@@ -21,27 +21,52 @@
         };
         var cswPublic = {};
 
-        (function () {
+        (function _pre() {
             var html = '',
                 attr = Csw.makeAttr();
             var $form;
-            
+
             if (options) {
                 $.extend(cswPrivate, options);
             }
-            
+
             html += '<form ';
             attr.add('id', cswPrivate.ID);
             html += attr.get();
             html += '>';
             html += '</form>';
             $form = $(html);
-            
+
             Csw.literals.factory($form, cswPublic);
 
             cswPrivate.$parent.append(cswPublic.$);
-            
+
         } ());
+
+        cswPublic.validator = { };
+        cswPublic.initValidator = function () {
+            // Validation
+            cswPublic.validator = cswPublic.$.validate({
+                highlight: function (element) {
+                    var $elm = $(element);
+                    $elm.attr('csw_invalid', '1');
+                    $elm.animate({ backgroundColor: '#ff6666' });
+                },
+                unhighlight: function (element) {
+                    var $elm = $(element);
+                    if ($elm.attr('csw_invalid') === '1')  // only unhighlight where we highlighted
+                    {
+                        $elm.css('background-color', '#66ff66');
+                        $elm.attr('csw_invalid', '0');
+                        setTimeout(function () { $elm.animate({ backgroundColor: 'transparent' }); }, 500);
+                    }
+                }
+            });
+        }; // initValidator()
+
+        cswPublic.isFormValid = function () {
+            return cswPublic.$.valid();
+        };
 
         return cswPublic;
     }

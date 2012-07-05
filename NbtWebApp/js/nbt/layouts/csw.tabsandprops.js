@@ -205,9 +205,26 @@
                 } else {
                     cswPrivate.getPropsImpl(tabContentDiv, tabid, onSuccess);
                 }
-            };
+            }; // getProps()
 
-            // getProps()
+            cswPrivate.initValidator = function () {
+                cswPublic.validator = cswPrivate.form.$.validate({
+                    highlight: function (element) {
+                        var $elm = $(element);
+                        $elm.attr('csw_invalid', '1');
+                        $elm.animate({ backgroundColor: '#ff6666' });
+                    },
+                    unhighlight: function (element) {
+                        var $elm = $(element);
+                        if ($elm.attr('csw_invalid') === '1')  // only unhighlight where we highlighted
+                        {
+                            $elm.css('background-color', '#66ff66');
+                            $elm.attr('csw_invalid', '0');
+                            setTimeout(function () { $elm.animate({ backgroundColor: 'transparent' }); }, 500);
+                        }
+                    }
+                }); // validate()
+            };
 
             cswPrivate.getPropsImpl = function (tabContentDiv, tabid, onSuccess) {
                 'use strict';
@@ -237,9 +254,7 @@
                     });
                     //var formTblCell11 = formTable.cell(1, 1);
                     //var formTblCell12 = formTable.cell(1, 2);
-
-
-                    cswPrivate.layoutTable = formTable.cell(1, 1).layoutTable({
+                    var layoutOpts = {
                         ID: cswPrivate.ID + '_props',
                         OddCellRightAlign: true,
                         ReadOnly: (cswPrivate.EditMode === Csw.enums.editMode.PrintReport || cswPrivate.ReadOnly),
@@ -263,7 +278,12 @@
                         onRemove: function (event, onRemoveData) {
                             cswPrivate.onRemove(tabid, onRemoveData);
                         } // onRemove
-                    }); // Csw.literals.layoutTable()
+                    };
+                    if (false === Csw.bool(cswPrivate.showSaveButton)) {
+                        layoutOpts.width = null;
+                    }
+
+                    cswPrivate.layoutTable = formTable.cell(1, 1).layoutTable(layoutOpts); // Csw.literals.layoutTable()
 
                     function doUpdateSubProps(configOn) {
                         var updOnSuccess = function (thisProp, key) {
@@ -318,22 +338,7 @@
                         cswPrivate.layoutTable.cellSet(1, 1)[1][2].trigger('focus');
                     }
                     // Validation
-                    cswPrivate.form.$.validate({
-                        highlight: function (element) {
-                            var $elm = $(element);
-                            $elm.attr('csw_invalid', '1');
-                            $elm.animate({ backgroundColor: '#ff6666' });
-                        },
-                        unhighlight: function (element) {
-                            var $elm = $(element);
-                            if ($elm.attr('csw_invalid') === '1')  // only unhighlight where we highlighted
-                            {
-                                $elm.css('background-color', '#66ff66');
-                                $elm.attr('csw_invalid', '0');
-                                setTimeout(function () { $elm.animate({ backgroundColor: 'transparent' }); }, 500);
-                            }
-                        }
-                    }); // validate()
+                    cswPrivate.initValidator();
 
                     if (Csw.bool(cswPrivate.Config)) {
                         cswPrivate.layoutTable.configOn();
@@ -486,17 +491,62 @@
                     }
                 }
                 return cswPrivate.atLeastOne;
-            };
+            }; // _handleProperties()
 
-            // _handleProperties()
+            cswPrivate.getCellSetForTabGroup = function(layoutTable, tabgroup, displayrow, displaycol) {
+
+                if(Csw.isNullOrEmpty(cswPrivate.tabgrouptables)) {
+                    cswPrivate.tabgrouptables = [];
+                }
+                if(Csw.isNullOrEmpty(cswPrivate.tabgrouptables[tabgroup])) {
+                    var cellSet = layoutTable.cellSet(displayrow, displaycol);
+                    var propCell = cswPrivate.getPropertyCell(cellSet);
+
+                    var $fieldset = $('<fieldset>');
+                    $fieldset.append('<legend>' + tabgroup + '</legend>');
+                    propCell.append($fieldset);
+
+                    var div = Csw.literals.div({
+                        $parent: $fieldset
+                    });
+
+                    var tabgroupLayoutTable = div.layoutTable({
+                        ID: tabgroup,
+                        OddCellRightAlign: true,
+                        ReadOnly: (cswPrivate.EditMode === Csw.enums.editMode.PrintReport || cswPrivate.ReadOnly),
+                        cellSet: {
+                            rows: 1,
+                            columns: 2
+                        },
+                        onSwap: function (e, onSwapData) {
+                            cswPrivate.onSwap(tabid, onSwapData);
+                        },
+                        showConfigButton: false,
+                        showExpandRowButton: false,
+                        showExpandColButton: false,
+                        showRemoveButton: false
+                    });
+                    cswPrivate.tabgrouptables[tabgroup] = tabgroupLayoutTable;
+                }
+
+                return cswPrivate.tabgrouptables[tabgroup].cellSet(displayrow, displaycol);
+
+            }; // getCellSetForTabGroup()
+
 
             cswPrivate.handleProp = function (layoutTable, propData, tabContentDiv, tabid, configMode) {
                 'use strict';
                 var propid = propData.id,
-                    cellSet = layoutTable.cellSet(propData.displayrow, propData.displaycol),
+                    cellSet,
                     helpText = Csw.string(propData.helptext),
                     propName = Csw.string(propData.name),
                     labelCell = {};
+
+                if(false === Csw.isNullOrEmpty(propData.tabgroup)) {
+                    cellSet = cswPrivate.getCellSetForTabGroup(layoutTable, propData.tabgroup, propData.displayrow, propData.displaycol);
+                } else {
+                    cellSet = layoutTable.cellSet(propData.displayrow, propData.displaycol);
+                }
 
                 layoutTable.addCellSetAttributes(cellSet, { propId: propid });
 
@@ -708,7 +758,7 @@
                 /// <param name="propData" type="Object">(Optional) an object representing CswNbt node properties.</param>
                 /// <returns type="Array">An array of propIds</returns>
                 'use strict';
-                Csw.tryExec(function () {
+                return Csw.tryExec(function () {
 
                     layoutTable = layoutTable || cswPrivate.layoutTable;
                     propData = propData || cswPrivate.propertyData;
@@ -762,11 +812,15 @@
                 return cswPrivate.propertyData;
             };
 
+            cswPublic.isFormValid = function () {
+                return cswPrivate.form.$.valid();
+            };
+
             cswPublic.save = function (tabContentDiv, tabid, onSuccess) {
                 'use strict';
                 Csw.tryExec(function () {
 
-                    if (cswPrivate.form.$.valid()) {
+                    if (cswPublic.isFormValid()) {
                         var propIds = cswPrivate.updatePropJsonFromLayoutTable();
                         var sourcenodeid = Csw.tryParseObjByIdx(cswPrivate.nodeids, 0);
                         var sourcenodekey = Csw.tryParseObjByIdx(cswPrivate.nodekeys, 0);

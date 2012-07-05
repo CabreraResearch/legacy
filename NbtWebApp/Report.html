@@ -38,7 +38,10 @@
                 if (false == Csw.isNullOrEmpty(qs.rformat)) {
                     runReport(qs.reportid, qs.rformat);
                 } else {
-                    $('#btnGrid').click(function () { runReport(qs.reportid, 'grid'); });
+                    $('#btnGrid').click(function () { 
+                        $('#btnGrid').attr('disabled','disabled'); 
+                        runReport(qs.reportid, 'grid'); 
+                    });
                     $('#btnCsv').click(function () { runReport(qs.reportid, 'csv'); });
                     $('#btnCrystal').click(function () { Csw.window.location('report.aspx?reportid=' + qs.reportid); });
                 }

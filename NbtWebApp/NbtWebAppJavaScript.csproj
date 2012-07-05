@@ -37,6 +37,7 @@
     <WarningLevel>4</WarningLevel>
     <NoWarn>
     </NoWarn>
+    <DocumentationFile>bin\NbtJavaScript.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
     <OutputPath>bin\</OutputPath>
@@ -58,6 +59,7 @@
     <WarningLevel>0</WarningLevel>
     <NoWarn>
     </NoWarn>
+    <DocumentationFile>bin\NbtJavaScript.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug %28Fast%29|x64'">
     <DebugSymbols>true</DebugSymbols>
@@ -71,9 +73,13 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <CodeAnalysisRuleSetDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets</CodeAnalysisRuleSetDirectories>
     <CodeAnalysisRuleDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
+    <DocumentationFile>bin\NbtJavaScript.XML</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Content Include="ConnectTest.html" />
+    <Content Include="js\common\composites\csw.quantity.js" />
+    <None Include="js\nbt.js.map" />
+    <None Include="js\common.js.map" />
     <Content Include="js\nbt\nodes\csw.node.link.js" />
     <Content Include="js\nbt\nodes\CswNodeGridNew.js" />
     <Content Include="DevHeader.html" />
@@ -86,6 +92,10 @@
     <Content Include="js\common\controls\csw.buttongroup.js" />
     <Content Include="js\common\layouts\csw.action.js" />
     <Content Include="js\nbt\actions\csw.submitrequest.js" />
+    <Content Include="js\nbt\wizards\csw.wizard.amountsgrid.js" />
+    <Content Include="js\nbt\wizards\csw.wizard.nodethingrid.js" />
+    <Content Include="js\nbt\wizards\csw.wizard.addlayout.js" />
+    <Content Include="js\nbt\wizards\csw.wizard.nodetypeselect.js" />
     <Content Include="js\nbt\wizards\csw.wizard.nodegrid.js" />
     <Content Include="js\nbt\wizards\csw.dispensecontainer.js" />
     <Content Include="js\nbt\wizards\csw.receivematerial.js" />

@@ -12,6 +12,6 @@ unlink($destfile);
 my $param = "";
 $param .= "--js $dir\\js\\CswCommon-vsdoc.js ";
 
-`java -jar "$dir\\..\\..\\..\\ThirdParty\\ClosureCompiler\\compiler.jar" $param --js_output_file $destfile`;
+`java -jar "$dir\\..\\..\\..\\ThirdParty\\ClosureCompiler\\compiler.jar" $param  --create_source_map $dir/js/common.js.map --source_map_format=V3 --js_output_file $destfile`;
 
 printf("Finished compiling CswCommon.$datestr.min.js javascript\n");

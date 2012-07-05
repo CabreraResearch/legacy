@@ -1,5 +1,6 @@
 using System;
 using ChemSW.Core;
+using ChemSW.Exceptions;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
@@ -30,6 +31,7 @@ namespace ChemSW.Nbt.ObjClasses
         public const string DispensePropertyName = "Dispense";
         public const string DisposePropertyName = "Dispose";
         public const string UndisposePropertyName = "Undispose";
+        public const string OwnerPropertyName = "Owner";
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
 
@@ -244,11 +246,7 @@ namespace ChemSW.Nbt.ObjClasses
                 else if( OCP.PropName == DispensePropertyName )
                 {
                     ActionData = this.NodeId.ToString();
-                    JObject ActionDataObj = new JObject();
-                    ActionDataObj["nodeId"] = this.NodeId.ToString();
-                    ActionDataObj["currentQuantity"] = this.Quantity.Quantity;
-                    CswNbtObjClassUnitOfMeasure unitNode = _CswNbtResources.Nodes.GetNode( this.Quantity.UnitId );
-                    ActionDataObj["currentUnitName"] = unitNode.Name.Text;
+                    JObject ActionDataObj = _getDispenseActionData();
                     ActionData = ActionDataObj.ToString();
                     ButtonAction = NbtButtonAction.dispense;
                 }
@@ -288,6 +286,37 @@ namespace ChemSW.Nbt.ObjClasses
         #endregion
 
         #region Private Helper Methods
+
+        private JObject _getDispenseActionData()
+        {
+            JObject ActionDataObj = new JObject();
+            ActionDataObj["sourceContainerNodeId"] = this.NodeId.ToString();
+            CswNbtObjClassUnitOfMeasure unitNode = _CswNbtResources.Nodes.GetNode( this.Quantity.UnitId );
+            if( null != unitNode )
+            {
+                ActionDataObj["currentQuantity"] = this.Quantity.Quantity;
+                ActionDataObj["currentUnitName"] = unitNode.Name.Text;
+            }
+            JObject CapacityObj = _getCapacityJSON();
+            ActionDataObj["capacity"] = CapacityObj.ToString();
+            return ActionDataObj;
+        }
+
+        private JObject _getCapacityJSON()
+        {
+            JObject CapacityObj = new JObject();
+            CswNbtObjClassSize sizeNode = _CswNbtResources.Nodes.GetNode( this.Size.RelatedNodeId );
+            if( null != sizeNode )
+            {
+                CswNbtNodePropQuantity Capacity = sizeNode.Capacity;
+                Capacity.ToJSON( CapacityObj );
+            }
+            else
+            {
+                throw new CswDniException( ErrorType.Error, "Cannot dispense container: Contianer's size is undefined.", "Dispense fail - null Size relationship." );
+            }
+            return CapacityObj;
+        }
 
         private void _DisposeContainer()
         {
@@ -361,7 +390,7 @@ namespace ChemSW.Nbt.ObjClasses
                 ContDispTransNode.QuantityDispensed.Quantity = this.Quantity.Quantity;
                 ContDispTransNode.QuantityDispensed.UnitId = this.Quantity.UnitId;
                 ContDispTransNode.Type.Value = DispenseType.ToString();
-                ContDispTransNode.DispensedDate.DateTimeValue = DateTime.Today;
+                ContDispTransNode.DispensedDate.DateTimeValue = DateTime.Now;
                 ContDispTransNode.RemainingSourceContainerQuantity.Quantity = RemainingSourceContainerQuantity;
                 ContDispTransNode.RemainingSourceContainerQuantity.UnitId = this.Quantity.UnitId;
 
@@ -405,6 +434,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropButton Dispense { get { return ( _CswNbtNode.Properties[DispensePropertyName] ); } }
         public CswNbtNodePropButton Dispose { get { return ( _CswNbtNode.Properties[DisposePropertyName] ); } }
         public CswNbtNodePropButton Undispose { get { return ( _CswNbtNode.Properties[UndisposePropertyName] ); } }
+        public CswNbtNodePropRelationship Owner { get { return ( _CswNbtNode.Properties[OwnerPropertyName] ); } }
         #endregion
 
 

@@ -327,6 +327,10 @@ namespace ChemSW.Nbt.MetaData
         {
             get { return _ObjectClassPropRow["valueoptions"].ToString(); }
         }
+        public string Extended
+        {
+            get { return _ObjectClassPropRow["extended"].ToString(); }
+        }
 
         //public string DefaultValue
         //{

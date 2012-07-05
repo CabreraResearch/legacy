@@ -1,3 +1,4 @@
+using System;
 using ChemSW.Core;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
@@ -117,26 +118,15 @@ namespace ChemSW.Nbt.ObjClasses
                         break;
                     case ReceivePropertyName:
                         ActionDataObj["materialId"] = NodeId.ToString();
+                        ActionDataObj["materialNodeTypeId"] = NodeTypeId;
                         ActionDataObj["tradeName"] = TradeName.Text;
-                        CswNbtView SizeView = new CswNbtView( _CswNbtResources );
-                        SizeView.Visibility = NbtViewVisibility.Property;
-                        SizeView.ViewMode = NbtViewRenderingMode.Grid;
-
-                        CswNbtViewRelationship MaterialRel = SizeView.AddViewRelationship( ObjectClass, true );
-                        CswNbtMetaDataObjectClass SizeOc = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.SizeClass );
-                        CswNbtMetaDataObjectClassProp CapacityOcp = SizeOc.getObjectClassProp( CswNbtObjClassSize.CapacityPropertyName );
-                        CswNbtMetaDataObjectClassProp MaterialOcp = SizeOc.getObjectClassProp( CswNbtObjClassSize.MaterialPropertyName );
-                        CswNbtMetaDataObjectClassProp CatalogNoOcp = SizeOc.getObjectClassProp( CswNbtObjClassSize.CatalogNoPropertyName );
-                        CswNbtMetaDataObjectClassProp DispensableOcp = SizeOc.getObjectClassProp( CswNbtObjClassSize.DispensablePropertyName );
-
-                        CswNbtViewRelationship SizeRel = SizeView.AddViewRelationship( MaterialRel, NbtViewPropOwnerType.Second, MaterialOcp, true );
-                        SizeView.AddViewProperty( SizeRel, CapacityOcp );
-                        CswNbtViewProperty DispensableVp = SizeView.AddViewProperty( SizeRel, DispensableOcp );
-                        DispensableVp.ShowInGrid = false;
-                        SizeView.AddViewPropertyFilter( DispensableVp, DispensableOcp.getFieldTypeRule().SubFields.Default.Name, Value: Tristate.True.ToString() );
-                        SizeView.AddViewProperty( SizeRel, CatalogNoOcp );
-                        SizeView.SaveToCache( false );
-                        ActionDataObj["sizesViewId"] = SizeView.SessionViewId.ToString();
+                        CswNbtActReceiving Act = new CswNbtActReceiving( _CswNbtResources, ObjectClass, NodeId );
+                        ActionDataObj["sizesViewId"] = Act.SizesView.SessionViewId.ToString();
+                        Int32 ContainerLimit = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswNbtResources.ConfigurationVariables.container_receipt_limit.ToString() ) );
+                        ActionDataObj["containerlimit"] = ContainerLimit;
+                        CswNbtObjClassContainer Container = Act.makeContainer();
+                        ActionDataObj["containerNodeTypeId"] = Container.NodeTypeId;
+                        ActionDataObj["containerAddLayout"] = Act.getContainerAddProps( Container );
                         ButtonAction = NbtButtonAction.receive;
                         break;
                 }

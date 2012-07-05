@@ -21,6 +21,7 @@
                 nodeid: '',
                 cswnbtnodekey: '',
                 reinit: false,
+                forceFit: false,
                 EditMode: Csw.enums.editMode.Edit,
                 onEditNode: null,
                 onDeleteNode: null,
@@ -56,6 +57,7 @@
                                             ForReport: forReporting
                                         }
                                     },
+                                    forceFit: o.forceFit,
                                     readonly: forReporting,
                                     usePaging: false === forReporting,
                                     showActionColumn: true,
@@ -76,7 +78,7 @@
                                         $.CswDialog('EditNodeDialog', {
                                             nodeids: nodeids,
                                             nodepks: nodeids,
-                                            cswnbtnodekeys: cswnbtnodekeys,
+                                            nodekeys: cswnbtnodekeys,
                                             nodenames: nodenames,
                                             Multi: (nodeids.length > 1),
                                             onEditNode: o.onEditNode,
@@ -99,7 +101,7 @@
                                         $.CswDialog('DeleteNodeDialog', {
                                             nodeids: nodeids,
                                             nodepks: nodeids,
-                                            cswnbtnodekeys: cswnbtnodekeys,
+                                            nodekeys: cswnbtnodekeys,
                                             nodenames: nodenames,
                                             onDeleteNode: o.onDeleteNode,
                                             Multi: (nodeids.length > 1),

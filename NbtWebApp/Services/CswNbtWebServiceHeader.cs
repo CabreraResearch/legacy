@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.IO;
@@ -7,10 +8,9 @@ using System.Reflection;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Nbt.Actions;
+using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using Newtonsoft.Json.Linq;
-using ChemSW.Nbt.MetaData;
-using System.Collections.Generic;
 
 namespace ChemSW.Nbt.WebServices
 {
@@ -179,7 +179,7 @@ namespace ChemSW.Nbt.WebServices
             Ret["Help"]["About"]["action"] = "About";
             CswNbtMetaDataObjectClass feedbackOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.FeedbackClass );
             IEnumerable<CswNbtMetaDataNodeType> feedbackNodeTypes = feedbackOC.getNodeTypes();
-            if( feedbackNodeTypes.Count() > 0 )
+            if( feedbackNodeTypes.Any() )
             {
                 Ret["Help"]["Give Feedback"] = new JObject();
                 //Ret["Help"]["Give Feedback"]["action"] = "AddNode";
@@ -192,7 +192,6 @@ namespace ChemSW.Nbt.WebServices
 
             return Ret;
         }
-
 
         public JObject makeVersionJson()
         {

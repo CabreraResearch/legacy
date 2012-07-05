@@ -30,14 +30,15 @@
 
                 canSelectRow: false,
 
-                onLoad: null,   // function()
+                onLoad: null,   // function(grid, ajaxResult)
                 onEdit: null,   // function(rows)
                 onDelete: null, // function(rows)
                 onSelect: null, // function(row)
                 onDeselect: null, // function(row)
 
                 height: '',  // overridden by webservice if paging is on
-                width: '100%',
+                //width: '100%',
+                width: '',
 
                 fields: [],   // [ { name: 'col1', type: 'string' }, ... ]
                 columns: [],  // [ { header: 'Col1', dataIndex: 'col1', ... }, ... ]
@@ -72,7 +73,7 @@
             }; // makeActionButton()
 
 
-            cswPrivate.makeStore = function(storeId, usePaging) {
+            cswPrivate.makeStore = Csw.method(function(storeId, usePaging) {
                 var fields = $.extend([], cswPrivate.fields);
 
                 var storeopts = {
@@ -97,10 +98,10 @@
                 }
 
                 return Ext.create('Ext.data.Store', storeopts);
-            }; // makeStore()
+            }); // makeStore()
 
             
-            cswPrivate.makeGrid = function (renderTo, store) {
+            cswPrivate.makeGrid = Csw.method(function (renderTo, store) {
                 var columns = $.extend([], cswPrivate.columns);
 
                 var gridopts = {
@@ -119,7 +120,7 @@
                     },
                     listeners: {
                         viewready: function () {
-                            Csw.tryExec(cswPrivate.onLoad, cswPublic);
+                            Csw.tryExec(cswPrivate.onLoad, cswPublic, cswPrivate.ajaxResult);
                         }
                     }
                 };
@@ -251,10 +252,10 @@
                 }, 200); // setTimeout
 
                 return grid;
-            }; // makeGrid()
+            }); // makeGrid()
 
 
-            cswPrivate.init = function () {
+            cswPrivate.init = Csw.method(function () {
                 cswParent.empty();
                 
                 cswPrivate.store = cswPrivate.makeStore(cswPrivate.ID + '_store', cswPrivate.usePaging);
@@ -272,19 +273,19 @@
                 if (Csw.bool(cswPrivate.truncated)) {
                     cswParent.span({ cssclass: 'truncated', text: 'Results Truncated' });
                 }
-            }; // init()
+            }); // init()
 
 
-            cswPublic.getCell = function (rowindex, key) {
+            cswPublic.getCell = Csw.method(function (rowindex, key) {
                 ///<summary>Gets the contents of a jqGrid cell by rowid and column key</summary>
                 return cswPrivate.store.getAt(rowindex).raw[key];
-            };
+            });
 
-            cswPublic.getSelectedRowId = function () {
+            cswPublic.getSelectedRowId = Csw.method(function () {
                 return cswPrivate.store.indexOf(cswPrivate.grid.getSelectionModel().getSelection()[0]);
-            };
+            });
 
-            cswPublic.scrollToRow = function (rowindex) {
+            cswPublic.scrollToRow = Csw.method(function (rowindex) {
                 ///<summary>Scrolls the grid to the specified index</summary>
                 ///<param name="rowid" type="String">Optional. jqGrid rowid. If null, selected row is assumed.</param>
                 ///<returns type="Void"></returns>
@@ -292,17 +293,17 @@
                     rowindex = cswPublic.getSelectedRowId();
                 }
                 cswPrivate.grid.getView().focusRow(rowindex);
-            };
+            });
 
-            cswPublic.getRowIdForVal = function (column, value) {
+            cswPublic.getRowIdForVal = Csw.method(function (column, value) {
                 ///<summary>Gets a row index by column name and value.</summary>
                 ///<param name="value" type="String">Cell value</param>
                 ///<param name="column" type="String">Column name</param>
                 ///<returns type="String">row index.</returns>
                 return cswPrivate.store.findExact(column, value);
-            };
+            });
 
-            cswPublic.getValueForColumn = function (columnname, rowindex) {
+            cswPublic.getValueForColumn = Csw.method(function (columnname, rowindex) {
                 ///<summary>Gets a cell value by column name.</summary>
                 ///<param name="columnname" type="String">Grid column name.</param>
                 ///<param name="rowid" type="String">Optional. If null, selected row is assumed.</param>
@@ -312,40 +313,40 @@
                 }
                 var ret = cswPublic.getCell(rowindex, columnname);
                 return ret;
-            };
+            });
 
-            cswPublic.setSelection = function (rowindex) {
+            cswPublic.setSelection = Csw.method(function (rowindex) {
                 ///<summary>Sets the selected row by index</summary>
                 if (rowindex > -1) {
                     cswPrivate.grid.getSelectionModel().select(rowindex);
                 }
-            };
+            });
 
             cswPublic.getAllGridRows = function () {
                 return cswPrivate.store.data;
             };
 
-            cswPublic.print = function (onSuccess) {
+            cswPublic.print = Csw.method(function (onSuccess) {
                 // turn paging off
                 var printStore = cswPrivate.makeStore(cswPrivate.ID + '_printstore', false);
                 var printGrid = cswPrivate.makeGrid('', printStore);
 
                 Ext.ux.grid.Printer.stylesheetPath = '/NbtWebApp/js/thirdparty/extJS-4.1.0/ux/grid/gridPrinterCss/print.css';
                 Ext.ux.grid.Printer.print(printGrid);
-            };
+            });
 
-            cswPublic.toggleShowCheckboxes = function (val) {
+            cswPublic.toggleShowCheckboxes = Csw.method(function (val) {
                 cswPrivate.showCheckboxes = (false === cswPrivate.showCheckboxes);
                 cswPrivate.init();
-            };
+            });
 
-            cswPrivate.calculateHeight = function(rows) {
+            cswPrivate.calculateHeight = Csw.method(function(rows) {
                 return 25 + // title bar
                        23 + // grid header
                        (rows * 28) + // rows
                        14 + // horizontal scrollbar
                        27;  // grid footer
-            };
+            });
 
             //constructor
             (function () {
@@ -366,6 +367,7 @@
                                 cswPrivate.fields = result.grid.fields;
                                 cswPrivate.columns = result.grid.columns;
                                 cswPrivate.data = result.grid.data;
+                                cswPrivate.ajaxResult = result;
                                 cswPrivate.init();
 
                             } // if(false === Csw.isNullOrEmpty(data.griddata)) {
