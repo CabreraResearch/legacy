@@ -45,6 +45,7 @@
         try {
             msg = cswPrivate.prepMsg(msg);
             console.error(msg);
+            Csw.error.loggly.error(msg);
         } catch (e) {
             Csw.debug.log(msg);
         }
@@ -85,6 +86,7 @@
         try {
             msg = cswPrivate.prepMsg(msg);
             console.info(msg);
+            Csw.error.loggly.info(msg);
         } catch (e) {
             Csw.debug.log(msg);
         }
@@ -159,6 +161,7 @@
         try {
             msg = cswPrivate.prepMsg(msg);
             console.warn(msg);
+            Csw.error.loggly.warn(msg);
         } catch (e) {
             Csw.debug.log(msg);
         }

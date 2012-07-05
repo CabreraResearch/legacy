@@ -7,6 +7,13 @@
     Csw.error = Csw.error ||
         Csw.register('error', Csw.makeNameSpace());
 
+    Csw.error.loggly = Csw.error.loggly ||
+        Csw.error.register('loggly', (function () {
+            var key = "9e6be4f5-f87e-4eac-bf76-d2c58fb3342b";
+            var host = ("https:" == document.location.protocol) ? "https://logs.loggly.com" : 'http://logs.loggly.com';
+            return new loggly({ url: host + '/inputs/' + key + '?rt=1', level: 'log' });
+        }()));
+
     Csw.error.makeErrorObj = Csw.error.makeErrorObj ||
         Csw.error.register('makeErrorObj', function (errorType, friendlyMsg, esotericMsg) {
             'use strict';
@@ -92,6 +99,20 @@
                 detail: 'JS Error type: ' + exception.type + '<br/>\n' + 'Stack: ' + exception.stack,
                 display: Csw.displayAllExceptions === true
             };
+            
+            var _errs = ["4ff2f798551a4ccb08002430"]; 
+            
+                window.onerror = function () { _errs.push(arguments); };
+                var d = function () {
+                    var e = document.createElement("script"), c = document.getElementsByTagName("script")[0];
+                    e.src = "//d15qhc0lu1ghnk.cloudfront.net/beacon.js"; e.async = !0;
+                    c.parentNode.insertBefore(e, c);
+                };
+            window.addEventListener ? window.addEventListener("load", d, !1) :
+            window.attachEvent("onload", d);
+    
+            
+            
             Csw.error.showError(e);
         });
 

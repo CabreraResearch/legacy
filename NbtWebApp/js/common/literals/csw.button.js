@@ -118,9 +118,9 @@
                 }
 
                 buttonOpt = {
-                    text: (cswPrivate.hasText),
+                    text: Csw.bool(cswPrivate.hasText),
                     label: cswPrivate.enabledText,
-                    disabled: (cswPrivate.ReadOnly),
+                    disabled: Csw.bool(cswPrivate.ReadOnly),
                     icons: {
                         primary: cswPrivate.primaryicon,
                         secondary: cswPrivate.secondaryicon
