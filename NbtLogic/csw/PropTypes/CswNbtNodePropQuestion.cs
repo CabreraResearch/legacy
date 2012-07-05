@@ -83,7 +83,7 @@ namespace ChemSW.Nbt.PropTypes
                         if( _IsValidNode &&
                             UpdateDateAnswered == DateTime.MinValue )  // case 21056
                         {
-                            UpdateDateAnswered = DateTime.Today;
+                            UpdateDateAnswered = DateTime.Now;
                         }
                     }
                     else
@@ -114,7 +114,7 @@ namespace ChemSW.Nbt.PropTypes
                     string val = value.Trim();
                     if( _IsValidNode && false == string.IsNullOrEmpty( val ) )
                     {
-                        UpdateDateCorrected = DateTime.Today;
+                        UpdateDateCorrected = DateTime.Now;
                     }
 
                     DateCorrected = UpdateDateCorrected;
