@@ -2763,6 +2763,11 @@ namespace ChemSW.Nbt.WebServices
                             ReturnVal["molData"] = MolData;
                         }
 
+                        //now create the image and save it as a blob
+                        byte[] molImage = CswStructureSearch.GetImage( MolData );
+                        CswNbtWebServiceTabsAndProps ws2 = new CswNbtWebServiceTabsAndProps( _CswNbtResources, _CswNbtStatisticsEvents );
+                        ws.SetPropBlobValue( molImage, "mol.jpeg", "image/jpeg", PropId, "blobdata" );
+
                     } // if( FileName != string.Empty && PropId != string.Empty )
 
                 }
@@ -2824,9 +2829,6 @@ namespace ChemSW.Nbt.WebServices
             return ReturnVal.ToString();
 
         } // saveMolProp()
-
-
-
 
 
         [WebMethod( EnableSession = false )]
