@@ -1260,6 +1260,19 @@ window.initMain = window.initMain || function (undefined) {
                 });
                 break;
             case 'Receiving':
+                o.onFinish = function (viewid) {
+                    clear({ 'all': true });
+                    handleItemSelect({
+                        type: 'view',
+                        viewmode: 'tree',
+                        viewid: viewid
+                    });
+                };
+                o.onCancel = function() {
+                    clear({ 'all': true });
+                    Csw.clientState.setCurrent(Csw.clientState.getLast());
+                    refreshSelected();
+                };
                 Csw.nbt.receiveMaterialWizard(centerTopDiv, o);
                 break;
             case 'Sessions':
