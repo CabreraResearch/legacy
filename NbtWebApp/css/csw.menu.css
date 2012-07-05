@@ -1,5 +1,5 @@
-
-/* Adapted from http://www.noupe.com/tutorial/drop-down-menu-jquery-css.html */
+/*
+/* Adapted from http://www.noupe.com/tutorial/drop-down-menu-jquery-css.html * /
 
 ul.topnav {
 	list-style: none;
@@ -12,7 +12,7 @@ ul.topnav li {
 	float: left;
 	margin: 0;
 	padding: 5px 7px 5px 7px;
-	position: relative; /*--Declare X and Y axis base for sub navigation--*/
+	position: relative; /*--Declare X and Y axis base for sub navigation--* /
 	display: block;
 	color: #3e73be;
 	cursor: pointer;
@@ -31,7 +31,7 @@ ul.topnav li a{
 }
 ul.topnav li ul.subnav {
 	list-style: none;
-	position: absolute; /*--Important - Keeps subnav from affecting main navigation flow--*/
+	position: absolute; /*--Important - Keeps subnav from affecting main navigation flow--* /
 	left: 0; top: 22px;
 	background: &cswheaderbgcolor;
 	margin: 0; padding: 0;
@@ -53,9 +53,10 @@ html ul.topnav li ul.subnav li a {
 	padding: 2px 0 2px 10px;
 	color: #3e73be;
 }
-html ul.topnav li ul.subnav li:hover { /*--Hover effect for subnav links--*/
+html ul.topnav li ul.subnav li:hover { /*--Hover effect for subnav links--* /
 	color: #6b94cf;
 }
-html ul.topnav li ul.subnav li a:hover { /*--Hover effect for subnav links--*/
+html ul.topnav li ul.subnav li a:hover { /*--Hover effect for subnav links--* /
 	color: #6b94cf;
 }
+*/
