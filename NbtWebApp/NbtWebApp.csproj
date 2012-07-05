@@ -2121,6 +2121,10 @@
       <Project>{1617E93A-A9DD-46D5-A607-7A36DF91C2D1}</Project>
       <Name>CswWebControls</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\Structure Search\StructureSearch\StructureSearch.csproj">
+      <Project>{E9156C9A-605E-4F21-8BB1-0970DA055FF0}</Project>
+      <Name>StructureSearch</Name>
+    </ProjectReference>
     <ProjectReference Include="..\NbtConfig\NbtConfig.csproj">
       <Project>{DABF9D08-70E8-4D42-AF7A-577335A7129F}</Project>
       <Name>NbtConfig</Name>

@@ -11,7 +11,7 @@
             var propDiv = o.propDiv;
             propDiv.empty();
             var propVals = o.propData.values;
-            var width = 100; //Csw.string(propVals.width);
+            var width = 200; //Csw.string(propVals.width);
             var mol = Csw.string(propVals.mol).trim();
 
             var table = propDiv.table({
@@ -22,13 +22,24 @@
             var cell22 = table.cell(2, 2).css('textAlign', 'right');
             var cell23 = table.cell(2, 3).css('textAlign', 'right');
 
+            var href = '/NbtWebApp/' + Csw.string(propVals.href);
+
             if (false === Csw.isNullOrEmpty(mol)) {
-                window.jmolInitialize('./js/thirdparty/js/jmol/', 'JmolApplet.jar');
-                window.jmolSetDocument(false);
-                var myApplet = window.jmolAppletInline('300px', mol);
-                cell11.append(myApplet);
-                var myCheck = window.jmolCheckbox("spin on", "spin off", "Rotate");
-                cell21.append(myCheck);
+                cell11.a({
+                    href: href,
+                    target: '_blank'
+                })
+                        .img({
+                            src: href,
+                            alt: 'mol.jpeg',
+                            height: propVals.height,
+                            width: width
+                        });
+                cell21.a({
+                    href: href,
+                    target: '_blank',
+                    text: 'mol.jpeg'
+                });
             }
 
             if (false === Csw.bool(o.ReadOnly) && o.EditMode !== Csw.enums.editMode.Add) {

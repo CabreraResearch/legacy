@@ -25,6 +25,7 @@ using ChemSW.Nbt.Welcome;
 using ChemSW.Security;
 using ChemSW.Session;
 using Newtonsoft.Json.Linq;
+using ChemSW.StructureSearch;
 
 namespace ChemSW.Nbt.WebServices
 {
@@ -2801,6 +2802,11 @@ namespace ChemSW.Nbt.WebServices
                         {
                             ReturnVal["molData"] = molData;
                         }
+
+                        //now create the image and save it as a blob
+                        byte[] molImage = CswStructureSearch.GetImage( molData );
+                        CswNbtWebServiceTabsAndProps ws2 = new CswNbtWebServiceTabsAndProps( _CswNbtResources, _CswNbtStatisticsEvents );
+                        ws.SetPropBlobValue( molImage, "mol.jpeg", "image/jpeg", PropId, "blobdata" );
 
                     } // if( FileName != string.Empty && PropId != string.Empty )
 
