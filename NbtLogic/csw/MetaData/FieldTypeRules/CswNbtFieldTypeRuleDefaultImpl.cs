@@ -52,9 +52,12 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
         // This is used by CswNbtNodeProp for unique value enforcement
         public void AddUniqueFilterToView( CswNbtView View, CswNbtViewProperty UniqueValueViewProperty, CswNbtNodePropWrapper PropertyValueToCheck )
         {
-            CswNbtPropFilterSql.PropertyFilterMode FilterMode = CswNbtPropFilterSql.PropertyFilterMode.Equals;
             string StringValueToCheck = PropertyValueToCheck.GetPropRowValue( SubFields.Default.Column );
-            View.AddViewPropertyFilter( UniqueValueViewProperty, SubFields.Default.Name, FilterMode, StringValueToCheck.Trim(), false );
+            if( StringValueToCheck != string.Empty )
+            {
+                CswNbtPropFilterSql.PropertyFilterMode FilterMode = CswNbtPropFilterSql.PropertyFilterMode.Equals;
+                View.AddViewPropertyFilter( UniqueValueViewProperty, SubFields.Default.Name, FilterMode, StringValueToCheck.Trim(), false );
+            }
         }
 
         public void afterCreateNodeTypeProp( CswNbtMetaDataNodeTypeProp NodeTypeProp )
