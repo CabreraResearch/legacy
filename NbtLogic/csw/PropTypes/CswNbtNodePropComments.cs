@@ -168,8 +168,26 @@ namespace ChemSW.Nbt.PropTypes
                     new JProperty( "datetime", dateSubmitted ),
                     new JProperty( "commenter", commenter ),
                     new JProperty( "message", message ) ) );
+
+
+                //Remove exceess comments
+                Int32 CommentsTruncationLimit = 10;
+                if( _CswNbtResources.ConfigVbls.doesConfigVarExist( ChemSW.Config.CswConfigurationVariables.ConfigurationVariableNames.CommentsTruncationLimit ) )
+                {
+
+                    CommentsTruncationLimit = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( ChemSW.Config.CswConfigurationVariables.ConfigurationVariableNames.CommentsTruncationLimit ) );
+                }
+
+                while( _CommentsJson.Count > CommentsTruncationLimit )
+                {
+                    _CommentsJson.RemoveAt( 0 );
+                }
+
+
                 CommentsJson = _CommentsJson;
                 _CswNbtNodePropData.SetPropRowValue( CswNbtSubField.PropColumn.Gestalt, commenter + " on " + dateSubmitted.ToString() + ": " + message ); //the caches the last message and sets it to Gestalt
+
+
             }
 
         }
