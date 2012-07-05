@@ -150,7 +150,6 @@ namespace ChemSW.Nbt.Sched
 
                                                             string ViewLink = string.Empty;
                                                             //bool ContinueWithReport = false;
-                                                            bool HasResults = false;
                                                             string EmailMessageSubject = string.Empty;
                                                             string EmailMessageBody = string.Empty;
 
@@ -166,8 +165,6 @@ namespace ChemSW.Nbt.Sched
                                                                     if( ViewId.isSet() )
                                                                     {
                                                                         ViewLink = makeViewUrl( ViewId );
-                                                                        //ContinueWithReport = true;
-
                                                                         CswNbtView ReportView = _CswNbtResources.ViewSelect.restoreView( ViewId );
                                                                         ICswNbtTree ReportTree = _CswNbtResources.Trees.getTreeFromView( UserNodeAsUser as ICswNbtUser, ReportView, true, true, false, false );
                                                                         EmailMessageSubject = CurrentMailReport.Type.Value + " Notification: " + ReportView.ViewName;
@@ -199,7 +196,11 @@ namespace ChemSW.Nbt.Sched
 
                                                                     ReportObjClass = (CswNbtObjClassReport) ReportNode;
 
-                                                                    CswArbitrarySelect ReportSelect = _CswNbtResources.makeCswArbitrarySelect( "MailReport_" + ReportNode.NodeId.ToString() + "_Select", ReportObjClass.SQL.Text );
+
+                                                                    ReportObjClass.ReportUserName.Text = UserNodeAsUser.Username;
+                                                                    string ReportSql = ReportObjClass.SQL.Text;
+
+                                                                    CswArbitrarySelect ReportSelect = _CswNbtResources.makeCswArbitrarySelect( "MailReport_" + ReportNode.NodeId.ToString() + "_Select", ReportSql );
                                                                     ReportTable = ReportSelect.getTable();
 
                                                                     EmailMessageSubject = CurrentMailReport.Type.Value + " Notification: " + ReportNode.NodeName;
