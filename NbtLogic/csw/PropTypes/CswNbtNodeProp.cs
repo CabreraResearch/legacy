@@ -206,71 +206,52 @@ namespace ChemSW.Nbt.PropTypes
         /// <param name="IsCopy">True if the update is part of a Copy operation</param>
         virtual public void onBeforeUpdateNodePropRow( bool IsCopy, bool OverrideUniqueValidation )
         {
-
-            /*case 26545
-            Check if the field type is text, then check if it's a null string
-            If it is not a null string, we can continue on to check if it is unique
-            if it IS a null string, we don't do the uniqueness check, as uniqueness does not apply to empty strings
-            */
-            bool fieldIsNotNull = true;
-            CswNbtMetaDataFieldType textFT = _CswNbtResources.MetaData.getFieldType( CswNbtMetaDataFieldType.NbtFieldType.Text );
-            if( NodeTypeProp.getFieldType().FieldTypeId == textFT.FieldTypeId )
+            //bz # 6686
+            if( IsUnique() && WasModified && !OverrideUniqueValidation )
             {
-                if( _CswNbtResources.Nodes[this.NodeId].Properties[this.NodeTypeProp].Field1.Equals( "" ) )
+                CswNbtView CswNbtView = new CswNbtView( _CswNbtResources );
+                CswNbtView.ViewName = "Other Nodes, for Property Uniqueness";
+
+                CswNbtViewRelationship ViewRel = null;
+                if( NodeTypeProp.IsGlobalUnique() )  // BZ 9754
+                    ViewRel = CswNbtView.AddViewRelationship( _CswNbtResources.MetaData.getObjectClassByNodeTypeId( NodeTypeProp.NodeTypeId ), false );
+                else
+                    ViewRel = CswNbtView.AddViewRelationship( NodeTypeProp.getNodeType(), false );
+
+                if( NodeId != null )
+                    ViewRel.NodeIdsToFilterOut.Add( NodeId );
+
+                //bz# 5959
+                CswNbtViewProperty UniqueValProperty = CswNbtView.AddViewProperty( ViewRel, NodeTypeProp );
+
+                // BZ 10099
+                this.NodeTypeProp.getFieldTypeRule().AddUniqueFilterToView( CswNbtView, UniqueValProperty, _CswNbtResources.Nodes[this.NodeId].Properties[this.NodeTypeProp] );
+
+                ICswNbtTree NodeTree = _CswNbtResources.Trees.getTreeFromView( CswNbtView, true, true, false, false );
+
+                if( NodeTree.getChildNodeCount() > 0 )
                 {
-                    fieldIsNotNull = false;
-                }
-            }
-
-            if( fieldIsNotNull )
-            {
-                //bz # 6686
-                if( IsUnique() && WasModified && !OverrideUniqueValidation )
-                {
-                    CswNbtView CswNbtView = new CswNbtView( _CswNbtResources );
-                    CswNbtView.ViewName = "Other Nodes, for Property Uniqueness";
-
-                    CswNbtViewRelationship ViewRel = null;
-                    if( NodeTypeProp.IsGlobalUnique() )  // BZ 9754
-                        ViewRel = CswNbtView.AddViewRelationship( _CswNbtResources.MetaData.getObjectClassByNodeTypeId( NodeTypeProp.NodeTypeId ), false );
-                    else
-                        ViewRel = CswNbtView.AddViewRelationship( NodeTypeProp.getNodeType(), false );
-
-                    if( NodeId != null )
-                        ViewRel.NodeIdsToFilterOut.Add( NodeId );
-
-                    //bz# 5959
-                    CswNbtViewProperty UniqueValProperty = CswNbtView.AddViewProperty( ViewRel, NodeTypeProp );
-
-                    // BZ 10099
-                    this.NodeTypeProp.getFieldTypeRule().AddUniqueFilterToView( CswNbtView, UniqueValProperty, _CswNbtResources.Nodes[this.NodeId].Properties[this.NodeTypeProp] );
-
-                    ICswNbtTree NodeTree = _CswNbtResources.Trees.getTreeFromView( CswNbtView, true, true, false, false );
-
-                    if( NodeTree.getChildNodeCount() > 0 )
+                    NodeTree.goToNthChild( 0 );
+                    if( !IsCopy || Required )
                     {
-                        NodeTree.goToNthChild( 0 );
-                        if( !IsCopy || Required )
-                        {
-                            CswNbtNode CswNbtNode = NodeTree.getNodeForCurrentPosition();
-                            string EsotericMessage = "Unique constraint violation: The proposed value '" + this.Gestalt + "' ";
-                            EsotericMessage += "of property '" + NodeTypeProp.PropName + "' ";
-                            EsotericMessage += "for nodeid (" + this.NodeId.ToString() + ") ";
-                            EsotericMessage += "of nodetype '" + NodeTypeProp.getNodeType().NodeTypeName + "' ";
-                            EsotericMessage += "is invalid because the same value is already set for node '" + CswNbtNode.NodeName + "' (" + CswNbtNode.NodeId.ToString() + ").";
-                            string ExotericMessage = "The " + NodeTypeProp.PropName + " property value must be unique";
-                            throw ( new CswDniException( ErrorType.Warning, ExotericMessage, EsotericMessage ) );
-                        }
-                        else
-                        {
-                            // BZ 9987 - Clear the value
-                            this._CswNbtNodePropData.ClearValue();
-                            this.clearModifiedFlag();
-                        }
+                        CswNbtNode CswNbtNode = NodeTree.getNodeForCurrentPosition();
+                        string EsotericMessage = "Unique constraint violation: The proposed value '" + this.Gestalt + "' ";
+                        EsotericMessage += "of property '" + NodeTypeProp.PropName + "' ";
+                        EsotericMessage += "for nodeid (" + this.NodeId.ToString() + ") ";
+                        EsotericMessage += "of nodetype '" + NodeTypeProp.getNodeType().NodeTypeName + "' ";
+                        EsotericMessage += "is invalid because the same value is already set for node '" + CswNbtNode.NodeName + "' (" + CswNbtNode.NodeId.ToString() + ").";
+                        string ExotericMessage = "The " + NodeTypeProp.PropName + " property value must be unique";
+                        throw ( new CswDniException( ErrorType.Warning, ExotericMessage, EsotericMessage ) );
                     }
+                    else
+                    {
+                        // BZ 9987 - Clear the value
+                        this._CswNbtNodePropData.ClearValue();
+                        this.clearModifiedFlag();
+                    }
+                }
 
-                }//if IsUnique
-            } //false == equals()
+            }//if IsUnique
 
             // case 25780 - copy first 512 characters of gestalt to gestaltsearch
             if( _CswNbtNodePropData.WasModified )
