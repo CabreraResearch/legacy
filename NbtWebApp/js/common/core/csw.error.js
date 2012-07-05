@@ -10,7 +10,7 @@
     Csw.error.loggly = Csw.error.loggly ||
         Csw.error.register('loggly', (function () {
             var key = "9e6be4f5-f87e-4eac-bf76-d2c58fb3342b";
-            var host = "http://logs.loggly.com";
+            var host = ("https:" == document.location.protocol) ? "https://logs.loggly.com" : 'http://logs.loggly.com';
             return new loggly({ url: host + '/inputs/' + key + '?rt=1', level: 'log' });
         }()));
 

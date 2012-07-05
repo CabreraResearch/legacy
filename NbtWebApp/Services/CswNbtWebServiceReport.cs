@@ -1,19 +1,10 @@
-using System;
 using System.Data;
 using System.Web;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Xml.Linq;
-using ChemSW.Core;
 using ChemSW.DB;
-using ChemSW.Nbt.MetaData;
-using ChemSW.Nbt.ObjClasses;
-using ChemSW.Nbt.PropTypes;
-using ChemSW.Nbt.ServiceDrivers;
-using Newtonsoft.Json.Linq;
-using ChemSW.Nbt.Logic;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.Grid;
+using ChemSW.Nbt.ObjClasses;
+using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.WebServices
 {
@@ -22,7 +13,7 @@ namespace ChemSW.Nbt.WebServices
         private readonly CswNbtResources _CswNbtResources;
         private readonly CswNbtNode _reportNode = null;
 
-        public CswNbtWebServiceReport( CswNbtResources CswNbtResources,CswNbtNode reportNode)
+        public CswNbtWebServiceReport( CswNbtResources CswNbtResources, CswNbtNode reportNode )
         {
             _CswNbtResources = CswNbtResources;
             _reportNode = reportNode;
@@ -36,6 +27,7 @@ namespace ChemSW.Nbt.WebServices
             if( string.Empty != report.SQL.Text )
             {
 
+                report.ReportUserName.Text = _CswNbtResources.CurrentNbtUser.Username;
                 CswArbitrarySelect cswRptSql = _CswNbtResources.makeCswArbitrarySelect( "report_sql", report.SQL.Text );
                 DataTable rptDataTbl = cswRptSql.getTable();
 

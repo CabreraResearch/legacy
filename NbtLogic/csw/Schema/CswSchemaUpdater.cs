@@ -128,12 +128,15 @@ namespace ChemSW.Nbt.Schema
             {
                 NewUpdateHistoryRow["log"] = "Failed update: " + CswSchemaUpdateDriver.Message;
             }
-
             _UpdateHistoryTable.Rows.Add( NewUpdateHistoryRow );
+
             _UpdateHistoryTableUpdate.update( _UpdateHistoryTable );
 
             CswNbtResources.finalize();
             CswNbtResources.release();
+
+
+            CswSchemaUpdateDriver.CswNbtSchemaModTrnsctn = null;
 
             GC.Collect();
 
