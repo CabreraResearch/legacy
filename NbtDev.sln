@@ -53,8 +53,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NbtConfig", "NbtConfig\NbtC
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NbtLogic.Test", "TestApps\NbtLogic.Test\NbtLogic.Test.csproj", "{A082F357-1745-4578-AF1F-517BC6EF4007}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Documentation", "..\..\Documentation\Project\Documentation.fsproj", "{55F4D566-0FD2-450A-AD62-498C7BB12650}"
-EndProject
 Global
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = Nbt.vsmdi
@@ -425,21 +423,6 @@ Global
 		{A082F357-1745-4578-AF1F-517BC6EF4007}.Release|x64.ActiveCfg = Release|x64
 		{A082F357-1745-4578-AF1F-517BC6EF4007}.Release|x64.Build.0 = Release|x64
 		{A082F357-1745-4578-AF1F-517BC6EF4007}.Release|x86.ActiveCfg = Release|x64
-		{55F4D566-0FD2-450A-AD62-498C7BB12650}.Debug (Fast)|Any CPU.ActiveCfg = Debug|Any CPU
-		{55F4D566-0FD2-450A-AD62-498C7BB12650}.Debug (Fast)|Any CPU.Build.0 = Debug|Any CPU
-		{55F4D566-0FD2-450A-AD62-498C7BB12650}.Debug (Fast)|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{55F4D566-0FD2-450A-AD62-498C7BB12650}.Debug (Fast)|x64.ActiveCfg = Debug|Any CPU
-		{55F4D566-0FD2-450A-AD62-498C7BB12650}.Debug (Fast)|x86.ActiveCfg = Debug|Any CPU
-		{55F4D566-0FD2-450A-AD62-498C7BB12650}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{55F4D566-0FD2-450A-AD62-498C7BB12650}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{55F4D566-0FD2-450A-AD62-498C7BB12650}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{55F4D566-0FD2-450A-AD62-498C7BB12650}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{55F4D566-0FD2-450A-AD62-498C7BB12650}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{55F4D566-0FD2-450A-AD62-498C7BB12650}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{55F4D566-0FD2-450A-AD62-498C7BB12650}.Release|Any CPU.Build.0 = Release|Any CPU
-		{55F4D566-0FD2-450A-AD62-498C7BB12650}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{55F4D566-0FD2-450A-AD62-498C7BB12650}.Release|x64.ActiveCfg = Release|Any CPU
-		{55F4D566-0FD2-450A-AD62-498C7BB12650}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
