@@ -10,7 +10,7 @@ D:\kiln\nbt\nbt\Scripts\Daily\NbtDailyBuild.pl 1 >> D:\log\dailylog.txt 2>&1
 
 echo "Deploy Finished" >> D:\log\dailylog.txt
 
-msbuild D:\kiln\Nbt\Nbt\NbtDev.sln /p:Configuration=Debug > D:\log\dailylogdev.txt
+msbuild D:\kiln\Documentation\Documentation.sln /p:Configuration=Debug > D:\log\dailylogdev.txt
 
 msbuild D:\kiln\Nbt\Nbt\Nbt.sln /p:Configuration=Release /p:Platform="x64" >> D:\log\dailylog.txt
 

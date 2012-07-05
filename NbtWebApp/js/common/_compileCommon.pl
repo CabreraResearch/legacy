@@ -14,4 +14,8 @@ $param .= "--js $dir\\js\\CswCommon-vsdoc.js ";
 
 `java -jar "$dir\\..\\..\\..\\ThirdParty\\ClosureCompiler\\compiler.jar" $param  --create_source_map $dir/js/common.js.map --source_map_format=V3 --js_output_file $destfile`;
 
+open(JSFILE, ">>$destfile") or die("Cannot open js directory: $destfile; $!");
+print JSFILE "//@ sourceMappingURL=js/common.js.map";
+close (JSFILE);
+
 printf("Finished compiling CswCommon.$datestr.min.js javascript\n");
