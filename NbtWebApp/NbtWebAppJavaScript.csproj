@@ -239,7 +239,7 @@
     <Content Include="js\common\core\csw.error.js" />
     <Content Include="js\common\core\csw.events.js" />
     <Content Include="js\common\types\csw.function.js" />
-    <Content Include="js\common\core\csw.menu.js" />
+    <Content Include="js\common\composites\csw.menu.js" />
     <Content Include="js\common\types\csw.number.js" />
     <Content Include="js\common\types\csw.object.js" />
     <Content Include="js\common\types\csw.string.js" />
