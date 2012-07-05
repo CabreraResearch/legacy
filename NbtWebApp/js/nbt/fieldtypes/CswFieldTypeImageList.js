@@ -29,9 +29,7 @@
 
             if (false === o.ReadOnly) {
                 var imageSelectList = imageListTable.cell(1, 2).select({ id: o.ID });
-                if (false === o.Required) {
-                    imageSelectList.option({ value: '', display: 'Select...' });
-                }
+                var selectOption = imageSelectList.option({ value: '', display: 'Select...' });
                 if (o.Multi) {
                     imageSelectList.option({ value: Csw.enums.multiEditDefaultValue, display: Csw.enums.multiEditDefaultValue, isSelected: true });
                 }
@@ -43,6 +41,9 @@
                 imageSelectList.bind('change', function () {
                     var selected = imageSelectList.children(':selected');
                     changeImage(selected.text(), selected.val(), true, selected);
+                    if (o.Required) {
+                        selectOption.remove();
+                    }
                     o.onChange();
                 });
 
@@ -65,11 +66,11 @@
                     imageTable.empty();
                     imageSelectList.children(':not(:selected)').show();
                     selected.hide();
-                } else if (selected) {
-                    selected.hide();
                 }
-
                 changeValue(selected.val());
+                if (allowMultiple && false === Csw.isNullOrEmpty(selected)) {
+                    selected.remove();
+                }
                 if (name != 'Select...') {
                     addImage(name, href, doAnimation);
                 }
