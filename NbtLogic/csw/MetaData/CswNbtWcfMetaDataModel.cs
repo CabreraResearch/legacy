@@ -176,6 +176,8 @@ namespace ChemSW.Nbt.MetaData
             [DataMember]
             public bool ReadOnly;
             [DataMember]
+            public bool IsRequired;
+            [DataMember]
             public bool IsUnique;
             [DataMember]
             public bool IsCompoundUnique;

@@ -39,69 +39,92 @@
 
         var $MenuDiv = $(this);
 
-        var jsonData = {
-            ViewId: o.viewid,
-            SafeNodeKey: o.cswnbtnodekey,
-            PropIdAttr: o.propid,
-            LimitMenuTo: o.limitMenuTo
-        };
+//        var jsonData = {
+//            ViewId: o.viewid,
+//            SafeNodeKey: o.cswnbtnodekey,
+//            PropIdAttr: o.propid,
+//            LimitMenuTo: o.limitMenuTo
+//        };
 
-        Csw.ajax.post({
-            url: o.Url,
-            data: jsonData,
-            stringify: false,
-            success: function (data) {
-                var $ul = $('<ul class="topnav"></ul>');
-
-                $MenuDiv.text('')
-                    .append($ul);
-
-                for (var itemKey in data) {
-                    if (data.hasOwnProperty(itemKey)) {
-
-                        var menuItem = data[itemKey];
-                        if (!Csw.isNullOrEmpty(itemKey))
-                        {
-                            var menuItemOpts = {
-                                $ul: $ul,
-                                itemKey: itemKey,
-                                itemJson: menuItem,
-                                onAlterNode: o.onAddNode,
-                                onMultiEdit: o.onMultiEdit,
-                                onEditView: o.onEditView,
-                                onSaveView: o.onSaveView,
-                                onSearch: o.onSearch,
-                                onPrintView: o.onPrintView,
-                                Multi: o.Multi,
-                                nodeTreeCheck: o.nodeTreeCheck
-                            };
-                            var $li = Csw.handleMenuItem(menuItemOpts);
-
-                            if (Csw.bool(menuItem.haschildren)) {
-                                delete menuItem.haschildren;
-                                var $subul = $('<ul class="subnav"></ul>')
-                                    .appendTo($li);
-                                for (var childItem in menuItem) {
-                                    if (menuItem.hasOwnProperty(childItem)) {
-                                        var thisChild = menuItem[childItem];
-                                        var subMenuItemOpts = {
-                                            $ul: $subul,
-                                            itemKey: childItem,
-                                            itemJson: thisChild
-                                        };
-                                        $.extend(menuItemOpts, subMenuItemOpts);
-                                        Csw.handleMenuItem(menuItemOpts);
-                                    }
-                                }
-                            }
-                        }
-                    }
+        var menuOpts = { 
+            width: 500,
+            ajax: { 
+                urlMethod: 'getMainMenu', 
+                data: {
+                    ViewId: o.viewid,
+                    SafeNodeKey: o.cswnbtnodekey,
+                    PropIdAttr: o.propid,
+                    LimitMenuTo: o.limitMenuTo
                 }
+            },
+            onAlterNode: o.onAddNode,
+            onMultiEdit: o.onMultiEdit,
+            onEditView: o.onEditView,
+            onSaveView: o.onSaveView,
+            onSearch: o.onSearch,
+            onPrintView: o.onPrintView,
+            Multi: o.Multi,
+            nodeTreeCheck: o.nodeTreeCheck
+        };
+        Csw.composites.menu( Csw.literals.factory($MenuDiv), menuOpts ); // menu()
 
-                $ul.CswMenu();
 
-            } // success{}
-        }); // $.ajax({
+//        Csw.ajax.post({
+//            url: o.Url,
+//            data: jsonData,
+//            stringify: false,
+//            success: function (data) {
+//                var $ul = $('<ul class="topnav"></ul>');
+
+//                $MenuDiv.text('')
+//                    .append($ul);
+
+//                for (var itemKey in data) {
+//                    if (data.hasOwnProperty(itemKey)) {
+
+//                        var menuItem = data[itemKey];
+//                        if (!Csw.isNullOrEmpty(itemKey))
+//                        {
+//                            var menuItemOpts = {
+//                                $ul: $ul,
+//                                itemKey: itemKey,
+//                                itemJson: menuItem,
+//                                onAlterNode: o.onAddNode,
+//                                onMultiEdit: o.onMultiEdit,
+//                                onEditView: o.onEditView,
+//                                onSaveView: o.onSaveView,
+//                                onSearch: o.onSearch,
+//                                onPrintView: o.onPrintView,
+//                                Multi: o.Multi,
+//                                nodeTreeCheck: o.nodeTreeCheck
+//                            };
+//                            var $li = Csw.handleMenuItem(menuItemOpts);
+
+//                            if (Csw.bool(menuItem.haschildren)) {
+//                                delete menuItem.haschildren;
+//                                var $subul = $('<ul class="subnav"></ul>')
+//                                    .appendTo($li);
+//                                for (var childItem in menuItem) {
+//                                    if (menuItem.hasOwnProperty(childItem)) {
+//                                        var thisChild = menuItem[childItem];
+//                                        var subMenuItemOpts = {
+//                                            $ul: $subul,
+//                                            itemKey: childItem,
+//                                            itemJson: thisChild
+//                                        };
+//                                        $.extend(menuItemOpts, subMenuItemOpts);
+//                                        Csw.handleMenuItem(menuItemOpts);
+//                                    }
+//                                }
+//                            }
+//                        }
+//                    }
+//                }
+
+//                $ul.CswMenu();
+
+//            } // success{}
+//        }); // $.ajax({
 
         // For proper chaining support
         return this;
