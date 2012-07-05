@@ -58,6 +58,7 @@
                     cswPublic.quantityTextBox = cswPublic.table.cell(1, cswPrivate.cellCol).numberTextBox({
                         ID: cswPrivate.ID + '_qty',
                         labelText: cswPrivate.labelText,
+                        useWide: cswPrivate.useWide,
                         value: Csw.string(cswPrivate.value).trim(),
                         MinValue: Csw.number(cswPrivate.minvalue),
                         MaxValue: Csw.number(cswPrivate.maxvalue),
