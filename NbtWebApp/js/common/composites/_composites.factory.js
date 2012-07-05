@@ -64,11 +64,18 @@
                 cswParent.linkGrid = function (opts) {
                     /// <summary> Creates a Csw.linkGrid on this element</summary>
                     /// <param name="opts" type="Object">Options to define the linkGrid.</param>
-                    /// <returns type="Csw.composites.thinGrid">A Csw.composites.linkGrid</returns>
+                    /// <returns type="Csw.composites.linkGrid">A Csw.composites.linkGrid</returns>
                     opts = cswPrivate.controlPreProcessing(opts, 'linkGrid');
                     return Csw.composites.linkGrid(cswParent, opts);
                 };
 
+                cswParent.menu = function (opts) {
+                    /// <summary> Creates a Csw.menu on this element</summary>
+                    /// <param name="opts" type="Object">Options to define the menu.</param>
+                    /// <returns type="Csw.composites.menu">A Csw.composites.menu</returns>
+                    opts = cswPrivate.controlPreProcessing(opts, 'menu');
+                    return Csw.composites.menu(cswParent, opts);
+                };
                 
                 return cswParent;
             });

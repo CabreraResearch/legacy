@@ -59,10 +59,11 @@
                     table.empty();
                     select.children(':not(:selected)').show();
                     selected.hide();
-                } else if (selected) {
-                    selected.remove();
                 }
                 changeValue(selected.val());
+                if (allowMultiple && false === Csw.isNullOrEmpty(selected)) {
+                    selected.remove();
+                }
                 addImage(name, href, doAnimation);
             }
 

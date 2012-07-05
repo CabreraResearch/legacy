@@ -30,6 +30,7 @@
     <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
     <CodeAnalysisFailOnMissingRules>false</CodeAnalysisFailOnMissingRules>
     <DocumentationFile>bin\NbtLogic.XML</DocumentationFile>
+    <NoWarn>1591</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
     <OutputPath>bin\Release\</OutputPath>
@@ -97,6 +98,9 @@
     <Compile Include="csw\Actions\CswNbtActDispenseContainer.cs" />
     <Compile Include="csw\Actions\CswNbtActSubmitRequest.cs" />
     <Compile Include="csw\Actions\CswNbtActSystemViews.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26697.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase25291GHS.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26758Fix.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26965.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26609.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase24508D.cs" />
