@@ -1,19 +1,18 @@
-﻿/// <reference path="~/js/CswCommon-vsdoc.js" />
+/// <reference path="~/js/CswCommon-vsdoc.js" />
 /// <reference path="~/js/CswNbt-vsdoc.js" />
 
 (function () {
-
     Csw.nbt.wizard.amountsGrid = Csw.nbt.wizard.amountsGrid ||
         Csw.nbt.wizard.register('amountsGrid', function (cswParent, options) {
             'use strict';
             ///<summary>Creates an amounts thin grid with an Add form.</summary>
             var cswPublic = {
                 quantities: [],
-                countControl: {},
-                qtyControl: {},
-                barcodeControl: {},
-                amountForm: {},
-                thinGrid: {}
+                countControl: null,
+                qtyControl: null,
+                barcodeControl: null,
+                amountForm: null,
+                thinGrid: null
             };
 
             Csw.tryExec(function () {
@@ -21,9 +20,10 @@
                 var cswPrivate = {
                     ID: 'wizardAmountsThinGrid',
                     onAdd: null,
-                    quantity: { },
+                    onDelete: null, //function(quantities.length)
+                    quantity: {},
                     containerlimit: 25,
-                    makeId: function(text) {
+                    makeId: function (text) {
                         return text;
                     },
                     containerMinimum: 1,
@@ -42,50 +42,71 @@
                     cswParent.span({ text: 'Enter the Amounts to ' + cswPrivate.action + ':' });
                     cswParent.br({ number: 2 });
 
-                    cswPublic.thinGrid = cswParent.thinGrid({ linkText: '', hasHeader: true, rows: [['#', 'Quantity', 'Unit', 'Barcode(s)']] });
                     cswParent.br();
                     cswPublic.amountForm = cswParent.form();
                     cswPrivate.amountsTable = cswPublic.amountForm.table();
                     cswPrivate.count = 0;
+                    cswPublic.amountForm.br({ number: 2 });
+                    cswPublic.thinGrid = cswPublic.amountForm.thinGrid({
+                        linkText: '',
+                        hasHeader: true, 
+                        rows: [['#', 'Quantity', 'Unit', 'Barcode(s)']],
+                        allowDelete: true,
+                        onDelete: function (rowid) {
+                            Csw.debug.assert(false === Csw.isNullOrEmpty(rowid), 'Rowid is null.');
+                            var reducedQuantities = cswPublic.quantities.filter(function (quantity, index, array) { return quantity.rowid !== rowid; });
+                            Csw.debug.assert(reducedQuantities !== cswPublic.quantities, 'Rowid is null.');
+                            cswPublic.quantities = reducedQuantities;
+                            if(cswPublic.quantities.length < 1) {
+                                cswPublic.thinGrid.hide();
+                            }
+                            Csw.tryExec(cswPrivate.onDelete, cswPublic.quantities.length);
+                        }
+                    });
+                    cswPublic.thinGrid.hide();
+                } ());
 
-                }());
-
-                cswPrivate.makeAddAmount = function() {
+                cswPrivate.makeAddAmount = function () {
                     'use strict';
                     cswPrivate.amountsTable.empty();
 
                     var thisAmount = {
+                        rowid: 1,
                         containerNo: 1,
                         quantity: '',
                         unit: '',
                         unitid: '',
                         barcodes: ''
                     };
+                    
                     //# of containers
                     cswPublic.countControl = cswPrivate.amountsTable.cell(1, 1).numberTextBox({
                         ID: Csw.tryExec(cswPrivate.makeId, 'containerCount'),
-                        labelText: 'Number: ',
+                        labelText: 'Number of Containers: ',
+                        useWide: true,
                         value: thisAmount.containerNo,
                         MinValue: cswPrivate.containerMinimum,
                         MaxValue: cswPrivate.containerlimit,
                         ceilingVal: cswPrivate.containerlimit,
-                        Precision: 6,
+                        Precision: 0,
                         Required: true,
-                        onChange: function(value) {
+                        onChange: function (value) {
                             thisAmount.containerNo = value;
                         }
                     });
 
                     //Quantity
-                    cswPrivate.quantity.labelText = 'Quantity: ';
+                    cswPrivate.quantity.labelText = 'Container Quantity: ';
+                    cswPrivate.quantity.useWide = true;
                     cswPrivate.quantity.ID = Csw.tryExec(cswPrivate.makeId, 'containerQuantity');
                     cswPublic.qtyControl = cswPrivate.amountsTable.cell(2, 1).quantity(cswPrivate.quantity);
 
                     //Barcodes
                     cswPublic.barcodeControl = cswPrivate.amountsTable.cell(3, 1).textArea({
                         ID: Csw.tryExec(cswPrivate.makeId, 'containerBarcodes'),
-                        labelText: 'Barcodes: ',
-                        onChange: function(value) {
+                        labelText: 'Barcodes (Optional): ',
+                        useWide: true,
+                        onChange: function (value) {
                             thisAmount.barcodes = value;
                         }
                     });
@@ -95,12 +116,13 @@
                         ID: Csw.tryExec(cswPrivate.makeId, 'addBtn'),
                         enabledText: 'Add',
                         disableOnClick: false,
-                        onClick: function() {
+                        onClick: function () {
+
                             var newCount = cswPrivate.count + Csw.number(thisAmount.containerNo);
                             if (newCount <= cswPrivate.containerlimit) {
                                 cswPrivate.count = newCount;
-
-                                var parseBarcodes = function(anArray) {
+                                
+                                var parseBarcodes = function (anArray) {
                                     if (anArray.length > thisAmount.containerNo) {
                                         anArray.splice(0, anArray.length - thisAmount.containerNo);
                                     }
@@ -110,10 +132,13 @@
                                 parseBarcodes(barcodeToParse);
 
                                 if (cswPublic.amountForm.isFormValid()) {
+                                    if (cswPrivate.count > 0) {
+                                        cswPublic.thinGrid.show();
+                                    }
                                     thisAmount.quantity = cswPublic.qtyControl.quantityValue;
                                     thisAmount.unit = cswPublic.qtyControl.unitText;
                                     thisAmount.unitid = cswPublic.qtyControl.unitVal;
-                                    cswPublic.thinGrid.addRows([thisAmount.containerNo, thisAmount.quantity, thisAmount.unit, thisAmount.barcodes]);
+                                    thisAmount.rowid = cswPublic.thinGrid.addRows([thisAmount.containerNo, thisAmount.quantity, thisAmount.unit, thisAmount.barcodes]);
                                     cswPublic.quantities.push(thisAmount);
                                     Csw.tryExec(cswPrivate.onAdd);
                                     cswPrivate.makeAddAmount();
@@ -127,7 +152,7 @@
 
                 (function _post() {
                     cswPrivate.makeAddAmount();
-                }());
+                } ());
 
             });
 
