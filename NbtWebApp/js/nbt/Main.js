@@ -93,40 +93,6 @@ window.initMain = window.initMain || function (undefined) {
         });
     }
 
-    // handle querystring arguments
-    var qs = Csw.queryString();
-    if (false == Csw.isNullOrEmpty(qs.action)) {
-        var actopts = {};
-        $.extend(actopts, qs);
-        initAll(function () { handleAction({ actionname: qs.action, ActionOptions: actopts }) });
-    } else if (false == Csw.isNullOrEmpty(qs.viewid)) {
-        var setView = function () {
-            Csw.clientState.setCurrentView(qs.viewid, Csw.string(qs.viewmode));
-            Csw.window.location("Main.html");
-        };
-        if (Csw.isNullOrEmpty(qs.viewmode)) {
-            Csw.ajax.post({
-                url: Csw.enums.ajaxUrlPrefix + 'getViewMode',
-                data: { ViewId: qs.viewid },
-                success: function (data) {
-                    qs.viewmode = Csw.string(data.viewmode, 'tree');
-                    setView();
-                }
-            });
-        } else {
-            setView();
-        }
-    } else if (false == Csw.isNullOrEmpty(qs.reportid)) {
-        //Csw.clientState.setCurrentReport(qs.reportid);
-        //Csw.window.location("Main.html");
-        handleReport(qs.reportid);
-    } else if (false == Csw.isNullOrEmpty(qs.clear)) {
-        Csw.clientState.clearCurrent();
-        Csw.window.location("Main.html");
-    } else {
-        initAll();
-    }
-
     function handleImpersonation(userid, username, onSuccess) {
         var u = Csw.cookie.get(Csw.cookie.cookieNames.Username);
         Csw.ajax.post({
@@ -182,6 +148,8 @@ window.initMain = window.initMain || function (undefined) {
         }); // CswMenuHeader
     }
 
+    initAll();
+
     function initAll(onSuccess) {
         //if (debugOn()) Csw.debug.log('Main.initAll()');
         $('#CenterBottomDiv').CswLogin('init', {
@@ -219,8 +187,50 @@ window.initMain = window.initMain || function (undefined) {
                 Csw.actions.quotaImage(headerQuota);
 
 
+                
+                // handle querystring arguments
+                var loadCurrent = false;
+                var qs = Csw.queryString();
+                if (false == Csw.isNullOrEmpty(qs.action)) {
+                    var actopts = {};
+                    $.extend(actopts, qs);
+                    handleAction({ actionname: qs.action, ActionOptions: actopts });
 
-                if (Csw.isNullOrEmpty(onSuccess)) {
+                } else if (false == Csw.isNullOrEmpty(qs.viewid)) {
+                    var setView = function (viewid, viewmode) {
+                        handleItemSelect({
+                            type: 'view',
+                            viewid: viewid,
+                            viewmode: viewmode
+                        });
+                    };
+                    if (Csw.isNullOrEmpty(qs.viewmode)) {
+                        Csw.ajax.post({
+                            url: Csw.enums.ajaxUrlPrefix + 'getViewMode',
+                            data: { ViewId: qs.viewid },
+                            success: function (data) {
+                                setView(qs.viewid, Csw.string(data.viewmode, 'tree'));
+                            }
+                        });
+                    } else {
+                        setView(qs.viewid, Csw.string(qs.viewmode));
+                    }
+
+                } else if (false == Csw.isNullOrEmpty(qs.reportid)) {
+                    //Csw.clientState.setCurrentReport(qs.reportid);
+                    //Csw.window.location("Main.html");
+                    handleReport(qs.reportid);
+                    loadCurrent=true;  // load the current context (probably the welcome page) below the report
+
+                } else if (false == Csw.isNullOrEmpty(qs.clear)) {
+                    Csw.clientState.clearCurrent();
+                    loadCurrent=true;
+
+                } else {
+                    loadCurrent=true;
+                }
+
+                if (Csw.isNullOrEmpty(onSuccess) && loadCurrent) {
                     onSuccess = function () {
                         var current = Csw.clientState.getCurrent();
                         if (false === Csw.isNullOrEmpty(current.viewid)) {
