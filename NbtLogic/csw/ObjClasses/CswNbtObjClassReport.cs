@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
 
@@ -7,12 +8,13 @@ namespace ChemSW.Nbt.ObjClasses
 {
     public class CswNbtObjClassReport : CswNbtObjClass
     {
-        public static string RPTFilePropertyName { get { return "RPT File"; } }
-        public static string ReportNamePropertyName { get { return "Report Name"; } }
-        public static string CategoryPropertyName { get { return "Category"; } }
-        //public static string ViewPropertyName { get { return "View"; } }
-        public static string SqlPropertyName { get { return "SQL"; } }
-        public static string btnRunPropertyName { get { return "Run"; } }
+        public const string RPTFilePropertyName = "RPT File";
+        public const string ReportNamePropertyName = "Report Name";
+        public const string CategoryPropertyName = "Category";
+        public const string SqlPropertyName = "SQL";
+        public const string FormattedSqlPropertyName = "FormattedSQL";
+        public const string btnRunPropertyName = "Run";
+        public const string ReportUserNamePropertyName = "ReportUserName";
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
 
@@ -87,6 +89,11 @@ namespace ChemSW.Nbt.ObjClasses
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
             _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
+
+
+            _CswNbtNode.Properties[ReportUserNamePropertyName].Hidden = true;
+            _CswNbtNode.Properties[FormattedSqlPropertyName].Hidden = true;
+
         }//beforeWriteNode()
 
         public override void afterWriteNode()
@@ -131,9 +138,38 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get
             {
-                return ( _CswNbtNode.Properties[SqlPropertyName].AsMemo );
+
+                CswTemplateTextFormatter CswTemplateTextFormatter = new Core.CswTemplateTextFormatter();
+                CswTemplateTextFormatter.addReplacementValue( "username", ReportUserName.Text );
+                string Message = string.Empty;
+                CswTemplateTextFormatter.setTemplateText( _CswNbtNode.Properties[SqlPropertyName].AsMemo.Text, ref Message );
+                FormattedSQL.Text = CswTemplateTextFormatter.getFormattedText();
+
+                return ( _CswNbtNode.Properties[FormattedSqlPropertyName] ); //sic.
             }
         }
+
+
+        public CswNbtNodePropText ReportUserName
+        {
+            //set
+            //{
+            //    _CswNbtNode.Properties[ReportUserNamePropertyName].AsText.Text = value.Text; ;
+            //}
+            get
+            {
+                return ( _CswNbtNode.Properties[ReportUserNamePropertyName] );
+            }
+        }
+
+        public CswNbtNodePropMemo FormattedSQL
+        {
+            get
+            {
+                return ( _CswNbtNode.Properties[FormattedSqlPropertyName] );
+            }
+        }
+
 
         public CswNbtNodePropButton Run
         {
@@ -166,6 +202,8 @@ namespace ChemSW.Nbt.ObjClasses
                 return ( _CswNbtNode.Properties[CategoryPropertyName].AsText );
             }
         }
+
+
 
         //public CswNbtNodePropViewReference View
         //{

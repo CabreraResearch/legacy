@@ -72,7 +72,7 @@
                     cswPublic[thisBtn.suffix] = cell.button({
                         suffix: thisBtn.suffix,
                         enabledText: thisBtn.text,
-                        disableOnClick: false,
+                        disableOnClick: true,
                         onClick: function () {
                             Csw.tryExec(thisBtn.onclick);
                         }

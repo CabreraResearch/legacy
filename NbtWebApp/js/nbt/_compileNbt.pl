@@ -44,4 +44,8 @@ sub extract
     return $filelist;
 }
 
+open(JSFILE, ">>$destfile") or die("Cannot open js directory: $destfile; $!");
+print JSFILE "//@ sourceMappingURL=js/nbt.js.map";
+close (JSFILE);
+
 printf("Finished compiling CswNbt.$datestr.min.js javascript\n");

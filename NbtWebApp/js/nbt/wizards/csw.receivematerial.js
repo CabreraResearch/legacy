@@ -30,7 +30,8 @@
                 selectedSizeId: '',
                 stepOneComplete: false,
                 stepTwoComplete: false,
-                stepThreeComplete: false
+                stepThreeComplete: false,
+                amountsGrid: null
             };
 
             var cswPublic = {};
@@ -115,11 +116,23 @@
                 cswPrivate.finalize = function () {
                     var container = {
                         materialid: cswPrivate.materialId,
+                        containernodetypeid: cswPrivate.containerNodeTypeId,
+                        quantities: cswPrivate.amountsGrid.quantities,
                         sizeid: cswPrivate.selectedSizeId,
-                        props: cswPrivate.tabsAndProps.getPropJson(),
-                        amounts: cswPrivate.amounts
+                        props: cswPrivate.tabsAndProps.getPropJson()                        
                     };
-                    //AJAX post
+                    
+                    Csw.ajax.post({
+                        urlMethod: 'receiveMaterial',
+                        data: { ReceiptDefinition: Csw.serialize(container) },
+                        success: function(data) {
+                            if(Csw.number(data.containerscreated) < 1) {
+                                Csw.error.throwException(Csw.error.exception('Failed to create any containers.'));
+                            } else {
+                                Csw.tryExec(cswPrivate.onFinish, data.viewid);
+                            }
+                        }
+                    });
                 };
 
                 cswPrivate.wizard = Csw.layouts.wizard(cswParent.div(), {

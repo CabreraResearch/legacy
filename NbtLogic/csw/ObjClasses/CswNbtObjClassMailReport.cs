@@ -267,7 +267,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get
             {
-                return ( _CswNbtNode.Properties[OutputFormatPropertyName].AsList );
+                return ( _CswNbtNode.Properties[OutputFormatPropertyName] );
             }
         }
 

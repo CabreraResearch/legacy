@@ -1,4 +1,4 @@
-﻿/// <reference path="~/js/CswCommon-vsdoc.js" />
+/// <reference path="~/js/CswCommon-vsdoc.js" />
 /// <reference path="~/js/CswNbt-vsdoc.js" />
 
 (function () {
@@ -372,7 +372,7 @@
             } ());
             
             //File upload onSuccess event to prep Step 4
-            cswPrivate.makeInspectionDesignGrid = function (gridJson, onSuccess) {
+            cswPrivate.makeInspectionDesignGrid = function (onSuccess) {
                 Csw.tryExec(onSuccess);
                 cswPrivate.gridIsPopulated = true;
 
@@ -426,7 +426,7 @@
 //                }
 //                cswPrivate.inspectionGrid = cswPrivate.inspectionGridDiv.grid(cswPrivate.gridOptions);
 
-                if (false === Csw.contains(gridJson, 'data') || false === Csw.contains(gridJson, 'columns') || gridJson.columns.length === 0) {
+                if (false === Csw.contains(cswPrivate.gridJson, 'data') || false === Csw.contains(cswPrivate.gridJson, 'columns') || cswPrivate.gridJson.columns.length === 0) {
                     Csw.error.showError(Csw.error.makeErrorObj(Csw.enums.errorType.warning.name, 'Inspection Design upload failed. Please check your design and try again.'));
                     cswPrivate.toggleButton(cswPrivate.buttons.next, false);
                     cswPrivate.toggleButton(cswPrivate.buttons.prev, true, true);
@@ -447,9 +447,9 @@
                         onDeselect: null, // function(row)
                         height: 200,
                         width: '100%',
-                        fields: gridJson.fields,
-                        columns: gridJson.columns,
-                        data: gridJson.data
+                        fields: cswPrivate.gridJson.fields,
+                        columns: cswPrivate.gridJson.columns,
+                        data: cswPrivate.gridJson.data
                     };
                     cswPrivate.inspectionGrid = cswPrivate.inspectionGridDiv.grid(cswPrivate.gridOptions);
                 }
@@ -472,10 +472,10 @@
                     url: f.url,
                     paramName: 'fileupload',
                     done: function (e, ret) {
-                        var gridData = {};
+                        cswPrivate.gridJson = {};
                         if (Csw.contains(ret, 'result') && Csw.contains(ret.result, 'grid')) {
-                            gridData = ret.result.grid;
-                            cswPrivate.makeInspectionDesignGrid(gridData, f.onSuccess);
+                            cswPrivate.gridJson = ret.result.grid;
+                            cswPrivate.makeInspectionDesignGrid(f.onSuccess);
                         }
                     }
                 });
@@ -709,7 +709,7 @@
                 cswPrivate.toggleButton(cswPrivate.buttons.finish, false);                
 
                 if (false === Csw.isNullOrEmpty(cswPrivate.inspectionGrid)) {
-                    designGrid = JSON.stringify(cswPrivate.inspectionGrid.getAllGridRows());
+                    designGrid = Csw.serialize(cswPrivate.gridJson.data.items);
                 }
 
                 var jsonData = {

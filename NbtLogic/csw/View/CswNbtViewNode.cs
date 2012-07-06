@@ -254,7 +254,9 @@ namespace ChemSW.Nbt
                      ObjectClass != CswNbtMetaDataObjectClass.NbtObjectClass.UserClass ) ||
                     _CswNbtResources.CurrentNbtUser.IsAdministrator() ) &&
                     ObjectClass != CswNbtMetaDataObjectClass.NbtObjectClass.RequestItemClass &&
-                    ObjectClass != CswNbtMetaDataObjectClass.NbtObjectClass.RequestClass );
+                    ObjectClass != CswNbtMetaDataObjectClass.NbtObjectClass.RequestClass &&
+                    ObjectClass != CswNbtMetaDataObjectClass.NbtObjectClass.ContainerClass &&
+                    ObjectClass != CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass );
         }
 
         public Collection<CswNbtViewAddNodeTypeEntry> AllowedChildNodeTypes( bool LimitToFirstGeneration )
