@@ -42,6 +42,16 @@
                 });
             }
 
+            //JMOL stuff
+//            if (false === Csw.isNullOrEmpty(mol)) {
+//                window.jmolInitialize('./js/thirdparty/js/jmol/', 'JmolApplet.jar');
+//                window.jmolSetDocument(false);
+//                var myApplet = window.jmolAppletInline('300px', mol);
+//                cell11.append(myApplet);
+//                var myCheck = window.jmolCheckbox("spin on", "spin off", "Rotate");
+//                cell21.append(myCheck);
+//            }
+
             if (false === Csw.bool(o.ReadOnly) && o.EditMode !== Csw.enums.editMode.Add) {
                 /* Edit Button */
                 cell22.div()

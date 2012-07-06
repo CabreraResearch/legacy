@@ -2765,7 +2765,6 @@ namespace ChemSW.Nbt.WebServices
 
                         //now create the image and save it as a blob
                         byte[] molImage = CswStructureSearch.GetImage( MolData );
-                        CswNbtWebServiceTabsAndProps ws2 = new CswNbtWebServiceTabsAndProps( _CswNbtResources, _CswNbtStatisticsEvents );
                         ws.SetPropBlobValue( molImage, "mol.jpeg", "image/jpeg", PropId, "blobdata" );
 
                     } // if( FileName != string.Empty && PropId != string.Empty )
@@ -2810,7 +2809,6 @@ namespace ChemSW.Nbt.WebServices
 
                         //now create the image and save it as a blob
                         byte[] molImage = CswStructureSearch.GetImage( molData );
-                        CswNbtWebServiceTabsAndProps ws2 = new CswNbtWebServiceTabsAndProps( _CswNbtResources, _CswNbtStatisticsEvents );
                         ws.SetPropBlobValue( molImage, "mol.jpeg", "image/jpeg", PropId, "blobdata" );
 
                     } // if( FileName != string.Empty && PropId != string.Empty )
@@ -4406,7 +4404,7 @@ namespace ChemSW.Nbt.WebServices
             {
                 _initResources();
                 AuthenticationStatus = _attemptRefresh( true );
-                
+
                 _setEditMode( NodeEditMode.Add );
                 ReturnVal = CswNbtActReceiving.receiveMaterial( ReceiptDefinition, _CswNbtResources );
 
