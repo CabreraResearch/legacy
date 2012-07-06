@@ -103,7 +103,7 @@ namespace ChemSW.Nbt.ServiceDrivers
             CswNbtObjClass NbtObjClass = CswNbtObjClassFactory.makeObjClass( _CswNbtResources, Node.getObjectClassId(), Node );
 
             CswNbtObjClass.NbtButtonAction ButtonAction = CswNbtObjClass.NbtButtonAction.Unknown;
-            string ActionData;
+            JObject ActionData;
             string Message;
             bool Success = NbtObjClass.onButtonClick( NodeTypeProp, out ButtonAction, out ActionData, out Message );
 
