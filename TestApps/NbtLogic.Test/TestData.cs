@@ -43,7 +43,7 @@ namespace ChemSw.Nbt.Test
 
         private void _setHighWaterMark()
         {
-            CswNbtNode PlaceHolderNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( _getNodeTypeId( "Report" ), CswNbtNodeCollection.MakeNodeOperation.WriteNode );
+            CswNbtNode PlaceHolderNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( _getNodeTypeId( "Weight Unit" ), CswNbtNodeCollection.MakeNodeOperation.WriteNode );
             _HighWaterMark = PlaceHolderNode.NodeId;
         }
 
