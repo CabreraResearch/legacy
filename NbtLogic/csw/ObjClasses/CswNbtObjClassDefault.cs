@@ -194,10 +194,13 @@ namespace ChemSW.Nbt.ObjClasses
                     }
 
 
-                    foreach( CswNbtNodePropWrapper CurrentCompoundUniuqeProp in CompoundUniqueProps )
+                    foreach( CswNbtNodePropWrapper CurrentCompoundUniqueProp in CompoundUniqueProps )
                     {
-                        CswNbtViewProperty CswNbtViewProperty = CswNbtView.AddViewProperty( ViewRelationship, CurrentCompoundUniuqeProp.NodeTypeProp );
-                        CurrentCompoundUniuqeProp.NodeTypeProp.getFieldTypeRule().AddUniqueFilterToView( CswNbtView, CswNbtViewProperty, CurrentCompoundUniuqeProp );
+                        if( false == _CswNbtResources.Nodes[CurrentCompoundUniqueProp.NodeId].Properties[CurrentCompoundUniqueProp.NodeTypeProp].Empty ) //case 26546 - allow unique props to be empty
+                        {
+                            CswNbtViewProperty CswNbtViewProperty = CswNbtView.AddViewProperty( ViewRelationship, CurrentCompoundUniqueProp.NodeTypeProp );
+                            CurrentCompoundUniqueProp.NodeTypeProp.getFieldTypeRule().AddUniqueFilterToView( CswNbtView, CswNbtViewProperty, CurrentCompoundUniqueProp );
+                        }
                     }
 
                     ICswNbtTree NodeTree = _CswNbtResources.Trees.getTreeFromView( CswNbtView, true, true, false, false );
