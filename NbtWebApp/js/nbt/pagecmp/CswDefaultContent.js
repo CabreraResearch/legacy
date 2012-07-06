@@ -31,9 +31,7 @@
                 function _makeAddLinksRecursive(addObj, parent) {
                     var ul = parent.ul();
                     function onEach(entryObj) {
-                        var $li = Csw.handleMenuItem({
-                            $ul: ul.$,
-                            itemKey: entryObj.text,
+                        var $li = handleItem({
                             itemJson: entryObj,
                             onAlterNode: o.onAddNode
                         }).appendTo(ul.$);
@@ -52,6 +50,33 @@
                 _makeAddLinksRecursive(data, addDiv);
             } // success
         }); // ajax
+
+        function handleItem(options) {
+            'use strict';
+            var o = {
+                itemJson: {},
+                onAlterNode: null // function (nodeid, nodekey) { },
+            };
+            if (options) $.extend(o, options);
+            var text = o.itemJson.text;
+            var $li = $('<li><a href="#">' + text + '</a></li>');
+            var $a = $li.children('a');
+
+            $a.click(function () {
+                $.CswDialog('AddNodeDialog', {
+                    text: text,
+                    nodetypeid: Csw.string(o.itemJson.nodetypeid),
+                    relatednodeid: Csw.string(o.itemJson.relatednodeid), //for Grid Props
+                    relatednodename: Csw.string(o.itemJson.relatednodename), //for Grid Props
+                    relatednodetypeid: Csw.string(o.itemJson.relatednodetypeid), //for NodeTypeSelect
+                    relatedobjectclassid: Csw.string(o.itemJson.relatedobjectclassid),
+                    onAddNode: o.onAlterNode
+                });
+                return false;
+            });
+            return $li;
+        } // handleItem()
+
 
         // For proper chaining support
         return this;

@@ -77,8 +77,6 @@
   <ItemGroup>
     <Content Include="ConnectTest.html" />
     <Content Include="js\common\composites\csw.quantity.js" />
-    <None Include="js\nbt.js.map" />
-    <None Include="js\common.js.map" />
     <Content Include="js\nbt\nodes\csw.node.link.js" />
     <Content Include="js\nbt\nodes\CswNodeGridNew.js" />
     <Content Include="DevHeader.html" />
@@ -239,7 +237,7 @@
     <Content Include="js\common\core\csw.error.js" />
     <Content Include="js\common\core\csw.events.js" />
     <Content Include="js\common\types\csw.function.js" />
-    <Content Include="js\common\core\csw.menu.js" />
+    <Content Include="js\common\composites\csw.menu.js" />
     <Content Include="js\common\types\csw.number.js" />
     <Content Include="js\common\types\csw.object.js" />
     <Content Include="js\common\types\csw.string.js" />

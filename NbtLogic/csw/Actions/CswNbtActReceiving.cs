@@ -196,6 +196,7 @@ namespace ChemSW.Nbt.Actions
                     if ( ContainerIds.Count > 0 )
                     {
                         CswNbtView NewContainersView = new CswNbtView( CswNbtResources );
+                        NewContainersView.ViewName = "New Containers";
                         CswNbtViewRelationship ContainerVr = NewContainersView.AddViewRelationship( ContainerNt, true );
                         ContainerVr.NodeIdsToFilterIn = ContainerIds;
                         NewContainersView.SaveToCache( false );
