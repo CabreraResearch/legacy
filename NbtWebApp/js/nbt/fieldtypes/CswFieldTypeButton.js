@@ -97,7 +97,7 @@
 
                                     case Csw.enums.nbtButtonAction.popup:
                                         $btn.button({ disabled: false });
-                                        Csw.openPopup(data.actiondata.url, 600, 800);
+                                        Csw.openPopup(actionJson.url, 600, 800);
                                         break;
                                     case Csw.enums.nbtButtonAction.loadView:
 
