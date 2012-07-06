@@ -1074,7 +1074,7 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string getThinGrid( string ViewId, string IncludeNodeKey )
+        public string getThinGrid( string ViewId, string IncludeNodeKey, string MaxRows )
         {
             UseCompression();
             JObject ReturnVal = new JObject();
@@ -1088,7 +1088,7 @@ namespace ChemSW.Nbt.WebServices
 
                 CswNbtNodeKey RealNodeKey = null;
                 CswNbtView View = _prepGridView( ViewId, IncludeNodeKey, ref RealNodeKey, ref IsQuickLaunch );
-                Int32 RowLimit = 3; //thin grids will only show 3 rows (case 26829)
+                Int32 RowLimit = CswConvert.ToInt32( MaxRows );
                 if( null != View )
                 {
                     var ws = new CswNbtWebServiceGrid( _CswNbtResources, View, ParentNodeKey: RealNodeKey, ForReport: false );
