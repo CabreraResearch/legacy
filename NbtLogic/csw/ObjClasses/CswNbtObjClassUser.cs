@@ -159,6 +159,11 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
+            if( false == String.IsNullOrEmpty( this.UsernameProperty.Text ) && false == CswTools.IsAlphaNumeric( this.UsernameProperty.Text ) )
+            {
+                throw new CswDniException( ErrorType.Warning, "Username must contain alphanumeric characters only.", "Username contains invalid characters: " + this.Username );
+            }
+
             _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
 
             if( UsernameProperty.Text != string.Empty ) // case 25616

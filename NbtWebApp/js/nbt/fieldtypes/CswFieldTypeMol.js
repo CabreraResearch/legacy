@@ -23,7 +23,7 @@
             var cell23 = table.cell(2, 3).css('textAlign', 'right');
 
             if (false === Csw.isNullOrEmpty(mol)) {
-                window.jmolInitialize('./js/thirdparty/js/jmol/', 'JmolApplet.jar');
+                window.jmolInitialize('./js/thirdparty/jmol/', 'JmolApplet.jar');
                 window.jmolSetDocument(false);
                 var myApplet = window.jmolAppletInline('300px', mol);
                 cell11.append(myApplet);
