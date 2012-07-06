@@ -22,8 +22,6 @@
             var cell22 = table.cell(2, 2).css('textAlign', 'right');
             var cell23 = table.cell(2, 3).css('textAlign', 'right');
 
-            var href = '/NbtWebApp/' + Csw.string(propVals.href);
-
             //JMOL stuff
             if (false === Csw.isNullOrEmpty(mol)) {
                 window.jmolInitialize('./js/thirdparty/jmol/', 'JmolApplet.jar');
