@@ -1,5 +1,6 @@
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
+using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.ObjClasses
 {
@@ -83,10 +84,10 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault.addDefaultViewFilters( ParentRelationship );
         }
 
-        public override bool onButtonClick( CswNbtMetaDataNodeTypeProp NodeTypeProp, out NbtButtonAction ButtonAction, out string ActionData, out string Message )
+        public override bool onButtonClick( CswNbtMetaDataNodeTypeProp NodeTypeProp, out NbtButtonAction ButtonAction, out JObject ActionData, out string Message )
         {
             Message = string.Empty;
-            ActionData = string.Empty;
+            ActionData = new JObject();
             ButtonAction = NbtButtonAction.Unknown;
             if( null != NodeTypeProp ) { /*Do Something*/ }
             return true;

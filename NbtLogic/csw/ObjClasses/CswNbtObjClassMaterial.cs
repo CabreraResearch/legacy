@@ -95,42 +95,40 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault.addDefaultViewFilters( ParentRelationship );
         }
 
-        public override bool onButtonClick( CswNbtMetaDataNodeTypeProp NodeTypeProp, out NbtButtonAction ButtonAction, out string ActionData, out string Message )
+        public override bool onButtonClick( CswNbtMetaDataNodeTypeProp NodeTypeProp, out NbtButtonAction ButtonAction, out JObject ActionData, out string Message )
         {
             Message = string.Empty;
-            ActionData = string.Empty;
+            ActionData = new JObject();
             ButtonAction = NbtButtonAction.Unknown;
             CswNbtMetaDataObjectClassProp OCP = NodeTypeProp.getObjectClassProp();
             if( null != NodeTypeProp && null != OCP )
             {
-                JObject ActionDataObj = new JObject();
                 switch( OCP.PropName )
                 {
                     case RequestPropertyName:
                         CswNbtActSubmitRequest RequestAct = new CswNbtActSubmitRequest( _CswNbtResources, CswNbtActSystemViews.SystemViewName.CISProRequestCart );
 
                         CswNbtObjClassRequestItem NodeAsRequestItem = RequestAct.makeRequestItem( new CswNbtActSubmitRequest.RequestItem( CswNbtActSubmitRequest.RequestItem.Material ), NodeId, OCP );
-                        ActionDataObj["requestaction"] = OCP.PropName;
-                        ActionDataObj["titleText"] = "Request for " + TradeName.Text;
-                        ActionDataObj["requestItemProps"] = RequestAct.getRequestItemAddProps( NodeAsRequestItem );
-                        ActionDataObj["requestItemNodeTypeId"] = RequestAct.RequestItemNt.NodeTypeId;
+                        ActionData["requestaction"] = OCP.PropName;
+                        ActionData["titleText"] = "Request for " + TradeName.Text;
+                        ActionData["requestItemProps"] = RequestAct.getRequestItemAddProps( NodeAsRequestItem );
+                        ActionData["requestItemNodeTypeId"] = RequestAct.RequestItemNt.NodeTypeId;
                         ButtonAction = NbtButtonAction.request;
                         break;
                     case ReceivePropertyName:
-                        ActionDataObj["materialId"] = NodeId.ToString();
-                        ActionDataObj["materialNodeTypeId"] = NodeTypeId;
-                        ActionDataObj["tradeName"] = TradeName.Text;
+                        ActionData["materialId"] = NodeId.ToString();
+                        ActionData["materialNodeTypeId"] = NodeTypeId;
+                        ActionData["tradeName"] = TradeName.Text;
                         CswNbtActReceiving Act = new CswNbtActReceiving( _CswNbtResources, ObjectClass, NodeId );
-                        ActionDataObj["sizesViewId"] = Act.SizesView.SessionViewId.ToString();
+                        ActionData["sizesViewId"] = Act.SizesView.SessionViewId.ToString();
                         Int32 ContainerLimit = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswNbtResources.ConfigurationVariables.container_receipt_limit.ToString() ) );
-                        ActionDataObj["containerlimit"] = ContainerLimit;
+                        ActionData["containerlimit"] = ContainerLimit;
                         CswNbtObjClassContainer Container = Act.makeContainer();
-                        ActionDataObj["containerNodeTypeId"] = Container.NodeTypeId;
-                        ActionDataObj["containerAddLayout"] = Act.getContainerAddProps( Container );
+                        ActionData["containerNodeTypeId"] = Container.NodeTypeId;
+                        ActionData["containerAddLayout"] = Act.getContainerAddProps( Container );
                         ButtonAction = NbtButtonAction.receive;
                         break;
                 }
-                ActionData = ActionDataObj.ToString();
             }
 
             return true;
