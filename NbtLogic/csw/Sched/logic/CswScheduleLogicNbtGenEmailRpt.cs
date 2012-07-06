@@ -72,8 +72,10 @@ namespace ChemSW.Nbt.Sched
         private string makeReportUrl( CswNbtObjClassReport ReportObjClass )
         {
             string ret = _CswNbtResources.SetupVbls["MailReportUrlStem"];
-            //if( !ret.EndsWith( "/" ) ) ret += "/";
-            ret += ReportObjClass.ReportUrl;
+            if( !ret.EndsWith( "/" ) ) ret += "/";
+            //ret += ReportObjClass.ReportUrl;
+            ret += "Main.html?reportid=";
+            ret += ReportObjClass.NodeId.ToString();
             return ret;
         }
 
