@@ -15,6 +15,18 @@
                 }
             }
             return ret;
+        },
+        prepLogglyMsg: function(msg) {
+            var ret = msg;
+            try {
+                if (false === Csw.isString(ret) && (Csw.isArray(ret) || Csw.isPlainObject(ret))) {
+                    var onSuccess = function(prop, name) {
+                        ret += name + '=' + prop;
+                    };
+                    Csw.crawlObject(ret, onSuccess, true);
+                }
+            } catch(e) {}
+            return ret;
         }
     };
 
@@ -37,7 +49,7 @@
         }
         return ret;
     }());
-
+    
     cswPublic.assert = function (truth, msg) {
         /// <summary>Evaluates the truthiness of truth and throws an exception with msg val if false.</summary>
         try {
@@ -64,7 +76,7 @@
             msg = cswPrivate.prepMsg(msg);
             console.error(msg);
             try {
-                Csw.error.loggly.error(msg);
+                Csw.error.loggly.error(cswPrivate.prepLogglyMsg(msg));
             } catch(e) {}
         } catch (e) {
             Csw.debug.log(msg);
@@ -107,7 +119,7 @@
             msg = cswPrivate.prepMsg(msg);
             console.info(msg);
             try {
-                Csw.error.loggly.info(msg);
+                Csw.error.loggly.info(cswPrivate.prepLogglyMsg(msg));
             } catch (e) { } 
         } catch (e) {
             Csw.debug.log(msg);
@@ -184,7 +196,7 @@
             msg = cswPrivate.prepMsg(msg);
             console.warn(msg);
             try {
-                Csw.error.loggly.warn(msg);
+                Csw.error.loggly.warn(cswPrivate.prepLogglyMsg(msg));
             } catch (e) { }
         } catch (e) {
             Csw.debug.log(msg);
