@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
+using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.ObjClasses
 {
@@ -38,7 +39,7 @@ namespace ChemSW.Nbt.ObjClasses
         public abstract void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false );
         public abstract void afterDeleteNode();
         public abstract void afterPopulateProps();
-        public abstract bool onButtonClick( CswNbtMetaDataNodeTypeProp NodeTypeProp, out NbtButtonAction ButtonAction, out string ActionData, out string Message );
+        public abstract bool onButtonClick( CswNbtMetaDataNodeTypeProp NodeTypeProp, out NbtButtonAction ButtonAction, out JObject ActionData, out string Message );
         public abstract void addDefaultViewFilters( CswNbtViewRelationship ParentRelationship );
 
         public Int32 NodeTypeId { get { return _CswNbtNode.NodeTypeId; } }

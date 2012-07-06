@@ -2,6 +2,7 @@
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
+using Newtonsoft.Json.Linq;
 
 
 namespace ChemSW.Nbt.ObjClasses
@@ -47,10 +48,10 @@ namespace ChemSW.Nbt.ObjClasses
         public delegate void AfterModifyReportEventHandler();
         public static string AfterModifyReportEventName = "AfterModifyReport";
 
-        public override bool onButtonClick( CswNbtMetaDataNodeTypeProp NodeTypeProp, out NbtButtonAction ButtonAction, out string ActionData, out string Message )
+        public override bool onButtonClick( CswNbtMetaDataNodeTypeProp NodeTypeProp, out NbtButtonAction ButtonAction, out JObject ActionData, out string Message )
         {
             Message = string.Empty;
-            ActionData = string.Empty;
+            ActionData = new JObject();
             ButtonAction = NbtButtonAction.Unknown;
             CswNbtMetaDataObjectClassProp OCP = NodeTypeProp.getObjectClassProp();
             if( null != NodeTypeProp && null != OCP )
@@ -58,7 +59,7 @@ namespace ChemSW.Nbt.ObjClasses
                 if( btnRunPropertyName == OCP.PropName )
                 {
                     ButtonAction = NbtButtonAction.popup;
-                    ActionData = ReportUrl;
+                    ActionData["url"] = ReportUrl;
                 }
             }
             return true;
@@ -68,7 +69,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get
             {
-                return "?reportid=" + NodeId.ToString();
+                return "Report.html?reportid=" + NodeId.ToString();
             }
         }
 

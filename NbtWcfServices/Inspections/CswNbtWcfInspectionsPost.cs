@@ -7,6 +7,7 @@ using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
 using NbtWebAppServices.Session;
+using Newtonsoft.Json.Linq;
 
 namespace NbtWebAppServices.Response
 {
@@ -123,7 +124,7 @@ namespace NbtWebAppServices.Response
                                 if( null != ButtonNtp )
                                 {
                                     CswNbtObjClass.NbtButtonAction ButtonAction;
-                                    string ActionData;
+                                    JObject ActionData;
                                     string Message;
                                     _InspectionDesignOc = _InspectionDesignOc ?? _CswNbtWcfSessionResources.CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass );
                                     CswNbtObjClass NbtObjClass = CswNbtObjClassFactory.makeObjClass( _CswNbtWcfSessionResources.CswNbtResources, _InspectionDesignOc, InspectionNode );
