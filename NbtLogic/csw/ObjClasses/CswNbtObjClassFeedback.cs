@@ -137,20 +137,19 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault.addDefaultViewFilters( ParentRelationship );
         }
 
-        public override bool onButtonClick( CswNbtMetaDataNodeTypeProp NodeTypeProp, out NbtButtonAction ButtonAction, out string ActionData, out string Message )
+        public override bool onButtonClick( CswNbtMetaDataNodeTypeProp NodeTypeProp, out NbtButtonAction ButtonAction, out JObject ActionData, out string Message )
         {
             Message = string.Empty;
-            ActionData = string.Empty;
+            ActionData = new JObject();
             ButtonAction = NbtButtonAction.Unknown;
             if( null != NodeTypeProp )
             {
                 CswNbtMetaDataObjectClassProp OCP = NodeTypeProp.getObjectClassProp();
                 if( LoadUserContextPropertyName == OCP.PropName )
                 {
-                    JObject ActionDataObj = new JObject();
-                    ActionDataObj["action"] = OCP.PropName;
+                    ActionData["action"] = OCP.PropName;
 
-                    ActionDataObj["type"] = "view"; //assume it's a view unless it's an action
+                    ActionData["type"] = "view"; //assume it's a view unless it's an action
                     CswNbtActionName ActionName = CswNbtActionName.Unknown;
                     Enum.TryParse<CswNbtActionName>( Action.Text, out ActionName );
                     if( CswNbtActionName.Unknown != ActionName )
@@ -158,39 +157,38 @@ namespace ChemSW.Nbt.ObjClasses
                         if( null != _CswNbtResources.Actions[ActionName] )
                         {
                             CswNbtAction action = _CswNbtResources.Actions[ActionName];
-                            ActionDataObj["type"] = "action";
-                            ActionDataObj["actionname"] = action.Name.ToString();
-                            ActionDataObj["actionid"] = action.ActionId.ToString();
-                            ActionDataObj["actionurl"] = action.Url.ToString();
+                            ActionData["type"] = "action";
+                            ActionData["actionname"] = action.Name.ToString();
+                            ActionData["actionid"] = action.ActionId.ToString();
+                            ActionData["actionurl"] = action.Url.ToString();
                         }
                     }
                     else
                     {
-                        ActionDataObj["selectedNodeId"] = SelectedNodeId.Text;
+                        ActionData["selectedNodeId"] = SelectedNodeId.Text;
                         if( null != CurrentViewMode )
                         {
-                            ActionDataObj["viewmode"] = CurrentViewMode.Text;
+                            ActionData["viewmode"] = CurrentViewMode.Text;
                         }
                         //CswNbtViewId delimitedViewId = new CswNbtViewId( CswConvert.ToInt32( View.SelectedViewIds.ToString() ) );
                         CswNbtViewId delimitedViewId = View.ViewId;
                         if( null != delimitedViewId )
                         {
-                            ActionDataObj["viewid"] = delimitedViewId.ToString();
+                            ActionData["viewid"] = delimitedViewId.ToString();
                         }
                         if( null != Author.RelatedNodeId )
                         {
                             if( _CswNbtResources.CurrentNbtUser.UserId != Author.RelatedNodeId )
                             {
-                                ActionDataObj["userid"] = Author.RelatedNodeId.ToString();
+                                ActionData["userid"] = Author.RelatedNodeId.ToString();
                                 CswNbtObjClassUser userNode = _CswNbtResources.Nodes[Author.RelatedNodeId];
                                 if( null != userNode )
                                 {
-                                    ActionDataObj["username"] = userNode.Username;
+                                    ActionData["username"] = userNode.Username;
                                 }
                             }
                         }
                     }
-                    ActionData = ActionDataObj.ToString();
                     ButtonAction = NbtButtonAction.loadView;
                 }
             }

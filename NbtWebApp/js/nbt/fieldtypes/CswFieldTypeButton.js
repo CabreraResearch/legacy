@@ -31,7 +31,7 @@
                                     var $newmessagediv = $('#' + messagediv.getId());
                                     $newmessagediv.text(data.message);
                                 }
-                                var actionJson = Csw.deserialize(data.actiondata);
+                                var actionJson = data.actiondata;
                                 if (Csw.contains(data, 'action')) {
                                     actionJson.action = data.action;
                                 }
@@ -97,7 +97,7 @@
 
                                     case Csw.enums.nbtButtonAction.popup:
                                         $btn.button({ disabled: false });
-                                        Csw.openPopup(data.actiondata, 600, 800);
+                                        Csw.openPopup(data.actiondata.url, 600, 800);
                                         break;
                                     case Csw.enums.nbtButtonAction.loadView:
 
