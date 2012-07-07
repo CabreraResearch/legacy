@@ -76,6 +76,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Content Include="ConnectTest.html" />
+    <Content Include="etc\far.exe" />
     <Content Include="js\common\composites\csw.quantity.js" />
     <Content Include="js\nbt\nodes\csw.node.link.js" />
     <Content Include="js\nbt\nodes\CswNodeGridNew.js" />
@@ -266,6 +267,7 @@
     <Content Include="NodeReport.html" />
     <Content Include="Scripts\jquery-1.7.1-vsdoc.js" />
     <Content Include="DevIncludes.html" />
+    <None Include="js\_pruneMaps.bat" />
     <None Include="js\_updateIncludes.pl" />
   </ItemGroup>
   <ItemGroup>
@@ -287,6 +289,7 @@
   <PropertyGroup>
     <PostBuildEvent>call $(ProjectDir)js\common\_compileCommon.pl $(ProjectDir)
 call $(ProjectDir)js\nbt\_compileNbt.pl $(ProjectDir)
+$(ProjectDir)js\_pruneMaps.bat $(ProjectDir)
 </PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
