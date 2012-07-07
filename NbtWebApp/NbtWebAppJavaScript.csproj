@@ -75,8 +75,8 @@
     <NoWarn>1591</NoWarn>
   </PropertyGroup>
   <ItemGroup>
+    <Content Include="Build\far.exe" />
     <Content Include="ConnectTest.html" />
-    <Content Include="etc\far.exe" />
     <Content Include="js\common\composites\csw.quantity.js" />
     <Content Include="js\nbt\nodes\csw.node.link.js" />
     <Content Include="js\nbt\nodes\CswNodeGridNew.js" />
