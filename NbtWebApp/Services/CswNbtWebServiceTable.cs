@@ -169,8 +169,7 @@ namespace ChemSW.Nbt.WebServices
                     {
                         CswNbtNode node = _CswNbtResources.Nodes.GetNode( NodeId );
                         CswNbtNodePropMol molProp = node.Properties[structureNTP];
-                        //CswNbtNodePropMol molProp = _CswNbtResources.Nodes[NodeId].Properties[CswNbtMetaDataFieldType.NbtFieldType.MOL];
-                        ret["thumbnailurl"] = "wsNBT.asmx/getBlob?mode=image&jctnodepropid=" + molProp.JctNodePropId + "&nodeid=" + NodeId + "&propid=" + molProp.NodeTypePropId;
+                        ret["thumbnailurl"] = molProp.getLink();
                     }
                 }
             }
