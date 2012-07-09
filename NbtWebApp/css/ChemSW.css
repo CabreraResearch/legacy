@@ -1339,3 +1339,17 @@ ul li div {
     color: #ff0000;
     font-weight: bold;
 }
+
+
+.menutoolbar
+{
+    background-color: transparent !Important;
+    background-image: none !Important;
+    border: none !Important;
+}
+.menuitem em button span
+{
+    color: #3e73be !Important;
+    font-family: verdana !Important;
+    font-size: &cswtextfontsize !Important;
+}

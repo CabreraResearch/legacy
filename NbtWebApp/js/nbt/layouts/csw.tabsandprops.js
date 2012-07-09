@@ -154,6 +154,7 @@
                                 thisTabDiv.tabs({
                                     selected: selectedtabno,
                                     select: function (event, ui) {
+                                        cswPrivate.tabgrouptables = [];  // case 26957
                                         var ret = false;
                                         var selectTabContentDiv = thisTabDiv.children('div:eq(' + Csw.number(ui.index) + ')');
                                         var selectTabid = selectTabContentDiv.getId();

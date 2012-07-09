@@ -7,13 +7,6 @@
     Csw.error = Csw.error ||
         Csw.register('error', Csw.makeNameSpace());
 
-    Csw.error.loggly = Csw.error.loggly ||
-        Csw.error.register('loggly', (function () {
-            var key = "9e6be4f5-f87e-4eac-bf76-d2c58fb3342b";
-            var host = "http://logs.loggly.com";
-            return new loggly({ url: host + '/inputs/' + key + '?rt=1', level: 'log' });
-        }()));
-
     Csw.error.makeErrorObj = Csw.error.makeErrorObj ||
         Csw.error.register('makeErrorObj', function (errorType, friendlyMsg, esotericMsg) {
             'use strict';

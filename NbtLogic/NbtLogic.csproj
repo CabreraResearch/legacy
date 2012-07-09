@@ -30,6 +30,7 @@
     <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
     <CodeAnalysisFailOnMissingRules>false</CodeAnalysisFailOnMissingRules>
     <DocumentationFile>bin\NbtLogic.XML</DocumentationFile>
+    <NoWarn>1591</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
     <OutputPath>bin\Release\</OutputPath>
@@ -48,6 +49,7 @@
     <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
     <CodeAnalysisFailOnMissingRules>false</CodeAnalysisFailOnMissingRules>
     <DocumentationFile>bin\NbtLogic.XML</DocumentationFile>
+    <NoWarn>1591</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug %28Fast%29|x64'">
     <DebugSymbols>true</DebugSymbols>
@@ -65,6 +67,7 @@
     <CodeAnalysisRuleDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
     <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
     <DocumentationFile>bin\NbtLogic.XML</DocumentationFile>
+    <NoWarn>1591</NoWarn>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="CrystalDecisions.CrystalReports.Engine, Version=13.0.2000.0, Culture=neutral, PublicKeyToken=692fbea5521e1304, processorArchitecture=MSIL" />
@@ -98,7 +101,11 @@
     <Compile Include="csw\Actions\CswNbtActSubmitRequest.cs" />
     <Compile Include="csw\Actions\CswNbtActSystemViews.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26772.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26697.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase25291GHS.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26758Fix.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26965.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26609.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase24508D.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase24446Container.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26831.cs" />
@@ -115,7 +122,7 @@
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26763.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase25898.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase24517InventoryLevelsViews.cs" />
-    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26609.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26609ReportUserName.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26584.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26575.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassFeedback.cs" />
@@ -131,6 +138,9 @@
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26692SetPreferred.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26471.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26896.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26609UpdateHiddenProp.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26609SetValOnAdd.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26714.cs" />
     <Compile Include="csw\ServiceDrivers\CswNbtSdInventoryLevelMgr.cs" />
     <Compile Include="csw\ServiceDrivers\CswNbtSdTabsAndProps.cs" />
     <Compile Include="csw\ServiceDrivers\CswNbtSdNode.cs" />
