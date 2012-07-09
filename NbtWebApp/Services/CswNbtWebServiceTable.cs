@@ -8,6 +8,7 @@ using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.ServiceDrivers;
 using ChemSW.Nbt.Statistics;
 using Newtonsoft.Json.Linq;
+using ChemSW.Nbt.ObjClasses;
 
 namespace ChemSW.Nbt.WebServices
 {
@@ -161,6 +162,17 @@ namespace ChemSW.Nbt.WebServices
                 // default image, overridden below
                 //ret["thumbnailurl"] = "Images/icons/300/" + NodeType.IconFileName;
                 ret["thumbnailurl"] = "Images/icons/300/_placeholder.gif";
+                if( NodeType.NodeTypeName.Equals( "Chemical" ) )
+                {
+                    CswNbtMetaDataNodeTypeProp structureNTP = NodeType.getNodeTypeProp( "Structure" );
+                    if( null != structureNTP )
+                    {
+                        CswNbtNode node = _CswNbtResources.Nodes.GetNode( NodeId );
+                        CswNbtNodePropMol molProp = node.Properties[structureNTP];
+                        //CswNbtNodePropMol molProp = _CswNbtResources.Nodes[NodeId].Properties[CswNbtMetaDataFieldType.NbtFieldType.MOL];
+                        ret["thumbnailurl"] = "wsNBT.asmx/getBlob?mode=image&jctnodepropid=" + molProp.JctNodePropId + "&nodeid=" + NodeId + "&propid=" + molProp.NodeTypePropId;
+                    }
+                }
             }
 
             // Map property order to insert position
