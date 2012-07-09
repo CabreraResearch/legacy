@@ -110,6 +110,7 @@ namespace ChemSW.Nbt
                         _CswNbtResources.logTimerResult( "completeNodeData called fillFromNodeTypeId(), finished on node (" + CswNbtNode.NodeId.ToString() + ")", Timer.ElapsedDurationInSecondsAsString );
                         if( CswNbtNode.getNodeType() != null )
                             CswNbtNode.Properties.fillFromNodePk( CswNbtNode.NodeId, CswNbtNode.NodeTypeId, Date );
+                        
                         _CswNbtResources.logTimerResult( "Filled in node property data for node (" + CswNbtNode.NodeId.ToString() + "): " + CswNbtNode.NodeName, Timer.ElapsedDurationInSecondsAsString );
 
                         if( Date != DateTime.MinValue )
@@ -131,7 +132,7 @@ namespace ChemSW.Nbt
         {
             CswNbtNode.Properties.fillFromNodePk( CswNbtNode.NodeId, NodeTypeId, DateTime.MinValue );
             CswNbtNode.Properties.fillFromNodeTypeId( CswNbtNode.NodeTypeId );
-
+            
         }//_fillFromNodeTypeId()
 
 

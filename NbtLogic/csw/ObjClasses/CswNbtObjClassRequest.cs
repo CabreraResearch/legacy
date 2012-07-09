@@ -112,7 +112,7 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault.afterDeleteNode();
         }//afterDeleteNode()        
 
-        public override void afterPopulateProps()
+        public override void    afterPopulateProps()
         {
             _CswNbtObjClassDefault.afterPopulateProps();
         }//afterPopulateProps()
