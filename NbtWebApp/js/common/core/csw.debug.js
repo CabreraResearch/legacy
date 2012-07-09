@@ -15,11 +15,41 @@
                 }
             }
             return ret;
+        },
+        prepLogglyMsg: function(msg) {
+            var ret = msg;
+            try {
+                if (false === Csw.isString(ret) && (Csw.isArray(ret) || Csw.isPlainObject(ret))) {
+                    var onSuccess = function(prop, name) {
+                        ret += name + '=' + prop;
+                    };
+                    Csw.crawlObject(ret, onSuccess, true);
+                }
+            } catch(e) {}
+            return ret;
         }
     };
 
     var cswPublic = {};
 
+    cswPublic.loggly = (function () {
+        var ret = { };
+        try {
+            var key = "9e6be4f5-f87e-4eac-bf76-d2c58fb3342b";
+            var host = ("https:" == document.location.protocol) ? "https://logs.loggly.com" : 'http://logs.loggly.com';
+            if (loggly) {
+                ret = new loggly({ url: host + '/inputs/' + key + '?rt=1', level: 'log' });
+            } else {
+                window.setTimeout(function() {
+                    ret = new loggly({ url: host + '/inputs/' + key + '?rt=1', level: 'log' });
+                }, 5000);
+            }
+        } catch(e) {
+            //Swallow
+        }
+        return ret;
+    }());
+    
     cswPublic.assert = function (truth, msg) {
         /// <summary>Evaluates the truthiness of truth and throws an exception with msg val if false.</summary>
         try {
@@ -45,7 +75,9 @@
         try {
             msg = cswPrivate.prepMsg(msg);
             console.error(msg);
-            Csw.error.loggly.error(msg);
+            try {
+                Csw.error.loggly.error(cswPrivate.prepLogglyMsg(msg));
+            } catch(e) {}
         } catch (e) {
             Csw.debug.log(msg);
         }
@@ -86,7 +118,9 @@
         try {
             msg = cswPrivate.prepMsg(msg);
             console.info(msg);
-            Csw.error.loggly.info(msg);
+            try {
+                Csw.error.loggly.info(cswPrivate.prepLogglyMsg(msg));
+            } catch (e) { } 
         } catch (e) {
             Csw.debug.log(msg);
         }
@@ -161,7 +195,9 @@
         try {
             msg = cswPrivate.prepMsg(msg);
             console.warn(msg);
-            Csw.error.loggly.warn(msg);
+            try {
+                Csw.error.loggly.warn(cswPrivate.prepLogglyMsg(msg));
+            } catch (e) { }
         } catch (e) {
             Csw.debug.log(msg);
         }
