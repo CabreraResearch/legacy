@@ -11,7 +11,7 @@
             var propDiv = o.propDiv;
             propDiv.empty();
             var propVals = o.propData.values;
-            var width = 100; //Csw.string(propVals.width);
+            var width = 200; //Csw.string(propVals.width);
             var mol = Csw.string(propVals.mol).trim();
 
             var table = propDiv.table({
@@ -22,6 +22,7 @@
             var cell22 = table.cell(2, 2).css('textAlign', 'right');
             var cell23 = table.cell(2, 3).css('textAlign', 'right');
 
+            //JMOL stuff
             if (false === Csw.isNullOrEmpty(mol)) {
                 window.jmolInitialize('./js/thirdparty/jmol/', 'JmolApplet.jar');
                 window.jmolSetDocument(false);

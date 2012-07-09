@@ -71,8 +71,11 @@ namespace ChemSW.Nbt.Schema
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase26887() ) );                     //01P-44
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase26837() ) );                     //01P-45
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase24446Container() ) );            //01P-46
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase26831() ) );                     //01P-47
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase26896() ) );                     //01P-48
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase26965() ) );                     //01P-47
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase24508D() ) );                    //01P-48
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase26772() ) );                     //01P-49
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase26609ReportUserName() ) );       //01P-49
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase26609UpdateHiddenProp() ) );     //01P-50
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase26609SetValOnAdd() ) );          //01P-51
@@ -81,10 +84,11 @@ namespace ChemSW.Nbt.Schema
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase25291GHS() ) );                  //01P-54
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase26697() ) );                     //01P-55
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase26831() ) );                     //01P-56
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase26829() ) );                     //01P-56
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase26896() ) );                     //01P-57
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase26772() ) );                     //01P-58
 
-            
+
             // This automatically detects the latest version
             _LatestVersion = _MinimumVersion;
             foreach( CswSchemaVersion Version in _UpdateDrivers.Keys.Where( Version => _LatestVersion == _MinimumVersion ||
