@@ -12,7 +12,7 @@
             {
                 SessionId: 'CswSessionId',
                 Username: 'csw_username',
-            OriginalUsername: 'csw_orig_username',
+                OriginalUsername: 'csw_orig_username',
                 LogoutPath: 'csw_logoutpath',
                 CurrentNodeId: 'csw_currentnodeid',
                 CurrentNodeKey: 'csw_currentnodekey',
@@ -23,6 +23,7 @@
                 CurrentViewMode: 'csw_currentviewmode',
                 //CurrentReportId: 'csw_currentreportid',
                 CurrentSearchId: 'csw_currentsearchid',
+                CustomerId: 'csw_customerid',
                 LastActionName: 'csw_lastactionname',
                 LastActionUrl: 'csw_lastactionurl',
                 LastViewId: 'csw_lastviewid',
