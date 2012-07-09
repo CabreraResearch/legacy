@@ -30,7 +30,7 @@
 
             cswPrivate.addCategory = function (catobj) {
 
-                var fieldsetid = Csw.makeId(cswPrivate.ID, '', catobj.category + '_fs', '', false);
+                var fieldsetid = Csw.makeSafeId(cswPrivate.ID, '', catobj.category + '_fs', '', false);
                 var $fieldset = cswPrivate.vsdiv.$.find('#' + fieldsetid);
                 if ($fieldset.length === 0) {
                     $fieldset = $('<fieldset id="' + fieldsetid + '" class="viewselectfieldset"></fieldset>')
@@ -41,7 +41,7 @@
                 $fieldset.append('<legend class="viewselectlegend">' + catobj.category + '</legend>');
 
                 var morediv = Csw.literals.moreDiv({
-                    ID: Csw.makeId(cswPrivate.ID, '', catobj.category + '_morediv'),
+                    ID: Csw.makeSafeId(cswPrivate.ID, '', catobj.category + '_morediv'),
                     $parent: $fieldset
                 });
 

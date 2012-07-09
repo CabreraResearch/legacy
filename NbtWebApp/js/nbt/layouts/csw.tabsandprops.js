@@ -572,7 +572,7 @@
                         });
 
                     } else {
-                        labelCell.append(propName);
+                        labelCell.setLabelText(propName, propData.required);
                     }
 
                     /* Case 25936 */
