@@ -33,6 +33,17 @@ namespace ChemSW.Nbt.WebServices
             }
         }
 
+        /// <summary>
+        /// Files in this path cause the app to recompile when changed so that reports are always up to date
+        /// </summary>
+        private string _ReportPath//Case 27044
+        {
+            get
+            {
+                return ( System.Web.Hosting.HostingEnvironment.ApplicationPhysicalPath + "bin\\rpt" );
+            }
+        }
+
         private static char _Delimiter = '_';
         public wsTools( CswNbtResources CswNbtResources, char Delimiter = '_' )
         {
@@ -183,9 +194,14 @@ namespace ChemSW.Nbt.WebServices
             return _CswNbtResources.AccessId + "_" + UniqueFileId;
         }
 
-        public string getFullFilePath( string UniqueFileId )
+        public string getFullTempFilePath( string UniqueFileId )
         {
             return Path.Combine( new string[] { _TempPath, _getFileNameForSchema( UniqueFileId ) } );
+        }
+
+        public string getFullReportFilePath( string UniqueFileId )
+        {
+            return Path.Combine( new string[] { _ReportPath, _getFileNameForSchema( UniqueFileId ) } );
         }
 
         public Stream getFileInputStream( HttpContext Context, string ParamName = "" )
@@ -216,7 +232,7 @@ namespace ChemSW.Nbt.WebServices
             FullPath = string.Empty;
             if( false == string.IsNullOrEmpty( RelativePath ) )
             {
-                FullPath = getFullFilePath( RelativePath );
+                FullPath = getFullTempFilePath( RelativePath );
                 FileStream = File.Create( FullPath );
             }
         } // _getFileStream
