@@ -90,6 +90,7 @@ namespace ChemSW.Nbt.ObjClasses
             : base( CswNbtResources, Node )
         {
             _CswNbtObjClassDefault = new CswNbtObjClassDefault( _CswNbtResources, Node );
+            
         }//ctor()
 
         public override CswNbtMetaDataObjectClass ObjectClass
@@ -165,18 +166,6 @@ namespace ChemSW.Nbt.ObjClasses
 
                 /* Spec W1010: Material applies only to Request and Dispense */
                 Material.Hidden = ( Types.Request != Type.StaticText && Types.Dispense != Type.StaticText );
-            }
-            if( RequestBy.WasModified )
-            {
-                /* Spec W1010: Size and Count apply only to Request */
-                Size.Hidden = ( Types.Request != Type.StaticText );
-                Count.Hidden = ( Types.Request != Type.StaticText );
-                Size.ReadOnly = ( Types.Request != Type.StaticText );
-                Count.ReadOnly = ( Types.Request != Type.StaticText );
-
-                /* Spec W1010: Quantity applies only to Request by Bulk and Dispense */
-                Quantity.Hidden = ( Types.Request == Type.StaticText && Types.Dispense != Type.StaticText );
-                Quantity.ReadOnly = ( Types.Request == Type.StaticText && Types.Dispense != Type.StaticText );
             }
             Material.ReadOnly = Material.ReadOnly || ( null != Material.RelatedNodeId );
             Container.ReadOnly = Container.ReadOnly || ( null != Container.RelatedNodeId );
@@ -283,6 +272,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void afterPopulateProps()
         {
+            RequestBy.SetOnPropChange( OnRequestByPropChange );
             _CswNbtObjClassDefault.afterPopulateProps();
         }//afterPopulateProps()
 
@@ -315,12 +305,24 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get { return _CswNbtNode.Properties[PropertyName.Type.ToString()]; }
         }
-
+        
         public CswNbtNodePropList RequestBy
         {
             get { return _CswNbtNode.Properties[PropertyName.RequestBy.ToString()]; }
         }
+        private void OnRequestByPropChange()
+        {
+            /* Spec W1010: Size and Count apply only to Request */
+            Size.Hidden = ( Types.Request != Type.StaticText );
+            Count.Hidden = ( Types.Request != Type.StaticText );
+            Size.ReadOnly = ( Types.Request != Type.StaticText );
+            Count.ReadOnly = ( Types.Request != Type.StaticText );
 
+            /* Spec W1010: Quantity applies only to Request by Bulk and Dispense */
+            Quantity.Hidden = ( Types.Request == Type.StaticText && Types.Dispense != Type.StaticText );
+            Quantity.ReadOnly = ( Types.Request == Type.StaticText && Types.Dispense != Type.StaticText );
+        }
+        
         public CswNbtNodePropQuantity Quantity
         {
             get { return _CswNbtNode.Properties[PropertyName.Quantity.ToString()]; }

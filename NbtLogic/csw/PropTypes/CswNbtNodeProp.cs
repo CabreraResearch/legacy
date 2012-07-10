@@ -48,9 +48,14 @@ namespace ChemSW.Nbt.PropTypes
             //_CswNbtNode = CswNbtNodePropData.Node;
             _CswNbtResources = CswNbtResources;
             _CswNbtMetaDataNodeTypeProp = MetaDataNodeTypeProp;
+            
         }//generic
-
-
+        
+        public void SetOnPropChange( CswNbtNodePropData.OnPropChangeHandler ChangeHandler )
+        {
+            _CswNbtNodePropData.OnPropChange = ChangeHandler;
+        }
+        
         /// <summary>
         /// Sets the property to non-modified.  Changes made between the last save and this call are lost.
         /// </summary>

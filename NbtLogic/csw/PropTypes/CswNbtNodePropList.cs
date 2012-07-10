@@ -27,7 +27,6 @@ namespace ChemSW.Nbt.PropTypes
             //}
             _FieldTypeRule = (CswNbtFieldTypeRuleList) CswNbtMetaDataNodeTypeProp.getFieldTypeRule();
             _ValueSubField = _FieldTypeRule.ValueSubField;
-
         }//generic
 
         private CswNbtFieldTypeRuleList _FieldTypeRule;

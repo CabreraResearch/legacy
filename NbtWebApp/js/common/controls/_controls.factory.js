@@ -1,14 +1,15 @@
 /// <reference path="~/js/CswNbt-vsdoc.js" />
 /// <reference path="~/js/CswCommon-vsdoc.js" />
-'use strict';
-(function () {
 
+(function () {
+    'use strict';
     Csw.controls.factory = Csw.controls.factory ||
         Csw.controls.register('factory',
             function (cswParent) {
                 /// <summary>Extends a Csw Control class with basic DOM methods.</summary>
                 /// <param name="cswParent" type="Csw.literals">An Csw Control to bind to.</param>
                 /// <returns type="Csw.controls">The options object with DOM methods attached.</returns> 
+                'use strict';
                 var cswPrivate = {};
                 if (Csw.isNullOrEmpty(cswParent)) {
                     Csw.error.throwException('Cannot create a Csw component without a Csw control', '_controls.factory', '_controls.factory.js', 14);
