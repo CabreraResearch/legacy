@@ -6,6 +6,7 @@ using ChemSW.Mail;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
+using ChemSW.Nbt.UnitsOfMeasure;
 using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.ObjClasses
@@ -29,6 +30,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string ExternalOrderNumber = "External Order Number";
             public const string Location = "Location";
             public const string AssignedTo = "Assigned To";
+            public const string Fulfill = "Fulfill";
         }
 
         public sealed class Types
@@ -58,12 +60,40 @@ namespace ChemSW.Nbt.ObjClasses
             public const string Dispensed = "Dispensed";
             public const string Completed = "Completed";
             public const string Cancelled = "Cancelled";
+
             public static readonly CswCommaDelimitedString Options = new CswCommaDelimitedString
-                                                                           {
-                                                                               Pending,Submitted,Ordered,Received,Dispensed,Completed,Cancelled
-                                                                           };
+                {
+                    Pending, Submitted, Ordered, Received, Dispensed, Completed, Cancelled
+                };
         }
 
+        public sealed class FulfillMenu
+        {
+            public const string Order = "Order";
+            public const string Receive = "Receive";
+            public const string Dispense = "Dispense";
+            public const string Move = "Move";
+            public const string Dispose = "Dispose";
+            public const string Complete = "Complete";
+            public const string Cancel = "Cancel";
+
+            public static readonly CswCommaDelimitedString Options = new CswCommaDelimitedString
+                {
+                    Order, Receive, Dispense, Dispose, Move, Complete, Cancel
+                };
+            public static readonly CswCommaDelimitedString DispenseOptions = new CswCommaDelimitedString
+                {
+                    Order, Receive, Dispense, Dispose, Move, Complete, Cancel
+                };
+            public static readonly CswCommaDelimitedString MoveOptions = new CswCommaDelimitedString
+                {
+                    Move, Complete, Cancel
+                };
+            public static readonly CswCommaDelimitedString DisposeOptions = new CswCommaDelimitedString
+                {
+                    Dispose, Move, Complete, Cancel
+                };
+        }
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
 
@@ -82,7 +112,7 @@ namespace ChemSW.Nbt.ObjClasses
             CswNbtNode CopyNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing );
             CopyNode.copyPropertyValues( Node );
             CswNbtObjClassRequestItem RetCopy = CopyNode;
-            RetCopy.Status.Value = Statuses.Pending.ToString();
+            RetCopy.Status.Value = Statuses.Pending;
             RetCopy.Request.RelatedNodeId = null;
             _toggleReadOnlyProps( false, RetCopy );
             RetCopy.postChanges( true );
@@ -278,6 +308,22 @@ namespace ChemSW.Nbt.ObjClasses
             /* Spec W1010: Material applies only to Request and Dispense */
             Material.Hidden = ( Types.Request != Type.Value && Types.Dispense != Type.Value );
             AssignedTo.Hidden = ( Types.Dispense != Type.Value );
+
+            switch( Type.Value )
+            {
+                case Types.Dispense:
+                    Fulfill.MenuOptions = FulfillMenu.DispenseOptions.ToString();
+                    Fulfill.SelectedMenuOption = FulfillMenu.Dispense;
+                    break;
+                case Types.Dispose:
+                    Fulfill.MenuOptions = FulfillMenu.DisposeOptions.ToString();
+                    Fulfill.SelectedMenuOption = FulfillMenu.Dispose;
+                    break;
+                case Types.Move:
+                    Fulfill.MenuOptions = FulfillMenu.MoveOptions.ToString();
+                    Fulfill.SelectedMenuOption = FulfillMenu.Move;
+                    break;
+            }
         }
 
         public CswNbtNodePropList RequestBy
@@ -321,6 +367,12 @@ namespace ChemSW.Nbt.ObjClasses
             if( null != Material.RelatedNodeId )
             {
                 Material.ReadOnly = true;
+                CswNbtUnitViewBuilder Vb = new CswNbtUnitViewBuilder( _CswNbtResources );
+                CswNbtView UnitView = Vb.getQuantityUnitOfMeasureView( Material.RelatedNodeId );
+                if( null != UnitView )
+                {
+                    Quantity.View = UnitView;
+                }
             }
         }
         public CswNbtNodePropRelationship Container
@@ -390,6 +442,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public CswNbtNodePropRelationship AssignedTo { get { return _CswNbtNode.Properties[PropertyName.AssignedTo]; } }
 
+        public CswNbtNodePropButton Fulfill { get { return _CswNbtNode.Properties[PropertyName.Fulfill]; } }
         #endregion
     }//CswNbtObjClassRequestItem
 
