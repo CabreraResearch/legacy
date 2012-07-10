@@ -174,24 +174,24 @@ namespace ChemSW.Nbt.PropTypes
         public CswPrimaryKey NodeId { get { return ( _CswNbtNodePropData.NodeId ); } set { _CswNbtNodePropData.NodeId = value; } }
         /// <summary>
         /// True if the property's value cannot be changed by the end user
-        /// This value is never saved to the database, so it's useful for object-class-specific logic
         /// </summary>
-        public bool ReadOnlyTemporary { get { return ( _CswNbtNodePropData.ReadOnlyTemporary ); } set { _CswNbtNodePropData.ReadOnlyTemporary = value; } }
+        public bool ReadOnly { get { return ( _CswNbtNodePropData.ReadOnly ); } }
         /// <summary>
-        /// True if the property's value cannot be changed by the end user
-        /// This value is saved to the database if the node is saved.
+        /// Set whether the property's value can be changed by the end user
         /// </summary>
-        public bool ReadOnlyPermanent { get { return ( _CswNbtNodePropData.ReadOnlyPermanent ); } set { _CswNbtNodePropData.ReadOnlyPermanent = value; } }
-        /// <summary>
-        ///  Determines whether a property displays.
-        /// This value is never saved to the database, so it's useful for object-class-specific logic
-        /// </summary>
-        public bool HiddenTemporary { get { return ( _CswNbtNodePropData.HiddenTemporary ); } set { _CswNbtNodePropData.HiddenTemporary = value; } }
+        /// <param name="value">New value for ReadOnly</param>
+        /// <param name="SaveToDb">If true, save this value to the database permanently.  If false, applies only to this request.</param>
+        public void setReadOnly( bool value, bool SaveToDb ) { _CswNbtNodePropData.setReadOnly( value, SaveToDb ); }
         /// <summary>
         ///  Determines whether a property displays.
-        /// This value is saved to the database if the node is saved.
         /// </summary>
-        public bool HiddenPermanent { get { return ( _CswNbtNodePropData.HiddenPermanent ); } set { _CswNbtNodePropData.HiddenPermanent = value; } }
+        public bool Hidden { get { return ( _CswNbtNodePropData.Hidden ); } }
+        /// <summary>
+        /// Set whether the property displays.
+        /// </summary>
+        /// <param name="value">New value for Hidden</param>
+        /// <param name="SaveToDb">If true, save this value to the database permanently.  If false, applies only to this request.</param>
+        public void setHidden( bool value, bool SaveToDb ) { _CswNbtNodePropData.setHidden( value, SaveToDb ); }
         /// <summary>
         /// Property Value: Field1
         /// </summary>

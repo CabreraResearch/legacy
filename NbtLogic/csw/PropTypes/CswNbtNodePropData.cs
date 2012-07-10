@@ -294,44 +294,38 @@ namespace ChemSW.Nbt.PropTypes
         } //NodeTypeProp
 
         private bool _ReadOnlyTemporary = false;
-        /// <summary>
-        /// True if the property's value cannot be changed by the end user
-        /// This value is never saved to the database, so it's useful for object-class-specific logic
-        /// </summary>
-        public bool ReadOnlyTemporary
-        {
-            get { return _ReadOnlyTemporary || ReadOnlyPermanent; }
-            set { _ReadOnlyTemporary = value; }
-        }//ReadOnlyTemporary
 
         /// <summary>
         /// True if the property's value cannot be changed by the end user
-        /// This value is saved to the database if the node is saved.
         /// </summary>
-        public bool ReadOnlyPermanent
+        public bool ReadOnly
         {
-            get { return _getRowBoolVal( CswNbtSubField.PropColumn.ReadOnly ); }
-            set { SetPropRowValue( CswNbtSubField.PropColumn.ReadOnly, value ); }
-        }//ReadOnlyPermanent
+            get { return _ReadOnlyTemporary || _getRowBoolVal( CswNbtSubField.PropColumn.ReadOnly ); }
+        }
+        public void setReadOnly( bool value, bool SaveToDb )
+        {
+            _ReadOnlyTemporary = value;
+            if( SaveToDb )
+            {
+                SetPropRowValue( CswNbtSubField.PropColumn.ReadOnly, value );
+            }
+        }
 
         private bool _HiddenTemporary = false;
         /// <summary>
         /// Determines whether property displays.
-        /// This value is never saved to the database, so it's useful for object-class-specific logic
         /// </summary>
-        public bool HiddenTemporary
+        public bool Hidden
         {
-            get { return _HiddenTemporary || HiddenPermanent }
-            set { _HiddenTemporary = value; }
+            get { return _HiddenTemporary || _getRowBoolVal( CswNbtSubField.PropColumn.Hidden ); }
         }
-        /// <summary>
-        /// Determines whether property displays.
-        /// This value is saved to the database if the node is saved.
-        /// </summary>
-        public bool HiddenPermanent
+        public void setHidden( bool value, bool SaveToDb )
         {
-            get { return _getRowBoolVal( CswNbtSubField.PropColumn.Hidden ); }
-            set { SetPropRowValue( CswNbtSubField.PropColumn.Hidden, value ); }
+            _HiddenTemporary = value;
+            if( SaveToDb )
+            {
+                SetPropRowValue( CswNbtSubField.PropColumn.Hidden, value );
+            }
         }
 
         /// <summary>
