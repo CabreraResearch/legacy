@@ -63,6 +63,11 @@
     Csw.clientSession = Csw.clientSession ||
         Csw.register('clientSession', Csw.makeNameSpace());
 
+    Csw.currentAccessId = Csw.currentAccessId ||
+        Csw.clientSession.register('currentAccessId', function() {
+            return Csw.cookie.get(Csw.cookie.cookieNames.CustomerId);
+        });
+
     Csw.clientSession.finishLogout = Csw.clientSession.finishLogout ||
         Csw.clientSession.register('finishLogout', function () {
             ///<summary>Complete the logout. Nuke any lingering client-side data.</summary>
@@ -92,6 +97,7 @@
                     ForMobile: cswPrivate.ForMobile
                 },
                 success: function () {
+                    Csw.cookie.set(Csw.cookie.cookieNames.CustomerId, cswPrivate.AccessId);
                     Csw.cookie.set(Csw.cookie.cookieNames.Username, cswPrivate.UserName);
                     Csw.cookie.set(Csw.cookie.cookieNames.LogoutPath, cswPrivate.logoutpath);
                     Csw.tryExec(cswPrivate.onAuthenticate, cswPrivate.UserName);

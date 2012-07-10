@@ -1,8 +1,8 @@
 /// <reference path="~/js/CswNbt-vsdoc.js" />
 /// <reference path="~/js/CswCommon-vsdoc.js" />
-'use strict';
-(function () {
 
+(function () {
+    'use strict';
     Csw.composites.factory = Csw.composites.factory ||
         Csw.composites.register('factory',
             function (cswParent) {

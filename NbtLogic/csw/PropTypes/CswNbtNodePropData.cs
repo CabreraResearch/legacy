@@ -123,6 +123,10 @@ namespace ChemSW.Nbt.PropTypes
         private bool _WasModified = false;
         private CswNbtResources _CswNbtResources;
 
+        public delegate void OnPropChangeHandler();
+
+        public OnPropChangeHandler OnPropChange;
+
         public bool WasModified
         {
             set
@@ -132,7 +136,13 @@ namespace ChemSW.Nbt.PropTypes
                     // We never set it false, so that modifying Field1 but not modifying Field2 will not accidentally clear the modification flag.
                     // Use clearModifiedFlag() to clear it on purpose.
                     if( value )
+                    {
                         _WasModified = true;
+                        if( null != OnPropChange )
+                        {
+                            OnPropChange();
+                        }
+                    }
                 }
             }
             get
