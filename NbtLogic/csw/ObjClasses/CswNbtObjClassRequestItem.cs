@@ -287,14 +287,14 @@ namespace ChemSW.Nbt.ObjClasses
         private void OnRequestByPropChange()
         {
             /* Spec W1010: Size and Count apply only to Request */
-            Size.Hidden = ( Types.Request != Type.Value );
-            Count.Hidden = ( Types.Request != Type.Value );
-            Size.ReadOnly = ( Types.Request != Type.Value );
-            Count.ReadOnly = ( Types.Request != Type.Value );
+            Size.Hidden = ( RequestBy.Value != RequestsBy.Size );
+            Count.Hidden = ( RequestBy.Value != RequestsBy.Size );
+            Size.ReadOnly = ( RequestBy.Value != RequestsBy.Size );
+            Count.ReadOnly = ( RequestBy.Value != RequestsBy.Size );
 
             /* Spec W1010: Quantity applies only to Request by Bulk and Dispense */
-            Quantity.Hidden = ( Types.Request == Type.Value && Types.Dispense != Type.Value );
-            Quantity.ReadOnly = ( Types.Request == Type.Value && Types.Dispense != Type.Value );
+            Quantity.Hidden = ( RequestBy.Value == RequestsBy.Size );
+            Quantity.ReadOnly = ( RequestBy.Value == RequestsBy.Size );
         }
 
         public CswNbtNodePropQuantity Quantity
