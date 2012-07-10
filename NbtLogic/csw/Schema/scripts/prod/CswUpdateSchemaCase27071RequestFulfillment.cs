@@ -16,41 +16,41 @@ namespace ChemSW.Nbt.Schema
     {
         public override void update()
         {
-            ////Part 2
-            //_CswNbtSchemaModTrnsctn.createAction( CswNbtActionName.Fulfill_Request, true, "", "Materials" );
-            //_CswNbtSchemaModTrnsctn.createModuleActionJunction(CswNbtResources.CswNbtModule.CISPro, CswNbtActionName.Fulfill_Request);
+            //Part 2
+            _CswNbtSchemaModTrnsctn.createAction( CswNbtActionName.Fulfill_Request, true, "", "Materials" );
+            _CswNbtSchemaModTrnsctn.createModuleActionJunction( CswNbtResources.CswNbtModule.CISPro, CswNbtActionName.Fulfill_Request );
 
-            ////Part 4
-            //CswNbtMetaDataObjectClass UserOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
+            //Part 4
+            CswNbtMetaDataObjectClass UserOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
             CswNbtMetaDataObjectClass RequestItemOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.RequestItemClass );
-            //CswNbtMetaDataObjectClassProp AssgnedToOcp = _CswNbtSchemaModTrnsctn.createObjectClassProp( RequestItemOc, new CswNbtWcfMetaDataModel.ObjectClassProp
-            //    {
-            //        PropName = CswNbtObjClassRequestItem.PropertyName.AssignedTo,
-            //        FieldType = CswNbtMetaDataFieldType.NbtFieldType.Relationship,
-            //        IsFk = true,
-            //        FkType = NbtViewRelatedIdType.ObjectClassId.ToString(),
-            //        FkValue = UserOc.ObjectClassId
-            //    } );
+            CswNbtMetaDataObjectClassProp AssgnedToOcp = _CswNbtSchemaModTrnsctn.createObjectClassProp( RequestItemOc, new CswNbtWcfMetaDataModel.ObjectClassProp
+                {
+                    PropName = CswNbtObjClassRequestItem.PropertyName.AssignedTo,
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Relationship,
+                    IsFk = true,
+                    FkType = NbtViewRelatedIdType.ObjectClassId.ToString(),
+                    FkValue = UserOc.ObjectClassId
+                } );
 
-            ////Bug fix
-            //CswNbtMetaDataObjectClassProp TypeOcp = RequestItemOc.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Type );
-            //CswNbtMetaDataFieldType ListFt = _CswNbtSchemaModTrnsctn.MetaData.getFieldType( CswNbtMetaDataFieldType.NbtFieldType.List );
-            //_CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp(TypeOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.fieldtypeid, ListFt.FieldTypeId );
-            //_CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( TypeOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.listoptions, CswNbtObjClassRequestItem.Types.Options.ToString() );
-            //_CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( TypeOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.servermanaged, true );
+            //Bug fix
+            CswNbtMetaDataObjectClassProp TypeOcp = RequestItemOc.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Type );
+            CswNbtMetaDataFieldType ListFt = _CswNbtSchemaModTrnsctn.MetaData.getFieldType( CswNbtMetaDataFieldType.NbtFieldType.List );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( TypeOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.fieldtypeid, ListFt.FieldTypeId );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( TypeOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.listoptions, CswNbtObjClassRequestItem.Types.Options.ToString() );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( TypeOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.readOnly, true );
 
-            ////Part 5
-            //CswNbtMetaDataObjectClassProp StatusOcp = RequestItemOc.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Status );
-            //CswNbtView DispenseRequestsView = _CswNbtSchemaModTrnsctn.makeNewView( "Dispense Requests: Open", NbtViewVisibility.Global );
-            //DispenseRequestsView.ViewMode = NbtViewRenderingMode.Tree;
-            //DispenseRequestsView.Category = "Requests";
-            //CswNbtViewRelationship RequestItemsVr = DispenseRequestsView.AddViewRelationship( RequestItemOc, true );
-            //DispenseRequestsView.AddViewPropertyAndFilter( RequestItemsVr, AssgnedToOcp, "me" );
-            //DispenseRequestsView.AddViewPropertyAndFilter( RequestItemsVr, TypeOcp, CswNbtObjClassRequestItem.Types.Dispense );
-            //DispenseRequestsView.AddViewPropertyAndFilter( RequestItemsVr, StatusOcp, CswNbtObjClassRequestItem.Statuses.Completed, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.NotEquals );
-            //DispenseRequestsView.AddViewPropertyAndFilter( RequestItemsVr, StatusOcp, CswNbtObjClassRequestItem.Statuses.Cancelled, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.NotEquals );
-            //DispenseRequestsView.AddViewPropertyAndFilter( RequestItemsVr, StatusOcp, CswNbtObjClassRequestItem.Statuses.Dispensed, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.NotEquals );
-            //DispenseRequestsView.save();
+            //Part 5
+            CswNbtMetaDataObjectClassProp StatusOcp = RequestItemOc.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Status );
+            CswNbtView DispenseRequestsView = _CswNbtSchemaModTrnsctn.makeNewView( "Dispense Requests: Open", NbtViewVisibility.Global );
+            DispenseRequestsView.ViewMode = NbtViewRenderingMode.Tree;
+            DispenseRequestsView.Category = "Requests";
+            CswNbtViewRelationship RequestItemsVr = DispenseRequestsView.AddViewRelationship( RequestItemOc, true );
+            DispenseRequestsView.AddViewPropertyAndFilter( RequestItemsVr, AssgnedToOcp, "me" );
+            DispenseRequestsView.AddViewPropertyAndFilter( RequestItemsVr, TypeOcp, CswNbtObjClassRequestItem.Types.Dispense );
+            DispenseRequestsView.AddViewPropertyAndFilter( RequestItemsVr, StatusOcp, CswNbtObjClassRequestItem.Statuses.Completed, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.NotEquals );
+            DispenseRequestsView.AddViewPropertyAndFilter( RequestItemsVr, StatusOcp, CswNbtObjClassRequestItem.Statuses.Cancelled, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.NotEquals );
+            DispenseRequestsView.AddViewPropertyAndFilter( RequestItemsVr, StatusOcp, CswNbtObjClassRequestItem.Statuses.Dispensed, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.NotEquals );
+            DispenseRequestsView.save();
 
             //Part 6
             _CswNbtSchemaModTrnsctn.createObjectClassProp( RequestItemOc, new CswNbtWcfMetaDataModel.ObjectClassProp

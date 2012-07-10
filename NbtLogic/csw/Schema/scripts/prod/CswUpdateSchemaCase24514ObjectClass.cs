@@ -126,7 +126,7 @@ namespace ChemSW.Nbt.Schema
                             FieldType = CswNbtMetaDataFieldType.NbtFieldType.List,
                             SetValOnAdd = true,
                             ListOptions = CswNbtObjClassRequestItem.Types.Options.ToString(),
-                            ServerManaged = true
+                            ReadOnly = true
                         } );
 
             CswNbtMetaDataObjectClassProp RequestByOcp =
