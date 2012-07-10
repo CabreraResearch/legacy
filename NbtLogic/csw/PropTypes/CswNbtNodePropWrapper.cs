@@ -213,7 +213,7 @@ namespace ChemSW.Nbt.PropTypes
                      _CswNbtResources.EditMode == NodeEditMode.AuditHistoryInPopup ||
                      ( _CswNbtResources.EditMode == NodeEditMode.Add && false == CanAdd ) ||
                      ( ( _CswNbtResources.EditMode == NodeEditMode.Edit || _CswNbtResources.EditMode == NodeEditMode.EditInPopup ) && false == CanEdit ) ||
-                     ( null != _Node && ( _Node.ReadOnlyPermanent || _Node.Locked ) ) ); // nodes.readonly or nodes.locked
+                     ( null != _Node && ( _Node.ReadOnly || _Node.Locked ) ) ); // nodes.readonly or nodes.locked
         }
 
         /// <summary>

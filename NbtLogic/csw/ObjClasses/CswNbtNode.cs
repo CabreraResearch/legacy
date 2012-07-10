@@ -219,10 +219,16 @@ namespace ChemSW.Nbt.ObjClasses
 
         private bool _ReadOnly = false;
         private bool _ReadOnlyTemporary = false;
+        /// <summary>
+        /// Determines whether the node is readonly
+        /// </summary>
         public bool ReadOnly
         {
             get { return _ReadOnly || _ReadOnlyTemporary; }
         }
+        /// <summary>
+        /// Should only be used by CswNbtNodeWriter
+        /// </summary>
         public bool ReadOnlyPermanent
         {
             get { return _ReadOnly; }
