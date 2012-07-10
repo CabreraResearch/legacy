@@ -24,7 +24,7 @@
 
             var href = '/NbtWebApp/' + Csw.string(propVals.href);
 
-            if (o.EditMode === 'Preview') { //render the 2d blob not the fancy JMol
+            if (o.EditMode !== 'Edit') { //render the 2d blob not the fancy JMol
                 cell11.a({
                     href: href,
                     target: '_blank'
