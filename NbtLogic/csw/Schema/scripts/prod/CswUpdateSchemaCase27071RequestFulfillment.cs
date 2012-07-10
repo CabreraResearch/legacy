@@ -38,6 +38,7 @@ namespace ChemSW.Nbt.Schema
 
             CswNbtView DispenseRequestsView = _CswNbtSchemaModTrnsctn.makeNewView( "Dispense Requests: Open", NbtViewVisibility.Global );
             DispenseRequestsView.ViewMode = NbtViewRenderingMode.Tree;
+            DispenseRequestsView.Category = "Requests";
             CswNbtViewRelationship RequestItemsVr = DispenseRequestsView.AddViewRelationship( RequestItemOc, true );
             DispenseRequestsView.AddViewPropertyAndFilter( RequestItemsVr, AssgnedToOcp, "me" );
             DispenseRequestsView.AddViewPropertyAndFilter( RequestItemsVr, TypeOcp, CswNbtObjClassRequestItem.Types.Dispense );
