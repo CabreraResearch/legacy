@@ -2115,7 +2115,8 @@ namespace ChemSW.Nbt.WebPages
 
                             HiddenField PropertyRefFkType = new HiddenField();
                             PropertyRefFkType.ID = "EditProp_FkTypeValue" + SelectedNodeTypeProp.PropId.ToString();
-                            PropertyRefFkType.Value = "NodeTypePropId";
+                            //PropertyRefFkType.Value = "NodeTypePropId";
+                            PropertyRefFkType.Value = SelectedNodeTypeProp.ValuePropType;
                             RelationshipRow.Cells[1].Controls.Add( PropertyRefFkType );
 
                             DropDownList RelationshipValue = new DropDownList();
@@ -2134,9 +2135,19 @@ namespace ChemSW.Nbt.WebPages
 
                             if( SelectedNodeTypeProp.FKValue != Int32.MinValue )
                             {
-                                RelationshipValue.SelectedValue = SelectedNodeTypeProp.FKValue.ToString();
+                                //RelationshipValue.SelectedValue = SelectedNodeTypeProp.FKValue.ToString();
 
-                                CswNbtMetaDataNodeTypeProp RelationshipProp = Master.CswNbtResources.MetaData.getNodeTypeProp( SelectedNodeTypeProp.FKValue );
+                                CswNbtMetaDataNodeTypeProp RelationshipProp = null;
+                                if( PropertyRefFkType.Value == "ObjectClassPropId" )
+                                {
+                                    RelationshipProp = Master.CswNbtResources.MetaData.getNodeTypePropByObjectClassProp( SelectedNodeTypeProp.getNodeType().NodeTypeId, SelectedNodeTypeProp.FKValue );
+                                }
+                                else
+                                {
+                                    RelationshipProp = Master.CswNbtResources.MetaData.getNodeTypeProp( SelectedNodeTypeProp.FKValue );
+                                }
+
+                                RelationshipValue.SelectedValue = RelationshipProp.PropId.ToString();
 
                                 TableRow RelatedPropRow = makeEditPropTableRow( EditPropPlaceHolder );
                                 ( (Literal) RelatedPropRow.Cells[0].Controls[0] ).Text = "Related " + LabelNodeTypeProp + ":";
@@ -2185,8 +2196,15 @@ namespace ChemSW.Nbt.WebPages
 
                                 RelatedPropValue.CssClass = "selectinput";
                                 RelatedPropValue.ID = "EditProp_RelatedPropValue" + SelectedNodeTypeProp.PropId.ToString();
-                                if( SelectedNodeTypeProp.ValuePropId != Int32.MinValue )
-                                    RelatedPropValue.SelectedValue = SelectedNodeTypeProp.ValuePropId.ToString();
+                                //if( SelectedNodeTypeProp.ValuePropId != Int32.MinValue )
+                                //RelatedPropValue.SelectedValue = SelectedNodeTypeProp.ValuePropId.ToString();
+                                foreach( ListItem item in RelatedPropValue.Items )
+                                {
+                                    if( item.Text.Equals( SelectedNodeTypeProp.PropName ) )
+                                    {
+                                        item.Selected = true;
+                                    }
+                                }
                                 RelatedPropRow.Cells[1].Controls.Add( RelatedPropValue );
                             }
                             break;
