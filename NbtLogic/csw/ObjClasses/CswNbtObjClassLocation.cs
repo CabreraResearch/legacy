@@ -109,10 +109,10 @@ namespace ChemSW.Nbt.ObjClasses
             // Hide the Child Location Type and Location Template controls
             if( _CswNbtResources.ConfigVbls.getConfigVariableValue( "loc_use_images" ) == "0" )
             {
-                this.ChildLocationType.Hidden = true;
-                this.Rows.Hidden = true;
-                this.Columns.Hidden = true;
-                this.LocationTemplate.Hidden = true;
+                this.ChildLocationType.setHidden( value: true, SaveToDb: false );
+                this.Rows.setHidden( value: true, SaveToDb: false );
+                this.Columns.setHidden( value: true, SaveToDb: false );
+                this.LocationTemplate.setHidden( value: true, SaveToDb: false );
             }
 
             _CswNbtObjClassDefault.afterPopulateProps();

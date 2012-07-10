@@ -182,7 +182,7 @@ namespace ChemSW.Nbt.ObjClasses
                             {
                                 // Found a match -- copy the value and set readonly
                                 EquipProp.copy( AssemblyProp );
-                                EquipProp.ReadOnly = true;
+                                EquipProp.setReadOnly( value: true, SaveToDb: true );
                                 FoundMatch = true;
                                 // case 21809
                                 EquipProp.HelpText = EquipProp.PropName + " is set on the Assembly, and must be modified there.";
@@ -193,7 +193,9 @@ namespace ChemSW.Nbt.ObjClasses
                             // if other things set these properties to readonly, this might be an issue.
                             // but it must be conditional - see BZ 7084
                             if( EquipProp.ReadOnly )
-                                EquipProp.ReadOnly = false;
+                            {
+                                EquipProp.setReadOnly( value: false, SaveToDb: true );
+                            }
                         }
                     }
                 }
@@ -206,7 +208,9 @@ namespace ChemSW.Nbt.ObjClasses
                     // if other things set these properties to readonly, this might be an issue.
                     // but it must be conditional - see BZ 7084
                     if( EquipProp.ReadOnly )
-                        EquipProp.ReadOnly = false;
+                    {
+                        EquipProp.setReadOnly( value: false, SaveToDb: true );
+                    }
                 }
             }
         } // SynchEquipmentToAssembly()

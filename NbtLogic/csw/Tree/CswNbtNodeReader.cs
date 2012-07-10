@@ -115,7 +115,7 @@ namespace ChemSW.Nbt
 
                         if( Date != DateTime.MinValue )
                         {
-                            CswNbtNode.ReadOnly = true;
+                            CswNbtNode.setReadOnly( value: true, SaveToDb: false );
                         }
                     }
                     // BZ 8117 - This is actually possibly expected behavior now when we delete a node

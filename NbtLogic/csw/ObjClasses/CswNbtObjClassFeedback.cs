@@ -123,10 +123,9 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void afterPopulateProps()
         {
-            //might cause a problem here, case 26683
             if( false == _CswNbtResources.CurrentNbtUser.IsAdministrator() )
             {
-                LoadUserContext.Hidden = true;
+                LoadUserContext.setHidden( value: true, SaveToDb: false );
             }
 
             _CswNbtObjClassDefault.afterPopulateProps();

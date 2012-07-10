@@ -90,7 +90,7 @@ namespace ChemSW.Nbt.ObjClasses
             : base( CswNbtResources, Node )
         {
             _CswNbtObjClassDefault = new CswNbtObjClassDefault( _CswNbtResources, Node );
-            
+
         }//ctor()
 
         public override CswNbtMetaDataObjectClass ObjectClass
@@ -156,34 +156,34 @@ namespace ChemSW.Nbt.ObjClasses
             if( Type.WasModified )
             {
                 /* Spec W1010: Location applies to all but Dispose */
-                Location.Hidden = ( Types.Dispose == Type.StaticText );
-                Location.ReadOnly = ( Types.Dispose == Type.StaticText );
+                Location.setHidden( value: ( Types.Dispose == Type.StaticText ), SaveToDb: true );
+                Location.setReadOnly( value: ( Types.Dispose == Type.StaticText ), SaveToDb: true );
 
                 /* Spec W1010: Container applies only to Dispense, Dispose and Move */
-                RequestBy.ReadOnly = ( Types.Request != Type.StaticText );
-                RequestBy.Hidden = ( Types.Request != Type.StaticText );
-                Container.Hidden = ( Types.Request == Type.StaticText );
+                RequestBy.setReadOnly( value: ( Types.Request != Type.StaticText ), SaveToDb: true );
+                RequestBy.setHidden( value: ( Types.Request != Type.StaticText ), SaveToDb: true );
+                Container.setHidden( value: ( Types.Request == Type.StaticText ), SaveToDb: true );
 
                 /* Spec W1010: Material applies only to Request and Dispense */
-                Material.Hidden = ( Types.Request != Type.StaticText && Types.Dispense != Type.StaticText );
+                Material.setHidden( value: ( Types.Request != Type.StaticText && Types.Dispense != Type.StaticText ), SaveToDb: true );
             }
-            Material.ReadOnly = Material.ReadOnly || ( null != Material.RelatedNodeId );
-            Container.ReadOnly = Container.ReadOnly || ( null != Container.RelatedNodeId );
+            Material.setReadOnly( value: ( Material.ReadOnly || null != Material.RelatedNodeId ), SaveToDb: true );
+            Container.setReadOnly( value: ( Container.ReadOnly || null != Container.RelatedNodeId ), SaveToDb: true );
         }
 
         private void _toggleReadOnlyProps( bool IsReadOnly, CswNbtObjClassRequestItem ItemInstance )
         {
-            ItemInstance.Request.ReadOnly = IsReadOnly;
-            ItemInstance.RequestBy.ReadOnly = IsReadOnly;
-            ItemInstance.Type.ReadOnly = IsReadOnly;
-            ItemInstance.Quantity.ReadOnly = IsReadOnly;
-            ItemInstance.Size.ReadOnly = IsReadOnly;
-            ItemInstance.Container.ReadOnly = IsReadOnly;
-            ItemInstance.Count.ReadOnly = IsReadOnly;
-            ItemInstance.Material.ReadOnly = IsReadOnly;
-            ItemInstance.Location.ReadOnly = IsReadOnly;
-            ItemInstance.Number.ReadOnly = IsReadOnly;
-            ItemInstance.ExternalOrderNumber.ReadOnly = IsReadOnly;
+            ItemInstance.Request.setReadOnly( value: IsReadOnly, SaveToDb: true );
+            ItemInstance.RequestBy.setReadOnly( value: IsReadOnly, SaveToDb: true );
+            ItemInstance.Type.setReadOnly( value: IsReadOnly, SaveToDb: true );
+            ItemInstance.Quantity.setReadOnly( value: IsReadOnly, SaveToDb: true );
+            ItemInstance.Size.setReadOnly( value: IsReadOnly, SaveToDb: true );
+            ItemInstance.Container.setReadOnly( value: IsReadOnly, SaveToDb: true );
+            ItemInstance.Count.setReadOnly( value: IsReadOnly, SaveToDb: true );
+            ItemInstance.Material.setReadOnly( value: IsReadOnly, SaveToDb: true );
+            ItemInstance.Location.setReadOnly( value: IsReadOnly, SaveToDb: true );
+            ItemInstance.Number.setReadOnly( value: IsReadOnly, SaveToDb: true );
+            ItemInstance.ExternalOrderNumber.setReadOnly( value: IsReadOnly, SaveToDb: true );
         }
 
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
@@ -305,7 +305,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get { return _CswNbtNode.Properties[PropertyName.Type.ToString()]; }
         }
-        
+
         public CswNbtNodePropList RequestBy
         {
             get { return _CswNbtNode.Properties[PropertyName.RequestBy.ToString()]; }
@@ -313,16 +313,16 @@ namespace ChemSW.Nbt.ObjClasses
         private void OnRequestByPropChange()
         {
             /* Spec W1010: Size and Count apply only to Request */
-            Size.Hidden = ( Types.Request != Type.StaticText );
-            Count.Hidden = ( Types.Request != Type.StaticText );
-            Size.ReadOnly = ( Types.Request != Type.StaticText );
-            Count.ReadOnly = ( Types.Request != Type.StaticText );
+            Size.setHidden( value: ( Types.Request != Type.StaticText ), SaveToDb: true );
+            Count.setHidden( value: ( Types.Request != Type.StaticText ), SaveToDb: true );
+            Size.setReadOnly( value: ( Types.Request != Type.StaticText ), SaveToDb: true );
+            Count.setReadOnly( value: ( Types.Request != Type.StaticText ), SaveToDb: true );
 
             /* Spec W1010: Quantity applies only to Request by Bulk and Dispense */
-            Quantity.Hidden = ( Types.Request == Type.StaticText && Types.Dispense != Type.StaticText );
-            Quantity.ReadOnly = ( Types.Request == Type.StaticText && Types.Dispense != Type.StaticText );
+            Quantity.setHidden( value: ( Types.Request == Type.StaticText && Types.Dispense != Type.StaticText ), SaveToDb: true );
+            Quantity.setReadOnly( value: ( Types.Request == Type.StaticText && Types.Dispense != Type.StaticText ), SaveToDb: true );
         }
-        
+
         public CswNbtNodePropQuantity Quantity
         {
             get { return _CswNbtNode.Properties[PropertyName.Quantity.ToString()]; }

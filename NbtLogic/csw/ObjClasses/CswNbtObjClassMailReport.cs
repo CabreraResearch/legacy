@@ -95,11 +95,11 @@ namespace ChemSW.Nbt.ObjClasses
             if( Type.Value == TypeOptionView )
             {
                 OutputFormat.Value = MailRptFormatOptions.Link.ToString();
-                OutputFormat.ReadOnly = true;
+                OutputFormat.setReadOnly( value: true, SaveToDb: true );
             }
             else if( Type.Value == TypeOptionReport )
             {
-                OutputFormat.ReadOnly = false;
+                OutputFormat.setReadOnly( value: true, SaveToDb: true );
             }
         }
 

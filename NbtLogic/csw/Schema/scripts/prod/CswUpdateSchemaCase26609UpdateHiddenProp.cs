@@ -22,8 +22,8 @@ namespace ChemSW.Nbt.Schema
             Collection<CswNbtNode> CurrentReportNodes = RptOC.getNodes( false, true );
             foreach( CswNbtNode CurrentNode in CurrentReportNodes )
             {
-                CurrentNode.Properties[CswNbtObjClassReport.ReportUserNamePropertyName].Hidden = true;
-                CurrentNode.Properties[CswNbtObjClassReport.FormattedSqlPropertyName].Hidden = true;
+                CurrentNode.Properties[CswNbtObjClassReport.ReportUserNamePropertyName].setHidden( value: true, SaveToDb: true );
+                CurrentNode.Properties[CswNbtObjClassReport.FormattedSqlPropertyName].setHidden( value: true, SaveToDb: true );
 
                 CurrentNode.postChanges( true );
             }

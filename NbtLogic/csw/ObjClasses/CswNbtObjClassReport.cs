@@ -92,8 +92,8 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
 
 
-            _CswNbtNode.Properties[ReportUserNamePropertyName].Hidden = true;
-            _CswNbtNode.Properties[FormattedSqlPropertyName].Hidden = true;
+            _CswNbtNode.Properties[ReportUserNamePropertyName].setHidden( value: true, SaveToDb: true );
+            _CswNbtNode.Properties[FormattedSqlPropertyName].setHidden( value: true, SaveToDb: true );
 
         }//beforeWriteNode()
 

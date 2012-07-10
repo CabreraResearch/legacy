@@ -74,9 +74,9 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
-            RequestDispose.Hidden = ( Disposed.Checked == Tristate.True );
-            RequestDispense.Hidden = ( Disposed.Checked == Tristate.True || Missing.Checked == Tristate.True || Quantity.Quantity <= 0 );
-            RequestMove.Hidden = ( Disposed.Checked == Tristate.True );
+            RequestDispose.setHidden( value: ( Disposed.Checked == Tristate.True ), SaveToDb: true );
+            RequestDispense.setHidden( value: ( Disposed.Checked == Tristate.True || Missing.Checked == Tristate.True || Quantity.Quantity <= 0 ), SaveToDb: true );
+            RequestMove.setHidden( value: ( Disposed.Checked == Tristate.True ), SaveToDb: true );
 
             if( Material.RelatedNodeId != null )
             {
@@ -195,16 +195,16 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void afterPopulateProps()
         {
-            this.Dispense.Hidden = false == _CswNbtResources.Permit.canContainer( NodeId, CswNbtPermit.NodeTypePermission.Create, _CswNbtResources.Actions[CswNbtActionName.DispenseContainer] );
+            this.Dispense.setHidden( value: ( false == _CswNbtResources.Permit.canContainer( NodeId, CswNbtPermit.NodeTypePermission.Create, _CswNbtResources.Actions[CswNbtActionName.DispenseContainer] ) ), SaveToDb: false );
             if( this.Disposed.Checked == Tristate.False )
             {
-                this.Undispose.Hidden = true;
-                this.Dispose.Hidden = false == _CswNbtResources.Permit.canContainer( NodeId, CswNbtPermit.NodeTypePermission.Edit, _CswNbtResources.Actions[CswNbtActionName.DisposeContainer] );
+                this.Undispose.setHidden( value: true, SaveToDb: true );
+                this.Dispose.setHidden( value: ( false == _CswNbtResources.Permit.canContainer( NodeId, CswNbtPermit.NodeTypePermission.Edit, _CswNbtResources.Actions[CswNbtActionName.DisposeContainer] ) ), SaveToDb: false );
             }
             else if( this.Disposed.Checked == Tristate.True )
             {
-                this.Dispose.Hidden = true;
-                this.Undispose.Hidden = false == _CswNbtResources.Permit.canContainer( NodeId, CswNbtPermit.NodeTypePermission.Edit, _CswNbtResources.Actions[CswNbtActionName.UndisposeContainer] );
+                this.Dispose.setHidden( value: true, SaveToDb: true );
+                this.Undispose.setHidden( value: ( false == _CswNbtResources.Permit.canContainer( NodeId, CswNbtPermit.NodeTypePermission.Edit, _CswNbtResources.Actions[CswNbtActionName.UndisposeContainer] ) ), SaveToDb: false );
             }
             _CswNbtObjClassDefault.afterPopulateProps();
         }//afterPopulateProps()
@@ -255,17 +255,17 @@ namespace ChemSW.Nbt.ObjClasses
 
                     CswNbtObjClassRequestItem NodeAsRequestItem = RequestAct.makeRequestItem( new CswNbtActSubmitRequest.RequestItem(), NodeId, OCP );
                     NodeAsRequestItem.Material.RelatedNodeId = Material.RelatedNodeId;
-                    NodeAsRequestItem.Material.ReadOnly = true;
+                    NodeAsRequestItem.Material.setReadOnly( value: true, SaveToDb: false );
                     switch( OCP.PropName )
                     {
                         case RequestDispensePropertyName:
                             break;
                         case RequestDisposePropertyName:
-                            NodeAsRequestItem.Material.Hidden = true;
+                            NodeAsRequestItem.Material.setHidden( value: true, SaveToDb: false );
                             NodeAsRequestItem.postChanges( true ); /* This is the only condition in which we want to commit the node upfront. */
                             break;
                         case RequestMovePropertyName:
-                            NodeAsRequestItem.Material.Hidden = true;
+                            NodeAsRequestItem.Material.setHidden( value: true, SaveToDb: false );
                             break;
                     }
 
@@ -396,17 +396,17 @@ namespace ChemSW.Nbt.ObjClasses
 
         private void _setDisposedReadOnly( bool isReadOnly )//case 25814
         {
-            this.Barcode.ReadOnly = isReadOnly;
-            this.Material.ReadOnly = isReadOnly;
-            this.Location.ReadOnly = isReadOnly;
-            this.Status.ReadOnly = isReadOnly;
-            this.Missing.ReadOnly = isReadOnly;
-            this.SourceContainer.ReadOnly = isReadOnly;
-            this.ExpirationDate.ReadOnly = isReadOnly;
-            this.Size.ReadOnly = isReadOnly;
-            this.RequestDispense.ReadOnly = isReadOnly;
-            this.RequestMove.ReadOnly = isReadOnly;
-            this.Dispense.ReadOnly = isReadOnly;
+            this.Barcode.setReadOnly( value: isReadOnly, SaveToDb: true );
+            this.Material.setReadOnly( value: isReadOnly, SaveToDb: true );
+            this.Location.setReadOnly( value: isReadOnly, SaveToDb: true );
+            this.Status.setReadOnly( value: isReadOnly, SaveToDb: true );
+            this.Missing.setReadOnly( value: isReadOnly, SaveToDb: true );
+            this.SourceContainer.setReadOnly( value: isReadOnly, SaveToDb: true );
+            this.ExpirationDate.setReadOnly( value: isReadOnly, SaveToDb: true );
+            this.Size.setReadOnly( value: isReadOnly, SaveToDb: true );
+            this.RequestDispense.setReadOnly( value: isReadOnly, SaveToDb: true );
+            this.RequestMove.setReadOnly( value: isReadOnly, SaveToDb: true );
+            this.Dispense.setReadOnly( value: isReadOnly, SaveToDb: true );
         }
 
         #endregion

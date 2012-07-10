@@ -107,7 +107,8 @@ namespace ChemSW.Nbt.PropTypes
         public string ObjectClassPropName { get { return ( _CswNbtNodeProp.ObjectClassPropName ); } }
         public CswPrimaryKey NodeId { get { return ( _CswNbtNodePropData.NodeId ); } set { _CswNbtNodePropData.NodeId = value; } }
         //public bool ReadOnly { get { return ( _CswNbtNodePropData.ReadOnly ); } set { _CswNbtNodePropData.ReadOnly = value; } }
-        public bool Hidden { get { return ( _CswNbtNodePropData.Hidden ); } set { _CswNbtNodePropData.Hidden = value; } }
+        public bool Hidden { get { return ( _CswNbtNodePropData.Hidden ); } }
+        public void setHidden( bool value, bool SaveToDb ) { _CswNbtNodePropData.setHidden( value, SaveToDb ); }
         public string Field1 { get { return ( _CswNbtNodePropData.Field1 ); } set { _CswNbtNodePropData.Field1 = value; } }
         public string Field2 { get { return ( _CswNbtNodePropData.Field2 ); } set { _CswNbtNodePropData.Field2 = value; } }
         public string Field3 { get { return ( _CswNbtNodePropData.Field3 ); } set { _CswNbtNodePropData.Field3 = value; } }
@@ -193,10 +194,10 @@ namespace ChemSW.Nbt.PropTypes
             {
                 return _CswNbtNodePropData.ReadOnly;
             }
-            set
-            {
-                _CswNbtNodePropData.ReadOnly = value;
-            }
+        }
+        public void setReadOnly( bool value, bool SaveToDb )
+        {
+            _CswNbtNodePropData.setReadOnly( value, SaveToDb );
         }
 
         /// <summary>
@@ -205,15 +206,14 @@ namespace ChemSW.Nbt.PropTypes
         public bool IsReadOnly()
         {
             return ( _CswNbtNodePropData.ReadOnly ||       // jct_nodes_props.readonly
-                    ( NodeTypeProp.ReadOnly && _CswNbtResources.EditMode != NodeEditMode.Add ) ||
-                //( NodeTypeProp.ReadOnly && _CswNbtResources.EditMode != NodeEditMode.Add && NodeTypeProp.SetValueOnAddEnabled ) ||              // nodetype_props.readonly
+                     ( NodeTypeProp.ReadOnly && _CswNbtResources.EditMode != NodeEditMode.Add ) ||
                      NodeTypeProp.ServerManaged ||         // nodetype_props.servermanaged
                      _CswNbtResources.EditMode == NodeEditMode.Preview ||
                      _CswNbtResources.EditMode == NodeEditMode.PrintReport ||
                      _CswNbtResources.EditMode == NodeEditMode.AuditHistoryInPopup ||
                      ( _CswNbtResources.EditMode == NodeEditMode.Add && false == CanAdd ) ||
                      ( ( _CswNbtResources.EditMode == NodeEditMode.Edit || _CswNbtResources.EditMode == NodeEditMode.EditInPopup ) && false == CanEdit ) ||
-                     ( null != _Node && ( _Node.ReadOnly || _Node.Locked ) ) ); // nodes.readonly or nodes.locked
+                     ( null != _Node && ( _Node.ReadOnlyPermanent || _Node.Locked ) ) ); // nodes.readonly or nodes.locked
         }
 
         /// <summary>
