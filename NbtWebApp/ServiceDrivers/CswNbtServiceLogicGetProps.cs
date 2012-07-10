@@ -7,8 +7,18 @@ namespace ChemSW.Nbt.WebServices
     public class CswNbtServiceLogicGetProps : CswNbtServiceLogic
     {
 
-        string _EditMode = string.Empty; string _NodeId = string.Empty; string _SafeNodeKey = string.Empty; string _TabId = string.Empty; string _NodeTypeId = string.Empty; string _Date = string.Empty; string _filterToPropId = string.Empty; string _Multi = string.Empty; string _ConfigMode;
-
+        string _EditMode = string.Empty; 
+        string _NodeId = string.Empty; 
+        string _SafeNodeKey = string.Empty; 
+        string _TabId = string.Empty; 
+        string _NodeTypeId = string.Empty; 
+        string _Date = string.Empty; 
+        string _filterToPropId = string.Empty; 
+        string _Multi = string.Empty;
+        string _ConfigMode;
+        string _RelatedNodeId = string.Empty;
+        string _RelatedNodeTypeId = string.Empty;
+        string _RelatedObjectClassId = string.Empty;
 
 
         public CswNbtServiceLogicGetProps( string EditMode, string NodeId, string SafeNodeKey, string TabId, string NodeTypeId, string Date, string filterToPropId, string Multi, string ConfigMode )
@@ -25,7 +35,7 @@ namespace ChemSW.Nbt.WebServices
             CswNbtServiceLogicResources.setEditMode( _EditMode );
             CswDateTime InDate = new CswDateTime( CswNbtServiceLogicResources.CswNbtResources );
             InDate.FromClientDateTimeString( _Date );
-            ReturnVal = ws.getProps( _NodeId, _SafeNodeKey, _TabId, CswConvert.ToInt32( _NodeTypeId ), InDate, _filterToPropId );
+            ReturnVal = ws.getProps( _NodeId, _SafeNodeKey, _TabId, CswConvert.ToInt32( _NodeTypeId ), InDate, _filterToPropId, _RelatedNodeId, _RelatedNodeTypeId, _RelatedObjectClassId );
 
             return ( ReturnVal );
         }//doLogic
