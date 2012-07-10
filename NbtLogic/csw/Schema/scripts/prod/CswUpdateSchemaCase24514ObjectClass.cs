@@ -123,9 +123,10 @@ namespace ChemSW.Nbt.Schema
                                                  new CswNbtWcfMetaDataModel.ObjectClassProp
                         {
                             PropName = CswNbtObjClassRequestItem.PropertyName.Type,
-                            FieldType = CswNbtMetaDataFieldType.NbtFieldType.Static,
-                            SetValOnAdd = true
-
+                            FieldType = CswNbtMetaDataFieldType.NbtFieldType.List,
+                            SetValOnAdd = true,
+                            ListOptions = CswNbtObjClassRequestItem.Types.Options.ToString(),
+                            ServerManaged = true
                         } );
 
             CswNbtMetaDataObjectClassProp RequestByOcp =

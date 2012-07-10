@@ -28,6 +28,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string Number = "Number";
             public const string ExternalOrderNumber = "External Order Number";
             public const string Location = "Location";
+            public const string AssignedTo = "Assigned To";
         }
 
         public sealed class Types
@@ -36,6 +37,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string Request = "Request";
             public const string Move = "Move";
             public const string Dispose = "Dispose";
+            public static readonly CswCommaDelimitedString Options = new CswCommaDelimitedString { Dispense, Request, Move, Dispose };
         }
 
         public sealed class RequestsBy
@@ -55,9 +57,10 @@ namespace ChemSW.Nbt.ObjClasses
             public const string Received = "Received";
             public const string Dispensed = "Dispensed";
             public const string Completed = "Completed";
+            public const string Cancelled = "Cancelled";
             public static readonly CswCommaDelimitedString Options = new CswCommaDelimitedString
                                                                            {
-                                                                               Pending,Submitted,Ordered,Received,Dispensed,Completed
+                                                                               Pending,Submitted,Ordered,Received,Dispensed,Completed,Cancelled
                                                                            };
         }
 
@@ -90,7 +93,7 @@ namespace ChemSW.Nbt.ObjClasses
             : base( CswNbtResources, Node )
         {
             _CswNbtObjClassDefault = new CswNbtObjClassDefault( _CswNbtResources, Node );
-            
+
         }//ctor()
 
         public override CswNbtMetaDataObjectClass ObjectClass
@@ -151,26 +154,6 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault.afterCreateNode();
         } // afterCreateNode()
 
-        private void _setPropDisplayAndEditVals()
-        {
-            if( Type.WasModified )
-            {
-                /* Spec W1010: Location applies to all but Dispose */
-                Location.Hidden = ( Types.Dispose == Type.StaticText );
-                Location.ReadOnly = ( Types.Dispose == Type.StaticText );
-
-                /* Spec W1010: Container applies only to Dispense, Dispose and Move */
-                RequestBy.ReadOnly = ( Types.Request != Type.StaticText );
-                RequestBy.Hidden = ( Types.Request != Type.StaticText );
-                Container.Hidden = ( Types.Request == Type.StaticText );
-
-                /* Spec W1010: Material applies only to Request and Dispense */
-                Material.Hidden = ( Types.Request != Type.StaticText && Types.Dispense != Type.StaticText );
-            }
-            Material.ReadOnly = Material.ReadOnly || ( null != Material.RelatedNodeId );
-            Container.ReadOnly = Container.ReadOnly || ( null != Container.RelatedNodeId );
-        }
-
         private void _toggleReadOnlyProps( bool IsReadOnly, CswNbtObjClassRequestItem ItemInstance )
         {
             ItemInstance.Request.ReadOnly = IsReadOnly;
@@ -192,12 +175,10 @@ namespace ChemSW.Nbt.ObjClasses
 
             CswNbtObjClassRequest NodeAsRequest = _CswNbtResources.Nodes.GetNode( Request.RelatedNodeId );
 
-            _setPropDisplayAndEditVals();
-
             /* Container-specific logic */
-            if( ( Type.StaticText == Types.Dispense ||
-                Type.StaticText == Types.Move ||
-                Type.StaticText == Types.Dispose ) &&
+            if( ( Type.Value == Types.Dispense ||
+                Type.Value == Types.Move ||
+                Type.Value == Types.Dispose ) &&
                 null != Container.RelatedNodeId )
             {
                 if( null != NodeAsRequest &&
@@ -208,7 +189,7 @@ namespace ChemSW.Nbt.ObjClasses
                     if( null == NodeAsContainer )
                     {
                         throw new CswDniException( ErrorType.Warning,
-                                                  "A " + Type.StaticText +
+                                                  "A " + Type.Value +
                                                   " type of Request Item requires a valid Container.",
                                                   "Attempted to edit node without a valid Container relationship." );
                     }
@@ -218,35 +199,9 @@ namespace ChemSW.Nbt.ObjClasses
                         NodeAsRequest.InventoryGroup.RelatedNodeId != NodeAsLocation.InventoryGroup.RelatedNodeId )
                     {
                         throw new CswDniException( ErrorType.Warning,
-                                                  "For a " + Type.StaticText +
+                                                  "For a " + Type.Value +
                                                   " type of Request Item, the Inventory Group of the Request must match the Inventory Group of the Container's Location.",
                                                   "Attempted to edit node without matching Container and Request Inventory Group relationships." );
-                    }
-                }
-            }
-
-            /* Email notification logic */
-            if( Status.WasModified &&
-                Status.Value != Statuses.Pending )
-            {
-                if( Status.Value == Statuses.Submitted )
-                {
-                    _toggleReadOnlyProps( true, this );
-                }
-
-                if( null != NodeAsRequest &&
-                    null != NodeAsRequest.Requestor.RelatedNodeId )
-                {
-                    CswNbtObjClassUser RequestorAsUser =
-                        _CswNbtResources.Nodes.GetNode( NodeAsRequest.Requestor.RelatedNodeId );
-                    if( null != RequestorAsUser )
-                    {
-                        string Subject = Node.NodeName + "'s Request Item Status has Changed to " + Status.Value;
-                        string Message = _makeNotificationMessage();
-                        string Recipient = RequestorAsUser.Email;
-                        Collection<CswMailMessage> EmailMessage = _CswNbtResources.makeMailMessages( Subject, Message,
-                                                                                                    Recipient );
-                        _CswNbtResources.sendEmailNotification( EmailMessage );
                     }
                 }
             }
@@ -273,6 +228,10 @@ namespace ChemSW.Nbt.ObjClasses
         public override void afterPopulateProps()
         {
             RequestBy.SetOnPropChange( OnRequestByPropChange );
+            Type.SetOnPropChange( OnTypePropChange );
+            Material.SetOnPropChange( OnMaterialPropChange );
+            Container.SetOnPropChange( OnContainerPropChange );
+            Status.SetOnPropChange( OnStatusPropChange );
             _CswNbtObjClassDefault.afterPopulateProps();
         }//afterPopulateProps()
 
@@ -298,80 +257,138 @@ namespace ChemSW.Nbt.ObjClasses
 
         public CswNbtNodePropRelationship Request
         {
-            get { return _CswNbtNode.Properties[PropertyName.Request.ToString()]; }
+            get { return _CswNbtNode.Properties[PropertyName.Request]; }
         }
 
-        public CswNbtNodePropStatic Type
+        public CswNbtNodePropList Type
         {
-            get { return _CswNbtNode.Properties[PropertyName.Type.ToString()]; }
+            get { return _CswNbtNode.Properties[PropertyName.Type]; }
         }
-        
+        private void OnTypePropChange()
+        {
+            /* Spec W1010: Location applies to all but Dispose */
+            Location.Hidden = ( Types.Dispose == Type.Value );
+            Location.ReadOnly = ( Types.Dispose == Type.Value );
+
+            /* Spec W1010: Container applies only to Dispense, Dispose and Move */
+            RequestBy.ReadOnly = ( Types.Request != Type.Value );
+            RequestBy.Hidden = ( Types.Request != Type.Value );
+            Container.Hidden = ( Types.Request == Type.Value );
+
+            /* Spec W1010: Material applies only to Request and Dispense */
+            Material.Hidden = ( Types.Request != Type.Value && Types.Dispense != Type.Value );
+            AssignedTo.Hidden = ( Types.Dispense != Type.Value );
+        }
+
         public CswNbtNodePropList RequestBy
         {
-            get { return _CswNbtNode.Properties[PropertyName.RequestBy.ToString()]; }
+            get { return _CswNbtNode.Properties[PropertyName.RequestBy]; }
         }
         private void OnRequestByPropChange()
         {
             /* Spec W1010: Size and Count apply only to Request */
-            Size.Hidden = ( Types.Request != Type.StaticText );
-            Count.Hidden = ( Types.Request != Type.StaticText );
-            Size.ReadOnly = ( Types.Request != Type.StaticText );
-            Count.ReadOnly = ( Types.Request != Type.StaticText );
+            Size.Hidden = ( Types.Request != Type.Value );
+            Count.Hidden = ( Types.Request != Type.Value );
+            Size.ReadOnly = ( Types.Request != Type.Value );
+            Count.ReadOnly = ( Types.Request != Type.Value );
 
             /* Spec W1010: Quantity applies only to Request by Bulk and Dispense */
-            Quantity.Hidden = ( Types.Request == Type.StaticText && Types.Dispense != Type.StaticText );
-            Quantity.ReadOnly = ( Types.Request == Type.StaticText && Types.Dispense != Type.StaticText );
+            Quantity.Hidden = ( Types.Request == Type.Value && Types.Dispense != Type.Value );
+            Quantity.ReadOnly = ( Types.Request == Type.Value && Types.Dispense != Type.Value );
         }
-        
+
         public CswNbtNodePropQuantity Quantity
         {
-            get { return _CswNbtNode.Properties[PropertyName.Quantity.ToString()]; }
+            get { return _CswNbtNode.Properties[PropertyName.Quantity]; }
         }
 
         public CswNbtNodePropRelationship Size
         {
-            get { return _CswNbtNode.Properties[PropertyName.Size.ToString()]; }
+            get { return _CswNbtNode.Properties[PropertyName.Size]; }
         }
 
         public CswNbtNodePropNumber Count
         {
-            get { return _CswNbtNode.Properties[PropertyName.Count.ToString()]; }
+            get { return _CswNbtNode.Properties[PropertyName.Count]; }
         }
 
         public CswNbtNodePropRelationship Material
         {
-            get { return _CswNbtNode.Properties[PropertyName.Material.ToString()]; }
+            get { return _CswNbtNode.Properties[PropertyName.Material]; }
         }
-
+        private void OnMaterialPropChange()
+        {
+            if( null != Material.RelatedNodeId )
+            {
+                Material.ReadOnly = true;
+            }
+        }
         public CswNbtNodePropRelationship Container
         {
-            get { return _CswNbtNode.Properties[PropertyName.Container.ToString()]; }
+            get { return _CswNbtNode.Properties[PropertyName.Container]; }
         }
-
+        private void OnContainerPropChange()
+        {
+            if( null != Container.RelatedNodeId )
+            {
+                Container.ReadOnly = true;
+            }
+        }
         public CswNbtNodePropLocation Location
         {
-            get { return _CswNbtNode.Properties[PropertyName.Location.ToString()]; }
+            get { return _CswNbtNode.Properties[PropertyName.Location]; }
         }
 
         public CswNbtNodePropComments Comments
         {
-            get { return _CswNbtNode.Properties[PropertyName.Comments.ToString()]; }
+            get { return _CswNbtNode.Properties[PropertyName.Comments]; }
         }
 
         public CswNbtNodePropList Status
         {
-            get { return _CswNbtNode.Properties[PropertyName.Status.ToString()]; }
+            get { return _CswNbtNode.Properties[PropertyName.Status]; }
+        }
+
+        private void OnStatusPropChange()
+        {
+            CswNbtObjClassRequest NodeAsRequest = _CswNbtResources.Nodes.GetNode( Request.RelatedNodeId );
+            /* Email notification logic */
+            if( Status.Value != Statuses.Pending )
+            {
+                if( Status.Value == Statuses.Submitted )
+                {
+                    _toggleReadOnlyProps( true, this );
+                }
+
+                if( null != NodeAsRequest &&
+                    null != NodeAsRequest.Requestor.RelatedNodeId )
+                {
+                    CswNbtObjClassUser RequestorAsUser =
+                        _CswNbtResources.Nodes.GetNode( NodeAsRequest.Requestor.RelatedNodeId );
+                    if( null != RequestorAsUser )
+                    {
+                        string Subject = Node.NodeName + "'s Request Item Status has Changed to " + Status.Value;
+                        string Message = _makeNotificationMessage();
+                        string Recipient = RequestorAsUser.Email;
+                        Collection<CswMailMessage> EmailMessage = _CswNbtResources.makeMailMessages( Subject, Message,
+                                                                                                    Recipient );
+                        _CswNbtResources.sendEmailNotification( EmailMessage );
+                    }
+                }
+            }
         }
 
         public CswNbtNodePropSequence Number
         {
-            get { return _CswNbtNode.Properties[PropertyName.Number.ToString()]; }
+            get { return _CswNbtNode.Properties[PropertyName.Number]; }
         }
 
         public CswNbtNodePropText ExternalOrderNumber
         {
-            get { return _CswNbtNode.Properties[PropertyName.ExternalOrderNumber.ToString()]; }
+            get { return _CswNbtNode.Properties[PropertyName.ExternalOrderNumber]; }
         }
+
+        public CswNbtNodePropRelationship AssignedTo { get { return _CswNbtNode.Properties[PropertyName.AssignedTo]; } }
 
         #endregion
     }//CswNbtObjClassRequestItem

@@ -11,11 +11,11 @@ namespace ChemSW.Nbt
     public sealed class NbtViewRenderingMode : CswEnum<NbtViewRenderingMode>
     {
         private NbtViewRenderingMode( string Name ) : base( Name ) { }
-        public static IEnumerable<NbtViewRenderingMode> _All { get { return CswEnum<NbtViewRenderingMode>.All; } }
-        public static explicit operator NbtViewRenderingMode( string str )
+        public static IEnumerable<NbtViewRenderingMode> _All { get { return All; } }
+        public static implicit operator NbtViewRenderingMode( string str )
         {
             NbtViewRenderingMode ret = Parse( str );
-            return ( ret != null ) ? ret : NbtViewRenderingMode.Unknown;
+            return ret ?? Unknown;
         }
         public static readonly NbtViewRenderingMode Unknown = new NbtViewRenderingMode( "Unknown" );
 
@@ -33,10 +33,10 @@ namespace ChemSW.Nbt
     {
         private NbtViewAddChildrenSetting( string Name ) : base( Name ) { }
         public static IEnumerable<NbtViewAddChildrenSetting> _All { get { return CswEnum<NbtViewAddChildrenSetting>.All; } }
-        public static explicit operator NbtViewAddChildrenSetting( string str )
+        public static implicit operator NbtViewAddChildrenSetting( string str )
         {
             NbtViewAddChildrenSetting ret = Parse( str );
-            return ( ret != null ) ? ret : NbtViewAddChildrenSetting.Unknown;
+            return ret ?? Unknown;
         }
         public static readonly NbtViewAddChildrenSetting Unknown = new NbtViewAddChildrenSetting( "Unknown" );
 
@@ -68,11 +68,11 @@ namespace ChemSW.Nbt
     public sealed class NbtViewXmlNodeName : CswEnum<NbtViewXmlNodeName>
     {
         private NbtViewXmlNodeName( string Name ) : base( Name ) { }
-        public static IEnumerable<NbtViewXmlNodeName> _All { get { return CswEnum<NbtViewXmlNodeName>.All; } }
-        public static explicit operator NbtViewXmlNodeName( string str )
+        public static IEnumerable<NbtViewXmlNodeName> _All { get { return All; } }
+        public static implicit operator NbtViewXmlNodeName( string str )
         {
             NbtViewXmlNodeName ret = Parse( str );
-            return ( ret != null ) ? ret : NbtViewXmlNodeName.Unknown;
+            return ret ?? Unknown;
         }
         public static readonly NbtViewXmlNodeName Unknown = new NbtViewXmlNodeName( "Unknown" );
 
@@ -121,11 +121,11 @@ namespace ChemSW.Nbt
     public sealed class NbtViewVisibility : CswEnum<NbtViewVisibility>
     {
         private NbtViewVisibility( string Name ) : base( Name ) { }
-        public static IEnumerable<NbtViewVisibility> _All { get { return CswEnum<NbtViewVisibility>.All; } }
+        public static IEnumerable<NbtViewVisibility> _All { get { return All; } }
         public static explicit operator NbtViewVisibility( string str )
         {
             NbtViewVisibility ret = Parse( str );
-            return ( ret != null ) ? ret : NbtViewVisibility.Unknown;
+            return ret ?? Unknown;
         }
         public static readonly NbtViewVisibility Unknown = new NbtViewVisibility( "Unknown" );
 
@@ -153,11 +153,11 @@ namespace ChemSW.Nbt
     public sealed class NbtViewNodeType : CswEnum<NbtViewNodeType>
     {
         private NbtViewNodeType( string Name ) : base( Name ) { }
-        public static IEnumerable<NbtViewNodeType> _All { get { return CswEnum<NbtViewNodeType>.All; } }
-        public static explicit operator NbtViewNodeType( string str )
+        public static IEnumerable<NbtViewNodeType> _All { get { return All; } }
+        public static implicit operator NbtViewNodeType( string str )
         {
             NbtViewNodeType ret = Parse( str );
-            return ( ret != null ) ? ret : NbtViewNodeType.Unknown;
+            return ret ?? Unknown;
         }
         public static readonly NbtViewNodeType Unknown = new NbtViewNodeType( "Unknown" );
 
@@ -179,14 +179,17 @@ namespace ChemSW.Nbt
         public static readonly NbtViewNodeType CswNbtViewRoot = new NbtViewNodeType( "CswNbtViewRoot" );
     }
 
+    /// <summary>
+    /// Options: ObjectClassId, NodeTypeId
+    /// </summary>
     public sealed class NbtViewRelatedIdType : CswEnum<NbtViewRelatedIdType>
     {
         private NbtViewRelatedIdType( string Name ) : base( Name ) { }
-        public static IEnumerable<NbtViewRelatedIdType> _All { get { return CswEnum<NbtViewRelatedIdType>.All; } }
+        public static IEnumerable<NbtViewRelatedIdType> _All { get { return All; } }
         public static implicit operator NbtViewRelatedIdType( string str )
         {
             NbtViewRelatedIdType ret = Parse( str );
-            return ( ret != null ) ? ret : NbtViewRelatedIdType.Unknown;
+            return ret ?? Unknown;
         }
         public static readonly NbtViewRelatedIdType Unknown = new NbtViewRelatedIdType( "Unknown" );
 
@@ -194,14 +197,17 @@ namespace ChemSW.Nbt
         public static readonly NbtViewRelatedIdType ObjectClassId = new NbtViewRelatedIdType( "ObjectClassId" );
     }
 
+    /// <summary>
+    /// Options: NodeTypePropId, ObjectClassPropId
+    /// </summary>
     public sealed class NbtViewPropIdType : CswEnum<NbtViewPropIdType>
     {
         private NbtViewPropIdType( string Name ) : base( Name ) { }
-        public static IEnumerable<NbtViewPropIdType> _All { get { return CswEnum<NbtViewPropIdType>.All; } }
+        public static IEnumerable<NbtViewPropIdType> _All { get { return All; } }
         public static implicit operator NbtViewPropIdType( string str )
         {
             NbtViewPropIdType ret = Parse( str );
-            return ( ret != null ) ? ret : NbtViewPropIdType.Unknown;
+            return ret ?? Unknown;
         }
         public static readonly NbtViewPropIdType Unknown = new NbtViewPropIdType( "Unknown" );
 
@@ -209,14 +215,17 @@ namespace ChemSW.Nbt
         public static readonly NbtViewPropIdType ObjectClassPropId = new NbtViewPropIdType( "ObjectClassPropId" );
     }
 
+    /// <summary>
+    /// Options: First, Second
+    /// </summary>
     public sealed class NbtViewPropOwnerType : CswEnum<NbtViewPropOwnerType>
     {
         private NbtViewPropOwnerType( string Name ) : base( Name ) { }
-        public static IEnumerable<NbtViewPropOwnerType> _All { get { return CswEnum<NbtViewPropOwnerType>.All; } }
-        public static explicit operator NbtViewPropOwnerType( string str )
+        public static IEnumerable<NbtViewPropOwnerType> _All { get { return All; } }
+        public static implicit operator NbtViewPropOwnerType( string str )
         {
             NbtViewPropOwnerType ret = Parse( str );
-            return ( ret != null ) ? ret : NbtViewPropOwnerType.Unknown;
+            return ret ?? Unknown;
         }
         public static readonly NbtViewPropOwnerType Unknown = new NbtViewPropOwnerType( "Unknown" );
 
@@ -224,14 +233,17 @@ namespace ChemSW.Nbt
         public static readonly NbtViewPropOwnerType Second = new NbtViewPropOwnerType( "Second" );
     }
 
+    /// <summary>
+    /// Options: NodeTypePropId, ObjectClassPropId
+    /// </summary>
     public sealed class NbtViewPropType : CswEnum<NbtViewPropType>
     {
         private NbtViewPropType( string Name ) : base( Name ) { }
-        public static IEnumerable<NbtViewPropType> _All { get { return CswEnum<NbtViewPropType>.All; } }
-        public static explicit operator NbtViewPropType( string str )
+        public static IEnumerable<NbtViewPropType> _All { get { return All; } }
+        public static implicit operator NbtViewPropType( string str )
         {
             NbtViewPropType ret = Parse( str );
-            return ( ret != null ) ? ret : NbtViewPropType.Unknown;
+            return ret ?? Unknown;
         }
         public static readonly NbtViewPropType Unknown = new NbtViewPropType( "Unknown" );
 
@@ -239,14 +251,17 @@ namespace ChemSW.Nbt
         public static readonly NbtViewPropType ObjectClassPropId = new NbtViewPropType( "ObjectClassPropId" );
     }
 
+    /// <summary>
+    /// Options: Ascending, Descending
+    /// </summary>
     public sealed class NbtViewPropertySortMethod : CswEnum<NbtViewPropertySortMethod>
     {
         private NbtViewPropertySortMethod( string Name ) : base( Name ) { }
-        public static IEnumerable<NbtViewPropertySortMethod> _All { get { return CswEnum<NbtViewPropertySortMethod>.All; } }
-        public static explicit operator NbtViewPropertySortMethod( string str )
+        public static IEnumerable<NbtViewPropertySortMethod> _All { get { return All; } }
+        public static implicit operator NbtViewPropertySortMethod( string str )
         {
             NbtViewPropertySortMethod ret = Parse( str );
-            return ( ret != null ) ? ret : NbtViewPropertySortMethod.Unknown;
+            return ret ?? Unknown;
         }
         public static readonly NbtViewPropertySortMethod Unknown = new NbtViewPropertySortMethod( "Unknown" );
 
