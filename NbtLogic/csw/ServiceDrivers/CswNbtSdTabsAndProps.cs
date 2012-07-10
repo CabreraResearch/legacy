@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
+using System.IO;
 using System.Linq;
 using ChemSW.Core;
 using ChemSW.DB;
@@ -849,7 +850,7 @@ namespace ChemSW.Nbt.ServiceDrivers
             return ret;
         }
 
-        public bool SetPropBlobValue( byte[] Data, string FileName, string ContentType, string PropIdAttr, string Column )
+        public bool SetPropBlobValue( byte[] Data, string FileName, string ContentType, string PropIdAttr, string Column, string ReportPath )
         {
             bool ret = false;
             if( String.IsNullOrEmpty( Column ) ) Column = "blobdata";
@@ -892,10 +893,26 @@ namespace ChemSW.Nbt.ServiceDrivers
                     JctTable.Rows.Add( JRow );
                     JctUpdate.update( JctTable );
                 }
+                CswNbtMetaDataObjectClass ReportOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.ReportClass );
+                if( Node.ObjClass.ObjectClass == ReportOC )
+                {
+                    CswNbtObjClassReport Report = Node;
+                    string uniqueFileName = _CswNbtResources.AccessId + "_" + Report.RPTFile.JctNodePropId + ".rpt";
+                    _createReportFile( ReportPath + uniqueFileName, Report.RPTFile.JctNodePropId, Data );
+                }
                 ret = true;
             } // if( Int32.MinValue != NbtNodeKey.NodeId.PrimaryKey )
             return ret;
         } // SetPropBlobValue()
+
+        private void _createReportFile( string ReportTempFileName, int NodePropId, byte[] BlobData )
+        {
+            ( new FileInfo( ReportTempFileName ) ).Directory.Create();
+            FileMode fileMode = File.Exists( ReportTempFileName ) ? FileMode.Truncate : FileMode.CreateNew;
+            FileStream fs = new FileStream( ReportTempFileName, fileMode );
+            BinaryWriter BWriter = new BinaryWriter( fs, System.Text.Encoding.Default );
+            BWriter.Write( BlobData );
+        }
 
         private bool _canEditLayout()
         {

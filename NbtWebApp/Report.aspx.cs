@@ -117,20 +117,22 @@ namespace ChemSW.Nbt.WebPages
                     {
                         wsTools Tools = new wsTools( Master.CswNbtResources );
                         string ReportTempFileName = Tools.getFullReportFilePath( JctNodePropId.ToString() + ".rpt" );
-                        ( new FileInfo( ReportTempFileName ) ).Directory.Create();//creates the /rpt directory if it doesn't exist
-
-                        DataTable JctTable = _getReportSQLFromDB( JctNodePropId );
-
-                        if( JctTable.Rows.Count > 0 )
+                        if( !File.Exists( ReportTempFileName ) )
                         {
-                            if( !JctTable.Rows[0].IsNull( "blobdata" ) )
-                            {
-                                _createReportFileFromNodePropData( ReportTempFileName, JctTable.Rows[0] );
-                            }
-                            else
-                                throw new CswDniException( ErrorType.Warning, "Report is missing RPT file", "Report's RPTFile blobdata is null" );
-                        }
+                            ( new FileInfo( ReportTempFileName ) ).Directory.Create();//creates the /rpt directory if it doesn't exist
 
+                            DataTable JctTable = _getReportSQLFromDB( JctNodePropId );
+
+                            if( JctTable.Rows.Count > 0 )
+                            {
+                                if( !JctTable.Rows[0].IsNull( "blobdata" ) )
+                                {
+                                    _createReportFileFromNodePropData( ReportTempFileName, JctTable.Rows[0] );
+                                }
+                                else
+                                    throw new CswDniException( ErrorType.Warning, "Report is missing RPT file", "Report's RPTFile blobdata is null" );
+                            }
+                        }
                         if( File.Exists( ReportTempFileName ) )
                         {
                             _renderReport( ReportTempFileName, ReportTable );
@@ -161,10 +163,8 @@ namespace ChemSW.Nbt.WebPages
 
         private void _createReportFileFromNodePropData( string ReportTempFileName, DataRow reportData )
         {
-            string ContentType = reportData["field2"].ToString();
             byte[] BlobData = reportData["blobdata"] as byte[];
-            FileMode fileMode = File.Exists( ReportTempFileName ) ? FileMode.Truncate : FileMode.CreateNew;
-            FileStream fs = new FileStream( ReportTempFileName, fileMode );
+            FileStream fs = new FileStream( ReportTempFileName, FileMode.CreateNew );
             BinaryWriter BWriter = new BinaryWriter( fs, System.Text.Encoding.Default );
             BWriter.Write( BlobData );
         }
