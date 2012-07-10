@@ -240,6 +240,13 @@ namespace ChemSW.Nbt.Grid
                     case CswNbtMetaDataFieldType.NbtFieldType.Logical:
                         newValue = CswConvert.ToDisplayString( CswConvert.ToTristate( oldValue ) );
                         break;
+                    case CswNbtMetaDataFieldType.NbtFieldType.MOL:
+                        string molUrl = CswNbtNodePropMol.getLink( JctNodePropId, NodeId, NodeTypePropId );
+                        if( false == string.IsNullOrEmpty( molUrl ) )
+                        {
+                            newValue = "<a target=\"blank\" href=\"" + molUrl + "\">" + "MolImage.jpg" + "</a>";
+                        }
+                        break;
                     default:
                         newValue = oldValue;
                         break;
