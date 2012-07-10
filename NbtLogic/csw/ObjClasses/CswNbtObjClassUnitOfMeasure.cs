@@ -75,8 +75,6 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void afterPopulateProps()
         {
-            this.UnitType.Hidden = true;
-
             _CswNbtObjClassDefault.afterPopulateProps();
         }//afterPopulateProps()
 
