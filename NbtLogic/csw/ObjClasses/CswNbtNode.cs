@@ -217,11 +217,17 @@ namespace ChemSW.Nbt.ObjClasses
         private bool _IsDemo = false;
         public bool IsDemo { get { return _IsDemo; } set { _IsDemo = value; } }
 
-        private bool _ReadOnly = false;
-        public bool ReadOnly
+        private bool _ReadOnlyPermanent = false;
+        public bool ReadOnlyPermanent
         {
-            get { return _ReadOnly; }
-            set { _ReadOnly = value; }
+            get { return _ReadOnlyPermanent; }
+            set { _ReadOnlyPermanent = value; }
+        }
+        private bool _ReadOnlyTemporary = false;
+        public bool ReadOnlyTemporary
+        {
+            get { return _ReadOnlyTemporary || ReadOnlyPermanent; }
+            set { _ReadOnlyTemporary = value; }
         }
 
         private bool _Locked = false;

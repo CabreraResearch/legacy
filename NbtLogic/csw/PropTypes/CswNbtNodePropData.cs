@@ -293,19 +293,45 @@ namespace ChemSW.Nbt.PropTypes
             }
         } //NodeTypeProp
 
-        public bool ReadOnly
+        private bool _ReadOnlyTemporary = false;
+        /// <summary>
+        /// True if the property's value cannot be changed by the end user
+        /// This value is never saved to the database, so it's useful for object-class-specific logic
+        /// </summary>
+        public bool ReadOnlyTemporary
+        {
+            get { return _ReadOnlyTemporary || ReadOnlyPermanent; }
+            set { _ReadOnlyTemporary = value; }
+        }//ReadOnlyTemporary
+
+        /// <summary>
+        /// True if the property's value cannot be changed by the end user
+        /// This value is saved to the database if the node is saved.
+        /// </summary>
+        public bool ReadOnlyPermanent
         {
             get { return _getRowBoolVal( CswNbtSubField.PropColumn.ReadOnly ); }
             set { SetPropRowValue( CswNbtSubField.PropColumn.ReadOnly, value ); }
-        }//ReadOnly 
+        }//ReadOnlyPermanent
 
+        private bool _HiddenTemporary = false;
         /// <summary>
         /// Determines whether property displays.
+        /// This value is never saved to the database, so it's useful for object-class-specific logic
         /// </summary>
-        public bool Hidden 
+        public bool HiddenTemporary
+        {
+            get { return _HiddenTemporary || HiddenPermanent }
+            set { _HiddenTemporary = value; }
+        }
+        /// <summary>
+        /// Determines whether property displays.
+        /// This value is saved to the database if the node is saved.
+        /// </summary>
+        public bool HiddenPermanent
         {
             get { return _getRowBoolVal( CswNbtSubField.PropColumn.Hidden ); }
-            set { SetPropRowValue(CswNbtSubField.PropColumn.Hidden, value); }
+            set { SetPropRowValue( CswNbtSubField.PropColumn.Hidden, value ); }
         }
 
         /// <summary>
