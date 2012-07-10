@@ -73,17 +73,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void afterPopulateProps()
         {
-            //case 25759 - set capacity unittype view based on related material physical state
-            CswNbtNode MaterialNode = _CswNbtResources.Nodes.GetNode( Material.RelatedNodeId );
-            if( MaterialNode != null )
-            {
-                CswNbtObjClassMaterial MaterialNodeAsMaterial = MaterialNode;
-                if( false == string.IsNullOrEmpty( MaterialNodeAsMaterial.PhysicalState.Value ) )
-                {
-                    Capacity.View = _getQuantityUnitOfMeasureView( MaterialNodeAsMaterial.PhysicalState.Value.ToLower() );
-                }
-            }
-
+            Material.SetOnPropChange( OnMaterialChange );
             _CswNbtObjClassDefault.afterPopulateProps();
         }//afterPopulateProps()
 
@@ -109,8 +99,7 @@ namespace ChemSW.Nbt.ObjClasses
             CswNbtMetaDataObjectClass UnitOfMeasureOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UnitOfMeasureClass );
 
             CswNbtView StateSpecificUnitTypeView = new CswNbtView( _CswNbtResources );
-            StateSpecificUnitTypeView.ViewName = "CswNbtNodeTypePropQuantity_" + this.NodeId.ToString();
-
+            
             foreach( CswNbtMetaDataNodeType UnitOfMeasureNodeType in UnitOfMeasureOC.getNodeTypes() )
             {
                 CswNbtMetaDataNodeTypeProp UnitTypeProp = UnitOfMeasureNodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassUnitOfMeasure.UnitTypePropertyName );
@@ -141,9 +130,6 @@ namespace ChemSW.Nbt.ObjClasses
                     matchFound = UnitType == CswNbtObjClassUnitOfMeasure.UnitTypes.Weight ||
                                     UnitType == CswNbtObjClassUnitOfMeasure.UnitTypes.Volume;
                     break;
-                default:
-                    matchFound = false;
-                    break;
             }
 
             return matchFound;
@@ -154,6 +140,20 @@ namespace ChemSW.Nbt.ObjClasses
         #region Object class specific properties
 
         public CswNbtNodePropRelationship Material { get { return _CswNbtNode.Properties[MaterialPropertyName]; } }
+        private void OnMaterialChange()
+        {
+            //case 25759 - set capacity unittype view based on related material physical state
+            CswNbtNode MaterialNode = _CswNbtResources.Nodes.GetNode( Material.RelatedNodeId );
+            if( MaterialNode != null )
+            {
+                Material.ReadOnly = true;
+                CswNbtObjClassMaterial MaterialNodeAsMaterial = MaterialNode;
+                if( false == string.IsNullOrEmpty( MaterialNodeAsMaterial.PhysicalState.Value ) )
+                {
+                    Capacity.View = _getQuantityUnitOfMeasureView( MaterialNodeAsMaterial.PhysicalState.Value.ToLower() );
+                }
+            }
+        }
         public CswNbtNodePropQuantity Capacity { get { return _CswNbtNode.Properties[CapacityPropertyName]; } }
         public CswNbtNodePropLogical QuantityEditable { get { return _CswNbtNode.Properties[QuantityEditablePropertyName]; } }
         public CswNbtNodePropLogical Dispensable { get { return _CswNbtNode.Properties[DispensablePropertyName]; } }
