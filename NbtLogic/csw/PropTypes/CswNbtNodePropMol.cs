@@ -58,7 +58,7 @@ namespace ChemSW.Nbt.PropTypes
             }
         }
 
-        public string getLink()
+        public static string getLink( Int32 JctNodePropId, CswPrimaryKey NodeId, Int32 NodeTypePropId )
         {
             string ret = string.Empty;
             if( JctNodePropId != Int32.MinValue && NodeId != null && NodeTypePropId != Int32.MinValue )
@@ -83,7 +83,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             ParentObject[_MolSubField.ToXmlNodeName( true )] = Mol;
             ParentObject["column"] = _MolSubField.Column.ToString().ToLower();
-            ParentObject[CswNbtSubField.SubFieldName.Href.ToString().ToLower()] = getLink();
+            ParentObject[CswNbtSubField.SubFieldName.Href.ToString().ToLower()] = getLink( JctNodePropId, NodeId, NodeTypePropId );
         }
 
         public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )

@@ -162,16 +162,6 @@ namespace ChemSW.Nbt.WebServices
                 // default image, overridden below
                 //ret["thumbnailurl"] = "Images/icons/300/" + NodeType.IconFileName;
                 ret["thumbnailurl"] = "Images/icons/300/_placeholder.gif";
-                if( NodeType.NodeTypeName.Equals( "Chemical" ) )
-                {
-                    CswNbtMetaDataNodeTypeProp structureNTP = NodeType.getNodeTypeProp( "Structure" );
-                    if( null != structureNTP )
-                    {
-                        CswNbtNode node = _CswNbtResources.Nodes.GetNode( NodeId );
-                        CswNbtNodePropMol molProp = node.Properties[structureNTP];
-                        ret["thumbnailurl"] = molProp.getLink();
-                    }
-                }
             }
 
             // Map property order to insert position
@@ -213,10 +203,14 @@ namespace ChemSW.Nbt.WebServices
                     Int32 JctNodePropId = CswConvert.ToInt32( PropElm["jctnodepropid"].ToString() );
 
                     // Special case: Image becomes thumbnail
-                    if( FieldType == CswNbtMetaDataFieldType.NbtFieldType.Image.ToString() ) //||
-                    // FieldType == CswNbtMetaDataFieldType.NbtFieldType.MOL.ToString() )
+                    if( FieldType == CswNbtMetaDataFieldType.NbtFieldType.Image.ToString() )
                     {
                         ret["thumbnailurl"] = CswNbtNodePropImage.getLink( JctNodePropId, NodeId, NodeTypePropId );
+                    }
+
+                    if( FieldType == CswNbtMetaDataFieldType.NbtFieldType.MOL.ToString() )
+                    {
+                        ret["thumbnailurl"] = CswNbtNodePropMol.getLink( JctNodePropId, NodeId, NodeTypePropId );
                     }
                     else
                     {
