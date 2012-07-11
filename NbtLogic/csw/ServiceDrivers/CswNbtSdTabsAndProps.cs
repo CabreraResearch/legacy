@@ -178,18 +178,22 @@ namespace ChemSW.Nbt.ServiceDrivers
                                     RelatedObjectClassPk = RelatedNodeType.ObjectClassId;
                                 }
                             }
-                            foreach ( CswNbtNodePropRelationship Relationship in from _Prop
-                                                                                     in Ret.Properties
-                                                                                 where _Prop.getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.Relationship
-                                                                                 select _Prop )
+
+                            if( Int32.MinValue != RelatedNodeTypePk && Int32.MinValue != RelatedObjectClassPk )
                             {
-                                if( ( Relationship.TargetType == NbtViewRelatedIdType.NodeTypeId && 
-                                      Relationship.TargetId == RelatedNodeTypePk ) || 
-                                    ( Relationship.TargetType == NbtViewRelatedIdType.ObjectClassId &&
-                                      Relationship.TargetId == RelatedObjectClassPk ) )
+                                foreach ( CswNbtNodePropRelationship Relationship in from _Prop
+                                                                                         in Ret.Properties
+                                                                                     where _Prop.getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.Relationship
+                                                                                     select _Prop )
                                 {
-                                    Relationship.RelatedNodeId = RelatedNodePk;
-                                    break;
+                                    if ( ( Relationship.TargetType == NbtViewRelatedIdType.NodeTypeId &&
+                                           Relationship.TargetId == RelatedNodeTypePk ) ||
+                                         ( Relationship.TargetType == NbtViewRelatedIdType.ObjectClassId &&
+                                           Relationship.TargetId == RelatedObjectClassPk ) )
+                                    {
+                                        Relationship.RelatedNodeId = RelatedNodePk;
+                                        break;
+                                    }
                                 }
                             }
                         }
