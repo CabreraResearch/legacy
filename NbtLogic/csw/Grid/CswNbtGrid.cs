@@ -244,7 +244,7 @@ namespace ChemSW.Nbt.Grid
                         string molUrl = CswNbtNodePropMol.getLink( JctNodePropId, NodeId, NodeTypePropId );
                         if( false == string.IsNullOrEmpty( molUrl ) )
                         {
-                            newValue = "<a target=\"blank\" href=\"" + molUrl + "\">" + "MolImage.jpg" + "</a>";
+                            newValue = "<a target=\"blank\" href=\"" + molUrl + "\">" + "Structure.jpg" + "</a>";
                         }
                         break;
                     default:
