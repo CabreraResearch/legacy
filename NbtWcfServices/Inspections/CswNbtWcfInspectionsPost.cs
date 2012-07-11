@@ -123,12 +123,10 @@ namespace NbtWebAppServices.Response
 
                                 if( null != ButtonNtp )
                                 {
-                                    CswNbtObjClass.NbtButtonAction ButtonAction;
-                                    JObject ActionData;
-                                    string Message;
                                     _InspectionDesignOc = _InspectionDesignOc ?? _CswNbtWcfSessionResources.CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass );
                                     CswNbtObjClass NbtObjClass = CswNbtObjClassFactory.makeObjClass( _CswNbtWcfSessionResources.CswNbtResources, _InspectionDesignOc, InspectionNode );
-                                    NbtObjClass.onButtonClick( ButtonNtp, out ButtonAction, out ActionData, out Message );
+                                    CswNbtObjClass.NbtButtonData ButtonData = new CswNbtObjClass.NbtButtonData(ButtonNtp);
+                                    NbtObjClass.onButtonClick( ButtonData );
                                 }
                             }
                             Processed = true;
