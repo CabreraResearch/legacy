@@ -74,7 +74,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                return NbtViewPropIdType.NodeTypePropId;
+                return (NbtViewPropIdType) _CswNbtMetaDataNodeTypeProp.FKType;
             }
         }
 
