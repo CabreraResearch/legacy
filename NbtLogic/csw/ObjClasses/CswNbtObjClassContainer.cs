@@ -223,31 +223,31 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault.addDefaultViewFilters( ParentRelationship );
         }
 
-        public override bool onButtonClick( CswNbtMetaDataNodeTypeProp NodeTypeProp, out NbtButtonAction ButtonAction, out JObject ActionData, out string Message )
+        public override bool onButtonClick( NbtButtonData ButtonData )
         {
-            Message = string.Empty;
-            ActionData = new JObject();
-            ButtonAction = NbtButtonAction.Unknown;
-            CswNbtMetaDataObjectClassProp OCP = NodeTypeProp.getObjectClassProp();
-            if( null != NodeTypeProp && null != OCP )
+            
+            
+            
+            CswNbtMetaDataObjectClassProp OCP = ButtonData.NodeTypeProp.getObjectClassProp();
+            if( null != ButtonData.NodeTypeProp && null != OCP )
             {
                 if( OCP.PropName == DisposePropertyName )
                 {
                     _DisposeContainer();//case 26665
                     postChanges( true );
-                    ButtonAction = NbtButtonAction.refresh;
+                    ButtonData.Action = NbtButtonAction.refresh;
                 }
                 else if( OCP.PropName == UndisposePropertyName )
                 {
                     _UndisposeContainer();
                     postChanges( true );
-                    ButtonAction = NbtButtonAction.refresh;
+                    ButtonData.Action = NbtButtonAction.refresh;
                 }
                 else if( OCP.PropName == DispensePropertyName )
                 {
                     //ActionData = this.NodeId.ToString();
-                    ActionData = _getDispenseActionData();
-                    ButtonAction = NbtButtonAction.dispense;
+                    ButtonData.Data = _getDispenseActionData();
+                    ButtonData.Action = NbtButtonAction.dispense;
                 }
                 else
                 {
@@ -269,12 +269,12 @@ namespace ChemSW.Nbt.ObjClasses
                             break;
                     }
 
-                    ActionData["requestaction"] = OCP.PropName;
-                    ActionData["titleText"] = OCP.PropName + " Request for " + Material.CachedNodeName;
-                    ActionData["requestItemProps"] = RequestAct.getRequestItemAddProps( NodeAsRequestItem );
-                    ActionData["requestItemNodeTypeId"] = RequestAct.RequestItemNt.NodeTypeId;
+                    ButtonData.Data["requestaction"] = OCP.PropName;
+                    ButtonData.Data["titleText"] = OCP.PropName + " Request for " + Material.CachedNodeName;
+                    ButtonData.Data["requestItemProps"] = RequestAct.getRequestItemAddProps( NodeAsRequestItem );
+                    ButtonData.Data["requestItemNodeTypeId"] = RequestAct.RequestItemNt.NodeTypeId;
 
-                    ButtonAction = NbtButtonAction.request;
+                    ButtonData.Action = NbtButtonAction.request;
                 }
             }
             return true;

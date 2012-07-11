@@ -228,17 +228,17 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault.addDefaultViewFilters( ParentRelationship );
         }
 
-        public override bool onButtonClick( CswNbtMetaDataNodeTypeProp NodeTypeProp, out NbtButtonAction ButtonAction, out JObject ActionData, out string Message )
+        public override bool onButtonClick( NbtButtonData ButtonData )
         {
-            Message = string.Empty;
-            ActionData = new JObject();
-            ButtonAction = NbtButtonAction.Unknown;
-            CswNbtMetaDataObjectClassProp OCP = NodeTypeProp.getObjectClassProp();
-            if( null != NodeTypeProp && null != OCP )
+            
+            
+            
+            CswNbtMetaDataObjectClassProp OCP = ButtonData.NodeTypeProp.getObjectClassProp();
+            if( null != ButtonData.NodeTypeProp && null != OCP )
             {
                 if( LoginPropertyName == OCP.PropName )
                 {
-                    ButtonAction = NbtButtonAction.reauthenticate;
+                    ButtonData.Action = NbtButtonAction.reauthenticate;
                 }
             }
             return true;

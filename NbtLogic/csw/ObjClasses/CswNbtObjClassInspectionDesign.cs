@@ -349,14 +349,11 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault.addDefaultViewFilters( ParentRelationship );
         }
 
-        public override bool onButtonClick( CswNbtMetaDataNodeTypeProp NodeTypeProp, out NbtButtonAction ButtonAction, out JObject ActionData, out string Message )
+        public override bool onButtonClick( NbtButtonData ButtonData )
         {
-            Message = string.Empty;
-            ActionData = new JObject();
-            ButtonAction = NbtButtonAction.Unknown;
-            if( null != NodeTypeProp )
+            if( null != ButtonData && null != ButtonData.NodeTypeProp )
             {
-                CswNbtMetaDataObjectClassProp ButtonOCP = NodeTypeProp.getObjectClassProp();
+                CswNbtMetaDataObjectClassProp ButtonOCP = ButtonData.NodeTypeProp.getObjectClassProp();
                 CswNbtPropEnmrtrFiltered QuestionsFlt;
                 switch( ButtonOCP.PropName )
                 {
@@ -385,7 +382,7 @@ namespace ChemSW.Nbt.ObjClasses
                         {
                             if( _Deficient )
                             {
-                                Message = "Inspection is deficient and requires further action.";
+                                ButtonData.Message = "Inspection is deficient and requires further action.";
                                 this.Status.Value = InspectionStatusAsString( InspectionStatus.Action_Required );
                             }
                             else
@@ -394,8 +391,8 @@ namespace ChemSW.Nbt.ObjClasses
                                     InspectionStatusAsString( _allAnsweredinTime
                                                                  ? InspectionStatus.Completed
                                                                  : InspectionStatus.Completed_Late );
-                                Message = "Inspection marked " + StatusValue + ".";
-                                ButtonAction = NbtButtonAction.refresh;
+                                ButtonData.Message = "Inspection marked " + StatusValue + ".";
+                                ButtonData.Action = NbtButtonAction.refresh;
                                 this.Status.Value = StatusValue;
                             }
                             if( true == this.InspectionDate.Empty )
@@ -422,15 +419,15 @@ namespace ChemSW.Nbt.ObjClasses
                         } // if( _allAnswered )
                         else
                         {
-                            Message =
+                           ButtonData.Message =
                                 "Inspection can not be finished until all questions are answered.  Questions remaining: " +
                                 UnansweredQuestions.ToString();
                         }
                         break;
 
                     case CancelPropertyName:
-                        Message = "Inspection has been cancelled.";
-                        ButtonAction = NbtButtonAction.refresh;
+                        ButtonData.Message = "Inspection has been cancelled.";
+                        ButtonData.Action = NbtButtonAction.refresh;
                         this.Status.Value = InspectionStatusAsString( InspectionStatus.Cancelled );
                         break;
 
@@ -445,7 +442,7 @@ namespace ChemSW.Nbt.ObjClasses
                                 QuestionProp.Answer = QuestionProp.PreferredAnswer;
                             }
                         }
-                        ButtonAction = NbtButtonAction.refresh;
+                        ButtonData.Action = NbtButtonAction.refresh;
                         break;
                 }
                 this.postChanges( false );

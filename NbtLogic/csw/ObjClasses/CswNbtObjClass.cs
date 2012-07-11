@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
@@ -39,7 +40,7 @@ namespace ChemSW.Nbt.ObjClasses
         public abstract void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false );
         public abstract void afterDeleteNode();
         public abstract void afterPopulateProps();
-        public abstract bool onButtonClick( CswNbtMetaDataNodeTypeProp NodeTypeProp, out NbtButtonAction ButtonAction, out JObject ActionData, out string Message );
+        public abstract bool onButtonClick( NbtButtonData ButtonData );
         public abstract void addDefaultViewFilters( CswNbtViewRelationship ParentRelationship );
         
         public Int32 NodeTypeId { get { return _CswNbtNode.NodeTypeId; } }
@@ -47,6 +48,27 @@ namespace ChemSW.Nbt.ObjClasses
         public CswPrimaryKey NodeId { get { return _CswNbtNode.NodeId; } }
         public CswNbtNode Node { get { return _CswNbtNode; } }
 
+        public class NbtButtonData
+        {
+            public NbtButtonData( CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp )
+            {
+                Data = new JObject();
+                Action = NbtButtonAction.Unknown;
+
+                Debug.Assert( null != CswNbtMetaDataNodeTypeProp, "CswNbtMetaDataNodeTypeProp is null." );
+                if(null == CswNbtMetaDataNodeTypeProp)
+                {
+                    throw new CswDniException( "Property is unknown." );
+                }
+                NodeTypeProp = CswNbtMetaDataNodeTypeProp;
+            }
+            public NbtButtonAction Action;
+            public string Event;
+            public CswNbtMetaDataNodeTypeProp NodeTypeProp;
+            public JObject Data;
+            public string Message;
+
+        }
 
         /// <summary>
         /// Button Actions
