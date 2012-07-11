@@ -223,23 +223,7 @@ namespace ChemSW.Nbt.PropTypes
         /// <param name="IsCopy">True if the update is part of a Copy operation</param>
         virtual public void onBeforeUpdateNodePropRow( bool IsCopy, bool OverrideUniqueValidation )
         {
-
-            /*case 26545
-            Check if the field type is text, then check if it's a null string
-            If it is not a null string, we can continue on to check if it is unique
-            if it IS a null string, we don't do the uniqueness check, as uniqueness does not apply to empty strings
-            */
-            bool fieldIsNotNull = true;
-            CswNbtMetaDataFieldType textFT = _CswNbtResources.MetaData.getFieldType( CswNbtMetaDataFieldType.NbtFieldType.Text );
-            if( NodeTypeProp.getFieldType().FieldTypeId == textFT.FieldTypeId )
-            {
-                if( _CswNbtResources.Nodes[this.NodeId].Properties[this.NodeTypeProp].Field1.Equals( "" ) )
-                {
-                    fieldIsNotNull = false;
-                }
-            }
-
-            if( fieldIsNotNull )
+            if( false == _CswNbtResources.Nodes[this.NodeId].Properties[this.NodeTypeProp].Empty ) //case 26546 - we allow unique properties to be empty
             {
                 //bz # 6686
                 if( IsUnique() && WasModified && !OverrideUniqueValidation )
@@ -287,7 +271,7 @@ namespace ChemSW.Nbt.PropTypes
                     }
 
                 }//if IsUnique
-            } //false == equals()
+            } //if empty
 
             // case 25780 - copy first 512 characters of gestalt to gestaltsearch
             if( _CswNbtNodePropData.WasModified )

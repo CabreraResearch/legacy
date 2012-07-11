@@ -73,9 +73,9 @@ namespace ChemSW.Nbt.Schema
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase24446Container() ) );            //01P-46
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase26965() ) );                     //01P-47
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase24508D() ) );                    //01P-48
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase26609ReportUserName() ) );       //01P-49
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase26609UpdateHiddenProp() ) );     //01P-50
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase26609SetValOnAdd() ) );          //01P-51
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCaseXXXXX() ) );                     //01P-49 -- case 27091
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCaseXXXXX() ) );                     //01P-50 -- case 27091
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCaseXXXXX() ) );                     //01P-51 -- case 27091
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase26714() ) );                     //01P-52
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase26758Fixed() ) );                //01P-53
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase25291GHS() ) );                  //01P-54
@@ -84,8 +84,11 @@ namespace ChemSW.Nbt.Schema
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase26896() ) );                     //01P-57
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase26772() ) );                     //01P-58
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase27071RequestFulfillment() ) );   //01P-59
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase26683() ) );                     //01P-60
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase27088() ) );                     //01P-61
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase26829() ) );                     //01P-60
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase26974() ) );                     //01P-61
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase24486() ) );                     //01P-62
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase26683() ) );                     //01P-63
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase27088() ) );                     //01P-64 
             
             
             // This automatically detects the latest version

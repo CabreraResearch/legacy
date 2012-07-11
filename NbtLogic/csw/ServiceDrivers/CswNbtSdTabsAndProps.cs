@@ -19,6 +19,7 @@ namespace ChemSW.Nbt.ServiceDrivers
 {
     public class CswNbtSdTabsAndProps
     {
+
         private readonly CswNbtResources _CswNbtResources;
         private readonly ICswNbtUser _ThisUser;
         private readonly bool _IsMultiEdit;
@@ -875,6 +876,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                     JctUpdate.update( JctTable );
                 }
                 ret = true;
+
             } // if( Int32.MinValue != NbtNodeKey.NodeId.PrimaryKey )
             return ret;
         }
