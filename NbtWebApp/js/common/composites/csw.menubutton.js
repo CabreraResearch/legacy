@@ -5,8 +5,10 @@
 (function () {
     'use strict';
 
-    Csw.composites.menu = Csw.composites.menu ||
-        Csw.composites.register('menu', function (cswParent, options) {
+    Csw.composites.menuButton = Csw.composites.menuButton ||
+        Csw.composites.register('menuButton', function (cswParent, options) {
+            Ext.require('Ext.button.*');
+            Ext.require('Ext.menu.*');
 
             var cswPrivate = {
                 ID: '',

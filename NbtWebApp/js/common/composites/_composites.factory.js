@@ -45,6 +45,14 @@
 //                    return Csw.composites.table(cswParent, opts);
 //                };
                 
+                cswParent.menuButton = function (opts) {
+                    /// <summary> Creates a Csw.menuButton on this element</summary>
+                    /// <param name="opts" type="Object">Options to define the table.</param>
+                    /// <returns type="Csw.composites.menuButton">A Csw.composites.menuButton</returns> 
+                    opts = cswPrivate.controlPreProcessing(opts, 'menuButton');
+                    return Csw.composites.menuButton(cswParent, opts);
+                };
+
                 cswParent.quantity = function (opts) {
                     /// <summary> Creates a Csw.quantity on this element</summary>
                     /// <param name="opts" type="Object">Options to define the quantity.</param>

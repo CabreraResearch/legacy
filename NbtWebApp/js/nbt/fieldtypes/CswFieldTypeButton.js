@@ -130,7 +130,7 @@
                 value = Csw.string(propVals.text, o.propData.name),
                 mode = Csw.string(propVals.mode, 'button'),
                 messagediv,
-                table,
+                table, btnCell,
                 button;
 
             function onClick() {
@@ -138,24 +138,32 @@
             }
 
             table = propDiv.table({
-                ID: Csw.makeId(o.ID, '', 'tbl')
+                ID: Csw.makeId(o.ID, 'tbl')
             });
-
-            if (mode === 'button') {
-                button = table.cell(1, 1).button({
-                    ID: o.ID,
-                    enabledText: value,
-                    disabledText: value,
-                    disableOnClick: true,
-                    onClick: onClick
-                });
-            }
-            else {
-                button = table.cell(1, 1).a({
-                    ID: o.ID,
-                    value: value,
-                    onClick: onClick
-                });
+            btnCell = table.cell(1, 1);
+            switch (mode) {
+                case 'button':
+                    button = btnCell.button({
+                        ID: o.ID,
+                        enabledText: value,
+                        disabledText: value,
+                        disableOnClick: true,
+                        onClick: onClick
+                    });
+                    break;
+                case 'menu':
+                    button = btnCell.menuButton({
+                        ID: Csw.makeId(o.ID, 'menuBtn')
+                    });
+                    break;
+                case 'link': //this is a fallthrough case
+                default:
+                    button = btnCell.a({
+                        ID: o.ID,
+                        value: value,
+                        onClick: onClick
+                    });
+                    break;
             }
 
             if (Csw.bool(o.ReadOnly)) {
