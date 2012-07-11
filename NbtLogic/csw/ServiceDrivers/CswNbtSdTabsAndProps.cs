@@ -170,22 +170,22 @@ namespace ChemSW.Nbt.ServiceDrivers
                         {
                             Int32 RelatedNodeTypePk = CswConvert.ToInt32( RelatedNodeTypeId );
                             Int32 RelatedObjectClassPk = CswConvert.ToInt32( RelatedObjectClassId );
-                            
-                            if(Int32.MinValue != RelatedNodeTypePk && Int32.MinValue == RelatedObjectClassPk)
+
+                            if( Int32.MinValue != RelatedNodeTypePk && Int32.MinValue == RelatedObjectClassPk )
                             {
                                 CswNbtMetaDataNodeType RelatedNodeType = _CswNbtResources.MetaData.getNodeType( RelatedNodeTypePk );
-                                if(null != RelatedNodeType)
+                                if( null != RelatedNodeType )
                                 {
                                     RelatedObjectClassPk = RelatedNodeType.ObjectClassId;
                                 }
                             }
-                            foreach ( CswNbtNodePropRelationship Relationship in from _Prop
-                                                                                     in Ret.Properties
-                                                                                 where _Prop.getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.Relationship
-                                                                                 select _Prop )
+                            foreach( CswNbtNodePropRelationship Relationship in from _Prop
+                                                                                    in Ret.Properties
+                                                                                where _Prop.getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.Relationship
+                                                                                select _Prop )
                             {
-                                if( ( Relationship.TargetType == NbtViewRelatedIdType.NodeTypeId && 
-                                      Relationship.TargetId == RelatedNodeTypePk ) || 
+                                if( ( Relationship.TargetType == NbtViewRelatedIdType.NodeTypeId &&
+                                      Relationship.TargetId == RelatedNodeTypePk ) ||
                                     ( Relationship.TargetType == NbtViewRelatedIdType.ObjectClassId &&
                                       Relationship.TargetId == RelatedObjectClassPk ) )
                                 {
@@ -880,7 +880,7 @@ namespace ChemSW.Nbt.ServiceDrivers
             return ret;
         }
 
-        public bool SetPropBlobValue( byte[] Data, string FileName, string ContentType, string PropIdAttr, string Column, string ReportPath )
+        public bool SetPropBlobValue( byte[] Data, string FileName, string ContentType, string PropIdAttr, string Column )
         {
             bool ret = false;
             if( String.IsNullOrEmpty( Column ) ) Column = "blobdata";
@@ -923,12 +923,12 @@ namespace ChemSW.Nbt.ServiceDrivers
                     JctTable.Rows.Add( JRow );
                     JctUpdate.update( JctTable );
                 }
-                CswNbtMetaDataObjectClass ReportOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.ReportClass );
-                if( Node.ObjClass.ObjectClass == ReportOC )
+                if( Node.getObjectClass().ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.ReportClass )
                 {
                     CswNbtObjClassReport Report = Node;
-                    string uniqueFileName = _CswNbtResources.AccessId + "_" + Report.RPTFile.JctNodePropId + ".rpt";
-                    _createReportFile( ReportPath + uniqueFileName, Report.RPTFile.JctNodePropId, Data );
+                    CswFilePath FilePathTools = new CswFilePath( _CswNbtResources.CswResources );
+                    string ReportPath = FilePathTools.getFullReportFilePath( Report.RPTFile.JctNodePropId.ToString() );
+                    _createReportFile( ReportPath, Report.RPTFile.JctNodePropId, Data );
                 }
                 ret = true;
             } // if( Int32.MinValue != NbtNodeKey.NodeId.PrimaryKey )

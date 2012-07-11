@@ -7,7 +7,6 @@ using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.ObjClasses;
-using ChemSW.Nbt.WebServices;
 using CrystalDecisions.CrystalReports.Engine;
 using CrystalDecisions.Web;
 
@@ -115,8 +114,8 @@ namespace ChemSW.Nbt.WebPages
                     Int32 JctNodePropId = ReportNode.RPTFile.JctNodePropId;
                     if( JctNodePropId > 0 )
                     {
-                        wsTools Tools = new wsTools( Master.CswNbtResources );
-                        string ReportTempFileName = Tools.getFullReportFilePath( JctNodePropId.ToString() + ".rpt" );
+                        CswFilePath FilePathTools = new CswFilePath( Master.CswNbtResources.CswResources );
+                        string ReportTempFileName = FilePathTools.getFullReportFilePath( JctNodePropId.ToString() );
                         if( !File.Exists( ReportTempFileName ) )
                         {
                             ( new FileInfo( ReportTempFileName ) ).Directory.Create();//creates the /rpt directory if it doesn't exist

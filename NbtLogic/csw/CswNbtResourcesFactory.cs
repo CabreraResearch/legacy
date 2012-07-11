@@ -40,7 +40,7 @@ namespace ChemSW.Nbt
             CswSetupVblsNbt SetupVbls = new CswSetupVblsNbt( SetupMode );
             CswDbCfgInfoNbt ConfigInfo = new CswDbCfgInfoNbt( SetupMode, IsMobile: false );
 
-            string FilesPath = CswTools.getConfigurationFilePath( SetupMode );
+            string FilesPath = CswFilePath.getConfigurationFilePath( SetupMode );
 
             CswNbtResources ReturnVal = new CswNbtResources( AppType, SetupVbls, ConfigInfo, ExcludeDisabledModules, IsDeleteModeLogical, CswSuperCycleCache, CswResourcesMaster, CswLogger );
             ReturnVal.SetDbResources( new CswNbtTreeFactory( FilesPath ), PooledConnectionState );

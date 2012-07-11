@@ -106,8 +106,7 @@ namespace ChemSW.Nbt.WebServices
 
         public bool SetPropBlobValue( byte[] Data, string FileName, string ContentType, string PropIdAttr, string Column )
         {
-            string ReportPath = System.Web.Hosting.HostingEnvironment.ApplicationPhysicalPath + "bin\\rpt\\";
-            return _TabsPropsSd.SetPropBlobValue( Data, FileName, ContentType, PropIdAttr, Column, ReportPath );
+            return _TabsPropsSd.SetPropBlobValue( Data, FileName, ContentType, PropIdAttr, Column );
         } // SetPropBlobValue()
 
         /// <summary>

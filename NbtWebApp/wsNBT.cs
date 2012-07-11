@@ -2737,8 +2737,8 @@ namespace ChemSW.Nbt.WebServices
                     // putting these in the param list causes the webservice to fail with
                     // "System.InvalidOperationException: Request format is invalid: application/octet-stream"
                     string PropId = Context.Request["propid"];
-                    wsTools Tools = new wsTools( _CswNbtResources );
-                    Stream MolStream = Tools.getFileInputStream( Context, "qqfile" );
+                    CswTempFile TempTools = new CswTempFile( _CswNbtResources.CswResources );
+                    Stream MolStream = TempTools.getFileInputStream( Context, "qqfile" );
 
                     if( null != MolStream && false == string.IsNullOrEmpty( PropId ) )
                     {
@@ -4398,7 +4398,7 @@ namespace ChemSW.Nbt.WebServices
             {
                 _initResources();
                 AuthenticationStatus = _attemptRefresh( true );
-                
+
                 _setEditMode( NodeEditMode.Add );
                 ReturnVal = CswNbtActReceiving.receiveMaterial( ReceiptDefinition, _CswNbtResources );
 
@@ -4883,8 +4883,8 @@ namespace ChemSW.Nbt.WebServices
 
                 if( AuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
-                    wsTools Tools = new wsTools( _CswNbtResources );
-                    Tools.purgeTempFiles( "xls" );
+                    CswTempFile TempTools = new CswTempFile( _CswNbtResources.CswResources );
+                    TempTools.purgeTempFiles( "xls" );
 
                     string TempFileName = "excelupload_" + _CswNbtResources.CurrentUser.Username + "_" + DateTime.Now.ToString( "MMddyyyy_HHmmss" ) + ".xls";
 
@@ -4893,7 +4893,7 @@ namespace ChemSW.Nbt.WebServices
 
                     HttpPostedFile File = Context.Request.Files[0];
                     Stream FileStream = File.InputStream;
-                    string FullPathAndFileName = Tools.cacheInputStream( FileStream, TempFileName );
+                    string FullPathAndFileName = TempTools.cacheInputStream( FileStream, TempFileName );
 
                     ExcelDataTable = ws.convertExcelFileToDataTable( FullPathAndFileName, ref ErrorMessage, ref WarningMessage );
 
