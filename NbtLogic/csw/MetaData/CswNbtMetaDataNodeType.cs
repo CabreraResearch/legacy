@@ -429,6 +429,10 @@ namespace ChemSW.Nbt.MetaData
         {
             return _CswNbtMetaDataResources.NodeTypePropsCollection.getNodeTypePropByObjectClassProp( NodeTypeId, ObjectClassPropName );
         }
+        public CswNbtMetaDataNodeTypeProp getNodeTypePropByObjectClassProp( Int32 ObjectClassPropId )
+        {
+            return _CswNbtMetaDataResources.NodeTypePropsCollection.getNodeTypePropByObjectClassProp( NodeTypeId, ObjectClassPropId );
+        }
         public Int32 getNodeTypePropIdByObjectClassProp( string ObjectClassPropName )
         {
             return _CswNbtMetaDataResources.NodeTypePropsCollection.getNodeTypePropIdByObjectClassProp( NodeTypeId, ObjectClassPropName );
