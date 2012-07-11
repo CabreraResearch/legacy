@@ -171,7 +171,7 @@ namespace ChemSW.Nbt.PropTypes
         /// <summary>
         /// The Node's Primary Key
         /// </summary>
-        public CswPrimaryKey NodeId { get { return ( _CswNbtNodePropData.NodeId ); } set { _CswNbtNodePropData.NodeId = value; } }
+        public CswPrimaryKey NodeId { get { return ( _CswNbtNodePropData.NodeId ); } } //set { _CswNbtNodePropData.NodeId = value; } }
         /// <summary>
         /// True if the property's value cannot be changed by the end user
         /// </summary>
