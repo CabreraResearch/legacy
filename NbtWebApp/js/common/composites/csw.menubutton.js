@@ -12,13 +12,11 @@
 
             var cswPrivate = {
                 ID: '',
-                menu: {
-                    items: [{
-                        text:'Menu Item 1'
-                    }]
-                },
+                menuOptions: ['Menu Item 1', 'Menu Item 2'],
+                menu: [],
+                selectedText: '',
                 onClick: null,
-                text: '',
+                state: '',
                 width: 240
             };
             var cswPublic = {};
@@ -37,16 +35,28 @@
                     $.extend(cswPrivate, options);
                 }
                 cswParent.empty();
-                
+
+                Csw.each(cswPrivate.menuOptions, function(val, key) {
+                    cswPrivate.menu.push({ text: val, handler: function(par1, par2) { Csw.tryExec(cswPrivate.onClick, par1, par2); } });
+                });
+
                 Ext.create('Ext.button.Split', {
-                    renderTo: cswPrivate.ID,
-                    text: cswPrivate.text,
+                    renderTo: cswParent.getId(),
+                    text: cswPrivate.selectedText,
                     handler: cswPrivate.onClick,
-                    scale: 'small',
-                    menu: new Ext.menu.Menu(cswPrivate.menu)
+                    scale: 'medium',
+                    menu: new Ext.menu.Menu({items: cswPrivate.menu})
                 });
 
             } ()); // constructor
+
+            cswPublic.disable = function() {
+
+            };
+
+            cswPublic.enable = function () {
+
+            };
 
             return cswPublic;
         });

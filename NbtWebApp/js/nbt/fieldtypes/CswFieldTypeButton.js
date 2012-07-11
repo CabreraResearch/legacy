@@ -79,8 +79,12 @@
                 mode = Csw.string(propVals.mode, 'button'),
                 messagediv,
                 table, btnCell,
-                button;
+                button, menuoptions, state, text;
 
+            menuoptions = propVals.menuoptions.split(',');
+            state = propVals.state;
+            text = propVals.text;
+            
             function onClick() {
                 onButtonClick(o.propid, button, messagediv, o);
             }
@@ -101,7 +105,11 @@
                     break;
                 case 'menu':
                     button = btnCell.menuButton({
-                        ID: Csw.makeId(o.ID, 'menuBtn')
+                        ID: Csw.makeId(o.ID, 'menuBtn'),
+                        selectedText: text,
+                        menuOptions: menuoptions,
+                        state: state,
+                        onClick: onClick
                     });
                     break;
                 case 'link': //this is a fallthrough case
