@@ -1,10 +1,10 @@
 /// <reference path="~/js/CswNbt-vsdoc.js" />
 /// <reference path="~/js/CswCommon-vsdoc.js" />
-'use strict';
+
 window.internetExplorerVersionNo = window.internetExplorerVersionNo || - 1;
 
 window.ChemSW = window.Csw = (function () {
-
+    'use strict';
     var internal = {
         document: window.document,
         navigator: window.navigator,
@@ -24,6 +24,7 @@ window.ChemSW = window.Csw = (function () {
     * makeNameSpace's only tie to the Csw closure is against internal for default values.
     */
     function makeNameSpace(externalCollection, anInternalCollection) {
+        'use strict';
         var internalCollection = {
             document: internal.document,
             navigator: internal.navigator,
@@ -50,6 +51,7 @@ window.ChemSW = window.Csw = (function () {
                     /// <param name="obj" type="Object"> Object to pass </param>
                     /// <param name="isProtected" type="Boolean"> If true, the object cannot be removed from the namespace </param>
                     /// <returns type="Boolean">True if the object name did not already exist in the namespace.</returns>
+                    'use strict';
                     var succeeded = false;
                     if (internalCollection.methods.indexOf(name) === -1) {
                         internalCollection.methods.push(name);
@@ -70,6 +72,7 @@ window.ChemSW = window.Csw = (function () {
                     /// </summary>
                     /// <param name="name" type="String"> Name of the object.</param>
                     /// <returns type="Boolean">True if the object was removed.</returns>
+                    'use strict';
                     var succeeded = false;
                     if (internalCollection.protectedmethods.indexOf(name) === -1) {
                         if (internalCollection.methods.indexOf(name) !== -1) {
@@ -88,6 +91,7 @@ window.ChemSW = window.Csw = (function () {
                     /// </summary>
                     /// <param name="propName" type="String"> Name of the property </param>
                     /// <returns type="Object">A clone of the property.</returns>
+                    'use strict';
                     var retVal;
                     if (propName && internalCollection.hasOwnProperty(propName)) {
                         retVal = internalCollection[propName];
@@ -105,6 +109,7 @@ window.ChemSW = window.Csw = (function () {
                     /// </summary>
                     /// <param name="name" type="String"> Name of the object </param>
                     /// <returns type="Boolean">True if the property was updated.</returns>
+                    'use strict';
                     var success = false;
                     if (prop && val && internalCollection.hasOwnProperty(prop)) {
                         internalCollection[prop] = val;
@@ -121,6 +126,7 @@ window.ChemSW = window.Csw = (function () {
                     /// <param name="propName" type="String"> Name of the object </param>
                     /// <param name="val" type="Object"> Value of the object </param>
                     /// <returns type="Boolean">True if the property was added.</returns>
+                    'use strict';
                     var success = false;
                     if (propName && val && false === internalCollection.hasOwnProperty(propName)) {
                         internalCollection[propName] = val;
@@ -135,6 +141,7 @@ window.ChemSW = window.Csw = (function () {
                     ///   Fetch a dereferenced copy of the currently registered properties on the ChemSW namespace
                     /// </summary>
                     /// <returns type="Array">An array of property names.</returns>
+                    'use strict';
                     var methods = internalCollection.methods.slice(0);
                     return methods;
                 });
@@ -182,6 +189,7 @@ window.ChemSW = window.Csw = (function () {
 
     external.method = external.method ||
         external.register('method', function (func) {
+            'use strict';
             var that = this;
             return function () {
                 var args = Array.prototype.slice.call(arguments, 0);

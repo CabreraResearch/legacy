@@ -14,7 +14,10 @@
                 viewid: '',
                 canSelectRow: true,
                 onSelect: null,
-                forceFit: true
+                forceFit: true,
+                relatednodeid: '',
+                relatednodetypeid: '',
+                relatedobjectclassid: ''
             };
             if (options) $.extend(cswPrivate, options);
 
@@ -81,6 +84,9 @@
                     viewid: viewid,
                     nodeid: cswPrivate.nodeid,
                     cswnbtnodekey: cswPrivate.cswnbtnodekey,
+                    relatednodeid: Csw.string(cswPrivate.relatednodeid),
+                    relatednodetypeid: Csw.string(cswPrivate.relatednodetypeid),
+                    relatedobjectclassid: Csw.string(cswPrivate.relatedobjectclassid),
                     propid: cswPrivate.ID,
                     limitMenuTo: 'Add',
                     onAddNode: function () {

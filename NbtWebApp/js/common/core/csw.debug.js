@@ -19,11 +19,14 @@
         prepLogglyMsg: function(msg) {
             var ret = msg;
             try {
-                if (false === Csw.isString(ret) && (Csw.isArray(ret) || Csw.isPlainObject(ret))) {
-                    var onSuccess = function(prop, name) {
-                        ret += name + '=' + prop;
+                if (false === Csw.isString(msg) && (Csw.isArray(msg) || Csw.isPlainObject(msg) || (typeof ret === 'object' && ret instanceof Object))) {
+                    ret = 'customerid="' + Csw.clientSession.currentAccessId() + '"';
+                    var onSuccess = function (prop, name) {
+                        ret += ', ' + name + '="' + prop + '"';
                     };
-                    Csw.crawlObject(ret, onSuccess, true);
+                    Csw.crawlObject(msg, onSuccess, true);
+                } else {
+                    ret = 'customerid="' + Csw.clientSession.currentAccessId() + '", ' + msg;
                 }
             } catch(e) {}
             return ret;
@@ -50,6 +53,42 @@
         return ret;
     }());
     
+    cswPublic.logglyPerf = (function () {
+        var ret = {};
+        try {
+            var key = "99cebafb-29e6-449d-b1a9-32efe4cbcd2d";
+            var host = ("https:" == document.location.protocol) ? "https://logs.loggly.com" : 'http://logs.loggly.com';
+            if (loggly) {
+                ret = new loggly({ url: host + '/inputs/' + key + '?rt=1', level: 'info' });
+            } else {
+                window.setTimeout(function () {
+                    ret = new loggly({ url: host + '/inputs/' + key + '?rt=1', level: 'info' });
+                }, 5000);
+            }
+        } catch (e) {
+            //Swallow
+        }
+        return ret;
+    }());
+
+    cswPublic.logglyErr = (function () {
+        var ret = {};
+        try {
+            var key = "b74600c4-9512-4092-bde0-8627be0bb742";
+            var host = ("https:" == document.location.protocol) ? "https://logs.loggly.com" : 'http://logs.loggly.com';
+            if (loggly) {
+                ret = new loggly({ url: host + '/inputs/' + key + '?rt=1', level: 'error' });
+            } else {
+                window.setTimeout(function () {
+                    ret = new loggly({ url: host + '/inputs/' + key + '?rt=1', level: 'error' });
+                }, 5000);
+            }
+        } catch (e) {
+            //Swallow
+        }
+        return ret;
+    }());
+
     cswPublic.assert = function (truth, msg) {
         /// <summary>Evaluates the truthiness of truth and throws an exception with msg val if false.</summary>
         try {
@@ -76,7 +115,7 @@
             msg = cswPrivate.prepMsg(msg);
             console.error(msg);
             try {
-                Csw.error.loggly.error(cswPrivate.prepLogglyMsg(msg));
+                Csw.debug.logglyErr.error(cswPrivate.prepLogglyMsg(msg));
             } catch(e) {}
         } catch (e) {
             Csw.debug.log(msg);
@@ -119,7 +158,7 @@
             msg = cswPrivate.prepMsg(msg);
             console.info(msg);
             try {
-                Csw.error.loggly.info(cswPrivate.prepLogglyMsg(msg));
+                Csw.debug.logglyPerf.info(cswPrivate.prepLogglyMsg(msg));
             } catch (e) { } 
         } catch (e) {
             Csw.debug.log(msg);
@@ -196,7 +235,7 @@
             msg = cswPrivate.prepMsg(msg);
             console.warn(msg);
             try {
-                Csw.error.loggly.warn(cswPrivate.prepLogglyMsg(msg));
+                Csw.debug.loggly.warn(cswPrivate.prepLogglyMsg(msg));
             } catch (e) { }
         } catch (e) {
             Csw.debug.log(msg);

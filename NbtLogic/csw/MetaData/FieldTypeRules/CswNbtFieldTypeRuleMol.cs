@@ -17,10 +17,12 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             _CswNbtFieldResources = CswNbtFieldResources;
             _CswNbtFieldTypeRuleDefault = new CswNbtFieldTypeRuleDefaultImpl( _CswNbtFieldResources );
 
-            MolSubField = new CswNbtSubField( _CswNbtFieldResources,  CswNbtSubField.PropColumn.ClobData, CswNbtSubField.SubFieldName.Mol );
+            MolSubField = new CswNbtSubField( _CswNbtFieldResources, CswNbtSubField.PropColumn.ClobData, CswNbtSubField.SubFieldName.Mol );
             // BZ 8638
             //MolSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotNull |
             //                          CswNbtPropFilterSql.PropertyFilterMode.Null;
+            MolSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotNull );
+            MolSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Null );
             SubFields.add( MolSubField );
         }//ctor
 
@@ -35,7 +37,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
         }
 
 
-        public bool SearchAllowed { get { return ( false ); } }
+        public bool SearchAllowed { get { return ( _CswNbtFieldTypeRuleDefault.SearchAllowed ); } }
 
         public string renderViewPropFilter( ICswNbtUser RunAsUser, CswNbtViewPropertyFilter CswNbtViewPropertyFilterIn )
         {

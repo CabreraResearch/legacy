@@ -93,17 +93,6 @@
 
             cswPrivate.getTabs = function (tabContentDiv) {
                 'use strict';
-                var jsonData = {
-                    EditMode: cswPrivate.EditMode,
-                    NodeId: Csw.tryParseObjByIdx(cswPrivate.nodeids, 0),
-                    SafeNodeKey: Csw.tryParseObjByIdx(cswPrivate.nodekeys, 0),
-                    NodeTypeId: cswPrivate.nodetypeid,
-                    Date: cswPrivate.date,
-                    filterToPropId: cswPrivate.filterToPropId,
-                    Multi: cswPrivate.Multi,
-                    ConfigMode: cswPrivate.Config
-                };
-
                 // For performance, don't bother getting tabs if we're in Add or Preview
                 if (cswPrivate.EditMode === Csw.enums.editMode.Add ||
                     cswPrivate.EditMode === Csw.enums.editMode.Preview ||
@@ -118,7 +107,16 @@
                     Csw.ajax.post({
                         watchGlobal: cswPrivate.AjaxWatchGlobal,
                         urlMethod: cswPrivate.TabsUrlMethod,
-                        data: jsonData,
+                        data: {
+                            EditMode: cswPrivate.EditMode,
+                            NodeId: Csw.tryParseObjByIdx(cswPrivate.nodeids, 0),
+                            SafeNodeKey: Csw.tryParseObjByIdx(cswPrivate.nodekeys, 0),
+                            NodeTypeId: Csw.string(cswPrivate.nodetypeid),
+                            Date: cswPrivate.date,
+                            filterToPropId: Csw.string(cswPrivate.filterToPropId),
+                            Multi: Csw.bool(cswPrivate.Multi),
+                            ConfigMode: cswPrivate.Config
+                        },
                         success: function (data) {
                             cswPrivate.clearTabs();
                             var tabdivs = [];
@@ -229,18 +227,7 @@
 
             cswPrivate.getPropsImpl = function (tabContentDiv, tabid, onSuccess) {
                 'use strict';
-                var jsonData = {
-                    EditMode: cswPrivate.EditMode,
-                    NodeId: Csw.tryParseObjByIdx(cswPrivate.nodeids, 0),
-                    TabId: tabid,
-                    SafeNodeKey: Csw.tryParseObjByIdx(cswPrivate.nodekeys, 0),
-                    NodeTypeId: cswPrivate.nodetypeid,
-                    Date: cswPrivate.date,
-                    Multi: cswPrivate.Multi,
-                    filterToPropId: cswPrivate.filterToPropId,
-                    ConfigMode: cswPrivate.Config
-                };
-
+                
                 function makePropLayout() {
                     cswPrivate.form = tabContentDiv.children('form');
                     cswPrivate.form.empty();
@@ -389,7 +376,20 @@
                     Csw.ajax.post({
                         watchGlobal: cswPrivate.AjaxWatchGlobal,
                         urlMethod: cswPrivate.PropsUrlMethod,
-                        data: jsonData,
+                        data: {
+                            EditMode: cswPrivate.EditMode,
+                            NodeId: Csw.tryParseObjByIdx(cswPrivate.nodeids, 0),
+                            TabId: tabid,
+                            SafeNodeKey: Csw.tryParseObjByIdx(cswPrivate.nodekeys, 0),
+                            NodeTypeId: cswPrivate.nodetypeid,
+                            Date: cswPrivate.date,
+                            Multi: cswPrivate.Multi,
+                            filterToPropId: cswPrivate.filterToPropId,
+                            ConfigMode: cswPrivate.Config,
+                            RelatedNodeId: Csw.string(cswPrivate.relatednodeid),
+                            RelatedNodeTypeId: Csw.string(cswPrivate.relatednodetypeid),
+                            RelatedObjectClassId: Csw.string(cswPrivate.relatedobjectclassid)
+                        },
                         success: function (data) {
                             if (Csw.isNullOrEmpty(data) && cswPrivate.EditMode === Csw.enums.editMode.Edit) {
                                 Csw.error.throwException({
@@ -572,7 +572,7 @@
                         });
 
                     } else {
-                        labelCell.append(propName);
+                        labelCell.setLabelText(propName, propData.required);
                     }
 
                     /* Case 25936 */

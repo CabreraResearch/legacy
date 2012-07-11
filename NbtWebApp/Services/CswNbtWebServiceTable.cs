@@ -8,6 +8,7 @@ using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.ServiceDrivers;
 using ChemSW.Nbt.Statistics;
 using Newtonsoft.Json.Linq;
+using ChemSW.Nbt.ObjClasses;
 
 namespace ChemSW.Nbt.WebServices
 {
@@ -202,10 +203,14 @@ namespace ChemSW.Nbt.WebServices
                     Int32 JctNodePropId = CswConvert.ToInt32( PropElm["jctnodepropid"].ToString() );
 
                     // Special case: Image becomes thumbnail
-                    if( FieldType == CswNbtMetaDataFieldType.NbtFieldType.Image.ToString() ) //||
-                    // FieldType == CswNbtMetaDataFieldType.NbtFieldType.MOL.ToString() )
+                    if( FieldType == CswNbtMetaDataFieldType.NbtFieldType.Image.ToString() )
                     {
                         ret["thumbnailurl"] = CswNbtNodePropImage.getLink( JctNodePropId, NodeId, NodeTypePropId );
+                    }
+
+                    if( FieldType == CswNbtMetaDataFieldType.NbtFieldType.MOL.ToString() )
+                    {
+                        ret["thumbnailurl"] = CswNbtNodePropMol.getLink( JctNodePropId, NodeId, NodeTypePropId );
                     }
                     else
                     {

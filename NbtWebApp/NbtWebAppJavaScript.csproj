@@ -75,6 +75,7 @@
     <NoWarn>1591</NoWarn>
   </PropertyGroup>
   <ItemGroup>
+    <Content Include="Build\far.exe" />
     <Content Include="ConnectTest.html" />
     <Content Include="js\common\composites\csw.quantity.js" />
     <Content Include="js\nbt\nodes\csw.node.link.js" />
@@ -266,6 +267,7 @@
     <Content Include="NodeReport.html" />
     <Content Include="Scripts\jquery-1.7.1-vsdoc.js" />
     <Content Include="DevIncludes.html" />
+    <None Include="js\_pruneMaps.bat" />
     <None Include="js\_updateIncludes.pl" />
   </ItemGroup>
   <ItemGroup>
@@ -287,13 +289,13 @@
   <PropertyGroup>
     <PostBuildEvent>call $(ProjectDir)js\common\_compileCommon.pl $(ProjectDir)
 call $(ProjectDir)js\nbt\_compileNbt.pl $(ProjectDir)
+$(ProjectDir)js\_pruneMaps.bat $(ProjectDir)
 </PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
     <PreBuildEvent>echo "NbtWebJavaScript" build started
 call $(ProjectDir)js\_updateIncludes.pl $(ProjectDir)
 call $(ProjectDir)css\_compressor.pl $(ProjectDir)
-call $(ProjectDir)js\common\_concatCswVsDoc.pl $(ProjectDir)
 call $(ProjectDir)js\nbt\_concatNbtVsDoc.pl $(ProjectDir)</PreBuildEvent>
   </PropertyGroup>
 </Project>
