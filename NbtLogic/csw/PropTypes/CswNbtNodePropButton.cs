@@ -5,6 +5,7 @@ using System.Xml;
 using System.Xml.Linq;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.MetaData.FieldTypeRules;
 using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.PropTypes
@@ -12,7 +13,12 @@ namespace ChemSW.Nbt.PropTypes
 
     public class CswNbtNodePropButton : CswNbtNodeProp
     {
-        public enum ButtonMode { button, link };
+        public sealed class ButtonMode
+        {
+            public const string button = "button";
+            public const string link = "link";
+            public const string menu = "menu";
+        };
 
         public static implicit operator CswNbtNodePropButton( CswNbtNodePropWrapper PropWrapper )
         {
@@ -22,18 +28,23 @@ namespace ChemSW.Nbt.PropTypes
         public CswNbtNodePropButton( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp )
             : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp )
         {
+            _FieldTypeRule  = (CswNbtFieldTypeRuleButton) CswNbtMetaDataNodeTypeProp.getFieldTypeRule();
+            _StateSubField = _FieldTypeRule.StateSubField;
         }
+
+        private CswNbtFieldTypeRuleButton _FieldTypeRule;
+        private CswNbtSubField _StateSubField;
 
         public string Text
         {
-            get { return _CswNbtMetaDataNodeTypeProp.StaticText.ToString(); }
+            get { return _CswNbtMetaDataNodeTypeProp.StaticText; }
         }
 
         public string Mode
         {
             get
             {
-                return _CswNbtMetaDataNodeTypeProp.Extended.ToString();
+                return _CswNbtMetaDataNodeTypeProp.Extended;
             }
         }
 
@@ -45,6 +56,46 @@ namespace ChemSW.Nbt.PropTypes
             }
         }
 
+        private string _MenuOptions = string.Empty;
+        /// <summary>
+        /// Returns the ListOptions of the button or the in-memory MenuOptions. set{} only affects the in-memory object.
+        /// </summary>
+        public string MenuOptions
+        {
+            get
+            {
+                if( string.IsNullOrEmpty( _MenuOptions ) )
+                {
+                    _MenuOptions = _CswNbtMetaDataNodeTypeProp.ListOptions;
+                }
+                return _MenuOptions;
+            }
+            set { _MenuOptions = value; }
+        }
+
+        private string _SelectedMenuOption = string.Empty;
+        
+        /// <summary>
+        /// Returns the StaticText of the button or the in-memory SelectedMenuOption. set{} only affects the in-memory object.
+        /// </summary>
+        public string SelectedMenuOption
+        {
+            get
+            {
+                if( string.IsNullOrEmpty(_SelectedMenuOption) )
+                {
+                    _SelectedMenuOption = Text;
+                }
+                return _SelectedMenuOption;
+            }
+            set { _SelectedMenuOption = value; }
+        }
+
+        public string State
+        {
+            get { return _CswNbtNodePropData.GetPropRowValue( _StateSubField.Column ); }
+            set { _CswNbtNodePropData.SetPropRowValue( _StateSubField.Column, value ); }
+        }
 
         override public string Gestalt
         {
@@ -73,12 +124,14 @@ namespace ChemSW.Nbt.PropTypes
             //ParentObject.Add( new JProperty( "text", Text ) );
             //ParentObject.Add( new JProperty( "mode", Mode.ToString().ToLower() ) );
             AsJSON( NodeTypeProp, ParentObject );
+            ParentObject["state"] = State;
         }
 
         public static void AsJSON( CswNbtMetaDataNodeTypeProp NodeTypeProp, JObject ParentObject )
         {
-            ParentObject["text"] = NodeTypeProp.StaticText.ToString();
-            ParentObject["mode"] = NodeTypeProp.Extended.ToString().ToLower();
+            ParentObject["text"] = NodeTypeProp.StaticText;
+            ParentObject["mode"] = NodeTypeProp.Extended.ToLower();
+            ParentObject["menuoptions"] = NodeTypeProp.ListOptions;
         }
 
         public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )

@@ -186,6 +186,8 @@
 
                         var sizeGrid = Csw.nbt.wizard.nodeGrid(cswPrivate.divStep1, {
                             nodeid: cswPrivate.materialId,
+                            relatednodeid: cswPrivate.materialId,
+                            relatednodetypeid: cswPrivate.materialNodeTypeId,
                             viewid: cswPrivate.sizesViewId,
                             onSelect: function () {
                                 if (cswPrivate.selectedSizeId !== sizeGrid.getSelectedNodeId()) {

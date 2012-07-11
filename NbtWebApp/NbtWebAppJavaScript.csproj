@@ -296,7 +296,6 @@ $(ProjectDir)js\_pruneMaps.bat $(ProjectDir)
     <PreBuildEvent>echo "NbtWebJavaScript" build started
 call $(ProjectDir)js\_updateIncludes.pl $(ProjectDir)
 call $(ProjectDir)css\_compressor.pl $(ProjectDir)
-call $(ProjectDir)js\common\_concatCswVsDoc.pl $(ProjectDir)
 call $(ProjectDir)js\nbt\_concatNbtVsDoc.pl $(ProjectDir)</PreBuildEvent>
   </PropertyGroup>
 </Project>
