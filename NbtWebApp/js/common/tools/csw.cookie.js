@@ -65,7 +65,7 @@
             /// <returns type="Boolean">Always true.</returns>
             var cookieName;
             for (cookieName in Csw.cookie.cookieNames) {
-                if (Csw.contains(Csw.cookie.cookieNames, cookieName)) {
+                if (Csw.contains(Csw.cookie.cookieNames, cookieName) && cookieName !== Csw.cookie.cookieNames.CustomerId) {
                     $.cookie(Csw.cookie.cookieNames[cookieName], null);
                 }
             }
