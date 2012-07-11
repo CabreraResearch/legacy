@@ -102,7 +102,7 @@ namespace ChemSW.Nbt.ObjClasses
             CswNbtNode MaterialNode = _CswNbtResources.Nodes.GetNode( Material.RelatedNodeId );
             if( MaterialNode != null )
             {
-                Material.ReadOnly = true;
+                Material.setReadOnly( value: true, SaveToDb: true );
                 CswNbtUnitViewBuilder Vb = new CswNbtUnitViewBuilder( _CswNbtResources );
                 CswNbtView UnitsView = Vb.getQuantityUnitOfMeasureView(MaterialNode);
                 if(null != UnitsView)

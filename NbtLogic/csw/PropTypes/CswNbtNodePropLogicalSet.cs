@@ -254,12 +254,12 @@ namespace ChemSW.Nbt.PropTypes
         /// </summary>
         public void SetValue( string XValue, string YValue, bool Checked )
         {
-            XmlNode YValueNode = LogicalSetXmlDoc.ChildNodes[0].SelectSingleNode( "YValue[@y='" + YValue + "']" );
+            XmlNode YValueNode = LogicalSetXmlDoc.ChildNodes[0].SelectSingleNode( "YValue[@y='" + CswTools.XPathSafeParameter( YValue ) + "']" );
             if( YValueNode == null )
             {
                 YValueNode = LogicalSetXmlDoc.CreateElement( "YValue" );
                 XmlAttribute YAttribute = LogicalSetXmlDoc.CreateAttribute( "y" );
-                YAttribute.Value = YValue;
+                YAttribute.Value = CswTools.XPathSafeParameter( YValue );
                 YValueNode.Attributes.Append( YAttribute );
                 LogicalSetXmlDoc.ChildNodes[0].AppendChild( YValueNode );
             }
@@ -283,7 +283,7 @@ namespace ChemSW.Nbt.PropTypes
         public bool CheckValue( string XValue, string YValue )
         {
             bool ret = false;
-            XmlNode YValueNode = LogicalSetXmlDoc.ChildNodes[0].SelectSingleNode( "YValue[@y='" + YValue + "']" );
+            XmlNode YValueNode = LogicalSetXmlDoc.ChildNodes[0].SelectSingleNode( "YValue[@y='" + CswTools.XPathSafeParameter( YValue ) + "']" );
             if( YValueNode != null )
             {
                 XmlNode XValueNode = YValueNode.SelectSingleNode( XValue );

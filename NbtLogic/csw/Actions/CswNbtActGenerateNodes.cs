@@ -196,7 +196,7 @@ namespace ChemSW.Nbt.Actions
 
                             ICswNbtPropertySetGeneratorTarget NewNodeAsGeneratorTarget = CswNbtPropSetCaster.AsPropertySetGeneratorTarget( NewNode );
                             NewNodeAsGeneratorTarget.GeneratedDate.DateTimeValue = DueDate;
-                            NewNodeAsGeneratorTarget.GeneratedDate.ReadOnly = true; //bz # 5349
+                            NewNodeAsGeneratorTarget.GeneratedDate.setReadOnly( value: true, SaveToDb: true ); //bz # 5349
                             NewNodeAsGeneratorTarget.Generator.RelatedNodeId = CswNbtNodeGenerator.NodeId;
                             NewNodeAsGeneratorTarget.Generator.CachedNodeName = CswNbtNodeGenerator.NodeName;
                             NewNodeAsGeneratorTarget.Parent.RelatedNodeId = NewParentPk;

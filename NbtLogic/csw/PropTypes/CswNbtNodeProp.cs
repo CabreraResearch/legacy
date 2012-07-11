@@ -171,15 +171,27 @@ namespace ChemSW.Nbt.PropTypes
         /// <summary>
         /// The Node's Primary Key
         /// </summary>
-        public CswPrimaryKey NodeId { get { return ( _CswNbtNodePropData.NodeId ); } set { _CswNbtNodePropData.NodeId = value; } }
+        public CswPrimaryKey NodeId { get { return ( _CswNbtNodePropData.NodeId ); } } //set { _CswNbtNodePropData.NodeId = value; } }
         /// <summary>
         /// True if the property's value cannot be changed by the end user
         /// </summary>
-        public bool ReadOnly { get { return ( _CswNbtNodePropData.ReadOnly ); } set { _CswNbtNodePropData.ReadOnly = value; } }
+        public bool ReadOnly { get { return ( _CswNbtNodePropData.ReadOnly ); } }
+        /// <summary>
+        /// Set whether the property's value can be changed by the end user
+        /// </summary>
+        /// <param name="value">New value for ReadOnly</param>
+        /// <param name="SaveToDb">If true, save this value to the database permanently.  If false, applies only to this request.</param>
+        public void setReadOnly( bool value, bool SaveToDb ) { _CswNbtNodePropData.setReadOnly( value, SaveToDb ); }
         /// <summary>
         ///  Determines whether a property displays.
         /// </summary>
-        public bool Hidden { get { return ( _CswNbtNodePropData.Hidden ); } set { _CswNbtNodePropData.Hidden = value; } }
+        public bool Hidden { get { return ( _CswNbtNodePropData.Hidden ); } }
+        /// <summary>
+        /// Set whether the property displays.
+        /// </summary>
+        /// <param name="value">New value for Hidden</param>
+        /// <param name="SaveToDb">If true, save this value to the database permanently.  If false, applies only to this request.</param>
+        public void setHidden( bool value, bool SaveToDb ) { _CswNbtNodePropData.setHidden( value, SaveToDb ); }
         /// <summary>
         /// Property Value: Field1
         /// </summary>
