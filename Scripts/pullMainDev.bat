@@ -15,6 +15,8 @@ hg pull -R /kiln/ThirdParty/OracleDataAccess -u
 hg pull -R /kiln/ThirdParty/YUICompressor -u
 hg pull -R /kiln/ThirdPary/DocuGen -u
 
+hg pull -R /kiln/Common/StructureSearch -u main
+
 exit
 
 
