@@ -101,6 +101,7 @@
     <Compile Include="csw\Actions\CswNbtActDispenseContainer.cs" />
     <Compile Include="csw\Actions\CswNbtActSubmitRequest.cs" />
     <Compile Include="csw\Actions\CswNbtActSystemViews.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase24446Action2.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase27071RequestFulfillment.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26772.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26697.cs" />
