@@ -137,12 +137,13 @@
                 return cswPublic;
             };
 
-            cswPublic.setLabelText = function (propName, isRequired) {
+            cswPublic.setLabelText = function (propName, isRequired, isReadOnly) {
                 /// <summary>Append a property name to a dom element. Appends a '*' if it's a required property</summary>
                 /// <param name="propName" type="Object">the property name to display</param>
                 /// <param name="isRequired" type="Object">whether or not this property is required</param>
+                /// <param name='isReadOnly" type="Object">whether or not this property is read only</param>
                 /// <returns type="Object">The parent Csw object (for chaining)</returns> 
-                if (Csw.bool(isRequired)) {
+                if (Csw.bool(isRequired) && !Csw.bool(isReadOnly)) {
                     propName = Csw.makeRequiredName(propName);
                 }
                 cswPublic.append(propName);
@@ -154,7 +155,7 @@
                     /// <summary>Returns the property name with the required symbol next to it</summary>
                     /// <param name="propName" type="Object">the property name to display</param>
                     /// <returns type="string">The label name for a required property</returns> 
-                    return propName + " *";
+                    return propName + "*";
                 });
 
             cswPublic.attach = function (object) {

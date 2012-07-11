@@ -274,7 +274,6 @@
     <None Include="css\_compressor.pl" />
     <None Include="js\nbt\_concatNbtVsDoc.pl" />
     <None Include="js\common\_compileCommon.pl" />
-    <None Include="js\common\_concatCswVsDoc.pl" />
     <None Include="js\nbt\_compileNbt.pl" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

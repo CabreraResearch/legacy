@@ -74,7 +74,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                return NbtViewPropIdType.NodeTypePropId;
+                return (NbtViewPropIdType) _CswNbtMetaDataNodeTypeProp.FKType;
             }
         }
 
@@ -189,7 +189,7 @@ namespace ChemSW.Nbt.PropTypes
                         }
                         else if( RelatedPropType == NbtViewPropIdType.ObjectClassPropId )
                         {
-                            StoredRelatedProp = _CswNbtResources.MetaData.getNodeTypePropByObjectClassProp( NodeTypeId, RelatedPropId );
+                            StoredRelatedProp = RelatedNode.getNodeType().getNodeTypePropByObjectClassProp( RelatedPropId );
                         }
 
                         if( null != StoredRelatedProp )
