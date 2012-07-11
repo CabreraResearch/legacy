@@ -366,7 +366,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             if( null != Material.RelatedNodeId )
             {
-                Material.ReadOnly = true;
+                Material.setReadOnly( value: true, SaveToDb: true );
                 CswNbtUnitViewBuilder Vb = new CswNbtUnitViewBuilder( _CswNbtResources );
                 CswNbtView UnitView = Vb.getQuantityUnitOfMeasureView( Material.RelatedNodeId );
                 if( null != UnitView )
@@ -383,7 +383,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             if( null != Container.RelatedNodeId )
             {
-                Container.ReadOnly = true;
+                Container.setReadOnly( value: true, SaveToDb: true );
             }
         }
         public CswNbtNodePropLocation Location
