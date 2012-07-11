@@ -183,17 +183,14 @@ namespace ChemSW.Nbt.ServiceDrivers
                             {
                                 foreach ( CswNbtNodePropRelationship Relationship in from _Prop
                                                                                          in Ret.Properties
-                                                                                     where _Prop.getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.Relationship
+                                                                                     where _Prop.getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.Relationship &&
+                                                                                       ( ( _Prop.AsRelationship.TargetType == NbtViewRelatedIdType.NodeTypeId &&
+                                                                                           _Prop.AsRelationship.TargetId == RelatedNodeTypePk ) ||
+                                                                                        (  _Prop.AsRelationship.TargetType == NbtViewRelatedIdType.ObjectClassId &&
+                                                                                           _Prop.AsRelationship.TargetId == RelatedObjectClassPk ) )
                                                                                      select _Prop )
                                 {
-                                    if ( ( Relationship.TargetType == NbtViewRelatedIdType.NodeTypeId &&
-                                           Relationship.TargetId == RelatedNodeTypePk ) ||
-                                         ( Relationship.TargetType == NbtViewRelatedIdType.ObjectClassId &&
-                                           Relationship.TargetId == RelatedObjectClassPk ) )
-                                    {
-                                        Relationship.RelatedNodeId = RelatedNodePk;
-                                        break;
-                                    }
+                                    Relationship.RelatedNodeId = RelatedNodePk;
                                 }
                             }
                         }
