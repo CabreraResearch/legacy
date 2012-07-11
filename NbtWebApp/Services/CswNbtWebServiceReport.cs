@@ -27,8 +27,8 @@ namespace ChemSW.Nbt.WebServices
             if( string.Empty != report.SQL.Text )
             {
 
-                report.ReportUserName.Text = _CswNbtResources.CurrentNbtUser.Username;
-                CswArbitrarySelect cswRptSql = _CswNbtResources.makeCswArbitrarySelect( "report_sql", report.SQL.Text );
+                string ReportSql = report.getUserContextSql( _CswNbtResources.CurrentNbtUser.Username );
+                CswArbitrarySelect cswRptSql = _CswNbtResources.makeCswArbitrarySelect( "report_sql", ReportSql );
                 DataTable rptDataTbl = cswRptSql.getTable();
 
                 if( "csv" == rformat.ToLower() )

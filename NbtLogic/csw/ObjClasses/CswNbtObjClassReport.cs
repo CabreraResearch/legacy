@@ -13,9 +13,7 @@ namespace ChemSW.Nbt.ObjClasses
         public const string ReportNamePropertyName = "Report Name";
         public const string CategoryPropertyName = "Category";
         public const string SqlPropertyName = "SQL";
-        public const string FormattedSqlPropertyName = "FormattedSQL";
         public const string btnRunPropertyName = "Run";
-        public const string ReportUserNamePropertyName = "ReportUserName";
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
 
@@ -91,10 +89,6 @@ namespace ChemSW.Nbt.ObjClasses
         {
             _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
 
-
-            _CswNbtNode.Properties[ReportUserNamePropertyName].Hidden = true;
-            _CswNbtNode.Properties[FormattedSqlPropertyName].Hidden = true;
-
         }//beforeWriteNode()
 
         public override void afterWriteNode()
@@ -139,38 +133,24 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get
             {
-
-                CswTemplateTextFormatter CswTemplateTextFormatter = new Core.CswTemplateTextFormatter();
-                CswTemplateTextFormatter.addReplacementValue( "username", ReportUserName.Text );
-                string Message = string.Empty;
-                CswTemplateTextFormatter.setTemplateText( _CswNbtNode.Properties[SqlPropertyName].AsMemo.Text, ref Message );
-                FormattedSQL.Text = CswTemplateTextFormatter.getFormattedText();
-
-                return ( _CswNbtNode.Properties[FormattedSqlPropertyName] ); //sic.
+                return ( _CswNbtNode.Properties[SqlPropertyName] ); //sic.
             }
         }
 
 
-        public CswNbtNodePropText ReportUserName
+        public string getUserContextSql( string UserName )
         {
-            //set
-            //{
-            //    _CswNbtNode.Properties[ReportUserNamePropertyName].AsText.Text = value.Text; ;
-            //}
-            get
-            {
-                return ( _CswNbtNode.Properties[ReportUserNamePropertyName] );
-            }
-        }
+            string ReturnVal = string.Empty;
 
-        public CswNbtNodePropMemo FormattedSQL
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[FormattedSqlPropertyName] );
-            }
-        }
+            CswTemplateTextFormatter CswTemplateTextFormatter = new Core.CswTemplateTextFormatter();
+            CswTemplateTextFormatter.addReplacementValue( "username", UserName );
+            string Message = string.Empty;
+            CswTemplateTextFormatter.setTemplateText( SQL.Text, ref Message );
+            ReturnVal = CswTemplateTextFormatter.getFormattedText();
 
+            return ( ReturnVal );
+
+        }//getUserContextSql
 
         public CswNbtNodePropButton Run
         {

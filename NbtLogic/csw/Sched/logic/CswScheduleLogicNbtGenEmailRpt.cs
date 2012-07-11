@@ -199,8 +199,7 @@ namespace ChemSW.Nbt.Sched
                                                                     ReportObjClass = (CswNbtObjClassReport) ReportNode;
 
 
-                                                                    ReportObjClass.ReportUserName.Text = UserNodeAsUser.Username;
-                                                                    string ReportSql = ReportObjClass.SQL.Text;
+                                                                    string ReportSql = ReportObjClass.getUserContextSql( UserNodeAsUser.Username );
 
                                                                     CswArbitrarySelect ReportSelect = _CswNbtResources.makeCswArbitrarySelect( "MailReport_" + ReportNode.NodeId.ToString() + "_Select", ReportSql );
                                                                     ReportTable = ReportSelect.getTable();
