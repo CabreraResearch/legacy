@@ -119,11 +119,15 @@ namespace ChemSW.Nbt.PropTypes
                     throw new CswDniException( "RecalculateReferenceValue(): _CswNbtMetaDataNodeTypeProp is null" );
 
                 Int32 NodeTypeId = this.NodeTypeProp.getNodeType().NodeTypeId;
-                if( RelationshipType != NbtViewPropIdType.NodeTypePropId )
+                CswNbtMetaDataNodeTypeProp RelationshipProp = null;
+                if( RelationshipType == NbtViewPropIdType.NodeTypePropId )
                 {
-                    throw new CswDniException( "RecalculateReferenceValue(): RelationshipType is not valid:" + RelationshipType.ToString() );
+                    RelationshipProp = _CswNbtResources.MetaData.getNodeTypePropVersion( NodeTypeId, RelationshipId );
                 }
-                CswNbtMetaDataNodeTypeProp RelationshipProp = _CswNbtResources.MetaData.getNodeTypePropVersion( NodeTypeId, RelationshipId );
+                else if( RelationshipType == NbtViewPropIdType.ObjectClassPropId )
+                {
+                    RelationshipProp = _CswNbtResources.MetaData.getNodeTypePropByObjectClassProp( NodeTypeId, RelationshipId );
+                }
                 if( RelationshipProp == null )
                 {
                     throw new CswDniException( "RecalculateReferenceValue(): RelationshipId is not valid:" + RelationshipId.ToString() );
@@ -177,7 +181,17 @@ namespace ChemSW.Nbt.PropTypes
                         //}
 
                         // Match by propname
-                        CswNbtMetaDataNodeTypeProp StoredRelatedProp = _CswNbtResources.MetaData.getNodeTypeProp( RelatedPropId );
+
+                        CswNbtMetaDataNodeTypeProp StoredRelatedProp = null;
+                        if( RelatedPropType == NbtViewPropIdType.NodeTypePropId )
+                        {
+                            StoredRelatedProp = _CswNbtResources.MetaData.getNodeTypeProp( RelatedPropId );
+                        }
+                        else if( RelatedPropType == NbtViewPropIdType.ObjectClassPropId )
+                        {
+                            StoredRelatedProp = _CswNbtResources.MetaData.getNodeTypePropByObjectClassProp( NodeTypeId, RelatedPropId );
+                        }
+
                         if( null != StoredRelatedProp )
                         {
                             CswNbtMetaDataNodeTypeProp ActualRelatedProp = RelatedNode.getNodeType().getNodeTypeProp( StoredRelatedProp.PropName );

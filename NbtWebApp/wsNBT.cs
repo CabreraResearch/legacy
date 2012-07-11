@@ -25,6 +25,7 @@ using ChemSW.Nbt.Welcome;
 using ChemSW.Security;
 using ChemSW.Session;
 using Newtonsoft.Json.Linq;
+using ChemSW.StructureSearch;
 
 namespace ChemSW.Nbt.WebServices
 {
@@ -2762,6 +2763,10 @@ namespace ChemSW.Nbt.WebServices
                             ReturnVal["molData"] = MolData;
                         }
 
+                        //now create the image and save it as a blob
+                        byte[] molImage = CswStructureSearch.GetImage( MolData );
+                        ws.SetPropBlobValue( molImage, "mol.jpeg", "image/jpeg", PropId, "blobdata" );
+
                     } // if( FileName != string.Empty && PropId != string.Empty )
 
                 }
@@ -2802,6 +2807,10 @@ namespace ChemSW.Nbt.WebServices
                             ReturnVal["molData"] = molData;
                         }
 
+                        //now create the image and save it as a blob
+                        byte[] molImage = CswStructureSearch.GetImage( molData );
+                        ws.SetPropBlobValue( molImage, "mol.jpeg", "image/jpeg", PropId, "blobdata" );
+
                     } // if( FileName != string.Empty && PropId != string.Empty )
 
                 }
@@ -2818,9 +2827,6 @@ namespace ChemSW.Nbt.WebServices
             return ReturnVal.ToString();
 
         } // saveMolProp()
-
-
-
 
 
         [WebMethod( EnableSession = false )]
@@ -4398,7 +4404,7 @@ namespace ChemSW.Nbt.WebServices
             {
                 _initResources();
                 AuthenticationStatus = _attemptRefresh( true );
-                
+
                 _setEditMode( NodeEditMode.Add );
                 ReturnVal = CswNbtActReceiving.receiveMaterial( ReceiptDefinition, _CswNbtResources );
 

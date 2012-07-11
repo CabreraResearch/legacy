@@ -102,8 +102,12 @@
     <Compile Include="csw\Actions\CswNbtActSubmitRequest.cs" />
     <Compile Include="csw\Actions\CswNbtActSystemViews.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase24446Action2.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase27088.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase24486.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26683.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase27071RequestFulfillment.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26772.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26829.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26697.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase25291GHS.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26758Fix.cs" />
@@ -141,6 +145,7 @@
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26471.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26896.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26714.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26974.cs" />
     <Compile Include="csw\ServiceDrivers\CswNbtSdInventoryLevelMgr.cs" />
     <Compile Include="csw\ServiceDrivers\CswNbtSdTabsAndProps.cs" />
     <Compile Include="csw\ServiceDrivers\CswNbtSdNode.cs" />

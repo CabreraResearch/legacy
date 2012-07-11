@@ -89,8 +89,8 @@ namespace ChemSW.Nbt.Actions
                     throw new CswDniException( ErrorType.Error, "Could not create a new container.", "Failed to create a new Container node." );
                 }
                 RetAsContainer.Material.RelatedNodeId = _MaterialId;
-                RetAsContainer.Material.Hidden = true;
-                RetAsContainer.Size.Hidden = true;
+                RetAsContainer.Material.setHidden( value: true, SaveToDb: false );
+                RetAsContainer.Size.setHidden( value: true, SaveToDb: false );
             }
             return RetAsContainer;
         }

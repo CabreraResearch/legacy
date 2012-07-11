@@ -64,7 +64,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             if( ApprovalStatus.WasModified )
             {
-                Receive.Hidden = ApprovalStatus.Checked != Tristate.True;
+                Receive.setHidden( value: ApprovalStatus.Checked != Tristate.True, SaveToDb: true );
             }
             _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
         }//beforeWriteNode()

@@ -293,19 +293,39 @@ namespace ChemSW.Nbt.PropTypes
             }
         } //NodeTypeProp
 
+        private bool _ReadOnlyTemporary = false;
+
+        /// <summary>
+        /// True if the property's value cannot be changed by the end user
+        /// </summary>
         public bool ReadOnly
         {
-            get { return _getRowBoolVal( CswNbtSubField.PropColumn.ReadOnly ); }
-            set { SetPropRowValue( CswNbtSubField.PropColumn.ReadOnly, value ); }
-        }//ReadOnly 
+            get { return _ReadOnlyTemporary || _getRowBoolVal( CswNbtSubField.PropColumn.ReadOnly ); }
+        }
+        public void setReadOnly( bool value, bool SaveToDb )
+        {
+            _ReadOnlyTemporary = value;
+            if( SaveToDb )
+            {
+                SetPropRowValue( CswNbtSubField.PropColumn.ReadOnly, value );
+            }
+        }
 
+        private bool _HiddenTemporary = false;
         /// <summary>
         /// Determines whether property displays.
         /// </summary>
-        public bool Hidden 
+        public bool Hidden
         {
-            get { return _getRowBoolVal( CswNbtSubField.PropColumn.Hidden ); }
-            set { SetPropRowValue(CswNbtSubField.PropColumn.Hidden, value); }
+            get { return _HiddenTemporary || _getRowBoolVal( CswNbtSubField.PropColumn.Hidden ); }
+        }
+        public void setHidden( bool value, bool SaveToDb )
+        {
+            _HiddenTemporary = value;
+            if( SaveToDb )
+            {
+                SetPropRowValue( CswNbtSubField.PropColumn.Hidden, value );
+            }
         }
 
         /// <summary>
