@@ -14,6 +14,16 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
         {
             _CswNbtFieldResources = CswNbtFieldResources;
             _CswNbtFieldTypeRuleDefault = new CswNbtFieldTypeRuleDefaultImpl( _CswNbtFieldResources );
+
+            StateSubField = new CswNbtSubField( _CswNbtFieldResources, CswNbtSubField.PropColumn.Field1, CswNbtSubField.SubFieldName.Barcode );
+            StateSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Begins );
+            StateSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Contains );
+            StateSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Ends );
+            StateSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Equals );
+            StateSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotEquals );
+            StateSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotNull );
+            StateSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Null );
+            SubFields.add( StateSubField );
         }//ctor
 
         public CswNbtSubFieldColl SubFields
@@ -23,6 +33,8 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                 return ( _CswNbtFieldTypeRuleDefault.SubFields );
             }//get
         }
+
+        public CswNbtSubField StateSubField;
 
         public bool SearchAllowed { get { return ( false ); } }
 
