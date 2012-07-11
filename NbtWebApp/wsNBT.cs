@@ -2116,7 +2116,7 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string getProps( string EditMode, string NodeId, string SafeNodeKey, string TabId, string NodeTypeId, string Date, string filterToPropId, string Multi, string ConfigMode )
+        public string getProps( string EditMode, string NodeId, string SafeNodeKey, string TabId, string NodeTypeId, string Date, string filterToPropId, string Multi, string ConfigMode, string RelatedNodeId, string RelatedNodeTypeId, string RelatedObjectClassId )
         {
 
             // **** HERE'S WHAT YOU UNCOMMENT IN ORDER TO RUN THE CswNbtServiceDriver DISPENSATION OF WEB METHODS AS PER CASE 26213
@@ -2140,7 +2140,7 @@ namespace ChemSW.Nbt.WebServices
                     _setEditMode( EditMode );
                     CswDateTime InDate = new CswDateTime( _CswNbtResources );
                     InDate.FromClientDateTimeString( Date );
-                    ReturnVal = ws.getProps( NodeId, SafeNodeKey, TabId, CswConvert.ToInt32( NodeTypeId ), InDate, filterToPropId );
+                    ReturnVal = ws.getProps( NodeId, SafeNodeKey, TabId, CswConvert.ToInt32( NodeTypeId ), InDate, filterToPropId, RelatedNodeId, RelatedNodeTypeId, RelatedObjectClassId );
                 }
 
                 _deInitResources();

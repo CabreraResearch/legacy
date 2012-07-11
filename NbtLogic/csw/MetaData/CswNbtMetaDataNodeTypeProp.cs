@@ -304,7 +304,7 @@ namespace ChemSW.Nbt.MetaData
                 _FieldTypeRule = _CswNbtMetaDataResources.makeFieldTypeRule( this.getFieldType().FieldType );
             return _FieldTypeRule;
         }
-
+        
         public Int32 PropId
         {
             get { return CswConvert.ToInt32( _NodeTypePropRow["nodetypepropid"].ToString() ); }

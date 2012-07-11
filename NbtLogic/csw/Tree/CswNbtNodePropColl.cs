@@ -1,6 +1,8 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
@@ -10,7 +12,7 @@ using ChemSW.Nbt.PropTypes;
 namespace ChemSW.Nbt
 {
 
-    public class CswNbtNodePropColl
+    public class CswNbtNodePropColl : IEnumerable, IEnumerable<CswNbtNodePropWrapper>
     {
         private ArrayList _Props = new ArrayList();
         private Hashtable _PropsIndexByFirstVersionPropId = new Hashtable();
@@ -404,11 +406,17 @@ namespace ChemSW.Nbt
         }//this[FieldType]
 
 
+        IEnumerator<CswNbtNodePropWrapper> IEnumerable<CswNbtNodePropWrapper>.GetEnumerator()
+        {
+            return _Props.Cast<CswNbtNodePropWrapper>().GetEnumerator();
+        }
+
         public IEnumerator GetEnumerator()
         {
             return new CswEnmrtrGeneric( _Props );
         }
 
+        
     }//CswNbtNodePropColl
 
 

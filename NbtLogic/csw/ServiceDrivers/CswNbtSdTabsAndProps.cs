@@ -148,7 +148,7 @@ namespace ChemSW.Nbt.ServiceDrivers
             return Ret;
         }
 
-        public CswNbtNode getAddNode( Int32 NodeTypeId, out bool CanCreate, out CswNbtMetaDataNodeType NodeType )
+        public CswNbtNode getAddNode( Int32 NodeTypeId, out bool CanCreate, out CswNbtMetaDataNodeType NodeType, string RelatedNodeId, string RelatedNodeTypeId, string RelatedObjectClassId )
         {
             CswNbtNode Ret = null;
             CanCreate = false;
@@ -163,6 +163,36 @@ namespace ChemSW.Nbt.ServiceDrivers
                     if( CanCreate )
                     {
                         Ret = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing );
+                        CswPrimaryKey RelatedNodePk = new CswPrimaryKey();
+                        RelatedNodePk.FromString( RelatedNodeId );
+                        if( Int32.MinValue != RelatedNodePk.PrimaryKey )
+                        {
+                            Int32 RelatedNodeTypePk = CswConvert.ToInt32( RelatedNodeTypeId );
+                            Int32 RelatedObjectClassPk = CswConvert.ToInt32( RelatedObjectClassId );
+                            
+                            if(Int32.MinValue != RelatedNodeTypePk && Int32.MinValue == RelatedObjectClassPk)
+                            {
+                                CswNbtMetaDataNodeType RelatedNodeType = _CswNbtResources.MetaData.getNodeType( RelatedNodeTypePk );
+                                if(null != RelatedNodeType)
+                                {
+                                    RelatedObjectClassPk = RelatedNodeType.ObjectClassId;
+                                }
+                            }
+                            foreach ( CswNbtNodePropRelationship Relationship in from _Prop
+                                                                                     in Ret.Properties
+                                                                                 where _Prop.getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.Relationship
+                                                                                 select _Prop )
+                            {
+                                if( ( Relationship.TargetType == NbtViewRelatedIdType.NodeTypeId && 
+                                      Relationship.TargetId == RelatedNodeTypePk ) || 
+                                    ( Relationship.TargetType == NbtViewRelatedIdType.ObjectClassId &&
+                                      Relationship.TargetId == RelatedObjectClassPk ) )
+                                {
+                                    Relationship.RelatedNodeId = RelatedNodePk;
+                                    break;
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -172,7 +202,7 @@ namespace ChemSW.Nbt.ServiceDrivers
         /// <summary>
         /// Fetch or create a node, and return a JObject for all properties in a given tab
         /// </summary>
-        public JObject getProps( string NodeId, string NodeKey, string TabId, Int32 NodeTypeId, CswDateTime Date, string filterToPropId )
+        public JObject getProps( string NodeId, string NodeKey, string TabId, Int32 NodeTypeId, CswDateTime Date, string filterToPropId, string RelatedNodeId, string RelatedNodeTypeId, string RelatedObjectClassId )
         {
             JObject Ret = new JObject();
 
@@ -199,7 +229,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                 CswNbtMetaDataNodeType NodeType = null;
                 if( _CswNbtResources.EditMode == NodeEditMode.Add )
                 {
-                    Node = getAddNode( NodeTypeId, out CanCreate, out NodeType );
+                    Node = getAddNode( NodeTypeId, out CanCreate, out NodeType, RelatedNodeId, RelatedNodeTypeId, RelatedObjectClassId );
                 }
                 else
                 {

@@ -32,9 +32,9 @@ namespace ChemSW.Nbt.WebServices
         /// <summary>
         /// Returns JObject for all properties in a given tab
         /// </summary>
-        public JObject getProps( string NodeId, string NodeKey, string TabId, Int32 NodeTypeId, CswDateTime Date, string filterToPropId )
+        public JObject getProps( string NodeId, string NodeKey, string TabId, Int32 NodeTypeId, CswDateTime Date, string filterToPropId, string RelatedNodeId, string RelatedNodeTypeId, string RelatedObjectClassId )
         {
-            return _TabsPropsSd.getProps( NodeId, NodeKey, TabId, NodeTypeId, Date, filterToPropId );
+            return _TabsPropsSd.getProps( NodeId, NodeKey, TabId, NodeTypeId, Date, filterToPropId, RelatedNodeId, RelatedNodeTypeId, RelatedObjectClassId );
         } // getProps()
 
         /// <summary>
