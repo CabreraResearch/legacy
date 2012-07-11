@@ -2737,7 +2737,7 @@ namespace ChemSW.Nbt.WebServices
                     // putting these in the param list causes the webservice to fail with
                     // "System.InvalidOperationException: Request format is invalid: application/octet-stream"
                     string PropId = Context.Request["propid"];
-                    CswTempFile TempTools = new CswTempFile( _CswNbtResources.CswResources );
+                    CswTempFile TempTools = new CswTempFile( _CswNbtResources );
                     Stream MolStream = TempTools.getFileInputStream( Context, "qqfile" );
 
                     if( null != MolStream && false == string.IsNullOrEmpty( PropId ) )
@@ -4883,7 +4883,7 @@ namespace ChemSW.Nbt.WebServices
 
                 if( AuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
-                    CswTempFile TempTools = new CswTempFile( _CswNbtResources.CswResources );
+                    CswTempFile TempTools = new CswTempFile( _CswNbtResources );
                     TempTools.purgeTempFiles( "xls" );
 
                     string TempFileName = "excelupload_" + _CswNbtResources.CurrentUser.Username + "_" + DateTime.Now.ToString( "MMddyyyy_HHmmss" ) + ".xls";

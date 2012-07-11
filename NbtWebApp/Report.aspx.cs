@@ -114,7 +114,7 @@ namespace ChemSW.Nbt.WebPages
                     Int32 JctNodePropId = ReportNode.RPTFile.JctNodePropId;
                     if( JctNodePropId > 0 )
                     {
-                        CswFilePath FilePathTools = new CswFilePath( Master.CswNbtResources.CswResources );
+                        CswFilePath FilePathTools = new CswFilePath( Master.CswNbtResources );
                         string ReportTempFileName = FilePathTools.getFullReportFilePath( JctNodePropId.ToString() );
                         if( !File.Exists( ReportTempFileName ) )
                         {

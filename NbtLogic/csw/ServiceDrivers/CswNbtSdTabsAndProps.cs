@@ -926,7 +926,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                 if( Node.getObjectClass().ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.ReportClass )
                 {
                     CswNbtObjClassReport Report = Node;
-                    CswFilePath FilePathTools = new CswFilePath( _CswNbtResources.CswResources );
+                    CswFilePath FilePathTools = new CswFilePath( _CswNbtResources );
                     string ReportPath = FilePathTools.getFullReportFilePath( Report.RPTFile.JctNodePropId.ToString() );
                     _createReportFile( ReportPath, Report.RPTFile.JctNodePropId, Data );
                 }
