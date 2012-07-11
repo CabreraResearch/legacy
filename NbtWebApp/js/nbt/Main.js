@@ -33,7 +33,7 @@ window.initMain = window.initMain || function (undefined) {
     Csw.subscribe(Csw.enums.events.ajax.globalAjaxStop, stopSpinner);
    
     function onObjectClassButtonClick(eventOj, opts) {
-        var actionJson = opts.data.data;
+        var actionJson = opts.data.actionData;
             switch (Csw.string(opts.data.action).toLowerCase()) {
                 case Csw.enums.nbtButtonAction.reauthenticate:
                     if (Csw.clientChanges.manuallyCheckChanges()) {
