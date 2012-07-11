@@ -25,7 +25,8 @@ my @components = (
 	"Nbt",
 	"NbtImport",
 	"NbtHelp",
-	"DailyBuildTools"
+	"DailyBuildTools",
+	"StructureSearch"
 );
 
 my $orclserver = "golem";
