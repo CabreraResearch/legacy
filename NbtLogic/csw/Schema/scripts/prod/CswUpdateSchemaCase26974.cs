@@ -33,10 +33,9 @@ namespace ChemSW.Nbt.Schema
                 CswNbtMetaDataNodeTypeProp sizeSupplierNTP = _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( sizeNT, CswNbtMetaDataFieldType.NbtFieldType.PropertyReference, "Supplier", sizeTab.TabId );
                 sizeSupplierNTP.SetFK( NbtViewPropIdType.ObjectClassPropId.ToString(), materialOCP.PropId, NbtViewPropIdType.ObjectClassPropId.ToString(), supplierOCP.PropId );
 
-
                 string templateText = sizeNT.NameTemplateValue;
-                templateText += " {" + CswNbtObjClassSize.CatalogNoPropertyName + "}"; //add catalog number to name template
-                templateText += " {" + sizeSupplierNTP.PropName + "}"; //add supplier (NTP) name to template
+                templateText += CswNbtMetaData.MakeTemplateEntry( sizeSupplierNTP.PropName ); //add supplier (NTP) name to template
+                templateText += CswNbtMetaData.MakeTemplateEntry( CswNbtObjClassSize.CatalogNoPropertyName ); //add catalog number to name template
                 sizeNT.setNameTemplateText( templateText );
 
             }

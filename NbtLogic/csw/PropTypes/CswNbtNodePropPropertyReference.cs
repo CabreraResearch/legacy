@@ -183,11 +183,11 @@ namespace ChemSW.Nbt.PropTypes
                         // Match by propname
 
                         CswNbtMetaDataNodeTypeProp StoredRelatedProp = null;
-                        if( RelationshipType == NbtViewPropIdType.NodeTypePropId )
+                        if( RelatedPropType == NbtViewPropIdType.NodeTypePropId )
                         {
                             StoredRelatedProp = _CswNbtResources.MetaData.getNodeTypeProp( RelatedPropId );
                         }
-                        else if( RelationshipType == NbtViewPropIdType.ObjectClassPropId )
+                        else if( RelatedPropType == NbtViewPropIdType.ObjectClassPropId )
                         {
                             StoredRelatedProp = _CswNbtResources.MetaData.getNodeTypePropByObjectClassProp( NodeTypeId, RelatedPropId );
                         }
