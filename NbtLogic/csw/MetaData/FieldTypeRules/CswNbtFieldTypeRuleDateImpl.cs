@@ -11,6 +11,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
         {
             string ValueColumn = "jnp." + Column.ToString();
             string ReturnVal = string.Empty;
+            bool IncludesTime = false;
 
             DateTime FilterValue = DateTime.MinValue;
             string Value = CswNbtViewPropertyFilterIn.Value.ToLower().Trim();
@@ -33,6 +34,10 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             else
             {
                 FilterValue = CswConvert.ToDateTime( CswNbtViewPropertyFilterIn.Value );
+                if( FilterValue.TimeOfDay != TimeSpan.MinValue ) // midnight
+                {
+                    IncludesTime = true;
+                }
             }
 
             if( CswNbtViewPropertyFilterIn.FilterMode == CswNbtPropFilterSql.PropertyFilterMode.NotNull )
@@ -45,35 +50,77 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             }
             else if( FilterValue != DateTime.MinValue )
             {
-                string FilterValueString = CswNbtFieldResources.CswNbtResources.getDbNativeDate( FilterValue ); //FilterValue.ToShortDateString();
-                if( CswNbtViewPropertyFilterIn.FilterMode == CswNbtPropFilterSql.PropertyFilterMode.Equals )
+                // case 26844
+                // We do date filtering differently depending on whether a time was supplied in the filter value.
+                if( IncludesTime )
                 {
-                    ReturnVal = ValueColumn + " = " + FilterValueString;
-                }
-                else if( CswNbtViewPropertyFilterIn.FilterMode == CswNbtPropFilterSql.PropertyFilterMode.GreaterThan )
-                {
-                    ReturnVal = ValueColumn + " > " + FilterValueString;
-                }
-                else if( CswNbtViewPropertyFilterIn.FilterMode == CswNbtPropFilterSql.PropertyFilterMode.GreaterThanOrEquals )
-                {
-                    ReturnVal = ValueColumn + " >= " + FilterValueString;
-                }
-                else if( CswNbtViewPropertyFilterIn.FilterMode == CswNbtPropFilterSql.PropertyFilterMode.LessThan )
-                {
-                    ReturnVal = ValueColumn + " < " + FilterValueString;
-                }
-                else if( CswNbtViewPropertyFilterIn.FilterMode == CswNbtPropFilterSql.PropertyFilterMode.LessThanOrEquals )
-                {
-                    ReturnVal = ValueColumn + " <= " + FilterValueString;
-                }
-                else if( CswNbtViewPropertyFilterIn.FilterMode == CswNbtPropFilterSql.PropertyFilterMode.NotEquals )
-                {
-                    ReturnVal = ValueColumn + " <> " + FilterValueString;
+                    string FilterValueString = CswNbtFieldResources.CswNbtResources.getDbNativeDate( FilterValue );
+                    if( CswNbtViewPropertyFilterIn.FilterMode == CswNbtPropFilterSql.PropertyFilterMode.Equals )
+                    {
+                        ReturnVal = ValueColumn + " = " + FilterValueString;
+                    }
+                    else if( CswNbtViewPropertyFilterIn.FilterMode == CswNbtPropFilterSql.PropertyFilterMode.GreaterThan )
+                    {
+                        ReturnVal = ValueColumn + " > " + FilterValueString;
+                    }
+                    else if( CswNbtViewPropertyFilterIn.FilterMode == CswNbtPropFilterSql.PropertyFilterMode.GreaterThanOrEquals )
+                    {
+                        ReturnVal = ValueColumn + " >= " + FilterValueString;
+                    }
+                    else if( CswNbtViewPropertyFilterIn.FilterMode == CswNbtPropFilterSql.PropertyFilterMode.LessThan )
+                    {
+                        ReturnVal = ValueColumn + " < " + FilterValueString;
+                    }
+                    else if( CswNbtViewPropertyFilterIn.FilterMode == CswNbtPropFilterSql.PropertyFilterMode.LessThanOrEquals )
+                    {
+                        ReturnVal = ValueColumn + " <= " + FilterValueString;
+                    }
+                    else if( CswNbtViewPropertyFilterIn.FilterMode == CswNbtPropFilterSql.PropertyFilterMode.NotEquals )
+                    {
+                        ReturnVal = ValueColumn + " <> " + FilterValueString;
+                    }
+                    else
+                    {
+                        throw new CswDniException( ErrorType.Error, "Invalid filter", "An invalid FilterMode was encountered in CswNbtNodeProp.GetFilter()) { " + CswNbtViewPropertyFilterIn.FilterMode.ToString() );
+                    }// switch( CswNbtViewPropertyFilterIn.FilterMode )
                 }
                 else
                 {
-                    throw new CswDniException( ErrorType.Error, "Invalid filter", "An invalid FilterMode was encountered in CswNbtNodeProp.GetFilter()) { " + CswNbtViewPropertyFilterIn.FilterMode.ToString() );
-                }// switch( CswNbtViewPropertyFilterIn.FilterMode )
+                    // If no time was specified, then we need to ignore the time part of values in our comparisons
+                    string TodayString = CswNbtFieldResources.CswNbtResources.getDbNativeDate( FilterValue );
+                    string TomorrowString = CswNbtFieldResources.CswNbtResources.getDbNativeDate( FilterValue.AddDays( 1 ) );
+
+                    if( CswNbtViewPropertyFilterIn.FilterMode == CswNbtPropFilterSql.PropertyFilterMode.Equals )
+                    {
+                        ReturnVal = ValueColumn + " > " + TodayString;
+                        ReturnVal += " and " + ValueColumn + " < " + TomorrowString;
+                    }
+                    else if( CswNbtViewPropertyFilterIn.FilterMode == CswNbtPropFilterSql.PropertyFilterMode.GreaterThan )
+                    {
+                        ReturnVal = ValueColumn + " > " + TomorrowString;
+                    }
+                    else if( CswNbtViewPropertyFilterIn.FilterMode == CswNbtPropFilterSql.PropertyFilterMode.GreaterThanOrEquals )
+                    {
+                        ReturnVal = ValueColumn + " >= " + TodayString;
+                    }
+                    else if( CswNbtViewPropertyFilterIn.FilterMode == CswNbtPropFilterSql.PropertyFilterMode.LessThan )
+                    {
+                        ReturnVal = ValueColumn + " < " + TodayString;
+                    }
+                    else if( CswNbtViewPropertyFilterIn.FilterMode == CswNbtPropFilterSql.PropertyFilterMode.LessThanOrEquals )
+                    {
+                        ReturnVal = ValueColumn + " <= " + TomorrowString;
+                    }
+                    else if( CswNbtViewPropertyFilterIn.FilterMode == CswNbtPropFilterSql.PropertyFilterMode.NotEquals )
+                    {
+                        ReturnVal = "(" + ValueColumn + " < " + TodayString;
+                        ReturnVal += " or " + ValueColumn + " > " + TomorrowString + ")";
+                    }
+                    else
+                    {
+                        throw new CswDniException( ErrorType.Error, "Invalid filter", "An invalid FilterMode was encountered in CswNbtNodeProp.GetFilter()) { " + CswNbtViewPropertyFilterIn.FilterMode.ToString() );
+                    }// switch( CswNbtViewPropertyFilterIn.FilterMode )
+                }
             }// if( FilterValue != DateTime.MinValue )
 
             return ( ReturnVal );
