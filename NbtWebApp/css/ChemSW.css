@@ -1240,9 +1240,9 @@ ul li div {
   pointer-events: none;
   cursor: default;
 }
-.disabled_tree
+.disabled_tree a
 {
-  color: #aaaaaa;
+  color: #aaaaaa !Important;
   pointer-events: none;
   cursor: default;
 }
