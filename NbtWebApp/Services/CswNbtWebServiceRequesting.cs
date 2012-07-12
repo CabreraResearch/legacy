@@ -81,6 +81,15 @@ namespace ChemSW.Nbt.WebServices
             return FulfillRequest.getFulfillmentFilters( SelectedObj );
         }
 
+        /// <summary>
+        /// Get Request Items Grid view using filter criteria
+        /// </summary>
+        public CswNbtView getRequestItemView( string FilterCriteria = "" )
+        {
+            CswNbtActFulfillRequest FulfillRequest = new CswNbtActFulfillRequest( _CswNbtResources );
+            return FulfillRequest.getRequestItems( FilterCriteria );
+        }
+
     } // class CswNbtWebServiceRequesting
 
 } // namespace ChemSW.Nbt.WebServices
