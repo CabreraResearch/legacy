@@ -254,6 +254,11 @@
                             btncol += 1;
                         } // if (nodeObj.allowdelete)
 
+                        if (Csw.bool(nodeObj.disabled)) {
+                            maintextcell.addClass('disabled');
+                            btnTable.addClass('disabled');
+                        }
+
                         c += 1;
                         if (c > o.columns) { c = 1; r += 1; }
                     } // if((pagenodecount < pagenodelimit * (currentpage - 1))

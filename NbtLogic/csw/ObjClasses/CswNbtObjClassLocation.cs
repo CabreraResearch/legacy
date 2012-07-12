@@ -209,21 +209,21 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get
             {
-                return ( _CswNbtNode.Properties[InventoryGroupPropertyName] );
+                return ( _CswNbtNode.Properties[LocationCodePropertyName] );
             }
         }
         public CswNbtNodePropLogical AllowInventory
         {
             get
             {
-                return ( _CswNbtNode.Properties[InventoryGroupPropertyName] );
+                return ( _CswNbtNode.Properties[AllowInventoryPropertyName] );
             }
         }
         public CswNbtNodePropImageList StorageCompatability
         {
             get
             {
-                return ( _CswNbtNode.Properties[InventoryGroupPropertyName] );
+                return ( _CswNbtNode.Properties[StorageCompatabilityPropertyName] );
             }
         }
 

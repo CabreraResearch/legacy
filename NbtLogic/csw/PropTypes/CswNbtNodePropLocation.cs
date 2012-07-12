@@ -193,36 +193,46 @@ namespace ChemSW.Nbt.PropTypes
 
         public static CswNbtView LocationPropertyView( CswNbtResources CswNbtResources, CswPrimaryKey NodeId = null )
         {
-            CswNbtView Ret = new CswNbtView( CswNbtResources );
+                    bool IsLocationNode = ( this.NodeTypeProp.getNodeType().getObjectClass().ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.LocationClass );
 
-            CswNbtMetaDataObjectClass LocationClass = CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.LocationClass );
-            CswNbtMetaDataObjectClassProp LocationClassProp = LocationClass.getObjectClassProp( CswNbtObjClassLocation.LocationPropertyName );
-            Ret.ViewName = TopLevelName;
+                    CswNbtMetaDataObjectClass LocationOC = CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.LocationClass );
+                    CswNbtMetaDataObjectClassProp LocationLocationOCP = LocationOC.getObjectClassProp( CswNbtObjClassLocation.LocationPropertyName );
+                    CswNbtMetaDataObjectClassProp LocationAllowInventoryOCP = LocationOC.getObjectClassProp( CswNbtObjClassLocation.AllowInventoryPropertyName );
 
-            CswNbtViewRelationship LocationLevel1 = Ret.AddViewRelationship( LocationClass, true );
-            if( NodeId != null )
-            {
-                LocationLevel1.NodeIdsToFilterOut.Add( NodeId );
-            }
+                    _View = new CswNbtView( CswNbtResources );
+                    _View.ViewName = TopLevelName;
 
-            // Only Locations with null parent locations at the root
-            CswNbtViewProperty LocationViewProp = Ret.AddViewProperty( LocationLevel1, LocationClassProp );
-            Ret.AddViewPropertyFilter( LocationViewProp, CswNbtSubField.SubFieldName.NodeID, CswNbtPropFilterSql.PropertyFilterMode.Null, string.Empty, false );
+                    CswNbtViewRelationship LocationLevel1 = _View.AddViewRelationship( LocationOC, true );
+                    if( NodeId != null )
+                        LocationLevel1.NodeIdsToFilterOut.Add( NodeId );
 
-            Int32 MaxDepth = 5;
-            if( CswTools.IsInteger( CswNbtResources.ConfigVbls.getConfigVariableValue( "loc_max_depth" ) ) )
-                MaxDepth = CswConvert.ToInt32( CswNbtResources.ConfigVbls.getConfigVariableValue( "loc_max_depth" ) );
+                    // Only Locations with null parent locations at the root
+                    _View.AddViewPropertyAndFilter( LocationLevel1, LocationLocationOCP, SubFieldName: CswNbtSubField.SubFieldName.NodeID, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Null );
+                    if( false == IsLocationNode )
+                    {
+                        _View.AddViewPropertyAndFilter( LocationLevel1, LocationAllowInventoryOCP, CswNbtPropFilterSql.FilterResultMode.Disabled, Value: Tristate.True.ToString() );
+                    }
 
-            CswNbtViewRelationship PriorLocationLevel = LocationLevel1;
-            for( int i = 2; i <= MaxDepth; i++ )
-            {
-                CswNbtViewRelationship LocationLevelX = Ret.AddViewRelationship( PriorLocationLevel, NbtViewPropOwnerType.Second, LocationClassProp, true );
-                if( NodeId != null )
-                    LocationLevelX.NodeIdsToFilterOut.Add( NodeId );
-                PriorLocationLevel = LocationLevelX;
-            }
+                    Int32 MaxDepth = 5;
+                    if( CswTools.IsInteger( _CswNbtResources.ConfigVbls.getConfigVariableValue( "loc_max_depth" ) ) )
+                        MaxDepth = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( "loc_max_depth" ) );
 
-            return Ret;
+                    CswNbtViewRelationship PriorLocationLevel = LocationLevel1;
+                    for( int i = 2; i <= MaxDepth; i++ )
+                    {
+                        CswNbtViewRelationship LocationLevelX = _View.AddViewRelationship( PriorLocationLevel, NbtViewPropOwnerType.Second, LocationLocationOCP, true );
+                        if( NodeId != null )
+                            LocationLevelX.NodeIdsToFilterOut.Add( NodeId );
+                        if( false == IsLocationNode )
+                        {
+                            _View.AddViewPropertyAndFilter( LocationLevelX, LocationAllowInventoryOCP, CswNbtPropFilterSql.FilterResultMode.Disabled, Value: Tristate.True.ToString() );
+                        }
+
+                      PriorLocationLevel = LocationLevelX;
+                }
+            
+
+            return _View;
         }
 
         private CswNbtView _View = null;

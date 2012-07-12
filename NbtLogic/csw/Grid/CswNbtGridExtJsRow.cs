@@ -36,6 +36,10 @@ namespace ChemSW.Nbt.Grid.ExtJs
         /// Show that the row is locked
         /// </summary>
         public bool isLocked = false;
+        /// <summary>
+        /// Show that the row is disabled
+        /// </summary>
+        public bool isDisabled = false;
 
         public JObject ToJson()
         {
@@ -61,6 +65,10 @@ namespace ChemSW.Nbt.Grid.ExtJs
             if( isLocked )
             {
                 Jrow["islocked"] = isLocked;
+            }
+            if( isDisabled )
+            {
+                Jrow["isdisabled"] = isDisabled;
             }
             return Jrow;
         } // ToJson()
