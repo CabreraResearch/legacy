@@ -115,7 +115,7 @@
                 }
 
                 if(thisdisabled) {
-                    $childObj.addClass('disabled_tree');
+                    $childObj.children('a').addClass('disabled');
                 }
 
             }); // each()
