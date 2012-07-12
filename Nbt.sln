@@ -33,7 +33,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NbtWebAppJavaScriptMobile",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NbtWcfServices", "NbtWcfServices\NbtWcfServices.csproj", "{22B27336-428C-4A59-9909-38BE803C9161}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StructureSearch", "..\..\Structure Search\StructureSearch\StructureSearch.csproj", "{E9156C9A-605E-4F21-8BB1-0970DA055FF0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StructureSearch", "..\..\Common\StructureSearch\StructureSearch\StructureSearch.csproj", "{E9156C9A-605E-4F21-8BB1-0970DA055FF0}"
 EndProject
 Global
 	GlobalSection(TestCaseManagementSettings) = postSolution
