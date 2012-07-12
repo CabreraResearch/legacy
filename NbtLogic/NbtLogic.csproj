@@ -146,6 +146,7 @@
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26896.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26714.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26974.cs" />
+    <Compile Include="csw\ServiceDrivers\CswNbtSdLocations.cs" />
     <Compile Include="csw\ServiceDrivers\CswNbtSdInventoryLevelMgr.cs" />
     <Compile Include="csw\ServiceDrivers\CswNbtSdTabsAndProps.cs" />
     <Compile Include="csw\ServiceDrivers\CswNbtSdNode.cs" />
