@@ -590,8 +590,11 @@ namespace ChemSW.Nbt
                                 }
                                 else if( Filter.ResultMode == CswNbtPropFilterSql.FilterResultMode.Disabled )
                                 {
-                                    From += "left outer join (" + FilterClause + ") f" + FilterCount.ToString() + " on (f" + FilterCount.ToString() + ".nodeid = n.nodeid)";
-                                    Select += ",f" + FilterCount.ToString() + ".included as included" + FilterCount.ToString();
+                                    if( false == IsParentQuery )
+                                    {
+                                        From += "left outer join (" + FilterClause + ") f" + FilterCount.ToString() + " on (f" + FilterCount.ToString() + ".nodeid = n.nodeid)";
+                                        Select += ",f" + FilterCount.ToString() + ".included as included" + FilterCount.ToString();
+                                    }
                                 }
 
 

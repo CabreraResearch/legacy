@@ -366,7 +366,7 @@ namespace ChemSW.Nbt
         {
             SubFieldName = SubFieldName ?? ParentViewProperty.MetaDataProp.getFieldTypeRule().SubFields.Default.Name;
             FilterMode = FilterMode ?? CswNbtPropFilterSql.PropertyFilterMode.Equals;
-            CswNbtViewPropertyFilter NewFilter = new CswNbtViewPropertyFilter( _CswNbtResources, this, SubFieldName, FilterMode, Value, CaseSensitive, ShowAtRuntime );
+            CswNbtViewPropertyFilter NewFilter = new CswNbtViewPropertyFilter( _CswNbtResources, this, SubFieldName, FilterMode, Value, ResultMode, CaseSensitive, ShowAtRuntime );
             if( ParentViewProperty != null )
             {
                 ParentViewProperty.addFilter( NewFilter );
