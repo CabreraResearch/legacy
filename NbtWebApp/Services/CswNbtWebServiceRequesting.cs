@@ -71,6 +71,16 @@ namespace ChemSW.Nbt.WebServices
             return getCurrentRequest( CopyRequest );
         }
 
+        /// <summary>
+        /// Get filter criteria in order to search for Request Items
+        /// </summary>
+        public JObject getFulfillRequestFilters(string SelectedFilters = "" )
+        {
+            CswNbtActFulfillRequest FulfillRequest = new CswNbtActFulfillRequest(_CswNbtResources);
+            JObject SelectedObj = CswConvert.ToJObject( SelectedFilters );
+            return FulfillRequest.getFulfillmentFilters( SelectedObj );
+        }
+
     } // class CswNbtWebServiceRequesting
 
 } // namespace ChemSW.Nbt.WebServices

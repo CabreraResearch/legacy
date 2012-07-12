@@ -12,6 +12,11 @@
     padding: 0px 0px 0px 10px;
     text-align: center;
 }
+.CswAction_LabelCell
+{
+    font-weight: bold;
+    text-align: left;
+}
 .CswAction_IndexCell
 {
     background-color: #ddeeff;

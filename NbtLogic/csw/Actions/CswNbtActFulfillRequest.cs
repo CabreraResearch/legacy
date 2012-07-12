@@ -47,11 +47,13 @@ namespace ChemSW.Nbt.Actions
                 _LocationView.SaveToCache( false );
                 LocationViewId = _LocationView.SessionViewId;
                 InventoryGroupObjectClassId = _CswNbtResources.MetaData.getObjectClassId( CswNbtMetaDataObjectClass.NbtObjectClass.InventoryGroupClass );
+                CswNbtObjClassRequestItem.Types.Options.Add( "All" );
+                RequestTypes = CswNbtObjClassRequestItem.Types.Options;
             }
-            public readonly CswCommaDelimitedString RequestTypes = CswNbtObjClassRequestItem.Types.Options;
+            public readonly CswCommaDelimitedString RequestTypes;
             public CswNbtSessionDataId LocationViewId;
-            public string MaterialName;
-            public string RequestName;
+            public string MaterialName = "";
+            public string RequestName = "";
             public Int32 InventoryGroupObjectClassId;
         }
 
