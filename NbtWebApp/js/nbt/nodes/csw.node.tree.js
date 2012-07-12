@@ -40,7 +40,6 @@
             if (viewmode === Csw.enums.viewMode.list.name) {
                 treeThemes = { "dots": false };
             }
-
             cswPublic.treeDiv.$.jstree({
                 "json_data": {
                     "data": data.root
@@ -100,6 +99,7 @@
                 var altName = Csw.string($childObj.find('a').first().text());
                 var thisnodename = Csw.string($childObj.CswAttrNonDom('nodename'), altName).trim();
                 var thislocked = Csw.bool($childObj.CswAttrNonDom('locked'));
+                var thisdisabled = ($childObj.CswAttrNonDom('disabled') === 'disabled');
 
                 if (Csw.bool(cswPrivate.ShowCheckboxes)) {
                     var $cb = $('<input type="checkbox" class="' + cswPrivate.idPrefix + 'check" id="check_' + thisid + '" rel="' + thisrel + '" nodeid="' + thisnodeid + '" nodename="' + thisnodename + '" cswnbtnodekey="' + thiskey + '"></input>');
@@ -112,6 +112,10 @@
                 if (thislocked) {
                     $('<img src="Images/quota/lock.gif" title="Quota exceeded" />')
                         .appendTo($childObj.children('a').first());
+                }
+
+                if(thisdisabled) {
+                    $childObj.addClass('disabled_tree');
                 }
 
             }); // each()
