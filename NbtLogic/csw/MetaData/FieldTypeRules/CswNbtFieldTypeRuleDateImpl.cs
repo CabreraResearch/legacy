@@ -34,7 +34,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             else
             {
                 FilterValue = CswConvert.ToDateTime( CswNbtViewPropertyFilterIn.Value );
-                if( FilterValue.TimeOfDay != TimeSpan.MinValue ) // midnight
+                if( FilterValue.TimeOfDay != TimeSpan.Zero ) // midnight
                 {
                     IncludesTime = true;
                 }
