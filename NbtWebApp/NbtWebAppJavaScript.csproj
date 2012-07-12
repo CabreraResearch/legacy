@@ -117,7 +117,6 @@
     <Content Include="js\CswNbt-vsdoc.js" />
     <Content Include="js\nbt\actions\csw.modules.js" />
     <Content Include="js\nbt\actions\csw.audithistory.js" />
-    <Content Include="js\nbt\actions\csw.inspectionstatus.js" />
     <Content Include="js\nbt\actions\csw.sessions.js" />
     <Content Include="js\nbt\actions\csw.quotaimage.js" />
     <Content Include="js\nbt\actions\csw.quotas.js" />

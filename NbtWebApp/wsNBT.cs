@@ -24,8 +24,8 @@ using ChemSW.Nbt.Statistics;
 using ChemSW.Nbt.Welcome;
 using ChemSW.Security;
 using ChemSW.Session;
-using Newtonsoft.Json.Linq;
 using ChemSW.StructureSearch;
+using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.WebServices
 {
@@ -3906,34 +3906,6 @@ namespace ChemSW.Nbt.WebServices
 
             return ReturnVal.ToString();
         } // SaveActionToQuickLaunch()
-
-        [WebMethod( EnableSession = false )]
-        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string getInspectionStatusGrid()
-        {
-            JObject ReturnVal = new JObject();
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
-            try
-            {
-                _initResources();
-                AuthenticationStatus = _attemptRefresh();
-                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
-                {
-                    CswNbtWebServiceInspections ws = new CswNbtWebServiceInspections( _CswNbtResources );
-                    ReturnVal = ws.getInspectionStatusGrid();
-                }
-                _deInitResources();
-            }
-            catch( Exception Ex )
-            {
-                ReturnVal = jError( Ex );
-            }
-
-            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
-
-            return ReturnVal.ToString();
-
-        } // getInspectionStatusGrid()
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
