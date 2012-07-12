@@ -120,7 +120,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
 
             return ( ReturnVal );
 
-        }//makeWhereClause()
+        }//renderViewPropFilter()
 
 
         public static string FilterModeToString( CswNbtPropFilterSql.PropertyFilterMode FilterMode )
