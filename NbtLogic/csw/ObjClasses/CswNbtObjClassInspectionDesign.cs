@@ -338,9 +338,9 @@ namespace ChemSW.Nbt.ObjClasses
                     this.Status.Value == InspectionStatusAsString( InspectionStatus.Completed_Late ) ||
                     this.Status.Value == InspectionStatusAsString( InspectionStatus.Missed ) )
                 {
-                    _CswNbtNode.ReadOnly = true;
+                    _CswNbtNode.setReadOnly( value: true, SaveToDb: false );
                 }
-                this.Status.ReadOnly = true;
+                this.Status.setReadOnly( value: true, SaveToDb: false );
             }
         }//afterPopulateProps()
 

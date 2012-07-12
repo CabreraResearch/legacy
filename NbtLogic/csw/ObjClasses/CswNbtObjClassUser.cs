@@ -169,7 +169,7 @@ namespace ChemSW.Nbt.ObjClasses
 
             if( UsernameProperty.Text != string.Empty ) // case 25616
             {
-                UsernameProperty.ReadOnly = true;       // BZ 5906
+                UsernameProperty.setReadOnly( value: true, SaveToDb: true );   // BZ 5906
             }
 
             if( Role.WasModified )
@@ -272,8 +272,8 @@ namespace ChemSW.Nbt.ObjClasses
             //BZ 9933
             if( _CswNbtResources.CurrentNbtUser == null || !_CswNbtResources.CurrentNbtUser.IsAdministrator() )
             {
-                this.FailedLoginCount.Hidden = true;
-                this.AccountLocked.Hidden = true;
+                this.FailedLoginCount.setHidden( value: true, SaveToDb: false );
+                this.AccountLocked.setHidden( value: true, SaveToDb: false );
             }
             _CswNbtObjClassDefault.afterPopulateProps();
 

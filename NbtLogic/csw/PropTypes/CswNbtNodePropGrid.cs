@@ -103,7 +103,7 @@ namespace ChemSW.Nbt.PropTypes
                 Int32 Ret = CswConvert.ToInt32( _CswNbtMetaDataNodeTypeProp.MaxValue );
                 if( Int32.MinValue == Ret )
                 {
-                    Ret = 10;
+                    Ret = 3;
                 }
                 return Ret;
             }

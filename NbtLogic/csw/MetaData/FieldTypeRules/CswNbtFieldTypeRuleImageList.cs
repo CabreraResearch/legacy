@@ -20,6 +20,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             ValueSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Contains );
             ValueSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotNull );
             ValueSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Null );
+            SubFields.add( ValueSubField );
         }//ctor
 
         public CswNbtSubField ValueSubField;

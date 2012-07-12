@@ -105,8 +105,8 @@ namespace ChemSW.Nbt.WebPages
                 //DataSet ReportData = new DataSet();
                 //ReportData.ReadXml( XmlReader );
 
-                ReportNode.ReportUserName.Text = Master.CswNbtResources.CurrentNbtUser.Username;
-                CswArbitrarySelect ReportSelect = Master.CswNbtResources.makeCswArbitrarySelect( "Report_" + ReportNode.NodeId.ToString() + "_Select", ReportNode.SQL.Text );
+                string ReportSql = ReportNode.getUserContextSql( Master.CswNbtResources.CurrentNbtUser.Username );
+                CswArbitrarySelect ReportSelect = Master.CswNbtResources.makeCswArbitrarySelect( "Report_" + ReportNode.NodeId.ToString() + "_Select", ReportSql );
                 DataTable ReportTable = ReportSelect.getTable();
                 if( ReportTable.Rows.Count > 0 )
                 {

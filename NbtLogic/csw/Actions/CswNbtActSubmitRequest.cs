@@ -324,14 +324,14 @@ namespace ChemSW.Nbt.Actions
                 {
                     case RequestItem.Material:
                         RetAsRequestItem.Material.RelatedNodeId = NodeId;
-                        RetAsRequestItem.Container.Hidden = true;
-                        RetAsRequestItem.Container.ReadOnly = true;
+                        RetAsRequestItem.Container.setHidden( value: true, SaveToDb: true );
+                        RetAsRequestItem.Container.setReadOnly( value: true, SaveToDb: true );
                         RetAsRequestItem.Type.Value = CswNbtObjClassRequestItem.Types.Request;
                         break;
                     case RequestItem.Container:
                         RetAsRequestItem.Container.RelatedNodeId = NodeId;
-                        RetAsRequestItem.Container.ReadOnly = true;
-                        RetAsRequestItem.RequestBy.ReadOnly = true;
+                        RetAsRequestItem.Container.setReadOnly( value: true, SaveToDb: true );
+                        RetAsRequestItem.RequestBy.setReadOnly( value: true, SaveToDb: true );
                         switch( OCP.PropName )
                         {
                             case CswNbtObjClassContainer.RequestDispensePropertyName:
@@ -345,9 +345,9 @@ namespace ChemSW.Nbt.Actions
                                     RetAsRequestItem.Type.Value = CswNbtObjClassRequestItem.Types.Dispose;
                                     /* Kludge Alert: We don't have compound conditionals yet. Set it and hide it for now to squash the Quantity subprop. TODO: Remove this when compound conditionals arrive. */
                                     RetAsRequestItem.RequestBy.Value = CswNbtObjClassRequestItem.RequestsBy.Size;
-                                    RetAsRequestItem.RequestBy.Hidden = true;
-                                    RetAsRequestItem.Material.Hidden = true;
-                                    RetAsRequestItem.Material.ReadOnly = true;
+                                    RetAsRequestItem.RequestBy.setHidden( value: true, SaveToDb: true );
+                                    RetAsRequestItem.Material.setHidden( value: true, SaveToDb: true );
+                                    RetAsRequestItem.Material.setReadOnly( value: true, SaveToDb: true );
                                     break;
                                 }
                             case CswNbtObjClassContainer.RequestMovePropertyName:
@@ -355,9 +355,9 @@ namespace ChemSW.Nbt.Actions
                                     RetAsRequestItem.Type.Value = CswNbtObjClassRequestItem.Types.Move;
                                     /* Kludge Alert: We don't have compound conditionals yet. Set it and hide it for now to squash the Quantity subprop. TODO: Remove this when compound conditionals arrive. */
                                     RetAsRequestItem.RequestBy.Value = CswNbtObjClassRequestItem.RequestsBy.Size;
-                                    RetAsRequestItem.RequestBy.Hidden = true;
-                                    RetAsRequestItem.Material.Hidden = true;
-                                    RetAsRequestItem.Material.ReadOnly = true;
+                                    RetAsRequestItem.RequestBy.setHidden( value: true, SaveToDb: true );
+                                    RetAsRequestItem.Material.setHidden( value: true, SaveToDb: true );
+                                    RetAsRequestItem.Material.setReadOnly( value: true, SaveToDb: true );
                                     break;
                                 }
                             default:

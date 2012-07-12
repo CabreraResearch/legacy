@@ -171,15 +171,27 @@ namespace ChemSW.Nbt.PropTypes
         /// <summary>
         /// The Node's Primary Key
         /// </summary>
-        public CswPrimaryKey NodeId { get { return ( _CswNbtNodePropData.NodeId ); } set { _CswNbtNodePropData.NodeId = value; } }
+        public CswPrimaryKey NodeId { get { return ( _CswNbtNodePropData.NodeId ); } } //set { _CswNbtNodePropData.NodeId = value; } }
         /// <summary>
         /// True if the property's value cannot be changed by the end user
         /// </summary>
-        public bool ReadOnly { get { return ( _CswNbtNodePropData.ReadOnly ); } set { _CswNbtNodePropData.ReadOnly = value; } }
+        public bool ReadOnly { get { return ( _CswNbtNodePropData.ReadOnly ); } }
+        /// <summary>
+        /// Set whether the property's value can be changed by the end user
+        /// </summary>
+        /// <param name="value">New value for ReadOnly</param>
+        /// <param name="SaveToDb">If true, save this value to the database permanently.  If false, applies only to this request.</param>
+        public void setReadOnly( bool value, bool SaveToDb ) { _CswNbtNodePropData.setReadOnly( value, SaveToDb ); }
         /// <summary>
         ///  Determines whether a property displays.
         /// </summary>
-        public bool Hidden { get { return ( _CswNbtNodePropData.Hidden ); } set { _CswNbtNodePropData.Hidden = value; } }
+        public bool Hidden { get { return ( _CswNbtNodePropData.Hidden ); } }
+        /// <summary>
+        /// Set whether the property displays.
+        /// </summary>
+        /// <param name="value">New value for Hidden</param>
+        /// <param name="SaveToDb">If true, save this value to the database permanently.  If false, applies only to this request.</param>
+        public void setHidden( bool value, bool SaveToDb ) { _CswNbtNodePropData.setHidden( value, SaveToDb ); }
         /// <summary>
         /// Property Value: Field1
         /// </summary>
@@ -211,23 +223,7 @@ namespace ChemSW.Nbt.PropTypes
         /// <param name="IsCopy">True if the update is part of a Copy operation</param>
         virtual public void onBeforeUpdateNodePropRow( bool IsCopy, bool OverrideUniqueValidation )
         {
-
-            /*case 26545
-            Check if the field type is text, then check if it's a null string
-            If it is not a null string, we can continue on to check if it is unique
-            if it IS a null string, we don't do the uniqueness check, as uniqueness does not apply to empty strings
-            */
-            bool fieldIsNotNull = true;
-            CswNbtMetaDataFieldType textFT = _CswNbtResources.MetaData.getFieldType( CswNbtMetaDataFieldType.NbtFieldType.Text );
-            if( NodeTypeProp.getFieldType().FieldTypeId == textFT.FieldTypeId )
-            {
-                if( _CswNbtResources.Nodes[this.NodeId].Properties[this.NodeTypeProp].Field1.Equals( "" ) )
-                {
-                    fieldIsNotNull = false;
-                }
-            }
-
-            if( fieldIsNotNull )
+            if( false == _CswNbtResources.Nodes[this.NodeId].Properties[this.NodeTypeProp].Empty ) //case 26546 - we allow unique properties to be empty
             {
                 //bz # 6686
                 if( IsUnique() && WasModified && !OverrideUniqueValidation )
@@ -275,7 +271,7 @@ namespace ChemSW.Nbt.PropTypes
                     }
 
                 }//if IsUnique
-            } //false == equals()
+            } //if empty
 
             // case 25780 - copy first 512 characters of gestalt to gestaltsearch
             if( _CswNbtNodePropData.WasModified )
