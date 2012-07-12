@@ -30,7 +30,7 @@ namespace ChemSW.Nbt.Schema
 
                 CswNbtMetaDataNodeTypeTab sizeTab = _getTab( sizeNT, "Size", 1 );
 
-                CswNbtMetaDataNodeTypeProp sizeSupplierNTP = _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( sizeNT, CswNbtMetaDataFieldType.NbtFieldType.PropertyReference, "Supplier3", sizeTab.TabId );
+                CswNbtMetaDataNodeTypeProp sizeSupplierNTP = _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( sizeNT, CswNbtMetaDataFieldType.NbtFieldType.PropertyReference, "Supplier", sizeTab.TabId );
                 sizeSupplierNTP.SetFK( NbtViewPropIdType.ObjectClassPropId.ToString(), materialOCP.PropId, NbtViewPropIdType.ObjectClassPropId.ToString(), supplierOCP.PropId );
 
                 string templateText = sizeNT.NameTemplateValue;
