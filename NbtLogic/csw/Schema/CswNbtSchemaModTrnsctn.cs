@@ -694,10 +694,10 @@ namespace ChemSW.Nbt.Schema
         /// <summary>
         /// Convenience function for deleting a Configuration Variable
         /// </summary>
-        public void deleteConfigurationVariable( string Name )
+        public void deleteConfigurationVariable( CswNbtResources.ConfigurationVariables Name )
         {
             CswTableUpdate ConfigVarTable = makeCswTableUpdate( "SchemaModTrnsctn_ConfigVarUpdate", "configuration_variables" );
-            DataTable ConfigVarDataTable = ConfigVarTable.getTable( "where lower(variablename)='" + Name.ToLower() + "'", true );
+            DataTable ConfigVarDataTable = ConfigVarTable.getTable( "where lower(variablename)='" + Name.ToString().ToLower() + "'", true );
             if( ConfigVarDataTable.Rows.Count == 1 )
             {
                 ConfigVarDataTable.Rows[0].Delete();

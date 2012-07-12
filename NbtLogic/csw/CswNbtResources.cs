@@ -123,7 +123,12 @@ namespace ChemSW.Nbt
             /// <summary>
             /// Limit the number of containers allowed to receive in a single operation
             /// </summary>
-            container_receipt_limit
+            container_receipt_limit,
+
+            /// <summary>
+            /// The maximum number of lines in comments fields
+            /// </summary>
+            total_comments_lines
         }
 
         /// <summary>
