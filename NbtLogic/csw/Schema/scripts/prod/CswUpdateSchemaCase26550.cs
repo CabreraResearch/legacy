@@ -1,4 +1,6 @@
-﻿using ChemSW.Nbt.MetaData;
+﻿using System.Data;
+using ChemSW.DB;
+using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 
 namespace ChemSW.Nbt.Schema
@@ -10,6 +12,31 @@ namespace ChemSW.Nbt.Schema
     {
         public override void update()
         {
+            #region Remove Existing Deficient_Inspections Action
+
+            _CswNbtSchemaModTrnsctn.deleteView( "Deficient Inspections", true );
+
+            string actionWhereClause = "where actionid = 100";
+            CswTableUpdate tableJctModActUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "DeleteDefInspActJctMod", "jct_modules_actions" );
+            DataTable jctModActTable = tableJctModActUpdate.getTable( actionWhereClause );
+            foreach( DataRow row in jctModActTable.Rows )
+            {
+                row.Delete();
+            }
+            tableJctModActUpdate.update( jctModActTable );
+
+            CswTableUpdate tableActionUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "DeleteDefInspAct", "actions" );
+            DataTable actTable = tableActionUpdate.getTable( actionWhereClause );
+            foreach( DataRow row in actTable.Rows )
+            {
+                row.Delete();
+            }
+            tableActionUpdate.update( actTable );
+
+            #endregion
+
+            #region Create new Deficient Inspections Report
+
             CswNbtMetaDataNodeType ReportNodeType = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Report" );
             CswNbtNode Report = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( ReportNodeType.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode );
             CswNbtObjClassReport NodeAsReport = Report;
@@ -45,8 +72,7 @@ namespace ChemSW.Nbt.Schema
 
             NodeAsReport.postChanges( false );
 
-            //TODO - add node to viewselect
-            //remove deficient inspections action from DB (and viewselect, if necessary)
+            #endregion
 
         }//Update()
 

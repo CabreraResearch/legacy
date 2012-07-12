@@ -11,7 +11,6 @@ namespace ChemSW.Nbt.Actions
         Future_Scheduling,
         Create_Inspection,
         Multi_Edit,
-        Deficient_Inspections,
         Quotas,
         Sessions,
         View_Scheduled_Rules,

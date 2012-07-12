@@ -1095,18 +1095,6 @@ window.initMain = window.initMain || function (undefined) {
             'data': { 'ActionName': o.actionname }
         });
 
-        function setupDeficientInspections() {
-            clear({ 'all': true });
-
-            Csw.actions.inspectionStatus(centerTopDiv, {
-                onEditNode: function () {
-                    setupDeficientInspections();
-                },
-                onAfterButtonClick: function () {
-                    setupDeficientInspections();
-                }
-            });
-        }
         clear({ 'all': true });
         refreshMainMenu();
         switch (o.actionname) {
@@ -1247,11 +1235,6 @@ window.initMain = window.initMain || function (undefined) {
             //				break;                                                                              
             //			case 'Inspection_Design':                                                                              
             //				break;                                                                              
-
-            case 'Deficient_Inspections':
-                setupDeficientInspections();
-
-                break;
             case 'Quotas':
                 Csw.actions.quotas(centerTopDiv, {
                     onQuotaChange: function () {
