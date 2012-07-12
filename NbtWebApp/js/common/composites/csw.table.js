@@ -56,10 +56,12 @@
 
                 if (false === isjQuery) {
                     cswPrivate.table.addClass(cswPrivate.TableCssClass);
-                    cswPrivate.table.propDom({
-                        width: cswPrivate.width,
-                        align: cswPrivate.align
-                    });
+                    if(false === Csw.isNullOrEmpty(cswPrivate.width)) {
+                        cswPrivate.table.propDom({ width: cswPrivate.width });
+                    }
+                    if(false === Csw.isNullOrEmpty(cswPrivate.align)) {
+                        cswPrivate.table.propDom({ align: cswPrivate.align });
+                    }
                     cswPrivate.table.propNonDom({
                         cellpadding: cswPrivate.cellpadding,
                         cellspacing: cswPrivate.cellspacing,
