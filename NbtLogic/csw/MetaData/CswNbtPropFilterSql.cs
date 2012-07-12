@@ -63,6 +63,25 @@ namespace ChemSW.Nbt.MetaData
             //public static readonly PropertyFilterMode Undefined = new PropertyFilterMode("Undefined");
         }
 
+        /// <summary>
+        /// Indicates how to treat results that are filtered out
+        /// </summary>
+        public sealed class FilterResultMode : CswEnum<FilterResultMode>
+        {
+            private FilterResultMode( String Name ) : base( Name ) { }
+            public static IEnumerable<FilterResultMode> _All { get { return All; } }
+            public static explicit operator FilterResultMode( string str )
+            {
+                FilterResultMode ret = Parse( str );
+                return ( ret != null ) ? ret : FilterResultMode.Unknown;
+            }
+            public static readonly FilterResultMode Unknown = new FilterResultMode( "Unknown" );
+
+            public static readonly FilterResultMode Hide = new FilterResultMode( "Hide" );
+            public static readonly FilterResultMode Disabled = new FilterResultMode( "Disabled" );
+        }
+        
+
         public enum PropertyFilterConjunction { And, AndNot };
 
 
