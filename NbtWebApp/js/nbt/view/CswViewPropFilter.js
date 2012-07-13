@@ -390,7 +390,7 @@
                     filtarbitraryid: o.filtarbitraryid,
                     proparbitraryid: o.proparbitraryid,
                     relatedidtype: o.relatedidtype,
-                    subfield: subFieldText,
+                    subfieldname: subFieldText,
                     filter: filterText,
                     filtervalue: Csw.string(filterValue).trim()
                 };
