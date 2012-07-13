@@ -15,6 +15,15 @@ namespace ChemSW.Nbt.Schema
 
             // NOTE: This script will be run many times, so make sure your changes are safe!
 
+            /* TODO: Delete on moving to Quince */
+            //case 26881
+            CswSequenceName CswSequenceName = new Nbt.CswSequenceName( "tablecolid" );
+            if( false == _CswNbtSchemaModTrnsctn.doesSequenceExist( CswSequenceName ) )
+            {
+                _CswNbtSchemaModTrnsctn.makeSequence( CswSequenceName, "", "", 0, 100001963 );
+            }
+
+
 
             // case 24441
             if( false == _CswNbtSchemaModTrnsctn.isColumnDefinedInDataBase( "object_class_props", "textarearows" ) )
@@ -31,7 +40,7 @@ namespace ChemSW.Nbt.Schema
             {
                 _CswNbtSchemaModTrnsctn.addBooleanColumn( "jct_nodes_props", "hidden", "Determines whether property displays.", true, false );
             }
-            
+
             // case 26957
             if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( "nodetype_layout", "tabgroup" ) )
             {
