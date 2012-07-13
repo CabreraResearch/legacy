@@ -12,7 +12,6 @@
                 storeId: '',
                 title: 'Untitled Grid',
                 truncated: false,
-                //readonly: false,
                 stateId: '',
                 usePaging: true,
                 forceFit: false,   // expand all columns to fill width (makes column resizing weird)
