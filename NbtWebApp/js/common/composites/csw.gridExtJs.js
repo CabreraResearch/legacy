@@ -371,7 +371,9 @@
                                 if (false === Csw.isNullOrEmpty(result.grid.truncated)) {
                                     cswPrivate.truncated = result.grid.truncated;
                                 }
-                                cswPrivate.title = result.grid.title;
+                                if(false === Csw.isNullOrEmpty(result.grid.title)) {
+                                    cswPrivate.title = result.grid.title;
+                                }
                                 cswPrivate.fields = result.grid.fields;
                                 cswPrivate.columns = result.grid.columns;
                                 cswPrivate.data = result.grid.data;
