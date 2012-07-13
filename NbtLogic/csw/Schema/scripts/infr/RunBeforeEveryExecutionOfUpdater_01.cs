@@ -17,11 +17,11 @@ namespace ChemSW.Nbt.Schema
 
 
             // case 24441
-            if( false == _CswNbtSchemaModTrnsctn.isColumnDefinedInDataBase( "object_class_props", "textarearows" ) )
+            if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( "object_class_props", "textarearows" ) )
             {
                 _CswNbtSchemaModTrnsctn.addLongColumn( "object_class_props", "textarearows", "Height in rows(memo) or pixels(image)", false, false );
             }
-            if( false == _CswNbtSchemaModTrnsctn.isColumnDefinedInDataBase( "object_class_props", "textareacols" ) )
+            if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( "object_class_props", "textareacols" ) )
             {
                 _CswNbtSchemaModTrnsctn.addLongColumn( "object_class_props", "textareacols", "Width in characters(memo) or pixels(image)", false, false );
             }
