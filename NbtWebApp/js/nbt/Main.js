@@ -41,7 +41,7 @@ window.initMain = window.initMain || function (undefined) {
                         Csw.cookie.clearAll();
                         Csw.ajax.post({
                             urlMethod: 'reauthenticate',
-                            data: { PropId: opts.propAttr },
+                            data: { PropId: Csw.string(opts.propid) },
                             success: function () {
                                 Csw.clientChanges.unsetChanged();
                                 Csw.window.location('Main.html');
