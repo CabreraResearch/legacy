@@ -6,6 +6,7 @@ using System.Data;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.Script.Services;   // supports ScriptService attribute
 using System.Web.Services;
@@ -360,7 +361,14 @@ namespace ChemSW.Nbt.WebServices
             }
 
             if( AuthenticationStatus == AuthenticationStatus.Unknown )
+            {
+                //Case 26866/27114
+                if( false == CswTools.IsAlphaNumeric( UserName ) )
+                {
+                    UserName = Regex.Replace( UserName, "[^a-zA-Z0-9_]+", "" );
+                }
                 AuthenticationStatus = _CswSessionResources.CswSessionManager.beginSession( UserName, Password, CswWebControls.CswNbtWebTools.getIpAddress(), IsMobile );
+            }
 
             // case 21211
             if( AuthenticationStatus == AuthenticationStatus.Authenticated )
@@ -4546,7 +4554,7 @@ namespace ChemSW.Nbt.WebServices
 
                 CswNbtWebServiceRequesting ws = new CswNbtWebServiceRequesting( _CswNbtResources );
                 ReturnVal = ws.getFulfillRequestFilters( SelectedFilters );
-                
+
                 _deInitResources();
             }
             catch( Exception Ex )
