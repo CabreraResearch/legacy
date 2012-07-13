@@ -104,6 +104,7 @@
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26714MakeUserManaged.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26720.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase24446Action2.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase27071RequestItem.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase27088.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase24486.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26683.cs" />
