@@ -51,11 +51,11 @@ window.initMain = window.initMain || function (undefined) {
                     break;
 
                 case Csw.enums.nbtButtonAction.receive:
-                    data.actionname = 'Receiving';
+                    opts.data.actionname = 'Receiving';
                     handleAction(opts.data);
                     break;
                 case Csw.enums.nbtButtonAction.dispense:
-                    data.actionname = 'DispenseContainer';
+                    opts.data.actionname = 'DispenseContainer';
                     handleAction(opts.data);
                     break;
 
