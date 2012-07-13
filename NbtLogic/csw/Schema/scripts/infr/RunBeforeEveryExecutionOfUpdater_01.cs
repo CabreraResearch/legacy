@@ -1,3 +1,8 @@
+using System;
+using System.Data;
+using ChemSW.Core;
+using ChemSW.DB;
+using ChemSW.Exceptions;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -17,10 +22,23 @@ namespace ChemSW.Nbt.Schema
 
             /* TODO: Delete on moving to Quince */
             //case 26881
+
+
             CswSequenceName CswSequenceName = new Nbt.CswSequenceName( "tablecolid" );
             if( false == _CswNbtSchemaModTrnsctn.doesSequenceExist( CswSequenceName ) )
             {
-                _CswNbtSchemaModTrnsctn.makeSequence( CswSequenceName, "", "", 0, 100001963 );
+                string Query = "select max(tablecolid) as \"max\" from data_dictionary";
+                CswArbitrarySelect CswArbitrarySelectDataDictionary = _CswNbtSchemaModTrnsctn.makeCswArbitrarySelect( "maxdatadictionaryrows", Query );
+                DataTable DataTableDataDictionary = CswArbitrarySelectDataDictionary.getTable();
+                if( DataTableDataDictionary.Rows.Count <= 0 )
+                {
+                    throw ( new CswDniException( "The following query should have returned one row but did not: " + Query ) );
+                }
+
+                Int32 MaxSequenceVal = CswConvert.ToInt32( DataTableDataDictionary.Rows[0]["max"] );
+                MaxSequenceVal++;
+
+                _CswNbtSchemaModTrnsctn.makeSequence( CswSequenceName, "", "", 0, MaxSequenceVal );
             }
 
 
