@@ -18,13 +18,13 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataObjectClass equipmentOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.EquipmentClass );
             CswNbtMetaDataObjectClassProp assemblyOCP = equipmentOC.getObjectClassProp( CswNbtObjClassEquipment.AssemblyPropertyName );
 
-            CswNbtMetaDataNodeType assemblyNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Assembly" );
+            CswNbtMetaDataObjectClass assemblyOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.EquipmentAssemblyClass );
 
-            if( null != assemblyNT )
+            if( null != assemblyOC )
             {
                 _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( assemblyOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.isfk, true );
-                _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( assemblyOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.fktype, NbtViewRelatedIdType.NodeTypeId.ToString() );
-                _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( assemblyOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.fkvalue, assemblyNT.NodeTypeId );
+                _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( assemblyOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.fktype, NbtViewRelatedIdType.ObjectClassId.ToString() );
+                _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( assemblyOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.fkvalue, assemblyOC.ObjectClassId );
             }
 
         }//Update()
