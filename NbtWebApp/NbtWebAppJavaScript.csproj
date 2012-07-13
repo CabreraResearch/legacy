@@ -78,6 +78,7 @@
     <Content Include="Build\far.exe" />
     <Content Include="ConnectTest.html" />
     <Content Include="js\nbt\actions\csw.fulfillrequest.js" />
+    <Content Include="etc\far.exe" />
     <Content Include="js\nbt\composites\csw.location.js" />
     <Content Include="js\common\composites\csw.menubutton.js" />
     <Content Include="js\nbt\composites\csw.quantity.js" />
@@ -283,21 +284,12 @@
     <Service Include="{C0C07587-41A7-46C8-8FBD-3F9C8EBE2DDC}" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="Ext.Net">
-      <HintPath>..\packages\Ext.NET.2.0.0-rc1\lib\Ext.Net.dll</HintPath>
-    </Reference>
-    <Reference Include="Ext.Net.Utilities">
-      <HintPath>..\packages\Ext.NET.Utilities.2.0.1\lib\Ext.Net.Utilities.dll</HintPath>
-    </Reference>
     <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Newtonsoft.Json.4.5.7\lib\net40\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Web" />
-    <Reference Include="Transformer.NET">
-      <HintPath>..\packages\Transformer.NET.2.0.0\lib\Transformer.NET.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSHARP.Targets" />
   <ProjectExtensions>
