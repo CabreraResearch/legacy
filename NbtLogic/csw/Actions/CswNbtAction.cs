@@ -20,8 +20,7 @@ namespace ChemSW.Nbt.Actions
         DispenseContainer,
         DisposeContainer,
         UndisposeContainer,
-        Receiving,
-        Fulfill_Request
+        Receiving
     }
 
     public class CswNbtAction

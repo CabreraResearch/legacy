@@ -77,7 +77,6 @@
   <ItemGroup>
     <Content Include="Build\far.exe" />
     <Content Include="ConnectTest.html" />
-    <Content Include="js\nbt\actions\csw.fulfillrequest.js" />
     <Content Include="etc\far.exe" />
     <Content Include="js\nbt\composites\csw.location.js" />
     <Content Include="js\common\composites\csw.menubutton.js" />

@@ -1274,12 +1274,6 @@ window.initMain = window.initMain || function (undefined) {
             //			case 'Enter_Results':                                                                              
             //				break;                                                                              
 
-            case 'Fulfill_Request':
-                Csw.actions.fulfillRequest(centerTopDiv, {
-                    
-                });
-                break;
-
             case 'Future_Scheduling':
                 Csw.nbt.futureSchedulingWizard(centerTopDiv, {
                     onCancel: refreshSelected,
