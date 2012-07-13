@@ -386,10 +386,8 @@ namespace ChemSW.Nbt.WebServices
                                 MetaDataOCP == Cancel )
                             {
                                 //Ret = Ret || Node.Properties[MetaDataProp].AsButton.Checked == Tristate.True;
-                                CswNbtObjClass.NbtButtonAction ButtonAction = CswNbtObjClass.NbtButtonAction.Unknown;
-                                string Message = string.Empty;
-                                JObject ActionData = null;
-                                ( (CswNbtObjClassInspectionDesign) Node ).onButtonClick( MetaDataProp, out ButtonAction, out ActionData, out Message );
+                                CswNbtObjClass.NbtButtonData ButtonData = new CswNbtObjClass.NbtButtonData( MetaDataProp );
+                                ( (CswNbtObjClassInspectionDesign) Node ).onButtonClick( ButtonData );
                             }
                         }
                     }

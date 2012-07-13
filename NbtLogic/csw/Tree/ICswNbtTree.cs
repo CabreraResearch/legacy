@@ -299,6 +299,10 @@ namespace ChemSW.Nbt
         /// </summary>
         bool getNodeLockedForCurrentPosition();
         /// <summary>
+        /// Returns whether the currently indexed node is included (for filters with resultmode.disabled)
+        /// </summary>
+        bool getNodeIncludedForCurrentPosition();
+        /// <summary>
         /// True if the currently indexed node is selectable, false otherwise
         /// </summary>
         bool getNodeSelectableForCurrentPosition();
@@ -362,7 +366,7 @@ namespace ChemSW.Nbt
         /// <param name="GroupName">If grouping nodes, name of Group for this node</param>
         /// <param name="Relationship">ViewRelationship node which caused this node to be added</param>
         /// <returns>Returns NodeKey index for node</returns>
-        Collection<CswNbtNodeKey> loadNodeAsChildFromRow( CswNbtNodeKey ParentNodeKey, DataRow DataRowToAdd, bool UseGrouping, string GroupName, CswNbtViewRelationship Relationship, Int32 RowCount );
+        Collection<CswNbtNodeKey> loadNodeAsChildFromRow( CswNbtNodeKey ParentNodeKey, DataRow DataRowToAdd, bool UseGrouping, string GroupName, CswNbtViewRelationship Relationship, Int32 RowCount, bool Included = true );
 
         ///// <summary>
         ///// Add a node from the information in its key
@@ -380,7 +384,7 @@ namespace ChemSW.Nbt
         /// <param name="ShowInTree">True if the node should appear in a tree, false otherwise</param>
         /// <param name="AddChildren">True if the user should be allowed to add children to this node, false otherwise</param>
         /// <returns>Returns NodeKey index for node</returns>
-        Collection<CswNbtNodeKey> loadNodeAsChildFromRow( CswNbtNodeKey ParentNodeKey, DataRow DataRowToAdd, bool UseGrouping, string GroupName, bool Selectable, bool ShowInTree, NbtViewAddChildrenSetting AddChildren, Int32 RowCount );
+        Collection<CswNbtNodeKey> loadNodeAsChildFromRow( CswNbtNodeKey ParentNodeKey, DataRow DataRowToAdd, bool UseGrouping, string GroupName, bool Selectable, bool ShowInTree, NbtViewAddChildrenSetting AddChildren, Int32 RowCount, bool Included = true );
 
         /// <summary>
         /// Sets the client-side expandmode of the current node

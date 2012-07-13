@@ -11,6 +11,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
         {
             string ValueColumn = "jnp." + Column.ToString();
             string ReturnVal = string.Empty;
+            bool IncludesTime = false;
 
             DateTime FilterValue = DateTime.MinValue;
             string Value = CswNbtViewPropertyFilterIn.Value.ToLower().Trim();
@@ -33,6 +34,10 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             else
             {
                 FilterValue = CswConvert.ToDateTime( CswNbtViewPropertyFilterIn.Value );
+                if( FilterValue.TimeOfDay != TimeSpan.Zero ) // midnight
+                {
+                    IncludesTime = true;
+                }
             }
 
             if( CswNbtViewPropertyFilterIn.FilterMode == CswNbtPropFilterSql.PropertyFilterMode.NotNull )
@@ -45,40 +50,77 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             }
             else if( FilterValue != DateTime.MinValue )
             {
-                string FilterValueString = CswNbtFieldResources.CswNbtResources.getDbNativeDate( FilterValue ); //FilterValue.ToShortDateString();
+                // case 26844
+                // If no time was specified in our filter value, then 
+                // we need to ignore the time part of values in our comparisons
+
+                string ThisDayString = CswNbtFieldResources.CswNbtResources.getDbNativeDate( FilterValue );
+                string NextDayString = CswNbtFieldResources.CswNbtResources.getDbNativeDate( FilterValue.AddDays( 1 ) );
+
                 if( CswNbtViewPropertyFilterIn.FilterMode == CswNbtPropFilterSql.PropertyFilterMode.Equals )
                 {
-                    ReturnVal = ValueColumn + " = " + FilterValueString;
+                    if( IncludesTime )
+                    {
+                        ReturnVal = ValueColumn + " = " + ThisDayString;
+                    }
+                    else
+                    {
+                        ReturnVal = ValueColumn + " > " + ThisDayString;
+                        ReturnVal += " and " + ValueColumn + " < " + NextDayString;
+                    }
                 }
                 else if( CswNbtViewPropertyFilterIn.FilterMode == CswNbtPropFilterSql.PropertyFilterMode.GreaterThan )
                 {
-                    ReturnVal = ValueColumn + " > " + FilterValueString;
+                    if( IncludesTime )
+                    {
+                        ReturnVal = ValueColumn + " > " + ThisDayString;
+                    }
+                    else
+                    {
+                        ReturnVal = ValueColumn + " > " + NextDayString;
+                    }
                 }
                 else if( CswNbtViewPropertyFilterIn.FilterMode == CswNbtPropFilterSql.PropertyFilterMode.GreaterThanOrEquals )
                 {
-                    ReturnVal = ValueColumn + " >= " + FilterValueString;
+                    ReturnVal = ValueColumn + " >= " + ThisDayString;
                 }
                 else if( CswNbtViewPropertyFilterIn.FilterMode == CswNbtPropFilterSql.PropertyFilterMode.LessThan )
                 {
-                    ReturnVal = ValueColumn + " < " + FilterValueString;
+                    ReturnVal = ValueColumn + " < " + ThisDayString;
                 }
                 else if( CswNbtViewPropertyFilterIn.FilterMode == CswNbtPropFilterSql.PropertyFilterMode.LessThanOrEquals )
                 {
-                    ReturnVal = ValueColumn + " <= " + FilterValueString;
+                    if( IncludesTime )
+                    {
+                        ReturnVal = ValueColumn + " <= " + ThisDayString;
+                    }
+                    else
+                    {
+                        ReturnVal = ValueColumn + " <= " + NextDayString;
+                    }
                 }
                 else if( CswNbtViewPropertyFilterIn.FilterMode == CswNbtPropFilterSql.PropertyFilterMode.NotEquals )
                 {
-                    ReturnVal = ValueColumn + " <> " + FilterValueString;
+                    if( IncludesTime )
+                    {
+                        ReturnVal = ValueColumn + " <> " + ThisDayString;
+                    }
+                    else
+                    {
+                        ReturnVal = "(" + ValueColumn + " < " + ThisDayString;
+                        ReturnVal += " or " + ValueColumn + " > " + NextDayString + ")";
+                    }
                 }
                 else
                 {
                     throw new CswDniException( ErrorType.Error, "Invalid filter", "An invalid FilterMode was encountered in CswNbtNodeProp.GetFilter()) { " + CswNbtViewPropertyFilterIn.FilterMode.ToString() );
                 }// switch( CswNbtViewPropertyFilterIn.FilterMode )
+
             }// if( FilterValue != DateTime.MinValue )
 
             return ( ReturnVal );
 
-        }//makeWhereClause()
+        }//renderViewPropFilter()
 
 
         public static string FilterModeToString( CswNbtPropFilterSql.PropertyFilterMode FilterMode )
