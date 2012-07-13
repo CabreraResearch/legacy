@@ -26,7 +26,7 @@
                     };
                     Csw.crawlObject(msg, onSuccess, true);
                 } else {
-                    ret = 'customerid="' + Csw.clientSession.currentAccessId() + '", ' + msg;
+                    ret = 'customerid="' + Csw.clientSession.currentAccessId() + '", error="' + msg + '"';
                 }
             } catch(e) {}
             return ret;

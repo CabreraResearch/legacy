@@ -32,20 +32,60 @@ window.initMain = window.initMain || function (undefined) {
     };
     Csw.subscribe(Csw.enums.events.ajax.globalAjaxStop, stopSpinner);
    
-    function onObjectClassButtonClick(eventOj, data) {
-        switch (Csw.string(data.action).toLowerCase()) {
-            case Csw.enums.nbtButtonAction.request:
-                refreshHeaderMenu();
-                //handleAction({ actionname: 'Submit_Request', ActionOptions: data });
-                break;
-            case Csw.enums.nbtButtonAction.receive:
-                data.actionname = 'Receiving';
-                handleAction(data);
-                break;
-            case Csw.enums.nbtButtonAction.dispense:
-                data.actionname = 'DispenseContainer';
-                handleAction(data);
-                break;
+    function onObjectClassButtonClick(eventOj, opts) {
+        var actionJson = opts.data.actionData;
+            switch (Csw.string(opts.data.action).toLowerCase()) {
+                case Csw.enums.nbtButtonAction.reauthenticate:
+                    if (Csw.clientChanges.manuallyCheckChanges()) {
+                        /* case 24669 */
+                        Csw.cookie.clearAll();
+                        Csw.ajax.post({
+                            urlMethod: 'reauthenticate',
+                            data: { PropId: Csw.string(opts.propid) },
+                            success: function () {
+                                Csw.clientChanges.unsetChanged();
+                                Csw.window.location('Main.html');
+                            }
+                        });
+                    }
+                    break;
+
+                case Csw.enums.nbtButtonAction.receive:
+                    data.actionname = 'Receiving';
+                    handleAction(opts.data);
+                    break;
+                case Csw.enums.nbtButtonAction.dispense:
+                    data.actionname = 'DispenseContainer';
+                    handleAction(opts.data);
+                    break;
+
+                case Csw.enums.nbtButtonAction.request:
+                    switch (actionJson.requestaction) {
+                        case 'Dispose':
+                            refreshHeaderMenu();
+                            break;
+                        default:
+                            $.CswDialog('AddNodeDialog', {
+                                nodetypeid: actionJson.requestItemNodeTypeId,
+                                propertyData: actionJson.requestItemProps,
+                                text: actionJson.titleText,
+                                onSaveImmediate: function () {
+                                    refreshHeaderMenu();
+                                }
+                            });
+                            break;
+                    }
+                    break;
+
+                case Csw.enums.nbtButtonAction.popup:
+                    Csw.openPopup(actionJson.url, 600, 800);
+                    break;
+                case Csw.enums.nbtButtonAction.loadView:
+                    Csw.publish(Csw.enums.events.RestoreViewContext, actionJson);
+                    break;
+                default:
+                    Csw.debug.error('No event has been defined for button click ' + opts.data.action);
+                    break;
         }
     }
     Csw.subscribe(Csw.enums.events.objectClassButtonClick, onObjectClassButtonClick);
@@ -1233,6 +1273,12 @@ window.initMain = window.initMain || function (undefined) {
                 break;
             //			case 'Enter_Results':                                                                              
             //				break;                                                                              
+
+            case 'Fulfill_Request':
+                Csw.actions.fulfillRequest(centerTopDiv, {
+                    
+                });
+                break;
 
             case 'Future_Scheduling':
                 Csw.nbt.futureSchedulingWizard(centerTopDiv, {

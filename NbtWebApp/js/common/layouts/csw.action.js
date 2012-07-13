@@ -11,7 +11,8 @@
                 Title: 'An Action',
                 FinishText: 'Finish',
                 onFinish: null,
-                onCancel: null
+                onCancel: null,
+                hasButtonGroup: true
             };
             if (options) {
                 $.extend(cswPrivate, options);
@@ -43,22 +44,23 @@
                         .br({ number: 2 })
                         .div({ suffix: 'content' });
 
-                cswPrivate.btnGroup = cswPublic.table.cell(3, 1).buttonGroup({
-                    buttons: {
-                        next: { enabled: false, hidden: true },
-                        previous: { enabled: false, hidden: true },
-                        finish: {
-                            text: cswPrivate.FinishText,
-                            onclick: function () { Csw.tryExec(cswPrivate.onFinish); }
+                if (Csw.bool(cswPrivate.hasButtonGroup)) {
+                    cswPrivate.btnGroup = cswPublic.table.cell(3, 1).buttonGroup({
+                        buttons: {
+                            next: { enabled: false, hidden: true },
+                            previous: { enabled: false, hidden: true },
+                            finish: {
+                                text: cswPrivate.FinishText,
+                                onclick: function() { Csw.tryExec(cswPrivate.onFinish); }
+                            }
+                        },
+                        cancel: {
+                            onclick: function() { Csw.tryExec(cswPrivate.onCancel); }
                         }
-                    },
-                    cancel: {
-                        onclick: function () { Csw.tryExec(cswPrivate.onCancel); }
-                    }
-                });
-                cswPublic.finish = cswPrivate.btnGroup.finish;
-                cswPublic.cancel = cswPrivate.btnGroup.cancel;
-
+                    });
+                    cswPublic.finish = cswPrivate.btnGroup.finish;
+                    cswPublic.cancel = cswPrivate.btnGroup.cancel;
+                }
             } ());
             
             return cswPublic;

@@ -11,6 +11,7 @@ unlink($destfile);
 my $param = "";
 $param .= extract("$dir\\js\\nbt");
 $param .= extract("$dir\\js\\nbt\\actions");
+$param .= extract("$dir\\js\\nbt\\composites");
 $param .= extract("$dir\\js\\nbt\\controls");
 $param .= extract("$dir\\js\\nbt\\layouts");
 $param .= extract("$dir\\js\\nbt\\literals");

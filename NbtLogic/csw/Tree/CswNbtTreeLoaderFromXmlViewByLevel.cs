@@ -119,6 +119,16 @@ namespace ChemSW.Nbt
                         Collection<CswNbtNodeKey> ThisNewNodeKeys = new Collection<CswNbtNodeKey>();
                         ParentNodeKeys = new Collection<CswNbtNodeKey>();
 
+                        // Handle ResultMode.Disabled on filters
+                        bool Included = true;
+                        foreach( DataColumn Column in NodesRow.Table.Columns )
+                        {
+                            if( Column.ColumnName.StartsWith( "INCLUDED" ) )
+                            {
+                                Included = Included && CswConvert.ToBoolean( NodesRow[Column] );
+                            }
+                        }
+
                         string GroupName = string.Empty;
                         if( Relationship.GroupByPropId != Int32.MinValue )
                         {
@@ -146,7 +156,7 @@ namespace ChemSW.Nbt
                                 {
                                     _CswNbtTree.makeNodeCurrent( ParentNodeKey );
                                     Int32 ChildCount = _CswNbtTree.getChildNodeCount();
-                                    ThisNewNodeKeys = _CswNbtTree.loadNodeAsChildFromRow( ParentNodeKey, NodesRow, ( Relationship.GroupByPropId != Int32.MinValue ), GroupName, Relationship, ChildCount + 1 );
+                                    ThisNewNodeKeys = _CswNbtTree.loadNodeAsChildFromRow( ParentNodeKey, NodesRow, ( Relationship.GroupByPropId != Int32.MinValue ), GroupName, Relationship, ChildCount + 1, Included );
                                     foreach( CswNbtNodeKey ThisNewNodeKey in ThisNewNodeKeys )
                                     {
                                         NewNodeKeys.Add( ThisNewNodeKey );
@@ -158,7 +168,7 @@ namespace ChemSW.Nbt
                         else
                         {
                             Int32 ChildCount = _CswNbtTree.getChildNodeCount();
-                            ThisNewNodeKeys = _CswNbtTree.loadNodeAsChildFromRow( null, NodesRow, ( Relationship.GroupByPropId != Int32.MinValue ), GroupName, Relationship, ChildCount + 1 );
+                            ThisNewNodeKeys = _CswNbtTree.loadNodeAsChildFromRow( null, NodesRow, ( Relationship.GroupByPropId != Int32.MinValue ), GroupName, Relationship, ChildCount + 1, Included );
                             foreach( CswNbtNodeKey ThisNewNodeKey in ThisNewNodeKeys )
                             {
                                 NewNodeKeys.Add( ThisNewNodeKey );
@@ -503,7 +513,7 @@ namespace ChemSW.Nbt
             } // if( false == IsParentQuery )
 
             // Property Filters
-
+            Int32 FilterCount = 0;
             foreach( CswNbtViewProperty Prop in Relationship.Properties )
             {
                 foreach( CswNbtViewPropertyFilter Filter in Prop.Filters )
@@ -512,6 +522,7 @@ namespace ChemSW.Nbt
                         Filter.FilterMode == CswNbtPropFilterSql.PropertyFilterMode.NotNull ||
                         Filter.Value != string.Empty )
                     {
+                        FilterCount += 1;
                         ICswNbtFieldTypeRule FilterFieldTypeRule = _CswNbtResources.MetaData.getFieldTypeRule( Prop.FieldType );
                         //if( Prop.Type == CswNbtPropType.NodeTypePropId )
                         //{
@@ -532,44 +543,60 @@ namespace ChemSW.Nbt
 
                             if( FilterSubField.RelationalTable == string.Empty )
                             {
-
+                                string FilterClause = @"select z.nodeid, '1' as included from nodes z where ";
                                 if( Filter.FilterMode == CswNbtPropFilterSql.PropertyFilterMode.Null )
                                 {
-                                    Where += @" and (n.nodeid not in (
+                                    FilterClause += @"(z.nodeid not in (
                                   select jnp.nodeid
                                     from jct_nodes_props jnp
                                     join nodetype_props p on (jnp.nodetypepropid = p.nodetypepropid) ";
                                     if( Prop.Type == NbtViewPropType.NodeTypePropId )
                                     {
-                                        Where += @"  where p.firstpropversionid = " + Prop.FirstVersionNodeTypeProp.PropId + @")";
+                                        FilterClause += @"  where p.firstpropversionid = " + Prop.FirstVersionNodeTypeProp.PropId + @")";
                                     }
                                     else
                                     {
-                                        Where += @"   join object_class_props op on (p.objectclasspropid = op.objectclasspropid)
+                                        FilterClause += @"   join object_class_props op on (p.objectclasspropid = op.objectclasspropid)
                                    where op.objectclasspropid = " + Prop.ObjectClassPropId + @")";
                                     }
-                                    Where += @"     or ";
+                                    FilterClause += @"     or ";
 
                                 }
                                 else
                                 {
-                                    Where += @" and (";
+                                    FilterClause += @"(";
                                 }
 
-                                Where += @" n.nodeid in (select jnp.nodeid from jct_nodes_props jnp ";
+                                FilterClause += @" z.nodeid in (select jnp.nodeid from jct_nodes_props jnp ";
 
                                 if( Prop.Type == NbtViewPropType.NodeTypePropId )
                                 {
-                                    Where += @"            join nodetype_props p on (lower(p.propname) = '" + Prop.NodeTypeProp.PropName.ToLower() + @"' ";
+                                    FilterClause += @"            join nodetype_props p on (lower(p.propname) = '" + Prop.NodeTypeProp.PropName.ToLower() + @"' ";
                                 }
                                 else
                                 {
-                                    Where += @"            join object_class_props op on (op.objectclasspropid = " + Prop.ObjectClassPropId + @")
+                                    FilterClause += @"            join object_class_props op on (op.objectclasspropid = " + Prop.ObjectClassPropId + @")
                                              join nodetype_props p on (p.objectclasspropid = op.objectclasspropid  ";
                                 }
 
-                                Where += @"                and jnp.nodetypepropid = p.nodetypepropid) 
+                                FilterClause += @"                and jnp.nodetypepropid = p.nodetypepropid) 
                                              where " + FilterValue + @"))";
+
+
+
+                                if( Filter.ResultMode == CswNbtPropFilterSql.FilterResultMode.Hide )
+                                {
+                                    From += "join (" + FilterClause + ") f" + FilterCount.ToString() + " on (f" + FilterCount.ToString() + ".nodeid = n.nodeid)";
+                                }
+                                else if( Filter.ResultMode == CswNbtPropFilterSql.FilterResultMode.Disabled )
+                                {
+                                    if( false == IsParentQuery )
+                                    {
+                                        From += "left outer join (" + FilterClause + ") f" + FilterCount.ToString() + " on (f" + FilterCount.ToString() + ".nodeid = n.nodeid)";
+                                        Select += ",f" + FilterCount.ToString() + ".included as included" + FilterCount.ToString();
+                                    }
+                                }
+
 
 
                             } // if( FilterSubField.RelationalTable == string.empty )

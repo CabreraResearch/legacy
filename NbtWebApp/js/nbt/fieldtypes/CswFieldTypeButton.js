@@ -25,91 +25,39 @@
                         url: '/NbtWebApp/wsNBT.asmx/onObjectClassButtonClick',
                         data: params,
                         success: function (data) {
+                            $btn.button({ disabled: false });
+
+                            var actionData = {
+                                data: data,
+                                propid: propid,
+                                button: button,
+                                messagediv: messagediv,
+                                context: o,
+                                onSuccess: o.onAfterButtonClick
+                            };
+
+                            if (false === Csw.isNullOrEmpty(data.message)) {
+                                // can't use messagediv, since doSave has remade the tab
+                                var $newmessagediv = $('#' + messagediv.getId());
+                                $newmessagediv.text(data.message);
+                            }
+
                             if (Csw.bool(data.success)) {
-                                if (false === Csw.isNullOrEmpty(data.message)) {
-                                    // can't use messagediv, since doSave has remade the tab
-                                    var $newmessagediv = $('#' + messagediv.getId());
-                                    $newmessagediv.text(data.message);
-                                }
-                                var actionJson = data.actiondata;
-                                if (Csw.contains(data, 'action')) {
-                                    actionJson.action = data.action;
-                                }
-                                switch (data.action) {
-                                    case Csw.enums.nbtButtonAction.reauthenticate:
-                                        if (Csw.clientChanges.manuallyCheckChanges()) {
-                                            /* case 24669 */
-                                            Csw.cookie.clearAll();
-                                            Csw.ajax.post({
-                                                url: '/NbtWebApp/wsNBT.asmx/reauthenticate',
-                                                data: { PropId: propAttr },
-                                                success: function () {
-                                                    Csw.clientChanges.unsetChanged();
-                                                    Csw.window.location("Main.html");
+                                if (data.action == Csw.enums.nbtButtonAction.refresh) { //cases 26201, 26107 
+                                    Csw.tryExec(o.onReload(
+                                        (function(messagedivid) {
+                                            return function() {
+                                                if (false === Csw.isNullOrEmpty(data.message)) {
+                                                    var $newmessagediv = $('#' + messagedivid);
+                                                    $newmessagediv.text(data.message);
                                                 }
-                                            });
-                                        }
-                                        break;
-
-                                    case Csw.enums.nbtButtonAction.receive:
-                                        $btn.button({ disabled: false });
-                                        Csw.publish(Csw.enums.events.objectClassButtonClick, actionJson);
-                                        break;
-
-                                    case Csw.enums.nbtButtonAction.refresh: //cases 26201, 26107 
-                                        $btn.button({ disabled: false });
-                                        Csw.tryExec(o.onReload(
-                                            (function (messagedivid) {
-                                                return function () {
-                                                    if (false === Csw.isNullOrEmpty(data.message)) {
-                                                        var $newmessagediv = $('#' + messagedivid);
-                                                        $newmessagediv.text(data.message);
-                                                    }
-                                                };
-                                            })(messagediv.getId())
-                                        ));
-                                        break;
-
-                                    case Csw.enums.nbtButtonAction.dispense:
-                                        $btn.button({ disabled: false });
-                                        Csw.publish(Csw.enums.events.objectClassButtonClick, actionJson);
-                                        break;
-
-                                    case Csw.enums.nbtButtonAction.request:
-                                        $btn.button({ disabled: false });
-
-                                        switch (actionJson.requestaction) {
-                                            case 'Dispose':
-                                                Csw.publish(Csw.enums.events.objectClassButtonClick, actionJson);
-                                                break;
-                                            default:
-                                                $.CswDialog('AddNodeDialog', {
-                                                    nodetypeid: actionJson.requestItemNodeTypeId,
-                                                    propertyData: actionJson.requestItemProps,
-                                                    text: actionJson.titleText,
-                                                    onSaveImmediate: function () {
-                                                        Csw.publish(Csw.enums.events.objectClassButtonClick, actionJson);
-                                                    }
-                                                });
-                                                break;
-                                        }
-                                        break;
-
-                                    case Csw.enums.nbtButtonAction.popup:
-                                        $btn.button({ disabled: false });
-                                        Csw.openPopup(actionJson.url, 600, 800);
-                                        break;
-                                    case Csw.enums.nbtButtonAction.loadView:
-
-                                        Csw.publish(Csw.enums.events.RestoreViewContext, actionJson);
-                                        break;
-                                    default:
-                                        Csw.debug.error('No event has been defined for button click ' + data.action);
-                                        $btn.button({ disabled: false });
-                                        break;
+                                            };
+                                        })(messagediv.getId())
+                                    ));
+                                } else {
+                                    Csw.publish(Csw.enums.events.objectClassButtonClick, actionData);
                                 }
                             }
-                            Csw.tryExec(o.onAfterButtonClick);
                         }, // ajax success()
                         error: function () {
                             button.enable();
@@ -130,32 +78,48 @@
                 value = Csw.string(propVals.text, o.propData.name),
                 mode = Csw.string(propVals.mode, 'button'),
                 messagediv,
-                table,
-                button;
+                table, btnCell,
+                button, menuoptions, state, text;
 
+            menuoptions = propVals.menuoptions.split(',');
+            state = propVals.state;
+            text = propVals.text;
+            
             function onClick() {
                 onButtonClick(o.propid, button, messagediv, o);
             }
 
             table = propDiv.table({
-                ID: Csw.makeId(o.ID, '', 'tbl')
+                ID: Csw.makeId(o.ID, 'tbl')
             });
-
-            if (mode === 'button') {
-                button = table.cell(1, 1).button({
-                    ID: o.ID,
-                    enabledText: value,
-                    disabledText: value,
-                    disableOnClick: true,
-                    onClick: onClick
-                });
-            }
-            else {
-                button = table.cell(1, 1).a({
-                    ID: o.ID,
-                    value: value,
-                    onClick: onClick
-                });
+            btnCell = table.cell(1, 1);
+            switch (mode) {
+                case 'button':
+                    button = btnCell.button({
+                        ID: o.ID,
+                        enabledText: value,
+                        disabledText: value,
+                        disableOnClick: true,
+                        onClick: onClick
+                    });
+                    break;
+                case 'menu':
+                    button = btnCell.menuButton({
+                        ID: Csw.makeId(o.ID, 'menuBtn'),
+                        selectedText: text,
+                        menuOptions: menuoptions,
+                        state: state,
+                        onClick: onClick
+                    });
+                    break;
+                case 'link': //this is a fallthrough case
+                default:
+                    button = btnCell.a({
+                        ID: o.ID,
+                        value: value,
+                        onClick: onClick
+                    });
+                    break;
             }
 
             if (Csw.bool(o.ReadOnly)) {

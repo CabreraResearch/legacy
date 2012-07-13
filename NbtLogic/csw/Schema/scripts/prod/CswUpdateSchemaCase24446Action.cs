@@ -11,7 +11,7 @@ namespace ChemSW.Nbt.Schema
     {
         public override void update()
         {
-            _CswNbtSchemaModTrnsctn.createAction( CswNbtActionName.Receiving, true, "", "Materials" );
+            _CswNbtSchemaModTrnsctn.createAction( CswNbtActionName.Receiving, false, "", "Materials" );
             _CswNbtSchemaModTrnsctn.createModuleActionJunction( CswNbtResources.CswNbtModule.CISPro, CswNbtActionName.Receiving );
 
             CswNbtMetaDataObjectClass SizeOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.SizeClass );

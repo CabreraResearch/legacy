@@ -102,14 +102,13 @@ namespace ChemSW.Nbt.ServiceDrivers
 
             CswNbtObjClass NbtObjClass = CswNbtObjClassFactory.makeObjClass( _CswNbtResources, Node.getObjectClassId(), Node );
 
-            CswNbtObjClass.NbtButtonAction ButtonAction = CswNbtObjClass.NbtButtonAction.Unknown;
-            JObject ActionData;
-            string Message;
-            bool Success = NbtObjClass.onButtonClick( NodeTypeProp, out ButtonAction, out ActionData, out Message );
+            CswNbtObjClass.NbtButtonData ButtonData = new CswNbtObjClass.NbtButtonData( NodeTypeProp );
 
-            RetObj["action"] = ButtonAction.ToString();
-            RetObj["actiondata"] = ActionData;  //e.g. popup url
-            RetObj["message"] = Message;
+            bool Success = NbtObjClass.onButtonClick( ButtonData );
+
+            RetObj["action"] = ButtonData.Action.ToString();
+            RetObj["actiondata"] = ButtonData.Data;  //e.g. popup url
+            RetObj["message"] = ButtonData.Message;
             RetObj["success"] = Success.ToString().ToLower();
 
             return RetObj;

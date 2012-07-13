@@ -70,6 +70,7 @@ namespace ChemSW.Nbt.WebServices
 
             string ThisNodeRel = "";
             bool ThisNodeLocked = false;
+            bool ThisNodeDisabled = false;
             CswNbtMetaDataNodeType ThisNodeType = _CswNbtResources.MetaData.getNodeType( ThisNodeKey.NodeTypeId );
             switch( ThisNodeKey.NodeSpecies )
             {
@@ -84,6 +85,7 @@ namespace ChemSW.Nbt.WebServices
                     ThisNodeName = Tree.getNodeNameForCurrentPosition();
                     ThisNodeRel = "nt_" + ThisNodeType.FirstVersionNodeTypeId;
                     ThisNodeLocked = Tree.getNodeLockedForCurrentPosition();
+                    ThisNodeDisabled = ( false == Tree.getNodeIncludedForCurrentPosition() );
                     if( false == string.IsNullOrEmpty( ThisNodeType.IconFileName ) )
                     {
                         ThisNodeIcon = "Images/icons/" + ThisNodeType.IconFileName;
@@ -116,6 +118,10 @@ namespace ChemSW.Nbt.WebServices
             ThisNodeObj["attr"]["nodeid"] = ThisNodeId;
             ThisNodeObj["attr"]["cswnbtnodekey"] = ThisNodeKeyString;
             ThisNodeObj["attr"]["locked"] = ThisNodeLocked.ToString().ToLower();
+            if( ThisNodeDisabled )
+            {
+                ThisNodeObj["attr"]["disabled"] = ThisNodeDisabled.ToString().ToLower();
+            }
             CswNbtNodeKey ParentKey = Tree.getNodeKeyForParentOfCurrentPosition();
             if( ParentKey.NodeSpecies != NodeSpecies.Root )
             {

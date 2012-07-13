@@ -267,9 +267,6 @@
                             cswPrivate.onRemove(tabid, onRemoveData);
                         } // onRemove
                     };
-                    if (false === Csw.bool(cswPrivate.showSaveButton)) {
-                        layoutOpts.width = null;
-                    }
 
                     cswPrivate.layoutTable = formTable.cell(1, 1).layoutTable(layoutOpts); // Csw.literals.layoutTable()
 
@@ -572,7 +569,7 @@
                         });
 
                     } else {
-                        labelCell.setLabelText(propName, propData.required);
+                        labelCell.setLabelText(propName, propData.required, propData.readonly);
                     }
 
                     /* Case 25936 */

@@ -119,6 +119,20 @@ namespace ChemSW.Nbt.WebServices
                     bool LimitToFirstLevelRelationships = ( View.ViewMode == NbtViewRenderingMode.Grid );
                     if( LimitToFirstLevelRelationships && View.Visibility == NbtViewVisibility.Property )
                     {
+                        if( string.IsNullOrEmpty( SafeNodeKey ) )
+                        {
+                            ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( View, false, false );
+                            Tree.goToNthChild( 0 );
+                            CswNbtNodeKey NodeKey = Tree.getNodeKeyForCurrentPosition();
+                            Node = _CswNbtResources.Nodes[NodeKey];
+                            if( null != Node )
+                            {
+                                RelatedNodeId = Node.NodeId;
+                                RelatedNodeName = Node.NodeName;
+                                RelatedNodeTypeId = Node.NodeTypeId.ToString();
+                                RelatedObjectClassId = Node.getObjectClassId().ToString();
+                            }
+                        }
                         ParentNode = View.Root.ChildRelationships[0];
                     }
                     foreach( JProperty AddNodeType in ParentNode.AllowedChildNodeTypes( LimitToFirstLevelRelationships )
