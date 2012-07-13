@@ -243,7 +243,7 @@ namespace ChemSW.Nbt.Logic
             ParentObj[FiltId] = new JObject();
             ParentObj[FiltId]["arbitraryid"] = Filter.ArbitraryId;
             ParentObj[FiltId]["nodename"] = NbtViewXmlNodeName.Filter.ToString().ToLower();
-            ParentObj[FiltId]["subfield"] = Filter.SubfieldName.ToString();
+            ParentObj[FiltId]["subfieldname"] = Filter.SubfieldName.ToString();
             ParentObj[FiltId]["value"] = Filter.Value;
             ParentObj[FiltId]["filtermode"] = Filter.FilterMode.ToString();
             ParentObj[FiltId]["casesensitive"] = Filter.CaseSensitive;
@@ -449,7 +449,7 @@ namespace ChemSW.Nbt.Logic
 
             if( ViewPropFilt != null )
             {
-                CswNbtSubField.SubFieldName FieldName = (CswNbtSubField.SubFieldName) CswConvert.ToString( FilterProp["subfield"] );
+                CswNbtSubField.SubFieldName FieldName = (CswNbtSubField.SubFieldName) CswConvert.ToString( FilterProp["subfieldname"] );
                 //Enum.TryParse( CswConvert.ToString( FilterProp["subfield"] ), true, out FieldName );
 
                 CswNbtPropFilterSql.PropertyFilterMode FilterMode = (CswNbtPropFilterSql.PropertyFilterMode) CswConvert.ToString( FilterProp["filter"] );
