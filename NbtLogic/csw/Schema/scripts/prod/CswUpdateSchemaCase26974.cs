@@ -35,7 +35,7 @@ namespace ChemSW.Nbt.Schema
 
                 string templateText = sizeNT.NameTemplateValue;
                 templateText += CswNbtMetaData.MakeTemplateEntry( sizeSupplierNTP.PropName ); //add supplier (NTP) name to template
-                templateText += CswNbtMetaData.MakeTemplateEntry( CswNbtObjClassSize.CatalogNoPropertyName ); //add catalog number to name template
+                templateText += " " + CswNbtMetaData.MakeTemplateEntry( CswNbtObjClassSize.CatalogNoPropertyName ); //add catalog number to name template
                 sizeNT.setNameTemplateText( templateText );
 
             }
