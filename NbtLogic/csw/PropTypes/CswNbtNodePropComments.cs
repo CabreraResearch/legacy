@@ -172,10 +172,10 @@ namespace ChemSW.Nbt.PropTypes
 
                 //Remove exceess comments
                 Int32 CommentsTruncationLimit = 10;
-                if( _CswNbtResources.ConfigVbls.doesConfigVarExist( ChemSW.Config.CswConfigurationVariables.ConfigurationVariableNames.CommentsTruncationLimit ) )
+                if( _CswNbtResources.ConfigVbls.doesConfigVarExist( CswNbtResources.ConfigurationVariables.total_comments_lines.ToString() ) )
                 {
 
-                    CommentsTruncationLimit = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( ChemSW.Config.CswConfigurationVariables.ConfigurationVariableNames.CommentsTruncationLimit ) );
+                    CommentsTruncationLimit = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswNbtResources.ConfigurationVariables.total_comments_lines.ToString() ) );
                 }
 
                 while( _CommentsJson.Count > CommentsTruncationLimit )
