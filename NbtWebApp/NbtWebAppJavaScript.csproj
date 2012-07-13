@@ -77,8 +77,11 @@
   <ItemGroup>
     <Content Include="Build\far.exe" />
     <Content Include="ConnectTest.html" />
-    <Content Include="js\common\composites\csw.quantity.js" />
+    <Content Include="js\nbt\actions\csw.fulfillrequest.js" />
+    <Content Include="js\nbt\composites\csw.location.js" />
     <Content Include="js\nbt\actions\csw.subscriptions.js" />
+    <Content Include="js\common\composites\csw.menubutton.js" />
+    <Content Include="js\nbt\composites\csw.quantity.js" />
     <Content Include="js\nbt\nodes\csw.node.link.js" />
     <Content Include="js\nbt\nodes\CswNodeGridNew.js" />
     <Content Include="DevHeader.html" />
@@ -238,7 +241,7 @@
     <Content Include="js\common\core\csw.error.js" />
     <Content Include="js\common\core\csw.events.js" />
     <Content Include="js\common\types\csw.function.js" />
-    <Content Include="js\common\composites\csw.menu.js" />
+    <Content Include="js\nbt\composites\csw.menu.js" />
     <Content Include="js\common\types\csw.number.js" />
     <Content Include="js\common\types\csw.object.js" />
     <Content Include="js\common\types\csw.string.js" />
@@ -265,7 +268,6 @@
     <Content Include="MainHeader.html" />
     <Content Include="MainIncludes.html" />
     <Content Include="NodeReport.html" />
-    <Content Include="Scripts\jquery-1.7.1-vsdoc.js" />
     <Content Include="DevIncludes.html" />
     <None Include="js\_pruneMaps.bat" />
     <None Include="js\_updateIncludes.pl" />
@@ -280,7 +282,23 @@
   <ItemGroup>
     <Service Include="{C0C07587-41A7-46C8-8FBD-3F9C8EBE2DDC}" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Reference Include="Ext.Net">
+      <HintPath>..\packages\Ext.NET.2.0.0-rc1\lib\Ext.Net.dll</HintPath>
+    </Reference>
+    <Reference Include="Ext.Net.Utilities">
+      <HintPath>..\packages\Ext.NET.Utilities.2.0.1\lib\Ext.Net.Utilities.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Newtonsoft.Json.4.5.7\lib\net40\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Web" />
+    <Reference Include="Transformer.NET">
+      <HintPath>..\packages\Transformer.NET.2.0.0\lib\Transformer.NET.dll</HintPath>
+    </Reference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSHARP.Targets" />
   <ProjectExtensions>
     <VisualStudio AllowExistingFolder="true" />

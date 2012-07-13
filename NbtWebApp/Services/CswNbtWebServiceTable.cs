@@ -115,6 +115,7 @@ namespace ChemSW.Nbt.WebServices
                                 NodeKey,
                                 Tree.getNodeNameForCurrentPosition(),
                                 Tree.getNodeLockedForCurrentPosition(),
+                                Tree.getNodeIncludedForCurrentPosition(),
                                 _CswNbtResources.MetaData.getNodeType( NodeKey.NodeTypeId ),
                                 Tree.getChildNodePropsOfNode(),
                                 PropsToHide,
@@ -125,6 +126,7 @@ namespace ChemSW.Nbt.WebServices
                                     CswNbtNodeKey NodeKey,
                                     string NodeName,
                                     bool Locked,
+                                    bool Included,
                                     CswNbtMetaDataNodeType NodeType,
                                     JArray TreeProps,
                                     Collection<Int32> PropsToHide,
@@ -141,7 +143,8 @@ namespace ChemSW.Nbt.WebServices
             {
                 ret["nodekey"] = NodeKey.ToString();
             }
-            ret["locked"] = Locked.ToString().ToLower(); // Tree.getNodeLockedForCurrentPosition().ToString().ToLower();
+            ret["locked"] = Locked.ToString().ToLower();
+            ret["disabled"] = (false == Included).ToString().ToLower();
 
             //CswNbtViewRelationship ViewRel = (CswNbtViewRelationship) View.FindViewNodeByUniqueId( NodeKey.ViewNodeUniqueId );
             bool CanView = _CswNbtResources.Permit.can( Security.CswNbtPermit.NodeTypePermission.View, NodeType );

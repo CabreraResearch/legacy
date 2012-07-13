@@ -24,11 +24,38 @@ namespace ChemSW.Nbt
                                          bool inShowAtRuntime = false )
             : base( CswNbtResources, View )
         {
+            _constructor( CswNbtResources, View, inSubFieldName, inFilterMode, inValue, CswNbtPropFilterSql.FilterResultMode.Hide, inCaseSensitive, inShowAtRuntime );
+        }
+
+        /// <summary>
+        /// For creating a property filter
+        /// </summary>
+        public CswNbtViewPropertyFilter( CswNbtResources CswNbtResources, CswNbtView View,
+                                         CswNbtSubField.SubFieldName inSubFieldName,
+                                         CswNbtPropFilterSql.PropertyFilterMode inFilterMode,
+                                         string inValue,
+                                         CswNbtPropFilterSql.FilterResultMode inResultMode,
+                                         bool inCaseSensitive = false,
+                                         bool inShowAtRuntime = false )
+            : base( CswNbtResources, View )
+        {
+            _constructor( CswNbtResources, View, inSubFieldName, inFilterMode, inValue, inResultMode, inCaseSensitive, inShowAtRuntime );
+        }
+
+        public void _constructor( CswNbtResources CswNbtResources, CswNbtView View,
+                                     CswNbtSubField.SubFieldName inSubFieldName,
+                                     CswNbtPropFilterSql.PropertyFilterMode inFilterMode,
+                                     string inValue,
+                                     CswNbtPropFilterSql.FilterResultMode inResultMode,
+                                     bool inCaseSensitive,
+                                     bool inShowAtRuntime )
+        {
             SubfieldName = inSubFieldName;
             FilterMode = inFilterMode;
             Value = inValue;
             CaseSensitive = inCaseSensitive;
             ShowAtRuntime = inShowAtRuntime;
+            ResultMode = inResultMode;
         }
 
         /// <summary>
@@ -65,7 +92,11 @@ namespace ChemSW.Nbt
                 }
                 if( FilterString[7] != string.Empty )
                 {
-                    ShowAtRuntime = CswConvert.ToBoolean( FilterString[7] );    
+                    ShowAtRuntime = CswConvert.ToBoolean( FilterString[7] );
+                }
+                if( FilterString[8] != string.Empty )
+                {
+                    ResultMode = (CswNbtPropFilterSql.FilterResultMode) FilterString[8].ToString();
                 }
                 _validate();
             }
@@ -104,6 +135,10 @@ namespace ChemSW.Nbt
                     //SubfieldName = (CswNbtSubField.SubFieldName) Enum.Parse( typeof( CswNbtSubField.SubFieldName ), FilterNode.Attributes["subfieldname"].Value );
                     SubfieldName = (CswNbtSubField.SubFieldName) FilterNode.Attributes["subfieldname"].Value;
                 }
+                if( FilterNode.Attributes["resultmode"] != null )
+                {
+                    ResultMode = (CswNbtPropFilterSql.FilterResultMode) FilterNode.Attributes["resultmode"].Value;
+                }
 
                 _validate();
 
@@ -135,7 +170,6 @@ namespace ChemSW.Nbt
                 string _FilterMode = CswConvert.ToString( FilterObj["filtermode"] );
                 if( !string.IsNullOrEmpty( _FilterMode ) )
                 {
-                    //FilterMode = (CswNbtPropFilterSql.PropertyFilterMode) Enum.Parse( typeof( CswNbtPropFilterSql.PropertyFilterMode ), _FilterMode, true );
                     FilterMode = (CswNbtPropFilterSql.PropertyFilterMode) _FilterMode;
                 }
 
@@ -152,8 +186,13 @@ namespace ChemSW.Nbt
                 string _SfName = CswConvert.ToString( FilterObj["subfieldname"] );
                 if( !string.IsNullOrEmpty( _SfName ) )
                 {
-                    //SubfieldName = (CswNbtSubField.SubFieldName) Enum.Parse( typeof( CswNbtSubField.SubFieldName ), _SfName );
                     SubfieldName = (CswNbtSubField.SubFieldName) _SfName;
+                }
+
+                string _ResultMode = CswConvert.ToString( FilterObj["resultmode"] );
+                if( !string.IsNullOrEmpty( _ResultMode ) )
+                {
+                    ResultMode = (CswNbtPropFilterSql.FilterResultMode) _ResultMode;
                 }
 
                 _validate();
@@ -235,6 +274,9 @@ namespace ChemSW.Nbt
         }//
 
         public CswNbtPropFilterSql.PropertyFilterMode FilterMode = CswNbtPropFilterSql.PropertyFilterMode.Unknown;
+
+        public CswNbtPropFilterSql.FilterResultMode ResultMode = CswNbtPropFilterSql.FilterResultMode.Hide;
+
         public bool CaseSensitive;
 
         public override string IconFileName
@@ -282,6 +324,10 @@ namespace ChemSW.Nbt
             SubfieldNameAttribute.Value = SubfieldName.ToString();
             PropFilterNode.Attributes.Append( SubfieldNameAttribute );
 
+            XmlAttribute ResultModeAttribute = XmlDoc.CreateAttribute( "resultmode" );
+            ResultModeAttribute.Value = ResultMode.ToString();
+            PropFilterNode.Attributes.Append( ResultModeAttribute );
+
             return PropFilterNode;
         }
 
@@ -293,8 +339,9 @@ namespace ChemSW.Nbt
                                      new XAttribute( "casesensitive", CaseSensitive.ToString() ),
                                      new XAttribute( "showatruntime", ShowAtRuntime.ToString() ),
                                      new XAttribute( "arbitraryid", ArbitraryId ),
-                                     new XAttribute( "subfieldname", SubfieldName.ToString() )
-                );
+                                     new XAttribute( "subfieldname", SubfieldName.ToString() ),
+                                     new XAttribute( "resultmode", ResultMode.ToString() )
+                                  );
             return PropFilter;
         }
 
@@ -308,7 +355,8 @@ namespace ChemSW.Nbt
                                                 new JProperty( "casesensitive", CaseSensitive.ToString() ),
                                                 new JProperty( "showatruntime", ShowAtRuntime.ToString() ),
                                                 new JProperty( "arbitraryid", ArbitraryId ),
-                                                new JProperty( "subfieldname", SubfieldName.ToString() )
+                                                new JProperty( "subfieldname", SubfieldName.ToString() ),
+                                                new JProperty( "resultmode", ResultMode.ToString() )
                                                 )
 
                 );
@@ -331,6 +379,7 @@ namespace ChemSW.Nbt
             ret.Add( ArbitraryId.ToString() );
             ret.Add( SubfieldName.ToString() );
             ret.Add( ShowAtRuntime.ToString() );
+            ret.Add( ResultMode.ToString() );
 
             return ret;
         }

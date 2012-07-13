@@ -1,3 +1,4 @@
+/// <reference path="http://cdn.sencha.io/ext-4.1.0-gpl/ext-all-debug.js" />
 /// <reference path="~/js/CswNbt-vsdoc.js" />
 /// <reference path="~/js/CswCommon-vsdoc.js" />
 
@@ -116,7 +117,15 @@
                     forceFit: cswPrivate.forceFit,
                     viewConfig: {
                         deferEmptyText: false,
-                        emptyText: 'No Results'
+                        emptyText: 'No Results',
+                        getRowClass: function(record, index) {
+                            var ret = '';
+                            var disabled = Csw.bool(record.raw.isdisabled);
+                            if (disabled) {
+                                ret = 'disabled';
+                            }
+                            return ret;
+                        }
                     },
                     listeners: {
                         viewready: function () {

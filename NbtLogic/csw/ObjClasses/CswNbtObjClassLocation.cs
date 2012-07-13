@@ -123,12 +123,12 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault.addDefaultViewFilters( ParentRelationship );
         }
 
-        public override bool onButtonClick( CswNbtMetaDataNodeTypeProp NodeTypeProp, out NbtButtonAction ButtonAction, out JObject ActionData, out string Message )
+        public override bool onButtonClick( NbtButtonData ButtonData )
         {
-            Message = string.Empty;
-            ActionData = new JObject();
-            ButtonAction = NbtButtonAction.Unknown;
-            if( null != NodeTypeProp ) { /*Do Something*/ }
+            
+            
+            
+            if( null != ButtonData && null != ButtonData.NodeTypeProp ) { /*Do Something*/ }
             return true;
         }
         #endregion
@@ -209,21 +209,21 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get
             {
-                return ( _CswNbtNode.Properties[InventoryGroupPropertyName] );
+                return ( _CswNbtNode.Properties[LocationCodePropertyName] );
             }
         }
         public CswNbtNodePropLogical AllowInventory
         {
             get
             {
-                return ( _CswNbtNode.Properties[InventoryGroupPropertyName] );
+                return ( _CswNbtNode.Properties[AllowInventoryPropertyName] );
             }
         }
         public CswNbtNodePropImageList StorageCompatability
         {
             get
             {
-                return ( _CswNbtNode.Properties[InventoryGroupPropertyName] );
+                return ( _CswNbtNode.Properties[StorageCompatabilityPropertyName] );
             }
         }
 

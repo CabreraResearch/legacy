@@ -961,7 +961,7 @@ namespace ChemSW.Nbt.WebServices
 
             return ReturnVal.ToString();
 
-        } // runTree()
+        } // getViewMode()
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
@@ -4520,6 +4520,63 @@ namespace ChemSW.Nbt.WebServices
                 {
                     CswNbtWebServiceRequesting ws = new CswNbtWebServiceRequesting( _CswNbtResources, CswNbtActSystemViews.SystemViewName.CISProRequestCart, CopyFromNodeId );
                     ReturnVal = ws.copyRequest( CopyFromNodeId, CopyToNodeId );
+                }
+                _deInitResources();
+            }
+            catch( Exception Ex )
+            {
+                ReturnVal = jError( Ex );
+            }
+
+            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+
+            return ReturnVal.ToString();
+        } // getMaterial()
+
+        [WebMethod( EnableSession = false )]
+        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        public string getFulfillRequestFilters( string SelectedFilters )
+        {
+            JObject ReturnVal = new JObject();
+            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            try
+            {
+                _initResources();
+                AuthenticationStatus = _attemptRefresh( true );
+
+                CswNbtWebServiceRequesting ws = new CswNbtWebServiceRequesting( _CswNbtResources );
+                ReturnVal = ws.getFulfillRequestFilters( SelectedFilters );
+                
+                _deInitResources();
+            }
+            catch( Exception Ex )
+            {
+                ReturnVal = jError( Ex );
+            }
+
+            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+
+            return ReturnVal.ToString();
+        } // getMaterial()
+
+        [WebMethod( EnableSession = false )]
+        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        public string getRequestItemGrid( string FilterCriteria )
+        {
+            JObject ReturnVal = new JObject();
+            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            try
+            {
+                _initResources();
+                AuthenticationStatus = _attemptRefresh( true );
+
+                CswNbtWebServiceRequesting ws = new CswNbtWebServiceRequesting( _CswNbtResources );
+                CswNbtView View = ws.getRequestItemView( FilterCriteria );
+
+                if( null != View )
+                {
+                    var gridWs = new CswNbtWebServiceGrid( _CswNbtResources, View, ForReport: false );
+                    ReturnVal = gridWs.runGrid( IncludeInQuickLaunch: false );
                 }
                 _deInitResources();
             }

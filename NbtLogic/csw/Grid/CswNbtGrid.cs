@@ -174,6 +174,7 @@ namespace ChemSW.Nbt.Grid
                                                                  NodeType,
                                                                  NodeId: Tree.getNodeIdForCurrentPosition() );
                 gridrow.isLocked = Tree.getNodeLockedForCurrentPosition();
+                gridrow.isDisabled = ( false == Tree.getNodeIncludedForCurrentPosition() );
 
                 _TreeNodeToGrid( View, Tree, grid, gridrow );
 

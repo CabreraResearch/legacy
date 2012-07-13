@@ -65,6 +65,7 @@ namespace ChemSW.Nbt
         public const string _AttrName_ExpandMode = "expandmode";
         public const string _AttrName_Truncated = "truncated";
         public const string _AttrName_Locked = "locked";
+        public const string _AttrName_Included = "included";
 
         // NbtNodeProp element
         public const string _ElemName_NodeProp = "NbtNodeProp";
@@ -95,6 +96,7 @@ namespace ChemSW.Nbt
                                                 NodeSpecies Species,
                                                 bool ShowInTree,
                                                 bool Locked,
+                                                bool Included,
                                                 out JObject NewNode,
                                                 out CswNbtNodeKey NewNodeKey )
         {
@@ -116,6 +118,7 @@ namespace ChemSW.Nbt
             NewNode[_AttrName_Selectable] = Selectable.ToString().ToLower();
             NewNode[_AttrName_ShowInTree] = ShowInTree.ToString().ToLower();
             NewNode[_AttrName_Locked] = Locked.ToString().ToLower();
+            NewNode[_AttrName_Included] = Included.ToString().ToLower();
             NewNode[_AttrName_ChildNodes] = new JArray();
             NewNode[_AttrName_ChildProps] = new JArray();
 
@@ -341,6 +344,7 @@ namespace ChemSW.Nbt
                               NodeSpecies.UnKnown,
                               true,
                               false,
+                              true,
                               out _TreeNode,
                               out _TreeNodeKey );
 
@@ -371,6 +375,7 @@ namespace ChemSW.Nbt
                                   NodeSpecies.Root,
                                   true,
                                   false,
+                                  true,
                                   out _RootNode,
                                   out _RootNodeKey );
             }
@@ -580,23 +585,23 @@ namespace ChemSW.Nbt
         //Modification methods*****************************************
         #region Modification Methods
 
-        public Collection<CswNbtNodeKey> loadNodeAsChildFromRow( CswNbtNodeKey ParentNodeKey, DataRow DataRowToAdd, bool UseGrouping, string GroupName, CswNbtViewRelationship Relationship, Int32 RowCount )
+        public Collection<CswNbtNodeKey> loadNodeAsChildFromRow( CswNbtNodeKey ParentNodeKey, DataRow DataRowToAdd, bool UseGrouping, string GroupName, CswNbtViewRelationship Relationship, Int32 RowCount, bool Included = true )
         {
-            return _loadNodeAsChildFromRow( ParentNodeKey, DataRowToAdd, UseGrouping, GroupName, Relationship, Relationship.Selectable, Relationship.ShowInTree, Relationship.AddChildren, RowCount );
+            return _loadNodeAsChildFromRow( ParentNodeKey, DataRowToAdd, UseGrouping, GroupName, Relationship, Relationship.Selectable, Relationship.ShowInTree, Relationship.AddChildren, RowCount, Included );
         }
 
-        public Collection<CswNbtNodeKey> loadNodeAsChildFromRow( CswNbtNodeKey ParentNodeKey, DataRow DataRowToAdd, bool UseGrouping, string GroupName, bool Selectable, bool ShowInTree, NbtViewAddChildrenSetting AddChildren, Int32 RowCount )
+        public Collection<CswNbtNodeKey> loadNodeAsChildFromRow( CswNbtNodeKey ParentNodeKey, DataRow DataRowToAdd, bool UseGrouping, string GroupName, bool Selectable, bool ShowInTree, NbtViewAddChildrenSetting AddChildren, Int32 RowCount, bool Included = true )
         {
-            return _loadNodeAsChildFromRow( ParentNodeKey, DataRowToAdd, UseGrouping, GroupName, null, Selectable, ShowInTree, AddChildren, RowCount );
+            return _loadNodeAsChildFromRow( ParentNodeKey, DataRowToAdd, UseGrouping, GroupName, null, Selectable, ShowInTree, AddChildren, RowCount, Included );
         }
 
-        private Collection<CswNbtNodeKey> _loadNodeAsChildFromRow( CswNbtNodeKey ParentNodeKey, DataRow DataRowToAdd, bool UseGrouping, string GroupName, CswNbtViewRelationship Relationship, bool Selectable, bool ShowInTree, NbtViewAddChildrenSetting AddChildren, Int32 RowCount )
+        private Collection<CswNbtNodeKey> _loadNodeAsChildFromRow( CswNbtNodeKey ParentNodeKey, DataRow DataRowToAdd, bool UseGrouping, string GroupName, CswNbtViewRelationship Relationship, bool Selectable, bool ShowInTree, NbtViewAddChildrenSetting AddChildren, Int32 RowCount, bool Included = true )
         {
             CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( CswConvert.ToInt32( DataRowToAdd[_CswNbtColumnNames.NodeTypeId.ToLower()].ToString() ) );
             string TableName = NodeType.TableName;
             string PkColumnName = _CswNbtResources.getPrimeKeyColName( TableName );
 
-            return _loadNodeAsChild( ParentNodeKey, UseGrouping, GroupName, Relationship, Selectable, ShowInTree, AddChildren, RowCount,
+            return _loadNodeAsChild( ParentNodeKey, UseGrouping, GroupName, Relationship, Selectable, ShowInTree, AddChildren, RowCount, Included,
                                      DataRowToAdd[_CswNbtColumnNames.IconFileName.ToLower()].ToString(),
                                      DataRowToAdd[_CswNbtColumnNames.NameTemplate.ToLower()].ToString(),
                                      new CswPrimaryKey( TableName, CswConvert.ToInt32( DataRowToAdd[PkColumnName] ) ),
@@ -610,7 +615,7 @@ namespace ChemSW.Nbt
         }
 
         public Collection<CswNbtNodeKey> _loadNodeAsChild( CswNbtNodeKey ParentNodeKey, bool UseGrouping, string GroupName, CswNbtViewRelationship Relationship,
-                                               bool Selectable, bool ShowInTree, NbtViewAddChildrenSetting AddChildren, Int32 RowCount,
+                                               bool Selectable, bool ShowInTree, NbtViewAddChildrenSetting AddChildren, Int32 RowCount, bool Included,
                                                string IconFileName, string NameTemplate, CswPrimaryKey NodeId, string NodeName, Int32 NodeTypeId,
                                                string NodeTypeName, Int32 ObjectClassId, string ObjectClassName, bool Locked )
         {
@@ -661,6 +666,7 @@ namespace ChemSW.Nbt
                                           NodeSpecies.Group,
                                           true,
                                           false,
+                                          true,
                                           out MatchingGroup,
                                           out MatchingGroupKey );
                     }
@@ -690,6 +696,7 @@ namespace ChemSW.Nbt
                                   NodeSpecies.Plain,
                                   ShowInTree,
                                   Locked,
+                                  Included,
                                   out ThisNode,
                                   out ThisKey );
                 ReturnKeyColl.Add( ThisKey );
@@ -751,6 +758,12 @@ namespace ChemSW.Nbt
             _checkCurrentNode();
             return CswConvert.ToBoolean( _getAttr( _AttrName_Locked ) );
         }//getLockedForCurrentNode()
+
+        public bool getIncludedForCurrentNode()
+        {
+            _checkCurrentNode();
+            return CswConvert.ToBoolean( _getAttr( _AttrName_Included ) );
+        }//getIncludedForCurrentNode()
 
         public bool getSelectableForCurrentNode()
         {

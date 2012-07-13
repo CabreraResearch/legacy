@@ -312,6 +312,14 @@ namespace ChemSW.Nbt
         }//getNodeLockedForCurrentPosition()
 
         /// <summary>
+        /// Returns whether the currently indexed node is included (for filters with ResultMode.Disabled)
+        /// </summary>
+        public bool getNodeIncludedForCurrentPosition()
+        {
+            return _CswNbtTreeNodes.getIncludedForCurrentNode();
+        }//getNodeIncludedForCurrentPosition()
+
+        /// <summary>
         /// True if the currently indexed node is selectable, false otherwise
         /// </summary>
         public bool getNodeSelectableForCurrentPosition()
@@ -527,9 +535,9 @@ namespace ChemSW.Nbt
         /// <param name="Relationship">ViewRelationship node which caused this node to be added</param>
         /// <param name="RowCount">Row number in view results</param>
         /// <returns>Returns NodeKey index for node</returns>
-        public Collection<CswNbtNodeKey> loadNodeAsChildFromRow( CswNbtNodeKey ParentNodeKey, DataRow DataRowToAdd, bool UseGrouping, string GroupName, CswNbtViewRelationship Relationship, Int32 RowCount )
+        public Collection<CswNbtNodeKey> loadNodeAsChildFromRow( CswNbtNodeKey ParentNodeKey, DataRow DataRowToAdd, bool UseGrouping, string GroupName, CswNbtViewRelationship Relationship, Int32 RowCount, bool Included = true )
         {
-            Collection<CswNbtNodeKey> ReturnVal = _CswNbtTreeNodes.loadNodeAsChildFromRow( ParentNodeKey, DataRowToAdd, UseGrouping, GroupName, Relationship, RowCount );
+            Collection<CswNbtNodeKey> ReturnVal = _CswNbtTreeNodes.loadNodeAsChildFromRow( ParentNodeKey, DataRowToAdd, UseGrouping, GroupName, Relationship, RowCount, Included );
             //ReturnVal.TreeKey = Key;
             //_TreeAsTransformedXml = "";
             return ( ReturnVal );
@@ -546,9 +554,9 @@ namespace ChemSW.Nbt
         /// <param name="AddChildren">True if the user should be allowed to add children to this node, false otherwise</param>
         /// <param name="RowCount">Row number in view results</param>
         /// <returns>Returns NodeKey index for node</returns>
-        public Collection<CswNbtNodeKey> loadNodeAsChildFromRow( CswNbtNodeKey ParentNodeKey, DataRow DataRowToAdd, bool UseGrouping, string GroupName, bool Selectable, bool ShowInTree, NbtViewAddChildrenSetting AddChildren, Int32 RowCount )
+        public Collection<CswNbtNodeKey> loadNodeAsChildFromRow( CswNbtNodeKey ParentNodeKey, DataRow DataRowToAdd, bool UseGrouping, string GroupName, bool Selectable, bool ShowInTree, NbtViewAddChildrenSetting AddChildren, Int32 RowCount, bool Included = true )
         {
-            Collection<CswNbtNodeKey> ReturnVal = _CswNbtTreeNodes.loadNodeAsChildFromRow( ParentNodeKey, DataRowToAdd, UseGrouping, GroupName, Selectable, ShowInTree, AddChildren, RowCount );
+            Collection<CswNbtNodeKey> ReturnVal = _CswNbtTreeNodes.loadNodeAsChildFromRow( ParentNodeKey, DataRowToAdd, UseGrouping, GroupName, Selectable, ShowInTree, AddChildren, RowCount, Included );
             return ( ReturnVal );
         }//loadNodeAsChildFromRow() 
 
@@ -570,12 +578,12 @@ namespace ChemSW.Nbt
 
 
         public Collection<CswNbtNodeKey> _loadNodeAsChild( CswNbtNodeKey ParentNodeKey, bool UseGrouping, string GroupName, CswNbtViewRelationship Relationship,
-                                               bool Selectable, bool ShowInTree, NbtViewAddChildrenSetting AddChildren, Int32 RowCount,
+                                               bool Selectable, bool ShowInTree, NbtViewAddChildrenSetting AddChildren, Int32 RowCount, bool Included,
                                                string IconFileName, string NameTemplate, CswPrimaryKey NodeId, string NodeName, Int32 NodeTypeId,
                                                string NodeTypeName, Int32 ObjectClassId, string ObjectClassName, bool Locked )
         {
             return _CswNbtTreeNodes._loadNodeAsChild( ParentNodeKey, UseGrouping, GroupName, Relationship,
-                                                       Selectable, ShowInTree, AddChildren, RowCount,
+                                                       Selectable, ShowInTree, AddChildren, RowCount, Included,
                                                        IconFileName, NameTemplate, NodeId, NodeName, NodeTypeId,
                                                        NodeTypeName, ObjectClassId, ObjectClassName, Locked );
         }

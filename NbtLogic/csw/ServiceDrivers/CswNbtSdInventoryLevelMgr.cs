@@ -16,11 +16,12 @@ namespace ChemSW.Nbt.ServiceDrivers
     public class CswNbtSdInventoryLevelMgr
     {
         private CswNbtResources _CswNbtResources;
-
+        private CswNbtSdLocations _SdLocations;
 
         public CswNbtSdInventoryLevelMgr( CswNbtResources Resources )
         {
             _CswNbtResources = Resources;
+            _SdLocations = new CswNbtSdLocations( _CswNbtResources );
         }
 
         #region Validation
@@ -86,7 +87,7 @@ namespace ChemSW.Nbt.ServiceDrivers
             CswNbtView Ret = null;
 
             Ret = new CswNbtView( _CswNbtResources );
-            CswNbtViewRelationship LocationRel = _getAllChildrenLocationRelationship( Ret, StartLocationId );
+            CswNbtViewRelationship LocationRel = _SdLocations.getAllChildrenLocationRelationship( Ret, StartLocationId );
 
             CswNbtMetaDataObjectClass ContainerOc = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.ContainerClass );
             CswNbtMetaDataObjectClassProp LocationOcp = ContainerOc.getObjectClassProp( CswNbtObjClassContainer.LocationPropertyName );
@@ -102,89 +103,7 @@ namespace ChemSW.Nbt.ServiceDrivers
             Ret.AddViewProperty( ContainerRel, QuantityOcp );
             return Ret;
         }
-
-        private CswNbtViewRelationship _getLocationRelationship( string LocationSql, CswNbtView LocationsView, CswPrimaryKey StartLocationId )
-        {
-            CswNbtViewRelationship LocationRel = null;
-            CswArbitrarySelect LocationSelect = _CswNbtResources.makeCswArbitrarySelect( "populateLocations_select", LocationSql );
-            DataTable LocationTable = null;
-            try
-            {
-                LocationTable = LocationSelect.getTable();
-                //For faster lookup
-                //Dictionary<Int32, Int32> LocationDict = new Dictionary<int, int>();
-                //For assignment
-                Collection<CswPrimaryKey> LocationPks = new Collection<CswPrimaryKey>();
-                //LocationDict.Add( StartLocationId.PrimaryKey, StartLocationId.PrimaryKey );
-                LocationPks.Add( StartLocationId );
-                CswNbtMetaDataObjectClass LocationOc = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.LocationClass );
-                LocationRel = LocationsView.AddViewRelationship( LocationOc, false );
-
-                if( LocationTable.Rows.Count > 0 )
-                {
-                    foreach( DataRow Row in LocationTable.Rows )
-                    {
-                        Int32 LocationNodeId = CswConvert.ToInt32( Row["nodeid"] );
-                        //We're already wrapping the SQL in a distinct()
-                        //if( false == LocationDict.ContainsKey( LocationNodeId ) )
-                        //LocationDict.Add( LocationNodeId, LocationNodeId );
-                        CswPrimaryKey LocationPk = new CswPrimaryKey( "nodes", LocationNodeId );
-                        LocationPks.Add( LocationPk );
-                        
-                    }
-                }
-                LocationRel.NodeIdsToFilterIn = LocationPks;
-            }
-            catch( Exception ex )
-            {
-                throw new CswDniException( ErrorType.Error, "Invalid Query", "_getContainerRelationship() attempted to run invalid SQL: " + LocationSql, ex );
-            }
-            return LocationRel;
-        }
-
-        private CswNbtViewRelationship _getAllParentsLocationRelationship( CswNbtView LocationsView, CswPrimaryKey StartLocationId )
-        {
-            CswNbtViewRelationship LocationRel = null;
-            if( null != StartLocationId )
-            {
-                string LocationSql = @"select distinct nodeid from (select n.nodeid, jnp.field1_fk
-                                      from nodes n 
-                                      join nodetypes nt on n.nodetypeid=nt.nodetypeid
-                                      join object_class oc on nt.objectclassid=oc.objectclassid
-                                      join jct_nodes_props jnp on n.nodeid=jnp.nodeid
-                                      join nodetype_props ntp on jnp.nodetypepropid=ntp.nodetypepropid
-                                      join field_types ft on ntp.fieldtypeid=ft.fieldtypeid
-                                      where oc.objectclass='LocationClass' 
-                                            and ft.fieldtype='Location'  
-                                            and n.nodeid != " + StartLocationId.PrimaryKey + " " +
-                                     " start with jnp.nodeid = " + StartLocationId.PrimaryKey + " " +
-                                     " connect by n.nodeid = prior jnp.field1_fk )";
-                LocationRel = _getLocationRelationship( LocationSql, LocationsView, StartLocationId );
-            }
-            return LocationRel;
-        }
-
-        private CswNbtViewRelationship _getAllChildrenLocationRelationship( CswNbtView LocationsView, CswPrimaryKey StartLocationId )
-        {
-            CswNbtViewRelationship LocationRel = null;
-            if( null != StartLocationId )
-            {
-                string LocationSql = @"select distinct nodeid from (select n.nodeid, jnp.field1_fk
-                                      from nodes n 
-                                      join nodetypes nt on n.nodetypeid=nt.nodetypeid
-                                      join object_class oc on nt.objectclassid=oc.objectclassid
-                                      join jct_nodes_props jnp on n.nodeid=jnp.nodeid
-                                      join nodetype_props ntp on jnp.nodetypepropid=ntp.nodetypepropid
-                                      join field_types ft on ntp.fieldtypeid=ft.fieldtypeid
-                                      where oc.objectclass='LocationClass' 
-                                            and ft.fieldtype='Location'  
-                                      start with n.nodeid = " + StartLocationId.PrimaryKey + " " +
-                                     " connect by jnp.field1_fk = prior n.nodeid )";
-                LocationRel = _getLocationRelationship( LocationSql, LocationsView, StartLocationId );
-            }
-            return LocationRel;
-        }
-
+        
         public double getCurrentInventoryLevel( CswNbtObjClassInventoryLevel InventoryLevel )
         {
             double Ret = 0;
@@ -258,7 +177,7 @@ namespace ChemSW.Nbt.ServiceDrivers
             {
                 Ret = new CswNbtView( _CswNbtResources );
                 Ret.ViewName = _ParentLocationInventoryLevelViewName;
-                CswNbtViewRelationship LocationRel = _getAllParentsLocationRelationship( Ret, LocationId );
+                CswNbtViewRelationship LocationRel = _SdLocations.getAllParentsLocationRelationship( Ret, LocationId );
                 CswNbtMetaDataObjectClass InventoryLevelOc = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.InventoryLevelClass );
                 CswNbtMetaDataObjectClassProp LocationOcp = InventoryLevelOc.getObjectClassProp( CswNbtObjClassInventoryLevel.PropertyName.Location );
                 CswNbtViewRelationship InventoryLevelRel = Ret.AddViewRelationship( LocationRel, NbtViewPropOwnerType.Second, LocationOcp, false );

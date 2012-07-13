@@ -46,18 +46,18 @@ namespace ChemSW.Nbt.ObjClasses
         public delegate void AfterModifyReportEventHandler();
         public static string AfterModifyReportEventName = "AfterModifyReport";
 
-        public override bool onButtonClick( CswNbtMetaDataNodeTypeProp NodeTypeProp, out NbtButtonAction ButtonAction, out JObject ActionData, out string Message )
+        public override bool onButtonClick( NbtButtonData ButtonData )
         {
-            Message = string.Empty;
-            ActionData = new JObject();
-            ButtonAction = NbtButtonAction.Unknown;
-            CswNbtMetaDataObjectClassProp OCP = NodeTypeProp.getObjectClassProp();
-            if( null != NodeTypeProp && null != OCP )
+            
+            
+            
+            CswNbtMetaDataObjectClassProp OCP = ButtonData.NodeTypeProp.getObjectClassProp();
+            if( null != ButtonData.NodeTypeProp && null != OCP )
             {
                 if( btnRunPropertyName == OCP.PropName )
                 {
-                    ButtonAction = NbtButtonAction.popup;
-                    ActionData["url"] = ReportUrl;
+                    ButtonData.Action = NbtButtonAction.popup;
+                    ButtonData.Data["url"] = ReportUrl;
                 }
             }
             return true;

@@ -8,6 +8,9 @@ using ChemSW.Nbt.PropTypes;
 
 namespace ChemSW.Nbt.UnitsOfMeasure
 {
+    /// <summary>
+    /// Utility class to create the appropriate Unit view for a Quantity
+    /// </summary>
     public class CswNbtUnitViewBuilder
     {
         #region Properties and ctor
@@ -20,6 +23,10 @@ namespace ChemSW.Nbt.UnitsOfMeasure
         }
         
         #endregion
+        
+        /// <summary>
+        /// Build a Unit View for a Quantity property using a Material NodeId
+        /// </summary>
         public CswNbtView getQuantityUnitOfMeasureView( CswPrimaryKey MaterialNodeId )
         {
             CswNbtView Ret = null;
@@ -31,6 +38,9 @@ namespace ChemSW.Nbt.UnitsOfMeasure
             return Ret;
         }
 
+        /// <summary>
+        /// Build a Unit View for a Quantity property using a Material NodeId
+        /// </summary>
         public CswNbtView getQuantityUnitOfMeasureView( CswNbtNode MaterialNode )
         {
             CswNbtView Ret = null;

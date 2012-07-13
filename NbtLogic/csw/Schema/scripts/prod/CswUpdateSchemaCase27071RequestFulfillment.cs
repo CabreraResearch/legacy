@@ -17,7 +17,7 @@ namespace ChemSW.Nbt.Schema
         public override void update()
         {
             //Part 2
-            _CswNbtSchemaModTrnsctn.createAction( CswNbtActionName.Fulfill_Request, true, "", "Materials" );
+            _CswNbtSchemaModTrnsctn.createAction( CswNbtActionName.Fulfill_Request, true, "", "Requests" );
             _CswNbtSchemaModTrnsctn.createModuleActionJunction( CswNbtResources.CswNbtModule.CISPro, CswNbtActionName.Fulfill_Request );
 
             //Part 4

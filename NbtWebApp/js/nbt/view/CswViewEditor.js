@@ -780,7 +780,7 @@
                     'FirstCellRightAlign': true
                 });
 
-                filterTable.cell(1, 1).text('Case Sensitive');
+                filterTable.cell(1, 1).text('Case sensitive');
                 var cbCaseSensitive = filterTable.cell(1, 2)
                     .input({
                         ID: o.ID + '_casecb',
@@ -792,7 +792,7 @@
                         checked: Csw.bool(viewNodeData.casesensitive)
                     });
 
-                filterTable.cell(2, 1).text('Show At Runtime');
+                filterTable.cell(2, 1).text('Show at runtime');
                 var cbShowAtRuntime = filterTable.cell(2, 2)
                     .input({
                         ID: o.ID + '_showcb',
@@ -802,6 +802,18 @@
                             viewNodeData.showatruntime = cbShowAtRuntime.$.is(':checked');
                         },
                         checked: Csw.bool(viewNodeData.showatruntime)
+                    });
+
+                filterTable.cell(3, 1).text('For non-matches');
+                var listResultMode = filterTable.cell(3, 2)
+                    .select({
+                        ID: o.ID + '_resultmode',
+                        values: ['Hide', {value: 'Disabled', display: 'Show Disabled'}],
+                        onChange: function () {
+                            //var $this = $(this);
+                            viewNodeData.resultmode = listResultMode.val();
+                        },
+                        selected: viewNodeData.showatruntime
                     });
             });
         }
