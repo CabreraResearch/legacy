@@ -58,9 +58,8 @@
                                         }
                                     },
                                     forceFit: o.forceFit,
-                                    readonly: forReporting,
                                     usePaging: false === forReporting,
-                                    showActionColumn: true,
+                                    showActionColumn: false === forReporting,
                                     canSelectRow: o.canSelectRow,
                                     onSelect: o.onSelect,
                                     onEdit: function(rows) {

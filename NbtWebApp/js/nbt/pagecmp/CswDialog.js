@@ -237,7 +237,7 @@
                             div.br();
                             div.button({
                                 ID: '_feedbackOk',
-                                enabledText: 'Ok',
+                                enabledText: 'OK',
                                 onClick: closeDialog
                             });
                             Csw.tryExec(o.onAddNode, nodeid, cswnbtnodekey, nodename);

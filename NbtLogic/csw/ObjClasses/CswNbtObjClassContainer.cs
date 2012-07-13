@@ -116,7 +116,15 @@ namespace ChemSW.Nbt.ObjClasses
                     //  or the Material's Storage Compatibility is one the selected values in the new Location.
                     if( Location.WasModified )
                     {
-                        // Waiting on case 24441
+                        CswNbtNodePropImageList materialStorageCompatibilty = MaterialNode.Properties[CswNbtObjClassMaterial.StorageCompatibilityPropertyName];
+                        CswNbtNode locationNode = _CswNbtResources.Nodes.GetNode( Location.SelectedNodeId );
+                        CswNbtNodePropImageList locationStorageCompatibility = locationNode.Properties[CswNbtObjClassLocation.StorageCompatabilityPropertyName];
+                        if( false == materialStorageCompatibilty.Value.IsEmpty && false == materialStorageCompatibilty.Gestalt.Contains( locationStorageCompatibility.Gestalt ) )
+                        {
+                            throw new CswDniException( ErrorType.Warning,
+                                "Cannot move a material with storage compatibility " + materialStorageCompatibilty.Gestalt + " to a location with a storage compatibility of " + locationStorageCompatibility.Gestalt,
+                                "Cannot move a material with storage compatibility " + materialStorageCompatibilty.Gestalt + " to a location with a storage compatibility of " + locationStorageCompatibility.Gestalt );
+                        }
                     }
                 }
             }
@@ -225,9 +233,9 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override bool onButtonClick( NbtButtonData ButtonData )
         {
-            
-            
-            
+
+
+
             CswNbtMetaDataObjectClassProp OCP = ButtonData.NodeTypeProp.getObjectClassProp();
             if( null != ButtonData.NodeTypeProp && null != OCP )
             {

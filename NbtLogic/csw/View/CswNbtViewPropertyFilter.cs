@@ -42,7 +42,7 @@ namespace ChemSW.Nbt
             _constructor( CswNbtResources, View, inSubFieldName, inFilterMode, inValue, inResultMode, inCaseSensitive, inShowAtRuntime );
         }
 
-        public void _constructor( CswNbtResources CswNbtResources, CswNbtView View,
+        private void _constructor( CswNbtResources CswNbtResources, CswNbtView View,
                                      CswNbtSubField.SubFieldName inSubFieldName,
                                      CswNbtPropFilterSql.PropertyFilterMode inFilterMode,
                                      string inValue,

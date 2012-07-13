@@ -4,7 +4,6 @@ using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropertySets;
 using ChemSW.Nbt.PropTypes;
-using Newtonsoft.Json.Linq;
 
 enum MailRptFormatOptions { Link, CSV };
 
@@ -99,7 +98,7 @@ namespace ChemSW.Nbt.ObjClasses
             }
             else if( Type.Value == TypeOptionReport )
             {
-                OutputFormat.setReadOnly( value: true, SaveToDb: true );
+                OutputFormat.setReadOnly( value: false, SaveToDb: true );
             }
         }
 
@@ -163,9 +162,9 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override bool onButtonClick( NbtButtonData ButtonData )
         {
-            
-            
-            
+
+
+
             CswNbtMetaDataObjectClassProp OCP = ButtonData.NodeTypeProp.getObjectClassProp();
             if( null != ButtonData.NodeTypeProp && null != OCP )
             {

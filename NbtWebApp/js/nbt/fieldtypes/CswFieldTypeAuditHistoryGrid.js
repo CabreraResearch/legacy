@@ -17,6 +17,7 @@
                     cswnbtnodekey: o.cswnbtnodekey,
                     EditMode: o.EditMode,
                     width: '100%',
+                    allowEditRow: (o.EditMode !== Csw.enums.editMode.PrintReport),
                     onEditRow: function (date) {
                         $.CswDialog('EditNodeDialog', {
                             nodeids: [o.nodeid],
