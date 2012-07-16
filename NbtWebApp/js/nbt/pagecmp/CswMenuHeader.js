@@ -11,6 +11,7 @@
             onQuotas: function () { },
             onModules: function () { },
             onSessions: function () { },
+            onSubscriptions: function () { },
             onImpersonate: null,
             onEndImpersonation: null,
             onSuccess: function () { },
@@ -33,6 +34,7 @@
             onQuotas: o.onQuotas,
             onModules: o.onModules,
             onSessions: o.onSessions,
+            onSubscriptions: o.onSubscriptions,
             onImpersonate: o.onImpersonate,
             onEndImpersonation: o.onEndImpersonation,
             onSubmitRequest: o.onSubmitRequest 

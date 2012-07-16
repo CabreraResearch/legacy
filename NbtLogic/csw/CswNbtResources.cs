@@ -550,24 +550,22 @@ namespace ChemSW.Nbt
 
 
         #region Caching
-
+        /*
         /// <summary>
         /// Prepare this class for storage in the cache
         /// </summary>
-        ///
-        /*
+        ///        
         public void BeforeStoreInCache()
         {
             this.CswEventLinker = null;
             _CswNbtNodeCollection = null;        // case 21246
             //_CswResources.BeforeStoreInCache();
         }
-         */
+         
         /// <summary>
         /// Clean-up after storing this class in the cache
         /// </summary>
-        /// 
-        /*
+        ///         
         public void AfterRestoreFromCache()
         {
             _CswResources.AfterRestoreFromCache();

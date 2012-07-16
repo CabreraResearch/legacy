@@ -1,16 +1,8 @@
 ﻿using System;
-using System.Data;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using ChemSW.Core;
 using ChemSW.Nbt.Actions;
-using ChemSW.Exceptions;
-using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
-using ChemSW.Nbt.PropertySets;
 using ChemSW.Nbt.PropTypes;
-using ChemSW.Nbt.Security;
 using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.Batch
@@ -46,6 +38,7 @@ namespace ChemSW.Nbt.Batch
         /// Create a new batch operation to handle future node generation
         /// </summary>
         /// <param name="GeneratorNodeId">Primary key of Generator</param>
+        /// <param name="FinalDate"></param>
         public CswNbtObjClassBatchOp makeBatchOp( CswPrimaryKey GeneratorNodeId, DateTime FinalDate )
         {
             CswNbtObjClassBatchOp BatchNode = null;
@@ -61,7 +54,8 @@ namespace ChemSW.Nbt.Batch
         /// <summary>
         /// Create a new batch operation to handle future node generation
         /// </summary>
-        /// <param name="GeneratorNodeId">Primary key of Generator</param>
+        /// <param name="GenNode">Generator Node</param>
+        /// <param name="FinalDate"></param>
         public CswNbtObjClassBatchOp makeBatchOp( CswNbtNode GenNode, DateTime FinalDate )
         {
             CswNbtObjClassBatchOp BatchNode = null;

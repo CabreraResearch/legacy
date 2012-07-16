@@ -24,8 +24,8 @@ using ChemSW.Nbt.Statistics;
 using ChemSW.Nbt.Welcome;
 using ChemSW.Security;
 using ChemSW.Session;
-using Newtonsoft.Json.Linq;
 using ChemSW.StructureSearch;
+using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.WebServices
 {
@@ -360,7 +360,9 @@ namespace ChemSW.Nbt.WebServices
             }
 
             if( AuthenticationStatus == AuthenticationStatus.Unknown )
+            {
                 AuthenticationStatus = _CswSessionResources.CswSessionManager.beginSession( UserName, Password, CswWebControls.CswNbtWebTools.getIpAddress(), IsMobile );
+            }
 
             // case 21211
             if( AuthenticationStatus == AuthenticationStatus.Authenticated )
@@ -2738,8 +2740,8 @@ namespace ChemSW.Nbt.WebServices
                     // putting these in the param list causes the webservice to fail with
                     // "System.InvalidOperationException: Request format is invalid: application/octet-stream"
                     string PropId = Context.Request["propid"];
-                    wsTools Tools = new wsTools( _CswNbtResources );
-                    Stream MolStream = Tools.getFileInputStream( Context, "qqfile" );
+                    CswTempFile TempTools = new CswTempFile( _CswNbtResources );
+                    Stream MolStream = TempTools.getFileInputStream( Context, "qqfile" );
 
                     if( null != MolStream && false == string.IsNullOrEmpty( PropId ) )
                     {
@@ -3909,34 +3911,6 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string getInspectionStatusGrid()
-        {
-            JObject ReturnVal = new JObject();
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
-            try
-            {
-                _initResources();
-                AuthenticationStatus = _attemptRefresh();
-                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
-                {
-                    CswNbtWebServiceInspections ws = new CswNbtWebServiceInspections( _CswNbtResources );
-                    ReturnVal = ws.getInspectionStatusGrid();
-                }
-                _deInitResources();
-            }
-            catch( Exception Ex )
-            {
-                ReturnVal = jError( Ex );
-            }
-
-            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
-
-            return ReturnVal.ToString();
-
-        } // getInspectionStatusGrid()
-
-        [WebMethod( EnableSession = false )]
-        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
         public string getGeneratorsTree()
         {
             JObject ReturnVal = new JObject();
@@ -4561,63 +4535,6 @@ namespace ChemSW.Nbt.WebServices
             return ReturnVal.ToString();
         } // getMaterial()
 
-        [WebMethod( EnableSession = false )]
-        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string getFulfillRequestFilters( string SelectedFilters )
-        {
-            JObject ReturnVal = new JObject();
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
-            try
-            {
-                _initResources();
-                AuthenticationStatus = _attemptRefresh( true );
-
-                CswNbtWebServiceRequesting ws = new CswNbtWebServiceRequesting( _CswNbtResources );
-                ReturnVal = ws.getFulfillRequestFilters( SelectedFilters );
-                
-                _deInitResources();
-            }
-            catch( Exception Ex )
-            {
-                ReturnVal = jError( Ex );
-            }
-
-            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
-
-            return ReturnVal.ToString();
-        } // getMaterial()
-
-        [WebMethod( EnableSession = false )]
-        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string getRequestItemGrid( string FilterCriteria )
-        {
-            JObject ReturnVal = new JObject();
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
-            try
-            {
-                _initResources();
-                AuthenticationStatus = _attemptRefresh( true );
-
-                CswNbtWebServiceRequesting ws = new CswNbtWebServiceRequesting( _CswNbtResources );
-                CswNbtView View = ws.getRequestItemView( FilterCriteria );
-
-                if( null != View )
-                {
-                    var gridWs = new CswNbtWebServiceGrid( _CswNbtResources, View, ForReport: false );
-                    ReturnVal = gridWs.runGrid( IncludeInQuickLaunch: false );
-                }
-                _deInitResources();
-            }
-            catch( Exception Ex )
-            {
-                ReturnVal = jError( Ex );
-            }
-
-            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
-
-            return ReturnVal.ToString();
-        } // getMaterial()
-
         #endregion Requesting
 
         #region Auditing
@@ -4946,8 +4863,8 @@ namespace ChemSW.Nbt.WebServices
 
                 if( AuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
-                    wsTools Tools = new wsTools( _CswNbtResources );
-                    Tools.purgeTempFiles( "xls" );
+                    CswTempFile TempTools = new CswTempFile( _CswNbtResources );
+                    TempTools.purgeTempFiles( "xls" );
 
                     string TempFileName = "excelupload_" + _CswNbtResources.CurrentUser.Username + "_" + DateTime.Now.ToString( "MMddyyyy_HHmmss" ) + ".xls";
 
@@ -4956,7 +4873,7 @@ namespace ChemSW.Nbt.WebServices
 
                     HttpPostedFile File = Context.Request.Files[0];
                     Stream FileStream = File.InputStream;
-                    string FullPathAndFileName = Tools.cacheInputStream( FileStream, TempFileName );
+                    string FullPathAndFileName = TempTools.cacheInputStream( FileStream, TempFileName );
 
                     ExcelDataTable = ws.convertExcelFileToDataTable( FullPathAndFileName, ref ErrorMessage, ref WarningMessage );
 

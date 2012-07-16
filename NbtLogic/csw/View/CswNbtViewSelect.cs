@@ -23,7 +23,6 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Restore a CswNbtViewBase that was saved as a string
         /// </summary>
-        /// <param name="CswNbtResources">A CswNbtResources object</param>
         /// <param name="ViewAsString">View saved as a string</param>
         public CswNbtView restoreView( string ViewAsString )
         {

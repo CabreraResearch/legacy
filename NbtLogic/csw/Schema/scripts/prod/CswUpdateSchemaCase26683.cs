@@ -1,7 +1,5 @@
-﻿using System;
-using System.Data;
+﻿using System.Text.RegularExpressions;
 using ChemSW.Core;
-using ChemSW.DB;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 
@@ -21,6 +19,21 @@ namespace ChemSW.Nbt.Schema
 
             foreach( CswNbtObjClassUser UserNode in UserOC.getNodes( false, true ) )
             {
+                //Case 26866/27114
+                if( false == CswTools.IsAlphaNumeric( UserNode.UsernameProperty.Text ) )
+                {
+                    string ValidUserName = Regex.Replace( UserNode.UsernameProperty.Text, "[^a-zA-Z0-9_]+", "" );
+                    CswNbtObjClassUser ExistingUserNode = _CswNbtSchemaModTrnsctn.Nodes.makeUserNodeFromUsername( ValidUserName );
+                    if( ExistingUserNode != null && ExistingUserNode.NodeId != null )
+                    {
+                        UserNode.AccountLocked.Checked = Tristate.True;
+                    }
+                    else
+                    {
+                        UserNode.UsernameProperty.Text = ValidUserName;
+                    }
+                }
+
                 UserNode.AccountLocked.setReadOnly( value: false, SaveToDb: true );
                 UserNode.AccountLocked.setHidden( value: false, SaveToDb: true );
 

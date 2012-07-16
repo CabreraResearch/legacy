@@ -45,7 +45,7 @@ namespace ChemSW.Nbt.Schema
         {
             get
             {
-                return ( CswTools.getConfigurationFilePath( _CswNbtResources.SetupVbls.SetupMode ) );
+                return ( CswFilePath.getConfigurationFilePath( _CswNbtResources.SetupVbls.SetupMode ) );
             }
         }
 
@@ -977,24 +977,31 @@ namespace ChemSW.Nbt.Schema
         /// <summary>
         /// Convenience wrapper for creating an Object Class Prop
         /// </summary>
-        public CswNbtMetaDataObjectClassProp createObjectClassProp( CswNbtMetaDataObjectClass ObjectClassOc,
-                                                                    CswNbtWcfMetaDataModel.ObjectClassProp OcpModel )
+        public CswNbtMetaDataObjectClassProp createObjectClassProp( CswNbtMetaDataObjectClass ObjectClass, CswNbtWcfMetaDataModel.ObjectClassProp OcpModel )
+        {
+            OcpModel.ObjectClass = ObjectClass;
+            return createObjectClassProp( OcpModel );
+        }
+
+        /// <summary>
+        /// Convenience wrapper for creating an Object Class Prop
+        /// </summary>
+        public CswNbtMetaDataObjectClassProp createObjectClassProp( CswNbtWcfMetaDataModel.ObjectClassProp OcpModel )
         {
             CswNbtMetaDataObjectClassProp RetProp = null;
-            if( null != ObjectClassOc )
+            if( null != OcpModel.ObjectClass )
             {
-                RetProp = ObjectClassOc.getObjectClassProp( OcpModel.PropName );
+                RetProp = OcpModel.ObjectClass.getObjectClassProp( OcpModel.PropName );
                 if( null == RetProp )
                 {
                     CswTableUpdate ObjectClassPropUpdate = makeCswTableUpdate( "SchemaModTrnsctn_ObjectClassUpdate", "object_class_props" );
                     DataTable UpdateTable = ObjectClassPropUpdate.getEmptyTable();
                     _addObjectClassPropRow( UpdateTable,
-                                           ObjectClassOc,
-                                           OcpModel );
+                                            OcpModel );
 
                     ObjectClassPropUpdate.update( UpdateTable );
                     MetaData.makeMissingNodeTypeProps();
-                    RetProp = ObjectClassOc.getObjectClassProp( OcpModel.PropName );
+                    RetProp = OcpModel.ObjectClass.getObjectClassProp( OcpModel.PropName );
                 }
             }
             return RetProp;
@@ -1010,7 +1017,8 @@ namespace ChemSW.Nbt.Schema
             if( NbtObjectClass != CswNbtMetaDataObjectClass.NbtObjectClass.Unknown )
             {
                 CswNbtMetaDataObjectClass ObjectClassOc = MetaData.getObjectClass( NbtObjectClass );
-                RetProp = createObjectClassProp( ObjectClassOc, OcpModel );
+                OcpModel.ObjectClass = ObjectClassOc;
+                RetProp = createObjectClassProp( OcpModel );
             }
             return RetProp;
         }
@@ -1220,7 +1228,7 @@ namespace ChemSW.Nbt.Schema
         /// <summary>
         /// Convenience function for making new Object Class Props with more granular control
         /// </summary>
-        private DataRow _addObjectClassPropRow( DataTable ObjectClassPropsTable, CswNbtMetaDataObjectClass ObjectClass, CswNbtWcfMetaDataModel.ObjectClassProp OcpModel )
+        private void _addObjectClassPropRow( DataTable ObjectClassPropsTable, CswNbtWcfMetaDataModel.ObjectClassProp OcpModel )
         {
             DataRow OCPRow = ObjectClassPropsTable.NewRow();
             OCPRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.propname.ToString()] = OcpModel.PropName;
@@ -1233,6 +1241,12 @@ namespace ChemSW.Nbt.Schema
                 OCPRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.isfk.ToString()] = CswConvert.ToDbVal( true );
                 OCPRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.fktype.ToString()] = OcpModel.FkType;
                 OCPRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.fkvalue.ToString()] = CswConvert.ToDbVal( OcpModel.FkValue );
+                if( Int32.MinValue != OcpModel.ValuePropId &&
+                    NbtViewPropIdType.Unknown != OcpModel.ValuePropType )
+                {
+                    OCPRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.valuepropid.ToString()] = CswConvert.ToDbVal( OcpModel.ValuePropId );
+                    OCPRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.valueproptype.ToString()] = CswConvert.ToDbVal( OcpModel.ValuePropType.ToString() );
+                }
             }
             else
             {
@@ -1243,7 +1257,7 @@ namespace ChemSW.Nbt.Schema
             OCPRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.isrequired.ToString()] = CswConvert.ToDbVal( OcpModel.IsRequired );
             OCPRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.isunique.ToString()] = CswConvert.ToDbVal( OcpModel.IsUnique );
             OCPRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.isglobalunique.ToString()] = CswConvert.ToDbVal( OcpModel.IsGlobalUnique );
-            OCPRow["objectclassid"] = ObjectClass.ObjectClassId.ToString();
+            OCPRow["objectclassid"] = OcpModel.ObjectClass.ObjectClassId.ToString();
             OCPRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.servermanaged.ToString()] = CswConvert.ToDbVal( OcpModel.ServerManaged );
             OCPRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.listoptions.ToString()] = OcpModel.ListOptions;
             OCPRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.valueoptions.ToString()] = OcpModel.ValueOptions;
@@ -1277,7 +1291,6 @@ namespace ChemSW.Nbt.Schema
             OCPRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.filterpropid.ToString()] = CswConvert.ToDbVal( OcpModel.FilterPropId );
             OCPRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.auditlevel.ToString()] = CswConvert.ToDbVal( OcpModel.AuditLevel );
             ObjectClassPropsTable.Rows.Add( OCPRow );
-            return OCPRow;
         }
 
         /// <summary>
@@ -1583,7 +1596,6 @@ namespace ChemSW.Nbt.Schema
         /// </summary>
         /// <param name="SqlFileName">Name of file</param>
         /// <param name="ResourceSqlFile">File contents from Resources</param>
-        /// <param name="Block">Whether to wait for the script to finish</param>
         public void runExternalSqlScript( string SqlFileName, byte[] ResourceSqlFile )
         {
             string FileLocations = Application.StartupPath;

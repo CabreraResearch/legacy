@@ -26,6 +26,7 @@
                 onQuotas: null, // function () { },
                 onModules: null, // function () { },
                 onSessions: null, // function () { },
+                onSubscriptions: null,
                 onImpersonate: null,
                 nodeTreeCheck: null,
                 Multi: false
@@ -143,6 +144,9 @@
                                 break;
                             case 'Sessions':
                                 Csw.tryExec(cswPrivate.onSessions);
+                                break;
+                            case 'Subscriptions':
+                                Csw.tryExec(cswPrivate.onSubscriptions);
                                 break;
                             case 'Impersonate':
                                 $.CswDialog('ImpersonateDialog', { onImpersonate: cswPrivate.onImpersonate });

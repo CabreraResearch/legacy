@@ -116,7 +116,6 @@
     <Compile Include="Services\CswNbtWebServiceTable.cs" />
     <Compile Include="Services\CswNbtWebServiceAuditing.cs" />
     <Compile Include="Services\CswNbtWebServiceInspectionDesign.cs" />
-    <Compile Include="Services\CswNbtWebServiceInspections.cs" />
     <Content Include="CafLabelPrintUtil.cab" />
     <Content Include="ConfigVars.aspx" />
     <Content Include="Content\images\ajax-loader.png" />

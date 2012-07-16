@@ -121,11 +121,10 @@ namespace ChemSW.Nbt.ImportExport
         /// Imports data from an Xml String
         /// </summary>
         /// <param name="IMode">Describes how data is to be treated when importing</param>
-        /// <param name="XmlStr">Source XML string</param>
         /// <param name="ViewXml">Will be filled with the exported view's XML as String </param>
         /// <param name="ResultXml">Will be filled with an XML String record of new primary keys and references</param>
         /// <param name="ErrorLog">Will be filled with a summary of recoverable errors</param>
-        public void ImportXml( ImportMode IMode,  ref string ViewXml, ref string ResultXml, ref string ErrorLog )
+        public void ImportXml( ImportMode IMode, ref string ViewXml, ref string ResultXml, ref string ErrorLog )
         {
             _StatusUpdate( "Starting Import" );
 
@@ -325,7 +324,7 @@ namespace ChemSW.Nbt.ImportExport
                                 if( ThisProp != null )
                                 {
                                     ThisProp.SetFromXmlDataRow( NodeTypePropRow );
-									ThisProp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, ThisTab.TabId, Int32.MinValue, Int32.MinValue );
+                                    ThisProp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, ThisTab.TabId, Int32.MinValue, Int32.MinValue );
                                 }
                                 else
                                 {
@@ -415,19 +414,19 @@ namespace ChemSW.Nbt.ImportExport
             // Fix relationship references
             //foreach( CswNbtMetaDataNodeType NodeType in _CswNbtResources.MetaData.getNodeTypes() )
             //{
-                foreach( CswNbtMetaDataNodeTypeProp Prop in _CswNbtResources.MetaData.getNodeTypeProps( CswNbtMetaDataFieldType.NbtFieldType.Relationship ) )
+            foreach( CswNbtMetaDataNodeTypeProp Prop in _CswNbtResources.MetaData.getNodeTypeProps( CswNbtMetaDataFieldType.NbtFieldType.Relationship ) )
+            {
+                //if( Prop.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Relationship )
+                //{
+                if( Prop.FKType == NbtViewRelatedIdType.NodeTypeId.ToString() )
                 {
-                    //if( Prop.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Relationship )
-                    //{
-                        if( Prop.FKType == NbtViewRelatedIdType.NodeTypeId.ToString() )
-                        {
-                            if( NodeTypeMap.ContainsKey( Prop.FKValue ) )
-                            {
-                                Prop.SetFK( Prop.FKType, NodeTypeMap[Prop.FKValue], Prop.ValuePropType, Prop.ValuePropId );
-                            }
-                        } // if( Prop.FKType == RelatedIdType.NodeTypeId.ToString() )
-                    //} // if( Prop.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Relationship )
-                } // foreach( CswNbtMetaDataNodeTypeProp Prop in NodeType.NodeTypeProps )
+                    if( NodeTypeMap.ContainsKey( Prop.FKValue ) )
+                    {
+                        Prop.SetFK( Prop.FKType, NodeTypeMap[Prop.FKValue], Prop.ValuePropType, Prop.ValuePropId );
+                    }
+                } // if( Prop.FKType == RelatedIdType.NodeTypeId.ToString() )
+                //} // if( Prop.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Relationship )
+            } // foreach( CswNbtMetaDataNodeTypeProp Prop in NodeType.NodeTypeProps )
             //} // foreach( CswNbtMetaDataNodeType NodeType in _CswNbtResources.MetaData.NodeTypes )
 
             _StatusUpdate( "Done Fixing Relationship References" );

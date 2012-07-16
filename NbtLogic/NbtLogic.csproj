@@ -88,7 +88,6 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="csw\Actions\CswNbtActFulfillRequest.cs" />
     <Compile Include="csw\Actions\CswNbtActReceiving.cs" />
     <Compile Include="csw\Batch\CswNbtBatchOpInventoryLevels.cs" />
     <Compile Include="csw\Grid\CswNbtGridExtJsDataIndex.cs" />
@@ -101,14 +100,21 @@
     <Compile Include="csw\Actions\CswNbtActDispenseContainer.cs" />
     <Compile Include="csw\Actions\CswNbtActSubmitRequest.cs" />
     <Compile Include="csw\Actions\CswNbtActSystemViews.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase27178.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26523.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase27145.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26714MakeUserManaged.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26720.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase27046.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase24446Action2.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase27071RequestItem.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase27088.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26550.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase24486.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26683.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase27071RequestFulfillment.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase27077.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase25815.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26772.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26829.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26697.cs" />

@@ -126,8 +126,8 @@ namespace ChemSW.Nbt.WebServices
 
                     if( _CswNbtResources.CurrentNbtUser.Username == CswNbtObjClassUser.ChemSWAdminUsername )
                     {
-                        Ret["Admin"]["View Log"] = new JObject();
-                        Ret["Admin"]["View Log"]["href"] = "DisplayLog.aspx";
+                        //Ret["Admin"]["View Log"] = new JObject();
+                        //Ret["Admin"]["View Log"]["href"] = "DisplayLog.aspx";
 
                         Ret["Admin"]["Modules"] = new JObject();
                         Ret["Admin"]["Modules"]["action"] = "Modules";
@@ -154,9 +154,12 @@ namespace ChemSW.Nbt.WebServices
                                         new JProperty( "action", "Profile" ),
                                         new JProperty( "userid", _CswNbtResources.CurrentNbtUser.UserId.ToString() )
                                     ) ),
-                                    new JProperty( "Subscriptions", new JObject(
+                                    new JProperty( "Subscriptions", new JObject(//TODO - case 27046 - remove once action below is finished
                                         new JProperty( "href", "Subscriptions.aspx" )
                                     ) )
+                //new JProperty( "Subscriptions", new JObject(
+                //    new JProperty( "action", "Subscriptions" )
+                //) )
                         );
 
             if( _CswNbtResources.IsModuleEnabled( CswNbtResources.CswNbtModule.CISPro ) )

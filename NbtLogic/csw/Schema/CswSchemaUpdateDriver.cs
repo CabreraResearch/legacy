@@ -28,12 +28,9 @@ namespace ChemSW.Nbt.Schema
         /// transaction management and exception reporting, while avoiding creating a circular
         /// dependency between the schema update logic and the transaction class.
         /// </summary>
-        /// <param name="CswNbtSchemaModTrnsctn"></param>
         /// <param name="CswUpdateSchemaTo"></param>
         public CswSchemaUpdateDriver( CswUpdateSchemaTo CswUpdateSchemaTo )
         {
-            //_CswNbtSchemaModTrnsctn = CswNbtSchemaModTrnsctn;
-
             _CswUpdateSchemaTo = CswUpdateSchemaTo;
         }//ctor
 
