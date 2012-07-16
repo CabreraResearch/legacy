@@ -1,3 +1,8 @@
+using System;
+using System.Data;
+using ChemSW.Core;
+using ChemSW.DB;
+using ChemSW.Exceptions;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -15,13 +20,35 @@ namespace ChemSW.Nbt.Schema
 
             // NOTE: This script will be run many times, so make sure your changes are safe!
 
+            /* TODO: Delete on moving to Quince */
+            //case 26881
+
+
+            CswSequenceName CswSequenceName = new Nbt.CswSequenceName( "tablecolid" );
+            if( false == _CswNbtSchemaModTrnsctn.doesSequenceExist( CswSequenceName ) )
+            {
+                string Query = "select max(tablecolid) as \"max\" from data_dictionary";
+                CswArbitrarySelect CswArbitrarySelectDataDictionary = _CswNbtSchemaModTrnsctn.makeCswArbitrarySelect( "maxdatadictionaryrows", Query );
+                DataTable DataTableDataDictionary = CswArbitrarySelectDataDictionary.getTable();
+                if( DataTableDataDictionary.Rows.Count <= 0 )
+                {
+                    throw ( new CswDniException( "The following query should have returned one row but did not: " + Query ) );
+                }
+
+                Int32 MaxSequenceVal = CswConvert.ToInt32( DataTableDataDictionary.Rows[0]["max"] );
+                MaxSequenceVal++;
+
+                _CswNbtSchemaModTrnsctn.makeSequence( CswSequenceName, "", "", 0, MaxSequenceVal );
+            }
+
+
 
             // case 24441
-            if( false == _CswNbtSchemaModTrnsctn.isColumnDefinedInDataBase( "object_class_props", "textarearows" ) )
+            if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( "object_class_props", "textarearows" ) )
             {
                 _CswNbtSchemaModTrnsctn.addLongColumn( "object_class_props", "textarearows", "Height in rows(memo) or pixels(image)", false, false );
             }
-            if( false == _CswNbtSchemaModTrnsctn.isColumnDefinedInDataBase( "object_class_props", "textareacols" ) )
+            if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( "object_class_props", "textareacols" ) )
             {
                 _CswNbtSchemaModTrnsctn.addLongColumn( "object_class_props", "textareacols", "Width in characters(memo) or pixels(image)", false, false );
             }
@@ -31,7 +58,7 @@ namespace ChemSW.Nbt.Schema
             {
                 _CswNbtSchemaModTrnsctn.addBooleanColumn( "jct_nodes_props", "hidden", "Determines whether property displays.", true, false );
             }
-            
+
             // case 26957
             if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( "nodetype_layout", "tabgroup" ) )
             {

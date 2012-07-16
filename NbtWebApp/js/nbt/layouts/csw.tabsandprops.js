@@ -237,13 +237,13 @@
                     }
 
                     var formTable = cswPrivate.form.table({
-                        ID: cswPrivate.ID + '_formtbl',
+                        ID: cswPrivate.ID + '_formtbl_' + tabid,
                         width: '100%'
                     });
                     //var formTblCell11 = formTable.cell(1, 1);
                     //var formTblCell12 = formTable.cell(1, 2);
                     var layoutOpts = {
-                        ID: cswPrivate.ID + '_props',
+                        ID: cswPrivate.ID + '_props_' + tabid,
                         OddCellRightAlign: true,
                         ReadOnly: (cswPrivate.EditMode === Csw.enums.editMode.PrintReport || cswPrivate.ReadOnly),
                         cellSet: {

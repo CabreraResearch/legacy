@@ -9,7 +9,7 @@ namespace ChemSW.Nbt.Schema
         public override void update()
         {
 
-            _CswNbtSchemaModTrnsctn.createConfigurationVariable( ChemSW.Config.CswConfigurationVariables.ConfigurationVariableNames.CommentsTruncationLimit, "Length limit of the comments property", "10", true );
+            _CswNbtSchemaModTrnsctn.createConfigurationVariable( CswNbtResources.ConfigurationVariables.total_comments_lines, "Length limit of the comments property", "10", true );
         }//Update()
 
     }//class CswUpdateSchemaCaseXXXXX

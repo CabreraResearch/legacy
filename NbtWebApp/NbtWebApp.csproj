@@ -32,7 +32,7 @@
     <CodeAnalysisRuleDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
     <CodeAnalysisIgnoreBuiltInRules>true</CodeAnalysisIgnoreBuiltInRules>
     <DocumentationFile>bin\NbtWebApp.XML</DocumentationFile>
-    <NoWarn>1591</NoWarn>
+    <NoWarn>1591,1572,1571,1573,1587,1570</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
     <OutputPath>bin\</OutputPath>
@@ -50,6 +50,7 @@
     <CodeAnalysisRuleDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
     <CodeAnalysisIgnoreBuiltInRules>true</CodeAnalysisIgnoreBuiltInRules>
     <DocumentationFile>bin\NbtWebApp.XML</DocumentationFile>
+    <NoWarn>1591,1572,1571,1573,1587,1570</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug %28Fast%29|x64'">
     <DebugSymbols>true</DebugSymbols>
@@ -67,6 +68,7 @@
     <CodeAnalysisRuleDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
     <CodeAnalysisIgnoreBuiltInRules>true</CodeAnalysisIgnoreBuiltInRules>
     <DocumentationFile>bin\NbtWebApp.XML</DocumentationFile>
+    <NoWarn>1591,1572,1571,1573,1587,1570</NoWarn>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="CrystalDecisions.CrystalReports.Engine, Version=13.0.2000.0, Culture=neutral, PublicKeyToken=692fbea5521e1304, processorArchitecture=MSIL" />
@@ -750,6 +752,7 @@
     <Content Include="crystal\prompting\js\promptengine_strings_zh_TW.js" />
     <Content Include="crystal\urlreporting\activexviewer.js" />
     <Content Include="crystal\urlreporting\appletviewer.js" />
+    <Content Include="etc\far.exe" />
     <Content Include="ExternalLogin.aspx" />
     <Content Include="ExternalLogin.html" />
     <Content Include="Images\icons\docs.gif" />
