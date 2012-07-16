@@ -79,6 +79,7 @@
     <Content Include="ConnectTest.html" />
     <Content Include="etc\far.exe" />
     <Content Include="js\nbt\composites\csw.location.js" />
+    <Content Include="js\nbt\actions\csw.subscriptions.js" />
     <Content Include="js\common\composites\csw.menubutton.js" />
     <Content Include="js\nbt\composites\csw.quantity.js" />
     <Content Include="js\nbt\nodes\csw.node.link.js" />
@@ -119,7 +120,6 @@
     <Content Include="js\CswNbt-vsdoc.js" />
     <Content Include="js\nbt\actions\csw.modules.js" />
     <Content Include="js\nbt\actions\csw.audithistory.js" />
-    <Content Include="js\nbt\actions\csw.inspectionstatus.js" />
     <Content Include="js\nbt\actions\csw.sessions.js" />
     <Content Include="js\nbt\actions\csw.quotaimage.js" />
     <Content Include="js\nbt\actions\csw.quotas.js" />

@@ -45,7 +45,7 @@ namespace ChemSW.Nbt.Schema
         {
             get
             {
-                return ( CswTools.getConfigurationFilePath( _CswNbtResources.SetupVbls.SetupMode ) );
+                return ( CswFilePath.getConfigurationFilePath( _CswNbtResources.SetupVbls.SetupMode ) );
             }
         }
 
