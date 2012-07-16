@@ -177,9 +177,7 @@
 
                                 // Object Class Buttons
                                 var propDiv = btnTable.cell(1, btncol).div();
-                                if (propObj.propData.values.mode !== 'menu') {
-                                    propObj.propData.values.mode = 'link'; // force link
-                                } 
+                                
                                 $.CswFieldTypeFactory('make', {
                                     nodeid: nodeid,
                                     fieldtype: propObj.fieldtype,
@@ -187,12 +185,12 @@
                                     propid: propObj.propid,
                                     propDiv: propDiv,
                                     propData: propObj.propData,
-                                    ID: Csw.makeId({ ID: o.ID, suffix: propObj.id }),
+                                    ID: Csw.makeId(o.ID, propObj.id, 'tbl' ),
                                     EditMode: Csw.enums.editMode.Table,
                                     doSave: function (saveoptions) {
                                         // Nothing to save in this case, so just call onSuccess
                                         var s = { onSuccess: null };
-                                        if (saveoptions) $.extend(s, saveoptions);
+                                        if (saveoptions) $.extend(true, s, saveoptions);
                                         Csw.tryExec(s.onSuccess);
                                     },
                                     onReload: null
@@ -211,9 +209,11 @@
                             if (nodeObj.allowedit) {
                                 btntext = "Edit";
                             }
-                            btnTable.cell(1, btncol).a({
+                            btnTable.cell(1, btncol).icon({
                                 ID: Csw.makeId(o.ID, nodeid, 'editbtn'),
-                                text: btntext,
+                                hovertext: btntext,
+                                iconType: Csw.enums.iconType.pencil,
+                                isButton: true,
                                 //disableOnClick: false,
                                 onClick: function () {
                                     $.CswDialog('EditNodeDialog', {
@@ -229,9 +229,11 @@
                         } // if (nodeObj.allowview || nodeObj.allowedit) 
 
                         if (o.allowDelete && nodeObj.allowdelete) {
-                            btnTable.cell(1, btncol).a({
+                            btnTable.cell(1, btncol).icon({
                                 ID: Csw.makeId(o.ID, nodeid, 'delbtn'),
-                                text: 'Delete',
+                                hovertext: 'Delete',
+                                iconType: Csw.enums.iconType.trash,
+                                isButton: true,
                                 //disableOnClick: false,
                                 onClick: function () {
                                     $.CswDialog('DeleteNodeDialog', {
