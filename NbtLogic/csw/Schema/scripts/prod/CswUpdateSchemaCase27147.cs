@@ -20,7 +20,7 @@ namespace ChemSW.Nbt.Schema
 
             _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( storageCompatibilityOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.extended, Tristate.True );
 
-            string listOpts = "None\nInorganic Acids\nOrganic Acids\nBases\nOxidizing Inorganic Acids\nToxics\nOxidizers\nFlammables";
+            string listOpts = "0 - None\n1 - Inorganic Acids\n2 - Organic Acids\n3 - Bases\n4 - Oxidizing Inorganic Acids\n - Oxidizers\n6 - Toxics\n7 - Flammables";
             _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( storageCompatibilityOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.listoptions, listOpts );
 
         }//Update()
