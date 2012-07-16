@@ -36,7 +36,7 @@ namespace ChemSW.Nbt.Schema
                     FkType = NbtViewPropIdType.ObjectClassPropId.ToString(),
                     FkValue = RequestOcp.PropId,
                     ValuePropId = RequestGroupOcp.PropId,
-                    ValuePropType = NbtViewPropIdType.ObjectClassPropId
+                    ValuePropType = NbtViewPropIdType.ObjectClassPropId.ToString()
                 } );
             
             foreach( CswNbtMetaDataNodeType RequestItemNt in RequestItemOc.getLatestVersionNodeTypes() )
