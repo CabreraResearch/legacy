@@ -2134,19 +2134,9 @@ namespace ChemSW.Nbt.WebPages
 
                             if( SelectedNodeTypeProp.FKValue != Int32.MinValue )
                             {
-
+                                RelationshipValue.SelectedValue = SelectedNodeTypeProp.FKValue.ToString();
 
                                 CswNbtMetaDataNodeTypeProp RelationshipProp = Master.CswNbtResources.MetaData.getNodeTypeProp( SelectedNodeTypeProp.FKValue );
-                                if( null == RelationshipProp )
-                                {
-                                    RelationshipProp = Master.CswNbtResources.MetaData.getNodeTypePropByObjectClassProp( SelectedNodeTypeProp.NodeTypeId, SelectedNodeTypeProp.FKValue );
-                                }
-
-                                CswNbtMetaDataNodeTypeProp ValueProp = Master.CswNbtResources.MetaData.getNodeTypeProp( SelectedNodeTypeProp.ValuePropId );
-                                if( null != RelationshipProp && null == ValueProp )
-                                {
-                                    ValueProp = Master.CswNbtResources.MetaData.getNodeTypePropByObjectClassProp( RelationshipProp.FKValue, SelectedNodeTypeProp.ValuePropId );
-                                }
 
                                 TableRow RelatedPropRow = makeEditPropTableRow( EditPropPlaceHolder );
                                 ( (Literal) RelatedPropRow.Cells[0].Controls[0] ).Text = "Related " + LabelNodeTypeProp + ":";
@@ -2158,53 +2148,46 @@ namespace ChemSW.Nbt.WebPages
                                 RelatedPropType.ID = "EditProp_RelatedPropType" + SelectedNodeTypeProp.PropId.ToString();
                                 RelatedPropRow.Cells[1].Controls.Add( RelatedPropType );
 
-                                if( null != RelationshipProp )
+                                IEnumerable<CswNbtMetaDataNodeType> NodeTypeCol = null;
+                                if( RelationshipProp.FKType == NbtViewRelatedIdType.NodeTypeId.ToString() )
                                 {
-                                    RelationshipValue.SelectedValue = RelationshipProp.PropId.ToString();
-                                    IEnumerable<CswNbtMetaDataNodeType> NodeTypeCol = null;
-                                    if( RelationshipProp.FKType == NbtViewRelatedIdType.NodeTypeId.ToString() )
+                                    NodeTypeCol = new Collection<CswNbtMetaDataNodeType>() { 
+                                        Master.CswNbtResources.MetaData.getNodeType( RelationshipProp.FKValue ) 
+                                    };
+                                }
+                                else
+                                {
+                                    CswNbtMetaDataObjectClass RelatedObjectClass = Master.CswNbtResources.MetaData.getObjectClass( RelationshipProp.FKValue );
+                                    if( RelatedObjectClass != null )
                                     {
-                                        NodeTypeCol = new Collection<CswNbtMetaDataNodeType>()
-                                            {
-                                                Master.CswNbtResources.MetaData.getNodeType( RelationshipProp.FKValue )
-                                            };
+                                        NodeTypeCol = RelatedObjectClass.getNodeTypes();
                                     }
-                                    else
-                                    {
-                                        CswNbtMetaDataObjectClass RelatedObjectClass = Master.CswNbtResources.MetaData.getObjectClass( RelationshipProp.FKValue );
-                                        if( RelatedObjectClass != null )
-                                        {
-                                            NodeTypeCol = RelatedObjectClass.getNodeTypes();
-                                        }
-                                    }
+                                }
 
-                                    foreach( CswNbtMetaDataNodeType RelatedNodeType in NodeTypeCol )
+                                foreach( CswNbtMetaDataNodeType RelatedNodeType in NodeTypeCol )
+                                {
+                                    if( RelatedNodeType != null )
                                     {
-                                        if( RelatedNodeType != null )
+                                        RelatedPropType.Value = NbtViewPropIdType.NodeTypePropId.ToString();
+                                        IEnumerable<CswNbtMetaDataNodeTypeProp> RelatedProps = RelatedNodeType.getNodeTypeProps();
+                                        if( RelatedProps != null )
                                         {
-                                            RelatedPropType.Value = NbtViewPropIdType.NodeTypePropId.ToString();
-                                            IEnumerable<CswNbtMetaDataNodeTypeProp> RelatedProps = RelatedNodeType.getNodeTypeProps();
-                                            if( RelatedProps != null )
+                                            foreach( CswNbtMetaDataNodeTypeProp RelatedProp in RelatedProps )
                                             {
-                                                foreach( CswNbtMetaDataNodeTypeProp RelatedProp in RelatedProps )
+                                                if( null == RelatedPropValue.Items.FindByText( RelatedProp.PropName ) )
                                                 {
-                                                    if( null == RelatedPropValue.Items.FindByText( RelatedProp.PropName ) )
-                                                    {
-                                                        RelatedPropValue.Items.Add( new ListItem( RelatedProp.PropName, RelatedProp.FirstPropVersionId.ToString() ) );
-                                                    }
+                                                    RelatedPropValue.Items.Add( new ListItem( RelatedProp.PropName, RelatedProp.FirstPropVersionId.ToString() ) );
                                                 }
                                             }
                                         }
                                     }
-
-                                    RelatedPropValue.CssClass = "selectinput";
-                                    RelatedPropValue.ID = "EditProp_RelatedPropValue" + SelectedNodeTypeProp.PropId.ToString();
-                                    if( null != ValueProp )
-                                    {
-                                        RelatedPropValue.SelectedValue = ValueProp.PropId.ToString();
-                                    }
-                                    RelatedPropRow.Cells[1].Controls.Add( RelatedPropValue );
                                 }
+
+                                RelatedPropValue.CssClass = "selectinput";
+                                RelatedPropValue.ID = "EditProp_RelatedPropValue" + SelectedNodeTypeProp.PropId.ToString();
+                                if( SelectedNodeTypeProp.ValuePropId != Int32.MinValue )
+                                    RelatedPropValue.SelectedValue = SelectedNodeTypeProp.ValuePropId.ToString();
+                                RelatedPropRow.Cells[1].Controls.Add( RelatedPropValue );
                             }
                             break;
 
