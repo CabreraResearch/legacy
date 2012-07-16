@@ -205,8 +205,8 @@ namespace ChemSW.Nbt.PropTypes
         /// </summary>
         public bool IsReadOnly()
         {
-            return ( _CswNbtNodePropData.ReadOnly ||       // jct_nodes_props.readonly
-                     ( NodeTypeProp.ReadOnly && _CswNbtResources.EditMode != NodeEditMode.Add ) ||
+            return ( ( ( _CswNbtNodePropData.ReadOnly ||       // jct_nodes_props.readonly
+                      NodeTypeProp.ReadOnly ) && _CswNbtResources.EditMode != NodeEditMode.Add ) ||
                      NodeTypeProp.ServerManaged ||         // nodetype_props.servermanaged
                      _CswNbtResources.EditMode == NodeEditMode.Preview ||
                      _CswNbtResources.EditMode == NodeEditMode.PrintReport ||
