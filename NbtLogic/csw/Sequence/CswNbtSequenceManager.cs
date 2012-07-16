@@ -81,6 +81,7 @@ namespace ChemSW.Nbt
         /// <param name="Prepend">String to prepend before all sequence values</param>
         /// <param name="Append">String to append after all sequence values</param>
         /// <param name="Pad">Pad the numeric portion of the sequence value to this many characters</param>
+        /// <param name="InitialValueIn"></param>
         /// <returns>Primary key of new sequence entry</returns>
         public Int32 makeSequence( CswSequenceName SequenceName, string Prepend, string Append, Int32 Pad, Int32 InitialValueIn )
         {

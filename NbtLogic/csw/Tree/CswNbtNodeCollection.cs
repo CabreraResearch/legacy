@@ -61,7 +61,7 @@ namespace ChemSW.Nbt
         #region Getting Nodes
 
         /// <summary>
-        /// Index of nodes by NodeId.  NodeTypeId is looked up and NodeSpecies.Plain is assumed.  See <see cref="GetNode(int, int, NodeSpecies)"/>
+        /// Index of nodes by NodeId.  NodeTypeId is looked up and NodeSpecies.Plain is assumed.  See <see cref="GetNode(CswPrimaryKey, int, NodeSpecies, DateTime)"/>
         /// </summary>
         /// <param name="NodeId">Primary Key of Node</param>
         public CswNbtNode this[CswPrimaryKey NodeId]
@@ -96,7 +96,7 @@ namespace ChemSW.Nbt
         } // getNode()
 
         /// <summary>
-        /// Fetch a node from the collection.  NodeTypeId is looked up and NodeSpecies.Plain is assumed.  See <see cref="GetNode(int, int, NodeSpecies)"/>
+        /// Fetch a node from the collection.  NodeTypeId is looked up and NodeSpecies.Plain is assumed.  See <see cref="GetNode(CswPrimaryKey, int, NodeSpecies, DateTime)"/>
         /// </summary>
         /// <param name="NodeId">Primary Key of Node</param>
         public CswNbtNode GetNode( CswPrimaryKey NodeId )
@@ -105,7 +105,7 @@ namespace ChemSW.Nbt
         }
 
         /// <summary>
-        /// Fetch a node from the collection.  NodeTypeId is looked up and NodeSpecies.Plain is assumed.  See <see cref="GetNode(int, int, NodeSpecies)"/>
+        /// Fetch a node from the collection.  NodeTypeId is looked up and NodeSpecies.Plain is assumed.  See <see cref="GetNode(CswPrimaryKey, int, NodeSpecies, DateTime)"/>
         /// </summary>
         public CswNbtNode GetNode( CswPrimaryKey NodeId, DateTime Date )
         {
@@ -113,18 +113,18 @@ namespace ChemSW.Nbt
         }
 
         /// <summary>
-        /// Fetch a node from the collection.  NodeSpecies.Plain is assumed.  See <see cref="GetNode(int, int, NodeSpecies)"/>
+        /// Fetch a node from the collection.  NodeSpecies.Plain is assumed.  See <see cref="GetNode(CswPrimaryKey, int, NodeSpecies, DateTime)"/>
         /// </summary>
         /// <param name="NodeId">Primary Key of Node (if not provided, make sure NodeTypeId is)</param>
         /// <param name="NodeTypeId">Primary Key of NodeTypeId (only required if NodeId is invalid)</param>
-        /// <seealso cref="this[int]"/>
+        /// <seealso cref="this[CswPrimaryKey]"/>
         public CswNbtNode GetNode( CswPrimaryKey NodeId, Int32 NodeTypeId )
         {
             return GetNode( NodeId, NodeTypeId, NodeSpecies.Plain, DateTime.MinValue );
         }
 
         /// <summary>
-        /// Index of nodes by NodeKey.  The NodeId, NodeTypeId and NodeSpecies in the Key are used.  See <see cref="GetNode(int, int, NodeSpecies)"/>
+        /// Index of nodes by NodeKey.  The NodeId, NodeTypeId and NodeSpecies in the Key are used.  See <see cref="GetNode(CswPrimaryKey, int, NodeSpecies, DateTime)"/>
         /// </summary>
         /// <param name="NodeKey">NodeKey for Node</param>
         public CswNbtNode this[CswNbtNodeKey NodeKey]
@@ -146,6 +146,7 @@ namespace ChemSW.Nbt
         /// <param name="NodeId">Primary Key of Node (if not provided, make sure NodeTypeId is)</param>
         /// <param name="NodeTypeId">Primary Key of NodeTypeId (only required if NodeId is invalid)</param>
         /// <param name="Species"><see cref="NodeSpecies" /></param>
+        /// <param name="Date"></param>
         public CswNbtNode GetNode( CswPrimaryKey NodeId, Int32 NodeTypeId, NodeSpecies Species, DateTime Date )
         {
             //bz # 7816: Return NULL rather than throwing
@@ -415,6 +416,7 @@ namespace ChemSW.Nbt
         /// </summary>
         /// <param name="NodeTypeId">Primary Key of Nodetype</param>
         /// <param name="Op">Specifies the action to take with regard to the database</param>
+        /// <param name="OverrideUniqueValidation"></param>
         public CswNbtNode makeNodeFromNodeTypeId( Int32 NodeTypeId, MakeNodeOperation Op, bool OverrideUniqueValidation = false )
         {
             CswNbtNode Node = _CswNbtNodeFactory.make( NodeSpecies.Plain, null, NodeTypeId, NodeHash.Count );
@@ -458,6 +460,7 @@ namespace ChemSW.Nbt
         /// not sure if this belongs here in CswNbtNodeCollection
         /// </remarks>
         /// <param name="Username">Username of User</param>
+        /// <param name="RequireViewPermissions"></param>
         public CswNbtNode makeUserNodeFromUsername( string Username, bool RequireViewPermissions = true )
         {
             CswTimer Timer = new CswTimer();
@@ -540,39 +543,39 @@ namespace ChemSW.Nbt
 
         #region Database
 
-        /// <summary>
-        /// Save the node to the database
-        /// </summary>
-        /// <param name="Node">Node to save</param>
+        ///// <summary>
+        ///// Save the node to the database
+        ///// </summary>
+        ///// <param name="Node">Node to save</param>
         //public void Write( CswNbtNode Node )
         //{
         //    //bz # 5943
         //    //_CswNbtNodeWriter.write( Node, true );
         //    Node.postChanges( true );
         //}
-        /// <summary>
-        /// Save the node to the database
-        /// </summary>
-        /// <param name="NodeId">Primary key of Node to save</param>
+        ///// <summary>
+        ///// Save the node to the database
+        ///// </summary>
+        ///// <param name="NodeId">Primary key of Node to save</param>
         //public void Write( Int32 NodeId )
         //{
         //    this.Write( GetNode( NodeId ) );
         //}
-        /// <summary>
-        /// Delete the node from the database and the Collection.  Don't try to do this while iterating.
-        /// NodeSpecies.Plain is assumed.
-        /// </summary>
-        /// <param name="NodeId">Primary Key of node to delete</param>
+        ///// <summary>
+        ///// Delete the node from the database and the Collection.  Don't try to do this while iterating.
+        ///// NodeSpecies.Plain is assumed.
+        ///// </summary>
+        ///// <param name="NodeId">Primary Key of node to delete</param>
         //public void Delete( Int32 NodeId )
         //{
         //    Delete( NodeId, NodeSpecies.Plain );
         //}
-        /// <summary>
-        /// Delete the node from the database and the Collection.  Don't try to do this while iterating.
-        /// NodeSpecies.Plain is assumed.
-        /// </summary>
-        /// <param name="NodeId">Primary Key of node to delete</param>
-        /// <param name="Species"><see cref="NodeSpecies"/></param>
+        ///// <summary>
+        ///// Delete the node from the database and the Collection.  Don't try to do this while iterating.
+        ///// NodeSpecies.Plain is assumed.
+        ///// </summary>
+        ///// <param name="NodeId">Primary Key of node to delete</param>
+        ///// <param name="Species"><see cref="NodeSpecies"/></param>
         //public void Delete( Int32 NodeId, NodeSpecies Species )
         //{
         //    CswNbtNode Node = GetNode( NodeId );
