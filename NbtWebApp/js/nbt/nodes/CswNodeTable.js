@@ -177,10 +177,13 @@
 
                                 // Object Class Buttons
                                 var propDiv = btnTable.cell(1, btncol).div();
-                                propObj.propData.values.mode = 'link';      // force link
+                                if (propObj.propData.values.mode !== 'menu') {
+                                    propObj.propData.values.mode = 'link'; // force link
+                                } 
                                 $.CswFieldTypeFactory('make', {
                                     nodeid: nodeid,
                                     fieldtype: propObj.fieldtype,
+                                    size: 'small',
                                     propid: propObj.propid,
                                     propDiv: propDiv,
                                     propData: propObj.propData,

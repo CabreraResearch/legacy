@@ -14,6 +14,7 @@
                 ID: '',
                 menuOptions: ['Menu Item 1', 'Menu Item 2'],
                 menu: [],
+                size: 'medium',
                 selectedText: '',
                 onClick: null,
                 state: '',
@@ -44,7 +45,7 @@
                     renderTo: cswParent.getId(),
                     text: cswPrivate.selectedText,
                     handler: cswPrivate.onClick,
-                    scale: 'medium',
+                    scale: Csw.string(cswPrivate.size, 'medium'),
                     menu: new Ext.menu.Menu({items: cswPrivate.menu})
                 });
 

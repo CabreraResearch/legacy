@@ -108,6 +108,7 @@
                         ID: Csw.makeId(o.ID, 'menuBtn'),
                         selectedText: text,
                         menuOptions: menuoptions,
+                        size: o.size,
                         state: state,
                         onClick: onClick
                     });
