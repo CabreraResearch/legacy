@@ -42,7 +42,7 @@ namespace ChemSW.Nbt.ObjClasses
         public abstract void afterPopulateProps();
         public abstract bool onButtonClick( NbtButtonData ButtonData );
         public abstract void addDefaultViewFilters( CswNbtViewRelationship ParentRelationship );
-        
+
         public Int32 NodeTypeId { get { return _CswNbtNode.NodeTypeId; } }
         public CswNbtMetaDataNodeType NodeType { get { return _CswNbtResources.MetaData.getNodeType( _CswNbtNode.NodeTypeId ); } }
         public CswPrimaryKey NodeId { get { return _CswNbtNode.NodeId; } }
@@ -56,14 +56,22 @@ namespace ChemSW.Nbt.ObjClasses
                 Action = NbtButtonAction.Unknown;
 
                 Debug.Assert( null != CswNbtMetaDataNodeTypeProp, "CswNbtMetaDataNodeTypeProp is null." );
-                if(null == CswNbtMetaDataNodeTypeProp)
+                if( null == CswNbtMetaDataNodeTypeProp )
                 {
                     throw new CswDniException( "Property is unknown." );
                 }
                 NodeTypeProp = CswNbtMetaDataNodeTypeProp;
             }
+            public void clone( NbtButtonData DataToCopy )
+            {
+                Action = DataToCopy.Action;
+                SelectedText = DataToCopy.SelectedText;
+                Data = DataToCopy.Data;
+                Message = DataToCopy.Message;
+            }
+
             public NbtButtonAction Action;
-            public string Event;
+            public string SelectedText;
             public CswNbtMetaDataNodeTypeProp NodeTypeProp;
             public JObject Data;
             public string Message;

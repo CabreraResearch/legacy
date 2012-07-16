@@ -3504,7 +3504,7 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string onObjectClassButtonClick( string NodeTypePropAttr )
+        public string onObjectClassButtonClick( string NodeTypePropAttr, string SelectedText )
         {
             JObject ReturnVal = new JObject();
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
@@ -3522,7 +3522,7 @@ namespace ChemSW.Nbt.WebServices
                 }
 
                 CswNbtWebServiceNode ws = new CswNbtWebServiceNode( _CswNbtResources, _CswNbtStatisticsEvents );
-                ReturnVal = ws.doObjectClassButtonClick( PropId );
+                ReturnVal = ws.doObjectClassButtonClick( PropId, SelectedText );
 
                 _deInitResources();
             }

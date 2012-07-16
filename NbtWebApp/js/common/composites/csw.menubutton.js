@@ -7,8 +7,8 @@
 
     Csw.composites.menuButton = Csw.composites.menuButton ||
         Csw.composites.register('menuButton', function (cswParent, options) {
-            Ext.require('Ext.button.*');
-            Ext.require('Ext.menu.*');
+            window.Ext.require('Ext.button.*');
+            window.Ext.require('Ext.menu.*');
 
             var cswPrivate = {
                 ID: '',
@@ -23,13 +23,13 @@
             var cswPublic = {};
             
             cswPrivate.handleMenuItemClick = function(selectedOption) {
-                if (false === Csw.isNullOrEmpty(selectedOption)) {
-                    cswPrivate.onClick(selectedOption);
-                    
-                } // if( false === Csw.isNullOrEmpty(menuItemJson))
+                if (false === Csw.isString(selectedOption)) {
+                    selectedOption = cswPrivate.selectedText;
+                }
+                cswPublic.selectedOption = selectedOption;
+                Csw.tryExec(cswPrivate.onClick);
             }; // handleMenuItemClick()
-
-
+            
             //constructor
             (function () {
                 if (options) {
@@ -42,12 +42,12 @@
                     cswPrivate.menu.push({ text: val, handler: function () { Csw.tryExec(cswPrivate.handleMenuItemClick, val); } });
                 });
                 
-                Ext.create('Ext.button.Split', {
+                cswPublic.menu = window.Ext.create('Ext.button.Split', {
                     renderTo: cswParent.getId(),
                     text: cswPrivate.selectedText,
                     handler: cswPrivate.handleMenuItemClick,
                     scale: Csw.string(cswPrivate.size, 'medium'),
-                    menu: new Ext.menu.Menu({items: cswPrivate.menu})
+                    menu: new window.Ext.menu.Menu({items: cswPrivate.menu})
                 });
 
             } ()); // constructor

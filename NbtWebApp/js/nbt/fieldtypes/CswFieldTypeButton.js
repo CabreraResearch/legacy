@@ -18,7 +18,8 @@
                 onSuccess: function () {
                     var $btn = $('#' + o.ID).button({ disabled: true });
                     params = {
-                        NodeTypePropAttr: propAttr
+                        NodeTypePropAttr: propAttr,
+                        SelectedText: Csw.string(button.selectedOption, Csw.string(o.propData.values.text, o.propData.name))
                     };
 
                     Csw.ajax.post({
@@ -31,6 +32,7 @@
                                 data: data,
                                 propid: propid,
                                 button: button,
+                                selectedOption: Csw.string(button.selectedOption),
                                 messagediv: messagediv,
                                 context: o,
                                 onSuccess: o.onAfterButtonClick
@@ -110,7 +112,9 @@
                         menuOptions: menuoptions,
                         size: o.size,
                         state: state,
-                        onClick: onClick
+                        onClick: function(selectedOption) {
+                            Csw.tryExec(onClick, selectedOption);
+                        }
                     });
                     break;
                 case 'link': //this is a fallthrough case

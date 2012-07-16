@@ -118,12 +118,15 @@ namespace ChemSW.Nbt.ObjClasses
                     {
                         CswNbtNodePropImageList materialStorageCompatibilty = MaterialNode.Properties[CswNbtObjClassMaterial.StorageCompatibilityPropertyName];
                         CswNbtNode locationNode = _CswNbtResources.Nodes.GetNode( Location.SelectedNodeId );
-                        CswNbtNodePropImageList locationStorageCompatibility = locationNode.Properties[CswNbtObjClassLocation.StorageCompatabilityPropertyName];
-                        if( false == materialStorageCompatibilty.Value.IsEmpty && false == materialStorageCompatibilty.Gestalt.Contains( locationStorageCompatibility.Gestalt ) )
+                        if( null != locationNode )
                         {
-                            throw new CswDniException( ErrorType.Warning,
-                                "Cannot move a material with storage compatibility " + materialStorageCompatibilty.Gestalt + " to a location with a storage compatibility of " + locationStorageCompatibility.Gestalt,
-                                "Cannot move a material with storage compatibility " + materialStorageCompatibilty.Gestalt + " to a location with a storage compatibility of " + locationStorageCompatibility.Gestalt );
+                            CswNbtNodePropImageList locationStorageCompatibility = locationNode.Properties[CswNbtObjClassLocation.StorageCompatabilityPropertyName];
+                            if ( false == materialStorageCompatibilty.Value.IsEmpty && false == materialStorageCompatibilty.Gestalt.Contains( locationStorageCompatibility.Gestalt ) )
+                            {
+                                throw new CswDniException( ErrorType.Warning,
+                                                           "Cannot move a material with storage compatibility " + materialStorageCompatibilty.Gestalt + " to a location with a storage compatibility of " + locationStorageCompatibility.Gestalt,
+                                                           "Cannot move a material with storage compatibility " + materialStorageCompatibilty.Gestalt + " to a location with a storage compatibility of " + locationStorageCompatibility.Gestalt );
+                            }
                         }
                     }
                 }
