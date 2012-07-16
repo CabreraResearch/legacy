@@ -154,8 +154,11 @@ namespace ChemSW.Nbt.WebServices
                                         new JProperty( "action", "Profile" ),
                                         new JProperty( "userid", _CswNbtResources.CurrentNbtUser.UserId.ToString() )
                                     ) ),
-                                    new JProperty( "Subscriptions", new JObject(
+                                    new JProperty( "Subscriptions_old", new JObject(//TODO - case 27046 - remove once action below is finished
                                         new JProperty( "href", "Subscriptions.aspx" )
+                                    ) ),
+                                    new JProperty( "Subscriptions", new JObject(
+                                        new JProperty( "action", "Subscriptions" )
                                     ) )
                         );
 

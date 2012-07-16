@@ -92,7 +92,7 @@ namespace ChemSW.Nbt
             _CswNbtNodeWriter = CswNbtNodeWriter;
             _CswNbtResources = CswNbtResources;
 
-            _XslFilePath = CswTools.getConfigurationFilePath( CswNbtResources.SetupVbls.SetupMode );
+            _XslFilePath = CswFilePath.getConfigurationFilePath( CswNbtResources.SetupVbls.SetupMode );
             _CswNbtTreeNodes = new CswNbtTreeNodes( _Key, _XslFilePath, ViewName, _CswNbtResources, CswNbtNodeCollection );
 
             _CswNbtNodeCollection = CswNbtNodeCollection;

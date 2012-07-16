@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
+using System.IO;
 using System.Linq;
 using ChemSW.Core;
 using ChemSW.DB;
@@ -170,11 +171,11 @@ namespace ChemSW.Nbt.ServiceDrivers
                         {
                             Int32 RelatedNodeTypePk = CswConvert.ToInt32( RelatedNodeTypeId );
                             Int32 RelatedObjectClassPk = CswConvert.ToInt32( RelatedObjectClassId );
-                            
-                            if(Int32.MinValue != RelatedNodeTypePk && Int32.MinValue == RelatedObjectClassPk)
+
+                            if( Int32.MinValue != RelatedNodeTypePk && Int32.MinValue == RelatedObjectClassPk )
                             {
                                 CswNbtMetaDataNodeType RelatedNodeType = _CswNbtResources.MetaData.getNodeType( RelatedNodeTypePk );
-                                if(null != RelatedNodeType)
+                                if( null != RelatedNodeType )
                                 {
                                     RelatedObjectClassPk = RelatedNodeType.ObjectClassId;
                                 }
@@ -925,10 +926,26 @@ namespace ChemSW.Nbt.ServiceDrivers
                     JctTable.Rows.Add( JRow );
                     JctUpdate.update( JctTable );
                 }
+                if( Node.getObjectClass().ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.ReportClass )
+                {
+                    CswNbtObjClassReport Report = Node;
+                    CswFilePath FilePathTools = new CswFilePath( _CswNbtResources );
+                    string ReportPath = FilePathTools.getFullReportFilePath( Report.RPTFile.JctNodePropId.ToString() );
+                    _createReportFile( ReportPath, Report.RPTFile.JctNodePropId, Data );
+                }
                 ret = true;
             } // if( Int32.MinValue != NbtNodeKey.NodeId.PrimaryKey )
             return ret;
         } // SetPropBlobValue()
+
+        private void _createReportFile( string ReportTempFileName, int NodePropId, byte[] BlobData )
+        {
+            ( new FileInfo( ReportTempFileName ) ).Directory.Create();
+            FileMode fileMode = File.Exists( ReportTempFileName ) ? FileMode.Truncate : FileMode.CreateNew;
+            FileStream fs = new FileStream( ReportTempFileName, fileMode );
+            BinaryWriter BWriter = new BinaryWriter( fs, System.Text.Encoding.Default );
+            BWriter.Write( BlobData );
+        }
 
         private bool _canEditLayout()
         {
