@@ -444,9 +444,6 @@ namespace ChemSW.Nbt.MetaData
         /// </summary>
         [NonSerialized]
         public DeletePropEventHandler OnDeleteNodeTypeProp = null;
-        /// <summary>
-        /// Internal event that occurs when a property is deleted
-        /// </summary>
 
         /// <summary>
         /// Defines events that occur when a nodetype is copied

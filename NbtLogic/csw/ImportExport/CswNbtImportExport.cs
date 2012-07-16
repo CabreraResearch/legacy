@@ -85,7 +85,7 @@ namespace ChemSW.Nbt.ImportExport
         /// Imports data from an Xml String
         /// </summary>
         /// <param name="IMode">Describes how data is to be treated when importing</param>
-        /// <param name="XmlStr">Source XML string</param>
+        /// <param name="CswNbtImportExportFrame">Source XML</param>
         /// <param name="ViewXml">Will be filled with the exported view's XML as String </param>
         /// <param name="ResultXml">Will be filled with an XML String record of new primary keys and references</param>
         /// <param name="ErrorLog">Will be filled with a summary of recoverable errors</param>

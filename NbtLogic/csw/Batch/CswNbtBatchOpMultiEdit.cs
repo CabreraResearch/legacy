@@ -1,16 +1,9 @@
 ﻿using System;
-using System.Data;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
 using ChemSW.Core;
-using ChemSW.Nbt.Actions;
-using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
-using ChemSW.Nbt.PropertySets;
-using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
 using Newtonsoft.Json.Linq;
 
@@ -29,7 +22,9 @@ namespace ChemSW.Nbt.Batch
         /// <summary>
         /// Create a new batch operation to handle a copyNodeProps/multi edit operation
         /// </summary>
-        /// <param name="GeneratorNodeId">Primary key of Generator</param>
+        /// <param name="SourceNode"></param>
+        /// <param name="CopyNodeIds"></param>
+        /// <param name="NodeTypePropIds"></param>
         public CswNbtObjClassBatchOp makeBatchOp( CswNbtNode SourceNode, Collection<CswPrimaryKey> CopyNodeIds, Collection<Int32> NodeTypePropIds )
         {
             CswNbtObjClassBatchOp BatchNode = null;

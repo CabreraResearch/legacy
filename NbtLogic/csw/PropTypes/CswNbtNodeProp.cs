@@ -221,6 +221,7 @@ namespace ChemSW.Nbt.PropTypes
         /// Event which fires before the node prop data row is written to the database
         /// </summary>
         /// <param name="IsCopy">True if the update is part of a Copy operation</param>
+        /// <param name="OverrideUniqueValidation"></param>
         virtual public void onBeforeUpdateNodePropRow( bool IsCopy, bool OverrideUniqueValidation )
         {
             if( false == _CswNbtResources.Nodes[this.NodeId].Properties[this.NodeTypeProp].Empty ) //case 26546 - we allow unique properties to be empty

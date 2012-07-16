@@ -304,7 +304,7 @@ namespace ChemSW.Nbt.MetaData
                 _FieldTypeRule = _CswNbtMetaDataResources.makeFieldTypeRule( this.getFieldType().FieldType );
             return _FieldTypeRule;
         }
-        
+
         public Int32 PropId
         {
             get { return CswConvert.ToInt32( _NodeTypePropRow["nodetypepropid"].ToString() ); }
@@ -532,7 +532,6 @@ namespace ChemSW.Nbt.MetaData
         /// <summary>
         /// Set the FK for relationship props
         /// </summary>
-        /// <param name="inIsFk">True if this is an Fk</param>
         /// <param name="inFKType">Either NodeTypeId or ObjectClassId</param>
         /// <param name="inFKValue">FK Value</param>
         /// <param name="inValuePropType">Optional (for Property Reference)</param>

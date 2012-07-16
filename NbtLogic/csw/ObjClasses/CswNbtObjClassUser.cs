@@ -7,7 +7,6 @@ using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
 using ChemSW.Security;
-using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.ObjClasses
 {
@@ -160,7 +159,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
-            if( false == String.IsNullOrEmpty( this.UsernameProperty.Text ) && false == CswTools.IsAlphaNumeric( this.UsernameProperty.Text ) )
+            if( _unableToWriteNodeInvalidUserName() )
             {
                 throw new CswDniException( ErrorType.Warning, "Username must contain alphanumeric characters only.", "Username contains invalid characters: " + this.Username );
             }
@@ -195,6 +194,14 @@ namespace ChemSW.Nbt.ObjClasses
             }
 
         }//beforeWriteNode()
+
+        private bool _unableToWriteNodeInvalidUserName()
+        {
+            return
+                false == String.IsNullOrEmpty( this.UsernameProperty.Text ) &&
+                false == CswTools.IsAlphaNumeric( this.UsernameProperty.Text ) &&
+                ( this.UsernameProperty.WasModified || this.AccountLocked.WasModified );
+        }
 
         public override void afterWriteNode()
         {
@@ -286,9 +293,9 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override bool onButtonClick( NbtButtonData ButtonData )
         {
-            
-            
-            
+
+
+
             if( null != ButtonData && null != ButtonData.NodeTypeProp ) { /*Do Something*/ }
             return true;
         }

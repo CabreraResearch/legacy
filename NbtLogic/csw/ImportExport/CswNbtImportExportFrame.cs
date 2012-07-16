@@ -138,12 +138,12 @@ namespace ChemSW.Nbt.ImportExport
 
         public void clear()
         {
-            /// For the momemnt this funciton royally breaks things if you intended to keep using the XmlDoc. 
-            /// I am putting this in for now in a rather raw way just to see if I can get the GC to free up 
-            /// the memory that is taken up by a ginormous document. Long term, we will need to refactor so that
-            /// we are not publically exposing the XML: once we hand out a reference, we have no way of letting the GC
-            /// know that he should free up the memory, because every Tom Dick and Harry caller could have is own 
-            /// reference to it, and the reference count will never go to zero.
+            // For the momemnt this funciton royally breaks things if you intended to keep using the XmlDoc. 
+            // I am putting this in for now in a rather raw way just to see if I can get the GC to free up 
+            // the memory that is taken up by a ginormous document. Long term, we will need to refactor so that
+            // we are not publically exposing the XML: once we hand out a reference, we have no way of letting the GC
+            // know that he should free up the memory, because every Tom Dick and Harry caller could have is own 
+            // reference to it, and the reference count will never go to zero.
             _XmlDoc = null; 
         }//clear() 
 

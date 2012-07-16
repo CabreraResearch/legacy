@@ -228,6 +228,8 @@ namespace ChemSW.Nbt.PropTypes
         /// Parses defined Field Type attributes/subfields into a XmlDocument class object
         /// </summary>
         /// <param name="Node">XmlDocument class XmlNode</param>
+        /// <param name="NodeMap"></param>
+        /// <param name="NodeTypeMap"></param>
         public void ReadXml( XmlNode Node, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
             _CswNbtNodeProp.ReadXml( Node, NodeMap, NodeTypeMap );
@@ -237,6 +239,7 @@ namespace ChemSW.Nbt.PropTypes
         /// Returns defined Field Type attributes/subfields as JToken class JObject
         /// </summary>
         /// <param name="JObject">JToken class JObject</param>
+        /// <param name="Tab"></param>
         public void ToJSON( JObject JObject, CswNbtMetaDataNodeTypeTab Tab )
         {
             JObject Values = new JObject();
@@ -283,6 +286,8 @@ namespace ChemSW.Nbt.PropTypes
         /// Parses defined Field Type attributes/subfields into a XContainer class object
         /// </summary>
         /// <param name="Node">XContainer class XElement</param>
+        /// <param name="NodeMap"></param>
+        /// <param name="NodeTypeMap"></param>
         public void ReadXElement( XElement Node, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
             _CswNbtNodeProp.ReadXElement( Node, NodeMap, NodeTypeMap );

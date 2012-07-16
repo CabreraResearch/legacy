@@ -44,6 +44,7 @@ namespace ChemSW.Nbt.Security
             /// Permission to view the tab
             /// </summary>
             View,
+            /// <summary>
             /// Permission to edit property values on this tab
             /// </summary>
             Edit
