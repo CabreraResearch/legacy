@@ -1,4 +1,4 @@
-/// <reference path="~/js/CswNbt-vsdoc.js" />
+﻿/// <reference path="~/js/CswNbt-vsdoc.js" />
 /// <reference path="~/js/CswCommon-vsdoc.js" />
 
 (function _cswEnums() {

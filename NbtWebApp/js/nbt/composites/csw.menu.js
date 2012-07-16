@@ -1,4 +1,4 @@
-/// <reference path="~/js/thirdparty/extjs-4.1.0/ext-all-debug.js" />
+﻿/// <reference path="~/js/thirdparty/extjs-4.1.0/ext-all-debug.js" />
 /// <reference path="~/js/CswNbt-vsdoc.js" />
 /// <reference path="~/js/CswCommon-vsdoc.js" />
 
@@ -38,7 +38,7 @@
                 if(false === Csw.isNullOrEmpty(menuItemJson)) {
                 
                     if (false === Csw.isNullOrEmpty(menuItemJson.href)) {
-                        Csw.window.location(menuItemJson.href);
+                        window.location = menuItemJson.href;
 
                     } else if (false === Csw.isNullOrEmpty(menuItemJson.popup)) {
                         window.open(menuItemJson.popup);

@@ -1,4 +1,4 @@
-/// <reference path="~/js/CswCommon-vsdoc.js" />
+﻿/// <reference path="~/js/CswCommon-vsdoc.js" />
 /// <reference path="~/js/CswNbt-vsdoc.js" />
 /// <reference path="~/js/thirdparty/extjs-4.1.0/ext-all-debug.js" />
 
