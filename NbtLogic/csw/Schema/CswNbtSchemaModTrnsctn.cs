@@ -1241,10 +1241,11 @@ namespace ChemSW.Nbt.Schema
                 OCPRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.isfk.ToString()] = CswConvert.ToDbVal( true );
                 OCPRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.fktype.ToString()] = OcpModel.FkType;
                 OCPRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.fkvalue.ToString()] = CswConvert.ToDbVal( OcpModel.FkValue );
-                if( Int32.MinValue != OcpModel.ValuePropId && NbtViewPropIdType.Unknown != OcpModel.ValuePropType )
+                if( Int32.MinValue != OcpModel.ValuePropId && 
+                    NbtViewPropIdType.Unknown != OcpModel.ValuePropType )
                 {
                     OCPRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.valuepropid.ToString()] = CswConvert.ToDbVal( OcpModel.ValuePropId );
-                    OCPRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.valueproptype.ToString()] = CswConvert.ToDbVal( OcpModel.ValuePropType );
+                    OCPRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.valueproptype.ToString()] = CswConvert.ToDbVal( OcpModel.ValuePropType.ToString() );
                 }
             }
             else

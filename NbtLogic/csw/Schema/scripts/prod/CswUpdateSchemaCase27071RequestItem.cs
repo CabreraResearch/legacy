@@ -31,6 +31,7 @@ namespace ChemSW.Nbt.Schema
             _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( RequestItemOc )
                 {
                     PropName = CswNbtObjClassRequestItem.PropertyName.InventoryGroup,
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.PropertyReference,
                     IsFk = true,
                     FkType = NbtViewPropIdType.ObjectClassPropId.ToString(),
                     FkValue = RequestOcp.PropId,
@@ -80,20 +81,21 @@ namespace ChemSW.Nbt.Schema
                 {
                     NodeAsRole.Name.Text = "Dispenser";
                     NodeAsRole.postChanges( true );
+                    
                     CswNbtMetaDataObjectClass MaterialOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass );
                     foreach( CswNbtMetaDataNodeType MaterialNt in MaterialOc.getLatestVersionNodeTypes() )
                     {
-                        _CswNbtSchemaModTrnsctn.Permit.set( CswNbtPermit.NodeTypePermission.View, MaterialNt, true );
-                        _CswNbtSchemaModTrnsctn.Permit.set( CswNbtPermit.NodeTypePermission.Create, MaterialNt, true );
+                        _CswNbtSchemaModTrnsctn.Permit.set( CswNbtPermit.NodeTypePermission.View, MaterialNt, NodeAsRole, true );
+                        _CswNbtSchemaModTrnsctn.Permit.set( CswNbtPermit.NodeTypePermission.Create, MaterialNt, NodeAsRole, true );
                     }
 
                     CswNbtMetaDataObjectClass ContainerOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.ContainerClass );
                     foreach( CswNbtMetaDataNodeType ContainerNt in ContainerOc.getLatestVersionNodeTypes() )
                     {
-                        _CswNbtSchemaModTrnsctn.Permit.set( CswNbtPermit.NodeTypePermission.View, ContainerNt, true );
-                        _CswNbtSchemaModTrnsctn.Permit.set( CswNbtPermit.NodeTypePermission.Create, ContainerNt, true );
-                        _CswNbtSchemaModTrnsctn.Permit.set( CswNbtPermit.NodeTypePermission.Edit, ContainerNt, true );
-                        _CswNbtSchemaModTrnsctn.Permit.set( CswNbtPermit.NodeTypePermission.Delete, ContainerNt, true );
+                        _CswNbtSchemaModTrnsctn.Permit.set( CswNbtPermit.NodeTypePermission.View, ContainerNt, NodeAsRole, true );
+                        _CswNbtSchemaModTrnsctn.Permit.set( CswNbtPermit.NodeTypePermission.Create, ContainerNt, NodeAsRole, true );
+                        _CswNbtSchemaModTrnsctn.Permit.set( CswNbtPermit.NodeTypePermission.Edit, ContainerNt, NodeAsRole, true );
+                        _CswNbtSchemaModTrnsctn.Permit.set( CswNbtPermit.NodeTypePermission.Delete, ContainerNt, NodeAsRole, true );
                     }
 
                     _CswNbtSchemaModTrnsctn.Permit.set( CswNbtActionName.Receiving, NodeAsRole, true );
