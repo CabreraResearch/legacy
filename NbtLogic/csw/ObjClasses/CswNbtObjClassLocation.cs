@@ -4,6 +4,7 @@ using ChemSW.Nbt.Batch;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.PropTypes;
+using ChemSW.Exceptions;
 using Newtonsoft.Json.Linq;
 
 
@@ -84,6 +85,16 @@ namespace ChemSW.Nbt.ObjClasses
                     }
                 }
             }
+
+            //check to see if storage comptibility has 'None' and another value selected
+            if( StorageCompatability.WasModified )
+            {
+                if( StorageCompatability.Value.Contains( "None" ) && StorageCompatability.Value.Count > 1 )
+                {
+                    throw new CswDniException( ErrorType.Warning, @"Location cannot have a storage compatibility of 'None' and something else.", @"Location cannot have a storage compatibility of 'None' and something else." );
+                }
+            }
+
             _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
         }//beforeWriteNode()
 
@@ -125,9 +136,9 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override bool onButtonClick( NbtButtonData ButtonData )
         {
-            
-            
-            
+
+
+
             if( null != ButtonData && null != ButtonData.NodeTypeProp ) { /*Do Something*/ }
             return true;
         }
@@ -219,7 +230,7 @@ namespace ChemSW.Nbt.ObjClasses
                 return ( _CswNbtNode.Properties[AllowInventoryPropertyName] );
             }
         }
-        public CswNbtNodePropImageList StorageCompatability
+        public CswNbtNodePropMultiList StorageCompatability
         {
             get
             {
