@@ -154,6 +154,10 @@
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26896.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26714.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26974.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\029\CswTestCase_029_01.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\029\CswTestCase_029_02.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\029\CswTestCase_029_03.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\029\CswTestCase_029_04.cs" />
     <Compile Include="csw\Schema\scripts\tests\rsrcs\CswTstCaseRsrc_030.cs" />
     <Compile Include="csw\ServiceDrivers\CswNbtSdLocations.cs" />
     <Compile Include="csw\ServiceDrivers\CswNbtSdInventoryLevelMgr.cs" />
@@ -673,7 +677,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="csw\Schema\scripts\tests\cases\029\" />
     <Folder Include="csw\Schema\scripts\tests\cases\999-NotImportedFromOldTestTool\dundant\" />
     <Folder Include="csw\Schema\scripts\tests\cases\999-NotImportedFromOldTestTool\review\" />
   </ItemGroup>
