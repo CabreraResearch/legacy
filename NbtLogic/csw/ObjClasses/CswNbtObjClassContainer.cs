@@ -118,12 +118,15 @@ namespace ChemSW.Nbt.ObjClasses
                     {
                         CswNbtNodePropImageList materialStorageCompatibilty = MaterialNode.Properties[CswNbtObjClassMaterial.StorageCompatibilityPropertyName];
                         CswNbtNode locationNode = _CswNbtResources.Nodes.GetNode( Location.SelectedNodeId );
-                        CswNbtNodePropImageList locationStorageCompatibility = locationNode.Properties[CswNbtObjClassLocation.StorageCompatabilityPropertyName];
-                        if( false == materialStorageCompatibilty.Value.IsEmpty && false == materialStorageCompatibilty.Gestalt.Contains( locationStorageCompatibility.Gestalt ) )
+                        if( null != locationNode ) //what if the user didn't specify a location?
                         {
-                            throw new CswDniException( ErrorType.Warning,
-                                "Cannot move a material with storage compatibility " + materialStorageCompatibilty.Gestalt + " to a location with a storage compatibility of " + locationStorageCompatibility.Gestalt,
-                                "Cannot move a material with storage compatibility " + materialStorageCompatibilty.Gestalt + " to a location with a storage compatibility of " + locationStorageCompatibility.Gestalt );
+                            CswNbtNodePropImageList locationStorageCompatibility = locationNode.Properties[CswNbtObjClassLocation.StorageCompatabilityPropertyName];
+                            if( false == materialStorageCompatibilty.Value.IsEmpty && false == _isStorageCompatible( materialStorageCompatibilty.Gestalt, locationStorageCompatibility.Gestalt ) )
+                            {
+                                throw new CswDniException( ErrorType.Warning,
+                                    "Storage compatibilities do not match, cannot move this container to specified location",
+                                    "Storage compatibilities do not match, cannot move this container to specified location" );
+                            }
                         }
                     }
                 }
@@ -415,6 +418,20 @@ namespace ChemSW.Nbt.ObjClasses
             this.RequestDispense.setReadOnly( value: isReadOnly, SaveToDb: true );
             this.RequestMove.setReadOnly( value: isReadOnly, SaveToDb: true );
             this.Dispense.setReadOnly( value: isReadOnly, SaveToDb: true );
+        }
+
+        private bool _isStorageCompatible( string materialStorageCompatibility, string locationStorageCompatibilities )
+        {
+            bool ret = false;
+            string[] comps = locationStorageCompatibilities.Split( '\n' );
+            foreach( string comp in comps )
+            {
+                if( materialStorageCompatibility.Contains( comp ) )
+                {
+                    ret = true;
+                }
+            }
+            return ret;
         }
 
         #endregion
