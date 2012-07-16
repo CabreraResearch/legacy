@@ -540,8 +540,7 @@ namespace ChemSW.Nbt.Security
                                 CswNbtObjClassInventoryGroupPermission PermNodeAsPerm = PermNode;
                                 if( Action != null )
                                 {
-                                    if( ( Action.Name == CswNbtActionName.Fulfill_Request && PermNodeAsPerm.Dispense.Checked == Tristate.True ) ||
-                                        ( Action.Name == CswNbtActionName.DispenseContainer && PermNodeAsPerm.Dispense.Checked == Tristate.True ) ||
+                                    if( ( Action.Name == CswNbtActionName.DispenseContainer && PermNodeAsPerm.Dispense.Checked == Tristate.True ) ||
                                         ( Action.Name == CswNbtActionName.DisposeContainer && PermNodeAsPerm.Dispose.Checked == Tristate.True ) ||
                                         ( Action.Name == CswNbtActionName.UndisposeContainer && PermNodeAsPerm.Undispose.Checked == Tristate.True ) ||
                                         ( Action.Name == CswNbtActionName.Submit_Request && PermNodeAsPerm.Request.Checked == Tristate.True ) )

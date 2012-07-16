@@ -31,6 +31,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string Location = "Location";
             public const string AssignedTo = "Assigned To";
             public const string Fulfill = "Fulfill";
+            public const string InventoryGroup = "Inventory Group";
         }
 
         public sealed class Types
@@ -257,6 +258,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void afterPopulateProps()
         {
+            Request.SetOnPropChange( OnRequestPropChange );
             RequestBy.SetOnPropChange( OnRequestByPropChange );
             Type.SetOnPropChange( OnTypePropChange );
             Material.SetOnPropChange( OnMaterialPropChange );
@@ -286,6 +288,11 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get { return _CswNbtNode.Properties[PropertyName.Request]; }
         }
+        private void OnRequestPropChange()
+        {
+            Request.setReadOnly( value: true, SaveToDb: true );
+            Request.setHidden( value: true, SaveToDb: false );
+        }
 
         public CswNbtNodePropList Type
         {
@@ -298,9 +305,9 @@ namespace ChemSW.Nbt.ObjClasses
             Location.setReadOnly( value: ( Types.Dispose == Type.Value ), SaveToDb: true );
 
             /* Spec W1010: Container applies only to Dispense, Dispose and Move */
-            RequestBy.setReadOnly( value: ( Types.Dispose != Type.Value ), SaveToDb: true );
-            RequestBy.setHidden( value: ( Types.Dispose != Type.Value ), SaveToDb: true );
-            Container.setHidden( value: ( Types.Dispose == Type.Value ), SaveToDb: true );
+            RequestBy.setReadOnly( value: ( Types.Request != Type.Value ), SaveToDb: true );
+            RequestBy.setHidden( value: ( Types.Request != Type.Value ), SaveToDb: true );
+            Container.setHidden( value: ( Types.Request == Type.Value ), SaveToDb: true );
 
             /* Spec W1010: Material applies only to Request and Dispense */
             Material.setHidden( value: ( Types.Request != Type.Value && Types.Dispense != Type.Value ), SaveToDb: true );
@@ -440,6 +447,9 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropRelationship AssignedTo { get { return _CswNbtNode.Properties[PropertyName.AssignedTo]; } }
 
         public CswNbtNodePropButton Fulfill { get { return _CswNbtNode.Properties[PropertyName.Fulfill]; } }
+
+        public CswNbtNodePropPropertyReference InventoryGroup { get { return _CswNbtNode.Properties[PropertyName.InventoryGroup]; } }
+
         #endregion
     }//CswNbtObjClassRequestItem
 

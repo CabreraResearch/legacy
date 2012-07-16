@@ -41,7 +41,15 @@ namespace ChemSW.Nbt.Schema
                 _CswNbtSchemaModTrnsctn.makeSequence( CswSequenceName, "", "", 0, MaxSequenceVal );
             }
 
+            if( _CswNbtSchemaModTrnsctn.isColumnDefined( "object_class_props", "valuepropid" ) )
+            {
+                _CswNbtSchemaModTrnsctn.changeColumnDataType( "object_class_props", "valuepropid", DataDictionaryPortableDataType.Int, 12 );
+            }
 
+            if( _CswNbtSchemaModTrnsctn.isColumnDefined( "object_class_props", "valueproptype" ) )
+            {
+                _CswNbtSchemaModTrnsctn.changeColumnDataType( "object_class_props", "valueproptype", DataDictionaryPortableDataType.String, 40 );
+            }
 
             // case 24441
             if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( "object_class_props", "textarearows" ) )

@@ -267,12 +267,14 @@ namespace ChemSW.Nbt.ServiceDrivers
 
                 if( _CswNbtResources.EditMode != NodeEditMode.Add || CanCreate )
                 {
-                    foreach( CswNbtMetaDataNodeTypeProp Prop in from _Prop in Props
-                                                                let Pw = Node.Properties[_Prop]
-                                                                where false == Pw.Hidden
-                                                                where _ConfigMode ||
-                                                                      _showProp( LayoutType, _Prop, FilterPropIdAttr, CswConvert.ToInt32( TabId ), Node )
-                                                                select _Prop )
+                    IEnumerable<CswNbtMetaDataNodeTypeProp> FilteredProps = ( from _Prop in Props
+                                                                              let Pw = Node.Properties[_Prop]
+                                                                              where false == Pw.Hidden
+                                                                              where _ConfigMode ||
+                                                                                    _showProp( LayoutType, _Prop, FilterPropIdAttr, CswConvert.ToInt32( TabId ), Node )
+                                                                              select _Prop );
+
+                    foreach( CswNbtMetaDataNodeTypeProp Prop in FilteredProps )
                     {
                         _addProp( Ret, Node, Prop, CswConvert.ToInt32( TabId ) );
                     }

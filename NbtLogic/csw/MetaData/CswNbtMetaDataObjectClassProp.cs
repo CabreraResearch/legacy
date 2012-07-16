@@ -19,6 +19,8 @@ namespace ChemSW.Nbt.MetaData
             iscompoundunique,
             servermanaged,
             valuefieldid,
+            valuepropid,
+            valueproptype,
             numberprecision,
             listoptions,
             viewxml,

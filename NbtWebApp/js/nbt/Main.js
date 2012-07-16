@@ -33,6 +33,7 @@ window.initMain = window.initMain || function (undefined) {
     Csw.subscribe(Csw.enums.events.ajax.globalAjaxStop, stopSpinner);
 
     function onObjectClassButtonClick(eventOj, opts) {
+        Csw.debug.assert(false === Csw.isNullOrEmpty(opts.data), 'opts.data is null.');
         var actionJson = opts.data.actionData;
             switch (Csw.string(opts.data.action).toLowerCase()) {
                 case Csw.enums.nbtButtonAction.reauthenticate:
@@ -51,15 +52,16 @@ window.initMain = window.initMain || function (undefined) {
                     break;
 
                 case Csw.enums.nbtButtonAction.receive:
-                    data.actionname = 'Receiving';
-                    handleAction(opts.data);
+                    actionJson.actionname = 'Receiving';
+                    handleAction(actionJson);
                     break;
                 case Csw.enums.nbtButtonAction.dispense:
-                    data.actionname = 'DispenseContainer';
-                    handleAction(opts.data);
+                    actionJson.actionname = 'DispenseContainer';
+                    handleAction(actionJson);
                     break;
 
                 case Csw.enums.nbtButtonAction.request:
+                    Csw.debug.assert(false === Csw.isNullOrEmpty(actionJson), 'actionJson is null.');
                     switch (actionJson.requestaction) {
                         case 'Dispose':
                             refreshHeaderMenu();
@@ -78,9 +80,11 @@ window.initMain = window.initMain || function (undefined) {
                     break;
 
                 case Csw.enums.nbtButtonAction.popup:
+                    Csw.debug.assert(false === Csw.isNullOrEmpty(actionJson), 'actionJson is null.');
                     Csw.openPopup(actionJson.url, 600, 800);
                     break;
                 case Csw.enums.nbtButtonAction.loadView:
+                    Csw.debug.assert(false === Csw.isNullOrEmpty(actionJson), 'actionJson is null.');
                     Csw.publish(Csw.enums.events.RestoreViewContext, actionJson);
                     break;
                 default:
@@ -1266,12 +1270,6 @@ window.initMain = window.initMain || function (undefined) {
                 break;
             //			case 'Enter_Results':                                                                                
             //				break;                                                                                
-
-            case 'Fulfill_Request':
-                Csw.actions.fulfillRequest(centerTopDiv, {
-                    
-                });
-                break;
 
             case 'Future_Scheduling':
                 Csw.nbt.futureSchedulingWizard(centerTopDiv, {
