@@ -1,6 +1,6 @@
 /// <reference path="~/js/CswCommon-vsdoc.js" />
 /// <reference path="~/js/CswNbt-vsdoc.js" />
-/// <reference path="http://cdn.sencha.io/ext-4.1.0-gpl/ext-all-debug.js" />
+/// <reference path="~/js/thirdparty/extjs-4.1.0/ext-all-debug.js" />
 
 (function () {
     'use strict';
@@ -22,9 +22,9 @@
             };
             var cswPublic = {};
             
-            cswPrivate.handleMenuItemClick = function(menuItemName, menuItemJson) {
-                if(false === Csw.isNullOrEmpty(menuItemJson)) {
-                
+            cswPrivate.handleMenuItemClick = function(selectedOption) {
+                if (false === Csw.isNullOrEmpty(selectedOption)) {
+                    cswPrivate.onClick(selectedOption);
                     
                 } // if( false === Csw.isNullOrEmpty(menuItemJson))
             }; // handleMenuItemClick()
@@ -38,13 +38,14 @@
                 cswParent.empty();
 
                 Csw.each(cswPrivate.menuOptions, function(val, key) {
-                    cswPrivate.menu.push({ text: val, handler: function(par1, par2) { Csw.tryExec(cswPrivate.onClick, par1, par2); } });
+                    //http://docs.sencha.com/ext-js/4-1/#!/api/Ext.button.Button-event-click
+                    cswPrivate.menu.push({ text: val, handler: function () { Csw.tryExec(cswPrivate.handleMenuItemClick, val); } });
                 });
-
+                
                 Ext.create('Ext.button.Split', {
                     renderTo: cswParent.getId(),
                     text: cswPrivate.selectedText,
-                    handler: cswPrivate.onClick,
+                    handler: cswPrivate.handleMenuItemClick,
                     scale: Csw.string(cswPrivate.size, 'medium'),
                     menu: new Ext.menu.Menu({items: cswPrivate.menu})
                 });
