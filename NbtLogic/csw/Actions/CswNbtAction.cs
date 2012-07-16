@@ -20,7 +20,6 @@ namespace ChemSW.Nbt.Actions
         DisposeContainer,
         UndisposeContainer,
         Receiving,
-        Fulfill_Request,
         Subscriptions
     }
 

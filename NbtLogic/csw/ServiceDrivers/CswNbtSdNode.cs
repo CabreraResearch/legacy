@@ -107,7 +107,7 @@ namespace ChemSW.Nbt.ServiceDrivers
             bool Success = NbtObjClass.onButtonClick( ButtonData );
 
             RetObj["action"] = ButtonData.Action.ToString();
-            RetObj["actiondata"] = ButtonData.Data;  //e.g. popup url
+            RetObj["actionData"] = ButtonData.Data;  //e.g. popup url
             RetObj["message"] = ButtonData.Message;
             RetObj["success"] = Success.ToString().ToLower();
 

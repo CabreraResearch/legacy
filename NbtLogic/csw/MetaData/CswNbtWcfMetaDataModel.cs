@@ -16,6 +16,13 @@ namespace ChemSW.Nbt.MetaData
         [DataContract]
         public class ObjectClassProp
         {
+            public ObjectClassProp(CswNbtMetaDataObjectClass NbtObjectClass = null )
+            {
+                ObjectClass = NbtObjectClass;
+            }
+
+            public CswNbtMetaDataObjectClass ObjectClass;
+
             /*The problem with default getters and setters (why we're not using them here) is two-fold: 
              * 1. they're immutable 
              * 2. they default to null for nullable types and 0 for numbers.
@@ -41,6 +48,10 @@ namespace ChemSW.Nbt.MetaData
             public bool ServerManaged;
             [DataMember]
             public Int32 ValueFieldId = Int32.MinValue;
+            [DataMember]
+            public Int32 ValuePropId = Int32.MinValue;
+            [DataMember]
+            public NbtViewPropIdType ValuePropType = NbtViewPropIdType.Unknown;
             [DataMember]
             public Int32 NumberPrecision = Int32.MinValue;
             [DataMember]

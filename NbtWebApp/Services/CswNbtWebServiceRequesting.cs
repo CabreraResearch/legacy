@@ -70,26 +70,7 @@ namespace ChemSW.Nbt.WebServices
             CswNbtActSubmitRequest CopyRequest = _RequestAct.copyRequest( CopyFromNodeId, CopyToNodeId );
             return getCurrentRequest( CopyRequest );
         }
-
-        /// <summary>
-        /// Get filter criteria in order to search for Request Items
-        /// </summary>
-        public JObject getFulfillRequestFilters(string SelectedFilters = "" )
-        {
-            CswNbtActFulfillRequest FulfillRequest = new CswNbtActFulfillRequest(_CswNbtResources);
-            JObject SelectedObj = CswConvert.ToJObject( SelectedFilters );
-            return FulfillRequest.getFulfillmentFilters( SelectedObj );
-        }
-
-        /// <summary>
-        /// Get Request Items Grid view using filter criteria
-        /// </summary>
-        public CswNbtView getRequestItemView( string FilterCriteria = "" )
-        {
-            CswNbtActFulfillRequest FulfillRequest = new CswNbtActFulfillRequest( _CswNbtResources );
-            return FulfillRequest.getRequestItems( FilterCriteria );
-        }
-
+        
     } // class CswNbtWebServiceRequesting
 
 } // namespace ChemSW.Nbt.WebServices
