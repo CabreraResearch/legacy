@@ -30,12 +30,21 @@
                         ID: 'logindiv',
                         align: 'center'
                     });
-                    loginTable = loginDiv.form().table({cellalign: 'center', cellvalign: 'center'});
+                    loginTable = loginDiv.form().table({ cellalign: 'center', cellvalign: 'center' });
                     loginMsg = loginTable.cell(1, 2, 'loginmsg').hide();
                     loginTable.cell(2, 1).text('Customer ID: ').align('right');
                     inpAccessId = loginTable.cell(2, 2).align('left').input({ ID: 'login_accessid', width: '120px' });
                     loginTable.cell(3, 1).text('User Name: ').align('right');
-                    inpUserName = loginTable.cell(3, 2).align('left').input({ ID: 'login_username', width: '120px' });
+                    inpUserName = loginTable.cell(3, 2).align('left').input({
+                        ID: 'login_username',
+                        width: '120px',
+                        onChange: function () {//Case 26866/27114
+                            var regex = /[^a-zA-Z0-9_]+/g;
+                            var validUserName = inpUserName.val();
+                            validUserName = validUserName.replace(regex, "");
+                            inpUserName.val(validUserName);
+                        }
+                    });
                     loginTable.cell(4, 1).text('Password: ').align('right');
                     inpPassword = loginTable.cell(4, 2).align('left').input({ ID: 'login_password', type: Csw.enums.inputTypes.password, width: '120px' });
                     loginBtn = loginTable.cell(5, 2, 'login_button_cell')
@@ -114,7 +123,7 @@
         Csw.clientSession.login(o);
     }; // login
 
-    
+
 
 } (jQuery));
 
