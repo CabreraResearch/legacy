@@ -93,37 +93,35 @@ namespace ChemSW.Nbt.ObjClasses
     //bz # 5943
     public enum NodeModificationState
     {
-        Unknown,
         /// <summary>
         /// Unknown
         /// </summary>
-        Empty,
+        Unknown,
         /// <summary>
         /// The node contains no data
         /// </summary>
-        Unchanged,
+        Empty,
         /// <summary>
         /// The node and its properties have been read from the database
+        /// </summary>
+        Unchanged,
+        /// <summary>
+        /// The value one of the node's selectors or of its properties has been modified
         /// </summary>
         Modified,
         //Set,
         /// <summary>
-        /// The value one of the node's selectors or of its properties has been modified
-        /// </summary>
-        Posted,
-        /// <summary>
         /// The Node's data has been written to the database, but not yet committed
         /// </summary>
-        //Committed,
+        Posted,
         ///// <summary>
         ///// The data written in the Posted phase has been committed
         ///// </summary>
-        ///// 
-        Deleted
+        //Committed,
         /// <summary>
         /// The node has been removed from the database
         /// </summary>
-
+        Deleted
     };
 
 
@@ -174,7 +172,7 @@ namespace ChemSW.Nbt.ObjClasses
             _NodeSpecies = NodeSpecies;
             _IsDemo = IsDemo;
             //if( NodeType != null )
-            
+
             //    ObjectClassId = NodeType.ObjectClassId;
 
         }//ctor()
@@ -580,7 +578,7 @@ namespace ChemSW.Nbt.ObjClasses
 
             if( null != _CswNbtObjClass )
             {
-                _CswNbtObjClass.beforeDeleteNode(DeleteAllRequiredRelatedNodes: DeleteAllRequiredRelatedNodes);
+                _CswNbtObjClass.beforeDeleteNode( DeleteAllRequiredRelatedNodes: DeleteAllRequiredRelatedNodes );
             }
 
             OnRequestDeleteNode( this );

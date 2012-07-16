@@ -78,11 +78,11 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <param name="CswNbtTreeKey">TreeKey which indexes this tree</param>
+        /// <param name="View">Tree View</param>
         /// <param name="CswNbtResources">The CswNbtResources object</param>
-        /// <param name="XslFilePath">File path to XSL used to translate the tree to XML</param>
         /// <param name="CswNbtNodeWriter">A CswNbtNodeWriter object</param>
         /// <param name="CswNbtNodeCollection">A reference to the CswNbtNodeCollection</param>
+        /// <param name="IsFullyPopulated"></param>
         public CswNbtTreeDomProxy( CswNbtView View, CswNbtResources CswNbtResources, CswNbtNodeWriter CswNbtNodeWriter, CswNbtNodeCollection CswNbtNodeCollection, bool IsFullyPopulated )
         {
             _View = View;
@@ -534,6 +534,7 @@ namespace ChemSW.Nbt
         /// <param name="GroupName">If grouping nodes, name of Group for this node</param>
         /// <param name="Relationship">ViewRelationship node which caused this node to be added</param>
         /// <param name="RowCount">Row number in view results</param>
+        /// <param name="Included"></param>
         /// <returns>Returns NodeKey index for node</returns>
         public Collection<CswNbtNodeKey> loadNodeAsChildFromRow( CswNbtNodeKey ParentNodeKey, DataRow DataRowToAdd, bool UseGrouping, string GroupName, CswNbtViewRelationship Relationship, Int32 RowCount, bool Included = true )
         {
@@ -551,8 +552,10 @@ namespace ChemSW.Nbt
         /// <param name="UseGrouping">Whether grouping nodes</param>
         /// <param name="GroupName">If grouping nodes, name of Group for this node</param>
         /// <param name="Selectable">True if the node is selectable, false otherwise</param>
+        /// <param name="ShowInTree"></param>
         /// <param name="AddChildren">True if the user should be allowed to add children to this node, false otherwise</param>
         /// <param name="RowCount">Row number in view results</param>
+        /// <param name="Included"></param>
         /// <returns>Returns NodeKey index for node</returns>
         public Collection<CswNbtNodeKey> loadNodeAsChildFromRow( CswNbtNodeKey ParentNodeKey, DataRow DataRowToAdd, bool UseGrouping, string GroupName, bool Selectable, bool ShowInTree, NbtViewAddChildrenSetting AddChildren, Int32 RowCount, bool Included = true )
         {

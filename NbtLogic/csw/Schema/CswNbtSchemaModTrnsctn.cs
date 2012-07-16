@@ -1596,7 +1596,6 @@ namespace ChemSW.Nbt.Schema
         /// </summary>
         /// <param name="SqlFileName">Name of file</param>
         /// <param name="ResourceSqlFile">File contents from Resources</param>
-        /// <param name="Block">Whether to wait for the script to finish</param>
         public void runExternalSqlScript( string SqlFileName, byte[] ResourceSqlFile )
         {
             string FileLocations = Application.StartupPath;
