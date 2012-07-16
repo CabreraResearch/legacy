@@ -18,11 +18,9 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataObjectClass locationOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.LocationClass );
             CswNbtMetaDataObjectClassProp storageCompatibilityOCP = locationOC.getObjectClassProp( CswNbtObjClassLocation.StorageCompatabilityPropertyName );
 
-            CswNbtMetaDataFieldType multiListFT = _CswNbtSchemaModTrnsctn.MetaData.getFieldType( CswNbtMetaDataFieldType.NbtFieldType.MultiList );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( storageCompatibilityOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.multi, Tristate.True );
 
-            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( storageCompatibilityOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.fieldtypeid, multiListFT.FieldTypeId );
-
-            string listOpts = "None, Inorganic Acids, Organic Acids, Bases, Oxidizing Inorganic Acids, Toxics, Oxidizers,  Flammables";
+            string listOpts = "None\nInorganic Acids\nOrganic Acids\nBases\nOxidizing Inorganic Acids\nToxics\nOxidizers\nFlammables";
             _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( storageCompatibilityOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.listoptions, listOpts );
 
         }//Update()

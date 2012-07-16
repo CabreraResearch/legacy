@@ -230,7 +230,7 @@ namespace ChemSW.Nbt.ObjClasses
                 return ( _CswNbtNode.Properties[AllowInventoryPropertyName] );
             }
         }
-        public CswNbtNodePropMultiList StorageCompatability
+        public CswNbtNodePropImageList StorageCompatability
         {
             get
             {
