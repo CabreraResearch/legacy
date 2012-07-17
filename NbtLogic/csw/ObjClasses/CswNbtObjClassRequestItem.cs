@@ -406,21 +406,21 @@ namespace ChemSW.Nbt.ObjClasses
 
             /* Spec W1010: Material applies only to Request and Dispense */
             Material.setHidden( value: ( Types.Request != Type.Value && Types.Dispense != Type.Value ), SaveToDb: true );
-            AssignedTo.setHidden( value: ( Types.Dispense != Type.Value ), SaveToDb: true );
+            //AssignedTo.setHidden( value: ( AssignedTo.Hidden && Types.Dispense != Type.Value ), SaveToDb: true );
 
             switch( Type.Value )
             {
                 case Types.Dispense:
                     Fulfill.MenuOptions = FulfillMenu.DispenseOptions.ToString();
-                    Fulfill.SelectedMenuOption = FulfillMenu.Dispense;
+                    Fulfill.State = FulfillMenu.Dispense;
                     break;
                 case Types.Dispose:
                     Fulfill.MenuOptions = FulfillMenu.DisposeOptions.ToString();
-                    Fulfill.SelectedMenuOption = FulfillMenu.Dispose;
+                    Fulfill.State = FulfillMenu.Dispose;
                     break;
                 case Types.Move:
                     Fulfill.MenuOptions = FulfillMenu.MoveOptions.ToString();
-                    Fulfill.SelectedMenuOption = FulfillMenu.Move;
+                    Fulfill.State = FulfillMenu.Move;
                     break;
             }
         }
@@ -523,15 +523,15 @@ namespace ChemSW.Nbt.ObjClasses
                         Fulfill.setReadOnly( value: true, SaveToDb: true );
                         break;
                     case Statuses.Received:
-                        Fulfill.SelectedMenuOption = FulfillMenu.Dispense;
+                        Fulfill.State = FulfillMenu.Dispense;
                         break;
                     case Statuses.Disposed: //This fallthrough is intentional
                     case Statuses.Moved:
                     case Statuses.Dispensed:
-                        Fulfill.SelectedMenuOption = FulfillMenu.Complete;
+                        Fulfill.State = FulfillMenu.Complete;
                         break;
                     case Statuses.Ordered:
-                        Fulfill.SelectedMenuOption = FulfillMenu.Receive;
+                        Fulfill.State = FulfillMenu.Receive;
                         break;
                 }
 

@@ -34,17 +34,6 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             MenuOptionsSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotNull );
             MenuOptionsSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Null );
             SubFields.add( MenuOptionsSubField );
-
-            SelectedOptionSubField = new CswNbtSubField( _CswNbtFieldResources, CswNbtSubField.PropColumn.Field3, CswNbtSubField.SubFieldName.Value );
-            SelectedOptionSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Begins );
-            SelectedOptionSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Contains );
-            SelectedOptionSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Ends );
-            SelectedOptionSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Equals );
-            SelectedOptionSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotEquals );
-            SelectedOptionSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotNull );
-            SelectedOptionSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Null );
-            SubFields.add( SelectedOptionSubField );
-
         }//ctor
 
         public CswNbtSubFieldColl SubFields
@@ -57,7 +46,6 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
 
         public CswNbtSubField StateSubField;
         public CswNbtSubField MenuOptionsSubField;
-        public CswNbtSubField SelectedOptionSubField;
 
         public bool SearchAllowed { get { return ( false ); } }
 

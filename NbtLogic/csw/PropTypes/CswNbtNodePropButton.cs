@@ -31,13 +31,13 @@ namespace ChemSW.Nbt.PropTypes
             _FieldTypeRule  = (CswNbtFieldTypeRuleButton) CswNbtMetaDataNodeTypeProp.getFieldTypeRule();
             _StateSubField = _FieldTypeRule.StateSubField;
             _MenuOptionsSubField = _FieldTypeRule.MenuOptionsSubField;
-            _SelectedOptionSubField = _FieldTypeRule.SelectedOptionSubField;
+        
         }
 
         private CswNbtFieldTypeRuleButton _FieldTypeRule;
         private CswNbtSubField _StateSubField;
         private CswNbtSubField _MenuOptionsSubField;
-        private CswNbtSubField _SelectedOptionSubField;
+        
 
         public string Text
         {
@@ -68,16 +68,7 @@ namespace ChemSW.Nbt.PropTypes
             get { return _CswNbtNodePropData.GetPropRowValue( _MenuOptionsSubField.Column ); }
             set { _CswNbtNodePropData.SetPropRowValue( _MenuOptionsSubField.Column, value ); }
         }
-
-        /// <summary>
-        /// Returns the SelectedMenuOption of the button.
-        /// </summary>
-        public string SelectedMenuOption
-        {
-            get { return _CswNbtNodePropData.GetPropRowValue( _SelectedOptionSubField.Column ); }
-            set { _CswNbtNodePropData.SetPropRowValue( _SelectedOptionSubField.Column, value ); }
-        }
-
+        
         public string State
         {
             get { return _CswNbtNodePropData.GetPropRowValue( _StateSubField.Column ); }
@@ -110,16 +101,15 @@ namespace ChemSW.Nbt.PropTypes
         {
             //ParentObject.Add( new JProperty( "text", Text ) );
             //ParentObject.Add( new JProperty( "mode", Mode.ToString().ToLower() ) );
-            AsJSON( NodeTypeProp, ParentObject );
-            ParentObject["state"] = State;
-            ParentObject["menuoptions"] = MenuOptions;
-            ParentObject["selectedText"] = SelectedMenuOption;
+            AsJSON( NodeTypeProp, ParentObject, MenuOptions, State );
         }
 
-        public static void AsJSON( CswNbtMetaDataNodeTypeProp NodeTypeProp, JObject ParentObject )
+        public static void AsJSON( CswNbtMetaDataNodeTypeProp NodeTypeProp, JObject ParentObject, string MenuOptions, string SelectedText )
         {
             ParentObject["text"] = NodeTypeProp.StaticText;
             ParentObject["mode"] = NodeTypeProp.Extended.ToLower();
+            ParentObject["menuoptions"] = MenuOptions;
+            ParentObject["selectedText"] = SelectedText;
         }
 
         public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
