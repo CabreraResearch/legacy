@@ -11,9 +11,9 @@ namespace ChemSW.Nbt.PropTypes
     public class CswNbtNodePropData
     {
         private CswPrimaryKey _NodeId;
-        private Int32 _NodeTypePropId = Int32.MinValue;
         private Int32 _ObjectClassPropId = Int32.MinValue;
         private DataRow _PropRow = null;
+        private CswNbtMetaDataNodeTypeProp _PropType = null;
 
         /// <summary>
         /// Creates a row in the database for this property
@@ -28,10 +28,11 @@ namespace ChemSW.Nbt.PropTypes
                     _PropRow["nodeid"] = CswConvert.ToDbVal( _NodeId.PrimaryKey );
                     _PropRow["nodeidtablename"] = _NodeId.TableName;
                 }
-                _PropRow["nodetypepropid"] = CswConvert.ToDbVal( _NodeTypePropId );
+                _PropRow["nodetypepropid"] = CswConvert.ToDbVal( _PropType.PropId );
                 _PropRow["objectclasspropid"] = CswConvert.ToDbVal( _ObjectClassPropId );
                 _PropRow["pendingupdate"] = CswConvert.ToDbVal( false );
                 _PropRow["readonly"] = CswConvert.ToDbVal( false );
+                _PropRow["auditlevel"] = _PropType.AuditLevel.ToString();
                 _PropsTable.Rows.Add( _PropRow );
             }
         }
@@ -70,7 +71,7 @@ namespace ChemSW.Nbt.PropTypes
                     _PropRow["nodeid"] = CswConvert.ToDbVal( _NodeId.PrimaryKey );
                     _PropRow["nodeidtablename"] = _NodeId.TableName;
                 }
-                _PropRow["nodetypepropid"] = CswConvert.ToDbVal( _NodeTypePropId );
+                _PropRow["nodetypepropid"] = CswConvert.ToDbVal( _PropType.PropId );
                 _PropRow["objectclasspropid"] = CswConvert.ToDbVal( _ObjectClassPropId );
 
                 if( false == ( CswConvert.ToDbVal( _PropRow[column.ToString()] ).Equals( dbval ) ) )
@@ -93,11 +94,11 @@ namespace ChemSW.Nbt.PropTypes
         /// <summary>
         /// Constructor for Node Properties
         /// </summary>
-        public CswNbtNodePropData( CswNbtResources rsc, DataRow PropRow, DataTable PropsTable, CswPrimaryKey NodeId, Int32 PropId )
+        public CswNbtNodePropData( CswNbtResources rsc, DataRow PropRow, DataTable PropsTable, CswPrimaryKey NodeId, CswNbtMetaDataNodeTypeProp PropType )
         {
             _PropRow = PropRow;
             _NodeId = NodeId;
-            _NodeTypePropId = PropId;
+            _PropType = PropType;
             _PropsTable = PropsTable;
             _CswNbtResources = rsc;
         }//ctor()
@@ -281,7 +282,7 @@ namespace ChemSW.Nbt.PropTypes
             get
             {
                 //return _getRowIntVal("nodetypepropid");
-                return _NodeTypePropId;
+                return _PropType.PropId;
             }
         } //NodeTypePropId
 
@@ -289,7 +290,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                return _CswNbtResources.MetaData.getNodeTypeProp( _NodeTypePropId );
+                return _CswNbtResources.MetaData.getNodeTypeProp( _PropType.PropId );
             }
         } //NodeTypeProp
 
