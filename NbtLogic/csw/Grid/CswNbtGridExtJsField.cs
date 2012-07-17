@@ -34,6 +34,7 @@ namespace ChemSW.Nbt.Grid.ExtJs
             {
                 Jfield["type"] = type;
             }
+            Jfield["useNull"] = true;  // case 26817
             return Jfield;
         } // ToJson()
 
