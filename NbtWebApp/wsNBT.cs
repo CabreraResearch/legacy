@@ -1062,10 +1062,10 @@ namespace ChemSW.Nbt.WebServices
                 {
                     _clearGroupBy( ChildRelationship );
                 }
-                if( RetView.ViewId.isSet() )
-                {
-                    RetView.save();
-                }
+                //if( RetView.ViewId.isSet() )
+                //{
+                //    RetView.save();
+                //}
                 if( RetView.SessionViewId.isSet() )
                 {
                     RetView.SaveToCache( false );
