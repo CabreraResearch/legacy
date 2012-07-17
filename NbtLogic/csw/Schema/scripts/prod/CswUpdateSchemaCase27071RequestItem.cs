@@ -36,7 +36,7 @@ namespace ChemSW.Nbt.Schema
                     FkType = NbtViewPropIdType.ObjectClassPropId.ToString(),
                     FkValue = RequestOcp.PropId,
                     ValuePropId = RequestGroupOcp.PropId,
-                    ValuePropType = NbtViewPropIdType.ObjectClassPropId
+                    ValuePropType = NbtViewPropIdType.ObjectClassPropId.ToString()
                 } );
             
             foreach( CswNbtMetaDataNodeType RequestItemNt in RequestItemOc.getLatestVersionNodeTypes() )
@@ -79,7 +79,7 @@ namespace ChemSW.Nbt.Schema
                 CswNbtObjClassRole NodeAsRole = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( RoleNt.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode );
                 if( null != NodeAsRole )
                 {
-                    NodeAsRole.Name.Text = "Dispenser";
+                    NodeAsRole.Name.Text = "CISPro_Dispenser";
                     NodeAsRole.postChanges( true );
                     
                     CswNbtMetaDataObjectClass MaterialOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass );

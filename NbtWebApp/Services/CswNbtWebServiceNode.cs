@@ -35,9 +35,9 @@ namespace ChemSW.Nbt.WebServices
             return _NodeSd.DeleteNode( NodePk, DeleteAllRequiredRelatedNodes );
         }
 
-        public JObject doObjectClassButtonClick( CswPropIdAttr PropId )
+        public JObject doObjectClassButtonClick( CswPropIdAttr PropId, string SelectedText )
         {
-            return _NodeSd.doObjectClassButtonClick( PropId );
+            return _NodeSd.doObjectClassButtonClick( PropId, SelectedText );
         }
 
         public JObject deleteDemoDataNodes()
