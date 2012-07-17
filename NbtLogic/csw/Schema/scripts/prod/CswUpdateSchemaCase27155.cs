@@ -26,15 +26,6 @@ namespace ChemSW.Nbt.Schema
                 }
             }
 
-            CswNbtMetaDataObjectClassProp actionXValuePermissionsOCP = roleOC.getObjectClassProp( CswNbtObjClassRole.ActionPermissionsXValueName );
-            if( null != actionXValuePermissionsOCP )
-            {
-                foreach( CswNbtMetaDataNodeTypeProp permissions in actionXValuePermissionsOCP.getNodeTypeProps() )
-                {
-                    permissions.removeFromLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Preview );
-                }
-            }
-
             CswNbtMetaDataObjectClassProp nodeTypePermissionsOCP = roleOC.getObjectClassProp( CswNbtObjClassRole.NodeTypePermissionsPropertyName );
             if( null != nodeTypePermissionsOCP )
             {
