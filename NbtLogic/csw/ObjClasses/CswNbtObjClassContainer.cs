@@ -121,7 +121,7 @@ namespace ChemSW.Nbt.ObjClasses
                         if( null != locationNode ) //what if the user didn't specify a location?
                         {
                             CswNbtNodePropImageList locationStorageCompatibility = locationNode.Properties[CswNbtObjClassLocation.StorageCompatabilityPropertyName];
-                            if( false == materialStorageCompatibilty.Value.IsEmpty && false == _isStorageCompatible( materialStorageCompatibilty.Gestalt, locationStorageCompatibility.Gestalt ) )
+                            if( false == materialStorageCompatibilty.Value.IsEmpty && false == _isStorageCompatible( materialStorageCompatibilty.Value, locationStorageCompatibility.Value ) )
                             {
                                 throw new CswDniException( ErrorType.Warning,
                                     "Storage compatibilities do not match, cannot move this container to specified location",
@@ -420,13 +420,19 @@ namespace ChemSW.Nbt.ObjClasses
             this.Dispense.setReadOnly( value: isReadOnly, SaveToDb: true );
         }
 
-        private bool _isStorageCompatible( string materialStorageCompatibility, string locationStorageCompatibilities )
+        private bool _isStorageCompatible( CswDelimitedString materialStorageCompatibility, CswDelimitedString locationStorageCompatibilities )
         {
             bool ret = false;
-            string[] comps = locationStorageCompatibilities.Split( '\n' );
-            foreach( string comp in comps )
+            foreach( string matComp in materialStorageCompatibility ) //loop through the materials storage compatibilities
             {
-                if( materialStorageCompatibility.Contains( comp ) )
+                if( matComp.Contains( "0w.gif" ) ) //if it has '0-none' selected, it can go anywhere
+                {
+                    ret = true;
+                }
+            }
+            foreach( string comp in locationStorageCompatibilities )
+            {
+                if( materialStorageCompatibility.Contains( comp ) || comp.Contains( "0w.gif" ) ) //if the locations storage compatibility matches OR it has '0-none', it can house the material
                 {
                     ret = true;
                 }
