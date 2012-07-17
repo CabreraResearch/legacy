@@ -194,12 +194,20 @@ namespace ChemSW.Nbt.PropTypes
         public static CswNbtView LocationPropertyView( CswNbtResources CswNbtResources, CswPrimaryKey NodeId = null )
         {
             CswNbtView Ret = new CswNbtView( CswNbtResources );
-            bool IsLocationNode = ( null != NodeId );
 
             CswNbtMetaDataObjectClass LocationOC = CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.LocationClass );
             CswNbtMetaDataObjectClassProp LocationLocationOCP = LocationOC.getObjectClassProp( CswNbtObjClassLocation.LocationPropertyName );
             CswNbtMetaDataObjectClassProp LocationAllowInventoryOCP = LocationOC.getObjectClassProp( CswNbtObjClassLocation.AllowInventoryPropertyName );
 
+            bool IsLocationNode = false;
+            if( NodeId != null )
+            {
+                CswNbtNode Node = CswNbtResources.Nodes[NodeId];
+                if( Node.getObjectClassId() == LocationOC.ObjectClassId )
+                {
+                    IsLocationNode = true;
+                }
+            }
             
             Ret.ViewName = TopLevelName;
 
@@ -225,7 +233,9 @@ namespace ChemSW.Nbt.PropTypes
             {
                 CswNbtViewRelationship LocationLevelX = Ret.AddViewRelationship( PriorLocationLevel, NbtViewPropOwnerType.Second, LocationLocationOCP, true );
                 if( NodeId != null )
+                {
                     LocationLevelX.NodeIdsToFilterOut.Add( NodeId );
+                }
                 if( false == IsLocationNode )
                 {
                     Ret.AddViewPropertyAndFilter( LocationLevelX, LocationAllowInventoryOCP, CswNbtPropFilterSql.FilterResultMode.Disabled, Value: Tristate.True.ToString() );

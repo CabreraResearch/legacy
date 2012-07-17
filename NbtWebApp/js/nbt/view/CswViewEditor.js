@@ -813,7 +813,7 @@
                             //var $this = $(this);
                             viewNodeData.resultmode = listResultMode.val();
                         },
-                        selected: viewNodeData.showatruntime
+                        selected: viewNodeData.resultmode
                     });
             });
         }
