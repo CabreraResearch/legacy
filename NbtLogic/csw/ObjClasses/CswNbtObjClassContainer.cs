@@ -121,7 +121,7 @@ namespace ChemSW.Nbt.ObjClasses
                         if( null != locationNode ) //what if the user didn't specify a location?
                         {
                             CswNbtNodePropImageList locationStorageCompatibility = locationNode.Properties[CswNbtObjClassLocation.StorageCompatabilityPropertyName];
-                            if( false == materialStorageCompatibilty.Value.IsEmpty && false == _isStorageCompatible( materialStorageCompatibilty.Value, locationStorageCompatibility.Value ) )
+                            if( false == _isStorageCompatible( materialStorageCompatibilty.Value, locationStorageCompatibility.Value ) )
                             {
                                 throw new CswDniException( ErrorType.Warning,
                                     "Storage compatibilities do not match, cannot move this container to specified location",
@@ -423,6 +423,10 @@ namespace ChemSW.Nbt.ObjClasses
         private bool _isStorageCompatible( CswDelimitedString materialStorageCompatibility, CswDelimitedString locationStorageCompatibilities )
         {
             bool ret = false;
+            if( false == materialStorageCompatibilty.Value.IsEmpty ) //if storage compatibility on the material is null, it can go anywhere
+            {
+                ret = true;
+            }
             foreach( string matComp in materialStorageCompatibility ) //loop through the materials storage compatibilities
             {
                 if( matComp.Contains( "0w.gif" ) ) //if it has '0-none' selected, it can go anywhere
