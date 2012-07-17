@@ -1,6 +1,6 @@
 ﻿/// <reference path="~/js/CswCommon-vsdoc.js" />
 /// <reference path="~/js/CswNbt-vsdoc.js" />
-/// <reference path="http://cdn.sencha.io/ext-4.1.0-gpl/ext-all-debug.js" />
+/// <reference path="~/js/thirdparty/extjs-4.1.0/ext-all-debug.js" />
 
 (function() {
     'use strict';

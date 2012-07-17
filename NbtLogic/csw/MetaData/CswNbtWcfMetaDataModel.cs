@@ -51,7 +51,7 @@ namespace ChemSW.Nbt.MetaData
             [DataMember]
             public Int32 ValuePropId = Int32.MinValue;
             [DataMember]
-            public NbtViewPropIdType ValuePropType = NbtViewPropIdType.Unknown;
+            public string ValuePropType = string.Empty;
             [DataMember]
             public Int32 NumberPrecision = Int32.MinValue;
             [DataMember]
