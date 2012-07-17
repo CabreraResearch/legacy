@@ -286,6 +286,7 @@ namespace ChemSW.Nbt.ObjClasses
                 {
                     case PropertyName.Fulfill:
                         CswNbtObjClassContainer NodeAsContainer = null;
+                        Fulfill.State = ButtonData.SelectedText;
                         switch( ButtonData.SelectedText )
                         {
                             case FulfillMenu.Cancel:
@@ -321,15 +322,34 @@ namespace ChemSW.Nbt.ObjClasses
                                 ButtonData.Action = NbtButtonAction.refresh;
                                 break;
                             case FulfillMenu.Move:
-                                Status.Value = Statuses.Moved;
-                                ButtonData.Action = NbtButtonAction.popup;
+                                if( null != Container.RelatedNodeId )
+                                {
+                                    NodeAsContainer = _CswNbtResources.Nodes.GetNode( Container.RelatedNodeId );
+                                    if( null != NodeAsContainer )
+                                    {
+                                        ButtonData.Data["nodeid"] = Container.RelatedNodeId.ToString();
+                                        ButtonData.Data["nodetypepropid"] = NodeAsContainer.Location.NodeTypePropId;
+                                        ButtonData.Data["jctnodepropid"] = NodeAsContainer.Location.JctNodePropId;
+                                        Status.Value = Statuses.Moved;
+                                        ButtonData.Action = NbtButtonAction.editprop;
+                                    }
+                                }
                                 break;
                             case FulfillMenu.Order:
-                                Status.Value = Statuses.Ordered;
-                                ButtonData.Action = NbtButtonAction.popup;
+                                if( Status.Value != Statuses.Received )
+                                {
+                                    Status.Value = Statuses.Ordered;
+                                }
+                                ButtonData.Action = NbtButtonAction.editprop;
+                                ButtonData.Data["nodeid"] = NodeId.ToString();
+                                ButtonData.Data["nodetypepropid"] = ExternalOrderNumber.NodeTypePropId;
+                                ButtonData.Data["jctnodepropid"] = ExternalOrderNumber.JctNodePropId;
                                 break;
                             case FulfillMenu.Receive:
-                                Status.Value = Statuses.Received;
+                                if( Status.Value != Statuses.Dispensed )
+                                {
+                                    Status.Value = Statuses.Received;
+                                }
                                 CswNbtObjClassMaterial NodeAsMaterial = _CswNbtResources.Nodes.GetNode( Material.RelatedNodeId );
                                 if( null != NodeAsMaterial )
                                 {
@@ -340,7 +360,6 @@ namespace ChemSW.Nbt.ObjClasses
                                         ButtonData.clone( ReceiveData );
                                     }
                                 }
-                                ButtonData.Action = NbtButtonAction.receive;
                                 break;
                         } //switch( ButtonData.SelectedText )
                         ButtonData.Data["requestitem"] = new JObject();
@@ -536,7 +555,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropRelationship AssignedTo { get { return _CswNbtNode.Properties[PropertyName.AssignedTo]; } }
 
         public CswNbtNodePropButton Fulfill { get { return _CswNbtNode.Properties[PropertyName.Fulfill]; } }
-
+        
         public CswNbtNodePropPropertyReference InventoryGroup { get { return _CswNbtNode.Properties[PropertyName.InventoryGroup]; } }
 
         #endregion
