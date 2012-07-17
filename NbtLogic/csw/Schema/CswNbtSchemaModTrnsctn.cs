@@ -1241,11 +1241,11 @@ namespace ChemSW.Nbt.Schema
                 OCPRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.isfk.ToString()] = CswConvert.ToDbVal( true );
                 OCPRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.fktype.ToString()] = OcpModel.FkType;
                 OCPRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.fkvalue.ToString()] = CswConvert.ToDbVal( OcpModel.FkValue );
-                if( Int32.MinValue != OcpModel.ValuePropId && 
-                    NbtViewPropIdType.Unknown != OcpModel.ValuePropType )
+                if( Int32.MinValue != OcpModel.ValuePropId &&
+                    CswNbtResources.UnknownEnum != OcpModel.ValuePropType )
                 {
                     OCPRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.valuepropid.ToString()] = CswConvert.ToDbVal( OcpModel.ValuePropId );
-                    OCPRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.valueproptype.ToString()] = CswConvert.ToDbVal( OcpModel.ValuePropType.ToString() );
+                    OCPRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.valueproptype.ToString()] = CswConvert.ToDbVal( OcpModel.ValuePropType );
                 }
             }
             else
@@ -1596,7 +1596,6 @@ namespace ChemSW.Nbt.Schema
         /// </summary>
         /// <param name="SqlFileName">Name of file</param>
         /// <param name="ResourceSqlFile">File contents from Resources</param>
-        /// <param name="Block">Whether to wait for the script to finish</param>
         public void runExternalSqlScript( string SqlFileName, byte[] ResourceSqlFile )
         {
             string FileLocations = Application.StartupPath;

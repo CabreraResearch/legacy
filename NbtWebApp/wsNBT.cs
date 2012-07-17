@@ -6,7 +6,6 @@ using System.Data;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.Script.Services;   // supports ScriptService attribute
 using System.Web.Services;
@@ -362,11 +361,6 @@ namespace ChemSW.Nbt.WebServices
 
             if( AuthenticationStatus == AuthenticationStatus.Unknown )
             {
-                //Case 26866/27114
-                if( false == CswTools.IsAlphaNumeric( UserName ) )
-                {
-                    UserName = Regex.Replace( UserName, "[^a-zA-Z0-9_]+", "" );
-                }
                 AuthenticationStatus = _CswSessionResources.CswSessionManager.beginSession( UserName, Password, CswWebControls.CswNbtWebTools.getIpAddress(), IsMobile );
             }
 
@@ -3504,7 +3498,7 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string onObjectClassButtonClick( string NodeTypePropAttr )
+        public string onObjectClassButtonClick( string NodeTypePropAttr, string SelectedText )
         {
             JObject ReturnVal = new JObject();
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
@@ -3522,7 +3516,7 @@ namespace ChemSW.Nbt.WebServices
                 }
 
                 CswNbtWebServiceNode ws = new CswNbtWebServiceNode( _CswNbtResources, _CswNbtStatisticsEvents );
-                ReturnVal = ws.doObjectClassButtonClick( PropId );
+                ReturnVal = ws.doObjectClassButtonClick( PropId, SelectedText );
 
                 _deInitResources();
             }
@@ -4540,7 +4534,7 @@ namespace ChemSW.Nbt.WebServices
 
             return ReturnVal.ToString();
         } // getMaterial()
-        
+
         #endregion Requesting
 
         #region Auditing

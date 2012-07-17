@@ -182,7 +182,7 @@ namespace ChemSW.Nbt
         /// Return a node key for all matching nodes in the tree which derived from the given ViewNode
         /// </summary>
         /// <param name="NodeId">Primary key of node</param>
-        /// <param name="NodeId">View Node</param>
+        /// <param name="ViewNode">View Node</param>
         Collection<CswNbtNodeKey> getNodeKeysByNodeIdAndViewNode( CswPrimaryKey NodeId, CswNbtViewNode ViewNode );
 
         /// <summary>
@@ -229,7 +229,6 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Returns all node keys of nodes of a given NodeType
         /// </summary>
-        /// <param name="NodeTypeId">Primary key of Node Type</param>
         /// <returns>Collection of Node Keys</returns>
         JArray getChildNodePropsOfNode();
 
@@ -362,9 +361,13 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Adds a Child from a DataRow.  Used by TreeLoaders.
         /// </summary>
+        /// <param name="ParentNodeKey"></param>
         /// <param name="DataRowToAdd">DataRow with node information</param>
+        /// <param name="UseGrouping"></param>
         /// <param name="GroupName">If grouping nodes, name of Group for this node</param>
         /// <param name="Relationship">ViewRelationship node which caused this node to be added</param>
+        /// <param name="RowCount"></param>
+        /// <param name="Included"></param>
         /// <returns>Returns NodeKey index for node</returns>
         Collection<CswNbtNodeKey> loadNodeAsChildFromRow( CswNbtNodeKey ParentNodeKey, DataRow DataRowToAdd, bool UseGrouping, string GroupName, CswNbtViewRelationship Relationship, Int32 RowCount, bool Included = true );
 
@@ -378,11 +381,15 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Adds a Child from a DataRow.  Used by TreeLoaders.
         /// </summary>
+        /// <param name="ParentNodeKey"></param>
         /// <param name="DataRowToAdd">DataRow with node information</param>
+        /// <param name="UseGrouping"></param>
         /// <param name="GroupName">If grouping nodes, name of Group for this node</param>
         /// <param name="Selectable">True if the node is selectable, false otherwise</param>
         /// <param name="ShowInTree">True if the node should appear in a tree, false otherwise</param>
         /// <param name="AddChildren">True if the user should be allowed to add children to this node, false otherwise</param>
+        /// <param name="RowCount"></param>
+        /// <param name="Included"></param>
         /// <returns>Returns NodeKey index for node</returns>
         Collection<CswNbtNodeKey> loadNodeAsChildFromRow( CswNbtNodeKey ParentNodeKey, DataRow DataRowToAdd, bool UseGrouping, string GroupName, bool Selectable, bool ShowInTree, NbtViewAddChildrenSetting AddChildren, Int32 RowCount, bool Included = true );
 

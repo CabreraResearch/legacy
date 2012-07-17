@@ -77,7 +77,7 @@ namespace ChemSW.Nbt.ServiceDrivers
             return ret;
         }
 
-        public JObject doObjectClassButtonClick( CswPropIdAttr PropId )
+        public JObject doObjectClassButtonClick( CswPropIdAttr PropId, string SelectedText )
         {
             JObject RetObj = new JObject();
             if( null == PropId ||
@@ -102,7 +102,7 @@ namespace ChemSW.Nbt.ServiceDrivers
 
             CswNbtObjClass NbtObjClass = CswNbtObjClassFactory.makeObjClass( _CswNbtResources, Node.getObjectClassId(), Node );
 
-            CswNbtObjClass.NbtButtonData ButtonData = new CswNbtObjClass.NbtButtonData( NodeTypeProp );
+            CswNbtObjClass.NbtButtonData ButtonData = new CswNbtObjClass.NbtButtonData( NodeTypeProp ) {SelectedText = SelectedText};
 
             bool Success = NbtObjClass.onButtonClick( ButtonData );
 

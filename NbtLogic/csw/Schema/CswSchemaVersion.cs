@@ -27,7 +27,7 @@ namespace ChemSW.Nbt.Schema
         public CswSchemaVersion( Int32 inCycleIteration, char inReleaseIdentifier, Int32 inReleaseIteration )
         {
             _init( inCycleIteration, inReleaseIdentifier, inReleaseIteration );
-        }        /// <summary>
+        }
 
         /// <summary>
         /// Constructor for single integer version numbers (for backwards compatibility)

@@ -126,8 +126,8 @@ namespace ChemSW.Nbt.WebServices
 
                     if( _CswNbtResources.CurrentNbtUser.Username == CswNbtObjClassUser.ChemSWAdminUsername )
                     {
-                        Ret["Admin"]["View Log"] = new JObject();
-                        Ret["Admin"]["View Log"]["href"] = "DisplayLog.aspx";
+                        //Ret["Admin"]["View Log"] = new JObject();
+                        //Ret["Admin"]["View Log"]["href"] = "DisplayLog.aspx";
 
                         Ret["Admin"]["Modules"] = new JObject();
                         Ret["Admin"]["Modules"]["action"] = "Modules";

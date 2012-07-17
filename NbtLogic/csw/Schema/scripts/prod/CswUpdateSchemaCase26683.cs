@@ -22,7 +22,16 @@ namespace ChemSW.Nbt.Schema
                 //Case 26866/27114
                 if( false == CswTools.IsAlphaNumeric( UserNode.UsernameProperty.Text ) )
                 {
-                    UserNode.UsernameProperty.Text = Regex.Replace( UserNode.UsernameProperty.Text, "[^a-zA-Z0-9_]+", "" );
+                    string ValidUserName = Regex.Replace( UserNode.UsernameProperty.Text, "[^a-zA-Z0-9_]+", "" );
+                    CswNbtObjClassUser ExistingUserNode = _CswNbtSchemaModTrnsctn.Nodes.makeUserNodeFromUsername( ValidUserName );
+                    if( ExistingUserNode != null && ExistingUserNode.NodeId != null )
+                    {
+                        UserNode.AccountLocked.Checked = Tristate.True;
+                    }
+                    else
+                    {
+                        UserNode.UsernameProperty.Text = ValidUserName;
+                    }
                 }
 
                 UserNode.AccountLocked.setReadOnly( value: false, SaveToDb: true );

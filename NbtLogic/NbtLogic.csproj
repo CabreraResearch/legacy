@@ -102,6 +102,8 @@
     <Compile Include="csw\Actions\CswNbtActSystemViews.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase27155.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase27147.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase27071RequestItem2.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase27178.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26523.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase27145.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26714MakeUserManaged.cs" />
