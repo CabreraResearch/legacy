@@ -81,11 +81,12 @@
                 mode = Csw.string(propVals.mode, 'button'),
                 messagediv,
                 table, btnCell,
-                button, menuoptions, state, text;
+                button, menuoptions, state, text, selectedText;
 
             menuoptions = propVals.menuoptions.split(',');
             state = propVals.state;
             text = propVals.text;
+            selectedText = propVals.selectedText;
             
             function onClick() {
                 onButtonClick(o.propid, button, messagediv, o);
@@ -108,7 +109,7 @@
                 case 'menu':
                     button = btnCell.menuButton({
                         ID: Csw.makeId(o.ID, 'menuBtn'),
-                        selectedText: text,
+                        selectedText: selectedText,
                         menuOptions: menuoptions,
                         size: o.size,
                         state: state,
