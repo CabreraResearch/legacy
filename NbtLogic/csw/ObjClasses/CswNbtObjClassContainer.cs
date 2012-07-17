@@ -273,7 +273,8 @@ namespace ChemSW.Nbt.ObjClasses
                             break;
                         case RequestDisposePropertyName:
                             NodeAsRequestItem.Material.setHidden( value: true, SaveToDb: false );
-                            NodeAsRequestItem.postChanges( true ); /* This is the only condition in which we want to commit the node upfront. */
+                            //Not sure why this was here, but it creates duplicate dispose requests
+                            //NodeAsRequestItem.postChanges( true ); /* This is the only condition in which we want to commit the node upfront. */
                             break;
                         case RequestMovePropertyName:
                             NodeAsRequestItem.Material.setHidden( value: true, SaveToDb: false );
