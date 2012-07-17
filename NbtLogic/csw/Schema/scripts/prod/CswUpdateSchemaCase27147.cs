@@ -23,6 +23,9 @@ namespace ChemSW.Nbt.Schema
             string listOpts = "0 - None\n1 - Inorganic Acids\n2 - Organic Acids\n3 - Bases\n4 - Oxidizing Inorganic Acids\n5 - Oxidizers\n6 - Toxics\n7 - Flammables";
             _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( storageCompatibilityOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.listoptions, listOpts );
 
+            string valueOpts = "/NbtWebApp/Images/cispro/0w.gif\n/NbtWebApp/Images/cispro/1o.gif\n/NbtWebApp/Images/cispro/2y.gif\n/NbtWebApp/Images/cispro/3g.gif\n/NbtWebApp/Images/cispro/4b.gif\n/NbtWebApp/Images/cispro/5l.gif\n/NbtWebApp/Images/cispro/6p.gif\n/NbtWebApp/Images/cispro/7r.gif";
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( storageCompatibilityOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.valueoptions, valueOpts );
+
         }//Update()
 
     }//class CswUpdateSchemaCase27147
