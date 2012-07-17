@@ -33,6 +33,7 @@ window.initMain = window.initMain || function (undefined) {
     Csw.subscribe(Csw.enums.events.ajax.globalAjaxStop, stopSpinner);
 
     function onObjectClassButtonClick(eventOj, opts) {
+        releaseEvents();
         Csw.debug.assert(false === Csw.isNullOrEmpty(opts.data), 'opts.data is null.');
         var actionJson = opts.data.actionData;
             switch (Csw.string(opts.data.action).toLowerCase()) {
@@ -40,7 +41,17 @@ window.initMain = window.initMain || function (undefined) {
                     actionJson.actionname = 'DispenseContainer';
                     handleAction(actionJson);
                     break;
-
+                case Csw.enums.nbtButtonAction.editprop:
+                    $.CswDialog('EditNodeDialog', {
+                        nodeids: [Csw.string(actionJson.nodeid)],
+                        filterToPropId: Csw.string(actionJson.propidattr),
+                        title: Csw.string(actionJson.title),
+                        onEditNode: function (nodeid, nodekey, close) {
+                            Csw.tryExec(close);
+                        }
+                    });
+                    break;
+                    
                 case Csw.enums.nbtButtonAction.loadView:
                     Csw.debug.assert(false === Csw.isNullOrEmpty(actionJson), 'actionJson is null.');
                     Csw.publish(Csw.enums.events.RestoreViewContext, actionJson);
