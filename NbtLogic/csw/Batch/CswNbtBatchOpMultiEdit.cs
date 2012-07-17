@@ -73,7 +73,7 @@ namespace ChemSW.Nbt.Batch
 
         public Double getPercentDone( CswNbtObjClassBatchOp BatchNode )
         {
-            Double ret = 0;
+            Double ret = 100;
             if( BatchNode != null && BatchNode.OpNameValue == NbtBatchOpName.MultiEdit )
             {
                 MultiEditBatchData BatchData = new MultiEditBatchData( BatchNode.BatchData.Text );
