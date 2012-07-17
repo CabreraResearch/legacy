@@ -43,7 +43,7 @@ namespace ChemSw.Nbt.Test
 
         private void _setHighWaterMark()
         {
-            CswNbtNode PlaceHolderNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( _getNodeTypeId( "Weight Unit" ), CswNbtNodeCollection.MakeNodeOperation.WriteNode );
+            CswNbtNode PlaceHolderNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( _getNodeTypeId( "Unit (Weight)" ), CswNbtNodeCollection.MakeNodeOperation.WriteNode );
             _HighWaterMark = PlaceHolderNode.NodeId;
         }
 
@@ -100,7 +100,7 @@ namespace ChemSw.Nbt.Test
 
         internal CswNbtNode createUnitOfMeasureNode( string NodeTypeName, string Name, double ConversionFactorBase, int ConversionFactorExponent, Tristate Fractional )
         {
-            CswNbtNode UnitOfMeasureNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( _getNodeTypeId( NodeTypeName + " Unit" ), CswNbtNodeCollection.MakeNodeOperation.WriteNode );
+            CswNbtNode UnitOfMeasureNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( _getNodeTypeId( "Unit (" + NodeTypeName + ")" ), CswNbtNodeCollection.MakeNodeOperation.WriteNode );
             CswNbtObjClassUnitOfMeasure NodeAsUnitOfMeasure = UnitOfMeasureNode;
             NodeAsUnitOfMeasure.Name.Text = Name + "Test";
             if( ConversionFactorBase != Int32.MinValue )

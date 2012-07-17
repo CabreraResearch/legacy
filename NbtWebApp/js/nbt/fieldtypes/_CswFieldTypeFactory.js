@@ -166,7 +166,7 @@ $.CswFieldTypeFactory = function (method) {
                 //$.extend(m, options);
                 m = options;
             }
-            m.ID = m.propData.id;
+            m.ID = Csw.makeId(m.propDiv.getId(), m.propData.id);
             m.Required = Csw.bool(m.propData.required);
             m.ReadOnly = Csw.bool(m.propData.readonly);
 

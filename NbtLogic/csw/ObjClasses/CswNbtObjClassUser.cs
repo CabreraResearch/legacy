@@ -200,7 +200,8 @@ namespace ChemSW.Nbt.ObjClasses
             return
                 false == String.IsNullOrEmpty( this.UsernameProperty.Text ) &&
                 false == CswTools.IsAlphaNumeric( this.UsernameProperty.Text ) &&
-                ( this.UsernameProperty.WasModified || this.AccountLocked.WasModified );
+                ( this.UsernameProperty.WasModified ||
+                ( this.AccountLocked.WasModified && this.AccountLocked.Checked == Tristate.False ) );
         }
 
         public override void afterWriteNode()
