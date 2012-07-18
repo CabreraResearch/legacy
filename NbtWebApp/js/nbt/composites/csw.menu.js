@@ -199,6 +199,7 @@
                                     {
                                         thisItem.menu.items.push({ 
                                             text: childItemName,
+                                            icon: childItem.icon,
                                             listeners: {
                                                 click: function(item, event) {
                                                     cswPrivate.handleMenuItemClick(childItemName, childItem);

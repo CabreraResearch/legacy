@@ -61,6 +61,7 @@
             if (options) $.extend(o, options);
             var text = o.itemJson.text;
             var $li = $('<li><a href="#">' + text + '</a></li>');
+            $li.css({ 'list-style-image': 'url(' + o.itemJson.icon + ')' });
             var $a = $li.children('a');
 
             $a.click(function () {
