@@ -219,7 +219,6 @@ namespace ChemSW.Nbt.ObjClasses
                 if( null != NodeAsRequest &&
                     null != NodeAsRequest.InventoryGroup.RelatedNodeId )
                 {
-
                     CswNbtObjClassContainer NodeAsContainer = _CswNbtResources.Nodes.GetNode( Container.RelatedNodeId );
                     if( null == NodeAsContainer )
                     {
@@ -290,13 +289,13 @@ namespace ChemSW.Nbt.ObjClasses
                     Ret = Statuses.Cancelled;
                     break;
                 case FulfillMenu.Complete:
-                        Ret = Statuses.Completed;
+                    Ret = Statuses.Completed;
                     break;
                 case FulfillMenu.Move:
-                        Ret = Statuses.Moved;
+                    Ret = Statuses.Moved;
                     break;
                 case FulfillMenu.Dispose:
-                        Ret = Statuses.Disposed;
+                    Ret = Statuses.Disposed;
                     break;
                 case FulfillMenu.Dispense:
                     Ret = Statuses.Dispensed;
@@ -308,7 +307,7 @@ namespace ChemSW.Nbt.ObjClasses
                     Ret = Statuses.Received;
                     break;
             }
-            if( Statuses.Options.IndexOf( Status.Value ) >= Statuses.Options.IndexOf( Ret ) )
+            if( FulfillMenu.Options.IndexOf( Status.Value ) >= FulfillMenu.Options.IndexOf( ButtonText ) )
             {
                 Ret = Status.Value;
             }
@@ -437,6 +436,7 @@ namespace ChemSW.Nbt.ObjClasses
 
             switch( Type.Value )
             {
+                case Types.Request: //This fall through is intentional
                 case Types.Dispense:
                     Fulfill.MenuOptions = FulfillMenu.DispenseOptions.ToString();
                     Fulfill.State = FulfillMenu.Dispense;
@@ -540,7 +540,7 @@ namespace ChemSW.Nbt.ObjClasses
                 SaveToDb: true );
             Fulfill.setHidden( value: ( Status.Value == Statuses.Pending || Status.Value == Statuses.Completed || Status.Value == Statuses.Cancelled ),
                 SaveToDb: true );
-            TotalDispensed.setHidden( value: ( Status.Value == Statuses.Pending || ( Type.Value != Types.Dispense && Type.Value != Types.Request ) ), 
+            TotalDispensed.setHidden( value: ( Status.Value == Statuses.Pending || ( Type.Value != Types.Dispense && Type.Value != Types.Request ) ),
                 SaveToDb: true );
 
             switch( Status.Value )
@@ -552,7 +552,7 @@ namespace ChemSW.Nbt.ObjClasses
                     Fulfill.State = FulfillMenu.Dispense;
                     break;
                 case Statuses.Dispensed:
-                    if(TotalDispensed.Quantity >= Quantity.Quantity )
+                    if( TotalDispensed.Quantity >= Quantity.Quantity )
                     {
                         Fulfill.State = FulfillMenu.Complete;
                     }
@@ -563,6 +563,10 @@ namespace ChemSW.Nbt.ObjClasses
                     break;
                 case Statuses.Ordered:
                     Fulfill.State = FulfillMenu.Receive;
+                    break;
+                case Statuses.Cancelled: //This fallthrough is intentional
+                case Statuses.Completed:
+                    Node.setReadOnly( true, true );
                     break;
             }
 
@@ -607,7 +611,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropQuantity TotalDispensed { get { return _CswNbtNode.Properties[PropertyName.TotalDispensed]; } }
         private void OnTotalDispensedPropChange()
         {
-            if(TotalDispensed.Quantity >= Quantity.Quantity)
+            if( TotalDispensed.Quantity >= Quantity.Quantity )
             {
                 Fulfill.State = FulfillMenu.Complete;
             }
