@@ -1240,7 +1240,11 @@ window.initMain = window.initMain || function (undefined) {
                             viewid: viewid
                         });
                     },
-                    requestItemId: requestItemId
+                    requestItemId: requestItemId,
+                    title: 'Dispense from Barcode [' + o.barcode + ']',
+                    location: o.location,
+                    material: o.material,
+                    barcode: o.barcode
                 };
                 Csw.nbt.dispenseContainerWizard(centerTopDiv, designOpt);
 

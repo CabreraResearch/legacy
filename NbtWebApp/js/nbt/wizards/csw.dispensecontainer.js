@@ -42,7 +42,11 @@
                 unitId: 'Unknown',
                 containerNodeTypeId: 'Unknown',
                 quantityControl: null,
-                requestItemId: ''
+                requestItemId: '',
+                title: 'Dispense from Container',
+                materialname: '',
+                barcode: '',
+                location: ''
             };
             if (options) $.extend(cswPrivate, options);
 
@@ -89,6 +93,15 @@
                         cswPrivate.divStep1 = cswPrivate.wizard.div(1);
                         cswPrivate.divStep1.br();
 
+                        cswPrivate.divStep1.p({ text: 'You have selected container barcode: [' + Csw.string(cswPrivate.barcode) + ']' });
+                        if (false === Csw.isNullOrEmpty(cswPrivate.materialname)) {
+                            cswPrivate.divStep1.p({ text: 'On Material: ' + Csw.string(cswPrivate.materialname) });
+                        }
+                        if (false === Csw.isNullOrEmpty(cswPrivate.location)) {
+                            cswPrivate.divStep1.p({ text: 'At Location: ' + Csw.string(cswPrivate.location) });
+                        }
+                        cswPrivate.divStep1.br();
+                        
                         dispenseTypeTable = cswPrivate.divStep1.table({
                             ID: cswPrivate.makeStepId('setDispenseTypeTable'),
                             cellpadding: '1px',
@@ -344,7 +357,7 @@
                     currentQuantity: cswPrivate.currentQuantity,
                     currentUnitName: cswPrivate.currentUnitName,
                     capacity: cswPrivate.capacity,
-                    Title: 'Dispense Container',
+                    Title: Csw.string(cswPrivate.title),
                     StepCount: 3,
                     Steps: cswPrivate.wizardSteps,
                     StartingStep: cswPrivate.startingStep,

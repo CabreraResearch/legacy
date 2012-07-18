@@ -301,6 +301,10 @@ namespace ChemSW.Nbt.ObjClasses
         {
             JObject ActionDataObj = new JObject();
             ActionDataObj["sourceContainerNodeId"] = this.NodeId.ToString();
+            ActionDataObj["barcode"] = Barcode.Barcode;
+            ActionDataObj["materialname"] = Material.CachedNodeName;
+            ActionDataObj["location"] = Location.CachedFullPath;
+
             CswNbtObjClassUnitOfMeasure unitNode = _CswNbtResources.Nodes.GetNode( this.Quantity.UnitId );
             if( null != unitNode )
             {
