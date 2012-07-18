@@ -74,6 +74,11 @@ namespace ChemSW.Nbt.MetaData
         {
             return _CollImpl.getWhere( "where fieldtypeid in (select fieldtypeid from field_types where fieldtype = '" + FieldType.ToString() + "')" ).Cast<CswNbtMetaDataNodeTypeProp>();
         }
+        public IEnumerable<CswNbtMetaDataNodeTypeProp> getNodeTypeProps( Int32 NodeTypeId, CswNbtMetaDataFieldType.NbtFieldType FieldType )
+        {
+            return _CollImpl.getWhere( "where nodetypeid = " + NodeTypeId.ToString() +
+                                        " and fieldtypeid in (select fieldtypeid from field_types where fieldtype = '" + FieldType.ToString() + "')" ).Cast<CswNbtMetaDataNodeTypeProp>();
+        }
         public IEnumerable<CswNbtMetaDataNodeTypeProp> getNodeTypePropsByTab( Int32 TabId )
         {
             return _CollImpl.getWhere( "where nodetypetabsetid = " + TabId.ToString() ).Cast<CswNbtMetaDataNodeTypeProp>();
@@ -166,24 +171,24 @@ namespace ChemSW.Nbt.MetaData
 
         private string _makeModuleWhereClause()
         {
-//            return @" ( ( exists (select j.jctmoduleobjectclassid
-//                                    from jct_modules_objectclass j
-//                                    join modules m on j.moduleid = m.moduleid
-//                                   where j.objectclassid = (select t.objectclassid from nodetypes t where t.nodetypeid = nodetype_props.nodetypeid)
-//                                     and m.enabled = '1')
-//                          or not exists (select j.jctmoduleobjectclassid
-//                                           from jct_modules_objectclass j
-//                                           join modules m on j.moduleid = m.moduleid
-//                                          where j.objectclassid = (select t.objectclassid from nodetypes t where t.nodetypeid = nodetype_props.nodetypeid)) )
-//                    and ( exists (select j.jctmodulenodetypeid
-//                                    from jct_modules_nodetypes j
-//                                    join modules m on j.moduleid = m.moduleid
-//                                   where j.nodetypeid = nodetype_props.nodetypeid
-//                                     and m.enabled = '1')
-//                          or not exists (select j.jctmodulenodetypeid
-//                                           from jct_modules_nodetypes j
-//                                           join modules m on j.moduleid = m.moduleid
-//                                          where j.nodetypeid = nodetype_props.nodetypeid) ) )";
+            //            return @" ( ( exists (select j.jctmoduleobjectclassid
+            //                                    from jct_modules_objectclass j
+            //                                    join modules m on j.moduleid = m.moduleid
+            //                                   where j.objectclassid = (select t.objectclassid from nodetypes t where t.nodetypeid = nodetype_props.nodetypeid)
+            //                                     and m.enabled = '1')
+            //                          or not exists (select j.jctmoduleobjectclassid
+            //                                           from jct_modules_objectclass j
+            //                                           join modules m on j.moduleid = m.moduleid
+            //                                          where j.objectclassid = (select t.objectclassid from nodetypes t where t.nodetypeid = nodetype_props.nodetypeid)) )
+            //                    and ( exists (select j.jctmodulenodetypeid
+            //                                    from jct_modules_nodetypes j
+            //                                    join modules m on j.moduleid = m.moduleid
+            //                                   where j.nodetypeid = nodetype_props.nodetypeid
+            //                                     and m.enabled = '1')
+            //                          or not exists (select j.jctmodulenodetypeid
+            //                                           from jct_modules_nodetypes j
+            //                                           join modules m on j.moduleid = m.moduleid
+            //                                          where j.nodetypeid = nodetype_props.nodetypeid) ) )";
             return " nodetype_props.nodetypeid in (select nodetypeid from nodetypes where enabled = '1') ";
         }
 

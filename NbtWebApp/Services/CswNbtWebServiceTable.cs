@@ -235,7 +235,7 @@ namespace ChemSW.Nbt.WebServices
                             JObject PropData = (JObject) JpPropData.Value;
 
                             JObject PropValues = new JObject();
-                            CswNbtNodePropButton.AsJSON( NodeTypeProp, PropValues );
+                            CswNbtNodePropButton.AsJSON( NodeTypeProp, PropValues, CswConvert.ToString( PropElm["field2"] ), CswConvert.ToString( PropElm["field1"] ) );
                             PropData["values"] = PropValues;
 
                             ThisProp["propData"] = PropData;

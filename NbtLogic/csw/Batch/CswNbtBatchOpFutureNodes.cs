@@ -22,7 +22,7 @@ namespace ChemSW.Nbt.Batch
         /// </summary>
         public Double getPercentDone( CswNbtObjClassBatchOp BatchNode )
         {
-            Double ret = 0;
+            Double ret = 100;
             if( BatchNode != null && BatchNode.OpNameValue == NbtBatchOpName.FutureNodes )
             {
                 FutureNodesBatchData BatchData = new FutureNodesBatchData( BatchNode.BatchData.Text );

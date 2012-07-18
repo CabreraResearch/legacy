@@ -152,7 +152,6 @@
                                 thisTabDiv.tabs({
                                     selected: selectedtabno,
                                     select: function (event, ui) {
-                                        cswPrivate.tabgrouptables = [];  // case 26957
                                         var ret = false;
                                         var selectTabContentDiv = thisTabDiv.children('div:eq(' + Csw.number(ui.index) + ')');
                                         var selectTabid = selectTabContentDiv.getId();
@@ -177,9 +176,7 @@
                         } // success
                     }); // ajax
                 } // if-else editmode is add or preview
-            };
-
-            // getTabs()
+            }; // getTabs()
 
             cswPrivate.getProps = function (tabContentDiv, tabid, onSuccess) {
                 'use strict';
@@ -227,6 +224,7 @@
 
             cswPrivate.getPropsImpl = function (tabContentDiv, tabid, onSuccess) {
                 'use strict';
+                cswPrivate.tabgrouptables = [];  // case 26957, 27117
                 
                 function makePropLayout() {
                     cswPrivate.form = tabContentDiv.children('form');
@@ -276,7 +274,9 @@
                                 var propId = key; //key
                                 var subTable = cswPrivate.layoutTable[propId + '_subproptable'];
                                 var parentCell = subTable.parent().parent();
-                                var cellSet = cswPrivate.layoutTable.cellSet(parentCell.propNonDom('row'), parentCell.propNonDom('column'));
+                                //var cellSet = cswPrivate.layoutTable.cellSet(parentCell.propNonDom('row'), parentCell.propNonDom('column'));
+                                var cellSet = cswPrivate.getCellSet(cswPrivate.layoutTable, thisProp.tabgroup, parentCell.propNonDom('row'), parentCell.propNonDom('column'));
+
                                 cswPrivate.layoutTable.addCellSetAttributes(cellSet, { propId: propId });
                                 var propCell = cswPrivate.getPropertyCell(cellSet);
 
@@ -491,45 +491,48 @@
                 return cswPrivate.atLeastOne;
             }; // _handleProperties()
 
-            cswPrivate.getCellSetForTabGroup = function(layoutTable, tabgroup, displayrow, displaycol) {
+            cswPrivate.getCellSet = function(layoutTable, tabgroup, displayrow, displaycol) {
+                var ret;
+                if(false === Csw.isNullOrEmpty(tabgroup)) {
+                    if(Csw.isNullOrEmpty(cswPrivate.tabgrouptables)) {
+                        cswPrivate.tabgrouptables = [];
+                    }
+                    if(Csw.isNullOrEmpty(cswPrivate.tabgrouptables[tabgroup])) {
+                        var cellSet = layoutTable.cellSet(displayrow, displaycol);
+                        var propCell = cswPrivate.getPropertyCell(cellSet);
 
-                if(Csw.isNullOrEmpty(cswPrivate.tabgrouptables)) {
-                    cswPrivate.tabgrouptables = [];
+                        var $fieldset = $('<fieldset>');
+                        $fieldset.append('<legend>' + tabgroup + '</legend>');
+                        propCell.append($fieldset);
+
+                        var div = Csw.literals.div({
+                            $parent: $fieldset
+                        });
+
+                        var tabgroupLayoutTable = div.layoutTable({
+                            ID: tabgroup,
+                            OddCellRightAlign: true,
+                            ReadOnly: (cswPrivate.EditMode === Csw.enums.editMode.PrintReport || cswPrivate.ReadOnly),
+                            cellSet: {
+                                rows: 1,
+                                columns: 2
+                            },
+                            onSwap: function (e, onSwapData) {
+                                cswPrivate.onSwap(tabid, onSwapData);
+                            },
+                            showConfigButton: false,
+                            showExpandRowButton: false,
+                            showExpandColButton: false,
+                            showRemoveButton: false
+                        });
+                        cswPrivate.tabgrouptables[tabgroup] = tabgroupLayoutTable;
+                    }
+                    ret = cswPrivate.tabgrouptables[tabgroup].cellSet(displayrow, displaycol);
+                } else {
+                    ret = layoutTable.cellSet(displayrow, displaycol);
                 }
-                if(Csw.isNullOrEmpty(cswPrivate.tabgrouptables[tabgroup])) {
-                    var cellSet = layoutTable.cellSet(displayrow, displaycol);
-                    var propCell = cswPrivate.getPropertyCell(cellSet);
-
-                    var $fieldset = $('<fieldset>');
-                    $fieldset.append('<legend>' + tabgroup + '</legend>');
-                    propCell.append($fieldset);
-
-                    var div = Csw.literals.div({
-                        $parent: $fieldset
-                    });
-
-                    var tabgroupLayoutTable = div.layoutTable({
-                        ID: tabgroup,
-                        OddCellRightAlign: true,
-                        ReadOnly: (cswPrivate.EditMode === Csw.enums.editMode.PrintReport || cswPrivate.ReadOnly),
-                        cellSet: {
-                            rows: 1,
-                            columns: 2
-                        },
-                        onSwap: function (e, onSwapData) {
-                            cswPrivate.onSwap(tabid, onSwapData);
-                        },
-                        showConfigButton: false,
-                        showExpandRowButton: false,
-                        showExpandColButton: false,
-                        showRemoveButton: false
-                    });
-                    cswPrivate.tabgrouptables[tabgroup] = tabgroupLayoutTable;
-                }
-
-                return cswPrivate.tabgrouptables[tabgroup].cellSet(displayrow, displaycol);
-
-            }; // getCellSetForTabGroup()
+                return ret;
+            }; // getCellSet()
 
 
             cswPrivate.handleProp = function (layoutTable, propData, tabContentDiv, tabid, configMode) {
@@ -540,12 +543,7 @@
                     propName = Csw.string(propData.name),
                     labelCell = {};
 
-                if(false === Csw.isNullOrEmpty(propData.tabgroup)) {
-                    cellSet = cswPrivate.getCellSetForTabGroup(layoutTable, propData.tabgroup, propData.displayrow, propData.displaycol);
-                } else {
-                    cellSet = layoutTable.cellSet(propData.displayrow, propData.displaycol);
-                }
-
+                cellSet = cswPrivate.getCellSet(layoutTable, propData.tabgroup, propData.displayrow, propData.displaycol);
                 layoutTable.addCellSetAttributes(cellSet, { propId: propid });
 
                 if (cswPrivate.canDisplayProp(propData, configMode) &&
@@ -772,7 +770,7 @@
                             cswnbtnodekey: cswPrivate.cswnbtnodekey
                         };
 
-                        var cellSet = layoutTable.cellSet(thisProp.displayrow, thisProp.displaycol);
+                        var cellSet = cswPrivate.getCellSet(cswPrivate.layoutTable, thisProp.tabgroup, thisProp.displayrow, thisProp.displaycol);
                         layoutTable.addCellSetAttributes(cellSet, { propId: thisProp.id });
                         propOpt.propCell = cswPrivate.getPropertyCell(cellSet);
                         propOpt.propDiv = propOpt.propCell.children('div').first();

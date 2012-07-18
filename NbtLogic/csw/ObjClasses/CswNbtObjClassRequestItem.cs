@@ -6,6 +6,7 @@ using ChemSW.Mail;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
+using ChemSW.Nbt.ServiceDrivers;
 using ChemSW.Nbt.UnitsOfMeasure;
 using Newtonsoft.Json.Linq;
 
@@ -286,6 +287,7 @@ namespace ChemSW.Nbt.ObjClasses
                 {
                     case PropertyName.Fulfill:
                         CswNbtObjClassContainer NodeAsContainer = null;
+                        Fulfill.State = ButtonData.SelectedText;
                         switch( ButtonData.SelectedText )
                         {
                             case FulfillMenu.Cancel:
@@ -299,7 +301,7 @@ namespace ChemSW.Nbt.ObjClasses
                             case FulfillMenu.Dispense:
                                 Status.Value = Statuses.Dispensed;
                                 NodeAsContainer = _CswNbtResources.Nodes.GetNode( Container.RelatedNodeId );
-                                if(null != NodeAsContainer)
+                                if( null != NodeAsContainer )
                                 {
                                     if( null != NodeAsContainer.Dispense.NodeTypeProp )
                                     {
@@ -321,15 +323,36 @@ namespace ChemSW.Nbt.ObjClasses
                                 ButtonData.Action = NbtButtonAction.refresh;
                                 break;
                             case FulfillMenu.Move:
-                                Status.Value = Statuses.Moved;
-                                ButtonData.Action = NbtButtonAction.popup;
+                                if( null != Container.RelatedNodeId )
+                                {
+                                    NodeAsContainer = _CswNbtResources.Nodes.GetNode( Container.RelatedNodeId );
+                                    if( null != NodeAsContainer )
+                                    {
+                                        ButtonData.Data["nodeid"] = Container.RelatedNodeId.ToString();
+                                        CswPropIdAttr LocIdAttr = new CswPropIdAttr( NodeAsContainer.Node, NodeAsContainer.Location.NodeTypeProp );
+                                        ButtonData.Data["propidattr"] = LocIdAttr.ToString();
+                                        Status.Value = Statuses.Moved;
+                                        ButtonData.Action = NbtButtonAction.editprop;
+                                        ButtonData.Data["title"] = "Set " + NodeAsContainer.Node.NodeName + " Container's Location";
+                                    }
+                                }
                                 break;
                             case FulfillMenu.Order:
-                                Status.Value = Statuses.Ordered;
-                                ButtonData.Action = NbtButtonAction.popup;
+                                if( Status.Value != Statuses.Received )
+                                {
+                                    Status.Value = Statuses.Ordered;
+                                }
+                                ButtonData.Action = NbtButtonAction.editprop;
+                                ButtonData.Data["nodeid"] = NodeId.ToString();
+                                CswPropIdAttr OrdIdAttr = new CswPropIdAttr( Node, ExternalOrderNumber.NodeTypeProp );
+                                ButtonData.Data["propidattr"] = OrdIdAttr.ToString();
+                                ButtonData.Data["title"] = "Enter the External Order Number";
                                 break;
                             case FulfillMenu.Receive:
-                                Status.Value = Statuses.Received;
+                                if( Status.Value != Statuses.Dispensed )
+                                {
+                                    Status.Value = Statuses.Received;
+                                }
                                 CswNbtObjClassMaterial NodeAsMaterial = _CswNbtResources.Nodes.GetNode( Material.RelatedNodeId );
                                 if( null != NodeAsMaterial )
                                 {
@@ -340,14 +363,13 @@ namespace ChemSW.Nbt.ObjClasses
                                         ButtonData.clone( ReceiveData );
                                     }
                                 }
-                                ButtonData.Action = NbtButtonAction.receive;
                                 break;
                         } //switch( ButtonData.SelectedText )
                         ButtonData.Data["requestitem"] = new JObject();
                         ButtonData.Data["requestitem"]["requestitemid"] = NodeId.ToString();
-                        ButtonData.Data["requestitem"]["materialid"] = ( Material.RelatedNodeId ?? new CswPrimaryKey()).ToString();
-                        ButtonData.Data["requestitem"]["containerid"] = ( Container.RelatedNodeId ?? new CswPrimaryKey()).ToString();
-                        ButtonData.Data["requestitem"]["locationid"] = ( Location.SelectedNodeId ?? new CswPrimaryKey()).ToString();
+                        ButtonData.Data["requestitem"]["materialid"] = ( Material.RelatedNodeId ?? new CswPrimaryKey() ).ToString();
+                        ButtonData.Data["requestitem"]["containerid"] = ( Container.RelatedNodeId ?? new CswPrimaryKey() ).ToString();
+                        ButtonData.Data["requestitem"]["locationid"] = ( Location.SelectedNodeId ?? new CswPrimaryKey() ).ToString();
                         break; //case PropertyName.Fulfill:
                 }
             }
@@ -384,21 +406,21 @@ namespace ChemSW.Nbt.ObjClasses
 
             /* Spec W1010: Material applies only to Request and Dispense */
             Material.setHidden( value: ( Types.Request != Type.Value && Types.Dispense != Type.Value ), SaveToDb: true );
-            AssignedTo.setHidden( value: ( Types.Dispense != Type.Value ), SaveToDb: true );
+            //AssignedTo.setHidden( value: ( AssignedTo.Hidden && Types.Dispense != Type.Value ), SaveToDb: true );
 
             switch( Type.Value )
             {
                 case Types.Dispense:
                     Fulfill.MenuOptions = FulfillMenu.DispenseOptions.ToString();
-                    Fulfill.SelectedMenuOption = FulfillMenu.Dispense;
+                    Fulfill.State = FulfillMenu.Dispense;
                     break;
                 case Types.Dispose:
                     Fulfill.MenuOptions = FulfillMenu.DisposeOptions.ToString();
-                    Fulfill.SelectedMenuOption = FulfillMenu.Dispose;
+                    Fulfill.State = FulfillMenu.Dispose;
                     break;
                 case Types.Move:
                     Fulfill.MenuOptions = FulfillMenu.MoveOptions.ToString();
-                    Fulfill.SelectedMenuOption = FulfillMenu.Move;
+                    Fulfill.State = FulfillMenu.Move;
                     break;
             }
         }
@@ -480,31 +502,41 @@ namespace ChemSW.Nbt.ObjClasses
 
         private void OnStatusPropChange()
         {
-            CswNbtObjClassRequest NodeAsRequest = _CswNbtResources.Nodes.GetNode( Request.RelatedNodeId );
-            /* Email notification logic */
-            if( Status.Value != Statuses.Pending )
+            if( Status.Value == Statuses.Pending )
+            {
+                AssignedTo.setHidden(value: true, SaveToDb: true);
+                Fulfill.setHidden( value: true, SaveToDb: true );                
+            }
+            else
             {
                 switch( Status.Value )
                 {
                     case Statuses.Submitted:
                         _toggleReadOnlyProps( true, this );
+                        AssignedTo.setHidden( value: false, SaveToDb: true );
+                        Fulfill.setHidden( value: false, SaveToDb: true );
                         break;
                     case Statuses.Completed: //This fallthrough is intentional
                     case Statuses.Cancelled:
+                        AssignedTo.setReadOnly( value: true, SaveToDb: true );
                         Fulfill.setHidden( value: true, SaveToDb: true );
                         Fulfill.setReadOnly( value: true, SaveToDb: true );
                         break;
-                    case Statuses.Received: //This fallthrough is intentional
-                    case Statuses.Disposed:
+                    case Statuses.Received:
+                        Fulfill.State = FulfillMenu.Dispense;
+                        break;
+                    case Statuses.Disposed: //This fallthrough is intentional
                     case Statuses.Moved:
                     case Statuses.Dispensed:
-                        Fulfill.SelectedMenuOption = FulfillMenu.Complete;
+                        Fulfill.State = FulfillMenu.Complete;
                         break;
                     case Statuses.Ordered:
-                        Fulfill.SelectedMenuOption = FulfillMenu.Receive;
+                        Fulfill.State = FulfillMenu.Receive;
                         break;
                 }
 
+                CswNbtObjClassRequest NodeAsRequest = _CswNbtResources.Nodes.GetNode( Request.RelatedNodeId );
+                /* Email notification logic */
                 if( null != NodeAsRequest &&
                     null != NodeAsRequest.Requestor.RelatedNodeId )
                 {

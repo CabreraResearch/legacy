@@ -405,6 +405,11 @@ namespace ChemSW.Nbt.MetaData
             return _CswNbtMetaDataResources.NodeTypePropsCollection.getNodeTypeProps( FieldType );
         }
 
+        public IEnumerable<CswNbtMetaDataNodeTypeProp> getNodeTypeProps( Int32 NodeTypeId, CswNbtMetaDataFieldType.NbtFieldType FieldType )
+        {
+            return _CswNbtMetaDataResources.NodeTypePropsCollection.getNodeTypeProps( NodeTypeId, FieldType );
+        }
+
         #endregion Selectors
 
         #region XML

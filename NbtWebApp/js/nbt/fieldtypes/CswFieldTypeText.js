@@ -39,7 +39,7 @@
                 text: null
             };
             var compare = {};
-            var text = o.propDiv.find('input');
+            var text = o.propDiv.find('#' + o.ID);
             if (false === Csw.isNullOrEmpty(text)) {
                 attributes.text = text.val();
                 compare = attributes;

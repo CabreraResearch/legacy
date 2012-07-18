@@ -349,6 +349,10 @@ namespace ChemSW.Nbt.MetaData
         {
             return _CswNbtMetaDataResources.CswNbtMetaData.getNodeTypeProps( NodeTypeId );
         }
+        public IEnumerable<CswNbtMetaDataNodeTypeProp> getNodeTypeProps(CswNbtMetaDataFieldType.NbtFieldType FieldType)
+        {
+            return _CswNbtMetaDataResources.CswNbtMetaData.getNodeTypeProps( NodeTypeId, FieldType );
+        }
 
 
         public CswNbtMetaDataNodeTypeTab getFirstNodeTypeTab()

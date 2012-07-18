@@ -92,6 +92,7 @@ namespace ChemSW.Nbt.ObjClasses
             }
             public static readonly NbtButtonAction Unknown = new NbtButtonAction( "Unknown" );
 
+            public static readonly NbtButtonAction editprop = new NbtButtonAction( "editprop" );
             public static readonly NbtButtonAction dispense = new NbtButtonAction( "dispense" );
             public static readonly NbtButtonAction reauthenticate = new NbtButtonAction( "reauthenticate" );
             public static readonly NbtButtonAction refresh = new NbtButtonAction( "refresh" );

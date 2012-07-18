@@ -271,7 +271,7 @@
                     filtarbitraryid: cswPrivate.filtarbitraryid,
                     proparbitraryid: cswPrivate.proparbitraryid,
                     relatedidtype: cswPrivate.relatedidtype,
-                    subfield: cswPrivate.selectedFilterMode,
+                    subfieldname: cswPrivate.selectedSubFieldName,
                     filter: cswPrivate.selectedFilterMode,
                     filtervalue: cswPrivate.selectedValue.trim()
                 };
