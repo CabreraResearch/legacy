@@ -269,7 +269,7 @@ namespace ChemSW.Nbt.ObjClasses
 
                 foreach( CswNbtAction Action in _CswNbtResources.Actions )
                 {
-                    if( _CswNbtResources.Permit.can( Action, this ) )
+                    if( _CswNbtResources.Permit.can( Action, this ) && Action.ShowInList )
                     {
                         NewYValues.Add( Action.DisplayName.ToString() );
                     }

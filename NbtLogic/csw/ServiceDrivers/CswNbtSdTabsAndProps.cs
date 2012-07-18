@@ -183,14 +183,14 @@ namespace ChemSW.Nbt.ServiceDrivers
 
                             if( Int32.MinValue != RelatedNodeTypePk && Int32.MinValue != RelatedObjectClassPk )
                             {
-                                foreach ( CswNbtNodePropRelationship Relationship in from _Prop
-                                                                                         in Ret.Properties
-                                                                                     where _Prop.getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.Relationship &&
-                                                                                       ( ( _Prop.AsRelationship.TargetType == NbtViewRelatedIdType.NodeTypeId &&
-                                                                                           _Prop.AsRelationship.TargetId == RelatedNodeTypePk ) ||
-                                                                                        (  _Prop.AsRelationship.TargetType == NbtViewRelatedIdType.ObjectClassId &&
-                                                                                           _Prop.AsRelationship.TargetId == RelatedObjectClassPk ) )
-                                                                                     select _Prop )
+                                foreach( CswNbtNodePropRelationship Relationship in from _Prop
+                                                                                        in Ret.Properties
+                                                                                    where _Prop.getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.Relationship &&
+                                                                                      ( ( _Prop.AsRelationship.TargetType == NbtViewRelatedIdType.NodeTypeId &&
+                                                                                          _Prop.AsRelationship.TargetId == RelatedNodeTypePk ) ||
+                                                                                       ( _Prop.AsRelationship.TargetType == NbtViewRelatedIdType.ObjectClassId &&
+                                                                                          _Prop.AsRelationship.TargetId == RelatedObjectClassPk ) )
+                                                                                    select _Prop )
                                 {
                                     Relationship.RelatedNodeId = RelatedNodePk;
                                 }
