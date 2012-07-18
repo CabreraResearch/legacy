@@ -153,6 +153,7 @@
                 nodeid: o.nodeid,
                 cswnbtnodekey: o.cswnbtnodekey,
                 propid: o.ID,
+                readonly: o.ReadOnly,
                 onAddNode: function () {
                     reinitGrid();
                 },

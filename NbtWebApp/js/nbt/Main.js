@@ -33,7 +33,6 @@ window.initMain = window.initMain || function (undefined) {
     Csw.subscribe(Csw.enums.events.ajax.globalAjaxStop, stopSpinner);
 
     function onObjectClassButtonClick(eventOj, opts) {
-        releaseEvents();
         Csw.debug.assert(false === Csw.isNullOrEmpty(opts.data), 'opts.data is null.');
         var actionJson = opts.data.actionData;
             switch (Csw.string(opts.data.action).toLowerCase()) {
@@ -798,9 +797,9 @@ window.initMain = window.initMain || function (undefined) {
                     refreshMainMenu({
                         viewid: o.viewid,
                         viewmode: Csw.enums.viewMode.grid.name,
-                        grid: grid,
-                        nodeid: o.nodeid,
-                        cswnbtnodekey: o.cswnbtnodekey
+                        grid: grid//,
+                        //nodeid: o.nodeid,  // case 26914
+                        //cswnbtnodekey: o.cswnbtnodekey
                     });
                 }
             },

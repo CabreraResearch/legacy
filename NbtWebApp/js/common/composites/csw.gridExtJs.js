@@ -180,9 +180,14 @@
                 if(cswPrivate.showCheckboxes){
                     gridopts.selType = 'checkboxmodel';
                     gridopts.selModel = { mode: 'Simple' };
-                    gridopts.listeners.selectionchange = function () {
-                        cswPrivate.editAllButton.enable();
-                        cswPrivate.deleteAllButton.enable();
+                    gridopts.listeners.selectionchange = function (t, selected, eOpts) {
+                        if(Csw.isNullOrEmpty(selected) || selected.length === 0) {
+                            cswPrivate.editAllButton.disable();
+                            cswPrivate.deleteAllButton.disable();
+                        } else {
+                            cswPrivate.editAllButton.enable();
+                            cswPrivate.deleteAllButton.enable();
+                        }
                     };
                 } else {
                     gridopts.selType = 'rowmodel';

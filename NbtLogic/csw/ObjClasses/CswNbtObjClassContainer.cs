@@ -118,14 +118,14 @@ namespace ChemSW.Nbt.ObjClasses
                     {
                         CswNbtNodePropImageList materialStorageCompatibilty = MaterialNode.Properties[CswNbtObjClassMaterial.StorageCompatibilityPropertyName];
                         CswNbtNode locationNode = _CswNbtResources.Nodes.GetNode( Location.SelectedNodeId );
-                        if( null != locationNode )
+                        if( null != locationNode ) //what if the user didn't specify a location?
                         {
                             CswNbtNodePropImageList locationStorageCompatibility = locationNode.Properties[CswNbtObjClassLocation.StorageCompatabilityPropertyName];
-                            if ( false == materialStorageCompatibilty.Value.IsEmpty && false == materialStorageCompatibilty.Gestalt.Contains( locationStorageCompatibility.Gestalt ) )
+                            if( false == _isStorageCompatible( materialStorageCompatibilty.Value, locationStorageCompatibility.Value ) )
                             {
                                 throw new CswDniException( ErrorType.Warning,
-                                                           "Cannot move a material with storage compatibility " + materialStorageCompatibilty.Gestalt + " to a location with a storage compatibility of " + locationStorageCompatibility.Gestalt,
-                                                           "Cannot move a material with storage compatibility " + materialStorageCompatibilty.Gestalt + " to a location with a storage compatibility of " + locationStorageCompatibility.Gestalt );
+                                    "Storage compatibilities do not match, cannot move this container to specified location",
+                                    "Storage compatibilities do not match, cannot move this container to specified location" );
                             }
                         }
                     }
@@ -419,6 +419,30 @@ namespace ChemSW.Nbt.ObjClasses
             this.RequestDispense.setReadOnly( value: isReadOnly, SaveToDb: true );
             this.RequestMove.setReadOnly( value: isReadOnly, SaveToDb: true );
             this.Dispense.setReadOnly( value: isReadOnly, SaveToDb: true );
+        }
+
+        private bool _isStorageCompatible( CswDelimitedString materialStorageCompatibility, CswDelimitedString locationStorageCompatibilities )
+        {
+            bool ret = false;
+            if( materialStorageCompatibility.Count == 0 ) //if storage compatibility on the material is null, it can go anywhere
+            {
+                ret = true;
+            }
+            foreach( string matComp in materialStorageCompatibility ) //loop through the materials storage compatibilities
+            {
+                if( matComp.Contains( "0w.gif" ) ) //if it has '0-none' selected, it can go anywhere
+                {
+                    ret = true;
+                }
+            }
+            foreach( string comp in locationStorageCompatibilities )
+            {
+                if( materialStorageCompatibility.Contains( comp ) || comp.Contains( "0w.gif" ) ) //if the locations storage compatibility matches OR it has '0-none', it can house the material
+                {
+                    ret = true;
+                }
+            }
+            return ret;
         }
 
         #endregion

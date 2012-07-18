@@ -175,10 +175,13 @@ namespace ChemSW.Nbt.WebServices
                                                           where null != ThisAction
                                                           select ThisAction ) )
                 {
-                    JObject ActionObj = _addViewSelectObj( ref ret, "Favorites", Action.DisplayName, ItemType.Action, "Images/view/action.gif", Action.ActionId.ToString() );
-                    ActionObj["actionid"] = Action.ActionId.ToString();
-                    ActionObj["actionurl"] = Action.Url;
-                    ActionObj["actionname"] = Action.Name.ToString();   // not using CswNbtAction.ActionNameEnumToString here
+                    if( true == Action.ShowInList ) //case 26555 - filter out actions like 'Multi Edit' or 'Edit View'
+                    {
+                        JObject ActionObj = _addViewSelectObj( ref ret, "Favorites", Action.DisplayName, ItemType.Action, "Images/view/action.gif", Action.ActionId.ToString() );
+                        ActionObj["actionid"] = Action.ActionId.ToString();
+                        ActionObj["actionurl"] = Action.Url;
+                        ActionObj["actionname"] = Action.Name.ToString();   // not using CswNbtAction.ActionNameEnumToString here
+                    }
                 }
             }
 
