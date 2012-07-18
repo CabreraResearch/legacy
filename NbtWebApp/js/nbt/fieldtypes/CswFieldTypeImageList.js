@@ -4,7 +4,6 @@
 (function ($) {
     "use strict";
     var pluginName = 'CswFieldTypeImageList';
-    var idToSearch = "";
 
     var methods = {
         init: function (o) {
@@ -12,8 +11,6 @@
             var propDiv = o.propDiv;
             propDiv.empty();
             var propVals = o.propData.values;
-
-            idToSearch = o.ID;
 
             var value = (false === o.Multi) ? Csw.string(propVals.value).trim() : Csw.enums.multiEditDefaultValue;
             var options = propVals.options;
@@ -157,7 +154,7 @@
         save: function (o) {
             var attributes = { value: null };
             var compare = {};
-            var hiddenValue = o.propDiv.find('#' + idToSearch + '_value');
+            var hiddenValue = o.propDiv.find('#' + o.ID + '_value');
             if (false === Csw.isNullOrEmpty(hiddenValue)) {
                 attributes.value = hiddenValue.text();
                 compare = attributes;
