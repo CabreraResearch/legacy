@@ -33,7 +33,7 @@ window.initMain = window.initMain || function (undefined) {
     Csw.subscribe(Csw.enums.events.ajax.globalAjaxStop, stopSpinner);
 
     function onObjectClassButtonClick(eventOj, opts) {
-        releaseEvents();
+        //releaseEvents();
         Csw.debug.assert(false === Csw.isNullOrEmpty(opts.data), 'opts.data is null.');
         var actionJson = opts.data.actionData;
             switch (Csw.string(opts.data.action).toLowerCase()) {

@@ -96,6 +96,13 @@ namespace ChemSW.Nbt.PropTypes
         public CswNbtMetaDataNodeTypeProp NodeTypeProp { get { return ( _CswNbtNodeProp.NodeTypeProp ); } }
 
         public string GetPropRowValue( CswNbtSubField.PropColumn Column ) { return _CswNbtNodePropData.GetPropRowValue( Column ); }
+        /// <summary>
+        /// Get the Prior state of the Property's value using the fieldtype rule's default subfield
+        /// </summary>
+        public string GetOriginalPropRowValue() { return GetOriginalPropRowValue( NodeTypeProp.getFieldTypeRule().SubFields.Default.Column ); }
+        /// <summary>
+        /// Get the Prior state of the Property's value using a specific subfield
+        /// </summary>
         public string GetOriginalPropRowValue( CswNbtSubField.PropColumn Column ) { return _CswNbtNodePropData.GetOriginalPropRowValue( Column ); }
         public void SetPropRowValue( CswNbtSubField.PropColumn Column, object value ) { _CswNbtNodePropData.SetPropRowValue( Column, value ); }
         public void makePropRow() { _CswNbtNodePropData.makePropRow(); }
