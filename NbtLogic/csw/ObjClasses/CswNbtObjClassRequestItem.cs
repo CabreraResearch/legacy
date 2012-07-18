@@ -83,15 +83,6 @@ namespace ChemSW.Nbt.ObjClasses
             public const string Complete = "Complete";
             public const string Cancel = "Cancel";
 
-            public static List<string> MenuOrder = new List<string>()
-                {
-                    Order,
-                    Receive,
-                    Dispense,
-                    Move,
-                    Complete
-                };
-
             public static readonly CswCommaDelimitedString Options = new CswCommaDelimitedString
                 {
                     Order, Receive, Dispense, Dispose, Move, Complete, Cancel
@@ -296,28 +287,43 @@ namespace ChemSW.Nbt.ObjClasses
             switch( ButtonText )
             {
                 case FulfillMenu.Cancel:
-                    Ret = Statuses.Cancelled;
+                    if( Statuses.Options.IndexOf( Status.Value ) < Statuses.Options.IndexOf( Statuses.Cancelled ) )
+                    {
+                        Ret = Statuses.Cancelled;
+                    }
                     break;
                 case FulfillMenu.Complete:
-                    Ret = Statuses.Completed;
+                    if( Statuses.Options.IndexOf( Status.Value ) < Statuses.Options.IndexOf( Statuses.Completed ) )
+                    {
+                        Ret = Statuses.Completed;
+                    }
                     break;
                 case FulfillMenu.Move:
-                    Ret = Statuses.Moved;
+                    if( Statuses.Options.IndexOf( Status.Value ) < Statuses.Options.IndexOf( Statuses.Moved ) )
+                    {
+                        Ret = Statuses.Moved;
+                    }
                     break;
                 case FulfillMenu.Dispose:
-                    Ret = Statuses.Disposed;
+                    if( Statuses.Options.IndexOf( Status.Value ) < Statuses.Options.IndexOf( Statuses.Disposed ) )
+                    {
+                        Ret = Statuses.Disposed;
+                    }
                     break;
                 case FulfillMenu.Dispense:
-                    Ret = Statuses.Dispensed;
+                    if( Statuses.Options.IndexOf( Status.Value ) > Statuses.Options.IndexOf( Statuses.Dispensed ) )
+                    {
+                        Ret = Statuses.Dispensed;
+                    }
                     break;
                 case FulfillMenu.Order:
-                    if( Status.Value == Statuses.Submitted )
+                    if( Statuses.Options.IndexOf( Status.Value ) > Statuses.Options.IndexOf( Statuses.Ordered ) )
                     {
                         Ret = Statuses.Ordered;
                     }
                     break;
                 case FulfillMenu.Receive:
-                    if( Status.Value == Statuses.Ordered )
+                    if( Statuses.Options.IndexOf( Status.Value ) > Statuses.Options.IndexOf( Statuses.Received ) )
                     {
                         Ret = Statuses.Received;
                     }
