@@ -321,19 +321,26 @@ namespace ChemSW.Nbt.PropTypes
             }
             ParentObject[_NameSubField.ToXmlNodeName( true ).ToLower()] = CachedNodeName;
 
+            CswNbtMetaDataNodeType TargetNodeType = null;
+            CswNbtMetaDataObjectClass TargetObjectClass = null;
             ParentObject["nodetypeid"] = default( string );
             ParentObject["objectclassid"] = default( string );
             if( TargetType == NbtViewRelatedIdType.NodeTypeId )
             {
                 ParentObject["nodetypeid"] = TargetId.ToString();
+                TargetNodeType = _CswNbtResources.MetaData.getNodeType( TargetId );
+                TargetObjectClass = TargetNodeType.getObjectClass();
             }
             else if( TargetType == NbtViewRelatedIdType.ObjectClassId )
             {
                 ParentObject["objectclassid"] = TargetId.ToString();
+                TargetObjectClass = _CswNbtResources.MetaData.getObjectClass( TargetId );
             }
 
             ParentObject["allowadd"] = false;
-            if( _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Create, _CswNbtResources.MetaData.getNodeType( TargetId ) ) )
+
+            if( TargetObjectClass != null && TargetObjectClass.CanAdd && // case 27189
+                ( TargetNodeType == null || _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Create, TargetNodeType ) ) )
             {
                 ParentObject["allowadd"] = "true";
             }

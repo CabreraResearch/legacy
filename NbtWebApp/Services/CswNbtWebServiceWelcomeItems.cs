@@ -123,21 +123,27 @@ namespace ChemSW.Nbt.WebServices
                         if( CswConvert.ToInt32( WelcomeRow["actionid"] ) != Int32.MinValue )
                         {
                             CswNbtAction ThisAction = _CswNbtResources.Actions[CswConvert.ToInt32( WelcomeRow["actionid"] )];
-                            if( _CswNbtResources.Permit.can( ThisAction.Name ) )
+                            if( null != ThisAction )
                             {
-                                LinkText = WelcomeRow["displaytext"].ToString() != string.Empty ? WelcomeRow["displaytext"].ToString() : CswNbtAction.ActionNameEnumToString( ThisAction.Name );
+                                if( _CswNbtResources.Permit.can( ThisAction.Name ) )
+                                {
+                                    LinkText = WelcomeRow["displaytext"].ToString() != string.Empty ? WelcomeRow["displaytext"].ToString() : CswNbtAction.ActionNameEnumToString( ThisAction.Name );
+                                }
+                                Ret[WelcomeId]["actionid"] = WelcomeRow["actionid"].ToString();
+                                Ret[WelcomeId]["actionname"] = ThisAction.Name.ToString();      // not using CswNbtAction.ActionNameEnumToString here
+                                Ret[WelcomeId]["actionurl"] = ThisAction.Url;
+                                Ret[WelcomeId]["type"] = "action";
                             }
-                            Ret[WelcomeId]["actionid"] = WelcomeRow["actionid"].ToString();
-                            Ret[WelcomeId]["actionname"] = ThisAction.Name.ToString();      // not using CswNbtAction.ActionNameEnumToString here
-                            Ret[WelcomeId]["actionurl"] = ThisAction.Url;
-                            Ret[WelcomeId]["type"] = "action";
                         }
                         if( CswConvert.ToInt32( WelcomeRow["reportid"] ) != Int32.MinValue )
                         {
                             CswNbtNode ThisReportNode = _CswNbtResources.Nodes[new CswPrimaryKey( "nodes", CswConvert.ToInt32( WelcomeRow["reportid"] ) )];
-                            LinkText = WelcomeRow["displaytext"].ToString() != string.Empty ? WelcomeRow["displaytext"].ToString() : ThisReportNode.NodeName;
-                            Ret[WelcomeId]["reportid"] = WelcomeRow["reportid"].ToString();
-                            Ret[WelcomeId]["type"] = "report";
+                            if( null != ThisReportNode )
+                            {
+                                LinkText = WelcomeRow["displaytext"].ToString() != string.Empty ? WelcomeRow["displaytext"].ToString() : ThisReportNode.NodeName;
+                                Ret[WelcomeId]["reportid"] = WelcomeRow["reportid"].ToString();
+                                Ret[WelcomeId]["type"] = "report";
+                            }
                         }
                         break;
                     
