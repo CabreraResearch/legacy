@@ -26,7 +26,7 @@
                     ID: Csw.makeId({ id: o.ID, suffix: 'adddiv' }),
                     cssclass: 'adddiv',
                     text: 'Add New:'
-                });
+                }).hide();
 
                 function _makeAddLinksRecursive(addObj, parent) {
                     var ul = parent.ul();
@@ -35,6 +35,7 @@
                             itemJson: entryObj,
                             onAlterNode: o.onAddNode
                         }).appendTo(ul.$);
+                        addDiv.show();
                     }
 
                     if (Csw.contains(addObj, 'entries')) {

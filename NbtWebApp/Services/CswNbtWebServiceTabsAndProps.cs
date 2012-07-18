@@ -1,4 +1,5 @@
 using System;
+using System.Collections.ObjectModel;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
@@ -120,12 +121,15 @@ namespace ChemSW.Nbt.WebServices
         }
         private void _getDefaultContentRecursive( JObject ParentObj, CswNbtViewNode ViewNode )
         {
-            ParentObj["entries"] = new JObject();
-            foreach( CswNbtViewNode.CswNbtViewAddNodeTypeEntry Entry in ViewNode.AllowedChildNodeTypes( true ) )
+            Collection<CswNbtViewNode.CswNbtViewAddNodeTypeEntry> Entries = ViewNode.AllowedChildNodeTypes( true );
+            if( Entries.Count > 0 )
             {
-                ParentObj["entries"][Entry.NodeType.NodeTypeName] = CswNbtWebServiceMainMenu.makeAddMenuItem( Entry, new CswPrimaryKey(), string.Empty, string.Empty, string.Empty );
+                ParentObj["entries"] = new JObject();
+                foreach( CswNbtViewNode.CswNbtViewAddNodeTypeEntry Entry in Entries )
+                {
+                    ParentObj["entries"][Entry.NodeType.NodeTypeName] = CswNbtWebServiceMainMenu.makeAddMenuItem( Entry, new CswPrimaryKey(), string.Empty, string.Empty, string.Empty );
+                }
             }
-
             JObject ChildObj = new JObject();
             ParentObj["children"] = ChildObj;
 
