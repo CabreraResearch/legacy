@@ -25,7 +25,7 @@ namespace ChemSW.Nbt.Schema
                 foreach( CswNbtNode curContainer in containerNT.getNodes( false, true ) )
                 {
                     CswNbtNodePropBarcode barCode = curContainer.Properties[CswNbtMetaDataFieldType.NbtFieldType.Barcode].AsBarcode;
-                    if( barcodesInSystem.Contains( barCode.Barcode ) )
+                    while( barcodesInSystem.Contains( barCode.Barcode ) )
                     {
                         barCode.setBarcodeValueOverride( "", false ); //clear the barcode
                         barCode.setBarcodeValue(); //then let it go to the next sequence so it's %100 unique
