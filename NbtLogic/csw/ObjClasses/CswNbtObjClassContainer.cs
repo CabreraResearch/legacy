@@ -424,7 +424,7 @@ namespace ChemSW.Nbt.ObjClasses
         private bool _isStorageCompatible( CswDelimitedString materialStorageCompatibility, CswDelimitedString locationStorageCompatibilities )
         {
             bool ret = false;
-            if( false == materialStorageCompatibilty.Value.IsEmpty ) //if storage compatibility on the material is null, it can go anywhere
+            if( materialStorageCompatibility.Count == 0 ) //if storage compatibility on the material is null, it can go anywhere
             {
                 ret = true;
             }
