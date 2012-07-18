@@ -798,9 +798,9 @@ window.initMain = window.initMain || function (undefined) {
                     refreshMainMenu({
                         viewid: o.viewid,
                         viewmode: Csw.enums.viewMode.grid.name,
-                        grid: grid,
-                        nodeid: o.nodeid,
-                        cswnbtnodekey: o.cswnbtnodekey
+                        grid: grid//,
+                        //nodeid: o.nodeid,  // case 26914
+                        //cswnbtnodekey: o.cswnbtnodekey
                     });
                 }
             },
