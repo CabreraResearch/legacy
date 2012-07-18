@@ -108,7 +108,6 @@ namespace ChemSW.Nbt.Schema
                     CswNbtMetaDataNodeType UserNt = UserOc.getLatestVersionNodeTypes().FirstOrDefault();
                     if( null != UserNt )
                     {
-
                         CswNbtObjClassUser NodeAsUser = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( UserNt.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode );
                         if( null != NodeAsUser )
                         {
