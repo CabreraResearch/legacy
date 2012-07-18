@@ -86,11 +86,11 @@
                 cswPrivate.$parent.append(cswPublic.$);
             }
             cswPublic.bind('change', function () {
-                Csw.tryExec(cswPrivate.onChange, cswPublic.val());
+                Csw.tryExec(cswPrivate.onChange, cswPublic.val(), cswPublic);
             });
 
             cswPublic.bind('click', function () {
-                Csw.tryExec(cswPrivate.onClick, cswPublic.val());
+                Csw.tryExec(cswPrivate.onClick, cswPublic.val(), cswPublic);
             });
         } ());
 
