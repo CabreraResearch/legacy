@@ -111,7 +111,8 @@
             refresh: 'refresh',
             popup: 'popup',
             request: 'request',
-            loadView: 'loadView'
+            loadView: 'loadView',
+            editprop: 'editprop'
         });
 
     Csw.enums.inputTypes = Csw.enums.inputTypes ||

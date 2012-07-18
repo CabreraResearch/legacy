@@ -30,10 +30,14 @@ namespace ChemSW.Nbt.PropTypes
         {
             _FieldTypeRule  = (CswNbtFieldTypeRuleButton) CswNbtMetaDataNodeTypeProp.getFieldTypeRule();
             _StateSubField = _FieldTypeRule.StateSubField;
+            _MenuOptionsSubField = _FieldTypeRule.MenuOptionsSubField;
+        
         }
 
         private CswNbtFieldTypeRuleButton _FieldTypeRule;
         private CswNbtSubField _StateSubField;
+        private CswNbtSubField _MenuOptionsSubField;
+        
 
         public string Text
         {
@@ -56,41 +60,15 @@ namespace ChemSW.Nbt.PropTypes
             }
         }
 
-        private string _MenuOptions = string.Empty;
         /// <summary>
-        /// Returns the ListOptions of the button or the in-memory MenuOptions. set{} only affects the in-memory object.
+        /// Returns the MenuOptions of the button.
         /// </summary>
         public string MenuOptions
         {
-            get
-            {
-                if( string.IsNullOrEmpty( _MenuOptions ) )
-                {
-                    _MenuOptions = _CswNbtMetaDataNodeTypeProp.ListOptions;
-                }
-                return _MenuOptions;
-            }
-            set { _MenuOptions = value; }
+            get { return _CswNbtNodePropData.GetPropRowValue( _MenuOptionsSubField.Column ); }
+            set { _CswNbtNodePropData.SetPropRowValue( _MenuOptionsSubField.Column, value ); }
         }
-
-        private string _SelectedMenuOption = string.Empty;
         
-        /// <summary>
-        /// Returns the StaticText of the button or the in-memory SelectedMenuOption. set{} only affects the in-memory object.
-        /// </summary>
-        public string SelectedMenuOption
-        {
-            get
-            {
-                if( string.IsNullOrEmpty(_SelectedMenuOption) )
-                {
-                    _SelectedMenuOption = Text;
-                }
-                return _SelectedMenuOption;
-            }
-            set { _SelectedMenuOption = value; }
-        }
-
         public string State
         {
             get { return _CswNbtNodePropData.GetPropRowValue( _StateSubField.Column ); }
@@ -123,15 +101,15 @@ namespace ChemSW.Nbt.PropTypes
         {
             //ParentObject.Add( new JProperty( "text", Text ) );
             //ParentObject.Add( new JProperty( "mode", Mode.ToString().ToLower() ) );
-            AsJSON( NodeTypeProp, ParentObject );
-            ParentObject["state"] = State;
+            AsJSON( NodeTypeProp, ParentObject, MenuOptions, State );
         }
 
-        public static void AsJSON( CswNbtMetaDataNodeTypeProp NodeTypeProp, JObject ParentObject )
+        public static void AsJSON( CswNbtMetaDataNodeTypeProp NodeTypeProp, JObject ParentObject, string MenuOptions, string SelectedText )
         {
             ParentObject["text"] = NodeTypeProp.StaticText;
             ParentObject["mode"] = NodeTypeProp.Extended.ToLower();
-            ParentObject["menuoptions"] = NodeTypeProp.ListOptions;
+            ParentObject["menuoptions"] = MenuOptions;
+            ParentObject["selectedText"] = SelectedText;
         }
 
         public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )

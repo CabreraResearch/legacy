@@ -489,7 +489,9 @@
                     }
                 }
                 Csw.subscribe(Csw.enums.events.objectClassButtonClick, onObjectClassButtonClick);
-
+                function close() {
+                    div.$.dialog('close');
+                }
                 Csw.layouts.tabsAndProps(tabCell, {
                     nodeids: o.nodeids,
                     nodekeys: o.nodekeys,
@@ -510,10 +512,10 @@
                     onSave: function (nodeids, nodekeys, tabcount) {
                         Csw.clientChanges.unsetChanged();
                         if (tabcount === 2 || o.Multi) { /* Ignore history tab */
-                            div.$.dialog('close');
+                            close();
                         }
                         //setupTabs(date);//case 26107
-                        Csw.tryExec(o.onEditNode, nodeids, nodekeys);
+                        Csw.tryExec(o.onEditNode, nodeids, nodekeys, close);
                     },
                     onBeforeTabSelect: function () {
                         return Csw.clientChanges.manuallyCheckChanges();
