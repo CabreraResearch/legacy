@@ -29,7 +29,6 @@
 
 .CswFieldTypeNFPA_red
 {
-	font-size: 2em;
 	background-color: #ff0000;
 	border-top: 2px solid #000000;
 	border-right: 1px solid #000000;
@@ -38,7 +37,6 @@
 }
 .CswFieldTypeNFPA_yellow
 {
-	font-size: 2em;
 	background-color: &cswbgcolorhilite;
 	border-top: 2px solid #000000;
 	border-right: 2px solid #000000;
@@ -47,7 +45,6 @@
 }
 .CswFieldTypeNFPA_blue
 {
-	font-size: 2em;
 	background-color: #0000ff;
 	border-top: 1px solid #000000;
 	border-right: 1px solid #000000;
@@ -56,7 +53,6 @@
 }
 .CswFieldTypeNFPA_white
 {
-	font-size: 1em;
 	background-color: #ffffff;
 	border-top: 1px solid #000000;
 	border-right: 2px solid #000000;
@@ -66,8 +62,9 @@
 
 .CswFieldTypeNFPA_text
 {
+	font-size: 2em;
 	color: &cswtextcolor;
-	padding: 3px;
+	padding: 10px;
 	font-weight: bold;
 	
      -moz-transform: rotate(315deg);  /* FF3.5+ */
@@ -77,3 +74,8 @@
           transform: rotate(315deg);  
 }
 
+.CswFieldTypeNFPA_whitetext
+{
+    font-size: 1.2em;
+    padding-left: 0px;
+}

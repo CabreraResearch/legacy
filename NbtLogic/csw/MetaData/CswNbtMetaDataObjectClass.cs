@@ -216,6 +216,20 @@ namespace ChemSW.Nbt.MetaData
             return Collection;
         }
 
+        public bool CanAdd
+        {
+            get
+            {
+                return ( ( ( ObjectClass != CswNbtMetaDataObjectClass.NbtObjectClass.RoleClass &&
+                             ObjectClass != CswNbtMetaDataObjectClass.NbtObjectClass.UserClass ) ||
+                           _CswNbtMetaDataResources.CswNbtResources.CurrentNbtUser.IsAdministrator() ) &&
+                       ObjectClass != CswNbtMetaDataObjectClass.NbtObjectClass.RequestItemClass &&
+                       ObjectClass != CswNbtMetaDataObjectClass.NbtObjectClass.RequestClass &&
+                       ObjectClass != CswNbtMetaDataObjectClass.NbtObjectClass.ContainerClass &&
+                       ObjectClass != CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass );
+            }
+        } // CanAdd
+
         #region IEquatable
 
         public static bool operator ==( CswNbtMetaDataObjectClass oc1, CswNbtMetaDataObjectClass oc2 )

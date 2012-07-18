@@ -42,8 +42,7 @@
                 var multiplier = -1 * cswPrivate.size;
 
                 return {
-                    'background-position-x': (state * multiplier) + 'px',
-                    'background-position-y': (cswPrivate.iconType * multiplier) + 'px',
+                    'background-position': (state * multiplier) + 'px ' + (cswPrivate.iconType * multiplier) + 'px',
                     'background-repeat': 'no-repeat'
                 };
             }; // offsetCss()

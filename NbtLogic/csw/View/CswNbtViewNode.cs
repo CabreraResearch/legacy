@@ -248,17 +248,6 @@ namespace ChemSW.Nbt
         //    return ret;
         //}
 
-        private bool _canAddThisObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass ObjectClass )
-        {
-            return ( ( ( ObjectClass != CswNbtMetaDataObjectClass.NbtObjectClass.RoleClass &&
-                     ObjectClass != CswNbtMetaDataObjectClass.NbtObjectClass.UserClass ) ||
-                    _CswNbtResources.CurrentNbtUser.IsAdministrator() ) &&
-                    ObjectClass != CswNbtMetaDataObjectClass.NbtObjectClass.RequestItemClass &&
-                    ObjectClass != CswNbtMetaDataObjectClass.NbtObjectClass.RequestClass &&
-                    ObjectClass != CswNbtMetaDataObjectClass.NbtObjectClass.ContainerClass &&
-                    ObjectClass != CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass );
-        }
-
         public Collection<CswNbtViewAddNodeTypeEntry> AllowedChildNodeTypes( bool LimitToFirstGeneration )
         {
             Collection<CswNbtViewAddNodeTypeEntry> ret = new Collection<CswNbtViewAddNodeTypeEntry>();
@@ -315,7 +304,7 @@ namespace ChemSW.Nbt
                         //if( !ret.Contains( NewEntry ) )
                         //{
                         CswNbtMetaDataObjectClass ObjectClass = FirstVersionNodeType.getObjectClass();
-                        if( _canAddThisObjectClass( ObjectClass.ObjectClass ) &&
+                        if( ObjectClass.CanAdd &&
                             _CswNbtResources.Permit.can( Security.CswNbtPermit.NodeTypePermission.Create, FirstVersionNodeType ) )
                         {
                             // Only use the first view relationship found per nodetype
