@@ -40,7 +40,7 @@ namespace ChemSW.Nbt.Schema
         {
             CswNbtMetaDataObjectClass InvGrpOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.InventoryGroupClass );
             CswNbtMetaDataNodeType InventoryGroupNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Inventory Group" );
-            if( InventoryGroupNT.ObjectClassId == InvGrpOC.ObjectClassId && InventoryGroupNT != null )
+            if( InventoryGroupNT != null && InventoryGroupNT.ObjectClassId == InvGrpOC.ObjectClassId )
             {
                 InventoryGroupNode = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( InventoryGroupNT.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode );
                 InventoryGroupNode.Name.Text = "CISPro";
