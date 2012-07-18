@@ -1,5 +1,4 @@
-﻿using System;
-using ChemSW.Core;
+﻿using ChemSW.Core;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
@@ -39,8 +38,9 @@ namespace ChemSW.Nbt.Schema
 
         private void _createInventoryGroupNode()
         {
+            CswNbtMetaDataObjectClass InvGrpOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.InventoryGroupClass );
             CswNbtMetaDataNodeType InventoryGroupNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Inventory Group" );
-            if( InventoryGroupNT != null && InventoryGroupNT.NodeTypeId != Int32.MinValue )
+            if( InventoryGroupNT.ObjectClassId == InvGrpOC.ObjectClassId && InventoryGroupNT != null )
             {
                 InventoryGroupNode = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( InventoryGroupNT.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode );
                 InventoryGroupNode.Name.Text = "CISPro";
