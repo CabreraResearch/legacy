@@ -95,7 +95,15 @@ namespace ChemSW.Nbt.PropTypes
         public CswNbtMetaDataFieldType getFieldType() { return ( _CswNbtNodeProp.getFieldType() ); }
         public CswNbtMetaDataNodeTypeProp NodeTypeProp { get { return ( _CswNbtNodeProp.NodeTypeProp ); } }
 
+        /// <summary>
+        /// Get the Current state of the Property's value using the fieldtype rule's default subfield
+        /// </summary>
+        public string GetPropRowValue() { return GetPropRowValue( NodeTypeProp.getFieldTypeRule().SubFields.Default.Column ); }
+        /// <summary>
+        /// Get the Current state of the Property's value using a specific subfield
+        /// </summary>
         public string GetPropRowValue( CswNbtSubField.PropColumn Column ) { return _CswNbtNodePropData.GetPropRowValue( Column ); }
+        
         /// <summary>
         /// Get the Prior state of the Property's value using the fieldtype rule's default subfield
         /// </summary>

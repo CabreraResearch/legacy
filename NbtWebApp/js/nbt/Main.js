@@ -1217,6 +1217,10 @@ window.initMain = window.initMain || function (undefined) {
                 break;
 
             case 'DispenseContainer':
+                var requestItemId = '';
+                if(Csw.contains(o, 'requestitem')) {
+                    requestItemId = o.requestitem.requestitemid;
+                }
                 designOpt = {
                     ID: 'cswDispenseContainerWizard',
                     sourceContainerNodeId: o.sourceContainerNodeId,
@@ -1235,7 +1239,8 @@ window.initMain = window.initMain || function (undefined) {
                             viewmode: 'tree',
                             viewid: viewid
                         });
-                    }
+                    },
+                    requestItemId: requestItemId
                 };
                 Csw.nbt.dispenseContainerWizard(centerTopDiv, designOpt);
 

@@ -34,6 +34,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string AssignedTo = "Assigned To";
             public const string Fulfill = "Fulfill";
             public const string InventoryGroup = "Inventory Group";
+            public const string TotalDispensed = "Total Dispensed";
         }
 
         public sealed class Types
@@ -270,6 +271,8 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void afterPopulateProps()
         {
+            Quantity.SetOnPropChange( OnQuantityPropChange );
+            TotalDispensed.SetOnPropChange( OnTotalDispensedPropChange );
             Request.SetOnPropChange( OnRequestPropChange );
             RequestBy.SetOnPropChange( OnRequestByPropChange );
             Type.SetOnPropChange( OnTypePropChange );
@@ -400,7 +403,7 @@ namespace ChemSW.Nbt.ObjClasses
 
                         Status.Value = _getNextStatus( ButtonData.SelectedText );
                         postChanges( true );
-                        ButtonData.Data["requestitem"] = new JObject();
+                        ButtonData.Data["requestitem"] = ButtonData.Data["requestitem"] ?? new JObject();
                         ButtonData.Data["requestitem"]["requestitemid"] = NodeId.ToString();
                         ButtonData.Data["requestitem"]["materialid"] = ( Material.RelatedNodeId ?? new CswPrimaryKey() ).ToString();
                         ButtonData.Data["requestitem"]["containerid"] = ( Container.RelatedNodeId ?? new CswPrimaryKey() ).ToString();
@@ -481,6 +484,10 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get { return _CswNbtNode.Properties[PropertyName.Quantity]; }
         }
+        private void OnQuantityPropChange()
+        {
+            TotalDispensed.UnitId = Quantity.UnitId;
+        }
 
         public CswNbtNodePropRelationship Size
         {
@@ -507,6 +514,9 @@ namespace ChemSW.Nbt.ObjClasses
                 {
                     Quantity.View = UnitView;
                 }
+
+                TotalDispensed.View = UnitView;
+                TotalDispensed.Quantity = 0;
             }
         }
         public CswNbtNodePropRelationship Container
@@ -541,6 +551,8 @@ namespace ChemSW.Nbt.ObjClasses
                 SaveToDb: true );
             Fulfill.setHidden( value: ( Status.Value == Statuses.Pending || Status.Value == Statuses.Completed || Status.Value == Statuses.Cancelled ),
                 SaveToDb: true );
+            TotalDispensed.setHidden( value: ( Status.Value == Statuses.Pending || ( Type.Value != Types.Dispense && Type.Value != Types.Request ) ), 
+                SaveToDb: true );
 
             switch( Status.Value )
             {
@@ -550,10 +562,14 @@ namespace ChemSW.Nbt.ObjClasses
                 case Statuses.Received:
                     Fulfill.State = FulfillMenu.Dispense;
                     break;
-                case Statuses.Disposed: 
+                case Statuses.Dispensed:
+                    if(TotalDispensed.Quantity >= Quantity.Quantity )
+                    {
+                        Fulfill.State = FulfillMenu.Complete;
+                    }
                     break;
                 case Statuses.Moved: //This fallthrough is intentional
-                case Statuses.Dispensed:
+                case Statuses.Disposed:
                     Fulfill.State = FulfillMenu.Complete;
                     break;
                 case Statuses.Ordered:
@@ -598,6 +614,15 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropButton Fulfill { get { return _CswNbtNode.Properties[PropertyName.Fulfill]; } }
 
         public CswNbtNodePropPropertyReference InventoryGroup { get { return _CswNbtNode.Properties[PropertyName.InventoryGroup]; } }
+
+        public CswNbtNodePropQuantity TotalDispensed { get { return _CswNbtNode.Properties[PropertyName.TotalDispensed]; } }
+        private void OnTotalDispensedPropChange()
+        {
+            if(TotalDispensed.Quantity >= Quantity.Quantity)
+            {
+                Fulfill.State = FulfillMenu.Complete;
+            }
+        }
 
         #endregion
     }//CswNbtObjClassRequestItem

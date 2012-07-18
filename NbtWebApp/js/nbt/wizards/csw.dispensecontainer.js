@@ -41,7 +41,8 @@
                 quantity: 'Unknown',
                 unitId: 'Unknown',
                 containerNodeTypeId: 'Unknown',
-                quantityControl: null
+                quantityControl: null,
+                requestItemId: ''
             };
             if (options) $.extend(cswPrivate, options);
 
@@ -305,11 +306,12 @@
                     Quantity: cswPrivate.quantity,
                     UnitId: cswPrivate.unitId,
                     ContainerNodeTypeId: cswPrivate.containerNodeTypeId,
-                    DesignGrid: designGrid
+                    DesignGrid: designGrid,
+                    RequestItemId: Csw.string(cswPrivate.requestItemId)
                 };
 
                 Csw.ajax.post({
-                    url: '/NbtWebApp/wsNBT.asmx/finalizeDispenseContainer',
+                    urlMethod: 'finalizeDispenseContainer',
                     data: jsonData,
                     success: function (data) {
                         var viewId = data.viewId;
