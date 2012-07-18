@@ -287,47 +287,30 @@ namespace ChemSW.Nbt.ObjClasses
             switch( ButtonText )
             {
                 case FulfillMenu.Cancel:
-                    if( Statuses.Options.IndexOf( Status.Value ) < Statuses.Options.IndexOf( Statuses.Cancelled ) )
-                    {
-                        Ret = Statuses.Cancelled;
-                    }
+                    Ret = Statuses.Cancelled;
                     break;
                 case FulfillMenu.Complete:
-                    if( Statuses.Options.IndexOf( Status.Value ) < Statuses.Options.IndexOf( Statuses.Completed ) )
-                    {
                         Ret = Statuses.Completed;
-                    }
                     break;
                 case FulfillMenu.Move:
-                    if( Statuses.Options.IndexOf( Status.Value ) < Statuses.Options.IndexOf( Statuses.Moved ) )
-                    {
                         Ret = Statuses.Moved;
-                    }
                     break;
                 case FulfillMenu.Dispose:
-                    if( Statuses.Options.IndexOf( Status.Value ) < Statuses.Options.IndexOf( Statuses.Disposed ) )
-                    {
                         Ret = Statuses.Disposed;
-                    }
                     break;
                 case FulfillMenu.Dispense:
-                    if( Statuses.Options.IndexOf( Status.Value ) > Statuses.Options.IndexOf( Statuses.Dispensed ) )
-                    {
-                        Ret = Statuses.Dispensed;
-                    }
+                    Ret = Statuses.Dispensed;
                     break;
                 case FulfillMenu.Order:
-                    if( Statuses.Options.IndexOf( Status.Value ) > Statuses.Options.IndexOf( Statuses.Ordered ) )
-                    {
-                        Ret = Statuses.Ordered;
-                    }
+                    Ret = Statuses.Ordered;
                     break;
                 case FulfillMenu.Receive:
-                    if( Statuses.Options.IndexOf( Status.Value ) > Statuses.Options.IndexOf( Statuses.Received ) )
-                    {
-                        Ret = Statuses.Received;
-                    }
+                    Ret = Statuses.Received;
                     break;
+            }
+            if( Statuses.Options.IndexOf( Status.Value ) >= Statuses.Options.IndexOf( Ret ) )
+            {
+                Ret = Status.Value;
             }
             return Ret;
         }
