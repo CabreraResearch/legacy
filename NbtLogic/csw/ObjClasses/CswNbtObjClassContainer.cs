@@ -264,9 +264,14 @@ namespace ChemSW.Nbt.ObjClasses
                     CswNbtObjClassRequestItem NodeAsRequestItem = RequestAct.makeRequestItem( new CswNbtActSubmitRequest.RequestItem(), NodeId, OCP );
                     NodeAsRequestItem.Material.RelatedNodeId = Material.RelatedNodeId;
                     NodeAsRequestItem.Material.setReadOnly( value: true, SaveToDb: false );
+                    
+                    NodeAsRequestItem.Location.SelectedNodeId = Location.SelectedNodeId;
+                    NodeAsRequestItem.Location.RefreshNodeName();
+
                     switch( OCP.PropName )
                     {
                         case RequestDispensePropertyName:
+                            NodeAsRequestItem.Quantity.UnitId = Quantity.UnitId;
                             break;
                         case RequestDisposePropertyName:
                             NodeAsRequestItem.Material.setHidden( value: true, SaveToDb: false );
@@ -277,9 +282,9 @@ namespace ChemSW.Nbt.ObjClasses
                             NodeAsRequestItem.Material.setHidden( value: true, SaveToDb: false );
                             break;
                     }
-
+                    
+                    ButtonData.Data["titleText"] = OCP.PropName + " [" + Barcode.Barcode + "]";
                     ButtonData.Data["requestaction"] = OCP.PropName;
-                    ButtonData.Data["titleText"] = OCP.PropName + " Request for " + Material.CachedNodeName;
                     ButtonData.Data["requestItemProps"] = RequestAct.getRequestItemAddProps( NodeAsRequestItem );
                     ButtonData.Data["requestItemNodeTypeId"] = RequestAct.RequestItemNt.NodeTypeId;
 
