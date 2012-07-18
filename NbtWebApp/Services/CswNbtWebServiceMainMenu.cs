@@ -81,7 +81,7 @@ namespace ChemSW.Nbt.WebServices
 
         }
 
-        public JObject getMenu( CswNbtView View, string SafeNodeKey, string PropIdAttr )
+        public JObject getMenu( CswNbtView View, string SafeNodeKey, string PropIdAttr, bool ReadOnly )
         {
 
             CswTimer MainMenuTimer = new CswTimer();
@@ -110,7 +110,7 @@ namespace ChemSW.Nbt.WebServices
             if( View != null )
             {
                 // ADD
-                if( _MenuItems.Contains( "Add" ) )
+                if( _MenuItems.Contains( "Add" ) && false == ReadOnly )
                 {
                     JObject AddObj = new JObject();
 
@@ -150,7 +150,8 @@ namespace ChemSW.Nbt.WebServices
                 }
 
                 // COPY
-                if( _MenuItems.Contains( "Copy" ) &&
+                if( _MenuItems.Contains( "Copy" ) && 
+                    false == ReadOnly &&
                     null != Node && Node.NodeSpecies == NodeSpecies.Plain &&
                     View.ViewMode != NbtViewRenderingMode.Grid &&
                     _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Create, Node.getNodeType() ) )
@@ -168,6 +169,7 @@ namespace ChemSW.Nbt.WebServices
 
                 // DELETE
                 if( _MenuItems.Contains( "Delete" ) &&
+                    false == ReadOnly &&
                     false == string.IsNullOrEmpty( SafeNodeKey ) &&
                     null != Node &&
                     View.ViewMode != NbtViewRenderingMode.Grid &&
@@ -284,6 +286,7 @@ namespace ChemSW.Nbt.WebServices
             }
 
             if( _MenuItems.Contains( "Multi-Edit" ) &&
+                false == ReadOnly &&
                 null != View &&
                 _CswNbtResources.Permit.can( CswNbtActionName.Multi_Edit ) &&
                 ( View.ViewMode != NbtViewRenderingMode.Grid ||

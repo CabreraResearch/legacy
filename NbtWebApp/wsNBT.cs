@@ -865,7 +865,7 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string getMainMenu( string ViewId, string SafeNodeKey, string PropIdAttr, string LimitMenuTo )
+        public string getMainMenu( string ViewId, string SafeNodeKey, string PropIdAttr, string LimitMenuTo, string ReadOnly )
         {
             JObject ReturnVal = new JObject();
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
@@ -879,7 +879,7 @@ namespace ChemSW.Nbt.WebServices
 
                     var ws = new CswNbtWebServiceMainMenu( _CswNbtResources, LimitMenuTo );
                     CswNbtView View = _getView( ViewId );
-                    ReturnVal = ws.getMenu( View, SafeNodeKey, PropIdAttr );
+                    ReturnVal = ws.getMenu( View, SafeNodeKey, PropIdAttr, CswConvert.ToBoolean( ReadOnly ) );
                 }
 
                 _deInitResources();
