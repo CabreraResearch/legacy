@@ -15,6 +15,25 @@ namespace ChemSW.Nbt.PropTypes
         private DataRow _PropRow = null;
         private CswNbtMetaDataNodeTypeProp _PropType = null;
 
+
+        private Int32 _NodeTypePropId
+        {
+            get
+            {
+                Int32 ReturnVal = Int32.MinValue;
+
+                if( null != _PropType )
+                {
+                    ReturnVal = _PropType.PropId;
+                }
+
+                return ( ReturnVal );
+            }
+        }
+
+
+
+
         /// <summary>
         /// Creates a row in the database for this property
         /// </summary>
@@ -28,7 +47,7 @@ namespace ChemSW.Nbt.PropTypes
                     _PropRow["nodeid"] = CswConvert.ToDbVal( _NodeId.PrimaryKey );
                     _PropRow["nodeidtablename"] = _NodeId.TableName;
                 }
-                _PropRow["nodetypepropid"] = CswConvert.ToDbVal( _PropType.PropId );
+                _PropRow["nodetypepropid"] = CswConvert.ToDbVal( _NodeTypePropId );
                 _PropRow["objectclasspropid"] = CswConvert.ToDbVal( _ObjectClassPropId );
                 _PropRow["pendingupdate"] = CswConvert.ToDbVal( false );
                 _PropRow["readonly"] = CswConvert.ToDbVal( false );
@@ -71,7 +90,7 @@ namespace ChemSW.Nbt.PropTypes
                     _PropRow["nodeid"] = CswConvert.ToDbVal( _NodeId.PrimaryKey );
                     _PropRow["nodeidtablename"] = _NodeId.TableName;
                 }
-                _PropRow["nodetypepropid"] = CswConvert.ToDbVal( _PropType.PropId );
+                _PropRow["nodetypepropid"] = CswConvert.ToDbVal( _NodeTypePropId );
                 _PropRow["objectclasspropid"] = CswConvert.ToDbVal( _ObjectClassPropId );
 
                 if( false == ( CswConvert.ToDbVal( _PropRow[column.ToString()] ).Equals( dbval ) ) )
@@ -282,7 +301,7 @@ namespace ChemSW.Nbt.PropTypes
             get
             {
                 //return _getRowIntVal("nodetypepropid");
-                return _PropType.PropId;
+                return _NodeTypePropId;
             }
         } //NodeTypePropId
 
@@ -290,7 +309,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                return _CswNbtResources.MetaData.getNodeTypeProp( _PropType.PropId );
+                return _CswNbtResources.MetaData.getNodeTypeProp( _NodeTypePropId );
             }
         } //NodeTypeProp
 
