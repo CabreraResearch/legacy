@@ -284,6 +284,12 @@ namespace ChemSW.Nbt.PropTypes
                     GestaltSearchValue = GestaltSearchValue.Substring( 0, 512 );
                 }
                 _CswNbtNodePropData.SetPropRowValue( CswNbtSubField.PropColumn.GestaltSearch, GestaltSearchValue );
+
+                // We fire this here so that it only fires once per row, not once per subfield.  See case 27241.
+                if( null != _CswNbtNodePropData.OnPropChange )
+                {
+                    _CswNbtNodePropData.OnPropChange();
+                }
             }
 
         }
