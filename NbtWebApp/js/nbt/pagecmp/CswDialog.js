@@ -972,22 +972,8 @@
             if (options) $.extend(o, options);
 
             var div = Csw.literals.div({ ID: 'searchdialog_div' });
-            var table = div.table({ ID: 'searchdialog_table', cellpadding: '2px' });
-
-            var cell11 = table.cell(1, 1);
-            var cell21 = table.cell(2, 1);
-            var cell22 = table.cell(2, 2);
-
-            cell11.propDom('colspan', 2);
-
-            var searchdiv = cell11.div({ ID: 'searchdialog_searchdiv' });
-            var resultsdiv = cell22.div({ ID: 'searchdialog_resultsdiv' });
-            var filtersdiv = cell21.div({ ID: 'searchdialog_filtersdiv' });
-
-            var universalsearch = Csw.composites.universalSearch({}, {
-                $searchbox_parent: searchdiv.$,
-                $searchresults_parent: resultsdiv.$,
-                $searchfilters_parent: filtersdiv.$,
+            
+            Csw.composites.universalSearch(div, {
                 nodetypeid: o.nodetypeid,
                 objectclassid: o.objectclassid,
                 onBeforeSearch: function () { },
@@ -999,6 +985,7 @@
                 allowEdit: false,
                 allowDelete: false,
                 extraAction: 'Select',
+                extraActionIcon: Csw.enums.iconType.check,
                 onExtraAction: function (nodeObj) {
                     div.$.dialog('close');
                     Csw.tryExec(o.onSelectNode, nodeObj);
