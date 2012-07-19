@@ -177,7 +177,7 @@ namespace NbtWebAppServices.Response
                     {
                         CswNbtNodePropQuestion PropAsQuestion = Prop.AsQuestion;
                         ResponseInspection.Counts.Total += 1;
-                        if( PropAsQuestion.IsActionRequired )
+                        if( false == PropAsQuestion.IsCompliant )
                         {
                             ResponseInspection.Counts.Ooc += 1;
                         }
