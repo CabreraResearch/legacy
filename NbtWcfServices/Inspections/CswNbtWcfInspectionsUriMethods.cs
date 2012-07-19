@@ -26,21 +26,21 @@ namespace NbtWebAppServices.WebServices
         {
             CswNbtWcfInspectionsGet WcfInspectionsGet = new CswNbtWcfInspectionsGet( _Context, CswNbtActSystemViews.SystemViewName.SIInspectionsbyDate );
             DateTime Start = CswConvert.ToDateTime( StartingDate );
-            DateTime Now = DateTime.Now;
+            DateTime Today = DateTime.Today; //Today's time is 00:00:00 vs Now's time which is.. now
             if( DateTime.MinValue == Start )
             {
-                Start = Now;
+                Start = Today;
             }
             DateTime End = CswConvert.ToDateTime( EndingDate );
             if( DateTime.MinValue == End )
             {
-                if( Start >= Now )
+                if( Start >= Today )
                 {
                     End = Start.AddDays( 2 );
                 }
                 else
                 {
-                    End = Now.AddDays( 2 );
+                    End = Today.AddDays( 2 );
                 }
             }
             if( Start > End )
@@ -48,6 +48,9 @@ namespace NbtWebAppServices.WebServices
                 End = Start;
                 End = End.AddDays( 2 );
             }
+            //In case we were provided valid dates, grab just the Day @midnight
+            Start = Start.Date;
+            End = End.Date;
             WcfInspectionsGet.addSystemViewPropFilter( CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass, CswNbtObjClassInspectionDesign.DatePropertyName, Start.ToShortDateString(), CswNbtPropFilterSql.PropertyFilterMode.GreaterThanOrEquals );
             WcfInspectionsGet.addSystemViewPropFilter( CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass, CswNbtObjClassInspectionDesign.DatePropertyName, End.ToShortDateString(), CswNbtPropFilterSql.PropertyFilterMode.LessThanOrEquals );
 
