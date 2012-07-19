@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
 using ChemSW.Core;
@@ -28,6 +29,57 @@ namespace ChemSW.Nbt.WebServices
         public CswPrimaryKey CopyNode( CswPrimaryKey NodePk )
         {
             return _NodeSd.CopyNode( NodePk );
+        }
+
+        public JObject DeleteNodes( string[] NodePks, string[] NodeKeys )
+        {
+            JObject ret = new JObject();
+            List<CswPrimaryKey> NodePrimaryKeys = new List<CswPrimaryKey>();
+
+            if( NodeKeys.Length > 0 )
+            {
+                foreach( string NodeKey in NodeKeys )
+                {
+                    CswNbtNodeKey NbtNodeKey = new CswNbtNodeKey( _CswNbtResources, NodeKey );
+                    if( null != NbtNodeKey )
+                    {
+                        NodePrimaryKeys.Add( NbtNodeKey.NodeId );
+                    }
+                }
+            }
+            if( NodePks.Length > 0 )
+            {
+                foreach( string NodePk in NodePks )
+                {
+                    CswPrimaryKey PrimaryKey = new CswPrimaryKey();
+                    PrimaryKey.FromString( NodePk );
+                    if( null != PrimaryKey && !NodePrimaryKeys.Contains( PrimaryKey ) )
+                    {
+                        NodePrimaryKeys.Add( PrimaryKey );
+                    }
+                }
+            }
+            if( NodePrimaryKeys.Count > 0 )
+            {
+                //TODO - case 22742 - uncomment when MultiDelete BatchOp has been created
+                //if( NodePrimaryKeys.Count < CswNbtBatchManager.getBatchThreshold( _CswNbtResources ) )
+                //{
+                bool success = false;
+                foreach( CswPrimaryKey Npk in NodePrimaryKeys )
+                {
+                    success = success && DeleteNode( Npk );
+                }
+                ret["Succeeded"] = success.ToString();
+                //}
+                //else
+                //{                
+                //CswNbtBatchOpMultiDelete op = new CswNbtBatchOpMultiDelete( _CswNbtResources );
+                //CswNbtObjClassBatchOp BatchNode = op.makeBatchOp( SourceNode, RealCopyNodeIds, NodeTypePropIds );
+                //ret["batch"] = BatchNode.NodeId.ToString();
+                //}
+            }
+
+            return ret;
         }
 
         public bool DeleteNode( CswPrimaryKey NodePk, bool DeleteAllRequiredRelatedNodes = false )

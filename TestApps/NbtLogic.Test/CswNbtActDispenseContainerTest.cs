@@ -42,7 +42,7 @@ namespace ChemSw.Nbt.Test
             CswNbtActDispenseContainer wiz = new CswNbtActDispenseContainer( TestData.CswNbtResources, ContainerNode.NodeId.ToString() );
             try
             {
-                JObject obj = wiz.dispenseSourceContainer( InvalidDispenseType, "5", LiterNode.NodeId.ToString() );
+                JObject obj = wiz.dispenseSourceContainer( InvalidDispenseType, "5", LiterNode.NodeId.ToString(), String.Empty );
                 Assert.Fail( "Exception should have been thrown." );
             }
             catch( Exception e )
@@ -60,7 +60,7 @@ namespace ChemSw.Nbt.Test
             CswNbtNode ContainerNode = TestData.createContainerNode( "Container", 0.5, LiterNode );
             CswNbtActDispenseContainer wiz = new CswNbtActDispenseContainer( TestData.CswNbtResources, ContainerNode.NodeId.ToString() );
             string DispenseType = "Add Material to Container";
-            JObject obj = wiz.dispenseSourceContainer( DispenseType, ".5", LiterNode.NodeId.ToString() );
+            JObject obj = wiz.dispenseSourceContainer( DispenseType, ".5", LiterNode.NodeId.ToString(), String.Empty );
             Assert.IsNotNull( obj );
             Assert.AreEqual( Expected, _getNewSourceContainerQuantity( ContainerNode.NodeId ) );
         }
@@ -74,7 +74,7 @@ namespace ChemSw.Nbt.Test
             CswNbtActDispenseContainer wiz = new CswNbtActDispenseContainer( TestData.CswNbtResources, ContainerNode.NodeId.ToString() );
             string DispenseType = "Add Material to Container";
             CswNbtNode MilliliterNode = TestData.createUnitOfMeasureNode( "Volume", "Milliliters", 1.0, 3, Tristate.True );
-            JObject obj = wiz.dispenseSourceContainer( DispenseType, "500", MilliliterNode.NodeId.ToString() );
+            JObject obj = wiz.dispenseSourceContainer( DispenseType, "500", MilliliterNode.NodeId.ToString(), String.Empty );
             Assert.IsNotNull( obj );
             Assert.AreEqual( Expected, _getNewSourceContainerQuantity( ContainerNode.NodeId ) );
         }
@@ -89,7 +89,7 @@ namespace ChemSw.Nbt.Test
             CswNbtActDispenseContainer wiz = new CswNbtActDispenseContainer( TestData.CswNbtResources, ContainerNode.NodeId.ToString() );
             string DispenseType = "Add Material to Container";
             CswNbtNode GramNode = TestData.createUnitOfMeasureNode( "Weight", "g", 1.0, 3, Tristate.True );
-            JObject obj = wiz.dispenseSourceContainer( DispenseType, "50", GramNode.NodeId.ToString() );
+            JObject obj = wiz.dispenseSourceContainer( DispenseType, "50", GramNode.NodeId.ToString(), String.Empty );
             Assert.IsNotNull( obj );
             Assert.AreEqual( Expected, _getNewSourceContainerQuantity( ContainerNode.NodeId ) );
         }
@@ -104,7 +104,7 @@ namespace ChemSw.Nbt.Test
             CswNbtActDispenseContainer wiz = new CswNbtActDispenseContainer( TestData.CswNbtResources, ContainerNode.NodeId.ToString() );
             string DispenseType = "Add Material to Container";
             CswNbtNode LiterNode = TestData.createUnitOfMeasureNode( "Volume", "Liters", 1.0, 0, Tristate.True );
-            JObject obj = wiz.dispenseSourceContainer( DispenseType, "5", LiterNode.NodeId.ToString() );
+            JObject obj = wiz.dispenseSourceContainer( DispenseType, "5", LiterNode.NodeId.ToString(), String.Empty );
             Assert.IsNotNull( obj );
             Assert.AreEqual( Expected, _getNewSourceContainerQuantity( ContainerNode.NodeId ) );
         }
@@ -117,7 +117,7 @@ namespace ChemSw.Nbt.Test
             CswNbtNode ContainerNode = TestData.createContainerNode( "Container", 1.5, LiterNode );
             CswNbtActDispenseContainer wiz = new CswNbtActDispenseContainer( TestData.CswNbtResources, ContainerNode.NodeId.ToString() );
             string DispenseType = "Waste Material";
-            JObject obj = wiz.dispenseSourceContainer( DispenseType, ".5", LiterNode.NodeId.ToString() );
+            JObject obj = wiz.dispenseSourceContainer( DispenseType, ".5", LiterNode.NodeId.ToString(), String.Empty );
             Assert.IsNotNull( obj );
             Assert.AreEqual( Expected, _getNewSourceContainerQuantity( ContainerNode.NodeId ) );
         }
@@ -130,7 +130,7 @@ namespace ChemSw.Nbt.Test
             CswNbtNode ContainerNode = TestData.createContainerNode( "Container", 1.5, LiterNode );
             CswNbtActDispenseContainer wiz = new CswNbtActDispenseContainer( TestData.CswNbtResources, ContainerNode.NodeId.ToString() );
             string DispenseType = "Dispense for Use";
-            JObject obj = wiz.dispenseSourceContainer( DispenseType, ".5", LiterNode.NodeId.ToString() );
+            JObject obj = wiz.dispenseSourceContainer( DispenseType, ".5", LiterNode.NodeId.ToString(), String.Empty );
             Assert.IsNotNull( obj );
             Assert.AreEqual( Expected, _getNewSourceContainerQuantity( ContainerNode.NodeId ) );
             Assert.AreEqual( 0, _getNewContainerCount( ContainerNode.NodeId ) );
@@ -153,7 +153,7 @@ namespace ChemSw.Nbt.Test
             string DispenseRow1 = "{ \"containerNo\":\"0\", \"quantity\":\"0.5\", \"unitid\":\"" + LiterNode.NodeId.ToString() + "\" }";
             string DispenseGrid = "[" + DispenseRow1 + "]";
 
-            JObject obj = wiz.dispenseIntoChildContainers( ContainerNodeTypeId, DispenseGrid );
+            JObject obj = wiz.dispenseIntoChildContainers( ContainerNodeTypeId, DispenseGrid, String.Empty );
             Assert.IsNotNull( obj );
             Assert.AreEqual( Expected, _getNewSourceContainerQuantity( ContainerNode.NodeId ) );
         }
@@ -173,7 +173,7 @@ namespace ChemSw.Nbt.Test
             string DispenseRow2 = "{ \"containerNo\":\"0\", \"quantity\":\"500\", \"unitid\":\"" + MilliliterNode.NodeId.ToString() + "\" }";
             string DispenseGrid = "[" + DispenseRow1 + "," + DispenseRow2 + "]";
 
-            JObject obj = wiz.dispenseIntoChildContainers( ContainerNodeTypeId, DispenseGrid );
+            JObject obj = wiz.dispenseIntoChildContainers( ContainerNodeTypeId, DispenseGrid, String.Empty );
             Assert.IsNotNull( obj );
             Assert.AreEqual( Expected, _getNewSourceContainerQuantity( ContainerNode.NodeId ) );
         }
@@ -191,7 +191,7 @@ namespace ChemSw.Nbt.Test
             string DispenseRow1 = "{ \"containerNo\":\"1\", \"quantity\":\"0.5\", \"unitid\":\"" + LiterNode.NodeId.ToString() + "\" }";
             string DispenseGrid = "[" + DispenseRow1 + "]";
 
-            JObject obj = wiz.dispenseIntoChildContainers( ContainerNodeTypeId, DispenseGrid );
+            JObject obj = wiz.dispenseIntoChildContainers( ContainerNodeTypeId, DispenseGrid, String.Empty );
             Assert.IsNotNull( obj );
             Assert.AreEqual( Expected, _getNewSourceContainerQuantity( ContainerNode.NodeId ) );
             Assert.AreEqual( 1, _getNewContainerCount( ContainerNode.NodeId ) );
@@ -212,7 +212,7 @@ namespace ChemSw.Nbt.Test
             string DispenseRow2 = "{ \"containerNo\":\"1\", \"quantity\":\"500\", \"unitid\":\"" + MilliliterNode.NodeId.ToString() + "\" }";
             string DispenseGrid = "[" + DispenseRow1 + "," + DispenseRow2 + "]";
 
-            JObject obj = wiz.dispenseIntoChildContainers( ContainerNodeTypeId, DispenseGrid );
+            JObject obj = wiz.dispenseIntoChildContainers( ContainerNodeTypeId, DispenseGrid, String.Empty );
             Assert.IsNotNull( obj );
             List<CswNbtObjClassContainer> NewContainers = _getNewContainers( ContainerNode.NodeId );
             foreach( CswNbtObjClassContainer NewContainer in NewContainers )
@@ -239,7 +239,7 @@ namespace ChemSw.Nbt.Test
             string DispenseRow2 = "{ \"containerNo\":\"0\", \"quantity\":\"500\", \"unitid\":\"" + MilliliterNode.NodeId.ToString() + "\" }";
             string DispenseGrid = "[" + DispenseRow1 + "," + DispenseRow2 + "]";
 
-            JObject obj = wiz.dispenseIntoChildContainers( ContainerNodeTypeId, DispenseGrid );
+            JObject obj = wiz.dispenseIntoChildContainers( ContainerNodeTypeId, DispenseGrid, String.Empty );
             Assert.IsNotNull( obj );
             Assert.AreEqual( Expected, _getNewSourceContainerQuantity( ContainerNode.NodeId ) );
             Assert.AreEqual( 1, _getNewContainerCount( ContainerNode.NodeId ) );
@@ -258,7 +258,7 @@ namespace ChemSw.Nbt.Test
             string DispenseRow1 = "{ \"containerNo\":\"3\", \"quantity\":\"0.5\", \"unitid\":\"" + LiterNode.NodeId.ToString() + "\" }";
             string DispenseGrid = "[" + DispenseRow1 + "]";
 
-            JObject obj = wiz.dispenseIntoChildContainers( ContainerNodeTypeId, DispenseGrid );
+            JObject obj = wiz.dispenseIntoChildContainers( ContainerNodeTypeId, DispenseGrid, String.Empty );
             Assert.IsNotNull( obj );
             Assert.AreEqual( Expected, _getNewSourceContainerQuantity( ContainerNode.NodeId ) );
             Assert.AreEqual( 3, _getNewContainerCount( ContainerNode.NodeId ) );

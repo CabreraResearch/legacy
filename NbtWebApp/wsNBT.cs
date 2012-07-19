@@ -3360,62 +3360,25 @@ namespace ChemSW.Nbt.WebServices
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
         public string DeleteNodes( string[] NodePks, string[] NodeKeys )
         {
-            JObject ReturnVal = new JObject();
-            List<CswPrimaryKey> NodePrimaryKeys = new List<CswPrimaryKey>();
-            bool ret = true;
+            JObject ret = new JObject();
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
             try
             {
                 _initResources();
                 AuthenticationStatus = _attemptRefresh();
-
                 if( AuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
-                    if( NodeKeys.Length > 0 )
-                    {
-                        foreach( string NodeKey in NodeKeys )
-                        {
-                            CswNbtNodeKey NbtNodeKey = _getNodeKey( NodeKey );
-                            if( null != NbtNodeKey )
-                            {
-                                NodePrimaryKeys.Add( NbtNodeKey.NodeId );
-                            }
-                        }
-                    }
-                    if( NodePks.Length > 0 )
-                    {
-                        foreach( string NodePk in NodePks )
-                        {
-                            CswPrimaryKey PrimaryKey = _getNodeId( NodePk );
-                            if( null != PrimaryKey && !NodePrimaryKeys.Contains( PrimaryKey ) )
-                            {
-                                NodePrimaryKeys.Add( PrimaryKey );
-                            }
-                        }
-                    }
-                    if( NodePrimaryKeys.Count > 0 )
-                    {
-                        foreach( CswPrimaryKey Npk in NodePrimaryKeys )
-                        {
-                            CswNbtWebServiceNode ws = new CswNbtWebServiceNode( _CswNbtResources, _CswNbtStatisticsEvents );
-                            ret = ret && ws.DeleteNode( Npk );
-                        }
-                    }
-
-                    ReturnVal["Succeeded"] = ret;
+                    CswNbtWebServiceNode ws = new CswNbtWebServiceNode( _CswNbtResources, _CswNbtStatisticsEvents );
+                    ret = ws.DeleteNodes( NodePks, NodeKeys );
                 }
-
                 _deInitResources();
             }
             catch( Exception ex )
             {
-                ReturnVal = jError( ex );
+                ret = jError( ex );
             }
-
-            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
-
-            return ReturnVal.ToString();
-
+            _jAddAuthenticationStatus( ret, AuthenticationStatus );
+            return ret.ToString();
         }
 
         [WebMethod( EnableSession = false )]

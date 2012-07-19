@@ -133,6 +133,10 @@ namespace ChemSw.Nbt.Test
         private int _getNodeTypeId( string NodeTypeName )
         {
             CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeName );
+            if( NodeType == null )
+            {
+                throw new Exception( "Expected NodeType not found: " + NodeTypeName );
+            }
             return NodeType.NodeTypeId;
         }
 
