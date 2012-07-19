@@ -46,7 +46,7 @@
 
                             if (Csw.bool(data.success)) {
                                 if (data.action == Csw.enums.nbtButtonAction.refresh) { //cases 26201, 26107 
-                                    Csw.tryExec(o.onReload(
+                                    Csw.tryExec(o.onReload,
                                         (function(messagedivid) {
                                             return function() {
                                                 if (false === Csw.isNullOrEmpty(data.message)) {
@@ -55,7 +55,7 @@
                                                 }
                                             };
                                         })(messagediv.getId())
-                                    ));
+                                    );
                                 } else {
                                     Csw.publish(Csw.enums.events.objectClassButtonClick, actionData);
                                 }

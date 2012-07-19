@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
+using ChemSW.Nbt.csw.Conversion;
 using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.ObjClasses
@@ -122,6 +124,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void afterPopulateProps()
         {
+            RequestItem.SetOnPropChange( OnRequestItemPropChange );
             _CswNbtObjClassDefault.afterPopulateProps();
         }//afterPopulateProps()
 
@@ -132,9 +135,6 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override bool onButtonClick( NbtButtonData ButtonData )
         {
-            
-            
-            
             if( null != ButtonData && null != ButtonData.NodeTypeProp ) { /*Do Something*/ }
             return true;
         }
@@ -167,11 +167,25 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get { return _CswNbtNode.Properties[RemainingSourceContainerQuantityPropertyName]; }
         }
-        public CswNbtNodePropRelationship Request
+        public CswNbtNodePropRelationship RequestItem
         {
             get { return _CswNbtNode.Properties[RequestItemPropertyName]; }
         }
-
+        private void OnRequestItemPropChange()
+        {
+            if( null != RequestItem.RelatedNodeId && 
+                Int32.MinValue != RequestItem.RelatedNodeId.PrimaryKey )
+                //_CswNbtNode.Properties[RequestItemPropertyName].GetOriginalPropRowValue() != _CswNbtNode.Properties[RequestItemPropertyName].GetPropRowValue() )
+            {
+                CswNbtObjClassRequestItem NodeAsRequestItem = _CswNbtResources.Nodes[RequestItem.RelatedNodeId];
+                if( null != NodeAsRequestItem )
+                {
+                    CswNbtUnitConversion Conversion = new CswNbtUnitConversion( _CswNbtResources, QuantityDispensed.UnitId, NodeAsRequestItem.TotalDispensed.UnitId, NodeAsRequestItem.Material.RelatedNodeId );
+                    NodeAsRequestItem.TotalDispensed.Quantity += Conversion.convertUnit( QuantityDispensed.Quantity );
+                    NodeAsRequestItem.postChanges( true );
+                }
+            }
+        }
         #endregion
 
     }//CswNbtObjClassContainerDispenseTransaction

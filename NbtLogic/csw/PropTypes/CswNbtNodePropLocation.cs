@@ -107,6 +107,11 @@ namespace ChemSW.Nbt.PropTypes
             }
         }
 
+        public string CachedFullPath
+        {
+            get { return CachedPath + PathDelimiter + CachedNodeName; }
+        }
+
         public string CachedBarcode
         {
             get

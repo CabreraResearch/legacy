@@ -185,8 +185,7 @@ namespace ChemSW.Nbt.Schema
                     new CswNbtWcfMetaDataModel.ObjectClassProp
                     {
                         PropName = CswNbtObjClassRequestItem.PropertyName.ExternalOrderNumber,
-                        FieldType = CswNbtMetaDataFieldType.NbtFieldType.Text,
-                        SetValOnAdd = true
+                        FieldType = CswNbtMetaDataFieldType.NbtFieldType.Text
                     }
                  );
 
