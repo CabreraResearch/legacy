@@ -84,7 +84,7 @@ namespace NbtWebAppServices.WebServices
         {
             Barcode = Barcode ?? "null";
             CswNbtWcfInspectionsGet WcfInspectionsGet = new CswNbtWcfInspectionsGet( _Context, CswNbtActSystemViews.SystemViewName.SIInspectionsbyBarcode );
-            WcfInspectionsGet.addSystemViewPropFilter( CswNbtMetaDataObjectClass.NbtObjectClass.Unknown, CswNbtObjClassLocation.BarcodePropertyName, Barcode, CswNbtPropFilterSql.PropertyFilterMode.Begins, CswNbtMetaDataFieldType.NbtFieldType.Barcode );
+            WcfInspectionsGet.addSystemViewBarcodeFilter( Barcode, CswNbtPropFilterSql.PropertyFilterMode.Begins, CswNbtMetaDataFieldType.NbtFieldType.Barcode );
             return WcfInspectionsGet.finalize();
         } // get()
 

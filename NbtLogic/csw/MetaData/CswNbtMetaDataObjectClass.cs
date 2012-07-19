@@ -162,7 +162,19 @@ namespace ChemSW.Nbt.MetaData
         //    //if ( OnAddProp != null )
         //    //    OnAddProp( Prop );
         //}
+        private CswNbtMetaDataObjectClassProp _BarcodeProp = null;
+        public CswNbtMetaDataObjectClassProp getBarcodeProp()
+        {
+            if( null == _BarcodeProp )
+            {
+                _BarcodeProp = ( from _Prop
+                                     in _CswNbtMetaDataResources.ObjectClassPropsCollection.getObjectClassPropsByObjectClass( ObjectClassId )
+                                 where _Prop.getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.Barcode
+                                 select _Prop ).FirstOrDefault();
 
+            }
+            return _BarcodeProp;
+        }
 
         public Collection<Int32> getObjectClassPropIds()
         {

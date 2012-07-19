@@ -289,7 +289,51 @@ namespace NbtWebAppServices.Response
             }
         }
 
+        public void addSystemViewBarcodeFilter( object FilterValue, CswNbtPropFilterSql.PropertyFilterMode FilterMode = null, CswNbtMetaDataFieldType.NbtFieldType FieldType = null )
+        {
+            try
+            {
+                FilterMode = FilterMode ?? CswNbtPropFilterSql.PropertyFilterMode.Contains;
+                foreach( CswNbtViewRelationship RootLevelRelationship in _NbtSystemView.SystemView.Root.ChildRelationships )
+                {
+                    CswNbtMetaDataObjectClass InstanceOc = null;
+                    CswNbtMetaDataObjectClassProp BarcodeOcp = null;
+                    if (NbtViewRelatedIdType.ObjectClassId == RootLevelRelationship.SecondType)
+                    {
+                        InstanceOc = _CswNbtWcfSessionResources.CswNbtResources.MetaData.getObjectClass(RootLevelRelationship.SecondId);
+                        if (null != InstanceOc)
+                        {
+                            BarcodeOcp = InstanceOc.getBarcodeProp();
 
+                        }
+                    }
+                    else if (NbtViewRelatedIdType.NodeTypeId == RootLevelRelationship.SecondType)
+                    {
+                        CswNbtMetaDataNodeType InstanceNt = _CswNbtWcfSessionResources.CswNbtResources.MetaData.getNodeType(RootLevelRelationship.SecondId);
+                        if (null != InstanceNt)
+                        {
+                            InstanceOc = InstanceNt.getObjectClass();
+                            CswNbtMetaDataNodeTypeProp BarcodeNtp = InstanceNt.getBarcodeProperty();
+                            if (null != BarcodeNtp)
+                            {
+                                BarcodeOcp = BarcodeNtp.getObjectClassProp();
+                            }
+                        }
+                    }
+
+                    if ( null != BarcodeOcp && null != InstanceOc )
+                    {
+                        string FilterValueString = CswConvert.ToString(FilterValue);
+                        CswNbtActSystemViews.SystemViewPropFilterDefinition ViewPropertyFilter = _NbtSystemView.makeSystemViewFilter(BarcodeOcp, FilterValueString, FilterMode, FieldType: FieldType);
+                        _NbtSystemView.addSystemViewFilter(ViewPropertyFilter, InstanceOc);
+                    }
+                }
+            }
+            catch( Exception ex )
+            {
+                _InspectionsResponse.addError( ex );
+            }
+        }
 
         public CswNbtWcfInspectionsResponseWithDesigns finalize()
         {
