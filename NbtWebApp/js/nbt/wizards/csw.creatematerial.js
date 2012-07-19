@@ -404,6 +404,7 @@
                                                 sizedef: Csw.clone(sizeData)
                                             });
                                             sizes.push(size);
+                                            cswPrivate.sizeGrid.show();
                                         } else {
                                             $.CswDialog('AlertDialog', 'This size is already defined. Please define a new, unique size.');
                                         }
@@ -444,6 +445,7 @@
                                 });
                             } else {
                                 cswPrivate.sizeGrid.addRows(['', 'Capacity', 'Quantity Editable', 'Dispensable']);
+                                cswPrivate.sizeGrid.hide();
                             }
                         }
 
