@@ -536,12 +536,9 @@ namespace ChemSW.Nbt.ObjClasses
 
         private void OnStatusPropChange()
         {
-            AssignedTo.setHidden( value: ( Status.Value == Statuses.Pending || Status.Value == Statuses.Completed || Status.Value == Statuses.Cancelled ),
-                SaveToDb: true );
-            Fulfill.setHidden( value: ( Status.Value == Statuses.Pending || Status.Value == Statuses.Completed || Status.Value == Statuses.Cancelled ),
-                SaveToDb: true );
-            TotalDispensed.setHidden( value: ( Status.Value == Statuses.Pending || ( Type.Value != Types.Dispense && Type.Value != Types.Request ) ),
-                SaveToDb: true );
+            AssignedTo.setHidden( value: ( Status.Value == Statuses.Pending || Status.Value == Statuses.Completed || Status.Value == Statuses.Cancelled ), SaveToDb: true );
+            Fulfill.setHidden( value: ( Status.Value == Statuses.Pending || Status.Value == Statuses.Completed || Status.Value == Statuses.Cancelled ), SaveToDb: true );
+            TotalDispensed.setHidden( value: ( Status.Value == Statuses.Pending || ( Type.Value != Types.Dispense && Type.Value != Types.Request ) ), SaveToDb: true );
 
             switch( Status.Value )
             {
@@ -570,22 +567,21 @@ namespace ChemSW.Nbt.ObjClasses
                     break;
             }
 
-            if( Status.Value != Statuses.Pending )
+            if( Status.Value != Statuses.Pending &&
+                Status.Value != Status.GetOriginalPropRowValue() )
             {
                 CswNbtObjClassRequest NodeAsRequest = _CswNbtResources.Nodes.GetNode( Request.RelatedNodeId );
                 /* Email notification logic */
                 if( null != NodeAsRequest &&
                     null != NodeAsRequest.Requestor.RelatedNodeId )
                 {
-                    CswNbtObjClassUser RequestorAsUser =
-                        _CswNbtResources.Nodes.GetNode( NodeAsRequest.Requestor.RelatedNodeId );
+                    CswNbtObjClassUser RequestorAsUser = _CswNbtResources.Nodes.GetNode( NodeAsRequest.Requestor.RelatedNodeId );
                     if( null != RequestorAsUser )
                     {
                         string Subject = Node.NodeName + "'s Request Item Status has Changed to " + Status.Value;
                         string Message = _makeNotificationMessage();
                         string Recipient = RequestorAsUser.Email;
-                        Collection<CswMailMessage> EmailMessage = _CswNbtResources.makeMailMessages( Subject, Message,
-                                                                                                    Recipient );
+                        Collection<CswMailMessage> EmailMessage = _CswNbtResources.makeMailMessages( Subject, Message, Recipient );
                         _CswNbtResources.sendEmailNotification( EmailMessage );
                     }
                 }

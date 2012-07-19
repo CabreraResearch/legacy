@@ -175,14 +175,17 @@ namespace ChemSW.Nbt.ObjClasses
         {
             if( null != RequestItem.RelatedNodeId && 
                 Int32.MinValue != RequestItem.RelatedNodeId.PrimaryKey )
-                //_CswNbtNode.Properties[RequestItemPropertyName].GetOriginalPropRowValue() != _CswNbtNode.Properties[RequestItemPropertyName].GetPropRowValue() )
             {
-                CswNbtObjClassRequestItem NodeAsRequestItem = _CswNbtResources.Nodes[RequestItem.RelatedNodeId];
-                if( null != NodeAsRequestItem )
+                Int32 RequestItemOriginalValue = CswConvert.ToInt32( RequestItem.GetOriginalPropRowValue( CswNbtSubField.SubFieldName.NodeID ) );
+                if( RequestItemOriginalValue != RequestItem.RelatedNodeId.PrimaryKey )
                 {
-                    CswNbtUnitConversion Conversion = new CswNbtUnitConversion( _CswNbtResources, QuantityDispensed.UnitId, NodeAsRequestItem.TotalDispensed.UnitId, NodeAsRequestItem.Material.RelatedNodeId );
-                    NodeAsRequestItem.TotalDispensed.Quantity += Conversion.convertUnit( QuantityDispensed.Quantity );
-                    NodeAsRequestItem.postChanges( true );
+                    CswNbtObjClassRequestItem NodeAsRequestItem = _CswNbtResources.Nodes[RequestItem.RelatedNodeId];
+                    if( null != NodeAsRequestItem )
+                    {
+                        CswNbtUnitConversion Conversion = new CswNbtUnitConversion( _CswNbtResources, QuantityDispensed.UnitId, NodeAsRequestItem.TotalDispensed.UnitId, NodeAsRequestItem.Material.RelatedNodeId );
+                        NodeAsRequestItem.TotalDispensed.Quantity += Conversion.convertUnit( QuantityDispensed.Quantity );
+                        NodeAsRequestItem.postChanges( true );
+                    }
                 }
             }
         }

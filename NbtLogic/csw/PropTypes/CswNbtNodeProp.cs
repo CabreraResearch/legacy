@@ -6,6 +6,7 @@ using System.Xml.Linq;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.ObjClasses;
 using Newtonsoft.Json.Linq;
 
@@ -48,14 +49,14 @@ namespace ChemSW.Nbt.PropTypes
             //_CswNbtNode = CswNbtNodePropData.Node;
             _CswNbtResources = CswNbtResources;
             _CswNbtMetaDataNodeTypeProp = MetaDataNodeTypeProp;
-            
+
         }//generic
-        
+
         public void SetOnPropChange( CswNbtNodePropData.OnPropChangeHandler ChangeHandler )
         {
             _CswNbtNodePropData.OnPropChange = ChangeHandler;
         }
-        
+
         /// <summary>
         /// Sets the property to non-modified.  Changes made between the last save and this call are lost.
         /// </summary>
@@ -301,7 +302,42 @@ namespace ChemSW.Nbt.PropTypes
             _CswNbtNodePropData.copy( Source );
         }
 
+        /// <summary>
+        /// Returns the original value of the default subfield for this property
+        /// </summary>
+        public string GetOriginalPropRowValue()
+        {
+            string ret = string.Empty;
+            ICswNbtFieldTypeRule FieldTypeRule = _CswNbtMetaDataNodeTypeProp.getFieldTypeRule();
+            if( FieldTypeRule != null )
+            {
+                ret = GetOriginalPropRowValue( FieldTypeRule.SubFields.Default.Column );
+            }
+            return ret;
+        }
 
+        /// <summary>
+        /// Returns the original value of the provided subfield for this property
+        /// </summary>
+        public string GetOriginalPropRowValue( CswNbtSubField.SubFieldName SubfieldName )
+        {
+            string ret = string.Empty;
+            ICswNbtFieldTypeRule FieldTypeRule = _CswNbtMetaDataNodeTypeProp.getFieldTypeRule();
+            if( FieldTypeRule != null )
+            {
+                CswNbtSubField.PropColumn Column = FieldTypeRule.SubFields[SubfieldName].Column;
+                ret = GetOriginalPropRowValue( Column );
+            }
+            return ret;
+        }
+
+        /// <summary>
+        /// Returns the original value of the provided column for this property
+        /// </summary>
+        public string GetOriginalPropRowValue( CswNbtSubField.PropColumn Column )
+        {
+            return _CswNbtNodePropData.GetOriginalPropRowValue( Column );
+        }
 
         #region Xml Operations
 
