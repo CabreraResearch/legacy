@@ -184,9 +184,15 @@ namespace ChemSW.Nbt.Actions
                 ContDispTransNode.DispensedDate.DateTimeValue = DateTime.Now;
                 ContDispTransNode.RemainingSourceContainerQuantity.Quantity = _SourceContainer.Quantity.Quantity;
                 ContDispTransNode.RemainingSourceContainerQuantity.UnitId = _SourceContainer.Quantity.UnitId;
-                CswPrimaryKey RequestItemPk = new CswPrimaryKey();
-                RequestItemPk.FromString( RequestItemId );
-                ContDispTransNode.RequestItem.RelatedNodeId = RequestItemPk;
+                if( false == string.IsNullOrEmpty( RequestItemId ) )
+                {
+                    CswPrimaryKey RequestItemPk = new CswPrimaryKey();
+                    RequestItemPk.FromString(RequestItemId);
+                    if( Int32.MinValue != RequestItemPk.PrimaryKey )
+                    {
+                        ContDispTransNode.RequestItem.RelatedNodeId = RequestItemPk;
+                    }
+                }
                 ContDispTransNode.postChanges( false );
             }
         }
