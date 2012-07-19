@@ -183,7 +183,7 @@ namespace ChemSW.Nbt.ObjClasses
                     if( null != NodeAsRequestItem )
                     {
                         CswNbtUnitConversion Conversion = new CswNbtUnitConversion( _CswNbtResources, QuantityDispensed.UnitId, NodeAsRequestItem.TotalDispensed.UnitId, NodeAsRequestItem.Material.RelatedNodeId );
-                        NodeAsRequestItem.TotalDispensed.Quantity += Conversion.convertUnit( QuantityDispensed.Quantity );
+                        NodeAsRequestItem.TotalDispensed.Quantity -= Conversion.convertUnit( QuantityDispensed.Quantity );  // Subtracting a negative number in order to add
                         NodeAsRequestItem.postChanges( true );
                     }
                 }
