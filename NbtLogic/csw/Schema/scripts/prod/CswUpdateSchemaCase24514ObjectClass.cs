@@ -238,6 +238,34 @@ namespace ChemSW.Nbt.Schema
                             IsRequired = true
                         }
                  );
+            
+            CswNbtMetaDataObjectClassProp AssgnedToOcp = _CswNbtSchemaModTrnsctn.createObjectClassProp( RequestItemOc, new CswNbtWcfMetaDataModel.ObjectClassProp
+            {
+                PropName = CswNbtObjClassRequestItem.PropertyName.AssignedTo,
+                FieldType = CswNbtMetaDataFieldType.NbtFieldType.Relationship,
+                IsFk = true,
+                FkType = NbtViewRelatedIdType.ObjectClassId.ToString(),
+                FkValue = UserOc.ObjectClassId
+            } );
+
+            CswNbtMetaDataObjectClassProp RequestGroupOcp = RequestOc.getObjectClassProp( CswNbtObjClassRequest.PropertyName.InventoryGroup.ToString() );
+            _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( RequestItemOc )
+            {
+                PropName = CswNbtObjClassRequestItem.PropertyName.InventoryGroup,
+                FieldType = CswNbtMetaDataFieldType.NbtFieldType.PropertyReference,
+                IsFk = true,
+                FkType = NbtViewPropIdType.ObjectClassPropId.ToString(),
+                FkValue = RequestOcp.PropId,
+                ValuePropId = RequestGroupOcp.PropId,
+                ValuePropType = NbtViewPropIdType.ObjectClassPropId.ToString()
+            } );
+
+            _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( RequestItemOc )
+            {
+                PropName = CswNbtObjClassRequestItem.PropertyName.TotalDispensed,
+                FieldType = CswNbtMetaDataFieldType.NbtFieldType.Quantity,
+                ServerManaged = true
+            } );
 
             _CswNbtSchemaModTrnsctn.createModuleObjectClassJunction( CswNbtResources.CswNbtModule.CISPro, RequestItemOc.ObjectClassId );
 
