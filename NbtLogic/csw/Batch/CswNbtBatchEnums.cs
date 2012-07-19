@@ -19,6 +19,7 @@ namespace ChemSW.Nbt.Batch
 
         public static readonly NbtBatchOpName FutureNodes = new NbtBatchOpName( "FutureNodes" );
         public static readonly NbtBatchOpName MultiEdit = new NbtBatchOpName( "MultiEdit" );
+        public static readonly NbtBatchOpName MultiDelete = new NbtBatchOpName( "MultiDelete" );
         public static readonly NbtBatchOpName InventoryLevel = new NbtBatchOpName( "InventoryLevel" );
     }
 
