@@ -161,6 +161,11 @@
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26896.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26714.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26974.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\029\CswTestCase_029_01.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\029\CswTestCase_029_02.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\029\CswTestCase_029_03.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\029\CswTestCase_029_04.cs" />
+    <Compile Include="csw\Schema\scripts\tests\rsrcs\CswTstCaseRsrc_030.cs" />
     <Compile Include="csw\ServiceDrivers\CswNbtSdLocations.cs" />
     <Compile Include="csw\ServiceDrivers\CswNbtSdInventoryLevelMgr.cs" />
     <Compile Include="csw\ServiceDrivers\CswNbtSdTabsAndProps.cs" />
@@ -205,10 +210,9 @@
     <Compile Include="csw\ObjClasses\CswNbtObjClassSize.cs" />
     <Compile Include="csw\Schema\scripts\infr\RunAfterEveryExecutionOfUpdater_03.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCaseXXXXX.cs" />
-    <Compile Include="csw\Schema\scripts\tests\cases\029\CswTestCase_029_04.cs" />
-    <Compile Include="csw\Schema\scripts\tests\cases\029\CswTestCase_029_03.cs" />
-    <Compile Include="csw\Schema\scripts\tests\cases\029\CswTestCase_029_02.cs" />
-    <Compile Include="csw\Schema\scripts\tests\cases\029\CswTestCase_029_01.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\030\CswTestCase_030_03.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\030\CswTestCase_030_02.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\030\CswTestCase_030_01.cs" />
     <Compile Include="csw\Schema\scripts\tests\rsrcs\CswTstCaseRsrc_029.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
