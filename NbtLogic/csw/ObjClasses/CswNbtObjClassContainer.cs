@@ -69,8 +69,6 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void afterCreateNode()
         {
-            _createContainerTransactionNode( CswNbtObjClassContainerDispenseTransaction.DispenseType.Receive, this.Quantity.Quantity, this.Quantity.UnitId );
-
             _CswNbtObjClassDefault.afterCreateNode();
         } // afterCreateNode()
 
@@ -324,28 +322,47 @@ namespace ChemSW.Nbt.ObjClasses
         }
 
         /// <summary>
-        /// Dispense out of this container.  
+        /// Dispense out of this container.
         /// </summary>
+        /// <param name="DispenseType"></param>
+        /// <param name="QuantityToDeduct">Positive quantity to subtract</param>
+        /// <param name="UnitId"></param>
+        /// <param name="RequestItemId"></param>
+        /// <param name="DestinationContainer"></param>
         public void DispenseOut( CswNbtObjClassContainerDispenseTransaction.DispenseType DispenseType, double QuantityToDeduct, CswPrimaryKey UnitId,
-                                 CswPrimaryKey RequestItemId = null, CswNbtObjClassContainer DestinationContainer = null )
+                                 CswPrimaryKey RequestItemId = null, CswNbtObjClassContainer DestinationContainer = null, bool RecordTransaction = true )
         {
             double RealQuantityToDeduct = _getDispenseAmountInProperUnits( QuantityToDeduct, UnitId, this.Quantity.UnitId );
             this.Quantity.Quantity = this.Quantity.Quantity - RealQuantityToDeduct;
 
-            _createContainerTransactionNode( DispenseType, -RealQuantityToDeduct, this.Quantity.UnitId, RequestItemId, this, DestinationContainer );
-        }
+            if( DestinationContainer != null )
+            {
+                DestinationContainer.DispenseIn( DispenseType, QuantityToDeduct, UnitId, RequestItemId, this, false );  // false, because we do not want another duplicate transaction record
+            }
+            if( RecordTransaction )
+            {
+                _createContainerTransactionNode( DispenseType, -RealQuantityToDeduct, this.Quantity.UnitId, RequestItemId, this, DestinationContainer );
+            }
+        } // DispenseOut()
 
         /// <summary>
         /// Dispense into this container.  
         /// </summary>
+        /// <param name="DispenseType"></param>
+        /// <param name="QuantityToAdd">Positive quantity to add</param>
+        /// <param name="UnitId"></param>
+        /// <param name="RequestItemId"></param>
+        /// <param name="SourceContainer"></param>
         public void DispenseIn( CswNbtObjClassContainerDispenseTransaction.DispenseType DispenseType, double QuantityToAdd, CswPrimaryKey UnitId,
-                                CswPrimaryKey RequestItemId = null, CswNbtObjClassContainer SourceContainer = null )
+                                CswPrimaryKey RequestItemId = null, CswNbtObjClassContainer SourceContainer = null, bool RecordTransaction = true )
         {
             double RealQuantityToAdd = _getDispenseAmountInProperUnits( QuantityToAdd, UnitId, this.Quantity.UnitId );
             this.Quantity.Quantity = this.Quantity.Quantity + RealQuantityToAdd;
-
-            _createContainerTransactionNode( DispenseType, RealQuantityToAdd, this.Quantity.UnitId, RequestItemId, SourceContainer, this );
-        }
+            if( RecordTransaction )
+            {
+                _createContainerTransactionNode( DispenseType, RealQuantityToAdd, this.Quantity.UnitId, RequestItemId, SourceContainer, this );
+            }
+        } // DispenseIn()
 
         #endregion Custom Logic
 
@@ -353,10 +370,12 @@ namespace ChemSW.Nbt.ObjClasses
 
         private double _getDispenseAmountInProperUnits( double Quantity, CswPrimaryKey OldUnitId, CswPrimaryKey NewUnitId )
         {
-            double ValueToConvert = Quantity;
-            double convertedValue = ValueToConvert;
-            CswNbtUnitConversion ConversionObj = new CswNbtUnitConversion( _CswNbtResources, OldUnitId, NewUnitId, this.Material.RelatedNodeId );
-            convertedValue = ConversionObj.convertUnit( ValueToConvert );
+            double convertedValue = Quantity;
+            if( null != OldUnitId && null != NewUnitId )
+            {
+                CswNbtUnitConversion ConversionObj = new CswNbtUnitConversion( _CswNbtResources, OldUnitId, NewUnitId, this.Material.RelatedNodeId );
+                convertedValue = ConversionObj.convertUnit( Quantity );
+            }
             return convertedValue;
         }
 

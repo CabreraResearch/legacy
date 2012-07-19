@@ -94,7 +94,7 @@ namespace ChemSW.Nbt.Actions
                         {
                             CswNbtObjClassContainer ChildContainer = _createChildContainer( ContainerNodeTypeId, UnitOfMeasurePK, Barcode );
                             _SourceContainer.DispenseOut( CswNbtObjClassContainerDispenseTransaction.DispenseType.Dispense, QuantityToDispense, UnitOfMeasurePK, RequestItemPk, ChildContainer );
-                            ChildContainer.DispenseIn( CswNbtObjClassContainerDispenseTransaction.DispenseType.Dispense, QuantityToDispense, UnitOfMeasurePK, RequestItemPk, _SourceContainer );
+                            //ChildContainer.DispenseIn( CswNbtObjClassContainerDispenseTransaction.DispenseType.Dispense, QuantityToDispense, UnitOfMeasurePK, RequestItemPk, _SourceContainer );
                             ChildContainer.postChanges( false );
                         }
                         _SourceContainer.postChanges( false );
