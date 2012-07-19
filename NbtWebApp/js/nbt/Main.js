@@ -1216,6 +1216,10 @@ window.initMain = window.initMain || function (undefined) {
                 break;
 
             case 'DispenseContainer':
+                var requestItemId = '';
+                if(Csw.contains(o, 'requestitem')) {
+                    requestItemId = o.requestitem.requestitemid;
+                }
                 designOpt = {
                     ID: 'cswDispenseContainerWizard',
                     sourceContainerNodeId: o.sourceContainerNodeId,
@@ -1234,7 +1238,12 @@ window.initMain = window.initMain || function (undefined) {
                             viewmode: 'tree',
                             viewid: viewid
                         });
-                    }
+                    },
+                    requestItemId: requestItemId,
+                    title: 'Dispense from Barcode [' + o.barcode + ']',
+                    location: o.location,
+                    material: o.material,
+                    barcode: o.barcode
                 };
                 Csw.nbt.dispenseContainerWizard(centerTopDiv, designOpt);
 

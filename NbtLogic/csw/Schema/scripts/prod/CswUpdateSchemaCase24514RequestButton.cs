@@ -139,7 +139,7 @@ namespace ChemSW.Nbt.Schema
                         RequestItemNt.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Number );
 
                     GridView.Root.ChildRelationships.Clear();
-                    GridView.ViewName = RootNt.NodeTypeName + " Request Items Grid Property View";
+                    GridView.ViewName = RootNt.NodeTypeName + " Requested Items";
                     GridView.Visibility = NbtViewVisibility.Property;
                     GridView.ViewMode = NbtViewRenderingMode.Grid;
                     GridView.Category = "Requests";

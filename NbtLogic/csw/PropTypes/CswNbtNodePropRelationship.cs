@@ -19,7 +19,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             return PropWrapper.AsRelationship;
         }
-
+        
         public CswNbtNodePropRelationship( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp )
             : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp )
         {

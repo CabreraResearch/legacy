@@ -41,7 +41,12 @@
                 quantity: 'Unknown',
                 unitId: 'Unknown',
                 containerNodeTypeId: 'Unknown',
-                quantityControl: null
+                quantityControl: null,
+                requestItemId: '',
+                title: 'Dispense from Container',
+                materialname: '',
+                barcode: '',
+                location: ''
             };
             if (options) $.extend(cswPrivate, options);
 
@@ -88,6 +93,15 @@
                         cswPrivate.divStep1 = cswPrivate.wizard.div(1);
                         cswPrivate.divStep1.br();
 
+                        cswPrivate.divStep1.p({ text: 'You have selected container barcode: [' + Csw.string(cswPrivate.barcode) + ']' });
+                        if (false === Csw.isNullOrEmpty(cswPrivate.materialname)) {
+                            cswPrivate.divStep1.p({ text: 'On Material: ' + Csw.string(cswPrivate.materialname) });
+                        }
+                        if (false === Csw.isNullOrEmpty(cswPrivate.location)) {
+                            cswPrivate.divStep1.p({ text: 'At Location: ' + Csw.string(cswPrivate.location) });
+                        }
+                        cswPrivate.divStep1.br();
+                        
                         dispenseTypeTable = cswPrivate.divStep1.table({
                             ID: cswPrivate.makeStepId('setDispenseTypeTable'),
                             cellpadding: '1px',
@@ -305,11 +319,12 @@
                     Quantity: cswPrivate.quantity,
                     UnitId: cswPrivate.unitId,
                     ContainerNodeTypeId: cswPrivate.containerNodeTypeId,
-                    DesignGrid: designGrid
+                    DesignGrid: designGrid,
+                    RequestItemId: Csw.string(cswPrivate.requestItemId)
                 };
 
                 Csw.ajax.post({
-                    url: '/NbtWebApp/wsNBT.asmx/finalizeDispenseContainer',
+                    urlMethod: 'finalizeDispenseContainer',
                     data: jsonData,
                     success: function (data) {
                         var viewId = data.viewId;
@@ -342,7 +357,7 @@
                     currentQuantity: cswPrivate.currentQuantity,
                     currentUnitName: cswPrivate.currentUnitName,
                     capacity: cswPrivate.capacity,
-                    Title: 'Dispense Container',
+                    Title: Csw.string(cswPrivate.title),
                     StepCount: 3,
                     Steps: cswPrivate.wizardSteps,
                     StartingStep: cswPrivate.startingStep,

@@ -236,9 +236,6 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override bool onButtonClick( NbtButtonData ButtonData )
         {
-
-
-
             CswNbtMetaDataObjectClassProp OCP = ButtonData.NodeTypeProp.getObjectClassProp();
             if( null != ButtonData.NodeTypeProp && null != OCP )
             {
@@ -267,9 +264,14 @@ namespace ChemSW.Nbt.ObjClasses
                     CswNbtObjClassRequestItem NodeAsRequestItem = RequestAct.makeRequestItem( new CswNbtActSubmitRequest.RequestItem(), NodeId, OCP );
                     NodeAsRequestItem.Material.RelatedNodeId = Material.RelatedNodeId;
                     NodeAsRequestItem.Material.setReadOnly( value: true, SaveToDb: false );
+                    
+                    NodeAsRequestItem.Location.SelectedNodeId = Location.SelectedNodeId;
+                    NodeAsRequestItem.Location.RefreshNodeName();
+
                     switch( OCP.PropName )
                     {
                         case RequestDispensePropertyName:
+                            NodeAsRequestItem.Quantity.UnitId = Quantity.UnitId;
                             break;
                         case RequestDisposePropertyName:
                             NodeAsRequestItem.Material.setHidden( value: true, SaveToDb: false );
@@ -280,9 +282,9 @@ namespace ChemSW.Nbt.ObjClasses
                             NodeAsRequestItem.Material.setHidden( value: true, SaveToDb: false );
                             break;
                     }
-
+                    
+                    ButtonData.Data["titleText"] = OCP.PropName + " [" + Barcode.Barcode + "]";
                     ButtonData.Data["requestaction"] = OCP.PropName;
-                    ButtonData.Data["titleText"] = OCP.PropName + " Request for " + Material.CachedNodeName;
                     ButtonData.Data["requestItemProps"] = RequestAct.getRequestItemAddProps( NodeAsRequestItem );
                     ButtonData.Data["requestItemNodeTypeId"] = RequestAct.RequestItemNt.NodeTypeId;
 
@@ -299,6 +301,10 @@ namespace ChemSW.Nbt.ObjClasses
         {
             JObject ActionDataObj = new JObject();
             ActionDataObj["sourceContainerNodeId"] = this.NodeId.ToString();
+            ActionDataObj["barcode"] = Barcode.Barcode;
+            ActionDataObj["materialname"] = Material.CachedNodeName;
+            ActionDataObj["location"] = Location.CachedFullPath;
+
             CswNbtObjClassUnitOfMeasure unitNode = _CswNbtResources.Nodes.GetNode( this.Quantity.UnitId );
             if( null != unitNode )
             {
