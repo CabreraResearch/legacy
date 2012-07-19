@@ -79,6 +79,7 @@ namespace ChemSW.Nbt.Batch
             CswNbtMetaDataObjectClassProp StatusOCP = BatchOpOC.getObjectClassProp( CswNbtObjClassBatchOp.StatusPropertyName );
             CswNbtMetaDataObjectClassProp PriorityOCP = BatchOpOC.getObjectClassProp( CswNbtObjClassBatchOp.PriorityPropertyName );
 
+
             CswNbtView NextBatchOpView = new CswNbtView( CswNbtResources );
             CswNbtViewRelationship BatchVR = NextBatchOpView.AddViewRelationship( BatchOpOC, false );
             CswNbtViewProperty StatusVP = NextBatchOpView.AddViewProperty( BatchVR, StatusOCP );
@@ -113,6 +114,13 @@ namespace ChemSW.Nbt.Batch
                 // else if( OpName == NbtBatchOpName.NEWNAME ) 
                 if( null != op )
                 {
+                    CswNbtNode UserNode = CswNbtResources.Nodes[BatchNode.User.RelatedNodeId];
+                    CswNbtObjClassUser UserOC = UserNode;
+                    CswNbtResources.AuditContext = "Batch Op: " + BatchNode.OpNameValue;
+                    CswNbtResources.AuditFirstName = UserOC.FirstName;
+                    CswNbtResources.AuditLastName = UserOC.LastName;
+                    CswNbtResources.AuditUsername = UserOC.Username;
+
                     op.runBatchOp( BatchNode );
                 }
             }
