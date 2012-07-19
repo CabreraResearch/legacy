@@ -401,7 +401,7 @@
                                             cswPrivate.sizeGrid.addRows(size);
                                             cswPrivate.sizeNodes.push({
                                                 nodetypeid: cswPrivate.sizeNodeTypeId,
-                                                sizedef: Csw.clone(sizeData) 
+                                                sizedef: Csw.clone(sizeData)
                                             });
                                             sizes.push(size);
                                         } else {
@@ -426,23 +426,25 @@
 
                         div = cswPrivate.divStep5.div();
 
-                        /* Thin Grid of sizes */
-                        cswPrivate.sizeGrid = div.thinGrid({ linkText: '', hasHeader: true });
+                        var makeGrid = function () {
+                            /* Thin Grid of sizes */
+                            cswPrivate.sizeGrid = div.thinGrid({ linkText: '', hasHeader: true, TableCssClass: 'CswThinGridTable CswThinGridTableWizard' });
 
 
-                        if (cswPrivate.useExistingMaterial) {
+                            if (cswPrivate.useExistingMaterial) {
 
-                            Csw.ajax.post({
-                                urlMethod: 'getMaterialSizes',
-                                data: { MaterialId: cswPrivate.materialNodeId },
-                                success: function (data) {
-                                    sizes = data.rows || [];
+                                Csw.ajax.post({
+                                    urlMethod: 'getMaterialSizes',
+                                    data: { MaterialId: cswPrivate.materialNodeId },
+                                    success: function (data) {
+                                        sizes = data.rows || [];
 
-                                    cswPrivate.sizeGrid.addRows(sizes);
-                                }
-                            });
-                        } else {
-                            cswPrivate.sizeGrid.addRows(['', 'Capacity', 'Quantity Editable', 'Dispensable']);
+                                        cswPrivate.sizeGrid.addRows(sizes);
+                                    }
+                                });
+                            } else {
+                                cswPrivate.sizeGrid.addRows(['', 'Capacity', 'Quantity Editable', 'Dispensable']);
+                            }
                         }
 
                         div.br();
@@ -455,7 +457,10 @@
                             labelText: 'Select a Material Size: ',
                             objectClassName: 'SizeClass',
                             onSelect: sizeSelect,
-                            onSuccess: sizeSelect,
+                            onSuccess: function (retObj, count) {
+                                sizeSelect(retObj, count);
+                                makeGrid();
+                            },
                             relatedToNodeTypeId: cswPrivate.materialType.val,
                             relatedObjectClassPropName: 'Material'
                         });
