@@ -52,10 +52,9 @@
 
                 cswPrivate.actionTbl.cell(1, 1)
                     .css('text-align', 'center')
-                    .span({ text: 'Edit any of the Request Items in your cart.' });
-                cswPrivate.actionTbl.cell(2, 1)
-                    .css('text-align', 'center')
-                    .span({ text: 'When you are finished, click "Place Request" to submit your cart.' });
+                    .span({ text: 'Edit any of the Request Items in your cart.<br>When you are finished, click "Place Request" to submit your cart.' })
+                    .css('text-align', 'left');
+
                 cswPrivate.actionTbl.cell(3, 1).br({ number: 2 });
                 cswPrivate.gridId = cswPrivate.ID + '_csw_requestGrid_outer';
                 cswPublic.gridParent = cswPrivate.actionTbl.cell(4, 1).div({ ID: cswPrivate.gridId }); //, align: 'center' });
