@@ -428,7 +428,7 @@
 
                         var makeGrid = function () {
                             /* Thin Grid of sizes */
-                            cswPrivate.sizeGrid = div.thinGrid({ linkText: '', hasHeader: true, TableCssClass: 'CswThinGridTable CswThinGridTableWizard' });
+                            cswPrivate.sizeGrid = div.thinGrid({ linkText: '', hasHeader: true, TableCssClass: 'CswThinGridTableWizard' });
 
 
                             if (cswPrivate.useExistingMaterial) {
