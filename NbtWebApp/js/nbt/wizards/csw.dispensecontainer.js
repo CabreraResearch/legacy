@@ -40,7 +40,9 @@
                 dispenseType: 'Unknown',
                 quantity: 'Unknown',
                 unitId: 'Unknown',
+                sizeId: '',
                 containerNodeTypeId: 'Unknown',
+                containerObjectClassId: '',
                 quantityControl: null,
                 requestItemId: '',
                 title: 'Dispense from Container',
@@ -79,21 +81,18 @@
             cswPrivate.makeStepOne = (function () {
                 var stepOneComplete = false;
                 return function () {
-                    if (Csw.isNullOrEmpty(cswPrivate.sourceContainerNodeId)) {
-                        cswPrivate.onCancel();
-                    }
-
-                    var dispenseTypeTable = '';
+                    
+                    var dispenseTypeTable;
 
                     cswPrivate.toggleButton(cswPrivate.buttons.finish, false);
-
-                    if (false === stepOneComplete) {
-                        cswPrivate.toggleButton(cswPrivate.buttons.next, false);
-
-                        cswPrivate.divStep1 = cswPrivate.wizard.div(1);
+                    var initStepOne = Csw.method(function() {
+                        cswPrivate.divStep1 = cswPrivate.divStep1 || cswPrivate.wizard.div(1);
+                        cswPrivate.divStep1.empty();
+                        
                         cswPrivate.divStep1.br();
-
-                        cswPrivate.divStep1.p({ text: 'You have selected container barcode: [' + Csw.string(cswPrivate.barcode) + ']' });
+                        if (false === Csw.isNullOrEmpty(cswPrivate.barcode)) {
+                            cswPrivate.divStep1.p({ text: 'You have selected container barcode: [' + Csw.string(cswPrivate.barcode) + ']' });
+                        }
                         if (false === Csw.isNullOrEmpty(cswPrivate.materialname)) {
                             cswPrivate.divStep1.p({ text: 'On Material: ' + Csw.string(cswPrivate.materialname) });
                         }
@@ -101,7 +100,7 @@
                             cswPrivate.divStep1.p({ text: 'At Location: ' + Csw.string(cswPrivate.location) });
                         }
                         cswPrivate.divStep1.br();
-                        
+
                         dispenseTypeTable = cswPrivate.divStep1.table({
                             ID: cswPrivate.makeStepId('setDispenseTypeTable'),
                             cellpadding: '1px',
@@ -116,18 +115,49 @@
                             ID: cswPrivate.makeStepId('setDispenseTypePicklist'),
                             cssclass: 'selectinput',
                             values: cswPrivate.dispenseTypes,
-                            onChange: function () {
+                            onChange: function() {
                                 if (false === Csw.isNullOrEmpty(dispenseTypeSelect.val())) {
                                     cswPrivate.dispenseType = dispenseTypeSelect.val();
                                     cswPrivate.wizard.next.enable();
-                                }
-                                else {
+                                } else {
                                     cswPrivate.wizard.next.disable();
                                 }
                             },
                             selected: cswPrivate.dispenseTypes.Unknown
                         });
+                    });
+                    
+                    if (false === stepOneComplete) {
+                        cswPrivate.divStep1 = cswPrivate.wizard.div(1);
+                        cswPrivate.toggleButton(cswPrivate.buttons.next, false);
 
+                        if (Csw.isNullOrEmpty(cswPrivate.sourceContainerNodeId)) {
+                            cswPrivate.divStep1.p({ text: 'No container is selected. Find a container to dispense from.' });
+                            cswPrivate.divStep1.br();
+                            Csw.debug.assert(false === Csw.isNullOrEmpty(cswPrivate.containerNodeTypeId), 'Cannot find a container without a container nodetype.');
+                            cswPrivate.divStep1.universalSearch({
+                                ID: cswPrivate.makeStepId('containerSearch'),
+                                nodetypeid: cswPrivate.containerNodeTypeId,
+                                objectclassid: cswPrivate.containerObjectClassId,
+                                showSaveAsView: false,
+                                allowEdit: false,
+                                allowDelete: false,
+                                extraAction: 'Select',
+                                extraActionIcon: Csw.enums.iconType.check,
+                                onExtraAction: function (nodeObj) {
+                                    Csw.debug.assert(false === Csw.isNullOrEmpty(nodeObj), 'Selected a container which did not yield a nodeObj');
+                                    Csw.debug.assert(false === Csw.isNullOrEmpty(nodeObj.nodeid), 'Selected a container which did not yield a nodeid');
+                                    if (false === Csw.isNullOrEmpty(nodeObj.nodeid)) {
+                                        cswPrivate.sourceContainerNodeId = nodeObj.nodeid;
+                                        initStepOne();
+                                    }
+                                }
+
+                            });
+
+                        } else {
+                            initStepOne();
+                        }
                         stepOneComplete = true;
                     }
                 };
@@ -228,7 +258,9 @@
                                 containerlimit: cswPrivate.containerlimit,
                                 makeId: cswPrivate.wizard.makeStepId,
                                 containerMinimum: 0,
-                                action: 'Dispense'
+                                action: 'Dispense',
+                                relatedNodeId: cswPrivate.sourceContainerNodeId,
+                                selectedSizeId: cswPrivate.sizeId
                             });
 
                             stepThreeDispenseComplete = true;

@@ -112,7 +112,9 @@ namespace ChemSW.Nbt.PropTypes
             }
             set
             {
-                if( value != null ) //&& value.TableName == "nodes" )
+                if( value != null && 
+                    false == string.IsNullOrEmpty(value.TableName) &&
+                    Int32.MinValue != value.PrimaryKey ) //&& value.TableName == "nodes" )
                 {
                     if( value.TableName != TargetTableName )
                     {

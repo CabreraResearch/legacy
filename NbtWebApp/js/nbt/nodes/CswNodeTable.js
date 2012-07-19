@@ -28,6 +28,7 @@
                 allowEdit: true,
                 allowDelete: true,
                 extraAction: null,
+                extraActionIcon: Csw.enums.iconType.none,
                 onExtraAction: null  // function(nodeObj) {}
             };
             if (options) $.extend(o, options);
@@ -235,22 +236,26 @@
                                 iconType: Csw.enums.iconType.trash,
                                 isButton: true,
                                 //disableOnClick: false,
-                                onClick: function () {
+                                onClick: Csw.method(function () {
                                     $.CswDialog('DeleteNodeDialog', {
                                         nodenames: [nodeObj.nodename],
                                         nodeids: [nodeid],
                                         cswnbtnodekeys: [nodeObj.nodekey],
                                         onDeleteNode: o.onDeleteNode
                                     }); // CswDialog
-                                } // onClick
+                                }) // onClick
                             }); // CswButton
                             btncol += 1;
                         } // if (nodeObj.allowdelete)
                         
                         if (false === Csw.isNullOrEmpty(o.extraAction)) {
-                            btnTable.cell(1, btncol).a({
+                            Csw.debug.assert(Csw.number(o.extraActionIcon) > 0, 'No icon specified for extraAction.');
+                            Csw.debug.assert(Csw.isFunction(o.onExtraAction), 'No method specified for extraAction.');
+
+                            btnTable.cell(1, btncol).icon({
                                 ID: Csw.makeId(o.ID, nodeid, 'extrabtn'),
-                                text: o.extraAction,
+                                hoverText: o.extraAction,
+                                iconType: o.extraActionIcon,
                                 //disableOnClick: false,
                                 onClick: function () {
                                     Csw.tryExec(o.onExtraAction, nodeObj);

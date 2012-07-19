@@ -382,10 +382,13 @@ namespace ChemSW.Nbt.ObjClasses
         private JObject _getDispenseActionData()
         {
             JObject ActionDataObj = new JObject();
-            ActionDataObj["sourceContainerNodeId"] = this.NodeId.ToString();
+            ActionDataObj["sourceContainerNodeId"] = NodeId.ToString();
+            ActionDataObj["containerobjectclassid"] = ObjectClass.ObjectClassId;
+            ActionDataObj["containernodetypeid"] = NodeTypeId;
             ActionDataObj["barcode"] = Barcode.Barcode;
             ActionDataObj["materialname"] = Material.CachedNodeName;
             ActionDataObj["location"] = Location.CachedFullPath;
+            ActionDataObj["sizeid"] = Size.RelatedNodeId.ToString();
 
             CswNbtObjClassUnitOfMeasure unitNode = _CswNbtResources.Nodes.GetNode( this.Quantity.UnitId );
             if( null != unitNode )

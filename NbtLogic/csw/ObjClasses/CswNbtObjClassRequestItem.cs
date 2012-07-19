@@ -333,16 +333,38 @@ namespace ChemSW.Nbt.ObjClasses
                                 break;
                             case FulfillMenu.Dispense:
                                 NodeAsContainer = _CswNbtResources.Nodes.GetNode( Container.RelatedNodeId );
-                                if( null != NodeAsContainer )
+                                if( null != NodeAsContainer && null != NodeAsContainer.Dispense.NodeTypeProp )
                                 {
-                                    if( null != NodeAsContainer.Dispense.NodeTypeProp )
-                                    {
-                                        NbtButtonData DispenseData = new NbtButtonData( NodeAsContainer.Dispense.NodeTypeProp );
-                                        NodeAsContainer.onButtonClick( DispenseData );
-                                        ButtonData.clone( DispenseData );
-                                    }
+                                    NbtButtonData DispenseData = new NbtButtonData( NodeAsContainer.Dispense.NodeTypeProp );
+                                    NodeAsContainer.onButtonClick( DispenseData );
+                                    ButtonData.clone( DispenseData );
                                 }
-                                ButtonData.Action = NbtButtonAction.dispense;
+                                else
+                                {
+                                    ButtonData.Data["containernodetypeid"] = Container.TargetId;
+                                    ButtonData.Data["containerobjectclassid"] = Container.TargetId;
+                                    JObject Capacity = null;
+                                    if( null != Size.RelatedNodeId && Int32.MinValue != Size.RelatedNodeId.PrimaryKey )
+                                    {
+                                        CswNbtObjClassSize NodeAsSize = _CswNbtResources.Nodes[Size.RelatedNodeId];
+                                        if( null != NodeAsSize )
+                                        {
+                                            Capacity = new JObject();
+                                            NodeAsSize.Capacity.ToJSON( Capacity );
+                                            ButtonData.Data["capacity"] = Capacity;
+                                        }
+                                    }
+                                    else if( false == Quantity.Empty )
+                                    {
+                                        Capacity = new JObject();
+                                        Quantity.ToJSON( Capacity );
+                                    }
+                                    if( null != Capacity )
+                                    {
+                                        ButtonData.Data["capacity"] = Capacity;
+                                    }
+                                    ButtonData.Action = NbtButtonAction.dispense;
+                                }
                                 break;
                             case FulfillMenu.Dispose:
                                 NodeAsContainer = _CswNbtResources.Nodes.GetNode( Container.RelatedNodeId );
