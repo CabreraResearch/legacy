@@ -414,11 +414,6 @@
                         });
                     }
 
-                    cswPrivate.toggleButton(cswPrivate.buttons.prev, true);
-                    cswPrivate.toggleButton(cswPrivate.buttons.cancel, true);
-                    cswPrivate.toggleButton(cswPrivate.buttons.finish, true);
-                    cswPrivate.toggleButton(cswPrivate.buttons.next, false);
-
                     if (false === cswPrivate.stepFiveComplete) {
                         cswPrivate.divStep5 = cswPrivate.divStep5 || cswPrivate.wizard.div(5);
                         cswPrivate.divStep5.empty();
@@ -447,6 +442,10 @@
                                 cswPrivate.sizeGrid.addRows(['', 'Capacity', 'Quantity Editable', 'Dispensable']);
                                 cswPrivate.sizeGrid.hide();
                             }
+                            cswPrivate.toggleButton(cswPrivate.buttons.prev, true);
+                            cswPrivate.toggleButton(cswPrivate.buttons.cancel, true);
+                            cswPrivate.toggleButton(cswPrivate.buttons.finish, true);
+                            cswPrivate.toggleButton(cswPrivate.buttons.next, false);
                         }
 
                         div.br();
