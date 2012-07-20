@@ -1,7 +1,8 @@
 ﻿using System;
+using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
-using ChemSW.Nbt.Actions;
+using ChemSW.Nbt.PropTypes;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -13,20 +14,24 @@ namespace ChemSW.Nbt.Schema
         public override void update()
         {
             CswNbtMetaDataObjectClass ContainerObjClass = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.ContainerClass );
-            CswNbtMetaDataObjectClassProp DispenseProp = _CswNbtSchemaModTrnsctn.createObjectClassProp(
+            CswNbtMetaDataObjectClassProp RequestOcp = _CswNbtSchemaModTrnsctn.createObjectClassProp(
                 ContainerObjClass,
                 new CswNbtWcfMetaDataModel.ObjectClassProp
                 {
                     FieldType = CswNbtMetaDataFieldType.NbtFieldType.Button,
-                    PropName = CswNbtObjClassContainer.RequestDispensePropertyName
+                    PropName = CswNbtObjClassContainer.RequestPropertyName,
+                    Extended = CswNbtNodePropButton.ButtonMode.menu,
+                    ListOptions = CswNbtObjClassContainer.RequestMenu.Options.ToString(),
+                    StaticText = CswNbtObjClassContainer.RequestMenu.Dispense
                 }
             );
+
 
             foreach( CswNbtMetaDataNodeType ContainerNodeType in ContainerObjClass.getNodeTypes() )
             {
                 CswNbtMetaDataNodeTypeTab NodeTypeTab = ContainerNodeType.getFirstNodeTypeTab();
                 Int32 FirstTabId = NodeTypeTab.TabId;
-                CswNbtMetaDataNodeTypeProp DispenseNodeTypeProp = ContainerNodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassContainer.RequestDispensePropertyName );
+                CswNbtMetaDataNodeTypeProp DispenseNodeTypeProp = ContainerNodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassContainer.RequestPropertyName );
                 DispenseNodeTypeProp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, FirstTabId );
                 DispenseNodeTypeProp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Table, true, FirstTabId );
             }

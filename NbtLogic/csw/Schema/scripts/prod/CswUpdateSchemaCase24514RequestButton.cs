@@ -4,6 +4,7 @@ using ChemSW.Config;
 using ChemSW.Log;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
+using ChemSW.Nbt.PropTypes;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -19,20 +20,12 @@ namespace ChemSW.Nbt.Schema
                 ContainerOc, new CswNbtWcfMetaDataModel.ObjectClassProp
                 {
                     FieldType = CswNbtMetaDataFieldType.NbtFieldType.Button,
-                    PropName = CswNbtObjClassContainer.RequestDispensePropertyName
+                    PropName = CswNbtObjClassContainer.RequestPropertyName,
+                    Extended = CswNbtNodePropButton.ButtonMode.menu,
+                    ListOptions = CswNbtObjClassContainer.RequestMenu.Options.ToString(),
+                    StaticText = CswNbtObjClassContainer.RequestMenu.Dispense
                 } );
-            _CswNbtSchemaModTrnsctn.createObjectClassProp(
-                ContainerOc, new CswNbtWcfMetaDataModel.ObjectClassProp
-                {
-                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Button,
-                    PropName = CswNbtObjClassContainer.RequestDisposePropertyName
-                } );
-            _CswNbtSchemaModTrnsctn.createObjectClassProp(
-                ContainerOc, new CswNbtWcfMetaDataModel.ObjectClassProp
-                {
-                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Button,
-                    PropName = CswNbtObjClassContainer.RequestMovePropertyName
-                } );
+
             foreach( CswNbtMetaDataNodeType ContainerNt in ContainerOc.getNodeTypes() )
             {
                 CswNbtMetaDataNodeTypeTab RequestsTab = ContainerNt.getNodeTypeTab( "Requests" );
@@ -40,17 +33,9 @@ namespace ChemSW.Nbt.Schema
                 {
                     RequestsTab = _CswNbtSchemaModTrnsctn.MetaData.makeNewTab( ContainerNt, "Requests", ContainerNt.getNodeTypeTabIds().Count );
                 }
-                CswNbtMetaDataNodeTypeProp DispenseNtp = ContainerNt.getNodeTypePropByObjectClassProp( CswNbtObjClassContainer.RequestDispensePropertyName );
+                CswNbtMetaDataNodeTypeProp DispenseNtp = ContainerNt.getNodeTypePropByObjectClassProp( CswNbtObjClassContainer.RequestPropertyName );
                 DispenseNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, RequestsTab.TabId, 1, 1 );
                 DispenseNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Table, true, RequestsTab.TabId, 1, 1 );
-
-                CswNbtMetaDataNodeTypeProp MoveNtp = ContainerNt.getNodeTypePropByObjectClassProp( CswNbtObjClassContainer.RequestMovePropertyName );
-                MoveNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, RequestsTab.TabId, 2, 1 );
-                MoveNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Table, true, RequestsTab.TabId, 2, 1 );
-
-                CswNbtMetaDataNodeTypeProp DisposeNtp = ContainerNt.getNodeTypePropByObjectClassProp( CswNbtObjClassContainer.RequestDisposePropertyName );
-                DisposeNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, RequestsTab.TabId, 3, 1 );
-                DisposeNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Table, true, RequestsTab.TabId, 3, 1 );
 
                 CswNbtMetaDataNodeTypeProp RequestsGridNtp = _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( ContainerNt, CswNbtMetaDataFieldType.NbtFieldType.Grid, "Submitted Requests", RequestsTab.TabId );
                 CswNbtView GridView = _CswNbtSchemaModTrnsctn.ViewSelect.restoreView( RequestsGridNtp.ViewId );
