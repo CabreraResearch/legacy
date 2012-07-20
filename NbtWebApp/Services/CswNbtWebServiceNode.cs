@@ -66,7 +66,7 @@ namespace ChemSW.Nbt.WebServices
                     bool success = true;
                     foreach( CswPrimaryKey Npk in NodePrimaryKeys )
                     {
-                        success = success && DeleteNode( Npk );
+                        success = DeleteNode( Npk ) && success;
                     }
                     ret["Succeeded"] = success.ToString();
                 }

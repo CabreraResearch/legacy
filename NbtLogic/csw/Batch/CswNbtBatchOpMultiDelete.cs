@@ -3,7 +3,6 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using ChemSW.Core;
 using ChemSW.Nbt.ObjClasses;
-using ChemSW.Nbt.Security;
 using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.Batch
@@ -100,8 +99,7 @@ namespace ChemSW.Nbt.Batch
             if( Int32.MinValue != DeleteNodePk.PrimaryKey )
             {
                 CswNbtNode DeleteNode = _CswNbtResources.Nodes[DeleteNodePk];
-                if( DeleteNode != null &&
-                    _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Delete, DeleteNode.getNodeType(), false, null, null, DeleteNode.NodeId, null ) )
+                if( DeleteNode != null )
                 {
                     DeleteNode.delete();
                 }
