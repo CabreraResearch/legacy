@@ -494,10 +494,11 @@
             cswPrivate.getCellSet = function(layoutTable, tabgroup, displayrow, displaycol) {
                 var ret;
                 if(false === Csw.isNullOrEmpty(tabgroup)) {
+                    var safetabgroup = Csw.makeSafeId(tabgroup);
                     if(Csw.isNullOrEmpty(cswPrivate.tabgrouptables)) {
                         cswPrivate.tabgrouptables = [];
                     }
-                    if(Csw.isNullOrEmpty(cswPrivate.tabgrouptables[tabgroup])) {
+                    if(Csw.isNullOrEmpty(cswPrivate.tabgrouptables[safetabgroup])) {
                         var cellSet = layoutTable.cellSet(displayrow, displaycol);
                         var propCell = cswPrivate.getPropertyCell(cellSet);
 
@@ -510,7 +511,7 @@
                         });
 
                         var tabgroupLayoutTable = div.layoutTable({
-                            ID: tabgroup,
+                            ID: safetabgroup,
                             OddCellRightAlign: true,
                             ReadOnly: (cswPrivate.EditMode === Csw.enums.editMode.PrintReport || cswPrivate.ReadOnly),
                             cellSet: {
@@ -525,9 +526,9 @@
                             showExpandColButton: false,
                             showRemoveButton: false
                         });
-                        cswPrivate.tabgrouptables[tabgroup] = tabgroupLayoutTable;
+                        cswPrivate.tabgrouptables[safetabgroup] = tabgroupLayoutTable;
                     }
-                    ret = cswPrivate.tabgrouptables[tabgroup].cellSet(displayrow, displaycol);
+                    ret = cswPrivate.tabgrouptables[safetabgroup].cellSet(displayrow, displaycol);
                 } else {
                     ret = layoutTable.cellSet(displayrow, displaycol);
                 }
