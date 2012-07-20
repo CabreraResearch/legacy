@@ -1,10 +1,10 @@
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
+using ChemSW.Nbt.Batch;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
@@ -34,7 +34,7 @@ namespace ChemSW.Nbt.WebServices
         public JObject DeleteNodes( string[] NodePks, string[] NodeKeys )
         {
             JObject ret = new JObject();
-            List<CswPrimaryKey> NodePrimaryKeys = new List<CswPrimaryKey>();
+            Collection<CswPrimaryKey> NodePrimaryKeys = new Collection<CswPrimaryKey>();
 
             if( NodeKeys.Length > 0 )
             {
@@ -61,22 +61,21 @@ namespace ChemSW.Nbt.WebServices
             }
             if( NodePrimaryKeys.Count > 0 )
             {
-                //TODO - case 22742 - uncomment when MultiDelete BatchOp has been created
-                //if( NodePrimaryKeys.Count < CswNbtBatchManager.getBatchThreshold( _CswNbtResources ) )
-                //{
-                bool success = false;
-                foreach( CswPrimaryKey Npk in NodePrimaryKeys )
+                if( NodePrimaryKeys.Count < CswNbtBatchManager.getBatchThreshold( _CswNbtResources ) )
                 {
-                    success = success && DeleteNode( Npk );
+                    bool success = true;
+                    foreach( CswPrimaryKey Npk in NodePrimaryKeys )
+                    {
+                        success = DeleteNode( Npk ) && success;
+                    }
+                    ret["Succeeded"] = success.ToString();
                 }
-                ret["Succeeded"] = success.ToString();
-                //}
-                //else
-                //{                
-                //CswNbtBatchOpMultiDelete op = new CswNbtBatchOpMultiDelete( _CswNbtResources );
-                //CswNbtObjClassBatchOp BatchNode = op.makeBatchOp( SourceNode, RealCopyNodeIds, NodeTypePropIds );
-                //ret["batch"] = BatchNode.NodeId.ToString();
-                //}
+                else
+                {
+                    CswNbtBatchOpMultiDelete op = new CswNbtBatchOpMultiDelete( _CswNbtResources );
+                    CswNbtObjClassBatchOp BatchNode = op.makeBatchOp( NodePrimaryKeys );
+                    ret["batch"] = BatchNode.NodeId.ToString();
+                }
             }
 
             return ret;
