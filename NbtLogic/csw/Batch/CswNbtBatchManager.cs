@@ -114,12 +114,19 @@ namespace ChemSW.Nbt.Batch
                 // else if( OpName == NbtBatchOpName.NEWNAME ) 
                 if( null != op )
                 {
+
                     CswNbtNode UserNode = CswNbtResources.Nodes[BatchNode.User.RelatedNodeId];
-                    CswNbtObjClassUser UserOC = UserNode;
-                    CswNbtResources.AuditContext = "Batch Op: " + BatchNode.OpNameValue;
-                    CswNbtResources.AuditFirstName = UserOC.FirstName;
-                    CswNbtResources.AuditLastName = UserOC.LastName;
-                    CswNbtResources.AuditUsername = UserOC.Username;
+                    if( null != UserNode )
+                    {
+                        CswNbtObjClassUser UserOC = UserNode;
+                        if( null != UserOC )
+                        {
+                            CswNbtResources.AuditContext = "Batch Op: " + BatchNode.OpNameValue;
+                            CswNbtResources.AuditFirstName = UserOC.FirstName;
+                            CswNbtResources.AuditLastName = UserOC.LastName;
+                            CswNbtResources.AuditUsername = UserOC.Username;
+                        }
+                    }
 
                     op.runBatchOp( BatchNode );
                 }
