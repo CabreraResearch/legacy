@@ -171,6 +171,51 @@ namespace ChemSW.Nbt.WebServices
             return Ret;
         }
 
+        public JObject getSizeFromRelatedNodeId( CswPrimaryKey RelatedNodeId )
+        {
+            JObject Ret = new JObject();
+            string SizeId = string.Empty;
+            CswNbtNode RelatedNode = _CswNbtResources.Nodes.GetNode( RelatedNodeId );
+            if( null != RelatedNode )
+            {
+                CswNbtNode Node = _CswNbtResources.Nodes[RelatedNodeId];
+                if( null != Node )
+                {
+                    switch( RelatedNode.ObjClass.ObjectClass.ObjectClass )
+                    {
+                        case CswNbtMetaDataObjectClass.NbtObjectClass.ContainerClass:
+                            CswNbtObjClassContainer NodeAsContainer = Node;
+                            if( null != NodeAsContainer )
+                            {
+                                SizeId = NodeAsContainer.Size.RelatedNodeId.ToString();
+                            }
+                            break;
+                        case CswNbtMetaDataObjectClass.NbtObjectClass.RequestItemClass:
+                            CswNbtObjClassRequestItem NodeAsRequestItem = Node;
+                            if( null != NodeAsRequestItem )
+                            {
+                                if( null != NodeAsRequestItem.Size.RelatedNodeId && Int32.MinValue != NodeAsRequestItem.Size.RelatedNodeId.PrimaryKey )
+                                {
+                                    SizeId = NodeAsRequestItem.Size.RelatedNodeId.ToString();
+                                }
+                                else if( null != NodeAsRequestItem.Container.RelatedNodeId && Int32.MinValue != NodeAsRequestItem.Container.RelatedNodeId.PrimaryKey )
+                                {
+                                    SizeId = NodeAsRequestItem.Container.RelatedNodeId.ToString();
+                                }
+                            }
+                            break;
+                        default:
+                            throw new CswDniException( ErrorType.Warning, "Cannot derive a size from an instance of this type " + RelatedNode.ObjClass.ObjectClass.ObjectClass + ".", "getSizeFromRelatedNodeId does not support this Object Class." );
+                    }
+                }
+            }
+            if( false == string.IsNullOrEmpty( SizeId ) )
+            {
+                Ret["sizeid"] = SizeId;
+            }
+            return Ret;
+        }
+
     } // class CswNbtWebServiceNode
 
 } // namespace ChemSW.Nbt.WebServices

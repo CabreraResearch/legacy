@@ -139,10 +139,6 @@ namespace ChemSW.Nbt.PropTypes
                     if( value )
                     {
                         _WasModified = true;
-                        if( null != OnPropChange )
-                        {
-                            OnPropChange();
-                        }
                     }
                 }
             }

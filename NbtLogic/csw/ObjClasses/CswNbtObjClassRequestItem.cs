@@ -333,16 +333,38 @@ namespace ChemSW.Nbt.ObjClasses
                                 break;
                             case FulfillMenu.Dispense:
                                 NodeAsContainer = _CswNbtResources.Nodes.GetNode( Container.RelatedNodeId );
-                                if( null != NodeAsContainer )
+                                if( null != NodeAsContainer && null != NodeAsContainer.Dispense.NodeTypeProp )
                                 {
-                                    if( null != NodeAsContainer.Dispense.NodeTypeProp )
-                                    {
-                                        NbtButtonData DispenseData = new NbtButtonData( NodeAsContainer.Dispense.NodeTypeProp );
-                                        NodeAsContainer.onButtonClick( DispenseData );
-                                        ButtonData.clone( DispenseData );
-                                    }
+                                    NbtButtonData DispenseData = new NbtButtonData( NodeAsContainer.Dispense.NodeTypeProp );
+                                    NodeAsContainer.onButtonClick( DispenseData );
+                                    ButtonData.clone( DispenseData );
                                 }
-                                ButtonData.Action = NbtButtonAction.dispense;
+                                else
+                                {
+                                    ButtonData.Data["containernodetypeid"] = Container.TargetId;
+                                    ButtonData.Data["containerobjectclassid"] = Container.TargetId;
+                                    JObject Capacity = null;
+                                    if( null != Size.RelatedNodeId && Int32.MinValue != Size.RelatedNodeId.PrimaryKey )
+                                    {
+                                        CswNbtObjClassSize NodeAsSize = _CswNbtResources.Nodes[Size.RelatedNodeId];
+                                        if( null != NodeAsSize )
+                                        {
+                                            Capacity = new JObject();
+                                            NodeAsSize.Capacity.ToJSON( Capacity );
+                                            ButtonData.Data["capacity"] = Capacity;
+                                        }
+                                    }
+                                    else if( false == Quantity.Empty )
+                                    {
+                                        Capacity = new JObject();
+                                        Quantity.ToJSON( Capacity );
+                                    }
+                                    if( null != Capacity )
+                                    {
+                                        ButtonData.Data["capacity"] = Capacity;
+                                    }
+                                    ButtonData.Action = NbtButtonAction.dispense;
+                                }
                                 break;
                             case FulfillMenu.Dispose:
                                 NodeAsContainer = _CswNbtResources.Nodes.GetNode( Container.RelatedNodeId );
@@ -536,12 +558,9 @@ namespace ChemSW.Nbt.ObjClasses
 
         private void OnStatusPropChange()
         {
-            AssignedTo.setHidden( value: ( Status.Value == Statuses.Pending || Status.Value == Statuses.Completed || Status.Value == Statuses.Cancelled ),
-                SaveToDb: true );
-            Fulfill.setHidden( value: ( Status.Value == Statuses.Pending || Status.Value == Statuses.Completed || Status.Value == Statuses.Cancelled ),
-                SaveToDb: true );
-            TotalDispensed.setHidden( value: ( Status.Value == Statuses.Pending || ( Type.Value != Types.Dispense && Type.Value != Types.Request ) ),
-                SaveToDb: true );
+            AssignedTo.setHidden( value: ( Status.Value == Statuses.Pending || Status.Value == Statuses.Completed || Status.Value == Statuses.Cancelled ), SaveToDb: true );
+            Fulfill.setHidden( value: ( Status.Value == Statuses.Pending || Status.Value == Statuses.Completed || Status.Value == Statuses.Cancelled ), SaveToDb: true );
+            TotalDispensed.setHidden( value: ( Status.Value == Statuses.Pending || ( Type.Value != Types.Dispense && Type.Value != Types.Request ) ), SaveToDb: true );
 
             switch( Status.Value )
             {
@@ -570,22 +589,21 @@ namespace ChemSW.Nbt.ObjClasses
                     break;
             }
 
-            if( Status.Value != Statuses.Pending )
+            if( Status.Value != Statuses.Pending &&
+                Status.Value != Status.GetOriginalPropRowValue() )
             {
                 CswNbtObjClassRequest NodeAsRequest = _CswNbtResources.Nodes.GetNode( Request.RelatedNodeId );
                 /* Email notification logic */
                 if( null != NodeAsRequest &&
                     null != NodeAsRequest.Requestor.RelatedNodeId )
                 {
-                    CswNbtObjClassUser RequestorAsUser =
-                        _CswNbtResources.Nodes.GetNode( NodeAsRequest.Requestor.RelatedNodeId );
+                    CswNbtObjClassUser RequestorAsUser = _CswNbtResources.Nodes.GetNode( NodeAsRequest.Requestor.RelatedNodeId );
                     if( null != RequestorAsUser )
                     {
                         string Subject = Node.NodeName + "'s Request Item Status has Changed to " + Status.Value;
                         string Message = _makeNotificationMessage();
                         string Recipient = RequestorAsUser.Email;
-                        Collection<CswMailMessage> EmailMessage = _CswNbtResources.makeMailMessages( Subject, Message,
-                                                                                                    Recipient );
+                        Collection<CswMailMessage> EmailMessage = _CswNbtResources.makeMailMessages( Subject, Message, Recipient );
                         _CswNbtResources.sendEmailNotification( EmailMessage );
                     }
                 }
