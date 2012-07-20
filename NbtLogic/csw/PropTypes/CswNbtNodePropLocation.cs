@@ -107,6 +107,11 @@ namespace ChemSW.Nbt.PropTypes
             }
         }
 
+        public string CachedFullPath
+        {
+            get { return CachedPath + PathDelimiter + CachedNodeName; }
+        }
+
         public string CachedBarcode
         {
             get
@@ -200,10 +205,10 @@ namespace ChemSW.Nbt.PropTypes
             CswNbtMetaDataObjectClassProp LocationAllowInventoryOCP = LocationOC.getObjectClassProp( CswNbtObjClassLocation.AllowInventoryPropertyName );
 
             bool IsLocationNode = false;
-            if( NodeId != null )
+            if( null != NodeId )
             {
                 CswNbtNode Node = CswNbtResources.Nodes[NodeId];
-                if( Node.getObjectClassId() == LocationOC.ObjectClassId )
+                if( null != Node && Node.getObjectClassId() == LocationOC.ObjectClassId )
                 {
                     IsLocationNode = true;
                 }

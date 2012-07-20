@@ -865,7 +865,7 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string getMainMenu( string ViewId, string SafeNodeKey, string PropIdAttr, string LimitMenuTo )
+        public string getMainMenu( string ViewId, string SafeNodeKey, string PropIdAttr, string LimitMenuTo, string ReadOnly )
         {
             JObject ReturnVal = new JObject();
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
@@ -879,7 +879,7 @@ namespace ChemSW.Nbt.WebServices
 
                     var ws = new CswNbtWebServiceMainMenu( _CswNbtResources, LimitMenuTo );
                     CswNbtView View = _getView( ViewId );
-                    ReturnVal = ws.getMenu( View, SafeNodeKey, PropIdAttr );
+                    ReturnVal = ws.getMenu( View, SafeNodeKey, PropIdAttr, CswConvert.ToBoolean( ReadOnly ) );
                 }
 
                 _deInitResources();
@@ -2394,7 +2394,39 @@ namespace ChemSW.Nbt.WebServices
 
             return ReturnVal.ToString();
 
-        } // getBlob()	
+        } // getQuantity()	
+        
+        [WebMethod( EnableSession = false )]
+        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        public string getSize( string RelatedNodeId )
+        {
+            JObject ReturnVal = new JObject();
+
+            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            try
+            {
+                _initResources();
+                AuthenticationStatus = _attemptRefresh( true );
+
+                CswPrimaryKey RelatedNodePk = _getNodeId( RelatedNodeId );
+                if( null != RelatedNodePk )
+                {
+                    var ws = new CswNbtWebServiceNode( _CswNbtResources, _CswNbtStatisticsEvents );
+                    ReturnVal = ws.getSizeFromRelatedNodeId( RelatedNodePk );
+                }
+                _deInitResources();
+
+            }
+            catch( Exception ex )
+            {
+                ReturnVal = jError( ex );
+            }
+
+            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+
+            return ReturnVal.ToString();
+
+        } // getQuantity()	
 
         #endregion Tabs and Props
 
@@ -3328,62 +3360,25 @@ namespace ChemSW.Nbt.WebServices
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
         public string DeleteNodes( string[] NodePks, string[] NodeKeys )
         {
-            JObject ReturnVal = new JObject();
-            List<CswPrimaryKey> NodePrimaryKeys = new List<CswPrimaryKey>();
-            bool ret = true;
+            JObject ret = new JObject();
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
             try
             {
                 _initResources();
                 AuthenticationStatus = _attemptRefresh();
-
                 if( AuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
-                    if( NodeKeys.Length > 0 )
-                    {
-                        foreach( string NodeKey in NodeKeys )
-                        {
-                            CswNbtNodeKey NbtNodeKey = _getNodeKey( NodeKey );
-                            if( null != NbtNodeKey )
-                            {
-                                NodePrimaryKeys.Add( NbtNodeKey.NodeId );
-                            }
-                        }
-                    }
-                    if( NodePks.Length > 0 )
-                    {
-                        foreach( string NodePk in NodePks )
-                        {
-                            CswPrimaryKey PrimaryKey = _getNodeId( NodePk );
-                            if( null != PrimaryKey && !NodePrimaryKeys.Contains( PrimaryKey ) )
-                            {
-                                NodePrimaryKeys.Add( PrimaryKey );
-                            }
-                        }
-                    }
-                    if( NodePrimaryKeys.Count > 0 )
-                    {
-                        foreach( CswPrimaryKey Npk in NodePrimaryKeys )
-                        {
-                            CswNbtWebServiceNode ws = new CswNbtWebServiceNode( _CswNbtResources, _CswNbtStatisticsEvents );
-                            ret = ret && ws.DeleteNode( Npk );
-                        }
-                    }
-
-                    ReturnVal["Succeeded"] = ret;
+                    CswNbtWebServiceNode ws = new CswNbtWebServiceNode( _CswNbtResources, _CswNbtStatisticsEvents );
+                    ret = ws.DeleteNodes( NodePks, NodeKeys );
                 }
-
                 _deInitResources();
             }
             catch( Exception ex )
             {
-                ReturnVal = jError( ex );
+                ret = jError( ex );
             }
-
-            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
-
-            return ReturnVal.ToString();
-
+            _jAddAuthenticationStatus( ret, AuthenticationStatus );
+            return ret.ToString();
         }
 
         [WebMethod( EnableSession = false )]
@@ -4917,7 +4912,8 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string finalizeDispenseContainer( string SourceContainerNodeId, string DispenseType, string Quantity, string UnitId, string ContainerNodeTypeId, string DesignGrid )
+        public string finalizeDispenseContainer( string SourceContainerNodeId, string DispenseType, string Quantity, 
+            string UnitId, string ContainerNodeTypeId, string DesignGrid, string RequestItemId )
         {
             JObject ReturnVal = new JObject();
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
@@ -4930,11 +4926,11 @@ namespace ChemSW.Nbt.WebServices
                     CswNbtWebServiceContainer ws = new CswNbtWebServiceContainer( _CswNbtResources );
                     if( DispenseType.Contains( CswNbtObjClassContainerDispenseTransaction.DispenseType.Dispense.ToString() ) && DesignGrid != "Unknown" )
                     {
-                        ReturnVal = ws.upsertDispenseContainers( SourceContainerNodeId, ContainerNodeTypeId, DesignGrid );
+                        ReturnVal = ws.upsertDispenseContainers( SourceContainerNodeId, ContainerNodeTypeId, DesignGrid, RequestItemId );
                     }
                     else
                     {
-                        ReturnVal = ws.updateDispensedContainer( SourceContainerNodeId, DispenseType, Quantity, UnitId );
+                        ReturnVal = ws.updateDispensedContainer( SourceContainerNodeId, DispenseType, Quantity, UnitId, RequestItemId );
                     }
 
                     ReturnVal["success"] = "true";

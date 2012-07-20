@@ -25,16 +25,20 @@
                                    .addClass('CswFieldTypeNFPA_table');
 
             var redDiv = table.cell(1, 1)
-                               .div({ cssclass: 'CswFieldTypeNFPA_text CswFieldTypeNFPA_cell CswFieldTypeNFPA_red' });
+                               .div({ cssclass: 'CswFieldTypeNFPA_cell CswFieldTypeNFPA_red' })
+                               .div({ cssclass: 'CswFieldTypeNFPA_text' });
 
             var yellowDiv = table.cell(1, 2)
-                               .div({ cssclass: 'CswFieldTypeNFPA_text CswFieldTypeNFPA_cell CswFieldTypeNFPA_yellow' });
+                               .div({ cssclass: 'CswFieldTypeNFPA_cell CswFieldTypeNFPA_yellow' })
+                               .div({ cssclass: 'CswFieldTypeNFPA_text' });
 
             var blueDiv = table.cell(2, 1)
-                               .div({ cssclass: 'CswFieldTypeNFPA_text CswFieldTypeNFPA_cell CswFieldTypeNFPA_blue' });
+                               .div({ cssclass: 'CswFieldTypeNFPA_cell CswFieldTypeNFPA_blue' })
+                               .div({ cssclass: 'CswFieldTypeNFPA_text' });
 
             var whiteDiv = table.cell(2, 2)
-                               .div({ cssclass: 'CswFieldTypeNFPA_text CswFieldTypeNFPA_cell CswFieldTypeNFPA_white' });
+                               .div({ cssclass: 'CswFieldTypeNFPA_cell CswFieldTypeNFPA_white' })
+                               .div({ cssclass: 'CswFieldTypeNFPA_text CswFieldTypeNFPA_whitetext' });
 
             function setValue(div, value) {
                 div.text(value);

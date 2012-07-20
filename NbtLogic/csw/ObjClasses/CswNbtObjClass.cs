@@ -64,10 +64,25 @@ namespace ChemSW.Nbt.ObjClasses
             }
             public void clone( NbtButtonData DataToCopy )
             {
-                Action = DataToCopy.Action;
-                SelectedText = DataToCopy.SelectedText;
-                Data = DataToCopy.Data;
-                Message = DataToCopy.Message;
+                if(null != DataToCopy )
+                {
+                    if (null != DataToCopy.Action)
+                    {
+                        Action = DataToCopy.Action;
+                    }
+                    if (null != DataToCopy.SelectedText)
+                    {
+                        SelectedText = DataToCopy.SelectedText;
+                    }
+                    if( null != DataToCopy.Data )
+                    {
+                        Data = DataToCopy.Data;
+                    }
+                    if( null != DataToCopy.Message )
+                    {
+                        Message = DataToCopy.Message;
+                    }
+                }
             }
 
             public NbtButtonAction Action;

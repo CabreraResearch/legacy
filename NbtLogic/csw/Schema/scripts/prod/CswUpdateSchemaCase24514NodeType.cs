@@ -72,8 +72,8 @@ namespace ChemSW.Nbt.Schema
             Int32 SequenceId = _CswNbtSchemaModTrnsctn.makeSequence( new CswSequenceName( "Request Items" ), "RI", "", 0, 1 );
             NumberNtp.setSequence( SequenceId );
 
-            RequestItemNt.addNameTemplateText( NumberNtp.PropName );
             RequestItemNt.addNameTemplateText( RequestItemRequestNtp.PropName );
+            RequestItemNt.addNameTemplateText( NumberNtp.PropName );
             RequestItemNt.addNameTemplateText( TypeNtp.PropName );
 
             #endregion NodeTypes
@@ -96,7 +96,7 @@ namespace ChemSW.Nbt.Schema
                                                                      TabId = RequestItemsNtt.TabId
                                                                  } );
             CswNbtView GridView = _CswNbtSchemaModTrnsctn.ViewSelect.restoreView( RequestItemsGridNtp.ViewId );
-            GridView.ViewName = "Request Items Grid Property View";
+            GridView.ViewName = "Requested Items";
             GridView.Visibility = NbtViewVisibility.Property;
             GridView.ViewMode = NbtViewRenderingMode.Grid;
             GridView.Category = "Requests";

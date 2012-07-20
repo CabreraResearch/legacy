@@ -33,7 +33,8 @@
             onSaveView: null, // function (newviewid) { },
             Multi: false,
             nodeTreeCheck: '',
-            limitMenuTo: ''
+            limitMenuTo: '',
+            readonly: false
         };
         if (options) $.extend(o, options);
 
@@ -54,7 +55,8 @@
                     ViewId: o.viewid,
                     SafeNodeKey: o.cswnbtnodekey,
                     PropIdAttr: o.propid,
-                    LimitMenuTo: o.limitMenuTo
+                    LimitMenuTo: o.limitMenuTo,
+                    ReadOnly: o.readonly
                 }
             },
             onAlterNode: o.onAddNode,

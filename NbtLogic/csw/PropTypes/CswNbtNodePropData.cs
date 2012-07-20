@@ -1,5 +1,6 @@
 using System;
 using System.Data;
+using System.Diagnostics;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
@@ -138,10 +139,6 @@ namespace ChemSW.Nbt.PropTypes
                     if( value )
                     {
                         _WasModified = true;
-                        if( null != OnPropChange )
-                        {
-                            OnPropChange();
-                        }
                     }
                 }
             }
@@ -425,6 +422,7 @@ namespace ChemSW.Nbt.PropTypes
             return ret;
         } // GetPropRowValueDate()
 
+        [DebuggerStepThrough]
         public string GetOriginalPropRowValue( CswNbtSubField.PropColumn Column )
         {
             // see case 22613

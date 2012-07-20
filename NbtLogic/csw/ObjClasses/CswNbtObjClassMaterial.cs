@@ -107,7 +107,7 @@ namespace ChemSW.Nbt.ObjClasses
 
                         CswNbtObjClassRequestItem NodeAsRequestItem = RequestAct.makeRequestItem( new CswNbtActSubmitRequest.RequestItem( CswNbtActSubmitRequest.RequestItem.Material ), NodeId, OCP );
                         ButtonData.Data["requestaction"] = OCP.PropName;
-                        ButtonData.Data["titleText"] = "Request for " + TradeName.Text;
+                        ButtonData.Data["titleText"] = "Request " + TradeName.Text;
                         ButtonData.Data["requestItemProps"] = RequestAct.getRequestItemAddProps( NodeAsRequestItem );
                         ButtonData.Data["requestItemNodeTypeId"] = RequestAct.RequestItemNt.NodeTypeId;
                         ButtonData.Action = NbtButtonAction.request;

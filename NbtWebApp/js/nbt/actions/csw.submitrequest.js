@@ -43,14 +43,21 @@
                 cswParent.empty();
                 cswPrivate.action = Csw.layouts.action(cswParent, {
                     Title: 'Submit Request',
-                    FinishText: 'Submit',
+                    FinishText: 'Place Request',
                     onFinish: submitRequest,
                     onCancel: cswPrivate.onCancel
                 });
-                cswPrivate.actionTbl = cswPrivate.action.actionDiv.table({ ID: cswPrivate.ID + '_tbl' }).css('width', '100%');
 
+                cswPrivate.actionTbl = cswPrivate.action.actionDiv.table({ ID: cswPrivate.ID + '_tbl', align: 'center' }).css('width', '95%');
+
+                cswPrivate.actionTbl.cell(1, 1)
+                    .css('text-align', 'left')
+                    .span({ text: 'Edit any of the Request Items in your cart. When you are finished, click "Place Request" to submit your cart.' });
+
+
+                cswPrivate.actionTbl.cell(3, 1).br({ number: 2 });
                 cswPrivate.gridId = cswPrivate.ID + '_csw_requestGrid_outer';
-                cswPublic.gridParent = cswPrivate.actionTbl.cell(1, 1).div({ ID: cswPrivate.gridId }); //, align: 'center' });
+                cswPublic.gridParent = cswPrivate.actionTbl.cell(4, 1).div({ ID: cswPrivate.gridId }); //, align: 'center' });
 
                 cswPrivate.initGrid = function (ajax) {
 
@@ -142,7 +149,7 @@
                     });
                 }; // copyRequest()
 
-                cswPrivate.historyTbl = cswPrivate.actionTbl.cell(3, 1).table({ align: 'left', cellvalign: 'middle' });
+                cswPrivate.historyTbl = cswPrivate.actionTbl.cell(5, 1).table({ align: 'left', cellvalign: 'middle' });
                 Csw.ajax.post({
                     urlMethod: 'getRequestHistory',
                     data: {},
@@ -171,7 +178,7 @@
                     }
                 });
 
-                cswPrivate.saveRequestTbl = cswPrivate.actionTbl.cell(4, 1).table({ align: 'right', cellvalign: 'middle', cellpadding: '2px' });
+                cswPrivate.saveRequestTbl = cswPrivate.actionTbl.cell(6, 1).table({ align: 'right', cellvalign: 'middle', cellpadding: '2px' });
                 cswPrivate.saveRequestTbl.cell(1, 4).span({ text: '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' });
                 cswPrivate.saveRequestTxt = cswPrivate.saveRequestTbl.cell(1, 3).input().hide();
                 cswPrivate.saveRequestTbl.cell(1, 1).span({ text: 'Save Request' });

@@ -6,6 +6,7 @@ using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
+using ChemSW.Nbt.Security;
 using NbtWebAppServices.Session;
 using Newtonsoft.Json.Linq;
 
@@ -79,60 +80,79 @@ namespace NbtWebAppServices.Response
                         {
                             Inspection.Counts = new CswNbtWcfInspectionsDataModel.CswNbtInspection.QuestionCounts();
                             /* We loop once to set the property values */
-                            foreach( CswNbtWcfInspectionsDataModel.CswNbtInspection.QuestionAnswer Question in Inspection.Questions )
+                            CswNbtMetaDataNodeType InspectionNt = InspectionNode.getNodeType();
+                            if( null != InspectionNt )
                             {
-                                CswNbtMetaDataNodeTypeProp Ntp = InspectionNode.getNodeType().getNodeTypeProp( Question.QuestionId );
-                                if( null != Ntp )
+                                //Can edit the nodetype
+                                if( _CswNbtWcfSessionResources.CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, InspectionNt ) )
                                 {
-                                    CswNbtNodePropWrapper Prop = InspectionNode.Properties[Ntp];
-                                    CswNbtNodePropQuestion PropAsQuestion = Prop.AsQuestion;
-                                    PropAsQuestion.Answer = Question.Answer;
-                                    PropAsQuestion.CorrectiveAction = Question.CorrectiveAction;
-                                    DateTime DateAnswered = CswConvert.ToDateTime( Question.DateAnswered );
-                                    DateTime DateCorrected = CswConvert.ToDateTime( Question.DateCorrected );
-                                    PropAsQuestion.DateAnswered = DateAnswered;
-                                    PropAsQuestion.DateCorrected = DateCorrected;
-                                    PropAsQuestion.Comments = Question.Comments;
-                                    if( false == string.IsNullOrEmpty( Question.Answer ) )
+                                    foreach( CswNbtWcfInspectionsDataModel.CswNbtInspection.QuestionAnswer Question in Inspection.Questions )
                                     {
-                                        Inspection.Counts.Answered += 1;
+                                        CswNbtMetaDataNodeTypeProp Ntp = InspectionNt.getNodeTypeProp( Question.QuestionId );
+                                        if( null != Ntp )
+                                        {
+                                            CswNbtMetaDataNodeTypeTab Tab = InspectionNt.getNodeTypeTab( Ntp.FirstEditLayout.TabId );
+                                            if( null != Tab )
+                                            {
+                                                bool CanEdit = _CswNbtWcfSessionResources.CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, InspectionNt, NodeTypeTab: Tab, MetaDataProp: Ntp );
+                                                CswNbtNodePropQuestion PropAsQuestion = InspectionNode.Properties[Ntp];
+                                                if( CanEdit )
+                                                {
+                                                    PropAsQuestion.Answer = Question.Answer;
+                                                    PropAsQuestion.CorrectiveAction = Question.CorrectiveAction;
+                                                    DateTime DateAnswered = CswConvert.ToDateTime( Question.DateAnswered );
+                                                    DateTime DateCorrected = CswConvert.ToDateTime( Question.DateCorrected );
+                                                    PropAsQuestion.DateAnswered = DateAnswered;
+                                                    PropAsQuestion.DateCorrected = DateCorrected;
+                                                    PropAsQuestion.Comments = Question.Comments;
+                                                }
+                                                if( false == string.IsNullOrEmpty( Question.Answer ) )
+                                                {
+                                                    Inspection.Counts.Answered += 1;
+                                                }
+                                                else
+                                                {
+                                                    Inspection.Counts.UnAnswered += 1;
+                                                }
+                                                if( false == PropAsQuestion.IsCompliant )
+                                                {
+                                                    Inspection.Counts.Ooc += 1;
+                                                }
+                                                Inspection.Counts.Total += 1;
+                                            }
+                                        }
                                     }
-                                    else
+                                    InspectionNode.postChanges( true );
+                                    if( false == string.IsNullOrEmpty( Inspection.Action ) && ( Inspection.Action.ToLower() == "finish" || Inspection.Action.ToLower() == "cancel" ) )
                                     {
-                                        Inspection.Counts.UnAnswered += 1;
+                                        CswNbtMetaDataNodeTypeProp ButtonNtp = null;
+                                        if( Inspection.Action.ToLower() == "finish" )
+                                        {
+                                            ButtonNtp = InspectionNode.getNodeType().getNodeTypeProp( CswNbtObjClassInspectionDesign.FinishPropertyName );
+                                        }
+                                        else if( Inspection.Action.ToLower() == "cancel" )
+                                        {
+                                            ButtonNtp = InspectionNode.getNodeType().getNodeTypeProp( CswNbtObjClassInspectionDesign.CancelPropertyName );
+                                        }
+
+                                        if( null != ButtonNtp )
+                                        {
+                                            CswNbtMetaDataNodeTypeTab ButtonTab = _CswNbtWcfSessionResources.CswNbtResources.MetaData.getNodeTypeTab(ButtonNtp.FirstEditLayout.TabId);
+                                            if( null != ButtonTab && 
+                                                _CswNbtWcfSessionResources.CswNbtResources.Permit.can(CswNbtPermit.NodeTypePermission.Edit, InspectionNt, NodeTypeTab: ButtonTab, MetaDataProp: ButtonNtp ) )
+                                            {
+                                                _InspectionDesignOc = _InspectionDesignOc ?? _CswNbtWcfSessionResources.CswNbtResources.MetaData.getObjectClass(CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass);
+                                                CswNbtObjClass NbtObjClass = CswNbtObjClassFactory.makeObjClass(_CswNbtWcfSessionResources.CswNbtResources, _InspectionDesignOc, InspectionNode);
+                                                CswNbtObjClass.NbtButtonData ButtonData = new CswNbtObjClass.NbtButtonData(ButtonNtp);
+                                                NbtObjClass.onButtonClick(ButtonData);
+                                            }
+                                        }
                                     }
-                                    if( false == PropAsQuestion.IsCompliant )
-                                    {
-                                        Inspection.Counts.Ooc += 1;
-                                    }
-                                    Inspection.Counts.Total += 1;
+                                    Processed = true;
                                 }
                             }
-                            InspectionNode.postChanges( true );
-                            if( false == string.IsNullOrEmpty( Inspection.Action ) && ( Inspection.Action.ToLower() == "finish" || Inspection.Action.ToLower() == "cancel" ) )
-                            {
-                                CswNbtMetaDataNodeTypeProp ButtonNtp = null;
-                                if( Inspection.Action.ToLower() == "finish" )
-                                {
-                                    ButtonNtp = InspectionNode.getNodeType().getNodeTypeProp( CswNbtObjClassInspectionDesign.FinishPropertyName );
-                                }
-                                else if( Inspection.Action.ToLower() == "cancel" )
-                                {
-                                    ButtonNtp = InspectionNode.getNodeType().getNodeTypeProp( CswNbtObjClassInspectionDesign.CancelPropertyName );
-                                }
-
-                                if( null != ButtonNtp )
-                                {
-                                    _InspectionDesignOc = _InspectionDesignOc ?? _CswNbtWcfSessionResources.CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass );
-                                    CswNbtObjClass NbtObjClass = CswNbtObjClassFactory.makeObjClass( _CswNbtWcfSessionResources.CswNbtResources, _InspectionDesignOc, InspectionNode );
-                                    CswNbtObjClass.NbtButtonData ButtonData = new CswNbtObjClass.NbtButtonData(ButtonNtp);
-                                    NbtObjClass.onButtonClick( ButtonData );
-                                }
-                            }
-                            Processed = true;
-
                             /* Reinit since state has changed. */
-                            NodeAsDesign = (CswNbtObjClassInspectionDesign) InspectionNode;
+                            NodeAsDesign = InspectionNode;
 
                             if( NodeAsDesign.Status.Value == Completed || NodeAsDesign.Status.Value == CompletedLate )
                             {

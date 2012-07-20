@@ -51,14 +51,16 @@ namespace ChemSW.Nbt.Schema
                 CswNbtMetaDataNodeTypeProp FulfillNtp = RequestItemNt.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Fulfill );
                 CswNbtMetaDataNodeTypeProp RequestNtp = RequestItemNt.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Request );
                 CswNbtMetaDataNodeTypeProp IGroupNtp = RequestItemNt.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestItem.PropertyName.InventoryGroup );
-
+                CswNbtMetaDataNodeTypeProp TotalDispNtp = RequestItemNt.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestItem.PropertyName.TotalDispensed );
+                
                 NumberNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Table, true, DisplayRow: 1, DisplayColumn: 1 );
                 MaterialNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Table, true, DisplayRow: 1, DisplayColumn: 2 );
                 RequestNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Table, true, DisplayRow: 2, DisplayColumn: 1 );
                 OrderNoNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Table, true, DisplayRow: 2, DisplayColumn: 2 );
                 IGroupNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Table, true, DisplayRow: 3, DisplayColumn: 1 );
                 StatusNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Table, true, DisplayRow: 4, DisplayColumn: 1 );
-                FulfillNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Table, true, DisplayRow: 4, DisplayColumn: 2 );
+                TotalDispNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Table, true, DisplayRow: 4, DisplayColumn: 2 );
+                FulfillNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Table, true, DisplayRow: 5, DisplayColumn: 1 );
 
                 CswNbtMetaDataNodeTypeProp RequestByNtp = RequestItemNt.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestItem.PropertyName.RequestBy );
                 CswNbtMetaDataNodeTypeProp SizeNtp = RequestItemNt.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Size );
@@ -106,7 +108,6 @@ namespace ChemSW.Nbt.Schema
                     CswNbtMetaDataNodeType UserNt = UserOc.getLatestVersionNodeTypes().FirstOrDefault();
                     if( null != UserNt )
                     {
-
                         CswNbtObjClassUser NodeAsUser = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( UserNt.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode );
                         if( null != NodeAsUser )
                         {

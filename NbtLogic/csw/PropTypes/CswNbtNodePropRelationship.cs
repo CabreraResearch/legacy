@@ -19,7 +19,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             return PropWrapper.AsRelationship;
         }
-
+        
         public CswNbtNodePropRelationship( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp )
             : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp )
         {
@@ -112,7 +112,9 @@ namespace ChemSW.Nbt.PropTypes
             }
             set
             {
-                if( value != null ) //&& value.TableName == "nodes" )
+                if( value != null && 
+                    false == string.IsNullOrEmpty(value.TableName) &&
+                    Int32.MinValue != value.PrimaryKey ) //&& value.TableName == "nodes" )
                 {
                     if( value.TableName != TargetTableName )
                     {
@@ -321,19 +323,26 @@ namespace ChemSW.Nbt.PropTypes
             }
             ParentObject[_NameSubField.ToXmlNodeName( true ).ToLower()] = CachedNodeName;
 
+            CswNbtMetaDataNodeType TargetNodeType = null;
+            CswNbtMetaDataObjectClass TargetObjectClass = null;
             ParentObject["nodetypeid"] = default( string );
             ParentObject["objectclassid"] = default( string );
             if( TargetType == NbtViewRelatedIdType.NodeTypeId )
             {
                 ParentObject["nodetypeid"] = TargetId.ToString();
+                TargetNodeType = _CswNbtResources.MetaData.getNodeType( TargetId );
+                TargetObjectClass = TargetNodeType.getObjectClass();
             }
             else if( TargetType == NbtViewRelatedIdType.ObjectClassId )
             {
                 ParentObject["objectclassid"] = TargetId.ToString();
+                TargetObjectClass = _CswNbtResources.MetaData.getObjectClass( TargetId );
             }
 
             ParentObject["allowadd"] = false;
-            if( _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Create, _CswNbtResources.MetaData.getNodeType( TargetId ) ) )
+
+            if( TargetObjectClass != null && TargetObjectClass.CanAdd && // case 27189
+                ( TargetNodeType == null || _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Create, TargetNodeType ) ) )
             {
                 ParentObject["allowadd"] = "true";
             }

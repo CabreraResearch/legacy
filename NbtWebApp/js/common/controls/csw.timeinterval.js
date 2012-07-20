@@ -76,12 +76,11 @@
                         cswPrivate.saveRateInterval();
                     }
 
-                    function dayChange() {
+                    function dayChange(val, checkbox) {
                         Csw.tryExec(cswPrivate.onChange);
 
-                        var $this = $(this),
-                            day = cswPrivate.weekDayDef[$this.val() - 1];
-                        if ($this.is(':checked')) {
+                        var day = cswPrivate.weekDayDef[val - 1];
+                        if (checkbox.checked()) {
                             if (false === isWeekly) {
                                 weekdays = [];
                             }

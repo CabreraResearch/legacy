@@ -49,12 +49,12 @@ namespace ChemSW.Nbt.Actions
 
         #region Private
 
-        private const string _SectionName = "SECTION";
-        private const string _QuestionName = "QUESTION";
-        private const string _AllowedAnswersName = "ALLOWED_ANSWERS";
-        private const string _CompliantAnswersName = "COMPLIANT_ANSWERS";
-        private const string _PreferredAnswer = "PREFERRED_ANSWER";
-        private const string _HelpTextName = "HELP_TEXT";
+        private const string _SectionName = "section";
+        private const string _QuestionName = "question";
+        private const string _AllowedAnswersName = "allowed_answers";
+        private const string _CompliantAnswersName = "compliant_answers";
+        private const string _PreferredAnswer = "preferred_answer";
+        private const string _HelpTextName = "help_text";
 
         private readonly CswCommaDelimitedString _ColumnNames = new CswCommaDelimitedString
                                                            {

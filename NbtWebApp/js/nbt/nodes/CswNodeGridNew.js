@@ -23,6 +23,7 @@
                 reinit: false,
                 forceFit: false,
                 EditMode: Csw.enums.editMode.Edit,
+                readonly: false,
                 onEditNode: null,
                 onDeleteNode: null,
                 canSelectRow: false,
@@ -59,7 +60,7 @@
                                     },
                                     forceFit: o.forceFit,
                                     usePaging: false === forReporting,
-                                    showActionColumn: false === forReporting,
+                                    showActionColumn: false === forReporting && false === o.readonly,
                                     canSelectRow: o.canSelectRow,
                                     onSelect: o.onSelect,
                                     onEdit: function(rows) {

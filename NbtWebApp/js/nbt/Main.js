@@ -33,81 +33,87 @@ window.initMain = window.initMain || function (undefined) {
     Csw.subscribe(Csw.enums.events.ajax.globalAjaxStop, stopSpinner);
 
     function onObjectClassButtonClick(eventOj, opts) {
-        releaseEvents();
         Csw.debug.assert(false === Csw.isNullOrEmpty(opts.data), 'opts.data is null.');
         var actionJson = opts.data.actionData;
-            switch (Csw.string(opts.data.action).toLowerCase()) {
-                case Csw.enums.nbtButtonAction.dispense:
-                    actionJson.actionname = 'DispenseContainer';
-                    handleAction(actionJson);
-                    break;
-                case Csw.enums.nbtButtonAction.editprop:
-                    $.CswDialog('EditNodeDialog', {
-                        nodeids: [Csw.string(actionJson.nodeid)],
-                        filterToPropId: Csw.string(actionJson.propidattr),
-                        title: Csw.string(actionJson.title),
-                        onEditNode: function (nodeid, nodekey, close) {
-                            Csw.tryExec(close);
+        switch (Csw.string(opts.data.action).toLowerCase()) {
+            case Csw.enums.nbtButtonAction.dispense:
+                actionJson.actionname = 'DispenseContainer';
+                handleAction(actionJson);
+                break;
+            case Csw.enums.nbtButtonAction.editprop:
+                $.CswDialog('EditNodeDialog', {
+                    nodeids: [Csw.string(actionJson.nodeid)],
+                    filterToPropId: Csw.string(actionJson.propidattr),
+                    title: Csw.string(actionJson.title),
+                    onEditNode: function (nodeid, nodekey, close) {
+                        Csw.tryExec(close);
+                    }
+                });
+                break;
+
+            case Csw.enums.nbtButtonAction.loadView:
+                Csw.debug.assert(false === Csw.isNullOrEmpty(actionJson), 'actionJson is null.');
+                Csw.publish(Csw.enums.events.RestoreViewContext, actionJson);
+                break;
+
+            case Csw.enums.nbtButtonAction.popup:
+                Csw.debug.assert(false === Csw.isNullOrEmpty(actionJson), 'actionJson is null.');
+                Csw.openPopup(actionJson.url, 600, 800);
+                break;
+
+            case Csw.enums.nbtButtonAction.reauthenticate:
+                if (Csw.clientChanges.manuallyCheckChanges()) {
+                    /* case 24669 */
+                    Csw.cookie.clearAll();
+                    Csw.ajax.post({
+                        urlMethod: 'reauthenticate',
+                        data: { PropId: Csw.string(opts.propid) },
+                        success: function () {
+                            Csw.clientChanges.unsetChanged();
+                            Csw.window.location('Main.html');
                         }
                     });
-                    break;
-                    
-                case Csw.enums.nbtButtonAction.loadView:
-                    Csw.debug.assert(false === Csw.isNullOrEmpty(actionJson), 'actionJson is null.');
-                    Csw.publish(Csw.enums.events.RestoreViewContext, actionJson);
-                    break;
+                }
+                break;
 
-                case Csw.enums.nbtButtonAction.popup:
-                    Csw.debug.assert(false === Csw.isNullOrEmpty(actionJson), 'actionJson is null.');
-                    Csw.openPopup(actionJson.url, 600, 800);
-                    break;
-                    
-                case Csw.enums.nbtButtonAction.reauthenticate:
-                    if (Csw.clientChanges.manuallyCheckChanges()) {
-                        /* case 24669 */
-                        Csw.cookie.clearAll();
-                        Csw.ajax.post({
-                            urlMethod: 'reauthenticate',
-                            data: { PropId: Csw.string(opts.propid) },
-                            success: function () {
-                                Csw.clientChanges.unsetChanged();
-                                Csw.window.location('Main.html');
+            case Csw.enums.nbtButtonAction.receive:
+                actionJson.actionname = 'Receiving';
+                handleAction(actionJson);
+                break;
+
+            case Csw.enums.nbtButtonAction.request:
+                Csw.debug.assert(false === Csw.isNullOrEmpty(actionJson), 'actionJson is null.');
+                switch (actionJson.requestaction) {
+                    case 'Dispose':
+                        refreshHeaderMenu();
+                        break;
+                    default:
+                        $.CswDialog('AddNodeDialog', {
+                            nodetypeid: actionJson.requestItemNodeTypeId,
+                            propertyData: actionJson.requestItemProps,
+                            text: actionJson.titleText,
+                            onSaveImmediate: function () {
+                                refreshHeaderMenu();
                             }
                         });
-                    }
-                    break;
+                        break;
+                }
+                break;
 
-                case Csw.enums.nbtButtonAction.receive:
-                    actionJson.actionname = 'Receiving';
-                    handleAction(actionJson);
-                    break;
-
-                case Csw.enums.nbtButtonAction.request:
-                    Csw.debug.assert(false === Csw.isNullOrEmpty(actionJson), 'actionJson is null.');
-                    switch (actionJson.requestaction) {
-                        case 'Dispose':
-                            refreshHeaderMenu();
-                            break;
-                        default:
-                            $.CswDialog('AddNodeDialog', {
-                                nodetypeid: actionJson.requestItemNodeTypeId,
-                                propertyData: actionJson.requestItemProps,
-                                text: actionJson.titleText,
-                                onSaveImmediate: function () {
-                                    refreshHeaderMenu();
-                                }
-                            });
-                            break;
-                    }
-                    break;
-               
-                default:
-                    Csw.debug.error('No event has been defined for button click ' + opts.data.action);
-                    break;
+            default:
+                Csw.debug.error('No event has been defined for button click ' + opts.data.action);
+                break;
         }
     }
     Csw.subscribe(Csw.enums.events.objectClassButtonClick, onObjectClassButtonClick);
 
+    function refreshMain(eventObj, data) {
+        Csw.clientChanges.unsetChanged();
+        multi = false;
+        clear({ all: true });
+        Csw.tryExec(refreshSelected, data);
+    }
+    Csw.subscribe('refreshMain', refreshMain);
 
     function loadImpersonation(eventObj, actionData) {
         if (false === Csw.isNullOrEmpty(actionData.userid)) {
@@ -798,9 +804,9 @@ window.initMain = window.initMain || function (undefined) {
                     refreshMainMenu({
                         viewid: o.viewid,
                         viewmode: Csw.enums.viewMode.grid.name,
-                        grid: grid,
-                        nodeid: o.nodeid,
-                        cswnbtnodekey: o.cswnbtnodekey
+                        grid: grid//,
+                        //nodeid: o.nodeid,  // case 26914
+                        //cswnbtnodekey: o.cswnbtnodekey
                     });
                 }
             },
@@ -1161,11 +1167,11 @@ window.initMain = window.initMain || function (undefined) {
         clear({ 'all': true });
         refreshMainMenu();
         switch (o.actionname) {
-            //			case 'Assign_Inspection':                                                                              
-            //				break;                                                                              
-            //			case 'Assign_Tests':                                                                              
-            //				break;                                                                              
-            // NOTE: Create Inspection currently only works if you are logged in as chemsw_admin                                                                              
+            //			case 'Assign_Inspection':                                                                                
+            //				break;                                                                                
+            //			case 'Assign_Tests':                                                                                
+            //				break;                                                                                
+            // NOTE: Create Inspection currently only works if you are logged in as chemsw_admin                                                                                
             case 'Create_Inspection':
                 designOpt = {
                     ID: 'cswInspectionDesignWizard',
@@ -1217,6 +1223,16 @@ window.initMain = window.initMain || function (undefined) {
                 break;
 
             case 'DispenseContainer':
+                var requestItemId = '';
+                if (Csw.contains(o, 'requestitem')) {
+                    requestItemId = o.requestitem.requestitemid;
+                }
+                var title = 'Dispense from Barcode ';
+                if (false === Csw.isNullOrEmpty(o.barcode)) {
+                    title += '[' + o.barcode + ']';
+                } else {
+                    title += 'by Search';
+                }
                 designOpt = {
                     ID: 'cswDispenseContainerWizard',
                     sourceContainerNodeId: o.sourceContainerNodeId,
@@ -1235,14 +1251,21 @@ window.initMain = window.initMain || function (undefined) {
                             viewmode: 'tree',
                             viewid: viewid
                         });
-                    }
+                    },
+                    requestItemId: requestItemId,
+                    title: title,
+                    location: o.location,
+                    material: o.material,
+                    barcode: o.barcode,
+                    containerNodeTypeId: o.containernodetypeid,
+                    containerObjectClassId: o.containerobjectclassid
                 };
                 Csw.nbt.dispenseContainerWizard(centerTopDiv, designOpt);
 
                 break;
 
-            //			case 'Design':                                                                                
-            //				break;                                                                                
+            //			case 'Design':                                                                                  
+            //				break;                                                                                  
             case 'Edit_View':
                 var editViewOptions = {
                     'viewid': o.ActionOptions.viewid,
@@ -1282,8 +1305,8 @@ window.initMain = window.initMain || function (undefined) {
                 $('#CenterTopDiv').CswViewEditor(editViewOptions);
 
                 break;
-            //			case 'Enter_Results':                                                                                
-            //				break;                                                                                
+            //			case 'Enter_Results':                                                                                  
+            //				break;                                                                                  
 
             case 'Future_Scheduling':
                 Csw.nbt.futureSchedulingWizard(centerTopDiv, {
@@ -1294,10 +1317,10 @@ window.initMain = window.initMain || function (undefined) {
                 });
                 break;
 
-            //			case 'Import_Fire_Extinguisher_Data':                                                                                
-            //				break;                                                                                
-            //			case 'Inspection_Design':                                                                                
-            //				break;                                                                                
+            //			case 'Import_Fire_Extinguisher_Data':                                                                                  
+            //				break;                                                                                  
+            //			case 'Inspection_Design':                                                                                  
+            //				break;                                                                                  
             case 'Quotas':
                 Csw.actions.quotas(centerTopDiv, {
                     onQuotaChange: function () {
@@ -1367,14 +1390,14 @@ window.initMain = window.initMain || function (undefined) {
 
                 Csw.nbt.scheduledRulesWizard(centerTopDiv, rulesOpt);
                 break;
-            //			case 'Load_Mobile_Data':                                                                                
-            //				break;                                                                                
-            //			case 'Receiving':                                                                                
-            //				break;                                                                                
-            //			case 'Split_Samples':                                                                                
-            //				break;                                                                                
-            //			case 'View_By_Location':                                                                                
-            //				break;                                                                                
+            //			case 'Load_Mobile_Data':                                                                                  
+            //				break;                                                                                  
+            //			case 'Receiving':                                                                                  
+            //				break;                                                                                  
+            //			case 'Split_Samples':                                                                                  
+            //				break;                                                                                  
+            //			case 'View_By_Location':                                                                                  
+            //				break;                                                                                  
             default:
                 if (false == Csw.isNullOrEmpty(o.actionurl)) {
                     Csw.window.location(o.actionurl);

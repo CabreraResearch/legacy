@@ -1212,8 +1212,22 @@ ul li div {
 .adddiv
 {
     padding: 10px;
-    font-size: 1.2em;
+    font-size: 20px;
 }
+.adddiv li
+{
+    padding: 6px;
+}
+.adddiv a
+{
+    font-size: 18px;
+}
+.adddiv li:hover
+{
+    background-color: #ddeeff;
+}
+
+
 .scrollingdiv
 {
     padding: 5px 0px 5px 0px;

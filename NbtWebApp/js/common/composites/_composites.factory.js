@@ -93,6 +93,14 @@
                     return Csw.composites.thinGrid(cswParent, opts);
                 };
                 
+                cswParent.universalSearch = function (opts) {
+                    /// <summary> Creates a Csw.universalSearch on this element</summary>
+                    /// <param name="opts" type="Object">Options to define the universalSearch.</param>
+                    /// <returns type="Csw.composites.universalSearch">A Csw.composites.universalSearch</returns>
+                    opts = cswPrivate.controlPreProcessing(opts, 'universalSearch');
+                    return Csw.composites.universalSearch(cswParent, opts);
+                };
+                
                 return cswParent;
             });
 

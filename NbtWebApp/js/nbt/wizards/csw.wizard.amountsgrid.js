@@ -12,7 +12,8 @@
                 qtyControl: null,
                 barcodeControl: null,
                 amountForm: null,
-                thinGrid: null
+                thinGrid: null,
+                selectedSizeId: null
             };
 
             Csw.tryExec(function () {
@@ -27,17 +28,48 @@
                         return text;
                     },
                     containerMinimum: 1,
-                    action: 'Receive'
+                    action: 'Receive',
+                    selectedSizeId: null,
+                    relatedNodeId: null
                 };
                 if (options) $.extend(cswPrivate, options);
 
+                cswPrivate.getQuantity = function () {
+                    var ret = false;
+                    if (Csw.isNullOrEmpty(cswPrivate.selectedSizeId) && false === Csw.isNullOrEmpty(cswPrivate.relatedNodeId)) {
+                        Csw.ajax.post({
+                            urlMethod: 'getSize',
+                            async: false,
+                            data: { RelatedNodeId: cswPrivate.relatedNodeId },
+                            success: function (data) {
+                                cswPrivate.selectedSizeId = data.sizeid;
+                                ret = false === Csw.isNullOrEmpty(cswPrivate.selectedSizeId);
+                            }
+                        });
+                    }
+                    if (false === Csw.isNullOrEmpty(cswPrivate.selectedSizeId)) {
+                        Csw.ajax.post({
+                            urlMethod: 'getQuantity',
+                            async: false,
+                            data: { SizeId: cswPrivate.selectedSizeId },
+                            success: function(data) {
+                                cswPrivate.quantity = data;
+                                ret = false === Csw.isNullOrEmpty(cswPrivate.quantity);
+                            }
+                        });
+                    }
+                    if(false === ret) {
+                        Csw.error.throwException(Csw.error.exception('Cannot create a Wizard amounts grid without the Capacity of a Size.', '', 'csw.wizard.amountsgrid.js', 68));
+                    }
+                    return ret;
+                };
 
                 (function _pre() {
                     if (Csw.isNullOrEmpty(cswParent)) {
                         Csw.error.throwException(Csw.error.exception('Cannot create a Wizard amounts grid without a parent.', '', 'csw.wizard.amountsgrid.js', 22));
                     }
                     if (Csw.isNullOrEmpty(cswPrivate.quantity)) {
-                        Csw.error.throwException(Csw.error.exception('Cannot create a Wizard amounts grid without the Capacity of a Size.', '', 'csw.wizard.amountsgrid.js', 34));
+                        cswPrivate.getQuantity();
                     }
                     cswParent.span({ text: 'Enter the Amounts to ' + cswPrivate.action + ':' });
                     cswParent.br({ number: 2 });

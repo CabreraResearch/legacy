@@ -770,7 +770,7 @@
                             cswnbtnodekey: cswPrivate.cswnbtnodekey
                         };
 
-                        var cellSet = cswPrivate.getCellSet(cswPrivate.layoutTable, thisProp.tabgroup, thisProp.displayrow, thisProp.displaycol);
+                        var cellSet = cswPrivate.getCellSet(layoutTable, thisProp.tabgroup, thisProp.displayrow, thisProp.displaycol);
                         layoutTable.addCellSetAttributes(cellSet, { propId: thisProp.id });
                         propOpt.propCell = cswPrivate.getPropertyCell(cellSet);
                         propOpt.propDiv = propOpt.propCell.children('div').first();

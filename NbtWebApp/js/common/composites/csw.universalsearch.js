@@ -25,6 +25,7 @@
                 allowEdit: true,
                 allowDelete: true,
                 extraAction: null,
+                extraActionIcon: Csw.enums.iconType.none,
                 onExtraAction: null,  // function(nodeObj) {}
 
                 newsearchurl: '/NbtWebApp/wsNBT.asmx/doUniversalSearch',
@@ -40,6 +41,20 @@
             };
             if (params) {
                 $.extend(cswPrivate, params);
+            }
+            if(false === Csw.isNullOrEmpty(cswParent)) {
+                cswPrivate.table = cswParent.table({
+                    ID: Csw.makeId(cswPrivate.ID, 'table'),
+                    cellpadding: '2px'
+                });
+                
+                var cell11 = cswPrivate.table.cell(1, 1);
+
+                cell11.propDom('colspan', 2);
+
+                cswPrivate.$searchbox_parent = cell11.div({ ID: 'searchdialog_searchdiv' }).$;
+                cswPrivate.$searchresults_parent = cswPrivate.table.cell(2, 2).div({ ID: 'searchdialog_resultsdiv' }).$;
+                cswPrivate.$searchfilters_parent = cswPrivate.table.cell(2, 1).div({ ID: 'searchdialog_filtersdiv' }).$;
             }
             var cswPublic = {};
 
@@ -90,7 +105,7 @@
                 });
             }; // search()
 
-            cswPrivate.handleResults = function (data) {
+            cswPrivate.handleResults = function(data) {
                 var fdiv, ftable, filtersdivid;
 
                 cswPrivate.sessiondataid = data.sessiondataid;
@@ -116,8 +131,8 @@
                         ButtonType: Csw.enums.imageButton_ButtonType.TableSingleColumn,
                         Active: (columns === 1),
                         AlternateText: 'Single Column',
-                        onClick: function () {
-                            setTimeout(function () { // so we see the clear immediately
+                        onClick: function() {
+                            setTimeout(function() { // so we see the clear immediately
                                 _renderResultsTable(1);
                             }, 0);
                         }
@@ -129,8 +144,8 @@
                         ButtonType: Csw.enums.imageButton_ButtonType.TableMultiColumn,
                         Active: (columns !== 1),
                         AlternateText: 'Multi Column',
-                        onClick: function () {
-                            setTimeout(function () { // so we see the clear immediately
+                        onClick: function() {
+                            setTimeout(function() { // so we see the clear immediately
                                 _renderResultsTable(3);
                             }, 0);
                         }
@@ -141,12 +156,12 @@
                     resultstable.cell(2, 1).$.CswNodeTable({
                         ID: Csw.makeId(cswPrivate.ID, '', 'srchresults'),
                         onEditNode: null,
-                        onDeleteNode: function () {
+                        onDeleteNode: function() {
                             // case 25380 - refresh on delete
                             cswPublic.restoreSearch(cswPrivate.sessiondataid);
                         },
                         //onSuccess: cswPrivate.onAfterSearch,
-                        onNoResults: function () {
+                        onNoResults: function() {
                             resultstable.cell(2, 1).text('No Results Found');
                         },
                         tabledata: data.table,
@@ -155,6 +170,7 @@
                         allowEdit: cswPrivate.allowEdit,
                         allowDelete: cswPrivate.allowEdit,
                         extraAction: cswPrivate.extraAction,
+                        extraActionIcon: cswPrivate.extraActionIcon,
                         onExtraAction: cswPrivate.onExtraAction
                     });
                 }
@@ -175,7 +191,7 @@
                 });
 
                 fdiv.span({ text: 'Searched For: ' + data.searchterm }).br();
-                ftable = fdiv.table({});
+                ftable = fdiv.table({ });
 
                 // Filters in use
                 var hasFilters = false;
@@ -195,7 +211,7 @@
                             ID: Csw.makeId(filtersdivid, '', thisFilter.filterid),
                             ButtonType: Csw.enums.imageButton_ButtonType.Delete,
                             AlternateText: 'Remove Filter',
-                            onClick: function () {
+                            onClick: function() {
                                 cswPrivate.filter(thisFilter, 'remove');
                             }
                         });
@@ -224,7 +240,7 @@
                     var flink = div.a({
                         ID: Csw.makeId(filtersdivid, '', thisFilter.filterid),
                         text: thisFilter.filtervalue + ' (' + thisFilter.count + ')',
-                        onClick: function () {
+                        onClick: function() {
                             cswPrivate.filter(thisFilter, 'add');
                             return false;
                         }
@@ -246,7 +262,7 @@
                     moreDiv.shownDiv.br();
                     var thisdiv = moreDiv.shownDiv;
                     moreDiv.moreLink.hide();
-                    Csw.each(thisFilterSet, function (thisFilter) {
+                    Csw.each(thisFilterSet, function(thisFilter) {
                         if (filterCount === cswPrivate.filterHideThreshold) {
                             moreDiv.moreLink.show();
                             thisdiv = moreDiv.hiddenDiv;
@@ -261,7 +277,7 @@
                 Csw.each(data.filters, makeFilterSet);
 
                 Csw.tryExec(cswPrivate.onAfterSearch);
-            } // handleResults()
+            }; // handleResults()
 
 
             cswPrivate.filter = function (thisFilter, action) {

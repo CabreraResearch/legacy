@@ -162,7 +162,19 @@ namespace ChemSW.Nbt.MetaData
         //    //if ( OnAddProp != null )
         //    //    OnAddProp( Prop );
         //}
+        private CswNbtMetaDataObjectClassProp _BarcodeProp = null;
+        public CswNbtMetaDataObjectClassProp getBarcodeProp()
+        {
+            if( null == _BarcodeProp )
+            {
+                _BarcodeProp = ( from _Prop
+                                     in _CswNbtMetaDataResources.ObjectClassPropsCollection.getObjectClassPropsByObjectClass( ObjectClassId )
+                                 where _Prop.getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.Barcode
+                                 select _Prop ).FirstOrDefault();
 
+            }
+            return _BarcodeProp;
+        }
 
         public Collection<Int32> getObjectClassPropIds()
         {
@@ -215,6 +227,20 @@ namespace ChemSW.Nbt.MetaData
             }
             return Collection;
         }
+
+        public bool CanAdd
+        {
+            get
+            {
+                return ( ( ( ObjectClass != CswNbtMetaDataObjectClass.NbtObjectClass.RoleClass &&
+                             ObjectClass != CswNbtMetaDataObjectClass.NbtObjectClass.UserClass ) ||
+                           _CswNbtMetaDataResources.CswNbtResources.CurrentNbtUser.IsAdministrator() ) &&
+                       ObjectClass != CswNbtMetaDataObjectClass.NbtObjectClass.RequestItemClass &&
+                       ObjectClass != CswNbtMetaDataObjectClass.NbtObjectClass.RequestClass &&
+                       ObjectClass != CswNbtMetaDataObjectClass.NbtObjectClass.ContainerClass &&
+                       ObjectClass != CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass );
+            }
+        } // CanAdd
 
         #region IEquatable
 

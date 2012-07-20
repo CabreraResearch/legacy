@@ -4,6 +4,7 @@ using System.Data;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
+using ChemSW.Nbt.Batch;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
@@ -28,6 +29,56 @@ namespace ChemSW.Nbt.WebServices
         public CswPrimaryKey CopyNode( CswPrimaryKey NodePk )
         {
             return _NodeSd.CopyNode( NodePk );
+        }
+
+        public JObject DeleteNodes( string[] NodePks, string[] NodeKeys )
+        {
+            JObject ret = new JObject();
+            Collection<CswPrimaryKey> NodePrimaryKeys = new Collection<CswPrimaryKey>();
+
+            if( NodeKeys.Length > 0 )
+            {
+                foreach( string NodeKey in NodeKeys )
+                {
+                    CswNbtNodeKey NbtNodeKey = new CswNbtNodeKey( _CswNbtResources, NodeKey );
+                    if( null != NbtNodeKey )
+                    {
+                        NodePrimaryKeys.Add( NbtNodeKey.NodeId );
+                    }
+                }
+            }
+            if( NodePks.Length > 0 )
+            {
+                foreach( string NodePk in NodePks )
+                {
+                    CswPrimaryKey PrimaryKey = new CswPrimaryKey();
+                    PrimaryKey.FromString( NodePk );
+                    if( null != PrimaryKey && !NodePrimaryKeys.Contains( PrimaryKey ) )
+                    {
+                        NodePrimaryKeys.Add( PrimaryKey );
+                    }
+                }
+            }
+            if( NodePrimaryKeys.Count > 0 )
+            {
+                if( NodePrimaryKeys.Count < CswNbtBatchManager.getBatchThreshold( _CswNbtResources ) )
+                {
+                    bool success = true;
+                    foreach( CswPrimaryKey Npk in NodePrimaryKeys )
+                    {
+                        success = DeleteNode( Npk ) && success;
+                    }
+                    ret["Succeeded"] = success.ToString();
+                }
+                else
+                {
+                    CswNbtBatchOpMultiDelete op = new CswNbtBatchOpMultiDelete( _CswNbtResources );
+                    CswNbtObjClassBatchOp BatchNode = op.makeBatchOp( NodePrimaryKeys );
+                    ret["batch"] = BatchNode.NodeId.ToString();
+                }
+            }
+
+            return ret;
         }
 
         public bool DeleteNode( CswPrimaryKey NodePk, bool DeleteAllRequiredRelatedNodes = false )
@@ -116,6 +167,51 @@ namespace ChemSW.Nbt.WebServices
             {
                 CswNbtNodePropQuantity Capacity = Size.Capacity;
                 Capacity.ToJSON( Ret );
+            }
+            return Ret;
+        }
+
+        public JObject getSizeFromRelatedNodeId( CswPrimaryKey RelatedNodeId )
+        {
+            JObject Ret = new JObject();
+            string SizeId = string.Empty;
+            CswNbtNode RelatedNode = _CswNbtResources.Nodes.GetNode( RelatedNodeId );
+            if( null != RelatedNode )
+            {
+                CswNbtNode Node = _CswNbtResources.Nodes[RelatedNodeId];
+                if( null != Node )
+                {
+                    switch( RelatedNode.ObjClass.ObjectClass.ObjectClass )
+                    {
+                        case CswNbtMetaDataObjectClass.NbtObjectClass.ContainerClass:
+                            CswNbtObjClassContainer NodeAsContainer = Node;
+                            if( null != NodeAsContainer )
+                            {
+                                SizeId = NodeAsContainer.Size.RelatedNodeId.ToString();
+                            }
+                            break;
+                        case CswNbtMetaDataObjectClass.NbtObjectClass.RequestItemClass:
+                            CswNbtObjClassRequestItem NodeAsRequestItem = Node;
+                            if( null != NodeAsRequestItem )
+                            {
+                                if( null != NodeAsRequestItem.Size.RelatedNodeId && Int32.MinValue != NodeAsRequestItem.Size.RelatedNodeId.PrimaryKey )
+                                {
+                                    SizeId = NodeAsRequestItem.Size.RelatedNodeId.ToString();
+                                }
+                                else if( null != NodeAsRequestItem.Container.RelatedNodeId && Int32.MinValue != NodeAsRequestItem.Container.RelatedNodeId.PrimaryKey )
+                                {
+                                    SizeId = NodeAsRequestItem.Container.RelatedNodeId.ToString();
+                                }
+                            }
+                            break;
+                        default:
+                            throw new CswDniException( ErrorType.Warning, "Cannot derive a size from an instance of this type " + RelatedNode.ObjClass.ObjectClass.ObjectClass + ".", "getSizeFromRelatedNodeId does not support this Object Class." );
+                    }
+                }
+            }
+            if( false == string.IsNullOrEmpty( SizeId ) )
+            {
+                Ret["sizeid"] = SizeId;
             }
             return Ret;
         }
