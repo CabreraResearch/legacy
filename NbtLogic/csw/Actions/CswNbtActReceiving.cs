@@ -151,7 +151,7 @@ namespace ChemSW.Nbt.Actions
                                         Int32 NoContainers = CswConvert.ToInt32( QuantityDef["containerNo"] );
                                         CswCommaDelimitedString Barcodes = new CswCommaDelimitedString();
                                         Barcodes.FromString( CswConvert.ToString( QuantityDef["barcodes"] ) );
-                                        Int32 QuantityValue = CswConvert.ToInt32( QuantityDef["quantity"] );
+                                        Double QuantityValue = CswConvert.ToDouble( QuantityDef["quantity"] );
                                         CswPrimaryKey UnitId = new CswPrimaryKey();
                                         UnitId.FromString( CswConvert.ToString( QuantityDef["unitid"] ) );
                                         CswNbtObjClassSize AsSize = CswNbtResources.Nodes.GetNode( SizeId );
@@ -173,16 +173,12 @@ namespace ChemSW.Nbt.Actions
                                                 }
                                                 AsContainer.Size.RelatedNodeId = SizeId;
                                                 AsContainer.Material.RelatedNodeId = MaterialId;
-                                                if ( AsSize.QuantityEditable.Checked == Tristate.True )
+                                                if( AsSize.QuantityEditable.Checked != Tristate.True )
                                                 {
-                                                    AsContainer.Quantity.Quantity = QuantityValue;
-                                                    AsContainer.Quantity.UnitId = UnitId;
+                                                    QuantityValue = AsSize.Capacity.Quantity;
+                                                    UnitId = AsSize.Capacity.UnitId;
                                                 }
-                                                else
-                                                {
-                                                    AsContainer.Quantity.Quantity = AsSize.Capacity.Quantity;
-                                                    AsContainer.Quantity.UnitId = AsSize.Capacity.UnitId;
-                                                }
+                                                AsContainer.DispenseIn( CswNbtObjClassContainerDispenseTransaction.DispenseType.Receive, QuantityValue, UnitId );
                                                 AsContainer.postChanges( true );
                                                 ContainerIds.Add( AsContainer.NodeId );
                                             }

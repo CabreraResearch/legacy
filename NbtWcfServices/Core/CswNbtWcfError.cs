@@ -21,7 +21,8 @@ namespace NbtWebAppServices.Core
         {
             CswNbtWebServiceErrorMessage Ret = new CswNbtWebServiceErrorMessage();
             if( null != _CswNbtWcfSessionResources &&
-                null != _CswNbtWcfSessionResources.CswNbtResources )
+                null != _CswNbtWcfSessionResources.CswNbtResources &&
+                _CswNbtWcfSessionResources.CswNbtResources.IsInitializedForDbAccess )
             {
                 _CswNbtWcfSessionResources.CswNbtResources.CswLogger.reportError( ex );
                 _CswNbtWcfSessionResources.CswNbtResources.Rollback();
@@ -39,7 +40,8 @@ namespace NbtWebAppServices.Core
 
             Ret.DisplayError = true;
             if( null != _CswNbtWcfSessionResources &&
-                null != _CswNbtWcfSessionResources.CswNbtResources )
+                null != _CswNbtWcfSessionResources.CswNbtResources &&
+                _CswNbtWcfSessionResources.CswNbtResources.IsInitializedForDbAccess )
             {
                 if( newEx.Type == ErrorType.Warning )
                 {

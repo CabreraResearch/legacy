@@ -1220,6 +1220,12 @@ window.initMain = window.initMain || function (undefined) {
                 if(Csw.contains(o, 'requestitem')) {
                     requestItemId = o.requestitem.requestitemid;
                 }
+                var title = 'Dispense from Barcode ';
+                if(false === Csw.isNullOrEmpty(o.barcode)) {
+                    title += '[' + o.barcode + ']';
+                } else {
+                    title += 'by Search';
+                }
                 designOpt = {
                     ID: 'cswDispenseContainerWizard',
                     sourceContainerNodeId: o.sourceContainerNodeId,
@@ -1240,10 +1246,12 @@ window.initMain = window.initMain || function (undefined) {
                         });
                     },
                     requestItemId: requestItemId,
-                    title: 'Dispense from Barcode [' + o.barcode + ']',
+                    title: title,
                     location: o.location,
                     material: o.material,
-                    barcode: o.barcode
+                    barcode: o.barcode,
+                    containerNodeTypeId: o.containernodetypeid,
+                    containerObjectClassId: o.containerobjectclassid
                 };
                 Csw.nbt.dispenseContainerWizard(centerTopDiv, designOpt);
 
