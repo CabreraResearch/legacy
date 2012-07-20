@@ -47,6 +47,7 @@ namespace ChemSW.Nbt.Schema
                 {
                     CswNbtMetaDataObjectClass ContainerOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.ContainerClass );
                     _CswNbtSchemaModTrnsctn.MetaData.ConvertObjectClass( ContainerNT, ContainerOC );
+                    ContainerNT.TableName = "nodes";
                 }
             }
 
@@ -57,6 +58,7 @@ namespace ChemSW.Nbt.Schema
                 {
                     CswNbtMetaDataObjectClass InventoryGroupOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.InventoryGroupClass );
                     _CswNbtSchemaModTrnsctn.MetaData.ConvertObjectClass( InventoryGroupNT, InventoryGroupOC );
+                    InventoryGroupNT.TableName = "nodes";
                 }
             }
 
