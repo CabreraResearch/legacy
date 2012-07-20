@@ -79,6 +79,7 @@ namespace ChemSW.Nbt.Batch
             CswNbtMetaDataObjectClassProp StatusOCP = BatchOpOC.getObjectClassProp( CswNbtObjClassBatchOp.StatusPropertyName );
             CswNbtMetaDataObjectClassProp PriorityOCP = BatchOpOC.getObjectClassProp( CswNbtObjClassBatchOp.PriorityPropertyName );
 
+
             CswNbtView NextBatchOpView = new CswNbtView( CswNbtResources );
             CswNbtViewRelationship BatchVR = NextBatchOpView.AddViewRelationship( BatchOpOC, false );
             CswNbtViewProperty StatusVP = NextBatchOpView.AddViewProperty( BatchVR, StatusOCP );
@@ -109,10 +110,28 @@ namespace ChemSW.Nbt.Batch
                 {
                     op = new CswNbtBatchOpInventoryLevels( CswNbtResources );
                 }
+                else if( OpName == NbtBatchOpName.MultiDelete )
+                {
+                    op = new CswNbtBatchOpMultiDelete( CswNbtResources );
+                }
                 // New batch ops go here
                 // else if( OpName == NbtBatchOpName.NEWNAME ) 
                 if( null != op )
                 {
+
+                    CswNbtNode UserNode = CswNbtResources.Nodes[BatchNode.User.RelatedNodeId];
+                    if( null != UserNode )
+                    {
+                        CswNbtObjClassUser UserOC = UserNode;
+                        if( null != UserOC )
+                        {
+                            CswNbtResources.AuditContext = "Batch Op: " + BatchNode.OpNameValue;
+                            CswNbtResources.AuditFirstName = UserOC.FirstName;
+                            CswNbtResources.AuditLastName = UserOC.LastName;
+                            CswNbtResources.AuditUsername = UserOC.Username;
+                        }
+                    }
+
                     op.runBatchOp( BatchNode );
                 }
             }

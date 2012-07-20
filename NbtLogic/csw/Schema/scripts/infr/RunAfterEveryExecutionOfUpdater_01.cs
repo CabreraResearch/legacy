@@ -14,6 +14,10 @@ namespace ChemSW.Nbt.Schema
             // This should always be run after schema updates in order to synchronize enabled nodetypes
             _CswNbtSchemaModTrnsctn.MetaData.ResetEnabledNodeTypes();
 
+
+            //case 23784
+            _CswNbtSchemaModTrnsctn.execArbitraryPlatformNeutralSql( "update scheduledrules set reprobate=0,totalroguecount=0,failedcount=0" );
+
         }//Update()
 
     }//class RunAfterEveryExecutionOfUpdater_01

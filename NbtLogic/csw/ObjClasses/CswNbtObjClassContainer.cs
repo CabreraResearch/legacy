@@ -2,13 +2,12 @@ using System;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.Actions;
+using ChemSW.Nbt.csw.Conversion;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
 using ChemSW.Nbt.ServiceDrivers;
-using ChemSW.Nbt.UnitsOfMeasure;
-using ChemSW.Nbt.csw.Conversion;
 using Newtonsoft.Json.Linq;
 
 
@@ -209,12 +208,12 @@ namespace ChemSW.Nbt.ObjClasses
             this.Dispense.setHidden( value: ( false == _CswNbtResources.Permit.canContainer( NodeId, CswNbtPermit.NodeTypePermission.Create, _CswNbtResources.Actions[CswNbtActionName.DispenseContainer] ) ), SaveToDb: false );
             if( this.Disposed.Checked == Tristate.False )
             {
-                this.Undispose.setHidden( value: true, SaveToDb: true );
+                this.Undispose.setHidden( value: true, SaveToDb: false );
                 this.Dispose.setHidden( value: ( false == _CswNbtResources.Permit.canContainer( NodeId, CswNbtPermit.NodeTypePermission.Edit, _CswNbtResources.Actions[CswNbtActionName.DisposeContainer] ) ), SaveToDb: false );
             }
             else if( this.Disposed.Checked == Tristate.True )
             {
-                this.Dispose.setHidden( value: true, SaveToDb: true );
+                this.Dispose.setHidden( value: true, SaveToDb: false );
                 this.Undispose.setHidden( value: ( false == _CswNbtResources.Permit.canContainer( NodeId, CswNbtPermit.NodeTypePermission.Edit, _CswNbtResources.Actions[CswNbtActionName.UndisposeContainer] ) ), SaveToDb: false );
             }
             _CswNbtObjClassDefault.afterPopulateProps();
@@ -508,6 +507,7 @@ namespace ChemSW.Nbt.ObjClasses
             this.RequestDispense.setReadOnly( value: isReadOnly, SaveToDb: true );
             this.RequestMove.setReadOnly( value: isReadOnly, SaveToDb: true );
             this.Dispense.setReadOnly( value: isReadOnly, SaveToDb: true );
+            this.Owner.setReadOnly( value: isReadOnly, SaveToDb: true );
         }
 
         private bool _isStorageCompatible( CswDelimitedString materialStorageCompatibility, CswDelimitedString locationStorageCompatibilities )

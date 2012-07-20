@@ -1,16 +1,16 @@
 ﻿/// <reference path="~/js/CswCommon-vsdoc.js" />
 /// <reference path="~/js/CswNbt-vsdoc.js" />
 
-(function() {
+(function () {
     'use strict';
 
-    var copyNode = function(options) {
+    var copyNode = function (options) {
         var o = {
             nodeid: '',
             nodekey: '',
-            onSuccess: function() {
+            onSuccess: function () {
             },
-            onError: function() {
+            onError: function () {
             }
         };
         if (options) {
@@ -27,7 +27,7 @@
                 NodeId: Csw.string(o.nodeid),
                 NodeKey: Csw.string(o.nodekey)
             },
-            success: function(result) {
+            success: function (result) {
                 o.onSuccess(result.NewNodeId, '');
             },
             error: o.onError
@@ -36,7 +36,7 @@
     Csw.register('copyNode', copyNode);
     Csw.copyNode = Csw.copyNode || copyNode;
 
-    var deleteNodes = function(options) {
+    var deleteNodes = function (options) {
         var o = {
             nodeids: Csw.array(),
             nodekeys: Csw.array(),
@@ -60,12 +60,25 @@
         Csw.ajax.post({
             url: '/NbtWebApp/wsNBT.asmx/DeleteNodes',
             data: jData,
-            success: function() {
+            success: function (data) {
                 /* clear selected node cookies */
                 o.nodeid = Csw.cookie.clear(Csw.cookie.cookieNames.CurrentNodeId);
                 o.cswnbtnodekey = Csw.cookie.clear(Csw.cookie.cookieNames.CurrentNodeKey);
                 /* returning '' will reselect the first node in the tree */
                 Csw.tryExec(o.onSuccess, '', '');
+                if (false === Csw.isNullOrEmpty(data.batch)) {
+                    $.CswDialog('BatchOpDialog', {
+                        opname: 'multi-delete',
+                        onViewBatchOperation: function () {
+                            Csw.publish('refreshMain', {
+                                nodeid: data.batch,
+                                viewid: '',
+                                viewmode: 'tree',
+                                IncludeNodeRequired: true
+                            });
+                        }
+                    });
+                }                 
             },
             error: o.onError
         });
@@ -74,4 +87,4 @@
     Csw.deleteNodes = Csw.deleteNodes || deleteNodes;
 
 
-}());
+} ());
