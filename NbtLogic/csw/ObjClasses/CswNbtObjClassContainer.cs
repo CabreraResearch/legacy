@@ -517,6 +517,10 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 ret = true;
             }
+            if( locationStorageCompatibilities.Count == 0 ) //if SC on the location is null, it can store anything
+            {
+                ret = true;
+            }
             foreach( string matComp in materialStorageCompatibility ) //loop through the materials storage compatibilities
             {
                 if( matComp.Contains( "0w.gif" ) ) //if it has '0-none' selected, it can go anywhere
