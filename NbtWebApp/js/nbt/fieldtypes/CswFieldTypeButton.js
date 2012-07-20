@@ -98,7 +98,7 @@
             btnCell = table.cell(1, 1);
             switch (mode) {
                 case 'button':
-                    button = btnCell.button({
+                    button = btnCell.buttonExt({
                         ID: o.ID,
                         enabledText: value,
                         disabledText: value,
@@ -111,7 +111,7 @@
                         ID: Csw.makeId(o.ID, 'menuBtn'),
                         selectedText: selectedText,
                         menuOptions: menuoptions,
-                        size: o.size,
+                        //size: o.size,
                         state: state,
                         onClick: function(selectedOption) {
                             Csw.tryExec(onClick, selectedOption);

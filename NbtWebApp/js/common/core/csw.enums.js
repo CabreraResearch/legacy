@@ -28,6 +28,21 @@
             return ret;
         });
 
+    Csw.enums.getName = Csw.enums.getName ||
+        Csw.enums.register('getName', function (cswEnum, enumValue) {
+            'use strict';
+            /// <summary>   Try to fetch an enum name based on its value. </summary>
+            var ret = '';
+
+            Csw.each(cswEnum, function (value, name) {
+                if(value === enumValue) {
+                    ret = name;
+                    return true;
+                }
+            });
+            return ret;
+        });
+
     Csw.enums.editMode = Csw.enums.editMode ||
         Csw.enums.register('editMode', {
             Edit: 'Edit',
@@ -279,9 +294,12 @@
             house: 66,
             door: 67,
             cabinet: 68,
-            box: 69
+            box: 69,
+            save: 70, //not actually in the img, but the file is present
+            back: 71, //called left above but the file is 'back.png'
+            add: 72 //called left above but the file is 'back.png'
         });
-
+    
     Csw.enums.searchCssClasses = Csw.enums.searchCssClasses ||
         Csw.enums.register('searchCssClasses', {
             nodetype_select: { name: 'csw_search_nodetype_select' },
