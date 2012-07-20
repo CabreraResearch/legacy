@@ -421,6 +421,7 @@
                         cswPrivate.divStep5.br({ number: 2 });
 
                         div = cswPrivate.divStep5.div();
+                        div.label({ text: 'Now creating sizes (not material attributes)', cssclass: 'CswLabelCreateMaterial' });
 
                         var makeGrid = function () {
                             /* Thin Grid of sizes */
