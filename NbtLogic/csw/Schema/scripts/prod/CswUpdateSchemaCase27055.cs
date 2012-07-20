@@ -14,7 +14,7 @@ namespace ChemSW.Nbt.Schema
     {
         public override void update()
         {
-
+            #region PART ONE
             //Remove Part Number (chemical, biological and supply NTPs) from Add layout, so it doesn't show up twice while creating a material
             CswNbtMetaDataNodeType chemicalNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Chemical" );
             if( null != chemicalNT )
@@ -45,6 +45,17 @@ namespace ChemSW.Nbt.Schema
                     supplyPartNoNTP.removeFromLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add );
                 }
             }
+            #endregion
+
+            #region PART FIVE
+            //Remove 'Supplier'from edit layout so it doesn' show up in Create Materials Wizard
+            CswNbtMetaDataNodeType sizeNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Size" );
+            if( null != sizeNT )
+            {
+                CswNbtMetaDataNodeTypeProp supplierNTP = sizeNT.getNodeTypeProp( "Supplier" );
+                supplierNTP.removeFromLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add );
+            }
+            #endregion
 
         }//Update()
 
