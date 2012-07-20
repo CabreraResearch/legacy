@@ -48,7 +48,7 @@ namespace ChemSW.Nbt.Schema
             #endregion
 
             #region PART FIVE
-            //Remove 'Supplier'from edit layout so it doesn' show up in Create Materials Wizard
+            //Remove 'Supplier'from add layout so it doesn' show up in Create Materials Wizard
             CswNbtMetaDataNodeType sizeNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Size" );
             if( null != sizeNT )
             {
