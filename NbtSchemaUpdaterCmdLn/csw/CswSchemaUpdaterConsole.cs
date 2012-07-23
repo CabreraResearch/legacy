@@ -111,7 +111,7 @@ namespace ChemSW.Nbt.Schema.CmdLn
 
         public ICswUser InitUser( ICswResources Resources )
         {
-            return new CswNbtSystemUser( Resources, "_SchemaUpdaterUser" );
+            return new CswNbtSystemUser( Resources, SystemUserNames.SysUsr_SchemaUpdt );
         }
 
         public void process( string[] args )

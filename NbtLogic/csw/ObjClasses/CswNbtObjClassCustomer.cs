@@ -1,13 +1,10 @@
 using System;
 using System.Collections.ObjectModel;
-using System.Data;
 using ChemSW.Core;
-using ChemSW.DB;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
 using ChemSW.Security;
-using Newtonsoft.Json.Linq;
 
 
 namespace ChemSW.Nbt.ObjClasses
@@ -51,7 +48,7 @@ namespace ChemSW.Nbt.ObjClasses
         }
         public ICswUser InitUser( ICswResources Resources )
         {
-            ICswUser RetUser = new CswNbtSystemUser( _CswNbtResources, "CswNbtObjClassCustomer_SystemUser" );
+            ICswUser RetUser = new CswNbtSystemUser( _CswNbtResources, SystemUserNames.SysUsr_ObjClassCustomer );
             return RetUser;
         }
 
@@ -154,9 +151,9 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
-        public override void beforeDeleteNode(bool DeleteAllRequiredRelatedNodes = false)
+        public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false )
         {
-            _CswNbtObjClassDefault.beforeDeleteNode(DeleteAllRequiredRelatedNodes);
+            _CswNbtObjClassDefault.beforeDeleteNode( DeleteAllRequiredRelatedNodes );
         }
 
         public override void afterDeleteNode()
@@ -230,9 +227,9 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override bool onButtonClick( NbtButtonData ButtonData )
         {
-            
-            
-            
+
+
+
             CswNbtMetaDataObjectClassProp OCP = ButtonData.NodeTypeProp.getObjectClassProp();
             if( null != ButtonData.NodeTypeProp && null != OCP )
             {

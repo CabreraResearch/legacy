@@ -2395,7 +2395,7 @@ namespace ChemSW.Nbt.WebServices
             return ReturnVal.ToString();
 
         } // getQuantity()	
-        
+
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
         public string getSize( string RelatedNodeId )
@@ -3799,7 +3799,7 @@ namespace ChemSW.Nbt.WebServices
 
         public ICswUser ConnectTestDb_InitUser( ICswResources Resources )
         {
-            return new CswNbtSystemUser( Resources, "ConnectTestDb" );
+            return new CswNbtSystemUser( Resources, SystemUserNames.SysUsr_DbConnectTest );
         }
 
 
@@ -4786,7 +4786,6 @@ namespace ChemSW.Nbt.WebServices
         #endregion Modules
 
 
-
         #region Inspection Design
 
         [WebMethod( EnableSession = false )]
@@ -4912,7 +4911,7 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string finalizeDispenseContainer( string SourceContainerNodeId, string DispenseType, string Quantity, 
+        public string finalizeDispenseContainer( string SourceContainerNodeId, string DispenseType, string Quantity,
             string UnitId, string ContainerNodeTypeId, string DesignGrid, string RequestItemId )
         {
             JObject ReturnVal = new JObject();
