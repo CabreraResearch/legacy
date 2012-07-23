@@ -1221,13 +1221,20 @@ namespace ChemSW.Nbt.MetaData
                 // Synchronize Object Class Props from the new object class
                 foreach( CswNbtMetaDataObjectClassProp ObjectClassProp in getObjectClassProps( NodeType.ObjectClassId ) )
                 {
+                    string NewPropName = ObjectClassProp.PropName;
                     Collection<CswNbtMetaDataNodeTypeProp> MatchingProps = new Collection<CswNbtMetaDataNodeTypeProp>();
                     bool FoundMatch = false;
+                    bool NameMatch = false;
+
                     foreach( CswNbtMetaDataNodeTypeProp Prop in NodeType.getNodeTypeProps() )
                     {
-                        if( Prop.PropName == ObjectClassProp.PropName && Prop.FieldTypeId == ObjectClassProp.FieldTypeId )
+                        if( Prop.PropName == NewPropName )
                         {
-                            MatchingProps.Add( Prop );
+                            NameMatch = true;
+                            if( Prop.FieldTypeId == ObjectClassProp.FieldTypeId )
+                            {
+                                MatchingProps.Add( Prop );
+                            }
                         }
                     }
 
@@ -1241,9 +1248,15 @@ namespace ChemSW.Nbt.MetaData
 
                     if( !FoundMatch )
                     {
-                        // Because we handle versioning above, we don't have to worry about it here
-                        CswNbtMetaDataNodeTypeProp NewNodeTypeProp = makeNewProp( NodeType, null, ObjectClassProp.FieldTypeId, ObjectClassProp.PropName, Int32.MinValue, false, ObjectClassProp );
+                        while( NameMatch )
+                        {
+                            // We have to use a different name.
+                            NewPropName = NewPropName + " (new)";
+                            NameMatch = ( null != NodeType.getNodeTypeProp( NewPropName ) );
+                        }
 
+                        // Because we handle versioning above, we don't have to worry about it here
+                        CswNbtMetaDataNodeTypeProp NewNodeTypeProp = makeNewProp( NodeType, null, ObjectClassProp.FieldTypeId, NewPropName, Int32.MinValue, false, ObjectClassProp );
                     }
                 } // foreach (CswNbtMetaDataObjectClassProp ObjectClassProp in this.ObjectClass.ObjectClassProps)
 
