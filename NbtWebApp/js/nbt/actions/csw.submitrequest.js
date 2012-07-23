@@ -169,7 +169,8 @@
                                 cswPrivate.historySelect.option({ value: prop['requestnodeid'], display: display });
                             });
                             cswPrivate.copyFromNodeId = cswPrivate.historySelect.val();
-                            cswPrivate.copyHistoryBtn = cswPrivate.historyTbl.cell(1, 3).button({
+                            cswPrivate.copyHistoryBtn = cswPrivate.historyTbl.cell(1, 3).buttonExt({
+                                icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.copy),
                                 enabledText: 'Copy to Cart',
                                 disabledText: 'Copying...',
                                 onClick: cswPrivate.copyRequest

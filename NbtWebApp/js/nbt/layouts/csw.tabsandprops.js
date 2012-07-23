@@ -1,4 +1,4 @@
-﻿/// <reference path="~/js/CswNbt-vsdoc.js" />
+/// <reference path="~/js/CswNbt-vsdoc.js" />
 /// <reference path="~/js/CswCommon-vsdoc.js" />
 
 (function () {
@@ -310,8 +310,9 @@
                     }
 
                     if (cswPrivate.EditMode !== Csw.enums.editMode.PrintReport && Csw.bool(cswPrivate.showSaveButton)) {
-                        cswPrivate.saveBtn = formTable.cell(2, 1).button({
+                        cswPrivate.saveBtn = formTable.cell(2, 1).buttonExt({
                             ID: 'SaveTab',
+                            icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.save),
                             enabledText: 'Save Changes',
                             disabledText: 'Saving...',
                             onClick: function () { cswPublic.save(tabContentDiv, tabid); }

@@ -29,6 +29,14 @@
                     return opts;
                 };
 
+                cswParent.buttonExt = function (opts) {
+                    /// <summary> Creates a Csw.buttonExt on this element</summary>
+                    /// <param name="opts" type="Object">Options to define the buttonExt.</param>
+                    /// <returns type="Csw.controls.buttonExt">A Csw.controls.buttonExt</returns>
+                    opts = cswPrivate.controlPreProcessing(opts, 'buttonExt');
+                    return Csw.controls.buttonExt(cswParent, opts);
+                };
+
                 cswParent.buttonGroup = function (opts) {
                     /// <summary> Creates a Csw.buttonGroup on this element</summary>
                     /// <param name="opts" type="Object">Options to define the buttonGroup.</param>

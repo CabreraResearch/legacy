@@ -46,14 +46,16 @@
                         }
                     });
                     loginTable.cell(4, 1).text('Password: ').align('right');
-                    inpPassword = loginTable.cell(4, 2).align('left').input({ ID: 'login_password', type: Csw.enums.inputTypes.password, width: '120px' });
+                    inpPassword = loginTable.cell(4, 2).align('left').input({ ID: 'login_password', type: Csw.enums.inputTypes.password, width: '120px', cssclass: 'mousetrap' });
                     loginBtn = loginTable.cell(5, 2, 'login_button_cell')
                                         .align('left')
-                                        .button({
+                                        .buttonExt({
+                                            icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.right),
                                             ID: 'login_button',
                                             enabledText: 'Login',
                                             disabledText: 'Logging in...',
                                             width: '100px',
+                                            bindOnEnter: true,
                                             onClick: function () {
                                                 loginMsg.hide().empty();
                                                 Csw.cookie.set(Csw.cookie.cookieNames.CustomerId, inpAccessId.val());
@@ -86,12 +88,7 @@
                     $('#assemblydiv').load('_Assembly.txt');
 
                     $('#login_accessid').focus();
-
-
-                    inpAccessId.clickOnEnter(loginBtn);
-                    inpPassword.clickOnEnter(loginBtn);
-                    inpUserName.clickOnEnter(loginBtn);
-
+                    
                 } // if-else(ThisSessionId !== null)
             } // init
         }; // methods

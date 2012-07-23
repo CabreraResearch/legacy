@@ -210,12 +210,11 @@
                             if (nodeObj.allowedit) {
                                 btntext = "Edit";
                             }
-                            btnTable.cell(1, btncol).icon({
+                            btnTable.cell(1, btncol).buttonExt({
                                 ID: Csw.makeId(o.ID, nodeid, 'editbtn'),
-                                hovertext: btntext,
-                                iconType: Csw.enums.iconType.pencil,
-                                isButton: true,
-                                //disableOnClick: false,
+                                enabledText: 'Edit',
+                                tooltip: { title: btntext },
+                                icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.pencil),
                                 onClick: function () {
                                     $.CswDialog('EditNodeDialog', {
                                         nodeids: [nodeid],
@@ -230,12 +229,12 @@
                         } // if (nodeObj.allowview || nodeObj.allowedit) 
 
                         if (o.allowDelete && nodeObj.allowdelete) {
-                            btnTable.cell(1, btncol).icon({
+                            btnTable.cell(1, btncol).buttonExt({
                                 ID: Csw.makeId(o.ID, nodeid, 'delbtn'),
-                                hovertext: 'Delete',
-                                iconType: Csw.enums.iconType.trash,
-                                isButton: true,
-                                //disableOnClick: false,
+                                enabledText: 'Delete',
+                                disabledOnClick: false,
+                                tooltip: { title: 'Delete' },
+                                icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.trash),
                                 onClick: Csw.method(function () {
                                     $.CswDialog('DeleteNodeDialog', {
                                         nodenames: [nodeObj.nodename],
@@ -252,11 +251,11 @@
                             Csw.debug.assert(Csw.number(o.extraActionIcon) > 0, 'No icon specified for extraAction.');
                             Csw.debug.assert(Csw.isFunction(o.onExtraAction), 'No method specified for extraAction.');
 
-                            btnTable.cell(1, btncol).icon({
+                            btnTable.cell(1, btncol).buttonExt({
                                 ID: Csw.makeId(o.ID, nodeid, 'extrabtn'),
-                                hoverText: o.extraAction,
-                                iconType: o.extraActionIcon,
-                                //disableOnClick: false,
+                                tooltip: { title: o.extraAction },
+                                icon: o.extraActionIcon,
+                                disableOnClick: false,
                                 onClick: function () {
                                     Csw.tryExec(o.onExtraAction, nodeObj);
                                 } // onClick

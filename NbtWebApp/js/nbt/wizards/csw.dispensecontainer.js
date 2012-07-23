@@ -1,4 +1,4 @@
-﻿/// <reference path="~/js/CswCommon-vsdoc.js" />
+/// <reference path="~/js/CswCommon-vsdoc.js" />
 /// <reference path="~/js/CswNbt-vsdoc.js" />
 
 (function () {
@@ -143,7 +143,7 @@
                                 allowEdit: false,
                                 allowDelete: false,
                                 extraAction: 'Select',
-                                extraActionIcon: Csw.enums.iconType.check,
+                                extraActionIcon: Csw.enums.getName( Csw.enums.iconType, Csw.enums.iconType.check),
                                 onExtraAction: function (nodeObj) {
                                     Csw.debug.assert(false === Csw.isNullOrEmpty(nodeObj), 'Selected a container which did not yield a nodeObj');
                                     Csw.debug.assert(false === Csw.isNullOrEmpty(nodeObj.nodeid), 'Selected a container which did not yield a nodeid');

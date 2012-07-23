@@ -10,21 +10,33 @@
                 ID: '',
                 buttons: {
                     previous: {
+                        tooltip: {
+                            title: 'Go Back a Step'
+                        },
                         suffix: 'previous',
-                        text: '< Previous',
+                        icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.back),
+                        text: 'Previous',
                         enabled: true,
                         hidden: false,
                         onclick: null
                     },
                     next: {
+                        tooltip: {
+                            title: 'Go to Next Step' 
+                        },
                         suffix: 'next',
-                        text: 'Next >',
+                        icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.right),
+                        text: 'Next',
                         enabled: true,
                         hidden: false,
                         onclick: null
                     },
                     finish: {
+                        tooltip: {
+                            title: 'Submit Action'
+                        },
                         suffix: 'finish',
+                        icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.check),
                         text: 'Finish',
                         hidden: false,
                         enabled: true,
@@ -33,7 +45,11 @@
 
                 },
                 cancel: {
+                    tooltip: {
+                        title: 'Cancel Action'
+                    },
                     suffix: 'cancel',
+                    icon: Csw.enums.getName( Csw.enums.iconType, Csw.enums.iconType.cancel),
                     text: 'Cancel',
                     enabled: true,
                     hidden: false,
@@ -62,6 +78,8 @@
                     'align': 'right',
                     'width': '65%'
                 });
+                cswPrivate.leftTbl = cswPrivate.bCell11.table();
+                
                 cswPrivate.bCell12 = cswPrivate.buttonTbl.cell(1, 2);
                 cswPrivate.bCell12.propDom({
                     'align': 'right',
@@ -69,8 +87,9 @@
                 });
 
                 cswPrivate.makeButton = function (thisBtn, cell) {
-                    cswPublic[thisBtn.suffix] = cell.button({
-                        suffix: thisBtn.suffix,
+                    cswPublic[thisBtn.suffix] = cell.buttonExt({
+                        icon: thisBtn.icon,
+                        tooltip: thisBtn.tooltip,
                         enabledText: thisBtn.text,
                         disableOnClick: true,
                         onClick: function () {
@@ -85,8 +104,10 @@
                     }
                 };
 
+                var i = 0;
                 Csw.each(cswPrivate.buttons, function(btn, name) {
-                    cswPrivate.makeButton(btn, cswPrivate.bCell11);
+                    i += 1;
+                    cswPrivate.makeButton(btn, cswPrivate.leftTbl.cell(1, i));
                 });
 
                 cswPrivate.makeButton(cswPrivate.cancel, cswPrivate.bCell12);

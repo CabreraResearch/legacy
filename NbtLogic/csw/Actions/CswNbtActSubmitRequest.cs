@@ -4,6 +4,7 @@ using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
+using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.ServiceDrivers;
 using Newtonsoft.Json.Linq;
 
@@ -297,7 +298,54 @@ namespace ChemSW.Nbt.Actions
         /// <summary>
         /// Instance a new request item according to Object Class rules. Note: this does not get the properties.
         /// </summary>
-        public CswNbtObjClassRequestItem makeRequestItem( RequestItem Item, CswPrimaryKey NodeId, CswNbtMetaDataObjectClassProp OCP )
+        public CswNbtObjClassRequestItem makeContainerRequestItem( RequestItem Item, CswPrimaryKey NodeId, string MenuOption )
+        {
+            CswNbtSdTabsAndProps PropsAction = new CswNbtSdTabsAndProps( _CswNbtResources );
+
+            CswNbtObjClassRequestItem RetAsRequestItem = PropsAction.getAddNode( RequestItemNt );
+            if( null == RetAsRequestItem )
+            {
+                throw new CswDniException( ErrorType.Error, "Could not generate a new request item.", "Failed to create a new Request Item node." );
+            }
+            if( null != CurrentRequestNodeId() )
+            {
+                RetAsRequestItem.Container.RelatedNodeId = NodeId;
+                RetAsRequestItem.Container.setReadOnly( value: true, SaveToDb: true );
+                RetAsRequestItem.RequestBy.setReadOnly( value: true, SaveToDb: true );
+                switch( MenuOption )
+                {
+                    case CswNbtObjClassContainer.RequestMenu.Dispense:
+                        RetAsRequestItem.Type.Value = CswNbtObjClassRequestItem.Types.Dispense;
+                        RetAsRequestItem.RequestBy.Value = CswNbtObjClassRequestItem.RequestsBy.Quantity;
+                        break;
+                    case CswNbtObjClassContainer.RequestMenu.Dispose:
+                        RetAsRequestItem.Type.Value = CswNbtObjClassRequestItem.Types.Dispose;
+                        /* Kludge Alert: We don't have compound conditionals yet. Set it and hide it for now to squash the Quantity subprop. TODO: Remove this when compound conditionals arrive. */
+                        RetAsRequestItem.RequestBy.Value = CswNbtObjClassRequestItem.RequestsBy.Size;
+                        RetAsRequestItem.RequestBy.setHidden( value: true, SaveToDb: true );
+                        RetAsRequestItem.Material.setHidden( value: true, SaveToDb: true );
+                        RetAsRequestItem.Material.setReadOnly( value: true, SaveToDb: true );
+                        break;
+                    case CswNbtObjClassContainer.RequestMenu.Move:
+
+                        RetAsRequestItem.Type.Value = CswNbtObjClassRequestItem.Types.Move;
+                        /* Kludge Alert: We don't have compound conditionals yet. Set it and hide it for now to squash the Quantity subprop. TODO: Remove this when compound conditionals arrive. */
+                        RetAsRequestItem.RequestBy.Value = CswNbtObjClassRequestItem.RequestsBy.Size;
+                        RetAsRequestItem.RequestBy.setHidden( value: true, SaveToDb: true );
+                        RetAsRequestItem.Material.setHidden( value: true, SaveToDb: true );
+                        RetAsRequestItem.Material.setReadOnly( value: true, SaveToDb: true );
+                        break;
+                    default:
+                        throw new CswDniException( ErrorType.Error, "No action has been defined for this button menu.", "Menu option named " + MenuOption + " has not implemented a button click event." );
+                }
+            }
+            return RetAsRequestItem;
+        }
+
+        /// <summary>
+        /// Instance a new request item according to Object Class rules. Note: this does not get the properties.
+        /// </summary>
+        public CswNbtObjClassRequestItem makeMaterialRequestItem( RequestItem Item, CswPrimaryKey NodeId, CswNbtMetaDataObjectClassProp OCP )
         {
             CswNbtSdTabsAndProps PropsAction = new CswNbtSdTabsAndProps( _CswNbtResources );
 
@@ -327,45 +375,6 @@ namespace ChemSW.Nbt.Actions
                         RetAsRequestItem.Container.setHidden( value: true, SaveToDb: true );
                         RetAsRequestItem.Container.setReadOnly( value: true, SaveToDb: true );
                         RetAsRequestItem.Type.Value = CswNbtObjClassRequestItem.Types.Request;
-                        break;
-                    case RequestItem.Container:
-                        RetAsRequestItem.Container.RelatedNodeId = NodeId;
-                        RetAsRequestItem.Container.setReadOnly( value: true, SaveToDb: true );
-                        RetAsRequestItem.RequestBy.setReadOnly( value: true, SaveToDb: true );
-                        switch( OCP.PropName )
-                        {
-                            case CswNbtObjClassContainer.RequestDispensePropertyName:
-                                {
-                                    RetAsRequestItem.Type.Value = CswNbtObjClassRequestItem.Types.Dispense;
-                                    RetAsRequestItem.RequestBy.Value = CswNbtObjClassRequestItem.RequestsBy.Quantity;
-                                    break;
-                                }
-                            case CswNbtObjClassContainer.RequestDisposePropertyName:
-                                {
-                                    RetAsRequestItem.Type.Value = CswNbtObjClassRequestItem.Types.Dispose;
-                                    /* Kludge Alert: We don't have compound conditionals yet. Set it and hide it for now to squash the Quantity subprop. TODO: Remove this when compound conditionals arrive. */
-                                    RetAsRequestItem.RequestBy.Value = CswNbtObjClassRequestItem.RequestsBy.Size;
-                                    RetAsRequestItem.RequestBy.setHidden( value: true, SaveToDb: true );
-                                    RetAsRequestItem.Material.setHidden( value: true, SaveToDb: true );
-                                    RetAsRequestItem.Material.setReadOnly( value: true, SaveToDb: true );
-                                    break;
-                                }
-                            case CswNbtObjClassContainer.RequestMovePropertyName:
-                                {
-                                    RetAsRequestItem.Type.Value = CswNbtObjClassRequestItem.Types.Move;
-                                    /* Kludge Alert: We don't have compound conditionals yet. Set it and hide it for now to squash the Quantity subprop. TODO: Remove this when compound conditionals arrive. */
-                                    RetAsRequestItem.RequestBy.Value = CswNbtObjClassRequestItem.RequestsBy.Size;
-                                    RetAsRequestItem.RequestBy.setHidden( value: true, SaveToDb: true );
-                                    RetAsRequestItem.Material.setHidden( value: true, SaveToDb: true );
-                                    RetAsRequestItem.Material.setReadOnly( value: true, SaveToDb: true );
-                                    break;
-                                }
-                            default:
-                                throw new CswDniException( ErrorType.Error, "No action has been defined for this button.",
-                                                          "Property named " + OCP.PropName +
-                                                          " has not implemented a button click event." );
-
-                        }
                         break;
                 }
             }

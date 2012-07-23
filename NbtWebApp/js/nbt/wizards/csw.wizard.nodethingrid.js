@@ -1,4 +1,4 @@
-﻿/// <reference path="~/js/CswCommon-vsdoc.js" />
+/// <reference path="~/js/CswCommon-vsdoc.js" />
 /// <reference path="~/js/CswNbt-vsdoc.js" />
 
 (function () {
@@ -54,6 +54,7 @@
                     });
 
                     cswPrivate.addNodeBtn = cswPrivate.addDiv.button({
+                        icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.add),
                         enabledText: 'Add',
                         onClick: function () {
                             var nodeData = { };
