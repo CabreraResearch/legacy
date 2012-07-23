@@ -24,7 +24,6 @@ namespace ChemSW.Nbt.Schema
             // This is where you add new versions.
             // e.g. _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCaseXXXXX() ) );
 
-
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase25978() ) );                     //01P-01
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase7608() ) );                      //01P-02
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase24645() ) );                     //01P-03
@@ -113,7 +112,8 @@ namespace ChemSW.Nbt.Schema
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase27270() ) );                     //01P-86
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase27055() ) );                     //01P-87
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase27223() ) );                     //01P-88
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase27063() ) );                     //01P-89
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase27263() ) );                     //01P-89
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase27063() ) );                     //01P-90
 
             // This automatically detects the latest version
             _LatestVersion = _MinimumVersion;

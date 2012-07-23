@@ -25,7 +25,7 @@
                 allowEdit: true,
                 allowDelete: true,
                 extraAction: null,
-                extraActionIcon: Csw.enums.iconType.none,
+                extraActionIcon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.none),
                 onExtraAction: null,  // function(nodeObj) {}
 
                 newsearchurl: '/NbtWebApp/wsNBT.asmx/doUniversalSearch',
@@ -224,10 +224,11 @@
 
                 if (hasFilters && cswPrivate.showSaveAsView) {
                     fdiv.br();
-                    fdiv.button({
+                    fdiv.buttonExt({
                         ID: Csw.makeId(filtersdivid, '', "saveview"),
                         enabledText: 'Save as View',
                         disableOnClick: false,
+                        icon: Csw.enums.getName( Csw.enums.iconType, Csw.enums.iconType.search),
                         onClick: cswPrivate.saveAsView
                     });
                 }
