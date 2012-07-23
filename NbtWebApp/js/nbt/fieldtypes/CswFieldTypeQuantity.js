@@ -98,8 +98,13 @@
 
                 $.validator.addMethod('validateInteger', function (value, element) {
                     return (precision != 0 || Csw.validateInteger(numberTextBox.val()));
-                }, 'Value must be an integer');
+                }, 'Value must be a whole number');
                 numberTextBox.addClass('validateInteger');
+
+                $.validator.addMethod('validateIntegerGreaterThanZero', function (value, element) {
+                    return (Csw.validateIntegerGreaterThanZero(numberTextBox.val()));
+                }, 'Value must be a non-zero, positive number');
+                numberTextBox.addClass('validateIntegerGreaterThanZero');
 
                 $.validator.addMethod('validateUnitPresent', function (value, element) {
                     return (false === Csw.isNullOrEmpty(selectBox.val()) || Csw.isNullOrEmpty(numberTextBox.val()));

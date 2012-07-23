@@ -131,6 +131,13 @@
     Csw.register('validateInteger', validateInteger);
     Csw.validateInteger = Csw.validateInteger || validateInteger;
 
+    function validateIntegerGreaterThanZero(value) {
+        var regex = /^(\d*(\.|)\d*)$/g;
+        return (regex.test(value));
+    }
+    Csw.register('validateIntegerGreaterThanZero', validateIntegerGreaterThanZero);
+    Csw.validateIntegerGreaterThanZero = Csw.validateIntegerGreaterThanZero || validateIntegerGreaterThanZero;
+
     function getMaxValueForPrecision(precision, maxPrecision) {
         var i,
             ret = '',
