@@ -357,31 +357,34 @@
                             excludeOcProps: ['material']
                         });
                         cswPrivate.addSizeBtn = addDiv.button({
+                            disableOnClick: false,
                             enabledText: 'Add',
                             onClick: function () {
-                                var sizeData = cswPrivate.addSizeNode.getPropJson();
+                                if (cswPrivate.addSizeNode.isFormValid()) {
+                                    var sizeData = cswPrivate.addSizeNode.getPropJson();
 
-                                Csw.ajax.post({
-                                    urlMethod: 'getSizeNodeProps',
-                                    data: {
-                                        SizeDefinition: JSON.stringify(sizeData),
-                                        SizeNodeTypeId: cswPrivate.sizeNodeTypeId
-                                    },
-                                    success: function (data) {
-                                        var size = data.row;
-                                        if (isSizeNew(size)) {
-                                            cswPrivate.sizeGrid.addRows(size);
-                                            cswPrivate.sizeNodes.push({
-                                                nodetypeid: cswPrivate.sizeNodeTypeId,
-                                                sizedef: Csw.clone(sizeData)
-                                            });
-                                            sizes.push(size);
-                                            cswPrivate.sizeGrid.show();
-                                        } else {
-                                            $.CswDialog('AlertDialog', 'This size is already defined. Please define a new, unique size.');
+                                    Csw.ajax.post({
+                                        urlMethod: 'getSizeNodeProps',
+                                        data: {
+                                            SizeDefinition: JSON.stringify(sizeData),
+                                            SizeNodeTypeId: cswPrivate.sizeNodeTypeId
+                                        },
+                                        success: function (data) {
+                                            var size = data.row;
+                                            if (isSizeNew(size)) {
+                                                cswPrivate.sizeGrid.addRows(size);
+                                                cswPrivate.sizeNodes.push({
+                                                    nodetypeid: cswPrivate.sizeNodeTypeId,
+                                                    sizedef: Csw.clone(sizeData)
+                                                });
+                                                sizes.push(size);
+                                                cswPrivate.sizeGrid.show();
+                                            } else {
+                                                $.CswDialog('AlertDialog', 'This size is already defined. Please define a new, unique size.');
+                                            }
                                         }
-                                    }
-                                });
+                                    });
+                                }
                             }
                         });
                     }
