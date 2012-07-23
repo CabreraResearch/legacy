@@ -82,6 +82,7 @@
             },
             Submit_Request: 'Submit_Request',
             objectClassButtonClick: 'objectClassButtonClick',
+            afterObjectClassButtonClick: 'afterObjectClassButtonClick',
             RestoreViewContext: 'RestoreViewContext',
             DispenseContainer: 'DispenseContainer'
         });
@@ -297,7 +298,8 @@
             box: 69,
             save: 70, //not actually in the img, but the file is present
             back: 71, //called left above but the file is 'back.png'
-            add: 72 //called left above but the file is 'back.png'
+            add: 72, //called left above but the file is 'back.png'
+            search: 73 //called ?? above but the file is 'back.png'
         });
     
     Csw.enums.searchCssClasses = Csw.enums.searchCssClasses ||
