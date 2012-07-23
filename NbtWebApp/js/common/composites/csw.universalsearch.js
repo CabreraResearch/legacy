@@ -70,21 +70,22 @@
                 cswPrivate.searchinput = cswtable.cell(1, 1).input({
                     ID: Csw.makeId(cswPrivate.ID, '', '_input'),
                     type: Csw.enums.inputTypes.text,
-                    width: cswPrivate.searchbox_width
+                    width: cswPrivate.searchbox_width,
+                    cssclass: 'mousetrap'
                 });
 
-                cswPrivate.searchbutton = cswtable.cell(1, 2).button({
+                cswPrivate.searchbutton = cswtable.cell(1, 2).buttonExt({
                     ID: Csw.makeId(cswPrivate.ID, '', '_srchbtn'),
+                    icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.search),
                     enabledText: 'Search',
                     disabledText: 'Searching...',
+                    bindOnEnter: true,
                     onClick: function () {
                         cswPrivate.searchterm = cswPrivate.searchinput.val();
                         //cswPrivate.filters = {};
                         cswPrivate.newsearch();
                     }
                 });
-
-                cswPrivate.searchinput.clickOnEnter(cswPrivate.searchbutton);
             })();
 
             // Handle search submission
