@@ -1015,7 +1015,9 @@
 
         SearchDialog: function (options) {
             var cswPrivate = {
+                ID: 'searchdialog',
                 propname: '',
+                title: '',
                 nodetypeid: '',
                 objectclassid: '',
                 onSelectNode: null
@@ -1028,10 +1030,12 @@
                 div: Csw.literals.div({ ID: 'searchdialog_div' }),
                 close: function () {
                     cswPublic.div.$.dialog('close');
-                }
+                },
+                title: Csw.string(cswPrivate.title, 'Search ' + cswPrivate.propname)
             };
             
             cswPublic.search = Csw.composites.universalSearch(cswPublic.div, {
+                ID: cswPrivate.ID,
                 nodetypeid: cswPrivate.nodetypeid,
                 objectclassid: cswPrivate.objectclassid,
                 onBeforeSearch: function () { },
@@ -1043,7 +1047,7 @@
                 allowEdit: false,
                 allowDelete: false,
                 extraAction: 'Select',
-                extraActionIcon: Csw.enums.iconType.check,
+                extraActionIcon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.check),
                 onExtraAction: function (nodeObj) {
                     cswPublic.close();
                     Csw.tryExec(cswPrivate.onSelectNode, nodeObj);
