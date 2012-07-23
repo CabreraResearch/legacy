@@ -178,6 +178,10 @@ namespace ChemSW.Nbt.Actions
                                                     QuantityValue = AsSize.Capacity.Quantity;
                                                     UnitId = AsSize.Capacity.UnitId;
                                                 }
+                                                if( null == AsContainer.Quantity.UnitId || Int32.MinValue == AsContainer.Quantity.UnitId.PrimaryKey )
+                                                {
+                                                    AsContainer.Quantity.UnitId = UnitId;
+                                                }
                                                 AsContainer.DispenseIn( CswNbtObjClassContainerDispenseTransaction.DispenseType.Receive, QuantityValue, UnitId );
                                                 AsContainer.postChanges( true );
                                                 ContainerIds.Add( AsContainer.NodeId );
