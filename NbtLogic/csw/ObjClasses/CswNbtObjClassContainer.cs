@@ -450,6 +450,8 @@ namespace ChemSW.Nbt.ObjClasses
 
         private bool _isStorageCompatible( CswDelimitedString materialStorageCompatibility, CswDelimitedString locationStorageCompatibilities )
         {
+            //if storage compatibility on the material is null, it can go anywhere
+            //OR if SC on the location is null, it can store anything
             bool ret = materialStorageCompatibility.Count == 0 || locationStorageCompatibilities.Count == 0;
             foreach( string matComp in materialStorageCompatibility ) //loop through the materials storage compatibilities
             {
