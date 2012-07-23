@@ -1,4 +1,4 @@
-﻿/// <reference path="~/js/CswNbt-vsdoc.js" />
+/// <reference path="~/js/CswNbt-vsdoc.js" />
 /// <reference path="~/js/CswCommon-vsdoc.js" />
 
 (function ($) {
@@ -14,59 +14,60 @@
             button.enable();
         } else {
             // case 25371 - Save the tab first
-            Csw.tryExec(o.doSave, {
-                onSuccess: function () {
-                    var $btn = $('#' + o.ID).button({ disabled: true });
-                    params = {
-                        NodeTypePropAttr: propAttr,
-                        SelectedText: Csw.string(button.selectedOption, Csw.string(o.propData.values.text, o.propData.name))
-                    };
+            //            Csw.tryExec(o.doSave, {
+            //                onSuccess: function () {
+            // Case 27263: prompt to save instead
+            if (Csw.clientChanges.manuallyCheckChanges()) {
+                var $btn = $('#' + o.ID).button({ disabled: true });
+                params = {
+                    NodeTypePropAttr: propAttr,
+                    SelectedText: Csw.string(button.selectedOption, Csw.string(o.propData.values.text, o.propData.name))
+                };
 
-                    Csw.ajax.post({
-                        url: '/NbtWebApp/wsNBT.asmx/onObjectClassButtonClick',
-                        data: params,
-                        success: function (data) {
-                            $btn.button({ disabled: false });
+                Csw.ajax.post({
+                    url: '/NbtWebApp/wsNBT.asmx/onObjectClassButtonClick',
+                    data: params,
+                    success: function(data) {
+                        $btn.button({ disabled: false });
 
-                            var actionData = {
-                                data: data,
-                                propid: propid,
-                                button: button,
-                                selectedOption: Csw.string(button.selectedOption),
-                                messagediv: messagediv,
-                                context: o,
-                                onSuccess: o.onAfterButtonClick
-                            };
+                        var actionData = {
+                            data: data,
+                            propid: propid,
+                            button: button,
+                            selectedOption: Csw.string(button.selectedOption),
+                            messagediv: messagediv,
+                            context: o,
+                            onSuccess: o.onAfterButtonClick
+                        };
 
-                            if (false === Csw.isNullOrEmpty(data.message)) {
-                                // can't use messagediv, since doSave has remade the tab
-                                var $newmessagediv = $('#' + messagediv.getId());
-                                $newmessagediv.text(data.message);
-                            }
-
-                            if (Csw.bool(data.success)) {
-                                if (data.action == Csw.enums.nbtButtonAction.refresh) { //cases 26201, 26107 
-                                    Csw.tryExec(o.onReload,
-                                        (function(messagedivid) {
-                                            return function() {
-                                                if (false === Csw.isNullOrEmpty(data.message)) {
-                                                    var $newmessagediv = $('#' + messagedivid);
-                                                    $newmessagediv.text(data.message);
-                                                }
-                                            };
-                                        })(messagediv.getId())
-                                    );
-                                } else {
-                                    Csw.publish(Csw.enums.events.objectClassButtonClick, actionData);
-                                }
-                            }
-                        }, // ajax success()
-                        error: function () {
-                            button.enable();
+                        if (false === Csw.isNullOrEmpty(data.message)) {
+                            // can't use messagediv, since doSave has remade the tab
+                            var $newmessagediv = $('#' + messagediv.getId());
+                            $newmessagediv.text(data.message);
                         }
-                    }); // ajax.post()
-                } // doSave.onSuccess()
-            }); // doSave()
+
+                        if (Csw.bool(data.success)) {
+                            if (data.action == Csw.enums.nbtButtonAction.refresh) { //cases 26201, 26107 
+                                Csw.tryExec(o.onReload,
+                                    (function(messagedivid) {
+                                        return function() {
+                                            if (false === Csw.isNullOrEmpty(data.message)) {
+                                                var $newmessagediv = $('#' + messagedivid);
+                                                $newmessagediv.text(data.message);
+                                            }
+                                        };
+                                    })(messagediv.getId())
+                                );
+                            } else {
+                                Csw.publish(Csw.enums.events.objectClassButtonClick, actionData);
+                            }
+                        }
+                    }, // ajax success()
+                    error: function() {
+                        button.enable();
+                    }
+                }); // ajax.post()
+            } // if (Csw.clientChanges.manuallyCheckChanges()) {
         } // if-else (Csw.isNullOrEmpty(propAttr)) {
     }; // onButtonClick()
 
@@ -87,7 +88,7 @@
             state = propVals.state;
             text = propVals.text;
             selectedText = propVals.selectedText;
-            
+
             function onClick() {
                 onButtonClick(o.propid, button, messagediv, o);
             }
@@ -98,7 +99,7 @@
             btnCell = table.cell(1, 1);
             switch (mode) {
                 case 'button':
-                    button = btnCell.button({
+                    button = btnCell.buttonExt({
                         ID: o.ID,
                         enabledText: value,
                         disabledText: value,
@@ -111,9 +112,9 @@
                         ID: Csw.makeId(o.ID, 'menuBtn'),
                         selectedText: selectedText,
                         menuOptions: menuoptions,
-                        size: o.size,
+                        //size: o.size,
                         state: state,
-                        onClick: function(selectedOption) {
+                        onClick: function (selectedOption) {
                             Csw.tryExec(onClick, selectedOption);
                         }
                     });

@@ -1,4 +1,4 @@
-﻿/// <reference path="~/js/CswCommon-vsdoc.js" />
+/// <reference path="~/js/CswCommon-vsdoc.js" />
 /// <reference path="~/js/CswNbt-vsdoc.js" />
 
 (function() {

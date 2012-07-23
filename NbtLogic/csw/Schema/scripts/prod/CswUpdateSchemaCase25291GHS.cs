@@ -63,8 +63,9 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataNodeTypeProp GHSPhraseSpanishNTP = _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( new CswNbtWcfMetaDataModel.NodeTypeProp( GHSPhraseNT, TextFT, "Spanish" ) );
             GHSPhraseCategoryNTP.ListOptions = "Physical,Health,Environmental";
             GHSPhraseNT.setNameTemplateText( CswNbtMetaData.MakeTemplateEntry( "Code" ) );
-
-
+            
+            _CswNbtSchemaModTrnsctn.createModuleNodeTypeJunction( CswNbtResources.CswNbtModule.CISPro, GHSPhraseNT.NodeTypeId );
+            
             // GHS NodeType
             CswNbtMetaDataNodeType GHSNT = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( new CswNbtWcfMetaDataModel.NodeType( GenericOC )
             {
@@ -83,7 +84,8 @@ namespace ChemSW.Nbt.Schema
             GHSGHSPhraseNTP.SetFK( NbtViewRelatedIdType.NodeTypeId.ToString(), GHSPhraseNT.NodeTypeId );
             //GHSJurisdictionNTP.SetFK( NbtViewRelatedIdType.NodeTypeId.ToString(), JurisdictionNT.NodeTypeId );
             GHSJurisdictionNTP.ListOptions = "North America, China, Europe, Japan";
-
+            
+            _CswNbtSchemaModTrnsctn.createModuleNodeTypeJunction( CswNbtResources.CswNbtModule.CISPro, GHSNT.NodeTypeId );
 
             // Chemical GHS Tab
             CswNbtMetaDataNodeType ChemicalNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Chemical" );

@@ -15,10 +15,10 @@ namespace ChemSW.Nbt.Schema
             //This block is needed in the event of a full SchemaUpdate reset to ensure that the RequestDispense button only exists on the Requests tab
             foreach( CswNbtMetaDataNodeType ContainerNt in ContainerOc.getNodeTypes() )
             {
-                CswNbtMetaDataNodeTypeProp RequestDispenseNtp = ContainerNt.getNodeTypePropByObjectClassProp( CswNbtObjClassContainer.RequestDispensePropertyName );
+                CswNbtMetaDataNodeTypeProp RequestNtp = ContainerNt.getNodeTypePropByObjectClassProp( CswNbtObjClassContainer.RequestPropertyName );
                 foreach( CswNbtMetaDataNodeTypeTab ContainerNodeTypeTab in _CswNbtSchemaModTrnsctn.MetaData.getNodeTypeTabs( ContainerNt.NodeTypeId ) )
                 {
-                    RequestDispenseNtp.removeFromLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, TabId: ContainerNodeTypeTab.TabId );
+                    RequestNtp.removeFromLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, TabId: ContainerNodeTypeTab.TabId );
                 }
 
                 CswNbtMetaDataNodeTypeTab RequestsTab = ContainerNt.getNodeTypeTab( "Requests" );
@@ -26,9 +26,9 @@ namespace ChemSW.Nbt.Schema
                 {
                     RequestsTab = _CswNbtSchemaModTrnsctn.MetaData.makeNewTab( ContainerNt, "Requests", ContainerNt.getNodeTypeTabIds().Count );
                 }
-                RequestDispenseNtp.removeFromLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, ContainerNt.getFirstNodeTypeTab().TabId );
-                RequestDispenseNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, RequestsTab.TabId, 1, 1 );
-                RequestDispenseNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Table, true, RequestsTab.TabId, 1, 1 );
+                RequestNtp.removeFromLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, ContainerNt.getFirstNodeTypeTab().TabId );
+                RequestNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, RequestsTab.TabId, 1, 1 );
+                RequestNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Table, true, RequestsTab.TabId, 1, 1 );
             }
         }//Update()
 
