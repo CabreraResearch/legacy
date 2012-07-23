@@ -238,7 +238,8 @@ namespace ChemSW.Nbt.MetaData
                        ObjectClass != CswNbtMetaDataObjectClass.NbtObjectClass.RequestItemClass &&
                        ObjectClass != CswNbtMetaDataObjectClass.NbtObjectClass.RequestClass &&
                        ObjectClass != CswNbtMetaDataObjectClass.NbtObjectClass.ContainerClass &&
-                       ObjectClass != CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass );
+                       ObjectClass != CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass &&
+                       ObjectClass != CswNbtMetaDataObjectClass.NbtObjectClass.ContainerDispenseTransactionClass );
             }
         } // CanAdd
 
