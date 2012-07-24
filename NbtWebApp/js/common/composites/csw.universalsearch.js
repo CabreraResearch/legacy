@@ -156,7 +156,10 @@
 
                     resultstable.cell(2, 1).$.CswNodeTable({
                         ID: Csw.makeId(cswPrivate.ID, '', 'srchresults'),
-                        onEditNode: null,
+                        onEditNode: function() {
+                            // case 27245 - refresh on edit
+                            cswPublic.restoreSearch(cswPrivate.sessiondataid);
+                        },
                         onDeleteNode: function() {
                             // case 25380 - refresh on delete
                             cswPublic.restoreSearch(cswPrivate.sessiondataid);
