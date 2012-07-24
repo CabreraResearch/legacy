@@ -859,8 +859,21 @@ window.initMain = window.initMain || function (undefined) {
         o.onEditNode = function () { getViewTable(o); };
         o.onDeleteNode = function () { getViewTable(o); };
 
-        clear({ centerbottom: true });
+        clear({ centertop: true, centerbottom: true });
 
+        var viewfilters = Csw.nbt.viewFilters({
+            ID: 'main_viewfilters',
+            parent: Csw.literals.factory($('#CenterTopDiv')),
+            viewid: o.viewid,
+            onEditFilters: function (newviewid) {
+                var newopts = o;
+                newopts.viewid = newviewid;
+                // set the current view to be the session view, so filters are saved
+                Csw.clientState.setCurrentView(newviewid, Csw.enums.viewMode.table.name);
+                getViewTable(newopts);
+            } // onEditFilters
+        }); // viewFilters
+        
         $('#CenterBottomDiv').CswNodeTable('init', {
             viewid: o.viewid,
             nodeid: o.nodeid,
