@@ -172,7 +172,18 @@
                         cswPrivate.divStep1 = cswPrivate.divStep1 || cswPrivate.wizard.div(1);
                         cswPrivate.divStep1.empty();
 
+                        cswPrivate.divStep1.br({ number: 1 });
+
+                        cswPrivate.divStep1.label({
+                            text: "Fill out Material type and identification properties",
+                            cssclass: "wizardHelpTitle"
+                        });
                         cswPrivate.divStep1.br({ number: 2 });
+                        cswPrivate.divStep1.label({
+                            text: "This wizard will guide you through the process of creating a new material. The information that needs to be filled out below are the basic attributes used to identify the material you are creating. If the attributes below match an existing material, you will be given the option to edit that material.",
+                            cssclass: "wizardHelpDesc"
+                        });
+                        cswPrivate.divStep1.br({ number: 4 });
 
                         cswPrivate.materialTypeSelect = cswPrivate.divStep1.nodeTypeSelect({
                             ID: cswPrivate.wizard.makeStepId('nodeTypeSelect'),
@@ -298,7 +309,18 @@
                         cswPrivate.divStep2 = cswPrivate.divStep2 || cswPrivate.wizard.div(2);
                         cswPrivate.divStep2.empty();
 
+                        cswPrivate.divStep2.br({ number: 1 });
+
+                        cswPrivate.divStep2.label({
+                            text: "Physical Properties",
+                            cssclass: "wizardHelpTitle"
+                        });
                         cswPrivate.divStep2.br({ number: 2 });
+                        cswPrivate.divStep2.label({
+                            text: "Fill out the physical properties of this material.",
+                            cssclass: "wizardHelpDesc"
+                        });
+                        cswPrivate.divStep2.br({ number: 4 });
 
                         div = cswPrivate.divStep2.div();
                         cswPrivate.tabsAndProps = Csw.layouts.tabsAndProps(div, {
@@ -341,6 +363,7 @@
                         }
                         addDiv = addDiv || div.div();
                         addDiv.empty();
+
                         cswPrivate.addSizeNode = Csw.layouts.tabsAndProps(addDiv, {
                             nodetypeid: cswPrivate.sizeNodeTypeId,
                             showSaveButton: false,
@@ -386,10 +409,19 @@
                         cswPrivate.divStep3 = cswPrivate.divStep3 || cswPrivate.wizard.div(3);
                         cswPrivate.divStep3.empty();
 
-                        cswPrivate.divStep3.br({ number: 2 });
-
                         div = cswPrivate.divStep3.div();
-                        div.label({ text: 'Now creating sizes (not material attributes)', cssclass: 'CswLabelCreateMaterial' });
+
+                        div.br({ number: 1 });
+                        div.label({
+                            text: "Create sizes of the material",
+                            cssclass: "wizardHelpTitle"
+                        });
+                        div.br({ number: 2 });
+                        div.label({
+                            text: "Here is where sizes of the material can be defined. Sizes are used in receiving and determine how much of the material can be received. Sizes can be created elsewhere and this part is optional. Click \"Finish\" to finish creating the material and have it in saved to the system.",
+                            cssclass: "wizardHelpDesc"
+                        });
+                        div.br({ number: 4 });
 
                         var makeGrid = function () {
                             /* Thin Grid of sizes */
