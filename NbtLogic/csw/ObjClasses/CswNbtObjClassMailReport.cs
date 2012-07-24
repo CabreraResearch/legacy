@@ -4,6 +4,7 @@ using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropertySets;
 using ChemSW.Nbt.PropTypes;
+using ChemSW.Nbt.Sched;
 
 enum MailRptFormatOptions { Link, CSV };
 
@@ -170,9 +171,10 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 if( RunNowPropertyName == OCP.PropName )
                 {
-                    NextDueDate.DateTimeValue = DateTime.Now;
-                    //case 25702
-                    //RunStatus.StaticText = string.Empty;
+                    CswScheduleLogicNbtGenEmailRpt MailReportProcessor = new CswScheduleLogicNbtGenEmailRpt();
+                    MailReportProcessor.init( _CswNbtResources, null );
+                    string statusMessage = MailReportProcessor.processMailReport( this, new CswNbtMailReportStatus() );
+                    this.RunStatus.AddComment( statusMessage );
                     Node.postChanges( false );
                     ButtonData.Action = NbtButtonAction.refresh;
                 }
