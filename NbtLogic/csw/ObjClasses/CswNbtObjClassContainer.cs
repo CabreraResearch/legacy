@@ -259,8 +259,13 @@ namespace ChemSW.Nbt.ObjClasses
         public void DispenseOut( CswNbtObjClassContainerDispenseTransaction.DispenseType DispenseType, double QuantityToDeduct, CswPrimaryKey UnitId,
                                  CswPrimaryKey RequestItemId = null, CswNbtObjClassContainer DestinationContainer = null, bool RecordTransaction = true )
         {
-            double RealQuantityToDeduct = _getDispenseAmountInProperUnits( QuantityToDeduct, UnitId, this.Quantity.UnitId );
-            this.Quantity.Quantity = this.Quantity.Quantity - RealQuantityToDeduct;
+            double RealQuantityToDeduct = _getDispenseAmountInProperUnits( QuantityToDeduct, UnitId, Quantity.UnitId );
+            double CurrentQuantity = 0;
+            if( CswTools.IsDouble( Quantity.Quantity ) )
+            {
+                CurrentQuantity = Quantity.Quantity;
+            }
+            Quantity.Quantity = CurrentQuantity - RealQuantityToDeduct;
 
             if( DestinationContainer != null )
             {
@@ -283,11 +288,16 @@ namespace ChemSW.Nbt.ObjClasses
         public void DispenseIn( CswNbtObjClassContainerDispenseTransaction.DispenseType DispenseType, double QuantityToAdd, CswPrimaryKey UnitId,
                                 CswPrimaryKey RequestItemId = null, CswNbtObjClassContainer SourceContainer = null, bool RecordTransaction = true )
         {
-            double RealQuantityToAdd = _getDispenseAmountInProperUnits( QuantityToAdd, UnitId, this.Quantity.UnitId );
-            this.Quantity.Quantity = this.Quantity.Quantity + RealQuantityToAdd;
+            double RealQuantityToAdd = _getDispenseAmountInProperUnits( QuantityToAdd, UnitId, Quantity.UnitId );
+            double CurrentQuantity = 0;
+            if(CswTools.IsDouble(Quantity.Quantity))
+            {
+                CurrentQuantity = Quantity.Quantity;
+            }
+            Quantity.Quantity = CurrentQuantity + RealQuantityToAdd;
             if( RecordTransaction )
             {
-                _createContainerTransactionNode( DispenseType, RealQuantityToAdd, this.Quantity.UnitId, RequestItemId, SourceContainer, this );
+                _createContainerTransactionNode( DispenseType, RealQuantityToAdd, Quantity.UnitId, RequestItemId, SourceContainer, this );
             }
         } // DispenseIn()
 
@@ -298,11 +308,8 @@ namespace ChemSW.Nbt.ObjClasses
         private double _getDispenseAmountInProperUnits( double Quantity, CswPrimaryKey OldUnitId, CswPrimaryKey NewUnitId )
         {
             double convertedValue = Quantity;
-            if( null != OldUnitId && null != NewUnitId )
-            {
-                CswNbtUnitConversion ConversionObj = new CswNbtUnitConversion( _CswNbtResources, OldUnitId, NewUnitId, this.Material.RelatedNodeId );
-                convertedValue = ConversionObj.convertUnit( Quantity );
-            }
+            CswNbtUnitConversion ConversionObj = new CswNbtUnitConversion( _CswNbtResources, OldUnitId, NewUnitId, Material.RelatedNodeId );
+            convertedValue = ConversionObj.convertUnit( Quantity );
             return convertedValue;
         }
 
@@ -435,20 +442,14 @@ namespace ChemSW.Nbt.ObjClasses
             Size.setReadOnly( value: isReadOnly, SaveToDb: true );
             Request.setReadOnly( value: isReadOnly, SaveToDb: true );
             Dispense.setReadOnly( value: isReadOnly, SaveToDb: true );
-            this.Owner.setReadOnly( value: isReadOnly, SaveToDb: true );
+            Owner.setReadOnly( value: isReadOnly, SaveToDb: true );
         }
 
         private bool _isStorageCompatible( CswDelimitedString materialStorageCompatibility, CswDelimitedString locationStorageCompatibilities )
         {
-            bool ret = false;
-            if( materialStorageCompatibility.Count == 0 ) //if storage compatibility on the material is null, it can go anywhere
-            {
-                ret = true;
-            }
-            if( locationStorageCompatibilities.Count == 0 ) //if SC on the location is null, it can store anything
-            {
-                ret = true;
-            }
+            //if storage compatibility on the material is null, it can go anywhere
+            //OR if SC on the location is null, it can store anything
+            bool ret = materialStorageCompatibility.Count == 0 || locationStorageCompatibilities.Count == 0;
             foreach( string matComp in materialStorageCompatibility ) //loop through the materials storage compatibilities
             {
                 if( matComp.Contains( "0w.gif" ) ) //if it has '0-none' selected, it can go anywhere

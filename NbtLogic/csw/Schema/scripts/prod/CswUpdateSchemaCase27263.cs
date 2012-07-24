@@ -30,19 +30,7 @@ namespace ChemSW.Nbt.Schema
                 RequestNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, LocationNtp, true );
 
             }
-
-            CswNbtMetaDataObjectClass ContainerOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.ContainerClass );
-            CswNbtMetaDataObjectClassProp RequestDispenseOcp = ContainerOc.getObjectClassProp( "Request Dispense" );
-            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( RequestDispenseOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.propname, CswNbtObjClassContainer.RequestPropertyName );
-            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( RequestDispenseOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.extended, CswNbtNodePropButton.ButtonMode.menu );
-            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( RequestDispenseOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.listoptions, CswNbtObjClassContainer.RequestMenu.Options.ToString() );
-            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( RequestDispenseOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.statictext, CswNbtObjClassContainer.RequestMenu.Dispense );
-
-            CswNbtMetaDataObjectClassProp RequestDisposeOcp = ContainerOc.getObjectClassProp( "Request Dispose" );
-            _CswNbtSchemaModTrnsctn.MetaData.DeleteObjectClassProp( RequestDisposeOcp, true );
-
-            CswNbtMetaDataObjectClassProp RequestMoveOcp = ContainerOc.getObjectClassProp( "Request Move" );
-            _CswNbtSchemaModTrnsctn.MetaData.DeleteObjectClassProp( RequestMoveOcp, true );
+            
 
         }//Update()
 
