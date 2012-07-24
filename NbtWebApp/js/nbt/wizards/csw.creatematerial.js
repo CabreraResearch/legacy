@@ -196,7 +196,7 @@
                         return false === Csw.isNullOrEmpty(cswPrivate.tradeName) && false === Csw.isNullOrEmpty(cswPrivate.supplier.val);
                     };
                     function supplierSelect() {
-                        cswPrivate.supplier = { name: cswPrivate.supplierSelect.find(':selected').text(), val: cswPrivate.supplierSelect.val() };
+                        cswPrivate.supplier = { name: cswPrivate.supplierSelect.selectedText(), val: cswPrivate.supplierSelect.val() };
                         cswPrivate.toggleButton(cswPrivate.buttons.next, nextBtnEnabled());
                     }
 
@@ -220,7 +220,9 @@
                             onChange: function () {
                                 cswPrivate.tradeName = cswPrivate.tradeNameInput.val();
                                 cswPrivate.toggleButton(cswPrivate.buttons.next, nextBtnEnabled());
-                                checkIfMaterialExists();
+                                if (false === Csw.isNullOrEmpty(cswPrivate.tradeName)) {
+                                    checkIfMaterialExists();
+                                }
                             }
                         });
                         cswPrivate.divStep2.br({ number: 1 });
@@ -232,7 +234,12 @@
                             objectClassName: 'VendorClass',
                             useWide: true,
                             labelText: 'Supplier: ',
-                            onChange: supplierSelect,
+                            onChange: function () {
+                                supplierSelect();
+                                if (false === Csw.isNullOrEmpty(cswPrivate.tradeName)) {
+                                    checkIfMaterialExists();
+                                }
+                            },
                             onSuccess: supplierSelect
                         });
                         cswPrivate.divStep2.br({ number: 1 });
@@ -244,45 +251,52 @@
                             labelText: 'Part No: ',
                             onChange: function () {
                                 cswPrivate.partNo = cswPrivate.partNoInput.val();
+                                if (false === Csw.isNullOrEmpty(cswPrivate.tradeName)) {
+                                    checkIfMaterialExists();
+                                }
                             }
                         });
-
                         cswPrivate.divStep2.br({ number: 3 });
-                        var foundMaterialLabel = cswPrivate.divStep2.label({
-                            text: 'A material with that tradename already exists. Click next to use this existing material.',
-                            cssclass: 'CswLabelCreateMaterialDuplicate'
-                        });
-                        foundMaterialLabel.hide();
 
+                        var foundMaterialLabel = null;
                         var checkIfMaterialExists = function () {
-                            if (false === Csw.isNullOrEmpty(cswPrivate.tradeName)) {
-                                Csw.ajax.post({
-                                    urlMethod: 'getMaterial',
-                                    data: {
-                                        NodeTypeId: cswPrivate.materialType.val,
-                                        Tradename: cswPrivate.tradeName,
-                                        Supplier: cswPrivate.supplier.name,
-                                        PartNo: cswPrivate.partNo
-                                    },
-                                    success: function (data) {
-                                        cswPrivate.useExistingMaterial = (false === Csw.isNullOrEmpty(data.tradename));
-                                        if (cswPrivate.useExistingMaterial) {
-                                            foundMaterialLabel.show();
-                                            cswPrivate.tradeName = data.tradename;
-                                            cswPrivate.supplier.name = data.supplier;
-                                            cswPrivate.partNo = data.partno;
-                                            cswPrivate.materialNodeId = data.nodeid;
-                                        } else {
-                                            foundMaterialLabel.hide();
-                                        }
+                            Csw.ajax.post({
+                                urlMethod: 'getMaterial',
+                                data: {
+                                    NodeTypeId: cswPrivate.materialType.val,
+                                    Tradename: cswPrivate.tradeName,
+                                    Supplier: cswPrivate.supplier.name,
+                                    PartNo: cswPrivate.partNo
+                                },
+                                success: function (data) {
+                                    if (false === Csw.isNullOrEmpty(foundMaterialLabel)) {
+                                        foundMaterialLabel.remove();
+                                        foundMaterialLabel = null;
+                                        cswPrivate.toggleButton(cswPrivate.buttons.next, true);
                                     }
-                                });
-                            } else {
-                                cswPrivate.useExistingMaterial = false;
-                                foundMaterialLabel.hide();
-                            }
+                                    if (materialExists(data)) {
+                                        foundMaterialLabel = cswPrivate.divStep2.nodeLink({
+                                            text: "A material with these properties already exists with a tradename of " + data.noderef,
+                                            ID: "materialExistsLabel"
+                                        });
+                                        cswPrivate.toggleButton(cswPrivate.buttons.next, false);
+                                    }
+                                }
+                            });
                         }
 
+                        var materialExists = function (data) {
+                            if (Csw.isNullOrEmpty(data)) {
+                                return false;
+                            }
+                            if (data["tradename"] == cswPrivate.tradeName &&
+                                data["supplier"] == cswPrivate.supplier.name &&
+                                    data["partno"] == cswPrivate.partNo &&
+                                        data["nodetypeid"] == cswPrivate.materialType.val) {
+                                return true;
+                            }
+                            return false;
+                        }
 
                         cswPrivate.stepTwoComplete = true;
                     }

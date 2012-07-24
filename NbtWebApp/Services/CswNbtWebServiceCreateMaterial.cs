@@ -213,20 +213,21 @@ namespace ChemSW.Nbt.WebServices
                     CswNbtObjClassMaterial NodeAsMaterial = (CswNbtObjClassMaterial) Node;
 
                     string TradeName = NodeAsMaterial.TradeName.Text;
-                    string SupplierName = NodeAsMaterial.Supplier.Gestalt;
+                    string Supplier = NodeAsMaterial.Supplier.Gestalt;
                     string PartNo = NodeAsMaterial.PartNumber.Text;
 
                     if( ThrowIfExists )
                     {
                         throw new CswDniException( ErrorType.Error,
                                                    "A material already exists with the provided Tradename, Supplier and Part Number.",
-                                                   "Attempted to call createMaterial with tradename: " + TradeName + ", supplier: " + SupplierName + " and partno: " + PartNo + " properties." );
+                                                   "Attempted to call createMaterial with tradename: " + TradeName + ", supplier: " + Supplier + " and partno: " + PartNo + " properties." );
                     }
 
                     MaterialObj["tradename"] = TradeName;
                     MaterialObj["partno"] = PartNo;
-                    MaterialObj["supplier"] = SupplierName;
-                    MaterialObj["nodeid"] = Node.NodeId.ToString();
+                    MaterialObj["supplier"] = Supplier.ToString();
+                    MaterialObj["nodetypeid"] = Node.NodeTypeId.ToString();
+                    MaterialObj["noderef"] = _CswNbtResources.makeClientNodeReference( Node ); //for the link
                 }
             }
 

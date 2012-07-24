@@ -23,7 +23,7 @@
                 var startpos = msg.indexOf(startmarker);
                 var endpos = msg.indexOf(endmarker);
                 while (startpos > 0) {
-                    cswParent.append(msg.substr(0, startpos));
+                    cswPrivate.div.append(msg.substr(0, startpos));
 
                     var noderef = msg.substr(startpos, endpos - startpos);
                     var midpos = noderef.indexOf(midmarker);
@@ -36,15 +36,15 @@
                     startpos = msg.indexOf(startmarker);
                     endpos = msg.indexOf(endmarker);
                 } // while (startpos > 0)
-                cswParent.append(msg);
+                cswPrivate.div.append(msg);
             }; // findNodeRef()
 
             cswPrivate.makeNodeLink = function (nodeid, nodename) {
-                cswParent.a({
+                cswPrivate.div.a({
                     ID: Csw.makeId(cswPrivate.ID, nodeid),
                     text: nodename,
                     onClick: function () {
-                        cswPrivate.onClick();
+                        Csw.tryExec(cswPrivate.onClick);
                         $.CswDialog('EditNodeDialog', {
                             nodeids: [nodeid],
                             nodenames: [nodename]
@@ -55,7 +55,8 @@
 
             (function () {
                 if (options) $.extend(cswPrivate, options);
-
+                cswPrivate.div = cswParent.div();
+                cswPublic = Csw.dom({}, cswPrivate.div);
                 cswPrivate.findNodeRef();
 
             } ());
