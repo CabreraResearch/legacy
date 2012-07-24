@@ -732,6 +732,10 @@ namespace ChemSW.Nbt.WebPages
                     SelectedNodeType.IconFileName = IconSelect.SelectedValue;
                     SelectedNodeType.setNameTemplateText( NameTemplate.Text );
 
+                    AuditLevel AuditLevel;
+                    Enum.TryParse( AuditLevelDropDownList.SelectedValue, true, out AuditLevel );
+                    SelectedNodeType.AuditLevel = AuditLevel;
+
                     //re-init the tree for changes
                     setSelected( CswNodeTypeTree.NodeTypeTreeSelectedType.NodeType, SelectedNodeType.NodeTypeId.ToString(), true );
                 }
@@ -1066,6 +1070,8 @@ namespace ChemSW.Nbt.WebPages
         private Literal NameTemplateLabel;
         private TextBox NameTemplate;
         private DropDownList AddToNameTemplatePropSelect;
+        private Literal AuditLevelLabel;
+        private DropDownList AuditLevelDropDownList;
         private Literal ChangeObjectClassLabel;
         private DropDownList ChangeObjectClassSelect;
         //private Literal Spacer1;
@@ -1127,6 +1133,15 @@ namespace ChemSW.Nbt.WebPages
             AddToNameTemplatePropSelect.ID = "AddToNameTemplatePropSelect_" + _SelectedValue;
             AddToNameTemplatePropSelect.CssClass = "selectinput";
             AddToNameTemplatePropSelect.AutoPostBack = false;
+
+
+            AuditLevelLabel = new Literal();
+            AuditLevelLabel.Text = "Audit Level";
+
+            AuditLevelDropDownList = new DropDownList();
+            AuditLevelDropDownList.ID = "AuditLevelSelect_" + _SelectedValue;
+            AuditLevelDropDownList.CssClass = "selectinput";
+            AuditLevelDropDownList.AutoPostBack = false;
 
             LockedCheckbox = new CheckBox();
             LockedCheckbox.ID = "locked" + _SelectedValue;
@@ -1197,7 +1212,9 @@ namespace ChemSW.Nbt.WebPages
             TabTable.addControl( 4, 0, NameTemplateLabel );
             TabTable.addControl( 4, 1, NameTemplate );
             TabTable.addControl( 4, 1, AddToNameTemplatePropSelect );
-            TabTable.addControl( 5, 1, LockedCheckbox );
+            TabTable.addControl( 5, 0, AuditLevelLabel );
+            TabTable.addControl( 5, 1, AuditLevelDropDownList );
+            TabTable.addControl( 6, 1, LockedCheckbox );
             if( _CanThisNodeTypeVersion )
             {
                 TabTable.addControl( 6, 0, NodeTypeVersionLabel );
@@ -1302,6 +1319,12 @@ namespace ChemSW.Nbt.WebPages
                     AddToNameTemplatePropSelect.Visible = false;
                 else
                     AddToNameTemplatePropSelect.Visible = true;
+
+
+                AuditLevelDropDownList.Items.Clear();
+                AuditLevelDropDownList.Items.Add( new ListItem( "No Audit", AuditLevel.NoAudit.ToString() ) );
+                AuditLevelDropDownList.Items.Add( new ListItem( "Audit", AuditLevel.PlainAudit.ToString() ) );
+                AuditLevelDropDownList.SelectedValue = SelectedNodeType.AuditLevel.ToString();
 
                 if( _Mode == NbtDesignMode.Inspection )
                 {

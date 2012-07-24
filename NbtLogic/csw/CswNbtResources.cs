@@ -676,6 +676,9 @@ namespace ChemSW.Nbt
 
         private void handleGetAuditLevel( DataRow DataRow, ref AuditLevel ReturnVal )
         {
+
+            ReturnVal = AuditLevel.NoAudit;
+
             // case 22542
             // Override jct_nodes_props audit level with level set on nodetype prop
             if( DataRow.Table.TableName == "jct_nodes_props" )
@@ -693,12 +696,21 @@ namespace ChemSW.Nbt
                 if( NodeTypePropId != Int32.MinValue )
                 {
                     CswNbtMetaDataNodeTypeProp NodeTypeProp = MetaData.getNodeTypeProp( NodeTypePropId );
-                    if( null != NodeTypeProp )
+                    if( ( null != NodeTypeProp ) && ( NodeTypeProp.AuditLevel > AuditLevel.NoAudit ) )
                     {
-                        ReturnVal = NodeTypeProp.AuditLevel;
-                    }
+                        CswNbtMetaDataNodeType NodeType = NodeTypeProp.getNodeType();
+
+                        if( ( null != NodeType ) && ( NodeType.AuditLevel > AuditLevel.NoAudit ) ) //NodeType overrides NodeTypeProp (per order TDU)
+                        {
+                            ReturnVal = NodeTypeProp.AuditLevel;
+                        }
+
+                    }//if the prop says to audit
+
                 } // if( NodeTypePropId != Int32.MinValue )
+
             } // if( DataRow.Table.TableName == "jct_nodes_props" )
+
         } // handleGetAuditLevel()
 
         /// <summary>
