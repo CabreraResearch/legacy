@@ -212,6 +212,9 @@
                                 cswPrivate.toggleButton(cswPrivate.buttons.next, nextBtnEnabled());
                                 if (false === Csw.isNullOrEmpty(cswPrivate.tradeName)) {
                                     checkIfMaterialExists();
+                                } else {
+                                    removeFoundMaterialLabel();
+                                    cswPrivate.toggleButton(cswPrivate.buttons.next, false);
                                 }
                             }
                         });
@@ -249,6 +252,12 @@
                         cswPrivate.divStep1.br({ number: 3 });
 
                         var foundMaterialLabel = null;
+                        var removeFoundMaterialLabel = function () {
+                            if (false === Csw.isNullOrEmpty(foundMaterialLabel)) {
+                                foundMaterialLabel.remove();
+                                foundMaterialLabel = null;
+                            }
+                        }
                         var checkIfMaterialExists = function () {
                             Csw.ajax.post({
                                 urlMethod: 'getMaterial',
@@ -259,11 +268,8 @@
                                     PartNo: cswPrivate.partNo
                                 },
                                 success: function (data) {
-                                    if (false === Csw.isNullOrEmpty(foundMaterialLabel)) {
-                                        foundMaterialLabel.remove();
-                                        foundMaterialLabel = null;
-                                        cswPrivate.toggleButton(cswPrivate.buttons.next, true);
-                                    }
+                                    removeFoundMaterialLabel();
+                                    cswPrivate.toggleButton(cswPrivate.buttons.next, true);
                                     if (materialExists(data)) {
                                         foundMaterialLabel = cswPrivate.divStep1.nodeLink({
                                             text: "A material with these properties already exists with a tradename of " + data.noderef,
