@@ -3,6 +3,8 @@
 
 (function () {
 
+    var cswDispenseWizardStateName = 'cswDispenseWizardStateName';
+    
     Csw.nbt.dispenseContainerWizard = Csw.nbt.dispenseContainerWizard ||
         Csw.nbt.register('dispenseContainerWizard', function (cswParent, options) {
             'use strict';
@@ -10,19 +12,30 @@
             //#region Variable Declaration
             var cswPrivate = {
                 ID: 'cswDispenseContainerWizard',
-                sourceContainerNodeId: '',
-                currentQuantity: '',
-                currentUnitName: '',
-                capacity: '',
+                state: {
+                    sourceContainerNodeId: '',
+                    currentQuantity: '',
+                    currentUnitName: '',
+                    capacity: '',
+                    dispenseType: 'Dispense into a Child Container',
+                    quantity: '',
+                    unitId: '',
+                    sizeId: '',
+                    containerNodeTypeId: '',
+                    materialname: '',
+                    barcode: '',
+                    location: '',
+                    requestItemId: ''
+                },
                 onCancel: null,
                 onFinish: null,
                 startingStep: 1,
                 wizard: '',
                 wizardSteps: {
                     1: 'Select a Dispense Type',
-                    2: 'Select a Destination Container Type',
-                    3: 'Select Amount'
+                    2: 'Select Amount(s)'
                 },
+                stepOneComplete: false, stepTwoComplete: false,
                 buttons: {
                     next: 'next',
                     prev: 'previous',
@@ -30,25 +43,14 @@
                     cancel: 'cancel'
                 },
                 dispenseTypes: {
-                    Unknown: '',
                     Dispense: 'Dispense into a Child Container',
                     Use: 'Dispense for Use',
                     Waste: 'Waste Material',
                     Add: 'Add Material to Container'
                 },
-                divStep1: '', divStep2: '', divstep3: '',
-                dispenseType: 'Unknown',
-                quantity: 'Unknown',
-                unitId: 'Unknown',
-                sizeId: '',
-                containerNodeTypeId: 'Unknown',
-                containerObjectClassId: '',
+                divStep1: '', divStep2: '',
                 quantityControl: null,
-                requestItemId: '',
                 title: 'Dispense from Container',
-                materialname: '',
-                barcode: '',
-                location: ''
             };
             if (options) $.extend(cswPrivate, options);
 
@@ -79,253 +81,258 @@
 
             //Step 1. Select a Dispense Type.
             cswPrivate.makeStepOne = (function () {
-                var stepOneComplete = false;
                 return function () {
-                    
+
                     var dispenseTypeTable;
 
+                    var toggleNext = function() {
+                        return cswPrivate.toggleButton(cswPrivate.buttons.next, false === Csw.isNullOrEmpty(cswPrivate.state.sourceContainerNodeId));
+                    };
+                    var resetStepTwo = function() {
+                        cswPrivate.stepTwoDispenseComplete = false;
+                        cswPrivate.stepTwoDispenseComplete = false;
+                    };
                     cswPrivate.toggleButton(cswPrivate.buttons.finish, false);
-                    var initStepOne = Csw.method(function() {
+
+                    var initStepOne = Csw.method(function () {
+                        var dispenseTypeSelect;
+
+                        var makeTypeSelect = function () {
+
+                            dispenseTypeTable.cell(5, 1).br({ number: 2 });
+                            dispenseTypeTable.cell(6, 1).span({ text: 'Select a dispense type:' });
+
+                            dispenseTypeSelect = dispenseTypeTable.cell(7, 1).select({
+                                ID: cswPrivate.makeStepId('setDispenseTypePicklist'),
+                                cssclass: 'selectinput',
+                                values: cswPrivate.dispenseTypes,
+                                selected: cswPrivate.dispenseTypes.Dispense,
+                                onChange: function () {
+                                    if (false === Csw.isNullOrEmpty(dispenseTypeSelect.val())) {
+                                        if(dispenseTypeSelect.val() !== cswPrivate.state.dispenseType) {
+                                            resetStepTwo();
+                                        }
+                                        cswPrivate.state.dispenseType = dispenseTypeSelect.val();
+                                    }
+                                    toggleNext();
+                                }
+                            });
+                            cswPrivate.state.dispenseType = dispenseTypeSelect.val();
+                        };
+
+                        var makeContainerGrid = function() {
+                            Csw.ajax.post({
+                                urlMethod: 'getDispenseContainerView',
+                                data: {
+                                    RequestItemId: cswPrivate.state.requestItemId
+                                },
+                                success: function (data) {
+                                    if (Csw.isNullOrEmpty(data.viewid)) {
+                                        Csw.error.throwException(Csw.error.exception('Could not get a grid of containers for this request item.', '', 'csw.dispensecontainer.js', 141));
+                                    }
+
+                                    cswPrivate.containerGrid = Csw.nbt.wizard.nodeGrid(dispenseTypeTable.cell(5, 1), {
+                                        hasMenu: false,
+                                        viewid: data.viewid,
+                                        ReadOnly: true,
+                                        onSelect: function () {
+                                            if (cswPrivate.state.sourceContainerNodeId !== cswPrivate.containerGrid.getSelectedNodeId()) {
+                                                resetStepTwo();
+                                            }
+                                            cswPrivate.state.sourceContainerNodeId = cswPrivate.containerGrid.getSelectedNodeId();
+                                            toggleNext();
+                                        },
+                                        onSuccess: makeTypeSelect
+                                    });
+                                }
+                            });
+                        };
+
                         cswPrivate.divStep1 = cswPrivate.divStep1 || cswPrivate.wizard.div(1);
                         cswPrivate.divStep1.empty();
-                        
-                        cswPrivate.divStep1.br();
-                        if (false === Csw.isNullOrEmpty(cswPrivate.barcode)) {
-                            cswPrivate.divStep1.p({ text: 'You have selected container barcode: [' + Csw.string(cswPrivate.barcode) + ']' });
-                        }
-                        if (false === Csw.isNullOrEmpty(cswPrivate.materialname)) {
-                            cswPrivate.divStep1.p({ text: 'On Material: ' + Csw.string(cswPrivate.materialname) });
-                        }
-                        if (false === Csw.isNullOrEmpty(cswPrivate.location)) {
-                            cswPrivate.divStep1.p({ text: 'At Location: ' + Csw.string(cswPrivate.location) });
-                        }
-                        cswPrivate.divStep1.br();
+
+                        cswPrivate.divStep1.span({ text: 'Confirm the container to use for this dispense, and select a type of dispense to perform.' });
+
+                        cswPrivate.divStep1.br({number: 2});
 
                         dispenseTypeTable = cswPrivate.divStep1.table({
                             ID: cswPrivate.makeStepId('setDispenseTypeTable'),
+                            width: '100%',
                             cellpadding: '1px',
+                            cellalign: 'left',
                             cellvalign: 'middle'
                         });
 
-                        dispenseTypeTable.cell(1, 1).span({ text: 'What kind of dispense would you like to do?' });
-
-                        var dispenseTypeDiv = dispenseTypeTable.cell(1, 2).div();
-
-                        var dispenseTypeSelect = dispenseTypeDiv.select({
-                            ID: cswPrivate.makeStepId('setDispenseTypePicklist'),
-                            cssclass: 'selectinput',
-                            values: cswPrivate.dispenseTypes,
-                            onChange: function() {
-                                if (false === Csw.isNullOrEmpty(dispenseTypeSelect.val())) {
-                                    cswPrivate.dispenseType = dispenseTypeSelect.val();
-                                    cswPrivate.wizard.next.enable();
-                                } else {
-                                    cswPrivate.wizard.next.disable();
-                                }
-                            },
-                            selected: cswPrivate.dispenseTypes.Unknown
-                        });
-                    });
-                    
-                    if (false === stepOneComplete) {
-                        cswPrivate.divStep1 = cswPrivate.wizard.div(1);
-                        cswPrivate.toggleButton(cswPrivate.buttons.next, false);
-
-                        if (Csw.isNullOrEmpty(cswPrivate.sourceContainerNodeId)) {
-                            cswPrivate.divStep1.p({ text: 'No container is selected. Find a container to dispense from.' });
-                            cswPrivate.divStep1.br();
-                            Csw.debug.assert(false === Csw.isNullOrEmpty(cswPrivate.containerNodeTypeId), 'Cannot find a container without a container nodetype.');
-                            cswPrivate.divStep1.universalSearch({
-                                ID: cswPrivate.makeStepId('containerSearch'),
-                                nodetypeid: cswPrivate.containerNodeTypeId,
-                                objectclassid: cswPrivate.containerObjectClassId,
-                                showSaveAsView: false,
-                                allowEdit: false,
-                                allowDelete: false,
-                                extraAction: 'Select',
-                                extraActionIcon: Csw.enums.getName( Csw.enums.iconType, Csw.enums.iconType.check),
-                                onExtraAction: function (nodeObj) {
-                                    Csw.debug.assert(false === Csw.isNullOrEmpty(nodeObj), 'Selected a container which did not yield a nodeObj');
-                                    Csw.debug.assert(false === Csw.isNullOrEmpty(nodeObj.nodeid), 'Selected a container which did not yield a nodeid');
-                                    if (false === Csw.isNullOrEmpty(nodeObj.nodeid)) {
-                                        cswPrivate.sourceContainerNodeId = nodeObj.nodeid;
-                                        initStepOne();
-                                    }
-                                }
-
-                            });
-
-                        } else {
-                            initStepOne();
+                        if (false === Csw.isNullOrEmpty(cswPrivate.state.barcode)) {
+                            dispenseTypeTable.cell(1, 1).span({ text: 'Barcode: [' + Csw.string(cswPrivate.state.barcode) + ']' });
                         }
-                        stepOneComplete = true;
+                        if (false === Csw.isNullOrEmpty(cswPrivate.state.materialname)) {
+                            dispenseTypeTable.cell(2, 1).span({ text: 'On Material: ' + Csw.string(cswPrivate.state.materialname) });
+                        }
+                        if (false === Csw.isNullOrEmpty(cswPrivate.state.location)) {
+                            dispenseTypeTable.cell(3, 1).span({ text: 'At Location: ' + Csw.string(cswPrivate.state.location) });
+                        }
+                        
+                        if (false === Csw.isNullOrEmpty(cswPrivate.state.requestItemId)) {
+                            makeContainerGrid();
+                        }
+                        else if(Csw.isNullOrEmpty(cswPrivate.state.sourceContainerNodeId)) {
+                            Csw.error.throwException(Csw.error.exception('Cannot dispense without a source container.', '', 'csw.dispensecontainer.js', 173));
+                        } else {
+                            makeTypeSelect();
+                        }
+
+                    });
+
+                    if (false === cswPrivate.stepOneComplete) {
+                        initStepOne();
+                        toggleNext();
+                        cswPrivate.stepOneComplete = true;
                     }
                 };
-            } ());
+            }());
 
-            //Step 2. Select a Destination Container NodeType .
-            //if( only one NodeType exists || Dispense Type != Dispense ) skip this step
+            //Step 2. Select Amount
+            //state.dispenseType != Dispense ? 
+            //Select a state.quantity :
+            //Select the number of destination containers and their quantities.
             cswPrivate.makeStepTwo = (function () {
-                var stepTwoComplete = false,
-                    skipThisStep = false;
-                return function (movingForward) {
+                return function() {
                     cswPrivate.toggleButton(cswPrivate.buttons.finish, false);
-                    if (false === stepTwoComplete) {
-                        cswPrivate.toggleButton(cswPrivate.buttons.next, false);
-                        var containerTypeTable = '',
+                    cswPrivate.toggleButton(cswPrivate.buttons.next, false);
+                    if (false === cswPrivate.stepTwoComplete) {
+                        var quantityTable,
                             blankText = '[Select One]';
 
-                        cswPrivate.divStep2 = cswPrivate.wizard.div(2);
+                        cswPrivate.divStep2 = cswPrivate.divStep2 || cswPrivate.wizard.div(2);
+                        cswPrivate.divStep2.span({ text: 'Confirm the source container and define the amounts to dispense:' });
                         cswPrivate.divStep2.br();
 
-                        containerTypeTable = cswPrivate.divStep2.table({
-                            ID: cswPrivate.makeStepId('setContainerTypeTable'),
+                        quantityTable = cswPrivate.divStep2.table({
+                            ID: cswPrivate.makeStepId('setQuantityTable'),
                             cellpadding: '1px',
                             cellvalign: 'middle'
-                        }).hide();
-
-                        var containerTypeText = containerTypeTable.cell(1, 1).span({ text: 'What kind of container would you like to use?' });
-
-                        var containerTypeDiv = containerTypeTable.cell(1, 2).div();
-
-                        var containerTypeSelect = containerTypeDiv.nodeTypeSelect({
-                            ID: Csw.makeSafeId('nodeTypeSelect'),
-                            objectClassName: 'ContainerClass',
-                            blankOptionText: blankText,
-                            onSelect: function (data, nodeTypeCount) {
-                                if (blankText !== containerTypeSelect.val()) {
-                                    cswPrivate.containerNodeTypeId = containerTypeSelect.val();
-                                    cswPrivate.wizard.next.enable();
-                                }
-                                else {
-                                    cswPrivate.wizard.next.disable();
-                                }
-                            },
-                            onSuccess: function (data, nodeTypeCount, lastNodeTypeId) {
-                                if (Csw.number(nodeTypeCount) > 1) {
-                                    containerTypeTable.show();
-                                }
-                                else {
-                                    cswPrivate.containerNodeTypeId = lastNodeTypeId;
-                                    skipThisStep = true;
-                                    cswPrivate.toggleButton(cswPrivate.buttons.next, true);
-                                    cswPrivate.wizard.next.click();
-                                }
-                            }
                         });
 
-                        stepTwoComplete = true;
-                    }
-                    if (skipThisStep) {
-                        movingForward ? cswPrivate.wizard.next.click() : cswPrivate.wizard.previous.click();
-                    }
-                };
-            } ());
+                        quantityTable.cell(1, 1).br();
+                        if (false === Csw.isNullOrEmpty(cswPrivate.state.barcode)) {
+                            quantityTable.cell(2, 1).span({ text: 'Barcode: [' + Csw.string(cswPrivate.state.barcode) + ']' });
+                        }
+                        if (false === Csw.isNullOrEmpty(cswPrivate.state.materialname)) {
+                            quantityTable.cell(3, 1).span({ text: 'On Material: ' + Csw.string(cswPrivate.state.materialname) });
+                        }
+                        if (false === Csw.isNullOrEmpty(cswPrivate.state.location)) {
+                            quantityTable.cell(4, 1).span({ text: 'At Location: ' + Csw.string(cswPrivate.state.location) });
+                        }
+                        if (false === Csw.isNullOrEmpty(cswPrivate.state.currentQuantity)) {
+                            quantityTable.cell(5, 1).span({ text: 'Current quantity: ' + cswPrivate.state.currentQuantity + ' ' + cswPrivate.state.currentUnitName }).br();
+                        }
+                        quantityTable.cell(6, 1).br({ number: 1 });
 
-            //Step 3. Select Amount
-            //DispenseType != Dispense ? 
-            //Select a Quantity :
-            //Select the number of destination containers and their quantities.
-            cswPrivate.makeStepThree = (function () {
-                var stepThreeDispenseComplete = false;
-                var stepThreeAddWasteUseComplete = false;
-                return function () {
-                    cswPrivate.toggleButton(cswPrivate.buttons.finish, false);
-                    if (cswPrivate.dispenseType === cswPrivate.dispenseTypes.Dispense) {
-                        if (false === stepThreeDispenseComplete) {
-                            if (stepThreeAddWasteUseComplete) {
-                                cswPrivate.divStep3.empty();
-                                stepThreeAddWasteUseComplete = false;
-                            }
-
-                            cswPrivate.divStep3 = cswPrivate.wizard.div(3);
-                            cswPrivate.divStep3.br();
-
-                            quantityTable = cswPrivate.divStep3.table({
-                                ID: cswPrivate.makeStepId('setQuantityTable'),
+                        var makeContainerSelect = function() {
+                            var containerTypeTable = quantityTable.cell(7, 1).table({
+                                ID: cswPrivate.makeStepId('setContainerTypeTable'),
                                 cellpadding: '1px',
                                 cellvalign: 'middle'
+                            }).hide();
+
+                            containerTypeTable.cell(1, 1).span({ text: 'Select a Container Type' });
+
+                            var containerTypeSelect = containerTypeTable.cell(2, 1).nodeTypeSelect({
+                                ID: Csw.makeSafeId('nodeTypeSelect'),
+                                objectClassName: 'ContainerClass',
+                                blankOptionText: blankText,
+                                onSelect: function(data, nodeTypeCount) {
+                                    if (blankText !== containerTypeSelect.val()) {
+                                        cswPrivate.state.containerNodeTypeId = containerTypeSelect.val();
+                                    }
+                                },
+                                onSuccess: function(data, nodeTypeCount, lastNodeTypeId) {
+                                    if (Csw.number(nodeTypeCount) > 1) {
+                                        containerTypeTable.show();
+                                    } else {
+                                        cswPrivate.state.containerNodeTypeId = lastNodeTypeId;
+                                    }
+                                }
                             });
+                            containerTypeTable.cell(3, 1).br();
+                        };
 
-                            quantityTable.cell(1, 1).span({ text: 'Current Quantity:    ' + cswPrivate.currentQuantity + ' ' + cswPrivate.currentUnitName }).br({ number: 2 });
+                        var makeQuantityForm = function() {
 
-                            cswPrivate.amountsGrid = Csw.nbt.wizard.amountsGrid(quantityTable.cell(2, 1), {
+                            cswPrivate.amountsGrid = Csw.nbt.wizard.amountsGrid(quantityTable.cell(8, 1), {
                                 ID: cswPrivate.wizard.makeStepId('wizardAmountsThinGrid'),
-                                onAdd: function () {
+                                onAdd: function() {
                                     cswPrivate.toggleButton(cswPrivate.buttons.finish, true);
                                 },
-                                quantity: cswPrivate.capacity,
+                                quantity: cswPrivate.state.capacity,
                                 containerlimit: cswPrivate.containerlimit,
                                 makeId: cswPrivate.wizard.makeStepId,
                                 containerMinimum: 0,
                                 action: 'Dispense',
-                                relatedNodeId: cswPrivate.sourceContainerNodeId,
-                                selectedSizeId: cswPrivate.sizeId
+                                relatedNodeId: cswPrivate.state.sourceContainerNodeId,
+                                selectedSizeId: cswPrivate.state.sizeId
                             });
+                        };
 
-                            stepThreeDispenseComplete = true;
-                        }
-                    }
-                    else {
-                        if (false === stepThreeAddWasteUseComplete) {
-                            if (stepThreeDispenseComplete) {
-                                cswPrivate.divStep3.empty();
-                                stepThreeDispenseComplete = false;
-                            }
-                            var quantityTable = '',
-                            blankText = '[Select One]';
-
-                            cswPrivate.divStep3 = cswPrivate.wizard.div(3);
-                            cswPrivate.divStep3.br();                            
-
-                            quantityTable = cswPrivate.divStep3.table({
-                                ID: cswPrivate.makeStepId('setQuantityTable'),
-                                cellpadding: '1px',
-                                cellvalign: 'middle'
-                            });
-
-                            quantityTable.cell(1, 1).span({ text: 'Current Quantity:    ' + cswPrivate.currentQuantity + ' ' + cswPrivate.currentUnitName }).br();
-                            quantityTable.cell(2, 1).span({ text: 'Select the quantity you wish to dispense:' });
-                            cswPrivate.quantityControl = quantityTable.cell(2, 2).quantity(cswPrivate.capacity);
+                        if (cswPrivate.state.dispenseType === cswPrivate.dispenseTypes.Dispense) {
+                            makeContainerSelect();
+                            makeQuantityForm();
+                        } else {
+                            quantityTable.cell(8, 1).span({ text: 'Set quantities for dispense:' });
+                            cswPrivate.quantityControl = quantityTable.cell(9, 1).quantity(cswPrivate.state.capacity);
 
                             cswPrivate.toggleButton(cswPrivate.buttons.finish, true);
-
-                            stepThreeAddWasteUseComplete = true;
                         }
+                        cswPrivate.stepTwoComplete = true;
                     }
+
                 };
-            } ());
+            }());
 
             cswPrivate.handleNext = function (newStepNo) {
                 cswPrivate.currentStepNo = newStepNo;
+                Csw.clientDb.setItem(cswPrivate.ID + '_' + cswDispenseWizardStateName, cswPrivate.state);
                 switch (newStepNo) {
                     case 2:
-                        if (cswPrivate.dispenseType === cswPrivate.dispenseTypes.Dispense) {
+                        if (Csw.isNullOrEmpty(cswPrivate.state.sourceContainerNodeId)) {
+                            Csw.error.throwException(Csw.error.exception('Cannot dispense without a source container.', '', 'csw.dispensecontainer.js', 283));
+                        } else {
+                            if (Csw.isNullOrEmpty(cswPrivate.state.barcode) ||
+                                Csw.isNullOrEmpty(cswPrivate.state.materialname) ||
+                                Csw.isNullOrEmpty(cswPrivate.state.location) ||
+                                Csw.isNullOrEmpty(cswPrivate.state.containerNodeTypeId)) {
+
+                                Csw.ajax.post({
+                                    urlMethod: 'getDispenseSourceContainerData',
+                                    data: {
+                                        ContainerId: cswPrivate.state.sourceContainerNodeId
+                                    },
+                                    async: false,
+                                    success: function (data) {
+                                        cswPrivate.state.barcode = data.barcode;
+                                        cswPrivate.state.materialname = data.materialname;
+                                        cswPrivate.state.location = data.location;
+                                        cswPrivate.state.containerNodeTypeId = data.nodetypeid;
+                                        cswPrivate.state.unitId = data.unitid;
+                                        cswPrivate.state.currentQuantity = data.quantity;
+                                        cswPrivate.state.currentUnitName = data.unit;
+                                        cswPrivate.state.sizeId = data.sizeid;
+                                    }
+                                });
+                            }
                             cswPrivate.makeStepTwo(true);
                         }
-                        else {
-                            cswPrivate.wizard.next.click();
-                        }
-                        break;
-                    case 3:
-                        cswPrivate.makeStepThree();
                         break;
                 }
             };
 
             cswPrivate.handlePrevious = function (newStepNo) {
                 cswPrivate.currentStepNo = newStepNo;
+                Csw.clientDb.setItem(cswPrivate.ID + '_' + cswDispenseWizardStateName, cswPrivate.state);
                 switch (newStepNo) {
                     case 1:
                         cswPrivate.makeStepOne();
-                        break;
-                    case 2:
-                        if (cswPrivate.dispenseType === cswPrivate.dispenseTypes.Dispense) {
-                            cswPrivate.makeStepTwo(false);
-                        }
-                        else {
-                            cswPrivate.wizard.previous.click();
-                        }
                         break;
                 }
             };
@@ -341,18 +348,18 @@
                     designGrid = Csw.serialize(cswPrivate.amountsGrid.quantities);
                 }
                 if (false === Csw.isNullOrEmpty(cswPrivate.quantityControl)) {
-                    cswPrivate.quantity = cswPrivate.quantityControl.quantityValue;
-                    cswPrivate.unitId = cswPrivate.quantityControl.unitVal;
+                    cswPrivate.state.quantity = cswPrivate.quantityControl.quantityValue;
+                    cswPrivate.state.unitId = cswPrivate.quantityControl.unitVal;
                 }
 
                 var jsonData = {
-                    SourceContainerNodeId: cswPrivate.sourceContainerNodeId,
-                    DispenseType: cswPrivate.dispenseType,
-                    Quantity: cswPrivate.quantity,
-                    UnitId: cswPrivate.unitId,
-                    ContainerNodeTypeId: cswPrivate.containerNodeTypeId,
+                    SourceContainerNodeId: Csw.string(cswPrivate.state.sourceContainerNodeId),
+                    DispenseType: Csw.string(cswPrivate.state.dispenseType),
+                    Quantity: Csw.string(cswPrivate.state.quantity),
+                    UnitId: Csw.string(cswPrivate.state.unitId),
+                    ContainerNodeTypeId: Csw.string(cswPrivate.state.containerNodeTypeId),
                     DesignGrid: designGrid,
-                    RequestItemId: Csw.string(cswPrivate.requestItemId)
+                    RequestItemId: Csw.string(cswPrivate.state.requestItemId)
                 };
 
                 Csw.ajax.post({
@@ -361,12 +368,13 @@
                     success: function (data) {
                         var viewId = data.viewId;
                         Csw.tryExec(cswPrivate.onFinish, viewId);
+                        Csw.clientDb.removeItem(cswPrivate.ID + '_' + cswDispenseWizardStateName);
                         if (false === Csw.isNullOrEmpty(data.barcodeId)) {
                             $.CswDialog('GenericDialog', {
                                 'div': Csw.literals.div().span({ text: 'Would you like to print Labels for the new Containers?' }),
                                 'title': 'Print Labels?',
                                 'onOk': function () {
-                                    $.CswDialog('PrintLabelDialog', { 'nodeid': cswPrivate.sourceContainerNodeId, 'propid': data.barcodeId });
+                                    $.CswDialog('PrintLabelDialog', { 'nodeid': cswPrivate.state.sourceContainerNodeId, 'propid': data.barcodeId });
                                 },
                                 'okText': 'Yes',
                                 'cancelText': 'No'
@@ -382,15 +390,20 @@
             };
 
             (function () {
+                var state = { };
+                if(Csw.isNullOrEmpty(cswPrivate.state.sourceContainerNodeId)) {
+                    state = Csw.clientDb.getItem(cswPrivate.ID + '_' + cswDispenseWizardStateName);
+                    $.extend(cswPrivate.state, state);
+                }
 
                 cswPrivate.wizard = Csw.layouts.wizard(cswPublic, {
                     ID: Csw.makeId({ ID: cswPrivate.ID, suffix: 'wizard' }),
-                    sourceContainerNodeId: cswPrivate.sourceContainerNodeId,
-                    currentQuantity: cswPrivate.currentQuantity,
-                    currentUnitName: cswPrivate.currentUnitName,
-                    capacity: cswPrivate.capacity,
+                    sourceContainerNodeId: cswPrivate.state.sourceContainerNodeId,
+                    currentQuantity: cswPrivate.state.currentQuantity,
+                    currentUnitName: cswPrivate.state.currentUnitName,
+                    capacity: cswPrivate.state.capacity,
                     Title: Csw.string(cswPrivate.title),
-                    StepCount: 3,
+                    StepCount: 2,
                     Steps: cswPrivate.wizardSteps,
                     StartingStep: cswPrivate.startingStep,
                     FinishText: 'Finish',
@@ -402,9 +415,9 @@
                 });
 
                 cswPrivate.makeStepOne();
-            } ());
+            }());
 
             return cswPublic;
         });
-} ());
+}());
 
