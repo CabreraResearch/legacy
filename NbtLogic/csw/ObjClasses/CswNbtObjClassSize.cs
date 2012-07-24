@@ -89,7 +89,7 @@ namespace ChemSW.Nbt.ObjClasses
             return true;
         }
         #endregion
-        
+
         #region Object class specific properties
 
         public CswNbtNodePropRelationship Material { get { return _CswNbtNode.Properties[MaterialPropertyName]; } }
@@ -101,8 +101,8 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 Material.setReadOnly( value: true, SaveToDb: true );
                 CswNbtUnitViewBuilder Vb = new CswNbtUnitViewBuilder( _CswNbtResources );
-                CswNbtView UnitsView = Vb.getQuantityUnitOfMeasureView(MaterialNode);
-                if(null != UnitsView)
+                CswNbtView UnitsView = Vb.getQuantityUnitOfMeasureView( MaterialNode );
+                if( null != UnitsView )
                 {
                     Capacity.View = UnitsView;
                 }
@@ -111,7 +111,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropQuantity Capacity { get { return _CswNbtNode.Properties[CapacityPropertyName]; } }
         public CswNbtNodePropLogical QuantityEditable { get { return _CswNbtNode.Properties[QuantityEditablePropertyName]; } }
         public CswNbtNodePropLogical Dispensable { get { return _CswNbtNode.Properties[DispensablePropertyName]; } }
-        public CswNbtNodePropText CatalogNo { get { return _CswNbtNode.Properties[DispensablePropertyName]; } }
+        public CswNbtNodePropText CatalogNo { get { return _CswNbtNode.Properties[CatalogNoPropertyName]; } }
 
         #endregion
 

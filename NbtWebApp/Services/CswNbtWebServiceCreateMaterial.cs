@@ -262,6 +262,7 @@ namespace ChemSW.Nbt.WebServices
             Row.Add( NodeAsSize.Capacity.Gestalt );
             Row.Add( NodeAsSize.Dispensable.Gestalt );
             Row.Add( NodeAsSize.QuantityEditable.Gestalt );
+            Row.Add( NodeAsSize.CatalogNo.Gestalt );
 
             if( WriteNode )
             {
