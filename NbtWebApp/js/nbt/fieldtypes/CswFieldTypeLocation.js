@@ -10,20 +10,69 @@
         var methods = {
             init: function (o) {
 
-                var propDiv = o.propDiv;
+                var propDiv, propVals, locationobjectclassid, locationnodetypeids, relatedmatch, 
+                    nodeId, name, path, nodeKey, viewId, comboBox, table, selectDiv;
+
+                function makeLocationCombo() {
+                    var locationTree;
+                    
+                    table.cell(1, 1).hide();
+                    table.cell(1, 2).hide();
+                    table.cell(2, 1).show();
+
+                    comboBox = selectDiv.comboBox({
+                        ID: o.ID + '_combo',
+                        topContent: name,
+                        selectContent: '',
+                        width: '290px',
+                        onClick: (function () {
+                            var first = true;
+                            return function () {
+                                if (first) {      // only do this once
+                                    locationTree.expandAll();
+                                    first = false;
+                                }
+                                comboBox.open(); // ensure we're open on click
+                                return false;    // but only close when onTreeSelect fires, below
+                            };
+                        })()
+                    });
+
+                    locationTree = Csw.nbt.nodeTree({
+                        ID: o.ID,
+                        parent: comboBox.pickList,
+                        onInitialSelectNode: function (optSelect) {
+                            onTreeSelect(selectDiv, comboBox, optSelect.nodeid, optSelect.nodename, optSelect.iconurl, function () { });
+                        },
+                        onSelectNode: function (optSelect) {
+                            onTreeSelect(selectDiv, comboBox, optSelect.nodeid, optSelect.nodename, optSelect.iconurl, o.onChange);
+                        },
+                        UseScrollbars: false,
+                        ShowToggleLink: false
+                    });
+
+                    locationTree.init({
+                        viewid: viewId,
+                        nodeid: nodeId,
+                        cswnbtnodekey: nodeKey,
+                        IncludeInQuickLaunch: false,
+                        DefaultSelect: Csw.enums.nodeTree_DefaultSelect.root.name
+                    });
+                } // makeLocationCombo()
+
+                propDiv = o.propDiv;
                 propDiv.empty();
-                var propVals = o.propData.values;
+                propVals = o.propData.values;
 
-                var locationobjectclassid = propVals.locationobjectclassid;
-                var locationnodetypeids = propVals.locationnodetypeids;  // array
+                locationobjectclassid = propVals.locationobjectclassid;
+                locationnodetypeids = propVals.locationnodetypeids;  // array
 
-                var relatedmatch = (o.relatedobjectclassid === locationobjectclassid);
+                relatedmatch = (o.relatedobjectclassid === locationobjectclassid);
                 Csw.each(locationnodetypeids, function (thisNTid) {
                     relatedmatch = (relatedmatch || thisNTid === o.relatednodetypeid);
                 });
 
-                var nodeId, name, path;
-                var nodeKey = ''; //(false === o.Multi) ? Csw.string(propVals.nodekey).trim() : '';
+                nodeKey = ''; //(false === o.Multi) ? Csw.string(propVals.nodekey).trim() : '';
                 if (relatedmatch) {
                     nodeId = (false === o.Multi) ? Csw.string(propVals.nodeid, o.relatednodeid).trim() : '';
                     name = (false === o.Multi) ? Csw.string(propVals.name, o.relatednodename).trim() : Csw.enums.multiEditDefaultValue;
@@ -33,16 +82,15 @@
                     name = (false === o.Multi) ? Csw.string(propVals.name, '').trim() : Csw.enums.multiEditDefaultValue;
                     path = (false === o.Multi) ? Csw.string(propVals.path, '').trim() : Csw.enums.multiEditDefaultValue;
                 }
-                var viewId = Csw.string(propVals.viewid).trim();
-                var comboBox;
-
-                var table = propDiv.table({
+                viewId = Csw.string(propVals.viewid).trim();
+                
+                table = propDiv.table({
                     ID: Csw.makeId(o.ID, 'tbl')
                 });
 
                 table.cell(1, 1).text(path);
 
-                var selectDiv = table.cell(2, 1).div({
+                selectDiv = table.cell(2, 1).div({
                     cssclass: 'locationselect',
                     value: nodeId
                 });
@@ -50,56 +98,17 @@
                 table.cell(2, 1).hide();
                 if (false === o.ReadOnly) {
 
-                    table.cell(1, 2).imageButton({
-                        ButtonType: Csw.enums.imageButton_ButtonType.Edit,
-                        AlternateText: 'Edit',
-                        ID: Csw.makeId(o.ID, 'toggle'),
-                        onClick: function () {
 
-                            table.cell(1, 1).hide();
-                            table.cell(1, 2).hide();
-                            table.cell(2, 1).show();
-
-                            comboBox = selectDiv.comboBox({
-                                ID: o.ID + '_combo',
-                                topContent: name,
-                                selectContent: '',
-                                width: '290px',
-                                onClick: (function () {
-                                    var first = true;
-                                    return function () {
-                                        if (first) {      // only do this once
-                                            locationTree.expandAll();
-                                            first = false;
-                                        }
-                                        comboBox.open(); // ensure we're open on click
-                                        return false;    // but only close when onTreeSelect fires, below
-                                    };
-                                })()
-                            });
-
-                            var locationTree = Csw.nbt.nodeTree({
-                                ID: o.ID,
-                                parent: comboBox.pickList,
-                                onInitialSelectNode: function (optSelect) {
-                                    onTreeSelect(selectDiv, comboBox, optSelect.nodeid, optSelect.nodename, optSelect.iconurl, function () { });
-                                },
-                                onSelectNode: function (optSelect) {
-                                    onTreeSelect(selectDiv, comboBox, optSelect.nodeid, optSelect.nodename, optSelect.iconurl, o.onChange);
-                                },
-                                UseScrollbars: false,
-                                ShowToggleLink: false
-                            });
-
-                            locationTree.init({
-                                viewid: viewId,
-                                nodeid: nodeId,
-                                cswnbtnodekey: nodeKey,
-                                IncludeInQuickLaunch: false,
-                                DefaultSelect: Csw.enums.nodeTree_DefaultSelect.root.name
-                            });
-                        } // onClick
-                    }); // imageButton
+                    if(o.EditMode === Csw.enums.editMode.Add) {
+                        makeLocationCombo();
+                    } else {
+                        table.cell(1, 2).imageButton({
+                            ButtonType: Csw.enums.imageButton_ButtonType.Edit,
+                            AlternateText: 'Edit',
+                            ID: Csw.makeId(o.ID, 'toggle'),
+                            onClick: makeLocationCombo
+                        });
+                    }
 
                     propDiv.$.hover(function (event) {
                         Csw.nodeHoverIn(event, selectDiv.propNonDom('value'));
