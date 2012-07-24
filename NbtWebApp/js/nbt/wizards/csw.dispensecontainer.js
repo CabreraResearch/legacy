@@ -89,8 +89,7 @@
                         return cswPrivate.toggleButton(cswPrivate.buttons.next, false === Csw.isNullOrEmpty(cswPrivate.state.sourceContainerNodeId));
                     };
                     var resetStepTwo = function() {
-                        cswPrivate.stepTwoDispenseComplete = false;
-                        cswPrivate.stepTwoDispenseComplete = false;
+                        cswPrivate.stepTwoComplete = false;
                     };
                     cswPrivate.toggleButton(cswPrivate.buttons.finish, false);
 
@@ -205,6 +204,7 @@
                             blankText = '[Select One]';
 
                         cswPrivate.divStep2 = cswPrivate.divStep2 || cswPrivate.wizard.div(2);
+                        cswPrivate.divStep2.empty();
                         cswPrivate.divStep2.span({ text: 'Confirm the source container and define the amounts to dispense:' });
                         cswPrivate.divStep2.br();
 
