@@ -124,10 +124,6 @@ namespace ChemSW.Nbt.PropTypes
         private bool _WasModified = false;
         private CswNbtResources _CswNbtResources;
 
-        public delegate void OnPropChangeHandler();
-
-        public OnPropChangeHandler OnPropChange;
-
         public bool WasModified
         {
             set

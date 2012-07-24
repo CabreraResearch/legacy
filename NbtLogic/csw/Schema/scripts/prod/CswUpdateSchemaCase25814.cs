@@ -1,6 +1,6 @@
-﻿using ChemSW.Nbt.MetaData;
+﻿using ChemSW.Nbt.Actions;
+using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
-using ChemSW.Nbt.Actions;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -43,25 +43,7 @@ namespace ChemSW.Nbt.Schema
                 _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp(
                     ContainerDispenseProp,
                     CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.propname,
-                    CswNbtObjClassContainer.RequestDispensePropertyName );
-            }
-
-            CswNbtMetaDataObjectClassProp ContainerDisposeProp = ContainerOC.getObjectClassProp( "Dispose" );
-            if( ContainerDisposeProp != null )
-            {
-                _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp(
-                    ContainerDisposeProp,
-                    CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.propname,
-                    CswNbtObjClassContainer.RequestDisposePropertyName );
-            }
-
-            CswNbtMetaDataObjectClassProp ContainerMoveProp = ContainerOC.getObjectClassProp( "Move" );
-            if( ContainerMoveProp != null )
-            {
-                _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp(
-                    ContainerMoveProp,
-                    CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.propname,
-                    CswNbtObjClassContainer.RequestMovePropertyName );
+                    CswNbtObjClassContainer.RequestPropertyName );
             }
 
             _CswNbtSchemaModTrnsctn.createAction( CswNbtActionName.DisposeContainer, false, "", "Materials" );

@@ -25,7 +25,7 @@
                 allowEdit: true,
                 allowDelete: true,
                 extraAction: null,
-                extraActionIcon: Csw.enums.iconType.none,
+                extraActionIcon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.none),
                 onExtraAction: null,  // function(nodeObj) {}
 
                 newsearchurl: '/NbtWebApp/wsNBT.asmx/doUniversalSearch',
@@ -70,21 +70,22 @@
                 cswPrivate.searchinput = cswtable.cell(1, 1).input({
                     ID: Csw.makeId(cswPrivate.ID, '', '_input'),
                     type: Csw.enums.inputTypes.text,
-                    width: cswPrivate.searchbox_width
+                    width: cswPrivate.searchbox_width,
+                    cssclass: 'mousetrap'
                 });
 
-                cswPrivate.searchbutton = cswtable.cell(1, 2).button({
+                cswPrivate.searchbutton = cswtable.cell(1, 2).buttonExt({
                     ID: Csw.makeId(cswPrivate.ID, '', '_srchbtn'),
+                    icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.search),
                     enabledText: 'Search',
                     disabledText: 'Searching...',
+                    bindOnEnter: true,
                     onClick: function () {
                         cswPrivate.searchterm = cswPrivate.searchinput.val();
                         //cswPrivate.filters = {};
                         cswPrivate.newsearch();
                     }
                 });
-
-                cswPrivate.searchinput.clickOnEnter(cswPrivate.searchbutton);
             })();
 
             // Handle search submission
@@ -155,7 +156,10 @@
 
                     resultstable.cell(2, 1).$.CswNodeTable({
                         ID: Csw.makeId(cswPrivate.ID, '', 'srchresults'),
-                        onEditNode: null,
+                        onEditNode: function() {
+                            // case 27245 - refresh on edit
+                            cswPublic.restoreSearch(cswPrivate.sessiondataid);
+                        },
                         onDeleteNode: function() {
                             // case 25380 - refresh on delete
                             cswPublic.restoreSearch(cswPrivate.sessiondataid);
@@ -224,10 +228,11 @@
 
                 if (hasFilters && cswPrivate.showSaveAsView) {
                     fdiv.br();
-                    fdiv.button({
+                    fdiv.buttonExt({
                         ID: Csw.makeId(filtersdivid, '', "saveview"),
                         enabledText: 'Save as View',
                         disableOnClick: false,
+                        icon: Csw.enums.getName( Csw.enums.iconType, Csw.enums.iconType.search),
                         onClick: cswPrivate.saveAsView
                     });
                 }

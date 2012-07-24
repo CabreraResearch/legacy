@@ -144,7 +144,8 @@
                     });
 
                     //Add
-                    cswPrivate.amountsTable.cell(4, 1).button({
+                    cswPrivate.amountsTable.cell(4, 1).buttonExt({
+                        icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.add),
                         ID: Csw.tryExec(cswPrivate.makeId, 'addBtn'),
                         enabledText: 'Add',
                         disableOnClick: false,

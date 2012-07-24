@@ -93,7 +93,7 @@ namespace ChemSW.Nbt.ObjClasses
         #region Object class specific properties
 
         public CswNbtNodePropRelationship Material { get { return _CswNbtNode.Properties[MaterialPropertyName]; } }
-        private void OnMaterialChange()
+        private void OnMaterialChange( CswNbtNodeProp Prop )
         {
             //case 25759 - set capacity unittype view based on related material physical state
             CswNbtNode MaterialNode = _CswNbtResources.Nodes.GetNode( Material.RelatedNodeId );

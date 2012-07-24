@@ -1,4 +1,4 @@
-﻿/// <reference path="~/js/CswNbt-vsdoc.js" />
+/// <reference path="~/js/CswNbt-vsdoc.js" />
 /// <reference path="~/js/CswCommon-vsdoc.js" />
 /// <reference path="../globals/CswEnums.js" />
 
@@ -35,8 +35,10 @@ window.initMain = window.initMain || function (undefined) {
     function onObjectClassButtonClick(eventOj, opts) {
         Csw.debug.assert(false === Csw.isNullOrEmpty(opts.data), 'opts.data is null.');
         var actionJson = opts.data.actionData;
+        Csw.publish(Csw.enums.events.afterObjectClassButtonClick, opts.data.action);
         switch (Csw.string(opts.data.action).toLowerCase()) {
             case Csw.enums.nbtButtonAction.dispense:
+                clear({ centertop: true, centerbottom: true });
                 actionJson.actionname = 'DispenseContainer';
                 handleAction(actionJson);
                 break;
@@ -52,6 +54,7 @@ window.initMain = window.initMain || function (undefined) {
                 break;
 
             case Csw.enums.nbtButtonAction.loadView:
+                clear({ centertop: true, centerbottom: true });
                 Csw.debug.assert(false === Csw.isNullOrEmpty(actionJson), 'actionJson is null.');
                 Csw.publish(Csw.enums.events.RestoreViewContext, actionJson);
                 break;
@@ -62,21 +65,22 @@ window.initMain = window.initMain || function (undefined) {
                 break;
 
             case Csw.enums.nbtButtonAction.reauthenticate:
-                if (Csw.clientChanges.manuallyCheckChanges()) {
-                    /* case 24669 */
-                    Csw.cookie.clearAll();
-                    Csw.ajax.post({
-                        urlMethod: 'reauthenticate',
-                        data: { PropId: Csw.string(opts.propid) },
-                        success: function () {
-                            Csw.clientChanges.unsetChanged();
-                            Csw.window.location('Main.html');
-                        }
-                    });
-                }
+                clear({ centertop: true, centerbottom: true });
+                /* case 24669 */
+                Csw.cookie.clearAll();
+                Csw.ajax.post({
+                    urlMethod: 'reauthenticate',
+                    data: { PropId: Csw.string(opts.propid) },
+                    success: function () {
+                        Csw.clientChanges.unsetChanged();
+                        Csw.window.location('Main.html');
+                    }
+                });
+                
                 break;
 
             case Csw.enums.nbtButtonAction.receive:
+                clear({ centertop: true, centerbottom: true });
                 actionJson.actionname = 'Receiving';
                 handleAction(actionJson);
                 break;
@@ -357,6 +361,8 @@ window.initMain = window.initMain || function (undefined) {
 
 
     function clear(options) {
+        ///<summary>Clears the contents of the page.</summary>
+        ///<param name="options">An object representing the elements to clear: all, left, right, centertop, centerbottom.</param>
         //if (debugOn()) Csw.debug.log('Main.clear()');
 
         var o = {
@@ -853,8 +859,21 @@ window.initMain = window.initMain || function (undefined) {
         o.onEditNode = function () { getViewTable(o); };
         o.onDeleteNode = function () { getViewTable(o); };
 
-        clear({ centerbottom: true });
+        clear({ centertop: true, centerbottom: true });
 
+        var viewfilters = Csw.nbt.viewFilters({
+            ID: 'main_viewfilters',
+            parent: Csw.literals.factory($('#CenterTopDiv')),
+            viewid: o.viewid,
+            onEditFilters: function (newviewid) {
+                var newopts = o;
+                newopts.viewid = newviewid;
+                // set the current view to be the session view, so filters are saved
+                Csw.clientState.setCurrentView(newviewid, Csw.enums.viewMode.table.name);
+                getViewTable(newopts);
+            } // onEditFilters
+        }); // viewFilters
+        
         $('#CenterBottomDiv').CswNodeTable('init', {
             viewid: o.viewid,
             nodeid: o.nodeid,
