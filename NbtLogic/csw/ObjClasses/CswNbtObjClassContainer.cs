@@ -167,14 +167,14 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 switch( OCP.PropName )
                 {
-                   case DisposePropertyName:
-                     DisposeContainer();//case 26665
+                    case DisposePropertyName:
+                        DisposeContainer();//case 26665
 
                         postChanges( true );
                         ButtonData.Action = NbtButtonAction.refresh;
                         break;
                     case UndisposePropertyName:
-                    UndisposeContainer();
+                        UndisposeContainer();
                         postChanges( true );
                         ButtonData.Action = NbtButtonAction.refresh;
                         break;
@@ -290,7 +290,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             double RealQuantityToAdd = _getDispenseAmountInProperUnits( QuantityToAdd, UnitId, Quantity.UnitId );
             double CurrentQuantity = 0;
-            if(CswTools.IsDouble(Quantity.Quantity))
+            if( CswTools.IsDouble( Quantity.Quantity ) )
             {
                 CurrentQuantity = Quantity.Quantity;
             }
@@ -341,7 +341,7 @@ namespace ChemSW.Nbt.ObjClasses
             CswNbtObjClassSize sizeNode = _CswNbtResources.Nodes.GetNode( Size.RelatedNodeId );
             if( null != sizeNode )
             {
-                CswNbtNodePropQuantity Capacity = sizeNode.Capacity;
+                CswNbtNodePropQuantity Capacity = sizeNode.InitialQuantity;
                 Capacity.ToJSON( CapacityObj );
             }
             else

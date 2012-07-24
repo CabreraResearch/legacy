@@ -43,7 +43,7 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataObjectClass SizeOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.SizeClass );
             foreach( CswNbtMetaDataNodeType SizeNt in SizeOc.getLatestVersionNodeTypes() )
             {
-                CswNbtMetaDataNodeTypeProp Capacity = SizeNt.getNodeTypePropByObjectClassProp( CswNbtObjClassSize.CapacityPropertyName );
+                CswNbtMetaDataNodeTypeProp Capacity = SizeNt.getNodeTypePropByObjectClassProp( CswNbtObjClassSize.InitialQuantityPropertyName );
                 SizeNt.setNameTemplateText( "" );
                 SizeNt.addNameTemplateText( Capacity.PropName );
             }

@@ -446,7 +446,7 @@
                                     }
                                 });
                             } else {
-                                cswPrivate.sizeGrid.addRows(['', 'Capacity', 'Quantity Editable', 'Dispensable', 'Catalog No']);
+                                cswPrivate.sizeGrid.addRows(['', 'Initial Quantity', 'Quantity Editable', 'Dispensable', 'Catalog No']);
                                 cswPrivate.sizeGrid.hide();
                             }
                             cswPrivate.toggleButton(cswPrivate.buttons.prev, true);

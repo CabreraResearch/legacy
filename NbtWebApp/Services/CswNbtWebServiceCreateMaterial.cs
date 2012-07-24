@@ -259,7 +259,7 @@ namespace ChemSW.Nbt.WebServices
             Ret["row"] = Row;
 
             Row.Add( "(New Size)" );
-            Row.Add( NodeAsSize.Capacity.Gestalt );
+            Row.Add( NodeAsSize.InitialQuantity.Gestalt );
             Row.Add( NodeAsSize.Dispensable.Gestalt );
             Row.Add( NodeAsSize.QuantityEditable.Gestalt );
             Row.Add( NodeAsSize.CatalogNo.Gestalt );
@@ -300,7 +300,7 @@ namespace ChemSW.Nbt.WebServices
             CswNbtViewRelationship SizeRel = SizesView.AddViewRelationship( SizeOc, false );
 
             SizesView.AddViewPropertyAndFilter( SizeRel, SizeMaterialOcp, MaterialId.PrimaryKey.ToString(), CswNbtSubField.SubFieldName.NodeID );
-            SizesView.AddViewProperty( SizeRel, SizeOc.getObjectClassProp( CswNbtObjClassSize.CapacityPropertyName ) );
+            SizesView.AddViewProperty( SizeRel, SizeOc.getObjectClassProp( CswNbtObjClassSize.InitialQuantityPropertyName ) );
             SizesView.AddViewProperty( SizeRel, SizeOc.getObjectClassProp( CswNbtObjClassSize.DispensablePropertyName ) );
             SizesView.AddViewProperty( SizeRel, SizeOc.getObjectClassProp( CswNbtObjClassSize.QuantityEditablePropertyName ) );
 

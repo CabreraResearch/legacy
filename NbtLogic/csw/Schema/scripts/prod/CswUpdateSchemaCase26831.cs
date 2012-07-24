@@ -26,7 +26,7 @@ namespace ChemSW.Nbt.Schema
 
             //get the sizeOC and the props we're going to add to the material 
             CswNbtMetaDataObjectClass sizeOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.SizeClass );
-            CswNbtMetaDataObjectClassProp sizeCapacityOCP = sizeOC.getObjectClassProp( CswNbtObjClassSize.CapacityPropertyName );
+            CswNbtMetaDataObjectClassProp sizeCapacityOCP = sizeOC.getObjectClassProp( CswNbtObjClassSize.InitialQuantityPropertyName );
             CswNbtMetaDataObjectClassProp sizeQuantityEditableOCP = sizeOC.getObjectClassProp( CswNbtObjClassSize.QuantityEditablePropertyName );
             CswNbtMetaDataObjectClassProp sizeCatalogNoOCP = sizeOC.getObjectClassProp( CswNbtObjClassSize.CatalogNoPropertyName );
 

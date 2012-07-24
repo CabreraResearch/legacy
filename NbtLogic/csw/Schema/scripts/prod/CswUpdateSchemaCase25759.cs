@@ -34,7 +34,7 @@ namespace ChemSW.Nbt.Schema
 
             //Undo Set Size.Capacity SetValOnAdd = false
             CswNbtMetaDataObjectClass SizeObjClass = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.SizeClass );
-            CswNbtMetaDataObjectClassProp CapacityProp = _CswNbtSchemaModTrnsctn.MetaData.getObjectClassProp( SizeObjClass.ObjectClassId, CswNbtObjClassSize.CapacityPropertyName );
+            CswNbtMetaDataObjectClassProp CapacityProp = _CswNbtSchemaModTrnsctn.MetaData.getObjectClassProp( SizeObjClass.ObjectClassId, CswNbtObjClassSize.InitialQuantityPropertyName );
             _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( CapacityProp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.setvalonadd, true );
 
         }//Update()
