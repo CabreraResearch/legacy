@@ -18,7 +18,7 @@
                     finish: 'finish',
                     cancel: 'cancel'
                 },
-                divStep1: '', divStep2: '', divStep3: '', divStep4: '',
+                divStep1: '', divStep2: '', divStep3: '',
                 materialTypeSelect: null,
                 materialType: { name: '', val: '' },
                 tradeName: '',
@@ -29,25 +29,20 @@
                 sizeNodes: [],
                 stepOneComplete: false,
                 stepTwoComplete: false,
-                stepThreeComplete: false,
-                stepFourComplete: false
+                stepThreeComplete: false
             };
 
             var cswPublic = {};
 
             cswPrivate.reinitSteps = function (startWithStep) {
-                cswPrivate.stepFourComplete = false;
+                cswPrivate.stepThreeComplete = false;
 
-                if (startWithStep <= 3) {
-                    cswPrivate.stepThreeComplete = false;
+                if (startWithStep <= 2) {
+                    cswPrivate.stepTwoComplete = false;
 
-                    if (startWithStep <= 2) {
-                        cswPrivate.stepTwoComplete = false;
-
-                        if (startWithStep <= 1) {
-                            /* This is mostly for debugging, you probably never need to reset step 1 in practice */
-                            cswPrivate.stepOneComplete = false;
-                        }
+                    if (startWithStep <= 1) {
+                        /* This is mostly for debugging, you probably never need to reset step 1 in practice */
+                        cswPrivate.stepOneComplete = false;
                     }
                 }
             };
@@ -58,11 +53,9 @@
                 }
 
                 cswPrivate.wizardSteps = {
-                    1: 'Choose Type',
-                    2: 'Identity',
-                    //3: 'Validate',
-                    3: 'Properties',
-                    4: 'Size(s)'
+                    1: 'Choose Type and Identity',
+                    2: 'Properties',
+                    3: 'Size(s)'
                 };
 
                 cswPrivate.currentStepNo = cswPrivate.startingStep;
@@ -125,7 +118,7 @@
                 cswPrivate.wizard = Csw.layouts.wizard(cswParent.div(), {
                     ID: Csw.makeId(cswPrivate.ID, 'wizard'),
                     Title: 'Create Material',
-                    StepCount: 4,
+                    StepCount: 3,
                     Steps: cswPrivate.wizardSteps,
                     StartingStep: cswPrivate.startingStep,
                     FinishText: 'Finish',
@@ -152,23 +145,30 @@
                 return false;
             };
 
+            //Step 1: 
             cswPrivate.makeStep1 = (function () {
 
                 return function () {
                     var nextBtnEnabled = function () {
-                        return false === Csw.isNullOrEmpty(cswPrivate.materialType);
+                        return false === Csw.isNullOrEmpty(cswPrivate.tradeName) && false === Csw.isNullOrEmpty(cswPrivate.supplier.val);
                     };
+                    function supplierSelect() {
+                        cswPrivate.supplier = { name: cswPrivate.supplierSelect.selectedText(), val: cswPrivate.supplierSelect.val() };
+                        cswPrivate.toggleButton(cswPrivate.buttons.next, nextBtnEnabled());
+                        cswPrivate.reinitSteps(2);
+                    }
                     function typeSelect() {
                         cswPrivate.materialType = { name: cswPrivate.materialTypeSelect.find(':selected').text(), val: cswPrivate.materialTypeSelect.val() };
                         cswPrivate.toggleButton(cswPrivate.buttons.next, true);
                         cswPrivate.reinitSteps(2);
                     }
-                    cswPrivate.toggleButton(cswPrivate.buttons.prev, false);
+
+                    cswPrivate.toggleButton(cswPrivate.buttons.prev, true);
                     cswPrivate.toggleButton(cswPrivate.buttons.cancel, true);
                     cswPrivate.toggleButton(cswPrivate.buttons.finish, false);
                     cswPrivate.toggleButton(cswPrivate.buttons.next, nextBtnEnabled());
 
-                    if (false === cswPrivate.stepOneComplete) {
+                    if (false === cswPrivate.stepTwoComplete) {
                         cswPrivate.divStep1 = cswPrivate.divStep1 || cswPrivate.wizard.div(1);
                         cswPrivate.divStep1.empty();
 
@@ -180,39 +180,18 @@
                             labelText: 'Select a Material Type: ',
                             objectClassName: 'MaterialClass',
                             onSelect: typeSelect,
+                            onChange: function () {
+                                typeSelect();
+                                if (false === Csw.isNullOrEmpty(cswPrivate.tradeName)) {
+                                    checkIfMaterialExists();
+                                }
+                            },
                             onSuccess: typeSelect
                         });
-
-                        cswPrivate.stepOneComplete = true;
-                    }
-                };
-            } ());
-
-            //Step 2: 
-            cswPrivate.makeStep2 = (function () {
-
-                return function () {
-                    var nextBtnEnabled = function () {
-                        return false === Csw.isNullOrEmpty(cswPrivate.tradeName) && false === Csw.isNullOrEmpty(cswPrivate.supplier.val);
-                    };
-                    function supplierSelect() {
-                        cswPrivate.supplier = { name: cswPrivate.supplierSelect.selectedText(), val: cswPrivate.supplierSelect.val() };
-                        cswPrivate.toggleButton(cswPrivate.buttons.next, nextBtnEnabled());
-                    }
-
-                    cswPrivate.toggleButton(cswPrivate.buttons.prev, true);
-                    cswPrivate.toggleButton(cswPrivate.buttons.cancel, true);
-                    cswPrivate.toggleButton(cswPrivate.buttons.finish, false);
-                    cswPrivate.toggleButton(cswPrivate.buttons.next, nextBtnEnabled());
-
-                    if (false === cswPrivate.stepTwoComplete) {
-                        cswPrivate.divStep2 = cswPrivate.divStep2 || cswPrivate.wizard.div(2);
-                        cswPrivate.divStep2.empty();
-
-                        cswPrivate.divStep2.br({ number: 2 });
+                        cswPrivate.divStep1.br({ number: 1 });
 
                         /* TRADENAME */
-                        cswPrivate.tradeNameInput = cswPrivate.divStep2.input({
+                        cswPrivate.tradeNameInput = cswPrivate.divStep1.input({
                             ID: cswPrivate.wizard.makeStepId('tradename'),
                             useWide: true,
                             labelText: 'Tradename: ',
@@ -225,10 +204,10 @@
                                 }
                             }
                         });
-                        cswPrivate.divStep2.br({ number: 1 });
+                        cswPrivate.divStep1.br({ number: 1 });
 
                         /* SUPPLIER */
-                        cswPrivate.supplierSelect = cswPrivate.divStep2.nodeSelect({
+                        cswPrivate.supplierSelect = cswPrivate.divStep1.nodeSelect({
                             ID: cswPrivate.wizard.makeStepId('supplier'),
                             cssclass: 'required',
                             objectClassName: 'VendorClass',
@@ -242,10 +221,10 @@
                             },
                             onSuccess: supplierSelect
                         });
-                        cswPrivate.divStep2.br({ number: 1 });
+                        cswPrivate.divStep1.br({ number: 1 });
 
                         /* PARTNO */
-                        cswPrivate.partNoInput = cswPrivate.divStep2.input({
+                        cswPrivate.partNoInput = cswPrivate.divStep1.input({
                             ID: cswPrivate.wizard.makeStepId('partno'),
                             useWide: true,
                             labelText: 'Part No: ',
@@ -256,7 +235,7 @@
                                 }
                             }
                         });
-                        cswPrivate.divStep2.br({ number: 3 });
+                        cswPrivate.divStep1.br({ number: 3 });
 
                         var foundMaterialLabel = null;
                         var checkIfMaterialExists = function () {
@@ -275,7 +254,7 @@
                                         cswPrivate.toggleButton(cswPrivate.buttons.next, true);
                                     }
                                     if (materialExists(data)) {
-                                        foundMaterialLabel = cswPrivate.divStep2.nodeLink({
+                                        foundMaterialLabel = cswPrivate.divStep1.nodeLink({
                                             text: "A material with these properties already exists with a tradename of " + data.noderef,
                                             ID: "materialExistsLabel"
                                         });
@@ -298,13 +277,13 @@
                             return false;
                         }
 
-                        cswPrivate.stepTwoComplete = true;
+                        cswPrivate.stepOneComplete = true;
                     }
                 };
             } ());
 
-            cswPrivate.makeStep3 = (function () {
-                cswPrivate.stepThreeComplete = false;
+            cswPrivate.makeStep2 = (function () {
+                cswPrivate.stepTwoComplete = false;
 
                 return function () {
                     var div;
@@ -314,14 +293,14 @@
                     cswPrivate.toggleButton(cswPrivate.buttons.finish, false);
                     cswPrivate.toggleButton(cswPrivate.buttons.next, true);
 
-                    if (false === cswPrivate.stepThreeComplete &&
+                    if (false === cswPrivate.stepTwoComplete &&
                         false === cswPrivate.useExistingMaterial) {
-                        cswPrivate.divStep3 = cswPrivate.divStep3 || cswPrivate.wizard.div(3);
-                        cswPrivate.divStep3.empty();
+                        cswPrivate.divStep2 = cswPrivate.divStep2 || cswPrivate.wizard.div(2);
+                        cswPrivate.divStep2.empty();
 
-                        cswPrivate.divStep3.br({ number: 2 });
+                        cswPrivate.divStep2.br({ number: 2 });
 
-                        div = cswPrivate.divStep3.div();
+                        div = cswPrivate.divStep2.div();
                         cswPrivate.tabsAndProps = Csw.layouts.tabsAndProps(div, {
                             nodetypeid: cswPrivate.materialType.val,
                             showSaveButton: false,
@@ -331,14 +310,14 @@
                             excludeOcProps: ['tradename', 'supplier', 'partno']
                         });
 
-                        cswPrivate.stepThreeComplete = true;
+                        cswPrivate.stepTwoComplete = true;
                     }
                 };
 
             } ());
 
-            cswPrivate.makeStep4 = (function () {
-                cswPrivate.stepFourComplete = false;
+            cswPrivate.makeStep3 = (function () {
+                cswPrivate.stepThreeComplete = false;
 
                 return function () {
                     var div, addDiv, selectDiv, sizes = [];
@@ -403,13 +382,13 @@
                         });
                     }
 
-                    if (false === cswPrivate.stepFourComplete) {
-                        cswPrivate.divStep4 = cswPrivate.divStep4 || cswPrivate.wizard.div(4);
-                        cswPrivate.divStep4.empty();
+                    if (false === cswPrivate.stepThreeComplete) {
+                        cswPrivate.divStep3 = cswPrivate.divStep3 || cswPrivate.wizard.div(3);
+                        cswPrivate.divStep3.empty();
 
-                        cswPrivate.divStep4.br({ number: 2 });
+                        cswPrivate.divStep3.br({ number: 2 });
 
-                        div = cswPrivate.divStep4.div();
+                        div = cswPrivate.divStep3.div();
                         div.label({ text: 'Now creating sizes (not material attributes)', cssclass: 'CswLabelCreateMaterial' });
 
                         var makeGrid = function () {
@@ -460,7 +439,7 @@
                         /* Populate this with onSuccess of cswPrivate.sizeSelect */
                         cswPrivate.addSizeNode = {};
 
-                        cswPrivate.stepFourComplete = true;
+                        cswPrivate.stepThreeComplete = true;
                     }
                 };
 
