@@ -78,7 +78,10 @@ namespace ChemSW.Nbt.Schema
             //case 27327 - change SizeClass "Capacity" to "Initial Capacity"
             CswNbtMetaDataObjectClass sizeOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.SizeClass );
             CswNbtMetaDataObjectClassProp initialQuantityOCP = sizeOC.getObjectClassProp( "Capacity" );
-            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( initialQuantityOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.propname, "Initial Quantity" );
+            if( null != initialQuantityOCP )
+            {
+                _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( initialQuantityOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.propname, "Initial Quantity" );
+            }
 
 
         }//Update()
