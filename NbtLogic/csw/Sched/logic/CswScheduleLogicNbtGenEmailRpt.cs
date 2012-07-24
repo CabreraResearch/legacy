@@ -133,127 +133,9 @@ namespace ChemSW.Nbt.Sched
 
                                         if( false == CurrentMailReport.Type.Empty )
                                         {
-                                            // BZ 10094 - Run report in context of recipient 
-                                            if( false == CurrentMailReport.Recipients.Empty )
-                                            {
-                                                Collection<Int32> RecipientUserIds = CurrentMailReport.Recipients.SelectedUserIds.ToIntCollection();
-                                                foreach( Int32 UserId in RecipientUserIds )
-                                                {
-                                                    if( Int32.MinValue != UserId )
-                                                    {
-                                                        CswNbtNode UserNode = _CswNbtResources.Nodes[new CswPrimaryKey( "nodes", UserId )];
-                                                        CswNbtObjClassUser UserNodeAsUser = (CswNbtObjClassUser) UserNode;
-                                                        string CurrentEmailAddress = UserNodeAsUser.Email.Trim();
-                                                        if( CurrentEmailAddress != string.Empty )
-                                                        {
-                                                            DataTable ReportTable = null;
-                                                            CswNbtNode ReportNode = null;
-                                                            CswNbtObjClassReport ReportObjClass = null;
-
-                                                            string ViewLink = string.Empty;
-                                                            //bool ContinueWithReport = false;
-                                                            string EmailMessageSubject = string.Empty;
-                                                            string EmailMessageBody = string.Empty;
-
-                                                            //from here to CswScheduleNodeUpdater::update(), all conditions must give StatusMessage a value!
-                                                            string EmailReportStatusMessage = string.Empty;
-
-                                                            if( "View" == CurrentMailReport.Type.Value )
-                                                            {
-                                                                Int32 ViewIdInt = CswConvert.ToInt32( CurrentMailReport.ReportView.SelectedViewIds );
-                                                                if( Int32.MinValue != ViewIdInt )
-                                                                {
-                                                                    CswNbtViewId ViewId = new CswNbtViewId( ViewIdInt );
-                                                                    if( ViewId.isSet() )
-                                                                    {
-                                                                        ViewLink = makeViewUrl( ViewId );
-                                                                        CswNbtView ReportView = _CswNbtResources.ViewSelect.restoreView( ViewId );
-                                                                        ICswNbtTree ReportTree = _CswNbtResources.Trees.getTreeFromView( UserNodeAsUser as ICswNbtUser, ReportView, true, true, false, false );
-                                                                        EmailMessageSubject = CurrentMailReport.Type.Value + " Notification: " + ReportView.ViewName;
-
-
-                                                                        if( ReportTree.getChildNodeCount() > 0 )
-                                                                        {
-                                                                            EmailMessageBody = _setStatusHaveData( CurrentMailReport, CswNbtMailReportStatus, ViewLink );
-                                                                        }
-                                                                        else
-                                                                        {
-                                                                            EmailMessageBody = _setStatusDoNotHaveData( CurrentMailReport, CswNbtMailReportStatus );
-                                                                        }//if-else the view got a result
-
-                                                                        EmailReportStatusMessage = _sendMailMessage( CurrentMailReport, CswNbtMailReportStatus, EmailMessageBody, UserNodeAsUser.LastName, UserNodeAsUser.FirstName, UserNodeAsUser.Node.NodeName, EmailMessageSubject, CurrentEmailAddress, null );
-
-                                                                    }
-                                                                    else
-                                                                    {
-                                                                        EmailReportStatusMessage = "Unable to process email report " + CurrentMailReport.Node.NodeName + ": the associated view's ViewId is not set";
-                                                                    }
-                                                                }
-                                                            }
-                                                            else if( "Report" == CurrentMailReport.Type.Value )
-                                                            {
-                                                                if( null != _CswNbtResources.Nodes[CurrentMailReport.Report.NodeId] )
-                                                                {
-                                                                    ReportNode = _CswNbtResources.Nodes[CurrentMailReport.Report.RelatedNodeId];
-
-                                                                    ReportObjClass = (CswNbtObjClassReport) ReportNode;
-
-
-                                                                    string ReportSql = ReportObjClass.getUserContextSql( UserNodeAsUser.Username );
-
-                                                                    CswArbitrarySelect ReportSelect = _CswNbtResources.makeCswArbitrarySelect( "MailReport_" + ReportNode.NodeId.ToString() + "_Select", ReportSql );
-                                                                    ReportTable = ReportSelect.getTable();
-
-                                                                    EmailMessageSubject = CurrentMailReport.Type.Value + " Notification: " + ReportNode.NodeName;
-
-                                                                    if( ReportTable.Rows.Count > 0 )
-                                                                    {
-
-                                                                        string ReportLink = string.Empty;
-                                                                        MailRptFormatOptions MailRptFormat = (MailRptFormatOptions) Enum.Parse( typeof( MailRptFormatOptions ), CurrentMailReport.OutputFormat.Value.ToString() );
-                                                                        if( MailRptFormatOptions.Link == MailRptFormat )
-                                                                        {
-                                                                            ReportLink = makeReportUrl( ReportObjClass );
-                                                                            ReportTable = null; //so we don't end up attaching the CSV
-                                                                        }
-
-
-                                                                        EmailMessageBody = _setStatusHaveData( CurrentMailReport, CswNbtMailReportStatus, ReportLink );
-                                                                    }
-                                                                    else
-                                                                    {
-                                                                        EmailMessageBody = _setStatusDoNotHaveData( CurrentMailReport, CswNbtMailReportStatus );
-                                                                    }//if-else the view got a result
-
-                                                                    EmailReportStatusMessage = _sendMailMessage( CurrentMailReport, CswNbtMailReportStatus, EmailMessageBody, UserNodeAsUser.LastName, UserNodeAsUser.FirstName, UserNodeAsUser.Node.NodeName, EmailMessageSubject, CurrentEmailAddress, ReportTable );
-
-                                                                }
-                                                                else
-                                                                {
-                                                                    EmailReportStatusMessage = "Unable to process email report " + CurrentMailReport.Node.NodeName + ": the associated report's NodeId is not set";
-
-                                                                }//if-else report's node id is present
-
-                                                            }
-                                                            else
-                                                            {
-                                                                EmailReportStatusMessage = "Unable to process email report " + CurrentMailReport.Node.NodeName + ": the report type " + CurrentMailReport.Type.Value + " is unknown";
-
-                                                            }//if-else-if on report type
-
-                                                            TotalReportsProcessed++;
-                                                            _CswScheduleNodeUpdater.update( CurrentMailReport.Node, EmailReportStatusMessage );
-
-
-
-                                                        } //if( Email Address != string.Empty )
-
-                                                    } //if( Int32.MinValue != UserId )
-
-                                                } // foreach( Int32 UserId in RecipientUserIds )
-
-                                            } // if( !CurrentMailReport.Recipients.Empty )
-
+                                            string EmailReportStatusMessage = processMailReport( CurrentMailReport, CswNbtMailReportStatus );
+                                            TotalReportsProcessed++;
+                                            _CswScheduleNodeUpdater.update( CurrentMailReport.Node, EmailReportStatusMessage );
                                         } // if( !CurrentMailReport.Type.Empty )
                                         else
                                         {
@@ -322,6 +204,111 @@ namespace ChemSW.Nbt.Sched
 
         }//threadCallBack()
 
+        public string processMailReport( CswNbtObjClassMailReport CurrentMailReport, CswNbtMailReportStatus CswNbtMailReportStatus )
+        {
+            string EmailReportStatusMessage = string.Empty;//all conditions must give StatusMessage a value!
+
+            if( false == CurrentMailReport.Recipients.Empty )
+            {
+                Collection<Int32> RecipientUserIds = CurrentMailReport.Recipients.SelectedUserIds.ToIntCollection();
+                foreach( Int32 UserId in RecipientUserIds )
+                {
+                    if( Int32.MinValue != UserId )
+                    {
+                        CswNbtNode UserNode = _CswNbtResources.Nodes[new CswPrimaryKey( "nodes", UserId )];
+                        CswNbtObjClassUser UserNodeAsUser = (CswNbtObjClassUser) UserNode;
+                        string CurrentEmailAddress = UserNodeAsUser.Email.Trim();
+                        if( CurrentEmailAddress != string.Empty )
+                        {
+                            DataTable ReportTable = null;
+                            CswNbtNode ReportNode = null;
+                            CswNbtObjClassReport ReportObjClass = null;
+
+                            string ViewLink = string.Empty;
+                            string EmailMessageSubject = string.Empty;
+                            string EmailMessageBody = string.Empty;
+
+                            if( "View" == CurrentMailReport.Type.Value )
+                            {
+                                Int32 ViewIdInt = CswConvert.ToInt32( CurrentMailReport.ReportView.SelectedViewIds );
+                                if( Int32.MinValue != ViewIdInt )
+                                {
+                                    CswNbtViewId ViewId = new CswNbtViewId( ViewIdInt );
+                                    if( ViewId.isSet() )
+                                    {
+                                        ViewLink = makeViewUrl( ViewId );
+                                        CswNbtView ReportView = _CswNbtResources.ViewSelect.restoreView( ViewId );
+                                        ICswNbtTree ReportTree = _CswNbtResources.Trees.getTreeFromView( UserNodeAsUser as ICswNbtUser, ReportView, true, true, false, false );
+                                        EmailMessageSubject = CurrentMailReport.Type.Value + " Notification: " + ReportView.ViewName;
+
+                                        if( ReportTree.getChildNodeCount() > 0 )
+                                        {
+                                            EmailMessageBody = _setStatusHaveData( CurrentMailReport, CswNbtMailReportStatus, ViewLink );
+                                        }
+                                        else
+                                        {
+                                            EmailMessageBody = _setStatusDoNotHaveData( CurrentMailReport, CswNbtMailReportStatus );
+                                        }//if-else the view got a result
+
+                                        EmailReportStatusMessage = _sendMailMessage( CurrentMailReport, CswNbtMailReportStatus, EmailMessageBody, UserNodeAsUser.LastName, UserNodeAsUser.FirstName, UserNodeAsUser.Node.NodeName, EmailMessageSubject, CurrentEmailAddress, null );
+                                    }
+                                    else
+                                    {
+                                        EmailReportStatusMessage = "Unable to process email report " + CurrentMailReport.Node.NodeName + ": the associated view's ViewId is not set";
+                                    }
+                                }
+                            }
+                            else if( "Report" == CurrentMailReport.Type.Value )
+                            {
+                                if( null != _CswNbtResources.Nodes[CurrentMailReport.Report.NodeId] )
+                                {
+                                    ReportNode = _CswNbtResources.Nodes[CurrentMailReport.Report.RelatedNodeId];
+                                    ReportObjClass = (CswNbtObjClassReport) ReportNode;
+                                    string ReportSql = ReportObjClass.getUserContextSql( UserNodeAsUser.Username );
+
+                                    CswArbitrarySelect ReportSelect = _CswNbtResources.makeCswArbitrarySelect( "MailReport_" + ReportNode.NodeId.ToString() + "_Select", ReportSql );
+                                    ReportTable = ReportSelect.getTable();
+
+                                    EmailMessageSubject = CurrentMailReport.Type.Value + " Notification: " + ReportNode.NodeName;
+
+                                    if( ReportTable.Rows.Count > 0 )
+                                    {
+                                        string ReportLink = string.Empty;
+                                        MailRptFormatOptions MailRptFormat = (MailRptFormatOptions) Enum.Parse( typeof( MailRptFormatOptions ), CurrentMailReport.OutputFormat.Value.ToString() );
+                                        if( MailRptFormatOptions.Link == MailRptFormat )
+                                        {
+                                            ReportLink = makeReportUrl( ReportObjClass );
+                                            ReportTable = null; //so we don't end up attaching the CSV
+                                        }
+
+                                        EmailMessageBody = _setStatusHaveData( CurrentMailReport, CswNbtMailReportStatus, ReportLink );
+                                    }
+                                    else
+                                    {
+                                        EmailMessageBody = _setStatusDoNotHaveData( CurrentMailReport, CswNbtMailReportStatus );
+                                    }//if-else the view got a result
+
+                                    EmailReportStatusMessage = _sendMailMessage( CurrentMailReport, CswNbtMailReportStatus, EmailMessageBody, UserNodeAsUser.LastName, UserNodeAsUser.FirstName, UserNodeAsUser.Node.NodeName, EmailMessageSubject, CurrentEmailAddress, ReportTable );
+                                }
+                                else
+                                {
+                                    EmailReportStatusMessage = "Unable to process email report " + CurrentMailReport.Node.NodeName + ": the associated report's NodeId is not set";
+                                }//if-else report's node id is present
+                            }
+                            else
+                            {
+                                EmailReportStatusMessage = "Unable to process email report " + CurrentMailReport.Node.NodeName + ": the report type " + CurrentMailReport.Type.Value + " is unknown";
+                            }//if-else-if on report type
+
+                        }//if( Email Address != string.Empty )
+
+                    }//if( Int32.MinValue != UserId )
+
+                }//foreach( Int32 UserId in RecipientUserIds )
+
+            }//if( !CurrentMailReport.Recipients.Empty )
+            return EmailReportStatusMessage;
+        }//processMailReport()
 
         private string _sendMailMessage( CswNbtObjClassMailReport CurrentMailReport, CswNbtMailReportStatus CswNbtMailReportStatus, string MailReportMessage, string LastName, string FirstName, string UserName, string Subject, string CurrentEmailAddress, DataTable ReportTable )
         {
