@@ -177,7 +177,7 @@
                         cswPrivate.materialTypeSelect = cswPrivate.divStep1.nodeTypeSelect({
                             ID: cswPrivate.wizard.makeStepId('nodeTypeSelect'),
                             useWide: true,
-                            labelText: 'Select a Material Type: ',
+                            labelText: 'Select a Material Type*: ',
                             objectClassName: 'MaterialClass',
                             onSelect: typeSelect,
                             onChange: function () {
@@ -194,7 +194,7 @@
                         cswPrivate.tradeNameInput = cswPrivate.divStep1.input({
                             ID: cswPrivate.wizard.makeStepId('tradename'),
                             useWide: true,
-                            labelText: 'Tradename: ',
+                            labelText: 'Tradename*: ',
                             cssclass: 'required',
                             onChange: function () {
                                 cswPrivate.tradeName = cswPrivate.tradeNameInput.val();
@@ -212,7 +212,7 @@
                             cssclass: 'required',
                             objectClassName: 'VendorClass',
                             useWide: true,
-                            labelText: 'Supplier: ',
+                            labelText: 'Supplier*: ',
                             onChange: function () {
                                 supplierSelect();
                                 if (false === Csw.isNullOrEmpty(cswPrivate.tradeName)) {
