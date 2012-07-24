@@ -163,13 +163,13 @@
                         });
 
                         if (false === Csw.isNullOrEmpty(cswPrivate.state.barcode)) {
-                            dispenseTypeTable.cell(1, 1).span({ text: 'Barcode: [' + Csw.string(cswPrivate.state.barcode) + ']' });
+                            dispenseTypeTable.cell(1, 1).span({ labelText: 'Barcode: ', text: '[' + Csw.string(cswPrivate.state.barcode) + ']' });
                         }
                         if (false === Csw.isNullOrEmpty(cswPrivate.state.materialname)) {
-                            dispenseTypeTable.cell(2, 1).span({ text: 'On Material: ' + Csw.string(cswPrivate.state.materialname) });
+                            dispenseTypeTable.cell(2, 1).span({ labelText: 'Material: ', text: Csw.string(cswPrivate.state.materialname) });
                         }
                         if (false === Csw.isNullOrEmpty(cswPrivate.state.location)) {
-                            dispenseTypeTable.cell(3, 1).span({ text: 'At Location: ' + Csw.string(cswPrivate.state.location) });
+                            dispenseTypeTable.cell(3, 1).span({ labelText: 'Location: ', text: Csw.string(cswPrivate.state.location) });
                         }
                         
                         if (false === Csw.isNullOrEmpty(cswPrivate.state.requestItemId)) {
@@ -216,16 +216,16 @@
 
                         quantityTable.cell(1, 1).br();
                         if (false === Csw.isNullOrEmpty(cswPrivate.state.barcode)) {
-                            quantityTable.cell(2, 1).span({ text: 'Barcode: [' + Csw.string(cswPrivate.state.barcode) + ']' });
+                            quantityTable.cell(2, 1).span({ labelText: 'Barcode: ', text: '[' + Csw.string(cswPrivate.state.barcode) + ']' });
                         }
                         if (false === Csw.isNullOrEmpty(cswPrivate.state.materialname)) {
-                            quantityTable.cell(3, 1).span({ text: 'On Material: ' + Csw.string(cswPrivate.state.materialname) });
+                            quantityTable.cell(3, 1).span({ labelText: 'Material: ', text: Csw.string(cswPrivate.state.materialname) });
                         }
                         if (false === Csw.isNullOrEmpty(cswPrivate.state.location)) {
-                            quantityTable.cell(4, 1).span({ text: 'At Location: ' + Csw.string(cswPrivate.state.location) });
+                            quantityTable.cell(4, 1).span({ labelText: 'Location: ', text: Csw.string(cswPrivate.state.location) });
                         }
                         if (false === Csw.isNullOrEmpty(cswPrivate.state.currentQuantity)) {
-                            quantityTable.cell(5, 1).span({ text: 'Current quantity: ' + cswPrivate.state.currentQuantity + ' ' + cswPrivate.state.currentUnitName }).br();
+                            quantityTable.cell(5, 1).span({ labelText: 'Current Quantity: ', text: cswPrivate.state.currentQuantity + ' ' + cswPrivate.state.currentUnitName });
                         }
                         quantityTable.cell(6, 1).br({ number: 1 });
 

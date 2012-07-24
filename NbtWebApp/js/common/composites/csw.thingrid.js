@@ -32,10 +32,14 @@
                 linkText: 'More...',
                 onLinkClick: null,
                 isControl: false,
+                header: [],
                 hasHeader: false, /* Ignore the header row for now, by default */
                 rowCount: 0,
                 rowElements: [],
                 allowDelete: false,
+                allowAdd: false,
+                makeAddRow: null,
+                onAdd: null,
                 onDelete: null,
                 TableCssClass: 'CswThinGridTable',
                 CellCssClass: 'CswThinGridCells'
@@ -69,13 +73,21 @@
                 var cssClass = '', thisCell;
                 if (row === 1) {
                     if (cswPrivate.hasHeader) {
+                        if(false === Csw.isNullOrEmpty(value)) {
+                            cswPrivate.header[col] = value;
+                        }
                         cssClass = 'CswThinGridHeaderShow';
                     } else {
                         cssClass = 'CswThinGridHeaderHide';
                     }
                 }
+
                 thisCell = cswPrivate.table.cell(row, col);
-                thisCell.append(Csw.string(value, '&nbsp;')).addClass(cssClass);
+                if(false === Csw.isNullOrEmpty(value)) {
+                    thisCell.append(Csw.string(value, '&nbsp;'));
+                }
+                thisCell.addClass(cssClass);
+                
                 if (false === Csw.isArray(cswPrivate.rowElements[row])) {
                     cswPrivate.rowElements[row] = [thisCell];
                 } else {
@@ -86,11 +98,28 @@
 
             cswPrivate.addDeleteBtn = Csw.method(function (row, col) {
                 var cell = cswPublic.addCell('', row, col);
-                cell.imageButton({
-                    ButtonType: Csw.enums.imageButton_ButtonType.Delete,
-                    AlternateText: 'Delete',
+                cell.buttonExt({
+                    icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.trash),
+                    size: 'small',
+                    tooltip: { title: 'Delete' },
+                    disableOnClick: false,
                     onClick: function () {
                         cswPublic.deleteRow(row);
+                    }
+                });
+            });
+
+            cswPrivate.addAddBtn = Csw.method(function (row, col) {
+                var cell = cswPublic.addCell('', row, col);
+                cell.buttonExt({
+                    icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.add),
+                    size: 'small',
+                    tooltip: { title: 'Add' },
+                    disableOnClick: false,
+                    onClick: function () {
+                        cswPublic.deleteRow(row);
+                        Csw.tryExec(cswPrivate.onAdd, row);
+                        Csw.tryExec(cswPublic.makeAddRow, cswPrivate.makeAddRow);
                     }
                 });
             });
@@ -104,7 +133,7 @@
                             cswPublic.addRows(cellVal, row, col);
                         } else {
                             col += 1;
-                            cswPublic.addCell(cellVal, cswPrivate.rowCount, col);
+                            cswPublic.addCell(cellVal, row, col);
                         }
                     });
                     if (false === cswPrivate.isHeaderRow(row) && cswPrivate.allowDelete) {
@@ -122,10 +151,24 @@
                     Csw.each(cswPrivate.rowElements[rowid], function (cell) {
                         cell.remove();
                     });
+                    delete cswPrivate.rowElements[rowid];
+                    //cswPrivate.rowCount -= 1;
                     Csw.tryExec(cswPrivate.onDelete, rowid);
                 }
             });
 
+            cswPublic.makeAddRow = Csw.method(function(callBack) {
+                ///<summary>Create a new cell for each column and pass the column name and cell into the callback method.</summary>
+                if (Csw.isFunction(callBack)) {
+                    cswPrivate.rowCount += 1;
+                    cswPrivate.header.forEach(function(element, index, array) {
+                        var cell = cswPublic.addCell('', cswPrivate.rowCount, index);
+                        Csw.tryExec(callBack, cell, element, cswPrivate.rowCount);
+                    });
+                    cswPrivate.addAddBtn(cswPrivate.rowCount, cswPrivate.header.length);
+                }
+            });
+            
             (function () {
                 if (cswPrivate.rows.length > 0) {
                     cswPrivate.rowCount = 1;
@@ -139,6 +182,8 @@
                     text: cswPrivate.linkText,
                     onClick: cswPrivate.onLinkClick
                 });
+
+                Csw.tryExec(cswPublic.makeAddRow, cswPrivate.makeAddRow);
 
             } ());
 
