@@ -78,6 +78,7 @@
     <Content Include="Build\far.exe" />
     <Content Include="ConnectTest.html" />
     <Content Include="etc\far.exe" />
+    <Content Include="js\common\controls\csw.buttonExt.js" />
     <Content Include="js\nbt\composites\csw.location.js" />
     <Content Include="js\nbt\actions\csw.subscriptions.js" />
     <Content Include="js\common\composites\csw.menubutton.js" />
