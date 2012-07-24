@@ -213,7 +213,7 @@
                             btnTable.cell(1, btncol).buttonExt({
                                 ID: Csw.makeId(o.ID, nodeid, 'editbtn'),
                                 enabledText: 'Edit',
-                                tooltip: { title: btntext },
+                                //tooltip: { title: btntext },
                                 icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.pencil),
                                 onClick: function () {
                                     $.CswDialog('EditNodeDialog', {
@@ -233,7 +233,7 @@
                                 ID: Csw.makeId(o.ID, nodeid, 'delbtn'),
                                 enabledText: 'Delete',
                                 disabledOnClick: false,
-                                tooltip: { title: 'Delete' },
+                                //tooltip: { title: 'Delete' },
                                 icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.trash),
                                 onClick: Csw.method(function () {
                                     $.CswDialog('DeleteNodeDialog', {
@@ -253,7 +253,8 @@
 
                             btnTable.cell(1, btncol).buttonExt({
                                 ID: Csw.makeId(o.ID, nodeid, 'extrabtn'),
-                                tooltip: { title: o.extraAction },
+                                enabledText: o.extraAction,
+                                //tooltip: { title: o.extraAction },
                                 icon: o.extraActionIcon,
                                 disableOnClick: false,
                                 onClick: function () {
