@@ -40,6 +40,7 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataNodeTypeProp NameNtp = RequestNt.getNodeTypePropByObjectClassProp( CswNbtObjClassRequest.PropertyName.Name.ToString() );
             CswNbtMetaDataNodeTypeProp UserNtp = RequestNt.getNodeTypePropByObjectClassProp( CswNbtObjClassRequest.PropertyName.Requestor.ToString() );
             CswNbtMetaDataNodeTypeProp DateNtp = RequestNt.getNodeTypePropByObjectClassProp( CswNbtObjClassRequest.PropertyName.SubmittedDate.ToString() );
+            RequestNt.NameTemplateValue = "";
             RequestNt.addNameTemplateText( NameNtp.PropName );
             RequestNt.addNameTemplateText( UserNtp.PropName );
             RequestNt.addNameTemplateText( DateNtp.PropName );
