@@ -59,7 +59,7 @@
                         });
                     }
                     if(false === ret) {
-                        Csw.error.throwException(Csw.error.exception('Cannot create a Wizard amounts grid without the Capacity of a Size.', '', 'csw.wizard.amountsgrid.js', 68));
+                        Csw.error.throwException(Csw.error.exception('Cannot create a Wizard amounts grid without the Initial Quantity of a Size.', '', 'csw.wizard.amountsgrid.js', 68));
                     }
                     return ret;
                 };

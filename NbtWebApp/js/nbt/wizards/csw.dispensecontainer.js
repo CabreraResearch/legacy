@@ -106,9 +106,47 @@
                             cellvalign: 'middle'
                         });
 
-                        dispenseTypeTable.cell(1, 1).span({ text: 'What kind of dispense would you like to do?' });
+                        dispenseTypeTable.cell(1, 1).span({ text: 'What kind of dispense would you like to do?' }).br();
 
-                        var dispenseTypeDiv = dispenseTypeTable.cell(1, 2).div();
+                        var dispenseTypeDiv = dispenseTypeTable.cell(2, 1).div();
+
+                        //                        var dispenseTypeRadioGroup = dispenseTypeDiv.table({
+                        //                            ID: cswPrivate.makeStepId('dispenseTypeRadioGroup'),
+                        //                            cellpadding: '1px',
+                        //                            cellvalign: 'middle'
+                        //                        });
+
+                        //                        for (i = 1; i <= 4; i += 1) {
+                        //                            dispenseTypeRadioGroup.cell(i, 1).input({
+                        //                                ID: 'dispenseType_' + i,
+                        //                                name: cswPrivate.dispenseTypes[i],
+                        //                                type: Csw.enums.inputTypes.radio,
+                        //                                cssclass: 'dispenseTypeRadio',
+                        //                                onChange: function () {
+                        //                                    var radioButtons = cswPublic.find('.dispenseTypeRadio');
+                        //                                    radioButtons.$.removeAttr('checked');
+                        //                                    checked = true;
+                        //                                    cswPrivate.dispenseType = cswPrivate.dispenseTypes[i];
+                        //                                    cswPrivate.wizard.next.enable();
+                        //                                },
+                        //                                value: i,
+                        //                                checked: false
+                        //                            });
+                        //                            dispenseTypeRadioGroup.cell(i, 2).text(cswPrivate.dispenseTypes[i]);
+                        //                        }
+
+                        //                        dispenseTypeRadioGroup.cell(1, 1).checkBoxArray({
+                        //                            ID: 'dispensetypeCheckBoxArray',
+                        //                            UseRadios: true,
+                        //                            Required: true,
+                        //                            ReadOnly: false,
+                        //                            Multi: false,
+                        //                            dataAry: cswPrivate.dispenseTypes,
+                        //                            nameCol: 'label',
+                        //                            keyCol: 'key',
+                        //                            valCol: 'value',
+                        //                            valColName: 'DispenseType'
+                        //                        });
 
                         var dispenseTypeSelect = dispenseTypeDiv.select({
                             ID: cswPrivate.makeStepId('setDispenseTypePicklist'),
@@ -124,6 +162,29 @@
                             },
                             selected: cswPrivate.dispenseTypes.Unknown
                         });
+                    });
+
+                    var setQuantity = Csw.method(function () {
+                        if (Csw.isNullOrEmpty(cswPrivate.sizeId) && false === Csw.isNullOrEmpty(cswPrivate.sourceContainerNodeId)) {
+                            Csw.ajax.post({
+                                urlMethod: 'getSize',
+                                async: false,
+                                data: { RelatedNodeId: cswPrivate.sourceContainerNodeId },
+                                success: function (data) {
+                                    cswPrivate.sizeId = data.sizeid;
+                                }
+                            });
+                        }
+                        if (false === Csw.isNullOrEmpty(cswPrivate.sizeId)) {
+                            Csw.ajax.post({
+                                urlMethod: 'getQuantity',
+                                async: false,
+                                data: { SizeId: cswPrivate.sizeId },
+                                success: function (data) {
+                                    cswPrivate.capacity = data;
+                                }
+                            });
+                        }
                     });
 
                     if (false === stepOneComplete) {
@@ -148,6 +209,7 @@
                                     Csw.debug.assert(false === Csw.isNullOrEmpty(nodeObj.nodeid), 'Selected a container which did not yield a nodeid');
                                     if (false === Csw.isNullOrEmpty(nodeObj.nodeid)) {
                                         cswPrivate.sourceContainerNodeId = nodeObj.nodeid;
+                                        setQuantity();
                                         initStepOne();
                                     }
                                 }
@@ -182,7 +244,7 @@
                             }
                             cswPrivate.divStep2 = cswPrivate.wizard.div(2);
                             cswPrivate.divStep2.br();
-                            
+
                             var containerTypeTable = '',
                                 blankText = '[Select One]',
                                 quantityTable = '',
@@ -221,7 +283,7 @@
                                         containerTypeTable.show();
                                     }
                                     else {
-                                        cswPrivate.containerNodeTypeId = lastNodeTypeId;                                        
+                                        cswPrivate.containerNodeTypeId = lastNodeTypeId;
                                         containerSelected = true;
                                     }
                                 }
@@ -275,8 +337,7 @@
                                 cellpadding: '1px',
                                 cellvalign: 'middle'
                             });
-
-
+                            
                             quantityTable.cell(1, 1).span({ text: 'Select the quantity you wish to dispense:' }).br().br();
                             quantityTable.cell(2, 1).span({ text: 'Current Quantity:    ' + cswPrivate.currentQuantity + ' ' + cswPrivate.currentUnitName });
                             cswPrivate.quantityControl = quantityTable.cell(3, 1).quantity(cswPrivate.capacity);
