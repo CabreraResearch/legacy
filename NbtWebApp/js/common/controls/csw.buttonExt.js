@@ -91,7 +91,7 @@
                     cswPublic.button.click(func);
                 } else {
                     if (false == cswPublic.isDisabled()) {
-                        cswPublic.button.fireEvent('click');
+                        cswPublic.button.fireHandler('click');
                     }
                 }
                 return cswPublic;
