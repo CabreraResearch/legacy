@@ -52,9 +52,12 @@ namespace ChemSW.Nbt.PropTypes
 
         }//generic
 
-        public void SetOnPropChange( CswNbtNodePropData.OnPropChangeHandler ChangeHandler )
+        public delegate void OnPropChangeHandler( CswNbtNodeProp Prop );
+        public OnPropChangeHandler OnPropChange;
+
+        public void SetOnPropChange( OnPropChangeHandler ChangeHandler )
         {
-            _CswNbtNodePropData.OnPropChange = ChangeHandler;
+            OnPropChange = ChangeHandler;
         }
 
         /// <summary>
@@ -286,9 +289,9 @@ namespace ChemSW.Nbt.PropTypes
                 _CswNbtNodePropData.SetPropRowValue( CswNbtSubField.PropColumn.GestaltSearch, GestaltSearchValue );
 
                 // We fire this here so that it only fires once per row, not once per subfield.  See case 27241.
-                if( null != _CswNbtNodePropData.OnPropChange )
+                if( null != OnPropChange )
                 {
-                    _CswNbtNodePropData.OnPropChange();
+                    OnPropChange( this );
                 }
             }
 

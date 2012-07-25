@@ -473,7 +473,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public CswNbtNodePropBarcode Barcode { get { return ( _CswNbtNode.Properties[BarcodePropertyName] ); } }
         public CswNbtNodePropLocation Location { get { return ( _CswNbtNode.Properties[LocationPropertyName] ); } }
-        private void OnLocationPropChange()
+        private void OnLocationPropChange( CswNbtNodeProp Prop )
         {
             CswNbtNode MaterialNode = _CswNbtResources.Nodes.GetNode( Material.RelatedNodeId );
             if( MaterialNode != null )
@@ -521,7 +521,7 @@ namespace ChemSW.Nbt.ObjClasses
         }
         public CswNbtNodePropDateTime LocationVerified { get { return ( _CswNbtNode.Properties[LocationVerifiedPropertyName] ); } }
         public CswNbtNodePropRelationship Material { get { return ( _CswNbtNode.Properties[MaterialPropertyName] ); } }
-        private void OnMaterialPropChange()
+        private void OnMaterialPropChange( CswNbtNodeProp Prop )
         {
             if( Material.RelatedNodeId != null )
             {
@@ -561,7 +561,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropList Status { get { return ( _CswNbtNode.Properties[StatusPropertyName] ); } }
         public CswNbtNodePropLogical Missing { get { return ( _CswNbtNode.Properties[MissingPropertyName] ); } }
         public CswNbtNodePropLogical Disposed { get { return ( _CswNbtNode.Properties[DisposedPropertyName] ); } }
-        private void OnDisposedPropChange()
+        private void OnDisposedPropChange( CswNbtNodeProp Prop )
         {
             if( Disposed.Checked == Tristate.False )
             {
@@ -577,7 +577,7 @@ namespace ChemSW.Nbt.ObjClasses
         }
         public CswNbtNodePropRelationship SourceContainer { get { return ( _CswNbtNode.Properties[SourceContainerPropertyName] ); } }
         public CswNbtNodePropQuantity Quantity { get { return ( _CswNbtNode.Properties[QuantityPropertyName] ); } }
-        private void OnQuantityPropChange()
+        private void OnQuantityPropChange( CswNbtNodeProp Prop )
         {
             _updateRequestMenu();
             CswNbtSdInventoryLevelMgr Mgr = new CswNbtSdInventoryLevelMgr( _CswNbtResources );

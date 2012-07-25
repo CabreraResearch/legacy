@@ -19,6 +19,10 @@ namespace ChemSW.Nbt.Schema
                 if( GridProp.PropName.ToLower().EndsWith( "grid" ) )
                 {
                     GridProp.PropName = GridProp.PropName.Substring( 0, ( GridProp.PropName.Length - "grid".Length ) ).Trim();
+
+                    CswNbtView GridView = _CswNbtSchemaModTrnsctn.restoreView( GridProp.ViewId );
+                    GridView.ViewName = GridProp.PropName;
+                    GridView.save();
                 }
             }
         }//Update()

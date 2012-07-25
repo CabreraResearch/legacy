@@ -142,12 +142,11 @@
                         scale: Csw.string(cswPrivate.size, 'medium')
                     });
 
-                    if (Csw.isNullOrEmpty(cswPrivate.tooltip.title)) {
-                        cswPrivate.tooltip.title = cswPrivate.enabledText;
+                    if (false === Csw.isNullOrEmpty(cswPrivate.tooltip.title)) {
+                        cswPrivate.tooltip.target = cswPublic.button.getId();
+                        window.Ext.create('Ext.tip.ToolTip', cswPrivate.tooltip);
+                        window.Ext.QuickTips.init();
                     }
-                    cswPrivate.tooltip.target = cswPublic.button.getId();
-                    window.Ext.create('Ext.tip.ToolTip', cswPrivate.tooltip);
-                    window.Ext.QuickTips.init();
                 };
                 if (false === Csw.isNullOrEmpty($('#' + cswParent.getId()), true)) {
                     cswPrivate.initBtn();
