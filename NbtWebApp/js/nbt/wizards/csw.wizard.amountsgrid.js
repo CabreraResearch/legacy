@@ -31,13 +31,23 @@
                     action: 'Receive',
                     selectedSizeId: null,
                     relatedNodeId: null,
+                    rows: [],
                     config: {
                         barcodeName: 'Barcodes (Optional)',
                         quantityName: 'Quantity *',
                         numberName: 'No. *'
                     }
                 };
-                if (options) $.extend(cswPrivate, options);
+                if (options) {
+                    $.extend(cswPrivate, options);
+                }
+                cswPrivate.header = [cswPrivate.config.numberName, cswPrivate.config.quantityName, cswPrivate.config.barcodeName];
+                if(cswPrivate.rows.length === 0) {
+                    cswPrivate.rows.push(cswPrivate.header);
+                } else {
+                    var firstRow = cswPrivate.rows.splice(0, 1, cswPrivate.header);
+                    cswPrivate.rows.push(firstRow);
+                }
 
                 cswPrivate.getQuantity = function () {
                     var ret = false;
@@ -82,6 +92,10 @@
                     cswParent.span({ text: 'Enter the Amounts to ' + cswPrivate.action + ':' });
                     cswParent.br({ number: 1 });
 
+                    //This object will be mutated on each call to makeAddRow below, but the reference to the object is constant--so we can pass it to onAdd.
+                    //There is a fragility here in that if you were to pass newAmount to an external function, the values of the properties of the object would be unknowable
+                    //This is a traditional MVC problem which would easily by templating libraries (Spine, Ember, Backbone, Knockout, etc);
+                    //however, as these two modules are so tightly coupled, the fragility should be an acceptable risk for now.
                     var newAmount = {
                         rowid: 1,
                         containerNo: 1,
@@ -91,11 +105,21 @@
                         barcodes: ''
                     };
 
+                    var extendNewAmount = function (object) {
+                        //To mitigate the risk of unknowingly passing the outer scope thisAmount, we're explicitly mapping the values down
+                        $.extend(newAmount, object);
+                    };
+
+                    var extractNewAmount = function(object) {
+                        var ret = $.extend(true, {}, object);
+                        return ret;
+                    };
+
                     cswPublic.amountForm = cswParent.form();
                     cswPublic.thinGrid = cswPublic.amountForm.thinGrid({
                         linkText: '',
                         hasHeader: true, 
-                        rows: [[cswPrivate.config.numberName, cswPrivate.config.quantityName, cswPrivate.config.barcodeName]],
+                        rows: cswPrivate.rows,
                         allowDelete: true,
                         allowAdd: true,
                         makeAddRow: function (cswCell, columnName, rowid) {
@@ -121,7 +145,7 @@
                                         Required: true,
                                         onChange: function (value) {
                                             thisAmount.containerNo = value;
-                                            $.extend(newAmount, thisAmount);
+                                            extendNewAmount(thisAmount);
                                         }
                                     });
                                     break;
@@ -135,12 +159,12 @@
                                         ID: Csw.tryExec(cswPrivate.makeId, 'containerBarcodes'),
                                         onChange: function (value) {
                                             thisAmount.barcodes = value;
-                                            $.extend(newAmount, thisAmount);
+                                            extendNewAmount(thisAmount);
                                         }
                                     });
                                     break;
                             }
-                            $.extend(newAmount, thisAmount);
+                            extendNewAmount(thisAmount);
                         },
                         onAdd: function () {
                             var newCount = cswPrivate.count + Csw.number(newAmount.containerNo);
@@ -161,19 +185,26 @@
                                     newAmount.unit = cswPublic.qtyControl.unitText;
                                     newAmount.unitid = cswPublic.qtyControl.unitVal;
                                     newAmount.rowid = cswPublic.thinGrid.addRows([newAmount.containerNo, newAmount.quantity + ' ' + newAmount.unit, newAmount.barcodes]);
-                                    cswPublic.quantities.push(newAmount);
+                                    cswPublic.quantities.push(extractNewAmount(newAmount));
                                 }
+                            } else {
+                                $.CswDialog('AlertDialog', 'The limit for containers created at receipt is [' + cswPrivate.containerlimit + ']. You have already added [' + cswPrivate.count + '] containers.', 'Cannot add [' + newCount + '] containers.');
                             }
+                            Csw.tryExec(cswPrivate.onAdd, (cswPrivate.count > 0));
                         },
                         onDelete: function (rowid) {
-                                    Csw.debug.assert(false === Csw.isNullOrEmpty(rowid), 'Rowid is null.');
-                                    var reducedQuantities = cswPublic.quantities.filter(function (quantity, index, array) { return quantity.rowid !== rowid; });
-                                    Csw.debug.assert(reducedQuantities !== cswPublic.quantities, 'Rowid is null.');
-                                    cswPublic.quantities = reducedQuantities;
-                                    Csw.tryExec(cswPrivate.onDelete, cswPublic.quantities.length);
-                                }
-                            });
-                        } ());
+                            Csw.debug.assert(false === Csw.isNullOrEmpty(rowid), 'Rowid is null.');
+                            var quantityToRemove = cswPublic.quantities.filter(function (quantity, index, array) { return quantity.rowid === rowid; });
+                            if (false === Csw.isNullOrEmpty(quantityToRemove, true)) {
+                                cswPrivate.count -= Csw.number(quantityToRemove[0].containerNo,0);
+                                var reducedQuantities = cswPublic.quantities.filter(function(quantity, index, array) { return quantity.rowid !== rowid; });
+                                Csw.debug.assert(reducedQuantities !== cswPublic.quantities, 'Rowid is null.');
+                                cswPublic.quantities = reducedQuantities;
+                                Csw.tryExec(cswPrivate.onDelete, (cswPrivate.count > 0));
+                            }
+                        }
+                        });
+                    } ());
                 
                     (function _post() {
                 
