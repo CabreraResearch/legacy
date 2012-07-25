@@ -129,7 +129,7 @@
                 };
 
                 cswPrivate.validationFailed = function() {
-                    cswPrivate.toggleButton(cswPrivate.buttons.next, true);
+                    cswPrivate.toggleButton(cswPrivate.buttons.finish, true);
                     cswPrivate.toggleButton(cswPrivate.buttons.prev, true, true);
                 };
 
@@ -225,14 +225,19 @@
                                 cellvalign: 'middle'
                             });
 
-                            if (false === Csw.isNullOrEmpty(cswPrivate.state.barcode)) {
-                                dispenseTypeTable.cell(1, 1).span({ labelText: 'Barcode: ', text: '[' + Csw.string(cswPrivate.state.barcode) + ']' });
-                            }
-                            if (false === Csw.isNullOrEmpty(cswPrivate.state.materialname)) {
-                                dispenseTypeTable.cell(2, 1).span({ labelText: 'Material: ', text: Csw.string(cswPrivate.state.materialname) });
-                            }
-                            if (false === Csw.isNullOrEmpty(cswPrivate.state.location)) {
-                                dispenseTypeTable.cell(3, 1).span({ labelText: 'Location: ', text: Csw.string(cswPrivate.state.location) });
+                            if (cswPrivate.dispenseMode !== cswPrivate.dispenseModes.Request) {
+                                if (false === Csw.isNullOrEmpty(cswPrivate.state.barcode)) {
+                                    dispenseTypeTable.cell(1, 1).span({ labelText: 'Barcode: ', text: Csw.string(cswPrivate.state.barcode) });
+                                }
+                                if (false === Csw.isNullOrEmpty(cswPrivate.state.materialname)) {
+                                    dispenseTypeTable.cell(2, 1).span({ labelText: 'Material: ', text: Csw.string(cswPrivate.state.materialname) });
+                                }
+                                if (false === Csw.isNullOrEmpty(cswPrivate.state.location)) {
+                                    dispenseTypeTable.cell(3, 1).span({ labelText: 'Location: ', text: Csw.string(cswPrivate.state.location) });
+                                }
+                                if (false === Csw.isNullOrEmpty(cswPrivate.state.currentQuantity)) {
+                                    dispenseTypeTable.cell(4, 1).span({ labelText: 'Current Quantity: ', text: cswPrivate.state.currentQuantity + ' ' + cswPrivate.state.currentUnitName });
+                                }
                             }
 
                             if (false === Csw.isNullOrEmpty(cswPrivate.state.requestItemId)) {
@@ -278,7 +283,7 @@
 
                             quantityTable.cell(1, 1).br();
                             if (false === Csw.isNullOrEmpty(cswPrivate.state.barcode)) {
-                                quantityTable.cell(2, 1).span({ labelText: 'Barcode: ', text: '[' + Csw.string(cswPrivate.state.barcode) + ']' });
+                                quantityTable.cell(2, 1).span({ labelText: 'Barcode: ', text: Csw.string(cswPrivate.state.barcode) });
                             }
                             if (false === Csw.isNullOrEmpty(cswPrivate.state.materialname)) {
                                 quantityTable.cell(3, 1).span({ labelText: 'Material: ', text: Csw.string(cswPrivate.state.materialname) });
@@ -331,7 +336,6 @@
                                         cswPrivate.toggleButton(cswPrivate.buttons.finish, hasQuantity);
                                     },
                                     quantity: cswPrivate.state.capacity,
-                                    rows: cswPrivate.state.quantity,
                                     containerlimit: cswPrivate.containerlimit,
                                     makeId: cswPrivate.wizard.makeStepId,
                                     containerMinimum: 0,
@@ -352,7 +356,9 @@
                             }
                             cswPrivate.stepTwoComplete = true;
                         }
-
+                        window.setTimeout(function() {
+                            cswPrivate.toggleButton(cswPrivate.buttons.next, false);
+                        }, 250);
                     };
                 }());
 
