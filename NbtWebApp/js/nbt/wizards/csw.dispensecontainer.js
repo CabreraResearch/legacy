@@ -56,11 +56,17 @@
                     divStep1: '',
                     divStep2: '',
                     quantityControl: null,
-                    title: 'Dispense from Container',
+                    title: 'Dispense from Container'
                 };
 
                 cswPrivate.getState = function() {
-                    return Csw.clientDb.getItem(cswPrivate.ID + '_' + cswDispenseWizardStateName);
+                    var ret = Csw.clientDb.getItem(cswPrivate.ID + '_' + cswDispenseWizardStateName);
+                    if (false === Csw.isNullOrEmpty(cswPrivate.state.requestItemId)) {
+                        ret.sourceContainerNodeId = null;
+                        ret.barcode = null;
+                        ret.location = null;
+                    }
+                    return ret;
                 };
 
                 cswPrivate.setState = function () {
