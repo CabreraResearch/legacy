@@ -1246,18 +1246,27 @@ window.initMain = window.initMain || function (undefined) {
                 if (Csw.contains(o, 'requestitem')) {
                     requestItemId = o.requestitem.requestitemid;
                 }
-                var title = 'Dispense from Barcode ';
+                var title = 'Dispense from ';
                 if (false === Csw.isNullOrEmpty(o.barcode)) {
-                    title += '[' + o.barcode + ']';
+                    title += 'Barcode [' + o.barcode + ']';
                 } else {
-                    title += 'by Search';
+                    title += 'Selected Container';
                 }
                 designOpt = {
                     ID: 'cswDispenseContainerWizard',
-                    sourceContainerNodeId: o.sourceContainerNodeId,
-                    currentQuantity: o.currentQuantity,
-                    currentUnitName: o.currentUnitName,
-                    capacity: Csw.deserialize(o.capacity),
+                    state: {
+                        sourceContainerNodeId: o.sourceContainerNodeId,
+                        currentQuantity: o.currentQuantity,
+                        currentUnitName: o.currentUnitName,
+                        capacity: Csw.deserialize(o.capacity),
+                        requestItemId: requestItemId,
+                        title: title,
+                        location: o.location,
+                        material: o.material,
+                        barcode: o.barcode,
+                        containerNodeTypeId: o.containernodetypeid,
+                        containerObjectClassId: o.containerobjectclassid
+                    },
                     onCancel: function () {
                         clear({ 'all': true });
                         Csw.clientState.setCurrent(Csw.clientState.getLast());
@@ -1270,14 +1279,7 @@ window.initMain = window.initMain || function (undefined) {
                             viewmode: 'tree',
                             viewid: viewid
                         });
-                    },
-                    requestItemId: requestItemId,
-                    title: title,
-                    location: o.location,
-                    material: o.material,
-                    barcode: o.barcode,
-                    containerNodeTypeId: o.containernodetypeid,
-                    containerObjectClassId: o.containerobjectclassid
+                    }
                 };
                 Csw.nbt.dispenseContainerWizard(centerTopDiv, designOpt);
 
