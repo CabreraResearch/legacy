@@ -286,7 +286,7 @@
 
                             quantityTable.cell(1, 1).span({ text: 'Current Quantity:    ' + cswPrivate.currentQuantity + ' ' + cswPrivate.currentUnitName }).br();
                             quantityTable.cell(2, 1).span({ text: 'Select the quantity you wish to dispense:' });
-                            cswPrivate.quantityControl = quantityTable.cell(2, 2).quantity(cswPrivate.capacity);
+                            cswPrivate.quantityControl = quantityTable.cell(3, 1).quantity(cswPrivate.capacity);
 
                             cswPrivate.toggleButton(cswPrivate.buttons.finish, true);
 
