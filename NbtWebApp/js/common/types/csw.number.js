@@ -118,7 +118,9 @@
         if (isValid && !regex.test(value)) {
             isValid = false;
         }
-
+        if (value === Csw.enums.multiEditDefaultValue) {
+            isValid = true;
+        }
         return isValid;
     }
     Csw.register('validateFloatPrecision', validateFloatPrecision);
@@ -126,14 +128,14 @@
 
     function validateInteger(value) {
         var regex = /^\-?\d*$/g;
-        return (regex.test(value));
+        return (regex.test(value) || value === Csw.enums.multiEditDefaultValue);
     }
     Csw.register('validateInteger', validateInteger);
     Csw.validateInteger = Csw.validateInteger || validateInteger;
 
     function validateIntegerGreaterThanZero(value) {
         var regex = /^(\d*(\.|)\d*)$/g;
-        return (regex.test(value));
+        return (regex.test(value) || value === Csw.enums.multiEditDefaultValue);
     }
     Csw.register('validateIntegerGreaterThanZero', validateIntegerGreaterThanZero);
     Csw.validateIntegerGreaterThanZero = Csw.validateIntegerGreaterThanZero || validateIntegerGreaterThanZero;
@@ -154,5 +156,11 @@
     }
     Csw.register('getMaxValueForPrecision', getMaxValueForPrecision);
     Csw.getMaxValueForPrecision = Csw.getMaxValueForPrecision || getMaxValueForPrecision;
+
+    function validateMaxLength(value, maxLength) {
+        return (value.length <= maxLength || value === Csw.enums.multiEditDefaultValue);
+    }
+    Csw.register('validateMaxLength', validateMaxLength);
+    Csw.validateMaxLength = Csw.validateMaxLength || validateMaxLength;
 
 } ());

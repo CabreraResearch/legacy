@@ -60,16 +60,23 @@
                         maxLength += (precision + 1); /*Decimal occupies a character.*/
                     }
                     cswPrivate.width = cswPrivate.width || (maxLength * 8) + 'px';
-                    cswPrivate.cssclass += ' textinput number ';
-                    cswPrivate.maxlength = maxLength;
+                    cswPrivate.cssclass += ' textinput ';
+                    cswPrivate.maxLength = maxLength;
 
                     cswPrivate.input = cswParent.input(cswPrivate);
-                    cswPublic = Csw.dom({ }, cswPrivate.input);
+                    cswPublic = Csw.dom({}, cswPrivate.input);
                     //$.extend(cswPublic, Csw.literals.input(cswPrivate));
 
                     cswPublic.bind('change', function () {
                         cswPrivate.value = cswPublic.val();
                     });
+
+                    if (Csw.isNumber(cswPrivate.maxLength)) {
+                        $.validator.addMethod(cswPrivate.ID + '_validateMaxLength', function (value, element) {
+                            return (this.optional(element) || Csw.validateMaxLength($(element).val(), cswPrivate.maxLength));
+                        }, 'Number must contain a most ' + cswPrivate.maxLength + ' digits');
+                        cswPublic.addClass(cswPrivate.ID + '_validateMaxLength');
+                    }
 
                     if (Csw.isNumber(minValue) && Csw.isNumeric(minValue)) {
                         $.validator.addMethod(cswPrivate.ID + '_validateFloatMinValue', function (value, element) {
@@ -99,7 +106,6 @@
 
                     if (0 < ceilingVal) {
                         //Independant of any other validation, no number can be greater than this.
-                        cswPublic.propDom('max', ceilingVal);
                         $.validator.addMethod(cswPrivate.ID + '_validateDb_15_6_FieldLength', function (value, element) {
                             return Csw.validateFloatMaxValue(Math.abs($(element).val()), ceilingVal);
                         }, 'Value precision cannot exceed ' + ceilingVal + '.');
