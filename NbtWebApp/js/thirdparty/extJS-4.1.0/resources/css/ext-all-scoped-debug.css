@@ -3398,7 +3398,8 @@ tr.x-container:before {
   .x-reset .x-grid-row-selected .x-grid-rowwrap-div {
     border-style: dotted;
     border-color: #a3bae9;
-    background-color: #dfe8f6 !important; }
+    background-color: #ffff00 !important;
+    font-weight:bold; }
   /* line 250, ../themes/stylesheets/ext4/default/widgets/_grid.scss */
   .x-reset .x-grid-rowwrap-div .x-grid-cell,
   .x-reset .x-grid-rowwrap-div .x-grid-cell-inner {

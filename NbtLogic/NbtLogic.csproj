@@ -99,6 +99,7 @@
     <Compile Include="csw\Grid\CswNbtGridExtJsField.cs" />
     <Compile Include="csw\Grid\CswNbtGrid.cs" />
     <Compile Include="csw\Actions\CswNbtActDispenseContainer.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase27263Case27153.cs" />
     <Compile Include="csw\Actions\CswNbtActSubmitRequest.cs" />
     <Compile Include="csw\Actions\CswNbtActSystemViews.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase27327.cs" />
