@@ -76,7 +76,7 @@
                     if (options) {
                         $.extend(cswPrivate, options);
                     }
-                    if (Csw.isNullOrEmpty(cswPrivate.state.sourceContainerNodeId) || Csw.isNullOrEmpty(cswPrivate.state.requestItemId)) {
+                    if (Csw.isNullOrEmpty(cswPrivate.state.sourceContainerNodeId) && Csw.isNullOrEmpty(cswPrivate.state.requestItemId)) {
                         state = cswPrivate.getState();
                         $.extend(cswPrivate.state, state);
                     }
@@ -437,7 +437,10 @@
                         FinishText: 'Finish',
                         onNext: cswPrivate.handleNext,
                         onPrevious: cswPrivate.handlePrevious,
-                        onCancel: cswPrivate.onCancel,
+                        onCancel: function () {
+                            cswPrivate.clearState();
+                            Csw.tryExec(cswPrivate.onCancel);
+                        },
                         onFinish: cswPrivate.onConfirmFinish,
                         doNextOnInit: false
                     });
