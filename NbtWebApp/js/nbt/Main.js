@@ -5,7 +5,7 @@
 window.initMain = window.initMain || function (undefined) {
 
     "use strict";
-    Csw.debug.group('Csw');
+    //Csw.debug.group('Csw');
     var mainTree;
     var mainGridId = 'CswNodeGrid';
     var mainTableId = 'CswNodeTable';
@@ -17,18 +17,18 @@ window.initMain = window.initMain || function (undefined) {
     function startSpinner() {
         $('#ajaxSpacer').hide();
         $('#ajaxImage').show();
-        if (true === window.displayAllExceptions) {
-            Csw.debug.group('ajax');
-        }
+        //if (true === window.displayAllExceptions) {
+        //    Csw.debug.group('ajax');
+        //}
     }
     Csw.subscribe(Csw.enums.events.ajax.globalAjaxStart, startSpinner);
 
     function stopSpinner() {
         $('#ajaxImage').hide();
         $('#ajaxSpacer').show();
-        if (true === window.displayAllExceptions) {
-            Csw.debug.groupEnd('ajax');
-        }
+        //if (true === window.displayAllExceptions) {
+        //    Csw.debug.groupEnd('ajax');
+        //}
     };
     Csw.subscribe(Csw.enums.events.ajax.globalAjaxStop, stopSpinner);
 
@@ -1253,7 +1253,7 @@ window.initMain = window.initMain || function (undefined) {
                     title += 'Selected Container';
                 }
                 designOpt = {
-                    ID: 'cswDispenseContainerWizard',
+                    ID: Csw.makeId('cswDispenseContainerWizard'),
                     state: {
                         sourceContainerNodeId: o.sourceContainerNodeId,
                         currentQuantity: o.currentQuantity,
