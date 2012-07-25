@@ -251,7 +251,6 @@
                         });
                         cswPrivate.divStep1.br({ number: 3 });
 
-                        var foundMaterialLabel = null;
                         var removeFoundMaterialLabel = function () {
                             if (false === Csw.isNullOrEmpty(foundMaterialLabel)) {
                                 foundMaterialLabel.remove();
@@ -282,16 +281,14 @@
                         }
 
                         var materialExists = function (data) {
-                            if (Csw.isNullOrEmpty(data)) {
-                                return false;
-                            }
+                            var ret = false;
                             if (data["tradename"] == cswPrivate.tradeName &&
                                 data["supplier"] == cswPrivate.supplier.name &&
                                     data["partno"] == cswPrivate.partNo &&
                                         data["nodetypeid"] == cswPrivate.materialType.val) {
-                                return true;
+                                ret = true;
                             }
-                            return false;
+                            return ret;
                         }
 
                         cswPrivate.stepOneComplete = true;
