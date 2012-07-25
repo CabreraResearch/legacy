@@ -54,7 +54,7 @@
 
                 cswPrivate.wizardSteps = {
                     1: 'Choose Type and Identity',
-                    2: 'Properties',
+                    2: 'Additional Properties',
                     3: 'Size(s)'
                 };
 
@@ -175,12 +175,12 @@
                         cswPrivate.divStep1.br({ number: 1 });
 
                         cswPrivate.divStep1.label({
-                            text: "Fill out Material type and identification properties",
+                            text: "Choose Type and Identity",
                             cssclass: "wizardHelpTitle"
                         });
                         cswPrivate.divStep1.br({ number: 2 });
                         cswPrivate.divStep1.label({
-                            text: "This wizard will guide you through the process of creating a new material. The information that needs to be filled out below are the basic attributes used to identify the material you are creating. If the attributes below match an existing material, you will be given the option to edit that material.",
+                            text: "This wizard will guide you through the process of creating a new material. Fill out the following identification properties. If the attributes below match an existing material, you will be given the option to edit that material.",
                             cssclass: "wizardHelpDesc"
                         });
                         cswPrivate.divStep1.br({ number: 4 });
@@ -424,7 +424,7 @@
                         });
                         div.br({ number: 2 });
                         div.label({
-                            text: "Here is where sizes of the material can be defined. Sizes are used in receiving and determine how much of the material can be received. Sizes can be created elsewhere and this part is optional. Click \"Finish\" to finish creating the material and have it in saved to the system.",
+                            text: "Sizes are used in receiving materials. This part is optional and sizes can be created elsewhere.",
                             cssclass: "wizardHelpDesc"
                         });
                         div.br({ number: 4 });
@@ -433,6 +433,10 @@
                             /* Thin Grid of sizes */
                             cswPrivate.sizeGrid = div.thinGrid({ linkText: '', hasHeader: true, TableCssClass: 'CswThinGridTableWizard' });
 
+                            cswPrivate.toggleButton(cswPrivate.buttons.prev, true);
+                            cswPrivate.toggleButton(cswPrivate.buttons.cancel, true);
+                            cswPrivate.toggleButton(cswPrivate.buttons.finish, true);
+                            cswPrivate.toggleButton(cswPrivate.buttons.next, false);
 
                             if (cswPrivate.useExistingMaterial) {
 
@@ -449,10 +453,6 @@
                                 cswPrivate.sizeGrid.addRows(['', 'Initial Quantity', 'Quantity Editable', 'Dispensable', 'Catalog No']);
                                 cswPrivate.sizeGrid.hide();
                             }
-                            cswPrivate.toggleButton(cswPrivate.buttons.prev, true);
-                            cswPrivate.toggleButton(cswPrivate.buttons.cancel, true);
-                            cswPrivate.toggleButton(cswPrivate.buttons.finish, true);
-                            cswPrivate.toggleButton(cswPrivate.buttons.next, false);
                         }
 
                         div.br();
