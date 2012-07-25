@@ -487,6 +487,12 @@ namespace ChemSW.Nbt.ObjClasses
                 RequestItemView.AddViewPropertyAndFilter( RiRelationship, ContainerOcp, SubFieldName: CswNbtSubField.SubFieldName.NodeID, Value: NodeId.PrimaryKey.ToString() );
                 RequestItemView.AddViewPropertyAndFilter( RiRelationship, TypeOcp, RequestItemType );
 
+                if(RequestItemType == CswNbtObjClassRequestItem.Types.Move)
+                {
+                    CswNbtMetaDataObjectClassProp LocationOcp = RequestItemOc.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Location );
+                    RequestItemView.AddViewPropertyAndFilter( RiRelationship, LocationOcp, SubFieldName: CswNbtSubField.SubFieldName.NodeID, Value: Location.SelectedNodeId.PrimaryKey.ToString() );
+                }
+
                 ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( RequestItemView, IncludeSystemNodes: false, RequireViewPermissions: false );
                 if( Tree.getChildNodeCount() > 0 )
                 {
@@ -505,7 +511,7 @@ namespace ChemSW.Nbt.ObjClasses
                                     NodeAsRequestItem.Status.Value = CswNbtObjClassRequestItem.Statuses.Disposed;
                                     break;
                             }
-                            NodeAsRequestItem.postChanges( true );
+                            NodeAsRequestItem.postChanges( false );
                         }
                         Tree.goToParentNode();
                     }
