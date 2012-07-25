@@ -52,9 +52,13 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataNodeType sizeNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Size" );
             if( null != sizeNT )
             {
-                CswNbtMetaDataNodeTypeProp supplierNTP = sizeNT.getNodeTypeProp( "Supplier" );
-                supplierNTP.removeFromLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add );
+                CswNbtMetaDataNodeTypeProp supplierNTP = sizeNT.getNodeTypeProp("Supplier");
+                if (null != supplierNTP)
+                {
+                    supplierNTP.removeFromLayout(CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add);
+                }
             }
+
             #endregion
 
         }//Update()
