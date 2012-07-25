@@ -156,8 +156,8 @@
                     success: function (json) {
                         if (json.count > 0) {
                             delete json.count;
-                            cswPrivate.historyTbl.cell(1, 1).span({ text: '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Past Requests: ' });
-                            cswPrivate.historySelect = cswPrivate.historyTbl.cell(1, 2).select({
+                            cswPrivate.historyTbl.cell(1, 1).span({ text: '</br>&nbsp;Past Requests: ' });
+                            cswPrivate.historySelect = cswPrivate.historyTbl.cell(2, 1).select({
                                 onChange: function () {
                                     cswPrivate.copyFromNodeId = cswPrivate.historySelect.val();
                                 }
@@ -169,8 +169,9 @@
                                 cswPrivate.historySelect.option({ value: prop['requestnodeid'], display: display });
                             });
                             cswPrivate.copyFromNodeId = cswPrivate.historySelect.val();
-                            cswPrivate.copyHistoryBtn = cswPrivate.historyTbl.cell(1, 3).buttonExt({
+                            cswPrivate.copyHistoryBtn = cswPrivate.historyTbl.cell(2, 2).buttonExt({
                                 icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.copy),
+                                size: 'small',
                                 enabledText: 'Copy to Cart',
                                 disabledText: 'Copying...',
                                 onClick: cswPrivate.copyRequest
@@ -180,8 +181,8 @@
                 });
 
                 cswPrivate.saveRequestTbl = cswPrivate.actionTbl.cell(6, 1).table({ align: 'right', cellvalign: 'middle', cellpadding: '2px' });
-                cswPrivate.saveRequestTbl.cell(1, 4).span({ text: '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' });
-                cswPrivate.saveRequestTxt = cswPrivate.saveRequestTbl.cell(1, 3).input().hide();
+                //cswPrivate.saveRequestTbl.cell(1, 4).span({ text: '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' });
+                cswPrivate.saveRequestTxt = cswPrivate.saveRequestTbl.cell(2, 1).input().hide();
                 cswPrivate.saveRequestTbl.cell(1, 1).span({ text: 'Save Request' });
                 cswPrivate.saveRequestChk = cswPrivate.saveRequestTbl.cell(1, 2).checkBox({
                     onChange: Csw.method(function () {
