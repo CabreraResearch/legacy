@@ -19,28 +19,39 @@ namespace ChemSW.Nbt.Schema
                                                                            (select nodetypeid
                                                                               from nodetypes
                                                                              where nodetypename in
-                                                                                   ('Aliquot', 'Container Dispense Transaction',
-                                                                                    'Assembly Document', 'Container Document',
-                                                                                    'Equipment Document', 'Material Document', 'Equipment Type',
-                                                                                    'Feedback', 'Assembly Schedule', 'Equipment Schedule',
-                                                                                    'Inspection Schedule', 'Department', 'GHS Phrase',
+                                                                                   ('Aliquot', 'Batch Operation',
+                                                                                    'Container Dispense Transaction', 'Assembly Document',
+                                                                                    'Container Document', 'Equipment Document',
+                                                                                    'Material Document', 'Assembly', 'Equipment Type', 'Feedback',
+                                                                                    'Assembly Schedule', 'Equipment Schedule',
+                                                                                    'Inspection Schedule', 'Department', 'GHS', 'GHS Phrase',
                                                                                     'Lab Safety (demo)', 'Lab Safety Group (demo)',
-                                                                                    'Inventory Group', 'Mail Report', 'Notification', 'Parameter',
-                                                                                    'Print Label', 'IMCS Report', 'Report', 'SI Report', 'Test',
-                                                                                    'Unit (Time)', 'Work Unit', 'Equipment'))" );
+                                                                                    'Inventory Group', 'Inventory Group Permission',
+                                                                                    'Inventory Level', 'Box', 'Building', 'Cabinet', 'Floor',
+                                                                                    'Room', 'Shelf', 'Site', 'Mail Report', 'Notification',
+                                                                                    'Parameter', 'Print Label', 'IMCS Report', 'Report',
+                                                                                    'SI Report', 'Request', 'Request Item', 'Size', 'Test',
+                                                                                    'Unit (Each)', 'Unit (Time)', 'Unit (Volume)',
+                                                                                    'Unit (Weight)', 'Vendor', 'Work Unit'))" );
 
 
             _CswNbtSchemaModTrnsctn.execArbitraryPlatformNeutralSql( @"update nodetypes
                                                                        set auditlevel = 'NoAudit'
                                                                      where nodetypename in
-                                                                           ('Aliquot', 'Container Dispense Transaction', 'Assembly Document',
-                                                                            'Container Document', 'Equipment Document', 'Material Document',
-                                                                            'Equipment Type', 'Feedback', 'Assembly Schedule',
-                                                                            'Equipment Schedule', 'Inspection Schedule', 'Department',
-                                                                            'GHS Phrase', 'Lab Safety (demo)', 'Lab Safety Group (demo)',
-                                                                            'Inventory Group', 'Mail Report', 'Notification', 'Parameter',
-                                                                            'Print Label', 'IMCS Report', 'Report', 'SI Report', 'Test',
-                                                                            'Unit (Time)', 'Work Unit', 'Equipment')" );
+                                                                           ('Aliquot', 'Batch Operation',
+                                                                            'Container Dispense Transaction', 'Assembly Document',
+                                                                            'Container Document', 'Equipment Document',
+                                                                            'Material Document', 'Assembly', 'Equipment Type', 'Feedback',
+                                                                            'Assembly Schedule', 'Equipment Schedule',
+                                                                            'Inspection Schedule', 'Department', 'GHS', 'GHS Phrase',
+                                                                            'Lab Safety (demo)', 'Lab Safety Group (demo)',
+                                                                            'Inventory Group', 'Inventory Group Permission',
+                                                                            'Inventory Level', 'Box', 'Building', 'Cabinet', 'Floor',
+                                                                            'Room', 'Shelf', 'Site', 'Mail Report', 'Notification',
+                                                                            'Parameter', 'Print Label', 'IMCS Report', 'Report',
+                                                                            'SI Report', 'Request', 'Request Item', 'Size', 'Test',
+                                                                            'Unit (Each)', 'Unit (Time)', 'Unit (Volume)',
+                                                                            'Unit (Weight)', 'Vendor', 'Work Unit')" );
 
 
             _CswNbtSchemaModTrnsctn.execArbitraryPlatformNeutralSql( @"update nodetype_props
@@ -49,29 +60,40 @@ namespace ChemSW.Nbt.Schema
                                                                            (select nodetypeid
                                                                               from nodetypes
                                                                              where nodetypename not in
-                                                                                   ('Aliquot', 'Container Dispense Transaction',
-                                                                                    'Assembly Document', 'Container Document',
-                                                                                    'Equipment Document', 'Material Document', 'Equipment Type',
-                                                                                    'Feedback', 'Assembly Schedule', 'Equipment Schedule',
-                                                                                    'Inspection Schedule', 'Department', 'GHS Phrase',
+                                                                                   ('Aliquot', 'Batch Operation',
+                                                                                    'Container Dispense Transaction', 'Assembly Document',
+                                                                                    'Container Document', 'Equipment Document',
+                                                                                    'Material Document', 'Assembly', 'Equipment Type', 'Feedback',
+                                                                                    'Assembly Schedule', 'Equipment Schedule',
+                                                                                    'Inspection Schedule', 'Department', 'GHS', 'GHS Phrase',
                                                                                     'Lab Safety (demo)', 'Lab Safety Group (demo)',
-                                                                                    'Inventory Group', 'Mail Report', 'Notification', 'Parameter',
-                                                                                    'Print Label', 'IMCS Report', 'Report', 'SI Report', 'Test',
-                                                                                    'Unit (Time)', 'Work Unit', 'Equipment'))" );
+                                                                                    'Inventory Group', 'Inventory Group Permission',
+                                                                                    'Inventory Level', 'Box', 'Building', 'Cabinet', 'Floor',
+                                                                                    'Room', 'Shelf', 'Site', 'Mail Report', 'Notification',
+                                                                                    'Parameter', 'Print Label', 'IMCS Report', 'Report',
+                                                                                    'SI Report', 'Request', 'Request Item', 'Size', 'Test',
+                                                                                    'Unit (Each)', 'Unit (Time)', 'Unit (Volume)',
+                                                                                    'Unit (Weight)', 'Vendor', 'Work Unit'))" );
 
 
 
             _CswNbtSchemaModTrnsctn.execArbitraryPlatformNeutralSql( @"update nodetypes
                                                                        set auditlevel = 'PlainAudit'
                                                                      where nodetypename not in
-                                                                           ('Aliquot', 'Container Dispense Transaction', 'Assembly Document',
-                                                                            'Container Document', 'Equipment Document', 'Material Document',
-                                                                            'Equipment Type', 'Feedback', 'Assembly Schedule',
-                                                                            'Equipment Schedule', 'Inspection Schedule', 'Department',
-                                                                            'GHS Phrase', 'Lab Safety (demo)', 'Lab Safety Group (demo)',
-                                                                            'Inventory Group', 'Mail Report', 'Notification', 'Parameter',
-                                                                            'Print Label', 'IMCS Report', 'Report', 'SI Report', 'Test',
-                                                                            'Unit (Time)', 'Work Unit', 'Equipment')" );
+                                                                           ('Aliquot', 'Batch Operation',
+                                                                            'Container Dispense Transaction', 'Assembly Document',
+                                                                            'Container Document', 'Equipment Document',
+                                                                            'Material Document', 'Assembly', 'Equipment Type', 'Feedback',
+                                                                            'Assembly Schedule', 'Equipment Schedule',
+                                                                            'Inspection Schedule', 'Department', 'GHS', 'GHS Phrase',
+                                                                            'Lab Safety (demo)', 'Lab Safety Group (demo)',
+                                                                            'Inventory Group', 'Inventory Group Permission',
+                                                                            'Inventory Level', 'Box', 'Building', 'Cabinet', 'Floor',
+                                                                            'Room', 'Shelf', 'Site', 'Mail Report', 'Notification',
+                                                                            'Parameter', 'Print Label', 'IMCS Report', 'Report',
+                                                                            'SI Report', 'Request', 'Request Item', 'Size', 'Test',
+                                                                            'Unit (Each)', 'Unit (Time)', 'Unit (Volume)',
+                                                                            'Unit (Weight)', 'Vendor', 'Work Unit')" );
 
 
         }//Update()
