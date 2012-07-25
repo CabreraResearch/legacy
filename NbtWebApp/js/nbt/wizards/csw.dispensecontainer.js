@@ -129,7 +129,7 @@
                             var makeTypeSelect = function() {
 
                                 dispenseTypeTable.cell(5, 1).br({ number: 2 });
-                                dispenseTypeTable.cell(6, 1).span({ text: 'Select a dispense type:' });
+                                dispenseTypeTable.cell(6, 1).span({ text: 'Pick a type of dispense:' });
 
                                 dispenseTypeSelect = dispenseTypeTable.cell(7, 1).select({
                                     ID: cswPrivate.makeStepId('setDispenseTypePicklist'),

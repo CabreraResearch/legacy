@@ -36,7 +36,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string InventoryGroup = "Inventory Group";
             public const string TotalDispensed = "Total Dispensed";
         }
-
+        
         public sealed class Types
         {
             public const string Dispense = "Dispense";
@@ -411,7 +411,7 @@ namespace ChemSW.Nbt.ObjClasses
                                 break;
                         } //switch( ButtonData.SelectedText )
 
-                        Status.Value = _getNextStatus( ButtonData.SelectedText );
+                        //Status.Value = _getNextStatus( ButtonData.SelectedText );
                         postChanges( true );
                         ButtonData.Data["requestitem"] = ButtonData.Data["requestitem"] ?? new JObject();
                         ButtonData.Data["requestitem"]["requestitemid"] = NodeId.ToString();
@@ -632,6 +632,10 @@ namespace ChemSW.Nbt.ObjClasses
             if( TotalDispensed.Quantity >= Quantity.Quantity )
             {
                 Fulfill.State = FulfillMenu.Complete;
+            }
+            else if( Type.Value == Types.Request || Type.Value == Types.Dispense )
+            {
+                Fulfill.State = FulfillMenu.Dispense;
             }
         }
 
