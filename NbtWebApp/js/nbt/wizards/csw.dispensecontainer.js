@@ -20,8 +20,7 @@
                 wizard: '',
                 wizardSteps: {
                     1: 'Select a Dispense Type',
-                    2: 'Select a Destination Container Type',
-                    3: 'Select Amount'
+                    2: 'Select Amount'
                 },
                 buttons: {
                     next: 'next',
@@ -81,14 +80,14 @@
             cswPrivate.makeStepOne = (function () {
                 var stepOneComplete = false;
                 return function () {
-                    
+
                     var dispenseTypeTable;
 
                     cswPrivate.toggleButton(cswPrivate.buttons.finish, false);
-                    var initStepOne = Csw.method(function() {
+                    var initStepOne = Csw.method(function () {
                         cswPrivate.divStep1 = cswPrivate.divStep1 || cswPrivate.wizard.div(1);
                         cswPrivate.divStep1.empty();
-                        
+
                         cswPrivate.divStep1.br();
                         if (false === Csw.isNullOrEmpty(cswPrivate.barcode)) {
                             cswPrivate.divStep1.p({ text: 'You have selected container barcode: [' + Csw.string(cswPrivate.barcode) + ']' });
@@ -115,7 +114,7 @@
                             ID: cswPrivate.makeStepId('setDispenseTypePicklist'),
                             cssclass: 'selectinput',
                             values: cswPrivate.dispenseTypes,
-                            onChange: function() {
+                            onChange: function () {
                                 if (false === Csw.isNullOrEmpty(dispenseTypeSelect.val())) {
                                     cswPrivate.dispenseType = dispenseTypeSelect.val();
                                     cswPrivate.wizard.next.enable();
@@ -126,7 +125,7 @@
                             selected: cswPrivate.dispenseTypes.Unknown
                         });
                     });
-                    
+
                     if (false === stepOneComplete) {
                         cswPrivate.divStep1 = cswPrivate.wizard.div(1);
                         cswPrivate.toggleButton(cswPrivate.buttons.next, false);
@@ -143,7 +142,7 @@
                                 allowEdit: false,
                                 allowDelete: false,
                                 extraAction: 'Select',
-                                extraActionIcon: Csw.enums.getName( Csw.enums.iconType, Csw.enums.iconType.check),
+                                extraActionIcon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.check),
                                 onExtraAction: function (nodeObj) {
                                     Csw.debug.assert(false === Csw.isNullOrEmpty(nodeObj), 'Selected a container which did not yield a nodeObj');
                                     Csw.debug.assert(false === Csw.isNullOrEmpty(nodeObj.nodeid), 'Selected a container which did not yield a nodeid');
@@ -163,85 +162,72 @@
                 };
             } ());
 
-            //Step 2. Select a Destination Container NodeType .
+            //Step 2a. Select a Destination Container NodeType.
             //if( only one NodeType exists || Dispense Type != Dispense ) skip this step
-            cswPrivate.makeStepTwo = (function () {
-                var stepTwoComplete = false,
-                    skipThisStep = false;
-                return function (movingForward) {
-                    cswPrivate.toggleButton(cswPrivate.buttons.finish, false);
-                    if (false === stepTwoComplete) {
-                        cswPrivate.toggleButton(cswPrivate.buttons.next, false);
-                        var containerTypeTable = '',
-                            blankText = '[Select One]';
-
-                        cswPrivate.divStep2 = cswPrivate.wizard.div(2);
-                        cswPrivate.divStep2.br();
-
-                        containerTypeTable = cswPrivate.divStep2.table({
-                            ID: cswPrivate.makeStepId('setContainerTypeTable'),
-                            cellpadding: '1px',
-                            cellvalign: 'middle'
-                        }).hide();
-
-                        var containerTypeText = containerTypeTable.cell(1, 1).span({ text: 'What kind of container would you like to use?' });
-
-                        var containerTypeDiv = containerTypeTable.cell(1, 2).div();
-
-                        var containerTypeSelect = containerTypeDiv.nodeTypeSelect({
-                            ID: Csw.makeSafeId('nodeTypeSelect'),
-                            objectClassName: 'ContainerClass',
-                            blankOptionText: blankText,
-                            onSelect: function (data, nodeTypeCount) {
-                                if (blankText !== containerTypeSelect.val()) {
-                                    cswPrivate.containerNodeTypeId = containerTypeSelect.val();
-                                    cswPrivate.wizard.next.enable();
-                                }
-                                else {
-                                    cswPrivate.wizard.next.disable();
-                                }
-                            },
-                            onSuccess: function (data, nodeTypeCount, lastNodeTypeId) {
-                                if (Csw.number(nodeTypeCount) > 1) {
-                                    containerTypeTable.show();
-                                }
-                                else {
-                                    cswPrivate.containerNodeTypeId = lastNodeTypeId;
-                                    skipThisStep = true;
-                                    cswPrivate.toggleButton(cswPrivate.buttons.next, true);
-                                    cswPrivate.wizard.next.click();
-                                }
-                            }
-                        });
-
-                        stepTwoComplete = true;
-                    }
-                    if (skipThisStep) {
-                        movingForward ? cswPrivate.wizard.next.click() : cswPrivate.wizard.previous.click();
-                    }
-                };
-            } ());
-
-            //Step 3. Select Amount
+            //Step 2b. Select Amount
             //DispenseType != Dispense ? 
             //Select a Quantity :
             //Select the number of destination containers and their quantities.
-            cswPrivate.makeStepThree = (function () {
-                var stepThreeDispenseComplete = false;
-                var stepThreeAddWasteUseComplete = false;
+            cswPrivate.makeStepTwo = (function () {
+                var stepTwoDispenseComplete = false;
+                var stepTwoAddWasteUseComplete = false;
                 return function () {
+                    cswPrivate.toggleButton(cswPrivate.buttons.next, false);
                     cswPrivate.toggleButton(cswPrivate.buttons.finish, false);
                     if (cswPrivate.dispenseType === cswPrivate.dispenseTypes.Dispense) {
-                        if (false === stepThreeDispenseComplete) {
-                            if (stepThreeAddWasteUseComplete) {
-                                cswPrivate.divStep3.empty();
-                                stepThreeAddWasteUseComplete = false;
+                        if (false === stepTwoDispenseComplete) {
+                            if (stepTwoAddWasteUseComplete) {
+                                cswPrivate.divStep2.empty();
+                                stepTwoAddWasteUseComplete = false;
                             }
+                            cswPrivate.divStep2 = cswPrivate.wizard.div(2);
+                            cswPrivate.divStep2.br();
+                            
+                            var containerTypeTable = '',
+                                blankText = '[Select One]',
+                                quantityTable = '',
+                                containerSelected = false,
+                                containerAdded = false;
 
-                            cswPrivate.divStep3 = cswPrivate.wizard.div(3);
-                            cswPrivate.divStep3.br();
+                            containerTypeTable = cswPrivate.divStep2.table({
+                                ID: cswPrivate.makeStepId('setContainerTypeTable'),
+                                cellpadding: '1px',
+                                cellvalign: 'middle'
+                            }).hide();
 
-                            quantityTable = cswPrivate.divStep3.table({
+                            var containerTypeText = containerTypeTable.cell(1, 1).span({ text: 'What kind of container would you like to use?' });
+
+                            var containerTypeDiv = containerTypeTable.cell(1, 2).div();
+
+                            var containerTypeSelect = containerTypeDiv.nodeTypeSelect({
+                                ID: Csw.makeSafeId('nodeTypeSelect'),
+                                objectClassName: 'ContainerClass',
+                                blankOptionText: blankText,
+                                onSelect: function (data, nodeTypeCount) {
+                                    if (blankText !== containerTypeSelect.val()) {
+                                        cswPrivate.containerNodeTypeId = containerTypeSelect.val();
+                                        if (containerAdded) {
+                                            cswPrivate.toggleButton(cswPrivate.buttons.finish, true);
+                                        }
+                                        containerSelected = true;
+                                    }
+                                    else {
+                                        cswPrivate.toggleButton(cswPrivate.buttons.finish, false);
+                                        containerSelected = false;
+                                    }
+                                },
+                                onSuccess: function (data, nodeTypeCount, lastNodeTypeId) {
+                                    if (Csw.number(nodeTypeCount) > 1) {
+                                        containerTypeTable.show();
+                                    }
+                                    else {
+                                        cswPrivate.containerNodeTypeId = lastNodeTypeId;                                        
+                                        containerSelected = true;
+                                    }
+                                }
+                            });
+
+                            quantityTable = cswPrivate.divStep2.table({
                                 ID: cswPrivate.makeStepId('setQuantityTable'),
                                 cellpadding: '1px',
                                 cellvalign: 'middle'
@@ -252,7 +238,16 @@
                             cswPrivate.amountsGrid = Csw.nbt.wizard.amountsGrid(quantityTable.cell(2, 1), {
                                 ID: cswPrivate.wizard.makeStepId('wizardAmountsThinGrid'),
                                 onAdd: function () {
-                                    cswPrivate.toggleButton(cswPrivate.buttons.finish, true);
+                                    if (containerSelected) {
+                                        cswPrivate.toggleButton(cswPrivate.buttons.finish, true);
+                                    }
+                                    containerAdded = true;
+                                },
+                                onDelete: function (qtyCnt) {
+                                    if (qtyCnt < 1) {
+                                        cswPrivate.toggleButton(cswPrivate.buttons.finish, false);
+                                    }
+                                    containerAdded = false;
                                 },
                                 quantity: cswPrivate.capacity,
                                 containerlimit: cswPrivate.containerlimit,
@@ -263,72 +258,36 @@
                                 selectedSizeId: cswPrivate.sizeId
                             });
 
-                            stepThreeDispenseComplete = true;
+                            stepTwoDispenseComplete = true;
                         }
                     }
                     else {
-                        if (false === stepThreeAddWasteUseComplete) {
-                            if (stepThreeDispenseComplete) {
-                                cswPrivate.divStep3.empty();
-                                stepThreeDispenseComplete = false;
+                        if (false === stepTwoAddWasteUseComplete) {
+                            if (stepTwoDispenseComplete) {
+                                cswPrivate.divStep2.empty();
+                                stepTwoDispenseComplete = false;
                             }
-                            var quantityTable = '',
-                            blankText = '[Select One]';
+                            cswPrivate.divStep2 = cswPrivate.wizard.div(2);
+                            cswPrivate.divStep2.br();
 
-                            cswPrivate.divStep3 = cswPrivate.wizard.div(3);
-                            cswPrivate.divStep3.br();                            
-
-                            quantityTable = cswPrivate.divStep3.table({
+                            quantityTable = cswPrivate.divStep2.table({
                                 ID: cswPrivate.makeStepId('setQuantityTable'),
                                 cellpadding: '1px',
                                 cellvalign: 'middle'
                             });
 
-                            quantityTable.cell(1, 1).span({ text: 'Current Quantity:    ' + cswPrivate.currentQuantity + ' ' + cswPrivate.currentUnitName }).br();
-                            quantityTable.cell(2, 1).span({ text: 'Select the quantity you wish to dispense:' });
+
+                            quantityTable.cell(1, 1).span({ text: 'Select the quantity you wish to dispense:' }).br().br();
+                            quantityTable.cell(2, 1).span({ text: 'Current Quantity:    ' + cswPrivate.currentQuantity + ' ' + cswPrivate.currentUnitName });
                             cswPrivate.quantityControl = quantityTable.cell(3, 1).quantity(cswPrivate.capacity);
 
                             cswPrivate.toggleButton(cswPrivate.buttons.finish, true);
 
-                            stepThreeAddWasteUseComplete = true;
+                            stepTwoAddWasteUseComplete = true;
                         }
                     }
                 };
             } ());
-
-            cswPrivate.handleNext = function (newStepNo) {
-                cswPrivate.currentStepNo = newStepNo;
-                switch (newStepNo) {
-                    case 2:
-                        if (cswPrivate.dispenseType === cswPrivate.dispenseTypes.Dispense) {
-                            cswPrivate.makeStepTwo(true);
-                        }
-                        else {
-                            cswPrivate.wizard.next.click();
-                        }
-                        break;
-                    case 3:
-                        cswPrivate.makeStepThree();
-                        break;
-                }
-            };
-
-            cswPrivate.handlePrevious = function (newStepNo) {
-                cswPrivate.currentStepNo = newStepNo;
-                switch (newStepNo) {
-                    case 1:
-                        cswPrivate.makeStepOne();
-                        break;
-                    case 2:
-                        if (cswPrivate.dispenseType === cswPrivate.dispenseTypes.Dispense) {
-                            cswPrivate.makeStepTwo(false);
-                        }
-                        else {
-                            cswPrivate.wizard.previous.click();
-                        }
-                        break;
-                }
-            };
 
             cswPrivate.onConfirmFinish = function () {
                 cswPrivate.toggleButton(cswPrivate.buttons.prev, false);
@@ -390,12 +349,12 @@
                     currentUnitName: cswPrivate.currentUnitName,
                     capacity: cswPrivate.capacity,
                     Title: Csw.string(cswPrivate.title),
-                    StepCount: 3,
+                    StepCount: 2,
                     Steps: cswPrivate.wizardSteps,
                     StartingStep: cswPrivate.startingStep,
                     FinishText: 'Finish',
-                    onNext: cswPrivate.handleNext,
-                    onPrevious: cswPrivate.handlePrevious,
+                    onNext: cswPrivate.makeStepTwo,
+                    onPrevious: cswPrivate.makeStepOne,
                     onCancel: cswPrivate.onCancel,
                     onFinish: cswPrivate.onConfirmFinish,
                     doNextOnInit: false
