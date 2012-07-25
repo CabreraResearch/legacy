@@ -47,7 +47,8 @@
                 title: 'Dispense from Container',
                 materialname: '',
                 barcode: '',
-                location: ''
+                location: '',
+                printBarcodes: false
             };
             if (options) $.extend(cswPrivate, options);
 
@@ -320,6 +321,24 @@
                                 selectedSizeId: cswPrivate.sizeId
                             });
 
+                            var checkBoxTable = quantityTable.cell(3, 1).table({
+                                ID: cswPrivate.makeStepId('checkboxTable'),
+                                cellpadding: '1px',
+                                cellvalign: 'middle'
+                            })
+
+                            cswPrivate.printBarcodesCheckBox = checkBoxTable.cell(1, 1).checkBox({
+                                onChange: Csw.method(function () {
+                                    var val;
+                                    if (cswPrivate.printBarcodesCheckBox.checked()) {
+                                        cswPrivate.printBarcodes = true;
+                                    } else {
+                                        cswPrivate.printBarcodes = false;
+                                    }
+                                })
+                            });
+                            checkBoxTable.cell(1, 2).span({ text: 'Print barcode labels for new containers' });
+
                             stepTwoDispenseComplete = true;
                         }
                     }
@@ -337,7 +356,7 @@
                                 cellpadding: '1px',
                                 cellvalign: 'middle'
                             });
-                            
+
                             quantityTable.cell(1, 1).span({ text: 'Select the quantity you wish to dispense:' }).br().br();
                             quantityTable.cell(2, 1).span({ text: 'Current Quantity:    ' + cswPrivate.currentQuantity + ' ' + cswPrivate.currentUnitName });
                             cswPrivate.quantityControl = quantityTable.cell(3, 1).quantity(cswPrivate.capacity);
@@ -382,16 +401,9 @@
                         var viewId = data.viewId;
                         Csw.tryExec(cswPrivate.onFinish, viewId);
                         if (false === Csw.isNullOrEmpty(data.barcodeId)) {
-                            $.CswDialog('GenericDialog', {
-                                'div': Csw.literals.div().span({ text: 'Would you like to print Labels for the new Containers?' }),
-                                'title': 'Print Labels?',
-                                'onOk': function () {
-                                    $.CswDialog('PrintLabelDialog', { 'nodeid': cswPrivate.sourceContainerNodeId, 'propid': data.barcodeId });
-                                },
-                                'okText': 'Yes',
-                                'cancelText': 'No'
-                            });
-
+                            if (cswPrivate.printBarcodes) {
+                                $.CswDialog('PrintLabelDialog', { 'nodeid': cswPrivate.sourceContainerNodeId, 'propid': data.barcodeId });
+                            }
                         }
                     },
                     error: function () {
