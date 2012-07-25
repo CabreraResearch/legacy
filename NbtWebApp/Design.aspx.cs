@@ -1217,24 +1217,24 @@ namespace ChemSW.Nbt.WebPages
             TabTable.addControl( 6, 1, LockedCheckbox );
             if( _CanThisNodeTypeVersion )
             {
-                TabTable.addControl( 6, 0, NodeTypeVersionLabel );
-                TabTable.addControl( 6, 1, NodeTypeVersionSelect );
+                TabTable.addControl( 7, 0, NodeTypeVersionLabel );
+                TabTable.addControl( 7, 1, NodeTypeVersionSelect );
             }
-            TabTable.addControl( 7, 1, _SaveButton );
-            TabTable.addControl( 8, 0, new CswLiteralNbsp() );
-            TableCell SpacerCell = TabTable.getCell( 8, 0 );
+            TabTable.addControl( 8, 1, _SaveButton );
+            TabTable.addControl( 9, 0, new CswLiteralNbsp() );
+            TableCell SpacerCell = TabTable.getCell( 9, 0 );
             SpacerCell.ColumnSpan = 2;
             SpacerCell.Controls.Add( Spacer2 );
-            TabTable.addControl( 10, 0, CopiedNodeTypeNameLabel );
-            TabTable.addControl( 10, 1, CopiedNodeTypeName );
-            TabTable.addControl( 11, 1, _CopyNodeTypeButton );
-            TabTable.addControl( 12, 0, new CswLiteralNbsp() );
-            TabTable.addControl( 13, 0, ChangeObjectClassLabel );
-            TabTable.addControl( 13, 1, ChangeObjectClassSelect );
-            TabTable.addControl( 14, 1, _ChangeObjectClassButton );
-            TabTable.addControl( 15, 0, new CswLiteralNbsp() );
-            TabTable.addControl( 16, 1, _LayoutLink );
-            TabTable.addControl( 17, 1, _DefaultViewLink );
+            TabTable.addControl( 11, 0, CopiedNodeTypeNameLabel );
+            TabTable.addControl( 11, 1, CopiedNodeTypeName );
+            TabTable.addControl( 12, 1, _CopyNodeTypeButton );
+            TabTable.addControl( 13, 0, new CswLiteralNbsp() );
+            TabTable.addControl( 14, 0, ChangeObjectClassLabel );
+            TabTable.addControl( 14, 1, ChangeObjectClassSelect );
+            TabTable.addControl( 15, 1, _ChangeObjectClassButton );
+            TabTable.addControl( 16, 0, new CswLiteralNbsp() );
+            TabTable.addControl( 17, 1, _LayoutLink );
+            TabTable.addControl( 18, 1, _DefaultViewLink );
         }
 
 
