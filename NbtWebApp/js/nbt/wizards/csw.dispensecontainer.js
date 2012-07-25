@@ -33,8 +33,8 @@
                     Unknown: '',
                     Dispense: 'Dispense into a Child Container',
                     Use: 'Dispense for Use',
-                    Waste: 'Waste Material',
-                    Add: 'Add Material to Container'
+                    Add: 'Add Material to Container',
+                    Waste: 'Waste Material'
                 },
                 divStep1: '', divStep2: '', divstep3: '',
                 dispenseType: 'Unknown',
