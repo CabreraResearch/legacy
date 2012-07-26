@@ -172,13 +172,6 @@
                         cswPrivate.divStep1 = cswPrivate.divStep1 || cswPrivate.wizard.div(1);
                         cswPrivate.divStep1.empty();
 
-                        cswPrivate.divStep1.br({ number: 1 });
-
-                        cswPrivate.divStep1.label({
-                            text: "Choose Type and Identity",
-                            cssclass: "wizardHelpTitle"
-                        });
-                        cswPrivate.divStep1.br({ number: 2 });
                         cswPrivate.divStep1.label({
                             text: "This wizard will guide you through the process of creating a new material. Fill out the following identification properties. If the attributes below match an existing material, you will be given the option to edit that material.",
                             cssclass: "wizardHelpDesc"
@@ -312,13 +305,6 @@
                         cswPrivate.divStep2 = cswPrivate.divStep2 || cswPrivate.wizard.div(2);
                         cswPrivate.divStep2.empty();
 
-                        cswPrivate.divStep2.br({ number: 1 });
-
-                        cswPrivate.divStep2.label({
-                            text: "Physical Properties",
-                            cssclass: "wizardHelpTitle"
-                        });
-                        cswPrivate.divStep2.br({ number: 2 });
                         cswPrivate.divStep2.label({
                             text: "Fill out the physical properties of this material.",
                             cssclass: "wizardHelpDesc"
@@ -414,12 +400,6 @@
 
                         div = cswPrivate.divStep3.div();
 
-                        div.br({ number: 1 });
-                        div.label({
-                            text: "Create sizes of the material",
-                            cssclass: "wizardHelpTitle"
-                        });
-                        div.br({ number: 2 });
                         div.label({
                             text: "Sizes are used in receiving materials. This part is optional and sizes can be created elsewhere.",
                             cssclass: "wizardHelpDesc"
