@@ -26,26 +26,26 @@ namespace ChemSW.Nbt.Schema
                 {
                     _CswNbtSchemaModTrnsctn.MetaData.DeleteNodeTypeTab( RequestsTab );
                 }
-                CswNbtMetaDataNodeTypeProp RequestBtnNtp = MaterialNt.getNodeTypePropByObjectClassProp( CswNbtObjClassMaterial.RequestPropertyName );
-                bool Moved = false;
-                foreach( CswNbtMetaDataNodeTypeTab Tab in MaterialNt.getNodeTypeTabs() )
-                {
-                    if( Tab.TabName == MaterialNt.NodeTypeName )
-                    {
-                        RequestBtnNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, Tab.TabId );
-                        RequestBtnNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Table, true, Tab.TabId );
-                        Moved = true;
-                    }
-                }
-                if( false == Moved )
-                {
-                    CswNbtMetaDataNodeTypeTab Tab = MaterialNt.getNodeTypeTabs().FirstOrDefault();
-                    if( null != Tab )
-                    {
-                        RequestBtnNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, Tab.TabId );
-                        RequestBtnNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Table, true, Tab.TabId );
-                    }
-                }
+                //CswNbtMetaDataNodeTypeProp RequestBtnNtp = MaterialNt.getNodeTypePropByObjectClassProp( CswNbtObjClassMaterial.RequestPropertyName );
+                //bool Moved = false;
+                //foreach( CswNbtMetaDataNodeTypeTab Tab in MaterialNt.getNodeTypeTabs() )
+                //{
+                //    if( Tab.TabName == MaterialNt.NodeTypeName )
+                //    {
+                //        RequestBtnNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, Tab.TabId );
+                //        RequestBtnNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Table, true, Tab.TabId );
+                //        Moved = true;
+                //    }
+                //}
+                //if( false == Moved )
+                //{
+                //    CswNbtMetaDataNodeTypeTab Tab = MaterialNt.getNodeTypeTabs().FirstOrDefault();
+                //    if( null != Tab )
+                //    {
+                //        RequestBtnNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, Tab.TabId );
+                //        RequestBtnNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Table, true, Tab.TabId );
+                //    }
+                //}
             }
 
         }//Update()
