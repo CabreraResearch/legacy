@@ -52,7 +52,7 @@
                         Dispense: 'Dispense into a Child Container',
                         Use: 'Dispense for Use',
                         Add: 'Add Material to Container',
-                        Waste: 'Waste Material'
+                        Waste: 'Waste Material'                       
                     },
                     divStep1: '',
                     divStep2: '',
@@ -157,24 +157,27 @@
 
                                 if (cswPrivate.dispenseMode !== cswPrivate.dispenseModes.Request) {
                                     dispenseTypeTable.cell(5, 1).br({ number: 2 });
-                                    dispenseTypeTable.cell(6, 1).span({ text: 'Pick a type of dispense:' });
+                                    dispenseTypeTable.cell(6, 1).span({ text: 'Pick a type of dispense:' }).br();
 
-                                    dispenseTypeSelect = dispenseTypeTable.cell(7, 1).select({
-                                        ID: cswPrivate.makeStepId('setDispenseTypePicklist'),
-                                        cssclass: 'selectinput',
-                                        values: cswPrivate.dispenseTypes,
-                                        selected: cswPrivate.dispenseTypes.Dispense,
+                                    var dispenseTypesArray = [
+                                        cswPrivate.dispenseTypes.Dispense,
+                                        cswPrivate.dispenseTypes.Use,
+                                        cswPrivate.dispenseTypes.Add,
+                                        cswPrivate.dispenseTypes.Waste
+                                    ];
+
+                                    var dispenseTypeRadioGroup = dispenseTypeTable.cell(7, 1).radiobutton({
+                                        ID: 'dispensetypes',
+                                        names: dispenseTypesArray,
                                         onChange: function () {
-                                            if (false === Csw.isNullOrEmpty(dispenseTypeSelect.val())) {
-                                                if (dispenseTypeSelect.val() !== cswPrivate.state.dispenseType) {
+                                            if (false === Csw.isNullOrEmpty(dispenseTypeRadioGroup.val())) {
+                                                if (dispenseTypeRadioGroup.val() !== cswPrivate.state.dispenseType) {
                                                     resetStepTwo();
                                                 }
-                                                cswPrivate.state.dispenseType = dispenseTypeSelect.val();
+                                                cswPrivate.state.dispenseType = dispenseTypeRadioGroup.val();
                                             }
-                                            toggleNext();
                                         }
                                     });
-                                    cswPrivate.state.dispenseType = dispenseTypeSelect.val();
                                 }
                             };
 
