@@ -209,7 +209,7 @@ namespace ChemSW.Nbt.ObjClasses
                                 break;
                         }
 
-                        ButtonData.Data["titleText"] = OCP.PropName + " [" + Barcode.Barcode + "]";
+                        ButtonData.Data["titleText"] = OCP.PropName + " " + Barcode.Barcode;
                         ButtonData.Data["requestaction"] = OCP.PropName;
                         ButtonData.Data["requestItemProps"] = RequestAct.getRequestItemAddProps( NodeAsRequestItem );
                         ButtonData.Data["requestItemNodeTypeId"] = RequestAct.RequestItemNt.NodeTypeId;
@@ -550,7 +550,7 @@ namespace ChemSW.Nbt.ObjClasses
                     CswNbtSdInventoryLevelMgr Mgr = new CswNbtSdInventoryLevelMgr( _CswNbtResources );
                     CswNbtNodePropWrapper LocationWrapper = Node.Properties[LocationPropertyName];
                     string PrevLocationId = LocationWrapper.GetOriginalPropRowValue( ( (CswNbtFieldTypeRuleLocation) _CswNbtResources.MetaData.getFieldTypeRule( LocationWrapper.getFieldType().FieldType ) ).NodeIdSubField.Column );
-                    string Reason = "Container  [" + Barcode.Barcode + "] moved to new location: " + Location.CachedNodeName;
+                    string Reason = "Container " + Barcode.Barcode + " moved to new location: " + Location.CachedNodeName;
                     if( false == string.IsNullOrEmpty( PrevLocationId ) )
                     {
                         CswPrimaryKey PrevLocationPk = new CswPrimaryKey();
@@ -640,7 +640,7 @@ namespace ChemSW.Nbt.ObjClasses
             double Diff = Quantity.Quantity - PrevQuantity;
             if( CswConvert.ToInt32( Diff ) != 0 )
             {
-                string Reason = "Container [" + Barcode.Barcode + "] quantity changed by: " + Diff + " " + Quantity.CachedUnitName;
+                string Reason = "Container " + Barcode.Barcode + " quantity changed by: " + Diff + " " + Quantity.CachedUnitName;
                 if( Disposed.Checked == Tristate.True )
                 {
                     Reason += " on disposal.";
