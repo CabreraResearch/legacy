@@ -620,13 +620,8 @@ namespace ChemSW.Nbt.ServiceDrivers
                     //string RetNodeId = RetNbtNodeKey.NodeId.PrimaryKey.ToString();
                     string RetNodeId = RetNbtNodeKey.NodeId.ToString();
 
-                    ret = new JObject();
-                    ret["result"] = "Succeeded";
                     ret["nodeid"] = RetNodeId;
                     ret["cswnbtnodekey"] = RetNodeKey;
-                    ret["nodename"] = Node.NodeName;
-                    ret["action"] = _determineAction( Node.ObjClass.ObjectClass.ObjectClass );
-
                 } //if( AllSucceeded && null != RetNbtNodeKey )
                 else
                 {
@@ -639,7 +634,6 @@ namespace ChemSW.Nbt.ServiceDrivers
                     {
                         ErrString = "Prop updates failed";
                     }
-                    ret = new JObject();
                     ret["result"] = ErrString;
                 } //else
             } //if( null != NodeType && null != NodeTypeTab )
@@ -650,6 +644,10 @@ namespace ChemSW.Nbt.ServiceDrivers
                 CswNbtActUpdatePropertyValue ActUpdatePropVal = new CswNbtActUpdatePropertyValue( _CswNbtResources );
                 ActUpdatePropVal.UpdateNode( Node, true );
                 Node.postChanges( false );
+                ret["result"] = "Succeeded";                
+                //If we're Adding, NodeName won't be valid until now.
+                ret["nodename"] = Node.NodeName;
+                ret["action"] = _determineAction( Node.ObjClass.ObjectClass.ObjectClass );
             }
 
             return ret;

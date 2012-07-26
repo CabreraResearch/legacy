@@ -127,7 +127,8 @@
                                     relatednodeid: cswPrivate.relatedTo.nodeId,
                                     relatedobjectclassid: cswPrivate.relatedTo.objectClassId,
                                     onAddNode: function(nodeid, nodekey, nodename) {
-                                        cswPublic.option({ value: nodeid, display: nodename, selected: true });
+                                        cswPublic.option({ value: nodeid, display: nodename });
+                                        cswPublic.val(nodeid);
                                     }
                                 });
                             };
