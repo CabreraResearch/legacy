@@ -122,19 +122,19 @@
                                 'nodetypeid': nodetypeToAdd,
                                 'onAddNode': o.onReload
                             });
-                        }
+                        };
 
-                        var getNodeTypeOptions = function () {
+                        var getNodeTypeOptions = function() {
                             var blankText = '[Select One]';
                             selectedNodeType = table.cell(1, cellCol)
                                 .nodeTypeSelect({
                                     objectClassId: objectClassId,
-                                    onSelect: function (data, nodeTypeCount) {
+                                    onSelect: function(data, nodeTypeCount) {
                                         if (blankText !== selectedNodeType.val()) {
                                             openAddNodeDialog(selectedNodeType.val());
                                         }
                                     },
-                                    onSuccess: function (data, nodeTypeCount, lastNodeTypeId) {
+                                    onSuccess: function(data, nodeTypeCount, lastNodeTypeId) {
                                         if (Csw.number(nodeTypeCount) > 1) {
                                             selectedNodeType.show();
                                             addImage.hide();
@@ -148,13 +148,14 @@
                                 })
                                 .hide();
                             cellCol++;
-                        }
+                        };
 
                         var makeAddImage = function (nodeTypeCount, lastNodeTypeId) {
                             addImage = table.cell(1, cellCol).div()
-                                .imageButton({
-                                    ButtonType: Csw.enums.imageButton_ButtonType.Add,
-                                    AlternateText: "Add New " + o.propData.name,
+                                .buttonExt({
+                                    icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.add),
+                                    size: 'small',
+                                    tooltip: { title: 'Add New " + o.propData.name' },
                                     onClick: function () {
                                         if (false === Csw.isNullOrEmpty(nodeTypeId)) {
                                             openAddNodeDialog(nodeTypeId);
