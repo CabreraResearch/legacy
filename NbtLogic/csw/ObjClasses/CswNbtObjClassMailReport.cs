@@ -1,10 +1,10 @@
 using System;
 using ChemSW.Core;
 using ChemSW.Exceptions;
+using ChemSW.Nbt.Batch;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropertySets;
 using ChemSW.Nbt.PropTypes;
-using ChemSW.Nbt.Sched;
 
 enum MailRptFormatOptions { Link, CSV };
 
@@ -163,19 +163,14 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override bool onButtonClick( NbtButtonData ButtonData )
         {
-
-
-
             CswNbtMetaDataObjectClassProp OCP = ButtonData.NodeTypeProp.getObjectClassProp();
             if( null != ButtonData.NodeTypeProp && null != OCP )
             {
                 if( RunNowPropertyName == OCP.PropName )
                 {
-                    CswScheduleLogicNbtGenEmailRpt MailReportProcessor = new CswScheduleLogicNbtGenEmailRpt();
-                    MailReportProcessor.init( _CswNbtResources, null );
-                    string statusMessage = MailReportProcessor.processMailReport( this, new CswNbtMailReportStatus() );
-                    this.RunStatus.AddComment( statusMessage );
-                    Node.postChanges( false );
+                    //Case 26900 - run mail report as a batch op so as not to disrupt scheduled processes
+                    CswNbtBatchOpMailReport op = new CswNbtBatchOpMailReport( _CswNbtResources );
+                    CswNbtObjClassBatchOp BatchNode = op.makeBatchOp( this.NodeId );
                     ButtonData.Action = NbtButtonAction.refresh;
                 }
             }

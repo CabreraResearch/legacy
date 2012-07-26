@@ -114,6 +114,10 @@ namespace ChemSW.Nbt.Batch
                 {
                     op = new CswNbtBatchOpMultiDelete( CswNbtResources );
                 }
+                else if( OpName == NbtBatchOpName.MailReport )
+                {
+                    op = new CswNbtBatchOpMailReport( CswNbtResources );
+                }
                 // New batch ops go here
                 // else if( OpName == NbtBatchOpName.NEWNAME ) 
                 if( null != op )
