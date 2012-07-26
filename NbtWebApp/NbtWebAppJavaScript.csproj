@@ -181,7 +181,6 @@
     <Content Include="js\nbt\fieldtypes\_CswFieldTypeFactory.js" />
     <Content Include="js\nbt\nodes\CswNodeGrid.js" />
     <Content Include="js\nbt\nodes\CswNodePreview.js" />
-    <Content Include="js\nbt\nodes\CswNodeSelect.js" />
     <Content Include="js\nbt\nodes\CswNodeTable.js" />
     <Content Include="js\nbt\nodes\CswNodeTree.js" />
     <Content Include="js\nbt\pagecmp\CswDashboard.js" />
@@ -202,6 +201,7 @@
     <Content Include="js\nbt\view\CswViewContentTree.js" />
     <Content Include="js\nbt\view\CswViewEditor.js" />
     <Content Include="js\nbt\view\CswViewPropFilter.js" />
+    <Content Include="MainHead.html" />
     <Content Include="Report.html" />
     <Content Include="js\ChemSW.js" />
     <Content Include="js\common\composites\csw.thingrid.js" />
@@ -283,14 +283,7 @@
   <ItemGroup>
     <Service Include="{C0C07587-41A7-46C8-8FBD-3F9C8EBE2DDC}" />
   </ItemGroup>
-  <ItemGroup>
-    <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Newtonsoft.Json.4.5.7\lib\net40\Newtonsoft.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Web" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSHARP.Targets" />
   <ProjectExtensions>
     <VisualStudio AllowExistingFolder="true" />
