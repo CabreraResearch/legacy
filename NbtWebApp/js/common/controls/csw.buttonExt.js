@@ -29,7 +29,7 @@
                 cssclass: '',
                 hasText: true,
                 disableOnClick: true,
-                path: '/NbtWebApp/Images/newicons/18/',
+                path: '/NbtWebApp/Images/newicons/',
                 icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.none),
                 onClick: null,
                 isEnabled: true,
@@ -91,7 +91,7 @@
                     cswPublic.button.click(func);
                 } else {
                     if (false == cswPublic.isDisabled()) {
-                        cswPublic.button.fireEvent('click');
+                        cswPublic.button.fireHandler('click');
                     }
                 }
                 return cswPublic;
@@ -101,6 +101,18 @@
                 if (options) {
                     $.extend(true, cswPrivate, options);
                 }
+                
+                switch(Csw.string(cswPrivate.size,'medium').toLowerCase()) {
+                    case 'medium':
+                        cswPrivate.size = 'medium';
+                        cswPrivate.path += '18/';
+                        break;
+                    case 'small':
+                        cswPrivate.size = 'small';
+                        cswPrivate.path += '16/';
+                        break;
+                }
+
                 var internalOnClick = Csw.makeDelegate(cswPrivate.onClick);
 
                 var icon = '';

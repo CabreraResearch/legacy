@@ -36,7 +36,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string InventoryGroup = "Inventory Group";
             public const string TotalDispensed = "Total Dispensed";
         }
-
+        
         public sealed class Types
         {
             public const string Dispense = "Dispense";
@@ -411,7 +411,7 @@ namespace ChemSW.Nbt.ObjClasses
                                 break;
                         } //switch( ButtonData.SelectedText )
 
-                        Status.Value = _getNextStatus( ButtonData.SelectedText );
+                        //Status.Value = _getNextStatus( ButtonData.SelectedText );
                         postChanges( true );
                         ButtonData.Data["requestitem"] = ButtonData.Data["requestitem"] ?? new JObject();
                         ButtonData.Data["requestitem"]["requestitemid"] = NodeId.ToString();
@@ -480,15 +480,27 @@ namespace ChemSW.Nbt.ObjClasses
         }
         private void OnRequestByPropChange( CswNbtNodeProp Prop )
         {
+            switch(RequestBy.Value)
+            {
+                case RequestsBy.Size:
+                    Quantity.UnitId = null;
+                    Quantity.Quantity = Double.NaN;
+                    break;
+                case RequestsBy.Quantity:
+                case RequestsBy.Bulk:
+                    Size.RelatedNodeId = null;
+                    Count.Value = Double.NaN;
+                    break;
+            }
             /* Spec W1010: Size and Count apply only to Request */
             Size.setHidden( value: ( RequestBy.Value != RequestsBy.Size ), SaveToDb: true );
             Count.setHidden( value: ( RequestBy.Value != RequestsBy.Size ), SaveToDb: true );
-            Size.setReadOnly( value: ( Status.Value != Statuses.Pending || RequestBy.Value != RequestsBy.Size ), SaveToDb: true );
-            Count.setReadOnly( value: ( Status.Value != Statuses.Pending || RequestBy.Value != RequestsBy.Size ), SaveToDb: true );
+            Size.setReadOnly( value: ( Status.Value != Statuses.Pending && RequestBy.Value != RequestsBy.Size ), SaveToDb: true );
+            Count.setReadOnly( value: ( Status.Value != Statuses.Pending && RequestBy.Value != RequestsBy.Size ), SaveToDb: true );
 
             /* Spec W1010: Quantity applies only to Request by Bulk and Dispense */
             Quantity.setHidden( value: ( RequestBy.Value == RequestsBy.Size ), SaveToDb: true );
-            Quantity.setReadOnly( value: ( Status.Value != Statuses.Pending || RequestBy.Value == RequestsBy.Size ), SaveToDb: true );
+            Quantity.setReadOnly( value: ( Status.Value != Statuses.Pending && RequestBy.Value == RequestsBy.Size ), SaveToDb: true );
         }
 
         public CswNbtNodePropQuantity Quantity
@@ -632,6 +644,10 @@ namespace ChemSW.Nbt.ObjClasses
             if( TotalDispensed.Quantity >= Quantity.Quantity )
             {
                 Fulfill.State = FulfillMenu.Complete;
+            }
+            else if( Type.Value == Types.Request || Type.Value == Types.Dispense )
+            {
+                Fulfill.State = FulfillMenu.Dispense;
             }
         }
 

@@ -97,7 +97,7 @@
                     storeopts.proxy.type = 'pagingmemory';
                 }
 
-                return Ext.create('Ext.data.Store', storeopts);
+                return window.Ext.create('Ext.data.Store', storeopts);
             }); // makeStore()
 
             
@@ -206,16 +206,18 @@
                     }];
                     
                     var rows = cswPrivate.data.items.length;
-                    if(rows === 0){
-                        gridopts.height = cswPrivate.calculateHeight(1);
-                    } else if( rows <= cswPrivate.pageSize) {
-                        gridopts.height = cswPrivate.calculateHeight(rows);
-                    } else {
-                        gridopts.height = cswPrivate.calculateHeight(cswPrivate.pageSize);
+                    if (false === Csw.isNumber(cswPrivate.height) || cswPrivate.height <= 0 || Csw.isNullOrEmpty(cswPrivate.height)) {
+                        if (rows === 0) {
+                            gridopts.height = cswPrivate.calculateHeight(1);
+                        } else if (rows <= cswPrivate.pageSize) {
+                            gridopts.height = cswPrivate.calculateHeight(rows);
+                        } else {
+                            gridopts.height = cswPrivate.calculateHeight(cswPrivate.pageSize);
+                        }
                     }
                 }
   
-                var grid = Ext.create('Ext.grid.Panel', gridopts);
+                var grid = window.Ext.create('Ext.grid.Panel', gridopts);
 
                 setTimeout(function() {   // this delay solves case 26792
                     // This should make the grid fill the parent container, but doesn't seem to work
@@ -228,7 +230,7 @@
                         };
                         if(cswPrivate.showCheckboxes && cswPrivate.showActionColumn)
                         {
-                            cswPrivate.editAllButton = Ext.create('Ext.button.Button', {
+                            cswPrivate.editAllButton = window.Ext.create('Ext.button.Button', {
                                                                                         xtype: 'button',
                                                                                         text: 'Edit Selected',
                                                                                         icon: 'Images/newicons/16/pencil.png',
@@ -241,7 +243,7 @@
                                                                                             cswPrivate.onEdit(rows);
                                                                                         } // edit handler
                                                                                     });
-                            cswPrivate.deleteAllButton = Ext.create('Ext.button.Button', {
+                            cswPrivate.deleteAllButton = window.Ext.create('Ext.button.Button', {
                                                                                         xtype: 'button',
                                                                                         text: 'Delete Selected',
                                                                                         icon: 'Images/newicons/16/trash.png',
@@ -260,7 +262,7 @@
                                 items: [cswPrivate.editAllButton, cswPrivate.deleteAllButton]
                             }]; // panelopts.dockedItems
                         } // if(cswPrivate.showCheckboxes && cswPrivate.showActionColumn)
-                        cswPrivate.panel = Ext.create('Ext.panel.Panel', panelopts);
+                        cswPrivate.panel = window.Ext.create('Ext.panel.Panel', panelopts);
                     } // if(false === Csw.isNullOrEmpty(renderTo))
                 }, 200); // setTimeout
 
@@ -344,8 +346,8 @@
                 var printStore = cswPrivate.makeStore(cswPrivate.ID + '_printstore', false);
                 var printGrid = cswPrivate.makeGrid('', printStore);
 
-                Ext.ux.grid.Printer.stylesheetPath = '/NbtWebApp/js/thirdparty/extJS-4.1.0/ux/grid/gridPrinterCss/print.css';
-                Ext.ux.grid.Printer.print(printGrid);
+                window.Ext.ux.grid.Printer.stylesheetPath = '/NbtWebApp/js/thirdparty/extJS-4.1.0/ux/grid/gridPrinterCss/print.css';
+                window.Ext.ux.grid.Printer.print(printGrid);
             });
 
             cswPublic.toggleShowCheckboxes = Csw.method(function (val) {

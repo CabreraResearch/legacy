@@ -88,10 +88,10 @@
                 status: auth,
                 success: function () {
                     Csw.tryExec(o.success, result);
-                    if (true === Csw.displayAllExceptions) {
-                        Csw.debug.profileEnd(url);
-                        Csw.debug.timeEnd(url);
-                    }
+                    //if (true === Csw.displayAllExceptions) {
+                    //    Csw.debug.profileEnd(url);
+                    //    Csw.debug.timeEnd(url);
+                    //}
                 },
                 failure: o.onloginfail,
                 usernodeid: result.nodeid,
@@ -106,7 +106,7 @@
         Csw.publish(Csw.enums.events.ajax.ajaxStop, o.watchGlobal, xmlHttpRequest, textStatus);
         Csw.debug.error('Webservice Request (' + o.url + ') Failed: ' + textStatus);
         Csw.tryExec(o.error, textStatus);
-        Csw.debug.timeEnd(o.url);
+        //Csw.debug.timeEnd(o.url);
     });
 
     cswPrivate.jsonPost = function (options) {
@@ -139,10 +139,10 @@
         }
         var url = Csw.string(o.url, o.urlPrefix + o.urlMethod);
         o.startTime = new Date();
-        if (true === Csw.displayAllExceptions) {
-            Csw.debug.profile(url);
-            Csw.debug.time(url);
-        }
+        //if (true === Csw.displayAllExceptions) {
+        //    Csw.debug.profile(url);
+        //    Csw.debug.time(url);
+        //}
 
         Csw.publish(Csw.enums.events.ajax.ajaxStart, o.watchGlobal);
         $.ajax({
@@ -150,6 +150,9 @@
             async: o.async,
             urlPrefix: Csw.enums.ajaxUrlPrefix,
             url: url,
+            xhrFields: {
+                withCredentials: true
+            },
             dataType: 'json',
             contentType: 'application/json; charset=utf-8',
             data: JSON.stringify(o.data),
@@ -193,7 +196,7 @@
             $.extend(o, options);
         }
         var url = Csw.string(o.url, o.urlPrefix + o.urlMethod);
-        Csw.debug.time(url);
+        //Csw.debug.time(url);
         Csw.publish(Csw.enums.events.ajax.ajaxStart, o.watchGlobal);
 
         $.ajax({

@@ -471,6 +471,54 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Object class specific properties
 
+        private void _updateRequestItems(string RequestItemType)
+        {
+            if( RequestItemType == CswNbtObjClassRequestItem.Types.Move ||
+             RequestItemType == CswNbtObjClassRequestItem.Types.Dispose )
+            {
+                CswNbtView RequestItemView = new CswNbtView( _CswNbtResources );
+                CswNbtMetaDataObjectClass RequestItemOc = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.RequestItemClass );
+                CswNbtViewRelationship RiRelationship = RequestItemView.AddViewRelationship( RequestItemOc, false );
+                CswNbtMetaDataObjectClassProp StatusOcp = RequestItemOc.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Status );
+                CswNbtMetaDataObjectClassProp ContainerOcp = RequestItemOc.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Container );
+                CswNbtMetaDataObjectClassProp TypeOcp = RequestItemOc.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Type );
+
+                RequestItemView.AddViewPropertyAndFilter( RiRelationship, StatusOcp, CswNbtObjClassRequestItem.Statuses.Submitted );
+                RequestItemView.AddViewPropertyAndFilter( RiRelationship, ContainerOcp, SubFieldName: CswNbtSubField.SubFieldName.NodeID, Value: NodeId.PrimaryKey.ToString() );
+                RequestItemView.AddViewPropertyAndFilter( RiRelationship, TypeOcp, RequestItemType );
+
+                if(RequestItemType == CswNbtObjClassRequestItem.Types.Move)
+                {
+                    CswNbtMetaDataObjectClassProp LocationOcp = RequestItemOc.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Location );
+                    RequestItemView.AddViewPropertyAndFilter( RiRelationship, LocationOcp, SubFieldName: CswNbtSubField.SubFieldName.NodeID, Value: Location.SelectedNodeId.PrimaryKey.ToString() );
+                }
+
+                ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( RequestItemView, IncludeSystemNodes: false, RequireViewPermissions: false );
+                if( Tree.getChildNodeCount() > 0 )
+                {
+                    for( Int32 N = 0; N < Tree.getChildNodeCount(); N += 1 )
+                    {
+                        Tree.goToNthChild( N );
+                        CswNbtObjClassRequestItem NodeAsRequestItem = Tree.getNodeForCurrentPosition();
+                        if( null != NodeAsRequestItem )
+                        {
+                            switch( RequestItemType )
+                            {
+                                case CswNbtObjClassRequestItem.Types.Move:
+                                    NodeAsRequestItem.Status.Value = CswNbtObjClassRequestItem.Statuses.Moved;
+                                    break;
+                                case CswNbtObjClassRequestItem.Types.Dispose:
+                                    NodeAsRequestItem.Status.Value = CswNbtObjClassRequestItem.Statuses.Disposed;
+                                    break;
+                            }
+                            NodeAsRequestItem.postChanges( false );
+                        }
+                        Tree.goToParentNode();
+                    }
+                }
+            }
+        }
+
         public CswNbtNodePropBarcode Barcode { get { return ( _CswNbtNode.Properties[BarcodePropertyName] ); } }
         public CswNbtNodePropLocation Location { get { return ( _CswNbtNode.Properties[LocationPropertyName] ); } }
         private void OnLocationPropChange( CswNbtNodeProp Prop )
@@ -517,6 +565,7 @@ namespace ChemSW.Nbt.ObjClasses
                         Mgr.addToCurrentQuantity( Quantity.Quantity, Quantity.UnitId, Reason, Material.RelatedNodeId, Location.SelectedNodeId );
                     }
                 }
+                _updateRequestItems( CswNbtObjClassRequestItem.Types.Move );
             }
         }
         public CswNbtNodePropDateTime LocationVerified { get { return ( _CswNbtNode.Properties[LocationVerifiedPropertyName] ); } }
@@ -572,6 +621,7 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 Dispose.setHidden( value: true, SaveToDb: false );
                 Undispose.setHidden( value: ( false == _CswNbtResources.Permit.canContainer( NodeId, CswNbtPermit.NodeTypePermission.Edit, _CswNbtResources.Actions[CswNbtActionName.UndisposeContainer] ) ), SaveToDb: false );
+                _updateRequestItems( CswNbtObjClassRequestItem.Types.Dispose );
             }
             _updateRequestMenu();
         }

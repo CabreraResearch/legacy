@@ -30,9 +30,24 @@
                     containerMinimum: 1,
                     action: 'Receive',
                     selectedSizeId: null,
-                    relatedNodeId: null
+                    relatedNodeId: null,
+                    rows: [],
+                    config: {
+                        barcodeName: 'Barcodes (Optional)',
+                        quantityName: 'Quantity *',
+                        numberName: 'No. *'
+                    }
                 };
-                if (options) $.extend(cswPrivate, options);
+                if (options) {
+                    $.extend(cswPrivate, options);
+                }
+                cswPrivate.header = [cswPrivate.config.numberName, cswPrivate.config.quantityName, cswPrivate.config.barcodeName];
+                if(cswPrivate.rows.length === 0) {
+                    cswPrivate.rows.push(cswPrivate.header);
+                } else {
+                    var firstRow = cswPrivate.rows.splice(0, 1, cswPrivate.header);
+                    cswPrivate.rows.push(firstRow);
+                }
 
                 cswPrivate.getQuantity = function () {
                     var ret = false;
@@ -71,38 +86,17 @@
                     if (Csw.isNullOrEmpty(cswPrivate.quantity)) {
                         cswPrivate.getQuantity();
                     }
-                    cswParent.span({ text: 'Enter the Amounts to ' + cswPrivate.action + ':' });
-                    cswParent.br({ number: 2 });
 
-                    cswParent.br();
-                    cswPublic.amountForm = cswParent.form();
-                    cswPrivate.amountsTable = cswPublic.amountForm.table();
                     cswPrivate.count = 0;
-                    cswPublic.amountForm.br({ number: 2 });
-                    cswPublic.thinGrid = cswPublic.amountForm.thinGrid({
-                        linkText: '',
-                        hasHeader: true, 
-                        rows: [['#', 'Quantity', 'Unit', 'Barcode(s)']],
-                        allowDelete: true,
-                        onDelete: function (rowid) {
-                            Csw.debug.assert(false === Csw.isNullOrEmpty(rowid), 'Rowid is null.');
-                            var reducedQuantities = cswPublic.quantities.filter(function (quantity, index, array) { return quantity.rowid !== rowid; });
-                            Csw.debug.assert(reducedQuantities !== cswPublic.quantities, 'Rowid is null.');
-                            cswPublic.quantities = reducedQuantities;
-                            if(cswPublic.quantities.length < 1) {
-                                cswPublic.thinGrid.hide();
-                            }
-                            Csw.tryExec(cswPrivate.onDelete, cswPublic.quantities.length);
-                        }
-                    });
-                    cswPublic.thinGrid.hide();
-                } ());
 
-                cswPrivate.makeAddAmount = function () {
-                    'use strict';
-                    cswPrivate.amountsTable.empty();
+                    cswParent.span({ text: 'Enter the Amounts to ' + cswPrivate.action + ':' });
+                    cswParent.br({ number: 1 });
 
-                    var thisAmount = {
+                    //This object will be mutated on each call to makeAddRow below, but the reference to the object is constant--so we can pass it to onAdd.
+                    //There is a fragility here in that if you were to pass newAmount to an external function, the values of the properties of the object would be unknowable
+                    //This is a traditional MVC problem which would easily by templating libraries (Spine, Ember, Backbone, Knockout, etc);
+                    //however, as these two modules are so tightly coupled, the fragility should be an acceptable risk for now.
+                    var newAmount = {
                         rowid: 1,
                         containerNo: 1,
                         quantity: '',
@@ -110,87 +104,116 @@
                         unitid: '',
                         barcodes: ''
                     };
-                    
-                    //# of containers
-                    cswPublic.countControl = cswPrivate.amountsTable.cell(1, 1).numberTextBox({
-                        ID: Csw.tryExec(cswPrivate.makeId, 'containerCount'),
-                        labelText: 'Number of Containers: ',
-                        useWide: true,
-                        value: thisAmount.containerNo,
-                        MinValue: cswPrivate.containerMinimum,
-                        MaxValue: cswPrivate.containerlimit,
-                        ceilingVal: cswPrivate.containerlimit,
-                        Precision: 0,
-                        Required: true,
-                        onChange: function (value) {
-                            thisAmount.containerNo = value;
-                        }
-                    });
 
-                    //Quantity
-                    cswPrivate.quantity.labelText = 'Container Quantity: ';
-                    cswPrivate.quantity.useWide = true;
-                    cswPrivate.quantity.ID = Csw.tryExec(cswPrivate.makeId, 'containerQuantity');
-                    cswPublic.qtyControl = cswPrivate.amountsTable.cell(2, 1).quantity(cswPrivate.quantity);
+                    var extendNewAmount = function (object) {
+                        //To mitigate the risk of unknowingly passing the outer scope thisAmount, we're explicitly mapping the values down
+                        $.extend(newAmount, object);
+                    };
 
-                    //Barcodes
-                    cswPublic.barcodeControl = cswPrivate.amountsTable.cell(3, 1).textArea({
-                        ID: Csw.tryExec(cswPrivate.makeId, 'containerBarcodes'),
-                        labelText: 'Barcodes (Optional): ',
-                        useWide: true,
-                        onChange: function (value) {
-                            thisAmount.barcodes = value;
-                        }
-                    });
+                    var extractNewAmount = function(object) {
+                        var ret = $.extend(true, {}, object);
+                        return ret;
+                    };
 
-                    //Add
-                    cswPrivate.amountsTable.cell(4, 1).buttonExt({
-                        icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.add),
-                        ID: Csw.tryExec(cswPrivate.makeId, 'addBtn'),
-                        enabledText: 'Add',
-                        disableOnClick: false,
-                        onClick: function () {
-
-                            var newCount = cswPrivate.count + Csw.number(thisAmount.containerNo);
+                    cswPublic.amountForm = cswParent.form();
+                    cswPublic.thinGrid = cswPublic.amountForm.thinGrid({
+                        linkText: '',
+                        hasHeader: true, 
+                        rows: cswPrivate.rows,
+                        allowDelete: true,
+                        allowAdd: true,
+                        makeAddRow: function (cswCell, columnName, rowid) {
+                            'use strict';
+                            var thisAmount = {
+                                rowid: rowid,
+                                containerNo: 1,
+                                quantity: '',
+                                unit: '',
+                                unitid: '',
+                                barcodes: ''
+                            };
+                            
+                            switch (columnName) {
+                                case cswPrivate.config.numberName:
+                                    cswPublic.countControl = cswCell.numberTextBox({
+                                        ID: Csw.tryExec(cswPrivate.makeId, 'containerCount'),
+                                        value: thisAmount.containerNo,
+                                        MinValue: cswPrivate.containerMinimum,
+                                        MaxValue: cswPrivate.containerlimit,
+                                        ceilingVal: cswPrivate.containerlimit,
+                                        Precision: 0,
+                                        Required: true,
+                                        onChange: function (value) {
+                                            thisAmount.containerNo = value;
+                                            extendNewAmount(thisAmount);
+                                        }
+                                    });
+                                    break;
+                                case cswPrivate.config.quantityName:
+                                    cswPrivate.quantity.ID = Csw.tryExec(cswPrivate.makeId, 'containerQuantity');
+                                    cswPrivate.quantity.qtyWidth = '40px';
+                                    cswPublic.qtyControl = cswCell.quantity(cswPrivate.quantity);
+                                    break;
+                                case cswPrivate.config.barcodeName:
+                                    cswPublic.barcodeControl = cswCell.input({
+                                        ID: Csw.tryExec(cswPrivate.makeId, 'containerBarcodes'),
+                                        onChange: function (value) {
+                                            thisAmount.barcodes = value;
+                                            extendNewAmount(thisAmount);
+                                        }
+                                    });
+                                    break;
+                            }
+                            extendNewAmount(thisAmount);
+                        },
+                        onAdd: function () {
+                            var newCount = cswPrivate.count + Csw.number(newAmount.containerNo);
                             if (newCount <= cswPrivate.containerlimit) {
                                 cswPrivate.count = newCount;
-                                
-                                var parseBarcodes = function (anArray) {
-                                    if (anArray.length > thisAmount.containerNo) {
-                                        anArray.splice(0, anArray.length - thisAmount.containerNo);
+
+                                var parseBarcodes = function(anArray) {
+                                    if (anArray.length > newAmount.containerNo) {
+                                        anArray.splice(0, anArray.length - newAmount.containerNo);
                                     }
-                                    thisAmount.barcodes = barcodeToParse.join(',');
+                                    newAmount.barcodes = barcodeToParse.join(',');
                                 };
-                                var barcodeToParse = Csw.delimitedString(thisAmount.barcodes).array;
+                                var barcodeToParse = Csw.delimitedString(newAmount.barcodes).array;
                                 parseBarcodes(barcodeToParse);
 
                                 if (cswPublic.amountForm.isFormValid()) {
-                                    if (cswPrivate.count > 0) {
-                                        cswPublic.thinGrid.show();
-                                    }
-                                    thisAmount.quantity = cswPublic.qtyControl.quantityValue;
-                                    thisAmount.unit = cswPublic.qtyControl.unitText;
-                                    thisAmount.unitid = cswPublic.qtyControl.unitVal;
-                                    thisAmount.rowid = cswPublic.thinGrid.addRows([thisAmount.containerNo, thisAmount.quantity, thisAmount.unit, thisAmount.barcodes]);
-                                    cswPublic.quantities.push(thisAmount);
-                                    Csw.tryExec(cswPrivate.onAdd);
-                                    cswPrivate.makeAddAmount();
+                                    newAmount.quantity = cswPublic.qtyControl.quantityValue;
+                                    newAmount.unit = cswPublic.qtyControl.unitText;
+                                    newAmount.unitid = cswPublic.qtyControl.unitVal;
+                                    newAmount.rowid = cswPublic.thinGrid.addRows([newAmount.containerNo, newAmount.quantity + ' ' + newAmount.unit, newAmount.barcodes]);
+                                    cswPublic.quantities.push(extractNewAmount(newAmount));
                                 }
                             } else {
                                 $.CswDialog('AlertDialog', 'The limit for containers created at receipt is [' + cswPrivate.containerlimit + ']. You have already added [' + cswPrivate.count + '] containers.', 'Cannot add [' + newCount + '] containers.');
                             }
+                            Csw.tryExec(cswPrivate.onAdd, (cswPrivate.count > 0));
+                        },
+                        onDelete: function (rowid) {
+                            Csw.debug.assert(false === Csw.isNullOrEmpty(rowid), 'Rowid is null.');
+                            var quantityToRemove = cswPublic.quantities.filter(function (quantity, index, array) { return quantity.rowid === rowid; });
+                            if (false === Csw.isNullOrEmpty(quantityToRemove, true)) {
+                                cswPrivate.count -= Csw.number(quantityToRemove[0].containerNo,0);
+                                var reducedQuantities = cswPublic.quantities.filter(function(quantity, index, array) { return quantity.rowid !== rowid; });
+                                Csw.debug.assert(reducedQuantities !== cswPublic.quantities, 'Rowid is null.');
+                                cswPublic.quantities = reducedQuantities;
+                                Csw.tryExec(cswPrivate.onDelete, (cswPrivate.count > 0));
+                            }
                         }
-                    });
-                };
+                        });
+                    } ());
+                
+                    (function _post() {
+                
+                    } ());
 
-                (function _post() {
-                    cswPrivate.makeAddAmount();
-                } ());
+                });
+
+                return cswPublic;
 
             });
-
-            return cswPublic;
-
-        });
-} ());
+        } ());
 

@@ -22,6 +22,7 @@
                 onCancel: null,
                 doNextOnInit: true,
                 stepDivs: [],
+                stepRootSpans: [],
                 stepDivLinks: [],
                 currentStepNo: 1
             };
@@ -48,7 +49,7 @@
                         }
                     });
 
-                    Csw.each(cswPrivate.stepDivs, function (val, key) {
+                    Csw.each(cswPrivate.stepRootSpans, function (val, key) {
                         if (val) {
                             if (key !== stepno) {
                                 val.hide();
@@ -103,12 +104,12 @@
                         text: s + '.&nbsp;' + steptitle
                     }).propNonDom({ stepno: s });
 
-                    cswPrivate.stepDivs[s] = stepsCell.div({ cssclass: 'CswWizard_StepDiv', suffix: s });
-
-                    cswPrivate.stepDivs[s].propNonDom({ stepno: s })
-                        .span({ cssclass: 'CswWizard_StepTitle', text: steptitle })
-                        .br({ number: 2 })
-                        .div({ suffix: s + '_content' });
+                    cswPrivate.stepRootSpans[s] = stepsCell.div({ cssclass: 'CswWizard_StepDiv', suffix: s });
+                        
+                    cswPrivate.stepRootSpans[s].propNonDom({ stepno: s })
+                        .span({ cssclass: 'CswWizard_StepTitle', text: steptitle });
+                    cswPrivate.stepRootSpans[s].br({ number: 2 });
+                    cswPrivate.stepDivs[s] = cswPrivate.stepRootSpans[s].div({ suffix: s + '_content' });
                 }
 
                 cswPrivate.btnGroup = cswPublic.table.cell(3, 1).buttonGroup({

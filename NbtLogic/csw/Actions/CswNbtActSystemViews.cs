@@ -231,19 +231,23 @@ namespace ChemSW.Nbt.Actions
                 CswNbtMetaDataObjectClass RequestItemOc = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.RequestItemClass );
                 CswNbtViewRelationship RequestItemVr = Ret.AddViewRelationship( RequestItemOc, true );
 
-                CswNbtMetaDataObjectClassProp NumberOcp = RequestItemOc.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Number.ToString() );
-                CswNbtMetaDataObjectClassProp TypeOcp = RequestItemOc.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Type.ToString() );
-                CswNbtMetaDataObjectClassProp QuantityOcp = RequestItemOc.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Quantity.ToString() );
-                CswNbtMetaDataObjectClassProp CountOcp = RequestItemOc.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Count.ToString() );
-                CswNbtMetaDataObjectClassProp SizeOcp = RequestItemOc.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Size.ToString() );
-                CswNbtMetaDataObjectClassProp OrderNoOcp = RequestItemOc.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.ExternalOrderNumber.ToString() );
-
+                CswNbtMetaDataObjectClassProp NumberOcp = RequestItemOc.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Number );
+                CswNbtMetaDataObjectClassProp TypeOcp = RequestItemOc.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Type );
+                CswNbtMetaDataObjectClassProp QuantityOcp = RequestItemOc.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Quantity );
+                CswNbtMetaDataObjectClassProp CountOcp = RequestItemOc.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Count );
+                CswNbtMetaDataObjectClassProp SizeOcp = RequestItemOc.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Size );
+                CswNbtMetaDataObjectClassProp MaterialOcp = RequestItemOc.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Material );
+                CswNbtMetaDataObjectClassProp ContainerOcp = RequestItemOc.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Container );
+                CswNbtMetaDataObjectClassProp LocationOcp = RequestItemOc.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Location );
+                
                 Ret.AddViewProperty( RequestItemVr, NumberOcp );
                 Ret.AddViewProperty( RequestItemVr, TypeOcp );
                 Ret.AddViewProperty( RequestItemVr, QuantityOcp );
                 Ret.AddViewProperty( RequestItemVr, CountOcp );
                 Ret.AddViewProperty( RequestItemVr, SizeOcp );
-                Ret.AddViewProperty( RequestItemVr, OrderNoOcp );
+                Ret.AddViewProperty( RequestItemVr, MaterialOcp );
+                Ret.AddViewProperty( RequestItemVr, ContainerOcp );
+                Ret.AddViewProperty( RequestItemVr, LocationOcp );
 
                 Ret.save();
             }
