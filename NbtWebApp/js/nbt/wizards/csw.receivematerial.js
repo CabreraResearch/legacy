@@ -20,14 +20,15 @@
                     cancel: 'cancel'
                 },
                 divStep1: '', divStep2: '', divStep3: '',
-                materialId: null,
-                materialNodeTypeId: '',
-                containerNodeTypeId: '',
-                containerAddLayout: {},
-                tradeName: '',
-                quantities: [],
-                sizesViewId: '',
-                selectedSizeId: '',
+                state: {
+                    materialId: null,
+                    materialNodeTypeId: '',
+                    containerNodeTypeId: '',
+                    containerAddLayout: {},
+                    tradeName: '',
+                    quantities: [],
+                    selectedSizeId: ''
+                },
                 stepOneComplete: false,
                 stepTwoComplete: false,
                 stepThreeComplete: false,
@@ -50,6 +51,31 @@
 
             };
 
+            cswPrivate.validateState = function () {
+                var state;
+                if (Csw.isNullOrEmpty(cswPrivate.state.materialId)) {
+                    state = cswPrivate.getState();
+                    $.extend(cswPrivate.state, state);
+                    if (Csw.isNullOrEmpty(cswPrivate.state.materialId)) {
+                        Csw.error.throwException(Csw.error.exception('Cannot create a Material Receiving wizard without a Material ID.', '', 'csw.receivematerial.js', 60));
+                    }
+                }
+                cswPrivate.setState();
+            };
+
+            cswPrivate.getState = function () {
+                var ret = Csw.clientDb.getItem(cswPrivate.ID + '_' + cswReceiveMaterialWizardState);
+                return ret;
+            };
+
+            cswPrivate.setState = function () {
+                Csw.clientDb.setItem(cswPrivate.ID + '_' + cswReceiveMaterialWizardState, cswPrivate.state);
+            };
+
+            cswPrivate.clearState = function () {
+                Csw.clientDb.removeItem(cswPrivate.ID + '_' + cswReceiveMaterialWizardState);
+            };
+
             //ctor preInit
             (function _pre() {
                 if (options) {
@@ -59,24 +85,17 @@
                 if (Csw.isNullOrEmpty(cswParent)) {
                     Csw.error.throwException(Csw.error.exception('Cannot create a Material Receiving wizard without a parent.', '', 'csw.receivematerial.js', 57));
                 }
-                if (Csw.isNullOrEmpty(cswPrivate.materialId) || Csw.isNullOrEmpty(cswPrivate.sizesViewId)) {
-                    var _internal = Csw.clientDb.getItem(cswReceiveMaterialWizardState);
-                    $.extend(true, cswPrivate, _internal);
-                    if (Csw.isNullOrEmpty(cswPrivate.materialId)) {
-                        Csw.error.throwException(Csw.error.exception('Cannot create a Material Receiving wizard without a Material ID.', '', 'csw.receivematerial.js', 60));
-                    }
-                }
-                Csw.clientDb.setItem(cswReceiveMaterialWizardState, cswPrivate);
+                cswPrivate.validateState();
 
                 cswPrivate.wizardSteps = {
-                    1: 'Select a Size',
-                    2: 'Define Properties',
-                    3: 'Set Amounts'
+                    1: 'Create Containers',
+                    2: 'Define Properties'
                 };
-                cswPrivate.containerlimit = Csw.number(cswPrivate.containerlimit, 25);
+                cswPrivate.state.containerlimit = Csw.number(cswPrivate.state.containerlimit, 25);
                 cswPrivate.currentStepNo = cswPrivate.startingStep;
 
                 cswPrivate.handleStep = function (newStepNo) {
+                    cswPrivate.setState();
                     if (Csw.contains(cswPrivate, 'makeStep' + newStepNo)) {
                         cswPrivate.lastStepNo = cswPrivate.currentStepNo;
                         cswPrivate.currentStepNo = newStepNo;
@@ -91,34 +110,21 @@
                     Csw.ajax.post({
                         urlMethod: 'getQuantity',
                         async: Csw.bool(async),
-                        data: { SizeId: cswPrivate.selectedSizeId },
+                        data: { SizeId: cswPrivate.state.selectedSizeId },
                         success: function (data) {
-                            cswPrivate.quantity = data;
-                            ret = false === Csw.isNullOrEmpty(cswPrivate.quantity);
+                            cswPrivate.state.quantity = data;
+                            ret = false === Csw.isNullOrEmpty(cswPrivate.state.quantity);
                         }
                     });
                     return ret;
                 };
-
-                cswPrivate.onBeforeNext = function (currentStepNo) {
-                    var isNotStepTwoOrIsValid = currentStepNo !== 2 || cswPrivate.tabsAndProps.isFormValid();
-                    var isStepTwoAndHasQuantity = isNotStepTwoOrIsValid;
-                    if (currentStepNo === 2) {
-                        if (false === Csw.isNullOrEmpty(cswPrivate.quantity)) {
-                            isStepTwoAndHasQuantity = true;
-                        } else {
-                            isStepTwoAndHasQuantity = cswPrivate.getQuantity(false);
-                        }
-                    }
-                    return isNotStepTwoOrIsValid && isStepTwoAndHasQuantity;
-                };
-
+                
                 cswPrivate.finalize = function () {
                     var container = {
-                        materialid: cswPrivate.materialId,
-                        containernodetypeid: cswPrivate.containerNodeTypeId,
+                        materialid: cswPrivate.state.materialId,
+                        containernodetypeid: cswPrivate.state.containerNodeTypeId,
                         quantities: cswPrivate.amountsGrid.quantities,
-                        sizeid: cswPrivate.selectedSizeId,
+                        sizeid: cswPrivate.state.selectedSizeId,
                         props: cswPrivate.tabsAndProps.getPropJson()                        
                     };
                     
@@ -137,14 +143,13 @@
 
                 cswPrivate.wizard = Csw.layouts.wizard(cswParent.div(), {
                     ID: Csw.makeId(cswPrivate.ID, 'wizard'),
-                    Title: 'Receive: ' + cswPrivate.tradeName,
-                    StepCount: 3,
+                    Title: 'Receive: ' + cswPrivate.state.tradeName,
+                    StepCount: 2,
                     Steps: cswPrivate.wizardSteps,
                     StartingStep: cswPrivate.startingStep,
                     FinishText: 'Finish',
                     onNext: cswPrivate.handleStep,
                     onPrevious: cswPrivate.handleStep,
-                    onBeforeNext: cswPrivate.onBeforeNext,
                     onCancel: cswPrivate.onCancel,
                     onFinish: cswPrivate.finalize,
                     doNextOnInit: false
@@ -170,7 +175,7 @@
 
                 return function () {
                     var nextBtnEnabled = function () {
-                        return false === Csw.isNullOrEmpty(cswPrivate.selectedSizeId);
+                        return cswPrivate.state.quantities && cswPrivate.state.quantities.length > 0 && false === Csw.isNullOrEmpty(cswPrivate.state.selectedSizeId);
                     };
 
                     cswPrivate.toggleButton(cswPrivate.buttons.prev, false);
@@ -181,37 +186,74 @@
                     if (false === cswPrivate.stepOneComplete) {
                         cswPrivate.divStep1 = cswPrivate.divStep1 || cswPrivate.wizard.div(1);
                         cswPrivate.divStep1.empty();
-                        cswPrivate.divStep1.span({ text: 'Select a Size to Receive.' });
+
+                        cswPrivate.divStep1.span({ text: 'Select a Size of ' + cswPrivate.state.tradeName + ' to receive. Then define the container quantities to create.' });
                         cswPrivate.divStep1.br({ number: 2 });
-
-                        var sizeGrid = Csw.nbt.wizard.nodeGrid(cswPrivate.divStep1, {
-                            nodeid: cswPrivate.materialId,
-                            relatednodeid: cswPrivate.materialId,
-                            relatednodetypeid: cswPrivate.materialNodeTypeId,
-                            viewid: cswPrivate.sizesViewId,
-                            onSelect: function () {
-                                if (cswPrivate.selectedSizeId !== sizeGrid.getSelectedNodeId()) {
-                                    cswPrivate.reinitSteps(2);
-                                }
-                                cswPrivate.selectedSizeId = sizeGrid.getSelectedNodeId();
-                                cswPrivate.toggleButton(cswPrivate.buttons.next, nextBtnEnabled());
-                                //We are NOT fetching quantity here, because the user could be clicking back and forth between grid rows.
-                            }
-                        });
-
+                        
+                        //If multiple container nodetypes exist
                         cswPrivate.container = {};
                         var containerSelect = Csw.nbt.wizard.nodeTypeSelect(cswPrivate.divStep1, {
                             labelText: 'Select a Container: ',
                             objectClassName: 'ContainerClass',
-                            data: cswPrivate.container,
+                            data: cswPrivate.state.container,
                             onSelect: function () {
-                                if (cswPrivate.containerNodeTypeId !== containerSelect.selectedNodeTypeId) {
+                                if (cswPrivate.state.containerNodeTypeId !== containerSelect.selectedNodeTypeId) {
                                     cswPrivate.reinitSteps(2);
-                                    cswPrivate.containerAddLayout = null;
+                                    cswPrivate.state.containerAddLayout = null;
                                 }
-                                cswPrivate.containerNodeTypeId = containerSelect.selectedNodeTypeId;
+                                cswPrivate.state.containerNodeTypeId = containerSelect.selectedNodeTypeId;
+                            },
+                            onSuccess: function (types, nodetypecount) {
+                                makeSizeSelect();
                             }
                         });
+
+                        var makeSizeSelect = function() {
+
+                            cswPrivate.sizeDiv = cswPrivate.sizeDiv || cswPrivate.divStep1.div();
+                            cswPrivate.sizeDiv.empty();
+                            
+                            cswPrivate.sizeDiv.span({ text: '<b>Pick a Size:</b>' });
+                            cswPrivate.sizeDiv.br({ number: 2 });
+
+                            cswPrivate.sizeSelect = cswPrivate.sizeDiv.nodeSelect({
+                                ID: cswPrivate.wizard.makeStepId('sizes'),
+                                objectClassName: 'SizeClass',
+                                relatedTo: {
+                                    objectClassName: 'MaterialClass',
+                                    nodeId: cswPrivate.state.materialId
+                                },
+                                onSuccess: function () {
+                                    makeAmountsGrid();
+                                },
+                                onSelect: function () {
+                                    makeAmountsGrid();
+                                }
+                            });
+                        };
+
+                        var makeAmountsGrid = function() {
+                            cswPrivate.state.selectedSizeId = cswPrivate.sizeSelect.selectedNodeId();
+                            cswPrivate.getQuantity(false);
+
+                            cswPrivate.amountsDiv = cswPrivate.amountsDiv || cswPrivate.divStep1.div();
+                            cswPrivate.amountsDiv.empty();
+                            
+                            cswPrivate.amountsGrid = Csw.nbt.wizard.amountsGrid(cswPrivate.amountsDiv, {
+                                ID: cswPrivate.wizard.makeStepId('wizardAmountsThinGrid'),
+                                onAdd: function() {
+                                    cswPrivate.toggleButton(cswPrivate.buttons.next, true);
+                                },
+                                onDelete: function(qtyCnt) {
+                                    if (qtyCnt < 1) {
+                                        cswPrivate.toggleButton(cswPrivate.buttons.next, false);
+                                    }
+                                },
+                                quantity: cswPrivate.state.quantity,
+                                containerlimit: cswPrivate.state.containerlimit,
+                                makeId: cswPrivate.wizard.makeStepId
+                            });
+                        };
 
                         cswPrivate.stepOneComplete = true;
                     }
@@ -224,65 +266,28 @@
                 return function () {
                     cswPrivate.toggleButton(cswPrivate.buttons.prev, true);
                     cswPrivate.toggleButton(cswPrivate.buttons.cancel, true);
-                    cswPrivate.toggleButton(cswPrivate.buttons.finish, false);
-                    cswPrivate.toggleButton(cswPrivate.buttons.next, true);
+                    cswPrivate.toggleButton(cswPrivate.buttons.finish, true);
+                    cswPrivate.toggleButton(cswPrivate.buttons.next, false);
 
                     if (false === cswPrivate.stepTwoComplete) {
-                        //We're fetching quantity here so that it will be ready (hopefully) by the time we click next. 
-                        //This does create a race condition, so we need to validate this on onBeforeClickNext
-                        cswPrivate.getQuantity(true);
                         cswPrivate.divStep2 = cswPrivate.divStep2 || cswPrivate.wizard.div(2);
                         cswPrivate.divStep2.empty();
-                        cswPrivate.divStep2.span({ text: 'Configure the new Container: ' });
+
+                        cswPrivate.divStep2.span({ text: '<b>Configure the new Container(s):</b>' });
                         cswPrivate.divStep2.br({ number: 2 });
 
                         cswPrivate.tabsAndProps = Csw.nbt.wizard.addLayout(cswPrivate.divStep2, {
-                            ID: cswPrivate.containerNodeTypeId + 'add_layout',
-                            nodetypeid: cswPrivate.containerNodeTypeId,
-                            propertyData: cswPrivate.containerAddLayout
+                            ID: cswPrivate.state.containerNodeTypeId + 'add_layout',
+                            nodetypeid: cswPrivate.state.containerNodeTypeId,
+                            propertyData: cswPrivate.state.containerAddLayout
                         });
 
                         cswPrivate.stepTwoComplete = true;
                     }
-                };
-            } ());
-
-            //Step 3: Amounts
-            cswPrivate.makeStep3 = (function () {
-
-                return function () {
-                    if (cswPrivate.tabsAndProps.isFormValid()) {
-                        cswPrivate.toggleButton(cswPrivate.buttons.prev, true);
-                        cswPrivate.toggleButton(cswPrivate.buttons.cancel, true);
+                    window.setTimeout(function () {
                         cswPrivate.toggleButton(cswPrivate.buttons.next, false);
-                        cswPrivate.toggleButton(cswPrivate.buttons.finish, cswPrivate.amountsGrid && cswPrivate.amountsGrid.quantities.length > 0);
-                        
-                        if (false === cswPrivate.stepThreeComplete) {
-                            cswPrivate.divStep3 = cswPrivate.divStep3 || cswPrivate.wizard.div(3);
-                            cswPrivate.divStep3.empty();
-
-                            cswPrivate.amountsGrid = Csw.nbt.wizard.amountsGrid(cswPrivate.divStep3, {
-                                ID: cswPrivate.wizard.makeStepId('wizardAmountsThinGrid'),
-                                onAdd: function () {
-                                    cswPrivate.toggleButton(cswPrivate.buttons.finish, true);
-                                },
-                                onDelete: function(qtyCnt) {
-                                    if(qtyCnt < 1) {
-                                        cswPrivate.toggleButton(cswPrivate.buttons.finish, false);
-                                    }    
-                                },
-                                quantity: cswPrivate.quantity,
-                                containerlimit: cswPrivate.containerlimit,
-                                makeId: cswPrivate.wizard.makeStepId
-                            });
-
-                            cswPrivate.stepThreeComplete = true;
-                        }
-                    } else {
-                        cswPrivate.toggleButton(cswPrivate.buttons.prev, true, true);
-                    }
+                    }, 250);
                 };
-
             } ());
 
             (function _post() {

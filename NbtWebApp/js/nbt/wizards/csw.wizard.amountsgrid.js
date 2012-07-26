@@ -89,8 +89,9 @@
 
                     cswPrivate.count = 0;
 
-                    cswParent.span({ text: 'Enter the Amounts to ' + cswPrivate.action + ':' });
-                    cswParent.br({ number: 1 });
+                    cswParent.br({ number: 2 });
+                    cswParent.span({ text: '<b>Enter the Amounts to ' + cswPrivate.action + ':</b>' });
+                    cswParent.br({ number: 2 });
 
                     //This object will be mutated on each call to makeAddRow below, but the reference to the object is constant--so we can pass it to onAdd.
                     //There is a fragility here in that if you were to pass newAmount to an external function, the values of the properties of the object would be unknowable
@@ -145,8 +146,7 @@
                                         Precision: 0,
                                         Required: true,
                                         onChange: function (value) {
-                                            thisAmount.containerNo = value;
-                                            extendNewAmount(thisAmount);
+                                            extendNewAmount({containerNo: value});
                                         }
                                     });
                                     break;
@@ -161,8 +161,7 @@
                                         rows: 1,
                                         cols: 14,
                                         onChange: function (value) {
-                                            thisAmount.barcodes = value;
-                                            extendNewAmount(thisAmount);
+                                            extendNewAmount({barcodes: value});
                                         }
                                     });
                                     break;
