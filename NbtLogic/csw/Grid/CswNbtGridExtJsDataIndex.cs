@@ -17,9 +17,9 @@ namespace ChemSW.Nbt.Grid.ExtJs
     {
         private string _dataIndex;
 
-        public CswNbtGridExtJsDataIndex( string dataIndex )
+        public CswNbtGridExtJsDataIndex( string UniquePrefix, string dataIndex )
         {
-            _dataIndex = dataIndex.Replace( " ", "_" ).ToLower();
+            _dataIndex = ( UniquePrefix + dataIndex ).Replace( " ", "_" ).ToLower();
         }
 
         public override string ToString()
