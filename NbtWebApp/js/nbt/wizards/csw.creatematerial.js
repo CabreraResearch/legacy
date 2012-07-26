@@ -244,6 +244,7 @@
                         });
                         cswPrivate.divStep1.br({ number: 3 });
 
+                        var foundMaterialLabel = null;
                         var removeFoundMaterialLabel = function () {
                             if (false === Csw.isNullOrEmpty(foundMaterialLabel)) {
                                 foundMaterialLabel.remove();
