@@ -136,6 +136,15 @@
                                                 });
 
 
+                        textCell.append('<b>' + nodeObj.nodename + '</b>');
+                        if (Csw.bool(nodeObj.locked)) {
+                            textCell.img({
+                                src: 'Images/quota/lock.gif',
+                                title: 'Quota exceeded'
+                            });
+                        }
+                        textCell.br();
+
                         var thumbtable = thumbnailCell.table({ width: '100%', cellpadding: 0, cellspacing: 0 });
                         var texttable = textCell.table({ width: '100%', cellpadding: 0, cellspacing: 0 });
 
@@ -155,16 +164,16 @@
                         thumbnailCell.br();
 
                         // Name
-                        var maintextcell = texttable.cell(1, 1);
-                        maintextcell.append('<b>' + nodeObj.nodename + '</b>');
+                        //var maintextcell = texttable.cell(1, 1);
+                        //maintextcell.append('<b>' + nodeObj.nodename + '</b>');
 
-                        if (Csw.bool(nodeObj.locked)) {
-                            maintextcell.img({
-                                src: 'Images/quota/lock.gif',
-                                title: 'Quota exceeded'
-                            });
-                        }
-                        maintextcell.br();
+//                        if (Csw.bool(nodeObj.locked)) {
+//                            maintextcell.img({
+//                                src: 'Images/quota/lock.gif',
+//                                title: 'Quota exceeded'
+//                            });
+//                        }
+//                        maintextcell.br();
 
                         var btnTable = btncell.table({
                             ID: Csw.makeId(o.ID, nodeid + '_btntbl'),
@@ -199,8 +208,8 @@
                                 btncol += 1;
 
                             } else {
-                                maintextcell.span({ text: propObj.propname + ': ' + propObj.gestalt });
-                                maintextcell.br();
+                                texttable.cell(propObj.row, propObj.column).span({ text: propObj.propname + ': ' + propObj.gestalt });
+                                //maintextcell.br();
                             }
                         });
 
@@ -265,7 +274,7 @@
                         } // if (nodeObj.allowdelete)
 
                         if (Csw.bool(nodeObj.disabled)) {
-                            maintextcell.addClass('disabled');
+                            textCell.addClass('disabled');
                             btnTable.addClass('disabled');
                         }
 

@@ -155,10 +155,11 @@
                             var makeTypeSelect = function() {
 
                                 if (cswPrivate.dispenseMode !== cswPrivate.dispenseModes.Request) {
-                                    dispenseTypeTable.cell(5, 1).br({ number: 2 });
-                                    dispenseTypeTable.cell(6, 1).span({ text: 'Pick a type of dispense:' });
+                                    cswPrivate.divStep1.br({ number: 2 });
+                                    cswPrivate.divStep1.span({ text: 'Pick a type of dispense:' });
+                                    cswPrivate.divStep1.br({ number: 1 });
 
-                                    dispenseTypeSelect = dispenseTypeTable.cell(7, 1).select({
+                                    dispenseTypeSelect = cswPrivate.divStep1.select({
                                         ID: cswPrivate.makeStepId('setDispenseTypePicklist'),
                                         cssclass: 'selectinput',
                                         values: cswPrivate.dispenseTypes,
@@ -188,7 +189,7 @@
                                             Csw.error.throwException(Csw.error.exception('Could not get a grid of containers for this request item.', '', 'csw.dispensecontainer.js', 141));
                                         }
 
-                                        cswPrivate.containerGrid = Csw.nbt.wizard.nodeGrid(dispenseTypeTable.cell(5, 1), {
+                                        cswPrivate.containerGrid = Csw.nbt.wizard.nodeGrid(cswPrivate.divStep1, {
                                             hasMenu: false,
                                             viewid: data.viewid,
                                             ReadOnly: true,
@@ -219,24 +220,28 @@
 
                             dispenseTypeTable = cswPrivate.divStep1.table({
                                 ID: cswPrivate.makeStepId('setDispenseTypeTable'),
-                                width: '100%',
                                 cellpadding: '1px',
                                 cellalign: 'left',
-                                cellvalign: 'middle'
+                                cellvalign: 'middle',
+                                FirstCellRightAlign: true
                             });
 
                             if (cswPrivate.dispenseMode !== cswPrivate.dispenseModes.Request) {
                                 if (false === Csw.isNullOrEmpty(cswPrivate.state.barcode)) {
-                                    dispenseTypeTable.cell(1, 1).span({ labelText: 'Barcode: ', text: Csw.string(cswPrivate.state.barcode) });
+                                    dispenseTypeTable.cell(1, 1).span({ text: 'Barcode: ' }).addClass('propertylabel');
+                                    dispenseTypeTable.cell(1, 2).span({ text: Csw.string(cswPrivate.state.barcode) });
                                 }
                                 if (false === Csw.isNullOrEmpty(cswPrivate.state.materialname)) {
-                                    dispenseTypeTable.cell(2, 1).span({ labelText: 'Material: ', text: Csw.string(cswPrivate.state.materialname) });
+                                    dispenseTypeTable.cell(2, 1).span({ text: 'Material: ' }).addClass('propertylabel');
+                                    dispenseTypeTable.cell(2, 2).span({ text: Csw.string(cswPrivate.state.materialname) });
                                 }
                                 if (false === Csw.isNullOrEmpty(cswPrivate.state.location)) {
-                                    dispenseTypeTable.cell(3, 1).span({ labelText: 'Location: ', text: Csw.string(cswPrivate.state.location) });
+                                    dispenseTypeTable.cell(3, 1).span({ text: 'Location: ' }).addClass('propertylabel');
+                                    dispenseTypeTable.cell(3, 2).span({ text: Csw.string(cswPrivate.state.location) });
                                 }
                                 if (false === Csw.isNullOrEmpty(cswPrivate.state.currentQuantity)) {
-                                    dispenseTypeTable.cell(4, 1).span({ labelText: 'Current Quantity: ', text: cswPrivate.state.currentQuantity + ' ' + cswPrivate.state.currentUnitName });
+                                    dispenseTypeTable.cell(4, 1).span({ text: 'Current Quantity: ' }).addClass('propertylabel');
+                                    dispenseTypeTable.cell(4, 2).span({ text: cswPrivate.state.currentQuantity + ' ' + cswPrivate.state.currentUnitName });
                                 }
                             }
 

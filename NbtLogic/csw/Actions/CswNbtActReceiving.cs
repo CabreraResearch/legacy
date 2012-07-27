@@ -63,9 +63,9 @@ namespace ChemSW.Nbt.Actions
 
                 CswNbtViewRelationship SizeRel = SizeView.AddViewRelationship( MaterialRel, NbtViewPropOwnerType.Second, MaterialOcp, true );
                 SizeView.AddViewProperty( SizeRel, CapacityOcp );
-                CswNbtViewProperty DispensableVp = SizeView.AddViewProperty( SizeRel, DispensableOcp );
-                DispensableVp.ShowInGrid = false;
-                SizeView.AddViewPropertyFilter( DispensableVp, DispensableOcp.getFieldTypeRule().SubFields.Default.Name, Value: Tristate.True.ToString() );
+                //CswNbtViewProperty DispensableVp = SizeView.AddViewProperty( SizeRel, DispensableOcp );
+                //DispensableVp.ShowInGrid = false;
+                //SizeView.AddViewPropertyFilter( DispensableVp, DispensableOcp.getFieldTypeRule().SubFields.Default.Name, Value: Tristate.True.ToString() );
                 SizeView.AddViewProperty( SizeRel, CatalogNoOcp );
                 SizeView.SaveToCache( false );
                 return SizeView;
