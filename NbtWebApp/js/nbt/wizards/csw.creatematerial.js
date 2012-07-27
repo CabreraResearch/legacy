@@ -577,8 +577,11 @@
                                         }
                                     }
                                 },
-                                onDelete: function () {
-                                    //TO DO
+                                onDelete: function (rowid) {
+                                    var reducedSizes = cswPublic.sizes.filter(function (size) {
+                                        return size.rowid != rowid;
+                                    });
+                                    cswPublic.sizes = reducedSizes;
                                 }
                             });
 
