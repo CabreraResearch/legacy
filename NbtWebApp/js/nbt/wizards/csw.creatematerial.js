@@ -196,7 +196,7 @@
                         cswPrivate.divStep1.empty();
 
                         cswPrivate.divStep1.label({
-                            text: "This wizard will guide you through the process of creating a new material. Fill out the following identification properties. If the attributes below match an existing material, you will be given the option to edit that material.",
+                            text: "This wizard will guide you through the process of creating a new material. If the attributes below match an existing material, you will be given the option to view that material.",
                             cssclass: "wizardHelpDesc"
                         });
                         cswPrivate.divStep1.br({ number: 4 });
@@ -330,7 +330,7 @@
                         cswPrivate.divStep2.empty();
 
                         cswPrivate.divStep2.label({
-                            text: "Fill out the additional properties of this material.",
+                            text: "Provide additional data for this material.",
                             cssclass: "wizardHelpDesc"
                         });
                         cswPrivate.divStep2.br({ number: 4 });
@@ -437,7 +437,7 @@
                         div = cswPrivate.divStep3.div();
 
                         div.label({
-                            text: "Sizes are used in receiving materials. This part is optional and sizes can be created elsewhere.",
+                            text: "Sizes are used to receive material inventory. This step is optional - you may create sizes for this material elsewhere.",
                             cssclass: "wizardHelpDesc"
                         });
                         div.br({ number: 4 });
