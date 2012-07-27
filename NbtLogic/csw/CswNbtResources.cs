@@ -49,6 +49,10 @@ namespace ChemSW.Nbt
             /// </summary>
             cache_lastupdated,
             /// <summary>
+            /// If set to 1, users can define their own barcodes on new containers.
+            /// </summary>
+            custom_barcodes,
+            /// <summary>
             /// Format of database (oracle, mysql, mssql)
             /// </summary>
             dbformat,
