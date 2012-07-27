@@ -4962,7 +4962,7 @@ namespace ChemSW.Nbt.WebServices
                 if( null != RequestItemPk )
                 {
                     CswNbtView ContainerView = ws.getDispensibleContainersView( RequestItemPk );
-                    ContainerView.SaveToCache(false);
+                    ContainerView.SaveToCache( false );
                     ReturnVal["viewid"] = ContainerView.SessionViewId.ToString();
                 }
 

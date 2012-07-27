@@ -24,6 +24,7 @@
                 tradeName: '',
                 supplier: { name: '', val: '' },
                 partNo: '',
+                physicalState: '',
                 useExistingMaterial: false,
                 materialProperies: {},
                 sizeNodes: [],
@@ -43,6 +44,7 @@
             };
 
             var cswPublic = {
+                physicalStateCrl: null,
                 catalogNoCtrl: null,
                 quantityCtrl: null,
                 dispensibleCtrl: null,
@@ -109,6 +111,7 @@
                             createMaterialDef.partno = cswPrivate.partNo;
                             createMaterialDef.supplierid = cswPrivate.supplier.val;
                             createMaterialDef.suppliername = cswPrivate.supplier.name;
+                            createMaterialDef.physicalState = cswPrivate.physicalState;
                             if (false === Csw.isNullOrEmpty(cswPrivate.tabsAndProps)) {
                                 createMaterialDef.properties = cswPrivate.tabsAndProps.getPropJson();
                             }
@@ -325,19 +328,72 @@
                         cswPrivate.divStep2.empty();
 
                         cswPrivate.divStep2.label({
-                            text: "Fill out the physical properties of this material.",
+                            text: "Fill out the additional properties of this material.",
                             cssclass: "wizardHelpDesc"
                         });
                         cswPrivate.divStep2.br({ number: 4 });
 
                         div = cswPrivate.divStep2.div();
-                        cswPrivate.tabsAndProps = Csw.layouts.tabsAndProps(div, {
+                        var hiddenDiv = cswPrivate.divStep2.div();
+                        cswPrivate.tabsAndProps = Csw.layouts.tabsAndProps(hiddenDiv, {
                             nodetypeid: cswPrivate.materialType.val,
                             showSaveButton: false,
                             EditMode: Csw.enums.editMode.Add,
                             ReloadTabOnSave: false,
                             ShowAsReport: false,
                             excludeOcProps: ['tradename', 'supplier', 'partno']
+                        });
+                        hiddenDiv.hide();
+
+                        Csw.ajax.post({
+                            urlMethod: 'getProps',
+                            data: {
+                                EditMode: Csw.enums.editMode.Add,
+                                NodeId: '',
+                                TabId: '',
+                                SafeNodeKey: '',
+                                NodeTypeId: cswPrivate.materialType.val,
+                                Date: '',
+                                Multi: '',
+                                filterToPropId: '',
+                                ConfigMode: '',
+                                RelatedNodeId: '',
+                                RelatedNodeTypeId: '',
+                                RelatedObjectClassId: ''
+                            },
+                            success: function (data) {
+
+                                //splits the comma delimited string into an array for the selector
+                                var getOpts = function (str) {
+                                    var ret = [];
+                                    var splitStr = str.split(",");
+                                    for (var i = 0; i < splitStr.length; i++) {
+                                        ret.push({ display: splitStr[i], value: splitStr[i] });
+                                    }
+                                    return ret;
+                                };
+
+                                for (var propKey in data) {
+                                    var propertyData = data[propKey];
+                                    switch (propertyData["fieldtype"]) {
+                                        case "List":
+                                            div.span({ text: propertyData["name"] + "*:", cssclass: "PhysicalStateSpan" });
+                                            cswPublic.physicalStateCrl = div.select({
+                                                ID: Csw.tryExec(Csw.makeId, 'physState'),
+                                                values: getOpts(propertyData["values"]["options"]),
+                                                onChange: function () {
+                                                    cswPrivate.physicalState = cswPublic.physicalStateCrl.val();
+                                                }
+                                            });
+                                            if (false === Csw.isNullOrEmpty(cswPublic.physicalStateCrl)) {
+                                                cswPrivate.physicalState = cswPublic.physicalStateCrl.val();
+                                            }
+                                            break;
+                                        default:
+                                            break;
+                                    }
+                                }
+                            }
                         });
 
                         cswPrivate.stepTwoComplete = true;
