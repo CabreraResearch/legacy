@@ -3,6 +3,8 @@ using System.Data;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
+using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.ObjClasses;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -72,6 +74,15 @@ namespace ChemSW.Nbt.Schema
             {
                 _CswNbtSchemaModTrnsctn.addStringColumn( "nodetype_layout", "tabgroup", "Assign properties into a group on a tab", false, false, 50 );
             }
+
+            //case 27327 - change SizeClass "Capacity" to "Initial Capacity"
+            CswNbtMetaDataObjectClass sizeOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.SizeClass );
+            CswNbtMetaDataObjectClassProp initialQuantityOCP = sizeOC.getObjectClassProp( "Capacity" );
+            if( null != initialQuantityOCP )
+            {
+                _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( initialQuantityOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.propname, "Initial Quantity" );
+            }
+
 
         }//Update()
 

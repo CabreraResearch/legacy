@@ -345,7 +345,7 @@ namespace ChemSW.Nbt.ObjClasses
             CswNbtObjClassSize sizeNode = _CswNbtResources.Nodes.GetNode( Size.RelatedNodeId );
             if( null != sizeNode )
             {
-                CswNbtNodePropQuantity Capacity = sizeNode.Capacity;
+                CswNbtNodePropQuantity Capacity = sizeNode.InitialQuantity;
                 Capacity.ToJSON( CapacityObj );
             }
             else

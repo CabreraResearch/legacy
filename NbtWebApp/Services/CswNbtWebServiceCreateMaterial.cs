@@ -6,6 +6,8 @@ using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Statistics;
 using Newtonsoft.Json.Linq;
+using ChemSW.Nbt.UnitsOfMeasure;
+using System.Collections.ObjectModel;
 
 namespace ChemSW.Nbt.WebServices
 {
@@ -103,12 +105,13 @@ namespace ChemSW.Nbt.WebServices
             }
         }
 
-        private void _getMaterialPropsFromObject( JObject Obj, out string Tradename, out CswPrimaryKey SupplierId, out string PartNo )
+        private void _getMaterialPropsFromObject( JObject Obj, out string Tradename, out CswPrimaryKey SupplierId, out string PartNo, out string PhysicalState )
         {
             Tradename = CswConvert.ToString( Obj["tradename"] );
             SupplierId = new CswPrimaryKey();
             string SupplierPk = CswConvert.ToString( Obj["supplierid"] );
             SupplierId.FromString( SupplierPk );
+            PhysicalState = CswConvert.ToString( Obj["physicalState"] );
 
             PartNo = CswConvert.ToString( Obj["partno"] );
             if( string.IsNullOrEmpty( Tradename ) || Int32.MinValue == SupplierId.PrimaryKey )
@@ -213,20 +216,21 @@ namespace ChemSW.Nbt.WebServices
                     CswNbtObjClassMaterial NodeAsMaterial = (CswNbtObjClassMaterial) Node;
 
                     string TradeName = NodeAsMaterial.TradeName.Text;
-                    string SupplierName = NodeAsMaterial.Supplier.Gestalt;
+                    string Supplier = NodeAsMaterial.Supplier.Gestalt;
                     string PartNo = NodeAsMaterial.PartNumber.Text;
 
                     if( ThrowIfExists )
                     {
                         throw new CswDniException( ErrorType.Error,
                                                    "A material already exists with the provided Tradename, Supplier and Part Number.",
-                                                   "Attempted to call createMaterial with tradename: " + TradeName + ", supplier: " + SupplierName + " and partno: " + PartNo + " properties." );
+                                                   "Attempted to call createMaterial with tradename: " + TradeName + ", supplier: " + Supplier + " and partno: " + PartNo + " properties." );
                     }
 
                     MaterialObj["tradename"] = TradeName;
                     MaterialObj["partno"] = PartNo;
-                    MaterialObj["supplier"] = SupplierName;
-                    MaterialObj["nodeid"] = Node.NodeId.ToString();
+                    MaterialObj["supplier"] = Supplier.ToString();
+                    MaterialObj["nodetypeid"] = Node.NodeTypeId.ToString();
+                    MaterialObj["noderef"] = _CswNbtResources.makeClientNodeReference( Node ); //for the link
                 }
             }
 
@@ -251,16 +255,25 @@ namespace ChemSW.Nbt.WebServices
             JObject Ret = new JObject();
 
             SizeNode = CswNbtResources.Nodes.makeNodeFromNodeTypeId( SizeNodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing, true );
-            CswNbtWebServiceNode NodeWs = new CswNbtWebServiceNode( CswNbtResources, CswNbtStatisticsEvents );
-            NodeWs.addNodeProps( SizeNode, SizeObj, null );
+            //CswNbtWebServiceNode NodeWs = new CswNbtWebServiceNode( CswNbtResources, CswNbtStatisticsEvents );
+            //NodeWs.addNodeProps( SizeNode, SizeObj, null );
             CswNbtObjClassSize NodeAsSize = (CswNbtObjClassSize) SizeNode;
+            NodeAsSize.InitialQuantity.Quantity = CswConvert.ToDouble( SizeObj["quantity"] );
+            CswPrimaryKey UnitIdPK = new CswPrimaryKey();
+            UnitIdPK.FromString( SizeObj["unitid"].ToString() );
+            NodeAsSize.InitialQuantity.UnitId = UnitIdPK;
+            NodeAsSize.CatalogNo.Text = SizeObj["catalogNo"].ToString();
+            NodeAsSize.QuantityEditable.Checked = CswConvert.ToTristate( SizeObj["quantEditableChecked"] );
+            NodeAsSize.Dispensable.Checked = CswConvert.ToTristate( SizeObj["dispensibleChecked"] );
+
             JArray Row = new JArray();
             Ret["row"] = Row;
 
             Row.Add( "(New Size)" );
-            Row.Add( NodeAsSize.Capacity.Gestalt );
+            Row.Add( NodeAsSize.InitialQuantity.Gestalt );
             Row.Add( NodeAsSize.Dispensable.Gestalt );
             Row.Add( NodeAsSize.QuantityEditable.Gestalt );
+            Row.Add( NodeAsSize.CatalogNo.Gestalt );
 
             if( WriteNode )
             {
@@ -298,7 +311,7 @@ namespace ChemSW.Nbt.WebServices
             CswNbtViewRelationship SizeRel = SizesView.AddViewRelationship( SizeOc, false );
 
             SizesView.AddViewPropertyAndFilter( SizeRel, SizeMaterialOcp, MaterialId.PrimaryKey.ToString(), CswNbtSubField.SubFieldName.NodeID );
-            SizesView.AddViewProperty( SizeRel, SizeOc.getObjectClassProp( CswNbtObjClassSize.CapacityPropertyName ) );
+            SizesView.AddViewProperty( SizeRel, SizeOc.getObjectClassProp( CswNbtObjClassSize.InitialQuantityPropertyName ) );
             SizesView.AddViewProperty( SizeRel, SizeOc.getObjectClassProp( CswNbtObjClassSize.DispensablePropertyName ) );
             SizesView.AddViewProperty( SizeRel, SizeOc.getObjectClassProp( CswNbtObjClassSize.QuantityEditablePropertyName ) );
 
@@ -326,12 +339,14 @@ namespace ChemSW.Nbt.WebServices
             string Tradename;
             CswPrimaryKey SupplierId;
             string PartNo;
-            _getMaterialPropsFromObject( MaterialObj, out Tradename, out SupplierId, out PartNo );
+            string PhysicalState;
+            _getMaterialPropsFromObject( MaterialObj, out Tradename, out SupplierId, out PartNo, out PhysicalState );
 
             CswNbtObjClassMaterial NodeAsMaterial = (CswNbtObjClassMaterial) Ret;
             NodeAsMaterial.TradeName.Text = Tradename;
             NodeAsMaterial.Supplier.RelatedNodeId = SupplierId;
             NodeAsMaterial.PartNumber.Text = PartNo;
+            NodeAsMaterial.PhysicalState.Value = PhysicalState;
             Ret.postChanges( true );
             return Ret;
         }
@@ -339,7 +354,7 @@ namespace ChemSW.Nbt.WebServices
         public JObject createMaterial( JObject MaterialObj, CswNbtNode MaterialNode = null )
         {
             JObject RetObj = new JObject();
-            JArray SizesArray = (JArray) MaterialObj["sizes"];
+            JArray SizesArray = (JArray) MaterialObj["sizeNodes"];
 
             if( null == MaterialNode )
             {
@@ -378,11 +393,10 @@ namespace ChemSW.Nbt.WebServices
                 if( SizeObj.HasValues )
                 {
                     CswNbtNode SizeNode;
-                    JObject SizeDef = (JObject) SizeObj["sizedef"];
                     Int32 SizeNtId = CswConvert.ToInt32( SizeObj["nodetypeid"] );
                     if( Int32.MinValue != SizeNtId )
                     {
-                        getSizeNodeProps( _CswNbtResources, _CswNbtStatisticsEvents, SizeNtId, SizeDef, true, out SizeNode );
+                        getSizeNodeProps( _CswNbtResources, _CswNbtStatisticsEvents, SizeNtId, SizeObj, true, out SizeNode );
                         if( null != SizeNode )
                         {
                             CswNbtObjClassSize NodeAsSize = (CswNbtObjClassSize) SizeNode;
@@ -404,6 +418,31 @@ namespace ChemSW.Nbt.WebServices
                     SizesArray.Remove( SizeObj );
                 }
             }
+        }
+
+        public static JObject GetMaterialUnitsOfMeasure( string PhysicalState, CswNbtResources CswNbtResources )
+        {
+            JObject ret = new JObject();
+            CswNbtUnitViewBuilder unitViewBuilder = new CswNbtUnitViewBuilder( CswNbtResources );
+            CswNbtView unitsView = unitViewBuilder.getQuantityUnitOfMeasureView( PhysicalState );
+
+            Collection<CswNbtNode> _UnitNodes = new Collection<CswNbtNode>();
+            ICswNbtTree UnitsTree = CswNbtResources.Trees.getTreeFromView( unitsView, false, true, false, false );
+            UnitsTree.goToRoot();
+            for( int i = 0; i < UnitsTree.getChildNodeCount(); i++ )
+            {
+                UnitsTree.goToNthChild( i );
+                _UnitNodes.Add( UnitsTree.getNodeForCurrentPosition() );
+                UnitsTree.goToParentNode();
+            }
+
+            foreach( CswNbtNode unitNode in _UnitNodes )
+            {
+                CswNbtObjClassUnitOfMeasure nodeAsUnitOfMeasure = (CswNbtObjClassUnitOfMeasure) unitNode;
+                ret[nodeAsUnitOfMeasure.NodeId.ToString()] = nodeAsUnitOfMeasure.Name.Gestalt;
+            }
+
+            return ret;
         }
 
         #endregion Public

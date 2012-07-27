@@ -21,9 +21,9 @@ namespace ChemSW.Nbt.UnitsOfMeasure
         {
             _CswNbtResources = CswNbtResources;
         }
-        
+
         #endregion
-        
+
         /// <summary>
         /// Build a Unit View for a Quantity property using a Material NodeId
         /// </summary>
@@ -46,7 +46,7 @@ namespace ChemSW.Nbt.UnitsOfMeasure
             CswNbtView Ret = null;
 
             CswNbtObjClassMaterial MaterialNodeAsMaterial = MaterialNode;
-            if( null != MaterialNode && 
+            if( null != MaterialNode &&
                 false == string.IsNullOrEmpty( MaterialNodeAsMaterial.PhysicalState.Value ) )
             {
                 CswNbtMetaDataObjectClass UnitOfMeasureOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UnitOfMeasureClass );
@@ -60,6 +60,24 @@ namespace ChemSW.Nbt.UnitsOfMeasure
                     {
                         Ret.AddViewRelationship( UnitOfMeasureNodeType, true );
                     }
+                }
+            }
+            return Ret;
+        }
+
+        public CswNbtView getQuantityUnitOfMeasureView( string PhysicalState )
+        {
+            CswNbtView Ret = null;
+            CswNbtMetaDataObjectClass UnitOfMeasureOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UnitOfMeasureClass );
+            Ret = new CswNbtView( _CswNbtResources );
+
+            foreach( CswNbtMetaDataNodeType UnitOfMeasureNodeType in UnitOfMeasureOC.getNodeTypes() )
+            {
+                CswNbtMetaDataNodeTypeProp UnitTypeProp = UnitOfMeasureNodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassUnitOfMeasure.UnitTypePropertyName );
+                CswNbtObjClassUnitOfMeasure.UnitTypes UnitType = (CswNbtObjClassUnitOfMeasure.UnitTypes) UnitTypeProp.DefaultValue.AsList.Value;
+                if( _physicalStateMatchesUnitType( PhysicalState, UnitType ) )
+                {
+                    Ret.AddViewRelationship( UnitOfMeasureNodeType, true );
                 }
             }
             return Ret;

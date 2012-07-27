@@ -350,7 +350,7 @@ namespace ChemSW.Nbt.ObjClasses
                                         if( null != NodeAsSize )
                                         {
                                             Capacity = new JObject();
-                                            NodeAsSize.Capacity.ToJSON( Capacity );
+                                            NodeAsSize.InitialQuantity.ToJSON( Capacity );
                                             ButtonData.Data["capacity"] = Capacity;
                                         }
                                     }
