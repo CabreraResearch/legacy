@@ -44,7 +44,10 @@ function CswMobileFieldTypeButton(ftDef) {
 
             CswAjaxJson({
                 url: '/NbtWebApp/wsNBT.asmx/onObjectClassButtonClick',
-                data: { NodeTypePropAttr: realNodePropId },
+                data: {
+                    NodeTypePropAttr: realNodePropId,
+                    SelectedText: p.propName
+                },
                 success: function (data) {
                     if (isTrue(data.success) && (isNullOrEmpty(data.message) || data.action !== 'Unknown')) {
                         var $viewPage = $('#' + p.viewId);

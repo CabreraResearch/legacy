@@ -24,7 +24,8 @@
                     value: '',
                     cellCol: 1,
                     quantityText: '',
-                    gestalt: ''
+                    gestalt: '',
+                    qtyWidth: ''
                 };
                 if (options) $.extend(cswPrivate, options);
 
@@ -59,6 +60,7 @@
                         ID: cswPrivate.ID + '_qty',
                         labelText: cswPrivate.labelText,
                         useWide: cswPrivate.useWide,
+                        width: cswPrivate.qtyWidth,
                         value: Csw.string(cswPrivate.value).trim(),
                         MinValue: Csw.number(cswPrivate.minvalue),
                         MaxValue: Csw.number(cswPrivate.maxvalue),

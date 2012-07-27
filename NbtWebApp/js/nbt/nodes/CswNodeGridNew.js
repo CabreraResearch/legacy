@@ -30,7 +30,9 @@
                 onSelect: null,
                 onSuccess: null,
                 onEditView: null,
-                onRefresh: null
+                onRefresh: null,
+                height: '',
+                includeInQuickLaunch: true
             };
 
             if (options) {
@@ -40,7 +42,8 @@
 
             if (o.reinit) $parent.empty();
 
-            var forReporting = (o.EditMode === Csw.enums.editMode.PrintReport), ret;
+            var forReporting = (o.EditMode === Csw.enums.editMode.PrintReport),
+                ret;
 
             /* fetchGridSkeleton */
             (function () {
@@ -54,13 +57,14 @@
                                         data: {
                                             ViewId: o.viewid,
                                             IncludeNodeKey: o.cswnbtnodekey,
-                                            IncludeInQuickLaunch: true,
+                                            IncludeInQuickLaunch: o.includeInQuickLaunch,
                                             ForReport: forReporting
                                         }
                                     },
                                     forceFit: o.forceFit,
                                     usePaging: false === forReporting,
                                     showActionColumn: false === forReporting && false === o.readonly,
+                                    height: o.height,
                                     canSelectRow: o.canSelectRow,
                                     onSelect: o.onSelect,
                                     onEdit: function(rows) {

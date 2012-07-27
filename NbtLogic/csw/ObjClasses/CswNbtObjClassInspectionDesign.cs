@@ -316,17 +316,26 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void afterPopulateProps()
         {
-            //case 25035
-            if( this.Status.Value == InspectionStatusAsString( InspectionStatus.Action_Required ) )
+            CswNbtPropEnmrtrFiltered QuestionsFlt = this.Node.Properties[(CswNbtMetaDataFieldType.NbtFieldType) CswNbtMetaDataFieldType.NbtFieldType.Question];
+            QuestionsFlt.Reset();
+            bool AllAnswered = true;
+            foreach( CswNbtNodePropWrapper Prop in QuestionsFlt )
             {
-                CswNbtPropEnmrtrFiltered QuestionsFlt = this.Node.Properties[(CswNbtMetaDataFieldType.NbtFieldType) CswNbtMetaDataFieldType.NbtFieldType.Question];
-                QuestionsFlt.Reset();
-                foreach( CswNbtNodePropWrapper Prop in QuestionsFlt )
+                CswNbtNodePropQuestion QuestionProp = Prop.AsQuestion;
+                
+                // case 25035
+                if( this.Status.Value == InspectionStatusAsString( InspectionStatus.Action_Required ) )
                 {
-                    CswNbtNodePropQuestion QuestionProp = Prop.AsQuestion;
                     QuestionProp.IsActionRequired = true;
                 }
+
+                AllAnswered = ( false == string.IsNullOrEmpty( QuestionProp.Answer ) ) && AllAnswered;
+
+                // case 26705
+                QuestionProp.SetOnPropChange( onQuestionChange );
             }
+
+            SetPreferred.setReadOnly( value: AllAnswered, SaveToDb: true );
 
             _CswNbtObjClassDefault.afterPopulateProps();
 
@@ -343,6 +352,17 @@ namespace ChemSW.Nbt.ObjClasses
                 this.Status.setReadOnly( value: true, SaveToDb: false );
             }
         }//afterPopulateProps()
+
+        public void onQuestionChange( CswNbtNodeProp Prop )
+        {
+            CswNbtNodePropWrapper PropWrapper = _CswNbtNode.Properties[Prop.NodeTypeProp];
+            CswNbtNodePropQuestion QuestionProp = PropWrapper.AsQuestion;
+            // case 26705
+            if( string.IsNullOrEmpty( QuestionProp.Answer ) )
+            {
+                SetPreferred.setReadOnly( value: false, SaveToDb: true );
+            }
+        }
 
         public override void addDefaultViewFilters( CswNbtViewRelationship ParentRelationship )
         {
@@ -419,9 +439,9 @@ namespace ChemSW.Nbt.ObjClasses
                         } // if( _allAnswered )
                         else
                         {
-                           ButtonData.Message =
-                                "Inspection can not be finished until all questions are answered.  Questions remaining: " +
-                                UnansweredQuestions.ToString();
+                            ButtonData.Message =
+                                 "Inspection can not be finished until all questions are answered.  Questions remaining: " +
+                                 UnansweredQuestions.ToString();
                         }
                         break;
 
@@ -443,6 +463,8 @@ namespace ChemSW.Nbt.ObjClasses
                             }
                         }
                         ButtonData.Action = NbtButtonAction.refresh;
+                        ButtonData.Message = "Unanswered questions have been set to their preferred answer.";
+                        SetPreferred.setReadOnly( value: true, SaveToDb: true );
                         break;
                 }
                 this.postChanges( false );

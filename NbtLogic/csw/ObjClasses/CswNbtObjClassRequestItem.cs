@@ -36,7 +36,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string InventoryGroup = "Inventory Group";
             public const string TotalDispensed = "Total Dispensed";
         }
-
+        
         public sealed class Types
         {
             public const string Dispense = "Dispense";
@@ -412,7 +412,7 @@ namespace ChemSW.Nbt.ObjClasses
                                 break;
                         } //switch( ButtonData.SelectedText )
 
-                        Status.Value = _getNextStatus( ButtonData.SelectedText );
+                        //Status.Value = _getNextStatus( ButtonData.SelectedText );
                         postChanges( true );
                         ButtonData.Data["requestitem"] = ButtonData.Data["requestitem"] ?? new JObject();
                         ButtonData.Data["requestitem"]["requestitemid"] = NodeId.ToString();
@@ -432,7 +432,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get { return _CswNbtNode.Properties[PropertyName.Request]; }
         }
-        private void OnRequestPropChange()
+        private void OnRequestPropChange( CswNbtNodeProp Prop )
         {
             Request.setReadOnly( value: true, SaveToDb: true );
             Request.setHidden( value: true, SaveToDb: false );
@@ -442,7 +442,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get { return _CswNbtNode.Properties[PropertyName.Type]; }
         }
-        private void OnTypePropChange()
+        private void OnTypePropChange( CswNbtNodeProp Prop )
         {
             /* Spec W1010: Location applies to all but Dispose */
             Location.setHidden( value: ( Types.Dispose == Type.Value ), SaveToDb: true );
@@ -479,24 +479,36 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get { return _CswNbtNode.Properties[PropertyName.RequestBy]; }
         }
-        private void OnRequestByPropChange()
+        private void OnRequestByPropChange( CswNbtNodeProp Prop )
         {
+            switch(RequestBy.Value)
+            {
+                case RequestsBy.Size:
+                    Quantity.UnitId = null;
+                    Quantity.Quantity = Double.NaN;
+                    break;
+                case RequestsBy.Quantity:
+                case RequestsBy.Bulk:
+                    Size.RelatedNodeId = null;
+                    Count.Value = Double.NaN;
+                    break;
+            }
             /* Spec W1010: Size and Count apply only to Request */
             Size.setHidden( value: ( RequestBy.Value != RequestsBy.Size ), SaveToDb: true );
             Count.setHidden( value: ( RequestBy.Value != RequestsBy.Size ), SaveToDb: true );
-            Size.setReadOnly( value: ( Status.Value != Statuses.Pending || RequestBy.Value != RequestsBy.Size ), SaveToDb: true );
-            Count.setReadOnly( value: ( Status.Value != Statuses.Pending || RequestBy.Value != RequestsBy.Size ), SaveToDb: true );
+            Size.setReadOnly( value: ( Status.Value != Statuses.Pending && RequestBy.Value != RequestsBy.Size ), SaveToDb: true );
+            Count.setReadOnly( value: ( Status.Value != Statuses.Pending && RequestBy.Value != RequestsBy.Size ), SaveToDb: true );
 
             /* Spec W1010: Quantity applies only to Request by Bulk and Dispense */
             Quantity.setHidden( value: ( RequestBy.Value == RequestsBy.Size ), SaveToDb: true );
-            Quantity.setReadOnly( value: ( Status.Value != Statuses.Pending || RequestBy.Value == RequestsBy.Size ), SaveToDb: true );
+            Quantity.setReadOnly( value: ( Status.Value != Statuses.Pending && RequestBy.Value == RequestsBy.Size ), SaveToDb: true );
         }
 
         public CswNbtNodePropQuantity Quantity
         {
             get { return _CswNbtNode.Properties[PropertyName.Quantity]; }
         }
-        private void OnQuantityPropChange()
+        private void OnQuantityPropChange( CswNbtNodeProp Prop )
         {
             TotalDispensed.UnitId = Quantity.UnitId;
         }
@@ -515,7 +527,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get { return _CswNbtNode.Properties[PropertyName.Material]; }
         }
-        private void OnMaterialPropChange()
+        private void OnMaterialPropChange( CswNbtNodeProp Prop )
         {
             if( null != Material.RelatedNodeId )
             {
@@ -535,7 +547,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get { return _CswNbtNode.Properties[PropertyName.Container]; }
         }
-        private void OnContainerPropChange()
+        private void OnContainerPropChange( CswNbtNodeProp Prop )
         {
             if( null != Container.RelatedNodeId )
             {
@@ -557,7 +569,7 @@ namespace ChemSW.Nbt.ObjClasses
             get { return _CswNbtNode.Properties[PropertyName.Status]; }
         }
 
-        private void OnStatusPropChange()
+        private void OnStatusPropChange( CswNbtNodeProp Prop )
         {
             AssignedTo.setHidden( value: ( Status.Value == Statuses.Pending || Status.Value == Statuses.Completed || Status.Value == Statuses.Cancelled ), SaveToDb: true );
             Fulfill.setHidden( value: ( Status.Value == Statuses.Pending || Status.Value == Statuses.Completed || Status.Value == Statuses.Cancelled ), SaveToDb: true );
@@ -628,11 +640,15 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropPropertyReference InventoryGroup { get { return _CswNbtNode.Properties[PropertyName.InventoryGroup]; } }
 
         public CswNbtNodePropQuantity TotalDispensed { get { return _CswNbtNode.Properties[PropertyName.TotalDispensed]; } }
-        private void OnTotalDispensedPropChange()
+        private void OnTotalDispensedPropChange( CswNbtNodeProp Prop )
         {
             if( TotalDispensed.Quantity >= Quantity.Quantity )
             {
                 Fulfill.State = FulfillMenu.Complete;
+            }
+            else if( Type.Value == Types.Request || Type.Value == Types.Dispense )
+            {
+                Fulfill.State = FulfillMenu.Dispense;
             }
         }
 

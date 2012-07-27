@@ -377,6 +377,7 @@
                 cswPrivate.gridIsPopulated = true;
 
                 //This is ugly. Abstract the step div from this function.
+                cswPrivate.divStep4 = cswPrivate.divStep4 || cswPrivate.wizard.div(Csw.enums.wizardSteps_InspectionDesign.step4.step);
                 cswPrivate.divStep4.empty();
                 var previewGridId = cswPrivate.makeStepId('previewGrid_outer', 4);
 
@@ -446,6 +447,7 @@
                         onSelect: null, // function(row)
                         onDeselect: null, // function(row)
                         height: 200,
+                        forcefit: true,
                         width: '100%',
                         fields: cswPrivate.gridJson.fields,
                         columns: cswPrivate.gridJson.columns,
@@ -460,7 +462,7 @@
                 var f = {
                     url: '/NbtWebApp/wsNBT.asmx/previewInspectionFile',
                     onSuccess: function () {
-                        cswPrivate.wizard.next.enable().click();
+                        cswPrivate.toggleButton(cswPrivate.buttons.next, true, true);
                     },
                     stepNo: Csw.enums.wizardSteps_InspectionDesign.step3.step,
                     uploadName: 'design'
@@ -568,7 +570,7 @@
 
                     if (false === stepFourComplete &&
                         false === skipStepFour) {
-                        cswPrivate.divStep4 = cswPrivate.wizard.div(Csw.enums.wizardSteps_InspectionDesign.step4.step);
+                        cswPrivate.divStep4 = cswPrivate.divStep4 || cswPrivate.wizard.div(Csw.enums.wizardSteps_InspectionDesign.step4.step);
                         stepFourComplete = true;
                     }
                 };

@@ -196,7 +196,7 @@ namespace ChemSW.Nbt.PropTypes
             return ret;
         }
 
-        public static CswNbtView LocationPropertyView( CswNbtResources CswNbtResources, CswPrimaryKey NodeId = null )
+        public static CswNbtView LocationPropertyView( CswNbtResources CswNbtResources, CswNbtMetaDataNodeTypeProp Prop, CswPrimaryKey NodeId = null )
         {
             CswNbtView Ret = new CswNbtView( CswNbtResources );
 
@@ -204,15 +204,7 @@ namespace ChemSW.Nbt.PropTypes
             CswNbtMetaDataObjectClassProp LocationLocationOCP = LocationOC.getObjectClassProp( CswNbtObjClassLocation.LocationPropertyName );
             CswNbtMetaDataObjectClassProp LocationAllowInventoryOCP = LocationOC.getObjectClassProp( CswNbtObjClassLocation.AllowInventoryPropertyName );
 
-            bool IsLocationNode = false;
-            if( null != NodeId )
-            {
-                CswNbtNode Node = CswNbtResources.Nodes[NodeId];
-                if( null != Node && Node.getObjectClassId() == LocationOC.ObjectClassId )
-                {
-                    IsLocationNode = true;
-                }
-            }
+            bool IsLocationNode = ( null != Prop && Prop.getNodeType().ObjectClassId == LocationOC.ObjectClassId );
             
             Ret.ViewName = TopLevelName;
 
@@ -255,7 +247,7 @@ namespace ChemSW.Nbt.PropTypes
         private CswNbtView _View = null;
         public CswNbtView View
         {
-            get { return _View ?? ( _View = LocationPropertyView( _CswNbtResources, NodeId ) ); } // get
+            get { return _View ?? ( _View = LocationPropertyView( _CswNbtResources, NodeTypeProp, NodeId ) ); } // get
         } // View
 
         public override void ToXml( XmlNode ParentNode )

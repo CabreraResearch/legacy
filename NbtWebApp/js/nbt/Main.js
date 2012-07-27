@@ -5,7 +5,7 @@
 window.initMain = window.initMain || function (undefined) {
 
     "use strict";
-    Csw.debug.group('Csw');
+    //Csw.debug.group('Csw');
     var mainTree;
     var mainGridId = 'CswNodeGrid';
     var mainTableId = 'CswNodeTable';
@@ -17,18 +17,18 @@ window.initMain = window.initMain || function (undefined) {
     function startSpinner() {
         $('#ajaxSpacer').hide();
         $('#ajaxImage').show();
-        if (true === window.displayAllExceptions) {
-            Csw.debug.group('ajax');
-        }
+        //if (true === window.displayAllExceptions) {
+        //    Csw.debug.group('ajax');
+        //}
     }
     Csw.subscribe(Csw.enums.events.ajax.globalAjaxStart, startSpinner);
 
     function stopSpinner() {
         $('#ajaxImage').hide();
         $('#ajaxSpacer').show();
-        if (true === window.displayAllExceptions) {
-            Csw.debug.groupEnd('ajax');
-        }
+        //if (true === window.displayAllExceptions) {
+        //    Csw.debug.groupEnd('ajax');
+        //}
     };
     Csw.subscribe(Csw.enums.events.ajax.globalAjaxStop, stopSpinner);
 
@@ -859,8 +859,21 @@ window.initMain = window.initMain || function (undefined) {
         o.onEditNode = function () { getViewTable(o); };
         o.onDeleteNode = function () { getViewTable(o); };
 
-        clear({ centerbottom: true });
+        clear({ centertop: true, centerbottom: true });
 
+        var viewfilters = Csw.nbt.viewFilters({
+            ID: 'main_viewfilters',
+            parent: Csw.literals.factory($('#CenterTopDiv')),
+            viewid: o.viewid,
+            onEditFilters: function (newviewid) {
+                var newopts = o;
+                newopts.viewid = newviewid;
+                // set the current view to be the session view, so filters are saved
+                Csw.clientState.setCurrentView(newviewid, Csw.enums.viewMode.table.name);
+                getViewTable(newopts);
+            } // onEditFilters
+        }); // viewFilters
+        
         $('#CenterBottomDiv').CswNodeTable('init', {
             viewid: o.viewid,
             nodeid: o.nodeid,
@@ -1233,18 +1246,27 @@ window.initMain = window.initMain || function (undefined) {
                 if (Csw.contains(o, 'requestitem')) {
                     requestItemId = o.requestitem.requestitemid;
                 }
-                var title = 'Dispense from Barcode ';
+                var title = 'Dispense from ';
                 if (false === Csw.isNullOrEmpty(o.barcode)) {
-                    title += '[' + o.barcode + ']';
+                    title += 'Barcode [' + o.barcode + ']';
                 } else {
-                    title += 'by Search';
+                    title += 'Selected Container';
                 }
                 designOpt = {
-                    ID: 'cswDispenseContainerWizard',
-                    sourceContainerNodeId: o.sourceContainerNodeId,
-                    currentQuantity: o.currentQuantity,
-                    currentUnitName: o.currentUnitName,
-                    capacity: Csw.deserialize(o.capacity),
+                    ID: Csw.makeId('cswDispenseContainerWizard'),
+                    state: {
+                        sourceContainerNodeId: o.sourceContainerNodeId,
+                        currentQuantity: o.currentQuantity,
+                        currentUnitName: o.currentUnitName,
+                        capacity: Csw.deserialize(o.capacity),
+                        requestItemId: requestItemId,
+                        title: title,
+                        location: o.location,
+                        material: o.material,
+                        barcode: o.barcode,
+                        containerNodeTypeId: o.containernodetypeid,
+                        containerObjectClassId: o.containerobjectclassid
+                    },
                     onCancel: function () {
                         clear({ 'all': true });
                         Csw.clientState.setCurrent(Csw.clientState.getLast());
@@ -1257,14 +1279,7 @@ window.initMain = window.initMain || function (undefined) {
                             viewmode: 'tree',
                             viewid: viewid
                         });
-                    },
-                    requestItemId: requestItemId,
-                    title: title,
-                    location: o.location,
-                    material: o.material,
-                    barcode: o.barcode,
-                    containerNodeTypeId: o.containernodetypeid,
-                    containerObjectClassId: o.containerobjectclassid
+                    }
                 };
                 Csw.nbt.dispenseContainerWizard(centerTopDiv, designOpt);
 

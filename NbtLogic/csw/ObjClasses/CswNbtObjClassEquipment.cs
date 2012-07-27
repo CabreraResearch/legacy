@@ -178,14 +178,17 @@ namespace ChemSW.Nbt.ObjClasses
                         bool FoundMatch = false;
                         foreach( CswNbtNodePropWrapper AssemblyProp in AssemblyNode.Properties )
                         {
-                            if( EquipProp.PropName.ToLower() == AssemblyProp.PropName.ToLower() && EquipProp.getFieldType() == AssemblyProp.getFieldType() )
+                            if( EquipProp.getFieldType().FieldType != CswNbtMetaDataFieldType.NbtFieldType.Grid ) // case 27270
                             {
-                                // Found a match -- copy the value and set readonly
-                                EquipProp.copy( AssemblyProp );
-                                EquipProp.setReadOnly( value: true, SaveToDb: true );
-                                FoundMatch = true;
-                                // case 21809
-                                EquipProp.HelpText = EquipProp.PropName + " is set on the Assembly, and must be modified there.";
+                                if( EquipProp.PropName.ToLower() == AssemblyProp.PropName.ToLower() && EquipProp.getFieldType() == AssemblyProp.getFieldType() )
+                                {
+                                    // Found a match -- copy the value and set readonly
+                                    EquipProp.copy( AssemblyProp );
+                                    EquipProp.setReadOnly( value: true, SaveToDb: true );
+                                    FoundMatch = true;
+                                    // case 21809
+                                    EquipProp.HelpText = EquipProp.PropName + " is set on the Assembly, and must be modified there.";
+                                }
                             }
                         }
                         if( !FoundMatch )

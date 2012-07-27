@@ -344,12 +344,22 @@ namespace ChemSW.Nbt
             {
                 string ArbId = string.Empty;
                 if( Parent != null )
+                {
                     ArbId += Parent.ArbitraryId + "_";
+                }
                 if( this.SecondType == NbtViewRelatedIdType.NodeTypeId )
+                {
                     ArbId += "NT_";
+                }
                 else if( this.SecondType == NbtViewRelatedIdType.ObjectClassId )
+                {
                     ArbId += "OC_";
+                }
                 ArbId += SecondId;
+                if( Int32.MinValue != this.PropId)
+                {
+                    ArbId += this.PropId.ToString();
+                }
                 return ArbId;
             }
         }

@@ -4945,6 +4945,64 @@ namespace ChemSW.Nbt.WebServices
             return ReturnVal.ToString();
         } // finalizeDispenseContainer()
 
+        [WebMethod( EnableSession = false )]
+        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        public string getDispenseContainerView( string RequestItemId )
+        {
+            JObject ReturnVal = new JObject();
+            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            try
+            {
+                _initResources();
+                AuthenticationStatus = _attemptRefresh( true );
+                CswNbtWebServiceContainer ws = new CswNbtWebServiceContainer( _CswNbtResources );
+
+                CswPrimaryKey RequestItemPk = _getNodeId( RequestItemId );
+                if( null != RequestItemPk )
+                {
+                    CswNbtView ContainerView = ws.getDispensibleContainersView( RequestItemPk );
+                    ContainerView.SaveToCache(false);
+                    ReturnVal["viewid"] = ContainerView.SessionViewId.ToString();
+                }
+
+                _deInitResources();
+            } // try
+            catch( Exception ex )
+            {
+                ReturnVal = jError( ex );
+            }
+            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+            return ReturnVal.ToString();
+        } // getDispenseContainerView()
+
+        [WebMethod( EnableSession = false )]
+        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        public string getDispenseSourceContainerData( string ContainerId )
+        {
+            JObject ReturnVal = new JObject();
+            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            try
+            {
+                _initResources();
+                AuthenticationStatus = _attemptRefresh( true );
+                CswNbtWebServiceContainer ws = new CswNbtWebServiceContainer( _CswNbtResources );
+
+                CswPrimaryKey ContainerPk = _getNodeId( ContainerId );
+                if( null != ContainerPk )
+                {
+                    ReturnVal = ws.getContainerData( ContainerPk );
+                }
+
+                _deInitResources();
+            } // try
+            catch( Exception ex )
+            {
+                ReturnVal = jError( ex );
+            }
+            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+            return ReturnVal.ToString();
+        } // getDispenseSourceContainerData()
+
         #endregion Dispense Container
 
         #endregion Web Methods

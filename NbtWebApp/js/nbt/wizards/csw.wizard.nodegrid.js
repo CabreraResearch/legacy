@@ -17,7 +17,10 @@
                 forceFit: true,
                 relatednodeid: '',
                 relatednodetypeid: '',
-                relatedobjectclassid: ''
+                relatedobjectclassid: '',
+                hasMenu: true,
+                ReadOnly: false,
+                height: 200
             };
             if (options) $.extend(cswPrivate, options);
 
@@ -39,7 +42,10 @@
 
                 viewid = viewid || cswPrivate.viewid;
 
-                cswPrivate.menuDiv = cswPublic.rootDiv.div({ ID: Csw.makeId(cswPrivate.ID, 'menu') }).css({ height: '25px' });
+                cswPrivate.menuDiv = cswPublic.rootDiv.div({ ID: Csw.makeId(cswPrivate.ID, 'menu') });
+                if (cswPrivate.hasMenu) {
+                    cswPrivate.menuDiv.css({ height: '25px' });
+                }
                 cswPrivate.filterDiv = cswPublic.rootDiv.div({ ID: Csw.makeId(cswPrivate.ID, 'filter') });
                 cswPrivate.gridDiv = cswPublic.rootDiv.div({ ID: Csw.makeId(cswPrivate.ID, 'property') });
                 cswPrivate.reinitGrid = (function () {
@@ -65,6 +71,10 @@
                     canSelectRow: cswPrivate.canSelectRow,
                     forceFit: cswPrivate.forceFit,
                     onSelect: cswPrivate.onSelect,
+                    showActionColumn: cswPrivate.showActionColumn,
+                    showEdit: cswPrivate.showEdit,
+                    showDelete: cswPrivate.showDelete,
+                    height: cswPrivate.height,
                     reinit: false,
                     onEditNode: function () {
                         cswPrivate.reinitGrid(viewid);
@@ -74,25 +84,29 @@
                     },
                     onSuccess: function () {
                         cswPrivate.makeGridMenu(viewid);
-                    }
+                        Csw.tryExec(cswPrivate.onSuccess);
+                    },
+                    includeInQuickLaunch: false
                 };
                 cswPublic.grid = cswPrivate.gridDiv.$.CswNodeGrid('init', cswPrivate.gridOpts);
             };
 
             cswPrivate.makeGridMenu = function (viewid) {
-                cswPrivate.menuDiv.$.CswMenuMain({
-                    viewid: viewid,
-                    nodeid: cswPrivate.nodeid,
-                    cswnbtnodekey: cswPrivate.cswnbtnodekey,
-                    relatednodeid: Csw.string(cswPrivate.relatednodeid),
-                    relatednodetypeid: Csw.string(cswPrivate.relatednodetypeid),
-                    relatedobjectclassid: Csw.string(cswPrivate.relatedobjectclassid),
-                    propid: cswPrivate.ID,
-                    limitMenuTo: 'Add',
-                    onAddNode: function () {
-                        cswPrivate.reinitGrid(viewid);
-                    }
-                }); // CswMenuMain
+                if (cswPrivate.hasMenu) {
+                    cswPrivate.menuDiv.$.CswMenuMain({
+                        viewid: viewid,
+                        nodeid: cswPrivate.nodeid,
+                        cswnbtnodekey: cswPrivate.cswnbtnodekey,
+                        relatednodeid: Csw.string(cswPrivate.relatednodeid),
+                        relatednodetypeid: Csw.string(cswPrivate.relatednodetypeid),
+                        relatedobjectclassid: Csw.string(cswPrivate.relatedobjectclassid),
+                        propid: cswPrivate.ID,
+                        limitMenuTo: 'Add',
+                        onAddNode: function() {
+                            cswPrivate.reinitGrid(viewid);
+                        }
+                    }); // CswMenuMain
+                }
             };
 
             cswPublic.getSelectedNodeId = function () {
