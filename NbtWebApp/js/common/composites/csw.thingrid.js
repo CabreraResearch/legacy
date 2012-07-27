@@ -140,7 +140,7 @@
             	/// <param name="col"></param>
                 var cell = cswPublic.addCell('', row, col);
                 cell.buttonExt({
-                    icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.add),
+                    icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.check),
                     size: 'small',
                     tooltip: { title: 'Add' },
                     disableOnClick: false,
