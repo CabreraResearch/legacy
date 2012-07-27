@@ -318,6 +318,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             CswNbtPropEnmrtrFiltered QuestionsFlt = this.Node.Properties[(CswNbtMetaDataFieldType.NbtFieldType) CswNbtMetaDataFieldType.NbtFieldType.Question];
             QuestionsFlt.Reset();
+            bool AllAnswered = true;
             foreach( CswNbtNodePropWrapper Prop in QuestionsFlt )
             {
                 CswNbtNodePropQuestion QuestionProp = Prop.AsQuestion;
@@ -327,10 +328,14 @@ namespace ChemSW.Nbt.ObjClasses
                 {
                     QuestionProp.IsActionRequired = true;
                 }
-                
+
+                AllAnswered = ( false == string.IsNullOrEmpty( QuestionProp.Answer ) ) && AllAnswered;
+
                 // case 26705
                 QuestionProp.SetOnPropChange( onQuestionChange );
             }
+
+            SetPreferred.setReadOnly( value: AllAnswered, SaveToDb: true );
 
             _CswNbtObjClassDefault.afterPopulateProps();
 
