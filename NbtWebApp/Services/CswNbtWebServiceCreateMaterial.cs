@@ -6,6 +6,8 @@ using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Statistics;
 using Newtonsoft.Json.Linq;
+using ChemSW.Nbt.UnitsOfMeasure;
+using System.Collections.ObjectModel;
 
 namespace ChemSW.Nbt.WebServices
 {
@@ -253,9 +255,17 @@ namespace ChemSW.Nbt.WebServices
             JObject Ret = new JObject();
 
             SizeNode = CswNbtResources.Nodes.makeNodeFromNodeTypeId( SizeNodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing, true );
-            CswNbtWebServiceNode NodeWs = new CswNbtWebServiceNode( CswNbtResources, CswNbtStatisticsEvents );
-            NodeWs.addNodeProps( SizeNode, SizeObj, null );
+            //CswNbtWebServiceNode NodeWs = new CswNbtWebServiceNode( CswNbtResources, CswNbtStatisticsEvents );
+            //NodeWs.addNodeProps( SizeNode, SizeObj, null );
             CswNbtObjClassSize NodeAsSize = (CswNbtObjClassSize) SizeNode;
+            NodeAsSize.InitialQuantity.Quantity = CswConvert.ToDouble( SizeObj["quantity"] );
+            CswPrimaryKey UnitIdPK = new CswPrimaryKey();
+            UnitIdPK.FromString( SizeObj["unitid"].ToString() );
+            NodeAsSize.InitialQuantity.UnitId = UnitIdPK;
+            NodeAsSize.CatalogNo.Text = SizeObj["catalogNo"].ToString();
+            NodeAsSize.QuantityEditable.Checked = CswConvert.ToTristate( SizeObj["quantEditableChecked"] );
+            NodeAsSize.Dispensable.Checked = CswConvert.ToTristate( SizeObj["dispensibleChecked"] );
+
             JArray Row = new JArray();
             Ret["row"] = Row;
 
@@ -344,7 +354,7 @@ namespace ChemSW.Nbt.WebServices
         public JObject createMaterial( JObject MaterialObj, CswNbtNode MaterialNode = null )
         {
             JObject RetObj = new JObject();
-            JArray SizesArray = (JArray) MaterialObj["sizes"];
+            JArray SizesArray = (JArray) MaterialObj["sizeNodes"];
 
             if( null == MaterialNode )
             {
@@ -383,11 +393,10 @@ namespace ChemSW.Nbt.WebServices
                 if( SizeObj.HasValues )
                 {
                     CswNbtNode SizeNode;
-                    JObject SizeDef = (JObject) SizeObj["sizedef"];
                     Int32 SizeNtId = CswConvert.ToInt32( SizeObj["nodetypeid"] );
                     if( Int32.MinValue != SizeNtId )
                     {
-                        getSizeNodeProps( _CswNbtResources, _CswNbtStatisticsEvents, SizeNtId, SizeDef, true, out SizeNode );
+                        getSizeNodeProps( _CswNbtResources, _CswNbtStatisticsEvents, SizeNtId, SizeObj, true, out SizeNode );
                         if( null != SizeNode )
                         {
                             CswNbtObjClassSize NodeAsSize = (CswNbtObjClassSize) SizeNode;
@@ -409,6 +418,31 @@ namespace ChemSW.Nbt.WebServices
                     SizesArray.Remove( SizeObj );
                 }
             }
+        }
+
+        public static JObject GetMaterialUnitsOfMeasure( string PhysicalState, CswNbtResources CswNbtResources )
+        {
+            JObject ret = new JObject();
+            CswNbtUnitViewBuilder unitViewBuilder = new CswNbtUnitViewBuilder( CswNbtResources );
+            CswNbtView unitsView = unitViewBuilder.getQuantityUnitOfMeasureView( PhysicalState );
+
+            Collection<CswNbtNode> _UnitNodes = new Collection<CswNbtNode>();
+            ICswNbtTree UnitsTree = CswNbtResources.Trees.getTreeFromView( unitsView, false, true, false, false );
+            UnitsTree.goToRoot();
+            for( int i = 0; i < UnitsTree.getChildNodeCount(); i++ )
+            {
+                UnitsTree.goToNthChild( i );
+                _UnitNodes.Add( UnitsTree.getNodeForCurrentPosition() );
+                UnitsTree.goToParentNode();
+            }
+
+            foreach( CswNbtNode unitNode in _UnitNodes )
+            {
+                CswNbtObjClassUnitOfMeasure nodeAsUnitOfMeasure = (CswNbtObjClassUnitOfMeasure) unitNode;
+                ret[nodeAsUnitOfMeasure.NodeId.ToString()] = nodeAsUnitOfMeasure.Name.Gestalt;
+            }
+
+            return ret;
         }
 
         #endregion Public
