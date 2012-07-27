@@ -49,7 +49,7 @@
                 cswPublic.selectedNodeId = function () {
                     return cswPrivate.selectedNodeId || cswPublic.val();
                 };
-                
+
                 Csw.ajax.post({
                     urlMethod: cswPrivate.nodesUrlMethod,
                     data: {
@@ -82,7 +82,7 @@
 
                         Csw.tryExec(cswPrivate.onSuccess, ret);
                         cswPublic.css('width', Csw.string(cswPrivate.width));
-                        
+
                         if (useSearch) {
                             var nameSpan = table.cell(1, cellCol).span({
                                 ID: Csw.makeId(o.ID, '', 'selectedname'),
@@ -103,57 +103,30 @@
                                     size: 'small',
                                     tooltip: { title: 'Add' },
                                     disableOnClick: false,
-                                    onClick: function() {
+                                    onClick: function () {
                                         $.CswDialog('SearchDialog', {
                                             nodetypeid: cswPrivate.nodeTypeId,
                                             objectclassid: cswPrivate.objectClassId,
-                                            onSelectNode: function(nodeObj) {
+                                            onSelectNode: function (nodeObj) {
                                                 nameSpan.text(nodeObj.nodename);
                                                 hiddenValue.val(nodeObj.nodeid);
                                             }
                                         });
                                     }
                                 });
-                        
+
                             cellCol += 1;
 
                             cswPrivate.table.$.hover(function (event) { Csw.nodeHoverIn(event, hiddenValue.val()); }, Csw.nodeHoverOut);
 
-                        } 
+                        }
                         if (canAdd) {
                             var openAddNodeDialog = function (nodetypeToAdd) {
                                 $.CswDialog('AddNodeDialog', {
                                     nodetypeid: nodetypeToAdd,
                                     relatednodeid: cswPrivate.relatedTo.nodeId,
                                     relatedobjectclassid: cswPrivate.relatedTo.objectClassId,
-                                    }
-                                });
-                            };
-
-                            var getNodeTypeOptions = function () {
-                                var blankText = '[Select One]';
-                                cswPrivate.selectedNodeType = cswPrivate.table.cell(1, cellCol)
-                                    .nodeTypeSelect({
-                                        objectClassId: cswPrivate.objectClassId,
-                                        onSelect: function (data, nodeTypeCount) {
-                                            if (blankText !== cswPrivate.selectedNodeType.val()) {
-                                                cswPrivate.nodeTypeId = cswPrivate.selectedNodeType.val();
-                                                openAddNodeDialog(cswPrivate.nodeTypeId);
-                                            }
-                                        },
-                        
-                            cellCol += 1;
-
-                            cswPrivate.table.$.hover(function (event) { Csw.nodeHoverIn(event, hiddenValue.val()); }, Csw.nodeHoverOut);
-
-                        } 
-                        if (canAdd) {
-                            var openAddNodeDialog = function (nodetypeToAdd) {
-                                $.CswDialog('AddNodeDialog', {
-                                    nodetypeid: nodetypeToAdd,
-                                    relatednodeid: cswPrivate.relatedTo.nodeId,
-                                    relatedobjectclassid: cswPrivate.relatedTo.objectClassId,
-                                    onAddNode: function(nodeid, nodekey, nodename) {
+                                    onAddNode: function (nodeid, nodekey, nodename) {
                                         cswPublic.option({ value: nodeid, display: nodename });
                                         cswPublic.val(nodeid);
                                     }
@@ -188,10 +161,7 @@
                                     .hide();
                                 cellCol += 1;
                             };
-                                    .hide();
-                                cellCol += 1;
-                            };
-                            
+
                             cswPrivate.addBtn = cswPrivate.table.cell(1, cellCol)
                                 .div()
                                 .buttonExt({
@@ -199,7 +169,7 @@
                                     size: 'small',
                                     tooltip: { title: 'Add' },
                                     disableOnClick: false,
-                                    onClick: function() {
+                                    onClick: function () {
                                         if (false === Csw.isNullOrEmpty(cswPrivate.nodeTypeId)) {
                                             openAddNodeDialog(cswPrivate.nodeTypeId);
                                         }
@@ -213,7 +183,7 @@
                         cswPrivate.selectedNodeId = cswPublic.val();
                     }
                 });
-                
+
             } ());
 
             return cswPublic;
