@@ -113,40 +113,40 @@ namespace ChemSW.Nbt.Actions
         /// <summary>
         /// Create new containers and return the number of containers succcesfully created and a view of said containers. 
         /// </summary>
-        public static JObject receiveMaterial(string ReceiptDefinition, CswNbtResources CswNbtResources)
+        public static JObject receiveMaterial( string ReceiptDefinition, CswNbtResources CswNbtResources )
         {
             JObject Ret = new JObject();
             JObject ReceiptObj = CswConvert.ToJObject( ReceiptDefinition );
             Collection<CswPrimaryKey> ContainerIds = new Collection<CswPrimaryKey>();
-            Debug.Assert( ReceiptObj.HasValues, "The request was not provided a parsable JSON string.");
+            Debug.Assert( ReceiptObj.HasValues, "The request was not provided a parsable JSON string." );
             if( ReceiptObj.HasValues )
             {
                 Int32 ContainerNodeTypeId = CswConvert.ToInt32( ReceiptObj["containernodetypeid"] );
                 Debug.Assert( ( Int32.MinValue != ContainerNodeTypeId ), "The request did not specify a valid container nodetypeid." );
-                if ( Int32.MinValue != ContainerNodeTypeId )
+                if( Int32.MinValue != ContainerNodeTypeId )
                 {
                     CswNbtMetaDataNodeType ContainerNt = CswNbtResources.MetaData.getNodeType( ContainerNodeTypeId );
-                    Debug.Assert( (null != ContainerNt), "The request specified an invalid container nodetypeid." );
-                    if ( null != ContainerNt )
+                    Debug.Assert( ( null != ContainerNt ), "The request specified an invalid container nodetypeid." );
+                    if( null != ContainerNt )
                     {
                         CswPrimaryKey MaterialId = new CswPrimaryKey();
                         MaterialId.FromString( CswConvert.ToString( ReceiptObj["materialid"] ) );
                         Debug.Assert( ( Int32.MinValue != MaterialId.PrimaryKey ), "The request did not specify a valid materialid." );
-                        if ( Int32.MinValue != MaterialId.PrimaryKey )
+                        if( Int32.MinValue != MaterialId.PrimaryKey )
                         {
                             CswPrimaryKey SizeId = new CswPrimaryKey();
                             SizeId.FromString( CswConvert.ToString( ReceiptObj["sizeid"] ) );
                             Debug.Assert( ( Int32.MinValue != SizeId.PrimaryKey ), "The request did not specify a valid sizeid." );
-                            if ( Int32.MinValue != SizeId.PrimaryKey )
+                            if( Int32.MinValue != SizeId.PrimaryKey )
                             {
                                 JArray Quantities = CswConvert.ToJArray( ReceiptObj["quantities"] );
                                 Debug.Assert( Quantities.HasValues, "The request did not specify any valid container amounts." );
-                                if ( Quantities.HasValues )
+                                if( Quantities.HasValues )
                                 {
                                     JObject ContainerAddProps = CswConvert.ToJObject( ReceiptObj["props"] );
 
                                     CswNbtSdTabsAndProps SdTabsAndProps = new CswNbtSdTabsAndProps( CswNbtResources );
-                                    foreach ( JObject QuantityDef in Quantities )
+                                    foreach( JObject QuantityDef in Quantities )
                                     {
                                         Int32 NoContainers = CswConvert.ToInt32( QuantityDef["containerNo"] );
                                         CswCommaDelimitedString Barcodes = new CswCommaDelimitedString();
@@ -155,19 +155,18 @@ namespace ChemSW.Nbt.Actions
                                         CswPrimaryKey UnitId = new CswPrimaryKey();
                                         UnitId.FromString( CswConvert.ToString( QuantityDef["unitid"] ) );
                                         CswNbtObjClassSize AsSize = CswNbtResources.Nodes.GetNode( SizeId );
-                                        
                                         Debug.Assert( ( NoContainers > 0 ), "The request did not specify at least one container." );
                                         Debug.Assert( ( QuantityValue > 0 ), "The request did not specify a valid quantity." );
                                         Debug.Assert( ( Int32.MinValue != UnitId.PrimaryKey ), "The request did not specify a valid unit." );
-                                        if ( NoContainers > 0 && QuantityValue > 0 && Int32.MinValue != UnitId.PrimaryKey )
+                                        if( NoContainers > 0 && QuantityValue > 0 && Int32.MinValue != UnitId.PrimaryKey )
                                         {
-                                            for ( Int32 C = 0; C < NoContainers; C += 1 )
+                                            for( Int32 C = 0; C < NoContainers; C += 1 )
                                             {
                                                 CswNbtNode Container;
                                                 CswNbtNodeKey ContainerNodeKey;
                                                 SdTabsAndProps.addNode( ContainerNt, out Container, ContainerAddProps, out ContainerNodeKey );
                                                 CswNbtObjClassContainer AsContainer = Container;
-                                                if ( Barcodes.Count <= NoContainers && false == string.IsNullOrEmpty( Barcodes[C] ) )
+                                                if( Barcodes.Count <= NoContainers && false == string.IsNullOrEmpty( Barcodes[C] ) )
                                                 {
                                                     AsContainer.Barcode.setBarcodeValueOverride( Barcodes[C], false );
                                                 }
@@ -185,6 +184,8 @@ namespace ChemSW.Nbt.Actions
                                                 AsContainer.DispenseIn( CswNbtObjClassContainerDispenseTransaction.DispenseType.Receive, QuantityValue, UnitId );
                                                 AsContainer.postChanges( true );
                                                 ContainerIds.Add( AsContainer.NodeId );
+                                                Ret["barcodeId"] = AsContainer.NodeId.ToString() + "_" +
+                                                AsContainer.Barcode.NodeTypePropId.ToString();
                                             }
                                         }
                                     }
@@ -193,7 +194,7 @@ namespace ChemSW.Nbt.Actions
                         }
                     }
 
-                    if ( ContainerIds.Count > 0 )
+                    if( ContainerIds.Count > 0 )
                     {
                         CswNbtView NewContainersView = new CswNbtView( CswNbtResources );
                         NewContainersView.ViewName = "New Containers";
