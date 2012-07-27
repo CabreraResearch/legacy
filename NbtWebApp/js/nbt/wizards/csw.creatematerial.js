@@ -565,11 +565,15 @@
                                         newSize.dispensibleChecked = cswPublic.dispensibleCtrl.val();
                                         newSize.quantEditableChecked = cswPublic.quantEditableCtrl.val();
                                         newSize.unitid = getID(newSize.unit);
-                                        if (isSizeNew(newSize)) {
-                                            cswPublic.sizes.push(extractNewAmount(newSize));
-                                            cswPublic.sizeGrid.addRows([newSize.quantity + ' ' + newSize.unit, newSize.catalogNo, newSize.quantEditableChecked, newSize.dispensibleChecked]);
+                                        if (false === Csw.isNullOrEmpty(newSize.quantity)) {
+                                            if (isSizeNew(newSize)) {
+                                                cswPublic.sizes.push(extractNewAmount(newSize));
+                                                cswPublic.sizeGrid.addRows([newSize.quantity + ' ' + newSize.unit, newSize.catalogNo, newSize.quantEditableChecked, newSize.dispensibleChecked]);
+                                            } else {
+                                                $.CswDialog('AlertDialog', 'This size is already defined. Please define a new, unique size.');
+                                            }
                                         } else {
-                                            $.CswDialog('AlertDialog', 'This size is already defined. Please define a new, unique size.');
+                                            $.CswDialog('AlertDialog', 'A quantity must be specified when creating a size. Please specify the quantity.');
                                         }
                                     }
                                 },
