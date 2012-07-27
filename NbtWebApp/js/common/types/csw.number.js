@@ -128,14 +128,14 @@
 
     function validateInteger(value) {
         var regex = /^\-?\d*$/g;
-        return (regex.test(value) || value === Csw.enums.multiEditDefaultValue);
+        return (regex.test(value));
     }
     Csw.register('validateInteger', validateInteger);
     Csw.validateInteger = Csw.validateInteger || validateInteger;
 
     function validateIntegerGreaterThanZero(value) {
         var regex = /^(\d*(\.|)\d*)$/g;
-        return (regex.test(value) || value === Csw.enums.multiEditDefaultValue);
+        return (regex.test(value));
     }
     Csw.register('validateIntegerGreaterThanZero', validateIntegerGreaterThanZero);
     Csw.validateIntegerGreaterThanZero = Csw.validateIntegerGreaterThanZero || validateIntegerGreaterThanZero;
@@ -158,7 +158,7 @@
     Csw.getMaxValueForPrecision = Csw.getMaxValueForPrecision || getMaxValueForPrecision;
 
     function validateMaxLength(value, maxLength) {
-        return (value.length <= maxLength || value === Csw.enums.multiEditDefaultValue);
+        return (value.length <= maxLength);
     }
     Csw.register('validateMaxLength', validateMaxLength);
     Csw.validateMaxLength = Csw.validateMaxLength || validateMaxLength;

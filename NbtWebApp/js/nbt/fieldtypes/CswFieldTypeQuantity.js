@@ -8,6 +8,10 @@
     var methods = {
         init: function (o) {
 
+            var isMultiEditValid = function (value) {
+                return o.Multi && value === Csw.enums.multiEditDefaultValue;
+            }
+
             var propDiv = o.propDiv;
             propDiv.empty();
             var propVals = o.propData.values,
@@ -49,7 +53,8 @@
                     Precision: 6, //case 24646 - precision is being handled in the validator below, so we don't want to use the one in numberTextBox.
                     ReadOnly: Csw.bool(o.ReadOnly),
                     Required: Csw.bool(o.Required),
-                    onChange: o.onChange
+                    onChange: o.onChange,
+                    isValid: isMultiEditValid
                 });
                 cellCol++;
 
@@ -97,22 +102,22 @@
                 }
 
                 $.validator.addMethod('validateInteger', function (value, element) {
-                    return (precision != 0 || Csw.validateInteger(numberTextBox.val()));
+                    return (isMultiEditValid(value) || precision != 0 || Csw.validateInteger(numberTextBox.val()));
                 }, 'Value must be a whole number');
                 numberTextBox.addClass('validateInteger');
 
                 $.validator.addMethod('validateIntegerGreaterThanZero', function (value, element) {
-                    return (Csw.validateIntegerGreaterThanZero(numberTextBox.val()));
+                    return (isMultiEditValid(value) || Csw.validateIntegerGreaterThanZero(numberTextBox.val()));
                 }, 'Value must be a non-zero, positive number');
                 numberTextBox.addClass('validateIntegerGreaterThanZero');
 
                 $.validator.addMethod('validateUnitPresent', function (value, element) {
-                    return (false === Csw.isNullOrEmpty(selectBox.val()) || Csw.isNullOrEmpty(numberTextBox.val()));
+                    return (isMultiEditValid(value) || false === Csw.isNullOrEmpty(selectBox.val()) || Csw.isNullOrEmpty(numberTextBox.val()));
                 }, 'Unit must be selected if Quantity is present.');
                 selectBox.addClass('validateUnitPresent');
 
                 $.validator.addMethod('validateQuantityPresent', function (value, element) {
-                    return (false === Csw.isNullOrEmpty(numberTextBox.val()) || Csw.isNullOrEmpty(selectBox.val()));
+                    return (isMultiEditValid(value) || false === Csw.isNullOrEmpty(numberTextBox.val()) || Csw.isNullOrEmpty(selectBox.val()));
                 }, 'Quantity must have a value if Unit is selected.');
                 selectBox.addClass('validateQuantityPresent');
 

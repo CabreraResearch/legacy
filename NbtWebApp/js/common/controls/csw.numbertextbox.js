@@ -20,7 +20,8 @@
                 onChange: function () {
                 },
                 width: '',
-                ceilingVal: 999999999.999999
+                ceilingVal: 999999999.999999,
+                isValid: null
             };
             var cswPublic = {};
             //        cswPublic.val = function (newValue) {
@@ -73,14 +74,14 @@
 
                     if (Csw.isNumber(cswPrivate.maxLength)) {
                         $.validator.addMethod(cswPrivate.ID + '_validateMaxLength', function (value, element) {
-                            return (this.optional(element) || Csw.validateMaxLength($(element).val(), cswPrivate.maxLength));
+                            return (Csw.tryExec(cswPrivate.isValid, value) || this.optional(element) || Csw.validateMaxLength($(element).val(), cswPrivate.maxLength));
                         }, 'Number must contain a most ' + cswPrivate.maxLength + ' digits');
                         cswPublic.addClass(cswPrivate.ID + '_validateMaxLength');
                     }
 
                     if (Csw.isNumber(minValue) && Csw.isNumeric(minValue)) {
                         $.validator.addMethod(cswPrivate.ID + '_validateFloatMinValue', function (value, element) {
-                            return (this.optional(element) || Csw.validateFloatMinValue($(element).val(), minValue));
+                            return (Csw.tryExec(cswPrivate.isValid, value) || this.optional(element) || Csw.validateFloatMinValue($(element).val(), minValue));
                         }, 'Number must be greater than or equal to ' + minValue);
                         cswPublic.addClass(cswPrivate.ID + '_validateFloatMinValue');
                     }
@@ -88,18 +89,18 @@
                         Csw.isNumeric(maxValue) &&
                             maxValue > minValue) {
                         $.validator.addMethod(cswPrivate.ID + '_validateFloatMaxValue', function (value, element) {
-                            return (this.optional(element) || Csw.validateFloatMaxValue($(element).val(), maxValue));
+                            return (Csw.tryExec(cswPrivate.isValid, value) || this.optional(element) || Csw.validateFloatMaxValue($(element).val(), maxValue));
                         }, 'Number must be less than or equal to ' + maxValue);
                         cswPublic.addClass(cswPrivate.ID + '_validateFloatMaxValue');
                     }
                     if (cswPrivate.Precision === undefined || cswPrivate.Precision <= 0) {
                         $.validator.addMethod(cswPrivate.ID + '_validateInteger', function (value, element) {
-                            return (this.optional(element) || Csw.validateInteger($(element).val()));
+                            return (Csw.tryExec(cswPrivate.isValid, value) || this.optional(element) || Csw.validateInteger($(element).val()));
                         }, 'Value must be an integer');
                         cswPublic.addClass(cswPrivate.ID + '_validateInteger');
                     } else {
                         $.validator.addMethod(cswPrivate.ID + '_validateFloatPrecision', function (value, element) {
-                            return (this.optional(element) || Csw.validateFloatPrecision($(element).val(), cswPrivate.Precision));
+                            return (Csw.tryExec(cswPrivate.isValid, value) || this.optional(element) || Csw.validateFloatPrecision($(element).val(), cswPrivate.Precision));
                         }, 'Value must be numeric');
                         cswPublic.addClass(cswPrivate.ID + '_validateFloatPrecision');
                     }
