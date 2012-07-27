@@ -166,7 +166,7 @@ namespace ChemSW.Nbt.Schema
                     {
                         DefaultSizeUnit = Unit;
                     }
-                    else if( Unit.Name.Text.ToLower() == "year" )
+                    else if( Unit.Name.Text.ToLower() == "years" )
                     {
                         DefaultTimeUnit = Unit;
                     }
