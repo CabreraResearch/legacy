@@ -59,6 +59,7 @@
                 cswPrivate.stepThreeComplete = false;
 
                 if (startWithStep <= 2) {
+                    cswPrivate.physicalState = '';
                     cswPrivate.stepTwoComplete = false;
 
                     if (startWithStep <= 1) {
@@ -211,6 +212,7 @@
                                 typeSelect();
                                 if (false === Csw.isNullOrEmpty(cswPrivate.tradeName)) {
                                     checkIfMaterialExists();
+                                    cswPrivate.reinitSteps(2);
                                 }
                             },
                             onSuccess: typeSelect
@@ -385,7 +387,7 @@
                                                 values: getOpts(propertyData["values"]["options"]),
                                                 onChange: function () {
                                                     cswPrivate.physicalState = cswPublic.physicalStateCrl.val();
-                                                    cswPrivate.reinitSteps(2);
+                                                    cswPrivate.reinitSteps(3);
                                                 }
                                             });
                                             if (false === Csw.isNullOrEmpty(cswPublic.physicalStateCrl)) {
