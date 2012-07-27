@@ -82,6 +82,8 @@ namespace ChemSW.Nbt.ObjClasses
         public override void afterCreateNode()
         {
             _CswNbtObjClassDefault.afterCreateNode();
+            Disposed.setHidden(value: true, SaveToDb: true);
+            SourceContainer.setHidden( value: true, SaveToDb: true );
         } // afterCreateNode()
 
         private void _updateRequestMenu()
@@ -122,7 +124,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void afterWriteNode()
         {
-            _CswNbtObjClassDefault.afterWriteNode();
+           _CswNbtObjClassDefault.afterWriteNode();
         }//afterWriteNode()
 
         public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false )
@@ -144,6 +146,7 @@ namespace ChemSW.Nbt.ObjClasses
             Quantity.SetOnPropChange( OnQuantityPropChange );
             Location.SetOnPropChange( OnLocationPropChange );
             Size.SetOnPropChange( OnSizePropChange );
+            SourceContainer.SetOnPropChange( OnSourceContainerChange );
             _CswNbtObjClassDefault.afterPopulateProps();
         }//afterPopulateProps()
 
@@ -628,6 +631,13 @@ namespace ChemSW.Nbt.ObjClasses
             _updateRequestMenu();
         }
         public CswNbtNodePropRelationship SourceContainer { get { return ( _CswNbtNode.Properties[SourceContainerPropertyName] ); } }
+        private void OnSourceContainerChange(CswNbtNodeProp Prop)
+        {
+            if(null != SourceContainer.RelatedNodeId && Int32.MinValue != SourceContainer.RelatedNodeId.PrimaryKey )
+            {
+                SourceContainer.setHidden( value: false, SaveToDb: true );
+            }
+        }
         public CswNbtNodePropQuantity Quantity { get { return ( _CswNbtNode.Properties[QuantityPropertyName] ); } }
         private void OnQuantityPropChange( CswNbtNodeProp Prop )
         {
