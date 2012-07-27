@@ -33,7 +33,7 @@
                 stepThreeComplete: false,
                 config: {
                     quantityName: 'Initial Quantity *',
-                    numberName: 'Catalog No. *',
+                    numberName: 'Catalog No.',
                     dispensibleName: 'Dispensible',
                     quantEditableName: 'Quantity Editable'
                 },
@@ -190,7 +190,7 @@
                     cswPrivate.toggleButton(cswPrivate.buttons.prev, true);
                     cswPrivate.toggleButton(cswPrivate.buttons.cancel, true);
                     cswPrivate.toggleButton(cswPrivate.buttons.finish, false);
-                    cswPrivate.toggleButton(cswPrivate.buttons.next, nextBtnEnabled());
+                    cswPrivate.toggleButton(cswPrivate.buttons.next, false);
 
                     if (false === cswPrivate.stepTwoComplete) {
                         cswPrivate.divStep1 = cswPrivate.divStep1 || cswPrivate.wizard.div(1);
@@ -253,7 +253,7 @@
                             },
                             onSuccess: supplierSelect
                         });
-                        cswPrivate.divStep1.br({ number: 1 });
+                        //cswPrivate.divStep1.br({ number: 1 });
 
                         /* PARTNO */
                         cswPrivate.partNoInput = cswPrivate.divStep1.input({
@@ -277,6 +277,7 @@
                             }
                         }
                         var checkIfMaterialExists = function () {
+                            cswPrivate.toggleButton(cswPrivate.buttons.next, false);
                             Csw.ajax.post({
                                 urlMethod: 'getMaterial',
                                 data: {
@@ -294,6 +295,8 @@
                                             ID: "materialExistsLabel"
                                         });
                                         cswPrivate.toggleButton(cswPrivate.buttons.next, false);
+                                    } else {
+                                        cswPrivate.toggleButton(cswPrivate.buttons.next, true);
                                     }
                                 }
                             });
@@ -442,7 +445,7 @@
                             text: "Sizes are used to receive material inventory. This step is optional - you may create sizes for this material elsewhere.",
                             cssclass: "wizardHelpDesc"
                         });
-                        div.br({ number: 4 });
+                        div.br({ number: 1 });
 
                         var makeGrid = function () {
 
