@@ -30,7 +30,7 @@
                         barcode: '',
                         location: '',
                         requestItemId: '',
-                        printBarcodes: false
+                        customBarcodes: false
                     },
                     onCancel: null,
                     onFinish: null,
@@ -62,7 +62,8 @@
                     dispenseModes: {
                         Direct: 'Direct',
                         Request: 'Request'
-                    }
+                    },
+                    printBarcodes: false
                 };
 
                 cswPrivate.setDispenseMode = function () {
@@ -350,7 +351,8 @@
                                     containerMinimum: 0,
                                     action: 'Dispense',
                                     relatedNodeId: cswPrivate.state.sourceContainerNodeId,
-                                    selectedSizeId: cswPrivate.state.sizeId
+                                    selectedSizeId: cswPrivate.state.sizeId,
+                                    customBarcodes: cswPrivate.state.customBarcodes
                                 });
                             };
 
@@ -365,9 +367,9 @@
                                     onChange: Csw.method(function () {
                                         var val;
                                         if (cswPrivate.printBarcodesCheckBox.checked()) {
-                                            cswPrivate.state.printBarcodes = true;
+                                            cswPrivate.printBarcodes = true;
                                         } else {
-                                            cswPrivate.state.printBarcodes = false;
+                                            cswPrivate.printBarcodes = false;
                                         }
                                     })
                                 });
@@ -472,7 +474,7 @@
                             Csw.tryExec(cswPrivate.onFinish, viewId);
                             cswPrivate.clearState();
                             if (false === Csw.isNullOrEmpty(data.barcodeId)) {
-                                if (cswPrivate.state.printBarcodes) {
+                                if (cswPrivate.printBarcodes) {
                                     $.CswDialog('PrintLabelDialog', { 'nodeid': cswPrivate.state.sourceContainerNodeId, 'propid': data.barcodeId });
                                 }
                             }

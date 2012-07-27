@@ -36,12 +36,16 @@
                         barcodeName: 'Barcodes (Optional)',
                         quantityName: 'Quantity *',
                         numberName: 'No. Containers *'
-                    }
+                    },
+                    customBarcodes: false
                 };
                 if (options) {
                     $.extend(cswPrivate, options);
                 }
-                cswPrivate.header = [cswPrivate.config.numberName, cswPrivate.config.quantityName, cswPrivate.config.barcodeName];
+                cswPrivate.header = [cswPrivate.config.numberName, cswPrivate.config.quantityName];
+                if(cswPrivate.customBarcodes){
+                    cswPrivate.header = cswPrivate.header.concat([cswPrivate.config.barcodeName]);
+                }
                 if (cswPrivate.rows.length === 0) {
                     cswPrivate.rows.push(cswPrivate.header);
                 } else {
