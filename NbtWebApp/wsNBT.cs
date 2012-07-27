@@ -1599,7 +1599,7 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string getNodes( string NodeTypeId, string ObjectClassId, string ObjectClass )
+        public string getNodes( string NodeTypeId, string ObjectClassId, string ObjectClass, string RelatedToObjectClass, string RelatedToNodeId )
         {
             JObject ReturnVal = new JObject();
 
@@ -1607,47 +1607,10 @@ namespace ChemSW.Nbt.WebServices
             try
             {
                 _initResources();
-                AuthenticationStatus = _attemptRefresh();
+                AuthenticationStatus = _attemptRefresh( true );
 
-                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
-                {
-
-                    Int32 RealNodeTypeId = CswConvert.ToInt32( NodeTypeId );
-                    Int32 RealObjectClassId = CswConvert.ToInt32( ObjectClassId );
-                    CswNbtMetaDataObjectClass.NbtObjectClass RealObjectClass;
-                    Enum.TryParse( ObjectClass, true, out RealObjectClass );
-                    bool CanAdd;
-                    Collection<CswNbtNode> Nodes = new Collection<CswNbtNode>();
-                    if( RealNodeTypeId != Int32.MinValue )
-                    {
-                        CswNbtMetaDataNodeType MetaDataNodeType = _CswNbtResources.MetaData.getNodeType( RealNodeTypeId );
-                        Nodes = MetaDataNodeType.getNodes( true, false );
-                        CanAdd = _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Create, MetaDataNodeType );
-                    }
-                    else
-                    {
-                        CswNbtMetaDataObjectClass MetaDataObjectClass = null;
-                        if( RealObjectClassId != Int32.MinValue )
-                        {
-                            MetaDataObjectClass = _CswNbtResources.MetaData.getObjectClass( RealObjectClassId );
-                        }
-                        else if( RealObjectClass != CswNbtMetaDataObjectClass.NbtObjectClass.Unknown )
-                        {
-                            MetaDataObjectClass = _CswNbtResources.MetaData.getObjectClass( RealObjectClass );
-                        }
-                        if( null != MetaDataObjectClass )
-                        {
-                            Nodes = MetaDataObjectClass.getNodes( true, false );
-                        }
-                        CanAdd = false;
-                    }
-
-                    foreach( CswNbtNode Node in Nodes )
-                    {
-                        ReturnVal[Node.NodeId.ToString()] = Node.NodeName;
-                    }
-                    ReturnVal["canadd"] = CanAdd;
-                }
+                CswNbtWebServiceNode ws = new CswNbtWebServiceNode(_CswNbtResources, _CswNbtStatisticsEvents);
+                ReturnVal = ws.getNodes(NodeTypeId, ObjectClassId, ObjectClass, RelatedToObjectClass, RelatedToNodeId);
 
                 _deInitResources();
             }
