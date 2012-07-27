@@ -111,7 +111,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropQuantity Capacity { get { return _CswNbtNode.Properties[CapacityPropertyName]; } }
         public CswNbtNodePropLogical QuantityEditable { get { return _CswNbtNode.Properties[QuantityEditablePropertyName]; } }
         public CswNbtNodePropLogical Dispensable { get { return _CswNbtNode.Properties[DispensablePropertyName]; } }
-        public CswNbtNodePropText CatalogNo { get { return _CswNbtNode.Properties[DispensablePropertyName]; } }
+        public CswNbtNodePropText CatalogNo { get { return _CswNbtNode.Properties[CatalogNoPropertyName]; } }
 
         #endregion
 

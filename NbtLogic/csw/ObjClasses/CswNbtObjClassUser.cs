@@ -389,9 +389,9 @@ namespace ChemSW.Nbt.ObjClasses
                 return ret;
             }
         }
-        public CswNbtNodePropLocation DefaultLocationProperty { get { return _CswNbtNode.Properties[DefaultLocationPropertyName].AsLocation; } }
+        public CswNbtNodePropLocation DefaultLocationProperty { get { return _CswNbtNode.Properties[DefaultLocationPropertyName]; } }
         public CswPrimaryKey DefaultLocationId { get { return DefaultLocationProperty.SelectedNodeId; } }
-        public CswNbtNodePropRelationship WorkUnitProperty { get { return _CswNbtNode.Properties[WorkUnitPropertyName].AsRelationship; } }
+        public CswNbtNodePropRelationship WorkUnitProperty { get { return _CswNbtNode.Properties[WorkUnitPropertyName]; } }
         public CswPrimaryKey WorkUnitId { get { return WorkUnitProperty.RelatedNodeId; } }
 
         #endregion
