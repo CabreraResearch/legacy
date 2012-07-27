@@ -666,16 +666,11 @@ namespace ChemSW.Nbt.MetaData
         //    set { _setAttribute( "defaultvalue", value, false ); }
         //}
 
-        public AuditLevel AuditLevel
+        public string AuditLevel
         {
             get
             {
-                AuditLevel ret = AuditLevel.NoAudit;
-                if( false == Enum.TryParse<AuditLevel>( _NodeTypePropRow[NodeTypePropAttributes.auditlevel.ToString()].ToString(), out ret ) )
-                {
-                    ret = AuditLevel.NoAudit;
-                }
-                return ret;
+                return ( ChemSW.Audit. AuditLevel.Parse( _NodeTypePropRow[NodeTypePropAttributes.auditlevel.ToString()].ToString() ) );
             }
             set
             {

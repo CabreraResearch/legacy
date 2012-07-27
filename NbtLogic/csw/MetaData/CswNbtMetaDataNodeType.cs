@@ -603,22 +603,15 @@ namespace ChemSW.Nbt.MetaData
         }
 
         private CswAuditMetaData _CswAuditMetaData = new CswAuditMetaData();
-        public AuditLevel AuditLevel
+        public string AuditLevel
         {
             get
             {
-                AuditLevel ret = AuditLevel.NoAudit;
-
-                if( false == Enum.TryParse<AuditLevel>( _NodeTypeRow[_CswAuditMetaData.AuditLevelColName].ToString(), out ret ) )
-                {
-                    ret = AuditLevel.NoAudit;
-                }
-
-                return ret;
+                return( ChemSW.Audit.AuditLevel.Parse( _NodeTypeRow[_CswAuditMetaData.AuditLevelColName].ToString() ) );
             }
             set
             {
-                _NodeTypeRow[_CswAuditMetaData.AuditLevelColName] = value;
+                _NodeTypeRow[_CswAuditMetaData.AuditLevelColName] = ChemSW.Audit.AuditLevel.Parse( value );
             }
         }
 

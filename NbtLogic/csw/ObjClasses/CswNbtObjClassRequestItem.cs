@@ -99,6 +99,7 @@ namespace ChemSW.Nbt.ObjClasses
                 {
                     Dispose, Move, Complete, Cancel
                 };
+
         }
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;

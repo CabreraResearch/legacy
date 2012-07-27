@@ -674,7 +674,7 @@ namespace ChemSW.Nbt
             _CswResources.OnGetAuditLevel = new Audit.GetAuditLevelHandler( handleGetAuditLevel );
         }
 
-        private void handleGetAuditLevel( DataRow DataRow, ref AuditLevel ReturnVal )
+        private void handleGetAuditLevel( DataRow DataRow, ref string ReturnVal )
         {
 
             ReturnVal = AuditLevel.NoAudit;
@@ -696,11 +696,13 @@ namespace ChemSW.Nbt
                 if( NodeTypePropId != Int32.MinValue )
                 {
                     CswNbtMetaDataNodeTypeProp NodeTypeProp = MetaData.getNodeTypeProp( NodeTypePropId );
-                    if( ( null != NodeTypeProp ) && ( NodeTypeProp.AuditLevel > AuditLevel.NoAudit ) )
+
+
+                    if( ( null != NodeTypeProp ) && ( AuditLevel.IsLevel1HigherThanLevel2( NodeTypeProp.AuditLevel, AuditLevel.NoAudit ) ) )
                     {
                         CswNbtMetaDataNodeType NodeType = NodeTypeProp.getNodeType();
 
-                        if( ( null != NodeType ) && ( NodeType.AuditLevel > AuditLevel.NoAudit ) ) //NodeType overrides NodeTypeProp (per order TDU)
+                        if( ( null != NodeType ) && ( AuditLevel.IsLevel1HigherThanLevel2( NodeType.AuditLevel, AuditLevel.NoAudit ) ) ) //NodeType overrides NodeTypeProp (per order TDU)
                         {
                             ReturnVal = NodeTypeProp.AuditLevel;
                         }
