@@ -51,7 +51,7 @@ namespace ChemSW.Nbt.Schema
                 {
                     if( null != Location )
                     {
-                        if( Location.Name.Text.ToLower() == "admissions" )
+                        if( Location.Name.Text.ToLower() == "center hall" )
                         {
                             DefaultLocation = Location;
                         }
