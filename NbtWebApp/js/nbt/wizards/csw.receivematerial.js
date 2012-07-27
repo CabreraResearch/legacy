@@ -232,11 +232,11 @@
                                 },
                                 onSuccess: function () {
                                     makeAmountsGrid();
-                                    makebarcodeCheckBox();
+                                    makeBarcodeCheckBox();
                                 },
                                 onSelect: function () {
                                     makeAmountsGrid();
-                                    makebarcodeCheckBox();
+                                    makeBarcodeCheckBox();
                                 }
                             });
                         };
@@ -261,12 +261,17 @@
                                 quantity: cswPrivate.state.quantity,
                                 containerlimit: cswPrivate.state.containerlimit,
                                 makeId: cswPrivate.wizard.makeStepId,
+                                materialId: cswPrivate.state.materialId,
+                                action: 'Receive',
                                 customBarcodes: cswPrivate.state.customBarcodes
                             });
                         };
 
-                        var makebarcodeCheckBox = function () {
-                            var checkBoxTable = cswPrivate.divStep1.table({
+                        var makeBarcodeCheckBox = function () {
+                            cswPrivate.barcodeCheckBoxDiv = cswPrivate.barcodeCheckBoxDiv || cswPrivate.divStep1.div();
+                            cswPrivate.barcodeCheckBoxDiv.empty();
+
+                            var checkBoxTable = cswPrivate.barcodeCheckBoxDiv.table({
                                 cellvalign: 'middle'
                             });
                             var printBarcodesCheckBox = checkBoxTable.cell(1, 1).checkBox({
