@@ -197,10 +197,10 @@ namespace ChemSW.Nbt.Schema
                     Size.IsDemo = true;
                     Size.Material.RelatedNodeId = Material.NodeId;
                     Size.CatalogNo.Text = "NE-H5/3";
-                    Size.Capacity.Quantity = 1;
+                    Size.InitialQuantity.Quantity = 1;
                     if(null != DefaultSizeUnit)
                     {
-                        Size.Capacity.UnitId = DefaultSizeUnit.NodeId;
+                        Size.InitialQuantity.UnitId = DefaultSizeUnit.NodeId;
                     }
                     Size.postChanges(ForceUpdate: false);
                 }
