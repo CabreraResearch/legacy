@@ -377,14 +377,29 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Creates a new <see cref="CswNbtViewPropertyFilter"/> for this view
         /// </summary>
-        public CswNbtViewPropertyFilter AddViewPropertyAndFilter( CswNbtViewRelationship ParentViewRelationship, ICswNbtMetaDataProp MetaDataProp, string Value = "", CswNbtSubField.SubFieldName SubFieldName = null, bool CaseSensitive = false, CswNbtPropFilterSql.PropertyFilterMode FilterMode = null, bool ShowAtRuntime = false )
+        public CswNbtViewPropertyFilter AddViewPropertyAndFilter( CswNbtViewRelationship ParentViewRelationship,
+                                                                  ICswNbtMetaDataProp MetaDataProp,
+                                                                  string Value = "",
+                                                                  CswNbtSubField.SubFieldName SubFieldName = null,
+                                                                  bool CaseSensitive = false,
+                                                                  CswNbtPropFilterSql.PropertyFilterMode FilterMode = null,
+                                                                  bool ShowAtRuntime = false,
+                                                                  bool ShowInGrid = true )
         {
-            return AddViewPropertyAndFilter( ParentViewRelationship, MetaDataProp, CswNbtPropFilterSql.FilterResultMode.Hide, Value, SubFieldName, CaseSensitive, FilterMode, ShowAtRuntime );
+            return AddViewPropertyAndFilter( ParentViewRelationship, MetaDataProp, CswNbtPropFilterSql.FilterResultMode.Hide, Value, SubFieldName, CaseSensitive, FilterMode, ShowAtRuntime, ShowInGrid);
         }
         /// <summary>
         /// Creates a new <see cref="CswNbtViewPropertyFilter"/> for this view
         /// </summary>
-        public CswNbtViewPropertyFilter AddViewPropertyAndFilter( CswNbtViewRelationship ParentViewRelationship, ICswNbtMetaDataProp MetaDataProp, CswNbtPropFilterSql.FilterResultMode ResultMode, string Value = "", CswNbtSubField.SubFieldName SubFieldName = null, bool CaseSensitive = false, CswNbtPropFilterSql.PropertyFilterMode FilterMode = null, bool ShowAtRuntime = false )
+        public CswNbtViewPropertyFilter AddViewPropertyAndFilter( CswNbtViewRelationship ParentViewRelationship,
+                                                                    ICswNbtMetaDataProp MetaDataProp,
+                                                                    CswNbtPropFilterSql.FilterResultMode ResultMode,
+                                                                    string Value = "",
+                                                                    CswNbtSubField.SubFieldName SubFieldName = null,
+                                                                    bool CaseSensitive = false,
+                                                                    CswNbtPropFilterSql.PropertyFilterMode FilterMode = null,
+                                                                    bool ShowAtRuntime = false,
+                                                                    bool ShowInGrid = true )
         {
             CswNbtViewPropertyFilter NewFilter = null;
             if( null != ParentViewRelationship && null != MetaDataProp )
@@ -392,6 +407,7 @@ namespace ChemSW.Nbt
                 //FilterMode = FilterMode ?? CswNbtPropFilterSql.PropertyFilterMode.Equals;
                 //SubFieldName = SubFieldName ?? MetaDataProp.getFieldTypeRule().SubFields.Default.Name;
                 CswNbtViewProperty ViewProp = AddViewProperty( ParentViewRelationship, MetaDataProp );
+                ViewProp.ShowInGrid = ShowInGrid;
                 NewFilter = AddViewPropertyFilter( ViewProp, ResultMode, SubFieldName, FilterMode, Value, CaseSensitive, ShowAtRuntime );
             }
             return NewFilter;

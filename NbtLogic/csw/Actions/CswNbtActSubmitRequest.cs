@@ -191,7 +191,8 @@ namespace ChemSW.Nbt.Actions
                 FilterMode = CswNbtPropFilterSql.PropertyFilterMode.Equals,
                 FilterValue = NodeId.PrimaryKey.ToString(),
                 ObjectClassProp = RequestOcp,
-                SubFieldName = CswNbtSubField.SubFieldName.NodeID
+                SubFieldName = CswNbtSubField.SubFieldName.NodeID,
+                ShowInGrid = false
             }, _RequestItemOc );
         }
 

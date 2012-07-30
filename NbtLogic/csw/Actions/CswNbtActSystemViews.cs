@@ -341,10 +341,12 @@ namespace ChemSW.Nbt.Actions
             public string FilterValue { get; set; }
             public CswNbtPropFilterSql.PropertyFilterMode FilterMode { get; set; }
             public CswNbtSubField.SubFieldName SubFieldName { get; set; }
+            private bool _ShowInGrid = true;
+            public bool ShowInGrid { get { return _ShowInGrid; } set { _ShowInGrid = value; } }
             public CswNbtMetaDataFieldType.NbtFieldType FieldType { get; set; }
         }
 
-        public SystemViewPropFilterDefinition makeSystemViewFilter( CswNbtMetaDataObjectClassProp ObjectClassProp, string FilterValue, CswNbtPropFilterSql.PropertyFilterMode FilterMode, CswNbtSubField.SubFieldName SubFieldName = null, CswNbtMetaDataFieldType.NbtFieldType FieldType = null )
+        public SystemViewPropFilterDefinition makeSystemViewFilter( CswNbtMetaDataObjectClassProp ObjectClassProp, string FilterValue, CswNbtPropFilterSql.PropertyFilterMode FilterMode, CswNbtSubField.SubFieldName SubFieldName = null, CswNbtMetaDataFieldType.NbtFieldType FieldType = null, bool ShowInGrid = true )
         {
             SubFieldName = SubFieldName ?? ObjectClassProp.getFieldTypeRule().SubFields.Default.Name;
             return new SystemViewPropFilterDefinition
@@ -353,7 +355,8 @@ namespace ChemSW.Nbt.Actions
                            FilterValue = FilterValue,
                            FilterMode = FilterMode,
                            SubFieldName = SubFieldName,
-                           FieldType = FieldType
+                           FieldType = FieldType,
+                           ShowInGrid = ShowInGrid
                        };
         }
 
@@ -372,7 +375,8 @@ namespace ChemSW.Nbt.Actions
                                                             FilterDefinition.ObjectClassProp,
                                                             FilterDefinition.FilterValue,
                                                             FilterMode: FilterDefinition.FilterMode,
-                                                            SubFieldName: FilterDefinition.SubFieldName );
+                                                            SubFieldName: FilterDefinition.SubFieldName,
+                                                            ShowInGrid: FilterDefinition.ShowInGrid );
                     }
                     else if( FilterDefinition.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Barcode )
                     {
