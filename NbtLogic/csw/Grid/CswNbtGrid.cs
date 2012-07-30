@@ -43,7 +43,7 @@ namespace ChemSW.Nbt.Grid
 
             grid.Truncated = Tree.getCurrentNodeChildrenTruncated();
 
-            CswNbtGridExtJsDataIndex nodeIdDataIndex = new CswNbtGridExtJsDataIndex( View, "nodeId" );
+            CswNbtGridExtJsDataIndex nodeIdDataIndex = new CswNbtGridExtJsDataIndex( View.ViewId.ToString(), "nodeId" );
             CswNbtGridExtJsField nodeIdFld = new CswNbtGridExtJsField();
             nodeIdFld.dataIndex = nodeIdDataIndex;
             grid.fields.Add( nodeIdFld );
@@ -53,7 +53,7 @@ namespace ChemSW.Nbt.Grid
             nodeIdCol.hidden = true;
             grid.columns.Add( nodeIdCol );
 
-            CswNbtGridExtJsDataIndex nodekeyDataIndex = new CswNbtGridExtJsDataIndex( View, "nodekey" );
+            CswNbtGridExtJsDataIndex nodekeyDataIndex = new CswNbtGridExtJsDataIndex( View.ViewId.ToString(), "nodekey" );
             CswNbtGridExtJsField nodekeyFld = new CswNbtGridExtJsField();
             nodekeyFld.dataIndex = nodekeyDataIndex;
             grid.fields.Add( nodekeyFld );
@@ -63,7 +63,7 @@ namespace ChemSW.Nbt.Grid
             nodekeyCol.hidden = true;
             grid.columns.Add( nodekeyCol );
 
-            CswNbtGridExtJsDataIndex nodenameDataIndex = new CswNbtGridExtJsDataIndex( View, "nodename" );
+            CswNbtGridExtJsDataIndex nodenameDataIndex = new CswNbtGridExtJsDataIndex( View.ViewId.ToString(), "nodename" );
             CswNbtGridExtJsField nodenameFld = new CswNbtGridExtJsField();
             nodenameFld.dataIndex = nodenameDataIndex;
             grid.fields.Add( nodenameFld );
@@ -91,7 +91,7 @@ namespace ChemSW.Nbt.Grid
                     // Because properties in the view might be by object class, but properties on the tree will always be by nodetype,
                     // we have to use name, not id, as the dataIndex
                     string header = MetaDataProp.PropNameWithQuestionNo;
-                    CswNbtGridExtJsDataIndex dataIndex = new CswNbtGridExtJsDataIndex( View, MetaDataProp.PropName );  // don't use PropNameWithQuestionNo here, because it won't match the propname from the tree
+                    CswNbtGridExtJsDataIndex dataIndex = new CswNbtGridExtJsDataIndex( View.ViewId.ToString(), MetaDataProp.PropName );  // don't use PropNameWithQuestionNo here, because it won't match the propname from the tree
 
                     // Potential bug here!
                     // If the same property is added to the view more than once, we'll only use the grid definition for the first instance
@@ -193,7 +193,7 @@ namespace ChemSW.Nbt.Grid
             {
                 // Potential bug here!
                 // If the view defines the property by objectclass propname, but the nodetype propname differs, this might break
-                CswNbtGridExtJsDataIndex dataIndex = new CswNbtGridExtJsDataIndex( View, Prop[CswNbtTreeNodes._AttrName_NodePropName].ToString() );
+                CswNbtGridExtJsDataIndex dataIndex = new CswNbtGridExtJsDataIndex( View.ViewId.ToString(), Prop[CswNbtTreeNodes._AttrName_NodePropName].ToString() );
 
                 CswPrimaryKey NodeId = Tree.getNodeIdForCurrentPosition();
                 CswNbtMetaDataFieldType.NbtFieldType FieldType = Prop[CswNbtTreeNodes._AttrName_NodePropFieldType].ToString();
