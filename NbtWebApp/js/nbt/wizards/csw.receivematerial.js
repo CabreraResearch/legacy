@@ -107,12 +107,12 @@
                 };
 
                 cswPrivate.getQuantity = function (async) {
-                    var ret = Csw.bool(async);
+                    var ret = Csw.bool(async);                    
                     //We may need to block (async==false) if we're validating prior to changing steps.
                     Csw.ajax.post({
                         urlMethod: 'getQuantity',
                         async: Csw.bool(async),
-                        data: { SizeId: cswPrivate.state.selectedSizeId },
+                        data: { SizeId: cswPrivate.state.selectedSizeId, Action: 'Receive' },
                         success: function (data) {
                             cswPrivate.state.quantity = data;
                             ret = false === Csw.isNullOrEmpty(cswPrivate.state.quantity);

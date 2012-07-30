@@ -160,7 +160,7 @@ namespace ChemSW.Nbt.WebServices
 
         } // _applyPropJson
 
-        public JObject getQuantityFromSize( CswPrimaryKey SizeId )
+        public JObject getQuantityFromSize( CswPrimaryKey SizeId, string Action )
         {
             JObject Ret = new JObject();
 
@@ -169,6 +169,16 @@ namespace ChemSW.Nbt.WebServices
             {
                 CswNbtNodePropQuantity Capacity = Size.InitialQuantity;
                 Capacity.ToJSON( Ret );
+                Ret["qtyReadonly"] = "false";
+                Ret["unitReadonly"] = "false";
+                if( Action == "Receive" )
+                {
+                    Ret["unitReadonly"] = "true";
+                    if( Size.QuantityEditable.Checked == Tristate.False )
+                    {
+                        Ret["qtyReadonly"] = "true";
+                    }
+                }
             }
             return Ret;
         }
@@ -282,22 +292,22 @@ namespace ChemSW.Nbt.WebServices
                                     {
                                         RelatedProps.Add( OcProp );
                                     }
-                                    
+
                                     if( RelatedProps.Any() )
                                     {
                                         doGetNodes = false;
-                                        CswNbtView View = new CswNbtView(_CswNbtResources);
-                                        CswNbtViewRelationship Relationship = View.AddViewRelationship(MetaDataObjectClass, true);
-                                        foreach (CswNbtMetaDataObjectClassProp RelationshipProp in RelatedProps)
+                                        CswNbtView View = new CswNbtView( _CswNbtResources );
+                                        CswNbtViewRelationship Relationship = View.AddViewRelationship( MetaDataObjectClass, true );
+                                        foreach( CswNbtMetaDataObjectClassProp RelationshipProp in RelatedProps )
                                         {
-                                            View.AddViewPropertyAndFilter(Relationship, RelationshipProp, SubFieldName: CswNbtSubField.SubFieldName.NodeID, Value: RelatedNodePk.PrimaryKey.ToString());
+                                            View.AddViewPropertyAndFilter( Relationship, RelationshipProp, SubFieldName: CswNbtSubField.SubFieldName.NodeID, Value: RelatedNodePk.PrimaryKey.ToString() );
                                         }
-                                        ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView(View, false, false);
-                                        
+                                        ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( View, false, false );
+
                                         UseSearch = UseSearch || Tree.getChildNodeCount() > SearchThreshold;
-                                        for (int N = 0; N < Tree.getChildNodeCount() && N < SearchThreshold; N += 1)
+                                        for( int N = 0; N < Tree.getChildNodeCount() && N < SearchThreshold; N += 1 )
                                         {
-                                            Tree.goToNthChild(N);
+                                            Tree.goToNthChild( N );
                                             Ret[Tree.getNodeIdForCurrentPosition().ToString()] = Tree.getNodeNameForCurrentPosition();
                                             Tree.goToParentNode();
                                         }
@@ -319,7 +329,7 @@ namespace ChemSW.Nbt.WebServices
                 }
             }
             UseSearch = UseSearch || Nodes.Count > SearchThreshold;
-            foreach( CswNbtNode Node in ( from _Node in Nodes orderby _Node.NodeName select _Node ).Take(SearchThreshold) )
+            foreach( CswNbtNode Node in ( from _Node in Nodes orderby _Node.NodeName select _Node ).Take( SearchThreshold ) )
             {
                 Ret[Node.NodeId.ToString()] = Node.NodeName;
             }
@@ -327,7 +337,7 @@ namespace ChemSW.Nbt.WebServices
             Ret["canadd"] = CanAdd;
             Ret["nodetypeid"] = RealNodeTypeId;
             Ret["objectclassid"] = RealObjectClassId;
-            
+
             return Ret;
         }
 

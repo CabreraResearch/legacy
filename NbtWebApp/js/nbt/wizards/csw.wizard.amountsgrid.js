@@ -79,7 +79,7 @@
                         Csw.ajax.post({//TODO - for receive, make only Unit Readonly - if not quantityeditable, make both quantity and unit readonly
                             urlMethod: 'getQuantity',
                             async: false,
-                            data: { SizeId: cswPrivate.selectedSizeId },
+                            data: { SizeId: cswPrivate.selectedSizeId, Action: cswPrivate.action },
                             success: function (data) {
                                 cswPrivate.quantity = data;
                                 ret = false === Csw.isNullOrEmpty(cswPrivate.quantity);
@@ -166,7 +166,7 @@
                                             extendNewAmount({ containerNo: value });
                                         }
                                     });
-                                    break;                                
+                                    break;
                                 case cswPrivate.config.sizeName:
                                     cswPublic.sizesControl = cswCell.nodeSelect({
                                         ID: Csw.tryExec(cswPrivate.makeId, 'sizes'),
@@ -179,7 +179,6 @@
 
                                         },
                                         onSelect: function () {
-                                            //TODO - get QuantityEditable value and apply case 27239 logic
                                             cswPrivate.selectedSizeId = cswPublic.sizesControl.selectedNodeId();
                                             cswPrivate.getQuantity();
                                             cswPublic.qtyControl.quantityTextBox.val(cswPrivate.quantity.value);
@@ -225,11 +224,11 @@
                                     newAmount.quantity = cswPublic.qtyControl.quantityValue;
                                     newAmount.unit = cswPublic.qtyControl.unitText;
                                     newAmount.unitid = cswPublic.qtyControl.unitVal;
-                                    newAmount.sizeid = cswPublic.sizesControl.selectedNodeId();
-                                    newAmount.sizename = cswPublic.sizesControl.selectedText();
                                     //we need to make sure the columns here match the header columns
                                     var formCols = [newAmount.containerNo];
                                     if (false === Csw.isNullOrEmpty(cswPrivate.materialId) && cswPrivate.action === 'Receive') {
+                                        newAmount.sizeid = cswPublic.sizesControl.selectedNodeId();
+                                        newAmount.sizename = cswPublic.sizesControl.selectedText();
                                         formCols = formCols.concat([newAmount.sizename]);
                                     }
                                     formCols = formCols.concat([newAmount.quantity + ' ' + newAmount.unit]);
