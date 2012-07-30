@@ -5,7 +5,6 @@ using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
-using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.ServiceDrivers;
 using ChemSW.Nbt.UnitsOfMeasure;
 using Newtonsoft.Json.Linq;
@@ -319,18 +318,18 @@ namespace ChemSW.Nbt.Actions
                     case CswNbtObjClassContainer.RequestMenu.Dispense:
                         RetAsRequestItem.Type.Value = CswNbtObjClassRequestItem.Types.Dispense;
                         RetAsRequestItem.RequestBy.Value = CswNbtObjClassRequestItem.RequestsBy.Quantity;
-                        
+
                         CswNbtObjClassContainer NodeAsContainer = _CswNbtResources.Nodes[NodeId];
                         Debug.Assert( null != NodeAsContainer, "RequestItem created without a Container." );
                         if( null != NodeAsContainer )
                         {
                             RetAsRequestItem.Material.RelatedNodeId = NodeAsContainer.Material.RelatedNodeId;
                             CswNbtNode MaterialNode = _CswNbtResources.Nodes[NodeAsContainer.Material.RelatedNodeId];
-                            Debug.Assert(null != MaterialNode, "RequestItem created without a valid Material.");
-                            if (null != MaterialNode)
+                            Debug.Assert( null != MaterialNode, "RequestItem created without a valid Material." );
+                            if( null != MaterialNode )
                             {
-                                CswNbtUnitViewBuilder Vb = new CswNbtUnitViewBuilder(_CswNbtResources);
-                                Vb.setQuantityUnitOfMeasureView(MaterialNode, RetAsRequestItem.Quantity);
+                                CswNbtUnitViewBuilder Vb = new CswNbtUnitViewBuilder( _CswNbtResources );
+                                Vb.setQuantityUnitOfMeasureView( MaterialNode, RetAsRequestItem.Quantity );
                             }
                         }
                         break;
@@ -392,7 +391,7 @@ namespace ChemSW.Nbt.Actions
                         Debug.Assert( null != MaterialNode, "RequestItem created without a valid Material." );
                         if( null != MaterialNode )
                         {
-                            CswNbtUnitViewBuilder Vb = new CswNbtUnitViewBuilder(_CswNbtResources);
+                            CswNbtUnitViewBuilder Vb = new CswNbtUnitViewBuilder( _CswNbtResources );
                             Vb.setQuantityUnitOfMeasureView( MaterialNode, RetAsRequestItem.Quantity );
                         }
                         RetAsRequestItem.Container.setHidden( value: true, SaveToDb: true );
