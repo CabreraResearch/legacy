@@ -20,9 +20,7 @@ namespace ChemSW.Nbt.Sched
             //case 25702 - add comment:
             SchedulerNode.RunStatus.AddComment( StatusMessage );
             DateTime CandidateNextDueDate = SchedulerNode.DueDateInterval.getNextOccuranceAfter( SchedulerNode.NextDueDate.DateTimeValue );
-            if( SchedulerNode.FinalDueDate.DateTimeValue.Date != DateTime.MinValue &&
-                ( SchedulerNode.FinalDueDate.DateTimeValue.Date < DateTime.Now.Date ||
-                  CandidateNextDueDate > SchedulerNode.FinalDueDate.DateTimeValue.Date ) )
+            if( _finalDueDateHasPassed( CandidateNextDueDate.Date, SchedulerNode.FinalDueDate.DateTimeValue.Date ) )
             {
                 CandidateNextDueDate = DateTime.MinValue;
             }
@@ -31,6 +29,13 @@ namespace ChemSW.Nbt.Sched
             CswNbtNodeSchedualable.postChanges( false );
 
         }//update() 
+
+        private bool _finalDueDateHasPassed( DateTime CandidateNextDueDate, DateTime FinalDueDate )
+        {
+            return FinalDueDate != DateTime.MinValue &&
+                ( FinalDueDate < DateTime.Now.Date ||
+                CandidateNextDueDate > FinalDueDate );
+        }
 
 
     }//CswScheduleNodeUpdater

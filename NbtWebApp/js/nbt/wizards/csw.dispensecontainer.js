@@ -4,14 +4,14 @@
 (function () {
 
     var cswDispenseWizardStateName = 'cswDispenseWizardStateName';
-    
+
     Csw.nbt.dispenseContainerWizard = Csw.nbt.dispenseContainerWizard ||
         Csw.nbt.register('dispenseContainerWizard', function (cswParent, options) {
             'use strict';
 
-            var cswPublic = { };
+            var cswPublic = {};
 
-            Csw.tryExec(function() {
+            Csw.tryExec(function () {
 
                 //#region Variable Declaration
                 var cswPrivate = {
@@ -29,7 +29,8 @@
                         materialname: '',
                         barcode: '',
                         location: '',
-                        requestItemId: ''
+                        requestItemId: '',
+                        customBarcodes: false
                     },
                     onCancel: null,
                     onFinish: null,
@@ -50,8 +51,8 @@
                     dispenseTypes: {
                         Dispense: 'Dispense into a Child Container',
                         Use: 'Dispense for Use',
-                        Waste: 'Waste Material',
-                        Add: 'Add Material to Container'
+                        Add: 'Add Material to Container',
+                        Waste: 'Waste Material'                       
                     },
                     divStep1: '',
                     divStep2: '',
@@ -61,10 +62,11 @@
                     dispenseModes: {
                         Direct: 'Direct',
                         Request: 'Request'
-                    }
+                    },
+                    printBarcodes: false
                 };
 
-                cswPrivate.setDispenseMode = function() {
+                cswPrivate.setDispenseMode = function () {
                     if (false === Csw.isNullOrEmpty(cswPrivate.state.requestItemId)) {
                         cswPrivate.dispenseMode = cswPrivate.dispenseModes.Request;
                         cswPrivate.wizardSteps["1"] = 'Select a Container';
@@ -74,7 +76,7 @@
                     }
                 };
 
-                cswPrivate.validateState = function() {
+                cswPrivate.validateState = function () {
                     var state;
                     if (Csw.isNullOrEmpty(cswPrivate.state.sourceContainerNodeId) && Csw.isNullOrEmpty(cswPrivate.state.requestItemId)) {
                         state = cswPrivate.getState();
@@ -84,7 +86,7 @@
                     cswPrivate.setDispenseMode();
                 };
 
-                cswPrivate.getState = function() {
+                cswPrivate.getState = function () {
                     var ret = Csw.clientDb.getItem(cswPrivate.ID + '_' + cswDispenseWizardStateName);
                     if (false === Csw.isNullOrEmpty(cswPrivate.state.requestItemId)) {
                         ret.sourceContainerNodeId = null;
@@ -98,7 +100,7 @@
                     Csw.clientDb.setItem(cswPrivate.ID + '_' + cswDispenseWizardStateName, cswPrivate.state);
                 };
 
-                cswPrivate.clearState = function() {
+                cswPrivate.clearState = function () {
                     Csw.clientDb.removeItem(cswPrivate.ID + '_' + cswDispenseWizardStateName);
                 };
 
@@ -109,9 +111,9 @@
                     cswPrivate.validateState();
                     cswPublic = cswParent.div();
                     cswPrivate.currentStepNo = cswPrivate.startingStep;
-                }());
-                
-                cswPrivate.toggleButton = function(button, isEnabled, doClick) {
+                } ());
+
+                cswPrivate.toggleButton = function (button, isEnabled, doClick) {
                     var btn;
                     if (Csw.bool(isEnabled)) {
                         btn = cswPrivate.wizard[button].enable();
@@ -123,68 +125,71 @@
                     }
                 };
 
-                cswPrivate.makeStepId = function(suffix, stepNo) {
+                cswPrivate.makeStepId = function (suffix, stepNo) {
                     var step = stepNo || cswPrivate.currentStepNo;
                     return Csw.makeId({ prefix: 'step_' + step, ID: cswPrivate.ID, suffix: suffix });
                 };
 
-                cswPrivate.validationFailed = function() {
+                cswPrivate.validationFailed = function () {
                     cswPrivate.toggleButton(cswPrivate.buttons.finish, true);
                     cswPrivate.toggleButton(cswPrivate.buttons.prev, true, true);
                 };
 
                 //Step 1. Select a Dispense Type.
-                cswPrivate.makeStepOne = (function() {
-                    return function() {
+                cswPrivate.makeStepOne = (function () {
+                    return function () {
 
                         var dispenseTypeTable;
 
-                        var toggleNext = function() {
+                        var toggleNext = function () {
                             return cswPrivate.toggleButton(cswPrivate.buttons.next, false === Csw.isNullOrEmpty(cswPrivate.state.sourceContainerNodeId));
                         };
-                        var resetStepTwo = function() {
+                        var resetStepTwo = function () {
                             cswPrivate.stepTwoComplete = false;
                             cswPrivate.state.quantity = [];
                             cswPrivate.setState();
                         };
                         cswPrivate.toggleButton(cswPrivate.buttons.finish, false);
 
-                        var initStepOne = Csw.method(function() {
+                        var initStepOne = Csw.method(function () {
                             var dispenseTypeSelect;
 
-                            var makeTypeSelect = function() {
+                            var makeTypeSelect = function () {
 
                                 if (cswPrivate.dispenseMode !== cswPrivate.dispenseModes.Request) {
                                     cswPrivate.divStep1.br({ number: 2 });
                                     cswPrivate.divStep1.span({ text: 'Pick a type of dispense:' });
                                     cswPrivate.divStep1.br({ number: 1 });
 
-                                    dispenseTypeSelect = cswPrivate.divStep1.select({
-                                        ID: cswPrivate.makeStepId('setDispenseTypePicklist'),
-                                        cssclass: 'selectinput',
-                                        values: cswPrivate.dispenseTypes,
-                                        selected: cswPrivate.dispenseTypes.Dispense,
-                                        onChange: function() {
-                                            if (false === Csw.isNullOrEmpty(dispenseTypeSelect.val())) {
-                                                if (dispenseTypeSelect.val() !== cswPrivate.state.dispenseType) {
+                                    var dispenseTypesArray = [
+                                        cswPrivate.dispenseTypes.Dispense,
+                                        cswPrivate.dispenseTypes.Use,
+                                        cswPrivate.dispenseTypes.Add,
+                                        cswPrivate.dispenseTypes.Waste
+                                    ];
+
+                                    var dispenseTypeRadioGroup = cswPrivate.divStep1.radiobutton({
+                                        ID: 'dispensetypes',
+                                        names: dispenseTypesArray,
+                                        onChange: function () {
+                                            if (false === Csw.isNullOrEmpty(dispenseTypeRadioGroup.val())) {
+                                                if (dispenseTypeRadioGroup.val() !== cswPrivate.state.dispenseType) {
                                                     resetStepTwo();
                                                 }
-                                                cswPrivate.state.dispenseType = dispenseTypeSelect.val();
+                                                cswPrivate.state.dispenseType = dispenseTypeRadioGroup.val();
                                             }
-                                            toggleNext();
                                         }
                                     });
-                                    cswPrivate.state.dispenseType = dispenseTypeSelect.val();
                                 }
                             };
 
-                            var makeContainerGrid = function() {
+                            var makeContainerGrid = function () {
                                 Csw.ajax.post({
                                     urlMethod: 'getDispenseContainerView',
                                     data: {
                                         RequestItemId: cswPrivate.state.requestItemId
                                     },
-                                    success: function(data) {
+                                    success: function (data) {
                                         if (Csw.isNullOrEmpty(data.viewid)) {
                                             Csw.error.throwException(Csw.error.exception('Could not get a grid of containers for this request item.', '', 'csw.dispensecontainer.js', 141));
                                         }
@@ -193,7 +198,7 @@
                                             hasMenu: false,
                                             viewid: data.viewid,
                                             ReadOnly: true,
-                                            onSelect: function() {
+                                            onSelect: function () {
                                                 if (cswPrivate.state.sourceContainerNodeId !== cswPrivate.containerGrid.getSelectedNodeId()) {
                                                     resetStepTwo();
                                                 }
@@ -210,7 +215,7 @@
                             cswPrivate.divStep1.empty();
 
                             var helpText = 'Confirm the container to use for this dispense';
-                            if(cswPrivate.dispenseMode !== cswPrivate.dispenseModes.Request) {
+                            if (cswPrivate.dispenseMode !== cswPrivate.dispenseModes.Request) {
                                 helpText += ', and select a type of dispense to perform';
                             }
                             helpText += '.';
@@ -261,14 +266,14 @@
                             cswPrivate.stepOneComplete = true;
                         }
                     };
-                }());
+                } ());
 
                 //Step 2. Select Amount
                 //state.dispenseType != Dispense ? 
                 //Select a state.quantity :
                 //Select the number of destination containers and their quantities.
-                cswPrivate.makeStepTwo = (function() {
-                    return function() {
+                cswPrivate.makeStepTwo = (function () {
+                    return function () {
                         cswPrivate.toggleButton(cswPrivate.buttons.finish, false);
                         cswPrivate.toggleButton(cswPrivate.buttons.next, false);
                         if (false === cswPrivate.stepTwoComplete) {
@@ -301,7 +306,7 @@
                             }
                             quantityTable.cell(6, 1).br({ number: 1 });
 
-                            var makeContainerSelect = function() {
+                            var makeContainerSelect = function () {
                                 var containerTypeTable = quantityTable.cell(7, 1).table({
                                     ID: cswPrivate.makeStepId('setContainerTypeTable'),
                                     cellpadding: '1px',
@@ -314,12 +319,12 @@
                                     ID: Csw.makeSafeId('nodeTypeSelect'),
                                     objectClassName: 'ContainerClass',
                                     blankOptionText: blankText,
-                                    onSelect: function(data, nodeTypeCount) {
+                                    onSelect: function (data, nodeTypeCount) {
                                         if (blankText !== containerTypeSelect.val()) {
                                             cswPrivate.state.containerNodeTypeId = containerTypeSelect.val();
                                         }
                                     },
-                                    onSuccess: function(data, nodeTypeCount, lastNodeTypeId) {
+                                    onSuccess: function (data, nodeTypeCount, lastNodeTypeId) {
                                         if (Csw.number(nodeTypeCount) > 1) {
                                             containerTypeTable.show();
                                         } else {
@@ -330,11 +335,11 @@
                                 containerTypeTable.cell(3, 1).br();
                             };
 
-                            var makeQuantityForm = function() {
+                            var makeQuantityForm = function () {
 
                                 cswPrivate.amountsGrid = Csw.nbt.wizard.amountsGrid(quantityTable.cell(8, 1), {
                                     ID: cswPrivate.wizard.makeStepId('wizardAmountsThinGrid'),
-                                    onAdd: function(hasQuantity) {
+                                    onAdd: function (hasQuantity) {
                                         cswPrivate.toggleButton(cswPrivate.buttons.finish, hasQuantity);
                                     },
                                     onDelete: function (hasQuantity) {
@@ -346,75 +351,97 @@
                                     containerMinimum: 0,
                                     action: 'Dispense',
                                     relatedNodeId: cswPrivate.state.sourceContainerNodeId,
-                                    selectedSizeId: cswPrivate.state.sizeId
+                                    selectedSizeId: cswPrivate.state.sizeId,
+                                    customBarcodes: cswPrivate.state.customBarcodes
                                 });
                             };
+
+                            var makePrintBarcodesCheckBox = function () {
+                                var checkBoxTable = quantityTable.cell(9, 1).table({
+                                    ID: cswPrivate.makeStepId('checkboxTable'),
+                                    cellpadding: '1px',
+                                    cellvalign: 'middle'
+                                });
+
+                                cswPrivate.printBarcodesCheckBox = checkBoxTable.cell(1, 1).checkBox({
+                                    onChange: Csw.method(function () {
+                                        var val;
+                                        if (cswPrivate.printBarcodesCheckBox.checked()) {
+                                            cswPrivate.printBarcodes = true;
+                                        } else {
+                                            cswPrivate.printBarcodes = false;
+                                        }
+                                    })
+                                });
+                                checkBoxTable.cell(1, 2).span({ text: 'Print barcode labels for new containers' });
+                            }
 
                             if (cswPrivate.state.dispenseType === cswPrivate.dispenseTypes.Dispense) {
                                 makeContainerSelect();
                                 makeQuantityForm();
+                                makePrintBarcodesCheckBox();
                             } else {
-                                quantityTable.cell(8, 1).span({ text: 'Set quantities for dispense:' });
+                                quantityTable.cell(8, 1).span({ text: 'Set quantity for dispense:' });
                                 cswPrivate.quantityControl = quantityTable.cell(9, 1).quantity(cswPrivate.state.capacity);
 
                                 cswPrivate.toggleButton(cswPrivate.buttons.finish, true);
                             }
                             cswPrivate.stepTwoComplete = true;
                         }
-                        window.setTimeout(function() {
+                        window.setTimeout(function () {
                             cswPrivate.toggleButton(cswPrivate.buttons.next, false);
                         }, 250);
                     };
-                }());
+                } ());
 
-                cswPrivate.handleNext = function(newStepNo) {
+                cswPrivate.handleNext = function (newStepNo) {
                     cswPrivate.currentStepNo = newStepNo;
                     cswPrivate.setState();
                     switch (newStepNo) {
-                    case 2:
-                        if (Csw.isNullOrEmpty(cswPrivate.state.sourceContainerNodeId)) {
-                            Csw.error.throwException(Csw.error.exception('Cannot dispense without a source container.', '', 'csw.dispensecontainer.js', 283));
-                        } else {
-                            if (Csw.isNullOrEmpty(cswPrivate.state.barcode) ||
+                        case 2:
+                            if (Csw.isNullOrEmpty(cswPrivate.state.sourceContainerNodeId)) {
+                                Csw.error.throwException(Csw.error.exception('Cannot dispense without a source container.', '', 'csw.dispensecontainer.js', 283));
+                            } else {
+                                if (Csw.isNullOrEmpty(cswPrivate.state.barcode) ||
                                 Csw.isNullOrEmpty(cswPrivate.state.materialname) ||
                                 Csw.isNullOrEmpty(cswPrivate.state.location) ||
                                 Csw.isNullOrEmpty(cswPrivate.state.containerNodeTypeId)) {
 
-                                Csw.ajax.post({
-                                    urlMethod: 'getDispenseSourceContainerData',
-                                    data: {
-                                        ContainerId: cswPrivate.state.sourceContainerNodeId
-                                    },
-                                    async: false,
-                                    success: function(data) {
-                                        cswPrivate.state.barcode = data.barcode;
-                                        cswPrivate.state.materialname = data.materialname;
-                                        cswPrivate.state.location = data.location;
-                                        cswPrivate.state.containerNodeTypeId = data.nodetypeid;
-                                        cswPrivate.state.unitId = data.unitid;
-                                        cswPrivate.state.currentQuantity = data.quantity;
-                                        cswPrivate.state.currentUnitName = data.unit;
-                                        cswPrivate.state.sizeId = data.sizeid;
-                                    }
-                                });
+                                    Csw.ajax.post({
+                                        urlMethod: 'getDispenseSourceContainerData',
+                                        data: {
+                                            ContainerId: cswPrivate.state.sourceContainerNodeId
+                                        },
+                                        async: false,
+                                        success: function (data) {
+                                            cswPrivate.state.barcode = data.barcode;
+                                            cswPrivate.state.materialname = data.materialname;
+                                            cswPrivate.state.location = data.location;
+                                            cswPrivate.state.containerNodeTypeId = data.nodetypeid;
+                                            cswPrivate.state.unitId = data.unitid;
+                                            cswPrivate.state.currentQuantity = data.quantity;
+                                            cswPrivate.state.currentUnitName = data.unit;
+                                            cswPrivate.state.sizeId = data.sizeid;
+                                        }
+                                    });
+                                }
+                                cswPrivate.makeStepTwo(true);
                             }
-                            cswPrivate.makeStepTwo(true);
-                        }
-                        break;
+                            break;
                     }
                 };
 
-                cswPrivate.handlePrevious = function(newStepNo) {
+                cswPrivate.handlePrevious = function (newStepNo) {
                     cswPrivate.currentStepNo = newStepNo;
                     cswPrivate.setState();
                     switch (newStepNo) {
-                    case 1:
-                        cswPrivate.makeStepOne();
-                        break;
+                        case 1:
+                            cswPrivate.makeStepOne();
+                            break;
                     }
                 };
 
-                cswPrivate.onConfirmFinish = function() {
+                cswPrivate.onConfirmFinish = function () {
                     cswPrivate.toggleButton(cswPrivate.buttons.prev, false);
                     cswPrivate.toggleButton(cswPrivate.buttons.next, false);
                     cswPrivate.toggleButton(cswPrivate.buttons.cancel, false);
@@ -442,24 +469,17 @@
                     Csw.ajax.post({
                         urlMethod: 'finalizeDispenseContainer',
                         data: jsonData,
-                        success: function(data) {
+                        success: function (data) {
                             var viewId = data.viewId;
                             Csw.tryExec(cswPrivate.onFinish, viewId);
                             cswPrivate.clearState();
                             if (false === Csw.isNullOrEmpty(data.barcodeId)) {
-                                $.CswDialog('GenericDialog', {
-                                    'div': Csw.literals.div().span({ text: 'Would you like to print Labels for the new Containers?' }),
-                                    'title': 'Print Labels?',
-                                    'onOk': function() {
-                                        $.CswDialog('PrintLabelDialog', { 'nodeid': cswPrivate.state.sourceContainerNodeId, 'propid': data.barcodeId });
-                                    },
-                                    'okText': 'Yes',
-                                    'cancelText': 'No'
-                                });
-
+                                if (cswPrivate.printBarcodes) {
+                                    $.CswDialog('PrintLabelDialog', { 'nodeid': cswPrivate.state.sourceContainerNodeId, 'propid': data.barcodeId });
+                                }
                             }
                         },
-                        error: function() {
+                        error: function () {
                             cswPrivate.toggleButton(cswPrivate.buttons.cancel, true);
                             cswPrivate.toggleButton(cswPrivate.buttons.prev, true);
                         }
@@ -467,7 +487,7 @@
                 };
 
                 (function _post() {
-                    
+
                     cswPrivate.wizard = Csw.layouts.wizard(cswPublic, {
                         ID: Csw.makeId({ ID: cswPrivate.ID, suffix: 'wizard' }),
                         sourceContainerNodeId: cswPrivate.state.sourceContainerNodeId,
@@ -490,9 +510,9 @@
                     });
 
                     cswPrivate.makeStepOne();
-                }());
+                } ());
             });
             return cswPublic;
         });
-}());
+} ());
 

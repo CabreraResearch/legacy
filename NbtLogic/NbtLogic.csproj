@@ -89,6 +89,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="csw\Actions\CswNbtActReceiving.cs" />
+    <Compile Include="csw\Batch\CswNbtBatchOpMailReport.cs" />
     <Compile Include="csw\Batch\CswNbtBatchOpMultiDelete.cs" />
     <Compile Include="csw\Batch\CswNbtBatchOpInventoryLevels.cs" />
     <Compile Include="csw\Grid\CswNbtGridExtJsDataIndex.cs" />
@@ -101,6 +102,7 @@
     <Compile Include="csw\Actions\CswNbtActDispenseContainer.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase27045.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase24514NodeType1.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase27119.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase27263Case27153.cs" />
     <Compile Include="csw\Actions\CswNbtActSubmitRequest.cs" />
     <Compile Include="csw\Actions\CswNbtActSystemViews.cs" />

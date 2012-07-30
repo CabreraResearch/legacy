@@ -3,30 +3,44 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using ChemSW.Core;
 using ChemSW.Nbt.ObjClasses;
+using ChemSW.Nbt.Sched;
 using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.Batch
 {
-    public class CswNbtBatchOpMultiDelete : ICswNbtBatchOp
+    public class CswNbtBatchOpMailReport : ICswNbtBatchOp
     {
         private CswNbtResources _CswNbtResources;
-        private NbtBatchOpName _BatchOpName = NbtBatchOpName.MultiDelete;
+        private NbtBatchOpName _BatchOpName = NbtBatchOpName.MailReport;
+        CswScheduleLogicNbtGenEmailRpt MailReportProcessor = new CswScheduleLogicNbtGenEmailRpt();
 
-        public CswNbtBatchOpMultiDelete( CswNbtResources CswNbtResources )
+        public CswNbtBatchOpMailReport( CswNbtResources CswNbtResources )
         {
             _CswNbtResources = CswNbtResources;
+            MailReportProcessor.init( _CswNbtResources, null );
         }
 
         /// <summary>
-        /// Create a new batch operation to handle a deleteNodes/multi edit operation
+        /// Create a new batch operation to handle the execution of a single mail report
         /// </summary>
-        /// <param name="DeleteNodeIds"></param>
-        public CswNbtObjClassBatchOp makeBatchOp( Collection<CswPrimaryKey> DeleteNodeIds )
+        /// <param name="MailReportNodeId"></param>
+        public CswNbtObjClassBatchOp makeBatchOp( CswPrimaryKey MailReportNodeId )
+        {
+            Collection<CswPrimaryKey> MailReportPK = new Collection<CswPrimaryKey>();
+            MailReportPK.Add( MailReportNodeId );
+            return makeBatchOp( MailReportPK );
+        }
+
+        /// <summary>
+        /// Create a new batch operation to handle the execution of one or more mail reports
+        /// </summary>
+        /// <param name="MailReportNodeIds"></param>
+        public CswNbtObjClassBatchOp makeBatchOp( Collection<CswPrimaryKey> MailReportNodeIds )
         {
             CswNbtObjClassBatchOp BatchNode = null;
-            MultiDeleteBatchData BatchData = new MultiDeleteBatchData( string.Empty );
-            BatchData.DeleteNodeIds = _pkArrayToJArray( DeleteNodeIds );
-            BatchData.StartingCount = DeleteNodeIds.Count();
+            MailReportBatchData BatchData = new MailReportBatchData( string.Empty );
+            BatchData.MailReportNodeIds = _pkArrayToJArray( MailReportNodeIds );
+            BatchData.StartingCount = MailReportNodeIds.Count();
             BatchNode = CswNbtBatchManager.makeNew( _CswNbtResources, _BatchOpName, BatchData.ToString() );
             return BatchNode;
         }
@@ -34,12 +48,12 @@ namespace ChemSW.Nbt.Batch
         public Double getPercentDone( CswNbtObjClassBatchOp BatchNode )
         {
             Double ret = 100;
-            if( BatchNode != null && BatchNode.OpNameValue == NbtBatchOpName.MultiDelete )
+            if( BatchNode != null && BatchNode.OpNameValue == NbtBatchOpName.MailReport )
             {
-                MultiDeleteBatchData BatchData = new MultiDeleteBatchData( BatchNode.BatchData.Text );
+                MailReportBatchData BatchData = new MailReportBatchData( BatchNode.BatchData.Text );
                 if( BatchData.StartingCount > 0 )
                 {
-                    ret = Math.Round( (Double) ( BatchData.StartingCount - BatchData.DeleteNodeIds.Count() ) / BatchData.StartingCount * 100, 0 );
+                    ret = Math.Round( (Double) ( BatchData.StartingCount - BatchData.MailReportNodeIds.Count() ) / BatchData.StartingCount * 100, 0 );
                 }
             }
             return ret;
@@ -52,17 +66,17 @@ namespace ChemSW.Nbt.Batch
         {
             try
             {
-                if( BatchNode != null && BatchNode.OpNameValue == NbtBatchOpName.MultiDelete )
+                if( BatchNode != null && BatchNode.OpNameValue == NbtBatchOpName.MailReport )
                 {
                     BatchNode.start();
-                    MultiDeleteBatchData BatchData = new MultiDeleteBatchData( BatchNode.BatchData.Text );
-                    if( BatchData.DeleteNodeIds.Count > 0 )
+                    MailReportBatchData BatchData = new MailReportBatchData( BatchNode.BatchData.Text );
+                    if( BatchData.MailReportNodeIds.Count > 0 )
                     {
-                        string NodeIdStr = BatchData.DeleteNodeIds.First.ToString();
-                        _deleteNode( NodeIdStr );
+                        string NodeIdStr = BatchData.MailReportNodeIds.First.ToString();
+                        _processMailReportNode( NodeIdStr );
 
                         // Setup for next iteration
-                        BatchData.DeleteNodeIds.RemoveAt( 0 );
+                        BatchData.MailReportNodeIds.RemoveAt( 0 );
                         BatchNode.BatchData.Text = BatchData.ToString();
                         BatchNode.PercentDone.Value = getPercentDone( BatchNode );
                     }
@@ -91,30 +105,33 @@ namespace ChemSW.Nbt.Batch
             return ret;
         }
 
-        private void _deleteNode( string NodePk )
+        private void _processMailReportNode( string NodePk )
         {
-            CswPrimaryKey DeleteNodePk = new CswPrimaryKey();
-            DeleteNodePk.FromString( NodePk );
+            CswPrimaryKey MailReportNodePk = new CswPrimaryKey();
+            MailReportNodePk.FromString( NodePk );
 
-            if( Int32.MinValue != DeleteNodePk.PrimaryKey )
+            if( Int32.MinValue != MailReportNodePk.PrimaryKey )
             {
-                CswNbtNode DeleteNode = _CswNbtResources.Nodes[DeleteNodePk];
-                if( DeleteNode != null )
+                CswNbtNode MailReportNode = _CswNbtResources.Nodes[MailReportNodePk];
+                if( MailReportNode != null )
                 {
-                    DeleteNode.delete();
+                    CswNbtObjClassMailReport NodeAsMailReport = MailReportNode;
+                    string statusMessage = MailReportProcessor.processMailReport( NodeAsMailReport, new CswNbtMailReportStatus() );
+                    NodeAsMailReport.RunStatus.AddComment( statusMessage );
+                    NodeAsMailReport.postChanges( false );
                 }
             }
         }
 
         #endregion
 
-        #region MultiDeleteBatchData
+        #region MailReportBatchData
 
-        private class MultiDeleteBatchData
+        private class MailReportBatchData
         {
             private JObject _BatchData;
 
-            public MultiDeleteBatchData( string BatchData )
+            public MailReportBatchData( string BatchData )
             {
                 if( BatchData != string.Empty )
                 {
@@ -126,24 +143,24 @@ namespace ChemSW.Nbt.Batch
                 }
             }
 
-            private JArray _DeleteNodeIds = null;
-            public JArray DeleteNodeIds
+            private JArray _MailReportNodeIds = null;
+            public JArray MailReportNodeIds
             {
                 get
                 {
-                    if( null == _DeleteNodeIds )
+                    if( null == _MailReportNodeIds )
                     {
-                        if( null != _BatchData["deletenodeids"] )
+                        if( null != _BatchData["mailreportnodeids"] )
                         {
-                            _DeleteNodeIds = (JArray) _BatchData["deletenodeids"];
+                            _MailReportNodeIds = (JArray) _BatchData["mailreportnodeids"];
                         }
                     }
-                    return _DeleteNodeIds;
+                    return _MailReportNodeIds;
                 }
                 set
                 {
-                    _DeleteNodeIds = value;
-                    _BatchData["deletenodeids"] = _DeleteNodeIds;
+                    _MailReportNodeIds = value;
+                    _BatchData["mailreportnodeids"] = _MailReportNodeIds;
                 }
             }
 
@@ -174,6 +191,6 @@ namespace ChemSW.Nbt.Batch
             }
         }
 
-        #endregion MultiDeleteBatchData
+        #endregion MailReportBatchData
     }
 }

@@ -10,6 +10,7 @@
                 quantities: [],
                 countControl: null,
                 qtyControl: null,
+                sizesControl: null,
                 barcodeControl: null,
                 amountForm: null,
                 thinGrid: null,
@@ -31,17 +32,29 @@
                     action: 'Receive',
                     selectedSizeId: null,
                     relatedNodeId: null,
+                    materialId: null,
                     rows: [],
                     config: {
                         barcodeName: 'Barcodes (Optional)',
-                        quantityName: 'Quantity *',
+                        quantityName: 'Net Quantity *',
+                        sizeName: 'Size *',
                         numberName: 'No. Containers *'
-                    }
+                    },
+                    customBarcodes: false
                 };
                 if (options) {
                     $.extend(cswPrivate, options);
                 }
-                cswPrivate.header = [cswPrivate.config.numberName, cswPrivate.config.quantityName, cswPrivate.config.barcodeName];
+
+                cswPrivate.header = [cswPrivate.config.numberName];
+                if (false === Csw.isNullOrEmpty(cswPrivate.materialId) && cswPrivate.action === 'Receive') {
+                    cswPrivate.header = cswPrivate.header.concat([cswPrivate.config.sizeName]);
+                }
+                cswPrivate.header = cswPrivate.header.concat([cswPrivate.config.quantityName]);
+                if (cswPrivate.customBarcodes) {
+                    cswPrivate.header = cswPrivate.header.concat([cswPrivate.config.barcodeName]);
+                }
+
                 if (cswPrivate.rows.length === 0) {
                     cswPrivate.rows.push(cswPrivate.header);
                 } else {
@@ -63,10 +76,10 @@
                         });
                     }
                     if (false === Csw.isNullOrEmpty(cswPrivate.selectedSizeId)) {
-                        Csw.ajax.post({
+                        Csw.ajax.post({//TODO - for receive, make only Unit Readonly - if not quantityeditable, make both quantity and unit readonly
                             urlMethod: 'getQuantity',
                             async: false,
-                            data: { SizeId: cswPrivate.selectedSizeId },
+                            data: { SizeId: cswPrivate.selectedSizeId, Action: cswPrivate.action },
                             success: function (data) {
                                 cswPrivate.quantity = data;
                                 ret = false === Csw.isNullOrEmpty(cswPrivate.quantity);
@@ -74,7 +87,7 @@
                         });
                     }
                     if (false === ret) {
-                        Csw.error.throwException(Csw.error.exception('Cannot create a Wizard amounts grid without the Capacity of a Size.', '', 'csw.wizard.amountsgrid.js', 68));
+                        Csw.error.throwException(Csw.error.exception('Cannot create a Wizard amounts grid without the Initial Quantity of a Size.', '', 'csw.wizard.amountsgrid.js', 68));
                     }
                     return ret;
                 };
@@ -101,6 +114,8 @@
                         rowid: 1,
                         containerNo: 1,
                         quantity: '',
+                        sizeid: '',
+                        sizename: '',
                         unit: '',
                         unitid: '',
                         barcodes: ''
@@ -129,6 +144,8 @@
                                 rowid: rowid,
                                 containerNo: 1,
                                 quantity: '',
+                                sizeid: '',
+                                sizename: '',
                                 unit: '',
                                 unitid: '',
                                 barcodes: ''
@@ -146,13 +163,34 @@
                                         Precision: 0,
                                         Required: true,
                                         onChange: function (value) {
-                                            extendNewAmount({containerNo: value});
+                                            extendNewAmount({ containerNo: value });
+                                        }
+                                    });
+                                    break;
+                                case cswPrivate.config.sizeName:
+                                    cswPublic.sizesControl = cswCell.nodeSelect({
+                                        ID: Csw.tryExec(cswPrivate.makeId, 'sizes'),
+                                        objectClassName: 'SizeClass',
+                                        relatedTo: {
+                                            objectClassName: 'MaterialClass',
+                                            nodeId: cswPrivate.materialId
+                                        },
+                                        onSuccess: function () {
+
+                                        },
+                                        onSelect: function () {
+                                            cswPrivate.selectedSizeId = cswPublic.sizesControl.selectedNodeId();
+                                            cswPrivate.getQuantity();
+                                            cswPublic.qtyControl.quantityTextBox.val(cswPrivate.quantity.value);
+                                            cswPublic.qtyControl.quantityValue = cswPrivate.quantity.value;
+                                            cswPublic.qtyControl.unitSelect.val(cswPrivate.quantity.nodeid);
+                                            cswPublic.qtyControl.unitText = cswPrivate.quantity.name;
                                         }
                                     });
                                     break;
                                 case cswPrivate.config.quantityName:
                                     cswPrivate.quantity.ID = Csw.tryExec(cswPrivate.makeId, 'containerQuantity');
-                                    cswPrivate.quantity.qtyWidth = (7 * 8) + 'px'; //7 characters wide, 8 is the characters-to-pixels ratio
+                                    cswPrivate.quantity.qtyWidth = (7 * 8) + 'px'; //7 characters wide, 8 is the characters-to-pixels ratio                                    
                                     cswPublic.qtyControl = cswCell.quantity(cswPrivate.quantity);
                                     break;
                                 case cswPrivate.config.barcodeName:
@@ -161,7 +199,7 @@
                                         rows: 1,
                                         cols: 14,
                                         onChange: function (value) {
-                                            extendNewAmount({barcodes: value});
+                                            extendNewAmount({ barcodes: value });
                                         }
                                     });
                                     break;
@@ -186,7 +224,18 @@
                                     newAmount.quantity = cswPublic.qtyControl.quantityValue;
                                     newAmount.unit = cswPublic.qtyControl.unitText;
                                     newAmount.unitid = cswPublic.qtyControl.unitVal;
-                                    newAmount.rowid = cswPublic.thinGrid.addRows([newAmount.containerNo, newAmount.quantity + ' ' + newAmount.unit, newAmount.barcodes]);
+                                    //we need to make sure the columns here match the header columns
+                                    var formCols = [newAmount.containerNo];
+                                    if (false === Csw.isNullOrEmpty(cswPrivate.materialId) && cswPrivate.action === 'Receive') {
+                                        newAmount.sizeid = cswPublic.sizesControl.selectedNodeId();
+                                        newAmount.sizename = cswPublic.sizesControl.selectedText();
+                                        formCols = formCols.concat([newAmount.sizename]);
+                                    }
+                                    formCols = formCols.concat([newAmount.quantity + ' ' + newAmount.unit]);
+                                    if (cswPrivate.customBarcodes) {
+                                        formCols = formCols.concat([newAmount.barcodes]);
+                                    }
+                                    newAmount.rowid = cswPublic.thinGrid.addRows(formCols);
                                     cswPublic.quantities.push(extractNewAmount(newAmount));
                                 }
                             } else {
@@ -206,16 +255,16 @@
                             }
                         }
                     });
-                }());
+                } ());
 
                 (function _post() {
 
-                }());
+                } ());
 
             });
 
             return cswPublic;
 
         });
-}());
+} ());
 

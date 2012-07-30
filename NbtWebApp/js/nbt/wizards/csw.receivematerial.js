@@ -26,12 +26,13 @@
                     containerNodeTypeId: '',
                     containerAddLayout: {},
                     tradeName: '',
-                    quantities: [],
-                    selectedSizeId: ''
+                    selectedSizeId: '',
+                    customBarcodes: false
                 },
                 stepOneComplete: false,
                 stepTwoComplete: false,
                 stepThreeComplete: false,
+                printBarcodes: false,
                 amountsGrid: null
             };
 
@@ -105,12 +106,12 @@
                 };
 
                 cswPrivate.getQuantity = function (async) {
-                    var ret = Csw.bool(async);
+                    var ret = Csw.bool(async);                    
                     //We may need to block (async==false) if we're validating prior to changing steps.
                     Csw.ajax.post({
                         urlMethod: 'getQuantity',
                         async: Csw.bool(async),
-                        data: { SizeId: cswPrivate.state.selectedSizeId },
+                        data: { SizeId: cswPrivate.state.selectedSizeId, Action: 'Receive' },
                         success: function (data) {
                             cswPrivate.state.quantity = data;
                             ret = false === Csw.isNullOrEmpty(cswPrivate.state.quantity);
@@ -118,24 +119,29 @@
                     });
                     return ret;
                 };
-                
+
                 cswPrivate.finalize = function () {
                     var container = {
                         materialid: cswPrivate.state.materialId,
                         containernodetypeid: cswPrivate.state.containerNodeTypeId,
                         quantities: cswPrivate.amountsGrid.quantities,
                         sizeid: cswPrivate.state.selectedSizeId,
-                        props: cswPrivate.tabsAndProps.getPropJson()                        
+                        props: cswPrivate.tabsAndProps.getPropJson()
                     };
-                    
+
                     Csw.ajax.post({
                         urlMethod: 'receiveMaterial',
                         data: { ReceiptDefinition: Csw.serialize(container) },
-                        success: function(data) {
-                            if(Csw.number(data.containerscreated) < 1) {
+                        success: function (data) {
+                            if (Csw.number(data.containerscreated) < 1) {
                                 Csw.error.throwException(Csw.error.exception('Failed to create any containers.'));
                             } else {
                                 Csw.tryExec(cswPrivate.onFinish, data.viewid);
+                                if (false === Csw.isNullOrEmpty(data.barcodeId)) {
+                                    if (cswPrivate.printBarcodes) {
+                                        $.CswDialog('PrintLabelDialog', { 'nodeid': data.containerId, 'propid': data.barcodeId });
+                                    }
+                                }
                             }
                         }
                     });
@@ -175,7 +181,7 @@
 
                 return function () {
                     var nextBtnEnabled = function () {
-                        return cswPrivate.state.quantities && cswPrivate.state.quantities.length > 0 && false === Csw.isNullOrEmpty(cswPrivate.state.selectedSizeId);
+                        return cswPrivate.amountsGrid && cswPrivate.amountsGrid.quantities.length > 0 && false === Csw.isNullOrEmpty(cswPrivate.state.selectedSizeId);
                     };
 
                     cswPrivate.toggleButton(cswPrivate.buttons.prev, false);
@@ -189,7 +195,7 @@
 
                         cswPrivate.divStep1.span({ text: 'Select a Size of ' + cswPrivate.state.tradeName + ' to receive. Then define the container quantities to create.' });
                         cswPrivate.divStep1.br({ number: 2 });
-                        
+
                         //If multiple container nodetypes exist
                         cswPrivate.container = {};
                         var containerSelect = Csw.nbt.wizard.nodeTypeSelect(cswPrivate.divStep1, {
@@ -208,11 +214,11 @@
                             }
                         });
 
-                        var makeSizeSelect = function() {
+                        var makeSizeSelect = function () {
 
                             cswPrivate.sizeDiv = cswPrivate.sizeDiv || cswPrivate.divStep1.div();
                             cswPrivate.sizeDiv.empty();
-                            
+
                             cswPrivate.sizeDiv.span({ text: '<b>Pick a Size:</b>' });
                             cswPrivate.sizeDiv.br({ number: 2 });
 
@@ -225,35 +231,60 @@
                                 },
                                 onSuccess: function () {
                                     makeAmountsGrid();
+                                    makeBarcodeCheckBox();
                                 },
                                 onSelect: function () {
                                     makeAmountsGrid();
+                                    makeBarcodeCheckBox();
                                 }
                             });
                         };
 
-                        var makeAmountsGrid = function() {
+                        var makeAmountsGrid = function () {
                             cswPrivate.state.selectedSizeId = cswPrivate.sizeSelect.selectedNodeId();
                             cswPrivate.getQuantity(false);
 
                             cswPrivate.amountsDiv = cswPrivate.amountsDiv || cswPrivate.divStep1.div();
                             cswPrivate.amountsDiv.empty();
-                            
+
                             cswPrivate.amountsGrid = Csw.nbt.wizard.amountsGrid(cswPrivate.amountsDiv, {
                                 ID: cswPrivate.wizard.makeStepId('wizardAmountsThinGrid'),
-                                onAdd: function() {
+                                onAdd: function () {
                                     cswPrivate.toggleButton(cswPrivate.buttons.next, true);
                                 },
-                                onDelete: function(qtyCnt) {
+                                onDelete: function (qtyCnt) {
                                     if (qtyCnt < 1) {
                                         cswPrivate.toggleButton(cswPrivate.buttons.next, false);
                                     }
                                 },
                                 quantity: cswPrivate.state.quantity,
                                 containerlimit: cswPrivate.state.containerlimit,
-                                makeId: cswPrivate.wizard.makeStepId
+                                makeId: cswPrivate.wizard.makeStepId,
+                                materialId: cswPrivate.state.materialId,
+                                action: 'Receive',
+                                customBarcodes: cswPrivate.state.customBarcodes
                             });
                         };
+
+                        var makeBarcodeCheckBox = function () {
+                            cswPrivate.barcodeCheckBoxDiv = cswPrivate.barcodeCheckBoxDiv || cswPrivate.divStep1.div();
+                            cswPrivate.barcodeCheckBoxDiv.empty();
+
+                            var checkBoxTable = cswPrivate.barcodeCheckBoxDiv.table({
+                                cellvalign: 'middle'
+                            });
+                            var printBarcodesCheckBox = checkBoxTable.cell(1, 1).checkBox({
+                                onChange: Csw.method(function () {
+                                    var val;
+                                    if (printBarcodesCheckBox.checked()) {
+                                        cswPrivate.printBarcodes = true;
+                                    } else {
+                                        cswPrivate.printBarcodes = false;
+                                    }
+                                })
+                            });
+                            checkBoxTable.cell(1, 2).span({ text: 'Print barcode labels for new containers' });
+                        }
 
                         cswPrivate.stepOneComplete = true;
                     }
