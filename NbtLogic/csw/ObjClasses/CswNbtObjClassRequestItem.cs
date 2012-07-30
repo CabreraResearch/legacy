@@ -80,8 +80,8 @@ namespace ChemSW.Nbt.ObjClasses
             public const string Dispense = "Dispense";
             public const string Move = "Move";
             public const string Dispose = "Dispose";
-            public const string Complete = "Complete";
-            public const string Cancel = "Cancel";
+            public const string Complete = "Complete Request";
+            public const string Cancel = "Cancel Request";
 
             public static readonly CswCommaDelimitedString Options = new CswCommaDelimitedString
                 {
