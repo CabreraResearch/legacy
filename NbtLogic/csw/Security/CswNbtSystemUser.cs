@@ -6,15 +6,16 @@ using ChemSW.Nbt.PropTypes;
 
 namespace ChemSW.Nbt.Security
 {
+    public enum SystemUserNames { SysUsr_ObjClassCustomer, SysUsr_SchedSvc, SysUsr_SchemaUpdt, SysUsr__SchemaImport, SysUsr_NbtWebSvcMgr, SysUsr_DbConnectTest, SysUsr_Test }
     public class CswNbtSystemUser : ICswNbtUser
     {
         private ICswResources _Resources;
-        private string _Username;
+        private SystemUserNames _SystemUserName;
 
-        public CswNbtSystemUser( ICswResources CswNbtResources, string Username )
+        public CswNbtSystemUser( ICswResources CswNbtResources, SystemUserNames SystemUserName )
         {
             _Resources = CswNbtResources;
-            _Username = Username;
+            _SystemUserName = SystemUserName;
         }
 
         //public bool CheckCreatePermission( int NodeTypeId )
@@ -59,10 +60,10 @@ namespace ChemSW.Nbt.Security
 
         public Int32 RoleTimeout { get { return Int32.MinValue; } }
 
-        public string Username { get { return _Username; } }
+        public string Username { get { return _SystemUserName.ToString(); } }
         public string Rolename { get { return string.Empty; } }
         public string FirstName { get { return string.Empty; } }
-        public string LastName { get { return _Username; } }
+        public string LastName { get { return _SystemUserName.ToString(); } }
         public string Email { get { return string.Empty; } }
         public string DateFormat { get { return string.Empty; } }
         public string TimeFormat { get { return string.Empty; } }

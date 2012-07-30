@@ -3761,7 +3761,7 @@ namespace ChemSW.Nbt.WebServices
 
         public ICswUser ConnectTestDb_InitUser( ICswResources Resources )
         {
-            return new CswNbtSystemUser( Resources, "ConnectTestDb" );
+            return new CswNbtSystemUser( Resources, SystemUserNames.SysUsr_DbConnectTest );
         }
 
 
@@ -4771,7 +4771,6 @@ namespace ChemSW.Nbt.WebServices
         } // saveModules()
 
         #endregion Modules
-
 
 
         #region Inspection Design

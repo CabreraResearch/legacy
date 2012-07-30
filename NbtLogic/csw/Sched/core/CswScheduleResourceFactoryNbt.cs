@@ -1,9 +1,9 @@
 using ChemSW.Config;
-using ChemSW.Nbt.Security;
-using ChemSW.Security;
-using ChemSW.Nbt.Config;
 using ChemSW.Core;
+using ChemSW.Nbt.Config;
+using ChemSW.Nbt.Security;
 using ChemSW.RscAdo;
+using ChemSW.Security;
 
 namespace ChemSW.Nbt.Sched
 {
@@ -16,7 +16,7 @@ namespace ChemSW.Nbt.Sched
         {
 
             CswSetupVblsNbt SetupVbls = new CswSetupVblsNbt( SetupMode.NbtExe );
-            PooledConnectionState PooledConnectionState; 
+            PooledConnectionState PooledConnectionState;
 
             if( SetupVbls.doesSettingExist( "CloseSchedulerDbConnections" ) )
             {
@@ -37,14 +37,14 @@ namespace ChemSW.Nbt.Sched
 
 
             CswNbtResources ReturnVal = CswNbtResourcesFactory.makeCswNbtResources( AppType.Nbt, SetupMode.NbtExe, true, false, null, PooledConnectionState );
-			ReturnVal.InitCurrentUser = InitUser;
+            ReturnVal.InitCurrentUser = InitUser;
             return ( ReturnVal );
         }
 
-		public ICswUser InitUser(ICswResources Resources)
-		{
-			return new CswNbtSystemUser( Resources, "NbtScheduleServiceUser" );
-		}
+        public ICswUser InitUser( ICswResources Resources )
+        {
+            return new CswNbtSystemUser( Resources, SystemUserNames.SysUsr_SchedSvc );
+        }
 
     }//CswReportTimingDaily
 

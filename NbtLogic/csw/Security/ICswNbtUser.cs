@@ -1,7 +1,5 @@
 using System;
 using ChemSW.Core;
-using ChemSW.Nbt.ObjClasses;
-using ChemSW.Nbt.PropTypes;
 using ChemSW.Security;
 
 namespace ChemSW.Nbt.Security

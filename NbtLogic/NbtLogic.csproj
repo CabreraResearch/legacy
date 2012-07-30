@@ -177,6 +177,7 @@
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26896.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26714.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26974.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26867.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase27330.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase27423.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase27423Part1.cs" />
@@ -185,7 +186,11 @@
     <Compile Include="csw\Schema\scripts\tests\cases\029\CswTestCase_029_02.cs" />
     <Compile Include="csw\Schema\scripts\tests\cases\029\CswTestCase_029_03.cs" />
     <Compile Include="csw\Schema\scripts\tests\cases\029\CswTestCase_029_04.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\031\CswTestCase_031_01.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\031\CswTestCase_031_02.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\031\CswTestCase_031_03.cs" />
     <Compile Include="csw\Schema\scripts\tests\rsrcs\CswTstCaseRsrc_030.cs" />
+    <Compile Include="csw\Schema\scripts\tests\rsrcs\CswTstCaseRsrc_031.cs" />
     <Compile Include="csw\ServiceDrivers\CswNbtSdLocations.cs" />
     <Compile Include="csw\ServiceDrivers\CswNbtSdInventoryLevelMgr.cs" />
     <Compile Include="csw\ServiceDrivers\CswNbtSdTabsAndProps.cs" />
