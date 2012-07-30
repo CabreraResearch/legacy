@@ -7,6 +7,24 @@ namespace ChemSW.Nbt.Grid.ExtJs
     {
         private string _dataIndex;
 
+        public CswNbtGridExtJsDataIndex( CswNbtView ViewForPrefix, string dataIndex )
+        {
+            CswDelimitedString Idx = new CswDelimitedString( '_' );
+            if( null != ViewForPrefix )
+            {
+                if( ViewForPrefix.IsSessionViewIdSet() )
+                {
+                    Idx.Add( ViewForPrefix.SessionViewId.ToString() );
+                }
+                else if( ViewForPrefix.IsViewIdSet() )
+                {
+                    Idx.Add( ViewForPrefix.ViewId.ToString() );
+                }
+            }
+            Idx.Add( dataIndex.Replace( " ", "" ) );
+            _dataIndex = Idx.ToString( EscapeDelimiterInstances: false );
+        }
+
         public CswNbtGridExtJsDataIndex( string UniquePrefix, string dataIndex )
         {
             CswDelimitedString Idx = new CswDelimitedString( '_' );

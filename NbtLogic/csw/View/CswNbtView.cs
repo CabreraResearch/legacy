@@ -183,7 +183,10 @@ namespace ChemSW.Nbt
             }
             set { Root.ViewId = value; }
         }
-
+        public bool IsViewIdSet()
+        {
+            return ( null != Root && null != Root.ViewId && Root.ViewId.isSet() );
+        }
         /// <summary>
         /// True if the View can be used as a search (contains a property filter)
         /// </summary>
@@ -1561,6 +1564,11 @@ namespace ChemSW.Nbt
                 return _SessionViewId ?? new CswNbtSessionDataId();
             }
             set { _SessionViewId = value; }
+        }
+
+        public bool IsSessionViewIdSet()
+        {
+            return ( null != _SessionViewId && _SessionViewId.isSet() );
         }
 
         #endregion Session Cache functions

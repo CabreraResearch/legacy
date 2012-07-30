@@ -96,9 +96,12 @@
                                 nodenames = [];
 
                             Csw.each(rows, function (row) {
-                                cswnbtnodekeys.push(row.nodekey);
-                                nodeids.push(row.nodeid);
-                                nodenames.push(row.nodename);
+                                var keyName = Csw.string(cswPrivate.cartviewid + '_nodekey').toLowerCase();
+                                var idName = Csw.string(cswPrivate.cartviewid + '_nodeid').toLowerCase();
+                                var nameName = Csw.string(cswPrivate.cartviewid + '_nodename').toLowerCase();
+                                cswnbtnodekeys.push(Csw.string(row[keyName]));
+                                nodeids.push(Csw.string(row[idName]));
+                                nodenames.push(Csw.string(row[nameName]));
                             });
 
                             $.CswDialog('EditNodeDialog', {
@@ -117,9 +120,12 @@
                                 nodenames = [];
 
                             Csw.each(rows, function (row) {
-                                cswnbtnodekeys.push(row.nodekey);
-                                nodeids.push(row.nodeid);
-                                nodenames.push(row.nodename);
+                                var keyName = Csw.string(cswPrivate.cartviewid + '_nodekey').toLowerCase();
+                                var idName = Csw.string(cswPrivate.cartviewid + '_nodeid').toLowerCase();
+                                var nameName = Csw.string(cswPrivate.cartviewid + '_nodename').toLowerCase();
+                                cswnbtnodekeys.push(Csw.string(row[keyName]));
+                                nodeids.push(Csw.string(row[idName]));
+                                nodenames.push(Csw.string(row[nameName]));
                             });
 
                             $.CswDialog('DeleteNodeDialog', {
