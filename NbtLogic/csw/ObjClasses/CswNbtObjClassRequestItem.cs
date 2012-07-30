@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using ChemSW.Core;
 using ChemSW.Exceptions;
@@ -36,7 +35,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string InventoryGroup = "Inventory Group";
             public const string TotalDispensed = "Total Dispensed";
         }
-        
+
         public sealed class Types
         {
             public const string Dispense = "Dispense Container";
@@ -480,7 +479,7 @@ namespace ChemSW.Nbt.ObjClasses
         }
         private void OnRequestByPropChange( CswNbtNodeProp Prop )
         {
-            switch(RequestBy.Value)
+            switch( RequestBy.Value )
             {
                 case RequestsBy.Size:
                     Quantity.UnitId = null;
@@ -531,14 +530,10 @@ namespace ChemSW.Nbt.ObjClasses
             if( null != Material.RelatedNodeId )
             {
                 Material.setReadOnly( value: true, SaveToDb: true );
+                CswNbtNode MaterialNode = _CswNbtResources.Nodes[Material.RelatedNodeId];
                 CswNbtUnitViewBuilder Vb = new CswNbtUnitViewBuilder( _CswNbtResources );
-                CswNbtView UnitView = Vb.getQuantityUnitOfMeasureView( Material.RelatedNodeId );
-                if( null != UnitView )
-                {
-                    Quantity.View = UnitView;
-                }
-
-                TotalDispensed.View = UnitView;
+                Vb.setQuantityUnitOfMeasureView( MaterialNode, Quantity );
+                Vb.setQuantityUnitOfMeasureView( MaterialNode, TotalDispensed );
                 TotalDispensed.Quantity = 0;
             }
         }
@@ -551,6 +546,14 @@ namespace ChemSW.Nbt.ObjClasses
             if( null != Container.RelatedNodeId )
             {
                 Container.setReadOnly( value: true, SaveToDb: true );
+                if( null == Material.RelatedNodeId )
+                {
+                    CswNbtObjClassContainer NodeAsContainer = _CswNbtResources.Nodes[Container.RelatedNodeId];
+                    if( null != NodeAsContainer )
+                    {
+                        Material.RelatedNodeId = NodeAsContainer.Material.RelatedNodeId;
+                    }
+                }
             }
         }
         public CswNbtNodePropLocation Location
