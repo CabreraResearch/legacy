@@ -190,17 +190,11 @@ namespace ChemSW.Nbt
             CswTableUpdate SessionViewsUpdate = _CswNbtResources.makeCswTableUpdate( "saveSessionView_update", SessionDataTableName );
             DataTable SessionViewTable = null;
             if( View.SessionViewId != null && View.SessionViewId.isSet() )
-            {
-                SessionViewTable = SessionViewsUpdate.getTable(SessionDataColumn_PrimaryKey, View.SessionViewId.get(), "where sessionid = '" + SessionId + "'", false);
-            }
+                SessionViewTable = SessionViewsUpdate.getTable( SessionDataColumn_PrimaryKey, View.SessionViewId.get(), "where sessionid = '" + SessionId + "'", false );
             else if( !ForceNewSessionId && View.ViewId != null && View.ViewId.isSet() )
-            {
-                SessionViewTable = SessionViewsUpdate.getTable(SessionDataColumn_ViewId, View.ViewId.get(), "where sessionid = '" + SessionId + "'", false);
-            }
+                SessionViewTable = SessionViewsUpdate.getTable( SessionDataColumn_ViewId, View.ViewId.get(), "where sessionid = '" + SessionId + "'", false );
             else
-            {
                 SessionViewTable = SessionViewsUpdate.getEmptyTable();
-            }
 
             DataRow SessionViewRow = _getSessionViewRow( SessionViewTable, View.ViewName, CswNbtSessionDataItem.SessionDataType.View, IncludeInQuickLaunch, KeepInQuickLaunch );
             SessionViewRow[SessionDataColumn_ViewId] = CswConvert.ToDbVal( View.ViewId.get() );
