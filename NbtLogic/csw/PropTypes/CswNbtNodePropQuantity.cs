@@ -196,6 +196,7 @@ namespace ChemSW.Nbt.PropTypes
             set
             {
                 _View = value;
+                _View.save();
             }
             get
             {

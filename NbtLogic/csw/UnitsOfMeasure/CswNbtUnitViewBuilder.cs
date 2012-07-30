@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using ChemSW.Core;
-using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
@@ -39,19 +37,41 @@ namespace ChemSW.Nbt.UnitsOfMeasure
         }
 
         /// <summary>
+        /// Create a Unit View for a Quantity property using a Material NodeId and a Quantity property
+        /// </summary>
+        public void setQuantityUnitOfMeasureView( CswNbtNode MaterialNode, CswNbtNodePropQuantity Size )
+        {
+            if( null != Size )
+            {
+                getQuantityUnitOfMeasureView( MaterialNode, Size.View );
+                if( null != Size.View )
+                {
+                    Size.View.save();
+                }
+            }
+        }
+
+        /// <summary>
         /// Build a Unit View for a Quantity property using a Material NodeId
         /// </summary>
-        public CswNbtView getQuantityUnitOfMeasureView( CswNbtNode MaterialNode )
+        public CswNbtView getQuantityUnitOfMeasureView( CswNbtNode MaterialNode, CswNbtView View = null )
         {
-            CswNbtView Ret = null;
+            CswNbtView Ret = View;
 
             CswNbtObjClassMaterial MaterialNodeAsMaterial = MaterialNode;
             if( null != MaterialNode &&
                 false == string.IsNullOrEmpty( MaterialNodeAsMaterial.PhysicalState.Value ) )
             {
                 CswNbtMetaDataObjectClass UnitOfMeasureOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UnitOfMeasureClass );
-                Ret = new CswNbtView( _CswNbtResources );
-
+                if( null == Ret )
+                {
+                    Ret = new CswNbtView( _CswNbtResources );
+                    Ret.makeNew( MaterialNodeAsMaterial.Node.NodeName + " Units Of Measure View", NbtViewVisibility.Property );
+                }
+                else
+                {
+                    Ret.Root.ChildRelationships.Clear();
+                }
                 foreach( CswNbtMetaDataNodeType UnitOfMeasureNodeType in UnitOfMeasureOC.getNodeTypes() )
                 {
                     CswNbtMetaDataNodeTypeProp UnitTypeProp = UnitOfMeasureNodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassUnitOfMeasure.UnitTypePropertyName );

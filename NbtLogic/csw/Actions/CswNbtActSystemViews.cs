@@ -217,7 +217,8 @@ namespace ChemSW.Nbt.Actions
             CswNbtView Ret = _getSystemView( SystemViewName.CISProRequestCart );
             if( null == Ret )
             {
-                CswNbtNode ChemSwAdminRoleNode = _CswNbtResources.Nodes.makeRoleNodeFromRoleName( CswNbtObjClassRole.ChemSWAdminRoleName ); Ret = new CswNbtView( _CswNbtResources );
+                Ret = new CswNbtView( _CswNbtResources );
+                CswNbtNode ChemSwAdminRoleNode = _CswNbtResources.Nodes.makeRoleNodeFromRoleName( CswNbtObjClassRole.ChemSWAdminRoleName );
                 Ret.makeNew( SystemViewName.CISProRequestCart.ToString(), NbtViewVisibility.Role, ChemSwAdminRoleNode.NodeId );
                 ReInit = true;
             }
@@ -239,7 +240,7 @@ namespace ChemSW.Nbt.Actions
                 CswNbtMetaDataObjectClassProp MaterialOcp = RequestItemOc.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Material );
                 CswNbtMetaDataObjectClassProp ContainerOcp = RequestItemOc.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Container );
                 CswNbtMetaDataObjectClassProp LocationOcp = RequestItemOc.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Location );
-                
+
                 Ret.AddViewProperty( RequestItemVr, NumberOcp );
                 Ret.AddViewProperty( RequestItemVr, TypeOcp );
                 Ret.AddViewProperty( RequestItemVr, QuantityOcp );
@@ -367,11 +368,11 @@ namespace ChemSW.Nbt.Actions
                     Ret = true;
                     if( null != FilterDefinition.ObjectClassProp )
                     {
-                        SystemView.AddViewPropertyAndFilter(PotentialSystemViewRelationship,
+                        SystemView.AddViewPropertyAndFilter( PotentialSystemViewRelationship,
                                                             FilterDefinition.ObjectClassProp,
                                                             FilterDefinition.FilterValue,
                                                             FilterMode: FilterDefinition.FilterMode,
-                                                            SubFieldName: FilterDefinition.SubFieldName);
+                                                            SubFieldName: FilterDefinition.SubFieldName );
                     }
                     else if( FilterDefinition.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Barcode )
                     {

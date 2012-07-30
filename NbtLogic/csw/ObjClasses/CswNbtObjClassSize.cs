@@ -1,7 +1,6 @@
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.UnitsOfMeasure;
-using Newtonsoft.Json.Linq;
 
 
 namespace ChemSW.Nbt.ObjClasses
@@ -101,11 +100,7 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 Material.setReadOnly( value: true, SaveToDb: true );
                 CswNbtUnitViewBuilder Vb = new CswNbtUnitViewBuilder( _CswNbtResources );
-                CswNbtView UnitsView = Vb.getQuantityUnitOfMeasureView( MaterialNode );
-                if( null != UnitsView )
-                {
-                    InitialQuantity.View = UnitsView;
-                }
+                Vb.setQuantityUnitOfMeasureView( MaterialNode, InitialQuantity );
             }
         }
         public CswNbtNodePropQuantity InitialQuantity { get { return _CswNbtNode.Properties[InitialQuantityPropertyName]; } }
