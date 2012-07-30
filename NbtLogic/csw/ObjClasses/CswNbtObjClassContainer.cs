@@ -147,6 +147,7 @@ namespace ChemSW.Nbt.ObjClasses
             Location.SetOnPropChange( OnLocationPropChange );
             Size.SetOnPropChange( OnSizePropChange );
             SourceContainer.SetOnPropChange( OnSourceContainerChange );
+            Barcode.SetOnPropChange( OnBarcodePropChange );
             _CswNbtObjClassDefault.afterPopulateProps();
         }//afterPopulateProps()
 
@@ -533,6 +534,11 @@ namespace ChemSW.Nbt.ObjClasses
         }
 
         public CswNbtNodePropBarcode Barcode { get { return ( _CswNbtNode.Properties[BarcodePropertyName] ); } }
+        private void OnBarcodePropChange( CswNbtNodeProp Prop )
+        {
+            Barcode.setReadOnly( value: false == string.IsNullOrEmpty( Barcode.Barcode ), SaveToDb: true );
+        }
+
         public CswNbtNodePropLocation Location { get { return ( _CswNbtNode.Properties[LocationPropertyName] ); } }
         private void OnLocationPropChange( CswNbtNodeProp Prop )
         {
