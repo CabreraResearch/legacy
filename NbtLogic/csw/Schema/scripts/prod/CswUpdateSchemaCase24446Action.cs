@@ -28,7 +28,7 @@ namespace ChemSW.Nbt.Schema
                 FieldType = CswNbtMetaDataFieldType.NbtFieldType.Button
             } );
 
-            CswNbtMetaDataObjectClassProp CapacityProp = _CswNbtSchemaModTrnsctn.MetaData.getObjectClassProp( SizeOc.ObjectClassId, CswNbtObjClassSize.CapacityPropertyName );
+            CswNbtMetaDataObjectClassProp CapacityProp = _CswNbtSchemaModTrnsctn.MetaData.getObjectClassProp( SizeOc.ObjectClassId, CswNbtObjClassSize.InitialQuantityPropertyName );
             _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( CapacityProp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.setvalonadd, true );
             
         }//Update()

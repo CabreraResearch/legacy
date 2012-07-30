@@ -3,6 +3,7 @@ using ChemSW.Core;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
+using Newtonsoft.Json.Linq;
 
 
 namespace ChemSW.Nbt.ObjClasses
@@ -34,6 +35,15 @@ namespace ChemSW.Nbt.ObjClasses
         public const string ExpirationIntervalPropertyName = "Expiration Interval";
         public const string RequestPropertyName = "Request";
         public const string ReceivePropertyName = "Receive";
+
+        public sealed class PhysicalStates
+        {
+            public const string NA = "n/a";
+            public const string Liquid = "liquid";
+            public const string Solid = "solid";
+            public const string Gas = "gas";
+            public static readonly CswCommaDelimitedString Options = new CswCommaDelimitedString { Solid, Liquid, NA };
+        }
 
         /// <summary>
         /// Convert a CswNbtNode to a CswNbtObjClassMaterial
@@ -112,16 +122,17 @@ namespace ChemSW.Nbt.ObjClasses
                         ButtonData.Action = NbtButtonAction.request;
                         break;
                     case ReceivePropertyName:
-                        ButtonData.Data["materialId"] = NodeId.ToString();
-                        ButtonData.Data["materialNodeTypeId"] = NodeTypeId;
-                        ButtonData.Data["tradeName"] = TradeName.Text;
+                        ButtonData.Data["state"] = new JObject();
+                        ButtonData.Data["state"]["materialId"] = NodeId.ToString();
+                        ButtonData.Data["state"]["materialNodeTypeId"] = NodeTypeId;
+                        ButtonData.Data["state"]["tradeName"] = TradeName.Text;
                         CswNbtActReceiving Act = new CswNbtActReceiving( _CswNbtResources, ObjectClass, NodeId );
-                        ButtonData.Data["sizesViewId"] = Act.SizesView.SessionViewId.ToString();
+                        //ButtonData.Data["sizesViewId"] = Act.SizesView.SessionViewId.ToString();
                         Int32 ContainerLimit = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswNbtResources.ConfigurationVariables.container_receipt_limit.ToString() ) );
-                        ButtonData.Data["containerlimit"] = ContainerLimit;
+                        ButtonData.Data["state"]["containerlimit"] = ContainerLimit;
                         CswNbtObjClassContainer Container = Act.makeContainer();
-                        ButtonData.Data["containerNodeTypeId"] = Container.NodeTypeId;
-                        ButtonData.Data["containerAddLayout"] = Act.getContainerAddProps( Container );
+                        ButtonData.Data["state"]["containerNodeTypeId"] = Container.NodeTypeId;
+                        ButtonData.Data["state"]["containerAddLayout"] = Act.getContainerAddProps( Container );
                         ButtonData.Action = NbtButtonAction.receive;
                         break;
                 }

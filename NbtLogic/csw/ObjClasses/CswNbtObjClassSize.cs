@@ -9,7 +9,7 @@ namespace ChemSW.Nbt.ObjClasses
     public class CswNbtObjClassSize : CswNbtObjClass
     {
         public const string MaterialPropertyName = "Material";
-        public const string CapacityPropertyName = "Capacity";
+        public const string InitialQuantityPropertyName = "Initial Quantity";
         public const string QuantityEditablePropertyName = "Quantity Editable";
         public const string DispensablePropertyName = "Dispensable";
         public const string CatalogNoPropertyName = "Catalog No";
@@ -104,14 +104,14 @@ namespace ChemSW.Nbt.ObjClasses
                 CswNbtView UnitsView = Vb.getQuantityUnitOfMeasureView( MaterialNode );
                 if( null != UnitsView )
                 {
-                    Capacity.View = UnitsView;
+                    InitialQuantity.View = UnitsView;
                 }
             }
         }
-        public CswNbtNodePropQuantity Capacity { get { return _CswNbtNode.Properties[CapacityPropertyName]; } }
+        public CswNbtNodePropQuantity InitialQuantity { get { return _CswNbtNode.Properties[InitialQuantityPropertyName]; } }
         public CswNbtNodePropLogical QuantityEditable { get { return _CswNbtNode.Properties[QuantityEditablePropertyName]; } }
         public CswNbtNodePropLogical Dispensable { get { return _CswNbtNode.Properties[DispensablePropertyName]; } }
-        public CswNbtNodePropText CatalogNo { get { return _CswNbtNode.Properties[DispensablePropertyName]; } }
+        public CswNbtNodePropText CatalogNo { get { return _CswNbtNode.Properties[CatalogNoPropertyName]; } }
 
         #endregion
 

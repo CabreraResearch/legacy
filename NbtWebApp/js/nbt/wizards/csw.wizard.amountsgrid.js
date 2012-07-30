@@ -35,14 +35,14 @@
                     config: {
                         barcodeName: 'Barcodes (Optional)',
                         quantityName: 'Quantity *',
-                        numberName: 'No. *'
+                        numberName: 'No. Containers *'
                     }
                 };
                 if (options) {
                     $.extend(cswPrivate, options);
                 }
                 cswPrivate.header = [cswPrivate.config.numberName, cswPrivate.config.quantityName, cswPrivate.config.barcodeName];
-                if(cswPrivate.rows.length === 0) {
+                if (cswPrivate.rows.length === 0) {
                     cswPrivate.rows.push(cswPrivate.header);
                 } else {
                     var firstRow = cswPrivate.rows.splice(0, 1, cswPrivate.header);
@@ -67,13 +67,13 @@
                             urlMethod: 'getQuantity',
                             async: false,
                             data: { SizeId: cswPrivate.selectedSizeId },
-                            success: function(data) {
+                            success: function (data) {
                                 cswPrivate.quantity = data;
                                 ret = false === Csw.isNullOrEmpty(cswPrivate.quantity);
                             }
                         });
                     }
-                    if(false === ret) {
+                    if (false === ret) {
                         Csw.error.throwException(Csw.error.exception('Cannot create a Wizard amounts grid without the Capacity of a Size.', '', 'csw.wizard.amountsgrid.js', 68));
                     }
                     return ret;
@@ -89,8 +89,9 @@
 
                     cswPrivate.count = 0;
 
-                    cswParent.span({ text: 'Enter the Amounts to ' + cswPrivate.action + ':' });
-                    cswParent.br({ number: 1 });
+                    cswParent.br({ number: 2 });
+                    cswParent.span({ text: '<b>Enter the Amounts to ' + cswPrivate.action + ':</b>' });
+                    cswParent.br({ number: 2 });
 
                     //This object will be mutated on each call to makeAddRow below, but the reference to the object is constant--so we can pass it to onAdd.
                     //There is a fragility here in that if you were to pass newAmount to an external function, the values of the properties of the object would be unknowable
@@ -110,7 +111,7 @@
                         $.extend(newAmount, object);
                     };
 
-                    var extractNewAmount = function(object) {
+                    var extractNewAmount = function (object) {
                         var ret = $.extend(true, {}, object);
                         return ret;
                     };
@@ -118,7 +119,7 @@
                     cswPublic.amountForm = cswParent.form();
                     cswPublic.thinGrid = cswPublic.amountForm.thinGrid({
                         linkText: '',
-                        hasHeader: true, 
+                        hasHeader: true,
                         rows: cswPrivate.rows,
                         allowDelete: true,
                         allowAdd: true,
@@ -132,34 +133,35 @@
                                 unitid: '',
                                 barcodes: ''
                             };
-                            
+
                             switch (columnName) {
                                 case cswPrivate.config.numberName:
                                     cswPublic.countControl = cswCell.numberTextBox({
                                         ID: Csw.tryExec(cswPrivate.makeId, 'containerCount'),
                                         value: thisAmount.containerNo,
                                         MinValue: cswPrivate.containerMinimum,
-                                        MaxValue: cswPrivate.containerlimit,
-                                        ceilingVal: cswPrivate.containerlimit,
+                                        MaxValue: (cswPrivate.containerlimit - Csw.number(cswPrivate.count, 0)),
+                                        ceilingVal: (cswPrivate.containerlimit - Csw.number(cswPrivate.count, 0)),
+                                        width: (3 * 8) + 'px', //3 characters wide, 8 is the characters-to-pixels ratio
                                         Precision: 0,
                                         Required: true,
                                         onChange: function (value) {
-                                            thisAmount.containerNo = value;
-                                            extendNewAmount(thisAmount);
+                                            extendNewAmount({containerNo: value});
                                         }
                                     });
                                     break;
                                 case cswPrivate.config.quantityName:
                                     cswPrivate.quantity.ID = Csw.tryExec(cswPrivate.makeId, 'containerQuantity');
-                                    cswPrivate.quantity.qtyWidth = '40px';
+                                    cswPrivate.quantity.qtyWidth = (7 * 8) + 'px'; //7 characters wide, 8 is the characters-to-pixels ratio
                                     cswPublic.qtyControl = cswCell.quantity(cswPrivate.quantity);
                                     break;
                                 case cswPrivate.config.barcodeName:
-                                    cswPublic.barcodeControl = cswCell.input({
+                                    cswPublic.barcodeControl = cswCell.textArea({
                                         ID: Csw.tryExec(cswPrivate.makeId, 'containerBarcodes'),
+                                        rows: 1,
+                                        cols: 14,
                                         onChange: function (value) {
-                                            thisAmount.barcodes = value;
-                                            extendNewAmount(thisAmount);
+                                            extendNewAmount({barcodes: value});
                                         }
                                     });
                                     break;
@@ -171,7 +173,7 @@
                             if (newCount <= cswPrivate.containerlimit) {
                                 cswPrivate.count = newCount;
 
-                                var parseBarcodes = function(anArray) {
+                                var parseBarcodes = function (anArray) {
                                     if (anArray.length > newAmount.containerNo) {
                                         anArray.splice(0, anArray.length - newAmount.containerNo);
                                     }
@@ -196,24 +198,24 @@
                             Csw.debug.assert(false === Csw.isNullOrEmpty(rowid), 'Rowid is null.');
                             var quantityToRemove = cswPublic.quantities.filter(function (quantity, index, array) { return quantity.rowid === rowid; });
                             if (false === Csw.isNullOrEmpty(quantityToRemove, true)) {
-                                cswPrivate.count -= Csw.number(quantityToRemove[0].containerNo,0);
-                                var reducedQuantities = cswPublic.quantities.filter(function(quantity, index, array) { return quantity.rowid !== rowid; });
+                                cswPrivate.count -= Csw.number(quantityToRemove[0].containerNo, 0);
+                                var reducedQuantities = cswPublic.quantities.filter(function (quantity, index, array) { return quantity.rowid !== rowid; });
                                 Csw.debug.assert(reducedQuantities !== cswPublic.quantities, 'Rowid is null.');
                                 cswPublic.quantities = reducedQuantities;
                                 Csw.tryExec(cswPrivate.onDelete, (cswPrivate.count > 0));
                             }
                         }
-                        });
-                    } ());
-                
-                    (function _post() {
-                
-                    } ());
+                    });
+                }());
 
-                });
+                (function _post() {
 
-                return cswPublic;
+                }());
 
             });
-        } ());
+
+            return cswPublic;
+
+        });
+}());
 

@@ -104,6 +104,7 @@
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase27263Case27153.cs" />
     <Compile Include="csw\Actions\CswNbtActSubmitRequest.cs" />
     <Compile Include="csw\Actions\CswNbtActSystemViews.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase27327.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26965B.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase27063.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase27223.cs" />
@@ -175,6 +176,9 @@
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26714.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26974.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26867.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase27330.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase27423Part1.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase27434.cs" />
     <Compile Include="csw\Schema\scripts\tests\cases\029\CswTestCase_029_01.cs" />
     <Compile Include="csw\Schema\scripts\tests\cases\029\CswTestCase_029_02.cs" />
     <Compile Include="csw\Schema\scripts\tests\cases\029\CswTestCase_029_03.cs" />

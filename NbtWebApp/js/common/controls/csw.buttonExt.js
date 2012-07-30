@@ -37,7 +37,8 @@
                 size: 'medium',
                 tooltip: {
                     title: '',
-                    width: 100
+                    width: 100,
+                    showDelay: 1000
                 }
             };
             var cswPublic = {};

@@ -1,43 +1,48 @@
 /// <reference path="~/js/CswNbt-vsdoc.js" />
 /// <reference path="~/js/CswCommon-vsdoc.js" />
+(function($) {
 
-$.CswFieldTypeFactory = function (method) {
-    "use strict";
-    var pluginName = 'CswFieldTypeFactory';
+    $.CswFieldTypeFactory = function(method) {
+        "use strict";
+        var pluginName = 'CswFieldTypeFactory';
 
-    var m = {
-        nodeid: '',
-        fieldtype: '',
-        propDiv: '',
-        saveBtn: '',
-        propData: '',
-        onChange: function () { },
-        onReload: function () { },    // if a control needs to reload the tab
-        cswnbtnodekey: '',
-        relatednodeid: '',
-        relatednodename: '',
-        relatednodetypeid: '',
-        relatedobjectclassid: '',
-        ID: '',
-        Required: '',
-        ReadOnly: '',
-        EditMode: Csw.enums.editMode.Edit,
-        Multi: false,
-        onEditView: function () { },
-        onAfterButtonClick: function () { }
-    };
-
-    var methods = {
-        'make': function (options) {
-            if (options) {
-                //$.extend(m, options);
-                m = options;
+        var m = {
+            nodeid: '',
+            fieldtype: '',
+            propDiv: '',
+            saveBtn: '',
+            propData: '',
+            onChange: function() {
+            },
+            onReload: function() {
+            },    // if a control needs to reload the tab
+            cswnbtnodekey: '',
+            relatednodeid: '',
+            relatednodename: '',
+            relatednodetypeid: '',
+            relatedobjectclassid: '',
+            ID: '',
+            Required: '',
+            ReadOnly: '',
+            EditMode: Csw.enums.editMode.Edit,
+            Multi: false,
+            onEditView: function() {
+            },
+            onAfterButtonClick: function() {
             }
-            m.ID = Csw.makeId(m.propDiv.getId(),m.propData.id);
-            m.Required = Csw.bool(m.propData.required);
-            m.ReadOnly = m.ReadOnly || Csw.bool(m.propData.readonly) || m.EditMode === Csw.enums.editMode.PrintReport;
+        };
 
-            switch (m.fieldtype) {
+        var methods = {
+            'make': function(options) {
+                if (options) {
+                    //$.extend(m, options);
+                    m = options;
+                }
+                m.ID = Csw.makeId(m.propDiv.getId(), m.propData.id);
+                m.Required = Csw.bool(m.propData.required);
+                m.ReadOnly = m.ReadOnly || Csw.bool(m.propData.readonly) || m.EditMode === Csw.enums.editMode.PrintReport;
+
+                switch (m.fieldtype) {
                 case "AuditHistoryGrid":
                     m.propDiv.$.CswFieldTypeAuditHistoryGrid('init', m); //'init', nodeid, propData, onChange
                     break;
@@ -158,19 +163,19 @@ $.CswFieldTypeFactory = function (method) {
                         'display': true
                     });
                     break;
-            } // switch (fieldtype)
-        }, // make
+                } // switch (fieldtype)
+            }, // make
 
-        'save': function (options) {
-            if (options) {
-                //$.extend(m, options);
-                m = options;
-            }
-            m.ID = Csw.makeId(m.propDiv.getId(), m.propData.id);
-            m.Required = Csw.bool(m.propData.required);
-            m.ReadOnly = Csw.bool(m.propData.readonly);
+            'save': function(options) {
+                if (options) {
+                    //$.extend(m, options);
+                    m = options;
+                }
+                m.ID = Csw.makeId(m.propDiv.getId(), m.propData.id);
+                m.Required = Csw.bool(m.propData.required);
+                m.ReadOnly = Csw.bool(m.propData.readonly);
 
-            switch (m.fieldtype) {
+                switch (m.fieldtype) {
                 case "Barcode":
                     m.propDiv.$.CswFieldTypeBarcode('save', m); //('save', $propdiv, propData);
                     break;
@@ -287,17 +292,18 @@ $.CswFieldTypeFactory = function (method) {
                         'display': true
                     });
                     break;
-            } // switch(fieldtype)
-        } // save
-    };
+                } // switch(fieldtype)
+            } // save
+        };
 
-    // Method calling logic
-    if (methods[method]) {
-        return methods[method].apply(this, Array.prototype.slice.call(arguments, 1));
-    }
-    else if (typeof method === 'object' || !method) {
-        return methods.init.apply(this, arguments);
-    } else {
-        $.error('Method ' + method + ' does not exist on ' + pluginName); return false;
-    }
-}        // $.CswFieldTypeFactory
+        // Method calling logic
+        if (methods[method]) {
+            return methods[method].apply(this, Array.prototype.slice.call(arguments, 1));
+        } else if (typeof method === 'object' || !method) {
+            return methods.init.apply(this, arguments);
+        } else {
+            $.error('Method ' + method + ' does not exist on ' + pluginName);
+            return false;
+        }
+    };        // $.CswFieldTypeFactory
+}(jQuery));

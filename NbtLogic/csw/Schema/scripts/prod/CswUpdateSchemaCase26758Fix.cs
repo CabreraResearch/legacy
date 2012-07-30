@@ -15,15 +15,15 @@ namespace ChemSW.Nbt.Schema
     {
         public override void update()
         {
-            CswNbtMetaDataObjectClass MaterialOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass );
+            //CswNbtMetaDataObjectClass MaterialOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass );
 
-            foreach( CswNbtMetaDataNodeType MaterialNt in MaterialOc.getNodeTypes() )
-            {
-                CswNbtMetaDataNodeTypeProp RequestBtnNtp = MaterialNt.getNodeTypePropByObjectClassProp( CswNbtObjClassMaterial.RequestPropertyName );
-                CswNbtMetaDataNodeTypeProp ReceiveBtnNtp = MaterialNt.getNodeTypePropByObjectClassProp( CswNbtObjClassMaterial.ReceivePropertyName );
-                RequestBtnNtp.updateLayout(CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, ReceiveBtnNtp, true );
-                RequestBtnNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Table, ReceiveBtnNtp, true );
-            }
+            //foreach( CswNbtMetaDataNodeType MaterialNt in MaterialOc.getNodeTypes() )
+            //{
+            //    CswNbtMetaDataNodeTypeProp RequestBtnNtp = MaterialNt.getNodeTypePropByObjectClassProp( CswNbtObjClassMaterial.RequestPropertyName );
+            //    CswNbtMetaDataNodeTypeProp ReceiveBtnNtp = MaterialNt.getNodeTypePropByObjectClassProp( CswNbtObjClassMaterial.ReceivePropertyName );
+            //    RequestBtnNtp.updateLayout(CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, ReceiveBtnNtp, true );
+            //    RequestBtnNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Table, ReceiveBtnNtp, true );
+            //}
         }//Update()
 
     }//class CswUpdateSchemaCase26758Fixed

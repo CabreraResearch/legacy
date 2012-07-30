@@ -74,7 +74,7 @@
                     cssclass: 'mousetrap'
                 });
 
-                cswPrivate.searchbutton = cswtable.cell(1, 2).buttonExt({
+                cswPrivate.searchbutton = cswtable.cell(1, 2).div().buttonExt({
                     ID: Csw.makeId(cswPrivate.ID, '', '_srchbtn'),
                     icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.search),
                     enabledText: 'Search',

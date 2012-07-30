@@ -60,20 +60,26 @@ namespace ChemSW.Nbt.Schema
             }
             if( null == RequestItemNt )
             {
-                RequestItemNt = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( new CswNbtWcfMetaDataModel.NodeType( RequestItemOc )
-                                                                     {
-                                                                         Category = "Requests",
-                                                                         NodeTypeName = RequestItemNodeTypeName
-                                                                     } );
+                RequestItemNt = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType(new CswNbtWcfMetaDataModel.NodeType(RequestItemOc)
+                    {
+                        Category = "Requests",
+                        NodeTypeName = RequestItemNodeTypeName
+                    });
             }
-            CswNbtMetaDataNodeTypeProp RequestItemRequestNtp = RequestItemNt.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Request.ToString() );
+            CswNbtMetaDataNodeTypeProp RequestItemRequestNtp = RequestItemNt.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Request );
             RequestItemRequestNtp.SetFK( NbtViewRelatedIdType.NodeTypeId.ToString(), RequestNt.NodeTypeId );
 
-            CswNbtMetaDataNodeTypeProp TypeNtp = RequestItemNt.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Type.ToString() );
-            CswNbtMetaDataNodeTypeProp StatusNtp = RequestItemNt.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Status.ToString() );
-            CswNbtMetaDataNodeTypeProp ExternalOrderNoNtp = RequestItemNt.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestItem.PropertyName.ExternalOrderNumber.ToString() );
+            CswNbtMetaDataNodeTypeProp TypeNtp = RequestItemNt.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Type );
+            CswNbtMetaDataNodeTypeProp StatusNtp = RequestItemNt.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Status );
+            CswNbtMetaDataNodeTypeProp ExternalOrderNoNtp = RequestItemNt.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestItem.PropertyName.ExternalOrderNumber );
+            CswNbtMetaDataNodeTypeProp QuantityNtp = RequestItemNt.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Quantity );
+            CswNbtMetaDataNodeTypeProp CountNtp = RequestItemNt.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Count );
+            CswNbtMetaDataNodeTypeProp SizeNtp = RequestItemNt.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Size );
+            CswNbtMetaDataNodeTypeProp MaterialNtp = RequestItemNt.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Material );
+            CswNbtMetaDataNodeTypeProp ContainerNtp = RequestItemNt.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Container );
+            CswNbtMetaDataNodeTypeProp LocationNtp = RequestItemNt.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Location );
+            CswNbtMetaDataNodeTypeProp NumberNtp = RequestItemNt.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Number );
 
-            CswNbtMetaDataNodeTypeProp NumberNtp = RequestItemNt.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Number.ToString() );
             Int32 SequenceId = _CswNbtSchemaModTrnsctn.makeSequence( new CswSequenceName( "Request Items" ), "RI", "", 0, 1 );
             NumberNtp.setSequence( SequenceId );
 
@@ -110,10 +116,16 @@ namespace ChemSW.Nbt.Schema
             CswNbtViewRelationship RequestItemRel = GridView.AddViewRelationship( RequestRel,
                                                                                  NbtViewPropOwnerType.Second,
                                                                                  RequestItemRequestNtp, false );
-            GridView.AddViewProperty( RequestItemRel, TypeNtp );
             GridView.AddViewProperty( RequestItemRel, NumberNtp );
+            GridView.AddViewProperty( RequestItemRel, TypeNtp );
             GridView.AddViewProperty( RequestItemRel, ExternalOrderNoNtp );
             GridView.AddViewProperty( RequestItemRel, StatusNtp );
+            GridView.AddViewProperty( RequestItemRel, QuantityNtp );
+            GridView.AddViewProperty( RequestItemRel, CountNtp );
+            GridView.AddViewProperty( RequestItemRel, SizeNtp );
+            GridView.AddViewProperty( RequestItemRel, MaterialNtp );
+            GridView.AddViewProperty( RequestItemRel, ContainerNtp );
+            GridView.AddViewProperty( RequestItemRel, LocationNtp );
             GridView.save();
 
 

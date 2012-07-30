@@ -26,23 +26,24 @@
                 'Yes': function() {
 
                     table.cell(rownum, 1).text(label);
-                    var parent = table.cell(rownum, 2);
+                    var parent = table.cell(rownum, 2).table();
+                    
                     var id = table.id;
                     /* NO! Refactor to use Csw.literals and more wholesome methods. */
                     cswPublic.$visibilityselect = $('<select id="' + id + '_vissel" />')
-                        .appendTo(parent.$);
+                        .appendTo(parent.cell(1,1).$);
                     cswPublic.$visibilityselect.append('<option value="User">User:</option>');
                     cswPublic.$visibilityselect.append('<option value="Role">Role:</option>');
                     cswPublic.$visibilityselect.append('<option value="Global">Global</option>');
 
-                    cswPublic.$visroleselect = parent.$.CswNodeSelect('init', {
+                    cswPublic.$visroleselect = parent.cell(1, 3).nodeSelect({
                         ID: Csw.makeId(id, 'visrolesel'),
-                        objectclass: 'RoleClass'
-                    }).hide();
-                    cswPublic.$visuserselect = parent.$.CswNodeSelect('init', {
+                        objectClassName: 'RoleClass'
+                    }).$.hide();
+                    cswPublic.$visuserselect = parent.cell(1, 4).nodeSelect({
                         ID: Csw.makeId(id, 'visusersel'),
-                        objectclass: 'UserClass'
-                    });
+                        objectClassName: 'UserClass'
+                    }).$;
 
                     cswPublic.$visibilityselect.change(function() {
                         var val = cswPublic.$visibilityselect.val();
