@@ -29,7 +29,7 @@ namespace ChemSW.Nbt.Grid
 
         public JObject TreeToJson( CswNbtView View, ICswNbtTree Tree, bool IsPropertyGrid = false )
         {
-            CswNbtGridExtJsGrid grid = new CswNbtGridExtJsGrid( View.ViewId.ToString() );
+            CswNbtGridExtJsGrid grid = new CswNbtGridExtJsGrid();
             grid.title = View.ViewName;
             if( _CswNbtResources.CurrentNbtUser != null && _CswNbtResources.CurrentNbtUser.PageSize > 0 )
             {
@@ -43,7 +43,7 @@ namespace ChemSW.Nbt.Grid
 
             grid.Truncated = Tree.getCurrentNodeChildrenTruncated();
 
-            CswNbtGridExtJsDataIndex nodeIdDataIndex = new CswNbtGridExtJsDataIndex( View.ViewId.ToString(), "nodeId" );
+            CswNbtGridExtJsDataIndex nodeIdDataIndex = new CswNbtGridExtJsDataIndex( "nodeId" );
             CswNbtGridExtJsField nodeIdFld = new CswNbtGridExtJsField();
             nodeIdFld.dataIndex = nodeIdDataIndex;
             grid.fields.Add( nodeIdFld );
@@ -53,7 +53,7 @@ namespace ChemSW.Nbt.Grid
             nodeIdCol.hidden = true;
             grid.columns.Add( nodeIdCol );
 
-            CswNbtGridExtJsDataIndex nodekeyDataIndex = new CswNbtGridExtJsDataIndex( View.ViewId.ToString(), "nodekey" );
+            CswNbtGridExtJsDataIndex nodekeyDataIndex = new CswNbtGridExtJsDataIndex( "nodekey" );
             CswNbtGridExtJsField nodekeyFld = new CswNbtGridExtJsField();
             nodekeyFld.dataIndex = nodekeyDataIndex;
             grid.fields.Add( nodekeyFld );
@@ -63,7 +63,7 @@ namespace ChemSW.Nbt.Grid
             nodekeyCol.hidden = true;
             grid.columns.Add( nodekeyCol );
 
-            CswNbtGridExtJsDataIndex nodenameDataIndex = new CswNbtGridExtJsDataIndex( View.ViewId.ToString(), "nodename" );
+            CswNbtGridExtJsDataIndex nodenameDataIndex = new CswNbtGridExtJsDataIndex( "nodename" );
             CswNbtGridExtJsField nodenameFld = new CswNbtGridExtJsField();
             nodenameFld.dataIndex = nodenameDataIndex;
             grid.fields.Add( nodenameFld );
@@ -91,7 +91,7 @@ namespace ChemSW.Nbt.Grid
                     // Because properties in the view might be by object class, but properties on the tree will always be by nodetype,
                     // we have to use name, not id, as the dataIndex
                     string header = MetaDataProp.PropNameWithQuestionNo;
-                    CswNbtGridExtJsDataIndex dataIndex = new CswNbtGridExtJsDataIndex( View.ViewId.ToString(), MetaDataProp.PropName );  // don't use PropNameWithQuestionNo here, because it won't match the propname from the tree
+                    CswNbtGridExtJsDataIndex dataIndex = new CswNbtGridExtJsDataIndex( MetaDataProp.PropName );  // don't use PropNameWithQuestionNo here, because it won't match the propname from the tree
 
                     // Potential bug here!
                     // If the same property is added to the view more than once, we'll only use the grid definition for the first instance
@@ -193,7 +193,7 @@ namespace ChemSW.Nbt.Grid
             {
                 // Potential bug here!
                 // If the view defines the property by objectclass propname, but the nodetype propname differs, this might break
-                CswNbtGridExtJsDataIndex dataIndex = new CswNbtGridExtJsDataIndex( View.ViewId.ToString(), Prop[CswNbtTreeNodes._AttrName_NodePropName].ToString() );
+                CswNbtGridExtJsDataIndex dataIndex = new CswNbtGridExtJsDataIndex( Prop[CswNbtTreeNodes._AttrName_NodePropName].ToString() );
 
                 CswPrimaryKey NodeId = Tree.getNodeIdForCurrentPosition();
                 CswNbtMetaDataFieldType.NbtFieldType FieldType = Prop[CswNbtTreeNodes._AttrName_NodePropFieldType].ToString();
@@ -267,7 +267,7 @@ namespace ChemSW.Nbt.Grid
 
         public CswNbtGridExtJsGrid DataTableToGrid( DataTable DT, bool Editable = false )
         {
-            CswNbtGridExtJsGrid grid = new CswNbtGridExtJsGrid(DT.TableName);
+            CswNbtGridExtJsGrid grid = new CswNbtGridExtJsGrid();
             grid.title = DT.TableName;
             if( _CswNbtResources.CurrentNbtUser != null && _CswNbtResources.CurrentNbtUser.PageSize > 0 )
             {
@@ -276,7 +276,7 @@ namespace ChemSW.Nbt.Grid
 
             foreach( DataColumn Column in DT.Columns )
             {
-                CswNbtGridExtJsDataIndex dataIndex = new CswNbtGridExtJsDataIndex( DT.TableName, Column.ColumnName );
+                CswNbtGridExtJsDataIndex dataIndex = new CswNbtGridExtJsDataIndex( Column.ColumnName );
                 CswNbtGridExtJsField fld = new CswNbtGridExtJsField();
                 fld.dataIndex = dataIndex;
                 grid.fields.Add( fld );
@@ -291,7 +291,7 @@ namespace ChemSW.Nbt.Grid
                 CswNbtGridExtJsRow gridrow = new CswNbtGridExtJsRow();
                 foreach( DataColumn Column in DT.Columns )
                 {
-                    gridrow.data[new CswNbtGridExtJsDataIndex( DT.TableName, Column.ColumnName )] = Row[Column].ToString();
+                    gridrow.data[new CswNbtGridExtJsDataIndex( Column.ColumnName )] = Row[Column].ToString();
                 }
                 grid.rows.Add( gridrow );
             } // foreach( DataRow Row in DT.Rows )

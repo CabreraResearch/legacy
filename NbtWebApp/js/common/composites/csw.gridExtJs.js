@@ -9,10 +9,10 @@
 
             var cswPrivate = {
                 ID: 'extjsGrid',
-                //storeId: '',
+                storeId: '',
                 title: 'Untitled Grid',
                 truncated: false,
-                //stateId: '',
+                stateId: '',
                 usePaging: true,
                 forceFit: false,   // expand all columns to fill width (makes column resizing weird)
 
@@ -105,7 +105,6 @@
                 var columns = $.extend([], cswPrivate.columns);
 
                 var gridopts = {
-                    itemId: cswPrivate.ID,
                     title: cswPrivate.title,
                     store: store,
                     columns: columns,
@@ -113,7 +112,7 @@
                     width: cswPrivate.width,
                     resizable: true,               // client side grid resizing
                     stateful: true,
-                    stateId: cswPrivate.ID,
+                    stateId: cswPrivate.stateId,
                     forceFit: cswPrivate.forceFit,
                     viewConfig: {
                         deferEmptyText: false,
