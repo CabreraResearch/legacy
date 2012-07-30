@@ -128,7 +128,7 @@ namespace ChemSW.Nbt.PropTypes
             ParentObject["viewname"] = View.ViewName;
             ParentObject["gridmode"] = GridMode.ToString();
             ParentObject["maxrows"] = MaxRows;
-            ParentObject["viewid"] = View.ViewId.ToString();
+            ParentObject["viewid"] = View.SaveToCache( false, true ).ToString();
             ParentObject["width"] = Width.ToString();
         }
 

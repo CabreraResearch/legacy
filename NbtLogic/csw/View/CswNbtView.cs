@@ -1535,7 +1535,7 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Save this View to Session's data cache
         /// </summary>
-        public void SaveToCache( bool IncludeInQuickLaunch, bool ForceCache = false, bool KeepInQuickLaunch = false )
+        public CswNbtSessionDataId SaveToCache( bool IncludeInQuickLaunch, bool ForceCache = false, bool KeepInQuickLaunch = false )
         {
             // don't cache twice
             if( SessionViewId == null ||
@@ -1546,6 +1546,7 @@ namespace ChemSW.Nbt
                 bool ForQuickLaunch = ( IncludeInQuickLaunch && IsQuickLaunch );
                 _SessionViewId = _CswNbtResources.ViewSelect.saveSessionView( this, ForQuickLaunch, KeepInQuickLaunch );
             }
+            return _SessionViewId;
         } // SaveToCache()
 
         public void clearSessionViewId()
