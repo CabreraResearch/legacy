@@ -1,5 +1,15 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using System.Collections;
+using System.Data;
+using System.Linq;
+using System.Reflection;
 using ChemSW.Core;
+using ChemSW.Exceptions;
+using ChemSW.Nbt.MetaData;
+using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.Grid.ExtJs
 {
@@ -9,15 +19,12 @@ namespace ChemSW.Nbt.Grid.ExtJs
 
         public CswNbtGridExtJsDataIndex( string UniquePrefix, string dataIndex )
         {
-            CswDelimitedString Idx = new CswDelimitedString( '_' );
-            Idx.Add( UniquePrefix.Replace( " ", "" ) );
-            Idx.Add( dataIndex.Replace( " ", "" ) );
-            _dataIndex = Idx.ToString( EscapeDelimiterInstances: false );
+            _dataIndex = ( UniquePrefix + dataIndex ).Replace( " ", "_" ).ToLower();
         }
 
         public override string ToString()
         {
-            return _dataIndex.ToLower();
+            return _dataIndex;
         }
 
         #region IEquatable
