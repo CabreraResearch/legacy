@@ -138,7 +138,7 @@
                                 Csw.error.throwException(Csw.error.exception('Failed to create any containers.'));
                             } else {
                                 Csw.tryExec(cswPrivate.onFinish, data.viewid);
-                                if (false === Csw.isNullOrEmpty(data.barcodeId)) {//TODO - FIX!
+                                if (false === Csw.isNullOrEmpty(data.barcodeId)) {
                                     if (cswPrivate.printBarcodes) {
                                         $.CswDialog('PrintLabelDialog', { 'nodeid': data.containerId, 'propid': data.barcodeId });
                                     }
