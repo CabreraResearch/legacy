@@ -7,9 +7,10 @@ namespace ChemSW.Nbt.ObjClasses
 {
     public class CswNbtObjClassWorkUnit : CswNbtObjClass
     {
-        public static string AuditingEnabledPropertyName { get { return "Auditing Enabled"; } }
-        public static string SignatureRequiredPropertyName { get { return "Signature Required"; } }
-
+        public const string AuditingEnabledPropertyName = "Auditing Enabled";
+        public const string SignatureRequiredPropertyName = "Signature Required";
+        public const string NamePropertyName = "Name";
+        
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
 
         public CswNbtObjClassWorkUnit( CswNbtResources CswNbtResources, CswNbtNode Node )
@@ -91,20 +92,9 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Object class specific properties
 
-        public CswNbtNodePropNodeTypeSelect AuditingEnabled
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[AuditingEnabledPropertyName].AsNodeTypeSelect );
-            }
-        }
-        public CswNbtNodePropNodeTypeSelect SignatureRequired
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[SignatureRequiredPropertyName].AsNodeTypeSelect );
-            }
-        }
+        public CswNbtNodePropNodeTypeSelect AuditingEnabled { get { return ( _CswNbtNode.Properties[AuditingEnabledPropertyName] ); } }
+        public CswNbtNodePropNodeTypeSelect SignatureRequired { get { return ( _CswNbtNode.Properties[SignatureRequiredPropertyName] ); } }
+        public CswNbtNodePropText Name { get { return ( _CswNbtNode.Properties[NamePropertyName] ); } }
 
         #endregion
 

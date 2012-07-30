@@ -39,10 +39,10 @@ namespace ChemSW.Nbt.ObjClasses
         
         public sealed class Types
         {
-            public const string Dispense = "Dispense";
-            public const string Request = "Request";
-            public const string Move = "Move";
-            public const string Dispose = "Dispose";
+            public const string Dispense = "Dispense Container";
+            public const string Request = "Request Material";
+            public const string Move = "Move Container";
+            public const string Dispose = "Dispose Container";
             public static readonly CswCommaDelimitedString Options = new CswCommaDelimitedString { Dispense, Request, Move, Dispose };
         }
 
@@ -80,8 +80,8 @@ namespace ChemSW.Nbt.ObjClasses
             public const string Dispense = "Dispense";
             public const string Move = "Move";
             public const string Dispose = "Dispose";
-            public const string Complete = "Complete";
-            public const string Cancel = "Cancel";
+            public const string Complete = "Complete Request";
+            public const string Cancel = "Cancel Request";
 
             public static readonly CswCommaDelimitedString Options = new CswCommaDelimitedString
                 {
@@ -89,7 +89,7 @@ namespace ChemSW.Nbt.ObjClasses
                 };
             public static readonly CswCommaDelimitedString DispenseOptions = new CswCommaDelimitedString
                 {
-                    Order, Receive, Dispense, Dispose, Move, Complete, Cancel
+                    Order, Receive, Dispense, Complete, Cancel
                 };
             public static readonly CswCommaDelimitedString MoveOptions = new CswCommaDelimitedString
                 {
@@ -97,7 +97,7 @@ namespace ChemSW.Nbt.ObjClasses
                 };
             public static readonly CswCommaDelimitedString DisposeOptions = new CswCommaDelimitedString
                 {
-                    Dispose, Move, Complete, Cancel
+                    Dispose, Complete, Cancel
                 };
         }
 
@@ -350,7 +350,7 @@ namespace ChemSW.Nbt.ObjClasses
                                         if( null != NodeAsSize )
                                         {
                                             Capacity = new JObject();
-                                            NodeAsSize.Capacity.ToJSON( Capacity );
+                                            NodeAsSize.InitialQuantity.ToJSON( Capacity );
                                             ButtonData.Data["capacity"] = Capacity;
                                         }
                                     }

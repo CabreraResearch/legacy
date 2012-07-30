@@ -5,3 +5,5 @@ set farpath=%1
   
 %1etc\far.exe %1js\*.js.map "D:\\kiln\\Nbt\\Nbt\\NbtWebApp\\js\\" "\\"
 %1etc\far.exe %1js\*.js.map "D:\\kiln\\Nbt\\Nbt\\NbtWebApp\\" "\\"
+
+exit 0

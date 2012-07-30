@@ -56,7 +56,7 @@ namespace ChemSW.Nbt.Actions
 
                 CswNbtViewRelationship MaterialRel = SizeView.AddViewRelationship( _MaterialOc, true );
                 CswNbtMetaDataObjectClass SizeOc = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.SizeClass );
-                CswNbtMetaDataObjectClassProp CapacityOcp = SizeOc.getObjectClassProp( CswNbtObjClassSize.CapacityPropertyName );
+                CswNbtMetaDataObjectClassProp CapacityOcp = SizeOc.getObjectClassProp( CswNbtObjClassSize.InitialQuantityPropertyName );
                 CswNbtMetaDataObjectClassProp MaterialOcp = SizeOc.getObjectClassProp( CswNbtObjClassSize.MaterialPropertyName );
                 CswNbtMetaDataObjectClassProp CatalogNoOcp = SizeOc.getObjectClassProp( CswNbtObjClassSize.CatalogNoPropertyName );
                 CswNbtMetaDataObjectClassProp DispensableOcp = SizeOc.getObjectClassProp( CswNbtObjClassSize.DispensablePropertyName );
@@ -171,8 +171,8 @@ namespace ChemSW.Nbt.Actions
                                             AsContainer.Material.RelatedNodeId = MaterialId;
                                             if( AsSize.QuantityEditable.Checked != Tristate.True )
                                             {
-                                                QuantityValue = AsSize.Capacity.Quantity;
-                                                UnitId = AsSize.Capacity.UnitId;
+                                                    QuantityValue = AsSize.InitialQuantity.Quantity;
+                                                    UnitId = AsSize.InitialQuantity.UnitId;
                                             }
                                             if( null == AsContainer.Quantity.UnitId || Int32.MinValue == AsContainer.Quantity.UnitId.PrimaryKey )
                                             {
