@@ -152,6 +152,7 @@ namespace ChemSW.Nbt.Actions
                                     CswPrimaryKey SizeId = new CswPrimaryKey();
                                     SizeId.FromString( CswConvert.ToString( QuantityDef["sizeid"] ) );
                                     CswNbtObjClassSize AsSize = CswNbtResources.Nodes.GetNode( SizeId );
+
                                     Debug.Assert( ( NoContainers > 0 ), "The request did not specify at least one container." );
                                     Debug.Assert( ( QuantityValue > 0 ), "The request did not specify a valid quantity." );
                                     Debug.Assert( ( Int32.MinValue != UnitId.PrimaryKey ), "The request did not specify a valid unit." );
