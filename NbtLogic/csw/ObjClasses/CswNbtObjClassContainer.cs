@@ -143,6 +143,7 @@ namespace ChemSW.Nbt.ObjClasses
             Dispense.setHidden( value: ( false == _CswNbtResources.Permit.canContainer( NodeId, CswNbtPermit.NodeTypePermission.Create, _CswNbtResources.Actions[CswNbtActionName.DispenseContainer] ) ), SaveToDb: false );
             Material.SetOnPropChange( OnMaterialPropChange );
             Dispose.SetOnPropChange( OnDisposedPropChange );
+            OnDisposedPropChange( Dispose );
             Quantity.SetOnPropChange( OnQuantityPropChange );
             Location.SetOnPropChange( OnLocationPropChange );
             Size.SetOnPropChange( OnSizePropChange );
@@ -346,6 +347,8 @@ namespace ChemSW.Nbt.ObjClasses
             }
             JObject CapacityObj = _getCapacityJSON();
             ActionDataObj["capacity"] = CapacityObj.ToString();
+            bool customBarcodes = CswConvert.ToBoolean( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswNbtResources.ConfigurationVariables.custom_barcodes.ToString() ) );
+            ActionDataObj["customBarcodes"] = customBarcodes;
             return ActionDataObj;
         }
 
@@ -597,31 +600,11 @@ namespace ChemSW.Nbt.ObjClasses
                 if( MaterialNode != null )
                 {
                     CswNbtObjClassMaterial MaterialNodeAsMaterial = MaterialNode;
-
                     // case 24488 - Expiration Date default is Today + Expiration Interval of the Material
                     // I'd like to do this on beforeCreateNode(), but the Material isn't set yet.
                     if( ExpirationDate.DateTimeValue == DateTime.MinValue )
                     {
-                        DateTime DefaultExpDate = DateTime.Now;
-                        switch( MaterialNodeAsMaterial.ExpirationInterval.CachedUnitName.ToLower() )
-                        {
-                            case "hours":
-                                DefaultExpDate = DefaultExpDate.AddHours( MaterialNodeAsMaterial.ExpirationInterval.Quantity );
-                                break;
-                            case "days":
-                                DefaultExpDate = DefaultExpDate.AddDays( MaterialNodeAsMaterial.ExpirationInterval.Quantity );
-                                break;
-                            case "months":
-                                DefaultExpDate = DefaultExpDate.AddMonths( CswConvert.ToInt32( MaterialNodeAsMaterial.ExpirationInterval.Quantity ) );
-                                break;
-                            case "years":
-                                DefaultExpDate = DefaultExpDate.AddYears( CswConvert.ToInt32( MaterialNodeAsMaterial.ExpirationInterval.Quantity ) );
-                                break;
-                            default:
-                                DefaultExpDate = DateTime.MinValue;
-                                break;
-                        }
-                        ExpirationDate.DateTimeValue = DefaultExpDate;
+                        ExpirationDate.DateTimeValue = MaterialNodeAsMaterial.getDefaultExpirationDate();
                     }
                 }
                 SourceContainer.setReadOnly( value: true, SaveToDb: true );

@@ -49,6 +49,10 @@ namespace ChemSW.Nbt
             /// </summary>
             cache_lastupdated,
             /// <summary>
+            /// If set to 1, users can define their own barcodes on new containers.
+            /// </summary>
+            custom_barcodes,
+            /// <summary>
             /// Format of database (oracle, mysql, mssql)
             /// </summary>
             dbformat,
@@ -674,8 +678,11 @@ namespace ChemSW.Nbt
             _CswResources.OnGetAuditLevel = new Audit.GetAuditLevelHandler( handleGetAuditLevel );
         }
 
-        private void handleGetAuditLevel( DataRow DataRow, ref AuditLevel ReturnVal )
+        private void handleGetAuditLevel( DataRow DataRow, ref string ReturnVal )
         {
+
+            ReturnVal = AuditLevel.NoAudit;
+
             // case 22542
             // Override jct_nodes_props audit level with level set on nodetype prop
             if( DataRow.Table.TableName == "jct_nodes_props" )
@@ -693,12 +700,23 @@ namespace ChemSW.Nbt
                 if( NodeTypePropId != Int32.MinValue )
                 {
                     CswNbtMetaDataNodeTypeProp NodeTypeProp = MetaData.getNodeTypeProp( NodeTypePropId );
-                    if( null != NodeTypeProp )
+
+
+                    if( ( null != NodeTypeProp ) && ( AuditLevel.IsLevel1HigherThanLevel2( NodeTypeProp.AuditLevel, AuditLevel.NoAudit ) ) )
                     {
-                        ReturnVal = NodeTypeProp.AuditLevel;
-                    }
+                        CswNbtMetaDataNodeType NodeType = NodeTypeProp.getNodeType();
+
+                        if( ( null != NodeType ) && ( AuditLevel.IsLevel1HigherThanLevel2( NodeType.AuditLevel, AuditLevel.NoAudit ) ) ) //NodeType overrides NodeTypeProp (per order TDU)
+                        {
+                            ReturnVal = NodeTypeProp.AuditLevel;
+                        }
+
+                    }//if the prop says to audit
+
                 } // if( NodeTypePropId != Int32.MinValue )
+
             } // if( DataRow.Table.TableName == "jct_nodes_props" )
+
         } // handleGetAuditLevel()
 
         /// <summary>

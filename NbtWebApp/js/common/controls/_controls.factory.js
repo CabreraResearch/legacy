@@ -141,6 +141,14 @@
                     return Csw.controls.numberTextBox(cswParent, opts);
                 };
 
+                cswParent.radiobutton = function (opts) {
+                    /// <summary> Creates a Csw.radiobutton on this element</summary>
+                    /// <param name="opts" type="Object">Options to define the radiobutton.</param>
+                    /// <returns type="Csw.controls.radiobutton">A Csw.controls.radiobutton</returns>
+                    opts = cswPrivate.controlPreProcessing(opts, 'radiobutton');
+                    return Csw.controls.radiobutton(cswParent, opts);
+                };
+
                 cswParent.tabDiv = function (opts) {
                     /// <summary> Creates a Csw.tabDiv on this element</summary>
                     /// <param name="opts" type="Object">Options to define the div.</param>

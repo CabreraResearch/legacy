@@ -17,7 +17,6 @@ namespace ChemSw.Nbt.Test
     {
         private CswNbtResources _CswNbtResources = null;
         private ICswDbCfgInfo _CswDbCfgInfoNbt = null;
-        private string UserName = "TestUser";
         private CswPrimaryKey _HighWaterMark = null;
 
         internal TestData()
@@ -38,7 +37,7 @@ namespace ChemSw.Nbt.Test
 
         private ICswUser _InitUser( ICswResources Resources )
         {
-            return new CswNbtSystemUser( Resources, UserName );
+            return new CswNbtSystemUser( Resources, SystemUserNames.SysUsr_Test );
         }
 
         private void _setHighWaterMark()

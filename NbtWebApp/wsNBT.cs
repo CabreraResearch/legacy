@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Data;
 using System.IO;
 using System.IO.Compression;
@@ -1609,8 +1608,8 @@ namespace ChemSW.Nbt.WebServices
                 _initResources();
                 AuthenticationStatus = _attemptRefresh( true );
 
-                CswNbtWebServiceNode ws = new CswNbtWebServiceNode(_CswNbtResources, _CswNbtStatisticsEvents);
-                ReturnVal = ws.getNodes(NodeTypeId, ObjectClassId, ObjectClass, RelatedToObjectClass, RelatedToNodeId);
+                CswNbtWebServiceNode ws = new CswNbtWebServiceNode( _CswNbtResources, _CswNbtStatisticsEvents );
+                ReturnVal = ws.getNodes( NodeTypeId, ObjectClassId, ObjectClass, RelatedToObjectClass, RelatedToNodeId );
 
                 _deInitResources();
             }
@@ -2329,7 +2328,7 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string getQuantity( string SizeId )
+        public string getQuantity( string SizeId, string Action )
         {
             JObject ReturnVal = new JObject();
 
@@ -2343,7 +2342,7 @@ namespace ChemSW.Nbt.WebServices
                 if( null != SizePk )
                 {
                     var ws = new CswNbtWebServiceNode( _CswNbtResources, _CswNbtStatisticsEvents );
-                    ReturnVal = ws.getQuantityFromSize( SizePk );
+                    ReturnVal = ws.getQuantityFromSize( SizePk, Action );
                 }
                 _deInitResources();
 
@@ -3762,7 +3761,7 @@ namespace ChemSW.Nbt.WebServices
 
         public ICswUser ConnectTestDb_InitUser( ICswResources Resources )
         {
-            return new CswNbtSystemUser( Resources, "ConnectTestDb" );
+            return new CswNbtSystemUser( Resources, SystemUserNames.SysUsr_DbConnectTest );
         }
 
 
@@ -4772,7 +4771,6 @@ namespace ChemSW.Nbt.WebServices
         } // saveModules()
 
         #endregion Modules
-
 
 
         #region Inspection Design

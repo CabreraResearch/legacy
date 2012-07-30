@@ -49,9 +49,14 @@ namespace ChemSW.Nbt.Schema
             else
             {
                 // Example: 01F-02
-                _init( CswConvert.ToInt32( SchemaVersionAsString.Substring( 0, 2 ) ),
-                       SchemaVersionAsString.Substring( 2, 1 )[0],
-                       CswConvert.ToInt32( SchemaVersionAsString.Substring( 4, 2 ) ) );
+
+                Int32 CycleIteration = CswConvert.ToInt32( SchemaVersionAsString.Substring( 0, 2 ) );
+                char ReleaseIdentifier = SchemaVersionAsString.Substring( 2, 1 )[0];
+
+                //case 27448: variable length iteration segment (retro-handle 2-character segments and forward-handle 3-character segments)
+                Int32 ReleaseIteration = CswConvert.ToInt32( SchemaVersionAsString.Substring( 4, SchemaVersionAsString.Length - 4 ) );
+
+                _init( CycleIteration, ReleaseIdentifier, ReleaseIteration );
             }
         }
 
@@ -72,7 +77,7 @@ namespace ChemSW.Nbt.Schema
             ret += CswTools.PadInt( CycleIteration, 2 );
             ret += ReleaseIdentifier.ToString();
             ret += "-";
-            ret += CswTools.PadInt( ReleaseIteration, 2 );
+            ret += CswTools.PadInt( ReleaseIteration, 3 );//27448: going forward, three character iteration segments
             return ret;
         }
 

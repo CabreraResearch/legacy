@@ -134,58 +134,55 @@ namespace ChemSW.Nbt.Actions
                         Debug.Assert( ( Int32.MinValue != MaterialId.PrimaryKey ), "The request did not specify a valid materialid." );
                         if( Int32.MinValue != MaterialId.PrimaryKey )
                         {
-                            CswPrimaryKey SizeId = new CswPrimaryKey();
-                            SizeId.FromString( CswConvert.ToString( ReceiptObj["sizeid"] ) );
-                            Debug.Assert( ( Int32.MinValue != SizeId.PrimaryKey ), "The request did not specify a valid sizeid." );
-                            if( Int32.MinValue != SizeId.PrimaryKey )
+                            JArray Quantities = CswConvert.ToJArray( ReceiptObj["quantities"] );
+                            Debug.Assert( Quantities.HasValues, "The request did not specify any valid container amounts." );
+                            if( Quantities.HasValues )
                             {
-                                JArray Quantities = CswConvert.ToJArray( ReceiptObj["quantities"] );
-                                Debug.Assert( Quantities.HasValues, "The request did not specify any valid container amounts." );
-                                if( Quantities.HasValues )
+                                JObject ContainerAddProps = CswConvert.ToJObject( ReceiptObj["props"] );
+
+                                CswNbtSdTabsAndProps SdTabsAndProps = new CswNbtSdTabsAndProps( CswNbtResources );
+                                foreach( JObject QuantityDef in Quantities )
                                 {
-                                    JObject ContainerAddProps = CswConvert.ToJObject( ReceiptObj["props"] );
+                                    Int32 NoContainers = CswConvert.ToInt32( QuantityDef["containerNo"] );
+                                    CswCommaDelimitedString Barcodes = new CswCommaDelimitedString();
+                                    Barcodes.FromString( CswConvert.ToString( QuantityDef["barcodes"] ) );
+                                    Double QuantityValue = CswConvert.ToDouble( QuantityDef["quantity"] );
+                                    CswPrimaryKey UnitId = new CswPrimaryKey();
+                                    UnitId.FromString( CswConvert.ToString( QuantityDef["unitid"] ) );
+                                    CswPrimaryKey SizeId = new CswPrimaryKey();
+                                    SizeId.FromString( CswConvert.ToString( QuantityDef["sizeid"] ) );
+                                    CswNbtObjClassSize AsSize = CswNbtResources.Nodes.GetNode( SizeId );
 
-                                    CswNbtSdTabsAndProps SdTabsAndProps = new CswNbtSdTabsAndProps( CswNbtResources );
-                                    foreach( JObject QuantityDef in Quantities )
+                                    Debug.Assert( ( NoContainers > 0 ), "The request did not specify at least one container." );
+                                    Debug.Assert( ( QuantityValue > 0 ), "The request did not specify a valid quantity." );
+                                    Debug.Assert( ( Int32.MinValue != UnitId.PrimaryKey ), "The request did not specify a valid unit." );
+                                    if( NoContainers > 0 && QuantityValue > 0 && Int32.MinValue != UnitId.PrimaryKey )
                                     {
-                                        Int32 NoContainers = CswConvert.ToInt32( QuantityDef["containerNo"] );
-                                        CswCommaDelimitedString Barcodes = new CswCommaDelimitedString();
-                                        Barcodes.FromString( CswConvert.ToString( QuantityDef["barcodes"] ) );
-                                        Double QuantityValue = CswConvert.ToDouble( QuantityDef["quantity"] );
-                                        CswPrimaryKey UnitId = new CswPrimaryKey();
-                                        UnitId.FromString( CswConvert.ToString( QuantityDef["unitid"] ) );
-                                        CswNbtObjClassSize AsSize = CswNbtResources.Nodes.GetNode( SizeId );
-
-                                        Debug.Assert( ( NoContainers > 0 ), "The request did not specify at least one container." );
-                                        Debug.Assert( ( QuantityValue > 0 ), "The request did not specify a valid quantity." );
-                                        Debug.Assert( ( Int32.MinValue != UnitId.PrimaryKey ), "The request did not specify a valid unit." );
-                                        if( NoContainers > 0 && QuantityValue > 0 && Int32.MinValue != UnitId.PrimaryKey )
+                                        for( Int32 C = 0; C < NoContainers; C += 1 )
                                         {
-                                            for( Int32 C = 0; C < NoContainers; C += 1 )
+                                            CswNbtNode Container;
+                                            CswNbtNodeKey ContainerNodeKey;
+                                            SdTabsAndProps.addNode( ContainerNt, out Container, ContainerAddProps, out ContainerNodeKey );
+                                            CswNbtObjClassContainer AsContainer = Container;
+                                            if( Barcodes.Count <= NoContainers && false == string.IsNullOrEmpty( Barcodes[C] ) )
                                             {
-                                                CswNbtNode Container;
-                                                CswNbtNodeKey ContainerNodeKey;
-                                                SdTabsAndProps.addNode( ContainerNt, out Container, ContainerAddProps, out ContainerNodeKey );
-                                                CswNbtObjClassContainer AsContainer = Container;
-                                                if( Barcodes.Count <= NoContainers && false == string.IsNullOrEmpty( Barcodes[C] ) )
-                                                {
-                                                    AsContainer.Barcode.setBarcodeValueOverride( Barcodes[C], false );
-                                                }
-                                                AsContainer.Size.RelatedNodeId = SizeId;
-                                                AsContainer.Material.RelatedNodeId = MaterialId;
-                                                if( AsSize.QuantityEditable.Checked != Tristate.True )
-                                                {
+                                                AsContainer.Barcode.setBarcodeValueOverride( Barcodes[C], false );
+                                            }
+                                            AsContainer.Size.RelatedNodeId = SizeId;
+                                            AsContainer.Material.RelatedNodeId = MaterialId;
+                                            if( AsSize.QuantityEditable.Checked != Tristate.True )
+                                            {
                                                     QuantityValue = AsSize.InitialQuantity.Quantity;
                                                     UnitId = AsSize.InitialQuantity.UnitId;
-                                                }
-                                                if( null == AsContainer.Quantity.UnitId || Int32.MinValue == AsContainer.Quantity.UnitId.PrimaryKey )
-                                                {
-                                                    AsContainer.Quantity.UnitId = UnitId;
-                                                }
-                                                AsContainer.DispenseIn( CswNbtObjClassContainerDispenseTransaction.DispenseType.Receive, QuantityValue, UnitId );
-                                                AsContainer.postChanges( true );
-                                                ContainerIds.Add( AsContainer.NodeId );
                                             }
+                                            if( null == AsContainer.Quantity.UnitId || Int32.MinValue == AsContainer.Quantity.UnitId.PrimaryKey )
+                                            {
+                                                AsContainer.Quantity.UnitId = UnitId;
+                                            }
+                                            AsContainer.DispenseIn( CswNbtObjClassContainerDispenseTransaction.DispenseType.Receive, QuantityValue, UnitId );
+                                            AsContainer.postChanges( true );
+                                            ContainerIds.Add( AsContainer.NodeId );
+                                            Ret["barcodeId"] = AsContainer.NodeId.ToString() + "_" + AsContainer.Barcode.NodeTypePropId.ToString();
                                         }
                                     }
                                 }

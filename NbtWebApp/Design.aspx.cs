@@ -732,6 +732,11 @@ namespace ChemSW.Nbt.WebPages
                     SelectedNodeType.IconFileName = IconSelect.SelectedValue;
                     SelectedNodeType.setNameTemplateText( NameTemplate.Text );
 
+                    SelectedNodeType.AuditLevel = AuditLevel.Parse( AuditLevelDropDownList.SelectedValue );
+
+
+
+
                     //re-init the tree for changes
                     setSelected( CswNodeTypeTree.NodeTypeTreeSelectedType.NodeType, SelectedNodeType.NodeTypeId.ToString(), true );
                 }
@@ -906,9 +911,7 @@ namespace ChemSW.Nbt.WebPages
                     PropToSave.HelpText = getPropAttributeValue( "EditProp_HelpText" + OldSelectedNodeTypePropId.ToString(), EditPropPlaceHolder );
                     PropToSave.IsQuickSearch = Convert.ToBoolean( getPropAttributeValue( "EditProp_IsQuickSearch" + OldSelectedNodeTypePropId.ToString(), typeof( bool ), EditPropPlaceHolder ) );
                     PropToSave.Extended = getPropAttributeValue( "EditProp_ExtendedValue" + OldSelectedNodeTypePropId.ToString(), EditPropPlaceHolder );
-                    AuditLevel AuditLevel;
-                    Enum.TryParse( getPropAttributeValue( "EditProp_AuditLevel" + OldSelectedNodeTypePropId.ToString(), EditPropPlaceHolder ), true, out AuditLevel );
-                    PropToSave.AuditLevel = AuditLevel;
+                    PropToSave.AuditLevel = AuditLevel.Parse( getPropAttributeValue( "EditProp_AuditLevel" + OldSelectedNodeTypePropId.ToString(), EditPropPlaceHolder ) );
 
 
                     // Default Value
@@ -1066,6 +1069,8 @@ namespace ChemSW.Nbt.WebPages
         private Literal NameTemplateLabel;
         private TextBox NameTemplate;
         private DropDownList AddToNameTemplatePropSelect;
+        private Literal AuditLevelLabel;
+        private DropDownList AuditLevelDropDownList;
         private Literal ChangeObjectClassLabel;
         private DropDownList ChangeObjectClassSelect;
         //private Literal Spacer1;
@@ -1127,6 +1132,15 @@ namespace ChemSW.Nbt.WebPages
             AddToNameTemplatePropSelect.ID = "AddToNameTemplatePropSelect_" + _SelectedValue;
             AddToNameTemplatePropSelect.CssClass = "selectinput";
             AddToNameTemplatePropSelect.AutoPostBack = false;
+
+
+            AuditLevelLabel = new Literal();
+            AuditLevelLabel.Text = "Audit Level";
+
+            AuditLevelDropDownList = new DropDownList();
+            AuditLevelDropDownList.ID = "AuditLevelSelect_" + _SelectedValue;
+            AuditLevelDropDownList.CssClass = "selectinput";
+            AuditLevelDropDownList.AutoPostBack = false;
 
             LockedCheckbox = new CheckBox();
             LockedCheckbox.ID = "locked" + _SelectedValue;
@@ -1197,27 +1211,29 @@ namespace ChemSW.Nbt.WebPages
             TabTable.addControl( 4, 0, NameTemplateLabel );
             TabTable.addControl( 4, 1, NameTemplate );
             TabTable.addControl( 4, 1, AddToNameTemplatePropSelect );
-            TabTable.addControl( 5, 1, LockedCheckbox );
+            TabTable.addControl( 5, 0, AuditLevelLabel );
+            TabTable.addControl( 5, 1, AuditLevelDropDownList );
+            TabTable.addControl( 6, 1, LockedCheckbox );
             if( _CanThisNodeTypeVersion )
             {
-                TabTable.addControl( 6, 0, NodeTypeVersionLabel );
-                TabTable.addControl( 6, 1, NodeTypeVersionSelect );
+                TabTable.addControl( 7, 0, NodeTypeVersionLabel );
+                TabTable.addControl( 7, 1, NodeTypeVersionSelect );
             }
-            TabTable.addControl( 7, 1, _SaveButton );
-            TabTable.addControl( 8, 0, new CswLiteralNbsp() );
-            TableCell SpacerCell = TabTable.getCell( 8, 0 );
+            TabTable.addControl( 8, 1, _SaveButton );
+            TabTable.addControl( 9, 0, new CswLiteralNbsp() );
+            TableCell SpacerCell = TabTable.getCell( 9, 0 );
             SpacerCell.ColumnSpan = 2;
             SpacerCell.Controls.Add( Spacer2 );
-            TabTable.addControl( 10, 0, CopiedNodeTypeNameLabel );
-            TabTable.addControl( 10, 1, CopiedNodeTypeName );
-            TabTable.addControl( 11, 1, _CopyNodeTypeButton );
-            TabTable.addControl( 12, 0, new CswLiteralNbsp() );
-            TabTable.addControl( 13, 0, ChangeObjectClassLabel );
-            TabTable.addControl( 13, 1, ChangeObjectClassSelect );
-            TabTable.addControl( 14, 1, _ChangeObjectClassButton );
-            TabTable.addControl( 15, 0, new CswLiteralNbsp() );
-            TabTable.addControl( 16, 1, _LayoutLink );
-            TabTable.addControl( 17, 1, _DefaultViewLink );
+            TabTable.addControl( 11, 0, CopiedNodeTypeNameLabel );
+            TabTable.addControl( 11, 1, CopiedNodeTypeName );
+            TabTable.addControl( 12, 1, _CopyNodeTypeButton );
+            TabTable.addControl( 13, 0, new CswLiteralNbsp() );
+            TabTable.addControl( 14, 0, ChangeObjectClassLabel );
+            TabTable.addControl( 14, 1, ChangeObjectClassSelect );
+            TabTable.addControl( 15, 1, _ChangeObjectClassButton );
+            TabTable.addControl( 16, 0, new CswLiteralNbsp() );
+            TabTable.addControl( 17, 1, _LayoutLink );
+            TabTable.addControl( 18, 1, _DefaultViewLink );
         }
 
 
@@ -1302,6 +1318,12 @@ namespace ChemSW.Nbt.WebPages
                     AddToNameTemplatePropSelect.Visible = false;
                 else
                     AddToNameTemplatePropSelect.Visible = true;
+
+
+                AuditLevelDropDownList.Items.Clear();
+                AuditLevelDropDownList.Items.Add( new ListItem( "No Audit", AuditLevel.NoAudit.ToString() ) );
+                AuditLevelDropDownList.Items.Add( new ListItem( "Audit", AuditLevel.PlainAudit.ToString() ) );
+                AuditLevelDropDownList.SelectedValue = SelectedNodeType.AuditLevel.ToString();
 
                 if( _Mode == NbtDesignMode.Inspection )
                 {

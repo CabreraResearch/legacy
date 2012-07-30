@@ -1043,7 +1043,7 @@ namespace ChemSW.Nbt.Schema
                                                                     Int32 DisplayRowAdd = Int32.MinValue,
                                                                     string Extended = "",
                                                                     bool SetValOnAdd = false,
-                                                                    AuditLevel AuditLevel = AuditLevel.NoAudit,
+                                                                    string AuditLevel = AuditLevel.NoAudit,
                                                                     string StaticText = "",
                                                                     Int32 NumberPrecision = Int32.MinValue
             )

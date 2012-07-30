@@ -133,7 +133,24 @@ namespace ChemSW.Nbt.ObjClasses
                         CswNbtObjClassContainer Container = Act.makeContainer();
                         ButtonData.Data["state"]["containerNodeTypeId"] = Container.NodeTypeId;
                         ButtonData.Data["state"]["containerAddLayout"] = Act.getContainerAddProps( Container );
+                        bool customBarcodes = CswConvert.ToBoolean( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswNbtResources.ConfigurationVariables.custom_barcodes.ToString() ) );
+                        ButtonData.Data["state"]["customBarcodes"] = customBarcodes;
+
+                        CswDateTime CswDate = new CswDateTime( _CswNbtResources, getDefaultExpirationDate() );
+                        if( false == CswDate.IsNull )
+                        {
+                            foreach( JProperty child in ButtonData.Data["state"]["containerAddLayout"].Children() )
+                            {
+                                JToken name = child.First.SelectToken( "name" );
+                                if( name.ToString() == "Expiration Date" )
+                                {
+                                    ButtonData.Data["state"]["containerAddLayout"][child.Name]["values"]["value"] = CswDate.ToClientAsDateTimeJObject();
+                                }
+                            }
+                        }
+
                         ButtonData.Action = NbtButtonAction.receive;
+
                         break;
                 }
             }
@@ -141,6 +158,43 @@ namespace ChemSW.Nbt.ObjClasses
             return true;
         }
         #endregion
+
+        #region Custom Logic
+
+        /// <summary>
+        /// Calculates the expiration date from today based on the Material's Expiration Interval
+        /// </summary>
+        public DateTime getDefaultExpirationDate()
+        {
+            DateTime DefaultExpDate = DateTime.Now;
+            switch( this.ExpirationInterval.CachedUnitName.ToLower() )
+            {
+                case "seconds":
+                    DefaultExpDate = DefaultExpDate.AddSeconds( this.ExpirationInterval.Quantity );
+                    break;
+                case "minutes":
+                    DefaultExpDate = DefaultExpDate.AddMinutes( this.ExpirationInterval.Quantity );
+                    break;
+                case "hours":
+                    DefaultExpDate = DefaultExpDate.AddHours( this.ExpirationInterval.Quantity );
+                    break;
+                case "days":
+                    DefaultExpDate = DefaultExpDate.AddDays( this.ExpirationInterval.Quantity );
+                    break;
+                case "weeks":
+                    DefaultExpDate = DefaultExpDate.AddDays( this.ExpirationInterval.Quantity * 7 );
+                    break;
+                case "years":
+                    DefaultExpDate = DefaultExpDate.AddYears( CswConvert.ToInt32( this.ExpirationInterval.Quantity ) );
+                    break;
+                default:
+                    DefaultExpDate = DateTime.MinValue;
+                    break;
+            }
+            return DefaultExpDate;
+        }
+
+        #endregion Custom Logic
 
         #region Object class specific properties
 

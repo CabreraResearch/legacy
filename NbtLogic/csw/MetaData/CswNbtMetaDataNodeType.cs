@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Data;
 using System.Linq;
 using System.Xml;
+using ChemSW.Audit;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
@@ -349,7 +350,7 @@ namespace ChemSW.Nbt.MetaData
         {
             return _CswNbtMetaDataResources.CswNbtMetaData.getNodeTypeProps( NodeTypeId );
         }
-        public IEnumerable<CswNbtMetaDataNodeTypeProp> getNodeTypeProps(CswNbtMetaDataFieldType.NbtFieldType FieldType)
+        public IEnumerable<CswNbtMetaDataNodeTypeProp> getNodeTypeProps( CswNbtMetaDataFieldType.NbtFieldType FieldType )
         {
             return _CswNbtMetaDataResources.CswNbtMetaData.getNodeTypeProps( NodeTypeId, FieldType );
         }
@@ -601,6 +602,18 @@ namespace ChemSW.Nbt.MetaData
             return Collection;
         }
 
+        private CswAuditMetaData _CswAuditMetaData = new CswAuditMetaData();
+        public string AuditLevel
+        {
+            get
+            {
+                return( ChemSW.Audit.AuditLevel.Parse( _NodeTypeRow[_CswAuditMetaData.AuditLevelColName].ToString() ) );
+            }
+            set
+            {
+                _NodeTypeRow[_CswAuditMetaData.AuditLevelColName] = ChemSW.Audit.AuditLevel.Parse( value );
+            }
+        }
 
 
         #region IEquatable

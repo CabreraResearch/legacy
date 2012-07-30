@@ -1,10 +1,8 @@
 using System.Data;
 using ChemSW.DB;
-using ChemSW.Nbt.Logic;
-using ChemSW.Nbt.ObjClasses;
-using ChemSW.Nbt.ServiceDrivers;
-using Newtonsoft.Json.Linq;
 using ChemSW.Nbt.Grid;
+using ChemSW.Nbt.ObjClasses;
+using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.WebServices
 {
@@ -35,6 +33,7 @@ namespace ChemSW.Nbt.WebServices
                              join nodes_audit na on n.nodeid = na.nodeid
                              join audit_transactions x on na.audittransactionid = x.audittransactionid
                             where n.nodeid = " + Node.NodeId.PrimaryKey.ToString() + @"
+                                and x.transactionusername != '" + ChemSW.Nbt.Security.SystemUserNames.SysUsr_SchemaUpdt.ToString() + @"'
                           UNION
                            select ja.recordcreated as ChangeDate";
                 if( !JustDateColumn )
@@ -51,7 +50,10 @@ namespace ChemSW.Nbt.WebServices
                              join jct_nodes_props_audit ja on j.jctnodepropid = ja.jctnodepropid
                              join audit_transactions x on ja.audittransactionid = x.audittransactionid
                             where n.nodeid = " + Node.NodeId.PrimaryKey.ToString() + @" 
+                                and x.transactionusername != '" + ChemSW.Nbt.Security.SystemUserNames.SysUsr_SchemaUpdt.ToString() + @"'
                             order by ChangeDate desc";
+
+
 
                 CswArbitrarySelect HistorySelect = _CswNbtResources.makeCswArbitrarySelect( "CswNbtWebServiceAuditing_getAuditHistory_select", SQL );
                 DataTable HistoryTable = HistorySelect.getTable();
