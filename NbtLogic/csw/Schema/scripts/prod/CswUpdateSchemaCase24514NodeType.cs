@@ -80,7 +80,7 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataNodeTypeProp LocationNtp = RequestItemNt.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Location );
             CswNbtMetaDataNodeTypeProp NumberNtp = RequestItemNt.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Number );
 
-            Int32 SequenceId = _CswNbtSchemaModTrnsctn.makeSequence( new CswSequenceName( "Request Items" ), "RI", "", 0, 1 );
+            Int32 SequenceId = _CswNbtSchemaModTrnsctn.makeSequence( new CswSequenceName( "Request Items" ), "R", "", 6, 1 );
             NumberNtp.setSequence( SequenceId );
 
             RequestItemNt.addNameTemplateText( RequestItemRequestNtp.PropName );

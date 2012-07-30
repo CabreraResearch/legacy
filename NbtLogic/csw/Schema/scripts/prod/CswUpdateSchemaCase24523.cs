@@ -134,7 +134,7 @@ namespace ChemSW.Nbt.Schema
                 _CswNbtSchemaModTrnsctn.Permit.set( Security.CswNbtPermit.NodeTypePermission.Edit, feedbackNT, role, true );
             }
 
-            Int32 sequenceId = _CswNbtSchemaModTrnsctn.makeSequence( new CswSequenceName( "Feedback CaseNo" ), "", "", 5, 1 );
+            Int32 sequenceId = _CswNbtSchemaModTrnsctn.makeSequence( new CswSequenceName( "Feedback CaseNo" ), "F", "", 6, 1 );
             CswNbtMetaDataNodeTypeProp caseNumberNTP = feedbackNT.getNodeTypePropByObjectClassProp( CswNbtObjClassFeedback.CaseNumberPropertyName );
             caseNumberNTP.setSequence( sequenceId );
             caseNumberNTP.ReadOnly = true; //default to read-only, but allow it to be changed

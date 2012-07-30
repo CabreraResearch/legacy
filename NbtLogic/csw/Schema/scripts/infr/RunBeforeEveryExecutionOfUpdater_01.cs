@@ -4,7 +4,6 @@ using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
-using ChemSW.Nbt.ObjClasses;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -83,6 +82,43 @@ namespace ChemSW.Nbt.Schema
                 _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( initialQuantityOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.propname, "Initial Quantity" );
             }
 
+            //case 27391
+            CswTableUpdate SequencesUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "RbEeOu_01_sequences", "sequences" );
+            DataTable SequenceTable = SequencesUpdate.getTable();
+            foreach( DataRow Row in SequenceTable.Rows )
+            {
+                string Name = CswConvert.ToString( Row["sequencename"] );
+                switch( Name )
+                {
+                    case "Fire Extinguisher Barcode":
+                        Row["sequencename"] = "Inspection Barcode";
+                        Row["prep"] = "I";
+                        break;
+                    case "Equipment Barcode":
+                        if( CswConvert.ToString( Row["prep"] ) != "E" )
+                        {
+                            Row["prep"] = "E";
+                        }
+                        break;
+                    case "Request Items":
+                        if( CswConvert.ToString( Row["prep"] ) != "R" )
+                        {
+                            Row["prep"] = "R";
+                        }
+                        break;
+                    case "Feedback CaseNo":
+                        if( CswConvert.ToString( Row["prep"] ) != "F" )
+                        {
+                            Row["prep"] = "F";
+                        }
+                        break;
+                }
+                if( CswConvert.ToInt32( Row["pad"] ) != 6 )
+                {
+                    Row["pad"] = CswConvert.ToDbVal( 6 );
+                }
+            }
+            SequencesUpdate.update( SequenceTable );
 
         }//Update()
 
