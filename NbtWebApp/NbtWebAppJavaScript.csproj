@@ -132,7 +132,7 @@
     <Content Include="js\nbt\wizards\csw.futurescheduling.js" />
     <Content Include="js\nbt\controls\csw.nodetypeselect.js" />
     <Content Include="js\common\composites\csw.tree.js" />
-    <Content Include="js\common\controls\csw.viewselect.js" />
+    <Content Include="js\nbt\controls\csw.viewselect.js" />
     <Content Include="js\common\literals\csw.button.js" />
     <Content Include="js\common\controls\csw.morediv.js" />
     <Content Include="js\nbt\nodes\csw.node.tree.js" />
@@ -219,7 +219,7 @@
     <Content Include="js\common\literals\csw.span.js" />
     <Content Include="js\common\literals\csw.br.js" />
     <Content Include="js\common\composites\csw.universalsearch.js" />
-    <Content Include="js\common\controls\csw.visibilityselect.js" />
+    <Content Include="js\nbt\controls\csw.visibilityselect.js" />
     <Content Include="js\common\core\csw.dom.js" />
     <Content Include="js\common\composites\csw.grid.js" />
     <Content Include="js\common\composites\csw.table.js" />
