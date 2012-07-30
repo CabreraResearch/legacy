@@ -171,7 +171,7 @@ namespace ChemSW.Nbt.WebServices
                 Capacity.ToJSON( Ret );
                 Ret["qtyReadonly"] = "false";
                 Ret["unitReadonly"] = "false";
-                if( Action == "Receive" )
+                if( Action == ChemSW.Nbt.ObjClasses.CswNbtObjClass.NbtButtonAction.receive.ToString() )
                 {
                     Ret["unitReadonly"] = "true";
                     if( Size.QuantityEditable.Checked == Tristate.False )
