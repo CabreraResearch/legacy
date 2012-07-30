@@ -82,6 +82,8 @@ namespace ChemSW.Nbt.ObjClasses
         public override void afterCreateNode()
         {
             _CswNbtObjClassDefault.afterCreateNode();
+            Disposed.setHidden( value: true, SaveToDb: true );
+            SourceContainer.setHidden( value: true, SaveToDb: true );
         } // afterCreateNode()
 
         private void _updateRequestMenu()
@@ -145,6 +147,7 @@ namespace ChemSW.Nbt.ObjClasses
             Quantity.SetOnPropChange( OnQuantityPropChange );
             Location.SetOnPropChange( OnLocationPropChange );
             Size.SetOnPropChange( OnSizePropChange );
+            SourceContainer.SetOnPropChange( OnSourceContainerChange );
             _CswNbtObjClassDefault.afterPopulateProps();
         }//afterPopulateProps()
 
@@ -193,21 +196,32 @@ namespace ChemSW.Nbt.ObjClasses
                         NodeAsRequestItem.Material.RelatedNodeId = Material.RelatedNodeId;
                         NodeAsRequestItem.Material.setReadOnly( value: true, SaveToDb: false );
 
-                        NodeAsRequestItem.Location.SelectedNodeId = Location.SelectedNodeId;
+                        CswPrimaryKey SelectedLocationId = new CswPrimaryKey();
+                        if( CswTools.IsPrimaryKey( _CswNbtResources.CurrentNbtUser.DefaultLocationId ) )
+                        {
+                            SelectedLocationId = _CswNbtResources.CurrentNbtUser.DefaultLocationId;
+                        }
+                        else
+                        {
+                            SelectedLocationId = Location.SelectedNodeId;
+                        }
+                        NodeAsRequestItem.Location.SelectedNodeId = SelectedLocationId;
                         NodeAsRequestItem.Location.RefreshNodeName();
 
                         switch( ButtonData.SelectedText )
                         {
                             case RequestMenu.Dispense:
                                 NodeAsRequestItem.Quantity.UnitId = Quantity.UnitId;
+                                ButtonData.Action = NbtButtonAction.request;
                                 break;
                             case RequestMenu.Dispose:
                                 NodeAsRequestItem.Material.setHidden( value: true, SaveToDb: false );
-                                //Not sure why this was here, but it creates duplicate dispose requests
-                                //NodeAsRequestItem.postChanges( true ); /* This is the only condition in which we want to commit the node upfront. */
+                                NodeAsRequestItem.postChanges( true ); /* This is the only condition in which we want to commit the node upfront. */
+                                ButtonData.Action = NbtButtonAction.nothing;
                                 break;
                             case RequestMenu.Move:
                                 NodeAsRequestItem.Material.setHidden( value: true, SaveToDb: false );
+                                ButtonData.Action = NbtButtonAction.request;
                                 break;
                         }
 
@@ -215,8 +229,6 @@ namespace ChemSW.Nbt.ObjClasses
                         ButtonData.Data["requestaction"] = OCP.PropName;
                         ButtonData.Data["requestItemProps"] = RequestAct.getRequestItemAddProps( NodeAsRequestItem );
                         ButtonData.Data["requestItemNodeTypeId"] = RequestAct.RequestItemNt.NodeTypeId;
-
-                        ButtonData.Action = NbtButtonAction.request;
                         break;
                 }
             }
@@ -345,7 +357,7 @@ namespace ChemSW.Nbt.ObjClasses
             CswNbtObjClassSize sizeNode = _CswNbtResources.Nodes.GetNode( Size.RelatedNodeId );
             if( null != sizeNode )
             {
-                CswNbtNodePropQuantity Capacity = sizeNode.Capacity;
+                CswNbtNodePropQuantity Capacity = sizeNode.InitialQuantity;
                 Capacity.ToJSON( CapacityObj );
             }
             else
@@ -611,6 +623,13 @@ namespace ChemSW.Nbt.ObjClasses
             _updateRequestMenu();
         }
         public CswNbtNodePropRelationship SourceContainer { get { return ( _CswNbtNode.Properties[SourceContainerPropertyName] ); } }
+        private void OnSourceContainerChange( CswNbtNodeProp Prop )
+        {
+            if( null != SourceContainer.RelatedNodeId && Int32.MinValue != SourceContainer.RelatedNodeId.PrimaryKey )
+            {
+                SourceContainer.setHidden( value: false, SaveToDb: true );
+            }
+        }
         public CswNbtNodePropQuantity Quantity { get { return ( _CswNbtNode.Properties[QuantityPropertyName] ); } }
         private void OnQuantityPropChange( CswNbtNodeProp Prop )
         {

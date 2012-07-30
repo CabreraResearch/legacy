@@ -168,7 +168,7 @@ namespace ChemSW.Nbt.Schema
                                 case CswNbtObjClassMaterial.PhysicalStatePropertyName: 
                                     MatNTP.updateLayout( EditLayout, false, BiosafetyTab.TabId, 3, 1 );
                                     MatNTP.updateLayout( AddLayout, false, Int32.MinValue, 4, 1 );
-                                    MatNTP.ListOptions = "solid,liquid,n/a";
+                                    MatNTP.ListOptions = CswNbtObjClassMaterial.PhysicalStates.Options.ToString();
                                     break;
                                 case CswNbtObjClassMaterial.SpecificGravityPropertyName: MatNTP.updateLayout( EditLayout, false, BiosafetyTab.TabId, 4, 1 ); break;
                                 //case CswNbtObjClassMaterial.StorageCompatibilityPropertyName: MatNTP.updateLayout( EditLayout, false, BiosafetyTab.TabId, 5, 1 ); break;

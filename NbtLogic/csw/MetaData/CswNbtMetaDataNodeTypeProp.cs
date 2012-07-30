@@ -146,6 +146,14 @@ namespace ChemSW.Nbt.MetaData
         {
             _CswNbtMetaDataResources.CswNbtMetaData.NodeTypeLayout.removePropFromLayout( LayoutType, this, TabId );
         }
+        public void removeFromAllLayouts( Int32 TabId = Int32.MinValue )
+        {
+            _CswNbtMetaDataResources.CswNbtMetaData.NodeTypeLayout.removePropFromLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, this, TabId );
+            _CswNbtMetaDataResources.CswNbtMetaData.NodeTypeLayout.removePropFromLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, this, TabId );
+            _CswNbtMetaDataResources.CswNbtMetaData.NodeTypeLayout.removePropFromLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Preview, this, TabId );
+            _CswNbtMetaDataResources.CswNbtMetaData.NodeTypeLayout.removePropFromLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Table, this, TabId );
+        }
+
 
         public void clearCachedLayouts()
         {

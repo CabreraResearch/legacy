@@ -37,6 +37,9 @@ window.initMain = window.initMain || function (undefined) {
         var actionJson = opts.data.actionData;
         Csw.publish(Csw.enums.events.afterObjectClassButtonClick, opts.data.action);
         switch (Csw.string(opts.data.action).toLowerCase()) {
+            case Csw.enums.nbtButtonAction.nothing:
+                //Do nothing
+                break;
             case Csw.enums.nbtButtonAction.dispense:
                 clear({ centertop: true, centerbottom: true });
                 actionJson.actionname = 'DispenseContainer';

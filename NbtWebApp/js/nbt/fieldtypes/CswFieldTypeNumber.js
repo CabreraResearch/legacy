@@ -8,6 +8,10 @@
     var methods = {
         init: function (o) {
 
+            var isMultiEditValid = function (value) {
+                return o.Multi && value === Csw.enums.multiEditDefaultValue;
+            }
+
             var propDiv = o.propDiv;
             propDiv.empty();
             var propVals = o.propData.values,
@@ -23,7 +27,8 @@
                 Precision: precision,
                 ReadOnly: Csw.bool(o.ReadOnly),
                 Required: Csw.bool(o.Required),
-                onChange: o.onChange
+                onChange: o.onChange,
+                isValid: isMultiEditValid
             });
 
             if (false === Csw.isNullOrEmpty(numberTextBox) && numberTextBox.length > 0) {

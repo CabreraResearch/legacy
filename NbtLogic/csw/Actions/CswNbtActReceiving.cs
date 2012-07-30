@@ -56,7 +56,7 @@ namespace ChemSW.Nbt.Actions
 
                 CswNbtViewRelationship MaterialRel = SizeView.AddViewRelationship( _MaterialOc, true );
                 CswNbtMetaDataObjectClass SizeOc = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.SizeClass );
-                CswNbtMetaDataObjectClassProp CapacityOcp = SizeOc.getObjectClassProp( CswNbtObjClassSize.CapacityPropertyName );
+                CswNbtMetaDataObjectClassProp CapacityOcp = SizeOc.getObjectClassProp( CswNbtObjClassSize.InitialQuantityPropertyName );
                 CswNbtMetaDataObjectClassProp MaterialOcp = SizeOc.getObjectClassProp( CswNbtObjClassSize.MaterialPropertyName );
                 CswNbtMetaDataObjectClassProp CatalogNoOcp = SizeOc.getObjectClassProp( CswNbtObjClassSize.CatalogNoPropertyName );
                 CswNbtMetaDataObjectClassProp DispensableOcp = SizeOc.getObjectClassProp( CswNbtObjClassSize.DispensablePropertyName );
@@ -155,6 +155,7 @@ namespace ChemSW.Nbt.Actions
                                         CswPrimaryKey UnitId = new CswPrimaryKey();
                                         UnitId.FromString( CswConvert.ToString( QuantityDef["unitid"] ) );
                                         CswNbtObjClassSize AsSize = CswNbtResources.Nodes.GetNode( SizeId );
+
                                         Debug.Assert( ( NoContainers > 0 ), "The request did not specify at least one container." );
                                         Debug.Assert( ( QuantityValue > 0 ), "The request did not specify a valid quantity." );
                                         Debug.Assert( ( Int32.MinValue != UnitId.PrimaryKey ), "The request did not specify a valid unit." );
@@ -174,8 +175,8 @@ namespace ChemSW.Nbt.Actions
                                                 AsContainer.Material.RelatedNodeId = MaterialId;
                                                 if( AsSize.QuantityEditable.Checked != Tristate.True )
                                                 {
-                                                    QuantityValue = AsSize.Capacity.Quantity;
-                                                    UnitId = AsSize.Capacity.UnitId;
+                                                    QuantityValue = AsSize.InitialQuantity.Quantity;
+                                                    UnitId = AsSize.InitialQuantity.UnitId;
                                                 }
                                                 if( null == AsContainer.Quantity.UnitId || Int32.MinValue == AsContainer.Quantity.UnitId.PrimaryKey )
                                                 {
