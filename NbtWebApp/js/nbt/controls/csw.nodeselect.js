@@ -61,7 +61,7 @@
                     },
                     success: function (data) {
                         var ret = data;
-                        var canAdd = Csw.bool(ret.canadd);
+                        var canAdd = Csw.bool(cswPrivate.canAdd) && Csw.bool(ret.canadd);
                         var useSearch = Csw.bool(ret.usesearch);
                         var cellCol = 2;
                         cswPrivate.nodeTypeId = cswPrivate.nodeTypeId || ret.nodetypeid;
