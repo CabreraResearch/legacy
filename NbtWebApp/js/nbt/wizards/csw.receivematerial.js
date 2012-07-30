@@ -26,7 +26,6 @@
                     containerNodeTypeId: '',
                     containerAddLayout: {},
                     tradeName: '',
-                    quantities: [],
                     selectedSizeId: '',
                     customBarcodes: false
                 },
@@ -182,7 +181,7 @@
 
                 return function () {
                     var nextBtnEnabled = function () {
-                        return cswPrivate.state.quantities && cswPrivate.state.quantities.length > 0 && false === Csw.isNullOrEmpty(cswPrivate.state.selectedSizeId);
+                        return cswPrivate.amountsGrid && cswPrivate.amountsGrid.quantities.length > 0 && false === Csw.isNullOrEmpty(cswPrivate.state.selectedSizeId);
                     };
 
                     cswPrivate.toggleButton(cswPrivate.buttons.prev, false);
