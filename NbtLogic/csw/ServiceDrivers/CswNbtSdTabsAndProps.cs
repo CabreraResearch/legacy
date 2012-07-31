@@ -195,7 +195,10 @@ namespace ChemSW.Nbt.ServiceDrivers
                                     Relationship.RelatedNodeId = RelatedNodePk;
                                     //TODO: Vet this with Steve. We don't hit afterPopulateProps() if this is an Add (b/c postChanges() isn't called)
                                     //Not sure if there is a more graceful way to do this.
-                                    Relationship.OnPropChange( null );
+                                    if( null != Relationship.OnPropChange )
+                                    {
+                                        Relationship.OnPropChange(null);
+                                    }
                                 }
                             }
                         }
