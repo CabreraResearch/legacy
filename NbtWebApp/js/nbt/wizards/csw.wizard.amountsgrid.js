@@ -9,11 +9,8 @@
             var cswPublic = {
                 quantities: [],
                 qtyControl: null,
-                sizeControl: null,
-                barcodeControl: null,
                 amountForm: null,
-                thinGrid: null,
-                selectedSizeId: null
+                thinGrid: null
             };
 
             Csw.tryExec(function () {
@@ -36,7 +33,7 @@
                     config: {
                         numberName: 'No. Containers *',
                         sizeName: 'Size *',
-                        quantityName: 'Net Quantity *',                                                
+                        quantityName: 'Net Quantity *',
                         barcodeName: 'Barcodes (Optional)'
                     },
                     customBarcodes: false
@@ -75,7 +72,7 @@
                         });
                     }
                     if (false === Csw.isNullOrEmpty(cswPrivate.selectedSizeId)) {
-                        Csw.ajax.post({//TODO - for receive, make only Unit Readonly - if not quantityeditable, make both quantity and unit readonly
+                        Csw.ajax.post({
                             urlMethod: 'getQuantity',
                             async: false,
                             data: { SizeId: cswPrivate.selectedSizeId, Action: cswPrivate.action },
@@ -134,22 +131,21 @@
                         allowAdd: true,
                         makeAddRow: function (cswCell, columnName, rowid) {
                             'use strict';
-                            var thisAmount = {
-                                rowid: rowid,
-                                containerNo: 1,
-                                quantity: '',
-                                sizeid: '',
-                                sizename: '',
-                                unit: '',
-                                unitid: '',
-                                barcodes: ''
-                            };
-
+                            var updateSizeVals = function () {
+                                cswPrivate.selectedSizeId = sizeControl.selectedNodeId();
+                                extendNewAmount({ sizeid: sizeControl.selectedNodeId() });
+                                extendNewAmount({ sizename: sizeControl.selectedText() });
+                            }
+                            var updateQuantityVals = function () {
+                                extendNewAmount({ quantity: cswPublic.qtyControl.quantityValue });
+                                extendNewAmount({ unit: cswPublic.qtyControl.unitText });
+                                extendNewAmount({ unitid: cswPublic.qtyControl.unitVal });
+                            }
                             switch (columnName) {
                                 case cswPrivate.config.numberName:
                                     var countControl = cswCell.numberTextBox({
                                         ID: Csw.tryExec(cswPrivate.makeId, 'containerCount'),
-                                        value: thisAmount.containerNo,
+                                        value: 1,
                                         MinValue: cswPrivate.containerMinimum,
                                         MaxValue: (cswPrivate.containerlimit - Csw.number(cswPrivate.count, 0)),
                                         ceilingVal: (cswPrivate.containerlimit - Csw.number(cswPrivate.count, 0)),
@@ -162,7 +158,7 @@
                                     });
                                     break;
                                 case cswPrivate.config.sizeName:
-                                    cswPublic.sizeControl = cswCell.nodeSelect({
+                                    var sizeControl = cswCell.nodeSelect({
                                         ID: Csw.tryExec(cswPrivate.makeId, 'sizes'),
                                         async: false,
                                         objectClassName: 'SizeClass',
@@ -170,28 +166,30 @@
                                             objectClassName: 'MaterialClass',
                                             nodeId: cswPrivate.materialId
                                         },
-                                        onSuccess: function () {
-
-                                        },
                                         onSelect: function () {
-                                            cswPrivate.selectedSizeId = cswPublic.sizeControl.selectedNodeId();
+                                            updateSizeVals();  
                                             cswPrivate.getQuantity();
                                             cswPublic.qtyControl.quantityTextBox.val(cswPrivate.quantity.value);
                                             cswPublic.qtyControl.quantityValue = cswPrivate.quantity.value;
                                             cswPublic.qtyControl.unitSelect.val(cswPrivate.quantity.nodeid);
                                             cswPublic.qtyControl.unitText = cswPrivate.quantity.name;
+                                            updateQuantityVals();
                                         }
                                     });
-                                    cswPrivate.selectedSizeId = cswPublic.sizeControl.selectedNodeId();                                    
+                                    updateSizeVals();
                                     break;
-                                case cswPrivate.config.quantityName:
+                                case cswPrivate.config.quantityName: //TODO - for receive, make only Unit Readonly - if not quantityeditable, make both quantity and unit readonly
                                     cswPrivate.getQuantity();
+                                    cswPrivate.quantity.onChange = function () {
+                                        updateQuantityVals();
+                                    };
                                     cswPrivate.quantity.ID = Csw.tryExec(cswPrivate.makeId, 'containerQuantity');
-                                    cswPrivate.quantity.qtyWidth = (7 * 8) + 'px'; //7 characters wide, 8 is the characters-to-pixels ratio                                    
+                                    cswPrivate.quantity.qtyWidth = (7 * 8) + 'px'; //7 characters wide, 8 is the characters-to-pixels ratio
                                     cswPublic.qtyControl = cswCell.quantity(cswPrivate.quantity);
+                                    updateQuantityVals();
                                     break;
                                 case cswPrivate.config.barcodeName:
-                                    cswPublic.barcodeControl = cswCell.textArea({
+                                    var barcodeControl = cswCell.textArea({
                                         ID: Csw.tryExec(cswPrivate.makeId, 'containerBarcodes'),
                                         rows: 1,
                                         cols: 14,
@@ -201,7 +199,6 @@
                                     });
                                     break;
                             }
-                            extendNewAmount(thisAmount);
                         },
                         onAdd: function () {
                             var newCount = cswPrivate.count + Csw.number(newAmount.containerNo);
@@ -218,14 +215,9 @@
                                 parseBarcodes(barcodeToParse);
 
                                 if (cswPublic.amountForm.isFormValid()) {
-                                    newAmount.quantity = cswPublic.qtyControl.quantityValue;
-                                    newAmount.unit = cswPublic.qtyControl.unitText;
-                                    newAmount.unitid = cswPublic.qtyControl.unitVal;
                                     //we need to make sure the columns here match the header columns
                                     var formCols = [newAmount.containerNo];
                                     if (false === Csw.isNullOrEmpty(cswPrivate.materialId) && cswPrivate.action === 'Receive') {
-                                        newAmount.sizeid = cswPublic.sizeControl.selectedNodeId();
-                                        newAmount.sizename = cswPublic.sizeControl.selectedText();
                                         formCols = formCols.concat([newAmount.sizename]);
                                     }
                                     formCols = formCols.concat([newAmount.quantity + ' ' + newAmount.unit]);
