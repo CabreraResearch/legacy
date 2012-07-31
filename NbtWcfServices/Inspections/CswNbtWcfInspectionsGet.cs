@@ -78,7 +78,6 @@ namespace NbtWebAppServices.Response
                                                        HelpText = NodeTypeProp.HelpText,
                                                        Type = NodeTypeProp.getFieldType().FieldType.ToString(),
                                                        QuestionId = NodeTypeProp.PropId,
-                                                       PreferredAnswer = NodeTypeProp.Extended,
                                                        Text = NodeTypeProp.PropName,
                                                        Choices = null
                                                    };
@@ -95,8 +94,9 @@ namespace NbtWebAppServices.Response
                         var ResponseProperty = new CswNbtWcfInspectionsDataModel.CswNbtInspectionDesign.SectionProperty
                         {
                             HelpText = NodeTypeProp.HelpText,
-                            Type = CswNbtMetaDataFieldType.NbtFieldType.Question.ToString(),
+                            Type = CswNbtMetaDataFieldType.NbtFieldType.Question,
                             QuestionId = NodeTypeProp.PropId,
+                            PreferredAnswer = NodeTypeProp.Extended,
                             Text = "Question " + NodeTypeProp.QuestionNo + ": " + NodeTypeProp.PropName
                         };
 
@@ -298,34 +298,34 @@ namespace NbtWebAppServices.Response
                 {
                     CswNbtMetaDataObjectClass InstanceOc = null;
                     CswNbtMetaDataObjectClassProp BarcodeOcp = null;
-                    if (NbtViewRelatedIdType.ObjectClassId == RootLevelRelationship.SecondType)
+                    if( NbtViewRelatedIdType.ObjectClassId == RootLevelRelationship.SecondType )
                     {
-                        InstanceOc = _CswNbtWcfSessionResources.CswNbtResources.MetaData.getObjectClass(RootLevelRelationship.SecondId);
-                        if (null != InstanceOc)
+                        InstanceOc = _CswNbtWcfSessionResources.CswNbtResources.MetaData.getObjectClass( RootLevelRelationship.SecondId );
+                        if( null != InstanceOc )
                         {
                             BarcodeOcp = InstanceOc.getBarcodeProp();
 
                         }
                     }
-                    else if (NbtViewRelatedIdType.NodeTypeId == RootLevelRelationship.SecondType)
+                    else if( NbtViewRelatedIdType.NodeTypeId == RootLevelRelationship.SecondType )
                     {
-                        CswNbtMetaDataNodeType InstanceNt = _CswNbtWcfSessionResources.CswNbtResources.MetaData.getNodeType(RootLevelRelationship.SecondId);
-                        if (null != InstanceNt)
+                        CswNbtMetaDataNodeType InstanceNt = _CswNbtWcfSessionResources.CswNbtResources.MetaData.getNodeType( RootLevelRelationship.SecondId );
+                        if( null != InstanceNt )
                         {
                             InstanceOc = InstanceNt.getObjectClass();
                             CswNbtMetaDataNodeTypeProp BarcodeNtp = InstanceNt.getBarcodeProperty();
-                            if (null != BarcodeNtp)
+                            if( null != BarcodeNtp )
                             {
                                 BarcodeOcp = BarcodeNtp.getObjectClassProp();
                             }
                         }
                     }
 
-                    if ( null != BarcodeOcp && null != InstanceOc )
+                    if( null != BarcodeOcp && null != InstanceOc )
                     {
-                        string FilterValueString = CswConvert.ToString(FilterValue);
-                        CswNbtActSystemViews.SystemViewPropFilterDefinition ViewPropertyFilter = _NbtSystemView.makeSystemViewFilter(BarcodeOcp, FilterValueString, FilterMode, FieldType: FieldType);
-                        _NbtSystemView.addSystemViewFilter(ViewPropertyFilter, InstanceOc);
+                        string FilterValueString = CswConvert.ToString( FilterValue );
+                        CswNbtActSystemViews.SystemViewPropFilterDefinition ViewPropertyFilter = _NbtSystemView.makeSystemViewFilter( BarcodeOcp, FilterValueString, FilterMode, FieldType: FieldType );
+                        _NbtSystemView.addSystemViewFilter( ViewPropertyFilter, InstanceOc );
                     }
                 }
             }
