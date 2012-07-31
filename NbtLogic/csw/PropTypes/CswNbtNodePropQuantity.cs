@@ -196,6 +196,10 @@ namespace ChemSW.Nbt.PropTypes
             set
             {
                 _View = value;
+                if( _View.ViewId != value.ViewId )
+                {
+                    _View.LoadJson( value.ToJson() );
+                }
                 _View.save();
             }
             get

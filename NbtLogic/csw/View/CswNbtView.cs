@@ -386,7 +386,7 @@ namespace ChemSW.Nbt
                                                                   bool ShowAtRuntime = false,
                                                                   bool ShowInGrid = true )
         {
-            return AddViewPropertyAndFilter( ParentViewRelationship, MetaDataProp, CswNbtPropFilterSql.FilterResultMode.Hide, Value, SubFieldName, CaseSensitive, FilterMode, ShowAtRuntime, ShowInGrid);
+            return AddViewPropertyAndFilter( ParentViewRelationship, MetaDataProp, CswNbtPropFilterSql.FilterResultMode.Hide, Value, SubFieldName, CaseSensitive, FilterMode, ShowAtRuntime, ShowInGrid );
         }
         /// <summary>
         /// Creates a new <see cref="CswNbtViewPropertyFilter"/> for this view
@@ -504,20 +504,42 @@ namespace ChemSW.Nbt
         }
 
         /// <summary>
-        /// Load View JSON into this View (String)
+        /// Load View JSON into this View
         /// </summary>
-        public bool LoadJson( string ViewString )
+        public bool LoadJson( JObject ViewObj )
         {
-            JObject ViewJson = new JObject();
+            bool Ret = false;
             try
             {
-                ViewJson = JObject.Parse( ViewString );
+                if( ViewObj.HasValues )
+                {
+                    Ret = _load( ViewObj );
+                }
             }
             catch( Exception ex )
             {
                 throw new CswDniException( ErrorType.Error, "Attempt to restore view failed.", "JObject.Parse() failed on view JSON with " + ex.ToString() );
             }
-            return _load( ViewJson );
+            return Ret;
+        }
+
+        /// <summary>
+        /// Load View JSON into this View (String)
+        /// </summary>
+        public bool LoadJson( string ViewString )
+        {
+            bool Ret = false;
+            JObject ViewJson;
+            try
+            {
+                ViewJson = JObject.Parse( ViewString );
+                Ret = LoadJson( ViewJson );
+            }
+            catch( Exception ex )
+            {
+                throw new CswDniException( ErrorType.Error, "Attempt to restore view failed.", "JObject.Parse() failed on view JSON with " + ex.ToString() );
+            }
+            return Ret;
         }
 
         /// <summary>
