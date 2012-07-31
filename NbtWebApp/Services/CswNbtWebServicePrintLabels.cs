@@ -22,32 +22,37 @@ namespace ChemSW.Nbt.WebServices
             JObject ret = new JObject();
             JArray Labels = new JArray();
             ret.Add( new JProperty( "labels", Labels ) );
-
-            CswPropIdAttr PropId = new CswPropIdAttr( PropIdAttr );
-            CswNbtMetaDataNodeTypeProp MetaDataProp = _CswNbtResources.MetaData.getNodeTypeProp( PropId.NodeTypePropId );
-            Int32 NodeTypeId = MetaDataProp.NodeTypeId;
-
-            string PrintLabelNodeTypesPropertyName = "NodeTypes";
-            CswNbtMetaDataObjectClass PrintLabelObjectClass = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.PrintLabelClass );
-            CswNbtMetaDataObjectClassProp NodeTypesProperty = PrintLabelObjectClass.getObjectClassProp( PrintLabelNodeTypesPropertyName );
-
-            CswNbtView PrintLabelView = new CswNbtView( _CswNbtResources );
-            PrintLabelView.ViewName = "getPrintLabelsForNodeType(" + NodeTypeId.ToString() + ")";
-            CswNbtViewRelationship PrintLabelRelationship = PrintLabelView.AddViewRelationship( PrintLabelObjectClass, true );
-            CswNbtViewProperty PrintLabelNodeTypesProperty = PrintLabelView.AddViewProperty( PrintLabelRelationship, NodeTypesProperty );
-            CswNbtViewPropertyFilter PrintLabelNodeTypesPropertyFilter = PrintLabelView.AddViewPropertyFilter( PrintLabelNodeTypesProperty, CswNbtSubField.SubFieldName.Unknown, CswNbtPropFilterSql.PropertyFilterMode.Contains, NodeTypeId.ToString(), false );
-
-            ICswNbtTree PrintLabelsTree = _CswNbtResources.Trees.getTreeFromView( PrintLabelView, true, true, false, false );
-
-            PrintLabelsTree.goToRoot();
-            for( int i = 0; i < PrintLabelsTree.getChildNodeCount(); i++ )
+            if( false == string.IsNullOrEmpty( PropIdAttr ) )
             {
-                PrintLabelsTree.goToNthChild( i );
-                Labels.Add( new JObject(
-                    new JProperty( "name", PrintLabelsTree.getNodeNameForCurrentPosition() ),
-                    new JProperty( "nodeid", PrintLabelsTree.getNodeIdForCurrentPosition().ToString() )
-                ) );
-                PrintLabelsTree.goToParentNode();
+                CswPropIdAttr PropId = new CswPropIdAttr(PropIdAttr);
+                CswNbtMetaDataNodeTypeProp MetaDataProp = _CswNbtResources.MetaData.getNodeTypeProp(PropId.NodeTypePropId);
+                if( null != MetaDataProp )
+                {
+                    Int32 NodeTypeId = MetaDataProp.NodeTypeId;
+
+                    string PrintLabelNodeTypesPropertyName = "NodeTypes";
+                    CswNbtMetaDataObjectClass PrintLabelObjectClass = _CswNbtResources.MetaData.getObjectClass(CswNbtMetaDataObjectClass.NbtObjectClass.PrintLabelClass);
+                    CswNbtMetaDataObjectClassProp NodeTypesProperty = PrintLabelObjectClass.getObjectClassProp(PrintLabelNodeTypesPropertyName);
+
+                    CswNbtView PrintLabelView = new CswNbtView(_CswNbtResources);
+                    PrintLabelView.ViewName = "getPrintLabelsForNodeType(" + NodeTypeId.ToString() + ")";
+                    CswNbtViewRelationship PrintLabelRelationship = PrintLabelView.AddViewRelationship(PrintLabelObjectClass, true);
+                    CswNbtViewProperty PrintLabelNodeTypesProperty = PrintLabelView.AddViewProperty(PrintLabelRelationship, NodeTypesProperty);
+                    CswNbtViewPropertyFilter PrintLabelNodeTypesPropertyFilter = PrintLabelView.AddViewPropertyFilter(PrintLabelNodeTypesProperty, CswNbtSubField.SubFieldName.Unknown, CswNbtPropFilterSql.PropertyFilterMode.Contains, NodeTypeId.ToString(), false);
+
+                    ICswNbtTree PrintLabelsTree = _CswNbtResources.Trees.getTreeFromView(PrintLabelView, true, true, false, false);
+
+                    PrintLabelsTree.goToRoot();
+                    for (int i = 0; i < PrintLabelsTree.getChildNodeCount(); i++)
+                    {
+                        PrintLabelsTree.goToNthChild(i);
+                        Labels.Add(new JObject(
+                                       new JProperty("name", PrintLabelsTree.getNodeNameForCurrentPosition()),
+                                       new JProperty("nodeid", PrintLabelsTree.getNodeIdForCurrentPosition().ToString())
+                                       ));
+                        PrintLabelsTree.goToParentNode();
+                    }
+                }
             }
             return ret;
         } // getLabels()

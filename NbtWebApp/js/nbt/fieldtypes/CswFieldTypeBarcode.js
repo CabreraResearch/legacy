@@ -13,36 +13,42 @@
             var propVals = o.propData.values;
             var value = (false === o.Multi) ? Csw.string(propVals.barcode).trim() : Csw.enums.multiEditDefaultValue;
 
+            var table = propDiv.table({
+                ID: Csw.makeId(o.ID, 'tbl')
+            });
+
+            var cell1 = table.cell(1, 1);
+
             if (o.ReadOnly) {
-                propDiv.text(value);
+                cell1.text(value);
             }
             else {
-                var table = propDiv.table({
-                    ID: Csw.makeId(o.ID, 'tbl')
-                });
 
-                var cell1 = table.cell(1, 1);
                 var textBox = cell1.input({ ID: o.ID,
                     type: Csw.enums.inputTypes.text,
                     cssclass: 'textinput',
                     onChange: o.onChange,
                     value: value
                 });
-                if (false === o.Multi) {
-                    table.cell(1, 2).div()
-                         .imageButton({ ButtonType: Csw.enums.imageButton_ButtonType.Print,
-                             AlternateText: '',
-                             ID: Csw.makeId(o.ID, 'print'),
-                             onClick: function () {
-                                 $.CswDialog('PrintLabelDialog', { 'nodeid': o.nodeid, 'propid': o.ID });
-                             }
-                         });
-                }
+
                 if (o.Required) {
                     textBox.addClass('required');
                 }
 
                 textBox.clickOnEnter(o.saveBtn);
+            }
+            if (false === o.Multi) {
+                table.cell(1, 2).div()
+                    .buttonExt({
+                        ID: Csw.makeId(o.ID, 'print'),
+                        enabledText: 'Print',
+                        size: 'small',
+                        tooltip: { title: 'Print Barcode Label' },
+                        icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.barcode),
+                        onClick: function() {
+                            $.CswDialog('PrintLabelDialog', { 'nodeid': o.nodeid, 'propid': o.propid });
+                        }
+                    });
             }
         },
         save: function (o) {
