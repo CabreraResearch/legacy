@@ -232,7 +232,7 @@
                         ID: Csw.makeId(filtersdivid, '', "saveview"),
                         enabledText: 'Save as View',
                         disableOnClick: false,
-                        icon: Csw.enums.getName( Csw.enums.iconType, Csw.enums.iconType.search),
+                        icon: Csw.enums.getName( Csw.enums.iconType, Csw.enums.iconType.save),
                         onClick: cswPrivate.saveAsView
                     });
                 }
