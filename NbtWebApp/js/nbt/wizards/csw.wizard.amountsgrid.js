@@ -167,12 +167,9 @@
                                             nodeId: cswPrivate.materialId
                                         },
                                         onSelect: function () {
-                                            updateSizeVals();  
+                                            updateSizeVals();
                                             cswPrivate.getQuantity();
-                                            cswPublic.qtyControl.quantityTextBox.val(cswPrivate.quantity.value);
-                                            cswPublic.qtyControl.quantityValue = cswPrivate.quantity.value;
-                                            cswPublic.qtyControl.unitSelect.val(cswPrivate.quantity.nodeid);
-                                            cswPublic.qtyControl.unitText = cswPrivate.quantity.name;
+                                            cswPublic.qtyControl.refresh(cswPrivate.quantity);
                                             updateQuantityVals();
                                         }
                                     });
