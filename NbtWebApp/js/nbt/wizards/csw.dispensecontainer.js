@@ -61,19 +61,21 @@
                     dispenseMode: 'Direct',
                     dispenseModes: {
                         Direct: 'Direct',
-                        Request: 'Request'
+                        RequestMaterial: 'RequestMaterial',
+                        RequestContainer: 'RequestContainer',
                     },
                     printBarcodes: false
                 };
 
                 cswPrivate.setDispenseMode = function () {
+                    cswPrivate.state.dispenseType = cswPrivate.dispenseTypes.Dispense;
                     if (false === Csw.isNullOrEmpty(cswPrivate.state.requestItemId)) {
                         if (Csw.isNullOrEmpty(cswPrivate.state.sourceContainerNodeId)) {
-                            cswPrivate.dispenseMode = cswPrivate.dispenseModes.Request;
+                            cswPrivate.dispenseMode = cswPrivate.dispenseModes.RequestMaterial;
                             cswPrivate.wizardSteps["1"] = 'Select a Container';
-                        }                       
-                        cswPrivate.state.dispenseType = cswPrivate.dispenseTypes.Dispense;
-                        
+                        } else {
+                            cswPrivate.dispenseMode = cswPrivate.dispenseModes.RequestContainer;
+                        }                        
                     } else {
                         cswPrivate.dispenseMode = cswPrivate.dispenseModes.Direct;
                     }
@@ -159,7 +161,7 @@
 
                             var makeTypeSelect = function () {
 
-                                if (cswPrivate.dispenseMode !== cswPrivate.dispenseModes.Request) {
+                                if (cswPrivate.dispenseMode !== cswPrivate.dispenseModes.RequestMaterial) {
                                     cswPrivate.divStep1.br({ number: 2 });
                                     cswPrivate.divStep1.span({ text: 'Pick a type of dispense:' });
                                     cswPrivate.divStep1.br({ number: 1 });
@@ -221,7 +223,7 @@
                             cswPrivate.divStep1.empty();
 
                             var helpText = 'Confirm the container to use for this dispense';
-                            if (cswPrivate.dispenseMode !== cswPrivate.dispenseModes.Request) {
+                            if (cswPrivate.dispenseMode !== cswPrivate.dispenseModes.RequestMaterial) {
                                 helpText += ', and select a type of dispense to perform';
                             }
                             helpText += '.';
@@ -237,7 +239,7 @@
                                 FirstCellRightAlign: true
                             });
 
-                            if (cswPrivate.dispenseMode !== cswPrivate.dispenseModes.Request) {
+                            if (cswPrivate.dispenseMode !== cswPrivate.dispenseModes.RequestMaterial) {
                                 if (false === Csw.isNullOrEmpty(cswPrivate.state.barcode)) {
                                     dispenseTypeTable.cell(1, 1).span({ text: 'Barcode: ' }).addClass('propertylabel');
                                     dispenseTypeTable.cell(1, 2).span({ text: Csw.string(cswPrivate.state.barcode) });
@@ -256,7 +258,7 @@
                                 }
                             }
 
-                            if (cswPrivate.dispenseMode === cswPrivate.dispenseModes.Request) {
+                            if (cswPrivate.dispenseMode === cswPrivate.dispenseModes.RequestMaterial) {
                                 makeContainerGrid();
                             } else if (Csw.isNullOrEmpty(cswPrivate.state.sourceContainerNodeId)) {
                                 Csw.error.throwException(Csw.error.exception('Cannot dispense without a source container.', '', 'csw.dispensecontainer.js', 173));
