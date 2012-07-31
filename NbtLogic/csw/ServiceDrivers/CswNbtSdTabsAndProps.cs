@@ -193,6 +193,12 @@ namespace ChemSW.Nbt.ServiceDrivers
                                                                                     select _Prop )
                                 {
                                     Relationship.RelatedNodeId = RelatedNodePk;
+                                    //TODO: Vet this with Steve. We don't hit afterPopulateProps() if this is an Add (b/c postChanges() isn't called)
+                                    //Not sure if there is a more graceful way to do this.
+                                    if( null != Relationship.OnPropChange )
+                                    {
+                                        Relationship.OnPropChange(null);
+                                    }
                                 }
                             }
                         }
@@ -644,7 +650,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                 CswNbtActUpdatePropertyValue ActUpdatePropVal = new CswNbtActUpdatePropertyValue( _CswNbtResources );
                 ActUpdatePropVal.UpdateNode( Node, true );
                 Node.postChanges( false );
-                ret["result"] = "Succeeded";                
+                ret["result"] = "Succeeded";
                 //If we're Adding, NodeName won't be valid until now.
                 ret["nodename"] = Node.NodeName;
                 ret["action"] = _determineAction( Node.ObjClass.ObjectClass.ObjectClass );

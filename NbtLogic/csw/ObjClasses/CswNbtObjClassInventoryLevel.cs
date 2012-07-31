@@ -2,7 +2,7 @@ using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.ServiceDrivers;
-using Newtonsoft.Json.Linq;
+using ChemSW.Nbt.UnitsOfMeasure;
 
 namespace ChemSW.Nbt.ObjClasses
 {
@@ -38,6 +38,7 @@ namespace ChemSW.Nbt.ObjClasses
         }
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
+        private CswNbtSdInventoryLevelMgr _LevelMgr = null;
 
         public static implicit operator CswNbtObjClassInventoryLevel( CswNbtNode Node )
         {
@@ -62,6 +63,7 @@ namespace ChemSW.Nbt.ObjClasses
             : base( CswNbtResources, Node )
         {
             _CswNbtObjClassDefault = new CswNbtObjClassDefault( _CswNbtResources, Node );
+            _LevelMgr = new CswNbtSdInventoryLevelMgr( _CswNbtResources );
         }//ctor()
 
         public override CswNbtMetaDataObjectClass ObjectClass
@@ -85,33 +87,6 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
-            CswNbtSdInventoryLevelMgr LevelMgr = new CswNbtSdInventoryLevelMgr( _CswNbtResources );
-            if( Location.WasModified || Material.WasModified )
-            {
-                CurrentQuantity.UnitId = Level.UnitId;
-                CurrentQuantity.Quantity = LevelMgr.getCurrentInventoryLevel( this );
-                CurrentQuantityLog.AddComment( "Set initial Inventory Level Quantity: " + CurrentQuantity.Gestalt );
-            }
-
-            if( CurrentQuantity.WasModified )
-            {
-                if( LevelMgr.doSendEmail( this ) )
-                {
-                    LastNotified.DateTimeValue = LevelMgr.sendPastThreshholdEmail( this );
-                    if( CurrentQuantity.Quantity > Level.Quantity )
-                    {
-                        Status.Value = Statuses.Above;
-                    }
-                    else
-                    {
-                        Status.Value = Statuses.Below;
-                    }
-                }
-                else
-                {
-                    Status.Value = Statuses.Ok;
-                }
-            }
             _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
 
         }//beforeWriteNode()
@@ -134,6 +109,10 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void afterPopulateProps()
         {
+            Level.SetOnPropChange( OnLevelPropChange );
+            Material.SetOnPropChange( OnMaterialPropChange );
+            CurrentQuantity.SetOnPropChange( OnCurrrentQuantityPropChange );
+            Location.SetOnPropChange( OnLocationPropChange );
             _CswNbtObjClassDefault.afterPopulateProps();
         }//afterPopulateProps()
 
@@ -156,12 +135,60 @@ namespace ChemSW.Nbt.ObjClasses
 
         public CswNbtNodePropList Type { get { return _CswNbtNode.Properties[PropertyName.Type]; } }
         public CswNbtNodePropQuantity Level { get { return _CswNbtNode.Properties[PropertyName.Level]; } }
+        private void OnLevelPropChange( CswNbtNodeProp Prop )
+        {
+            if( Level.UnitId != CurrentQuantity.UnitId )
+            {
+                CurrentQuantity.UnitId = Level.UnitId;
+                CurrentQuantity.Quantity = _LevelMgr.getCurrentInventoryLevel( this );
+                CurrentQuantityLog.AddComment( "Set initial Inventory Level Quantity: " + CurrentQuantity.Gestalt );
+            }
+        }
         public CswNbtNodePropRelationship Material { get { return _CswNbtNode.Properties[PropertyName.Material]; } }
+        private void OnMaterialPropChange( CswNbtNodeProp Prop )
+        {
+            if( CswTools.IsPrimaryKey( Material.RelatedNodeId ) )
+            {
+                CswNbtNode MaterialNode = _CswNbtResources.Nodes[Material.RelatedNodeId];
+                if( null != MaterialNode )
+                {
+                    CswNbtUnitViewBuilder Vb = new CswNbtUnitViewBuilder( _CswNbtResources );
+                    Vb.setQuantityUnitOfMeasureView( MaterialNode, CurrentQuantity );
+                    Vb.setQuantityUnitOfMeasureView( MaterialNode, Level );
+                }
+            }
+        }
+
         public CswNbtNodePropLocation Location { get { return _CswNbtNode.Properties[PropertyName.Location]; } }
+        private void OnLocationPropChange( CswNbtNodeProp Prop )
+        {
+            CurrentQuantity.Quantity = _LevelMgr.getCurrentInventoryLevel( this );
+        }
+
         public CswNbtNodePropDateTime LastNotified { get { return _CswNbtNode.Properties[PropertyName.LastNotified]; } }
         public CswNbtNodePropUserSelect Subscribe { get { return _CswNbtNode.Properties[PropertyName.Subscribe]; } }
         public CswNbtNodePropList Status { get { return _CswNbtNode.Properties[PropertyName.Status]; } }
         public CswNbtNodePropQuantity CurrentQuantity { get { return _CswNbtNode.Properties[PropertyName.CurrentQuantity]; } }
+        private void OnCurrrentQuantityPropChange( CswNbtNodeProp Prop )
+        {
+            if( _LevelMgr.doSendEmail( this ) )
+            {
+                LastNotified.DateTimeValue = _LevelMgr.sendPastThreshholdEmail( this );
+                if( CurrentQuantity.Quantity > Level.Quantity )
+                {
+                    Status.Value = Statuses.Above;
+                }
+                else
+                {
+                    Status.Value = Statuses.Below;
+                }
+            }
+            else
+            {
+                Status.Value = Statuses.Ok;
+            }
+        }
+
         public CswNbtNodePropComments CurrentQuantityLog { get { return _CswNbtNode.Properties[PropertyName.CurrentQuantityLog]; } }
 
         #endregion

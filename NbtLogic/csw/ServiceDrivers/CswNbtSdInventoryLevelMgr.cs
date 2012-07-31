@@ -85,22 +85,24 @@ namespace ChemSW.Nbt.ServiceDrivers
         public CswNbtView GetCurrentQuantityView( CswNbtObjClassInventoryLevel InventoryLevel, CswPrimaryKey StartLocationId )
         {
             CswNbtView Ret = null;
+            if( CswTools.IsPrimaryKey( InventoryLevel.Material.RelatedNodeId ) )
+            {
+                Ret = new CswNbtView(_CswNbtResources);
+                CswNbtViewRelationship LocationRel = _SdLocations.getAllChildrenLocationRelationship(Ret, StartLocationId);
 
-            Ret = new CswNbtView( _CswNbtResources );
-            CswNbtViewRelationship LocationRel = _SdLocations.getAllChildrenLocationRelationship( Ret, StartLocationId );
+                CswNbtMetaDataObjectClass ContainerOc = _CswNbtResources.MetaData.getObjectClass(CswNbtMetaDataObjectClass.NbtObjectClass.ContainerClass);
+                CswNbtMetaDataObjectClassProp LocationOcp = ContainerOc.getObjectClassProp(CswNbtObjClassContainer.LocationPropertyName);
+                CswNbtMetaDataObjectClassProp MaterialOcp = ContainerOc.getObjectClassProp(CswNbtObjClassContainer.MaterialPropertyName);
+                CswNbtMetaDataObjectClassProp DisposedOcp = ContainerOc.getObjectClassProp(CswNbtObjClassContainer.DisposedPropertyName);
+                CswNbtMetaDataObjectClassProp MissingOcp = ContainerOc.getObjectClassProp(CswNbtObjClassContainer.MissingPropertyName);
+                CswNbtMetaDataObjectClassProp QuantityOcp = ContainerOc.getObjectClassProp(CswNbtObjClassContainer.QuantityPropertyName);
 
-            CswNbtMetaDataObjectClass ContainerOc = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.ContainerClass );
-            CswNbtMetaDataObjectClassProp LocationOcp = ContainerOc.getObjectClassProp( CswNbtObjClassContainer.LocationPropertyName );
-            CswNbtMetaDataObjectClassProp MaterialOcp = ContainerOc.getObjectClassProp( CswNbtObjClassContainer.MaterialPropertyName );
-            CswNbtMetaDataObjectClassProp DisposedOcp = ContainerOc.getObjectClassProp( CswNbtObjClassContainer.DisposedPropertyName );
-            CswNbtMetaDataObjectClassProp MissingOcp = ContainerOc.getObjectClassProp( CswNbtObjClassContainer.MissingPropertyName );
-            CswNbtMetaDataObjectClassProp QuantityOcp = ContainerOc.getObjectClassProp( CswNbtObjClassContainer.QuantityPropertyName );
-
-            CswNbtViewRelationship ContainerRel = Ret.AddViewRelationship( LocationRel, NbtViewPropOwnerType.Second, LocationOcp, false );
-            Ret.AddViewPropertyAndFilter( ContainerRel, MaterialOcp, InventoryLevel.Material.RelatedNodeId.PrimaryKey.ToString(), CswNbtSubField.SubFieldName.NodeID, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
-            Ret.AddViewPropertyAndFilter( ContainerRel, DisposedOcp, Tristate.True.ToString(), CswNbtSubField.SubFieldName.Checked, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.NotEquals );
-            Ret.AddViewPropertyAndFilter( ContainerRel, MissingOcp, Tristate.True.ToString(), CswNbtSubField.SubFieldName.Checked, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.NotEquals );
-            Ret.AddViewProperty( ContainerRel, QuantityOcp );
+                CswNbtViewRelationship ContainerRel = Ret.AddViewRelationship(LocationRel, NbtViewPropOwnerType.Second, LocationOcp, false);
+                Ret.AddViewPropertyAndFilter(ContainerRel, MaterialOcp, InventoryLevel.Material.RelatedNodeId.PrimaryKey.ToString(), CswNbtSubField.SubFieldName.NodeID, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals);
+                Ret.AddViewPropertyAndFilter(ContainerRel, DisposedOcp, Tristate.True.ToString(), CswNbtSubField.SubFieldName.Checked, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.NotEquals);
+                Ret.AddViewPropertyAndFilter(ContainerRel, MissingOcp, Tristate.True.ToString(), CswNbtSubField.SubFieldName.Checked, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.NotEquals);
+                Ret.AddViewProperty(ContainerRel, QuantityOcp);
+            }
             return Ret;
         }
         
