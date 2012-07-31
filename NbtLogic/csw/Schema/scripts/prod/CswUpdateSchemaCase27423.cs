@@ -105,19 +105,22 @@ namespace ChemSW.Nbt.Schema
                         if( null != Role && false == RoleIdsWithUsers.Contains( Role.NodeId.PrimaryKey ) )
                         {
                             string ValidUserName = CswNbtObjClassUser.getValidUserName( Role.Name.Text.ToLower() );
-                            if( CswNbtObjClassUser.IsUserNameUnique( _CswNbtSchemaModTrnsctn.MetaData._CswNbtMetaDataResources.CswNbtResources, ValidUserName ) )
+                            if( ValidUserName != CswNbtObjClassUser.ChemSWAdminUsername )
                             {
-                                CswNbtObjClassUser NewUser = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( UserNt.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode, OverrideUniqueValidation: false );
-                                NewUser.IsDemo = false;
-                                NewUser.Role.RelatedNodeId = Role.NodeId;
-                                NewUser.UsernameProperty.Text = ValidUserName;
-                                NewUser.WorkUnitProperty.RelatedNodeId = DefaultWorkUnit.NodeId;
-                                if( null != DefaultLocation )
+                                if( CswNbtObjClassUser.IsUserNameUnique( _CswNbtSchemaModTrnsctn.MetaData._CswNbtMetaDataResources.CswNbtResources, ValidUserName ) )
                                 {
-                                    NewUser.DefaultLocationProperty.SelectedNodeId = DefaultLocation.NodeId;
+                                    CswNbtObjClassUser NewUser = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( UserNt.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode, OverrideUniqueValidation: false );
+                                    NewUser.IsDemo = false;
+                                    NewUser.Role.RelatedNodeId = Role.NodeId;
+                                    NewUser.UsernameProperty.Text = ValidUserName;
+                                    NewUser.WorkUnitProperty.RelatedNodeId = DefaultWorkUnit.NodeId;
+                                    if( null != DefaultLocation )
+                                    {
+                                        NewUser.DefaultLocationProperty.SelectedNodeId = DefaultLocation.NodeId;
+                                    }
+                                    NewUser.PasswordProperty.Password = Role.Name.Text.ToLower();
+                                    NewUser.postChanges( ForceUpdate: false );
                                 }
-                                NewUser.PasswordProperty.Password = Role.Name.Text.ToLower();
-                                NewUser.postChanges( ForceUpdate: false );
                             }
                         }
                     }
