@@ -9,6 +9,7 @@
             var cswPrivate = {
                 $parent: '',
                 ID: '',
+                async: true,
                 nodesUrlMethod: 'getNodes',
                 nodeTypeId: '',
                 objectClassId: '',
@@ -52,6 +53,7 @@
 
                 Csw.ajax.post({
                     urlMethod: cswPrivate.nodesUrlMethod,
+                    async: Csw.bool(cswPrivate.async),
                     data: {
                         NodeTypeId: Csw.string(cswPrivate.nodeTypeId),
                         ObjectClassId: Csw.string(cswPrivate.objectClassId),
