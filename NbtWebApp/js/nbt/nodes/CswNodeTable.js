@@ -167,27 +167,27 @@
                         //var maintextcell = texttable.cell(1, 1);
                         //maintextcell.append('<b>' + nodeObj.nodename + '</b>');
 
-//                        if (Csw.bool(nodeObj.locked)) {
-//                            maintextcell.img({
-//                                src: 'Images/quota/lock.gif',
-//                                title: 'Quota exceeded'
-//                            });
-//                        }
-//                        maintextcell.br();
+                        //                        if (Csw.bool(nodeObj.locked)) {
+                        //                            maintextcell.img({
+                        //                                src: 'Images/quota/lock.gif',
+                        //                                title: 'Quota exceeded'
+                        //                            });
+                        //                        }
+                        //                        maintextcell.br();
 
                         var btnTable = btncell.table({
                             ID: Csw.makeId(o.ID, nodeid + '_btntbl'),
                             cellspacing: '5px'
                         });
                         var btncol = 1;
-
+                        var row = 1;
                         // Props
                         Csw.crawlObject(nodeObj.props, function (propObj) {
                             if (propObj.fieldtype === "Button") {
 
                                 // Object Class Buttons
                                 var propDiv = btnTable.cell(1, btncol).div();
-                                
+
                                 $.CswFieldTypeFactory('make', {
                                     nodeid: nodeid,
                                     fieldtype: propObj.fieldtype,
@@ -195,7 +195,7 @@
                                     propid: propObj.propid,
                                     propDiv: propDiv,
                                     propData: propObj.propData,
-                                    ID: Csw.makeId(o.ID, propObj.id, 'tbl' ),
+                                    ID: Csw.makeId(o.ID, propObj.id, 'tbl'),
                                     EditMode: Csw.enums.editMode.Table,
                                     doSave: function (saveoptions) {
                                         // Nothing to save in this case, so just call onSuccess
@@ -208,13 +208,14 @@
                                 btncol += 1;
 
                             } else {
-                                texttable.cell(propObj.row, propObj.column).span({ text: propObj.propname + ': ' + propObj.gestalt });
+                                texttable.cell(Csw.number(propObj.row, row), Csw.number(propObj.column, 1)).span({ text: propObj.propname + ': ' + propObj.gestalt });
+                                row += 1;
                                 //maintextcell.br();
                             }
                         });
 
                         // System Buttons
-                        if (o.allowEdit && ( nodeObj.allowview || nodeObj.allowedit ) ) {
+                        if (o.allowEdit && (nodeObj.allowview || nodeObj.allowedit)) {
                             var btntext = "View";
                             if (nodeObj.allowedit) {
                                 btntext = "Edit";
@@ -255,7 +256,7 @@
                             }); // CswButton
                             btncol += 1;
                         } // if (nodeObj.allowdelete)
-                        
+
                         if (false === Csw.isNullOrEmpty(o.extraAction)) {
                             Csw.debug.assert(Csw.number(o.extraActionIcon) > 0, 'No icon specified for extraAction.');
                             Csw.debug.assert(Csw.isFunction(o.onExtraAction), 'No method specified for extraAction.');
