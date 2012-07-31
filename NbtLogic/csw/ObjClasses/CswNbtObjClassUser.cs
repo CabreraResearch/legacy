@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.Actions;
@@ -125,6 +126,18 @@ namespace ChemSW.Nbt.ObjClasses
 
         public Int32 PasswordPropertyId { get { return PasswordProperty.NodeTypePropId; } }
         public bool PasswordIsExpired { get { return PasswordProperty.IsExpired; } }
+
+        public static string getValidUserName( string Name )
+        {
+            return Regex.Replace( Name, "[^a-zA-Z0-9_]+", "" );
+        }
+
+        public static bool IsUserNameUnique( CswNbtResources Resources, string UserName )
+        {
+            CswNbtObjClassUser ExistingUserNode = Resources.Nodes.makeUserNodeFromUsername( UserName );
+            return ( null != ExistingUserNode &&
+                     CswTools.IsPrimaryKey( ExistingUserNode.NodeId ) );
+        }
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {

@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
-using System.Data;
 using System.Linq;
-using ChemSW.Core;
-using ChemSW.DB;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 
@@ -83,7 +80,7 @@ namespace ChemSW.Nbt.Schema
                     if( null != User )
                     {
                         UserNt = UserNt ?? User.NodeType;
-                        RoleIdsWithUsers.Add(User.RoleId.PrimaryKey);
+                        RoleIdsWithUsers.Add( User.RoleId.PrimaryKey );
                         if( null == User.WorkUnitProperty.RelatedNodeId || Int32.MinValue == User.WorkUnitProperty.RelatedNodeId.PrimaryKey )
                         {
                             User.WorkUnitProperty.RelatedNodeId = DefaultWorkUnit.NodeId;
@@ -97,40 +94,44 @@ namespace ChemSW.Nbt.Schema
                 }
 
                 CswNbtMetaDataObjectClass RoleOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.RoleClass );
-                if(null == UserNt)
+                if( null == UserNt )
                 {
                     UserNt = UserOc.getLatestVersionNodeTypes().FirstOrDefault();
                 }
                 if( null != UserNt )
                 {
-                    foreach (CswNbtObjClassRole Role in RoleOc.getNodes(true, false))
+                    foreach( CswNbtObjClassRole Role in RoleOc.getNodes( true, false ) )
                     {
-                        if (null != Role && false == RoleIdsWithUsers.Contains(Role.NodeId.PrimaryKey))
+                        if( null != Role && false == RoleIdsWithUsers.Contains( Role.NodeId.PrimaryKey ) )
                         {
-                            CswNbtObjClassUser NewUser = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId(UserNt.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode, OverrideUniqueValidation: false);
-                            NewUser.IsDemo = false;
-                            NewUser.Role.RelatedNodeId = Role.NodeId;
-                            NewUser.UsernameProperty.Text = Role.Name.Text.ToLower();
-                            NewUser.WorkUnitProperty.RelatedNodeId = DefaultWorkUnit.NodeId;
-                            if (null != DefaultLocation)
+                            string ValidUserName = CswNbtObjClassUser.getValidUserName( Role.Name.Text.ToLower() );
+                            if( CswNbtObjClassUser.IsUserNameUnique( _CswNbtSchemaModTrnsctn.MetaData._CswNbtMetaDataResources.CswNbtResources, ValidUserName ) )
                             {
-                                NewUser.DefaultLocationProperty.SelectedNodeId = DefaultLocation.NodeId;
+                                CswNbtObjClassUser NewUser = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( UserNt.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode, OverrideUniqueValidation: false );
+                                NewUser.IsDemo = false;
+                                NewUser.Role.RelatedNodeId = Role.NodeId;
+                                NewUser.UsernameProperty.Text = ValidUserName;
+                                NewUser.WorkUnitProperty.RelatedNodeId = DefaultWorkUnit.NodeId;
+                                if( null != DefaultLocation )
+                                {
+                                    NewUser.DefaultLocationProperty.SelectedNodeId = DefaultLocation.NodeId;
+                                }
+                                NewUser.PasswordProperty.Password = Role.Name.Text.ToLower();
+                                NewUser.postChanges( ForceUpdate: false );
                             }
-                            NewUser.PasswordProperty.Password = Role.Name.Text.ToLower();
-                            NewUser.postChanges(ForceUpdate: false);
                         }
                     }
                 }
                 CswNbtMetaDataObjectClass IgPermissionOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.InventoryGroupPermissionClass );
-                foreach (CswNbtObjClassInventoryGroupPermission Permission in IgPermissionOc.getNodes(true, false))
+                foreach( CswNbtObjClassInventoryGroupPermission Permission in IgPermissionOc.getNodes( true, false ) )
                 {
-                    if(null != Permission)
+                    if( null != Permission )
                     {
-                        if(null != DefaultNodeAsInventoryGroup && ( null == Permission.InventoryGroup.RelatedNodeId || Int32.MinValue == Permission.InventoryGroup.RelatedNodeId.PrimaryKey ) )
+                        if( null != DefaultNodeAsInventoryGroup && ( null == Permission.InventoryGroup.RelatedNodeId || Int32.MinValue == Permission.InventoryGroup.RelatedNodeId.PrimaryKey ) )
                         {
                             Permission.InventoryGroup.RelatedNodeId = DefaultNodeAsInventoryGroup.NodeId;
                         }
-                        if(null == Permission.WorkUnit.RelatedNodeId || Int32.MinValue == Permission.WorkUnit.RelatedNodeId.PrimaryKey)
+                        if( null == Permission.WorkUnit.RelatedNodeId || Int32.MinValue == Permission.WorkUnit.RelatedNodeId.PrimaryKey )
                         {
                             Permission.WorkUnit.RelatedNodeId = DefaultWorkUnit.NodeId;
                         }
@@ -147,20 +148,20 @@ namespace ChemSW.Nbt.Schema
 
             CswNbtObjClassVendor DefaultVendor = null;
             CswNbtMetaDataNodeType VendorNt = VendorOc.getLatestVersionNodeTypes().FirstOrDefault();
-            if(null != VendorNt)
+            if( null != VendorNt )
             {
-                DefaultVendor = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId(VendorNt.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode, OverrideUniqueValidation: false);
+                DefaultVendor = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( VendorNt.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode, OverrideUniqueValidation: false );
                 DefaultVendor.VendorName.Text = "Default Vendor";
                 DefaultVendor.IsDemo = true;
-                DefaultVendor.postChanges(ForceUpdate: false);
+                DefaultVendor.postChanges( ForceUpdate: false );
             }
             CswNbtMetaDataNodeType SizeNt = SizeOc.getLatestVersionNodeTypes().FirstOrDefault();
             CswNbtMetaDataNodeType SynonymNt = SynonymOc.getLatestVersionNodeTypes().FirstOrDefault();
             CswNbtObjClassUnitOfMeasure DefaultSizeUnit = null;
             CswNbtObjClassUnitOfMeasure DefaultTimeUnit = null;
-            foreach (CswNbtObjClassUnitOfMeasure Unit in UnitOc.getNodes(true, false))
+            foreach( CswNbtObjClassUnitOfMeasure Unit in UnitOc.getNodes( true, false ) )
             {
-                if(null != Unit )
+                if( null != Unit )
                 {
                     if( Unit.Name.Text.ToLower() == "g" )
                     {
@@ -173,45 +174,45 @@ namespace ChemSW.Nbt.Schema
                 }
             }
 
-            foreach (CswNbtMetaDataNodeType MaterialNt in MaterialOc.getLatestVersionNodeTypes())
+            foreach( CswNbtMetaDataNodeType MaterialNt in MaterialOc.getLatestVersionNodeTypes() )
             {
-                CswNbtObjClassMaterial Material = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId(MaterialNt.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode, OverrideUniqueValidation: false);
+                CswNbtObjClassMaterial Material = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( MaterialNt.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode, OverrideUniqueValidation: false );
                 Material.IsDemo = true;
                 Material.TradeName.Text = "Default " + MaterialNt.NodeTypeName;
-                if(null != DefaultVendor)
+                if( null != DefaultVendor )
                 {
                     Material.Supplier.RelatedNodeId = DefaultVendor.NodeId;
                 }
                 Material.PartNumber.Text = "658-35AB";
                 Material.PhysicalState.Value = CswNbtObjClassMaterial.PhysicalStates.Solid;
                 Material.ExpirationInterval.Quantity = 1;
-                if(null != DefaultTimeUnit)
+                if( null != DefaultTimeUnit )
                 {
                     Material.ExpirationInterval.UnitId = DefaultTimeUnit.NodeId;
                 }
-                Material.postChanges(ForceUpdate: false);
-                
-                if(null != SizeNt)
+                Material.postChanges( ForceUpdate: false );
+
+                if( null != SizeNt )
                 {
-                    CswNbtObjClassSize Size = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId(SizeNt.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode, OverrideUniqueValidation: false);
+                    CswNbtObjClassSize Size = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( SizeNt.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode, OverrideUniqueValidation: false );
                     Size.IsDemo = true;
                     Size.Material.RelatedNodeId = Material.NodeId;
                     Size.CatalogNo.Text = "NE-H5/3";
                     Size.InitialQuantity.Quantity = 1;
-                    if(null != DefaultSizeUnit)
+                    if( null != DefaultSizeUnit )
                     {
                         Size.InitialQuantity.UnitId = DefaultSizeUnit.NodeId;
                     }
-                    Size.postChanges(ForceUpdate: false);
+                    Size.postChanges( ForceUpdate: false );
                 }
 
-                if(null != SynonymNt)
+                if( null != SynonymNt )
                 {
-                    CswNbtObjClassMaterialSynonym Synonym = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId(SynonymNt.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode, OverrideUniqueValidation: false);
+                    CswNbtObjClassMaterialSynonym Synonym = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( SynonymNt.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode, OverrideUniqueValidation: false );
                     Synonym.IsDemo = true;
                     Synonym.Material.RelatedNodeId = Material.NodeId;
                     Synonym.Name.Text = Material.TradeName.Text + " Synonym";
-                    Synonym.postChanges(ForceUpdate: false);
+                    Synonym.postChanges( ForceUpdate: false );
                 }
             }
 
