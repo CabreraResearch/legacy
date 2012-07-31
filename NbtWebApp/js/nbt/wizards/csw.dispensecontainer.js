@@ -62,7 +62,7 @@
                     dispenseModes: {
                         Direct: 'Direct',
                         RequestMaterial: 'RequestMaterial',
-                        RequestContainer: 'RequestContainer',
+                        RequestContainer: 'RequestContainer'
                     },
                     printBarcodes: false
                 };
