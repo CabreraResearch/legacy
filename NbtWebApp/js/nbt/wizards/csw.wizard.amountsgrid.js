@@ -8,9 +8,8 @@
             ///<summary>Creates an amounts thin grid with an Add form.</summary>
             var cswPublic = {
                 quantities: [],
-                countControl: null,
                 qtyControl: null,
-                sizesControl: null,
+                sizeControl: null,
                 barcodeControl: null,
                 amountForm: null,
                 thinGrid: null,
@@ -35,10 +34,10 @@
                     materialId: null,
                     rows: [],
                     config: {
-                        barcodeName: 'Barcodes (Optional)',
-                        quantityName: 'Net Quantity *',
+                        numberName: 'No. Containers *',
                         sizeName: 'Size *',
-                        numberName: 'No. Containers *'
+                        quantityName: 'Net Quantity *',                                                
+                        barcodeName: 'Barcodes (Optional)'
                     },
                     customBarcodes: false
                 };
@@ -96,12 +95,7 @@
                     if (Csw.isNullOrEmpty(cswParent)) {
                         Csw.error.throwException(Csw.error.exception('Cannot create a Wizard amounts grid without a parent.', '', 'csw.wizard.amountsgrid.js', 22));
                     }
-                    if (Csw.isNullOrEmpty(cswPrivate.quantity)) {
-                        cswPrivate.getQuantity();
-                    }
-
                     cswPrivate.count = 0;
-
                     cswParent.br({ number: 2 });
                     cswParent.span({ text: '<b>Enter the Amounts to ' + cswPrivate.action + ':</b>' });
                     cswParent.br({ number: 2 });
@@ -153,7 +147,7 @@
 
                             switch (columnName) {
                                 case cswPrivate.config.numberName:
-                                    cswPublic.countControl = cswCell.numberTextBox({
+                                    var countControl = cswCell.numberTextBox({
                                         ID: Csw.tryExec(cswPrivate.makeId, 'containerCount'),
                                         value: thisAmount.containerNo,
                                         MinValue: cswPrivate.containerMinimum,
@@ -168,8 +162,9 @@
                                     });
                                     break;
                                 case cswPrivate.config.sizeName:
-                                    cswPublic.sizesControl = cswCell.nodeSelect({
+                                    cswPublic.sizeControl = cswCell.nodeSelect({
                                         ID: Csw.tryExec(cswPrivate.makeId, 'sizes'),
+                                        async: false,
                                         objectClassName: 'SizeClass',
                                         relatedTo: {
                                             objectClassName: 'MaterialClass',
@@ -179,7 +174,7 @@
 
                                         },
                                         onSelect: function () {
-                                            cswPrivate.selectedSizeId = cswPublic.sizesControl.selectedNodeId();
+                                            cswPrivate.selectedSizeId = cswPublic.sizeControl.selectedNodeId();
                                             cswPrivate.getQuantity();
                                             cswPublic.qtyControl.quantityTextBox.val(cswPrivate.quantity.value);
                                             cswPublic.qtyControl.quantityValue = cswPrivate.quantity.value;
@@ -187,8 +182,10 @@
                                             cswPublic.qtyControl.unitText = cswPrivate.quantity.name;
                                         }
                                     });
+                                    cswPrivate.selectedSizeId = cswPublic.sizeControl.selectedNodeId();                                    
                                     break;
                                 case cswPrivate.config.quantityName:
+                                    cswPrivate.getQuantity();
                                     cswPrivate.quantity.ID = Csw.tryExec(cswPrivate.makeId, 'containerQuantity');
                                     cswPrivate.quantity.qtyWidth = (7 * 8) + 'px'; //7 characters wide, 8 is the characters-to-pixels ratio                                    
                                     cswPublic.qtyControl = cswCell.quantity(cswPrivate.quantity);
@@ -227,8 +224,8 @@
                                     //we need to make sure the columns here match the header columns
                                     var formCols = [newAmount.containerNo];
                                     if (false === Csw.isNullOrEmpty(cswPrivate.materialId) && cswPrivate.action === 'Receive') {
-                                        newAmount.sizeid = cswPublic.sizesControl.selectedNodeId();
-                                        newAmount.sizename = cswPublic.sizesControl.selectedText();
+                                        newAmount.sizeid = cswPublic.sizeControl.selectedNodeId();
+                                        newAmount.sizename = cswPublic.sizeControl.selectedText();
                                         formCols = formCols.concat([newAmount.sizename]);
                                     }
                                     formCols = formCols.concat([newAmount.quantity + ' ' + newAmount.unit]);

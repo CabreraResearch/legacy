@@ -105,21 +105,6 @@
                     }
                 };
 
-                cswPrivate.getQuantity = function (async) {
-                    var ret = Csw.bool(async);                    
-                    //We may need to block (async==false) if we're validating prior to changing steps.
-                    Csw.ajax.post({
-                        urlMethod: 'getQuantity',
-                        async: Csw.bool(async),
-                        data: { SizeId: cswPrivate.state.selectedSizeId, Action: 'Receive' },
-                        success: function (data) {
-                            cswPrivate.state.quantity = data;
-                            ret = false === Csw.isNullOrEmpty(cswPrivate.state.quantity);
-                        }
-                    });
-                    return ret;
-                };
-
                 cswPrivate.finalize = function () {
                     var container = {
                         materialid: cswPrivate.state.materialId,
@@ -193,9 +178,6 @@
                         cswPrivate.divStep1 = cswPrivate.divStep1 || cswPrivate.wizard.div(1);
                         cswPrivate.divStep1.empty();
 
-                        cswPrivate.divStep1.span({ text: 'Select a Size of ' + cswPrivate.state.tradeName + ' to receive. Then define the container quantities to create.' });
-                        cswPrivate.divStep1.br({ number: 2 });
-
                         //If multiple container nodetypes exist
                         cswPrivate.container = {};
                         var containerSelect = Csw.nbt.wizard.nodeTypeSelect(cswPrivate.divStep1, {
@@ -210,40 +192,12 @@
                                 cswPrivate.state.containerNodeTypeId = containerSelect.selectedNodeTypeId;
                             },
                             onSuccess: function (types, nodetypecount) {
-                                makeSizeSelect();
+                                makeAmountsGrid();
+                                makeBarcodeCheckBox();
                             }
-                        });
-
-                        var makeSizeSelect = function () {
-
-                            cswPrivate.sizeDiv = cswPrivate.sizeDiv || cswPrivate.divStep1.div();
-                            cswPrivate.sizeDiv.empty();
-
-                            cswPrivate.sizeDiv.span({ text: '<b>Pick a Size:</b>' });
-                            cswPrivate.sizeDiv.br({ number: 2 });
-
-                            cswPrivate.sizeSelect = cswPrivate.sizeDiv.nodeSelect({
-                                ID: cswPrivate.wizard.makeStepId('sizes'),
-                                objectClassName: 'SizeClass',
-                                relatedTo: {
-                                    objectClassName: 'MaterialClass',
-                                    nodeId: cswPrivate.state.materialId
-                                },
-                                onSuccess: function () {
-                                    makeAmountsGrid();
-                                    makeBarcodeCheckBox();
-                                },
-                                onSelect: function () {
-                                    makeAmountsGrid();
-                                    makeBarcodeCheckBox();
-                                }
-                            });
-                        };
+                        });                        
 
                         var makeAmountsGrid = function () {
-                            cswPrivate.state.selectedSizeId = cswPrivate.sizeSelect.selectedNodeId();
-                            cswPrivate.getQuantity(false);
-
                             cswPrivate.amountsDiv = cswPrivate.amountsDiv || cswPrivate.divStep1.div();
                             cswPrivate.amountsDiv.empty();
 
