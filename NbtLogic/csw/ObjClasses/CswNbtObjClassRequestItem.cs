@@ -259,6 +259,21 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault.afterDeleteNode();
         }//afterDeleteNode()        
 
+        private void _setOptionsForCurrentUser()
+        {
+            if( CswTools.IsPrimaryKey( Request.RelatedNodeId ) &&
+                Status.Value != Statuses.Cancelled &&
+                Status.Value != Statuses.Completed )
+            {
+                CswNbtObjClassRequest NodeAsRequest = _CswNbtResources.Nodes[Request.RelatedNodeId];
+                if( null != NodeAsRequest &&
+                    _CswNbtResources.CurrentNbtUser.UserId == NodeAsRequest.Requestor.RelatedNodeId )
+                {
+                    Fulfill.setHidden(value: true, SaveToDb: false);
+                }
+            }
+        }
+
         public override void afterPopulateProps()
         {
             Quantity.SetOnPropChange( OnQuantityPropChange );
@@ -269,6 +284,7 @@ namespace ChemSW.Nbt.ObjClasses
             Material.SetOnPropChange( OnMaterialPropChange );
             Container.SetOnPropChange( OnContainerPropChange );
             Status.SetOnPropChange( OnStatusPropChange );
+            _setOptionsForCurrentUser();
             _CswNbtObjClassDefault.afterPopulateProps();
         }//afterPopulateProps()
 
@@ -278,40 +294,6 @@ namespace ChemSW.Nbt.ObjClasses
             //ParentRelationship.View.AddViewPropertyAndFilter( ParentRelationship, StatusOcp, Statuses.Pending.ToString() );
 
             _CswNbtObjClassDefault.addDefaultViewFilters( ParentRelationship );
-        }
-
-        private string _getNextStatus( string ButtonText )
-        {
-            string Ret = Status.Value;
-            switch( ButtonText )
-            {
-                case FulfillMenu.Cancel:
-                    Ret = Statuses.Cancelled;
-                    break;
-                case FulfillMenu.Complete:
-                    Ret = Statuses.Completed;
-                    break;
-                case FulfillMenu.Move:
-                    Ret = Statuses.Moved;
-                    break;
-                case FulfillMenu.Dispose:
-                    Ret = Statuses.Disposed;
-                    break;
-                case FulfillMenu.Dispense:
-                    Ret = Statuses.Dispensed;
-                    break;
-                case FulfillMenu.Order:
-                    Ret = Statuses.Ordered;
-                    break;
-                case FulfillMenu.Receive:
-                    Ret = Statuses.Received;
-                    break;
-            }
-            if( FulfillMenu.Options.IndexOf( Status.Value ) >= FulfillMenu.Options.IndexOf( ButtonText ) )
-            {
-                Ret = Status.Value;
-            }
-            return Ret;
         }
 
         public override bool onButtonClick( NbtButtonData ButtonData )
@@ -411,7 +393,7 @@ namespace ChemSW.Nbt.ObjClasses
                                 break;
                         } //switch( ButtonData.SelectedText )
 
-                        //Status.Value = _getNextStatus( ButtonData.SelectedText );
+                        Status.Value = _getNextStatus( ButtonData.SelectedText );
                         postChanges( true );
                         ButtonData.Data["requestitem"] = ButtonData.Data["requestitem"] ?? new JObject();
                         ButtonData.Data["requestitem"]["requestitemid"] = NodeId.ToString();
@@ -423,7 +405,50 @@ namespace ChemSW.Nbt.ObjClasses
             }
             return true;
         }
-        #endregion
+
+        private string _getNextStatus( string ButtonText )
+        {
+            string Ret = Status.Value;
+            switch( ButtonText )
+            {
+                case FulfillMenu.Cancel:
+                    Ret = Statuses.Cancelled;
+                    break;
+                case FulfillMenu.Complete:
+                    Ret = Statuses.Completed;
+                    break;
+            }
+            return Ret;
+        }
+
+        public void setNextStatus( string StatusVal )
+        {
+            switch(Status.Value)
+            {
+                case Statuses.Submitted:
+                    if( StatusVal == Statuses.Dispensed || StatusVal == Statuses.Disposed || StatusVal == Statuses.Moved || StatusVal == Statuses.Received || StatusVal == Statuses.Cancelled || StatusVal == Statuses.Completed )
+                    {
+                        Status.Value = StatusVal;
+                    }
+                    break;
+                case Statuses.Received:
+                    if( StatusVal == Statuses.Dispensed || StatusVal == Statuses.Cancelled || StatusVal == Statuses.Completed )
+                    {
+                        Status.Value = StatusVal;
+                    }
+                    break;
+                case Statuses.Dispensed:
+                case Statuses.Moved:
+                case Statuses.Disposed:
+                    if( StatusVal == Statuses.Cancelled || StatusVal == Statuses.Completed )
+                    {
+                        Status.Value = StatusVal;
+                    }
+                    break;
+            }
+        }
+
+       #endregion
 
         #region Object class specific properties
 
@@ -652,6 +677,7 @@ namespace ChemSW.Nbt.ObjClasses
             else if( Type.Value == Types.Request || Type.Value == Types.Dispense )
             {
                 Fulfill.State = FulfillMenu.Dispense;
+                Status.Value = Statuses.Dispensed;
             }
         }
 

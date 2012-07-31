@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using ChemSW.Core;
+using ChemSW.Nbt.csw.Conversion;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
-using ChemSW.Nbt.csw.Conversion;
-using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.ObjClasses
 {
@@ -15,13 +14,13 @@ namespace ChemSW.Nbt.ObjClasses
     {
         #region Static Properties
 
-        public static string SourceContainerPropertyName { get { return "Source Container"; } }
-        public static string DestinationContainerPropertyName { get { return "Destination Container"; } }
-        public static string QuantityDispensedPropertyName { get { return "Quantity Dispensed"; } }
-        public static string TypePropertyName { get { return "Dispense Type"; } }
-        public static string DispensedDatePropertyName { get { return "Dispensed Date"; } }
-        public static string RemainingSourceContainerQuantityPropertyName { get { return "Remaining Source Container Quantity"; } }
-        public static string RequestItemPropertyName { get { return "Request Item"; } }
+        public const string SourceContainerPropertyName = "Source Container";
+        public const string DestinationContainerPropertyName = "Destination Container";
+        public const string QuantityDispensedPropertyName = "Quantity Dispensed";
+        public const string TypePropertyName = "Dispense Type";
+        public const string DispensedDatePropertyName = "Dispensed Date";
+        public const string RemainingSourceContainerQuantityPropertyName = "Remaining Source Container Quantity";
+        public const string RequestItemPropertyName = "Request Item";
 
         public sealed class DispenseType : CswEnum<DispenseType>
         {
@@ -37,22 +36,27 @@ namespace ChemSW.Nbt.ObjClasses
             /// Add new (child) containers with material specified in existing source container (no parent container)
             /// </summary>
             public static readonly DispenseType Receive = new DispenseType( "Receive" );
+
             /// <summary>
             /// Transfer material from a source (parent) container to zero or more destination (child) containers
             /// </summary>
             public static readonly DispenseType Dispense = new DispenseType( "Dispense" );
+
             /// <summary>
             /// Transfer material from a source (parent) container to an undocumented location (no child containers)
             /// </summary>
             public static readonly DispenseType Waste = new DispenseType( "Waste" );
+
             /// <summary>
             /// Empty material from a source (parent) container and mark as disposed (no child containers)
             /// </summary>
             public static readonly DispenseType Dispose = new DispenseType( "Dispose" );
+
             /// <summary>
             /// Add material to an existing source container (no parent container, no child containers)
             /// </summary>
             public static readonly DispenseType Add = new DispenseType( "Add" );
+
         }
 
         #endregion
@@ -173,7 +177,7 @@ namespace ChemSW.Nbt.ObjClasses
         }
         private void OnRequestItemPropChange( CswNbtNodeProp Prop )
         {
-            if( null != RequestItem.RelatedNodeId && 
+            if( null != RequestItem.RelatedNodeId &&
                 Int32.MinValue != RequestItem.RelatedNodeId.PrimaryKey )
             {
                 Int32 RequestItemOriginalValue = CswConvert.ToInt32( RequestItem.GetOriginalPropRowValue( CswNbtSubField.SubFieldName.NodeID ) );
@@ -183,7 +187,19 @@ namespace ChemSW.Nbt.ObjClasses
                     if( null != NodeAsRequestItem )
                     {
                         CswNbtUnitConversion Conversion = new CswNbtUnitConversion( _CswNbtResources, QuantityDispensed.UnitId, NodeAsRequestItem.TotalDispensed.UnitId, NodeAsRequestItem.Material.RelatedNodeId );
-                        NodeAsRequestItem.TotalDispensed.Quantity -= Conversion.convertUnit( QuantityDispensed.Quantity );  // Subtracting a negative number in order to add
+                        if( Type.Value == DispenseType.Dispense.ToString() )
+                        {
+                            NodeAsRequestItem.setNextStatus( CswNbtObjClassRequestItem.Statuses.Dispensed );
+                            NodeAsRequestItem.TotalDispensed.Quantity -= Conversion.convertUnit( QuantityDispensed.Quantity );  // Subtracting a negative number in order to add
+                        }
+                        else if( Type.Value == DispenseType.Dispose.ToString() )
+                        {
+                            NodeAsRequestItem.setNextStatus( CswNbtObjClassRequestItem.Statuses.Disposed );
+                        }
+                        else if( Type.Value == DispenseType.Receive.ToString() )
+                        {
+                            NodeAsRequestItem.setNextStatus( CswNbtObjClassRequestItem.Statuses.Received );
+                        }
                         NodeAsRequestItem.postChanges( true );
                     }
                 }
