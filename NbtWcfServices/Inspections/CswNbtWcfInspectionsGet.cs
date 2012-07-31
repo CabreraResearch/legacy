@@ -217,13 +217,13 @@ namespace NbtWebAppServices.Response
                 for( Int32 I = 0; I < ChildNodeCount; I += 1 )
                 {
                     Tree.goToNthChild( I );
-                    CswNbtNode NodeForCurrentPosition = Tree.getNodeForCurrentPosition();
-                    if( false == NodeForCurrentPosition.Locked )
+                    if( false == Tree.getNodeLockedForCurrentPosition() )
                     {
-                        if (NodeForCurrentPosition.ObjClass.ObjectClass.ObjectClass == _InspectionDesignOc.ObjectClass)
+                        CswNbtNode NodeForCurrentPosition = Tree.getNodeForCurrentPosition();
+                        if( NodeForCurrentPosition.ObjClass.ObjectClass.ObjectClass == _InspectionDesignOc.ObjectClass )
                         {
-                            _addNodeTypeInspectionDesignToResponse(NodeForCurrentPosition);
-                            _addInspectionDesignNodeNodeToResponse(NodeForCurrentPosition);
+                            _addNodeTypeInspectionDesignToResponse( NodeForCurrentPosition );
+                            _addInspectionDesignNodeNodeToResponse( NodeForCurrentPosition );
                         }
                     }
                     if( Tree.getChildNodeCount() > 0 )
