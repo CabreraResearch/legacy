@@ -215,11 +215,8 @@
                         });
 
                         // System Buttons
-                        if (o.allowEdit && (nodeObj.allowview || nodeObj.allowedit)) {
-                            var btntext = "View";
-                            if (nodeObj.allowedit) {
-                                btntext = "Edit";
-                            }
+                        if (Csw.bool(o.allowEdit) && (Csw.bool(nodeObj.allowview) || Csw.bool(nodeObj.allowedit))) {
+                            
                             btnTable.cell(1, btncol).buttonExt({
                                 ID: Csw.makeId(o.ID, nodeid, 'editbtn'),
                                 enabledText: 'Edit',
@@ -238,7 +235,7 @@
                             btncol += 1;
                         } // if (nodeObj.allowview || nodeObj.allowedit) 
 
-                        if (o.allowDelete && nodeObj.allowdelete) {
+                        if (Csw.bool(o.allowDelete) && Csw.bool(nodeObj.allowdelete)) {
                             btnTable.cell(1, btncol).buttonExt({
                                 ID: Csw.makeId(o.ID, nodeid, 'delbtn'),
                                 enabledText: 'Delete',
