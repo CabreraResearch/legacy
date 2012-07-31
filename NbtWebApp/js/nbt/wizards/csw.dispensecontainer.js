@@ -52,7 +52,7 @@
                         Dispense: 'Dispense into a Child Container',
                         Use: 'Dispense for Use',
                         Add: 'Add Material to Container',
-                        Waste: 'Waste Material'                       
+                        Waste: 'Waste Material'
                     },
                     divStep1: '',
                     divStep2: '',
@@ -168,6 +168,8 @@
                                         cswPrivate.dispenseTypes.Waste
                                     ];
 
+                                    cswPrivate.state.dispenseType = cswPrivate.dispenseTypes.Dispense;
+
                                     var dispenseTypeRadioGroup = cswPrivate.divStep1.radiobutton({
                                         ID: 'dispensetypes',
                                         names: dispenseTypesArray,
@@ -178,7 +180,8 @@
                                                 }
                                                 cswPrivate.state.dispenseType = dispenseTypeRadioGroup.val();
                                             }
-                                        }
+                                        },
+                                        checkedIndex: 0
                                     });
                                 }
                             };
