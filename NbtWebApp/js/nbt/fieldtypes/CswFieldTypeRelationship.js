@@ -155,7 +155,7 @@
                                 .buttonExt({
                                     icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.add),
                                     size: 'small',
-                                    tooltip: { title: 'Add New " + o.propData.name' },
+                                    tooltip: { title: 'Add New ' + o.propData.name },
                                     onClick: function () {
                                         if (false === Csw.isNullOrEmpty(nodeTypeId)) {
                                             openAddNodeDialog(nodeTypeId);
