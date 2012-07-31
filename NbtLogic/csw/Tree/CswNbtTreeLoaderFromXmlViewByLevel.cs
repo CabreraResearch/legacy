@@ -194,7 +194,8 @@ namespace ChemSW.Nbt
                                                      CswConvert.ToString( NodesRow["field1"] ),
                                                      CswConvert.ToString( NodesRow["field2"] ),
                                                      CswConvert.ToInt32( NodesRow["field1_fk"] ),
-                                                     CswConvert.ToDouble( NodesRow["field1_numeric"] ) );
+                                                     CswConvert.ToDouble( NodesRow["field1_numeric"] ),
+                                                     CswConvert.ToBoolean( NodesRow["hidden"] ) );
 
                         } // foreach( CswNbtNodeKey NewNodeKey in NewNodeKeys )
                         if( ParentNodeKeys.Count > 0 )
@@ -504,7 +505,7 @@ namespace ChemSW.Nbt
                         From += @"   ) props on (props.nodetypeid = t.nodetypeid)";  // intentional multiplexing
 
                         // Property Values
-                        Select += @" ,propval.jctnodepropid, propval.gestalt, propval.field1, propval.field2, propval.field1_fk, propval.field1_numeric ";
+                        Select += @" ,propval.jctnodepropid, propval.gestalt, propval.field1, propval.field2, propval.field1_fk, propval.field1_numeric, propval.hidden ";
                         From += @"  left outer join jct_nodes_props propvaljoin on (props.nodetypepropid = propvaljoin.nodetypepropid and propvaljoin.nodeid = n.nodeid) ";  // better performance from indexes if we do this first
                         From += @"  left outer join jct_nodes_props propval on (propval.jctnodepropid = propvaljoin.jctnodepropid) ";
 

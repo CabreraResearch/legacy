@@ -2,13 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using ChemSW.Core;
-using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.ServiceDrivers;
 using ChemSW.Nbt.Statistics;
 using Newtonsoft.Json.Linq;
-using ChemSW.Nbt.ObjClasses;
 
 namespace ChemSW.Nbt.WebServices
 {
@@ -144,7 +142,7 @@ namespace ChemSW.Nbt.WebServices
                 ret["nodekey"] = NodeKey.ToString();
             }
             ret["locked"] = Locked.ToString().ToLower();
-            ret["disabled"] = (false == Included).ToString().ToLower();
+            ret["disabled"] = ( false == Included ).ToString().ToLower();
 
             //CswNbtViewRelationship ViewRel = (CswNbtViewRelationship) View.FindViewNodeByUniqueId( NodeKey.ViewNodeUniqueId );
             bool CanView = _CswNbtResources.Permit.can( Security.CswNbtPermit.NodeTypePermission.View, NodeType );
@@ -156,9 +154,9 @@ namespace ChemSW.Nbt.WebServices
                 CanEdit = CanEdit && ViewRel.AllowEdit;
                 CanDelete = CanDelete && ViewRel.AllowDelete;
             }
-            ret["allowview"] = CanView.ToString().ToLower();
-            ret["allowedit"] = CanEdit.ToString().ToLower();
-            ret["allowdelete"] = CanDelete.ToString().ToLower();
+            ret["allowview"] = CanView;
+            ret["allowedit"] = CanEdit;
+            ret["allowdelete"] = CanDelete;
 
             if( NodeType != null )
             {
@@ -196,64 +194,66 @@ namespace ChemSW.Nbt.WebServices
             Int32 OrderCnt = 100;
             foreach( JObject PropElm in TreeProps )
             {
-                Int32 NodeTypePropId = CswConvert.ToInt32( PropElm["nodetypepropid"].ToString() );
-                if( PropsToHide == null || false == PropsToHide.Contains( NodeTypePropId ) )
+                if( false == CswConvert.ToBoolean( PropElm["hidden"] ) )
                 {
-                    CswPropIdAttr PropId = new CswPropIdAttr( NodeId, NodeTypePropId );
-                    string FieldType = PropElm["fieldtype"].ToString();
-                    string PropName = PropElm["propname"].ToString();
-                    string Gestalt = PropElm["gestalt"].ToString();
-                    Int32 JctNodePropId = CswConvert.ToInt32( PropElm["jctnodepropid"].ToString() );
-
-                    // Special case: Image becomes thumbnail
-                    if( FieldType == CswNbtMetaDataFieldType.NbtFieldType.Image.ToString() )
+                    Int32 NodeTypePropId = CswConvert.ToInt32( PropElm["nodetypepropid"].ToString() );
+                    if( PropsToHide == null || false == PropsToHide.Contains( NodeTypePropId ) )
                     {
-                        ret["thumbnailurl"] = CswNbtNodePropImage.getLink( JctNodePropId, NodeId, NodeTypePropId );
-                    }
+                        CswPropIdAttr PropId = new CswPropIdAttr( NodeId, NodeTypePropId );
+                        string FieldType = PropElm["fieldtype"].ToString();
+                        string PropName = PropElm["propname"].ToString();
+                        string Gestalt = PropElm["gestalt"].ToString();
+                        Int32 JctNodePropId = CswConvert.ToInt32( PropElm["jctnodepropid"].ToString() );
 
-                    if( FieldType == CswNbtMetaDataFieldType.NbtFieldType.MOL.ToString() )
-                    {
-                        ret["thumbnailurl"] = CswNbtNodePropMol.getLink( JctNodePropId, NodeId, NodeTypePropId );
-                    }
-                    else
-                    {
-                        JObject ThisProp = new JObject();
-                        ThisProp["propid"] = PropId.ToString();
-                        ThisProp["propname"] = PropName;
-                        ThisProp["gestalt"] = _Truncate( Gestalt );
-                        ThisProp["fieldtype"] = FieldType;
-
-                        if( FieldType == CswNbtMetaDataFieldType.NbtFieldType.Button.ToString() )
+                        // Special case: Image becomes thumbnail
+                        if( FieldType == CswNbtMetaDataFieldType.NbtFieldType.Image.ToString() )
                         {
-                            // Include full info for rendering the button
-                            // This was done in such a way as to prevent instancing the CswNbtNode object, 
-                            // which we don't need for Buttons.
-                            CswNbtMetaDataNodeTypeProp NodeTypeProp = _CswNbtResources.MetaData.getNodeTypeProp( NodeTypePropId );
-
-                            CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources, _CswNbtStatisticsEvents );
-                            JProperty JpPropData = ws.makePropJson( NodeId, NodeTypeProp.FirstEditLayout.TabId, NodeTypeProp, null, Int32.MinValue, Int32.MinValue, string.Empty );
-                            JObject PropData = (JObject) JpPropData.Value;
-
-                            JObject PropValues = new JObject();
-                            CswNbtNodePropButton.AsJSON( NodeTypeProp, PropValues, CswConvert.ToString( PropElm["field2"] ), CswConvert.ToString( PropElm["field1"] ) );
-                            PropData["values"] = PropValues;
-
-                            ThisProp["propData"] = PropData;
+                            ret["thumbnailurl"] = CswNbtNodePropImage.getLink( JctNodePropId, NodeId, NodeTypePropId );
                         }
-                        //if( FieldType == CswNbtMetaDataFieldType.NbtFieldType.Link.ToString() )
-                        if( OrderMap.ContainsKey( NodeTypePropId ) )
+
+                        if( FieldType == CswNbtMetaDataFieldType.NbtFieldType.MOL.ToString() )
                         {
-                            PropObjs.Add( OrderMap[NodeTypePropId], ThisProp );
+                            ret["thumbnailurl"] = CswNbtNodePropMol.getLink( JctNodePropId, NodeId, NodeTypePropId );
                         }
                         else
                         {
-                            PropObjs.Add( OrderCnt, ThisProp );
-                            OrderCnt++;
-                        }
-                    }
-                } // if( false == PropsToHide.Contains( NodeTypePropId ) )
-            } // foreach( XElement PropElm in NodeElm.Elements() )
+                            JObject ThisProp = new JObject();
+                            ThisProp["propid"] = PropId.ToString();
+                            ThisProp["propname"] = PropName;
+                            ThisProp["gestalt"] = _Truncate( Gestalt );
+                            ThisProp["fieldtype"] = FieldType;
 
+                            if( FieldType == CswNbtMetaDataFieldType.NbtFieldType.Button.ToString() )
+                            {
+                                // Include full info for rendering the button
+                                // This was done in such a way as to prevent instancing the CswNbtNode object, 
+                                // which we don't need for Buttons.
+                                CswNbtMetaDataNodeTypeProp NodeTypeProp = _CswNbtResources.MetaData.getNodeTypeProp( NodeTypePropId );
+
+                                CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources, _CswNbtStatisticsEvents );
+                                JProperty JpPropData = ws.makePropJson( NodeId, NodeTypeProp.FirstEditLayout.TabId, NodeTypeProp, null, Int32.MinValue, Int32.MinValue, string.Empty );
+                                JObject PropData = (JObject) JpPropData.Value;
+
+                                JObject PropValues = new JObject();
+                                CswNbtNodePropButton.AsJSON( NodeTypeProp, PropValues, CswConvert.ToString( PropElm["field2"] ), CswConvert.ToString( PropElm["field1"] ) );
+                                PropData["values"] = PropValues;
+
+                                ThisProp["propData"] = PropData;
+                            }
+                            //if( FieldType == CswNbtMetaDataFieldType.NbtFieldType.Link.ToString() )
+                            if( OrderMap.ContainsKey( NodeTypePropId ) )
+                            {
+                                PropObjs.Add( OrderMap[NodeTypePropId], ThisProp );
+                            }
+                            else
+                            {
+                                PropObjs.Add( OrderCnt, ThisProp );
+                                OrderCnt++;
+                            }
+                        }
+                    } // if( false == PropsToHide.Contains( NodeTypePropId ) )
+                } //if (false == CswConvert.ToBoolean(PropElm["hidden"]))
+            } // foreach( XElement PropElm in NodeElm.Elements() )
             // insert in order
             JArray PropsArray = new JArray();
             foreach( JObject PropObj in PropObjs.Values )

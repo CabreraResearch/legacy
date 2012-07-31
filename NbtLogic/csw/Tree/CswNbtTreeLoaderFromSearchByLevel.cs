@@ -102,7 +102,8 @@ namespace ChemSW.Nbt
                                                          CswConvert.ToString( NodesRow["field1"] ),
                                                          CswConvert.ToString( NodesRow["field2"] ),
                                                          CswConvert.ToInt32( NodesRow["field1_fk"] ),
-                                                         CswConvert.ToInt32( NodesRow["field1_numeric"] ) );
+                                                         CswConvert.ToInt32( NodesRow["field1_numeric"] ),
+                                                         CswConvert.ToBoolean( NodesRow["hidden"] ) );
 
                             } // foreach( CswNbtNodeKey NewNodeKey in NewNodeKeys )
                         } // if( ThisNTPId != Int32.MinValue )
@@ -176,7 +177,7 @@ namespace ChemSW.Nbt
             string SafeLikeClause = CswTools.SafeSqlLikeClause( _SearchTerm, CswTools.SqlLikeMode.Contains, true );
 
             // Properties
-            Select += @" ,props.nodetypepropid, props.propname, props.fieldtype, propval.jctnodepropid, propval.gestalt, propval.field1, propval.field2, propval.field1_fk, propval.field1_numeric   ";
+            Select += @" ,props.nodetypepropid, props.propname, props.fieldtype, propval.jctnodepropid, propval.gestalt, propval.field1, propval.field2, propval.field1_fk, propval.field1_numeric, propval.hidden   ";
 
             From += @" left outer join (select p.nodetypeid, p.nodetypepropid, p.propname, f.fieldtype, nl.nodetypelayoutid, nl.display_row
                                                   from nodetype_props p

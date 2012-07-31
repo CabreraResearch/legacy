@@ -78,6 +78,7 @@ namespace ChemSW.Nbt
         public const string _AttrName_NodePropField1_Fk = "field1_fk";
         public const string _AttrName_NodePropField1_Numeric = "field1_numeric";
         public const string _AttrName_NodePropFieldType = "fieldtype";
+        public const string _AttrName_NodePropHidden = "hidden";
 
         // NbtNodeGroup element
         public const string _ElemName_NodeGroup = "NbtNodeGroup";
@@ -186,7 +187,8 @@ namespace ChemSW.Nbt
                                       string Field1,
                                       string Field2,
                                       Int32 Field1_Fk,
-                                      double Field1_Numeric )
+                                      double Field1_Numeric,
+                                      bool Hidden )
         {
             // BZ 7135 - write dates in XML format
             string PropValue = Gestalt;
@@ -202,6 +204,7 @@ namespace ChemSW.Nbt
             NewProp[_AttrName_NodePropField1_Fk] = Field1_Fk;
             NewProp[_AttrName_NodePropField1_Numeric] = Field1_Numeric;
             NewProp[_AttrName_NodePropFieldType] = FieldType.ToString();
+            NewProp[_AttrName_NodePropHidden] = Hidden;
             ( (JArray) NodeObj[_AttrName_ChildProps] ).Add( NewProp );
 
         }//_makePropJObject()
@@ -827,10 +830,10 @@ namespace ChemSW.Nbt
             return _getChildProps();
         }
 
-        public void addProperty( Int32 NodeTypePropId, Int32 JctNodePropId, string Name, string Gestalt, CswNbtMetaDataFieldType.NbtFieldType FieldType, string Field1, string Field2, Int32 Field1_Fk, double Field1_Numeric )
+        public void addProperty( Int32 NodeTypePropId, Int32 JctNodePropId, string Name, string Gestalt, CswNbtMetaDataFieldType.NbtFieldType FieldType, string Field1, string Field2, Int32 Field1_Fk, double Field1_Numeric, bool Hidden )
         {
             _checkCurrentNode();
-            _makePropJObject( _CurrentNode, NodeTypePropId, JctNodePropId, Name, Gestalt, FieldType, Field1, Field2, Field1_Fk, Field1_Numeric );
+            _makePropJObject( _CurrentNode, NodeTypePropId, JctNodePropId, Name, Gestalt, FieldType, Field1, Field2, Field1_Fk, Field1_Numeric, Hidden );
 
         }//addProperty()
 

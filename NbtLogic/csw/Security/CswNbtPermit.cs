@@ -160,6 +160,12 @@ namespace ChemSW.Nbt.Security
                             }
 
                             // case 24510
+                            if( NodeType.getObjectClass().ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.ContainerDispenseTransactionClass )
+                            {
+                                ret = Permission != NodeTypePermission.Delete;
+                            }
+
+                            // case 24510
                             if( NodeType.getObjectClass().ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.ContainerClass )
                             {
                                 ret = ret && canContainer( NodeId, Permission, null, User );
@@ -547,13 +553,13 @@ namespace ChemSW.Nbt.Security
                                         ( Action.Name == CswNbtActionName.Submit_Request && PermNodeAsPerm.Request.Checked == Tristate.True ) )
                                     {
                                         ret = true;
-                                    } 
-                                    else if(Action.Name == CswNbtActionName.Receiving)
+                                    }
+                                    else if( Action.Name == CswNbtActionName.Receiving )
                                     {
-                                        foreach ( CswNbtMetaDataNodeType ContainerNt in ContainerOC.getLatestVersionNodeTypes() )
+                                        foreach( CswNbtMetaDataNodeType ContainerNt in ContainerOC.getLatestVersionNodeTypes() )
                                         {
                                             ret = can( NodeTypePermission.Create, ContainerNt );
-                                            if(ret)
+                                            if( ret )
                                             {
                                                 break;
                                             }

@@ -458,6 +458,7 @@ namespace ChemSW.Nbt.ObjClasses
             ExpirationDate.setReadOnly( value: isReadOnly, SaveToDb: true );
             Size.setReadOnly( value: isReadOnly, SaveToDb: true );
             Request.setReadOnly( value: isReadOnly, SaveToDb: true );
+            Request.setHidden( value: isReadOnly, SaveToDb: true );
             Dispense.setReadOnly( value: isReadOnly, SaveToDb: true );
             Owner.setReadOnly( value: isReadOnly, SaveToDb: true );
         }
