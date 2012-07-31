@@ -75,7 +75,7 @@
                 var makeSmallGrid = function () {
                     'use strict';
                     Csw.ajax.post({
-                        url: Csw.enums.ajaxUrlPrefix + 'getThinGrid',
+                        urlMethod: 'getThinGrid',
                         data: {
                             ViewId: viewid,
                             IncludeNodeKey: o.cswnbtnodekey,
@@ -102,7 +102,7 @@
                 var makeLinkGrid = function () {
                     'use strict';
                     Csw.ajax.post({
-                        url: Csw.enums.ajaxUrlPrefix + 'getGridRowCount',
+                        urlMethod: 'getGridRowCount',
                         data: {
                             ViewId: viewid,
                             IncludeNodeKey: o.cswnbtnodekey
