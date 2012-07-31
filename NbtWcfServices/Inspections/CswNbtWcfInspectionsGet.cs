@@ -218,10 +218,13 @@ namespace NbtWebAppServices.Response
                 {
                     Tree.goToNthChild( I );
                     CswNbtNode NodeForCurrentPosition = Tree.getNodeForCurrentPosition();
-                    if( NodeForCurrentPosition.ObjClass.ObjectClass.ObjectClass == _InspectionDesignOc.ObjectClass )
+                    if( false == NodeForCurrentPosition.Locked )
                     {
-                        _addNodeTypeInspectionDesignToResponse( NodeForCurrentPosition );
-                        _addInspectionDesignNodeNodeToResponse( NodeForCurrentPosition );
+                        if (NodeForCurrentPosition.ObjClass.ObjectClass.ObjectClass == _InspectionDesignOc.ObjectClass)
+                        {
+                            _addNodeTypeInspectionDesignToResponse(NodeForCurrentPosition);
+                            _addInspectionDesignNodeNodeToResponse(NodeForCurrentPosition);
+                        }
                     }
                     if( Tree.getChildNodeCount() > 0 )
                     {
