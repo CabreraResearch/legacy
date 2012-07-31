@@ -127,7 +127,7 @@
             refresh: 'refresh',
             popup: 'popup',
             request: 'request',
-            loadView: 'loadView',
+            loadView: 'loadview',
             editprop: 'editprop',
             nothing: 'nothing'
         });
