@@ -68,9 +68,12 @@
 
                 cswPrivate.setDispenseMode = function () {
                     if (false === Csw.isNullOrEmpty(cswPrivate.state.requestItemId)) {
-                        cswPrivate.dispenseMode = cswPrivate.dispenseModes.Request;
-                        cswPrivate.wizardSteps["1"] = 'Select a Container';
+                        if (Csw.isNullOrEmpty(cswPrivate.state.sourceContainerNodeId)) {
+                            cswPrivate.dispenseMode = cswPrivate.dispenseModes.Request;
+                            cswPrivate.wizardSteps["1"] = 'Select a Container';
+                        }                       
                         cswPrivate.state.dispenseType = cswPrivate.dispenseTypes.Dispense;
+                        
                     } else {
                         cswPrivate.dispenseMode = cswPrivate.dispenseModes.Direct;
                     }
@@ -253,7 +256,7 @@
                                 }
                             }
 
-                            if (false === Csw.isNullOrEmpty(cswPrivate.state.requestItemId)) {
+                            if (cswPrivate.dispenseMode === cswPrivate.dispenseModes.Request) {
                                 makeContainerGrid();
                             } else if (Csw.isNullOrEmpty(cswPrivate.state.sourceContainerNodeId)) {
                                 Csw.error.throwException(Csw.error.exception('Cannot dispense without a source container.', '', 'csw.dispensecontainer.js', 173));
