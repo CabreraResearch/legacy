@@ -259,9 +259,11 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault.afterDeleteNode();
         }//afterDeleteNode()        
 
-        private void _setOptionsForCurrentUser()
+        private void _setFulfillVisibility()
         {
-            if( CswTools.IsPrimaryKey( Request.RelatedNodeId ) &&
+            bool HideMenuButton = ( Status.Value == Statuses.Pending );
+            if( false == HideMenuButton &&
+                CswTools.IsPrimaryKey( Request.RelatedNodeId ) &&
                 Status.Value != Statuses.Cancelled &&
                 Status.Value != Statuses.Completed )
             {
@@ -269,9 +271,10 @@ namespace ChemSW.Nbt.ObjClasses
                 if( null != NodeAsRequest &&
                     _CswNbtResources.CurrentNbtUser.UserId == NodeAsRequest.Requestor.RelatedNodeId )
                 {
-                    Fulfill.setHidden(value: true, SaveToDb: false);
+                    HideMenuButton = true;
                 }
             }
+            Fulfill.setHidden( value: HideMenuButton, SaveToDb: false );
         }
 
         public override void afterPopulateProps()
@@ -284,7 +287,7 @@ namespace ChemSW.Nbt.ObjClasses
             Material.SetOnPropChange( OnMaterialPropChange );
             Container.SetOnPropChange( OnContainerPropChange );
             Status.SetOnPropChange( OnStatusPropChange );
-            _setOptionsForCurrentUser();
+            _setFulfillVisibility();
             _CswNbtObjClassDefault.afterPopulateProps();
         }//afterPopulateProps()
 
@@ -423,7 +426,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public void setNextStatus( string StatusVal )
         {
-            switch(Status.Value)
+            switch( Status.Value )
             {
                 case Statuses.Submitted:
                     if( StatusVal == Statuses.Dispensed || StatusVal == Statuses.Disposed || StatusVal == Statuses.Moved || StatusVal == Statuses.Received || StatusVal == Statuses.Cancelled || StatusVal == Statuses.Completed )
@@ -448,7 +451,7 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
-       #endregion
+        #endregion
 
         #region Object class specific properties
 
@@ -670,14 +673,19 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropQuantity TotalDispensed { get { return _CswNbtNode.Properties[PropertyName.TotalDispensed]; } }
         private void OnTotalDispensedPropChange( CswNbtNodeProp Prop )
         {
-            if( TotalDispensed.Quantity >= Quantity.Quantity )
+            if( Status.Value != Statuses.Pending &&
+                Status.Value != Statuses.Cancelled &&
+                Status.Value != Statuses.Completed )
             {
-                Fulfill.State = FulfillMenu.Complete;
-            }
-            else if( Type.Value == Types.Request || Type.Value == Types.Dispense )
-            {
-                Fulfill.State = FulfillMenu.Dispense;
-                Status.Value = Statuses.Dispensed;
+                if( TotalDispensed.Quantity >= Quantity.Quantity )
+                {
+                    Fulfill.State = FulfillMenu.Complete;
+                }
+                else if( TotalDispensed.Quantity > 0 && ( Type.Value == Types.Request || Type.Value == Types.Dispense ) )
+                {
+                    Fulfill.State = FulfillMenu.Dispense;
+                    Status.Value = Statuses.Dispensed;
+                }
             }
         }
 

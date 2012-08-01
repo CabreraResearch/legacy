@@ -2105,7 +2105,13 @@ namespace ChemSW.Nbt.WebServices
                     _setEditMode( EditMode );
                     CswDateTime InDate = new CswDateTime( _CswNbtResources );
                     InDate.FromClientDateTimeString( Date );
-                    ReturnVal = ws.getProps( NodeId, SafeNodeKey, TabId, CswConvert.ToInt32( NodeTypeId ), InDate, filterToPropId, RelatedNodeId, RelatedNodeTypeId, RelatedObjectClassId );
+                    CswNbtNodeKey NodeKey = _getNodeKey(SafeNodeKey);
+                    Int32 NodeTypePk = CswConvert.ToInt32(NodeTypeId);
+                    if( null != NodeKey && Int32.MinValue == NodeTypePk )
+                    {
+                        NodeTypePk = NodeKey.NodeTypeId;
+                    }
+                    ReturnVal = ws.getProps( NodeId, SafeNodeKey, TabId, NodeTypePk, InDate, filterToPropId, RelatedNodeId, RelatedNodeTypeId, RelatedObjectClassId );
                 }
 
                 _deInitResources();
@@ -2438,7 +2444,7 @@ namespace ChemSW.Nbt.WebServices
 
             return ReturnVal.ToString();
 
-        } // getNodeTypes()
+        } // g()
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
