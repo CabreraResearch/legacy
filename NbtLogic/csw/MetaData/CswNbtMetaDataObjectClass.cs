@@ -232,14 +232,14 @@ namespace ChemSW.Nbt.MetaData
         {
             get
             {
-                return ( ( ( ObjectClass != CswNbtMetaDataObjectClass.NbtObjectClass.RoleClass &&
-                             ObjectClass != CswNbtMetaDataObjectClass.NbtObjectClass.UserClass ) ||
+                return ( ( ( ObjectClass != NbtObjectClass.RoleClass &&
+                             ObjectClass != NbtObjectClass.UserClass ) ||
                            _CswNbtMetaDataResources.CswNbtResources.CurrentNbtUser.IsAdministrator() ) &&
-                       ObjectClass != CswNbtMetaDataObjectClass.NbtObjectClass.RequestItemClass &&
-                       ObjectClass != CswNbtMetaDataObjectClass.NbtObjectClass.RequestClass &&
-                       ObjectClass != CswNbtMetaDataObjectClass.NbtObjectClass.ContainerClass &&
-                       ObjectClass != CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass &&
-                       ObjectClass != CswNbtMetaDataObjectClass.NbtObjectClass.ContainerDispenseTransactionClass );
+                       ObjectClass != NbtObjectClass.RequestItemClass &&
+                       ObjectClass != NbtObjectClass.RequestClass &&
+                       ObjectClass != NbtObjectClass.ContainerClass &&
+                       ObjectClass != NbtObjectClass.MaterialClass &&
+                       ObjectClass != NbtObjectClass.ContainerDispenseTransactionClass );
             }
         } // CanAdd
 
