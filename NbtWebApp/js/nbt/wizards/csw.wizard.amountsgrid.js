@@ -199,38 +199,7 @@
                             }
                         },
                         onAdd: function () {
-                            if (Csw.isNumeric(Csw.number(newAmount.containerNo))) {
-                                var newCount = cswPrivate.count + Csw.number(newAmount.containerNo);
-                                if (newCount <= cswPrivate.containerlimit) {
-                                    cswPrivate.count = newCount;
-
-                                    var parseBarcodes = function (anArray) {
-                                        if (anArray.length > newAmount.containerNo) {
-                                            anArray.splice(0, anArray.length - newAmount.containerNo);
-                                        }
-                                        newAmount.barcodes = barcodeToParse.join(',');
-                                    };
-                                    var barcodeToParse = Csw.delimitedString(newAmount.barcodes).array;
-                                    parseBarcodes(barcodeToParse);
-
-                                    if (cswPublic.amountForm.isFormValid()) {
-                                        //we need to make sure the columns here match the header columns
-                                        var formCols = [newAmount.containerNo];
-                                        if (false === Csw.isNullOrEmpty(cswPrivate.materialId) && cswPrivate.action === 'Receive') {
-                                            formCols = formCols.concat([newAmount.sizename]);
-                                        }
-                                        formCols = formCols.concat([newAmount.quantity + ' ' + newAmount.unit]);
-                                        if (cswPrivate.customBarcodes) {
-                                            formCols = formCols.concat([newAmount.barcodes]);
-                                        }
-                                        newAmount.rowid = cswPublic.thinGrid.addRows(formCols);
-                                        cswPublic.quantities.push(extractNewAmount(newAmount));
-                                    }
-                                } else {
-                                    $.CswDialog('AlertDialog', 'The limit for containers created at receipt is [' + cswPrivate.containerlimit + ']. You have already added [' + cswPrivate.count + '] containers.', 'Cannot add [' + newCount + '] containers.');
-                                }
-                                Csw.tryExec(cswPrivate.onAdd, (cswPrivate.count > 0));
-                            }
+                            executeOnAdd();
                         },
                         onDelete: function (rowid) {
                             Csw.debug.assert(false === Csw.isNullOrEmpty(rowid), 'Rowid is null.');
@@ -244,6 +213,40 @@
                             }
                         }
                     });
+
+                    var executeOnAdd = function () {
+                        if (Csw.isNumeric(Csw.number(newAmount.containerNo)) && cswPublic.amountForm.isFormValid()) {
+                            var newCount = cswPrivate.count + Csw.number(newAmount.containerNo);
+                            if (newCount <= cswPrivate.containerlimit) {
+                                cswPrivate.count = newCount;
+
+                                var parseBarcodes = function (anArray) {
+                                    if (anArray.length > newAmount.containerNo) {
+                                        anArray.splice(0, anArray.length - newAmount.containerNo);
+                                    }
+                                    newAmount.barcodes = barcodeToParse.join(',');
+                                };
+                                var barcodeToParse = Csw.delimitedString(newAmount.barcodes).array;
+                                parseBarcodes(barcodeToParse);
+
+                                //we need to make sure the columns here match the header columns
+                                var formCols = [newAmount.containerNo];
+                                if (false === Csw.isNullOrEmpty(cswPrivate.materialId) && cswPrivate.action === 'Receive') {
+                                    formCols = formCols.concat([newAmount.sizename]);
+                                }
+                                formCols = formCols.concat([newAmount.quantity + ' ' + newAmount.unit]);
+                                if (cswPrivate.customBarcodes) {
+                                    formCols = formCols.concat([newAmount.barcodes]);
+                                }
+                                newAmount.rowid = cswPublic.thinGrid.addRows(formCols);
+                                cswPublic.quantities.push(extractNewAmount(newAmount));
+                            } else {
+                                $.CswDialog('AlertDialog', 'The limit for containers created at receipt is [' + cswPrivate.containerlimit + ']. You have already added [' + cswPrivate.count + '] containers.', 'Cannot add [' + newCount + '] containers.');
+                            }
+                            Csw.tryExec(cswPrivate.onAdd, (cswPrivate.count > 0));
+                        }
+                    };
+
                 } ());
 
                 (function _post() {
