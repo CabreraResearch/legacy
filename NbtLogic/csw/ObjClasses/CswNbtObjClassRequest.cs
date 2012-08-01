@@ -1,30 +1,18 @@
 using System;
-using System.Collections.Generic;
-using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
-using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.ObjClasses
 {
     public class CswNbtObjClassRequest : CswNbtObjClass
     {
 
-        public sealed class PropertyName : CswEnum<PropertyName>
+        public sealed class PropertyName
         {
-            private PropertyName( String Name ) : base( Name ) { }
-            public static IEnumerable<PropertyName> all { get { return All; } }
-            public static implicit operator PropertyName( string Str )
-            {
-                PropertyName Ret = Parse( Str );
-                return Ret ?? Unknown;
-            }
-            public static readonly PropertyName Requestor = new PropertyName( "Requestor" );
-            public static readonly PropertyName Name = new PropertyName( "Name" );
-            public static readonly PropertyName SubmittedDate = new PropertyName( "Submitted Date" );
-            public static readonly PropertyName CompletedDate = new PropertyName( "Completed Date" );
-            public static readonly PropertyName InventoryGroup = new PropertyName( "Inventory Group" );
-            public static readonly PropertyName Unknown = new PropertyName( "Unknown" );
+            public const string Requestor = "Requestor";
+            public const string Name = "Name";
+            public const string SubmittedDate = "Submitted Date";
+            public const string CompletedDate = "Completed Date";
         }
 
         public static implicit operator CswNbtObjClassRequest( CswNbtNode Node )
@@ -112,7 +100,7 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault.afterDeleteNode();
         }//afterDeleteNode()        
 
-        public override void    afterPopulateProps()
+        public override void afterPopulateProps()
         {
             _CswNbtObjClassDefault.afterPopulateProps();
         }//afterPopulateProps()
@@ -127,9 +115,9 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override bool onButtonClick( NbtButtonData ButtonData )
         {
-            
-            
-            
+
+
+
             if( null != ButtonData && null != ButtonData.NodeTypeProp ) { /*Do Something*/ }
             return true;
         }
@@ -139,27 +127,22 @@ namespace ChemSW.Nbt.ObjClasses
 
         public CswNbtNodePropRelationship Requestor
         {
-            get { return _CswNbtNode.Properties[PropertyName.Requestor.ToString()]; }
-        }
-
-        public CswNbtNodePropRelationship InventoryGroup
-        {
-            get { return _CswNbtNode.Properties[PropertyName.InventoryGroup.ToString()]; }
+            get { return _CswNbtNode.Properties[PropertyName.Requestor]; }
         }
 
         public CswNbtNodePropText Name
         {
-            get { return _CswNbtNode.Properties[PropertyName.Name.ToString()]; }
+            get { return _CswNbtNode.Properties[PropertyName.Name]; }
         }
 
         public CswNbtNodePropDateTime SubmittedDate
         {
-            get { return _CswNbtNode.Properties[PropertyName.SubmittedDate.ToString()]; }
+            get { return _CswNbtNode.Properties[PropertyName.SubmittedDate]; }
         }
 
         public CswNbtNodePropDateTime CompletedDate
         {
-            get { return _CswNbtNode.Properties[PropertyName.CompletedDate.ToString()]; }
+            get { return _CswNbtNode.Properties[PropertyName.CompletedDate]; }
         }
 
         #endregion
