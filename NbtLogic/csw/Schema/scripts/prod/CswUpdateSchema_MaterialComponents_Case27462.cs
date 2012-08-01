@@ -6,7 +6,7 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Schema Update for case 27462
     /// </summary>
-    public class CswUpdateSchemaCase27462 : CswUpdateSchemaTo
+    public class CswUpdateSchema_MaterialComponents_Case27462 : CswUpdateSchemaTo
     {
         public override void update()
         {
@@ -22,6 +22,6 @@ namespace ChemSW.Nbt.Schema
             // This is a placeholder script that does nothing.
         }//Update()
 
-    }//class CswUpdateSchemaCase27462
+    }//class CswUpdateSchema_MaterialComponents_Case27462
 
 }//namespace ChemSW.Nbt.Schema
