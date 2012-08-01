@@ -22,6 +22,7 @@ hg update -R /kiln/Common/CswCommon -r "%TagName%" -C
 hg update -R /kiln/Common/CswConfigUI -r "%TagName%" -C
 hg update -R /kiln/Common/CswWebControls -r "%TagName%" -C
 hg update -R /kiln/Common/CswLogService -r "%TagName%" -C
+hg update -R /kiln/Common/StructureSearch -r "%TagName%" -C
 hg update -R /kiln/nbt/nbt -r "%TagName%" -C
 
 echo "Update completed."
