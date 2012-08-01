@@ -142,7 +142,7 @@
                 cell.buttonExt({
                     icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.check),
                     size: 'small',
-                    tooltip: { title: 'Add' },
+                    tooltip: { title: 'OK' },
                     disableOnClick: false,
                     onClick: function () {
                         cswPublic.deleteRow(row);
