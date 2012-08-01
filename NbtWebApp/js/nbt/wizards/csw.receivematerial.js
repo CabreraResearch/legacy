@@ -165,14 +165,10 @@
             cswPrivate.makeStep1 = (function () {
 
                 return function () {
-                    var nextBtnEnabled = function () {
-                        return cswPrivate.amountsGrid && cswPrivate.amountsGrid.quantities.length > 0 && false === Csw.isNullOrEmpty(cswPrivate.state.selectedSizeId);
-                    };
-
                     cswPrivate.toggleButton(cswPrivate.buttons.prev, false);
                     cswPrivate.toggleButton(cswPrivate.buttons.cancel, true);
                     cswPrivate.toggleButton(cswPrivate.buttons.finish, false);
-                    cswPrivate.toggleButton(cswPrivate.buttons.next, nextBtnEnabled());
+                    cswPrivate.toggleButton(cswPrivate.buttons.next, true);
 
                     if (false === cswPrivate.stepOneComplete) {
                         cswPrivate.divStep1 = cswPrivate.divStep1 || cswPrivate.wizard.div(1);
@@ -195,7 +191,7 @@
                                 makeAmountsGrid();
                                 makeBarcodeCheckBox();
                             }
-                        });                        
+                        });
 
                         var makeAmountsGrid = function () {
                             cswPrivate.amountsDiv = cswPrivate.amountsDiv || cswPrivate.divStep1.div();
@@ -203,14 +199,6 @@
 
                             cswPrivate.amountsGrid = Csw.nbt.wizard.amountsGrid(cswPrivate.amountsDiv, {
                                 ID: cswPrivate.wizard.makeStepId('wizardAmountsThinGrid'),
-                                onAdd: function () {
-                                    cswPrivate.toggleButton(cswPrivate.buttons.next, true);
-                                },
-                                onDelete: function (qtyCnt) {
-                                    if (qtyCnt < 1) {
-                                        cswPrivate.toggleButton(cswPrivate.buttons.next, false);
-                                    }
-                                },
                                 quantity: cswPrivate.state.quantity,
                                 containerlimit: cswPrivate.state.containerlimit,
                                 makeId: cswPrivate.wizard.makeStepId,
