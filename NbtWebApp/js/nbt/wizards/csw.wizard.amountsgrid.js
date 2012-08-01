@@ -251,8 +251,9 @@
                     };
 
                     cswPublic.amountsGridOnAdd = function () {
-                        newAmount.rowid = newAmount.rowid + 1;
+                        cswPublic.thinGrid.deleteRow(cswPublic.quantities.length * 2 + 4);
                         executeOnAdd();
+                        Csw.tryExec(cswPublic.thinGrid.makeAddRow, executeMakeAddRow);
                     }
 
                 } ());
