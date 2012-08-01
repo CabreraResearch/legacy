@@ -123,6 +123,76 @@
                         return ret;
                     };
 
+                    var executeMakeAddRow = function (cswCell, columnName, rowid) {
+                        'use strict';
+                        var updateSizeVals = function () {
+                            cswPrivate.selectedSizeId = sizeControl.selectedNodeId();
+                            extendNewAmount({ sizeid: sizeControl.selectedNodeId() });
+                            extendNewAmount({ sizename: sizeControl.selectedText() });
+                        }
+                        var updateQuantityVals = function () {
+                            extendNewAmount({ quantity: cswPublic.qtyControl.quantityValue });
+                            extendNewAmount({ unit: cswPublic.qtyControl.unitText });
+                            extendNewAmount({ unitid: cswPublic.qtyControl.unitVal });
+                        }
+                        switch (columnName) {
+                            case cswPrivate.config.numberName:
+                                var countControl = cswCell.numberTextBox({
+                                    ID: Csw.tryExec(cswPrivate.makeId, 'containerCount'),
+                                    value: cswPublic.quantities.length === 0 ? 1 : '',
+                                    MinValue: cswPrivate.containerMinimum,
+                                    MaxValue: (cswPrivate.containerlimit - Csw.number(cswPrivate.count, 0)),
+                                    ceilingVal: (cswPrivate.containerlimit - Csw.number(cswPrivate.count, 0)),
+                                    width: (3 * 8) + 'px', //3 characters wide, 8 is the characters-to-pixels ratio
+                                    Precision: 0,
+                                    Required: true,
+                                    onChange: function (value) {
+                                        extendNewAmount({ containerNo: value });
+                                    }
+                                });
+                                extendNewAmount({ containerNo: countControl.val() });
+                                break;
+                            case cswPrivate.config.sizeName:
+                                var sizeControl = cswCell.nodeSelect({
+                                    ID: Csw.tryExec(cswPrivate.makeId, 'sizes'),
+                                    async: false,
+                                    objectClassName: 'SizeClass',
+                                    relatedTo: {
+                                        objectClassName: 'MaterialClass',
+                                        nodeId: cswPrivate.materialId
+                                    },
+                                    onSelect: function () {
+                                        updateSizeVals();
+                                        cswPrivate.getQuantity();
+                                        cswPublic.qtyControl.refresh(cswPrivate.quantity);
+                                        updateQuantityVals();
+                                    }
+                                });
+                                updateSizeVals();
+                                break;
+                            case cswPrivate.config.quantityName: //TODO - for receive, make only Unit Readonly - if not quantityeditable, make both quantity and unit readonly
+                                cswPrivate.getQuantity();
+                                cswPrivate.quantity.onChange = function () {
+                                    updateQuantityVals();
+                                };
+                                cswPrivate.quantity.ID = Csw.tryExec(cswPrivate.makeId, 'containerQuantity');
+                                cswPrivate.quantity.qtyWidth = (7 * 8) + 'px'; //7 characters wide, 8 is the characters-to-pixels ratio
+                                cswPublic.qtyControl = cswCell.quantity(cswPrivate.quantity);
+                                updateQuantityVals();
+                                break;
+                            case cswPrivate.config.barcodeName:
+                                var barcodeControl = cswCell.textArea({
+                                    ID: Csw.tryExec(cswPrivate.makeId, 'containerBarcodes'),
+                                    rows: 1,
+                                    cols: 14,
+                                    onChange: function (value) {
+                                        extendNewAmount({ barcodes: value });
+                                    }
+                                });
+                                break;
+                        }
+                    };
+
                     cswPublic.amountForm = cswParent.form();
                     cswPublic.thinGrid = cswPublic.amountForm.thinGrid({
                         linkText: '',
@@ -130,75 +200,7 @@
                         rows: cswPrivate.rows,
                         allowDelete: true,
                         allowAdd: true,
-                        makeAddRow: function (cswCell, columnName, rowid) {
-                            'use strict';
-                            var updateSizeVals = function () {
-                                cswPrivate.selectedSizeId = sizeControl.selectedNodeId();
-                                extendNewAmount({ sizeid: sizeControl.selectedNodeId() });
-                                extendNewAmount({ sizename: sizeControl.selectedText() });
-                            }
-                            var updateQuantityVals = function () {
-                                extendNewAmount({ quantity: cswPublic.qtyControl.quantityValue });
-                                extendNewAmount({ unit: cswPublic.qtyControl.unitText });
-                                extendNewAmount({ unitid: cswPublic.qtyControl.unitVal });
-                            }
-                            switch (columnName) {
-                                case cswPrivate.config.numberName:
-                                    var countControl = cswCell.numberTextBox({
-                                        ID: Csw.tryExec(cswPrivate.makeId, 'containerCount'),
-                                        value: cswPublic.quantities.length === 0 ? 1 : '',
-                                        MinValue: cswPrivate.containerMinimum,
-                                        MaxValue: (cswPrivate.containerlimit - Csw.number(cswPrivate.count, 0)),
-                                        ceilingVal: (cswPrivate.containerlimit - Csw.number(cswPrivate.count, 0)),
-                                        width: (3 * 8) + 'px', //3 characters wide, 8 is the characters-to-pixels ratio
-                                        Precision: 0,
-                                        Required: true,
-                                        onChange: function (value) {
-                                            extendNewAmount({ containerNo: value });
-                                        }
-                                    });
-                                    extendNewAmount({ containerNo: countControl.val() });
-                                    break;
-                                case cswPrivate.config.sizeName:
-                                    var sizeControl = cswCell.nodeSelect({
-                                        ID: Csw.tryExec(cswPrivate.makeId, 'sizes'),
-                                        async: false,
-                                        objectClassName: 'SizeClass',
-                                        relatedTo: {
-                                            objectClassName: 'MaterialClass',
-                                            nodeId: cswPrivate.materialId
-                                        },
-                                        onSelect: function () {
-                                            updateSizeVals();
-                                            cswPrivate.getQuantity();
-                                            cswPublic.qtyControl.refresh(cswPrivate.quantity);
-                                            updateQuantityVals();
-                                        }
-                                    });
-                                    updateSizeVals();
-                                    break;
-                                case cswPrivate.config.quantityName: //TODO - for receive, make only Unit Readonly - if not quantityeditable, make both quantity and unit readonly
-                                    cswPrivate.getQuantity();
-                                    cswPrivate.quantity.onChange = function () {
-                                        updateQuantityVals();
-                                    };
-                                    cswPrivate.quantity.ID = Csw.tryExec(cswPrivate.makeId, 'containerQuantity');
-                                    cswPrivate.quantity.qtyWidth = (7 * 8) + 'px'; //7 characters wide, 8 is the characters-to-pixels ratio
-                                    cswPublic.qtyControl = cswCell.quantity(cswPrivate.quantity);
-                                    updateQuantityVals();
-                                    break;
-                                case cswPrivate.config.barcodeName:
-                                    var barcodeControl = cswCell.textArea({
-                                        ID: Csw.tryExec(cswPrivate.makeId, 'containerBarcodes'),
-                                        rows: 1,
-                                        cols: 14,
-                                        onChange: function (value) {
-                                            extendNewAmount({ barcodes: value });
-                                        }
-                                    });
-                                    break;
-                            }
-                        },
+                        makeAddRow: executeMakeAddRow,
                         onAdd: function () {
                             executeOnAdd();
                         },
@@ -213,7 +215,7 @@
                                 Csw.tryExec(cswPrivate.onDelete, (cswPrivate.count > 0));
                             }
                         }
-                    });
+                    });                    
 
                     var executeOnAdd = function () {
                         if (Csw.isNumeric(Csw.number(newAmount.containerNo)) && cswPublic.amountForm.isFormValid()) {
@@ -252,7 +254,6 @@
                         newAmount.rowid = newAmount.rowid + 1;
                         executeOnAdd();
                     }
-
 
                 } ());
 
