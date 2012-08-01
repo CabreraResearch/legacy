@@ -96,8 +96,15 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void afterPopulateProps()
         {
+            _toggleButtonVisibility();
             _CswNbtObjClassDefault.afterPopulateProps();
         }//afterPopulateProps()
+
+        private void _toggleButtonVisibility()
+        {
+            Receive.setHidden( value: false == _CswNbtResources.Permit.can( CswNbtActionName.Receiving ), SaveToDb: false );
+            Request.setHidden( value: false == _CswNbtResources.Permit.can( CswNbtActionName.Submit_Request ), SaveToDb: false );
+        }
 
         public override void addDefaultViewFilters( CswNbtViewRelationship ParentRelationship )
         {
