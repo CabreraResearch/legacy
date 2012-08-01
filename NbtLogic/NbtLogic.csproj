@@ -180,6 +180,7 @@
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26867.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase27330.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase27423.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase27423Part2.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase27423Part1.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase27434.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase27391.cs" />

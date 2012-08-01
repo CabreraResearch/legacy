@@ -135,8 +135,8 @@ namespace ChemSW.Nbt.ObjClasses
         public static bool IsUserNameUnique( CswNbtResources Resources, string UserName )
         {
             CswNbtObjClassUser ExistingUserNode = Resources.Nodes.makeUserNodeFromUsername( UserName );
-            return ( null != ExistingUserNode &&
-                     CswTools.IsPrimaryKey( ExistingUserNode.NodeId ) );
+            return ( null == ExistingUserNode ||
+                     false == CswTools.IsPrimaryKey( ExistingUserNode.NodeId ) );
         }
 
         public override CswNbtMetaDataObjectClass ObjectClass
