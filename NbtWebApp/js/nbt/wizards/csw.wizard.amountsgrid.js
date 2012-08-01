@@ -215,7 +215,7 @@
                                 Csw.tryExec(cswPrivate.onDelete, (cswPrivate.count > 0));
                             }
                         }
-                    });                    
+                    });
 
                     var executeOnAdd = function () {
                         if (Csw.isNumeric(Csw.number(newAmount.containerNo)) && cswPublic.amountForm.isFormValid()) {
@@ -251,7 +251,8 @@
                     };
 
                     cswPublic.amountsGridOnAdd = function () {
-                        cswPublic.thinGrid.deleteRow(cswPublic.quantities.length * 2 + 4);
+                        var rowid = cswPublic.thinGrid.getRowCount();
+                        cswPublic.thinGrid.deleteRow(rowid);
                         executeOnAdd();
                         Csw.tryExec(cswPublic.thinGrid.makeAddRow, executeMakeAddRow);
                     }
