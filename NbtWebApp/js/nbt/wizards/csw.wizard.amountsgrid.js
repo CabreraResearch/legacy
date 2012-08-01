@@ -10,7 +10,8 @@
                 quantities: [],
                 qtyControl: null,
                 amountForm: null,
-                thinGrid: null
+                thinGrid: null,
+                amountsGridOnAdd: null
             };
 
             Csw.tryExec(function () {
@@ -247,7 +248,14 @@
                         }
                     };
 
+                    cswPublic.amountsGridOnAdd = function () {
+                        newAmount.rowid = newAmount.rowid + 1;
+                        executeOnAdd();
+                    }
+
+
                 } ());
+
 
                 (function _post() {
 
