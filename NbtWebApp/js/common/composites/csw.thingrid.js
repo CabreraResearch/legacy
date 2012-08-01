@@ -214,6 +214,11 @@
                 }
             });
 
+            cswPublic.getRowCount = Csw.method(function () {
+                var rowCount = cswPrivate.rowCount;
+                return rowCount;
+            });
+
             (function () {
                 if (cswPrivate.rows.length > 0) {
                     cswPrivate.rowCount = 1;
