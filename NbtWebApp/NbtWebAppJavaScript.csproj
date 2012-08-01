@@ -75,7 +75,6 @@
     <NoWarn>1591</NoWarn>
   </PropertyGroup>
   <ItemGroup>
-    <Content Include="Build\far.exe" />
     <Content Include="ConnectTest.html" />
     <Content Include="etc\far.exe" />
     <Content Include="js\common\controls\csw.radiobutton.js" />
