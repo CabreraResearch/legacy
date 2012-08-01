@@ -103,7 +103,7 @@
                     //however, as these two modules are so tightly coupled, the fragility should be an acceptable risk for now.
                     var newAmount = {
                         rowid: 1,
-                        containerNo: 1,
+                        containerNo: '',
                         quantity: '',
                         sizeid: '',
                         sizename: '',
@@ -145,7 +145,7 @@
                                 case cswPrivate.config.numberName:
                                     var countControl = cswCell.numberTextBox({
                                         ID: Csw.tryExec(cswPrivate.makeId, 'containerCount'),
-                                        value: 1,
+                                        value: cswPublic.quantities.length === 0 ? 1 : '',
                                         MinValue: cswPrivate.containerMinimum,
                                         MaxValue: (cswPrivate.containerlimit - Csw.number(cswPrivate.count, 0)),
                                         ceilingVal: (cswPrivate.containerlimit - Csw.number(cswPrivate.count, 0)),
@@ -156,6 +156,7 @@
                                             extendNewAmount({ containerNo: value });
                                         }
                                     });
+                                    extendNewAmount({ containerNo: countControl.val() });
                                     break;
                                 case cswPrivate.config.sizeName:
                                     var sizeControl = cswCell.nodeSelect({
@@ -198,36 +199,38 @@
                             }
                         },
                         onAdd: function () {
-                            var newCount = cswPrivate.count + Csw.number(newAmount.containerNo);
-                            if (newCount <= cswPrivate.containerlimit) {
-                                cswPrivate.count = newCount;
+                            if (Csw.isNumeric(Csw.number(newAmount.containerNo))) {
+                                var newCount = cswPrivate.count + Csw.number(newAmount.containerNo);
+                                if (newCount <= cswPrivate.containerlimit) {
+                                    cswPrivate.count = newCount;
 
-                                var parseBarcodes = function (anArray) {
-                                    if (anArray.length > newAmount.containerNo) {
-                                        anArray.splice(0, anArray.length - newAmount.containerNo);
-                                    }
-                                    newAmount.barcodes = barcodeToParse.join(',');
-                                };
-                                var barcodeToParse = Csw.delimitedString(newAmount.barcodes).array;
-                                parseBarcodes(barcodeToParse);
+                                    var parseBarcodes = function (anArray) {
+                                        if (anArray.length > newAmount.containerNo) {
+                                            anArray.splice(0, anArray.length - newAmount.containerNo);
+                                        }
+                                        newAmount.barcodes = barcodeToParse.join(',');
+                                    };
+                                    var barcodeToParse = Csw.delimitedString(newAmount.barcodes).array;
+                                    parseBarcodes(barcodeToParse);
 
-                                if (cswPublic.amountForm.isFormValid()) {
-                                    //we need to make sure the columns here match the header columns
-                                    var formCols = [newAmount.containerNo];
-                                    if (false === Csw.isNullOrEmpty(cswPrivate.materialId) && cswPrivate.action === 'Receive') {
-                                        formCols = formCols.concat([newAmount.sizename]);
+                                    if (cswPublic.amountForm.isFormValid()) {
+                                        //we need to make sure the columns here match the header columns
+                                        var formCols = [newAmount.containerNo];
+                                        if (false === Csw.isNullOrEmpty(cswPrivate.materialId) && cswPrivate.action === 'Receive') {
+                                            formCols = formCols.concat([newAmount.sizename]);
+                                        }
+                                        formCols = formCols.concat([newAmount.quantity + ' ' + newAmount.unit]);
+                                        if (cswPrivate.customBarcodes) {
+                                            formCols = formCols.concat([newAmount.barcodes]);
+                                        }
+                                        newAmount.rowid = cswPublic.thinGrid.addRows(formCols);
+                                        cswPublic.quantities.push(extractNewAmount(newAmount));
                                     }
-                                    formCols = formCols.concat([newAmount.quantity + ' ' + newAmount.unit]);
-                                    if (cswPrivate.customBarcodes) {
-                                        formCols = formCols.concat([newAmount.barcodes]);
-                                    }
-                                    newAmount.rowid = cswPublic.thinGrid.addRows(formCols);
-                                    cswPublic.quantities.push(extractNewAmount(newAmount));
+                                } else {
+                                    $.CswDialog('AlertDialog', 'The limit for containers created at receipt is [' + cswPrivate.containerlimit + ']. You have already added [' + cswPrivate.count + '] containers.', 'Cannot add [' + newCount + '] containers.');
                                 }
-                            } else {
-                                $.CswDialog('AlertDialog', 'The limit for containers created at receipt is [' + cswPrivate.containerlimit + ']. You have already added [' + cswPrivate.count + '] containers.', 'Cannot add [' + newCount + '] containers.');
+                                Csw.tryExec(cswPrivate.onAdd, (cswPrivate.count > 0));
                             }
-                            Csw.tryExec(cswPrivate.onAdd, (cswPrivate.count > 0));
                         },
                         onDelete: function (rowid) {
                             Csw.debug.assert(false === Csw.isNullOrEmpty(rowid), 'Rowid is null.');
