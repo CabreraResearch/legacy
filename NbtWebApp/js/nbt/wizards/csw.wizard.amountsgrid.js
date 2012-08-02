@@ -144,7 +144,9 @@
                                     ceilingVal: (cswPrivate.containerlimit - Csw.number(cswPrivate.count, 0)),
                                     width: (3 * 8) + 'px', //3 characters wide, 8 is the characters-to-pixels ratio
                                     Precision: 0,
-                                    Required: true,
+                                    Required: (function () {
+                                        return Csw.bool(cswPublic.quantities.length === 0);
+                                    })(),
                                     onChange: function (value) {
                                         extendNewAmount({ containerNo: value });
                                     }
@@ -248,7 +250,7 @@
                         }
                     };
 
-                    cswPublic.amountsGridOnAdd = function() {
+                    cswPublic.amountsGridOnAdd = function () {
                         var rowid = cswPublic.thinGrid.getRowCount();
                         cswPublic.thinGrid.deleteRow(rowid);
                         executeOnAdd();
