@@ -511,11 +511,13 @@ namespace ChemSW.Nbt.ObjClasses
             switch( RequestBy.Value )
             {
                 case RequestsBy.Size:
+                    Quantity.CachedUnitName = "";
                     Quantity.UnitId = null;
                     Quantity.Quantity = Double.NaN;
                     break;
                 case RequestsBy.Quantity:
                 case RequestsBy.Bulk:
+                    Size.CachedNodeName = "";
                     Size.RelatedNodeId = null;
                     Count.Value = Double.NaN;
                     break;
