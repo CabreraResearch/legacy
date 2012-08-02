@@ -129,7 +129,11 @@
                         },
                         next: {
                             onclick: function () {
-                                if (cswPublic.form.isFormValid()) {
+                                var isValid = true;
+                                Csw.tryExec(function (){
+                                    isValid = cswPublic.form.isFormValid();
+                                });
+                                if (isValid) {
                                     var currentStepNo = cswPrivate.getCurrentStepNo();
                                     if (false === cswPrivate.onBeforeNext || Csw.tryExec(cswPrivate.onBeforeNext, currentStepNo)) {
                                         cswPrivate.selectStep(currentStepNo + 1);
