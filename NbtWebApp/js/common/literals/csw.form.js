@@ -70,7 +70,7 @@
 
             (function _post() {
                 cswPublic.initValidator();
-            });
+            })();
 
             return cswPublic;
         });
