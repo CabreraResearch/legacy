@@ -84,6 +84,7 @@
     <Content Include="js\common\composites\csw.menubutton.js" />
     <Content Include="js\nbt\composites\csw.quantity.js" />
     <Content Include="js\nbt\nodes\csw.node.link.js" />
+    <Content Include="js\nbt\controls\csw.nodebutton.js" />
     <Content Include="js\nbt\nodes\CswNodeGridNew.js" />
     <Content Include="DevHeader.html" />
     <Content Include="Dev.html" />
