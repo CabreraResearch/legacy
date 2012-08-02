@@ -511,11 +511,13 @@ namespace ChemSW.Nbt.ObjClasses
             switch( RequestBy.Value )
             {
                 case RequestsBy.Size:
+                    Quantity.CachedUnitName = "";
                     Quantity.UnitId = null;
                     Quantity.Quantity = Double.NaN;
                     break;
                 case RequestsBy.Quantity:
                 case RequestsBy.Bulk:
+                    Size.CachedNodeName = "";
                     Size.RelatedNodeId = null;
                     Count.Value = Double.NaN;
                     break;
@@ -564,6 +566,16 @@ namespace ChemSW.Nbt.ObjClasses
                 Vb.setQuantityUnitOfMeasureView( MaterialNode, Quantity );
                 Vb.setQuantityUnitOfMeasureView( MaterialNode, TotalDispensed );
                 TotalDispensed.Quantity = 0;
+
+                CswNbtView SizeView = Size.View;
+                CswNbtMetaDataObjectClass SizeOc = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.SizeClass );
+                CswNbtMetaDataObjectClassProp SizeMaterialOcp = SizeOc.getObjectClassProp( CswNbtObjClassSize.MaterialPropertyName );
+                CswNbtViewRelationship SizeVr = SizeView.Root.ChildRelationships[0];
+                if( null != SizeVr && ( SizeVr.SecondId == SizeOc.ObjectClassId || SizeOc.getNodeTypeIds().Contains( SizeVr.SecondId ) ) )
+                {
+                    SizeView.AddViewPropertyAndFilter( SizeVr, SizeMaterialOcp, Material.RelatedNodeId.PrimaryKey.ToString(), SubFieldName: CswNbtSubField.SubFieldName.NodeID );
+                    SizeView.save();
+                }
             }
         }
         public CswNbtNodePropRelationship Container

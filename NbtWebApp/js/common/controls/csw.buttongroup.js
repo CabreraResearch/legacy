@@ -91,7 +91,7 @@
                         icon: thisBtn.icon,
                         tooltip: thisBtn.tooltip,
                         enabledText: thisBtn.text,
-                        disableOnClick: true,
+                        disableOnClick: false,
                         onClick: function () {
                             Csw.tryExec(thisBtn.onclick);
                         }

@@ -80,7 +80,9 @@
                     cswPrivate.SelectedStep = cswPrivate.StartingStep;
                 }
 
-                cswPublic.table = cswParent.table({
+                cswPublic.form = cswParent.form();
+
+                cswPublic.table = cswPublic.form.table({
                     suffix: cswPrivate.ID,
                     TableCssClass: 'CswWizard_WizardTable'
                 });
@@ -105,7 +107,7 @@
                     }).propNonDom({ stepno: s });
 
                     cswPrivate.stepRootSpans[s] = stepsCell.div({ cssclass: 'CswWizard_StepDiv', suffix: s });
-                        
+
                     cswPrivate.stepRootSpans[s].propNonDom({ stepno: s })
                         .span({ cssclass: 'CswWizard_StepTitle', text: steptitle });
                     cswPrivate.stepRootSpans[s].br({ number: 2 });
@@ -116,24 +118,32 @@
                     buttons: {
                         previous: {
                             onclick: function () {
-                                var currentStepNo = cswPrivate.getCurrentStepNo();
-                                if (false === cswPrivate.onBeforePrevious || Csw.tryExec(cswPrivate.onBeforePrevious, currentStepNo)) {
-                                    cswPrivate.selectStep(currentStepNo - 1);
-                                    Csw.tryExec(cswPrivate.onPrevious, currentStepNo - 1);
+                                if (cswPublic.form.isFormValid()) {
+                                    var currentStepNo = cswPrivate.getCurrentStepNo();
+                                    if (false === cswPrivate.onBeforePrevious || Csw.tryExec(cswPrivate.onBeforePrevious, currentStepNo)) {
+                                        cswPrivate.selectStep(currentStepNo - 1);
+                                        Csw.tryExec(cswPrivate.onPrevious, currentStepNo - 1);
+                                    }
                                 }
                             }
                         },
                         next: {
                             onclick: function () {
-                                var currentStepNo = cswPrivate.getCurrentStepNo();
-                                if (false === cswPrivate.onBeforeNext || Csw.tryExec(cswPrivate.onBeforeNext, currentStepNo)) {
-                                    cswPrivate.selectStep(currentStepNo + 1);
-                                    Csw.tryExec(cswPrivate.onNext, currentStepNo + 1);
+                                if (cswPublic.form.isFormValid()) {
+                                    var currentStepNo = cswPrivate.getCurrentStepNo();
+                                    if (false === cswPrivate.onBeforeNext || Csw.tryExec(cswPrivate.onBeforeNext, currentStepNo)) {
+                                        cswPrivate.selectStep(currentStepNo + 1);
+                                        Csw.tryExec(cswPrivate.onNext, currentStepNo + 1);
+                                    }
                                 }
                             }
                         },
                         finish: {
-                            onclick: function () { Csw.tryExec(cswPrivate.onFinish); }
+                            onclick: function () {
+                                if (cswPublic.form.isFormValid()) {
+                                    Csw.tryExec(cswPrivate.onFinish);
+                                }
+                            }
                         }
                     },
                     cancel: {
@@ -144,7 +154,7 @@
                 cswPublic.next = cswPrivate.btnGroup.next;
                 cswPublic.finish = cswPrivate.btnGroup.finish;
                 cswPublic.cancel = cswPrivate.btnGroup.cancel;
-               
+
                 cswPrivate.selectStep(cswPrivate.SelectedStep);
                 if (cswPrivate.doNextOnInit) {
                     Csw.tryExec(cswPrivate.onNext, cswPrivate.SelectedStep);

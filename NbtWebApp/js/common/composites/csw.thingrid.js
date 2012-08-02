@@ -50,9 +50,10 @@
                 if (options) {
                     $.extend(cswPrivate, options);
                 }
-                cswPrivate.div = cswParent.div();
-                cswPrivate.table = cswPrivate.div.table(cswPrivate);
-                cswPublic = Csw.dom({}, cswPrivate.table);
+                var form = cswParent.form();
+                cswPrivate.table = form.table(cswPrivate);
+                cswPublic = Csw.dom({}, form);
+                cswPublic.form = form;
             } ());
 
             cswPublic.hide = function () {
@@ -145,9 +146,11 @@
                     tooltip: { title: 'OK' },
                     disableOnClick: false,
                     onClick: function () {
-                        cswPublic.deleteRow(row);
-                        Csw.tryExec(cswPrivate.onAdd, row);
-                        Csw.tryExec(cswPublic.makeAddRow, cswPrivate.makeAddRow);
+                        if (cswPublic.form.isFormValid()) {
+                            cswPublic.deleteRow(row);
+                            Csw.tryExec(cswPrivate.onAdd, row);
+                            Csw.tryExec(cswPublic.makeAddRow, cswPrivate.makeAddRow);
+                        }
                     }
                 });
             });

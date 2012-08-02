@@ -69,7 +69,7 @@
 
                 cswPrivate.searchinput = cswtable.cell(1, 1).input({
                     ID: Csw.makeId(cswPrivate.ID, '', '_input'),
-                    type: Csw.enums.inputTypes.text,
+                    type: Csw.enums.inputTypes.search,
                     width: cswPrivate.searchbox_width,
                     cssclass: 'mousetrap'
                 });
