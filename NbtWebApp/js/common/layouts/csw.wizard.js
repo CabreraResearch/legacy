@@ -118,12 +118,10 @@
                     buttons: {
                         previous: {
                             onclick: function () {
-                                if (cswPublic.form.isFormValid()) {
-                                    var currentStepNo = cswPrivate.getCurrentStepNo();
-                                    if (false === cswPrivate.onBeforePrevious || Csw.tryExec(cswPrivate.onBeforePrevious, currentStepNo)) {
-                                        cswPrivate.selectStep(currentStepNo - 1);
-                                        Csw.tryExec(cswPrivate.onPrevious, currentStepNo - 1);
-                                    }
+                                var currentStepNo = cswPrivate.getCurrentStepNo();
+                                if (false === cswPrivate.onBeforePrevious || Csw.tryExec(cswPrivate.onBeforePrevious, currentStepNo)) {
+                                    cswPrivate.selectStep(currentStepNo - 1);
+                                    Csw.tryExec(cswPrivate.onPrevious, currentStepNo - 1);
                                 }
                             }
                         },
