@@ -1,6 +1,6 @@
 using System;
-using System.Collections.ObjectModel;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Data;
 using System.IO;
 using System.Linq;
@@ -65,7 +65,7 @@ namespace ChemSW.Nbt.WebServices
                 ResetWelcomeItems( strRoleId );
                 WelcomeTable = _getWelcomeTable( RoleId );
             }
-            Dictionary<CswNbtViewId, CswNbtView>  VisibleViews = _CswNbtResources.ViewSelect.getVisibleViews( string.Empty, _CswNbtResources.CurrentNbtUser, true, false, false, NbtViewRenderingMode.Any );
+            Dictionary<CswNbtViewId, CswNbtView> VisibleViews = _CswNbtResources.ViewSelect.getVisibleViews( string.Empty, _CswNbtResources.CurrentNbtUser, true, false, false, NbtViewRenderingMode.Any );
 
             foreach( DataRow WelcomeRow in WelcomeTable.Rows )
             {
@@ -83,7 +83,7 @@ namespace ChemSW.Nbt.WebServices
                             CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( CswConvert.ToInt32( WelcomeRow["nodetypeid"] ) );
                             if( NodeType != null )
                             {
-                                bool CanAdd = _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Create, NodeType );
+                                bool CanAdd = NodeType.getObjectClass().CanAdd && _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Create, NodeType );
                                 if( CanAdd )
                                 {
                                     if( WelcomeRow["displaytext"].ToString() != string.Empty )
@@ -146,21 +146,21 @@ namespace ChemSW.Nbt.WebServices
                             }
                         }
                         break;
-                    
+
                     // case 25734 - no more search links
                     // case CswNbtWelcomeTable.WelcomeComponentType.Search:
-                        //if( CswConvert.ToInt32( WelcomeRow["nodeviewid"] ) != Int32.MinValue )
-                        //{
-                        //    CswNbtView ThisView = _CswNbtResources.ViewSelect.restoreView( new CswNbtViewId( CswConvert.ToInt32( WelcomeRow["nodeviewid"] ) ) );
-                        //    if( null != ThisView && ThisView.IsSearchable() )
-                        //    {
-                        //        LinkText = WelcomeRow["displaytext"].ToString() != string.Empty ? WelcomeRow["displaytext"].ToString() : ThisView.ViewName;
-                        //        Ret[WelcomeId]["viewid"] = new CswNbtViewId( CswConvert.ToInt32( WelcomeRow["nodeviewid"] ) ).ToString();
-                        //        Ret[WelcomeId]["viewmode"] = ThisView.ViewMode.ToString().ToLower();
-                        //        Ret[WelcomeId]["type"] = "view";
-                        //    }
-                        //}
-                        //break;
+                    //if( CswConvert.ToInt32( WelcomeRow["nodeviewid"] ) != Int32.MinValue )
+                    //{
+                    //    CswNbtView ThisView = _CswNbtResources.ViewSelect.restoreView( new CswNbtViewId( CswConvert.ToInt32( WelcomeRow["nodeviewid"] ) ) );
+                    //    if( null != ThisView && ThisView.IsSearchable() )
+                    //    {
+                    //        LinkText = WelcomeRow["displaytext"].ToString() != string.Empty ? WelcomeRow["displaytext"].ToString() : ThisView.ViewName;
+                    //        Ret[WelcomeId]["viewid"] = new CswNbtViewId( CswConvert.ToInt32( WelcomeRow["nodeviewid"] ) ).ToString();
+                    //        Ret[WelcomeId]["viewmode"] = ThisView.ViewMode.ToString().ToLower();
+                    //        Ret[WelcomeId]["type"] = "view";
+                    //    }
+                    //}
+                    //break;
 
                     case CswNbtWelcomeTable.WelcomeComponentType.Text:
                         LinkText = WelcomeRow["displaytext"].ToString();

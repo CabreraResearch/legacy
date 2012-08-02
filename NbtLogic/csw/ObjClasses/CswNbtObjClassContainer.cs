@@ -31,7 +31,10 @@ namespace ChemSW.Nbt.ObjClasses
         public const string DisposePropertyName = "Dispose";
         public const string UndisposePropertyName = "Undispose";
         public const string OwnerPropertyName = "Owner";
-
+        private bool _IsDisposed
+        {
+            get { return Disposed.Checked == Tristate.True; }
+        }
         public sealed class RequestMenu
         {
             public const string Dispense = "Dispense";
@@ -89,7 +92,6 @@ namespace ChemSW.Nbt.ObjClasses
         private void _updateRequestMenu()
         {
             bool IsDisposed = Disposed.Checked == Tristate.True;
-            Request.setHidden( value: IsDisposed, SaveToDb: true );
             CswCommaDelimitedString MenuOpts = new CswCommaDelimitedString();
             string SelectedOpt = RequestMenu.Dispose;
             if( false == IsDisposed )
@@ -140,7 +142,6 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void afterPopulateProps()
         {
-            Dispense.setHidden( value: ( false == _CswNbtResources.Permit.canContainer( NodeId, CswNbtPermit.NodeTypePermission.Create, _CswNbtResources.Actions[CswNbtActionName.DispenseContainer] ) ), SaveToDb: false );
             Material.SetOnPropChange( OnMaterialPropChange );
             Dispose.SetOnPropChange( OnDisposedPropChange );
             OnDisposedPropChange( Dispose );
@@ -149,8 +150,17 @@ namespace ChemSW.Nbt.ObjClasses
             Size.SetOnPropChange( OnSizePropChange );
             SourceContainer.SetOnPropChange( OnSourceContainerChange );
             Barcode.SetOnPropChange( OnBarcodePropChange );
+            _toggleButtonVisibility();
             _CswNbtObjClassDefault.afterPopulateProps();
         }//afterPopulateProps()
+
+        private void _toggleButtonVisibility( bool SaveToDb = false )
+        {
+            Dispense.setHidden( value: ( _IsDisposed || false == _CswNbtResources.Permit.canContainer( NodeId, CswNbtPermit.NodeTypePermission.Create, _CswNbtResources.Actions[CswNbtActionName.DispenseContainer] ) ), SaveToDb: SaveToDb );
+            Dispose.setHidden( value: ( _IsDisposed || false == _CswNbtResources.Permit.canContainer( NodeId, CswNbtPermit.NodeTypePermission.Edit, _CswNbtResources.Actions[CswNbtActionName.DisposeContainer] ) ), SaveToDb: SaveToDb );
+            Undispose.setHidden( value: ( false == _IsDisposed || false == _CswNbtResources.Permit.canContainer( NodeId, CswNbtPermit.NodeTypePermission.Edit, _CswNbtResources.Actions[CswNbtActionName.UndisposeContainer] ) ), SaveToDb: SaveToDb );
+            Request.setHidden( value: ( _IsDisposed || false == _CswNbtResources.Permit.canContainer( NodeId, CswNbtPermit.NodeTypePermission.View, _CswNbtResources.Actions[CswNbtActionName.Submit_Request] ) ), SaveToDb: SaveToDb );
+        }
 
         public override void addDefaultViewFilters( CswNbtViewRelationship ParentRelationship )
         {
@@ -457,10 +467,8 @@ namespace ChemSW.Nbt.ObjClasses
             SourceContainer.setReadOnly( value: isReadOnly, SaveToDb: true );
             ExpirationDate.setReadOnly( value: isReadOnly, SaveToDb: true );
             Size.setReadOnly( value: isReadOnly, SaveToDb: true );
-            Request.setReadOnly( value: isReadOnly, SaveToDb: true );
-            Request.setHidden( value: isReadOnly, SaveToDb: true );
-            Dispense.setReadOnly( value: isReadOnly, SaveToDb: true );
             Owner.setReadOnly( value: isReadOnly, SaveToDb: true );
+            _toggleButtonVisibility( true );
         }
 
         private bool _isStorageCompatible( CswDelimitedString materialStorageCompatibility, CswDelimitedString locationStorageCompatibilities )
@@ -616,15 +624,8 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropLogical Disposed { get { return ( _CswNbtNode.Properties[DisposedPropertyName] ); } }
         private void OnDisposedPropChange( CswNbtNodeProp Prop )
         {
-            if( Disposed.Checked == Tristate.False )
+            if( Disposed.Checked == Tristate.True )
             {
-                Undispose.setHidden( value: true, SaveToDb: false );
-                Dispose.setHidden( value: ( false == _CswNbtResources.Permit.canContainer( NodeId, CswNbtPermit.NodeTypePermission.Edit, _CswNbtResources.Actions[CswNbtActionName.DisposeContainer] ) ), SaveToDb: false );
-            }
-            else if( Disposed.Checked == Tristate.True )
-            {
-                Dispose.setHidden( value: true, SaveToDb: false );
-                Undispose.setHidden( value: ( false == _CswNbtResources.Permit.canContainer( NodeId, CswNbtPermit.NodeTypePermission.Edit, _CswNbtResources.Actions[CswNbtActionName.UndisposeContainer] ) ), SaveToDb: false );
                 _updateRequestItems( CswNbtObjClassRequestItem.Types.Dispose );
             }
             _updateRequestMenu();
