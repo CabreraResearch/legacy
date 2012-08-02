@@ -9,7 +9,6 @@
             var cswPublic = {
                 quantities: [],
                 qtyControl: null,
-                amountForm: null,
                 thinGrid: null,
                 amountsGridOnAdd: null
             };
@@ -217,7 +216,7 @@
                     });
 
                     var executeOnAdd = function () {
-                        if (Csw.isNumeric(Csw.number(newAmount.containerNo)) && cswPublic.amountForm.isFormValid()) {
+                        if (Csw.isNumeric(Csw.number(newAmount.containerNo))) {
                             var newCount = cswPrivate.count + Csw.number(newAmount.containerNo);
                             if (newCount <= cswPrivate.containerlimit) {
                                 cswPrivate.count = newCount;
