@@ -124,6 +124,11 @@ namespace ChemSW.Nbt.MetaData
             get { return CswConvert.ToInt32( _ObjectClassRow["quota"] ); }
         }
 
+        public Collection<Int32> getNodeTypeIds()
+        {
+            return _CswNbtMetaDataResources.NodeTypesCollection.getNodeTypeIds( ObjectClassId );
+        }
+
         public IEnumerable<CswNbtMetaDataNodeType> getNodeTypes()
         {
             return _CswNbtMetaDataResources.NodeTypesCollection.getNodeTypes( ObjectClassId );
