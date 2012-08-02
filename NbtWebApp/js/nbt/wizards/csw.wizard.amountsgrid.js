@@ -242,13 +242,6 @@
                                 }
                                 newAmount.rowid = cswPublic.thinGrid.addRows(formCols);
                                 cswPublic.quantities.push(extractNewAmount(newAmount));
-                                formCols = formCols.concat([newAmount.quantity + ' ' + newAmount.unit]);
-                                if (cswPrivate.customBarcodes) {
-                                    formCols = formCols.concat([newAmount.barcodes]);
-                                }
-                                newAmount.rowid = cswPublic.thinGrid.addRows(formCols);
-                                cswPublic.quantities.push(extractNewAmount(newAmount));
-                                
                             } else {
                                 $.CswDialog('AlertDialog', 'The limit for containers created at receipt is [' + cswPrivate.containerlimit + ']. You have already added [' + cswPrivate.count + '] containers.', 'Cannot add [' + newCount + '] containers.');
                             }
@@ -256,12 +249,12 @@
                         }
                     };
 
-                    cswPublic.amountsGridOnAdd = function () {
+                    cswPublic.amountsGridOnAdd = function() {
                         var rowid = cswPublic.thinGrid.getRowCount();
                         cswPublic.thinGrid.deleteRow(rowid);
                         executeOnAdd();
                         Csw.tryExec(cswPublic.thinGrid.makeAddRow, executeMakeAddRow);
-                    }
+                    };
 
                 } ());
 
