@@ -129,12 +129,12 @@
                             cswPrivate.selectedSizeId = sizeControl.selectedNodeId();
                             extendNewAmount({ sizeid: sizeControl.selectedNodeId() });
                             extendNewAmount({ sizename: sizeControl.selectedText() });
-                        }
+                        };
                         var updateQuantityVals = function () {
                             extendNewAmount({ quantity: cswPublic.qtyControl.quantityValue });
                             extendNewAmount({ unit: cswPublic.qtyControl.unitText });
                             extendNewAmount({ unitid: cswPublic.qtyControl.unitVal });
-                        }
+                        };
                         switch (columnName) {
                             case cswPrivate.config.numberName:
                                 var countControl = cswCell.numberTextBox({
@@ -193,8 +193,7 @@
                         }
                     };
 
-                    cswPublic.amountForm = cswParent.form();
-                    cswPublic.thinGrid = cswPublic.amountForm.thinGrid({
+                    cswPublic.thinGrid = cswParent.thinGrid({
                         linkText: '',
                         hasHeader: true,
                         rows: cswPrivate.rows,
@@ -243,6 +242,13 @@
                                 }
                                 newAmount.rowid = cswPublic.thinGrid.addRows(formCols);
                                 cswPublic.quantities.push(extractNewAmount(newAmount));
+                                formCols = formCols.concat([newAmount.quantity + ' ' + newAmount.unit]);
+                                if (cswPrivate.customBarcodes) {
+                                    formCols = formCols.concat([newAmount.barcodes]);
+                                }
+                                newAmount.rowid = cswPublic.thinGrid.addRows(formCols);
+                                cswPublic.quantities.push(extractNewAmount(newAmount));
+                                
                             } else {
                                 $.CswDialog('AlertDialog', 'The limit for containers created at receipt is [' + cswPrivate.containerlimit + ']. You have already added [' + cswPrivate.count + '] containers.', 'Cannot add [' + newCount + '] containers.');
                             }
