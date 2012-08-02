@@ -1,10 +1,3 @@
-<script type="text/javascript">
-    var scr = document.createElement("script");
-    var host = (("https:" == document.location.protocol) ? "https://d3eyf2cx8mbems.cloudfront.net" : "http://d3eyf2cx8mbems.cloudfront.net");
-    scr.type = "text/javascript";
-    scr.src = host + "/js/loggly-0.1.0.js";
-    document.documentElement.firstChild.appendChild(scr);
-</script>
 <!--[if lte IE 8]>
  <script type="text/javascript" 
      src="//ajax.googleapis.com/ajax/libs/chrome-frame/1/CFInstall.min.js"></script>
@@ -93,7 +86,7 @@ window.internetExplorerVersionNo = 9;
 
     // from: http://stackoverflow.com/questions/6435833/how-to-scope-the-reset-css-so-that-is-applied-to-ext-components-using-scopereset
     // Here we define Ext for the first time
-    Ext = {
+    window.Ext = {
         buildSettings:{
             "scopeResetCSS": true  // Thanks, but I'll do my own scoping please
         }
@@ -106,12 +99,12 @@ window.internetExplorerVersionNo = 9;
 
 <script language="javascript">
 
-    Ext.Loader.setConfig({enabled: true});
+    window.Ext.Loader.setConfig({enabled: true});
 
-    Ext.Loader.setPath('Ext', 'js/thirdparty/extjs-4.1.0');
-    Ext.state.Manager.setProvider(new Ext.state.CookieProvider());
+    window.Ext.Loader.setPath('Ext', 'js/thirdparty/extjs-4.1.0');
+    window.Ext.state.Manager.setProvider(new Ext.state.LocalStorageProvider());
 
-    Ext.require([
+    window.Ext.require([
         'Ext.ux.grid.Printer',
         'Ext.ux.data.PagingMemoryProxy'
     ]);
@@ -119,7 +112,7 @@ window.internetExplorerVersionNo = 9;
 
     // from: http://www.sencha.com/forum/showthread.php?200248-4.1.0-button-contents-are-cut-off-when-using-scoped-CSS&highlight=scoperesetcss
     // Fixes the grid pager buttons disappearing if scopeResetCSS=true
-    Ext.override(Ext.button.Button, {
+    window.Ext.override(Ext.button.Button, {
 
         getPersistentPadding: function () {
 
@@ -132,11 +125,11 @@ window.internetExplorerVersionNo = 9;
             // Short-circuit IE as it sometimes gives false positive for padding
             if (!padding) {
                 padding = me.self.prototype.persistentPadding = [0, 0, 0, 0];
-                if (!Ext.isIE) {
+                if (!window.Ext.isIE) {
 
 
                     // BEGIN PATCH
-                    btn = Ext.create('Ext.button.Button', {
+                    btn = window.Ext.create('Ext.button.Button', {
                         renderTo: Ext.getBody(),
                         text: 'test',
                         style: 'position:absolute;top:-999px;'
@@ -169,7 +162,7 @@ window.internetExplorerVersionNo = 9;
             false === window.JSON.hasOwnProperty('parse') || 
             false === window.JSON.hasOwnProperty('stringify')) {
 
-               document.write('<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/json2/20110223/json2.js"><\/script>');
+               document.write('<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/json2/20110223/json2.js"><\/script>');
                /* document.write('<script type="text/javascript" src="Scripts/json2.min.js"><\/script>'); */
         }
 

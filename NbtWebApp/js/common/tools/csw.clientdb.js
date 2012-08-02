@@ -82,16 +82,22 @@
 
 
     Csw.clientDb.clear = Csw.clientDb.clear ||
-        Csw.clientDb.register('clear', function () {
-            //nuke the entire storage collection
-            if (cswPrivate.hasLocalStorage) {
-                window.localStorage.clear();
+        Csw.clientDb.register('clear', function (clearAll) {
+            if (Csw.bool(clearAll)) {
+                //nuke the entire storage collection
+                if (cswPrivate.hasLocalStorage) {
+                    window.localStorage.clear();
+                }
+                if (cswPrivate.hasSessionStorage) {
+                    window.sessionStorage.clear();
+                }
+                cswPrivate.closureStorage.clear();
+            } else {
+                cswPrivate.keys.forEach(function (key) {
+                    Csw.clientDb.removeItem(key);
+                });
             }
-            if (cswPrivate.hasSessionStorage) {
-                window.sessionStorage.clear();
-            }
-            cswPrivate.closureStorage.clear();
-            return this;
+            return Csw.clientDb;
         });
 
     Csw.clientDb.getItem = Csw.clientDb.getItem ||
