@@ -173,31 +173,30 @@
                     urlMethod: cswPrivate.ajax.urlMethod,
                     data: cswPrivate.ajax.data,
                     success: function (result) {
+
                         var items = [];
                         Csw.each(result, function(menuItem, menuItemName) {
-                            if(items.length > 0)
-                            {
-                                items.push({xtype: 'tbseparator'});
+                            if (items.length > 0) {
+                                items.push({ xtype: 'tbseparator' });
                             }
-                            
-                            var thisItem = {};
+
+                            var thisItem = { };
                             if (Csw.bool(menuItem.haschildren)) {
                                 // Child items
                                 thisItem = {
                                     xtype: 'splitbutton',
                                     text: menuItemName,
-                                    menu: { items: []},
+                                    menu: { items: [] },
                                     listeners: {
-                                        click: function(button, event) { 
-                                            button.showMenu();  // open the menu on click, not just on arrowclick
+                                        click: function(button, event) {
+                                            button.showMenu(); // open the menu on click, not just on arrowclick
                                         }
                                     },
                                     cls: 'menuitem'
                                 }; // thisItem
                                 Csw.each(menuItem, function(childItem, childItemName) {
-                                    if(childItemName != 'haschildren')
-                                    {
-                                        thisItem.menu.items.push({ 
+                                    if (childItemName != 'haschildren') {
+                                        thisItem.menu.items.push({
                                             text: childItemName,
                                             icon: childItem.icon,
                                             listeners: {
@@ -225,13 +224,15 @@
                             }
                             items.push(thisItem);
                         }); // each
-                        Ext.create('Ext.toolbar.Toolbar', {
-                            renderTo: cswParent.getId(),
-                            width: cswPrivate.width,
-                            items: items,
-                            cls: 'menutoolbar'
-                        }); // toolbar
-                    } // success
+                        if (false === Csw.isNullOrEmpty($('#' + cswParent.getId()), true)) {
+                            window.Ext.create('Ext.toolbar.Toolbar', {
+                                renderTo: cswParent.getId(),
+                                width: cswPrivate.width,
+                                items: items,
+                                cls: 'menutoolbar'
+                            }); // toolbar
+                        } // success
+                    }
                 }); // ajax
             } ()); // constructor
 

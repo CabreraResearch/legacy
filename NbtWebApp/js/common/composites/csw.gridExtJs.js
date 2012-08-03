@@ -262,7 +262,9 @@
                                 items: [cswPrivate.editAllButton, cswPrivate.deleteAllButton]
                             }]; // panelopts.dockedItems
                         } // if(cswPrivate.showCheckboxes && cswPrivate.showActionColumn)
-                        cswPrivate.panel = window.Ext.create('Ext.panel.Panel', panelopts);
+                        if (false === Csw.isNullOrEmpty($('#' + renderTo), true)) {
+                            cswPrivate.panel = window.Ext.create('Ext.panel.Panel', panelopts);
+                        }
                     } // if(false === Csw.isNullOrEmpty(renderTo))
                 }, 200); // setTimeout
 
