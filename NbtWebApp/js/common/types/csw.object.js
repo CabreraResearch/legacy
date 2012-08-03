@@ -340,4 +340,18 @@
 			return ret;
         });
 
+    Csw.extend = Csw.extend ||
+        Csw.register('extend', function (destObj, srcObj, deepCopy) {
+            /// <summary>Copy one object to another</summary>
+            /// <returns type="Object"> An object. </returns>
+            'use strict';
+            var ret = destObj || {};
+            if(arguments.length === 3) {
+                ret = window.$.extend(Csw.bool(deepCopy), ret, srcObj);
+            } else {
+                ret = window.$.extend(ret, srcObj);
+            }
+            return ret;
+        });
+
 } ());
