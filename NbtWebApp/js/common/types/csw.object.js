@@ -14,7 +14,7 @@
             /// <param name="obj" type="Object"> Object to test</param>
             /// <returns type="Boolean" />
             'use strict';
-            var ret = ($.isPlainObject(obj));
+            var ret = (window.$.isPlainObject(obj));
             return ret;
         });
 
@@ -24,7 +24,7 @@
             /// <param name="obj" type="Object"> Object to test</param>
             /// <returns type="Boolean" />
             'use strict';
-            var ret = (obj instanceof jQuery);
+            var ret = (obj instanceof window.jQuery);
             return ret;
         });
 
@@ -62,8 +62,8 @@
                 ret = (obj === null ||
                     obj === undefined ||
                     (/* Plain object is an object literal: {} */
-                        $.isPlainObject(obj) && (
-                            $.isEmptyObject(obj)) ||
+                        window.$.isPlainObject(obj) && (
+                            window.$.isEmptyObject(obj)) ||
                             false === obj.isValid)
                 );
             }
@@ -195,7 +195,7 @@
                 childKey, obj, childObj;
             if (Csw.isFunction(onSuccess)) {
                 if (Csw.isArray(thisObj) || (Csw.isPlainObject(thisObj) && false === Csw.contains(thisObj, 'length'))) {
-                    $.each(thisObj, function(key, value) {
+                    window.$.each(thisObj, function(key, value) {
                         obj = thisObj[key];
                         ret = onSuccess(obj, key, thisObj, value);
                         return !ret; //false signals break
@@ -333,7 +333,7 @@
             /// <returns type="Object"> An object. </returns>
             'use strict';
             var ret = {};
-            Csw.tryExec(function () { ret = $.parseJSON(data); });
+            Csw.tryExec(function () { ret = window.$.parseJSON(data); });
             if(Csw.isNullOrEmpty(ret)) {
 				ret = {};
 			}
