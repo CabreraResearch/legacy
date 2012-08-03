@@ -120,7 +120,8 @@
                         var openAddNodeDialog = function (nodetypeToAdd) {
                             $.CswDialog('AddNodeDialog', {
                                 'nodetypeid': nodetypeToAdd,
-                                'onAddNode': o.onReload
+                                'onAddNode': o.onReload,
+                                text: o.propData.name
                             });
                         };
 

@@ -198,8 +198,9 @@
                 Csw.error.throwException(Csw.error.exception('Cannot create an Add Dialog without options.', '', 'CswDialog.js', 177));
             }
             $.extend(cswPrivate, options);
+            cswPrivate.ID = Csw.makeSafeId(cswPrivate.text, Math.floor(Math.random() * 99999));
             var cswPublic = {
-                div: Csw.literals.div(),
+                div: Csw.literals.div({ ID: cswPrivate.ID }),
                 close: function () {
                     cswPublic.div.$.dialog('close');
                 },
@@ -207,6 +208,7 @@
             };
             
             cswPublic.tabsAndProps = Csw.layouts.tabsAndProps(cswPublic.div, {
+                ID: Csw.makeId(cswPrivate.ID, 'tabsAndProps'),
                 nodetypeid: cswPrivate.nodetypeid,
                 relatednodeid: cswPrivate.relatednodeid,
                 relatednodename: cswPrivate.relatednodename,
