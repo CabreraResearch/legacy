@@ -13,6 +13,7 @@
             /// </summary>
             /// <param name="obj" type="Object"> Object to test</param>
             /// <returns type="Boolean" />
+            'use strict';
             var ret = ($.isPlainObject(obj));
             return ret;
         });
@@ -22,6 +23,7 @@
             /// <summary> Returns true if the object jQuery</summary>
             /// <param name="obj" type="Object"> Object to test</param>
             /// <returns type="Boolean" />
+            'use strict';
             var ret = (obj instanceof jQuery);
             return ret;
         });
@@ -31,6 +33,7 @@
             /// <summary> Returns true if the object is an Array or jQuery</summary>
             /// <param name="obj" type="Object"> Object to test</param>
             /// <returns type="Boolean" />
+            'use strict';
             var ret = (Csw.isArray(obj) || isJQuery(obj));
             return ret;
         });
@@ -40,6 +43,7 @@
             /// <summary> Returns true if the object is not a function, array, jQuery or JSON object</summary>
             /// <param name="obj" type="Object"> Object to test</param>
             /// <returns type="Boolean" />
+            'use strict';
             var ret = (false === Csw.isFunction(obj) && false === hasLength(obj) && false === isPlainObject(obj));
             return ret;
         });
@@ -49,7 +53,7 @@
             /// <summary> Returns true if the input is null or undefined</summary>
             /// <param name="obj" type="Object"> Object to test</param>
             /// <returns type="Boolean" />
-
+            'use strict';
             /* Don't attempt to evaluate validity of functions--they're not null */
             var ret = (false === Csw.isFunction(obj));
 
@@ -70,6 +74,7 @@
         Csw.register('isTrueOrFalse', function isTrueOrFalse(obj) {
             /// <summary> Returns true if a value can be evaluated as true or false.</summary>
             /// <returns type="Boolean" />
+            'use strict';
             return (
                 obj === true ||
                     obj === false ||
@@ -85,6 +90,7 @@
             /// <summary> Returns true if the input is null, undefined, or ''</summary>
             /// <param name="obj" type="Object"> Object to test</param>
             /// <returns type="Boolean" />
+            'use strict';
             var ret = true;
 
             /* if(obj) is faster, but it coerces type. We also have to check if obj is a truthy value. */
@@ -101,6 +107,7 @@
 
     Csw.isInstanceOf = Csw.isInstanceOf ||
         Csw.register('isInstanceOf', function isInstanceOf(name, obj) {
+            'use strict';
             return (Csw.contains(name, obj) && Csw.bool(obj[name]));
         });
 
@@ -111,6 +118,7 @@
             /// <param name="index" type="String"> Index or property to find </param>
             /// <param name="defaultStr" type="String"> Optional. String to use instead of '' if index does not exist. </param>
             /// <returns type="String">Parsed string</returns>
+            'use strict';
             var ret = '';
             if (false === Csw.isNullOrEmpty(defaultStr)) {
                 ret = defaultStr;
@@ -129,6 +137,7 @@
             /// <param name="object" type="Object"> An object to evaluate </param>
             /// <param name="index" type="String"> An index or property to find </param>
             /// <returns type="Boolean" />
+            'use strict';
             var ret = false;
             if (false === Csw.isNullOrUndefined(object)) {
                 if (Csw.isArray(object)) {
@@ -148,6 +157,7 @@
             /// <param name="oldName" type="String"> Current property name </param>
             /// <param name="newName" type="String"> New property name </param>
             /// <returns type="Object"> The modified object </returns>
+            'use strict';
             if (false === Csw.isNullOrUndefined(obj) && contains(obj, oldName)) {
                 obj[newName] = obj[oldName];
                 delete obj[oldName];
@@ -162,6 +172,7 @@
             /// <param name="prop" type="String"> Property name </param>
             /// <param name="value" type="Object"> Value to match </param>
             /// <returns type="Boolean"> True if succeeded </returns>
+            'use strict';
             var ret = false;
             if (false === Csw.isNullOrEmpty(anObj) && contains(anObj, prop) && anObj[prop] === value) {
                 ret = true;
@@ -178,6 +189,7 @@
             ///<para>if an Object, onSuccess receives (thisObject, name, parentObject)</para>
             ///</param>
             /// <returns type="Object">Returns the return of onSuccess</returns>
+            'use strict';
             //http://stackoverflow.com/questions/7356835/jquery-each-fumbles-if-non-array-object-has-length-property
             var ret = false,
                 childKey, obj, childObj;
@@ -210,6 +222,7 @@
             /// <param name="onSuccess" type="Function"> A function to execute on finding a property. To force iteration to stop, onSuccess should return false. </param>
             /// <param name="doRecursion" type="Boolean"> If true, recurse on all properties. Recursion will stop if onSuccess returns false. </param>
             /// <returns type="Object">Returns the return of onSuccess</returns>
+            'use strict';
             //borrowed from http://code.google.com/p/shadejs
             var stopCrawling = false;
             var onEach = function(childObj, childKey, parentObj, value) {
@@ -230,7 +243,8 @@
             /// <summary>Find an object in a JSON object.</summary>
             /// <param name="obj" type="Object"> Object to search </param>
             /// <returns type="Object"></returns>
-            var thisObj = obj || { };
+            'use strict';
+            var thisObj = obj || {};
             var currentObj = null;
             var parentObj = thisObj;
             var currentKey;
@@ -241,6 +255,7 @@
                 /// <param name="key" type="String"> Property name to match. </param>
                 /// <param name="value" type="Object"> Property value to match </param>
                 /// <returns type="Object"> Returns the value of the 'property' property which contains a matching key/value prop. </returns>
+                'use strict';
                 var ret = false;
                 if (foundMatch(thisObj, key, value)) {
                     ret = thisObj;
@@ -266,7 +281,8 @@
             }
 
             function remove(key, value) {
-                var onSuccess = function(childObj, childKey, parObj) {
+                'use strict';
+                var onSuccess = function (childObj, childKey, parObj) {
                     var deleted = false;
                     if (foundMatch(childObj, key, value)) {
                         deleted = true;
@@ -295,6 +311,7 @@
             /// <summary>Get a dereferenced copy of an object</summary>
             /// <param name="data" type="Object"> An object </param>
             /// <returns type="Object"> An identical copy of the object. </returns>
+            'use strict';
             return JSON.parse(JSON.stringify(data));
         });
 
@@ -303,6 +320,7 @@
             /// <summary>Convert an object to a string</summary>
             /// <param name="data" type="Object"> An object </param>
             /// <returns type="String"> A string representation of the object. </returns>
+            'use strict';
             var ret = '';
             Csw.tryExec(function() { ret = JSON.stringify(data); });
             return ret;
@@ -313,6 +331,7 @@
             /// <summary>Convert a string to a native JS Object</summary>
             /// <param name="data" type="String"> A string representation of an object </param>
             /// <returns type="Object"> An object. </returns>
+            'use strict';
             var ret = {};
             Csw.tryExec(function () { ret = $.parseJSON(data); });
             if(Csw.isNullOrEmpty(ret)) {
