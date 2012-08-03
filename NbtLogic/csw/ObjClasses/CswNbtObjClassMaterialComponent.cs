@@ -1,7 +1,6 @@
-using ChemSW.Nbt.MetaData;
-using Newtonsoft.Json.Linq;
-using ChemSW.Nbt.PropTypes;
 using ChemSW.Exceptions;
+using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.PropTypes;
 
 namespace ChemSW.Nbt.ObjClasses
 {
@@ -20,9 +19,9 @@ namespace ChemSW.Nbt.ObjClasses
             get { return _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.MaterialComponentClass ); }
         }
 
-        public static string PercentagePropertyName { get { return "Percentage"; } }
-        public static string MixturePropertyName { get { return "Mixture"; } }
-        public static string ConstituentPropertyName { get { return "Constituent"; } }
+        public const string PercentagePropertyName = "Percentage";
+        public const string MixturePropertyName = "Mixture";
+        public const string ConstituentPropertyName = "Constituent";
 
         /// <summary>
         /// Convert a CswNbtNode to a CswNbtObjClassMaterialComponent
@@ -89,9 +88,9 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override bool onButtonClick( NbtButtonData ButtonData )
         {
-            
-            
-            
+
+
+
             if( null != ButtonData && null != ButtonData.NodeTypeProp ) { /*Do Something*/ }
             return true;
         }
@@ -103,7 +102,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get
             {
-                return ( _CswNbtNode.Properties[PercentagePropertyName].AsNumber );
+                return ( _CswNbtNode.Properties[PercentagePropertyName] );
             }
         }
 
@@ -111,7 +110,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get
             {
-                return ( _CswNbtNode.Properties[MixturePropertyName].AsRelationship );
+                return ( _CswNbtNode.Properties[MixturePropertyName] );
             }
         }
 
