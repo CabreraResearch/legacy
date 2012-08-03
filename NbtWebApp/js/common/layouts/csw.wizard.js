@@ -27,7 +27,7 @@
                 currentStepNo: 1
             };
             if (options) {
-                $.extend(cswPrivate, options);
+                Csw.extend(cswPrivate, options);
             }
 
             var cswPublic = {};

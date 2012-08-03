@@ -14,7 +14,7 @@
             }
         };
         if (options) {
-            $.extend(o, options);
+            Csw.extend(o, options);
         }
 
         var dataJson = {
@@ -44,7 +44,7 @@
             onError: null
         };
         if (options) {
-            $.extend(o, options);
+            Csw.extend(o, options);
         }
 
         if (false === Csw.isArray(o.nodeids)) {  /* case 22722 */

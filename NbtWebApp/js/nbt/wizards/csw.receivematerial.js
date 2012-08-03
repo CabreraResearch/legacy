@@ -56,7 +56,7 @@
                 var state;
                 if (Csw.isNullOrEmpty(cswPrivate.state.materialId)) {
                     state = cswPrivate.getState();
-                    $.extend(cswPrivate.state, state);
+                    Csw.extend(cswPrivate.state, state);
                     if (Csw.isNullOrEmpty(cswPrivate.state.materialId)) {
                         Csw.error.throwException(Csw.error.exception('Cannot create a Material Receiving wizard without a Material ID.', '', 'csw.receivematerial.js', 60));
                     }
@@ -80,7 +80,7 @@
             //ctor preInit
             (function _pre() {
                 if (options) {
-                    $.extend(cswPrivate, options);
+                    Csw.extend(cswPrivate, options);
                 }
 
                 if (Csw.isNullOrEmpty(cswParent)) {

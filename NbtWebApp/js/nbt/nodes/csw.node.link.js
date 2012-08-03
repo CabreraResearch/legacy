@@ -54,7 +54,7 @@
             }; // makeNodeLink()
 
             (function () {
-                if (options) $.extend(cswPrivate, options);
+                if (options) Csw.extend(cswPrivate, options);
                 cswPrivate.div = cswParent.div();
                 cswPublic = Csw.dom({}, cswPrivate.div);
                 cswPrivate.findNodeRef();

@@ -37,7 +37,7 @@
                 var $label;
                 
                 if (options) {
-                    $.extend(cswPrivate, options);
+                    Csw.extend(cswPrivate, options);
                 }
                 var cssClass = 'CswLabel ' + cswPrivate.cssclass;
                 if(cswPrivate.useWide) {

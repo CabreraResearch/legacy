@@ -37,7 +37,7 @@
                 'display': true
             };
             if (Csw.isPlainObject(errorJson)) {
-                $.extend(e, errorJson);
+                Csw.extend(e, errorJson);
             } else {
                 e.type = errorJson;
             }

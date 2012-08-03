@@ -48,7 +48,7 @@
                 delimiter: ',',
                 initString: Csw.string(string)
             };
-            if (opts) $.extend(cswPrivate, opts);
+            if (opts) Csw.extend(cswPrivate, opts);
             
             var cswPublic = {
                 array: [],

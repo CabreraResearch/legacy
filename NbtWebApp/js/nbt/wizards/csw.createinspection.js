@@ -39,7 +39,7 @@
                 inspectionGrid: '',
                 gridOptions: {}
             };
-            if (options) $.extend(cswPrivate, options);
+            if (options) Csw.extend(cswPrivate, options);
 
             var cswPublic = cswParent.div();
             cswPrivate.currentStepNo = cswPrivate.startingStep;
@@ -423,7 +423,7 @@
 //                    cswPrivate.toggleButton(cswPrivate.buttons.next, false);
 //                    cswPrivate.toggleButton(cswPrivate.buttons.prev, true, true);
 //                } else {
-//                    $.extend(cswPrivate.gridOptions.gridOpts, jqGridOpts);
+//                    Csw.extend(cswPrivate.gridOptions.gridOpts, jqGridOpts);
 //                }
 //                cswPrivate.inspectionGrid = cswPrivate.inspectionGridDiv.grid(cswPrivate.gridOptions);
 
@@ -599,7 +599,7 @@
 
                         if (cswPrivate.isNewInspectionDesign()) {
                             if (cswPrivate.gridOptions) {
-                                $.extend(true, confirmGridOptions, cswPrivate.gridOptions);
+                                Csw.extend(confirmGridOptions, cswPrivate.gridOptions, true);
                             }
 
                             confirmGridOptions.ID = cswPrivate.makeStepId('confirmGrid');
