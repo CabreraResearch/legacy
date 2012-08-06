@@ -61,7 +61,7 @@
                     Csw.tryExec(o.onYes);
                 }
             });
-            
+
             openDialog(div, 300, 150, null, 'Expire Warning');
         }, // ExpireDialog
         AddWelcomeItemDialog: function (options) {
@@ -79,7 +79,7 @@
                     Csw.tryExec(o.onAdd);
                 }
             });
-            
+
             openDialog(div, 400, 400, null, 'New Welcome Item');
         }, // AddWelcomeItemDialog
         AddViewDialog: function (options) {
@@ -206,7 +206,7 @@
                 },
                 title: 'New ' + cswPrivate.text
             };
-            
+
             cswPublic.tabsAndProps = Csw.layouts.tabsAndProps(cswPublic.div, {
                 ID: Csw.makeId(cswPrivate.ID, 'tabsAndProps'),
                 nodetypeid: cswPrivate.nodetypeid,
@@ -247,7 +247,7 @@
                 },
                 title: 'New ' + cswPrivate.text
             };
-            
+
             cswPublic.tabsAndProps = Csw.layouts.tabsAndProps(cswPublic.div, {
                 nodetypeid: cswPrivate.nodetypeid,
                 EditMode: Csw.enums.editMode.Add,
@@ -498,7 +498,7 @@
                     cswPublic.div.$.dialog('close');
                 }
             };
-            
+
             var myEditMode = Csw.enums.editMode.EditInPopup;
             var table = cswPublic.div.table();
             if (false === Csw.isNullOrEmpty(cswPrivate.date) && false === cswPrivate.Multi) {
@@ -663,7 +663,7 @@
             };
 
             cswPublic.div.span({ text: 'Are you sure you want to delete' });
-            
+
             if (cswPrivate.Multi) {
                 //var $nodechecks = $('.' + o.NodeCheckTreeId + '_check:checked');
                 //var nodechecked = $('#' + o.NodeCheckTreeId).CswNodeTree('checkedNodes');
@@ -796,6 +796,13 @@
             var div = Csw.literals.div(),
                 molTxtArea, saveBtn;
 
+            div.label({
+                text: 'Upload a MOL File:',
+                cssclass: 'changeMolDataDialogLabel'
+            });
+
+            div.br({ number: 2 });
+
             var uploadBtn = div.input({ ID: 'fileupload', type: Csw.enums.inputTypes.file });
 
             uploadBtn.$.fileupload({
@@ -809,22 +816,18 @@
                 }
             });
 
-            div.button({
-                ID: 'fileupload_cancel',
-                enabledText: 'Cancel',
-                disabledText: 'Canceling',
-                onClick: function () {
-                    div.$.dialog('close');
-                }
-            });
+            div.br({ number: 2 });
 
             div.span({ text: 'MOL Text (Paste from Clipboard):' }).br();
 
             molTxtArea = div.textArea({ ID: '', rows: 4, cols: 40 });
             div.br();
-            saveBtn = div.button({ ID: 'txt_save',
-                enabledText: 'Save MOL Text',
-                disabledText: 'Saving MOL...',
+
+            var buttonsDiv = div.div({ align: 'right' });
+
+            saveBtn = buttonsDiv.button({ ID: 'txt_save',
+                enabledText: 'Save',
+                disabledText: 'Saving...',
                 onClick: function () {
                     Csw.ajax.post({
                         url: o.TextUrl,
@@ -841,7 +844,16 @@
                 } // onClick
             }); // 
 
-            openDialog(div, 400, 300, null, 'Upload');
+            buttonsDiv.button({
+                ID: 'fileupload_cancel',
+                enabledText: 'Cancel',
+                disabledText: 'Canceling',
+                onClick: function () {
+                    div.$.dialog('close');
+                }
+            });
+
+            openDialog(div, 400, 300, null, 'Change MOL Data');
         }, // FileUploadDialog
         ShowLicenseDialog: function (options) {
             var o = {
@@ -912,7 +924,7 @@
                     cswPublic.div.$.dialog('close');
                 }
             };
-            
+
             cswPublic.div.br();
             var labelSelDiv = cswPublic.div.div();
             var labelSel = labelSelDiv.select({ ID: cswPrivate.ID + '_labelsel' });
@@ -1035,7 +1047,7 @@
                 },
                 title: Csw.string(cswPrivate.title, 'Search ' + cswPrivate.propname)
             };
-            
+
             cswPublic.search = Csw.composites.universalSearch(cswPublic.div, {
                 ID: cswPrivate.ID,
                 nodetypeid: cswPrivate.nodetypeid,
