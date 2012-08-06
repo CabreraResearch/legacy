@@ -1,18 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Collections.Specialized;
-using System.Collections;
 using System.Data;
-using System.Linq;
-using System.Reflection;
 using ChemSW.Core;
-using ChemSW.Exceptions;
-using ChemSW.Nbt.MetaData;
-using Newtonsoft.Json.Linq;
 using ChemSW.Nbt.Grid.ExtJs;
+using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.ServiceDrivers;
+using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.Grid
 {
@@ -202,15 +195,20 @@ namespace ChemSW.Nbt.Grid
                 string PropName = CswConvert.ToString( Prop[CswNbtTreeNodes._AttrName_NodePropName] );
 
                 string oldValue = Prop[CswNbtTreeNodes._AttrName_NodePropGestalt].ToString();
+                if( string.IsNullOrEmpty( oldValue ) )
+                {
+                    oldValue = null;
+                }
                 string newValue = string.Empty;
                 switch( FieldType )
                 {
                     case CswNbtMetaDataFieldType.NbtFieldType.Button:
-                    // This will require significant work on the client to rearrange how we handle ajax events
-                    //CswPropIdAttr PropAttr=new CswPropIdAttr(NodeId, NodeTypePropId);
-                    //string url = "wsNBT.asmx/onObjectClassButtonClick?NodeTypePropAttr=" + PropAttr.ToString();
-                    //newValue = "<a href='" + url + "'>" + ( oldValue ?? PropName ) + "</a>";
-                    //break;
+                        
+                        // This will require significant work on the client to rearrange how we handle ajax events
+                        CswPropIdAttr PropAttr = new CswPropIdAttr( NodeId, NodeTypePropId );
+                        string url = "wsNBT.asmx/onObjectClassButtonClick?NodeTypePropAttr=" + PropAttr.ToString();
+                        newValue = "<a href='" + url + "'>" + ( oldValue ?? PropName ) + "</a>";
+                        break;
                     case CswNbtMetaDataFieldType.NbtFieldType.File:
                         string LinkUrl = CswNbtNodePropBlob.getLink( JctNodePropId, NodeId, NodeTypePropId );
                         if( false == string.IsNullOrEmpty( LinkUrl ) )

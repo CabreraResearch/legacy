@@ -53,7 +53,7 @@
 //            searchtype: ''
 //        };
 
-//        if (options) $.extend(o, options);
+//        if (options) Csw.extend(o, options);
 
 //        var $parent = $(this);
 //        var parent = Csw.literals.factory($parent);
@@ -76,7 +76,7 @@
 //                'link': '',
 //                'advancedIsHidden': false
 //            };
-//            if (modOptions) $.extend(a, modOptions);
+//            if (modOptions) Csw.extend(a, modOptions);
 
 //            if ('Advanced' === a.link.text() || (a.advancedIsHidden)) {
 //                $('.' + Csw.enums.cssClasses_ViewBuilder.subfield_select.name).each(function () { $(this).show(); });
@@ -195,7 +195,7 @@
 //                                            $parent: o.searchTable,
 //                                            $nodeTypesSelect: $thisSelect
 //                                        };
-//                                        $.extend(o, r);
+//                                        Csw.extend(o, r);
 //                                        getNewProps();
 //                                    });
 //            o.relatedidtype = o.$nodeTypesSelect.find(':selected').CswAttrNonDom('type');
@@ -227,7 +227,7 @@
 //                                        selectedFilterVal: '',
 //                                        selectedPropData: newOh.find('viewbuilderpropid', thisPropId)
 //                                    };
-//                                    $.extend(o, r);
+//                                    Csw.extend(o, r);
 //                                    o.searchTable.$.CswViewPropFilter('init', {
 //                                        ID: o.ID,
 //                                        propRow: propRow,

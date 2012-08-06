@@ -267,7 +267,7 @@ window.initMain = window.initMain || function (undefined) {
                 var qs = Csw.queryString();
                 if (false == Csw.isNullOrEmpty(qs.action)) {
                     var actopts = {};
-                    $.extend(actopts, qs);
+                    Csw.extend(actopts, qs);
                     handleAction({ actionname: qs.action, ActionOptions: actopts });
 
                 } else if (false == Csw.isNullOrEmpty(qs.viewid)) {
@@ -376,7 +376,7 @@ window.initMain = window.initMain || function (undefined) {
             all: false
         };
         if (options) {
-            $.extend(o, options);
+            Csw.extend(o, options);
         }
 
         if (o.all || o.left) {
@@ -441,7 +441,7 @@ window.initMain = window.initMain || function (undefined) {
             cswnbtnodekey: ''
         };
         if (options) {
-            $.extend(o, options);
+            Csw.extend(o, options);
         }
 
         multi = false; /* Case 26134. Revert multi-edit selection when switching views, etc. */
@@ -547,7 +547,7 @@ window.initMain = window.initMain || function (undefined) {
         };
 
         if (options) {
-            $.extend(o, options);
+            Csw.extend(o, options);
         }
 
         $('#MainMenuDiv').CswMenuMain({
@@ -646,7 +646,7 @@ window.initMain = window.initMain || function (undefined) {
     //        };
 
     //        if (options) {
-    //            $.extend(o, options);
+    //            Csw.extend(o, options);
     //        }
 
     //        $('#CenterTopDiv').children('#' + o.viewSearchId)
@@ -678,7 +678,7 @@ window.initMain = window.initMain || function (undefined) {
     //            ID: ''
     //        };
     //        if (options) {
-    //            $.extend(o, options);
+    //            Csw.extend(o, options);
     //        }
 
     //        clear({ centertop: true });
@@ -761,7 +761,7 @@ window.initMain = window.initMain || function (undefined) {
             onRefresh: ''
         };
 
-        if (options) $.extend(o, options);
+        if (options) Csw.extend(o, options);
 
         // Defaults
         var getEmptyGrid = (Csw.bool(o.showempty));
@@ -845,7 +845,7 @@ window.initMain = window.initMain || function (undefined) {
             onDeleteNode: ''
         };
         if (options) {
-            $.extend(o, options);
+            Csw.extend(o, options);
         }
 
         // Defaults
@@ -909,7 +909,7 @@ window.initMain = window.initMain || function (undefined) {
                 cswnbtnodekey: ''
             };
             if (options) {
-                $.extend(o, options);
+                Csw.extend(o, options);
             }
 
             Csw.cookie.set(Csw.cookie.cookieNames.CurrentNodeId, o.nodeid);
@@ -933,7 +933,7 @@ window.initMain = window.initMain || function (undefined) {
                 refreshSelected({ 'nodeid': nodeid, 'cswnbtnodekey': cswnbtnodekey, 'IncludeNodeRequired': true });
             }
         };
-        if (viewopts) $.extend(v, viewopts);
+        if (viewopts) Csw.extend(v, viewopts);
         clear({ right: true });
         $('#RightDiv').CswDefaultContent(v);
 
@@ -947,7 +947,7 @@ window.initMain = window.initMain || function (undefined) {
                 refreshSelected({ 'nodeid': nodeid, 'cswnbtnodekey': cswnbtnodekey, 'IncludeNodeRequired': true });
             }
         };
-        if (viewopts) $.extend(v, viewopts);
+        if (viewopts) Csw.extend(v, viewopts);
         clear({ centerbottom: true });
         var div = Csw.literals.div({
             $parent: $('#CenterBottomDiv'),
@@ -968,7 +968,7 @@ window.initMain = window.initMain || function (undefined) {
             nodeid: '',
             cswnbtnodekey: ''
         };
-        if (options) $.extend(o, options);
+        if (options) Csw.extend(o, options);
 
         clear({ right: true });
         var parent = Csw.literals.factory($('#RightDiv'));
@@ -1028,7 +1028,7 @@ window.initMain = window.initMain || function (undefined) {
                 forsearch: false,
                 IncludeNodeRequired: false
             };
-            if (options) $.extend(o, options);
+            if (options) Csw.extend(o, options);
 
             if (Csw.isNullOrEmpty(o.viewid)) {
                 o.viewid = Csw.cookie.get(Csw.cookie.cookieNames.CurrentViewId);
@@ -1107,7 +1107,7 @@ window.initMain = window.initMain || function (undefined) {
             'IncludeNodeRequired': false
         };
         if (options) {
-            $.extend(o, options);
+            Csw.extend(o, options);
         }
 
         var getEmptyTree = (Csw.bool(o.showempty));
@@ -1173,7 +1173,7 @@ window.initMain = window.initMain || function (undefined) {
             'ActionOptions': {}
         };
         if (options) {
-            $.extend(o, options);
+            Csw.extend(o, options);
         }
 
         var designOpt = {};

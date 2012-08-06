@@ -35,7 +35,7 @@
 
             html += '<span ';
             if (options) {
-                $.extend(cswPrivate, options);
+                Csw.extend(cswPrivate, options);
             } 
             
             attr.add('id', cswPrivate.ID);
