@@ -1,0 +1,1 @@
+expdp.exe nbt_master/nbt@w2008x64db DUMPFILE=NBT_MASTER_11g.dmp DIRECTORY=NBTDUMPS
