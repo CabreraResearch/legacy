@@ -42,7 +42,7 @@
                     table = cswParent;
                 } 
                 if(options) {
-                    $.extend(cswPrivate, options);
+                    Csw.extend(cswPrivate, options);
                 }
 
                 cswPrivate.table = cswParent.attach(table);

@@ -11,7 +11,7 @@
                 ID: 'action_quota_image'
             };
             if (options) {
-                $.extend(o, options);
+                Csw.extend(o, options);
             }
 
             Csw.ajax.post({

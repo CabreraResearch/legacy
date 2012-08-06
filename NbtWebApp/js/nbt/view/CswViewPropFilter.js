@@ -14,7 +14,7 @@
             viewbuilderpropid: '',
             ID: ''
         };
-        if (options) $.extend(o, options);
+        if (options) Csw.extend(o, options);
 
         if (!Csw.isNullOrEmpty(o.filtarbitraryid)) {
             filterId = Csw.makeId({ ID: id + delimiter + 'filtarbitraryid',
@@ -65,7 +65,7 @@
                 autoFocusInput: false
             };
 
-            if (options) $.extend(o, options);
+            if (options) Csw.extend(o, options);
 
             var $table = $(this); //must call on a table
             var propFilterTable = Csw.literals.table($table);
@@ -172,7 +172,7 @@
                             selectedFilterVal: '',
                             advancedIsHidden: Csw.bool(subfieldsList.$.is(':hidden'))
                         };
-                        $.extend(filtOpt, r);
+                        Csw.extend(filtOpt, r);
                         renderPropFiltRow(filtOpt);
                     }
                 });
@@ -193,7 +193,7 @@
                             selectedFilterVal: '',
                             advancedIsHidden: Csw.bool(subfieldsList.$.is(':hidden'))
                         };
-                        $.extend(filtOpt, r);
+                        Csw.extend(filtOpt, r);
                         renderPropFiltRow(filtOpt);
                     }
                 });
@@ -268,7 +268,7 @@
                 autoFocusInput: false
             };
 
-            if (options) $.extend(o, options);
+            if (options) Csw.extend(o, options);
 
             var $table = $(this); //must call on a table
             var propFilterTable = Csw.literals.table($table);
@@ -342,7 +342,7 @@
                 filtarbitraryid: '',
                 allowNullFilterValue: false
             };
-            if (options) $.extend(o, options);
+            if (options) Csw.extend(o, options);
 
             var $thisProp = $(this),
                 retJson = {},
@@ -404,7 +404,7 @@
                 filtJson: '',
                 onSuccess: null //function ($filterXml) {}
             };
-            if (options) $.extend(o, options);
+            if (options) Csw.extend(o, options);
 
             var jsonData = {
                 PropFiltJson: JSON.stringify(o.filtJson),

@@ -39,13 +39,13 @@
                 }
 
                 if (options) {
-                    $.extend(cswPrivate, options);
+                    Csw.extend(cswPrivate, options);
                 }
                 cswPrivate.comboDiv = cswParent.div({
                     ID: cswPrivate.ID
                 });
                 cswPublic = Csw.dom({ }, cswPrivate.comboDiv);
-                //$.extend(cswPublic, Csw.literals.div(cswPrivate));
+                //Csw.extend(cswPublic, Csw.literals.div(cswPrivate));
 
                 cswPrivate.topDiv = cswPrivate.comboDiv.div({
                     ID: cswPrivate.ID + '_top',

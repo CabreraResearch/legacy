@@ -19,7 +19,7 @@
             };
 
             if (options) {
-                $.extend(o, options);
+                Csw.extend(o, options);
             }
             var $parent = $(this);
             var parent = Csw.literals.factory($parent);
@@ -130,7 +130,7 @@
                 'onAdd': function () { }
             };
             if (options) {
-                $.extend(o, options);
+                Csw.extend(o, options);
             }
 
             var $parent = $(this);
@@ -179,7 +179,8 @@
             var ntSelectLabel = table.cell(3, 1).span({ text: 'Add New:' });
             var ntSelect = table.cell(3, 2)
                                  .nodeTypeSelect({
-                                     'ID': 'welcome_ntsel'
+                                     ID: 'welcome_ntsel',
+                                     filterToPermission: 'Create'
                                  });
 
             /* Welcome Text Label */
@@ -281,7 +282,7 @@
             onLinkClick: null//,
             //onSearchClick: null
         };
-        if (clickopts) $.extend(c, clickopts);
+        if (clickopts) Csw.extend(c, clickopts);
 
         var optSelect = {
             type: c.itemData.type,
@@ -324,7 +325,7 @@
             onSuccess: function () { }
         };
         if (removedata) {
-            $.extend(r, removedata);
+            Csw.extend(r, removedata);
         }
         var textCell = r.cellSet[2][1],
             welcomeid, dataJson;
@@ -361,7 +362,7 @@
             'onError': function () { }
         };
         if (addoptions) {
-            $.extend(a, addoptions);
+            Csw.extend(a, addoptions);
         }
 
         var dataJson = {
@@ -396,7 +397,7 @@
             moveWelcomeItemUrl: ''
         };
         if (onSwapData) {
-            $.extend(s, onSwapData);
+            Csw.extend(s, onSwapData);
         }
 
         var welcomeIdOrig = _moveItem(s.moveWelcomeItemUrl, s.cellSet, s.swaprow, s.swapcolumn);
@@ -440,7 +441,7 @@
             buttonImg: ''
         };
         if (options) {
-            $.extend(o, options);
+            Csw.extend(o, options);
         }
 
         switch (o.typeSelect.val()) {
