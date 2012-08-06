@@ -49,17 +49,17 @@ namespace ChemSW.Nbt.MetaData
         }
         public IEnumerable<CswNbtMetaDataNodeType> getNodeTypes()
         {
-            return _CollImpl.getAll().Cast<CswNbtMetaDataNodeType>();
+            return from NT in _CollImpl.getAll().Cast<CswNbtMetaDataNodeType>() orderby NT.NodeTypeName select NT;
         }
         public IEnumerable<CswNbtMetaDataNodeType> getNodeTypes( Int32 ObjectClassId )
         {
-            return _CollImpl.getWhere( "where objectclassid = " + ObjectClassId.ToString() ).Cast<CswNbtMetaDataNodeType>();
+            return from NT in _CollImpl.getWhere( "where objectclassid = " + ObjectClassId.ToString() ).Cast<CswNbtMetaDataNodeType>() orderby NT.NodeTypeName select NT;
         }
 
         private IEnumerable<CswNbtMetaDataNodeType> _getNodeTypesLatestVersion( Collection<ICswNbtMetaDataObject> NodeTypeCollection )
         {
             Dictionary<Int32, CswNbtMetaDataNodeType> Dict = new Dictionary<Int32, CswNbtMetaDataNodeType>();
-            foreach( CswNbtMetaDataNodeType NT in NodeTypeCollection.Cast<CswNbtMetaDataNodeType>() )
+            foreach( CswNbtMetaDataNodeType NT in from _NT in NodeTypeCollection.Cast<CswNbtMetaDataNodeType>() orderby _NT.NodeTypeName select _NT )
             {
                 if( false == Dict.ContainsKey( NT.FirstVersionNodeTypeId ) ||
                     Dict[NT.FirstVersionNodeTypeId] == null ||
@@ -122,24 +122,24 @@ namespace ChemSW.Nbt.MetaData
 
         private string _makeModuleWhereClause()
         {
-//            return @" ( ( exists (select j.jctmoduleobjectclassid
-//                                    from jct_modules_objectclass j
-//                                    join modules m on j.moduleid = m.moduleid
-//                                   where j.objectclassid = nodetypes.objectclassid
-//                                     and m.enabled = '1')
-//                          or not exists (select j.jctmoduleobjectclassid
-//                                           from jct_modules_objectclass j
-//                                           join modules m on j.moduleid = m.moduleid
-//                                          where j.objectclassid = nodetypes.objectclassid) )
-//                    and ( exists (select j.jctmodulenodetypeid
-//                                    from jct_modules_nodetypes j
-//                                    join modules m on j.moduleid = m.moduleid
-//                                   where j.nodetypeid = nodetypes.nodetypeid
-//                                     and m.enabled = '1')
-//                          or not exists (select j.jctmodulenodetypeid
-//                                           from jct_modules_nodetypes j
-//                                           join modules m on j.moduleid = m.moduleid
-//                                          where j.nodetypeid = nodetypes.nodetypeid) ) )";
+            //            return @" ( ( exists (select j.jctmoduleobjectclassid
+            //                                    from jct_modules_objectclass j
+            //                                    join modules m on j.moduleid = m.moduleid
+            //                                   where j.objectclassid = nodetypes.objectclassid
+            //                                     and m.enabled = '1')
+            //                          or not exists (select j.jctmoduleobjectclassid
+            //                                           from jct_modules_objectclass j
+            //                                           join modules m on j.moduleid = m.moduleid
+            //                                          where j.objectclassid = nodetypes.objectclassid) )
+            //                    and ( exists (select j.jctmodulenodetypeid
+            //                                    from jct_modules_nodetypes j
+            //                                    join modules m on j.moduleid = m.moduleid
+            //                                   where j.nodetypeid = nodetypes.nodetypeid
+            //                                     and m.enabled = '1')
+            //                          or not exists (select j.jctmodulenodetypeid
+            //                                           from jct_modules_nodetypes j
+            //                                           join modules m on j.moduleid = m.moduleid
+            //                                          where j.nodetypeid = nodetypes.nodetypeid) ) )";
             return " nodetypes.enabled = '1' ";
         }
 
