@@ -72,17 +72,6 @@
                         cswPrivate.value = cswPublic.val();
                     });
 
-                    if (cswPrivate.Precision === undefined || cswPrivate.Precision <= 0) {
-                        $.validator.addMethod(cswPrivate.ID + '_validateInteger', function (value, element) {
-                            return (Csw.tryExec(cswPrivate.isValid, value) || this.optional(element) || Csw.validateInteger($(element).val()));
-                        }, 'Value must be an integer');
-                        cswPublic.addClass(cswPrivate.ID + '_validateInteger');
-                    } else {
-                        $.validator.addMethod(cswPrivate.ID + '_validateFloatPrecision', function (value, element) {
-                            return (Csw.tryExec(cswPrivate.isValid, value) || this.optional(element) || Csw.validateFloatPrecision($(element).val(), cswPrivate.Precision));
-                        }, 'Value must be numeric');
-                        cswPublic.addClass(cswPrivate.ID + '_validateFloatPrecision');
-                    }
                     if (Csw.isNumber(cswPrivate.maxLength)) {
                         $.validator.addMethod(cswPrivate.ID + '_validateMaxLength', function (value, element) {
                             return (Csw.tryExec(cswPrivate.isValid, value) || this.optional(element) || Csw.validateMaxLength($(element).val(), cswPrivate.maxLength));
@@ -103,7 +92,18 @@
                             return (Csw.tryExec(cswPrivate.isValid, value) || this.optional(element) || Csw.validateFloatMaxValue($(element).val(), maxValue));
                         }, 'Number must be less than or equal to ' + maxValue);
                         cswPublic.addClass(cswPrivate.ID + '_validateFloatMaxValue');
-                    }                    
+                    }
+                    if (cswPrivate.Precision === undefined || cswPrivate.Precision <= 0) {
+                        $.validator.addMethod(cswPrivate.ID + '_validateInteger', function (value, element) {
+                            return (Csw.tryExec(cswPrivate.isValid, value) || this.optional(element) || Csw.validateInteger($(element).val()));
+                        }, 'Value must be an integer');
+                        cswPublic.addClass(cswPrivate.ID + '_validateInteger');
+                    } else {
+                        $.validator.addMethod(cswPrivate.ID + '_validateFloatPrecision', function (value, element) {
+                            return (Csw.tryExec(cswPrivate.isValid, value) || this.optional(element) || Csw.validateFloatPrecision($(element).val(), cswPrivate.Precision));
+                        }, 'Value must be numeric');
+                        cswPublic.addClass(cswPrivate.ID + '_validateFloatPrecision');
+                    }
 
                     if (0 < ceilingVal) {
                         //Independant of any other validation, no number can be greater than this.
