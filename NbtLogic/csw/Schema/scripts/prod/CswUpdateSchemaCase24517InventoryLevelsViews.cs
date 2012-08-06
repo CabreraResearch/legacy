@@ -53,13 +53,13 @@ namespace ChemSW.Nbt.Schema
             }
 
             CswNbtView AboveMinimumInventoryView = _CswNbtSchemaModTrnsctn.makeView();
-            AboveMinimumInventoryView.makeNew( "Above Minimum Inventory", NbtViewVisibility.Global );
+            AboveMinimumInventoryView.makeNew( "Above Maximum Inventory", NbtViewVisibility.Global );
             AboveMinimumInventoryView.ViewMode = NbtViewRenderingMode.Grid;
             AboveMinimumInventoryView.Category = "Materials";
             CswNbtViewRelationship AmivRel = AboveMinimumInventoryView.AddViewRelationship( InventoryLevelOc, true );
             AboveMinimumInventoryView.AddViewProperty( AmivRel, IlMaterialOcp );
             AboveMinimumInventoryView.AddViewProperty( AmivRel, IlLocationOcp );
-            AboveMinimumInventoryView.AddViewProperty( AmivRel, IlTypeOcp );
+            AboveMinimumInventoryView.AddViewPropertyAndFilter( AmivRel, IlTypeOcp, CswNbtObjClassInventoryLevel.Types.Maximum );
             AboveMinimumInventoryView.AddViewProperty( AmivRel, IlLevelOcp );
             AboveMinimumInventoryView.AddViewPropertyAndFilter( AmivRel, IlStatusOcp, CswNbtObjClassInventoryLevel.Statuses.Above );
             AboveMinimumInventoryView.AddViewProperty( AmivRel, IlCurrentQuantityOcp );
@@ -72,7 +72,7 @@ namespace ChemSW.Nbt.Schema
             CswNbtViewRelationship BmivRel = BelowMinimumInventoryView.AddViewRelationship( InventoryLevelOc, true );
             BelowMinimumInventoryView.AddViewProperty( BmivRel, IlMaterialOcp );
             BelowMinimumInventoryView.AddViewProperty( BmivRel, IlLocationOcp );
-            BelowMinimumInventoryView.AddViewProperty( BmivRel, IlTypeOcp );
+            BelowMinimumInventoryView.AddViewPropertyAndFilter( BmivRel, IlTypeOcp, CswNbtObjClassInventoryLevel.Types.Minimum ); 
             BelowMinimumInventoryView.AddViewProperty( BmivRel, IlLevelOcp );
             BelowMinimumInventoryView.AddViewPropertyAndFilter( BmivRel, IlStatusOcp, CswNbtObjClassInventoryLevel.Statuses.Below );
             BelowMinimumInventoryView.AddViewProperty( BmivRel, IlCurrentQuantityOcp );
