@@ -70,7 +70,7 @@
                     $.CswDialog('BatchOpDialog', {
                         opname: 'multi-delete',
                         onViewBatchOperation: function () {
-                            Csw.publish('refreshMain', {
+                            Csw.publish(Csw.enums.events.main.refresh, {
                                 nodeid: data.batch,
                                 viewid: '',
                                 viewmode: 'tree',
