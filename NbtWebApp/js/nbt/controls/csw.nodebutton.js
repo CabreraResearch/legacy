@@ -3,158 +3,216 @@
 
 (function ($) {
     "use strict";
-    var pluginName = 'CswFieldTypeButton';
-
-    var onButtonClick = function (propid, button, messagediv, o) {
-        var propAttr = Csw.string(propid),
-            params;
-        button.disable();
-        if (Csw.isNullOrEmpty(propAttr)) {
-            Csw.error.showError(Csw.error.makeErrorObj(Csw.enums.errorType.warning.name, 'Cannot execute a property\'s button click event without a valid property.', 'Attempted to click a property button with a null or empty propid.'));
-            button.enable();
-        } else {
-            // case 25371 - Save the tab first
-            //            Csw.tryExec(o.doSave, {
-            //                onSuccess: function () {
-            // Case 27263: prompt to save instead
-            if (Csw.clientChanges.manuallyCheckChanges()) {
-                var $btn = $('#' + o.ID).button({ disabled: true });
-                params = {
-                    NodeTypePropAttr: propAttr,
-                    SelectedText: Csw.string(button.selectedOption, Csw.string(o.propData.values.text, o.propData.name))
-                };
-
-                Csw.ajax.post({
-                    url: '/NbtWebApp/wsNBT.asmx/onObjectClassButtonClick',
-                    data: params,
-                    success: function(data) {
-                        $btn.button({ disabled: false });
-
-                        var actionData = {
-                            data: data,
-                            propid: propid,
-                            button: button,
-                            selectedOption: Csw.string(button.selectedOption),
-                            messagediv: messagediv,
-                            context: o,
-                            onSuccess: o.onAfterButtonClick
-                        };
-
-                        if (false === Csw.isNullOrEmpty(data.message)) {
-                            // can't use messagediv, since doSave has remade the tab
-                            var $newmessagediv = $('#' + messagediv.getId());
-                            $newmessagediv.text(data.message);
-                        }
-
-                        if (Csw.bool(data.success)) {
-                            if (data.action == Csw.enums.nbtButtonAction.refresh) { //cases 26201, 26107 
-                                Csw.tryExec(o.onReload,
-                                    (function(messagedivid) {
-                                        return function() {
-                                            if (false === Csw.isNullOrEmpty(data.message)) {
-                                                var $newmessagediv = $('#' + messagedivid);
-                                                $newmessagediv.text(data.message);
-                                            }
-                                        };
-                                    })(messagediv.getId())
-                                );
-                            } else {
-                                Csw.publish(Csw.enums.events.objectClassButtonClick, actionData);
-                            }
-                        }
-                    }, // ajax success()
-                    error: function() {
-                        button.enable();
+    
+    function onObjectClassButtonClick(eventOj, opts) {
+        Csw.debug.assert(false === Csw.isNullOrEmpty(opts.data), 'opts.data is null.');
+        var actionJson = opts.data.actionData;
+        Csw.publish(Csw.enums.events.afterObjectClassButtonClick, opts.data.action);
+        switch (Csw.string(opts.data.action).toLowerCase()) {
+            case Csw.enums.nbtButtonAction.refresh:
+            case Csw.enums.nbtButtonAction.nothing:
+                //Do nothing
+                break;
+            case Csw.enums.nbtButtonAction.dispense:
+                Csw.publish(Csw.enums.events.main.clear, { centertop: true, centerbottom: true });
+                actionJson.actionname = 'DispenseContainer';
+                Csw.publish(Csw.enums.events.main.handleAction, actionJson);
+                break;
+            case Csw.enums.nbtButtonAction.editprop:
+                $.CswDialog('EditNodeDialog', {
+                    nodeids: [Csw.string(actionJson.nodeid)],
+                    filterToPropId: Csw.string(actionJson.propidattr),
+                    title: Csw.string(actionJson.title),
+                    onEditNode: function (nodeid, nodekey, close) {
+                        Csw.tryExec(close);
                     }
-                }); // ajax.post()
-            } // if (Csw.clientChanges.manuallyCheckChanges()) {
-        } // if-else (Csw.isNullOrEmpty(propAttr)) {
-    }; // onButtonClick()
+                });
+                break;
 
-    var methods = {
-        init: function (o) {
+            case Csw.enums.nbtButtonAction.loadView:
+                Csw.publish(Csw.enums.events.main.clear, { centertop: true, centerbottom: true });
+                Csw.debug.assert(false === Csw.isNullOrEmpty(actionJson), 'actionJson is null.');
+                Csw.publish(Csw.enums.events.RestoreViewContext, actionJson);
+                break;
 
-            var propDiv = o.propDiv;
-            propDiv.empty();
+            case Csw.enums.nbtButtonAction.popup:
+                Csw.debug.assert(false === Csw.isNullOrEmpty(actionJson), 'actionJson is null.');
+                Csw.openPopup(actionJson.url, 600, 800);
+                break;
 
-            var propVals = o.propData.values,
-                value = Csw.string(propVals.text, o.propData.name),
-                mode = Csw.string(propVals.mode, 'button'),
-                messagediv,
-                table, btnCell,
-                button, menuoptions, state, text, selectedText;
+            case Csw.enums.nbtButtonAction.reauthenticate:
+                Csw.publish(Csw.enums.events.main.clear, { centertop: true, centerbottom: true });
+                /* case 24669 */
+                Csw.cookie.clearAll();
+                Csw.ajax.post({
+                    urlMethod: 'reauthenticate',
+                    data: { PropId: Csw.string(opts.propid) },
+                    success: function () {
+                        Csw.clientChanges.unsetChanged();
+                        Csw.window.location('Main.html');
+                    }
+                });
 
-            menuoptions = propVals.menuoptions.split(',');
-            state = propVals.state;
-            text = propVals.text;
-            selectedText = propVals.selectedText;
+                break;
 
-            function onClick() {
-                onButtonClick(o.propid, button, messagediv, o);
-            }
+            case Csw.enums.nbtButtonAction.receive:
+                Csw.publish(Csw.enums.events.main.clear, { centertop: true, centerbottom: true });
+                actionJson.actionname = 'Receiving';
+                Csw.publish(Csw.enums.events.main.handleAction, actionJson);
+                break;
 
-            table = propDiv.table({
-                ID: Csw.makeId(o.ID, 'tbl')
-            });
-            btnCell = table.cell(1, 1);
-            switch (mode) {
-                case 'button':
-                    button = btnCell.buttonExt({
-                        ID: o.ID,
-                        enabledText: value,
-                        disabledText: value,
-                        disableOnClick: true,
-                        onClick: onClick
-                    });
-                    break;
-                case 'menu':
-                    button = btnCell.menuButton({
-                        ID: Csw.makeId(o.ID, 'menuBtn'),
-                        selectedText: selectedText,
-                        menuOptions: menuoptions,
-                        //size: o.size,
-                        state: state,
-                        onClick: function (selectedOption) {
-                            Csw.tryExec(onClick, selectedOption);
-                        }
-                    });
-                    break;
-                case 'link': //this is a fallthrough case
-                default:
-                    button = btnCell.a({
-                        ID: o.ID,
-                        value: value,
-                        onClick: onClick
-                    });
-                    break;
-            }
+            case Csw.enums.nbtButtonAction.request:
+                Csw.debug.assert(false === Csw.isNullOrEmpty(actionJson), 'actionJson is null.');
+                switch (actionJson.requestaction) {
+                    case 'Dispose':
+                        Csw.publish(Csw.enums.events.main.refreshHeader);
+                        break;
+                    default:
+                        $.CswDialog('AddNodeDialog', {
+                            nodetypeid: actionJson.requestItemNodeTypeId,
+                            propertyData: actionJson.requestItemProps,
+                            text: actionJson.titleText,
+                            onSaveImmediate: function () {
+                                Csw.publish(Csw.enums.events.main.refreshHeader);
+                            }
+                        });
+                        break;
+                }
+                break;
 
-            if (Csw.bool(o.ReadOnly)) {
-                button.disable();
-            }
-
-            messagediv = table.cell(1, 2).div({
-                ID: Csw.makeId(o.ID, '', 'msg', '', false),
-                cssclass: 'buttonmessage'
-            });
-
-            if (o.Required) {
-                button.addClass('required');
-            }
-
-        },
-        save: function (o) {
-            Csw.preparePropJsonForSave(o.propData);
+            default:
+                Csw.debug.error('No event has been defined for button click ' + opts.data.action);
+                break;
         }
-    };
+    }
+    Csw.subscribe(Csw.enums.events.objectClassButtonClick, onObjectClassButtonClick);
 
-    $.fn.CswFieldTypeButton = function (method) {
-        if (methods[method]) {
-            return methods[method].apply(this, Array.prototype.slice.call(arguments, 1));
-        } else if (typeof method === 'object' || !method) {
-            return methods.init.apply(this, arguments);
-        } else {
-            $.error('Method ' + method + ' does not exist on ' + pluginName); return false;
-        }
-    };
+    Csw.controls.nodeButton = Csw.controls.nodeButton ||
+        Csw.controls.register('nodeButton', function (cswParent, options) {
+
+            var cswPublic = { };
+            var cswPrivate = { };
+
+            Csw.tryExec(function() {
+
+                (function _pre() {
+                    cswPrivate = {
+                        ID: 'nodebutton',
+                        div: {},
+                        value: '',
+                        mode: 'button',
+                        messageDiv: {},
+                        state: '',
+                        table: {},
+                        btnCell: {},
+                        size: 'medium',
+                        propId: '',
+                        onClickSuccess: null
+                    };
+                    Csw.extend(cswPrivate, options);
+                    cswPrivate.div = cswParent.div();
+                    cswPrivate.div.empty();
+                    
+                    cswPrivate.table = cswPrivate.div.table({
+                        ID: Csw.makeId(cswPrivate.ID, 'tbl')
+                    });
+                }());
+
+                cswPrivate.onButtonClick = function() {
+                    
+                    cswPublic.button.disable();
+                    if (Csw.isNullOrEmpty(cswPrivate.propId)) {
+                        Csw.error.showError(Csw.error.makeErrorObj(Csw.enums.errorType.warning.name, 'Cannot execute a property\'s button click event without a valid property.', 'Attempted to click a property button with a null or empty propid.'));
+                        cswPublic.button.enable();
+                    } else {
+                        // Case 27263: prompt to save instead
+                        if (Csw.clientChanges.manuallyCheckChanges()) {
+                            Csw.ajax.post({
+                                urlMethod: 'onObjectClassButtonClick',
+                                data: {
+                                    NodeTypePropAttr: cswPrivate.propId,
+                                    SelectedText: Csw.string(cswPrivate.selectedOption, Csw.string(cswPrivate.value))
+                                },
+                                success: function(data) {
+                                    cswPublic.button.enable();
+
+                                    var actionData = {
+                                        data: data,
+                                        propid: cswPrivate.propId,
+                                        button: cswPublic.button,
+                                        selectedOption: Csw.string(cswPublic.button.selectedOption),
+                                        messagediv: cswPrivate.messageDiv,
+                                        context: cswPrivate,
+                                        onSuccess: cswPrivate.onAfterButtonClick
+                                    };
+
+                                    if (false === Csw.isNullOrEmpty(data.message)) {
+                                        cswPrivate.messageDiv.text(data.message);
+                                    }
+
+                                    if (Csw.bool(data.success) && Csw.tryExec(cswPrivate.onClickSuccess, data)) {
+                                        Csw.publish(Csw.enums.events.objectClassButtonClick, actionData);
+                                    }
+                                }, // ajax success()
+                                error: function() {
+                                    cswPublic.button.enable();
+                                }
+                            }); // ajax.post()
+                        } // if (Csw.clientChanges.manuallyCheckChanges()) {
+                    } // if-else (Csw.isNullOrEmpty(propAttr)) {
+                }; // onButtonClick()
+
+                (function _post() {
+                    cswPrivate.btnCell = cswPrivate.table.cell(1, 1);
+                    switch (cswPrivate.mode) {
+                        case 'button':
+                            cswPublic.button = cswPrivate.btnCell.buttonExt({
+                                ID: cswPrivate.ID,
+                                size: cswPrivate.size,
+                                enabledText: cswPrivate.value,
+                                disabledText: cswPrivate.value,
+                                disableOnClick: true,
+                                onClick: cswPrivate.onButtonClick
+                            });
+                            break;
+                        case 'menu':
+                            cswPublic.button = cswPrivate.btnCell.menuButton({
+                                ID: Csw.makeId(cswPrivate.ID, 'menuBtn'),
+                                selectedText: cswPrivate.selectedText,
+                                menuOptions: cswPrivate.menuOptions,
+                                size: cswPrivate.size,
+                                state: Csw.string(cswPrivate.state, cswPrivate.value),
+                                onClick: function (selectedOption) {
+                                    cswPrivate.selectedText = selectedOption;
+                                    cswPrivate.onButtonClick();
+                                }
+                            });
+                            break;
+                            //case 'link':
+                            //this is a fallthrough case
+                        default:
+                            cswPublic.button = cswPrivate.btnCell.a({
+                                ID: cswPrivate.ID,
+                                value: cswPrivate.value,
+                                onClick: cswPrivate.onButtonClick
+                            });
+                            break;
+                    }
+
+                    if (Csw.bool(cswPrivate.ReadOnly)) {
+                        cswPublic.button.disable();
+                    }
+
+                    cswPublic.messageDiv = cswPrivate.table.cell(1, 2).div({
+                        ID: Csw.makeId(cswPrivate.ID, 'msg', false),
+                        cssclass: 'buttonmessage'
+                    });
+
+                    if (cswPrivate.Required) {
+                        cswPublic.button.addClass('required');
+                    }
+                }());
+            });
+            return cswPublic;
+        });
 })(jQuery);

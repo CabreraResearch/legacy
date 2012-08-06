@@ -31,96 +31,14 @@ window.initMain = window.initMain || function (undefined) {
         //}
     };
     Csw.subscribe(Csw.enums.events.ajax.globalAjaxStop, stopSpinner);
-
-    function onObjectClassButtonClick(eventOj, opts) {
-        Csw.debug.assert(false === Csw.isNullOrEmpty(opts.data), 'opts.data is null.');
-        var actionJson = opts.data.actionData;
-        Csw.publish(Csw.enums.events.afterObjectClassButtonClick, opts.data.action);
-        switch (Csw.string(opts.data.action).toLowerCase()) {
-            case Csw.enums.nbtButtonAction.nothing:
-                //Do nothing
-                break;
-            case Csw.enums.nbtButtonAction.dispense:
-                clear({ centertop: true, centerbottom: true });
-                actionJson.actionname = 'DispenseContainer';
-                handleAction(actionJson);
-                break;
-            case Csw.enums.nbtButtonAction.editprop:
-                $.CswDialog('EditNodeDialog', {
-                    nodeids: [Csw.string(actionJson.nodeid)],
-                    filterToPropId: Csw.string(actionJson.propidattr),
-                    title: Csw.string(actionJson.title),
-                    onEditNode: function (nodeid, nodekey, close) {
-                        Csw.tryExec(close);
-                    }
-                });
-                break;
-
-            case Csw.enums.nbtButtonAction.loadView:
-                clear({ centertop: true, centerbottom: true });
-                Csw.debug.assert(false === Csw.isNullOrEmpty(actionJson), 'actionJson is null.');
-                Csw.publish(Csw.enums.events.RestoreViewContext, actionJson);
-                break;
-
-            case Csw.enums.nbtButtonAction.popup:
-                Csw.debug.assert(false === Csw.isNullOrEmpty(actionJson), 'actionJson is null.');
-                Csw.openPopup(actionJson.url, 600, 800);
-                break;
-
-            case Csw.enums.nbtButtonAction.reauthenticate:
-                clear({ centertop: true, centerbottom: true });
-                /* case 24669 */
-                Csw.cookie.clearAll();
-                Csw.ajax.post({
-                    urlMethod: 'reauthenticate',
-                    data: { PropId: Csw.string(opts.propid) },
-                    success: function () {
-                        Csw.clientChanges.unsetChanged();
-                        Csw.window.location('Main.html');
-                    }
-                });
-                
-                break;
-
-            case Csw.enums.nbtButtonAction.receive:
-                clear({ centertop: true, centerbottom: true });
-                actionJson.actionname = 'Receiving';
-                handleAction(actionJson);
-                break;
-
-            case Csw.enums.nbtButtonAction.request:
-                Csw.debug.assert(false === Csw.isNullOrEmpty(actionJson), 'actionJson is null.');
-                switch (actionJson.requestaction) {
-                    case 'Dispose':
-                        refreshHeaderMenu();
-                        break;
-                    default:
-                        $.CswDialog('AddNodeDialog', {
-                            nodetypeid: actionJson.requestItemNodeTypeId,
-                            propertyData: actionJson.requestItemProps,
-                            text: actionJson.titleText,
-                            onSaveImmediate: function () {
-                                refreshHeaderMenu();
-                            }
-                        });
-                        break;
-                }
-                break;
-
-            default:
-                Csw.debug.error('No event has been defined for button click ' + opts.data.action);
-                break;
-        }
-    }
-    Csw.subscribe(Csw.enums.events.objectClassButtonClick, onObjectClassButtonClick);
-
+    
     function refreshMain(eventObj, data) {
         Csw.clientChanges.unsetChanged();
         multi = false;
         clear({ all: true });
         Csw.tryExec(refreshSelected, data);
     }
-    Csw.subscribe('refreshMain', refreshMain);
+    Csw.subscribe(Csw.enums.events.main.refresh, refreshMain);
 
     function loadImpersonation(eventObj, actionData) {
         if (false === Csw.isNullOrEmpty(actionData.userid)) {
@@ -149,7 +67,6 @@ window.initMain = window.initMain || function (undefined) {
             });
         }
     }
-
     Csw.subscribe(Csw.enums.events.RestoreViewContext, loadImpersonation);
 
     // watermark
@@ -221,9 +138,11 @@ window.initMain = window.initMain || function (undefined) {
             } // onEndImpersonation
         }); // CswMenuHeader
     }
+    Csw.subscribe(Csw.enums.events.main.refreshHeader, function (eventObj, opts) {
+        refreshHeaderMenu(opts);
+    });
 
     initAll();
-
     function initAll(onSuccess) {
         //if (debugOn()) Csw.debug.log('Main.initAll()');
         $('#CenterBottomDiv').CswLogin('init', {
@@ -361,8 +280,7 @@ window.initMain = window.initMain || function (undefined) {
         // Refresh the 'Recent' category in the view selector
         mainviewselect.refreshRecent();
     }
-
-
+    
     function clear(options) {
         ///<summary>Clears the contents of the page.</summary>
         ///<param name="options">An object representing the elements to clear: all, left, right, centertop, centerbottom.</param>
@@ -396,6 +314,9 @@ window.initMain = window.initMain || function (undefined) {
             $('#MainMenuDiv').empty();
         }
     }
+    Csw.subscribe(Csw.enums.events.main.clear, function (eventObj, opts) {
+        clear(opts);
+    });
 
     function refreshWelcome() {
         //if (debugOn()) Csw.debug.log('Main.refreshWelcome()');
@@ -1429,7 +1350,9 @@ window.initMain = window.initMain || function (undefined) {
                 break;
         }
     }
-
+    Csw.subscribe(Csw.enums.events.main.handleAction, function (eventObj, opts) {
+        handleAction(opts);
+    });
     // _handleAction()
 };
 
