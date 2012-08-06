@@ -26,7 +26,6 @@ namespace ChemSW.Nbt.Schema
 
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_MaterialComponents_Case27462() ) );                //01Q-001
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_Requesting_Case27470() ) );                        //01Q-002
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase27401() ) );                                    //01Q-003
 
 
 
