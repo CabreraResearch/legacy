@@ -2105,8 +2105,8 @@ namespace ChemSW.Nbt.WebServices
                     _setEditMode( EditMode );
                     CswDateTime InDate = new CswDateTime( _CswNbtResources );
                     InDate.FromClientDateTimeString( Date );
-                    CswNbtNodeKey NodeKey = _getNodeKey(SafeNodeKey);
-                    Int32 NodeTypePk = CswConvert.ToInt32(NodeTypeId);
+                    CswNbtNodeKey NodeKey = _getNodeKey( SafeNodeKey );
+                    Int32 NodeTypePk = CswConvert.ToInt32( NodeTypeId );
                     if( null != NodeKey && Int32.MinValue == NodeTypePk )
                     {
                         NodeTypePk = NodeKey.NodeTypeId;
