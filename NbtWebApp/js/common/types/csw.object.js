@@ -194,7 +194,14 @@
             var ret = false,
                 childKey, obj, childObj;
             if (Csw.isFunction(onSuccess)) {
-                if (Csw.isArray(thisObj) || (Csw.isPlainObject(thisObj) && false === Csw.contains(thisObj, 'length'))) {
+                if (Csw.isArray(thisObj)) {
+                    thisObj.forEach(function (element, index, array) {
+                        obj = thisObj[index];
+                        ret = onSuccess(obj, index, thisObj, element);
+                        return !ret; //false signals break
+                    });
+                }
+                else if(Csw.isPlainObject(thisObj) && false === Csw.contains(thisObj, 'length')) {
                     window.$.each(thisObj, function(key, value) {
                         obj = thisObj[key];
                         ret = onSuccess(obj, key, thisObj, value);
