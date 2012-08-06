@@ -311,7 +311,7 @@ namespace ChemSW.Nbt.ServiceDrivers
         {
             if( null != MaterialId && null != LocationId )
             {
-                CswNbtView InventoryLevelView = _getParentLocationInventoryLevelView( MaterialId, LocationId );
+                CswNbtView InventoryLevelView = _getParentLocationInventoryLevelView( LocationId, MaterialId );
                 Collection<CswNbtObjClassInventoryLevel> InventoryLevels = _InventoryLevels( InventoryLevelView );
                 _applyQuantityToInventoryLevels( InventoryLevels, Quantity, UnitId, Reason );
             }
