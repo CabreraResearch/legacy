@@ -37,21 +37,21 @@ namespace ChemSW.Nbt.Grid
             grid.Truncated = Tree.getCurrentNodeChildrenTruncated();
 
             CswNbtGridExtJsDataIndex nodeIdDataIndex = new CswNbtGridExtJsDataIndex( "nodeId" );
-            CswNbtGridExtJsField nodeIdFld = new CswNbtGridExtJsField {dataIndex = nodeIdDataIndex};
+            CswNbtGridExtJsField nodeIdFld = new CswNbtGridExtJsField { dataIndex = nodeIdDataIndex };
             grid.fields.Add( nodeIdFld );
-            CswNbtGridExtJsColumn nodeIdCol = new CswNbtGridExtJsColumn {header = "Internal ID", dataIndex = nodeIdDataIndex, hidden = true};
+            CswNbtGridExtJsColumn nodeIdCol = new CswNbtGridExtJsColumn { header = "Internal ID", dataIndex = nodeIdDataIndex, hidden = true };
             grid.columns.Add( nodeIdCol );
 
             CswNbtGridExtJsDataIndex nodekeyDataIndex = new CswNbtGridExtJsDataIndex( "nodekey" );
-            CswNbtGridExtJsField nodekeyFld = new CswNbtGridExtJsField {dataIndex = nodekeyDataIndex};
+            CswNbtGridExtJsField nodekeyFld = new CswNbtGridExtJsField { dataIndex = nodekeyDataIndex };
             grid.fields.Add( nodekeyFld );
-            CswNbtGridExtJsColumn nodekeyCol = new CswNbtGridExtJsColumn {header = "Internal Key", dataIndex = nodekeyDataIndex, hidden = true};
+            CswNbtGridExtJsColumn nodekeyCol = new CswNbtGridExtJsColumn { header = "Internal Key", dataIndex = nodekeyDataIndex, hidden = true };
             grid.columns.Add( nodekeyCol );
 
             CswNbtGridExtJsDataIndex nodenameDataIndex = new CswNbtGridExtJsDataIndex( "nodename" );
-            CswNbtGridExtJsField nodenameFld = new CswNbtGridExtJsField {dataIndex = nodenameDataIndex};
+            CswNbtGridExtJsField nodenameFld = new CswNbtGridExtJsField { dataIndex = nodenameDataIndex };
             grid.fields.Add( nodenameFld );
-            CswNbtGridExtJsColumn nodenameCol = new CswNbtGridExtJsColumn {header = "Internal Name", dataIndex = nodenameDataIndex, hidden = true};
+            CswNbtGridExtJsColumn nodenameCol = new CswNbtGridExtJsColumn { header = "Internal Name", dataIndex = nodenameDataIndex, hidden = true };
             grid.columns.Add( nodenameCol );
 
             // View Properties determine Columns and Fields
@@ -78,8 +78,8 @@ namespace ChemSW.Nbt.Grid
                     // If the same property is added to the view more than once, we'll only use the grid definition for the first instance
                     if( false == grid.columnsContains( header ) )
                     {
-                        CswNbtGridExtJsField fld = new CswNbtGridExtJsField {dataIndex = dataIndex};
-                        CswNbtGridExtJsColumn col = new CswNbtGridExtJsColumn {header = header, dataIndex = dataIndex, hidden = (false == ViewProp.ShowInGrid)};
+                        CswNbtGridExtJsField fld = new CswNbtGridExtJsField { dataIndex = dataIndex };
+                        CswNbtGridExtJsColumn col = new CswNbtGridExtJsColumn { header = header, dataIndex = dataIndex, hidden = ( false == ViewProp.ShowInGrid ) };
                         switch( ViewProp.FieldType )
                         {
                             case CswNbtMetaDataFieldType.NbtFieldType.Number:
@@ -267,14 +267,16 @@ namespace ChemSW.Nbt.Grid
                 grid.columns.Add( gridcol );
             }
 
+            Int32 RowNo = 0;
             foreach( DataRow Row in DT.Rows )
             {
-                CswNbtGridExtJsRow gridrow = new CswNbtGridExtJsRow();
+                CswNbtGridExtJsRow gridrow = new CswNbtGridExtJsRow( RowNo );
                 foreach( DataColumn Column in DT.Columns )
                 {
                     gridrow.data[new CswNbtGridExtJsDataIndex( Column.ColumnName )] = Row[Column].ToString();
                 }
                 grid.rows.Add( gridrow );
+                RowNo += 1;
             } // foreach( DataRow Row in DT.Rows )
 
             return grid;
