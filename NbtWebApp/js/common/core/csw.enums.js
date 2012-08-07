@@ -89,6 +89,7 @@
                 handleAction: 'handleAction',
                 refresh: 'refresh',
                 refreshHeader: 'refreshHeader',
+                refreshSelected: 'refreshSelected',
                 clear: 'clear'
             }
         });

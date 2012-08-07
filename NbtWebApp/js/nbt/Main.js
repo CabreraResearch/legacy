@@ -1007,10 +1007,9 @@ window.initMain = window.initMain || function (undefined) {
                     break;
             } // switch
         } // if (manuallyCheckChanges())
-    }
-
-    // refreshSelected()
-
+    }// refreshSelected()
+    Csw.subscribe(Csw.enums.events.main.refreshSelected, refreshSelected);
+    
     var multi = false;
 
     function refreshNodesTree(options) {
