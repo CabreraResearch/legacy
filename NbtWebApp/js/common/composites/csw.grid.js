@@ -100,7 +100,7 @@
                 return window.Ext.create('Ext.data.Store', storeopts);
             }); // makeStore()
 
-            
+           
             cswPrivate.makeGrid = Csw.method(function (renderTo, store) {
                 var columns = Csw.extend([], cswPrivate.columns);
 
@@ -145,7 +145,6 @@
                         renderer: function (value, metaData, record, rowIndex, colIndex, store, view) {
                             var cell1Id = cswPrivate.ID + '_action_' + rowIndex + '_' + colIndex + '_1';
                             var cell2Id = cswPrivate.ID + '_action_' + rowIndex + '_' + colIndex + '_2';
-
                             var ret = '<table cellpadding="0"><tr>';
                             ret += '<td id="' + cell1Id + '" style="width: 26px;"/>';
                             ret += '<td id="' + cell2Id + '" style="width: 26px;"/>';
@@ -170,12 +169,48 @@
                             if (candelete) {
                                 cswPrivate.makeActionButton(cell2Id, 'Delete', Csw.enums.iconType.trash, cswPrivate.onDelete, record, rowIndex, colIndex);
                             }
+                            
                             return ret;
                         } // renderer()
                     }; // newcol
                     gridopts.columns.splice(0, 0, newcol);
                 } // if(cswPrivate.showActionColumn && false === cswPrivate.showCheckboxes) {
+                
+                if(cswPrivate.data.buttons && cswPrivate.data.buttons.length > 0) {
+                    var colNames = Csw.delimitedString();
+                    Csw.each(cswPrivate.data.buttons, function (val, key) {
+                        //Get the column names, delimitedString will handle dupes for us automatically
+                        colNames.add(val.selectedtext);
+                    });
 
+                    var cols = cswPrivate.columns.filter(function (col) {
+                        return colNames.contains(col.header);
+                    });
+
+                    Csw.each(cols, function(colObj, key) {
+                        colObj.renderer = function (value, metaData, record, rowIndex, colIndex, store, view) {
+                            var id = window.Ext.id();
+                            var thisBtn = cswPrivate.data.buttons.filter(function(btn) {
+                                return btn.index === colObj.dataIndex && btn.rowno === rowIndex;
+                            });
+                            if (thisBtn.length === 1) {
+                                Csw.defer(function() {
+                                    var div = Csw.literals.factory($('#' + id));
+                                    div.nodeButton({
+                                        value: colObj.header,
+                                        ID: Csw.makeId('nodebutton', window.Ext.id()),
+                                        size: 'small',
+                                        propId: thisBtn[0].propattr
+                                    });
+                                }, 100);
+                            }
+                            return '<div id="' + id + '"></div>';
+
+                        };
+                    });
+
+                }
+                
                 // Selection mode
                 if(cswPrivate.showCheckboxes){
                     gridopts.selType = 'checkboxmodel';
