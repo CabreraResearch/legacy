@@ -37,33 +37,21 @@ namespace ChemSW.Nbt.Grid
             grid.Truncated = Tree.getCurrentNodeChildrenTruncated();
 
             CswNbtGridExtJsDataIndex nodeIdDataIndex = new CswNbtGridExtJsDataIndex( "nodeId" );
-            CswNbtGridExtJsField nodeIdFld = new CswNbtGridExtJsField();
-            nodeIdFld.dataIndex = nodeIdDataIndex;
+            CswNbtGridExtJsField nodeIdFld = new CswNbtGridExtJsField {dataIndex = nodeIdDataIndex};
             grid.fields.Add( nodeIdFld );
-            CswNbtGridExtJsColumn nodeIdCol = new CswNbtGridExtJsColumn();
-            nodeIdCol.header = "Internal ID";
-            nodeIdCol.dataIndex = nodeIdDataIndex;
-            nodeIdCol.hidden = true;
+            CswNbtGridExtJsColumn nodeIdCol = new CswNbtGridExtJsColumn {header = "Internal ID", dataIndex = nodeIdDataIndex, hidden = true};
             grid.columns.Add( nodeIdCol );
 
             CswNbtGridExtJsDataIndex nodekeyDataIndex = new CswNbtGridExtJsDataIndex( "nodekey" );
-            CswNbtGridExtJsField nodekeyFld = new CswNbtGridExtJsField();
-            nodekeyFld.dataIndex = nodekeyDataIndex;
+            CswNbtGridExtJsField nodekeyFld = new CswNbtGridExtJsField {dataIndex = nodekeyDataIndex};
             grid.fields.Add( nodekeyFld );
-            CswNbtGridExtJsColumn nodekeyCol = new CswNbtGridExtJsColumn();
-            nodekeyCol.header = "Internal Key";
-            nodekeyCol.dataIndex = nodekeyDataIndex;
-            nodekeyCol.hidden = true;
+            CswNbtGridExtJsColumn nodekeyCol = new CswNbtGridExtJsColumn {header = "Internal Key", dataIndex = nodekeyDataIndex, hidden = true};
             grid.columns.Add( nodekeyCol );
 
             CswNbtGridExtJsDataIndex nodenameDataIndex = new CswNbtGridExtJsDataIndex( "nodename" );
-            CswNbtGridExtJsField nodenameFld = new CswNbtGridExtJsField();
-            nodenameFld.dataIndex = nodenameDataIndex;
+            CswNbtGridExtJsField nodenameFld = new CswNbtGridExtJsField {dataIndex = nodenameDataIndex};
             grid.fields.Add( nodenameFld );
-            CswNbtGridExtJsColumn nodenameCol = new CswNbtGridExtJsColumn();
-            nodenameCol.header = "Internal Name";
-            nodenameCol.dataIndex = nodenameDataIndex;
-            nodenameCol.hidden = true;
+            CswNbtGridExtJsColumn nodenameCol = new CswNbtGridExtJsColumn {header = "Internal Name", dataIndex = nodenameDataIndex, hidden = true};
             grid.columns.Add( nodenameCol );
 
             // View Properties determine Columns and Fields
@@ -90,12 +78,8 @@ namespace ChemSW.Nbt.Grid
                     // If the same property is added to the view more than once, we'll only use the grid definition for the first instance
                     if( false == grid.columnsContains( header ) )
                     {
-                        CswNbtGridExtJsField fld = new CswNbtGridExtJsField();
-                        fld.dataIndex = dataIndex;
-                        CswNbtGridExtJsColumn col = new CswNbtGridExtJsColumn();
-                        col.header = header;
-                        col.dataIndex = dataIndex;
-                        col.hidden = ( false == ViewProp.ShowInGrid );
+                        CswNbtGridExtJsField fld = new CswNbtGridExtJsField {dataIndex = dataIndex};
+                        CswNbtGridExtJsColumn col = new CswNbtGridExtJsColumn {header = header, dataIndex = dataIndex, hidden = (false == ViewProp.ShowInGrid)};
                         switch( ViewProp.FieldType )
                         {
                             case CswNbtMetaDataFieldType.NbtFieldType.Number:
@@ -111,11 +95,11 @@ namespace ChemSW.Nbt.Grid
                                 string DateDisplayMode = CswNbtNodePropDateTime.DateDisplayMode.Date.ToString();
                                 if( ViewProp.Type == NbtViewPropType.NodeTypePropId && ViewProp.NodeTypeProp != null )
                                 {
-                                    DateDisplayMode = ViewProp.NodeTypeProp.Extended.ToString();
+                                    DateDisplayMode = ViewProp.NodeTypeProp.Extended;
                                 }
                                 else if( ViewProp.Type == NbtViewPropType.ObjectClassPropId && ViewProp.ObjectClassProp != null )
                                 {
-                                    DateDisplayMode = ViewProp.ObjectClassProp.Extended.ToString();
+                                    DateDisplayMode = ViewProp.ObjectClassProp.Extended;
                                 }
                                 if( DateDisplayMode == string.Empty ||
                                     DateDisplayMode == CswNbtNodePropDateTime.DateDisplayMode.Date.ToString() ||
@@ -148,7 +132,7 @@ namespace ChemSW.Nbt.Grid
             // Nodes in the Tree determine Rows
             for( Int32 c = 0; c < Tree.getChildNodeCount(); c++ )
             {
-                CswNbtGridExtJsRow gridrow = new CswNbtGridExtJsRow();
+                CswNbtGridExtJsRow gridrow = new CswNbtGridExtJsRow( c );
                 Tree.goToNthChild( c );
 
                 gridrow.data.Add( nodeIdDataIndex, Tree.getNodeIdForCurrentPosition().ToString() );
@@ -203,7 +187,6 @@ namespace ChemSW.Nbt.Grid
                 switch( FieldType )
                 {
                     case CswNbtMetaDataFieldType.NbtFieldType.Button:
-                        
                         // This will require significant work on the client to rearrange how we handle ajax events
                         CswPropIdAttr PropAttr = new CswPropIdAttr( NodeId, NodeTypePropId );
                         string url = "wsNBT.asmx/onObjectClassButtonClick?NodeTypePropAttr=" + PropAttr.ToString();
