@@ -106,6 +106,7 @@
                 };
 
                 cswPrivate.finalize = function () {
+                    cswPrivate.toggleButton(cswPrivate.buttons.finish, false);
                     var container = {
                         materialid: cswPrivate.state.materialId,
                         containernodetypeid: cswPrivate.state.containerNodeTypeId,
