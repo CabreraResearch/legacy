@@ -167,7 +167,8 @@
                                         cswPrivate.getQuantity();
                                         cswPublic.qtyControl.refresh(cswPrivate.quantity);
                                         updateQuantityVals();
-                                    }
+                                    },
+                                    canAdd: true
                                 });
                                 updateSizeVals();
                                 break;
