@@ -177,6 +177,9 @@
                                 cswPrivate.quantity.onChange = function () {
                                     updateQuantityVals();
                                 };
+                                if (cswPrivate.action === 'Receive') {
+                                    cswPrivate.quantity.Required = true;
+                                }
                                 cswPrivate.quantity.ID = Csw.tryExec(cswPrivate.makeId, 'containerQuantity');
                                 cswPrivate.quantity.qtyWidth = (7 * 8) + 'px'; //7 characters wide, 8 is the characters-to-pixels ratio
                                 cswPublic.qtyControl = cswCell.quantity(cswPrivate.quantity);
