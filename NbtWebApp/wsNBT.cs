@@ -2105,8 +2105,8 @@ namespace ChemSW.Nbt.WebServices
                     _setEditMode( EditMode );
                     CswDateTime InDate = new CswDateTime( _CswNbtResources );
                     InDate.FromClientDateTimeString( Date );
-                    CswNbtNodeKey NodeKey = _getNodeKey(SafeNodeKey);
-                    Int32 NodeTypePk = CswConvert.ToInt32(NodeTypeId);
+                    CswNbtNodeKey NodeKey = _getNodeKey( SafeNodeKey );
+                    Int32 NodeTypePk = CswConvert.ToInt32( NodeTypeId );
                     if( null != NodeKey && Int32.MinValue == NodeTypePk )
                     {
                         NodeTypePk = NodeKey.NodeTypeId;
@@ -2725,7 +2725,7 @@ namespace ChemSW.Nbt.WebServices
         //dch
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string saveMolPropFile()
+        public string getMolFileContents()
         {
             JObject ReturnVal = new JObject();
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
@@ -2753,21 +2753,8 @@ namespace ChemSW.Nbt.WebServices
                         {
                             FileData[CurrentIndex] = br.ReadByte();
                         }
-
-                        // Save the binary data
-                        CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources, _CswNbtStatisticsEvents );
                         string MolData = CswTools.ByteArrayToString( FileData ).Replace( "\r", "" );
-                        bool Success = ws.saveMolProp( MolData, PropId );
-
-                        ReturnVal["success"] = Success;
-                        if( Success )
-                        {
-                            ReturnVal["molData"] = MolData;
-                        }
-
-                        //now create the image and save it as a blob
-                        byte[] molImage = CswStructureSearch.GetImage( MolData );
-                        ws.SetPropBlobValue( molImage, "mol.jpeg", "image/jpeg", PropId, "blobdata" );
+                        ReturnVal["molData"] = MolData;
 
                     } // if( FileName != string.Empty && PropId != string.Empty )
 
@@ -2829,7 +2816,6 @@ namespace ChemSW.Nbt.WebServices
             return ReturnVal.ToString();
 
         } // saveMolProp()
-
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
