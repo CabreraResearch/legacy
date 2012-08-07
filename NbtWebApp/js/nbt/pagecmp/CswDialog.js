@@ -810,9 +810,9 @@
                 url: o.FileUrl + '?' + $.param({ PropId: o.PropId }),
                 paramName: 'fileupload',
                 done: function (e, data) {
-                    molTxtArea.text(data.molData);
-                    div.$.dialog('close');
-                    o.onSuccess();
+                    molTxtArea.text(o.molData);
+                    //div.$.dialog('close');
+                    //o.onSuccess();
                 }
             });
 
