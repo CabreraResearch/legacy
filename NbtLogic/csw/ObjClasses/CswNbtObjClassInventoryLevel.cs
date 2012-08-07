@@ -8,7 +8,9 @@ namespace ChemSW.Nbt.ObjClasses
 {
     public class CswNbtObjClassInventoryLevel : CswNbtObjClass
     {
-
+        /// <summary>
+        /// Property Nammes
+        /// </summary>
         public sealed class PropertyName
         {
             public const string Material = "Material";
@@ -22,6 +24,9 @@ namespace ChemSW.Nbt.ObjClasses
             public const string CurrentQuantityLog = "Current Quantity Log";
         }
 
+        /// <summary>
+        /// Possible statuses
+        /// </summary>
         public sealed class Statuses
         {
             public const string Above = "Above Inventory Level";
@@ -30,6 +35,9 @@ namespace ChemSW.Nbt.ObjClasses
             public static readonly CswCommaDelimitedString Options = new CswCommaDelimitedString { Above, Below, Ok };
         }
 
+        /// <summary>
+        /// Possible Types
+        /// </summary>
         public sealed class Types
         {
             public const string Minimum = "Minimum";
