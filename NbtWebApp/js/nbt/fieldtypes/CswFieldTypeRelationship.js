@@ -102,6 +102,7 @@
                         }
                         var selectBox = table.cell(1, cellCol).select({
                             ID: o.ID,
+                            name: o.ID,
                             cssclass: 'selectinput',
                             onChange: o.onChange,
                             values: relationships,
