@@ -2,6 +2,7 @@ using System;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.Actions;
+using ChemSW.Nbt.Batch;
 using ChemSW.Nbt.csw.Conversion;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
@@ -252,7 +253,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public void DisposeContainer()
         {
-            _createContainerTransactionNode( CswNbtObjClassContainerDispenseTransaction.DispenseType.Dispose, -this.Quantity.Quantity, this.Quantity.UnitId );
+            _createContainerTransactionNode( CswNbtObjClassContainerDispenseTransaction.DispenseType.Dispose, -this.Quantity.Quantity, this.Quantity.UnitId, SourceContainer: this );
             this.Quantity.Quantity = 0;
             this.Disposed.Checked = Tristate.True;
             _setDisposedReadOnly( true );
@@ -265,9 +266,10 @@ namespace ChemSW.Nbt.ObjClasses
 
             if( ContDispTransNode != null )
             {
-                this.Quantity.Quantity = ContDispTransNode.QuantityDispensed.Quantity;
+                this.Quantity.Quantity = -ContDispTransNode.QuantityDispensed.Quantity;
                 this.Quantity.UnitId = ContDispTransNode.QuantityDispensed.UnitId;
-                ContDispTransNode.Node.delete();
+                CswNbtBatchOpMultiDelete op = new CswNbtBatchOpMultiDelete( _CswNbtResources );
+                CswNbtObjClassBatchOp BatchNode = op.makeBatchOp( ContDispTransNode.NodeId );
             }
             this.Disposed.Checked = Tristate.False;
             _setDisposedReadOnly( false );
