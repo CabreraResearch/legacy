@@ -115,12 +115,7 @@ namespace ChemSW.Nbt.ObjClasses
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
             _updateRequestMenu();
-            if( _CswNbtResources.EditMode == NodeEditMode.Add )
-            {
-                CswNbtSdInventoryLevelMgr Mgr = new CswNbtSdInventoryLevelMgr( _CswNbtResources );
-                Mgr.addToCurrentQuantity( Quantity.Quantity, Quantity.UnitId, "Container  [" + Barcode.Barcode + "] created.", Material.RelatedNodeId, Location.SelectedNodeId );
-            }
-
+            
             _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
         }//beforeWriteNode()
 
@@ -573,8 +568,9 @@ namespace ChemSW.Nbt.ObjClasses
                     }
                 }
             }
-            if( false == string.IsNullOrEmpty( Location.CachedNodeName ) &&
-                    Location.CachedNodeName != CswNbtNodePropLocation.TopLevelName )
+            if( CswTools.IsPrimaryKey(Location.SelectedNodeId ) &&
+                false == string.IsNullOrEmpty( Location.CachedNodeName ) &&
+                Location.CachedNodeName != CswNbtNodePropLocation.TopLevelName )
             {
                 if( CswConvert.ToInt32( Quantity.Quantity ) != 0 )
                 {
