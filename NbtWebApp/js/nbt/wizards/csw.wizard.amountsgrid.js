@@ -177,7 +177,7 @@
                                 });
                                 updateSizeVals();
                                 break;
-                            case cswPrivate.config.quantityName: //TODO - for receive, make only Unit Readonly - if not quantityeditable, make both quantity and unit readonly
+                            case cswPrivate.config.quantityName:
                                 cswPrivate.getQuantity();
                                 cswPrivate.quantity.onChange = function () {
                                     updateQuantityVals();
