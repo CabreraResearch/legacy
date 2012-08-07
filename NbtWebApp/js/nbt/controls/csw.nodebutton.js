@@ -64,7 +64,7 @@
                                     };
 
                                     if (false === Csw.isNullOrEmpty(data.message)) {
-                                        cswPrivate.messageDiv.text(data.message);
+                                        cswPublic.messageDiv.text(data.message);
                                     }
                                     var continueToPub = false === Csw.isFunction(cswPrivate.onClickSuccess) || Csw.tryExec(cswPrivate.onClickSuccess, data);
                                     if (Csw.bool(data.success) && continueToPub) {

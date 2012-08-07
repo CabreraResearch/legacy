@@ -177,7 +177,7 @@
                 } // if(cswPrivate.showActionColumn && false === cswPrivate.showCheckboxes) {
                 
                 if(cswPrivate.data.buttons && cswPrivate.data.buttons.length > 0) {
-                    var colNames = Csw.delimitedString();
+                    var colNames = Csw.delimitedString('', {spaceToDelimiter: false});
                     Csw.each(cswPrivate.data.buttons, function (val, key) {
                         //Get the column names, delimitedString will handle dupes for us automatically
                         colNames.add(val.selectedtext);
