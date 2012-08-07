@@ -141,8 +141,8 @@
                     StartingStep: cswPrivate.startingStep,
                     FinishText: 'Finish',
                     onBeforeNext: function () {
-                        cswPrivate.amountsGrid.amountsGridOnAdd();
-                        return true;
+                        var ret = cswPrivate.amountsGrid.amountsGridOnAdd();
+                        return ret;
                     },
                     onNext: cswPrivate.handleStep,
                     onPrevious: cswPrivate.handleStep,

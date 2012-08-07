@@ -88,7 +88,7 @@
                         cswPrivate.quantity = {
                             qtyReadonly: true,
                             unitReadonly: true
-                        }                        
+                        }
                     }
                     return ret;
                 };
@@ -264,6 +264,7 @@
                         cswPublic.thinGrid.deleteRow(rowid);
                         executeOnAdd();
                         Csw.tryExec(cswPublic.thinGrid.makeAddRow, executeMakeAddRow);
+                        return Csw.bool(cswPublic.quantities.length > 0);
                     };
 
                 } ());
