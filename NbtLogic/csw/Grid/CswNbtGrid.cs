@@ -187,10 +187,14 @@ namespace ChemSW.Nbt.Grid
                 switch( FieldType )
                 {
                     case CswNbtMetaDataFieldType.NbtFieldType.Button:
-                        // This will require significant work on the client to rearrange how we handle ajax events
-                        CswPropIdAttr PropAttr = new CswPropIdAttr( NodeId, NodeTypePropId );
-                        string url = "wsNBT.asmx/onObjectClassButtonClick?NodeTypePropAttr=" + PropAttr.ToString();
-                        newValue = "<a href='" + url + "'>" + ( oldValue ?? PropName ) + "</a>";
+                        grid.buttons.Add( new CswNbtGridExtJsButton
+                        {
+                            DataIndex = dataIndex.ToString(),
+                            RowNo = gridrow.RowNo,
+                            MenuOptions = "",
+                            SelectedText = oldValue ?? PropName,
+                            PropAttr = new CswPropIdAttr( NodeId, NodeTypePropId )
+                        } );
                         break;
                     case CswNbtMetaDataFieldType.NbtFieldType.File:
                         string LinkUrl = CswNbtNodePropBlob.getLink( JctNodePropId, NodeId, NodeTypePropId );
