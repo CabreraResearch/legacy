@@ -1,7 +1,7 @@
-echo exit | sqlplus nbt/nbt@w2008x64Db @nbt_nuke.sql
+echo exit | sqlplus nbt_master/nbt@w2008x64Db @nbt_nuke.sql
 
-impdp.exe nbt/nbt@w2008x64Db DUMPFILE=NBT_MASTER_11G.dmp DIRECTORY=NBTDUMPS REMAP_SCHEMA=nbt_master:nbt
+impdp.exe nbt_master/nbt@w2008x64Db DUMPFILE=NBT_MASTER_11G.dmp DIRECTORY=NBTDUMPS
 
-echo exit | sqlplus nbt/nbt@w2008x64Db @nbt_finalize_ora.sql
+echo exit | sqlplus nbt_master/nbt@w2008x64Db @nbt_finalize_ora.sql
 
-C:\kiln\Nbt\Nbt\NbtSchemaUpdaterCmdLn\bin\Debug\NbtUpdt.exe -accessid 1 -mode prod
+C:\kiln\Nbt\Nbt\NbtSchemaUpdaterCmdLn\bin\Debug\NbtUpdt.exe -all -mode prod

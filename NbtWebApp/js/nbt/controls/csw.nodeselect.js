@@ -131,6 +131,7 @@
                                     onAddNode: function (nodeid, nodekey, nodename) {
                                         cswPublic.option({ value: nodeid, display: nodename });
                                         cswPublic.val(nodeid);
+                                        cswPrivate.select.trigger('change');
                                     }
                                 });
                             };
