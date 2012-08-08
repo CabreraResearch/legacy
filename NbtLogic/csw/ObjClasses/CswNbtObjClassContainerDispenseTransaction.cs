@@ -105,7 +105,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
-            _CswNbtNode.setReadOnly( value: true, SaveToDb: false ); //case 24508
+            _CswNbtNode.setReadOnly( value: true, SaveToDb: true ); //case 24508
 
             _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
         }//beforeWriteNode()
