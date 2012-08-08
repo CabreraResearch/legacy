@@ -120,6 +120,10 @@ namespace ChemSW.Nbt.PropTypes
                 string StringVal = string.Empty;
                 if( Double.IsNaN( value ) )
                 {
+                    if( Required )
+                    {
+                        throw new CswDniException( ErrorType.Warning, "Cannot save a Quantity without a value if the Property is required.", "Attempted to save the Quantity of a Quantity with an invalid number." );
+                    }
                     _CswNbtNodePropData.SetPropRowValue( _QuantitySubField.Column, Double.NaN );
                 }
                 else
@@ -177,6 +181,10 @@ namespace ChemSW.Nbt.PropTypes
                 }
                 else
                 {
+                    if( Required )
+                    {
+                        throw new CswDniException( ErrorType.Warning, "Cannot save a Quantity without a Unit if the Property is required.", "Attempted to save a Quantity with an invalid UnitId." );
+                    }
                     _CswNbtNodePropData.SetPropRowValue( _UnitIdSubField.Column, Int32.MinValue );
                 }
 
@@ -380,7 +388,7 @@ namespace ChemSW.Nbt.PropTypes
                         JOption["value"] = Node.NodeName;
                         JOption["fractional"] = Node.Properties[CswNbtObjClassUnitOfMeasure.FractionalPropertyName].AsLogical.Checked.ToString().ToLower();
                     }
-                    else
+                    else if( false == Required )
                     {
                         JOption["id"] = "";
                         JOption["value"] = "";
@@ -483,7 +491,7 @@ namespace ChemSW.Nbt.PropTypes
                     thisUnitId.TableName = "nodes";
                     thisUnitId.PrimaryKey = CswConvert.ToInt32( NodePkString );
                 }
-                if( thisUnitId.PrimaryKey != Int32.MinValue )
+                if( CswTools.IsPrimaryKey( thisUnitId ) )
                 {
                     if( NodeMap != null && NodeMap.ContainsKey( thisUnitId.PrimaryKey ) )
                     {

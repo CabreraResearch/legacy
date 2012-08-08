@@ -78,7 +78,7 @@
                     }
                     relationships.push({ value: relatedObj.id, display: relatedObj.value, frac: Csw.bool(relatedObj.fractional) });
                 }, false);
-                if (false === o.Multi && false === foundSelected) {
+                if (false === o.Multi && false === foundSelected && false === Csw.isNullOrEmpty(selectedNodeId)) {
                     relationships.push({ value: selectedNodeId, display: selectedName, frac: Csw.bool(propVals.fractional) });
                 }
                 var selectBox = table.cell(1, cellCol).select({

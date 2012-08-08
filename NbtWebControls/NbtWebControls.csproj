@@ -108,7 +108,6 @@
     <Compile Include="csw\FieldTypes\CswFile.cs" />
     <Compile Include="csw\FieldTypes\CswGrid.cs" />
     <Compile Include="csw\FieldTypes\CswImage.cs" />
-    <Compile Include="csw\FieldTypes\CswJMol.cs" />
     <Compile Include="csw\FieldTypes\CswLink.cs" />
     <Compile Include="csw\FieldTypes\CswList.cs" />
     <Compile Include="csw\FieldTypes\CswLocation.cs" />

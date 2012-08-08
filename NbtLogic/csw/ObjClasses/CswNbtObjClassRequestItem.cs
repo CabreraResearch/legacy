@@ -142,7 +142,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             _CswNbtObjClassDefault.beforeCreateNode( OverrideUniqueValidation );
 
-            CswNbtActSubmitRequest RequestAct = new CswNbtActSubmitRequest( _CswNbtResources, CswNbtActSystemViews.SystemViewName.CISProRequestCart );
+            CswNbtActSubmitRequest RequestAct = new CswNbtActSubmitRequest( _CswNbtResources, CreateDefaultRequestNode: true );
             Request.RelatedNodeId = RequestAct.CurrentRequestNode().NodeId;
         } // beforeCreateNode()
 
