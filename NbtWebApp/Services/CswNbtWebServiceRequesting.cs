@@ -14,7 +14,7 @@ namespace ChemSW.Nbt.WebServices
 
         private void _initOrderingResources( CswNbtActSystemViews.SystemViewName ViewName, CswPrimaryKey RequestNodeId = null )
         {
-            _RequestAct = new CswNbtActSubmitRequest( _CswNbtResources, ViewName, RequestNodeId );
+            _RequestAct = new CswNbtActSubmitRequest( _CswNbtResources, CreateDefaultRequestNode: true, RequestViewName: ViewName, RequestNodeId: RequestNodeId );
         }
 
         public CswNbtWebServiceRequesting( CswNbtResources CswNbtResources, CswNbtActSystemViews.SystemViewName ViewName = null, CswPrimaryKey RequestNodeId = null )
