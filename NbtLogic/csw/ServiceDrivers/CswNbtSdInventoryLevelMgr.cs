@@ -52,11 +52,8 @@ namespace ChemSW.Nbt.ServiceDrivers
 
         #region Email
 
-        private void _sendEmail( string Recipient )
+        private void _sendEmail( string Recipient, string Subject, string Message )
         {
-            string Subject = "";
-            string Message = "";
-
             Collection<CswMailMessage> EmailMessage = _CswNbtResources.makeMailMessages( Subject, Message,
                                                                                         Recipient );
             _CswNbtResources.sendEmailNotification( EmailMessage );
@@ -70,9 +67,17 @@ namespace ChemSW.Nbt.ServiceDrivers
         {
             foreach( CswNbtObjClassUser User in InventoryLevel.Subscribe.SelectedUsers() )
             {
-                if( false == string.IsNullOrEmpty( User.Email ) )
+                if( false == string.IsNullOrEmpty( User.Email ) && 
+                    false == string.IsNullOrEmpty( InventoryLevel.Type.Value ) )
                 {
-                    _sendEmail( User.Email );
+                    string Subject = InventoryLevel.Status.Value + " alert for " + InventoryLevel.Material.CachedNodeName + " at " + InventoryLevel.Location.CachedFullPath;
+                    string Message = "The status for Inventory Level: " + InventoryLevel.Node.NodeName + " has changed to " + InventoryLevel.Status.Value + "\n";
+                    Message += "Material: " + InventoryLevel.Material.CachedNodeName + "\n";
+                    Message += "Location: " + InventoryLevel.Location.CachedFullPath + "\n";
+                    Message += "Current Quantity: " + InventoryLevel.CurrentQuantity.Gestalt + "\n";
+                    Message += "Threshhold: " + InventoryLevel.Level.Gestalt + "\n";
+                    
+                    _sendEmail( User.Email, Subject, Message );
                 }
             }
             return DateTime.Now;
