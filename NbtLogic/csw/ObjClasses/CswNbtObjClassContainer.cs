@@ -50,6 +50,11 @@ namespace ChemSW.Nbt.ObjClasses
 
         }
 
+        /// <summary>
+        /// Has the corresponding Inventory Level been modified in a change event on this instance?
+        /// </summary>
+        private bool _InventoryLevelModified = false;
+
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
 
         public CswNbtObjClassContainer( CswNbtResources CswNbtResources, CswNbtNode Node )
@@ -115,7 +120,7 @@ namespace ChemSW.Nbt.ObjClasses
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
             _updateRequestMenu();
-            
+
             _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
         }//beforeWriteNode()
 
@@ -568,28 +573,28 @@ namespace ChemSW.Nbt.ObjClasses
                     }
                 }
             }
-            if( CswTools.IsPrimaryKey(Location.SelectedNodeId ) &&
+            if( CswTools.IsPrimaryKey( Location.SelectedNodeId ) &&
                 false == string.IsNullOrEmpty( Location.CachedNodeName ) &&
                 Location.CachedNodeName != CswNbtNodePropLocation.TopLevelName )
             {
-                if( CswConvert.ToInt32( Quantity.Quantity ) != 0 )
+                if( false == _InventoryLevelModified &&
+                    CswConvert.ToInt32( Quantity.Quantity ) != 0 )
                 {
                     CswNbtSdInventoryLevelMgr Mgr = new CswNbtSdInventoryLevelMgr( _CswNbtResources );
-                    CswNbtNodePropWrapper LocationWrapper = Node.Properties[LocationPropertyName];
-                    string PrevLocationId = LocationWrapper.GetOriginalPropRowValue( ( (CswNbtFieldTypeRuleLocation) _CswNbtResources.MetaData.getFieldTypeRule( LocationWrapper.getFieldType().FieldType ) ).NodeIdSubField.Column );
+                    CswNbtSubField NodeId = ( (CswNbtFieldTypeRuleLocation) _CswNbtResources.MetaData.getFieldTypeRule( Location.getFieldType().FieldType ) ).NodeIdSubField;
+                    Int32 PrevLocationId = CswConvert.ToInt32( Node.Properties[LocationPropertyName].GetOriginalPropRowValue( NodeId.Column ) );
                     string Reason = "Container " + Barcode.Barcode + " moved to new location: " + Location.CachedNodeName;
-                    if( false == string.IsNullOrEmpty( PrevLocationId ) )
+                    if( Int32.MinValue != PrevLocationId )
                     {
-                        CswPrimaryKey PrevLocationPk = new CswPrimaryKey();
-                        PrevLocationPk.FromString( PrevLocationId );
+                        CswPrimaryKey PrevLocationPk = new CswPrimaryKey( "nodes", PrevLocationId );
                         if( PrevLocationPk != Location.SelectedNodeId )
                         {
-                            Mgr.changeLocationOfQuantity( Quantity.Quantity, Quantity.UnitId, Reason, Material.RelatedNodeId, PrevLocationPk, Location.SelectedNodeId );
+                            _InventoryLevelModified = Mgr.changeLocationOfQuantity( Quantity.Quantity, Quantity.UnitId, Reason, Material.RelatedNodeId, PrevLocationPk, Location.SelectedNodeId );
                         }
                     }
                     else
                     {
-                        Mgr.addToCurrentQuantity( Quantity.Quantity, Quantity.UnitId, Reason, Material.RelatedNodeId, Location.SelectedNodeId );
+                        _InventoryLevelModified = Mgr.addToCurrentQuantity( Quantity.Quantity, Quantity.UnitId, Reason, Material.RelatedNodeId, Location.SelectedNodeId );
                     }
                 }
                 _updateRequestItems( CswNbtObjClassRequestItem.Types.Move );
@@ -638,22 +643,24 @@ namespace ChemSW.Nbt.ObjClasses
         private void OnQuantityPropChange( CswNbtNodeProp Prop )
         {
             _updateRequestMenu();
-            CswNbtSdInventoryLevelMgr Mgr = new CswNbtSdInventoryLevelMgr( _CswNbtResources );
-            CswNbtNodePropWrapper QuantityWrapper = Node.Properties[QuantityPropertyName];
-            double PrevQuantity = CswConvert.ToDouble( QuantityWrapper.GetOriginalPropRowValue( ( (CswNbtFieldTypeRuleQuantity) _CswNbtResources.MetaData.getFieldTypeRule( QuantityWrapper.getFieldType().FieldType ) ).QuantitySubField.Column ) );
-            if( false == CswTools.IsDouble( PrevQuantity ) )
+            if( false == _InventoryLevelModified )
             {
-                PrevQuantity = 0;
-            }
-            double Diff = Quantity.Quantity - PrevQuantity;
-            if( CswConvert.ToInt32( Diff ) != 0 )
-            {
-                string Reason = "Container " + Barcode.Barcode + " quantity changed by: " + Diff + " " + Quantity.CachedUnitName;
-                if( Disposed.Checked == Tristate.True )
+                CswNbtSdInventoryLevelMgr Mgr = new CswNbtSdInventoryLevelMgr( _CswNbtResources );
+                double PrevQuantity = CswConvert.ToDouble( Node.Properties[QuantityPropertyName].GetOriginalPropRowValue( ( (CswNbtFieldTypeRuleQuantity) _CswNbtResources.MetaData.getFieldTypeRule( Quantity.getFieldType().FieldType ) ).QuantitySubField.Column ) );
+                if( false == CswTools.IsDouble( PrevQuantity ) )
                 {
-                    Reason += " on disposal.";
+                    PrevQuantity = 0;
                 }
-                Mgr.addToCurrentQuantity( Diff, Quantity.UnitId, Reason, Material.RelatedNodeId, Location.SelectedNodeId );
+                double Diff = Quantity.Quantity - PrevQuantity;
+                if( CswConvert.ToInt32( Diff ) != 0 )
+                {
+                    string Reason = "Container " + Barcode.Barcode + " quantity changed by: " + Diff + " " + Quantity.CachedUnitName;
+                    if( Disposed.Checked == Tristate.True )
+                    {
+                        Reason += " on disposal.";
+                    }
+                    _InventoryLevelModified = Mgr.addToCurrentQuantity( Diff, Quantity.UnitId, Reason, Material.RelatedNodeId, Location.SelectedNodeId );
+                }
             }
         }
 
@@ -661,7 +668,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropRelationship Size { get { return ( _CswNbtNode.Properties[SizePropertyName] ); } }
         private void OnSizePropChange( CswNbtNodeProp Prop )
         {
-            if( null != Size.RelatedNodeId )
+            if( CswTools.IsPrimaryKey( Size.RelatedNodeId ) )
             {
                 Size.setReadOnly( value: true, SaveToDb: true );
                 Size.setHidden( value: true, SaveToDb: true );

@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Data;
 using ChemSW.Core;
-using ChemSW.DB;
-using ChemSW.Exceptions;
 using ChemSW.Mail;
 using ChemSW.Nbt.csw.Conversion;
 using ChemSW.Nbt.MetaData;
@@ -67,7 +64,7 @@ namespace ChemSW.Nbt.ServiceDrivers
         {
             foreach( CswNbtObjClassUser User in InventoryLevel.Subscribe.SelectedUsers() )
             {
-                if( false == string.IsNullOrEmpty( User.Email ) && 
+                if( false == string.IsNullOrEmpty( User.Email ) &&
                     false == string.IsNullOrEmpty( InventoryLevel.Type.Value ) )
                 {
                     string Subject = InventoryLevel.Status.Value + " alert for " + InventoryLevel.Material.CachedNodeName + " at " + InventoryLevel.Location.CachedFullPath;
@@ -76,7 +73,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                     Message += "Location: " + InventoryLevel.Location.CachedFullPath + "\n";
                     Message += "Current Quantity: " + InventoryLevel.CurrentQuantity.Gestalt + "\n";
                     Message += "Threshhold: " + InventoryLevel.Level.Gestalt + "\n";
-                    
+
                     _sendEmail( User.Email, Subject, Message );
                 }
             }
@@ -92,25 +89,25 @@ namespace ChemSW.Nbt.ServiceDrivers
             CswNbtView Ret = null;
             if( CswTools.IsPrimaryKey( InventoryLevel.Material.RelatedNodeId ) )
             {
-                Ret = new CswNbtView(_CswNbtResources);
-                CswNbtViewRelationship LocationRel = _SdLocations.getAllChildrenLocationRelationship(Ret, StartLocationId);
+                Ret = new CswNbtView( _CswNbtResources );
+                CswNbtViewRelationship LocationRel = _SdLocations.getAllChildrenLocationRelationship( Ret, StartLocationId );
 
-                CswNbtMetaDataObjectClass ContainerOc = _CswNbtResources.MetaData.getObjectClass(CswNbtMetaDataObjectClass.NbtObjectClass.ContainerClass);
-                CswNbtMetaDataObjectClassProp LocationOcp = ContainerOc.getObjectClassProp(CswNbtObjClassContainer.LocationPropertyName);
-                CswNbtMetaDataObjectClassProp MaterialOcp = ContainerOc.getObjectClassProp(CswNbtObjClassContainer.MaterialPropertyName);
-                CswNbtMetaDataObjectClassProp DisposedOcp = ContainerOc.getObjectClassProp(CswNbtObjClassContainer.DisposedPropertyName);
-                CswNbtMetaDataObjectClassProp MissingOcp = ContainerOc.getObjectClassProp(CswNbtObjClassContainer.MissingPropertyName);
-                CswNbtMetaDataObjectClassProp QuantityOcp = ContainerOc.getObjectClassProp(CswNbtObjClassContainer.QuantityPropertyName);
+                CswNbtMetaDataObjectClass ContainerOc = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.ContainerClass );
+                CswNbtMetaDataObjectClassProp LocationOcp = ContainerOc.getObjectClassProp( CswNbtObjClassContainer.LocationPropertyName );
+                CswNbtMetaDataObjectClassProp MaterialOcp = ContainerOc.getObjectClassProp( CswNbtObjClassContainer.MaterialPropertyName );
+                CswNbtMetaDataObjectClassProp DisposedOcp = ContainerOc.getObjectClassProp( CswNbtObjClassContainer.DisposedPropertyName );
+                CswNbtMetaDataObjectClassProp MissingOcp = ContainerOc.getObjectClassProp( CswNbtObjClassContainer.MissingPropertyName );
+                CswNbtMetaDataObjectClassProp QuantityOcp = ContainerOc.getObjectClassProp( CswNbtObjClassContainer.QuantityPropertyName );
 
-                CswNbtViewRelationship ContainerRel = Ret.AddViewRelationship(LocationRel, NbtViewPropOwnerType.Second, LocationOcp, false);
-                Ret.AddViewPropertyAndFilter(ContainerRel, MaterialOcp, InventoryLevel.Material.RelatedNodeId.PrimaryKey.ToString(), CswNbtSubField.SubFieldName.NodeID, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals);
-                Ret.AddViewPropertyAndFilter(ContainerRel, DisposedOcp, Tristate.True.ToString(), CswNbtSubField.SubFieldName.Checked, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.NotEquals);
-                Ret.AddViewPropertyAndFilter(ContainerRel, MissingOcp, Tristate.True.ToString(), CswNbtSubField.SubFieldName.Checked, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.NotEquals);
-                Ret.AddViewProperty(ContainerRel, QuantityOcp);
+                CswNbtViewRelationship ContainerRel = Ret.AddViewRelationship( LocationRel, NbtViewPropOwnerType.Second, LocationOcp, false );
+                Ret.AddViewPropertyAndFilter( ContainerRel, MaterialOcp, InventoryLevel.Material.RelatedNodeId.PrimaryKey.ToString(), CswNbtSubField.SubFieldName.NodeID, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+                Ret.AddViewPropertyAndFilter( ContainerRel, DisposedOcp, Tristate.True.ToString(), CswNbtSubField.SubFieldName.Checked, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.NotEquals );
+                Ret.AddViewPropertyAndFilter( ContainerRel, MissingOcp, Tristate.True.ToString(), CswNbtSubField.SubFieldName.Checked, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.NotEquals );
+                Ret.AddViewProperty( ContainerRel, QuantityOcp );
             }
             return Ret;
         }
-        
+
         public double getCurrentInventoryLevel( CswNbtObjClassInventoryLevel InventoryLevel )
         {
             double Ret = 0;
@@ -165,15 +162,18 @@ namespace ChemSW.Nbt.ServiceDrivers
             return Ret;
         }
 
-        private void _addToCurrentQuantity( CswNbtObjClassInventoryLevel InventoryLevel, double Quantity, CswPrimaryKey UnitId, string Reason )
+        private bool _addToCurrentQuantity( CswNbtObjClassInventoryLevel InventoryLevel, double Quantity, CswPrimaryKey UnitId, string Reason )
         {
+            bool Ret = false;
             if( null != InventoryLevel )
             {
                 CswNbtUnitConversion Conversion = new CswNbtUnitConversion( _CswNbtResources, InventoryLevel.Level.UnitId, UnitId, InventoryLevel.Material.RelatedNodeId );
                 InventoryLevel.CurrentQuantity.Quantity += Conversion.convertUnit( Quantity );
                 InventoryLevel.CurrentQuantityLog.AddComment( Reason );
                 InventoryLevel.postChanges( true );
+                Ret = true;
             }
+            return Ret;
         }
 
         private const string _ParentLocationInventoryLevelViewName = "ParentLocationInventoryLevelView";
@@ -278,11 +278,12 @@ namespace ChemSW.Nbt.ServiceDrivers
             }
         }
 
-        public void changeLocationOfQuantity( double Quantity, CswPrimaryKey UnitId, string Reason, CswPrimaryKey MaterialId, CswPrimaryKey PrevLocationId, CswPrimaryKey CurrentLocationId )
+        public bool changeLocationOfQuantity( double Quantity, CswPrimaryKey UnitId, string Reason, CswPrimaryKey MaterialId, CswPrimaryKey PrevLocationId, CswPrimaryKey CurrentLocationId )
         {
-            if( null != MaterialId &&
-                null != PrevLocationId &&
-                null != CurrentLocationId )
+            bool Ret = false;
+            if( CswTools.IsPrimaryKey( MaterialId ) &&
+                CswTools.IsPrimaryKey( PrevLocationId ) &&
+                CswTools.IsPrimaryKey( CurrentLocationId ) )
             {
                 Collection<CswNbtObjClassInventoryLevel> PrevLevels;
                 Collection<CswNbtObjClassInventoryLevel> CurrentLevels;
@@ -309,25 +310,33 @@ namespace ChemSW.Nbt.ServiceDrivers
                 }
                 //These Inventory Levels are gaining inventory
                 _applyQuantityToInventoryLevels( AppliesToCurrentLevels, Quantity, UnitId, Reason );
+                Ret = true;
             }
+            return Ret;
         }
 
-        public void addToCurrentQuantity( double Quantity, CswPrimaryKey UnitId, string Reason, CswPrimaryKey MaterialId = null, CswPrimaryKey LocationId = null )
+        public bool addToCurrentQuantity( double Quantity, CswPrimaryKey UnitId, string Reason, CswPrimaryKey MaterialId = null, CswPrimaryKey LocationId = null )
         {
-            if( null != MaterialId && null != LocationId )
+            bool Ret = false;
+            if( CswTools.IsPrimaryKey( MaterialId ) && 
+                CswTools.IsPrimaryKey( LocationId ) )
             {
                 CswNbtView InventoryLevelView = _getParentLocationInventoryLevelView( LocationId, MaterialId );
                 Collection<CswNbtObjClassInventoryLevel> InventoryLevels = _InventoryLevels( InventoryLevelView );
                 _applyQuantityToInventoryLevels( InventoryLevels, Quantity, UnitId, Reason );
+                Ret = true;
             }
+            return Ret;
         }
 
-        public void addToCurrentQuantity( CswNbtObjClassInventoryLevel InventoryLevel, double Quantity, CswPrimaryKey UnitId, string Reason )
+        public bool addToCurrentQuantity( CswNbtObjClassInventoryLevel InventoryLevel, double Quantity, CswPrimaryKey UnitId, string Reason )
         {
+            bool Ret = false;
             if( null != InventoryLevel )
             {
-                _addToCurrentQuantity( InventoryLevel, Quantity, UnitId, Reason );
+                Ret = _addToCurrentQuantity( InventoryLevel, Quantity, UnitId, Reason );
             }
+            return Ret;
         }
 
         #endregion Inventory
