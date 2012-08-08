@@ -144,7 +144,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                                         }
                                         else
                                         {
-                                            Conversion = new CswNbtUnitConversion( _CswNbtResources, InventoryLevel.Level.UnitId, new CswPrimaryKey( "nodes", UnitTypeId ), InventoryLevel.Material.RelatedNodeId );
+                                            Conversion = new CswNbtUnitConversion( _CswNbtResources, new CswPrimaryKey( "nodes", UnitTypeId ), InventoryLevel.Level.UnitId, InventoryLevel.Material.RelatedNodeId );
                                             UnitConversions.Add( UnitTypeId, Conversion );
                                         }
                                         if( null != Conversion )
@@ -169,7 +169,7 @@ namespace ChemSW.Nbt.ServiceDrivers
         {
             if( null != InventoryLevel )
             {
-                CswNbtUnitConversion Conversion = new CswNbtUnitConversion( _CswNbtResources, InventoryLevel.Level.UnitId, UnitId, InventoryLevel.Material.RelatedNodeId );
+                CswNbtUnitConversion Conversion = new CswNbtUnitConversion( _CswNbtResources, UnitId, InventoryLevel.Level.UnitId, InventoryLevel.Material.RelatedNodeId );
                 InventoryLevel.CurrentQuantity.Quantity += Conversion.convertUnit( Quantity );
                 InventoryLevel.CurrentQuantityLog.AddComment( Reason );
                 InventoryLevel.postChanges( true );
