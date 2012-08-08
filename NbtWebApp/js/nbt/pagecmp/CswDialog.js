@@ -810,9 +810,8 @@
                 url: o.FileUrl + '?' + $.param({ PropId: o.PropId }),
                 paramName: 'fileupload',
                 done: function (e, data) {
-                    molTxtArea.text(o.molData);
-                    //div.$.dialog('close');
-                    //o.onSuccess();
+                    div.$.dialog('close');
+                    o.onSuccess();
                 }
             });
 
@@ -820,7 +819,8 @@
 
             div.span({ text: 'MOL Text (Paste from Clipboard):' }).br();
 
-            molTxtArea = div.textArea({ ID: '', rows: 4, cols: 40 });
+            molTxtArea = div.textArea({ ID: '', rows: 6, cols: 40 });
+            molTxtArea.text(o.molData);
             div.br();
 
             var buttonsDiv = div.div({ align: 'right' });

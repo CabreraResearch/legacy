@@ -2725,7 +2725,7 @@ namespace ChemSW.Nbt.WebServices
         //dch
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string getMolFileContents()
+        public string saveMolPropFile()
         {
             JObject ReturnVal = new JObject();
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
@@ -2753,8 +2753,21 @@ namespace ChemSW.Nbt.WebServices
                         {
                             FileData[CurrentIndex] = br.ReadByte();
                         }
+
+                        // Save the binary data
+                        CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources, _CswNbtStatisticsEvents );
                         string MolData = CswTools.ByteArrayToString( FileData ).Replace( "\r", "" );
-                        ReturnVal["molData"] = MolData;
+                        bool Success = ws.saveMolProp( MolData, PropId );
+
+                        ReturnVal["success"] = Success;
+                        if( Success )
+                        {
+                            ReturnVal["molData"] = MolData;
+                        }
+
+                        //now create the image and save it as a blob
+                        byte[] molImage = CswStructureSearch.GetImage( MolData );
+                        ws.SetPropBlobValue( molImage, "mol.jpeg", "image/jpeg", PropId, "blobdata" );
 
                     } // if( FileName != string.Empty && PropId != string.Empty )
 
@@ -2816,6 +2829,7 @@ namespace ChemSW.Nbt.WebServices
             return ReturnVal.ToString();
 
         } // saveMolProp()
+
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]

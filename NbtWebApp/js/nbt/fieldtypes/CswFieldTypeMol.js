@@ -43,7 +43,7 @@
                         onClick: function () {
                             $.CswDialog('EditMolDialog', {
                                 TextUrl: '/NbtWebApp/wsNBT.asmx/saveMolProp',
-                                FileUrl: '/NbtWebApp/wsNBT.asmx/getMolFileContents',
+                                FileUrl: '/NbtWebApp/wsNBT.asmx/saveMolPropFile',
                                 PropId: o.propData.id,
                                 molData: mol,
                                 onSuccess: function () {
