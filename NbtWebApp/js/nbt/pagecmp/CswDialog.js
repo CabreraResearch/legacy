@@ -803,18 +803,16 @@
 
             div.br({ number: 2 });
 
-            var uploadBtn = div.input({
-                ID: 'fileupload',
-                type: Csw.enums.inputTypes.file
-            });
+            var uploadBtn = div.input({ ID: 'fileupload', type: Csw.enums.inputTypes.file });
 
             uploadBtn.$.fileupload({
                 datatype: 'json',
                 url: o.FileUrl + '?' + $.param({ PropId: o.PropId }),
                 paramName: 'fileupload',
                 done: function (e, data) {
-                    var fileData = $.parseJSON(data.result.childNodes[0].childNodes[0].data);
-                    molTxtArea.text(fileData["molData"]);
+                    molTxtArea.text(o.molData);
+                    //div.$.dialog('close');
+                    //o.onSuccess();
                 }
             });
 
@@ -822,13 +820,13 @@
 
             div.span({ text: 'MOL Text (Paste from Clipboard):' }).br();
 
-            molTxtArea = div.textArea({ ID: '', rows: 6, cols: 40 });
+            molTxtArea = div.textArea({ ID: '', rows: 4, cols: 40 });
             div.br();
 
             var buttonsDiv = div.div({ align: 'right' });
 
             saveBtn = buttonsDiv.button({ ID: 'txt_save',
-                enabledText: 'Save MOL',
+                enabledText: 'Save',
                 disabledText: 'Saving...',
                 onClick: function () {
                     Csw.ajax.post({
@@ -840,7 +838,6 @@
                         success: function (data) {
                             div.$.dialog('close');
                             Csw.tryExec(o.onSuccess);
-                            molTxtArea.text(molTxtArea.val());
                         },
                         error: saveBtn.enable
                     }); // ajax
