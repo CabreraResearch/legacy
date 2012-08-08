@@ -2736,9 +2736,6 @@ namespace ChemSW.Nbt.WebServices
 
                 if( AuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
-
-                    // putting these in the param list causes the webservice to fail with
-                    // "System.InvalidOperationException: Request format is invalid: application/octet-stream"
                     string PropId = Context.Request["propid"];
                     CswTempFile TempTools = new CswTempFile( _CswNbtResources );
                     Stream MolStream = TempTools.getFileInputStream( Context, "qqfile" );
@@ -2753,25 +2750,12 @@ namespace ChemSW.Nbt.WebServices
                         {
                             FileData[CurrentIndex] = br.ReadByte();
                         }
-
-                        // Save the binary data
-                        CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources, _CswNbtStatisticsEvents );
                         string MolData = CswTools.ByteArrayToString( FileData ).Replace( "\r", "" );
-                        bool Success = ws.saveMolProp( MolData, PropId );
 
-                        ReturnVal["success"] = Success;
-                        if( Success )
-                        {
-                            ReturnVal["molData"] = MolData;
-                        }
-
-                        //now create the image and save it as a blob
-                        byte[] molImage = CswStructureSearch.GetImage( MolData );
-                        ws.SetPropBlobValue( molImage, "mol.jpeg", "image/jpeg", PropId, "blobdata" );
-
-                    } // if( FileName != string.Empty && PropId != string.Empty )
-
+                        ReturnVal = _saveMolProps( MolData, PropId );
+                    }
                 }
+
                 _deInitResources();
             }
             catch( Exception ex )
@@ -2788,7 +2772,7 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string saveMolProp( string molData, string PropId )
+        public string saveMolPropText( string molData, string PropId )
         {
             JObject ReturnVal = new JObject();
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
@@ -2799,22 +2783,7 @@ namespace ChemSW.Nbt.WebServices
 
                 if( AuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
-                    if( false == string.IsNullOrEmpty( molData ) && false == string.IsNullOrEmpty( PropId ) )
-                    {
-                        CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources, _CswNbtStatisticsEvents );
-                        bool Succeeded = ws.saveMolProp( molData, PropId );
-                        ReturnVal["success"] = Succeeded;
-                        if( Succeeded )
-                        {
-                            ReturnVal["molData"] = molData;
-                        }
-
-                        //now create the image and save it as a blob
-                        byte[] molImage = CswStructureSearch.GetImage( molData );
-                        ws.SetPropBlobValue( molImage, "mol.jpeg", "image/jpeg", PropId, "blobdata" );
-
-                    } // if( FileName != string.Empty && PropId != string.Empty )
-
+                    ReturnVal = _saveMolProps( molData, PropId );
                 }
                 _deInitResources();
             }
@@ -2830,6 +2799,24 @@ namespace ChemSW.Nbt.WebServices
 
         } // saveMolProp()
 
+        private JObject _saveMolProps( string molData, string PropId )
+        {
+            JObject ReturnVal = new JObject();
+
+            CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources, _CswNbtStatisticsEvents );
+            bool Succeeded = ws.saveMolProp( molData, PropId );
+            ReturnVal["success"] = Succeeded;
+            if( Succeeded )
+            {
+                ReturnVal["molData"] = molData;
+            }
+
+            //now create the image and save it as a blob
+            byte[] molImage = CswStructureSearch.GetImage( molData );
+            ws.SetPropBlobValue( molImage, "mol.jpeg", "image/jpeg", PropId, "blobdata" );
+
+            return ReturnVal;
+        }
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
