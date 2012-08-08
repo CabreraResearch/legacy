@@ -37,7 +37,7 @@
 //                    search: false
 //                }
             };
-            if (options) $.extend(cswPrivate, options);
+            if (options) Csw.extend(cswPrivate, options);
 
             var cswPublic = { };
             cswParent.empty();

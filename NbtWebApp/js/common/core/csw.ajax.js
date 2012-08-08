@@ -135,7 +135,7 @@
             removeTimer: true
         };
         if (options) {
-            $.extend(o, options);
+            Csw.extend(o, options);
         }
         var url = Csw.string(o.url, o.urlPrefix + o.urlMethod);
         o.startTime = new Date();
@@ -193,7 +193,7 @@
             watchGlobal: true
         };
         if (options) {
-            $.extend(o, options);
+            Csw.extend(o, options);
         }
         var url = Csw.string(o.url, o.urlPrefix + o.urlMethod);
         //Csw.debug.time(url);
@@ -247,7 +247,7 @@
         };
 
         if (options) {
-            $.extend(o, options);
+            Csw.extend(o, options);
         }
 
         var url = Csw.string(o.url, o.urlPrefix + o.urlMethod);

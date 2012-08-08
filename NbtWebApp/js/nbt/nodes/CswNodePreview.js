@@ -14,7 +14,7 @@
                 eventArg: {},
                 delay: 2500
             };
-            if (options) $.extend(o, options);
+            if (options) Csw.extend(o, options);
 
             function _fixDimensions() {
                 // Make sure preview div is within the window

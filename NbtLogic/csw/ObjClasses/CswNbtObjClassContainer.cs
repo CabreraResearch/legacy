@@ -181,66 +181,84 @@ namespace ChemSW.Nbt.ObjClasses
             CswNbtMetaDataObjectClassProp OCP = ButtonData.NodeTypeProp.getObjectClassProp();
             if( null != ButtonData.NodeTypeProp && null != OCP )
             {
+                bool HasPermission = false;
                 switch( OCP.PropName )
                 {
                     case DisposePropertyName:
-                        DisposeContainer();//case 26665
-
-                        postChanges( true );
-                        ButtonData.Action = NbtButtonAction.refresh;
+                        if( _CswNbtResources.Permit.canContainer( NodeId, CswNbtPermit.NodeTypePermission.Create, _CswNbtResources.Actions[CswNbtActionName.DisposeContainer] ) )
+                        {
+                            HasPermission = true;
+                            DisposeContainer(); //case 26665
+                            postChanges( true );
+                            ButtonData.Action = NbtButtonAction.refresh;
+                        }
                         break;
                     case UndisposePropertyName:
-                        UndisposeContainer();
-                        postChanges( true );
-                        ButtonData.Action = NbtButtonAction.refresh;
+                        if( _CswNbtResources.Permit.canContainer( NodeId, CswNbtPermit.NodeTypePermission.Create, _CswNbtResources.Actions[CswNbtActionName.UndisposeContainer] ) )
+                        {
+                            HasPermission = true;
+                            UndisposeContainer();
+                            postChanges( true );
+                            ButtonData.Action = NbtButtonAction.refresh;
+                        }
                         break;
                     case DispensePropertyName:
-                        //ActionData = this.NodeId.ToString();
-                        ButtonData.Data = _getDispenseActionData();
-                        ButtonData.Action = NbtButtonAction.dispense;
+                        if( _CswNbtResources.Permit.canContainer( NodeId, CswNbtPermit.NodeTypePermission.Create, _CswNbtResources.Actions[CswNbtActionName.DispenseContainer] ) )
+                        {
+                            HasPermission = true;
+                            //ActionData = this.NodeId.ToString();
+                            ButtonData.Data = _getDispenseActionData();
+                            ButtonData.Action = NbtButtonAction.dispense;
+                        }
                         break;
                     case RequestPropertyName:
+                        if( _CswNbtResources.Permit.canContainer( NodeId, CswNbtPermit.NodeTypePermission.Create, _CswNbtResources.Actions[CswNbtActionName.Submit_Request] ) )
+                            CswNbtActSubmitRequest RequestAct = new CswNbtActSubmitRequest( _CswNbtResources, CreateDefaultRequestNode: true );
+                            HasPermission = true;
 
-                        CswNbtActSubmitRequest RequestAct = new CswNbtActSubmitRequest( _CswNbtResources, CreateDefaultRequestNode: true );
+                            CswNbtObjClassRequestItem NodeAsRequestItem = RequestAct.makeContainerRequestItem( new CswNbtActSubmitRequest.RequestItem(), NodeId, ButtonData.SelectedText );
+                            NodeAsRequestItem.Material.RelatedNodeId = Material.RelatedNodeId;
+                            NodeAsRequestItem.Material.setReadOnly( value: true, SaveToDb: false );
 
-                        CswNbtObjClassRequestItem NodeAsRequestItem = RequestAct.makeContainerRequestItem( new CswNbtActSubmitRequest.RequestItem(), NodeId, ButtonData.SelectedText );
-                        NodeAsRequestItem.Material.RelatedNodeId = Material.RelatedNodeId;
-                        NodeAsRequestItem.Material.setReadOnly( value: true, SaveToDb: false );
+                            CswPrimaryKey SelectedLocationId = new CswPrimaryKey();
+                            if( CswTools.IsPrimaryKey( _CswNbtResources.CurrentNbtUser.DefaultLocationId ) )
+                            {
+                                SelectedLocationId = _CswNbtResources.CurrentNbtUser.DefaultLocationId;
+                            }
+                            else
+                            {
+                                SelectedLocationId = Location.SelectedNodeId;
+                            }
+                            NodeAsRequestItem.Location.SelectedNodeId = SelectedLocationId;
+                            NodeAsRequestItem.Location.RefreshNodeName();
 
-                        CswPrimaryKey SelectedLocationId = new CswPrimaryKey();
-                        if( CswTools.IsPrimaryKey( _CswNbtResources.CurrentNbtUser.DefaultLocationId ) )
-                        {
-                            SelectedLocationId = _CswNbtResources.CurrentNbtUser.DefaultLocationId;
+                            switch( ButtonData.SelectedText )
+                            {
+                                case RequestMenu.Dispense:
+                                    NodeAsRequestItem.Quantity.UnitId = Quantity.UnitId;
+                                    ButtonData.Action = NbtButtonAction.request;
+                                    break;
+                                case RequestMenu.Dispose:
+                                    NodeAsRequestItem.Material.setHidden( value: true, SaveToDb: false );
+                                    NodeAsRequestItem.postChanges( true ); /* This is the only condition in which we want to commit the node upfront. */
+                                    ButtonData.Action = NbtButtonAction.nothing;
+                                    break;
+                                case RequestMenu.Move:
+                                    NodeAsRequestItem.Material.setHidden( value: true, SaveToDb: false );
+                                    ButtonData.Action = NbtButtonAction.request;
+                                    break;
+                            }
+
+                            ButtonData.Data["titleText"] = OCP.PropName + " " + Barcode.Barcode;
+                            ButtonData.Data["requestaction"] = OCP.PropName;
+                            ButtonData.Data["requestItemProps"] = RequestAct.getRequestItemAddProps( NodeAsRequestItem );
+                            ButtonData.Data["requestItemNodeTypeId"] = RequestAct.RequestItemNt.NodeTypeId;
                         }
-                        else
-                        {
-                            SelectedLocationId = Location.SelectedNodeId;
-                        }
-                        NodeAsRequestItem.Location.SelectedNodeId = SelectedLocationId;
-                        NodeAsRequestItem.Location.RefreshNodeName();
-
-                        switch( ButtonData.SelectedText )
-                        {
-                            case RequestMenu.Dispense:
-                                NodeAsRequestItem.Quantity.UnitId = Quantity.UnitId;
-                                ButtonData.Action = NbtButtonAction.request;
-                                break;
-                            case RequestMenu.Dispose:
-                                NodeAsRequestItem.Material.setHidden( value: true, SaveToDb: false );
-                                NodeAsRequestItem.postChanges( true ); /* This is the only condition in which we want to commit the node upfront. */
-                                ButtonData.Action = NbtButtonAction.nothing;
-                                break;
-                            case RequestMenu.Move:
-                                NodeAsRequestItem.Material.setHidden( value: true, SaveToDb: false );
-                                ButtonData.Action = NbtButtonAction.request;
-                                break;
-                        }
-
-                        ButtonData.Data["titleText"] = OCP.PropName + " " + Barcode.Barcode;
-                        ButtonData.Data["requestaction"] = OCP.PropName;
-                        ButtonData.Data["requestItemProps"] = RequestAct.getRequestItemAddProps( NodeAsRequestItem );
-                        ButtonData.Data["requestItemNodeTypeId"] = RequestAct.RequestItemNt.NodeTypeId;
                         break;
+                }
+                if( false == HasPermission )
+                {
+                    throw new CswDniException( ErrorType.Warning, "You do not have permission to the " + OCP.PropName + " action.", "You do not have permission to the " + OCP.PropName + " action." );
                 }
             }
             return true;
@@ -249,28 +267,41 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Custom Logic
 
-
+        /// <summary>
+        /// Checks permission and disposes a container
+        /// </summary>
         public void DisposeContainer()
         {
-            _createContainerTransactionNode( CswNbtObjClassContainerDispenseTransaction.DispenseType.Dispose, -this.Quantity.Quantity, this.Quantity.UnitId );
-            this.Quantity.Quantity = 0;
-            this.Disposed.Checked = Tristate.True;
-            _setDisposedReadOnly( true );
+
+            if( _CswNbtResources.Permit.canContainer( NodeId, CswNbtPermit.NodeTypePermission.Create, _CswNbtResources.Actions[CswNbtActionName.DisposeContainer] ) )
+            {
+                _createContainerTransactionNode( CswNbtObjClassContainerDispenseTransaction.DispenseType.Dispose, -this.Quantity.Quantity, this.Quantity.UnitId );
+                this.Quantity.Quantity = 0;
+                this.Disposed.Checked = Tristate.True;
+                _setDisposedReadOnly( true );
+            }
         }
 
+        /// <summary>
+        /// Checks permission and undisposes a container
+        /// </summary>
         public void UndisposeContainer()
         {
-            CswNbtMetaDataNodeType ContDispTransNT = _CswNbtResources.MetaData.getNodeType( "Container Dispense Transaction" );
-            CswNbtObjClassContainerDispenseTransaction ContDispTransNode = _getMostRecentDisposeTransaction( ContDispTransNT );
 
-            if( ContDispTransNode != null )
+            if( _CswNbtResources.Permit.canContainer( NodeId, CswNbtPermit.NodeTypePermission.Create, _CswNbtResources.Actions[CswNbtActionName.UndisposeContainer] ) )
             {
-                this.Quantity.Quantity = ContDispTransNode.QuantityDispensed.Quantity;
-                this.Quantity.UnitId = ContDispTransNode.QuantityDispensed.UnitId;
-                ContDispTransNode.Node.delete();
+                CswNbtMetaDataNodeType ContDispTransNT = _CswNbtResources.MetaData.getNodeType( "Container Dispense Transaction" );
+                CswNbtObjClassContainerDispenseTransaction ContDispTransNode = _getMostRecentDisposeTransaction( ContDispTransNT );
+
+                if( ContDispTransNode != null )
+                {
+                    this.Quantity.Quantity = ContDispTransNode.QuantityDispensed.Quantity;
+                    this.Quantity.UnitId = ContDispTransNode.QuantityDispensed.UnitId;
+                    ContDispTransNode.Node.delete();
+                }
+                this.Disposed.Checked = Tristate.False;
+                _setDisposedReadOnly( false );
             }
-            this.Disposed.Checked = Tristate.False;
-            _setDisposedReadOnly( false );
         }
 
         /// <summary>

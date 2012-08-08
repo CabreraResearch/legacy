@@ -26,7 +26,7 @@
 
                 (function preInit() {
                     if (options) {
-                        $.extend(cswPrivate, options);
+                        Csw.extend(cswPrivate, options);
                     }
 
                     cswPublic = cswParent.div();

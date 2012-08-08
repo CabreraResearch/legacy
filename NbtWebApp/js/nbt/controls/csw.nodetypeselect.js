@@ -28,7 +28,7 @@
             (function () {
 
                 if (options) {
-                    $.extend(cswPrivate, options);
+                    Csw.extend(cswPrivate, options);
                 }
                 cswPrivate.ID += '_sel';
 
@@ -36,7 +36,7 @@
 
                 cswPublic = Csw.dom({}, cswPrivate.select);
 
-                //$.extend(cswPublic, Csw.literals.select(cswPrivate));
+                //Csw.extend(cswPublic, Csw.literals.select(cswPrivate));
 
                 cswPublic.bind('change', function () {
                     Csw.tryExec(cswPrivate.onChange, cswPublic, cswPrivate.nodetypecount);

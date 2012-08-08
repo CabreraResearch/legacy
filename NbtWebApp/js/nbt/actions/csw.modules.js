@@ -12,7 +12,7 @@
                 ID: 'action_modules',
                 onModuleChange: null // function() {}
             };
-            if (options) $.extend(cswPrivate, options);
+            if (options) Csw.extend(cswPrivate, options);
 
             // constructor
             cswPrivate.init = function () {

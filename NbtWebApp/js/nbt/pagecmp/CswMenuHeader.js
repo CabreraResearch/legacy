@@ -19,7 +19,7 @@
         };
 
         if (options) {
-            $.extend(o, options);
+            Csw.extend(o, options);
         }
 
         var $MenuDiv = $(this);
