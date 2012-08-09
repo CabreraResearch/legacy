@@ -64,7 +64,7 @@
         Csw.register('clientSession', Csw.makeNameSpace());
 
     Csw.currentAccessId = Csw.currentAccessId ||
-        Csw.clientSession.register('currentAccessId', function() {
+        Csw.clientSession.register('currentAccessId', function () {
             return Csw.cookie.get(Csw.cookie.cookieNames.CustomerId);
         });
 
@@ -165,6 +165,9 @@
             switch (o.status) {
                 case 'Authenticated':
                     o.success();
+                    break;
+                case 'Archived':
+                    txt = 'Your account is archived. Please see your account administrator.';
                     break;
                 case 'Deauthenticated':
                     o.success(); // yes, o.success() is intentional here.

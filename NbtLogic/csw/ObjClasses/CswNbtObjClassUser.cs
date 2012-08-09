@@ -448,6 +448,11 @@ namespace ChemSW.Nbt.ObjClasses
             return _RoleNodeObjClass.Administrator.Checked == Tristate.True;
         }
 
+        public bool IsArchived()
+        {
+            return this.Archived.Checked == Tristate.True;
+        }
+
     }//CswNbtObjClassUser
 
 }//namespace ChemSW.Nbt.ObjClasses
