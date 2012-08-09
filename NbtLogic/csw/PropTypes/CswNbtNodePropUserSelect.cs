@@ -171,16 +171,19 @@ namespace ChemSW.Nbt.PropTypes
             CswNbtMetaDataObjectClass UserOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
             foreach( CswNbtNode UserNode in UserOC.getNodes( false, false ) )
             {
-                DataRow NTRow = Data.NewRow();
-                NTRow[NameColumn] = UserNode.NodeName; // UsersTree.getNodeNameForCurrentPosition();
-                NTRow[KeyColumn] = UserNode.NodeId.PrimaryKey; //  UsersTree.getNodeIdForCurrentPosition().PrimaryKey;
-                NTRow[StringKeyColumn] = UserNode.NodeId.ToString(); //  UsersTree.getNodeIdForCurrentPosition().PrimaryKey;
-                NTRow[ValueColumn] = ( SelectedUserIds.Contains( UserNode.NodeId.PrimaryKey.ToString() ) ||  //UsersTree.getNodeIdForCurrentPosition().PrimaryKey.ToString() ) ) ||
-                                       ( first && Required && SelectedUserIds.Count == 0 ) );
-                Data.Rows.Add( NTRow );
-                first = false;
+                if( false == CswConvert.ToBoolean( UserNode.Properties[CswNbtObjClassUser.ArchivedPropertyName].Field1 ) )
+                {
+                    DataRow NTRow = Data.NewRow();
+                    NTRow[NameColumn] = UserNode.NodeName; // UsersTree.getNodeNameForCurrentPosition();
+                    NTRow[KeyColumn] = UserNode.NodeId.PrimaryKey; //  UsersTree.getNodeIdForCurrentPosition().PrimaryKey;
+                    NTRow[StringKeyColumn] = UserNode.NodeId.ToString(); //  UsersTree.getNodeIdForCurrentPosition().PrimaryKey;
+                    NTRow[ValueColumn] = ( SelectedUserIds.Contains( UserNode.NodeId.PrimaryKey.ToString() ) ||  //UsersTree.getNodeIdForCurrentPosition().PrimaryKey.ToString() ) ) ||
+                                           ( first && Required && SelectedUserIds.Count == 0 ) );
+                    Data.Rows.Add( NTRow );
+                    first = false;
 
-                //UsersTree.goToParentNode();
+                    //UsersTree.goToParentNode();
+                }
             }
             return Data;
         } // UserOptions()
