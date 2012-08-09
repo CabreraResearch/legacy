@@ -2588,7 +2588,7 @@ namespace ChemSW.Nbt.WebServices
                 {
 
                     var ws = new CswNbtWebServiceHeader( _CswNbtResources );
-                    ReturnVal = ws.makeVersionJson();
+                    ReturnVal = ws.makeVersionJson( _CswSessionResources );
                 }
 
                 _deInitResources();

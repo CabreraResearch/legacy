@@ -762,6 +762,18 @@
                             row += 1;
                         }
                     }
+                    table.cell(row, 1).css({ padding: '15px 1px 1px 1px' }).append('');
+                    row += 1;
+                    table.cell(row, 1).css({ padding: '2px 5px 2px 5px' }).append('Session Info');
+                    row += 1;
+                    table.cell(row, 1).css({ padding: '2px 5px 2px 5px' }).append('---------------------------');
+                    row += 1;
+                    for (var userComp in data.userProps) {
+                        var thisProp = data.userProps[userComp];
+                        table.cell(row, 1).css({ padding: '2px 5px 2px 5px' }).append(thisProp.componentName);
+                        table.cell(row, 2).css({ padding: '2px 5px 2px 5px' }).append(thisProp.value);
+                        row += 1;
+                    }
                 }
             });
             openDialog(div, 600, 400, null, 'About');
