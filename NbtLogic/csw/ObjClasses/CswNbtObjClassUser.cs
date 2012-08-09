@@ -31,6 +31,7 @@ namespace ChemSW.Nbt.ObjClasses
         public static string TimeFormatPropertyName { get { return "Time Format"; } }
         public static string DefaultLocationPropertyName { get { return "Default Location"; } }
         public static string WorkUnitPropertyName { get { return "Work Unit"; } }
+        public static string ArchivedPropertyName { get { return "Archived"; } }
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
 
@@ -406,6 +407,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswPrimaryKey DefaultLocationId { get { return DefaultLocationProperty.SelectedNodeId; } }
         public CswNbtNodePropRelationship WorkUnitProperty { get { return _CswNbtNode.Properties[WorkUnitPropertyName]; } }
         public CswPrimaryKey WorkUnitId { get { return WorkUnitProperty.RelatedNodeId; } }
+        public CswNbtNodePropLogical Archived { get { return _CswNbtNode.Properties[ArchivedPropertyName]; } }
 
         #endregion
 
