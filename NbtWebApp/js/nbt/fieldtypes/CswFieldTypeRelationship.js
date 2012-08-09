@@ -120,23 +120,26 @@
 
                         var openAddNodeDialog = function (nodetypeToAdd) {
                             $.CswDialog('AddNodeDialog', {
-                                'nodetypeid': nodetypeToAdd,
-                                'onAddNode': o.onReload,
+                                nodetypeid: nodetypeToAdd,
+                                onAddNode: function (nodeid, nodekey, nodename) {
+                                    selectBox.option({ value: nodeid, display: nodename });
+                                    selectBox.val(nodeid);
+                                },
                                 text: o.propData.name
                             });
                         };
 
-                        var getNodeTypeOptions = function() {
+                        var getNodeTypeOptions = function () {
                             var blankText = '[Select One]';
                             selectedNodeType = table.cell(1, cellCol)
                                 .nodeTypeSelect({
                                     objectClassId: objectClassId,
-                                    onSelect: function(data, nodeTypeCount) {
+                                    onSelect: function (data, nodeTypeCount) {
                                         if (blankText !== selectedNodeType.val()) {
                                             openAddNodeDialog(selectedNodeType.val());
                                         }
                                     },
-                                    onSuccess: function(data, nodeTypeCount, lastNodeTypeId) {
+                                    onSuccess: function (data, nodeTypeCount, lastNodeTypeId) {
                                         if (Csw.number(nodeTypeCount) > 1) {
                                             selectedNodeType.show();
                                             addImage.hide();
