@@ -5,6 +5,10 @@
     "use strict";
     var pluginName = 'CswDialog';
 
+    var posX = 150;
+    var posY = 30;
+    var incrPosBy = 30;
+
     var afterObjectClassButtonClick = function (action, dialog) {
         switch (Csw.string(action).toLowerCase()) {
             case Csw.enums.nbtButtonAction.dispense:
@@ -1254,6 +1258,8 @@
             Csw.tryExec(o.onOpen, div);
         },
         CloseDialog: function (id) {
+            posX -= incrPosBy;
+            posY -= incrPosBy;
             $('#' + id)
                 .dialog('close')
                 .remove();
@@ -1267,17 +1273,28 @@
         $('<div id="DialogErrorDiv" style="display: none;"></div>')
             .prependTo(div.$);
 
+        Csw.tryExec(div.$.dialog('close'));
+
         div.$.dialog({
             modal: true,
             width: width,
             height: height,
             title: title,
+            position: [posX, posY],
             close: function () {
-                div.remove();
+                posX -= incrPosBy;
+                posY -= incrPosBy;
                 Csw.tryExec(onClose);
                 Csw.unsubscribe(Csw.enums.events.afterObjectClassButtonClick, closeMe);
+            },
+            dragStop: function () {
+                var newPos = div.$.dialog("option", "position");
+                posX = newPos[0] + incrPosBy;
+                posY = newPos[1] + incrPosBy;
             }
         });
+        posX += incrPosBy;
+        posY += incrPosBy;
         function closeMe(eventObj, action) {
             afterObjectClassButtonClick(action, {
                 close: function () {
@@ -1285,6 +1302,8 @@
                     Csw.unsubscribe(Csw.enums.events.afterObjectClassButtonClick, closeMe);
                 }
             });
+            posX -= incrPosBy;
+            posY -= incrPosBy;
         }
         Csw.subscribe(Csw.enums.events.afterObjectClassButtonClick, closeMe);
     }
