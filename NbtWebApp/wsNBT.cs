@@ -4991,7 +4991,7 @@ namespace ChemSW.Nbt.WebServices
 
         private void _setEditMode( string EditModeStr )
         {
-            _CswNbtResources.EditMode = (NodeEditMode) Enum.Parse( typeof( NodeEditMode ), EditModeStr );
+            _CswNbtResources.EditMode = EditModeStr;
         }
 
         private void _setEditMode( NodeEditMode EditMode )

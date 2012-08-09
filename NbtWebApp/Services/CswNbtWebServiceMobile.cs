@@ -153,7 +153,7 @@ namespace ChemSW.Nbt.WebServices
             return _getNode( ThisNode, RunProps );
         }
 
-        private JProperty _getNode( CswNbtNode ThisNode, bool RunProps = true, NodeSpecies ThisNodeSpecies = NodeSpecies.UnKnown )
+        private JProperty _getNode( CswNbtNode ThisNode, bool RunProps = true, NodeSpecies ThisNodeSpecies = null )
         {
             JProperty Ret = new JProperty( "No Results" );
             if( null != ThisNode )
