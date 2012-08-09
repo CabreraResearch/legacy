@@ -11,6 +11,7 @@ using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using Newtonsoft.Json.Linq;
+using ChemSW.Session;
 
 namespace ChemSW.Nbt.WebServices
 {
@@ -196,7 +197,7 @@ namespace ChemSW.Nbt.WebServices
             return Ret;
         }
 
-        public JObject makeVersionJson()
+        public JObject makeVersionJson( CswSessionResourcesNbt _CswSessionResources )
         {
             JObject ret = new JObject();
 
@@ -265,6 +266,24 @@ namespace ChemSW.Nbt.WebServices
                                         )
 
                          ) );
+
+            SortedList<string, CswSessionsListEntry> sessions = _CswSessionResources.CswSessionManager.SessionsList.AllSessions;
+            CswDateTime loginDate = new CswDateTime( _CswNbtResources );
+            foreach( var entry in sessions )
+            {
+                CswSessionsListEntry sessionEntry = entry.Value;
+                if( sessionEntry.UserName.Equals( _CswNbtResources.CurrentUser.Username ) )
+                {
+                    loginDate.FromClientDateString( sessionEntry.LoginDate.ToString() );
+                }
+            }
+
+            JObject UserObj = new JObject();
+            UserObj["customerid"] = new JObject( new JProperty( "componentName", "Customer ID:" ), new JProperty( "value", _CswNbtResources.AccessId ) );
+            UserObj["loggedinas"] = new JObject( new JProperty( "componentName", "Logged in as:" ), new JProperty( "value", _CswNbtResources.CurrentUser.Username ) );
+            UserObj["sessionsince"] = new JObject( new JProperty( "componentName", "Session since:" ), new JProperty( "value", loginDate.ToDateTime().ToString() ) );
+
+            ret.Add( new JProperty( "userProps", UserObj ) );
 
             return ret;
         } // makeVersionJson()

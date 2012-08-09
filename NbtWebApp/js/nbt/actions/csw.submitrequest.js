@@ -127,7 +127,10 @@
                                 nodepks: nodeids,
                                 nodekeys: cswnbtnodekeys,
                                 nodenames: nodenames,
-                                onDeleteNode: cswPrivate.initGrid,
+                                onDeleteNode: Csw.method(function () {
+                                    Csw.publish(Csw.enums.events.main.refreshHeader);
+                                    cswPrivate.initGrid();
+                                }),
                                 Multi: (nodeids.length > 1),
                                 publishDeleteEvent: false
                             });
