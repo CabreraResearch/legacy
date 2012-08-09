@@ -5,9 +5,23 @@
     "use strict";
     var pluginName = 'CswDialog';
 
-    var posX = 150;
-    var posY = 30;
+    var cswPrivateInit = function () { //create this to prevent anyone from modifying the orginal position of the dialog positions
+        var origX = 150;
+        var origY = 30;
+
+        this.origXAccessor = function () {
+            return origX;
+        }
+        this.origYAccessor = function () {
+            return origY;
+        }
+    };
+    var cswPrivate = new cswPrivateInit();
+
+    var posX = cswPrivate.origXAccessor();
+    var posY = cswPrivate.origYAccessor();
     var incrPosBy = 30;
+    var dialogsCount = 0;
 
     var afterObjectClassButtonClick = function (action, dialog) {
         switch (Csw.string(action).toLowerCase()) {
@@ -1260,6 +1274,7 @@
         CloseDialog: function (id) {
             posX -= incrPosBy;
             posY -= incrPosBy;
+            dialogsCount--;
             $('#' + id)
                 .dialog('close')
                 .remove();
@@ -1273,7 +1288,7 @@
         $('<div id="DialogErrorDiv" style="display: none;"></div>')
             .prependTo(div.$);
 
-        Csw.tryExec(div.$.dialog('close'));
+        Csw.tryExec(div.$.dialog, 'close')
 
         div.$.dialog({
             modal: true,
@@ -1284,13 +1299,21 @@
             close: function () {
                 posX -= incrPosBy;
                 posY -= incrPosBy;
+                dialogsCount--;
                 Csw.tryExec(onClose);
                 Csw.unsubscribe(Csw.enums.events.afterObjectClassButtonClick, closeMe);
+                if (dialogsCount === 0) {
+                    posX = cswPrivate.origXAccessor();
+                    posY = cswPrivate.origYAccessor();
+                }
             },
             dragStop: function () {
                 var newPos = div.$.dialog("option", "position");
                 posX = newPos[0] + incrPosBy;
                 posY = newPos[1] + incrPosBy;
+            },
+            open: function () {
+                dialogsCount++;
             }
         });
         posX += incrPosBy;
@@ -1304,6 +1327,7 @@
             });
             posX -= incrPosBy;
             posY -= incrPosBy;
+            dialogsCount--;
         }
         Csw.subscribe(Csw.enums.events.afterObjectClassButtonClick, closeMe);
     }
