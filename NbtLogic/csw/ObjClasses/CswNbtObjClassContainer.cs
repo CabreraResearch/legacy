@@ -214,12 +214,13 @@ namespace ChemSW.Nbt.ObjClasses
                         break;
                     case RequestPropertyName:
                         if( _CswNbtResources.Permit.canContainer( NodeId, CswNbtPermit.NodeTypePermission.Create, _CswNbtResources.Actions[CswNbtActionName.Submit_Request] ) )
+                        {
                             CswNbtActSubmitRequest RequestAct = new CswNbtActSubmitRequest( _CswNbtResources, CreateDefaultRequestNode: true );
                             HasPermission = true;
 
                             CswNbtObjClassRequestItem NodeAsRequestItem = RequestAct.makeContainerRequestItem( new CswNbtActSubmitRequest.RequestItem(), NodeId, ButtonData.SelectedText );
                             NodeAsRequestItem.Material.RelatedNodeId = Material.RelatedNodeId;
-                        NodeAsRequestItem.Material.setReadOnly( value: true, SaveToDb: ButtonData.SelectedText != RequestMenu.Dispense );
+                            NodeAsRequestItem.Material.setReadOnly( value: true, SaveToDb: ButtonData.SelectedText != RequestMenu.Dispense );
 
                             CswPrimaryKey SelectedLocationId = new CswPrimaryKey();
                             if( CswTools.IsPrimaryKey( _CswNbtResources.CurrentNbtUser.DefaultLocationId ) )
@@ -232,8 +233,8 @@ namespace ChemSW.Nbt.ObjClasses
                             }
                             NodeAsRequestItem.Location.SelectedNodeId = SelectedLocationId;
                             NodeAsRequestItem.Location.RefreshNodeName();
-                        NodeAsRequestItem.Material.setHidden( value: true, SaveToDb: ButtonData.SelectedText != RequestMenu.Dispense );
-                        
+                            NodeAsRequestItem.Material.setHidden( value: true, SaveToDb: ButtonData.SelectedText != RequestMenu.Dispense );
+
                             switch( ButtonData.SelectedText )
                             {
                                 case RequestMenu.Dispense:
@@ -241,14 +242,14 @@ namespace ChemSW.Nbt.ObjClasses
                                     ButtonData.Action = NbtButtonAction.request;
                                     break;
                                 case RequestMenu.Dispose:
-                                NodeAsRequestItem.IsTemp = false; /* This is the only condition in which we want to commit the node upfront. */
+                                    NodeAsRequestItem.IsTemp = false; /* This is the only condition in which we want to commit the node upfront. */
                                     ButtonData.Action = NbtButtonAction.nothing;
                                     break;
                                 case RequestMenu.Move:
                                     ButtonData.Action = NbtButtonAction.request;
                                     break;
                             }
-                        NodeAsRequestItem.postChanges( ForceUpdate: true );
+                            NodeAsRequestItem.postChanges( ForceUpdate: true );
                             ButtonData.Data["titleText"] = OCP.PropName + " " + Barcode.Barcode;
                             ButtonData.Data["requestaction"] = OCP.PropName;
                             ButtonData.Data["requestItemProps"] = RequestAct.getRequestItemAddProps( NodeAsRequestItem );
@@ -297,8 +298,8 @@ namespace ChemSW.Nbt.ObjClasses
                 {
                     this.Quantity.Quantity = -ContDispTransNode.QuantityDispensed.Quantity;
                     this.Quantity.UnitId = ContDispTransNode.QuantityDispensed.UnitId;
-                CswNbtBatchOpMultiDelete op = new CswNbtBatchOpMultiDelete( _CswNbtResources );
-                CswNbtObjClassBatchOp BatchNode = op.makeBatchOp( ContDispTransNode.NodeId );
+                    CswNbtBatchOpMultiDelete op = new CswNbtBatchOpMultiDelete( _CswNbtResources );
+                    CswNbtObjClassBatchOp BatchNode = op.makeBatchOp( ContDispTransNode.NodeId );
                 }
                 this.Disposed.Checked = Tristate.False;
                 _setDisposedReadOnly( false );
