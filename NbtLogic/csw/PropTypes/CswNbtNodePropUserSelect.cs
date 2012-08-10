@@ -74,6 +74,18 @@ namespace ChemSW.Nbt.PropTypes
                     _SelectedUserIds.OnChange += _SelectedUserIds_OnChange;
                     _SelectedUserIds.FromString( _CswNbtNodePropData.GetPropRowValue( _SelectedUserIdsSubField.Column ) );
                 }
+                //removed archived users
+                for( int i = 0; i < _SelectedUserIds.Count; i++ ) //foreach won't work here because we edit the list while we iterate it
+                {
+                    CswPrimaryKey pk = new CswPrimaryKey();
+                    pk.FromString( "nodes_" + _SelectedUserIds[i] );
+                    CswNbtNode node = _CswNbtResources.Nodes.GetNode( pk );
+                    CswNbtObjClassUser nodeAsUser = (CswNbtObjClassUser) node;
+                    if( nodeAsUser.IsArchived() )
+                    {
+                        _SelectedUserIds.Remove( _SelectedUserIds[i] );
+                    }
+                }
                 return _SelectedUserIds;
             }
             set
