@@ -5,6 +5,24 @@
     "use strict";
     var pluginName = 'CswDialog';
 
+    var cswPrivateInit = function () { //create this to prevent anyone from modifying the orginal position of the dialog positions
+        var origX = 150;
+        var origY = 30;
+
+        this.origXAccessor = function () {
+            return origX;
+        }
+        this.origYAccessor = function () {
+            return origY;
+        }
+    };
+    var cswPrivate = new cswPrivateInit();
+
+    var posX = cswPrivate.origXAccessor();
+    var posY = cswPrivate.origYAccessor();
+    var incrPosBy = 30;
+    var dialogsCount = 0;
+
     var afterObjectClassButtonClick = function (action, dialog) {
         switch (Csw.string(action).toLowerCase()) {
             case Csw.enums.nbtButtonAction.dispense:
@@ -746,6 +764,18 @@
                             row += 1;
                         }
                     }
+                    table.cell(row, 1).css({ padding: '15px 1px 1px 1px' }).append('');
+                    row += 1;
+                    table.cell(row, 1).css({ padding: '2px 5px 2px 5px' }).append('Session Info');
+                    row += 1;
+                    table.cell(row, 1).css({ padding: '2px 5px 2px 5px' }).append('---------------------------');
+                    row += 1;
+                    for (var userComp in data.userProps) {
+                        var thisProp = data.userProps[userComp];
+                        table.cell(row, 1).css({ padding: '2px 5px 2px 5px' }).append(thisProp.componentName);
+                        table.cell(row, 2).css({ padding: '2px 5px 2px 5px' }).append(thisProp.value);
+                        row += 1;
+                    }
                 }
             });
             openDialog(div, 600, 400, null, 'About');
@@ -1256,6 +1286,9 @@
             Csw.tryExec(o.onOpen, div);
         },
         CloseDialog: function (id) {
+            posX -= incrPosBy;
+            posY -= incrPosBy;
+            dialogsCount--;
             $('#' + id)
                 .dialog('close')
                 .remove();
@@ -1269,17 +1302,36 @@
         $('<div id="DialogErrorDiv" style="display: none;"></div>')
             .prependTo(div.$);
 
+        Csw.tryExec(div.$.dialog, 'close')
+
         div.$.dialog({
             modal: true,
             width: width,
             height: height,
             title: title,
+            position: [posX, posY],
             close: function () {
-                div.remove();
+                posX -= incrPosBy;
+                posY -= incrPosBy;
+                dialogsCount--;
                 Csw.tryExec(onClose);
                 Csw.unsubscribe(Csw.enums.events.afterObjectClassButtonClick, closeMe);
+                if (dialogsCount === 0) {
+                    posX = cswPrivate.origXAccessor();
+                    posY = cswPrivate.origYAccessor();
+                }
+            },
+            dragStop: function () {
+                var newPos = div.$.dialog("option", "position");
+                posX = newPos[0] + incrPosBy;
+                posY = newPos[1] + incrPosBy;
+            },
+            open: function () {
+                dialogsCount++;
             }
         });
+        posX += incrPosBy;
+        posY += incrPosBy;
         function closeMe(eventObj, action) {
             afterObjectClassButtonClick(action, {
                 close: function () {
@@ -1287,6 +1339,9 @@
                     Csw.unsubscribe(Csw.enums.events.afterObjectClassButtonClick, closeMe);
                 }
             });
+            posX -= incrPosBy;
+            posY -= incrPosBy;
+            dialogsCount--;
         }
         Csw.subscribe(Csw.enums.events.afterObjectClassButtonClick, closeMe);
     }
