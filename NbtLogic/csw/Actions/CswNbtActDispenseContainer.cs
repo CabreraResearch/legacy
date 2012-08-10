@@ -2,7 +2,6 @@
 using System.Collections.ObjectModel;
 using ChemSW.Core;
 using ChemSW.Exceptions;
-using ChemSW.Nbt.csw.Conversion;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using Newtonsoft.Json.Linq;
@@ -51,24 +50,43 @@ namespace ChemSW.Nbt.Actions
             JObject ret = new JObject();
             if( null != _SourceContainer )
             {
+                CswNbtObjClassContainerDispenseTransaction.DispenseType DispenseTypeEnum = _getDispenseTypeFromAction( DispenseType );
                 CswPrimaryKey UnitOfMeasurePk = new CswPrimaryKey();
-                UnitOfMeasurePk.FromString(UnitId);
+                UnitOfMeasurePk.FromString( UnitId );
                 CswPrimaryKey RequestItemPk = new CswPrimaryKey();
-                RequestItemPk.FromString(RequestItemId);
-                Double RealQuantity = CswConvert.ToDouble(Quantity);
+                RequestItemPk.FromString( RequestItemId );
+                Double RealQuantity = CswConvert.ToDouble( Quantity );
 
-                if (DispenseType.Contains(CswNbtObjClassContainerDispenseTransaction.DispenseType.Add.ToString()))
+                if( DispenseTypeEnum == CswNbtObjClassContainerDispenseTransaction.DispenseType.Add )
                 {
                     RealQuantity = -RealQuantity; // deducting negative quantity is adding quantity
                 }
 
-                _SourceContainer.DispenseOut(DispenseType, RealQuantity, UnitOfMeasurePk, RequestItemPk);
-                _SourceContainer.postChanges(false);
+                _SourceContainer.DispenseOut( DispenseTypeEnum, RealQuantity, UnitOfMeasurePk, RequestItemPk );
+                _SourceContainer.postChanges( false );
 
                 string ViewId = _getViewForAllDispenseContainers();
                 ret["viewId"] = ViewId;
             }
             return ret;
+        }
+
+        private CswNbtObjClassContainerDispenseTransaction.DispenseType _getDispenseTypeFromAction( string DispenseTypeDescription )
+        {
+            CswNbtObjClassContainerDispenseTransaction.DispenseType DispenseType = DispenseTypeDescription;
+            if( DispenseTypeDescription.Contains( CswNbtObjClassContainerDispenseTransaction.DispenseType.Add.ToString() ) )
+            {
+                DispenseType = CswNbtObjClassContainerDispenseTransaction.DispenseType.Add;
+            }
+            else if( DispenseTypeDescription.Contains( CswNbtObjClassContainerDispenseTransaction.DispenseType.Waste.ToString() ) )
+            {
+                DispenseType = CswNbtObjClassContainerDispenseTransaction.DispenseType.Waste;
+            }
+            else if( DispenseTypeDescription.Contains( CswNbtObjClassContainerDispenseTransaction.DispenseType.Dispense.ToString() ) )
+            {
+                DispenseType = CswNbtObjClassContainerDispenseTransaction.DispenseType.Dispense;
+            }
+            return DispenseType;
         }
 
         public JObject dispenseIntoChildContainers( string ContainerNodeTypeId, string DispenseGrid, string RequestItemId )
@@ -77,45 +95,45 @@ namespace ChemSW.Nbt.Actions
             if( null != _SourceContainer )
             {
                 CswPrimaryKey RequestItemPk = new CswPrimaryKey();
-                RequestItemPk.FromString(RequestItemId);
-                JArray GridArray = JArray.Parse(DispenseGrid);
-                for (Int32 i = 0; i < GridArray.Count; i += 1)
+                RequestItemPk.FromString( RequestItemId );
+                JArray GridArray = JArray.Parse( DispenseGrid );
+                for( Int32 i = 0; i < GridArray.Count; i += 1 )
                 {
-                    if (GridArray[i].Type == JTokenType.Object)
+                    if( GridArray[i].Type == JTokenType.Object )
                     {
                         JObject CurrentRow = (JObject) GridArray[i];
-                        int NumOfContainers = CswConvert.ToInt32(CurrentRow["containerNo"]);
-                        double QuantityToDispense = CswConvert.ToDouble(CurrentRow["quantity"]);
-                        string UnitId = CswConvert.ToString(CurrentRow["unitid"]);
-                        string Barcode = CswConvert.ToString(CurrentRow["barcodes"]);
+                        int NumOfContainers = CswConvert.ToInt32( CurrentRow["containerNo"] );
+                        double QuantityToDispense = CswConvert.ToDouble( CurrentRow["quantity"] );
+                        string UnitId = CswConvert.ToString( CurrentRow["unitid"] );
+                        string Barcode = CswConvert.ToString( CurrentRow["barcodes"] );
 
                         CswPrimaryKey UnitOfMeasurePK = new CswPrimaryKey();
-                        UnitOfMeasurePK.FromString(UnitId);
+                        UnitOfMeasurePK.FromString( UnitId );
 
-                        if (NumOfContainers == 0)
+                        if( NumOfContainers == 0 )
                         {
                             _SourceContainer.DispenseOut(
                                 CswNbtObjClassContainerDispenseTransaction.DispenseType.Dispense, QuantityToDispense,
-                                UnitOfMeasurePK, RequestItemPk);
-                            _SourceContainer.postChanges(false);
+                                UnitOfMeasurePK, RequestItemPk );
+                            _SourceContainer.postChanges( false );
                         }
                         else
                         {
-                            for (Int32 c = 0; c < NumOfContainers; c += 1)
+                            for( Int32 c = 0; c < NumOfContainers; c += 1 )
                             {
-                                CswNbtObjClassContainer ChildContainer = _createChildContainer(ContainerNodeTypeId,
-                                                                                               UnitOfMeasurePK, Barcode);
+                                CswNbtObjClassContainer ChildContainer = _createChildContainer( ContainerNodeTypeId,
+                                                                                               UnitOfMeasurePK, Barcode );
                                 _SourceContainer.DispenseOut(
                                     CswNbtObjClassContainerDispenseTransaction.DispenseType.Dispense, QuantityToDispense,
-                                    UnitOfMeasurePK, RequestItemPk, ChildContainer);
+                                    UnitOfMeasurePK, RequestItemPk, ChildContainer );
                                 //ChildContainer.DispenseIn( CswNbtObjClassContainerDispenseTransaction.DispenseType.Dispense, QuantityToDispense, UnitOfMeasurePK, RequestItemPk, _SourceContainer );
-                                ChildContainer.postChanges(false);
+                                ChildContainer.postChanges( false );
                             }
-                            _SourceContainer.postChanges(false);
+                            _SourceContainer.postChanges( false );
                         }
                     }
                 }
-                _SourceContainer.postChanges(false);
+                _SourceContainer.postChanges( false );
 
                 string ViewId = _getViewForAllDispenseContainers();
                 ret["viewId"] = ViewId;
@@ -191,20 +209,20 @@ namespace ChemSW.Nbt.Actions
                     CswNbtViewRelationship ContainerRel = Ret.AddViewRelationship( ContainerOc, true );
                     CswNbtViewProperty BarcodeVp = Ret.AddViewProperty( ContainerRel, ContainerOc.getObjectClassProp( CswNbtObjClassContainer.BarcodePropertyName ) );
                     CswNbtViewProperty MaterialVp = Ret.AddViewProperty( ContainerRel, ContainerOc.getObjectClassProp( CswNbtObjClassContainer.MaterialPropertyName ) );
-                    Ret.AddViewPropertyFilter(MaterialVp, SubFieldName: CswNbtSubField.SubFieldName.NodeID, Value: NodeAsMaterial.NodeId.PrimaryKey.ToString());
+                    Ret.AddViewPropertyFilter( MaterialVp, SubFieldName: CswNbtSubField.SubFieldName.NodeID, Value: NodeAsMaterial.NodeId.PrimaryKey.ToString() );
                     MaterialVp.ShowInGrid = false;
 
                     CswNbtViewProperty MissingVp = Ret.AddViewProperty( ContainerRel, ContainerOc.getObjectClassProp( CswNbtObjClassContainer.MissingPropertyName ) );
-                    Ret.AddViewPropertyFilter(MissingVp, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.NotEquals, Value: Tristate.True.ToString());
+                    Ret.AddViewPropertyFilter( MissingVp, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.NotEquals, Value: Tristate.True.ToString() );
                     MissingVp.ShowInGrid = false;
 
                     CswNbtViewProperty LocationVp = Ret.AddViewProperty( ContainerRel, ContainerOc.getObjectClassProp( CswNbtObjClassContainer.LocationPropertyName ) );
-                    
+
                     CswNbtViewProperty QuantityVp = Ret.AddViewProperty( ContainerRel, ContainerOc.getObjectClassProp( CswNbtObjClassContainer.QuantityPropertyName ) );
-                    Ret.AddViewPropertyFilter(QuantityVp, CswNbtSubField.SubFieldName.Value, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.GreaterThan, Value: "0" );
+                    Ret.AddViewPropertyFilter( QuantityVp, CswNbtSubField.SubFieldName.Value, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.GreaterThan, Value: "0" );
 
                     CswNbtViewProperty ExpirationDateVp = Ret.AddViewProperty( ContainerRel, ContainerOc.getObjectClassProp( CswNbtObjClassContainer.ExpirationDatePropertyName ) );
-                    Ret.AddViewPropertyFilter(ExpirationDateVp, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.GreaterThanOrEquals, Value: "today");
+                    Ret.AddViewPropertyFilter( ExpirationDateVp, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.GreaterThanOrEquals, Value: "today" );
                 }
             }
 

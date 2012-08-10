@@ -5,6 +5,24 @@
     "use strict";
     var pluginName = 'CswDialog';
 
+    var cswPrivateInit = function () { //create this to prevent anyone from modifying the orginal position of the dialog positions
+        var origX = 150;
+        var origY = 30;
+
+        this.origXAccessor = function () {
+            return origX;
+        }
+        this.origYAccessor = function () {
+            return origY;
+        }
+    };
+    var cswPrivate = new cswPrivateInit();
+
+    var posX = cswPrivate.origXAccessor();
+    var posY = cswPrivate.origYAccessor();
+    var incrPosBy = 30;
+    var dialogsCount = 0;
+
     var afterObjectClassButtonClick = function (action, dialog) {
         switch (Csw.string(action).toLowerCase()) {
             case Csw.enums.nbtButtonAction.dispense:
@@ -61,7 +79,7 @@
                     Csw.tryExec(o.onYes);
                 }
             });
-            
+
             openDialog(div, 300, 150, null, 'Expire Warning');
         }, // ExpireDialog
         AddWelcomeItemDialog: function (options) {
@@ -79,7 +97,7 @@
                     Csw.tryExec(o.onAdd);
                 }
             });
-            
+
             openDialog(div, 400, 400, null, 'New Welcome Item');
         }, // AddWelcomeItemDialog
         AddViewDialog: function (options) {
@@ -206,7 +224,7 @@
                 },
                 title: 'New ' + cswPrivate.text
             };
-            
+
             cswPublic.tabsAndProps = Csw.layouts.tabsAndProps(cswPublic.div, {
                 ID: Csw.makeId(cswPrivate.ID, 'tabsAndProps'),
                 nodetypeid: cswPrivate.nodetypeid,
@@ -247,7 +265,7 @@
                 },
                 title: 'New ' + cswPrivate.text
             };
-            
+
             cswPublic.tabsAndProps = Csw.layouts.tabsAndProps(cswPublic.div, {
                 nodetypeid: cswPrivate.nodetypeid,
                 EditMode: Csw.enums.editMode.Add,
@@ -498,7 +516,7 @@
                     cswPublic.div.$.dialog('close');
                 }
             };
-            
+
             var myEditMode = Csw.enums.editMode.EditInPopup;
             var table = cswPublic.div.table();
             if (false === Csw.isNullOrEmpty(cswPrivate.date) && false === cswPrivate.Multi) {
@@ -663,7 +681,7 @@
             };
 
             cswPublic.div.span({ text: 'Are you sure you want to delete' });
-            
+
             if (cswPrivate.Multi) {
                 //var $nodechecks = $('.' + o.NodeCheckTreeId + '_check:checked');
                 //var nodechecked = $('#' + o.NodeCheckTreeId).CswNodeTree('checkedNodes');
@@ -744,6 +762,18 @@
                             row += 1;
                         }
                     }
+                    table.cell(row, 1).css({ padding: '15px 1px 1px 1px' }).append('');
+                    row += 1;
+                    table.cell(row, 1).css({ padding: '2px 5px 2px 5px' }).append('Session Info');
+                    row += 1;
+                    table.cell(row, 1).css({ padding: '2px 5px 2px 5px' }).append('---------------------------');
+                    row += 1;
+                    for (var userComp in data.userProps) {
+                        var thisProp = data.userProps[userComp];
+                        table.cell(row, 1).css({ padding: '2px 5px 2px 5px' }).append(thisProp.componentName);
+                        table.cell(row, 2).css({ padding: '2px 5px 2px 5px' }).append(thisProp.value);
+                        row += 1;
+                    }
                 }
             });
             openDialog(div, 600, 400, null, 'About');
@@ -796,6 +826,13 @@
             var div = Csw.literals.div(),
                 molTxtArea, saveBtn;
 
+            div.label({
+                text: 'Upload a MOL File:',
+                cssclass: 'changeMolDataDialogLabel'
+            });
+
+            div.br({ number: 2 });
+
             var uploadBtn = div.input({ ID: 'fileupload', type: Csw.enums.inputTypes.file });
 
             uploadBtn.$.fileupload({
@@ -803,28 +840,24 @@
                 url: o.FileUrl + '?' + $.param({ PropId: o.PropId }),
                 paramName: 'fileupload',
                 done: function (e, data) {
-                    molTxtArea.text(data.molData);
                     div.$.dialog('close');
                     o.onSuccess();
                 }
             });
 
-            div.button({
-                ID: 'fileupload_cancel',
-                enabledText: 'Cancel',
-                disabledText: 'Canceling',
-                onClick: function () {
-                    div.$.dialog('close');
-                }
-            });
+            div.br({ number: 2 });
 
             div.span({ text: 'MOL Text (Paste from Clipboard):' }).br();
 
-            molTxtArea = div.textArea({ ID: '', rows: 4, cols: 40 });
+            molTxtArea = div.textArea({ ID: '', rows: 6, cols: 40 });
+            molTxtArea.text(o.molData);
             div.br();
-            saveBtn = div.button({ ID: 'txt_save',
-                enabledText: 'Save MOL Text',
-                disabledText: 'Saving MOL...',
+
+            var buttonsDiv = div.div({ align: 'right' });
+
+            saveBtn = buttonsDiv.button({ ID: 'txt_save',
+                enabledText: 'Save',
+                disabledText: 'Saving...',
                 onClick: function () {
                     Csw.ajax.post({
                         url: o.TextUrl,
@@ -841,7 +874,16 @@
                 } // onClick
             }); // 
 
-            openDialog(div, 400, 300, null, 'Upload');
+            buttonsDiv.button({
+                ID: 'fileupload_cancel',
+                enabledText: 'Cancel',
+                disabledText: 'Canceling',
+                onClick: function () {
+                    div.$.dialog('close');
+                }
+            });
+
+            openDialog(div, 400, 300, null, 'Change MOL Data');
         }, // FileUploadDialog
         ShowLicenseDialog: function (options) {
             var o = {
@@ -912,7 +954,7 @@
                     cswPublic.div.$.dialog('close');
                 }
             };
-            
+
             cswPublic.div.br();
             var labelSelDiv = cswPublic.div.div();
             var labelSel = labelSelDiv.select({ ID: cswPrivate.ID + '_labelsel' });
@@ -1035,7 +1077,7 @@
                 },
                 title: Csw.string(cswPrivate.title, 'Search ' + cswPrivate.propname)
             };
-            
+
             cswPublic.search = Csw.composites.universalSearch(cswPublic.div, {
                 ID: cswPrivate.ID,
                 nodetypeid: cswPrivate.nodetypeid,
@@ -1242,6 +1284,9 @@
             Csw.tryExec(o.onOpen, div);
         },
         CloseDialog: function (id) {
+            posX -= incrPosBy;
+            posY -= incrPosBy;
+            dialogsCount--;
             $('#' + id)
                 .dialog('close')
                 .remove();
@@ -1255,17 +1300,36 @@
         $('<div id="DialogErrorDiv" style="display: none;"></div>')
             .prependTo(div.$);
 
+        Csw.tryExec(div.$.dialog, 'close')
+
         div.$.dialog({
             modal: true,
             width: width,
             height: height,
             title: title,
+            position: [posX, posY],
             close: function () {
-                div.remove();
+                posX -= incrPosBy;
+                posY -= incrPosBy;
+                dialogsCount--;
                 Csw.tryExec(onClose);
                 Csw.unsubscribe(Csw.enums.events.afterObjectClassButtonClick, closeMe);
+                if (dialogsCount === 0) {
+                    posX = cswPrivate.origXAccessor();
+                    posY = cswPrivate.origYAccessor();
+                }
+            },
+            dragStop: function () {
+                var newPos = div.$.dialog("option", "position");
+                posX = newPos[0] + incrPosBy;
+                posY = newPos[1] + incrPosBy;
+            },
+            open: function () {
+                dialogsCount++;
             }
         });
+        posX += incrPosBy;
+        posY += incrPosBy;
         function closeMe(eventObj, action) {
             afterObjectClassButtonClick(action, {
                 close: function () {
@@ -1273,6 +1337,9 @@
                     Csw.unsubscribe(Csw.enums.events.afterObjectClassButtonClick, closeMe);
                 }
             });
+            posX -= incrPosBy;
+            posY -= incrPosBy;
+            dialogsCount--;
         }
         Csw.subscribe(Csw.enums.events.afterObjectClassButtonClick, closeMe);
     }

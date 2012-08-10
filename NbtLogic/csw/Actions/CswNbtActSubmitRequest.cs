@@ -27,10 +27,12 @@ namespace ChemSW.Nbt.Actions
         #region Constructor
 
         private CswNbtActSystemViews _SystemViews;
+        private bool _CreateDefaultRequestNode = true;
 
-        public CswNbtActSubmitRequest( CswNbtResources CswNbtResources, CswNbtActSystemViews.SystemViewName RequestViewName = null, CswPrimaryKey RequestNodeId = null )
+        public CswNbtActSubmitRequest( CswNbtResources CswNbtResources, bool CreateDefaultRequestNode, CswNbtActSystemViews.SystemViewName RequestViewName = null, CswPrimaryKey RequestNodeId = null )
         {
             _CswNbtResources = CswNbtResources;
+            _CreateDefaultRequestNode = CreateDefaultRequestNode;
             if( false == _CswNbtResources.IsModuleEnabled( CswNbtResources.CswNbtModule.CISPro ) )
             {
                 throw new CswDniException( ErrorType.Error, "Cannot use the Submit Request action without the required module.", "Attempted to constuct CswNbtActSubmitRequest without the required module." );
@@ -157,7 +159,8 @@ namespace ChemSW.Nbt.Actions
                 //{
                 //    throw new CswDniException( ErrorType.Warning, "Only one pending request may be open at a time.", "There is more than one Pending request assigned to the current user." );
                 //}
-                else if( CartCount == 0 )
+                else if( CartCount == 0 && 
+                         _CreateDefaultRequestNode )
                 {
                     CswNbtMetaDataNodeType RequestNt = _RequestOc.getLatestVersionNodeTypes().FirstOrDefault();
                     if( null == RequestNt )
@@ -294,8 +297,8 @@ namespace ChemSW.Nbt.Actions
                     Tree.goToParentNode();
                 }
             }
-            return new CswNbtActSubmitRequest( _CswNbtResources, CswNbtActSystemViews.SystemViewName.CISProRequestCart, CopyToNodeId );
-        }
+            return new CswNbtActSubmitRequest( _CswNbtResources, CreateDefaultRequestNode: true, RequestNodeId: CopyToNodeId );
+        } 
 
         /// <summary>
         /// Instance a new request item according to Object Class rules. Note: this does not get the properties.

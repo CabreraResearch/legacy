@@ -83,7 +83,12 @@
                         });
                     }
                     if (false === ret) {
-                        Csw.error.throwException(Csw.error.exception('Cannot create a Wizard amounts grid without the Initial Quantity of a Size.', '', 'csw.wizard.amountsgrid.js', 68));
+                        //Case 27444 - instead of throwing, Quantity is set to null and readonly until a Size is created to populate it
+                        //    Csw.error.throwException(Csw.error.exception('Cannot create a Wizard amounts grid without the Initial Quantity of a Size.', '', 'csw.wizard.amountsgrid.js', 68));
+                        cswPrivate.quantity = {
+                            qtyReadonly: true,
+                            unitReadonly: true
+                        }
                     }
                     return ret;
                 };
@@ -167,15 +172,19 @@
                                         cswPrivate.getQuantity();
                                         cswPublic.qtyControl.refresh(cswPrivate.quantity);
                                         updateQuantityVals();
-                                    }
+                                    },
+                                    canAdd: true
                                 });
                                 updateSizeVals();
                                 break;
-                            case cswPrivate.config.quantityName: //TODO - for receive, make only Unit Readonly - if not quantityeditable, make both quantity and unit readonly
+                            case cswPrivate.config.quantityName:
                                 cswPrivate.getQuantity();
                                 cswPrivate.quantity.onChange = function () {
                                     updateQuantityVals();
                                 };
+                                if (cswPrivate.action === 'Receive') {
+                                    cswPrivate.quantity.Required = true;
+                                }
                                 cswPrivate.quantity.ID = Csw.tryExec(cswPrivate.makeId, 'containerQuantity');
                                 cswPrivate.quantity.qtyWidth = (7 * 8) + 'px'; //7 characters wide, 8 is the characters-to-pixels ratio
                                 cswPublic.qtyControl = cswCell.quantity(cswPrivate.quantity);
@@ -218,7 +227,7 @@
                     });
 
                     var executeOnAdd = function () {
-                        if (Csw.isNumeric(Csw.number(newAmount.containerNo))) {
+                        if (Csw.isNumeric(Csw.number(newAmount.containerNo)) && false === Csw.isNullOrEmpty(newAmount.quantity)) {
                             var newCount = cswPrivate.count + Csw.number(newAmount.containerNo);
                             if (newCount <= cswPrivate.containerlimit) {
                                 cswPrivate.count = newCount;
@@ -255,6 +264,7 @@
                         cswPublic.thinGrid.deleteRow(rowid);
                         executeOnAdd();
                         Csw.tryExec(cswPublic.thinGrid.makeAddRow, executeMakeAddRow);
+                        return Csw.bool(cswPublic.quantities.length > 0);
                     };
 
                 } ());
