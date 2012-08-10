@@ -76,7 +76,7 @@ namespace ChemSW.Nbt
             _CswNbtResources = CswNbtResources;
 
             if( StringKey == string.Empty )
-				throw new CswDniException( ErrorType.Error, "Misconfigured Tree", "CswNbtNodeKey.constructor(string) encountered a null StringKey" );
+                throw new CswDniException( ErrorType.Error, "Misconfigured Tree", "CswNbtNodeKey.constructor(string) encountered a null StringKey" );
 
             _DelimitedString.FromString( StringKey );
         }//CswNbtNodeKey()
@@ -169,30 +169,30 @@ namespace ChemSW.Nbt
             get { return _NodeCountPath.Count - 2; }
         }
 
-		private CswNbtTreeKey _CswNbtTreeKey = null;
-		/// <summary>
-		/// Identifier for Tree in which this NodeKey is valid
-		/// </summary>
-		public CswNbtTreeKey TreeKey
-		{
-			get
-			{
-				if( _CswNbtTreeKey == null )
-				{
-					if( string.Empty != _DelimitedString[5] )
-						_CswNbtTreeKey = new CswNbtTreeKey( _CswNbtResources, _DelimitedString[5] );
-				}
-				return _CswNbtTreeKey;
-			}
-			set
-			{
-				_CswNbtTreeKey = value;
-				if( null != _CswNbtTreeKey )
-					_DelimitedString[5] = value.ToString();
-				else
-					_DelimitedString[5] = string.Empty;
-			}
-		}
+        private CswNbtTreeKey _CswNbtTreeKey = null;
+        /// <summary>
+        /// Identifier for Tree in which this NodeKey is valid
+        /// </summary>
+        public CswNbtTreeKey TreeKey
+        {
+            get
+            {
+                if( _CswNbtTreeKey == null )
+                {
+                    if( string.Empty != _DelimitedString[5] )
+                        _CswNbtTreeKey = new CswNbtTreeKey( _CswNbtResources, _DelimitedString[5] );
+                }
+                return _CswNbtTreeKey;
+            }
+            set
+            {
+                _CswNbtTreeKey = value;
+                if( null != _CswNbtTreeKey )
+                    _DelimitedString[5] = value.ToString();
+                else
+                    _DelimitedString[5] = string.Empty;
+            }
+        }
 
         private CswPrimaryKey _NodeId = null;
         /// <summary>
@@ -259,9 +259,11 @@ namespace ChemSW.Nbt
         {
             get
             {
-                NodeSpecies ret;
-                if( !Enum.TryParse<NodeSpecies>( _DelimitedString[2], out ret ) )
+                NodeSpecies ret = _DelimitedString[2];
+                if( ret == CswNbtResources.UnknownEnum )
+                {
                     ret = ObjClasses.NodeSpecies.Plain;
+                }
                 return ret;
             }
             set

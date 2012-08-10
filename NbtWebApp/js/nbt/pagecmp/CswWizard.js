@@ -32,7 +32,7 @@
                 doNextOnInit: true
             };
             if (options) {
-                $.extend(o, options);
+                Csw.extend(o, options);
             }
 
             if (o.StartingStep > o.SelectedStep) {

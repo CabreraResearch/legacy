@@ -13,7 +13,7 @@
                 onQuotaChange: null // function () { }
             };
             if (options) {
-                $.extend(o, options);
+                Csw.extend(o, options);
             }
             
             var div = cswParent.div();

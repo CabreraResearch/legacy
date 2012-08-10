@@ -27,7 +27,7 @@
             rootnode: null,
             toggleLink: null
         };
-        if (opts) $.extend(cswPrivate, opts);
+        if (opts) Csw.extend(cswPrivate, opts);
 
         var cswPublic = {
             treeDiv: null
@@ -139,11 +139,11 @@
                 viewid: '',
                 forsearch: cswPrivate.forsearch
             };
-            if (myoptions) $.extend(m, myoptions);
+            if (myoptions) Csw.extend(m, myoptions);
 
             // case 21715 - don't trigger onSelectNode event on first event
             var m2 = {};
-            $.extend(m2, m);
+            Csw.extend(m2, m);
             m2.onSelectNode = cswPrivate.onInitialSelectNode;
             cswPrivate.handleSelectNode(m2);
 
@@ -168,7 +168,7 @@
                 viewid: '',
                 forsearch: cswPrivate.forsearch
             };
-            if (myoptions) $.extend(m, myoptions);
+            if (myoptions) Csw.extend(m, myoptions);
 
             var selected = Csw.jsTreeGetSelected(cswPublic.treeDiv.$);
             var optSelect = {
@@ -210,7 +210,7 @@
                 onViewChange: null, // function (newviewid, newviewmode) {},    // if the server returns a different view than what we asked for (e.g. case 21262)
                 DefaultSelect: Csw.enums.nodeTree_DefaultSelect.firstchild.name
             };
-            if (options) $.extend(o, options);
+            if (options) Csw.extend(o, options);
 
             var url = cswPrivate.RunTreeUrl;
             var dataParam = {
@@ -268,7 +268,7 @@
                 newcswnbtnodekey: ''
             };
             if (optSelect) {
-                $.extend(o, optSelect);
+                Csw.extend(o, optSelect);
             }
             cswPublic.treeDiv.$.jstree('select_node', '#' + cswPrivate.idPrefix + o.newcswnbtnodekey);
         };

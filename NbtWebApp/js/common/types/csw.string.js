@@ -48,36 +48,66 @@
                 delimiter: ',',
                 initString: Csw.string(string)
             };
-            if (opts) $.extend(cswPrivate, opts);
+            if (opts) Csw.extend(cswPrivate, opts);
             
             var cswPublic = {
                 array: [],
                 delimited: function () {
+                	/// <summary>
+                	/// returns the delimited string as an Array
+                	/// </summary>
                     return cswPublic.array.join(cswPrivate.delimiter);
                 },
                 string: function () {
+                    /// <summary>
+                    /// returns the delimited string as a String
+                    /// </summary>
                     return cswPublic.array.toString();
+                },
+                add: function (str) {
+                    /// <summary>
+                    /// Adds an item to the delimited string and returns the delimitedString object
+                    /// </summary>
+                    cswPublic.array.push(cswPrivate.parse(str));
+                    cswPrivate.deleteDuplicates();
+                    return cswPublic;
+                },
+                contains: function (str, caseSensitive) {
+                	/// <summary>
+                	/// True if the delimited string contains the provided string
+                    /// </summary>
+                    var isCaseSensitive = Csw.bool(caseSensitive);
+                    str = Csw.string(str).trim();
+                    if (false === isCaseSensitive) {
+                        str = str.toLowerCase();
+                    }
+                    var match = cswPublic.array.filter(function(matStr) {
+                        return ((isCaseSensitive && Csw.string(matStr).trim() === str) || Csw.string(matStr).trim().toLowerCase() === str);
+                    });
+                    return match.length > 0;
                 }
             };
 
-            (function () { //ctor
-                var delimitedString = string;
-                cswPrivate.initString = delimitedString;
-
+            cswPrivate.parse = function(str) {
+                var ret = Csw.string(str);
+                
                 if (cswPrivate.newLineToDelimiter) {
-                    while (delimitedString.indexOf('\n') !== -1) {
-                        delimitedString = delimitedString.replace(/\n/g, cswPrivate.delimiter);
+                    while (ret.indexOf('\n') !== -1) {
+                        ret = ret.replace(/\n/g, cswPrivate.delimiter);
                     }
                 }
                 if (cswPrivate.spaceToDelimiter) {
-                    while (delimitedString.indexOf(' ') !== -1) {
-                        delimitedString = delimitedString.replace(/ /g, cswPrivate.delimiter);
+                    while (ret.indexOf(' ') !== -1) {
+                        ret = ret.replace(/ /g, cswPrivate.delimiter);
                     }
                 }
-                while (delimitedString.indexOf(',,') !== -1) {
-                    delimitedString = delimitedString.replace(/,,/g, cswPrivate.delimiter);
+                while (ret.indexOf(',,') !== -1) {
+                    ret = ret.replace(/,,/g, cswPrivate.delimiter);
                 }
-                cswPublic.array = delimitedString.split(cswPrivate.delimiter);
+                return ret;
+            };
+
+            cswPrivate.deleteDuplicates = function() {
                 if (cswPrivate.removeDuplicates) {
                     (function () {
 
@@ -92,8 +122,15 @@
                         };
 
                         cswPublic.array = unique(cswPublic.array);
-                    } ());
+                    }());
                 }
+            };
+
+            (function () { //ctor
+                var delimitedString = cswPrivate.parse(string);
+                cswPrivate.initString = delimitedString;
+                cswPublic.array = delimitedString.split(cswPrivate.delimiter);
+                cswPrivate.deleteDuplicates();
             } ());
             return cswPublic;
         });

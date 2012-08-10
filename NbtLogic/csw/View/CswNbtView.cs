@@ -206,7 +206,7 @@ namespace ChemSW.Nbt
         }
 
         #region Child constructors
-
+        
         /// <summary>
         /// Creates a new <see cref="CswNbtViewRelationship"/> for this view.
         /// For copying an existing relationship
@@ -338,6 +338,12 @@ namespace ChemSW.Nbt
                             return AddViewProperty( ParentViewRelationship, BarcodeNtp );
                         }
                         break;
+                    case CswNbtMetaDataFieldType.NbtFieldType.Button:
+                        foreach (CswNbtMetaDataNodeTypeProp ButtonNtp in NodeType.getButtonProperties())
+                        {
+                            AddViewProperty( ParentViewRelationship, ButtonNtp );
+                        }
+                        break;
                     case CswNbtMetaDataFieldType.NbtFieldType.Location:
                         CswNbtMetaDataNodeTypeProp LocationNtp = NodeType.getLocationProperty();
                         if( null != LocationNtp )
@@ -353,7 +359,7 @@ namespace ChemSW.Nbt
             }
             return null;
         }
-
+        
         /// <summary>
         /// Creates a new <see cref="CswNbtViewPropertyFilter"/> for this view
         /// </summary>

@@ -57,7 +57,7 @@
 
             (function () {
                 if (options) {
-                    $.extend(cswPrivate, options);
+                    Csw.extend(cswPrivate, options);
                 }
 
                 cswPrivate.outerTabDiv = cswParent.tabDiv({ ID: cswPrivate.ID + '_tabdiv' });
@@ -270,7 +270,9 @@
 
                     function doUpdateSubProps(configOn) {
                         var updOnSuccess = function (thisProp, key) {
-                            if (Csw.bool(thisProp.hassubprops)) {
+                            if (false === Csw.isNullOrEmpty(thisProp) &&
+                                false === Csw.isNullOrEmpty(key) &&
+                                Csw.bool(thisProp.hassubprops)) {
                                 var propId = key; //key
                                 var subTable = cswPrivate.layoutTable[propId + '_subproptable'];
                                 var parentCell = subTable.parent().parent();
@@ -398,11 +400,19 @@
                                     lineNumber: 387
                                 });
                             }
+                            if (data.nodeid) {
+                                cswPrivate.nodeids[0] = data.nodeid;
+                                delete data.nodeid;
+                            }
                             cswPrivate.propertyData = data;
                             makePropLayout();
                         } // success{}
                     }); // ajax
                 } else {
+                    if (cswPrivate.propertyData.nodeid) {
+                        cswPrivate.nodeids[0] = cswPrivate.propertyData.nodeid;
+                        delete cswPrivate.propertyData.nodeid;
+                    }
                     makePropLayout();
                 }
             };
@@ -634,7 +644,7 @@
                             var s = {
                                 onSuccess: null
                             };
-                            if (saveopts) $.extend(s, saveopts);
+                            if (saveopts) Csw.extend(s, saveopts);
                             cswPublic.save(tabContentDiv, tabid, s.onSuccess);
                         },
                         cswnbtnodekey: Csw.tryParseObjByIdx(cswPrivate.nodekeys, 0),

@@ -71,7 +71,7 @@
 
             (function () {
                 if (options) {
-                    $.extend(cswPrivate, options);
+                    Csw.extend(cswPrivate, options);
                 }
 
                 cswPrivate.wizardSteps = {
@@ -464,11 +464,11 @@
 
                             var extendNewAmount = function (object) {
                                 //To mitigate the risk of unknowingly passing the outer scope thisAmount, we're explicitly mapping the values down
-                                $.extend(newSize, object);
+                                Csw.extend(newSize, object);
                             };
 
                             var extractNewAmount = function (object) {
-                                var ret = $.extend(true, {}, object);
+                                var ret = Csw.extend({}, object, true);
                                 return ret;
                             };
 

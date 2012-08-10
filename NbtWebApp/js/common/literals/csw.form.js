@@ -27,7 +27,7 @@
                 var $form;
 
                 if (options) {
-                    $.extend(cswPrivate, options);
+                    Csw.extend(cswPrivate, options);
                 }
 
                 html += '<form ';
