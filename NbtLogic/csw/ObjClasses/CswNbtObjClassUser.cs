@@ -303,6 +303,12 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void addDefaultViewFilters( CswNbtViewRelationship ParentRelationship )
         {
+            //case 24525 - add default filter to ignore archived users in relationship props
+            CswNbtView view = ParentRelationship.View;
+            CswNbtMetaDataObjectClass userOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
+            CswNbtMetaDataObjectClassProp archivedOCP = userOC.getObjectClassProp( CswNbtObjClassUser.ArchivedPropertyName );
+            view.AddViewPropertyAndFilter( ParentRelationship, archivedOCP, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.NotEquals, Value: Tristate.True.ToString() );
+
             _CswNbtObjClassDefault.addDefaultViewFilters( ParentRelationship );
         }
 
