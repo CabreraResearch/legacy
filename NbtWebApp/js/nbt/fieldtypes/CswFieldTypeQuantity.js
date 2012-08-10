@@ -20,6 +20,7 @@
                 selectedNodeId = (false === o.Multi) ? Csw.string(propVals.relatednodeid).trim() : Csw.enums.multiEditDefaultValue,
                 selectedName = (false === o.Multi) ? Csw.string(propVals.name).trim() : Csw.enums.multiEditDefaultValue,
                 nodeTypeId = Csw.string(propVals.nodetypeid).trim(),
+                objectClassId = Csw.string(propVals.objectclassid).trim(),
                 options = propVals.options,
                 relationships = [],
                 fractional = Csw.bool(propVals.fractional),
@@ -34,8 +35,9 @@
 
                 if (false === Csw.isNullOrEmpty(o.relatednodeid) &&
                     Csw.isNullOrEmpty(selectedNodeId) &&
-                        false === o.Multi &&
-                            o.relatednodetypeid === nodeTypeId) {
+                    false === o.Multi &&
+                    (Csw.number(o.relatednodetypeid) === Csw.number(nodeTypeId) ||
+                      Csw.number(o.relatedobjectclassid) === Csw.number(objectClassId))) {
                     selectedNodeId = o.relatednodeid;
                     selectedName = o.relatednodename;
                 }
@@ -76,7 +78,7 @@
                     }
                     relationships.push({ value: relatedObj.id, display: relatedObj.value, frac: Csw.bool(relatedObj.fractional) });
                 }, false);
-                if (false === o.Multi && false === foundSelected) {
+                if (false === o.Multi && false === foundSelected && false === Csw.isNullOrEmpty(selectedNodeId)) {
                     relationships.push({ value: selectedNodeId, display: selectedName, frac: Csw.bool(propVals.fractional) });
                 }
                 var selectBox = table.cell(1, cellCol).select({

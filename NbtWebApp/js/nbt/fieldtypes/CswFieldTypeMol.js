@@ -24,26 +24,14 @@
 
             var href = '/NbtWebApp/' + Csw.string(propVals.href);
 
-            if (o.EditMode !== Csw.enums.editMode.Edit) { //render the 2d blob not the fancy JMol
-                cell11.a({
-                    href: href,
-                    target: '_blank'
-                }).img({
-                    src: href,
-                    height: propVals.height,
-                    width: width
-                });
-            } else {
-                //JMOL stuff
-                if (false === Csw.isNullOrEmpty(mol)) {
-                    window.jmolInitialize('./js/thirdparty/jmol/', 'JmolApplet.jar');
-                    window.jmolSetDocument(false);
-                    var myApplet = window.jmolAppletInline('300px', mol);
-                    cell11.append(myApplet);
-                    var myCheck = window.jmolCheckbox("spin on", "spin off", "Rotate");
-                    cell21.append(myCheck);
-                }
-            }
+            cell11.a({
+                href: href,
+                target: '_blank'
+            }).img({
+                src: href,
+                height: propVals.height,
+                width: width
+            });
 
             if (false === Csw.bool(o.ReadOnly) && o.EditMode !== Csw.enums.editMode.Add) {
                 /* Edit Button */

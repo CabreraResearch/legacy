@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using ChemSW.Config;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
@@ -60,7 +61,7 @@ namespace ChemSW.Nbt.WebServices
 
             Int32 NodeTypeCount = 0;
 
-            foreach( CswNbtMetaDataNodeType RetNodeType in NodeTypes )
+            foreach( CswNbtMetaDataNodeType RetNodeType in from _RetNodeType in NodeTypes orderby _RetNodeType.NodeTypeName select _RetNodeType )
             {
                 bool AddThisNodeType = false;
                 if( false == ExcludedIds.Contains( RetNodeType.NodeTypeId ) )
@@ -106,9 +107,13 @@ namespace ChemSW.Nbt.WebServices
         {
             bool hasPermission = true;
             CswNbtPermit.NodeTypePermission PermissionType;
-            if( Enum.TryParse<CswNbtPermit.NodeTypePermission>( FilterToPermission, out PermissionType ) )
+            if( Enum.TryParse( FilterToPermission, out PermissionType ) )
             {
-                hasPermission = _CswNbtResources.Permit.can( PermissionType, RetNodeType );
+                if( PermissionType == CswNbtPermit.NodeTypePermission.Create )
+                {
+                    hasPermission = hasPermission && RetNodeType.getObjectClass().CanAdd;
+                }
+                hasPermission = hasPermission && _CswNbtResources.Permit.can( PermissionType, RetNodeType );
             }
             return hasPermission;
         }
