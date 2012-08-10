@@ -62,7 +62,7 @@ namespace ChemSW.Nbt.ServiceDrivers
 
         public bool DeleteNode( CswPrimaryKey NodePk, bool DeleteAllRequiredRelatedNodes = false )
         {
-            return _DeleteNode( NodePk, _CswNbtResources );
+            return _DeleteNode(NodePk, _CswNbtResources, DeleteAllRequiredRelatedNodes: DeleteAllRequiredRelatedNodes);
         }
 
         private bool _DeleteNode( CswPrimaryKey NodePk, CswNbtResources NbtResources, bool DeleteAllRequiredRelatedNodes = false )
@@ -102,7 +102,7 @@ namespace ChemSW.Nbt.ServiceDrivers
 
             CswNbtObjClass NbtObjClass = CswNbtObjClassFactory.makeObjClass( _CswNbtResources, Node.getObjectClassId(), Node );
 
-            CswNbtObjClass.NbtButtonData ButtonData = new CswNbtObjClass.NbtButtonData( NodeTypeProp ) {SelectedText = SelectedText};
+            CswNbtObjClass.NbtButtonData ButtonData = new CswNbtObjClass.NbtButtonData( NodeTypeProp ) { SelectedText = SelectedText };
 
             bool Success = NbtObjClass.onButtonClick( ButtonData );
 
