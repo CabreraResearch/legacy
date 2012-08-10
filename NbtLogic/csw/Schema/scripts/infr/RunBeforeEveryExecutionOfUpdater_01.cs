@@ -15,20 +15,15 @@ namespace ChemSW.Nbt.Schema
 
             // NOTE: This script will be run many times, so make sure your changes are safe!
 
-            if(false == _CswNbtSchemaModTrnsctn.isColumnDefinedInDataBase("nodes", "istemp"))
+            if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( "nodes", "istemp" ) )
             {
-                _CswNbtSchemaModTrnsctn.addBooleanColumn("nodes", "istemp", "Node is temporary", false, true );
-                _CswNbtSchemaModTrnsctn.execArbitraryPlatformNeutralSql("update nodes set istemp='0'");
+                _CswNbtSchemaModTrnsctn.addBooleanColumn( "nodes", "istemp", "Node is temporary", logicaldelete: false, required: true );
             }
-            if( false == _CswNbtSchemaModTrnsctn.isColumnDefinedInDataBase( "jct_nodes_props", "istemp" ) )
+            if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( "nodes", "sessionid" ) )
             {
-                _CswNbtSchemaModTrnsctn.addBooleanColumn( "jct_nodes_props", "istemp", "Property is temporary", false, true );
-                _CswNbtSchemaModTrnsctn.execArbitraryPlatformNeutralSql( "update jct_nodes_props set istemp='0'" );
+                _CswNbtSchemaModTrnsctn.addStringColumn( "nodes", "sessionid", "Session ID of temporary node", logicaldelete: false, required: false, datatypesize: 50 );
             }
-            if( false == _CswNbtSchemaModTrnsctn.isColumnDefinedInDataBase( "nodes", "sessionid" ) )
-            {
-                _CswNbtSchemaModTrnsctn.addForeignKeyColumn( "nodes", "sessionid", "Session ID of temporary node", false, false, "sessionlist", "sessionid" );
-            }
+            _CswNbtSchemaModTrnsctn.execArbitraryPlatformNeutralSql( "update nodes set istemp='0', sessionid=''" );
         }//Update()
 
     }//class RunBeforeEveryExecutionOfUpdater_01
