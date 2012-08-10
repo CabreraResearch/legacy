@@ -459,6 +459,29 @@ namespace ChemSW.Nbt.ObjClasses
         private bool _IsDemo = false;
         public bool IsDemo { get { return _IsDemo; } set { _IsDemo = value; } }
 
+        private bool _IsTemp = false;
+        /// <summary>
+        /// If true, this is a temporary node
+        /// </summary>
+        public bool IsTemp
+        {
+            get { return _IsTemp; }
+            set
+            {
+                if( false == value )
+                {
+                    SessionId = string.Empty;
+                }
+                _IsTemp = value;
+            }
+        }
+
+        private string _SessionId = string.Empty;
+        /// <summary>
+        /// If IsTemp, the SessionId associated with the Node
+        /// </summary>
+        public string SessionId { get { return _SessionId; } set { _SessionId = value; } }
+
         private bool _ReadOnly = false;
         private bool _ReadOnlyTemporary = false;
         /// <summary>
