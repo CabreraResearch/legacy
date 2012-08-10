@@ -19,7 +19,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             return PropWrapper.AsRelationship;
         }
-        
+
         public CswNbtNodePropRelationship( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp )
             : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp )
         {
@@ -112,8 +112,8 @@ namespace ChemSW.Nbt.PropTypes
             }
             set
             {
-                if( value != null && 
-                    false == string.IsNullOrEmpty(value.TableName) &&
+                if( value != null &&
+                    false == string.IsNullOrEmpty( value.TableName ) &&
                     Int32.MinValue != value.PrimaryKey ) //&& value.TableName == "nodes" )
                 {
                     if( value.TableName != TargetTableName )
