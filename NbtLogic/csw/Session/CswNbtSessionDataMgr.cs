@@ -4,6 +4,7 @@ using System.Data;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Nbt.Actions;
+using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Search;
 using Newtonsoft.Json.Linq;
 
@@ -243,7 +244,7 @@ namespace ChemSW.Nbt
             CswTableUpdate SessionDataUpdate = _CswNbtResources.makeCswTableUpdate( "removeSessionData_View_update", SessionDataTableName );
             string WhereClause = @"where " + SessionDataColumn_SessionId + @"='" + _CswNbtResources.Session.SessionId + @"' 
                                      and " + SessionDataColumn_ViewId + @" = '" + View.ViewId.get() + @"'";
-            
+
             DataTable SessionDataTable = SessionDataUpdate.getTable( WhereClause );
             foreach( DataRow Row in SessionDataTable.Rows )
             {
@@ -289,6 +290,29 @@ namespace ChemSW.Nbt
                         foreach( DataRow Row in DoomedRows )
                             Row.Delete();
                         SessionDataUpdate.update( SessionDataTable );
+                    }
+
+                    CswTableSelect SessionNodeSelect = _CswNbtResources.makeCswTableSelect( "removeSessionData_update_nodes", "nodes" );
+                    DataTable NodesTable = SessionNodeSelect.getTable( "where " + SessionDataColumn_SessionId + " = '" + SessionId + "'" );
+                    if( NodesTable.Rows.Count > 0 )
+                    {
+                        Collection<CswNbtNode> DoomedNodes = new Collection<CswNbtNode>();
+                        foreach( DataRow Row in NodesTable.Rows )
+                        {
+                            CswPrimaryKey NodeId = new CswPrimaryKey( "nodes", CswConvert.ToInt32( Row["nodeid"] ) );
+                            if( CswTools.IsPrimaryKey( NodeId ) )
+                            {
+                                CswNbtNode TempNode = _CswNbtResources.Nodes[NodeId];
+                                if( null != TempNode )
+                                {
+                                    DoomedNodes.Add( TempNode );
+                                }
+                            }
+                        }
+                        foreach( CswNbtNode DoomedNode in DoomedNodes )
+                        {
+                            DoomedNode.delete( DeleteAllRequiredRelatedNodes: true );
+                        }
                     }
                 }
             }
