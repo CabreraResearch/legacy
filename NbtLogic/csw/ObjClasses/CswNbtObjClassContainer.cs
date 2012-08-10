@@ -206,7 +206,7 @@ namespace ChemSW.Nbt.ObjClasses
 
                         CswNbtObjClassRequestItem NodeAsRequestItem = RequestAct.makeContainerRequestItem( new CswNbtActSubmitRequest.RequestItem(), NodeId, ButtonData.SelectedText );
                         NodeAsRequestItem.Material.RelatedNodeId = Material.RelatedNodeId;
-                        NodeAsRequestItem.Material.setReadOnly( value: true, SaveToDb: false );
+                        NodeAsRequestItem.Material.setReadOnly( value: true, SaveToDb: ButtonData.SelectedText != RequestMenu.Dispense );
 
                         CswPrimaryKey SelectedLocationId = new CswPrimaryKey();
                         if( CswTools.IsPrimaryKey( _CswNbtResources.CurrentNbtUser.DefaultLocationId ) )
@@ -219,7 +219,8 @@ namespace ChemSW.Nbt.ObjClasses
                         }
                         NodeAsRequestItem.Location.SelectedNodeId = SelectedLocationId;
                         NodeAsRequestItem.Location.RefreshNodeName();
-
+                        NodeAsRequestItem.Material.setHidden( value: true, SaveToDb: ButtonData.SelectedText != RequestMenu.Dispense );
+                        
                         switch( ButtonData.SelectedText )
                         {
                             case RequestMenu.Dispense:
@@ -227,16 +228,14 @@ namespace ChemSW.Nbt.ObjClasses
                                 ButtonData.Action = NbtButtonAction.request;
                                 break;
                             case RequestMenu.Dispose:
-                                NodeAsRequestItem.Material.setHidden( value: true, SaveToDb: false );
-                                NodeAsRequestItem.postChanges( true ); /* This is the only condition in which we want to commit the node upfront. */
+                                NodeAsRequestItem.IsTemp = false; /* This is the only condition in which we want to commit the node upfront. */
                                 ButtonData.Action = NbtButtonAction.nothing;
                                 break;
                             case RequestMenu.Move:
-                                NodeAsRequestItem.Material.setHidden( value: true, SaveToDb: false );
                                 ButtonData.Action = NbtButtonAction.request;
                                 break;
                         }
-
+                        NodeAsRequestItem.postChanges( ForceUpdate: true );
                         ButtonData.Data["titleText"] = OCP.PropName + " " + Barcode.Barcode;
                         ButtonData.Data["requestaction"] = OCP.PropName;
                         ButtonData.Data["requestItemProps"] = RequestAct.getRequestItemAddProps( NodeAsRequestItem );

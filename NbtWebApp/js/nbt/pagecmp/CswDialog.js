@@ -207,6 +207,8 @@
                 title: 'New ' + cswPrivate.text
             };
 
+            openDialog(cswPublic.div, 800, 600, null, cswPublic.title);
+
             cswPublic.tabsAndProps = Csw.layouts.tabsAndProps(cswPublic.div, {
                 ID: Csw.makeId(cswPrivate.ID, 'tabsAndProps'),
                 nodetypeid: cswPrivate.nodetypeid,
@@ -223,7 +225,7 @@
                     Csw.tryExec(cswPrivate.onSaveImmediate);
                 },
                 onInitFinish: function () {
-                    openDialog(cswPublic.div, 800, 600, null, cswPublic.title);
+                    //openDialog(cswPublic.div, 800, 600, null, cswPublic.title);
                 },
                 ShowAsReport: false
             });
