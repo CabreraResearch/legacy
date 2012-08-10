@@ -35,7 +35,7 @@
         var methods = {
             'make': function(options) {
                 if (options) {
-                    //$.extend(m, options);
+                    //Csw.extend(m, options);
                     m = options;
                 }
                 m.ID = Csw.makeId(m.propDiv.getId(), m.propData.id);
@@ -168,7 +168,7 @@
 
             'save': function(options) {
                 if (options) {
-                    //$.extend(m, options);
+                    //Csw.extend(m, options);
                     m = options;
                 }
                 m.ID = Csw.makeId(m.propDiv.getId(), m.propData.id);

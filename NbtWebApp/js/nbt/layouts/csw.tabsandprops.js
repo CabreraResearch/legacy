@@ -57,7 +57,7 @@
 
             (function () {
                 if (options) {
-                    $.extend(cswPrivate, options);
+                    Csw.extend(cswPrivate, options);
                 }
 
                 cswPrivate.outerTabDiv = cswParent.tabDiv({ ID: cswPrivate.ID + '_tabdiv' });
@@ -644,7 +644,7 @@
                             var s = {
                                 onSuccess: null
                             };
-                            if (saveopts) $.extend(s, saveopts);
+                            if (saveopts) Csw.extend(s, saveopts);
                             cswPublic.save(tabContentDiv, tabid, s.onSuccess);
                         },
                         cswnbtnodekey: Csw.tryParseObjByIdx(cswPrivate.nodekeys, 0),

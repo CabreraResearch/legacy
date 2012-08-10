@@ -16,6 +16,19 @@ namespace ChemSW.Nbt.Grid.ExtJs
     public class CswNbtGridExtJsRow
     {
         /// <summary>
+        /// Instance a CswNbtGridExtJsRow with a Row Number
+        /// </summary>
+        public CswNbtGridExtJsRow( Int32 RowNo )
+        {
+            this.RowNo = RowNo;
+        }
+
+        /// <summary>
+        /// Row Number of this row instance
+        /// </summary>
+        public Int32 RowNo = Int32.MinValue;
+
+        /// <summary>
         /// Name - value pairs that encompass the row data
         /// </summary>
         public Dictionary<CswNbtGridExtJsDataIndex, string> data = new Dictionary<CswNbtGridExtJsDataIndex, string>();
