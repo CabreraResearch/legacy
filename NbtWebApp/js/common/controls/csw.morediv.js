@@ -12,7 +12,7 @@
                 lesstext: 'less'
             };
             if (options) {
-                $.extend(cswPrivate, options);
+                Csw.extend(cswPrivate, options);
             }
 
             var cswPublic;

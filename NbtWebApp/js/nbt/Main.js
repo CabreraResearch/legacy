@@ -31,96 +31,14 @@ window.initMain = window.initMain || function (undefined) {
         //}
     };
     Csw.subscribe(Csw.enums.events.ajax.globalAjaxStop, stopSpinner);
-
-    function onObjectClassButtonClick(eventOj, opts) {
-        Csw.debug.assert(false === Csw.isNullOrEmpty(opts.data), 'opts.data is null.');
-        var actionJson = opts.data.actionData;
-        Csw.publish(Csw.enums.events.afterObjectClassButtonClick, opts.data.action);
-        switch (Csw.string(opts.data.action).toLowerCase()) {
-            case Csw.enums.nbtButtonAction.nothing:
-                //Do nothing
-                break;
-            case Csw.enums.nbtButtonAction.dispense:
-                clear({ centertop: true, centerbottom: true });
-                actionJson.actionname = 'DispenseContainer';
-                handleAction(actionJson);
-                break;
-            case Csw.enums.nbtButtonAction.editprop:
-                $.CswDialog('EditNodeDialog', {
-                    nodeids: [Csw.string(actionJson.nodeid)],
-                    filterToPropId: Csw.string(actionJson.propidattr),
-                    title: Csw.string(actionJson.title),
-                    onEditNode: function (nodeid, nodekey, close) {
-                        Csw.tryExec(close);
-                    }
-                });
-                break;
-
-            case Csw.enums.nbtButtonAction.loadView:
-                clear({ centertop: true, centerbottom: true });
-                Csw.debug.assert(false === Csw.isNullOrEmpty(actionJson), 'actionJson is null.');
-                Csw.publish(Csw.enums.events.RestoreViewContext, actionJson);
-                break;
-
-            case Csw.enums.nbtButtonAction.popup:
-                Csw.debug.assert(false === Csw.isNullOrEmpty(actionJson), 'actionJson is null.');
-                Csw.openPopup(actionJson.url, 600, 800);
-                break;
-
-            case Csw.enums.nbtButtonAction.reauthenticate:
-                clear({ centertop: true, centerbottom: true });
-                /* case 24669 */
-                Csw.cookie.clearAll();
-                Csw.ajax.post({
-                    urlMethod: 'reauthenticate',
-                    data: { PropId: Csw.string(opts.propid) },
-                    success: function () {
-                        Csw.clientChanges.unsetChanged();
-                        Csw.window.location('Main.html');
-                    }
-                });
-                
-                break;
-
-            case Csw.enums.nbtButtonAction.receive:
-                clear({ centertop: true, centerbottom: true });
-                actionJson.actionname = 'Receiving';
-                handleAction(actionJson);
-                break;
-
-            case Csw.enums.nbtButtonAction.request:
-                Csw.debug.assert(false === Csw.isNullOrEmpty(actionJson), 'actionJson is null.');
-                switch (actionJson.requestaction) {
-                    case 'Dispose':
-                        refreshHeaderMenu();
-                        break;
-                    default:
-                        $.CswDialog('AddNodeDialog', {
-                            nodetypeid: actionJson.requestItemNodeTypeId,
-                            propertyData: actionJson.requestItemProps,
-                            text: actionJson.titleText,
-                            onSaveImmediate: function () {
-                                refreshHeaderMenu();
-                            }
-                        });
-                        break;
-                }
-                break;
-
-            default:
-                Csw.debug.error('No event has been defined for button click ' + opts.data.action);
-                break;
-        }
-    }
-    Csw.subscribe(Csw.enums.events.objectClassButtonClick, onObjectClassButtonClick);
-
+    
     function refreshMain(eventObj, data) {
         Csw.clientChanges.unsetChanged();
         multi = false;
         clear({ all: true });
         Csw.tryExec(refreshSelected, data);
     }
-    Csw.subscribe('refreshMain', refreshMain);
+    Csw.subscribe(Csw.enums.events.main.refresh, refreshMain);
 
     function loadImpersonation(eventObj, actionData) {
         if (false === Csw.isNullOrEmpty(actionData.userid)) {
@@ -149,7 +67,6 @@ window.initMain = window.initMain || function (undefined) {
             });
         }
     }
-
     Csw.subscribe(Csw.enums.events.RestoreViewContext, loadImpersonation);
 
     // watermark
@@ -221,9 +138,11 @@ window.initMain = window.initMain || function (undefined) {
             } // onEndImpersonation
         }); // CswMenuHeader
     }
+    Csw.subscribe(Csw.enums.events.main.refreshHeader, function (eventObj, opts) {
+        refreshHeaderMenu(opts);
+    });
 
     initAll();
-
     function initAll(onSuccess) {
         //if (debugOn()) Csw.debug.log('Main.initAll()');
         $('#CenterBottomDiv').CswLogin('init', {
@@ -267,7 +186,7 @@ window.initMain = window.initMain || function (undefined) {
                 var qs = Csw.queryString();
                 if (false == Csw.isNullOrEmpty(qs.action)) {
                     var actopts = {};
-                    $.extend(actopts, qs);
+                    Csw.extend(actopts, qs);
                     handleAction({ actionname: qs.action, ActionOptions: actopts });
 
                 } else if (false == Csw.isNullOrEmpty(qs.viewid)) {
@@ -361,8 +280,7 @@ window.initMain = window.initMain || function (undefined) {
         // Refresh the 'Recent' category in the view selector
         mainviewselect.refreshRecent();
     }
-
-
+    
     function clear(options) {
         ///<summary>Clears the contents of the page.</summary>
         ///<param name="options">An object representing the elements to clear: all, left, right, centertop, centerbottom.</param>
@@ -376,7 +294,7 @@ window.initMain = window.initMain || function (undefined) {
             all: false
         };
         if (options) {
-            $.extend(o, options);
+            Csw.extend(o, options);
         }
 
         if (o.all || o.left) {
@@ -396,6 +314,9 @@ window.initMain = window.initMain || function (undefined) {
             $('#MainMenuDiv').empty();
         }
     }
+    Csw.subscribe(Csw.enums.events.main.clear, function (eventObj, opts) {
+        clear(opts);
+    });
 
     function refreshWelcome() {
         //if (debugOn()) Csw.debug.log('Main.refreshWelcome()');
@@ -441,7 +362,7 @@ window.initMain = window.initMain || function (undefined) {
             cswnbtnodekey: ''
         };
         if (options) {
-            $.extend(o, options);
+            Csw.extend(o, options);
         }
 
         multi = false; /* Case 26134. Revert multi-edit selection when switching views, etc. */
@@ -547,7 +468,7 @@ window.initMain = window.initMain || function (undefined) {
         };
 
         if (options) {
-            $.extend(o, options);
+            Csw.extend(o, options);
         }
 
         $('#MainMenuDiv').CswMenuMain({
@@ -646,7 +567,7 @@ window.initMain = window.initMain || function (undefined) {
     //        };
 
     //        if (options) {
-    //            $.extend(o, options);
+    //            Csw.extend(o, options);
     //        }
 
     //        $('#CenterTopDiv').children('#' + o.viewSearchId)
@@ -678,7 +599,7 @@ window.initMain = window.initMain || function (undefined) {
     //            ID: ''
     //        };
     //        if (options) {
-    //            $.extend(o, options);
+    //            Csw.extend(o, options);
     //        }
 
     //        clear({ centertop: true });
@@ -761,7 +682,7 @@ window.initMain = window.initMain || function (undefined) {
             onRefresh: ''
         };
 
-        if (options) $.extend(o, options);
+        if (options) Csw.extend(o, options);
 
         // Defaults
         var getEmptyGrid = (Csw.bool(o.showempty));
@@ -845,7 +766,7 @@ window.initMain = window.initMain || function (undefined) {
             onDeleteNode: ''
         };
         if (options) {
-            $.extend(o, options);
+            Csw.extend(o, options);
         }
 
         // Defaults
@@ -909,7 +830,7 @@ window.initMain = window.initMain || function (undefined) {
                 cswnbtnodekey: ''
             };
             if (options) {
-                $.extend(o, options);
+                Csw.extend(o, options);
             }
 
             Csw.cookie.set(Csw.cookie.cookieNames.CurrentNodeId, o.nodeid);
@@ -933,7 +854,7 @@ window.initMain = window.initMain || function (undefined) {
                 refreshSelected({ 'nodeid': nodeid, 'cswnbtnodekey': cswnbtnodekey, 'IncludeNodeRequired': true });
             }
         };
-        if (viewopts) $.extend(v, viewopts);
+        if (viewopts) Csw.extend(v, viewopts);
         clear({ right: true });
         $('#RightDiv').CswDefaultContent(v);
 
@@ -947,7 +868,7 @@ window.initMain = window.initMain || function (undefined) {
                 refreshSelected({ 'nodeid': nodeid, 'cswnbtnodekey': cswnbtnodekey, 'IncludeNodeRequired': true });
             }
         };
-        if (viewopts) $.extend(v, viewopts);
+        if (viewopts) Csw.extend(v, viewopts);
         clear({ centerbottom: true });
         var div = Csw.literals.div({
             $parent: $('#CenterBottomDiv'),
@@ -968,7 +889,7 @@ window.initMain = window.initMain || function (undefined) {
             nodeid: '',
             cswnbtnodekey: ''
         };
-        if (options) $.extend(o, options);
+        if (options) Csw.extend(o, options);
 
         clear({ right: true });
         var parent = Csw.literals.factory($('#RightDiv'));
@@ -1028,7 +949,7 @@ window.initMain = window.initMain || function (undefined) {
                 forsearch: false,
                 IncludeNodeRequired: false
             };
-            if (options) $.extend(o, options);
+            if (options) Csw.extend(o, options);
 
             if (Csw.isNullOrEmpty(o.viewid)) {
                 o.viewid = Csw.cookie.get(Csw.cookie.cookieNames.CurrentViewId);
@@ -1086,10 +1007,9 @@ window.initMain = window.initMain || function (undefined) {
                     break;
             } // switch
         } // if (manuallyCheckChanges())
-    }
-
-    // refreshSelected()
-
+    }// refreshSelected()
+    Csw.subscribe(Csw.enums.events.main.refreshSelected, refreshSelected);
+    
     var multi = false;
 
     function refreshNodesTree(options) {
@@ -1107,7 +1027,7 @@ window.initMain = window.initMain || function (undefined) {
             'IncludeNodeRequired': false
         };
         if (options) {
-            $.extend(o, options);
+            Csw.extend(o, options);
         }
 
         var getEmptyTree = (Csw.bool(o.showempty));
@@ -1173,7 +1093,7 @@ window.initMain = window.initMain || function (undefined) {
             'ActionOptions': {}
         };
         if (options) {
-            $.extend(o, options);
+            Csw.extend(o, options);
         }
 
         var designOpt = {};
@@ -1429,7 +1349,9 @@ window.initMain = window.initMain || function (undefined) {
                 break;
         }
     }
-
+    Csw.subscribe(Csw.enums.events.main.handleAction, function (eventObj, opts) {
+        handleAction(opts);
+    });
     // _handleAction()
 };
 

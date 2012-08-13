@@ -1,4 +1,3 @@
-using System;
 using System.Web;
 using ChemSW.Config;
 using ChemSW.Nbt.Statistics;
@@ -25,7 +24,7 @@ namespace ChemSW.Nbt.WebServices
 
         public void setEditMode( string EditModeStr )
         {
-            CswNbtResources.EditMode = (NodeEditMode) Enum.Parse( typeof( NodeEditMode ), EditModeStr );
+            CswNbtResources.EditMode = EditModeStr;
         }
 
 

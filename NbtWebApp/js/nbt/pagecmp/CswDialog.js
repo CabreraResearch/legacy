@@ -64,7 +64,7 @@
             };
 
             if (options) {
-                $.extend(o, options);
+                Csw.extend(o, options);
             }
 
             var div = Csw.literals.div();
@@ -93,7 +93,7 @@
                 onAdd: function () { }
             };
 
-            if (options) $.extend(o, options);
+            if (options) Csw.extend(o, options);
 
             var div = Csw.literals.div();
 
@@ -114,7 +114,7 @@
                 viewmode: '',
                 category: ''
             };
-            if (options) $.extend(o, options);
+            if (options) Csw.extend(o, options);
 
             var div = Csw.literals.div();
             var table = div.table({
@@ -221,7 +221,7 @@
             if (Csw.isNullOrEmpty(options)) {
                 Csw.error.throwException(Csw.error.exception('Cannot create an Add Dialog without options.', '', 'CswDialog.js', 177));
             }
-            $.extend(cswPrivate, options);
+            Csw.extend(cswPrivate, options);
             cswPrivate.ID = Csw.makeSafeId(cswPrivate.text, Math.floor(Math.random() * 99999));
             var cswPublic = {
                 div: Csw.literals.div({ ID: cswPrivate.ID }),
@@ -230,6 +230,8 @@
                 },
                 title: 'New ' + cswPrivate.text
             };
+
+            openDialog(cswPublic.div, 800, 600, null, cswPublic.title);
 
             cswPublic.tabsAndProps = Csw.layouts.tabsAndProps(cswPublic.div, {
                 ID: Csw.makeId(cswPrivate.ID, 'tabsAndProps'),
@@ -247,7 +249,7 @@
                     Csw.tryExec(cswPrivate.onSaveImmediate);
                 },
                 onInitFinish: function () {
-                    openDialog(cswPublic.div, 800, 600, null, cswPublic.title);
+                    //openDialog(cswPublic.div, 800, 600, null, cswPublic.title);
                 },
                 ShowAsReport: false
             });
@@ -263,7 +265,7 @@
             if (Csw.isNullOrEmpty(options)) {
                 Csw.error.throwException(Csw.error.exception('Cannot create an Add Feedback without options.', '', 'CswDialog.js', 215));
             }
-            $.extend(cswPrivate, options);
+            Csw.extend(cswPrivate, options);
             var cswPublic = {
                 div: Csw.literals.div(),
                 close: function () {
@@ -317,7 +319,7 @@
             };
 
             if (options) {
-                $.extend(o, options);
+                Csw.extend(o, options);
             }
 
             var div = Csw.literals.div(),
@@ -349,7 +351,7 @@
             };
 
             if (options) {
-                $.extend(o, options);
+                Csw.extend(o, options);
             }
 
             var div = Csw.literals.div(),
@@ -515,7 +517,7 @@
             if (Csw.isNullOrEmpty(options)) {
                 Csw.error.throwException(Csw.error.exception('Cannot create an Add Dialog without options.', '', 'CswDialog.js', 177));
             }
-            $.extend(cswPrivate, options);
+            Csw.extend(cswPrivate, options);
             var cswPublic = {
                 div: Csw.literals.div(),
                 close: function () {
@@ -603,7 +605,7 @@
             if (Csw.isNullOrEmpty(options)) {
                 Csw.error.throwException(Csw.error.exception('Cannot create an Copy Dialog without options.', '', 'CswDialog.js', 177));
             }
-            $.extend(cswPrivate, options);
+            Csw.extend(cswPrivate, options);
             var cswPublic = {
                 div: Csw.literals.div({ ID: 'CopyNodeDialogDiv' }),
                 close: function () {
@@ -678,7 +680,7 @@
             if (Csw.isNullOrEmpty(options)) {
                 Csw.error.throwException(Csw.error.exception('Cannot create an Delete Dialog without options.', '', 'CswDialog.js', 641));
             }
-            $.extend(cswPrivate, options);
+            Csw.extend(cswPrivate, options);
             var cswPublic = {
                 div: Csw.literals.div(),
                 close: function () {
@@ -791,7 +793,7 @@
                 onSuccess: function () { }
             };
             if (options) {
-                $.extend(o, options);
+                Csw.extend(o, options);
             }
 
             var div = Csw.literals.div();
@@ -827,7 +829,7 @@
                 onSuccess: function () { }
             };
             if (options) {
-                $.extend(o, options);
+                Csw.extend(o, options);
             }
             var div = Csw.literals.div(),
                 molTxtArea, saveBtn;
@@ -899,7 +901,7 @@
                 onDecline: function () { }
             };
             if (options) {
-                $.extend(o, options);
+                Csw.extend(o, options);
             }
 
             var div = Csw.literals.div({ align: 'center' });
@@ -953,7 +955,7 @@
             if (Csw.isNullOrEmpty(options)) {
                 Csw.error.throwException(Csw.error.exception('Cannot create an Print Label Dialog without options.', '', 'CswDialog.js', 893));
             }
-            $.extend(cswPrivate, options);
+            Csw.extend(cswPrivate, options);
             var cswPublic = {
                 div: Csw.literals.div({ align: 'center', text: 'Select a Label to Print:' }),
                 close: function () {
@@ -1023,7 +1025,7 @@
             var o = {
                 onImpersonate: null
             };
-            if (options) $.extend(o, options);
+            if (options) Csw.extend(o, options);
 
             var div = Csw.literals.div();
 
@@ -1075,7 +1077,7 @@
             if (Csw.isNullOrEmpty(options)) {
                 Csw.error.throwException(Csw.error.exception('Cannot create an Search Dialog without options.', '', 'CswDialog.js', 1013));
             }
-            $.extend(cswPrivate, options);
+            Csw.extend(cswPrivate, options);
             var cswPublic = {
                 div: Csw.literals.div({ ID: 'searchdialog_div' }),
                 close: function () {
@@ -1119,7 +1121,7 @@
                 okText: 'Ok',
                 cancelText: 'Cancel'
             };
-            if (options) $.extend(o, options);
+            if (options) Csw.extend(o, options);
 
             o.div.button({
                 enabledText: o.okText,
@@ -1146,7 +1148,7 @@
                 onClose: null,
                 onViewBatchOperation: null
             };
-            if (options) $.extend(o, options);
+            if (options) Csw.extend(o, options);
 
             var div = Csw.literals.div({ ID: 'searchdialog_div' });
 
@@ -1235,7 +1237,7 @@
             };
 
             if (options) {
-                $.extend(o, options);
+                Csw.extend(o, options);
             }
 
             var div = Csw.literals.div({
@@ -1283,7 +1285,7 @@
                 onClose: null
             };
             if (options) {
-                $.extend(o, options);
+                Csw.extend(o, options);
             }
             var div = Csw.literals.div(o.ID);
             openDialog(div, o.width, o.height, o.onClose, o.title);

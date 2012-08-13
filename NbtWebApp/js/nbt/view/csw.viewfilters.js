@@ -143,7 +143,7 @@
             // constructor
             (function () {
 
-                if (options) $.extend(cswPrivate, options);
+                if (options) Csw.extend(cswPrivate, options);
 
                 cswPrivate.div = cswPrivate.parent.div({ ID: cswPrivate.ID })
                                 .addClass('viewfilters')

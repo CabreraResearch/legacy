@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Data;
 using ChemSW.Core;
 using ChemSW.DB;
@@ -394,21 +395,125 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Specifies operation to take on database when using makeNodeFromNodeTypeId
         /// </summary>
-        public enum MakeNodeOperation
+        public sealed class MakeNodeOperation : IEquatable<MakeNodeOperation>
         {
+
+            #region Enum Member
+		    
             /// <summary>
             /// Write the new node to the database
             /// </summary>
-            WriteNode,
+            public const string WriteNode = "WriteNode";
+
             /// <summary>
             /// Just set the primary key and the default property values, but make
             /// no changes to the database
             /// </summary>
-            JustSetPk,
+            public const string JustSetPk = "JustSetPk";
+
             /// <summary>
             /// Just get an empty node with meta data from the nodetype
             /// </summary>
-            DoNothing
+            public const string DoNothing = "DoNothing";
+
+            /// <summary>
+            /// Write the new temporary node to the database.
+            /// </summary>
+            public const string MakeTemp = "MakeTemp"; 
+	        #endregion
+
+            private static Dictionary<string, string> _Enums = new Dictionary<string, string>( StringComparer.OrdinalIgnoreCase )
+                                                                   {
+                                                                       { WriteNode, WriteNode },
+                                                                       { JustSetPk, JustSetPk },
+                                                                       { DoNothing, DoNothing },
+                                                                       { MakeTemp, MakeTemp }
+                                                                   };
+            /// <summary>
+            /// Instance value
+            /// </summary>
+            public readonly string Value;
+
+            private static string _Parse( string Val )
+            {
+                string ret = CswResources.UnknownEnum;
+                if( _Enums.ContainsKey( Val ) )
+                {
+                    ret = _Enums[Val];
+                }
+                return ret;
+            }
+            /// <summary>
+            /// Constructor
+            /// </summary>
+            public MakeNodeOperation( string ItemName = CswResources.UnknownEnum )
+            {
+                Value = _Parse( ItemName );
+            }
+
+            /// <summary>
+            /// Implicit enum cast
+            /// </summary>
+            public static implicit operator MakeNodeOperation( string Val )
+            {
+                return new MakeNodeOperation( Val );
+            }
+            
+            /// <summary>
+            /// Implicit string cast
+            /// </summary>
+            public static implicit operator string( MakeNodeOperation item )
+            {
+                return item.Value;
+            }
+
+            /// <summary>
+            /// ToString
+            /// </summary>
+            public override string ToString()
+            {
+                return Value;
+            }
+
+            #region IEquatable (MakeNodeOperation)
+
+            /// <summary>
+            /// ==
+            /// </summary>
+            public static bool operator ==( MakeNodeOperation ft1, MakeNodeOperation ft2 )
+            {
+                //do a string comparison on the fieldtypes
+                return ft1.ToString() == ft2.ToString();
+            }
+            
+            /// <summary>
+            /// !=
+            /// </summary>
+            public static bool operator !=( MakeNodeOperation ft1, MakeNodeOperation ft2 )
+            {
+                return !( ft1 == ft2 );
+            }
+
+            /// <summary>
+            /// Equals
+            /// </summary>
+            public override bool Equals( object obj )
+            {
+                if( !( obj is MakeNodeOperation ) )
+                    return false;
+                return this == (MakeNodeOperation) obj;
+            }
+
+            /// <summary>
+            /// Equals
+            /// </summary>
+            public bool Equals( MakeNodeOperation obj )
+            {
+                return this == obj;
+            }
+
+            #endregion IEquatable (MakeNodeOperation)
+
         }
 
         /// <summary>
@@ -423,22 +528,29 @@ namespace ChemSW.Nbt
             Node.OnAfterSetNodeId += new CswNbtNode.OnSetNodeIdHandler( OnAfterSetNodeIdHandler );
             Node.OnRequestDeleteNode += new CswNbtNode.OnRequestDeleteNodeHandler( OnAfterDeleteNode );
             Node.fillFromNodeTypeId( NodeTypeId );
-
-            if( Op == MakeNodeOperation.WriteNode )
+            Node.IsTemp = MakeNodeOperation.MakeTemp == Op;
+            if(Node.IsTemp)
             {
-                _CswNbtNodeFactory.CswNbtNodeWriter.setDefaultPropertyValues( Node );
-                Node.postChanges( true, false, OverrideUniqueValidation );
-            }
-            else if( Op == MakeNodeOperation.JustSetPk )
-            {
-                _CswNbtNodeFactory.CswNbtNodeWriter.makeNewNodeEntry( Node, false, false, OverrideUniqueValidation );
-                //_CswNbtNodeFactory.CswNbtNodeWriter.setDefaultPropertyValues( Node );
-            }
-            else if( Op == MakeNodeOperation.DoNothing ) //right now there are only three enum values; I'm just making this explicit
-            {
-                _CswNbtNodeFactory.CswNbtNodeWriter.setDefaultPropertyValues( Node );
+                Node.SessionId = _CswNbtResources.Session.SessionId;
             }
 
+            switch(Op)
+            {
+                case MakeNodeOperation.WriteNode:
+                case MakeNodeOperation.MakeTemp:
+                    _CswNbtNodeFactory.CswNbtNodeWriter.setDefaultPropertyValues( Node );
+                    Node.postChanges( true, false, OverrideUniqueValidation );
+                    break;
+                case MakeNodeOperation.JustSetPk:
+                    _CswNbtNodeFactory.CswNbtNodeWriter.makeNewNodeEntry( Node, false, false, OverrideUniqueValidation );
+                    //_CswNbtNodeFactory.CswNbtNodeWriter.setDefaultPropertyValues( Node );    
+                    break;
+                case MakeNodeOperation.DoNothing:
+                    //right now there are only three enum values; I'm just making this explicit
+                    _CswNbtNodeFactory.CswNbtNodeWriter.setDefaultPropertyValues( Node );
+                    break;
+            }
+            
             //if( Node.NodeId != Int32.MinValue )
             //{
             //    NodeHash.Add( new NodeHashKey( Node.NodeId, Node.NodeSpecies ), Node );

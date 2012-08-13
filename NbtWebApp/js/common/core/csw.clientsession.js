@@ -85,7 +85,7 @@
         Csw.clientSession.register('login', function (loginopts) {
             ///<summary>Attempt a login.</summary>
             if (loginopts) {
-                $.extend(cswPrivate, loginopts);
+                Csw.extend(cswPrivate, loginopts);
             }
             cswPrivate.isAuthenticated = true;
             Csw.ajax.post({
@@ -117,7 +117,7 @@
         Csw.clientSession.register('logout', function (options) {
             ///<summary>End the current session.</summary>
             if (options) {
-                $.extend(cswPrivate, options);
+                Csw.extend(cswPrivate, options);
             }
             cswPrivate.isAuthenticated = false;
             Csw.ajax.post({
@@ -157,7 +157,7 @@
                 ForMobile: false
             };
             if (options) {
-                $.extend(o, options);
+                Csw.extend(o, options);
             }
 
             var txt = '';
@@ -248,7 +248,7 @@
                 'No': null
             };
             if (options) {
-                $.extend(o, options);
+                Csw.extend(o, options);
             }
 
             Csw.ajax.post({

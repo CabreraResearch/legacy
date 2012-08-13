@@ -85,7 +85,7 @@
                     var state;
                     if (Csw.isNullOrEmpty(cswPrivate.state.sourceContainerNodeId) && Csw.isNullOrEmpty(cswPrivate.state.requestItemId)) {
                         state = cswPrivate.getState();
-                        $.extend(cswPrivate.state, state);
+                        Csw.extend(cswPrivate.state, state);
                     }
                     if (Csw.isNullOrEmpty(cswPrivate.state.dispenseMode)) {
                         cswPrivate.setDispenseMode();
@@ -115,7 +115,7 @@
 
                 (function _pre() {
                     if (options) {
-                        $.extend(cswPrivate, options);
+                        Csw.extend(cswPrivate, options);
                     }
                     cswPrivate.validateState();
                     cswPublic = cswParent.div();

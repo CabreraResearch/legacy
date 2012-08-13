@@ -109,6 +109,14 @@
                     return Csw.controls.multiSelect(cswParent, opts);
                 };
 
+                cswParent.nodeButton = function (opts) {
+                    /// <summary> Creates a Csw.nodeButton on this element</summary>
+                    /// <param name="opts" type="Object">Options to define the nodeButton.</param>
+                    /// <returns type="Csw.controls.nodeButton">A Csw.controls.nodeButton</returns>
+                    opts = cswPrivate.controlPreProcessing(opts, 'nodeButton');
+                    return Csw.controls.nodeButton(cswParent, opts);
+                };
+
                 cswParent.nodeSelect = function (opts) {
                     /// <summary> Creates a Csw.nodeSelect on this element</summary>
                     /// <param name="opts" type="Object">Options to define the nodeSelect.</param>

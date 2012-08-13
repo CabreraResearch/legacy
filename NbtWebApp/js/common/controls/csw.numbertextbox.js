@@ -35,7 +35,7 @@
 
             (function () {
                 if (options) {
-                    $.extend(cswPrivate, options);
+                    Csw.extend(cswPrivate, options);
                 }
 
                 var ceilingVal = Csw.number(cswPrivate.ceilingVal),
@@ -47,7 +47,7 @@
                 if (cswPrivate.ReadOnly) {
                     cswPrivate.div = cswParent.div(cswPrivate);
                     cswPublic = Csw.dom({}, cswPrivate.div);
-                    //$.extend(cswPublic, Csw.literals.div(cswPrivate));
+                    //Csw.extend(cswPublic, Csw.literals.div(cswPrivate));
                     cswPublic.append(cswPrivate.value);
                 } else {
                     /* Case 24499: Client-side logic to validate numbers. */
@@ -66,7 +66,7 @@
 
                     cswPrivate.input = cswParent.input(cswPrivate);
                     cswPublic = Csw.dom({}, cswPrivate.input);
-                    //$.extend(cswPublic, Csw.literals.input(cswPrivate));
+                    //Csw.extend(cswPublic, Csw.literals.input(cswPrivate));
 
                     cswPublic.bind('change', function () {
                         cswPrivate.value = cswPublic.val();

@@ -31,7 +31,7 @@
 
                 //#region init ctor
                 (function _pre() {
-                    $.extend(true, cswPrivate, options);
+                    Csw.extend(cswPrivate, options, true);
                     cswParent.empty();
                     
                     cswPrivate.relatedmatch = (cswPrivate.relatedobjectclassid === cswPrivate.locationobjectclassid);

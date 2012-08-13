@@ -14,7 +14,7 @@
             }
         };
         if (options) {
-            $.extend(o, options);
+            Csw.extend(o, options);
         }
 
         var dataJson = {
@@ -44,7 +44,7 @@
             onError: null
         };
         if (options) {
-            $.extend(o, options);
+            Csw.extend(o, options);
         }
 
         if (false === Csw.isArray(o.nodeids)) {  /* case 22722 */
@@ -70,7 +70,7 @@
                     $.CswDialog('BatchOpDialog', {
                         opname: 'multi-delete',
                         onViewBatchOperation: function () {
-                            Csw.publish('refreshMain', {
+                            Csw.publish(Csw.enums.events.main.refresh, {
                                 nodeid: data.batch,
                                 viewid: '',
                                 viewmode: 'tree',

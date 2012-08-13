@@ -83,7 +83,7 @@ namespace ChemSW.Nbt.Actions
             ContainerNt = ContainerNt ?? _ContainerOc.getLatestVersionNodeTypes().FirstOrDefault();
             if( null != ContainerNt )
             {
-                RetAsContainer = PropsAction.getAddNode( ContainerNt );
+                RetAsContainer = PropsAction.getAddNode( ContainerNt, CswNbtNodeCollection.MakeNodeOperation.DoNothing );
                 if( null == RetAsContainer )
                 {
                     throw new CswDniException( ErrorType.Error, "Could not create a new container.", "Failed to create a new Container node." );
@@ -160,9 +160,8 @@ namespace ChemSW.Nbt.Actions
                                     {
                                         for( Int32 C = 0; C < NoContainers; C += 1 )
                                         {
-                                            CswNbtNode Container;
                                             CswNbtNodeKey ContainerNodeKey;
-                                            SdTabsAndProps.addNode( ContainerNt, out Container, ContainerAddProps, out ContainerNodeKey );
+                                            CswNbtNode Container = SdTabsAndProps.addNode( ContainerNt, null, ContainerAddProps, out ContainerNodeKey );
                                             CswNbtObjClassContainer AsContainer = Container;
                                             if( Barcodes.Count <= NoContainers && false == string.IsNullOrEmpty( Barcodes[C] ) )
                                             {
@@ -172,8 +171,8 @@ namespace ChemSW.Nbt.Actions
                                             AsContainer.Material.RelatedNodeId = MaterialId;
                                             if( AsSize.QuantityEditable.Checked != Tristate.True )
                                             {
-                                                    QuantityValue = AsSize.InitialQuantity.Quantity;
-                                                    UnitId = AsSize.InitialQuantity.UnitId;
+                                                QuantityValue = AsSize.InitialQuantity.Quantity;
+                                                UnitId = AsSize.InitialQuantity.UnitId;
                                             }
                                             if( null == AsContainer.Quantity.UnitId || Int32.MinValue == AsContainer.Quantity.UnitId.PrimaryKey )
                                             {
