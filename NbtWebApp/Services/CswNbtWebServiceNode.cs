@@ -112,6 +112,24 @@ namespace ChemSW.Nbt.WebServices
                                                             " where isdemo='" + CswConvert.ToDbVal( true ) + "' " );
                 Total = NodesTable.Rows.Count;
                 Collection<Exception> Exceptions = new Collection<Exception>();
+
+                try
+                {
+                    CswNbtResources UserSystemResources = wsMd.makeSystemUserResources( _CswNbtResources.AccessId, false, false );
+                    CswNbtMetaDataObjectClass UserOc = UserSystemResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
+                    foreach( CswNbtObjClassUser User in UserOc.getNodes( forceReInit: true, includeSystemNodes: false ) )
+                    {
+                        User.WorkUnitProperty.RelatedNodeId = null;
+                        User.DefaultLocationProperty.SelectedNodeId = null;
+                        User.postChanges( ForceUpdate: true );
+                    }
+                    wsMd.finalizeOtherResources( UserSystemResources );
+                }
+                catch( Exception Ex )
+                {
+                    Exceptions.Add( Ex );
+                }
+
                 foreach( DataRow NodeRow in NodesTable.Rows )
                 {
                     try

@@ -179,7 +179,8 @@
             var ntSelectLabel = table.cell(3, 1).span({ text: 'Add New:' });
             var ntSelect = table.cell(3, 2)
                                  .nodeTypeSelect({
-                                     'ID': 'welcome_ntsel'
+                                     ID: 'welcome_ntsel',
+                                     filterToPermission: 'Create'
                                  });
 
             /* Welcome Text Label */

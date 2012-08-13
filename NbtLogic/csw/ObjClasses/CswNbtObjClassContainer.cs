@@ -2,6 +2,7 @@ using System;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.Actions;
+using ChemSW.Nbt.Batch;
 using ChemSW.Nbt.csw.Conversion;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
@@ -31,7 +32,10 @@ namespace ChemSW.Nbt.ObjClasses
         public const string DisposePropertyName = "Dispose";
         public const string UndisposePropertyName = "Undispose";
         public const string OwnerPropertyName = "Owner";
-
+        private bool _IsDisposed
+        {
+            get { return Disposed.Checked == Tristate.True; }
+        }
         public sealed class RequestMenu
         {
             public const string Dispense = "Dispense";
@@ -46,6 +50,11 @@ namespace ChemSW.Nbt.ObjClasses
                 };
 
         }
+
+        /// <summary>
+        /// Has the corresponding Inventory Level been modified in a change event on this instance?
+        /// </summary>
+        private bool _InventoryLevelModified = false;
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
 
@@ -89,7 +98,6 @@ namespace ChemSW.Nbt.ObjClasses
         private void _updateRequestMenu()
         {
             bool IsDisposed = Disposed.Checked == Tristate.True;
-            Request.setHidden( value: IsDisposed, SaveToDb: true );
             CswCommaDelimitedString MenuOpts = new CswCommaDelimitedString();
             string SelectedOpt = RequestMenu.Dispose;
             if( false == IsDisposed )
@@ -113,11 +121,6 @@ namespace ChemSW.Nbt.ObjClasses
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
             _updateRequestMenu();
-            if( _CswNbtResources.EditMode == NodeEditMode.Add )
-            {
-                CswNbtSdInventoryLevelMgr Mgr = new CswNbtSdInventoryLevelMgr( _CswNbtResources );
-                Mgr.addToCurrentQuantity( Quantity.Quantity, Quantity.UnitId, "Container  [" + Barcode.Barcode + "] created.", Material.RelatedNodeId, Location.SelectedNodeId );
-            }
 
             _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
         }//beforeWriteNode()
@@ -140,7 +143,6 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void afterPopulateProps()
         {
-            Dispense.setHidden( value: ( false == _CswNbtResources.Permit.canContainer( NodeId, CswNbtPermit.NodeTypePermission.Create, _CswNbtResources.Actions[CswNbtActionName.DispenseContainer] ) ), SaveToDb: false );
             Material.SetOnPropChange( OnMaterialPropChange );
             Dispose.SetOnPropChange( OnDisposedPropChange );
             OnDisposedPropChange( Dispose );
@@ -149,8 +151,17 @@ namespace ChemSW.Nbt.ObjClasses
             Size.SetOnPropChange( OnSizePropChange );
             SourceContainer.SetOnPropChange( OnSourceContainerChange );
             Barcode.SetOnPropChange( OnBarcodePropChange );
+            _toggleButtonVisibility();
             _CswNbtObjClassDefault.afterPopulateProps();
         }//afterPopulateProps()
+
+        private void _toggleButtonVisibility( bool SaveToDb = false )
+        {
+            Dispense.setHidden( value: ( _IsDisposed || false == _CswNbtResources.Permit.canContainer( NodeId, CswNbtPermit.NodeTypePermission.Create, _CswNbtResources.Actions[CswNbtActionName.DispenseContainer] ) ), SaveToDb: SaveToDb );
+            Dispose.setHidden( value: ( _IsDisposed || false == _CswNbtResources.Permit.canContainer( NodeId, CswNbtPermit.NodeTypePermission.Edit, _CswNbtResources.Actions[CswNbtActionName.DisposeContainer] ) ), SaveToDb: SaveToDb );
+            Undispose.setHidden( value: ( false == _IsDisposed || false == _CswNbtResources.Permit.canContainer( NodeId, CswNbtPermit.NodeTypePermission.Edit, _CswNbtResources.Actions[CswNbtActionName.UndisposeContainer] ) ), SaveToDb: SaveToDb );
+            Request.setHidden( value: ( _IsDisposed || false == _CswNbtResources.Permit.canContainer( NodeId, CswNbtPermit.NodeTypePermission.View, _CswNbtResources.Actions[CswNbtActionName.Submit_Request] ) ), SaveToDb: SaveToDb );
+        }
 
         public override void addDefaultViewFilters( CswNbtViewRelationship ParentRelationship )
         {
@@ -191,7 +202,7 @@ namespace ChemSW.Nbt.ObjClasses
                         break;
                     case RequestPropertyName:
 
-                        CswNbtActSubmitRequest RequestAct = new CswNbtActSubmitRequest( _CswNbtResources, CswNbtActSystemViews.SystemViewName.CISProRequestCart );
+                        CswNbtActSubmitRequest RequestAct = new CswNbtActSubmitRequest( _CswNbtResources, CreateDefaultRequestNode: true );
 
                         CswNbtObjClassRequestItem NodeAsRequestItem = RequestAct.makeContainerRequestItem( new CswNbtActSubmitRequest.RequestItem(), NodeId, ButtonData.SelectedText );
                         NodeAsRequestItem.Material.RelatedNodeId = Material.RelatedNodeId;
@@ -242,7 +253,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public void DisposeContainer()
         {
-            _createContainerTransactionNode( CswNbtObjClassContainerDispenseTransaction.DispenseType.Dispose, -this.Quantity.Quantity, this.Quantity.UnitId );
+            _createContainerTransactionNode( CswNbtObjClassContainerDispenseTransaction.DispenseType.Dispose, -this.Quantity.Quantity, this.Quantity.UnitId, SourceContainer: this );
             this.Quantity.Quantity = 0;
             this.Disposed.Checked = Tristate.True;
             _setDisposedReadOnly( true );
@@ -255,9 +266,10 @@ namespace ChemSW.Nbt.ObjClasses
 
             if( ContDispTransNode != null )
             {
-                this.Quantity.Quantity = ContDispTransNode.QuantityDispensed.Quantity;
+                this.Quantity.Quantity = -ContDispTransNode.QuantityDispensed.Quantity;
                 this.Quantity.UnitId = ContDispTransNode.QuantityDispensed.UnitId;
-                ContDispTransNode.Node.delete();
+                CswNbtBatchOpMultiDelete op = new CswNbtBatchOpMultiDelete( _CswNbtResources );
+                CswNbtObjClassBatchOp BatchNode = op.makeBatchOp( ContDispTransNode.NodeId );
             }
             this.Disposed.Checked = Tristate.False;
             _setDisposedReadOnly( false );
@@ -457,10 +469,8 @@ namespace ChemSW.Nbt.ObjClasses
             SourceContainer.setReadOnly( value: isReadOnly, SaveToDb: true );
             ExpirationDate.setReadOnly( value: isReadOnly, SaveToDb: true );
             Size.setReadOnly( value: isReadOnly, SaveToDb: true );
-            Request.setReadOnly( value: isReadOnly, SaveToDb: true );
-            Request.setHidden( value: isReadOnly, SaveToDb: true );
-            Dispense.setReadOnly( value: isReadOnly, SaveToDb: true );
             Owner.setReadOnly( value: isReadOnly, SaveToDb: true );
+            _toggleButtonVisibility( true );
         }
 
         private bool _isStorageCompatible( CswDelimitedString materialStorageCompatibility, CswDelimitedString locationStorageCompatibilities )
@@ -565,27 +575,28 @@ namespace ChemSW.Nbt.ObjClasses
                     }
                 }
             }
-            if( false == string.IsNullOrEmpty( Location.CachedNodeName ) &&
-                    Location.CachedNodeName != CswNbtNodePropLocation.TopLevelName )
+            if( CswTools.IsPrimaryKey( Location.SelectedNodeId ) &&
+                false == string.IsNullOrEmpty( Location.CachedNodeName ) &&
+                Location.CachedNodeName != CswNbtNodePropLocation.TopLevelName )
             {
-                if( CswConvert.ToInt32( Quantity.Quantity ) != 0 )
+                if( false == _InventoryLevelModified &&
+                    CswConvert.ToInt32( Quantity.Quantity ) != 0 )
                 {
                     CswNbtSdInventoryLevelMgr Mgr = new CswNbtSdInventoryLevelMgr( _CswNbtResources );
-                    CswNbtNodePropWrapper LocationWrapper = Node.Properties[LocationPropertyName];
-                    string PrevLocationId = LocationWrapper.GetOriginalPropRowValue( ( (CswNbtFieldTypeRuleLocation) _CswNbtResources.MetaData.getFieldTypeRule( LocationWrapper.getFieldType().FieldType ) ).NodeIdSubField.Column );
+                    CswNbtSubField NodeId = ( (CswNbtFieldTypeRuleLocation) _CswNbtResources.MetaData.getFieldTypeRule( Location.getFieldType().FieldType ) ).NodeIdSubField;
+                    Int32 PrevLocationId = CswConvert.ToInt32( Node.Properties[LocationPropertyName].GetOriginalPropRowValue( NodeId.Column ) );
                     string Reason = "Container " + Barcode.Barcode + " moved to new location: " + Location.CachedNodeName;
-                    if( false == string.IsNullOrEmpty( PrevLocationId ) )
+                    if( Int32.MinValue != PrevLocationId )
                     {
-                        CswPrimaryKey PrevLocationPk = new CswPrimaryKey();
-                        PrevLocationPk.FromString( PrevLocationId );
+                        CswPrimaryKey PrevLocationPk = new CswPrimaryKey( "nodes", PrevLocationId );
                         if( PrevLocationPk != Location.SelectedNodeId )
                         {
-                            Mgr.changeLocationOfQuantity( Quantity.Quantity, Quantity.UnitId, Reason, Material.RelatedNodeId, PrevLocationPk, Location.SelectedNodeId );
+                            _InventoryLevelModified = Mgr.changeLocationOfQuantity( Quantity.Quantity, Quantity.UnitId, Reason, Material.RelatedNodeId, PrevLocationPk, Location.SelectedNodeId );
                         }
                     }
                     else
                     {
-                        Mgr.addToCurrentQuantity( Quantity.Quantity, Quantity.UnitId, Reason, Material.RelatedNodeId, Location.SelectedNodeId );
+                        _InventoryLevelModified = Mgr.addToCurrentQuantity( Quantity.Quantity, Quantity.UnitId, Reason, Material.RelatedNodeId, Location.SelectedNodeId );
                     }
                 }
                 _updateRequestItems( CswNbtObjClassRequestItem.Types.Move );
@@ -616,15 +627,8 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropLogical Disposed { get { return ( _CswNbtNode.Properties[DisposedPropertyName] ); } }
         private void OnDisposedPropChange( CswNbtNodeProp Prop )
         {
-            if( Disposed.Checked == Tristate.False )
+            if( Disposed.Checked == Tristate.True )
             {
-                Undispose.setHidden( value: true, SaveToDb: false );
-                Dispose.setHidden( value: ( false == _CswNbtResources.Permit.canContainer( NodeId, CswNbtPermit.NodeTypePermission.Edit, _CswNbtResources.Actions[CswNbtActionName.DisposeContainer] ) ), SaveToDb: false );
-            }
-            else if( Disposed.Checked == Tristate.True )
-            {
-                Dispose.setHidden( value: true, SaveToDb: false );
-                Undispose.setHidden( value: ( false == _CswNbtResources.Permit.canContainer( NodeId, CswNbtPermit.NodeTypePermission.Edit, _CswNbtResources.Actions[CswNbtActionName.UndisposeContainer] ) ), SaveToDb: false );
                 _updateRequestItems( CswNbtObjClassRequestItem.Types.Dispose );
             }
             _updateRequestMenu();
@@ -641,22 +645,24 @@ namespace ChemSW.Nbt.ObjClasses
         private void OnQuantityPropChange( CswNbtNodeProp Prop )
         {
             _updateRequestMenu();
-            CswNbtSdInventoryLevelMgr Mgr = new CswNbtSdInventoryLevelMgr( _CswNbtResources );
-            CswNbtNodePropWrapper QuantityWrapper = Node.Properties[QuantityPropertyName];
-            double PrevQuantity = CswConvert.ToDouble( QuantityWrapper.GetOriginalPropRowValue( ( (CswNbtFieldTypeRuleQuantity) _CswNbtResources.MetaData.getFieldTypeRule( QuantityWrapper.getFieldType().FieldType ) ).QuantitySubField.Column ) );
-            if( false == CswTools.IsDouble( PrevQuantity ) )
+            if( false == _InventoryLevelModified )
             {
-                PrevQuantity = 0;
-            }
-            double Diff = Quantity.Quantity - PrevQuantity;
-            if( CswConvert.ToInt32( Diff ) != 0 )
-            {
-                string Reason = "Container " + Barcode.Barcode + " quantity changed by: " + Diff + " " + Quantity.CachedUnitName;
-                if( Disposed.Checked == Tristate.True )
+                CswNbtSdInventoryLevelMgr Mgr = new CswNbtSdInventoryLevelMgr( _CswNbtResources );
+                double PrevQuantity = CswConvert.ToDouble( Node.Properties[QuantityPropertyName].GetOriginalPropRowValue( ( (CswNbtFieldTypeRuleQuantity) _CswNbtResources.MetaData.getFieldTypeRule( Quantity.getFieldType().FieldType ) ).QuantitySubField.Column ) );
+                if( false == CswTools.IsDouble( PrevQuantity ) )
                 {
-                    Reason += " on disposal.";
+                    PrevQuantity = 0;
                 }
-                Mgr.addToCurrentQuantity( Diff, Quantity.UnitId, Reason, Material.RelatedNodeId, Location.SelectedNodeId );
+                double Diff = Quantity.Quantity - PrevQuantity;
+                if( CswConvert.ToInt32( Diff ) != 0 )
+                {
+                    string Reason = "Container " + Barcode.Barcode + " quantity changed by: " + Diff + " " + Quantity.CachedUnitName;
+                    if( Disposed.Checked == Tristate.True )
+                    {
+                        Reason += " on disposal.";
+                    }
+                    _InventoryLevelModified = Mgr.addToCurrentQuantity( Diff, Quantity.UnitId, Reason, Material.RelatedNodeId, Location.SelectedNodeId );
+                }
             }
         }
 
@@ -664,7 +670,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropRelationship Size { get { return ( _CswNbtNode.Properties[SizePropertyName] ); } }
         private void OnSizePropChange( CswNbtNodeProp Prop )
         {
-            if( null != Size.RelatedNodeId )
+            if( CswTools.IsPrimaryKey( Size.RelatedNodeId ) )
             {
                 Size.setReadOnly( value: true, SaveToDb: true );
                 Size.setHidden( value: true, SaveToDb: true );

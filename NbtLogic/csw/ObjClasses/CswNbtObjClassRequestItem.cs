@@ -142,7 +142,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             _CswNbtObjClassDefault.beforeCreateNode( OverrideUniqueValidation );
 
-            CswNbtActSubmitRequest RequestAct = new CswNbtActSubmitRequest( _CswNbtResources, CswNbtActSystemViews.SystemViewName.CISProRequestCart );
+            CswNbtActSubmitRequest RequestAct = new CswNbtActSubmitRequest( _CswNbtResources, CreateDefaultRequestNode: true );
             Request.RelatedNodeId = RequestAct.CurrentRequestNode().NodeId;
         } // beforeCreateNode()
 
@@ -208,18 +208,15 @@ namespace ChemSW.Nbt.ObjClasses
         {
             _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
 
-            CswNbtObjClassRequest NodeAsRequest = _CswNbtResources.Nodes.GetNode( Request.RelatedNodeId );
-
             /* Container-specific logic */
             if( ( Type.Value == Types.Dispense ||
                 Type.Value == Types.Move ||
                 Type.Value == Types.Dispose ) &&
                 null != Container.RelatedNodeId )
             {
-                if( null != NodeAsRequest &&
-                    null != NodeAsRequest.InventoryGroup.RelatedNodeId )
+                if( CswTools.IsPrimaryKey( InventoryGroup.RelatedNodeId ) )
                 {
-                    CswNbtObjClassContainer NodeAsContainer = _CswNbtResources.Nodes.GetNode( Container.RelatedNodeId );
+                    CswNbtObjClassContainer NodeAsContainer = _CswNbtResources.Nodes[Container.RelatedNodeId];
                     if( null == NodeAsContainer )
                     {
                         throw new CswDniException( ErrorType.Warning,
@@ -227,10 +224,9 @@ namespace ChemSW.Nbt.ObjClasses
                                                   " type of Request Item requires a valid Container.",
                                                   "Attempted to edit node without a valid Container relationship." );
                     }
-                    CswNbtObjClassLocation NodeAsLocation =
-                        _CswNbtResources.Nodes.GetNode( NodeAsContainer.Location.NodeId );
+                    CswNbtObjClassLocation NodeAsLocation = _CswNbtResources.Nodes[NodeAsContainer.Location.SelectedNodeId];
                     if( null != NodeAsLocation &&
-                        NodeAsRequest.InventoryGroup.RelatedNodeId != NodeAsLocation.InventoryGroup.RelatedNodeId )
+                        InventoryGroup.RelatedNodeId != NodeAsLocation.InventoryGroup.RelatedNodeId )
                     {
                         throw new CswDniException( ErrorType.Warning,
                                                   "For a " + Type.Value +
@@ -684,7 +680,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public CswNbtNodePropButton Fulfill { get { return _CswNbtNode.Properties[PropertyName.Fulfill]; } }
 
-        public CswNbtNodePropPropertyReference InventoryGroup { get { return _CswNbtNode.Properties[PropertyName.InventoryGroup]; } }
+        public CswNbtNodePropRelationship InventoryGroup { get { return _CswNbtNode.Properties[PropertyName.InventoryGroup]; } }
 
         public CswNbtNodePropQuantity TotalDispensed { get { return _CswNbtNode.Properties[PropertyName.TotalDispensed]; } }
         private void OnTotalDispensedPropChange( CswNbtNodeProp Prop )
