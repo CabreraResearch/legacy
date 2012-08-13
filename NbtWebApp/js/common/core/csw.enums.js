@@ -84,7 +84,14 @@
             objectClassButtonClick: 'objectClassButtonClick',
             afterObjectClassButtonClick: 'afterObjectClassButtonClick',
             RestoreViewContext: 'RestoreViewContext',
-            DispenseContainer: 'DispenseContainer'
+            DispenseContainer: 'DispenseContainer',
+            main: {
+                handleAction: 'handleAction',
+                refresh: 'refresh',
+                refreshHeader: 'refreshHeader',
+                refreshSelected: 'refreshSelected',
+                clear: 'clear'
+            }
         });
 
     Csw.enums.wizardSteps_InspectionDesign = Csw.enums.wizardSteps_InspectionDesign ||

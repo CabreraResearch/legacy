@@ -558,6 +558,31 @@ namespace ChemSW.Nbt.MetaData
             return _BarcodeProperty;
         } // getBarcodeProperty()
 
+        private IEnumerable<CswNbtMetaDataNodeTypeProp> _ButtonProperties = null;
+        private IEnumerable<CswNbtMetaDataNodeTypeProp> _getButtonProperties()
+        {
+            if( null == _ButtonProperties )
+            {
+                foreach( CswNbtMetaDataNodeTypeProp ButtonNtp in
+                    from _Ntp
+                        in getNodeTypeProps()
+                    orderby _Ntp.PropName
+                    where _Ntp.getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.Button
+                    select _Ntp )
+                {
+                    yield return ButtonNtp;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets all the Button properties on this NodeType
+        /// </summary>
+        public IEnumerable<CswNbtMetaDataNodeTypeProp> getButtonProperties()
+        {
+            return _ButtonProperties ?? _getButtonProperties();
+        }
+
         private CswNbtMetaDataNodeTypeProp _LocationProperty;
         public CswNbtMetaDataNodeTypeProp getLocationProperty()
         {

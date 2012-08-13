@@ -165,7 +165,7 @@
 
             //constructor
             (function () {
-                if (options) $.extend(cswPrivate, options);
+                if (options) Csw.extend(cswPrivate, options);
 
                 cswParent.empty();
 
@@ -272,7 +272,7 @@
 //                nodeTreeCheck: null
 //            };
 //            if (options) {
-//                $.extend(o, options);
+//                Csw.extend(o, options);
 //            }
 //            var $li;
 //            var json = o.itemJson;

@@ -25,7 +25,7 @@
                 var liExternal = {};
 
                 (function() {
-                    $.extend(liInternal, liOptions);
+                    Csw.extend(liInternal, liOptions);
 
                     var $li,
                         html = '<li>';
@@ -44,7 +44,7 @@
                 var html = '<ol></ol>';
                 var $ol;
 
-                $.extend(cswPrivate, options);
+                Csw.extend(cswPrivate, options);
 
                 $ol = $(html);
                 Csw.literals.factory($ol, cswPublic);

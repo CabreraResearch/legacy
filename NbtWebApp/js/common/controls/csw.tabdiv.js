@@ -30,9 +30,9 @@
             var cswPublic = {};
 
             (function () {
-                $.extend(cswPrivate, options);
+                Csw.extend(cswPrivate, options);
                 cswPublic = cswParent.div(cswPrivate);
-                //$.extend(cswPublic, Csw.literals.div(cswPrivate));
+                //Csw.extend(cswPublic, Csw.literals.div(cswPrivate));
             } ());
 
             cswPublic.tabs = function () {

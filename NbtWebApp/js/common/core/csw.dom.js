@@ -478,7 +478,7 @@
             var elementId = [];
 
             if (Csw.isPlainObject(options)) {
-                $.extend(cswPrivate, options);
+                Csw.extend(cswPrivate, options);
             } else {
                 cswPrivate.prefix = options;
             }
@@ -520,7 +520,7 @@
                 Delimiter: Csw.string(delimiter, '_')
             };
             if (Csw.isPlainObject(options)) {
-                $.extend(o, options);
+                Csw.extend(o, options);
             } else {
                 o.ID = Csw.string(options);
             }

@@ -285,7 +285,7 @@
                     filtJson: '',
                     onSuccess: null //function ($filterXml) {}
                 };
-                if (options) $.extend(o, options);
+                if (options) Csw.extend(o, options);
 
                 var jsonData = {
                     PropFiltJson: JSON.stringify(o.filtJson),
@@ -336,7 +336,7 @@
 
             // constructor
             (function () {
-                if (options) $.extend(cswPrivate, options);
+                if (options) Csw.extend(cswPrivate, options);
 
                 cswPrivate.table = cswPrivate.parent;
                 if(Csw.isNullOrEmpty(cswPrivate.table.controlName) || cswPrivate.table.controlName !== 'table') {

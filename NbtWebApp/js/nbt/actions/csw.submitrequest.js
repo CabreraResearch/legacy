@@ -23,7 +23,7 @@
             }
             Csw.tryExec(function () {
                 if (options) {
-                    $.extend(true, cswPrivate, options);
+                    Csw.extend(cswPrivate, options, true);
                 }
                 var submitRequest = function () {
                     Csw.ajax.post({

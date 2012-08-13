@@ -36,7 +36,7 @@
             limitMenuTo: '',
             readonly: false
         };
-        if (options) $.extend(o, options);
+        if (options) Csw.extend(o, options);
 
         var $MenuDiv = $(this);
 
@@ -114,7 +114,7 @@
 //                                            itemKey: childItem,
 //                                            itemJson: thisChild
 //                                        };
-//                                        $.extend(menuItemOpts, subMenuItemOpts);
+//                                        Csw.extend(menuItemOpts, subMenuItemOpts);
 //                                        Csw.handleMenuItem(menuItemOpts);
 //                                    }
 //                                }

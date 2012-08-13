@@ -578,6 +578,26 @@ namespace ChemSW.Nbt.Schema
 
         }//restoreViews()
 
+        /// <summary>
+        /// Restore all views matching ViewMode
+        /// </summary>
+        public List<CswNbtView> restoreAllViewsOfMode( NbtViewRenderingMode ViewMode )
+        {
+            List<CswNbtView> ReturnVal = new List<CswNbtView>();
+
+            CswTableSelect ViewSelect = makeCswTableSelect( "SchemaModTrnsctn_restoreViews_select", "node_views" );
+            CswCommaDelimitedString SelectCols = new CswCommaDelimitedString();
+            SelectCols.Add( "nodeviewid" );
+            DataTable ViewTable = ViewSelect.getTable( SelectCols, string.Empty, Int32.MinValue, " where viewmode='" + ViewMode + "'", false );
+            foreach( DataRow CurrentRow in ViewTable.Rows )
+            {
+                ReturnVal.Add( _CswNbtResources.ViewSelect.restoreView( new CswNbtViewId( CswConvert.ToInt32( CurrentRow["nodeviewid"] ) ) ) );
+            }
+
+            return ( ReturnVal );
+
+        }//restoreViews()
+
         public void deleteView( string ViewName, bool DeleteAllInstances )
         {
             List<CswNbtView> Views = restoreViews( ViewName );

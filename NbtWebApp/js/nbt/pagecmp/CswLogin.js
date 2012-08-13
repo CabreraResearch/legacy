@@ -15,7 +15,7 @@
                     onAuthenticate: null, //function (Username) {}
                     onFail: null // function (errormessage) {}
                 };
-                if (options) $.extend(o, options);
+                if (options) Csw.extend(o, options);
 
                 var thisSessionId = Csw.cookie.get(Csw.cookie.cookieNames.SessionId);
                 var $parent = $(this);
@@ -116,7 +116,7 @@
             onFail: null, // function (errormessage) {} 
             logoutpath: ''
         };
-        if (options) $.extend(o, options);
+        if (options) Csw.extend(o, options);
         Csw.clientSession.login(o);
     }; // login
 
