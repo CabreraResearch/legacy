@@ -100,6 +100,7 @@
             }
             try {
                 if (cswPrivate.isLogLevelSupported('error')) {
+                    msg.type = 'Error';
                     Csw.debug.loggly.error.error(Csw.serialize(msg));
                 }
             } catch(e) {}
@@ -153,6 +154,7 @@
             }
             try {
                 if (cswPrivate.isLogLevelSupported('performance')) {
+                    msg.type = 'Performance';
                     Csw.debug.loggly.perf.info(Csw.serialize(msg));
                 }
             } catch(e) {}
@@ -171,6 +173,7 @@
             }
             try {
                 if (cswPrivate.isLogLevelSupported('info')) {
+                    msg.type = 'Info';
                     Csw.debug.loggly.info.debug(Csw.serialize(msg));
                 }
             } catch (e) { }
@@ -253,6 +256,7 @@
             }
             try {
                 if (cswPrivate.isLogLevelSupported('warn')) {
+                    msg.type = 'Warning';
                     Csw.debug.loggly.warn.warn(Csw.serialize(msg));
                 }
             } catch (e) { }
