@@ -1,4 +1,5 @@
-﻿using ChemSW.Nbt.MetaData;
+﻿using System;
+using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 
 namespace ChemSW.Nbt.Schema
@@ -12,14 +13,17 @@ namespace ChemSW.Nbt.Schema
         {
             string reportSqlText = _getLab1DeficienciesReportSQLText();
 
-            CswNbtMetaDataObjectClass ReportOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.ReportClass );
-            foreach( CswNbtNode ReportNode in ReportOC.getNodes( true, false ) )
+            if( false == String.IsNullOrEmpty( reportSqlText ) )
             {
-                CswNbtObjClassReport NodeAsReport = ReportNode;
-                if( NodeAsReport.ReportName.Text == "Lab 1 Deficiencies" )
+                CswNbtMetaDataObjectClass ReportOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.ReportClass );
+                foreach( CswNbtNode ReportNode in ReportOC.getNodes( true, false ) )
                 {
-                    NodeAsReport.SQL.Text = reportSqlText;
-                    NodeAsReport.postChanges( false );
+                    CswNbtObjClassReport NodeAsReport = ReportNode;
+                    if( NodeAsReport.ReportName.Text == "Lab 1 Deficiencies" )
+                    {
+                        NodeAsReport.SQL.Text = reportSqlText;
+                        NodeAsReport.postChanges( false );
+                    }
                 }
             }
         }//Update()
@@ -49,25 +53,21 @@ namespace ChemSW.Nbt.Schema
                                     order by des.P{2}, des.P{0}, q.questionno";
             #endregion
 
-            #region NodeType Props
-
             CswNbtMetaDataNodeType LabSafetyChecklistDemoNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Lab Safety Checklist (demo)" );
-            CswNbtMetaDataNodeTypeProp InspectionDateNTP = LabSafetyChecklistDemoNT.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.InspectionDatePropertyName );
-            CswNbtMetaDataNodeTypeProp InspectionNameNTP = LabSafetyChecklistDemoNT.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.NamePropertyName );
-            CswNbtMetaDataNodeTypeProp LocationNTP = LabSafetyChecklistDemoNT.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.LocationPropertyName );
-            CswNbtMetaDataNodeTypeProp TargetNTP = LabSafetyChecklistDemoNT.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.TargetPropertyName );
+            if( LabSafetyChecklistDemoNT != null )
+            {
+                CswNbtMetaDataNodeTypeProp InspectionDateNTP = LabSafetyChecklistDemoNT.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.InspectionDatePropertyName );
+                CswNbtMetaDataNodeTypeProp InspectionNameNTP = LabSafetyChecklistDemoNT.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.NamePropertyName );
+                CswNbtMetaDataNodeTypeProp LocationNTP = LabSafetyChecklistDemoNT.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.LocationPropertyName );
+                CswNbtMetaDataNodeTypeProp TargetNTP = LabSafetyChecklistDemoNT.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.TargetPropertyName );
 
-            #endregion
-
-            reportSqlText = string.Format( sqlText,
-                 InspectionDateNTP.PropId.ToString(),//P4625
-                 InspectionNameNTP.PropId.ToString(),//P4615
-                 LocationNTP.PropId.ToString(),//P4621
-                 TargetNTP.PropId.ToString()//P4614_labsafetydemo_ntfk
-                //inspectionTargetDescription.ObjectClassPropId.ToString(),//P4621
-                //inspectionDesignDueDate.ObjectClassPropId.ToString(),//P4621
-                //inspectionDesignStatus.ObjectClassPropId.ToString(),//P4625
-                );
+                reportSqlText = string.Format( sqlText,
+                     InspectionDateNTP.PropId.ToString(),//P4625
+                     InspectionNameNTP.PropId.ToString(),//P4615
+                     LocationNTP.PropId.ToString(),//P4621
+                     TargetNTP.PropId.ToString()//P4614_labsafetydemo_ntfk
+                    );
+            }
 
             return reportSqlText;
         }
