@@ -18,7 +18,10 @@
         expiretime: '',
         expiredInterval: '',
         isAuthenticated: false,
-        logglyInput: '75c30bba-4b60-496c-a348-7eb413c01037'
+        logglyInput: '75c30bba-4b60-496c-a348-7eb413c01037',
+        logglyLevel: 'error',
+        server: 'localhost',
+        debug: false
     };
 
     cswPrivate.checkExpired = function () {
@@ -64,9 +67,67 @@
     Csw.clientSession = Csw.clientSession ||
         Csw.register('clientSession', Csw.makeNameSpace());
 
-    Csw.currentAccessId = Csw.currentAccessId ||
-        Csw.clientSession.register('currentAccessId', function() {
-            return Csw.cookie.get(Csw.cookie.cookieNames.CustomerId);
+    Csw.clientSession.currentAccessId = Csw.clientSession.currentAccessId ||
+        Csw.clientSession.register('currentAccessId', function () {
+            return Csw.string(Csw.cookie.get(Csw.cookie.cookieNames.CustomerId), cswPrivate.AccessId);
+        });
+
+    Csw.clientSession.currentServer = Csw.clientSession.currentServer ||
+        Csw.clientSession.register('currentServer', function () {
+            return Csw.string(cswPrivate.server);
+        });
+
+    Csw.clientSession.currentUserName = Csw.clientSession.currentUserName ||
+        Csw.clientSession.register('currentUserName', function() {
+            return Csw.string(Csw.cookie.get(Csw.cookie.cookieNames.Username), cswPrivate.UserName);
+        });
+
+    Csw.clientSession.currentSessionId = Csw.clientSession.currentSessionId ||
+        Csw.clientSession.register('currentSessionId', function () {
+            return Csw.string(Csw.cookie.get(Csw.cookie.cookieNames.SessionId));
+        });
+
+    Csw.clientSession.enableDebug = Csw.clientSession.enableDebug ||
+        Csw.clientSession.register('enableDebug', function () {
+            cswPrivate.debug = true;
+        });
+
+    Csw.clientSession.isDebug = Csw.clientSession.isDebug ||
+        Csw.clientSession.register('isDebug', function () {
+            return cswPrivate.debug;
+        });
+
+    Csw.clientSession.setLogglyInput = Csw.clientSession.setLogglyInput ||
+        Csw.clientSession.register('setLogglyInput', function (logglyInput, logglyLevel, server) {
+            if (false === Csw.isNullOrEmpty(logglyInput) && logglyInput.length == 36) {
+                cswPrivate.logglyInput = logglyInput;
+            }
+            if (false === Csw.isNullOrEmpty(logglyLevel) && Csw.contains(Csw.debug.logLevels(), logglyLevel)) {
+                cswPrivate.logglyLevel = logglyLevel;
+            }
+            if (false === Csw.isNullOrEmpty(server)) {
+                cswPrivate.server = server;
+            }
+        });
+
+    Csw.clientSession.getLogglyInput = Csw.clientSession.getLogglyInput ||
+        Csw.clientSession.register('getLogglyInput', function () {
+            var ret = '75c30bba-4b60-496c-a348-7eb413c01037';
+            if (false === Csw.isNullOrEmpty(cswPrivate.logglyInput) &&
+                cswPrivate.logglyInput.length == 36) {
+                ret = cswPrivate.logglyInput;
+            }
+            return ret;
+        });
+
+    Csw.clientSession.getLogglyLevel = Csw.clientSession.getLogglyLevel ||
+        Csw.clientSession.register('getLogglyLevel', function () {
+            var ret = 'error';
+            if (false === Csw.isNullOrEmpty(cswPrivate.logglyLevel) &&
+                Csw.contains(Csw.debug.logLevels(), cswPrivate.logglyLevel)) {
+                ret = cswPrivate.logglyLevel;
+            }
+            return ret;
         });
 
     Csw.clientSession.finishLogout = Csw.clientSession.finishLogout ||
@@ -261,4 +322,4 @@
             });
         });
 
-} ());
+}());

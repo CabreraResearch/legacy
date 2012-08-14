@@ -1,3 +1,10 @@
+<script type="text/javascript">
+    var scr = document.createElement("script");
+    var host = (("https:" == document.location.protocol) ? "https://d3eyf2cx8mbems.cloudfront.net" : "http://d3eyf2cx8mbems.cloudfront.net");
+    scr.type = "text/javascript";
+    scr.src = host + "/js/loggly-0.1.0.js";
+    document.documentElement.firstChild.appendChild(scr);
+</script>
 <!--[if lte IE 8]>
  <script type="text/javascript" 
      src="//ajax.googleapis.com/ajax/libs/chrome-frame/1/CFInstall.min.js"></script>
@@ -86,7 +93,7 @@ window.internetExplorerVersionNo = 9;
     // from: http://stackoverflow.com/questions/6435833/how-to-scope-the-reset-css-so-that-is-applied-to-ext-components-using-scopereset
     // Here we define Ext for the first time
     window.Ext = {
-        buildSettings:{
+        buildSettings: {
             "scopeResetCSS": true  // Thanks, but I'll do my own scoping please
         }
     };
@@ -98,7 +105,7 @@ window.internetExplorerVersionNo = 9;
 
 <script language="javascript">
 
-    window.Ext.Loader.setConfig({enabled: true});
+    window.Ext.Loader.setConfig({ enabled: true });
 
     window.Ext.Loader.setPath('Ext', 'js/thirdparty/extjs-4.1.0');
     window.Ext.state.Manager.setProvider(new Ext.state.LocalStorageProvider());
@@ -155,15 +162,15 @@ window.internetExplorerVersionNo = 9;
 <!-- end ExtJS -->
 
 <script type="text/javascript">
-    
-        if (undefined === window.JSON || 
-            null === window.JSON || 
-            false === window.JSON.hasOwnProperty('parse') || 
-            false === window.JSON.hasOwnProperty('stringify')) {
 
-               document.write('<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/json2/20110223/json2.js"><\/script>');
-               /* document.write('<script type="text/javascript" src="Scripts/json2.min.js"><\/script>'); */
-        }
+    if (undefined === window.JSON ||
+        null === window.JSON ||
+        false === window.JSON.hasOwnProperty('parse') ||
+        false === window.JSON.hasOwnProperty('stringify')) {
+
+        document.write('<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/json2/20110223/json2.js"><\/script>');
+        /* document.write('<script type="text/javascript" src="Scripts/json2.min.js"><\/script>'); */
+    }
 
 
 </script>
