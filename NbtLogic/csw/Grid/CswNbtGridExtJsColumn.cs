@@ -55,7 +55,7 @@ namespace ChemSW.Nbt.Grid.ExtJs
         public JObject ToJson()
         {
             JObject Jcol = new JObject();
-            Jcol["id"] = dataIndex.ToString();
+            Jcol["id"] = dataIndex.safeString();
             Jcol["header"] = header;
             Jcol["dataIndex"] = dataIndex.ToString();
             if( width > 0 )
