@@ -12,6 +12,7 @@ using ChemSW.Config;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
+using ChemSW.Log;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.Grid;
 using ChemSW.Nbt.Logic;
@@ -252,6 +253,14 @@ namespace ChemSW.Nbt.WebServices
             if( JObj != null )
             {
                 JObj["AuthenticationStatus"] = AuthenticationStatusIn.ToString();
+                JObj["LogglyInput"] = CswResources.CswLogglyVenue;
+                string LogLevel = _CswNbtResources.ConfigVbls.getConfigVariableValue( CswConfigurationVariables.ConfigurationVariableNames.Logging_Level );
+                if( string.IsNullOrEmpty( LogLevel ) )
+                {
+                    LogLevel = LogLevels.Error;
+                }
+                JObj["LogLevel"] = LogLevel;
+
                 if( false == ForMobile )
                 {
                     if( _CswSessionResources != null &&
