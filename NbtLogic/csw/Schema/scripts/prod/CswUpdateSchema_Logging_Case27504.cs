@@ -1,8 +1,6 @@
 ﻿
 using ChemSW.Config;
 using ChemSW.Log;
-using ChemSW.Nbt.MetaData;
-using ChemSW.Nbt.ObjClasses;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -13,9 +11,7 @@ namespace ChemSW.Nbt.Schema
     {
         public override void update()
         {
-
-            _CswNbtSchemaModTrnsctn.createConfigurationVariable( CswConfigurationVariables.ConfigurationVariableNames.Logging_Level, "Log level verbosity. Possible values: Info, Performance, Warn, Error, None.", LogLevels.Error, IsSystem: false );
-
+            _CswNbtSchemaModTrnsctn.createConfigurationVariable( CswConfigurationVariables.ConfigurationVariableNames.Logging_Level, "Log level verbosity. Possible values: Info, Performance, Warn, Error, None.", LogLevels.None, IsSystem: false );
         }//Update()
 
     }//class CswUpdateSchema_Logging_Case27504
