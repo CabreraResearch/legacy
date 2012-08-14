@@ -30,7 +30,6 @@ namespace ChemSW.Nbt.Schema
                 {
                     CswNbtView SizeView = _CswNbtSchemaModTrnsctn.restoreView( SizeNtp.ViewId );
                     SizeView.Root.ChildRelationships.Clear();
-                    //SizeView.makeNew( "CswNbtNodePropSize", NbtViewVisibility.Property );
                     CswNbtViewRelationship Root = SizeView.AddViewRelationship( SizeNt, true );
                     SizeView.AddViewPropertyAndFilter(
                         ParentViewRelationship: Root,
