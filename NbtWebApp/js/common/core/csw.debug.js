@@ -38,7 +38,7 @@
         cswPublic.loggly.error = new window.loggly({ url: url, level: 'error' });
     });
 
-    cswPrivate.initLoggly = function() {
+    $(document).ready(function () {
         (function() {
             var key = Csw.clientSession.getLogglyInput();
             var host = ("https:" == document.location.protocol) ? "https://logs.loggly.com" : 'http://logs.loggly.com';
@@ -55,10 +55,9 @@
                 //Swallow
             }
         }());
-    };
-    Csw.subscribe(Csw.enums.events.domready, cswPrivate.initLoggly);
+    });
 
-    cswPrivate.isLogLevelSupported = function(requestLevel) {
+    cswPrivate.isLogLevelSupported = function (requestLevel) {
         var maxLevel = Csw.clientSession.getLogglyLevel();
         return cswPrivate.logLevels.indexOf(maxLevel) <= cswPrivate.logLevels.indexOf(requestLevel);
     };
