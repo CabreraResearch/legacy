@@ -17,7 +17,8 @@
         expiretimeInterval: '',
         expiretime: '',
         expiredInterval: '',
-        isAuthenticated: false
+        isAuthenticated: false,
+        logglyInput: '75c30bba-4b60-496c-a348-7eb413c01037'
     };
 
     cswPrivate.checkExpired = function () {
