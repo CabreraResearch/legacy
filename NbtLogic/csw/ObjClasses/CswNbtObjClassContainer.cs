@@ -2,7 +2,6 @@ using System;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.Actions;
-using ChemSW.Nbt.Batch;
 using ChemSW.Nbt.csw.Conversion;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
@@ -298,8 +297,7 @@ namespace ChemSW.Nbt.ObjClasses
                 {
                     this.Quantity.Quantity = -ContDispTransNode.QuantityDispensed.Quantity;
                     this.Quantity.UnitId = ContDispTransNode.QuantityDispensed.UnitId;
-                    CswNbtBatchOpMultiDelete op = new CswNbtBatchOpMultiDelete( _CswNbtResources );
-                    CswNbtObjClassBatchOp BatchNode = op.makeBatchOp( ContDispTransNode.NodeId );
+                    ContDispTransNode.Node.delete( OverridePermissions: true );
                 }
                 this.Disposed.Checked = Tristate.False;
                 _setDisposedReadOnly( false );
