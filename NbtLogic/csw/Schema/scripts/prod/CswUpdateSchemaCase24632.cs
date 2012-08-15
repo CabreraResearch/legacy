@@ -28,9 +28,7 @@ namespace ChemSW.Nbt.Schema
                 PropName = CswNbtObjClassRegulatoryList.CASNumbersPropertyName,
                 FieldType = CswNbtMetaDataFieldType.NbtFieldType.Memo,
                 IsFk = false,
-                IsRequired = true,
-                ValuePropType = memoFT.FieldType,
-                ValuePropId = memoFT.FieldTypeId
+                IsRequired = true
             } );
 
             CswNbtMetaDataObjectClassProp nameOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( regulatoryListOC )
@@ -38,15 +36,15 @@ namespace ChemSW.Nbt.Schema
                 PropName = CswNbtObjClassRegulatoryList.NamePropertyName,
                 FieldType = CswNbtMetaDataFieldType.NbtFieldType.Text,
                 IsFk = false,
-                IsRequired = true,
-                ValuePropType = textFT.FieldType,
-                ValuePropId = textFT.FieldTypeId
+                IsRequired = true
             } );
             #endregion
 
             #region CREATE THE REGULATORY LIST NODETYPE
             CswNbtMetaDataNodeType regulatoryListNT = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( regulatoryListOC.ObjectClassId, "Regulatory List", "Materials" );
             regulatoryListNT.setNameTemplateText( CswNbtMetaData.MakeTemplateEntry( CswNbtObjClassRegulatoryList.NamePropertyName ) ); //set display name
+            CswNbtMetaDataNodeTypeProp casNosNTP = regulatoryListNT.getNodeTypePropByObjectClassProp( CswNbtObjClassRegulatoryList.CASNumbersPropertyName );
+            casNosNTP.HelpText = "The CASNos property should be a comma delimited set of CASNos in this regulatory list. Example: \"CASNo1,CASNo2,CASNo3\"";
             #endregion
 
         }//Update()
