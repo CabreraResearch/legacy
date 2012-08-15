@@ -140,15 +140,15 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Object class specific properties
 
-        public CswNbtNodePropText Title { get { return _CswNbtNode.Properties[TitlePropertyName].AsText; } }
-        public CswNbtNodePropDateTime AcquiredDate { get { return _CswNbtNode.Properties[AcquiredDatePropertyName].AsDateTime; } }
-        public CswNbtNodePropDateTime ExpirationDate { get { return _CswNbtNode.Properties[ExpirationDatePropertyName].AsDateTime; } }
-        public CswNbtNodePropBlob File { get { return _CswNbtNode.Properties[FilePropertyName].AsBlob; } }
-        public CswNbtNodePropLink Link { get { return _CswNbtNode.Properties[LinkPropertyName].AsLink; } }
-        public CswNbtNodePropList FileType { get { return _CswNbtNode.Properties[FileTypePropertyName].AsList; } }
-        public CswNbtNodePropList DocumentClass { get { return _CswNbtNode.Properties[DocumentClassPropertyName].AsList; } }
-        public CswNbtNodePropRelationship Owner { get { return _CswNbtNode.Properties[OwnerPropertyName].AsRelationship; } }
-        public CswNbtNodePropLogical Archived { get { return _CswNbtNode.Properties[ArchivedPropertyName].AsLogical; } }
+        public CswNbtNodePropText Title { get { return _CswNbtNode.Properties[TitlePropertyName]; } }
+        public CswNbtNodePropDateTime AcquiredDate { get { return _CswNbtNode.Properties[AcquiredDatePropertyName]; } }
+        public CswNbtNodePropDateTime ExpirationDate { get { return _CswNbtNode.Properties[ExpirationDatePropertyName]; } }
+        public CswNbtNodePropBlob File { get { return _CswNbtNode.Properties[FilePropertyName]; } }
+        public CswNbtNodePropLink Link { get { return _CswNbtNode.Properties[LinkPropertyName]; } }
+        public CswNbtNodePropList FileType { get { return _CswNbtNode.Properties[FileTypePropertyName]; } }
+        public CswNbtNodePropList DocumentClass { get { return _CswNbtNode.Properties[DocumentClassPropertyName]; } }
+        public CswNbtNodePropRelationship Owner { get { return _CswNbtNode.Properties[OwnerPropertyName]; } }
+        public CswNbtNodePropLogical Archived { get { return _CswNbtNode.Properties[ArchivedPropertyName]; } }
 
         #endregion
     }//CswNbtObjClassDocument
