@@ -80,6 +80,7 @@
                 globalAjaxStart: 'globalAjaxStart',
                 globalAjaxStop: 'globalAjaxStop'
             },
+            domready: 'DOM_Ready',
             Submit_Request: 'Submit_Request',
             objectClassButtonClick: 'objectClassButtonClick',
             afterObjectClassButtonClick: 'afterObjectClassButtonClick',
