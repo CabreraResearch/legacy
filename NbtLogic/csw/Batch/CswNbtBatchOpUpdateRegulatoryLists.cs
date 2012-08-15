@@ -27,7 +27,7 @@ namespace ChemSW.Nbt.Batch
             if( BatchNode != null && BatchNode.OpNameValue == NbtBatchOpName.UpdateRegulatoryLists )
             {
                 RegulatoryListsBatchData BatchData = BatchNode.BatchData.Text;
-                ret = ( BatchData.CASNosProcessed / BatchData.totalCASNos ) * 100;
+                ret = ( ( BatchData.CASNos.Count - BatchData.totalCASNos ) / BatchData.totalCASNos ) * 100;
             }
             return ret;
         } // getPercentDone()
@@ -61,20 +61,23 @@ namespace ChemSW.Nbt.Batch
 
                     if( BatchData.MatchingMaterialIDs.Count > 0 ) //update materials
                     {
-                        //update the current material
                         CswPrimaryKey currentMaterialID = new CswPrimaryKey();
                         currentMaterialID.FromString( BatchData.MatchingMaterialIDs[0] );
                         BatchData.MatchingMaterialIDs.RemoveAt( 0 );
                         CswNbtNode materialNode = _CswNbtResources.Nodes.GetNode( currentMaterialID );
                         CswNbtObjClassMaterial nodeAsMaterial = (CswNbtObjClassMaterial) materialNode;
-                        nodeAsMaterial.RegulatoryLists.StaticText += "," + BatchData.ListName; //update the node
-                        nodeAsMaterial.postChanges( false );
+                        if( false == _materialHasList( BatchData.ListName, nodeAsMaterial ) )
+                        {
+                            //update the current material
+                            nodeAsMaterial.RegulatoryLists.StaticText += "," + BatchData.ListName; //update the node
+                            nodeAsMaterial.postChanges( false );
 
-                        //get materials using the current material as a component
-                        _getParentMaterials( currentMaterialID.PrimaryKey.ToString(), BatchData.MatchingMaterialIDs );
+                            //get materials using the current material as a component
+                            _getParentMaterials( currentMaterialID.PrimaryKey.ToString(), BatchData.MatchingMaterialIDs );
 
-                        //save the updated batch data
-                        BatchNode.appendToLog( "Updated " + currentMaterialID.ToString() );
+                            //save the updated batch data
+                            BatchNode.appendToLog( "Updated " + currentMaterialID.ToString() );
+                        }
                     }
                     else if( BatchData.CASNos.Count > 0 ) //we have more CASNos to process
                     {
@@ -91,11 +94,7 @@ namespace ChemSW.Nbt.Batch
                         for( int i = 0; i < nodeCount; i++ )
                         {
                             materialsByCASNoTree.goToNthChild( i );
-                            CswNbtObjClassMaterial nodeAsMaterial = (CswNbtObjClassMaterial) materialsByCASNoTree.getNodeForCurrentPosition();
-                            if( false == _materialHasList( BatchData.ListName, nodeAsMaterial ) )
-                            {
-                                BatchData.MatchingMaterialIDs.Add( nodeAsMaterial.NodeId.ToString() );
-                            }
+                            BatchData.MatchingMaterialIDs.Add( materialsByCASNoTree.getNodeIdForCurrentPosition().ToString() );
                             materialsByCASNoTree.goToParentNode();
                         }
 
@@ -107,7 +106,6 @@ namespace ChemSW.Nbt.Batch
                         BatchNode.finish();
                     }
                     BatchNode.PercentDone.Value = getPercentDone( BatchNode );
-                    BatchData.CASNosProcessed = BatchData.CASNosProcessed + 1;
                     BatchNode.BatchData.Text = BatchData.ToString();
                     BatchNode.postChanges( false );
                 }
@@ -138,13 +136,12 @@ namespace ChemSW.Nbt.Batch
                 CASNosProcessed = 0;
             }
 
-            private RegulatoryListsBatchData( CswCommaDelimitedString CASNos, string listName, CswCommaDelimitedString MatchingMaterialIDs, string CurrentCASNo, double processed, double total )
+            private RegulatoryListsBatchData( CswCommaDelimitedString CASNos, string listName, CswCommaDelimitedString MatchingMaterialIDs, string CurrentCASNo, double total )
             {
                 this.ListName = listName;
                 this.CASNos = CASNos;
                 this.CurrentCASNo = CurrentCASNo;
                 this.MatchingMaterialIDs = MatchingMaterialIDs;
-                this.CASNosProcessed = processed;
                 this.totalCASNos = total;
             }
 
@@ -161,10 +158,9 @@ namespace ChemSW.Nbt.Batch
                 CswCommaDelimitedString MatchingMaterialIDs = new CswCommaDelimitedString();
                 MatchingMaterialIDs.FromString( Obj["MatchingMaterialIDs"].ToString() );
 
-                double CASNosProcessed = CswConvert.ToDouble( Obj["CASNosProcessed"] );
                 double total = CswConvert.ToDouble( Obj["totalCASNos"] );
 
-                return new RegulatoryListsBatchData( CASNos, listName, MatchingMaterialIDs, currentCASNo, CASNosProcessed, total );
+                return new RegulatoryListsBatchData( CASNos, listName, MatchingMaterialIDs, currentCASNo, total );
             }
 
             public static implicit operator string( RegulatoryListsBatchData item )
@@ -180,7 +176,6 @@ namespace ChemSW.Nbt.Batch
                 Obj["MatchingMaterialIDs"] = MatchingMaterialIDs.ToString();
                 Obj["CurrentCASNo"] = CurrentCASNo;
                 Obj["totalCASNos"] = totalCASNos.ToString();
-                Obj["CASNosProcessed"] = CASNosProcessed.ToString();
                 return Obj.ToString();
             }
         } // class InventoryLevelsBatchData
