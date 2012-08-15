@@ -8,16 +8,16 @@ namespace ChemSW.Nbt.ObjClasses
 {
     public class CswNbtObjClassDocument : CswNbtObjClass
     {
-        public static string TitlePropertyName { get { return "Title"; } }
-        public static string AcquiredDatePropertyName { get { return "Acquired Date"; } }
-        public static string ExpirationDatePropertyName { get { return "Expiration Date"; } }
-        public static string FilePropertyName { get { return "File"; } }
-        public static string LinkPropertyName { get { return "Link "; } }
-        public static string DocumentClassPropertyName { get { return "Document Class"; } }
-        public static string FileTypePropertyName { get { return "File Type"; } }
-        //public static string OpenPropertyName { get { return "Open"; } }
-        public static string OwnerPropertyName { get { return "Owner"; } }
-        public static string ArchivedPropertyName { get { return "Archived"; } }
+        public const string TitlePropertyName ="Title"; 
+        public const string AcquiredDatePropertyName ="Acquired Date"; 
+        public const string ExpirationDatePropertyName ="Expiration Date"; 
+        public const string FilePropertyName ="File"; 
+        public const string LinkPropertyName ="Link "; 
+        public const string DocumentClassPropertyName ="Document Class"; 
+        public const string FileTypePropertyName ="File Type"; 
+        //public static string OpenPropertyName ="Open"; 
+        public const string OwnerPropertyName ="Owner"; 
+        public const string ArchivedPropertyName ="Archived"; 
 
         public static CswCommaDelimitedString AllowedFileTypes = new CswCommaDelimitedString { "File", "Link" };
 
