@@ -218,7 +218,7 @@ namespace ChemSW.Nbt.PropTypes
             Ret.AddViewPropertyAndFilter( LocationLevel1, LocationLocationOCP, SubFieldName: CswNbtSubField.SubFieldName.NodeID, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Null );
             if( false == IsLocationNode )
             {
-                Ret.AddViewPropertyAndFilter( LocationLevel1, LocationAllowInventoryOCP, CswNbtPropFilterSql.FilterResultMode.Disabled, Value: Tristate.True.ToString() );
+                Ret.AddViewPropertyAndFilter( LocationLevel1, LocationAllowInventoryOCP, CswNbtPropFilterSql.PropertyFilterConjunction.And, CswNbtPropFilterSql.FilterResultMode.Disabled, Value: Tristate.True.ToString() );
             }
 
             Int32 MaxDepth = 5;
@@ -235,7 +235,7 @@ namespace ChemSW.Nbt.PropTypes
                 }
                 if( false == IsLocationNode )
                 {
-                    Ret.AddViewPropertyAndFilter( LocationLevelX, LocationAllowInventoryOCP, CswNbtPropFilterSql.FilterResultMode.Disabled, Value: Tristate.True.ToString() );
+                    Ret.AddViewPropertyAndFilter( LocationLevelX, LocationAllowInventoryOCP, CswNbtPropFilterSql.PropertyFilterConjunction.And, CswNbtPropFilterSql.FilterResultMode.Disabled, Value: Tristate.True.ToString() );
                 }
 
                 PriorLocationLevel = LocationLevelX;

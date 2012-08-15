@@ -20,11 +20,13 @@ namespace ChemSW.Nbt
                                          CswNbtSubField.SubFieldName inSubFieldName,
                                          CswNbtPropFilterSql.PropertyFilterMode inFilterMode,
                                          string inValue,
+                                         CswNbtPropFilterSql.PropertyFilterConjunction PropertyFilterConjunction,
                                          bool inCaseSensitive = false,
                                          bool inShowAtRuntime = false )
             : base( CswNbtResources, View )
         {
-            _constructor( CswNbtResources, View, inSubFieldName, inFilterMode, inValue, CswNbtPropFilterSql.FilterResultMode.Hide, inCaseSensitive, inShowAtRuntime );
+            _constructor( CswNbtResources, View, inSubFieldName, inFilterMode, inValue, CswNbtPropFilterSql.FilterResultMode.Hide,
+                          inCaseSensitive, inShowAtRuntime, PropertyFilterConjunction );
         }
 
         /// <summary>
@@ -35,20 +37,22 @@ namespace ChemSW.Nbt
                                          CswNbtPropFilterSql.PropertyFilterMode inFilterMode,
                                          string inValue,
                                          CswNbtPropFilterSql.FilterResultMode inResultMode,
+                                         CswNbtPropFilterSql.PropertyFilterConjunction PropertyFilterConjunction,
                                          bool inCaseSensitive = false,
                                          bool inShowAtRuntime = false )
             : base( CswNbtResources, View )
         {
-            _constructor( CswNbtResources, View, inSubFieldName, inFilterMode, inValue, inResultMode, inCaseSensitive, inShowAtRuntime );
+            _constructor( CswNbtResources, View, inSubFieldName, inFilterMode, inValue, inResultMode, inCaseSensitive, inShowAtRuntime, PropertyFilterConjunction );
         }
 
         private void _constructor( CswNbtResources CswNbtResources, CswNbtView View,
-                                     CswNbtSubField.SubFieldName inSubFieldName,
-                                     CswNbtPropFilterSql.PropertyFilterMode inFilterMode,
-                                     string inValue,
-                                     CswNbtPropFilterSql.FilterResultMode inResultMode,
-                                     bool inCaseSensitive,
-                                     bool inShowAtRuntime )
+                                   CswNbtSubField.SubFieldName inSubFieldName,
+                                   CswNbtPropFilterSql.PropertyFilterMode inFilterMode,
+                                   string inValue,
+                                   CswNbtPropFilterSql.FilterResultMode inResultMode,
+                                   bool inCaseSensitive,
+                                   bool inShowAtRuntime,
+                                   CswNbtPropFilterSql.PropertyFilterConjunction inPropertyFilterConjunction )
         {
             SubfieldName = inSubFieldName;
             FilterMode = inFilterMode;
@@ -56,6 +60,7 @@ namespace ChemSW.Nbt
             CaseSensitive = inCaseSensitive;
             ShowAtRuntime = inShowAtRuntime;
             ResultMode = inResultMode;
+            Conjunction = inPropertyFilterConjunction;
         }
 
         /// <summary>
@@ -68,7 +73,7 @@ namespace ChemSW.Nbt
             {
                 if( FilterString[1] != string.Empty )
                 {
-                    Conjunction = (CswNbtPropFilterSql.PropertyFilterConjunction) Enum.Parse( typeof( CswNbtPropFilterSql.PropertyFilterConjunction ), FilterString[1].ToString(), true );
+                    Conjunction = (CswNbtPropFilterSql.PropertyFilterConjunction) FilterString[1].ToString();
                 }
                 if( FilterString[2] != string.Empty )
                 {
@@ -139,6 +144,10 @@ namespace ChemSW.Nbt
                 {
                     ResultMode = (CswNbtPropFilterSql.FilterResultMode) FilterNode.Attributes["resultmode"].Value;
                 }
+                if( FilterNode.Attributes["conjunction"] != null )
+                {
+                    Conjunction = (CswNbtPropFilterSql.PropertyFilterConjunction) FilterNode.Attributes["conjunction"].Value;
+                }
 
                 _validate();
 
@@ -193,6 +202,12 @@ namespace ChemSW.Nbt
                 if( !string.IsNullOrEmpty( _ResultMode ) )
                 {
                     ResultMode = (CswNbtPropFilterSql.FilterResultMode) _ResultMode;
+                }
+
+                string _Conjunction = CswConvert.ToString( FilterObj["conjunction"] );
+                if( !string.IsNullOrEmpty( _Conjunction ) )
+                {
+                    Conjunction = (CswNbtPropFilterSql.PropertyFilterConjunction) _Conjunction;
                 }
 
                 _validate();
@@ -328,19 +343,24 @@ namespace ChemSW.Nbt
             ResultModeAttribute.Value = ResultMode.ToString();
             PropFilterNode.Attributes.Append( ResultModeAttribute );
 
+            XmlAttribute ConjunctionAttribute = XmlDoc.CreateAttribute( "conjunction" );
+            ConjunctionAttribute.Value = Conjunction.ToString();
+            PropFilterNode.Attributes.Append( ConjunctionAttribute );
+
             return PropFilterNode;
         }
 
         public XElement ToXElement()
         {
             XElement PropFilter = new XElement( NbtViewXmlNodeName.Filter.ToString(),
-                                     new XAttribute( "value", Value ),
-                                     new XAttribute( "filtermode", FilterMode.ToString() ),
-                                     new XAttribute( "casesensitive", CaseSensitive.ToString() ),
-                                     new XAttribute( "showatruntime", ShowAtRuntime.ToString() ),
-                                     new XAttribute( "arbitraryid", ArbitraryId ),
-                                     new XAttribute( "subfieldname", SubfieldName.ToString() ),
-                                     new XAttribute( "resultmode", ResultMode.ToString() )
+                                                new XAttribute( "value", Value ),
+                                                new XAttribute( "filtermode", FilterMode.ToString() ),
+                                                new XAttribute( "casesensitive", CaseSensitive.ToString() ),
+                                                new XAttribute( "showatruntime", ShowAtRuntime.ToString() ),
+                                                new XAttribute( "arbitraryid", ArbitraryId ),
+                                                new XAttribute( "subfieldname", SubfieldName.ToString() ),
+                                                new XAttribute( "resultmode", ResultMode.ToString() ),
+                                                new XAttribute( "conjunction", Conjunction.ToString() )
                                   );
             return PropFilter;
         }
@@ -348,18 +368,16 @@ namespace ChemSW.Nbt
         public JProperty ToJson()
         {
             JProperty PropFilter = new JProperty( NbtViewXmlNodeName.Filter.ToString() + "_" + ArbitraryId,
-                                            new JObject(
-                                                new JProperty( "nodename", NbtViewXmlNodeName.Filter.ToString().ToLower() ),
-                                                new JProperty( "value", Value ),
-                                                new JProperty( "filtermode", FilterMode.ToString() ),
-                                                new JProperty( "casesensitive", CaseSensitive.ToString() ),
-                                                new JProperty( "showatruntime", ShowAtRuntime.ToString() ),
-                                                new JProperty( "arbitraryid", ArbitraryId ),
-                                                new JProperty( "subfieldname", SubfieldName.ToString() ),
-                                                new JProperty( "resultmode", ResultMode.ToString() )
-                                                )
-
-                );
+                                                  new JObject(  new JProperty( "nodename", NbtViewXmlNodeName.Filter.ToString().ToLower() ),
+                                                                new JProperty( "value", Value ),
+                                                                new JProperty( "filtermode", FilterMode.ToString() ),
+                                                                new JProperty( "casesensitive", CaseSensitive.ToString() ),
+                                                                new JProperty( "showatruntime", ShowAtRuntime.ToString() ),
+                                                                new JProperty( "arbitraryid", ArbitraryId ),
+                                                                new JProperty( "subfieldname", SubfieldName.ToString() ),
+                                                                new JProperty( "resultmode", ResultMode.ToString() ),
+                                                                new JProperty( "conjunction", Conjunction.ToString() )
+                                                                ));
             return PropFilter;
         }
 
@@ -388,7 +406,7 @@ namespace ChemSW.Nbt
         {
             get
             {
-                return _SubfieldName + " " + FilterMode.ToString() + " " + Value;
+                return Conjunction + " " + _SubfieldName + " " + FilterMode.ToString() + " " + Value;
             }
         }
 

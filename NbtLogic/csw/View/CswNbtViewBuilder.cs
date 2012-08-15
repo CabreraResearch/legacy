@@ -180,6 +180,7 @@ namespace ChemSW.Nbt.Logic
                     FiltArbitraryId = Filt.ArbitraryId;
                 }
                 ParentObj["filtarbitraryid"] = FiltArbitraryId;
+                ParentObj["defaultconjunction"] = CswNbtPropFilterSql.PropertyFilterConjunction.And.ToString();
                 ParentObj["defaultsubfield"] = ViewBuilderProp.FieldTypeRule.SubFields.Default.Name.ToString();
                 ParentObj["defaultfiltermode"] = ViewBuilderProp.FieldTypeRule.SubFields.Default.DefaultFilterMode.ToString();
 
@@ -247,6 +248,7 @@ namespace ChemSW.Nbt.Logic
             ParentObj[FiltId]["value"] = Filter.Value;
             ParentObj[FiltId]["filtermode"] = Filter.FilterMode.ToString();
             ParentObj[FiltId]["casesensitive"] = Filter.CaseSensitive;
+            ParentObj[FiltId]["conjunction"] = Filter.Conjunction.ToString();
         }
 
         #endregion Private Assembly Methods
@@ -449,18 +451,16 @@ namespace ChemSW.Nbt.Logic
 
             if( ViewPropFilt != null )
             {
+                CswNbtPropFilterSql.PropertyFilterConjunction Conjunction = (CswNbtPropFilterSql.PropertyFilterConjunction) CswConvert.ToString( FilterProp["conjunction"] );
                 CswNbtSubField.SubFieldName FieldName = (CswNbtSubField.SubFieldName) CswConvert.ToString( FilterProp["subfieldname"] );
-                //Enum.TryParse( CswConvert.ToString( FilterProp["subfield"] ), true, out FieldName );
-
                 CswNbtPropFilterSql.PropertyFilterMode FilterMode = (CswNbtPropFilterSql.PropertyFilterMode) CswConvert.ToString( FilterProp["filter"] );
-                //Enum.TryParse( CswConvert.ToString( FilterProp["filter"] ), true, out FilterMode );
-
                 string FilterValue = CswConvert.ToString( FilterProp["filtervalue"] );
 
                 if( FieldName != CswNbtSubField.SubFieldName.Unknown &&
                     FilterMode != CswNbtPropFilterSql.PropertyFilterMode.Unknown )
                 {
                     ViewPropFilt.FilterMode = FilterMode;
+                    ViewPropFilt.Conjunction = Conjunction;
                     ViewPropFilt.SubfieldName = FieldName;
                     ViewPropFilt.Value = FilterValue;
                     _addVbPropFilter( Ret, ViewPropFilt );
