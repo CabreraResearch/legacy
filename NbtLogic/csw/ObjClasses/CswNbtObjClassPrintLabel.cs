@@ -1,15 +1,14 @@
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
-using Newtonsoft.Json.Linq;
 
 
 namespace ChemSW.Nbt.ObjClasses
 {
     public class CswNbtObjClassPrintLabel : CswNbtObjClass
     {
-        public const string EplTextPropertyName = "epltext"; 
-        public const string ParamsPropertyName = "params"; 
-        public const string NodeTypesPropertyName = "NodeTypes"; 
+        public const string EplTextPropertyName = "epltext";
+        public const string ParamsPropertyName = "params";
+        public const string NodeTypesPropertyName = "NodeTypes";
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
 
@@ -58,9 +57,9 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault.afterWriteNode();
         }//afterWriteNode()
 
-        public override void beforeDeleteNode(bool DeleteAllRequiredRelatedNodes = false)
+        public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false )
         {
-            _CswNbtObjClassDefault.beforeDeleteNode(DeleteAllRequiredRelatedNodes);
+            _CswNbtObjClassDefault.beforeDeleteNode( DeleteAllRequiredRelatedNodes );
 
         }//beforeDeleteNode()
 
@@ -81,9 +80,9 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override bool onButtonClick( NbtButtonData ButtonData )
         {
-            
-            
-            
+
+
+
             if( null != ButtonData && null != ButtonData.NodeTypeProp ) { /*Do Something*/ }
             return true;
         }
@@ -93,29 +92,9 @@ namespace ChemSW.Nbt.ObjClasses
 
 
 
-        public CswNbtNodePropMemo epltext
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[EplTextPropertyName].AsMemo );
-            }
-        }
-
-        public CswNbtNodePropMemo Params
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[ParamsPropertyName].AsMemo );
-            }
-        }
-
-        public CswNbtNodePropNodeTypeSelect NodeTypes
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[NodeTypesPropertyName].AsNodeTypeSelect );
-            }
-        }
+        public CswNbtNodePropMemo epltext { get { return ( _CswNbtNode.Properties[EplTextPropertyName].AsMemo ); } }
+        public CswNbtNodePropMemo Params { get { return ( _CswNbtNode.Properties[ParamsPropertyName].AsMemo ); } }
+        public CswNbtNodePropNodeTypeSelect NodeTypes { get { return ( _CswNbtNode.Properties[NodeTypesPropertyName].AsNodeTypeSelect ); } }
 
 
         #endregion
