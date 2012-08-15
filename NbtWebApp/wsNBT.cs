@@ -12,6 +12,7 @@ using ChemSW.Config;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
+using ChemSW.Log;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.Grid;
 using ChemSW.Nbt.Logic;
@@ -252,6 +253,9 @@ namespace ChemSW.Nbt.WebServices
             if( JObj != null )
             {
                 JObj["AuthenticationStatus"] = AuthenticationStatusIn.ToString();
+                JObj["LogglyInput"] = CswResources.CswLogglyVenue;
+                JObj["server"] = Environment.MachineName;
+
                 if( false == ForMobile )
                 {
                     if( _CswSessionResources != null &&
@@ -265,6 +269,14 @@ namespace ChemSW.Nbt.WebServices
                     JObj["timer"]["serverinit"] = Math.Round( ServerInitTime, 3 );
                     if( null != _CswNbtResources )
                     {
+                        LogLevels LogLevel = _CswNbtResources.ConfigVbls.getConfigVariableValue( CswConfigurationVariables.ConfigurationVariableNames.Logging_Level );
+                        if( LogLevel == CswNbtResources.UnknownEnum )
+                        {
+                            LogLevel = LogLevels.Error;
+                        }
+                        JObj["LogLevel"] = LogLevel.ToString().ToLower();
+
+                        JObj["timer"]["customerid"] = _CswNbtResources.AccessId;
                         JObj["timer"]["dbinit"] = Math.Round( _CswNbtResources.CswLogger.DbInitTime, 3 );
                         JObj["timer"]["dbquery"] = Math.Round( _CswNbtResources.CswLogger.DbQueryTime, 3 );
                         JObj["timer"]["dbcommit"] = Math.Round( _CswNbtResources.CswLogger.DbCommitTime, 3 );

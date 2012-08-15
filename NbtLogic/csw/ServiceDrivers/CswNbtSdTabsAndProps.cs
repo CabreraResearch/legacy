@@ -195,12 +195,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                                                                                     select _Prop )
                                 {
                                     Relationship.RelatedNodeId = RelatedNodePk;
-                                    //TODO: Vet this with Steve. We don't hit afterPopulateProps() if this is an Add (b/c postChanges() isn't called)
-                                    //Not sure if there is a more graceful way to do this.
-                                    if( null != Relationship.OnPropChange )
-                                    {
-                                        Relationship.OnPropChange( null );
-                                    }
+                                    Ret.postChanges( ForceUpdate: false );
                                 }
                             }
                         }
@@ -832,23 +827,22 @@ namespace ChemSW.Nbt.ServiceDrivers
                 //{
                 //    Tab = NodeType.getNodeTypeTab( CswConvert.ToInt32( TabId ) );
                 //}
-                ret["props"] = new JArray();
-                ret["props"] = getProps( NodeId, NodeKey, TabId, NodeType.NodeTypeId, null, "", "", "", "" );
-                //IEnumerable<CswNbtMetaDataNodeTypeProp> Props = _CswNbtResources.MetaData.NodeTypeLayout.getPropsNotInLayout( NodeType, CswConvert.ToInt32( TabId ), LayoutType );
-                //foreach( CswNbtMetaDataNodeTypeProp Prop in from Prop in Props
-                //                                            orderby Prop.PropNameWithQuestionNo
-                //                                            select Prop )
-                //{
-                //    // case 24179
-                //    if( Prop.getFieldType().IsLayoutCompatible( LayoutType ) )
-                //    {
-                //        JObject ThisPropObj = new JObject();
-                //        ThisPropObj["propid"] = Prop.PropId.ToString();
-                //        ThisPropObj["propname"] = Prop.PropNameWithQuestionNo.ToString();
-                //        ThisPropObj["hidden"] = ( LayoutType == CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit && Prop.FirstEditLayout == null ).ToString().ToLower();
-                //        ret.Add( ThisPropObj );
-                //    }
-                //}
+
+                IEnumerable<CswNbtMetaDataNodeTypeProp> Props = _CswNbtResources.MetaData.NodeTypeLayout.getPropsNotInLayout( NodeType, CswConvert.ToInt32( TabId ), LayoutType );
+                foreach( CswNbtMetaDataNodeTypeProp Prop in from Prop in Props
+                                                            orderby Prop.PropNameWithQuestionNo
+                                                            select Prop )
+                {
+                    // case 24179
+                    if( Prop.getFieldType().IsLayoutCompatible( LayoutType ) )
+                    {
+                        JObject ThisPropObj = new JObject();
+                        ThisPropObj["propid"] = Prop.PropId.ToString();
+                        ThisPropObj["propname"] = Prop.PropNameWithQuestionNo.ToString();
+                        ThisPropObj["hidden"] = ( LayoutType == CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit && Prop.FirstEditLayout == null ).ToString().ToLower();
+                        ret.Add( ThisPropObj );
+                    }
+                }
             } // if( NodeType != null )
             return ret;
         } // getPropertiesForLayoutAdd()

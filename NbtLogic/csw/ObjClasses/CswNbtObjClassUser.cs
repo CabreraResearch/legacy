@@ -15,22 +15,25 @@ namespace ChemSW.Nbt.ObjClasses
     {
         public static string ChemSWAdminUsername { get { return CswAuthenticator.ChemSWAdminUsername; } }
 
-        public static string RolePropertyName { get { return "Role"; } }
-        public static string AccountLockedPropertyName { get { return "AccountLocked"; } }
-        public static string FailedLoginCountPropertyName { get { return "FailedLoginCount"; } }
-        public static string PasswordPropertyName { get { return "Password"; } }
-        public static string UsernamePropertyName { get { return "Username"; } }
-        public static string FirstNamePropertyName { get { return "First Name"; } }
-        public static string LastNamePropertyName { get { return "Last Name"; } }
-        public static string LastLoginPropertyName { get { return "Last Login"; } }
-        public static string FavoriteViewsPropertyName { get { return "Favorite Views"; } }
-        public static string FavoriteActionsPropertyName { get { return "Favorite Actions"; } }
-        public static string EmailPropertyName { get { return "Email"; } }
-        public static string PageSizePropertyName { get { return "Page Size"; } }
-        public static string DateFormatPropertyName { get { return "Date Format"; } }
-        public static string TimeFormatPropertyName { get { return "Time Format"; } }
-        public static string DefaultLocationPropertyName { get { return "Default Location"; } }
-        public static string WorkUnitPropertyName { get { return "Work Unit"; } }
+        public const string RolePropertyName = "Role";
+        public const string AccountLockedPropertyName = "AccountLocked";
+        public const string FailedLoginCountPropertyName = "FailedLoginCount";
+        public const string PasswordPropertyName = "Password";
+        public const string UsernamePropertyName = "Username";
+        public const string FirstNamePropertyName = "First Name";
+        public const string LastNamePropertyName = "Last Name";
+        public const string LastLoginPropertyName = "Last Login";
+        public const string FavoriteViewsPropertyName = "Favorite Views";
+        public const string FavoriteActionsPropertyName = "Favorite Actions";
+        public const string EmailPropertyName = "Email";
+        public const string PageSizePropertyName = "Page Size";
+        public const string DateFormatPropertyName = "Date Format";
+        public const string TimeFormatPropertyName = "Time Format";
+        public const string DefaultLocationPropertyName = "Default Location";
+        public const string WorkUnitPropertyName = "Work Unit";
+        public const string LogLevelPropertyName = "Log Level";
+
+        
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
 
@@ -406,6 +409,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswPrimaryKey DefaultLocationId { get { return DefaultLocationProperty.SelectedNodeId; } }
         public CswNbtNodePropRelationship WorkUnitProperty { get { return _CswNbtNode.Properties[WorkUnitPropertyName]; } }
         public CswPrimaryKey WorkUnitId { get { return WorkUnitProperty.RelatedNodeId; } }
+        
 
         #endregion
 

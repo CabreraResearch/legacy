@@ -45,39 +45,23 @@
             if (false === Csw.isNullOrEmpty(result.timer)) {
                 var timer = {};
                 timer[url] = result.timer;
-                if (Csw.isNullOrEmpty(cswPrivate.perflogheaders)) {
-                    cswPrivate.perflogheaders = true;
-                    Csw.debug.info("timestamp\t" +
-                                 "client\t" +
-                                 "serverinit\t" +
-                                 "servertotal\t" +
-                                 "dbinit\t" +
-                                 "dbquery\t" +
-                                 "dbcommit\t" +
-                                 "dbdeinit\t" +
-                                 "treeloadersql\t" +
-                                 "url\t");
-                }
+                
                 var endTime = new Date();
                 var etms = Csw.string(endTime.getMilliseconds());
                 while (etms.length < 3) {
-                    etms = "0" + etms;
+                    etms = '0' + etms;
                 }
-                if (false === Csw.isNullOrEmpty(result.timer)) {
-                    Csw.debug.info(endTime.toLocaleTimeString() + "." + etms + "\t" +
-                            (endTime - o.startTime) + "\t" +
-                            result.timer.serverinit + "\t" +
-                            result.timer.servertotal + "\t" +
-                            result.timer.dbinit + "\t" +
-                            result.timer.dbquery + "\t" +
-                            result.timer.dbcommit + "\t" +
-                            result.timer.dbdeinit + "\t" +
-                            result.timer.treeloadersql + "\t" +
-                            url);
-                }
-                //Csw.debug.info(timer);
+                
+                result.timer.timestap = endTime.toLocaleTimeString() + '.' + etms;
+                result.timer.client = (endTime - o.startTime);
+                result.timer.url = url;
+                Csw.clientSession.setLogglyInput(result.LogglyInput, result.LogLevel, result.server);
+                delete result.server;
+                delete result.LogglyInput;
+                delete result.LogLevel;
+                Csw.debug.perf(result.timer);
+                
             }
-            
             delete result.AuthenticationStatus;
             delete result.timeout;
             if (Csw.bool(o.removeTimer)) {
@@ -88,10 +72,6 @@
                 status: auth,
                 success: function () {
                     Csw.tryExec(o.success, result);
-                    //if (true === Csw.displayAllExceptions) {
-                    //    Csw.debug.profileEnd(url);
-                    //    Csw.debug.timeEnd(url);
-                    //}
                 },
                 failure: o.onloginfail,
                 usernodeid: result.nodeid,
@@ -106,7 +86,6 @@
         Csw.publish(Csw.enums.events.ajax.ajaxStop, o.watchGlobal, xmlHttpRequest, textStatus);
         Csw.debug.error('Webservice Request (' + o.url + ') Failed: ' + textStatus);
         Csw.tryExec(o.error, textStatus);
-        //Csw.debug.timeEnd(o.url);
     });
 
     cswPrivate.jsonPost = function (options) {
@@ -139,10 +118,6 @@
         }
         var url = Csw.string(o.url, o.urlPrefix + o.urlMethod);
         o.startTime = new Date();
-        //if (true === Csw.displayAllExceptions) {
-        //    Csw.debug.profile(url);
-        //    Csw.debug.time(url);
-        //}
 
         Csw.publish(Csw.enums.events.ajax.ajaxStart, o.watchGlobal);
         $.ajax({
