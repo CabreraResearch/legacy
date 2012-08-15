@@ -90,9 +90,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Object class specific properties
 
-
-
-        public CswNbtNodePropMemo epltext { get { return ( _CswNbtNode.Properties[EplTextPropertyName].AsMemo ); } }
+        public CswNbtNodePropMemo EplText { get { return ( _CswNbtNode.Properties[EplTextPropertyName].AsMemo ); } }
         public CswNbtNodePropMemo Params { get { return ( _CswNbtNode.Properties[ParamsPropertyName].AsMemo ); } }
         public CswNbtNodePropNodeTypeSelect NodeTypes { get { return ( _CswNbtNode.Properties[NodeTypesPropertyName].AsNodeTypeSelect ); } }
 
