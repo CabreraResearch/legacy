@@ -22,7 +22,7 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataFieldType textFT = _CswNbtSchemaModTrnsctn.MetaData.getFieldType( CswNbtMetaDataFieldType.NbtFieldType.Text );
 
             #region CREATE THE REGULATORY LIST OC AND IT'S PROPS
-            CswNbtMetaDataObjectClass regulatoryListOC = _CswNbtSchemaModTrnsctn.createObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.RegulatoryListClass, "clipboard.gif", true, true );
+            CswNbtMetaDataObjectClass regulatoryListOC = _CswNbtSchemaModTrnsctn.createObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.RegulatoryListClass, "report.gif", true, true );
             CswNbtMetaDataObjectClassProp casNumbersOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( regulatoryListOC )
             {
                 PropName = CswNbtObjClassRegulatoryList.CASNumbersPropertyName,
