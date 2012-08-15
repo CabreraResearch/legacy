@@ -111,10 +111,10 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Object class specific properties
 
-        public CswNbtNodePropMemo EplText { get { return ( _CswNbtNode.Properties[PropertyName.EplText].AsMemo ); } }
-        public CswNbtNodePropMemo Params { get { return ( _CswNbtNode.Properties[PropertyName.Params].AsMemo ); } }
-        public CswNbtNodePropNodeTypeSelect NodeTypes { get { return ( _CswNbtNode.Properties[PropertyName.NodeTypes].AsNodeTypeSelect ); } }
-        public CswNbtNodePropList ControlType { get { return ( _CswNbtNode.Properties[PropertyName.ControlType].AsList ); } }
+        public CswNbtNodePropMemo EplText { get { return _CswNbtNode.Properties[PropertyName.EplText]; } }
+        public CswNbtNodePropMemo Params { get { return _CswNbtNode.Properties[PropertyName.Params]; } }
+        public CswNbtNodePropNodeTypeSelect NodeTypes { get { return _CswNbtNode.Properties[PropertyName.NodeTypes]; } }
+        public CswNbtNodePropList ControlType { get { return _CswNbtNode.Properties[PropertyName.ControlType]; } }
 
         #endregion
 
