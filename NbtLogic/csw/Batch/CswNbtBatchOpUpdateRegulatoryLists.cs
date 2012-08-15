@@ -67,7 +67,7 @@ namespace ChemSW.Nbt.Batch
                         BatchData.MatchingMaterialIDs.RemoveAt( 0 );
                         CswNbtNode materialNode = _CswNbtResources.Nodes.GetNode( currentMaterialID );
                         CswNbtObjClassMaterial nodeAsMaterial = (CswNbtObjClassMaterial) materialNode;
-                        nodeAsMaterial.RegulatoryLists.StaticText += "," + BatchData.CurrentCASNo; //update the node
+                        nodeAsMaterial.RegulatoryLists.StaticText += "," + BatchData.ListName; //update the node
                         nodeAsMaterial.postChanges( false );
 
                         //get materials using the current material as a component
@@ -75,8 +75,6 @@ namespace ChemSW.Nbt.Batch
 
                         //save the updated batch data
                         BatchNode.appendToLog( "Updated " + currentMaterialID.ToString() );
-                        BatchNode.BatchData.Text = BatchData.ToString();
-                        BatchNode.postChanges( false );
                     }
                     else if( BatchData.CASNos.Count > 0 ) //we have more CASNos to process
                     {
@@ -94,7 +92,7 @@ namespace ChemSW.Nbt.Batch
                         {
                             materialsByCASNoTree.goToNthChild( i );
                             CswNbtObjClassMaterial nodeAsMaterial = (CswNbtObjClassMaterial) materialsByCASNoTree.getNodeForCurrentPosition();
-                            if( false == _materialHasList( BatchData.CurrentCASNo, nodeAsMaterial ) )
+                            if( false == _materialHasList( BatchData.ListName, nodeAsMaterial ) )
                             {
                                 BatchData.MatchingMaterialIDs.Add( nodeAsMaterial.NodeId.ToString() );
                             }
@@ -103,17 +101,15 @@ namespace ChemSW.Nbt.Batch
 
                         //save the batch data
                         BatchNode.appendToLog( "Finishing processing CASNo: " + BatchData.CurrentCASNo );
-                        BatchNode.PercentDone.Value = getPercentDone( BatchNode );
-                        BatchData.CASNosProcessed = BatchData.CASNosProcessed + 1;
-                        BatchNode.BatchData.Text = BatchData.ToString();
-                        BatchNode.postChanges( false );
                     }
                     else //we have no materials to update and no more CASNumbers to process, we're done
                     {
-                        BatchNode.PercentDone.Value = getPercentDone( BatchNode );
                         BatchNode.finish();
-                        BatchNode.postChanges( false );
                     }
+                    BatchNode.PercentDone.Value = getPercentDone( BatchNode );
+                    BatchData.CASNosProcessed = BatchData.CASNosProcessed + 1;
+                    BatchNode.BatchData.Text = BatchData.ToString();
+                    BatchNode.postChanges( false );
                 }
             }
             catch( Exception ex )

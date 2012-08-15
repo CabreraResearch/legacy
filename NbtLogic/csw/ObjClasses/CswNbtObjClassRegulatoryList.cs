@@ -55,11 +55,13 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
-            CswNbtBatchOpUpdateRegulatoryLists BatchOp = new CswNbtBatchOpUpdateRegulatoryLists( _CswNbtResources );
-            CswCommaDelimitedString CASNosAsCommaString = new CswCommaDelimitedString();
-            CASNosAsCommaString.FromString( CASNumbers.Text );
-            BatchOp.makeBatchOp( CASNosAsCommaString, Name.Text );
-
+            if( CASNumbers.WasModified )
+            {
+                CswNbtBatchOpUpdateRegulatoryLists BatchOp = new CswNbtBatchOpUpdateRegulatoryLists( _CswNbtResources );
+                CswCommaDelimitedString CASNosAsCommaString = new CswCommaDelimitedString();
+                CASNosAsCommaString.FromString( CASNumbers.Text );
+                BatchOp.makeBatchOp( CASNosAsCommaString, Name.Text );
+            }
             _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
         }//beforeWriteNode()
 
