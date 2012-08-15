@@ -40,6 +40,8 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void beforeCreateNode( bool OverrideUniqueValidation )
         {
+            Mixture.SetOnPropChange( OnMixturePropChange );
+            Constituent.SetOnPropChange( OnConstituentPropChange );
             _CswNbtObjClassDefault.beforeCreateNode( OverrideUniqueValidation );
         } // beforeCreateNode()
 
@@ -50,13 +52,17 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
-            if( null != Mixture.RelatedNodeId && null != Constituent.RelatedNodeId )
+            Core.CswPrimaryKey pk = new Core.CswPrimaryKey();
+            pk.FromString( _CswNbtResources.CurrentUser.Cookies["csw_currentnodeid"] );
+            if( null != Constituent.RelatedNodeId )
             {
-                if( Mixture.RelatedNodeId == Constituent.RelatedNodeId )
+                Mixture.RelatedNodeId = pk;
+                if( Constituent.RelatedNodeId.Equals( Mixture.RelatedNodeId ) && false == IsTemp )
                 {
-                    throw new CswDniException( ErrorType.Warning, "Mixture material and Constituent material cannot be the same", "Mixture material and Constituent material cannot be the same" );
+                    throw new CswDniException( ErrorType.Warning, "Constituent cannot be the same as Mixture", "" );
                 }
             }
+
             _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
         }//beforeWriteNode()
 
@@ -98,31 +104,36 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Object class specific properties
 
-        public CswNbtNodePropNumber Percentage
+        public CswNbtNodePropNumber Percentage { get { return ( _CswNbtNode.Properties[PercentagePropertyName] ); } }
+
+        public CswNbtNodePropRelationship Mixture { get { return ( _CswNbtNode.Properties[MixturePropertyName] ); } }
+        private void OnMixturePropChange( CswNbtNodeProp Prop )
         {
-            get
-            {
-                return ( _CswNbtNode.Properties[PercentagePropertyName] );
-            }
+            //if( null != Mixture.RelatedNodeId && null != Constituent.RelatedNodeId )
+            //{
+            //    //if( Mixture.RelatedNodeId.Equals( Constituent.RelatedNodeId ) )
+            //    //{
+            //    Mixture.RelatedNodeId = null;
+            //    Constituent.RelatedNodeId = null;
+            //    //}
+            //}
         }
 
-        public CswNbtNodePropRelationship Mixture
+        public CswNbtNodePropRelationship Constituent { get { return ( _CswNbtNode.Properties[ConstituentPropertyName] ); } }
+        private void OnConstituentPropChange( CswNbtNodeProp Prop )
         {
-            get
-            {
-                return ( _CswNbtNode.Properties[MixturePropertyName] );
-            }
-        }
-
-        public CswNbtNodePropRelationship Constituent
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[ConstituentPropertyName] );
-            }
+            //if( null != Mixture.RelatedNodeId && null != Constituent.RelatedNodeId )
+            //{
+            //    //if( Mixture.RelatedNodeId.Equals( Constituent.RelatedNodeId ) )
+            //    //{
+            //    Mixture.RelatedNodeId = null;
+            //    Constituent.RelatedNodeId = null;
+            //    //}
+            //}
         }
 
         #endregion
+
 
 
     }//CswNbtObjClassMaterialComponent
