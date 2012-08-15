@@ -59,14 +59,73 @@ namespace ChemSW.Nbt.ObjClasses
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
             _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
+        }//beforeWriteNode()
 
+        public override void afterWriteNode()
+        {
+            _CswNbtObjClassDefault.afterWriteNode();
+        }//afterWriteNode()
+
+        public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false )
+        {
+            _CswNbtObjClassDefault.beforeDeleteNode( DeleteAllRequiredRelatedNodes );
+
+        }//beforeDeleteNode()
+
+        public override void afterDeleteNode()
+        {
+            _CswNbtObjClassDefault.afterDeleteNode();
+        }//afterDeleteNode()        
+
+        public override void afterPopulateProps()
+        {
+            Owner.SetOnPropChange( OnOwnerPropChange );
+            File.SetOnPropChange( OnFilePropChange );
+            Link.SetOnPropChange( OnLinkPropChange );
+            _CswNbtObjClassDefault.afterPopulateProps();
+        }//afterPopulateProps()
+
+        public override void addDefaultViewFilters( CswNbtViewRelationship ParentRelationship )
+        {
+            _CswNbtObjClassDefault.addDefaultViewFilters( ParentRelationship );
+        }
+
+        public override bool onButtonClick( NbtButtonData ButtonData )
+        {
+            if( null != ButtonData && null != ButtonData.NodeTypeProp ) { /*Do Something*/ }
+            return true;
+        }
+        #endregion
+
+        #region Object class specific properties
+
+        public CswNbtNodePropText Title { get { return _CswNbtNode.Properties[TitlePropertyName]; } }
+        public CswNbtNodePropDateTime AcquiredDate { get { return _CswNbtNode.Properties[AcquiredDatePropertyName]; } }
+        public CswNbtNodePropDateTime ExpirationDate { get { return _CswNbtNode.Properties[ExpirationDatePropertyName]; } }
+        public CswNbtNodePropBlob File { get { return _CswNbtNode.Properties[FilePropertyName]; } }
+        private void OnFilePropChange( CswNbtNodeProp NodeProp )
+        {
             if( AcquiredDate.DateTimeValue == DateTime.MinValue &&
-                false == string.IsNullOrEmpty( File.FileName ) || false == string.IsNullOrEmpty( Link.Href ) )
+                false == string.IsNullOrEmpty( File.FileName ) )
             {
                 AcquiredDate.DateTimeValue = DateTime.Now;
             }
+        }
+        public CswNbtNodePropLink Link { get { return _CswNbtNode.Properties[LinkPropertyName]; } }
+        private void OnLinkPropChange( CswNbtNodeProp NodeProp )
+        {
+            if( AcquiredDate.DateTimeValue == DateTime.MinValue &&
+                false == string.IsNullOrEmpty( Link.Href ) )
+            {
+                AcquiredDate.DateTimeValue = DateTime.Now;
+            }
+        }
+        public CswNbtNodePropList FileType { get { return _CswNbtNode.Properties[FileTypePropertyName]; } }
+        public CswNbtNodePropList DocumentClass { get { return _CswNbtNode.Properties[DocumentClassPropertyName]; } }
+        public CswNbtNodePropRelationship Owner { get { return _CswNbtNode.Properties[OwnerPropertyName]; } }
+        private void OnOwnerPropChange( CswNbtNodeProp NodeProp )
+        {
             if( Archived.Checked != Tristate.True &&
-                Owner.WasModified &&
                 Owner.RelatedNodeId != null &&
                 false == string.IsNullOrEmpty( DocumentClass.Value ) )
             {
@@ -99,55 +158,8 @@ namespace ChemSW.Nbt.ObjClasses
 
                 }
             }
-
-        }//beforeWriteNode()
-
-        public override void afterWriteNode()
-        {
-            _CswNbtObjClassDefault.afterWriteNode();
-        }//afterWriteNode()
-
-        public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false )
-        {
-            _CswNbtObjClassDefault.beforeDeleteNode( DeleteAllRequiredRelatedNodes );
-
-        }//beforeDeleteNode()
-
-        public override void afterDeleteNode()
-        {
-            _CswNbtObjClassDefault.afterDeleteNode();
-        }//afterDeleteNode()        
-
-        public override void afterPopulateProps()
-        {
-            _CswNbtObjClassDefault.afterPopulateProps();
-        }//afterPopulateProps()
-
-        public override void addDefaultViewFilters( CswNbtViewRelationship ParentRelationship )
-        {
-            _CswNbtObjClassDefault.addDefaultViewFilters( ParentRelationship );
         }
 
-        public override bool onButtonClick( NbtButtonData ButtonData )
-        {
-
-
-
-            if( null != ButtonData && null != ButtonData.NodeTypeProp ) { /*Do Something*/ }
-            return true;
-        }
-        #endregion
-
-        #region Object class specific properties
-
-        public CswNbtNodePropText Title { get { return _CswNbtNode.Properties[TitlePropertyName]; } }
-        public CswNbtNodePropDateTime AcquiredDate { get { return _CswNbtNode.Properties[AcquiredDatePropertyName]; } }
-        public CswNbtNodePropDateTime ExpirationDate { get { return _CswNbtNode.Properties[ExpirationDatePropertyName]; } }
-        public CswNbtNodePropBlob File { get { return _CswNbtNode.Properties[FilePropertyName]; } }
-        public CswNbtNodePropLink Link { get { return _CswNbtNode.Properties[LinkPropertyName]; } }
-        public CswNbtNodePropList FileType { get { return _CswNbtNode.Properties[FileTypePropertyName]; } }
-        public CswNbtNodePropList DocumentClass { get { return _CswNbtNode.Properties[DocumentClassPropertyName]; } }
-        public CswNbtNodePropRelationship Owner { get { return _CswNbtNode.Properties[OwnerPropertyName]; } }
         public CswNbtNodePropLogical Archived { get { return _CswNbtNode.Properties[ArchivedPropertyName]; } }
 
         #endregion
