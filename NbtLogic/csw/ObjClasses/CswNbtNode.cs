@@ -831,14 +831,19 @@ namespace ChemSW.Nbt.ObjClasses
         }
 
         //bz # 5943
-        public void delete( bool DeleteAllRequiredRelatedNodes = false )
+        /// <summary>
+        /// Deletes the node from the database.
+        /// </summary>
+        /// <param name="DeleteAllRequiredRelatedNodes"></param>
+        /// <param name="OverridePermissions">For internal use only. When set to true, ignores user permissions.</param>
+        public void delete( bool DeleteAllRequiredRelatedNodes = false, bool OverridePermissions = false )
         {
             if( null == OnRequestDeleteNode )
             {
                 throw ( new CswDniException( "There is no delete handler" ) );
             }
             CswNbtMetaDataNodeType thisNT = this.getNodeType();
-            if( !_CswNbtResources.Permit.can( Security.CswNbtPermit.NodeTypePermission.Delete, thisNT ) )
+            if( false == OverridePermissions && false == _CswNbtResources.Permit.can( Security.CswNbtPermit.NodeTypePermission.Delete, thisNT ) )
             {
                 throw ( new CswDniException( ErrorType.Warning, "You do not have permission to delete this " + thisNT.NodeTypeName, "User attempted to delete a " + thisNT.NodeTypeName + " without Delete permissions" ) );
             }

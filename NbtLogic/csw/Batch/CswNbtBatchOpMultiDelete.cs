@@ -18,17 +18,6 @@ namespace ChemSW.Nbt.Batch
         }
 
         /// <summary>
-        /// Create a new batch operation to handle the deletion of a single node
-        /// </summary>
-        /// <param name="MailReportNodeId"></param>
-        public CswNbtObjClassBatchOp makeBatchOp( CswPrimaryKey DeleteNodeId )
-        {
-            Collection<CswPrimaryKey> DeleteNodePK = new Collection<CswPrimaryKey>();
-            DeleteNodePK.Add( DeleteNodeId );
-            return makeBatchOp( DeleteNodePK );
-        }
-
-        /// <summary>
         /// Create a new batch operation to handle a deleteNodes/multi edit operation
         /// </summary>
         /// <param name="DeleteNodeIds"></param>
