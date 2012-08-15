@@ -7,9 +7,9 @@ namespace ChemSW.Nbt.ObjClasses
 {
     public class CswNbtObjClassPrintLabel : CswNbtObjClass
     {
-        public static string EplTextPropertyName { get { return "epltext"; } }
-        public static string ParamsPropertyName { get { return "params"; } }
-        public static string NodeTypesPropertyName { get { return "NodeTypes"; } }
+        public const string EplTextPropertyName = "epltext"; 
+        public const string ParamsPropertyName = "params"; 
+        public const string NodeTypesPropertyName = "NodeTypes"; 
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
 
