@@ -7,20 +7,121 @@ namespace ChemSW.Nbt.ObjClasses
 {
     public class CswNbtObjClassDocument : CswNbtObjClass
     {
+        #region Public Sealed Classes
+        /// <summary>
+        /// Object Class Property Names
+        /// </summary>
         public sealed class PropertyName
         {
+            /// <summary>
+            /// Basis for the name of the Document
+            /// </summary>
             public const string Title = "Title";
+            /// <summary>
+            /// Date document was created
+            /// </summary>
             public const string AcquiredDate = "Acquired Date";
+            /// <summary>
+            /// Expiration Date, if any
+            /// </summary>
             public const string ExpirationDate = "Expiration Date";
+            /// <summary>
+            /// If FileType == File, the File
+            /// </summary>
             public const string File = "File";
+            /// <summary>
+            /// If FileType == Link, the Link
+            /// </summary>
             public const string Link = "Link ";
+            /// <summary>
+            /// Class. Currently support MSDS and CofA in Business Logic
+            /// </summary>
             public const string DocumentClass = "Document Class";
+            /// <summary>
+            /// Type. Currently support File and List
+            /// </summary>
             public const string FileType = "File Type";
+            /// <summary>
+            /// Document owner: Material, Equipment, etc
+            /// </summary>
             public const string Owner = "Owner";
+            /// <summary>
+            /// Archive status
+            /// </summary>
             public const string Archived = "Archived";
+            /// <summary>
+            /// Language of the document. Conditional on Document Class == MSDS
+            /// </summary>
+            public const string Language = "Language";
+            /// <summary>
+            /// Format of the document. Conditional on Document Class == MSDS
+            /// </summary>
+            public const string Format = "Format";
+            /// <summary>
+            /// Date document transitioned to Archive.
+            /// </summary>
+            public const string ArchiveDate = "Archive Date";
         }
 
-        public static CswCommaDelimitedString AllowedFileTypes = new CswCommaDelimitedString { "File", "Link" };
+        /// <summary>
+        /// Potential File Types
+        /// </summary>
+        public sealed class FileTypes
+        {
+            /// <summary>
+            /// Blob
+            /// </summary>
+            public const string File = "File";
+            /// <summary>
+            /// Hyperlink
+            /// </summary>
+            public const string Link = "Link";
+            /// <summary>
+            /// Options
+            /// </summary>
+            public static CswCommaDelimitedString Options = new CswCommaDelimitedString { File, Link };
+        }
+
+        /// <summary>
+        /// Document Classes recognized by Business Logic
+        /// </summary>
+        public sealed class DocumentClasses
+        {
+            /// <summary>
+            /// No associated class (Default)
+            /// </summary>
+            public const string None = "";
+            /// <summary>
+            /// Material Safety Data Sheet
+            /// </summary>
+            public const string MSDS = "MSDS";
+            /// <summary>
+            /// Certificate of Analysis
+            /// </summary>
+            public const string CofA = "CofA";
+        }
+
+        /// <summary>
+        /// Formats recognized by Business Logic
+        /// </summary>
+        public sealed class Formats
+        {
+            /// <summary>
+            /// No associated format (Default)
+            /// </summary>
+            public const string None = "";
+            /// <summary>
+            /// Occupational Safety and Health Administration
+            /// </summary>
+            public const string OSHA = "OSHA";
+            /// <summary>
+            /// Globally Harmonized System
+            /// </summary>
+            public const string GHS = "GHS";
+
+        }
+
+        #endregion Public Sealed Classes
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
 
@@ -162,8 +263,10 @@ namespace ChemSW.Nbt.ObjClasses
                 }
             }
         }
-
         public CswNbtNodePropLogical Archived { get { return _CswNbtNode.Properties[PropertyName.Archived]; } }
+        public CswNbtNodePropList Language { get { return _CswNbtNode.Properties[PropertyName.Language]; } }
+        public CswNbtNodePropList Format { get { return _CswNbtNode.Properties[PropertyName.Format]; } }
+        public CswNbtNodePropDateTime ArchiveDate { get { return _CswNbtNode.Properties[PropertyName.ArchiveDate]; } }
 
         #endregion
     }//CswNbtObjClassDocument
