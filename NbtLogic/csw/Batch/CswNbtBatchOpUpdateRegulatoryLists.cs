@@ -74,6 +74,7 @@ namespace ChemSW.Nbt.Batch
                         _getParentMaterials( currentMaterialID.PrimaryKey.ToString(), BatchData.MatchingMaterialIDs );
 
                         //save the updated batch data
+                        BatchNode.appendToLog( "Updated " + currentMaterialID.ToString() );
                         BatchNode.BatchData.Text = BatchData.ToString();
                         BatchNode.postChanges( false );
                     }
@@ -101,6 +102,7 @@ namespace ChemSW.Nbt.Batch
                         }
 
                         //save the batch data
+                        BatchNode.appendToLog( "Finishing processing CASNo: " + BatchData.CurrentCASNo );
                         BatchNode.PercentDone.Value = getPercentDone( BatchNode );
                         BatchData.CASNosProcessed = BatchData.CASNosProcessed + 1;
                         BatchNode.BatchData.Text = BatchData.ToString();
@@ -108,6 +110,7 @@ namespace ChemSW.Nbt.Batch
                     }
                     else //we have no materials to update and no more CASNumbers to process, we're done
                     {
+                        BatchNode.PercentDone.Value = getPercentDone( BatchNode );
                         BatchNode.finish();
                         BatchNode.postChanges( false );
                     }
