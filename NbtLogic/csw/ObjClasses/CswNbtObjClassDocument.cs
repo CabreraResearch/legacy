@@ -14,7 +14,6 @@ namespace ChemSW.Nbt.ObjClasses
         public const string LinkPropertyName = "Link ";
         public const string DocumentClassPropertyName = "Document Class";
         public const string FileTypePropertyName = "File Type";
-        //public static string OpenPropertyName ="Open"; 
         public const string OwnerPropertyName = "Owner";
         public const string ArchivedPropertyName = "Archived";
 
@@ -148,10 +147,6 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropLink Link { get { return _CswNbtNode.Properties[LinkPropertyName].AsLink; } }
         public CswNbtNodePropList FileType { get { return _CswNbtNode.Properties[FileTypePropertyName].AsList; } }
         public CswNbtNodePropList DocumentClass { get { return _CswNbtNode.Properties[DocumentClassPropertyName].AsList; } }
-        //public CswNbtNodePropButton Open
-        //{
-        //    get { return _CswNbtNode.Properties[OpenPropertyName].AsButton; }
-        //}
         public CswNbtNodePropRelationship Owner { get { return _CswNbtNode.Properties[OwnerPropertyName].AsRelationship; } }
         public CswNbtNodePropLogical Archived { get { return _CswNbtNode.Properties[ArchivedPropertyName].AsLogical; } }
 
