@@ -515,6 +515,7 @@ namespace ChemSW.Nbt
 
             // Property Filters
             Int32 FilterCount = 0;
+            string FilterWhere = string.Empty;
             foreach( CswNbtViewProperty Prop in Relationship.Properties )
             {
                 foreach( CswNbtViewPropertyFilter Filter in Prop.Filters )
@@ -585,31 +586,41 @@ namespace ChemSW.Nbt
 
 
 
-                                if( Filter.ResultMode == CswNbtPropFilterSql.FilterResultMode.Hide )
-                                {
-                                    From += "join (" + FilterClause + ") f" + FilterCount.ToString() + " on (f" + FilterCount.ToString() + ".nodeid = n.nodeid)";
-                                }
-                                else if( Filter.ResultMode == CswNbtPropFilterSql.FilterResultMode.Disabled )
-                                {
-                                    if( false == IsParentQuery )
-                                    {
+                                //if( Filter.ResultMode == CswNbtPropFilterSql.FilterResultMode.Hide )
+                                //{
+                                //    From += "join (" + FilterClause + ") f" + FilterCount.ToString() + " on (f" + FilterCount.ToString() + ".nodeid = n.nodeid)";
+                                //}
+                                //else if( Filter.ResultMode == CswNbtPropFilterSql.FilterResultMode.Disabled )
+                                //{
+                                    //if( false == IsParentQuery )
+                                    //{
                                         From += "left outer join (" + FilterClause + ") f" + FilterCount.ToString() + " on (f" + FilterCount.ToString() + ".nodeid = n.nodeid)";
-                                        Select += ",f" + FilterCount.ToString() + ".included as included" + FilterCount.ToString();
-                                    }
-                                }
+                                        if( Filter.ResultMode == CswNbtPropFilterSql.FilterResultMode.Disabled && false == IsParentQuery )
+                                        {
+                                            Select += ",f" + FilterCount.ToString() + ".included as included" + FilterCount.ToString();
+                                        }
+                                        if(FilterWhere != string.Empty) {
+                                            FilterWhere += Filter.Conjunction.ToString().ToLower();
+                                        }
+                                        FilterWhere += " f" + FilterCount.ToString() + ".included = '1' ";
+                                    //}
+                                //}
 
 
 
                             } // if( FilterSubField.RelationalTable == string.empty )
                             else if( false == string.IsNullOrEmpty( FilterValue ) )
                             {
-                                Where += " and " + FilterValue; // n." + FilterSubField.Column + " is not null";
+                                FilterWhere += Filter.Conjunction.ToString().ToLower() + " " + FilterValue; // n." + FilterSubField.Column + " is not null";
                             }
                         } // if we really have a filter
                     } // if we have a filter
                 } // foreach( CswNbtViewPropertyFilter Filter in Prop.Filters )
             } // foreach( CswNbtViewProperty Prop in Relationship.Properties )
-
+            if(FilterWhere != string.Empty)
+            {
+                Where += "and (" + FilterWhere + ")";
+            }
 
             if( Relationship.NodeIdsToFilterOut.Count > 0 )
             {
