@@ -6,9 +6,12 @@ namespace ChemSW.Nbt.ObjClasses
 {
     public class CswNbtObjClassPrintLabel : CswNbtObjClass
     {
-        public const string EplTextPropertyName = "epltext";
-        public const string ParamsPropertyName = "params";
-        public const string NodeTypesPropertyName = "NodeTypes";
+        public sealed class PropertyName
+        {
+            public const string EplText = "epltext";
+            public const string Params = "params";
+            public const string NodeTypes = "NodeTypes";
+        }
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
 
@@ -90,9 +93,9 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Object class specific properties
 
-        public CswNbtNodePropMemo EplText { get { return ( _CswNbtNode.Properties[EplTextPropertyName].AsMemo ); } }
-        public CswNbtNodePropMemo Params { get { return ( _CswNbtNode.Properties[ParamsPropertyName].AsMemo ); } }
-        public CswNbtNodePropNodeTypeSelect NodeTypes { get { return ( _CswNbtNode.Properties[NodeTypesPropertyName].AsNodeTypeSelect ); } }
+        public CswNbtNodePropMemo EplText { get { return ( _CswNbtNode.Properties[PropertyName.EplText].AsMemo ); } }
+        public CswNbtNodePropMemo Params { get { return ( _CswNbtNode.Properties[PropertyName.Params].AsMemo ); } }
+        public CswNbtNodePropNodeTypeSelect NodeTypes { get { return ( _CswNbtNode.Properties[PropertyName.NodeTypes].AsNodeTypeSelect ); } }
 
 
         #endregion
