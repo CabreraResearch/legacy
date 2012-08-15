@@ -22,6 +22,7 @@ namespace ChemSW.Nbt.Batch
         public static readonly NbtBatchOpName MultiDelete = new NbtBatchOpName( "MultiDelete" );
         public static readonly NbtBatchOpName InventoryLevel = new NbtBatchOpName( "InventoryLevel" );
         public static readonly NbtBatchOpName MailReport = new NbtBatchOpName( "MailReport" );
+        public static readonly NbtBatchOpName UpdateRegulatoryLists = new NbtBatchOpName( "UpdateRegulatoryLists" );
     }
 
     /// <summary>

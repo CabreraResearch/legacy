@@ -92,6 +92,9 @@
     <Compile Include="csw\Batch\CswNbtBatchOpMailReport.cs" />
     <Compile Include="csw\Batch\CswNbtBatchOpMultiDelete.cs" />
     <Compile Include="csw\Batch\CswNbtBatchOpInventoryLevels.cs" />
+    <Compile Include="csw\Batch\CswNbtBatchOpUpdateRegulatoryLists.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="csw\Grid\CswNbtGridExtJsDataIndex.cs" />
     <Compile Include="csw\Grid\CswNbtGridExtJsGrid.cs" />
     <Compile Include="csw\Grid\CswNbtGridExtJsRow.cs" />
