@@ -1,16 +1,34 @@
+using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
 
 
 namespace ChemSW.Nbt.ObjClasses
 {
+    /// <summary>
+    /// Print Label Object Class
+    /// </summary>
     public class CswNbtObjClassPrintLabel : CswNbtObjClass
     {
+        /// <summary>
+        /// Property names on the Print Label class
+        /// </summary>
         public sealed class PropertyName
         {
             public const string EplText = "epltext";
             public const string Params = "params";
             public const string NodeTypes = "NodeTypes";
+            public const string ControlType = "Control Type";
+        }
+
+        /// <summary>
+        /// Supported UI Controls to Print from
+        /// </summary>
+        public sealed class ControlTypes
+        {
+            public const string ActiveX = "ActiveX";
+            public const string jZebra = "jZebra";
+            public static CswCommaDelimitedString Options = new CswCommaDelimitedString { ActiveX, jZebra };
         }
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
@@ -96,7 +114,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropMemo EplText { get { return ( _CswNbtNode.Properties[PropertyName.EplText].AsMemo ); } }
         public CswNbtNodePropMemo Params { get { return ( _CswNbtNode.Properties[PropertyName.Params].AsMemo ); } }
         public CswNbtNodePropNodeTypeSelect NodeTypes { get { return ( _CswNbtNode.Properties[PropertyName.NodeTypes].AsNodeTypeSelect ); } }
-
+        public CswNbtNodePropList ControlType { get { return ( _CswNbtNode.Properties[PropertyName.ControlType].AsList ); } }
 
         #endregion
 
