@@ -2,22 +2,21 @@ using System;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
-using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.ObjClasses
 {
     public class CswNbtObjClassDocument : CswNbtObjClass
     {
-        public const string TitlePropertyName ="Title"; 
-        public const string AcquiredDatePropertyName ="Acquired Date"; 
-        public const string ExpirationDatePropertyName ="Expiration Date"; 
-        public const string FilePropertyName ="File"; 
-        public const string LinkPropertyName ="Link "; 
-        public const string DocumentClassPropertyName ="Document Class"; 
-        public const string FileTypePropertyName ="File Type"; 
+        public const string TitlePropertyName = "Title";
+        public const string AcquiredDatePropertyName = "Acquired Date";
+        public const string ExpirationDatePropertyName = "Expiration Date";
+        public const string FilePropertyName = "File";
+        public const string LinkPropertyName = "Link ";
+        public const string DocumentClassPropertyName = "Document Class";
+        public const string FileTypePropertyName = "File Type";
         //public static string OpenPropertyName ="Open"; 
-        public const string OwnerPropertyName ="Owner"; 
-        public const string ArchivedPropertyName ="Archived"; 
+        public const string OwnerPropertyName = "Owner";
+        public const string ArchivedPropertyName = "Archived";
 
         public static CswCommaDelimitedString AllowedFileTypes = new CswCommaDelimitedString { "File", "Link" };
 
@@ -109,9 +108,9 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault.afterWriteNode();
         }//afterWriteNode()
 
-        public override void beforeDeleteNode(bool DeleteAllRequiredRelatedNodes = false)
+        public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false )
         {
-            _CswNbtObjClassDefault.beforeDeleteNode(DeleteAllRequiredRelatedNodes);
+            _CswNbtObjClassDefault.beforeDeleteNode( DeleteAllRequiredRelatedNodes );
 
         }//beforeDeleteNode()
 
@@ -132,9 +131,9 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override bool onButtonClick( NbtButtonData ButtonData )
         {
-            
-            
-            
+
+
+
             if( null != ButtonData && null != ButtonData.NodeTypeProp ) { /*Do Something*/ }
             return true;
         }
@@ -142,55 +141,19 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Object class specific properties
 
-        public CswNbtNodePropText Title
-        {
-            get { return _CswNbtNode.Properties[TitlePropertyName].AsText; }
-        }
-
-        public CswNbtNodePropDateTime AcquiredDate
-        {
-            get { return _CswNbtNode.Properties[AcquiredDatePropertyName].AsDateTime; }
-        }
-
-        public CswNbtNodePropDateTime ExpirationDate
-        {
-            get { return _CswNbtNode.Properties[ExpirationDatePropertyName].AsDateTime; }
-        }
-
-        public CswNbtNodePropBlob File
-        {
-            get { return _CswNbtNode.Properties[FilePropertyName].AsBlob; }
-        }
-
-        public CswNbtNodePropLink Link
-        {
-            get { return _CswNbtNode.Properties[LinkPropertyName].AsLink; }
-        }
-
-        public CswNbtNodePropList FileType
-        {
-            get { return _CswNbtNode.Properties[FileTypePropertyName].AsList; }
-        }
-
-        public CswNbtNodePropList DocumentClass
-        {
-            get { return _CswNbtNode.Properties[DocumentClassPropertyName].AsList; }
-        }
-
+        public CswNbtNodePropText Title { get { return _CswNbtNode.Properties[TitlePropertyName].AsText; } }
+        public CswNbtNodePropDateTime AcquiredDate { get { return _CswNbtNode.Properties[AcquiredDatePropertyName].AsDateTime; } }
+        public CswNbtNodePropDateTime ExpirationDate { get { return _CswNbtNode.Properties[ExpirationDatePropertyName].AsDateTime; } }
+        public CswNbtNodePropBlob File { get { return _CswNbtNode.Properties[FilePropertyName].AsBlob; } }
+        public CswNbtNodePropLink Link { get { return _CswNbtNode.Properties[LinkPropertyName].AsLink; } }
+        public CswNbtNodePropList FileType { get { return _CswNbtNode.Properties[FileTypePropertyName].AsList; } }
+        public CswNbtNodePropList DocumentClass { get { return _CswNbtNode.Properties[DocumentClassPropertyName].AsList; } }
         //public CswNbtNodePropButton Open
         //{
         //    get { return _CswNbtNode.Properties[OpenPropertyName].AsButton; }
         //}
-
-        public CswNbtNodePropRelationship Owner
-        {
-            get { return _CswNbtNode.Properties[OwnerPropertyName].AsRelationship; }
-        }
-
-        public CswNbtNodePropLogical Archived
-        {
-            get { return _CswNbtNode.Properties[ArchivedPropertyName].AsLogical; }
-        }
+        public CswNbtNodePropRelationship Owner { get { return _CswNbtNode.Properties[OwnerPropertyName].AsRelationship; } }
+        public CswNbtNodePropLogical Archived { get { return _CswNbtNode.Properties[ArchivedPropertyName].AsLogical; } }
 
         #endregion
     }//CswNbtObjClassDocument
