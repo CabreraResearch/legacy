@@ -206,7 +206,7 @@ namespace ChemSW.Nbt.Batch
                 for( int c = 0; c < childNodesCount; c++ )
                 {
                     componentsTree.goToNthChild( c );
-                    CswNbtObjClassMaterial nodeAsMaterial = (CswNbtObjClassMaterial) componentsTree.getNodeForCurrentPosition(); //the mixture
+                    matchingNodesIDs.Add( componentsTree.getNodeIdForCurrentPosition().ToString() ); //the mixture node id
                     componentsTree.goToParentNode();
                 }
                 componentsTree.goToParentNode();
