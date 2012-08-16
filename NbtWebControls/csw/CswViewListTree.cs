@@ -124,7 +124,8 @@ namespace ChemSW.NbtWebControls
                 if( PreviousActionId > 0 )
                 {
                     CswNbtAction Action = _CswNbtResources.Actions[PreviousActionId];
-                    Ret = _makeTreeViewXmlNode( XmlDoc, Action.ActionId.ToString(), ViewType.Action, Action.Name.ToString().Replace( '_', ' ' ), "Images/view/action.gif", true, false );
+                    Ret = _makeTreeViewXmlNode( XmlDoc, Action.ActionId.ToString(), ViewType.Action, Action.Name.ToString().Replace( '_', ' ' ), 
+                                                CswNbtMetaDataObjectClass.IconPrefix16 + "wizard.png", true, false );
                 }
             }
             return Ret;
@@ -236,7 +237,8 @@ namespace ChemSW.NbtWebControls
 								  _CswNbtResources.Permit.can( Action.Name ) )
 							{
 								XmlNode CategoryNode = _getCategoryNode( DocRoot, Action.Category );
-								CategoryNode.AppendChild( _makeTreeViewXmlNode( XmlDoc, Action.ActionId.ToString(), ViewType.Action, Action.Name.ToString().Replace( '_', ' ' ), "Images/view/action.gif", true, false ) );
+								CategoryNode.AppendChild( _makeTreeViewXmlNode( XmlDoc, Action.ActionId.ToString(), ViewType.Action, Action.Name.ToString().Replace( '_', ' ' ), 
+                                                                                CswNbtMetaDataObjectClass.IconPrefix16 + "wizard.png", true, false ) );
 							}
                         }
 

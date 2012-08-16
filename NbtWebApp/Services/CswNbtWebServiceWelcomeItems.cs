@@ -29,11 +29,6 @@ namespace ChemSW.Nbt.WebServices
             _CswNbtWelcomeTable = new CswNbtWelcomeTable( _CswNbtResources );
         }
 
-        /// <summary>
-        /// Folder Path for Button Images
-        /// </summary>
-        public static string IconImageRoot = "Images/biggerbuttons";
-
         private DataTable _getWelcomeTable( Int32 RoleId )
         {
             CswTableSelect WelcomeSelect = _CswNbtResources.makeCswTableSelect( "WelcomeSelect", "welcome" );
@@ -90,7 +85,8 @@ namespace ChemSW.Nbt.WebServices
                                         LinkText = WelcomeRow["displaytext"].ToString();
                                     else
                                         LinkText = "Add New " + NodeType.NodeTypeName;
-                                    Ret[WelcomeId]["nodetypeid"] = WelcomeRow["nodetypeid"].ToString();
+                                    Ret[WelcomeId]["nodetypeid"] = NodeType.NodeTypeId.ToString();
+                                    Ret[WelcomeId]["buttonicon"] = CswNbtMetaDataObjectClass.IconPrefix100 + NodeType.IconFileName;
                                     Ret[WelcomeId]["type"] = "add_new_nodetype";
                                 }
                             }
@@ -116,8 +112,26 @@ namespace ChemSW.Nbt.WebServices
 
                                 Ret[WelcomeId]["viewid"] = new CswNbtViewId( CswConvert.ToInt32( WelcomeRow["nodeviewid"] ) ).ToString();
                                 Ret[WelcomeId]["viewmode"] = ThisView.ViewMode.ToString().ToLower();
+                                if( ThisView.Root.ChildRelationships[0] != null )
+                                {
+                                    if( ThisView.Root.ChildRelationships[0].SecondType == NbtViewRelatedIdType.NodeTypeId )
+                                    {
+                                        CswNbtMetaDataNodeType RootNT = _CswNbtResources.MetaData.getNodeType( ThisView.Root.ChildRelationships[0].SecondId );
+                                        if( RootNT != null )
+                                        {
+                                            Ret[WelcomeId]["buttonicon"] = CswNbtMetaDataObjectClass.IconPrefix100 + RootNT.IconFileName;
+                                        }
+                                    }
+                                    else if( ThisView.Root.ChildRelationships[0].SecondType == NbtViewRelatedIdType.ObjectClassId )
+                                    {
+                                        CswNbtMetaDataObjectClass RootOC = _CswNbtResources.MetaData.getObjectClass( ThisView.Root.ChildRelationships[0].SecondId );
+                                        if( RootOC != null )
+                                        {
+                                            Ret[WelcomeId]["buttonicon"] = CswNbtMetaDataObjectClass.IconPrefix100 + RootOC.IconFileName;
+                                        }
+                                    }
+                                }
                                 Ret[WelcomeId]["type"] = "view";
-
                             }
                         }
                         if( CswConvert.ToInt32( WelcomeRow["actionid"] ) != Int32.MinValue )
@@ -132,6 +146,7 @@ namespace ChemSW.Nbt.WebServices
                                 Ret[WelcomeId]["actionid"] = WelcomeRow["actionid"].ToString();
                                 Ret[WelcomeId]["actionname"] = ThisAction.Name.ToString();      // not using CswNbtAction.ActionNameEnumToString here
                                 Ret[WelcomeId]["actionurl"] = ThisAction.Url;
+                                Ret[WelcomeId]["buttonicon"] = CswNbtMetaDataObjectClass.IconPrefix100 + "wizard.png";
                                 Ret[WelcomeId]["type"] = "action";
                             }
                         }
@@ -143,6 +158,7 @@ namespace ChemSW.Nbt.WebServices
                                 LinkText = WelcomeRow["displaytext"].ToString() != string.Empty ? WelcomeRow["displaytext"].ToString() : ThisReportNode.NodeName;
                                 Ret[WelcomeId]["reportid"] = WelcomeRow["reportid"].ToString();
                                 Ret[WelcomeId]["type"] = "report";
+                                Ret[WelcomeId]["buttonicon"] = CswNbtMetaDataObjectClass.IconPrefix100 + ThisReportNode.getNodeType().IconFileName;
                             }
                         }
                         break;
@@ -171,10 +187,10 @@ namespace ChemSW.Nbt.WebServices
                 if( LinkText != string.Empty )
                 {
                     Ret[WelcomeId]["linktype"] = WelcomeRow["componenttype"].ToString();
-                    if( WelcomeRow["buttonicon"].ToString() != string.Empty )
-                    {
-                        Ret[WelcomeId]["buttonicon"] = IconImageRoot + "/" + WelcomeRow["buttonicon"].ToString();
-                    }
+                    //if( WelcomeRow["buttonicon"].ToString() != string.Empty )
+                    //{
+                    //    Ret[WelcomeId]["buttonicon"] = IconImageRoot + WelcomeRow["buttonicon"].ToString();
+                    //}
                     Ret[WelcomeId]["text"] = LinkText;
                     Ret[WelcomeId]["displayrow"] = WelcomeRow["display_row"].ToString();
                     Ret[WelcomeId]["displaycol"] = WelcomeRow["display_col"].ToString();
