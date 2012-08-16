@@ -187,7 +187,7 @@ namespace ChemSW.Nbt.WebServices
                 }
                 else if( false == string.IsNullOrEmpty( ThisNode.IconFileName ) )
                 {
-                    NodeProps["iconfilename"] = "Images/icons/" + CswTools.SafeJavascriptParam( ThisNode.IconFileName );
+                    NodeProps["iconfilename"] = CswNbtMetaDataObjectClass.IconPrefix16 + CswTools.SafeJavascriptParam( ThisNode.IconFileName );
                 }
 
                 _addObjectClassProps( ThisNode, NodeProps );

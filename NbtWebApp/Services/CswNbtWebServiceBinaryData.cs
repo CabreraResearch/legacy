@@ -4,6 +4,8 @@ using System.IO;
 using System.Web;
 using ChemSW.Core;
 using ChemSW.DB;
+using ChemSW.Nbt.ObjClasses;
+using ChemSW.Nbt.MetaData;
 
 namespace ChemSW.Nbt.WebServices
 {
@@ -28,21 +30,39 @@ namespace ChemSW.Nbt.WebServices
                     SelectColumns.Add( "blobdata" );
                     SelectColumns.Add( "field2" );
                     SelectColumns.Add( "field1" );
+                    SelectColumns.Add( "nodeid" );
                     DataTable JctTable = JctSelect.getTable( SelectColumns, "jctnodepropid", JctNodePropId, "", true );
 
-                    byte[] BlobData;
-                    string ContentType;
-                    string FileName;
-                    if( JctTable.Rows.Count > 0 && false == JctTable.Rows[0].IsNull( "blobdata" ) )
+                    byte[] BlobData = null;
+                    string FileName = "empty";
+                    string ContentType = "image/gif";
+                    if( JctTable.Rows.Count > 0 )
                     {
-                        FileName = JctTable.Rows[0]["field1"].ToString();
-                        ContentType = JctTable.Rows[0]["field2"].ToString();
-                        BlobData = JctTable.Rows[0]["blobdata"] as byte[];
+                        Int32 NodeId = CswConvert.ToInt32( JctTable.Rows[0]["nodeid"] );
+                        if( false == JctTable.Rows[0].IsNull( "blobdata" ) )
+                        {
+                            FileName = JctTable.Rows[0]["field1"].ToString();
+                            ContentType = JctTable.Rows[0]["field2"].ToString();
+                            BlobData = JctTable.Rows[0]["blobdata"] as byte[];
+                        }
+                        else
+                        {
+                            CswNbtNode Node = _CswNbtResources.Nodes[new CswPrimaryKey( "nodes", NodeId )];
+                            if( null != Node )
+                            {
+                                CswNbtMetaDataNodeType NodeType = Node.getNodeType();
+                                if( null != NodeType && NodeType.IconFileName != string.Empty )
+                                {
+                                    FileName = NodeType.IconFileName;
+                                    ContentType = "image/png";
+                                    BlobData = File.ReadAllBytes( Context.Request.PhysicalApplicationPath + CswNbtMetaDataObjectClass.IconPrefix100 + NodeType.IconFileName );
+                                }
+                            }
+                        }
                     }
-                    else
+
+                    if( FileName == "empty" )
                     {
-                        FileName = "empty";
-                        ContentType = "image/gif";
                         BlobData = File.ReadAllBytes( Context.Request.PhysicalApplicationPath + "/Images/icons/300/_placeholder.gif" );
                     }
 
