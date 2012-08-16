@@ -110,6 +110,7 @@
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase27438.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase27523.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase27513.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_Documents_Case27435.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_Logging_Case27504.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase_GridsAndButtons_27479.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase27145.cs" />

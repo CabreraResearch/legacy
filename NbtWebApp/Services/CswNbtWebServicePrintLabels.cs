@@ -71,7 +71,7 @@ namespace ChemSW.Nbt.WebServices
             CswPropIdAttr PropId = new CswPropIdAttr( PropIdAttr );
             CswNbtNode TargetNode = _CswNbtResources.Nodes.GetNode( PropId.NodeId );
 
-            string EPLText = NodeAsPrintLabel.epltext.Text;
+            string EPLText = NodeAsPrintLabel.EplText.Text;
             string Params = NodeAsPrintLabel.Params.Text;
 
             // BZ 6118 - this prevents " from being turned into &quot;
