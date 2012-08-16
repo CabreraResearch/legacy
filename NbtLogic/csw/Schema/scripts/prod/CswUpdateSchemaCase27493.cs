@@ -105,7 +105,7 @@ namespace ChemSW.Nbt.Schema
                 case "ParameterClass":                     NewImage = "square";           break;
                 case "PrintLabelClass":                    NewImage = "barcode";          break;
                 case "ProblemClass":                       NewImage = "trianglegear";     break;
-                case "ReportClass":                        NewImage = "document";         break;
+                case "ReportClass":                        NewImage = "doc";              break;
                 case "RequestClass":                       NewImage = "cart";             break;
                 case "RequestItemClass":                   NewImage = "cart";             break;
                 case "ResultClass":                        NewImage = "options";          break;
