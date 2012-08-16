@@ -1,15 +1,35 @@
+using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
-using Newtonsoft.Json.Linq;
 
 
 namespace ChemSW.Nbt.ObjClasses
 {
+    /// <summary>
+    /// Print Label Object Class
+    /// </summary>
     public class CswNbtObjClassPrintLabel : CswNbtObjClass
     {
-        public static string EplTextPropertyName { get { return "epltext"; } }
-        public static string ParamsPropertyName { get { return "params"; } }
-        public static string NodeTypesPropertyName { get { return "NodeTypes"; } }
+        /// <summary>
+        /// Property names on the Print Label class
+        /// </summary>
+        public sealed class PropertyName
+        {
+            public const string EplText = "epltext";
+            public const string Params = "params";
+            public const string NodeTypes = "NodeTypes";
+            public const string ControlType = "Control Type";
+        }
+
+        /// <summary>
+        /// Supported UI Controls to Print from
+        /// </summary>
+        public sealed class ControlTypes
+        {
+            public const string ActiveX = "ActiveX";
+            public const string jZebra = "jZebra";
+            public static CswCommaDelimitedString Options = new CswCommaDelimitedString { ActiveX, jZebra };
+        }
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
 
@@ -58,9 +78,9 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault.afterWriteNode();
         }//afterWriteNode()
 
-        public override void beforeDeleteNode(bool DeleteAllRequiredRelatedNodes = false)
+        public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false )
         {
-            _CswNbtObjClassDefault.beforeDeleteNode(DeleteAllRequiredRelatedNodes);
+            _CswNbtObjClassDefault.beforeDeleteNode( DeleteAllRequiredRelatedNodes );
 
         }//beforeDeleteNode()
 
@@ -81,9 +101,9 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override bool onButtonClick( NbtButtonData ButtonData )
         {
-            
-            
-            
+
+
+
             if( null != ButtonData && null != ButtonData.NodeTypeProp ) { /*Do Something*/ }
             return true;
         }
@@ -91,32 +111,10 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Object class specific properties
 
-
-
-        public CswNbtNodePropMemo epltext
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[EplTextPropertyName].AsMemo );
-            }
-        }
-
-        public CswNbtNodePropMemo Params
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[ParamsPropertyName].AsMemo );
-            }
-        }
-
-        public CswNbtNodePropNodeTypeSelect NodeTypes
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[NodeTypesPropertyName].AsNodeTypeSelect );
-            }
-        }
-
+        public CswNbtNodePropMemo EplText { get { return _CswNbtNode.Properties[PropertyName.EplText]; } }
+        public CswNbtNodePropMemo Params { get { return _CswNbtNode.Properties[PropertyName.Params]; } }
+        public CswNbtNodePropNodeTypeSelect NodeTypes { get { return _CswNbtNode.Properties[PropertyName.NodeTypes]; } }
+        public CswNbtNodePropList ControlType { get { return _CswNbtNode.Properties[PropertyName.ControlType]; } }
 
         #endregion
 
