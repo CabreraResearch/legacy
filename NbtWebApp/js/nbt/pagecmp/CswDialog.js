@@ -798,9 +798,9 @@
                 datatype: 'json',
                 url: o.url + '?' + $.param(o.params),
                 paramName: 'fileupload',
-                done: function () {
+                success: function (result, textStatus, jqXHR) {
                     div.$.dialog('close');
-                    Csw.tryExec(o.onSuccess);
+                    Csw.tryExec(o.onSuccess, result.data);
                 }
             });
 
