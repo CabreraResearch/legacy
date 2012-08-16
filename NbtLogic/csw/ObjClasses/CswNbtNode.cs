@@ -144,6 +144,14 @@ namespace ChemSW.Nbt
             return this == obj;
         }
 
+        /// <summary>
+        /// Get Hash Code
+        /// </summary>
+        public override int GetHashCode()
+        {
+            return Value.GetHashCode() ^ _Enums.GetHashCode();
+        }
+
         #endregion IEquatable (NodeEditMode)
 
 
@@ -258,6 +266,14 @@ namespace ChemSW.Nbt.ObjClasses
             return this == obj;
         }
 
+        /// <summary>
+        /// Get Hash Code
+        /// </summary>
+        public override int GetHashCode()
+        {
+            return Value.GetHashCode() ^ _Enums.GetHashCode();
+        }
+
         #endregion IEquatable (NodeSpecies)
 
     };
@@ -362,6 +378,14 @@ namespace ChemSW.Nbt.ObjClasses
         public bool Equals( NodeModificationState obj )
         {
             return this == obj;
+        }
+
+        /// <summary>
+        /// Get Hash Code
+        /// </summary>
+        public override int GetHashCode()
+        {
+            return Value.GetHashCode() ^ _Enums.GetHashCode();
         }
 
         #endregion IEquatable (NodeModificationState)

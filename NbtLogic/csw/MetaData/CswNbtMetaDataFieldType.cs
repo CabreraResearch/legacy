@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using ChemSW.Core;
-using ChemSW.Exceptions;
 
 namespace ChemSW.Nbt.MetaData
 {
@@ -143,6 +142,14 @@ namespace ChemSW.Nbt.MetaData
             public bool Equals( NbtFieldType obj )
             {
                 return this == obj;
+            }
+
+            /// <summary>
+            /// Get Hash Code
+            /// </summary>
+            public override int GetHashCode()
+            {
+                return Value.GetHashCode() ^ _Enums.GetHashCode();
             }
 
             #endregion IEquatable (NbtFieldType)
