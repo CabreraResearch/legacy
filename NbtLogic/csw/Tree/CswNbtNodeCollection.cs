@@ -517,7 +517,10 @@ namespace ChemSW.Nbt
             /// </summary>
             public override int GetHashCode()
             {
-                return Value.GetHashCode() ^ _Enums.GetHashCode();
+                int ret = 23, prime = 37;
+                ret = ( ret * prime ) + Value.GetHashCode();
+                ret = ( ret * prime ) + _Enums.GetHashCode();
+                return ret;
             }
 
             #endregion IEquatable (MakeNodeOperation)
