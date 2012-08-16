@@ -40,8 +40,6 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void beforeCreateNode( bool OverrideUniqueValidation )
         {
-            Mixture.SetOnPropChange( OnMixturePropChange );
-            Constituent.SetOnPropChange( OnConstituentPropChange );
             _CswNbtObjClassDefault.beforeCreateNode( OverrideUniqueValidation );
         } // beforeCreateNode()
 
@@ -62,7 +60,6 @@ namespace ChemSW.Nbt.ObjClasses
                     throw new CswDniException( ErrorType.Warning, "Constituent cannot be the same as Mixture", "" );
                 }
             }
-
             _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
         }//beforeWriteNode()
 
@@ -84,6 +81,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void afterPopulateProps()
         {
+            Mixture.SetOnPropChange( OnMixturePropChange );
             _CswNbtObjClassDefault.afterPopulateProps();
         }//afterPopulateProps()
 
@@ -109,28 +107,17 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropRelationship Mixture { get { return ( _CswNbtNode.Properties[MixturePropertyName] ); } }
         private void OnMixturePropChange( CswNbtNodeProp Prop )
         {
-            //if( null != Mixture.RelatedNodeId && null != Constituent.RelatedNodeId )
-            //{
-            //    //if( Mixture.RelatedNodeId.Equals( Constituent.RelatedNodeId ) )
-            //    //{
-            //    Mixture.RelatedNodeId = null;
-            //    Constituent.RelatedNodeId = null;
-            //    //}
-            //}
+            if( null != Mixture.RelatedNodeId && null != Constituent.RelatedNodeId )
+            {
+                if( Mixture.RelatedNodeId.Equals( Constituent.RelatedNodeId ) )
+                {
+                    Mixture.RelatedNodeId = null;
+                    Constituent.RelatedNodeId = null;
+                }
+            }
         }
 
         public CswNbtNodePropRelationship Constituent { get { return ( _CswNbtNode.Properties[ConstituentPropertyName] ); } }
-        private void OnConstituentPropChange( CswNbtNodeProp Prop )
-        {
-            //if( null != Mixture.RelatedNodeId && null != Constituent.RelatedNodeId )
-            //{
-            //    //if( Mixture.RelatedNodeId.Equals( Constituent.RelatedNodeId ) )
-            //    //{
-            //    Mixture.RelatedNodeId = null;
-            //    Constituent.RelatedNodeId = null;
-            //    //}
-            //}
-        }
 
         #endregion
 
