@@ -73,7 +73,7 @@ namespace ChemSW.Nbt.Batch
                             nodeAsMaterial.postChanges( false );
 
                             //get materials using the current material as a component
-                            _getParentMaterials( currentMaterialID.PrimaryKey.ToString(), BatchData.MatchingMaterialIDs );
+                            _getParentMaterials( currentMaterialID.PrimaryKey, BatchData.MatchingMaterialIDs );
 
                             //save the updated batch data
                             BatchNode.appendToLog( "Updated " + currentMaterialID.ToString() );
@@ -184,26 +184,32 @@ namespace ChemSW.Nbt.Batch
 
         #region private helper functions
 
-        private void _getParentMaterials( string nodeid, CswCommaDelimitedString matchingNodesIDs )
+        private void _getParentMaterials( Int32 nodeid, CswCommaDelimitedString matchingNodesIDs )
         {
             CswNbtMetaDataObjectClass materialComponentOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.MaterialComponentClass );
+            CswNbtMetaDataObjectClassProp constituentOCP = materialComponentOC.getObjectClassProp( CswNbtObjClassMaterialComponent.ConstituentPropertyName );
+            CswNbtMetaDataObjectClassProp mixtureOCP = materialComponentOC.getObjectClassProp( CswNbtObjClassMaterialComponent.MixturePropertyName );
 
-            foreach( CswNbtMetaDataNodeType materialComponentNT in materialComponentOC.getNodeTypes() )
+            CswNbtView componentsView = new CswNbtView( _CswNbtResources );
+            CswNbtViewRelationship parent = componentsView.AddViewRelationship( materialComponentOC, false );
+            componentsView.AddViewPropertyAndFilter( parent, constituentOCP, Value: nodeid.ToString(), FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals, SubFieldName: CswNbtSubField.SubFieldName.NodeID );
+            componentsView.AddViewRelationship( parent, NbtViewPropOwnerType.First, mixtureOCP, false );
+
+            ICswNbtTree componentsTree = _CswNbtResources.Trees.getTreeFromView( componentsView, false );
+            int nodesCount = componentsTree.getChildNodeCount();
+            for( int i = 0; i < nodesCount; i++ )
             {
-                CswNbtMetaDataNodeTypeProp constituentNTP = materialComponentNT.getNodeTypePropByObjectClassProp( CswNbtObjClassMaterialComponent.ConstituentPropertyName );
-                CswNbtView componentsView = new CswNbtView( _CswNbtResources );
-                CswNbtViewRelationship parent = componentsView.AddViewRelationship( materialComponentNT, false );
-                componentsView.AddViewPropertyAndFilter( parent, constituentNTP, Value: nodeid, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals, SubFieldName: CswNbtSubField.SubFieldName.NodeID );
-
-                ICswNbtTree componentsTree = _CswNbtResources.Trees.getTreeFromView( componentsView, false );
-                int nodesCount = componentsTree.getChildNodeCount();
-                for( int i = 0; i < nodesCount; i++ )
+                componentsTree.goToNthChild( i );
+                //CswNbtObjClassMaterialComponent nodeAsMaterialComponent = (CswNbtObjClassMaterialComponent) componentsTree.getNodeForCurrentPosition();
+                //matchingNodesIDs.Add( nodeAsMaterialComponent.Mixture.RelatedNodeId.ToString() );
+                int childNodesCount = componentsTree.getNodeCountForCurrentLevel();
+                for( int c = 0; c < childNodesCount; c++ )
                 {
-                    componentsTree.goToNthChild( i );
-                    CswNbtObjClassMaterialComponent nodeAsMaterialComponent = (CswNbtObjClassMaterialComponent) componentsTree.getNodeForCurrentPosition();
-                    matchingNodesIDs.Add( nodeAsMaterialComponent.Mixture.RelatedNodeId.ToString() );
+                    componentsTree.goToNthChild( c );
+                    CswNbtObjClassMaterial nodeAsMaterial = (CswNbtObjClassMaterial) componentsTree.getNodeForCurrentPosition(); //the mixture
                     componentsTree.goToParentNode();
                 }
+                componentsTree.goToParentNode();
             }
         }
 
@@ -211,14 +217,7 @@ namespace ChemSW.Nbt.Batch
         {
             CswCommaDelimitedString lists = new CswCommaDelimitedString();
             lists.FromString( material.RegulatoryLists.StaticText );
-            foreach( string listName in lists )
-            {
-                if( listName.Equals( name ) )
-                {
-                    return true;
-                }
-            }
-            return false;
+            return lists.Contains( name );
         }
 
         private CswNbtView _getMaterialsByCASNoView( string CASNo )
