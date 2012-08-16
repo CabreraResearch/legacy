@@ -127,7 +127,7 @@ namespace ChemSW.Nbt.ObjClasses
                             CswNbtActSubmitRequest RequestAct = new CswNbtActSubmitRequest( _CswNbtResources, CreateDefaultRequestNode: true );
 
                             CswNbtObjClassRequestItem NodeAsRequestItem = RequestAct.makeMaterialRequestItem( new CswNbtActSubmitRequest.RequestItem( CswNbtActSubmitRequest.RequestItem.Material ), NodeId, OCP );
-                        NodeAsRequestItem.postChanges( false );
+                            NodeAsRequestItem.postChanges( false );
                             ButtonData.Data["requestaction"] = OCP.PropName;
                             ButtonData.Data["titleText"] = "Request for " + TradeName.Text;
                             ButtonData.Data["requestItemProps"] = RequestAct.getRequestItemAddProps( NodeAsRequestItem );
@@ -205,6 +205,9 @@ namespace ChemSW.Nbt.ObjClasses
                     break;
                 case "weeks":
                     DefaultExpDate = DefaultExpDate.AddDays( this.ExpirationInterval.Quantity * 7 );
+                    break;
+                case "months":
+                    DefaultExpDate = DefaultExpDate.AddMonths( CswConvert.ToInt32( this.ExpirationInterval.Quantity ) );
                     break;
                 case "years":
                     DefaultExpDate = DefaultExpDate.AddYears( CswConvert.ToInt32( this.ExpirationInterval.Quantity ) );
