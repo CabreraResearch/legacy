@@ -305,7 +305,7 @@ namespace ChemSW.NbtWebControls
                                                                     NodeTypeBaseVersionPrefix + NodeType.FirstVersionNodeTypeId.ToString(),
                                                                     NodeTypeBaseVersionPrefix + NodeType.FirstVersionNodeTypeId.ToString(),
                                                                     _CswNbtResources.MetaData.getNodeTypeLatestVersion( NodeType ).NodeTypeName,
-                                                                    "Images/icons/" + _CswNbtResources.MetaData.getNodeTypeLatestVersion( NodeType ).IconFileName,
+                                                                    CswNbtMetaDataObjectClass.IconPrefix16 + _CswNbtResources.MetaData.getNodeTypeLatestVersion( NodeType ).IconFileName,
                                                                     false,
                                                                     ( SelectedNodeType != null && NodeType.NodeTypeId == SelectedNodeType.NodeTypeId ),
                                                                     "" );
@@ -333,7 +333,7 @@ namespace ChemSW.NbtWebControls
                                                             NodeTypePrefix + NodeType.NodeTypeId.ToString(),
                                                             NodeTypePrefix + NodeType.NodeTypeId.ToString(),
                                                             NodeTypeName,
-                                                            "Images/icons/" + NodeType.IconFileName.ToString(),
+                                                            CswNbtMetaDataObjectClass.IconPrefix16 + NodeType.IconFileName.ToString(),
                                                             true,
                                                             ( SelectedNodeType != null && NodeType.NodeTypeId == SelectedNodeType.NodeTypeId ),
                                                             "" );
