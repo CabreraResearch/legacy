@@ -74,12 +74,12 @@ namespace ChemSW.Nbt.WebServices
             CswNbtMetaDataNodeType ThisNodeType = _CswNbtResources.MetaData.getNodeType( ThisNodeKey.NodeTypeId );
             switch( ThisNodeKey.NodeSpecies )
             {
-                case NodeSpecies.More:
-                    ThisNodeId = ThisNodeKey.NodeId.ToString();
-                    ThisNodeName = NodeSpecies.More.ToString() + "...";
-                    ThisNodeIcon = "Images/icons/triangle_blueS.gif";
-                    ThisNodeRel = "nt_" + ThisNodeType.FirstVersionNodeTypeId;
-                    break;
+                //case NodeSpecies.More:
+                //    ThisNodeId = ThisNodeKey.NodeId.ToString();
+                //    ThisNodeName = NodeSpecies.More.ToString() + "...";
+                //    ThisNodeIcon = "Images/icons/triangle_blueS.gif";
+                //    ThisNodeRel = "nt_" + ThisNodeType.FirstVersionNodeTypeId;
+                //    break;
                 case NodeSpecies.Plain:
                     ThisNodeId = ThisNodeKey.NodeId.ToString();
                     ThisNodeName = Tree.getNodeNameForCurrentPosition();
@@ -88,7 +88,7 @@ namespace ChemSW.Nbt.WebServices
                     ThisNodeDisabled = ( false == Tree.getNodeIncludedForCurrentPosition() );
                     if( false == string.IsNullOrEmpty( ThisNodeType.IconFileName ) )
                     {
-                        ThisNodeIcon = "Images/icons/" + ThisNodeType.IconFileName;
+                        ThisNodeIcon = CswNbtMetaDataObjectClass.IconPrefix16 + ThisNodeType.IconFileName;
                     }
                     break;
                 case NodeSpecies.Group:
@@ -481,7 +481,7 @@ namespace ChemSW.Nbt.WebServices
             TypesJson["root"]["icon"]["image"] = "Images/view/viewtree.gif";
             TypesJson["group"] = new JObject();
             TypesJson["group"]["icon"] = new JObject();
-            TypesJson["group"]["icon"]["image"] = "Images/icons/group.gif";
+            TypesJson["group"]["icon"]["image"] = CswNbtMetaDataObjectClass.IconPrefix16 + "folder.gif";
             TypesJson["default"] = "";
 
             var NodeTypes = new Dictionary<Int32, string>();
@@ -515,7 +515,7 @@ namespace ChemSW.Nbt.WebServices
                 TypesJson["nt_" + NodeType.Key]["icon"] = new JObject();
                 if( false == string.IsNullOrEmpty( NodeType.Value ) )
                 {
-                    TypesJson["nt_" + NodeType.Key]["icon"]["image"] = "Images/icons/" + NodeType.Value;
+                    TypesJson["nt_" + NodeType.Key]["icon"]["image"] = CswNbtMetaDataObjectClass.IconPrefix16 + NodeType.Value;
                 }
             }
             return TypesJson;

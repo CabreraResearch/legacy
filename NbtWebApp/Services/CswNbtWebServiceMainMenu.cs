@@ -313,7 +313,7 @@ namespace ChemSW.Nbt.WebServices
             {
                 Ret["text"] = Entry.NodeType.NodeTypeName;
                 Ret["nodetypeid"] = Entry.NodeType.NodeTypeId;
-                Ret["icon"] = "Images/icons/" + Entry.NodeType.IconFileName;
+                Ret["icon"] = CswNbtMetaDataObjectClass.IconPrefix16 + Entry.NodeType.IconFileName;
             }
             Ret["relatednodeid"] = default( string );
             if( null != RelatedNodeId && Int32.MinValue != RelatedNodeId.PrimaryKey )

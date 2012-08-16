@@ -177,7 +177,8 @@ namespace ChemSW.Nbt.WebServices
                 {
                     if( Action.ShowInList ) //case 26555 - filter out actions like 'Multi Edit' or 'Edit View'
                     {
-                        JObject ActionObj = _addViewSelectObj( ref ret, "Favorites", Action.DisplayName, ItemType.Action, "Images/view/action.gif", Action.ActionId.ToString() );
+                        JObject ActionObj = _addViewSelectObj( ref ret, "Favorites", Action.DisplayName, ItemType.Action,
+                            CswNbtMetaDataObjectClass.IconPrefix16 + "wizard.png", Action.ActionId.ToString() );
                         ActionObj["actionid"] = Action.ActionId.ToString();
                         ActionObj["actionurl"] = Action.Url;
                         ActionObj["actionname"] = Action.Name.ToString();   // not using CswNbtAction.ActionNameEnumToString here
@@ -205,7 +206,8 @@ namespace ChemSW.Nbt.WebServices
                         //Case 23687: "View By Location" Action is toast. Bye-bye "loc_use_images" config var check.
                         _CswNbtResources.Permit.can( Action.Name ) )
                     {
-                        JObject ActionObj = _addViewSelectObj( ref ret, Action.Category, Action.DisplayName, ItemType.Action, "Images/view/action.gif", Action.ActionId.ToString() );
+                        JObject ActionObj = _addViewSelectObj( ref ret, Action.Category, Action.DisplayName, ItemType.Action, 
+                                                               CswNbtMetaDataObjectClass.IconPrefix16 + "wizard.png", Action.ActionId.ToString() );
                         ActionObj["actionid"] = Action.ActionId.ToString();
                         ActionObj["actionurl"] = Action.Url;
                         ActionObj["actionname"] = Action.Name.ToString();   // not using CswNbtAction.ActionNameEnumToString here

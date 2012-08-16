@@ -5,6 +5,7 @@ using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.ObjClasses;
+using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.Search;
 using Newtonsoft.Json.Linq;
 
@@ -126,7 +127,8 @@ namespace ChemSW.Nbt
             ParentObj["type"] = CswConvert.ToString( LaunchType );
             ParentObj["name"] = Text;
             ParentObj["id"] = SessionDataId.ToString();
-            ParentObj["iconurl"] = "Images/view/action.gif";
+            //ParentObj["iconurl"] = "Images/view/action.gif";
+            ParentObj["iconurl"] = CswNbtMetaDataObjectClass.IconPrefix16 + "wizard.png";
             ParentObj["actionname"] = CswConvert.ToString( ActionName );
             ParentObj["actionid"] = CswConvert.ToString( ActionName );
             ParentObj["actionurl"] = CswConvert.ToString( ActionUrl );
@@ -137,7 +139,8 @@ namespace ChemSW.Nbt
             ParentObj["type"] = CswConvert.ToString( LaunchType );
             ParentObj["name"] = Text;
             ParentObj["id"] = SessionDataId.ToString();
-            ParentObj["iconurl"] = "Images/view/search.gif";
+            //ParentObj["iconurl"] = "Images/view/search.gif";
+            ParentObj["iconurl"] = CswNbtMetaDataObjectClass.IconPrefix16 + "magglass.png"; 
             ParentObj["searchid"] = SessionDataId.ToString();
         }
 

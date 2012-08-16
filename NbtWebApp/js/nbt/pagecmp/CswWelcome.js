@@ -85,8 +85,9 @@
                                         href: 'javascript:void(0);'
                                     });
                                     link.img({
-                                        border: 0,
-                                        src: thisItem.buttonicon
+                                        src: thisItem.buttonicon,
+                                        border: '',
+                                        cssclass: 'WelcomeImage'
                                     });
                                 }
 
@@ -187,12 +188,12 @@
             table.cell(4, 1).span({ text: 'Text:' });
 
             var welcomeText = table.cell(4, 2).input({ ID: 'welcome_text' });
-            var buttonselLabel = table.cell(5, 1).span({ text: 'Use Button:' });
-            var buttonSel = table.cell(5, 2).select({ ID: 'welcome_button' });
-            buttonSel.option({ value: 'blank.gif', display: '', isSelected: true })
-                                        .css('width', '100px');
+            //var buttonselLabel = table.cell(5, 1).span({ text: 'Use Button:' });
+            //var buttonSel = table.cell(5, 2).select({ ID: 'welcome_button' });
+            //buttonSel.option({ value: 'blank.gif', display: '', isSelected: true })
+            //                            .css('width', '100px');
 
-            var buttonImg = table.cell(6, 2).img({ ID: 'welcome_btnimg' });
+            //var buttonImg = table.cell(6, 2).img({ ID: 'welcome_btnimg' });
 
             var addButton = table.cell(7, 2).button({ ID: 'welcome_add',
                 enabledText: 'Add',
@@ -219,16 +220,16 @@
                         viewvalue: viewvalue,
                         nodetypeid: ntSelect.val(),
                         text: welcomeText.val(),
-                        iconfilename: buttonSel.val(),
+                        iconfilename: '', //buttonSel.val(),
                         onSuccess: o.onAdd,
                         onError: function () { addButton.enable(); }
                     });
                 }
             });
 
-            buttonSel.bind('change', function () {
-                buttonImg.propDom('src', 'Images/biggerbuttons/' + buttonSel.val());
-            });
+//            buttonSel.bind('change', function () {
+//                buttonImg.propDom('src', 'Images/biggerbuttons/' + buttonSel.val());
+//            });
 
             typeSelect.change(function () {
                 _onTypeChange({
@@ -237,25 +238,25 @@
                     viewselect: viewSelect,
                     //searchviewselect: searchViewSelect,
                     ntSelectLabel: ntSelectLabel,
-                    $ntselect: ntSelect,
-                    buttonSelLabel: buttonselLabel,
-                    buttonSel: buttonSel,
-                    buttonImg: buttonImg
+                    $ntselect: ntSelect//,
+//                    buttonSelLabel: buttonselLabel,
+//                    buttonSel: buttonSel,
+//                    buttonImg: buttonImg
                 });
             });
 
-            Csw.ajax.post({
-                url: '/NbtWebApp/wsNBT.asmx/getWelcomeButtonIconList',
-                success: function (data) {
-                    for (var filename in data) {
-                        if (false === Csw.isNullOrEmpty(filename) &&
-                            filename !== 'blank.gif') {
-                            buttonSel.option({ value: filename, display: filename });
-                        }
-                        buttonSel.css('width', '');
-                    } // each
-                } // success
-            }); // Csw.ajax
+//            Csw.ajax.post({
+//                url: '/NbtWebApp/wsNBT.asmx/getWelcomeButtonIconList',
+//                success: function (data) {
+//                    for (var filename in data) {
+//                        if (false === Csw.isNullOrEmpty(filename) &&
+//                            filename !== 'blank.gif') {
+//                            buttonSel.option({ value: filename, display: filename });
+//                        }
+//                        buttonSel.css('width', '');
+//                    } // each
+//                } // success
+//            }); // Csw.ajax
         } // getAddItemForm
 
     };
@@ -435,10 +436,10 @@
             viewselect: '',
             //searchviewselect: '',
             ntSelectLabel: '',
-            $ntselect: '',
-            buttonSelLabel: '',
-            buttonSel: '',
-            buttonImg: ''
+            $ntselect: ''//,
+//            buttonSelLabel: '',
+//            buttonSel: '',
+//            buttonImg: ''
         };
         if (options) {
             Csw.extend(o, options);
@@ -451,9 +452,9 @@
                 //o.searchviewselect.$.hide();
                 o.ntSelectLabel.show();
                 o.$ntselect.show();
-                o.buttonSelLabel.show();
-                o.buttonSel.show();
-                o.buttonImg.show();
+//                o.buttonSelLabel.show();
+//                o.buttonSel.show();
+//                o.buttonImg.show();
                 break;
             case 'Link':
                 o.viewSelectLabel.show();
@@ -461,9 +462,9 @@
                 //o.searchviewselect.$.hide();
                 o.ntSelectLabel.hide();
                 o.$ntselect.hide();
-                o.buttonSelLabel.show();
-                o.buttonSel.show();
-                o.buttonImg.show();
+//                o.buttonSelLabel.show();
+//                o.buttonSel.show();
+//                o.buttonImg.show();
                 break;
             //            case 'Search':    
             //                o.viewSelectLabel.show();    
@@ -481,9 +482,9 @@
                 //o.searchviewselect.$.hide();
                 o.ntSelectLabel.hide();
                 o.$ntselect.hide();
-                o.buttonSelLabel.hide();
-                o.buttonSel.hide();
-                o.buttonImg.hide();
+//                o.buttonSelLabel.hide();
+//                o.buttonSel.hide();
+//                o.buttonImg.hide();
                 break;
         } // switch
 

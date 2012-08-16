@@ -462,7 +462,7 @@ namespace ChemSW.Nbt
                 string PotentialIconSuffix = _getAttr( NodeObj, _AttrName_IconFileName );
                 if( false == string.IsNullOrEmpty( PotentialIconSuffix ) )
                 {
-                    IconName = "Images/icons/" + PotentialIconSuffix;
+                    IconName = CswNbtMetaDataObjectClass.IconPrefix16 + PotentialIconSuffix;
                 }
                 ReturnVal.IconFileName = IconName;
                 ReturnVal.NodeName = _getAttr( NodeObj, _AttrName_NodeName );
