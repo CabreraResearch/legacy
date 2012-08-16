@@ -1,4 +1,5 @@
-﻿using ChemSW.Nbt.MetaData;
+﻿using ChemSW.Core;
+using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 
 namespace ChemSW.Nbt.Schema
@@ -27,24 +28,36 @@ namespace ChemSW.Nbt.Schema
             {
                 PropName = CswNbtObjClassDocument.PropertyName.Language,
                 FieldType = CswNbtMetaDataFieldType.NbtFieldType.List,
-                ListOptions = "en,fr,es,de"
+                ListOptions = "en,fr,es,de",
+                SetValOnAdd = true,
+                FilterPropId = DocumentClassOcp.PropId,
+                Filter = CswNbtMetaDataObjectClassProp.makeFilter( DocumentClassOcp.getFieldTypeRule().SubFields.Default, CswNbtPropFilterSql.PropertyFilterMode.Equals, CswNbtObjClassDocument.DocumentClasses.MSDS )
             } );
 
             CswNbtMetaDataObjectClassProp FormatOcp = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( DocumentOc )
             {
                 PropName = CswNbtObjClassDocument.PropertyName.Format,
                 FieldType = CswNbtMetaDataFieldType.NbtFieldType.List,
-                ListOptions = CswNbtObjClassDocument.Formats.Options.ToString()
+                ListOptions = CswNbtObjClassDocument.Formats.Options.ToString(),
+                SetValOnAdd = true,
+                FilterPropId = DocumentClassOcp.PropId,
+                Filter = CswNbtMetaDataObjectClassProp.makeFilter( DocumentClassOcp.getFieldTypeRule().SubFields.Default, CswNbtPropFilterSql.PropertyFilterMode.Equals, CswNbtObjClassDocument.DocumentClasses.MSDS )
             } );
 
             CswNbtMetaDataObjectClassProp LinkOcp = DocumentOc.getObjectClassProp( CswNbtObjClassDocument.PropertyName.Link );
             CswNbtMetaDataObjectClassProp FileOcp = DocumentOc.getObjectClassProp( CswNbtObjClassDocument.PropertyName.File );
             CswNbtMetaDataObjectClassProp FileTypeOcp = DocumentOc.getObjectClassProp( CswNbtObjClassDocument.PropertyName.FileType );
+            CswNbtMetaDataObjectClassProp ArchivedOcp = DocumentOc.getObjectClassProp( CswNbtObjClassDocument.PropertyName.Archived );
+            CswNbtMetaDataObjectClassProp AcquiredDateOcp = DocumentOc.getObjectClassProp( CswNbtObjClassDocument.PropertyName.AcquiredDate );
 
             _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( LinkOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.setvalonadd, true );
             _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( FileOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.setvalonadd, true );
             _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( FileTypeOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.isrequired, true );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( AcquiredDateOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.servermanaged, true );
             _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( FileTypeOcp, FileTypeOcp.getFieldTypeRule().SubFields.Default.Name, CswNbtObjClassDocument.FileTypes.File );
+
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( ArchivedOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.isrequired, true );
+            _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( ArchivedOcp, ArchivedOcp.getFieldTypeRule().SubFields.Default.Name, Tristate.False );
 
         }//Update()
 

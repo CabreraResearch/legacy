@@ -189,6 +189,8 @@ namespace ChemSW.Nbt.ObjClasses
             AcquiredDate.SetOnPropChange( OnAcquiredDatePropChange );
             DocumentClass.SetOnPropChange( OnDocumentClassPropChange );
             Archived.SetOnPropChange( OnArchivedPropChange );
+            Language.SetOnPropChange( OnLanguagePropChange );
+            Format.SetOnPropChange( OnFormatPropChange );
             _CswNbtObjClassDefault.afterPopulateProps();
         }//afterPopulateProps()
 
@@ -206,45 +208,15 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Object class specific properties
 
-        public CswNbtNodePropText Title { get { return _CswNbtNode.Properties[PropertyName.Title]; } }
-        public CswNbtNodePropDateTime AcquiredDate { get { return _CswNbtNode.Properties[PropertyName.AcquiredDate]; } }
-        private void OnAcquiredDatePropChange( CswNbtNodeProp NodeProp )
+        private void _archiveMatchingDocs()
         {
-            ArchiveDate.setHidden( value: true, SaveToDb: true );
-        }
-        public CswNbtNodePropDateTime ExpirationDate { get { return _CswNbtNode.Properties[PropertyName.ExpirationDate]; } }
-        public CswNbtNodePropBlob File { get { return _CswNbtNode.Properties[PropertyName.File]; } }
-        private void OnFilePropChange( CswNbtNodeProp NodeProp )
-        {
-            if( AcquiredDate.DateTimeValue == DateTime.MinValue &&
-                false == string.IsNullOrEmpty( File.FileName ) )
-            {
-                AcquiredDate.DateTimeValue = DateTime.Now;
-            }
-        }
-        public CswNbtNodePropLink Link { get { return _CswNbtNode.Properties[PropertyName.Link]; } }
-        private void OnLinkPropChange( CswNbtNodeProp NodeProp )
-        {
-            if( AcquiredDate.DateTimeValue == DateTime.MinValue &&
-                false == string.IsNullOrEmpty( Link.Href ) )
-            {
-                AcquiredDate.DateTimeValue = DateTime.Now;
-            }
-        }
-        public CswNbtNodePropList FileType { get { return _CswNbtNode.Properties[PropertyName.FileType]; } }
-        public CswNbtNodePropList DocumentClass { get { return _CswNbtNode.Properties[PropertyName.DocumentClass]; } }
-        private void OnDocumentClassPropChange( CswNbtNodeProp NodeProp )
-        {
-            Language.setHidden( value: DocumentClass.Value != DocumentClasses.MSDS, SaveToDb: true );
-            Format.setHidden( value: DocumentClass.Value != DocumentClasses.MSDS, SaveToDb: true );
-
-        }
-        public CswNbtNodePropRelationship Owner { get { return _CswNbtNode.Properties[PropertyName.Owner]; } }
-        private void OnOwnerPropChange( CswNbtNodeProp NodeProp )
-        {
+            //If the document is not already archived and ( has a Document Class which is not MSDS or is MSDS and has a Language and Format ), 
+            //then archive existing Docs with the same property values
             if( Archived.Checked != Tristate.True &&
-                Owner.RelatedNodeId != null &&
-                false == string.IsNullOrEmpty( DocumentClass.Value ) )
+                false == string.IsNullOrEmpty( DocumentClass.Value ) &&
+                ( DocumentClass.Value != DocumentClasses.MSDS || (
+                false == string.IsNullOrEmpty( Format.Value ) &&
+                false == string.IsNullOrEmpty( Language.Value ) ) ) )
             {
                 CswNbtNode OwnerNode = _CswNbtResources.Nodes.GetNode( Owner.RelatedNodeId );
                 if( null != OwnerNode )
@@ -282,6 +254,47 @@ namespace ChemSW.Nbt.ObjClasses
                 }
             }
         }
+
+        public CswNbtNodePropText Title { get { return _CswNbtNode.Properties[PropertyName.Title]; } }
+        public CswNbtNodePropDateTime AcquiredDate { get { return _CswNbtNode.Properties[PropertyName.AcquiredDate]; } }
+        private void OnAcquiredDatePropChange( CswNbtNodeProp NodeProp )
+        {
+            ArchiveDate.setHidden( value: true, SaveToDb: true );
+        }
+        public CswNbtNodePropDateTime ExpirationDate { get { return _CswNbtNode.Properties[PropertyName.ExpirationDate]; } }
+        public CswNbtNodePropBlob File { get { return _CswNbtNode.Properties[PropertyName.File]; } }
+        private void OnFilePropChange( CswNbtNodeProp NodeProp )
+        {
+            if( AcquiredDate.DateTimeValue == DateTime.MinValue &&
+                false == string.IsNullOrEmpty( File.FileName ) )
+            {
+                AcquiredDate.DateTimeValue = DateTime.Now;
+            }
+        }
+        public CswNbtNodePropLink Link { get { return _CswNbtNode.Properties[PropertyName.Link]; } }
+        private void OnLinkPropChange( CswNbtNodeProp NodeProp )
+        {
+            if( AcquiredDate.DateTimeValue == DateTime.MinValue &&
+                false == string.IsNullOrEmpty( Link.Href ) )
+            {
+                AcquiredDate.DateTimeValue = DateTime.Now;
+            }
+        }
+        public CswNbtNodePropList FileType { get { return _CswNbtNode.Properties[PropertyName.FileType]; } }
+        public CswNbtNodePropList DocumentClass { get { return _CswNbtNode.Properties[PropertyName.DocumentClass]; } }
+        private void OnDocumentClassPropChange( CswNbtNodeProp NodeProp )
+        {
+            Language.setHidden( value: DocumentClass.Value != DocumentClasses.MSDS, SaveToDb: true );
+            Format.setHidden( value: DocumentClass.Value != DocumentClasses.MSDS, SaveToDb: true );
+        }
+        public CswNbtNodePropRelationship Owner { get { return _CswNbtNode.Properties[PropertyName.Owner]; } }
+        private void OnOwnerPropChange( CswNbtNodeProp NodeProp )
+        {
+            if( CswTools.IsPrimaryKey( Owner.RelatedNodeId ) )
+            {
+                _archiveMatchingDocs();
+            }
+        }
         public CswNbtNodePropLogical Archived { get { return _CswNbtNode.Properties[PropertyName.Archived]; } }
         private void OnArchivedPropChange( CswNbtNodeProp NodeProp )
         {
@@ -294,7 +307,16 @@ namespace ChemSW.Nbt.ObjClasses
         }
 
         public CswNbtNodePropList Language { get { return _CswNbtNode.Properties[PropertyName.Language]; } }
+        private void OnLanguagePropChange( CswNbtNodeProp NodeProp )
+        {
+            _archiveMatchingDocs();
+        }
+
         public CswNbtNodePropList Format { get { return _CswNbtNode.Properties[PropertyName.Format]; } }
+        private void OnFormatPropChange( CswNbtNodeProp NodeProp )
+        {
+            _archiveMatchingDocs();
+        }
         public CswNbtNodePropDateTime ArchiveDate { get { return _CswNbtNode.Properties[PropertyName.ArchiveDate]; } }
 
         #endregion
