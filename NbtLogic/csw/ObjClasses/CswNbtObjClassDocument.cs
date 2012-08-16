@@ -118,7 +118,7 @@ namespace ChemSW.Nbt.ObjClasses
             /// Globally Harmonized System
             /// </summary>
             public const string GHS = "GHS";
-
+            public static CswCommaDelimitedString Options = new CswCommaDelimitedString { OSHA, GHS };
         }
 
         #endregion Public Sealed Classes
@@ -186,6 +186,9 @@ namespace ChemSW.Nbt.ObjClasses
             Owner.SetOnPropChange( OnOwnerPropChange );
             File.SetOnPropChange( OnFilePropChange );
             Link.SetOnPropChange( OnLinkPropChange );
+            AcquiredDate.SetOnPropChange( OnAcquiredDatePropChange );
+            DocumentClass.SetOnPropChange( OnDocumentClassPropChange );
+            Archived.SetOnPropChange( OnArchivedPropChange );
             _CswNbtObjClassDefault.afterPopulateProps();
         }//afterPopulateProps()
 
@@ -205,6 +208,10 @@ namespace ChemSW.Nbt.ObjClasses
 
         public CswNbtNodePropText Title { get { return _CswNbtNode.Properties[PropertyName.Title]; } }
         public CswNbtNodePropDateTime AcquiredDate { get { return _CswNbtNode.Properties[PropertyName.AcquiredDate]; } }
+        private void OnAcquiredDatePropChange( CswNbtNodeProp NodeProp )
+        {
+            ArchiveDate.setHidden( value: true, SaveToDb: true );
+        }
         public CswNbtNodePropDateTime ExpirationDate { get { return _CswNbtNode.Properties[PropertyName.ExpirationDate]; } }
         public CswNbtNodePropBlob File { get { return _CswNbtNode.Properties[PropertyName.File]; } }
         private void OnFilePropChange( CswNbtNodeProp NodeProp )
@@ -226,6 +233,12 @@ namespace ChemSW.Nbt.ObjClasses
         }
         public CswNbtNodePropList FileType { get { return _CswNbtNode.Properties[PropertyName.FileType]; } }
         public CswNbtNodePropList DocumentClass { get { return _CswNbtNode.Properties[PropertyName.DocumentClass]; } }
+        private void OnDocumentClassPropChange( CswNbtNodeProp NodeProp )
+        {
+            Language.setHidden( value: DocumentClass.Value != DocumentClasses.MSDS, SaveToDb: true );
+            Format.setHidden( value: DocumentClass.Value != DocumentClasses.MSDS, SaveToDb: true );
+
+        }
         public CswNbtNodePropRelationship Owner { get { return _CswNbtNode.Properties[PropertyName.Owner]; } }
         private void OnOwnerPropChange( CswNbtNodeProp NodeProp )
         {
@@ -264,6 +277,11 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
         public CswNbtNodePropLogical Archived { get { return _CswNbtNode.Properties[PropertyName.Archived]; } }
+        private void OnArchivedPropChange( CswNbtNodeProp NodeProp )
+        {
+            ArchiveDate.setHidden( value: false, SaveToDb: true );
+        }
+
         public CswNbtNodePropList Language { get { return _CswNbtNode.Properties[PropertyName.Language]; } }
         public CswNbtNodePropList Format { get { return _CswNbtNode.Properties[PropertyName.Format]; } }
         public CswNbtNodePropDateTime ArchiveDate { get { return _CswNbtNode.Properties[PropertyName.ArchiveDate]; } }
