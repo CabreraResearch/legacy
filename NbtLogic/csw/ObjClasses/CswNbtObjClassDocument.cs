@@ -255,6 +255,12 @@ namespace ChemSW.Nbt.ObjClasses
                     ExistingDocsView.AddViewPropertyAndFilter( DocumentVr, DocumentClass.NodeTypeProp, DocumentClass.Value );
                     ExistingDocsView.AddViewPropertyAndFilter( DocumentVr, Archived.NodeTypeProp, Tristate.True.ToString(), FilterMode: CswNbtPropFilterSql.PropertyFilterMode.NotEquals );
 
+                    if( DocumentClass.Value == DocumentClasses.MSDS )
+                    {
+                        ExistingDocsView.AddViewPropertyAndFilter( DocumentVr, Format.NodeTypeProp, Format.Value );
+                        ExistingDocsView.AddViewPropertyAndFilter( DocumentVr, Language.NodeTypeProp, Language.Value );
+                    }
+
                     ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( ExistingDocsView, true, false );
                     Int32 DocCount = Tree.getChildNodeCount();
                     if( DocCount > 0 )
@@ -265,7 +271,7 @@ namespace ChemSW.Nbt.ObjClasses
                             CswNbtNode DocNode = Tree.getNodeForCurrentPosition();
                             if( DocNode.NodeId != NodeId )
                             {
-                                CswNbtObjClassDocument DocNodeAsDocument = (CswNbtObjClassDocument) DocNode;
+                                CswNbtObjClassDocument DocNodeAsDocument = DocNode;
                                 DocNodeAsDocument.Archived.Checked = Tristate.True;
                                 DocNode.postChanges( true );
                             }
@@ -279,7 +285,12 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropLogical Archived { get { return _CswNbtNode.Properties[PropertyName.Archived]; } }
         private void OnArchivedPropChange( CswNbtNodeProp NodeProp )
         {
-            ArchiveDate.setHidden( value: false, SaveToDb: true );
+            ArchiveDate.setHidden( value: Archived.Checked != Tristate.True, SaveToDb: true );
+            if( Archived.Checked == Tristate.True )
+            {
+                ArchiveDate.DateTimeValue = DateTime.Now;
+                Title.Text += " (Archived)";
+            }
         }
 
         public CswNbtNodePropList Language { get { return _CswNbtNode.Properties[PropertyName.Language]; } }
