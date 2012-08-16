@@ -57,6 +57,28 @@ namespace ChemSW.Nbt.ObjClasses
         {
             if( CASNumbers.WasModified )
             {
+                //remove this list from all material nodes
+                CswNbtView materialsWithThisList = new CswNbtView( _CswNbtResources );
+                CswNbtMetaDataObjectClass materialOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass );
+                CswNbtMetaDataObjectClassProp regListsOCP = materialOC.getObjectClassProp( CswNbtObjClassMaterial.RegulatoryListsPropertyName );
+                CswNbtViewRelationship parent = materialsWithThisList.AddViewRelationship( materialOC, false );
+                materialsWithThisList.AddViewPropertyAndFilter( parent, regListsOCP, Value: Name.Text, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Contains );
+
+                ICswNbtTree materialsWithListTree = _CswNbtResources.Trees.getTreeFromView( materialsWithThisList, false );
+                int nodeCount = materialsWithListTree.getChildNodeCount();
+                for( int i = 0; i < nodeCount; i++ )
+                {
+                    materialsWithListTree.goToNthChild( i );
+                    CswNbtObjClassMaterial nodeAsMaterial = (CswNbtObjClassMaterial) materialsWithListTree.getNodeForCurrentPosition();
+                    CswCommaDelimitedString regLists = new CswCommaDelimitedString();
+                    regLists.FromString( nodeAsMaterial.RegulatoryLists.StaticText );
+                    regLists.Remove( Name.Text );
+                    nodeAsMaterial.RegulatoryLists.StaticText = regLists.ToString();
+                    nodeAsMaterial.postChanges( false );
+                    materialsWithListTree.goToParentNode();
+                }
+
+                //start the batch operation to update
                 CswNbtBatchOpUpdateRegulatoryLists BatchOp = new CswNbtBatchOpUpdateRegulatoryLists( _CswNbtResources );
                 CswCommaDelimitedString CASNosAsCommaString = new CswCommaDelimitedString();
                 CASNosAsCommaString.FromString( CASNumbers.Text );
