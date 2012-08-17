@@ -89,6 +89,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="csw\Actions\CswNbtActReceiving.cs" />
+    <Compile Include="csw\Batch\CswNbtBatchOpUpdateRegulatoryListsForMaterials.cs" />
     <Compile Include="csw\Batch\CswNbtBatchOpMailReport.cs" />
     <Compile Include="csw\Batch\CswNbtBatchOpMultiDelete.cs" />
     <Compile Include="csw\Batch\CswNbtBatchOpInventoryLevels.cs" />

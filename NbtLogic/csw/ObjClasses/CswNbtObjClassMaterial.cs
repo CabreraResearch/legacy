@@ -78,21 +78,21 @@ namespace ChemSW.Nbt.ObjClasses
                 Receive.setHidden( value: ApprovalStatus.Checked != Tristate.True, SaveToDb: true );
             }
 
-            //if( CasNo.WasModified )
-            //{
-            //    CswCommaDelimitedString ParentMaterials = new CswCommaDelimitedString();
-            //    getParentMaterials( ref ParentMaterials );
-            //    if( ParentMaterials.Count > 0 ) //this material is used by others as a component...we have no idea how deep the rabbit hole is...make a batch op to update 
-            //    {
-            //        ParentMaterials.Add( NodeId.ToString() ); //we need to update this material too, so add it to the list
-            //        CswNbtBatchOpUpdateRegulatoryListsForMaterials BatchOp = new CswNbtBatchOpUpdateRegulatoryListsForMaterials( _CswNbtResources );
-            //        BatchOp.makeBatchOp( ParentMaterials );
-            //    }
-            //    else //this material isn't used as a component anywhere, so just update it by its self
-            //    {
-            //        _updateRegulatoryLists();
-            //    }
-            //}
+            if( CasNo.WasModified )
+            {
+                CswCommaDelimitedString ParentMaterials = new CswCommaDelimitedString();
+                getParentMaterials( ref ParentMaterials );
+                if( ParentMaterials.Count > 0 ) //this material is used by others as a component...we have no idea how deep the rabbit hole is...make a batch op to update 
+                {
+                    ParentMaterials.Add( NodeId.ToString() ); //we need to update this material too, so add it to the list
+                    CswNbtBatchOpUpdateRegulatoryListsForMaterials BatchOp = new CswNbtBatchOpUpdateRegulatoryListsForMaterials( _CswNbtResources );
+                    BatchOp.makeBatchOp( ParentMaterials );
+                }
+                else //this material isn't used as a component anywhere, so just update it by its self
+                {
+                    _updateRegulatoryLists();
+                }
+            }
             _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
         }//beforeWriteNode()
 
@@ -233,19 +233,19 @@ namespace ChemSW.Nbt.ObjClasses
             return DefaultExpDate;
         }
 
-        //private void _updateRegulatoryLists()
-        //{
-        //    CswNbtMetaDataObjectClass regListOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.RegulatoryListClass );
-        //    foreach( CswNbtObjClassRegulatoryList nodeAsRegList in regListOC.getNodes( false, false ) )
-        //    {
-        //        CswCommaDelimitedString CASNos = new CswCommaDelimitedString();
-        //        CASNos.FromString( nodeAsRegList.CASNumbers.Text );
-        //        if( CASNos.Contains( CasNo.Text ) )
-        //        {
-        //            RegulatoryLists.StaticText += "," + nodeAsRegList.Name.Text;
-        //        }
-        //    }
-        //}
+        private void _updateRegulatoryLists()
+        {
+            CswNbtMetaDataObjectClass regListOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.RegulatoryListClass );
+            foreach( CswNbtObjClassRegulatoryList nodeAsRegList in regListOC.getNodes( false, false ) )
+            {
+                CswCommaDelimitedString CASNos = new CswCommaDelimitedString();
+                CASNos.FromString( nodeAsRegList.CASNumbers.Text );
+                if( CASNos.Contains( CasNo.Text ) )
+                {
+                    RegulatoryLists.StaticText += "," + nodeAsRegList.Name.Text;
+                }
+            }
+        }
 
         /// <summary>
         /// Gets all the node ids of materials that use this material as a component
