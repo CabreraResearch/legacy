@@ -32,9 +32,6 @@ namespace ChemSW.Nbt.Schema
                 {
                     constituentNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, constituentNTP, true ); //add constituent to add layout
                 }
-
-                CswNbtMetaDataNodeTypeProp mixtureNTP = materialComponentNT.getNodeTypePropByObjectClassProp( CswNbtObjClassMaterialComponent.MixturePropertyName );
-                mixtureNTP.setIsCompoundUnique( false );
             }
 
         }//Update()
