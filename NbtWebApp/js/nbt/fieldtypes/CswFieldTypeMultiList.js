@@ -22,7 +22,8 @@
                     ID: o.ID,
                     cssclass: 'selectinput',
                     values: options,
-                    isMultiEdit: o.Multi
+                    isMultiEdit: o.Multi,
+                    editMode: o.EditMode
                 });
             }
         },
