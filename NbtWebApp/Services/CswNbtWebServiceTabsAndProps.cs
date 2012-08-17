@@ -105,9 +105,9 @@ namespace ChemSW.Nbt.WebServices
             return _TabsPropsSd.saveMolProp( moldata, propIdAttr );
         }
 
-        public bool SetPropBlobValue( byte[] Data, string FileName, string ContentType, string PropIdAttr, string Column )
+        public bool SetPropBlobValue( byte[] Data, string FileName, string ContentType, string PropIdAttr, string Column, out string Href )
         {
-            return _TabsPropsSd.SetPropBlobValue( Data, FileName, ContentType, PropIdAttr, Column );
+            return _TabsPropsSd.SetPropBlobValue( Data, FileName, ContentType, PropIdAttr, Column, out Href );
         } // SetPropBlobValue()
 
         /// <summary>

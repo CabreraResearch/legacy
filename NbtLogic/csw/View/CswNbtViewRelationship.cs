@@ -167,7 +167,7 @@ namespace ChemSW.Nbt
                     _SecondId = SecondNodeType.FirstVersionNodeTypeId;
             }
             _SecondName = InSecondName;
-            string IconFileNamePrefix = "Images/icons/";
+            string IconFileNamePrefix = CswNbtMetaDataObjectClass.IconPrefix16;
             if( InIconFileName.Length > IconFileNamePrefix.Length &&
                 InIconFileName.Substring( 0, IconFileNamePrefix.Length ) == IconFileNamePrefix )
             {

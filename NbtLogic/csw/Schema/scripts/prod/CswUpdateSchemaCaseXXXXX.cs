@@ -1,10 +1,4 @@
-﻿using System;
-using System.Data;
-using ChemSW.Core;
-using ChemSW.DB;
-using ChemSW.Nbt.MetaData;
-using ChemSW.Nbt.ObjClasses;
-
+﻿
 namespace ChemSW.Nbt.Schema
 {
     /// <summary>
@@ -12,11 +6,14 @@ namespace ChemSW.Nbt.Schema
     /// </summary>
     public class CswUpdateSchemaCaseXXXXX : CswUpdateSchemaTo
     {
+        /// <summary>
+        /// Update logic
+        /// </summary>
         public override void update()
         {
             // This is a placeholder script that does nothing.
         }//Update()
 
-    }//class CswUpdateSchemaCaseXXXXX
+    }
 
 }//namespace ChemSW.Nbt.Schema

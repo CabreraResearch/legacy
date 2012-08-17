@@ -384,7 +384,7 @@
                         cswPrivate.propNameCell.hide();
                     }
                     if (false === Csw.bool(cswPrivate.showConjunction)) {
-                        cswPrivate.conjunctionCell.hide();
+                        cswPrivate.conjunctionCell.css({visibility: 'hidden'});  // this one gets mixed, so we want it to take up space
                     }
                     if (false === Csw.bool(cswPrivate.showSubfield)) {
                         cswPrivate.subFieldCell.hide();
