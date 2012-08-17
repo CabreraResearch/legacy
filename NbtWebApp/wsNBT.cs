@@ -2865,7 +2865,7 @@ namespace ChemSW.Nbt.WebServices
                 {
 
                     CswNbtWebServicePrintLabels ws = new CswNbtWebServicePrintLabels( _CswNbtResources );
-                    ReturnVal.Add( new JProperty( "epl", ws.getEPLText( PropId, PrintLabelNodeId ) ) );
+                    ReturnVal = ws.getEPLText( PropId, PrintLabelNodeId );
                 }
 
                 _deInitResources();
