@@ -949,14 +949,12 @@
             }
             $.extend(cswPrivate, options);
             var cswPublic = {
-                div: Csw.literals.div({ align: 'center', text: 'Select a Label to Print:' }),
+                div: Csw.literals.div({ text: 'Select a Label to Print:' }),
                 close: function () {
                     cswPublic.div.$.dialog('close');
                 }
             };
 
-            cswPublic.div.br();
-            var labelSelDiv = cswPublic.div.div();
             var doPrint;
             var getEplContext = function(selectedVal) {
                 var jData2 = { PropId: cswPrivate.propid, PrintLabelNodeId: selectedVal || labelSel.val() };
@@ -966,51 +964,40 @@
                     data: jData2,
                     success: function(data) {
                         
-                        var labelx, labelj;
+                        var labelx;
+                        
                         if (data.controltype === 'ActiveX') {
-                            hiddenDiv.append('<OBJECT ID="labelx" Name="labelx" classid="clsid:A8926827-7F19-48A1-A086-B1A5901DB7F0" codebase="CafLabelPrintUtil.cab#version=0,1,6,0" width=0 height=0 align=center hspace=0 vspace=0></OBJECT>');
                             doPrint = function() {
                                 labelx = $('#labelx').get(0);
                                 labelx.EPLScript = data.epl;
                                 labelx.Print();
                             };
+                            printBtn.show();
                         } else {
-                            hiddenDiv.append('<applet id="jZebra" name="jZebra" code="jzebra.PrintApplet.class" archive="jzebra.jar" width="0" height="0"><param name="printer" value="zebra"></applet>');
-                            var printer = Csw.string(Csw.cookie.get('defaultPrinter'));
-                            var printerSel = labelSelDiv.select({
-                                labelText: 'Printer Name',
-                                ID: 'printersList',
-                                value: Csw.cookie.get('defaultPrinter'),
-                                onChange: function(val) {
-                                    printer = val;
-                                    Csw.cookie.set('defaultPrinter', printer);
-                                }
+                            //hiddenDiv.append('<applet id="jZebra" name="jZebra" code="jzebra.PrintApplet.class" archive="jzebra.jar" width="0" height="0"><param name="printer" value="zebra"></applet>');
+                            Csw.subscribe('jZebra_Ready', function() {
+                                jZeb.findPrinters();
+                                doPrint = function() {
+                                    var printer = $('#printersList').val();
+                                    jZeb.setDefaultPrinter(printer);
+                                    return jZeb.print(data.epl);
+                                };
+                                printBtn.show();
                             });
-                            window.jZebra.findPrinters();
-                            printer = printerSel.val();
-                            doPrint = function () {
-                                labelj = document.jZebra;
-                                labelj.findPrinter(printer);
-                                labelj.append(data.epl);
-                                labelj.print();
-                                debugger;
-                            };
                         }
-                        cswPublic.div.button({
-                            ID: 'print_label_print',
-                            enabledText: 'Print',
-                            //disabledText: 'Printing...', 
-                            disableOnClick: false,
-                            onClick: doPrint
-                        });
+                        
                     } // success
                 }); // ajax
             };
+            
+            cswPublic.div.br();
+            var labelSelDiv = cswPublic.div.div();
             var labelSel = labelSelDiv.select({
                 ID: cswPrivate.ID + '_labelsel',
                 onChange: getEplContext
             });
-
+            var jZeb = labelSelDiv.jZebra();
+            
             var jData = { PropId: cswPrivate.propid };
             Csw.ajax.post({
                 url: cswPrivate.GetPrintLabelsUrl,
@@ -1031,6 +1018,7 @@
             }); // ajax
 
             var hiddenDiv = cswPublic.div.div().css({ visibility: 'hidden', border: '1px solid red' });
+            hiddenDiv.append('<OBJECT ID="labelx" Name="labelx" classid="clsid:A8926827-7F19-48A1-A086-B1A5901DB7F0" codebase="CafLabelPrintUtil.cab#version=0,1,6,0" width=0 height=0 align=center hspace=0 vspace=0></OBJECT>');
             
             cswPublic.div.button({ ID: 'print_label_close',
                 enabledText: 'Close',
@@ -1040,6 +1028,17 @@
                 }
             });
 
+            var printBtn = cswPublic.div.button({
+                ID: 'print_label_print',
+                enabledText: 'Print',
+                //disabledText: 'Printing...', 
+                disableOnClick: false,
+                onClick: function () {
+                    doPrint();
+                }
+            });
+            //printBtn.hide();
+            
             openDialog(cswPublic.div, 400, 300, null, 'Print');
             return cswPublic;
         }, // PrintLabelDialog
@@ -1331,7 +1330,7 @@
         $('<div id="DialogErrorDiv" style="display: none;"></div>')
             .prependTo(div.$);
 
-        Csw.tryExec(div.$.dialog, 'close')
+        Csw.tryExec(div.$.dialog, 'close');
 
         div.$.dialog({
             modal: true,
@@ -1343,7 +1342,14 @@
                 posX -= incrPosBy;
                 posY -= incrPosBy;
                 dialogsCount--;
-                Csw.tryExec(onClose);
+                if (Csw.isFunction(onClose)) {
+                    Csw.tryExec(onClose);
+                }
+                try {
+                    div.$.dialog('close');
+                    div.remove();
+                } catch (e) { /*swallow*/ }
+                
                 Csw.unsubscribe(Csw.enums.events.afterObjectClassButtonClick, closeMe);
                 if (dialogsCount === 0) {
                     posX = cswPrivate.origXAccessor();

@@ -91,6 +91,13 @@
                 return cswPrivate.makeControlForChaining(opts, 'a');
             };
 
+            cswPublic.applet = function (opts) {
+                /// <summary> Creates a Csw.applet on this element</summary>
+                /// <param name="opts" type="Object">Options to define the applet.</param>
+                /// <returns type="Csw.literals.applet">A Csw.literals.applet</returns> 
+                return cswPrivate.makeControlForChaining(opts, 'applet');
+            };
+
             cswPublic.b = function (opts) {
                 /// <summary> Creates a Csw.b on this element</summary>
                 /// <param name="opts" type="Object">Options to define the b.</param>

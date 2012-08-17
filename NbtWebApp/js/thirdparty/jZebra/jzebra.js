@@ -15,13 +15,13 @@
         jZebra.monitorFinding();
     }
 
-    jZebra.findPrinters = function () {
+    jZebra.findPrinters = function (defaultPrinter) {
         var applet = document.jZebra;
         if (applet != null) {
             // Searches for locally installed printer with "zebra" in the name
             applet.findPrinter(",");
         }
-        jZebra.monitorFinding2();
+        jZebra.monitorFinding2(defaultPrinter);
     }
 
     jZebra.print = function () {
@@ -274,8 +274,10 @@
                 return;
             }
             if (!finished) {
-                window.setTimeout('monitorApplet("' + appletFunction + '", "' +
-                    finishedFunction.replace(/\"/g, '\\"') + '", "' + description + '")', 100);
+                window.setTimeout(
+                    function () {
+                        jZebra.monitorApplet(appletFunction, finishedFunction.replace(/\"/g, '\\"'), description)
+                    }, 100);
             } else {
                 var p = document.jZebra.getPrinterName();
                 if (p == null) {
@@ -335,16 +337,22 @@
       }
     }*/
 
-    jZebra.monitorFinding2 = function () {
+    jZebra.monitorFinding2 = function (defaultPrinter) {
         var applet = document.jZebra;
         if (applet != null) {
             if (!applet.isDoneFinding()) {
-                window.setTimeout('monitorFinding2()', 100);
+                window.setTimeout(function () {
+                    jZebra.monitorFinding2(defaultPrinter)
+                }, 100);
             } else {
                 var listing = applet.getPrinters();
                 var printers = listing.split(',');
                 for (var i in printers) {
-                    document.getElementById("printersList").options[i] = new Option(printers[i]);
+                    if (defaultPrinter == printers[i]) {
+                        document.getElementById("printersList").options[i] = new Option(printers[i], printers[i], true);
+                    } else {
+                        document.getElementById("printersList").options[i] = new Option(printers[i], printers[i]);
+                    }
                     //alert(printers[i]);
                 }
             }
@@ -357,7 +365,7 @@
         var applet = document.jZebra;
         if (applet != null) {
             if (!applet.isDoneAppending()) {
-                window.setTimeout('monitorAppending()', 100);
+                window.setTimeout(jZebra.monitorAppending, 100);
             } else {
                 applet.print(); // Don't print until all of the data has been appended
                 jZebra.monitorPrinting();
@@ -371,7 +379,7 @@
         var applet = document.jZebra;
         if (applet != null) {
             if (!applet.isDoneAppending()) {
-                window.setTimeout('monitorAppending2()', 100);
+                window.setTimeout(jZebra.monitorAppending2, 100);
             } else {
                 applet.printPS(); // Don't print until all of the image data has been appended
                 jZebra.monitorPrinting();
@@ -395,10 +403,10 @@
                 }
             } catch(err) {
                 // Firefox fix
-                window.setTimeout("monitorLoading()", 500);
+                window.setTimeout(jZebra.monitorLoading, 500);
             }
         } else {
-            window.setTimeout("monitorLoading()", 100);
+            window.setTimeout(jZebra.monitorLoading, 100);
         }
     }
 

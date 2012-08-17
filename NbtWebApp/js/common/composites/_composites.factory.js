@@ -29,6 +29,14 @@
                     return Csw.composites.grid(cswParent, opts);
                 };
 
+                cswParent.jZebra = function (opts) {
+                    /// <summary> Creates a Csw.jZebra on this element</summary>
+                    /// <param name="opts" type="Object">Options to define the jZebra.</param>
+                    /// <returns type="Csw.composites.jZebra">A Csw.composites.jZebra</returns>
+                    opts = cswPrivate.controlPreProcessing(opts, 'jZebra');
+                    return Csw.composites.jZebra(cswParent, opts);
+                };
+
                 cswParent.layoutTable = function (opts) {
                     /// <summary> Creates a Csw.layoutTable on this element</summary>
                     /// <param name="opts" type="Object">Options to define the table.</param>
