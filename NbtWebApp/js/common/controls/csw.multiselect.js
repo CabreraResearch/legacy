@@ -65,7 +65,12 @@
                 }
 
                 Csw.each(values, function (opt) {
-                    //TODO - add to moreDiv
+                    if (row > cswPrivate.hidethreshold && tbl === showntbl) {
+                        row = 1;
+                        tbl = hiddentbl;
+                        morediv.moreLink.show();
+                    }
+
                     var value = Csw.string(opt.value, opt.text),
                         text = Csw.string(opt.text, value),
                         isSelected;
@@ -73,6 +78,11 @@
                         isSelected = (Csw.bool(opt.selected) && false === isMultiEdit);
                         cswPrivate.select.option({ value: value, display: text, isSelected: isSelected, isDisabled: opt.disabled });
                         optionCount += 1;
+                        if (isSelected) {
+                            //tbl.cell(1, 1).span({ text: text + ', ' });
+                            tbl.cell(row, 1).text(text);
+                            row += 1;
+                        }
                     }
                 });
 
