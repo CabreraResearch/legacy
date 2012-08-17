@@ -9,6 +9,7 @@
             var cswPrivate = {
                 $parent: '',
                 ID: '',
+                value: '',
                 nodeTypesUrlMethod: 'getNodeTypes',
                 nodetypeid: '',
                 objectClassName: '',
@@ -43,7 +44,8 @@
                     Csw.tryExec(cswPrivate.onSelect, cswPublic.val(), cswPrivate.nodetypecount);
                 });
 
-                if (false === Csw.isNullOrEmpty(cswPrivate.blankOptionText)) {
+                if (Csw.isNullOrEmpty(cswPrivate.value) &&
+                    false === Csw.isNullOrEmpty(cswPrivate.blankOptionText)) {
                     cswPublic.option({
                         value: cswPrivate.blankOptionText,
                         isSelected: true
@@ -69,13 +71,18 @@
                             if (Csw.contains(thisNodeType, 'id') &&
                             Csw.contains(thisNodeType, 'name')) {
                                 var id = thisNodeType.id,
-                                    name = thisNodeType.name;
+                                    name = thisNodeType.name,
+                                    option;
                                 delete thisNodeType.id;
                                 delete thisNodeType.name;
                                 lastNodeTypeId = id;
                                 ret.nodetypecount += 1;
-                                var option = cswPublic.option({ value: id, display: name });
-
+                                if (false === Csw.isNullOrEmpty(cswPrivate.value) &&
+                                    Csw.number(cswPrivate.value) === Csw.number(id)) {
+                                    option = cswPublic.option({ value: id, display: name, selected: true });
+                                } else {
+                                    option = cswPublic.option({ value: id, display: name });
+                                }
                                 Csw.each(thisNodeType, function (value, key) {
                                     option.propNonDom(key, value);
                                 });

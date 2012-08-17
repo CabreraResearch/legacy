@@ -323,19 +323,33 @@ namespace ChemSW.Nbt.WebServices
 
         private CswNbtNode _makeMaterialNode( JObject MaterialObj )
         {
-            CswNbtNode Ret;
+            CswNbtNode Ret = null;
 
             JObject MaterialProperties = (JObject) MaterialObj["properties"];
             CswNbtWebServiceTabsAndProps wsTap = new CswNbtWebServiceTabsAndProps( _CswNbtResources, _CswNbtStatisticsEvents );
             CswNbtNodeKey MaterialNodeKey;
             CswNbtMetaDataNodeType MaterialNt = _MaterialNt;
-            Ret = wsTap.addNode( MaterialNt, MaterialProperties, out MaterialNodeKey );
+            CswPrimaryKey MaterialId = new CswPrimaryKey();
+            MaterialId.FromString( CswConvert.ToString( MaterialObj["materialId"] ) );
+            if( CswTools.IsPrimaryKey( MaterialId ) )
+            {
+                Ret = _CswNbtResources.Nodes[MaterialId];
+                if( null != Ret )
+                {
+                    wsTap.saveProps( MaterialId, Int32.MinValue, MaterialProperties.ToString(), MaterialNt.NodeTypeId, null );
+                }
+            }
+            if( null == Ret )
+            {
+                Ret = wsTap.addNode( MaterialNt, MaterialProperties, out MaterialNodeKey );
+            }
             if( null == Ret )
             {
                 throw new CswDniException( ErrorType.Error,
                                           "Failed to create new material.",
                                           "Attempted to call _makeMaterialNode failed." );
             }
+            
             string Tradename;
             CswPrimaryKey SupplierId;
             string PartNo;

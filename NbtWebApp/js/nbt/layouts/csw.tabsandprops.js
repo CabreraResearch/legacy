@@ -18,6 +18,7 @@
                 NodePreviewUrlMethod: 'getNodePreview',
                 QuotaUrlMethod: 'checkQuota',
                 nodeids: [],
+                onNodeIdSet: null,
                 nodepks: [],
                 nodekeys: [],
                 relatednodeid: '',
@@ -401,6 +402,7 @@
                                 });
                             }
                             if (data.nodeid) {
+                                Csw.tryExec(cswPrivate.onNodeIdSet, data.nodeid);
                                 cswPrivate.nodeids[0] = data.nodeid;
                                 delete data.nodeid;
                             }
@@ -410,6 +412,7 @@
                     }); // ajax
                 } else {
                     if (cswPrivate.propertyData.nodeid) {
+                        Csw.tryExec(cswPrivate.onNodeIdSet, cswPrivate.propertyData.nodeid);
                         cswPrivate.nodeids[0] = cswPrivate.propertyData.nodeid;
                         delete cswPrivate.propertyData.nodeid;
                     }
@@ -822,6 +825,10 @@
 
             cswPublic.isFormValid = function () {
                 return cswPrivate.form.$.valid();
+            };
+
+            cswPublic.getNodeId = function() {
+                return cswPrivate.nodeids[0];
             };
 
             cswPublic.save = function (tabContentDiv, tabid, onSuccess) {
