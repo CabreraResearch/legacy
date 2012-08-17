@@ -70,7 +70,7 @@ namespace ChemSW.Nbt.WebServices
             CswPropIdAttr PropId = new CswPropIdAttr( PropIdAttr );
             CswNbtNode TargetNode = _CswNbtResources.Nodes.GetNode( PropId.NodeId );
 
-            string EPLText = NodeAsPrintLabel.epltext.Text;
+            string EPLText = NodeAsPrintLabel.EplText.Text;
             string Params = NodeAsPrintLabel.Params.Text;
             string ControlType = NodeAsPrintLabel.ControlType.Value;
             if( string.IsNullOrEmpty( ControlType ) )

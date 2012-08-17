@@ -19,6 +19,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string Params = "params";
             public const string NodeTypes = "NodeTypes";
             public const string ControlType = "Control Type";
+            public const string LabelName = "Label Name";
         }
 
         /// <summary>
@@ -115,6 +116,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropMemo Params { get { return _CswNbtNode.Properties[PropertyName.Params]; } }
         public CswNbtNodePropNodeTypeSelect NodeTypes { get { return _CswNbtNode.Properties[PropertyName.NodeTypes]; } }
         public CswNbtNodePropList ControlType { get { return _CswNbtNode.Properties[PropertyName.ControlType]; } }
+        public CswNbtNodePropText LabelName { get { return _CswNbtNode.Properties[PropertyName.LabelName]; } }
 
         #endregion
 
