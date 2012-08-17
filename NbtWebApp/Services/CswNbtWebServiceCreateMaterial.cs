@@ -1,13 +1,13 @@
 using System;
+using System.Collections.ObjectModel;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Statistics;
-using Newtonsoft.Json.Linq;
 using ChemSW.Nbt.UnitsOfMeasure;
-using System.Collections.ObjectModel;
+using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.WebServices
 {
@@ -323,19 +323,33 @@ namespace ChemSW.Nbt.WebServices
 
         private CswNbtNode _makeMaterialNode( JObject MaterialObj )
         {
-            CswNbtNode Ret;
+            CswNbtNode Ret = null;
 
             JObject MaterialProperties = (JObject) MaterialObj["properties"];
             CswNbtWebServiceTabsAndProps wsTap = new CswNbtWebServiceTabsAndProps( _CswNbtResources, _CswNbtStatisticsEvents );
             CswNbtNodeKey MaterialNodeKey;
             CswNbtMetaDataNodeType MaterialNt = _MaterialNt;
-            wsTap.addNode( MaterialNt, out Ret, MaterialProperties, out MaterialNodeKey );
+            CswPrimaryKey MaterialId = new CswPrimaryKey();
+            MaterialId.FromString( CswConvert.ToString( MaterialObj["materialId"] ) );
+            if( CswTools.IsPrimaryKey( MaterialId ) )
+            {
+                Ret = _CswNbtResources.Nodes[MaterialId];
+                if( null != Ret )
+                {
+                    wsTap.saveProps( MaterialId, Int32.MinValue, MaterialProperties.ToString(), MaterialNt.NodeTypeId, null );
+                }
+            }
+            if( null == Ret )
+            {
+                Ret = wsTap.addNode( MaterialNt, MaterialProperties, out MaterialNodeKey );
+            }
             if( null == Ret )
             {
                 throw new CswDniException( ErrorType.Error,
                                           "Failed to create new material.",
                                           "Attempted to call _makeMaterialNode failed." );
             }
+            
             string Tradename;
             CswPrimaryKey SupplierId;
             string PartNo;

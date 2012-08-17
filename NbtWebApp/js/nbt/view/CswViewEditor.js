@@ -29,7 +29,7 @@
             onAddView: null,
             startingStep: 1
         };
-        if (options) $.extend(o, options);
+        if (options) Csw.extend(o, options);
 
         var WizardStepArray = [Csw.enums.wizardSteps_ViewEditor.viewselect, Csw.enums.wizardSteps_ViewEditor.attributes, Csw.enums.wizardSteps_ViewEditor.relationships,
             Csw.enums.wizardSteps_ViewEditor.properties, Csw.enums.wizardSteps_ViewEditor.filters, Csw.enums.wizardSteps_ViewEditor.tuning];
@@ -493,7 +493,7 @@
 //                                }
 //                            }
 //                        };
-//                        $.extend(g.gridOpts, gridJson);
+//                        Csw.extend(g.gridOpts, gridJson);
 //                        g.gridOpts.rowNum = 100000;
 
 
@@ -923,7 +923,7 @@
                             if (false === propJson.hasOwnProperty(Csw.enums.viewChildPropNames.propfilters.name)) {
                                 propJson[Csw.enums.viewChildPropNames.propfilters.name] = {};
                             }
-                            $.extend(propJson[Csw.enums.viewChildPropNames.propfilters.name], newPropJson);
+                            Csw.extend(propJson[Csw.enums.viewChildPropNames.propfilters.name], newPropJson);
                             _makeViewTree(stepno);
                         } // onSuccess
                     }); // CswViewPropFilter
@@ -1114,10 +1114,11 @@
                 if (false === isAdd && false === Csw.isNullOrEmpty(itemJson)) {
                     var filtArbitraryId = Csw.string(itemJson.arbitraryid);
                     if (stepno === Csw.enums.wizardSteps_ViewEditor.tuning.step) {
+                        var selectedConjunction = Csw.string(itemJson.conjunction);
                         var selectedSubfield = Csw.string(itemJson.subfield, itemJson.subfieldname);
                         var selectedFilterMode = Csw.string(itemJson.filtermode);
                         var filterValue = Csw.string(itemJson.value);
-                        var name = selectedSubfield + ' ' + selectedFilterMode + ' ' + filterValue;
+                        var name = selectedConjunction + ' ' + selectedSubfield + ' ' + selectedFilterMode + ' ' + filterValue;
                         var $filtLink = makeViewListItem(filtArbitraryId, Csw.enums.cssClasses_ViewEdit.vieweditor_viewfilterlink.name, name, false, stepno, Csw.enums.viewChildPropNames.filters, rel);
                         if (false === Csw.isNullOrEmpty($filtLink)) {
                             $ret = $filtLink;
@@ -1259,7 +1260,7 @@
                             var $selected = $this.find('option:selected');
                             var childJson = $wizard.data($selected.val() + '_thisViewJson');
                             if (arbid === "root") {
-                                $.extend(currentViewJson.childrelationships, childJson);
+                                Csw.extend(currentViewJson.childrelationships, childJson);
                             } else {
                                 var objUtil = Csw.object(currentViewJson);
                                 var parentObj = objUtil.find('arbitraryid', arbid);
@@ -1278,7 +1279,7 @@
                                     objCollection = {};
                                     parentObj[collection] = objCollection;
                                 }
-                                $.extend(objCollection, childJson);
+                                Csw.extend(objCollection, childJson);
                             }
                             _makeViewTree(stepno);
                         });

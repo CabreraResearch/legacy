@@ -48,7 +48,7 @@
 
             (function () {
                 if (options) {
-                    $.extend(cswPrivate, options);
+                    Csw.extend(cswPrivate, options);
                 }
                 var form = cswParent.form();
                 cswPrivate.table = form.table(cswPrivate);

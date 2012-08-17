@@ -26,7 +26,7 @@
             };
 
             if (options) {
-                $.extend(cswPrivate, options);
+                Csw.extend(cswPrivate, options);
             }
 
             var cswPublic = cswParent.div();
@@ -149,7 +149,7 @@
 //                        url: '/NbtWebApp/wsNBT.asmx/getScheduledRulesGrid',
 //                        data: { AccessId: cswPrivate.selectedCustomerId },
 //                        success: function(data) {
-//                            $.extend(cswPrivate.gridOptions.gridOpts, data);
+//                            Csw.extend(cswPrivate.gridOptions.gridOpts, data);
 //                            cswPrivate.scheduledRulesGrid = rulesGridDiv.grid(cswPrivate.gridOptions);
 //                        }
 //                    });

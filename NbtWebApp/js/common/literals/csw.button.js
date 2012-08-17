@@ -79,7 +79,7 @@
 
             (function () {
                 if (options) {
-                    $.extend(cswPrivate, options);
+                    Csw.extend(cswPrivate, options);
                 }
                 cswPrivate.type = Csw.enums.inputTypes.button;
                 var buttonOpt;
@@ -102,7 +102,7 @@
 
                 cswPrivate.onClick = onClick;
 
-                $.extend(cswPublic, Csw.literals.input(cswPrivate));
+                Csw.extend(cswPublic, Csw.literals.input(cswPrivate));
 
                 if(false === Csw.isNullOrEmpty(cswPrivate.bindOnEnter)) {
                     cswPrivate.bindOnEnter.clickOnEnter(cswPublic);

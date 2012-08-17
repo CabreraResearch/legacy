@@ -25,7 +25,7 @@
             (function () {
 
                 if (options) {
-                    $.extend(cswPrivate, options);
+                    Csw.extend(cswPrivate, options);
                 }
 
                 var optionCount = 0,
@@ -34,8 +34,8 @@
                 delete cswPrivate.values;
 
                 cswPrivate.select = cswParent.select(cswPrivate);
-                cswPublic = Csw.dom({ }, cswPrivate.select);
-                //$.extend(cswPublic, Csw.literals.select(cswPrivate));
+                cswPublic = Csw.dom({}, cswPrivate.select);
+                //Csw.extend(cswPublic, Csw.literals.select(cswPrivate));
 
                 if (Csw.isFunction(cswPrivate.onChange)) {
                     cswPrivate.select.bind('change', function () {
@@ -54,11 +54,15 @@
                     }
                 });
 
-                if (optionCount > 20) {
+                var filterThreshold = 20;
+                if (optionCount > filterThreshold) {
                     cswPrivate.select.$.multiselect().multiselectfilter();
                 } else {
-                    cswPrivate.select.$.multiselect();
+                    cswPrivate.select.$.multiselect({
+                        selectedList: filterThreshold
+                    });
                 }
+
             } ());
 
             cswPublic.val = function () {

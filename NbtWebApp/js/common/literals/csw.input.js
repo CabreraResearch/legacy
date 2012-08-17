@@ -43,7 +43,7 @@
             var $input;
 
             if (options) {
-                $.extend(cswPrivate, options);
+                Csw.extend(cswPrivate, options);
             }
 
             cswPrivate.name = Csw.string(cswPrivate.name, cswPrivate.ID);

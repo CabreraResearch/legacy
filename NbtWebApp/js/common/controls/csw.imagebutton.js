@@ -24,7 +24,7 @@
 
             (function() {
                 if (options) {
-                    $.extend(cswPrivate, options);
+                    Csw.extend(cswPrivate, options);
                 }
 
                 cswPrivate.imageButton = cswParent.div(cswPrivate);

@@ -125,7 +125,15 @@ namespace ChemSW.Nbt
                         {
                             if( Column.ColumnName.StartsWith( "INCLUDED" ) )
                             {
-                                Included = Included && CswConvert.ToBoolean( NodesRow[Column] );
+                                string Conjunction = Column.ColumnName.Substring( "INCLUDED".Length );
+                                if( Conjunction.StartsWith( "OR" ) )
+                                {
+                                    Included = Included || CswConvert.ToBoolean( NodesRow[Column] );
+                                }
+                                else
+                                {
+                                    Included = Included && CswConvert.ToBoolean( NodesRow[Column] );
+                                }
                             }
                         }
 
@@ -515,6 +523,7 @@ namespace ChemSW.Nbt
 
             // Property Filters
             Int32 FilterCount = 0;
+            string FilterWhere = string.Empty;
             foreach( CswNbtViewProperty Prop in Relationship.Properties )
             {
                 foreach( CswNbtViewPropertyFilter Filter in Prop.Filters )
@@ -584,32 +593,33 @@ namespace ChemSW.Nbt
                                              where " + FilterValue + @"))";
 
 
-
+                                From += "left outer join (" + FilterClause + ") f" + FilterCount.ToString() + " on (f" + FilterCount.ToString() + ".nodeid = n.nodeid)";
+                                if( Filter.ResultMode == CswNbtPropFilterSql.FilterResultMode.Disabled && false == IsParentQuery )
+                                {
+                                    Select += ",f" + FilterCount.ToString() + ".included as included" + Filter.Conjunction.ToString() + FilterCount.ToString();
+                                }
                                 if( Filter.ResultMode == CswNbtPropFilterSql.FilterResultMode.Hide )
                                 {
-                                    From += "join (" + FilterClause + ") f" + FilterCount.ToString() + " on (f" + FilterCount.ToString() + ".nodeid = n.nodeid)";
-                                }
-                                else if( Filter.ResultMode == CswNbtPropFilterSql.FilterResultMode.Disabled )
-                                {
-                                    if( false == IsParentQuery )
+                                    if( FilterWhere != string.Empty )
                                     {
-                                        From += "left outer join (" + FilterClause + ") f" + FilterCount.ToString() + " on (f" + FilterCount.ToString() + ".nodeid = n.nodeid)";
-                                        Select += ",f" + FilterCount.ToString() + ".included as included" + FilterCount.ToString();
+                                        FilterWhere += Filter.Conjunction.ToString().ToLower();
                                     }
+                                    FilterWhere += " f" + FilterCount.ToString() + ".included = '1' ";
                                 }
-
-
 
                             } // if( FilterSubField.RelationalTable == string.empty )
                             else if( false == string.IsNullOrEmpty( FilterValue ) )
                             {
-                                Where += " and " + FilterValue; // n." + FilterSubField.Column + " is not null";
+                                FilterWhere += Filter.Conjunction.ToString().ToLower() + " " + FilterValue; // n." + FilterSubField.Column + " is not null";
                             }
                         } // if we really have a filter
                     } // if we have a filter
                 } // foreach( CswNbtViewPropertyFilter Filter in Prop.Filters )
             } // foreach( CswNbtViewProperty Prop in Relationship.Properties )
-
+            if(FilterWhere != string.Empty)
+            {
+                Where += "and (" + FilterWhere + ")";
+            }
 
             if( Relationship.NodeIdsToFilterOut.Count > 0 )
             {
@@ -646,8 +656,10 @@ namespace ChemSW.Nbt
 
             // BZ 6008
             if( !_IncludeSystemNodes )
+            {
                 Where += " and n.issystem = '0' ";
-
+            }
+            Where += " and n.istemp= '0' ";
             string ret = Select + " " + From + " " + Where;
             if( false == IsParentQuery )
             {

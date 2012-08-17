@@ -30,7 +30,7 @@
                     qtyReadonly: false,
                     unitReadonly: false
                 };
-                if (options) $.extend(cswPrivate, options);
+                if (options) Csw.extend(cswPrivate, options);
 
                 cswParent.empty();
                 cswPrivate.precision = Csw.number(cswPrivate.precision, 6);

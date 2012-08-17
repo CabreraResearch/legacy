@@ -3,6 +3,8 @@
 
 (function () {
 
+    var cswCreateMaterialWizardStateName = 'cswCreateMaterialWizardStateName';
+
     Csw.nbt.createMaterialWizard = Csw.nbt.createMaterialWizard ||
         Csw.nbt.register('createMaterialWizard', function (cswParent, options) {
             'use strict';
@@ -20,27 +22,31 @@
                 },
                 divStep1: '', divStep2: '', divStep3: '',
                 materialTypeSelect: null,
-                materialType: { name: '', val: '' },
-                tradeName: '',
-                supplier: { name: '', val: '' },
-                partNo: '',
-                physicalState: '',
-                useExistingMaterial: false,
-                materialProperies: {},
                 sizeNodes: [],
                 stepOneComplete: false,
                 stepTwoComplete: false,
                 stepThreeComplete: false,
+                stepFourComplete: false,
                 config: {
                     quantityName: 'Initial Quantity *',
                     numberName: 'Catalog No.',
                     dispensibleName: 'Dispensible',
                     quantEditableName: 'Quantity Editable'
                 },
-                quantity: {},
                 rows: [],
-                selectedSizeId: null,
-                relatedNodeId: null
+                relatedNodeId: null,
+                state: {
+                    sizeNodeTypeId: '',
+                    relatedNodeId: null,
+                    materialId: '',
+                    materialType: { name: '', val: '' },
+                    tradeName: '',
+                    supplier: { name: '', val: '' },
+                    partNo: '',
+                    physicalState: '',
+                    useExistingMaterial: false,
+                    materialProperies: {}
+                }
             };
 
             var cswPublic = {
@@ -55,11 +61,32 @@
                 sizes: []
             };
 
+            cswPrivate.validateState = function () {
+                var state;
+                if (Csw.isNullOrEmpty(cswPrivate.state.tradeName)) {
+                    state = cswPrivate.getState();
+                    Csw.extend(cswPrivate.state, state);
+                }
+                cswPrivate.setState();
+            };
+
+            cswPrivate.getState = function () {
+                return Csw.clientDb.getItem(cswPrivate.ID + '_' + cswCreateMaterialWizardStateName);
+            };
+
+            cswPrivate.setState = function () {
+                Csw.clientDb.setItem(cswPrivate.ID + '_' + cswCreateMaterialWizardStateName, cswPrivate.state);
+            };
+
+            cswPrivate.clearState = function () {
+                Csw.clientDb.removeItem(cswPrivate.ID + '_' + cswCreateMaterialWizardStateName);
+            };
+
             cswPrivate.reinitSteps = function (startWithStep) {
                 cswPrivate.stepThreeComplete = false;
 
                 if (startWithStep <= 2) {
-                    cswPrivate.physicalState = '';
+                    cswPrivate.state.physicalState = '';
                     cswPrivate.stepTwoComplete = false;
 
                     if (startWithStep <= 1) {
@@ -71,9 +98,9 @@
 
             (function () {
                 if (options) {
-                    $.extend(cswPrivate, options);
+                    Csw.extend(cswPrivate, options);
                 }
-
+                cswPrivate.validateState();
                 cswPrivate.wizardSteps = {
                     1: 'Choose Type and Identity',
                     2: 'Additional Properties',
@@ -83,6 +110,7 @@
                 cswPrivate.currentStepNo = cswPrivate.startingStep;
 
                 cswPrivate.handleStep = function (newStepNo) {
+                    cswPrivate.setState();
                     if (Csw.contains(cswPrivate, 'makeStep' + newStepNo)) {
                         cswPrivate.lastStepNo = cswPrivate.currentStepNo;
                         cswPrivate.currentStepNo = newStepNo;
@@ -98,17 +126,18 @@
                 cswPrivate.finalize = function () {
                     function getMaterialDefinition() {
                         var createMaterialDef = {
-                            useexistingmaterial: cswPrivate.useExistingMaterial,
+                            useexistingmaterial: cswPrivate.state.useExistingMaterial,
                             sizes: cswPrivate.sizeNodes
                         };
 
-                        if (false === cswPrivate.useExistingMaterial) {
-                            createMaterialDef.materialnodetypeid = cswPrivate.materialType.val;
-                            createMaterialDef.tradename = cswPrivate.tradeName;
-                            createMaterialDef.partno = cswPrivate.partNo;
-                            createMaterialDef.supplierid = cswPrivate.supplier.val;
-                            createMaterialDef.suppliername = cswPrivate.supplier.name;
-                            createMaterialDef.physicalState = cswPrivate.physicalState;
+                        if (false === cswPrivate.state.useExistingMaterial) {
+                            createMaterialDef.materialId = cswPrivate.state.materialId;
+                            createMaterialDef.materialnodetypeid = cswPrivate.state.materialType.val;
+                            createMaterialDef.tradename = cswPrivate.state.tradeName;
+                            createMaterialDef.partno = cswPrivate.state.partNo;
+                            createMaterialDef.supplierid = cswPrivate.state.supplier.val;
+                            createMaterialDef.suppliername = cswPrivate.state.supplier.name;
+                            createMaterialDef.physicalState = cswPrivate.state.physicalState;
                             createMaterialDef.sizeNodes = cswPublic.sizes;
                             if (false === Csw.isNullOrEmpty(cswPrivate.tabsAndProps)) {
                                 createMaterialDef.properties = cswPrivate.tabsAndProps.getPropJson();
@@ -125,6 +154,7 @@
                             MaterialDefinition: getMaterialDefinition()
                         },
                         success: function (data) {
+                            cswPrivate.clearState();
                             var viewid = '';
                             if (Csw.contains(data, 'nextoptions')) {
                                 viewid = data.nextoptions.nodeview;
@@ -143,7 +173,10 @@
                     FinishText: 'Finish',
                     onNext: cswPrivate.handleStep,
                     onPrevious: cswPrivate.handleStep,
-                    onCancel: cswPrivate.onCancel,
+                    onCancel: function () {
+                        cswPrivate.clearState();
+                        Csw.tryExec(cswPrivate.onCancel);
+                    },
                     onFinish: cswPrivate.finalize,
                     doNextOnInit: false
                 });
@@ -169,11 +202,11 @@
 
                 return function () {
                     function supplierSelect() {
-                        cswPrivate.supplier = { name: cswPrivate.supplierSelect.selectedText(), val: cswPrivate.supplierSelect.val() };
+                        cswPrivate.state.supplier = { name: cswPrivate.supplierSelect.selectedText(), val: cswPrivate.supplierSelect.val() };
                         cswPrivate.reinitSteps(2);
                     }
                     function typeSelect() {
-                        cswPrivate.materialType = { name: cswPrivate.materialTypeSelect.find(':selected').text(), val: cswPrivate.materialTypeSelect.val() };
+                        cswPrivate.state.materialType = { name: cswPrivate.materialTypeSelect.find(':selected').text(), val: cswPrivate.materialTypeSelect.val() };
                         cswPrivate.reinitSteps(2);
                     }
 
@@ -198,9 +231,10 @@
                             labelText: 'Select a Material Type*: ',
                             objectClassName: 'MaterialClass',
                             onSelect: typeSelect,
+                            value: cswPrivate.state.materialType.val || cswPrivate.state.materialNodeTypeId,
                             onChange: function () {
                                 typeSelect();
-                                if (false === Csw.isNullOrEmpty(cswPrivate.tradeName)) {
+                                if (false === Csw.isNullOrEmpty(cswPrivate.state.tradeName)) {
                                     checkIfMaterialExists();
                                     cswPrivate.reinitSteps(2);
                                 }
@@ -215,9 +249,10 @@
                             useWide: true,
                             labelText: 'Tradename*: ',
                             cssclass: 'required',
+                            value: cswPrivate.state.tradeName,
                             onChange: function () {
-                                cswPrivate.tradeName = cswPrivate.tradeNameInput.val();
-                                if (false === Csw.isNullOrEmpty(cswPrivate.tradeName)) {
+                                cswPrivate.state.tradeName = cswPrivate.tradeNameInput.val();
+                                if (false === Csw.isNullOrEmpty(cswPrivate.state.tradeName)) {
                                     checkIfMaterialExists();
                                 } else {
                                     removeFoundMaterialLabel();
@@ -232,10 +267,11 @@
                             cssclass: 'required',
                             objectClassName: 'VendorClass',
                             useWide: true,
+                            selectedNodeId: cswPrivate.state.supplierId,
                             labelText: 'Supplier*: ',
                             onChange: function () {
                                 supplierSelect();
-                                if (false === Csw.isNullOrEmpty(cswPrivate.tradeName)) {
+                                if (false === Csw.isNullOrEmpty(cswPrivate.state.tradeName)) {
                                     checkIfMaterialExists();
                                 }
                             },
@@ -247,10 +283,11 @@
                         cswPrivate.partNoInput = cswPrivate.divStep1.input({
                             ID: cswPrivate.wizard.makeStepId('partno'),
                             useWide: true,
+                            value: cswPrivate.state.partNo,
                             labelText: 'Part No: ',
                             onChange: function () {
-                                cswPrivate.partNo = cswPrivate.partNoInput.val();
-                                if (false === Csw.isNullOrEmpty(cswPrivate.tradeName)) {
+                                cswPrivate.state.partNo = cswPrivate.partNoInput.val();
+                                if (false === Csw.isNullOrEmpty(cswPrivate.state.tradeName)) {
                                     checkIfMaterialExists();
                                 }
                             }
@@ -269,10 +306,10 @@
                                 urlMethod: 'getMaterial',
                                 async: false,
                                 data: {
-                                    NodeTypeId: cswPrivate.materialType.val,
-                                    Tradename: cswPrivate.tradeName,
-                                    Supplier: cswPrivate.supplier.name,
-                                    PartNo: cswPrivate.partNo
+                                    NodeTypeId: cswPrivate.state.materialType.val,
+                                    Tradename: cswPrivate.state.tradeName,
+                                    Supplier: cswPrivate.state.supplier.name,
+                                    PartNo: cswPrivate.state.partNo
                                 },
                                 success: function (data) {
                                     removeFoundMaterialLabel();
@@ -289,10 +326,10 @@
 
                         var materialExists = function (data) {
                             var ret = false;
-                            if (data["tradename"] == cswPrivate.tradeName &&
-                                data["supplier"] == cswPrivate.supplier.name &&
-                                data["partno"] == cswPrivate.partNo &&
-                                data["nodetypeid"] == cswPrivate.materialType.val) {
+                            if (data["tradename"] == cswPrivate.state.tradeName &&
+                                data["supplier"] == cswPrivate.state.supplier.name &&
+                                data["partno"] == cswPrivate.state.partNo &&
+                                data["nodetypeid"] == cswPrivate.state.materialType.val) {
                                 ret = true;
                             }
                             return ret;
@@ -315,7 +352,7 @@
                     cswPrivate.toggleButton(cswPrivate.buttons.finish, false);
 
                     if (false === cswPrivate.stepTwoComplete &&
-                        false === cswPrivate.useExistingMaterial) {
+                        false === cswPrivate.state.useExistingMaterial) {
                         cswPrivate.divStep2 = cswPrivate.divStep2 || cswPrivate.wizard.div(2);
                         cswPrivate.divStep2.empty();
 
@@ -328,66 +365,70 @@
                         div = cswPrivate.divStep2.div();
                         var hiddenDiv = cswPrivate.divStep2.div();
                         cswPrivate.tabsAndProps = Csw.layouts.tabsAndProps(hiddenDiv, {
-                            nodetypeid: cswPrivate.materialType.val,
+                            nodetypeid: cswPrivate.state.materialType.val,
                             showSaveButton: false,
                             EditMode: Csw.enums.editMode.Add,
                             ReloadTabOnSave: false,
                             ShowAsReport: false,
-                            excludeOcProps: ['tradename', 'supplier', 'partno']
-                        });
-                        hiddenDiv.hide();
+                            excludeOcProps: ['tradename', 'supplier', 'partno'],
+                            onNodeIdSet: function (materialId) {
+                                cswPrivate.state.materialId = materialId;
+                                Csw.ajax.post({
+                                    urlMethod: 'getProps',
+                                    data: {
+                                        EditMode: Csw.enums.editMode.Add,
+                                        NodeId: cswPrivate.state.materialId,
+                                        NodeTypeId: cswPrivate.state.materialType.val,
+                                        SafeNodeKey: '',
+                                        TabId: '',
+                                        Date: '',
+                                        Multi: '',
+                                        filterToPropId: '',
+                                        ConfigMode: '',
+                                        RelatedNodeId: '',
+                                        RelatedNodeTypeId: '',
+                                        RelatedObjectClassId: ''
+                                    },
+                                    success: function (data) {
 
-                        Csw.ajax.post({
-                            urlMethod: 'getProps',
-                            data: {
-                                EditMode: Csw.enums.editMode.Add,
-                                NodeId: '',
-                                TabId: '',
-                                SafeNodeKey: '',
-                                NodeTypeId: cswPrivate.materialType.val,
-                                Date: '',
-                                Multi: '',
-                                filterToPropId: '',
-                                ConfigMode: '',
-                                RelatedNodeId: '',
-                                RelatedNodeTypeId: '',
-                                RelatedObjectClassId: ''
-                            },
-                            success: function (data) {
-
-                                //splits the comma delimited string into an array for the selector
-                                var getOpts = function (str) {
-                                    var ret = [];
-                                    var splitStr = str.split(",");
-                                    for (var i = 0; i < splitStr.length; i++) {
-                                        ret.push({ display: splitStr[i], value: splitStr[i] });
-                                    }
-                                    return ret;
-                                };
-
-                                for (var propKey in data) {
-                                    var propertyData = data[propKey];
-                                    switch (propertyData["fieldtype"]) {
-                                        case "List":
-                                            div.span({ text: propertyData["name"] + "*:", cssclass: "PhysicalStateSpan" });
-                                            cswPublic.physicalStateCrl = div.select({
-                                                ID: Csw.tryExec(Csw.makeId, 'physState'),
-                                                values: getOpts(propertyData["values"]["options"]),
-                                                onChange: function () {
-                                                    cswPrivate.physicalState = cswPublic.physicalStateCrl.val();
-                                                    cswPrivate.reinitSteps(3);
-                                                }
-                                            });
-                                            if (false === Csw.isNullOrEmpty(cswPublic.physicalStateCrl)) {
-                                                cswPrivate.physicalState = cswPublic.physicalStateCrl.val();
+                                        //splits the comma delimited string into an array for the selector
+                                        var getOpts = function (str) {
+                                            var ret = [];
+                                            var splitStr = str.split(",");
+                                            for (var i = 0; i < splitStr.length; i++) {
+                                                ret.push({ display: splitStr[i], value: splitStr[i] });
                                             }
-                                            break;
-                                        default:
-                                            break;
+                                            return ret;
+                                        };
+
+                                        for (var propKey in data) {
+                                            var propertyData = data[propKey];
+                                            switch (propertyData["fieldtype"]) {
+                                                case "List":
+                                                    div.span({ text: propertyData["name"] + "*:", cssclass: "PhysicalStateSpan" });
+                                                    cswPublic.physicalStateCrl = div.select({
+                                                        ID: Csw.tryExec(Csw.makeId, 'physState'),
+                                                        selected: cswPrivate.state.physicalState,
+                                                        values: getOpts(propertyData["values"]["options"]),
+                                                        onChange: function () {
+                                                            cswPrivate.state.physicalState = cswPublic.physicalStateCrl.val();
+                                                            cswPrivate.reinitSteps(3);
+                                                        }
+                                                    });
+                                                    if (false === Csw.isNullOrEmpty(cswPublic.physicalStateCrl)) {
+                                                        cswPrivate.state.physicalState = cswPublic.physicalStateCrl.val();
+                                                    }
+                                                    break;
+                                                default:
+                                                    break;
+                                            }
+                                        }
                                     }
-                                }
+                                });
                             }
                         });
+                        
+                        hiddenDiv.hide();
 
                         cswPrivate.stepTwoComplete = true;
                     }
@@ -414,7 +455,7 @@
                     }
 
                     function sizeSelect(retObj, count) {
-                        cswPrivate.sizeNodeTypeId = cswPrivate.sizeSelect.val();
+                        cswPrivate.state.sizeNodeTypeId = cswPrivate.sizeSelect.val();
                         if (count > 1) {
                             selectDiv.show();
                         }
@@ -443,7 +484,7 @@
                             Csw.ajax.post({
                                 urlMethod: 'getMaterialUnitsOfMeasure',
                                 data: {
-                                    PhysicalState: cswPrivate.physicalState || 'n/a' //if we couldn't choose a state, assume it's a supply
+                                    PhysicalState: cswPrivate.state.physicalState || 'n/a' //if we couldn't choose a state, assume it's a supply
                                 },
                                 async: false, //wait for this request to finish
                                 success: function (data) {
@@ -459,16 +500,16 @@
                                 unitid: '',
                                 quantEditableChecked: 'false', //default?
                                 dispensibleChecked: 'false', //default?
-                                nodetypeid: cswPrivate.sizeNodeTypeId
+                                nodetypeid: cswPrivate.state.sizeNodeTypeId
                             };
 
                             var extendNewAmount = function (object) {
                                 //To mitigate the risk of unknowingly passing the outer scope thisAmount, we're explicitly mapping the values down
-                                $.extend(newSize, object);
+                                Csw.extend(newSize, object);
                             };
 
                             var extractNewAmount = function (object) {
-                                var ret = $.extend(true, {}, object);
+                                var ret = Csw.extend({}, object, true);
                                 return ret;
                             };
 
@@ -585,6 +626,7 @@
                         cswPrivate.sizeSelect = selectDiv.nodeTypeSelect({
                             ID: cswPrivate.wizard.makeStepId('nodeTypeSelect'),
                             useWide: true,
+                            value: cswPrivate.state.sizeNodeTypeId,
                             labelText: 'Select a Material Size: ',
                             objectClassName: 'SizeClass',
                             onSelect: sizeSelect,
@@ -592,7 +634,7 @@
                                 sizeSelect(retObj, count);
                                 makeGrid();
                             },
-                            relatedToNodeTypeId: cswPrivate.materialType.val,
+                            relatedToNodeTypeId: cswPrivate.state.materialType.val,
                             relatedObjectClassPropName: 'Material'
                         });
                         selectDiv.hide();

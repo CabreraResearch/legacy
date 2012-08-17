@@ -40,7 +40,7 @@
             var $img;
 
             if (options) {
-                $.extend(cswPrivate, options);
+                Csw.extend(cswPrivate, options);
             }
 
             cswPrivate.ID = Csw.string(cswPrivate.ID, cswPrivate.name);

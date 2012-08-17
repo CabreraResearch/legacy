@@ -12,7 +12,7 @@
             viewmode: '',
             onAddNode: null
         };
-        if (options) $.extend(o, options);
+        if (options) Csw.extend(o, options);
 
         var $parent = $(this);
 
@@ -58,7 +58,7 @@
                 itemJson: {},
                 onAlterNode: null // function (nodeid, nodekey) { },
             };
-            if (options) $.extend(o, options);
+            if (options) Csw.extend(o, options);
             var text = o.itemJson.text;
             var $li = $('<li><a href="#">' + text + '</a></li>');
             $li.css({ 'list-style-image': 'url(' + o.itemJson.icon + ')' });

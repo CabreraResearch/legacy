@@ -45,6 +45,18 @@
             }
         });
 
+    Csw.defer = Csw.defer ||
+        Csw.register('defer', Csw.method(function(func, delay) {
+        	/// <summary>
+        	/// Defer the execution of a method by a number of milliseconds
+        	/// </summary>
+            func = func || function () {
+            };
+            delay = delay || 1000;
+            return window.Ext.defer(func, delay);
+        }));
+
+
 //    Csw.method = Csw.register('method', function (func) {
 //        var that = this;
 //            var args = arguments;

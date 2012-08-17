@@ -33,7 +33,7 @@
             //constructor
             (function () {
                 if (options) {
-                    $.extend(cswPrivate, options);
+                    Csw.extend(cswPrivate, options);
                 }
                 cswParent.empty();
 

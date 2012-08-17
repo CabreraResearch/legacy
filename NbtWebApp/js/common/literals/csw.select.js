@@ -103,7 +103,7 @@
                 };
 
                 (function () {
-                    $.extend(optInternal, optionOpts);
+                    Csw.extend(optInternal, optionOpts);
 
                     var html = '<option ',
                         $option,
@@ -138,7 +138,7 @@
                     style = Csw.makeStyle();
 
                 if (options) {
-                    $.extend(cswPrivate, options);
+                    Csw.extend(cswPrivate, options);
                 }
 
                 cswPrivate.ID = Csw.string(cswPrivate.ID, cswPrivate.name);

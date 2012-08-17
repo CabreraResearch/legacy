@@ -392,11 +392,11 @@
             /* Ctor: Build the init table */
             (function() {
                 if (options) {
-                    $.extend(cswPrivate, options);
+                    Csw.extend(cswPrivate, options);
                 }
                 var layoutDiv = cswParent.div(cswPrivate);
                 
-                //$.extend(cswPublic, Csw.literals.div(cswPrivate));
+                //Csw.extend(cswPublic, Csw.literals.div(cswPrivate));
                 var buttonDiv = layoutDiv.div({
                     ID: Csw.makeId(cswPrivate.ID, 'btnDiv')
                 });

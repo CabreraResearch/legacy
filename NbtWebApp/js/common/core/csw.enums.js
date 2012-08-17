@@ -80,11 +80,19 @@
                 globalAjaxStart: 'globalAjaxStart',
                 globalAjaxStop: 'globalAjaxStop'
             },
+            domready: 'DOM_Ready',
             Submit_Request: 'Submit_Request',
             objectClassButtonClick: 'objectClassButtonClick',
             afterObjectClassButtonClick: 'afterObjectClassButtonClick',
             RestoreViewContext: 'RestoreViewContext',
-            DispenseContainer: 'DispenseContainer'
+            DispenseContainer: 'DispenseContainer',
+            main: {
+                handleAction: 'handleAction',
+                refresh: 'refresh',
+                refreshHeader: 'refreshHeader',
+                refreshSelected: 'refreshSelected',
+                clear: 'clear'
+            }
         });
 
     Csw.enums.wizardSteps_InspectionDesign = Csw.enums.wizardSteps_InspectionDesign ||
@@ -326,6 +334,7 @@
 
     Csw.enums.cssClasses_ViewBuilder = Csw.enums.cssClasses_ViewBuilder ||
         Csw.enums.register('cssClasses_ViewBuilder', {
+            conjunction_select: { name: 'csw_viewbuilder_conjunction_select' },
             subfield_select: { name: 'csw_viewbuilder_subfield_select' },
             filter_select: { name: 'csw_viewbuilder_filter_select' },
             default_filter: { name: 'csw_viewbuilder_default_filter' },

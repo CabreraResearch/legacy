@@ -39,7 +39,7 @@
                     customBarcodes: false
                 };
                 if (options) {
-                    $.extend(cswPrivate, options);
+                    Csw.extend(cswPrivate, options);
                 }
 
                 cswPrivate.header = [cswPrivate.config.numberName];
@@ -119,11 +119,11 @@
 
                     var extendNewAmount = function (object) {
                         //To mitigate the risk of unknowingly passing the outer scope thisAmount, we're explicitly mapping the values down
-                        $.extend(newAmount, object);
+                        Csw.extend(newAmount, object);
                     };
 
                     var extractNewAmount = function (object) {
-                        var ret = $.extend(true, {}, object);
+                        var ret = Csw.extend({}, object, true);
                         return ret;
                     };
 

@@ -1,5 +1,6 @@
 using System;
 using ChemSW.Core;
+using ChemSW.Exceptions;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
@@ -116,50 +117,63 @@ namespace ChemSW.Nbt.ObjClasses
             CswNbtMetaDataObjectClassProp OCP = ButtonData.NodeTypeProp.getObjectClassProp();
             if( null != ButtonData.NodeTypeProp && null != OCP )
             {
+                bool HasPermission = false;
                 switch( OCP.PropName )
                 {
                     case RequestPropertyName:
-                        CswNbtActSubmitRequest RequestAct = new CswNbtActSubmitRequest( _CswNbtResources, CreateDefaultRequestNode: true );
+                        if( _CswNbtResources.Permit.can( CswNbtActionName.Submit_Request ) )
+                        {
+                            HasPermission = true;
+                            CswNbtActSubmitRequest RequestAct = new CswNbtActSubmitRequest( _CswNbtResources, CreateDefaultRequestNode: true );
 
-                        CswNbtObjClassRequestItem NodeAsRequestItem = RequestAct.makeMaterialRequestItem( new CswNbtActSubmitRequest.RequestItem( CswNbtActSubmitRequest.RequestItem.Material ), NodeId, OCP );
-                        ButtonData.Data["requestaction"] = OCP.PropName;
-                        ButtonData.Data["titleText"] = "Request for " + TradeName.Text;
-                        ButtonData.Data["requestItemProps"] = RequestAct.getRequestItemAddProps( NodeAsRequestItem );
-                        ButtonData.Data["requestItemNodeTypeId"] = RequestAct.RequestItemNt.NodeTypeId;
-                        ButtonData.Action = NbtButtonAction.request;
+                            CswNbtObjClassRequestItem NodeAsRequestItem = RequestAct.makeMaterialRequestItem( new CswNbtActSubmitRequest.RequestItem( CswNbtActSubmitRequest.RequestItem.Material ), NodeId, OCP );
+                        NodeAsRequestItem.postChanges( false );
+                            ButtonData.Data["requestaction"] = OCP.PropName;
+                            ButtonData.Data["titleText"] = "Request for " + TradeName.Text;
+                            ButtonData.Data["requestItemProps"] = RequestAct.getRequestItemAddProps( NodeAsRequestItem );
+                            ButtonData.Data["requestItemNodeTypeId"] = RequestAct.RequestItemNt.NodeTypeId;
+                            ButtonData.Action = NbtButtonAction.request;
+                        }
                         break;
                     case ReceivePropertyName:
-                        ButtonData.Data["state"] = new JObject();
-                        ButtonData.Data["state"]["materialId"] = NodeId.ToString();
-                        ButtonData.Data["state"]["materialNodeTypeId"] = NodeTypeId;
-                        ButtonData.Data["state"]["tradeName"] = TradeName.Text;
-                        CswNbtActReceiving Act = new CswNbtActReceiving( _CswNbtResources, ObjectClass, NodeId );
-                        //ButtonData.Data["sizesViewId"] = Act.SizesView.SessionViewId.ToString();
-                        Int32 ContainerLimit = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswNbtResources.ConfigurationVariables.container_receipt_limit.ToString() ) );
-                        ButtonData.Data["state"]["containerlimit"] = ContainerLimit;
-                        CswNbtObjClassContainer Container = Act.makeContainer();
-                        Container.Location.SelectedNodeId = _CswNbtResources.CurrentNbtUser.DefaultLocationId;
-                        ButtonData.Data["state"]["containerNodeTypeId"] = Container.NodeTypeId;
-                        ButtonData.Data["state"]["containerAddLayout"] = Act.getContainerAddProps( Container );
-                        bool customBarcodes = CswConvert.ToBoolean( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswNbtResources.ConfigurationVariables.custom_barcodes.ToString() ) );
-                        ButtonData.Data["state"]["customBarcodes"] = customBarcodes;
-
-                        CswDateTime CswDate = new CswDateTime( _CswNbtResources, getDefaultExpirationDate() );
-                        if( false == CswDate.IsNull )
+                        if( _CswNbtResources.Permit.can( CswNbtActionName.Receiving ) )
                         {
-                            foreach( JProperty child in ButtonData.Data["state"]["containerAddLayout"].Children() )
+                            HasPermission = true;
+                            ButtonData.Data["state"] = new JObject();
+                            ButtonData.Data["state"]["materialId"] = NodeId.ToString();
+                            ButtonData.Data["state"]["materialNodeTypeId"] = NodeTypeId;
+                            ButtonData.Data["state"]["tradeName"] = TradeName.Text;
+                            CswNbtActReceiving Act = new CswNbtActReceiving( _CswNbtResources, ObjectClass, NodeId );
+                            //ButtonData.Data["sizesViewId"] = Act.SizesView.SessionViewId.ToString();
+                            Int32 ContainerLimit = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswNbtResources.ConfigurationVariables.container_receipt_limit.ToString() ) );
+                            ButtonData.Data["state"]["containerlimit"] = ContainerLimit;
+                            CswNbtObjClassContainer Container = Act.makeContainer();
+                            Container.Location.SelectedNodeId = _CswNbtResources.CurrentNbtUser.DefaultLocationId;
+                            ButtonData.Data["state"]["containerNodeTypeId"] = Container.NodeTypeId;
+                            ButtonData.Data["state"]["containerAddLayout"] = Act.getContainerAddProps( Container );
+                            bool customBarcodes = CswConvert.ToBoolean( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswNbtResources.ConfigurationVariables.custom_barcodes.ToString() ) );
+                            ButtonData.Data["state"]["customBarcodes"] = customBarcodes;
+
+                            CswDateTime CswDate = new CswDateTime( _CswNbtResources, getDefaultExpirationDate() );
+                            if( false == CswDate.IsNull )
                             {
-                                JToken name = child.First.SelectToken( "name" );
-                                if( name.ToString() == "Expiration Date" )
+                                foreach( JProperty child in ButtonData.Data["state"]["containerAddLayout"].Children() )
                                 {
-                                    ButtonData.Data["state"]["containerAddLayout"][child.Name]["values"]["value"] = CswDate.ToClientAsDateTimeJObject();
+                                    JToken name = child.First.SelectToken( "name" );
+                                    if( name.ToString() == "Expiration Date" )
+                                    {
+                                        ButtonData.Data["state"]["containerAddLayout"][child.Name]["values"]["value"] = CswDate.ToClientAsDateTimeJObject();
+                                    }
                                 }
                             }
+
+                            ButtonData.Action = NbtButtonAction.receive;
                         }
-
-                        ButtonData.Action = NbtButtonAction.receive;
-
                         break;
+                }
+                if( false == HasPermission )
+                {
+                    throw new CswDniException( ErrorType.Warning, "You do not have permission to the " + OCP.PropName + " action.", "You do not have permission to the " + OCP.PropName + " action." );
                 }
             }
 

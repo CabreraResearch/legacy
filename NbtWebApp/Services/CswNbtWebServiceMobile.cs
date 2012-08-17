@@ -153,13 +153,13 @@ namespace ChemSW.Nbt.WebServices
             return _getNode( ThisNode, RunProps );
         }
 
-        private JProperty _getNode( CswNbtNode ThisNode, bool RunProps = true, NodeSpecies ThisNodeSpecies = NodeSpecies.UnKnown )
+        private JProperty _getNode( CswNbtNode ThisNode, bool RunProps = true, NodeSpecies ThisNodeSpecies = null )
         {
             JProperty Ret = new JProperty( "No Results" );
             if( null != ThisNode )
             {
                 string ThisNodeName = ThisNode.NodeName;
-
+                 
                 Ret = new JProperty( NodeIdPrefix + ThisNode.NodeId );
                 JObject NodeProps = new JObject();
                 Ret.Value = NodeProps;
@@ -187,7 +187,7 @@ namespace ChemSW.Nbt.WebServices
                 }
                 else if( false == string.IsNullOrEmpty( ThisNode.IconFileName ) )
                 {
-                    NodeProps["iconfilename"] = "Images/icons/" + CswTools.SafeJavascriptParam( ThisNode.IconFileName );
+                    NodeProps["iconfilename"] = CswNbtMetaDataObjectClass.IconPrefix16 + CswTools.SafeJavascriptParam( ThisNode.IconFileName );
                 }
 
                 _addObjectClassProps( ThisNode, NodeProps );
