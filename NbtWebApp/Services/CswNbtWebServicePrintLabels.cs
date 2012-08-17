@@ -1,6 +1,5 @@
 using System;
 using ChemSW.Core;
-using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
@@ -24,32 +23,32 @@ namespace ChemSW.Nbt.WebServices
             ret.Add( new JProperty( "labels", Labels ) );
             if( false == string.IsNullOrEmpty( PropIdAttr ) )
             {
-                CswPropIdAttr PropId = new CswPropIdAttr(PropIdAttr);
-                CswNbtMetaDataNodeTypeProp MetaDataProp = _CswNbtResources.MetaData.getNodeTypeProp(PropId.NodeTypePropId);
+                CswPropIdAttr PropId = new CswPropIdAttr( PropIdAttr );
+                CswNbtMetaDataNodeTypeProp MetaDataProp = _CswNbtResources.MetaData.getNodeTypeProp( PropId.NodeTypePropId );
                 if( null != MetaDataProp )
                 {
                     Int32 NodeTypeId = MetaDataProp.NodeTypeId;
 
                     string PrintLabelNodeTypesPropertyName = "NodeTypes";
-                    CswNbtMetaDataObjectClass PrintLabelObjectClass = _CswNbtResources.MetaData.getObjectClass(CswNbtMetaDataObjectClass.NbtObjectClass.PrintLabelClass);
-                    CswNbtMetaDataObjectClassProp NodeTypesProperty = PrintLabelObjectClass.getObjectClassProp(PrintLabelNodeTypesPropertyName);
+                    CswNbtMetaDataObjectClass PrintLabelObjectClass = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.PrintLabelClass );
+                    CswNbtMetaDataObjectClassProp NodeTypesProperty = PrintLabelObjectClass.getObjectClassProp( PrintLabelNodeTypesPropertyName );
 
-                    CswNbtView PrintLabelView = new CswNbtView(_CswNbtResources);
+                    CswNbtView PrintLabelView = new CswNbtView( _CswNbtResources );
                     PrintLabelView.ViewName = "getPrintLabelsForNodeType(" + NodeTypeId.ToString() + ")";
-                    CswNbtViewRelationship PrintLabelRelationship = PrintLabelView.AddViewRelationship(PrintLabelObjectClass, true);
-                    CswNbtViewProperty PrintLabelNodeTypesProperty = PrintLabelView.AddViewProperty(PrintLabelRelationship, NodeTypesProperty);
-                    CswNbtViewPropertyFilter PrintLabelNodeTypesPropertyFilter = PrintLabelView.AddViewPropertyFilter(PrintLabelNodeTypesProperty, CswNbtSubField.SubFieldName.Unknown, CswNbtPropFilterSql.PropertyFilterMode.Contains, NodeTypeId.ToString(), false);
+                    CswNbtViewRelationship PrintLabelRelationship = PrintLabelView.AddViewRelationship( PrintLabelObjectClass, true );
+                    CswNbtViewProperty PrintLabelNodeTypesProperty = PrintLabelView.AddViewProperty( PrintLabelRelationship, NodeTypesProperty );
+                    CswNbtViewPropertyFilter PrintLabelNodeTypesPropertyFilter = PrintLabelView.AddViewPropertyFilter( PrintLabelNodeTypesProperty, CswNbtSubField.SubFieldName.Unknown, CswNbtPropFilterSql.PropertyFilterMode.Contains, NodeTypeId.ToString(), false );
 
-                    ICswNbtTree PrintLabelsTree = _CswNbtResources.Trees.getTreeFromView(PrintLabelView, true, true, false, false);
+                    ICswNbtTree PrintLabelsTree = _CswNbtResources.Trees.getTreeFromView( PrintLabelView, true, true, false, false );
 
                     PrintLabelsTree.goToRoot();
-                    for (int i = 0; i < PrintLabelsTree.getChildNodeCount(); i++)
+                    for( int i = 0; i < PrintLabelsTree.getChildNodeCount(); i++ )
                     {
-                        PrintLabelsTree.goToNthChild(i);
-                        Labels.Add(new JObject(
-                                       new JProperty("name", PrintLabelsTree.getNodeNameForCurrentPosition()),
-                                       new JProperty("nodeid", PrintLabelsTree.getNodeIdForCurrentPosition().ToString())
-                                       ));
+                        PrintLabelsTree.goToNthChild( i );
+                        Labels.Add( new JObject(
+                                       new JProperty( "name", PrintLabelsTree.getNodeNameForCurrentPosition() ),
+                                       new JProperty( "nodeid", PrintLabelsTree.getNodeIdForCurrentPosition().ToString() )
+                                       ) );
                         PrintLabelsTree.goToParentNode();
                     }
                 }
@@ -58,9 +57,9 @@ namespace ChemSW.Nbt.WebServices
         } // getLabels()
 
 
-        public string getEPLText( string PropIdAttr, string PrintLabelNodeIdStr )
+        public JObject getEPLText( string PropIdAttr, string PrintLabelNodeIdStr )
         {
-            string ret = string.Empty;
+            JObject Ret = new JObject();
 
             CswPrimaryKey PrintLabelId = new CswPrimaryKey();
             PrintLabelId.FromString( PrintLabelNodeIdStr );
@@ -73,10 +72,16 @@ namespace ChemSW.Nbt.WebServices
 
             string EPLText = NodeAsPrintLabel.EplText.Text;
             string Params = NodeAsPrintLabel.Params.Text;
+            string ControlType = NodeAsPrintLabel.ControlType.Value;
+            if( string.IsNullOrEmpty( ControlType ) )
+            {
+                ControlType = CswNbtObjClassPrintLabel.ControlTypes.jZebra;
+            }
 
             // BZ 6118 - this prevents " from being turned into &quot;
             // BUT SEE BZ 7881!
-            ret = GenerateEPLScript( EPLText, Params, TargetNode ) + "\n";
+            Ret["epl"] = GenerateEPLScript( EPLText, Params, TargetNode ) + "\n";
+            Ret["controltype"] = ControlType;
             //if( CheckedNodeIds != string.Empty )
             //{
             //    foreach( string NodeIdToPrintString in CheckedNodeIds.Split( ',' ) )
@@ -90,7 +95,7 @@ namespace ChemSW.Nbt.WebServices
             //    }
             //}
 
-            return ret;
+            return Ret;
         } // getEPLText()
 
         private string GenerateEPLScript( string EPLText, string Params, CswNbtNode Node )

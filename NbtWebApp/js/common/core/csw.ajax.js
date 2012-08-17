@@ -56,18 +56,16 @@
                 result.timer.client = (endTime - o.startTime);
                 result.timer.url = url;
                 Csw.clientSession.setLogglyInput(result.LogglyInput, result.LogLevel, result.server);
-                delete result.server;
-                delete result.LogglyInput;
-                delete result.LogLevel;
                 Csw.debug.perf(result.timer);
                 
             }
+            delete result.server;
+            delete result.LogglyInput;
+            delete result.LogLevel;
             delete result.AuthenticationStatus;
             delete result.timeout;
-            if (Csw.bool(o.removeTimer)) {
-                delete result.timer;
-            }
-
+            delete result.timer;
+            
             Csw.clientSession.handleAuthenticationStatus({
                 status: auth,
                 success: function () {

@@ -13,7 +13,8 @@
                 cssclass: '',
                 multiple: false,
                 width: '',
-                onChange: null //function () {}
+                onChange: null, //function () {}
+                onComplete: null
             };
             var cswPublic = {};
 
@@ -32,6 +33,10 @@
 
             cswPublic.selectedText = function () {
                 return cswPublic.$.find('option:selected').text();
+            };
+
+            cswPublic.selectedVal = function () {
+                return cswPublic.val();
             };
 
             cswPublic.makeOption = function (opt) {
@@ -82,6 +87,7 @@
                         cswPublic.addOption(opt, (opt.value === cswPrivate.selected));
                     });
                 }
+                Csw.tryExec(cswPrivate.onComplete, cswPublic.selectedVal());
                 return cswPublic;
             };
 

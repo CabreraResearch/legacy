@@ -117,6 +117,7 @@
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase27145.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase27401.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_MaterialComponents_Case27462.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_PrintLabels_Case26704.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_Requesting_Case27470.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_Requesting_Case27542.cs" />
     <Compile Include="csw\Schema\scripts\tests\cases\029\CswTestCase_029_01.cs" />
