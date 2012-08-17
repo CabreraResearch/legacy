@@ -72,7 +72,7 @@ namespace ChemSW.Nbt.Batch
                             nodeAsMaterial.postChanges( false );
 
                             //get materials using the current material as a component
-                            BatchData.MatchingMaterialIDs.FromDelimitedString( nodeAsMaterial.getParentMaterials() );
+                            nodeAsMaterial.getParentMaterials( ref BatchData.MatchingMaterialIDs );
 
                             //save the updated batch data
                             BatchNode.appendToLog( "Updated " + currentMaterialID.ToString() );

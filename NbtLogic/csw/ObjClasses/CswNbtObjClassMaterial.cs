@@ -5,6 +5,7 @@ using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
 using Newtonsoft.Json.Linq;
+using ChemSW.Nbt.Batch;
 
 
 namespace ChemSW.Nbt.ObjClasses
@@ -76,6 +77,22 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 Receive.setHidden( value: ApprovalStatus.Checked != Tristate.True, SaveToDb: true );
             }
+
+            //if( CasNo.WasModified )
+            //{
+            //    CswCommaDelimitedString ParentMaterials = new CswCommaDelimitedString();
+            //    getParentMaterials( ref ParentMaterials );
+            //    if( ParentMaterials.Count > 0 ) //this material is used by others as a component...we have no idea how deep the rabbit hole is...make a batch op to update 
+            //    {
+            //        ParentMaterials.Add( NodeId.ToString() ); //we need to update this material too, so add it to the list
+            //        CswNbtBatchOpUpdateRegulatoryListsForMaterials BatchOp = new CswNbtBatchOpUpdateRegulatoryListsForMaterials( _CswNbtResources );
+            //        BatchOp.makeBatchOp( ParentMaterials );
+            //    }
+            //    else //this material isn't used as a component anywhere, so just update it by its self
+            //    {
+            //        _updateRegulatoryLists();
+            //    }
+            //}
             _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
         }//beforeWriteNode()
 
@@ -127,7 +144,7 @@ namespace ChemSW.Nbt.ObjClasses
                             CswNbtActSubmitRequest RequestAct = new CswNbtActSubmitRequest( _CswNbtResources, CreateDefaultRequestNode: true );
 
                             CswNbtObjClassRequestItem NodeAsRequestItem = RequestAct.makeMaterialRequestItem( new CswNbtActSubmitRequest.RequestItem( CswNbtActSubmitRequest.RequestItem.Material ), NodeId, OCP );
-                        NodeAsRequestItem.postChanges( false );
+                            NodeAsRequestItem.postChanges( false );
                             ButtonData.Data["requestaction"] = OCP.PropName;
                             ButtonData.Data["titleText"] = "Request for " + TradeName.Text;
                             ButtonData.Data["requestItemProps"] = RequestAct.getRequestItemAddProps( NodeAsRequestItem );
@@ -214,6 +231,54 @@ namespace ChemSW.Nbt.ObjClasses
                     break;
             }
             return DefaultExpDate;
+        }
+
+        //private void _updateRegulatoryLists()
+        //{
+        //    CswNbtMetaDataObjectClass regListOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.RegulatoryListClass );
+        //    foreach( CswNbtObjClassRegulatoryList nodeAsRegList in regListOC.getNodes( false, false ) )
+        //    {
+        //        CswCommaDelimitedString CASNos = new CswCommaDelimitedString();
+        //        CASNos.FromString( nodeAsRegList.CASNumbers.Text );
+        //        if( CASNos.Contains( CasNo.Text ) )
+        //        {
+        //            RegulatoryLists.StaticText += "," + nodeAsRegList.Name.Text;
+        //        }
+        //    }
+        //}
+
+        /// <summary>
+        /// Gets all the node ids of materials that use this material as a component
+        /// </summary>
+        /// <returns></returns>
+        public void getParentMaterials( ref CswCommaDelimitedString MachingMaterialIDs )
+        {
+            CswNbtMetaDataObjectClass materialComponentOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.MaterialComponentClass );
+            CswNbtMetaDataObjectClassProp constituentOCP = materialComponentOC.getObjectClassProp( CswNbtObjClassMaterialComponent.ConstituentPropertyName );
+            CswNbtMetaDataObjectClassProp mixtureOCP = materialComponentOC.getObjectClassProp( CswNbtObjClassMaterialComponent.MixturePropertyName );
+
+            CswNbtView componentsView = new CswNbtView( _CswNbtResources );
+            CswNbtViewRelationship parent = componentsView.AddViewRelationship( materialComponentOC, false );
+            componentsView.AddViewPropertyAndFilter( parent, constituentOCP,
+                Value: NodeId.PrimaryKey.ToString(),
+                FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals,
+                SubFieldName: CswNbtSubField.SubFieldName.NodeID );
+            componentsView.AddViewRelationship( parent, NbtViewPropOwnerType.First, mixtureOCP, false );
+
+            ICswNbtTree componentsTree = _CswNbtResources.Trees.getTreeFromView( componentsView, false );
+            int nodesCount = componentsTree.getChildNodeCount();
+            for( int i = 0; i < nodesCount; i++ )
+            {
+                componentsTree.goToNthChild( i );
+                int childNodesCount = componentsTree.getChildNodeCount();
+                for( int c = 0; c < childNodesCount; c++ )
+                {
+                    componentsTree.goToNthChild( c );
+                    MachingMaterialIDs.Add( componentsTree.getNodeIdForCurrentPosition().ToString() ); //the mixture node id
+                    componentsTree.goToParentNode();
+                }
+                componentsTree.goToParentNode();
+            }
         }
 
         #endregion Custom Logic
