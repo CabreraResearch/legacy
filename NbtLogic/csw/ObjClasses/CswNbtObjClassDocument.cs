@@ -284,8 +284,8 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropList DocumentClass { get { return _CswNbtNode.Properties[PropertyName.DocumentClass]; } }
         private void OnDocumentClassPropChange( CswNbtNodeProp NodeProp )
         {
-            Language.setHidden( value: DocumentClass.Value != DocumentClasses.MSDS, SaveToDb: true );
-            Format.setHidden( value: DocumentClass.Value != DocumentClasses.MSDS, SaveToDb: true );
+            //Language.setHidden( value: DocumentClass.Value != DocumentClasses.MSDS, SaveToDb: true );
+            //Format.setHidden( value: DocumentClass.Value != DocumentClasses.MSDS, SaveToDb: true );
         }
         public CswNbtNodePropRelationship Owner { get { return _CswNbtNode.Properties[PropertyName.Owner]; } }
         private void OnOwnerPropChange( CswNbtNodeProp NodeProp )

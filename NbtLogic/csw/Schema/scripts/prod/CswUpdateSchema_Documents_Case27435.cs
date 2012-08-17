@@ -29,9 +29,13 @@ namespace ChemSW.Nbt.Schema
                 PropName = CswNbtObjClassDocument.PropertyName.Language,
                 FieldType = CswNbtMetaDataFieldType.NbtFieldType.List,
                 ListOptions = "en,fr,es,de",
-                SetValOnAdd = true,
-                FilterPropId = DocumentClassOcp.PropId,
-                Filter = CswNbtMetaDataObjectClassProp.makeFilter( DocumentClassOcp.getFieldTypeRule().SubFields.Default, CswNbtPropFilterSql.PropertyFilterMode.Equals, CswNbtObjClassDocument.DocumentClasses.MSDS )
+                SetValOnAdd = false
+                //This worked for Size on Request Item but does not seem to work when making the prop conditional on another prop of the same Object Class
+                //IsFk = true,
+                //FkType = NbtViewPropIdType.ObjectClassPropId.ToString(),
+                //FkValue = DocumentClassOcp.PropId,
+                //FilterPropId = DocumentClassOcp.PropId,
+                //Filter = CswNbtMetaDataObjectClassProp.makeFilter( DocumentClassOcp.getFieldTypeRule().SubFields.Default, CswNbtPropFilterSql.PropertyFilterMode.Equals, CswNbtObjClassDocument.DocumentClasses.MSDS )
             } );
 
             CswNbtMetaDataObjectClassProp FormatOcp = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( DocumentOc )
@@ -39,10 +43,27 @@ namespace ChemSW.Nbt.Schema
                 PropName = CswNbtObjClassDocument.PropertyName.Format,
                 FieldType = CswNbtMetaDataFieldType.NbtFieldType.List,
                 ListOptions = CswNbtObjClassDocument.Formats.Options.ToString(),
-                SetValOnAdd = true,
-                FilterPropId = DocumentClassOcp.PropId,
-                Filter = CswNbtMetaDataObjectClassProp.makeFilter( DocumentClassOcp.getFieldTypeRule().SubFields.Default, CswNbtPropFilterSql.PropertyFilterMode.Equals, CswNbtObjClassDocument.DocumentClasses.MSDS )
+                SetValOnAdd = false
+                //IsFk = true,
+                //FkType = NbtViewPropIdType.ObjectClassPropId.ToString(),
+                //FkValue = DocumentClassOcp.PropId,
+                //FilterPropId = DocumentClassOcp.PropId,
+                //Filter = CswNbtMetaDataObjectClassProp.makeFilter( DocumentClassOcp.getFieldTypeRule().SubFields.Default, CswNbtPropFilterSql.PropertyFilterMode.Equals, CswNbtObjClassDocument.DocumentClasses.MSDS )
             } );
+
+            foreach( CswNbtMetaDataNodeType DocumentNt in DocumentOc.getLatestVersionNodeTypes() )
+            {
+                CswNbtMetaDataNodeTypeProp FormatNtp = DocumentNt.getNodeTypePropByObjectClassProp( FormatOcp.PropId );
+                CswNbtMetaDataNodeTypeProp LanguageNtp = DocumentNt.getNodeTypePropByObjectClassProp( LanguageOcp.PropId );
+                if( false == DocumentNt.NodeTypeName.Contains( "material" ) && false == DocumentNt.NodeTypeName.Contains( "Material" ) )
+                {
+                    FormatNtp.removeFromAllLayouts();
+                    LanguageNtp.removeFromAllLayouts();
+                }
+                CswNbtMetaDataNodeTypeProp DocumentClassNtp = DocumentNt.getNodeTypePropByObjectClassProp( DocumentClassOcp.PropId );
+                FormatNtp.setFilter( DocumentClassNtp, DocumentClassNtp.getFieldTypeRule().SubFields.Default, CswNbtPropFilterSql.PropertyFilterMode.Equals, CswNbtObjClassDocument.DocumentClasses.MSDS );
+                LanguageNtp.setFilter( DocumentClassNtp, DocumentClassNtp.getFieldTypeRule().SubFields.Default, CswNbtPropFilterSql.PropertyFilterMode.Equals, CswNbtObjClassDocument.DocumentClasses.MSDS );
+            }
 
             CswNbtMetaDataObjectClassProp LinkOcp = DocumentOc.getObjectClassProp( CswNbtObjClassDocument.PropertyName.Link );
             CswNbtMetaDataObjectClassProp FileOcp = DocumentOc.getObjectClassProp( CswNbtObjClassDocument.PropertyName.File );
