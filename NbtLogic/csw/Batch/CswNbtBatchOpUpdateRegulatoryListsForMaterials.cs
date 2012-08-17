@@ -38,14 +38,11 @@ namespace ChemSW.Nbt.Batch
         public CswNbtObjClassBatchOp makeBatchOp( CswCommaDelimitedString MaterialIDs )
         {
             CswNbtObjClassBatchOp BatchNode = null;
-            if( false == MaterialIDs.IsEmpty )
-            {
-                //get all existing of RegLists
-                CswCommaDelimitedString nodeids = _getRegListsIDs();
+            //get all existing of RegLists
+            CswCommaDelimitedString nodeids = _getRegListsIDs();
 
-                RegulatoryListsBatchData BatchData = new RegulatoryListsBatchData( MaterialIDs, nodeids );
-                BatchNode = CswNbtBatchManager.makeNew( _CswNbtResources, _BatchOpName, BatchData );
-            }
+            RegulatoryListsBatchData BatchData = new RegulatoryListsBatchData( MaterialIDs, nodeids );
+            BatchNode = CswNbtBatchManager.makeNew( _CswNbtResources, _BatchOpName, BatchData );
             return BatchNode;
         } // makeBatchOp()
 

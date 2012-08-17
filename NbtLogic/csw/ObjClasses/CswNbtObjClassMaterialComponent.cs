@@ -1,6 +1,8 @@
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
+using ChemSW.Nbt.Batch;
+using ChemSW.Core;
 
 namespace ChemSW.Nbt.ObjClasses
 {
@@ -65,6 +67,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void afterWriteNode()
         {
+            _recalculateRegListMembership();
             _CswNbtObjClassDefault.afterWriteNode();
         }//afterWriteNode()
 
@@ -121,7 +124,23 @@ namespace ChemSW.Nbt.ObjClasses
 
         #endregion
 
+        #region Custom logic
 
+        /*
+         * When a material component is changed in any way, we have to assume this changes the playing field for regulatory list membership
+         * This means we have to re-calculate the regulatory list membership for each material and reg list
+         */
+        private void _recalculateRegListMembership()
+        {
+            if( false == IsTemp )
+            {
+                CswCommaDelimitedString emptyList = new CswCommaDelimitedString(); //create an empty list of strings
+                CswNbtBatchOpUpdateRegulatoryListsForMaterials BatchOp = new CswNbtBatchOpUpdateRegulatoryListsForMaterials( _CswNbtResources );
+                BatchOp.makeBatchOp( emptyList ); //this batch op will iterate all lists and determine material membership
+            }
+        }
+
+        #endregion
 
     }//CswNbtObjClassMaterialComponent
 
