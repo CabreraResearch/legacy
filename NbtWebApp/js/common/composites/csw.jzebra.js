@@ -91,9 +91,7 @@
 
                         cswPublic.findPrinters = function() {
                             //This will populate cswPrivate.printerSel with available printers
-                            cswPublic.zebraJs.findPrinters(cswPrivate.defaultPrinter);
-                            debugger;
-
+                            cswPublic.zebraJs.findPrinters(cswPublic.defaultPrinter);
                         };
                         Csw.publish('jZebra_Ready');
                     } else if (cswPrivate.initAttempts < 5) {

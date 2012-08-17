@@ -355,6 +355,7 @@
                     }
                     //alert(printers[i]);
                 }
+                $('#printersList').val(defaultPrinter);
             }
         } else {
             alert("Applet not loaded!");
