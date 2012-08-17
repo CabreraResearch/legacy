@@ -32,31 +32,23 @@
 
                 var optionCount = 0,
                     isMultiEdit = Csw.bool(cswPrivate.isMultiEdit),
-                    values = cswPrivate.values;
+                    values = cswPrivate.values,
+                    parentDiv = cswParent.div({ ID: Csw.makeId(cswPrivate.ID, 'multiListDiv') }),
+                    table = parentDiv.table({ ID: Csw.makeId(cswPrivate.ID, 'tbl') }),
+                    moreDivCell = table.cell(1, 1),
+                    editBtnCell = table.cell(1, 2),
+                    multiSelectCell = table.cell(2, 1),
+                    morediv = moreDivCell.moreDiv({ ID: Csw.makeId(cswPrivate.ID, cswPrivate.ID + '_morediv') }),
+                    showntbl = morediv.shownDiv.table({ cellpadding: '2px', width: '100%' }),
+                    hiddentbl = morediv.hiddenDiv.table({ cellpadding: '2px', width: '100%' }),
+                    moreDivTbl = showntbl,
+                    row = 1;
+                
                 delete cswPrivate.values;
-
-                var parentDiv = cswParent.div({
-                    ID: Csw.makeId(cswPrivate.ID, 'multiListDiv')
-                });
-
-                var table = parentDiv.table({
-                    ID: Csw.makeId(cswPrivate.ID, 'tbl')
-                });
-
-                var morediv = table.cell(1, 1).moreDiv({
-                    ID: Csw.makeId(cswPrivate.ID, cswPrivate.ID + '_morediv')
-                });
-
-                var showntbl = morediv.shownDiv.table({ cellpadding: '2px', width: '100%' });
-                var hiddentbl = morediv.hiddenDiv.table({ cellpadding: '2px', width: '100%' });
-                var row = 1;
-                var tbl = showntbl;
                 morediv.moreLink.hide();
-
-                cswPrivate.select = table.cell(2, 1).select(cswPrivate);
-                table.cell(2, 1).hide();
+                cswPrivate.select = multiSelectCell.select(cswPrivate);
+                multiSelectCell.hide();
                 cswPublic = Csw.dom({}, cswPrivate.select);
-                //Csw.extend(cswPublic, Csw.literals.select(cswPrivate));
 
                 if (Csw.isFunction(cswPrivate.onChange)) {
                     cswPrivate.select.bind('change', function () {
@@ -65,12 +57,11 @@
                 }
 
                 Csw.each(values, function (opt) {
-                    if (row > cswPrivate.hidethreshold && tbl === showntbl) {
+                    if (row > cswPrivate.hidethreshold && moreDivTbl === showntbl) {
                         row = 1;
-                        tbl = hiddentbl;
+                        moreDivTbl = hiddentbl;
                         morediv.moreLink.show();
                     }
-
                     var value = Csw.string(opt.value, opt.text),
                         text = Csw.string(opt.text, value),
                         isSelected;
@@ -79,28 +70,28 @@
                         cswPrivate.select.option({ value: value, display: text, isSelected: isSelected, isDisabled: opt.disabled });
                         optionCount += 1;
                         if (isSelected) {
-                            //tbl.cell(1, 1).span({ text: text + ', ' });
-                            tbl.cell(row, 1).text(text);
+                            //moreDivTbl.cell(1, 1).span({ text: text + ', ' });
+                            moreDivTbl.cell(row, 1).text(text);
                             row += 1;
                         }
                     }
                 });
 
                 var makeMultiSelect = function () {
-                    table.cell(1, 1).hide();
-                    table.cell(1, 2).hide();
+                    moreDivCell.hide();
+                    editBtnCell.hide();
                     if (optionCount > 20) {
                         cswPrivate.select.$.multiselect().multiselectfilter();
                     } else {
                         cswPrivate.select.$.multiselect();
                     }
-                    table.cell(2, 1).show();
+                    multiSelectCell.show();
                 }
 
                 if (cswPrivate.EditMode === Csw.enums.editMode.Add) {
                     makeMultiSelect();
                 } else {
-                    table.cell(1, 2).imageButton({
+                    editBtnCell.imageButton({
                         ButtonType: Csw.enums.imageButton_ButtonType.Edit,
                         AlternateText: 'Edit',
                         ID: Csw.makeId(cswPrivate.ID, 'toggle'),
