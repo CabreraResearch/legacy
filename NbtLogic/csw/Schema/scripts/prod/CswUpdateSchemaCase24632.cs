@@ -5,6 +5,7 @@ using ChemSW.DB;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using System.Collections.Generic;
+using ChemSW.Nbt.Security;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -45,6 +46,32 @@ namespace ChemSW.Nbt.Schema
             regulatoryListNT.setNameTemplateText( CswNbtMetaData.MakeTemplateEntry( CswNbtObjClassRegulatoryList.NamePropertyName ) ); //set display name
             CswNbtMetaDataNodeTypeProp casNosNTP = regulatoryListNT.getNodeTypePropByObjectClassProp( CswNbtObjClassRegulatoryList.CASNumbersPropertyName );
             casNosNTP.HelpText = "The CASNos property should be a comma delimited set of CASNos in this regulatory list. Example: \"CASNo1,CASNo2,CASNo3\"";
+            #endregion
+
+            #region CREATE REGULATORY LISTS VIEW
+
+            CswNbtObjClassRole cisProAdminRole = _CswNbtSchemaModTrnsctn.Nodes.makeRoleNodeFromRoleName( "CISPro_Admin" );
+            if( null != cisProAdminRole )
+            {
+                CswNbtView regListsView = _CswNbtSchemaModTrnsctn.makeNewView( "Regulatory Lists", NbtViewVisibility.Role, cisProAdminRole.NodeId );
+                regListsView.SetViewMode( NbtViewRenderingMode.Tree );
+                regListsView.Category = "CISPro Configuration";
+                CswNbtViewRelationship parent = regListsView.AddViewRelationship( regulatoryListOC, false );
+                regListsView.save();
+            }
+
+            #endregion
+
+            #region ADD REGULATORY LIST NODETYPE PERMISSIONS TO CISPro_Admin
+
+            if( null != cisProAdminRole )
+            {
+                _CswNbtSchemaModTrnsctn.Permit.set( CswNbtPermit.NodeTypePermission.View, regulatoryListNT, cisProAdminRole, true );
+                _CswNbtSchemaModTrnsctn.Permit.set( CswNbtPermit.NodeTypePermission.Create, regulatoryListNT, cisProAdminRole, true );
+                _CswNbtSchemaModTrnsctn.Permit.set( CswNbtPermit.NodeTypePermission.Edit, regulatoryListNT, cisProAdminRole, true );
+                _CswNbtSchemaModTrnsctn.Permit.set( CswNbtPermit.NodeTypePermission.Delete, regulatoryListNT, cisProAdminRole, true );
+            }
+
             #endregion
 
         }//Update()
