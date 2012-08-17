@@ -133,6 +133,7 @@
     <Compile Include="csw\ServiceDrivers\CswNbtSdTabsAndProps.cs" />
     <Compile Include="csw\ServiceDrivers\CswNbtSdNode.cs" />
     <Compile Include="csw\ServiceDrivers\CswPropIdAttr.cs" />
+    <Compile Include="csw\Tree\CswNbtTreeLoaderFromXmlViewByLevelWith.cs" />
     <Compile Include="csw\UnitsOfMeasure\CswNbtUnitViewBuilder.cs" />
     <Compile Include="csw\UnitsOfMeasure\CswNbtUnitConversion.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassContainerDispenseTransaction.cs" />
