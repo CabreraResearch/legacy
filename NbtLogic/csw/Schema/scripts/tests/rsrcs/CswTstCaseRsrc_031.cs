@@ -14,9 +14,7 @@ namespace ChemSW.Nbt.Schema
     {
 
         public CswTstCaseRsrc_031()
-        {
-            string foo = "foo";
-        }
+        { }
 
         private CswTestCaseRsrc _CswTestCaseRsrc;
         private CswNbtSchemaModTrnsctn _CswNbtSchemaModTrnsctn;

@@ -3,14 +3,14 @@
 
 (function ($) {
     "use strict";
-   
+
     Csw.controls.nodeButton = Csw.controls.nodeButton ||
         Csw.controls.register('nodeButton', function (cswParent, options) {
 
-            var cswPublic = { };
-            var cswPrivate = { };
+            var cswPublic = {};
+            var cswPrivate = {};
 
-            Csw.tryExec(function() {
+            Csw.tryExec(function () {
 
                 (function _pre() {
                     cswPrivate = {
@@ -29,14 +29,14 @@
                     Csw.extend(cswPrivate, options);
                     cswPrivate.div = cswParent.div();
                     cswPrivate.div.empty();
-                    
+
                     cswPrivate.table = cswPrivate.div.table({
                         ID: Csw.makeId(cswPrivate.ID, 'tbl')
                     });
-                }());
+                } ());
 
-                cswPrivate.onButtonClick = function() {
-                    
+                cswPrivate.onButtonClick = function () {
+
                     cswPublic.button.disable();
                     if (Csw.isNullOrEmpty(cswPrivate.propId)) {
                         Csw.error.showError(Csw.error.makeErrorObj(Csw.enums.errorType.warning.name, 'Cannot execute a property\'s button click event without a valid property.', 'Attempted to click a property button with a null or empty propid.'));
@@ -44,37 +44,67 @@
                     } else {
                         // Case 27263: prompt to save instead
                         if (Csw.clientChanges.manuallyCheckChanges()) {
-                            Csw.ajax.post({
-                                urlMethod: 'onObjectClassButtonClick',
-                                data: {
-                                    NodeTypePropAttr: cswPrivate.propId,
-                                    SelectedText: Csw.string(cswPrivate.selectedOption, Csw.string(cswPrivate.value))
-                                },
-                                success: function(data) {
-                                    cswPublic.button.enable();
+                            var performOnObjectClassButtonClick = function () {
+                                Csw.ajax.post({
+                                    urlMethod: 'onObjectClassButtonClick',
+                                    data: {
+                                        NodeTypePropAttr: cswPrivate.propId,
+                                        SelectedText: Csw.string(cswPrivate.selectedOption, Csw.string(cswPrivate.value))
+                                    },
+                                    success: function (data) {
+                                        cswPublic.button.enable();
 
-                                    var actionData = {
-                                        data: data,
-                                        propid: cswPrivate.propId,
-                                        button: cswPublic.button,
-                                        selectedOption: Csw.string(cswPublic.button.selectedOption),
-                                        messagediv: cswPrivate.messageDiv,
-                                        context: cswPrivate,
-                                        onSuccess: cswPrivate.onAfterButtonClick
-                                    };
+                                        var actionData = {
+                                            data: data,
+                                            propid: cswPrivate.propId,
+                                            button: cswPublic.button,
+                                            selectedOption: Csw.string(cswPublic.button.selectedOption),
+                                            messagediv: cswPrivate.messageDiv,
+                                            context: cswPrivate,
+                                            onSuccess: cswPrivate.onAfterButtonClick
+                                        };
 
-                                    if (false === Csw.isNullOrEmpty(data.message)) {
-                                        cswPublic.messageDiv.text(data.message);
+                                        if (false === Csw.isNullOrEmpty(data.message)) {
+                                            cswPublic.messageDiv.text(data.message);
+                                        }
+                                        var continueToPub = false === Csw.isFunction(cswPrivate.onClickSuccess) || Csw.tryExec(cswPrivate.onClickSuccess, data);
+                                        if (Csw.bool(data.success) && continueToPub) {
+                                            Csw.publish(Csw.enums.events.objectClassButtonClick, actionData);
+                                        }
+                                    }, // ajax success()
+                                    error: function () {
+                                        cswPublic.button.enable();
                                     }
-                                    var continueToPub = false === Csw.isFunction(cswPrivate.onClickSuccess) || Csw.tryExec(cswPrivate.onClickSuccess, data);
-                                    if (Csw.bool(data.success) && continueToPub) {
-                                        Csw.publish(Csw.enums.events.objectClassButtonClick, actionData);
+                                }); // ajax.post()
+                            }
+
+                            //TODO - Case 27274 - replace static values
+                            var confirmDialogIsEnabled = function () {
+                                return Csw.string(cswPrivate.value) === 'Dispose';
+                            },
+                            confirmMessage = 'Are you sure you want to Dispose this Container?';
+
+                            if (confirmDialogIsEnabled()) {
+                                $.CswDialog('GenericDialog', {
+                                    ID: Csw.makeSafeId('ButtonConfirmationDialog'),
+                                    title: 'Confirm Action',
+                                    height: 150,
+                                    width: 400,
+                                    div: Csw.literals.div({ text: confirmMessage, align: 'center' }),
+                                    onOk: function (selectedOption) {
+                                        performOnObjectClassButtonClick();
+                                    },
+                                    onCancel: function () {
+                                        cswPublic.button.enable();
+                                    },
+                                    onClose: function () {
+                                        cswPublic.button.enable();
                                     }
-                                }, // ajax success()
-                                error: function() {
-                                    cswPublic.button.enable();
-                                }
-                            }); // ajax.post()
+                                });
+                            } else {
+                                performOnObjectClassButtonClick();
+                            }
+
                         } // if (Csw.clientChanges.manuallyCheckChanges()) {
                     } // if-else (Csw.isNullOrEmpty(propAttr)) {
                 }; // onButtonClick()
@@ -105,8 +135,8 @@
                                 }
                             });
                             break;
-                            //case 'link':
-                            //this is a fallthrough case
+                        //case 'link':         
+                        //this is a fallthrough case         
                         default:
                             cswPublic.button = cswPrivate.btnCell.a({
                                 ID: cswPrivate.ID,
@@ -128,11 +158,11 @@
                     if (cswPrivate.Required) {
                         cswPublic.button.addClass('required');
                     }
-                }());
+                } ());
             });
             return cswPublic;
         });
-    
+
     function onObjectClassButtonClick(eventOj, opts) {
         Csw.debug.assert(false === Csw.isNullOrEmpty(opts.data), 'opts.data is null.');
         var actionJson = opts.data.actionData;
@@ -217,5 +247,5 @@
         }
     }
     Csw.subscribe(Csw.enums.events.objectClassButtonClick, onObjectClassButtonClick);
-    
+
 })(jQuery);
