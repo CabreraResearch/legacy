@@ -55,7 +55,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
-            if( CASNumbers.WasModified )
+            if( CASNumbers.WasModified || Name.WasModified )
             {
                 //remove this list from all material nodes
                 _removeListFromMaterials();
@@ -64,7 +64,7 @@ namespace ChemSW.Nbt.ObjClasses
                 CswNbtBatchOpUpdateRegulatoryLists BatchOp = new CswNbtBatchOpUpdateRegulatoryLists( _CswNbtResources );
                 CswCommaDelimitedString CASNosAsCommaString = new CswCommaDelimitedString();
                 CASNosAsCommaString.FromString( CASNumbers.Text );
-                BatchOp.makeBatchOp( CASNosAsCommaString, Name.Text );
+                BatchOp.makeBatchOp( Name.Text, CASNosAsCommaString );
             }
             _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
         }//beforeWriteNode()
@@ -116,7 +116,8 @@ namespace ChemSW.Nbt.ObjClasses
             CswNbtMetaDataObjectClass materialOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass );
             CswNbtMetaDataObjectClassProp regListsOCP = materialOC.getObjectClassProp( CswNbtObjClassMaterial.RegulatoryListsPropertyName );
             CswNbtViewRelationship parent = materialsWithThisList.AddViewRelationship( materialOC, false );
-            materialsWithThisList.AddViewPropertyAndFilter( parent, regListsOCP, Value: Name.Text, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Contains );
+            string OriginalName = Name.GetOriginalPropRowValue();
+            materialsWithThisList.AddViewPropertyAndFilter( parent, regListsOCP, Value: OriginalName, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Contains );
 
             ICswNbtTree materialsWithListTree = _CswNbtResources.Trees.getTreeFromView( materialsWithThisList, false );
             int nodeCount = materialsWithListTree.getChildNodeCount();
@@ -126,7 +127,7 @@ namespace ChemSW.Nbt.ObjClasses
                 CswNbtObjClassMaterial nodeAsMaterial = (CswNbtObjClassMaterial) materialsWithListTree.getNodeForCurrentPosition();
                 CswCommaDelimitedString regLists = new CswCommaDelimitedString();
                 regLists.FromString( nodeAsMaterial.RegulatoryLists.StaticText );
-                regLists.Remove( Name.Text );
+                regLists.Remove( OriginalName );
                 nodeAsMaterial.RegulatoryLists.StaticText = regLists.ToString();
                 nodeAsMaterial.postChanges( false );
                 materialsWithListTree.goToParentNode();

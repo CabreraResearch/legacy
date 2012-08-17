@@ -27,7 +27,7 @@ namespace ChemSW.Nbt.Batch
             if( BatchNode != null && BatchNode.OpNameValue == NbtBatchOpName.UpdateRegulatoryLists )
             {
                 RegulatoryListsBatchData BatchData = BatchNode.BatchData.Text;
-                ret = ( ( BatchData.CASNos.Count - BatchData.totalCASNos ) / BatchData.totalCASNos ) * 100;
+                ret = ( ( BatchData.totalCASNos - BatchData.CASNos.Count ) / BatchData.totalCASNos ) * 100;
             }
             return ret;
         } // getPercentDone()
@@ -35,17 +35,16 @@ namespace ChemSW.Nbt.Batch
         /// <summary>
         /// Create a new batch operation to update materials regulatory lists property
         /// </summary>
-        public CswNbtObjClassBatchOp makeBatchOp( CswCommaDelimitedString CASNos, string listName )
+        public CswNbtObjClassBatchOp makeBatchOp( string listName, CswCommaDelimitedString CASNos )
         {
             CswNbtObjClassBatchOp BatchNode = null;
             if( false == CASNos.IsEmpty && null != listName )
             {
-                RegulatoryListsBatchData BatchData = new RegulatoryListsBatchData( CASNos, listName );
+                RegulatoryListsBatchData BatchData = new RegulatoryListsBatchData( listName, CASNos );
                 BatchNode = CswNbtBatchManager.makeNew( _CswNbtResources, _BatchOpName, BatchData );
             }
             return BatchNode;
         } // makeBatchOp()
-
 
         /// <summary>
         /// Run the next iteration of this batch operation
@@ -73,7 +72,7 @@ namespace ChemSW.Nbt.Batch
                             nodeAsMaterial.postChanges( false );
 
                             //get materials using the current material as a component
-                            _getParentMaterials( currentMaterialID.PrimaryKey, BatchData.MatchingMaterialIDs );
+                            BatchData.MatchingMaterialIDs.FromDelimitedString( nodeAsMaterial.getParentMaterials() );
 
                             //save the updated batch data
                             BatchNode.appendToLog( "Updated " + currentMaterialID.ToString() );
@@ -126,14 +125,12 @@ namespace ChemSW.Nbt.Batch
             public CswCommaDelimitedString CASNos = new CswCommaDelimitedString();
             public string CurrentCASNo = "";
             public double totalCASNos;
-            public double CASNosProcessed;
 
-            public RegulatoryListsBatchData( CswCommaDelimitedString CASNos, string listName )
+            public RegulatoryListsBatchData( string listName, CswCommaDelimitedString CASNos )
             {
                 this.ListName = listName;
                 this.CASNos = CASNos;
                 totalCASNos = CASNos.Count;
-                CASNosProcessed = 0;
             }
 
             private RegulatoryListsBatchData( CswCommaDelimitedString CASNos, string listName, CswCommaDelimitedString MatchingMaterialIDs, string CurrentCASNo, double total )
@@ -180,38 +177,9 @@ namespace ChemSW.Nbt.Batch
             }
         } // class InventoryLevelsBatchData
 
-        #endregion InventoryLevelsBatchData
+        #endregion
 
         #region private helper functions
-
-        private void _getParentMaterials( Int32 nodeid, CswCommaDelimitedString matchingNodesIDs )
-        {
-            CswNbtMetaDataObjectClass materialComponentOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.MaterialComponentClass );
-            CswNbtMetaDataObjectClassProp constituentOCP = materialComponentOC.getObjectClassProp( CswNbtObjClassMaterialComponent.ConstituentPropertyName );
-            CswNbtMetaDataObjectClassProp mixtureOCP = materialComponentOC.getObjectClassProp( CswNbtObjClassMaterialComponent.MixturePropertyName );
-
-            CswNbtView componentsView = new CswNbtView( _CswNbtResources );
-            CswNbtViewRelationship parent = componentsView.AddViewRelationship( materialComponentOC, false );
-            componentsView.AddViewPropertyAndFilter( parent, constituentOCP, Value: nodeid.ToString(), FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals, SubFieldName: CswNbtSubField.SubFieldName.NodeID );
-            componentsView.AddViewRelationship( parent, NbtViewPropOwnerType.First, mixtureOCP, false );
-
-            ICswNbtTree componentsTree = _CswNbtResources.Trees.getTreeFromView( componentsView, false );
-            int nodesCount = componentsTree.getChildNodeCount();
-            for( int i = 0; i < nodesCount; i++ )
-            {
-                componentsTree.goToNthChild( i );
-                //CswNbtObjClassMaterialComponent nodeAsMaterialComponent = (CswNbtObjClassMaterialComponent) componentsTree.getNodeForCurrentPosition();
-                //matchingNodesIDs.Add( nodeAsMaterialComponent.Mixture.RelatedNodeId.ToString() );
-                int childNodesCount = componentsTree.getNodeCountForCurrentLevel();
-                for( int c = 0; c < childNodesCount; c++ )
-                {
-                    componentsTree.goToNthChild( c );
-                    matchingNodesIDs.Add( componentsTree.getNodeIdForCurrentPosition().ToString() ); //the mixture node id
-                    componentsTree.goToParentNode();
-                }
-                componentsTree.goToParentNode();
-            }
-        }
 
         private bool _materialHasList( string name, CswNbtObjClassMaterial material )
         {
