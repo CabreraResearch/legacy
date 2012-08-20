@@ -42,8 +42,9 @@
                     showntbl = morediv.shownDiv.table({ cellpadding: '2px', width: '100%' }),
                     hiddentbl = morediv.hiddenDiv.table({ cellpadding: '2px', width: '100%' }),
                     moreDivTbl = showntbl,
-                    row = 1;
-                
+                    row = 1,
+                    optionSubject = '';
+
                 delete cswPrivate.values;
                 morediv.moreLink.hide();
                 cswPrivate.select = multiSelectCell.select(cswPrivate);
@@ -56,12 +57,7 @@
                     });
                 }
 
-                Csw.each(values, function (opt) {
-                    if (row > cswPrivate.hidethreshold && moreDivTbl === showntbl) {
-                        row = 1;
-                        moreDivTbl = hiddentbl;
-                        morediv.moreLink.show();
-                    }
+                Csw.each(values, function (opt) {                    
                     var value = Csw.string(opt.value, opt.text),
                         text = Csw.string(opt.text, value),
                         isSelected;
@@ -70,9 +66,19 @@
                         cswPrivate.select.option({ value: value, display: text, isSelected: isSelected, isDisabled: opt.disabled });
                         optionCount += 1;
                         if (isSelected) {
-                            //moreDivTbl.cell(1, 1).span({ text: text + ', ' });
-                            moreDivTbl.cell(row, 1).text(text);
-                            row += 1;
+                            var splitOption = text.split(": ");
+                            if (splitOption[0] === optionSubject) {
+                                moreDivTbl.cell(row, 1).span({ text: ', ' + splitOption[1] });
+                            } else {
+                                row += 1;
+                                if (row > cswPrivate.hidethreshold && moreDivTbl === showntbl) {
+                                    row = 1;
+                                    moreDivTbl = hiddentbl;
+                                    morediv.moreLink.show();
+                                }
+                                optionSubject = splitOption[0];
+                                moreDivTbl.cell(row, 1).span({ text: text });                                
+                            }
                         }
                     }
                 });
