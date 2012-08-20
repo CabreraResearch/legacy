@@ -185,11 +185,14 @@ namespace ChemSW.Nbt.WebServices
             IEnumerable<CswNbtMetaDataNodeType> feedbackNodeTypes = feedbackOC.getNodeTypes();
             if( feedbackNodeTypes.Any() )
             {
-                Ret["Help"]["Give Feedback"] = new JObject();
-                //Ret["Help"]["Give Feedback"]["action"] = "AddNode";
-                Ret["Help"]["Give Feedback"]["action"] = "AddFeedback";
-                CswNbtMetaDataNodeType feedbackNodeType = feedbackNodeTypes.First();
-                Ret["Help"]["Give Feedback"]["nodetypeid"] = feedbackNodeType.NodeTypeId;
+                if( _CswNbtResources.Permit.can( Security.CswNbtPermit.NodeTypePermission.Create, feedbackNodeTypes.First() ) )
+                {
+                    Ret["Help"]["Give Feedback"] = new JObject();
+                    //Ret["Help"]["Give Feedback"]["action"] = "AddNode";
+                    Ret["Help"]["Give Feedback"]["action"] = "AddFeedback";
+                    CswNbtMetaDataNodeType feedbackNodeType = feedbackNodeTypes.First();
+                    Ret["Help"]["Give Feedback"]["nodetypeid"] = feedbackNodeType.NodeTypeId;
+                }
             }
 
             Ret["Logout"] = new JObject( new JProperty( "action", "Logout" ) );
