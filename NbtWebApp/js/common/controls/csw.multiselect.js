@@ -19,7 +19,7 @@
                 onChange: null, //function () {}
                 isControl: false,
                 hidethreshold: 5,
-                editMode: ''
+                EditMode: ''
             };
 
             var cswPublic = {};

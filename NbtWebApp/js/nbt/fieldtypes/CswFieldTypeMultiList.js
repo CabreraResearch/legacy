@@ -23,7 +23,7 @@
                     cssclass: 'selectinput',
                     values: options,
                     isMultiEdit: o.Multi,
-                    editMode: o.EditMode
+                    EditMode: o.EditMode
                 });
             }
         },
