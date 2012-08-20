@@ -2677,10 +2677,12 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string fileForProp()
+        public void fileForProp()
         {
             //Come back to implement Multi
-            JObject ReturnVal = new JObject( new JProperty( "success", false.ToString().ToLower() ) );
+            JObject ReturnVal = new JObject();
+            ReturnVal["data"] = new JObject();
+            ReturnVal["data"]["success"] = false;
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
             try
             {
@@ -2713,9 +2715,17 @@ namespace ChemSW.Nbt.WebServices
 
                             // Save the binary data
                             CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources, _CswNbtStatisticsEvents );
-                            bool ret = ws.SetPropBlobValue( FileData, FileName, ContentType, PropId, Column );
+                            string Href;
+                            bool ret = ws.SetPropBlobValue( FileData, FileName, ContentType, PropId, Column, out Href );
 
-                            ReturnVal = new JObject( new JProperty( "success", ret.ToString().ToLower() ) );
+                            ReturnVal["data"]["success"] = ret;
+                            if( ret )
+                            {
+                                ReturnVal["data"]["filename"] = FileName;
+                                ReturnVal["data"]["contenttype"] = ContentType;
+                                ReturnVal["data"]["href"] = Href;
+                            }
+
                         } //if( false == string.IsNullOrEmpty( PropId ) )
                     } //for( Int32 I = 0; I < Context.Request.Files.Count; I += 1 )
                 }
@@ -2728,7 +2738,11 @@ namespace ChemSW.Nbt.WebServices
 
             _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
 
-            return ReturnVal.ToString();
+            Context.Response.Clear();
+            Context.Response.ContentType = "application/json; charset=utf-8";
+            //Context.Response.AddHeader( "content-disposition", "attachment; filename=export.json" );
+            Context.Response.Flush();
+            Context.Response.Write( ReturnVal.ToString() );
 
         } // fileForProp()
 
@@ -2825,7 +2839,8 @@ namespace ChemSW.Nbt.WebServices
 
             //now create the image and save it as a blob
             byte[] molImage = CswStructureSearch.GetImage( molData );
-            ws.SetPropBlobValue( molImage, "mol.jpeg", "image/jpeg", PropId, "blobdata" );
+            string Href;
+            ws.SetPropBlobValue( molImage, "mol.jpeg", "image/jpeg", PropId, "blobdata", out Href );
 
             return ReturnVal;
         }
@@ -2877,7 +2892,7 @@ namespace ChemSW.Nbt.WebServices
                 {
 
                     CswNbtWebServicePrintLabels ws = new CswNbtWebServicePrintLabels( _CswNbtResources );
-                    ReturnVal.Add( new JProperty( "epl", ws.getEPLText( PropId, PrintLabelNodeId ) ) );
+                    ReturnVal = ws.getEPLText( PropId, PrintLabelNodeId );
                 }
 
                 _deInitResources();

@@ -1114,10 +1114,11 @@
                 if (false === isAdd && false === Csw.isNullOrEmpty(itemJson)) {
                     var filtArbitraryId = Csw.string(itemJson.arbitraryid);
                     if (stepno === Csw.enums.wizardSteps_ViewEditor.tuning.step) {
+                        var selectedConjunction = Csw.string(itemJson.conjunction);
                         var selectedSubfield = Csw.string(itemJson.subfield, itemJson.subfieldname);
                         var selectedFilterMode = Csw.string(itemJson.filtermode);
                         var filterValue = Csw.string(itemJson.value);
-                        var name = selectedSubfield + ' ' + selectedFilterMode + ' ' + filterValue;
+                        var name = selectedConjunction + ' ' + selectedSubfield + ' ' + selectedFilterMode + ' ' + filterValue;
                         var $filtLink = makeViewListItem(filtArbitraryId, Csw.enums.cssClasses_ViewEdit.vieweditor_viewfilterlink.name, name, false, stepno, Csw.enums.viewChildPropNames.filters, rel);
                         if (false === Csw.isNullOrEmpty($filtLink)) {
                             $ret = $filtLink;

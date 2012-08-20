@@ -18,6 +18,7 @@
                 NodePreviewUrlMethod: 'getNodePreview',
                 QuotaUrlMethod: 'checkQuota',
                 nodeids: [],
+                onNodeIdSet: null,
                 nodepks: [],
                 nodekeys: [],
                 relatednodeid: '',
@@ -313,7 +314,7 @@
 
                     if (cswPrivate.EditMode !== Csw.enums.editMode.PrintReport && Csw.bool(cswPrivate.showSaveButton)) {
                         cswPrivate.saveBtn = formTable.cell(2, 1).buttonExt({
-                            ID: 'SaveTab',
+                            ID: 'SaveTab' + window.Ext.id,
                             icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.save),
                             enabledText: 'Save Changes',
                             disabledText: 'Saving...',
@@ -401,6 +402,7 @@
                                 });
                             }
                             if (data.nodeid) {
+                                Csw.tryExec(cswPrivate.onNodeIdSet, data.nodeid);
                                 cswPrivate.nodeids[0] = data.nodeid;
                                 delete data.nodeid;
                             }
@@ -410,6 +412,7 @@
                     }); // ajax
                 } else {
                     if (cswPrivate.propertyData.nodeid) {
+                        Csw.tryExec(cswPrivate.onNodeIdSet, cswPrivate.propertyData.nodeid);
                         cswPrivate.nodeids[0] = cswPrivate.propertyData.nodeid;
                         delete cswPrivate.propertyData.nodeid;
                     }
@@ -822,6 +825,10 @@
 
             cswPublic.isFormValid = function () {
                 return cswPrivate.form.$.valid();
+            };
+
+            cswPublic.getNodeId = function() {
+                return cswPrivate.nodeids[0];
             };
 
             cswPublic.save = function (tabContentDiv, tabid, onSuccess) {

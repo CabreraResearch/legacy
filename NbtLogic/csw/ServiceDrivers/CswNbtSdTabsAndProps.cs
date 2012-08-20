@@ -326,10 +326,14 @@ namespace ChemSW.Nbt.ServiceDrivers
         {
             JObject Ret = new JObject();
             JObject PropObj = new JObject();
-            CswNbtNode Node = null;
-            Node = _CswNbtResources.EditMode == NodeEditMode.Add && NodeTypeId != Int32.MinValue ?
-                        _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing ) :
-                        _CswNbtResources.getNode( NodeId, NodeKey, new CswDateTime( _CswNbtResources ) );
+
+            CswNbtNode Node = _CswNbtResources.getNode( NodeId, NodeKey, new CswDateTime( _CswNbtResources ) );
+            if( null == Node &&
+                _CswNbtResources.EditMode == NodeEditMode.Add &&
+                NodeTypeId != Int32.MinValue )
+            {
+                Node = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing );
+            }
 
             if( Node != null )
             {
@@ -913,11 +917,11 @@ namespace ChemSW.Nbt.ServiceDrivers
             return ret;
         }
 
-        public bool SetPropBlobValue( byte[] Data, string FileName, string ContentType, string PropIdAttr, string Column )
+        public bool SetPropBlobValue( byte[] Data, string FileName, string ContentType, string PropIdAttr, string Column, out string Href )
         {
             bool ret = false;
             if( String.IsNullOrEmpty( Column ) ) Column = "blobdata";
-
+            Href = "";
             CswPropIdAttr PropId = new CswPropIdAttr( PropIdAttr );
             CswNbtMetaDataNodeTypeProp MetaDataProp = _CswNbtResources.MetaData.getNodeTypeProp( PropId.NodeTypePropId );
             if( Int32.MinValue != PropId.NodeId.PrimaryKey )
@@ -930,6 +934,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                 JctUpdate.AllowBlobColumns = true;
                 if( PropWrapper.JctNodePropId > 0 )
                 {
+                    Href = CswNbtNodePropBlob.getLink( PropWrapper.JctNodePropId, PropId.NodeId, PropId.NodeTypePropId );
                     DataTable JctTable = JctUpdate.getTable( "jctnodepropid", PropWrapper.JctNodePropId );
                     if( JctTable.Columns[Column].DataType == typeof( string ) )
                     {
@@ -963,6 +968,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                     string ReportPath = FilePathTools.getFullReportFilePath( Report.RPTFile.JctNodePropId.ToString() );
                     _createReportFile( ReportPath, Report.RPTFile.JctNodePropId, Data );
                 }
+                Node.postChanges( ForceUpdate: false );
                 ret = true;
             } // if( Int32.MinValue != NbtNodeKey.NodeId.PrimaryKey )
             return ret;

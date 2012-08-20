@@ -79,7 +79,12 @@
                         //Case 24155
                         Csw.each(ret, function (nodeName, nodeId) {
                             nodecount += 1;
-                            cswPublic.option({ value: nodeId, display: nodeName });
+                            if (false === Csw.isNullOrEmpty(cswPrivate.selectedNodeId) && 
+                                nodeId === cswPrivate.selectedNodeId) {
+                                cswPublic.option({ value: nodeId, display: nodeName, selected: true });
+                            } else {
+                                cswPublic.option({ value: nodeId, display: nodeName });
+                            }
                         });
 
                         Csw.tryExec(cswPrivate.onSuccess, ret);

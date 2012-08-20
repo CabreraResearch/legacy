@@ -43,6 +43,7 @@
 
                 var row = 1;
                 var viewPropFilters = {};
+                var isFirst = true;
                 Csw.each(data, function (propJson) {
                     Csw.each(propJson.filters, function (filtJson) {
                         viewPropFilters[filtJson.arbitraryid] = Csw.nbt.viewPropFilter({
@@ -56,15 +57,18 @@
                                 viewbuilderpropid: '',
                                 propRow: row,
                                 firstColumn: 1,
+                                showConjunction: (false === isFirst),
                                 showPropertyName: true,
                                 showSubfield: false,
                                 readOnly: true,
+                                selectedConjunction: filtJson.conjunction,
                                 selectedSubFieldName: filtJson.subfieldname,
                                 selectedFilterMode: filtJson.filtermode,
                                 selectedValue: filtJson.value,
                                 autoFocusInput: false//,
                                 //$clickOnEnter: filterbtn.$
                         });
+                        isFirst = false;
                         row++;
                     }); //each()
                 }); //each()
@@ -86,10 +90,9 @@
 
                 var row = 1;
                 var viewPropFilters = {};
+                var isFirst = true;
                 Csw.each(data, function (propJson) {
-                    
                     Csw.each(propJson.filters, function (filtJson) {
-
                         viewPropFilters[filtJson.arbitraryid] = Csw.nbt.viewPropFilter({
                                 parent: tbl,
                                 viewid: cswPrivate.viewid,
@@ -100,15 +103,18 @@
                                 viewbuilderpropid: '',
                                 propRow: row,
                                 firstColumn: 1,
+                                showConjunction: (false === isFirst),
                                 showPropertyName: true,
                                 showSubfield: false,
                                 readOnly: cswPrivate.readOnly,
+                                selectedConjunction: filtJson.conjunction,
                                 selectedSubFieldName: filtJson.subfieldname,
                                 selectedFilterMode: filtJson.filtermode,
                                 selectedValue: filtJson.value,
                                 autoFocusInput: false//,
                                 //$clickOnEnter: filterbtn.$
                         });
+                        isFirst = false;
                         row++;
                     }); //each()
                 }); //each()
@@ -137,7 +143,7 @@
                         });
                     } // onOk
                 }); // CswDialog
-            }; // cswPrivate.renderEditable()
+            }; // cswPrivate.renderDialog()
             
             
             // constructor

@@ -59,6 +59,7 @@
                 firstColumn: 3,
                 includePropertyName: false,
                 advancedIsHidden: false,
+                selectedConjunction: '',
                 selectedSubfieldVal: '',
                 selectedFilterMode: '',
                 selectedFilterVal: '',
@@ -99,11 +100,14 @@
                     propertyName = propsData.propname,
                     fieldtype = propsData.fieldtype,
                     defaultFilterModeVal = Csw.string(propsData.defaultfilter),
+                    defaultConjunction = Csw.string(filtOpt.selectedConjunction, 'And'),
                     defaultSubfieldVal = Csw.string(filtOpt.selectedSubfieldVal, propsData.defaultsubfield),
                     defaultSubFieldId = makePropFilterId('default_filter', filtOpt),
                     filterModesId = makePropFilterId('filter_select', filtOpt),
                     filtValInputId = makePropFilterId('propfilter_input', filtOpt),
                     subfieldOptionsId = makePropFilterId('subfield_select', filtOpt),
+                    conjunctionOptionsId = makePropFilterId('conjunctions_select', filtOpt),
+                    conjunctions = ['And','Or'],
                     subFieldVals = [],
                     filterModeVals = [],
                     subfields = (Csw.contains(propsData, 'subfields')) ? propsData.subfields : [],
@@ -111,8 +115,8 @@
                     filtValAry = [],
                     filtSelected = Csw.string(filtOpt.selectedFilterVal, (Csw.contains(propsData, 'filtersoptions')) ? propsData.filtersoptions.selected : {}),
                     placeholder = '',
-                    subfieldCell, filterModesCell, propFilterValueCell, defaultSubField,
-                    field, thisField, filtermodes, mode, thisMode, subfieldsList, filterModesList, filt, filtInput;
+                    conjunctionCell, subfieldCell, filterModesCell, propFilterValueCell, defaultSubField,
+                    field, thisField, filtermodes, mode, thisMode, conjunctionList, subfieldsList, filterModesList, filt, filtInput;
 
                 if (filtOpt.includePropertyName) {
                     //Row propRow, Column 3: property
@@ -120,18 +124,33 @@
                         .empty()
                         .span({ text: propertyName, ID: makePropFilterId(propertyName, filtOpt) }) //3
                 }
-                //Row propRow, Column 4: Subfield Cell
-                subfieldCell = propFilterTable.cell(filtOpt.propRow, (filtOpt.firstColumn + 1)) //4
+                //Row propRow, Column 4: Conjunction Cell
+                conjunctionCell = propFilterTable.cell(filtOpt.propRow, (filtOpt.firstColumn + 1)) //4
                     .empty();
 
-                //Row propRow, Column 5: Filters cell
-                filterModesCell = propFilterTable.cell(filtOpt.propRow, (filtOpt.firstColumn + 2)) //5
+                //Row propRow, Column 5: Subfield Cel
+                subfieldCell = propFilterTable.cell(filtOpt.propRow, (filtOpt.firstColumn + 2)) //5
                     .empty();
 
-                //Row propRow, Column 6: Input cell
-                propFilterValueCell = propFilterTable.cell(filtOpt.propRow, (filtOpt.firstColumn + 3)) //6
+                //Row propRow, Column 6: Filters cell
+                filterModesCell = propFilterTable.cell(filtOpt.propRow, (filtOpt.firstColumn + 3)) //6
                     .empty();
 
+                //Row propRow, Column 7: Input cell
+                propFilterValueCell = propFilterTable.cell(filtOpt.propRow, (filtOpt.firstColumn + 4)) //7
+                    .empty();
+
+                // Conjunction picklist
+                conjunctionList = conjunctionCell.select({ ID: conjunctionOptionsId,
+                    values: conjunctions,
+                    selected: defaultConjunction,
+                    cssclass: Csw.enums.cssClasses_ViewBuilder.conjunction_select.name,
+                    onChange: function () {
+                        filtOpt.selectedConjunction = conjunctionList.val();
+                        //renderPropFiltRow(filtOpt);
+                    }
+                });
+                
                 //Subfield default value (hidden)
                 defaultSubField = subfieldCell.span({
                     ID: defaultSubFieldId,
@@ -290,25 +309,38 @@
                     propSelectCell.span({ ID: propCellId, value: propertyName });
                 }
 
+                var selectedConjunction = Csw.string(propsData.conjunction);
                 var selectedSubfield = Csw.string(propsData.subfieldname, propsData.subfield);
                 var selectedFilterMode = Csw.string(propsData.filtermode);
                 var filterValue = Csw.string(propsData.value);
 
                 //Row propRow, Column 4: Subfield Cell
-                var subfieldCell = propFilterTable.cell(filtOpt.propRow, (filtOpt.firstColumn + 1)) //4
+                var conjunctionCell = propFilterTable.cell(filtOpt.propRow, (filtOpt.firstColumn + 1)) //4
+                    .css({ 'padding': '2px' });
+                var defaultConjunctionId = makePropFilterId('default_conjunction', filtOpt);
+
+                //Row propRow, Column 5: Subfield Cell
+                var subfieldCell = propFilterTable.cell(filtOpt.propRow, (filtOpt.firstColumn + 2)) //5
                     .css({ 'padding': '2px' });
                 var defaultSubFieldId = makePropFilterId('default_filter', filtOpt);
 
-                //Row propRow, Column 5: Filters cell
-                var filtersCell = propFilterTable.cell(filtOpt.propRow, (filtOpt.firstColumn + 2)) //5
+                //Row propRow, Column 6: Filters cell
+                var filtersCell = propFilterTable.cell(filtOpt.propRow, (filtOpt.firstColumn + 3)) //6
                     .css({ 'padding': '2px' });
                 var filtersOptionsId = makePropFilterId('filter_select', filtOpt);
 
-                //Row propRow, Column 6: Input cell
-                var propFilterValueCell = propFilterTable.cell(filtOpt.propRow, (filtOpt.firstColumn + 3)) //6
+                //Row propRow, Column 7: Input cell
+                var propFilterValueCell = propFilterTable.cell(filtOpt.propRow, (filtOpt.firstColumn + 4)) //7
                     .css({ 'padding': '2px' });
                 var filtValInputId = makePropFilterId('propfilter_input', filtOpt);
 
+                //Conjunction
+                conjunctionCell.span({
+                    ID: defaultConjunctionId,
+                    value: selectedConjunction,
+                    cssclass: Csw.enums.cssClasses_ViewBuilder.default_filter.name
+                })
+                    .css({ 'text-align': "center" });
                 //Subfield
                 subfieldCell.span({
                     ID: defaultSubFieldId,
@@ -348,7 +380,7 @@
                 retJson = {},
                 $filtInput = $thisProp.find('.' + Csw.enums.cssClasses_ViewBuilder.filter_value.name),
                 fieldtype = Csw.string(o.filtJson.fieldtype, o.fieldtype),
-                filterValue, $subField, subFieldText, $filter, filterText, nodetypeorobjectclassid;
+                filterValue, $conjunction, conjunctionText, $subField, subFieldText, $filter, filterText, nodetypeorobjectclassid;
 
             if ($filtInput.length > 1) {
                 $filtInput = $filtInput.filter('#' + o.filtarbitraryid);
@@ -373,6 +405,9 @@
                 }
                 subFieldText = $subField.find(':selected').text();
 
+                $conjunction = $thisProp.find('.' + Csw.enums.cssClasses_ViewBuilder.conjunction_select.name);
+                conjunctionText = $conjunction.find(':selected').text();
+
                 $filter = $thisProp.find('.' + Csw.enums.cssClasses_ViewBuilder.filter_select.name);
                 if ($filter.length > 1) {
                     $filter = $filter.filter('#' + o.filtarbitraryid)
@@ -390,6 +425,7 @@
                     filtarbitraryid: o.filtarbitraryid,
                     proparbitraryid: o.proparbitraryid,
                     relatedidtype: o.relatedidtype,
+                    conjunction: conjunctionText,
                     subfieldname: subFieldText,
                     filter: filterText,
                     filtervalue: Csw.string(filterValue).trim()
@@ -425,6 +461,10 @@
             var $button = $(this);
 
             if (!Csw.isNullOrEmpty($button)) {
+                $('.' + Csw.enums.cssClasses_ViewBuilder.conjunction_select.name).each(function () {
+                    var $input = $(this);
+                    $input.clickOnEnter($button);
+                });
                 $('.' + Csw.enums.cssClasses_ViewBuilder.subfield_select.name).each(function () {
                     var $input = $(this);
                     $input.clickOnEnter($button);

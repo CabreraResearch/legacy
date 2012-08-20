@@ -77,8 +77,11 @@
   <ItemGroup>
     <Content Include="ConnectTest.html" />
     <Content Include="etc\far.exe" />
+    <Content Include="js\common\composites\csw.gridExtJs.js" />
+    <Content Include="js\common\composites\csw.jzebra.js" />
     <Content Include="js\common\controls\csw.radiobutton.js" />
     <Content Include="js\common\controls\csw.buttonExt.js" />
+    <Content Include="js\common\literals\csw.applet.js" />
     <Content Include="js\nbt\composites\csw.location.js" />
     <Content Include="js\nbt\actions\csw.subscriptions.js" />
     <Content Include="js\common\composites\csw.menubutton.js" />

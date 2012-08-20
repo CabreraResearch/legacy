@@ -334,6 +334,7 @@
 
     Csw.enums.cssClasses_ViewBuilder = Csw.enums.cssClasses_ViewBuilder ||
         Csw.enums.register('cssClasses_ViewBuilder', {
+            conjunction_select: { name: 'csw_viewbuilder_conjunction_select' },
             subfield_select: { name: 'csw_viewbuilder_subfield_select' },
             filter_select: { name: 'csw_viewbuilder_filter_select' },
             default_filter: { name: 'csw_viewbuilder_default_filter' },

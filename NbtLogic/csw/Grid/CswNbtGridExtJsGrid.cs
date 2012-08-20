@@ -44,13 +44,13 @@ namespace ChemSW.Nbt.Grid.ExtJs
         /// </summary>
         public bool Truncated = false;
 
-        public CswNbtGridExtJsGrid()
+        public CswNbtGridExtJsGrid( string UniquePrefix )
         {
             // add hidden canview/canedit/candelete columns
             string[] columnNames = new string[] { "canView", "canEdit", "canDelete", "isLocked" };
             foreach( string columnName in columnNames )
             {
-                CswNbtGridExtJsDataIndex dataIndex = new CswNbtGridExtJsDataIndex( columnName );
+                CswNbtGridExtJsDataIndex dataIndex = new CswNbtGridExtJsDataIndex( UniquePrefix, columnName );
                 CswNbtGridExtJsField fld = new CswNbtGridExtJsField()
                 {
                     dataIndex = dataIndex,
