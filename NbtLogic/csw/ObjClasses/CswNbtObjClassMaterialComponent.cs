@@ -67,7 +67,10 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void afterWriteNode()
         {
-            //_recalculateRegListMembership();
+            if( Mixture.WasModified || Constituent.WasModified )
+            {
+                _recalculateRegListMembership();
+            }
             _CswNbtObjClassDefault.afterWriteNode();
         }//afterWriteNode()
 
