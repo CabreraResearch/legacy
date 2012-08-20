@@ -1,7 +1,6 @@
 using System;
 using ChemSW.Core;
 using ChemSW.Exceptions;
-using ChemSW.Nbt.Batch;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropertySets;
 using ChemSW.Nbt.PropTypes;
@@ -168,9 +167,8 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 if( RunNowPropertyName == OCP.PropName )
                 {
-                    //Case 26900 - run mail report as a batch op so as not to disrupt scheduled processes
-                    CswNbtBatchOpMailReport op = new CswNbtBatchOpMailReport( _CswNbtResources );
-                    CswNbtObjClassBatchOp BatchNode = op.makeBatchOp( this.NodeId );
+                    NextDueDate.DateTimeValue = DateTime.Now.AddDays( this.WarningDays.Value );
+                    Node.postChanges( false );
                     ButtonData.Action = NbtButtonAction.refresh;
                 }
             }

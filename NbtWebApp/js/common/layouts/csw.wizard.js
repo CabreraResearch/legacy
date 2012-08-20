@@ -24,10 +24,13 @@
                 stepDivs: [],
                 stepRootSpans: [],
                 stepDivLinks: [],
-                currentStepNo: 1
+                currentStepNo: 1,
+                state: {
+                    
+                }
             };
             if (options) {
-                $.extend(cswPrivate, options);
+                Csw.extend(cswPrivate, options);
             }
 
             var cswPublic = {};

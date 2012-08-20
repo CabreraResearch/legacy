@@ -90,7 +90,7 @@
 
             (function () {
                 if (options) {
-                    $.extend(cswPrivate, options);
+                    Csw.extend(cswPrivate, options);
                 }
 
                 cswPrivate.storeDataId = Csw.makeId(cswPrivate.ID, cswPrivate.storedDataSuffix, '', '', false);
@@ -114,7 +114,7 @@
                     cols: cswPrivate.cols
                 });
                 if (false === Csw.isNullOrEmpty(cbaData)) {
-                    $.extend(cswPrivate, cbaData);
+                    Csw.extend(cswPrivate, cbaData);
                 }
                 cswPrivate.MultiIsUnchanged = cswPrivate.Multi;
 
@@ -294,7 +294,7 @@
                 };
 
                 if (opts) {
-                    $.extend(_internal, opts);
+                    Csw.extend(_internal, opts);
                 }
 
                 var data = Csw.clientDb.getItem(cswPrivate.storeDataId);

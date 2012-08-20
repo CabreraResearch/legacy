@@ -28,7 +28,9 @@
             while (cswPrivate.e = cswPrivate.r.exec(cswPrivate.q)) {
                 cswPublic[cswPrivate.d(cswPrivate.e[1])] = cswPrivate.d(cswPrivate.e[2]);
             }
-
+            if(false === Csw.contains(cswPublic, 'pageName')) {
+                cswPublic.pageName = window.location.pathname.substring(window.location.pathname.lastIndexOf('/') + 1);
+            }
             return cswPublic;
 
         });

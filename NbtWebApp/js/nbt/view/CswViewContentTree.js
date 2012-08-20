@@ -11,7 +11,7 @@
             ViewInfoUrl: '/NbtWebApp/wsNBT.asmx/getViewInfo',
             viewid: ''
         };
-        if (options) $.extend(o, options);
+        if (options) Csw.extend(o, options);
 
         function viewJsonHtml(viewJson) {
             var types = {};

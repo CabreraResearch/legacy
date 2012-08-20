@@ -40,7 +40,7 @@
                 buttonMultiColumn: ''
             };
             if (params) {
-                $.extend(cswPrivate, params);
+                Csw.extend(cswPrivate, params);
             }
             if(false === Csw.isNullOrEmpty(cswParent)) {
                 cswPrivate.table = cswParent.table({

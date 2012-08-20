@@ -27,14 +27,14 @@
 
             (function () {
                 if (options) {
-                    $.extend(cswPrivate, options);
+                    Csw.extend(cswPrivate, options);
                 }
                 cswPrivate.dateTimeDiv = cswParent.div({
                     isControl: cswPrivate.isControl,
                     ID: cswPrivate.id
                 });
                 cswPublic = Csw.dom({ }, cswPrivate.dateTimeDiv);
-                //$.extend(cswPublic, Csw.literals.div(cswPrivate));
+                //Csw.extend(cswPublic, Csw.literals.div(cswPrivate));
 
                 if (cswPrivate.ReadOnly) {
                     switch (cswPrivate.DisplayMode) {

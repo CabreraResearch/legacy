@@ -31,7 +31,7 @@
                 extraActionIcon: Csw.enums.iconType.none,
                 onExtraAction: null  // function(nodeObj) {}
             };
-            if (options) $.extend(o, options);
+            if (options) Csw.extend(o, options);
 
             var $parent = $(this);
             var parent = Csw.literals.factory($parent);
@@ -200,7 +200,9 @@
                                     doSave: function (saveoptions) {
                                         // Nothing to save in this case, so just call onSuccess
                                         var s = { onSuccess: null };
-                                        if (saveoptions) $.extend(true, s, saveoptions);
+                                        if (saveoptions) {
+                                            Csw.extend(s, saveoptions, true);
+                                        }
                                         Csw.tryExec(s.onSuccess);
                                     },
                                     onReload: null

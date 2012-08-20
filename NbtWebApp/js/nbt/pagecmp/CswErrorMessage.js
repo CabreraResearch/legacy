@@ -11,7 +11,7 @@
             message: '',
             detail: ''
         };
-        if (options) $.extend(o, options);
+        if (options) Csw.extend(o, options);
 
         var $parentdiv = $(this);
         var parent = Csw.literals.factory($parentdiv);

@@ -77,7 +77,7 @@
 
             (function () {
                 if (options) {
-                    $.extend(cswPrivate, options);
+                    Csw.extend(cswPrivate, options);
                 }
                 cswPrivate.value = Csw.string(cswPrivate.Checked, 'null').toLowerCase(); //Case 21769
                 cswPrivate.AlternateText = cswPrivate.value;
@@ -103,7 +103,7 @@
                     //cswPrivate.checkBox.imageButton(cswPrivate);
                 }
                 cswPublic = Csw.dom({}, cswPrivate.checkBox);
-                //$.extend(cswPublic, Csw.literals.div(cswPrivate));
+                //Csw.extend(cswPublic, Csw.literals.div(cswPrivate));
                 cswPrivate.checkBox.bind('click', function () {
                     if (!Csw.bool(cswPrivate.ReadOnly)) {
                         Csw.tryExec(cswPrivate.changeState);

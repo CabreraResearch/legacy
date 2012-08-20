@@ -9,7 +9,7 @@
                 urlMethod: 'getSubscriptions',
                 ID: 'action_subscriptions'
             };
-            if (options) $.extend(o, options)
+            if (options) Csw.extend(o, options)
 
             var description,
                 controlTables,

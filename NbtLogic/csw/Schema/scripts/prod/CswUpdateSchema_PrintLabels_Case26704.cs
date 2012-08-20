@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Linq;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
@@ -98,7 +98,6 @@ P1";
     }
 
 }//namespace ChemSW.Nbt.Schema
-
 
 
 

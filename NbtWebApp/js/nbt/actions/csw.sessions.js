@@ -10,7 +10,7 @@
                 endSessionUrlMethod: 'endSession',
                 ID: 'action_sessions'
             };
-            if (options) $.extend(o, options);
+            if (options) Csw.extend(o, options);
 
             var table;
             var row;

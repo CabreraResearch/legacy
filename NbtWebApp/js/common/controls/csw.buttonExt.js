@@ -100,7 +100,7 @@
 
             (function () {
                 if (options) {
-                    $.extend(true, cswPrivate, options);
+                    Csw.extend(cswPrivate, options, true);
                 }
                 
                 switch(Csw.string(cswPrivate.size,'medium').toLowerCase()) {

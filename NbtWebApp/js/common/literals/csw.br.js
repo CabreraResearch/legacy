@@ -19,7 +19,7 @@
                 var html = '<br />';
                 var $br, i;
 
-                $.extend(cswPrivate, options);
+                Csw.extend(cswPrivate, options);
                 for (i = 1; i < Csw.number(cswPrivate.number); i += 1) {
                     html += '<br />';
                 }
