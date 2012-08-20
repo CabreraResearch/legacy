@@ -35,13 +35,13 @@ namespace ChemSW.Nbt.Batch
         /// <summary>
         /// Create a new batch operation to update materials regulatory lists property
         /// </summary>
-        public CswNbtObjClassBatchOp makeBatchOp( CswCommaDelimitedString MaterialIDs )
+        public CswNbtObjClassBatchOp makeBatchOp( CswCommaDelimitedString ExplicitIDs )
         {
             CswNbtObjClassBatchOp BatchNode = null;
             //get all existing of RegLists
             CswCommaDelimitedString nodeids = _getRegListsIDs();
 
-            RegulatoryListsBatchData BatchData = new RegulatoryListsBatchData( MaterialIDs, nodeids );
+            RegulatoryListsBatchData BatchData = new RegulatoryListsBatchData( ExplicitIDs, nodeids );
             BatchNode = CswNbtBatchManager.makeNew( _CswNbtResources, _BatchOpName, BatchData );
             return BatchNode;
         } // makeBatchOp()
@@ -57,7 +57,24 @@ namespace ChemSW.Nbt.Batch
                 {
                     BatchNode.start();
                     RegulatoryListsBatchData BatchData = BatchNode.BatchData.Text;
-                    if( BatchData.MatchingMaterialIDs.Count > 0 ) //update materials
+                    if( BatchData.ExplicitIDs.Count > 0 && false == BatchData.CurrentCASNo.Equals( "" ) )
+                    {
+                        CswPrimaryKey currentMaterialID = new CswPrimaryKey();
+                        currentMaterialID.FromString( BatchData.ExplicitIDs[0] );
+                        BatchData.ExplicitIDs.RemoveAt( 0 );
+
+                        CswNbtObjClassMaterial nodeAsMaterial = (CswNbtObjClassMaterial) _CswNbtResources.Nodes.GetNode( currentMaterialID );
+                        if( nodeAsMaterial.CasNo.Text.Equals( BatchData.CurrentCASNo ) ) //material matches reg list condition
+                        {
+                            BatchData.MatchingMaterialIDs.Add( nodeAsMaterial.NodeId.ToString() );
+                        }
+                        else
+                        {
+                            nodeAsMaterial.RegulatoryLists.StaticText = "";
+                            nodeAsMaterial.postChanges( false );
+                        }
+                    }
+                    else if( BatchData.MatchingMaterialIDs.Count > 0 ) //update materials
                     {
                         CswPrimaryKey currentMaterialID = new CswPrimaryKey();
                         currentMaterialID.FromString( BatchData.MatchingMaterialIDs[0] );
@@ -142,15 +159,16 @@ namespace ChemSW.Nbt.Batch
         private class RegulatoryListsBatchData
         {
             public string ListName;
+            public CswCommaDelimitedString ExplicitIDs = new CswCommaDelimitedString();
             public CswCommaDelimitedString MatchingMaterialIDs = new CswCommaDelimitedString();
             public CswCommaDelimitedString CASNos = new CswCommaDelimitedString();
             public CswCommaDelimitedString RegListsNodeIDs = new CswCommaDelimitedString();
             public CswCommaDelimitedString SeenIDs = new CswCommaDelimitedString();
             public string CurrentCASNo = "";
 
-            public RegulatoryListsBatchData( CswCommaDelimitedString MatchingMaterialIDs, CswCommaDelimitedString RegListsNodeIDs )
+            public RegulatoryListsBatchData( CswCommaDelimitedString ExplicitIDs, CswCommaDelimitedString RegListsNodeIDs )
             {
-                this.MatchingMaterialIDs = MatchingMaterialIDs;
+                this.ExplicitIDs = ExplicitIDs;
                 this.RegListsNodeIDs = RegListsNodeIDs;
             }
 
@@ -159,7 +177,8 @@ namespace ChemSW.Nbt.Batch
                 CswCommaDelimitedString MatchingMaterialIDs,
                 string CurrentCASNo,
                 CswCommaDelimitedString RegListsNodeIDs,
-                CswCommaDelimitedString SeenIDs )
+                CswCommaDelimitedString SeenIDs,
+                CswCommaDelimitedString ExplicitIDs )
             {
                 this.ListName = listName;
                 this.CASNos = CASNos;
@@ -167,6 +186,7 @@ namespace ChemSW.Nbt.Batch
                 this.MatchingMaterialIDs = MatchingMaterialIDs;
                 this.RegListsNodeIDs = RegListsNodeIDs;
                 this.SeenIDs = SeenIDs;
+                this.ExplicitIDs = ExplicitIDs;
             }
 
             public static implicit operator RegulatoryListsBatchData( string item )
@@ -188,7 +208,10 @@ namespace ChemSW.Nbt.Batch
                 CswCommaDelimitedString SeenIDs = new CswCommaDelimitedString();
                 SeenIDs.FromString( Obj["SeenIDs"].ToString() );
 
-                return new RegulatoryListsBatchData( CASNos, listName, MatchingMaterialIDs, currentCASNo, RegListsNodeIDs, SeenIDs );
+                CswCommaDelimitedString ExplicitIDs = new CswCommaDelimitedString();
+                ExplicitIDs.FromString( Obj["ExplicitIDs"].ToString() );
+
+                return new RegulatoryListsBatchData( CASNos, listName, MatchingMaterialIDs, currentCASNo, RegListsNodeIDs, SeenIDs, ExplicitIDs );
             }
 
             public static implicit operator string( RegulatoryListsBatchData item )
@@ -205,6 +228,7 @@ namespace ChemSW.Nbt.Batch
                 Obj["CurrentCASNo"] = CurrentCASNo;
                 Obj["RegListsNodeIDs"] = RegListsNodeIDs.ToString();
                 Obj["SeenIDs"] = SeenIDs.ToString();
+                Obj["ExplicitIDs"] = ExplicitIDs.ToString();
                 return Obj.ToString();
             }
         } // class InventoryLevelsBatchData

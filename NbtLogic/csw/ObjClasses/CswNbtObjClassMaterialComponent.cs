@@ -67,18 +67,18 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void afterWriteNode()
         {
-            _recalculateRegListMembership();
+            //_recalculateRegListMembership();
             _CswNbtObjClassDefault.afterWriteNode();
         }//afterWriteNode()
 
         public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false )
         {
             _CswNbtObjClassDefault.beforeDeleteNode( DeleteAllRequiredRelatedNodes );
-
         }//beforeDeleteNode()
 
         public override void afterDeleteNode()
         {
+            _recalculateRegListMembership();
             _CswNbtObjClassDefault.afterDeleteNode();
         }//afterDeleteNode()        
 
@@ -134,9 +134,12 @@ namespace ChemSW.Nbt.ObjClasses
         {
             if( false == IsTemp )
             {
-                CswCommaDelimitedString emptyList = new CswCommaDelimitedString(); //create an empty list of strings
+                CswCommaDelimitedString parents = new CswCommaDelimitedString();
+                CswNbtObjClassMaterial constituentNode = _CswNbtResources.Nodes.GetNode( Constituent.RelatedNodeId );
+                constituentNode.getParentMaterials( ref parents );
+                parents.Add( Mixture.RelatedNodeId.ToString() );
                 CswNbtBatchOpUpdateRegulatoryListsForMaterials BatchOp = new CswNbtBatchOpUpdateRegulatoryListsForMaterials( _CswNbtResources );
-                BatchOp.makeBatchOp( emptyList ); //this batch op will iterate all lists and determine material membership
+                BatchOp.makeBatchOp( parents );
             }
         }
 
