@@ -1,0 +1,55 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <link rel="shortcut icon" href="images/favicon.ico" />
+    <title>ChemSW Live</title>
+    <!--#include file="MainIncludes.html" -->
+    <!--#include file="MainCswIncludes.html" -->
+    <script type="text/javascript">
+
+        $(document).ready(
+            Csw.method(function () {
+                var cswPublic = { };
+                var cswPrivate = {
+                    parent: Csw.literals.factory($('#divBody'), cswPublic)
+                };
+
+                function stopSpinner() {
+                    $('#spinner').hide();
+                }
+
+                Csw.subscribe(Csw.enums.events.ajax.globalAjaxStop, stopSpinner);
+
+                function startSpinner() {
+                    $('#spinner').show();
+                }
+
+                Csw.subscribe(Csw.enums.events.ajax.globalAjaxStart, startSpinner);
+
+
+
+
+
+
+            })
+        
+
+        );
+    </script>
+</head>
+<body>
+    <div id="spinner" width="100%" style="text-align: center; display: none;">
+        <img src="images/ajax/progress.gif" /></div>
+    <div id="rptDiv">
+        <div id="divBody"></div>
+    </div>
+    <div id="DialogErrorDiv"></div>
+    <div id="hiddenDiv" style="visibility: hidden; border: 1px solid red;">
+        <applet id="jZebra" name="jZebra" code="jzebra.PrintApplet.class" archive="jzebra.jar" width="0" height="0"></applet>
+        <OBJECT ID="labelx" Name="labelx" classid="clsid:A8926827-7F19-48A1-A086-B1A5901DB7F0" codebase="CafLabelPrintUtil.cab#version=0,1,6,0" width=0 height=0 align=center hspace=0 vspace=0></OBJECT>
+    </div>    
+
+</body>
+</html>
