@@ -1143,8 +1143,8 @@
     <Content Include="js\thirdparty\jsTree.v.1.0rc2\_lib\jquery.cookie.js" />
     <Content Include="js\thirdparty\jsTree.v.1.0rc2\_lib\jquery.hotkeys.js" />
     <Content Include="js\thirdparty\jsTree.v.1.0rc2\_lib\jquery.js" />
-    <Content Include="js\thirdparty\jZebra\jsquery.js" />
     <Content Include="js\thirdparty\jZebra\jzebra.jar" />
+    <Content Include="js\thirdparty\jZebra\jzebra.js" />
     <Content Include="js\thirdparty\jZebra\lib\pdf-renderer.jar" />
     <Content Include="js\thirdparty\jZebra\loading.html" />
     <Content Include="js\thirdparty\jZebra\loading_green.gif" />
