@@ -73,7 +73,7 @@ namespace ChemSW.Nbt.Grid
             // View Properties determine Columns and Fields
             foreach( CswNbtViewProperty ViewProp in View.getOrderedViewProps( true ) )
             {
-                if( ViewProp != null )
+                if( null != ViewProp )
                 {
                     ICswNbtMetaDataProp MetaDataProp = null;
                     if( ViewProp.Type == NbtViewPropType.NodeTypePropId )
@@ -87,61 +87,64 @@ namespace ChemSW.Nbt.Grid
 
                     // Because properties in the view might be by object class, but properties on the tree will always be by nodetype,
                     // we have to use name, not id, as the dataIndex
-                    string header = MetaDataProp.PropNameWithQuestionNo;
-                    CswNbtGridExtJsDataIndex dataIndex = new CswNbtGridExtJsDataIndex( gridUniquePrefix, MetaDataProp.PropName );  // don't use PropNameWithQuestionNo here, because it won't match the propname from the tree
-
-                    // Potential bug here!
-                    // If the same property is added to the view more than once, we'll only use the grid definition for the first instance
-                    if( false == grid.columnsContains( header ) )
+                    if( null != MetaDataProp )
                     {
-                        CswNbtGridExtJsField fld = new CswNbtGridExtJsField { dataIndex = dataIndex };
-                        CswNbtGridExtJsColumn col = new CswNbtGridExtJsColumn { header = header, dataIndex = dataIndex, hidden = ( false == ViewProp.ShowInGrid ) };
-                        switch( ViewProp.FieldType )
-                        {
-                            case CswNbtMetaDataFieldType.NbtFieldType.Number:
-                                fld.type = "number";
-                                col.xtype = extJsXType.numbercolumn;
-                                break;
-                            case CswNbtMetaDataFieldType.NbtFieldType.DateTime:
-                                fld.type = "date";
-                                col.xtype = extJsXType.datecolumn;
+                        string header = MetaDataProp.PropNameWithQuestionNo;
+                        CswNbtGridExtJsDataIndex dataIndex = new CswNbtGridExtJsDataIndex( gridUniquePrefix, MetaDataProp.PropName );  // don't use PropNameWithQuestionNo here, because it won't match the propname from the tree
 
-                                // case 26782 - Set dateformat as client date format
-                                string dateformat = string.Empty;
-                                string DateDisplayMode = CswNbtNodePropDateTime.DateDisplayMode.Date.ToString();
-                                if( ViewProp.Type == NbtViewPropType.NodeTypePropId && ViewProp.NodeTypeProp != null )
-                                {
-                                    DateDisplayMode = ViewProp.NodeTypeProp.Extended;
-                                }
-                                else if( ViewProp.Type == NbtViewPropType.ObjectClassPropId && ViewProp.ObjectClassProp != null )
-                                {
-                                    DateDisplayMode = ViewProp.ObjectClassProp.Extended;
-                                }
-                                if( DateDisplayMode == string.Empty ||
-                                    DateDisplayMode == CswNbtNodePropDateTime.DateDisplayMode.Date.ToString() ||
-                                    DateDisplayMode == CswNbtNodePropDateTime.DateDisplayMode.DateTime.ToString() )
-                                {
-                                    dateformat += CswTools.DateFormatToExtJsDateFormat( _CswNbtResources.CurrentNbtUser.DateFormat );
-                                    if( DateDisplayMode == CswNbtNodePropDateTime.DateDisplayMode.DateTime.ToString() )
-                                    {
-                                        dateformat += " ";
-                                    }
-                                }
-                                if( DateDisplayMode == CswNbtNodePropDateTime.DateDisplayMode.Time.ToString() ||
-                                    DateDisplayMode == CswNbtNodePropDateTime.DateDisplayMode.DateTime.ToString() )
-                                {
-                                    dateformat += CswTools.DateFormatToExtJsDateFormat( _CswNbtResources.CurrentNbtUser.TimeFormat );
-                                }
-                                col.dateformat = dateformat;
-                                break;
-                        }
-                        if( ViewProp.Width > 0 )
+                        // Potential bug here!
+                        // If the same property is added to the view more than once, we'll only use the grid definition for the first instance
+                        if( false == grid.columnsContains( header ) )
                         {
-                            col.width = ViewProp.Width * 7; // approx. characters to pixels
-                        }
-                        grid.columns.Add( col );
-                        grid.fields.Add( fld );
-                    } // if( false == grid.columnsContains( header ) )
+                            CswNbtGridExtJsField fld = new CswNbtGridExtJsField { dataIndex = dataIndex };
+                            CswNbtGridExtJsColumn col = new CswNbtGridExtJsColumn { header = header, dataIndex = dataIndex, hidden = ( false == ViewProp.ShowInGrid ) };
+                            switch( ViewProp.FieldType )
+                            {
+                                case CswNbtMetaDataFieldType.NbtFieldType.Number:
+                                    fld.type = "number";
+                                    col.xtype = extJsXType.numbercolumn;
+                                    break;
+                                case CswNbtMetaDataFieldType.NbtFieldType.DateTime:
+                                    fld.type = "date";
+                                    col.xtype = extJsXType.datecolumn;
+
+                                    // case 26782 - Set dateformat as client date format
+                                    string dateformat = string.Empty;
+                                    string DateDisplayMode = CswNbtNodePropDateTime.DateDisplayMode.Date.ToString();
+                                    if( ViewProp.Type == NbtViewPropType.NodeTypePropId && ViewProp.NodeTypeProp != null )
+                                    {
+                                        DateDisplayMode = ViewProp.NodeTypeProp.Extended;
+                                    }
+                                    else if( ViewProp.Type == NbtViewPropType.ObjectClassPropId && ViewProp.ObjectClassProp != null )
+                                    {
+                                        DateDisplayMode = ViewProp.ObjectClassProp.Extended;
+                                    }
+                                    if( DateDisplayMode == string.Empty ||
+                                        DateDisplayMode == CswNbtNodePropDateTime.DateDisplayMode.Date.ToString() ||
+                                        DateDisplayMode == CswNbtNodePropDateTime.DateDisplayMode.DateTime.ToString() )
+                                    {
+                                        dateformat += CswTools.DateFormatToExtJsDateFormat( _CswNbtResources.CurrentNbtUser.DateFormat );
+                                        if( DateDisplayMode == CswNbtNodePropDateTime.DateDisplayMode.DateTime.ToString() )
+                                        {
+                                            dateformat += " ";
+                                        }
+                                    }
+                                    if( DateDisplayMode == CswNbtNodePropDateTime.DateDisplayMode.Time.ToString() ||
+                                        DateDisplayMode == CswNbtNodePropDateTime.DateDisplayMode.DateTime.ToString() )
+                                    {
+                                        dateformat += CswTools.DateFormatToExtJsDateFormat( _CswNbtResources.CurrentNbtUser.TimeFormat );
+                                    }
+                                    col.dateformat = dateformat;
+                                    break;
+                            }
+                            if( ViewProp.Width > 0 )
+                            {
+                                col.width = ViewProp.Width * 7; // approx. characters to pixels
+                            }
+                            grid.columns.Add( col );
+                            grid.fields.Add( fld );
+                        } // if( false == grid.columnsContains( header ) )
+                    } // if(null != MetaDataProp )
                 } // if( ViewProp != null )
             } // foreach( CswNbtViewProperty ViewProp in View.getOrderedViewProps() )
 

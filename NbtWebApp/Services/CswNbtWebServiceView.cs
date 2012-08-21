@@ -14,8 +14,23 @@ using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Security;
 using Newtonsoft.Json.Linq;
 
+
 namespace ChemSW.Nbt.WebServices
 {
+
+    public class CswNbtWebServiceViewParams
+    {
+        public CswNbtWebServiceViewParams( bool IsSearchableIn, bool IncludeRecentIn )
+        {
+            IsSearchable = IsSearchableIn;
+            IncludeRecent = IncludeRecentIn;
+        }//ctor
+
+        public bool IsSearchable = false;
+        public bool IncludeRecent = false;
+    }//ParamNames
+
+
     public class CswNbtWebServiceView
     {
         public enum ItemType
@@ -44,7 +59,7 @@ namespace ChemSW.Nbt.WebServices
             _CswNbtResources = CswNbtResources;
         }
 
-        private JObject _getCategory( ref JArray ret, string Category )
+        private static JObject _getCategory( ref JArray ret, string Category )
         {
             JObject CatItemsJObj = null;
 
@@ -110,7 +125,7 @@ namespace ChemSW.Nbt.WebServices
             return CatItemsJObj;
         } // _addCategory()
 
-        private JObject _addViewSelectObj( ref JArray ret, string Category, string Name, ItemType Type, string Icon, string Id )
+        private static JObject _addViewSelectObj( ref JArray ret, string Category, string Name, ItemType Type, string Icon, string Id )
         {
             if( Category == string.Empty )
             {
@@ -136,23 +151,28 @@ namespace ChemSW.Nbt.WebServices
             return ret;
         } // getViewSelectRecent()
 
+        public static void getViewSelectWebSvc( ICswResources CswResources, CswWebSvcRetJObJobj ReturnObj, CswNbtWebServiceViewParams CswNbtWebServiceViewParams )
+        {
+            ReturnObj.JObject["viewselectitems"] = getViewSelect( (CswNbtResources) CswResources, CswNbtWebServiceViewParams.IsSearchable, CswNbtWebServiceViewParams.IncludeRecent );
+        }
 
-        public JArray getViewSelect( bool IsSearchable, bool IncludeRecent )
+
+        public static JArray getViewSelect( CswNbtResources CswNbtResources, bool IsSearchable, bool IncludeRecent )
         {
             JArray ret = new JArray();
 
             // Favorites and Recent
-            ICswNbtUser User = _CswNbtResources.CurrentNbtUser;
+            ICswNbtUser User = CswNbtResources.CurrentNbtUser;
             if( User != null )
             {
-                CswNbtNode UserNode = _CswNbtResources.Nodes[User.UserId];
+                CswNbtNode UserNode = CswNbtResources.Nodes[User.UserId];
                 CswNbtObjClassUser UserOc = (CswNbtObjClassUser) UserNode;
 
                 // Recent
                 if( IncludeRecent )
                 {
                     JObject RecentItemsJObj = _getCategory( ref ret, "Recent" );
-                    _CswNbtResources.SessionDataMgr.getQuickLaunchJson( ref RecentItemsJObj );
+                    CswNbtResources.SessionDataMgr.getQuickLaunchJson( ref RecentItemsJObj );
                 }
 
                 //Add the user's stored views to Favorites
@@ -170,7 +190,7 @@ namespace ChemSW.Nbt.WebServices
                                                   where CswConvert.ToBoolean( ActionRow[ActionSelected] )
                                                   select CswNbtAction.ActionNameStringToEnum( CswConvert.ToString( ActionRow[ActionPk] ) )
                                                       into NbtActionName
-                                                      select _CswNbtResources.Actions[NbtActionName]
+                                                      select CswNbtResources.Actions[NbtActionName]
                                                           into ThisAction
                                                           where null != ThisAction
                                                           select ThisAction ) )
@@ -187,7 +207,7 @@ namespace ChemSW.Nbt.WebServices
             }
 
             // Views
-            Dictionary<CswNbtViewId, CswNbtView> Views = _CswNbtResources.ViewSelect.getVisibleViews( "lower(NVL(v.category, v.viewname)), lower(v.viewname)", _CswNbtResources.CurrentNbtUser, false, false, IsSearchable, NbtViewRenderingMode.Any );
+            Dictionary<CswNbtViewId, CswNbtView> Views = CswNbtResources.ViewSelect.getVisibleViews( "lower(NVL(v.category, v.viewname)), lower(v.viewname)", CswNbtResources.CurrentNbtUser, false, false, IsSearchable, NbtViewRenderingMode.Any );
 
             foreach( CswNbtView View in Views.Values )
             {
@@ -200,11 +220,11 @@ namespace ChemSW.Nbt.WebServices
             if( !IsSearchable )
             {
                 // Actions
-                foreach( CswNbtAction Action in _CswNbtResources.Actions )
+                foreach( CswNbtAction Action in CswNbtResources.Actions )
                 {
                     if( Action.ShowInList &&
                         //Case 23687: "View By Location" Action is toast. Bye-bye "loc_use_images" config var check.
-                        _CswNbtResources.Permit.can( Action.Name ) )
+                        CswNbtResources.Permit.can( Action.Name ) )
                     {
                         JObject ActionObj = _addViewSelectObj( ref ret, Action.Category, Action.DisplayName, ItemType.Action, 
                                                                CswNbtMetaDataObjectClass.IconPrefix16 + "wizard.png", Action.ActionId.ToString() );
@@ -215,10 +235,10 @@ namespace ChemSW.Nbt.WebServices
                 }
 
                 // Reports
-                CswNbtMetaDataObjectClass ReportMetaDataObjectClass = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.ReportClass );
+                CswNbtMetaDataObjectClass ReportMetaDataObjectClass = CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.ReportClass );
                 CswNbtView ReportView = ReportMetaDataObjectClass.CreateDefaultView();
                 ReportView.ViewName = "CswViewTree.DataBinding.ReportView";
-                ICswNbtTree ReportTree = _CswNbtResources.Trees.getTreeFromView( ReportView, true, true, false, false );
+                ICswNbtTree ReportTree = CswNbtResources.Trees.getTreeFromView( ReportView, true, true, false, false );
                 for( int i = 0; i < ReportTree.getChildNodeCount(); i++ )
                 {
                     ReportTree.goToNthChild( i );
@@ -540,7 +560,11 @@ namespace ChemSW.Nbt.WebServices
             {
                 // We need the property arbitrary id, so we're doing this by property, not by filter.  
                 // However, we're filtering to only those properties that have filters that have ShowAtRuntime == true
-                foreach( CswNbtViewProperty Property in from CswNbtViewProperty _Property in View.Root.GetAllChildrenOfType( NbtViewNodeType.CswNbtViewProperty ) orderby _Property.MetaDataProp.PropNameWithQuestionNo select _Property )
+                foreach( CswNbtViewProperty Property in from CswNbtViewProperty _Property 
+                                                          in View.Root.GetAllChildrenOfType( NbtViewNodeType.CswNbtViewProperty )
+                                                       where null != _Property.MetaDataProp
+                                                     orderby _Property.MetaDataProp.PropNameWithQuestionNo 
+                                                      select _Property )
                 {
                     JProperty PropertyJson = Property.ToJson( ShowAtRuntimeOnly: true );
                     if( ( (JObject) PropertyJson.Value["filters"] ).Count > 0 )

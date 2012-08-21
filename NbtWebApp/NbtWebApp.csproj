@@ -1885,6 +1885,9 @@
     <Compile Include="TermsOfUse.aspx.designer.cs">
       <DependentUpon>TermsOfUse.aspx</DependentUpon>
     </Compile>
+    <Compile Include="WebSvc\Core\CswWebSvcCommonMethods.cs" />
+    <Compile Include="WebSvc\Core\CswWebSvcResourceInitializerNbt.cs" />
+    <Compile Include="WebSvc\Returns\CswWebSvcRetJObJobj.cs" />
     <Compile Include="wsNBT.cs">
       <DependentUpon>wsNBT.asmx</DependentUpon>
       <SubType>Component</SubType>

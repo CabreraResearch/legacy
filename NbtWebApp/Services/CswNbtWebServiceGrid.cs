@@ -90,15 +90,22 @@ namespace ChemSW.Nbt.WebServices
                     Relationship.SecondId != Int32.MinValue )
                 {
                     CswNbtMetaDataObjectClass SecondOc = _CswNbtResources.MetaData.getObjectClass( Relationship.SecondId );
-                    foreach( CswNbtMetaDataNodeType NT in SecondOc.getNodeTypes() )
+                    if( null != SecondOc )
                     {
-                        FirstLevelNodeTypes.Add( NT );
+                        foreach( CswNbtMetaDataNodeType NT in SecondOc.getNodeTypes() )
+                        {
+                            FirstLevelNodeTypes.Add( NT );
+                        }
                     }
                 }
                 else if( Relationship.SecondType == NbtViewRelatedIdType.NodeTypeId &&
                          Relationship.SecondId != Int32.MinValue )
                 {
-                    FirstLevelNodeTypes.Add( _CswNbtResources.MetaData.getNodeType( Relationship.SecondId ) );
+                    CswNbtMetaDataNodeType SecondNt = _CswNbtResources.MetaData.getNodeType( Relationship.SecondId );
+                    if( null != SecondNt )
+                    {
+                        FirstLevelNodeTypes.Add( SecondNt );
+                    }
                 }
 
                 foreach( CswNbtMetaDataNodeType NodeType in FirstLevelNodeTypes )
