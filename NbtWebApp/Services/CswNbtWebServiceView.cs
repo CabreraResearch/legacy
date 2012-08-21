@@ -560,7 +560,11 @@ namespace ChemSW.Nbt.WebServices
             {
                 // We need the property arbitrary id, so we're doing this by property, not by filter.  
                 // However, we're filtering to only those properties that have filters that have ShowAtRuntime == true
-                foreach( CswNbtViewProperty Property in from CswNbtViewProperty _Property in View.Root.GetAllChildrenOfType( NbtViewNodeType.CswNbtViewProperty ) orderby _Property.MetaDataProp.PropNameWithQuestionNo select _Property )
+                foreach( CswNbtViewProperty Property in from CswNbtViewProperty _Property 
+                                                          in View.Root.GetAllChildrenOfType( NbtViewNodeType.CswNbtViewProperty )
+                                                       where null != _Property.MetaDataProp
+                                                     orderby _Property.MetaDataProp.PropNameWithQuestionNo 
+                                                      select _Property )
                 {
                     JProperty PropertyJson = Property.ToJson( ShowAtRuntimeOnly: true );
                     if( ( (JObject) PropertyJson.Value["filters"] ).Count > 0 )
