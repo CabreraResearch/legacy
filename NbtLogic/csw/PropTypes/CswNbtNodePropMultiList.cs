@@ -52,6 +52,38 @@ namespace ChemSW.Nbt.PropTypes
 
         }//Gestalt
 
+        /// <summary>
+        /// The Delimiter used to concatenate all selected options
+        /// </summary>
+        public string ReadOnlyDelimiter
+        {
+            get
+            {
+                string _readOnlyDelimiter = "<br />";
+                if( false == String.IsNullOrEmpty( _CswNbtMetaDataNodeTypeProp.Extended ) )
+                {
+                    _readOnlyDelimiter = _CswNbtMetaDataNodeTypeProp.Extended;
+                }
+                return _readOnlyDelimiter;
+            }
+        }
+
+        /// <summary>
+        /// The number of selected options to display in readonly mode.
+        /// </summary>
+        public int HideThreshold
+        {
+            get
+            {
+                int _hideThreshold = 5;
+                if( CswTools.IsDouble( _CswNbtMetaDataNodeTypeProp.MaxValue ) )
+                {
+                    _hideThreshold = CswConvert.ToInt32( _CswNbtMetaDataNodeTypeProp.MaxValue );
+                }
+                return _hideThreshold;
+            }
+        }
+
         private CswCommaDelimitedString _Value = null;
         public CswCommaDelimitedString Value
         {

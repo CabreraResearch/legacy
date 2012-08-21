@@ -1997,6 +1997,25 @@ namespace ChemSW.Nbt.WebPages
                             MOptionsValue.ID = "EditProp_OptionsValue" + SelectedNodeTypeProp.PropId.ToString();
                             MOptionsValue.Text = SelectedNodeTypeProp.ListOptions;
                             MOptionsRow.Cells[1].Controls.Add( MOptionsValue );
+
+                            TableRow ReadOnlyDelimiterRow = makeEditPropTableRow( EditPropPlaceHolder );
+                            ( (Literal) ReadOnlyDelimiterRow.Cells[0].Controls[0] ).Text = "ReadOnly Delimiter:";
+                            TextBox ReadOnlyDelimiterValue = new TextBox();
+                            ReadOnlyDelimiterValue.CssClass = "textinput";
+                            ReadOnlyDelimiterValue.ID = "EditProp_ReadOnlyDelimiter" + SelectedNodeTypeProp.PropId.ToString();
+                            if( SelectedNodeTypeProp.Extended != null )
+                                ReadOnlyDelimiterValue.Text = SelectedNodeTypeProp.Extended;
+                            ReadOnlyDelimiterRow.Cells[1].Controls.Add( ReadOnlyDelimiterValue );
+
+                            TableRow HideThresholdRow = makeEditPropTableRow( EditPropPlaceHolder );
+                            ( (Literal) HideThresholdRow.Cells[0].Controls[0] ).Text = "ReadOnly Hide Threshold:";
+                            TextBox HideThresholdValue = new TextBox();
+                            HideThresholdValue.CssClass = "textinput";
+                            HideThresholdValue.ID = "EditProp_HideThreshold" + SelectedNodeTypeProp.PropId.ToString();
+                            if( !Double.IsNaN( SelectedNodeTypeProp.MaxValue ) )
+                                HideThresholdValue.Text = SelectedNodeTypeProp.MaxValue.ToString();
+                            HideThresholdRow.Cells[1].Controls.Add( HideThresholdValue );
+
                             break;
 
                         //case CswNbtMetaDataFieldType.NbtFieldType.MultiRelationship:
