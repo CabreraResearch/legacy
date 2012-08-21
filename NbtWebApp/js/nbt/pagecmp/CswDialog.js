@@ -1357,10 +1357,6 @@
                 if (Csw.isFunction(onClose)) {
                     Csw.tryExec(onClose);
                 }
-                try {
-                    div.$.dialog('close');
-                    div.remove();
-                } catch (e) { /*swallow*/ }
                 
                 Csw.unsubscribe(Csw.enums.events.afterObjectClassButtonClick, closeMe);
                 if (dialogsCount === 0) {
