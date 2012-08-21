@@ -22,6 +22,8 @@
                     ID: o.ID,
                     cssclass: 'selectinput',
                     values: options,
+                    readonlyless: propVals.readonlyless,
+                    readonlymore: propVals.readonlymore,
                     isMultiEdit: o.Multi,
                     EditMode: o.EditMode
                 });

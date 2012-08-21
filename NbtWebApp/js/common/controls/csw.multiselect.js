@@ -15,10 +15,11 @@
                 values: [],
                 multiple: true,
                 cssclass: '',
+                readonlyless: '',
+                readonlymore: '',
                 isMultiEdit: false,
                 onChange: null, //function () {}
                 isControl: false,
-                hidethreshold: 5,
                 EditMode: ''
             };
 
@@ -38,12 +39,7 @@
                     moreDivCell = table.cell(1, 1),
                     editBtnCell = table.cell(1, 2),
                     multiSelectCell = table.cell(2, 1),
-                    morediv = moreDivCell.moreDiv({ ID: Csw.makeId(cswPrivate.ID, cswPrivate.ID + '_morediv') }),
-                    showntbl = morediv.shownDiv.table({ cellpadding: '2px', width: '100%' }),
-                    hiddentbl = morediv.hiddenDiv.table({ cellpadding: '2px', width: '100%' }),
-                    moreDivTbl = showntbl,
-                    row = 1,
-                    optionSubject = '';
+                    morediv = moreDivCell.moreDiv({ ID: Csw.makeId(cswPrivate.ID, cswPrivate.ID + '_morediv') });
 
                 delete cswPrivate.values;
                 morediv.moreLink.hide();
@@ -57,7 +53,7 @@
                     });
                 }
 
-                Csw.each(values, function (opt) {                    
+                Csw.each(values, function (opt) {
                     var value = Csw.string(opt.value, opt.text),
                         text = Csw.string(opt.text, value),
                         isSelected;
@@ -65,23 +61,16 @@
                         isSelected = (Csw.bool(opt.selected) && false === isMultiEdit);
                         cswPrivate.select.option({ value: value, display: text, isSelected: isSelected, isDisabled: opt.disabled });
                         optionCount += 1;
-                        if (isSelected) {
-                            var splitOption = text.split(": ");
-                            if (splitOption[0] === optionSubject) {
-                                moreDivTbl.cell(row, 1).span({ text: ', ' + splitOption[1] });
-                            } else {
-                                row += 1;
-                                if (row > cswPrivate.hidethreshold && moreDivTbl === showntbl) {
-                                    row = 1;
-                                    moreDivTbl = hiddentbl;
-                                    morediv.moreLink.show();
-                                }
-                                optionSubject = splitOption[0];
-                                moreDivTbl.cell(row, 1).span({ text: text });                                
-                            }
-                        }
                     }
                 });
+
+                if (false === Csw.isNullOrEmpty(cswPrivate.readonlyless)) {
+                    morediv.shownDiv.span({ text: cswPrivate.readonlyless });
+                    if (false === Csw.isNullOrEmpty(cswPrivate.readonlymore)) {
+                        morediv.hiddenDiv.span({ text: cswPrivate.readonlymore });
+                        morediv.moreLink.show();
+                    }
+                }
 
                 var makeMultiSelect = function () {
                     moreDivCell.hide();
