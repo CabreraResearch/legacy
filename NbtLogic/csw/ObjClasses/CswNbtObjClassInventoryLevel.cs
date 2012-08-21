@@ -182,6 +182,9 @@ namespace ChemSW.Nbt.ObjClasses
             if( _LevelMgr.doSendEmail( this ) )
             {
                 LastNotified.DateTimeValue = _LevelMgr.sendPastThreshholdEmail( this );
+            }
+            if( _LevelMgr.isLevelPastThreshhold( this ) )
+            {
                 if( CurrentQuantity.Quantity > Level.Quantity )
                 {
                     Status.Value = Statuses.Above;
