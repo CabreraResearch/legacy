@@ -224,7 +224,10 @@ namespace ChemSW.Nbt.ObjClasses
                         string EsotericMessage = "The " + CompoundUniquePropNames.ToString() +
                             " of node " + NodeId.ToString() + " are the same as for node " + DuplicateValueNode.NodeId.ToString() + ": " + CompoundUniquePropValues.ToString();
 
-                        throw ( new CswDniException( ErrorType.Warning, ExotericMessage, EsotericMessage ) );
+                        if( false == _CswNbtNode.IsTemp && false == DuplicateValueNode.IsTemp ) //only throw an error is we're comparing two REAL nodes
+                        {
+                            throw ( new CswDniException( ErrorType.Warning, ExotericMessage, EsotericMessage ) );
+                        }
 
                     }//we have a duplicate value situation
                 }

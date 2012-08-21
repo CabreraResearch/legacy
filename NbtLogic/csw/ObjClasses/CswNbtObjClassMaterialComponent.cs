@@ -54,9 +54,12 @@ namespace ChemSW.Nbt.ObjClasses
         {
             Core.CswPrimaryKey pk = new Core.CswPrimaryKey();
             pk.FromString( _CswNbtResources.CurrentUser.Cookies["csw_currentnodeid"] );
-            if( null != Constituent.RelatedNodeId )
+            if( null != Constituent.RelatedNodeId && false == IsTemp )
             {
-                Mixture.RelatedNodeId = pk;
+                if( null == Mixture.RelatedNodeId )
+                {
+                    Mixture.RelatedNodeId = pk;
+                }
                 if( Constituent.RelatedNodeId.Equals( Mixture.RelatedNodeId ) && false == IsTemp )
                 {
                     throw new CswDniException( ErrorType.Warning, "Constituent cannot be the same as Mixture", "" );
