@@ -1220,9 +1220,6 @@
     <Content Include="etc\jsTree.xsl" />
     <Content Include="etc\lib.xsl" />
     <Content Include="etc\ReportingDataSet.xsl" />
-    <Content Include="etc\TelerikRadGrid.xsl" />
-    <Content Include="etc\TelerikRadGridProperty.xsl" />
-    <Content Include="etc\TelerikRadTreeView.xsl" />
     <Content Include="Global.asax" />
     <Content Include="ie6style.css" />
     <Content Include="Images\ajax\progress.gif" />
