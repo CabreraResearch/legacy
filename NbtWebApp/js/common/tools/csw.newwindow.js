@@ -19,6 +19,9 @@
            if(options) {
                $.extend(cswPrivate, options);
            }
+           if(window.internetExplorerVersionNo > 0) {
+               title = '';
+           }
            var popup = window.open(url, Csw.string(title), Csw.params(cswPrivate, ','));
            popup.focus();
            return popup;

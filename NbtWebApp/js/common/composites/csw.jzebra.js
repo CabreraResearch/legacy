@@ -80,8 +80,9 @@
                 cswPrivate.initJava = function() {
                     cswPrivate.initAttempts += 1;
                     if (false === Csw.isNullOrEmpty(document.jZebra) &&
-                        Csw.isFunction(document.jZebra.findPrinter) &&
-                        document.jZebra.isActive()) {
+                        window.internetExplorerVersionNo > 0 ||
+                        (Csw.isFunction(document.jZebra.findPrinter) &&
+                        document.jZebra.isActive() )) {
                         cswPublic.zebraJava = document.jZebra;
 
                         cswPublic.print = function(eplText) {

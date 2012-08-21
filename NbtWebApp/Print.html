@@ -27,7 +27,7 @@
                     doPrint: '',
                     jZeb: {}
                 };
-                cswPublic.div = cswPrivate.parent.div();
+                cswPublic.table = cswPrivate.parent.table();
                 
                 Csw.subscribe(Csw.enums.events.ajax.globalAjaxStop, cswPrivate.stopSpinner);
                 Csw.subscribe(Csw.enums.events.ajax.globalAjaxStart, cswPrivate.startSpinner);
@@ -67,7 +67,7 @@
                         }
                     }); // ajax
                 
-                    var printBtn = cswPublic.div.buttonExt({
+                    var printBtn = cswPublic.table.cell(1,2).buttonExt({
                         icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.print),
                         width: '100px',
                         bindOnEnter: true,
@@ -81,7 +81,7 @@
                     });
                 });
 
-                cswPrivate.jZeb = cswPublic.div.jZebra();
+                cswPrivate.jZeb = cswPublic.table.cell(1,1).jZebra();
 
                 return cswPublic;
 
