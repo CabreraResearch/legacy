@@ -1147,6 +1147,8 @@
             };
             if (options) Csw.extend(o, options);
 
+            o.div.br({ number: 2 });
+
             o.div.button({
                 enabledText: o.okText,
                 onClick: function () {

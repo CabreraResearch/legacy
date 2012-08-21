@@ -67,7 +67,7 @@
                 if (o.Multi) {
                     relationships.push({ value: Csw.enums.multiEditDefaultValue, display: Csw.enums.multiEditDefaultValue });
                 }
-                if (false === o.Required && false === Csw.isNullOrEmpty(selectedName)) {
+                if (false === o.Required) {
                     relationships.push({ value: '', display: '', frac: true });
                 }
                 var foundSelected = false;

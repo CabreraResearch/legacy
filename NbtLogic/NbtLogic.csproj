@@ -105,6 +105,7 @@
     <Compile Include="csw\Grid\CswNbtGridExtJsButton.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassFeedback.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassInventoryLevel.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase27432.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase27493.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase27548.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase27438.cs" />
