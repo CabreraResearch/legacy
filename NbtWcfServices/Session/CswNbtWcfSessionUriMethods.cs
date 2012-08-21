@@ -78,15 +78,12 @@ namespace NbtWebAppServices.WebServices
                     {
                         // case 21036
                         if( request.IsMobile &&
-                            false ==
-                            _CswNbtWcfSessionResources.CswNbtResources.IsModuleEnabled(
-                                CswNbtResources.CswNbtModule.Mobile ) )
+                            false == _CswNbtWcfSessionResources.CswNbtResources.Modules.IsModuleEnabled( CswNbtModule.Mobile ) )
                         {
                             AuthenticationStatus = AuthenticationStatus.ModuleNotEnabled;
                             _CswNbtWcfSessionResources.CswSessionManager.clearSession();
                         }
-                        CswLicenseManager LicenseManager =
-                            new CswLicenseManager( _CswNbtWcfSessionResources.CswNbtResources );
+                        CswLicenseManager LicenseManager = new CswLicenseManager( _CswNbtWcfSessionResources.CswNbtResources );
 
                         if( _CswNbtWcfSessionResources.CswNbtResources.CurrentNbtUser.PasswordIsExpired )
                         {

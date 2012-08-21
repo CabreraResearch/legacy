@@ -37,9 +37,9 @@ namespace ChemSW.Nbt.WebServices
             JObject ret = new JObject();
             if( _CanEditModules )
             {
-                foreach( CswNbtResources.CswNbtModule Module in Enum.GetValues( typeof( CswNbtResources.CswNbtModule ) ) )
+                foreach( CswNbtModule Module in CswNbtModule._All )
                 {
-                    ret[Module.ToString()] = _CswNbtResources.IsModuleEnabled( Module );
+                    ret[Module.ToString()] = _CswNbtResources.Modules.IsModuleEnabled( Module );
                 }
             } // if(_CanEditModules)
 
@@ -53,13 +53,13 @@ namespace ChemSW.Nbt.WebServices
             JObject inModulesJson = JObject.Parse( inModules );
             if( _CanEditModules )
             {
-                Collection<CswNbtResources.CswNbtModule> ModulesToEnable = new Collection<CswNbtResources.CswNbtModule>();
-                Collection<CswNbtResources.CswNbtModule> ModulesToDisable = new Collection<CswNbtResources.CswNbtModule>();
+                Collection<CswNbtModule> ModulesToEnable = new Collection<CswNbtModule>();
+                Collection<CswNbtModule> ModulesToDisable = new Collection<CswNbtModule>();
 
                 foreach( JProperty ModulesJProp in inModulesJson.Properties() )
                 {
-                    CswNbtResources.CswNbtModule Module;
-                    Enum.TryParse( ModulesJProp.Name, true, out Module );
+                    CswNbtModule Module = ModulesJProp.Name;
+                    //Enum.TryParse( ModulesJProp.Name, true, out Module );
                     if( CswConvert.ToBoolean( ModulesJProp.Value ) )
                     {
                         ModulesToEnable.Add( Module );
@@ -70,7 +70,7 @@ namespace ChemSW.Nbt.WebServices
                     }
                 }
 
-                _CswNbtResources.UpdateModules( ModulesToEnable, ModulesToDisable );
+                _CswNbtResources.Modules.UpdateModules( ModulesToEnable, ModulesToDisable );
 
             } // if( _CanEditModules )
             return ret;

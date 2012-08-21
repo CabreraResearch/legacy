@@ -41,7 +41,7 @@ namespace ChemSW.Nbt.WebServices
 
         private void _checkNbtManagerPermission( bool AllowAnyAdmin )
         {
-            if( false == _NbtManagerResources.IsModuleEnabled( CswNbtResources.CswNbtModule.NBTManager ) )
+            if( false == _NbtManagerResources.Modules.IsModuleEnabled( CswNbtModule.NBTManager ) )
             {
                 throw new CswDniException( ErrorType.Error, "Cannot use NBT Manager web services if the NBT Manager module is not enabled.", "Attempted to instance CswNbtWebServiceNbtManager, while the NBT Manager module is not enabled." );
             }

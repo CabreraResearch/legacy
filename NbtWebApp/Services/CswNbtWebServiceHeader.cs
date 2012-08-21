@@ -28,9 +28,9 @@ namespace ChemSW.Nbt.WebServices
             public string Text;
             public string Id;
             public string Href;
-            public CswNbtResources.CswNbtModule Module;
+            public CswNbtModule Module;
 
-            public DashIcon( string inText, string inId, string inHref, CswNbtResources.CswNbtModule inModule )
+            public DashIcon( string inText, string inId, string inHref, CswNbtModule inModule )
             {
                 Text = inText;
                 Id = inId;
@@ -47,41 +47,41 @@ namespace ChemSW.Nbt.WebServices
             DashIcons.Add( new DashIcon( "IMCS - Instrument Maintenance and Calibration",
                                          "dash_imcs",
                                          string.Empty,
-                                         CswNbtResources.CswNbtModule.IMCS ) );
+                                         CswNbtModule.IMCS ) );
 
             DashIcons.Add( new DashIcon( "SI - Site Inspection",
                                          "dash_si",
                                          string.Empty,
-                                         CswNbtResources.CswNbtModule.SI ) );
+                                         CswNbtModule.SI ) );
             // Case 24091
             //DashIcons.Add( new DashIcon( "STIS - Sample Tracking and Inventory System",
             //                             "dash_stis",
             //                             "http://www.chemswlive.com/19002.htm",
-            //                             CswNbtResources.CswNbtModule.STIS ) );
+            //                             CswNbtModule.STIS ) );
             DashIcons.Add( new DashIcon( "CISPro - Chemical Inventory System",
                                          "dash_cispro",
                                          "",                              //"http://www.chemswlive.com/19002.htm",
-                                         CswNbtResources.CswNbtModule.CISPro ) );
+                                         CswNbtModule.CISPro ) );
             //DashIcons.Add( new DashIcon( "CCPro - Control Charts",
             //                             "dash_ccpro",
             //                             "http://www.chemswlive.com/19002.htm",
-            //                             CswNbtResources.CswNbtModule.CCPro ) );
+            //                             CswNbtModule.CCPro ) );
             //DashIcons.Add( new DashIcon( "BioSafety",
             //                             "dash_biosafety",
             //                             "http://www.chemswlive.com/19002.htm",
-            //                             CswNbtResources.CswNbtModule.BioSafety ) );
+            //                             CswNbtModule.BioSafety ) );
             //DashIcons.Add( new DashIcon( "Mobile",
             //                             "dash_hh",
             //                             "http://www.chemswlive.com/cis-pro-mobile.htm",
-            //                             CswNbtResources.CswNbtModule.Mobile ) );
+            //                             CswNbtModule.Mobile ) );
             DashIcons.Add( new DashIcon( "NBTManager",
                                          "dash_nbtmgr",
                                          "",
-                                         CswNbtResources.CswNbtModule.NBTManager ) );
+                                         CswNbtModule.NBTManager ) );
 
-            foreach( DashIcon DashIcon in DashIcons.Where( DashIcon => _CswNbtResources.IsModuleEnabled( DashIcon.Module ) || DashIcon.Module != CswNbtResources.CswNbtModule.NBTManager ) )
+            foreach( DashIcon DashIcon in DashIcons.Where( DashIcon => _CswNbtResources.Modules.IsModuleEnabled( DashIcon.Module ) || DashIcon.Module != CswNbtModule.NBTManager ) )
             {
-                Ret.Add( new JProperty( ( _CswNbtResources.IsModuleEnabled( DashIcon.Module ) ) ? DashIcon.Id : DashIcon.Id + "_off",
+                Ret.Add( new JProperty( ( _CswNbtResources.Modules.IsModuleEnabled( DashIcon.Module ) ) ? DashIcon.Id : DashIcon.Id + "_off",
                                         new JObject(
                                             new JProperty( "text", DashIcon.Text ),
                                             new JProperty( "href", DashIcon.Href )
@@ -163,7 +163,7 @@ namespace ChemSW.Nbt.WebServices
                 //) )
                         );
 
-            if( _CswNbtResources.IsModuleEnabled( CswNbtResources.CswNbtModule.CISPro ) )
+            if( _CswNbtResources.Modules.IsModuleEnabled( CswNbtModule.CISPro ) )
             {
                 CswNbtActSubmitRequest RequestAction = new CswNbtActSubmitRequest( _CswNbtResources, CreateDefaultRequestNode: false );
                 if( RequestAction.CartContentCount > 0 )

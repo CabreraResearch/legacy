@@ -418,7 +418,7 @@ namespace ChemSW.NbtWebControls
                         {
                             foreach( ExportOutputFormat FormatType in Enum.GetValues( typeof( ExportOutputFormat ) ) )
                             {
-                                if( ExportOutputFormat.MobileXML != FormatType || _CswNbtResources.IsModuleEnabled( CswNbtResources.CswNbtModule.Mobile ) )
+                                if( ExportOutputFormat.MobileXML != FormatType || _CswNbtResources.Modules.IsModuleEnabled( CswNbtModule.Mobile ) )
                                 {
                                     _addExportMenuItem( _View, FormatType, NbtViewRenderingMode );
                                 }
@@ -427,11 +427,11 @@ namespace ChemSW.NbtWebControls
                         else // tree or list
                         {
                             _addExportMenuItem( _View, ExportOutputFormat.ReportXML, NbtViewRenderingMode );
-                            if( _CswNbtResources.IsModuleEnabled( CswNbtResources.CswNbtModule.Mobile ) )
+                            if( _CswNbtResources.Modules.IsModuleEnabled( CswNbtModule.Mobile ) )
                                 _addExportMenuItem( _View, ExportOutputFormat.MobileXML, NbtViewRenderingMode );
                         }
                     }
-                    else if( IsDesignMode && _CswNbtResources.IsModuleEnabled( CswNbtResources.CswNbtModule.Mobile ) )
+                    else if( IsDesignMode && _CswNbtResources.Modules.IsModuleEnabled( CswNbtModule.Mobile ) )
                     {
                         ExportMenuItem.Visible = false;
                         CswNbtMetaDataNodeType NodeType = null;
@@ -465,7 +465,7 @@ namespace ChemSW.NbtWebControls
                         }
                 } // if( AllowExport )
 
-                if( AllowMobile && _View != null && _CswNbtResources.IsModuleEnabled( CswNbtResources.CswNbtModule.Mobile ) )
+                if( AllowMobile && _View != null && _CswNbtResources.Modules.IsModuleEnabled( CswNbtModule.Mobile ) )
                 {
                     _MobileMenuItem.Visible = true;
                     _MobileMenuItem.Items.Clear();
@@ -858,7 +858,7 @@ namespace ChemSW.NbtWebControls
                     _ChangeViewMenuItem.Visible = true;
                 if( AllowBatch )
                     _BatchOpsMenuItem.Visible = true;
-                if( AllowMobile && _CswNbtResources.IsModuleEnabled( CswNbtResources.CswNbtModule.Mobile ) )
+                if( AllowMobile && _CswNbtResources.Modules.IsModuleEnabled( CswNbtModule.Mobile ) )
                     _MobileMenuItem.Visible = true;
                 //if( AllowEditView && ( (CswNbtObjClassRole) _CswNbtResources.CurrentNbtUser.RoleNode ).ActionPermissions.CheckValue( CswNbtAction.PermissionXValue, CswNbtAction.ActionNameEnumToString( _CswNbtResources.Actions[CswNbtActionName.Edit_View].Name ) ) )
 				if( AllowEditView && _CswNbtResources.Permit.can( CswNbtActionName.Edit_View ) )
