@@ -106,10 +106,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ServiceDrivers\CswNbtServiceLogicResources.cs" />
-    <Compile Include="ServiceDrivers\CswNbtServiceLogicGetProps.cs" />
-    <Compile Include="ServiceDrivers\CswNbtServiceLogic.cs" />
-    <Compile Include="ServiceDrivers\CswNbtServiceDriver.cs" />
     <Compile Include="Services\CswNbtWebServiceContainer.cs" />
     <Compile Include="Services\CswNbtWebServiceRequesting.cs" />
     <Compile Include="Services\CswNbtWebServiceModules.cs" />

@@ -1944,13 +1944,6 @@ namespace ChemSW.Nbt.WebServices
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
         public string getProps( string EditMode, string NodeId, string SafeNodeKey, string TabId, string NodeTypeId, string Date, string filterToPropId, string Multi, string ConfigMode, string RelatedNodeId, string RelatedNodeTypeId, string RelatedObjectClassId )
         {
-
-            // **** HERE'S WHAT YOU UNCOMMENT IN ORDER TO RUN THE CswNbtServiceDriver DISPENSATION OF WEB METHODS AS PER CASE 26213
-            //CswNbtServiceDriver CswNbtServiceDriver = new CswNbtServiceDriver( Context, SetupMode.NbtWeb, new CswNbtServiceLogicGetProps( EditMode, NodeId, SafeNodeKey, TabId, NodeTypeId, Date, filterToPropId, Multi, ConfigMode ) );
-            //return ( CswNbtServiceDriver.run() );
-
-
-            //EVERYTHING FROM HERE TO THE END OF THE METHOD GETS COMMENTED OUT IF YOU USE THE CswNbtServiceDriver DISPENSATION
             CswTimer GetPropsTimer = new CswTimer();
 
             JObject ReturnVal = new JObject();
