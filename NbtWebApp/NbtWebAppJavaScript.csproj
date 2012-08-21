@@ -106,6 +106,8 @@
     <Content Include="MainCswIncludes.html" />
     <Content Include="JavaScriptTest.html" />
     <Content Include="css\ChemSW.css" />
+    <Content Include="Print.html" />
+    <Content Include="Template.html" />
     <None Include="css\cssVariables.pm" />
     <Content Include="css\csw.thingrid.css" />
     <Content Include="css\csw.label.css" />

@@ -17,7 +17,8 @@
             'use strict';
             var cswPrivate = {
                 ID: 'jzebra',
-                cssclass: ''
+                cssclass: '',
+                dynamicallyInjectApplet: false
             };
             var cswPublic = {};
 
@@ -34,13 +35,16 @@
                     }
                     cswPrivate.div = cswParent.div();
                     
-                    if (Csw.isNullOrEmpty(document.jZebra)) {
+                    if (cswPrivate.dynamicallyInjectApplet &&
+                        Csw.isNullOrEmpty(document.jZebra)) {
                         //The 3rd party Java applet
                         cswPrivate.applet = cswPrivate.div.applet({
                             name: 'jZebra',
                             code: 'jzebra.PrintApplet.class',
                             archive: 'js/thirdparty/jZebra/jzebra.jar'
                         });
+                    } else {
+                        cswPrivate.applet = cswPrivate.div.find('#jZebra');
                     }
                     
                     cswPublic.defaultPrinter = Csw.string(Csw.cookie.get('defaultPrinter'));
@@ -76,7 +80,8 @@
                 cswPrivate.initJava = function() {
                     cswPrivate.initAttempts += 1;
                     if (false === Csw.isNullOrEmpty(document.jZebra) &&
-                        Csw.isFunction(document.jZebra.findPrinter)) {
+                        Csw.isFunction(document.jZebra.findPrinter) &&
+                        document.jZebra.isActive()) {
                         cswPublic.zebraJava = document.jZebra;
 
                         cswPublic.print = function(eplText) {
@@ -95,7 +100,7 @@
                         };
                         Csw.publish('jZebra_Ready');
                     } else if (cswPrivate.initAttempts < 5) {
-                        window.setTimeout(cswPrivate.initJava, 3000);
+                        window.setTimeout(cswPrivate.initJava, 1000);
                     }
                 };
 

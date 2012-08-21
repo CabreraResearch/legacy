@@ -13,25 +13,77 @@
             Csw.method(function () {
                 var cswPublic = { };
                 var cswPrivate = {
-                    parent: Csw.literals.factory($('#divBody'), cswPublic)
+                    ID: 'print_label',
+                    GetEPLTextUrl: 'getEPLText',
+                    nodeid: '',
+                    propid: '',
+                    parent: Csw.literals.factory($('#divBody'), cswPublic),
+                    stopSpinner: function () {
+                        $('#spinner').hide();
+                    },
+                    startSpinner: function () { 
+                        $('#spinner').show();
+                    },
+                    doPrint: '',
+                    jZeb: {}
                 };
+                cswPublic.div = cswPrivate.parent.div();
+                
+                Csw.subscribe(Csw.enums.events.ajax.globalAjaxStop, cswPrivate.stopSpinner);
+                Csw.subscribe(Csw.enums.events.ajax.globalAjaxStart, cswPrivate.startSpinner);
+                
+                cswPrivate.queryString = Csw.queryString();
 
-                function stopSpinner() {
-                    $('#spinner').hide();
-                }
+                Csw.subscribe('jZebra_Ready', function() {
+                    var data = {
+                        PropId: Csw.string(cswPrivate.queryString.PropId),
+                        PrintLabelNodeId: Csw.string(cswPrivate.queryString.PrintLabelNodeId)
+                    };
+                    var ret = Csw.ajax.post({
+                        urlMethod: cswPrivate.GetEPLTextUrl,
+                        data: data,
+                        success: function(data) {
 
-                Csw.subscribe(Csw.enums.events.ajax.globalAjaxStop, stopSpinner);
+                            var labelx;
 
-                function startSpinner() {
-                    $('#spinner').show();
-                }
+                            if (data.controltype === 'ActiveX') {
+                                cswPrivate.doPrint = function() {
+                                    labelx = $('#labelx').get(0);
+                                    labelx.EPLScript = data.epl;
+                                    labelx.Print();
+                                };
+                            } else {
+                                cswPrivate.jZeb.findPrinters();
+                                cswPrivate.doPrint = function() {
+                                    var printer = $('#printersList').val();
+                                    cswPrivate.jZeb.setDefaultPrinter(printer);
+                                    return cswPrivate.jZeb.print(data.epl);
+                                };
+                            }
 
-                Csw.subscribe(Csw.enums.events.ajax.globalAjaxStart, startSpinner);
+                        },
+                        error: function (data) {
 
+                        }
+                    }); // ajax
+                
+                    var printBtn = cswPublic.div.buttonExt({
+                        icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.print),
+                        width: '100px',
+                        bindOnEnter: true,
+                        ID: 'print_label_print',
+                        enabledText: 'Print',
+                        //disabledText: 'Printing...', 
+                        disableOnClick: false,
+                        onClick: function() {
+                            cswPrivate.doPrint();
+                        }
+                    });
+                });
 
+                cswPrivate.jZeb = cswPublic.div.jZebra();
 
-
-
+                return cswPublic;
 
             })
         
@@ -47,7 +99,7 @@
     </div>
     <div id="DialogErrorDiv"></div>
     <div id="hiddenDiv" style="visibility: hidden; border: 1px solid red;">
-        <applet id="jZebra" name="jZebra" code="jzebra.PrintApplet.class" archive="jzebra.jar" width="0" height="0"></applet>
+        <applet id="jZebra" name="jZebra" code="jzebra.PrintApplet.class" archive="js/thirdparty/jZebra/jzebra.jar" width="0" height="0"></applet>
         <OBJECT ID="labelx" Name="labelx" classid="clsid:A8926827-7F19-48A1-A086-B1A5901DB7F0" codebase="CafLabelPrintUtil.cab#version=0,1,6,0" width=0 height=0 align=center hspace=0 vspace=0></OBJECT>
     </div>    
 

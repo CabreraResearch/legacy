@@ -337,5 +337,25 @@
 			}
 			return ret;
         });
+    
+    Csw.params = Csw.params ||
+        Csw.register('params', function (data, delimiter) {
+            /// <summary>Convert an object to delimited list of parameters (x='1'&y='2')</summary>
+            /// <param name="data" type="Object"> An object </param>
+            /// <returns type="String"> A parameter string. </returns>
+            var ret = '';
+            delimiter = delimiter || '&';
+            if (delimiter === '&') {
+                Csw.tryExec(function() { ret = $.param(data); });
+            } else {
+                Csw.each(data, function(val, key) {
+                    if(ret.length > 0) {
+                        ret += delimiter;
+                    }
+                    ret += key + '=' + val;
+                });
+            }
+            return Csw.string(ret);
+        });
 
 } ());
