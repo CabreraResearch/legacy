@@ -41,7 +41,7 @@
 
             (function() {
                 if (options) {
-                    $.extend(cswPrivate, options);
+                    Csw.extend(cswPrivate, options);
                 }
                 var $table = $('<table id="' + cswPrivate.ID + '"></table>');
                 var isjQuery = Csw.isJQuery(options);

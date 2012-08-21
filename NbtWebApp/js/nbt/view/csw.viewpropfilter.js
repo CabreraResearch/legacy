@@ -20,11 +20,13 @@
                 viewbuilderpropid: '',  // provide one of these to uniquely identify the filter
 
                 propname: '',             // default will be populated from propsData if not supplied
+                selectedConjunction: '',  // default will be populated from propsData if not supplied
                 selectedSubFieldName: '', // default will be populated from propsData if not supplied
                 selectedFilterMode: '',   // default will be populated from propsData if not supplied
                 selectedValue: '',        // default will be populated from propsData if not supplied
 
                 showPropertyName: true,   // whether to show the property name
+                showConjunction: true,    // whether to show the conjunction
                 showSubfield: true,       // whether to show the subfield
                 showFilterMode: true,     // whether to show the filter mode
                 showValue: true,          // whether to show the filter value
@@ -89,6 +91,31 @@
             }; // makePropNameControl()
 
 
+            cswPrivate.makeConjunctionControl = function () {
+                var conjunctionOptions = ['And','Or'];
+                var conjunctionId = cswPrivate.makePropFilterId('filter_conjunction');
+
+                cswPrivate.conjunctionCell.empty();
+                if(cswPrivate.readOnly)
+                {
+                    cswPrivate.conjunctionControl = cswPrivate.conjunctionCell.span({ 
+                        ID: conjunctionId,
+                        text: cswPrivate.selectedConjunction
+                    });
+                } else {
+                    cswPrivate.conjunctionControl = cswPrivate.conjunctionCell.select({ 
+                        ID: conjunctionId,
+                        values: conjunctionOptions,
+                        selected: cswPrivate.selectedConjunction,
+                        onChange: function () {
+                            cswPrivate.selectedConjunction = cswPrivate.conjunctionControl.val();
+                            //cswPrivate.renderPropFiltRow();
+                        }
+                    });
+                } // if-else(cswPrivate.readOnly)
+            }; // makeConjunctionControl()
+
+
             cswPrivate.makeSubfieldControl = function () {
                 var subfields = (Csw.contains(cswPrivate.propsData, 'subfields')) ? cswPrivate.propsData.subfields : [];
                 var subFieldOptions = [];
@@ -119,7 +146,7 @@
                         }
                     });
                 } // if-else(cswPrivate.readOnly)
-            }; // makeSubfieldPicklist()
+            }; // makeSubfieldControl()
 
 
             cswPrivate.makeFilterModeControl = function() {
@@ -150,7 +177,7 @@
                         }
                     });
                 } // if-else(cswPrivate.readOnly)
-            }; // makeFilterModePicklist()
+            }; // makeFilterModeControl()
 
 
             cswPrivate.makeFilterValueControl = function() {
@@ -245,6 +272,7 @@
 
             cswPrivate.renderPropFiltRow = function() {
                 cswPrivate.makePropNameControl();
+                cswPrivate.makeConjunctionControl();
                 cswPrivate.makeSubfieldControl();
                 cswPrivate.makeFilterModeControl();
                 cswPrivate.makeFilterValueControl();
@@ -285,7 +313,7 @@
                     filtJson: '',
                     onSuccess: null //function ($filterXml) {}
                 };
-                if (options) $.extend(o, options);
+                if (options) Csw.extend(o, options);
 
                 var jsonData = {
                     PropFiltJson: JSON.stringify(o.filtJson),
@@ -319,6 +347,9 @@
                     cswPrivate.propname = cswPrivate.propsData.propname;
                 }
                                                 
+                if(Csw.isNullOrEmpty(cswPrivate.selectedConjunction)) {
+                    cswPrivate.selectedConjunction = Csw.string(cswPrivate.propsData.defaultconjunction, cswPrivate.propsData.conjunction);
+                }
                 if(Csw.isNullOrEmpty(cswPrivate.selectedSubFieldName)) {
                     cswPrivate.selectedSubFieldName = Csw.string(cswPrivate.propsData.defaultsubfield, 
                                                                Csw.string(cswPrivate.propsData.subfieldname, 
@@ -336,20 +367,24 @@
 
             // constructor
             (function () {
-                if (options) $.extend(cswPrivate, options);
+                if (options) Csw.extend(cswPrivate, options);
 
                 cswPrivate.table = cswPrivate.parent;
                 if(Csw.isNullOrEmpty(cswPrivate.table.controlName) || cswPrivate.table.controlName !== 'table') {
                     Csw.error.showError(Csw.error.makeErrorObj(Csw.enums.errorType.error.name, "Javascript Error", "csw.viewpropfilter was not called on a Table"));
                 } else {
 
-                    cswPrivate.propNameCell = cswPrivate.table.cell(cswPrivate.propRow, cswPrivate.firstColumn).empty();
-                    cswPrivate.subFieldCell = cswPrivate.table.cell(cswPrivate.propRow, cswPrivate.firstColumn + 1).empty();
-                    cswPrivate.filterModeCell = cswPrivate.table.cell(cswPrivate.propRow, cswPrivate.firstColumn + 2).empty();
-                    cswPrivate.valueCell = cswPrivate.table.cell(cswPrivate.propRow, cswPrivate.firstColumn + 3).empty();
+                    cswPrivate.conjunctionCell = cswPrivate.table.cell(cswPrivate.propRow, cswPrivate.firstColumn).empty();
+                    cswPrivate.propNameCell = cswPrivate.table.cell(cswPrivate.propRow, cswPrivate.firstColumn + 1).empty();
+                    cswPrivate.subFieldCell = cswPrivate.table.cell(cswPrivate.propRow, cswPrivate.firstColumn + 2).empty();
+                    cswPrivate.filterModeCell = cswPrivate.table.cell(cswPrivate.propRow, cswPrivate.firstColumn + 3).empty();
+                    cswPrivate.valueCell = cswPrivate.table.cell(cswPrivate.propRow, cswPrivate.firstColumn + 4).empty();
 
                     if (false === Csw.bool(cswPrivate.showPropertyName)) {
                         cswPrivate.propNameCell.hide();
+                    }
+                    if (false === Csw.bool(cswPrivate.showConjunction)) {
+                        cswPrivate.conjunctionCell.css({visibility: 'hidden'});  // this one gets mixed, so we want it to take up space
                     }
                     if (false === Csw.bool(cswPrivate.showSubfield)) {
                         cswPrivate.subFieldCell.hide();

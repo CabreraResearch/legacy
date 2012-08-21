@@ -23,7 +23,7 @@ namespace ChemSW.Nbt.WebPages
 {
     public partial class Design : System.Web.UI.Page
     {
-        private string _IconImageRoot = "Images/icons";
+        private string _IconImageRoot = CswNbtMetaDataObjectClass.IconPrefix16;
         private NbtDesignMode _Mode = NbtDesignMode.Standard;
 
         public string LabelNodeType = "NodeType";

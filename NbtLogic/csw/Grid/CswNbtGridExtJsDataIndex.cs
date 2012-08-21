@@ -15,13 +15,26 @@ namespace ChemSW.Nbt.Grid.ExtJs
 {
     public class CswNbtGridExtJsDataIndex : IEquatable<CswNbtGridExtJsDataIndex>
     {
+        private string _prefix;
         private string _dataIndex;
 
-        public CswNbtGridExtJsDataIndex( string dataIndex )
+        public CswNbtGridExtJsDataIndex( string UniquePrefix, string dataIndex )
         {
+            _prefix = UniquePrefix.Replace( " ", "_" ).ToLower();
             _dataIndex = dataIndex.Replace( " ", "_" ).ToLower();
         }
 
+        /// <summary>
+        /// Returns prefix + dataIndex as a string
+        /// </summary>
+        public string safeString()
+        {
+            return _prefix + _dataIndex;
+        }
+
+        /// <summary>
+        /// Returns dataIndex as a string
+        /// </summary>
         public override string ToString()
         {
             return _dataIndex;

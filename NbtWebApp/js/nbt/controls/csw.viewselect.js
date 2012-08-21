@@ -23,7 +23,7 @@
                 div: null
             };
             if (params) {
-                $.extend(cswPrivate, params);
+                Csw.extend(cswPrivate, params);
             }
 
             var cswPublic = {};
@@ -132,7 +132,7 @@
                     width: '266px'
                 });
 
-                $.extend(cswPublic, cswPrivate.comboBox);
+                Csw.extend(cswPublic, cswPrivate.comboBox);
 
                 Csw.ajax.post({
                     url: cswPrivate.viewurl,

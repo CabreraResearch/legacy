@@ -12,6 +12,7 @@ using ChemSW.Config;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
+using ChemSW.Log;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.Grid;
 using ChemSW.Nbt.Logic;
@@ -252,6 +253,9 @@ namespace ChemSW.Nbt.WebServices
             if( JObj != null )
             {
                 JObj["AuthenticationStatus"] = AuthenticationStatusIn.ToString();
+                JObj["LogglyInput"] = CswResources.CswLogglyVenue;
+                JObj["server"] = Environment.MachineName;
+
                 if( false == ForMobile )
                 {
                     if( _CswSessionResources != null &&
@@ -265,6 +269,14 @@ namespace ChemSW.Nbt.WebServices
                     JObj["timer"]["serverinit"] = Math.Round( ServerInitTime, 3 );
                     if( null != _CswNbtResources )
                     {
+                        LogLevels LogLevel = _CswNbtResources.ConfigVbls.getConfigVariableValue( CswConfigurationVariables.ConfigurationVariableNames.Logging_Level );
+                        if( LogLevel == CswNbtResources.UnknownEnum )
+                        {
+                            LogLevel = LogLevels.Error;
+                        }
+                        JObj["LogLevel"] = LogLevel.ToString().ToLower();
+
+                        JObj["timer"]["customerid"] = _CswNbtResources.AccessId;
                         JObj["timer"]["dbinit"] = Math.Round( _CswNbtResources.CswLogger.DbInitTime, 3 );
                         JObj["timer"]["dbquery"] = Math.Round( _CswNbtResources.CswLogger.DbQueryTime, 3 );
                         JObj["timer"]["dbcommit"] = Math.Round( _CswNbtResources.CswLogger.DbCommitTime, 3 );
@@ -2665,10 +2677,12 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string fileForProp()
+        public void fileForProp()
         {
             //Come back to implement Multi
-            JObject ReturnVal = new JObject( new JProperty( "success", false.ToString().ToLower() ) );
+            JObject ReturnVal = new JObject();
+            ReturnVal["data"] = new JObject();
+            ReturnVal["data"]["success"] = false;
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
             try
             {
@@ -2701,9 +2715,17 @@ namespace ChemSW.Nbt.WebServices
 
                             // Save the binary data
                             CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources, _CswNbtStatisticsEvents );
-                            bool ret = ws.SetPropBlobValue( FileData, FileName, ContentType, PropId, Column );
+                            string Href;
+                            bool ret = ws.SetPropBlobValue( FileData, FileName, ContentType, PropId, Column, out Href );
 
-                            ReturnVal = new JObject( new JProperty( "success", ret.ToString().ToLower() ) );
+                            ReturnVal["data"]["success"] = ret;
+                            if( ret )
+                            {
+                                ReturnVal["data"]["filename"] = FileName;
+                                ReturnVal["data"]["contenttype"] = ContentType;
+                                ReturnVal["data"]["href"] = Href;
+                            }
+
                         } //if( false == string.IsNullOrEmpty( PropId ) )
                     } //for( Int32 I = 0; I < Context.Request.Files.Count; I += 1 )
                 }
@@ -2716,7 +2738,11 @@ namespace ChemSW.Nbt.WebServices
 
             _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
 
-            return ReturnVal.ToString();
+            Context.Response.Clear();
+            Context.Response.ContentType = "application/json; charset=utf-8";
+            //Context.Response.AddHeader( "content-disposition", "attachment; filename=export.json" );
+            Context.Response.Flush();
+            Context.Response.Write( ReturnVal.ToString() );
 
         } // fileForProp()
 
@@ -2813,7 +2839,8 @@ namespace ChemSW.Nbt.WebServices
 
             //now create the image and save it as a blob
             byte[] molImage = CswStructureSearch.GetImage( molData );
-            ws.SetPropBlobValue( molImage, "mol.jpeg", "image/jpeg", PropId, "blobdata" );
+            string Href;
+            ws.SetPropBlobValue( molImage, "mol.jpeg", "image/jpeg", PropId, "blobdata", out Href );
 
             return ReturnVal;
         }
@@ -4991,7 +5018,7 @@ namespace ChemSW.Nbt.WebServices
 
         private void _setEditMode( string EditModeStr )
         {
-            _CswNbtResources.EditMode = (NodeEditMode) Enum.Parse( typeof( NodeEditMode ), EditModeStr );
+            _CswNbtResources.EditMode = EditModeStr;
         }
 
         private void _setEditMode( NodeEditMode EditMode )

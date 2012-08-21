@@ -14,7 +14,7 @@
                 nodetypeid: '',
                 excludeOcProps: []
             };
-            if (options) $.extend(cswPrivate, options);
+            if (options) Csw.extend(cswPrivate, options);
 
             var cswPublic = {
                 nodes: []
@@ -57,9 +57,9 @@
                         icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.add),
                         enabledText: 'Add',
                         onClick: function () {
-                            var nodeData = { };
-                            $.extend(true, nodeData, cswPrivate.tabsAndProps.getPropJson());
-
+                            var nodeData = {};
+                            Csw.extend(nodeData, cswPrivate.tabsAndProps.getPropJson(), true);
+                            
                             Csw.ajax.post({
                                 urlMethod: 'nodePropsToArray',
                                 data: {

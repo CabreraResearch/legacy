@@ -18,6 +18,7 @@
                 NodePreviewUrlMethod: 'getNodePreview',
                 QuotaUrlMethod: 'checkQuota',
                 nodeids: [],
+                onNodeIdSet: null,
                 nodepks: [],
                 nodekeys: [],
                 relatednodeid: '',
@@ -57,7 +58,7 @@
 
             (function () {
                 if (options) {
-                    $.extend(cswPrivate, options);
+                    Csw.extend(cswPrivate, options);
                 }
 
                 cswPrivate.outerTabDiv = cswParent.tabDiv({ ID: cswPrivate.ID + '_tabdiv' });
@@ -270,7 +271,9 @@
 
                     function doUpdateSubProps(configOn) {
                         var updOnSuccess = function (thisProp, key) {
-                            if (Csw.bool(thisProp.hassubprops)) {
+                            if (false === Csw.isNullOrEmpty(thisProp) &&
+                                false === Csw.isNullOrEmpty(key) &&
+                                Csw.bool(thisProp.hassubprops)) {
                                 var propId = key; //key
                                 var subTable = cswPrivate.layoutTable[propId + '_subproptable'];
                                 var parentCell = subTable.parent().parent();
@@ -311,7 +314,7 @@
 
                     if (cswPrivate.EditMode !== Csw.enums.editMode.PrintReport && Csw.bool(cswPrivate.showSaveButton)) {
                         cswPrivate.saveBtn = formTable.cell(2, 1).buttonExt({
-                            ID: 'SaveTab',
+                            ID: 'SaveTab' + window.Ext.id,
                             icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.save),
                             enabledText: 'Save Changes',
                             disabledText: 'Saving...',
@@ -398,11 +401,21 @@
                                     lineNumber: 387
                                 });
                             }
+                            if (data.nodeid) {
+                                Csw.tryExec(cswPrivate.onNodeIdSet, data.nodeid);
+                                cswPrivate.nodeids[0] = data.nodeid;
+                                delete data.nodeid;
+                            }
                             cswPrivate.propertyData = data;
                             makePropLayout();
                         } // success{}
                     }); // ajax
                 } else {
+                    if (cswPrivate.propertyData.nodeid) {
+                        Csw.tryExec(cswPrivate.onNodeIdSet, cswPrivate.propertyData.nodeid);
+                        cswPrivate.nodeids[0] = cswPrivate.propertyData.nodeid;
+                        delete cswPrivate.propertyData.nodeid;
+                    }
                     makePropLayout();
                 }
             };
@@ -634,7 +647,7 @@
                             var s = {
                                 onSuccess: null
                             };
-                            if (saveopts) $.extend(s, saveopts);
+                            if (saveopts) Csw.extend(s, saveopts);
                             cswPublic.save(tabContentDiv, tabid, s.onSuccess);
                         },
                         cswnbtnodekey: Csw.tryParseObjByIdx(cswPrivate.nodekeys, 0),
@@ -812,6 +825,10 @@
 
             cswPublic.isFormValid = function () {
                 return cswPrivate.form.$.valid();
+            };
+
+            cswPublic.getNodeId = function() {
+                return cswPrivate.nodeids[0];
             };
 
             cswPublic.save = function (tabContentDiv, tabid, onSuccess) {

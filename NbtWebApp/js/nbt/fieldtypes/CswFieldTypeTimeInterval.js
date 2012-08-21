@@ -48,7 +48,7 @@
 
                 var newInterval = attributes.Interval.rateintervalvalue;
                 if (false === o.Multi || parent.find('#' + o.ID + '_textvalue').text() !== Csw.enums.multiEditDefaultValue) {
-                    $.extend(true, newInterval, intervalData);
+                    Csw.extend(true, newInterval, intervalData);
                     compare = attributes;
                 }
                 var oldInterval = o.propData.values.Interval.rateintervalvalue;

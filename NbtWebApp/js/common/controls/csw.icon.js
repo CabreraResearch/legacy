@@ -85,7 +85,7 @@
 
             // Constructor
             (function () {
-                if (options) $.extend(cswPrivate, options);
+                if (options) Csw.extend(cswPrivate, options);
 
                 cswPrivate.div = cswParent.div({ text: '&nbsp;' });
                 cswPrivate.div.css({

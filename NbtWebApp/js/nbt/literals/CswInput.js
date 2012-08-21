@@ -24,7 +24,7 @@
                 'autocomplete': 'on',
                 'onChange': null //function () {}
             };
-            if (options) $.extend(o, options);
+            if (options) Csw.extend(o, options);
 
             o.name = Csw.string(o.name,o.ID);
             o.ID = Csw.string(o.ID,o.name);

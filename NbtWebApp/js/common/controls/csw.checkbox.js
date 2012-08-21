@@ -25,7 +25,7 @@
 
                 (function preInit() {
                     if (options) {
-                        $.extend(cswPrivate, options);
+                        Csw.extend(cswPrivate, options);
                     }
                     cswPrivate.value = Csw.string(cswPrivate.Checked, 'false').toLowerCase(); //Case 21769
                     cswPrivate.AlternateText = cswPrivate.value;

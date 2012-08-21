@@ -63,7 +63,7 @@
                 }
 
                 if (options) {
-                    $.extend(true, cswPrivate, options);
+                    Csw.extend(cswPrivate, options, true);
                 }
 
                 cswPrivate.buttonTbl = cswParent.table({

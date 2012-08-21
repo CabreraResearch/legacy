@@ -24,7 +24,7 @@
             };
 
             if (options) {
-                $.extend(true, cswPrivate, options);
+                Csw.extend(cswPrivate, options, true);
             }
 
             cswPrivate.now = new Date();
@@ -559,7 +559,7 @@
                     textValue = Csw.enums.multiEditDefaultValue;
                     cswPrivate.rateType = Csw.enums.rateIntervalTypes.WeeklyByDay;
                 } else {
-                    $.extend(true, cswPublic.rateInterval, propVals.Interval.rateintervalvalue);
+                    Csw.extend(cswPublic.rateInterval, propVals.Interval.rateintervalvalue, true);
                     textValue = Csw.string(propVals.Interval.text).trim();
                     cswPrivate.rateType = cswPublic.rateInterval.ratetype;
                 }

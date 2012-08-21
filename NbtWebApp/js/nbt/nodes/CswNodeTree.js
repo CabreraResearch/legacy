@@ -63,7 +63,7 @@
 //                newcswnbtnodekey: ''
 //            };
 //            if (optSelect) {
-//                $.extend(o, optSelect);
+//                Csw.extend(o, optSelect);
 //            }
 //            var $treediv = $(this);
 //            var idPrefix = $treediv.CswAttrDom('id');
@@ -157,7 +157,7 @@
 //            DefaultSelect: Csw.enums.nodeTree_DefaultSelect.firstchild.name,
 //            height: ''
 //        };
-//        if (options) $.extend(o, options);
+//        if (options) Csw.extend(o, options);
 
 //        if (false === Csw.isFunction(o.onInitialSelectNode)) {
 //            o.onInitialSelectNode = o.onSelectNode;
@@ -316,11 +316,11 @@
 //            //UsePaging: '',
 //            forsearch: ''
 //        };
-//        if (myoptions) $.extend(m, myoptions);
+//        if (myoptions) Csw.extend(m, myoptions);
 
 //        // case 21715 - don't trigger onSelectNode event on first event
 //        var m2 = {};
-//        $.extend(m2, m);
+//        Csw.extend(m2, m);
 //        m2.onSelectNode = m.onInitialSelectNode;
 //        handleSelectNode(m2);
 
@@ -341,7 +341,7 @@
 //            //UsePaging: '',
 //            forsearch: ''
 //        };
-//        if (myoptions) $.extend(m, myoptions);
+//        if (myoptions) Csw.extend(m, myoptions);
 
 //        var selected = Csw.jsTreeGetSelected(m.$treediv);
 //        var optSelect = {

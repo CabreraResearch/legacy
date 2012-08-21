@@ -36,7 +36,7 @@
 
             (function() {
                 if (options) {
-                    $.extend(cswPrivate, options);
+                    Csw.extend(cswPrivate, options);
                 }
                 var html = '',
                     attr = Csw.makeAttr(),

@@ -23,11 +23,12 @@
                 var table = propDiv.table({
                     ID: Csw.makeId(o.ID, 'tbl')
                 });
-                table.cell(1, 1).a({ href: href, target: '_blank', text: fileName });
+                var fileCell = table.cell(1, 1);
+                fileCell.a({ href: href, target: '_blank', text: fileName });
                 var cell12 = table.cell(1, 2).div();
                 var cell13 = table.cell(1, 3).div();
 
-                if (false === o.ReadOnly && o.EditMode !== Csw.enums.editMode.Add) {
+                if (false === o.ReadOnly) {
                     //Edit button
                     cell12.imageButton({
                             ButtonType: Csw.enums.imageButton_ButtonType.Edit,
@@ -39,8 +40,15 @@
                                     params: {
                                         PropId: o.propData.id
                                     },
-                                    onSuccess: function () {
-                                        o.onReload();
+                                    onSuccess: function (data) {
+                                        if (data.success) {
+                                            o.propData.values.href = data.href;
+                                            o.propData.values.name = data.filename;
+                                            o.propData.values.contenttype = data.contenttype;
+                                            fileCell.empty();
+                                            fileCell.a({ href: data.href, target: '_blank', text: data.filename });
+                                            //o.onReload(); if we reload, we'll lose our reference
+                                        }
                                     }
                                 });
                             }

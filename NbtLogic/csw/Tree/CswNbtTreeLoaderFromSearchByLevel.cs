@@ -214,7 +214,10 @@ namespace ChemSW.Nbt
 
             // BZ 6008
             if( !_IncludeSystemNodes )
+            {
                 Where += " and n.issystem = '0' ";
+            }
+            Where += " and n.istemp= '0' ";
 
             Where += _ExtraWhereClause;
 

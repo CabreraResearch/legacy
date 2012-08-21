@@ -48,6 +48,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswPrimaryKey NodeId { get { return _CswNbtNode.NodeId; } }
         public CswNbtNode Node { get { return _CswNbtNode; } }
         public bool IsDemo { get { return _CswNbtNode.IsDemo; } set { _CswNbtNode.IsDemo = value; } }
+        public bool IsTemp { get { return _CswNbtNode.IsTemp; } set { _CswNbtNode.IsTemp = value; } }
         public class NbtButtonData
         {
             public NbtButtonData( CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp )
@@ -64,13 +65,13 @@ namespace ChemSW.Nbt.ObjClasses
             }
             public void clone( NbtButtonData DataToCopy )
             {
-                if(null != DataToCopy )
+                if( null != DataToCopy )
                 {
-                    if (null != DataToCopy.Action)
+                    if( null != DataToCopy.Action )
                     {
                         Action = DataToCopy.Action;
                     }
-                    if (null != DataToCopy.SelectedText)
+                    if( null != DataToCopy.SelectedText )
                     {
                         SelectedText = DataToCopy.SelectedText;
                     }
