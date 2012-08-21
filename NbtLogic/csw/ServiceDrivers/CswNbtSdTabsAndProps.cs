@@ -870,11 +870,11 @@ namespace ChemSW.Nbt.ServiceDrivers
                 CswNbtNode Node = _CswNbtResources.Nodes[PropId.NodeId];
                 CswNbtNodePropWrapper PropWrapper = Node.Properties[MetaDataProp];
                 PropWrapper.ClearValue();
+                Node.postChanges( false );
                 if( IncludeBlob )
                 {
                     PropWrapper.ClearBlob();
                 }
-                Node.postChanges( false );
                 ret = true;
             }
             return ret;
