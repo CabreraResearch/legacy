@@ -30,9 +30,12 @@ namespace ChemSW.Nbt
         private void initModules()
         {
             _ModuleRules.Clear();
-            foreach( CswNbtModuleName Module in CswNbtModuleName._All )
+            foreach( CswNbtModuleName ModuleName in CswNbtModuleName._All )
             {
-                _ModuleRules.Add( Module, CswNbtModuleRuleFactory.makeModuleRule( Module ) );
+                if( CswNbtModuleName.Unknown != ModuleName )
+                {
+                    _ModuleRules.Add( ModuleName, CswNbtModuleRuleFactory.makeModuleRule( ModuleName ) );
+                }
             }
 
             // Fetch modules from database

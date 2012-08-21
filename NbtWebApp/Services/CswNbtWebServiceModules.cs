@@ -37,9 +37,12 @@ namespace ChemSW.Nbt.WebServices
             JObject ret = new JObject();
             if( _CanEditModules )
             {
-                foreach( CswNbtModuleName Module in CswNbtModuleName._All )
+                foreach( CswNbtModuleName ModuleName in CswNbtModuleName._All )
                 {
-                    ret[Module.ToString()] = _CswNbtResources.Modules.IsModuleEnabled( Module );
+                    if( CswNbtModuleName.Unknown != ModuleName )
+                    {
+                        ret[ModuleName.ToString()] = _CswNbtResources.Modules.IsModuleEnabled( ModuleName );
+                    }
                 }
             } // if(_CanEditModules)
 

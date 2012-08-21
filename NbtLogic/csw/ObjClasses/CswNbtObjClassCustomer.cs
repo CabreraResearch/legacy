@@ -182,9 +182,12 @@ namespace ChemSW.Nbt.ObjClasses
                 this.SchemaName.StaticText = _CswNbtResources.CswDbCfgInfo.CurrentUserName;
 
                 CswCommaDelimitedString YValues = new CswCommaDelimitedString();
-                foreach( CswNbtModuleName Module in CswNbtModuleName._All )
+                foreach( CswNbtModuleName ModuleName in CswNbtModuleName._All )
                 {
-                    YValues.Add( Module.ToString() );
+                    if( CswNbtModuleName.Unknown != ModuleName )
+                    {
+                        YValues.Add( ModuleName.ToString() );
+                    }
                 }
                 ModulesEnabled.YValues = YValues;
                 ModulesEnabled.XValues = new CswCommaDelimitedString() { ModulesEnabledXValue };
@@ -207,9 +210,12 @@ namespace ChemSW.Nbt.ObjClasses
                 //_CswNbtResources.AccessId = OriginalAccessId;
                 finalizeOtherResources( OtherResources );
 
-                foreach( CswNbtModuleName Module in CswNbtModuleName._All )
+                foreach( CswNbtModuleName ModuleName in CswNbtModuleName._All )
                 {
-                    ModulesEnabled.SetValue( ModulesEnabledXValue, Module.ToString(), Modules.Contains( Module ) );
+                    if( CswNbtModuleName.Unknown != ModuleName )
+                    {
+                        ModulesEnabled.SetValue( ModulesEnabledXValue, ModuleName.ToString(), Modules.Contains( ModuleName ) );
+                    }
                 }
 
                 this.SchemaVersion.StaticText = OtherSchemaVersion;
