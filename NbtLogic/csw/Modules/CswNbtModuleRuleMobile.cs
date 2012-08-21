@@ -8,6 +8,10 @@ namespace ChemSW.Nbt
     /// </summary>
     public class CswNbtModuleRuleMobile : CswNbtModuleRule
     {
+        public CswNbtModuleRuleMobile( CswNbtResources CswNbtResources ) :
+            base( CswNbtResources )
+        {
+        }
         public override CswNbtModuleName ModuleName { get { return CswNbtModuleName.Mobile; } }
         public override void OnEnable() { }
         public override void OnDisable() { }

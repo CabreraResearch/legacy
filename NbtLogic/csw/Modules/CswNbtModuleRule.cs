@@ -8,10 +8,15 @@ namespace ChemSW.Nbt
     /// </summary>
     public abstract class CswNbtModuleRule
     {
-        public abstract CswNbtModuleName ModuleName { get; }
-        
+        protected CswNbtResources _CswNbtResources;
+        public CswNbtModuleRule( CswNbtResources CswNbtResources )
+        {
+            _CswNbtResources = CswNbtResources;
+        }
+
         public bool Enabled = false;
 
+        public abstract CswNbtModuleName ModuleName { get; }
         public abstract void OnEnable();
         public abstract void OnDisable();
 

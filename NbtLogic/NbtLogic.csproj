@@ -100,7 +100,7 @@
     <Compile Include="csw\Modules\CswNbtModuleRuleCISPro.cs" />
     <Compile Include="csw\Modules\CswNbtModuleRuleCCPro.cs" />
     <Compile Include="csw\Modules\CswNbtModuleRuleFactory.cs" />
-    <Compile Include="csw\Modules\ICswNbtModuleRule.cs" />
+    <Compile Include="csw\Modules\CswNbtModuleRule.cs" />
     <Compile Include="csw\Modules\CswNbtModuleRuleBioSafety.cs" />
     <Compile Include="csw\Modules\CswNbtModuleName.cs" />
     <Compile Include="csw\Modules\CswNbtModuleManager.cs" />

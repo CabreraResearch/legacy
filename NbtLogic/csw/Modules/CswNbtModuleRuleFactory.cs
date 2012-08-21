@@ -9,40 +9,40 @@ namespace ChemSW.Nbt
     /// </summary>
     public class CswNbtModuleRuleFactory
     {
-        public static CswNbtModuleRule makeModuleRule( CswNbtModuleName ModuleName )
+        public static CswNbtModuleRule makeModuleRule( CswNbtResources CswNbtResources, CswNbtModuleName ModuleName )
         {
             CswNbtModuleRule ret = null;
             if( CswNbtModuleName.BioSafety == ModuleName )
             {
-                ret = new CswNbtModuleRuleBioSafety();
+                ret = new CswNbtModuleRuleBioSafety( CswNbtResources );
             }
             else if( CswNbtModuleName.CCPro == ModuleName )
             {
-                ret = new CswNbtModuleRuleCCPro();
+                ret = new CswNbtModuleRuleCCPro( CswNbtResources );
             }
             else if( CswNbtModuleName.CISPro == ModuleName )
             {
-                ret = new CswNbtModuleRuleCISPro();
+                ret = new CswNbtModuleRuleCISPro( CswNbtResources );
             }
             else if( CswNbtModuleName.IMCS == ModuleName )
             {
-                ret = new CswNbtModuleRuleIMCS();
+                ret = new CswNbtModuleRuleIMCS( CswNbtResources );
             }
             else if( CswNbtModuleName.Mobile == ModuleName )
             {
-                ret = new CswNbtModuleRuleMobile();
+                ret = new CswNbtModuleRuleMobile( CswNbtResources );
             }
             else if( CswNbtModuleName.NBTManager == ModuleName )
             {
-                ret = new CswNbtModuleRuleNBTManager();
+                ret = new CswNbtModuleRuleNBTManager( CswNbtResources );
             }
             else if( CswNbtModuleName.SI == ModuleName )
             {
-                ret = new CswNbtModuleRuleSI();
+                ret = new CswNbtModuleRuleSI( CswNbtResources );
             }
             else if( CswNbtModuleName.STIS == ModuleName )
             {
-                ret = new CswNbtModuleRuleSTIS();
+                ret = new CswNbtModuleRuleSTIS( CswNbtResources );
             }
             else
             {

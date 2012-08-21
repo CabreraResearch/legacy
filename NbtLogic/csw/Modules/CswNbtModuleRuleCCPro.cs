@@ -8,6 +8,10 @@ namespace ChemSW.Nbt
     /// </summary>
     public class CswNbtModuleRuleCCPro : CswNbtModuleRule
     {
+        public CswNbtModuleRuleCCPro( CswNbtResources CswNbtResources ) :
+            base( CswNbtResources )
+        {
+        }
         public override CswNbtModuleName ModuleName { get { return CswNbtModuleName.CCPro; } }
         public override void OnEnable() { }
         public override void OnDisable() { }

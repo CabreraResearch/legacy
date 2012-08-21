@@ -34,7 +34,7 @@ namespace ChemSW.Nbt
             {
                 if( CswNbtModuleName.Unknown != ModuleName )
                 {
-                    _ModuleRules.Add( ModuleName, CswNbtModuleRuleFactory.makeModuleRule( ModuleName ) );
+                    _ModuleRules.Add( ModuleName, CswNbtModuleRuleFactory.makeModuleRule( _CswNbtResources, ModuleName ) );
                 }
             }
 

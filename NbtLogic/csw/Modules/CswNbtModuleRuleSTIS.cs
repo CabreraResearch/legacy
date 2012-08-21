@@ -8,6 +8,10 @@ namespace ChemSW.Nbt
     /// </summary>
     public class CswNbtModuleRuleSTIS : CswNbtModuleRule
     {
+        public CswNbtModuleRuleSTIS( CswNbtResources CswNbtResources ) : 
+            base( CswNbtResources ) 
+        { 
+        }
         public override CswNbtModuleName ModuleName { get { return CswNbtModuleName.STIS; } }
         public override void OnEnable() { }
         public override void OnDisable() { }
