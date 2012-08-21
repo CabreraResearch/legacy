@@ -29,7 +29,7 @@ namespace ChemSW.Nbt
         private void initModules()
         {
             ModulesHt.Clear();
-            foreach( CswNbtModule Module in Enum.GetValues( typeof( CswNbtModule ) ) )
+            foreach( CswNbtModuleName Module in Enum.GetValues( typeof( CswNbtModuleName ) ) )
             {
                 ModulesHt.Add( Module, false );
             }
@@ -43,7 +43,7 @@ namespace ChemSW.Nbt
                 {
                     try
                     {
-                        CswNbtModule Module = ModuleRow["name"].ToString();
+                        CswNbtModuleName Module = ModuleRow["name"].ToString();
                         //Enum.TryParse( ModuleRow["name"].ToString(), true, out Module );
                         ModulesHt[Module] = ( ModuleRow["enabled"].ToString() == "1" );
                     }
@@ -58,7 +58,7 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Returns whether a module is enabled
         /// </summary>
-        public bool IsModuleEnabled( CswNbtModule Module )
+        public bool IsModuleEnabled( CswNbtModuleName Module )
         {
             if( ModulesHt.Count == 0 )
             {
@@ -74,15 +74,15 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Collection of all enabled modules
         /// </summary>
-        public Collection<CswNbtModule> ModulesEnabled()
+        public Collection<CswNbtModuleName> ModulesEnabled()
         {
             if( ModulesHt.Count == 0 )
             {
                 initModules();
             }
 
-            Collection<CswNbtModule> EnabledModules = new Collection<CswNbtModule>();
-            foreach( CswNbtModule Module in ModulesHt.Keys )
+            Collection<CswNbtModuleName> EnabledModules = new Collection<CswNbtModuleName>();
+            foreach( CswNbtModuleName Module in ModulesHt.Keys )
             {
                 if( (bool) ModulesHt[Module] )
                     EnabledModules.Add( Module );
@@ -94,7 +94,7 @@ namespace ChemSW.Nbt
         /// This will explicitly enable or disable a set of modules.  
         /// Any modules not listed in either list will not be altered.
         /// </summary>
-        public bool UpdateModules( Collection<CswNbtModule> ModulesToEnable, Collection<CswNbtModule> ModulesToDisable )
+        public bool UpdateModules( Collection<CswNbtModuleName> ModulesToEnable, Collection<CswNbtModuleName> ModulesToDisable )
         {
             bool ret = false;
 
@@ -102,7 +102,7 @@ namespace ChemSW.Nbt
             DataTable ModulesTable = ModulesUpdate.getTable();
             foreach( DataRow ModuleRow in ModulesTable.Rows )
             {
-                CswNbtModule Module = ModuleRow["name"].ToString();
+                CswNbtModuleName Module = ModuleRow["name"].ToString();
                 //Enum.TryParse( ModuleRow["name"].ToString(), true, out Module );
                 if( ModulesToEnable.Contains( Module ) )
                 {

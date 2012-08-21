@@ -35,7 +35,7 @@ namespace ChemSW.Nbt.Actions
             {
                 throw new CswDniException( ErrorType.Error, "Cannot execute dispense contianer action with an undefined Source Container.", "Attempted to constuct CswNbtActDispenseContainer without a valid Source Container." );
             }
-            if( false == _CswNbtResources.Modules.IsModuleEnabled( CswNbtModule.CISPro ) )
+            if( false == _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.CISPro ) )
             {
                 throw new CswDniException( ErrorType.Error, "Cannot use the Dispense action without the required module.", "Attempted to constuct CswNbtActSubmitRequest without the required module." );
             }

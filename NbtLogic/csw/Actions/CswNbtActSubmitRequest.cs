@@ -33,7 +33,7 @@ namespace ChemSW.Nbt.Actions
         {
             _CswNbtResources = CswNbtResources;
             _CreateDefaultRequestNode = CreateDefaultRequestNode;
-            if( false == _CswNbtResources.Modules.IsModuleEnabled( CswNbtModule.CISPro ) )
+            if( false == _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.CISPro ) )
             {
                 throw new CswDniException( ErrorType.Error, "Cannot use the Submit Request action without the required module.", "Attempted to constuct CswNbtActSubmitRequest without the required module." );
             }

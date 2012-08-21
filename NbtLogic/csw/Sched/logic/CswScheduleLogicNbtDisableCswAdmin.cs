@@ -56,7 +56,7 @@ namespace ChemSW.Nbt.Sched
                 {
                     CswNbtNode ChemSWAdminUserNode = _CswNbtResources.Nodes.makeUserNodeFromUsername( CswNbtObjClassUser.ChemSWAdminUsername );
                     CswNbtObjClassUser CswAdminAsUser = (CswNbtObjClassUser) ChemSWAdminUserNode;
-                    if( false == _CswNbtResources.Modules.IsModuleEnabled( CswNbtModule.NBTManager ) )
+                    if( false == _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.NBTManager ) )
                     {
                         CswAdminAsUser.AccountLocked.Checked = Tristate.True;
                         CswAdminAsUser.PasswordProperty.ChangedDate = DateTime.MinValue;

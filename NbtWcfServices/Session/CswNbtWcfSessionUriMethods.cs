@@ -78,7 +78,7 @@ namespace NbtWebAppServices.WebServices
                     {
                         // case 21036
                         if( request.IsMobile &&
-                            false == _CswNbtWcfSessionResources.CswNbtResources.Modules.IsModuleEnabled( CswNbtModule.Mobile ) )
+                            false == _CswNbtWcfSessionResources.CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.Mobile ) )
                         {
                             AuthenticationStatus = AuthenticationStatus.ModuleNotEnabled;
                             _CswNbtWcfSessionResources.CswSessionManager.clearSession();

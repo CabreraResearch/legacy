@@ -37,7 +37,7 @@ namespace ChemSW.Nbt.WebServices
             JObject ret = new JObject();
             if( _CanEditModules )
             {
-                foreach( CswNbtModule Module in CswNbtModule._All )
+                foreach( CswNbtModuleName Module in CswNbtModuleName._All )
                 {
                     ret[Module.ToString()] = _CswNbtResources.Modules.IsModuleEnabled( Module );
                 }
@@ -53,12 +53,12 @@ namespace ChemSW.Nbt.WebServices
             JObject inModulesJson = JObject.Parse( inModules );
             if( _CanEditModules )
             {
-                Collection<CswNbtModule> ModulesToEnable = new Collection<CswNbtModule>();
-                Collection<CswNbtModule> ModulesToDisable = new Collection<CswNbtModule>();
+                Collection<CswNbtModuleName> ModulesToEnable = new Collection<CswNbtModuleName>();
+                Collection<CswNbtModuleName> ModulesToDisable = new Collection<CswNbtModuleName>();
 
                 foreach( JProperty ModulesJProp in inModulesJson.Properties() )
                 {
-                    CswNbtModule Module = ModulesJProp.Name;
+                    CswNbtModuleName Module = ModulesJProp.Name;
                     //Enum.TryParse( ModulesJProp.Name, true, out Module );
                     if( CswConvert.ToBoolean( ModulesJProp.Value ) )
                     {

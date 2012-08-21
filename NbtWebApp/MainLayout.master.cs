@@ -227,42 +227,42 @@ namespace ChemSW.Nbt.WebPages
                     dash_biosafety_off.Visible = true;
                     dash_nbtmgr_off.Visible = true;
 
-                    if( Master.CswNbtResources.Modules.IsModuleEnabled( CswNbtModule.IMCS ) )
+                    if( Master.CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.IMCS ) )
                     {
                         dash_imcs.Visible = true;
                         dash_imcs_off.Visible = false;
                     }
-                    if( Master.CswNbtResources.Modules.IsModuleEnabled( CswNbtModule.SI ) )
+                    if( Master.CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.SI ) )
                     {
                         dash_si.Visible = true;
                         dash_si_off.Visible = false;
                     }
-                    if( Master.CswNbtResources.Modules.IsModuleEnabled( CswNbtModule.CCPro ) )
+                    if( Master.CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.CCPro ) )
                     {
                         dash_ccpro.Visible = true;
                         dash_ccpro_off.Visible = false;
                     }
-                    if( Master.CswNbtResources.Modules.IsModuleEnabled( CswNbtModule.CISPro ) )
+                    if( Master.CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.CISPro ) )
                     {
                         dash_cispro.Visible = true;
                         dash_cispro_off.Visible = false;
                     }
-                    if( Master.CswNbtResources.Modules.IsModuleEnabled( CswNbtModule.STIS ) )
+                    if( Master.CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.STIS ) )
                     {
                         dash_stis.Visible = true;
                         dash_stis_off.Visible = false;
                     }
-                    if( Master.CswNbtResources.Modules.IsModuleEnabled( CswNbtModule.BioSafety ) )
+                    if( Master.CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.BioSafety ) )
                     {
                         dash_biosafety.Visible = true;
                         dash_biosafety_off.Visible = false;
                     }
-                    if( Master.CswNbtResources.Modules.IsModuleEnabled( CswNbtModule.Mobile ) )
+                    if( Master.CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.Mobile ) )
                     {
                         dash_hh.Visible = true;
                         dash_hh_off.Visible = false;
                     }
-                    if( Master.CswNbtResources.Modules.IsModuleEnabled( CswNbtModule.NBTManager ) )
+                    if( Master.CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.NBTManager ) )
                     {
                         dash_nbtmgr.Visible = true;
                         dash_nbtmgr_off.Visible = false;
