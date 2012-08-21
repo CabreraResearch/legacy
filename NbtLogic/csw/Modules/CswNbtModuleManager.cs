@@ -25,13 +25,14 @@ namespace ChemSW.Nbt
             _CswNbtResources = CswNbtResources;
         }
 
-        private SortedList ModulesHt = new SortedList();
+        private Dictionary<CswNbtModuleName, CswNbtModuleRule> _ModuleRules = new Dictionary<CswNbtModuleName, CswNbtModuleRule>();
+
         private void initModules()
         {
-            ModulesHt.Clear();
-            foreach( CswNbtModuleName Module in Enum.GetValues( typeof( CswNbtModuleName ) ) )
+            _ModuleRules.Clear();
+            foreach( CswNbtModuleName Module in CswNbtModuleName._All )
             {
-                ModulesHt.Add( Module, false );
+                _ModuleRules.Add( Module, CswNbtModuleRuleFactory.makeModuleRule( Module ) );
             }
 
             // Fetch modules from database
@@ -43,13 +44,17 @@ namespace ChemSW.Nbt
                 {
                     try
                     {
-                        CswNbtModuleName Module = ModuleRow["name"].ToString();
-                        //Enum.TryParse( ModuleRow["name"].ToString(), true, out Module );
-                        ModulesHt[Module] = ( ModuleRow["enabled"].ToString() == "1" );
+                        CswNbtModuleRule ModuleRule = _ModuleRules[ModuleRow["name"].ToString()];
+                        if( null != ModuleRule )
+                        {
+                            ModuleRule.Enabled = CswConvert.ToBoolean( ModuleRow["enabled"].ToString() );
+                        }
                     }
                     catch( Exception ex )
                     {
-                        throw new CswDniException( ErrorType.Error, "Invalid Module", "An invalid module was detected in the Modules table: " + ModuleRow["name"].ToString(), ex );
+                        throw new CswDniException( ErrorType.Error,
+                                                   "Invalid Module",
+                                                   "An invalid module was detected in the Modules table: " + ModuleRow["name"].ToString(), ex );
                     }
                 }
             } // if( _CswResources.IsInitializedForDbAccess )
@@ -60,32 +65,37 @@ namespace ChemSW.Nbt
         /// </summary>
         public bool IsModuleEnabled( CswNbtModuleName Module )
         {
-            if( ModulesHt.Count == 0 )
+            bool ret = false;     // Assume modules are disabled if we have no db connection (for login page)
+            if( _ModuleRules.Count == 0 )
             {
                 initModules();
             }
 
-            if( ModulesHt.Count > 0 )
-                return (bool) ModulesHt[Module];
-            else
-                return false;   // Assume modules are disabled if we have no db connection (for login page)
-        }
+            if( _ModuleRules.Count > 0 )
+            {
+                ret = _ModuleRules[Module].Enabled;
+            }
+            return ret;
+        } // IsModuleEnabled()
+        
 
         /// <summary>
         /// Collection of all enabled modules
         /// </summary>
         public Collection<CswNbtModuleName> ModulesEnabled()
         {
-            if( ModulesHt.Count == 0 )
+            if( _ModuleRules.Count == 0 )
             {
                 initModules();
             }
 
             Collection<CswNbtModuleName> EnabledModules = new Collection<CswNbtModuleName>();
-            foreach( CswNbtModuleName Module in ModulesHt.Keys )
+            foreach( CswNbtModuleName Module in _ModuleRules.Keys )
             {
-                if( (bool) ModulesHt[Module] )
+                if( _ModuleRules[Module].Enabled )
+                {
                     EnabledModules.Add( Module );
+                }
             }
             return EnabledModules;
         }
@@ -107,10 +117,12 @@ namespace ChemSW.Nbt
                 if( ModulesToEnable.Contains( Module ) )
                 {
                     ModuleRow["enabled"] = CswConvert.ToDbVal( true );
+                    _ModuleRules[Module].OnEnable();
                 }
                 if( ModulesToDisable.Contains( Module ) )
                 {
                     ModuleRow["enabled"] = CswConvert.ToDbVal( false );
+                    _ModuleRules[Module].OnDisable();
                 }
             }
             ret = ModulesUpdate.update( ModulesTable );
