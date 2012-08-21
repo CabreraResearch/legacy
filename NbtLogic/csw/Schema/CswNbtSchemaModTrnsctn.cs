@@ -486,7 +486,7 @@ namespace ChemSW.Nbt.Schema
 
                 foreach( DataRow CurrentRow in DataTable.Rows )
                 {
-                    CurrentRow[_CswAuditMetaData.AuditLevelColName] = _CswAuditMetaData.DefaultAuditLevel;
+                    CurrentRow[_CswAuditMetaData.AuditLevelColName] = AuditLevel;
                 }
 
                 CswTableUpdate.update( DataTable );

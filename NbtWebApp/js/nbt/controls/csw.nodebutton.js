@@ -168,7 +168,7 @@
 
             case Csw.enums.nbtButtonAction.popup:
                 Csw.debug.assert(false === Csw.isNullOrEmpty(actionJson), 'actionJson is null.');
-                Csw.openPopup(actionJson.url, 600, 800);
+                Csw.openPopup(actionJson.url);
                 break;
 
             case Csw.enums.nbtButtonAction.reauthenticate:

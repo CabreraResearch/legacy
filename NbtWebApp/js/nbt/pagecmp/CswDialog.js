@@ -957,48 +957,25 @@
                 }
             };
 
-            var doPrint;
-            var getEplContext = function(selectedVal) {
-                var jData2 = { PropId: cswPrivate.propid, PrintLabelNodeId: selectedVal || labelSel.val() };
-                Csw.ajax.post({
-                    url: cswPrivate.GetEPLTextUrl,
-                    async: false,
-                    data: jData2,
-                    success: function(data) {
-                        
-                        var labelx;
-                        
-                        if (data.controltype === 'ActiveX') {
-                            doPrint = function() {
-                                labelx = $('#labelx').get(0);
-                                labelx.EPLScript = data.epl;
-                                labelx.Print();
-                            };
-                            printBtn.show();
-                        } else {
-                            //hiddenDiv.append('<applet id="jZebra" name="jZebra" code="jzebra.PrintApplet.class" archive="jzebra.jar" width="0" height="0"><param name="printer" value="zebra"></applet>');
-                            Csw.subscribe('jZebra_Ready', function() {
-                                jZeb.findPrinters();
-                                doPrint = function() {
-                                    var printer = $('#printersList').val();
-                                    jZeb.setDefaultPrinter(printer);
-                                    return jZeb.print(data.epl);
-                                };
-                                printBtn.show();
-                            });
-                        }
-                        
-                    } // success
-                }); // ajax
+            var getEplContext = function() {
+                Csw.openPopup('Print.html?PropId=' + cswPrivate.propid + '&PrintLabelNodeId=' + labelSel.val(), 'Print ' + labelSel.selectedText(), {
+                    width: 400,
+                    height: 200,
+                    location: 'no',
+                    toolbar: 'no',
+                    status: 'no',
+                    menubar: 'no',
+                    chrome: 'yes',
+                    centerscreen: 'yes'
+                });
+                cswPublic.close();
             };
             
             cswPublic.div.br();
             var labelSelDiv = cswPublic.div.div();
             var labelSel = labelSelDiv.select({
-                ID: cswPrivate.ID + '_labelsel',
-                onChange: getEplContext
+                ID: cswPrivate.ID + '_labelsel'
             });
-            var jZeb = labelSelDiv.jZebra();
             
             var jData = { PropId: cswPrivate.propid };
             Csw.ajax.post({
@@ -1010,17 +987,12 @@
                             var label = data.labels[i];
                             labelSel.option({ value: label.nodeid, display: label.name });
                         }
-                        getEplContext();
-                        
                     } else {
                         
                         labelSelDiv.span({ text: 'No labels have been assigned!' });
                     }
                 } // success
             }); // ajax
-
-            var hiddenDiv = cswPublic.div.div().css({ visibility: 'hidden', border: '1px solid red' });
-            hiddenDiv.append('<OBJECT ID="labelx" Name="labelx" classid="clsid:A8926827-7F19-48A1-A086-B1A5901DB7F0" codebase="CafLabelPrintUtil.cab#version=0,1,6,0" width=0 height=0 align=center hspace=0 vspace=0></OBJECT>');
             
             cswPublic.div.button({ ID: 'print_label_close',
                 enabledText: 'Close',
@@ -1030,14 +1002,12 @@
                 }
             });
 
-            var printBtn = cswPublic.div.button({
+            cswPublic.div.button({
                 ID: 'print_label_print',
                 enabledText: 'Print',
                 //disabledText: 'Printing...', 
                 disableOnClick: false,
-                onClick: function () {
-                    doPrint();
-                }
+                onClick: getEplContext
             });
             //printBtn.hide();
             
