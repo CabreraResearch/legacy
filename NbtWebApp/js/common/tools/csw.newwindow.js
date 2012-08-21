@@ -29,10 +29,10 @@
 
 
     Csw.newWindow = Csw.newWindow ||
-        Csw.register('newWindow', function (url, height, width, callBack) { //onSuccess) {
+        Csw.register('newWindow', function (url, title, options, callBack) { //onSuccess) {
             var printWindow, printDoc;
 
-            printWindow = Csw.openPopup(url, height, width);
+            printWindow = Csw.openPopup(url, title, options);
             printDoc = printWindow.document;
 
             Csw.tryExec(callBack);
