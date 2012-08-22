@@ -84,9 +84,6 @@
     <Reference Include="CrystalDecisions.ReportSource, Version=13.0.2000.0, Culture=neutral, PublicKeyToken=692fbea5521e1304, processorArchitecture=MSIL" />
     <Reference Include="CrystalDecisions.Shared, Version=13.0.2000.0, Culture=neutral, PublicKeyToken=692fbea5521e1304, processorArchitecture=MSIL" />
     <Reference Include="CrystalDecisions.Web, Version=13.0.2000.0, Culture=neutral, PublicKeyToken=692fbea5521e1304, processorArchitecture=MSIL" />
-    <Reference Include="GoogleClosure">
-      <HintPath>..\packages\GoogleClosure.1.2\lib\net40\GoogleClosure.dll</HintPath>
-    </Reference>
     <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.4.5.4\lib\net40\Newtonsoft.Json.dll</HintPath>
     </Reference>
@@ -106,25 +103,21 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ServiceDrivers\CswNbtServiceLogicResources.cs" />
-    <Compile Include="ServiceDrivers\CswNbtServiceLogicGetProps.cs" />
-    <Compile Include="ServiceDrivers\CswNbtServiceLogic.cs" />
-    <Compile Include="ServiceDrivers\CswNbtServiceDriver.cs" />
-    <Compile Include="Services\CswNbtWebServiceContainer.cs" />
-    <Compile Include="Services\CswNbtWebServiceRequesting.cs" />
-    <Compile Include="Services\CswNbtWebServiceModules.cs" />
-    <Compile Include="Services\CswNbtWebServiceCreateMaterial.cs" />
-    <Compile Include="Services\CswNbtWebServiceGenerators.cs" />
-    <Compile Include="Services\CswNbtWebServiceReport.cs" />
-    <Compile Include="Services\wsTreeOfView.cs">
+    <Compile Include="WebSvc\Logic\CISPro\CswNbtWebServiceContainer.cs" />
+    <Compile Include="WebSvc\Logic\CISPro\CswNbtWebServiceRequesting.cs" />
+    <Compile Include="WebSvc\Logic\MetaData\CswNbtWebServiceModules.cs" />
+    <Compile Include="WebSvc\Logic\CISPro\CswNbtWebServiceCreateMaterial.cs" />
+    <Compile Include="WebSvc\Logic\Generators\CswNbtWebServiceGenerators.cs" />
+    <Compile Include="WebSvc\Logic\Nodes\CswNbtWebServiceReport.cs" />
+    <Compile Include="WebSvc\Logic\Views\wsTreeOfView.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Services\CswNbtWebServiceBinaryData.cs" />
-    <Compile Include="Services\CswNbtWebServiceNbtManager.cs" />
-    <Compile Include="Services\CswNbtWebServiceQuotas.cs" />
-    <Compile Include="Services\CswNbtWebServiceTable.cs" />
-    <Compile Include="Services\CswNbtWebServiceAuditing.cs" />
-    <Compile Include="Services\CswNbtWebServiceInspectionDesign.cs" />
+    <Compile Include="WebSvc\Logic\Nodes\CswNbtWebServiceBinaryData.cs" />
+    <Compile Include="WebSvc\Logic\NbtManager\CswNbtWebServiceNbtManager.cs" />
+    <Compile Include="WebSvc\Logic\MetaData\CswNbtWebServiceQuotas.cs" />
+    <Compile Include="WebSvc\Logic\Views\CswNbtWebServiceTable.cs" />
+    <Compile Include="WebSvc\Logic\Nodes\CswNbtWebServiceAuditing.cs" />
+    <Compile Include="WebSvc\Logic\SI\CswNbtWebServiceInspectionDesign.cs" />
     <Content Include="CafLabelPrintUtil.cab" />
     <Content Include="ConfigVars.aspx" />
     <Content Include="Content\images\ajax-loader.png" />
@@ -705,7 +698,6 @@
     <Content Include="crystal\urlreporting\appletviewer.js" />
     <Content Include="etc\far.exe" />
     <Content Include="ExternalLogin.aspx" />
-    <Content Include="ExternalLogin.html" />
     <Content Include="Images\icons\docs.gif" />
     <Content Include="Images\icons\edit.gif" />
     <Content Include="Images\icons\flag.gif" />
@@ -1159,9 +1151,7 @@
     <Content Include="js\thirdparty\multiselect\jquery.multiselect.min.js" />
     <Content Include="jzebra.jar" />
     <Content Include="NodeTypeTreeService.asmx" />
-    <Content Include="perf.html" />
     <Content Include="Report.aspx" />
-    <Content Include="Report.html" />
     <Content Include="Scripts\es5-shim.js" />
     <Content Include="Scripts\es5-shim.min.js" />
     <Content Include="Scripts\ES5.js" />
@@ -1175,121 +1165,14 @@
     <Content Include="Scripts\json2.js" />
     <Content Include="Scripts\json2.min.js" />
     <Content Include="Scripts\modernizr-2.5.3.js" />
-    <Content Include="Scripts\i18n\grid.locale-ar.js" />
-    <Content Include="Scripts\i18n\grid.locale-bg.js" />
-    <Content Include="Scripts\i18n\grid.locale-bg1251.js" />
-    <Content Include="Scripts\i18n\grid.locale-cat.js" />
-    <Content Include="Scripts\i18n\grid.locale-cn.js" />
-    <Content Include="Scripts\i18n\grid.locale-cs.js" />
-    <Content Include="Scripts\i18n\grid.locale-da.js" />
-    <Content Include="Scripts\i18n\grid.locale-de.js" />
-    <Content Include="Scripts\i18n\grid.locale-el.js" />
-    <Content Include="Scripts\i18n\grid.locale-en.js" />
-    <Content Include="Scripts\i18n\grid.locale-es.js" />
-    <Content Include="Scripts\i18n\grid.locale-fa.js" />
-    <Content Include="Scripts\i18n\grid.locale-fi.js" />
-    <Content Include="Scripts\i18n\grid.locale-fr.js" />
-    <Content Include="Scripts\i18n\grid.locale-gl.js" />
-    <Content Include="Scripts\i18n\grid.locale-he.js" />
-    <Content Include="Scripts\i18n\grid.locale-hu.js" />
-    <Content Include="Scripts\i18n\grid.locale-is.js" />
-    <Content Include="Scripts\i18n\grid.locale-it.js" />
-    <Content Include="Scripts\i18n\grid.locale-ja.js" />
-    <Content Include="Scripts\i18n\grid.locale-lt.js" />
-    <Content Include="Scripts\i18n\grid.locale-mne.js" />
-    <Content Include="Scripts\i18n\grid.locale-nl.js" />
-    <Content Include="Scripts\i18n\grid.locale-no.js" />
-    <Content Include="Scripts\i18n\grid.locale-pl.js" />
-    <Content Include="Scripts\i18n\grid.locale-pt-br.js" />
-    <Content Include="Scripts\i18n\grid.locale-pt.js" />
-    <Content Include="Scripts\i18n\grid.locale-ro.js" />
-    <Content Include="Scripts\i18n\grid.locale-ru.js" />
-    <Content Include="Scripts\i18n\grid.locale-sk.js" />
-    <Content Include="Scripts\i18n\grid.locale-sr.js" />
-    <Content Include="Scripts\i18n\grid.locale-sv.js" />
-    <Content Include="Scripts\i18n\grid.locale-th.js" />
-    <Content Include="Scripts\i18n\grid.locale-tr.js" />
-    <Content Include="Scripts\i18n\grid.locale-ua.js" />
     <Content Include="Scripts\jquery.cookie.js" />
     <Content Include="Scripts\jquery.mobile-1.0rc1.js" />
     <Content Include="Scripts\jquery.mobile-1.0rc1.min.js" />
-    <Content Include="wsTests1.html" />
-    <Content Include="ConnectTest.html" />
     <Content Include="Images\favicon.ico" />
     <Content Include="Design.aspx" />
     <Content Include="Design_Layout.aspx" />
     <Content Include="DisplayLog.aspx" />
     <Content Include="etc\CswSetupVbls.xml" />
-    <Content Include="etc\DataForHandHeld.xsl" />
-    <Content Include="etc\jsTree.xsl" />
-    <Content Include="etc\lib.xsl" />
-    <Content Include="etc\ReportingDataSet.xsl" />
-    <Content Include="etc\TelerikRadGrid.xsl" />
-    <Content Include="etc\TelerikRadGridProperty.xsl" />
-    <Content Include="etc\TelerikRadTreeView.xsl" />
-    <Content Include="fp_client\fpspread\4_0_3505_2008\HTC\button.htc" />
-    <Content Include="fp_client\fpspread\4_0_3505_2008\HTC\checkboxeditor.htc" />
-    <Content Include="fp_client\fpspread\4_0_3505_2008\HTC\checkboxrender.htc" />
-    <Content Include="fp_client\fpspread\4_0_3505_2008\HTC\cmdbar.htc" />
-    <Content Include="fp_client\fpspread\4_0_3505_2008\HTC\fpspread.htc" />
-    <Content Include="fp_client\fpspread\4_0_3505_2008\HTC\fpspread.js" />
-    <Content Include="fp_client\fpspread\4_0_3505_2008\HTC\fpspreadmac.js" />
-    <Content Include="fp_client\fpspread\4_0_3505_2008\HTC\listboxeditor.htc" />
-    <Content Include="fp_client\fpspread\4_0_3505_2008\HTC\listboxrender.htc" />
-    <Content Include="fp_client\fpspread\4_0_3505_2008\HTC\multicolumncombobox.css" />
-    <Content Include="fp_client\fpspread\4_0_3505_2008\HTC\multicolumncombobox.js" />
-    <Content Include="fp_client\fpspread\4_0_3505_2008\HTC\percenteditor.htc" />
-    <Content Include="fp_client\fpspread\4_0_3505_2008\HTC\percentrender.htc" />
-    <Content Include="fp_client\fpspread\4_0_3505_2008\HTC\radiobtnlisteditor.htc" />
-    <Content Include="fp_client\fpspread\4_0_3505_2008\HTC\tagcloud.htc" />
-    <Content Include="fp_client\fpspread\4_0_3505_2008\img\Add-d.gif" />
-    <Content Include="fp_client\fpspread\4_0_3505_2008\img\Add.gif" />
-    <Content Include="fp_client\fpspread\4_0_3505_2008\img\bshadow.png" />
-    <Content Include="fp_client\fpspread\4_0_3505_2008\img\Cancel-d.gif" />
-    <Content Include="fp_client\fpspread\4_0_3505_2008\img\Cancel.gif" />
-    <Content Include="fp_client\fpspread\4_0_3505_2008\img\cbbg.gif" />
-    <Content Include="fp_client\fpspread\4_0_3505_2008\img\chbg.gif" />
-    <Content Include="fp_client\fpspread\4_0_3505_2008\img\checked.gif" />
-    <Content Include="fp_client\fpspread\4_0_3505_2008\img\chm.png" />
-    <Content Include="fp_client\fpspread\4_0_3505_2008\img\Clear-d.gif" />
-    <Content Include="fp_client\fpspread\4_0_3505_2008\img\Clear.gif" />
-    <Content Include="fp_client\fpspread\4_0_3505_2008\img\Copy-d.gif" />
-    <Content Include="fp_client\fpspread\4_0_3505_2008\img\Copy.gif" />
-    <Content Include="fp_client\fpspread\4_0_3505_2008\img\cshadow.png" />
-    <Content Include="fp_client\fpspread\4_0_3505_2008\img\Delete-d.gif" />
-    <Content Include="fp_client\fpspread\4_0_3505_2008\img\Delete.gif" />
-    <Content Include="fp_client\fpspread\4_0_3505_2008\img\down.gif" />
-    <Content Include="fp_client\fpspread\4_0_3505_2008\img\downarrow.gif" />
-    <Content Include="fp_client\fpspread\4_0_3505_2008\img\Edit-d.gif" />
-    <Content Include="fp_client\fpspread\4_0_3505_2008\img\Edit.gif" />
-    <Content Include="fp_client\fpspread\4_0_3505_2008\img\First-d.gif" />
-    <Content Include="fp_client\fpspread\4_0_3505_2008\img\First.gif" />
-    <Content Include="fp_client\fpspread\4_0_3505_2008\img\gline.gif" />
-    <Content Include="fp_client\fpspread\4_0_3505_2008\img\gradient1_ch.gif" />
-    <Content Include="fp_client\fpspread\4_0_3505_2008\img\gradient1_ch_s.gif" />
-    <Content Include="fp_client\fpspread\4_0_3505_2008\img\Insert-d.gif" />
-    <Content Include="fp_client\fpspread\4_0_3505_2008\img\Insert.gif" />
-    <Content Include="fp_client\fpspread\4_0_3505_2008\img\Last-d.gif" />
-    <Content Include="fp_client\fpspread\4_0_3505_2008\img\Last.gif" />
-    <Content Include="fp_client\fpspread\4_0_3505_2008\img\lshadow.png" />
-    <Content Include="fp_client\fpspread\4_0_3505_2008\img\minus.gif" />
-    <Content Include="fp_client\fpspread\4_0_3505_2008\img\Next-d.gif" />
-    <Content Include="fp_client\fpspread\4_0_3505_2008\img\Next.gif" />
-    <Content Include="fp_client\fpspread\4_0_3505_2008\img\Paste-d.gif" />
-    <Content Include="fp_client\fpspread\4_0_3505_2008\img\Paste.gif" />
-    <Content Include="fp_client\fpspread\4_0_3505_2008\img\plus.gif" />
-    <Content Include="fp_client\fpspread\4_0_3505_2008\img\Prev-d.gif" />
-    <Content Include="fp_client\fpspread\4_0_3505_2008\img\Prev.gif" />
-    <Content Include="fp_client\fpspread\4_0_3505_2008\img\Print-d.gif" />
-    <Content Include="fp_client\fpspread\4_0_3505_2008\img\Print.gif" />
-    <Content Include="fp_client\fpspread\4_0_3505_2008\img\resize.gif" />
-    <Content Include="fp_client\fpspread\4_0_3505_2008\img\sbar.gif" />
-    <Content Include="fp_client\fpspread\4_0_3505_2008\img\spinner.gif" />
-    <Content Include="fp_client\fpspread\4_0_3505_2008\img\unchecked.gif" />
-    <Content Include="fp_client\fpspread\4_0_3505_2008\img\up.gif" />
-    <Content Include="fp_client\fpspread\4_0_3505_2008\img\uparrow.gif" />
-    <Content Include="fp_client\fpspread\4_0_3505_2008\img\Update-d.gif" />
-    <Content Include="fp_client\fpspread\4_0_3505_2008\img\Update.gif" />
     <Content Include="Global.asax" />
     <Content Include="ie6style.css" />
     <Content Include="Images\ajax\progress.gif" />
@@ -1765,21 +1648,21 @@
     <Compile Include="MainLayout.master.designer.cs">
       <DependentUpon>MainLayout.master</DependentUpon>
     </Compile>
-    <Compile Include="Services\CswNbtWebServiceGrid.cs" />
-    <Compile Include="Services\CswNbtWebServiceHeader.cs" />
-    <Compile Include="Services\CswNbtWebServiceMainMenu.cs" />
-    <Compile Include="Services\CswNbtWebServiceMetaData.cs" />
-    <Compile Include="Services\CswNbtWebServiceMobile.cs" />
-    <Compile Include="Services\CswNbtWebServiceNode.cs" />
-    <Compile Include="Services\CswNbtWebServicePrintLabels.cs" />
-    <Compile Include="Services\CswNbtWebServiceQuickLaunchItems.cs" />
-    <Compile Include="Services\CswNbtWebServiceSearch.cs" />
-    <Compile Include="Services\CswNbtWebServiceTabsAndProps.cs" />
-    <Compile Include="Services\CswNbtWebServiceTree.cs" />
-    <Compile Include="Services\CswNbtWebServiceView.cs" />
-    <Compile Include="Services\CswNbtWebServiceWelcomeItems.cs" />
-    <Compile Include="Services\TimingModule.cs" />
-    <Compile Include="Services\wsTools.cs" />
+    <Compile Include="WebSvc\Logic\Views\CswNbtWebServiceGrid.cs" />
+    <Compile Include="WebSvc\Logic\Menus\CswNbtWebServiceHeader.cs" />
+    <Compile Include="WebSvc\Logic\Menus\CswNbtWebServiceMainMenu.cs" />
+    <Compile Include="WebSvc\Logic\MetaData\CswNbtWebServiceMetaData.cs" />
+    <Compile Include="WebSvc\Logic\SI\CswNbtWebServiceMobile.cs" />
+    <Compile Include="WebSvc\Logic\Nodes\CswNbtWebServiceNode.cs" />
+    <Compile Include="WebSvc\Logic\Nodes\CswNbtWebServicePrintLabels.cs" />
+    <Compile Include="WebSvc\Logic\Menus\CswNbtWebServiceQuickLaunchItems.cs" />
+    <Compile Include="WebSvc\Logic\Views\CswNbtWebServiceSearch.cs" />
+    <Compile Include="WebSvc\Logic\Nodes\CswNbtWebServiceTabsAndProps.cs" />
+    <Compile Include="WebSvc\Logic\Views\CswNbtWebServiceTree.cs" />
+    <Compile Include="WebSvc\Logic\Views\CswNbtWebServiceView.cs" />
+    <Compile Include="WebSvc\Logic\Menus\CswNbtWebServiceWelcomeItems.cs" />
+    <Compile Include="WebSvc\Logic\Tools\TimingModule.cs" />
+    <Compile Include="WebSvc\Logic\Tools\wsTools.cs" />
     <Compile Include="Base.master.cs">
       <DependentUpon>Base.master</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -1885,6 +1768,9 @@
     <Compile Include="TermsOfUse.aspx.designer.cs">
       <DependentUpon>TermsOfUse.aspx</DependentUpon>
     </Compile>
+    <Compile Include="WebSvc\Core\CswWebSvcCommonMethods.cs" />
+    <Compile Include="WebSvc\Core\CswWebSvcResourceInitializerNbt.cs" />
+    <Compile Include="WebSvc\Returns\CswWebSvcRetJObJobj.cs" />
     <Compile Include="wsNBT.cs">
       <DependentUpon>wsNBT.asmx</DependentUpon>
       <SubType>Component</SubType>

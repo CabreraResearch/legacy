@@ -93,18 +93,6 @@ namespace ChemSW.Nbt.WebPages
                 //if( View == null )
                 //    throw new CswDniException( ErrorType.Warning, "Report has invalid View", "Report received a null view" );
 
-                //ICswNbtTree Tree = Master.CswNbtResources.Trees.getTreeFromView( View, true, true, false, false );
-                //Tree.goToRoot();
-                ////Tree.goToNthChild( 0 );
-                //if( Tree.getChildNodeCount() > 0 )
-                //{
-                // BROKEN BY case 24709
-                //Tree.XmlTreeDestinationFormat = XmlTreeDestinationFormat.ReportingDataSet;
-                //string TransformedXml = Tree.getTreeAsXml();
-                //StringReader XmlReader = new StringReader( TransformedXml );
-                //DataSet ReportData = new DataSet();
-                //ReportData.ReadXml( XmlReader );
-
                 string ReportSql = ReportNode.getUserContextSql( Master.CswNbtResources.CurrentNbtUser.Username );
                 CswArbitrarySelect ReportSelect = Master.CswNbtResources.makeCswArbitrarySelect( "Report_" + ReportNode.NodeId.ToString() + "_Select", ReportSql );
                 DataTable ReportTable = ReportSelect.getTable();
