@@ -100,13 +100,13 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 if( ModulesEnabled.WasModified )
                 {
-                    Collection<CswNbtResources.CswNbtModule> ModulesToEnable = new Collection<CswNbtResources.CswNbtModule>();
-                    Collection<CswNbtResources.CswNbtModule> ModulesToDisable = new Collection<CswNbtResources.CswNbtModule>();
+                    Collection<CswNbtModuleName> ModulesToEnable = new Collection<CswNbtModuleName>();
+                    Collection<CswNbtModuleName> ModulesToDisable = new Collection<CswNbtModuleName>();
 
                     foreach( string ModuleName in ModulesEnabled.YValues )
                     {
-                        CswNbtResources.CswNbtModule Module;
-                        Enum.TryParse( ModuleName, true, out Module );
+                        CswNbtModuleName Module = ModuleName;
+                        //Enum.TryParse( ModuleName, true, out Module );
                         if( ModulesEnabled.CheckValue( ModulesEnabledXValue, ModuleName ) )
                         {
                             ModulesToEnable.Add( Module );
@@ -119,7 +119,7 @@ namespace ChemSW.Nbt.ObjClasses
 
                     // switch to target schema
                     CswNbtResources OtherResources = makeOtherResources();
-                    OtherResources.UpdateModules( ModulesToEnable, ModulesToDisable );
+                    OtherResources.Modules.UpdateModules( ModulesToEnable, ModulesToDisable );
                     finalizeOtherResources( OtherResources );
 
                 } // if( ModulesEnabled.WasModified )
@@ -182,9 +182,12 @@ namespace ChemSW.Nbt.ObjClasses
                 this.SchemaName.StaticText = _CswNbtResources.CswDbCfgInfo.CurrentUserName;
 
                 CswCommaDelimitedString YValues = new CswCommaDelimitedString();
-                foreach( CswNbtResources.CswNbtModule Module in Enum.GetValues( typeof( CswNbtResources.CswNbtModule ) ) )
+                foreach( CswNbtModuleName ModuleName in CswNbtModuleName._All )
                 {
-                    YValues.Add( Module.ToString() );
+                    if( CswNbtModuleName.Unknown != ModuleName )
+                    {
+                        YValues.Add( ModuleName.ToString() );
+                    }
                 }
                 ModulesEnabled.YValues = YValues;
                 ModulesEnabled.XValues = new CswCommaDelimitedString() { ModulesEnabledXValue };
@@ -194,8 +197,8 @@ namespace ChemSW.Nbt.ObjClasses
                 //_CswNbtResources.AccessId = CompanyID.Text;
                 CswNbtResources OtherResources = makeOtherResources();
 
-                Collection<CswNbtResources.CswNbtModule> Modules = new Collection<CswNbtResources.CswNbtModule>();
-                foreach( CswNbtResources.CswNbtModule Module in OtherResources.ModulesEnabled() )
+                Collection<CswNbtModuleName> Modules = new Collection<CswNbtModuleName>();
+                foreach( CswNbtModuleName Module in OtherResources.Modules.ModulesEnabled() )
                 {
                     Modules.Add( Module );
                 }
@@ -207,9 +210,12 @@ namespace ChemSW.Nbt.ObjClasses
                 //_CswNbtResources.AccessId = OriginalAccessId;
                 finalizeOtherResources( OtherResources );
 
-                foreach( CswNbtResources.CswNbtModule Module in Enum.GetValues( typeof( CswNbtResources.CswNbtModule ) ) )
+                foreach( CswNbtModuleName ModuleName in CswNbtModuleName._All )
                 {
-                    ModulesEnabled.SetValue( ModulesEnabledXValue, Module.ToString(), Modules.Contains( Module ) );
+                    if( CswNbtModuleName.Unknown != ModuleName )
+                    {
+                        ModulesEnabled.SetValue( ModulesEnabledXValue, ModuleName.ToString(), Modules.Contains( ModuleName ) );
+                    }
                 }
 
                 this.SchemaVersion.StaticText = OtherSchemaVersion;
