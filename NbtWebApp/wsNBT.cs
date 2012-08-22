@@ -380,7 +380,7 @@ namespace ChemSW.Nbt.WebServices
             if( AuthenticationStatus == AuthenticationStatus.Authenticated )
             {
                 // case 21036
-                if( IsMobile && false == _CswNbtResources.IsModuleEnabled( CswNbtResources.CswNbtModule.Mobile ) )
+                if( IsMobile && false == _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.Mobile ) )
                 {
                     AuthenticationStatus = AuthenticationStatus.ModuleNotEnabled;
                     _CswSessionResources.CswSessionManager.clearSession();

@@ -37,9 +37,12 @@ namespace ChemSW.Nbt.WebServices
             JObject ret = new JObject();
             if( _CanEditModules )
             {
-                foreach( CswNbtResources.CswNbtModule Module in Enum.GetValues( typeof( CswNbtResources.CswNbtModule ) ) )
+                foreach( CswNbtModuleName ModuleName in CswNbtModuleName._All )
                 {
-                    ret[Module.ToString()] = _CswNbtResources.IsModuleEnabled( Module );
+                    if( CswNbtModuleName.Unknown != ModuleName )
+                    {
+                        ret[ModuleName.ToString()] = _CswNbtResources.Modules.IsModuleEnabled( ModuleName );
+                    }
                 }
             } // if(_CanEditModules)
 
@@ -53,13 +56,13 @@ namespace ChemSW.Nbt.WebServices
             JObject inModulesJson = JObject.Parse( inModules );
             if( _CanEditModules )
             {
-                Collection<CswNbtResources.CswNbtModule> ModulesToEnable = new Collection<CswNbtResources.CswNbtModule>();
-                Collection<CswNbtResources.CswNbtModule> ModulesToDisable = new Collection<CswNbtResources.CswNbtModule>();
+                Collection<CswNbtModuleName> ModulesToEnable = new Collection<CswNbtModuleName>();
+                Collection<CswNbtModuleName> ModulesToDisable = new Collection<CswNbtModuleName>();
 
                 foreach( JProperty ModulesJProp in inModulesJson.Properties() )
                 {
-                    CswNbtResources.CswNbtModule Module;
-                    Enum.TryParse( ModulesJProp.Name, true, out Module );
+                    CswNbtModuleName Module = ModulesJProp.Name;
+                    //Enum.TryParse( ModulesJProp.Name, true, out Module );
                     if( CswConvert.ToBoolean( ModulesJProp.Value ) )
                     {
                         ModulesToEnable.Add( Module );
@@ -70,7 +73,7 @@ namespace ChemSW.Nbt.WebServices
                     }
                 }
 
-                _CswNbtResources.UpdateModules( ModulesToEnable, ModulesToDisable );
+                _CswNbtResources.Modules.UpdateModules( ModulesToEnable, ModulesToDisable );
 
             } // if( _CanEditModules )
             return ret;

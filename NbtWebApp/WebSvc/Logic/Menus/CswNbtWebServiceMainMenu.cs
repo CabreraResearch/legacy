@@ -248,7 +248,7 @@ namespace ChemSW.Nbt.WebServices
                         //foreach( ExportOutputFormat FormatType in Enum.GetValues( typeof( ExportOutputFormat ) )
                         //    .Cast<ExportOutputFormat>()
                         //    .Where( FormatType => ExportOutputFormat.MobileXML != FormatType || 
-                        //            _CswNbtResources.IsModuleEnabled( CswNbtResources.CswNbtModule.Mobile ) ) )
+                        //            _CswNbtResources.Modules.IsModuleEnabled( CswNbtModule.Mobile ) ) )
                         //{
                         //    ExportObj[FormatType.ToString()] = new JObject();
                         //    ExportObj[FormatType.ToString()]["popup"] = Url + "&format=" + FormatType.ToString().ToLower() + "&renderingmode=" + View.ViewMode;
@@ -262,7 +262,7 @@ namespace ChemSW.Nbt.WebServices
                     //{
                     //ExportObj["haschildren"] = true;
                     //ExportObj["Report XML"] = "";
-                    //if( _CswNbtResources.IsModuleEnabled( CswNbtResources.CswNbtModule.Mobile ) )
+                    //if( _CswNbtResources.Modules.IsModuleEnabled( CswNbtModule.Mobile ) )
                     //{
                     //    if( null == View.SessionViewId )
                     //    {
