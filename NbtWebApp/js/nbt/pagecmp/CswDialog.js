@@ -520,7 +520,8 @@
             };
 
             var myEditMode = Csw.enums.editMode.EditInPopup;
-            var table = cswPublic.div.table();
+            var tableId = Csw.makeSafeId(cswPrivate.nodeids[0], Math.floor(Math.random() * 99999));
+            var table = cswPublic.div.table({ ID: tableId });
             if (false === Csw.isNullOrEmpty(cswPrivate.date) && false === cswPrivate.Multi) {
                 myEditMode = Csw.enums.editMode.AuditHistoryInPopup;
                 Csw.actions.auditHistory(table.cell(1, 1), {
