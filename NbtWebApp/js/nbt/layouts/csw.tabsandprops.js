@@ -981,7 +981,7 @@
                         cswPrivate.linkDiv.a({
                             text: 'As Report',
                             onClick: function () {
-                                Csw.openPopup('NodeReport.html?nodeid=' + Csw.tryParseObjByIdx(cswPrivate.nodeids, 0) + '&cswnbtnodekey=' + Csw.tryParseObjByIdx(cswPrivate.nodekeys, 0), 600, 800);
+                                Csw.openPopup('NodeReport.html?nodeid=' + Csw.tryParseObjByIdx(cswPrivate.nodeids, 0) + '&cswnbtnodekey=' + Csw.tryParseObjByIdx(cswPrivate.nodekeys, 0));
                             }
                         });
                     }

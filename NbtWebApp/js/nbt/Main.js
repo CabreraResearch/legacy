@@ -463,7 +463,7 @@ window.initMain = window.initMain || function (undefined) {
 
 
     function handleReport(reportid) {
-        Csw.openPopup("Report.html?reportid=" + reportid, 600, 800);
+        Csw.openPopup("Report.html?reportid=" + reportid);
     }
 
     function refreshMainMenu(options) {

@@ -16,6 +16,7 @@ using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Security;
 using ChemSW.RscAdo;
 using ChemSW.Security;
+using ChemSW.Session;
 using ChemSW.TblDn;
 
 namespace ChemSW.Nbt
@@ -150,6 +151,9 @@ namespace ChemSW.Nbt
         private bool _ExcludeDisabledModules = true;
         public bool ExcludeDisabledModules { get { return _ExcludeDisabledModules; } }
 
+        public double ServerInitTime = double.MinValue;
+        public double TotalServerTime = double.MinValue;
+
         public PooledConnectionState PooledConnectionState { get { return ( _CswResources.PooledConnectionState ); } }
 
 
@@ -162,6 +166,9 @@ namespace ChemSW.Nbt
         /// Provides a means to get session data
         /// </summary>
         public CswNbtSessionDataMgr SessionDataMgr;
+
+        public CswSessionManager CswSessionManager = null;
+
 
         ///// <summary>
         ///// Stores all Views used in this session, indexed by SessionViewId
