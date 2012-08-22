@@ -19,6 +19,7 @@
     /// </param>
         var o = {
             Url: '/NbtWebApp/wsNBT.asmx/getMainMenu',
+            width: 500,
             viewid: '',
             nodeid: '',
             cswnbtnodekey: '',
@@ -48,7 +49,7 @@
 //        };
 
         var menuOpts = { 
-            width: 500,
+            width: o.width,
             ajax: { 
                 urlMethod: 'getMainMenu', 
                 data: {

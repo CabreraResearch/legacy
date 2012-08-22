@@ -470,6 +470,7 @@ window.initMain = window.initMain || function (undefined) {
         //if (debugOn()) Csw.debug.log('Main.refreshMainMenu()');
 
         var o = {
+            $parent: $('#MainMenuDiv'),
             viewid: '',
             viewmode: '',
             nodeid: '',
@@ -477,12 +478,10 @@ window.initMain = window.initMain || function (undefined) {
             prefix: 'csw',
             grid: ''
         };
+        if (options) Csw.extend(o, options);
 
-        if (options) {
-            Csw.extend(o, options);
-        }
-
-        $('#MainMenuDiv').CswMenuMain({
+        o.$parent.CswMenuMain({
+            width: '',
             'viewid': o.viewid,
             'nodeid': o.nodeid,
             'cswnbtnodekey': o.cswnbtnodekey,
@@ -834,6 +833,7 @@ window.initMain = window.initMain || function (undefined) {
         //if (debugOn()) Csw.debug.log('Main.onSelectTreeNode()');
         if (Csw.clientChanges.manuallyCheckChanges()) {
             var o = {
+                tree: null,
                 viewid: '',
                 nodeid: '',
                 nodename: '',
@@ -849,10 +849,22 @@ window.initMain = window.initMain || function (undefined) {
 
             if (o.nodeid !== '' && o.nodeid !== 'root') {
                 getTabs({ 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey });
-                refreshMainMenu({ viewid: o.viewid, viewmode: Csw.enums.viewMode.tree.name, nodeid: o.nodeid, cswnbtnodekey: o.cswnbtnodekey });
+                refreshMainMenu({ 
+                    $parent: o.tree.menuDiv.$,
+                    viewid: o.viewid, 
+                    viewmode: Csw.enums.viewMode.tree.name, 
+                    nodeid: o.nodeid, 
+                    cswnbtnodekey: o.cswnbtnodekey 
+                });
             } else {
                 showDefaultContentTree({ viewid: o.viewid, viewmode: Csw.enums.viewMode.tree.name });
-                refreshMainMenu({ viewid: o.viewid, viewmode: Csw.enums.viewMode.tree.name, nodeid: '', cswnbtnodekey: '' });
+                refreshMainMenu({ 
+                    $parent: o.tree.menuDiv.$,
+                    viewid: o.viewid, 
+                    viewmode: Csw.enums.viewMode.tree.name, 
+                    nodeid: '', 
+                    cswnbtnodekey: '' 
+                });
             }
         }
     }; // onSelectTreeNode()
@@ -1074,6 +1086,7 @@ window.initMain = window.initMain || function (undefined) {
             //showempty: getEmptyTree,
             onSelectNode: function (optSelect) {
                 onSelectTreeNode({
+                    tree: mainTree,
                     viewid: optSelect.viewid,
                     nodeid: optSelect.nodeid,
                     cswnbtnodekey: optSelect.cswnbtnodekey
