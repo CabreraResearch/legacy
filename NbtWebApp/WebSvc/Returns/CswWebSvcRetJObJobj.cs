@@ -15,6 +15,11 @@ namespace ChemSW.Nbt.WebServices
 {
     public class CswWebSvcRetJObJobj : ICswWebSvcRetObj
     {
+        public CswWebSvcRetJObJobj()
+        {
+            JObject = new JObject();
+        }
+
         private CswNbtResources _CswNbtResources = null;
         public ICswResources CswResources
         {
@@ -25,30 +30,29 @@ namespace ChemSW.Nbt.WebServices
 
         }
 
-        JObject _JObject = new JObject();
 
-        public JObject JObject
-        {
-            set
-            {
-                _JObject = value;
-            }
+        public JObject JObject { set; get; }
+        //{
+        //    set
+        //    {
+        //        _JObject = value;
+        //    }
 
-            get
-            {
-                return ( _JObject );
-            }
-        }
+        //    get
+        //    {
+        //        return ( _JObject );
+        //    }
+        //}
 
         public void addException( Exception Exception )
         {
-            _JObject = CswWebSvcCommonMethods.jError( _CswNbtResources, Exception );
+            JObject = CswWebSvcCommonMethods.jError( _CswNbtResources, Exception );
         }//
 
         public void finalize( AuthenticationStatus AuthenticationStatus )
         {
 
-            CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, null, _JObject, AuthenticationStatus );
+            CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, null, JObject, AuthenticationStatus );
             // ******************************************
             // IT IS VERY IMPORTANT for this function not to require the use of database resources, 
             // since it occurs AFTER the call to _deInitResources(), and thus will leak Oracle connections 
