@@ -53,29 +53,13 @@ namespace ChemSW.Nbt.PropTypes
         }
 
         /// <summary>
-        /// Determines whether or not to show a confirmation dialog before performing the button action
-        /// </summary>
-        public bool EnableConfirmationDialog
-        {
-            get
-            {
-                return _CswNbtMetaDataNodeTypeProp.IsCompoundUnique();
-            }
-        }
-
-        /// <summary>
         /// The message to display in the confirmation dialog.
         /// </summary>
         public string ConfirmationDialogMessage
         {
             get
             {
-                string _confirmMessage = "You are about to perform the following action: " + PropName + ".  Are you sure?";
-                if( false == String.IsNullOrEmpty( _CswNbtMetaDataNodeTypeProp.ValueOptions ) )
-                {
-                    _confirmMessage = _CswNbtMetaDataNodeTypeProp.ValueOptions;
-                }
-                return _confirmMessage;
+                return _CswNbtMetaDataNodeTypeProp.ValueOptions;
             }
         }
 
@@ -129,7 +113,6 @@ namespace ChemSW.Nbt.PropTypes
             //ParentObject.Add( new JProperty( "text", Text ) );
             //ParentObject.Add( new JProperty( "mode", Mode.ToString().ToLower() ) );
             AsJSON( NodeTypeProp, ParentObject, MenuOptions, State );
-            ParentObject["useconfirmdialog"] = EnableConfirmationDialog.ToString();
             ParentObject["confirmmessage"] = ConfirmationDialogMessage;
         }
 

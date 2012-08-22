@@ -1631,14 +1631,6 @@ namespace ChemSW.Nbt.WebPages
                             ButtonModeValue.SelectedValue = SelectedNodeTypeProp.Extended;
                             ButtonModeRow.Cells[1].Controls.Add( ButtonModeValue );
 
-                            TableRow EnableConfirmationDialogRow = makeEditPropTableRow( EditPropPlaceHolder );
-                            ( (Literal) EnableConfirmationDialogRow.Cells[0].Controls[0] ).Text = "";
-                            CheckBox EnableConfirmationDialogValue = new CheckBox();
-                            EnableConfirmationDialogValue.ID = "EditProp_IsCompoundUnique" + SelectedNodeTypeProp.PropId.ToString();
-                            EnableConfirmationDialogValue.Text = "Enable Confirmation Dialog";
-                            EnableConfirmationDialogValue.Checked = CswConvert.ToBoolean( SelectedNodeTypeProp.IsCompoundUnique() );
-                            EnableConfirmationDialogRow.Cells[1].Controls.Add( EnableConfirmationDialogValue );
-
                             TableRow ConfirmationDialogMessageRow = makeEditPropTableRow( EditPropPlaceHolder );
                             ( (Literal) ConfirmationDialogMessageRow.Cells[0].Controls[0] ).Text = "Confirmation Dialog Message:";
                             TextBox ConfirmationDialogMessageValue = new TextBox();

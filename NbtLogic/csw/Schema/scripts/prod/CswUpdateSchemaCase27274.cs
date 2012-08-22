@@ -19,7 +19,6 @@ namespace ChemSW.Nbt.Schema
                 if( DisposeNTP != null )
                 {
                     DisposeNTP.ValueOptions = "Are you sure you want to Dispose this Container?";
-                    DisposeNTP.setIsCompoundUnique( true );
                 }
             }
         }//Update()

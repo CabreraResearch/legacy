@@ -45,7 +45,6 @@
                 state: state,
                 menuOptions: menuoptions,
                 selectedText: selectedText,
-                useconfirmdialog: propVals.useconfirmdialog,
                 confirmmessage: propVals.confirmmessage,
                 propId: o.propid,
                 ReadOnly: Csw.bool(o.ReadOnly),

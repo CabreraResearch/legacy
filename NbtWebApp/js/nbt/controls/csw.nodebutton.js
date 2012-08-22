@@ -20,7 +20,6 @@
                         mode: 'button',
                         messageDiv: {},
                         state: '',
-                        useconfirmdialog: false,
                         confirmmessage: '',
                         table: {},
                         btnCell: {},
@@ -80,7 +79,7 @@
                                 }); // ajax.post()
                             }
 
-                            if (Csw.bool(cswPrivate.useconfirmdialog) && false === Csw.isNullOrEmpty(cswPrivate.confirmmessage)) {
+                            if (false === Csw.isNullOrEmpty(cswPrivate.confirmmessage)) {
                                 $.CswDialog('GenericDialog', {
                                     ID: Csw.makeSafeId('ButtonConfirmationDialog'),
                                     title: 'Confirm ' + Csw.string(cswPrivate.value),
