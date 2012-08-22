@@ -42,90 +42,92 @@ namespace ChemSW.Nbt
 
             _CswNbtTree.goToRoot();
 
-            DataTable NodesTable = new DataTable();
-            string Sql = _makeNodeSql();
-
-            Int32 thisResultLimit = _CswNbtResources.TreeViewResultLimit * _getMaxPropertyCount();
-
-            CswArbitrarySelect ResultSelect = _CswNbtResources.makeCswArbitrarySelect( "TreeLoader_select", Sql );
-            CswTimer SqlTimer = new CswTimer();
-            try
+            if( string.Empty != _SearchTerm )
             {
-                NodesTable = ResultSelect.getTable( 0, thisResultLimit, false, false );
-            }
-            catch( Exception ex )
-            {
-                throw new CswDniException( ErrorType.Error, "Invalid View", "_getNodes() attempted to run invalid SQL: " + Sql, ex );
-            }
+                DataTable NodesTable = new DataTable();
+                string Sql = _makeNodeSql();
 
-            if( SqlTimer.ElapsedDurationInSeconds > 2 )
-            {
-                _CswNbtResources.logMessage( "Tree View SQL required longer than 2 seconds to run: " + Sql );
-            }
+                Int32 thisResultLimit = _CswNbtResources.TreeViewResultLimit * _getMaxPropertyCount();
 
-            Int32 PriorNodeId = Int32.MinValue;
-            Collection<CswNbtNodeKey> NewNodeKeys = null;
-            Int32 RowCount = 1;
-            foreach( DataRow NodesRow in NodesTable.Rows )
-            {
-                Int32 ThisNodeId = CswConvert.ToInt32( NodesRow["nodeid"] );
-                Int32 ThisNodeTypeId = CswConvert.ToInt32( NodesRow["nodetypeid"] );
-
-                // Verify permissions
-                // this could be a performance problem
-                CswNbtMetaDataNodeType ThisNodeType = _CswNbtResources.MetaData.getNodeType( ThisNodeTypeId );
-                if( false == RequireViewPermissions || _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, ThisNodeType ) )
+                CswArbitrarySelect ResultSelect = _CswNbtResources.makeCswArbitrarySelect( "TreeLoader_select", Sql );
+                CswTimer SqlTimer = new CswTimer();
+                try
                 {
+                    NodesTable = ResultSelect.getTable( 0, thisResultLimit, false, false );
+                }
+                catch( Exception ex )
+                {
+                    throw new CswDniException( ErrorType.Error, "Invalid View", "_getNodes() attempted to run invalid SQL: " + Sql, ex );
+                }
 
-                    // Handle property multiplexing
-                    // This assumes that property rows for the same nodeid are next to one another
-                    if( ThisNodeId != PriorNodeId )
-                    {
-                        PriorNodeId = ThisNodeId;
-                        NewNodeKeys = _CswNbtTree.loadNodeAsChildFromRow( null, NodesRow, false, string.Empty, true, true, NbtViewAddChildrenSetting.None, RowCount );
-                        RowCount++;
-                    } // if( ThisNodeId != PriorNodeId )
+                if( SqlTimer.ElapsedDurationInSeconds > 2 )
+                {
+                    _CswNbtResources.logMessage( "Tree View SQL required longer than 2 seconds to run: " + Sql );
+                }
 
-                    if( NewNodeKeys != null && NodesTable.Columns.Contains( "nodetypepropid" ) )
+                Int32 PriorNodeId = Int32.MinValue;
+                Collection<CswNbtNodeKey> NewNodeKeys = null;
+                Int32 RowCount = 1;
+                foreach( DataRow NodesRow in NodesTable.Rows )
+                {
+                    Int32 ThisNodeId = CswConvert.ToInt32( NodesRow["nodeid"] );
+                    Int32 ThisNodeTypeId = CswConvert.ToInt32( NodesRow["nodetypeid"] );
+
+                    // Verify permissions
+                    // this could be a performance problem
+                    CswNbtMetaDataNodeType ThisNodeType = _CswNbtResources.MetaData.getNodeType( ThisNodeTypeId );
+                    if( false == RequireViewPermissions || _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, ThisNodeType ) )
                     {
-                        Int32 ThisNTPId = CswConvert.ToInt32( NodesRow["nodetypepropid"] );
-                        if( ThisNTPId != Int32.MinValue )
+
+                        // Handle property multiplexing
+                        // This assumes that property rows for the same nodeid are next to one another
+                        if( ThisNodeId != PriorNodeId )
                         {
-                            foreach( CswNbtNodeKey NewNodeKey in NewNodeKeys )
+                            PriorNodeId = ThisNodeId;
+                            NewNodeKeys = _CswNbtTree.loadNodeAsChildFromRow( null, NodesRow, false, string.Empty, true, true, NbtViewAddChildrenSetting.None, RowCount );
+                            RowCount++;
+                        } // if( ThisNodeId != PriorNodeId )
+
+                        if( NewNodeKeys != null && NodesTable.Columns.Contains( "nodetypepropid" ) )
+                        {
+                            Int32 ThisNTPId = CswConvert.ToInt32( NodesRow["nodetypepropid"] );
+                            if( ThisNTPId != Int32.MinValue )
                             {
-                                _CswNbtTree.makeNodeCurrent( NewNodeKey );
-                                _CswNbtTree.addProperty( ThisNTPId,
-                                                         CswConvert.ToInt32( NodesRow["jctnodepropid"] ),
-                                                         NodesRow["propname"].ToString(),
-                                                         NodesRow["gestalt"].ToString(),
-                                                         CswConvert.ToString( NodesRow["fieldtype"] ),
-                                                         CswConvert.ToString( NodesRow["field1"] ),
-                                                         CswConvert.ToString( NodesRow["field2"] ),
-                                                         CswConvert.ToInt32( NodesRow["field1_fk"] ),
-                                                         CswConvert.ToInt32( NodesRow["field1_numeric"] ),
-                                                         CswConvert.ToBoolean( NodesRow["hidden"] ) );
+                                foreach( CswNbtNodeKey NewNodeKey in NewNodeKeys )
+                                {
+                                    _CswNbtTree.makeNodeCurrent( NewNodeKey );
+                                    _CswNbtTree.addProperty( ThisNTPId,
+                                                             CswConvert.ToInt32( NodesRow["jctnodepropid"] ),
+                                                             NodesRow["propname"].ToString(),
+                                                             NodesRow["gestalt"].ToString(),
+                                                             CswConvert.ToString( NodesRow["fieldtype"] ),
+                                                             CswConvert.ToString( NodesRow["field1"] ),
+                                                             CswConvert.ToString( NodesRow["field2"] ),
+                                                             CswConvert.ToInt32( NodesRow["field1_fk"] ),
+                                                             CswConvert.ToInt32( NodesRow["field1_numeric"] ),
+                                                             CswConvert.ToBoolean( NodesRow["hidden"] ) );
 
-                            } // foreach( CswNbtNodeKey NewNodeKey in NewNodeKeys )
-                        } // if( ThisNTPId != Int32.MinValue )
-                        _CswNbtTree.goToRoot();
-                    } // if( NewNodeKeys != null && NodesTable.Columns.Contains( "jctnodepropid" ) )
-                } // if( _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, ThisNodeTypeId ) )
-            } // foreach(DataRow NodesRow in NodesTable.Rows)
+                                } // foreach( CswNbtNodeKey NewNodeKey in NewNodeKeys )
+                            } // if( ThisNTPId != Int32.MinValue )
+                            _CswNbtTree.goToRoot();
+                        } // if( NewNodeKeys != null && NodesTable.Columns.Contains( "jctnodepropid" ) )
+                    } // if( _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, ThisNodeTypeId ) )
+                } // foreach(DataRow NodesRow in NodesTable.Rows)
 
-            // case 24678 - Mark truncated results
-            if( NodesTable.Rows.Count == thisResultLimit )
-            {
-                // Mark root truncated
+                // case 24678 - Mark truncated results
+                if( NodesTable.Rows.Count == thisResultLimit )
+                {
+                    // Mark root truncated
+                    _CswNbtTree.goToRoot();
+                    _CswNbtTree.setCurrentNodeChildrenTruncated( true );
+
+                    // Remove the last node (whose properties might have been truncated)
+                    _CswNbtTree.goToNthChild( ( _CswNbtTree.getChildNodeCount() - 1 ) );
+                    _CswNbtTree.removeCurrentNode();
+                }
+
                 _CswNbtTree.goToRoot();
-                _CswNbtTree.setCurrentNodeChildrenTruncated( true );
-
-                // Remove the last node (whose properties might have been truncated)
-                _CswNbtTree.goToNthChild( ( _CswNbtTree.getChildNodeCount() - 1 ) );
-                _CswNbtTree.removeCurrentNode();
             }
-
-            _CswNbtTree.goToRoot();
-
         } // load()
 
 

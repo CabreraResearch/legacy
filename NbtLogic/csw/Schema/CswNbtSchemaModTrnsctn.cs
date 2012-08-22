@@ -509,7 +509,7 @@ namespace ChemSW.Nbt.Schema
 
         //public bool IsModuleEnabled( CswNbtResources.CswModule Module )
         //{
-        //    return _CswNbtResources.IsModuleEnabled( Module );
+        //    return _CswNbtResources.Modules.IsModuleEnabled( Module );
         //}
 
         public CswNbtViewSelect ViewSelect { get { return _CswNbtResources.ViewSelect; } }
@@ -754,7 +754,7 @@ namespace ChemSW.Nbt.Schema
         }
 
 
-        public void createModuleActionJunction( CswNbtResources.CswNbtModule Module, CswNbtActionName ActionName )
+        public void createModuleActionJunction( CswNbtModuleName Module, CswNbtActionName ActionName )
         {
             Int32 ModuleId = getModuleId( Module );
             Int32 ActionId = getActionId( ActionName );
@@ -837,7 +837,7 @@ namespace ChemSW.Nbt.Schema
         //    }
         //}
 
-        public Int32 getModuleId( CswNbtResources.CswNbtModule Module )
+        public Int32 getModuleId( CswNbtModuleName Module )
         {
             Int32 RetModuleId = Int32.MinValue;
             CswTableSelect ModulesTable = makeCswTableSelect( "SchemaModTrnsctn_ModuleUpdate", "modules" );
@@ -866,7 +866,7 @@ namespace ChemSW.Nbt.Schema
             ModulesDataTable.Rows.Add( ModuleRow );
             Int32 NewModuleId = CswConvert.ToInt32( ModuleRow["moduleid"] );
             ModulesTable.update( ModulesDataTable );
-            _CswNbtResources.ClearModulesCache();
+            _CswNbtResources.Modules.ClearModulesCache();
             return NewModuleId;
         }
 
@@ -901,7 +901,7 @@ namespace ChemSW.Nbt.Schema
         /// <summary>
         /// Convenience function for making new jct_module_objectclass records
         /// </summary>
-        public void createModuleObjectClassJunction( CswNbtResources.CswNbtModule Module, Int32 ObjectClassId )
+        public void createModuleObjectClassJunction( CswNbtModuleName Module, Int32 ObjectClassId )
         {
             Int32 ModuleId = getModuleId( Module );
             createModuleObjectClassJunction( ModuleId, ObjectClassId );
@@ -926,7 +926,7 @@ namespace ChemSW.Nbt.Schema
         /// <summary>
         /// Convenience function for making new jct_module_nodetype records
         /// </summary>
-        public void createModuleNodeTypeJunction( CswNbtResources.CswNbtModule Module, Int32 NodeTypeId )
+        public void createModuleNodeTypeJunction( CswNbtModuleName Module, Int32 NodeTypeId )
         {
             Int32 ModuleId = getModuleId( Module );
             createModuleNodeTypeJunction( ModuleId, NodeTypeId );
