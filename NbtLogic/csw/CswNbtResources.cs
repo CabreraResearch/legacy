@@ -151,8 +151,8 @@ namespace ChemSW.Nbt
         private bool _ExcludeDisabledModules = true;
         public bool ExcludeDisabledModules { get { return _ExcludeDisabledModules; } }
 
-        public double ServerInitTime = double.MinValue;
-        public double TotalServerTime = double.MinValue;
+        public double ServerInitTime = double.NaN;
+        public double TotalServerTime = double.NaN;
 
         public PooledConnectionState PooledConnectionState { get { return ( _CswResources.PooledConnectionState ); } }
 
