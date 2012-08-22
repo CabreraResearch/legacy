@@ -22,7 +22,7 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataObjectClassProp materialOCP = sizeOC.getObjectClassProp( CswNbtObjClassSize.MaterialPropertyName );
 
             //make this server managed
-            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( materialOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.servermanaged, Tristate.True );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( materialOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.servermanaged, true );
 
             CswNbtMetaDataNodeType sizeNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Size" );
             if( null != sizeNT )

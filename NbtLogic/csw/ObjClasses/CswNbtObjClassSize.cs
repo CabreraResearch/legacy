@@ -55,8 +55,11 @@ namespace ChemSW.Nbt.ObjClasses
             if( null == Material.RelatedNodeId )
             {
                 CswPrimaryKey pk = new CswPrimaryKey();
-                pk.FromString( _CswNbtResources.CurrentNbtUser.Cookies["csw_currentnodeid"] );
-                Material.RelatedNodeId = pk;
+                bool succeeded = pk.FromString( _CswNbtResources.CurrentNbtUser.Cookies["csw_currentnodeid"] );
+                if( succeeded && _isMaterialID( pk ) ) //only assign the id if we got a real nodeid from cookies and it's indeed a material id
+                {
+                    Material.RelatedNodeId = pk;
+                }
             }
 
             _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
@@ -117,6 +120,15 @@ namespace ChemSW.Nbt.ObjClasses
 
         #endregion
 
+        #region Custom logic
+
+        private bool _isMaterialID( CswPrimaryKey nodeid )
+        {
+            CswNbtNode node = _CswNbtResources.Nodes.GetNode( nodeid );
+            return _Validate( node, CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass );
+        }
+
+        #endregion
 
     }//CswNbtObjClassSize
 
