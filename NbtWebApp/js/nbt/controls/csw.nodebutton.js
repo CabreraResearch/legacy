@@ -20,6 +20,8 @@
                         mode: 'button',
                         messageDiv: {},
                         state: '',
+                        useconfirmdialog: false,
+                        confirmmessage: '',
                         table: {},
                         btnCell: {},
                         size: 'medium',
@@ -78,19 +80,13 @@
                                 }); // ajax.post()
                             }
 
-                            //TODO - Case 27274 - replace static values
-                            var confirmDialogIsEnabled = function () {
-                                return Csw.string(cswPrivate.value) === 'Dispose';
-                            },
-                            confirmMessage = 'Are you sure you want to Dispose this Container?';
-
-                            if (confirmDialogIsEnabled()) {
+                            if (Csw.bool(cswPrivate.useconfirmdialog) && false === Csw.isNullOrEmpty(cswPrivate.confirmmessage)) {
                                 $.CswDialog('GenericDialog', {
                                     ID: Csw.makeSafeId('ButtonConfirmationDialog'),
-                                    title: 'Confirm Action',
+                                    title: 'Confirm ' + Csw.string(cswPrivate.value),
                                     height: 150,
                                     width: 400,
-                                    div: Csw.literals.div({ text: confirmMessage, align: 'center' }),
+                                    div: Csw.literals.div({ text: cswPrivate.confirmmessage, align: 'center' }),
                                     onOk: function (selectedOption) {
                                         performOnObjectClassButtonClick();
                                     },

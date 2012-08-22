@@ -1630,6 +1630,24 @@ namespace ChemSW.Nbt.WebPages
                             ButtonModeValue.Items.Add( new ListItem( "Link", CswNbtNodePropButton.ButtonMode.link.ToString() ) );
                             ButtonModeValue.SelectedValue = SelectedNodeTypeProp.Extended;
                             ButtonModeRow.Cells[1].Controls.Add( ButtonModeValue );
+
+                            TableRow EnableConfirmationDialogRow = makeEditPropTableRow( EditPropPlaceHolder );
+                            ( (Literal) EnableConfirmationDialogRow.Cells[0].Controls[0] ).Text = "";
+                            CheckBox EnableConfirmationDialogValue = new CheckBox();
+                            EnableConfirmationDialogValue.ID = "EditProp_IsCompoundUnique" + SelectedNodeTypeProp.PropId.ToString();
+                            EnableConfirmationDialogValue.Text = "Enable Confirmation Dialog";
+                            EnableConfirmationDialogValue.Checked = CswConvert.ToBoolean( SelectedNodeTypeProp.IsCompoundUnique() );
+                            EnableConfirmationDialogRow.Cells[1].Controls.Add( EnableConfirmationDialogValue );
+
+                            TableRow ConfirmationDialogMessageRow = makeEditPropTableRow( EditPropPlaceHolder );
+                            ( (Literal) ConfirmationDialogMessageRow.Cells[0].Controls[0] ).Text = "Confirmation Dialog Message:";
+                            TextBox ConfirmationDialogMessageValue = new TextBox();
+                            ConfirmationDialogMessageValue.CssClass = "textinput";
+                            ConfirmationDialogMessageValue.ID = "EditProp_ValueOptionsValue" + SelectedNodeTypeProp.PropId.ToString();
+                            if( SelectedNodeTypeProp.Extended != null )
+                                ConfirmationDialogMessageValue.Text = SelectedNodeTypeProp.ValueOptions;
+                            ConfirmationDialogMessageRow.Cells[1].Controls.Add( ConfirmationDialogMessageValue );
+
                             break;
 
                         case CswNbtMetaDataFieldType.NbtFieldType.Comments:
