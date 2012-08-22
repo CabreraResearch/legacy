@@ -93,21 +93,25 @@
 
             cswPrivate.makeGridMenu = function (viewid) {
                 if (cswPrivate.hasMenu) {
-                    cswPrivate.menuDiv.$.CswMenuMain({
-                        viewid: viewid,
-                        nodeid: cswPrivate.nodeid,
-                        cswnbtnodekey: cswPrivate.cswnbtnodekey,
-                        relatednodeid: Csw.string(cswPrivate.relatednodeid),
-                        relatednodetypeid: Csw.string(cswPrivate.relatednodetypeid),
-                        relatedobjectclassid: Csw.string(cswPrivate.relatedobjectclassid),
-                        propid: cswPrivate.ID,
-                        limitMenuTo: 'Add',
-                        onAddNode: function() {
-                            cswPrivate.reinitGrid(viewid);
-                        }
-                    }); // CswMenuMain
+                    var menuOpts = { 
+                        width: 150,
+                        ajax: { 
+                            urlMethod: 'getMainMenu', 
+                            data: {
+                                ViewId: viewid,
+                                SafeNodeKey: cswPrivate.cswnbtnodekey,
+                                PropIdAttr: cswPrivate.ID,
+                                LimitMenuTo: 'Add',
+                                ReadOnly: false
+                            }
+                        },
+                        onAlterNode: function() { cswPrivate.reinitGrid(viewid); },
+                        Multi: false,
+                        nodeTreeCheck: ''
+                    };
+                    Csw.composites.menu( cswPrivate.menuDiv, menuOpts );
                 }
-            };
+            }; // makeGridMenu()
 
             cswPublic.getSelectedNodeId = function () {
                 if (cswPublic.grid) {
