@@ -2002,7 +2002,7 @@ namespace ChemSW.Nbt.WebPages
                             ( (Literal) ReadOnlyDelimiterRow.Cells[0].Controls[0] ).Text = "ReadOnly Delimiter:";
                             TextBox ReadOnlyDelimiterValue = new TextBox();
                             ReadOnlyDelimiterValue.CssClass = "textinput";
-                            ReadOnlyDelimiterValue.ID = "EditProp_ReadOnlyDelimiter" + SelectedNodeTypeProp.PropId.ToString();
+                            ReadOnlyDelimiterValue.ID = "EditProp_ExtendedValue" + SelectedNodeTypeProp.PropId.ToString();
                             if( SelectedNodeTypeProp.Extended != null )
                                 ReadOnlyDelimiterValue.Text = SelectedNodeTypeProp.Extended;
                             ReadOnlyDelimiterRow.Cells[1].Controls.Add( ReadOnlyDelimiterValue );
@@ -2011,7 +2011,7 @@ namespace ChemSW.Nbt.WebPages
                             ( (Literal) HideThresholdRow.Cells[0].Controls[0] ).Text = "ReadOnly Hide Threshold:";
                             TextBox HideThresholdValue = new TextBox();
                             HideThresholdValue.CssClass = "textinput";
-                            HideThresholdValue.ID = "EditProp_HideThreshold" + SelectedNodeTypeProp.PropId.ToString();
+                            HideThresholdValue.ID = "EditProp_MaxValue" + SelectedNodeTypeProp.PropId.ToString();
                             if( !Double.IsNaN( SelectedNodeTypeProp.MaxValue ) )
                                 HideThresholdValue.Text = SelectedNodeTypeProp.MaxValue.ToString();
                             HideThresholdRow.Cells[1].Controls.Add( HideThresholdValue );
