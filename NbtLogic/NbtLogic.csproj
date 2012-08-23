@@ -96,6 +96,18 @@
     <Compile Include="csw\Batch\CswNbtBatchOpUpdateRegulatoryLists.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="csw\Modules\CswNbtModuleRuleSTIS.cs" />
+    <Compile Include="csw\Modules\CswNbtModuleRuleSI.cs" />
+    <Compile Include="csw\Modules\CswNbtModuleRuleNBTManager.cs" />
+    <Compile Include="csw\Modules\CswNbtModuleRuleMobile.cs" />
+    <Compile Include="csw\Modules\CswNbtModuleRuleIMCS.cs" />
+    <Compile Include="csw\Modules\CswNbtModuleRuleCISPro.cs" />
+    <Compile Include="csw\Modules\CswNbtModuleRuleCCPro.cs" />
+    <Compile Include="csw\Modules\CswNbtModuleRuleFactory.cs" />
+    <Compile Include="csw\Modules\CswNbtModuleRule.cs" />
+    <Compile Include="csw\Modules\CswNbtModuleRuleBioSafety.cs" />
+    <Compile Include="csw\Modules\CswNbtModuleName.cs" />
+    <Compile Include="csw\Modules\CswNbtModuleManager.cs" />
     <Compile Include="csw\Grid\CswNbtGridExtJsDataIndex.cs" />
     <Compile Include="csw\Grid\CswNbtGridExtJsGrid.cs" />
     <Compile Include="csw\Grid\CswNbtGridExtJsRow.cs" />

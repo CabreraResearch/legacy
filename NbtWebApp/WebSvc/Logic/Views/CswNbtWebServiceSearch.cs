@@ -64,19 +64,19 @@ namespace ChemSW.Nbt.WebServices
         //    if( null == SelectedNodeType )
         //    {
 
-        //        if( _CswNbtResources.IsModuleEnabled( CswNbtResources.CswNbtModule.IMCS ) )
+        //        if( _CswNbtResources.Modules.IsModuleEnabled( CswNbtModule.IMCS ) )
         //        {
         //            SearchOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.EquipmentClass );
         //        }
-        //        else if( _CswNbtResources.IsModuleEnabled( CswNbtResources.CswNbtModule.CISPro ) )
+        //        else if( _CswNbtResources.Modules.IsModuleEnabled( CswNbtModule.CISPro ) )
         //        {
         //            SearchOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass );
         //        }
-        //        else if( _CswNbtResources.IsModuleEnabled( CswNbtResources.CswNbtModule.BioSafety ) )
+        //        else if( _CswNbtResources.Modules.IsModuleEnabled( CswNbtModule.BioSafety ) )
         //        {
         //            SearchOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.BiologicalClass );
         //        }
-        //        else if( _CswNbtResources.IsModuleEnabled( CswNbtResources.CswNbtModule.SI ) )
+        //        else if( _CswNbtResources.Modules.IsModuleEnabled( CswNbtModule.SI ) )
         //        {
         //            SearchOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.InspectionTargetClass );
         //        }
