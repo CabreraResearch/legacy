@@ -77,7 +77,7 @@
   <ItemGroup>
     <Content Include="ConnectTest.html" />
     <Content Include="etc\far.exe" />
-    <Content Include="js\common\composites\csw.gridExtJs.js" />
+    <Content Include="ExternalLogin.html" />
     <Content Include="js\common\composites\csw.jzebra.js" />
     <Content Include="js\common\controls\csw.radiobutton.js" />
     <Content Include="js\common\controls\csw.buttonExt.js" />
@@ -86,6 +86,7 @@
     <Content Include="js\nbt\actions\csw.subscriptions.js" />
     <Content Include="js\common\composites\csw.menubutton.js" />
     <Content Include="js\nbt\composites\csw.quantity.js" />
+    <Content Include="js\nbt\controls\csw.nodebutton.js" />
     <Content Include="js\nbt\nodes\csw.node.link.js" />
     <Content Include="DevHeader.html" />
     <Content Include="Dev.html" />
@@ -106,8 +107,11 @@
     <Content Include="MainCswIncludes.html" />
     <Content Include="JavaScriptTest.html" />
     <Content Include="css\ChemSW.css" />
+    <Content Include="perf.html" />
     <Content Include="Print.html" />
     <Content Include="Template.html" />
+    <Content Include="TEST.html" />
+    <Content Include="wsTests1.html" />
     <None Include="css\cssVariables.pm" />
     <Content Include="css\csw.thingrid.css" />
     <Content Include="css\csw.label.css" />

@@ -52,7 +52,8 @@
                 atLeastOne: {},
                 saveBtn: {},
                 propertyData: null,
-                excludeOcProps: []
+                excludeOcProps: [],
+                async: true
             };
             var cswPublic = {};
 
@@ -94,8 +95,9 @@
 
             cswPrivate.getTabs = function (tabContentDiv) {
                 'use strict';
-                // For performance, don't bother getting tabs if we're in Add or Preview
+                // For performance, don't bother getting tabs if we're in Add, Temp, Preview or Table
                 if (cswPrivate.EditMode === Csw.enums.editMode.Add ||
+                    cswPrivate.EditMode === Csw.enums.editMode.Temp ||
                     cswPrivate.EditMode === Csw.enums.editMode.Preview ||
                         cswPrivate.EditMode === Csw.enums.editMode.Table) {
 
@@ -254,7 +256,7 @@
                         },
                         showConfigButton: false, //o.Config,
                         showExpandRowButton: cswPrivate.Config,
-                        showExpandColButton: (cswPrivate.Config && cswPrivate.EditMode !== Csw.enums.editMode.Table),
+                        showExpandColButton: (cswPrivate.Config && (cswPrivate.EditMode !== Csw.enums.editMode.Table && cswPrivate.EditMode !== Csw.enums.editMode.Temp)),
                         showRemoveButton: cswPrivate.Config,
                         onConfigOn: function () {
                             doUpdateSubProps(true);
@@ -372,7 +374,8 @@
                 }
 
                 if (Csw.isNullOrEmpty(cswPrivate.propertyData) ||
-                    cswPrivate.EditMode !== Csw.enums.editMode.Add) {
+                    (cswPrivate.EditMode !== Csw.enums.editMode.Add &&
+                    cswPrivate.EditMode !== Csw.enums.editMode.Temp)) {
 
                     Csw.ajax.post({
                         watchGlobal: cswPrivate.AjaxWatchGlobal,
@@ -831,7 +834,7 @@
                 return cswPrivate.nodeids[0];
             };
 
-            cswPublic.save = function (tabContentDiv, tabid, onSuccess) {
+            cswPublic.save = function (tabContentDiv, tabid, onSuccess, async) {
                 'use strict';
                 Csw.tryExec(function () {
 
@@ -839,18 +842,18 @@
                         var propIds = cswPrivate.updatePropJsonFromLayoutTable();
                         var sourcenodeid = Csw.tryParseObjByIdx(cswPrivate.nodeids, 0);
                         var sourcenodekey = Csw.tryParseObjByIdx(cswPrivate.nodekeys, 0);
-
+                        async = Csw.bool(async, true) && false === cswPrivate.Multi; //
                         Csw.ajax.post({
                             watchGlobal: cswPrivate.AjaxWatchGlobal,
                             urlMethod: cswPrivate.SavePropUrlMethod,
-                            async: (false === cswPrivate.Multi),
+                            async: async,
                             data: {
                                 EditMode: cswPrivate.EditMode,
-                                NodeId: sourcenodeid,
-                                SafeNodeKey: sourcenodekey,
-                                TabId: tabid,
+                                NodeId: Csw.string(sourcenodeid),
+                                SafeNodeKey: Csw.string(sourcenodekey),
+                                TabId: Csw.string(tabid),
                                 NodeTypeId: cswPrivate.nodetypeid,
-                                NewPropsJson: JSON.stringify(cswPrivate.propertyData),
+                                NewPropsJson: Csw.serialize(cswPrivate.propertyData),
                                 ViewId: Csw.cookie.get(Csw.cookie.cookieNames.CurrentViewId)
                             },
                             success: function (successData) {

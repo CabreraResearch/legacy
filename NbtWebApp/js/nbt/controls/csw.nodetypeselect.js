@@ -79,7 +79,7 @@
                                 ret.nodetypecount += 1;
                                 if (false === Csw.isNullOrEmpty(cswPrivate.value) &&
                                     Csw.number(cswPrivate.value) === Csw.number(id)) {
-                                    option = cswPublic.option({ value: id, display: name, selected: true });
+                                    option = cswPublic.option({ value: id, display: name, isSelected: true });
                                 } else {
                                     option = cswPublic.option({ value: id, display: name });
                                 }

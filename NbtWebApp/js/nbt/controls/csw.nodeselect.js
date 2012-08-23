@@ -81,7 +81,7 @@
                             nodecount += 1;
                             if (false === Csw.isNullOrEmpty(cswPrivate.selectedNodeId) && 
                                 nodeId === cswPrivate.selectedNodeId) {
-                                cswPublic.option({ value: nodeId, display: nodeName, selected: true });
+                                cswPublic.option({ value: nodeId, display: nodeName, isSelected: true });
                             } else {
                                 cswPublic.option({ value: nodeId, display: nodeName });
                             }
