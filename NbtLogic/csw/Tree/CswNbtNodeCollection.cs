@@ -70,6 +70,25 @@ namespace ChemSW.Nbt
             get { return GetNode( NodeId, DateTime.MinValue ); }
         }
 
+        /// <summary>
+        /// Index of nodes by NodeId.  NodeTypeId is looked up and NodeSpecies.Plain is assumed.  See <see cref="GetNode(CswPrimaryKey, int, NodeSpecies, DateTime)"/>
+        /// </summary>
+        /// <param name="NodeId">String representation of Primary Key of Node</param>
+        public CswNbtNode this[string NodePk]
+        {
+            get
+            {
+                CswNbtNode Ret = null;
+                CswPrimaryKey NodeId = new CswPrimaryKey();
+                NodeId.FromString( NodePk );
+                if( CswTools.IsPrimaryKey( NodeId ) )
+                {
+                    Ret = this[NodeId];
+                }
+                return Ret;
+            }
+        }
+
         public CswNbtNode GetNode( string NodeId, string NodeKey, CswDateTime Date )
         {
             CswNbtNode Node = null;
@@ -399,7 +418,7 @@ namespace ChemSW.Nbt
         {
 
             #region Enum Member
-		    
+
             /// <summary>
             /// Write the new node to the database
             /// </summary>
@@ -419,8 +438,8 @@ namespace ChemSW.Nbt
             /// <summary>
             /// Write the new temporary node to the database.
             /// </summary>
-            public const string MakeTemp = "MakeTemp"; 
-	        #endregion
+            public const string MakeTemp = "MakeTemp";
+            #endregion
 
             private static Dictionary<string, string> _Enums = new Dictionary<string, string>( StringComparer.OrdinalIgnoreCase )
                                                                    {
@@ -458,7 +477,7 @@ namespace ChemSW.Nbt
             {
                 return new MakeNodeOperation( Val );
             }
-            
+
             /// <summary>
             /// Implicit string cast
             /// </summary>
@@ -485,7 +504,7 @@ namespace ChemSW.Nbt
                 //do a string comparison on the fieldtypes
                 return ft1.ToString() == ft2.ToString();
             }
-            
+
             /// <summary>
             /// !=
             /// </summary>
@@ -529,12 +548,12 @@ namespace ChemSW.Nbt
             Node.OnRequestDeleteNode += new CswNbtNode.OnRequestDeleteNodeHandler( OnAfterDeleteNode );
             Node.fillFromNodeTypeId( NodeTypeId );
             Node.IsTemp = MakeNodeOperation.MakeTemp == Op;
-            if(Node.IsTemp)
+            if( Node.IsTemp )
             {
                 Node.SessionId = _CswNbtResources.Session.SessionId;
             }
 
-            switch(Op)
+            switch( Op )
             {
                 case MakeNodeOperation.WriteNode:
                 case MakeNodeOperation.MakeTemp:
@@ -550,7 +569,7 @@ namespace ChemSW.Nbt
                     _CswNbtNodeFactory.CswNbtNodeWriter.setDefaultPropertyValues( Node );
                     break;
             }
-            
+
             //if( Node.NodeId != Int32.MinValue )
             //{
             //    NodeHash.Add( new NodeHashKey( Node.NodeId, Node.NodeSpecies ), Node );
