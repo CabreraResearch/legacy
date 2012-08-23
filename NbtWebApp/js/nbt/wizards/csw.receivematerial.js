@@ -90,7 +90,8 @@
 
                 cswPrivate.wizardSteps = {
                     1: 'Create Containers',
-                    2: 'Define Properties'
+                    2: 'Define Properties',
+                    3: 'Attach MSDS'
                 };
                 cswPrivate.state.containerlimit = Csw.number(cswPrivate.state.containerlimit, 25);
                 cswPrivate.currentStepNo = cswPrivate.startingStep;
@@ -136,7 +137,7 @@
                 cswPrivate.wizard = Csw.layouts.wizard(cswParent.div(), {
                     ID: Csw.makeId(cswPrivate.ID, 'wizard'),
                     Title: 'Receive: ' + cswPrivate.state.tradeName,
-                    StepCount: 2,
+                    StepCount: 3,
                     Steps: cswPrivate.wizardSteps,
                     StartingStep: cswPrivate.startingStep,
                     FinishText: 'Finish',
@@ -179,6 +180,12 @@
                         cswPrivate.divStep1 = cswPrivate.divStep1 || cswPrivate.wizard.div(1);
                         cswPrivate.divStep1.empty();
 
+                        cswPrivate.divStep1.label({
+                            text: 'Select the number of containers and their quantities to receive.',
+                            cssclass: "wizardHelpDesc"
+                        });
+                        cswPrivate.divStep1.br({ number: 4 });
+
                         //If multiple container nodetypes exist
                         cswPrivate.container = {};
                         var containerSelect = Csw.nbt.wizard.nodeTypeSelect(cswPrivate.divStep1, {
@@ -213,7 +220,7 @@
                             });
                         };
 
-                        var makeBarcodeCheckBox = function () {
+                        var makeBarcodeCheckBox = function() {
                             cswPrivate.barcodeCheckBoxDiv = cswPrivate.barcodeCheckBoxDiv || cswPrivate.divStep1.div();
                             cswPrivate.barcodeCheckBoxDiv.empty();
 
@@ -221,7 +228,7 @@
                                 cellvalign: 'middle'
                             });
                             var printBarcodesCheckBox = checkBoxTable.cell(1, 1).checkBox({
-                                onChange: Csw.method(function () {
+                                onChange: Csw.method(function() {
                                     var val;
                                     if (printBarcodesCheckBox.checked()) {
                                         cswPrivate.printBarcodes = true;
@@ -231,7 +238,7 @@
                                 })
                             });
                             checkBoxTable.cell(1, 2).span({ text: 'Print barcode labels for new containers' });
-                        }
+                        };
 
                         cswPrivate.stepOneComplete = true;
                     }
@@ -244,15 +251,18 @@
                 return function () {
                     cswPrivate.toggleButton(cswPrivate.buttons.prev, true);
                     cswPrivate.toggleButton(cswPrivate.buttons.cancel, true);
-                    cswPrivate.toggleButton(cswPrivate.buttons.finish, true);
-                    cswPrivate.toggleButton(cswPrivate.buttons.next, false);
+                    cswPrivate.toggleButton(cswPrivate.buttons.finish, false);
+                    cswPrivate.toggleButton(cswPrivate.buttons.next, true);
 
                     if (false === cswPrivate.stepTwoComplete) {
                         cswPrivate.divStep2 = cswPrivate.divStep2 || cswPrivate.wizard.div(2);
                         cswPrivate.divStep2.empty();
 
-                        cswPrivate.divStep2.span({ text: '<b>Configure the new Container(s):</b>' });
-                        cswPrivate.divStep2.br({ number: 2 });
+                        cswPrivate.divStep2.label({
+                            text: 'Configure the properties to apply to all containers upon receipt.',
+                            cssclass: "wizardHelpDesc"
+                        });
+                        cswPrivate.divStep2.br({ number: 4 });
 
                         cswPrivate.tabsAndProps = Csw.nbt.wizard.addLayout(cswPrivate.divStep2, {
                             ID: cswPrivate.state.containerNodeTypeId + 'add_layout',
@@ -267,6 +277,58 @@
                     }, 250);
                 };
             } ());
+
+            //Step 3: MSDS upload
+            cswPrivate.makeStep3 = (function () {
+                cswPrivate.stepThreeComplete = false;
+
+                return function () {
+                    var div;
+
+                    cswPrivate.toggleButton(cswPrivate.buttons.prev, true);
+                    cswPrivate.toggleButton(cswPrivate.buttons.cancel, true);
+                    cswPrivate.toggleButton(cswPrivate.buttons.next, false);
+                    cswPrivate.toggleButton(cswPrivate.buttons.finish, true);
+
+                    if (false === cswPrivate.stepThreeComplete) {
+                        cswPrivate.divStep3 = cswPrivate.divStep3 || cswPrivate.wizard.div(3);
+                        cswPrivate.divStep3.empty();
+
+                        if (Csw.isNullOrEmpty(cswPrivate.state.documentTypeId)) {
+                            cswPrivate.divStep3.label({
+                                text: "No Material Documents have been defined. Click Finish to complete the wizard.",
+                                cssclass: "wizardHelpDesc"
+                            });
+                        } else {
+
+                            cswPrivate.divStep3.label({
+                                text: "Define a Material Safety Data Sheet to attach to this material.",
+                                cssclass: "wizardHelpDesc"
+                            });
+                            cswPrivate.divStep3.br({ number: 4 });
+
+                            div = cswPrivate.divStep3.div();
+
+                            cswPrivate.documentTabsAndProps = Csw.layouts.tabsAndProps(div, {
+                                nodetypeid: cswPrivate.state.documentTypeId,
+                                showSaveButton: false,
+                                EditMode: Csw.enums.editMode.Add,
+                                ReloadTabOnSave: false,
+                                ShowAsReport: false,
+                                excludeOcProps: ['owner'],
+                                onNodeIdSet: function (documentId) {
+                                    cswPrivate.state.documentId = documentId;
+                                }
+                            });
+
+                        }
+
+                        cswPrivate.stepThreeComplete = true;
+                    }
+                };
+
+            }());
+
 
             (function _post() {
                 cswPrivate.makeStep1();

@@ -591,7 +591,7 @@ namespace ChemSW.Nbt.ObjClasses
                 // case 24488 - When Location is modified, verify that:
                 //  the Material's Storage Compatibility is null,
                 //  or the Material's Storage Compatibility is one the selected values in the new Location.
-                CswNbtNodePropImageList materialStorageCompatibilty = MaterialNode.Properties[CswNbtObjClassMaterial.StorageCompatibilityPropertyName];
+                CswNbtNodePropImageList materialStorageCompatibilty = MaterialNode.Properties[CswNbtObjClassMaterial.PropertyName.StorageCompatibility];
                 CswNbtNode locationNode = _CswNbtResources.Nodes.GetNode( Location.SelectedNodeId );
                 if( null != locationNode ) //what if the user didn't specify a location?
                 {

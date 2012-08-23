@@ -70,9 +70,9 @@ namespace ChemSW.Nbt.WebServices
             Ret.VisibilityUserId = _CswNbtResources.CurrentNbtUser.UserId;
             CswNbtMetaDataNodeType MaterialNt = _CswNbtResources.MetaData.getNodeType( NodeTypeId );
             CswNbtViewRelationship MaterialRel = Ret.AddViewRelationship( MaterialNt, false );
-            CswNbtMetaDataNodeTypeProp TradeNameNtp = MaterialNt.getNodeTypePropByObjectClassProp( CswNbtObjClassMaterial.TradenamePropertyName );
-            CswNbtMetaDataNodeTypeProp SupplierNtp = MaterialNt.getNodeTypePropByObjectClassProp( CswNbtObjClassMaterial.SupplierPropertyName );
-            CswNbtMetaDataNodeTypeProp PartNoNtp = MaterialNt.getNodeTypePropByObjectClassProp( CswNbtObjClassMaterial.PartNumberPropertyName );
+            CswNbtMetaDataNodeTypeProp TradeNameNtp = MaterialNt.getNodeTypePropByObjectClassProp( CswNbtObjClassMaterial.PropertyName.Tradename );
+            CswNbtMetaDataNodeTypeProp SupplierNtp = MaterialNt.getNodeTypePropByObjectClassProp( CswNbtObjClassMaterial.PropertyName.Supplier );
+            CswNbtMetaDataNodeTypeProp PartNoNtp = MaterialNt.getNodeTypePropByObjectClassProp( CswNbtObjClassMaterial.PropertyName.PartNumber );
 
             Ret.AddViewPropertyAndFilter( MaterialRel, TradeNameNtp, Tradename );
             Ret.AddViewPropertyAndFilter( MaterialRel, SupplierNtp, SupplierId.PrimaryKey.ToString(), CswNbtSubField.SubFieldName.NodeID );
