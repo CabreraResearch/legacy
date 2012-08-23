@@ -22,7 +22,10 @@
                     ID: o.ID,
                     cssclass: 'selectinput',
                     values: options,
-                    isMultiEdit: o.Multi
+                    readonlyless: propVals.readonlyless,
+                    readonlymore: propVals.readonlymore,
+                    isMultiEdit: o.Multi,
+                    EditMode: o.EditMode
                 });
             }
         },

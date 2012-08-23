@@ -224,6 +224,9 @@ namespace ChemSW.Nbt.ObjClasses
                 case "weeks":
                     DefaultExpDate = DefaultExpDate.AddDays( this.ExpirationInterval.Quantity * 7 );
                     break;
+                case "months":
+                    DefaultExpDate = DefaultExpDate.AddMonths( CswConvert.ToInt32( this.ExpirationInterval.Quantity ) );
+                    break;
                 case "years":
                     DefaultExpDate = DefaultExpDate.AddYears( CswConvert.ToInt32( this.ExpirationInterval.Quantity ) );
                     break;

@@ -46,7 +46,6 @@ namespace ChemSW.Nbt.WebServices
     {
         // case 25887
         CswTimer Timer = new CswTimer();
-        double ServerInitTime = 0;
 
 
         #region Session and Resource Management
@@ -108,7 +107,7 @@ namespace ChemSW.Nbt.WebServices
                 }
             }
 
-            ServerInitTime = Timer.ElapsedDurationInMilliseconds;
+            _CswNbtResources.ServerInitTime = Timer.ElapsedDurationInMilliseconds;
 
             return ret;
 
@@ -132,6 +131,9 @@ namespace ChemSW.Nbt.WebServices
                 OtherResources.finalize();
                 OtherResources.release();
             }
+
+            _CswNbtResources.TotalServerTime = Timer.ElapsedDurationInMilliseconds;
+
         } // _deInitResources()
 
         #region Sessions Action

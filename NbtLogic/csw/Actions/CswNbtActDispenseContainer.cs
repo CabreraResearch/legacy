@@ -222,7 +222,8 @@ namespace ChemSW.Nbt.Actions
                     Ret.AddViewPropertyFilter( QuantityVp, CswNbtSubField.SubFieldName.Value, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.GreaterThan, Value: "0" );
 
                     CswNbtViewProperty ExpirationDateVp = Ret.AddViewProperty( ContainerRel, ContainerOc.getObjectClassProp( CswNbtObjClassContainer.ExpirationDatePropertyName ) );
-                    Ret.AddViewPropertyFilter( ExpirationDateVp, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.GreaterThanOrEquals, Value: "today" );
+                    Ret.AddViewPropertyFilter( ExpirationDateVp, CswNbtPropFilterSql.PropertyFilterConjunction.Or, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.GreaterThanOrEquals, Value: "today" );
+                    Ret.AddViewPropertyFilter( ExpirationDateVp, CswNbtPropFilterSql.PropertyFilterConjunction.Or, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Null );
                 }
             }
 

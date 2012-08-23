@@ -48,8 +48,6 @@ namespace ChemSW.WebSvc
         {
             AuthenticationStatus ReturnVal = _CswSessionResourcesNbt.attemptRefresh();
 
-
-
             if( ReturnVal == AuthenticationStatus.Authenticated )
             {
                 // Set audit context
