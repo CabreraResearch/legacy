@@ -34,7 +34,7 @@
                 onClick: null,
                 isEnabled: true,
                 bindOnEnter: false,
-                size: 'medium',
+                size: 'small',
                 tooltip: {
                     title: '',
                     width: 100,
