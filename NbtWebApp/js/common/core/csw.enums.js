@@ -53,7 +53,8 @@
             DefaultValue: 'DefaultValue',
             AuditHistoryInPopup: 'AuditHistoryInPopup',
             Preview: 'Preview',
-            Table: 'Table'
+            Table: 'Table',
+            Temp: 'Temp'
         });
 
     Csw.enums.errorType = Csw.enums.errorType ||

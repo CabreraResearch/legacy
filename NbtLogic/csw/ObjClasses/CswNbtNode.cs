@@ -24,8 +24,8 @@ namespace ChemSW.Nbt
                                                                        { DefaultValue, DefaultValue },
                                                                        { AuditHistoryInPopup, AuditHistoryInPopup },
                                                                        { Preview, Preview },
-                                                                       { Table, Table }
-            
+                                                                       { Table, Table },
+                                                                       { Temp, Temp }
                                                                    };
         /// <summary>
         /// 
@@ -83,6 +83,11 @@ namespace ChemSW.Nbt
         /// Adding a new node in a popup
         /// </summary>
         public const string Add = "Add";
+
+        /// <summary>
+        /// Adding/Editing a temporary node
+        /// </summary>
+        public const string Temp = "Temp";
 
         /// <summary>
         /// Editing a node in a popup
