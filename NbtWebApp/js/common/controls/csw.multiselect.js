@@ -15,9 +15,12 @@
                 values: [],
                 multiple: true,
                 cssclass: '',
+                readonlyless: '',
+                readonlymore: '',
                 isMultiEdit: false,
                 onChange: null, //function () {}
-                isControl: false
+                isControl: false,
+                EditMode: ''
             };
 
             var cswPublic = {};
@@ -30,12 +33,19 @@
 
                 var optionCount = 0,
                     isMultiEdit = Csw.bool(cswPrivate.isMultiEdit),
-                    values = cswPrivate.values;
-                delete cswPrivate.values;
+                    values = cswPrivate.values,
+                    parentDiv = cswParent.div({ ID: Csw.makeId(cswPrivate.ID, 'multiListDiv') }),
+                    table = parentDiv.table({ ID: Csw.makeId(cswPrivate.ID, 'tbl') }),
+                    moreDivCell = table.cell(1, 1),
+                    editBtnCell = table.cell(1, 2),
+                    multiSelectCell = table.cell(2, 1),
+                    morediv = moreDivCell.moreDiv({ ID: Csw.makeId(cswPrivate.ID, cswPrivate.ID + '_morediv') });
 
-                cswPrivate.select = cswParent.select(cswPrivate);
+                delete cswPrivate.values;
+                morediv.moreLink.hide();
+                cswPrivate.select = multiSelectCell.select(cswPrivate);
+                multiSelectCell.hide();
                 cswPublic = Csw.dom({}, cswPrivate.select);
-                //Csw.extend(cswPublic, Csw.literals.select(cswPrivate));
 
                 if (Csw.isFunction(cswPrivate.onChange)) {
                     cswPrivate.select.bind('change', function () {
@@ -54,12 +64,33 @@
                     }
                 });
 
-                var filterThreshold = 20;
-                if (optionCount > filterThreshold) {
-                    cswPrivate.select.$.multiselect().multiselectfilter();
+                if (false === Csw.isNullOrEmpty(cswPrivate.readonlyless)) {
+                    morediv.shownDiv.span({ text: cswPrivate.readonlyless });
+                    if (false === Csw.isNullOrEmpty(cswPrivate.readonlymore)) {
+                        morediv.hiddenDiv.span({ text: cswPrivate.readonlymore });
+                        morediv.moreLink.show();
+                    }
+                }
+
+                var makeMultiSelect = function () {
+                    moreDivCell.hide();
+                    editBtnCell.hide();
+                    if (optionCount > 20) {
+                        cswPrivate.select.$.multiselect().multiselectfilter();
+                    } else {
+                        cswPrivate.select.$.multiselect();
+                    }
+                    multiSelectCell.show();
+                }
+
+                if (cswPrivate.EditMode === Csw.enums.editMode.Add) {
+                    makeMultiSelect();
                 } else {
-                    cswPrivate.select.$.multiselect({
-                        selectedList: filterThreshold
+                    editBtnCell.imageButton({
+                        ButtonType: Csw.enums.imageButton_ButtonType.Edit,
+                        AlternateText: 'Edit',
+                        ID: Csw.makeId(cswPrivate.ID, 'toggle'),
+                        onClick: makeMultiSelect
                     });
                 }
 

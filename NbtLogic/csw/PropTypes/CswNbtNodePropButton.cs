@@ -28,16 +28,16 @@ namespace ChemSW.Nbt.PropTypes
         public CswNbtNodePropButton( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp )
             : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp )
         {
-            _FieldTypeRule  = (CswNbtFieldTypeRuleButton) CswNbtMetaDataNodeTypeProp.getFieldTypeRule();
+            _FieldTypeRule = (CswNbtFieldTypeRuleButton) CswNbtMetaDataNodeTypeProp.getFieldTypeRule();
             _StateSubField = _FieldTypeRule.StateSubField;
             _MenuOptionsSubField = _FieldTypeRule.MenuOptionsSubField;
-        
+
         }
 
         private CswNbtFieldTypeRuleButton _FieldTypeRule;
         private CswNbtSubField _StateSubField;
         private CswNbtSubField _MenuOptionsSubField;
-        
+
 
         public string Text
         {
@@ -49,6 +49,17 @@ namespace ChemSW.Nbt.PropTypes
             get
             {
                 return _CswNbtMetaDataNodeTypeProp.Extended;
+            }
+        }
+
+        /// <summary>
+        /// The message to display in the confirmation dialog.
+        /// </summary>
+        public string ConfirmationDialogMessage
+        {
+            get
+            {
+                return _CswNbtMetaDataNodeTypeProp.ValueOptions;
             }
         }
 
@@ -68,7 +79,7 @@ namespace ChemSW.Nbt.PropTypes
             get { return _CswNbtNodePropData.GetPropRowValue( _MenuOptionsSubField.Column ); }
             set { _CswNbtNodePropData.SetPropRowValue( _MenuOptionsSubField.Column, value ); }
         }
-        
+
         public string State
         {
             get { return _CswNbtNodePropData.GetPropRowValue( _StateSubField.Column ); }
@@ -102,6 +113,7 @@ namespace ChemSW.Nbt.PropTypes
             //ParentObject.Add( new JProperty( "text", Text ) );
             //ParentObject.Add( new JProperty( "mode", Mode.ToString().ToLower() ) );
             AsJSON( NodeTypeProp, ParentObject, MenuOptions, State );
+            ParentObject["confirmmessage"] = ConfirmationDialogMessage;
         }
 
         public static void AsJSON( CswNbtMetaDataNodeTypeProp NodeTypeProp, JObject ParentObject, string MenuOptions, string SelectedText )
