@@ -18,7 +18,7 @@ namespace ChemSW.Nbt.Schema
                 CswNbtMetaDataNodeTypeProp DisposeNTP = _CswNbtSchemaModTrnsctn.MetaData.getNodeTypeProp( ContainerNT.NodeTypeId, "Dispose" );
                 if( DisposeNTP != null )
                 {
-                    DisposeNTP.ValueOptions = "Are you sure you want to Dispose this Container?";
+                    DisposeNTP.ValueOptions = "Are you sure you want to dispose this container?";
                 }
             }
         }//Update()
