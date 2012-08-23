@@ -23,7 +23,8 @@
                     relationships = [],
                     cellCol = 1,
                     selectedNodeType = {},
-                    addImage = {};
+                    addImage = {},
+                    onAddNodeFunc = {};
 
                 // Default to selected node as relationship value for new nodes being added
                 if (false === Csw.isNullOrEmpty(o.relatednodeid) &&
@@ -83,6 +84,11 @@
 
                         propDiv.$.hover(function (event) { Csw.nodeHoverIn(event, hiddenValue.val()); }, Csw.nodeHoverOut);
 
+                        onAddNodeFunc = function (nodeid, nodekey, nodename) {
+                            nameSpan.text(nodename);
+                            hiddenValue.val(nodeid);
+                        };
+
                     } else {
                         // Select value in a selectbox
 
@@ -114,6 +120,11 @@
                             selectBox.addClass("required");
                         }
 
+                        onAddNodeFunc = function (nodeid, nodekey, nodename) {
+                            selectBox.option({ value: nodeid, display: nodename });
+                            selectBox.val(nodeid);
+                        };
+
                         propDiv.$.hover(function (event) { Csw.nodeHoverIn(event, selectBox.val()); }, Csw.nodeHoverOut);
                     } //if-else(useSearch)
                     if (allowAdd) {
@@ -121,10 +132,7 @@
                         var openAddNodeDialog = function (nodetypeToAdd) {
                             $.CswDialog('AddNodeDialog', {
                                 nodetypeid: nodetypeToAdd,
-                                onAddNode: function (nodeid, nodekey, nodename) {
-                                    selectBox.option({ value: nodeid, display: nodename });
-                                    selectBox.val(nodeid);
-                                },
+                                onAddNode: onAddNodeFunc,
                                 text: o.propData.name
                             });
                         };

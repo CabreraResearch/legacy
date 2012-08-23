@@ -35,13 +35,14 @@ namespace ChemSW.Nbt.Schema
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_Requesting_Case27542() ) );                        //01Q-009
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_Logging_Case27504() ) );                           //01Q-010
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase27438() ) );                                    //01Q-011
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase27548() ) );                                    //01Q-012
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_Documents_Case27435() ) );                         //01R-001 // ROMEO!
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase27548() ) );                                    //01Q-012                        
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_Documents_Case27435() ) );                         //01R-001 // ROMEO!            
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase27493() ) );                                    //01R-002 // ROMEO! wherefore art thou Romeo?
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase27488() ) );                                    //01R-003 // ROMEO!
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase27488() ) );                                    //01R-003 // ROMEO!            
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase27500() ) );                                    //01R-004 // ROMEO!
-
-            
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase27432() ) );                                    //01R-005
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase27431() ) );                                    //01R-006
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase27274() ) );                                    //01R-007
 
             // This automatically detects the latest version
             _LatestVersion = _MinimumVersion;
