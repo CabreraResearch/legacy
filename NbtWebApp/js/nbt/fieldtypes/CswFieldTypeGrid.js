@@ -25,6 +25,7 @@
                             data: {
                                 ViewId: viewid,
                                 SafeNodeKey: o.cswnbtnodekey,
+                                NodeTypeId: '',
                                 PropIdAttr: o.ID,
                                 LimitMenuTo: '',
                                 ReadOnly: o.ReadOnly

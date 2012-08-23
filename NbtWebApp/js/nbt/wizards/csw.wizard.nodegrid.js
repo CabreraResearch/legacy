@@ -100,6 +100,7 @@
                             data: {
                                 ViewId: viewid,
                                 SafeNodeKey: cswPrivate.cswnbtnodekey,
+                                NodeTypeId: '',
                                 PropIdAttr: cswPrivate.ID,
                                 LimitMenuTo: 'Add',
                                 ReadOnly: false
