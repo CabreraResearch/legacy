@@ -82,7 +82,7 @@ namespace ChemSW.Nbt.WebServices
 
         }
 
-        public JObject getMenu( CswNbtView View, string SafeNodeKey, string PropIdAttr, bool ReadOnly )
+        public JObject getMenu( CswNbtView View, string SafeNodeKey, Int32 NodeTypeId, string PropIdAttr, bool ReadOnly )
         {
 
             CswTimer MainMenuTimer = new CswTimer();
@@ -113,9 +113,25 @@ namespace ChemSW.Nbt.WebServices
             {
                 JObject MoreObj = new JObject();
 
-                if( View != null )
+                if( null == View && Int32.MinValue != NodeTypeId )
                 {
-                    // ADD
+                    // ADD for Searches
+                    if( _MenuItems.Contains( "Add" ) && false == ReadOnly )
+                    {
+                        JObject AddObj = new JObject();
+
+                        CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType(NodeTypeId);
+                        if( null != NodeType )
+                        {
+                            AddObj[NodeType.NodeTypeName] = makeAddMenuItem( NodeType, RelatedNodeId, RelatedNodeName, RelatedNodeTypeId, RelatedObjectClassId );
+                            AddObj["haschildren"] = true;
+                            Ret["Add"] = AddObj;
+                        }
+                    } // if( _MenuItems.Contains( "Add" ) && false == ReadOnly )
+                } // if( null == View && Int32.MinValue != NodeTypeId )
+                if( null != View )
+                {
+                    // ADD for Views
                     if( _MenuItems.Contains( "Add" ) && false == ReadOnly )
                     {
                         JObject AddObj = new JObject();
@@ -143,7 +159,7 @@ namespace ChemSW.Nbt.WebServices
                         }
                         foreach( JProperty AddNodeType in ParentNode.AllowedChildNodeTypes( LimitToFirstLevelRelationships )
                             .Select( Entry => new JProperty( Entry.NodeType.NodeTypeName,
-                                                             makeAddMenuItem( Entry, RelatedNodeId, RelatedNodeName, RelatedNodeTypeId, RelatedObjectClassId ) ) ) )
+                                                             makeAddMenuItem( Entry.NodeType, RelatedNodeId, RelatedNodeName, RelatedNodeTypeId, RelatedObjectClassId ) ) ) )
                         {
                             AddObj.Add( AddNodeType );
                         }
@@ -317,16 +333,16 @@ namespace ChemSW.Nbt.WebServices
             return Ret;
         } // getMenu()
 
-        public static JObject makeAddMenuItem( CswNbtViewNode.CswNbtViewAddNodeTypeEntry Entry, CswPrimaryKey RelatedNodeId, string RelatedNodeName, string RelatedNodeTypeId, string RelatedObjectClassId )
+        public static JObject makeAddMenuItem( CswNbtMetaDataNodeType NodeType, CswPrimaryKey RelatedNodeId, string RelatedNodeName, string RelatedNodeTypeId, string RelatedObjectClassId )
         {
             JObject Ret = new JObject();
             Ret["text"] = default( string );
             Ret["nodetypeid"] = default( string );
-            if( null != Entry.NodeType )
+            if( null != NodeType )
             {
-                Ret["text"] = Entry.NodeType.NodeTypeName;
-                Ret["nodetypeid"] = Entry.NodeType.NodeTypeId;
-                Ret["icon"] = CswNbtMetaDataObjectClass.IconPrefix16 + Entry.NodeType.IconFileName;
+                Ret["text"] = NodeType.NodeTypeName;
+                Ret["nodetypeid"] = NodeType.NodeTypeId;
+                Ret["icon"] = CswNbtMetaDataObjectClass.IconPrefix16 + NodeType.IconFileName;
             }
             Ret["relatednodeid"] = default( string );
             if( null != RelatedNodeId && Int32.MinValue != RelatedNodeId.PrimaryKey )

@@ -281,7 +281,9 @@
 
                 Csw.each(data.filters, makeFilterSet);
 
-                Csw.tryExec(cswPrivate.onAfterSearch);
+                cswPrivate.data = data;
+
+                Csw.tryExec(cswPrivate.onAfterSearch, cswPublic);
             }; // handleResults()
 
 
@@ -339,6 +341,17 @@
                     }
                 });
             }; // restoreSearch()
+
+            cswPublic.getFilterToNodeTypeId = function() {
+                var ret = '';
+                function findFilterToNodeTypeId(thisFilter) {
+                    if(Csw.isNullOrEmpty(ret) && thisFilter.filtername == 'Filter To') {
+                        ret = thisFilter.firstversionid;
+                    }
+                } // findFilterToNodeTypeId()
+                Csw.each(cswPrivate.data.filtersapplied, findFilterToNodeTypeId);
+                return ret;
+            } // getFilterToNodeTypeId()
 
             return cswPublic;
         });

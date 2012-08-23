@@ -210,8 +210,8 @@ window.initMain = window.initMain || function (undefined) {
                     onBeforeSearch: function () {
                         clear({ all: true });
                     },
-                    onAfterSearch: function () {
-                        refreshMainMenu();
+                    onAfterSearch: function (search) {
+                        refreshMainMenu({ nodetypeid: search.getFilterToNodeTypeId() });
                     },
                     onAfterNewSearch: function (searchid) {
                         Csw.clientState.setCurrentSearch(searchid);
@@ -473,6 +473,7 @@ window.initMain = window.initMain || function (undefined) {
             viewmode: '',
             nodeid: '',
             cswnbtnodekey: '',
+            nodetypeid: '',
             propid: '',
             grid: '',
             limitMenuTo: '',
@@ -489,6 +490,7 @@ window.initMain = window.initMain || function (undefined) {
                 data: {
                     ViewId: o.viewid,
                     SafeNodeKey: o.cswnbtnodekey,
+                    NodeTypeId: o.nodetypeid,
                     PropIdAttr: o.propid,
                     LimitMenuTo: o.limitMenuTo,
                     ReadOnly: o.readonly
