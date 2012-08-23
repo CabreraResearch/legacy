@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
@@ -7,7 +6,6 @@ using ChemSW.Audit;
 using ChemSW.Config;
 using ChemSW.Core;
 using ChemSW.DB;
-using ChemSW.Exceptions;
 using ChemSW.Log;
 using ChemSW.Mail;
 using ChemSW.Nbt.Actions;
@@ -151,8 +149,8 @@ namespace ChemSW.Nbt
         private bool _ExcludeDisabledModules = true;
         public bool ExcludeDisabledModules { get { return _ExcludeDisabledModules; } }
 
-        public double ServerInitTime = double.MinValue;
-        public double TotalServerTime = double.MinValue;
+        public double ServerInitTime = 0;
+        public double TotalServerTime = 0;
 
         public PooledConnectionState PooledConnectionState { get { return ( _CswResources.PooledConnectionState ); } }
 

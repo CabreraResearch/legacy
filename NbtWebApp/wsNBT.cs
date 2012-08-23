@@ -46,7 +46,6 @@ namespace ChemSW.Nbt.WebServices
     {
         // case 25887
         CswTimer Timer = new CswTimer();
-        double ServerInitTime = 0;
 
 
         #region Session and Resource Management
@@ -108,7 +107,7 @@ namespace ChemSW.Nbt.WebServices
                 }
             }
 
-            ServerInitTime = Timer.ElapsedDurationInMilliseconds;
+            _CswNbtResources.ServerInitTime = Timer.ElapsedDurationInMilliseconds;
 
             return ret;
 
@@ -132,6 +131,9 @@ namespace ChemSW.Nbt.WebServices
                 OtherResources.finalize();
                 OtherResources.release();
             }
+
+            _CswNbtResources.TotalServerTime = Timer.ElapsedDurationInMilliseconds;
+
         } // _deInitResources()
 
         #region Sessions Action
@@ -170,7 +172,7 @@ namespace ChemSW.Nbt.WebServices
             }
             catch( Exception Ex )
             {
-                CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
+                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
             }
 
 
@@ -199,7 +201,7 @@ namespace ChemSW.Nbt.WebServices
             }
             catch( Exception Ex )
             {
-                CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
+                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
             }
 
             CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
@@ -421,7 +423,7 @@ namespace ChemSW.Nbt.WebServices
             }
             catch( Exception Ex )
             {
-                CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
+                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
             }
 
             return ( ReturnVal.ToString() );
@@ -468,7 +470,7 @@ namespace ChemSW.Nbt.WebServices
             }
             catch( Exception Ex )
             {
-                CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
+                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
             }
 
 
@@ -493,7 +495,7 @@ namespace ChemSW.Nbt.WebServices
             }
             catch( Exception Ex )
             {
-                CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
+                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
             }
 
             return ( ReturnVal.ToString() );
@@ -519,7 +521,7 @@ namespace ChemSW.Nbt.WebServices
             }
             catch( Exception Ex )
             {
-                CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
+                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
             }
 
             CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
@@ -587,7 +589,7 @@ namespace ChemSW.Nbt.WebServices
             }
             catch( Exception Ex )
             {
-                CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
+                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
             }
 
             CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
@@ -620,7 +622,7 @@ namespace ChemSW.Nbt.WebServices
             }
             catch( Exception Ex )
             {
-                CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
+                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
             }
 
             CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
@@ -670,7 +672,7 @@ namespace ChemSW.Nbt.WebServices
             }
             catch( Exception Ex )
             {
-                CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
+                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
             }
 
             CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
@@ -723,7 +725,7 @@ namespace ChemSW.Nbt.WebServices
             }
             catch( Exception Ex )
             {
-                CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
+                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
             }
 
             CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
@@ -754,7 +756,7 @@ namespace ChemSW.Nbt.WebServices
 
             catch( Exception Ex )
             {
-                CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
+                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
             }
 
             CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
@@ -785,7 +787,7 @@ namespace ChemSW.Nbt.WebServices
             }
             catch( Exception Ex )
             {
-                CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
+                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
             }
 
             CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
@@ -819,7 +821,7 @@ namespace ChemSW.Nbt.WebServices
             }
             catch( Exception Ex )
             {
-                CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
+                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
             }
 
             CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
@@ -850,7 +852,7 @@ namespace ChemSW.Nbt.WebServices
             }
             catch( Exception Ex )
             {
-                CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
+                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
             }
 
             CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
@@ -887,7 +889,7 @@ namespace ChemSW.Nbt.WebServices
             }
             catch( Exception Ex )
             {
-                CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
+                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
             }
 
             CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
@@ -918,7 +920,7 @@ namespace ChemSW.Nbt.WebServices
             }
             catch( Exception Ex )
             {
-                CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
+                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
             }
 
             CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
@@ -948,7 +950,7 @@ namespace ChemSW.Nbt.WebServices
             }
             catch( Exception Ex )
             {
-                CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
+                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
             }
 
             CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
@@ -1032,7 +1034,7 @@ namespace ChemSW.Nbt.WebServices
             }
             catch( Exception Ex )
             {
-                CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
+                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
             }
 
             CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
@@ -1066,7 +1068,7 @@ namespace ChemSW.Nbt.WebServices
             }
             catch( Exception Ex )
             {
-                CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
+                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
             }
 
             CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
@@ -1102,7 +1104,7 @@ namespace ChemSW.Nbt.WebServices
             }
             catch( Exception Ex )
             {
-                CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
+                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
             }
 
             CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
@@ -1139,7 +1141,7 @@ namespace ChemSW.Nbt.WebServices
             }
             catch( Exception Ex )
             {
-                CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
+                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
             }
 
             CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
@@ -1172,7 +1174,7 @@ namespace ChemSW.Nbt.WebServices
         //    }
         //    catch( Exception Ex )
         //    {
-        //        CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
+        //        ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
         //    }
 
         //    CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
@@ -1210,7 +1212,7 @@ namespace ChemSW.Nbt.WebServices
             }
             catch( Exception Ex )
             {
-                CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
+                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
             }
 
             CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
@@ -1267,7 +1269,7 @@ namespace ChemSW.Nbt.WebServices
             }
             catch( Exception Ex )
             {
-                CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
+                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
             }
 
             CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
@@ -1306,7 +1308,7 @@ namespace ChemSW.Nbt.WebServices
         //    }
         //    catch( Exception Ex )
         //    {
-        //        CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
+        //        ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
         //    }
 
         //    CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
@@ -1345,7 +1347,7 @@ namespace ChemSW.Nbt.WebServices
         //    }
         //    catch( Exception Ex )
         //    {
-        //        CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
+        //        ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
         //    }
 
         //    CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
@@ -1400,7 +1402,7 @@ namespace ChemSW.Nbt.WebServices
             }
             catch( Exception Ex )
             {
-                CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
+                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
             }
 
             CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
@@ -1446,7 +1448,7 @@ namespace ChemSW.Nbt.WebServices
             }
             catch( Exception Ex )
             {
-                CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
+                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
             }
 
 
@@ -1476,7 +1478,7 @@ namespace ChemSW.Nbt.WebServices
             }
             catch( Exception Ex )
             {
-                CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
+                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
             }
 
 
@@ -1517,7 +1519,7 @@ namespace ChemSW.Nbt.WebServices
             }
             catch( Exception Ex )
             {
-                CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
+                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
             }
 
             CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
@@ -1550,7 +1552,7 @@ namespace ChemSW.Nbt.WebServices
             }
             catch( Exception Ex )
             {
-                CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
+                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
             }
 
             CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
@@ -1590,7 +1592,7 @@ namespace ChemSW.Nbt.WebServices
             }
             catch( Exception Ex )
             {
-                CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
+                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
             }
 
 
@@ -1626,7 +1628,7 @@ namespace ChemSW.Nbt.WebServices
             }
             catch( Exception Ex )
             {
-                CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
+                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
             }
 
 
@@ -1678,7 +1680,7 @@ namespace ChemSW.Nbt.WebServices
             }
             catch( Exception Ex )
             {
-                CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
+                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
             }
 
             CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
@@ -1715,7 +1717,7 @@ namespace ChemSW.Nbt.WebServices
             }
             catch( Exception Ex )
             {
-                CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
+                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
             }
 
             CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
@@ -1784,7 +1786,7 @@ namespace ChemSW.Nbt.WebServices
             }
             catch( Exception Ex )
             {
-                CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
+                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
             }
 
             CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
@@ -1820,7 +1822,7 @@ namespace ChemSW.Nbt.WebServices
             }
             catch( Exception Ex )
             {
-                CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
+                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
             }
 
             CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
@@ -1860,7 +1862,7 @@ namespace ChemSW.Nbt.WebServices
             }
             catch( Exception Ex )
             {
-                CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
+                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
             }
 
             CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
@@ -1891,7 +1893,7 @@ namespace ChemSW.Nbt.WebServices
 
             catch( Exception Ex )
             {
-                CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
+                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
             }
 
             CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
@@ -1928,7 +1930,7 @@ namespace ChemSW.Nbt.WebServices
             }
             catch( Exception Ex )
             {
-                CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
+                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
             }
 
 
@@ -1972,7 +1974,7 @@ namespace ChemSW.Nbt.WebServices
             }
             catch( Exception ex )
             {
-                CswWebSvcCommonMethods.jError( _CswNbtResources, ex );
+                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, ex );
             }
 
 
@@ -2006,7 +2008,7 @@ namespace ChemSW.Nbt.WebServices
             }
             catch( Exception Ex )
             {
-                CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
+                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
             }
 
             CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
@@ -2067,7 +2069,7 @@ namespace ChemSW.Nbt.WebServices
             }
             catch( Exception Ex )
             {
-                CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
+                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
             }
 
 
@@ -2110,7 +2112,7 @@ namespace ChemSW.Nbt.WebServices
             }
             catch( Exception Ex )
             {
-                CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
+                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
             }
 
             CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
@@ -2143,7 +2145,7 @@ namespace ChemSW.Nbt.WebServices
             }
             catch( Exception Ex )
             {
-                CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
+                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
             }
 
             CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
@@ -2176,7 +2178,7 @@ namespace ChemSW.Nbt.WebServices
             }
             catch( Exception Ex )
             {
-                CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
+                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
             }
 
             CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
@@ -2209,7 +2211,7 @@ namespace ChemSW.Nbt.WebServices
             }
             catch( Exception Ex )
             {
-                CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
+                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
             }
 
             CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
@@ -2241,7 +2243,7 @@ namespace ChemSW.Nbt.WebServices
             }
             catch( Exception Ex )
             {
-                CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
+                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
             }
 
             CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
@@ -2291,7 +2293,7 @@ namespace ChemSW.Nbt.WebServices
             }
             catch( Exception Ex )
             {
-                CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
+                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
             }
 
             CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
@@ -2318,7 +2320,7 @@ namespace ChemSW.Nbt.WebServices
             }
             catch( Exception Ex )
             {
-                CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
+                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
             }
 
             CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
@@ -2354,7 +2356,7 @@ namespace ChemSW.Nbt.WebServices
             }
             catch( Exception Ex )
             {
-                CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
+                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
             }
 
             CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
@@ -2388,7 +2390,7 @@ namespace ChemSW.Nbt.WebServices
             } // try
             catch( Exception Ex )
             {
-                CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
+                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
             }
 
             CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
@@ -2419,7 +2421,7 @@ namespace ChemSW.Nbt.WebServices
             } // try
             catch( Exception Ex )
             {
-                CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
+                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
             }
 
             CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
@@ -2449,7 +2451,7 @@ namespace ChemSW.Nbt.WebServices
             }
             catch( Exception Ex )
             {
-                CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
+                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
             }
 
             CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
@@ -2477,7 +2479,7 @@ namespace ChemSW.Nbt.WebServices
             }
             catch( Exception Ex )
             {
-                CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
+                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
             }
 
             CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
@@ -2508,7 +2510,7 @@ namespace ChemSW.Nbt.WebServices
             }
             catch( Exception Ex )
             {
-                CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
+                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
             }
 
             CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
@@ -2575,7 +2577,7 @@ namespace ChemSW.Nbt.WebServices
             }
             catch( Exception Ex )
             {
-                CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
+                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
             }
 
             CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
@@ -2623,7 +2625,7 @@ namespace ChemSW.Nbt.WebServices
             }
             catch( Exception Ex )
             {
-                CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
+                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
                 ReturnVal["success"] = false;
             }
 
@@ -2705,7 +2707,7 @@ namespace ChemSW.Nbt.WebServices
             }
             catch( Exception Ex )
             {
-                CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
+                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
             }
 
             CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
@@ -2737,7 +2739,7 @@ namespace ChemSW.Nbt.WebServices
             }
             catch( Exception Ex )
             {
-                CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
+                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
             }
 
             CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
@@ -2773,7 +2775,7 @@ namespace ChemSW.Nbt.WebServices
             }
             catch( Exception Ex )
             {
-                CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
+                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
             }
 
             CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
@@ -2805,7 +2807,7 @@ namespace ChemSW.Nbt.WebServices
             }
             catch( Exception Ex )
             {
-                CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
+                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
             }
 
             CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
@@ -2837,7 +2839,7 @@ namespace ChemSW.Nbt.WebServices
             }
             catch( Exception Ex )
             {
-                CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
+                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
             }
 
             CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
@@ -2870,7 +2872,7 @@ namespace ChemSW.Nbt.WebServices
             }
             catch( Exception Ex )
             {
-                CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
+                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
             }
 
             CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
@@ -2908,7 +2910,7 @@ namespace ChemSW.Nbt.WebServices
 
         //    catch( Exception Ex )
         //    {
-        //        CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
+        //        ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
         //    }
 
         //    CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
@@ -2938,7 +2940,7 @@ namespace ChemSW.Nbt.WebServices
         //    }
         //    catch( Exception Ex )
         //    {
-        //        CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
+        //        ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
         //    }
 
 
@@ -2975,7 +2977,7 @@ namespace ChemSW.Nbt.WebServices
 
         //    catch( Exception Ex )
         //    {
-        //        CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
+        //        ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
         //    }
 
         //    return ReturnVal.ToString();
@@ -3011,7 +3013,7 @@ namespace ChemSW.Nbt.WebServices
 
         //    catch( Exception Ex )
         //    {
-        //        CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
+        //        ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
         //    }
 
         //    CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
@@ -3047,7 +3049,7 @@ namespace ChemSW.Nbt.WebServices
         //    }
         //    catch( Exception Ex )
         //    {
-        //        CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
+        //        ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
         //    }
 
         //    CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
@@ -3076,7 +3078,7 @@ namespace ChemSW.Nbt.WebServices
             }
             catch( Exception Ex )
             {
-                CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
+                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
             }
 
             CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
@@ -3105,7 +3107,7 @@ namespace ChemSW.Nbt.WebServices
             }
             catch( Exception Ex )
             {
-                CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
+                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
             }
 
             CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
@@ -3134,7 +3136,7 @@ namespace ChemSW.Nbt.WebServices
             }
             catch( Exception Ex )
             {
-                CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
+                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
             }
 
             CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
@@ -3164,7 +3166,7 @@ namespace ChemSW.Nbt.WebServices
             }
             catch( Exception Ex )
             {
-                CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
+                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
             }
 
             CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
@@ -3223,7 +3225,7 @@ namespace ChemSW.Nbt.WebServices
             }
             catch( Exception Ex )
             {
-                CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
+                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
             }
 
             CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
@@ -3272,7 +3274,7 @@ namespace ChemSW.Nbt.WebServices
             }
             catch( Exception Ex )
             {
-                CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
+                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
             }
 
             CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
@@ -3304,7 +3306,7 @@ namespace ChemSW.Nbt.WebServices
             }
             catch( Exception Ex )
             {
-                CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
+                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
             }
 
             CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
@@ -3339,7 +3341,7 @@ namespace ChemSW.Nbt.WebServices
             }
             catch( Exception Ex )
             {
-                CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
+                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
             }
 
             CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
@@ -3383,7 +3385,7 @@ namespace ChemSW.Nbt.WebServices
 
             catch( Exception Ex )
             {
-                CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
+                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
             }
 
 
@@ -3417,7 +3419,7 @@ namespace ChemSW.Nbt.WebServices
 
             catch( Exception Ex )
             {
-                CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
+                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
             }
 
             CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
@@ -3457,7 +3459,7 @@ namespace ChemSW.Nbt.WebServices
             }
             catch( Exception Ex )
             {
-                CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
+                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
             }
 
             CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
@@ -3494,7 +3496,7 @@ namespace ChemSW.Nbt.WebServices
             }
             catch( Exception Ex )
             {
-                CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
+                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
             }
 
             CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
@@ -3534,7 +3536,7 @@ namespace ChemSW.Nbt.WebServices
             }
             catch( Exception Ex )
             {
-                CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
+                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
             }
 
             CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
@@ -3567,7 +3569,7 @@ namespace ChemSW.Nbt.WebServices
             }
             catch( Exception Ex )
             {
-                CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
+                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
             }
 
             CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
@@ -3927,7 +3929,7 @@ namespace ChemSW.Nbt.WebServices
 
             catch( Exception Ex )
             {
-                CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
+                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
             }
 
             //_jAddAuthenticationStatus( ReturnVal, AuthenticationStatus.Authenticated );
@@ -4019,7 +4021,7 @@ namespace ChemSW.Nbt.WebServices
             }
             catch( Exception Ex )
             {
-                CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
+                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
             }
 
             CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
