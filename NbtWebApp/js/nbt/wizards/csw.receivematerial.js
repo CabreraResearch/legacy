@@ -27,7 +27,9 @@
                     containerAddLayout: {},
                     tradeName: '',
                     selectedSizeId: '',
-                    customBarcodes: false
+                    customBarcodes: false,
+                    documentTypeId: '',
+                    documentId: ''
                 },
                 stepOneComplete: false,
                 stepTwoComplete: false,
@@ -113,9 +115,12 @@
                         containernodetypeid: cswPrivate.state.containerNodeTypeId,
                         quantities: cswPrivate.amountsGrid.quantities,
                         sizeid: cswPrivate.state.selectedSizeId,
-                        props: cswPrivate.tabsAndProps.getPropJson()
+                        props: cswPrivate.tabsAndProps.getPropJson(),
+                        documentid: cswPrivate.state.documentId
                     };
-
+                    if(false === Csw.isNullOrEmpty(cswPrivate.documentTabsAndProps)) {
+                        container.documentProperties = cswPrivate.documentTabsAndProps.getPropJson();
+                    }
                     Csw.ajax.post({
                         urlMethod: 'receiveMaterial',
                         data: { ReceiptDefinition: Csw.serialize(container) },
@@ -272,9 +277,6 @@
 
                         cswPrivate.stepTwoComplete = true;
                     }
-                    window.setTimeout(function () {
-                        cswPrivate.toggleButton(cswPrivate.buttons.next, false);
-                    }, 250);
                 };
             } ());
 
@@ -296,14 +298,14 @@
 
                         if (Csw.isNullOrEmpty(cswPrivate.state.documentTypeId)) {
                             cswPrivate.divStep3.label({
-                                text: "No Material Documents have been defined. Click Finish to complete the wizard.",
-                                cssclass: "wizardHelpDesc"
+                                text: 'No Material Documents have been defined. Click Finish to complete the wizard.',
+                                cssclass: 'wizardHelpDesc'
                             });
                         } else {
 
                             cswPrivate.divStep3.label({
-                                text: "Define a Material Safety Data Sheet to attach to this material.",
-                                cssclass: "wizardHelpDesc"
+                                text: 'Define a Material Safety Data Sheet to attach to ' + cswPrivate.state.tradeName,
+                                cssclass: 'wizardHelpDesc'
                             });
                             cswPrivate.divStep3.br({ number: 4 });
 

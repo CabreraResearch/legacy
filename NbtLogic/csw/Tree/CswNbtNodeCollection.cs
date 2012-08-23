@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
@@ -81,6 +82,7 @@ namespace ChemSW.Nbt
                 CswNbtNode Ret = null;
                 CswPrimaryKey NodeId = new CswPrimaryKey();
                 NodeId.FromString( NodePk );
+                Debug.Assert( CswTools.IsPrimaryKey( NodeId ), "The request did not specify a valid materialid." );
                 if( CswTools.IsPrimaryKey( NodeId ) )
                 {
                     Ret = this[NodeId];

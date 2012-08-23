@@ -1,6 +1,5 @@
 using System;
 using System.Collections.ObjectModel;
-using System.Linq;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.Actions;
@@ -177,21 +176,11 @@ namespace ChemSW.Nbt.WebServices
                     _CswNbtResources.EditMode = NodeEditMode.Temp;
                     CswNbtSdTabsAndProps SdProps = new CswNbtSdTabsAndProps( _CswNbtResources );
                     Ret["properties"] = SdProps.getProps( NodeAsMaterial.Node, string.Empty, null, CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, true );
-                    CswNbtMetaDataObjectClass DocumentOc = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.DocumentClass );
-                    foreach( CswNbtMetaDataNodeType DocumentNt in from
-                                                                      _DocumentNt in
-                                                                      DocumentOc.getLatestVersionNodeTypes()
-                                                                  let OwnerNtp = _DocumentNt.getNodeTypePropByObjectClassProp( CswNbtObjClassDocument.PropertyName.Owner )
-                                                                  where ( ( OwnerNtp.FKType == NbtViewRelatedIdType.NodeTypeId.ToString() &&
-                                                                            OwnerNtp.FKValue == NodeAsMaterial.NodeTypeId ) ||
-                                                                        ( OwnerNtp.FKType == NbtViewRelatedIdType.ObjectClassId.ToString() &&
-                                                                            OwnerNtp.FKValue == NodeAsMaterial.ObjectClass.ObjectClassId ) )
-                                                                  select _DocumentNt )
+                    Int32 DocumentNodeTypeId = CswNbtActReceiving.getMaterialDocumentNodeTypeId( _CswNbtResources, NodeAsMaterial );
+                    if( Int32.MinValue != DocumentNodeTypeId )
                     {
-                        Ret["documenttypeid"] = DocumentNt.NodeTypeId;
-                        break;
+                        Ret["documenttypeid"] = DocumentNodeTypeId;
                     }
-
                 }
                 else
                 {
@@ -350,15 +339,8 @@ namespace ChemSW.Nbt.WebServices
                         NodeAsMaterial.PartNumber.Text = PartNo;
                         NodeAsMaterial.PhysicalState.Value = PhysicalState;
                         Ret.postChanges( true );
-                    }
 
-                    CswNbtObjClassDocument Doc = _CswNbtResources.Nodes[CswConvert.ToString( MaterialObj["documentId"] )];
-                    if( null != Doc )
-                    {
-                        Doc.IsTemp = false;
-                        wsTap.saveProps( Doc.NodeId, Int32.MinValue, CswConvert.ToString( MaterialObj["documentProperties"] ), Doc.NodeTypeId, null );
-                        Doc.Owner.RelatedNodeId = Ret.NodeId;
-                        Doc.postChanges( ForceUpdate: false );
+                        CswNbtActReceiving.commitDocumentNode( _CswNbtResources, NodeAsMaterial, MaterialObj );
                     }
                 }
 

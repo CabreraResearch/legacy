@@ -170,6 +170,12 @@ namespace ChemSW.Nbt.ObjClasses
                                 }
                             }
 
+                            Int32 DocumentNodeTypeId = CswNbtActReceiving.getMaterialDocumentNodeTypeId( _CswNbtResources, this );
+                            if( Int32.MinValue != DocumentNodeTypeId )
+                            {
+                                ButtonData.Data["state"]["documentTypeId"] = DocumentNodeTypeId;
+                            }
+
                             ButtonData.Action = NbtButtonAction.receive;
                         }
                         break;

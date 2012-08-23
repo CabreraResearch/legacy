@@ -156,7 +156,7 @@
                             createMaterialDef.materialnodetypeid = cswPrivate.state.materialType.val;
                             createMaterialDef.tradename = cswPrivate.state.tradeName;
                             createMaterialDef.partno = cswPrivate.state.partNo;
-                            createMaterialDef.documentId = cswPrivate.state.documentId;
+                            createMaterialDef.documentid = cswPrivate.state.documentId;
                             createMaterialDef.supplierid = cswPrivate.state.supplier.val;
                             createMaterialDef.suppliername = cswPrivate.state.supplier.name;
                             createMaterialDef.physicalState = cswPrivate.state.physicalState;
