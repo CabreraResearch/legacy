@@ -155,7 +155,7 @@
                         }
                         var moreinfoimg = thumbtable.cell(1, 2).css({ width: '25px' })
                             .img({
-                                src: 'Images/info.png',
+                                src: 'Images/newicons/18/about.png',
                                 title: 'More Info'
                             });
                         moreinfoimg.propNonDom({ valign: 'top' });
