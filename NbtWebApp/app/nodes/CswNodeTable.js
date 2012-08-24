@@ -27,6 +27,7 @@
                 tabledata: null,
                 allowEdit: true,
                 allowDelete: true,
+                compactResults: false,
                 extraAction: null,
                 extraActionIcon: Csw.enums.iconType.none,
                 onExtraAction: null  // function(nodeObj) {}
@@ -71,7 +72,7 @@
             function _getButtonCell(cellSet) {
                 var ret;
                 if (singleColumn) {
-                    ret = cellSet[2][2];
+                    ret = cellSet[1][3];
                 } else {
                     ret = cellSet[3][1];
                 }
@@ -102,15 +103,16 @@
                         var thumbwidth = (1 / o.columns * 100) + '%';
                         var textwidth = (1 / o.columns * 100) + '%';
                         var imgwidth = '75%';
+                        var imgheight = '';
                         var verticalAlign = 'top';
                         var bborder = '1px solid #cccccc';
                         var cellpad = o.rowpadding + 'px';
                         if (singleColumn) {
-                            thumbwidth = '25%';
+                            thumbwidth = '10%';
                             textwidth = '75%';
                             verticalAlign = 'top';
                             imgwidth = '90%';
-                            cellpad = '10px';
+                            cellpad = '0px';
                         }
                         var thumbnailCell = _getThumbnailCell(cellSet)
                                                 .css({
@@ -124,7 +126,11 @@
                                                     paddingTop: cellpad
                                                 });
                         if (singleColumn) {
-                            cellSet[2][1].css({
+                            thumbnailCell.css({
+                                borderBottom: bborder,
+                                paddingBottom: cellpad
+                            });
+                            textCell.css({                        
                                 borderBottom: bborder,
                                 paddingBottom: cellpad
                             });
@@ -148,20 +154,26 @@
                         var thumbtable = thumbnailCell.table({ width: '100%', cellpadding: 0, cellspacing: 0 });
                         var texttable = textCell.table({ width: '100%', cellpadding: 0, cellspacing: 0 });
 
+                        if(Csw.bool(o.compactResults)) {
+                            texttable.hide();
+                            imgwidth = '';
+                            imgheight = '18px';
+                        }
+
                         if (false === Csw.isNullOrEmpty(nodeObj.thumbnailurl)) {
                             thumbtable.cell(1, 1).img({
                                 src: nodeObj.thumbnailurl
-                            }).css({ width: imgwidth });
+                            }).css({ width: imgwidth, height: imgheight });
                         }
                         var moreinfoimg = thumbtable.cell(1, 2).css({ width: '25px' })
                             .img({
-                                src: 'Images/newicons/18/about.png',
+                                src: 'Images/newicons/18/info.png',
                                 title: 'More Info'
                             });
                         moreinfoimg.propNonDom({ valign: 'top' });
                         moreinfoimg.$.hover(function (event) { Csw.nodeHoverIn(event, nodeid, '', 0); }, Csw.nodeHoverOut);
 
-                        thumbnailCell.br();
+                        //thumbnailCell.br();
 
                         // Name
                         //var maintextcell = texttable.cell(1, 1);
@@ -217,6 +229,17 @@
                         });
 
                         // System Buttons
+                        if(Csw.bool(o.compactResults)) {
+                            btnTable.cell(1, btncol).buttonExt({
+                                ID: Csw.makeId(o.ID, nodeid, 'morebtn'),
+                                enabledText: 'More Info',
+                                icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.info),
+                                onClick: function () {
+                                    texttable.toggle();
+                                } // onClick
+                            }); // CswButton
+                            btncol += 1;
+                        }
                         if (Csw.bool(o.allowEdit) && (Csw.bool(nodeObj.allowview) || Csw.bool(nodeObj.allowedit))) {
                             
                             btnTable.cell(1, btncol).buttonExt({
@@ -296,7 +319,7 @@
                     var cellspacing = '5px';
                     if (singleColumn) {
                         cellalign = 'left';
-                        cellset = { rows: 2, columns: 2 };
+                        cellset = { rows: 1, columns: 3 };
                         cellspacing = '0px';
                     }
 
