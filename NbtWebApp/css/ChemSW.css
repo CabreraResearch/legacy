@@ -1379,3 +1379,12 @@ ul li div {
     font-family: verdana !Important;
     font-size: &cswtextfontsize !Important;
 }
+
+
+.NodeTableOddRow
+{
+    background-color: #dddddd;
+}
+.NodeTableEvenRow
+{
+}

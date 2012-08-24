@@ -75,6 +75,7 @@
     <NoWarn>1591</NoWarn>
   </PropertyGroup>
   <ItemGroup>
+    <Content Include="app\nodes\csw.node.table.js" />
     <Content Include="ConnectTest.html" />
     <Content Include="etc\far.exe" />
     <Content Include="ExternalLogin.html" />
@@ -633,7 +634,6 @@
     <Content Include="app\fieldtypes\_CswFieldTypeFactory.js" />
     <Content Include="app\nodes\CswNodeGrid.js" />
     <Content Include="app\nodes\CswNodePreview.js" />
-    <Content Include="app\nodes\CswNodeTable.js" />
     <Content Include="app\nodes\CswNodeTree.js" />
     <Content Include="app\pagecmp\CswDashboard.js" />
     <Content Include="app\pagecmp\CswDefaultContent.js" />

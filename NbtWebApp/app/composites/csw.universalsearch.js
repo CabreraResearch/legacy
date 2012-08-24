@@ -115,7 +115,8 @@
                 // Search results
 
                 function _renderResultsTable(columns) {
-
+                    var nodeTable;
+                    
                     cswPrivate.$searchresults_parent.contents().remove();
                     cswPrivate.$searchresults_parent.css({ paddingTop: '15px' });
 
@@ -126,9 +127,26 @@
                     });
 
                     resultstable.cell(1, 1).append('<b>Search Results: (' + data.table.results + ')</b>');
-
-                    resultstable.cell(1, 2).css({ width: '18px' });
-                    cswPrivate.buttonSingleColumn = resultstable.cell(1, 2).imageButton({
+                    
+                    if(Csw.bool(cswPrivate.compactResults))
+                    {
+                        resultstable.cell(1, 2).css({ width: '100px' });
+                        cswPrivate.linkExpandAll = resultstable.cell(1, 2).a({
+                            ID: Csw.makeId(cswPrivate.ID, '', '_expandall'),
+                            text: 'Expand All',
+                            onClick: function() {
+                                if(cswPrivate.linkExpandAll.text() === 'Expand All'){
+                                    cswPrivate.linkExpandAll.text('Collapse All');
+                                }
+                                else if(cswPrivate.linkExpandAll.text() === 'Collapse All'){
+                                    cswPrivate.linkExpandAll.text('Expand All');
+                                }
+                                nodeTable.expandAll();
+                            }
+                        });
+                    }
+                    resultstable.cell(1, 3).css({ width: '18px' });
+                    cswPrivate.buttonSingleColumn = resultstable.cell(1, 3).imageButton({
                         ID: Csw.makeId(cswPrivate.ID, '', '_singlecol'),
                         ButtonType: Csw.enums.imageButton_ButtonType.TableSingleColumn,
                         Active: (columns === 1),
@@ -140,8 +158,8 @@
                         }
                     });
 
-                    resultstable.cell(1, 3).css({ width: '18px' });
-                    cswPrivate.buttonMultiColumn = resultstable.cell(1, 3).imageButton({
+                    resultstable.cell(1, 4).css({ width: '18px' });
+                    cswPrivate.buttonMultiColumn = resultstable.cell(1, 4).imageButton({
                         ID: Csw.makeId(cswPrivate.ID, '', '_multicol'),
                         ButtonType: Csw.enums.imageButton_ButtonType.TableMultiColumn,
                         Active: (columns !== 1),
@@ -155,7 +173,7 @@
 
                     resultstable.cell(2, 1).propDom({ 'colspan': 3 });
 
-                    resultstable.cell(2, 1).$.CswNodeTable({
+                    nodeTable = Csw.nbt.nodeTable(resultstable.cell(2, 1), {
                         ID: Csw.makeId(cswPrivate.ID, '', 'srchresults'),
                         onEditNode: function() {
                             // case 27245 - refresh on edit
