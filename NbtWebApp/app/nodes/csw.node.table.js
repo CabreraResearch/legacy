@@ -75,15 +75,19 @@
                     var textwidth = (1 / cswPrivate.columns * 100) + '%';
                     var imgwidth = '75%';
                     var imgheight = '';
-                    var verticalAlign = 'top';
+                    var thumbverticalAlign = 'middle';
+                    var thumbhorizontalAlign = 'center';
+                    var thumbBackgroundColor = '#ffffff';
                     var bborder = '1px solid #cccccc';
                     var cellpad = cswPrivate.rowpadding + 'px';
                     if (cswPrivate.singleColumn) {
                         thumbwidth = '25%';
                         textwidth = '75%';
-                        verticalAlign = 'top';
                         imgwidth = '90%';
                         cellpad = '10px';
+                        thumbverticalAlign = 'top';
+                        thumbhorizontalAlign = '';
+                        thumbBackgroundColor = '';
                     }
                     if (Csw.bool(cswPrivate.compactResults)) {
                         thumbwidth = '10%';
@@ -93,8 +97,11 @@
                     var thumbnailCell = cswPrivate.getThumbnailCell(cellSet)
                                                 .css({
                                                     width: thumbwidth,
-                                                    verticalAlign: verticalAlign,
-                                                    paddingTop: cellpad
+                                                    verticalAlign: thumbverticalAlign,
+                                                    backgroundColor: thumbBackgroundColor,
+                                                    textAlign: thumbhorizontalAlign,
+                                                    paddingTop: cellpad,
+                                                    maxWidth: '100px'
                                                 });
                     var textCell = cswPrivate.getTextCell(cellSet)
                                                 .css({
@@ -118,17 +125,18 @@
                                                 });
 
                     // Banding
-                    if(cswPrivate.r % 2 === 1)
-                    {
-                        thumbnailCell.addClass('NodeTableOddRow');
-                        textCell.addClass('NodeTableOddRow');
-                        btncell.addClass('NodeTableOddRow');
-                    } else {
-                        thumbnailCell.addClass('NodeTableEvenRow');
-                        textCell.addClass('NodeTableEvenRow');
-                        btncell.addClass('NodeTableEvenRow');
+                    if (cswPrivate.singleColumn) {
+                        if(cswPrivate.r % 2 === 1)
+                        {
+                            thumbnailCell.addClass('NodeTableOddRow');
+                            textCell.addClass('NodeTableOddRow');
+                            btncell.addClass('NodeTableOddRow');
+                        } else {
+                            thumbnailCell.addClass('NodeTableEvenRow');
+                            textCell.addClass('NodeTableEvenRow');
+                            btncell.addClass('NodeTableEvenRow');
+                        }
                     }
-                    
 
                     textCell.append('<b>' + nodeObj.nodename + '</b>');
                     if (Csw.bool(nodeObj.locked)) {
@@ -324,7 +332,7 @@
                     ID: cswPrivate.ID + '_tbl',
                     cellSet: cellset,
                     cellalign: cellalign,
-                    width: '100%',
+                    width: '',
                     cellspacing: cellspacing
                 });
 
