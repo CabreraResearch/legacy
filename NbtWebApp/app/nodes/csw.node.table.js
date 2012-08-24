@@ -139,7 +139,7 @@
                     }
                     textCell.br();
 
-                    var thumbtable = thumbnailCell.table({ width: '100%', cellpadding: 0, cellspacing: 0 });
+                    //var thumbtable = thumbnailCell.table({ width: '100%', cellpadding: 0, cellspacing: 0 });
                     var texttable = textCell.table({ width: '100%', cellpadding: 0, cellspacing: 0 });
                     cswPrivate.texttables.push(texttable);
 
@@ -151,17 +151,19 @@
                     }
 
                     if (false === Csw.isNullOrEmpty(nodeObj.thumbnailurl)) {
-                        thumbtable.cell(1, 1).img({
+                        thumbnailCell.img({
                             src: nodeObj.thumbnailurl
                         }).css({ width: imgwidth, height: imgheight });
                     }
-                    var moreinfoimg = thumbtable.cell(1, 2).css({ width: '25px' })
-                            .img({
-                                src: 'Images/newicons/18/info.png',
-                                title: 'More Info'
-                            });
-                    moreinfoimg.propNonDom({ valign: 'top' });
-                    moreinfoimg.$.hover(function (event) { Csw.nodeHoverIn(event, nodeid, '', 0); }, Csw.nodeHoverOut);
+//                    var moreinfoimg = thumbtable.cell(1, 2).css({ width: '25px' })
+//                            .img({
+//                                src: 'Images/newicons/18/info.png',
+//                                title: 'More Info'
+//                            });
+//                    moreinfoimg.propNonDom({ valign: 'top' });
+//                    moreinfoimg.$.hover(function (event) { Csw.nodeHoverIn(event, nodeid, '', 0); }, Csw.nodeHoverOut);
+                    thumbnailCell.$.hover(function (event) { Csw.nodeHoverIn(event, nodeid, ''); }, Csw.nodeHoverOut);
+                    textCell.$.hover(function (event) { Csw.nodeHoverIn(event, nodeid, ''); }, Csw.nodeHoverOut);
 
                     //thumbnailCell.br();
 
