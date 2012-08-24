@@ -1,21 +1,21 @@
 use strict;
 
 my $dir = $ARGV[0];
-my $destfile = "$dir\\js\\mobile\\CswAllMobile.min.js";
+my $destfile = "$dir\\mobile\\CswAllMobile.min.js";
 
 unlink($destfile);
 
 my $param = "";
 
-$param .= extract("$dir\\js\\mobile\\globals");
-$param .= extract("$dir\\js\\mobile\\tools");
-$param .= extract("$dir\\js\\mobile");
-$param .= extract("$dir\\js\\mobile\\clientdb");
-$param .= extract("$dir\\js\\mobile\\controls");
-$param .= extract("$dir\\js\\mobile\\fieldtypes");
-$param .= extract("$dir\\js\\mobile\\objectclasses");
-$param .= extract("$dir\\js\\mobile\\pages");
-$param .= extract("$dir\\js\\mobile\\sync");
+$param .= extract("$dir\\mobile\\globals");
+$param .= extract("$dir\\mobile\\tools");
+$param .= extract("$dir\\mobile");
+$param .= extract("$dir\\mobile\\clientdb");
+$param .= extract("$dir\\mobile\\controls");
+$param .= extract("$dir\\mobile\\fieldtypes");
+$param .= extract("$dir\\mobile\\objectclasses");
+$param .= extract("$dir\\mobile\\pages");
+$param .= extract("$dir\\mobile\\sync");
 
 `java -jar "$dir\\..\\..\\..\\ThirdParty\\ClosureCompiler\\compiler.jar" $param --js_output_file $destfile`;
 

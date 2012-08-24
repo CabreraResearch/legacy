@@ -228,6 +228,9 @@
                 case 'Authenticated':
                     o.success();
                     break;
+                case 'Archived':
+                    txt = 'Your account is archived. Please see your account administrator.';
+                    break;
                 case 'Deauthenticated':
                     o.success(); // yes, o.success() is intentional here.
                     break;

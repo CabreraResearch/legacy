@@ -418,7 +418,7 @@ window.initMain = window.initMain || function (undefined) {
                             getViewTable({ 'viewid': o.viewid, 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey });
                             break;
                         default:
-                            refreshNodesTree({ 'viewid': o.viewid, 'viewmode': o.viewmode, 'nodeid': '', 'cswnbtnodekey': '', 'showempty': linkOpt.showempty, 'forsearch': linkOpt.forsearch });
+                            refreshNodesTree({ 'viewid': o.viewid, 'viewmode': o.viewmode, 'nodeid': o.nodeid, 'cswnbtnodekey': '', 'showempty': linkOpt.showempty, 'forsearch': linkOpt.forsearch });
                             break;
                     }
                 };

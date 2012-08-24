@@ -6,14 +6,20 @@
     var pluginName = 'CswDialog';
 
     var cswPrivateInit = function () { //create this to prevent anyone from modifying the orginal position of the dialog positions
-        var origX = 150;
-        var origY = 30;
+        var origX = 0; //150
+        var origY = 0; //30
 
         this.origXAccessor = function () {
             return origX;
         }
         this.origYAccessor = function () {
             return origY;
+        }
+        this.windowWidth = function () {
+            return document.documentElement.clientWidth;
+        }
+        this.windowHeight = function () {
+            return document.documentElement.clientHeight;
         }
     };
     var cswPrivate = new cswPrivateInit();
@@ -1307,6 +1313,10 @@
             .prependTo(div.$);
 
         Csw.tryExec(div.$.dialog, 'close');
+        if (dialogsCount === 0) { //as per discussion - dialogs should be centered
+            posX = (cswPrivate.windowWidth() / 2) - (width / 2) + posX;
+            posY = (cswPrivate.windowHeight() / 2) - (height / 2) + posY;
+        }
 
         div.$.dialog({
             modal: true,
