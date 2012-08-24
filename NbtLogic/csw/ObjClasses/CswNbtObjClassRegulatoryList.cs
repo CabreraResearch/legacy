@@ -114,7 +114,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             CswNbtView materialsWithThisList = new CswNbtView( _CswNbtResources );
             CswNbtMetaDataObjectClass materialOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass );
-            CswNbtMetaDataObjectClassProp regListsOCP = materialOC.getObjectClassProp( CswNbtObjClassMaterial.RegulatoryListsPropertyName );
+            CswNbtMetaDataObjectClassProp regListsOCP = materialOC.getObjectClassProp( CswNbtObjClassMaterial.PropertyName.RegulatoryLists );
             CswNbtViewRelationship parent = materialsWithThisList.AddViewRelationship( materialOC, false );
             string OriginalName = Name.GetOriginalPropRowValue();
             materialsWithThisList.AddViewPropertyAndFilter( parent, regListsOCP, Value: OriginalName, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Contains );
