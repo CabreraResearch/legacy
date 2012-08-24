@@ -18,15 +18,10 @@ namespace ChemSW.Nbt.Schema
 
             if( null != ContDispTransNt )
             {
-                CswNbtView GridView = _CswNbtSchemaModTrnsctn.restoreView( "Container Dispense Transactions" );
+                CswNbtMetaDataNodeTypeProp ContainerDispensesGridProp = ContainerNt.getNodeTypeProp( "Container Dispense Transactions" );
+                CswNbtView GridView = _CswNbtSchemaModTrnsctn.restoreView( ContainerDispensesGridProp.ViewId );
                 if( GridView != null )
                 {
-                    GridView.Root.ChildRelationships.Clear();
-
-                    CswNbtViewRelationship RootRel = GridView.AddViewRelationship( ContainerNt, false );
-
-                    //CswNbtViewProperty ExpirationDateVp = GridView.findPropertyByName( "" );
-
                     CswNbtMetaDataNodeTypeProp SourceContainerNtp = ContDispTransNt.getNodeTypePropByObjectClassProp( CswNbtObjClassContainerDispenseTransaction.SourceContainerPropertyName );
                     CswNbtMetaDataNodeTypeProp DestinationContainerNtp = ContDispTransNt.getNodeTypePropByObjectClassProp( CswNbtObjClassContainerDispenseTransaction.DestinationContainerPropertyName );
                     CswNbtMetaDataNodeTypeProp QuantityDispensedNtp = ContDispTransNt.getNodeTypePropByObjectClassProp( CswNbtObjClassContainerDispenseTransaction.QuantityDispensedPropertyName );
@@ -37,6 +32,9 @@ namespace ChemSW.Nbt.Schema
 
                     if( null != SourceContainerNtp && null != DestinationContainerNtp )
                     {
+                        GridView.Root.ChildRelationships.Clear();
+                        CswNbtViewRelationship RootRel = GridView.AddViewRelationship( ContainerNt, false );
+
                         List<CswNbtMetaDataNodeTypeProp> ContainerNtps = new List<CswNbtMetaDataNodeTypeProp>();
                         ContainerNtps.Add( SourceContainerNtp );
                         ContainerNtps.Add( DestinationContainerNtp );
@@ -51,13 +49,9 @@ namespace ChemSW.Nbt.Schema
 
                             CswNbtViewProperty SourceContainerVp = GridView.AddViewProperty( ContDispTransRel, SourceContainerNtp );
                             SourceContainerVp.Order = 2;
-                            SourceContainerVp.SortBy = true;
-                            SourceContainerVp.SortMethod = NbtViewPropertySortMethod.Descending;
 
                             CswNbtViewProperty DestinationContainerVp = GridView.AddViewProperty( ContDispTransRel, DestinationContainerNtp );
                             DestinationContainerVp.Order = 3;
-                            DestinationContainerVp.SortBy = true;
-                            DestinationContainerVp.SortMethod = NbtViewPropertySortMethod.Descending;
 
                             CswNbtViewProperty TypeVp = GridView.AddViewProperty( ContDispTransRel, TypeNtp );
                             TypeVp.Order = 4;
