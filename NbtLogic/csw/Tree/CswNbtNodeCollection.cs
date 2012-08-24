@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
@@ -68,6 +69,26 @@ namespace ChemSW.Nbt
         public CswNbtNode this[CswPrimaryKey NodeId]
         {
             get { return GetNode( NodeId, DateTime.MinValue ); }
+        }
+
+        /// <summary>
+        /// Index of nodes by NodeId.  NodeTypeId is looked up and NodeSpecies.Plain is assumed.  See <see cref="GetNode(CswPrimaryKey, int, NodeSpecies, DateTime)"/>
+        /// </summary>
+        /// <param name="NodeId">String representation of Primary Key of Node</param>
+        public CswNbtNode this[string NodePk]
+        {
+            get
+            {
+                CswNbtNode Ret = null;
+                CswPrimaryKey NodeId = new CswPrimaryKey();
+                NodeId.FromString( NodePk );
+                Debug.Assert( CswTools.IsPrimaryKey( NodeId ), "The request did not specify a valid materialid." );
+                if( CswTools.IsPrimaryKey( NodeId ) )
+                {
+                    Ret = this[NodeId];
+                }
+                return Ret;
+            }
         }
 
         public CswNbtNode GetNode( string NodeId, string NodeKey, CswDateTime Date )

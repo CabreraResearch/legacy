@@ -129,11 +129,11 @@ namespace ChemSW.Nbt.Actions
                     Debug.Assert( ( null != ContainerNt ), "The request specified an invalid container nodetypeid." );
                     if( null != ContainerNt )
                     {
-                        CswPrimaryKey MaterialId = new CswPrimaryKey();
-                        MaterialId.FromString( CswConvert.ToString( ReceiptObj["materialid"] ) );
-                        Debug.Assert( ( Int32.MinValue != MaterialId.PrimaryKey ), "The request did not specify a valid materialid." );
-                        if( Int32.MinValue != MaterialId.PrimaryKey )
+                        CswNbtObjClassMaterial NodeAsMaterial = CswNbtResources.Nodes[CswConvert.ToString( ReceiptObj["materialid"] )];
+                        Debug.Assert( ( null != NodeAsMaterial ), "The request did not specify a valid materialid." );
+                        if( null != NodeAsMaterial )
                         {
+                            commitDocumentNode( CswNbtResources, NodeAsMaterial, ReceiptObj );
                             JArray Quantities = CswConvert.ToJArray( ReceiptObj["quantities"] );
                             Debug.Assert( Quantities.HasValues, "The request did not specify any valid container amounts." );
                             if( Quantities.HasValues )
@@ -168,7 +168,7 @@ namespace ChemSW.Nbt.Actions
                                                 AsContainer.Barcode.setBarcodeValueOverride( Barcodes[C], false );
                                             }
                                             AsContainer.Size.RelatedNodeId = SizeId;
-                                            AsContainer.Material.RelatedNodeId = MaterialId;
+                                            AsContainer.Material.RelatedNodeId = NodeAsMaterial.NodeId;
                                             if( AsSize.QuantityEditable.Checked != Tristate.True )
                                             {
                                                 QuantityValue = AsSize.InitialQuantity.Quantity;
@@ -202,6 +202,46 @@ namespace ChemSW.Nbt.Actions
             }
             Ret["containerscreated"] = ContainerIds.Count;
             return Ret;
+        }
+
+        /// <summary>
+        /// Gets the first Document <see cref="CswNbtMetaDataNodeType"/> with an Owner relationship target of Material
+        /// </summary>
+        public static Int32 getMaterialDocumentNodeTypeId( CswNbtResources CswNbtResources, CswNbtObjClassMaterial NodeAsMaterial )
+        {
+            Int32 Ret = Int32.MinValue;
+            CswNbtMetaDataObjectClass DocumentOc = CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.DocumentClass );
+            foreach( CswNbtMetaDataNodeType DocumentNt in from
+                                                              _DocumentNt in
+                                                              DocumentOc.getLatestVersionNodeTypes()
+                                                          let OwnerNtp = _DocumentNt.getNodeTypePropByObjectClassProp( CswNbtObjClassDocument.PropertyName.Owner )
+                                                          where ( ( OwnerNtp.FKType == NbtViewRelatedIdType.NodeTypeId.ToString() &&
+                                                                    OwnerNtp.FKValue == NodeAsMaterial.NodeTypeId ) ||
+                                                                ( OwnerNtp.FKType == NbtViewRelatedIdType.ObjectClassId.ToString() &&
+                                                                    OwnerNtp.FKValue == NodeAsMaterial.ObjectClass.ObjectClassId ) )
+                                                          select _DocumentNt )
+            {
+                Ret = DocumentNt.NodeTypeId;
+                break;
+            }
+            return Ret;
+        }
+
+        /// <summary>
+        /// Upversion a Document node
+        /// </summary>
+        public static CswNbtObjClassDocument commitDocumentNode( CswNbtResources CswNbtResources, CswNbtObjClassMaterial NodeAsMaterial, JObject Obj )
+        {
+            CswNbtSdTabsAndProps SdTabsAndProps = new CswNbtSdTabsAndProps( CswNbtResources );
+            CswNbtObjClassDocument Doc = CswNbtResources.Nodes[CswConvert.ToString( Obj["documentid"] )];
+            if( null != Doc )
+            {
+                Doc.IsTemp = false;
+                SdTabsAndProps.saveProps( Doc.NodeId, Int32.MinValue, CswConvert.ToString( Obj["documentProperties"] ), Doc.NodeTypeId, null );
+                Doc.Owner.RelatedNodeId = NodeAsMaterial.NodeId;
+                Doc.postChanges( ForceUpdate: false );
+            }
+            return Doc;
         }
 
         #endregion Public methods and props

@@ -332,7 +332,7 @@ namespace ChemSW.Nbt.ServiceDrivers
 
             CswNbtNode Node = _CswNbtResources.getNode( NodeId, NodeKey, new CswDateTime( _CswNbtResources ) );
             if( null == Node &&
-                _CswNbtResources.EditMode == NodeEditMode.Add &&
+                ( _CswNbtResources.EditMode == NodeEditMode.Add || _CswNbtResources.EditMode == NodeEditMode.Temp ) &&
                 NodeTypeId != Int32.MinValue )
             {
                 Node = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing );
@@ -617,6 +617,16 @@ namespace ChemSW.Nbt.ServiceDrivers
                 Node = _CswNbtResources.Nodes.GetNode( NodePk );
                 switch( _CswNbtResources.EditMode )
                 {
+                    case NodeEditMode.Temp:
+                        if( null != Node )
+                        {
+                            addNode( NodeType, Node, PropsObj, out RetNbtNodeKey, View, NodeTypeTab );
+                        }
+                        else
+                        {
+                            Node = addNode( NodeType, null, PropsObj, out RetNbtNodeKey, View, NodeTypeTab );
+                        }
+                        break;
                     case NodeEditMode.Add:
                         if( null != Node )
                         {

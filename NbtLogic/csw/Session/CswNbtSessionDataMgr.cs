@@ -4,8 +4,8 @@ using System.Data;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Nbt.Actions;
-using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Search;
 using Newtonsoft.Json.Linq;
 
@@ -140,7 +140,7 @@ namespace ChemSW.Nbt
             ParentObj["name"] = Text;
             ParentObj["id"] = SessionDataId.ToString();
             //ParentObj["iconurl"] = "Images/view/search.gif";
-            ParentObj["iconurl"] = CswNbtMetaDataObjectClass.IconPrefix16 + "magglass.png"; 
+            ParentObj["iconurl"] = CswNbtMetaDataObjectClass.IconPrefix16 + "magglass.png";
             ParentObj["searchid"] = SessionDataId.ToString();
         }
 
@@ -295,8 +295,8 @@ namespace ChemSW.Nbt
                         SessionDataUpdate.update( SessionDataTable );
                     }
 
-                    CswTableSelect SessionNodeSelect = _CswNbtResources.makeCswTableSelect( "removeSessionData_update_nodes", "nodes" );
-                    DataTable NodesTable = SessionNodeSelect.getTable( "where " + SessionDataColumn_SessionId + " = '" + SessionId + "'" );
+                    CswArbitrarySelect SessionNodeSelect = _CswNbtResources.makeCswArbitrarySelect( "removeSessionData_update_nodes", "select nodeid from nodes n where istemp=1 or ( n.sessionid is not null and n.sessionid <> '' and not exists (select sessionid from sessionlist s where s.sessionid = n.sessionid))" );
+                    DataTable NodesTable = SessionNodeSelect.getTable();
                     if( NodesTable.Rows.Count > 0 )
                     {
                         Collection<CswNbtNode> DoomedNodes = new Collection<CswNbtNode>();

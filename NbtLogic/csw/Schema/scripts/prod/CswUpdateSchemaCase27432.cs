@@ -22,7 +22,7 @@ namespace ChemSW.Nbt.Schema
                 CswNbtMetaDataObjectClass MaterialOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass );
                 foreach( CswNbtMetaDataNodeType MaterialNodeType in MaterialOC.getNodeTypes() )
                 {
-                    CswNbtMetaDataNodeTypeProp ExpInt = MaterialNodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassMaterial.ExpirationIntervalPropertyName );
+                    CswNbtMetaDataNodeTypeProp ExpInt = MaterialNodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassMaterial.PropertyName.ExpirationInterval );
                     CswNbtView TimeView = _CswNbtSchemaModTrnsctn.restoreView( ExpInt.ViewId );
 
                     CswNbtViewRelationship TimeUnitNodeTypeRelationship = TimeView.Root.ChildRelationships[0];
