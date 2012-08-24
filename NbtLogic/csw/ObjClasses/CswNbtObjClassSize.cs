@@ -1,7 +1,7 @@
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.UnitsOfMeasure;
-
+using ChemSW.Core;
 
 namespace ChemSW.Nbt.ObjClasses
 {
@@ -52,6 +52,16 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
+            if( null == Material.RelatedNodeId )
+            {
+                CswPrimaryKey pk = new CswPrimaryKey();
+                bool succeeded = pk.FromString( _CswNbtResources.CurrentNbtUser.Cookies["csw_currentnodeid"] );
+                if( succeeded && _isMaterialID( pk ) ) //only assign the id if we got a real nodeid from cookies and it's indeed a material id
+                {
+                    Material.RelatedNodeId = pk;
+                }
+            }
+
             _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
         }//beforeWriteNode()
 
@@ -110,6 +120,15 @@ namespace ChemSW.Nbt.ObjClasses
 
         #endregion
 
+        #region Custom logic
+
+        private bool _isMaterialID( CswPrimaryKey nodeid )
+        {
+            CswNbtNode node = _CswNbtResources.Nodes.GetNode( nodeid );
+            return _Validate( node, CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass );
+        }
+
+        #endregion
 
     }//CswNbtObjClassSize
 

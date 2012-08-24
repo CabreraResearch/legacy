@@ -200,7 +200,8 @@ namespace ChemSW.Nbt.ObjClasses
                         if( false == _CswNbtResources.Nodes[CurrentCompoundUniqueProp.NodeId].Properties[CurrentCompoundUniqueProp.NodeTypeProp].Empty ) //case 26546 - allow unique props to be empty
                         {
                             CswNbtViewProperty CswNbtViewProperty = CswNbtView.AddViewProperty( ViewRelationship, CurrentCompoundUniqueProp.NodeTypeProp );
-                            CurrentCompoundUniqueProp.NodeTypeProp.getFieldTypeRule().AddUniqueFilterToView( CswNbtView, CswNbtViewProperty, CurrentCompoundUniqueProp );
+                            ICswNbtFieldTypeRule ftRule = CurrentCompoundUniqueProp.NodeTypeProp.getFieldTypeRule();
+                            ftRule.AddUniqueFilterToView( CswNbtView, CswNbtViewProperty, CurrentCompoundUniqueProp );
                         }
                     }
 
@@ -220,10 +221,13 @@ namespace ChemSW.Nbt.ObjClasses
                         }
 
                         string ExotericMessage = "The following properties must have unique values:  " + CompoundUniquePropNames.ToString();
-                        string EsotericMessage = "The " + CompoundUniquePropNames.ToString() + " of node " + NodeId.ToString() + " are the same as for node " + DuplicateValueNode.NodeId.ToString() + ": " + CompoundUniquePropValues.ToString();
+                        string EsotericMessage = "The " + CompoundUniquePropNames.ToString() +
+                            " of node " + NodeId.ToString() + " are the same as for node " + DuplicateValueNode.NodeId.ToString() + ": " + CompoundUniquePropValues.ToString();
 
-                        throw ( new CswDniException( ErrorType.Warning, ExotericMessage, EsotericMessage ) );
-
+                        if( false == _CswNbtNode.IsTemp && false == DuplicateValueNode.IsTemp ) //only throw an error is we're comparing two REAL nodes
+                        {
+                            throw ( new CswDniException( ErrorType.Warning, ExotericMessage, EsotericMessage ) );
+                        }
 
                     }//we have a duplicate value situation
                 }
@@ -354,9 +358,9 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override bool onButtonClick( NbtButtonData ButtonData )
         {
-            
-            
-            
+
+
+
             if( null != ButtonData && null != ButtonData.NodeTypeProp ) { /*Do Something*/ }
             return true;
         }
