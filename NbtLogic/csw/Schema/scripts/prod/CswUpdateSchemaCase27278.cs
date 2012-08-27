@@ -19,53 +19,56 @@ namespace ChemSW.Nbt.Schema
             if( null != ContDispTransNt )
             {
                 CswNbtMetaDataNodeTypeProp ContainerDispensesGridProp = ContainerNt.getNodeTypeProp( "Container Dispense Transactions" );
-                CswNbtView GridView = _CswNbtSchemaModTrnsctn.restoreView( ContainerDispensesGridProp.ViewId );
-                if( GridView != null )
+                if( ContainerDispensesGridProp != null )
                 {
-                    CswNbtMetaDataNodeTypeProp SourceContainerNtp = ContDispTransNt.getNodeTypePropByObjectClassProp( CswNbtObjClassContainerDispenseTransaction.SourceContainerPropertyName );
-                    CswNbtMetaDataNodeTypeProp DestinationContainerNtp = ContDispTransNt.getNodeTypePropByObjectClassProp( CswNbtObjClassContainerDispenseTransaction.DestinationContainerPropertyName );
-                    CswNbtMetaDataNodeTypeProp QuantityDispensedNtp = ContDispTransNt.getNodeTypePropByObjectClassProp( CswNbtObjClassContainerDispenseTransaction.QuantityDispensedPropertyName );
-                    CswNbtMetaDataNodeTypeProp TypeNtp = ContDispTransNt.getNodeTypePropByObjectClassProp( CswNbtObjClassContainerDispenseTransaction.TypePropertyName );
-                    CswNbtMetaDataNodeTypeProp DispensedDateNtp = ContDispTransNt.getNodeTypePropByObjectClassProp( CswNbtObjClassContainerDispenseTransaction.DispensedDatePropertyName );
-                    CswNbtMetaDataNodeTypeProp RemainingSourceContainerQuantityNtp = ContDispTransNt.getNodeTypePropByObjectClassProp( CswNbtObjClassContainerDispenseTransaction.RemainingSourceContainerQuantityPropertyName );
-                    CswNbtMetaDataNodeTypeProp RequestNtp = ContDispTransNt.getNodeTypePropByObjectClassProp( CswNbtObjClassContainerDispenseTransaction.RequestItemPropertyName );
-
-                    if( null != SourceContainerNtp && null != DestinationContainerNtp )
+                    CswNbtView GridView = _CswNbtSchemaModTrnsctn.restoreView( ContainerDispensesGridProp.ViewId );
+                    if( GridView != null )
                     {
-                        GridView.Root.ChildRelationships.Clear();
-                        CswNbtViewRelationship RootRel = GridView.AddViewRelationship( ContainerNt, false );
+                        CswNbtMetaDataNodeTypeProp SourceContainerNtp = ContDispTransNt.getNodeTypePropByObjectClassProp( CswNbtObjClassContainerDispenseTransaction.SourceContainerPropertyName );
+                        CswNbtMetaDataNodeTypeProp DestinationContainerNtp = ContDispTransNt.getNodeTypePropByObjectClassProp( CswNbtObjClassContainerDispenseTransaction.DestinationContainerPropertyName );
+                        CswNbtMetaDataNodeTypeProp QuantityDispensedNtp = ContDispTransNt.getNodeTypePropByObjectClassProp( CswNbtObjClassContainerDispenseTransaction.QuantityDispensedPropertyName );
+                        CswNbtMetaDataNodeTypeProp TypeNtp = ContDispTransNt.getNodeTypePropByObjectClassProp( CswNbtObjClassContainerDispenseTransaction.TypePropertyName );
+                        CswNbtMetaDataNodeTypeProp DispensedDateNtp = ContDispTransNt.getNodeTypePropByObjectClassProp( CswNbtObjClassContainerDispenseTransaction.DispensedDatePropertyName );
+                        CswNbtMetaDataNodeTypeProp RemainingSourceContainerQuantityNtp = ContDispTransNt.getNodeTypePropByObjectClassProp( CswNbtObjClassContainerDispenseTransaction.RemainingSourceContainerQuantityPropertyName );
+                        CswNbtMetaDataNodeTypeProp RequestNtp = ContDispTransNt.getNodeTypePropByObjectClassProp( CswNbtObjClassContainerDispenseTransaction.RequestItemPropertyName );
 
-                        List<CswNbtMetaDataNodeTypeProp> ContainerNtps = new List<CswNbtMetaDataNodeTypeProp>();
-                        ContainerNtps.Add( SourceContainerNtp );
-                        ContainerNtps.Add( DestinationContainerNtp );
-                        foreach( CswNbtMetaDataNodeTypeProp ContainerNtp in ContainerNtps )
+                        if( null != SourceContainerNtp && null != DestinationContainerNtp )
                         {
-                            CswNbtViewRelationship ContDispTransRel = GridView.AddViewRelationship( RootRel, NbtViewPropOwnerType.Second, ContainerNtp, false );
+                            GridView.Root.ChildRelationships.Clear();
+                            CswNbtViewRelationship RootRel = GridView.AddViewRelationship( ContainerNt, false );
 
-                            CswNbtViewProperty DispensedDateVp = GridView.AddViewProperty( ContDispTransRel, DispensedDateNtp );
-                            DispensedDateVp.Order = 1;
-                            DispensedDateVp.SortBy = true;
-                            DispensedDateVp.SortMethod = NbtViewPropertySortMethod.Descending;
+                            List<CswNbtMetaDataNodeTypeProp> ContainerNtps = new List<CswNbtMetaDataNodeTypeProp>();
+                            ContainerNtps.Add( SourceContainerNtp );
+                            ContainerNtps.Add( DestinationContainerNtp );
+                            foreach( CswNbtMetaDataNodeTypeProp ContainerNtp in ContainerNtps )
+                            {
+                                CswNbtViewRelationship ContDispTransRel = GridView.AddViewRelationship( RootRel, NbtViewPropOwnerType.Second, ContainerNtp, false );
 
-                            CswNbtViewProperty SourceContainerVp = GridView.AddViewProperty( ContDispTransRel, SourceContainerNtp );
-                            SourceContainerVp.Order = 2;
+                                CswNbtViewProperty DispensedDateVp = GridView.AddViewProperty( ContDispTransRel, DispensedDateNtp );
+                                DispensedDateVp.Order = 1;
+                                DispensedDateVp.SortBy = true;
+                                DispensedDateVp.SortMethod = NbtViewPropertySortMethod.Descending;
 
-                            CswNbtViewProperty DestinationContainerVp = GridView.AddViewProperty( ContDispTransRel, DestinationContainerNtp );
-                            DestinationContainerVp.Order = 3;
+                                CswNbtViewProperty SourceContainerVp = GridView.AddViewProperty( ContDispTransRel, SourceContainerNtp );
+                                SourceContainerVp.Order = 2;
 
-                            CswNbtViewProperty TypeVp = GridView.AddViewProperty( ContDispTransRel, TypeNtp );
-                            TypeVp.Order = 4;
+                                CswNbtViewProperty DestinationContainerVp = GridView.AddViewProperty( ContDispTransRel, DestinationContainerNtp );
+                                DestinationContainerVp.Order = 3;
 
-                            CswNbtViewProperty QuantityDispensedVp = GridView.AddViewProperty( ContDispTransRel, QuantityDispensedNtp );
-                            QuantityDispensedVp.Order = 5;
+                                CswNbtViewProperty TypeVp = GridView.AddViewProperty( ContDispTransRel, TypeNtp );
+                                TypeVp.Order = 4;
 
-                            CswNbtViewProperty RemainingSourceContainerQuantityVp = GridView.AddViewProperty( ContDispTransRel, RemainingSourceContainerQuantityNtp );
-                            RemainingSourceContainerQuantityVp.Order = 6;
+                                CswNbtViewProperty QuantityDispensedVp = GridView.AddViewProperty( ContDispTransRel, QuantityDispensedNtp );
+                                QuantityDispensedVp.Order = 5;
 
-                            CswNbtViewProperty RequestVp = GridView.AddViewProperty( ContDispTransRel, RequestNtp );
-                            RequestVp.Order = 7;
+                                CswNbtViewProperty RemainingSourceContainerQuantityVp = GridView.AddViewProperty( ContDispTransRel, RemainingSourceContainerQuantityNtp );
+                                RemainingSourceContainerQuantityVp.Order = 6;
+
+                                CswNbtViewProperty RequestVp = GridView.AddViewProperty( ContDispTransRel, RequestNtp );
+                                RequestVp.Order = 7;
+                            }
+                            GridView.save();
                         }
-                        GridView.save();
                     }
                 }
             }
