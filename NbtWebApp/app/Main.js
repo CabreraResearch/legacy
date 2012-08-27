@@ -538,7 +538,7 @@ window.initMain = window.initMain || function (undefined) {
             nodeTreeCheck: mainTree
         };
 
-        Csw.composites.menu( o.parent, menuOpts );
+        o.parent.menu( menuOpts );
 
     } // refreshMainMenu()
 

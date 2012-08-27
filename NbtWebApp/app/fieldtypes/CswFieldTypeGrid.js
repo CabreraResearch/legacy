@@ -39,7 +39,7 @@
                         Multi: false,
                         nodeTreeCheck: ''
                     };
-                    Csw.composites.menu( menuDiv, menuOpts );
+                    menuDiv.menu( menuOpts );
 
                 } // if( o.EditMode !== Csw.enums.editMode.PrintReport )
             } // makeGridMenu()
