@@ -245,7 +245,7 @@
 
                         btnTable.cell(1, btncol).buttonExt({
                             ID: Csw.makeId(cswPrivate.ID, nodeid, 'editbtn'),
-                            enabledText: 'Edit',
+                            enabledText: 'Details',
                             //tooltip: { title: btntext },
                             icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.pencil),
                             onClick: function () {
