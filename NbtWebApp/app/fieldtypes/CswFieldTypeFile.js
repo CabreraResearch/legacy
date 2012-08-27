@@ -30,10 +30,12 @@
 
                 if (false === o.ReadOnly) {
                     //Edit button
-                    cell12.imageButton({
-                            ButtonType: Csw.enums.imageButton_ButtonType.Edit,
-                            AlternateText: 'Edit',
+                    cell12.icon({
                             ID: o.ID + '_edit',
+                            iconType: Csw.enums.iconType.pencil,
+                            hovertext: 'Edit',
+                            size: 16,
+                            isButton: true,
                             onClick: function () {
                                 $.CswDialog('FileUploadDialog', {
                                     url: '/NbtWebApp/wsNBT.asmx/fileForProp',
@@ -54,10 +56,12 @@
                             }
                         });
                     //Clear button
-                    cell13.imageButton({
-                            ButtonType: Csw.enums.imageButton_ButtonType.Clear,
-                            AlternateText: 'Clear',
+                    cell13.icon({
                             ID: o.ID + '_clr',
+                            iconType: Csw.enums.iconType.trash,
+                            hovertext: 'Clear File',
+                            size: 16,
+                            isButton: true,
                             onClick: function () {
                                 /* remember: confirm is globally blocking call */
                                 if (confirm("Are you sure you want to clear this file?")) {

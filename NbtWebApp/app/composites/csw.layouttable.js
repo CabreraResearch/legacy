@@ -442,57 +442,68 @@
                     ID: Csw.makeId(cswPrivate.ID, 'buttontbl')
                 });
                 if (cswPrivate.showAddButton) {
-                    cswPrivate.addBtn = cswPublic.buttonTable.cell(1, 1).imageButton({
-                        ButtonType: Csw.enums.imageButton_ButtonType.Add,
-                        AlternateText: 'Add',
+                    cswPrivate.addBtn = cswPublic.buttonTable.cell(1, 1).icon({
                         ID: cswPrivate.ID + 'addbtn',
+                        hovertext: 'Add',
+                        iconType: Csw.enums.iconType.plus,
+                        isButton: true,
                         onClick: function() {
                             Csw.tryExec(cswPrivate.onAddClick);
-                        }
+                        },
+                        size: 18
                     });
+
                     cswPrivate.addBtn.hide();
                 }
                 if (cswPrivate.showRemoveButton) {
-                    cswPrivate.removeBtn = cswPublic.buttonTable.cell(1, 2).imageButton({
-                        ButtonType: Csw.enums.imageButton_ButtonType.Delete,
-                        AlternateText: 'Remove',
+                    cswPrivate.removeBtn = cswPublic.buttonTable.cell(1, 2).icon({
                         ID: cswPrivate.ID + 'rembtn',
+                        hovertext: 'Remove',
+                        iconType: Csw.enums.iconType.trash,
+                        isButton: true,
                         onClick: function() {
                             cswPrivate.toggleRemove();
-                        }
+                        },
+                        size: 18
                     });
                     cswPrivate.removeBtn.hide();
                 }
                 if (cswPrivate.showExpandColButton) {
-                    cswPrivate.expandColBtn = cswPublic.buttonTable.cell(1, 3).imageButton({
-                        ButtonType: Csw.enums.imageButton_ButtonType.ArrowEast,
-                        AlternateText: 'Add Column',
+                    cswPrivate.expandColBtn = cswPublic.buttonTable.cell(1, 3).icon({
                         ID: cswPrivate.ID + 'addcolumnbtn',
+                        hovertext: 'Add Column',
+                        iconType: Csw.enums.iconType.right,
+                        isButton: true,
                         onClick: function() {
                             cswPrivate.addColumn();
-                        }
+                        },
+                        size: 18
                     });
                     cswPrivate.expandColBtn.hide();
                 }
                 if (cswPrivate.showExpandRowButton) {
-                    cswPrivate.expandRowBtn = cswPublic.buttonTable.cell(1, 4).imageButton({
-                        ButtonType: Csw.enums.imageButton_ButtonType.ArrowSouth,
-                        AlternateText: 'Add Row',
+                    cswPrivate.expandRowBtn = cswPublic.buttonTable.cell(1, 4).icon({
                         ID: cswPrivate.ID + 'addrowbtn',
+                        hovertext: 'Add Row',
+                        iconType: Csw.enums.iconType.down,
+                        isButton: true,
                         onClick: function() {
                             cswPrivate.addRow();
-                        }
+                        },
+                        size: 18
                     });
                     cswPrivate.expandRowBtn.hide();
                 }
                 if (cswPrivate.showConfigButton) {
-                    cswPrivate.configBtn = cswPublic.buttonTable.cell(1, 5).imageButton({
-                        ButtonType: Csw.enums.imageButton_ButtonType.Configure,
-                        AlternateText: 'Configure',
+                    cswPrivate.configBtn = cswPublic.buttonTable.cell(1, 5).icon({
                         ID: cswPrivate.ID + 'configbtn',
+                        hovertext: 'Configure',
+                        iconType: Csw.enums.iconType.wrench,
+                        isButton: true,
                         onClick: function() {
                             cswPublic.toggleConfig();
-                        }
+                        },
+                        size: 18
                     });
                 }
 

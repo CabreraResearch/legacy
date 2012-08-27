@@ -95,10 +95,12 @@
                 //#region final ctor
                 (function _post() {
                     if (false === cswPrivate.ReadOnly) {
-                        cswPublic.table.cell(1, 2).imageButton({
-                            ButtonType: Csw.enums.imageButton_ButtonType.Edit,
-                            AlternateText: 'Edit',
+                        cswPublic.table.cell(1, 2).icon({
                             ID: Csw.makeId(cswPrivate.ID, 'toggle'),
+                            iconType: Csw.enums.iconType.pencil,
+                            hovertext: 'Edit',
+                            size: 16,
+                            isButton: true,
                             onClick: function () {
 
                                 cswPublic.table.cell(1, 1).hide();

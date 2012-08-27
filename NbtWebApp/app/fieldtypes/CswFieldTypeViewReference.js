@@ -23,11 +23,12 @@
                     viewid: viewId
                 });
 
-                table.cell(1, 2).imageButton({
+                table.cell(1, 2).icon({
                     ID: o.ID + '_view',
-                    ButtonType: Csw.enums.imageButton_ButtonType.View,
-                    AlternateText: 'View',
-                    Required: o.Required,
+                    iconType: Csw.enums.iconType.magglass,
+                    hovertext: 'View',
+                    size: 16,
+                    isButton: true,
                     onClick: function () {
                         Csw.clientState.setCurrentView(viewId, viewMode);
                         /* case 20958 - so that it doesn't treat the view as a Grid Property view */
@@ -38,11 +39,12 @@
                     }
                 });
                 if (false === o.ReadOnly) {
-                    table.cell(1, 3).imageButton({
+                    table.cell(1, 3).icon({
                         ID: o.ID + '_edit',
-                        ButtonType: Csw.enums.imageButton_ButtonType.Edit,
-                        AlternateText: 'Edit',
-                        Required: o.Required,
+                        hovertext: 'Edit',
+                        iconType: Csw.enums.iconType.pencil,
+                        size: 16,
+                        isButton: true,
                         onClick: function () {
                             o.onEditView(viewId);
                         }

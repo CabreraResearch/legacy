@@ -65,9 +65,11 @@
                         //                        var dialogLink = table.cell(1, cellCol).a({
                         //                            ID: Csw.makeId(o.ID, '', 'searchlink'),
                         //                            text: 'Find',
-                        table.cell(1, cellCol).imageButton({
-                            ButtonType: Csw.enums.imageButton_ButtonType.View,
-                            AlternateText: "Search " + o.propData.name,
+                        table.cell(1, cellCol).icon({
+                            iconType: Csw.enums.iconType.magglass,
+                            hovertext: "Search " + o.propData.name,
+                            size: 16,
+                            isButton: true,
                             onClick: function () {
                                 $.CswDialog('SearchDialog', {
                                     propname: o.propData.name,

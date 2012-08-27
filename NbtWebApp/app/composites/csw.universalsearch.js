@@ -228,13 +228,15 @@
                         text: thisFilter.filtername + ':&nbsp;'
                     });
                     ftable.cell(ftable_row, 2).span({
-                        text: thisFilter.filtervalue
+                        text: thisFilter.filtervalue + '&nbsp;&nbsp;'
                     });
                     if (Csw.bool(thisFilter.removeable)) {
-                        ftable.cell(ftable_row, 3).imageButton({
+                        ftable.cell(ftable_row, 3).icon({
                             ID: Csw.makeId(filtersdivid, '', thisFilter.filterid),
-                            ButtonType: Csw.enums.imageButton_ButtonType.Delete,
-                            AlternateText: 'Remove Filter',
+                            iconType: Csw.enums.iconType.x,
+                            hovertext: 'Remove Filter',
+                            size: 16,
+                            isButton: true,
                             onClick: function() {
                                 cswPrivate.filter(thisFilter, 'remove');
                             }

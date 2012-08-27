@@ -24,7 +24,7 @@
                 iconFilePrefix: 'Images/newicons/icons',
                 iconFileSuffix: '.png'
             };
-            var cswPublic = {};
+            var cswPublic = cswParent.div({ text: '&nbsp;' });
 
             cswPrivate.url = function () {
                 // Case 24112: IE7 processes url() using https but handles the response as http--prompting the security dialog.
@@ -51,28 +51,28 @@
                 if (false === Csw.isNullOrEmpty(newType) && newType != Csw.enums.iconType.none) {
                     cswPrivate.iconType = newType;
 
-                    cswPrivate.div.css({
+                    cswPublic.css({
                         background: 'url(\'' + cswPrivate.url() + '\')'
                     });
-                    cswPrivate.div.css(cswPrivate.offsetCss(cswPrivate.state));
+                    cswPublic.css(cswPrivate.offsetCss(cswPrivate.state));
 
-                    cswPrivate.div.unbind('mouseover');
-                    cswPrivate.div.unbind('mouseout');
-                    cswPrivate.div.unbind('mousedown');
-                    cswPrivate.div.unbind('mouseup');
+                    cswPublic.unbind('mouseover');
+                    cswPublic.unbind('mouseout');
+                    cswPublic.unbind('mousedown');
+                    cswPublic.unbind('mouseup');
 
                     if (cswPrivate.isButton && cswPrivate.state != Csw.enums.iconState.disabled) {
-                        cswPrivate.div.bind('mouseover', function () {
-                            cswPrivate.div.css(cswPrivate.offsetCss(Csw.enums.iconState.hover));
+                        cswPublic.bind('mouseover', function () {
+                            cswPublic.css(cswPrivate.offsetCss(Csw.enums.iconState.hover));
                         });
-                        cswPrivate.div.bind('mouseout', function () {
-                            cswPrivate.div.css(cswPrivate.offsetCss(cswPrivate.state));
+                        cswPublic.bind('mouseout', function () {
+                            cswPublic.css(cswPrivate.offsetCss(cswPrivate.state));
                         });
-                        cswPrivate.div.bind('mousedown', function () {
-                            cswPrivate.div.css(cswPrivate.offsetCss(Csw.enums.iconState.selected));
+                        cswPublic.bind('mousedown', function () {
+                            cswPublic.css(cswPrivate.offsetCss(Csw.enums.iconState.selected));
                         });
-                        cswPrivate.div.bind('mouseup', function () {
-                            cswPrivate.div.css(cswPrivate.offsetCss(Csw.enums.iconState.hover));
+                        cswPublic.bind('mouseup', function () {
+                            cswPublic.css(cswPrivate.offsetCss(Csw.enums.iconState.hover));
                         });
                     }
 
@@ -87,17 +87,16 @@
             (function () {
                 if (options) Csw.extend(cswPrivate, options);
 
-                cswPrivate.div = cswParent.div({ text: '&nbsp;' });
-                cswPrivate.div.css({
+                cswPublic.css({
                     display: 'inline-block',
                     width: cswPrivate.size,
                     height: cswPrivate.size
                 });
-                cswPrivate.div.propNonDom('title', cswPrivate.hovertext);
+                cswPublic.propNonDom('title', cswPrivate.hovertext);
 
                 // Case 24112: IE7 processes url() using https but handles the response as http--prompting the security dialog.
 
-                cswPrivate.div.bind('click', function () {
+                cswPublic.bind('click', function () {
                     Csw.tryExec(cswPrivate.onClick);
                 });
                 cswPublic.setType(cswPrivate.iconType);

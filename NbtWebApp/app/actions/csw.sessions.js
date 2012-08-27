@@ -43,12 +43,16 @@
                         Csw.crawlObject(result, function (childObj) {
                             var cell2name = childObj.username;
                             var cell1 = table.cell(row, 1);
-                            cell1.imageButton({
-                                ButtonType: Csw.enums.imageButton_ButtonType.Fire,
-                                AlternateText: 'Burn Session',
-                                ID: o.ID + '_burn_' + childObj.sessionid,
-                                onClick: Csw.makeDelegate(function (sessionid) { handleBurn(sessionid); }, childObj.sessionid)
+                            cell1.icon({
+                                ID: o.ID + '_end_' + childObj.sessionid,
+                                hovertext: 'End Session',
+                                iconType: Csw.enums.iconType.x,
+                                state: Csw.enums.iconState.normal,
+                                isButton: true,
+                                onClick: Csw.makeDelegate(function (sessionid) { handleBurn(sessionid); }, childObj.sessionid),
+                                size: 16
                             });
+
 
                             if (childObj.sessionid === Csw.cookie.get(Csw.cookie.cookieNames.SessionId)) {
                                 cell2name += "&nbsp;(you)";
