@@ -19,10 +19,10 @@ namespace ChemSW.Nbt.Schema
             if( null != ContDispTransNt )
             {
                 CswNbtMetaDataNodeTypeProp ContainerDispensesGridProp = ContainerNt.getNodeTypeProp( "Container Dispense Transactions" );
-                if( ContainerDispensesGridProp != null )
+                if( null != ContainerDispensesGridProp )
                 {
                     CswNbtView GridView = _CswNbtSchemaModTrnsctn.restoreView( ContainerDispensesGridProp.ViewId );
-                    if( GridView != null )
+                    if( null != GridView )
                     {
                         CswNbtMetaDataNodeTypeProp SourceContainerNtp = ContDispTransNt.getNodeTypePropByObjectClassProp( CswNbtObjClassContainerDispenseTransaction.SourceContainerPropertyName );
                         CswNbtMetaDataNodeTypeProp DestinationContainerNtp = ContDispTransNt.getNodeTypePropByObjectClassProp( CswNbtObjClassContainerDispenseTransaction.DestinationContainerPropertyName );
