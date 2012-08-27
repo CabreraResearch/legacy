@@ -1180,6 +1180,10 @@ ul li div {
     border-right: 5px solid #54548f;
     border-bottom: 5px solid #54548f;
     border-left: 5px solid #7b7bb1;
+    -moz-border-radius: 20px;
+    -webkit-border-radius: 20px;
+    -khtml-border-radius: 20px;
+    border-radius: 20px;
 }
 .ResetButton
 {
@@ -1374,4 +1378,13 @@ ul li div {
     color: #3e73be !Important;
     font-family: verdana !Important;
     font-size: &cswtextfontsize !Important;
+}
+
+
+.NodeTableOddRow
+{
+    background-color: #dddddd;
+}
+.NodeTableEvenRow
+{
 }

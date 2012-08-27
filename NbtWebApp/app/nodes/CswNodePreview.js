@@ -12,7 +12,7 @@
                 nodeid: '',
                 cswnbtnodekey: '',
                 eventArg: {},
-                delay: 2500
+                delay: 1500
             };
             if (options) Csw.extend(o, options);
 

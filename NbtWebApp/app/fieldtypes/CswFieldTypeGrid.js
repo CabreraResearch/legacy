@@ -17,29 +17,32 @@
             function makeGridMenu(menuDiv, o, gridOpts, cswGrid, viewid) {
                 //Case 21741
                 if (o.EditMode !== Csw.enums.editMode.PrintReport) {
-                    menuDiv.$.CswMenuMain({
-                        viewid: viewid,
-                        nodeid: o.nodeid,
-                        cswnbtnodekey: o.cswnbtnodekey,
-                        propid: o.ID,
-                        readonly: o.ReadOnly,
-                        onAddNode: function () {
-                            reinitGrid();
-                        },
-                        onPrintView: function () {
-                            cswGrid.print();
-                        },
-                        onMultiEdit: function () {
-                            cswGrid.toggleShowCheckboxes();
-                        },
-                        onEditView: function () {
-                            if (Csw.isFunction(o.onEditView)) {
-                                o.onEditView(viewid);
+
+                    var menuOpts = { 
+                        width: 150,
+                        ajax: { 
+                            urlMethod: 'getMainMenu', 
+                            data: {
+                                ViewId: viewid,
+                                SafeNodeKey: o.cswnbtnodekey,
+                                NodeTypeId: '',
+                                PropIdAttr: o.ID,
+                                LimitMenuTo: '',
+                                ReadOnly: o.ReadOnly
                             }
-                        }
-                    }); // CswMenuMain
+                        },
+                        onAlterNode: function () { reinitGrid(); },
+                        onMultiEdit: function () { cswGrid.toggleShowCheckboxes(); },
+                        onEditView: function () { Csw.tryExec(o.onEditView, viewid); },
+                        onSaveView: null,
+                        onPrintView: function () { cswGrid.print(); },
+                        Multi: false,
+                        nodeTreeCheck: ''
+                    };
+                    Csw.composites.menu( menuDiv, menuOpts );
+
                 } // if( o.EditMode !== Csw.enums.editMode.PrintReport )
-            }
+            } // makeGridMenu()
 
 
             var propDiv = o.propDiv;

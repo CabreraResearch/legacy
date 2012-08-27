@@ -27,6 +27,7 @@
                 extraAction: null,
                 extraActionIcon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.none),
                 onExtraAction: null,  // function(nodeObj) {}
+                compactResults: false,
 
                 newsearchurl: '/NbtWebApp/wsNBT.asmx/doUniversalSearch',
                 filtersearchurl: '/NbtWebApp/wsNBT.asmx/filterUniversalSearch',
@@ -114,7 +115,8 @@
                 // Search results
 
                 function _renderResultsTable(columns) {
-
+                    var nodeTable;
+                    
                     cswPrivate.$searchresults_parent.contents().remove();
                     cswPrivate.$searchresults_parent.css({ paddingTop: '15px' });
 
@@ -125,9 +127,26 @@
                     });
 
                     resultstable.cell(1, 1).append('<b>Search Results: (' + data.table.results + ')</b>');
-
-                    resultstable.cell(1, 2).css({ width: '18px' });
-                    cswPrivate.buttonSingleColumn = resultstable.cell(1, 2).imageButton({
+                    
+                    if(Csw.bool(cswPrivate.compactResults))
+                    {
+                        resultstable.cell(1, 2).css({ width: '100px' });
+                        cswPrivate.linkExpandAll = resultstable.cell(1, 2).a({
+                            ID: Csw.makeId(cswPrivate.ID, '', '_expandall'),
+                            text: 'Expand All',
+                            onClick: function() {
+                                if(cswPrivate.linkExpandAll.text() === 'Expand All'){
+                                    cswPrivate.linkExpandAll.text('Collapse All');
+                                }
+                                else if(cswPrivate.linkExpandAll.text() === 'Collapse All'){
+                                    cswPrivate.linkExpandAll.text('Expand All');
+                                }
+                                nodeTable.expandAll();
+                            }
+                        });
+                    }
+                    resultstable.cell(1, 3).css({ width: '18px' });
+                    cswPrivate.buttonSingleColumn = resultstable.cell(1, 3).imageButton({
                         ID: Csw.makeId(cswPrivate.ID, '', '_singlecol'),
                         ButtonType: Csw.enums.imageButton_ButtonType.TableSingleColumn,
                         Active: (columns === 1),
@@ -139,8 +158,8 @@
                         }
                     });
 
-                    resultstable.cell(1, 3).css({ width: '18px' });
-                    cswPrivate.buttonMultiColumn = resultstable.cell(1, 3).imageButton({
+                    resultstable.cell(1, 4).css({ width: '18px' });
+                    cswPrivate.buttonMultiColumn = resultstable.cell(1, 4).imageButton({
                         ID: Csw.makeId(cswPrivate.ID, '', '_multicol'),
                         ButtonType: Csw.enums.imageButton_ButtonType.TableMultiColumn,
                         Active: (columns !== 1),
@@ -154,7 +173,7 @@
 
                     resultstable.cell(2, 1).propDom({ 'colspan': 3 });
 
-                    resultstable.cell(2, 1).$.CswNodeTable({
+                    nodeTable = Csw.nbt.nodeTable(resultstable.cell(2, 1), {
                         ID: Csw.makeId(cswPrivate.ID, '', 'srchresults'),
                         onEditNode: function() {
                             // case 27245 - refresh on edit
@@ -175,7 +194,8 @@
                         allowDelete: cswPrivate.allowEdit,
                         extraAction: cswPrivate.extraAction,
                         extraActionIcon: cswPrivate.extraActionIcon,
-                        onExtraAction: cswPrivate.onExtraAction
+                        onExtraAction: cswPrivate.onExtraAction,
+                        compactResults: cswPrivate.compactResults
                     });
                 }
 
@@ -281,7 +301,9 @@
 
                 Csw.each(data.filters, makeFilterSet);
 
-                Csw.tryExec(cswPrivate.onAfterSearch);
+                cswPrivate.data = data;
+
+                Csw.tryExec(cswPrivate.onAfterSearch, cswPublic);
             }; // handleResults()
 
 
@@ -339,6 +361,17 @@
                     }
                 });
             }; // restoreSearch()
+
+            cswPublic.getFilterToNodeTypeId = function() {
+                var ret = '';
+                function findFilterToNodeTypeId(thisFilter) {
+                    if(Csw.isNullOrEmpty(ret) && thisFilter.filtername == 'Filter To') {
+                        ret = thisFilter.firstversionid;
+                    }
+                } // findFilterToNodeTypeId()
+                Csw.each(cswPrivate.data.filtersapplied, findFilterToNodeTypeId);
+                return ret;
+            } // getFilterToNodeTypeId()
 
             return cswPublic;
         });
