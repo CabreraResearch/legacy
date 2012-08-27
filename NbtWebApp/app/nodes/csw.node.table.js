@@ -314,6 +314,7 @@
             cswPrivate.makeTable = function () {
                 var i;
                 cswPrivate.tableDiv.$.empty();
+                cswPrivate.pagerDiv.$.empty();
                 cswPrivate.r = 1;
                 cswPrivate.c = 1;
                 cswPrivate.pagenodecount = 0;
@@ -338,9 +339,11 @@
 
                 Csw.crawlObject(cswPrivate.tabledata.nodes, cswPrivate.makeNodeCell);
 
+                // Pager control
                 if (cswPrivate.pagenodelimit < cswPrivate.results) {
+                    
                     if (cswPrivate.currentpage > 1) {
-                        cswPrivate.tableDiv.a({
+                        cswPrivate.pagerDiv.a({
                             ID: 'tableprev',
                             text: 'Previous Page',
                             onClick: function () {
@@ -354,7 +357,7 @@
                     for (i = 0; i < cswPrivate.totalpages; i++) {
                         pageoptions[i] = { value: Csw.string(i + 1), display: Csw.string(i + 1) };
                     }
-                    var pagesel = cswPrivate.tableDiv.select({
+                    var pagesel = cswPrivate.pagerDiv.select({
                         ID: 'pageselect',
                         values: pageoptions,
                         selected: Csw.string(cswPrivate.currentpage),
@@ -365,7 +368,7 @@
                     });
 
                     if (cswPrivate.currentpage < cswPrivate.totalpages) {
-                        cswPrivate.tableDiv.a({
+                        cswPrivate.pagerDiv.a({
                             ID: 'tablenext',
                             text: 'Next Page',
                             onClick: function () {
@@ -390,8 +393,9 @@
                 } else {
                     cswPrivate.tableDiv = cswParent.div({
                         ID: Csw.makeId({ id: cswPrivate.ID, suffix: '_scrolldiv' })
-                        //height: cswPrivate.maxheight + 'px',
-                        //styles: { overflow: 'auto' }
+                    }).css({ width: '100%' });
+                    cswPrivate.pagerDiv = cswParent.div({
+                        ID: Csw.makeId({ id: cswPrivate.ID, suffix: '_pagerdiv' })
                     });
                     cswPrivate.makeTable();
                 }
