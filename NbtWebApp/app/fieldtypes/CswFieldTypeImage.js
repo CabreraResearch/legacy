@@ -19,6 +19,8 @@
                     width,
                     href = '/NbtWebApp/' + Csw.string(propVals.href);
 
+                href += '&usenodetypeasplaceholder=false';     // case 27596
+
                 if (false === Csw.isNullOrEmpty(propVals.width) &&
                    Csw.isNumeric(propVals.width)) {
                     width = Math.abs(Csw.number(propVals.width, 100) - 36);
@@ -36,7 +38,7 @@
                 var cell22 = table.cell(2, 2).propDom({ align: 'right', width: '20px' }).div();
                 var cell23 = table.cell(2, 3).propDom({ align: 'right', width: '20px' }).div();
 
-                if (false === Csw.isNullOrEmpty(fileName)) {
+                //if (false === Csw.isNullOrEmpty(fileName)) {
                     //Case 24389: IE interprets height and width absolutely, better not to use them at all.
                     cell11.a({
                         href: href,
@@ -51,9 +53,9 @@
                         target: '_blank',
                         text: fileName
                     });
-                } else {
-                    cell21.append('(no image selected)');
-                }
+//                } else {
+//                    cell21.append('(no image selected)');
+//                }
 
 
                 if (false === o.ReadOnly && o.EditMode !== Csw.enums.editMode.Add) {
