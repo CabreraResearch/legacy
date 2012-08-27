@@ -91,19 +91,19 @@
                         cswPublic.css('width', Csw.string(cswPrivate.width));
 
                         if (useSearch) {
-                            var nameSpan = table.cell(1, cellCol).span({
-                                ID: Csw.makeId(o.ID, '', 'selectedname'),
+                            var nameSpan = cswPrivate.table.cell(1, cellCol).span({
+                                ID: Csw.makeId(cswPrivate.ID, '', 'selectedname'),
                                 text: cswPublic.selectedText()
                             });
 
-                            var hiddenValue = table.cell(1, cellCol).input({
-                                ID: Csw.makeId(o.ID, '', 'hiddenvalue'),
+                            var hiddenValue = cswPrivate.table.cell(1, cellCol).input({
+                                ID: Csw.makeId(cswPrivate.ID, '', 'hiddenvalue'),
                                 type: Csw.enums.inputTypes.hidden,
                                 value: cswPublic.selectedNodeId()
                             });
                             cellCol += 1;
 
-                            table.cell(1, cellCol)
+                            cswPrivate.table.cell(1, cellCol)
                                 .div()
                                 .buttonExt({
                                     icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.search),
