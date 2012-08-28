@@ -73,7 +73,7 @@ namespace ChemSW.Nbt.Sched
                     Int32 NodesPerCycle = 1;
                     if( _CswScheduleLogicDetail.RunParams.ContainsKey( _NodesPerCycleParamName ) )
                     {
-                        NodesPerCycle = Convert.ToInt32( _CswScheduleLogicDetail.RunParams[_NodesPerCycleParamName] );
+                        NodesPerCycle = CswConvert.ToInt32( _CswScheduleLogicDetail.RunParams[_NodesPerCycleParamName] );
                         OutOfDateNodesQuerySelect.getTable( false, false, 0, NodesPerCycle );
                         OutOfDateNodes = OutOfDateNodesQuerySelect.getTable( false, false, 0, NodesPerCycle );
 
