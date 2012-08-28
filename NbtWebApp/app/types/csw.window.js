@@ -59,11 +59,13 @@
         };
     } ());
 
-    if (false === window.Modernizr.localstorage) {
-        window.localStorage = newLocalStorage;
-    }
-    if (false === window.Modernizr.sessionstorage) {
-        window.sessionStorage = newLocalStorage;
+    if (window.Modernizr && window.hasOwnProperty('Modernizr') ) {
+        if(window.Modernizr.hasOwnProperty('localstorage') && false === window.Modernizr.localstorage) {
+            window.localStorage = newLocalStorage;
+        }
+        if (window.Modernizr.hasOwnProperty('sessionstorage') && false === window.Modernizr.sessionstorage) {
+            window.sessionStorage = newLocalStorage;
+        }    
     }
 
     Csw.window = Csw.window || Csw.register('window', Csw.makeNameSpace());

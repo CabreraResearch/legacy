@@ -91,6 +91,10 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.ServiceModel.Activation" />
+    <Reference Include="System.ServiceModel.Web" />
     <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Drawing" />
@@ -103,12 +107,16 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Global.asax.cs">
+      <DependentUpon>Global.asax</DependentUpon>
+    </Compile>
     <Compile Include="WebSvc\Logic\CISPro\CswNbtWebServiceContainer.cs" />
     <Compile Include="WebSvc\Logic\CISPro\CswNbtWebServiceRequesting.cs" />
     <Compile Include="WebSvc\Logic\MetaData\CswNbtWebServiceModules.cs" />
     <Compile Include="WebSvc\Logic\CISPro\CswNbtWebServiceCreateMaterial.cs" />
     <Compile Include="WebSvc\Logic\Generators\CswNbtWebServiceGenerators.cs" />
     <Compile Include="WebSvc\Logic\Nodes\CswNbtWebServiceReport.cs" />
+    <Compile Include="WebSvc\Logic\Views\CswNbtViewsUriMethods.cs" />
     <Compile Include="WebSvc\Logic\Views\wsTreeOfView.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -127,7 +135,6 @@
     <Content Include="Content\images\icons-36-white.png" />
     <Content Include="Content\jquery.mobile-1.0rc1.css" />
     <Content Include="Content\jquery.mobile-1.0rc1.min.css" />
-    <Compile Include="Global.asax.cs" />
     <Content Include="crystal\ActiveXControls\PrintControl.cab" />
     <Content Include="crystal\ActiveXControls\PrintControl_res_cs.cab" />
     <Content Include="crystal\ActiveXControls\PrintControl_res_da.cab" />
@@ -698,6 +705,7 @@
     <Content Include="crystal\urlreporting\appletviewer.js" />
     <Content Include="etc\far.exe" />
     <Content Include="ExternalLogin.aspx" />
+    <Content Include="Global.asax" />
     <Content Include="Images\icons\docs.gif" />
     <Content Include="Images\icons\edit.gif" />
     <Content Include="Images\icons\flag.gif" />
@@ -734,7 +742,6 @@
     <Content Include="Design_Layout.aspx" />
     <Content Include="DisplayLog.aspx" />
     <Content Include="etc\CswSetupVbls.xml" />
-    <Content Include="Global.asax" />
     <Content Include="ie6style.css" />
     <Content Include="Images\ajax\progress.gif" />
     <Content Include="Images\bigbuttons\add.png" />
@@ -1331,7 +1338,8 @@
     </Compile>
     <Compile Include="WebSvc\Core\CswWebSvcCommonMethods.cs" />
     <Compile Include="WebSvc\Core\CswWebSvcResourceInitializerNbt.cs" />
-    <Compile Include="WebSvc\Returns\CswWebSvcRetJObJobj.cs" />
+    <Compile Include="WebSvc\Returns\CswWebSvcReturnBase.cs" />
+    <Compile Include="WebSvc\Returns\CswWebSvcReturn.cs" />
     <Compile Include="wsNBT.cs">
       <DependentUpon>wsNBT.asmx</DependentUpon>
       <SubType>Component</SubType>

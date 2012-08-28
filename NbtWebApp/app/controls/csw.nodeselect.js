@@ -79,7 +79,7 @@
                         //Case 24155
                         Csw.each(ret, function (nodeName, nodeId) {
                             nodecount += 1;
-                            if (false === Csw.isNullOrEmpty(cswPrivate.selectedNodeId) && 
+                            if (false === Csw.isNullOrEmpty(cswPrivate.selectedNodeId) &&
                                 nodeId === cswPrivate.selectedNodeId) {
                                 cswPublic.option({ value: nodeId, display: nodeName, isSelected: true });
                             } else {
@@ -91,6 +91,7 @@
                         cswPublic.css('width', Csw.string(cswPrivate.width));
 
                         if (useSearch) {
+                            cswPrivate.select.hide();
                             var nameSpan = cswPrivate.table.cell(1, cellCol).span({
                                 ID: Csw.makeId(cswPrivate.ID, '', 'selectedname'),
                                 text: cswPublic.selectedText()
@@ -108,7 +109,7 @@
                                 .buttonExt({
                                     icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.search),
                                     size: 'small',
-                                    tooltip: { title: 'Add' },
+                                    tooltip: { title: 'Search' },
                                     disableOnClick: false,
                                     onClick: function () {
                                         $.CswDialog('SearchDialog', {

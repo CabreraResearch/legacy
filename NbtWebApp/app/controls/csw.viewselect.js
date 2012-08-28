@@ -8,8 +8,8 @@
         Csw.controls.register('viewSelect', function (cswParent, params) {
 
             var cswPrivate = {
-                viewurl: '/NbtWebApp/wsNBT.asmx/getViewSelect',
-                recenturl: '/NbtWebApp/wsNBT.asmx/getViewSelectRecent',
+                uri: 'Views',
+                viewMethod: 'ViewSelect',
                 ID: 'viewselect',
                 onSelect: null,
                 onSuccess: null,
@@ -99,19 +99,8 @@
                 cswPrivate.comboBox.topContent($newTopContent);
                 cswPrivate.div.propNonDom('selectedType', itemobj.type);
                 cswPrivate.div.propNonDom('selectedName', itemobj.name);
-                switch (itemobj.type.toLowerCase()) {
-                    case 'view':
-                        cswPrivate.div.propNonDom('selectedValue', itemobj.viewid);
-                        break;
-                    case 'action':
-                        cswPrivate.div.propNonDom('selectedValue', itemobj.actionid);
-                        break;
-                    case 'report':
-                        cswPrivate.div.propNonDom('selectedValue', itemobj.reportid);
-                        break;
-                }
-
-                //setTimeout(function () { cswPrivate.comboBox.toggle(); }, cswPrivate.ClickDelay);
+                cswPrivate.div.propNonDom('selectedValue', itemobj.itemid);
+                
                 Csw.tryExec(cswPrivate.onSelect, itemobj);
             }; // cswPrivate.handleSelect()
 
@@ -121,7 +110,7 @@
                 cswPrivate.div = cswParent.div();
                 cswPublic = Csw.dom({}, cswPrivate.div);
 
-                cswPrivate.vsdiv = Csw.literals.div({ ID: Csw.makeId(cswPrivate.ID, '', 'vsdiv') });
+                cswPrivate.vsdiv = Csw.literals.div({ ID: Csw.makeId(cswPrivate.ID, 'vsdiv') });
                 if (false == Csw.isNullOrEmpty(cswPrivate.maxHeight)) {
                     cswPrivate.vsdiv.css({ maxHeight: cswPrivate.maxHeight });
                 }
@@ -134,15 +123,14 @@
 
                 Csw.extend(cswPublic, cswPrivate.comboBox);
 
-                Csw.ajax.post({
-                    url: cswPrivate.viewurl,
+                cswPrivate.ajax = Csw.ajaxWcf.post({
+                    urlMethod: cswPrivate.viewMethod,
                     data: {
                         IsSearchable: cswPrivate.issearchable,
                         IncludeRecent: cswPrivate.includeRecent
                     },
-                    stringify: false,
                     success: function (data) {
-                        Csw.each(data.viewselectitems, cswPrivate.addCategory);
+                        Csw.each(data.categories, cswPrivate.addCategory);
                         Csw.tryExec(cswPrivate.onSuccess);
                     }
                 });
@@ -161,10 +149,13 @@
 
             cswPublic.refreshRecent = function () {
                 if (cswPrivate.includeRecent) {
-                    Csw.ajax.post({
-                        url: cswPrivate.recenturl,
+                    Csw.ajaxWcf.post({
+                        urlMethod: cswPrivate.viewMethod,
+                        data: {
+                            LimitToRecent: true
+                        },
                         success: function (data) {
-                            Csw.each(data.viewselectitems, cswPrivate.addCategory);
+                            Csw.each(data.categories, cswPrivate.addCategory);
                         }
                     });
                 }

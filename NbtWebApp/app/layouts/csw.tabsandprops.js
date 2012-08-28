@@ -238,7 +238,7 @@
                     }
 
                     var formTable = cswPrivate.form.table({
-                        ID: cswPrivate.ID + '_formtbl_' + tabid,
+                        ID: cswPrivate.ID + '_formtbl_' + tabid + window.Ext.id(),
                         width: '100%'
                     });
                     //var formTblCell11 = formTable.cell(1, 1);

@@ -57,7 +57,8 @@ sub extractFile
     open(JSFILE, "$filename") or die("Cannot open js file: $filename ; $!");
     while((my $line = <JSFILE>)) 
     {
-        if($line !~ m/-vsdoc\.js/ )
+        if($line !~ m/-vsdoc\.js/ && 
+           $line !~ m/-debug\.js/)
         {
             $ret .= $line;         
         }
