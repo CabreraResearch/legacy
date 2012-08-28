@@ -73,9 +73,6 @@ namespace ChemSW.Nbt.Batch
 
                             //get materials using the current material as a component
                             nodeAsMaterial.getParentMaterials( ref BatchData.MatchingMaterialIDs );
-
-                            //save the updated batch data
-                            BatchNode.appendToLog( "Updated " + currentMaterialID.ToString() );
                         }
                     }
                     else if( BatchData.CASNos.Count > 0 ) //we have more CASNos to process
@@ -96,9 +93,6 @@ namespace ChemSW.Nbt.Batch
                             BatchData.MatchingMaterialIDs.Add( materialsByCASNoTree.getNodeIdForCurrentPosition().ToString() );
                             materialsByCASNoTree.goToParentNode();
                         }
-
-                        //save the batch data
-                        BatchNode.appendToLog( "Finishing processing CASNo: " + BatchData.CurrentCASNo );
                     }
                     else //we have no materials to update and no more CASNumbers to process, we're done
                     {
