@@ -68,7 +68,10 @@ namespace ChemSW.Nbt.Batch
                         if( false == _materialHasList( BatchData.ListName, nodeAsMaterial ) )
                         {
                             //update the current material
-                            nodeAsMaterial.RegulatoryLists.StaticText += "," + BatchData.ListName; //update the node
+                            CswCommaDelimitedString RegLists = new CswCommaDelimitedString();
+                            RegLists.FromString( nodeAsMaterial.RegulatoryLists.StaticText );
+                            RegLists.Add( BatchData.ListName );
+                            nodeAsMaterial.RegulatoryLists.StaticText = RegLists.ToString(); //update the node
                             nodeAsMaterial.postChanges( false );
 
                             //get materials using the current material as a component
