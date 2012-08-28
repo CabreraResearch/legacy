@@ -13,10 +13,10 @@ namespace ChemSW.Nbt.Schema
         /// </summary>
         public override void update()
         {
-            CswNbtMetaDataNodeType ChemicalNt = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Chemical" );
-            if( null != ChemicalNt )
+            CswNbtMetaDataObjectClass MaterialOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass );
+            foreach( CswNbtMetaDataNodeType MaterialNt in MaterialOc.getNodeTypes() )
             {
-                ChemicalNt.setNameTemplateText(
+                MaterialNt.setNameTemplateText(
                     CswNbtMetaData.MakeTemplateEntry( CswNbtObjClassMaterial.PropertyName.Tradename ) + " " +
                     CswNbtMetaData.MakeTemplateEntry( CswNbtObjClassMaterial.PropertyName.Supplier ) + " " +
                     CswNbtMetaData.MakeTemplateEntry( CswNbtObjClassMaterial.PropertyName.PartNumber )
