@@ -4,7 +4,7 @@
 (function () {
     'use strict';
 
-    var preview;
+    var previews = {};
     Csw.nodeHoverIn = Csw.nodeHoverIn || 
         Csw.register('nodeHoverIn', function (event, nodeid, cswnbtnodekey, delay) {
             'use strict';
@@ -15,19 +15,19 @@
                 eventArg: event
             };
             if (Csw.number(delay, -1) >= 0) {
-                previewopts.delay = delay;
+                previewopts.openDelay = delay;
             }
-            preview = Csw.nbt.nodePreview(Csw.literals.factory($('body')), previewopts);
-            preview.open();
+            previews[nodeid] = Csw.nbt.nodePreview(Csw.literals.factory($('body')), previewopts);
+            previews[nodeid].open();
     }); // Csw.nodeHoverIn 
 
 
     Csw.nodeHoverOut = Csw.nodeHoverOut ||
-        Csw.register('nodeHoverOut', function () {
+        Csw.register('nodeHoverOut', function (event, nodeid) {
             'use strict';
-            if (false === Csw.isNullOrEmpty(preview)) {
-                preview.close();
-                preview = undefined;
+            if (false === Csw.isNullOrEmpty(previews[nodeid])) {
+                previews[nodeid].close(); 
+                previews[nodeid] = undefined;
             }
     }); // Csw.nodeHoverOut
 
@@ -40,7 +40,8 @@
                 nodeid: '',
                 cswnbtnodekey: '',
                 eventArg: {},
-                delay: 1500
+                openDelay: 1500,
+                closeDelay: 500
             };
             Csw.extend(cswPrivate, options);
                 
@@ -89,16 +90,25 @@
                 });
             } // loadPreview()
 
+            cswPrivate.hoverIn = function() {
+                clearTimeout(cswPrivate.closeTimeoutHandle);
+            }; // hoverIn()
+            
+            cswPrivate.hoverOut = function() {
+                cswPublic.close();
+            }; // hoverOut()
+
+            
             cswPublic.open = function (options) {
-                cswPrivate.timeoutHandle = setTimeout(cswPrivate.loadPreview, cswPrivate.delay);
+                cswPrivate.openTimeoutHandle = setTimeout(cswPrivate.loadPreview, cswPrivate.openDelay);
             }; // open()
 
 
             cswPublic.close = function () {
-                clearTimeout(cswPrivate.timeoutHandle);
-                
-                // Clear all node previews, in case other ones are hanging around
-                $('.CswNodePreview').remove();
+                clearTimeout(cswPrivate.openTimeoutHandle);
+//                // Clear all node previews, in case other ones are hanging around
+//                $('.CswNodePreview').remove();
+                cswPrivate.closeTimeoutHandle = setTimeout(function() { cswPrivate.div.remove(); }, cswPrivate.closeDelay);
             }; // close()
 
             // constructor
@@ -115,6 +125,7 @@
                         backgroundColor: '#ffffff'
                     })
                     .hide();
+                cswPrivate.div.$.hover(cswPrivate.hoverIn, cswPrivate.hoverOut);
 
                 cswPrivate.fixDimensions();
 
