@@ -8,7 +8,6 @@ using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
 using NbtWebAppServices.Session;
-using Newtonsoft.Json.Linq;
 
 namespace NbtWebAppServices.Response
 {
@@ -101,9 +100,15 @@ namespace NbtWebAppServices.Response
                                                     PropAsQuestion.Answer = Question.Answer;
                                                     PropAsQuestion.CorrectiveAction = Question.CorrectiveAction;
                                                     DateTime DateAnswered = CswConvert.ToDateTime( Question.DateAnswered );
+                                                    if( DateTime.MinValue != DateAnswered )
+                                                    {
+                                                        PropAsQuestion.DateAnswered = DateAnswered;
+                                                    }
                                                     DateTime DateCorrected = CswConvert.ToDateTime( Question.DateCorrected );
-                                                    PropAsQuestion.DateAnswered = DateAnswered;
-                                                    PropAsQuestion.DateCorrected = DateCorrected;
+                                                    if( DateTime.MinValue != DateCorrected )
+                                                    {
+                                                        PropAsQuestion.DateCorrected = DateCorrected;
+                                                    }
                                                     PropAsQuestion.Comments = Question.Comments;
                                                 }
                                                 if( false == string.IsNullOrEmpty( Question.Answer ) )
@@ -137,14 +142,14 @@ namespace NbtWebAppServices.Response
 
                                         if( null != ButtonNtp )
                                         {
-                                            CswNbtMetaDataNodeTypeTab ButtonTab = _CswNbtWcfSessionResources.CswNbtResources.MetaData.getNodeTypeTab(ButtonNtp.FirstEditLayout.TabId);
-                                            if( null != ButtonTab && 
-                                                _CswNbtWcfSessionResources.CswNbtResources.Permit.can(CswNbtPermit.NodeTypePermission.Edit, InspectionNt, NodeTypeTab: ButtonTab, MetaDataProp: ButtonNtp ) )
+                                            CswNbtMetaDataNodeTypeTab ButtonTab = _CswNbtWcfSessionResources.CswNbtResources.MetaData.getNodeTypeTab( ButtonNtp.FirstEditLayout.TabId );
+                                            if( null != ButtonTab &&
+                                                _CswNbtWcfSessionResources.CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, InspectionNt, NodeTypeTab: ButtonTab, MetaDataProp: ButtonNtp ) )
                                             {
-                                                _InspectionDesignOc = _InspectionDesignOc ?? _CswNbtWcfSessionResources.CswNbtResources.MetaData.getObjectClass(CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass);
-                                                CswNbtObjClass NbtObjClass = CswNbtObjClassFactory.makeObjClass(_CswNbtWcfSessionResources.CswNbtResources, _InspectionDesignOc, InspectionNode);
-                                                CswNbtObjClass.NbtButtonData ButtonData = new CswNbtObjClass.NbtButtonData(ButtonNtp);
-                                                NbtObjClass.onButtonClick(ButtonData);
+                                                _InspectionDesignOc = _InspectionDesignOc ?? _CswNbtWcfSessionResources.CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass );
+                                                CswNbtObjClass NbtObjClass = CswNbtObjClassFactory.makeObjClass( _CswNbtWcfSessionResources.CswNbtResources, _InspectionDesignOc, InspectionNode );
+                                                CswNbtObjClass.NbtButtonData ButtonData = new CswNbtObjClass.NbtButtonData( ButtonNtp );
+                                                NbtObjClass.onButtonClick( ButtonData );
                                             }
                                         }
                                     }
