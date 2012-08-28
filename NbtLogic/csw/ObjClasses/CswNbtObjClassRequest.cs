@@ -56,19 +56,7 @@ namespace ChemSW.Nbt.ObjClasses
 
             if( SubmittedDate.WasModified && DateTime.MinValue != SubmittedDate.DateTimeValue )
             {
-                CswNbtView RequestItemsView = new CswNbtView( _CswNbtResources );
-                CswNbtMetaDataObjectClass RequestItemsOc = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.RequestItemClass );
-                CswNbtMetaDataObjectClassProp RiRequestOcp = RequestItemsOc.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Request );
-
-                CswNbtViewRelationship RequestItemVr = RequestItemsView.AddViewRelationship( RequestItemsOc, false );
-                RequestItemsView.AddViewPropertyAndFilter( RequestItemVr,
-                                                          RequestItemsOc.getObjectClassProp(
-                                                              CswNbtObjClassRequestItem.PropertyName.Status ),
-                                                          CswNbtObjClassRequestItem.Statuses.Pending,
-                                                          FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
-                RequestItemsView.AddViewPropertyAndFilter( RequestItemVr, RiRequestOcp, NodeId.PrimaryKey.ToString(), SubFieldName: CswNbtSubField.SubFieldName.NodeID );
-
-                ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( RequestItemsView, false, false );
+                ICswNbtTree Tree = _getRelatedRequestItemsTree( FilterByPending: true );
                 Int32 RequestItemNodeCount = Tree.getChildNodeCount();
                 if( RequestItemNodeCount > 0 )
                 {
@@ -115,13 +103,65 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override bool onButtonClick( NbtButtonData ButtonData )
         {
-
-
-
             if( null != ButtonData && null != ButtonData.NodeTypeProp ) { /*Do Something*/ }
             return true;
         }
         #endregion
+
+        #region Custom Logic
+
+        public void setCompletedDate()
+        {
+            ICswNbtTree RequestItemTree = _getRelatedRequestItemsTree();
+            if( _allRequestItemsCompleted( RequestItemTree ) )
+            {
+                this.CompletedDate.DateTimeValue = DateTime.Today;
+                this.postChanges( false );
+            }
+        }
+
+        private ICswNbtTree _getRelatedRequestItemsTree( bool FilterByPending = false )
+        {
+            CswNbtView RequestItemView = new CswNbtView( _CswNbtResources );
+            CswNbtMetaDataObjectClass RequestItemOc = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.RequestItemClass );
+            CswNbtMetaDataObjectClassProp RequestOcp = RequestItemOc.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Request );
+            CswNbtViewRelationship RiRelationship = RequestItemView.AddViewRelationship( RequestItemOc, false );
+            if( FilterByPending )
+            {
+                RequestItemView.AddViewPropertyAndFilter( RiRelationship,
+                                                          RequestItemOc.getObjectClassProp(
+                                                              CswNbtObjClassRequestItem.PropertyName.Status ),
+                                                          CswNbtObjClassRequestItem.Statuses.Pending,
+                                                          FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+            }
+            RequestItemView.AddViewPropertyAndFilter( RiRelationship, RequestOcp, SubFieldName: CswNbtSubField.SubFieldName.NodeID, Value: NodeId.PrimaryKey.ToString() );
+            ICswNbtTree RequestItemTree = _CswNbtResources.Trees.getTreeFromView( RequestItemView, IncludeSystemNodes: false, RequireViewPermissions: false );
+            return RequestItemTree;
+        }
+
+        private bool _allRequestItemsCompleted( ICswNbtTree RequestItemTree )
+        {
+            bool allRequestItemsCompleted = true;
+            if( RequestItemTree.getChildNodeCount() > 0 )
+            {
+                for( Int32 N = 0; N < RequestItemTree.getChildNodeCount(); N += 1 )
+                {
+                    RequestItemTree.goToNthChild( N );
+                    CswNbtObjClassRequestItem NodeAsRequestItem = RequestItemTree.getNodeForCurrentPosition();
+                    if( null != NodeAsRequestItem )
+                    {
+                        if( ChemSW.Nbt.ObjClasses.CswNbtObjClassRequestItem.Statuses.Completed != NodeAsRequestItem.Status.Value )
+                        {
+                            allRequestItemsCompleted = false;
+                        }
+                    }
+                    RequestItemTree.goToParentNode();
+                }
+            }
+            return allRequestItemsCompleted;
+        }
+
+        #endregion Custom Logic
 
         #region Object class specific properties
 

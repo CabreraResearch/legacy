@@ -646,6 +646,11 @@ namespace ChemSW.Nbt.ObjClasses
                     break;
                 case Statuses.Cancelled: //This fallthrough is intentional
                 case Statuses.Completed:
+                    CswNbtObjClassRequest NodeAsRequest = _CswNbtResources.Nodes[Request.RelatedNodeId];
+                    if( null != NodeAsRequest )
+                    {
+                        NodeAsRequest.setCompletedDate();
+                    }
                     Node.setReadOnly( true, true );
                     break;
             }

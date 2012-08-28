@@ -50,7 +50,7 @@
                                     urlMethod: 'onObjectClassButtonClick',
                                     data: {
                                         NodeTypePropAttr: cswPrivate.propId,
-                                        SelectedText: Csw.string(cswPrivate.selectedOption, Csw.string(cswPrivate.value))
+                                        SelectedText: Csw.string(cswPublic.button.selectedOption, Csw.string(cswPrivate.value))
                                     },
                                     success: function (data) {
                                         cswPublic.button.enable();
