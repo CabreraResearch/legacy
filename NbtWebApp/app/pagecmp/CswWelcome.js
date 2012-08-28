@@ -284,18 +284,18 @@
             //onSearchClick: null
         };
         if (clickopts) Csw.extend(c, clickopts);
-
+        var itemid = Csw.string(c.itemData.itemid, c.itemData.viewid);
+        itemid = Csw.string(itemid, c.itemData.actionid);
+        itemid = Csw.string(itemid, c.itemData.reportid);
+        
         var optSelect = {
             type: c.itemData.type,
-            viewmode: c.itemData.viewmode,
-            itemid: c.itemData.itemid,
+            mode: c.itemData.viewmode,
+            itemid: itemid,
             text: c.itemData.text,
             iconurl: c.itemData.iconurl,
-            viewid: c.itemData.viewid,
-            actionid: c.itemData.actionid,
-            actionname: c.itemData.actionname,
-            actionurl: c.itemData.actionurl,
-            reportid: c.itemData.reportid,
+            name: c.itemData.actionname,
+            url: c.itemData.actionurl,
             linktype: c.itemData.linktype
         };
 
