@@ -1,1 +1,1 @@
-<%@ Application Codebehind="Global.asax.cs" Inherits="ChemSW.Nbt.NbtApplication" Language="C#" %>
+﻿<%@ Application Codebehind="Global.asax.cs" Inherits="NbtWebAppServices.Global" Language="C#" %>
