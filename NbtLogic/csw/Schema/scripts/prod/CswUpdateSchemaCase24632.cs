@@ -24,18 +24,19 @@ namespace ChemSW.Nbt.Schema
 
             #region CREATE THE REGULATORY LIST OC AND IT'S PROPS
             CswNbtMetaDataObjectClass regulatoryListOC = _CswNbtSchemaModTrnsctn.createObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.RegulatoryListClass, "doc.png", true, true );
-            CswNbtMetaDataObjectClassProp casNumbersOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( regulatoryListOC )
-            {
-                PropName = CswNbtObjClassRegulatoryList.CASNumbersPropertyName,
-                FieldType = CswNbtMetaDataFieldType.NbtFieldType.Memo,
-                IsFk = false,
-                IsRequired = true
-            } );
-
             CswNbtMetaDataObjectClassProp nameOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( regulatoryListOC )
             {
                 PropName = CswNbtObjClassRegulatoryList.NamePropertyName,
                 FieldType = CswNbtMetaDataFieldType.NbtFieldType.Text,
+                IsFk = false,
+                IsRequired = true,
+                IsUnique = true
+            } );
+
+            CswNbtMetaDataObjectClassProp casNumbersOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( regulatoryListOC )
+            {
+                PropName = CswNbtObjClassRegulatoryList.CASNumbersPropertyName,
+                FieldType = CswNbtMetaDataFieldType.NbtFieldType.Memo,
                 IsFk = false,
                 IsRequired = true
             } );
