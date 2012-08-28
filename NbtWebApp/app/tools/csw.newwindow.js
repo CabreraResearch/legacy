@@ -13,12 +13,10 @@
                toolbar: 'yes',
                location: 'no',
                menubar: 'yes',
-               height: 800,
-               width: 600
+               height: 600,
+               width: 800
            };
-           if(options) {
-               $.extend(cswPrivate, options);
-           }
+           Csw.extend(cswPrivate, options);
            if(window.internetExplorerVersionNo > 0) {
                title = '';
            }

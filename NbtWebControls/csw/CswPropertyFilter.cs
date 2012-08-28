@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Specialized;
+using System.Collections.ObjectModel;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using ChemSW.Core;
@@ -56,7 +57,7 @@ namespace ChemSW.NbtWebControls
         /// <summary>
         /// Restrict the set of properties to include by field type
         /// </summary>
-        public ArrayList AllowedFieldTypes = new ArrayList();
+        public Collection<CswNbtMetaDataFieldType.NbtFieldType> AllowedFieldTypes = new Collection<CswNbtMetaDataFieldType.NbtFieldType>();
         /// <summary>
         /// Restrict the set of filter modes to include (further restricted by subfield of field type of selected property)
         /// </summary>

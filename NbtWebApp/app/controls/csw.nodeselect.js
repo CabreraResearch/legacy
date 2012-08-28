@@ -125,7 +125,8 @@
 
                             cellCol += 1;
 
-                            cswPrivate.table.$.hover(function (event) { Csw.nodeHoverIn(event, hiddenValue.val()); }, Csw.nodeHoverOut);
+                            cswPrivate.table.$.hover(function (event) { Csw.nodeHoverIn(event, hiddenValue.val()); },
+                                                     function (event) { Csw.nodeHoverOut(event, hiddenValue.val()); });
 
                         }
                         if (canAdd) {

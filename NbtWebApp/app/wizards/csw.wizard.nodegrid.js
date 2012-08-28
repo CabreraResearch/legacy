@@ -110,7 +110,7 @@
                         Multi: false,
                         nodeTreeCheck: ''
                     };
-                    Csw.composites.menu( cswPrivate.menuDiv, menuOpts );
+                    cswPrivate.menuDiv.menu( menuOpts );
                 }
             }; // makeGridMenu()
 

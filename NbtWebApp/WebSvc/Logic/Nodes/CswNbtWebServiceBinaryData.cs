@@ -19,6 +19,11 @@ namespace ChemSW.Nbt.WebServices
 
         public void displayBlobData( HttpContext Context )
         {
+            bool UseNodeTypeAsPlaceHolder = true;
+            if( null != Context.Request["usenodetypeasplaceholder"] )
+            {
+                UseNodeTypeAsPlaceHolder = CswConvert.ToBoolean( Context.Request["usenodetypeasplaceholder"] );
+            }
             if( null != Context.Request["jctnodepropid"] )
             {
                 Int32 JctNodePropId = Convert.ToInt32( Context.Request["jctnodepropid"] );
@@ -45,7 +50,7 @@ namespace ChemSW.Nbt.WebServices
                             ContentType = JctTable.Rows[0]["field2"].ToString();
                             BlobData = JctTable.Rows[0]["blobdata"] as byte[];
                         }
-                        else
+                        else if( UseNodeTypeAsPlaceHolder )
                         {
                             CswNbtNode Node = _CswNbtResources.Nodes[new CswPrimaryKey( "nodes", NodeId )];
                             if( null != Node )
@@ -59,7 +64,7 @@ namespace ChemSW.Nbt.WebServices
                                 }
                             }
                         }
-                    }
+                    } // if( JctTable.Rows.Count > 0 )
 
                     if( FileName == "empty" )
                     {

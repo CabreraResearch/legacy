@@ -149,7 +149,8 @@
                             cswPublic.unitSelect.addClass('validateQuantityPresent');
                         }
 
-                        cswParent.$.hover(function (event) { Csw.nodeHoverIn(event, cswPublic.unitSelect.val()); }, Csw.nodeHoverOut);
+                        cswParent.$.hover(function (event) { Csw.nodeHoverIn(event, cswPublic.unitSelect.val()); },
+                                          function (event) { Csw.nodeHoverOut(event, cswPublic.unitSelect.val()); });
                     }
                 }
 

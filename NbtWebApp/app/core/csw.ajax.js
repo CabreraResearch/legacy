@@ -28,10 +28,10 @@
         if (result.error !== undefined) {
             if (false === o.overrideError) {
                 cswPrivate.handleAjaxError({
-                    'display': result.error.display,
-                    'type': result.error.type,
-                    'message': result.error.message,
-                    'detail': result.error.detail
+                    display: result.error.display,
+                    type: result.error.type,
+                    message: result.error.message,
+                    detail: result.error.detail
                 }, '');
             }
             Csw.tryExec(o.error, result.error);
@@ -86,7 +86,7 @@
         Csw.tryExec(o.error, textStatus);
     });
 
-    cswPrivate.jsonPost = function (options) {
+    cswPrivate.jsonPost = Csw.method(function (options) {
         /// <summary>Executes Async webservice request for JSON</summary>
         /// <param name="options" type="Object">
         ///     A JSON Object
@@ -95,7 +95,7 @@
         ///     &#10;3 - options.success: function () {}
         ///     &#10;4 - options.error: function () {}
         /// </param>
-        var o = {
+        var cswInternal = {
             url: '',
             urlPrefix: Csw.enums.ajaxUrlPrefix,
             urlMethod: '',
@@ -111,34 +111,35 @@
             watchGlobal: true,
             removeTimer: true
         };
-        if (options) {
-            Csw.extend(o, options);
-        }
-        var url = Csw.string(o.url, o.urlPrefix + o.urlMethod);
-        o.startTime = new Date();
+        Csw.extend(cswInternal, options);
 
-        Csw.publish(Csw.enums.events.ajax.ajaxStart, o.watchGlobal);
-        $.ajax({
+        var cswExternal = { };
+        cswInternal.url = Csw.string(cswInternal.url, cswInternal.urlPrefix + cswInternal.urlMethod);
+        cswInternal.startTime = new Date();
+
+        Csw.publish(Csw.enums.events.ajax.ajaxStart, cswInternal.watchGlobal);
+        cswExternal.ajax = $.ajax({
             type: 'POST',
-            async: o.async,
+            async: cswInternal.async,
             urlPrefix: Csw.enums.ajaxUrlPrefix,
-            url: url,
+            url: cswInternal.url,
             xhrFields: {
                 withCredentials: true
             },
             dataType: 'json',
             contentType: 'application/json; charset=utf-8',
-            data: JSON.stringify(o.data),
+            data: JSON.stringify(cswInternal.data),
             success: function (data) {
-                cswPrivate.onJsonSuccess(o, data, url);
+                cswPrivate.onJsonSuccess(cswInternal, data, cswInternal.url);
             }, /* success{} */
             error: function (xmlHttpRequest, textStatus) {
-                cswPrivate.onJsonError(xmlHttpRequest, textStatus, o);
+                cswPrivate.onJsonError(xmlHttpRequest, textStatus, cswInternal);
             }
         }); /* $.ajax({ */
-    }; /* cswPrivate.jsonPost */
+        return cswExternal;
+    }); /* cswPrivate.jsonPost */
 
-    cswPrivate.jsonGet = function (options) {
+    cswPrivate.jsonGet = Csw.method(function (options) {
 
         /// <summary>
         ///   Executes Async webservice request for JSON
@@ -150,7 +151,7 @@
         ///     &#10;3 - options.success: function () {}
         ///     &#10;4 - options.error: function () {}
         /// </param>
-        var o = {
+        var cswInternal = {
             url: '',
             urlPrefix: Csw.enums.ajaxUrlPrefix,
             urlMethod: '',
@@ -165,28 +166,28 @@
             async: true,
             watchGlobal: true
         };
-        if (options) {
-            Csw.extend(o, options);
-        }
-        var url = Csw.string(o.url, o.urlPrefix + o.urlMethod);
+        Csw.extend(cswInternal, options);
+        var cswExternal = { };
+        cswInternal.url = Csw.string(cswInternal.url, cswInternal.urlPrefix + cswInternal.urlMethod);
         //Csw.debug.time(url);
-        Csw.publish(Csw.enums.events.ajax.ajaxStart, o.watchGlobal);
+        Csw.publish(Csw.enums.events.ajax.ajaxStart, cswInternal.watchGlobal);
 
-        $.ajax({
+        cswExternal.ajax = $.ajax({
             type: 'GET',
-            async: o.async,
-            url: url,
+            async: cswInternal.async,
+            url: cswInternal.url,
             dataType: 'json',
             contentType: 'application/json; charset=utf-8',
-            data: $.param(o.data),
+            data: $.param(cswInternal.data),
             success: function (data) {
-                cswPrivate.onJsonSuccess(o, data, url);
+                cswPrivate.onJsonSuccess(cswInternal, data, cswInternal.url);
             }, /* success{} */
             error: function (xmlHttpRequest, textStatus) {
-                cswPrivate.onJsonError(xmlHttpRequest, textStatus, o);
+                cswPrivate.onJsonError(xmlHttpRequest, textStatus, cswInternal);
             }
         }); /* $.ajax({ */
-    };
+        return cswExternal;
+    });
 
     cswPrivate.xmlPost = function (options) {
         /// <summary>

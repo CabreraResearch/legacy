@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.Linq;
+using System.Runtime.Serialization;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
@@ -12,41 +13,28 @@ using ChemSW.Nbt.Grid;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Security;
+using NbtWebApp.WebSvc.Returns;
 using Newtonsoft.Json.Linq;
 
 
 namespace ChemSW.Nbt.WebServices
 {
-
-    public class CswNbtWebServiceViewParams
+    /// <summary>
+    /// View Select Return Object
+    /// </summary>
+    [DataContract]
+    public class CswNbtViewReturn : CswWebSvcReturn
     {
-        public CswNbtWebServiceViewParams( bool IsSearchableIn, bool IncludeRecentIn )
+        public CswNbtViewReturn()
         {
-            IsSearchable = IsSearchableIn;
-            IncludeRecent = IncludeRecentIn;
-        }//ctor
-
-        public bool IsSearchable = false;
-        public bool IncludeRecent = false;
-    }//ParamNames
-
+            Data = new ViewSelect.Response();
+        }
+        [DataMember]
+        public ViewSelect.Response Data;
+    }
 
     public class CswNbtWebServiceView
     {
-        public enum ItemType
-        {
-            Root,
-            View,
-            //ViewCategory, 
-            Category,
-            Action,
-            Report,
-            //ReportCategory, 
-            Search,
-            RecentView,
-            Unknown
-        };
-
         private const string ActionName = "actionname";
         private const string ActionPk = "actionid";
         private const string ActionSelected = "Include";
@@ -59,129 +47,137 @@ namespace ChemSW.Nbt.WebServices
             _CswNbtResources = CswNbtResources;
         }
 
-        private static JObject _getCategory( ref JArray ret, string Category )
+        /// <summary>
+        /// Create a new Category object and append it to the outer View Select return or fetch an existing Category from the return for use.
+        /// </summary>
+        private static ViewSelect.Response.Category _getCategory( ref ViewSelect.Response ViewSelectReturn, string Category )
         {
-            JObject CatItemsJObj = null;
+            ViewSelect.Response.Category Ret = ViewSelectReturn.categories.FirstOrDefault( Cat =>
+                                                            string.Equals( Cat.category, Category, StringComparison.InvariantCultureIgnoreCase ) );
 
-            for( Int32 i = 0; i < ret.Count; i++ )
+            if( Ret == null )
             {
-                string ThisCat = ret[i]["category"].ToString();
-                if( ThisCat == Category )
-                {
-                    CatItemsJObj = (JObject) ret[i]["items"];
-                }
-            }
-
-            if( CatItemsJObj == null )
-            {
-                JObject CatJObjToAdd = new JObject();
-                CatJObjToAdd["category"] = Category;
-                CatJObjToAdd["items"] = new JObject();
-                CatItemsJObj = (JObject) CatJObjToAdd["items"];
+                Ret = new ViewSelect.Response.Category( Category );
 
                 // Insertion sort on category name
                 if( Category == "Uncategorized" )
                 {
                     // Last
-                    ret.Add( CatJObjToAdd );
+                    ViewSelectReturn.categories.Add( Ret );
                 }
                 else if( Category == "Favorites" || Category == "Recent" )
                 {
                     // First
-                    ret.AddFirst( CatJObjToAdd );
+                    ViewSelectReturn.categories.Insert( 0, Ret );
                 }
                 else
                 {
                     // Alphabetical
                     Int32 insertAt = -1;
-                    for( Int32 i = 0; i < ret.Count; i++ )
+                    for( Int32 i = 0; i < ViewSelectReturn.categories.Count; i += 1 )
                     {
-                        string ThisCat = ret[i]["category"].ToString();
-                        if( ThisCat == "Uncategorized" )
+                        string ThisCat = ViewSelectReturn.categories[i].category;
+                        if( ThisCat == "Uncategorized" ||
+                            ( ThisCat != "Favorites" &&
+                              ThisCat != "Recent" &&
+                              Category.CompareTo( ThisCat ) <= 0 ) )
                         {
                             insertAt = i;
                             break;
-                        }
-                        else if( ThisCat != "Favorites" && ThisCat != "Recent" )
-                        {
-                            if( Category.CompareTo( ThisCat ) <= 0 )
-                            {
-                                insertAt = i;
-                                break;
-                            }
                         }
                     } // for( Int32 i = 0; i < ret.Count; i++ )
 
                     if( insertAt >= 0 )
                     {
-                        ret.Insert( insertAt, CatJObjToAdd );
+                        ViewSelectReturn.categories.Insert( insertAt, Ret );
                     }
                     else
                     {
-                        ret.Add( CatJObjToAdd );
+                        ViewSelectReturn.categories.Add( Ret );
                     }
                 }
             }
-            return CatItemsJObj;
+            return Ret;
         } // _addCategory()
 
-        private static JObject _addViewSelectObj( ref JArray ret, string Category, string Name, ItemType Type, string Icon, string Id )
+        /// <summary>
+        /// Create a new Item object and append it to a Category in the View Select return
+        /// </summary>
+        private static ViewSelect.Response.Item _addViewSelectObj( ref ViewSelect.Response ViewSelectReturn, string Category, string Name, ItemType Type, string Icon, string Id )
         {
             if( Category == string.Empty )
             {
                 Category = "Uncategorized";
             }
-            JObject CatItemsJObj = _getCategory( ref ret, Category );
+            ViewSelect.Response.Category Cat = _getCategory( ref ViewSelectReturn, Category );
 
-            JObject NewObj = new JObject();
-            NewObj["name"] = Name;
-            NewObj["type"] = Type.ToString();
-            NewObj["id"] = Id;
-            NewObj["iconurl"] = Icon;
-            CatItemsJObj[Name] = NewObj;
-
-            return NewObj;
+            return _addViewSelectObj( Cat, Name, Type, Icon, Id );
         }
 
-        public JArray getViewSelectRecent()
+        /// <summary>
+        /// Create a new Item object and append it to a Category in the View Select return
+        /// </summary>
+        private static ViewSelect.Response.Item _addViewSelectObj( ViewSelect.Response.Category Cat, string Name, ItemType Type, string Icon, string Id )
         {
-            JArray ret = new JArray();
-            JObject RecentItemsJObj = _getCategory( ref ret, "Recent" );
-            _CswNbtResources.SessionDataMgr.getQuickLaunchJson( ref RecentItemsJObj );
-            return ret;
+            ViewSelect.Response.Item Ret = new ViewSelect.Response.Item( Type )
+            {
+                name = Name,
+                itemid = Id,
+                iconurl = Icon
+            };
+
+            Cat.items.Add( Ret );
+
+            return Ret;
+        }
+
+        public static ViewSelect.Response getViewSelectRecent( CswNbtResources CswNbtResources )
+        {
+            ViewSelect.Response Ret = new ViewSelect.Response();
+            ViewSelect.Response.Category Recent = _getCategory( ref Ret, "Recent" );
+            CswNbtResources.SessionDataMgr.getQuickLaunchJson( ref Recent );
+            return Ret;
         } // getViewSelectRecent()
 
-        public static void getViewSelectWebSvc( ICswResources CswResources, CswWebSvcRetJObJobj ReturnObj, CswNbtWebServiceViewParams CswNbtWebServiceViewParams )
+        /// <summary>
+        /// WCF wrapper around getViewSelect
+        /// </summary>
+        public static void getViewSelectWebSvc( ICswResources CswResources, CswNbtViewReturn ViewReturn, ViewSelect.Request Request )
         {
-            ReturnObj.JObject["viewselectitems"] = getViewSelect( (CswNbtResources) CswResources, CswNbtWebServiceViewParams.IsSearchable, CswNbtWebServiceViewParams.IncludeRecent );
+            if( false == Request.LimitToRecent )
+            {
+                ViewReturn.Data = getViewSelect( (CswNbtResources) CswResources, Request );
+            } 
+            else
+            {
+                ViewReturn.Data = getViewSelectRecent( (CswNbtResources) CswResources );
+            }
         }
 
 
-        public static JArray getViewSelect( CswNbtResources CswNbtResources, bool IsSearchable, bool IncludeRecent )
+        public static ViewSelect.Response getViewSelect( CswNbtResources CswNbtResources, ViewSelect.Request Request )
         {
-            JArray ret = new JArray();
+            ViewSelect.Response ret = new ViewSelect.Response();
 
             // Favorites and Recent
             ICswNbtUser User = CswNbtResources.CurrentNbtUser;
             if( User != null )
             {
-                CswNbtNode UserNode = CswNbtResources.Nodes[User.UserId];
-                CswNbtObjClassUser UserOc = (CswNbtObjClassUser) UserNode;
+                CswNbtObjClassUser UserOc = CswNbtResources.Nodes[User.UserId];
 
                 // Recent
-                if( IncludeRecent )
+                if( Request.IncludeRecent )
                 {
-                    JObject RecentItemsJObj = _getCategory( ref ret, "Recent" );
-                    CswNbtResources.SessionDataMgr.getQuickLaunchJson( ref RecentItemsJObj );
+                    ViewSelect.Response.Category RecentCategory = _getCategory( ref ret, "Recent" );
+                    CswNbtResources.SessionDataMgr.getQuickLaunchJson( ref RecentCategory );
                 }
 
+                ViewSelect.Response.Category FavoritesCategory = _getCategory( ref ret, "Favorites" );
                 //Add the user's stored views to Favorites
                 foreach( CswNbtView View in UserOc.FavoriteViews.SelectedViews.Values.Where( View => View.IsFullyEnabled() ) )
                 {
-                    JObject ViewObj = _addViewSelectObj( ref ret, "Favorites", View.ViewName, ItemType.View, View.IconFileName, View.ViewId.ToString() );
-                    ViewObj["viewid"] = View.ViewId.ToString();
-                    ViewObj["viewmode"] = View.ViewMode.ToString();
-                    ViewObj["viewname"] = View.ViewName.ToString();
+                    ViewSelect.Response.Item ViewItem = _addViewSelectObj( FavoritesCategory, View.ViewName, ItemType.View, View.IconFileName, View.ViewId.ToString() );
+                    ViewItem.mode = View.ViewMode.ToString();
                 }
 
                 //Add the user's stored actions to Favorites
@@ -197,27 +193,23 @@ namespace ChemSW.Nbt.WebServices
                 {
                     if( Action.ShowInList ) //case 26555 - filter out actions like 'Multi Edit' or 'Edit View'
                     {
-                        JObject ActionObj = _addViewSelectObj( ref ret, "Favorites", Action.DisplayName, ItemType.Action,
+                        ViewSelect.Response.Item ActionItem = _addViewSelectObj( FavoritesCategory, Action.DisplayName, ItemType.Action,
                             CswNbtMetaDataObjectClass.IconPrefix16 + "wizard.png", Action.ActionId.ToString() );
-                        ActionObj["actionid"] = Action.ActionId.ToString();
-                        ActionObj["actionurl"] = Action.Url;
-                        ActionObj["actionname"] = Action.Name.ToString();   // not using CswNbtAction.ActionNameEnumToString here
+                        ActionItem.url = Action.Url;
                     }
                 }
             }
 
             // Views
-            Dictionary<CswNbtViewId, CswNbtView> Views = CswNbtResources.ViewSelect.getVisibleViews( "lower(NVL(v.category, v.viewname)), lower(v.viewname)", CswNbtResources.CurrentNbtUser, false, false, IsSearchable, NbtViewRenderingMode.Any );
+            Dictionary<CswNbtViewId, CswNbtView> Views = CswNbtResources.ViewSelect.getVisibleViews( "lower(NVL(v.category, v.viewname)), lower(v.viewname)", CswNbtResources.CurrentNbtUser, false, false, Request.IsSearchable, NbtViewRenderingMode.Any );
 
             foreach( CswNbtView View in Views.Values )
             {
-                JObject ViewObj = _addViewSelectObj( ref ret, View.Category, View.ViewName, ItemType.View, View.IconFileName, View.ViewId.ToString() );
-                ViewObj["viewid"] = View.ViewId.ToString();
-                ViewObj["viewmode"] = View.ViewMode.ToString();
-                ViewObj["viewname"] = View.ViewName.ToString();
+                ViewSelect.Response.Item ViewItem = _addViewSelectObj( ref ret, View.Category, View.ViewName, ItemType.View, View.IconFileName, View.ViewId.ToString() );
+                ViewItem.mode = View.ViewMode.ToString();
             }
 
-            if( !IsSearchable )
+            if( false == Request.IsSearchable )
             {
                 // Actions
                 foreach( CswNbtAction Action in CswNbtResources.Actions )
@@ -226,11 +218,9 @@ namespace ChemSW.Nbt.WebServices
                         //Case 23687: "View By Location" Action is toast. Bye-bye "loc_use_images" config var check.
                         CswNbtResources.Permit.can( Action.Name ) )
                     {
-                        JObject ActionObj = _addViewSelectObj( ref ret, Action.Category, Action.DisplayName, ItemType.Action, 
-                                                               CswNbtMetaDataObjectClass.IconPrefix16 + "wizard.png", Action.ActionId.ToString() );
-                        ActionObj["actionid"] = Action.ActionId.ToString();
-                        ActionObj["actionurl"] = Action.Url;
-                        ActionObj["actionname"] = Action.Name.ToString();   // not using CswNbtAction.ActionNameEnumToString here
+                        ViewSelect.Response.Item ActionItem = _addViewSelectObj( ref ret, Action.Category, Action.DisplayName, ItemType.Action,
+                                                              CswNbtMetaDataObjectClass.IconPrefix16 + "wizard.png", Action.ActionId.ToString() );
+                        ActionItem.url = Action.Url;
                     }
                 }
 
@@ -243,9 +233,8 @@ namespace ChemSW.Nbt.WebServices
                 {
                     ReportTree.goToNthChild( i );
 
-                    CswNbtObjClassReport ReportNode = (CswNbtObjClassReport) ReportTree.getNodeForCurrentPosition();
-                    JObject ReportObj = _addViewSelectObj( ref ret, ReportNode.Category.Text, ReportNode.ReportName.Text, ItemType.Report, "Images/view/report.gif", ReportNode.NodeId.ToString() );
-                    ReportObj["reportid"] = ReportNode.NodeId.ToString();
+                    CswNbtObjClassReport ReportNode = ReportTree.getNodeForCurrentPosition();
+                    _addViewSelectObj( ref ret, ReportNode.Category.Text, ReportNode.ReportName.Text, ItemType.Report, "Images/view/report.gif", ReportNode.NodeId.ToString() );
 
                     ReportTree.goToParentNode();
                 }
@@ -560,11 +549,11 @@ namespace ChemSW.Nbt.WebServices
             {
                 // We need the property arbitrary id, so we're doing this by property, not by filter.  
                 // However, we're filtering to only those properties that have filters that have ShowAtRuntime == true
-                foreach( CswNbtViewProperty Property in from CswNbtViewProperty _Property 
+                foreach( CswNbtViewProperty Property in from CswNbtViewProperty _Property
                                                           in View.Root.GetAllChildrenOfType( NbtViewNodeType.CswNbtViewProperty )
-                                                       where null != _Property.MetaDataProp
-                                                     orderby _Property.MetaDataProp.PropNameWithQuestionNo 
-                                                      select _Property )
+                                                        where null != _Property.MetaDataProp
+                                                        orderby _Property.MetaDataProp.PropNameWithQuestionNo
+                                                        select _Property )
                 {
                     JProperty PropertyJson = Property.ToJson( ShowAtRuntimeOnly: true );
                     if( ( (JObject) PropertyJson.Value["filters"] ).Count > 0 )
