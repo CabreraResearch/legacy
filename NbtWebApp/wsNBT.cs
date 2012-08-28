@@ -814,7 +814,7 @@ namespace ChemSW.Nbt.WebServices
 
                     var ws = new CswNbtWebServiceMainMenu( _CswNbtResources, LimitMenuTo );
                     CswNbtView View = _getView( ViewId );
-                    ReturnVal = ws.getMenu( View, SafeNodeKey, CswConvert.ToInt32(NodeTypeId), PropIdAttr, CswConvert.ToBoolean( ReadOnly ) );
+                    ReturnVal = ws.getMenu( View, SafeNodeKey, CswConvert.ToInt32( NodeTypeId ), PropIdAttr, CswConvert.ToBoolean( ReadOnly ) );
                 }
 
                 _deInitResources();
@@ -2581,7 +2581,7 @@ namespace ChemSW.Nbt.WebServices
             }
 
             CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
-            
+
             //This is the only way to get the content back down to the client using jQuery File Upload.
             //DO NOT TOUCH.
             Context.Response.Clear();
@@ -4247,6 +4247,42 @@ namespace ChemSW.Nbt.WebServices
 
             return ReturnVal.ToString();
         } // getMaterialUnitsOfMeasure()
+
+        [WebMethod( EnableSession = false )]
+        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        public string GetNodeRef( string nodeId )
+        {
+            JObject ReturnVal = new JObject();
+            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            try
+            {
+                _initResources();
+                AuthenticationStatus = _attemptRefresh();
+
+                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+                {
+                    CswPrimaryKey pk = new CswPrimaryKey();
+                    pk.FromString( nodeId );
+                    CswNbtNode node = _CswNbtResources.Nodes.GetNode( pk );
+                    if( null != node )
+                    {
+                        ReturnVal["noderef"] = _CswNbtResources.makeClientNodeReference( node );
+                    }
+                }
+
+                _deInitResources();
+            }
+
+            catch( Exception Ex )
+            {
+                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
+            }
+
+            //_jAddAuthenticationStatus( ReturnVal, AuthenticationStatus.Authenticated );
+            CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus.Authenticated );
+
+            return ReturnVal.ToString();
+        }
 
         #endregion CISPro
 

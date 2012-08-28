@@ -118,7 +118,17 @@
                         selectBox.hide(); //hide this until the "edit" button is clicked
                         cellCol++;
 
-                        var staticText = table.cell(1, cellCol).span({ text: selectBox.selectedText() }); //this is going to change!!!
+                        var nodeLinkText;
+                        Csw.ajax.post({
+                            urlMethod: 'GetNodeRef',
+                            async: false,
+                            data: { nodeId: selectedNodeId },
+                            success: function (data) {
+                                nodeLinkText = table.cell(1, cellCol).nodeLink({
+                                    text: data.noderef
+                                });
+                            }
+                        });
                         cellCol++;
 
                         var toggleButton = table.cell(1, cellCol).imageButton({
@@ -128,7 +138,7 @@
                             onClick: function () {
                                 selectBox.show();
                                 toggleButton.hide();
-                                staticText.hide();
+                                nodeLinkText.hide();
                             }
                         });
                         cellCol++;
@@ -225,7 +235,7 @@
                     }
                 }
                 Csw.preparePropJsonForSave(o.Multi, o.propData, compare);
-                selectBox.selectedNodeId = o.nodeid; //update the select box with the newly selected element
+                selectedNodeId = o.nodeid; //update the select box with the newly selected element
             } // save
         }; // methods
 
