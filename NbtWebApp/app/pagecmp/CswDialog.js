@@ -279,7 +279,6 @@
                 EditMode: Csw.enums.editMode.Add,
                 ReloadTabOnSave: false,
                 onSave: function (nodeid, cswnbtnodekey, tabcount, nodename) {
-Csw.debug.log(nodeid);
                     Csw.ajax.post({
                         urlMethod: 'GetFeedbackCaseNumber',
                         data: { nodeId: nodeid },
