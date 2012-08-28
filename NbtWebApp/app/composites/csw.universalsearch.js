@@ -43,12 +43,12 @@
             if (params) {
                 Csw.extend(cswPrivate, params);
             }
-            if(false === Csw.isNullOrEmpty(cswParent)) {
+            if (false === Csw.isNullOrEmpty(cswParent)) {
                 cswPrivate.table = cswParent.table({
                     ID: Csw.makeId(cswPrivate.ID, 'table'),
                     cellpadding: '2px'
                 });
-                
+
                 var cell11 = cswPrivate.table.cell(1, 1);
 
                 cell11.propDom('colspan', 2);
@@ -75,7 +75,7 @@
                     cssclass: 'mousetrap'
                 });
 
-                cswPrivate.searchbutton = cswtable.cell(1, 2).div().buttonExt({
+                cswPrivate.searchbutton = cswtable.cell(1, 2).div({ ID: cswPrivate.ID + window.Ext.id() }).buttonExt({
                     ID: Csw.makeId(cswPrivate.ID, '', '_srchbtn'),
                     icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.search),
                     enabledText: 'Search',
@@ -107,7 +107,7 @@
                 });
             }; // search()
 
-            cswPrivate.handleResults = function(data) {
+            cswPrivate.handleResults = function (data) {
                 var fdiv, ftable, filtersdivid;
 
                 cswPrivate.sessiondataid = data.sessiondataid;
@@ -116,7 +116,7 @@
 
                 function _renderResultsTable(columns) {
                     var nodeTable;
-                    
+
                     cswPrivate.$searchresults_parent.contents().remove();
                     cswPrivate.$searchresults_parent.css({ paddingTop: '15px' });
 
@@ -127,18 +127,17 @@
                     });
 
                     resultstable.cell(1, 1).append('<b>Search Results: (' + data.table.results + ')</b>');
-                    
-                    if(Csw.bool(cswPrivate.compactResults))
-                    {
+
+                    if (Csw.bool(cswPrivate.compactResults)) {
                         resultstable.cell(1, 2).css({ width: '100px' });
                         cswPrivate.linkExpandAll = resultstable.cell(1, 2).a({
                             ID: Csw.makeId(cswPrivate.ID, '', '_expandall'),
                             text: 'Expand All',
-                            onClick: function() {
-                                if(cswPrivate.linkExpandAll.text() === 'Expand All'){
+                            onClick: function () {
+                                if (cswPrivate.linkExpandAll.text() === 'Expand All') {
                                     cswPrivate.linkExpandAll.text('Collapse All');
                                 }
-                                else if(cswPrivate.linkExpandAll.text() === 'Collapse All'){
+                                else if (cswPrivate.linkExpandAll.text() === 'Collapse All') {
                                     cswPrivate.linkExpandAll.text('Expand All');
                                 }
                                 nodeTable.expandAll();
@@ -151,8 +150,8 @@
                         ButtonType: Csw.enums.imageButton_ButtonType.TableSingleColumn,
                         Active: (columns === 1),
                         AlternateText: 'Single Column',
-                        onClick: function() {
-                            setTimeout(function() { // so we see the clear immediately
+                        onClick: function () {
+                            setTimeout(function () { // so we see the clear immediately
                                 _renderResultsTable(1);
                             }, 0);
                         }
@@ -164,8 +163,8 @@
                         ButtonType: Csw.enums.imageButton_ButtonType.TableMultiColumn,
                         Active: (columns !== 1),
                         AlternateText: 'Multi Column',
-                        onClick: function() {
-                            setTimeout(function() { // so we see the clear immediately
+                        onClick: function () {
+                            setTimeout(function () { // so we see the clear immediately
                                 _renderResultsTable(3);
                             }, 0);
                         }
@@ -175,16 +174,16 @@
 
                     nodeTable = Csw.nbt.nodeTable(resultstable.cell(2, 1), {
                         ID: Csw.makeId(cswPrivate.ID, '', 'srchresults'),
-                        onEditNode: function() {
+                        onEditNode: function () {
                             // case 27245 - refresh on edit
                             cswPublic.restoreSearch(cswPrivate.sessiondataid);
                         },
-                        onDeleteNode: function() {
+                        onDeleteNode: function () {
                             // case 25380 - refresh on delete
                             cswPublic.restoreSearch(cswPrivate.sessiondataid);
                         },
                         //onSuccess: cswPrivate.onAfterSearch,
-                        onNoResults: function() {
+                        onNoResults: function () {
                             resultstable.cell(2, 1).text('No Results Found');
                         },
                         tabledata: data.table,
@@ -215,7 +214,7 @@
                 });
 
                 fdiv.span({ text: 'Searched For: ' + data.searchterm }).br();
-                ftable = fdiv.table({ });
+                ftable = fdiv.table({});
 
                 // Filters in use
                 var hasFilters = false;
@@ -235,7 +234,7 @@
                             ID: Csw.makeId(filtersdivid, '', thisFilter.filterid),
                             ButtonType: Csw.enums.imageButton_ButtonType.Delete,
                             AlternateText: 'Remove Filter',
-                            onClick: function() {
+                            onClick: function () {
                                 cswPrivate.filter(thisFilter, 'remove');
                             }
                         });
@@ -252,7 +251,7 @@
                         ID: Csw.makeId(filtersdivid, '', "saveview"),
                         enabledText: 'Save as View',
                         disableOnClick: false,
-                        icon: Csw.enums.getName( Csw.enums.iconType, Csw.enums.iconType.save),
+                        icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.save),
                         onClick: cswPrivate.saveAsView
                     });
                 }
@@ -265,7 +264,7 @@
                     var flink = div.a({
                         ID: Csw.makeId(filtersdivid, '', thisFilter.filterid),
                         text: thisFilter.filtervalue + ' (' + thisFilter.count + ')',
-                        onClick: function() {
+                        onClick: function () {
                             cswPrivate.filter(thisFilter, 'add');
                             return false;
                         }
@@ -287,7 +286,7 @@
                     moreDiv.shownDiv.br();
                     var thisdiv = moreDiv.shownDiv;
                     moreDiv.moreLink.hide();
-                    Csw.each(thisFilterSet, function(thisFilter) {
+                    Csw.each(thisFilterSet, function (thisFilter) {
                         if (filterCount === cswPrivate.filterHideThreshold) {
                             moreDiv.moreLink.show();
                             thisdiv = moreDiv.hiddenDiv;
@@ -362,10 +361,10 @@
                 });
             }; // restoreSearch()
 
-            cswPublic.getFilterToNodeTypeId = function() {
+            cswPublic.getFilterToNodeTypeId = function () {
                 var ret = '';
                 function findFilterToNodeTypeId(thisFilter) {
-                    if(Csw.isNullOrEmpty(ret) && thisFilter.filtername == 'Filter To') {
+                    if (Csw.isNullOrEmpty(ret) && thisFilter.filtername == 'Filter To') {
                         ret = thisFilter.firstversionid;
                     }
                 } // findFilterToNodeTypeId()
