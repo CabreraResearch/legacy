@@ -31,11 +31,12 @@
                 });
                 var cell12 = table.cell(1, 2).div();
 
-                cell12.imageButton({
-                        ButtonType: Csw.enums.imageButton_ButtonType.Edit,
-                        AlternateText: 'Edit',
+                cell12.icon({
                         ID: o.ID + '_edit',
-                        Required: o.Required,
+                        iconType: Csw.enums.iconType.pencil,
+                        hovertext: 'Edit',
+                        size: 16,
+                        isButton: true,
                         onClick: function () {
                             editTable.show();
                         }

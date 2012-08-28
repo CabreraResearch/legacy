@@ -45,9 +45,10 @@
                         size: 'small',
                         tooltip: { title: 'Print Barcode Label' },
                         icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.barcode),
-                        onClick: function() {
+                        onClick: function () {
                             $.CswDialog('PrintLabelDialog', { 'nodeid': o.nodeid, 'propid': o.propid });
-                        }
+                        },
+                        editMode: o.EditMode
                     });
             }
         },

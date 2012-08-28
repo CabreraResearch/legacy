@@ -113,10 +113,12 @@
                     nameCell.a({ href: href, target: '_blank', text: name });
                 }
                 if (false === o.ReadOnly && (false === o.Required || allowMultiple)) {
-                    nameCell.imageButton({
-                        ButtonType: Csw.enums.imageButton_ButtonType.Delete,
-                        AlternateText: 'Remove',
+                    nameCell.icon({
                         ID: Csw.makeId('image', imgTblCol, 'rembtn'),
+                        iconType: Csw.enums.iconType.trash,
+                        hovertext: 'Remove',
+                        size: 16,
+                        isButton: true,
                         onClick: function () {
                             nameCell.$.fadeOut('fast');
                             imageCell.$.fadeOut('fast');

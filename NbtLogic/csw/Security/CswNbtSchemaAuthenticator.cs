@@ -31,29 +31,36 @@ namespace ChemSW.Nbt.Security
             if( UserAsNode != null )
             {
                 CswNbtObjClassUser UserObjClass = (CswNbtObjClassUser) UserAsNode;
-                if( false == UserObjClass.IsAccountLocked() )
+                if( false == UserObjClass.IsArchived() )
                 {
-                    string encryptedpassword = CswEncryption.getMd5Hash( password );
-                    if( UserObjClass.EncryptedPassword == encryptedpassword )
+                    if( false == UserObjClass.IsAccountLocked() )
                     {
-                        UserObjClass.clearFailedLoginCount();
-                        UserObjClass.LastLogin.DateTimeValue = DateTime.Now;
-                        _User = UserObjClass;
-                        ReturnVal = AuthenticationStatus.Authenticated;
-                    }
+                        string encryptedpassword = CswEncryption.getMd5Hash( password );
+                        if( UserObjClass.EncryptedPassword == encryptedpassword )
+                        {
+                            UserObjClass.clearFailedLoginCount();
+                            UserObjClass.LastLogin.DateTimeValue = DateTime.Now;
+                            _User = UserObjClass;
+                            ReturnVal = AuthenticationStatus.Authenticated;
+                        }
+                        else
+                        {
+                            UserObjClass.incFailedLoginCount();
+                            UserObjClass = null;
+                            ReturnVal = AuthenticationStatus.Failed;
+                        }
+
+                        //bz # 6555
+                        UserAsNode.postChanges( false );
+                    } // if (!User.IsAccountLocked())
                     else
                     {
-                        UserObjClass.incFailedLoginCount();
-                        UserObjClass = null;
-                        ReturnVal = AuthenticationStatus.Failed;
+                        ReturnVal = AuthenticationStatus.Locked;
                     }
-
-                    //bz # 6555
-                    UserAsNode.postChanges( false );
-                } // if (!User.IsAccountLocked())
+                }
                 else
                 {
-                    ReturnVal = AuthenticationStatus.Locked;
+                    ReturnVal = AuthenticationStatus.Archived;
                 }
 
             } // if (User != null)

@@ -32,6 +32,7 @@ namespace ChemSW.Nbt.ObjClasses
         public const string DefaultLocationPropertyName = "Default Location";
         public const string WorkUnitPropertyName = "Work Unit";
         public const string LogLevelPropertyName = "Log Level";
+        public static string ArchivedPropertyName { get { return "Archived"; } }
 
         
 
@@ -305,6 +306,12 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void addDefaultViewFilters( CswNbtViewRelationship ParentRelationship )
         {
+            //case 24525 - add default filter to ignore archived users in relationship props
+            CswNbtView view = ParentRelationship.View;
+            CswNbtMetaDataObjectClass userOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
+            CswNbtMetaDataObjectClassProp archivedOCP = userOC.getObjectClassProp( CswNbtObjClassUser.ArchivedPropertyName );
+            view.AddViewPropertyAndFilter( ParentRelationship, archivedOCP, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.NotEquals, Value: Tristate.True.ToString() );
+
             _CswNbtObjClassDefault.addDefaultViewFilters( ParentRelationship );
         }
 
@@ -409,7 +416,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswPrimaryKey DefaultLocationId { get { return DefaultLocationProperty.SelectedNodeId; } }
         public CswNbtNodePropRelationship WorkUnitProperty { get { return _CswNbtNode.Properties[WorkUnitPropertyName]; } }
         public CswPrimaryKey WorkUnitId { get { return WorkUnitProperty.RelatedNodeId; } }
-        
+        public CswNbtNodePropLogical Archived { get { return _CswNbtNode.Properties[ArchivedPropertyName]; } }
 
         #endregion
 
@@ -448,6 +455,11 @@ namespace ChemSW.Nbt.ObjClasses
         public bool IsAdministrator()
         {
             return _RoleNodeObjClass.Administrator.Checked == Tristate.True;
+        }
+
+        public bool IsArchived()
+        {
+            return this.Archived.Checked == Tristate.True;
         }
 
     }//CswNbtObjClassUser

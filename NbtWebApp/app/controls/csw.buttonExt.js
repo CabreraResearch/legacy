@@ -33,15 +33,16 @@
                 onClick: null,
                 isEnabled: true,
                 bindOnEnter: false,
-                size: 'medium',
+                size: 'small',
                 tooltip: {
                     title: '',
                     width: 100,
                     showDelay: 1000
-                }
+                },
+                editMode: ''
             };
             var cswPublic = {};
-            
+
             window.Ext.require('Ext.button.*');
 
             cswPublic.show = Csw.method(function () {
@@ -49,12 +50,12 @@
                 return cswPublic;
             });
 
-            cswPublic.hide = Csw.method(function() {
+            cswPublic.hide = Csw.method(function () {
                 cswPublic.button.hide();
                 return cswPublic;
             });
 
-            cswPublic.addClass = Csw.method(function(cls) {
+            cswPublic.addClass = Csw.method(function (cls) {
                 cswPublic.button.addClass(cls);
                 return cswPublic;
             });
@@ -101,8 +102,8 @@
                 if (options) {
                     Csw.extend(cswPrivate, options, true);
                 }
-                
-                switch(Csw.string(cswPrivate.size,'medium').toLowerCase()) {
+
+                switch (Csw.string(cswPrivate.size, 'medium').toLowerCase()) {
                     case 'medium':
                         cswPrivate.size = 'medium';
                         cswPrivate.path += '18/';
@@ -130,28 +131,29 @@
                     if (cswPrivate.isEnabled) {
                         if (cswPrivate.disableOnClick && false === Csw.ajax.ajaxInProgress()) {
                             cswPublic.disable();
-                            if(false === Csw.isNullOrEmpty(cswPrivate.disabledText)) {
+                            if (false === Csw.isNullOrEmpty(cswPrivate.disabledText)) {
                                 cswPublic.button.setText(cswPrivate.disabledText);
                             }
                             Csw.subscribe(Csw.enums.events.ajax.globalAjaxStop, doEnable);
                         }
                         Csw.tryExec(internalOnClick, arguments);
-                    } 
+                    }
                 }
 
                 cswPrivate.onClick = onClick;
 
-                if(Csw.bool(cswPrivate.bindOnEnter)) {
+                if (Csw.bool(cswPrivate.bindOnEnter)) {
                     window.Mousetrap.bind('enter', cswPrivate.onClick);
                 }
-                cswPrivate.initBtn = function() {
+                cswPrivate.initBtn = function () {
                     cswPublic.button = window.Ext.create('Ext.Button', {
                         renderTo: cswParent.getId(),
                         text: Csw.string(cswPrivate.enabledText),
                         handler: cswPrivate.onClick,
                         icon: icon,
                         cls: Csw.string(cswPrivate.cssclass),
-                        scale: Csw.string(cswPrivate.size, 'medium')
+                        scale: Csw.string(cswPrivate.size, 'medium'),
+                        disabled: (Csw.enums.editMode.PrintReport === cswPrivate.editMode || Csw.enums.editMode.AuditHistoryInPopup === cswPrivate.editMode)
                     });
 
                     if (false === Csw.isNullOrEmpty(cswPrivate.tooltip.title)) {
@@ -171,10 +173,10 @@
                     }, 500);
                 }
             } ());
-            
+
             return cswPublic;
-            
+
         });
-    
+
 } ());
 

@@ -50,7 +50,7 @@ namespace ChemSW.Nbt.MetaData
                                                                };
 
 
-        public sealed class NbtFieldType : IEquatable<NbtFieldType>
+        public sealed class NbtFieldType : IEquatable<NbtFieldType>, IComparable<NbtFieldType>
         {
             public readonly string Value;
 
@@ -157,6 +157,14 @@ namespace ChemSW.Nbt.MetaData
 
             #endregion IEquatable (NbtFieldType)
 
+            #region IComparable (NbtFieldType)
+
+            public int CompareTo( NbtFieldType other )
+            {
+                return this.ToString().CompareTo(other.ToString());
+            }
+
+            #endregion IComparable (NbtFieldType)
         };
 
         public enum DataType

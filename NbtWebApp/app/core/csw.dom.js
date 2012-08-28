@@ -282,6 +282,13 @@
                 return cswPublic;
             };
 
+            cswPublic.toggle = function () {
+                /// <summary>Toggle the element's visibility.</summary>
+                /// <returns type="Object">The Csw object (for chaining)</returns> 
+                cswPublic.$.toggle();
+                return cswPublic;
+            };
+
             cswPublic.jquery = function ($jqElement, opts) {
                 /// <summary> Extend a jQuery object with Csw methods.</summary>
                 /// <param name="$element" type="jQuery">Element to extend.</param>

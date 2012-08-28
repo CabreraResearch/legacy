@@ -118,6 +118,14 @@ namespace ChemSW.Nbt.Batch
                 {
                     op = new CswNbtBatchOpMailReport( CswNbtResources );
                 }
+                else if( OpName == NbtBatchOpName.UpdateRegulatoryLists )
+                {
+                    op = new CswNbtBatchOpUpdateRegulatoryLists( CswNbtResources );
+                }
+                else if( OpName == NbtBatchOpName.UpdateRegulatoryListsForMaterials )
+                {
+                    op = new CswNbtBatchOpUpdateRegulatoryListsForMaterials( CswNbtResources );
+                }
                 // New batch ops go here
                 // else if( OpName == NbtBatchOpName.NEWNAME ) 
                 if( null != op )

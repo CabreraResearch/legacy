@@ -23,6 +23,7 @@
             var cell23 = table.cell(2, 3).css('textAlign', 'right');
 
             var href = '/NbtWebApp/' + Csw.string(propVals.href);
+            href += '&usenodetypeasplaceholder=false';     // case 27596
 
             cell11.a({
                 href: href,
@@ -36,13 +37,15 @@
             if (false === Csw.bool(o.ReadOnly) && o.EditMode !== Csw.enums.editMode.Add) {
                 /* Edit Button */
                 cell22.div()
-                    .imageButton({
-                        ButtonType: Csw.enums.imageButton_ButtonType.Edit,
-                        AlternateText: 'Edit',
+                    .icon({
                         ID: o.ID + '_edit',
+                        iconType: Csw.enums.iconType.pencil,
+                        hovertext: 'Edit',
+                        size: 16,
+                        isButton: true,
                         onClick: function () {
                             $.CswDialog('EditMolDialog', {
-                                TextUrl: '/NbtWebApp/wsNBT.asmx/saveMolProp',
+                                TextUrl: '/NbtWebApp/wsNBT.asmx/saveMolPropText',
                                 FileUrl: '/NbtWebApp/wsNBT.asmx/saveMolPropFile',
                                 PropId: o.propData.id,
                                 molData: mol,
@@ -55,10 +58,12 @@
 
                 /* Clear Button */
                 cell23.div()
-                    .imageButton({
-                        ButtonType: Csw.enums.imageButton_ButtonType.Clear,
-                        AlternateText: 'Clear',
+                    .icon({
                         ID: o.ID + '_clr',
+                        iconType: Csw.enums.iconType.trash,
+                        hovertext: 'Clear Mol',
+                        size: 16,
+                        isButton: true,
                         onClick: function () {
                             /* remember: confirm is globally blocking call */
                             if (confirm("Are you sure you want to clear this structure?")) {

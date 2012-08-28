@@ -127,7 +127,7 @@ namespace ChemSW.Nbt.WebServices
                 ParentObj["entries"] = new JObject();
                 foreach( CswNbtViewNode.CswNbtViewAddNodeTypeEntry Entry in Entries )
                 {
-                    ParentObj["entries"][Entry.NodeType.NodeTypeName] = CswNbtWebServiceMainMenu.makeAddMenuItem( Entry, new CswPrimaryKey(), string.Empty, string.Empty, string.Empty );
+                    ParentObj["entries"][Entry.NodeType.NodeTypeName] = CswNbtWebServiceMainMenu.makeAddMenuItem( Entry.NodeType, new CswPrimaryKey(), string.Empty, string.Empty, string.Empty );
                 }
             }
             JObject ChildObj = new JObject();

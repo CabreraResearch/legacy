@@ -43,6 +43,8 @@ namespace ChemSW.Nbt.ServiceDrivers
             TabOrderModifier = 0;
 
             CswNbtNode Node = _CswNbtResources.Nodes.GetNode( NodeId, NodeKey, Date );
+            CswNbtMetaDataNodeType NodeType = Node.getNodeType();
+
             if( filterToPropId != string.Empty )
             {
                 CswPropIdAttr PropId = new CswPropIdAttr( filterToPropId );
@@ -87,7 +89,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                 //        break;
 
                 //    default:
-                if( Node != null )
+                if( null != Node )
                 {
                     foreach( CswNbtMetaDataNodeTypeTab Tab in _CswNbtResources.MetaData.getNodeTypeTabs( Node.NodeTypeId )
                                                                 .Where( Tab => _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, Node.getNodeType(), false, Tab ) )
@@ -100,9 +102,10 @@ namespace ChemSW.Nbt.ServiceDrivers
                     if( false == _ConfigMode &&
                         false == _IsMultiEdit &&
                         Date.IsNull &&
+                        NodeType.AuditLevel != Audit.AuditLevel.NoAudit &&
                         CswConvert.ToBoolean( _CswNbtResources.ConfigVbls.getConfigVariableValue( "auditing" ) ) )
                     {
-                        if( _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, Node.getNodeType() ) )
+                        if( _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, NodeType ) )
                         {
                             _makeTab( Ret, Int32.MaxValue, HistoryTabPrefix + NodeId, "History", false );
                         }
@@ -880,11 +883,11 @@ namespace ChemSW.Nbt.ServiceDrivers
                 CswNbtNode Node = _CswNbtResources.Nodes[PropId.NodeId];
                 CswNbtNodePropWrapper PropWrapper = Node.Properties[MetaDataProp];
                 PropWrapper.ClearValue();
+                Node.postChanges( false );
                 if( IncludeBlob )
                 {
                     PropWrapper.ClearBlob();
                 }
-                Node.postChanges( false );
                 ret = true;
             }
             return ret;

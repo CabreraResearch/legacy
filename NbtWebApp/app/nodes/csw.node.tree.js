@@ -30,6 +30,7 @@
         if (opts) Csw.extend(cswPrivate, opts);
 
         var cswPublic = {
+            menuDiv: null,
             treeDiv: null
         };
 
@@ -74,15 +75,15 @@
             function hoverNode(e, bindData) {
                 var $hoverLI = $(bindData.rslt.obj[0]);
                 //var nodeid = $hoverLI.CswAttrDom('id').substring(cswPrivate.idPrefix.length);
-                var nodeid = $hoverLI.CswAttrNonDom('nodeid');
+                cswPrivate.hoverNodeId = $hoverLI.CswAttrNonDom('nodeid');
                 var cswnbtnodekey = $hoverLI.CswAttrNonDom('cswnbtnodekey');
-                Csw.nodeHoverIn(bindData.args[1], nodeid, cswnbtnodekey);
+                Csw.nodeHoverIn(bindData.args[1], cswPrivate.hoverNodeId, cswnbtnodekey);
             }
             cswPublic.treeDiv.bind('hover_node.jstree', hoverNode);
 
             function deHoverNode() {
                 Csw.jsTreeGetSelected(cswPublic.treeDiv.$);
-                Csw.nodeHoverOut();
+                Csw.nodeHoverOut(null, cswPrivate.hoverNodeId);
             }
             cswPublic.treeDiv.bind('dehover_node.jstree', deHoverNode);
 
@@ -330,16 +331,28 @@
             }
             cswPrivate.idPrefix = Csw.string(cswPrivate.ID) + '_';
 
+            cswPrivate.table = cswPrivate.parent.table();
+            var cell11 = cswPrivate.table.cell(1,1);
+            var cell12 = cswPrivate.table.cell(1,2);
+            var cell21 = cswPrivate.table.cell(2,1);
+
+            cell11.css({ width: '50%', verticalAlign: 'middle' });
+            cell12.css({ width: '50%' });
+            cell21.propDom('colspan', 2);
+
+            cswPrivate.toggleDiv = cell11.div({ ID: Csw.makeId({ ID: cswPrivate.IdPrefix, suffix: 'toggleDiv' }) });
+            cswPublic.menuDiv = cell12.div({ ID: Csw.makeId({ ID: cswPrivate.IdPrefix, suffix: 'menuDiv', align: 'right' }) });
+            cswPublic.treeDiv = cell21.div({ ID: Csw.makeId({ ID: cswPrivate.IdPrefix, suffix: 'treeDiv' }) });
+            
+
             if (cswPrivate.ShowToggleLink) {
-                cswPrivate.toggleLink = cswPrivate.parent.a({
+                cswPrivate.toggleLink = cswPrivate.toggleDiv.a({
                     ID: cswPrivate.idPrefix + 'toggle',
                     value: 'Expand All',
                     onClick: cswPublic.expandAll
                 });
                 cswPrivate.toggleLink.hide();
             }
-
-            cswPublic.treeDiv = cswPrivate.parent.div({ ID: cswPrivate.IdPrefix });
 
             if (cswPrivate.UseScrollbars) {
                 cswPublic.treeDiv.addClass('treediv');

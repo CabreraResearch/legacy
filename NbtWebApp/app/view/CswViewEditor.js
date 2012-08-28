@@ -1198,10 +1198,10 @@
                 $parent: $parent,
                 cssclass: Csw.enums.cssClasses_ViewEdit.vieweditor_deletespan.name
             }).propNonDom('arbid', arbid);
-            td.imageButton({
-                ButtonType: Csw.enums.imageButton_ButtonType.Delete,
-                AlternateText: 'Delete',
-                ID: arbid + '_delete'
+            td.icon({
+                ID: arbid + '_delete',
+                iconType: Csw.enums.iconType.x,
+                hovertext: 'Delete'
             }).css({ display: 'inline-block' });
             return td.$;
         }

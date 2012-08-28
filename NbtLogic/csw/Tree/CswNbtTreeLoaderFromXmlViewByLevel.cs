@@ -577,20 +577,20 @@ namespace ChemSW.Nbt
                                     FilterClause += @"(";
                                 }
 
-                                FilterClause += @" z.nodeid in (select jnp.nodeid from jct_nodes_props jnp ";
+                                FilterClause += @" z.nodeid in (select n.nodeid from nodes n ";
 
                                 if( Prop.Type == NbtViewPropType.NodeTypePropId )
                                 {
-                                    FilterClause += @"            join nodetype_props p on (lower(p.propname) = '" + Prop.NodeTypeProp.PropName.ToLower() + @"' ";
+                                    FilterClause += @"            join nodetype_props p on (lower(p.propname) = '" + Prop.NodeTypeProp.PropName.ToLower() + @"') ";
                                 }
                                 else
                                 {
                                     FilterClause += @"            join object_class_props op on (op.objectclasspropid = " + Prop.ObjectClassPropId + @")
-                                             join nodetype_props p on (p.objectclasspropid = op.objectclasspropid  ";
+                                                                  join nodetype_props p on (p.objectclasspropid = op.objectclasspropid) ";
                                 }
-
-                                FilterClause += @"                and jnp.nodetypepropid = p.nodetypepropid) 
-                                             where " + FilterValue + @"))";
+                                FilterClause += @"                left outer join jct_nodes_props jnp on (jnp.nodeid = n.nodeid
+                                                                                                     and jnp.nodetypepropid = p.nodetypepropid)
+                                                                  where " + FilterValue + @"))";
 
 
                                 From += "left outer join (" + FilterClause + ") f" + FilterCount.ToString() + " on (f" + FilterCount.ToString() + ".nodeid = n.nodeid)";

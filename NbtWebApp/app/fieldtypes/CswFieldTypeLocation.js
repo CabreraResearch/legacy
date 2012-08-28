@@ -102,17 +102,18 @@
                     if(o.EditMode === Csw.enums.editMode.Add) {
                         makeLocationCombo();
                     } else {
-                        table.cell(1, 2).imageButton({
-                            ButtonType: Csw.enums.imageButton_ButtonType.Edit,
-                            AlternateText: 'Edit',
+                        table.cell(1, 2).icon({
                             ID: Csw.makeId(o.ID, 'toggle'),
+                            iconType: Csw.enums.iconType.pencil,
+                            hovertext: 'Edit',
+                            size: 16,
+                            isButton: true,
                             onClick: makeLocationCombo
                         });
                     }
 
-                    propDiv.$.hover(function (event) {
-                        Csw.nodeHoverIn(event, selectDiv.propNonDom('value'));
-                    }, Csw.nodeHoverOut);
+                    propDiv.$.hover(function (event) { Csw.nodeHoverIn(event, selectDiv.propNonDom('value')); }, 
+                                    function (event) { Csw.nodeHoverOut(event, selectDiv.propNonDom('value')); });
                 }
             },
             save: function (o) { //($propdiv, $xml

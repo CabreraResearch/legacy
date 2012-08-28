@@ -6,14 +6,11 @@ using System.Linq;
 using System.Web;
 using ChemSW.Core;
 using ChemSW.Exceptions;
+using ChemSW.Nbt.Grid;
 using ChemSW.Nbt.Logic;
 using ChemSW.Nbt.MetaData;
-using ChemSW.Nbt.ObjClasses;
-using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
-using ChemSW.Nbt.ServiceDrivers;
 using Newtonsoft.Json.Linq;
-using ChemSW.Nbt.Grid;
 
 namespace ChemSW.Nbt.WebServices
 {
@@ -113,7 +110,10 @@ namespace ChemSW.Nbt.WebServices
                     _NodeTypePermission Permission = new _NodeTypePermission( NodeType, _CswNbtResources );
                     _ActionEnabled = false == _ForReport &&
                                      ( _ActionEnabled || Permission.CanView || Permission.CanDelete || Permission.CanDelete );
-                    _Permissions.Add( NodeType.FirstVersionNodeTypeId, Permission );
+                    if( false == _Permissions.ContainsKey( NodeType.FirstVersionNodeTypeId ) )
+                    {
+                        _Permissions.Add( NodeType.FirstVersionNodeTypeId, Permission );
+                    }
                 }
             }
 

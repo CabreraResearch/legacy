@@ -6,14 +6,20 @@
     var pluginName = 'CswDialog';
 
     var cswPrivateInit = function () { //create this to prevent anyone from modifying the orginal position of the dialog positions
-        var origX = 150;
-        var origY = 30;
+        var origX = 0; //150
+        var origY = 0; //30
 
         this.origXAccessor = function () {
             return origX;
         }
         this.origYAccessor = function () {
             return origY;
+        }
+        this.windowWidth = function () {
+            return document.documentElement.clientWidth;
+        }
+        this.windowHeight = function () {
+            return document.documentElement.clientHeight;
         }
     };
     var cswPrivate = new cswPrivateInit();
@@ -520,7 +526,8 @@
             };
 
             var myEditMode = Csw.enums.editMode.EditInPopup;
-            var table = cswPublic.div.table();
+            var tableId = Csw.makeSafeId(cswPrivate.nodeids[0], Math.floor(Math.random() * 99999));
+            var table = cswPublic.div.table({ ID: tableId });
             if (false === Csw.isNullOrEmpty(cswPrivate.date) && false === cswPrivate.Multi) {
                 myEditMode = Csw.enums.editMode.AuditHistoryInPopup;
                 Csw.actions.auditHistory(table.cell(1, 1), {
@@ -1092,6 +1099,7 @@
                 showSaveAsView: false,
                 allowEdit: false,
                 allowDelete: false,
+                compactResults: true,
                 extraAction: 'Select',
                 extraActionIcon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.check),
                 onExtraAction: function (nodeObj) {
@@ -1305,6 +1313,10 @@
             .prependTo(div.$);
 
         Csw.tryExec(div.$.dialog, 'close');
+        if (dialogsCount === 0) { //as per discussion - dialogs should be centered
+            posX = (cswPrivate.windowWidth() / 2) - (width / 2) + posX;
+            posY = (cswPrivate.windowHeight() / 2) - (height / 2) + posY;
+        }
 
         div.$.dialog({
             modal: true,

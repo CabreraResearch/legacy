@@ -208,8 +208,8 @@ window.initMain = window.initMain || function (undefined) {
                     onBeforeSearch: function () {
                         clear({ all: true });
                     },
-                    onAfterSearch: function () {
-                        refreshMainMenu();
+                    onAfterSearch: function (search) {
+                        refreshMainMenu({ nodetypeid: search.getFilterToNodeTypeId() });
                     },
                     onAfterNewSearch: function (searchid) {
                         Csw.clientState.setCurrentSearch(searchid);
@@ -431,7 +431,7 @@ window.initMain = window.initMain || function (undefined) {
                             getViewTable({ 'viewid': o.itemid, 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey });
                             break;
                         default:
-                            refreshNodesTree({ 'viewid': o.itemid, 'viewmode': o.mode, 'nodeid': '', 'cswnbtnodekey': '', 'showempty': linkOpt.showempty, 'forsearch': linkOpt.forsearch });
+                            refreshNodesTree({ 'viewid': o.itemid, 'viewmode': o.mode, 'nodeid': o.nodeid, 'cswnbtnodekey': '', 'showempty': linkOpt.showempty, 'forsearch': linkOpt.forsearch });
                             break;
                         }
                     };
@@ -462,52 +462,62 @@ window.initMain = window.initMain || function (undefined) {
         }
 
         function refreshMainMenu(options) {
-            //if (debugOn()) Csw.debug.log('Main.refreshMainMenu()');
-
             var o = {
+            parent: Csw.literals.factory($('#MainMenuDiv')),
                 viewid: '',
                 viewmode: '',
                 nodeid: '',
                 cswnbtnodekey: '',
-                prefix: 'csw',
-                grid: ''
+            nodetypeid: '',
+            propid: '',
+            grid: '',
+            limitMenuTo: '',
+            readonly: false
             };
+        if (options) Csw.extend(o, options);
 
-            if (options) {
-                Csw.extend(o, options);
-            }
+        $('#MainMenuDiv').children().remove();
 
-            $('#MainMenuDiv').CswMenuMain({
-                'viewid': o.viewid,
-                'nodeid': o.nodeid,
-                'cswnbtnodekey': o.cswnbtnodekey,
-                'onAddNode': function (nodeid, cswnbtnodekey) {
+        var menuOpts = { 
+            width: '',
+            ajax: { 
+                urlMethod: 'getMainMenu', 
+                data: {
+                    ViewId: o.viewid,
+                    SafeNodeKey: o.cswnbtnodekey,
+                    NodeTypeId: o.nodetypeid,
+                    PropIdAttr: o.propid,
+                    LimitMenuTo: o.limitMenuTo,
+                    ReadOnly: o.readonly
+                }
+            },
+            onAlterNode: function (nodeid, cswnbtnodekey) {
                     refreshSelected({ 'nodeid': nodeid, 'cswnbtnodekey': cswnbtnodekey, 'IncludeNodeRequired': true });
                 },
-                'onMultiEdit': function () {
+            onMultiEdit: function () {
                     switch (o.viewmode) {
                         case Csw.enums.viewMode.grid.name:
-                            //                        multi = (false === o.grid.isMulti());
-                            //                        var g = {
-                            //                            canEdit: multi,
-                            //                            canDelete: multi,
-                            //                            gridOpts: {
-                            //                                //reinit: true,
-                            //                                multiselect: multi
-                            //                            }
-                            //                        };
-                            //                        o.grid.changeGridOpts(g, ['Action', 'Delete']);
-
                             o.grid.toggleShowCheckboxes();
-
                             break;
                         default:
                             multi = (false === multi);
                             refreshSelected({ nodeid: o.nodeid, viewmode: o.viewmode, cswnbtnodekey: o.cswnbtnodekey });
                             break;
+                } // switch
+            },
+            onEditView: function () {
+                handleAction({
+                    'actionname': 'Edit_View',
+                    'ActionOptions': {
+                        'viewid': Csw.cookie.get(Csw.cookie.cookieNames.CurrentViewId),
+                        'viewmode': Csw.cookie.get(Csw.cookie.cookieNames.CurrentViewMode)
                     }
+                });
                 },
-                'onPrintView': function () {
+            onSaveView: function (newviewid) {
+                handleItemSelect({ 'viewid': newviewid, 'viewmode': Csw.cookie.get(Csw.cookie.cookieNames.CurrentViewMode) });
+            },
+            onPrintView: function () {
                     switch (o.viewmode) {
                         case Csw.enums.viewMode.grid.name:
                             if (false == Csw.isNullOrEmpty(o.grid)) {
@@ -519,46 +529,13 @@ window.initMain = window.initMain || function (undefined) {
                             break;
                     }
                 },
-                //            'onSearch':
-                //                 {
-                //                     'onViewSearch': function () {
-                //                         var genericSearchId = Csw.makeId({ 'ID': mainSearchId, prefix: o.prefix, suffix: 'generic' });
-                //                         var viewSearchId = Csw.makeId({ 'ID': mainSearchId, prefix: o.prefix, suffix: 'view' });
-                //                         refreshSearchPanel({
-                //                             'genericSearchId': genericSearchId,
-                //                             'viewSearchId': viewSearchId,
-                //                             'searchType': 'view',
-                //                             'cswnbtnodekey': o.cswnbtnodekey,
-                //                             'viewid': o.viewid
-                //                         });
-                //                     },
-                //                     'onGenericSearch': function () {
-                //                         var genericSearchId = Csw.makeId({ 'ID': mainSearchId, prefix: o.prefix, suffix: 'generic' });
-                //                         var viewSearchId = Csw.makeId({ 'ID': mainSearchId, prefix: o.prefix, suffix: 'view' });
-                //                         refreshSearchPanel({
-                //                             'genericSearchId': genericSearchId,
-                //                             'viewSearchId': viewSearchId,
-                //                             'searchType': 'generic',
-                //                             'cswnbtnodekey': o.cswnbtnodekey
-                //                         });
-                //                     }
-                //                 },
-                'onEditView': function () {
-                    handleAction({
-                        'actionname': 'Edit_View',
-                        'ActionOptions': {
-                            'viewid': Csw.cookie.get(Csw.cookie.cookieNames.CurrentViewId),
-                            'viewmode': Csw.cookie.get(Csw.cookie.cookieNames.CurrentViewMode)
-                        }
-                    });
-                },
-                'onSaveView': function (newviewid) {
-                    handleItemSelect({ itemid: newviewid, mode: Csw.cookie.get(Csw.cookie.cookieNames.CurrentViewMode) });
-                },
-                'Multi': multi,
+            Multi: multi,
                 nodeTreeCheck: mainTree
-            });
-        }
+        };
+
+        o.parent.menu( menuOpts );
+
+    } // refreshMainMenu()
 
         //    function refreshSearchPanel(options) {
         //        //if (debugOn()) Csw.debug.log('Main.refreshSearchPanel()');
@@ -804,7 +781,7 @@ window.initMain = window.initMain || function (undefined) {
                 } // onEditFilters
             }); // viewFilters
         
-            $('#CenterBottomDiv').CswNodeTable('init', {
+        Csw.nbt.nodeTable($('#CenterBottomDiv'), {
                 viewid: o.viewid,
                 nodeid: o.nodeid,
                 cswnbtnodekey: o.cswnbtnodekey,
@@ -829,6 +806,7 @@ window.initMain = window.initMain || function (undefined) {
             //if (debugOn()) Csw.debug.log('Main.onSelectTreeNode()');
             if (Csw.clientChanges.manuallyCheckChanges()) {
                 var o = {
+                tree: null,
                     viewid: '',
                     nodeid: '',
                     nodename: '',
@@ -844,10 +822,22 @@ window.initMain = window.initMain || function (undefined) {
 
                 if (o.nodeid !== '' && o.nodeid !== 'root') {
                     getTabs({ 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey });
-                    refreshMainMenu({ viewid: o.viewid, viewmode: Csw.enums.viewMode.tree.name, nodeid: o.nodeid, cswnbtnodekey: o.cswnbtnodekey });
+                refreshMainMenu({ 
+                    parent: o.tree.menuDiv,
+                    viewid: o.viewid, 
+                    viewmode: Csw.enums.viewMode.tree.name, 
+                    nodeid: o.nodeid, 
+                    cswnbtnodekey: o.cswnbtnodekey 
+                });
                 } else {
                     showDefaultContentTree({ viewid: o.viewid, viewmode: Csw.enums.viewMode.tree.name });
-                    refreshMainMenu({ viewid: o.viewid, viewmode: Csw.enums.viewMode.tree.name, nodeid: '', cswnbtnodekey: '' });
+                refreshMainMenu({ 
+                    parent: o.tree.menuDiv,
+                    viewid: o.viewid, 
+                    viewmode: Csw.enums.viewMode.tree.name, 
+                    nodeid: '', 
+                    cswnbtnodekey: '' 
+                });
                 }
             }
         }; // onSelectTreeNode()
@@ -1069,6 +1059,7 @@ window.initMain = window.initMain || function (undefined) {
                 //showempty: getEmptyTree,
                 onSelectNode: function (optSelect) {
                     onSelectTreeNode({
+                    tree: mainTree,
                         viewid: optSelect.viewid,
                         nodeid: optSelect.nodeid,
                         cswnbtnodekey: optSelect.cswnbtnodekey

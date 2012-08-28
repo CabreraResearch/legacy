@@ -219,7 +219,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                if( String.IsNullOrEmpty( _CollapsedReadOnlyValue ) )
+                if( String.IsNullOrEmpty( _CollapsedReadOnlyValue ) && String.IsNullOrEmpty( _ExpandedReadOnlyValue ) )
                 {
                     _setReadOnlyValues();
                 }
@@ -231,7 +231,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                if( String.IsNullOrEmpty( _ExpandedReadOnlyValue ) )
+                if( String.IsNullOrEmpty( _ExpandedReadOnlyValue ) && String.IsNullOrEmpty( _CollapsedReadOnlyValue ) )
                 {
                     _setReadOnlyValues();
                 }
