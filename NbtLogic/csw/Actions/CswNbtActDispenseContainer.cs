@@ -182,7 +182,7 @@ namespace ChemSW.Nbt.Actions
 
             if( _ContainersToView.Count > 0 )
             {
-                CswNbtMetaDataObjectClassProp SourceContainerProp = ContainerOc.getObjectClassProp( CswNbtObjClassContainer.SourceContainerPropertyName );
+                CswNbtMetaDataObjectClassProp SourceContainerProp = ContainerOc.getObjectClassProp( CswNbtObjClassContainer.PropertyName.SourceContainer );
                 CswNbtViewRelationship ChildRelationship = DispenseContainerView.AddViewRelationship( RootRelationship, NbtViewPropOwnerType.Second, SourceContainerProp, false );
                 ChildRelationship.NodeIdsToFilterIn = _ContainersToView;
             }
@@ -207,21 +207,21 @@ namespace ChemSW.Nbt.Actions
 
                     CswNbtMetaDataObjectClass ContainerOc = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.ContainerClass );
                     CswNbtViewRelationship ContainerRel = Ret.AddViewRelationship( ContainerOc, true );
-                    CswNbtViewProperty BarcodeVp = Ret.AddViewProperty( ContainerRel, ContainerOc.getObjectClassProp( CswNbtObjClassContainer.BarcodePropertyName ) );
-                    CswNbtViewProperty MaterialVp = Ret.AddViewProperty( ContainerRel, ContainerOc.getObjectClassProp( CswNbtObjClassContainer.MaterialPropertyName ) );
+                    CswNbtViewProperty BarcodeVp = Ret.AddViewProperty( ContainerRel, ContainerOc.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Barcode ) );
+                    CswNbtViewProperty MaterialVp = Ret.AddViewProperty( ContainerRel, ContainerOc.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Material ) );
                     Ret.AddViewPropertyFilter( MaterialVp, SubFieldName: CswNbtSubField.SubFieldName.NodeID, Value: NodeAsMaterial.NodeId.PrimaryKey.ToString() );
                     MaterialVp.ShowInGrid = false;
 
-                    CswNbtViewProperty MissingVp = Ret.AddViewProperty( ContainerRel, ContainerOc.getObjectClassProp( CswNbtObjClassContainer.MissingPropertyName ) );
+                    CswNbtViewProperty MissingVp = Ret.AddViewProperty( ContainerRel, ContainerOc.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Missing ) );
                     Ret.AddViewPropertyFilter( MissingVp, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.NotEquals, Value: Tristate.True.ToString() );
                     MissingVp.ShowInGrid = false;
 
-                    CswNbtViewProperty LocationVp = Ret.AddViewProperty( ContainerRel, ContainerOc.getObjectClassProp( CswNbtObjClassContainer.LocationPropertyName ) );
+                    CswNbtViewProperty LocationVp = Ret.AddViewProperty( ContainerRel, ContainerOc.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Location ) );
 
-                    CswNbtViewProperty QuantityVp = Ret.AddViewProperty( ContainerRel, ContainerOc.getObjectClassProp( CswNbtObjClassContainer.QuantityPropertyName ) );
+                    CswNbtViewProperty QuantityVp = Ret.AddViewProperty( ContainerRel, ContainerOc.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Quantity ) );
                     Ret.AddViewPropertyFilter( QuantityVp, CswNbtSubField.SubFieldName.Value, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.GreaterThan, Value: "0" );
 
-                    CswNbtViewProperty ExpirationDateVp = Ret.AddViewProperty( ContainerRel, ContainerOc.getObjectClassProp( CswNbtObjClassContainer.ExpirationDatePropertyName ) );
+                    CswNbtViewProperty ExpirationDateVp = Ret.AddViewProperty( ContainerRel, ContainerOc.getObjectClassProp( CswNbtObjClassContainer.PropertyName.ExpirationDate ) );
                     Ret.AddViewPropertyFilter( ExpirationDateVp, CswNbtPropFilterSql.PropertyFilterConjunction.Or, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.GreaterThanOrEquals, Value: "today" );
                     Ret.AddViewPropertyFilter( ExpirationDateVp, CswNbtPropFilterSql.PropertyFilterConjunction.Or, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Null );
                 }

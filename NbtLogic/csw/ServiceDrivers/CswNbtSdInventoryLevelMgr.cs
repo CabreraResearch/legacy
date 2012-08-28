@@ -93,11 +93,11 @@ namespace ChemSW.Nbt.ServiceDrivers
                 CswNbtViewRelationship LocationRel = _SdLocations.getAllChildrenLocationRelationship( Ret, StartLocationId );
 
                 CswNbtMetaDataObjectClass ContainerOc = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.ContainerClass );
-                CswNbtMetaDataObjectClassProp LocationOcp = ContainerOc.getObjectClassProp( CswNbtObjClassContainer.LocationPropertyName );
-                CswNbtMetaDataObjectClassProp MaterialOcp = ContainerOc.getObjectClassProp( CswNbtObjClassContainer.MaterialPropertyName );
-                CswNbtMetaDataObjectClassProp DisposedOcp = ContainerOc.getObjectClassProp( CswNbtObjClassContainer.DisposedPropertyName );
-                CswNbtMetaDataObjectClassProp MissingOcp = ContainerOc.getObjectClassProp( CswNbtObjClassContainer.MissingPropertyName );
-                CswNbtMetaDataObjectClassProp QuantityOcp = ContainerOc.getObjectClassProp( CswNbtObjClassContainer.QuantityPropertyName );
+                CswNbtMetaDataObjectClassProp LocationOcp = ContainerOc.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Location );
+                CswNbtMetaDataObjectClassProp MaterialOcp = ContainerOc.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Material );
+                CswNbtMetaDataObjectClassProp DisposedOcp = ContainerOc.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Disposed );
+                CswNbtMetaDataObjectClassProp MissingOcp = ContainerOc.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Missing );
+                CswNbtMetaDataObjectClassProp QuantityOcp = ContainerOc.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Quantity );
 
                 CswNbtViewRelationship ContainerRel = Ret.AddViewRelationship( LocationRel, NbtViewPropOwnerType.Second, LocationOcp, false );
                 Ret.AddViewPropertyAndFilter( ContainerRel, MaterialOcp, InventoryLevel.Material.RelatedNodeId.PrimaryKey.ToString(), CswNbtSubField.SubFieldName.NodeID, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
