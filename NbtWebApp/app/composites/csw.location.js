@@ -148,9 +148,8 @@
                             } // onClick
                         }); // imageButton
 
-                        cswParent.$.hover(function (event) {
-                            Csw.nodeHoverIn(event, cswPrivate.selectDiv.propNonDom('value'));
-                        }, Csw.nodeHoverOut);
+                        cswParent.$.hover(function (event) { Csw.nodeHoverIn(event, cswPrivate.selectDiv.propNonDom('value')); }, 
+                                          function (event) { Csw.nodeHoverOut(event, cswPrivate.selectDiv.propNonDom('value')); });
                     }
                 }());
                 //#region final ctor

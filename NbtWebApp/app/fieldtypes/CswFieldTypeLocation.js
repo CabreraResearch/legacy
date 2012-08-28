@@ -112,9 +112,8 @@
                         });
                     }
 
-                    propDiv.$.hover(function (event) {
-                        Csw.nodeHoverIn(event, selectDiv.propNonDom('value'));
-                    }, Csw.nodeHoverOut);
+                    propDiv.$.hover(function (event) { Csw.nodeHoverIn(event, selectDiv.propNonDom('value')); }, 
+                                    function (event) { Csw.nodeHoverOut(event, selectDiv.propNonDom('value')); });
                 }
             },
             save: function (o) { //($propdiv, $xml

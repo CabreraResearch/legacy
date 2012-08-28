@@ -170,8 +170,10 @@
 //                            });
 //                    moreinfoimg.propNonDom({ valign: 'top' });
 //                    moreinfoimg.$.hover(function (event) { Csw.nodeHoverIn(event, nodeid, '', 0); }, Csw.nodeHoverOut);
-                    thumbnailCell.$.hover(function (event) { Csw.nodeHoverIn(event, nodeid, ''); }, Csw.nodeHoverOut);
-                    textCell.$.hover(function (event) { Csw.nodeHoverIn(event, nodeid, ''); }, Csw.nodeHoverOut);
+                    thumbnailCell.$.hover(function (event) { Csw.nodeHoverIn(event, nodeid, ''); },
+                                          function (event) { Csw.nodeHoverOut(event, nodeid, ''); });
+                    textCell.$.hover(function (event) { Csw.nodeHoverIn(event, nodeid, ''); },
+                                     function (event) { nodeHoverOut(event, nodeid, ''); });
 
                     //thumbnailCell.br();
 

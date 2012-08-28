@@ -39,7 +39,8 @@
 
                 if (o.ReadOnly) {
                     propDiv.append(selectedName);
-                    propDiv.$.hover(function (event) { Csw.nodeHoverIn(event, selectedNodeId); }, Csw.nodeHoverOut);
+                    propDiv.$.hover(function (event) { Csw.nodeHoverIn(event, selectedNodeId); },
+                                    function (event) { Csw.nodeHoverOut(event, selectedNodeId); });
                 } else {
 
                     var table = propDiv.table({
@@ -84,7 +85,8 @@
                         });
                         cellCol++;
 
-                        propDiv.$.hover(function (event) { Csw.nodeHoverIn(event, hiddenValue.val()); }, Csw.nodeHoverOut);
+                        propDiv.$.hover(function (event) { Csw.nodeHoverIn(event, hiddenValue.val()); },
+                                        function (event) { Csw.nodeHoverOut(event, hiddenValue.val()); });
 
                         onAddNodeFunc = function (nodeid, nodekey, nodename) {
                             nameSpan.text(nodename);
@@ -127,7 +129,8 @@
                             selectBox.val(nodeid);
                         };
 
-                        propDiv.$.hover(function (event) { Csw.nodeHoverIn(event, selectBox.val()); }, Csw.nodeHoverOut);
+                        propDiv.$.hover(function (event) { Csw.nodeHoverIn(event, selectBox.val()); },
+                                        function (event) { Csw.nodeHoverOut(event, selectBox.val()); });
                     } //if-else(useSearch)
                     if (allowAdd) {
 
