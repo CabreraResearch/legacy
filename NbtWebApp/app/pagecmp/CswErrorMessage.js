@@ -47,10 +47,12 @@
         cell12.nodeLink({ text: o.message });
 
         cell13.css({ width: '18px' });
-        cell13.imageButton({
-            ButtonType: Csw.enums.imageButton_ButtonType.Delete,
-            AlternateText: 'Hide',
+        cell13.icon({
             ID: Csw.makeId(id, 'hidebtn'),
+            iconType: Csw.enums.iconType.x,
+            hovertext: 'Hide',
+            isButton: true,
+            size: 16,
             onClick: function () {
                 errorDiv.remove();
                 if ($parentdiv.children().length === 0)

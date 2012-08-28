@@ -86,10 +86,12 @@
                 if (cswPrivate.EditMode === Csw.enums.editMode.Add) {
                     makeMultiSelect();
                 } else {
-                    editBtnCell.imageButton({
-                        ButtonType: Csw.enums.imageButton_ButtonType.Edit,
-                        AlternateText: 'Edit',
+                    editBtnCell.icon({
                         ID: Csw.makeId(cswPrivate.ID, 'toggle'),
+                        iconType: Csw.enums.iconType.pencil,
+                        hovertext: 'Edit',
+                        size: 16,
+                        isButton: true,
                         onClick: makeMultiSelect
                     });
                 }

@@ -619,8 +619,11 @@ namespace ChemSW.NbtWebControls
                 if( AllowEditView && _EditViewMenuItem != null && View != null )
                 {
                     _EditViewMenuItem.NavigateUrl = "EditView.aspx?viewid=" + View.ViewId.ToString();
-                    if( View.Visibility == NbtViewVisibility.Property )
+                    if( View.Visibility == NbtViewVisibility.Property || 
+                        View.Visibility == NbtViewVisibility.Hidden )
+                    {
                         _EditViewMenuItem.NavigateUrl += "&step=2";
+                    }
                 }
                 else
                 {

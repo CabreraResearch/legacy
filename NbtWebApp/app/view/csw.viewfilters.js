@@ -30,14 +30,14 @@
 
                 outercell12.css({ width: '100%', textAlign: 'right' });
 
-                var editbtn = outercell12.imageButton({
-                    ButtonType: Csw.enums.imageButton_ButtonType.Edit,
-                    AlternateText: 'Edit Filters',
+                var editbtn = outercell12.icon({
                     ID: 'editfilterbtn',
+                    iconType: Csw.enums.iconType.pencil,
+                    hovertext: 'Edit Filters',
+                    size: 16,
+                    isButton: true,
                     onClick: function() {
-                        
                         cswPrivate.renderDialog(data);
-
                     } // onClick
                 }); // imageButton
 

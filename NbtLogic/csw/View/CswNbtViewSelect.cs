@@ -208,12 +208,7 @@ namespace ChemSW.Nbt
         {
             CswTableSelect ViewsTable = _CswNbtResources.makeCswTableSelect( "CswNbtViewSelect_viewExists_select", "node_views" );
             string WhereClause = "where viewname = '" + ViewName + "'";
-            if( Visibility == NbtViewVisibility.Global )
-            {
-                //Globally unique name
-                //WhereClause += " and visibility = 'Global'";
-            }
-            else if( Visibility == NbtViewVisibility.Role )
+            if( Visibility == NbtViewVisibility.Role )
             {
                 WhereClause += " and visibility = 'Role' and roleid = " + VisibilityRoleId.PrimaryKey.ToString();
             }
@@ -221,10 +216,9 @@ namespace ChemSW.Nbt
             {
                 WhereClause += " and visibility = 'User' and userid = " + VisibilityUserId.PrimaryKey.ToString();
             }
-            else if( Visibility == NbtViewVisibility.Property )
+            else
             {
-                WhereClause += " and visibility = 'Property'";  // This will probably return more than one match
-
+                WhereClause += " and visibility = '" + Visibility.ToString() + "'";
             }
             return ViewsTable.getTable( WhereClause );
         } // getViews()

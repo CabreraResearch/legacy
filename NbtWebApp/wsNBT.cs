@@ -32,9 +32,6 @@ using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.WebServices
 {
-    //Convenience type definitions for wb methods
-    using GetViewDriverType = CswWebSvcDriver<CswWebSvcRetJObJobj, CswNbtWebServiceViewParams>;
-
     /// <summary>
     /// NBT Web service interface
     /// </summary>
@@ -463,7 +460,6 @@ namespace ChemSW.Nbt.WebServices
                 //    CswNbtWebServiceQuickLaunchItems wsQL = new CswNbtWebServiceQuickLaunchItems( _CswNbtResources );
                 //    wsQL.initQuickLaunchItems();
                 //}
-
                 CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
 
                 _deInitResources();
@@ -474,7 +470,7 @@ namespace ChemSW.Nbt.WebServices
             }
 
 
-            return ( ReturnVal.ToString() );
+            return ReturnVal.ToString();
         }//authenticate()
 
         [WebMethod( EnableSession = false )]
@@ -684,54 +680,6 @@ namespace ChemSW.Nbt.WebServices
         #endregion Impersonation
 
         #region Render Core UI
-
-        [WebMethod( EnableSession = false )]
-        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string getViewSelect( bool IsSearchable, bool IncludeRecent )
-        {
-
-
-            //delegate has to be static because you can't create an instance yet: you don't have resources until the delegate is actually called
-            GetViewDriverType CswWebSvcDriver = new GetViewDriverType(
-                                                                           new CswWebSvcResourceInitializerNbt( Context ),
-                                                                           new CswWebSvcRetJObJobj(),
-                                                                           new GetViewDriverType.WebSvcMethodPtr( CswNbtWebServiceView.getViewSelectWebSvc ),
-                                                                           new WebServices.CswNbtWebServiceViewParams( IsSearchable, IncludeRecent )
-                                                                      );
-
-
-            return ( CswWebSvcDriver.run().JObject.ToString() );
-
-        } // getViewSelect()
-
-        [WebMethod( EnableSession = false )]
-        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string getViewSelectRecent()
-        {
-
-            JObject ReturnVal = new JObject();
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
-            try
-            {
-                _initResources();
-                AuthenticationStatus = _attemptRefresh();
-
-                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
-                {
-                    var ws = new CswNbtWebServiceView( _CswNbtResources );
-                    ReturnVal["viewselectitems"] = ws.getViewSelectRecent();
-                    _deInitResources();
-                }
-            }
-            catch( Exception Ex )
-            {
-                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
-            }
-
-            CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
-
-            return ReturnVal.ToString();
-        } // getViewSelectRecent()
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
@@ -3595,7 +3543,7 @@ namespace ChemSW.Nbt.WebServices
             JObject Connected = new JObject();
             Connected["result"] = "OK";
             //            _jAddAuthenticationStatus( Connected, AuthenticationStatus.Authenticated, true );  // we don't want to trigger session timeouts
-            CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, Connected, AuthenticationStatus.Authenticated, true );
+            CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, Connected, AuthenticationStatus.Authenticated );
             return ( Connected.ToString() );
         }
 
@@ -3828,7 +3776,7 @@ namespace ChemSW.Nbt.WebServices
                 ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
             }
 
-            CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus, ForMobile );
+            CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
             //_jAddAuthenticationStatus( ReturnVal, AuthenticationStatus, ForMobile );
 
             return ReturnVal.ToString();
@@ -3865,7 +3813,7 @@ namespace ChemSW.Nbt.WebServices
             }
 
             //_jAddAuthenticationStatus( ReturnVal, AuthenticationStatus.Authenticated, ForMobile );
-            CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus.Authenticated, ForMobile );
+            CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus.Authenticated );
 
             return ReturnVal.ToString();
         } // GetViews()
@@ -3899,7 +3847,7 @@ namespace ChemSW.Nbt.WebServices
                 ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
             }
 
-            CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus.Authenticated, ForMobile );
+            CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus.Authenticated );
             //_jAddAuthenticationStatus( ReturnVal, AuthenticationStatus.Authenticated, ForMobile );
 
             return ReturnVal.ToString();

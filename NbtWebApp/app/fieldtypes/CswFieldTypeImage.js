@@ -19,6 +19,8 @@
                     width,
                     href = '/NbtWebApp/' + Csw.string(propVals.href);
 
+                href += '&usenodetypeasplaceholder=false';     // case 27596
+
                 if (false === Csw.isNullOrEmpty(propVals.width) &&
                    Csw.isNumeric(propVals.width)) {
                     width = Math.abs(Csw.number(propVals.width, 100) - 36);
@@ -36,7 +38,7 @@
                 var cell22 = table.cell(2, 2).propDom({ align: 'right', width: '20px' }).div();
                 var cell23 = table.cell(2, 3).propDom({ align: 'right', width: '20px' }).div();
 
-                if (false === Csw.isNullOrEmpty(fileName)) {
+                //if (false === Csw.isNullOrEmpty(fileName)) {
                     //Case 24389: IE interprets height and width absolutely, better not to use them at all.
                     cell11.a({
                         href: href,
@@ -51,55 +53,59 @@
                         target: '_blank',
                         text: fileName
                     });
-                } else {
-                    cell21.append('(no image selected)');
-                }
+//                } else {
+//                    cell21.append('(no image selected)');
+//                }
 
 
                 if (false === o.ReadOnly && o.EditMode !== Csw.enums.editMode.Add) {
                     //Edit button
-                    cell22.imageButton({
-                            ButtonType: Csw.enums.imageButton_ButtonType.Edit,
-                            AlternateText: 'Edit',
-                            ID: Csw.makeId(o.ID, 'edit'),
-                            onClick: function () {
-                                $.CswDialog('FileUploadDialog', {
-                                    url: '/NbtWebApp/wsNBT.asmx/fileForProp',
-                                    params: {
-                                        PropId: o.propData.id
-                                    },
-                                    onSuccess: function () {
-                                        o.onReload();
-                                    }
-                                });
-                            }
-                        });
-                    if (false === Csw.isNullOrEmpty(fileName)) {
-                        //Clear button
-                        cell23.imageButton({
-                                ButtonType: Csw.enums.imageButton_ButtonType.Clear,
-                                AlternateText: 'Clear',
-                                ID: Csw.makeId(o.ID, 'clr'),
-                                onClick: function () {
-                                    /* remember: confirm is globally blocking call */
-                                    if (confirm("Are you sure you want to clear this image?")) {
-                                        var dataJson = {
-                                            PropId: o.propData.id,
-                                            IncludeBlob: true
-                                        };
-
-                                        Csw.ajax.post({
-                                            url: '/NbtWebApp/wsNBT.asmx/clearProp',
-                                            data: dataJson,
-                                            success: function () { o.onReload(); }
-                                        });
-                                    }
+                    cell22.icon({
+                        ID: Csw.makeId(o.ID, 'edit'),
+                        iconType: Csw.enums.iconType.pencil,
+                        hovertext: 'Edit',
+                        size: 16,
+                        isButton: true,
+                        onClick: function () {
+                            $.CswDialog('FileUploadDialog', {
+                                url: '/NbtWebApp/wsNBT.asmx/fileForProp',
+                                params: {
+                                    PropId: o.propData.id
+                                },
+                                onSuccess: function () {
+                                    o.onReload();
                                 }
                             });
-                    }
-                }
-            }
-        },
+                        }
+                    }); // icon
+                    if (false === Csw.isNullOrEmpty(fileName)) {
+                        //Clear button
+                        cell23.icon({
+                            ID: Csw.makeId(o.ID, 'clr'),
+                            iconType: Csw.enums.iconType.trash,
+                            hovertext: 'Clear Image',
+                            size: 16,
+                            isButton: true,
+                            onClick: function () {
+                                /* remember: confirm is globally blocking call */
+                                if (confirm("Are you sure you want to clear this image?")) {
+                                    var dataJson = {
+                                        PropId: o.propData.id,
+                                        IncludeBlob: true
+                                    };
+
+                                    Csw.ajax.post({
+                                        url: '/NbtWebApp/wsNBT.asmx/clearProp',
+                                        data: dataJson,
+                                        success: function () { o.onReload(); }
+                                    });
+                                }
+                            }
+                        }); // icon
+                    } // if (false === Csw.isNullOrEmpty(fileName)) {
+                } // if (false === o.ReadOnly && o.EditMode !== Csw.enums.editMode.Add) {
+            } // if-else (o.Multi)
+        }, // init
         save: function (o) {
             Csw.preparePropJsonForSave(o.propData);
         }

@@ -77,8 +77,8 @@ namespace ChemSW.Nbt.ObjClasses
                     CswNbtView view = _CswNbtResources.ViewSelect.restoreView( View.ViewId ); //WARNING!!!! calling View.ViewId creates a ViewId if there isn't one!
                     view.LoadXml( cookieView.ToXml() );
                     view.ViewId = View.ViewId; //correct view.ViewId because of above problem.
-                    view.ViewName = cookieView.ViewName; //same as above, but cookie
-                    view.Visibility = NbtViewVisibility.Property;
+                    view.ViewName = cookieView.ViewName; //same as above, but name
+                    view.Visibility = NbtViewVisibility.Hidden;  // see case 26799
                     view.save();
                 }
                 if( _CswNbtResources.CurrentNbtUser.Cookies.ContainsKey( "csw_currentnodeid" ) )

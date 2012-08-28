@@ -1,6 +1,6 @@
 
 /// <reference path="~/app/CswApp-vsdoc.js" />
-/// <reference path="~/js/thirdparty/extjs-4.1.0/ext-all-debug.js" />
+/// <reference path="~/vendor/extjs-4.1.0/ext-all-debug.js" />
 
 (function() {
     'use strict';
@@ -95,10 +95,12 @@
                 //#region final ctor
                 (function _post() {
                     if (false === cswPrivate.ReadOnly) {
-                        cswPublic.table.cell(1, 2).imageButton({
-                            ButtonType: Csw.enums.imageButton_ButtonType.Edit,
-                            AlternateText: 'Edit',
+                        cswPublic.table.cell(1, 2).icon({
                             ID: Csw.makeId(cswPrivate.ID, 'toggle'),
+                            iconType: Csw.enums.iconType.pencil,
+                            hovertext: 'Edit',
+                            size: 16,
+                            isButton: true,
                             onClick: function () {
 
                                 cswPublic.table.cell(1, 1).hide();
@@ -146,9 +148,8 @@
                             } // onClick
                         }); // imageButton
 
-                        cswParent.$.hover(function (event) {
-                            Csw.nodeHoverIn(event, cswPrivate.selectDiv.propNonDom('value'));
-                        }, Csw.nodeHoverOut);
+                        cswParent.$.hover(function (event) { Csw.nodeHoverIn(event, cswPrivate.selectDiv.propNonDom('value')); }, 
+                                          function (event) { Csw.nodeHoverOut(event, cswPrivate.selectDiv.propNonDom('value')); });
                     }
                 }());
                 //#region final ctor

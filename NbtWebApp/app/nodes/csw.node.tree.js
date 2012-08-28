@@ -75,15 +75,15 @@
             function hoverNode(e, bindData) {
                 var $hoverLI = $(bindData.rslt.obj[0]);
                 //var nodeid = $hoverLI.CswAttrDom('id').substring(cswPrivate.idPrefix.length);
-                var nodeid = $hoverLI.CswAttrNonDom('nodeid');
+                cswPrivate.hoverNodeId = $hoverLI.CswAttrNonDom('nodeid');
                 var cswnbtnodekey = $hoverLI.CswAttrNonDom('cswnbtnodekey');
-                Csw.nodeHoverIn(bindData.args[1], nodeid, cswnbtnodekey);
+                Csw.nodeHoverIn(bindData.args[1], cswPrivate.hoverNodeId, cswnbtnodekey);
             }
             cswPublic.treeDiv.bind('hover_node.jstree', hoverNode);
 
             function deHoverNode() {
                 Csw.jsTreeGetSelected(cswPublic.treeDiv.$);
-                Csw.nodeHoverOut();
+                Csw.nodeHoverOut(null, cswPrivate.hoverNodeId);
             }
             cswPublic.treeDiv.bind('dehover_node.jstree', deHoverNode);
 

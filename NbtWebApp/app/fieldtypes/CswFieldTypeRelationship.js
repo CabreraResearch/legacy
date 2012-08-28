@@ -39,7 +39,8 @@
 
                 if (o.ReadOnly) {
                     propDiv.append(selectedName);
-                    propDiv.$.hover(function (event) { Csw.nodeHoverIn(event, selectedNodeId); }, Csw.nodeHoverOut);
+                    propDiv.$.hover(function (event) { Csw.nodeHoverIn(event, selectedNodeId); },
+                                    function (event) { Csw.nodeHoverOut(event, selectedNodeId); });
                 } else {
 
                     var table = propDiv.table({
@@ -65,9 +66,11 @@
                         //                        var dialogLink = table.cell(1, cellCol).a({
                         //                            ID: Csw.makeId(o.ID, '', 'searchlink'),
                         //                            text: 'Find',
-                        table.cell(1, cellCol).imageButton({
-                            ButtonType: Csw.enums.imageButton_ButtonType.View,
-                            AlternateText: "Search " + o.propData.name,
+                        table.cell(1, cellCol).icon({
+                            iconType: Csw.enums.iconType.magglass,
+                            hovertext: "Search " + o.propData.name,
+                            size: 16,
+                            isButton: true,
                             onClick: function () {
                                 $.CswDialog('SearchDialog', {
                                     propname: o.propData.name,
@@ -82,7 +85,8 @@
                         });
                         cellCol++;
 
-                        propDiv.$.hover(function (event) { Csw.nodeHoverIn(event, hiddenValue.val()); }, Csw.nodeHoverOut);
+                        propDiv.$.hover(function (event) { Csw.nodeHoverIn(event, hiddenValue.val()); },
+                                        function (event) { Csw.nodeHoverOut(event, hiddenValue.val()); });
 
                         onAddNodeFunc = function (nodeid, nodekey, nodename) {
                             nameSpan.text(nodename);
@@ -152,7 +156,8 @@
                             selectBox.val(nodeid);
                         };
 
-                        propDiv.$.hover(function (event) { Csw.nodeHoverIn(event, selectBox.val()); }, Csw.nodeHoverOut);
+                        propDiv.$.hover(function (event) { Csw.nodeHoverIn(event, selectBox.val()); },
+                                        function (event) { Csw.nodeHoverOut(event, selectBox.val()); });
                     } //if-else(useSearch)
                     if (allowAdd) {
 

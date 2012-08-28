@@ -79,7 +79,7 @@
                         //Case 24155
                         Csw.each(ret, function (nodeName, nodeId) {
                             nodecount += 1;
-                            if (false === Csw.isNullOrEmpty(cswPrivate.selectedNodeId) && 
+                            if (false === Csw.isNullOrEmpty(cswPrivate.selectedNodeId) &&
                                 nodeId === cswPrivate.selectedNodeId) {
                                 cswPublic.option({ value: nodeId, display: nodeName, isSelected: true });
                             } else {
@@ -91,24 +91,25 @@
                         cswPublic.css('width', Csw.string(cswPrivate.width));
 
                         if (useSearch) {
-                            var nameSpan = table.cell(1, cellCol).span({
-                                ID: Csw.makeId(o.ID, '', 'selectedname'),
+                            cswPrivate.select.hide();
+                            var nameSpan = cswPrivate.table.cell(1, cellCol).span({
+                                ID: Csw.makeId(cswPrivate.ID, '', 'selectedname'),
                                 text: cswPublic.selectedText()
                             });
 
-                            var hiddenValue = table.cell(1, cellCol).input({
-                                ID: Csw.makeId(o.ID, '', 'hiddenvalue'),
+                            var hiddenValue = cswPrivate.table.cell(1, cellCol).input({
+                                ID: Csw.makeId(cswPrivate.ID, '', 'hiddenvalue'),
                                 type: Csw.enums.inputTypes.hidden,
                                 value: cswPublic.selectedNodeId()
                             });
                             cellCol += 1;
 
-                            table.cell(1, cellCol)
+                            cswPrivate.table.cell(1, cellCol)
                                 .div()
                                 .buttonExt({
                                     icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.search),
                                     size: 'small',
-                                    tooltip: { title: 'Add' },
+                                    tooltip: { title: 'Search' },
                                     disableOnClick: false,
                                     onClick: function () {
                                         $.CswDialog('SearchDialog', {
@@ -124,7 +125,8 @@
 
                             cellCol += 1;
 
-                            cswPrivate.table.$.hover(function (event) { Csw.nodeHoverIn(event, hiddenValue.val()); }, Csw.nodeHoverOut);
+                            cswPrivate.table.$.hover(function (event) { Csw.nodeHoverIn(event, hiddenValue.val()); },
+                                                     function (event) { Csw.nodeHoverOut(event, hiddenValue.val()); });
 
                         }
                         if (canAdd) {

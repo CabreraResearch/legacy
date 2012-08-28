@@ -238,7 +238,7 @@
                     }
 
                     var formTable = cswPrivate.form.table({
-                        ID: cswPrivate.ID + '_formtbl_' + tabid,
+                        ID: cswPrivate.ID + '_formtbl_' + tabid + window.Ext.id(),
                         width: '100%'
                     });
                     //var formTblCell11 = formTable.cell(1, 1);
@@ -353,10 +353,12 @@
                         };
 
                         /* Show the 'fake' config button to open the dialog */
-                        formTable.cell(1, 2).imageButton({
-                            ButtonType: Csw.enums.imageButton_ButtonType.Configure,
-                            AlternateText: 'Configure',
+                        formTable.cell(1, 2).icon({
                             ID: cswPrivate.ID + 'configbtn',
+                            iconType: Csw.enums.iconType.wrench,
+                            hovertext: 'Configure',
+                            size: 16,
+                            isButton: true,
                             onClick: function () {
                                 cswPrivate.clearTabs();
                                 $.CswDialog('EditLayoutDialog', editLayoutOpt);
