@@ -240,7 +240,6 @@
                     }
                 }
                 Csw.preparePropJsonForSave(o.Multi, o.propData, compare);
-                selectedNodeId = o.nodeid; //update the select box with the newly selected element
             } // save
         }; // methods
 
