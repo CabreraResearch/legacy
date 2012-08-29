@@ -1,6 +1,8 @@
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
 using Newtonsoft.Json.Linq;
+using System.Collections.Generic;
+using ChemSW.Exceptions;
 
 namespace ChemSW.Nbt.ObjClasses
 {
@@ -51,6 +53,26 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
+            if( VendorType.WasModified || CorporateIdentity.WasModified )
+            {
+                Dictionary<string, string> corporates = new Dictionary<string, string>();
+                foreach( CswNbtObjClassVendor vendorNode in this.NodeType.getNodes( false, false ) )
+                {
+                    if( vendorNode.VendorType.Value.Equals( "Corporate" ) )
+                    {
+                        if( corporates.ContainsKey( vendorNode.CorporateIdentity.Text ) )
+                        {
+                            throw new CswDniException( ErrorType.Warning,
+                                "Multiple Corporate Entities with a Vendor Type of Corporate are not allowed",
+                                "A Vendor with a Corporate Entity of " + vendorNode.CorporateIdentity.Text + " already exists with a Vendor Type of " + vendorNode.VendorType.Value );
+                        }
+                        else
+                        {
+                            corporates.Add( vendorNode.CorporateIdentity.Text, "Corporate" );
+                        }
+                    }
+                }
+            }
             _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
         }//beforeWriteNode()
 
