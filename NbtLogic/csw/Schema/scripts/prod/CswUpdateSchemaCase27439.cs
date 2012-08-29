@@ -35,15 +35,15 @@ namespace ChemSW.Nbt.Schema
             _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( vendorTypeOCP, vendorTypeOCP.getFieldTypeRule().SubFields.Default.Name, "Sales" );
 
             /* Get the Vendor NT and hide the newly created properties */
-            CswNbtMetaDataNodeType vendorNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Vendor" );
-            if( null != vendorNT )
-            {
-                CswNbtMetaDataNodeTypeProp corporateEntityNTP = _CswNbtSchemaModTrnsctn.MetaData.getNodeTypePropByObjectClassProp( vendorNT.NodeTypeId, corporateEntityOCP.ObjectClassPropId );
-                corporateEntityNTP.removeFromAllLayouts();
+            //CswNbtMetaDataNodeType vendorNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Vendor" );
+            //if( null != vendorNT )
+            //{
+            //    CswNbtMetaDataNodeTypeProp corporateEntityNTP = _CswNbtSchemaModTrnsctn.MetaData.getNodeTypePropByObjectClassProp( vendorNT.NodeTypeId, corporateEntityOCP.ObjectClassPropId );
+            //    corporateEntityNTP.removeFromAllLayouts();
 
-                CswNbtMetaDataNodeTypeProp vendorTypeNTP = _CswNbtSchemaModTrnsctn.MetaData.getNodeTypePropByObjectClassProp( vendorNT.NodeTypeId, vendorTypeOCP.ObjectClassPropId );
-                vendorTypeNTP.removeFromAllLayouts();
-            }
+            //    CswNbtMetaDataNodeTypeProp vendorTypeNTP = _CswNbtSchemaModTrnsctn.MetaData.getNodeTypePropByObjectClassProp( vendorNT.NodeTypeId, vendorTypeOCP.ObjectClassPropId );
+            //    vendorTypeNTP.removeFromAllLayouts();
+            //}
 
         }//Update()
 

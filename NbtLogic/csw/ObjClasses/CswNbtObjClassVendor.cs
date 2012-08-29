@@ -94,7 +94,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public CswNbtNodePropText VendorName { get { return ( _CswNbtNode.Properties[VendorNamePropertyName] ); } }
         public CswNbtNodePropText CorporateIdentity { get { return ( _CswNbtNode.Properties[CorporateEntityPropertyName] ); } }
-        public CswNbtNodePropText VendorType { get { return ( _CswNbtNode.Properties[VendorTypePropertyName] ); } }
+        public CswNbtNodePropList VendorType { get { return ( _CswNbtNode.Properties[VendorTypePropertyName] ); } }
 
         #endregion
 
