@@ -125,7 +125,7 @@
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase27622.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase27274.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase27278.cs" />
-    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase27488.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_RequestItem_Case27488.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase27431.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase27432.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase27500.cs" />
@@ -135,7 +135,7 @@
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase27493.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase24632.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase27548.cs" />
-    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase27438.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_Size_Case27438.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase27523.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase27513.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_MSDS_Case27435.cs" />
