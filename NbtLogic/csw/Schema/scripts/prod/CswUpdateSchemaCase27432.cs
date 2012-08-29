@@ -14,11 +14,22 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataNodeType TimeUnitNodeType = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Unit (Time)" );
             if( null != TimeUnitNodeType )
             {
-                CswNbtObjClassUnitOfMeasure NodeAsUnitOfMeasure = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( TimeUnitNodeType.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode );
-                NodeAsUnitOfMeasure.Name.Text = "Months";
-                NodeAsUnitOfMeasure.Fractional.Checked = Tristate.False;
-                NodeAsUnitOfMeasure.postChanges( true );
-
+                CswNbtObjClassUnitOfMeasure NodeAsUnitOfMeasure = null;
+                foreach( CswNbtObjClassUnitOfMeasure Unit in TimeUnitNodeType.getNodes( forceReInit: true, includeSystemNodes: false ) )
+                {
+                    if( Unit.Name.Text == "Months" )
+                    {
+                        NodeAsUnitOfMeasure = Unit;
+                        break;
+                    }
+                }
+                if( null == NodeAsUnitOfMeasure )
+                {
+                    NodeAsUnitOfMeasure = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( TimeUnitNodeType.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode );
+                    NodeAsUnitOfMeasure.Name.Text = "Months";
+                    NodeAsUnitOfMeasure.Fractional.Checked = Tristate.False;
+                    NodeAsUnitOfMeasure.postChanges( true );
+                }
                 CswNbtMetaDataObjectClass MaterialOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass );
                 foreach( CswNbtMetaDataNodeType MaterialNodeType in MaterialOC.getNodeTypes() )
                 {
