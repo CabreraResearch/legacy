@@ -105,11 +105,11 @@
                 }; // onButtonClick()
 
                 (function _post() {
-                    cswPrivate.btnCell = cswPrivate.table.cell(1, 1).div({ ID: cswPrivate.ID + '_div_' + window.Ext.id() });
+                    cswPrivate.btnCell = cswPrivate.table.cell(1, 1).div({ ID: Csw.makeSafeId(cswPrivate.ID, window.Ext.id()) });
                     switch (cswPrivate.mode) {
                         case 'button':
                             cswPublic.button = cswPrivate.btnCell.buttonExt({
-                                ID: cswPrivate.ID,
+                                ID: Csw.makeSafeId(cswPrivate.ID, window.Ext.id()),
                                 size: cswPrivate.size,
                                 enabledText: cswPrivate.value,
                                 disabledText: cswPrivate.value,
