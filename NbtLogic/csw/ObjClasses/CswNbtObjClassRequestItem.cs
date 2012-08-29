@@ -177,8 +177,7 @@ namespace ChemSW.Nbt.ObjClasses
             CswNbtObjClassLocation NodeAsLocation = _CswNbtResources.Nodes.GetNode( Location.SelectedNodeId );
             if( null != NodeAsLocation )
             {
-                MessageText += "Location: " + NodeAsLocation.Location + CswNbtNodePropLocation.PathDelimiter +
-                                NodeAsLocation.Name + "\n";
+                MessageText += "Location: " + NodeAsLocation.Location.CachedFullPath;
             }
 
 
