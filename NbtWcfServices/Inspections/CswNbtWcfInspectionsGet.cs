@@ -177,13 +177,16 @@ namespace NbtWebAppServices.Response
                     {
                         CswNbtNodePropQuestion PropAsQuestion = Prop.AsQuestion;
                         ResponseInspection.Counts.Total += 1;
-                        if( false == PropAsQuestion.IsCompliant )
+                        if( false == string.IsNullOrEmpty( PropAsQuestion.Answer ) || PropAsQuestion.DateAnswered != DateTime.MinValue )
                         {
-                            ResponseInspection.Counts.Ooc += 1;
-                        }
-                        if( false == string.IsNullOrEmpty( PropAsQuestion.Answer ) )
-                        {
-                            ResponseInspection.Counts.Answered += 1;
+                            if( PropAsQuestion.IsCompliant )
+                            {
+                                ResponseInspection.Counts.Answered += 1;
+                            }
+                            else
+                            {
+                                ResponseInspection.Counts.Ooc += 1;
+                            }
                         }
                         else
                         {
