@@ -22,7 +22,7 @@
                 var msg = cswPrivate.text;
                 var startpos = msg.indexOf(startmarker);
                 var endpos = msg.indexOf(endmarker);
-                while (startpos > 0) {
+                while (startpos >= 0) {
                     cswPrivate.div.append(msg.substr(0, startpos));
 
                     var noderef = msg.substr(startpos, endpos - startpos);

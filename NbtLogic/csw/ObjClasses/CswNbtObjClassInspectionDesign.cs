@@ -5,7 +5,6 @@ using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropertySets;
 using ChemSW.Nbt.PropTypes;
-using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.ObjClasses
 {
@@ -322,7 +321,7 @@ namespace ChemSW.Nbt.ObjClasses
             foreach( CswNbtNodePropWrapper Prop in QuestionsFlt )
             {
                 CswNbtNodePropQuestion QuestionProp = Prop.AsQuestion;
-                
+
                 // case 25035
                 if( this.Status.Value == InspectionStatusAsString( InspectionStatus.Action_Required ) )
                 {
@@ -395,7 +394,8 @@ namespace ChemSW.Nbt.ObjClasses
                                 _allAnswered = false;
                             }
                             _allAnsweredinTime = ( _allAnsweredinTime &&
-                                                  QuestionProp.DateAnswered.Date <= this.Date.DateTimeValue );
+                                                   DateTime.MinValue != QuestionProp.DateAnswered.Date &&
+                                                   QuestionProp.DateAnswered.Date <= this.Date.DateTimeValue );
                         }
 
                         if( _allAnswered )

@@ -110,6 +110,7 @@
                             // case 25820 - guarantee selected option appears
                             relationships.push({ value: selectedNodeId, display: selectedName });
                         }
+
                         var selectBox = table.cell(1, cellCol).select({
                             ID: o.ID,
                             name: o.ID,
@@ -117,6 +118,32 @@
                             onChange: o.onChange,
                             values: relationships,
                             selected: selectedNodeId
+                        });
+                        selectBox.hide(); //hide this until the "edit" button is clicked
+                        cellCol++;
+
+                        var nodeLinkText;
+                        Csw.ajax.post({
+                            urlMethod: 'GetNodeRef',
+                            async: false,
+                            data: { nodeId: selectedNodeId },
+                            success: function (data) {
+                                nodeLinkText = table.cell(1, cellCol).nodeLink({
+                                    text: data.noderef
+                                });
+                            }
+                        });
+                        cellCol++;
+
+                        var toggleButton = table.cell(1, cellCol).imageButton({
+                            ButtonType: Csw.enums.imageButton_ButtonType.Edit,
+                            AlternateText: 'Edit',
+                            ID: Csw.makeId(o.ID, 'toggle'),
+                            onClick: function () {
+                                selectBox.show();
+                                toggleButton.hide();
+                                nodeLinkText.hide();
+                            }
                         });
                         cellCol++;
 
@@ -213,6 +240,7 @@
                     }
                 }
                 Csw.preparePropJsonForSave(o.Multi, o.propData, compare);
+                selectedNodeId = o.nodeid; //update the select box with the newly selected element
             } // save
         }; // methods
 

@@ -51,6 +51,7 @@ namespace ChemSW.Nbt.Sched
         }
 
 
+        private const string _NodesPerCycleParamName = "NodesPerCycle";
         public void threadCallBack()
         {
             _LogicRunStatus = LogicRunStatus.Running;
@@ -67,30 +68,66 @@ namespace ChemSW.Nbt.Sched
 
                     // Find which nodes are out of date
                     CswStaticSelect OutOfDateNodesQuerySelect = _CswNbtResources.makeCswStaticSelect( "OutOfDateNodes_select", "ValuesToUpdate" );
-                    DataTable OutOfDateNodes = OutOfDateNodesQuerySelect.getTable( false, false, 0, 25 );
+                    DataTable OutOfDateNodes = null;
 
-                    if( OutOfDateNodes.Rows.Count > 0 )
+                    Int32 NodesPerCycle = 1;
+                    if( _CswScheduleLogicDetail.RunParams.ContainsKey( _NodesPerCycleParamName ) )
+                    {
+                        NodesPerCycle = CswConvert.ToInt32( _CswScheduleLogicDetail.RunParams[_NodesPerCycleParamName] );
+                        OutOfDateNodesQuerySelect.getTable( false, false, 0, NodesPerCycle );
+                        OutOfDateNodes = OutOfDateNodesQuerySelect.getTable( false, false, 0, NodesPerCycle );
+
+                        if( NodesPerCycle > OutOfDateNodes.Rows.Count ) //in case we didn't actually retrieve that amount
+                        {
+                            NodesPerCycle = OutOfDateNodes.Rows.Count;
+                        }
+                    }
+                    else
+                    {
+                        OutOfDateNodes = OutOfDateNodesQuerySelect.getTable( false, false, 0, 25 ); //use default page value
+                        if( OutOfDateNodes.Rows.Count <= 0 )
+                        {
+                            NodesPerCycle = 0; //loop control
+                        }
+                    }
+
+                    Int32 ErroneousNodeCount = 0;
+                    string ErroneousNodes = "The following Node Id's do not have corresponding nodes: ";
+                    for( Int32 idx = 0; ( idx < NodesPerCycle ); idx++ )
                     {
                         // Update one of them at random (which will keep us from encountering errors which gum up the queue)
                         Random rand = new Random();
                         Int32 index = rand.Next( 0, OutOfDateNodes.Rows.Count );
+
                         CswPrimaryKey nodeid = new CswPrimaryKey( "nodes", CswConvert.ToInt32( OutOfDateNodes.Rows[index]["nodeid"].ToString() ) );
-                        //Int32 propid = CswConvert.ToInt32(OutOfDateNodes.Rows[index]["nodetypepropid"].ToString());
-                        //Int32 jctnodepropid = CswConvert.ToInt32(OutOfDateNodes.Rows[index]["jctnodepropid"].ToString());
                         CswNbtNode Node = _CswNbtResources.Nodes[nodeid];
-                        if( Node == null )
-                            throw new CswDniException( "Node not found (" + nodeid.ToString() + ")" );
-                        // Don't update nodes of disabled nodetypes
-                        if( Node.getNodeType() != null )
+                        if( Node != null )
                         {
-                            CswNbtActUpdatePropertyValue CswNbtActUpdatePropertyValue = new CswNbtActUpdatePropertyValue( _CswNbtResources );
-                            CswNbtActUpdatePropertyValue.UpdateNode( Node, false );
-                            Node.postChanges( false );
+                            if( Node.getNodeType() != null )
+                            {
+                                CswNbtActUpdatePropertyValue CswNbtActUpdatePropertyValue = new CswNbtActUpdatePropertyValue( _CswNbtResources );
+                                CswNbtActUpdatePropertyValue.UpdateNode( Node, false );
+                                Node.postChanges( false );
+                            }
+                        }
+                        else
+                        {
+                            ErroneousNodeCount++;
+                            ErroneousNodes = nodeid.ToString();
                         }
 
-                    }//if there were out of date nodes
 
-                    _CswScheduleLogicDetail.StatusMessage = "Completed without error";
+                    }//if we have noes to process
+
+                    if( 0 == ErroneousNodeCount )
+                    {
+                        _CswScheduleLogicDetail.StatusMessage = "Completed without error";
+                    }
+                    else
+                    {
+                        _CswScheduleLogicDetail.StatusMessage = ErroneousNodes;
+                    }
+
                     _LogicRunStatus = MtSched.Core.LogicRunStatus.Succeeded; //last line
 
                 }

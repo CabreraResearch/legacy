@@ -2,11 +2,11 @@ using System;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.Actions;
+using ChemSW.Nbt.Batch;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
-using Newtonsoft.Json.Linq;
-using ChemSW.Nbt.Batch;
 using ChemSW.Nbt.UnitsOfMeasure;
+using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.ObjClasses
 {
@@ -311,9 +311,15 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropButton Request { get { return ( _CswNbtNode.Properties[PropertyName.Request] ); } }
         private void _physicalStatePropChangeHandler( CswNbtNodeProp prop )
         {
-            CswNbtUnitViewBuilder Vb = new CswNbtUnitViewBuilder( _CswNbtResources );
-            CswNbtView unitsOfMeasureView = Vb.getQuantityUnitOfMeasureView( _CswNbtNode.NodeId );
-            unitsOfMeasureView.save();
+            if( false == string.IsNullOrEmpty( PhysicalState.Value ) )
+            {
+                CswNbtUnitViewBuilder Vb = new CswNbtUnitViewBuilder( _CswNbtResources );
+                CswNbtView unitsOfMeasureView = Vb.getQuantityUnitOfMeasureView( _CswNbtNode.NodeId );
+                if( null != unitsOfMeasureView )
+                {
+                    unitsOfMeasureView.save();
+                }
+            }
         }
         public CswNbtNodePropButton Receive { get { return ( _CswNbtNode.Properties[PropertyName.Receive] ); } }
 

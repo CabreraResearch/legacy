@@ -27,9 +27,21 @@ namespace ChemSW.Nbt
                 CswNbtMetaDataNodeTypeProp LocationInvGrpNTP = LocationNT.getNodeTypePropByObjectClassProp( CswNbtObjClassLocation.InventoryGroupPropertyName );
                 LocationInvGrpNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, false );
                 LocationInvGrpNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, LocationNT.getFirstNodeTypeTab().TabId );
+                
                 CswNbtMetaDataNodeTypeProp LocationStorCompatNTP = LocationNT.getNodeTypePropByObjectClassProp( CswNbtObjClassLocation.StorageCompatabilityPropertyName );
                 //LocationStorCompatNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, false );
                 LocationStorCompatNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, LocationNT.getFirstNodeTypeTab().TabId );
+
+                CswNbtMetaDataNodeTypeProp LocationInvLevelsNTP = LocationNT.getNodeTypeProp( "Inventory Levels" );
+                if( null != LocationInvLevelsNTP )
+                {
+                    CswNbtMetaDataNodeTypeTab LocationInvLevelsTab = LocationNT.getNodeTypeTab( "Inventory Levels" );
+                    if( LocationInvLevelsTab == null )
+                    {
+                        LocationInvLevelsTab = _CswNbtResources.MetaData.makeNewTab( LocationNT, "Inventory Levels", 100 );
+                    }
+                    LocationInvLevelsNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, LocationInvLevelsTab.TabId );
+                }
             }
             CswNbtMetaDataObjectClass UserOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
             foreach( CswNbtMetaDataNodeType UserNT in UserOC.getNodeTypes() )
@@ -46,13 +58,26 @@ namespace ChemSW.Nbt
             //   Location.Inventory Group
             //   Location.Storage Compatibility
             //   User.WorkUnit
+            //   Location.Inventory Levels
             CswNbtMetaDataObjectClass LocationOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.LocationClass );
             foreach( CswNbtMetaDataNodeType LocationNT in LocationOC.getNodeTypes() )
             {
                 CswNbtMetaDataNodeTypeProp LocationInvGrpNTP = LocationNT.getNodeTypePropByObjectClassProp( CswNbtObjClassLocation.InventoryGroupPropertyName );
                 LocationInvGrpNTP.removeFromAllLayouts();
+                
                 CswNbtMetaDataNodeTypeProp LocationStorCompatNTP = LocationNT.getNodeTypePropByObjectClassProp( CswNbtObjClassLocation.StorageCompatabilityPropertyName );
                 LocationStorCompatNTP.removeFromAllLayouts();
+                
+                CswNbtMetaDataNodeTypeProp LocationInvLevelsNTP = LocationNT.getNodeTypeProp( "Inventory Levels" );
+                if( null != LocationInvLevelsNTP )
+                {
+                    LocationInvLevelsNTP.removeFromAllLayouts();
+                    CswNbtMetaDataNodeTypeTab LocationInvLevelsTab = LocationNT.getNodeTypeTab( "Inventory Levels" );
+                    if( LocationInvLevelsTab != null )
+                    {
+                        _CswNbtResources.MetaData.DeleteNodeTypeTab( LocationInvLevelsTab );
+                    }
+                }
             }
             CswNbtMetaDataObjectClass UserOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
             foreach( CswNbtMetaDataNodeType UserNT in UserOC.getNodeTypes() )

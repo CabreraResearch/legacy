@@ -100,7 +100,7 @@
 
             
             cswPublic.open = function (options) {
-                cswPrivate.openTimeoutHandle = setTimeout(cswPrivate.loadPreview, cswPrivate.openDelay);
+                cswPrivate.openTimeoutHandle = Csw.defer(cswPrivate.loadPreview, cswPrivate.openDelay);
             }; // open()
 
 
@@ -108,7 +108,7 @@
                 clearTimeout(cswPrivate.openTimeoutHandle);
 //                // Clear all node previews, in case other ones are hanging around
 //                $('.CswNodePreview').remove();
-                cswPrivate.closeTimeoutHandle = setTimeout(function() { cswPrivate.div.remove(); }, cswPrivate.closeDelay);
+                cswPrivate.closeTimeoutHandle = Csw.defer(function() { cswPrivate.div.remove(); }, cswPrivate.closeDelay);
             }; // close()
 
             // constructor
