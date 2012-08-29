@@ -66,7 +66,8 @@ namespace ChemSW.Nbt
             {
                 bool ReturnVal = ( ( ( ViewId != null && ViewId.isSet() ) ||
                                      ( SessionViewId != null && SessionViewId.isSet() ) ) &&
-                                   ( Visibility != NbtViewVisibility.Property ) );
+                                   ( Visibility != NbtViewVisibility.Property ) &&
+                                   ( Visibility != NbtViewVisibility.Hidden ) );
                 return ReturnVal;
             }
         } // IsQuickLaunch
@@ -921,7 +922,8 @@ namespace ChemSW.Nbt
             if( ViewName.Length > ViewNameLength )
                 ViewName = ViewName.Substring( 0, ViewNameLength );
 
-            if( Visibility != NbtViewVisibility.Property )
+            if( Visibility != NbtViewVisibility.Hidden &&
+                Visibility != NbtViewVisibility.Property )
             {
                 CswTableSelect CheckViewTableSelect = CswNbtResources.makeCswTableSelect( "ViewIsUnique_select", "node_views" );
                 string WhereClause = "where viewname = '" + CswTools.SafeSqlParam( ViewName ) + "'";
@@ -948,8 +950,10 @@ namespace ChemSW.Nbt
                 {
                     // Must be globally unique 
                 }
-                // don't include Property views for uniqueness
+                
+                // don't include Property or Hidden views for uniqueness
                 WhereClause += " and visibility <> '" + NbtViewVisibility.Property.ToString() + "'";
+                WhereClause += " and visibility <> '" + NbtViewVisibility.Hidden.ToString() + "'";
                 //DataTable CheckViewTable = CheckViewTableSelect.getTable( WhereClause );
                 return ( CheckViewTableSelect.getRecordCount( WhereClause ) == 0 );
             }

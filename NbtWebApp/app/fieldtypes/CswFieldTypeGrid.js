@@ -60,11 +60,11 @@
                 var makeFullGrid = function (viewid, newDiv) {
                     'use strict';
                     newDiv.empty();
-                    var menuDiv = newDiv.div({ ID: Csw.makeId(o.ID, 'grid_as_fieldtype_menu') }).css({ height: '25px' });
+                    var menuDiv = newDiv.div({ ID: Csw.makeId(o.ID + window.Ext.id(), 'grid_as_fieldtype_menu') }).css({ height: '25px' });
                     //newDiv.br();
-                    var filterDiv = newDiv.div({ ID: Csw.makeId(o.ID, 'grid_as_fieldtype_filter') });
+                    var filterDiv = newDiv.div({ ID: Csw.makeId(o.ID + window.Ext.id(), 'grid_as_fieldtype_filter') });
                     //newDiv.br();
-                    var gridDiv = newDiv.div({ ID: Csw.makeId(o.ID, 'grid_as_fieldtype') });
+                    var gridDiv = newDiv.div({ ID: Csw.makeId(o.ID + window.Ext.id(), 'grid_as_fieldtype') });
                     reinitGrid = (function () {
                         return function () {
                             makeFullGrid(viewid, newDiv);

@@ -173,7 +173,7 @@
                     thumbnailCell.$.hover(function (event) { Csw.nodeHoverIn(event, nodeid, ''); },
                                           function (event) { Csw.nodeHoverOut(event, nodeid, ''); });
                     textCell.$.hover(function (event) { Csw.nodeHoverIn(event, nodeid, ''); },
-                                     function (event) { nodeHoverOut(event, nodeid, ''); });
+                                     function (event) { Csw.nodeHoverOut(event, nodeid, ''); });
 
                     //thumbnailCell.br();
 
