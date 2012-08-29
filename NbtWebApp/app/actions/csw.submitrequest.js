@@ -59,14 +59,7 @@
                 cswPrivate.gridId = cswPrivate.ID + '_csw_requestGrid_outer';
                 cswPublic.gridParent = cswPrivate.actionTbl.cell(4, 1).div({ ID: cswPrivate.gridId }); //, align: 'center' });
 
-                cswPrivate.initGrid = function (ajax) {
-
-                    if (Csw.isNullOrEmpty(ajax)) {
-                        ajax = {
-                            urlMethod: 'getCurrentRequest',
-                            data: {}
-                        };
-                    }
+                cswPrivate.initGrid = function () {
 
                     // This really ought to be a CswNodeGrid
 
@@ -79,7 +72,10 @@
                         usePaging: true,
                         height: 180,
 
-                        ajax: ajax,
+                        ajax: {
+                            urlMethod: 'getCurrentRequest',
+                            data: {}
+                        },
 
                         showCheckboxes: false,
                         showActionColumn: true,
@@ -204,5 +200,5 @@
             });
             return cswPublic;
         });
-} ());
+}());
 
