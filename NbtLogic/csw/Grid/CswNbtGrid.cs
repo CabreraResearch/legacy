@@ -211,6 +211,7 @@ namespace ChemSW.Nbt.Grid
                     switch( FieldType )
                     {
                         case CswNbtMetaDataFieldType.NbtFieldType.Button:
+                            bool IsReadOnly = CswConvert.ToBoolean( Prop[CswNbtTreeNodes._AttrName_NodePropHidden] );
                             grid.buttons.Add( new CswNbtGridExtJsButton
                             {
                                 DataIndex = dataIndex.ToString(),

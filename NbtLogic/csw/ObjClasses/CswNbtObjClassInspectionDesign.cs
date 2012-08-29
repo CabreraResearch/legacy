@@ -429,6 +429,13 @@ namespace ChemSW.Nbt.ObjClasses
                                 {
                                     _Deficient = areMoreActionsRequired();
                                 }
+                                Finish.setReadOnly( value: true, SaveToDb: true );
+                                Finish.setHidden( value: true, SaveToDb: true );
+                                Cancel.setReadOnly( value: true, SaveToDb: true );
+                                Cancel.setHidden( value: true, SaveToDb: true );
+                                SetPreferred.setReadOnly( value: true, SaveToDb: true );
+                                SetPreferred.setHidden( value: true, SaveToDb: true );
+
                                 Parent.Status.Value = _Deficient
                                                           ? TargetStatusAsString( TargetStatus.Deficient )
                                                           : TargetStatusAsString( TargetStatus.OK );
@@ -448,6 +455,12 @@ namespace ChemSW.Nbt.ObjClasses
                     case CancelPropertyName:
                         ButtonData.Message = "Inspection has been cancelled.";
                         ButtonData.Action = NbtButtonAction.refresh;
+                        Finish.setReadOnly( value: true, SaveToDb: true );
+                        Finish.setHidden( value: true, SaveToDb: true );
+                        Cancel.setReadOnly( value: true, SaveToDb: true );
+                        Cancel.setHidden( value: true, SaveToDb: true );
+                        SetPreferred.setReadOnly( value: true, SaveToDb: true );
+                        SetPreferred.setHidden( value: true, SaveToDb: true );
                         this.Status.Value = InspectionStatusAsString( InspectionStatus.Cancelled );
                         break;
 
@@ -465,6 +478,7 @@ namespace ChemSW.Nbt.ObjClasses
                         ButtonData.Action = NbtButtonAction.refresh;
                         ButtonData.Message = "Unanswered questions have been set to their preferred answer.";
                         SetPreferred.setReadOnly( value: true, SaveToDb: true );
+                        SetPreferred.setHidden( value: true, SaveToDb: true );
                         break;
                 }
                 this.postChanges( false );
