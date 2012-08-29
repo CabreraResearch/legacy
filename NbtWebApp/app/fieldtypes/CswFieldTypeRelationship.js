@@ -146,7 +146,7 @@
                         });
                         cellCol++;
 
-                        if (o.EditMode === Csw.enums.editMode.Add) {
+                        if (o.EditMode === Csw.enums.editMode.Add || (o.Required && Csw.isNullOrEmpty(selectedNodeId))) {
                             selectBox.show();
                             toggleButton.hide();
                             nodeLinkText.hide();
