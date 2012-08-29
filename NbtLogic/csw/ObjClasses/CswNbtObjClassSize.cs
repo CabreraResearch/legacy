@@ -1,7 +1,9 @@
+using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.UnitsOfMeasure;
-using ChemSW.Core;
+using System;
+using ChemSW.Exceptions;
 
 namespace ChemSW.Nbt.ObjClasses
 {
@@ -54,9 +56,8 @@ namespace ChemSW.Nbt.ObjClasses
         {
             if( null == Material.RelatedNodeId )
             {
-                CswPrimaryKey pk = new CswPrimaryKey();
-                bool succeeded = pk.FromString( _CswNbtResources.CurrentNbtUser.Cookies["csw_currentnodeid"] );
-                if( succeeded && _isMaterialID( pk ) ) //only assign the id if we got a real nodeid from cookies and it's indeed a material id
+                CswPrimaryKey pk = CswConvert.ToPrimaryKey( _CswNbtResources.CurrentNbtUser.Cookies["csw_currentnodeid"] );
+                if( null != pk && _isMaterialID( pk ) ) //only assign the id if we got a real nodeid from cookies and it's indeed a material id
                 {
                     Material.RelatedNodeId = pk;
                 }
