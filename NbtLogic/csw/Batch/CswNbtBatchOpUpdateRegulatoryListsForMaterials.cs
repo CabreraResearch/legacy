@@ -92,13 +92,13 @@ namespace ChemSW.Nbt.Batch
                         if( false == _materialHasList( BatchData.ListName, nodeAsMaterial ) )
                         {
                             //update the current material
-                            nodeAsMaterial.RegulatoryLists.StaticText += "," + BatchData.ListName; //update the node
+                            CswCommaDelimitedString RegLists = new CswCommaDelimitedString();
+                            RegLists.FromString( nodeAsMaterial.RegulatoryLists.StaticText );
+                            RegLists.Add( BatchData.ListName );
+                            nodeAsMaterial.RegulatoryLists.StaticText = RegLists.ToString(); //update the node
 
                             //get materials using the current material as a component
                             nodeAsMaterial.getParentMaterials( ref BatchData.MatchingMaterialIDs );
-
-                            //save the updated batch data
-                            BatchNode.appendToLog( "Updated " + currentMaterialID.ToString() );
                         }
                         nodeAsMaterial.postChanges( false ); //update the node no matter what
                     }
@@ -120,9 +120,6 @@ namespace ChemSW.Nbt.Batch
                             BatchData.MatchingMaterialIDs.Add( materialsByCASNoTree.getNodeIdForCurrentPosition().ToString() );
                             materialsByCASNoTree.goToParentNode();
                         }
-
-                        //save the batch data
-                        BatchNode.appendToLog( "Finishing processing CASNo: " + BatchData.CurrentCASNo );
                     }
                     else if( BatchData.RegListsNodeIDs.Count > 0 )
                     {

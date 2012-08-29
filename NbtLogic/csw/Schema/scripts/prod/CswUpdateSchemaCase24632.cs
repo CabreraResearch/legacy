@@ -23,19 +23,20 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataFieldType textFT = _CswNbtSchemaModTrnsctn.MetaData.getFieldType( CswNbtMetaDataFieldType.NbtFieldType.Text );
 
             #region CREATE THE REGULATORY LIST OC AND IT'S PROPS
-            CswNbtMetaDataObjectClass regulatoryListOC = _CswNbtSchemaModTrnsctn.createObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.RegulatoryListClass, "report.gif", true, true );
-            CswNbtMetaDataObjectClassProp casNumbersOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( regulatoryListOC )
-            {
-                PropName = CswNbtObjClassRegulatoryList.CASNumbersPropertyName,
-                FieldType = CswNbtMetaDataFieldType.NbtFieldType.Memo,
-                IsFk = false,
-                IsRequired = true
-            } );
-
+            CswNbtMetaDataObjectClass regulatoryListOC = _CswNbtSchemaModTrnsctn.createObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.RegulatoryListClass, "doc.png", true, true );
             CswNbtMetaDataObjectClassProp nameOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( regulatoryListOC )
             {
                 PropName = CswNbtObjClassRegulatoryList.NamePropertyName,
                 FieldType = CswNbtMetaDataFieldType.NbtFieldType.Text,
+                IsFk = false,
+                IsRequired = true,
+                IsUnique = true
+            } );
+
+            CswNbtMetaDataObjectClassProp casNumbersOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( regulatoryListOC )
+            {
+                PropName = CswNbtObjClassRegulatoryList.CASNumbersPropertyName,
+                FieldType = CswNbtMetaDataFieldType.NbtFieldType.Memo,
                 IsFk = false,
                 IsRequired = true
             } );
