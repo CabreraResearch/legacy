@@ -123,28 +123,28 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get
             {
-                return ( _CswNbtNode.Properties[PropertyName.Assembly].AsRelationship );
+                return ( _CswNbtNode.Properties[PropertyName.Assembly] );
             }
         }
         public CswNbtNodePropRelationship Type
         {
             get
             {
-                return ( _CswNbtNode.Properties[PropertyName.Type].AsRelationship );
+                return ( _CswNbtNode.Properties[PropertyName.Type] );
             }
         }
         public CswNbtNodePropLogicalSet Parts
         {
             get
             {
-                return ( _CswNbtNode.Properties[PropertyName.Parts].AsLogicalSet );
+                return ( _CswNbtNode.Properties[PropertyName.Parts] );
             }
         }
         public CswNbtNodePropList Status
         {
             get
             {
-                return ( _CswNbtNode.Properties[PropertyName.Status].AsList );
+                return ( _CswNbtNode.Properties[PropertyName.Status] );
             }
         }
 
