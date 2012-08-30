@@ -55,20 +55,19 @@ namespace ChemSW.Nbt.ObjClasses
         {
             if( VendorType.WasModified || CorporateIdentity.WasModified )
             {
-                Dictionary<string, string> corporates = new Dictionary<string, string>();
-                foreach( CswNbtObjClassVendor vendorNode in this.NodeType.getNodes( false, false ) )
+                //For each Corporate Entity, there can only be one vendortype of Corporate aka Highlander attribute
+                if( false == VendorType.Empty && false == CorporateIdentity.Empty )
                 {
-                    if( vendorNode.VendorType.Value.Equals( "Corporate" ) )
+                    foreach( CswNbtObjClassVendor vendorNode in this.NodeType.getNodes( false, false ) )
                     {
-                        if( corporates.ContainsKey( vendorNode.CorporateIdentity.Text ) )
+                        if( vendorNode.NodeId != this.NodeId &&
+                            vendorNode.CorporateIdentity.Text.Equals( CorporateIdentity.Text ) &&
+                            vendorNode.VendorType.Value.Equals( "Corporate" ) &&
+                            this.VendorType.Value.Equals( "Corporate" ) )
                         {
                             throw new CswDniException( ErrorType.Warning,
-                                "Multiple Corporate Entities with a Vendor Type of Corporate are not allowed",
-                                "A Vendor with a Corporate Entity of " + vendorNode.CorporateIdentity.Text + " already exists with a Vendor Type of " + vendorNode.VendorType.Value );
-                        }
-                        else
-                        {
-                            corporates.Add( vendorNode.CorporateIdentity.Text, "Corporate" );
+                                    "Multiple Corporate Entities with a Vendor Type of \"Corporate\" are not allowed",
+                                    "A Vendor with a Corporate Entity of " + vendorNode.CorporateIdentity.Text + " already exists with a Vendor Type of " + vendorNode.VendorType.Value );
                         }
                     }
                 }
