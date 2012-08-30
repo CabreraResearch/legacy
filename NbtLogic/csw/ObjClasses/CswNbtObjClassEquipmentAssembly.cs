@@ -202,7 +202,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get
             {
-                return ( _CswNbtNode.Properties[PropertyName.Type].AsRelationship );
+                return ( _CswNbtNode.Properties[PropertyName.Type] );
             }
         }
 
@@ -210,7 +210,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get
             {
-                return ( _CswNbtNode.Properties[PropertyName.AssemblyParts].AsLogicalSet );
+                return ( _CswNbtNode.Properties[PropertyName.AssemblyParts] );
             }
         }
 
