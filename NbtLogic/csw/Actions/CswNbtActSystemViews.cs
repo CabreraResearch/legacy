@@ -177,7 +177,7 @@ namespace ChemSW.Nbt.Actions
                 Ret.Root.ChildRelationships.Clear();
                 CswNbtMetaDataObjectClass LocationOc = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.LocationClass );
                 CswNbtViewRelationship LocationVr = Ret.AddViewRelationship( LocationOc, true );
-                CswNbtMetaDataObjectClassProp LocationLocationOcp = LocationOc.getObjectClassProp( CswNbtObjClassLocation.LocationPropertyName );
+                CswNbtMetaDataObjectClassProp LocationLocationOcp = LocationOc.getObjectClassProp( CswNbtObjClassLocation.PropertyName.Location );
                 CswNbtViewProperty LocationLocationVp = Ret.AddViewProperty( LocationVr, LocationLocationOcp );
                 LocationLocationVp.SortBy = true;
                 Ret.save();
@@ -204,7 +204,7 @@ namespace ChemSW.Nbt.Actions
                 Ret.Root.ChildRelationships.Clear();
                 CswNbtMetaDataObjectClass LocationOc = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.LocationClass );
                 CswNbtViewRelationship LocationVr = Ret.AddViewRelationship( LocationOc, true );
-                CswNbtMetaDataObjectClassProp LocationLocationOcp = LocationOc.getObjectClassProp( CswNbtObjClassLocation.LocationPropertyName );
+                CswNbtMetaDataObjectClassProp LocationLocationOcp = LocationOc.getObjectClassProp( CswNbtObjClassLocation.PropertyName.Location );
                 CswNbtViewProperty LocationLocationVp = Ret.AddViewProperty( LocationVr, LocationLocationOcp );
                 LocationLocationVp.SortBy = true;
                 Ret.save();
