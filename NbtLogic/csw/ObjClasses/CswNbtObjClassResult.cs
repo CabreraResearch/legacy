@@ -1,14 +1,17 @@
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
-using Newtonsoft.Json.Linq;
 
 
 namespace ChemSW.Nbt.ObjClasses
 {
     public class CswNbtObjClassResult : CswNbtObjClass
     {
-        public static string ParameterPropertyName { get { return "Parameter"; } }
-        public static string AliquotPropertyName { get { return "Aliquot"; } }
+        public sealed class PropertyName
+        {
+            public const string Parameter = "Parameter";
+            public const string Aliquot = "Aliquot";
+        }
+
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
 
@@ -37,7 +40,7 @@ namespace ChemSW.Nbt.ObjClasses
         }
 
         #region Inherited Events
-       
+
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
             _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
@@ -48,9 +51,9 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault.afterWriteNode();
         }//afterWriteNode()
 
-        public override void beforeDeleteNode(bool DeleteAllRequiredRelatedNodes = false)
+        public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false )
         {
-            _CswNbtObjClassDefault.beforeDeleteNode(DeleteAllRequiredRelatedNodes);
+            _CswNbtObjClassDefault.beforeDeleteNode( DeleteAllRequiredRelatedNodes );
 
         }//beforeDeleteNode()
 
@@ -71,9 +74,9 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override bool onButtonClick( NbtButtonData ButtonData )
         {
-            
-            
-            
+
+
+
             if( null != ButtonData && null != ButtonData.NodeTypeProp ) { /*Do Something*/ }
             return true;
         }
@@ -83,13 +86,12 @@ namespace ChemSW.Nbt.ObjClasses
 
         public CswNbtNodePropRelationship Parameter
         {
-            get { return _CswNbtNode.Properties[ParameterPropertyName].AsRelationship; }
+            get { return _CswNbtNode.Properties[PropertyName.Parameter].AsRelationship; }
         }
         public CswNbtNodePropRelationship Aliquot
         {
-            get { return _CswNbtNode.Properties[AliquotPropertyName].AsRelationship; }
+            get { return _CswNbtNode.Properties[PropertyName.Aliquot].AsRelationship; }
         }
-
 
         #endregion
 
