@@ -22,21 +22,6 @@ namespace ChemSW.Nbt.ObjClasses
             get { return _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.Unknown ); }
         }
 
-        public override void beforeCreateNode( bool OverrideUniqueValidation )
-        {
-        } // beforeCreateNode()
-
-        public override void afterCreateNode()
-        {
-            // BZ 9609 - We must force reinit since we just added node(s)
-            // actually, let's reinit everything, since any number of trees may be affected
-            //_CswNbtResources.Trees.clear();
-
-            // BZ 10094 - Notification event
-            _CswNbtResources.runNotification( this.NodeType, CswNbtObjClassNotification.EventOption.Create, _CswNbtNode, string.Empty, string.Empty );
-
-        } // afterCreateNode()
-
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
             List<CswNbtNodePropWrapper> CompoundUniqueProps = new List<CswNbtNodePropWrapper>();

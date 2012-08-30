@@ -138,13 +138,6 @@ namespace ChemSW.Nbt.ObjClasses
         }
 
         #region Inherited Events
-        public override void beforeCreateNode( bool OverrideUniqueValidation )
-        {
-            _CswNbtObjClassDefault.beforeCreateNode( OverrideUniqueValidation );
-
-            CswNbtActSubmitRequest RequestAct = new CswNbtActSubmitRequest( _CswNbtResources, CreateDefaultRequestNode: true );
-            Request.RelatedNodeId = RequestAct.CurrentRequestNode().NodeId;
-        } // beforeCreateNode()
 
         private string _makeNotificationMessage()
         {
@@ -183,11 +176,6 @@ namespace ChemSW.Nbt.ObjClasses
 
             return MessageText;
         }
-
-        public override void afterCreateNode()
-        {
-            _CswNbtObjClassDefault.afterCreateNode();
-        } // afterCreateNode()
 
         private void _toggleReadOnlyProps( bool IsReadOnly, CswNbtObjClassRequestItem ItemInstance )
         {
@@ -461,8 +449,13 @@ namespace ChemSW.Nbt.ObjClasses
         }
         private void OnRequestPropChange( CswNbtNodeProp Prop )
         {
-            Request.setReadOnly( value: true, SaveToDb: true );
-            Request.setHidden( value: true, SaveToDb: false );
+            if( false == CswTools.IsPrimaryKey( Request.RelatedNodeId ) )
+            {
+                CswNbtActSubmitRequest RequestAct = new CswNbtActSubmitRequest( _CswNbtResources, CreateDefaultRequestNode: true );
+                Request.RelatedNodeId = RequestAct.CurrentRequestNode().NodeId;
+                Request.setReadOnly( value: true, SaveToDb: true );
+                Request.setHidden( value: true, SaveToDb: false );
+            }
         }
 
         public CswNbtNodePropList Type

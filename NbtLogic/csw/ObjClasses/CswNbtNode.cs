@@ -813,20 +813,14 @@ namespace ChemSW.Nbt.ObjClasses
                 bool IsNew = ( this.NodeId == null || this.NodeId.PrimaryKey == Int32.MinValue );
                 if( null != _CswNbtObjClass )
                 {
-                    if( IsNew )
-                        _CswNbtObjClass.beforeCreateNode( OverrideUniqueValidation );
-                    else
-                        _CswNbtObjClass.beforeWriteNode( IsCopy, OverrideUniqueValidation );
+                    _CswNbtObjClass.beforeWriteNode( IsCopy, OverrideUniqueValidation );
                 }
 
                 OnRequestWriteNode( this, ForceUpdate, IsCopy, OverrideUniqueValidation );
 
                 if( null != _CswNbtObjClass )
                 {
-                    if( IsNew )
-                        _CswNbtObjClass.afterCreateNode();
-                    else
-                        _CswNbtObjClass.afterWriteNode();
+                    _CswNbtObjClass.afterWriteNode();
                 }
 
                 _NodeModificationState = NodeModificationState.Posted;

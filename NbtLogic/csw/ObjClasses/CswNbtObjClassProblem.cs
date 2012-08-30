@@ -2,21 +2,24 @@ using System;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
-using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.ObjClasses
 {
     public class CswNbtObjClassProblem : CswNbtObjClass
     {
-        public static string PartsPropertyName { get { return "Parts"; } }
-        public static string OwnerPropertyName { get { return "Owner"; } }
-        public static string DateOpenedPropertyName { get { return "Date Opened"; } }
-        public static string DateClosedPropertyName { get { return "Date Closed"; } }
-        public static string ClosedPropertyName { get { return "Closed"; } }
-        public static string ReportedByPropertyName { get { return "Reported By"; } }
-        public static string FailurePropertyName { get { return "Failure"; } }
+        public sealed class PropertyName
+        {
+            public const string Parts = "Parts";
+            public const string Owner = "Owner";
+            public const string DateOpened = "Date Opened";
+            public const string DateClosed = "Date Closed";
+            public const string Closed = "Closed";
+            public const string ReportedBy = "Reported By";
+            public const string Failure = "Failure";
+        }
 
-        public static string PartsXValueName { get { return "Service"; } }
+
+        public const string PartsXValueName = "Service";
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
 
@@ -45,27 +48,6 @@ namespace ChemSW.Nbt.ObjClasses
         }
 
         #region Inherited Events
-        public override void beforeCreateNode( bool OverrideUniqueValidation )
-        {
-            // BZ 10051 - Set the Date Opened to today
-            if( DateOpened.DateTimeValue == DateTime.MinValue )
-            {
-                DateOpened.DateTimeValue = DateTime.Now;
-            }
-            if( ReportedBy.RelatedNodeId == null )
-            {
-                ReportedBy.RelatedNodeId = _CswNbtResources.CurrentNbtUser.UserId;
-                ReportedBy.CachedNodeName = _CswNbtResources.CurrentNbtUser.Username;
-            }
-            _checkClosed();
-
-            _CswNbtObjClassDefault.beforeCreateNode( OverrideUniqueValidation );
-        } // beforeCreateNode()
-
-        public override void afterCreateNode()
-        {
-            _CswNbtObjClassDefault.afterCreateNode();
-        } // afterCreateNode()
 
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
@@ -91,9 +73,9 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault.afterWriteNode();
         }//afterWriteNode()
 
-        public override void beforeDeleteNode(bool DeleteAllRequiredRelatedNodes = false)
+        public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false )
         {
-            _CswNbtObjClassDefault.beforeDeleteNode(DeleteAllRequiredRelatedNodes);
+            _CswNbtObjClassDefault.beforeDeleteNode( DeleteAllRequiredRelatedNodes );
 
         }//beforeDeleteNode()
 
@@ -104,6 +86,8 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void afterPopulateProps()
         {
+            DateOpened.SetOnPropChange( OnDateOpenedChanged );
+            ReportedBy.SetOnPropChange( OnReportedByChange );
             if( Owner.RelatedNodeId != null )
             {
                 CswNbtNode EquipmentOrAssemblyNode = _CswNbtResources.Nodes[Owner.RelatedNodeId];
@@ -145,9 +129,9 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override bool onButtonClick( NbtButtonData ButtonData )
         {
-            
-            
-            
+
+
+
             if( null != ButtonData && null != ButtonData.NodeTypeProp ) { /*Do Something*/ }
             return true;
         }
@@ -164,57 +148,32 @@ namespace ChemSW.Nbt.ObjClasses
         //        return ( _CswNbtNode.Properties[EquipmentPropertyName].AsRelationship );
         //    }
         //}
-        public CswNbtNodePropRelationship Owner
+        public CswNbtNodePropRelationship Owner { get { return ( _CswNbtNode.Properties[PropertyName.Owner] ); } }
+
+        public CswNbtNodePropRelationship ReportedBy { get { return ( _CswNbtNode.Properties[PropertyName.ReportedBy] ); } }
+        public void OnReportedByChange( CswNbtNodeProp NodeProp )
         {
-            get
+            if( false == CswTools.IsPrimaryKey( ReportedBy.RelatedNodeId ) )
             {
-                return ( _CswNbtNode.Properties[OwnerPropertyName].AsRelationship );
+                ReportedBy.RelatedNodeId = _CswNbtResources.CurrentNbtUser.UserId;
+                ReportedBy.CachedNodeName = _CswNbtResources.CurrentNbtUser.Username;
             }
         }
 
-        public CswNbtNodePropRelationship ReportedBy
+        public CswNbtNodePropLogicalSet Parts { get { return ( _CswNbtNode.Properties[PropertyName.Parts] ); } }
+        public CswNbtNodePropLogical Closed { get { return ( _CswNbtNode.Properties[PropertyName.Closed] ); } }
+
+        public CswNbtNodePropDateTime DateOpened { get { return ( _CswNbtNode.Properties[PropertyName.DateOpened] ); } }
+        private void OnDateOpenedChanged( CswNbtNodeProp NodeProp )
         {
-            get
+            if( DateOpened.DateTimeValue == DateTime.MinValue )
             {
-                return ( _CswNbtNode.Properties[ReportedByPropertyName].AsRelationship );
-            }
-        }
-        public CswNbtNodePropLogicalSet Parts
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[PartsPropertyName].AsLogicalSet );
-            }
-        }
-        public CswNbtNodePropLogical Closed
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[ClosedPropertyName].AsLogical );
+                DateOpened.DateTimeValue = DateTime.Now;
             }
         }
 
-        public CswNbtNodePropDateTime DateOpened
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[DateOpenedPropertyName].AsDateTime );
-            }
-        }
-        public CswNbtNodePropDateTime DateClosed
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[DateClosedPropertyName].AsDateTime );
-            }
-        }
-        public CswNbtNodePropLogical Failure
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[FailurePropertyName].AsLogical );
-            }
-        }
+        public CswNbtNodePropDateTime DateClosed { get { return ( _CswNbtNode.Properties[PropertyName.DateClosed] ); } }
+        public CswNbtNodePropLogical Failure { get { return ( _CswNbtNode.Properties[PropertyName.Failure] ); } }
 
         #endregion
 

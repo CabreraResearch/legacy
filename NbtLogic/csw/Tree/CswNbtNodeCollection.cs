@@ -611,7 +611,7 @@ namespace ChemSW.Nbt
             CswNbtNode UserNode = null;
 
             CswNbtMetaDataObjectClass User_ObjectClass = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
-            CswNbtMetaDataObjectClassProp UserName_ObjectClassProp = User_ObjectClass.getObjectClassProp( CswNbtObjClassUser.UsernamePropertyName );
+            CswNbtMetaDataObjectClassProp UserName_ObjectClassProp = User_ObjectClass.getObjectClassProp( CswNbtObjClassUser.PropertyName.Username );
 
             _CswNbtResources.logTimerResult( "makeUserNodeFromUsername 1", Timer );
 
@@ -660,7 +660,7 @@ namespace ChemSW.Nbt
             CswNbtNode RoleNode = null;
 
             CswNbtMetaDataObjectClass Role_ObjectClass = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.RoleClass );
-            CswNbtMetaDataObjectClassProp RoleName_ObjectClassProp = Role_ObjectClass.getObjectClassProp( CswNbtObjClassRole.NamePropertyName );
+            CswNbtMetaDataObjectClassProp RoleName_ObjectClassProp = Role_ObjectClass.getObjectClassProp( CswNbtObjClassRole.PropertyName.Name );
 
             // generate the view
             CswNbtView View = new CswNbtView( _CswNbtResources );

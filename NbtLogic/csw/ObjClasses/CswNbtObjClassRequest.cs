@@ -1,4 +1,5 @@
 using System;
+using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
 
@@ -39,16 +40,6 @@ namespace ChemSW.Nbt.ObjClasses
         }
 
         #region Inherited Events
-        public override void beforeCreateNode( bool OverrideUniqueValidation )
-        {
-            _CswNbtObjClassDefault.beforeCreateNode( OverrideUniqueValidation );
-            Requestor.RelatedNodeId = _CswNbtResources.CurrentNbtUser.UserId;
-        } // beforeCreateNode()
-
-        public override void afterCreateNode()
-        {
-            _CswNbtObjClassDefault.afterCreateNode();
-        } // afterCreateNode()
 
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
@@ -90,6 +81,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void afterPopulateProps()
         {
+            Requestor.SetOnPropChange( OnRequestorChange );
             _CswNbtObjClassDefault.afterPopulateProps();
         }//afterPopulateProps()
 
@@ -169,7 +161,13 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get { return _CswNbtNode.Properties[PropertyName.Requestor]; }
         }
-
+        private void OnRequestorChange( CswNbtNodeProp NodeProp )
+        {
+            if( false == CswTools.IsPrimaryKey( Requestor.RelatedNodeId ) )
+            {
+                Requestor.RelatedNodeId = _CswNbtResources.CurrentNbtUser.UserId;
+            }
+        }
         public CswNbtNodePropText Name
         {
             get { return _CswNbtNode.Properties[PropertyName.Name]; }

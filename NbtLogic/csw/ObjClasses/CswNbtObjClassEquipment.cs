@@ -2,19 +2,20 @@ using System;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
-using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.ObjClasses
 {
     public class CswNbtObjClassEquipment : CswNbtObjClass
     {
-        public static string AssemblyPropertyName { get { return "Assembly"; } }
-        public static string TypePropertyName { get { return "Type"; } }
+        public sealed class PropertyName
+        {
+            public const string Assembly = "Assembly";
+            public const string Type = "Type";
+            public const string Parts = "Parts";
+            public const string Status = "Status";
+        }
 
-        public static string PartsPropertyName { get { return "Parts"; } }
         public static string PartsXValueName { get { return "Uses"; } }
-
-        public static string StatusPropertyName { get { return "Status"; } }
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
 
@@ -43,19 +44,6 @@ namespace ChemSW.Nbt.ObjClasses
         }
 
         #region Inherited Events
-        public override void beforeCreateNode( bool OverrideUniqueValidation )
-        {
-            if( Assembly.WasModified )
-                //_CswNbtNode.PendingUpdate = true;
-                SynchEquipmentToAssembly();
-
-            _CswNbtObjClassDefault.beforeCreateNode( OverrideUniqueValidation );
-        } // beforeCreateNode()
-
-        public override void afterCreateNode()
-        {
-            _CswNbtObjClassDefault.afterCreateNode();
-        } // afterCreateNode()
 
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
@@ -106,7 +94,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             // BZ 10454
             // Filter out Retired Equipment by default
-            CswNbtMetaDataObjectClassProp StatusOCP = this.ObjectClass.getObjectClassProp( StatusPropertyName );
+            CswNbtMetaDataObjectClassProp StatusOCP = this.ObjectClass.getObjectClassProp( PropertyName.Status );
             CswNbtViewProperty StatusViewProp = ParentRelationship.View.AddViewProperty( ParentRelationship, StatusOCP );
             CswNbtViewPropertyFilter StatusViewPropFilter = ParentRelationship.View.AddViewPropertyFilter( StatusViewProp,
                                                                                                            StatusOCP.getFieldTypeRule().SubFields.Default.Name,
@@ -135,28 +123,28 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get
             {
-                return ( _CswNbtNode.Properties[AssemblyPropertyName].AsRelationship );
+                return ( _CswNbtNode.Properties[PropertyName.Assembly] );
             }
         }
         public CswNbtNodePropRelationship Type
         {
             get
             {
-                return ( _CswNbtNode.Properties[TypePropertyName].AsRelationship );
+                return ( _CswNbtNode.Properties[PropertyName.Type] );
             }
         }
         public CswNbtNodePropLogicalSet Parts
         {
             get
             {
-                return ( _CswNbtNode.Properties[PartsPropertyName].AsLogicalSet );
+                return ( _CswNbtNode.Properties[PropertyName.Parts] );
             }
         }
         public CswNbtNodePropList Status
         {
             get
             {
-                return ( _CswNbtNode.Properties[StatusPropertyName].AsList );
+                return ( _CswNbtNode.Properties[PropertyName.Status] );
             }
         }
 
@@ -217,7 +205,6 @@ namespace ChemSW.Nbt.ObjClasses
                 }
             }
         } // SynchEquipmentToAssembly()
-
     }//CswNbtObjClassEquipment
 
 }//namespace ChemSW.Nbt.ObjClasses

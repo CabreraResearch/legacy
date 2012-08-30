@@ -76,8 +76,8 @@ namespace ChemSW.Nbt.Batch
         public static void runNextBatchOp( CswNbtResources CswNbtResources )
         {
             CswNbtMetaDataObjectClass BatchOpOC = CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.BatchOpClass );
-            CswNbtMetaDataObjectClassProp StatusOCP = BatchOpOC.getObjectClassProp( CswNbtObjClassBatchOp.StatusPropertyName );
-            CswNbtMetaDataObjectClassProp PriorityOCP = BatchOpOC.getObjectClassProp( CswNbtObjClassBatchOp.PriorityPropertyName );
+            CswNbtMetaDataObjectClassProp StatusOCP = BatchOpOC.getObjectClassProp( CswNbtObjClassBatchOp.PropertyName.Status );
+            CswNbtMetaDataObjectClassProp PriorityOCP = BatchOpOC.getObjectClassProp( CswNbtObjClassBatchOp.PropertyName.Priority );
 
 
             CswNbtView NextBatchOpView = new CswNbtView( CswNbtResources );

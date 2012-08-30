@@ -25,7 +25,7 @@ namespace ChemSW.Nbt.Actions
 
     public class CswNbtAction
     {
-        public static string PermissionXValue = "Allow";
+        public const string PermissionXValue = "Allow";
 
         public Int32 ActionId;
         public string Url;

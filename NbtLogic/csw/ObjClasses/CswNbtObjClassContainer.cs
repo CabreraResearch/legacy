@@ -86,17 +86,6 @@ namespace ChemSW.Nbt.ObjClasses
         }
 
         #region Inherited Events
-        public override void beforeCreateNode( bool OverrideUniqueValidation )
-        {
-            _CswNbtObjClassDefault.beforeCreateNode( OverrideUniqueValidation );
-        } // beforeCreateNode()
-
-        public override void afterCreateNode()
-        {
-            _CswNbtObjClassDefault.afterCreateNode();
-            Disposed.setHidden( value: true, SaveToDb: true );
-            SourceContainer.setHidden( value: true, SaveToDb: true );
-        } // afterCreateNode()
 
         private void _updateRequestMenu()
         {
@@ -398,7 +387,7 @@ namespace ChemSW.Nbt.ObjClasses
 
                 DisposedContainerTransactionsView.AddViewPropertyAndFilter(
                     ParentRelationship,
-                    ContDispTransNT.getNodeTypePropByObjectClassProp( CswNbtObjClassContainerDispenseTransaction.SourceContainerPropertyName ),
+                    ContDispTransNT.getNodeTypePropByObjectClassProp( CswNbtObjClassContainerDispenseTransaction.PropertyName.SourceContainer ),
                     NodeId.PrimaryKey.ToString(),
                     CswNbtSubField.SubFieldName.NodeID,
                     false,
@@ -407,7 +396,7 @@ namespace ChemSW.Nbt.ObjClasses
 
                 DisposedContainerTransactionsView.AddViewPropertyAndFilter(
                     ParentRelationship,
-                    ContDispTransNT.getNodeTypePropByObjectClassProp( CswNbtObjClassContainerDispenseTransaction.TypePropertyName ),
+                    ContDispTransNT.getNodeTypePropByObjectClassProp( CswNbtObjClassContainerDispenseTransaction.PropertyName.Type ),
                     CswNbtObjClassContainerDispenseTransaction.DispenseType.Dispose.ToString(),
                     CswNbtSubField.SubFieldName.Value,
                     false,
@@ -572,7 +561,7 @@ namespace ChemSW.Nbt.ObjClasses
                 CswNbtNode locationNode = _CswNbtResources.Nodes.GetNode( Location.SelectedNodeId );
                 if( null != locationNode ) //what if the user didn't specify a location?
                 {
-                    CswNbtNodePropImageList locationStorageCompatibility = locationNode.Properties[CswNbtObjClassLocation.StorageCompatabilityPropertyName];
+                    CswNbtNodePropImageList locationStorageCompatibility = locationNode.Properties[CswNbtObjClassLocation.PropertyName.StorageCompatability];
                     if( false == _isStorageCompatible( materialStorageCompatibilty.Value, locationStorageCompatibility.Value ) )
                     {
                         throw new CswDniException( ErrorType.Warning,
@@ -633,6 +622,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropLogical Disposed { get { return ( _CswNbtNode.Properties[PropertyName.Disposed] ); } }
         private void OnDisposedPropChange( CswNbtNodeProp Prop )
         {
+            Disposed.setHidden( value: true, SaveToDb: true );
             if( Disposed.Checked == Tristate.True )
             {
                 _updateRequestItems( CswNbtObjClassRequestItem.Types.Dispose );
@@ -645,6 +635,10 @@ namespace ChemSW.Nbt.ObjClasses
             if( null != SourceContainer.RelatedNodeId && Int32.MinValue != SourceContainer.RelatedNodeId.PrimaryKey )
             {
                 SourceContainer.setHidden( value: false, SaveToDb: true );
+            }
+            else
+            {
+                SourceContainer.setHidden( value: true, SaveToDb: true );
             }
         }
         public CswNbtNodePropQuantity Quantity { get { return ( _CswNbtNode.Properties[PropertyName.Quantity] ); } }

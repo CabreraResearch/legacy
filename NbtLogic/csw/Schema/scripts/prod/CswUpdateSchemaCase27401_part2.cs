@@ -19,7 +19,7 @@ namespace ChemSW.Nbt.Schema
         {
 
             CswNbtMetaDataObjectClass sizeOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.SizeClass );
-            CswNbtMetaDataObjectClassProp materialOCP = sizeOC.getObjectClassProp( CswNbtObjClassSize.MaterialPropertyName );
+            CswNbtMetaDataObjectClassProp materialOCP = sizeOC.getObjectClassProp( CswNbtObjClassSize.PropertyName.Material );
 
             //make this server managed
             _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( materialOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.servermanaged, true );

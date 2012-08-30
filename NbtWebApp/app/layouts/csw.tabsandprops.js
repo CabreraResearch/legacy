@@ -279,11 +279,12 @@
                                 
                                 var propId = key; //key
                                 var subTable = cswPrivate.layoutTable[thisProp.id + '_subproptable'];
-                                var parentCell = subTable.table.parent().parent();
+                                //var parentCell = subTable.parent().parent();
+                                var parentCell = Csw.literals.factory(subTable.table.$.parent().parent().parent());
                                 //var cellSet = cswPrivate.layoutTable.cellSet(parentCell.propNonDom('row'), parentCell.propNonDom('column'));
                                 var cellSet = cswPrivate.getCellSet(cswPrivate.layoutTable, thisProp.tabgroup, parentCell.propNonDom('row'), parentCell.propNonDom('column'));
 
-                                cswPrivate.layoutTable.addCellSetAttributes(cellSet, { propId: propId });
+                                cswPrivate.layoutTable.addCellSetAttributes(cellSet, { propId: thisProp.id });
                                 var propCell = cswPrivate.getPropertyCell(cellSet);
 
                                 if (subTable.length > 0) {
@@ -294,7 +295,7 @@
                                         relatednodename: cswPrivate.relatednodename,
                                         relatednodetypeid: cswPrivate.relatednodetypeid,
                                         relatedobjectclassid: cswPrivate.relatedobjectclassid,
-                                        propid: propId,
+                                        propid: thisProp.id,
                                         propDiv: propCell.children('div'),
                                         propData: thisProp,
                                         onChange: function () {
@@ -307,7 +308,7 @@
                                         cswnbtnodekey: Csw.tryParseObjByIdx(cswPrivate.nodekeys, 0)
                                     };
 
-                                    cswPrivate.updateSubProps(fieldOpt, propId, thisProp, propCell, tabContentDiv, tabid, configOn);
+                                    cswPrivate.updateSubProps(fieldOpt, thisProp.id, thisProp, propCell, tabContentDiv, tabid, configOn);
                                 }
                             }
                             return false;
