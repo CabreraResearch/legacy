@@ -1,6 +1,7 @@
 ﻿using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
+using System.Collections.ObjectModel;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -40,9 +41,7 @@ namespace ChemSW.Nbt.Schema
                     {
                         CswNbtMetaDataNodeTypeProp linkNTP = materialDocumentNT.getNodeTypePropByObjectClassProp( linkOCP.ObjectClassPropId );
                         CswNbtMetaDataNodeTypeProp fileNTP = materialDocumentNT.getNodeTypePropByObjectClassProp( fileOCP.ObjectClassPropId );
-                        docsView.AddViewProperty( firstChild, linkNTP );
-                        docsView.AddViewProperty( firstChild, fileNTP );
-                        docsView.save();
+                        _addPropertyRecursively( docsView, docsView.Root.ChildRelationships, documentOC, materialDocumentNT, fileNTP, linkNTP );
                     }
                 }
             }
@@ -63,9 +62,7 @@ namespace ChemSW.Nbt.Schema
                         {
                             CswNbtMetaDataNodeTypeProp linkNTP = assemblyDocumentNT.getNodeTypePropByObjectClassProp( linkOCP.ObjectClassPropId );
                             CswNbtMetaDataNodeTypeProp fileNTP = assemblyDocumentNT.getNodeTypePropByObjectClassProp( fileOCP.ObjectClassPropId );
-                            docsView.AddViewProperty( firstChild, linkNTP );
-                            docsView.AddViewProperty( firstChild, fileNTP );
-                            docsView.save();
+                            _addPropertyRecursively( docsView, docsView.Root.ChildRelationships, documentOC, assemblyDocumentNT, fileNTP, linkNTP );
                         }
                     }
                 }
@@ -85,9 +82,7 @@ namespace ChemSW.Nbt.Schema
                     {
                         CswNbtMetaDataNodeTypeProp linkNTP = equipmentDocumentNT.getNodeTypePropByObjectClassProp( linkOCP.ObjectClassPropId );
                         CswNbtMetaDataNodeTypeProp fileNTP = equipmentDocumentNT.getNodeTypePropByObjectClassProp( fileOCP.ObjectClassPropId );
-                        docsView.AddViewProperty( firstChild, linkNTP );
-                        docsView.AddViewProperty( firstChild, fileNTP );
-                        docsView.save();
+                        _addPropertyRecursively( docsView, docsView.Root.ChildRelationships, documentOC, equipmentDocumentNT, fileNTP, linkNTP );
                     }
                 }
             }
@@ -106,14 +101,31 @@ namespace ChemSW.Nbt.Schema
                     {
                         CswNbtMetaDataNodeTypeProp linkNTP = containerDocumentNT.getNodeTypePropByObjectClassProp( linkOCP.ObjectClassPropId );
                         CswNbtMetaDataNodeTypeProp fileNTP = containerDocumentNT.getNodeTypePropByObjectClassProp( fileOCP.ObjectClassPropId );
-                        docsView.AddViewProperty( firstChild, linkNTP );
-                        docsView.AddViewProperty( firstChild, fileNTP );
-                        docsView.save();
+                        _addPropertyRecursively( docsView, docsView.Root.ChildRelationships, documentOC, containerDocumentNT, fileNTP, linkNTP );
                     }
                 }
             }
 
         }//Update()
+
+        private void _addPropertyRecursively( CswNbtView View, Collection<CswNbtViewRelationship> Relationships, CswNbtMetaDataObjectClass documentOC, CswNbtMetaDataNodeType documentNT, CswNbtMetaDataNodeTypeProp fileNTP, CswNbtMetaDataNodeTypeProp linkNTP )
+        {
+            foreach( CswNbtViewRelationship ChildRelationship in Relationships )
+            {
+                if( ChildRelationship.SecondId == documentNT.NodeTypeId &&
+                    ChildRelationship.SecondType == NbtViewRelatedIdType.NodeTypeId || ChildRelationship.SecondId == documentOC.ObjectClassId &&
+                    ChildRelationship.SecondType == NbtViewRelatedIdType.ObjectClassId )
+                {
+                    View.AddViewProperty( ChildRelationship, fileNTP );
+                    View.AddViewProperty( ChildRelationship, linkNTP );
+                }
+                if( ChildRelationship.ChildRelationships.Count > 0 )
+                {
+                    _addPropertyRecursively( View, ChildRelationship.ChildRelationships, documentOC, documentNT, fileNTP, linkNTP );
+                }
+            }
+            View.save();
+        }
 
     }
 
