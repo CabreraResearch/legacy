@@ -2,18 +2,21 @@
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
-using Newtonsoft.Json.Linq;
 
 
 namespace ChemSW.Nbt.ObjClasses
 {
     public class CswNbtObjClassReport : CswNbtObjClass
     {
-        public const string RPTFilePropertyName = "RPT File";
-        public const string ReportNamePropertyName = "Report Name";
-        public const string CategoryPropertyName = "Category";
-        public const string SqlPropertyName = "SQL";
-        public const string btnRunPropertyName = "Run";
+        public sealed class PropertyName
+        {
+            public const string RPTFile = "RPT File";
+            public const string ReportName = "Report Name";
+            public const string Category = "Category";
+            public const string Sql = "SQL";
+            public const string BtnRun = "Run";
+        }
+
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
 
@@ -48,13 +51,13 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override bool onButtonClick( NbtButtonData ButtonData )
         {
-            
-            
-            
+
+
+
             CswNbtMetaDataObjectClassProp OCP = ButtonData.NodeTypeProp.getObjectClassProp();
             if( null != ButtonData.NodeTypeProp && null != OCP )
             {
-                if( btnRunPropertyName == OCP.PropName )
+                if( PropertyName.BtnRun == OCP.PropName )
                 {
                     ButtonData.Action = NbtButtonAction.popup;
                     ButtonData.Data["url"] = ReportUrl;
@@ -75,7 +78,7 @@ namespace ChemSW.Nbt.ObjClasses
 
 
         #region Inherited Events
-        
+
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
             _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
@@ -124,7 +127,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get
             {
-                return ( _CswNbtNode.Properties[SqlPropertyName] ); //sic.
+                return ( _CswNbtNode.Properties[PropertyName.Sql] ); //sic.
             }
         }
 
@@ -147,7 +150,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get
             {
-                return ( _CswNbtNode.Properties[btnRunPropertyName].AsButton );
+                return ( _CswNbtNode.Properties[PropertyName.BtnRun].AsButton );
             }
         }
 
@@ -155,7 +158,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get
             {
-                return ( _CswNbtNode.Properties[RPTFilePropertyName].AsBlob );
+                return ( _CswNbtNode.Properties[PropertyName.RPTFile].AsBlob );
             }
         }
 
@@ -163,7 +166,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get
             {
-                return ( _CswNbtNode.Properties[ReportNamePropertyName].AsText );
+                return ( _CswNbtNode.Properties[PropertyName.ReportName].AsText );
             }
         }
 
@@ -171,7 +174,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get
             {
-                return ( _CswNbtNode.Properties[CategoryPropertyName].AsText );
+                return ( _CswNbtNode.Properties[PropertyName.Category].AsText );
             }
         }
 
