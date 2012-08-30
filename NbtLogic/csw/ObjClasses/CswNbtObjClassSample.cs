@@ -84,18 +84,9 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Object class specific properties
 
-        public CswNbtNodePropQuantity Quantity
-        {
-            get { return _CswNbtNode.Properties[PropertyName.Quantity].AsQuantity; }
-        }
-        public CswNbtNodePropBarcode Barcode
-        {
-            get { return _CswNbtNode.Properties[PropertyName.Barcode].AsBarcode; }
-        }
-        public CswNbtNodePropRelationship ParentSample
-        {
-            get { return _CswNbtNode.Properties[PropertyName.ParentSample].AsRelationship; }
-        }
+        public CswNbtNodePropQuantity Quantity { get { return _CswNbtNode.Properties[PropertyName.Quantity]; } }
+        public CswNbtNodePropBarcode Barcode { get { return _CswNbtNode.Properties[PropertyName.Barcode]; } }
+        public CswNbtNodePropRelationship ParentSample { get { return _CswNbtNode.Properties[PropertyName.ParentSample]; } }
 
         #endregion
 
