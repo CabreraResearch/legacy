@@ -5,7 +5,11 @@ namespace ChemSW.Nbt.ObjClasses
 {
     public class CswNbtObjClassInspectionTargetGroup : CswNbtObjClass
     {
-        public static string NamePropertyName { get { return "Name"; } }
+        public sealed class PropertyName
+        {
+            public const string Name = "Name";
+        }
+
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
 
@@ -80,9 +84,10 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get
             {
-                return ( _CswNbtNode.Properties[NamePropertyName].AsText );
+                return ( _CswNbtNode.Properties[PropertyName.Name].AsText );
             }
         }
+
         private void OnNameChange( CswNbtNodeProp NodeProp )
         {
             if( string.IsNullOrEmpty( Name.Text ) )
