@@ -13,7 +13,7 @@ namespace ChemSW.Nbt.ObjClasses
 {
     public class CswNbtObjClassUser : CswNbtObjClass, ICswNbtUser
     {
-        public static string ChemSWAdminUsername { get { return CswAuthenticator.ChemSWAdminUsername; } }
+        public const string ChemSWAdminUsername = CswAuthenticator.ChemSWAdminUsername;
 
         public const string RolePropertyName = "Role";
         public const string AccountLockedPropertyName = "AccountLocked";
@@ -34,7 +34,7 @@ namespace ChemSW.Nbt.ObjClasses
         public const string LogLevelPropertyName = "Log Level";
         public static string ArchivedPropertyName { get { return "Archived"; } }
 
-        
+
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
 
@@ -162,7 +162,7 @@ namespace ChemSW.Nbt.ObjClasses
         }
 
         #region Inherited Events
-        
+
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
             if( _unableToWriteNodeInvalidUserName() )
