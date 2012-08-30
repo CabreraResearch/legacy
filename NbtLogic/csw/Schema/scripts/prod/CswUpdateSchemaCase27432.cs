@@ -14,7 +14,17 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataNodeType TimeUnitNodeType = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Unit (Time)" );
             if( null != TimeUnitNodeType )
             {
-                CswNbtObjClassUnitOfMeasure NodeAsUnitOfMeasure = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( TimeUnitNodeType.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode );
+                CswNbtObjClassUnitOfMeasure NodeAsUnitOfMeasure = null;
+                foreach( CswNbtObjClassUnitOfMeasure Unit in TimeUnitNodeType.getNodes( forceReInit: true, includeSystemNodes: false ) )
+                {
+                    if( Unit.Name.Text.ToLower().Replace( " ", "" ) == "months" )
+                    {
+                        NodeAsUnitOfMeasure = Unit;
+                        break;
+                    }
+                }
+
+                NodeAsUnitOfMeasure = NodeAsUnitOfMeasure ?? _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( TimeUnitNodeType.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode );
                 NodeAsUnitOfMeasure.Name.Text = "Months";
                 NodeAsUnitOfMeasure.Fractional.Checked = Tristate.False;
                 NodeAsUnitOfMeasure.postChanges( true );

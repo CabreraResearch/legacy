@@ -93,11 +93,11 @@ namespace ChemSW.Nbt.ServiceDrivers
                 CswNbtViewRelationship LocationRel = _SdLocations.getAllChildrenLocationRelationship( Ret, StartLocationId );
 
                 CswNbtMetaDataObjectClass ContainerOc = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.ContainerClass );
-                CswNbtMetaDataObjectClassProp LocationOcp = ContainerOc.getObjectClassProp( CswNbtObjClassContainer.LocationPropertyName );
-                CswNbtMetaDataObjectClassProp MaterialOcp = ContainerOc.getObjectClassProp( CswNbtObjClassContainer.MaterialPropertyName );
-                CswNbtMetaDataObjectClassProp DisposedOcp = ContainerOc.getObjectClassProp( CswNbtObjClassContainer.DisposedPropertyName );
-                CswNbtMetaDataObjectClassProp MissingOcp = ContainerOc.getObjectClassProp( CswNbtObjClassContainer.MissingPropertyName );
-                CswNbtMetaDataObjectClassProp QuantityOcp = ContainerOc.getObjectClassProp( CswNbtObjClassContainer.QuantityPropertyName );
+                CswNbtMetaDataObjectClassProp LocationOcp = ContainerOc.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Location );
+                CswNbtMetaDataObjectClassProp MaterialOcp = ContainerOc.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Material );
+                CswNbtMetaDataObjectClassProp DisposedOcp = ContainerOc.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Disposed );
+                CswNbtMetaDataObjectClassProp MissingOcp = ContainerOc.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Missing );
+                CswNbtMetaDataObjectClassProp QuantityOcp = ContainerOc.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Quantity );
 
                 CswNbtViewRelationship ContainerRel = Ret.AddViewRelationship( LocationRel, NbtViewPropOwnerType.Second, LocationOcp, false );
                 Ret.AddViewPropertyAndFilter( ContainerRel, MaterialOcp, InventoryLevel.Material.RelatedNodeId.PrimaryKey.ToString(), CswNbtSubField.SubFieldName.NodeID, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
@@ -247,34 +247,30 @@ namespace ChemSW.Nbt.ServiceDrivers
 
         public void changeLocationOfLocation( CswPrimaryKey PrevLocationId, CswPrimaryKey CurrentLocationId )
         {
-            if( null != PrevLocationId &&
-                null != CurrentLocationId )
-            {
-                Collection<CswNbtObjClassInventoryLevel> PrevLevels;
-                Collection<CswNbtObjClassInventoryLevel> CurrentLevels;
-                _getInventoryLevelCollections( out PrevLevels, out CurrentLevels, PrevLocationId, CurrentLocationId );
+            Collection<CswNbtObjClassInventoryLevel> PrevLevels;
+            Collection<CswNbtObjClassInventoryLevel> CurrentLevels;
+            _getInventoryLevelCollections( out PrevLevels, out CurrentLevels, PrevLocationId, CurrentLocationId );
 
-                Collection<CswNbtObjClassInventoryLevel> AppliesToLevels = new Collection<CswNbtObjClassInventoryLevel>();
-                foreach( CswNbtObjClassInventoryLevel Prev in PrevLevels )
+            Collection<CswNbtObjClassInventoryLevel> AppliesToLevels = new Collection<CswNbtObjClassInventoryLevel>();
+            foreach( CswNbtObjClassInventoryLevel Prev in PrevLevels )
+            {
+                if( false == CurrentLevels.Contains( Prev ) )
                 {
-                    if( false == CurrentLevels.Contains( Prev ) )
-                    {
-                        AppliesToLevels.Add( Prev );
-                    }
+                    AppliesToLevels.Add( Prev );
                 }
-                foreach( CswNbtObjClassInventoryLevel Current in CurrentLevels )
+            }
+            foreach( CswNbtObjClassInventoryLevel Current in CurrentLevels )
+            {
+                if( false == PrevLevels.Contains( Current ) && false == AppliesToLevels.Contains( Current ) )
                 {
-                    if( false == PrevLevels.Contains( Current ) && false == AppliesToLevels.Contains( Current ) )
-                    {
-                        AppliesToLevels.Add( Current );
-                    }
+                    AppliesToLevels.Add( Current );
                 }
-                foreach( CswNbtObjClassInventoryLevel LevelToUpdate in AppliesToLevels )
-                {
-                    CswNbtSdInventoryLevelMgr Mgr = new CswNbtSdInventoryLevelMgr( _CswNbtResources );
-                    LevelToUpdate.CurrentQuantity.Quantity = Mgr.getCurrentInventoryLevel( LevelToUpdate );
-                    LevelToUpdate.postChanges( true );
-                }
+            }
+            foreach( CswNbtObjClassInventoryLevel LevelToUpdate in AppliesToLevels )
+            {
+                CswNbtSdInventoryLevelMgr Mgr = new CswNbtSdInventoryLevelMgr( _CswNbtResources );
+                LevelToUpdate.CurrentQuantity.Quantity = Mgr.getCurrentInventoryLevel( LevelToUpdate );
+                LevelToUpdate.postChanges( true );
             }
         }
 
@@ -318,7 +314,7 @@ namespace ChemSW.Nbt.ServiceDrivers
         public bool addToCurrentQuantity( double Quantity, CswPrimaryKey UnitId, string Reason, CswPrimaryKey MaterialId = null, CswPrimaryKey LocationId = null )
         {
             bool Ret = false;
-            if( CswTools.IsPrimaryKey( MaterialId ) && 
+            if( CswTools.IsPrimaryKey( MaterialId ) &&
                 CswTools.IsPrimaryKey( LocationId ) )
             {
                 CswNbtView InventoryLevelView = _getParentLocationInventoryLevelView( LocationId, MaterialId );

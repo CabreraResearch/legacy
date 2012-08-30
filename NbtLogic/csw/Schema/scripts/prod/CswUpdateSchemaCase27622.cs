@@ -17,7 +17,7 @@ namespace ChemSW.Nbt.Schema
             foreach( CswNbtMetaDataNodeType MaterialNt in MaterialOc.getNodeTypes() )
             {
                 MaterialNt.setNameTemplateText(
-                    CswNbtMetaData.MakeTemplateEntry( CswNbtObjClassMaterial.PropertyName.Tradename ) + " " +
+                    CswNbtMetaData.MakeTemplateEntry( MaterialNt.getNodeTypePropByObjectClassProp( CswNbtObjClassMaterial.PropertyName.Tradename ).PropName ) + " " +
                     CswNbtMetaData.MakeTemplateEntry( CswNbtObjClassMaterial.PropertyName.Supplier ) + " " +
                     CswNbtMetaData.MakeTemplateEntry( CswNbtObjClassMaterial.PropertyName.PartNumber )
                     );

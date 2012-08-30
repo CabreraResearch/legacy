@@ -1,5 +1,5 @@
 /// <reference path="~/app/CswApp-vsdoc.js" />
-
+/// <reference path="~/vendor/extjs-4.1.0/ext-all-debug.js" />
 
 (function ($) {
     "use strict";
@@ -18,6 +18,7 @@
                         div: {},
                         value: '',
                         mode: 'button',
+                        useToolTip: true,
                         messageDiv: {},
                         state: '',
                         confirmmessage: '',
@@ -25,7 +26,8 @@
                         btnCell: {},
                         size: 'medium',
                         propId: '',
-                        onClickSuccess: null
+                        onClickSuccess: null,
+                        onClickAction: null
                     };
                     Csw.extend(cswPrivate, options);
                     cswPrivate.div = cswParent.div();
@@ -45,14 +47,14 @@
                     } else {
                         // Case 27263: prompt to save instead
                         if (Csw.clientChanges.manuallyCheckChanges()) {
-                            var performOnObjectClassButtonClick = function () {
+                            var performOnObjectClassButtonClick = function() {
                                 Csw.ajax.post({
                                     urlMethod: 'onObjectClassButtonClick',
                                     data: {
                                         NodeTypePropAttr: cswPrivate.propId,
                                         SelectedText: Csw.string(cswPublic.button.selectedOption, Csw.string(cswPrivate.value))
                                     },
-                                    success: function (data) {
+                                    success: function(data) {
                                         cswPublic.button.enable();
 
                                         var actionData = {
@@ -66,18 +68,33 @@
                                         };
 
                                         if (false === Csw.isNullOrEmpty(data.message)) {
-                                            cswPublic.messageDiv.text(data.message);
+                                            if (false === cswPrivate.useToolTip) {
+                                                cswPublic.messageDiv.text(data.message);
+                                            } else {
+                                                window.Ext.create('Ext.tip.ToolTip', {
+                                                    target: Csw.makeId(cswPrivate.ID, 'tbl'),
+                                                    html: data.message,
+                                                    autoShow: true,
+                                                    focusOnToFront: true,
+                                                    autoHide: false,
+                                                    closable: true,
+                                                    anchor: 'left',
+                                                    bodyStyle: {
+                                                        background: '#ffff00'
+                                                    }
+                                                });
+                                            }
                                         }
                                         var continueToPub = false === Csw.isFunction(cswPrivate.onClickSuccess) || Csw.tryExec(cswPrivate.onClickSuccess, data);
                                         if (Csw.bool(data.success) && continueToPub) {
                                             Csw.publish(Csw.enums.events.objectClassButtonClick, actionData);
                                         }
                                     }, // ajax success()
-                                    error: function () {
+                                    error: function() {
                                         cswPublic.button.enable();
                                     }
                                 }); // ajax.post()
-                            }
+                            };
 
                             if (false === Csw.isNullOrEmpty(cswPrivate.confirmmessage)) {
                                 $.CswDialog('GenericDialog', {
@@ -105,11 +122,12 @@
                 }; // onButtonClick()
 
                 (function _post() {
-                    cswPrivate.btnCell = cswPrivate.table.cell(1, 1);
+                    cswPrivate.btnCell = cswPrivate.table.cell(1, 1).div({ ID: Csw.makeSafeId(cswPrivate.ID, window.Ext.id()) });
+                    cswPrivate.buttonId = Csw.makeSafeId(cswPrivate.ID, window.Ext.id());
                     switch (cswPrivate.mode) {
                         case 'button':
                             cswPublic.button = cswPrivate.btnCell.buttonExt({
-                                ID: cswPrivate.ID,
+                                ID: cswPrivate.buttonId,
                                 size: cswPrivate.size,
                                 enabledText: cswPrivate.value,
                                 disabledText: cswPrivate.value,
@@ -119,7 +137,7 @@
                             break;
                         case 'menu':
                             cswPublic.button = cswPrivate.btnCell.menuButton({
-                                ID: Csw.makeId(cswPrivate.ID, 'menuBtn'),
+                                ID: cswPrivate.buttonId,
                                 selectedText: cswPrivate.selectedText,
                                 menuOptions: cswPrivate.menuOptions,
                                 size: cswPrivate.size,
@@ -130,11 +148,11 @@
                                 }
                             });
                             break;
-                        //case 'link':         
-                        //this is a fallthrough case         
+                        //case 'link':           
+                        //this is a fallthrough case           
                         default:
                             cswPublic.button = cswPrivate.btnCell.a({
-                                ID: cswPrivate.ID,
+                                ID: cswPrivate.buttonId,
                                 value: cswPrivate.value,
                                 onClick: cswPrivate.onButtonClick
                             });
@@ -146,10 +164,10 @@
                     }
 
                     cswPublic.messageDiv = cswPrivate.table.cell(1, 2).div({
-                        ID: Csw.makeId(cswPrivate.ID, 'msg', false),
+                        ID: Csw.makeId(cswPrivate.buttonId, 'msg'),
                         cssclass: 'buttonmessage'
                     });
-
+                    
                     if (cswPrivate.Required) {
                         cswPublic.button.addClass('required');
                     }

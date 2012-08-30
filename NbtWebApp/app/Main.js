@@ -186,7 +186,7 @@ window.initMain = window.initMain || function (undefined) {
             ret = true;
         }
         
-        if(Csw.bool(qs.debug) || 'Dev.html' === qs.pageName) {
+        if(Csw.bool(qs.debug) || 'dev.html' === Csw.string(qs.pageName).toLowerCase()) {
             Csw.clientSession.enableDebug();
             Csw.cookie.set(Csw.cookie.cookieNames.LogoutPath, 'Dev.html');
             Csw.setGlobalProp('homeUrl', 'Dev.html');
