@@ -75,14 +75,17 @@ namespace ChemSW.Nbt.Schema
                 if( null != documentsNTP )
                 {
                     CswNbtView docsView = _CswNbtSchemaModTrnsctn.restoreView( documentsNTP.ViewId );
-                    CswNbtViewRelationship parent = docsView.Root.ChildRelationships[0];
-                    CswNbtViewRelationship firstChild = parent.ChildRelationships[0];
-                    CswNbtMetaDataNodeType equipmentDocumentNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Equipment Document" );
-                    if( null != equipmentDocumentNT )
+                    if( null != docsView )
                     {
-                        CswNbtMetaDataNodeTypeProp linkNTP = equipmentDocumentNT.getNodeTypePropByObjectClassProp( linkOCP.ObjectClassPropId );
-                        CswNbtMetaDataNodeTypeProp fileNTP = equipmentDocumentNT.getNodeTypePropByObjectClassProp( fileOCP.ObjectClassPropId );
-                        _addPropertyRecursively( docsView, docsView.Root.ChildRelationships, documentOC, equipmentDocumentNT, fileNTP, linkNTP );
+                        CswNbtViewRelationship parent = docsView.Root.ChildRelationships[0];
+                        CswNbtViewRelationship firstChild = parent.ChildRelationships[0];
+                        CswNbtMetaDataNodeType equipmentDocumentNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Equipment Document" );
+                        if( null != equipmentDocumentNT )
+                        {
+                            CswNbtMetaDataNodeTypeProp linkNTP = equipmentDocumentNT.getNodeTypePropByObjectClassProp( linkOCP.ObjectClassPropId );
+                            CswNbtMetaDataNodeTypeProp fileNTP = equipmentDocumentNT.getNodeTypePropByObjectClassProp( fileOCP.ObjectClassPropId );
+                            _addPropertyRecursively( docsView, docsView.Root.ChildRelationships, documentOC, equipmentDocumentNT, fileNTP, linkNTP );
+                        }
                     }
                 }
             }
@@ -94,14 +97,17 @@ namespace ChemSW.Nbt.Schema
                 if( null != documentsNTP )
                 {
                     CswNbtView docsView = _CswNbtSchemaModTrnsctn.restoreView( documentsNTP.ViewId );
-                    CswNbtViewRelationship parent = docsView.Root.ChildRelationships[0];
-                    CswNbtViewRelationship firstChild = parent.ChildRelationships[0];
-                    CswNbtMetaDataNodeType containerDocumentNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Container Document" );
-                    if( null != containerDocumentNT )
+                    if( null != docsView )
                     {
-                        CswNbtMetaDataNodeTypeProp linkNTP = containerDocumentNT.getNodeTypePropByObjectClassProp( linkOCP.ObjectClassPropId );
-                        CswNbtMetaDataNodeTypeProp fileNTP = containerDocumentNT.getNodeTypePropByObjectClassProp( fileOCP.ObjectClassPropId );
-                        _addPropertyRecursively( docsView, docsView.Root.ChildRelationships, documentOC, containerDocumentNT, fileNTP, linkNTP );
+                        CswNbtViewRelationship parent = docsView.Root.ChildRelationships[0];
+                        CswNbtViewRelationship firstChild = parent.ChildRelationships[0];
+                        CswNbtMetaDataNodeType containerDocumentNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Container Document" );
+                        if( null != containerDocumentNT )
+                        {
+                            CswNbtMetaDataNodeTypeProp linkNTP = containerDocumentNT.getNodeTypePropByObjectClassProp( linkOCP.ObjectClassPropId );
+                            CswNbtMetaDataNodeTypeProp fileNTP = containerDocumentNT.getNodeTypePropByObjectClassProp( fileOCP.ObjectClassPropId );
+                            _addPropertyRecursively( docsView, docsView.Root.ChildRelationships, documentOC, containerDocumentNT, fileNTP, linkNTP );
+                        }
                     }
                 }
             }
