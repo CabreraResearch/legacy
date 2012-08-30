@@ -26,7 +26,7 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataObjectClass regulatoryListOC = _CswNbtSchemaModTrnsctn.createObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.RegulatoryListClass, "doc.png", true, true );
             CswNbtMetaDataObjectClassProp nameOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( regulatoryListOC )
             {
-                PropName = CswNbtObjClassRegulatoryList.NamePropertyName,
+                PropName = CswNbtObjClassRegulatoryList.PropertyName.Name,
                 FieldType = CswNbtMetaDataFieldType.NbtFieldType.Text,
                 IsFk = false,
                 IsRequired = true,
@@ -35,7 +35,7 @@ namespace ChemSW.Nbt.Schema
 
             CswNbtMetaDataObjectClassProp casNumbersOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( regulatoryListOC )
             {
-                PropName = CswNbtObjClassRegulatoryList.CASNumbersPropertyName,
+                PropName = CswNbtObjClassRegulatoryList.PropertyName.CASNumbers,
                 FieldType = CswNbtMetaDataFieldType.NbtFieldType.Memo,
                 IsFk = false,
                 IsRequired = true
@@ -44,8 +44,8 @@ namespace ChemSW.Nbt.Schema
 
             #region CREATE THE REGULATORY LIST NODETYPE
             CswNbtMetaDataNodeType regulatoryListNT = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( regulatoryListOC.ObjectClassId, "Regulatory List", "Materials" );
-            regulatoryListNT.setNameTemplateText( CswNbtMetaData.MakeTemplateEntry( CswNbtObjClassRegulatoryList.NamePropertyName ) ); //set display name
-            CswNbtMetaDataNodeTypeProp casNosNTP = regulatoryListNT.getNodeTypePropByObjectClassProp( CswNbtObjClassRegulatoryList.CASNumbersPropertyName );
+            regulatoryListNT.setNameTemplateText( CswNbtMetaData.MakeTemplateEntry( CswNbtObjClassRegulatoryList.PropertyName.Name ) ); //set display name
+            CswNbtMetaDataNodeTypeProp casNosNTP = regulatoryListNT.getNodeTypePropByObjectClassProp( CswNbtObjClassRegulatoryList.PropertyName.CASNumbers );
             casNosNTP.HelpText = "The CASNos property should be a comma delimited set of CASNos in this regulatory list. Example: \"CASNo1,CASNo2,CASNo3\"";
             #endregion
 

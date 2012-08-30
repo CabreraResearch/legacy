@@ -1,19 +1,18 @@
-using System;
 using ChemSW.Core;
 using ChemSW.Nbt.Batch;
 using ChemSW.Nbt.MetaData;
-using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.PropTypes;
-using ChemSW.Exceptions;
-using Newtonsoft.Json.Linq;
 
 
 namespace ChemSW.Nbt.ObjClasses
 {
     public class CswNbtObjClassRegulatoryList : CswNbtObjClass
     {
-        public const string CASNumbersPropertyName = "CAS Numbers";
-        public const string NamePropertyName = "Name";
+        public sealed class PropertyName
+        {
+            public const string CASNumbers = "CAS Numbers";
+            public const string Name = "Name";
+        }
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
 
@@ -43,7 +42,7 @@ namespace ChemSW.Nbt.ObjClasses
         }
 
         #region Inherited Events
-        
+
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
             if( CASNumbers.WasModified || Name.WasModified )
@@ -95,8 +94,8 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Object class specific properties
 
-        public CswNbtNodePropMemo CASNumbers { get { return _CswNbtNode.Properties[CASNumbersPropertyName]; } }
-        public CswNbtNodePropText Name { get { return _CswNbtNode.Properties[NamePropertyName]; } }
+        public CswNbtNodePropMemo CASNumbers { get { return _CswNbtNode.Properties[PropertyName.CASNumbers]; } }
+        public CswNbtNodePropText Name { get { return _CswNbtNode.Properties[PropertyName.Name]; } }
 
         #endregion
 
