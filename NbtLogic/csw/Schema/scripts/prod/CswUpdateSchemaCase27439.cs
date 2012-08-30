@@ -21,21 +21,19 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataObjectClassProp corporateEntityOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( vendorOC )
             {
                 PropName = "Corporate Entity",
-                FieldType = CswNbtMetaDataFieldType.NbtFieldType.Text,
-                IsRequired = false,
+                FieldType = CswNbtMetaDataFieldType.NbtFieldType.Text
             } );
 
             CswNbtMetaDataObjectClassProp vendorTypeOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( vendorOC )
             {
                 PropName = "Vendor Type",
                 FieldType = CswNbtMetaDataFieldType.NbtFieldType.List,
-                ListOptions = "Sales,Corporate,Technical,Manufacturing",
-                IsRequired = true
+                ListOptions = "Sales,Corporate,Technical,Manufacturing"
             } );
             _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( vendorTypeOCP, vendorTypeOCP.getFieldTypeRule().SubFields.Default.Name, "Sales" );
 
             /* Get the Vendor NT and hide the newly created properties */
-            CswNbtMetaDataNodeType vendorNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "vendor" );
+            CswNbtMetaDataNodeType vendorNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Vendor" );
             if( null != vendorNT )
             {
                 CswNbtMetaDataNodeTypeProp corporateEntityNTP = _CswNbtSchemaModTrnsctn.MetaData.getNodeTypePropByObjectClassProp( vendorNT.NodeTypeId, corporateEntityOCP.ObjectClassPropId );
