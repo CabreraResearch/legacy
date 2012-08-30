@@ -1,13 +1,16 @@
 using ChemSW.Nbt.MetaData;
-using Newtonsoft.Json.Linq;
 using ChemSW.Nbt.PropTypes;
 
 namespace ChemSW.Nbt.ObjClasses
 {
     public class CswNbtObjClassInventoryGroup : CswNbtObjClass
     {
-        public static string NamePropertyName { get { return "Name"; } }
-        
+        public sealed class PropertyName
+        {
+            public const string Name = "Name";
+        }
+
+
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
 
         public CswNbtObjClassInventoryGroup( CswNbtResources CswNbtResources, CswNbtNode Node )
@@ -35,7 +38,7 @@ namespace ChemSW.Nbt.ObjClasses
         }
 
         #region Inherited Events
-        
+
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
             _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
@@ -46,9 +49,9 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault.afterWriteNode();
         }//afterWriteNode()
 
-        public override void beforeDeleteNode(bool DeleteAllRequiredRelatedNodes = false)
+        public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false )
         {
-            _CswNbtObjClassDefault.beforeDeleteNode(DeleteAllRequiredRelatedNodes);
+            _CswNbtObjClassDefault.beforeDeleteNode( DeleteAllRequiredRelatedNodes );
 
         }//beforeDeleteNode()
 
@@ -69,9 +72,9 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override bool onButtonClick( NbtButtonData ButtonData )
         {
-            
-            
-            
+
+
+
             if( null != ButtonData && null != ButtonData.NodeTypeProp ) { /*Do Something*/ }
             return true;
         }
@@ -79,7 +82,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Object class specific properties
 
-        public CswNbtNodePropText Name { get { return _CswNbtNode.Properties[NamePropertyName].AsText; } }
+        public CswNbtNodePropText Name { get { return _CswNbtNode.Properties[PropertyName.Name].AsText; } }
 
         #endregion
 
