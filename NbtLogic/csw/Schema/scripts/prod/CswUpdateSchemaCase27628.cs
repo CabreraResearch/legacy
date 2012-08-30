@@ -54,16 +54,19 @@ namespace ChemSW.Nbt.Schema
                 if( null != documentsNTP )
                 {
                     CswNbtView docsView = _CswNbtSchemaModTrnsctn.restoreView( documentsNTP.ViewId );
-                    CswNbtViewRelationship parent = docsView.Root.ChildRelationships[0];
-                    CswNbtViewRelationship firstChild = parent.ChildRelationships[0];
-                    CswNbtMetaDataNodeType assemblyDocumentNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Assembly Document" );
-                    if( null != assemblyDocumentNT )
+                    if( null != docsView )
                     {
-                        CswNbtMetaDataNodeTypeProp linkNTP = assemblyDocumentNT.getNodeTypePropByObjectClassProp( linkOCP.ObjectClassPropId );
-                        CswNbtMetaDataNodeTypeProp fileNTP = assemblyDocumentNT.getNodeTypePropByObjectClassProp( fileOCP.ObjectClassPropId );
-                        docsView.AddViewProperty( firstChild, linkNTP );
-                        docsView.AddViewProperty( firstChild, fileNTP );
-                        docsView.save();
+                        CswNbtViewRelationship parent = docsView.Root.ChildRelationships[0];
+                        CswNbtViewRelationship firstChild = parent.ChildRelationships[0];
+                        CswNbtMetaDataNodeType assemblyDocumentNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Assembly Document" );
+                        if( null != assemblyDocumentNT )
+                        {
+                            CswNbtMetaDataNodeTypeProp linkNTP = assemblyDocumentNT.getNodeTypePropByObjectClassProp( linkOCP.ObjectClassPropId );
+                            CswNbtMetaDataNodeTypeProp fileNTP = assemblyDocumentNT.getNodeTypePropByObjectClassProp( fileOCP.ObjectClassPropId );
+                            docsView.AddViewProperty( firstChild, linkNTP );
+                            docsView.AddViewProperty( firstChild, fileNTP );
+                            docsView.save();
+                        }
                     }
                 }
             }
