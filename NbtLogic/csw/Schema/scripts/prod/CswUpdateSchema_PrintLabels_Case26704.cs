@@ -76,7 +76,7 @@ P1";
                     {
                         PrintLabel.LabelName.Text = "Default Barcode Label";
                     }
-                    catch( Exception Ex )
+                    catch( Exception )
                     {
                         CswNbtMetaDataNodeTypeProp LabelNameNtp = PrintLabelNt.getNodeTypeProp( "Label Name" );
                         if( null != LabelNameNtp )
