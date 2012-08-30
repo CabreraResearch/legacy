@@ -84,15 +84,8 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Object class specific properties
 
-        public CswNbtNodePropRelationship Parameter
-        {
-            get { return _CswNbtNode.Properties[PropertyName.Parameter].AsRelationship; }
-        }
-        public CswNbtNodePropRelationship Aliquot
-        {
-            get { return _CswNbtNode.Properties[PropertyName.Aliquot].AsRelationship; }
-        }
-
+        public CswNbtNodePropRelationship Parameter { get { return _CswNbtNode.Properties[PropertyName.Parameter]; } }
+        public CswNbtNodePropRelationship Aliquot { get { return _CswNbtNode.Properties[PropertyName.Aliquot]; } }
         #endregion
 
     }//CswNbtObjClassResult
