@@ -156,71 +156,18 @@ namespace ChemSW.Nbt.ObjClasses
         }
         #endregion
 
+        public CswNbtMetaDataNodeType TargetNodeType { get { return ( _CswNbtResources.MetaData.getNodeType( CswConvert.ToInt32( TargetType.SelectedNodeTypeIds[0] ) ) ); } }
+        public EventOption SelectedEvent { get { return ( (EventOption) Enum.Parse( typeof( EventOption ), Event.Value ) ); } }
+
         #region Object class specific properties
 
-        public CswNbtNodePropList Event
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[PropertyName.Event].AsList );
-            }
-        }
-        public EventOption SelectedEvent
-        {
-            get
-            {
-                return ( (EventOption) Enum.Parse( typeof( EventOption ), Event.Value ) );
-            }
-        }
-        public CswNbtNodePropList Property
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[PropertyName.Property].AsList );
-            }
-        }
-        public CswNbtNodePropNodeTypeSelect TargetType
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[PropertyName.TargetType].AsNodeTypeSelect );
-            }
-        }
-        public CswNbtMetaDataNodeType TargetNodeType
-        {
-            get
-            {
-                return ( _CswNbtResources.MetaData.getNodeType( CswConvert.ToInt32( TargetType.SelectedNodeTypeIds[0] ) ) );
-            }
-        }
-        public CswNbtNodePropText Value
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[PropertyName.Value].AsText );
-            }
-        }
-        public CswNbtNodePropUserSelect SubscribedUsers
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[PropertyName.SubscribedUsers].AsUserSelect );
-            }
-        }
-        public CswNbtNodePropText Subject
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[PropertyName.Subject].AsText );
-            }
-        }
-        public CswNbtNodePropMemo Message
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[PropertyName.Message].AsMemo );
-            }
-        }
+        public CswNbtNodePropList Event { get { return ( _CswNbtNode.Properties[PropertyName.Event] ); } }
+        public CswNbtNodePropList Property { get { return ( _CswNbtNode.Properties[PropertyName.Property] ); } }
+        public CswNbtNodePropNodeTypeSelect TargetType { get { return ( _CswNbtNode.Properties[PropertyName.TargetType] ); } }
+        public CswNbtNodePropText Value { get { return ( _CswNbtNode.Properties[PropertyName.Value] ); } }
+        public CswNbtNodePropUserSelect SubscribedUsers { get { return ( _CswNbtNode.Properties[PropertyName.SubscribedUsers] ); } }
+        public CswNbtNodePropText Subject { get { return ( _CswNbtNode.Properties[PropertyName.Subject] ); } }
+        public CswNbtNodePropMemo Message { get { return ( _CswNbtNode.Properties[PropertyName.Message] ); } }
 
         #endregion
 
