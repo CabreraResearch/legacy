@@ -47,10 +47,6 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
-            if( Assembly.WasModified )
-                //_CswNbtNode.PendingUpdate = true;
-                SynchEquipmentToAssembly();
-
             _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
         }//beforeWriteNode()
 
@@ -83,10 +79,7 @@ namespace ChemSW.Nbt.ObjClasses
                     this.Parts.YValues = PartsString;
                 }
             }
-
-            // case 21809
-            SynchEquipmentToAssembly();
-
+            SyncEquipmentToAssembly();
             _CswNbtObjClassDefault.afterPopulateProps();
         }//afterPopulateProps()
 
@@ -107,9 +100,6 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override bool onButtonClick( NbtButtonData ButtonData )
         {
-
-
-
             if( null != ButtonData && null != ButtonData.NodeTypeProp ) { /*Do Something*/ }
             return true;
         }
@@ -119,39 +109,15 @@ namespace ChemSW.Nbt.ObjClasses
         #region Object class specific properties
 
 
-        public CswNbtNodePropRelationship Assembly
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[PropertyName.Assembly] );
-            }
-        }
-        public CswNbtNodePropRelationship Type
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[PropertyName.Type] );
-            }
-        }
-        public CswNbtNodePropLogicalSet Parts
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[PropertyName.Parts] );
-            }
-        }
-        public CswNbtNodePropList Status
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[PropertyName.Status] );
-            }
-        }
+        public CswNbtNodePropRelationship Assembly { get { return ( _CswNbtNode.Properties[PropertyName.Assembly] ); } }
+        public CswNbtNodePropRelationship Type { get { return ( _CswNbtNode.Properties[PropertyName.Type] ); } }
+        public CswNbtNodePropLogicalSet Parts { get { return ( _CswNbtNode.Properties[PropertyName.Parts] ); } }
+        public CswNbtNodePropList Status { get { return ( _CswNbtNode.Properties[PropertyName.Status] ); } }
 
         #endregion
 
 
-        public void SynchEquipmentToAssembly()
+        public void SyncEquipmentToAssembly()
         {
             // for all equipment properties that match properties on the assembly
             bool FoundAssemblyNode = false;

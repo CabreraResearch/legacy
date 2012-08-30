@@ -15,11 +15,6 @@ namespace ChemSW.Nbt.ObjClasses
     {
         public sealed class PropertyName
         {
-            ///// <summary>
-            ///// Inspection Route
-            ///// </summary>
-            //public static string RoutePropertyName = "Route"; } }
-
             /// <summary>
             /// Target == Owner == Parent
             /// </summary>
@@ -237,6 +232,15 @@ namespace ChemSW.Nbt.ObjClasses
             return ret;
         }
 
+        private void _setDefaultValues()
+        {
+            if( string.IsNullOrEmpty( Version.Text ) )
+            {
+                // case 8179 - set value of Version property
+                CswNbtMetaDataNodeType ThisNodeType = _CswNbtResources.MetaData.getNodeType( this.NodeTypeId );
+                Version.Text = ThisNodeType.NodeTypeName + " v" + ThisNodeType.VersionNo.ToString();
+            }
+        }
 
         #region Inherited Events
 
@@ -245,6 +249,12 @@ namespace ChemSW.Nbt.ObjClasses
         /// </summary>
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
+            _setDefaultValues();
+            if( false == _genFutureNodesHasRun ) //redundant--for readability
+            {
+                //this is written in such a way that it should only execute once per instance of this node
+                _genFutureNodes();
+            }
             _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
         }//beforeWriteNode()
 
@@ -284,7 +294,6 @@ namespace ChemSW.Nbt.ObjClasses
         {
             Generator.SetOnPropChange( OnGeneratorChange );
             IsFuture.SetOnPropChange( OnIsFutureChange );
-            Version.SetOnPropChange( OnVersionPropChange );
             CswNbtPropEnmrtrFiltered QuestionsFlt = this.Node.Properties[(CswNbtMetaDataFieldType.NbtFieldType) CswNbtMetaDataFieldType.NbtFieldType.Question];
             QuestionsFlt.Reset();
             bool AllAnswered = true;
@@ -524,17 +533,6 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
-        ///// <summary>
-        ///// Inspection route
-        ///// </summary>
-        //public CswNbtNodePropRelationship Route
-        //{
-        //    get
-        //    {
-        //        return ( _CswNbtNode.Properties[RoutePropertyName].AsRelationship );
-        //    }
-        //}
-
         /// <summary>
         /// Inspection target == owner == parent. 
         /// In FE, target == Inspection Target
@@ -546,17 +544,6 @@ namespace ChemSW.Nbt.ObjClasses
                 return ( _CswNbtNode.Properties[PropertyName.Target] );
             }
         }
-
-        ///// <summary>
-        ///// Order on route
-        ///// </summary>
-        //public CswNbtNodePropNumber RouteOrder
-        //{
-        //    get
-        //    {
-        //        return ( _CswNbtNode.Properties[RouteOrderPropertyName].AsNumber );
-        //    }
-        //}
 
         /// <summary>
         /// Inspection name
@@ -603,7 +590,11 @@ namespace ChemSW.Nbt.ObjClasses
         }
         private void OnIsFutureChange( CswNbtNodeProp NodeProp )
         {
-            _genFutureNodes();
+            if( false == _genFutureNodesHasRun ) //redundant--for readability
+            {
+                //this is written in such a way that it should only execute once per instance of this node
+                _genFutureNodes();
+            }
         }
         public CswNbtNodePropRelationship Generator
         {
@@ -614,7 +605,11 @@ namespace ChemSW.Nbt.ObjClasses
         }
         private void OnGeneratorChange( CswNbtNodeProp NodeProp )
         {
-            _genFutureNodes();
+            if( false == _genFutureNodesHasRun ) //redundant--for readability
+            {
+                //this is written in such a way that it should only execute once per instance of this node
+                _genFutureNodes();
+            }
         }
         /// <summary>
         /// In this context owner == parent
@@ -702,15 +697,7 @@ namespace ChemSW.Nbt.ObjClasses
                 return ( _CswNbtNode.Properties[PropertyName.Version] );
             }
         }
-        private void OnVersionPropChange( CswNbtNodeProp NodeProp )
-        {
-            if( string.IsNullOrEmpty( Version.Text ) )
-            {
-                // case 8179 - set value of Version property
-                CswNbtMetaDataNodeType ThisNodeType = _CswNbtResources.MetaData.getNodeType( this.NodeTypeId );
-                Version.Text = ThisNodeType.NodeTypeName + " v" + ThisNodeType.VersionNo.ToString();
-            }
-        }
+
         /// <summary>
         /// Date the inspection switched to action required or completed...
         /// </summary>

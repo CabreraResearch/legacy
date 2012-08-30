@@ -191,9 +191,20 @@ namespace ChemSW.Nbt.ObjClasses
             ItemInstance.Number.setReadOnly( value: IsReadOnly, SaveToDb: true );
         }
 
+        private void _setDefaultValues()
+        {
+            if( false == CswTools.IsPrimaryKey( Request.RelatedNodeId ) )
+            {
+                CswNbtActSubmitRequest RequestAct = new CswNbtActSubmitRequest( _CswNbtResources, CreateDefaultRequestNode: true );
+                Request.RelatedNodeId = RequestAct.CurrentRequestNode().NodeId;
+                Request.setReadOnly( value: true, SaveToDb: true );
+                Request.setHidden( value: true, SaveToDb: false );
+            }
+        }
+
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
-            _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
+            _setDefaultValues();
 
             /* Container-specific logic */
             if( ( Type.Value == Types.Dispense ||
@@ -223,7 +234,7 @@ namespace ChemSW.Nbt.ObjClasses
                 }
             }
 
-
+            _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
         }//beforeWriteNode()
 
         public override void afterWriteNode()
@@ -264,7 +275,6 @@ namespace ChemSW.Nbt.ObjClasses
         {
             Quantity.SetOnPropChange( OnQuantityPropChange );
             TotalDispensed.SetOnPropChange( OnTotalDispensedPropChange );
-            Request.SetOnPropChange( OnRequestPropChange );
             RequestBy.SetOnPropChange( OnRequestByPropChange );
             Type.SetOnPropChange( OnTypePropChange );
             Material.SetOnPropChange( OnMaterialPropChange );
@@ -446,16 +456,6 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropRelationship Request
         {
             get { return _CswNbtNode.Properties[PropertyName.Request]; }
-        }
-        private void OnRequestPropChange( CswNbtNodeProp Prop )
-        {
-            if( false == CswTools.IsPrimaryKey( Request.RelatedNodeId ) )
-            {
-                CswNbtActSubmitRequest RequestAct = new CswNbtActSubmitRequest( _CswNbtResources, CreateDefaultRequestNode: true );
-                Request.RelatedNodeId = RequestAct.CurrentRequestNode().NodeId;
-                Request.setReadOnly( value: true, SaveToDb: true );
-                Request.setHidden( value: true, SaveToDb: false );
-            }
         }
 
         public CswNbtNodePropList Type

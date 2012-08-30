@@ -39,12 +39,19 @@ namespace ChemSW.Nbt.ObjClasses
             get { return _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.RequestClass ); }
         }
 
+        private void _setDefaultValues()
+        {
+            if( false == CswTools.IsPrimaryKey( Requestor.RelatedNodeId ) )
+            {
+                Requestor.RelatedNodeId = _CswNbtResources.CurrentNbtUser.UserId;
+            }
+        }
+
         #region Inherited Events
 
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
-            _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
-
+            _setDefaultValues();
             if( SubmittedDate.WasModified && DateTime.MinValue != SubmittedDate.DateTimeValue )
             {
                 ICswNbtTree Tree = _getRelatedRequestItemsTree( FilterByPending: true );
@@ -61,6 +68,7 @@ namespace ChemSW.Nbt.ObjClasses
                     }
                 }
             }
+            _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
         }//beforeWriteNode()
 
         public override void afterWriteNode()
@@ -81,7 +89,6 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void afterPopulateProps()
         {
-            Requestor.SetOnPropChange( OnRequestorChange );
             _CswNbtObjClassDefault.afterPopulateProps();
         }//afterPopulateProps()
 
@@ -161,13 +168,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get { return _CswNbtNode.Properties[PropertyName.Requestor]; }
         }
-        private void OnRequestorChange( CswNbtNodeProp NodeProp )
-        {
-            if( false == CswTools.IsPrimaryKey( Requestor.RelatedNodeId ) )
-            {
-                Requestor.RelatedNodeId = _CswNbtResources.CurrentNbtUser.UserId;
-            }
-        }
+
         public CswNbtNodePropText Name
         {
             get { return _CswNbtNode.Properties[PropertyName.Name]; }

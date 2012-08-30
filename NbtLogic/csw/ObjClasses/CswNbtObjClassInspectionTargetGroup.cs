@@ -37,52 +37,7 @@ namespace ChemSW.Nbt.ObjClasses
             return ret;
         }
 
-        #region Inherited Events
-
-        public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
-        {
-            _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
-        }//beforeWriteNode()
-
-        public override void afterWriteNode()
-        {
-            _CswNbtObjClassDefault.afterWriteNode();
-        }//afterWriteNode()
-
-        public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false )
-        {
-            _CswNbtObjClassDefault.beforeDeleteNode( DeleteAllRequiredRelatedNodes );
-
-        }//beforeDeleteNode()
-
-        public override void afterDeleteNode()
-        {
-            _CswNbtObjClassDefault.afterDeleteNode();
-        }//afterDeleteNode()        
-
-        public override void afterPopulateProps()
-        {
-            Name.SetOnPropChange( OnNameChange );
-            _CswNbtObjClassDefault.afterPopulateProps();
-        }//afterPopulateProps()
-
-        public override void addDefaultViewFilters( CswNbtViewRelationship ParentRelationship )
-        {
-            _CswNbtObjClassDefault.addDefaultViewFilters( ParentRelationship );
-        }
-
-        public override bool onButtonClick( NbtButtonData ButtonData )
-        {
-            if( null != ButtonData && null != ButtonData.NodeTypeProp ) { /*Do Something*/ }
-            return true;
-        }
-        #endregion
-
-        #region Object class specific properties
-
-        public CswNbtNodePropText Name { get { return ( _CswNbtNode.Properties[PropertyName.Name] ); } }
-
-        private void OnNameChange( CswNbtNodeProp NodeProp )
+        private void _setDefaultValues()
         {
             if( string.IsNullOrEmpty( Name.Text ) )
             {
@@ -116,6 +71,52 @@ namespace ChemSW.Nbt.ObjClasses
                 }
             }
         }
+
+        #region Inherited Events
+
+        public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
+        {
+            _setDefaultValues();
+            _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
+        }//beforeWriteNode()
+
+        public override void afterWriteNode()
+        {
+            _CswNbtObjClassDefault.afterWriteNode();
+        }//afterWriteNode()
+
+        public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false )
+        {
+            _CswNbtObjClassDefault.beforeDeleteNode( DeleteAllRequiredRelatedNodes );
+
+        }//beforeDeleteNode()
+
+        public override void afterDeleteNode()
+        {
+            _CswNbtObjClassDefault.afterDeleteNode();
+        }//afterDeleteNode()        
+
+        public override void afterPopulateProps()
+        {
+            _CswNbtObjClassDefault.afterPopulateProps();
+        }//afterPopulateProps()
+
+        public override void addDefaultViewFilters( CswNbtViewRelationship ParentRelationship )
+        {
+            _CswNbtObjClassDefault.addDefaultViewFilters( ParentRelationship );
+        }
+
+        public override bool onButtonClick( NbtButtonData ButtonData )
+        {
+            if( null != ButtonData && null != ButtonData.NodeTypeProp ) { /*Do Something*/ }
+            return true;
+        }
+        #endregion
+
+        #region Object class specific properties
+
+        public CswNbtNodePropText Name { get { return ( _CswNbtNode.Properties[PropertyName.Name] ); } }
+
         #endregion
 
     }//CswNbtObjClassLocation

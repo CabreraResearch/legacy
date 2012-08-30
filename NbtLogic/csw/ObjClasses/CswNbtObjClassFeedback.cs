@@ -53,10 +53,53 @@ namespace ChemSW.Nbt.ObjClasses
             return ret;
         }
 
+        private void _setDefaultValues()
+        {
+            if( false == CswTools.IsPrimaryKey( Author.RelatedNodeId ) )
+            {
+                //Grab the name of the person submitting feedback and the current time
+                this.Author.RelatedNodeId = _CswNbtResources.CurrentNbtUser.UserId;
+                this.DateSubmitted.DateTimeValue = System.DateTime.Now;
+
+                //if we have an action this is all we want/need/care about
+                if( _CswNbtResources.CurrentNbtUser.Cookies.ContainsKey( "csw_currentactionname" ) && false == String.IsNullOrEmpty( _CswNbtResources.CurrentNbtUser.Cookies["csw_currentactionname"] ) )
+                {
+                    Action.Text = _CswNbtResources.CurrentNbtUser.Cookies["csw_currentactionname"];
+                }
+                else //if we DONT have an action, we want the info required to load a view
+                {
+                    if( _CswNbtResources.CurrentNbtUser.Cookies.ContainsKey( "csw_currentviewid" ) && false == String.IsNullOrEmpty( _CswNbtResources.CurrentNbtUser.Cookies["csw_currentviewid"] ) )
+                    {
+                        CswNbtViewId CurrentViewId = new CswNbtViewId( _CswNbtResources.CurrentNbtUser.Cookies["csw_currentviewid"] );
+                        //View.SelectedViewIds = new Core.CswCommaDelimitedString() { CurrentViewId.get().ToString() };
+
+                        CswNbtView cookieView = _getView( _CswNbtResources.CurrentNbtUser.Cookies["csw_currentviewid"] ); //this view doesn't exist in the the DB, which is why we save it below
+
+                        CswNbtView view = _CswNbtResources.ViewSelect.restoreView( View.ViewId ); //WARNING!!!! calling View.ViewId creates a ViewId if there isn't one!
+                        view.LoadXml( cookieView.ToXml() );
+                        view.ViewId = View.ViewId; //correct view.ViewId because of above problem.
+                        view.ViewName = cookieView.ViewName; //same as above, but name
+                        view.Visibility = NbtViewVisibility.Hidden; // see case 26799
+                        view.save();
+                    }
+                    if( _CswNbtResources.CurrentNbtUser.Cookies.ContainsKey( "csw_currentnodeid" ) )
+                    {
+                        SelectedNodeId.Text = _CswNbtResources.CurrentNbtUser.Cookies["csw_currentnodeid"];
+                    }
+
+                    if( _CswNbtResources.CurrentNbtUser.Cookies.ContainsKey( "csw_currentviewmode" ) )
+                    {
+                        CurrentViewMode.Text = _CswNbtResources.CurrentNbtUser.Cookies["csw_currentviewmode"];
+                    }
+                }
+            }
+        }
+
         #region Inherited Events
 
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
+            _setDefaultValues();
             _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
         }//beforeWriteNode()
 
@@ -82,7 +125,6 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 LoadUserContext.setHidden( value: true, SaveToDb: false );
             }
-            Author.SetOnPropChange( OnAuthorPropChange );
             _CswNbtObjClassDefault.afterPopulateProps();
         }//afterPopulateProps()
 
@@ -156,47 +198,7 @@ namespace ChemSW.Nbt.ObjClasses
                 return ( _CswNbtNode.Properties[PropertyName.Author] );
             }
         }
-        private void OnAuthorPropChange( CswNbtNodeProp NodeProp )
-        {
-            if( false == CswTools.IsPrimaryKey( Author.RelatedNodeId ) )
-            {
-                //Grab the name of the person submitting feedback and the current time
-                this.Author.RelatedNodeId = _CswNbtResources.CurrentNbtUser.UserId;
-                this.DateSubmitted.DateTimeValue = System.DateTime.Now;
 
-                //if we have an action this is all we want/need/care about
-                if( _CswNbtResources.CurrentNbtUser.Cookies.ContainsKey( "csw_currentactionname" ) && false == String.IsNullOrEmpty( _CswNbtResources.CurrentNbtUser.Cookies["csw_currentactionname"] ) )
-                {
-                    Action.Text = _CswNbtResources.CurrentNbtUser.Cookies["csw_currentactionname"];
-                }
-                else //if we DONT have an action, we want the info required to load a view
-                {
-                    if( _CswNbtResources.CurrentNbtUser.Cookies.ContainsKey( "csw_currentviewid" ) && false == String.IsNullOrEmpty( _CswNbtResources.CurrentNbtUser.Cookies["csw_currentviewid"] ) )
-                    {
-                        CswNbtViewId CurrentViewId = new CswNbtViewId( _CswNbtResources.CurrentNbtUser.Cookies["csw_currentviewid"] );
-                        //View.SelectedViewIds = new Core.CswCommaDelimitedString() { CurrentViewId.get().ToString() };
-
-                        CswNbtView cookieView = _getView( _CswNbtResources.CurrentNbtUser.Cookies["csw_currentviewid"] ); //this view doesn't exist in the the DB, which is why we save it below
-
-                        CswNbtView view = _CswNbtResources.ViewSelect.restoreView( View.ViewId ); //WARNING!!!! calling View.ViewId creates a ViewId if there isn't one!
-                        view.LoadXml( cookieView.ToXml() );
-                        view.ViewId = View.ViewId; //correct view.ViewId because of above problem.
-                        view.ViewName = cookieView.ViewName; //same as above, but name
-                        view.Visibility = NbtViewVisibility.Hidden; // see case 26799
-                        view.save();
-                    }
-                    if( _CswNbtResources.CurrentNbtUser.Cookies.ContainsKey( "csw_currentnodeid" ) )
-                    {
-                        SelectedNodeId.Text = _CswNbtResources.CurrentNbtUser.Cookies["csw_currentnodeid"];
-                    }
-
-                    if( _CswNbtResources.CurrentNbtUser.Cookies.ContainsKey( "csw_currentviewmode" ) )
-                    {
-                        CurrentViewMode.Text = _CswNbtResources.CurrentNbtUser.Cookies["csw_currentviewmode"];
-                    }
-                }
-            }
-        }
         public CswNbtNodePropDateTime DateSubmitted
         {
             get
