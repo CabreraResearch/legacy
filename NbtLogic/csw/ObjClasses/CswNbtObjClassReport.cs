@@ -146,39 +146,10 @@ namespace ChemSW.Nbt.ObjClasses
 
         }//getUserContextSql
 
-        public CswNbtNodePropButton Run
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[PropertyName.BtnRun].AsButton );
-            }
-        }
-
-        public CswNbtNodePropBlob RPTFile
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[PropertyName.RPTFile].AsBlob );
-            }
-        }
-
-        public CswNbtNodePropText ReportName
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[PropertyName.ReportName].AsText );
-            }
-        }
-
-        public CswNbtNodePropText Category
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[PropertyName.Category].AsText );
-            }
-        }
-
-
+        public CswNbtNodePropButton Run { get { return ( _CswNbtNode.Properties[PropertyName.BtnRun] ); } }
+        public CswNbtNodePropBlob RPTFile { get { return ( _CswNbtNode.Properties[PropertyName.RPTFile] ); } }
+        public CswNbtNodePropText ReportName { get { return ( _CswNbtNode.Properties[PropertyName.ReportName] ); } }
+        public CswNbtNodePropText Category { get { return ( _CswNbtNode.Properties[PropertyName.Category] ); } }
 
         //public CswNbtNodePropViewReference View
         //{
