@@ -7,13 +7,17 @@ namespace ChemSW.Nbt.ObjClasses
 {
     public class CswNbtObjClassNotification : CswNbtObjClass
     {
-        public static string EventPropertyName { get { return "Event"; } }
-        public static string TargetTypePropertyName { get { return "Target Type"; } }
-        public static string PropertyPropertyName { get { return "Property"; } }
-        public static string ValuePropertyName { get { return "Value"; } }
-        public static string SubscribedUsersPropertyName { get { return "Subscribed Users"; } }
-        public static string SubjectPropertyName { get { return "Subject"; } }
-        public static string MessagePropertyName { get { return "Message"; } }
+        public sealed class PropertyName
+        {
+            public const string Event = "Event";
+            public const string TargetType = "Target Type";
+            public const string Property = "Property";
+            public const string Value = "Value";
+            public const string SubscribedUsers = "Subscribed Users";
+            public const string Subject = "Subject";
+            public const string Message = "Message";
+        }
+
 
         public enum EventOption
         {
@@ -22,8 +26,8 @@ namespace ChemSW.Nbt.ObjClasses
             Delete
         }
 
-        public static string MessageNodeNameReplacement = "[Name]";
-        public static string MessagePropertyValueReplacement = "[NewValue]";
+        public const string MessageNodeNameReplacement = "[Name]";
+        public const string MessagePropertyValueReplacement = "[NewValue]";
 
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
@@ -53,7 +57,7 @@ namespace ChemSW.Nbt.ObjClasses
         }
 
         #region Inherited Events
-        
+
         private void _setDefaultMessage()
         {
             if( null != TargetNodeType )
@@ -77,7 +81,7 @@ namespace ChemSW.Nbt.ObjClasses
                 }
             }
         }
-        
+
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
             // If TargetType changes or Event is set to Create or Delete, 
@@ -158,7 +162,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get
             {
-                return ( _CswNbtNode.Properties[EventPropertyName].AsList );
+                return ( _CswNbtNode.Properties[PropertyName.Event].AsList );
             }
         }
         public EventOption SelectedEvent
@@ -172,14 +176,14 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get
             {
-                return ( _CswNbtNode.Properties[PropertyPropertyName].AsList );
+                return ( _CswNbtNode.Properties[PropertyName.Property].AsList );
             }
         }
         public CswNbtNodePropNodeTypeSelect TargetType
         {
             get
             {
-                return ( _CswNbtNode.Properties[TargetTypePropertyName].AsNodeTypeSelect );
+                return ( _CswNbtNode.Properties[PropertyName.TargetType].AsNodeTypeSelect );
             }
         }
         public CswNbtMetaDataNodeType TargetNodeType
@@ -193,28 +197,28 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get
             {
-                return ( _CswNbtNode.Properties[ValuePropertyName].AsText );
+                return ( _CswNbtNode.Properties[PropertyName.Value].AsText );
             }
         }
         public CswNbtNodePropUserSelect SubscribedUsers
         {
             get
             {
-                return ( _CswNbtNode.Properties[SubscribedUsersPropertyName].AsUserSelect );
+                return ( _CswNbtNode.Properties[PropertyName.SubscribedUsers].AsUserSelect );
             }
         }
         public CswNbtNodePropText Subject
         {
             get
             {
-                return ( _CswNbtNode.Properties[SubjectPropertyName].AsText );
+                return ( _CswNbtNode.Properties[PropertyName.Subject].AsText );
             }
         }
         public CswNbtNodePropMemo Message
         {
             get
             {
-                return ( _CswNbtNode.Properties[MessagePropertyName].AsMemo );
+                return ( _CswNbtNode.Properties[PropertyName.Message].AsMemo );
             }
         }
 
