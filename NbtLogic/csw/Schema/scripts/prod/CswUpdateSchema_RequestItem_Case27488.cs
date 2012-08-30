@@ -18,7 +18,7 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataObjectClass RequestItemOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.RequestItemClass );
             CswNbtMetaDataObjectClass SizeOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.SizeClass );
             CswNbtMetaDataObjectClassProp RequestItemMaterialOCP = RequestItemOC.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Material );
-            CswNbtMetaDataObjectClassProp SizeMaterialOCP = SizeOC.getObjectClassProp( CswNbtObjClassSize.MaterialPropertyName );
+            CswNbtMetaDataObjectClassProp SizeMaterialOCP = SizeOC.getObjectClassProp( CswNbtObjClassSize.PropertyName.Material );
 
             foreach( CswNbtMetaDataNodeType RequestItemNT in RequestItemOC.getNodeTypes() )
             {
@@ -34,7 +34,7 @@ namespace ChemSW.Nbt.Schema
                 //Case 27438 
                 CswNbtMetaDataObjectClass SizeOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.SizeClass );
                 CswNbtMetaDataNodeType SizeNt = SizeOc.FirstNodeType;
-                CswNbtMetaDataNodeTypeProp DispensableNtp = SizeNt.getNodeTypePropByObjectClassProp( CswNbtObjClassSize.DispensablePropertyName );
+                CswNbtMetaDataNodeTypeProp DispensableNtp = SizeNt.getNodeTypePropByObjectClassProp( CswNbtObjClassSize.PropertyName.Dispensable );
                 SizeView.AddViewPropertyAndFilter(
                         ParentViewRelationship: SizeViewRel,
                         MetaDataProp: DispensableNtp,

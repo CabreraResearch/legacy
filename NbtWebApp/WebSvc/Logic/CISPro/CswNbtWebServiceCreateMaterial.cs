@@ -45,7 +45,7 @@ namespace ChemSW.Nbt.WebServices
             {
                 Ret = MaterialNode.getViewOfNode();
                 CswNbtMetaDataObjectClass SizeOc = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.SizeClass );
-                CswNbtMetaDataObjectClassProp MaterialOcp = SizeOc.getObjectClassProp( CswNbtObjClassSize.MaterialPropertyName );
+                CswNbtMetaDataObjectClassProp MaterialOcp = SizeOc.getObjectClassProp( CswNbtObjClassSize.PropertyName.Material );
                 Ret.AddViewRelationship( Ret.Root.ChildRelationships[0], NbtViewPropOwnerType.Second, MaterialOcp, false );
                 Ret.ViewName = "New Material: " + MaterialNode.NodeName;
             }
@@ -78,7 +78,7 @@ namespace ChemSW.Nbt.WebServices
             Ret.AddViewPropertyAndFilter( MaterialRel, PartNoNtp, PartNo );
 
             CswNbtMetaDataObjectClass SizeOc = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.SizeClass );
-            CswNbtMetaDataObjectClassProp MaterialOcp = SizeOc.getObjectClassProp( CswNbtObjClassSize.MaterialPropertyName );
+            CswNbtMetaDataObjectClassProp MaterialOcp = SizeOc.getObjectClassProp( CswNbtObjClassSize.PropertyName.Material );
             Ret.AddViewRelationship( MaterialRel, NbtViewPropOwnerType.Second, MaterialOcp, false );
 
             Ret.ViewName = "New Material: " + Tradename;
@@ -290,13 +290,13 @@ namespace ChemSW.Nbt.WebServices
             SizesView.ViewMode = NbtViewRenderingMode.Grid;
             CswNbtMetaDataObjectClass SizeOc = CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.SizeClass );
 
-            CswNbtMetaDataObjectClassProp SizeMaterialOcp = SizeOc.getObjectClassProp( CswNbtObjClassSize.MaterialPropertyName );
+            CswNbtMetaDataObjectClassProp SizeMaterialOcp = SizeOc.getObjectClassProp( CswNbtObjClassSize.PropertyName.Material );
             CswNbtViewRelationship SizeRel = SizesView.AddViewRelationship( SizeOc, false );
 
             SizesView.AddViewPropertyAndFilter( SizeRel, SizeMaterialOcp, MaterialId.PrimaryKey.ToString(), CswNbtSubField.SubFieldName.NodeID );
-            SizesView.AddViewProperty( SizeRel, SizeOc.getObjectClassProp( CswNbtObjClassSize.InitialQuantityPropertyName ) );
-            SizesView.AddViewProperty( SizeRel, SizeOc.getObjectClassProp( CswNbtObjClassSize.DispensablePropertyName ) );
-            SizesView.AddViewProperty( SizeRel, SizeOc.getObjectClassProp( CswNbtObjClassSize.QuantityEditablePropertyName ) );
+            SizesView.AddViewProperty( SizeRel, SizeOc.getObjectClassProp( CswNbtObjClassSize.PropertyName.InitialQuantity ) );
+            SizesView.AddViewProperty( SizeRel, SizeOc.getObjectClassProp( CswNbtObjClassSize.PropertyName.Dispensable ) );
+            SizesView.AddViewProperty( SizeRel, SizeOc.getObjectClassProp( CswNbtObjClassSize.PropertyName.QuantityEditable ) );
 
             CswNbtWebServiceGrid wsG = new CswNbtWebServiceGrid( CswNbtResources, SizesView, false );
             Ret["rows"] = wsG.getThinGridRows( Int32.MinValue, true );
