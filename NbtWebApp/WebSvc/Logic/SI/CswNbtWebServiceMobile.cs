@@ -223,9 +223,9 @@ namespace ChemSW.Nbt.WebServices
                     }
                 case CswNbtMetaDataObjectClass.NbtObjectClass.InspectionTargetClass:
                     {
-                        NodeProps["location"] = Node.Properties[CswNbtObjClassInspectionTarget.LocationPropertyName].Gestalt;
-                        NodeProps["description"] = Node.Properties[CswNbtObjClassInspectionTarget.DescriptionPropertyName].Gestalt;
-                        NodeProps["status"] = Node.Properties[CswNbtObjClassInspectionTarget.StatusPropertyName].Gestalt;
+                        NodeProps["location"] = Node.Properties[CswNbtObjClassInspectionTarget.PropertyName.Location].Gestalt;
+                        NodeProps["description"] = Node.Properties[CswNbtObjClassInspectionTarget.PropertyName.Description].Gestalt;
+                        NodeProps["status"] = Node.Properties[CswNbtObjClassInspectionTarget.PropertyName.Status].Gestalt;
                         //NodeProps["lastinspectiondate"] = Node.Properties[CswNbtObjClassInspectionTarget.LastInspectionDatePropertyName].Gestalt;
                         break;
                     }

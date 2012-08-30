@@ -1,21 +1,25 @@
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropertySets;
 using ChemSW.Nbt.PropTypes;
-using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.ObjClasses
 {
     public class CswNbtObjClassInspectionTarget : CswNbtObjClass, ICswNbtPropertySetInspectionParent
     {
-        //public static string LastInspectionDatePropertyName { get { return "Last Inspection Date"; } }
-        public static string StatusPropertyName { get { return "Status"; } }
-        public static string LocationPropertyName { get { return "Location"; } }
-        public static string DescriptionPropertyName { get { return "Description"; } }
-        public static string BarcodePropertyName { get { return "Barcode"; } }
-        public static string InspectionTargetGroupPropertyName { get { return "Inspection Target Group"; } }
+        public sealed class PropertyName
+        {
+            //public static string LastInspectionDatePropertyName { get { return "Last Inspection Date"; } }
+            public const string Status = "Status";
+            public const string Location = "Location";
+            public const string Description = "Description";
+            public const string Barcode = "Barcode";
+            public const string InspectionTargetGroup = "Inspection Target Group";
+        }
+
+
 
         //ICswNbtPropertySetInspectionParent
-        public string InspectionParentStatusPropertyName { get { return StatusPropertyName; } }
+        public string InspectionParentStatusPropertyName { get { return PropertyName.Status; } }
         //public string InspectionParentLastInspectionDatePropertyName { get { return LastInspectionDatePropertyName; } }
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
@@ -56,9 +60,9 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault.afterWriteNode();
         }//afterWriteNode()
 
-        public override void beforeDeleteNode(bool DeleteAllRequiredRelatedNodes = false)
+        public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false )
         {
-            _CswNbtObjClassDefault.beforeDeleteNode(DeleteAllRequiredRelatedNodes);
+            _CswNbtObjClassDefault.beforeDeleteNode( DeleteAllRequiredRelatedNodes );
         }//beforeDeleteNode()
 
         public override void afterDeleteNode()
@@ -78,16 +82,16 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override bool onButtonClick( NbtButtonData ButtonData )
         {
-            
-            
-            
+
+
+
             if( null != ButtonData && null != ButtonData.NodeTypeProp ) { /*Do Something*/ }
             return true;
         }
         #endregion
 
         #region Object class specific properties
-/*
+        /*
         /// <summary>
         /// Date of last Inspection
         /// </summary>
@@ -107,7 +111,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get
             {
-                return ( _CswNbtNode.Properties[StatusPropertyName].AsList );
+                return ( _CswNbtNode.Properties[PropertyName.Status].AsList );
             }
         }
 
@@ -118,7 +122,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get
             {
-                return ( _CswNbtNode.Properties[LocationPropertyName].AsLocation );
+                return ( _CswNbtNode.Properties[PropertyName.Location].AsLocation );
             }
         }
 
@@ -126,7 +130,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get
             {
-                return ( _CswNbtNode.Properties[DescriptionPropertyName].AsText );
+                return ( _CswNbtNode.Properties[PropertyName.Description].AsText );
             }
         }
 
@@ -134,7 +138,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get
             {
-                return ( _CswNbtNode.Properties[BarcodePropertyName].AsBarcode );
+                return ( _CswNbtNode.Properties[PropertyName.Barcode].AsBarcode );
             }
         }
 
@@ -142,7 +146,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get
             {
-                return ( _CswNbtNode.Properties[InspectionTargetGroupPropertyName].AsRelationship );
+                return ( _CswNbtNode.Properties[PropertyName.InspectionTargetGroup].AsRelationship );
             }
         }
 
