@@ -53,14 +53,7 @@ namespace ChemSW.Nbt.ObjClasses
         }
 
         #region Inherited Events
-
-        public override void beforeCreateNode( bool OverrideUniqueValidation )
-        {
-            _setDefaultMessage();
-
-            _CswNbtObjClassDefault.beforeCreateNode( OverrideUniqueValidation );
-        } // beforeCreateNode()
-
+        
         private void _setDefaultMessage()
         {
             if( null != TargetNodeType )
@@ -84,15 +77,7 @@ namespace ChemSW.Nbt.ObjClasses
                 }
             }
         }
-
-        public override void afterCreateNode()
-        {
-            // BZ 10094 - Reset cache
-            _CswNbtResources.ConfigVbls.setConfigVariableValue( "cache_lastupdated", DateTime.Now.ToString() );
-
-            _CswNbtObjClassDefault.afterCreateNode();
-        } // afterCreateNode()
-
+        
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
             // If TargetType changes or Event is set to Create or Delete, 

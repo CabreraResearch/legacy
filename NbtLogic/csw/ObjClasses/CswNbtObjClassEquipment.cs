@@ -43,20 +43,7 @@ namespace ChemSW.Nbt.ObjClasses
         }
 
         #region Inherited Events
-        public override void beforeCreateNode( bool OverrideUniqueValidation )
-        {
-            if( Assembly.WasModified )
-                //_CswNbtNode.PendingUpdate = true;
-                SynchEquipmentToAssembly();
-
-            _CswNbtObjClassDefault.beforeCreateNode( OverrideUniqueValidation );
-        } // beforeCreateNode()
-
-        public override void afterCreateNode()
-        {
-            _CswNbtObjClassDefault.afterCreateNode();
-        } // afterCreateNode()
-
+        
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
             if( Assembly.WasModified )

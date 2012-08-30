@@ -67,21 +67,6 @@ namespace ChemSW.Nbt.ObjClasses
         }
 
         #region Inherited Events
-        public override void beforeCreateNode( bool OverrideUniqueValidation )
-        {
-            _CswNbtObjClassDefault.beforeCreateNode( OverrideUniqueValidation );
-            _CswNbtPropertySetSchedulerImpl.updateNextDueDate();
-
-            // BZ 7845
-            if( TargetType.Empty )
-                Enabled.Checked = Tristate.False;
-        } // beforeCreateNode()
-
-        public override void afterCreateNode()
-        {
-            _CswNbtObjClassDefault.afterCreateNode();
-            //_CswNbtPropertySetSchedulerImpl.setLastFutureDate();
-        } // afterCreateNode()
 
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
@@ -307,10 +292,10 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
-        public override void beforeDeleteNode(bool DeleteAllRequiredRelatedNodes = false)
+        public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false )
         {
             _deleteFutureNodes();
-            _CswNbtObjClassDefault.beforeDeleteNode(DeleteAllRequiredRelatedNodes);
+            _CswNbtObjClassDefault.beforeDeleteNode( DeleteAllRequiredRelatedNodes );
         } //beforeDeleteNode()
 
         public override void afterDeleteNode()
@@ -320,6 +305,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void afterPopulateProps()
         {
+            TargetType.SetOnPropChange( OnTargetTypePropChange );
             _CswNbtObjClassDefault.afterPopulateProps();
         }//afterPopulateProps()
 
@@ -330,9 +316,9 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override bool onButtonClick( NbtButtonData ButtonData )
         {
-            
-            
-            
+
+
+
 
             CswNbtMetaDataObjectClassProp OCP = ButtonData.NodeTypeProp.getObjectClassProp();
             if( null != ButtonData.NodeTypeProp && null != OCP )
@@ -395,7 +381,13 @@ namespace ChemSW.Nbt.ObjClasses
                 return ( _CswNbtNode.Properties[TargetTypePropertyName].AsNodeTypeSelect );
             }
         }
-
+        private void OnTargetTypePropChange( CswNbtNodeProp NodeProp )
+        {
+            if( TargetType.Empty )
+            {
+                Enabled.Checked = Tristate.False;
+            }
+        }
         public CswNbtNodePropMemo Description
         {
             get

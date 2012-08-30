@@ -162,18 +162,7 @@ namespace ChemSW.Nbt.ObjClasses
         }
 
         #region Inherited Events
-        public override void beforeCreateNode( bool OverrideUniqueValidation )
-        {
-            _CswNbtObjClassDefault.beforeCreateNode( OverrideUniqueValidation );
-        } // beforeCreateNode()
-
-        public override void afterCreateNode()
-        {
-            // BZ 9170
-            _CswNbtResources.ConfigVbls.setConfigVariableValue( "cache_lastupdated", DateTime.Now.ToString() );
-            _CswNbtObjClassDefault.afterCreateNode();
-        } // afterCreateNode()
-
+        
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
             if( _unableToWriteNodeInvalidUserName() )

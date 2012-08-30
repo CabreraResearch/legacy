@@ -45,27 +45,6 @@ namespace ChemSW.Nbt.ObjClasses
         }
 
         #region Inherited Events
-        public override void beforeCreateNode( bool OverrideUniqueValidation )
-        {
-            // BZ 10051 - Set the Date Opened to today
-            if( DateOpened.DateTimeValue == DateTime.MinValue )
-            {
-                DateOpened.DateTimeValue = DateTime.Now;
-            }
-            if( ReportedBy.RelatedNodeId == null )
-            {
-                ReportedBy.RelatedNodeId = _CswNbtResources.CurrentNbtUser.UserId;
-                ReportedBy.CachedNodeName = _CswNbtResources.CurrentNbtUser.Username;
-            }
-            _checkClosed();
-
-            _CswNbtObjClassDefault.beforeCreateNode( OverrideUniqueValidation );
-        } // beforeCreateNode()
-
-        public override void afterCreateNode()
-        {
-            _CswNbtObjClassDefault.afterCreateNode();
-        } // afterCreateNode()
 
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
@@ -91,9 +70,9 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault.afterWriteNode();
         }//afterWriteNode()
 
-        public override void beforeDeleteNode(bool DeleteAllRequiredRelatedNodes = false)
+        public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false )
         {
-            _CswNbtObjClassDefault.beforeDeleteNode(DeleteAllRequiredRelatedNodes);
+            _CswNbtObjClassDefault.beforeDeleteNode( DeleteAllRequiredRelatedNodes );
 
         }//beforeDeleteNode()
 
@@ -104,6 +83,8 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void afterPopulateProps()
         {
+            DateOpened.SetOnPropChange( OnDateOpenedChanged );
+            ReportedBy.SetOnPropChange( OnReportedByChange );
             if( Owner.RelatedNodeId != null )
             {
                 CswNbtNode EquipmentOrAssemblyNode = _CswNbtResources.Nodes[Owner.RelatedNodeId];
@@ -145,9 +126,9 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override bool onButtonClick( NbtButtonData ButtonData )
         {
-            
-            
-            
+
+
+
             if( null != ButtonData && null != ButtonData.NodeTypeProp ) { /*Do Something*/ }
             return true;
         }
@@ -179,6 +160,14 @@ namespace ChemSW.Nbt.ObjClasses
                 return ( _CswNbtNode.Properties[ReportedByPropertyName].AsRelationship );
             }
         }
+        public void OnReportedByChange( CswNbtNodeProp NodeProp )
+        {
+            if( false == CswTools.IsPrimaryKey( ReportedBy.RelatedNodeId ) )
+            {
+                ReportedBy.RelatedNodeId = _CswNbtResources.CurrentNbtUser.UserId;
+                ReportedBy.CachedNodeName = _CswNbtResources.CurrentNbtUser.Username;
+            }
+        }
         public CswNbtNodePropLogicalSet Parts
         {
             get
@@ -201,6 +190,14 @@ namespace ChemSW.Nbt.ObjClasses
                 return ( _CswNbtNode.Properties[DateOpenedPropertyName].AsDateTime );
             }
         }
+        private void OnDateOpenedChanged( CswNbtNodeProp NodeProp )
+        {
+            if( DateOpened.DateTimeValue == DateTime.MinValue )
+            {
+                DateOpened.DateTimeValue = DateTime.Now;
+            }
+        }
+
         public CswNbtNodePropDateTime DateClosed
         {
             get

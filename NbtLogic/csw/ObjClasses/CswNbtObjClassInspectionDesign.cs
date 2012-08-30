@@ -221,58 +221,7 @@ namespace ChemSW.Nbt.ObjClasses
 
 
         #region Inherited Events
-        /// <summary>
-        /// Set any existing pending or overdue inspections on the same parent to missed
-        /// </summary>
-        public override void beforeCreateNode( bool OverrideUniqueValidation )
-        {
-            if( Tristate.True != this.IsFuture.Checked &&
-                null != this.Generator.RelatedNodeId )
-            {
-                String NodeStatus = String.Empty;
-                CswNbtMetaDataNodeType ThisInspectionNT = this.Node.getNodeTypeLatestVersion();
-                if( null != ThisInspectionNT )
-                {
-                    //Limit collection to Inspections on the same Generator
-                    IEnumerable<CswNbtNode> AllNodesOfThisNT = ThisInspectionNT.getNodes( true, true )
-                        .Where( InspectionNode => this.Generator.RelatedNodeId == InspectionNode.Properties[GeneratorPropertyName].AsRelationship.RelatedNodeId );
-                    foreach( CswNbtNode InspectionNode in AllNodesOfThisNT )
-                    {
-                        CswNbtObjClassInspectionDesign PriorInspection = (CswNbtObjClassInspectionDesign) InspectionNode;
-                        NodeStatus = PriorInspection.Status.Value;
-
-                        if( //Inspection status is Pending, Overdue or not set
-                            ( InspectionStatusAsString( InspectionStatus.Overdue ) == NodeStatus ||
-                              InspectionStatusAsString( InspectionStatus.Pending ) == NodeStatus ||
-                              String.Empty == NodeStatus ) &&
-                            //Inspections have the same target, and we're comparing different Inspection nodes
-                            ( this.Target.RelatedNodeId == InspectionNode.Properties[TargetPropertyName].AsRelationship.RelatedNodeId &&
-                              this.Node != InspectionNode ) )
-                        {
-                            PriorInspection.Status.Value = InspectionStatus.Missed.ToString();
-                            // Case 20755
-                            PriorInspection.postChanges( true );
-                        }
-                    }
-                }
-            }
-
-            // case 8179 - set value of Version property
-            CswNbtMetaDataNodeType ThisNodeType = _CswNbtResources.MetaData.getNodeType( this.NodeTypeId );
-            Version.Text = ThisNodeType.NodeTypeName + " v" + ThisNodeType.VersionNo.ToString();
-
-            _CswNbtObjClassDefault.beforeCreateNode( OverrideUniqueValidation );
-        } // beforeCreateNode()
-
-        /// <summary>
-        /// Lock Node Type
-        /// </summary>
-        public override void afterCreateNode()
-        {
-            _CswNbtObjClassDefault.afterCreateNode();
-        } // afterCreateNode()
-
-
+        
         /// <summary>
         /// Determine Inspection Status and set read-only
         /// </summary>
@@ -315,6 +264,9 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void afterPopulateProps()
         {
+            Generator.SetOnPropChange( OnGeneratorChange );
+            IsFuture.SetOnPropChange( OnIsFutureChange );
+            Version.SetOnPropChange( OnVersionPropChange );
             CswNbtPropEnmrtrFiltered QuestionsFlt = this.Node.Properties[(CswNbtMetaDataFieldType.NbtFieldType) CswNbtMetaDataFieldType.NbtFieldType.Question];
             QuestionsFlt.Reset();
             bool AllAnswered = true;
@@ -517,6 +469,43 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Object class specific properties
 
+        private bool _genFutureNodesHasRun = false;
+        private void _genFutureNodes()
+        {
+            if( Tristate.True != this.IsFuture.Checked &&
+                CswTools.IsPrimaryKey( this.Generator.RelatedNodeId ) &&
+                false == _genFutureNodesHasRun )
+            {
+                String NodeStatus = String.Empty;
+                CswNbtMetaDataNodeType ThisInspectionNT = this.Node.getNodeTypeLatestVersion();
+                if( null != ThisInspectionNT )
+                {
+                    _genFutureNodesHasRun = true;
+                    //Limit collection to Inspections on the same Generator
+                    IEnumerable<CswNbtNode> AllNodesOfThisNT = ThisInspectionNT.getNodes( true, true )
+                        .Where( InspectionNode => this.Generator.RelatedNodeId == InspectionNode.Properties[GeneratorPropertyName].AsRelationship.RelatedNodeId );
+                    foreach( CswNbtNode InspectionNode in AllNodesOfThisNT )
+                    {
+                        CswNbtObjClassInspectionDesign PriorInspection = (CswNbtObjClassInspectionDesign) InspectionNode;
+                        NodeStatus = PriorInspection.Status.Value;
+
+                        if( //Inspection status is Pending, Overdue or not set
+                            ( InspectionStatusAsString( InspectionStatus.Overdue ) == NodeStatus ||
+                              InspectionStatusAsString( InspectionStatus.Pending ) == NodeStatus ||
+                              String.Empty == NodeStatus ) &&
+                            //Inspections have the same target, and we're comparing different Inspection nodes
+                            ( this.Target.RelatedNodeId == InspectionNode.Properties[TargetPropertyName].AsRelationship.RelatedNodeId &&
+                              this.Node != InspectionNode ) )
+                        {
+                            PriorInspection.Status.Value = InspectionStatus.Missed.ToString();
+                            // Case 20755
+                            PriorInspection.postChanges( true );
+                        }
+                    }
+                }
+            }
+        }
+
         ///// <summary>
         ///// Inspection route
         ///// </summary>
@@ -594,7 +583,10 @@ namespace ChemSW.Nbt.ObjClasses
                 return ( _CswNbtNode.Properties[IsFuturePropertyName] );
             }
         }
-
+        private void OnIsFutureChange( CswNbtNodeProp NodeProp )
+        {
+            _genFutureNodes();
+        }
         public CswNbtNodePropRelationship Generator
         {
             get
@@ -602,7 +594,10 @@ namespace ChemSW.Nbt.ObjClasses
                 return ( _CswNbtNode.Properties[GeneratorPropertyName] );
             }
         }
-
+        private void OnGeneratorChange( CswNbtNodeProp NodeProp )
+        {
+            _genFutureNodes();
+        }
         /// <summary>
         /// In this context owner == parent
         /// </summary>
@@ -689,7 +684,15 @@ namespace ChemSW.Nbt.ObjClasses
                 return ( _CswNbtNode.Properties[VersionPropertyName] );
             }
         }
-
+        private void OnVersionPropChange( CswNbtNodeProp NodeProp )
+        {
+            if( string.IsNullOrEmpty( Version.Text ) )
+            {
+                // case 8179 - set value of Version property
+                CswNbtMetaDataNodeType ThisNodeType = _CswNbtResources.MetaData.getNodeType( this.NodeTypeId );
+                Version.Text = ThisNodeType.NodeTypeName + " v" + ThisNodeType.VersionNo.ToString();
+            }
+        }
         /// <summary>
         /// Date the inspection switched to action required or completed...
         /// </summary>
