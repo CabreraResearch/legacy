@@ -88,7 +88,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get
             {
-                return ( _CswNbtNode.Properties[PropertyName.Parts].AsMemo );
+                return ( _CswNbtNode.Properties[PropertyName.Parts] );
             }
         }
 
