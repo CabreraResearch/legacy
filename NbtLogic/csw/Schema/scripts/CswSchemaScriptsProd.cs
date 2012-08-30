@@ -33,7 +33,6 @@ namespace ChemSW.Nbt.Schema
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase27513() ) );                                    //01Q-005
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase27523() ) );                                    //01Q-006
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_PrintLabels_Case26704() ) );                       //01Q-007 Quince_2012.8.17.1
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase27439() ) );                                    //01R-017
 
             #endregion QA
 
@@ -59,6 +58,8 @@ namespace ChemSW.Nbt.Schema
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase27401_part2() ) );                              //01R-018 //025
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase27278() ) );                                    //01R-019 //026
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase27622() ) );                                    //01R-020 //027
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase27622() ) );                                    //01R-020 //027
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase27439() ) );                                    //01R-021 //028
 
             #endregion Dev
 
