@@ -170,133 +170,22 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Object class specific properties
 
-        public CswNbtNodePropViewPickList ReportView
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[PropertyName.ReportView].AsViewPickList );
-            }
-        }
-
-        public CswNbtNodePropRelationship Report
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[PropertyName.Report].AsRelationship );
-            }
-        }
-
-        public CswNbtNodePropMemo Message
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[PropertyName.Message].AsMemo );
-            }
-        }
-
-        public CswNbtNodePropMemo NoDataNotification
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[PropertyName.NoDataNotification].AsMemo );
-            }
-        }
-
-        public CswNbtNodePropUserSelect Recipients
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[PropertyName.Recipients].AsUserSelect );
-            }
-        }
-
-        public CswNbtNodePropList Type
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[PropertyName.Type].AsList );
-            }
-        }
-
-        public CswNbtNodePropDateTime LastProcessed
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[PropertyName.LastProcessed].AsDateTime );
-            }
-        }
-
-        public CswNbtNodePropDateTime FinalDueDate
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[PropertyName.FinalDueDate].AsDateTime );
-            }
-        }
-
-        public CswNbtNodePropDateTime NextDueDate
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[PropertyName.NextDueDate].AsDateTime );
-            }
-        }
-
-        public CswNbtNodePropButton RunNow
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[PropertyName.RunNow].AsButton );
-            }
-        }
-
-        public CswNbtNodePropList OutputFormat
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[PropertyName.OutputFormat] );
-            }
-        }
-
-        public CswNbtNodePropComments RunStatus
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[PropertyName.RunStatus].AsComments );
-            }
-        }
-
-        public CswNbtNodePropNumber WarningDays
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[PropertyName.WarningDays].AsNumber );
-            }
-        }
-
-        public CswNbtNodePropTimeInterval DueDateInterval
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[PropertyName.DueDateInterval].AsTimeInterval );
-            }
-        }
-
-        public CswNbtNodePropDateTime RunTime
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[PropertyName.RunTime].AsDateTime );
-            }
-        }
-
-        public CswNbtNodePropLogical Enabled
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[PropertyName.Enabled].AsLogical );
-            }
-        }
+        public CswNbtNodePropViewPickList ReportView { get { return ( _CswNbtNode.Properties[PropertyName.ReportView] ); } }
+        public CswNbtNodePropRelationship Report { get { return ( _CswNbtNode.Properties[PropertyName.Report] ); } }
+        public CswNbtNodePropMemo Message { get { return ( _CswNbtNode.Properties[PropertyName.Message] ); } }
+        public CswNbtNodePropMemo NoDataNotification { get { return ( _CswNbtNode.Properties[PropertyName.NoDataNotification] ); } }
+        public CswNbtNodePropUserSelect Recipients { get { return ( _CswNbtNode.Properties[PropertyName.Recipients] ); } }
+        public CswNbtNodePropList Type { get { return ( _CswNbtNode.Properties[PropertyName.Type] ); } }
+        public CswNbtNodePropDateTime LastProcessed { get { return ( _CswNbtNode.Properties[PropertyName.LastProcessed] ); } }
+        public CswNbtNodePropDateTime FinalDueDate { get { return ( _CswNbtNode.Properties[PropertyName.FinalDueDate] ); } }
+        public CswNbtNodePropDateTime NextDueDate { get { return ( _CswNbtNode.Properties[PropertyName.NextDueDate] ); } }
+        public CswNbtNodePropButton RunNow { get { return ( _CswNbtNode.Properties[PropertyName.RunNow] ); } }
+        public CswNbtNodePropList OutputFormat { get { return ( _CswNbtNode.Properties[PropertyName.OutputFormat] ); } }
+        public CswNbtNodePropComments RunStatus { get { return ( _CswNbtNode.Properties[PropertyName.RunStatus] ); } }
+        public CswNbtNodePropNumber WarningDays { get { return ( _CswNbtNode.Properties[PropertyName.WarningDays] ); } }
+        public CswNbtNodePropTimeInterval DueDateInterval { get { return ( _CswNbtNode.Properties[PropertyName.DueDateInterval] ); } }
+        public CswNbtNodePropDateTime RunTime { get { return ( _CswNbtNode.Properties[PropertyName.RunTime] ); } }
+        public CswNbtNodePropLogical Enabled { get { return ( _CswNbtNode.Properties[PropertyName.Enabled] ); } }
 
         #endregion
 
