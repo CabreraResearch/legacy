@@ -319,53 +319,12 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Object class specific properties
 
-        public CswNbtNodePropLogical Administrator
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[PropertyName.Administrator].AsLogical );
-            }
-        }
-
-        public CswNbtNodePropMemo Description
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[PropertyName.Description].AsMemo );
-            }
-        }
-
-        public CswNbtNodePropMultiList NodeTypePermissions
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[PropertyName.NodeTypePermissions].AsMultiList );
-            }
-        }
-
-        public CswNbtNodePropMultiList ActionPermissions
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[PropertyName.ActionPermissions].AsMultiList );
-            }
-        }
-
-        public CswNbtNodePropNumber Timeout
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[PropertyName.Timeout].AsNumber );
-            }
-        }
-
-        public CswNbtNodePropText Name
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[PropertyName.Name].AsText );
-            }
-        }
+        public CswNbtNodePropLogical Administrator { get { return ( _CswNbtNode.Properties[PropertyName.Administrator] ); } }
+        public CswNbtNodePropMemo Description { get { return ( _CswNbtNode.Properties[PropertyName.Description] ); } }
+        public CswNbtNodePropMultiList NodeTypePermissions { get { return ( _CswNbtNode.Properties[PropertyName.NodeTypePermissions] ); } }
+        public CswNbtNodePropMultiList ActionPermissions { get { return ( _CswNbtNode.Properties[PropertyName.ActionPermissions] ); } }
+        public CswNbtNodePropNumber Timeout { get { return ( _CswNbtNode.Properties[PropertyName.Timeout] ); } }
+        public CswNbtNodePropText Name { get { return ( _CswNbtNode.Properties[PropertyName.Name] ); } }
 
         #endregion
 
