@@ -222,7 +222,7 @@ namespace ChemSW.Nbt.ObjClasses
                             HasPermission = true;
 
                             CswNbtObjClassRequestItem NodeAsRequestItem = RequestAct.makeContainerRequestItem( this, ButtonData );
-                            
+
                             ButtonData.Data["titleText"] = OCP.PropName + " " + Barcode.Barcode;
                             ButtonData.Data["requestaction"] = OCP.PropName;
                             ButtonData.Data["requestItemProps"] = RequestAct.getRequestItemAddProps( NodeAsRequestItem );
@@ -364,6 +364,8 @@ namespace ChemSW.Nbt.ObjClasses
             ActionDataObj["capacity"] = CapacityObj.ToString();
             bool customBarcodes = CswConvert.ToBoolean( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswNbtResources.ConfigurationVariables.custom_barcodes.ToString() ) );
             ActionDataObj["customBarcodes"] = customBarcodes;
+            bool netQuantityEnforced = CswConvert.ToBoolean( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswNbtResources.ConfigurationVariables.netquantity_enforced.ToString() ) );
+            ActionDataObj["netQuantityEnforced"] = netQuantityEnforced;
             return ActionDataObj;
         }
 
