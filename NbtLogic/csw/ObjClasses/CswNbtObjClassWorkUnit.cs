@@ -1,16 +1,18 @@
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
-using Newtonsoft.Json.Linq;
 
 
 namespace ChemSW.Nbt.ObjClasses
 {
     public class CswNbtObjClassWorkUnit : CswNbtObjClass
     {
-        public const string AuditingEnabledPropertyName = "Auditing Enabled";
-        public const string SignatureRequiredPropertyName = "Signature Required";
-        public const string NamePropertyName = "Name";
-        
+        public sealed class PropertyName
+        {
+            public const string AuditingEnabled = "Auditing Enabled";
+            public const string SignatureRequired = "Signature Required";
+            public const string Name = "Name";
+        }
+
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
 
         public CswNbtObjClassWorkUnit( CswNbtResources CswNbtResources, CswNbtNode Node )
@@ -38,7 +40,7 @@ namespace ChemSW.Nbt.ObjClasses
         }
 
         #region Inherited Events
-        
+
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
             _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
@@ -49,9 +51,9 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault.afterWriteNode();
         }//afterWriteNode()
 
-        public override void beforeDeleteNode(bool DeleteAllRequiredRelatedNodes = false)
+        public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false )
         {
-            _CswNbtObjClassDefault.beforeDeleteNode(DeleteAllRequiredRelatedNodes);
+            _CswNbtObjClassDefault.beforeDeleteNode( DeleteAllRequiredRelatedNodes );
 
         }//beforeDeleteNode()
 
@@ -72,9 +74,9 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override bool onButtonClick( NbtButtonData ButtonData )
         {
-            
-            
-            
+
+
+
             if( null != ButtonData && null != ButtonData.NodeTypeProp ) { /*Do Something*/ }
             return true;
         }
@@ -83,9 +85,9 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Object class specific properties
 
-        public CswNbtNodePropNodeTypeSelect AuditingEnabled { get { return ( _CswNbtNode.Properties[AuditingEnabledPropertyName] ); } }
-        public CswNbtNodePropNodeTypeSelect SignatureRequired { get { return ( _CswNbtNode.Properties[SignatureRequiredPropertyName] ); } }
-        public CswNbtNodePropText Name { get { return ( _CswNbtNode.Properties[NamePropertyName] ); } }
+        public CswNbtNodePropNodeTypeSelect AuditingEnabled { get { return ( _CswNbtNode.Properties[PropertyName.AuditingEnabled] ); } }
+        public CswNbtNodePropNodeTypeSelect SignatureRequired { get { return ( _CswNbtNode.Properties[PropertyName.SignatureRequired] ); } }
+        public CswNbtNodePropText Name { get { return ( _CswNbtNode.Properties[PropertyName.Name] ); } }
 
         #endregion
 
