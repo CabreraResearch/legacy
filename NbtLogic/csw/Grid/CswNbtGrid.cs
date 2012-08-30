@@ -244,6 +244,10 @@ namespace ChemSW.Nbt.Grid
                                 Href = Prop[HrefColumn.ToString().ToLower()].ToString();
                                 if( false == string.IsNullOrEmpty( Href ) )
                                 {
+                                    if( false == Href.Contains( "http" ) )
+                                    {
+                                        Href = "http://" + Href;
+                                    }
                                     newValue = "<a target=\"blank\" href=\"" + Href + "\">" + ( oldValue ?? "Link" ) + "</a>";
                                 }
                             }
