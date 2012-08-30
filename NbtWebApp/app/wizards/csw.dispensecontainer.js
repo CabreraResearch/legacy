@@ -20,6 +20,7 @@
                         sourceContainerNodeId: '',
                         currentQuantity: '',
                         currentUnitName: '',
+                        quantityAfterDispense: '',
                         capacity: '',
                         dispenseType: 'Dispense into a Child Container',
                         quantity: '',
@@ -31,7 +32,8 @@
                         location: '',
                         requestItemId: '',
                         dispenseMode: '',
-                        customBarcodes: false
+                        customBarcodes: false,
+                        netQuantityEnforced: true
                     },
                     onCancel: null,
                     onFinish: null,
@@ -290,7 +292,9 @@
                         cswPrivate.toggleButton(cswPrivate.buttons.next, false);
                         if (false === cswPrivate.stepTwoComplete) {
                             var quantityTable,
-                                blankText = '[Select One]';
+                                blankText = '[Select One]',
+                                quantityAfterDispenseSpan = {},
+                                netQuantityExceededSpan = {};
 
                             cswPrivate.divStep2 = cswPrivate.divStep2 || cswPrivate.wizard.div(2);
                             cswPrivate.divStep2.empty();
@@ -315,6 +319,10 @@
                             }
                             if (false === Csw.isNullOrEmpty(cswPrivate.state.currentQuantity)) {
                                 quantityTable.cell(5, 1).span({ labelText: 'Current Quantity: ', text: cswPrivate.state.currentQuantity + ' ' + cswPrivate.state.currentUnitName });
+                                cswPrivate.state.quantityAfterDispense = cswPrivate.state.currentQuantity;
+                                quantityAfterDispenseSpan = quantityTable.cell(6, 1).span({ labelText: 'Quantity after Dispense: ', text: cswPrivate.state.quantityAfterDispense + ' ' + cswPrivate.state.currentUnitName });
+                                netQuantityExceededSpan = quantityTable.cell(6, 1).span({ cssclass: 'CswErrorMessage_ValidatorError', text: ' Total quantity to dispense cannot exceed source container\'s net quantity.' });
+                                netQuantityExceededSpan.hide();
                             }
                             quantityTable.cell(6, 1).br({ number: 1 });
 
@@ -351,11 +359,13 @@
 
                                 cswPrivate.amountsGrid = Csw.nbt.wizard.amountsGrid(quantityTable.cell(8, 1), {
                                     ID: cswPrivate.wizard.makeStepId('wizardAmountsThinGrid'),
-                                    onAdd: function (hasQuantity) {
-                                        cswPrivate.toggleButton(cswPrivate.buttons.finish, hasQuantity);
+                                    onAdd: function (hasQuantity, quantityToDeduct, unitToDeduct) {
+                                        var enableFinishButton = updateQuantityAfterDispense(hasQuantity, quantityToDeduct, unitToDeduct, true);
+                                        cswPrivate.toggleButton(cswPrivate.buttons.finish, enableFinishButton);
                                     },
-                                    onDelete: function (hasQuantity) {
-                                        cswPrivate.toggleButton(cswPrivate.buttons.finish, hasQuantity);
+                                    onDelete: function (hasQuantity, quantityToAdd, unitToAdd) {
+                                        var enableFinishButton = updateQuantityAfterDispense(hasQuantity, quantityToAdd, unitToAdd, false);
+                                        cswPrivate.toggleButton(cswPrivate.buttons.finish, enableFinishButton);
                                     },
                                     quantity: cswPrivate.state.capacity,
                                     containerlimit: cswPrivate.containerlimit,
@@ -367,6 +377,47 @@
                                     customBarcodes: cswPrivate.state.customBarcodes
                                 });
                             };
+
+                            var updateQuantityAfterDispense = function (enableFinishButton, quantityDeltaValue, quantityDeltaUnitId, deductingValue) {
+                                if (quantityDeltaUnitId !== cswPrivate.state.unitId) {
+                                    Csw.ajax.post({
+                                        urlMethod: 'convertUnit',
+                                        async: false,
+                                        data: {
+                                            ValueToConvert: quantityDeltaValue,
+                                            OldUnitId: quantityDeltaUnitId,
+                                            NewUnitId: cswPrivate.state.unitId
+                                        },
+                                        success: function (data) {
+                                            if (Csw.isNullOrEmpty(data)) {
+                                                quantityDeltaValue = 0;
+                                            } else {
+                                                //TODO: get currentQuantity's precision value instead
+                                                var precision = 6; //number of post-decimal significant digits to show
+                                                quantityDeltaValue = Math.floor(Csw.number(data.convertedvalue) * Math.pow(10,precision)) / Math.pow(10,precision);
+                                            }
+                                        },
+                                        error: function () {
+                                            quantityDeltaValue = 0;
+                                        }
+                                    });
+                                }
+                                if (deductingValue) {
+                                    cswPrivate.state.quantityAfterDispense = Csw.number(cswPrivate.state.quantityAfterDispense) - Csw.number(quantityDeltaValue);
+                                } else {
+                                    cswPrivate.state.quantityAfterDispense = Csw.number(cswPrivate.state.quantityAfterDispense) + Csw.number(quantityDeltaValue);
+                                }
+                                if (Csw.bool(cswPrivate.state.netQuantityEnforced)) {
+                                    if (cswPrivate.state.quantityAfterDispense < 0) {
+                                        netQuantityExceededSpan.show();
+                                        enableFinishButton = false;
+                                    } else {
+                                        netQuantityExceededSpan.hide();
+                                    }
+                                }
+                                quantityAfterDispenseSpan.text(cswPrivate.state.quantityAfterDispense + ' ' + cswPrivate.state.currentUnitName);
+                                return enableFinishButton;
+                            }
 
                             var makePrintBarcodesCheckBox = function () {
                                 var checkBoxTable = quantityTable.cell(9, 1).table({

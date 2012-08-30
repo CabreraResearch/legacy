@@ -1187,7 +1187,9 @@ window.initMain = window.initMain || function (undefined) {
                             material: o.material,
                             barcode: o.barcode,
                             containerNodeTypeId: o.containernodetypeid,
-                            containerObjectClassId: o.containerobjectclassid
+                            containerObjectClassId: o.containerobjectclassid,
+                            customBarcodes: o.customBarcodes,
+                            netQuantityEnforced: o.netQuantityEnforced
                         },
                         onCancel: function () {
                             clear({ 'all': true });
