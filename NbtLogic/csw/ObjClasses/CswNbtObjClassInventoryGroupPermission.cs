@@ -1,20 +1,23 @@
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
-using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.ObjClasses
 {
     public class CswNbtObjClassInventoryGroupPermission : CswNbtObjClass
     {
-        public static string InventoryGroupPropertyName { get { return "Inventory Group"; } }
-        public static string WorkUnitPropertyName { get { return "WorkUnit"; } }
-        public static string RolePropertyName { get { return "Role"; } }
-        public static string ViewPropertyName { get { return "View"; } }
-        public static string EditPropertyName { get { return "Edit"; } }
-        public static string DispensePropertyName { get { return "Dispense"; } }
-        public static string DisposePropertyName { get { return "Dispose"; } }
-        public static string UndisposePropertyName { get { return "Undispose"; } }
-        public static string RequestPropertyName { get { return "Request"; } }
+        public sealed class PropertyName
+        {
+            public const string InventoryGroup = "Inventory Group";
+            public const string WorkUnit = "WorkUnit";
+            public const string Role = "Role";
+            public const string View = "View";
+            public const string Edit = "Edit";
+            public const string Dispense = "Dispense";
+            public const string Dispose = "Dispose";
+            public const string Undispose = "Undispose";
+            public const string Request = "Request";
+        }
+
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
 
@@ -43,7 +46,7 @@ namespace ChemSW.Nbt.ObjClasses
         }
 
         #region Inherited Events
-        
+
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
             _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
@@ -77,9 +80,9 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override bool onButtonClick( NbtButtonData ButtonData )
         {
-            
-            
-            
+
+
+
             if( null != ButtonData && null != ButtonData.NodeTypeProp ) { /*Do Something*/ }
             return true;
         }
@@ -87,15 +90,15 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Object class specific properties
 
-        public CswNbtNodePropRelationship InventoryGroup { get { return _CswNbtNode.Properties[InventoryGroupPropertyName].AsRelationship; } }
-        public CswNbtNodePropRelationship WorkUnit { get { return _CswNbtNode.Properties[WorkUnitPropertyName].AsRelationship; } }
-        public CswNbtNodePropRelationship Role { get { return _CswNbtNode.Properties[RolePropertyName].AsRelationship; } }
-        public CswNbtNodePropLogical View { get { return _CswNbtNode.Properties[ViewPropertyName].AsLogical; } }
-        public CswNbtNodePropLogical Edit { get { return _CswNbtNode.Properties[EditPropertyName].AsLogical; } }
-        public CswNbtNodePropLogical Dispense { get { return _CswNbtNode.Properties[DispensePropertyName].AsLogical; } }
-        public CswNbtNodePropLogical Dispose { get { return _CswNbtNode.Properties[DisposePropertyName].AsLogical; } }
-        public CswNbtNodePropLogical Undispose { get { return _CswNbtNode.Properties[UndisposePropertyName].AsLogical; } }
-        public CswNbtNodePropLogical Request { get { return _CswNbtNode.Properties[RequestPropertyName].AsLogical; } }
+        public CswNbtNodePropRelationship InventoryGroup { get { return _CswNbtNode.Properties[PropertyName.InventoryGroup].AsRelationship; } }
+        public CswNbtNodePropRelationship WorkUnit { get { return _CswNbtNode.Properties[PropertyName.WorkUnit].AsRelationship; } }
+        public CswNbtNodePropRelationship Role { get { return _CswNbtNode.Properties[PropertyName.Role].AsRelationship; } }
+        public CswNbtNodePropLogical View { get { return _CswNbtNode.Properties[PropertyName.View].AsLogical; } }
+        public CswNbtNodePropLogical Edit { get { return _CswNbtNode.Properties[PropertyName.Edit].AsLogical; } }
+        public CswNbtNodePropLogical Dispense { get { return _CswNbtNode.Properties[PropertyName.Dispense].AsLogical; } }
+        public CswNbtNodePropLogical Dispose { get { return _CswNbtNode.Properties[PropertyName.Dispose].AsLogical; } }
+        public CswNbtNodePropLogical Undispose { get { return _CswNbtNode.Properties[PropertyName.Undispose].AsLogical; } }
+        public CswNbtNodePropLogical Request { get { return _CswNbtNode.Properties[PropertyName.Request].AsLogical; } }
 
         #endregion
 
