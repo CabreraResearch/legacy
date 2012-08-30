@@ -85,14 +85,8 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Object class specific properties
 
-        public CswNbtNodePropRelationship Test
-        {
-            get { return _CswNbtNode.Properties[PropertyName.Test].AsRelationship; }
-        }
-        public CswNbtNodePropNodeTypeSelect ResultType
-        {
-            get { return _CswNbtNode.Properties[PropertyName.ResultType].AsNodeTypeSelect; }
-        }
+        public CswNbtNodePropRelationship Test { get { return _CswNbtNode.Properties[PropertyName.Test]; } }
+        public CswNbtNodePropNodeTypeSelect ResultType { get { return _CswNbtNode.Properties[PropertyName.ResultType]; } }
 
         //public CswNbtNodePropNumber NumberOfResults
         //{
