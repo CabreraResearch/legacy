@@ -10,32 +10,37 @@ namespace ChemSW.Nbt.ObjClasses
 {
     public class CswNbtObjClassGenerator : CswNbtObjClass, ICswNbtPropertySetScheduler
     {
-        public static string InspectionGeneratorNodeTypeName { get { return "Inspection Schedule"; } }
+        public const string InspectionGeneratorNodeTypeName = "Inspection Schedule";
 
-        public static string DueDateIntervalPropertyName { get { return "Due Date Interval"; } }
-        public static string RunTimePropertyName { get { return "Run Time"; } }
-        public static string FinalDueDatePropertyName { get { return "Final Due Date"; } }
-        public static string NextDueDatePropertyName { get { return "Next Due Date"; } }
-        public static string WarningDaysPropertyName { get { return "Warning Days"; } }
-        //public static string GraceDaysPropertyName { get { return "Grace Days"; } }
-        public static string EnabledPropertyName { get { return "Enabled"; } }
-        public static string RunStatusPropertyName { get { return "Run Status"; } }
-        public static string TargetTypePropertyName { get { return "Target Type"; } }
-        public static string OwnerPropertyName { get { return "Owner"; } }
-        public static string DescriptionPropertyName { get { return "Description"; } }
-        public static string SummaryPropertyName { get { return "Summary"; } }
-        public static string ParentTypePropertyName { get { return "Parent Type"; } }
-        public static string ParentViewPropertyName { get { return "Parent View"; } }
-        public static string RunNowPropertyName { get { return "Run Now"; } }
+        public sealed class PropertyName
+        {
+            public static string DueDateInterval = "Due Date Interval";
+            public static string RunTime = "Run Time";
+            public static string FinalDueDate = "Final Due Date";
+            public static string NextDueDate = "Next Due Date";
+            public static string WarningDays = "Warning Days";
+            //public static string GraceDaysPropertyName { get { return "Grace Days"; } }
+            public static string Enabled = "Enabled";
+            public static string RunStatus = "Run Status";
+            public static string TargetType = "Target Type";
+            public static string Owner = "Owner";
+            public static string Description = "Description";
+            public static string Summary = "Summary";
+            public static string ParentType = "Parent Type";
+            public static string ParentView = "Parent View";
+            public static string RunNow = "Run Now";
+        }
+
+
 
         //ICswNbtPropertySetScheduler
-        public string SchedulerFinalDueDatePropertyName { get { return FinalDueDatePropertyName; } }
-        public string SchedulerNextDueDatePropertyName { get { return NextDueDatePropertyName; } }
-        public string SchedulerRunStatusPropertyName { get { return RunStatusPropertyName; } }
-        public string SchedulerWarningDaysPropertyName { get { return WarningDaysPropertyName; } }
-        public string SchedulerDueDateIntervalPropertyName { get { return DueDateIntervalPropertyName; } }
-        public string SchedulerRunTimePropertyName { get { return RunTimePropertyName; } }
-        public string SchedulerRunNowPropertyName { get { return RunNowPropertyName; } }
+        public string SchedulerFinalDueDatePropertyName { get { return PropertyName.FinalDueDate; } }
+        public string SchedulerNextDueDatePropertyName { get { return PropertyName.NextDueDate; } }
+        public string SchedulerRunStatusPropertyName { get { return PropertyName.RunStatus; } }
+        public string SchedulerWarningDaysPropertyName { get { return PropertyName.WarningDays; } }
+        public string SchedulerDueDateIntervalPropertyName { get { return PropertyName.DueDateInterval; } }
+        public string SchedulerRunTimePropertyName { get { return PropertyName.RunTime; } }
+        public string SchedulerRunNowPropertyName { get { return PropertyName.RunNow; } }
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
         private CswNbtPropertySetSchedulerImpl _CswNbtPropertySetSchedulerImpl;
@@ -322,7 +327,7 @@ namespace ChemSW.Nbt.ObjClasses
             CswNbtMetaDataObjectClassProp OCP = ButtonData.NodeTypeProp.getObjectClassProp();
             if( null != ButtonData.NodeTypeProp && null != OCP )
             {
-                if( RunNowPropertyName == OCP.PropName )
+                if( PropertyName.RunNow == OCP.PropName )
                 {
                     NextDueDate.DateTimeValue = DateTime.Now;
                     //case 25702 - empty comment?
@@ -342,7 +347,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get
             {
-                return ( _CswNbtNode.Properties[FinalDueDatePropertyName].AsDateTime );
+                return ( _CswNbtNode.Properties[PropertyName.FinalDueDate].AsDateTime );
             }
         }
 
@@ -350,7 +355,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get
             {
-                return ( _CswNbtNode.Properties[NextDueDatePropertyName].AsDateTime );
+                return ( _CswNbtNode.Properties[PropertyName.NextDueDate].AsDateTime );
             }
         }
 
@@ -377,7 +382,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get
             {
-                return ( _CswNbtNode.Properties[TargetTypePropertyName].AsNodeTypeSelect );
+                return ( _CswNbtNode.Properties[PropertyName.TargetType].AsNodeTypeSelect );
             }
         }
         private void OnTargetTypePropChange( CswNbtNodeProp NodeProp )
@@ -391,7 +396,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get
             {
-                return ( _CswNbtNode.Properties[DescriptionPropertyName].AsMemo );
+                return ( _CswNbtNode.Properties[PropertyName.Description].AsMemo );
             }
         }
 
@@ -402,7 +407,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get
             {
-                return ( _CswNbtNode.Properties[OwnerPropertyName].AsRelationship );
+                return ( _CswNbtNode.Properties[PropertyName.Owner].AsRelationship );
             }
         }
 
@@ -410,7 +415,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get
             {
-                return ( _CswNbtNode.Properties[RunStatusPropertyName].AsComments );
+                return ( _CswNbtNode.Properties[PropertyName.RunStatus].AsComments );
             }
         }
 
@@ -421,7 +426,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get
             {
-                return ( _CswNbtNode.Properties[WarningDaysPropertyName].AsNumber );
+                return ( _CswNbtNode.Properties[PropertyName.WarningDays].AsNumber );
             }
         }
 
@@ -440,14 +445,14 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get
             {
-                return ( _CswNbtNode.Properties[SummaryPropertyName].AsText );
+                return ( _CswNbtNode.Properties[PropertyName.Summary].AsText );
             }
         }
         public CswNbtNodePropTimeInterval DueDateInterval
         {
             get
             {
-                return ( _CswNbtNode.Properties[DueDateIntervalPropertyName].AsTimeInterval );
+                return ( _CswNbtNode.Properties[PropertyName.DueDateInterval].AsTimeInterval );
             }
         }
 
@@ -463,7 +468,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get
             {
-                return ( _CswNbtNode.Properties[RunTimePropertyName].AsDateTime );
+                return ( _CswNbtNode.Properties[PropertyName.RunTime].AsDateTime );
             }
         }
 
@@ -471,7 +476,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get
             {
-                return ( _CswNbtNode.Properties[EnabledPropertyName].AsLogical );
+                return ( _CswNbtNode.Properties[PropertyName.Enabled].AsLogical );
             }
         }
 
@@ -482,7 +487,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get
             {
-                return ( _CswNbtNode.Properties[ParentTypePropertyName].AsNodeTypeSelect );
+                return ( _CswNbtNode.Properties[PropertyName.ParentType].AsNodeTypeSelect );
             }
         }
 
@@ -493,7 +498,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get
             {
-                return ( _CswNbtNode.Properties[ParentViewPropertyName].AsViewReference );
+                return ( _CswNbtNode.Properties[PropertyName.ParentView].AsViewReference );
             }
         }
 
@@ -504,7 +509,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get
             {
-                return ( _CswNbtNode.Properties[RunNowPropertyName].AsButton );
+                return ( _CswNbtNode.Properties[PropertyName.RunNow].AsButton );
             }
         }
 

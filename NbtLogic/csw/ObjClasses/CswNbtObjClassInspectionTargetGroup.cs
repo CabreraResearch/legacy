@@ -87,7 +87,7 @@ namespace ChemSW.Nbt.ObjClasses
             if( string.IsNullOrEmpty( Name.Text ) )
             {
                 CswNbtMetaDataObjectClass GeneratorOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.GeneratorClass );
-                CswNbtMetaDataObjectClassProp OwnerOCP = GeneratorOC.getObjectClassProp( CswNbtObjClassGenerator.OwnerPropertyName );
+                CswNbtMetaDataObjectClassProp OwnerOCP = GeneratorOC.getObjectClassProp( CswNbtObjClassGenerator.PropertyName.Owner );
                 CswNbtMetaDataNodeTypeProp OwnerNTP;
                 CswNbtMetaDataNodeType OwnerNT;
                 //CswNbtMetaDataObjectClass OwnerOC;
@@ -96,7 +96,7 @@ namespace ChemSW.Nbt.ObjClasses
 
                 foreach( CswNbtMetaDataNodeType NodeType in GeneratorOC.getNodeTypes() )
                 {
-                    OwnerNTP = NodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassGenerator.OwnerPropertyName );
+                    OwnerNTP = NodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassGenerator.PropertyName.Owner );
                     if( NbtViewRelatedIdType.NodeTypeId.ToString() == OwnerNTP.FKType )
                     {
                         OwnerNT = _CswNbtResources.MetaData.getNodeType( OwnerNTP.FKValue );

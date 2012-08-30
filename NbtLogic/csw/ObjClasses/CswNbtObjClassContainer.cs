@@ -86,7 +86,7 @@ namespace ChemSW.Nbt.ObjClasses
         }
 
         #region Inherited Events
-        
+
         private void _updateRequestMenu()
         {
             bool IsDisposed = Disposed.Checked == Tristate.True;
@@ -211,7 +211,7 @@ namespace ChemSW.Nbt.ObjClasses
                             HasPermission = true;
 
                             CswNbtObjClassRequestItem NodeAsRequestItem = RequestAct.makeContainerRequestItem( this, ButtonData );
-                            
+
                             ButtonData.Data["titleText"] = OCP.PropName + " " + Barcode.Barcode;
                             ButtonData.Data["requestaction"] = OCP.PropName;
                             ButtonData.Data["requestItemProps"] = RequestAct.getRequestItemAddProps( NodeAsRequestItem );
@@ -558,7 +558,7 @@ namespace ChemSW.Nbt.ObjClasses
                 CswNbtNode locationNode = _CswNbtResources.Nodes.GetNode( Location.SelectedNodeId );
                 if( null != locationNode ) //what if the user didn't specify a location?
                 {
-                    CswNbtNodePropImageList locationStorageCompatibility = locationNode.Properties[CswNbtObjClassLocation.StorageCompatabilityPropertyName];
+                    CswNbtNodePropImageList locationStorageCompatibility = locationNode.Properties[CswNbtObjClassLocation.PropertyName.StorageCompatability];
                     if( false == _isStorageCompatible( materialStorageCompatibilty.Value, locationStorageCompatibility.Value ) )
                     {
                         throw new CswDniException( ErrorType.Warning,
@@ -632,7 +632,7 @@ namespace ChemSW.Nbt.ObjClasses
             if( null != SourceContainer.RelatedNodeId && Int32.MinValue != SourceContainer.RelatedNodeId.PrimaryKey )
             {
                 SourceContainer.setHidden( value: false, SaveToDb: true );
-            } 
+            }
             else
             {
                 SourceContainer.setHidden( value: true, SaveToDb: true );
