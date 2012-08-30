@@ -148,21 +148,9 @@ namespace ChemSW.Nbt.ObjClasses
         //        return ( _CswNbtNode.Properties[EquipmentPropertyName].AsRelationship );
         //    }
         //}
-        public CswNbtNodePropRelationship Owner
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[PropertyName.Owner].AsRelationship );
-            }
-        }
+        public CswNbtNodePropRelationship Owner { get { return ( _CswNbtNode.Properties[PropertyName.Owner] ); } }
 
-        public CswNbtNodePropRelationship ReportedBy
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[PropertyName.ReportedBy].AsRelationship );
-            }
-        }
+        public CswNbtNodePropRelationship ReportedBy { get { return ( _CswNbtNode.Properties[PropertyName.ReportedBy] ); } }
         public void OnReportedByChange( CswNbtNodeProp NodeProp )
         {
             if( false == CswTools.IsPrimaryKey( ReportedBy.RelatedNodeId ) )
@@ -171,28 +159,11 @@ namespace ChemSW.Nbt.ObjClasses
                 ReportedBy.CachedNodeName = _CswNbtResources.CurrentNbtUser.Username;
             }
         }
-        public CswNbtNodePropLogicalSet Parts
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[PropertyName.Parts].AsLogicalSet );
-            }
-        }
-        public CswNbtNodePropLogical Closed
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[PropertyName.Closed].AsLogical );
-            }
-        }
 
-        public CswNbtNodePropDateTime DateOpened
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[PropertyName.DateOpened].AsDateTime );
-            }
-        }
+        public CswNbtNodePropLogicalSet Parts { get { return ( _CswNbtNode.Properties[PropertyName.Parts] ); } }
+        public CswNbtNodePropLogical Closed { get { return ( _CswNbtNode.Properties[PropertyName.Closed] ); } }
+
+        public CswNbtNodePropDateTime DateOpened { get { return ( _CswNbtNode.Properties[PropertyName.DateOpened] ); } }
         private void OnDateOpenedChanged( CswNbtNodeProp NodeProp )
         {
             if( DateOpened.DateTimeValue == DateTime.MinValue )
@@ -201,20 +172,8 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
-        public CswNbtNodePropDateTime DateClosed
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[PropertyName.DateClosed].AsDateTime );
-            }
-        }
-        public CswNbtNodePropLogical Failure
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[PropertyName.Failure].AsLogical );
-            }
-        }
+        public CswNbtNodePropDateTime DateClosed { get { return ( _CswNbtNode.Properties[PropertyName.DateClosed] ); } }
+        public CswNbtNodePropLogical Failure { get { return ( _CswNbtNode.Properties[PropertyName.Failure] ); } }
 
         #endregion
 
