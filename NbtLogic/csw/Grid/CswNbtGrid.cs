@@ -201,6 +201,7 @@ namespace ChemSW.Nbt.Grid
                     Int32 JctNodePropId = CswConvert.ToInt32( Prop[CswNbtTreeNodes._AttrName_JctNodePropId] );
                     Int32 NodeTypePropId = CswConvert.ToInt32( Prop[CswNbtTreeNodes._AttrName_NodePropId] );
                     string PropName = CswConvert.ToString( Prop[CswNbtTreeNodes._AttrName_NodePropName] );
+                    CswNbtMetaDataNodeTypeProp MetaDataProp = _CswNbtResources.MetaData.getNodeTypeProp( NodeTypePropId );
 
                     string oldValue = Prop[CswNbtTreeNodes._AttrName_NodePropGestalt].ToString();
                     if( string.IsNullOrEmpty( oldValue ) )
@@ -222,10 +223,14 @@ namespace ChemSW.Nbt.Grid
                             } );
                             break;
                         case CswNbtMetaDataFieldType.NbtFieldType.File:
-                            string LinkUrl = CswNbtNodePropBlob.getLink( JctNodePropId, NodeId, NodeTypePropId );
-                            if( false == string.IsNullOrEmpty( LinkUrl ) )
+                            CswNbtSubField.PropColumn FileColumn = MetaDataProp.getFieldTypeRule().SubFields[CswNbtSubField.SubFieldName.Name].Column;
+                            if( false == String.IsNullOrEmpty( Prop[FileColumn.ToString().ToLower()].ToString() ) )
                             {
-                                newValue = "<a target=\"blank\" href=\"" + LinkUrl + "\">" + ( oldValue ?? "File" ) + "</a>";
+                                string LinkUrl = CswNbtNodePropBlob.getLink( JctNodePropId, NodeId, NodeTypePropId );
+                                if( false == string.IsNullOrEmpty( LinkUrl ) )
+                                {
+                                    newValue = "<a target=\"blank\" href=\"" + LinkUrl + "\">" + ( oldValue ?? "File" ) + "</a>";
+                                }
                             }
                             break;
                         case CswNbtMetaDataFieldType.NbtFieldType.Image:
@@ -236,7 +241,6 @@ namespace ChemSW.Nbt.Grid
                             }
                             break;
                         case CswNbtMetaDataFieldType.NbtFieldType.Link:
-                            CswNbtMetaDataNodeTypeProp MetaDataProp = _CswNbtResources.MetaData.getNodeTypeProp( NodeTypePropId );
                             CswNbtSubField.PropColumn HrefColumn = MetaDataProp.getFieldTypeRule().SubFields[CswNbtSubField.SubFieldName.Href].Column;
                             string Href = string.Empty;
                             if( null != Prop[HrefColumn.ToString().ToLower()] )
