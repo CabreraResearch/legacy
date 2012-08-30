@@ -90,15 +90,15 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Object class specific properties
 
-        public CswNbtNodePropRelationship InventoryGroup { get { return _CswNbtNode.Properties[PropertyName.InventoryGroup].AsRelationship; } }
-        public CswNbtNodePropRelationship WorkUnit { get { return _CswNbtNode.Properties[PropertyName.WorkUnit].AsRelationship; } }
-        public CswNbtNodePropRelationship Role { get { return _CswNbtNode.Properties[PropertyName.Role].AsRelationship; } }
-        public CswNbtNodePropLogical View { get { return _CswNbtNode.Properties[PropertyName.View].AsLogical; } }
-        public CswNbtNodePropLogical Edit { get { return _CswNbtNode.Properties[PropertyName.Edit].AsLogical; } }
-        public CswNbtNodePropLogical Dispense { get { return _CswNbtNode.Properties[PropertyName.Dispense].AsLogical; } }
-        public CswNbtNodePropLogical Dispose { get { return _CswNbtNode.Properties[PropertyName.Dispose].AsLogical; } }
-        public CswNbtNodePropLogical Undispose { get { return _CswNbtNode.Properties[PropertyName.Undispose].AsLogical; } }
-        public CswNbtNodePropLogical Request { get { return _CswNbtNode.Properties[PropertyName.Request].AsLogical; } }
+        public CswNbtNodePropRelationship InventoryGroup { get { return _CswNbtNode.Properties[PropertyName.InventoryGroup]; } }
+        public CswNbtNodePropRelationship WorkUnit { get { return _CswNbtNode.Properties[PropertyName.WorkUnit]; } }
+        public CswNbtNodePropRelationship Role { get { return _CswNbtNode.Properties[PropertyName.Role]; } }
+        public CswNbtNodePropLogical View { get { return _CswNbtNode.Properties[PropertyName.View]; } }
+        public CswNbtNodePropLogical Edit { get { return _CswNbtNode.Properties[PropertyName.Edit]; } }
+        public CswNbtNodePropLogical Dispense { get { return _CswNbtNode.Properties[PropertyName.Dispense]; } }
+        public CswNbtNodePropLogical Dispose { get { return _CswNbtNode.Properties[PropertyName.Dispose]; } }
+        public CswNbtNodePropLogical Undispose { get { return _CswNbtNode.Properties[PropertyName.Undispose]; } }
+        public CswNbtNodePropLogical Request { get { return _CswNbtNode.Properties[PropertyName.Request]; } }
 
         #endregion
 
