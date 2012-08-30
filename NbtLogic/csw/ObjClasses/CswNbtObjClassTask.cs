@@ -3,29 +3,31 @@ using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropertySets;
 using ChemSW.Nbt.PropTypes;
-using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.ObjClasses
 {
     public class CswNbtObjClassTask : CswNbtObjClass, ICswNbtPropertySetGeneratorTarget
     {
-        public static string DueDatePropertyName { get { return "Due Date"; } }
-        public static string CompletedPropertyName { get { return "Completed"; } }
-        public static string DescriptionPropertyName { get { return "Description"; } }
-        public static string OwnerPropertyName { get { return "Owner"; } }
-        public static string SummaryPropertyName { get { return "Summary"; } }
-        public static string DoneOnPropertyName { get { return "Done On"; } }
-        public static string IsFuturePropertyName { get { return "IsFuture"; } }
-        public static string GeneratorPropertyName { get { return "Generator"; } }
-        public static string PartsPropertyName { get { return "Parts"; } }
+        public sealed class PropertyName
+        {
+            public const string DueDate = "Due Date";
+            public const string Completed = "Completed";
+            public const string Description = "Description";
+            public const string Owner = "Owner";
+            public const string Summary = "Summary";
+            public const string DoneOn = "Done On";
+            public const string IsFuture = "IsFuture";
+            public const string Generator = "Generator";
+            public const string Parts = "Parts";
+            public const string PartsXValue = "Service";
+        }
 
-        public static string PartsXValueName { get { return "Service"; } }
 
         //ICswNbtPropertySetRuleGeneratorTarget
-        public string GeneratorTargetGeneratedDatePropertyName { get { return DueDatePropertyName; } }
-        public string GeneratorTargetIsFuturePropertyName { get { return IsFuturePropertyName; } }
-        public string GeneratorTargetGeneratorPropertyName { get { return GeneratorPropertyName; } }
-        public string GeneratorTargetParentPropertyName { get { return OwnerPropertyName; } }
+        public string GeneratorTargetGeneratedDatePropertyName { get { return PropertyName.DueDate; } }
+        public string GeneratorTargetIsFuturePropertyName { get { return PropertyName.IsFuture; } }
+        public string GeneratorTargetGeneratorPropertyName { get { return PropertyName.Generator; } }
+        public string GeneratorTargetParentPropertyName { get { return PropertyName.Owner; } }
 
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
@@ -68,7 +70,7 @@ namespace ChemSW.Nbt.ObjClasses
         }
 
         #region Inherited Events
-        
+
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
             _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
@@ -77,9 +79,9 @@ namespace ChemSW.Nbt.ObjClasses
             if( !_CswNbtNode.New && ( NodeModificationState.Modified == _CswNbtNode.ModificationState ) )
             {
                 //if someone set the flag deliberately don't mess with it
-                if( !_CswNbtNode.Properties[CswNbtObjClassTask.IsFuturePropertyName].WasModified )
+                if( !_CswNbtNode.Properties[PropertyName.IsFuture].WasModified )
                 {
-                    _CswNbtNode.Properties[CswNbtObjClassTask.IsFuturePropertyName].AsLogical.Checked = Tristate.False;
+                    _CswNbtNode.Properties[PropertyName.IsFuture].AsLogical.Checked = Tristate.False;
                 }
 
             }//If one of the main properties is modified        
@@ -91,9 +93,9 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault.afterWriteNode();
         }//afterWriteNode()
 
-        public override void beforeDeleteNode(bool DeleteAllRequiredRelatedNodes = false)
+        public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false )
         {
-            _CswNbtObjClassDefault.beforeDeleteNode(DeleteAllRequiredRelatedNodes);
+            _CswNbtObjClassDefault.beforeDeleteNode( DeleteAllRequiredRelatedNodes );
 
         }//beforeDeleteNode()
 
@@ -142,9 +144,9 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override bool onButtonClick( NbtButtonData ButtonData )
         {
-            
-            
-            
+
+
+
             if( null != ButtonData && null != ButtonData.NodeTypeProp ) { /*Do Something*/ }
             return true;
         }
@@ -163,14 +165,14 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get
             {
-                return ( _CswNbtNode.Properties[DoneOnPropertyName].AsDateTime );
+                return ( _CswNbtNode.Properties[PropertyName.DoneOn].AsDateTime );
             }
         }
         public CswNbtNodePropDateTime DueDate
         {
             get
             {
-                return ( _CswNbtNode.Properties[DueDatePropertyName].AsDateTime );
+                return ( _CswNbtNode.Properties[PropertyName.DueDate].AsDateTime );
             }
         }
 
@@ -178,7 +180,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get
             {
-                return ( _CswNbtNode.Properties[IsFuturePropertyName].AsLogical );
+                return ( _CswNbtNode.Properties[PropertyName.IsFuture].AsLogical );
             }
         }
 
@@ -186,7 +188,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get
             {
-                return ( _CswNbtNode.Properties[CompletedPropertyName].AsLogical );
+                return ( _CswNbtNode.Properties[PropertyName.Completed].AsLogical );
             }
         }
 
@@ -194,7 +196,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get
             {
-                return ( _CswNbtNode.Properties[DescriptionPropertyName].AsMemo );
+                return ( _CswNbtNode.Properties[PropertyName.Description].AsMemo );
             }
         }
 
@@ -202,7 +204,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get
             {
-                return ( _CswNbtNode.Properties[GeneratorPropertyName].AsRelationship );
+                return ( _CswNbtNode.Properties[PropertyName.Generator].AsRelationship );
             }
         }
 
@@ -210,7 +212,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get
             {
-                return ( _CswNbtNode.Properties[OwnerPropertyName].AsRelationship );
+                return ( _CswNbtNode.Properties[PropertyName.Owner].AsRelationship );
             }
         }
 
@@ -218,7 +220,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get
             {
-                return ( _CswNbtNode.Properties[SummaryPropertyName].AsText );
+                return ( _CswNbtNode.Properties[PropertyName.Summary].AsText );
             }
         }
 
@@ -234,9 +236,10 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get
             {
-                return ( _CswNbtNode.Properties[PartsPropertyName].AsLogicalSet );
+                return ( _CswNbtNode.Properties[PropertyName.Parts].AsLogicalSet );
             }
         }
+
         #endregion
 
 
