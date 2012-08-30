@@ -26,6 +26,7 @@ using ChemSW.Session;
 using ChemSW.StructureSearch;
 using ChemSW.WebSvc;
 using Newtonsoft.Json.Linq;
+using ChemSW.Nbt.csw.Conversion;
 
 
 
@@ -4846,6 +4847,33 @@ namespace ChemSW.Nbt.WebServices
             CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
             return ReturnVal.ToString();
         } // getDispenseSourceContainerData()
+
+        [WebMethod( EnableSession = false )]
+        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        public string convertUnit( string ValueToConvert, string OldUnitId, string NewUnitId )
+        {
+            JObject ReturnVal = new JObject();
+            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            try
+            {
+                _initResources();
+                AuthenticationStatus = _attemptRefresh( true );
+
+                CswPrimaryKey OldUnitPk = CswConvert.ToPrimaryKey( OldUnitId );
+                CswPrimaryKey NewUnitPk = CswConvert.ToPrimaryKey( NewUnitId );
+                CswNbtUnitConversion Conversion = new CswNbtUnitConversion( _CswNbtResources, OldUnitPk, NewUnitPk );
+                double convertedValue = Conversion.convertUnit( CswConvert.ToDouble( ValueToConvert  ) );
+                ReturnVal["convertedvalue"] = convertedValue.ToString();
+
+                _deInitResources();
+            }
+            catch( Exception Ex )
+            {
+                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
+            }
+            CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
+            return ReturnVal.ToString();
+        } // convertUnit()
 
         #endregion Dispense Container
 
