@@ -247,63 +247,63 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get
             {
-                return ( _CswNbtNode.Properties[PropertyName.IPFilterRegex].AsText );
+                return ( _CswNbtNode.Properties[PropertyName.IPFilterRegex] );
             }
         }
         public CswNbtNodePropDateTime SubscriptionExpirationDate
         {
             get
             {
-                return ( _CswNbtNode.Properties[PropertyName.SubscriptionExpirationDate].AsDateTime );
+                return ( _CswNbtNode.Properties[PropertyName.SubscriptionExpirationDate] );
             }
         }
         public CswNbtNodePropLogical Deactivated
         {
             get
             {
-                return ( _CswNbtNode.Properties[PropertyName.Deactivated].AsLogical );
+                return ( _CswNbtNode.Properties[PropertyName.Deactivated] );
             }
         }
         public CswNbtNodePropText CompanyID
         {
             get
             {
-                return ( _CswNbtNode.Properties[PropertyName.CompanyID].AsText );
+                return ( _CswNbtNode.Properties[PropertyName.CompanyID] );
             }
         }
         public CswNbtNodePropNumber UserCount
         {
             get
             {
-                return ( _CswNbtNode.Properties[PropertyName.UserCount].AsNumber );
+                return ( _CswNbtNode.Properties[PropertyName.UserCount] );
             }
         }
         public CswNbtNodePropLogicalSet ModulesEnabled
         {
             get
             {
-                return ( _CswNbtNode.Properties[PropertyName.ModulesEnabled].AsLogicalSet );
+                return ( _CswNbtNode.Properties[PropertyName.ModulesEnabled] );
             }
         }
         public CswNbtNodePropButton Login
         {
             get
             {
-                return ( _CswNbtNode.Properties[PropertyName.Login].AsButton );
+                return ( _CswNbtNode.Properties[PropertyName.Login] );
             }
         }
         public CswNbtNodePropStatic SchemaVersion
         {
             get
             {
-                return ( _CswNbtNode.Properties[PropertyName.SchemaVersion].AsStatic );
+                return ( _CswNbtNode.Properties[PropertyName.SchemaVersion] );
             }
         }
         public CswNbtNodePropStatic SchemaName
         {
             get
             {
-                return ( _CswNbtNode.Properties[PropertyName.SchemaName].AsStatic );
+                return ( _CswNbtNode.Properties[PropertyName.SchemaName] );
             }
         }
 
