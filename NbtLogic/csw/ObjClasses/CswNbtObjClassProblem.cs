@@ -2,21 +2,24 @@ using System;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
-using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.ObjClasses
 {
     public class CswNbtObjClassProblem : CswNbtObjClass
     {
-        public static string PartsPropertyName { get { return "Parts"; } }
-        public static string OwnerPropertyName { get { return "Owner"; } }
-        public static string DateOpenedPropertyName { get { return "Date Opened"; } }
-        public static string DateClosedPropertyName { get { return "Date Closed"; } }
-        public static string ClosedPropertyName { get { return "Closed"; } }
-        public static string ReportedByPropertyName { get { return "Reported By"; } }
-        public static string FailurePropertyName { get { return "Failure"; } }
+        public sealed class PropertyName
+        {
+            public const string Parts = "Parts";
+            public const string Owner = "Owner";
+            public const string DateOpened = "Date Opened";
+            public const string DateClosed = "Date Closed";
+            public const string Closed = "Closed";
+            public const string ReportedBy = "Reported By";
+            public const string Failure = "Failure";
+        }
 
-        public static string PartsXValueName { get { return "Service"; } }
+
+        public const string PartsXValueName = "Service";
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
 
@@ -149,7 +152,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get
             {
-                return ( _CswNbtNode.Properties[OwnerPropertyName].AsRelationship );
+                return ( _CswNbtNode.Properties[PropertyName.Owner].AsRelationship );
             }
         }
 
@@ -157,7 +160,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get
             {
-                return ( _CswNbtNode.Properties[ReportedByPropertyName].AsRelationship );
+                return ( _CswNbtNode.Properties[PropertyName.ReportedBy].AsRelationship );
             }
         }
         public void OnReportedByChange( CswNbtNodeProp NodeProp )
@@ -172,14 +175,14 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get
             {
-                return ( _CswNbtNode.Properties[PartsPropertyName].AsLogicalSet );
+                return ( _CswNbtNode.Properties[PropertyName.Parts].AsLogicalSet );
             }
         }
         public CswNbtNodePropLogical Closed
         {
             get
             {
-                return ( _CswNbtNode.Properties[ClosedPropertyName].AsLogical );
+                return ( _CswNbtNode.Properties[PropertyName.Closed].AsLogical );
             }
         }
 
@@ -187,7 +190,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get
             {
-                return ( _CswNbtNode.Properties[DateOpenedPropertyName].AsDateTime );
+                return ( _CswNbtNode.Properties[PropertyName.DateOpened].AsDateTime );
             }
         }
         private void OnDateOpenedChanged( CswNbtNodeProp NodeProp )
@@ -202,14 +205,14 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get
             {
-                return ( _CswNbtNode.Properties[DateClosedPropertyName].AsDateTime );
+                return ( _CswNbtNode.Properties[PropertyName.DateClosed].AsDateTime );
             }
         }
         public CswNbtNodePropLogical Failure
         {
             get
             {
-                return ( _CswNbtNode.Properties[FailurePropertyName].AsLogical );
+                return ( _CswNbtNode.Properties[PropertyName.Failure].AsLogical );
             }
         }
 
