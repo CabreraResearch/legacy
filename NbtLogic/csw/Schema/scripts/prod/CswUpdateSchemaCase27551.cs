@@ -17,17 +17,17 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataObjectClass materialCompnentOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.MaterialComponentClass );
 
             //make mixture readonly
-            CswNbtMetaDataObjectClassProp mixtureOCP = materialCompnentOC.getObjectClassProp( CswNbtObjClassMaterialComponent.MixturePropertyName );
+            CswNbtMetaDataObjectClassProp mixtureOCP = materialCompnentOC.getObjectClassProp( CswNbtObjClassMaterialComponent.PropertyName.Mixture );
             _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( mixtureOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.servermanaged, Tristate.True );
 
             //make constituent required
-            CswNbtMetaDataObjectClassProp constituentOCP = materialCompnentOC.getObjectClassProp( CswNbtObjClassMaterialComponent.ConstituentPropertyName );
+            CswNbtMetaDataObjectClassProp constituentOCP = materialCompnentOC.getObjectClassProp( CswNbtObjClassMaterialComponent.PropertyName.Constituent );
             _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( constituentOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.isrequired, Tristate.True );
 
             //add constituentNTP to add layout
             foreach( CswNbtMetaDataNodeType materialComponentNT in materialCompnentOC.getNodeTypes() )
             {
-                CswNbtMetaDataNodeTypeProp constituentNTP = materialComponentNT.getNodeTypeProp( CswNbtObjClassMaterialComponent.ConstituentPropertyName );
+                CswNbtMetaDataNodeTypeProp constituentNTP = materialComponentNT.getNodeTypeProp( CswNbtObjClassMaterialComponent.PropertyName.Constituent );
                 if( null != constituentNTP )
                 {
                     constituentNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, constituentNTP, true ); //add constituent to add layout
