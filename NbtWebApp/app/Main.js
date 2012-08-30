@@ -1180,6 +1180,7 @@ window.initMain = window.initMain || function (undefined) {
                             sourceContainerNodeId: o.sourceContainerNodeId,
                             currentQuantity: o.currentQuantity,
                             currentUnitName: o.currentUnitName,
+                            precision: o.precision,
                             capacity: Csw.deserialize(o.capacity),
                             requestItemId: requestItemId,
                             title: title,

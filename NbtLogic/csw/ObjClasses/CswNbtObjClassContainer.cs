@@ -359,6 +359,7 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 ActionDataObj["currentQuantity"] = Quantity.Quantity;
                 ActionDataObj["currentUnitName"] = unitNode.Name.Text;
+                ActionDataObj["precision"] = Quantity.Precision.ToString();
             }
             JObject CapacityObj = _getCapacityJSON();
             ActionDataObj["capacity"] = CapacityObj.ToString();

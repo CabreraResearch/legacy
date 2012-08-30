@@ -20,6 +20,7 @@
                         sourceContainerNodeId: '',
                         currentQuantity: '',
                         currentUnitName: '',
+                        precision: 6,
                         quantityAfterDispense: '',
                         capacity: '',
                         dispenseType: 'Dispense into a Child Container',
@@ -392,9 +393,8 @@
                                             if (Csw.isNullOrEmpty(data)) {
                                                 quantityDeltaValue = 0;
                                             } else {
-                                                //TODO: get currentQuantity's precision value instead
-                                                var precision = 6; //number of post-decimal significant digits to show
-                                                quantityDeltaValue = Math.floor(Csw.number(data.convertedvalue) * Math.pow(10,precision)) / Math.pow(10,precision);
+                                                var precision = Csw.number(cswPrivate.state.precision);
+                                                quantityDeltaValue = Math.round(Csw.number(data.convertedvalue) * Math.pow(10, precision)) / Math.pow(10, precision);
                                             }
                                         },
                                         error: function () {
