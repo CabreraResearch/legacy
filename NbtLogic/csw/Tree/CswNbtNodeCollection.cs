@@ -611,7 +611,7 @@ namespace ChemSW.Nbt
             CswNbtNode UserNode = null;
 
             CswNbtMetaDataObjectClass User_ObjectClass = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
-            CswNbtMetaDataObjectClassProp UserName_ObjectClassProp = User_ObjectClass.getObjectClassProp( CswNbtObjClassUser.UsernamePropertyName );
+            CswNbtMetaDataObjectClassProp UserName_ObjectClassProp = User_ObjectClass.getObjectClassProp( CswNbtObjClassUser.PropertyName.Username );
 
             _CswNbtResources.logTimerResult( "makeUserNodeFromUsername 1", Timer );
 

@@ -188,10 +188,10 @@ namespace ChemSW.Nbt.Security
                                     NodeType.getObjectClass().ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.UserClass &&
                                     !User.IsAdministrator() &&
                                     OCP != null &&
-                                    ( OCP.PropName == CswNbtObjClassUser.UsernamePropertyName ||
-                                      OCP.PropName == CswNbtObjClassUser.RolePropertyName ||
-                                      OCP.PropName == CswNbtObjClassUser.FailedLoginCountPropertyName ||
-                                      OCP.PropName == CswNbtObjClassUser.AccountLockedPropertyName ) )
+                                    ( OCP.PropName == CswNbtObjClassUser.PropertyName.Username ||
+                                      OCP.PropName == CswNbtObjClassUser.PropertyName.Role ||
+                                      OCP.PropName == CswNbtObjClassUser.PropertyName.FailedLoginCount ||
+                                      OCP.PropName == CswNbtObjClassUser.PropertyName.AccountLocked ) )
                                 {
                                     ret = false;
                                 }
@@ -202,7 +202,7 @@ namespace ChemSW.Nbt.Security
                                     !User.IsAdministrator() &&
                                     User.UserId != NodeId &&
                                     OCP != null &&
-                                    OCP.PropName == CswNbtObjClassUser.PasswordPropertyName )
+                                    OCP.PropName == CswNbtObjClassUser.PropertyName.Password )
                                 {
                                     ret = false;
                                 }

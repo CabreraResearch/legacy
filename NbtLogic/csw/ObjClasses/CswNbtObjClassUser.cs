@@ -15,26 +15,27 @@ namespace ChemSW.Nbt.ObjClasses
     {
         public const string ChemSWAdminUsername = CswAuthenticator.ChemSWAdminUsername;
 
-        public const string RolePropertyName = "Role";
-        public const string AccountLockedPropertyName = "AccountLocked";
-        public const string FailedLoginCountPropertyName = "FailedLoginCount";
-        public const string PasswordPropertyName = "Password";
-        public const string UsernamePropertyName = "Username";
-        public const string FirstNamePropertyName = "First Name";
-        public const string LastNamePropertyName = "Last Name";
-        public const string LastLoginPropertyName = "Last Login";
-        public const string FavoriteViewsPropertyName = "Favorite Views";
-        public const string FavoriteActionsPropertyName = "Favorite Actions";
-        public const string EmailPropertyName = "Email";
-        public const string PageSizePropertyName = "Page Size";
-        public const string DateFormatPropertyName = "Date Format";
-        public const string TimeFormatPropertyName = "Time Format";
-        public const string DefaultLocationPropertyName = "Default Location";
-        public const string WorkUnitPropertyName = "Work Unit";
-        public const string LogLevelPropertyName = "Log Level";
-        public static string ArchivedPropertyName { get { return "Archived"; } }
-
-
+        public sealed class PropertyName
+        {
+            public const string Role = "Role";
+            public const string AccountLocked = "AccountLocked";
+            public const string FailedLoginCount = "FailedLoginCount";
+            public const string Password = "Password";
+            public const string Username = "Username";
+            public const string FirstName = "First Name";
+            public const string LastName = "Last Name";
+            public const string LastLogin = "Last Login";
+            public const string FavoriteViews = "Favorite Views";
+            public const string FavoriteActions = "Favorite Actions";
+            public const string Email = "Email";
+            public const string PageSize = "Page Size";
+            public const string DateFormat = "Date Format";
+            public const string TimeFormat = "Time Format";
+            public const string DefaultLocation = "Default Location";
+            public const string WorkUnit = "Work Unit";
+            public const string LogLevel = "Log Level";
+            public const string Archived = "Archived";
+        }
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
 
@@ -235,7 +236,7 @@ namespace ChemSW.Nbt.ObjClasses
             }
 
             // case 22635 - prevent deleting chemsw admin user
-            CswNbtNodePropWrapper UsernamePropWrapper = Node.Properties[UsernamePropertyName];
+            CswNbtNodePropWrapper UsernamePropWrapper = Node.Properties[PropertyName.Username];
             if( UsernamePropWrapper.GetOriginalPropRowValue( UsernamePropWrapper.NodeTypeProp.getFieldTypeRule().SubFields.Default.Column ) == ChemSWAdminUsername &&
                 false == ( _CswNbtResources.CurrentNbtUser is CswNbtSystemUser ) )
             {
@@ -298,7 +299,7 @@ namespace ChemSW.Nbt.ObjClasses
             //case 24525 - add default filter to ignore archived users in relationship props
             CswNbtView view = ParentRelationship.View;
             CswNbtMetaDataObjectClass userOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
-            CswNbtMetaDataObjectClassProp archivedOCP = userOC.getObjectClassProp( CswNbtObjClassUser.ArchivedPropertyName );
+            CswNbtMetaDataObjectClassProp archivedOCP = userOC.getObjectClassProp( PropertyName.Archived );
             view.AddViewPropertyAndFilter( ParentRelationship, archivedOCP, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.NotEquals, Value: Tristate.True.ToString() );
 
             _CswNbtObjClassDefault.addDefaultViewFilters( ParentRelationship );
@@ -347,20 +348,20 @@ namespace ChemSW.Nbt.ObjClasses
         public string Rolename { get { return _RoleNodeObjClass.Name.Text; } }
         public Int32 RoleTimeout { get { return CswConvert.ToInt32( _RoleNodeObjClass.Timeout.Value ); } }
 
-        public CswNbtNodePropRelationship Role { get { return ( _CswNbtNode.Properties[RolePropertyName].AsRelationship ); } }
-        public CswNbtNodePropLogical AccountLocked { get { return ( _CswNbtNode.Properties[AccountLockedPropertyName].AsLogical ); } }
-        public CswNbtNodePropNumber FailedLoginCount { get { return ( _CswNbtNode.Properties[FailedLoginCountPropertyName].AsNumber ); } }
-        public CswNbtNodePropPassword PasswordProperty { get { return ( _CswNbtNode.Properties[PasswordPropertyName].AsPassword ); } }
-        public CswNbtNodePropText UsernameProperty { get { return ( _CswNbtNode.Properties[UsernamePropertyName].AsText ); } }
-        public CswNbtNodePropText FirstNameProperty { get { return ( _CswNbtNode.Properties[FirstNamePropertyName].AsText ); } }
-        public CswNbtNodePropText LastNameProperty { get { return ( _CswNbtNode.Properties[LastNamePropertyName].AsText ); } }
+        public CswNbtNodePropRelationship Role { get { return ( _CswNbtNode.Properties[PropertyName.Role].AsRelationship ); } }
+        public CswNbtNodePropLogical AccountLocked { get { return ( _CswNbtNode.Properties[PropertyName.AccountLocked].AsLogical ); } }
+        public CswNbtNodePropNumber FailedLoginCount { get { return ( _CswNbtNode.Properties[PropertyName.FailedLoginCount].AsNumber ); } }
+        public CswNbtNodePropPassword PasswordProperty { get { return ( _CswNbtNode.Properties[PropertyName.Password].AsPassword ); } }
+        public CswNbtNodePropText UsernameProperty { get { return ( _CswNbtNode.Properties[PropertyName.Username].AsText ); } }
+        public CswNbtNodePropText FirstNameProperty { get { return ( _CswNbtNode.Properties[PropertyName.FirstName].AsText ); } }
+        public CswNbtNodePropText LastNameProperty { get { return ( _CswNbtNode.Properties[PropertyName.LastName].AsText ); } }
         public string FirstName { get { return FirstNameProperty.Text; } }
         public string LastName { get { return LastNameProperty.Text; } }
         public string Username { get { return UsernameProperty.Text; } }
-        public CswNbtNodePropDateTime LastLogin { get { return ( _CswNbtNode.Properties[LastLoginPropertyName].AsDateTime ); } }
-        public CswNbtNodePropViewPickList FavoriteViews { get { return _CswNbtNode.Properties[FavoriteViewsPropertyName].AsViewPickList; } }
-        public CswNbtNodePropLogicalSet FavoriteActions { get { return _CswNbtNode.Properties[FavoriteActionsPropertyName].AsLogicalSet; } }
-        public CswNbtNodePropText EmailProperty { get { return _CswNbtNode.Properties[EmailPropertyName].AsText; } }
+        public CswNbtNodePropDateTime LastLogin { get { return ( _CswNbtNode.Properties[PropertyName.LastLogin].AsDateTime ); } }
+        public CswNbtNodePropViewPickList FavoriteViews { get { return _CswNbtNode.Properties[PropertyName.FavoriteViews].AsViewPickList; } }
+        public CswNbtNodePropLogicalSet FavoriteActions { get { return _CswNbtNode.Properties[PropertyName.FavoriteActions].AsLogicalSet; } }
+        public CswNbtNodePropText EmailProperty { get { return _CswNbtNode.Properties[PropertyName.Email].AsText; } }
         public string Email { get { return EmailProperty.Text; } }
         public string DateFormat
         {
@@ -374,7 +375,7 @@ namespace ChemSW.Nbt.ObjClasses
                 return ret;
             }
         }
-        public CswNbtNodePropList DateFormatProperty { get { return ( _CswNbtNode.Properties[DateFormatPropertyName].AsList ); } }
+        public CswNbtNodePropList DateFormatProperty { get { return ( _CswNbtNode.Properties[PropertyName.DateFormat].AsList ); } }
         public string TimeFormat
         {
             get
@@ -387,11 +388,11 @@ namespace ChemSW.Nbt.ObjClasses
                 return ret;
             }
         }
-        public CswNbtNodePropList TimeFormatProperty { get { return ( _CswNbtNode.Properties[TimeFormatPropertyName].AsList ); } }
+        public CswNbtNodePropList TimeFormatProperty { get { return ( _CswNbtNode.Properties[PropertyName.TimeFormat].AsList ); } }
 
         public string EncryptedPassword { get { return PasswordProperty.EncryptedPassword; } }
 
-        public CswNbtNodePropNumber PageSizeProperty { get { return _CswNbtNode.Properties[PageSizePropertyName].AsNumber; } }
+        public CswNbtNodePropNumber PageSizeProperty { get { return _CswNbtNode.Properties[PropertyName.PageSize].AsNumber; } }
         public Int32 PageSize
         {
             get
@@ -401,11 +402,11 @@ namespace ChemSW.Nbt.ObjClasses
                 return ret;
             }
         }
-        public CswNbtNodePropLocation DefaultLocationProperty { get { return _CswNbtNode.Properties[DefaultLocationPropertyName]; } }
+        public CswNbtNodePropLocation DefaultLocationProperty { get { return _CswNbtNode.Properties[PropertyName.DefaultLocation]; } }
         public CswPrimaryKey DefaultLocationId { get { return DefaultLocationProperty.SelectedNodeId; } }
-        public CswNbtNodePropRelationship WorkUnitProperty { get { return _CswNbtNode.Properties[WorkUnitPropertyName]; } }
+        public CswNbtNodePropRelationship WorkUnitProperty { get { return _CswNbtNode.Properties[PropertyName.WorkUnit]; } }
         public CswPrimaryKey WorkUnitId { get { return WorkUnitProperty.RelatedNodeId; } }
-        public CswNbtNodePropLogical Archived { get { return _CswNbtNode.Properties[ArchivedPropertyName]; } }
+        public CswNbtNodePropLogical Archived { get { return _CswNbtNode.Properties[PropertyName.Archived]; } }
 
         #endregion
 
