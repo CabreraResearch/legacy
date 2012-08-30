@@ -221,7 +221,7 @@ namespace ChemSW.Nbt.ObjClasses
 
 
         #region Inherited Events
-        
+
         /// <summary>
         /// Determine Inspection Status and set read-only
         /// </summary>

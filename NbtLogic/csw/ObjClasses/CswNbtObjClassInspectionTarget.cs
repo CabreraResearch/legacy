@@ -16,8 +16,6 @@ namespace ChemSW.Nbt.ObjClasses
             public const string InspectionTargetGroup = "Inspection Target Group";
         }
 
-
-
         //ICswNbtPropertySetInspectionParent
         public string InspectionParentStatusPropertyName { get { return PropertyName.Status; } }
         //public string InspectionParentLastInspectionDatePropertyName { get { return LastInspectionDatePropertyName; } }
@@ -107,47 +105,17 @@ namespace ChemSW.Nbt.ObjClasses
         /// <summary>
         /// Inspection Target Inspection Status (OK, Deficient)
         /// </summary>
-        public CswNbtNodePropList Status
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[PropertyName.Status].AsList );
-            }
-        }
+        public CswNbtNodePropList Status { get { return ( _CswNbtNode.Properties[PropertyName.Status] ); } }
 
         /// <summary>
         /// Location of Inspection Target
         /// </summary>
-        public CswNbtNodePropLocation Location
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[PropertyName.Location].AsLocation );
-            }
-        }
-
-        public CswNbtNodePropText Description
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[PropertyName.Description].AsText );
-            }
-        }
-
-        public CswNbtNodePropBarcode Barcode
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[PropertyName.Barcode].AsBarcode );
-            }
-        }
-
+        public CswNbtNodePropLocation Location { get { return ( _CswNbtNode.Properties[PropertyName.Location] ); } }
+        public CswNbtNodePropText Description { get { return ( _CswNbtNode.Properties[PropertyName.Description] ); } }
+        public CswNbtNodePropBarcode Barcode { get { return ( _CswNbtNode.Properties[PropertyName.Barcode] ); } }
         public CswNbtNodePropRelationship InspectionTargetGroup
         {
-            get
-            {
-                return ( _CswNbtNode.Properties[PropertyName.InspectionTargetGroup].AsRelationship );
-            }
+            get { return ( _CswNbtNode.Properties[PropertyName.InspectionTargetGroup] ); }
         }
 
         #endregion
