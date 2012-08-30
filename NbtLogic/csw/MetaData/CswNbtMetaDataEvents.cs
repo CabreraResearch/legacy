@@ -105,7 +105,7 @@ namespace ChemSW.Nbt.MetaData
                 {
                     CswNbtMetaDataNodeType EquipmentNodeType = EditedProp.getNodeType();
                     //CswNbtObjClassRuleEquipment EquipmentRule = new CswNbtObjClassRuleEquipment();
-                    CswNbtMetaDataNodeTypeProp RelationshipProp = EquipmentNodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassEquipment.AssemblyPropertyName );
+                    CswNbtMetaDataNodeTypeProp RelationshipProp = EquipmentNodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassEquipment.PropertyName.Assembly );
                     if( RelationshipProp != null )
                     {
                         //if (RelationshipProp.FKType == RelatedIdType.NodeTypeId.ToString())
@@ -182,7 +182,7 @@ namespace ChemSW.Nbt.MetaData
                     //if( EquipmentNodeType.ObjectClass.ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.EquipmentClass )
                     //{
                     //CswNbtObjClassRuleEquipment EquipmentRule = new CswNbtObjClassRuleEquipment(); 
-                    CswNbtMetaDataNodeTypeProp RelationshipProp = EquipmentNodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassEquipment.AssemblyPropertyName );
+                    CswNbtMetaDataNodeTypeProp RelationshipProp = EquipmentNodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassEquipment.PropertyName.Assembly );
                     if( RelationshipProp != null )
                     {
                         if( ( RelationshipProp.FKType == NbtViewRelatedIdType.NodeTypeId.ToString() &&
