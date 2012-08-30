@@ -1,29 +1,30 @@
-using ChemSW.Nbt.MetaData;
-using ChemSW.Nbt.PropTypes;
-using Newtonsoft.Json.Linq;
-using ChemSW.Nbt.ServiceDrivers;
+using System;
 using ChemSW.Core;
 using ChemSW.Nbt.Actions;
-using System;
-using System.Data;
+using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.PropTypes;
 
 namespace ChemSW.Nbt.ObjClasses
 {
     public class CswNbtObjClassFeedback : CswNbtObjClass
     {
-        public const string AuthorPropertyName = "Author";
-        public const string DateSubmittedPropertyName = "Date Submitted";
-        public const string SubjectPropertyName = "Subject";
-        public const string SummaryPropertyName = "Summary";
-        public const string DiscussionPropertyName = "Discussion";
-        public const string LoadUserContextPropertyName = "Load User Context";
-        public const string SelectedNodeIDPropertyName = "Selected Node ID";
-        public const string ActionPropertyName = "Action";
-        public const string ViewPropertyName = "View";
-        public const string StatusPropertyName = "Status";
-        public const string CategoryPropertyName = "Category";
-        public const string CaseNumberPropertyName = "Case Number";
-        public const string CurrentViewModePropertyName = "Current View Mode";
+        public sealed class PropertyName
+        {
+            public const string Author = "Author";
+            public const string DateSubmitted = "Date Submitted";
+            public const string Subject = "Subject";
+            public const string Summary = "Summary";
+            public const string Discussion = "Discussion";
+            public const string LoadUserContext = "Load User Context";
+            public const string SelectedNodeID = "Selected Node ID";
+            public const string Action = "Action";
+            public const string View = "View";
+            public const string Status = "Status";
+            public const string Category = "Category";
+            public const string CaseNumber = "Case Number";
+            public const string CurrentViewMode = "Current View Mode";
+        }
+
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
 
@@ -53,7 +54,7 @@ namespace ChemSW.Nbt.ObjClasses
         }
 
         #region Inherited Events
-        
+
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
             _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
@@ -95,7 +96,7 @@ namespace ChemSW.Nbt.ObjClasses
             if( null != ButtonData && null != ButtonData.NodeTypeProp )
             {
                 CswNbtMetaDataObjectClassProp OCP = ButtonData.NodeTypeProp.getObjectClassProp();
-                if( LoadUserContextPropertyName == OCP.PropName )
+                if( PropertyName.LoadUserContext == OCP.PropName )
                 {
                     ButtonData.Data["action"] = OCP.PropName;
 
@@ -152,7 +153,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get
             {
-                return ( _CswNbtNode.Properties[AuthorPropertyName] );
+                return ( _CswNbtNode.Properties[PropertyName.Author] );
             }
         }
         private void OnAuthorPropChange( CswNbtNodeProp NodeProp )
@@ -200,7 +201,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get
             {
-                return ( _CswNbtNode.Properties[DateSubmittedPropertyName] );
+                return ( _CswNbtNode.Properties[PropertyName.DateSubmitted] );
             }
         }
 
@@ -208,7 +209,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get
             {
-                return ( _CswNbtNode.Properties[SubjectPropertyName] );
+                return ( _CswNbtNode.Properties[PropertyName.Subject] );
             }
         }
 
@@ -216,7 +217,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get
             {
-                return ( _CswNbtNode.Properties[SummaryPropertyName] );
+                return ( _CswNbtNode.Properties[PropertyName.Summary] );
             }
         }
 
@@ -224,7 +225,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get
             {
-                return ( _CswNbtNode.Properties[DiscussionPropertyName] );
+                return ( _CswNbtNode.Properties[PropertyName.Discussion] );
             }
         }
 
@@ -232,7 +233,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get
             {
-                return ( _CswNbtNode.Properties[LoadUserContextPropertyName] );
+                return ( _CswNbtNode.Properties[PropertyName.LoadUserContext] );
             }
         }
 
@@ -240,7 +241,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get
             {
-                return ( _CswNbtNode.Properties[SelectedNodeIDPropertyName] );
+                return ( _CswNbtNode.Properties[PropertyName.SelectedNodeID] );
             }
         }
 
@@ -248,7 +249,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get
             {
-                return ( _CswNbtNode.Properties[ActionPropertyName] );
+                return ( _CswNbtNode.Properties[PropertyName.Action] );
             }
         }
 
@@ -256,7 +257,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get
             {
-                return ( _CswNbtNode.Properties[ViewPropertyName] );
+                return ( _CswNbtNode.Properties[PropertyName.View] );
             }
         }
 
@@ -264,7 +265,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get
             {
-                return ( _CswNbtNode.Properties[StatusPropertyName] );
+                return ( _CswNbtNode.Properties[PropertyName.Status] );
             }
         }
 
@@ -272,7 +273,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get
             {
-                return ( _CswNbtNode.Properties[CategoryPropertyName] );
+                return ( _CswNbtNode.Properties[PropertyName.Category] );
             }
         }
 
@@ -280,7 +281,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get
             {
-                return ( _CswNbtNode.Properties[CaseNumberPropertyName] );
+                return ( _CswNbtNode.Properties[PropertyName.CaseNumber] );
             }
         }
 
@@ -288,7 +289,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get
             {
-                return ( _CswNbtNode.Properties[CurrentViewModePropertyName] );
+                return ( _CswNbtNode.Properties[PropertyName.CurrentViewMode] );
             }
         }
 
