@@ -81,13 +81,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Object class specific properties
 
-        public CswNbtNodePropText VendorName
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[PropertyName.VendorName].AsText );
-            }
-        }
+        public CswNbtNodePropText VendorName { get { return ( _CswNbtNode.Properties[PropertyName.VendorName] ); } }
 
         #endregion
 
