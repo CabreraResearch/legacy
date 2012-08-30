@@ -384,7 +384,7 @@ namespace ChemSW.Nbt.ObjClasses
 
                 DisposedContainerTransactionsView.AddViewPropertyAndFilter(
                     ParentRelationship,
-                    ContDispTransNT.getNodeTypePropByObjectClassProp( CswNbtObjClassContainerDispenseTransaction.SourceContainerPropertyName ),
+                    ContDispTransNT.getNodeTypePropByObjectClassProp( CswNbtObjClassContainerDispenseTransaction.PropertyName.SourceContainer ),
                     NodeId.PrimaryKey.ToString(),
                     CswNbtSubField.SubFieldName.NodeID,
                     false,
@@ -393,7 +393,7 @@ namespace ChemSW.Nbt.ObjClasses
 
                 DisposedContainerTransactionsView.AddViewPropertyAndFilter(
                     ParentRelationship,
-                    ContDispTransNT.getNodeTypePropByObjectClassProp( CswNbtObjClassContainerDispenseTransaction.TypePropertyName ),
+                    ContDispTransNT.getNodeTypePropByObjectClassProp( CswNbtObjClassContainerDispenseTransaction.PropertyName.Type ),
                     CswNbtObjClassContainerDispenseTransaction.DispenseType.Dispose.ToString(),
                     CswNbtSubField.SubFieldName.Value,
                     false,
