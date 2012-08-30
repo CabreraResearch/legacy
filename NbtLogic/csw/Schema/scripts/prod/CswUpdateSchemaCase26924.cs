@@ -11,7 +11,7 @@ namespace ChemSW.Nbt.Schema
         /// </summary>
         public override void update()
         {
-            _CswNbtSchemaModTrnsctn.createConfigurationVariable( CswNbtResources.ConfigurationVariables.netquantity_enforced, "When set to 1, total quantity to deduct in the Dispense Container wizard cannot exceed the parent container's netquantity.", "1", IsSystem: false );
+            _CswNbtSchemaModTrnsctn.createConfigurationVariable( CswNbtResources.ConfigurationVariables.netquantity_enforced, "When set to 1, users cannot dispense any quantity greater than the parent container's netquantity.", "1", IsSystem: false );
         }//Update()
 
     }//class CswUpdateSchemaCase26924
