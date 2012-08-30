@@ -89,12 +89,12 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Object class specific properties
 
-        public CswNbtNodePropQuantity Quantity { get { return ( _CswNbtNode.Properties[PropertyName.Quantity].AsQuantity ); } }
-        //public CswNbtNodePropText Increment { get { return ( _CswNbtNode.Properties[IncrementPropertyName].AsText ); } }
-        public CswNbtNodePropBarcode Barcode { get { return ( _CswNbtNode.Properties[PropertyName.Barcode].AsBarcode ); } }
-        public CswNbtNodePropLocation Location { get { return ( _CswNbtNode.Properties[PropertyName.Location].AsLocation ); } }
-        public CswNbtNodePropRelationship Sample { get { return ( _CswNbtNode.Properties[PropertyName.Sample].AsRelationship ); } }
-        public CswNbtNodePropRelationship ParentAliquot { get { return ( _CswNbtNode.Properties[PropertyName.ParentAliquot].AsRelationship ); } }
+        public CswNbtNodePropQuantity Quantity { get { return ( _CswNbtNode.Properties[PropertyName.Quantity] ); } }
+        //public CswNbtNodePropText Increment { get { return ( _CswNbtNode.Properties[IncrementPropertyName] ); } }
+        public CswNbtNodePropBarcode Barcode { get { return ( _CswNbtNode.Properties[PropertyName.Barcode] ); } }
+        public CswNbtNodePropLocation Location { get { return ( _CswNbtNode.Properties[PropertyName.Location] ); } }
+        public CswNbtNodePropRelationship Sample { get { return ( _CswNbtNode.Properties[PropertyName.Sample] ); } }
+        public CswNbtNodePropRelationship ParentAliquot { get { return ( _CswNbtNode.Properties[PropertyName.ParentAliquot] ); } }
 
         #endregion
 
