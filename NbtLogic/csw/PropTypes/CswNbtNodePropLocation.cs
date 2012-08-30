@@ -109,7 +109,7 @@ namespace ChemSW.Nbt.PropTypes
 
         public string CachedFullPath
         {
-            get { return CachedPath + PathDelimiter + CachedNodeName; }
+            get { return Gestalt; }
         }
 
         public string CachedBarcode
@@ -205,7 +205,7 @@ namespace ChemSW.Nbt.PropTypes
             CswNbtMetaDataObjectClassProp LocationAllowInventoryOCP = LocationOC.getObjectClassProp( CswNbtObjClassLocation.AllowInventoryPropertyName );
 
             bool IsLocationNode = ( null != Prop && Prop.getNodeType().ObjectClassId == LocationOC.ObjectClassId );
-            
+
             Ret.ViewName = TopLevelName;
 
             CswNbtViewRelationship LocationLevel1 = Ret.AddViewRelationship( LocationOC, true );
@@ -240,7 +240,7 @@ namespace ChemSW.Nbt.PropTypes
 
                 PriorLocationLevel = LocationLevelX;
             }
-            
+
             return Ret;
         }
 

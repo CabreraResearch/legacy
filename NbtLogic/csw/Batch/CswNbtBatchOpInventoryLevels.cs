@@ -35,15 +35,12 @@ namespace ChemSW.Nbt.Batch
         public CswNbtObjClassBatchOp makeBatchOp( CswPrimaryKey PrevLocation, CswPrimaryKey CurrentLocation )
         {
             CswNbtObjClassBatchOp BatchNode = null;
-            if( null != PrevLocation && null != CurrentLocation && Int32.MinValue != PrevLocation.PrimaryKey && Int32.MinValue != CurrentLocation.PrimaryKey )
-            {
-                InventoryLevelsBatchData BatchData = new InventoryLevelsBatchData( PrevLocation, CurrentLocation );
-                BatchNode = CswNbtBatchManager.makeNew( _CswNbtResources, _BatchOpName, BatchData );
-            }
+            InventoryLevelsBatchData BatchData = new InventoryLevelsBatchData( PrevLocation, CurrentLocation );
+            BatchNode = CswNbtBatchManager.makeNew( _CswNbtResources, _BatchOpName, BatchData );
             return BatchNode;
         } // makeBatchOp()
 
-        
+
         /// <summary>
         /// Run the next iteration of this batch operation
         /// </summary>
@@ -60,7 +57,7 @@ namespace ChemSW.Nbt.Batch
                     Mgr.changeLocationOfLocation( BatchData.FromLocation, BatchData.ToLocation );
                     BatchNode.finish();
                     BatchNode.postChanges( false );
-                } // if( BatchNode != null && BatchNode.OpNameValue == NbtBatchOpName.FutureNodes )
+                }
             }
             catch( Exception ex )
             {
@@ -86,11 +83,21 @@ namespace ChemSW.Nbt.Batch
             public static implicit operator InventoryLevelsBatchData( string item )
             {
                 JObject Obj = CswConvert.ToJObject( item );
-                CswPrimaryKey PrevLocation = new CswPrimaryKey();
-                PrevLocation.FromString( CswConvert.ToString( Obj["FromLocation"] ) );
-                CswPrimaryKey CurrentLocation = new CswPrimaryKey();
-                CurrentLocation.FromString( CswConvert.ToString( Obj["ToLocation"] ) );
+                CswPrimaryKey PrevLocation = _setLocationPk( Obj["FromLocation"] );
+                CswPrimaryKey CurrentLocation = _setLocationPk( Obj["ToLocation"] );
                 return new InventoryLevelsBatchData( PrevLocation, CurrentLocation );
+            }
+
+            private static CswPrimaryKey _setLocationPk( JToken BatchDataLocation )
+            {
+                CswPrimaryKey Location = null;
+                string LocationId = CswConvert.ToString( BatchDataLocation );
+                if( false == String.IsNullOrEmpty( LocationId ) )
+                {
+                    Location = new CswPrimaryKey();
+                    Location.FromString( LocationId );
+                }
+                return Location;
             }
 
             public static implicit operator string( InventoryLevelsBatchData item )
@@ -101,8 +108,14 @@ namespace ChemSW.Nbt.Batch
             public override string ToString()
             {
                 JObject Obj = new JObject();
-                Obj["FromLocation"] = FromLocation.ToString();
-                Obj["ToLocation"] = ToLocation.ToString();
+                if( null != FromLocation )
+                { 
+                    Obj["FromLocation"] = FromLocation.ToString();
+                }
+                if( null != ToLocation )
+                {
+                    Obj["ToLocation"] = ToLocation.ToString();
+                }
                 return Obj.ToString();
             }
         } // class InventoryLevelsBatchData

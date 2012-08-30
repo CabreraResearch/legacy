@@ -177,8 +177,7 @@ namespace ChemSW.Nbt.ObjClasses
             CswNbtObjClassLocation NodeAsLocation = _CswNbtResources.Nodes.GetNode( Location.SelectedNodeId );
             if( null != NodeAsLocation )
             {
-                MessageText += "Location: " + NodeAsLocation.Location + CswNbtNodePropLocation.PathDelimiter +
-                                NodeAsLocation.Name + "\n";
+                MessageText += "Location: " + NodeAsLocation.Location.CachedFullPath;
             }
 
 
@@ -273,19 +272,6 @@ namespace ChemSW.Nbt.ObjClasses
             Fulfill.setHidden( value: HideMenuButton, SaveToDb: false );
         }
 
-        //This will not work, because this is a NodeTypeProp level view, not a Node level view
-        //private void _setSizesView()
-        //{
-        //    if( CswTools.IsPrimaryKey( Material.RelatedNodeId ) )
-        //    {
-        //        CswNbtMetaDataObjectClass SizeOc = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.SizeClass );
-        //        CswNbtMetaDataObjectClassProp SizeMaterialOcp = SizeOc.getObjectClassProp( CswNbtObjClassSize.MaterialPropertyName );
-        //        Size.View.Root.ChildRelationships.Clear();
-        //        CswNbtViewRelationship SizeVr = Size.View.AddViewRelationship( SizeOc, false );
-        //        Size.View.AddViewPropertyAndFilter( SizeVr, SizeMaterialOcp, Material.RelatedNodeId.PrimaryKey.ToString(), SubFieldName: CswNbtSubField.SubFieldName.NodeID );
-        //    }
-        //}
-
         public override void afterPopulateProps()
         {
             Quantity.SetOnPropChange( OnQuantityPropChange );
@@ -297,7 +283,6 @@ namespace ChemSW.Nbt.ObjClasses
             Container.SetOnPropChange( OnContainerPropChange );
             Status.SetOnPropChange( OnStatusPropChange );
             _setFulfillVisibility();
-            // _setSizesView();
             _CswNbtObjClassDefault.afterPopulateProps();
         }//afterPopulateProps()
 

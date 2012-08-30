@@ -38,7 +38,7 @@
                 if (false === Csw.isNullOrEmpty(menuItemJson)) {
 
                     if (false === Csw.isNullOrEmpty(menuItemJson.href)) {
-                        window.location = menuItemJson.href;
+                        Csw.window.location(menuItemJson.href);
 
                     } else if (false === Csw.isNullOrEmpty(menuItemJson.popup)) {
                         window.open(menuItemJson.popup);

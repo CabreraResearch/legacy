@@ -9,18 +9,18 @@
         var origX = 0; //150
         var origY = 0; //30
 
-        this.origXAccessor = function () {
+        this.origXAccessor = function() {
             return origX;
-        }
-        this.origYAccessor = function () {
+        };
+        this.origYAccessor = function() {
             return origY;
-        }
-        this.windowWidth = function () {
+        };
+        this.windowWidth = function() {
             return document.documentElement.clientWidth;
-        }
-        this.windowHeight = function () {
+        };
+        this.windowHeight = function() {
             return document.documentElement.clientHeight;
-        }
+        };
     };
     var cswPrivate = new cswPrivateInit();
 
@@ -209,6 +209,7 @@
             ///<summary>Creates an Add Node dialog and returns an object represent that dialog.</summary>
             var cswPrivate = {
                 text: '',
+                nodeid: '',
                 nodetypeid: '',
                 relatednodeid: '',
                 relatednodename: '',
@@ -232,9 +233,12 @@
             };
 
             openDialog(cswPublic.div, 800, 600, null, cswPublic.title);
-
+            if(false === Csw.isNullOrEmpty(cswPrivate.propertyData) && false === Csw.isNullOrEmpty(cswPrivate.propertyData.nodeid)) {
+                cswPrivate.nodeid = Csw.string(cswPrivate.nodeid, cswPrivate.propertyData.nodeid);
+            }
             cswPublic.tabsAndProps = Csw.layouts.tabsAndProps(cswPublic.div, {
                 ID: Csw.makeId(cswPrivate.ID, 'tabsAndProps'),
+                nodeids: [ cswPrivate.nodeid ],
                 nodetypeid: cswPrivate.nodetypeid,
                 relatednodeid: cswPrivate.relatednodeid,
                 relatednodename: cswPrivate.relatednodename,

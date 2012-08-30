@@ -663,10 +663,6 @@ namespace ChemSW.Nbt.ServiceDrivers
                 if( AllSucceeded && null != RetNbtNodeKey )
                 {
                     string RetNodeKey = RetNbtNodeKey.ToString();
-                    //string RetNodeId = RetNbtNodeKey.NodeId.PrimaryKey.ToString();
-                    string RetNodeId = RetNbtNodeKey.NodeId.ToString();
-
-                    ret["nodeid"] = RetNodeId;
                     ret["cswnbtnodekey"] = RetNodeKey;
                 } //if( AllSucceeded && null != RetNbtNodeKey )
                 else
@@ -690,6 +686,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                 CswNbtActUpdatePropertyValue ActUpdatePropVal = new CswNbtActUpdatePropertyValue( _CswNbtResources );
                 ActUpdatePropVal.UpdateNode( Node, true );
                 Node.postChanges( false );
+                ret["nodeid"] = Node.NodeId.ToString();
                 ret["result"] = "Succeeded";
                 //If we're Adding, NodeName won't be valid until now.
                 ret["nodename"] = Node.NodeName;

@@ -89,6 +89,7 @@
 
     Csw.clientSession.enableDebug = Csw.clientSession.enableDebug ||
         Csw.clientSession.register('enableDebug', function () {
+            cswPrivate.logglyLevel = 'info';
             cswPrivate.debug = true;
         });
 
@@ -123,7 +124,10 @@
     Csw.clientSession.getLogglyLevel = Csw.clientSession.getLogglyLevel ||
         Csw.clientSession.register('getLogglyLevel', function () {
             var ret = 'error';
-            if (false === Csw.isNullOrEmpty(cswPrivate.logglyLevel) &&
+            if (Csw.bool(cswPrivate.debug)) {
+                ret = 'info';
+            }
+            else if (false === Csw.isNullOrEmpty(cswPrivate.logglyLevel) &&
                 Csw.contains(Csw.debug.logLevels(), cswPrivate.logglyLevel)) {
                 ret = cswPrivate.logglyLevel;
             }

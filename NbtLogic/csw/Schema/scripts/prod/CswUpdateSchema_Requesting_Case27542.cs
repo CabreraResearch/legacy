@@ -16,9 +16,11 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataObjectClassProp RequestOcp = RequestItemOc.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Request );
             CswNbtMetaDataObjectClassProp MaterialOcp = RequestItemOc.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Material );
             CswNbtMetaDataObjectClassProp ContainerOcp = RequestItemOc.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Container );
+            CswNbtMetaDataObjectClassProp TypeOcp = RequestItemOc.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Type );
             _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( RequestOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.servermanaged, true );
             _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( MaterialOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.servermanaged, true );
             _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( ContainerOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.servermanaged, true );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( TypeOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.servermanaged, true );
 
 
         }//Update()

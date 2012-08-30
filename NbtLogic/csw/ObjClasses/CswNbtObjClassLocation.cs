@@ -1,11 +1,9 @@
-using System;
 using ChemSW.Core;
 using ChemSW.Nbt.Batch;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.PropTypes;
-using ChemSW.Exceptions;
-using Newtonsoft.Json.Linq;
+using System;
 
 
 namespace ChemSW.Nbt.ObjClasses
@@ -70,19 +68,23 @@ namespace ChemSW.Nbt.ObjClasses
                 _CswNbtResources.EditMode != NodeEditMode.Add )
             {
                 CswNbtNodePropWrapper LocationWrapper = Node.Properties[LocationPropertyName];
-                string PrevLocationName = LocationWrapper.GetOriginalPropRowValue( ( (CswNbtFieldTypeRuleLocation) _CswNbtResources.MetaData.getFieldTypeRule( LocationWrapper.getFieldType().FieldType ) ).NameSubField.Column );
                 string PrevLocationId = LocationWrapper.GetOriginalPropRowValue( ( (CswNbtFieldTypeRuleLocation) _CswNbtResources.MetaData.getFieldTypeRule( LocationWrapper.getFieldType().FieldType ) ).NodeIdSubField.Column );
-                if( false == string.IsNullOrEmpty( PrevLocationId ) &&
-                    PrevLocationName != CswNbtNodePropLocation.TopLevelName )
+
+                CswPrimaryKey PrevLocationPk = null;
+                CswPrimaryKey CurrLocationPk = null;
+                if( false == String.IsNullOrEmpty( PrevLocationId ) )
                 {
-                    CswPrimaryKey PrevLocationPk = new CswPrimaryKey( "nodes", CswConvert.ToInt32( PrevLocationId ) );
-                    if( Int32.MinValue != PrevLocationPk.PrimaryKey &&
-                        PrevLocationPk != Location.SelectedNodeId )
-                    {
-                        //We should only be here if the change can actually affect inventory levels: not adding a new location node, not changing a location's location from Top, not setting a previous unset location's location value
-                        CswNbtBatchOpInventoryLevels BatchOp = new CswNbtBatchOpInventoryLevels( _CswNbtResources );
-                        BatchOp.makeBatchOp( PrevLocationPk, Location.SelectedNodeId );
-                    }
+                    PrevLocationPk = new CswPrimaryKey( "nodes", CswConvert.ToInt32( PrevLocationId ) );
+                }
+                if( null != Location.SelectedNodeId )
+                {
+                    CurrLocationPk = Location.SelectedNodeId;
+                }
+                if( PrevLocationPk != CurrLocationPk )
+                {
+                    //Case 26849 - Executing even if one of the locations is Top or null so that the other location can still be updated
+                    CswNbtBatchOpInventoryLevels BatchOp = new CswNbtBatchOpInventoryLevels( _CswNbtResources );
+                    BatchOp.makeBatchOp( PrevLocationPk, CurrLocationPk );
                 }
             }
 
