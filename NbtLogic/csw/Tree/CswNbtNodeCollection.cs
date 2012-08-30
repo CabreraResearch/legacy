@@ -660,7 +660,7 @@ namespace ChemSW.Nbt
             CswNbtNode RoleNode = null;
 
             CswNbtMetaDataObjectClass Role_ObjectClass = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.RoleClass );
-            CswNbtMetaDataObjectClassProp RoleName_ObjectClassProp = Role_ObjectClass.getObjectClassProp( CswNbtObjClassRole.NamePropertyName );
+            CswNbtMetaDataObjectClassProp RoleName_ObjectClassProp = Role_ObjectClass.getObjectClassProp( CswNbtObjClassRole.PropertyName.Name );
 
             // generate the view
             CswNbtView View = new CswNbtView( _CswNbtResources );

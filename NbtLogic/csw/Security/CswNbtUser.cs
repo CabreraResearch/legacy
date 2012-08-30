@@ -103,7 +103,7 @@ namespace ChemSW.Nbt.Security
 
         public bool IsAdministrator()
         {
-            return CswConvert.ToBoolean( _RolePropDict[CswNbtObjClassRole.AdministratorPropertyName] );
+            return CswConvert.ToBoolean( _RolePropDict[CswNbtObjClassRole.PropertyName.Administrator] );
         }
 
         public string Email
@@ -133,12 +133,12 @@ namespace ChemSW.Nbt.Security
 
         public string Rolename
         {
-            get { return _RolePropDict[CswNbtObjClassRole.NamePropertyName]; }
+            get { return _RolePropDict[CswNbtObjClassRole.PropertyName.Name]; }
         }
 
         public Int32 RoleTimeout
         {
-            get { return CswConvert.ToInt32( _RolePropDict[CswNbtObjClassRole.TimeoutPropertyName] ); }
+            get { return CswConvert.ToInt32( _RolePropDict[CswNbtObjClassRole.PropertyName.Timeout] ); }
         }
 
         public string FirstName
