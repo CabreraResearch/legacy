@@ -224,7 +224,7 @@ namespace ChemSW.Nbt.Grid
                             break;
                         case CswNbtMetaDataFieldType.NbtFieldType.File:
                             CswNbtSubField.PropColumn FileColumn = MetaDataProp.getFieldTypeRule().SubFields[CswNbtSubField.SubFieldName.Name].Column;
-                            if( false == String.IsNullOrEmpty( Prop[FileColumn.ToString().ToLower()].ToString() ) )
+                            if( false == String.IsNullOrEmpty( CswConvert.ToString( Prop[FileColumn.ToString().ToLower()] ) ) )
                             {
                                 string LinkUrl = CswNbtNodePropBlob.getLink( JctNodePropId, NodeId, NodeTypePropId );
                                 if( false == string.IsNullOrEmpty( LinkUrl ) )
