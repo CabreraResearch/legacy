@@ -118,9 +118,8 @@ namespace ChemSW.Nbt.Schema
         {
             foreach( CswNbtViewRelationship ChildRelationship in Relationships )
             {
-                if( ChildRelationship.SecondId == documentNT.NodeTypeId &&
-                    ChildRelationship.SecondType == NbtViewRelatedIdType.NodeTypeId || ChildRelationship.SecondId == documentOC.ObjectClassId &&
-                    ChildRelationship.SecondType == NbtViewRelatedIdType.ObjectClassId )
+                if( ( ChildRelationship.SecondId == documentNT.NodeTypeId && ChildRelationship.SecondType == NbtViewRelatedIdType.NodeTypeId ) ||
+                    ( ChildRelationship.SecondId == documentOC.ObjectClassId && ChildRelationship.SecondType == NbtViewRelatedIdType.ObjectClassId ) )
                 {
                     View.AddViewProperty( ChildRelationship, fileNTP );
                     View.AddViewProperty( ChildRelationship, linkNTP );
