@@ -129,9 +129,16 @@
                                 Csw.error.throwException(Csw.error.exception('Failed to create any containers.'));
                             } else {
                                 Csw.tryExec(cswPrivate.onFinish, data.viewid);
-                                if (false === Csw.isNullOrEmpty(data.barcodeId)) {
-                                    if (cswPrivate.printBarcodes) {
-                                        $.CswDialog('PrintLabelDialog', { 'nodeid': data.containerId, 'propid': data.barcodeId });
+                                if (cswPrivate.printBarcodes) {
+                                    if (false === Csw.isNullOrEmpty(data.barcodes) &&
+                                        data.barcodes.length > 0) {
+
+                                        $.CswDialog('PrintLabelDialog', {
+                                            nodeid: data.containerId,
+                                            propids: data.barcodes
+                                        });
+                                    } else {
+                                        //handle warning
                                     }
                                 }
                             }

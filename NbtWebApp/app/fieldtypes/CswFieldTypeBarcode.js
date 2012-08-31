@@ -46,7 +46,10 @@
                         tooltip: { title: 'Print Barcode Label' },
                         icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.barcode),
                         onClick: function () {
-                            $.CswDialog('PrintLabelDialog', { 'nodeid': o.nodeid, 'propid': o.propid });
+                            $.CswDialog('PrintLabelDialog', {
+                                nodeid: o.nodeid,
+                                propids: [o.propid]
+                            });
                         },
                         editMode: o.EditMode
                     });

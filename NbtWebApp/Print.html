@@ -35,14 +35,15 @@
 
                 
                     var data = {
-                        PropId: Csw.string(cswPrivate.queryString.PropId),
+                        PropIds: Csw.string(cswPrivate.queryString.PropIds),
                         PrintLabelNodeId: Csw.string(cswPrivate.queryString.PrintLabelNodeId)
                     };
                     var ret = Csw.ajax.post({
                         urlMethod: cswPrivate.GetEPLTextUrl,
                         data: data,
                         success: function(data) {
-
+                            //TODO: display x of n labels printing
+                            //TODO: each(label in data) print(); update counter;
                             var labelx;
 
                             if (data.controltype === 'ActiveX') {

@@ -955,7 +955,7 @@
                 GetPrintLabelsUrl: 'getLabels',
                 GetEPLTextUrl: 'getEPLText',
                 nodeid: '',
-                propid: ''
+                propids: []
             };
             if (Csw.isNullOrEmpty(options)) {
                 Csw.error.throwException(Csw.error.exception('Cannot create an Print Label Dialog without options.', '', 'CswDialog.js', 893));
@@ -969,7 +969,7 @@
             };
 
             var getEplContext = function () {
-                Csw.openPopup('Print.html?PropId=' + cswPrivate.propid + '&PrintLabelNodeId=' + labelSel.val(), 'Print ' + labelSel.selectedText(), {
+                Csw.openPopup('Print.html?PropIds=' + cswPrivate.propid + '&PrintLabelNodeId=' + labelSel.val(), 'Print ' + labelSel.selectedText(), {
                     width: 400,
                     height: 200,
                     location: 'no',
