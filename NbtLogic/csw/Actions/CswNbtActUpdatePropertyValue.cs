@@ -19,7 +19,7 @@ namespace ChemSW.Nbt.Actions
             // BZ 10240
             if( ( Node.PendingUpdate || ForceUpdate ) && Node.getObjectClass().ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.EquipmentClass )
             {
-                ( (CswNbtObjClassEquipment) Node ).SynchEquipmentToAssembly();
+                ( (CswNbtObjClassEquipment) Node ).SyncEquipmentToAssembly();
             }
 
 

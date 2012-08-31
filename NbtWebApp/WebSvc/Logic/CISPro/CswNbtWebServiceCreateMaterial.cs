@@ -310,7 +310,7 @@ namespace ChemSW.Nbt.WebServices
 
             JObject MaterialProperties = (JObject) MaterialObj["properties"];
             CswNbtWebServiceTabsAndProps wsTap = new CswNbtWebServiceTabsAndProps( _CswNbtResources, _CswNbtStatisticsEvents );
-            CswNbtNodeKey MaterialNodeKey;
+
             Int32 MaterialNodeTypeId = CswConvert.ToInt32( MaterialObj["materialnodetypeid"] );
             if( Int32.MinValue != MaterialNodeTypeId )
             {
