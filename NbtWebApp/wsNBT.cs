@@ -13,6 +13,7 @@ using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.Actions;
+using ChemSW.Nbt.csw.Conversion;
 using ChemSW.Nbt.Grid;
 using ChemSW.Nbt.Logic;
 using ChemSW.Nbt.MetaData;
@@ -26,7 +27,6 @@ using ChemSW.Session;
 using ChemSW.StructureSearch;
 using ChemSW.WebSvc;
 using Newtonsoft.Json.Linq;
-using ChemSW.Nbt.csw.Conversion;
 
 
 
@@ -4768,7 +4768,7 @@ namespace ChemSW.Nbt.WebServices
                 if( AuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
                     CswNbtWebServiceContainer ws = new CswNbtWebServiceContainer( _CswNbtResources );
-                    if( DispenseType.Contains( CswNbtObjClassContainerDispenseTransaction.DispenseType.Dispense.ToString() ) && DesignGrid != "Unknown" )
+                    if( DispenseType.Contains( CswNbtObjClassContainerDispenseTransaction.DispenseType.Dispense.ToString() ) && false == String.IsNullOrEmpty( DesignGrid ) )
                     {
                         ReturnVal = ws.upsertDispenseContainers( SourceContainerNodeId, ContainerNodeTypeId, DesignGrid, RequestItemId );
                     }
@@ -4862,7 +4862,7 @@ namespace ChemSW.Nbt.WebServices
                 CswPrimaryKey OldUnitPk = CswConvert.ToPrimaryKey( OldUnitId );
                 CswPrimaryKey NewUnitPk = CswConvert.ToPrimaryKey( NewUnitId );
                 CswNbtUnitConversion Conversion = new CswNbtUnitConversion( _CswNbtResources, OldUnitPk, NewUnitPk );
-                double convertedValue = Conversion.convertUnit( CswConvert.ToDouble( ValueToConvert  ) );
+                double convertedValue = Conversion.convertUnit( CswConvert.ToDouble( ValueToConvert ) );
                 ReturnVal["convertedvalue"] = convertedValue.ToString();
 
                 _deInitResources();

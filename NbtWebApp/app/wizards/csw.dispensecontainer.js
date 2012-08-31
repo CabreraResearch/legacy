@@ -515,7 +515,7 @@
                 };
 
                 cswPrivate.onConfirmFinish = function () {
-                    var designGrid = 'Unknown',
+                    var designGrid = '',
                         finalQuantity = '',
                         finalUnit = '',
                         enableFinish = true;
@@ -544,7 +544,7 @@
                             Quantity: Csw.string(finalQuantity),
                             UnitId: Csw.string(finalUnit),
                             ContainerNodeTypeId: Csw.string(cswPrivate.state.containerNodeTypeId),
-                            DesignGrid: designGrid,
+                            DesignGrid: Csw.string(designGrid),
                             RequestItemId: Csw.string(cswPrivate.state.requestItemId)
                         };
 
