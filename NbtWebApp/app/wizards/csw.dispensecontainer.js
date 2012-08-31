@@ -527,6 +527,7 @@
                     if (false === Csw.isNullOrEmpty(cswPrivate.quantityControl) && cswPrivate.state.dispenseType !== cswPrivate.dispenseTypes.Dispense) {
                         finalQuantity = cswPrivate.quantityControl.quantityValue;
                         finalUnit = cswPrivate.quantityControl.unitVal;
+                        designGrid = '';
                     }
 
                     if (false === enableFinish) {
