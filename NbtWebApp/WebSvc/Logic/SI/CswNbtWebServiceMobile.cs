@@ -215,17 +215,17 @@ namespace ChemSW.Nbt.WebServices
             {
                 case CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass:
                     {
-                        NodeProps["location"] = Node.Properties[CswNbtObjClassInspectionDesign.LocationPropertyName].Gestalt;
-                        NodeProps["duedate"] = Node.Properties[CswNbtObjClassInspectionDesign.DatePropertyName].Gestalt;
-                        NodeProps["status"] = Node.Properties[CswNbtObjClassInspectionDesign.StatusPropertyName].Gestalt;
-                        NodeProps["target"] = Node.Properties[CswNbtObjClassInspectionDesign.TargetPropertyName].Gestalt;
+                        NodeProps["location"] = Node.Properties[CswNbtObjClassInspectionDesign.PropertyName.Location].Gestalt;
+                        NodeProps["duedate"] = Node.Properties[CswNbtObjClassInspectionDesign.PropertyName.Date].Gestalt;
+                        NodeProps["status"] = Node.Properties[CswNbtObjClassInspectionDesign.PropertyName.Status].Gestalt;
+                        NodeProps["target"] = Node.Properties[CswNbtObjClassInspectionDesign.PropertyName.Target].Gestalt;
                         break;
                     }
                 case CswNbtMetaDataObjectClass.NbtObjectClass.InspectionTargetClass:
                     {
-                        NodeProps["location"] = Node.Properties[CswNbtObjClassInspectionTarget.LocationPropertyName].Gestalt;
-                        NodeProps["description"] = Node.Properties[CswNbtObjClassInspectionTarget.DescriptionPropertyName].Gestalt;
-                        NodeProps["status"] = Node.Properties[CswNbtObjClassInspectionTarget.StatusPropertyName].Gestalt;
+                        NodeProps["location"] = Node.Properties[CswNbtObjClassInspectionTarget.PropertyName.Location].Gestalt;
+                        NodeProps["description"] = Node.Properties[CswNbtObjClassInspectionTarget.PropertyName.Description].Gestalt;
+                        NodeProps["status"] = Node.Properties[CswNbtObjClassInspectionTarget.PropertyName.Status].Gestalt;
                         //NodeProps["lastinspectiondate"] = Node.Properties[CswNbtObjClassInspectionTarget.LastInspectionDatePropertyName].Gestalt;
                         break;
                     }
@@ -380,8 +380,8 @@ namespace ChemSW.Nbt.WebServices
                         CswNbtMetaDataObjectClassProp MetaDataOCP = MetaDataProp.getObjectClassProp();
                         if( MetaDataOCP != null )
                         {
-                            CswNbtMetaDataObjectClassProp Finish = _CswNbtResources.MetaData.getObjectClassProp( Node.getObjectClassId(), CswNbtObjClassInspectionDesign.FinishPropertyName );
-                            CswNbtMetaDataObjectClassProp Cancel = _CswNbtResources.MetaData.getObjectClassProp( Node.getObjectClassId(), CswNbtObjClassInspectionDesign.CancelPropertyName );
+                            CswNbtMetaDataObjectClassProp Finish = _CswNbtResources.MetaData.getObjectClassProp( Node.getObjectClassId(), CswNbtObjClassInspectionDesign.PropertyName.Finish );
+                            CswNbtMetaDataObjectClassProp Cancel = _CswNbtResources.MetaData.getObjectClassProp( Node.getObjectClassId(), CswNbtObjClassInspectionDesign.PropertyName.Cancel );
                             if( MetaDataOCP == Finish ||
                                 MetaDataOCP == Cancel )
                             {

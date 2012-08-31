@@ -19,7 +19,7 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataObjectClass userOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
             CswNbtMetaDataObjectClassProp archivedOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( userOC )
             {
-                PropName = CswNbtObjClassUser.ArchivedPropertyName,
+                PropName = CswNbtObjClassUser.PropertyName.Archived,
                 FieldType = CswNbtMetaDataFieldType.NbtFieldType.Logical,
                 IsFk = false,
                 IsRequired = true,
@@ -33,7 +33,7 @@ namespace ChemSW.Nbt.Schema
 
             foreach( CswNbtNode userNode in userOC.getNodes( false, false ) )
             {
-                userNode.Properties[CswNbtObjClassUser.ArchivedPropertyName].AsLogical.Checked = Tristate.False;
+                userNode.Properties[CswNbtObjClassUser.PropertyName.Archived].AsLogical.Checked = Tristate.False;
                 userNode.postChanges( false );
             }
             #endregion

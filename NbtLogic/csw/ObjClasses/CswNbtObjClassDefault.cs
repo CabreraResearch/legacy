@@ -6,7 +6,6 @@ using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.PropTypes;
-using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.ObjClasses
 {
@@ -21,21 +20,6 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get { return _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.Unknown ); }
         }
-
-        public override void beforeCreateNode( bool OverrideUniqueValidation )
-        {
-        } // beforeCreateNode()
-
-        public override void afterCreateNode()
-        {
-            // BZ 9609 - We must force reinit since we just added node(s)
-            // actually, let's reinit everything, since any number of trees may be affected
-            //_CswNbtResources.Trees.clear();
-
-            // BZ 10094 - Notification event
-            _CswNbtResources.runNotification( this.NodeType, CswNbtObjClassNotification.EventOption.Create, _CswNbtNode, string.Empty, string.Empty );
-
-        } // afterCreateNode()
 
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
@@ -121,11 +105,13 @@ namespace ChemSW.Nbt.ObjClasses
                     //    }
                     //}
 
-                    //BZ 10239 - Fetch the cached value field name.
-                    CswNbtFieldTypeRulePropertyReference PropRefFTR = (CswNbtFieldTypeRulePropertyReference) _CswNbtResources.MetaData.getFieldTypeRule( CswNbtMetaDataFieldType.NbtFieldType.PropertyReference );
-                    CswNbtSubField.PropColumn PropRefColumn = PropRefFTR.CachedValueSubField.Column;
+                    if( CswTools.IsPrimaryKey( CurrentProp.NodeId ) )
+                    {
+                        //BZ 10239 - Fetch the cached value field name.
+                        CswNbtFieldTypeRulePropertyReference PropRefFTR = (CswNbtFieldTypeRulePropertyReference) _CswNbtResources.MetaData.getFieldTypeRule( CswNbtMetaDataFieldType.NbtFieldType.PropertyReference );
+                        CswNbtSubField.PropColumn PropRefColumn = PropRefFTR.CachedValueSubField.Column;
 
-                    string SQL = @"update jct_nodes_props 
+                        string SQL = @"update jct_nodes_props 
                                       set pendingupdate = '" + CswConvert.ToDbVal( true ) + @"',
                                           " + PropRefColumn.ToString() + @" = ''
                                     where jctnodepropid in (select j.jctnodepropid
@@ -149,13 +135,14 @@ namespace ChemSW.Nbt.ObjClasses
                                                               and ((lower(p.valueproptype) = 'nodetypepropid' and p.valuepropid = " + CurrentProp.NodeTypePropId.ToString() + @") 
                                                                   or (lower(p.valueproptype) = 'objectclasspropid' and p.valuepropid = " + CurrentProp.ObjectClassPropId + @")))";
 
-                    // We're not doing this in a CswTableUpdate because it might be a large operation, 
-                    // and we don't care about auditing for this change.
-                    _CswNbtResources.execArbitraryPlatformNeutralSql( SQL );
-
+                        // We're not doing this in a CswTableUpdate because it might be a large operation, 
+                        // and we don't care about auditing for this change.
+                        _CswNbtResources.execArbitraryPlatformNeutralSql( SQL );
+                    }
 
                     // 4. For locations, if this node's location changed, we need to update the pathname on the children
-                    if( CurrentProp.getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.Location )
+                    if( CurrentProp.getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.Location &&
+                        CswTools.IsPrimaryKey( _CswNbtNode.NodeId ) )
                     {
                         _CswNbtResources.CswNbtNodeFactory.CswNbtNodeWriter.updateRelationsToThisNode( _CswNbtNode );
                     }
@@ -189,7 +176,7 @@ namespace ChemSW.Nbt.ObjClasses
 
                     CswNbtViewRelationship ViewRelationship = CswNbtView.Root.ChildRelationships[0];
 
-                    if( NodeId != null )
+                    if( CswTools.IsPrimaryKey( NodeId ) )
                     {
                         ViewRelationship.NodeIdsToFilterOut.Add( NodeId );
                     }
@@ -224,7 +211,7 @@ namespace ChemSW.Nbt.ObjClasses
                         string EsotericMessage = "The " + CompoundUniquePropNames.ToString() +
                             " of node " + NodeId.ToString() + " are the same as for node " + DuplicateValueNode.NodeId.ToString() + ": " + CompoundUniquePropValues.ToString();
 
-                        if( false == _CswNbtNode.IsTemp && false == DuplicateValueNode.IsTemp ) //only throw an error is we're comparing two REAL nodes
+                        if( false == _CswNbtNode.IsTemp && false == DuplicateValueNode.IsTemp ) //only throw an error if we're comparing two REAL nodes
                         {
                             throw ( new CswDniException( ErrorType.Warning, ExotericMessage, EsotericMessage ) );
                         }

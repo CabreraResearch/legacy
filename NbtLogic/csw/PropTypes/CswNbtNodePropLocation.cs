@@ -201,8 +201,8 @@ namespace ChemSW.Nbt.PropTypes
             CswNbtView Ret = new CswNbtView( CswNbtResources );
 
             CswNbtMetaDataObjectClass LocationOC = CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.LocationClass );
-            CswNbtMetaDataObjectClassProp LocationLocationOCP = LocationOC.getObjectClassProp( CswNbtObjClassLocation.LocationPropertyName );
-            CswNbtMetaDataObjectClassProp LocationAllowInventoryOCP = LocationOC.getObjectClassProp( CswNbtObjClassLocation.AllowInventoryPropertyName );
+            CswNbtMetaDataObjectClassProp LocationLocationOCP = LocationOC.getObjectClassProp( CswNbtObjClassLocation.PropertyName.Location );
+            CswNbtMetaDataObjectClassProp LocationAllowInventoryOCP = LocationOC.getObjectClassProp( CswNbtObjClassLocation.PropertyName.AllowInventory );
 
             bool IsLocationNode = ( null != Prop && Prop.getNodeType().ObjectClassId == LocationOC.ObjectClassId );
 
@@ -493,7 +493,7 @@ namespace ChemSW.Nbt.PropTypes
                 {
                     // Find the location with this barcode value
                     CswNbtMetaDataObjectClass LocationObjectClass = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.LocationClass );
-                    CswNbtMetaDataObjectClassProp BarcodeObjectClassProp = LocationObjectClass.getObjectClassProp( CswNbtObjClassLocation.BarcodePropertyName );
+                    CswNbtMetaDataObjectClassProp BarcodeObjectClassProp = LocationObjectClass.getObjectClassProp( CswNbtObjClassLocation.PropertyName.Barcode );
 
                     CswNbtView LocationView = new CswNbtView( _CswNbtResources );
                     // All locations..

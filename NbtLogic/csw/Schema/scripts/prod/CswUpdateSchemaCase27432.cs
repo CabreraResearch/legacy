@@ -36,7 +36,7 @@ namespace ChemSW.Nbt.Schema
                     CswNbtView TimeView = _CswNbtSchemaModTrnsctn.restoreView( ExpInt.ViewId );
 
                     CswNbtViewRelationship TimeUnitNodeTypeRelationship = TimeView.Root.ChildRelationships[0];
-                    CswNbtMetaDataNodeTypeProp TimeNameNtp = TimeUnitNodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassUnitOfMeasure.NamePropertyName );
+                    CswNbtMetaDataNodeTypeProp TimeNameNtp = TimeUnitNodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassUnitOfMeasure.PropertyName.Name );
                     CswNbtViewProperty TimeNameViewProp = TimeView.AddViewProperty( TimeUnitNodeTypeRelationship, TimeNameNtp );
 
                     TimeView.AddViewPropertyFilter(

@@ -133,11 +133,11 @@ namespace NbtWebAppServices.Response
                                         CswNbtMetaDataNodeTypeProp ButtonNtp = null;
                                         if( Inspection.Action.ToLower() == "finish" )
                                         {
-                                            ButtonNtp = InspectionNode.getNodeType().getNodeTypeProp( CswNbtObjClassInspectionDesign.FinishPropertyName );
+                                            ButtonNtp = InspectionNode.getNodeType().getNodeTypeProp( CswNbtObjClassInspectionDesign.PropertyName.Finish );
                                         }
                                         else if( Inspection.Action.ToLower() == "cancel" )
                                         {
-                                            ButtonNtp = InspectionNode.getNodeType().getNodeTypeProp( CswNbtObjClassInspectionDesign.CancelPropertyName );
+                                            ButtonNtp = InspectionNode.getNodeType().getNodeTypeProp( CswNbtObjClassInspectionDesign.PropertyName.Cancel );
                                         }
 
                                         if( null != ButtonNtp )

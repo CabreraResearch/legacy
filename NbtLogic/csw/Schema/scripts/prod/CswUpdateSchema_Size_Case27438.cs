@@ -16,9 +16,9 @@ namespace ChemSW.Nbt.Schema
             if( SizeNt != null )
             {
                 //Hide Dispensable and QuantityEditable properties
-                CswNbtMetaDataNodeTypeProp DispensableNtp = SizeNt.getNodeTypePropByObjectClassProp( CswNbtObjClassSize.DispensablePropertyName );
+                CswNbtMetaDataNodeTypeProp DispensableNtp = SizeNt.getNodeTypePropByObjectClassProp( CswNbtObjClassSize.PropertyName.Dispensable );
                 DispensableNtp.removeFromAllLayouts();
-                CswNbtMetaDataNodeTypeProp QuantityEditableNtp = SizeNt.getNodeTypePropByObjectClassProp( CswNbtObjClassSize.QuantityEditablePropertyName );
+                CswNbtMetaDataNodeTypeProp QuantityEditableNtp = SizeNt.getNodeTypePropByObjectClassProp( CswNbtObjClassSize.PropertyName.QuantityEditable );
                 QuantityEditableNtp.removeFromAllLayouts();
             }
 
