@@ -686,10 +686,10 @@ namespace ChemSW.Nbt.ServiceDrivers
                 CswNbtActUpdatePropertyValue ActUpdatePropVal = new CswNbtActUpdatePropertyValue( _CswNbtResources );
                 ActUpdatePropVal.UpdateNode( Node, true );
                 Node.postChanges( false );
-                ret["nodeid"] = Node.NodeId.ToString();
                 ret["result"] = "Succeeded";
                 //If we're Adding, NodeName won't be valid until now.
                 ret["nodename"] = Node.NodeName;
+                ret["nodeid"] = Node.NodeId.ToString();
                 ret["action"] = _determineAction( Node.ObjClass.ObjectClass.ObjectClass );
             }
 

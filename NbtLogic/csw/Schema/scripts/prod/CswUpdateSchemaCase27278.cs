@@ -24,13 +24,13 @@ namespace ChemSW.Nbt.Schema
                     CswNbtView GridView = _CswNbtSchemaModTrnsctn.restoreView( ContainerDispensesGridProp.ViewId );
                     if( null != GridView )
                     {
-                        CswNbtMetaDataNodeTypeProp SourceContainerNtp = ContDispTransNt.getNodeTypePropByObjectClassProp( CswNbtObjClassContainerDispenseTransaction.SourceContainerPropertyName );
-                        CswNbtMetaDataNodeTypeProp DestinationContainerNtp = ContDispTransNt.getNodeTypePropByObjectClassProp( CswNbtObjClassContainerDispenseTransaction.DestinationContainerPropertyName );
-                        CswNbtMetaDataNodeTypeProp QuantityDispensedNtp = ContDispTransNt.getNodeTypePropByObjectClassProp( CswNbtObjClassContainerDispenseTransaction.QuantityDispensedPropertyName );
-                        CswNbtMetaDataNodeTypeProp TypeNtp = ContDispTransNt.getNodeTypePropByObjectClassProp( CswNbtObjClassContainerDispenseTransaction.TypePropertyName );
-                        CswNbtMetaDataNodeTypeProp DispensedDateNtp = ContDispTransNt.getNodeTypePropByObjectClassProp( CswNbtObjClassContainerDispenseTransaction.DispensedDatePropertyName );
-                        CswNbtMetaDataNodeTypeProp RemainingSourceContainerQuantityNtp = ContDispTransNt.getNodeTypePropByObjectClassProp( CswNbtObjClassContainerDispenseTransaction.RemainingSourceContainerQuantityPropertyName );
-                        CswNbtMetaDataNodeTypeProp RequestNtp = ContDispTransNt.getNodeTypePropByObjectClassProp( CswNbtObjClassContainerDispenseTransaction.RequestItemPropertyName );
+                        CswNbtMetaDataNodeTypeProp SourceContainerNtp = ContDispTransNt.getNodeTypePropByObjectClassProp( CswNbtObjClassContainerDispenseTransaction.PropertyName.SourceContainer );
+                        CswNbtMetaDataNodeTypeProp DestinationContainerNtp = ContDispTransNt.getNodeTypePropByObjectClassProp( CswNbtObjClassContainerDispenseTransaction.PropertyName.DestinationContainer );
+                        CswNbtMetaDataNodeTypeProp QuantityDispensedNtp = ContDispTransNt.getNodeTypePropByObjectClassProp( CswNbtObjClassContainerDispenseTransaction.PropertyName.QuantityDispensed );
+                        CswNbtMetaDataNodeTypeProp TypeNtp = ContDispTransNt.getNodeTypePropByObjectClassProp( CswNbtObjClassContainerDispenseTransaction.PropertyName.Type );
+                        CswNbtMetaDataNodeTypeProp DispensedDateNtp = ContDispTransNt.getNodeTypePropByObjectClassProp( CswNbtObjClassContainerDispenseTransaction.PropertyName.DispensedDate );
+                        CswNbtMetaDataNodeTypeProp RemainingSourceContainerQuantityNtp = ContDispTransNt.getNodeTypePropByObjectClassProp( CswNbtObjClassContainerDispenseTransaction.PropertyName.RemainingSourceContainerQuantity );
+                        CswNbtMetaDataNodeTypeProp RequestNtp = ContDispTransNt.getNodeTypePropByObjectClassProp( CswNbtObjClassContainerDispenseTransaction.PropertyName.RequestItem );
 
                         if( null != SourceContainerNtp && null != DestinationContainerNtp )
                         {

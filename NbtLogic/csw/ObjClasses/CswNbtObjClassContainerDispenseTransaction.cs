@@ -14,13 +14,16 @@ namespace ChemSW.Nbt.ObjClasses
     {
         #region Static Properties
 
-        public const string SourceContainerPropertyName = "Source Container";
-        public const string DestinationContainerPropertyName = "Destination Container";
-        public const string QuantityDispensedPropertyName = "Quantity Dispensed";
-        public const string TypePropertyName = "Dispense Type";
-        public const string DispensedDatePropertyName = "Dispensed Date";
-        public const string RemainingSourceContainerQuantityPropertyName = "Remaining Source Container Quantity";
-        public const string RequestItemPropertyName = "Request Item";
+        public sealed class PropertyName
+        {
+            public const string SourceContainer = "Source Container";
+            public const string DestinationContainer = "Destination Container";
+            public const string QuantityDispensed = "Quantity Dispensed";
+            public const string Type = "Dispense Type";
+            public const string DispensedDate = "Dispensed Date";
+            public const string RemainingSourceContainerQuantity = "Remaining Source Container Quantity";
+            public const string RequestItem = "Request Item";
+        }
 
         public sealed class DispenseType : CswEnum<DispenseType>
         {
@@ -93,16 +96,6 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Inherited Events
 
-        public override void beforeCreateNode( bool OverrideUniqueValidation )
-        {
-            _CswNbtObjClassDefault.beforeCreateNode( OverrideUniqueValidation );
-        } // beforeCreateNode()
-
-        public override void afterCreateNode()
-        {
-            _CswNbtObjClassDefault.afterCreateNode();
-        } // afterCreateNode()
-
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
             _CswNbtNode.setReadOnly( value: true, SaveToDb: true ); //case 24508
@@ -149,31 +142,31 @@ namespace ChemSW.Nbt.ObjClasses
 
         public CswNbtNodePropRelationship SourceContainer
         {
-            get { return _CswNbtNode.Properties[SourceContainerPropertyName]; }
+            get { return _CswNbtNode.Properties[PropertyName.SourceContainer]; }
         }
         public CswNbtNodePropRelationship DestinationContainer
         {
-            get { return _CswNbtNode.Properties[DestinationContainerPropertyName]; }
+            get { return _CswNbtNode.Properties[PropertyName.DestinationContainer]; }
         }
         public CswNbtNodePropQuantity QuantityDispensed
         {
-            get { return _CswNbtNode.Properties[QuantityDispensedPropertyName]; }
+            get { return _CswNbtNode.Properties[PropertyName.QuantityDispensed]; }
         }
         public CswNbtNodePropList Type
         {
-            get { return _CswNbtNode.Properties[TypePropertyName]; }
+            get { return _CswNbtNode.Properties[PropertyName.Type]; }
         }
         public CswNbtNodePropDateTime DispensedDate
         {
-            get { return _CswNbtNode.Properties[DispensedDatePropertyName]; }
+            get { return _CswNbtNode.Properties[PropertyName.DispensedDate]; }
         }
         public CswNbtNodePropQuantity RemainingSourceContainerQuantity
         {
-            get { return _CswNbtNode.Properties[RemainingSourceContainerQuantityPropertyName]; }
+            get { return _CswNbtNode.Properties[PropertyName.RemainingSourceContainerQuantity]; }
         }
         public CswNbtNodePropRelationship RequestItem
         {
-            get { return _CswNbtNode.Properties[RequestItemPropertyName]; }
+            get { return _CswNbtNode.Properties[PropertyName.RequestItem]; }
         }
         private void OnRequestItemPropChange( CswNbtNodeProp Prop )
         {

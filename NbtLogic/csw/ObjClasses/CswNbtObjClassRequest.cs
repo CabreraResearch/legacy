@@ -1,4 +1,5 @@
 using System;
+using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
 
@@ -38,22 +39,19 @@ namespace ChemSW.Nbt.ObjClasses
             get { return _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.RequestClass ); }
         }
 
-        #region Inherited Events
-        public override void beforeCreateNode( bool OverrideUniqueValidation )
+        private void _setDefaultValues()
         {
-            _CswNbtObjClassDefault.beforeCreateNode( OverrideUniqueValidation );
-            Requestor.RelatedNodeId = _CswNbtResources.CurrentNbtUser.UserId;
-        } // beforeCreateNode()
+            if( false == CswTools.IsPrimaryKey( Requestor.RelatedNodeId ) )
+            {
+                Requestor.RelatedNodeId = _CswNbtResources.CurrentNbtUser.UserId;
+            }
+        }
 
-        public override void afterCreateNode()
-        {
-            _CswNbtObjClassDefault.afterCreateNode();
-        } // afterCreateNode()
+        #region Inherited Events
 
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
-            _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
-
+            _setDefaultValues();
             if( SubmittedDate.WasModified && DateTime.MinValue != SubmittedDate.DateTimeValue )
             {
                 ICswNbtTree Tree = _getRelatedRequestItemsTree( FilterByPending: true );
@@ -70,6 +68,7 @@ namespace ChemSW.Nbt.ObjClasses
                     }
                 }
             }
+            _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
         }//beforeWriteNode()
 
         public override void afterWriteNode()

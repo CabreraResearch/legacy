@@ -1,6 +1,5 @@
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
-using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 using ChemSW.Exceptions;
 
@@ -8,10 +7,12 @@ namespace ChemSW.Nbt.ObjClasses
 {
     public class CswNbtObjClassVendor : CswNbtObjClass
     {
-
-        public const string VendorNamePropertyName = "Vendor Name";
-        public const string CorporateEntityPropertyName = "Corporate Entity";
-        public const string VendorTypePropertyName = "Vendor Type";
+        public sealed class PropertyName
+        {
+            public const string VendorName = "Vendor Name";
+            public const string CorporateEntityName = "Corporate Entity";
+            public const string VendorTypeName = "Vendor Type";
+        }
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
 
@@ -40,16 +41,6 @@ namespace ChemSW.Nbt.ObjClasses
         }
 
         #region Inherited Events
-
-        public override void beforeCreateNode( bool OverrideUniqueValidation )
-        {
-            _CswNbtObjClassDefault.beforeCreateNode( OverrideUniqueValidation );
-        } // beforeCreateNode()
-
-        public override void afterCreateNode()
-        {
-            _CswNbtObjClassDefault.afterCreateNode();
-        } // afterCreateNode()
 
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
@@ -113,9 +104,9 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Object class specific properties
 
-        public CswNbtNodePropText VendorName { get { return ( _CswNbtNode.Properties[VendorNamePropertyName] ); } }
-        public CswNbtNodePropText CorporateIdentity { get { return ( _CswNbtNode.Properties[CorporateEntityPropertyName] ); } }
-        public CswNbtNodePropList VendorType { get { return ( _CswNbtNode.Properties[VendorTypePropertyName] ); } }
+        public CswNbtNodePropText VendorName { get { return ( _CswNbtNode.Properties[PropertyName.VendorName] ); } }
+        public CswNbtNodePropText CorporateIdentity { get { return ( _CswNbtNode.Properties[PropertyName.CorporateEntityName] ); } }
+        public CswNbtNodePropList VendorType { get { return ( _CswNbtNode.Properties[PropertyName.VendorTypeName] ); } }
 
         #endregion
 

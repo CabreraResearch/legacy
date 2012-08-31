@@ -20,7 +20,7 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataNodeType materialComponentNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Material Component" );
             if( null != materialComponentNT )
             {
-                string templateText = CswNbtMetaData.MakeTemplateEntry( CswNbtObjClassMaterialComponent.ConstituentPropertyName );
+                string templateText = CswNbtMetaData.MakeTemplateEntry( CswNbtObjClassMaterialComponent.PropertyName.Constituent );
                 materialComponentNT.setNameTemplateText( templateText );
             }
 
