@@ -288,7 +288,7 @@ namespace ChemSW.Nbt
                     Select += ",parent.parentnodeid ";
                 }
                 //Where += " and parent.parentnodeid is not null ";
-                string InnerNodeIds = " innernodeids as ( ";
+                //string InnerNodeIds = " innernodeids as ( ";
                 Where += " and parent.parentnodeid in (" + _makeNodeSql( (CswNbtViewRelationship) Relationship.Parent, true ) + ")";
 
                 if( Relationship.PropOwner == NbtViewPropOwnerType.First )

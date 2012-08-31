@@ -51,8 +51,8 @@ namespace NbtWebAppServices.WebServices
             //In case we were provided valid dates, grab just the Day @midnight
             Start = Start.Date;
             End = End.Date;
-            WcfInspectionsGet.addSystemViewPropFilter( CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass, CswNbtObjClassInspectionDesign.DatePropertyName, Start.ToShortDateString(), CswNbtPropFilterSql.PropertyFilterMode.GreaterThanOrEquals );
-            WcfInspectionsGet.addSystemViewPropFilter( CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass, CswNbtObjClassInspectionDesign.DatePropertyName, End.ToShortDateString(), CswNbtPropFilterSql.PropertyFilterMode.LessThanOrEquals );
+            WcfInspectionsGet.addSystemViewPropFilter( CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass, CswNbtObjClassInspectionDesign.PropertyName.Date, Start.ToShortDateString(), CswNbtPropFilterSql.PropertyFilterMode.GreaterThanOrEquals );
+            WcfInspectionsGet.addSystemViewPropFilter( CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass, CswNbtObjClassInspectionDesign.PropertyName.Date, End.ToShortDateString(), CswNbtPropFilterSql.PropertyFilterMode.LessThanOrEquals );
 
             return WcfInspectionsGet.finalize();
         }
@@ -73,7 +73,7 @@ namespace NbtWebAppServices.WebServices
         {
             LocationName = LocationName ?? "null";
             CswNbtWcfInspectionsGet WcfInspectionsGet = new CswNbtWcfInspectionsGet( _Context, CswNbtActSystemViews.SystemViewName.SIInspectionsbyLocation );
-            WcfInspectionsGet.addSystemViewPropFilter( CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass, CswNbtObjClassInspectionDesign.LocationPropertyName, LocationName, CswNbtPropFilterSql.PropertyFilterMode.Begins );
+            WcfInspectionsGet.addSystemViewPropFilter( CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass, CswNbtObjClassInspectionDesign.PropertyName.Location, LocationName, CswNbtPropFilterSql.PropertyFilterMode.Begins );
             return WcfInspectionsGet.finalize();
         } // get()
 

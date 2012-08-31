@@ -11,11 +11,11 @@ namespace ChemSW.Nbt.Schema
         public override void update()
         {
             CswNbtMetaDataObjectClass MailReportOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.MailReportClass );
-            CswNbtMetaDataObjectClassProp WarningDaysOcp = MailReportOc.getObjectClassProp( CswNbtObjClassMailReport.WarningDaysPropertyName );
+            CswNbtMetaDataObjectClassProp WarningDaysOcp = MailReportOc.getObjectClassProp( CswNbtObjClassMailReport.PropertyName.WarningDays );
 
             foreach( CswNbtMetaDataNodeType MailReportNt in MailReportOc.getNodeTypes() )
             {
-                CswNbtMetaDataNodeTypeProp WarningDaysNtp = MailReportNt.getNodeTypePropByObjectClassProp( CswNbtObjClassMailReport.WarningDaysPropertyName );
+                CswNbtMetaDataNodeTypeProp WarningDaysNtp = MailReportNt.getNodeTypePropByObjectClassProp( CswNbtObjClassMailReport.PropertyName.WarningDays );
                 WarningDaysNtp.removeFromAllLayouts();
                 WarningDaysNtp.DefaultValue.AsNumber.Value = 0;
             }

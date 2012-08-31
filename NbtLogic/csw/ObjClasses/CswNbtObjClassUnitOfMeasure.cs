@@ -2,18 +2,20 @@ using System.Collections.Generic;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
-using Newtonsoft.Json.Linq;
 
 
 namespace ChemSW.Nbt.ObjClasses
 {
     public class CswNbtObjClassUnitOfMeasure : CswNbtObjClass
     {
-        public static string NamePropertyName { get { return "Name"; } }
-        public static string BaseUnitPropertyName { get { return "Base Unit"; } }
-        public static string ConversionFactorPropertyName { get { return "Conversion Factor"; } }
-        public static string FractionalPropertyName { get { return "Fractional"; } }
-        public static string UnitTypePropertyName { get { return "Unit Type"; } }
+        public sealed class PropertyName
+        {
+            public const string Name = "Name";
+            public const string BaseUnit = "Base Unit";
+            public const string ConversionFactor = "Conversion Factor";
+            public const string Fractional = "Fractional";
+            public const string UnitType = "Unit Type";
+        }
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
 
@@ -42,15 +44,6 @@ namespace ChemSW.Nbt.ObjClasses
         }
 
         #region Inherited Events
-        public override void beforeCreateNode( bool OverrideUniqueValidation )
-        {
-            _CswNbtObjClassDefault.beforeCreateNode( OverrideUniqueValidation );
-        } // beforeCreateNode()
-
-        public override void afterCreateNode()
-        {
-            _CswNbtObjClassDefault.afterCreateNode();
-        } // afterCreateNode()
 
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
@@ -85,9 +78,9 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override bool onButtonClick( NbtButtonData ButtonData )
         {
-            
-            
-            
+
+
+
             if( null != ButtonData && null != ButtonData.NodeTypeProp ) { /*Do Something*/ }
             return true;
         }
@@ -96,11 +89,11 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Object class specific properties
 
-        public CswNbtNodePropText Name { get { return ( _CswNbtNode.Properties[NamePropertyName] ); } }
-        public CswNbtNodePropText BaseUnit { get { return ( _CswNbtNode.Properties[BaseUnitPropertyName] ); } }
-        public CswNbtNodePropScientific ConversionFactor { get { return ( _CswNbtNode.Properties[ConversionFactorPropertyName] ); } }
-        public CswNbtNodePropLogical Fractional { get { return ( _CswNbtNode.Properties[FractionalPropertyName] ); } }
-        public CswNbtNodePropList UnitType { get { return ( _CswNbtNode.Properties[UnitTypePropertyName] ); } }
+        public CswNbtNodePropText Name { get { return ( _CswNbtNode.Properties[PropertyName.Name] ); } }
+        public CswNbtNodePropText BaseUnit { get { return ( _CswNbtNode.Properties[PropertyName.BaseUnit] ); } }
+        public CswNbtNodePropScientific ConversionFactor { get { return ( _CswNbtNode.Properties[PropertyName.ConversionFactor] ); } }
+        public CswNbtNodePropLogical Fractional { get { return ( _CswNbtNode.Properties[PropertyName.Fractional] ); } }
+        public CswNbtNodePropList UnitType { get { return ( _CswNbtNode.Properties[PropertyName.UnitType] ); } }
 
         #endregion
 

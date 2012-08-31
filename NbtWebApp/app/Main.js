@@ -16,6 +16,8 @@ window.initMain = window.initMain || function (undefined) {
 
     var mainviewselect;
 
+    Csw.body = Csw.literals.factory($('body'));     // case 27563 review K3663 comment 1
+
     function startSpinner() {
         $('#ajaxSpacer').hide();
         $('#ajaxImage').show();

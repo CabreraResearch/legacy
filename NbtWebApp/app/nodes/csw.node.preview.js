@@ -17,7 +17,7 @@
             if (Csw.number(delay, -1) >= 0) {
                 previewopts.openDelay = delay;
             }
-            previews[nodeid] = Csw.nbt.nodePreview(Csw.literals.factory($('body')), previewopts);
+            previews[nodeid] = Csw.nbt.nodePreview(Csw.body, previewopts);
             previews[nodeid].open();
     }); // Csw.nodeHoverIn 
 

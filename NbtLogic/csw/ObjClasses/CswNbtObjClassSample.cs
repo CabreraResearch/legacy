@@ -1,15 +1,17 @@
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
-using Newtonsoft.Json.Linq;
 
 
 namespace ChemSW.Nbt.ObjClasses
 {
     public class CswNbtObjClassSample : CswNbtObjClass
     {
-        public static string BarcodePropertyName { get { return "Barcode"; } }
-        public static string QuantityPropertyName { get { return "Quantity"; } }
-        public static string ParentSamplePropertyName { get { return "Parent Sample"; } }
+        public sealed class PropertyName
+        {
+            public const string Barcode = "Barcode";
+            public const string Quantity = "Quantity";
+            public const string ParentSample = "Parent Sample";
+        }
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
 
@@ -38,15 +40,6 @@ namespace ChemSW.Nbt.ObjClasses
         }
 
         #region Inherited Events
-        public override void beforeCreateNode( bool OverrideUniqueValidation )
-        {
-            _CswNbtObjClassDefault.beforeCreateNode( OverrideUniqueValidation );
-        } // beforeCreateNode()
-
-        public override void afterCreateNode()
-        {
-            _CswNbtObjClassDefault.afterCreateNode();
-        } // afterCreateNode()
 
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
@@ -58,9 +51,9 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault.afterWriteNode();
         }//afterWriteNode()
 
-        public override void beforeDeleteNode(bool DeleteAllRequiredRelatedNodes = false)
+        public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false )
         {
-            _CswNbtObjClassDefault.beforeDeleteNode(DeleteAllRequiredRelatedNodes);
+            _CswNbtObjClassDefault.beforeDeleteNode( DeleteAllRequiredRelatedNodes );
 
         }//beforeDeleteNode()
 
@@ -81,9 +74,9 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override bool onButtonClick( NbtButtonData ButtonData )
         {
-            
-            
-            
+
+
+
             if( null != ButtonData && null != ButtonData.NodeTypeProp ) { /*Do Something*/ }
             return true;
         }
@@ -91,18 +84,9 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Object class specific properties
 
-        public CswNbtNodePropQuantity Quantity
-        {
-            get { return _CswNbtNode.Properties[QuantityPropertyName].AsQuantity; }
-        }
-        public CswNbtNodePropBarcode Barcode
-        {
-            get { return _CswNbtNode.Properties[BarcodePropertyName].AsBarcode; }
-        }
-        public CswNbtNodePropRelationship ParentSample
-        {
-            get { return _CswNbtNode.Properties[ParentSamplePropertyName].AsRelationship; }
-        }
+        public CswNbtNodePropQuantity Quantity { get { return _CswNbtNode.Properties[PropertyName.Quantity]; } }
+        public CswNbtNodePropBarcode Barcode { get { return _CswNbtNode.Properties[PropertyName.Barcode]; } }
+        public CswNbtNodePropRelationship ParentSample { get { return _CswNbtNode.Properties[PropertyName.ParentSample]; } }
 
         #endregion
 
