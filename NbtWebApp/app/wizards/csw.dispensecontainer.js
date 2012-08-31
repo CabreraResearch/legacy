@@ -206,7 +206,7 @@
                                             Csw.error.throwException(Csw.error.exception('Could not get a grid of containers for this request item.', '', 'csw.dispensecontainer.js', 141));
                                         }
 
-                                        cswPrivate.containerGrid = Csw.nbt.wizard.nodeGrid(cswPrivate.divStep1, {
+                                        cswPrivate.containerGrid = Csw.wizard.nodeGrid(cswPrivate.divStep1, {
                                             hasMenu: false,
                                             viewid: data.viewid,
                                             ReadOnly: true,
@@ -349,7 +349,7 @@
 
                             var makeQuantityForm = function () {
 
-                                cswPrivate.amountsGrid = Csw.nbt.wizard.amountsGrid(quantityTable.cell(8, 1), {
+                                cswPrivate.amountsGrid = Csw.wizard.amountsGrid(quantityTable.cell(8, 1), {
                                     ID: cswPrivate.wizard.makeStepId('wizardAmountsThinGrid'),
                                     onAdd: function (hasQuantity) {
                                         cswPrivate.toggleButton(cswPrivate.buttons.finish, hasQuantity);

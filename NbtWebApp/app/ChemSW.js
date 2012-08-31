@@ -157,7 +157,7 @@ window.ChemSW = window.Csw = (function () {
     external.composites = external.composites || external.register('composites', makeNameSpace());
     external.controls = external.controls || external.register('controls', makeNameSpace());
     external.nbt = external.nbt || external.register('nbt', makeNameSpace());
-    external.nbt.wizard = external.nbt.wizard || external.nbt.register('wizard', makeNameSpace());
+    external.wizard = external.wizard || external.register('wizard', makeNameSpace());
     
     external.isFunction = external.isFunction ||
         external.register('isFunction', function (obj) {

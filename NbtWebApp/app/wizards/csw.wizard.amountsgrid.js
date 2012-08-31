@@ -2,8 +2,8 @@
 /// <reference path="~/app/CswApp-vsdoc.js" />
 
 (function () {
-    Csw.nbt.wizard.amountsGrid = Csw.nbt.wizard.amountsGrid ||
-        Csw.nbt.wizard.register('amountsGrid', function (cswParent, options) {
+    Csw.wizard.amountsGrid = Csw.wizard.amountsGrid ||
+        Csw.wizard.register('amountsGrid', function (cswParent, options) {
             'use strict';
             ///<summary>Creates an amounts thin grid with an Add form.</summary>
             var cswPublic = {
