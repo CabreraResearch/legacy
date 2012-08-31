@@ -3,6 +3,10 @@
 	padding: 3px;
 	border: 1px solid #ffaa00;
 }
+.CswErrorMessage_ValidatorError
+{
+	color: #ff3333;
+}
 .CswErrorMessage_Error
 {
 	background-color: #ff3333;
