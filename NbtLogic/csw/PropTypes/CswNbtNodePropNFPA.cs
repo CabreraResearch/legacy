@@ -123,7 +123,7 @@ namespace ChemSW.Nbt.PropTypes
             {
                 if( null == _DisplayMode )
                 {
-                    _DisplayMode = (NFPADisplayMode) _CswNbtMetaDataNodeTypeProp.Extended;
+                    _DisplayMode = (NFPADisplayMode) _CswNbtMetaDataNodeTypeProp.Attribute1;
                 }
                 return _DisplayMode;
             }
@@ -133,11 +133,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                if( null == _DisplaySpecial )
-                {
-                    _DisplaySpecial = CswConvert.ToBoolean( _CswNbtMetaDataNodeTypeProp.Multi.ToString() );
-                }
-                return _DisplaySpecial;
+                return CswConvert.ToBoolean( _CswNbtMetaDataNodeTypeProp.Attribute2 );
             }
         }
 

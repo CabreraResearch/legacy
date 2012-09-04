@@ -911,7 +911,11 @@ namespace ChemSW.Nbt.WebPages
                     PropToSave.IsQuickSearch = Convert.ToBoolean( getPropAttributeValue( "EditProp_IsQuickSearch" + OldSelectedNodeTypePropId.ToString(), typeof( bool ), EditPropPlaceHolder ) );
                     PropToSave.Extended = getPropAttributeValue( "EditProp_ExtendedValue" + OldSelectedNodeTypePropId.ToString(), EditPropPlaceHolder );
                     PropToSave.AuditLevel = AuditLevel.Parse( getPropAttributeValue( "EditProp_AuditLevel" + OldSelectedNodeTypePropId.ToString(), EditPropPlaceHolder ) );
-
+                    PropToSave.Attribute1 = getPropAttributeValue( "EditProp_Attribute1" + OldSelectedNodeTypePropId.ToString(), EditPropPlaceHolder );
+                    PropToSave.Attribute2 = getPropAttributeValue( "EditProp_Attribute2" + OldSelectedNodeTypePropId.ToString(), EditPropPlaceHolder );
+                    PropToSave.Attribute3 = getPropAttributeValue( "EditProp_Attribute3" + OldSelectedNodeTypePropId.ToString(), EditPropPlaceHolder );
+                    PropToSave.Attribute4 = getPropAttributeValue( "EditProp_Attribute4" + OldSelectedNodeTypePropId.ToString(), EditPropPlaceHolder );
+                    PropToSave.Attribute5 = getPropAttributeValue( "EditProp_Attribute5" + OldSelectedNodeTypePropId.ToString(), EditPropPlaceHolder );
 
                     // Default Value
                     Control Control = EditPropPlaceHolder.FindControl( "EditProp_DefaultValue" + OldSelectedNodeTypePropId.ToString() );
@@ -2082,15 +2086,22 @@ namespace ChemSW.Nbt.WebPages
                         case CswNbtMetaDataFieldType.NbtFieldType.NFPA:
                             TableRow DisplayModeRow = makeEditPropTableRow( EditPropPlaceHolder );
 
-                            CswNbtNodePropNFPA.NFPADisplayMode mode = (CswNbtNodePropNFPA.NFPADisplayMode) SelectedNodeTypeProp.Extended;
+                            CswNbtNodePropNFPA.NFPADisplayMode mode = (CswNbtNodePropNFPA.NFPADisplayMode) SelectedNodeTypeProp.Attribute1;
 
                             DropDownList modes = new DropDownList();
-                            modes.ID = "EditProp_ExtendedValue" + SelectedNodeTypeProp.PropId.ToString();
+                            modes.ID = "EditProp_Attribute1" + SelectedNodeTypeProp.PropId.ToString();
                             modes.Items.Add( new ListItem( CswNbtNodePropNFPA.NFPADisplayMode.Diamond.ToString(), CswNbtNodePropNFPA.NFPADisplayMode.Diamond.ToString() ) );
                             modes.Items.Add( new ListItem( CswNbtNodePropNFPA.NFPADisplayMode.Linear.ToString(), CswNbtNodePropNFPA.NFPADisplayMode.Linear.ToString() ) );
                             modes.SelectedValue = mode.ToString();
                             ( (Literal) DisplayModeRow.Cells[0].Controls[0] ).Text = "Display Mode:";
                             DisplayModeRow.Cells[1].Controls.Add( modes );
+
+                            TableRow HideSpecialRow = makeEditPropTableRow( EditPropPlaceHolder );
+                            CheckBox hideSpecialCheckBox = new CheckBox();
+                            hideSpecialCheckBox.Checked = CswConvert.ToBoolean( SelectedNodeTypeProp.Attribute2 );
+                            hideSpecialCheckBox.ID = "EditProp_Attribute2" + SelectedNodeTypeProp.PropId.ToString();
+                            ( (Literal) HideSpecialRow.Cells[0].Controls[0] ).Text = "Hide Special:";
+                            HideSpecialRow.Cells[1].Controls.Add( hideSpecialCheckBox );
 
                             break;
 
