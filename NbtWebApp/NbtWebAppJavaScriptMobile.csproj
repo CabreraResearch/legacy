@@ -72,64 +72,64 @@
     <Content Include="Content\jquery.mobile-1.0rc1.css" />
     <Content Include="Content\jquery.mobile-1.0rc1.min.css" />
     <Content Include="iphone.html" />
-    <Content Include="js\mobile\clientdb\CswMobileClientDb.js" />
-    <Content Include="js\mobile\clientdb\CswMobileClientDbResources.js" />
-    <Content Include="js\mobile\controls\CswMobileListView.js" />
-    <Content Include="js\mobile\controls\CswMobileMenuButton.js" />
-    <Content Include="js\mobile\controls\CswMobilePageFooter.js" />
-    <Content Include="js\mobile\controls\CswMobilePageHeader.js" />
-    <Content Include="js\mobile\controls\ICswMobileWebControls.js" />
-    <Content Include="js\mobile\CswAllMobile.min.js" />
-    <Content Include="js\mobile\CswMobile.css" />
-    <Content Include="js\mobile\CswMobile.js" />
-    <Content Include="js\mobile\fieldtypes\CswMobileFieldTypeButton.js" />
-    <Content Include="js\mobile\fieldtypes\CswMobileFieldTypeBarcode.js" />
-    <Content Include="js\mobile\fieldtypes\CswMobileFieldTypeDateTime.js" />
-    <Content Include="js\mobile\fieldtypes\CswMobileFieldTypeLink.js" />
-    <Content Include="js\mobile\fieldtypes\CswMobileFieldTypeList.js" />
-    <Content Include="js\mobile\fieldtypes\CswMobileFieldTypeLogical.js" />
-    <Content Include="js\mobile\fieldtypes\CswMobileFieldTypeMemo.js" />
-    <Content Include="js\mobile\fieldtypes\CswMobileFieldTypeNumber.js" />
-    <Content Include="js\mobile\fieldtypes\CswMobileFieldTypePassword.js" />
-    <Content Include="js\mobile\fieldtypes\CswMobileFieldTypeQuantity.js" />
-    <Content Include="js\mobile\fieldtypes\CswMobileFieldTypeQuestion.js" />
-    <Content Include="js\mobile\fieldtypes\CswMobileFieldTypeStatic.js" />
-    <Content Include="js\mobile\fieldtypes\CswMobileFieldTypeText.js" />
-    <Content Include="js\mobile\fieldtypes\CswMobilePropFactory.js" />
-    <Content Include="js\mobile\globals\CswMobileEnums.js" />
-    <Content Include="js\mobile\globals\CswMobileTools.js" />
-    <Content Include="js\mobile\globals\CswEnums.js" />
-    <Content Include="js\mobile\globals\CswGlobalTools.js" />
-    <Content Include="js\mobile\globals\CswPrototypeExtensions.js" />
-    <Content Include="js\mobile\globals\Global.js" />
-    <Content Include="js\mobile\controls\CswButton.js" />
-    <Content Include="js\mobile\controls\CswDiv.js" />
-    <Content Include="js\mobile\controls\CswInput.js" />
-    <Content Include="js\mobile\controls\CswLink.js" />
-    <Content Include="js\mobile\controls\CswList.js" />
-    <Content Include="js\mobile\controls\CswSelect.js" />
-    <Content Include="js\mobile\controls\CswSpan.js" />
-    <Content Include="js\mobile\controls\CswTable.js" />
-    <Content Include="js\mobile\tools\CswAttr.js" />
-    <Content Include="js\mobile\tools\CswClientDb.js" />
-    <Content Include="js\mobile\tools\CswCookie.js" />
-    <Content Include="js\mobile\tools\CswString.js" />
-    <Content Include="js\mobile\tools\CswTools.js" />
-    <Content Include="js\mobile\objectclasses\CswMobileGenericClass.js" />
-    <Content Include="js\mobile\objectclasses\CswMobileInspectionDesignClass.js" />
-    <Content Include="js\mobile\objectclasses\CswMobileNodesFactory.js" />
-    <Content Include="js\mobile\pages\CswMobilePageFactory.js" />
-    <Content Include="js\mobile\pages\CswMobilePageHelp.js" />
-    <Content Include="js\mobile\pages\CswMobilePageLogin.js" />
-    <Content Include="js\mobile\pages\CswMobilePageNodes.js" />
-    <Content Include="js\mobile\pages\CswMobilePageOffline.js" />
-    <Content Include="js\mobile\pages\CswMobilePageOnline.js" />
-    <Content Include="js\mobile\pages\CswMobilePageProps.js" />
-    <Content Include="js\mobile\pages\CswMobilePageSearch.js" />
-    <Content Include="js\mobile\pages\CswMobilePageTabs.js" />
-    <Content Include="js\mobile\pages\CswMobilePageViews.js" />
-    <Content Include="js\mobile\sync\CswMobileBackgroundTask.js" />
-    <Content Include="js\mobile\sync\CswMobileSync.js" />
+    <Content Include="mobile\clientdb\CswMobileClientDb.js" />
+    <Content Include="mobile\clientdb\CswMobileClientDbResources.js" />
+    <Content Include="mobile\controls\CswMobileListView.js" />
+    <Content Include="mobile\controls\CswMobileMenuButton.js" />
+    <Content Include="mobile\controls\CswMobilePageFooter.js" />
+    <Content Include="mobile\controls\CswMobilePageHeader.js" />
+    <Content Include="mobile\controls\ICswMobileWebControls.js" />
+    <Content Include="mobile\CswAllMobile.min.js" />
+    <Content Include="mobile\CswMobile.css" />
+    <Content Include="mobile\CswMobile.js" />
+    <Content Include="mobile\fieldtypes\CswMobileFieldTypeButton.js" />
+    <Content Include="mobile\fieldtypes\CswMobileFieldTypeBarcode.js" />
+    <Content Include="mobile\fieldtypes\CswMobileFieldTypeDateTime.js" />
+    <Content Include="mobile\fieldtypes\CswMobileFieldTypeLink.js" />
+    <Content Include="mobile\fieldtypes\CswMobileFieldTypeList.js" />
+    <Content Include="mobile\fieldtypes\CswMobileFieldTypeLogical.js" />
+    <Content Include="mobile\fieldtypes\CswMobileFieldTypeMemo.js" />
+    <Content Include="mobile\fieldtypes\CswMobileFieldTypeNumber.js" />
+    <Content Include="mobile\fieldtypes\CswMobileFieldTypePassword.js" />
+    <Content Include="mobile\fieldtypes\CswMobileFieldTypeQuantity.js" />
+    <Content Include="mobile\fieldtypes\CswMobileFieldTypeQuestion.js" />
+    <Content Include="mobile\fieldtypes\CswMobileFieldTypeStatic.js" />
+    <Content Include="mobile\fieldtypes\CswMobileFieldTypeText.js" />
+    <Content Include="mobile\fieldtypes\CswMobilePropFactory.js" />
+    <Content Include="mobile\globals\CswMobileEnums.js" />
+    <Content Include="mobile\globals\CswMobileTools.js" />
+    <Content Include="mobile\globals\CswEnums.js" />
+    <Content Include="mobile\globals\CswGlobalTools.js" />
+    <Content Include="mobile\globals\CswPrototypeExtensions.js" />
+    <Content Include="mobile\globals\Global.js" />
+    <Content Include="mobile\controls\CswButton.js" />
+    <Content Include="mobile\controls\CswDiv.js" />
+    <Content Include="mobile\controls\CswInput.js" />
+    <Content Include="mobile\controls\CswLink.js" />
+    <Content Include="mobile\controls\CswList.js" />
+    <Content Include="mobile\controls\CswSelect.js" />
+    <Content Include="mobile\controls\CswSpan.js" />
+    <Content Include="mobile\controls\CswTable.js" />
+    <Content Include="mobile\tools\CswAttr.js" />
+    <Content Include="mobile\tools\CswClientDb.js" />
+    <Content Include="mobile\tools\CswCookie.js" />
+    <Content Include="mobile\tools\CswString.js" />
+    <Content Include="mobile\tools\CswTools.js" />
+    <Content Include="mobile\objectclasses\CswMobileGenericClass.js" />
+    <Content Include="mobile\objectclasses\CswMobileInspectionDesignClass.js" />
+    <Content Include="mobile\objectclasses\CswMobileNodesFactory.js" />
+    <Content Include="mobile\pages\CswMobilePageFactory.js" />
+    <Content Include="mobile\pages\CswMobilePageHelp.js" />
+    <Content Include="mobile\pages\CswMobilePageLogin.js" />
+    <Content Include="mobile\pages\CswMobilePageNodes.js" />
+    <Content Include="mobile\pages\CswMobilePageOffline.js" />
+    <Content Include="mobile\pages\CswMobilePageOnline.js" />
+    <Content Include="mobile\pages\CswMobilePageProps.js" />
+    <Content Include="mobile\pages\CswMobilePageSearch.js" />
+    <Content Include="mobile\pages\CswMobilePageTabs.js" />
+    <Content Include="mobile\pages\CswMobilePageViews.js" />
+    <Content Include="mobile\sync\CswMobileBackgroundTask.js" />
+    <Content Include="mobile\sync\CswMobileSync.js" />
     <Content Include="Mobile.html" />
     <Content Include="MobileTest.html" />
     <Content Include="Scripts\jquery-1.7.1-vsdoc.js" />
@@ -137,23 +137,23 @@
     <Content Include="Scripts\jquery-1.7.1.min.js" />
     <Content Include="Scripts\jquery.mobile-1.0rc1.js" />
     <Content Include="Scripts\jquery.mobile-1.0rc1.min.js" />
-    <Content Include="Scripts\modernizr-2.0.6-development-only.js" />
-    <Content Include="Scripts\modernizr.2.0.6.min.js" />
     <Content Include="_DevMobileIncludes.html" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="js\mobile\_compileMobile.pl" />
+    <None Include="mobile\_compileMobile.pl" />
     <None Include="Mobile.manifest" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="js\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>
     </PreBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
-    <PostBuildEvent>call $(ProjectDir)js\mobile\_compileMobile.pl $(ProjectDir)</PostBuildEvent>
+    <PostBuildEvent>call $(ProjectDir)mobile\_compileMobile.pl $(ProjectDir)</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

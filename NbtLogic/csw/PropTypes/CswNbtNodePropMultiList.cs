@@ -34,6 +34,8 @@ namespace ChemSW.Nbt.PropTypes
         private CswNbtFieldTypeRuleMultiList _FieldTypeRule;
         private CswNbtSubField _ValueSubField;
 
+        #region Attributes
+
         override public bool Empty
         {
             get
@@ -51,6 +53,38 @@ namespace ChemSW.Nbt.PropTypes
             }//
 
         }//Gestalt
+
+        /// <summary>
+        /// The Delimiter used to concatenate all selected options
+        /// </summary>
+        public string ReadOnlyDelimiter
+        {
+            get
+            {
+                string _readOnlyDelimiter = "<br />";
+                if( false == String.IsNullOrEmpty( _CswNbtMetaDataNodeTypeProp.Extended ) )
+                {
+                    _readOnlyDelimiter = _CswNbtMetaDataNodeTypeProp.Extended;
+                }
+                return _readOnlyDelimiter;
+            }
+        }
+
+        /// <summary>
+        /// The number of selected options to display in readonly mode.
+        /// </summary>
+        public int HideThreshold
+        {
+            get
+            {
+                int _hideThreshold = 5;
+                if( CswTools.IsDouble( _CswNbtMetaDataNodeTypeProp.MaxValue ) )
+                {
+                    _hideThreshold = CswConvert.ToInt32( _CswNbtMetaDataNodeTypeProp.MaxValue );
+                }
+                return _hideThreshold;
+            }
+        }
 
         private CswCommaDelimitedString _Value = null;
         public CswCommaDelimitedString Value
@@ -72,6 +106,8 @@ namespace ChemSW.Nbt.PropTypes
                 _setGestalt();
             }
         }
+
+        #endregion Attributes
 
         /// <summary>
         /// Add a value to the set of selected values
@@ -176,6 +212,82 @@ namespace ChemSW.Nbt.PropTypes
         {
         }
 
+        #region ReadOnly Value
+
+        private string _CollapsedReadOnlyValue;
+        public string CollapsedReadOnlyValue
+        {
+            get
+            {
+                if( String.IsNullOrEmpty( _CollapsedReadOnlyValue ) && String.IsNullOrEmpty( _ExpandedReadOnlyValue ) )
+                {
+                    _setReadOnlyValues();
+                }
+                return _CollapsedReadOnlyValue;
+            }
+        }
+        private string _ExpandedReadOnlyValue;
+        public string ExpandedReadOnlyValue
+        {
+            get
+            {
+                if( String.IsNullOrEmpty( _ExpandedReadOnlyValue ) && String.IsNullOrEmpty( _CollapsedReadOnlyValue ) )
+                {
+                    _setReadOnlyValues();
+                }
+                return _ExpandedReadOnlyValue;
+            }
+        }
+
+        private void _setReadOnlyValues()
+        {
+            bool expandedEnabled = false;
+            int SelectedOptionsAdded = 0;
+            string valueToSet = _CollapsedReadOnlyValue;
+            string OptionSubject = String.Empty;
+            foreach( string Key in Options.Keys )
+            {
+                if( Value.Contains( Key ) )
+                {
+                    string[] SplitOption = Options[Key].Split( new string[] { ": " }, StringSplitOptions.None );
+                    if( SplitOption[0] == OptionSubject )
+                    {
+                        valueToSet = valueToSet + ", " + SplitOption[1];
+                    }
+                    else
+                    {
+                        SelectedOptionsAdded++;
+                        if( SelectedOptionsAdded > HideThreshold && false == expandedEnabled )
+                        {
+                            _CollapsedReadOnlyValue = valueToSet;
+                            valueToSet = String.Empty;
+                            expandedEnabled = true;
+                        }
+                        OptionSubject = SplitOption[0];
+                        if( String.IsNullOrEmpty( valueToSet ) )
+                        {
+                            valueToSet = Options[Key];
+                        }
+                        else
+                        {
+                            valueToSet = valueToSet + ReadOnlyDelimiter + " " + Options[Key];
+                        }
+                    }
+                }
+            }
+            if( expandedEnabled )
+            {
+                _ExpandedReadOnlyValue = valueToSet;
+            }
+            else
+            {
+                _CollapsedReadOnlyValue = valueToSet;
+            }
+        }
+
+        #endregion ReadOnly Value
+
+        #region Serialization
 
         public override void ToXml( XmlNode ParentNode )
         {
@@ -188,6 +300,8 @@ namespace ChemSW.Nbt.PropTypes
                 CswXmlDocument.AppendXmlAttribute( OptionNode, "text", Options[Key] );
                 CswXmlDocument.AppendXmlAttribute( OptionNode, "selected", Value.Contains( Key ).ToString().ToLower() );
             }
+            CswXmlDocument.AppendXmlNode( ParentNode, "readonlyless", CollapsedReadOnlyValue );
+            CswXmlDocument.AppendXmlNode( ParentNode, "readonlymore", ExpandedReadOnlyValue );
         }
 
         public override void ToXElement( XElement ParentNode )
@@ -210,6 +324,8 @@ namespace ChemSW.Nbt.PropTypes
                 OptionsObj[Key]["value"] = Key;
                 OptionsObj[Key]["selected"] = Value.Contains( Key ).ToString().ToLower();
             }
+            ParentObject["readonlyless"] = CollapsedReadOnlyValue;
+            ParentObject["readonlymore"] = ExpandedReadOnlyValue;
         } // ToJSON()
 
         public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
@@ -243,6 +359,9 @@ namespace ChemSW.Nbt.PropTypes
                 Value = NewValue;
             }
         }
+
+        #endregion Serialization
+
     }//CswNbtNodeProp
 
 }//namespace ChemSW.Nbt.PropTypes

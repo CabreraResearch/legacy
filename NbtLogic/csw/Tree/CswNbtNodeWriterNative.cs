@@ -74,6 +74,8 @@ namespace ChemSW.Nbt
             NodesTable.Rows[0]["readonly"] = CswConvert.ToDbVal( Node.ReadOnlyPermanent );
             NodesTable.Rows[0]["locked"] = CswConvert.ToDbVal( Node.Locked );
             NodesTable.Rows[0]["isdemo"] = CswConvert.ToDbVal( Node.IsDemo );
+            NodesTable.Rows[0]["istemp"] = CswConvert.ToDbVal( Node.IsTemp );
+            NodesTable.Rows[0]["sessionid"] = CswConvert.ToDbVal( Node.SessionId );
             CswTableUpdateNodes.update( NodesTable );
 
         }//write()

@@ -1,8 +1,7 @@
 ﻿using System;
-using ChemSW.Nbt.MetaData;
-using Newtonsoft.Json.Linq;
-using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Batch;
+using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.PropTypes;
 
 namespace ChemSW.Nbt.ObjClasses
 {
@@ -10,16 +9,21 @@ namespace ChemSW.Nbt.ObjClasses
     {
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
 
-        public static string BatchDataPropertyName { get { return "Batch Data"; } }
-        public static string CreatedDatePropertyName { get { return "Created Date"; } }
-        public static string EndDatePropertyName { get { return "End Date"; } }
-        public static string LogPropertyName { get { return "Log"; } }
-        public static string OpNamePropertyName { get { return "Operation Name"; } }
-        public static string PercentDonePropertyName { get { return "Percent Done"; } }
-        public static string PriorityPropertyName { get { return "Priority"; } }
-        public static string StartDatePropertyName { get { return "Start Date"; } }
-        public static string StatusPropertyName { get { return "Status"; } }
-        public static string UserPropertyName { get { return "User"; } }
+        public sealed class PropertyName
+        {
+            public const string BatchData = "Batch Data";
+            public const string CreatedDate = "Created Date";
+            public const string EndDate = "End Date";
+            public const string Log = "Log";
+            public const string OpName = "Operation Name";
+            public const string PercentDone = "Percent Done";
+            public const string Priority = "Priority";
+            public const string StartDate = "Start Date";
+            public const string Status = "Status";
+            public const string User = "User";
+        }
+
+
 
 
         public CswNbtObjClassBatchOp( CswNbtResources CswNbtResources, CswNbtNode Node )
@@ -98,15 +102,6 @@ namespace ChemSW.Nbt.ObjClasses
 
 
         #region Inherited Events
-        public override void beforeCreateNode( bool OverrideUniqueValidation )
-        {
-            _CswNbtObjClassDefault.beforeCreateNode( OverrideUniqueValidation );
-        } // beforeCreateNode()
-
-        public override void afterCreateNode()
-        {
-            _CswNbtObjClassDefault.afterCreateNode();
-        } // afterCreateNode()
 
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
@@ -141,9 +136,9 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override bool onButtonClick( NbtButtonData ButtonData )
         {
-            
-            
-            
+
+
+
             if( null != ButtonData && null != ButtonData.NodeTypeProp ) { /*Do Something*/ }
             return true;
         }
@@ -155,42 +150,42 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get
             {
-                return ( _CswNbtNode.Properties[BatchDataPropertyName] );
+                return ( _CswNbtNode.Properties[PropertyName.BatchData] );
             }
         }
         public CswNbtNodePropDateTime CreatedDate
         {
             get
             {
-                return ( _CswNbtNode.Properties[CreatedDatePropertyName] );
+                return ( _CswNbtNode.Properties[PropertyName.CreatedDate] );
             }
         }
         public CswNbtNodePropDateTime EndDate
         {
             get
             {
-                return ( _CswNbtNode.Properties[EndDatePropertyName] );
+                return ( _CswNbtNode.Properties[PropertyName.EndDate] );
             }
         }
         public CswNbtNodePropDateTime StartDate
         {
             get
             {
-                return ( _CswNbtNode.Properties[StartDatePropertyName] );
+                return ( _CswNbtNode.Properties[PropertyName.StartDate] );
             }
         }
         public CswNbtNodePropComments Log
         {
             get
             {
-                return ( _CswNbtNode.Properties[LogPropertyName] );
+                return ( _CswNbtNode.Properties[PropertyName.Log] );
             }
         }
         public CswNbtNodePropList OpName
         {
             get
             {
-                return ( _CswNbtNode.Properties[OpNamePropertyName] );
+                return ( _CswNbtNode.Properties[PropertyName.OpName] );
             }
         }
         public NbtBatchOpName OpNameValue
@@ -204,28 +199,28 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get
             {
-                return ( _CswNbtNode.Properties[PercentDonePropertyName] );
+                return ( _CswNbtNode.Properties[PropertyName.PercentDone] );
             }
         }
         public CswNbtNodePropNumber Priority
         {
             get
             {
-                return ( _CswNbtNode.Properties[PriorityPropertyName] );
+                return ( _CswNbtNode.Properties[PropertyName.Priority] );
             }
         }
         public CswNbtNodePropList Status
         {
             get
             {
-                return ( _CswNbtNode.Properties[StatusPropertyName] );
+                return ( _CswNbtNode.Properties[PropertyName.Status] );
             }
         }
         public CswNbtNodePropRelationship User
         {
             get
             {
-                return ( _CswNbtNode.Properties[UserPropertyName] );
+                return ( _CswNbtNode.Properties[PropertyName.User] );
             }
         }
 

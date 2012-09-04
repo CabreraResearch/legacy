@@ -109,7 +109,7 @@ namespace ChemSW.Nbt.PropTypes
 
         public string CachedFullPath
         {
-            get { return CachedPath + PathDelimiter + CachedNodeName; }
+            get { return Gestalt; }
         }
 
         public string CachedBarcode
@@ -201,11 +201,11 @@ namespace ChemSW.Nbt.PropTypes
             CswNbtView Ret = new CswNbtView( CswNbtResources );
 
             CswNbtMetaDataObjectClass LocationOC = CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.LocationClass );
-            CswNbtMetaDataObjectClassProp LocationLocationOCP = LocationOC.getObjectClassProp( CswNbtObjClassLocation.LocationPropertyName );
-            CswNbtMetaDataObjectClassProp LocationAllowInventoryOCP = LocationOC.getObjectClassProp( CswNbtObjClassLocation.AllowInventoryPropertyName );
+            CswNbtMetaDataObjectClassProp LocationLocationOCP = LocationOC.getObjectClassProp( CswNbtObjClassLocation.PropertyName.Location );
+            CswNbtMetaDataObjectClassProp LocationAllowInventoryOCP = LocationOC.getObjectClassProp( CswNbtObjClassLocation.PropertyName.AllowInventory );
 
             bool IsLocationNode = ( null != Prop && Prop.getNodeType().ObjectClassId == LocationOC.ObjectClassId );
-            
+
             Ret.ViewName = TopLevelName;
 
             CswNbtViewRelationship LocationLevel1 = Ret.AddViewRelationship( LocationOC, true );
@@ -218,7 +218,7 @@ namespace ChemSW.Nbt.PropTypes
             Ret.AddViewPropertyAndFilter( LocationLevel1, LocationLocationOCP, SubFieldName: CswNbtSubField.SubFieldName.NodeID, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Null );
             if( false == IsLocationNode )
             {
-                Ret.AddViewPropertyAndFilter( LocationLevel1, LocationAllowInventoryOCP, CswNbtPropFilterSql.FilterResultMode.Disabled, Value: Tristate.True.ToString() );
+                Ret.AddViewPropertyAndFilter( LocationLevel1, LocationAllowInventoryOCP, CswNbtPropFilterSql.PropertyFilterConjunction.And, CswNbtPropFilterSql.FilterResultMode.Disabled, Value: Tristate.True.ToString() );
             }
 
             Int32 MaxDepth = 5;
@@ -235,12 +235,12 @@ namespace ChemSW.Nbt.PropTypes
                 }
                 if( false == IsLocationNode )
                 {
-                    Ret.AddViewPropertyAndFilter( LocationLevelX, LocationAllowInventoryOCP, CswNbtPropFilterSql.FilterResultMode.Disabled, Value: Tristate.True.ToString() );
+                    Ret.AddViewPropertyAndFilter( LocationLevelX, LocationAllowInventoryOCP, CswNbtPropFilterSql.PropertyFilterConjunction.And, CswNbtPropFilterSql.FilterResultMode.Disabled, Value: Tristate.True.ToString() );
                 }
 
                 PriorLocationLevel = LocationLevelX;
             }
-            
+
             return Ret;
         }
 
@@ -493,7 +493,7 @@ namespace ChemSW.Nbt.PropTypes
                 {
                     // Find the location with this barcode value
                     CswNbtMetaDataObjectClass LocationObjectClass = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.LocationClass );
-                    CswNbtMetaDataObjectClassProp BarcodeObjectClassProp = LocationObjectClass.getObjectClassProp( CswNbtObjClassLocation.BarcodePropertyName );
+                    CswNbtMetaDataObjectClassProp BarcodeObjectClassProp = LocationObjectClass.getObjectClassProp( CswNbtObjClassLocation.PropertyName.Barcode );
 
                     CswNbtView LocationView = new CswNbtView( _CswNbtResources );
                     // All locations..

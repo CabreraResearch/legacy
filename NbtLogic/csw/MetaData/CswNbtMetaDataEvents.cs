@@ -105,7 +105,7 @@ namespace ChemSW.Nbt.MetaData
                 {
                     CswNbtMetaDataNodeType EquipmentNodeType = EditedProp.getNodeType();
                     //CswNbtObjClassRuleEquipment EquipmentRule = new CswNbtObjClassRuleEquipment();
-                    CswNbtMetaDataNodeTypeProp RelationshipProp = EquipmentNodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassEquipment.AssemblyPropertyName );
+                    CswNbtMetaDataNodeTypeProp RelationshipProp = EquipmentNodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassEquipment.PropertyName.Assembly );
                     if( RelationshipProp != null )
                     {
                         //if (RelationshipProp.FKType == RelatedIdType.NodeTypeId.ToString())
@@ -182,7 +182,7 @@ namespace ChemSW.Nbt.MetaData
                     //if( EquipmentNodeType.ObjectClass.ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.EquipmentClass )
                     //{
                     //CswNbtObjClassRuleEquipment EquipmentRule = new CswNbtObjClassRuleEquipment(); 
-                    CswNbtMetaDataNodeTypeProp RelationshipProp = EquipmentNodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassEquipment.AssemblyPropertyName );
+                    CswNbtMetaDataNodeTypeProp RelationshipProp = EquipmentNodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassEquipment.PropertyName.Assembly );
                     if( RelationshipProp != null )
                     {
                         if( ( RelationshipProp.FKType == NbtViewRelatedIdType.NodeTypeId.ToString() &&
@@ -234,8 +234,8 @@ namespace ChemSW.Nbt.MetaData
 
         public void OnMakeNewInspectionDesignNodeType( CswNbtMetaDataNodeType NewNodeType, bool IsCopy )
         {
-            CswNbtMetaDataNodeTypeProp NameProp = NewNodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.NamePropertyName );
-            Int32 DatePropId = NewNodeType.getNodeTypePropIdByObjectClassProp( CswNbtObjClassInspectionDesign.DatePropertyName );
+            CswNbtMetaDataNodeTypeProp NameProp = NewNodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.PropertyName.Name );
+            Int32 DatePropId = NewNodeType.getNodeTypePropIdByObjectClassProp( CswNbtObjClassInspectionDesign.PropertyName.Date );
 
             // Set 'Name' default value = nodetypename
             NameProp.DefaultValue.AsText.Text = NewNodeType.NodeTypeName;
@@ -268,17 +268,17 @@ namespace ChemSW.Nbt.MetaData
                 ////CancelledProp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, ActionTab.TabId, 2, 1 );
                 //_CswNbtResources.MetaData.NodeTypeLayout.updatePropLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, NewNodeType.NodeTypeId, CancelledPropId, ActionTab.TabId, 2, 1 ); 
 
-                Int32 SetPreferredPropId = NewNodeType.getNodeTypePropIdByObjectClassProp( CswNbtObjClassInspectionDesign.SetPreferredPropertyName );
+                Int32 SetPreferredPropId = NewNodeType.getNodeTypePropIdByObjectClassProp( CswNbtObjClassInspectionDesign.PropertyName.SetPreferred );
                 _CswNbtResources.MetaData.NodeTypeLayout.updatePropLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, NewNodeType.NodeTypeId, SetPreferredPropId, true, ActionTab.TabId, 1, 1 );
 
-                Int32 FinishedPropId = NewNodeType.getNodeTypePropIdByObjectClassProp( CswNbtObjClassInspectionDesign.FinishPropertyName );
+                Int32 FinishedPropId = NewNodeType.getNodeTypePropIdByObjectClassProp( CswNbtObjClassInspectionDesign.PropertyName.Finish );
                 _CswNbtResources.MetaData.NodeTypeLayout.updatePropLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, NewNodeType.NodeTypeId, FinishedPropId, true, ActionTab.TabId, 2, 1 );
 
-                Int32 CancelledPropId = NewNodeType.getNodeTypePropIdByObjectClassProp( CswNbtObjClassInspectionDesign.CancelPropertyName );
+                Int32 CancelledPropId = NewNodeType.getNodeTypePropIdByObjectClassProp( CswNbtObjClassInspectionDesign.PropertyName.Cancel );
                 _CswNbtResources.MetaData.NodeTypeLayout.updatePropLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, NewNodeType.NodeTypeId, CancelledPropId, true, ActionTab.TabId, 3, 1 );
 
 
-                Int32 CancelReasonPropId = NewNodeType.getNodeTypePropIdByObjectClassProp( CswNbtObjClassInspectionDesign.CancelReasonPropertyName );
+                Int32 CancelReasonPropId = NewNodeType.getNodeTypePropIdByObjectClassProp( CswNbtObjClassInspectionDesign.PropertyName.CancelReason );
                 //CancelReasonProp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, ActionTab.TabId, 3, 1 );
                 _CswNbtResources.MetaData.NodeTypeLayout.updatePropLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, NewNodeType.NodeTypeId, CancelReasonPropId, true, ActionTab.TabId, 4, 1 );
 
@@ -294,7 +294,7 @@ namespace ChemSW.Nbt.MetaData
 
         public void OnUpdateInspectionDesignNodeType( CswNbtMetaDataNodeType NodeType )
         {
-            CswNbtMetaDataNodeTypeProp NameProp = NodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.NamePropertyName );
+            CswNbtMetaDataNodeTypeProp NameProp = NodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.PropertyName.Name );
 
             // Set 'Name' default value = nodetypename
             NameProp.DefaultValue.AsText.Text = NodeType.NodeTypeName;

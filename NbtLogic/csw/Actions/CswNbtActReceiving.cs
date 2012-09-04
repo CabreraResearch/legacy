@@ -31,7 +31,7 @@ namespace ChemSW.Nbt.Actions
         public CswNbtActReceiving( CswNbtResources CswNbtResources, CswNbtMetaDataObjectClass MaterialOc, CswPrimaryKey MaterialNodeId )
         {
             _CswNbtResources = CswNbtResources;
-            if( false == _CswNbtResources.IsModuleEnabled( CswNbtResources.CswNbtModule.CISPro ) )
+            if( false == _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.CISPro ) )
             {
                 throw new CswDniException( ErrorType.Error, "Cannot use the Submit Request action without the required module.", "Attempted to constuct CswNbtActReceiving without the required module." );
             }
@@ -56,10 +56,10 @@ namespace ChemSW.Nbt.Actions
 
                 CswNbtViewRelationship MaterialRel = SizeView.AddViewRelationship( _MaterialOc, true );
                 CswNbtMetaDataObjectClass SizeOc = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.SizeClass );
-                CswNbtMetaDataObjectClassProp CapacityOcp = SizeOc.getObjectClassProp( CswNbtObjClassSize.InitialQuantityPropertyName );
-                CswNbtMetaDataObjectClassProp MaterialOcp = SizeOc.getObjectClassProp( CswNbtObjClassSize.MaterialPropertyName );
-                CswNbtMetaDataObjectClassProp CatalogNoOcp = SizeOc.getObjectClassProp( CswNbtObjClassSize.CatalogNoPropertyName );
-                CswNbtMetaDataObjectClassProp DispensableOcp = SizeOc.getObjectClassProp( CswNbtObjClassSize.DispensablePropertyName );
+                CswNbtMetaDataObjectClassProp CapacityOcp = SizeOc.getObjectClassProp( CswNbtObjClassSize.PropertyName.InitialQuantity );
+                CswNbtMetaDataObjectClassProp MaterialOcp = SizeOc.getObjectClassProp( CswNbtObjClassSize.PropertyName.Material );
+                CswNbtMetaDataObjectClassProp CatalogNoOcp = SizeOc.getObjectClassProp( CswNbtObjClassSize.PropertyName.CatalogNo );
+                CswNbtMetaDataObjectClassProp DispensableOcp = SizeOc.getObjectClassProp( CswNbtObjClassSize.PropertyName.Dispensable );
 
                 CswNbtViewRelationship SizeRel = SizeView.AddViewRelationship( MaterialRel, NbtViewPropOwnerType.Second, MaterialOcp, true );
                 SizeView.AddViewProperty( SizeRel, CapacityOcp );
@@ -83,7 +83,7 @@ namespace ChemSW.Nbt.Actions
             ContainerNt = ContainerNt ?? _ContainerOc.getLatestVersionNodeTypes().FirstOrDefault();
             if( null != ContainerNt )
             {
-                RetAsContainer = PropsAction.getAddNode( ContainerNt );
+                RetAsContainer = PropsAction.getAddNode( ContainerNt, CswNbtNodeCollection.MakeNodeOperation.DoNothing );
                 if( null == RetAsContainer )
                 {
                     throw new CswDniException( ErrorType.Error, "Could not create a new container.", "Failed to create a new Container node." );
@@ -129,11 +129,11 @@ namespace ChemSW.Nbt.Actions
                     Debug.Assert( ( null != ContainerNt ), "The request specified an invalid container nodetypeid." );
                     if( null != ContainerNt )
                     {
-                        CswPrimaryKey MaterialId = new CswPrimaryKey();
-                        MaterialId.FromString( CswConvert.ToString( ReceiptObj["materialid"] ) );
-                        Debug.Assert( ( Int32.MinValue != MaterialId.PrimaryKey ), "The request did not specify a valid materialid." );
-                        if( Int32.MinValue != MaterialId.PrimaryKey )
+                        CswNbtObjClassMaterial NodeAsMaterial = CswNbtResources.Nodes[CswConvert.ToString( ReceiptObj["materialid"] )];
+                        Debug.Assert( ( null != NodeAsMaterial ), "The request did not specify a valid materialid." );
+                        if( null != NodeAsMaterial )
                         {
+                            commitDocumentNode( CswNbtResources, NodeAsMaterial, ReceiptObj );
                             JArray Quantities = CswConvert.ToJArray( ReceiptObj["quantities"] );
                             Debug.Assert( Quantities.HasValues, "The request did not specify any valid container amounts." );
                             if( Quantities.HasValues )
@@ -160,20 +160,19 @@ namespace ChemSW.Nbt.Actions
                                     {
                                         for( Int32 C = 0; C < NoContainers; C += 1 )
                                         {
-                                            CswNbtNode Container;
                                             CswNbtNodeKey ContainerNodeKey;
-                                            SdTabsAndProps.addNode( ContainerNt, out Container, ContainerAddProps, out ContainerNodeKey );
+                                            CswNbtNode Container = SdTabsAndProps.addNode( ContainerNt, null, ContainerAddProps, out ContainerNodeKey );
                                             CswNbtObjClassContainer AsContainer = Container;
                                             if( Barcodes.Count <= NoContainers && false == string.IsNullOrEmpty( Barcodes[C] ) )
                                             {
                                                 AsContainer.Barcode.setBarcodeValueOverride( Barcodes[C], false );
                                             }
                                             AsContainer.Size.RelatedNodeId = SizeId;
-                                            AsContainer.Material.RelatedNodeId = MaterialId;
+                                            AsContainer.Material.RelatedNodeId = NodeAsMaterial.NodeId;
                                             if( AsSize.QuantityEditable.Checked != Tristate.True )
                                             {
-                                                    QuantityValue = AsSize.InitialQuantity.Quantity;
-                                                    UnitId = AsSize.InitialQuantity.UnitId;
+                                                QuantityValue = AsSize.InitialQuantity.Quantity;
+                                                UnitId = AsSize.InitialQuantity.UnitId;
                                             }
                                             if( null == AsContainer.Quantity.UnitId || Int32.MinValue == AsContainer.Quantity.UnitId.PrimaryKey )
                                             {
@@ -203,6 +202,46 @@ namespace ChemSW.Nbt.Actions
             }
             Ret["containerscreated"] = ContainerIds.Count;
             return Ret;
+        }
+
+        /// <summary>
+        /// Gets the first Document <see cref="CswNbtMetaDataNodeType"/> with an Owner relationship target of Material
+        /// </summary>
+        public static Int32 getMaterialDocumentNodeTypeId( CswNbtResources CswNbtResources, CswNbtObjClassMaterial NodeAsMaterial )
+        {
+            Int32 Ret = Int32.MinValue;
+            CswNbtMetaDataObjectClass DocumentOc = CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.DocumentClass );
+            foreach( CswNbtMetaDataNodeType DocumentNt in from
+                                                              _DocumentNt in
+                                                              DocumentOc.getLatestVersionNodeTypes()
+                                                          let OwnerNtp = _DocumentNt.getNodeTypePropByObjectClassProp( CswNbtObjClassDocument.PropertyName.Owner )
+                                                          where ( ( OwnerNtp.FKType == NbtViewRelatedIdType.NodeTypeId.ToString() &&
+                                                                    OwnerNtp.FKValue == NodeAsMaterial.NodeTypeId ) ||
+                                                                ( OwnerNtp.FKType == NbtViewRelatedIdType.ObjectClassId.ToString() &&
+                                                                    OwnerNtp.FKValue == NodeAsMaterial.ObjectClass.ObjectClassId ) )
+                                                          select _DocumentNt )
+            {
+                Ret = DocumentNt.NodeTypeId;
+                break;
+            }
+            return Ret;
+        }
+
+        /// <summary>
+        /// Upversion a Document node
+        /// </summary>
+        public static CswNbtObjClassDocument commitDocumentNode( CswNbtResources CswNbtResources, CswNbtObjClassMaterial NodeAsMaterial, JObject Obj )
+        {
+            CswNbtSdTabsAndProps SdTabsAndProps = new CswNbtSdTabsAndProps( CswNbtResources );
+            CswNbtObjClassDocument Doc = CswNbtResources.Nodes[CswConvert.ToString( Obj["documentid"] )];
+            if( null != Doc )
+            {
+                Doc.IsTemp = false;
+                SdTabsAndProps.saveProps( Doc.NodeId, Int32.MinValue, CswConvert.ToString( Obj["documentProperties"] ), Doc.NodeTypeId, null );
+                Doc.Owner.RelatedNodeId = NodeAsMaterial.NodeId;
+                Doc.postChanges( ForceUpdate: false );
+            }
+            return Doc;
         }
 
         #endregion Public methods and props

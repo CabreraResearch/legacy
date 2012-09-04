@@ -56,10 +56,10 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataNodeType LabSafetyChecklistDemoNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Lab Safety Checklist (demo)" );
             if( LabSafetyChecklistDemoNT != null )
             {
-                CswNbtMetaDataNodeTypeProp InspectionDateNTP = LabSafetyChecklistDemoNT.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.InspectionDatePropertyName );
-                CswNbtMetaDataNodeTypeProp InspectionNameNTP = LabSafetyChecklistDemoNT.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.NamePropertyName );
-                CswNbtMetaDataNodeTypeProp LocationNTP = LabSafetyChecklistDemoNT.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.LocationPropertyName );
-                CswNbtMetaDataNodeTypeProp TargetNTP = LabSafetyChecklistDemoNT.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.TargetPropertyName );
+                CswNbtMetaDataNodeTypeProp InspectionDateNTP = LabSafetyChecklistDemoNT.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.PropertyName.InspectionDate );
+                CswNbtMetaDataNodeTypeProp InspectionNameNTP = LabSafetyChecklistDemoNT.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.PropertyName.Name );
+                CswNbtMetaDataNodeTypeProp LocationNTP = LabSafetyChecklistDemoNT.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.PropertyName.Location );
+                CswNbtMetaDataNodeTypeProp TargetNTP = LabSafetyChecklistDemoNT.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.PropertyName.Target );
 
                 reportSqlText = string.Format( sqlText,
                      InspectionDateNTP.PropId.ToString(),//P4625

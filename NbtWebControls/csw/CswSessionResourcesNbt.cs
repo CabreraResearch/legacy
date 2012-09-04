@@ -67,6 +67,7 @@ namespace ChemSW.Nbt
                                                        _CswNbtStatistics = new CswNbtStatistics( new CswNbtStatisticsStorageDb( CswNbtResources ),
                                                                                                   new CswNbtStatisticsStorageStateServer(),
                                                                                                   RecordStatistics ) );
+            CswNbtResources.CswSessionManager = CswSessionManager;
             CswNbtStatisticsEvents = _CswNbtStatistics.CswNbtStatisticsEvents;
             CswSessionManager.OnDeauthenticate += new CswSessionManager.DeathenticationHandler( OnDeauthenticate );
 

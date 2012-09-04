@@ -1,12 +1,15 @@
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
-using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.ObjClasses
 {
     public class CswNbtObjClassInspectionTargetGroup : CswNbtObjClass
     {
-        public static string NamePropertyName { get { return "Name"; } }
+        public sealed class PropertyName
+        {
+            public const string Name = "Name";
+        }
+
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
 
@@ -34,49 +37,46 @@ namespace ChemSW.Nbt.ObjClasses
             return ret;
         }
 
-        #region Inherited Events
-
-        public override void beforeCreateNode( bool OverrideUniqueValidation )
+        private void _setDefaultValues()
         {
-            _CswNbtObjClassDefault.beforeCreateNode( OverrideUniqueValidation );
-        } // beforeCreateNode()
-
-        public override void afterCreateNode()
-        {
-            CswNbtMetaDataObjectClass GeneratorOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.GeneratorClass );
-            CswNbtMetaDataObjectClassProp OwnerOCP = GeneratorOC.getObjectClassProp( CswNbtObjClassGenerator.OwnerPropertyName );
-            CswNbtMetaDataNodeTypeProp OwnerNTP;
-            CswNbtMetaDataNodeType OwnerNT;
-            //CswNbtMetaDataObjectClass OwnerOC;
-            CswNbtNode GeneratorNode;
-            CswNbtObjClassGenerator NewGenerator;
-
-            foreach( CswNbtMetaDataNodeType NodeType in GeneratorOC.getNodeTypes() )
+            if( string.IsNullOrEmpty( Name.Text ) )
             {
-                OwnerNTP = NodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassGenerator.OwnerPropertyName );
-                if( NbtViewRelatedIdType.NodeTypeId.ToString() == OwnerNTP.FKType )
-                {
-                    OwnerNT = _CswNbtResources.MetaData.getNodeType( OwnerNTP.FKValue );
-                    if( null != OwnerNT && OwnerNT == Node.getNodeType() )
-                    {
-                        GeneratorNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeType.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing );
-                        if( null != GeneratorNode )
-                        {
-                            NewGenerator = (CswNbtObjClassGenerator) GeneratorNode;
-                            NewGenerator.Owner.RelatedNodeId = this.NodeId;
-                            NewGenerator.Owner.RefreshNodeName(); // 20959
-                            GeneratorNode.postChanges( true );
-                        }
-                    }
-                } //RelatedIdType.NodeTypeId.ToString() == OwnerNTP.FKType
-                //else if( RelatedIdType.ObjectClassId.ToString() == OwnerNTP.FKType )
-            }
+                CswNbtMetaDataObjectClass GeneratorOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.GeneratorClass );
+                CswNbtMetaDataObjectClassProp OwnerOCP = GeneratorOC.getObjectClassProp( CswNbtObjClassGenerator.PropertyName.Owner );
+                CswNbtMetaDataNodeTypeProp OwnerNTP;
+                CswNbtMetaDataNodeType OwnerNT;
+                //CswNbtMetaDataObjectClass OwnerOC;
+                CswNbtNode GeneratorNode;
+                CswNbtObjClassGenerator NewGenerator;
 
-            _CswNbtObjClassDefault.afterCreateNode();
-        } // afterCreateNode()
+                foreach( CswNbtMetaDataNodeType NodeType in GeneratorOC.getNodeTypes() )
+                {
+                    OwnerNTP = NodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassGenerator.PropertyName.Owner );
+                    if( NbtViewRelatedIdType.NodeTypeId.ToString() == OwnerNTP.FKType )
+                    {
+                        OwnerNT = _CswNbtResources.MetaData.getNodeType( OwnerNTP.FKValue );
+                        if( null != OwnerNT && OwnerNT == Node.getNodeType() )
+                        {
+                            GeneratorNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeType.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing );
+                            if( null != GeneratorNode )
+                            {
+                                NewGenerator = (CswNbtObjClassGenerator) GeneratorNode;
+                                NewGenerator.Owner.RelatedNodeId = this.NodeId;
+                                NewGenerator.Owner.RefreshNodeName(); // 20959
+                                GeneratorNode.postChanges( true );
+                            }
+                        }
+                    } //RelatedIdType.NodeTypeId.ToString() == OwnerNTP.FKType
+                    //else if( RelatedIdType.ObjectClassId.ToString() == OwnerNTP.FKType )
+                }
+            }
+        }
+
+        #region Inherited Events
 
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
+            _setDefaultValues();
             _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
         }//beforeWriteNode()
 
@@ -85,9 +85,9 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault.afterWriteNode();
         }//afterWriteNode()
 
-        public override void beforeDeleteNode(bool DeleteAllRequiredRelatedNodes = false)
+        public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false )
         {
-            _CswNbtObjClassDefault.beforeDeleteNode(DeleteAllRequiredRelatedNodes);
+            _CswNbtObjClassDefault.beforeDeleteNode( DeleteAllRequiredRelatedNodes );
 
         }//beforeDeleteNode()
 
@@ -108,9 +108,6 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override bool onButtonClick( NbtButtonData ButtonData )
         {
-            
-            
-            
             if( null != ButtonData && null != ButtonData.NodeTypeProp ) { /*Do Something*/ }
             return true;
         }
@@ -118,13 +115,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Object class specific properties
 
-        public CswNbtNodePropText Name
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[NamePropertyName].AsText );
-            }
-        }
+        public CswNbtNodePropText Name { get { return ( _CswNbtNode.Properties[PropertyName.Name] ); } }
 
         #endregion
 

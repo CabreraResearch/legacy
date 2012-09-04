@@ -33,7 +33,7 @@ namespace ChemSW.Nbt.Actions
         {
             _CswNbtResources = CswNbtResources;
             _CreateDefaultRequestNode = CreateDefaultRequestNode;
-            if( false == _CswNbtResources.IsModuleEnabled( CswNbtResources.CswNbtModule.CISPro ) )
+            if( false == _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.CISPro ) )
             {
                 throw new CswDniException( ErrorType.Error, "Cannot use the Submit Request action without the required module.", "Attempted to constuct CswNbtActSubmitRequest without the required module." );
             }
@@ -303,60 +303,82 @@ namespace ChemSW.Nbt.Actions
         /// <summary>
         /// Instance a new request item according to Object Class rules. Note: this does not get the properties.
         /// </summary>
-        public CswNbtObjClassRequestItem makeContainerRequestItem( RequestItem Item, CswPrimaryKey NodeId, string MenuOption )
+        public CswNbtObjClassRequestItem makeContainerRequestItem( CswNbtObjClassContainer Container, CswNbtObjClass.NbtButtonData ButtonData )
         {
             CswNbtSdTabsAndProps PropsAction = new CswNbtSdTabsAndProps( _CswNbtResources );
-
             CswNbtObjClassRequestItem RetAsRequestItem = PropsAction.getAddNode( RequestItemNt );
             if( null == RetAsRequestItem )
             {
                 throw new CswDniException( ErrorType.Error, "Could not generate a new request item.", "Failed to create a new Request Item node." );
             }
-            if( null != CurrentRequestNodeId() )
+            if( null != CurrentRequestNodeId() && null != Container )
             {
-                RetAsRequestItem.Container.RelatedNodeId = NodeId;
+                RetAsRequestItem.Container.RelatedNodeId = Container.NodeId;
                 RetAsRequestItem.Container.setReadOnly( value: true, SaveToDb: true );
-                RetAsRequestItem.RequestBy.setReadOnly( value: true, SaveToDb: true );
-                switch( MenuOption )
+
+                RetAsRequestItem.Material.RelatedNodeId = Container.Material.RelatedNodeId;
+                RetAsRequestItem.Material.setReadOnly( value: true, SaveToDb: ButtonData.SelectedText != CswNbtObjClassContainer.RequestMenu.Dispense );
+                RetAsRequestItem.Material.setHidden( value: true, SaveToDb: ButtonData.SelectedText != CswNbtObjClassContainer.RequestMenu.Dispense );
+
+                CswPrimaryKey SelectedLocationId = new CswPrimaryKey();
+                if( CswTools.IsPrimaryKey( _CswNbtResources.CurrentNbtUser.DefaultLocationId ) )
+                {
+                    SelectedLocationId = _CswNbtResources.CurrentNbtUser.DefaultLocationId;
+                }
+                else
+                {
+                    SelectedLocationId = Container.Location.SelectedNodeId;
+                }
+                switch( ButtonData.SelectedText )
                 {
                     case CswNbtObjClassContainer.RequestMenu.Dispense:
                         RetAsRequestItem.Type.Value = CswNbtObjClassRequestItem.Types.Dispense;
-                        RetAsRequestItem.RequestBy.Value = CswNbtObjClassRequestItem.RequestsBy.Quantity;
 
-                        CswNbtObjClassContainer NodeAsContainer = _CswNbtResources.Nodes[NodeId];
-                        Debug.Assert( null != NodeAsContainer, "RequestItem created without a Container." );
-                        if( null != NodeAsContainer )
+                        RetAsRequestItem.Quantity.UnitId = Container.Quantity.UnitId;
+                        RetAsRequestItem.RequestBy.Value = CswNbtObjClassRequestItem.RequestsBy.Bulk;
+
+                        RetAsRequestItem.Material.RelatedNodeId = Container.Material.RelatedNodeId;
+                        CswNbtNode MaterialNode = _CswNbtResources.Nodes[Container.Material.RelatedNodeId];
+                        Debug.Assert( null != MaterialNode, "RequestItem created without a valid Material." );
+                        if( null != MaterialNode )
                         {
-                            RetAsRequestItem.Material.RelatedNodeId = NodeAsContainer.Material.RelatedNodeId;
-                            CswNbtNode MaterialNode = _CswNbtResources.Nodes[NodeAsContainer.Material.RelatedNodeId];
-                            Debug.Assert( null != MaterialNode, "RequestItem created without a valid Material." );
-                            if( null != MaterialNode )
-                            {
-                                CswNbtUnitViewBuilder Vb = new CswNbtUnitViewBuilder( _CswNbtResources );
-                                Vb.setQuantityUnitOfMeasureView( MaterialNode, RetAsRequestItem.Quantity );
-                            }
+                            CswNbtUnitViewBuilder Vb = new CswNbtUnitViewBuilder( _CswNbtResources );
+                            Vb.setQuantityUnitOfMeasureView( MaterialNode, RetAsRequestItem.Quantity );
                         }
+                        
+                        ButtonData.Action = CswNbtObjClass.NbtButtonAction.request;
                         break;
                     case CswNbtObjClassContainer.RequestMenu.Dispose:
+                        RetAsRequestItem.IsTemp = false; /* This is the only condition in which we want to commit the node upfront. */
                         RetAsRequestItem.Type.Value = CswNbtObjClassRequestItem.Types.Dispose;
+                        
                         /* Kludge Alert: We don't have compound conditionals yet. Set it and hide it for now to squash the Quantity subprop. TODO: Remove this when compound conditionals arrive. */
                         RetAsRequestItem.RequestBy.Value = CswNbtObjClassRequestItem.RequestsBy.Size;
-                        RetAsRequestItem.RequestBy.setHidden( value: true, SaveToDb: true );
-                        RetAsRequestItem.Material.setHidden( value: true, SaveToDb: true );
-                        RetAsRequestItem.Material.setReadOnly( value: true, SaveToDb: true );
+                        
+                        SelectedLocationId = Container.Location.SelectedNodeId;
+                        ButtonData.Action = CswNbtObjClass.NbtButtonAction.nothing;
                         break;
                     case CswNbtObjClassContainer.RequestMenu.Move:
-
-                        RetAsRequestItem.Type.Value = CswNbtObjClassRequestItem.Types.Move;
+                        RetAsRequestItem.Type.Value = CswNbtObjClassRequestItem.Types.Move;    
+                        
                         /* Kludge Alert: We don't have compound conditionals yet. Set it and hide it for now to squash the Quantity subprop. TODO: Remove this when compound conditionals arrive. */
                         RetAsRequestItem.RequestBy.Value = CswNbtObjClassRequestItem.RequestsBy.Size;
-                        RetAsRequestItem.RequestBy.setHidden( value: true, SaveToDb: true );
-                        RetAsRequestItem.Material.setHidden( value: true, SaveToDb: true );
-                        RetAsRequestItem.Material.setReadOnly( value: true, SaveToDb: true );
+                        
+                        ButtonData.Action = CswNbtObjClass.NbtButtonAction.request;
                         break;
                     default:
-                        throw new CswDniException( ErrorType.Error, "No action has been defined for this button menu.", "Menu option named " + MenuOption + " has not implemented a button click event." );
+                        throw new CswDniException( ErrorType.Error, "No action has been defined for this button menu.", "Menu option named " + ButtonData.SelectedText + " has not implemented a button click event." );
                 }
+
+                RetAsRequestItem.Location.SelectedNodeId = SelectedLocationId;
+                RetAsRequestItem.Location.RefreshNodeName();
+
+                RetAsRequestItem.RequestBy.setHidden( value: ( ButtonData.SelectedText != CswNbtObjClassContainer.RequestMenu.Dispense ), SaveToDb: true );
+                RetAsRequestItem.RequestBy.setReadOnly( value: ( ButtonData.SelectedText != CswNbtObjClassContainer.RequestMenu.Dispense ), SaveToDb: true );
+
+                RetAsRequestItem.Type.setReadOnly( value: true, SaveToDb: true );
+
+                RetAsRequestItem.postChanges( ForceUpdate: false );
             }
             return RetAsRequestItem;
         }

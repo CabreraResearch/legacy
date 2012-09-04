@@ -50,6 +50,7 @@ namespace ChemSW.Nbt.MetaData
             switch( EditMode )
             {
                 case NodeEditMode.Add: LType = LayoutType.Add; break;
+                case NodeEditMode.Temp: LType = LayoutType.Add; break;
                 case NodeEditMode.Preview: LType = LayoutType.Preview; break;
                 case NodeEditMode.Table: LType = LayoutType.Table; break;
                 default: LType = LayoutType.Edit; break;

@@ -62,11 +62,11 @@ namespace ChemSW.Nbt.Security
                     string ObjectClassPropValueFk = Row["field1_fk"].ToString();
                     string ObjectClassPropValueDate = Row["field1_date"].ToString();
 
-                    if( ObjectClassPropName == CswNbtObjClassUser.RolePropertyName )
+                    if( ObjectClassPropName == CswNbtObjClassUser.PropertyName.Role )
                     {
                         _RoleId = CswConvert.ToInt32( Row["field1_fk"] );
                     }
-                    if( ObjectClassPropName == CswNbtObjClassUser.PasswordPropertyName )
+                    if( ObjectClassPropName == CswNbtObjClassUser.PropertyName.Password )
                     {
                         _PasswordPropertyId = CswConvert.ToInt32( Row["nodetypepropid"] );
                     }
@@ -103,17 +103,17 @@ namespace ChemSW.Nbt.Security
 
         public bool IsAdministrator()
         {
-            return CswConvert.ToBoolean( _RolePropDict[CswNbtObjClassRole.AdministratorPropertyName] );
+            return CswConvert.ToBoolean( _RolePropDict[CswNbtObjClassRole.PropertyName.Administrator] );
         }
 
         public string Email
         {
-            get { return _UserPropDict[CswNbtObjClassUser.EmailPropertyName]; }
+            get { return _UserPropDict[CswNbtObjClassUser.PropertyName.Email]; }
         }
 
         public Int32 PageSize
         {
-            get { return CswConvert.ToInt32( _UserPropDict[CswNbtObjClassUser.PageSizePropertyName] ); }
+            get { return CswConvert.ToInt32( _UserPropDict[CswNbtObjClassUser.PropertyName.PageSize] ); }
         }
 
         public CswPrimaryKey UserId
@@ -128,34 +128,34 @@ namespace ChemSW.Nbt.Security
 
         public string Username
         {
-            get { return _UserPropDict[CswNbtObjClassUser.UsernamePropertyName]; }
+            get { return _UserPropDict[CswNbtObjClassUser.PropertyName.Username]; }
         }
 
         public string Rolename
         {
-            get { return _RolePropDict[CswNbtObjClassRole.NamePropertyName]; }
+            get { return _RolePropDict[CswNbtObjClassRole.PropertyName.Name]; }
         }
 
         public Int32 RoleTimeout
         {
-            get { return CswConvert.ToInt32( _RolePropDict[CswNbtObjClassRole.TimeoutPropertyName] ); }
+            get { return CswConvert.ToInt32( _RolePropDict[CswNbtObjClassRole.PropertyName.Timeout] ); }
         }
 
         public string FirstName
         {
-            get { return _UserPropDict[CswNbtObjClassUser.FirstNamePropertyName]; }
+            get { return _UserPropDict[CswNbtObjClassUser.PropertyName.FirstName]; }
         }
 
         public string LastName
         {
-            get { return _UserPropDict[CswNbtObjClassUser.LastNamePropertyName]; }
+            get { return _UserPropDict[CswNbtObjClassUser.PropertyName.LastName]; }
         }
 
         public string DateFormat
         {
             get
             {
-                string ret = _UserPropDict[CswNbtObjClassUser.DateFormatPropertyName];
+                string ret = _UserPropDict[CswNbtObjClassUser.PropertyName.DateFormat];
                 if( string.Empty == ret )
                 {
                     ret = CswDateTime.DefaultDateFormat.ToString();
@@ -168,7 +168,7 @@ namespace ChemSW.Nbt.Security
         {
             get
             {
-                string ret = _UserPropDict[CswNbtObjClassUser.TimeFormatPropertyName];
+                string ret = _UserPropDict[CswNbtObjClassUser.PropertyName.TimeFormat];
                 if( string.Empty == ret )
                 {
                     ret = CswDateTime.DefaultTimeFormat.ToString();
@@ -182,9 +182,9 @@ namespace ChemSW.Nbt.Security
             get
             {
                 CswPrimaryKey ret = null;
-                if( _UserPropDict.ContainsKey( CswNbtObjClassUser.DefaultLocationPropertyName + _FkSuffix ) )
+                if( _UserPropDict.ContainsKey( CswNbtObjClassUser.PropertyName.DefaultLocation + _FkSuffix ) )
                 {
-                    ret = new CswPrimaryKey( "nodes", CswConvert.ToInt32( _UserPropDict[CswNbtObjClassUser.DefaultLocationPropertyName + _FkSuffix] ) );
+                    ret = new CswPrimaryKey( "nodes", CswConvert.ToInt32( _UserPropDict[CswNbtObjClassUser.PropertyName.DefaultLocation + _FkSuffix] ) );
                 }
                 return ret;
             }
@@ -195,9 +195,9 @@ namespace ChemSW.Nbt.Security
             get
             {
                 CswPrimaryKey ret = null;
-                if( _UserPropDict.ContainsKey( CswNbtObjClassUser.WorkUnitPropertyName + _FkSuffix ) )
+                if( _UserPropDict.ContainsKey( CswNbtObjClassUser.PropertyName.WorkUnit + _FkSuffix ) )
                 {
-                    ret = new CswPrimaryKey( "nodes", CswConvert.ToInt32( _UserPropDict[CswNbtObjClassUser.WorkUnitPropertyName + _FkSuffix] ) );
+                    ret = new CswPrimaryKey( "nodes", CswConvert.ToInt32( _UserPropDict[CswNbtObjClassUser.PropertyName.WorkUnit + _FkSuffix] ) );
                 }
                 return ret;
             }
@@ -213,9 +213,9 @@ namespace ChemSW.Nbt.Security
             get
             {
                 DateTime ChangedDate = DateTime.MinValue;
-                if( _UserPropDict.ContainsKey( CswNbtObjClassUser.PasswordPropertyName + _DateSuffix ) )
+                if( _UserPropDict.ContainsKey( CswNbtObjClassUser.PropertyName.Password + _DateSuffix ) )
                 {
-                    ChangedDate = CswConvert.ToDateTime( _UserPropDict[CswNbtObjClassUser.PasswordPropertyName + _DateSuffix] );
+                    ChangedDate = CswConvert.ToDateTime( _UserPropDict[CswNbtObjClassUser.PropertyName.Password + _DateSuffix] );
                 }
                 Int32 PasswordExpiryDays = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( "passwordexpiry_days" ) );
                 return ( ChangedDate == DateTime.MinValue ||

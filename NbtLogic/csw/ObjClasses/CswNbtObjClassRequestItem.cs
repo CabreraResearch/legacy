@@ -138,13 +138,6 @@ namespace ChemSW.Nbt.ObjClasses
         }
 
         #region Inherited Events
-        public override void beforeCreateNode( bool OverrideUniqueValidation )
-        {
-            _CswNbtObjClassDefault.beforeCreateNode( OverrideUniqueValidation );
-
-            CswNbtActSubmitRequest RequestAct = new CswNbtActSubmitRequest( _CswNbtResources, CreateDefaultRequestNode: true );
-            Request.RelatedNodeId = RequestAct.CurrentRequestNode().NodeId;
-        } // beforeCreateNode()
 
         private string _makeNotificationMessage()
         {
@@ -177,18 +170,12 @@ namespace ChemSW.Nbt.ObjClasses
             CswNbtObjClassLocation NodeAsLocation = _CswNbtResources.Nodes.GetNode( Location.SelectedNodeId );
             if( null != NodeAsLocation )
             {
-                MessageText += "Location: " + NodeAsLocation.Location + CswNbtNodePropLocation.PathDelimiter +
-                                NodeAsLocation.Name + "\n";
+                MessageText += "Location: " + NodeAsLocation.Location.CachedFullPath;
             }
 
 
             return MessageText;
         }
-
-        public override void afterCreateNode()
-        {
-            _CswNbtObjClassDefault.afterCreateNode();
-        } // afterCreateNode()
 
         private void _toggleReadOnlyProps( bool IsReadOnly, CswNbtObjClassRequestItem ItemInstance )
         {
@@ -204,9 +191,20 @@ namespace ChemSW.Nbt.ObjClasses
             ItemInstance.Number.setReadOnly( value: IsReadOnly, SaveToDb: true );
         }
 
+        private void _setDefaultValues()
+        {
+            if( false == CswTools.IsPrimaryKey( Request.RelatedNodeId ) )
+            {
+                CswNbtActSubmitRequest RequestAct = new CswNbtActSubmitRequest( _CswNbtResources, CreateDefaultRequestNode: true );
+                Request.RelatedNodeId = RequestAct.CurrentRequestNode().NodeId;
+                Request.setReadOnly( value: true, SaveToDb: true );
+                Request.setHidden( value: true, SaveToDb: false );
+            }
+        }
+
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
-            _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
+            _setDefaultValues();
 
             /* Container-specific logic */
             if( ( Type.Value == Types.Dispense ||
@@ -236,7 +234,7 @@ namespace ChemSW.Nbt.ObjClasses
                 }
             }
 
-
+            _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
         }//beforeWriteNode()
 
         public override void afterWriteNode()
@@ -273,31 +271,16 @@ namespace ChemSW.Nbt.ObjClasses
             Fulfill.setHidden( value: HideMenuButton, SaveToDb: false );
         }
 
-        //This will not work, because this is a NodeTypeProp level view, not a Node level view
-        //private void _setSizesView()
-        //{
-        //    if( CswTools.IsPrimaryKey( Material.RelatedNodeId ) )
-        //    {
-        //        CswNbtMetaDataObjectClass SizeOc = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.SizeClass );
-        //        CswNbtMetaDataObjectClassProp SizeMaterialOcp = SizeOc.getObjectClassProp( CswNbtObjClassSize.MaterialPropertyName );
-        //        Size.View.Root.ChildRelationships.Clear();
-        //        CswNbtViewRelationship SizeVr = Size.View.AddViewRelationship( SizeOc, false );
-        //        Size.View.AddViewPropertyAndFilter( SizeVr, SizeMaterialOcp, Material.RelatedNodeId.PrimaryKey.ToString(), SubFieldName: CswNbtSubField.SubFieldName.NodeID );
-        //    }
-        //}
-
         public override void afterPopulateProps()
         {
             Quantity.SetOnPropChange( OnQuantityPropChange );
             TotalDispensed.SetOnPropChange( OnTotalDispensedPropChange );
-            Request.SetOnPropChange( OnRequestPropChange );
             RequestBy.SetOnPropChange( OnRequestByPropChange );
             Type.SetOnPropChange( OnTypePropChange );
             Material.SetOnPropChange( OnMaterialPropChange );
             Container.SetOnPropChange( OnContainerPropChange );
             Status.SetOnPropChange( OnStatusPropChange );
             _setFulfillVisibility();
-            // _setSizesView();
             _CswNbtObjClassDefault.afterPopulateProps();
         }//afterPopulateProps()
 
@@ -401,6 +384,11 @@ namespace ChemSW.Nbt.ObjClasses
                                         NbtButtonData ReceiveData = new NbtButtonData( NodeAsMaterial.Receive.NodeTypeProp );
                                         NodeAsMaterial.onButtonClick( ReceiveData );
                                         ButtonData.clone( ReceiveData );
+                                        Int32 DocumentNodeTypeId = CswNbtActReceiving.getMaterialDocumentNodeTypeId( _CswNbtResources, NodeAsMaterial );
+                                        if( Int32.MinValue != DocumentNodeTypeId )
+                                        {
+                                            ButtonData.Data["documenttypeid"] = DocumentNodeTypeId;
+                                        }
                                     }
                                 }
                                 break;
@@ -468,11 +456,6 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropRelationship Request
         {
             get { return _CswNbtNode.Properties[PropertyName.Request]; }
-        }
-        private void OnRequestPropChange( CswNbtNodeProp Prop )
-        {
-            Request.setReadOnly( value: true, SaveToDb: true );
-            Request.setHidden( value: true, SaveToDb: false );
         }
 
         public CswNbtNodePropList Type
@@ -641,6 +624,11 @@ namespace ChemSW.Nbt.ObjClasses
                     break;
                 case Statuses.Cancelled: //This fallthrough is intentional
                 case Statuses.Completed:
+                    CswNbtObjClassRequest NodeAsRequest = _CswNbtResources.Nodes[Request.RelatedNodeId];
+                    if( null != NodeAsRequest )
+                    {
+                        NodeAsRequest.setCompletedDate();
+                    }
                     Node.setReadOnly( true, true );
                     break;
             }

@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using ChemSW.Core;
-using ChemSW.Exceptions;
 
 namespace ChemSW.Nbt.MetaData
 {
@@ -51,7 +50,7 @@ namespace ChemSW.Nbt.MetaData
                                                                };
 
 
-        public sealed class NbtFieldType : IEquatable<NbtFieldType>
+        public sealed class NbtFieldType : IEquatable<NbtFieldType>, IComparable<NbtFieldType>
         {
             public readonly string Value;
 
@@ -145,8 +144,27 @@ namespace ChemSW.Nbt.MetaData
                 return this == obj;
             }
 
+            /// <summary>
+            /// Get Hash Code
+            /// </summary>
+            public override int GetHashCode()
+            {
+                int ret = 23, prime = 37;
+                ret = ( ret * prime ) + Value.GetHashCode();
+                ret = ( ret * prime ) + _Enums.GetHashCode();
+                return ret;
+            }
+
             #endregion IEquatable (NbtFieldType)
 
+            #region IComparable (NbtFieldType)
+
+            public int CompareTo( NbtFieldType other )
+            {
+                return this.ToString().CompareTo(other.ToString());
+            }
+
+            #endregion IComparable (NbtFieldType)
         };
 
         public enum DataType

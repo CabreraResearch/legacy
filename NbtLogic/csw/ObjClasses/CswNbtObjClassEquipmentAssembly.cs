@@ -4,15 +4,18 @@ using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
-using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.ObjClasses
 {
     public class CswNbtObjClassEquipmentAssembly : CswNbtObjClass
     {
-        public static string TypePropertyName { get { return "Assembly Type"; } }
-        public static string AssemblyPartsPropertyName { get { return "Assembly Parts"; } }
-        public static string PartsXValueName { get { return "Uses"; } }
+        public sealed class PropertyName
+        {
+            public const string Type = "Assembly Type";
+            public const string AssemblyParts = "Assembly Parts";
+        }
+
+        public static string PartsXValueName = "Uses";
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
 
@@ -41,15 +44,6 @@ namespace ChemSW.Nbt.ObjClasses
         }
 
         #region Inherited Events
-        public override void beforeCreateNode( bool OverrideUniqueValidation )
-        {
-            _CswNbtObjClassDefault.beforeCreateNode( OverrideUniqueValidation );
-        } // beforeCreateNode()
-
-        public override void afterCreateNode()
-        {
-            _CswNbtObjClassDefault.afterCreateNode();
-        } // afterCreateNode()
 
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
@@ -76,13 +70,13 @@ namespace ChemSW.Nbt.ObjClasses
                 DataTable PropRefsTable = PropRefsSelect.getTable();
 
                 // Update the nodes.pendingupdate directly, to avoid having to fetch all the node info for every related node 
-                string PkString = string.Empty;
+                string PkString = String.Empty;
                 foreach( DataRow PropRefsRow in PropRefsTable.Rows )
                 {
-                    if( PkString != string.Empty ) PkString += ",";
+                    if( PkString != String.Empty ) PkString += ",";
                     PkString += PropRefsRow["nodeid"].ToString();
                 }
-                if( PkString != string.Empty )
+                if( PkString != String.Empty )
                 {
                     CswTableUpdate NodesUpdate = _CswNbtResources.makeCswTableUpdate( "afterWriteNode_update", "nodes" );
                     DataTable NodesTable = NodesUpdate.getTable( "where nodeid in (" + PkString + ")" );
@@ -160,9 +154,9 @@ namespace ChemSW.Nbt.ObjClasses
 
         }// _updateEquipment()
 
-        public override void beforeDeleteNode(bool DeleteAllRequiredRelatedNodes = false)
+        public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false )
         {
-            _CswNbtObjClassDefault.beforeDeleteNode(DeleteAllRequiredRelatedNodes);
+            _CswNbtObjClassDefault.beforeDeleteNode( DeleteAllRequiredRelatedNodes );
 
         }//beforeDeleteNode()
 
@@ -194,9 +188,9 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override bool onButtonClick( NbtButtonData ButtonData )
         {
-            
-            
-            
+
+
+
             if( null != ButtonData && null != ButtonData.NodeTypeProp ) { /*Do Something*/ }
             return true;
         }
@@ -208,7 +202,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get
             {
-                return ( _CswNbtNode.Properties[TypePropertyName].AsRelationship );
+                return ( _CswNbtNode.Properties[PropertyName.Type] );
             }
         }
 
@@ -216,12 +210,11 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get
             {
-                return ( _CswNbtNode.Properties[AssemblyPartsPropertyName].AsLogicalSet );
+                return ( _CswNbtNode.Properties[PropertyName.AssemblyParts] );
             }
         }
 
         #endregion
-
     }//CswNbtObjClassEquipmentAssembly
 
 }//namespace ChemSW.Nbt.ObjClasses
