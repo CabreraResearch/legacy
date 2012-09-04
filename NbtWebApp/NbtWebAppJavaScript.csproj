@@ -76,6 +76,43 @@
   </PropertyGroup>
   <ItemGroup>
     <Content Include="app\core\csw.ajaxWcf.js" />
+    <Content Include="app\fieldtypes_dep\CswFieldTypeAuditHistoryGrid.js" />
+    <Content Include="app\fieldtypes_dep\CswFieldTypeBarcode.js" />
+    <Content Include="app\fieldtypes_dep\CswFieldTypeButton.js" />
+    <Content Include="app\fieldtypes_dep\CswFieldTypeComments.js" />
+    <Content Include="app\fieldtypes_dep\CswFieldTypeComposite.js" />
+    <Content Include="app\fieldtypes_dep\CswFieldTypeDateTime.js" />
+    <Content Include="app\fieldtypes_dep\CswFieldTypeFile.js" />
+    <Content Include="app\fieldtypes_dep\CswFieldTypeGrid.js" />
+    <Content Include="app\fieldtypes_dep\CswFieldTypeImage.js" />
+    <Content Include="app\fieldtypes_dep\CswFieldTypeImageList.js" />
+    <Content Include="app\fieldtypes_dep\CswFieldTypeLink.js" />
+    <Content Include="app\fieldtypes_dep\CswFieldTypeList.js" />
+    <Content Include="app\fieldtypes_dep\CswFieldTypeLocation.js" />
+    <Content Include="app\fieldtypes_dep\CswFieldTypeLocationContents.js" />
+    <Content Include="app\fieldtypes_dep\CswFieldTypeLogical.js" />
+    <Content Include="app\fieldtypes_dep\CswFieldTypeLogicalSet.js" />
+    <Content Include="app\fieldtypes_dep\CswFieldTypeMemo.js" />
+    <Content Include="app\fieldtypes_dep\CswFieldTypeMol.js" />
+    <Content Include="app\fieldtypes_dep\CswFieldTypeMTBF.js" />
+    <Content Include="app\fieldtypes_dep\CswFieldTypeMultiList.js" />
+    <Content Include="app\fieldtypes_dep\CswFieldTypeNFPA.js" />
+    <Content Include="app\fieldtypes_dep\CswFieldTypeNodeTypeSelect.js" />
+    <Content Include="app\fieldtypes_dep\CswFieldTypeNumber.js" />
+    <Content Include="app\fieldtypes_dep\CswFieldTypePassword.js" />
+    <Content Include="app\fieldtypes_dep\CswFieldTypePropertyReference.js" />
+    <Content Include="app\fieldtypes_dep\CswFieldTypeQuantity.js" />
+    <Content Include="app\fieldtypes_dep\CswFieldTypeQuestion.js" />
+    <Content Include="app\fieldtypes_dep\CswFieldTypeRelationship.js" />
+    <Content Include="app\fieldtypes_dep\CswFieldTypeScientific.js" />
+    <Content Include="app\fieldtypes_dep\CswFieldTypeSequence.js" />
+    <Content Include="app\fieldtypes_dep\CswFieldTypeStatic.js" />
+    <Content Include="app\fieldtypes_dep\CswFieldTypeText.js" />
+    <Content Include="app\fieldtypes_dep\CswFieldTypeTimeInterval.js" />
+    <Content Include="app\fieldtypes_dep\CswFieldTypeUserSelect.js" />
+    <Content Include="app\fieldtypes_dep\CswFieldTypeViewPickList.js" />
+    <Content Include="app\fieldtypes_dep\CswFieldTypeViewReference.js" />
+    <Content Include="app\fieldtypes_dep\_CswFieldTypeFactory.js" />
     <Content Include="app\nodes\csw.node.table.js" />
     <Content Include="ConnectTest.html" />
     <Content Include="etc\far.exe" />
@@ -596,43 +633,6 @@
     <Content Include="app\_first-vsdoc.js" />
     <Content Include="app\_last-vsdoc.js" />
     <Content Include="app\literals\CswInput.js" />
-    <Content Include="app\fieldtypes\CswFieldTypeAuditHistoryGrid.js" />
-    <Content Include="app\fieldtypes\CswFieldTypeBarcode.js" />
-    <Content Include="app\fieldtypes\CswFieldTypeButton.js" />
-    <Content Include="app\fieldtypes\CswFieldTypeComments.js" />
-    <Content Include="app\fieldtypes\CswFieldTypeComposite.js" />
-    <Content Include="app\fieldtypes\CswFieldTypeDateTime.js" />
-    <Content Include="app\fieldtypes\CswFieldTypeFile.js" />
-    <Content Include="app\fieldtypes\CswFieldTypeGrid.js" />
-    <Content Include="app\fieldtypes\CswFieldTypeImage.js" />
-    <Content Include="app\fieldtypes\CswFieldTypeImageList.js" />
-    <Content Include="app\fieldtypes\CswFieldTypeLink.js" />
-    <Content Include="app\fieldtypes\CswFieldTypeList.js" />
-    <Content Include="app\fieldtypes\CswFieldTypeLocation.js" />
-    <Content Include="app\fieldtypes\CswFieldTypeLocationContents.js" />
-    <Content Include="app\fieldtypes\CswFieldTypeLogical.js" />
-    <Content Include="app\fieldtypes\CswFieldTypeLogicalSet.js" />
-    <Content Include="app\fieldtypes\CswFieldTypeMemo.js" />
-    <Content Include="app\fieldtypes\CswFieldTypeMol.js" />
-    <Content Include="app\fieldtypes\CswFieldTypeMTBF.js" />
-    <Content Include="app\fieldtypes\CswFieldTypeMultiList.js" />
-    <Content Include="app\fieldtypes\CswFieldTypeNFPA.js" />
-    <Content Include="app\fieldtypes\CswFieldTypeNodeTypeSelect.js" />
-    <Content Include="app\fieldtypes\CswFieldTypeNumber.js" />
-    <Content Include="app\fieldtypes\CswFieldTypePassword.js" />
-    <Content Include="app\fieldtypes\CswFieldTypePropertyReference.js" />
-    <Content Include="app\fieldtypes\CswFieldTypeQuantity.js" />
-    <Content Include="app\fieldtypes\CswFieldTypeQuestion.js" />
-    <Content Include="app\fieldtypes\CswFieldTypeRelationship.js" />
-    <Content Include="app\fieldtypes\CswFieldTypeScientific.js" />
-    <Content Include="app\fieldtypes\CswFieldTypeSequence.js" />
-    <Content Include="app\fieldtypes\CswFieldTypeStatic.js" />
-    <Content Include="app\fieldtypes\CswFieldTypeText.js" />
-    <Content Include="app\fieldtypes\CswFieldTypeTimeInterval.js" />
-    <Content Include="app\fieldtypes\CswFieldTypeUserSelect.js" />
-    <Content Include="app\fieldtypes\CswFieldTypeViewPickList.js" />
-    <Content Include="app\fieldtypes\CswFieldTypeViewReference.js" />
-    <Content Include="app\fieldtypes\_CswFieldTypeFactory.js" />
     <Content Include="app\nodes\CswNodeGrid.js" />
     <Content Include="app\nodes\CswNodePreview.js" />
     <Content Include="app\nodes\CswNodeTree.js" />
@@ -745,7 +745,9 @@
   <ItemGroup>
     <Service Include="{C0C07587-41A7-46C8-8FBD-3F9C8EBE2DDC}" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="app\fieldtypes\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSHARP.Targets" />
   <ProjectExtensions>
     <VisualStudio AllowExistingFolder="true" />
