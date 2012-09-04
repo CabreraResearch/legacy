@@ -14,6 +14,20 @@ namespace ChemSW.Nbt.PropTypes
 
     public class CswNbtNodePropNFPA : CswNbtNodeProp
     {
+
+        public sealed class NFPADisplayMode : CswEnum<NFPADisplayMode>
+        {
+            private NFPADisplayMode( string mode ) : base( mode ) { }
+            public static IEnumerable<NFPADisplayMode> all { get { return All; } }
+            public static explicit operator NFPADisplayMode( string str )
+            {
+                NFPADisplayMode ret = Parse( str );
+                return ret ?? Diamond; //return the selected value, or Diamond if none
+            }
+            public static readonly NFPADisplayMode Linear = new NFPADisplayMode( "Linear" );
+            public static readonly NFPADisplayMode Diamond = new NFPADisplayMode( "Diamond" );
+        }
+
         public static implicit operator CswNbtNodePropNFPA( CswNbtNodePropWrapper PropWrapper )
         {
             return PropWrapper.AsNFPA;
@@ -101,6 +115,13 @@ namespace ChemSW.Nbt.PropTypes
             }
         }
 
+        public NFPADisplayMode DisplayMode
+        {
+            get
+            {
+                return (NFPADisplayMode) _CswNbtMetaDataNodeTypeProp.Extended;
+            }
+        }
 
         private void _setGestalt()
         {
@@ -134,6 +155,7 @@ namespace ChemSW.Nbt.PropTypes
             ParentObject[_YellowSubField.ToXmlNodeName( true )] = Yellow;
             ParentObject[_BlueSubField.ToXmlNodeName( true )] = Blue;
             ParentObject[_WhiteSubField.ToXmlNodeName( true )] = White;
+            ParentObject["DisplayMode"] = DisplayMode.ToString();
         }
 
         public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
