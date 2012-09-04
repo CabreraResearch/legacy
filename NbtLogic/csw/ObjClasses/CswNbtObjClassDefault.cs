@@ -252,7 +252,7 @@ namespace ChemSW.Nbt.ObjClasses
             bool SomethingModified = false;
             foreach( CswNbtNodePropWrapper CurrentProp in _CswNbtNode.Properties )
             {
-                if( CurrentProp.WasModified )
+                if( CurrentProp.WasModifiedForNotification )
                 {
                     // Prop-specific notifications  
                     _CswNbtResources.runNotification( this.NodeType, CswNbtObjClassNotification.EventOption.Edit, _CswNbtNode, CurrentProp.PropName, string.Empty );

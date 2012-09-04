@@ -77,10 +77,10 @@ namespace ChemSW.Nbt.PropTypes
                 if( false == ( CswConvert.ToDbVal( _PropRow[column.ToString()] ).Equals( dbval ) ) )
                 {
                     _PropRow[column.ToString()] = CswConvert.ToDbVal( value );
-                    //if( column != CswNbtSubField.PropColumn.PendingUpdate )  // don't mark modified if all we're doing is changing PendingUpdate
-                    //{
                     WasModified = true;
-                    //}
+                    // don't mark modified if all we're doing is changing PendingUpdate
+                    // see case 27652
+                    WasModifiedForNotification = ( column != CswNbtSubField.PropColumn.PendingUpdate );
                     ret = true;
                 }
             }
@@ -122,11 +122,12 @@ namespace ChemSW.Nbt.PropTypes
         }//refresh
 
         private bool _WasModified = false;
+        private bool _WasModifiedForNotification = false;
         private CswNbtResources _CswNbtResources;
 
         public bool WasModified
         {
-            set
+            private set
             {
                 if( !SuspendModifyTracking )
                 {
@@ -144,9 +145,30 @@ namespace ChemSW.Nbt.PropTypes
             }
         }//WasModified
 
+        public bool WasModifiedForNotification
+        {
+            private set
+            {
+                if( !SuspendModifyTracking )
+                {
+                    // We never set it false, so that modifying Field1 but not modifying Field2 will not accidentally clear the modification flag.
+                    // Use clearModifiedFlag() to clear it on purpose.
+                    if( value )
+                    {
+                        _WasModifiedForNotification = true;
+                    }
+                }
+            }
+            get
+            {
+                return ( _WasModifiedForNotification );
+            }
+        }//WasModified
+
         public void clearModifiedFlag()
         {
             _WasModified = false;
+            _WasModifiedForNotification = false;
         }
 
         public string OtherPropGestalt( Int32 NodeTypePropId )
@@ -573,6 +595,7 @@ namespace ChemSW.Nbt.PropTypes
             this.ClobData = string.Empty;
 
             WasModified = true;
+            WasModifiedForNotification = true;
         }
 
         public void ClearBlob()
@@ -585,6 +608,7 @@ namespace ChemSW.Nbt.PropTypes
             if( !JctTable.Rows[0].IsNull( "blobdata" ) )
             {
                 WasModified = true;
+                WasModifiedForNotification = true;
             }
 
             JctTable.Rows[0]["blobdata"] = DBNull.Value;

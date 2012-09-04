@@ -64,9 +64,18 @@ namespace ChemSW.Nbt.PropTypes
             get
             {
                 return ( _CswNbtNodeProp.WasModified );
-            }//
+            }
 
         }//WasModified
+
+        public bool WasModifiedForNotification
+        {
+            get
+            {
+                return ( _CswNbtNodeProp.WasModifiedForNotification );
+            }
+
+        }//WasModifiedForNotification
 
         public bool SuspendModifyTracking
         {
@@ -77,7 +86,7 @@ namespace ChemSW.Nbt.PropTypes
             get
             {
                 return ( _CswNbtNodeProp.SuspendModifyTracking );
-            }//
+            }
         }//SuspendModifyTracking
 
         //public void ensureEmptyVal()
