@@ -886,7 +886,6 @@ namespace ChemSW.Nbt.WebPages
                     {
                         PropToSave.removeFromLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add );
                     }
-
                     PropToSave.DateToday = Convert.ToBoolean( getPropAttributeValue( "EditProp_DateTodayValue" + OldSelectedNodeTypePropId.ToString(), typeof( bool ), EditPropPlaceHolder ) );
                     PropToSave.Length = CswConvert.ToInt32( getPropAttributeValue( "EditProp_LengthValue" + OldSelectedNodeTypePropId.ToString(), typeof( Int32 ), EditPropPlaceHolder ) );
                     PropToSave.TextAreaRows = CswConvert.ToInt32( getPropAttributeValue( "EditProp_RowsValue" + OldSelectedNodeTypePropId.ToString(), typeof( Int32 ), EditPropPlaceHolder ) );
@@ -2080,6 +2079,20 @@ namespace ChemSW.Nbt.WebPages
                         //    MultiViewXmlRow.Cells[1].Controls.Add( MultiEditRelationshipViewButton );
                         //    break;
 
+                        case CswNbtMetaDataFieldType.NbtFieldType.NFPA:
+                            TableRow DisplayModeRow = makeEditPropTableRow( EditPropPlaceHolder );
+
+                            CswNbtNodePropNFPA.NFPADisplayMode mode = (CswNbtNodePropNFPA.NFPADisplayMode) SelectedNodeTypeProp.Extended;
+
+                            DropDownList modes = new DropDownList();
+                            modes.ID = "EditProp_ExtendedValue" + SelectedNodeTypeProp.PropId.ToString();
+                            modes.Items.Add( new ListItem( CswNbtNodePropNFPA.NFPADisplayMode.Diamond.ToString(), CswNbtNodePropNFPA.NFPADisplayMode.Diamond.ToString() ) );
+                            modes.Items.Add( new ListItem( CswNbtNodePropNFPA.NFPADisplayMode.Linear.ToString(), CswNbtNodePropNFPA.NFPADisplayMode.Linear.ToString() ) );
+                            modes.SelectedValue = mode.ToString();
+                            ( (Literal) DisplayModeRow.Cells[0].Controls[0] ).Text = "Display Mode:";
+                            DisplayModeRow.Cells[1].Controls.Add( modes );
+
+                            break;
 
                         case CswNbtMetaDataFieldType.NbtFieldType.NodeTypeSelect:
                             TableRow SelectModeRow = makeEditPropTableRow( EditPropPlaceHolder );
