@@ -47,6 +47,8 @@ namespace ChemSW.Nbt.PropTypes
         private CswNbtSubField _YellowSubField;
         private CswNbtSubField _BlueSubField;
         private CswNbtSubField _WhiteSubField;
+        private NFPADisplayMode _DisplayMode;
+        private bool _DisplaySpecial;
 
         override public bool Empty
         {
@@ -119,7 +121,23 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                return (NFPADisplayMode) _CswNbtMetaDataNodeTypeProp.Extended;
+                if( null == _DisplayMode )
+                {
+                    _DisplayMode = (NFPADisplayMode) _CswNbtMetaDataNodeTypeProp.Extended;
+                }
+                return _DisplayMode;
+            }
+        }
+
+        public bool DisplaySpecial
+        {
+            get
+            {
+                if( null == _DisplaySpecial )
+                {
+                    _DisplaySpecial = CswConvert.ToBoolean( _CswNbtMetaDataNodeTypeProp.Multi.ToString() );
+                }
+                return _DisplaySpecial;
             }
         }
 
@@ -156,6 +174,7 @@ namespace ChemSW.Nbt.PropTypes
             ParentObject[_BlueSubField.ToXmlNodeName( true )] = Blue;
             ParentObject[_WhiteSubField.ToXmlNodeName( true )] = White;
             ParentObject["displaymode"] = DisplayMode.ToString();
+            ParentObject["displayspecial"] = DisplaySpecial;
         }
 
         public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
