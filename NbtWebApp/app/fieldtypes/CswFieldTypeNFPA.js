@@ -17,6 +17,7 @@
             var blue = (false === o.Multi) ? propVals.health : Csw.enums.multiEditDefaultValue;
             var white = (false === o.Multi) ? propVals.special : Csw.enums.multiEditDefaultValue;
             var displayMode = propVals.displaymode;
+            var hideSpecial = propVals.hidespecial;
 
             var outerTable = propDiv.table({
                 ID: Csw.makeId(o.ID, 'tbl')
@@ -37,10 +38,11 @@
                 blueDiv = table.cell(2, 1)
                                .div({ cssclass: 'CswFieldTypeNFPA_cell CswFieldTypeNFPA_blueDiamond' })
                                .div({ cssclass: 'CswFieldTypeNFPA_text CswFieldTypeNFPA_textRotated' });
-
-                whiteDiv = table.cell(2, 2)
+                if (false === hideSpecial) {
+                    whiteDiv = table.cell(2, 2)
                                .div({ cssclass: 'CswFieldTypeNFPA_cell CswFieldTypeNFPA_whiteDiamond' })
                                .div({ cssclass: 'CswFieldTypeNFPA_text CswFieldTypeNFPA_whitetext CswFieldTypeNFPA_textRotated' });
+                }
             } else {
                 redDiv = table.cell(1, 1)
                                .div({ cssclass: 'CswFieldTypeNFPA_cell CswFieldTypeNFPA_redLinear' })
@@ -54,18 +56,22 @@
                                .div({ cssclass: 'CswFieldTypeNFPA_cell CswFieldTypeNFPA_blueLinear' })
                                .div({ cssclass: 'CswFieldTypeNFPA_text' });
 
-                whiteDiv = table.cell(1, 4)
+                if (false === hideSpecial) {
+                    whiteDiv = table.cell(1, 4)
                                .div({ cssclass: 'CswFieldTypeNFPA_cell CswFieldTypeNFPA_whiteLinear' })
                                .div({ cssclass: 'CswFieldTypeNFPA_text CswFieldTypeNFPA_whitetextLinear' });
+                }
             }
 
             function setValue(div, value) {
-                div.text(value);
+                if (false == Csw.isNullOrEmpty(div)) {
+                    div.text(value);
 
-                if (value === 'W') {
-                    div.addClass("strikethrough");
-                } else {
-                    div.removeClass("strikethrough");
+                    if (value === 'W') {
+                        div.addClass("strikethrough");
+                    } else {
+                        div.removeClass("strikethrough");
+                    }
                 }
             }
 
@@ -106,13 +112,16 @@
                 editTable.cell(1, 1).text('Flammability');
                 editTable.cell(2, 1).text('Reactivity');
                 editTable.cell(3, 1).text('Health');
-                editTable.cell(4, 1).text('Special');
+                if (false === hideSpecial) {
+                    editTable.cell(4, 1).text('Special');
+                }
 
                 makeSelect(editTable.cell(1, 2), 'red', red, redDiv);
                 makeSelect(editTable.cell(2, 2), 'yellow', yellow, yellowDiv);
                 makeSelect(editTable.cell(3, 2), 'blue', blue, blueDiv);
 
-                var whiteVals = [
+                if (false === hideSpecial) {
+                    var whiteVals = [
                     { value: '', display: '' },
                     { value: 'ACID', display: 'ACID' },
                     { value: 'ALK', display: 'ALK' },
@@ -124,10 +133,10 @@
                     { value: 'POI', display: 'POI' },
                     { value: 'RAD', display: 'RAD' },
                     { value: 'W', display: 'W'}];
-                if (o.Multi) {
-                    whiteVals.push({ value: Csw.enums.multiEditDefaultValue, display: Csw.enums.multiEditDefaultValue });
-                }
-                var whiteSelect = editTable.cell(4, 2)
+                    if (o.Multi) {
+                        whiteVals.push({ value: Csw.enums.multiEditDefaultValue, display: Csw.enums.multiEditDefaultValue });
+                    }
+                    var whiteSelect = editTable.cell(4, 2)
                                           .select({
                                               ID: Csw.makeId(o.ID, 'white'),
                                               selected: white,
@@ -137,7 +146,7 @@
                                                   setValue(whiteDiv, whiteSelect.val());
                                               }
                                           });
-
+                }
             } // if(!o.ReadOnly)
         },
         save: function (o) {

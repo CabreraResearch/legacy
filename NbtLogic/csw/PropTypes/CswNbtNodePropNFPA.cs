@@ -129,7 +129,7 @@ namespace ChemSW.Nbt.PropTypes
             }
         }
 
-        public bool DisplaySpecial
+        public bool HideSpecial
         {
             get
             {
@@ -170,7 +170,7 @@ namespace ChemSW.Nbt.PropTypes
             ParentObject[_BlueSubField.ToXmlNodeName( true )] = Blue;
             ParentObject[_WhiteSubField.ToXmlNodeName( true )] = White;
             ParentObject["displaymode"] = DisplayMode.ToString();
-            ParentObject["displayspecial"] = DisplaySpecial;
+            ParentObject["hidespecial"] = HideSpecial;
         }
 
         public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
