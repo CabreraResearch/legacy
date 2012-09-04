@@ -16,29 +16,48 @@
             var yellow = (false === o.Multi) ? propVals.reactivity : Csw.enums.multiEditDefaultValue;
             var blue = (false === o.Multi) ? propVals.health : Csw.enums.multiEditDefaultValue;
             var white = (false === o.Multi) ? propVals.special : Csw.enums.multiEditDefaultValue;
+            var displayMode = propVals.displaymode;
 
             var outerTable = propDiv.table({
                 ID: Csw.makeId(o.ID, 'tbl')
             });
 
-            var table = outerTable.cell(1, 1).table({ID: Csw.makeId(o.ID, 'tbl1')})
-                                   .addClass('CswFieldTypeNFPA_table');
+            var table = outerTable.cell(1, 1).table({ ID: Csw.makeId(o.ID, 'tbl1') }).addClass('CswFieldTypeNFPA_table');
+            var redDiv, yellowDiv, blueDiv, whiteDiv;
+            if (displayMode === Csw.enums.NFPADisplayMode.Diamond) {
+                table.addClass('CswFieldTypeNFPA_rotation');
+                redDiv = table.cell(1, 1)
+                               .div({ cssclass: 'CswFieldTypeNFPA_cell CswFieldTypeNFPA_redDiamond' })
+                               .div({ cssclass: 'CswFieldTypeNFPA_text CswFieldTypeNFPA_textRotated' });
 
-            var redDiv = table.cell(1, 1)
-                               .div({ cssclass: 'CswFieldTypeNFPA_cell CswFieldTypeNFPA_red' })
+                yellowDiv = table.cell(1, 2)
+                               .div({ cssclass: 'CswFieldTypeNFPA_cell CswFieldTypeNFPA_yellowDiamond' })
+                               .div({ cssclass: 'CswFieldTypeNFPA_text CswFieldTypeNFPA_textRotated' });
+
+                blueDiv = table.cell(2, 1)
+                               .div({ cssclass: 'CswFieldTypeNFPA_cell CswFieldTypeNFPA_blueDiamond' })
+                               .div({ cssclass: 'CswFieldTypeNFPA_text CswFieldTypeNFPA_textRotated' });
+
+                whiteDiv = table.cell(2, 2)
+                               .div({ cssclass: 'CswFieldTypeNFPA_cell CswFieldTypeNFPA_whiteDiamond' })
+                               .div({ cssclass: 'CswFieldTypeNFPA_text CswFieldTypeNFPA_whitetext CswFieldTypeNFPA_textRotated' });
+            } else {
+                redDiv = table.cell(1, 1)
+                               .div({ cssclass: 'CswFieldTypeNFPA_cell CswFieldTypeNFPA_redLinear' })
+                               .div({ cssclass: 'CswFieldTypeNFPA_text CswFieldTypeNFPA_text' });
+
+                yellowDiv = table.cell(1, 2)
+                               .div({ cssclass: 'CswFieldTypeNFPA_cell CswFieldTypeNFPA_yellowLinear' })
                                .div({ cssclass: 'CswFieldTypeNFPA_text' });
 
-            var yellowDiv = table.cell(1, 2)
-                               .div({ cssclass: 'CswFieldTypeNFPA_cell CswFieldTypeNFPA_yellow' })
+                blueDiv = table.cell(1, 3)
+                               .div({ cssclass: 'CswFieldTypeNFPA_cell CswFieldTypeNFPA_blueLinear' })
                                .div({ cssclass: 'CswFieldTypeNFPA_text' });
 
-            var blueDiv = table.cell(2, 1)
-                               .div({ cssclass: 'CswFieldTypeNFPA_cell CswFieldTypeNFPA_blue' })
-                               .div({ cssclass: 'CswFieldTypeNFPA_text' });
-
-            var whiteDiv = table.cell(2, 2)
-                               .div({ cssclass: 'CswFieldTypeNFPA_cell CswFieldTypeNFPA_white' })
-                               .div({ cssclass: 'CswFieldTypeNFPA_text CswFieldTypeNFPA_whitetext' });
+                whiteDiv = table.cell(1, 4)
+                               .div({ cssclass: 'CswFieldTypeNFPA_cell CswFieldTypeNFPA_whiteLinear' })
+                               .div({ cssclass: 'CswFieldTypeNFPA_text CswFieldTypeNFPA_whitetextLinear' });
+            }
 
             function setValue(div, value) {
                 div.text(value);

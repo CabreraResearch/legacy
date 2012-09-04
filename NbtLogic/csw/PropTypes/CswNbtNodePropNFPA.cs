@@ -155,7 +155,7 @@ namespace ChemSW.Nbt.PropTypes
             ParentObject[_YellowSubField.ToXmlNodeName( true )] = Yellow;
             ParentObject[_BlueSubField.ToXmlNodeName( true )] = Blue;
             ParentObject[_WhiteSubField.ToXmlNodeName( true )] = White;
-            ParentObject["DisplayMode"] = DisplayMode.ToString();
+            ParentObject["displaymode"] = DisplayMode.ToString();
         }
 
         public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
