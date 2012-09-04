@@ -968,7 +968,7 @@
                 }
             };
 
-            var getEplContext = function() {
+            var getEplContext = function () {
                 Csw.openPopup('Print.html?PropId=' + cswPrivate.propid + '&PrintLabelNodeId=' + labelSel.val(), 'Print ' + labelSel.selectedText(), {
                     width: 400,
                     height: 200,
@@ -981,13 +981,13 @@
                 });
                 cswPublic.close();
             };
-            
+
             cswPublic.div.br();
             var labelSelDiv = cswPublic.div.div();
             var labelSel = labelSelDiv.select({
                 ID: cswPrivate.ID + '_labelsel'
             });
-            
+
             var jData = { PropId: cswPrivate.propid };
             Csw.ajax.post({
                 url: cswPrivate.GetPrintLabelsUrl,
@@ -999,12 +999,12 @@
                             labelSel.option({ value: label.nodeid, display: label.name });
                         }
                     } else {
-                        
+
                         labelSelDiv.span({ text: 'No labels have been assigned!' });
                     }
                 } // success
             }); // ajax
-            
+
             cswPublic.div.button({ ID: 'print_label_close',
                 enabledText: 'Close',
                 disabledText: 'Closing...',
@@ -1021,7 +1021,7 @@
                 onClick: getEplContext
             });
             //printBtn.hide();
-            
+
             openDialog(cswPublic.div, 400, 300, null, 'Print');
             return cswPublic;
         }, // PrintLabelDialog
@@ -1335,7 +1335,7 @@
                 if (Csw.isFunction(onClose)) {
                     Csw.tryExec(onClose);
                 }
-                
+
                 Csw.unsubscribe(Csw.enums.events.afterObjectClassButtonClick, closeMe);
                 if (dialogsCount === 0) {
                     posX = cswPrivate.origXAccessor();
@@ -1360,9 +1360,6 @@
                     Csw.unsubscribe(Csw.enums.events.afterObjectClassButtonClick, closeMe);
                 }
             });
-            posX -= incrPosBy;
-            posY -= incrPosBy;
-            dialogsCount--;
         }
         Csw.subscribe(Csw.enums.events.afterObjectClassButtonClick, closeMe);
     }

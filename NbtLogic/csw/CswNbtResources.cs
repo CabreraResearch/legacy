@@ -92,6 +92,10 @@ namespace ChemSW.Nbt
             /// </summary>
             mobileview_resultlim,
             /// <summary>
+            /// When set to 1, total quantity to deduct in DispenseContainer cannot exceed container netquantity.
+            /// </summary>
+            netquantity_enforced,
+            /// <summary>
             /// Number of days before a password expires
             /// </summary>
             passwordexpiry_days,

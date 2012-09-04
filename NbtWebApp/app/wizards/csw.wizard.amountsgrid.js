@@ -221,7 +221,7 @@
                                 var reducedQuantities = cswPublic.quantities.filter(function (quantity, index, array) { return quantity.rowid !== rowid; });
                                 Csw.debug.assert(reducedQuantities !== cswPublic.quantities, 'Rowid is null.');
                                 cswPublic.quantities = reducedQuantities;
-                                Csw.tryExec(cswPrivate.onDelete, (cswPrivate.count > 0));
+                                Csw.tryExec(cswPrivate.onDelete, (cswPrivate.count > 0), Csw.number( quantityToRemove[0].quantity * quantityToRemove[0].containerNo ), quantityToRemove[0].unitid);
                             }
                         }
                     });
@@ -255,7 +255,7 @@
                             } else {
                                 $.CswDialog('AlertDialog', 'The limit for containers created at receipt is [' + cswPrivate.containerlimit + ']. You have already added [' + cswPrivate.count + '] containers.', 'Cannot add [' + newCount + '] containers.');
                             }
-                            Csw.tryExec(cswPrivate.onAdd, (cswPrivate.count > 0));
+                            Csw.tryExec(cswPrivate.onAdd, (cswPrivate.count > 0), Csw.number( newAmount.quantity * newAmount.containerNo ), newAmount.unitid);
                         }
                     };
 

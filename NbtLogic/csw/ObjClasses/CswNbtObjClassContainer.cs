@@ -348,11 +348,14 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 ActionDataObj["currentQuantity"] = Quantity.Quantity;
                 ActionDataObj["currentUnitName"] = unitNode.Name.Text;
+                ActionDataObj["precision"] = Quantity.Precision.ToString();
             }
             JObject CapacityObj = _getCapacityJSON();
             ActionDataObj["capacity"] = CapacityObj.ToString();
             bool customBarcodes = CswConvert.ToBoolean( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswNbtResources.ConfigurationVariables.custom_barcodes.ToString() ) );
             ActionDataObj["customBarcodes"] = customBarcodes;
+            bool netQuantityEnforced = CswConvert.ToBoolean( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswNbtResources.ConfigurationVariables.netquantity_enforced.ToString() ) );
+            ActionDataObj["netQuantityEnforced"] = netQuantityEnforced;
             return ActionDataObj;
         }
 
