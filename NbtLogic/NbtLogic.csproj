@@ -104,6 +104,7 @@
     <Compile Include="csw\Actions\CswNbtActSystemViews.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassFeedback.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassInventoryLevel.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase27612.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase27523.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase27513.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase27145.cs" />
