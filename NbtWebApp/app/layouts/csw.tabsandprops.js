@@ -57,7 +57,7 @@
             };
             var cswPublic = {};
 
-            (function () {
+            (function _preCtor() {
                 if (options) {
                     Csw.extend(cswPrivate, options);
                 }
@@ -65,6 +65,8 @@
                 cswPrivate.outerTabDiv = cswParent.tabDiv({ ID: cswPrivate.ID + '_tabdiv' });
                 cswPrivate.tabcnt = 0;
             } ());
+
+            //#region Tabs
 
             cswPrivate.clearTabs = function () {
                 cswPrivate.outerTabDiv.empty();
@@ -181,6 +183,170 @@
                 } // if-else editmode is add or preview
             }; // getTabs()
 
+            //#endregion Tabs
+
+            //#region Validator
+            
+            cswPrivate.initValidator = function () {
+                cswPublic.validator = cswPrivate.form.$.validate({
+                    highlight: function (element) {
+                        var $elm = $(element);
+                        $elm.attr('csw_invalid', '1');
+                        $elm.animate({ backgroundColor: '#ff6666' });
+                    },
+                    unhighlight: function (element) {
+                        var $elm = $(element);
+                        if ($elm.attr('csw_invalid') === '1')  // only unhighlight where we highlighted
+                        {
+                            $elm.css('background-color', '#66ff66');
+                            $elm.attr('csw_invalid', '0');
+                            setTimeout(function () { $elm.animate({ backgroundColor: 'transparent' }); }, 500);
+                        }
+                    }
+                }); // validate()
+            };
+
+            cswPublic.isFormValid = function () {
+                return cswPrivate.form.$.valid();
+            };
+
+            //#endregion Validator
+
+            //#region Helper Methods
+
+            cswPublic.getNodeId = function () {
+                return cswPrivate.nodeids[0];
+            };
+
+            cswPrivate.enableSaveBtn = function () {
+                if (false === Csw.isNullOrEmpty(cswPrivate.saveBtn, true)) {
+                    cswPrivate.saveBtn.enable();
+                }
+            };
+
+            cswPublic.getPropJson = function () {
+                cswPrivate.updatePropJsonFromLayoutTable();
+                return cswPrivate.propertyData;
+            };
+
+            //#endregion Helper Methods
+            
+            //#region Layout Config
+
+            cswPrivate.onRemove = function (tabid, onRemoveData) {
+                'use strict';
+                var propid = '';
+                var propDiv = cswPrivate.getPropertyCell(onRemoveData.cellSet).children('div');
+                if (false === Csw.isNullOrEmpty(propDiv)) {
+                    propid = propDiv.first().propNonDom('propId');
+                }
+
+                Csw.ajax.post({
+                    watchGlobal: cswPrivate.AjaxWatchGlobal,
+                    urlMethod: cswPrivate.RemovePropUrlMethod,
+                    data: { PropId: propid, EditMode: cswPrivate.EditMode, TabId: tabid },
+                    success: function () {
+                        cswPrivate.onPropertyRemove(propid);
+                    }
+                });
+
+            };
+
+            // onRemove()
+
+            cswPrivate.onSwap = function (tabid, onSwapData) {
+                //case 26418
+                var propIdOrig = cswPrivate.moveProp(cswPrivate.getPropertyCell(onSwapData.cellSet), tabid, onSwapData.swaprow, onSwapData.swapcolumn, onSwapData.cellSet[1][1].propNonDom('propid'));
+                var propIdSwap = cswPrivate.moveProp(cswPrivate.getPropertyCell(onSwapData.swapcellset), tabid, onSwapData.row, onSwapData.column, onSwapData.swapcellset[1][1].propNonDom('propid'));
+                onSwapData.cellSet[1][1].propNonDom('propid', propIdSwap);
+                onSwapData.swapcellset[1][1].propNonDom('propid', propIdOrig);
+            };
+
+            // onSwap()
+
+            cswPrivate.moveProp = function (propDiv, tabid, newrow, newcolumn, propId) {
+                'use strict';
+                if (propDiv.length() > 0) {
+                    var propid = Csw.string(propDiv.propNonDom('propid'), propId);
+                    var dataJson = {
+                        PropId: propid,
+                        TabId: tabid,
+                        NewRow: newrow,
+                        NewColumn: newcolumn,
+                        EditMode: cswPrivate.EditMode
+                    };
+
+                    Csw.ajax.post({
+                        watchGlobal: cswPrivate.AjaxWatchGlobal,
+                        urlMethod: cswPrivate.MovePropUrlMethod,
+                        data: dataJson
+                    });
+                }
+                return propid;
+            };
+
+            // _moveProp()
+
+            //#endregion Layout Config
+
+            //#region Layout Table Cell Set
+
+            cswPrivate.getLabelCell = function (cellSet) {
+                return cellSet[1][1].children('div');
+            };
+
+            cswPrivate.getPropertyCell = function (cellSet) {
+                return cellSet[1][2].children('div');
+            };
+
+            cswPrivate.getCellSet = function (layoutTable, tabgroup, displayrow, displaycol) {
+                var ret;
+                if (false === Csw.isNullOrEmpty(tabgroup)) {
+                    var safetabgroup = Csw.makeSafeId(tabgroup);
+                    if (Csw.isNullOrEmpty(cswPrivate.tabgrouptables)) {
+                        cswPrivate.tabgrouptables = [];
+                    }
+                    if (Csw.isNullOrEmpty(cswPrivate.tabgrouptables[safetabgroup])) {
+                        var cellSet = layoutTable.cellSet(displayrow, displaycol);
+                        var propCell = cswPrivate.getPropertyCell(cellSet);
+
+                        var $fieldset = $('<fieldset>');
+                        $fieldset.append('<legend>' + tabgroup + '</legend>');
+                        propCell.append($fieldset);
+
+                        var div = Csw.literals.div({
+                            $parent: $fieldset
+                        });
+
+                        var tabgroupLayoutTable = div.layoutTable({
+                            ID: safetabgroup,
+                            OddCellRightAlign: true,
+                            ReadOnly: (cswPrivate.EditMode === Csw.enums.editMode.PrintReport || cswPrivate.ReadOnly),
+                            cellSet: {
+                                rows: 1,
+                                columns: 2
+                            },
+                            onSwap: function (e, onSwapData) {
+                                cswPrivate.onSwap(tabid, onSwapData);
+                            },
+                            showConfigButton: false,
+                            showExpandRowButton: false,
+                            showExpandColButton: false,
+                            showRemoveButton: false
+                        });
+                        cswPrivate.tabgrouptables[safetabgroup] = tabgroupLayoutTable;
+                    }
+                    ret = cswPrivate.tabgrouptables[safetabgroup].cellSet(displayrow, displaycol);
+                } else {
+                    ret = layoutTable.cellSet(displayrow, displaycol);
+                }
+                return ret;
+            }; // getCellSet()
+
+            //#endregion Layout Table Cell Set
+
+            //#region Properties
+
             cswPrivate.getProps = function (tabContentDiv, tabid, onSuccess) {
                 'use strict';
                 if (cswPrivate.EditMode === Csw.enums.editMode.Add && cswPrivate.Config === false) {
@@ -206,29 +372,10 @@
                 }
             }; // getProps()
 
-            cswPrivate.initValidator = function () {
-                cswPublic.validator = cswPrivate.form.$.validate({
-                    highlight: function (element) {
-                        var $elm = $(element);
-                        $elm.attr('csw_invalid', '1');
-                        $elm.animate({ backgroundColor: '#ff6666' });
-                    },
-                    unhighlight: function (element) {
-                        var $elm = $(element);
-                        if ($elm.attr('csw_invalid') === '1')  // only unhighlight where we highlighted
-                        {
-                            $elm.css('background-color', '#66ff66');
-                            $elm.attr('csw_invalid', '0');
-                            setTimeout(function () { $elm.animate({ backgroundColor: 'transparent' }); }, 500);
-                        }
-                    }
-                }); // validate()
-            };
-
             cswPrivate.getPropsImpl = function (tabContentDiv, tabid, onSuccess) {
                 'use strict';
                 cswPrivate.tabgrouptables = [];  // case 26957, 27117
-                
+
                 function makePropLayout() {
                     cswPrivate.form = tabContentDiv.children('form');
                     cswPrivate.form.empty();
@@ -276,7 +423,7 @@
                             if (false === Csw.isNullOrEmpty(thisProp) &&
                                 false === Csw.isNullOrEmpty(key) &&
                                 Csw.bool(thisProp.hassubprops)) {
-                                
+
                                 var propId = key; //key
                                 var subTable = cswPrivate.layoutTable[thisProp.id + '_subproptable'];
                                 //var parentCell = subTable.parent().parent();
@@ -340,7 +487,7 @@
                                 cswPrivate.filterToPropId === '' &&
                                     cswPrivate.EditMode !== Csw.enums.editMode.PrintReport &&
                                         Csw.bool(tabContentDiv.data('canEditLayout'))) {
-                        /* Case 24437 */
+                            /* Case 24437 */
                         var editLayoutOpt = {
                             ID: cswPrivate.ID,
                             nodeids: cswPrivate.nodeids,
@@ -425,71 +572,7 @@
                     }
                     makePropLayout();
                 }
-            };
-
-            // getPropsImpl()
-
-            cswPrivate.onRemove = function (tabid, onRemoveData) {
-                'use strict';
-                var propid = '';
-                var propDiv = cswPrivate.getPropertyCell(onRemoveData.cellSet).children('div');
-                if (false === Csw.isNullOrEmpty(propDiv)) {
-                    propid = propDiv.first().propNonDom('propId');
-                }
-
-                Csw.ajax.post({
-                    watchGlobal: cswPrivate.AjaxWatchGlobal,
-                    urlMethod: cswPrivate.RemovePropUrlMethod,
-                    data: { PropId: propid, EditMode: cswPrivate.EditMode, TabId: tabid },
-                    success: function () {
-                        cswPrivate.onPropertyRemove(propid);
-                    }
-                });
-
-            };
-
-            // onRemove()
-
-            cswPrivate.onSwap = function (tabid, onSwapData) {
-                //case 26418
-                var propIdOrig = cswPrivate.moveProp(cswPrivate.getPropertyCell(onSwapData.cellSet), tabid, onSwapData.swaprow, onSwapData.swapcolumn, onSwapData.cellSet[1][1].propNonDom('propid'));
-                var propIdSwap = cswPrivate.moveProp(cswPrivate.getPropertyCell(onSwapData.swapcellset), tabid, onSwapData.row, onSwapData.column, onSwapData.swapcellset[1][1].propNonDom('propid'));
-                onSwapData.cellSet[1][1].propNonDom('propid', propIdSwap);
-                onSwapData.swapcellset[1][1].propNonDom('propid', propIdOrig);
-            };
-
-            // onSwap()
-
-            cswPrivate.moveProp = function (propDiv, tabid, newrow, newcolumn, propId) {
-                'use strict';
-                if (propDiv.length() > 0) {
-                    var propid = Csw.string(propDiv.propNonDom('propid'), propId);
-                    var dataJson = {
-                        PropId: propid,
-                        TabId: tabid,
-                        NewRow: newrow,
-                        NewColumn: newcolumn,
-                        EditMode: cswPrivate.EditMode
-                    };
-
-                    Csw.ajax.post({
-                        watchGlobal: cswPrivate.AjaxWatchGlobal,
-                        urlMethod: cswPrivate.MovePropUrlMethod,
-                        data: dataJson
-                    });
-                }
-                return propid;
-            };
-
-            // _moveProp()
-
-            cswPrivate.getLabelCell = function (cellSet) {
-                return cellSet[1][1].children('div');
-            };
-
-            cswPrivate.getPropertyCell = function (cellSet) {
-                return cellSet[1][2].children('div');
-            };
+            }; // getPropsImpl()
 
             cswPrivate.handleProperties = function (layoutTable, tabContentDiv, tabid, configMode) {
                 'use strict';
@@ -512,51 +595,7 @@
                 return cswPrivate.atLeastOne;
             }; // _handleProperties()
 
-            cswPrivate.getCellSet = function(layoutTable, tabgroup, displayrow, displaycol) {
-                var ret;
-                if(false === Csw.isNullOrEmpty(tabgroup)) {
-                    var safetabgroup = Csw.makeSafeId(tabgroup);
-                    if(Csw.isNullOrEmpty(cswPrivate.tabgrouptables)) {
-                        cswPrivate.tabgrouptables = [];
-                    }
-                    if(Csw.isNullOrEmpty(cswPrivate.tabgrouptables[safetabgroup])) {
-                        var cellSet = layoutTable.cellSet(displayrow, displaycol);
-                        var propCell = cswPrivate.getPropertyCell(cellSet);
-
-                        var $fieldset = $('<fieldset>');
-                        $fieldset.append('<legend>' + tabgroup + '</legend>');
-                        propCell.append($fieldset);
-
-                        var div = Csw.literals.div({
-                            $parent: $fieldset
-                        });
-
-                        var tabgroupLayoutTable = div.layoutTable({
-                            ID: safetabgroup,
-                            OddCellRightAlign: true,
-                            ReadOnly: (cswPrivate.EditMode === Csw.enums.editMode.PrintReport || cswPrivate.ReadOnly),
-                            cellSet: {
-                                rows: 1,
-                                columns: 2
-                            },
-                            onSwap: function (e, onSwapData) {
-                                cswPrivate.onSwap(tabid, onSwapData);
-                            },
-                            showConfigButton: false,
-                            showExpandRowButton: false,
-                            showExpandColButton: false,
-                            showRemoveButton: false
-                        });
-                        cswPrivate.tabgrouptables[safetabgroup] = tabgroupLayoutTable;
-                    }
-                    ret = cswPrivate.tabgrouptables[safetabgroup].cellSet(displayrow, displaycol);
-                } else {
-                    ret = layoutTable.cellSet(displayrow, displaycol);
-                }
-                return ret;
-            }; // getCellSet()
-
-
+            
             cswPrivate.handleProp = function (layoutTable, propData, tabContentDiv, tabid, configMode) {
                 'use strict';
                 var propid = propData.id,
@@ -715,9 +754,7 @@
                         Csw.crawlObject(subProps, subOnSuccess, false);
                     }
                 } // if (propData.display != 'false' || ConfigMode )
-            };
-
-            // _makeProp()
+            }; // _makeProp()
 
             cswPrivate.updateSubProps = function (fieldOpt, propId, propData, propCell, tabContentDiv, tabid, configMode, layoutTable) {
                 /// <summary>Update a properties sub props</summary>
@@ -819,24 +856,7 @@
                 });
             }; // updatePropJsonFromLayoutTable()
 
-            cswPrivate.enableSaveBtn = function () {
-                if (false === Csw.isNullOrEmpty(cswPrivate.saveBtn, true)) {
-                    cswPrivate.saveBtn.enable();
-                }
-            };
-
-            cswPublic.getPropJson = function () {
-                cswPrivate.updatePropJsonFromLayoutTable();
-                return cswPrivate.propertyData;
-            };
-
-            cswPublic.isFormValid = function () {
-                return cswPrivate.form.$.valid();
-            };
-
-            cswPublic.getNodeId = function() {
-                return cswPrivate.nodeids[0];
-            };
+            
 
             cswPublic.save = function (tabContentDiv, tabid, onSuccess, async) {
                 'use strict';
@@ -979,7 +999,9 @@
                 });
             }; // Save()
 
-            (function () {
+            //#endregion Properties
+
+            (function _postCtor() {
                 cswPrivate.getTabs(cswPrivate.outerTabDiv);
 
                 if (cswPrivate.EditMode !== Csw.enums.editMode.PrintReport) {
@@ -994,8 +1016,7 @@
                     }
                 }
             } ());
-
-
+            
             return cswPublic;
         });
 } ());
