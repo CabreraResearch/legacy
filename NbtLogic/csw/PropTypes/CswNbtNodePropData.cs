@@ -77,10 +77,10 @@ namespace ChemSW.Nbt.PropTypes
                 if( false == ( CswConvert.ToDbVal( _PropRow[column.ToString()] ).Equals( dbval ) ) )
                 {
                     _PropRow[column.ToString()] = CswConvert.ToDbVal( value );
-                    if( column != CswNbtSubField.PropColumn.PendingUpdate )  // don't mark modified if all we're doing is changing PendingUpdate
-                    {
-                        WasModified = true;
-                    }
+                    //if( column != CswNbtSubField.PropColumn.PendingUpdate )  // don't mark modified if all we're doing is changing PendingUpdate
+                    //{
+                    WasModified = true;
+                    //}
                     ret = true;
                 }
             }
