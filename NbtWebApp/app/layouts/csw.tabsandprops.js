@@ -388,8 +388,7 @@
                         ID: cswPrivate.ID + '_formtbl_' + tabid + window.Ext.id(),
                         width: '100%'
                     });
-                    //var formTblCell11 = formTable.cell(1, 1);
-                    //var formTblCell12 = formTable.cell(1, 2);
+
                     var layoutOpts = {
                         ID: cswPrivate.ID + '_props_' + tabid,
                         OddCellRightAlign: true,
@@ -416,7 +415,7 @@
                         } // onRemove
                     };
 
-                    cswPrivate.layoutTable = formTable.cell(1, 1).layoutTable(layoutOpts); // Csw.literals.layoutTable()
+                    cswPrivate.layoutTable = formTable.cell(1, 1).layoutTable(layoutOpts); 
 
                     function doUpdateSubProps(configOn) {
                         var updOnSuccess = function (thisProp, key) {
@@ -424,11 +423,9 @@
                                 false === Csw.isNullOrEmpty(key) &&
                                 Csw.bool(thisProp.hassubprops)) {
 
-                                var propId = key; //key
+                                var propId = key; 
                                 var subTable = cswPrivate.layoutTable[thisProp.id + '_subproptable'];
-                                //var parentCell = subTable.parent().parent();
                                 var parentCell = Csw.literals.factory(subTable.table.$.parent().parent().parent());
-                                //var cellSet = cswPrivate.layoutTable.cellSet(parentCell.propNonDom('row'), parentCell.propNonDom('column'));
                                 var cellSet = cswPrivate.getCellSet(cswPrivate.layoutTable, thisProp.tabgroup, parentCell.propNonDom('row'), parentCell.propNonDom('column'));
 
                                 cswPrivate.layoutTable.addCellSetAttributes(cellSet, { propId: thisProp.id });
@@ -842,7 +839,7 @@
                         // recurse on subprops
                         if (Csw.bool(thisProp.hassubprops) && Csw.contains(thisProp, 'subprops')) {
                             var subProps = thisProp.subprops;
-                            if (false === Csw.isNullOrEmpty(subProps)) { //&& $subprops.children('[display != "false"]').length > 0)
+                            if (false === Csw.isNullOrEmpty(subProps)) { 
                                 var subTable = layoutTable[thisProp.id + '_subproptable'];
                                 if (false === Csw.isNullOrEmpty(subTable)) {
                                     cswPrivate.updatePropJsonFromLayoutTable(subTable, subProps);
@@ -866,7 +863,7 @@
                         var propIds = cswPrivate.updatePropJsonFromLayoutTable();
                         var sourcenodeid = Csw.tryParseObjByIdx(cswPrivate.nodeids, 0);
                         var sourcenodekey = Csw.tryParseObjByIdx(cswPrivate.nodekeys, 0);
-                        async = Csw.bool(async, true) && false === cswPrivate.Multi; //
+                        async = Csw.bool(async, true) && false === cswPrivate.Multi; 
                         Csw.ajax.post({
                             watchGlobal: cswPrivate.AjaxWatchGlobal,
                             urlMethod: cswPrivate.SavePropUrlMethod,
@@ -914,15 +911,11 @@
 
                                 if (cswPrivate.ShowCheckboxes) {
                                     // apply the newly saved checked property values on this node to the checked nodes
-                                    //var $nodechecks = $('.' + o.NodeCheckTreeId + '_check:checked');
-                                    //var nodechecks = $('#' + o.NodeCheckTreeId).CswNodeTree('checkedNodes');
                                     var nodechecks = cswPrivate.nodeTreeCheck.checkedNodes();
                                     var $propchecks = $('.' + cswPrivate.ID + '_check:checked');
 
                                     if (nodechecks.length > 0 && $propchecks.length > 0) {
-                                        //$nodechecks.each(function () {
                                         Csw.each(nodechecks, function (thisObj) {
-                                            //var nodeid = $(this).attr('nodeid');
                                             dataJson.CopyNodeIds.push(thisObj.nodeid);
                                         });
 
@@ -931,7 +924,7 @@
                                             dataJson.PropIds.push(propid);
                                         });
                                         copyNodeProps();
-                                    } // if($nodechecks.length > 0 && $propchecks.length > 0)
+                                    } // if (nodechecks.length > 0 && $propchecks.length > 0)
                                     else {
                                         doSave = false;
                                         $.CswDialog('AlertDialog', 'You have not selected any properties to save.');
@@ -949,42 +942,16 @@
                                 if (doSave) {
                                     // reload tab
                                     var onSaveSuccess = function () {
-
                                         var onSaveRefresh = function () {
                                             Csw.tryExec(cswPrivate.onSave, successData.nodeid, successData.cswnbtnodekey, cswPrivate.tabcnt, successData.nodename);
                                             Csw.tryExec(onSuccess);
                                         };
 
-                                        //                                        switch (successData.action) {
-                                        //                                            case 'loadView':
-                                        //                                                //Csw.ajax('getviewofnode'
-                                        //                                                //success: load view(data.viewid)
-                                        //                                               
-
-                                        //                                                var dialogOptions = {
-                                        //                                                    div: Csw.literals.div({ text: 'Warning: You are about to lose your work!' }),
-                                        //                                                    title: '',
-                                        //                                                    onOk: onSaveRefresh,
-                                        //                                                    onCancel: null,
-                                        //                                                    onClose: null,
-                                        //                                                    height: 400,
-                                        //                                                    width: 600,
-                                        //                                                    okText: 'Continue Working',
-                                        //                                                    cancelText: 'Go to My Feedback'
-                                        //                                                };
-
-                                        //                                                $.CswDialog('GenericDialog', dialogOptions)
-
-                                        //                                                break;
-                                        //default:
                                         onSaveRefresh();
-                                        //  break;
-                                        // }
                                     };
                                     if (cswPrivate.ReloadTabOnSave) {
                                         cswPrivate.getProps(tabContentDiv, tabid, onSaveSuccess);
                                     } else {
-                                        // cswPublic events
                                         onSaveSuccess();
                                     }
                                 }
@@ -992,7 +959,7 @@
                             }, // success
                             error: cswPrivate.enableSaveBtn
                         }); // ajax
-                    } // if(cswPrivate.form.$.valid())
+                    } // if(cswPrivate.isValid())
                     else {
                         cswPrivate.enableSaveBtn();
                     }
