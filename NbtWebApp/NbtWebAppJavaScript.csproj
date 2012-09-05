@@ -679,7 +679,6 @@
     <Content Include="app\pagecmp\CswErrorMessage.js" />
     <Content Include="app\pagecmp\CswLogin.js" />
     <Content Include="app\pagecmp\CswMenuHeader.js" />
-    <Content Include="app\pagecmp\CswQuickLaunch.js" />
     <Content Include="app\pagecmp\CswWelcome.js" />
     <Content Include="app\pagecmp\CswWizard.js" />
     <Content Include="app\tools\CswAttr.js" />

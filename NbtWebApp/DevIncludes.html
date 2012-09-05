@@ -30,7 +30,7 @@
 <script type="text/javascript" src="app/core/csw.dom.js"></script>
 <script type="text/javascript" src="app/core/csw.error.js"></script>
 <script type="text/javascript" src="app/core/csw.events.js"></script>
-<script type="text/javascript" src="app/core/csw.clientstate.js"></script>
+
 
 <!-- JS Native Types -->
 <script type="text/javascript" src="app/types/csw.window.js"></script>
@@ -152,11 +152,7 @@
 <script type="text/javascript" src="app/pagecmp/CswDialog.js"></script>
 <script type="text/javascript" src="app/pagecmp/CswErrorMessage.js"></script>
 <script type="text/javascript" src="app/pagecmp/CswLogin.js"></script>
-<script type="text/javascript" src="app/pagecmp/CswMenu.js"></script>
 <script type="text/javascript" src="app/pagecmp/CswMenuHeader.js"></script>
-<script type="text/javascript" src="app/pagecmp/CswMenuMain.js"></script>
-<script type="text/javascript" src="app/pagecmp/CswQuickLaunch.js"></script>
-<script type="text/javascript" src="app/pagecmp/CswSearch.js"></script>
 <script type="text/javascript" src="app/pagecmp/CswWelcome.js"></script>
 <script type="text/javascript" src="app/pagecmp/CswWizard.js"></script>
 
@@ -177,43 +173,45 @@
 <script type="text/javascript" src="app/view/CswViewPropFilter.js"></script>
 
 <!-- Field Types -->
-<script type="text/javascript" src="app/fieldtypes_dep/_CswFieldTypeFactory.js"></script>
-<script type="text/javascript" src="app/fieldtypes/csw.fieldType.auditHistoryGrid.js"></script>
-<script type="text/javascript" src="app/fieldtypes/csw.fieldType.barcode.js"></script>
-<script type="text/javascript" src="app/fieldtypes/csw.fieldType.button.js"></script>
-<script type="text/javascript" src="app/fieldtypes/csw.fieldType.comments.js"></script>
-<script type="text/javascript" src="app/fieldtypes/csw.fieldType.composite.js"></script>
-<script type="text/javascript" src="app/fieldtypes/csw.fieldType.dateTime.js"></script>
-<script type="text/javascript" src="app/fieldtypes/csw.fieldType.file.js"></script>
-<script type="text/javascript" src="app/fieldtypes/csw.fieldType.grid.js"></script>
-<script type="text/javascript" src="app/fieldtypes/csw.fieldType.image.js"></script>
-<script type="text/javascript" src="app/fieldtypes/csw.fieldType.imageList.js"></script>
-<script type="text/javascript" src="app/fieldtypes/csw.fieldType.link.js"></script>
-<script type="text/javascript" src="app/fieldtypes/csw.fieldType.list.js"></script>
-<script type="text/javascript" src="app/fieldtypes/csw.fieldType.location.js"></script>
-<script type="text/javascript" src="app/fieldtypes/csw.fieldType.locationContents.js"></script>
-<script type="text/javascript" src="app/fieldtypes/csw.fieldType.logical.js"></script>
-<script type="text/javascript" src="app/fieldtypes/csw.fieldType.logicalSet.js"></script>
-<script type="text/javascript" src="app/fieldtypes/csw.fieldType.memo.js"></script>
-<script type="text/javascript" src="app/fieldtypes/csw.fieldType.mol.js"></script>
-<script type="text/javascript" src="app/fieldtypes/csw.fieldType.multiList.js"></script>
-<script type="text/javascript" src="app/fieldtypes/csw.fieldType.mtbf.js"></script>
-<script type="text/javascript" src="app/fieldtypes/csw.fieldType.nfpa.js"></script>
-<script type="text/javascript" src="app/fieldtypes/csw.fieldType.nodeTypeSelect.js"></script>
-<script type="text/javascript" src="app/fieldtypes/csw.fieldType.number.js"></script>
-<script type="text/javascript" src="app/fieldtypes/csw.fieldType.password.js"></script>
-<script type="text/javascript" src="app/fieldtypes/csw.fieldType.propertyReference.js"></script>
-<script type="text/javascript" src="app/fieldtypes/csw.fieldType.quantity.js"></script>
-<script type="text/javascript" src="app/fieldtypes/csw.fieldType.question.js"></script>
-<script type="text/javascript" src="app/fieldtypes/csw.fieldType.relationship.js"></script>
-<script type="text/javascript" src="app/fieldtypes/csw.fieldType.scientific.js"></script>
-<script type="text/javascript" src="app/fieldtypes/csw.fieldType.sequence.js"></script>
-<script type="text/javascript" src="app/fieldtypes/csw.fieldType.static.js"></script>
-<script type="text/javascript" src="app/fieldtypes/csw.fieldType.text.js"></script>
-<script type="text/javascript" src="app/fieldtypes/csw.fieldType.timeInterval.js"></script>
-<script type="text/javascript" src="app/fieldtypes/csw.fieldType.userSelect.js"></script>
-<script type="text/javascript" src="app/fieldtypes/csw.fieldType.viewPickList.js"></script>
-<script type="text/javascript" src="app/fieldtypes/csw.fieldType.viewReference.js"></script>
+<script type="text/javascript" src="app/proptypes/_CswFieldTypeFactory.js"></script>
+<script type="text/javascript" src="app/proptypes/csw.property.js"></script>
+<script type="text/javascript" src="app/proptypes/csw.propertyOption.js"></script>
+<script type="text/javascript" src="app/proptypes/csw.propTypeAuditHistoryGrid.js"></script>
+<script type="text/javascript" src="app/proptypes/csw.propTypeBarcode.js"></script>
+<script type="text/javascript" src="app/proptypes/csw.propTypeButton.js"></script>
+<script type="text/javascript" src="app/proptypes/csw.propTypeComments.js"></script>
+<script type="text/javascript" src="app/proptypes/csw.propTypeComposite.js"></script>
+<script type="text/javascript" src="app/proptypes/csw.propTypeDateTime.js"></script>
+<script type="text/javascript" src="app/proptypes/csw.propTypeFile.js"></script>
+<script type="text/javascript" src="app/proptypes/csw.propTypeGrid.js"></script>
+<script type="text/javascript" src="app/proptypes/csw.propTypeImage.js"></script>
+<script type="text/javascript" src="app/proptypes/csw.propTypeImageList.js"></script>
+<script type="text/javascript" src="app/proptypes/csw.propTypeLink.js"></script>
+<script type="text/javascript" src="app/proptypes/csw.propTypeList.js"></script>
+<script type="text/javascript" src="app/proptypes/csw.propTypeLocation.js"></script>
+<script type="text/javascript" src="app/proptypes/csw.propTypeLocationContents.js"></script>
+<script type="text/javascript" src="app/proptypes/csw.propTypeLogical.js"></script>
+<script type="text/javascript" src="app/proptypes/csw.propTypeLogicalSet.js"></script>
+<script type="text/javascript" src="app/proptypes/csw.propTypeMemo.js"></script>
+<script type="text/javascript" src="app/proptypes/csw.propTypeMol.js"></script>
+<script type="text/javascript" src="app/proptypes/csw.propTypeMultiList.js"></script>
+<script type="text/javascript" src="app/proptypes/csw.propTypeMtbf.js"></script>
+<script type="text/javascript" src="app/proptypes/csw.propTypeNfpa.js"></script>
+<script type="text/javascript" src="app/proptypes/csw.propTypeNodeTypeSelect.js"></script>
+<script type="text/javascript" src="app/proptypes/csw.propTypeNumber.js"></script>
+<script type="text/javascript" src="app/proptypes/csw.propTypePassword.js"></script>
+<script type="text/javascript" src="app/proptypes/csw.propTypePropertyReference.js"></script>
+<script type="text/javascript" src="app/proptypes/csw.propTypeQuantity.js"></script>
+<script type="text/javascript" src="app/proptypes/csw.propTypeQuestion.js"></script>
+<script type="text/javascript" src="app/proptypes/csw.propTypeRelationship.js"></script>
+<script type="text/javascript" src="app/proptypes/csw.propTypeScientific.js"></script>
+<script type="text/javascript" src="app/proptypes/csw.propTypeSequence.js"></script>
+<script type="text/javascript" src="app/proptypes/csw.propTypeStatic.js"></script>
+<script type="text/javascript" src="app/proptypes/csw.propTypeText.js"></script>
+<script type="text/javascript" src="app/proptypes/csw.propTypeTimeInterval.js"></script>
+<script type="text/javascript" src="app/proptypes/csw.propTypeUserSelect.js"></script>
+<script type="text/javascript" src="app/proptypes/csw.propTypeViewPickList.js"></script>
+<script type="text/javascript" src="app/proptypes/csw.propTypeViewReference.js"></script>
 
 <!-- Main -->
 <script type="text/javascript" src="app/Main.js"></script>
