@@ -169,6 +169,7 @@
                                     ID: Csw.tryExec(cswPrivate.makeId, 'sizes'),
                                     async: false,
                                     objectClassName: 'SizeClass',
+                                    addNodeDialogTitle: 'Size',
                                     relatedTo: {
                                         objectClassName: 'MaterialClass',
                                         nodeId: cswPrivate.materialId
