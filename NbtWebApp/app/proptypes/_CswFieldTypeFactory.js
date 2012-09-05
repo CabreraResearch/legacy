@@ -164,6 +164,7 @@
                     });
                     break;
                 } // switch (fieldtype)
+                return m;
             }, // make
 
             'save': function(options) {

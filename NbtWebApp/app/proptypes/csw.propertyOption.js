@@ -5,10 +5,9 @@
     'use strict';
     Csw.nbt.propertyOption = Csw.nbt.propertyOption ||
         Csw.nbt.register('propertyOption',
-            function (cswPrivate) {
-                /// <summary>Extends a Csw Control class with basic DOM methods.</summary>
-                /// <param name="cswParent" type="Csw.literals">An Csw Control to bind to.</param>
-                /// <returns type="Csw.controls">The options object with DOM methods attached.</returns> 
+            Csw.method(function (cswPrivate) {
+                /// <summary>Extends an Object with properties specific to NBT FieldTypes (for the purpose of Intellisense)</summary>
+                /// <returns type="Csw.nbt.propertyOption">An Object represent a CswNbtNodeProp</returns> 
                 'use strict';
                 var cswPublic = {
                     nodeid: '',
@@ -40,8 +39,17 @@
                 }
 
                 Csw.extend(cswPublic, cswPrivate);
+
+                if(false === Csw.isNullOrEmpty(cswPublic.propDiv)) {
+                    cswPublic.propDiv.propNonDom({
+                        nodeid: cswPublic.nodeid,
+                        propid: cswPublic.propid,
+                        cswnbtnodekey: cswPublic.cswnbtnodekey
+                    });
+                }
+
                 return cswPublic;
-            });
+            }));
 
 
 } ());

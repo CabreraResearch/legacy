@@ -167,6 +167,7 @@ window.ChemSW = window.Csw = (function () {
     external.layouts = external.layouts || external.register('layouts', makeNameSpace());
     external.literals = external.literals || external.register('literals', makeNameSpace());
     external.nbt = external.nbt || external.register('nbt', makeNameSpace());
+    external.properties = external.properties || external.register('properties', makeNameSpace());
     external.window = external.window || external.register('window', makeNameSpace());
     external.wizard = external.wizard || external.register('wizard', makeNameSpace());
     

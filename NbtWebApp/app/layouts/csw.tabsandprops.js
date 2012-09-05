@@ -52,6 +52,7 @@
                 atLeastOne: {},
                 saveBtn: {},
                 propertyData: null,
+                properties: [],
                 excludeOcProps: [],
                 async: true
             };
@@ -669,7 +670,7 @@
                     var propId = propData.id;
                     var propName = propData.name;
 
-                    var fieldOpt = {
+                    var fieldOpt = Csw.nbt.propertyOption({
                         fieldtype: propData.fieldtype,
                         nodeid: Csw.tryParseObjByIdx(cswPrivate.nodeids, 0),
                         nodename: cswPrivate.nodename,
@@ -681,16 +682,20 @@
                         propDiv: propCell.div(),
                         saveBtn: cswPrivate.saveBtn,
                         propData: propData,
-                        onChange: function () {
-                        },
                         onReload: function (afterReload) {
                             cswPrivate.getProps(tabContentDiv, tabid, afterReload);
+                        },
+                        onChange: function() {
+                            if (Csw.bool(propData.hassubprops)) {
+                                Csw.tryExec(cswPrivate.updateSubProps, fieldOpt, propId, propData, propCell, tabContentDiv, tabid, false, layoutTable);
+                            }
+                            Csw.tryExec(cswPrivate.onPropertyChange, fieldOpt.propid, propName);
                         },
                         doSave: function (saveopts) {
                             var s = {
                                 onSuccess: null
                             };
-                            if (saveopts) Csw.extend(s, saveopts);
+                            Csw.extend(s, saveopts);
                             cswPublic.save(tabContentDiv, tabid, s.onSuccess);
                         },
                         cswnbtnodekey: Csw.tryParseObjByIdx(cswPrivate.nodekeys, 0),
@@ -699,21 +704,9 @@
                         onEditView: cswPrivate.onEditView,
                         onAfterButtonClick: cswPrivate.onAfterButtonClick,
                         ReadOnly: Csw.bool(propData.readonly) || cswPrivate.Config
-                    };
-                    fieldOpt.propDiv.propNonDom({
-                        'nodeid': fieldOpt.nodeid,
-                        'propid': fieldOpt.propid,
-                        'cswnbtnodekey': fieldOpt.cswnbtnodekey
                     });
 
-                    fieldOpt.onChange = function () { if (Csw.isFunction(cswPrivate.onPropertyChange)) cswPrivate.onPropertyChange(fieldOpt.propid, propName); };
-                    if (Csw.bool(propData.hassubprops)) {
-                        fieldOpt.onChange = function () {
-                            cswPrivate.updateSubProps(fieldOpt, propId, propData, propCell, tabContentDiv, tabid, false, layoutTable);
-                            if (Csw.isFunction(cswPrivate.onPropertyChange)) cswPrivate.onPropertyChange(fieldOpt.propid, propName);
-                        };
-                    } // if (Csw.bool(propData.hassubprops)) {
-                    $.CswFieldTypeFactory('make', fieldOpt);
+                    cswPrivate.properties[propId] = Csw.nbt.property(propCell.div(), fieldOpt);
 
                     if (Csw.contains(propData, 'subprops')) {
                         // recurse on sub-props
