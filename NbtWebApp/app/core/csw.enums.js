@@ -4,9 +4,6 @@
 (function _cswEnums() {
     'use strict';
 
-    Csw.enums = Csw.enums ||
-        Csw.register('enums', Csw.makeNameSpace());
-
     Csw.enums.constants = Csw.enums.constants ||
         Csw.enums.register('constants', { unknownEnum: 'unknown' });
 

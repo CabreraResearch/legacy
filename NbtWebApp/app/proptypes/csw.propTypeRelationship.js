@@ -119,6 +119,7 @@
                             values: relationships,
                             selected: selectedNodeId
                         });
+                        selectBox.hide(); //hide this until the "edit" button is clicked
                         cellCol++;
 
                         var nodeLinkText;
@@ -145,14 +146,6 @@
                             }
                         });
                         cellCol++;
-
-                        if (o.EditMode === Csw.enums.editMode.Add || (o.Required && Csw.isNullOrEmpty(selectedNodeId))) {
-                            selectBox.show();
-                            toggleButton.hide();
-                            nodeLinkText.hide();
-                        } else {
-                            selectBox.hide();
-                        }
 
                         if (o.Required) {
                             selectBox.addClass("required");
