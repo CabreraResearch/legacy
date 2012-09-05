@@ -1,4 +1,4 @@
-/// <reference path="~/app/CswApp-vsdoc.js" />
+/// <reference path="~app/CswApp-vsdoc.js" />
 /// <reference path="~/vendor/extjs-4.1.0/ext-all-debug.js" />
 
 (function ($) {

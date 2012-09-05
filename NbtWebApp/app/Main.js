@@ -1,6 +1,4 @@
-/// <reference path="~/app/CswApp-vsdoc.js" />
-
-/// <reference path="../globals/CswEnums.js" />
+/// <reference path="~app/CswApp-vsdoc.js" />
 
 window.initMain = window.initMain || function (undefined) {
 
