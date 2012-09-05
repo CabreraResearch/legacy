@@ -122,6 +122,7 @@
     <Compile Include="csw\ObjClasses\CswNbtObjClassRegulatoryList.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassFeedback.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassInventoryLevel.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase27578.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase27439.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26924.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase27622.cs" />
