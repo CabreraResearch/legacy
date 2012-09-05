@@ -38,11 +38,9 @@
                 blueDiv = table.cell(2, 1)
                                .div({ cssclass: 'CswFieldTypeNFPA_cell CswFieldTypeNFPA_blueDiamond' })
                                .div({ cssclass: 'CswFieldTypeNFPA_text CswFieldTypeNFPA_textRotated' });
-                if (false === hideSpecial) {
-                    whiteDiv = table.cell(2, 2)
+                whiteDiv = table.cell(2, 2)
                                .div({ cssclass: 'CswFieldTypeNFPA_cell CswFieldTypeNFPA_whiteDiamond' })
                                .div({ cssclass: 'CswFieldTypeNFPA_text CswFieldTypeNFPA_whitetext CswFieldTypeNFPA_textRotated' });
-                }
             } else {
                 redDiv = table.cell(1, 1)
                                .div({ cssclass: 'CswFieldTypeNFPA_cell CswFieldTypeNFPA_redLinear' })
@@ -56,11 +54,9 @@
                                .div({ cssclass: 'CswFieldTypeNFPA_cell CswFieldTypeNFPA_blueLinear' })
                                .div({ cssclass: 'CswFieldTypeNFPA_text' });
 
-                if (false === hideSpecial) {
-                    whiteDiv = table.cell(1, 4)
+                whiteDiv = table.cell(1, 4)
                                .div({ cssclass: 'CswFieldTypeNFPA_cell CswFieldTypeNFPA_whiteLinear' })
                                .div({ cssclass: 'CswFieldTypeNFPA_text CswFieldTypeNFPA_whitetextLinear' });
-                }
             }
 
             function setValue(div, value) {
@@ -112,9 +108,7 @@
                 editTable.cell(1, 1).text('Flammability');
                 editTable.cell(2, 1).text('Reactivity');
                 editTable.cell(3, 1).text('Health');
-                if (false === hideSpecial) {
-                    editTable.cell(4, 1).text('Special');
-                }
+                var whiteText = editTable.cell(4, 1).text('Special');
 
                 makeSelect(editTable.cell(1, 2), 'red', red, redDiv);
                 makeSelect(editTable.cell(2, 2), 'yellow', yellow, yellowDiv);
@@ -148,6 +142,16 @@
                                           });
                 }
             } // if(!o.ReadOnly)
+            if (hideSpecial) {
+                if (displayMode === Csw.enums.NFPADisplayMode.Diamond) {
+                    table.cell(2, 2).hide(); //white cell for diamond display
+                } else {
+                    table.cell(1, 4).hide(); //white cell for linear display
+                }
+                whiteSelect.hide();
+                whiteDiv.hide();
+                whiteText.hide();
+            }
         },
         save: function (o) {
             var attributes = {
