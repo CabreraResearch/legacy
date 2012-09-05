@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.ObjectModel;
-using ChemSW.Nbt.MetaData;
-using ChemSW.Nbt.ObjClasses;
+﻿using ChemSW.Nbt.MetaData;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -31,17 +28,6 @@ namespace ChemSW.Nbt.Schema
                 ListOptions = "Sales,Corporate,Technical,Manufacturing"
             } );
             _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( vendorTypeOCP, vendorTypeOCP.getFieldTypeRule().SubFields.Default.Name, "Sales" );
-
-            /* Get the Vendor NT and hide the newly created properties */
-            CswNbtMetaDataNodeType vendorNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Vendor" );
-            if( null != vendorNT )
-            {
-                CswNbtMetaDataNodeTypeProp corporateEntityNTP = _CswNbtSchemaModTrnsctn.MetaData.getNodeTypePropByObjectClassProp( vendorNT.NodeTypeId, corporateEntityOCP.ObjectClassPropId );
-                corporateEntityNTP.removeFromAllLayouts();
-
-                CswNbtMetaDataNodeTypeProp vendorTypeNTP = _CswNbtSchemaModTrnsctn.MetaData.getNodeTypePropByObjectClassProp( vendorNT.NodeTypeId, vendorTypeOCP.ObjectClassPropId );
-                vendorTypeNTP.removeFromAllLayouts();
-            }
 
         }//Update()
 
