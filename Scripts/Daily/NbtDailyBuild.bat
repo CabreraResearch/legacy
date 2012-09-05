@@ -61,7 +61,7 @@ set ResetSchema=%2
 >>%LogFile% date /T
 >>%LogFile% time /T
 
->>%LogFile% 2>&1 %KilnPath%\nbt\nbt\Scripts\Daily\NbtDailyBuild.pl %VersionNo% 
+>>%LogFile% 2>&1 %KilnPath%\nbt\nbt\Scripts\Daily\NbtDailyBuild.pl %VersionNo% %KilnPath%
 
 >>%LogFile% echo ====================================================================
 >>%LogFile% echo Starting Build
