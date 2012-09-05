@@ -51,7 +51,9 @@
                     properties: {},
                     documentProperties: {},
                     useExistingMaterial: false,
-                    materialProperies: {}
+                    materialProperies: {},
+                    showQuantityEditable: false,
+                    showDispensable: false
                 }
             };
 
@@ -204,7 +206,7 @@
                     doNextOnInit: false
                 });
 
-            }());
+            } ());
 
 
             cswPrivate.toggleButton = function (button, isEnabled, doClick) {
@@ -250,7 +252,7 @@
                             hasChanged = true;
                             cswPrivate.state.partNo = cswPrivate.partNoInput.val();
                         }
-                        
+
                         if (hasChanged) {
                             cswPrivate.state.materialId = '';
                             cswPrivate.state.documentId = '';
@@ -359,7 +361,7 @@
                                         Csw.publish('CreateMaterialSuccess');
                                     }
                                 },
-                                error: function() {
+                                error: function () {
                                     cswPrivate.toggleButton(cswPrivate.buttons.prev, false, true);
                                 }
                             });
@@ -368,7 +370,7 @@
                         cswPrivate.stepOneComplete = true;
                     }
                 };
-            }());
+            } ());
 
             cswPrivate.makeStep2 = (function () {
                 cswPrivate.stepTwoComplete = false;
@@ -393,7 +395,7 @@
                         cswPrivate.divStep2.br({ number: 4 });
 
                         div = cswPrivate.divStep2.div();
-                        Csw.subscribe('CreateMaterialSuccess', function() {
+                        Csw.subscribe('CreateMaterialSuccess', function () {
                             cswPrivate.tabsAndProps = Csw.layouts.tabsAndProps(div, {
                                 nodeids: [cswPrivate.state.materialId],
                                 nodetypeid: cswPrivate.state.materialType.val,
@@ -411,7 +413,7 @@
                     }
                 };
 
-            }());
+            } ());
 
             cswPrivate.makeStep3 = (function () {
                 cswPrivate.stepThreeComplete = false;
@@ -476,8 +478,8 @@
                                 unit: '',
                                 unitid: '',
                                 unitCount: '',
-                                quantEditableChecked: 'true', 
-                                dispensibleChecked: 'true', 
+                                quantEditableChecked: 'true',
+                                dispensibleChecked: 'true',
                                 nodetypeid: cswPrivate.state.sizeNodeTypeId
                             };
 
@@ -492,6 +494,12 @@
                             };
 
                             cswPrivate.header = [cswPrivate.config.quantityName, cswPrivate.config.numberName, cswPrivate.config.unitCountName];
+                            if (cswPrivate.state.showQuantityEditable) {
+                                cswPrivate.header = cswPrivate.header.concat([cswPrivate.config.quantityEditableName]);
+                            }
+                            if (cswPrivate.state.showDispensable) {
+                                cswPrivate.header = cswPrivate.header.concat([cswPrivate.config.dispensibleName]);
+                            }
                             if (cswPrivate.rows.length === 0) {
                                 cswPrivate.rows.push(cswPrivate.header);
                             }
@@ -591,6 +599,14 @@
                                         newSize.unitCount = cswPublic.unitCountCtrl.val();
 
                                         var formCols = [newSize.quantity + ' ' + newSize.unit, newSize.catalogNo, newSize.unitCount];
+                                        if (cswPrivate.state.showQuantityEditable) {
+                                            newSize.quantEditableChecked = cswPublic.quantEditableCtrl.val();
+                                            formCols = formCols.concat([newSize.quantEditableChecked]);
+                                        }
+                                        if (cswPrivate.state.showDispensable) {
+                                            newSize.dispensibleChecked = cswPublic.dispensibleCtrl.val();
+                                            formCols = formCols.concat([newSize.dispensibleChecked]);
+                                        }
                                         if (false === Csw.isNullOrEmpty(newSize.quantity)) {
                                             if (isSizeNew(newSize)) {
                                                 cswPublic.sizes.push(extractNewAmount(newSize));
@@ -638,7 +654,7 @@
                     }
                 };
 
-            }());
+            } ());
 
             //MSDS upload
             cswPrivate.makeStep4 = (function () {
@@ -689,10 +705,10 @@
                     }
                 };
 
-            }());
+            } ());
 
             cswPrivate.makeStep1();
 
             return cswPublic;
         });
-}());
+} ());

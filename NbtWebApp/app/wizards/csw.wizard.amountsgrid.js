@@ -9,6 +9,7 @@
             var cswPublic = {
                 quantities: [],
                 qtyControl: null,
+                containerNoControl: null,
                 thinGrid: null,
                 amountsGridOnAdd: null
             };
@@ -134,14 +135,16 @@
                             extendNewAmount({ sizeid: sizeControl.selectedNodeId() });
                             extendNewAmount({ sizename: sizeControl.selectedText() });
                         };
-                        var updateQuantityVals = function () {
+                        var updateColumnVals = function () {
                             extendNewAmount({ quantity: cswPublic.qtyControl.quantityValue });
                             extendNewAmount({ unit: cswPublic.qtyControl.unitText });
                             extendNewAmount({ unitid: cswPublic.qtyControl.unitVal });
+                            cswPublic.containerNoControl.val(cswPrivate.quantity.unitCount);
+                            extendNewAmount({ containerNo: cswPrivate.quantity.unitCount });
                         };
                         switch (columnName) {
                             case cswPrivate.config.numberName:
-                                var countControl = cswCell.numberTextBox({
+                                cswPublic.containerNoControl = cswCell.numberTextBox({
                                     ID: Csw.tryExec(cswPrivate.makeId, 'containerCount'),
                                     value: cswPublic.quantities.length === 0 ? 1 : '',
                                     MinValue: cswPrivate.containerMinimum,
@@ -156,7 +159,7 @@
                                         extendNewAmount({ containerNo: value });
                                     }
                                 });
-                                extendNewAmount({ containerNo: countControl.val() });
+                                extendNewAmount({ containerNo: cswPublic.containerNoControl.val() });
                                 break;
                             case cswPrivate.config.sizeName:
                                 var sizeControl = cswCell.nodeSelect({
@@ -171,7 +174,7 @@
                                         updateSizeVals();
                                         cswPrivate.getQuantity();
                                         cswPublic.qtyControl.refresh(cswPrivate.quantity);
-                                        updateQuantityVals();
+                                        updateColumnVals();
                                     },
                                     canAdd: true
                                 });
@@ -180,7 +183,7 @@
                             case cswPrivate.config.quantityName:
                                 cswPrivate.getQuantity();
                                 cswPrivate.quantity.onChange = function () {
-                                    updateQuantityVals();
+                                    updateColumnVals();
                                 };
                                 if (cswPrivate.action === 'Receive') {
                                     cswPrivate.quantity.Required = true;
@@ -188,7 +191,7 @@
                                 cswPrivate.quantity.ID = Csw.tryExec(cswPrivate.makeId, 'containerQuantity');
                                 cswPrivate.quantity.qtyWidth = (7 * 8) + 'px'; //7 characters wide, 8 is the characters-to-pixels ratio
                                 cswPublic.qtyControl = cswCell.quantity(cswPrivate.quantity);
-                                updateQuantityVals();
+                                updateColumnVals();
                                 break;
                             case cswPrivate.config.barcodeName:
                                 var barcodeControl = cswCell.textArea({
@@ -221,7 +224,7 @@
                                 var reducedQuantities = cswPublic.quantities.filter(function (quantity, index, array) { return quantity.rowid !== rowid; });
                                 Csw.debug.assert(reducedQuantities !== cswPublic.quantities, 'Rowid is null.');
                                 cswPublic.quantities = reducedQuantities;
-                                Csw.tryExec(cswPrivate.onDelete, (cswPrivate.count > 0), Csw.number( quantityToRemove[0].quantity * quantityToRemove[0].containerNo ), quantityToRemove[0].unitid);
+                                Csw.tryExec(cswPrivate.onDelete, (cswPrivate.count > 0), Csw.number(quantityToRemove[0].quantity * quantityToRemove[0].containerNo), quantityToRemove[0].unitid);
                             }
                         }
                     });
@@ -255,7 +258,7 @@
                             } else {
                                 $.CswDialog('AlertDialog', 'The limit for containers created at receipt is [' + cswPrivate.containerlimit + ']. You have already added [' + cswPrivate.count + '] containers.', 'Cannot add [' + newCount + '] containers.');
                             }
-                            Csw.tryExec(cswPrivate.onAdd, (cswPrivate.count > 0), Csw.number( newAmount.quantity * newAmount.containerNo ), newAmount.unitid);
+                            Csw.tryExec(cswPrivate.onAdd, (cswPrivate.count > 0), Csw.number(newAmount.quantity * newAmount.containerNo), newAmount.unitid);
                         }
                     };
 
