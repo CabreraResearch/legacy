@@ -31,7 +31,8 @@
                     quantityName: 'Initial Quantity *',
                     numberName: 'Catalog No.',
                     dispensibleName: 'Dispensible',
-                    quantEditableName: 'Quantity Editable'
+                    quantityEditableName: 'Quantity Editable',
+                    unitCountName: 'Unit Count'
                 },
                 rows: [],
                 tabsAndProps: null,
@@ -55,12 +56,11 @@
             };
 
             var cswPublic = {
-                physicalStateCrl: null,
                 catalogNoCtrl: null,
                 quantityCtrl: null,
-                untitsCrl: null,
                 dispensibleCtrl: null,
                 quantEditableCtrl: null,
+                unitCountCtrl: null,
                 sizesForm: null,
                 sizeGrid: null,
                 sizes: []
@@ -475,8 +475,9 @@
                                 quantity: '',
                                 unit: '',
                                 unitid: '',
-                                quantEditableChecked: 'false', //default?
-                                dispensibleChecked: 'false', //default?
+                                unitCount: '',
+                                quantEditableChecked: 'true', 
+                                dispensibleChecked: 'true', 
                                 nodetypeid: cswPrivate.state.sizeNodeTypeId
                             };
 
@@ -490,7 +491,7 @@
                                 return ret;
                             };
 
-                            cswPrivate.header = [cswPrivate.config.quantityName, cswPrivate.config.numberName, cswPrivate.config.quantEditableName, cswPrivate.config.dispensibleName];
+                            cswPrivate.header = [cswPrivate.config.quantityName, cswPrivate.config.numberName, cswPrivate.config.unitCountName];
                             if (cswPrivate.rows.length === 0) {
                                 cswPrivate.rows.push(cswPrivate.header);
                             }
@@ -509,8 +510,9 @@
                                         quantity: '',
                                         unit: '',
                                         unitid: '',
-                                        quantEditableChecked: 'false', //default?
-                                        dispensibleChecked: 'false' //default?
+                                        unitCount: '',
+                                        quantEditableChecked: 'true',
+                                        dispensibleChecked: 'true'
                                     };
 
                                     switch (columnName) {
@@ -534,7 +536,7 @@
                                                 }
                                             });
                                             break;
-                                        case cswPrivate.config.quantEditableName:
+                                        case cswPrivate.config.quantityEditableName:
                                             cswPublic.quantEditableCtrl = cswCell.checkBox({
                                                 ID: Csw.tryExec(Csw.makeId, 'sizeQuantEditable'),
                                                 Checked: true,
@@ -554,6 +556,18 @@
                                                 }
                                             });
                                             break;
+                                        case cswPrivate.config.unitCountName:
+                                            cswPublic.unitCountCtrl = cswCell.numberTextBox({
+                                                ID: Csw.tryExec(Csw.makeId, 'sizeUnitCount'),
+                                                value: 1,
+                                                MinValue: 1,
+                                                Precision: 0,
+                                                Required: true,
+                                                onChange: function (value) {
+                                                    thisSize.unitCount = cswPublic.unitCountCtrl.val();
+                                                    extendNewAmount(thisSize);
+                                                }
+                                            });
                                     }
                                     extendNewAmount(thisSize);
                                 },
@@ -573,13 +587,14 @@
                                         newSize.quantity = cswPublic.quantityCtrl.val();
                                         newSize.unit = cswPublic.unitsCtrl.val();
                                         newSize.catalogNo = cswPublic.catalogNoCtrl.val();
-                                        newSize.dispensibleChecked = cswPublic.dispensibleCtrl.val();
-                                        newSize.quantEditableChecked = cswPublic.quantEditableCtrl.val();
                                         newSize.unitid = getID(newSize.unit);
+                                        newSize.unitCount = cswPublic.unitCountCtrl.val();
+
+                                        var formCols = [newSize.quantity + ' ' + newSize.unit, newSize.catalogNo, newSize.unitCount];
                                         if (false === Csw.isNullOrEmpty(newSize.quantity)) {
                                             if (isSizeNew(newSize)) {
                                                 cswPublic.sizes.push(extractNewAmount(newSize));
-                                                cswPublic.sizeGrid.addRows([newSize.quantity + ' ' + newSize.unit, newSize.catalogNo, newSize.quantEditableChecked, newSize.dispensibleChecked]);
+                                                cswPublic.sizeGrid.addRows(formCols);
                                             } else {
                                                 $.CswDialog('AlertDialog', 'This size is already defined. Please define a new, unique size.');
                                             }
