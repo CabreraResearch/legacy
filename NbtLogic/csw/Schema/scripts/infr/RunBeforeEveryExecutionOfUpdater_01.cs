@@ -26,11 +26,11 @@ namespace ChemSW.Nbt.Schema
             _CswNbtSchemaModTrnsctn.execArbitraryPlatformNeutralSql( "update nodes set istemp='0', sessionid=''" );
 
             //Add 5 generic nodetype prop attribute columns
-            if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( "nodetype_props", "attribute5" ) )
+            if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( "nodetype_props", "attribute1" ) )
             {
                 _CswNbtSchemaModTrnsctn.addStringColumn( "nodetype_props", "attribute1", "Generic nodetype prop attribute col", false, false, 100 );
             }
-            if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( "nodetype_props", "attribute1" ) )
+            if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( "nodetype_props", "attribute2" ) )
             {
                 _CswNbtSchemaModTrnsctn.addStringColumn( "nodetype_props", "attribute2", "Generic nodetype prop attribute col", false, false, 100 );
             }
