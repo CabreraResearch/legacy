@@ -1,4 +1,4 @@
-/// <reference path="~app/CswApp-vsdoc.js" />
+/// <reference path="~/app/CswApp-vsdoc.js" />
 
 window.internetExplorerVersionNo = window.internetExplorerVersionNo || -1;
 
@@ -152,14 +152,13 @@ window.ChemSW = window.Csw = (function () {
     makeNameSpace(external, internal);
 
     external.actions = external.actions || external.register('actions', makeNameSpace());
-    external.composites = external.composites || external.register('composites', makeNameSpace());
-    external.controls = external.controls || external.register('controls', makeNameSpace());
     external.layouts = external.layouts || external.register('layouts', makeNameSpace());
     external.literals = external.literals || external.register('literals', makeNameSpace());
+    external.composites = external.composites || external.register('composites', makeNameSpace());
+    external.controls = external.controls || external.register('controls', makeNameSpace());
     external.nbt = external.nbt || external.register('nbt', makeNameSpace());
-    external.properties = external.properties || external.register('properties', makeNameSpace());
     external.wizard = external.wizard || external.register('wizard', makeNameSpace());
-                             
+    
     external.isFunction = external.isFunction ||
         external.register('isFunction', function (obj) {
             'use strict';

@@ -1,4 +1,4 @@
-/// <reference path="~app/CswApp-vsdoc.js" />
+/// <reference path="~/app/CswApp-vsdoc.js" />
 
 
 //See http://www.erichynds.com/examples/jquery-ui-multiselect-widget/demos for fancy options

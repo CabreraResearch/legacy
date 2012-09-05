@@ -1,4 +1,4 @@
-/// <reference path="~app/CswApp-vsdoc.js" />
+/// <reference path="~/app/CswApp-vsdoc.js" />
 
 
 (function _cswImg() {
