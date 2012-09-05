@@ -139,7 +139,7 @@
                             extendNewAmount({ quantity: cswPublic.qtyControl.quantityValue });
                             extendNewAmount({ unit: cswPublic.qtyControl.unitText });
                             extendNewAmount({ unitid: cswPublic.qtyControl.unitVal });
-                            if (false === Csw.isNumeric(cswPrivate.quantity.unitCount)) {
+                            if (false === Csw.isNumeric(Csw.number(cswPrivate.quantity.unitCount))) {
                                 cswPrivate.quantity.unitCount = 1;
                             }
                             cswPublic.containerNoControl.val(cswPrivate.quantity.unitCount);
