@@ -124,6 +124,7 @@
     <Compile Include="csw\ObjClasses\CswNbtObjClassInventoryLevel.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase27439.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26924.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase27439_Part2.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase27622.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase27274.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase27278.cs" />
