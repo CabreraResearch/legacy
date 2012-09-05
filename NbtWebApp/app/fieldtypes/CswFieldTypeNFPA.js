@@ -44,7 +44,7 @@
             } else {
                 redDiv = table.cell(1, 1)
                                .div({ cssclass: 'CswFieldTypeNFPA_cell CswFieldTypeNFPA_redLinear' })
-                               .div({ cssclass: 'CswFieldTypeNFPA_text CswFieldTypeNFPA_text' });
+                               .div({ cssclass: 'CswFieldTypeNFPA_text' });
 
                 yellowDiv = table.cell(1, 2)
                                .div({ cssclass: 'CswFieldTypeNFPA_cell CswFieldTypeNFPA_yellowLinear' })
