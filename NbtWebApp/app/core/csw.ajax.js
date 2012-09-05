@@ -314,10 +314,6 @@
         }
     } ());
 
-    Csw.ajax = Csw.ajax ||
-        Csw.register('ajax', Csw.makeNameSpace(null, cswPrivate));
-
-
     Csw.ajax.ajaxInProgress = Csw.ajax.ajaxInProgress ||
         Csw.ajax.register('ajaxInProgress', function () {
             /// <summary> Evaluates whether a pending ajax request is still open. </summary>

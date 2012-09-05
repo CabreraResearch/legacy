@@ -152,11 +152,22 @@ window.ChemSW = window.Csw = (function () {
     makeNameSpace(external, internal);
 
     external.actions = external.actions || external.register('actions', makeNameSpace());
-    external.layouts = external.layouts || external.register('layouts', makeNameSpace());
-    external.literals = external.literals || external.register('literals', makeNameSpace());
+    external.ajax = external.ajax || external.register('ajax', makeNameSpace());
+    external.ajaxWcf = external.ajaxWcf || external.register('ajaxWcf', makeNameSpace());
+    external.actions = external.actions || external.register('actions', makeNameSpace());
+    external.clientChanges = external.clientChanges || external.register('clientChanges', makeNameSpace());
+    external.clientSession = external.clientSession || external.register('clientSession', makeNameSpace());
+    external.clientState = external.clientState || external.register('clientState', makeNameSpace());
+    external.clientDb = external.clientDb || external.register('clientDb', makeNameSpace());
     external.composites = external.composites || external.register('composites', makeNameSpace());
     external.controls = external.controls || external.register('controls', makeNameSpace());
+    external.cookie = external.cookie || external.register('cookie', makeNameSpace());
+    external.enums = external.enums || external.register('enums', makeNameSpace());
+    external.error = external.error || external.register('error', makeNameSpace());
+    external.layouts = external.layouts || external.register('layouts', makeNameSpace());
+    external.literals = external.literals || external.register('literals', makeNameSpace());
     external.nbt = external.nbt || external.register('nbt', makeNameSpace());
+    external.window = external.window || external.register('window', makeNameSpace());
     external.wizard = external.wizard || external.register('wizard', makeNameSpace());
     
     external.isFunction = external.isFunction ||
