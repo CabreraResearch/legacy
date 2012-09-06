@@ -48,7 +48,6 @@ namespace ChemSW.Nbt.PropTypes
         private CswNbtSubField _BlueSubField;
         private CswNbtSubField _WhiteSubField;
         private NFPADisplayMode _DisplayMode;
-        private bool _DisplaySpecial;
 
         override public bool Empty
         {
