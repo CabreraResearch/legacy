@@ -5,6 +5,7 @@ use File::Copy;
 # Arguments
 
 my $increment = "1";
+my $kilnpath = "C:\kiln";
 if($#ARGV != 1)
 {
 	die( "Usage: DeployNbt.pl [increment] [kilnpath]\n" );

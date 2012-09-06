@@ -85,8 +85,8 @@ IF "%ResetSchema%" NEQ "Y" GOTO Continue
 >>%LogFile% time /T
 
 REM must reset nbt_master before schemaupdater runs
->>%LogFile% exit | sqlplus %ResetSchemaUsername%/%ResetSchemaPassword%@%ResetSchemaServer% @%KilnPath%\nbt\Nbt\Schema\nbt_nuke.sql
->>%LogFile% impdp.exe %ResetSchemaUsername%/%ResetSchemaPassword%@%ResetSchemaServer% DUMPFILE=NBT_MASTER_11G.DMP DIRECTORY=EXPORTS REMAP_SCHEMA=nbt_master:%ResetSchemaUsername%
+exit | >>%LogFile% sqlplus %ResetSchemaUsername%/%ResetSchemaPassword%@%ResetSchemaServer% @%KilnPath%\nbt\Nbt\Schema\nbt_nuke.sql
+>>%LogFile% 2>&1 impdp.exe %ResetSchemaUsername%/%ResetSchemaPassword%@%ResetSchemaServer% DUMPFILE=NBT_MASTER_11G.DMP DIRECTORY=EXPORTS REMAP_SCHEMA=nbt_master:%ResetSchemaUsername% NOLOGFILE=Y
 
 
 :Continue
