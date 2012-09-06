@@ -1,35 +1,25 @@
 /// <reference path="~/app/CswApp-vsdoc.js" />
 
+(function () {
+    'use strict';
+    Csw.properties.composite = Csw.properties.composite ||
+        Csw.properties.register('composite',
+            Csw.method(function (propertyOption) {
+                'use strict';
+                var cswPublic = {
+                    data: propertyOption
+                };
+                var render = function (o) {
 
-(function ($) {
-    "use strict";
-    var pluginName = 'CswFieldTypeComposite';
+                    var propVals = o.propData.values;
+                    cswPublic.control = o.propDiv;
+                    var value = (false === o.Multi) ? Csw.string(propVals.value).trim() : Csw.enums.multiEditDefaultValue;
+                    cswPublic.control.append(value);
 
-    var methods = {
-        init: function (o) {
+                };
 
-            var propDiv = o.propDiv;
-            propDiv.empty();
-            var propVals = o.propData.values;
-            var value = (false === o.Multi) ? Csw.string(propVals.value).trim() : Csw.enums.multiEditDefaultValue;
-            propDiv.append(value);
+                propertyOption.render(render);
+                return cswPublic;
+            }));
 
-        },
-        save: function (o) {
-            Csw.preparePropJsonForSave(o.propData);
-        }
-    };
-
-    // Method calling logic
-    $.fn.CswFieldTypeComposite = function (method) {
-
-        if (methods[method]) {
-            return methods[method].apply(this, Array.prototype.slice.call(arguments, 1));
-        } else if (typeof method === 'object' || !method) {
-            return methods.init.apply(this, arguments);
-        } else {
-            $.error('Method ' + method + ' does not exist on ' + pluginName); return false;
-        }
-
-    };
-})(jQuery);
+}());

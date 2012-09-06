@@ -30,6 +30,9 @@
                         case Csw.enums.subFieldsMap.Comments.name:
                             cswPublic = Csw.properties.comments(cswPrivate);
                             break;
+                        case Csw.enums.subFieldsMap.Composite.name:
+                            cswPublic = Csw.properties.composite(cswPrivate);
+                            break;
                         default:
                             cswPublic = $.CswFieldTypeFactory('make', cswPrivate);
                     }
