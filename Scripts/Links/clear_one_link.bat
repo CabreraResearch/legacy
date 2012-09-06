@@ -18,7 +18,7 @@ GOTO End
 
 echo %1%2
 cd %1%2
-del etc\CswDbConfig.xml
+del etc\CswDbCfgInfo.xml
 del etc\CswSetupVbls.xml
 rmdir etc
 
