@@ -169,6 +169,7 @@
                                                 ret = true;
                                             }
                                         }
+                                        Csw.publish('initPropertyTearDown');
                                         return ret;
                                     } // select()
                                 }); // tabs
@@ -765,7 +766,7 @@
                 Normally, the page is ready when 'Save' is clicked; however, 
                 before we can evaluate subprop behavior, the governing controls must update with the result of their change event.
                 */
-                setTimeout(function () {
+                Csw.defer(function () {
                     // do a fake 'save' to update the json with the current value
                     $.CswFieldTypeFactory('save', fieldOpt);
                     if (cswPrivate.EditMode == Csw.enums.editMode.Add) {
