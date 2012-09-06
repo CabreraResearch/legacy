@@ -43,9 +43,9 @@
                 m.ReadOnly = m.ReadOnly || Csw.bool(m.propData.readonly) || m.EditMode === Csw.enums.editMode.PrintReport;
 
                 switch (m.fieldtype) {
+                case "AuditHistoryGrid":
                 case "Barcode":
-                    m.propDiv.$.CswFieldTypeBarcode('init', m); //'init', nodeid, propData, onChange
-                    break;
+                    break; //keep the refactored props in the switch until _factory is completely removed
                 case "Button":
                     m.propDiv.$.CswFieldTypeButton('init', m); //'init', nodeid, propData, onChange
                     break;
@@ -174,9 +174,10 @@
                 m.ReadOnly = Csw.bool(m.propData.readonly);
 
                 switch (m.fieldtype) {
+                case "AuditHistoryGrid":
                 case "Barcode":
-                    m.propDiv.$.CswFieldTypeBarcode('save', m); //('save', $propdiv, propData);
-                    break;
+                    break; //keep the refactored props in the switch until _factory is completely removed
+
                 case "Button":
                     m.propDiv.$.CswFieldTypeButton('save', m); //('save', $propdiv, propData);
                     break;
