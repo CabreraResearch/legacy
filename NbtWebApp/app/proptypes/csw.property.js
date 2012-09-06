@@ -36,6 +36,9 @@
                         case Csw.enums.subFieldsMap.DateTime.name:
                             cswPublic = Csw.properties.dateTime(cswPrivate);
                             break;
+                        case Csw.enums.subFieldsMap.File.name:
+                            cswPublic = Csw.properties.file(cswPrivate);
+                            break;
                         default:
                             cswPublic = $.CswFieldTypeFactory('make', cswPrivate);
                     }
