@@ -93,7 +93,7 @@
                 cswPublic.render = function (callBack) {
                     var renderer = function() {
                         Csw.tryExec(callBack, cswPublic);
-                        Csw.unsubscribe('render_' + cswPublic.nodeid, renderer);
+                        //Csw.unsubscribe('render_' + cswPublic.nodeid, renderer);
                     };
                     Csw.subscribe('render_' + cswPublic.nodeid, renderer);
                 };

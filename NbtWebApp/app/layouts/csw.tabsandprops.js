@@ -670,7 +670,7 @@
                 if (cswPrivate.canDisplayProp(propData, configMode)) {
                     var propId = propData.id;
                     var propName = propData.name;
-
+                    var propDiv = propCell.div();
                     var fieldOpt = Csw.nbt.propertyOption({
                         fieldtype: propData.fieldtype,
                         nodeid: Csw.tryParseObjByIdx(cswPrivate.nodeids, 0),
@@ -680,7 +680,7 @@
                         relatednodetypeid: cswPrivate.relatednodetypeid,
                         relatedobjectclassid: cswPrivate.relatedobjectclassid,
                         propid: propId,
-                        propDiv: propCell.div(),
+                        propDiv: propDiv,
                         saveBtn: cswPrivate.saveBtn,
                         propData: propData,
                         onReload: function (afterReload) {
@@ -707,7 +707,7 @@
                         ReadOnly: Csw.bool(propData.readonly) || cswPrivate.Config
                     });
 
-                    cswPrivate.properties[propId] = Csw.nbt.property(propCell.div(), fieldOpt);
+                    cswPrivate.properties[propId] = Csw.nbt.property(propDiv, fieldOpt);
 
                     if (Csw.contains(propData, 'subprops')) {
                         // recurse on sub-props
