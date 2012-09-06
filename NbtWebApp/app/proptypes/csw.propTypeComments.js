@@ -10,11 +10,11 @@
                 var cswPublic = {
                     data: propertyOption
                 };
-                var render = function(o) {
+                var render = function() {
                     'use strict';
-                    o = o || Csw.nbt.propertyOption(propertyOption);
-                    cswPrivate.propVals = o.propData.values;
-                    cswPrivate.parent = o.propDiv;
+                    cswPublic.data = cswPublic.data || Csw.nbt.propertyOption(propertyOption);
+                    cswPrivate.propVals = cswPublic.data.propData.values;
+                    cswPrivate.parent = cswPublic.data.propDiv;
                     cswPrivate.rows = Csw.string(cswPrivate.propVals.rows);
                     cswPrivate.columns = Csw.string(cswPrivate.propVals.columns);
 
@@ -62,20 +62,20 @@
                         cell3.addClass(cswPrivate.bgclass);
                         cell3.append(acomment.message);
                     });
-                    if (false === o.ReadOnly) {
+                    if (false === cswPublic.data.ReadOnly) {
                         cswPublic.control = cswPrivate.parent.textArea({
                             rows: cswPrivate.rows,
                             cols: cswPrivate.columns,
                             onChange: function () {
                                 var comment = cswPublic.control.val();
-                                Csw.tryExec(o.onChange, comment);
+                                Csw.tryExec(cswPublic.data.onChange, comment);
                                 propertyOption.onPropChange({ newmessage: comment });
                             }
                         }); 
                     }
                 };
 
-                propertyOption.render(render);
+                cswPublic.data.bindRender(render);
                 return cswPublic;
             }));
     

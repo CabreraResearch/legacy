@@ -14,14 +14,14 @@
                     data: propertyOption
                 };
 
-                var render = function (o) {
+                var render = function () {
                     'use strict';
-                    o = o || Csw.nbt.propertyOption(propertyOption);
+                    cswPublic.data = cswPublic.data || Csw.nbt.propertyOption(propertyOption);
 
-                    cswPrivate.propVals = o.propData.values;
-                    cswPrivate.parent = o.propDiv;
+                    cswPrivate.propVals = cswPublic.data.propData.values;
+                    cswPrivate.parent = cswPublic.data.propDiv;
 
-                    if (o.Multi) {
+                    if (cswPublic.data.Multi) {
                         cswPublic.control = cswPrivate.parent.append(Csw.enums.multiEditDefaultValue);
                     } else {
 
@@ -36,7 +36,7 @@
                         cswPrivate.fileName = Csw.string(cswPrivate.propVals.name).trim();
 
                         cswPublic.control = cswPrivate.parent.table({
-                            ID: Csw.makeId(o.ID, 'tbl')
+                            ID: Csw.makeId(cswPublic.data.ID, 'tbl')
                         });
                         cswPrivate.cell11 = cswPublic.control.cell(1, 1).propDom('colspan', '3');
                         cswPrivate.cell21 = cswPublic.control.cell(2, 1).propDom('width', cswPrivate.width);
@@ -48,7 +48,7 @@
                             if (false === Csw.isNullOrEmpty(fileName)) {
                                 //Clear button
                                 cswPrivate.cell23.icon({
-                                    ID: Csw.makeId(o.ID, 'clr'),
+                                    ID: Csw.makeId(cswPublic.data.ID, 'clr'),
                                     iconType: Csw.enums.iconType.trash,
                                     hovertext: 'Clear Image',
                                     size: 16,
@@ -57,7 +57,7 @@
                                         /* remember: confirm is globally blocking call */
                                         if (confirm("Are you sure you want to clear this image?")) {
                                             var dataJson = {
-                                                PropId: o.propData.id,
+                                                PropId: cswPublic.data.propData.id,
                                                 IncludeBlob: true
                                             };
 
@@ -71,7 +71,7 @@
                                                         contenttype: ''
                                                     };
                                                     cswPrivate.makeImg(null);
-                                                    o.onPropChange(val);
+                                                    cswPublic.data.onPropChange(val);
                                                 }
                                             });
                                         }
@@ -105,10 +105,10 @@
                         };
                         cswPrivate.makeImg(cswPrivate);
 
-                        if (false === o.ReadOnly && o.EditMode !== Csw.enums.editMode.Add) {
+                        if (false === cswPublic.data.ReadOnly && cswPublic.data.EditMode !== Csw.enums.editMode.Add) {
                             //Edit button
                             cswPrivate.cell22.icon({
-                                ID: Csw.makeId(o.ID, 'edit'),
+                                ID: Csw.makeId(cswPublic.data.ID, 'edit'),
                                 iconType: Csw.enums.iconType.pencil,
                                 hovertext: 'Edit',
                                 size: 16,
@@ -117,7 +117,7 @@
                                     $.CswDialog('FileUploadDialog', {
                                         url: '/NbtWebApp/wsNBT.asmx/fileForProp',
                                         params: {
-                                            PropId: o.propData.id
+                                            PropId: cswPublic.data.propData.id
                                         },
                                         onSuccess: function (data) {
                                             var val = {
@@ -128,7 +128,7 @@
                                             };
                                             if (data.success) {
                                                 cswPrivate.makeImg(val);
-                                                o.onPropChange(val);
+                                                cswPublic.data.onPropChange(val);
                                             }
                                         }
                                     });
@@ -141,7 +141,7 @@
 
                 };
 
-                propertyOption.render(render);
+                cswPublic.data.bindRender(render);
                 return cswPublic;
             }));
 

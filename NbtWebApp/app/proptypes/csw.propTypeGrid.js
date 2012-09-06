@@ -11,12 +11,12 @@
                 var cswPublic = {
                     data: propertyOption
                 };
-                var render = function (o) {
+                var render = function () {
                     'use strict';
-                    o = o || Csw.nbt.propertyOption(propertyOption);
+                    cswPublic.data = cswPublic.data || Csw.nbt.propertyOption(propertyOption);
 
-                    cswPrivate.propVals = o.propData.values;
-                    cswPrivate.parent = o.propDiv;
+                    cswPrivate.propVals = cswPublic.data.propData.values;
+                    cswPrivate.parent = cswPublic.data.propDiv;
                     cswPrivate.gridMode = Csw.string(cswPrivate.propVals.gridmode);
                     cswPrivate.maxRows = Csw.string(cswPrivate.propVals.maxrows);
                     cswPrivate.viewid = Csw.string(cswPrivate.propVals.viewid).trim();
@@ -54,18 +54,18 @@
                     cswPrivate.makeFullGrid = function (viewid, newDiv) {
                         'use strict';
                         newDiv.empty();
-                        var menuDiv = newDiv.div({ ID: Csw.makeId(o.ID + window.Ext.id(), 'grid_as_fieldtype_menu') }).css({ height: '25px' });
+                        var menuDiv = newDiv.div({ ID: Csw.makeId(cswPublic.data.ID + window.Ext.id(), 'grid_as_fieldtype_menu') }).css({ height: '25px' });
                         //newDiv.br();
-                        var filterDiv = newDiv.div({ ID: Csw.makeId(o.ID + window.Ext.id(), 'grid_as_fieldtype_filter') });
+                        var filterDiv = newDiv.div({ ID: Csw.makeId(cswPublic.data.ID + window.Ext.id(), 'grid_as_fieldtype_filter') });
                         //newDiv.br();
-                        var gridDiv = newDiv.div({ ID: Csw.makeId(o.ID + window.Ext.id(), 'grid_as_fieldtype') });
+                        var gridDiv = newDiv.div({ ID: Csw.makeId(cswPublic.data.ID + window.Ext.id(), 'grid_as_fieldtype') });
                         cswPrivate.reinitGrid = (function () {
                             return function () {
                                 cswPrivate.makeFullGrid(viewid, newDiv);
                             };
                         }());
                         Csw.nbt.viewFilters({
-                            ID: o.ID + '_viewfilters',
+                            ID: cswPublic.data.ID + '_viewfilters',
                             parent: filterDiv,
                             viewid: viewid,
                             onEditFilters: function (newviewid) {
@@ -74,15 +74,15 @@
                         }); // viewFilters
 
                         var gridOpts = {
-                            ID: o.ID + '_fieldtypegrid',
+                            ID: cswPublic.data.ID + '_fieldtypegrid',
                             //                        resizeWithParent: false,
                             //                        resizeWithParentElement: $('#nodetabs_props'),
                             viewid: viewid,
-                            nodeid: o.nodeid,
-                            cswnbtnodekey: o.cswnbtnodekey,
-                            readonly: o.ReadOnly,
+                            nodeid: cswPublic.data.nodeid,
+                            cswnbtnodekey: cswPublic.data.cswnbtnodekey,
+                            readonly: cswPublic.data.ReadOnly,
                             reinit: false,
-                            EditMode: o.EditMode,
+                            EditMode: cswPublic.data.EditMode,
                             onEditNode: function () {
                                 //o.onReload();
                                 cswPrivate.reinitGrid();
@@ -92,7 +92,7 @@
                                 cswPrivate.reinitGrid();
                             },
                             onSuccess: function (grid) {
-                                cswPrivate.makeGridMenu(menuDiv, o, gridOpts, grid, viewid);
+                                cswPrivate.makeGridMenu(menuDiv, cswPublic.data, gridOpts, grid, viewid);
                             }
                         };
                         cswPublic.control = gridDiv.$.CswNodeGrid('init', gridOpts);
@@ -104,7 +104,7 @@
                             urlMethod: 'getThinGrid',
                             data: {
                                 ViewId: cswPrivate.viewid,
-                                IncludeNodeKey: o.cswnbtnodekey,
+                                IncludeNodeKey: cswPublic.data.cswnbtnodekey,
                                 MaxRows: cswPrivate.maxRows
                             },
                             success: function (data) {
@@ -112,11 +112,11 @@
                                     rows: data.rows,
                                     onLinkClick: function () {
                                         $.CswDialog('OpenEmptyDialog', {
-                                            title: o.nodename + ' ' + o.propData.name,
+                                            title: cswPublic.data.nodename + ' ' + cswPublic.data.propData.name,
                                             onOpen: function (dialogDiv) {
                                                 cswPrivate.makeFullGrid(cswPrivate.viewid, dialogDiv);
                                             },
-                                            onClose: o.onReload
+                                            onClose: cswPublic.data.onReload
                                         }
                                         );
                                     }
@@ -131,7 +131,7 @@
                             urlMethod: 'getGridRowCount',
                             data: {
                                 ViewId: cswPrivate.viewid,
-                                IncludeNodeKey: o.cswnbtnodekey
+                                IncludeNodeKey: cswPublic.data.cswnbtnodekey
                             },
                             success: function (data) {
                                 cswPublic.control = cswPrivate.parent.linkGrid({
@@ -139,11 +139,11 @@
                                     linkText: '',
                                     onLinkClick: function () {
                                         $.CswDialog('OpenEmptyDialog', {
-                                            title: o.propData.name,
+                                            title: cswPublic.data.propData.name,
                                             onOpen: function (dialogDiv) {
                                                 cswPrivate.makeFullGrid(cswPrivate.viewid, dialogDiv);
                                             },
-                                            onClose: o.onReload
+                                            onClose: cswPublic.data.onReload
                                         }
                                         );
                                     }
@@ -152,7 +152,7 @@
                         });
                     };
 
-                    if (o.EditMode === Csw.enums.editMode.AuditHistoryInPopup || o.Multi) {
+                    if (cswPublic.data.EditMode === Csw.enums.editMode.AuditHistoryInPopup || cswPublic.data.Multi) {
                         cswPublic.control = cswPrivate.parent.append('[Grid display disabled]');
                     } else {
                         
@@ -172,7 +172,7 @@
 
                 };
 
-                propertyOption.render(render);
+                cswPublic.data.bindRender(render);
                 return cswPublic;
             }));
 

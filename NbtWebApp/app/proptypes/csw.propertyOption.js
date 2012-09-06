@@ -93,7 +93,7 @@
                     cswInternal.preparePropJsonForSave(cswPublic.Multi, cswPublic.propData, attributes);
                 };
 
-                cswPublic.render = function (callBack) {
+                cswPublic.bindRender = function (callBack) {
                     'use strict';
                     cswPrivate.globalTearDown = function () {
                         /// <summary>
@@ -131,7 +131,7 @@
                     });
                 }
 
-                cswPublic.unBind = function() {
+                cswPublic.unBindRender = function() {
                     Csw.tryExec(cswPrivate.nodeTearDown);
                 };
 

@@ -10,57 +10,57 @@
                 var cswPublic = {
                     data: propertyOption
                 };
-                var render = function (o) {
+                var render = function () {
                     'use strict';
-                    o = o || Csw.nbt.propertyOption(propertyOption);
+                    cswPublic.data = cswPublic.data || Csw.nbt.propertyOption(propertyOption);
                     
-                    cswPrivate.propVals = o.propData.values;
-                    cswPrivate.value = (false === o.Multi) ? Csw.string(cswPrivate.propVals.barcode).trim() : Csw.enums.multiEditDefaultValue;
+                    cswPrivate.propVals = cswPublic.data.propData.values;
+                    cswPrivate.value = (false === cswPublic.data.Multi) ? Csw.string(cswPrivate.propVals.barcode).trim() : Csw.enums.multiEditDefaultValue;
 
-                    cswPublic.control = o.propDiv.table({
-                        ID: Csw.makeId(o.ID, 'tbl')
+                    cswPublic.control = cswPublic.data.propDiv.table({
+                        ID: Csw.makeId(cswPublic.data.ID, 'tbl')
                     });
 
                     cswPrivate.cell1 = cswPublic.control.cell(1, 1);
 
-                    if (o.ReadOnly) {
+                    if (cswPublic.data.ReadOnly) {
                         cswPrivate.cell1.text(cswPrivate.value);
                     } else {
 
                         cswPrivate.input = cswPrivate.cell1.input({
-                            ID: o.ID,
+                            ID: cswPublic.data.ID,
                             type: Csw.enums.inputTypes.text,
                             cssclass: 'textinput',
                             onChange: function () {
                                 var barcode = cswPrivate.input.val();
-                                Csw.tryExec(o.onChange, barcode);
-                                o.onPropChange({ barcode: barcode });
+                                Csw.tryExec(cswPublic.data.onChange, barcode);
+                                cswPublic.data.onPropChange({ barcode: barcode });
                             },
                             value: cswPrivate.value
                         });
 
-                        if (o.Required) {
+                        if (cswPublic.data.Required) {
                             cswPublic.control.addClass('required');
                         }
 
-                        cswPublic.control.clickOnEnter(o.saveBtn);
+                        cswPublic.control.clickOnEnter(cswPublic.data.saveBtn);
                     }
-                    if (false === o.Multi) {
-                        cswPublic.control.cell(1, 2).div({ ID: Csw.makeId(o.ID, 'parent', window.Ext.id()) })
+                    if (false === cswPublic.data.Multi) {
+                        cswPublic.control.cell(1, 2).div({ ID: Csw.makeId(cswPublic.data.ID, 'parent', window.Ext.id()) })
                             .buttonExt({
-                                ID: Csw.makeId(o.ID, 'print', window.Ext.id()),
+                                ID: Csw.makeId(cswPublic.data.ID, 'print', window.Ext.id()),
                                 enabledText: 'Print',
                                 size: 'small',
                                 tooltip: { title: 'Print Barcode Label' },
                                 icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.barcode),
                                 onClick: function () {
-                                    $.CswDialog('PrintLabelDialog', { 'nodeid': o.nodeid, 'propid': o.propid });
+                                    $.CswDialog('PrintLabelDialog', { 'nodeid': cswPublic.data.nodeid, 'propid': cswPublic.data.propid });
                                 },
-                                editMode: o.EditMode
+                                editMode: cswPublic.data.EditMode
                             });
                     }
                 };
-                propertyOption.render(render);
+                cswPublic.data.bindRender(render);
 
                 return cswPublic;
 

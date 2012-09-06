@@ -10,16 +10,16 @@
                 var cswPublic = {
                     data: propertyOption
                 };
-                var render = function (o) {
-                    o = o || Csw.nbt.propertyOption(propertyOption);
-                    cswPrivate.propVals = o.propData.values;
-                    cswPrivate.value = (false === o.Multi) ? Csw.string(cswPrivate.propVals.value).trim() : Csw.enums.multiEditDefaultValue;
+                var render = function () {
+                    cswPublic.data = cswPublic.data || Csw.nbt.propertyOption(propertyOption);
+                    cswPrivate.propVals = cswPublic.data.propData.values;
+                    cswPrivate.value = (false === cswPublic.data.Multi) ? Csw.string(cswPrivate.propVals.value).trim() : Csw.enums.multiEditDefaultValue;
                     
-                    cswPublic.control = o.propDiv;
+                    cswPublic.control = cswPublic.data.propDiv;
                     cswPublic.control.append(cswPrivate.value);
                 };
 
-                propertyOption.render(render);
+                cswPublic.data.bindRender(render);
                 return cswPublic;
             }));
 

@@ -11,16 +11,16 @@
                     data: propertyOption
                 };
                 
-                var render = function(o) {
+                var render = function() {
                     'use strict';
-                    o = o || Csw.nbt.propertyOption(propertyOption);
+                    cswPublic.data = cswPublic.data || Csw.nbt.propertyOption(propertyOption);
 
-                    var propVals = o.propData.values;
-                    var parent = o.propDiv;
+                    var propVals = cswPublic.data.propData.values;
+                    var parent = cswPublic.data.propDiv;
 
                 };
 
-                propertyOption.render(render);
+                cswPublic.data.bindRender(render);
                 return cswPublic;
             }));
     

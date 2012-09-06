@@ -10,29 +10,29 @@
                     data: propertyOption
                 };
 
-                var render = function(o) {
+                var render = function() {
                     'use strict';
-                    o = o || Csw.nbt.propertyOption(propertyOption);
-                    if (false === o.Multi) {
-                        cswPublic.control = Csw.actions.auditHistory(o.propDiv, {
-                            ID: Csw.makeId(o.ID, window.Ext.id()),
-                            nodeid: o.nodeid,
-                            cswnbtnodekey: o.cswnbtnodekey,
-                            EditMode: o.EditMode,
+                    cswPublic.data = cswPublic.data || Csw.nbt.propertyOption(propertyOption);
+                    if (false === cswPublic.data.Multi) {
+                        cswPublic.control = Csw.actions.auditHistory(cswPublic.data.propDiv, {
+                            ID: Csw.makeId(cswPublic.data.ID, window.Ext.id()),
+                            nodeid: cswPublic.data.nodeid,
+                            cswnbtnodekey: cswPublic.data.cswnbtnodekey,
+                            EditMode: cswPublic.data.EditMode,
                             width: '100%',
-                            allowEditRow: (o.EditMode !== Csw.enums.editMode.PrintReport),
+                            allowEditRow: (cswPublic.data.EditMode !== Csw.enums.editMode.PrintReport),
                             onEditRow: function(date) {
                                 $.CswDialog('EditNodeDialog', {
-                                    nodeids: [o.nodeid],
-                                    nodekeys: [o.cswnbtnodekey],
-                                    onEditNode: o.onEditNode,
+                                    nodeids: [cswPublic.data.nodeid],
+                                    nodekeys: [cswPublic.data.cswnbtnodekey],
+                                    onEditNode: cswPublic.data.onEditNode,
                                     date: date
                                 });
                             }
                         });
                     }
                 };
-                propertyOption.render(render);
+                cswPublic.data.bindRender(render);
                 return cswPublic;
             }));
     

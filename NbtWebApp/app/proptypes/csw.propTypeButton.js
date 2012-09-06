@@ -10,13 +10,13 @@
                 var cswPublic = {
                     data: propertyOption
                 };
-                var render = function(o) {
+                var render = function() {
                     'use strict';
-                    o = o || Csw.nbt.propertyOption(propertyOption);
-                    cswPrivate.propDiv = o.propDiv;
+                    cswPublic.data = cswPublic.data || Csw.nbt.propertyOption(propertyOption);
+                    cswPrivate.propDiv = cswPublic.data.propDiv;
                     
-                    cswPrivate.propVals = o.propData.values;
-                    cswPrivate.value = Csw.string(cswPrivate.propVals.text, o.propData.name);
+                    cswPrivate.propVals = cswPublic.data.propData.values;
+                    cswPrivate.value = Csw.string(cswPrivate.propVals.text, cswPublic.data.propData.name);
                     cswPrivate.mode = Csw.string(cswPrivate.propVals.mode, 'button');
                     cswPrivate.menuoptions = cswPrivate.propVals.menuoptions.split(',');
                     cswPrivate.state = cswPrivate.propVals.state;
@@ -26,7 +26,7 @@
                     cswPrivate.onClickSuccess = function(data) {
                         var isRefresh = data.action == Csw.enums.nbtButtonAction.refresh;
                         if (isRefresh) { //cases 26201, 26107 
-                            Csw.tryExec(o.onReload,
+                            Csw.tryExec(cswPublic.data.onReload,
                                 (function(messagedivid) {
                                     return function() {
                                         if (false === Csw.isNullOrEmpty(data.message)) {
@@ -41,21 +41,21 @@
                     };
 
                     cswPublic.control = cswPrivate.propDiv.nodeButton({
-                        ID: Csw.makeId(o.propid, cswPrivate.text, 'btn'),
+                        ID: Csw.makeId(cswPublic.data.propid, cswPrivate.text, 'btn'),
                         value: cswPrivate.value,
                         mode: cswPrivate.mode,
                         state: cswPrivate.state,
                         menuOptions: cswPrivate.menuoptions,
                         selectedText: cswPrivate.selectedText,
                         confirmmessage: cswPrivate.propVals.confirmmessage,
-                        propId: o.propid,
-                        ReadOnly: Csw.bool(o.ReadOnly),
-                        Required: Csw.bool(o.Required),
+                        propId: cswPublic.data.propid,
+                        ReadOnly: Csw.bool(cswPublic.data.ReadOnly),
+                        Required: Csw.bool(cswPublic.data.Required),
                         onClickSuccess: cswPrivate.onClickSuccess
                     });
                 };
 
-                propertyOption.render(render);
+                cswPublic.data.bindRender(render);
 
                 return cswPublic;
             }));
