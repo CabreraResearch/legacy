@@ -11,6 +11,7 @@
                 qtyControl: null,
                 containerNoControl: null,
                 thinGrid: null,
+                thinGridAddButton: null,
                 amountsGridOnAdd: null
             };
 
@@ -215,7 +216,7 @@
                         hasHeader: true,
                         rows: cswPrivate.rows,
                         allowDelete: true,
-                        allowAdd: true,
+                        allowAdd: false,
                         makeAddRow: executeMakeAddRow,
                         onAdd: function () {
                             executeOnAdd();
@@ -273,6 +274,21 @@
                         Csw.tryExec(cswPublic.thinGrid.makeAddRow, executeMakeAddRow);
                         return Csw.bool(cswPublic.quantities.length > 0);
                     };
+
+                    cswParent.br();
+
+                    cswPublic.thinGridAddButton = cswParent.div({ID: window.Ext.id()}).buttonExt({
+                        enabledText: 'Add Row',
+                        size: 'small',
+                        tooltip: { title: 'Add Row' },
+                        icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.add),
+                        onClick: function () {
+                            cswPublic.thinGrid.addRow();
+                            cswPublic.thinGridAddButton.enable();
+                        }
+                    });
+
+                    cswParent.br();
 
                 } ());
 
