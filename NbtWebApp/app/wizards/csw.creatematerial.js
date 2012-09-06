@@ -426,7 +426,8 @@
                         var ret = true;
                         for (var i = 0; i < cswPublic.sizes.length; i++) {
                             if (cswPublic.sizes[i]["quantity"] === size["quantity"] &&
-                                cswPublic.sizes[i]["unit"] === size["unit"]
+                                cswPublic.sizes[i]["unit"] === size["unit"] &&
+                                cswPublic.sizes[i]["catalogNo"] === size["catalogNo"]
                             ) {
                                 ret = false;
                             }
