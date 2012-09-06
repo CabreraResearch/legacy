@@ -30,9 +30,6 @@ my @components = (
 	"StructureSearch"
 );
 
-my $orcldumpdir = "ChemSWDumpDirectory";
-my $masterdumpdir = "ChemSWDumpDirectory";
-
 my %repopaths;
 foreach my $component (@components)
 {
