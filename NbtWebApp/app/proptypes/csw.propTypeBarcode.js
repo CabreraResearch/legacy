@@ -6,7 +6,7 @@
         Csw.properties.register('barcode',
             Csw.method(function(propertyOption) {
                 'use strict';
-                var ret = {
+                var cswPublic = {
                     data: propertyOption
                 };
                 var render = function (o) {
@@ -26,12 +26,12 @@
                         cell1.text(value);
                     } else {
 
-                        ret.control = cell1.input({
+                        cswPublic.control = cell1.input({
                             ID: o.ID,
                             type: Csw.enums.inputTypes.text,
                             cssclass: 'textinput',
                             onChange: function () {
-                                var barcode = ret.control.val();
+                                var barcode = cswPublic.control.val();
                                 Csw.tryExec(o.onChange, barcode);
                                 o.onPropChange({ barcode: barcode });
                             },
@@ -39,10 +39,10 @@
                         });
 
                         if (o.Required) {
-                            ret.control.addClass('required');
+                            cswPublic.control.addClass('required');
                         }
 
-                        ret.control.clickOnEnter(o.saveBtn);
+                        cswPublic.control.clickOnEnter(o.saveBtn);
                     }
                     if (false === o.Multi) {
                         table.cell(1, 2).div({ ID: Csw.makeId(o.ID, 'parent', window.Ext.id()) })
@@ -61,7 +61,7 @@
                 };
                 propertyOption.render(render);
 
-                return ret;
+                return cswPublic;
 
             }));
 }());

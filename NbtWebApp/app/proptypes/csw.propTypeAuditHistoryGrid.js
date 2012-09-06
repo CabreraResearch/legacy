@@ -6,13 +6,13 @@
     Csw.properties.auditHistoryGrid = Csw.properties.auditHistoryGrid ||
         Csw.properties.register('auditHistoryGrid',
             Csw.method(function(propertyOption) {
-                var ret = {
+                var cswPublic = {
                     data: propertyOption
                 };
 
                 var render = function(o) {
                     if (false === o.Multi) {
-                        ret.control = Csw.actions.auditHistory(o.propDiv, {
+                        cswPublic.control = Csw.actions.auditHistory(o.propDiv, {
                             ID: Csw.makeId(o.ID, window.Ext.id()),
                             nodeid: o.nodeid,
                             cswnbtnodekey: o.cswnbtnodekey,
@@ -31,7 +31,7 @@
                     }
                 };
                 propertyOption.render(render);
-                return ret;
+                return cswPublic;
             }));
     
 }());

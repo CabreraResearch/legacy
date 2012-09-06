@@ -6,7 +6,7 @@
         Csw.properties.register('comments',
             Csw.method(function(propertyOption) {
                 'use strict';
-                var ret = {
+                var cswPublic = {
                     data: propertyOption
                 };
                 var render = function(o) {
@@ -59,11 +59,11 @@
                         cell3.append(acomment.message);
                     });
                     if (false === o.ReadOnly) {
-                        ret.control = parent.textArea({
+                        cswPublic.control = parent.textArea({
                             rows: rows,
                             cols: columns,
                             onChange: function () {
-                                var comment = ret.control.val();
+                                var comment = cswPublic.control.val();
                                 Csw.tryExec(o.onChange, comment);
                                 propertyOption.onPropChange({ newmessage: comment });
                             }
@@ -72,7 +72,7 @@
                 };
 
                 propertyOption.render(render);
-                return ret;
+                return cswPublic;
             }));
     
 }());

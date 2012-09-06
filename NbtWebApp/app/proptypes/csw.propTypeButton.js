@@ -6,7 +6,7 @@
         Csw.properties.register('button',
             Csw.method(function(propertyOption) {
                 'use strict';
-                var ret = {
+                var cswPublic = {
                     data: propertyOption
                 };
                 var render = function(o) {
@@ -35,13 +35,13 @@
                                             $newmessagediv.text(data.message);
                                         }
                                     };
-                                })(ret.control.messageDiv.getId())
+                                })(cswPublic.control.messageDiv.getId())
                             );
                         }
                         return false === isRefresh;
                     };
 
-                    ret.control = propDiv.nodeButton({
+                    cswPublic.control = propDiv.nodeButton({
                         ID: Csw.makeId(o.propid, text, 'btn'),
                         value: value,
                         mode: mode,
@@ -58,6 +58,6 @@
 
                 propertyOption.render(render);
 
-                return ret;
+                return cswPublic;
             }));
 }());
