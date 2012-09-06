@@ -359,12 +359,16 @@ namespace ChemSW.Nbt.ObjClasses
                                     NodeAsContainer = _CswNbtResources.Nodes.GetNode( Container.RelatedNodeId );
                                     if( null != NodeAsContainer )
                                     {
-                                        ButtonData.Data["nodeid"] = Container.RelatedNodeId.ToString();
-                                        CswPropIdAttr LocIdAttr = new CswPropIdAttr( NodeAsContainer.Node, NodeAsContainer.Location.NodeTypeProp );
-                                        ButtonData.Data["propidattr"] = LocIdAttr.ToString();
-                                        Status.Value = Statuses.Moved;
-                                        ButtonData.Action = NbtButtonAction.editprop;
-                                        ButtonData.Data["title"] = "Set " + NodeAsContainer.Node.NodeName + " Container's Location";
+                                        NodeAsContainer.Location.SelectedNodeId = Location.SelectedNodeId;
+                                        NodeAsContainer.postChanges( false );
+                                        Status.Value = Statuses.Completed;
+                                        ButtonData.Action = NbtButtonAction.refresh;
+                                        //ButtonData.Data["nodeid"] = Container.RelatedNodeId.ToString();
+                                        //CswPropIdAttr LocIdAttr = new CswPropIdAttr( NodeAsContainer.Node, NodeAsContainer.Location.NodeTypeProp );
+                                        //ButtonData.Data["propidattr"] = LocIdAttr.ToString();
+                                        //Status.Value = Statuses.Moved;
+                                        //ButtonData.Action = NbtButtonAction.editprop;
+                                        //ButtonData.Data["title"] = "Set " + NodeAsContainer.Node.NodeName + " Container's Location";
                                     }
                                 }
                                 break;
