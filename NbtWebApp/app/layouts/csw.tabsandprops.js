@@ -705,7 +705,7 @@
                         onEditView: cswPrivate.onEditView,
                         onAfterButtonClick: cswPrivate.onAfterButtonClick,
                         ReadOnly: Csw.bool(propData.readonly) || cswPrivate.Config
-                    });
+                    }, propDiv);
 
                     cswPrivate.properties[propId] = Csw.nbt.property(propDiv, fieldOpt);
 

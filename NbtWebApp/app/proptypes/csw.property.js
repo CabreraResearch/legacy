@@ -9,7 +9,7 @@
                 /// <param name="cswParent" type="Csw.literals">An Csw Control to bind to.</param>
                 /// <returns type="Csw.controls">The options object with DOM methods attached.</returns> 
                 'use strict';
-                var cswPrivate = Csw.nbt.propertyOption(options);
+                var cswPrivate = Csw.nbt.propertyOption(options, cswParent);
                 var cswPublic = {};
                 
                 if (Csw.isNullOrEmpty(cswParent)) {
@@ -19,7 +19,7 @@
                 (function _preCtor() {
                     switch (cswPrivate.fieldtype) {
                         case Csw.enums.subFieldsMap.AuditHistoryGrid.name:
-                            cswPublic = Csw.properties.auditHistoryGrid(cswParent, cswPrivate);
+                            cswPublic = Csw.properties.auditHistoryGrid(cswPrivate);
                             break;
                         default:
                             cswPublic = $.CswFieldTypeFactory('make', cswPrivate);

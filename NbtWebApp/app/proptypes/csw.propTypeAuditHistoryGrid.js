@@ -5,15 +5,14 @@
     'use strict';
     Csw.properties.auditHistoryGrid = Csw.properties.auditHistoryGrid ||
         Csw.properties.register('auditHistoryGrid',
-            Csw.method(function(cswParent, propertyOption) {
+            Csw.method(function(propertyOption) {
                 var ret = {
                     data: propertyOption
                 };
 
                 var render = function(o) {
-                    cswParent.empty();
                     if (false === o.Multi) {
-                        ret.control = Csw.actions.auditHistory(cswParent, {
+                        ret.control = Csw.actions.auditHistory(o.propDiv, {
                             ID: Csw.makeId(o.ID, window.Ext.id()),
                             nodeid: o.nodeid,
                             cswnbtnodekey: o.cswnbtnodekey,

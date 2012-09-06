@@ -48,7 +48,7 @@
 
     Csw.nbt.propertyOption = Csw.nbt.propertyOption ||
         Csw.nbt.register('propertyOption',
-            Csw.method(function (cswPrivate) {
+            Csw.method(function (cswPrivate, cswParent) {
                 /// <summary>Extends an Object with properties specific to NBT FieldTypes (for the purpose of Intellisense)</summary>
                 /// <returns type="Csw.nbt.propertyOption">An Object represent a CswNbtNodeProp</returns> 
                 'use strict';
@@ -58,7 +58,7 @@
                     name: '', //propName
                     nodeid: '',
                     fieldtype: '',
-                    propDiv: {},
+                    propDiv: cswParent,
                     saveBtn: {},
                     propData: {},
                     onChange: function () {
@@ -92,6 +92,7 @@
 
                 cswPublic.render = function (callBack) {
                     var renderer = function() {
+                        cswPublic.propDiv.empty();
                         Csw.tryExec(callBack, cswPublic);
                         //Csw.unsubscribe('render_' + cswPublic.nodeid, renderer);
                     };
