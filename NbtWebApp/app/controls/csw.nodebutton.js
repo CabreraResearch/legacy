@@ -30,7 +30,7 @@
                         onClickAction: null
                     };
                     Csw.extend(cswPrivate, options);
-                    cswPrivate.div = cswParent.div();
+                    cswPrivate.div = cswParent.div({ID: window.Ext.id()});
                     cswPrivate.div.empty();
 
                     cswPrivate.table = cswPrivate.div.table({
@@ -71,18 +71,7 @@
                                             if (false === cswPrivate.useToolTip) {
                                                 cswPublic.messageDiv.text(data.message);
                                             } else {
-                                                window.Ext.create('Ext.tip.ToolTip', {
-                                                    target: Csw.makeId(cswPrivate.ID, 'tbl'),
-                                                    html: data.message,
-                                                    autoShow: true,
-                                                    focusOnToFront: true,
-                                                    autoHide: false,
-                                                    closable: true,
-                                                    anchor: 'left',
-                                                    bodyStyle: {
-                                                        background: '#ffff00'
-                                                    }
-                                                });
+                                                cswPrivate.btnCell.quickTip({ html: data.message });
                                             }
                                         }
                                         var continueToPub = false === Csw.isFunction(cswPrivate.onClickSuccess) || Csw.tryExec(cswPrivate.onClickSuccess, data);
