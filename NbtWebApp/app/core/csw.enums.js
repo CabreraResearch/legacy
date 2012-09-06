@@ -415,6 +415,7 @@
                     Text: Csw.enums.subFieldNames.Text
                 }
             },
+            Comments: { name: 'Comments', subfields: {} },
             Composite: { name: 'Composite', subfields: {} },
             DateTime: {
                 name: 'DateTime',
