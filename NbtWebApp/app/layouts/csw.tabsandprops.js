@@ -590,6 +590,7 @@
                         cswPrivate.saveBtn.show();
                     }
                 }
+                Csw.publish('render_' + cswPublic.getNodeId());
                 return cswPrivate.atLeastOne;
             }; // _handleProperties()
 
