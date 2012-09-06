@@ -360,6 +360,8 @@ namespace ChemSW.Nbt.ObjClasses
                                     if( null != NodeAsContainer )
                                     {
                                         NodeAsContainer.Location.SelectedNodeId = Location.SelectedNodeId;
+                                        NodeAsContainer.Location.CachedNodeName = Location.CachedNodeName;
+                                        NodeAsContainer.Location.CachedPath = Location.CachedPath;
                                         NodeAsContainer.postChanges( false );
                                         Status.Value = Statuses.Completed;
                                         ButtonData.Action = NbtButtonAction.refresh;
