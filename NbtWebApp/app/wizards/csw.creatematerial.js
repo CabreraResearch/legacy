@@ -65,6 +65,7 @@
                 unitCountCtrl: null,
                 sizesForm: null,
                 sizeGrid: null,
+                sizeGridAddButton: null,
                 sizes: []
             };
 
@@ -511,7 +512,7 @@
                                 hasHeader: true,
                                 rows: cswPrivate.rows,
                                 allowDelete: true,
-                                allowAdd: true,
+                                allowAdd: false,
                                 makeAddRow: function (cswCell, columnName, rowid) {
                                     'use strict';
                                     var thisSize = {
@@ -628,7 +629,21 @@
                                     cswPublic.sizes = reducedSizes;
                                 }
                             });
+
+                            cswPrivate.divStep3.br();
+
+                            cswPublic.sizeGridAddButton = cswPrivate.divStep3.buttonExt({
+                                enabledText: 'Add Row',
+                                size: 'small',
+                                tooltip: { title: 'Add Row' },
+                                icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.add),
+                                onClick: function () {
+                                    cswPublic.sizeGrid.addRow();
+                                    cswPublic.sizeGridAddButton.enable();
+                                }
+                            });
                         };
+
                         div.br();
 
                         /* Size Select (hidden if only 1 NodeType present) - to get size node type */
