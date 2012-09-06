@@ -45,10 +45,8 @@
                 switch (m.fieldtype) {
                 case "AuditHistoryGrid":
                 case "Barcode":
-                    break; //keep the refactored props in the switch until _factory is completely removed
                 case "Button":
-                    m.propDiv.$.CswFieldTypeButton('init', m); //'init', nodeid, propData, onChange
-                    break;
+                    break; //keep the refactored props in the switch until _factory is completely removed
                 case "Comments":
                     m.propDiv.$.CswFieldTypeComments('init', m); //'init', nodeid, propData, onChange
                     break;
@@ -176,11 +174,8 @@
                 switch (m.fieldtype) {
                 case "AuditHistoryGrid":
                 case "Barcode":
-                    break; //keep the refactored props in the switch until _factory is completely removed
-
                 case "Button":
-                    m.propDiv.$.CswFieldTypeButton('save', m); //('save', $propdiv, propData);
-                    break;
+                    break; //keep the refactored props in the switch until _factory is completely removed
                 case "Comments":
                     m.propDiv.$.CswFieldTypeComments('save', m); //('save', $propdiv, propData);
                     break;

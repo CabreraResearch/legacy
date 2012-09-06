@@ -24,6 +24,9 @@
                         case Csw.enums.subFieldsMap.Barcode.name:
                             cswPublic = Csw.properties.barcode(cswPrivate);
                             break;
+                        case Csw.enums.subFieldsMap.Button.name:
+                            cswPublic = Csw.properties.button(cswPrivate);
+                            break;
                         default:
                             cswPublic = $.CswFieldTypeFactory('make', cswPrivate);
                     }
