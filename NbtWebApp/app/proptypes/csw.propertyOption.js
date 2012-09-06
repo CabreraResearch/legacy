@@ -11,6 +11,7 @@
             ///<param name="propVals" type="Object">Likely an o.propData.values object. This contains the cached prop JSON.</param>
             ///<param name="attributes" type="Object">An object which mirrors the structure of propVals. This contains the new prop JSON derived from the form.</param>
             ///<returns type="Void">No return, but the JSON is updated. propVals.wasmodified is set according to whether the subfield values changed.</returns>
+            'use strict';
             var wasModified = false;
             if (false === Csw.isNullOrEmpty(propVals)) {
                 Csw.crawlObject(propVals, function (prop, key) {
@@ -35,6 +36,7 @@
             ///<param name="propVals" type="Object">Likely an o.propData.values object. This contains the cached prop JSON.</param>
             ///<param name="attributes" type="Object">An object which mirrors the structure of propVals. This contains the new prop JSON derived from the form.</param>
             ///<returns type="Void">No return, but the JSON is updated. propVals.wasmodified is set according to whether the subfield values changed.</returns>
+            'use strict';
             var wasModified = false;
             if (false === Csw.isNullOrEmpty(propData)) {
                 if (Csw.contains(propData, 'values')) {
@@ -86,16 +88,20 @@
 
                 Csw.extend(cswPublic, cswPrivate);
                 cswPublic.onPropChange = function(attributes) {
-                    attributes = attributes || { };
+                    'use strict';
+                    attributes = attributes || {};
                     cswInternal.preparePropJsonForSave(cswPublic.Multi, cswPublic.propData, attributes);
                 };
 
                 cswPublic.render = function (callBack) {
-                    var tearDown = function() {
+                    'use strict';
+                    var tearDown = function () {
+                        'use strict';
                         Csw.unsubscribe('render_' + cswPublic.nodeid, renderer);
                         Csw.unsubscribe('initPropertyTearDown', tearDown);
                     };
                     var renderer = function () {
+                        'use strict';
                         cswPublic.propDiv.empty();
                         Csw.tryExec(callBack, cswPublic);
                         Csw.subscribe('initPropertyTearDown', tearDown);

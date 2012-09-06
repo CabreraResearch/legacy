@@ -5,10 +5,12 @@
     Csw.properties.barcode = Csw.properties.barcode ||
         Csw.properties.register('barcode',
             Csw.method(function(propertyOption) {
+                'use strict';
                 var ret = {
                     data: propertyOption
                 };
                 var render = function (o) {
+                    'use strict';
                     o = o || Csw.nbt.propertyOption(propertyOption);
                     
                     var propVals = o.propData.values;
