@@ -26,12 +26,12 @@
                         cell1.text(value);
                     } else {
 
-                        var textBox = cell1.input({
+                        ret.control = cell1.input({
                             ID: o.ID,
                             type: Csw.enums.inputTypes.text,
                             cssclass: 'textinput',
                             onChange: function () {
-                                var barcode = textBox.val();
+                                var barcode = ret.control.val();
                                 Csw.tryExec(o.onChange, barcode);
                                 o.onPropChange({ barcode: barcode });
                             },
@@ -39,10 +39,10 @@
                         });
 
                         if (o.Required) {
-                            textBox.addClass('required');
+                            ret.control.addClass('required');
                         }
 
-                        textBox.clickOnEnter(o.saveBtn);
+                        ret.control.clickOnEnter(o.saveBtn);
                     }
                     if (false === o.Multi) {
                         table.cell(1, 2).div({ ID: Csw.makeId(o.ID, 'parent', window.Ext.id()) })

@@ -35,13 +35,13 @@
                                             $newmessagediv.text(data.message);
                                         }
                                     };
-                                })(nodeButton.messageDiv.getId())
+                                })(ret.control.messageDiv.getId())
                             );
                         }
                         return false === isRefresh;
                     };
 
-                    var nodeButton = propDiv.nodeButton({
+                    ret.control = propDiv.nodeButton({
                         ID: Csw.makeId(o.propid, text, 'btn'),
                         value: value,
                         mode: mode,
