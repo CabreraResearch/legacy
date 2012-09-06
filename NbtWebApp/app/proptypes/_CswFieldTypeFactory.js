@@ -48,10 +48,8 @@
                     case "Button":
                     case "Comments":
                     case "Composite":
-                        break; //keep the refactored props in the switch until _factory is completely removed
                     case "DateTime":
-                        m.propDiv.$.CswFieldTypeDateTime('init', m); //'init', nodeid, propData, onChange
-                        break;
+                        break; //keep the refactored props in the switch until _factory is completely removed
                     case "File":
                         m.propDiv.$.CswFieldTypeFile('init', m); //'init', nodeid, propData, onChange
                         break;
@@ -173,10 +171,8 @@
                     case "Button":
                     case "Comments":
                     case "Composite":
-                        break; //keep the refactored props in the switch until _factory is completely removed
                     case "DateTime":
-                        m.propDiv.$.CswFieldTypeDateTime('save', m); //('save', $propdiv, propData);
-                        break;
+                        break; //keep the refactored props in the switch until _factory is completely removed
                     case "File":
                         m.propDiv.$.CswFieldTypeFile('save', m); //('save', $propdiv, propData);
                         break;

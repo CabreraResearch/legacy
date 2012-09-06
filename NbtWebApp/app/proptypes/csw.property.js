@@ -33,6 +33,9 @@
                         case Csw.enums.subFieldsMap.Composite.name:
                             cswPublic = Csw.properties.composite(cswPrivate);
                             break;
+                        case Csw.enums.subFieldsMap.DateTime.name:
+                            cswPublic = Csw.properties.dateTime(cswPrivate);
+                            break;
                         default:
                             cswPublic = $.CswFieldTypeFactory('make', cswPrivate);
                     }
