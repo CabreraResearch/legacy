@@ -436,6 +436,7 @@
             File: { name: 'File', subfields: {} },
             Grid: { name: 'Grid', subfields: {} },
             Image: { name: 'Image', subfields: {} },
+            ImageList: { name: 'ImageList', subfields: {} },
             Link: {
                 name: 'Link',
                 subfields: {
