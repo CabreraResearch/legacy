@@ -6,30 +6,32 @@
         Csw.properties.register('dateTime',
             Csw.method(function (propertyOption) {
                 'use strict';
+                var cswPrivate = { };
                 var cswPublic = {
                     data: propertyOption
                 };
                 var render = function (o) {
                     o = o || Csw.nbt.propertyOption(propertyOption);
-                    var propVals = o.propData.values;
-                    var parent = o.propDiv;
-                    var date = (false === o.Multi) ? Csw.string(propVals.value.date).trim() : Csw.enums.multiEditDefaultValue;
-                    var time = (false === o.Multi) ? Csw.string(propVals.value.time).trim() : Csw.enums.multiEditDefaultValue;
+                    cswPrivate.propVals = o.propData.values;
+                    cswPrivate.parent = o.propDiv;
+                    cswPrivate.date = (false === o.Multi) ? Csw.string(cswPrivate.propVals.value.date).trim() : Csw.enums.multiEditDefaultValue;
+                    cswPrivate.time = (false === o.Multi) ? Csw.string(cswPrivate.propVals.value.time).trim() : Csw.enums.multiEditDefaultValue;
 
+                    cswPublic.control = cswPrivate.parent.div();
                     if (o.ReadOnly) {
-                        parent.append(o.propData.gestalt);
+                        cswPublic.control.append(o.propData.gestalt);
                     } else {
-                        cswPublic.control = parent.dateTimePicker({
+                        cswPrivate.dateTimePicker = cswPublic.control.dateTimePicker({
                             ID: o.ID,
-                            Date: date,
-                            Time: time,
-                            DateFormat: Csw.serverDateFormatToJQuery(propVals.value.dateformat),
-                            TimeFormat: Csw.serverTimeFormatToJQuery(propVals.value.timeformat),
-                            DisplayMode: propVals.displaymode,
+                            Date: cswPrivate.date,
+                            Time: cswPrivate.time,
+                            DateFormat: Csw.serverDateFormatToJQuery(cswPrivate.propVals.value.dateformat),
+                            TimeFormat: Csw.serverTimeFormatToJQuery(cswPrivate.propVals.value.timeformat),
+                            DisplayMode: cswPrivate.propVals.displaymode,
                             ReadOnly: o.ReadOnly,
                             Required: o.Required,
                             onChange: function () {
-                                var val = cswPublic.control.val();
+                                var val = cswPrivate.dateTimePicker.val();
                                 Csw.tryExec(o.onChange, val);
                                 o.onPropChange({ value: val });
                             }

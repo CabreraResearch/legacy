@@ -6,22 +6,24 @@
         Csw.properties.register('comments',
             Csw.method(function(propertyOption) {
                 'use strict';
+                var cswPrivate = { };
                 var cswPublic = {
                     data: propertyOption
                 };
                 var render = function(o) {
+                    'use strict';
+                    o = o || Csw.nbt.propertyOption(propertyOption);
+                    cswPrivate.propVals = o.propData.values;
+                    cswPrivate.parent = o.propDiv;
+                    cswPrivate.rows = Csw.string(cswPrivate.propVals.rows);
+                    cswPrivate.columns = Csw.string(cswPrivate.propVals.columns);
 
-                    var propVals = o.propData.values;
-                    var parent = o.propDiv,
-                        rows = Csw.string(propVals.rows),
-                        columns = Csw.string(propVals.columns);
-
-                    var commentsDiv = parent.div({
+                    cswPrivate.commentsDiv = cswPrivate.parent.div({
                         value: '',
                         cssclass: 'scrollingdiv',
                         width: '350px'
                     });
-                    var myTable = commentsDiv.table({
+                    cswPrivate.myTable = cswPrivate.commentsDiv.table({
                         TableCssClass: '',
                         CellCssClass: '',
                         cellpadding: 4,
@@ -34,34 +36,36 @@
                         OddCellRightAlign: false,
                         border: 0
                     });
-                    var arow = 0;
-                    var bgclass = '';
-                    Csw.each(propVals.comments, function(acomment) {
+
+                    cswPrivate.arow = 0;
+                    cswPrivate.bgclass = '';
+
+                    Csw.each(cswPrivate.propVals.comments, function (acomment) {
                         acomment = acomment || { datetime: '', commenter: '', message: '' };
-                        arow += 1;
-                        var cell1 = myTable.cell(arow * 2, 1);
-                        var cell2 = myTable.cell(arow * 2, 2);
-                        if ((arow % 2) === 0) {
-                            bgclass = 'OddRow';
+                        cswPrivate.arow += 1;
+                        var cell1 = cswPrivate.myTable.cell(cswPrivate.arow * 2, 1);
+                        var cell2 = cswPrivate.myTable.cell(cswPrivate.arow * 2, 2);
+                        if ((cswPrivate.arow % 2) === 0) {
+                            cswPrivate.bgclass = 'OddRow';
                         } else {
-                            bgclass = 'EvenRow';
+                            cswPrivate.bgclass = 'EvenRow';
                         }
-                        cell1.addClass(bgclass);
-                        cell2.addClass(bgclass);
+                        cell1.addClass(cswPrivate.bgclass);
+                        cell2.addClass(cswPrivate.bgclass);
                         cell2.append(acomment.datetime);
                         cell1.append(acomment.commenter);
                         cell2.propDom('align', 'right');
                         cell1.css({ fontStyle: 'italic' });
                         cell2.css({ fontStyle: 'italic' });
-                        var cell3 = myTable.cell(arow * 2 + 1, 1);
+                        var cell3 = cswPrivate.myTable.cell(cswPrivate.arow * 2 + 1, 1);
                         cell3.propNonDom('colspan', '2');
-                        cell3.addClass(bgclass);
+                        cell3.addClass(cswPrivate.bgclass);
                         cell3.append(acomment.message);
                     });
                     if (false === o.ReadOnly) {
-                        cswPublic.control = parent.textArea({
-                            rows: rows,
-                            cols: columns,
+                        cswPublic.control = cswPrivate.parent.textArea({
+                            rows: cswPrivate.rows,
+                            cols: cswPrivate.columns,
                             onChange: function () {
                                 var comment = cswPublic.control.val();
                                 Csw.tryExec(o.onChange, comment);

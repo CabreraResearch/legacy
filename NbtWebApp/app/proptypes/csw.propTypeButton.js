@@ -6,25 +6,24 @@
         Csw.properties.register('button',
             Csw.method(function(propertyOption) {
                 'use strict';
+                var cswPrivate = { };
                 var cswPublic = {
                     data: propertyOption
                 };
                 var render = function(o) {
                     'use strict';
-                    var propDiv = o.propDiv;
-                    propDiv.empty();
+                    o = o || Csw.nbt.propertyOption(propertyOption);
+                    cswPrivate.propDiv = o.propDiv;
+                    
+                    cswPrivate.propVals = o.propData.values;
+                    cswPrivate.value = Csw.string(cswPrivate.propVals.text, o.propData.name);
+                    cswPrivate.mode = Csw.string(cswPrivate.propVals.mode, 'button');
+                    cswPrivate.menuoptions = cswPrivate.propVals.menuoptions.split(',');
+                    cswPrivate.state = cswPrivate.propVals.state;
+                    cswPrivate.text = cswPrivate.propVals.text;
+                    cswPrivate.selectedText = cswPrivate.propVals.selectedText;
 
-                    var propVals = o.propData.values,
-                        value = Csw.string(propVals.text, o.propData.name),
-                        mode = Csw.string(propVals.mode, 'button'),
-                        menuoptions, state, text, selectedText;
-
-                    menuoptions = propVals.menuoptions.split(',');
-                    state = propVals.state;
-                    text = propVals.text;
-                    selectedText = propVals.selectedText;
-
-                    var onClickSuccess = function(data) {
+                    cswPrivate.onClickSuccess = function(data) {
                         var isRefresh = data.action == Csw.enums.nbtButtonAction.refresh;
                         if (isRefresh) { //cases 26201, 26107 
                             Csw.tryExec(o.onReload,
@@ -41,18 +40,18 @@
                         return false === isRefresh;
                     };
 
-                    cswPublic.control = propDiv.nodeButton({
-                        ID: Csw.makeId(o.propid, text, 'btn'),
-                        value: value,
-                        mode: mode,
-                        state: state,
-                        menuOptions: menuoptions,
-                        selectedText: selectedText,
-                        confirmmessage: propVals.confirmmessage,
+                    cswPublic.control = cswPrivate.propDiv.nodeButton({
+                        ID: Csw.makeId(o.propid, cswPrivate.text, 'btn'),
+                        value: cswPrivate.value,
+                        mode: cswPrivate.mode,
+                        state: cswPrivate.state,
+                        menuOptions: cswPrivate.menuoptions,
+                        selectedText: cswPrivate.selectedText,
+                        confirmmessage: cswPrivate.propVals.confirmmessage,
                         propId: o.propid,
                         ReadOnly: Csw.bool(o.ReadOnly),
                         Required: Csw.bool(o.Required),
-                        onClickSuccess: onClickSuccess
+                        onClickSuccess: cswPrivate.onClickSuccess
                     });
                 };
 

@@ -11,6 +11,8 @@
                 };
 
                 var render = function(o) {
+                    'use strict';
+                    o = o || Csw.nbt.propertyOption(propertyOption);
                     if (false === o.Multi) {
                         cswPublic.control = Csw.actions.auditHistory(o.propDiv, {
                             ID: Csw.makeId(o.ID, window.Ext.id()),

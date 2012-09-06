@@ -6,6 +6,7 @@
         Csw.properties.register('barcode',
             Csw.method(function(propertyOption) {
                 'use strict';
+                var cswPrivate = { };
                 var cswPublic = {
                     data: propertyOption
                 };
@@ -13,29 +14,29 @@
                     'use strict';
                     o = o || Csw.nbt.propertyOption(propertyOption);
                     
-                    var propVals = o.propData.values;
-                    var value = (false === o.Multi) ? Csw.string(propVals.barcode).trim() : Csw.enums.multiEditDefaultValue;
+                    cswPrivate.propVals = o.propData.values;
+                    cswPrivate.value = (false === o.Multi) ? Csw.string(cswPrivate.propVals.barcode).trim() : Csw.enums.multiEditDefaultValue;
 
-                    var table = o.propDiv.table({
+                    cswPublic.control = o.propDiv.table({
                         ID: Csw.makeId(o.ID, 'tbl')
                     });
 
-                    var cell1 = table.cell(1, 1);
+                    cswPrivate.cell1 = cswPublic.control.cell(1, 1);
 
                     if (o.ReadOnly) {
-                        cell1.text(value);
+                        cswPrivate.cell1.text(cswPrivate.value);
                     } else {
 
-                        cswPublic.control = cell1.input({
+                        cswPrivate.input = cswPrivate.cell1.input({
                             ID: o.ID,
                             type: Csw.enums.inputTypes.text,
                             cssclass: 'textinput',
                             onChange: function () {
-                                var barcode = cswPublic.control.val();
+                                var barcode = cswPrivate.input.val();
                                 Csw.tryExec(o.onChange, barcode);
                                 o.onPropChange({ barcode: barcode });
                             },
-                            value: value
+                            value: cswPrivate.value
                         });
 
                         if (o.Required) {
@@ -45,7 +46,7 @@
                         cswPublic.control.clickOnEnter(o.saveBtn);
                     }
                     if (false === o.Multi) {
-                        table.cell(1, 2).div({ ID: Csw.makeId(o.ID, 'parent', window.Ext.id()) })
+                        cswPublic.control.cell(1, 2).div({ ID: Csw.makeId(o.ID, 'parent', window.Ext.id()) })
                             .buttonExt({
                                 ID: Csw.makeId(o.ID, 'print', window.Ext.id()),
                                 enabledText: 'Print',

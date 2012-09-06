@@ -6,16 +6,17 @@
         Csw.properties.register('composite',
             Csw.method(function (propertyOption) {
                 'use strict';
+                var cswPrivate = { };
                 var cswPublic = {
                     data: propertyOption
                 };
                 var render = function (o) {
-
-                    var propVals = o.propData.values;
+                    o = o || Csw.nbt.propertyOption(propertyOption);
+                    cswPrivate.propVals = o.propData.values;
+                    cswPrivate.value = (false === o.Multi) ? Csw.string(cswPrivate.propVals.value).trim() : Csw.enums.multiEditDefaultValue;
+                    
                     cswPublic.control = o.propDiv;
-                    var value = (false === o.Multi) ? Csw.string(propVals.value).trim() : Csw.enums.multiEditDefaultValue;
-                    cswPublic.control.append(value);
-
+                    cswPublic.control.append(cswPrivate.value);
                 };
 
                 propertyOption.render(render);
