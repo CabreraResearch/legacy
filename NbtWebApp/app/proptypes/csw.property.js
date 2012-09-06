@@ -42,6 +42,9 @@
                         case Csw.enums.subFieldsMap.Grid.name:
                             cswPublic = Csw.properties.grid(cswPrivate);
                             break;
+                        case Csw.enums.subFieldsMap.Image.name:
+                            cswPublic = Csw.properties.image(cswPrivate);
+                            break;
                         default:
                             cswPublic = $.CswFieldTypeFactory('make', cswPrivate);
                     }

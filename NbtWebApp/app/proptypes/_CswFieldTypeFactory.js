@@ -50,10 +50,8 @@
                     case "Composite":
                     case "DateTime":
                     case "File":
-                    case "Grid": break; //keep the refactored props in the switch until _factory is completely removed
-                    case "Image":
-                        m.propDiv.$.CswFieldTypeImage('init', m); //'init', nodeid, propData, onChange
-                        break;
+                    case "Grid": 
+                    case "Image": break; //keep the refactored props in the switch until _factory is completely removed
                     case "ImageList":
                         m.propDiv.$.CswFieldTypeImageList('init', m); //'init', nodeid, propData, onChange
                         break;
@@ -169,11 +167,7 @@
                     case "DateTime":
                     case "File":
                     case "Grid":
-                        break; //keep the refactored props in the switch until _factory is completely removed
-                    
-                    case "Image":
-                        m.propDiv.$.CswFieldTypeImage('save', m); //('save', $propdiv, propData);
-                        break;
+                    case "Image": break; //keep the refactored props in the switch until _factory is completely removed
                     case "ImageList":
                         m.propDiv.$.CswFieldTypeImageList('save', m); //('save', $propdiv, propData);
                         break;

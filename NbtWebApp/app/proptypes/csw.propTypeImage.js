@@ -1,126 +1,148 @@
 /// <reference path="~/app/CswApp-vsdoc.js" />
 
 
-(function ($) {
-    "use strict";
-    var pluginName = 'CswFieldTypeImage';
+(function () {
+    'use strict';
+    Csw.properties.image = Csw.properties.image ||
+        Csw.properties.register('image',
+            Csw.method(function (propertyOption) {
+                'use strict';
+                var cswPrivate = {
+                    width: ''
+                };
+                var cswPublic = {
+                    data: propertyOption
+                };
 
-    var methods = {
-        init: function (o) {
+                var render = function (o) {
+                    'use strict';
+                    o = o || Csw.nbt.propertyOption(propertyOption);
 
-            var propDiv = o.propDiv;
-            propDiv.empty();
+                    cswPrivate.propVals = o.propData.values;
+                    cswPrivate.parent = o.propDiv;
 
-            if (o.Multi) {
-                propDiv.append(Csw.enums.multiEditDefaultValue);
-            } else {
+                    if (o.Multi) {
+                        cswPublic.control = cswPrivate.parent.append(Csw.enums.multiEditDefaultValue);
+                    } else {
 
-                var propVals = o.propData.values,
-                    width,
-                    href = '/NbtWebApp/' + Csw.string(propVals.href);
+                        cswPrivate.href = '/NbtWebApp/' + Csw.string(cswPrivate.propVals.href);
+                        cswPrivate.href += '&usenodetypeasplaceholder=false'; // case 27596
 
-                href += '&usenodetypeasplaceholder=false';     // case 27596
-
-                if (false === Csw.isNullOrEmpty(propVals.width) &&
-                   Csw.isNumeric(propVals.width)) {
-                    width = Math.abs(Csw.number(propVals.width, 100) - 36);
-                } else {
-                    width = '';
-                }
-
-                var fileName = Csw.string(propVals.name).trim();
-
-                var table = propDiv.table({
-                    ID: Csw.makeId(o.ID, 'tbl')
-                });
-                var cell11 = table.cell(1, 1).propDom('colspan', '3');
-                var cell21 = table.cell(2, 1).propDom('width', width);
-                var cell22 = table.cell(2, 2).propDom({ align: 'right', width: '20px' }).div();
-                var cell23 = table.cell(2, 3).propDom({ align: 'right', width: '20px' }).div();
-
-                //if (false === Csw.isNullOrEmpty(fileName)) {
-                    //Case 24389: IE interprets height and width absolutely, better not to use them at all.
-                    cell11.a({
-                        href: href,
-                        target: '_blank'
-                    })
-                        .img({
-                            src: href, 
-                            alt: fileName
-                        });
-                    cell21.a({ 
-                        href: href,
-                        target: '_blank',
-                        text: fileName
-                    });
-//                } else {
-//                    cell21.append('(no image selected)');
-//                }
-
-
-                if (false === o.ReadOnly && o.EditMode !== Csw.enums.editMode.Add) {
-                    //Edit button
-                    cell22.icon({
-                        ID: Csw.makeId(o.ID, 'edit'),
-                        iconType: Csw.enums.iconType.pencil,
-                        hovertext: 'Edit',
-                        size: 16,
-                        isButton: true,
-                        onClick: function () {
-                            $.CswDialog('FileUploadDialog', {
-                                url: '/NbtWebApp/wsNBT.asmx/fileForProp',
-                                params: {
-                                    PropId: o.propData.id
-                                },
-                                onSuccess: function () {
-                                    o.onReload();
-                                }
-                            });
+                        if (false === Csw.isNullOrEmpty(cswPrivate.propVals.width) &&
+                            Csw.isNumeric(cswPrivate.propVals.width)) {
+                            cswPrivate.width = Math.abs(Csw.number(cswPrivate.propVals.width, 100) - 36);
                         }
-                    }); // icon
-                    if (false === Csw.isNullOrEmpty(fileName)) {
-                        //Clear button
-                        cell23.icon({
-                            ID: Csw.makeId(o.ID, 'clr'),
-                            iconType: Csw.enums.iconType.trash,
-                            hovertext: 'Clear Image',
-                            size: 16,
-                            isButton: true,
-                            onClick: function () {
-                                /* remember: confirm is globally blocking call */
-                                if (confirm("Are you sure you want to clear this image?")) {
-                                    var dataJson = {
-                                        PropId: o.propData.id,
-                                        IncludeBlob: true
-                                    };
 
-                                    Csw.ajax.post({
-                                        url: '/NbtWebApp/wsNBT.asmx/clearProp',
-                                        data: dataJson,
-                                        success: function () { o.onReload(); }
+                        cswPrivate.fileName = Csw.string(cswPrivate.propVals.name).trim();
+
+                        cswPublic.control = cswPrivate.parent.table({
+                            ID: Csw.makeId(o.ID, 'tbl')
+                        });
+                        cswPrivate.cell11 = cswPublic.control.cell(1, 1).propDom('colspan', '3');
+                        cswPrivate.cell21 = cswPublic.control.cell(2, 1).propDom('width', cswPrivate.width);
+                        cswPrivate.cell22 = cswPublic.control.cell(2, 2).propDom({ align: 'right', width: '20px' }).div();
+                        cswPrivate.cell23 = cswPublic.control.cell(2, 3).propDom({ align: 'right', width: '20px' }).div();
+
+                        cswPrivate.makeClr = function (fileName) {
+                            cswPrivate.cell23.empty();
+                            if (false === Csw.isNullOrEmpty(fileName)) {
+                                //Clear button
+                                cswPrivate.cell23.icon({
+                                    ID: Csw.makeId(o.ID, 'clr'),
+                                    iconType: Csw.enums.iconType.trash,
+                                    hovertext: 'Clear Image',
+                                    size: 16,
+                                    isButton: true,
+                                    onClick: function () {
+                                        /* remember: confirm is globally blocking call */
+                                        if (confirm("Are you sure you want to clear this image?")) {
+                                            var dataJson = {
+                                                PropId: o.propData.id,
+                                                IncludeBlob: true
+                                            };
+
+                                            Csw.ajax.post({
+                                                url: '/NbtWebApp/wsNBT.asmx/clearProp',
+                                                data: dataJson,
+                                                success: function () {
+                                                    var val = {
+                                                        href: '',
+                                                        name: '',
+                                                        contenttype: ''
+                                                    };
+                                                    cswPrivate.makeImg(null);
+                                                    o.onPropChange(val);
+                                                }
+                                            });
+                                        }
+                                    }
+                                }); // icon
+                            } // if (false === Csw.isNullOrEmpty(fileName)) {
+                        };
+                        
+                        //Case 24389: IE interprets height and width absolutely, better not to use them at all.
+                        cswPrivate.makeImg = function(imgData) {
+                            cswPrivate.cell11.empty();
+                            cswPrivate.cell21.empty();
+                            var fileName = null;
+                            if (false == Csw.isNullOrEmpty(imgData)) {
+                                cswPrivate.cell11.a({
+                                    href: imgData.href,
+                                    target: '_blank'
+                                })
+                                    .img({
+                                        src: imgData.href,
+                                        alt: imgData.fileName
+                                    });
+                                fileName = imgData.fileName;
+                                cswPrivate.cell21.a({
+                                    href: imgData.href,
+                                    target: '_blank',
+                                    text: imgData.fileName
+                                });
+                            }
+                            cswPrivate.makeClr(fileName);
+                        };
+                        cswPrivate.makeImg(cswPrivate);
+
+                        if (false === o.ReadOnly && o.EditMode !== Csw.enums.editMode.Add) {
+                            //Edit button
+                            cswPrivate.cell22.icon({
+                                ID: Csw.makeId(o.ID, 'edit'),
+                                iconType: Csw.enums.iconType.pencil,
+                                hovertext: 'Edit',
+                                size: 16,
+                                isButton: true,
+                                onClick: function () {
+                                    $.CswDialog('FileUploadDialog', {
+                                        url: '/NbtWebApp/wsNBT.asmx/fileForProp',
+                                        params: {
+                                            PropId: o.propData.id
+                                        },
+                                        onSuccess: function (data) {
+                                            var val = {
+                                                href: data.href,
+                                                name: data.filename,
+                                                fileName: data.filename,
+                                                contenttype: data.contenttype
+                                            };
+                                            if (data.success) {
+                                                cswPrivate.makeImg(val);
+                                                o.onPropChange(val);
+                                            }
+                                        }
                                     });
                                 }
-                            }
-                        }); // icon
-                    } // if (false === Csw.isNullOrEmpty(fileName)) {
-                } // if (false === o.ReadOnly && o.EditMode !== Csw.enums.editMode.Add) {
-            } // if-else (o.Multi)
-        }, // init
-        save: function (o) {
-            Csw.preparePropJsonForSave(o.propData);
-        }
-    };
+                            }); // icon
+                            
+                        } // if (false === o.ReadOnly && o.EditMode !== Csw.enums.editMode.Add) {
+                    }
 
-    // Method calling logic
-    $.fn.CswFieldTypeImage = function (method) {
 
-        if (methods[method]) {
-            return methods[method].apply(this, Array.prototype.slice.call(arguments, 1));
-        } else if (typeof method === 'object' || !method) {
-            return methods.init.apply(this, arguments);
-        } else {
-            $.error('Method ' + method + ' does not exist on ' + pluginName); return false;
-        }
+                };
 
-    };
-})(jQuery);
+                propertyOption.render(render);
+                return cswPublic;
+            }));
+
+}());
