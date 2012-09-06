@@ -43,9 +43,6 @@
                 m.ReadOnly = m.ReadOnly || Csw.bool(m.propData.readonly) || m.EditMode === Csw.enums.editMode.PrintReport;
 
                 switch (m.fieldtype) {
-                case "AuditHistoryGrid":
-                    m.propDiv.$.CswFieldTypeAuditHistoryGrid('init', m); //'init', nodeid, propData, onChange
-                    break;
                 case "Barcode":
                     m.propDiv.$.CswFieldTypeBarcode('init', m); //'init', nodeid, propData, onChange
                     break;
