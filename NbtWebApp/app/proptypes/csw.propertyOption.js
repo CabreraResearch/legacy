@@ -18,7 +18,7 @@
                         var attr = attributes[key];
                         //don't bother sending this to server unless it's changed
                         if (Csw.isPlainObject(attr)) {
-                            wasModified = preparePropJsonForSaveRecursive(isMulti, propVals[key], attr) || wasModified;
+                            wasModified = cswInternal.preparePropJsonForSaveRecursive(isMulti, propVals[key], attr) || wasModified;
                         } else if ((false === isMulti && propVals[key] !== attr) ||
                             (isMulti && false === Csw.isNullOrUndefined(attr) && attr !== Csw.enums.multiEditDefaultValue)) {
                             wasModified = true;
@@ -39,7 +39,7 @@
             if (false === Csw.isNullOrEmpty(propData)) {
                 if (Csw.contains(propData, 'values')) {
                     var propVals = propData.values;
-                    wasModified = preparePropJsonForSaveRecursive(isMulti, propVals, attributes);
+                    wasModified = cswInternal.preparePropJsonForSaveRecursive(isMulti, propVals, attributes);
                 }
                 propData.wasmodified = propData.wasmodified || wasModified;
             }
@@ -91,10 +91,14 @@
                 };
 
                 cswPublic.render = function (callBack) {
-                    var renderer = function() {
+                    var tearDown = function() {
+                        Csw.unsubscribe('render_' + cswPublic.nodeid, renderer);
+                        Csw.unsubscribe('initPropertyTearDown', tearDown);
+                    };
+                    var renderer = function () {
                         cswPublic.propDiv.empty();
                         Csw.tryExec(callBack, cswPublic);
-                        //Csw.unsubscribe('render_' + cswPublic.nodeid, renderer);
+                        Csw.subscribe('initPropertyTearDown', tearDown);
                     };
                     Csw.subscribe('render_' + cswPublic.nodeid, renderer);
                 };
