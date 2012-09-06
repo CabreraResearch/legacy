@@ -145,16 +145,22 @@
                     size: 'small',
                     tooltip: { title: 'OK' },
                     disableOnClick: false,
-                    onClick: cswPublic.addRow
+                    onClick: cswPublic.commitRow
                 });
             });
 
-            cswPublic.addRow = Csw.method(function () {
-                if (cswPublic.form.isFormValid()) {
+            cswPublic.commitRow = Csw.method(function () {
+                if (cswPublic.form.isFormValid() && Csw.contains(cswPrivate.rowElements, cswPrivate.rowCount)) {
                     cswPublic.deleteRow(cswPrivate.rowCount);
                     Csw.tryExec(cswPrivate.onAdd, cswPrivate.rowCount);
-                    Csw.tryExec(cswPublic.makeAddRow, cswPrivate.makeAddRow);
+                    if (cswPrivate.allowAdd) {
+                        Csw.tryExec(cswPublic.makeAddRow, cswPrivate.makeAddRow);
+                    }
                 }
+            });
+
+            cswPublic.makeNewAddRow = Csw.method(function () {
+                Csw.tryExec(cswPublic.makeAddRow, cswPrivate.makeAddRow);
             });
 
             cswPublic.addRows = Csw.method(function (dataRows, row, col) {

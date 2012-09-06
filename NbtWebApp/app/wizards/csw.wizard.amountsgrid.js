@@ -219,7 +219,36 @@
                         allowAdd: false,
                         makeAddRow: executeMakeAddRow,
                         onAdd: function () {
-                            executeOnAdd();
+                            if (Csw.isNumeric(Csw.number(newAmount.containerNo)) && false === Csw.isNullOrEmpty(newAmount.quantity)) {
+                                var newCount = cswPrivate.count + Csw.number(newAmount.containerNo);
+                                if (newCount <= cswPrivate.containerlimit) {
+                                    cswPrivate.count = newCount;
+
+                                    var parseBarcodes = function (anArray) {
+                                        if (anArray.length > newAmount.containerNo) {
+                                            anArray.splice(0, anArray.length - newAmount.containerNo);
+                                        }
+                                        newAmount.barcodes = barcodeToParse.join(',');
+                                    };
+                                    var barcodeToParse = Csw.delimitedString(newAmount.barcodes).array;
+                                    parseBarcodes(barcodeToParse);
+
+                                    //we need to make sure the columns here match the header columns
+                                    var formCols = [newAmount.containerNo];
+                                    if (false === Csw.isNullOrEmpty(cswPrivate.materialId) && cswPrivate.action === 'Receive') {
+                                        formCols = formCols.concat([newAmount.sizename]);
+                                    }
+                                    formCols = formCols.concat([newAmount.quantity + ' ' + newAmount.unit]);
+                                    if (cswPrivate.customBarcodes) {
+                                        formCols = formCols.concat([newAmount.barcodes]);
+                                    }
+                                    newAmount.rowid = cswPublic.thinGrid.addRows(formCols);
+                                    cswPublic.quantities.push(extractNewAmount(newAmount));
+                                } else {
+                                    $.CswDialog('AlertDialog', 'The limit for containers created at receipt is [' + cswPrivate.containerlimit + ']. You have already added [' + cswPrivate.count + '] containers.', 'Cannot add [' + newCount + '] containers.');
+                                }
+                                Csw.tryExec(cswPrivate.onAdd, (cswPrivate.count > 0), Csw.number(newAmount.quantity * newAmount.containerNo), newAmount.unitid);
+                            }
                         },
                         onDelete: function (rowid) {
                             Csw.debug.assert(false === Csw.isNullOrEmpty(rowid), 'Rowid is null.');
@@ -234,56 +263,21 @@
                         }
                     });
 
-                    var executeOnAdd = function () {
-                        if (Csw.isNumeric(Csw.number(newAmount.containerNo)) && false === Csw.isNullOrEmpty(newAmount.quantity)) {
-                            var newCount = cswPrivate.count + Csw.number(newAmount.containerNo);
-                            if (newCount <= cswPrivate.containerlimit) {
-                                cswPrivate.count = newCount;
-
-                                var parseBarcodes = function (anArray) {
-                                    if (anArray.length > newAmount.containerNo) {
-                                        anArray.splice(0, anArray.length - newAmount.containerNo);
-                                    }
-                                    newAmount.barcodes = barcodeToParse.join(',');
-                                };
-                                var barcodeToParse = Csw.delimitedString(newAmount.barcodes).array;
-                                parseBarcodes(barcodeToParse);
-
-                                //we need to make sure the columns here match the header columns
-                                var formCols = [newAmount.containerNo];
-                                if (false === Csw.isNullOrEmpty(cswPrivate.materialId) && cswPrivate.action === 'Receive') {
-                                    formCols = formCols.concat([newAmount.sizename]);
-                                }
-                                formCols = formCols.concat([newAmount.quantity + ' ' + newAmount.unit]);
-                                if (cswPrivate.customBarcodes) {
-                                    formCols = formCols.concat([newAmount.barcodes]);
-                                }
-                                newAmount.rowid = cswPublic.thinGrid.addRows(formCols);
-                                cswPublic.quantities.push(extractNewAmount(newAmount));
-                            } else {
-                                $.CswDialog('AlertDialog', 'The limit for containers created at receipt is [' + cswPrivate.containerlimit + ']. You have already added [' + cswPrivate.count + '] containers.', 'Cannot add [' + newCount + '] containers.');
-                            }
-                            Csw.tryExec(cswPrivate.onAdd, (cswPrivate.count > 0), Csw.number(newAmount.quantity * newAmount.containerNo), newAmount.unitid);
-                        }
-                    };
-
                     cswPublic.amountsGridOnAdd = function () {
-                        var rowid = cswPublic.thinGrid.getRowCount();
-                        cswPublic.thinGrid.deleteRow(rowid);
-                        executeOnAdd();
-                        Csw.tryExec(cswPublic.thinGrid.makeAddRow, executeMakeAddRow);
+                        cswPublic.thinGrid.commitRow();
                         return Csw.bool(cswPublic.quantities.length > 0);
                     };
 
                     cswParent.br();
 
-                    cswPublic.thinGridAddButton = cswParent.div({ID: window.Ext.id()}).buttonExt({
+                    cswPublic.thinGridAddButton = cswParent.div({ ID: window.Ext.id() }).buttonExt({
                         enabledText: 'Add Row',
                         size: 'small',
                         tooltip: { title: 'Add Row' },
                         icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.add),
                         onClick: function () {
-                            cswPublic.thinGrid.addRow();
+                            cswPublic.thinGrid.commitRow();
+                            cswPublic.thinGrid.makeNewAddRow();
                             cswPublic.thinGridAddButton.enable();
                         }
                     });
