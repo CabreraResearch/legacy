@@ -31,8 +31,8 @@ GOTO Run
 :Usage
 echo # 
 echo # Invalid Arguments
-echo # Usage: NbtDailyBuild.bat [VersionNo] [ResetSchema]
-echo # Example: NbtDailyBuild.bat 1 Y
+echo # Usage: %0 [VersionNo] [ResetSchema]
+echo # Example: %0 1 Y
 echo #   [VersionNo]: Number
 echo #         Final number in the build tag (e.g. the 3 in 2012.9.5.3).
 echo #   [ResetSchema]: Y/N
