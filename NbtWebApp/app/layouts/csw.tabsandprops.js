@@ -169,7 +169,7 @@
                                                 ret = true;
                                             }
                                         }
-                                        Csw.publish('initPropertyTearDown');
+                                        Csw.publish('initPropertyTearDown_' + cswPublic.getNodeId());
                                         return ret;
                                     } // select()
                                 }); // tabs

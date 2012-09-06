@@ -95,18 +95,32 @@
 
                 cswPublic.render = function (callBack) {
                     'use strict';
-                    var tearDown = function () {
+                    cswPrivate.globalTearDown = function () {
+                        /// <summary>
+                        /// Unbind all properties on this node's layout from the 
+                        /// </summary>
                         'use strict';
-                        Csw.unsubscribe('render_' + cswPublic.nodeid, renderer);
-                        Csw.unsubscribe('initPropertyTearDown', tearDown);
+                        Csw.unsubscribe('render_' + cswPublic.nodeid, cswPrivate.renderer);
+                        Csw.unsubscribe('initPropertyTearDown', cswPrivate.tearDown);
+                        Csw.unsubscribe('initPropertyTearDown_' + cswPublic.nodeid, cswPrivate.tearDown);
                     };
-                    var renderer = function () {
+
+                    cswPrivate.nodeTearDown = function () {
+                        /// <summary>
+                        /// Unbind all properties on this node's layout from the 
+                        /// </summary>
+                        'use strict';
+                        Csw.unsubscribe('render_' + cswPublic.nodeid, cswPrivate.renderer);
+                        Csw.unsubscribe('initPropertyTearDown_' + cswPublic.nodeid, cswPrivate.tearDown);
+                    };
+                    cswPrivate.renderer = function () {
                         'use strict';
                         cswPublic.propDiv.empty();
                         Csw.tryExec(callBack, cswPublic);
-                        Csw.subscribe('initPropertyTearDown', tearDown);
+                        Csw.subscribe('initPropertyTearDown', cswPrivate.globalTearDown);
+                        Csw.subscribe('initPropertyTearDown_' + cswPublic.nodeid, cswPrivate.nodeTearDown);
                     };
-                    Csw.subscribe('render_' + cswPublic.nodeid, renderer);
+                    Csw.subscribe('render_' + cswPublic.nodeid, cswPrivate.renderer);
                 };
 
                 if(false === Csw.isNullOrEmpty(cswPublic.propDiv)) {
@@ -116,6 +130,10 @@
                         cswnbtnodekey: cswPublic.cswnbtnodekey
                     });
                 }
+
+                cswPublic.unBind = function() {
+                    Csw.tryExec(cswPrivate.nodeTearDown);
+                };
 
                 return cswPublic;
             }));
