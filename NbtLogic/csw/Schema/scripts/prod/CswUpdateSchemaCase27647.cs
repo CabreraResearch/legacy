@@ -24,6 +24,19 @@ namespace ChemSW.Nbt.Schema
                 NumberMinValue = 1,
                 NumberPrecision = 0
             } );
+
+            CswNbtMetaDataNodeType SizeNt = SizeOc.FirstNodeType;
+            if( null != SizeNt )
+            {
+                CswNbtMetaDataNodeTypeProp UnitCountNtp = SizeNt.getNodeTypePropByObjectClassProp( CswNbtObjClassSize.PropertyName.UnitCount );
+                UnitCountNtp.DefaultValue.AsNumber.Value = 1;
+            }
+
+            foreach( CswNbtObjClassSize SizeNode in SizeOc.getNodes( false, false ) )
+            {
+                SizeNode.UnitCount.Value = 1;
+                SizeNode.postChanges( false );
+            }
         }//Update()
 
     }//class CswUpdateSchemaCase27647
