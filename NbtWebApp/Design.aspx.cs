@@ -1542,13 +1542,13 @@ namespace ChemSW.Nbt.WebPages
                     NameValue.MaxLength = 512;
                     NameRow.Cells[1].Controls.Add( NameValue );
 
-                    //TableRow TabGroupRow = makeEditPropTableRow( EditPropPlaceHolder );
-                    //( (Literal) TabGroupRow.Cells[0].Controls[0] ).Text = LabelNodeTypeTab + " Group:";
-                    //TextBox TabGroupValue = new TextBox();
-                    //TabGroupValue.CssClass = "textinput";
-                    //TabGroupValue.ID = "EditProp_TabGroupValue" + SelectedNodeTypeProp.PropId.ToString();
-                    //TabGroupValue.Text = SelectedNodeTypeProp.FirstEditLayout.TabGroup.ToString();
-                    //TabGroupRow.Cells[1].Controls.Add( TabGroupValue );
+                    TableRow TabGroupRow = makeEditPropTableRow( EditPropPlaceHolder );
+                    ( (Literal) TabGroupRow.Cells[0].Controls[0] ).Text = LabelNodeTypeTab + " Group:";
+                    TextBox TabGroupValue = new TextBox();
+                    TabGroupValue.CssClass = "textinput";
+                    TabGroupValue.ID = "EditProp_TabGroupValue" + SelectedNodeTypeProp.PropId.ToString();
+                    TabGroupValue.Text = SelectedNodeTypeProp.FirstEditLayout.TabGroup.ToString();
+                    TabGroupRow.Cells[1].Controls.Add( TabGroupValue );
 
                     //TableRow DisplayColRow = makeEditPropTableRow( EditPropPlaceHolder );
                     //( (Literal) DisplayColRow.Cells[0].Controls[0] ).Text = LabelNodeTypeTab + " Display Column:";
