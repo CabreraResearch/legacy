@@ -19,10 +19,13 @@ namespace ChemSW.Nbt.Schema
             if( null != feedbackNT )
             {
                 CswNbtMetaDataNodeTypeTab feedbackNTT = feedbackNT.getFirstNodeTypeTab();
-                CswNbtMetaDataNodeTypeProp documentNTP = _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( feedbackNT, CswNbtMetaDataFieldType.NbtFieldType.File, "Document", feedbackNTT.TabId );
+                if( null != feedbackNTT )
+                {
+                    CswNbtMetaDataNodeTypeProp documentNTP = _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( feedbackNT, CswNbtMetaDataFieldType.NbtFieldType.File, "Document", feedbackNTT.TabId );
 
-                _CswNbtSchemaModTrnsctn.MetaData.NodeTypeLayout.updatePropLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, feedbackNT.NodeTypeId, documentNTP.PropId, true, feedbackNTT.TabId );
-                _CswNbtSchemaModTrnsctn.MetaData.NodeTypeLayout.updatePropLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, feedbackNT.NodeTypeId, documentNTP.PropId, true, feedbackNTT.TabId );
+                    _CswNbtSchemaModTrnsctn.MetaData.NodeTypeLayout.updatePropLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, feedbackNT.NodeTypeId, documentNTP.PropId, true, feedbackNTT.TabId );
+                    _CswNbtSchemaModTrnsctn.MetaData.NodeTypeLayout.updatePropLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, feedbackNT.NodeTypeId, documentNTP.PropId, true, feedbackNTT.TabId );
+                }
             }
 
         }//Update()
