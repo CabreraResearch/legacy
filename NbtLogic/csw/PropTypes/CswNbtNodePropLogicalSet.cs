@@ -472,7 +472,7 @@ namespace ChemSW.Nbt.PropTypes
             LogicalSetXmlDoc = new XmlDocument();
 
             // Kludge for nodetype permissions...
-            if( this.ObjectClassPropName == CswNbtObjClassRole.NodeTypePermissionsPropertyName )
+            if( this.ObjectClassPropName == CswNbtObjClassRole.PropertyName.NodeTypePermissions )
             {
                 // Have to map the nodetypes
                 ResetXml();

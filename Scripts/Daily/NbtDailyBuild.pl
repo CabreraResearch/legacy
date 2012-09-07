@@ -5,13 +5,15 @@ use File::Copy;
 # Arguments
 
 my $increment = "1";
-if($#ARGV > 0)
+my $kilnpath = "C:\kiln";
+if($#ARGV != 1)
 {
-	die( "Usage: DeployNbt.pl [increment]\n" );
+	die( "Usage: DeployNbt.pl [increment] [kilnpath]\n" );
 }
-elsif($#ARGV == 0)
+else
 {
 	$increment = $ARGV[0];
+	$kilnpath = $ARGV[1];
 }
 
 #---------------------------------------------------------------------------------
@@ -29,26 +31,22 @@ my @components = (
 	"StructureSearch"
 );
 
-my $orclserver = "golem";
-my $orcldumpdir = "ChemSWDumpDirectory";
-my $masterdumpdir = "ChemSWDumpDirectory";
-
 my %repopaths;
 foreach my $component (@components)
 {
 	if($component eq "NbtHelp")
 	{
-		$repopaths{$component} = "d:/kiln/Nbt/Nbt/NbtWebApp/help";
+		$repopaths{$component} = "$kilnpath/Nbt/Nbt/NbtWebApp/help";
 	}
 	elsif($component eq "Nbt" || $component eq "NbtImport")
 	{
-		$repopaths{$component} = "d:/kiln/Nbt/$component";
+		$repopaths{$component} = "$kilnpath/Nbt/$component";
 	}
 	elsif($component eq "DailyBuildTools")
 	{
-		$repopaths{$component} = "d:/kiln/$component";
+		$repopaths{$component} = "$kilnpath/$component";
 	} else {
-		$repopaths{$component} = "d:/kiln/Common/$component";
+		$repopaths{$component} = "$kilnpath/Common/$component";
 	}
 }
 

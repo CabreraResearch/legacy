@@ -92,7 +92,7 @@ commit;
 create or replace view vwQuestionDetail as
 select jnp.nodeid,ntp.propname question,jnp.field1 answer,jnp.field2 correctiveaction,jnp.field3 iscompliant,
  to_char(jnp.clobdata) comments,jnp.field1_date dateanswered,jnp.field2_date datecorrected,
- ntp.questionno
+ ntp.questionno, ntp.nodetypepropid
   from jct_nodes_props jnp
  join nodetype_props ntp on ntp.nodetypepropid=jnp.nodetypepropid
  join field_types ft on ft.fieldtypeid=ntp.fieldtypeid and ft.fieldtype='Question';

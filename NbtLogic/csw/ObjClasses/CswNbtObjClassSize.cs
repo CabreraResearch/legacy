@@ -1,17 +1,20 @@
+using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.UnitsOfMeasure;
-
 
 namespace ChemSW.Nbt.ObjClasses
 {
     public class CswNbtObjClassSize : CswNbtObjClass
     {
-        public const string MaterialPropertyName = "Material";
-        public const string InitialQuantityPropertyName = "Initial Quantity";
-        public const string QuantityEditablePropertyName = "Quantity Editable";
-        public const string DispensablePropertyName = "Dispensable";
-        public const string CatalogNoPropertyName = "Catalog No";
+        public sealed class PropertyName
+        {
+            public const string Material = "Material";
+            public const string InitialQuantity = "Initial Quantity";
+            public const string QuantityEditable = "Quantity Editable";
+            public const string Dispensable = "Dispensable";
+            public const string CatalogNo = "Catalog No";
+        }
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
 
@@ -40,18 +43,18 @@ namespace ChemSW.Nbt.ObjClasses
         }
 
         #region Inherited Events
-        public override void beforeCreateNode( bool OverrideUniqueValidation )
-        {
-            _CswNbtObjClassDefault.beforeCreateNode( OverrideUniqueValidation );
-        } // beforeCreateNode()
-
-        public override void afterCreateNode()
-        {
-            _CswNbtObjClassDefault.afterCreateNode();
-        } // afterCreateNode()
 
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
+            if( null == Material.RelatedNodeId )
+            {
+                CswPrimaryKey pk = CswConvert.ToPrimaryKey( _CswNbtResources.CurrentNbtUser.Cookies["csw_currentnodeid"] );
+                if( null != pk && _isMaterialID( pk ) ) //only assign the id if we got a real nodeid from cookies and it's indeed a material id
+                {
+                    Material.RelatedNodeId = pk;
+                }
+            }
+
             _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
         }//beforeWriteNode()
 
@@ -91,7 +94,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Object class specific properties
 
-        public CswNbtNodePropRelationship Material { get { return _CswNbtNode.Properties[MaterialPropertyName]; } }
+        public CswNbtNodePropRelationship Material { get { return _CswNbtNode.Properties[PropertyName.Material]; } }
         private void OnMaterialChange( CswNbtNodeProp Prop )
         {
             //case 25759 - set capacity unittype view based on related material physical state
@@ -103,13 +106,22 @@ namespace ChemSW.Nbt.ObjClasses
                 Vb.setQuantityUnitOfMeasureView( MaterialNode, InitialQuantity );
             }
         }
-        public CswNbtNodePropQuantity InitialQuantity { get { return _CswNbtNode.Properties[InitialQuantityPropertyName]; } }
-        public CswNbtNodePropLogical QuantityEditable { get { return _CswNbtNode.Properties[QuantityEditablePropertyName]; } }
-        public CswNbtNodePropLogical Dispensable { get { return _CswNbtNode.Properties[DispensablePropertyName]; } }
-        public CswNbtNodePropText CatalogNo { get { return _CswNbtNode.Properties[CatalogNoPropertyName]; } }
+        public CswNbtNodePropQuantity InitialQuantity { get { return _CswNbtNode.Properties[PropertyName.InitialQuantity]; } }
+        public CswNbtNodePropLogical QuantityEditable { get { return _CswNbtNode.Properties[PropertyName.QuantityEditable]; } }
+        public CswNbtNodePropLogical Dispensable { get { return _CswNbtNode.Properties[PropertyName.Dispensable]; } }
+        public CswNbtNodePropText CatalogNo { get { return _CswNbtNode.Properties[PropertyName.CatalogNo]; } }
 
         #endregion
 
+        #region Custom logic
+
+        private bool _isMaterialID( CswPrimaryKey nodeid )
+        {
+            CswNbtNode node = _CswNbtResources.Nodes.GetNode( nodeid );
+            return _Validate( node, CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass );
+        }
+
+        #endregion
 
     }//CswNbtObjClassSize
 

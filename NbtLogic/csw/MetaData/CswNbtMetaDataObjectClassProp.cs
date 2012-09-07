@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using ChemSW.Core;
+using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.PropTypes;
 
@@ -218,7 +219,11 @@ namespace ChemSW.Nbt.MetaData
         //    //if ( OnEditNodeTypePropOrder != null )
         //    //    OnEditNodeTypePropOrder( this );
         //}
-        private char FilterDelimiter = '|';
+
+        /// <summary>
+        /// Default filter delimiter
+        /// </summary>
+        public const char FilterDelimiter = '|';
         public void getFilter( ref CswNbtSubField SubField, ref CswNbtPropFilterSql.PropertyFilterMode FilterMode, ref string FilterValue )
         {
             if( _ObjectClassPropRow["filter"].ToString() != string.Empty )
@@ -242,6 +247,69 @@ namespace ChemSW.Nbt.MetaData
             return ( _ObjectClassPropRow["filter"].ToString() != string.Empty );
         }
 
+        public static string makeFilter( CswNbtSubField SubField, CswNbtPropFilterSql.PropertyFilterMode FilterMode, object FilterValue )
+        {
+            return SubField.Column.ToString() + FilterDelimiter + FilterMode + FilterDelimiter + FilterValue;
+        }
+
+        public void setFilter( Int32 FilterObjectClassPropId, CswNbtSubField SubField, CswNbtPropFilterSql.PropertyFilterMode FilterMode, object FilterValue )
+        {
+            string FilterString = makeFilter( SubField, FilterMode, FilterValue );
+            CswNbtMetaDataObjectClassProp FilterProp = _CswNbtMetaDataResources.CswNbtMetaData.getObjectClassProp( FilterObjectClassPropId );
+            _setFilter( FilterProp, FilterString );
+        }
+
+        public void setFilter( CswNbtMetaDataObjectClassProp FilterProp, CswNbtSubField SubField, CswNbtPropFilterSql.PropertyFilterMode FilterMode, object FilterValue )
+        {
+            string FilterString = makeFilter( SubField, FilterMode, FilterValue );
+            _setFilter( FilterProp, FilterString );
+        }
+
+        public void setFilter( Int32 FilterObjectClassPropId, string FilterString )
+        {
+            CswNbtMetaDataObjectClassProp FilterProp = _CswNbtMetaDataResources.CswNbtMetaData.getObjectClassProp( FilterObjectClassPropId );
+            _setFilter( FilterProp, FilterString );
+        }
+
+        private void _setFilter( CswNbtMetaDataObjectClassProp FilterProp, string FilterString )
+        {
+            if( IsRequired )
+            {
+                throw new CswDniException( ErrorType.Warning, "Required properties cannot be conditional", "User attempted to set a conditional filter on a required property" );
+            }
+
+            bool changed = false;
+
+            if( FilterProp != null )
+            {
+                Int32 CurrentFilterId = CswConvert.ToInt32( _ObjectClassPropRow["filterpropid"] );
+                changed = CurrentFilterId != FilterProp.FirstPropVersionId;
+                if( changed )
+                {
+                    _ObjectClassPropRow["filterpropid"] = CswConvert.ToDbVal( FilterProp.FirstPropVersionId );
+                }
+            }
+            else
+            {
+                FilterString = "";
+                _CswNbtMetaDataResources.CswNbtResources.logMessage( "Attempted to create a conditional property filter with based upon a null ObjectClassProperty." );
+            }
+            string CurrentFilter = CswConvert.ToString( _ObjectClassPropRow["filter"] );
+            if( CurrentFilter != FilterString )
+            {
+                changed = true;
+                _ObjectClassPropRow["filter"] = CswConvert.ToDbVal( FilterString );
+            }
+
+            //if( changed )
+            //{
+            //    foreach( CswNbtMetaDataNodeTypeProp NodeTypeProp in this.getNodeTypeProps() )
+            //    {
+
+            //    }
+
+            //}
+        }
 
         public PropertySelectMode Multi
         {

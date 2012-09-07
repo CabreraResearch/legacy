@@ -33,35 +33,7 @@ namespace ChemSW.Nbt
     //    /// </summary>
     //    Esig
     //}
-
-    /// <summary>
-    /// Formats for Tree XML export
-    /// </summary>
-    public enum XmlTreeDestinationFormat
-    {
-        /// <summary>
-        /// No conversion (results in error if conversion is attempted)
-        /// </summary>
-        None,
-        /// <summary>
-        /// Telerik RadTreeView compatible format
-        /// </summary>
-        TelerikRadTreeView,
-        /// <summary>
-        /// Telerik RadGrid compatible format
-        /// </summary>
-        TelerikRadGrid,
-        /// <summary>
-        /// Telerik RadGrid compatible format for grid properties
-        /// </summary>
-        TelerikRadGridProperty,
-        /// <summary>
-        /// Reporting compatible format
-        /// </summary>
-        ReportingDataSet,
-        jsTree
-    }
-
+    
     /// <summary>
     /// Defines event arguments for events that occur during <see cref="ICswNbtTree.iterateTree"/>
     /// </summary>

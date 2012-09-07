@@ -27,7 +27,7 @@ namespace ChemSW.Nbt.Schema
             if( SupplyNT != null )
             {
                 CswNbtMetaDataObjectClass MaterialOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass );
-                CswNbtMetaDataObjectClassProp PhysicalStateOCP = _CswNbtSchemaModTrnsctn.MetaData.getObjectClassProp( MaterialOC.ObjectClassId, CswNbtObjClassMaterial.PhysicalStatePropertyName );
+                CswNbtMetaDataObjectClassProp PhysicalStateOCP = _CswNbtSchemaModTrnsctn.MetaData.getObjectClassProp( MaterialOC.ObjectClassId, CswNbtObjClassMaterial.PropertyName.PhysicalState );
                 CswNbtMetaDataNodeTypeProp PhysicalStateNTP = _CswNbtSchemaModTrnsctn.MetaData.getNodeTypePropByObjectClassProp( SupplyNT.NodeTypeId, PhysicalStateOCP.ObjectClassPropId );
                 PhysicalStateNTP.DefaultValue.AsList.Value = "n/a";
             }

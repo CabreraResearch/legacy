@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Xml;
-using ChemSW.Audit;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
@@ -678,7 +677,7 @@ namespace ChemSW.Nbt.MetaData
         {
             get
             {
-                return ( ChemSW.Audit. AuditLevel.Parse( _NodeTypePropRow[NodeTypePropAttributes.auditlevel.ToString()].ToString() ) );
+                return ( ChemSW.Audit.AuditLevel.Parse( _NodeTypePropRow[NodeTypePropAttributes.auditlevel.ToString()].ToString() ) );
             }
             set
             {
@@ -1001,7 +1000,7 @@ namespace ChemSW.Nbt.MetaData
             get { return CswConvert.ToInt32( _NodeTypePropRow["filterpropid"] ); }
         }
 
-        private char FilterDelimiter = '|';
+        private char FilterDelimiter = CswNbtMetaDataObjectClassProp.FilterDelimiter;
         public void setFilter( Int32 FilterNodeTypePropId, CswNbtSubField SubField, CswNbtPropFilterSql.PropertyFilterMode FilterMode, object FilterValue )
         {
             string FilterString = SubField.Column.ToString() + FilterDelimiter + FilterMode + FilterDelimiter + FilterValue;
@@ -1634,13 +1633,18 @@ namespace ChemSW.Nbt.MetaData
                     if( TargetType == NbtViewRelatedIdType.NodeTypeId )
                     {
                         CswNbtMetaDataNodeType TargetNodeType = _CswNbtMetaDataResources.CswNbtResources.MetaData.getNodeType( FKValue );
-                        ret = ( TargetNodeType.getObjectClass().ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
+                        if( null != TargetNodeType )
+                        {
+                            ret = ( TargetNodeType.getObjectClass().ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
+                        }
                     }
                     else if( TargetType == NbtViewRelatedIdType.ObjectClassId )
                     {
                         CswNbtMetaDataObjectClass TargetObjectClass = _CswNbtMetaDataResources.CswNbtResources.MetaData.getObjectClass( FKValue );
-                        ret = ( TargetObjectClass.ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
-
+                        if( null != TargetObjectClass )
+                        {
+                            ret = ( TargetObjectClass.ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
+                        }
                     }
                 }
             }

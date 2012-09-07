@@ -82,8 +82,25 @@ namespace ChemSW.Nbt.MetaData
         }
         
 
-        public enum PropertyFilterConjunction { And, AndNot };
+        //public enum PropertyFilterConjunction { And, AndNot };
 
+        /// <summary>
+        /// Filter Conjunction
+        /// </summary>
+        public sealed class PropertyFilterConjunction : CswEnum<PropertyFilterConjunction>
+        {
+            private PropertyFilterConjunction( string Name ) : base( Name ) { }
+            public static IEnumerable<PropertyFilterConjunction> _All { get { return All; } }
+            public static implicit operator PropertyFilterConjunction( string str )
+            {
+                PropertyFilterConjunction ret = Parse( str );
+                return ret ?? Unknown;
+            }
+            public static readonly PropertyFilterConjunction Unknown = new PropertyFilterConjunction( "Unknown" );
+
+            public static readonly PropertyFilterConjunction And = new PropertyFilterConjunction( "And" );
+            public static readonly PropertyFilterConjunction Or = new PropertyFilterConjunction( "Or" );
+        }
 
         private string _FilterTableAlias = "jnp.";
         public CswNbtPropFilterSql()
