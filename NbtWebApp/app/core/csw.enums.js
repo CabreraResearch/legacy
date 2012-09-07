@@ -4,9 +4,6 @@
 (function _cswEnums() {
     'use strict';
 
-    Csw.enums = Csw.enums ||
-        Csw.register('enums', Csw.makeNameSpace());
-
     Csw.enums.constants = Csw.enums.constants ||
         Csw.enums.register('constants', { unknownEnum: 'unknown' });
 
@@ -418,6 +415,7 @@
                     Text: Csw.enums.subFieldNames.Text
                 }
             },
+            Comments: { name: 'Comments', subfields: {} },
             Composite: { name: 'Composite', subfields: {} },
             DateTime: {
                 name: 'DateTime',
@@ -438,6 +436,7 @@
             File: { name: 'File', subfields: {} },
             Grid: { name: 'Grid', subfields: {} },
             Image: { name: 'Image', subfields: {} },
+            ImageList: { name: 'ImageList', subfields: {} },
             Link: {
                 name: 'Link',
                 subfields: {
