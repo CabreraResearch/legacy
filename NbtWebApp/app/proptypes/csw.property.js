@@ -57,6 +57,9 @@
                         case Csw.enums.subFieldsMap.Location.name:
                             cswPublic = Csw.properties.location(cswPrivate);
                             break;
+                        case Csw.enums.subFieldsMap.LocationContents.name:
+                            cswPublic = Csw.properties.locationContents(cswPrivate);
+                            break;
                         default:
                             cswPublic = $.CswFieldTypeFactory('make', cswPrivate);
                     }
