@@ -54,10 +54,8 @@
                     case "Image": 
                     case "ImageList":
                     case "Link": 
-                    case "List": break; //keep the refactored props in the switch until _factory is completely removed
-                    case "Location":
-                        m.propDiv.$.CswFieldTypeLocation('init', m); //'init', nodeid, propData, onChange
-                        break;
+                    case "List": 
+                    case "Location": break; //keep the refactored props in the switch until _factory is completely removed
                     case "LocationContents":
                         m.propDiv.$.CswFieldTypeLocationContents('init', m); //'init', nodeid, propData, onChange
                         break;
@@ -164,10 +162,8 @@
                     case "Image": 
                     case "ImageList": 
                     case "Link": 
-                    case "List": break; //keep the refactored props in the switch until _factory is completely removed
-                    case "Location":
-                        m.propDiv.$.CswFieldTypeLocation('save', m); //('save', $propdiv, propData);
-                        break;
+                    case "List": 
+                    case "Location": break; //keep the refactored props in the switch until _factory is completely removed
                     case "LocationContents":
                         m.propDiv.$.CswFieldTypeLocationContents('save', m); //('save', $propdiv, propData);
                         break;
