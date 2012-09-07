@@ -76,6 +76,9 @@
                             
                         case Csw.enums.subFieldsMap.NodeTypeSelect.name:
                             cswPublic = Csw.properties.nodeTypeSelect(cswPrivate);
+                            break;    
+                        case Csw.enums.subFieldsMap.Number.name:
+                            cswPublic = Csw.properties.number(cswPrivate);
                             break;
                             
                         case Csw.enums.subFieldsMap.UserSelect.name:

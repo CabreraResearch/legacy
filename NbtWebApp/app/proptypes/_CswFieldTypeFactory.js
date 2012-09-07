@@ -65,64 +65,50 @@
 
                     case "Memo": break; //keep the refactored props in the switch until _factory is completely removed    
                     case "MOL":
-                        m.propDiv.$.CswFieldTypeMol('init', m); //'init', nodeid, propData, onChange
+                        m.propDiv.$.CswFieldTypeMol('init', m); 
                         break;
                     case "MTBF":
-                        m.propDiv.$.CswFieldTypeMTBF('init', m); //'init', nodeid, propData, onChange
+                        m.propDiv.$.CswFieldTypeMTBF('init', m); 
                         break;
                     case "MultiList": break; //keep the refactored props in the switch until _factory is completely removed    
                     case "NFPA":
-                        m.propDiv.$.CswFieldTypeNFPA('init', m); //'init', nodeid, propData, onChange
+                        m.propDiv.$.CswFieldTypeNFPA('init', m); 
                         break;
                     
-                    case "Number":
-                        m.propDiv.$.CswFieldTypeNumber('init', m); //'init', nodeid, propData, onChange
-                        break;
+                    case "Number": break; //keep the refactored props in the switch until _factory is completely removed    
                     case "Password":
-                        m.propDiv.$.CswFieldTypePassword('init', m); //'init', nodeid, propData, onChange
+                        m.propDiv.$.CswFieldTypePassword('init', m); 
                         break;
                     case "PropertyReference":
-                        m.propDiv.$.CswFieldTypePropertyReference('init', m); //'init', nodeid, propData, onChange
+                        m.propDiv.$.CswFieldTypePropertyReference('init', m); 
                         break;
                     case "Quantity":
-                        m.propDiv.$.CswFieldTypeQuantity('init', m); //'init', nodeid, propData, onChange
+                        m.propDiv.$.CswFieldTypeQuantity('init', m); 
                         break;
                     case "Question":
-                        m.propDiv.$.CswFieldTypeQuestion('init', m); //'init', nodeid, propData, onChange
+                        m.propDiv.$.CswFieldTypeQuestion('init', m); 
                         break;
                     case "Relationship":
-                        m.propDiv.$.CswFieldTypeRelationship('init', m); //('init', nodeid, propData, onChange);
+                        m.propDiv.$.CswFieldTypeRelationship('init', m); 
                         break;
                     case "Scientific":
-                        m.propDiv.$.CswFieldTypeScientific('init', m); //('init', nodeid, propData, onChange);
+                        m.propDiv.$.CswFieldTypeScientific('init', m); 
                         break;
                     case "Sequence":
-                        m.propDiv.$.CswFieldTypeSequence('init', m); //('init', nodeid, propData, onChange);
+                        m.propDiv.$.CswFieldTypeSequence('init', m); 
                         break;
                     case "Static":
-                        m.propDiv.$.CswFieldTypeStatic('init', m); //('init', nodeid, propData, onChange);
+                        m.propDiv.$.CswFieldTypeStatic('init', m); 
                         break;
                     case "Text":
-                        m.propDiv.$.CswFieldTypeText('init', m); //('init', nodeid, propData, onChange);
+                        m.propDiv.$.CswFieldTypeText('init', m); 
                         break;
-                        //				case "Time":     
-                        //					m.propDiv.$.CswFieldTypeTime('init', m); //('init', nodeid, propData, onChange);     
-                        //					break;     
                     case "TimeInterval":
-                        m.propDiv.$.CswFieldTypeTimeInterval('init', m); //('init', nodeid, propData, onChange);
+                        m.propDiv.$.CswFieldTypeTimeInterval('init', m); 
                         break;
                     
                     case "ViewReference":
-                        m.propDiv.$.CswFieldTypeViewReference('init', m); //('init', nodeid, propData, onChange);
-                        break;
-                    default:
-                        m.propDiv.$.append(m.propData.gestalt);
-                        Csw.error.showError({
-                            'type': 'Error',
-                            'message': 'Unrecognized Field Type',
-                            'detail': 'CswFieldTypeFactory.make: Unrecognized Field Type: ' + m.fieldtype,
-                            'display': true
-                        });
+                        m.propDiv.$.CswFieldTypeViewReference('init', m); 
                         break;
                 } // switch (fieldtype)
                 return m;
@@ -159,62 +145,50 @@
                     case "ViewPickList": break; //keep the refactored props in the switch until _factory is completely removed
                     case "Memo": break; //keep the refactored props in the switch until _factory is completely removed    
                     case "MOL":
-                        m.propDiv.$.CswFieldTypeMol('save', m); //('save', $propdiv, propData);
+                        m.propDiv.$.CswFieldTypeMol('save', m); 
                         break;
                     case "MTBF":
-                        m.propDiv.$.CswFieldTypeMTBF('save', m); //('save', $propdiv, propData);
+                        m.propDiv.$.CswFieldTypeMTBF('save', m); 
                         break;
                     case "MultiList": break; //keep the refactored props in the switch until _factory is completely removed    
                     case "NFPA":
-                        m.propDiv.$.CswFieldTypeNFPA('save', m); //('save', $propdiv, propData);
+                        m.propDiv.$.CswFieldTypeNFPA('save', m); 
                         break;
-                    case "Number":
-                        m.propDiv.$.CswFieldTypeNumber('save', m); //('save', $propdiv, propData);
-                        break;
+                    case "Number": break; //keep the refactored props in the switch until _factory is completely removed    
                     case "Password":
-                        m.propDiv.$.CswFieldTypePassword('save', m); //('save', $propdiv, propData);
+                        m.propDiv.$.CswFieldTypePassword('save', m); 
                         break;
                     case "PropertyReference":
-                        m.propDiv.$.CswFieldTypePropertyReference('save', m); //('save', $propdiv, propData);
+                        m.propDiv.$.CswFieldTypePropertyReference('save', m); 
                         break;
                     case "Quantity":
-                        m.propDiv.$.CswFieldTypeQuantity('save', m); //('save', $propdiv, propData);
+                        m.propDiv.$.CswFieldTypeQuantity('save', m); 
                         break;
                     case "Question":
-                        m.propDiv.$.CswFieldTypeQuestion('save', m); //('save', $propdiv, propData);
+                        m.propDiv.$.CswFieldTypeQuestion('save', m); 
                         break;
                     case "Relationship":
-                        m.propDiv.$.CswFieldTypeRelationship('save', m); //('save', $propdiv, propData);
+                        m.propDiv.$.CswFieldTypeRelationship('save', m); 
                         break;
                     case "Scientific":
-                        m.propDiv.$.CswFieldTypeScientific('save', m); //('save', $propdiv, propData);
+                        m.propDiv.$.CswFieldTypeScientific('save', m); 
                         break;
                     case "Sequence":
-                        m.propDiv.$.CswFieldTypeSequence('save', m); //('save', $propdiv, propData);
+                        m.propDiv.$.CswFieldTypeSequence('save', m); 
                         break;
                     case "Static":
-                        m.propDiv.$.CswFieldTypeStatic('save', m); //('save', $propdiv, propData);
+                        m.propDiv.$.CswFieldTypeStatic('save', m); 
                         break;
                     case "Text":
-                        m.propDiv.$.CswFieldTypeText('save', m); //('save', $propdiv, propData);
+                        m.propDiv.$.CswFieldTypeText('save', m); 
                         break;
-                        //				case "Time":     
-                        //					m.propDiv.$.CswFieldTypeTime('save', m); //('save', $propdiv, propData);     
-                        //					break;     
                     case "TimeInterval":
-                        m.propDiv.$.CswFieldTypeTimeInterval('save', m); //('save', $propdiv, propData);
+                        m.propDiv.$.CswFieldTypeTimeInterval('save', m); 
                         break;
                     case "ViewReference":
-                        m.propDiv.$.CswFieldTypeViewReference('save', m); //('save', $propdiv, propData);
+                        m.propDiv.$.CswFieldTypeViewReference('save', m);
                         break;
-                    default:
-                        Csw.error.showError({
-                            'type': 'Error',
-                            'message': 'Unrecognized Field Type',
-                            'detail': 'CswFieldTypeFactory.save: Unrecognized Field Type: ' + m.fieldtype,
-                            'display': true
-                        });
-                        break;
+
                 } // switch(fieldtype)
             } // save
         };
