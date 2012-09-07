@@ -58,9 +58,11 @@
                     case "Location": 
                     case "LocationContents": break; //keep the refactored props in the switch until _factory is completely removed
                     case "Logical": break; //keep the refactored props in the switch until _factory is completely removed
-                    case "LogicalSet":
-                        m.propDiv.$.CswFieldTypeLogicalSet('init', m); //'init', nodeid, propData, onChange
-                        break;
+                    case "LogicalSet": break; //keep the refactored props in the switch until _factory is completely removed
+                    case "NodeTypeSelect": break; //keep the refactored props in the switch until _factory is completely removed
+                    case "UserSelect": break; //keep the refactored props in the switch until _factory is completely removed
+                    case "ViewPickList": break; //keep the refactored props in the switch until _factory is completely removed    
+
                     case "Memo":
                         m.propDiv.$.CswFieldTypeMemo('init', m); //'init', nodeid, propData, onChange
                         break;
@@ -76,9 +78,7 @@
                     case "NFPA":
                         m.propDiv.$.CswFieldTypeNFPA('init', m); //'init', nodeid, propData, onChange
                         break;
-                    case "NodeTypeSelect":
-                        m.propDiv.$.CswFieldTypeNodeTypeSelect('init', m); //'init', nodeid, propData, onChange
-                        break;
+                    
                     case "Number":
                         m.propDiv.$.CswFieldTypeNumber('init', m); //'init', nodeid, propData, onChange
                         break;
@@ -115,12 +115,7 @@
                     case "TimeInterval":
                         m.propDiv.$.CswFieldTypeTimeInterval('init', m); //('init', nodeid, propData, onChange);
                         break;
-                    case "UserSelect":
-                        m.propDiv.$.CswFieldTypeUserSelect('init', m); //('init', nodeid, propData, onChange);
-                        break;
-                    case "ViewPickList":
-                        m.propDiv.$.CswFieldTypeViewPickList('init', m); //('init', nodeid, propData, onChange);
-                        break;
+                    
                     case "ViewReference":
                         m.propDiv.$.CswFieldTypeViewReference('init', m); //('init', nodeid, propData, onChange);
                         break;
@@ -162,9 +157,11 @@
                     case "Location": break; //keep the refactored props in the switch until _factory is completely removed
                     case "LocationContents": break; //keep the refactored props in the switch until _factory is completely removed
                     case "Logical": break; //keep the refactored props in the switch until _factory is completely removed
-                    case "LogicalSet":
-                        m.propDiv.$.CswFieldTypeLogicalSet('save', m); //('save', $propdiv, propData);
-                        break;
+                    case "LogicalSet": break; //keep the refactored props in the switch until _factory is completely removed
+                    case "NodeTypeSelect": break; //keep the refactored props in the switch until _factory is completely removed
+                    case "UserSelect": break; //keep the refactored props in the switch until _factory is completely removed
+                    case "ViewPickList": break; //keep the refactored props in the switch until _factory is completely removed
+                        
                     case "Memo":
                         m.propDiv.$.CswFieldTypeMemo('save', m); //('save', $propdiv, propData);
                         break;
@@ -179,9 +176,6 @@
                         break;
                     case "NFPA":
                         m.propDiv.$.CswFieldTypeNFPA('save', m); //('save', $propdiv, propData);
-                        break;
-                    case "NodeTypeSelect":
-                        m.propDiv.$.CswFieldTypeNodeTypeSelect('save', m); //('save', $propdiv, propData);
                         break;
                     case "Number":
                         m.propDiv.$.CswFieldTypeNumber('save', m); //('save', $propdiv, propData);
@@ -218,12 +212,6 @@
                         //					break;     
                     case "TimeInterval":
                         m.propDiv.$.CswFieldTypeTimeInterval('save', m); //('save', $propdiv, propData);
-                        break;
-                    case "UserSelect":
-                        m.propDiv.$.CswFieldTypeUserSelect('save', m); //('save', $propdiv, propData);
-                        break;
-                    case "ViewPickList":
-                        m.propDiv.$.CswFieldTypeViewPickList('save', m); //('save', $propdiv, propData);
                         break;
                     case "ViewReference":
                         m.propDiv.$.CswFieldTypeViewReference('save', m); //('save', $propdiv, propData);

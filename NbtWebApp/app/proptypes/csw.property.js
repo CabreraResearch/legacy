@@ -63,6 +63,21 @@
                         case Csw.enums.subFieldsMap.Logical.name:
                             cswPublic = Csw.properties.logical(cswPrivate);
                             break;
+                        case Csw.enums.subFieldsMap.LogicalSet.name:
+                            cswPublic = Csw.properties.logicalSet(cswPrivate);
+                            break;
+                            
+                        case Csw.enums.subFieldsMap.NodeTypeSelect.name:
+                            cswPublic = Csw.properties.nodeTypeSelect(cswPrivate);
+                            break;
+                            
+                        case Csw.enums.subFieldsMap.UserSelect.name:
+                            cswPublic = Csw.properties.userSelect(cswPrivate);
+                            break;
+                            
+                        case Csw.enums.subFieldsMap.ViewPickList.name:
+                            cswPublic = Csw.properties.viewPickList(cswPrivate);
+                            break;
                         default:
                             cswPublic = $.CswFieldTypeFactory('make', cswPrivate);
                     }

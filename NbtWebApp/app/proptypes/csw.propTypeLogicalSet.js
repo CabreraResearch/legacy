@@ -1,66 +1,50 @@
 /// <reference path="~/app/CswApp-vsdoc.js" />
 
-
-(function ($) {
-    "use strict";        
-    var pluginName = 'CswFieldTypeLogicalSet';
+(function () {
+    'use strict';
     var nameCol = 'name';
     var keyCol = 'key';
-  
-    var methods = {
-        init: function (o) { 
 
-            var propDiv =  o.propDiv;
-            propDiv.empty();
-            var propVals = o.propData.values,
-                logicalSetJson = propVals.logicalsetjson;
+    Csw.properties.logicalSet = Csw.properties.logicalSet ||
+        Csw.properties.register('logicalSet',
+            Csw.method(function (propertyOption) {
+                'use strict';
+                var cswPrivate = {};
+                var cswPublic = {
+                    data: propertyOption
+                };
 
-            propDiv.div()
-                   .checkBoxArray({
-                        ID: o.ID + '_cba',
-                        onChange: o.onChange,
-                        ReadOnly: o.ReadOnly,
-                        dataAry: logicalSetJson.data,
-                        cols: logicalSetJson.columns,
-                        nameCol: nameCol,
-                        keyCol: keyCol,
-                        Multi: o.Multi
-                    });
+                var render = function () {
+                    'use strict';
+                    cswPublic.data = cswPublic.data || Csw.nbt.propertyOption(propertyOption);
 
-            return propDiv;
-        },
-        save: function (o) { //$propdiv, $xml
-            var attributes = { logicalsetjson: null };
-            var compare = {};
-            var formdata = Csw.clientDb.getItem(o.ID + '_cba' + '_cswCbaArrayDataStore'); 
-            
-            if(false === Csw.isNullOrEmpty(formdata) && (
-               false === o.Multi || 
-                    false === formdata.MultiIsUnchanged)) {
-                attributes.logicalsetjson = formdata;
-                compare = attributes;
-            }
-            Csw.preparePropJsonForSave(o.Multi, o.propData, compare);
-            return $(this);
-        } // save()
-    };
-    
+                    var propVals = cswPublic.data.propData.values;
+                    var parent = cswPublic.data.propDiv;
 
-    // Method calling logic
-    $.fn.CswFieldTypeLogicalSet = function (method) {
-        
-        if ( methods[method] ) {
-          return methods[ method ].apply( this, Array.prototype.slice.call( arguments, 1 ));
-        } else if ( typeof method === 'object' || ! method ) {
-          return methods.init.apply( this, arguments );
-        } else {
-          $.error( 'Method ' +  method + ' does not exist on ' + pluginName ); return false;
-        }    
-  
-    };
-})(jQuery);
+                    var logicalSetJson = propVals.logicalsetjson;
 
+                    cswPublic.control = parent.div()
+                           .checkBoxArray({
+                               ID: cswPublic.data.ID + '_cba',
+                               ReadOnly: cswPublic.data.ReadOnly,
+                               dataAry: logicalSetJson.data,
+                               cols: logicalSetJson.columns,
+                               nameCol: nameCol,
+                               keyCol: keyCol,
+                               Multi: cswPublic.data.Multi,
+                               onChange: function() {
+                                   var val = cswPublic.control.val();
+                                   Csw.tryExec(cswPublic.data.onChange, val);
+                                   if (false === cswPublic.data.Multi || false === val.MultiIsUnchanged) {
+                                       cswPublic.data.onPropChange({ logicalsetjson: val });
+                                   }
+                               }
+                           });
 
+                };
 
+                cswPublic.data.bindRender(render);
+                return cswPublic;
+            }));
 
-
+}());
