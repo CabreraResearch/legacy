@@ -83,19 +83,26 @@
                     }
                 };
                 if (Csw.isNullOrEmpty(cswPrivate)) {
-                    //Csw.error.throwException('Cannot create a Csw component without a Csw control', '_controls.factory', '_controls.factory.js', 14);
+                    Csw.error.throwException('Cannot create a Csw propertyOption without an object to define the property control.', 'propertyOption', 'csw.propertyOption.js', 86);
                 }
 
                 Csw.extend(cswPublic, cswPrivate);
                 cswPublic.onPropChange = function(attributes) {
+                	/// <summary>
+                	/// Update cswPublic.data as the DOM changes. Each propType is responsible for implementing a call to this method for each relevant subfield.
+                	/// </summary>
                     'use strict';
                     attributes = attributes || {};
                     cswInternal.preparePropJsonForSave(cswPublic.Multi, cswPublic.propData, attributes);
                 };
 
                 cswPublic.bindRender = function (callBack) {
+                	/// <summary>
+                	/// Subscribe to the render and teardown events
+                	/// </summary>
+
                     'use strict';
-                    cswPrivate.globalTearDown = function () {
+                    cswPrivate.tearDown = function () {
                         /// <summary>
                         /// Unbind all properties on this node's layout from the 
                         /// </summary>
@@ -103,22 +110,18 @@
                         Csw.unsubscribe('render_' + cswPublic.nodeid, cswPrivate.renderer);
                         Csw.unsubscribe('initPropertyTearDown', cswPrivate.tearDown);
                         Csw.unsubscribe('initPropertyTearDown_' + cswPublic.nodeid, cswPrivate.tearDown);
+                        Csw.tryExec(cswPrivate.tearDownCallback);
                     };
-
-                    cswPrivate.nodeTearDown = function () {
-                        /// <summary>
-                        /// Unbind all properties on this node's layout from the 
-                        /// </summary>
-                        'use strict';
-                        Csw.unsubscribe('render_' + cswPublic.nodeid, cswPrivate.renderer);
-                        Csw.unsubscribe('initPropertyTearDown_' + cswPublic.nodeid, cswPrivate.tearDown);
-                    };
+                    
                     cswPrivate.renderer = function () {
+                    	/// <summary>
+                    	/// Execute the render callback method on publish
+                    	/// </summary>
                         'use strict';
                         cswPublic.propDiv.empty();
                         Csw.tryExec(callBack, cswPublic);
-                        Csw.subscribe('initPropertyTearDown', cswPrivate.globalTearDown);
-                        Csw.subscribe('initPropertyTearDown_' + cswPublic.nodeid, cswPrivate.nodeTearDown);
+                        Csw.subscribe('initPropertyTearDown', cswPrivate.tearDown);
+                        Csw.subscribe('initPropertyTearDown_' + cswPublic.nodeid, cswPrivate.tearDown);
                     };
                     Csw.subscribe('render_' + cswPublic.nodeid, cswPrivate.renderer);
                 };
@@ -131,8 +134,11 @@
                     });
                 }
 
-                cswPublic.unBindRender = function() {
-                    Csw.tryExec(cswPrivate.nodeTearDown);
+                cswPublic.unBindRender = function(callback) {
+                	/// <summary>
+                	/// This is where you would define a callback to assign to the tearDown events
+                	/// </summary>
+                    cswPrivate.tearDownCallback = callback;
                 };
 
                 return cswPublic;
