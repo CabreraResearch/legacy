@@ -26,7 +26,6 @@
                         btnCell: {},
                         size: 'medium',
                         propId: '',
-                        onClickSuccess: null,
                         onClickAction: null
                     };
                     Csw.extend(cswPrivate, options);
