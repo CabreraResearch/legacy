@@ -38,7 +38,7 @@
                             isButton: true,
                             onClick: function () {
                                 $.CswDialog('FileUploadDialog', {
-                                    url: '/NbtWebApp/wsNBT.asmx/fileForProp',
+                                    urlMethod: 'fileForProp',
                                     params: {
                                         PropId: o.propData.id
                                     },
@@ -71,7 +71,7 @@
                                     };
 
                                     Csw.ajax.post({
-                                        url: '/NbtWebApp/wsNBT.asmx/clearProp',
+                                        urlMethod: 'clearProp',
                                         data: dataJson,
                                         success: function () { o.onReload(); }
                                     });

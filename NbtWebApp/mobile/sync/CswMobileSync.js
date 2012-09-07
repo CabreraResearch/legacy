@@ -31,7 +31,7 @@ function CswMobileSync(options,mobileStorage) {
         onSuccess: [], 
         onError: [],
         onLoginFailure: null,
-        syncUrl: '/NbtWebApp/wsNBT.asmx/UpdateProperties',
+        syncUrl: 'wsNBT.asmx/UpdateProperties',
         ForMobile: true
     };
     if (options) $().extend(o, options);
