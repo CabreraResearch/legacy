@@ -137,7 +137,7 @@ namespace ChemSW.Nbt.WebServices
             return ThisNodeObj;
         } // _treeNodeJObject()
 
-        public JObject runTree( CswPrimaryKey IncludeNodeId, CswNbtNodeKey IncludeNodeKey, bool IncludeNodeRequired, bool IncludeInQuickLaunch, string DefaultSelect )
+        public JObject runTree( CswPrimaryKey IncludeNodeId, CswNbtNodeKey IncludeNodeKey, bool IncludeNodeRequired, bool IncludeInQuickLaunch, string DefaultSelect, string AccessedByObjClassId = "" )
         {
             JObject ReturnObj = new JObject();
 
@@ -226,11 +226,13 @@ namespace ChemSW.Nbt.WebServices
                     ReturnObj["selectid"] = _IdPrefix + "root";
                 }
 
+                Tree.goToRoot();
                 ReturnObj["root"] = new JObject();
                 ReturnObj["root"]["data"] = _View.ViewName;
                 ReturnObj["root"]["attr"] = new JObject();
                 ReturnObj["root"]["attr"]["id"] = _IdPrefix + "root";
                 ReturnObj["root"]["attr"]["rel"] = "root";
+                ReturnObj["root"]["attr"]["disabled"] = false == Tree.getNodeIncludedForCurrentPosition();
                 //Tree.goToRoot();
                 //ReturnObj["attr"]["cswnbtnodekey"] = Tree.getNodeKeyForCurrentPosition().ToString();
                 ReturnObj["root"]["state"] = "open";
