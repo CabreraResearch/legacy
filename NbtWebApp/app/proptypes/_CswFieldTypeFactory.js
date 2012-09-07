@@ -52,10 +52,8 @@
                     case "File":
                     case "Grid": 
                     case "Image": 
-                    case "ImageList": break; //keep the refactored props in the switch until _factory is completely removed
-                    case "Link":
-                        m.propDiv.$.CswFieldTypeLink('init', m); //'init', nodeid, propData, onChange
-                        break;
+                    case "ImageList":
+                    case "Link": break; //keep the refactored props in the switch until _factory is completely removed
                     case "List":
                         m.propDiv.$.CswFieldTypeList('init', m); //'init', nodeid, propData, onChange
                         break;
@@ -166,10 +164,8 @@
                     case "File":
                     case "Grid":
                     case "Image": 
-                    case "ImageList": break; //keep the refactored props in the switch until _factory is completely removed
-                    case "Link":
-                        m.propDiv.$.CswFieldTypeLink('save', m); //('save', $propdiv, propData);
-                        break;
+                    case "ImageList": 
+                    case "Link": break; //keep the refactored props in the switch until _factory is completely removed
                     case "List":
                         m.propDiv.$.CswFieldTypeList('save', m); //('save', $propdiv, propData);
                         break;

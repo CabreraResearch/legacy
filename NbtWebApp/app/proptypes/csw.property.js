@@ -48,6 +48,9 @@
                         case Csw.enums.subFieldsMap.ImageList.name:
                             cswPublic = Csw.properties.imageList(cswPrivate);
                             break;
+                        case Csw.enums.subFieldsMap.Link.name:
+                            cswPublic = Csw.properties.link(cswPrivate);
+                            break;
                         default:
                             cswPublic = $.CswFieldTypeFactory('make', cswPrivate);
                     }

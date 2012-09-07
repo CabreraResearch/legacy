@@ -1,110 +1,99 @@
 /// <reference path="~/app/CswApp-vsdoc.js" />
 
+(function () {
+    'use strict';
+    Csw.properties.link = Csw.properties.link ||
+        Csw.properties.register('link',
+            Csw.method(function(propertyOption) {
+                'use strict';
+                var cswPrivate = { };
+                var cswPublic = {
+                    data: propertyOption
+                };
+                
+                var render = function() {
+                    'use strict';
+                    cswPublic.data = cswPublic.data || Csw.nbt.propertyOption(propertyOption);
 
-(function ($) {
-    "use strict";
-    var pluginName = 'CswFieldTypeLink';
+                    cswPrivate.propVals = cswPublic.data.propData.values;
+                    cswPrivate.parent = cswPublic.data.propDiv;
 
-    var methods = {
-        init: function (o) {
+                    cswPrivate.text = (false === cswPublic.data.Multi) ? Csw.string(cswPrivate.propVals.text).trim() : Csw.enums.multiEditDefaultValue;
+                    cswPrivate.href = (false === cswPublic.data.Multi) ? Csw.string(cswPrivate.propVals.href).trim() : Csw.enums.multiEditDefaultValue;
 
-            var propDiv = o.propDiv;
-            propDiv.empty();
+                    if (cswPublic.data.ReadOnly) {
+                        cswPublic.control = cswPrivate.parent.a({
+                            href: cswPrivate.href,
+                            text: cswPrivate.text
+                        });
+                    } else {
+                        cswPublic.control = cswPrivate.parent.table({
+                            ID: Csw.makeId(cswPublic.data.ID, 'tbl')
+                        });
 
-            var propVals = o.propData.values;
-            var text = (false === o.Multi) ? Csw.string(propVals.text).trim() : Csw.enums.multiEditDefaultValue;
-            var href = (false === o.Multi) ? Csw.string(propVals.href).trim() : Csw.enums.multiEditDefaultValue;
+                        cswPublic.control.cell(1, 1).a({
+                            href: cswPrivate.href,
+                            text: cswPrivate.text
+                        });
+                        cswPrivate.cell12 = cswPublic.control.cell(1, 2).div();
 
-            if (o.ReadOnly) {
-                propDiv.a({
-                    href: href,
-                    text: text
-                });
-            } else {
-                var table = propDiv.table({
-                    ID: Csw.makeId(o.ID, 'tbl')
-                });
+                        cswPrivate.cell12.icon({
+                            ID: cswPublic.data.ID + '_edit',
+                            iconType: Csw.enums.iconType.pencil,
+                            hovertext: 'Edit',
+                            size: 16,
+                            isButton: true,
+                            onClick: function () {
+                                cswPrivate.editTable.show();
+                            }
+                        });
 
-                table.cell(1, 1).a({
-                    href: href,
-                    text: text
-                });
-                var cell12 = table.cell(1, 2).div();
+                        cswPrivate.editTable = cswPrivate.parent.table({
+                            ID: Csw.makeId(cswPublic.data.ID, 'edittbl')
+                        }).hide();
 
-                cell12.icon({
-                        ID: o.ID + '_edit',
-                        iconType: Csw.enums.iconType.pencil,
-                        hovertext: 'Edit',
-                        size: 16,
-                        isButton: true,
-                        onClick: function () {
-                            editTable.show();
+                        cswPrivate.editTable.cell(1, 1).span({ text: 'Text' });
+
+                        cswPrivate.editTextCell = cswPrivate.editTable.cell(1, 2);
+                        cswPrivate.editText = cswPrivate.editTextCell.input({
+                            ID: cswPublic.data.ID + '_text',
+                            type: Csw.enums.inputTypes.text,
+                            value: cswPrivate.text,
+                            onChange: function() {
+                                var val = cswPrivate.editText.val();
+                                Csw.tryExec(cswPublic.data.onChange, val);
+                                cswPublic.data.onPropChange({ text: val });
+                            }
+                        });
+
+                        cswPrivate.editTable.cell(2, 1).span({ text: 'URL' });
+
+                        cswPrivate.editHrefCell = cswPrivate.editTable.cell(2, 2);
+                        cswPrivate.editHref = cswPrivate.editHrefCell.input({
+                            ID: cswPublic.data.ID + '_href',
+                            type: Csw.enums.inputTypes.text,
+                            value: cswPrivate.href,
+                            onChange: function () {
+                                var val = cswPrivate.editHref.val();
+                                Csw.tryExec(cswPublic.data.onChange, val);
+                                cswPublic.data.onPropChange({ href: val });
+                            }
+                        });
+
+                        if (cswPublic.data.Required && cswPrivate.href === '') {
+                            cswPrivate.editTable.show();
+                            cswPrivate.editText.addClass('required');
+                            cswPrivate.editHref.addClass('required');
                         }
-                    });
+                        cswPrivate.editText.clickOnEnter(cswPublic.data.saveBtn);
+                        cswPrivate.editHref.clickOnEnter(cswPublic.data.saveBtn);
+                    }
 
-                var editTable = propDiv.table({
-                    ID: Csw.makeId(o.ID, 'edittbl')
-                }).hide();
+                };
 
-                editTable.cell(1, 1).span({text: 'Text'});
-
-                var editTextCell = editTable.cell(1, 2);
-                var editText = editTextCell.input({ 
-                    ID: o.ID + '_text',
-                    type: Csw.enums.inputTypes.text,
-                    value: text,
-                    onChange: o.onChange
-                });
-
-                editTable.cell(2, 1).span({text: 'URL'});
-
-                var editHrefCell = editTable.cell(2, 2);
-                var editHref = editHrefCell.input({ 
-                    ID: o.ID + '_href',
-                    type: Csw.enums.inputTypes.text,
-                    value: href,
-                    onChange: o.onChange
-                });
-
-                if (o.Required && href === '') {
-                    editTable.show();
-                    editText.addClass("required");
-                    editHref.addClass("required");
-                }
-                editText.clickOnEnter(o.saveBtn);
-                editHref.clickOnEnter(o.saveBtn);
-            }
-        },
-        save: function (o) {
-            var attributes = {
-                text: null,
-                href: null
-            };
-            var compare = {};
-            var editText = o.propDiv.find('#' + o.ID + '_text');
-            if (false === Csw.isNullOrEmpty(editText)) {
-                attributes.text = editText.val();
-                compare = attributes;
-            }
-            var editHref = o.propDiv.find('#' + o.ID + '_href');
-            if (false === Csw.isNullOrEmpty(editHref)) {
-                attributes.href = editHref.val();
-                compare = attributes;
-            }
-            Csw.preparePropJsonForSave(o.Multi, o.propData, compare);
-        }
-    };
-
-    // Method calling logic
-    $.fn.CswFieldTypeLink = function (method) {
-
-        if (methods[method]) {
-            return methods[method].apply(this, Array.prototype.slice.call(arguments, 1));
-        } else if (typeof method === 'object' || !method) {
-            return methods.init.apply(this, arguments);
-        } else {
-            $.error('Method ' + method + ' does not exist on ' + pluginName); return false;
-        }
-
-    };
-})(jQuery);
+                cswPublic.data.bindRender(render);
+                return cswPublic;
+            }));
+    
+}());
+  
