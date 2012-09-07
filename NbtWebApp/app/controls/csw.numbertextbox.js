@@ -21,7 +21,8 @@
                 },
                 width: '',
                 ceilingVal: 999999999.999999,
-                isValid: null
+                isValid: null,
+                isClosedSet: true
             };
             var cswPublic = {};
             //        cswPublic.val = function (newValue) {
@@ -72,14 +73,14 @@
                         cswPrivate.value = cswPublic.val();
                     });
 
-                    if (cswPrivate.Precision === undefined || cswPrivate.Precision <= 0) {
+                    if (precision === undefined || precision <= 0) {
                         $.validator.addMethod(cswPrivate.ID + '_validateInteger', function (value, element) {
                             return (Csw.tryExec(cswPrivate.isValid, value) || this.optional(element) || Csw.validateInteger($(element).val()));
                         }, 'Value must be an integer');
                         cswPublic.addClass(cswPrivate.ID + '_validateInteger');
                     } else {
                         $.validator.addMethod(cswPrivate.ID + '_validateFloatPrecision', function (value, element) {
-                            return (Csw.tryExec(cswPrivate.isValid, value) || this.optional(element) || Csw.validateFloatPrecision($(element).val(), cswPrivate.Precision));
+                            return (Csw.tryExec(cswPrivate.isValid, value) || this.optional(element) || Csw.validateFloatPrecision($(element).val(), precision));
                         }, 'Value must be numeric');
                         cswPublic.addClass(cswPrivate.ID + '_validateFloatPrecision');
                     }
@@ -92,7 +93,7 @@
 
                     if (Csw.isNumber(minValue) && Csw.isNumeric(minValue)) {
                         $.validator.addMethod(cswPrivate.ID + '_validateFloatMinValue', function (value, element) {
-                            return (Csw.tryExec(cswPrivate.isValid, value) || this.optional(element) || Csw.validateFloatMinValue($(element).val(), minValue));
+                            return (Csw.tryExec(cswPrivate.isValid, value) || this.optional(element) || Csw.validateFloatMinValue($(element).val(), minValue, cswPrivate.isClosedSet));
                         }, 'Number must be greater than or equal to ' + minValue);
                         cswPublic.addClass(cswPrivate.ID + '_validateFloatMinValue');
                     }
@@ -100,7 +101,7 @@
                         Csw.isNumeric(maxValue) &&
                             maxValue > minValue) {
                         $.validator.addMethod(cswPrivate.ID + '_validateFloatMaxValue', function (value, element) {
-                            return (Csw.tryExec(cswPrivate.isValid, value) || this.optional(element) || Csw.validateFloatMaxValue($(element).val(), maxValue));
+                            return (Csw.tryExec(cswPrivate.isValid, value) || this.optional(element) || Csw.validateFloatMaxValue($(element).val(), maxValue, cswPrivate.isClosedSet));
                         }, 'Number must be less than or equal to ' + maxValue);
                         cswPublic.addClass(cswPrivate.ID + '_validateFloatMaxValue');
                     }                    

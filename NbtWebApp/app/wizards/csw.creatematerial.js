@@ -530,6 +530,8 @@
                                         case cswPrivate.config.quantityName:
                                             cswPublic.quantityCtrl = cswCell.numberTextBox({
                                                 ID: Csw.tryExec(Csw.makeId, 'quantityNumberBox'),
+                                                MinValue: 0,
+                                                isClosedSet: false,
                                                 width: '60px'
                                             });
                                             cswPublic.unitsCtrl = cswCell.select({
@@ -611,11 +613,15 @@
                                             formCols = formCols.concat([newSize.dispensibleChecked]);
                                         }
                                         if (false === Csw.isNullOrEmpty(newSize.quantity)) {
-                                            if (isSizeNew(newSize)) {
-                                                cswPublic.sizes.push(extractNewAmount(newSize));
-                                                cswPublic.sizeGrid.addRows(formCols);
+                                            if (newSize.quantity <= 0) {
+                                                $.CswDialog('AlertDialog', 'Quantity must be greater than zero.');
                                             } else {
-                                                $.CswDialog('AlertDialog', 'This size is already defined. Please define a new, unique size.');
+                                                if (isSizeNew(newSize)) {
+                                                    cswPublic.sizes.push(extractNewAmount(newSize));
+                                                    cswPublic.sizeGrid.addRows(formCols);
+                                                } else {
+                                                    $.CswDialog('AlertDialog', 'This size is already defined. Please define a new, unique size.');
+                                                }
                                             }
                                         } else {
                                             $.CswDialog('AlertDialog', 'A quantity must be specified when creating a size. Please specify the quantity.');
