@@ -69,6 +69,9 @@
                         case Csw.enums.subFieldsMap.Memo.name:
                             cswPublic = Csw.properties.memo(cswPrivate);
                             break;
+                        case Csw.enums.subFieldsMap.MOL.name:
+                            cswPublic = Csw.properties.mol(cswPrivate);
+                            break;
                             
                         case Csw.enums.subFieldsMap.MultiList.name:
                             cswPublic = Csw.properties.multiList(cswPrivate);

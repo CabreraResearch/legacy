@@ -64,9 +64,7 @@
                     case "ViewPickList": break; //keep the refactored props in the switch until _factory is completely removed    
 
                     case "Memo": break; //keep the refactored props in the switch until _factory is completely removed    
-                    case "MOL":
-                        m.propDiv.$.CswFieldTypeMol('init', m); 
-                        break;
+                    case "MOL": break; //keep the refactored props in the switch until _factory is completely removed    
                     case "MTBF":
                         m.propDiv.$.CswFieldTypeMTBF('init', m); 
                         break;
@@ -136,9 +134,7 @@
                     case "UserSelect": break; //keep the refactored props in the switch until _factory is completely removed
                     case "ViewPickList": break; //keep the refactored props in the switch until _factory is completely removed
                     case "Memo": break; //keep the refactored props in the switch until _factory is completely removed    
-                    case "MOL":
-                        m.propDiv.$.CswFieldTypeMol('save', m); 
-                        break;
+                    case "MOL": break; //keep the refactored props in the switch until _factory is completely removed    
                     case "MTBF":
                         m.propDiv.$.CswFieldTypeMTBF('save', m); 
                         break;

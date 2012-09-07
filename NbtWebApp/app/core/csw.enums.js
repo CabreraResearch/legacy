@@ -465,6 +465,12 @@
                     Text: Csw.enums.subFieldNames.Text
                 }
             },
+            MOL: {
+                name: 'MOL',
+                subfields: {
+                    
+                }
+            },
             MTBF: { name: 'MTBF', subfields: {} },
             MultiList: { name: 'MultiList', subfields: {} },
             NodeTypeSelect: { name: 'NodeTypeSelect', subfields: {} },
