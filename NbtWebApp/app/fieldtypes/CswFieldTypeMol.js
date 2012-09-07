@@ -22,7 +22,7 @@
             var cell22 = table.cell(2, 2).css('textAlign', 'right');
             var cell23 = table.cell(2, 3).css('textAlign', 'right');
 
-            var href = '/NbtWebApp/' + Csw.string(propVals.href);
+            var href = Csw.string(propVals.href);
             href += '&usenodetypeasplaceholder=false';     // case 27596
 
             cell11.a({

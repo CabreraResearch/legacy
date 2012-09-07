@@ -506,7 +506,7 @@
                             helpText.empty();
                             helpText.span({ text: 'Create a new <b>' + cswPrivate.selectedInspectionDesign.name + '</b> Design using the Excel template.' })
                                 .p()
-                                .a({ href: '/NbtWebApp/etc/InspectionDesign.xls', text: 'Download Template' })
+                                .a({ href: 'etc/InspectionDesign.xls', text: 'Download Template' })
                                 .$.button();
                         };
                         if (false === stepThreeComplete) {

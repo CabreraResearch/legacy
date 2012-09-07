@@ -17,7 +17,7 @@
 
                 var propVals = o.propData.values,
                     width,
-                    href = '/NbtWebApp/' + Csw.string(propVals.href);
+                    href = Csw.string(propVals.href);
 
                 href += '&usenodetypeasplaceholder=false';     // case 27596
 

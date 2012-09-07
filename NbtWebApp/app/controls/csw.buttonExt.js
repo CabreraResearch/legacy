@@ -28,7 +28,7 @@
                 cssclass: '',
                 hasText: true,
                 disableOnClick: true,
-                path: '/NbtWebApp/Images/newicons/',
+                path: 'Images/newicons/',
                 icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.none),
                 onClick: null,
                 isEnabled: true,
