@@ -276,8 +276,9 @@
                         tooltip: { title: 'Add Row' },
                         icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.add),
                         onClick: function () {
-                            cswPublic.thinGrid.commitRow();
-                            cswPublic.thinGrid.makeNewAddRow();
+                            if (cswPublic.sizeGrid.commitRow()) {
+                                cswPublic.sizeGrid.makeNewAddRow();
+                            }
                             cswPublic.thinGridAddButton.enable();
                         }
                     });

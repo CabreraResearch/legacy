@@ -150,13 +150,16 @@
             });
 
             cswPublic.commitRow = Csw.method(function () {
+                var rowCommitted = false;
                 if (cswPublic.form.isFormValid() && Csw.contains(cswPrivate.rowElements, cswPrivate.rowCount)) {
                     cswPublic.deleteRow(cswPrivate.rowCount);
                     Csw.tryExec(cswPrivate.onAdd, cswPrivate.rowCount);
                     if (cswPrivate.allowAdd) {
                         Csw.tryExec(cswPublic.makeAddRow, cswPrivate.makeAddRow);
                     }
+                    rowCommitted = true;
                 }
+                return rowCommitted;
             });
 
             cswPublic.makeNewAddRow = Csw.method(function () {
