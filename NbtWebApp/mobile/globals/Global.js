@@ -47,7 +47,7 @@ function checkExpireTime() {
             'onYes': function ()
             {
                 CswAjaxJson({
-                    'url': '/NbtWebApp/wsNBT.asmx/RenewSession',
+                    'url': 'wsNBT.asmx/RenewSession',
                     'success': function () { }
                 });
             }

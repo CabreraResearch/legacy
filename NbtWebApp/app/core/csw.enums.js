@@ -70,7 +70,7 @@
         });
 
     Csw.enums.ajaxUrlPrefix = Csw.enums.ajaxUrlPrefix ||
-        Csw.enums.register('ajaxUrlPrefix', '/NbtWebApp/wsNBT.asmx/');
+        Csw.enums.register('ajaxUrlPrefix', 'wsNBT.asmx/');
 
     Csw.enums.events = Csw.enums.events ||
         Csw.enums.register('events', {

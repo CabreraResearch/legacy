@@ -6,7 +6,7 @@
     $.fn.CswDashboard = function (options) {
 
         var o = {
-            Url: '/NbtWebApp/wsNBT.asmx/getDashboard',
+            Url: 'getDashboard',
             onSuccess: function () { }
         };
 
@@ -17,7 +17,7 @@
         var $DashDiv = $(this);
         
         Csw.ajax.post({
-            url: o.Url,
+            urlMethod: o.Url,
             data: {},
             stringify: false,
             success: function (data) {

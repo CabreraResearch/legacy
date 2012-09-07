@@ -86,7 +86,7 @@ window.initMain = window.initMain || function (undefined) {
     function handleImpersonation(userid, username, onSuccess) {
         var u = Csw.cookie.get(Csw.cookie.cookieNames.Username);
         Csw.ajax.post({
-            url: '/NbtWebApp/wsNBT.asmx/impersonate',
+            urlMethod: 'impersonate',
             data: { UserId: userid },
             success: function (data) {
                 if (Csw.bool(data.result)) {
@@ -128,7 +128,7 @@ window.initMain = window.initMain || function (undefined) {
             },
             onEndImpersonation: function () {
                 Csw.ajax.post({
-                    url: '/NbtWebApp/wsNBT.asmx/endImpersonation',
+                    urlMethod: 'endImpersonation',
                     success: function (data) {
                         if (Csw.bool(data.result)) {
                             Csw.cookie.set(Csw.cookie.cookieNames.Username, Csw.cookie.get(Csw.cookie.cookieNames.OriginalUsername));

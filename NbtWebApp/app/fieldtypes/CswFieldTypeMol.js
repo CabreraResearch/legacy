@@ -22,7 +22,7 @@
             var cell22 = table.cell(2, 2).css('textAlign', 'right');
             var cell23 = table.cell(2, 3).css('textAlign', 'right');
 
-            var href = '/NbtWebApp/' + Csw.string(propVals.href);
+            var href = Csw.string(propVals.href);
             href += '&usenodetypeasplaceholder=false';     // case 27596
 
             cell11.a({
@@ -45,8 +45,8 @@
                         isButton: true,
                         onClick: function () {
                             $.CswDialog('EditMolDialog', {
-                                TextUrl: '/NbtWebApp/wsNBT.asmx/saveMolPropText',
-                                FileUrl: '/NbtWebApp/wsNBT.asmx/saveMolPropFile',
+                                TextUrl: 'saveMolPropText',
+                                FileUrl: 'saveMolPropFile',
                                 PropId: o.propData.id,
                                 molData: mol,
                                 onSuccess: function () {
@@ -73,7 +73,7 @@
                                 };
 
                                 Csw.ajax.post({
-                                    url: '/NbtWebApp/wsNBT.asmx/clearProp',
+                                    urlMethod: 'clearProp',
                                     data: dataJson,
                                     success: function () { o.onReload(); }
                                 });

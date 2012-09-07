@@ -29,10 +29,10 @@
                 onExtraAction: null,  // function(nodeObj) {}
                 compactResults: false,
 
-                newsearchurl: '/NbtWebApp/wsNBT.asmx/doUniversalSearch',
-                filtersearchurl: '/NbtWebApp/wsNBT.asmx/filterUniversalSearch',
-                restoresearchurl: '/NbtWebApp/wsNBT.asmx/restoreUniversalSearch',
-                saveurl: '/NbtWebApp/wsNBT.asmx/saveSearchAsView',
+                newsearchurl: 'doUniversalSearch',
+                filtersearchurl: 'filterUniversalSearch',
+                restoresearchurl: 'restoreUniversalSearch',
+                saveurl: 'saveSearchAsView',
                 //filters: {},
                 sessiondataid: '',
                 searchterm: '',
@@ -94,7 +94,7 @@
                 Csw.tryExec(cswPrivate.onBeforeSearch);
 
                 Csw.ajax.post({
-                    url: cswPrivate.newsearchurl,
+                    urlMethod: cswPrivate.newsearchurl,
                     data: {
                         SearchTerm: cswPrivate.searchterm,
                         NodeTypeId: cswPrivate.nodetypeid,
@@ -313,7 +313,7 @@
 
                 Csw.tryExec(cswPrivate.onBeforeSearch);
                 Csw.ajax.post({
-                    url: cswPrivate.filtersearchurl,
+                    urlMethod: cswPrivate.filtersearchurl,
                     data: {
                         SessionDataId: cswPrivate.sessiondataid,
                         Filter: JSON.stringify(thisFilter),
@@ -331,7 +331,7 @@
                     onAddView: function (newviewid, viewmode) {
 
                         Csw.ajax.post({
-                            url: cswPrivate.saveurl,
+                            urlMethod: cswPrivate.saveurl,
                             data: {
                                 SessionDataId: cswPrivate.sessiondataid,
                                 ViewId: newviewid
@@ -352,7 +352,7 @@
 
                 Csw.tryExec(cswPrivate.onBeforeSearch);
                 Csw.ajax.post({
-                    url: cswPrivate.restoresearchurl,
+                    urlMethod: cswPrivate.restoresearchurl,
                     data: {
                         SessionDataId: cswPrivate.sessiondataid
                     },
