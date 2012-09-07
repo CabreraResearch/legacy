@@ -105,12 +105,16 @@
                         }
                     }; // addImage()
 
+                    cswPrivate.saveProp = function() {
+                        cswPublic.data.onPropChange({ value: cswPrivate.selectedValues.join('\n') });
+                    };
+
                     cswPrivate.addValue = function (valueToAdd) {
                         if (false === Csw.contains(cswPrivate.selectedValues, valueToAdd) &&
                             false === Csw.isNullOrEmpty(valueToAdd)) {
                             cswPrivate.selectedValues.push(valueToAdd);
                         }
-                        cswPrivate.hiddenValue.text(cswPrivate.selectedValues.join('\n'));
+                        cswPrivate.saveProp();
                     };
 
                     cswPrivate.removeValue = function (valueToRemove) {
@@ -118,7 +122,7 @@
                         if (idx !== -1) {
                             cswPrivate.selectedValues.splice(idx, 1);
                         }
-                        cswPrivate.hiddenValue.text(cswPrivate.selectedValues.join('\n'));
+                        cswPrivate.saveProp();
                     };
 
                     if (false === cswPublic.data.ReadOnly) {
@@ -127,14 +131,6 @@
                         if (cswPublic.data.Multi) {
                             cswPrivate.imageSelectList.option({ value: Csw.enums.multiEditDefaultValue, display: Csw.enums.multiEditDefaultValue, isSelected: true });
                         }
-                        cswPrivate.hiddenValue = cswPrivate.parent.textArea({
-                            ID: cswPublic.data.ID + '_value',
-                            value: cswPrivate.value,
-                            onChange: function() {
-                                var val = cswPrivate.hiddenValue.val();
-                                cswPublic.data.onPropChange({ value: val });
-                            }
-                        }).hide();
 
                         cswPrivate.imageSelectList.bind('change', function () {
                             var selected = cswPrivate.imageSelectList.children(':selected');
@@ -142,7 +138,7 @@
                             if (cswPublic.data.Required && false === cswPrivate.allowMultiple) {
                                 cswPrivate.selectOption.remove();
                             }
-                            cswPublic.data.onChange();
+                            Csw.tryExec(cswPublic.data.onChange, cswPrivate.selectedValues);
                         });
 
                         Csw.crawlObject(cswPrivate.options,
@@ -159,6 +155,7 @@
                             false
                         );
 
+                        cswPrivate.imageSelectList.required(cswPublic.data.Required);
                         if (cswPublic.data.Required) {
                             $.validator.addMethod('imageRequired', function (value, element) {
                                 return (cswPrivate.selectedValues.length > 0);
