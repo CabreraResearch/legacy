@@ -101,9 +101,7 @@
                         m.propDiv.$.CswFieldTypeTimeInterval('init', m); 
                         break;
                     
-                    case "ViewReference":
-                        m.propDiv.$.CswFieldTypeViewReference('init', m); 
-                        break;
+                    case "ViewReference": break; //keep the refactored props in the switch until _factory is completely removed    
                 } // switch (fieldtype)
                 return m;
             }, // make
@@ -173,9 +171,7 @@
                     case "TimeInterval":
                         m.propDiv.$.CswFieldTypeTimeInterval('save', m); 
                         break;
-                    case "ViewReference":
-                        m.propDiv.$.CswFieldTypeViewReference('save', m);
-                        break;
+                    case "ViewReference": break; //keep the refactored props in the switch until _factory is completely removed    
 
                 } // switch(fieldtype)
             } // save

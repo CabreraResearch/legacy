@@ -98,6 +98,9 @@
                         case Csw.enums.subFieldsMap.ViewPickList.name:
                             cswPublic = Csw.properties.viewPickList(cswPrivate);
                             break;
+                        case Csw.enums.subFieldsMap.ViewReference.name:
+                            cswPublic = Csw.properties.viewReference(cswPrivate);
+                            break;
                         default:
                             cswPublic = $.CswFieldTypeFactory('make', cswPrivate);
                     }
