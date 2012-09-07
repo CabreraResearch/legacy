@@ -43,37 +43,13 @@
                 m.ReadOnly = m.ReadOnly || Csw.bool(m.propData.readonly) || m.EditMode === Csw.enums.editMode.PrintReport;
 
                 switch (m.fieldtype) {
-                    case "AuditHistoryGrid":
-                    case "Barcode":
-                    case "Button":
-                    case "Comments":
-                    case "Composite":
-                    case "DateTime":
-                    case "File":
-                    case "Grid": 
-                    case "Image": 
-                    case "ImageList":
-                    case "Link": 
-                    case "List": 
-                    case "Location": 
-                    case "LocationContents": break; //keep the refactored props in the switch until _factory is completely removed
-                    case "Logical": break; //keep the refactored props in the switch until _factory is completely removed
-                    case "LogicalSet": break; //keep the refactored props in the switch until _factory is completely removed
-                    case "NodeTypeSelect": break; //keep the refactored props in the switch until _factory is completely removed
-                    case "UserSelect": break; //keep the refactored props in the switch until _factory is completely removed
-                    case "ViewPickList": break; //keep the refactored props in the switch until _factory is completely removed    
-
-                    case "Memo": break; //keep the refactored props in the switch until _factory is completely removed    
-                    case "MOL": break; //keep the refactored props in the switch until _factory is completely removed    
                     case "MTBF":
                         m.propDiv.$.CswFieldTypeMTBF('init', m); 
                         break;
-                    case "MultiList": break; //keep the refactored props in the switch until _factory is completely removed    
                     case "NFPA":
                         m.propDiv.$.CswFieldTypeNFPA('init', m); 
                         break;
                     
-                    case "Number": break; //keep the refactored props in the switch until _factory is completely removed    
                     case "Password":
                         m.propDiv.$.CswFieldTypePassword('init', m); 
                         break;
@@ -92,14 +68,9 @@
                     case "Scientific":
                         m.propDiv.$.CswFieldTypeScientific('init', m); 
                         break;
-                    case "Sequence": break; //keep the refactored props in the switch until _factory is completely removed    
-                    case "Static": break; //keep the refactored props in the switch until _factory is completely removed    
-                    case "Text": break; //keep the refactored props in the switch until _factory is completely removed    
                     case "TimeInterval":
                         m.propDiv.$.CswFieldTypeTimeInterval('init', m); 
                         break;
-                    
-                    case "ViewReference": break; //keep the refactored props in the switch until _factory is completely removed    
                 } // switch (fieldtype)
                 return m;
             }, // make
@@ -114,35 +85,12 @@
                 m.ReadOnly = Csw.bool(m.propData.readonly);
 
                 switch (m.fieldtype) {
-                    case "AuditHistoryGrid":
-                    case "Barcode":
-                    case "Button":
-                    case "Comments":
-                    case "Composite":
-                    case "DateTime":
-                    case "File":
-                    case "Grid":
-                    case "Image": 
-                    case "ImageList": 
-                    case "Link": 
-                    case "List": 
-                    case "Location": break; //keep the refactored props in the switch until _factory is completely removed
-                    case "LocationContents": break; //keep the refactored props in the switch until _factory is completely removed
-                    case "Logical": break; //keep the refactored props in the switch until _factory is completely removed
-                    case "LogicalSet": break; //keep the refactored props in the switch until _factory is completely removed
-                    case "NodeTypeSelect": break; //keep the refactored props in the switch until _factory is completely removed
-                    case "UserSelect": break; //keep the refactored props in the switch until _factory is completely removed
-                    case "ViewPickList": break; //keep the refactored props in the switch until _factory is completely removed
-                    case "Memo": break; //keep the refactored props in the switch until _factory is completely removed    
-                    case "MOL": break; //keep the refactored props in the switch until _factory is completely removed    
                     case "MTBF":
                         m.propDiv.$.CswFieldTypeMTBF('save', m); 
                         break;
-                    case "MultiList": break; //keep the refactored props in the switch until _factory is completely removed    
                     case "NFPA":
                         m.propDiv.$.CswFieldTypeNFPA('save', m); 
                         break;
-                    case "Number": break; //keep the refactored props in the switch until _factory is completely removed    
                     case "Password":
                         m.propDiv.$.CswFieldTypePassword('save', m); 
                         break;
@@ -161,13 +109,9 @@
                     case "Scientific":
                         m.propDiv.$.CswFieldTypeScientific('save', m); 
                         break;
-                    case "Sequence": break; //keep the refactored props in the switch until _factory is completely removed    
-                    case "Static": break; //keep the refactored props in the switch until _factory is completely removed    
-                    case "Text": break; //keep the refactored props in the switch until _factory is completely removed    
                     case "TimeInterval":
                         m.propDiv.$.CswFieldTypeTimeInterval('save', m); 
                         break;
-                    case "ViewReference": break; //keep the refactored props in the switch until _factory is completely removed    
 
                 } // switch(fieldtype)
             } // save
