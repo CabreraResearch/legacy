@@ -127,7 +127,7 @@
         Csw.publish(Csw.enums.events.ajax.ajaxStart, cswInternal.watchGlobal);
         cswExternal.ajax = $.ajax({
             type: 'POST',
-            url: '/NbtWebApp/Views/' + cswInternal.urlMethod,
+            url: 'Views/' + cswInternal.urlMethod,
             xhrFields: {
                 withCredentials: true
             },

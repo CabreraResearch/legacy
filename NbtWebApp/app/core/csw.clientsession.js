@@ -12,8 +12,8 @@
         onAuthenticate: null, // function (UserName) {} 
         onFail: null, // function (errormessage) {} 
         logoutpath: '',
-        authenticateUrl: '/NbtWebApp/wsNBT.asmx/authenticate',
-        DeauthenticateUrl: '/NbtWebApp/wsNBT.asmx/deauthenticate',
+        authenticateUrl: 'authenticate',
+        DeauthenticateUrl: 'deauthenticate',
         expiretimeInterval: '',
         expiretime: '',
         expiredInterval: '',
@@ -40,8 +40,8 @@
                 $.CswDialog('ExpireDialog', {
                     onYes: function () {
                         Csw.ajax.post({
-                            'url': '/NbtWebApp/wsNBT.asmx/RenewSession',
-                            'success': function () {
+                            urlMethod: 'RenewSession',
+                            success: function () {
                                 cswPrivate.isAuthenticated = true;
                             }
                         });
@@ -152,7 +152,7 @@
             }
             cswPrivate.isAuthenticated = true;
             Csw.ajax.post({
-                url: cswPrivate.authenticateUrl,
+                urlMethod: cswPrivate.authenticateUrl,
                 data: {
                     AccessId: cswPrivate.AccessId,
                     UserName: cswPrivate.UserName,
@@ -184,7 +184,7 @@
             }
             cswPrivate.isAuthenticated = false;
             Csw.ajax.post({
-                url: cswPrivate.DeauthenticateUrl,
+                urlMethod: cswPrivate.DeauthenticateUrl,
                 data: {},
                 success: function () {
                     Csw.clientSession.finishLogout();
@@ -315,7 +315,7 @@
             }
 
             Csw.ajax.post({
-                url: '/NbtWebApp/wsNBT.asmx/isAdministrator',
+                urlMethod: 'isAdministrator',
                 success: function (data) {
                     if (Csw.bool(data.Administrator)) {
                         Csw.tryExec(o.Yes);

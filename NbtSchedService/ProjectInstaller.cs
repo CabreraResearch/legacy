@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.ComponentModel;
 using System.Configuration.Install;
+using System.IO;
 
 namespace CswMailRptService
 {
@@ -60,7 +61,7 @@ namespace CswMailRptService
 			// 
 			// serviceInstaller1
 			// 
-			this.serviceInstaller1.ServiceName = "ChemSW NBT Schedule Service";
+            this.serviceInstaller1.ServiceName = GetServiceName();
             this.serviceInstaller1.Description = "Schedule service for ChemSW NBT applications. Copyright ChemSW, Inc., 2011.";
 			// 
 			// ProjectInstaller
@@ -71,5 +72,18 @@ namespace CswMailRptService
 
 		}
 		#endregion
-	}
+
+        private string GetServiceName()
+        {
+            string serviceName = "ChemSW NBT Schedule Service";
+            string ConfigFileName = "NbtSchedServiceName.cfg";
+            if( File.Exists( ConfigFileName ) )
+            {
+                TextReader tr = new StreamReader( ConfigFileName );
+                serviceName = tr.ReadLine();
+                tr.Close();
+            }
+            return serviceName;
+        } // GetServiceName()
+    }
 }

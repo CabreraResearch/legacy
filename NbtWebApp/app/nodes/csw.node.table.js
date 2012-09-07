@@ -6,8 +6,8 @@
         Csw.nbt.register('nodeTable', function (cswParent, params) {
             'use strict';
             var cswPrivate = {
-                TableSearchUrl: '/NbtWebApp/wsNBT.asmx/getTableSearch',
-                TableViewUrl: '/NbtWebApp/wsNBT.asmx/getTableView',
+                //TableSearchUrl: 'getTableSearch',
+                TableViewUrl: 'getTableView',
                 viewid: '',
                 ID: '',
                 nodeid: '',
@@ -423,7 +423,7 @@
                     cswPrivate.HandleTableData();
                 } else {
                     Csw.ajax.post({
-                        url: cswPrivate.TableViewUrl,
+                        urlMethod: cswPrivate.TableViewUrl,
                         data: {
                             ViewId: cswPrivate.viewid,
                             NodeId: cswPrivate.nodeid,

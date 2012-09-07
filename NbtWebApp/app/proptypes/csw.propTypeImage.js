@@ -25,7 +25,7 @@
                         cswPublic.control = cswPrivate.parent.append(Csw.enums.multiEditDefaultValue);
                     } else {
 
-                        cswPrivate.href = '/NbtWebApp/' + Csw.string(cswPrivate.propVals.href);
+                        cswPrivate.href = Csw.string(cswPrivate.propVals.href);
                         cswPrivate.href += '&usenodetypeasplaceholder=false'; // case 27596
 
                         if (false === Csw.isNullOrEmpty(cswPrivate.propVals.width) &&
@@ -62,7 +62,7 @@
                                             };
 
                                             Csw.ajax.post({
-                                                url: '/NbtWebApp/wsNBT.asmx/clearProp',
+                                        urlMethod: 'clearProp',
                                                 data: dataJson,
                                                 success: function () {
                                                     var val = {
@@ -115,7 +115,7 @@
                                 isButton: true,
                                 onClick: function () {
                                     $.CswDialog('FileUploadDialog', {
-                                        url: '/NbtWebApp/wsNBT.asmx/fileForProp',
+                                        urlMethod: 'fileForProp',
                                         params: {
                                             PropId: cswPublic.data.propData.id
                                         },

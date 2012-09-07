@@ -23,7 +23,7 @@ function CswMobileBackgroundTask(mobileStorage, mobileSync, options) {
         onError: null, //function () { },
         onLoginFailure: null, //function () { },
         PollingInterval: '30000', //30 seconds
-        taskUrl: '/NbtWebApp/wsNBT.asmx/ConnectTest'
+        taskUrl: 'wsNBT.asmx/ConnectTest'
     };
 
     if (options) $.extend(o, options);
