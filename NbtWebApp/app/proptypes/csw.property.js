@@ -51,6 +51,9 @@
                         case Csw.enums.subFieldsMap.Link.name:
                             cswPublic = Csw.properties.link(cswPrivate);
                             break;
+                        case Csw.enums.subFieldsMap.List.name:
+                            cswPublic = Csw.properties.list(cswPrivate);
+                            break;
                         default:
                             cswPublic = $.CswFieldTypeFactory('make', cswPrivate);
                     }
