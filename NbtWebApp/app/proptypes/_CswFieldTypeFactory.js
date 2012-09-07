@@ -96,9 +96,7 @@
                         break;
                     case "Sequence": break; //keep the refactored props in the switch until _factory is completely removed    
                     case "Static": break; //keep the refactored props in the switch until _factory is completely removed    
-                    case "Text":
-                        m.propDiv.$.CswFieldTypeText('init', m); 
-                        break;
+                    case "Text": break; //keep the refactored props in the switch until _factory is completely removed    
                     case "TimeInterval":
                         m.propDiv.$.CswFieldTypeTimeInterval('init', m); 
                         break;
@@ -171,9 +169,7 @@
                         break;
                     case "Sequence": break; //keep the refactored props in the switch until _factory is completely removed    
                     case "Static": break; //keep the refactored props in the switch until _factory is completely removed    
-                    case "Text":
-                        m.propDiv.$.CswFieldTypeText('save', m); 
-                        break;
+                    case "Text": break; //keep the refactored props in the switch until _factory is completely removed    
                     case "TimeInterval":
                         m.propDiv.$.CswFieldTypeTimeInterval('save', m); 
                         break;
