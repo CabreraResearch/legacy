@@ -84,6 +84,9 @@
                         case Csw.enums.subFieldsMap.Sequence.name:
                             cswPublic = Csw.properties.sequence(cswPrivate);
                             break;
+                        case Csw.enums.subFieldsMap.Static.name:
+                            cswPublic = Csw.properties.static(cswPrivate);
+                            break;
                             
                         case Csw.enums.subFieldsMap.UserSelect.name:
                             cswPublic = Csw.properties.userSelect(cswPrivate);
