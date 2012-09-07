@@ -94,7 +94,7 @@
                     if (Csw.isNumber(minValue) && Csw.isNumeric(minValue)) {
                         $.validator.addMethod(cswPrivate.ID + '_validateFloatMinValue', function (value, element) {
                             return (Csw.tryExec(cswPrivate.isValid, value) || this.optional(element) || Csw.validateFloatMinValue($(element).val(), minValue, cswPrivate.isClosedSet));
-                        }, 'Number must be greater than or equal to ' + minValue);
+                        }, 'Number must be greater than' + (Csw.bool(cswPrivate.isClosedSet) ? ' or equal to ' : ' ') + minValue);
                         cswPublic.addClass(cswPrivate.ID + '_validateFloatMinValue');
                     }
                     if (Csw.isNumber(maxValue) &&
@@ -102,9 +102,9 @@
                             maxValue > minValue) {
                         $.validator.addMethod(cswPrivate.ID + '_validateFloatMaxValue', function (value, element) {
                             return (Csw.tryExec(cswPrivate.isValid, value) || this.optional(element) || Csw.validateFloatMaxValue($(element).val(), maxValue, cswPrivate.isClosedSet));
-                        }, 'Number must be less than or equal to ' + maxValue);
+                        }, 'Number must be less than' + (Csw.bool(cswPrivate.isClosedSet) ? ' or equal to ' : ' ') + maxValue);
                         cswPublic.addClass(cswPrivate.ID + '_validateFloatMaxValue');
-                    }                    
+                    }
 
                     if (0 < ceilingVal) {
                         //Independant of any other validation, no number can be greater than this.
