@@ -156,10 +156,7 @@
                         ID: Csw.makeId(cswPrivate.buttonId, 'msg'),
                         cssclass: 'buttonmessage'
                     });
-                    
-                    if (cswPrivate.Required) {
-                        cswPublic.button.addClass('required');
-                    }
+                    cswPublic.button.required(cswPrivate.Required);
                 } ());
             });
             return cswPublic;

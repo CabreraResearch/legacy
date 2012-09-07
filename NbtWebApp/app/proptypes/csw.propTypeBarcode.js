@@ -38,12 +38,8 @@
                             },
                             value: cswPrivate.value
                         });
-
-                        if (cswPublic.data.Required) {
-                            cswPublic.control.addClass('required');
-                        }
-
-                        cswPublic.control.clickOnEnter(cswPublic.data.saveBtn);
+                        cswPrivate.input.required(cswPublic.data.Required);
+                        cswPrivate.input.clickOnEnter(cswPublic.data.saveBtn);
                     }
                     if (false === cswPublic.data.Multi) {
                         cswPublic.control.cell(1, 2).div({ ID: Csw.makeId(cswPublic.data.ID, 'parent', window.Ext.id()) })

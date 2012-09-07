@@ -80,10 +80,10 @@
                             }
                         });
 
+                        cswPrivate.editText.required(cswPublic.data.Required);
+                        cswPrivate.editHref.required(cswPublic.data.Required);
                         if (cswPublic.data.Required && cswPrivate.href === '') {
                             cswPrivate.editTable.show();
-                            cswPrivate.editText.addClass('required');
-                            cswPrivate.editHref.addClass('required');
                         }
                         cswPrivate.editText.clickOnEnter(cswPublic.data.saveBtn);
                         cswPrivate.editHref.clickOnEnter(cswPublic.data.saveBtn);
