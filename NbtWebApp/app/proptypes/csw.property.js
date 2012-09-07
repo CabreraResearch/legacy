@@ -70,6 +70,10 @@
                             cswPublic = Csw.properties.memo(cswPrivate);
                             break;
                             
+                        case Csw.enums.subFieldsMap.MultiList.name:
+                            cswPublic = Csw.properties.multiList(cswPrivate);
+                            break;
+                            
                         case Csw.enums.subFieldsMap.NodeTypeSelect.name:
                             cswPublic = Csw.properties.nodeTypeSelect(cswPrivate);
                             break;

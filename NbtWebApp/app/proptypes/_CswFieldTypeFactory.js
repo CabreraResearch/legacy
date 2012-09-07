@@ -70,9 +70,7 @@
                     case "MTBF":
                         m.propDiv.$.CswFieldTypeMTBF('init', m); //'init', nodeid, propData, onChange
                         break;
-                    case "MultiList":
-                        m.propDiv.$.CswFieldTypeMultiList('init', m); //'init', nodeid, propData, onChange
-                        break;
+                    case "MultiList": break; //keep the refactored props in the switch until _factory is completely removed    
                     case "NFPA":
                         m.propDiv.$.CswFieldTypeNFPA('init', m); //'init', nodeid, propData, onChange
                         break;
@@ -166,9 +164,7 @@
                     case "MTBF":
                         m.propDiv.$.CswFieldTypeMTBF('save', m); //('save', $propdiv, propData);
                         break;
-                    case "MultiList":
-                        m.propDiv.$.CswFieldTypeMultiList('save', m); //('save', $propdiv, propData);
-                        break;
+                    case "MultiList": break; //keep the refactored props in the switch until _factory is completely removed    
                     case "NFPA":
                         m.propDiv.$.CswFieldTypeNFPA('save', m); //('save', $propdiv, propData);
                         break;
