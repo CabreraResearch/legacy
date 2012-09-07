@@ -66,6 +66,9 @@
                         case Csw.enums.subFieldsMap.LogicalSet.name:
                             cswPublic = Csw.properties.logicalSet(cswPrivate);
                             break;
+                        case Csw.enums.subFieldsMap.Memo.name:
+                            cswPublic = Csw.properties.memo(cswPrivate);
+                            break;
                             
                         case Csw.enums.subFieldsMap.NodeTypeSelect.name:
                             cswPublic = Csw.properties.nodeTypeSelect(cswPrivate);

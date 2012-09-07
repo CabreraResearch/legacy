@@ -63,9 +63,7 @@
                     case "UserSelect": break; //keep the refactored props in the switch until _factory is completely removed
                     case "ViewPickList": break; //keep the refactored props in the switch until _factory is completely removed    
 
-                    case "Memo":
-                        m.propDiv.$.CswFieldTypeMemo('init', m); //'init', nodeid, propData, onChange
-                        break;
+                    case "Memo": break; //keep the refactored props in the switch until _factory is completely removed    
                     case "MOL":
                         m.propDiv.$.CswFieldTypeMol('init', m); //'init', nodeid, propData, onChange
                         break;
@@ -161,10 +159,7 @@
                     case "NodeTypeSelect": break; //keep the refactored props in the switch until _factory is completely removed
                     case "UserSelect": break; //keep the refactored props in the switch until _factory is completely removed
                     case "ViewPickList": break; //keep the refactored props in the switch until _factory is completely removed
-                        
-                    case "Memo":
-                        m.propDiv.$.CswFieldTypeMemo('save', m); //('save', $propdiv, propData);
-                        break;
+                    case "Memo": break; //keep the refactored props in the switch until _factory is completely removed    
                     case "MOL":
                         m.propDiv.$.CswFieldTypeMol('save', m); //('save', $propdiv, propData);
                         break;
