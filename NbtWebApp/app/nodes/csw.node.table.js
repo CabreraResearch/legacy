@@ -202,25 +202,22 @@
                             // Object Class Buttons
                             var propDiv = btnTable.cell(1, btncol).div();
 
-                            $.CswFieldTypeFactory('make', {
-                                nodeid: nodeid,
-                                fieldtype: propObj.fieldtype,
-                                size: 'small',
-                                propid: propObj.propid,
-                                propDiv: propDiv,
-                                propData: propObj.propData,
-                                ID: Csw.makeId(cswPrivate.ID, propObj.id, 'tbl'),
-                                EditMode: Csw.enums.editMode.Table,
-                                doSave: function (saveoptions) {
-                                    // Nothing to save in this case, so just call onSuccess
-                                    var s = { onSuccess: null };
-                                    if (saveoptions) {
-                                        Csw.extend(s, saveoptions, true);
-                                    }
-                                    Csw.tryExec(s.onSuccess);
-                                },
-                                onReload: null
-                            });
+                            var propId = propObj.id;
+                            propObj.size = 'small';
+                            propObj.nodeid = nodeid;
+                            propObj.ID = Csw.makeId(cswPrivate.ID, propObj.id, 'tbl');
+                            propObj.EditMode = Csw.enums.editMode.Table;
+                            propObj.doSave = function(saveoptions) {
+                                // Nothing to save in this case, so just call onSuccess
+                                saveoptions = saveoptions || { onSuccess: null };
+                                Csw.tryExec(saveoptions.onSuccess);
+                            };
+                            var fieldOpt = Csw.nbt.propertyOption(propObj, propDiv);
+
+                            cswPrivate.properties[propId] = Csw.nbt.property(fieldOpt);
+
+                            //$.CswFieldTypeFactory('make', {
+                                
                             btncol += 1;
 
                         } else {
