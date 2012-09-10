@@ -44,9 +44,6 @@
 
                 switch (m.fieldtype) {
                     
-                    case "Password":
-                        m.propDiv.$.CswFieldTypePassword('init', m); 
-                        break;
                     case "PropertyReference":
                         m.propDiv.$.CswFieldTypePropertyReference('init', m); 
                         break;
@@ -77,9 +74,6 @@
 
                 switch (m.fieldtype) {
 
-                    case "Password":
-                        m.propDiv.$.CswFieldTypePassword('save', m); 
-                        break;
                     case "PropertyReference":
                         m.propDiv.$.CswFieldTypePropertyReference('save', m); 
                         break;

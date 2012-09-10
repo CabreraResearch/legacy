@@ -1,123 +1,110 @@
 /// <reference path="~/app/CswApp-vsdoc.js" />
 
+(function () {
+    'use strict';
+    Csw.properties.password = Csw.properties.password ||
+        Csw.properties.register('password',
+            Csw.method(function (propertyOption) {
+                'use strict';
+                var cswPrivate = {};
+                var cswPublic = {
+                    data: propertyOption || Csw.nbt.propertyOption(propertyOption)
+                };
 
-(function ($) {
-    "use strict";
-    var pluginName = 'CswFieldTypePassword';
+                var render = function () {
+                    'use strict';
 
-    var methods = {
-        init: function (o) {
+                    cswPrivate.propVals = cswPublic.data.propData.values;
+                    cswPrivate.parent = cswPublic.data.propDiv;
 
-            var propDiv = o.propDiv;
-            propDiv.empty();
-            var propVals = o.propData.values,
-                isExpired = (false === o.Multi) ? Csw.bool(propVals.isexpired) : null,
-                isAdmin = (false === o.Multi) ? Csw.bool(propVals.isadmin) : null,
-                passwordcomplexity = Csw.number(propVals.passwordcomplexity, 0),
-                passwordlength = Csw.number(propVals.passwordlength, 0),
-                pwd1,
-                pwd2;
+                    cswPrivate.isExpired = (false === cswPublic.data.Multi) ? Csw.bool(cswPrivate.propVals.isexpired) : null;
+                    cswPrivate.isAdmin = (false === cswPublic.data.Multi) ? Csw.bool(cswPrivate.propVals.isadmin) : null;
+                    cswPrivate.passwordcomplexity = Csw.number(cswPrivate.propVals.passwordcomplexity, 0);
+                    cswPrivate.passwordlength = Csw.number(cswPrivate.propVals.passwordlength, 0);
 
-            if (o.ReadOnly) {
-                // show nothing
-            } else {
-                var table = propDiv.table({
-                    ID: Csw.makeId(o.ID, 'tbl'),
-                    OddCellRightAlign: true
-                });
+                    if (cswPublic.data.ReadOnly) {
+                        // show nothing
+                    } else {
+                        cswPublic.control = cswPrivate.parent.table({
+                            ID: Csw.makeId(cswPublic.data.ID, 'tbl'),
+                            OddCellRightAlign: true
+                        });
 
-                table.cell(1, 1).text('Set New');
-                var cell12 = table.cell(1, 2);
-                table.cell(2, 1).text('Confirm');
-                var cell22 = table.cell(2, 2);
-                var cell31 = table.cell(3, 1);
-                table.cell(3, 2).text('Expired');
+                        cswPublic.control.cell(1, 1).text('Set New');
+                        cswPrivate.cell12 = cswPublic.control.cell(1, 2);
+                        cswPublic.control.cell(2, 1).text('Confirm');
+                        cswPrivate.cell22 = cswPublic.control.cell(2, 2);
+                        cswPrivate.cell31 = cswPublic.control.cell(3, 1);
+                        cswPublic.control.cell(3, 2).text('Expired');
 
-                var textBox1 = cell12.input({
-                    ID: o.ID + '_pwd1',
-                    type: Csw.enums.inputTypes.password,
-                    cssclass: 'textinput',
-                    value: (false === o.Multi) ? '' : Csw.enums.multiEditDefaultValue,
-                    onChange: o.onChange
-                });
+                        cswPrivate.textBox1 = cswPrivate.cell12.input({
+                            ID: cswPublic.data.ID + '_pwd1',
+                            type: Csw.enums.inputTypes.password,
+                            cssclass: 'textinput',
+                            value: (false === cswPublic.data.Multi) ? '' : Csw.enums.multiEditDefaultValue,
+                            onChange: function () {
+                                var val = cswPrivate.textBox1.val();
+                                Csw.tryExec(cswPublic.data.onChange, val);
+                                cswPublic.data.onPropChange({ newpassword: val });
+                            }
+                        });
 
-                /* Text Box 2 */
-                cell22.input({ ID: o.ID + '_pwd2',
-                    type: Csw.enums.inputTypes.password,
-                    value: (false === o.Multi) ? '' : Csw.enums.multiEditDefaultValue,
-                    cssclass: 'textinput password2',
-                    onChange: o.onChange
-                });
-                if (isAdmin) {
-                    cell31.input({
-                        ID: o.ID + '_exp',
-                        name: o.ID + '_exp',
-                        type: Csw.enums.inputTypes.checkbox,
-                        checked: isExpired
-                    });
-                }
+                        /* Text Box 2 */
+                        cswPrivate.cell22.input({
+                            ID: cswPublic.data.ID + '_pwd2',
+                            type: Csw.enums.inputTypes.password,
+                            value: (false === cswPublic.data.Multi) ? '' : Csw.enums.multiEditDefaultValue,
+                            cssclass: 'textinput password2',
+                            onChange: cswPublic.data.onChange
+                        });
+                        if (cswPrivate.isAdmin) {
+                            cswPrivate.expiredChk = cswPrivate.cell31.input({
+                                ID: cswPublic.data.ID + '_exp',
+                                name: cswPublic.data.ID + '_exp',
+                                type: Csw.enums.inputTypes.checkbox,
+                                checked: cswPrivate.isExpired,
+                                onChange: function() {
+                                    var val = cswPrivate.expiredChk.$.is(':checked');
+                                    Csw.tryExec(cswPublic.data.onChange, val);
+                                    cswPublic.data.onPropChange({ isexpired: val });
+                                }
+                            });
+                        }
 
-                if (o.Required && Csw.isNullOrEmpty(propVals.password)) {
-                    textBox1.addClass('required');
-                }
+                        if (cswPublic.data.Required && Csw.isNullOrEmpty(cswPrivate.propVals.password)) {
+                            cswPrivate.textBox1.addClass('required');
+                        }
 
-                $.validator.addMethod("password2", function () {
-                    pwd1 = $('#' + o.ID + '_pwd1').val();
-                    pwd2 = $('#' + o.ID + '_pwd2').val();
-                    return ((pwd1 === '' && pwd2 === '') || pwd1 === pwd2);
-                }, 'Passwords do not match!');
-                //Case 26096
-                if (passwordlength > 0) {
-                    $.validator.addMethod("password_length", function (value) {
-                        return (Csw.string(value).length >= passwordlength || Csw.string(value).length === 0);
-                    }, 'Password must be at least ' + passwordlength + ' characters long.');
-                    textBox1.addClass('password_length');
-                }
-                if (passwordcomplexity > 0) {
-                    $.validator.addMethod("password_number", function (value) {
-                        return ((/.*[\d]/.test(value) && /.*[a-zA-Z]/.test(value)) || Csw.string(value).length === 0);
-                    }, 'Password must contain at least one letter and one number.');
-                    textBox1.addClass('password_number');
-                    if (passwordcomplexity > 1) {
-                        $.validator.addMethod("password_symbol", function (value) {
-                            return (/.*[`~!@#$%\^*()_\-+=\[{\]};:|\.?,]/.test(value) || Csw.string(value).length === 0);
-                        }, 'Password must contain a symbol.');
-                        textBox1.addClass('password_symbol');
+                        $.validator.addMethod("password2", function () {
+                            cswPrivate.pwd1 = $('#' + cswPublic.data.ID + '_pwd1').val();
+                            cswPrivate.pwd2 = $('#' + cswPublic.data.ID + '_pwd2').val();
+                            return ((cswPrivate.pwd1 === '' && cswPrivate.pwd2 === '') || cswPrivate.pwd1 === cswPrivate.pwd2);
+                        }, 'Passwords do not match!');
+                        //Case 26096
+                        if (cswPrivate.passwordlength > 0) {
+                            $.validator.addMethod("password_length", function (value) {
+                                return (Csw.string(value).length >= cswPrivate.passwordlength || Csw.string(value).length === 0);
+                            }, 'Password must be at least ' + cswPrivate.passwordlength + ' characters long.');
+                            cswPrivate.textBox1.addClass('password_length');
+                        }
+                        if (cswPrivate.passwordcomplexity > 0) {
+                            $.validator.addMethod("password_number", function (value) {
+                                return ((/.*[\d]/.test(value) && /.*[a-zA-Z]/.test(value)) || Csw.string(value).length === 0);
+                            }, 'Password must contain at least one letter and one number.');
+                            cswPrivate.textBox1.addClass('password_number');
+                            if (cswPrivate.passwordcomplexity > 1) {
+                                $.validator.addMethod("password_symbol", function (value) {
+                                    return (/.*[`~!@#$%\^*()_\-+=\[{\]};:|\.?,]/.test(value) || Csw.string(value).length === 0);
+                                }, 'Password must contain a symbol.');
+                                cswPrivate.textBox1.addClass('password_symbol');
+                            }
+                        }
                     }
-                }
-            }
-        },
-        save: function (o) { //$propdiv, $xml
-            var attributes = {
-                isexpired: null,
-                newpassword: null
-            };
-            var compare = {};
-            var newPw = o.propDiv.find('input#' + o.ID + '_pwd1');
-            if (false === Csw.isNullOrEmpty(newPw)) {
-                attributes.newpassword = newPw.val();
-                compare = attributes;
-            }
 
-            var isExpiredCheck = o.propDiv.find('input#' + o.ID + '_exp');
-            if (false === Csw.isNullOrEmpty(isExpiredCheck) && isExpiredCheck.length() > 0) {
-                attributes.isexpired = isExpiredCheck.$.is(':checked');
-                compare = attributes;
-            }
-            Csw.preparePropJsonForSave(o.Multi, o.propData, compare);
-        }
-    };
+                };
 
-    // Method calling logic
-    $.fn.CswFieldTypePassword = function (method) {
+                cswPublic.data.bindRender(render);
+                return cswPublic;
+            }));
 
-        if (methods[method]) {
-            return methods[method].apply(this, Array.prototype.slice.call(arguments, 1));
-        } else if (typeof method === 'object' || !method) {
-            return methods.init.apply(this, arguments);
-        } else {
-            $.error('Method ' + method + ' does not exist on ' + pluginName); return false;
-        }
-
-    };
-})(jQuery);
+}());

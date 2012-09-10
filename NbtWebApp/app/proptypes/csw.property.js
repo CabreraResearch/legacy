@@ -81,14 +81,15 @@
                         case Csw.enums.subFieldsMap.NFPA.name:
                             cswPublic = Csw.properties.nfpa(cswPrivate);
                             break;
-                            
                         case Csw.enums.subFieldsMap.NodeTypeSelect.name:
                             cswPublic = Csw.properties.nodeTypeSelect(cswPrivate);
                             break;    
                         case Csw.enums.subFieldsMap.Number.name:
                             cswPublic = Csw.properties.number(cswPrivate);
+                            break;      
+                        case Csw.enums.subFieldsMap.Password.name:
+                            cswPublic = Csw.properties.password(cswPrivate);
                             break;   
-
                         case Csw.enums.subFieldsMap.Sequence.name:
                             cswPublic = Csw.properties.sequence(cswPrivate);
                             break;

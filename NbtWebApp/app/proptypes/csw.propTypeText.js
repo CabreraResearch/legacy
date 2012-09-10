@@ -21,7 +21,7 @@
                     cswPrivate.length = Csw.number(cswPrivate.propVals.length, 14);
 
                     if (cswPublic.data.ReadOnly) {
-                        cswPublic.control = propDiv.append(cswPrivate.value);
+                        cswPublic.control = cswPrivate.parent.append(cswPrivate.value);
                     } else {
                         cswPublic.control = cswPrivate.parent.input({
                             ID: cswPublic.data.ID,
