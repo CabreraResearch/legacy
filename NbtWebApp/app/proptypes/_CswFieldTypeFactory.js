@@ -1,0 +1,130 @@
+/// <reference path="~/app/CswApp-vsdoc.js" />
+
+(function ($) {
+
+    $.CswFieldTypeFactory = function (method) {
+        "use strict";
+        var pluginName = 'CswFieldTypeFactory';
+
+        var m = {
+            nodeid: '',
+            fieldtype: '',
+            propDiv: '',
+            saveBtn: '',
+            propData: '',
+            onChange: function () {
+            },
+            onReload: function () {
+            },    // if a control needs to reload the tab
+            cswnbtnodekey: '',
+            relatednodeid: '',
+            relatednodename: '',
+            relatednodetypeid: '',
+            relatedobjectclassid: '',
+            ID: '',
+            Required: '',
+            ReadOnly: '',
+            EditMode: Csw.enums.editMode.Edit,
+            Multi: false,
+            onEditView: function () {
+            },
+            onAfterButtonClick: function () {
+            }
+        };
+
+        var methods = {
+            'make': function (options) {
+                if (options) {
+                    //Csw.extend(m, options);
+                    m = options;
+                }
+                m.ID = Csw.makeId(m.propDiv.getId(), m.propData.id);
+                m.Required = Csw.bool(m.propData.required);
+                m.ReadOnly = m.ReadOnly || Csw.bool(m.propData.readonly) || m.EditMode === Csw.enums.editMode.PrintReport;
+
+                switch (m.fieldtype) {
+                    case "MTBF":
+                        m.propDiv.$.CswFieldTypeMTBF('init', m); 
+                        break;
+                    case "NFPA":
+                        m.propDiv.$.CswFieldTypeNFPA('init', m); 
+                        break;
+                    
+                    case "Password":
+                        m.propDiv.$.CswFieldTypePassword('init', m); 
+                        break;
+                    case "PropertyReference":
+                        m.propDiv.$.CswFieldTypePropertyReference('init', m); 
+                        break;
+                    case "Quantity":
+                        m.propDiv.$.CswFieldTypeQuantity('init', m); 
+                        break;
+                    case "Question":
+                        m.propDiv.$.CswFieldTypeQuestion('init', m); 
+                        break;
+                    case "Relationship":
+                        m.propDiv.$.CswFieldTypeRelationship('init', m); 
+                        break;
+                    case "Scientific":
+                        m.propDiv.$.CswFieldTypeScientific('init', m); 
+                        break;
+                    case "TimeInterval":
+                        m.propDiv.$.CswFieldTypeTimeInterval('init', m); 
+                        break;
+                } // switch (fieldtype)
+                return m;
+            }, // make
+
+            'save': function (options) {
+                if (options) {
+                    //Csw.extend(m, options);
+                    m = options;
+                }
+                m.ID = Csw.makeId(m.propDiv.getId(), m.propData.id);
+                m.Required = Csw.bool(m.propData.required);
+                m.ReadOnly = Csw.bool(m.propData.readonly);
+
+                switch (m.fieldtype) {
+                    case "MTBF":
+                        m.propDiv.$.CswFieldTypeMTBF('save', m); 
+                        break;
+                    case "NFPA":
+                        m.propDiv.$.CswFieldTypeNFPA('save', m); 
+                        break;
+                    case "Password":
+                        m.propDiv.$.CswFieldTypePassword('save', m); 
+                        break;
+                    case "PropertyReference":
+                        m.propDiv.$.CswFieldTypePropertyReference('save', m); 
+                        break;
+                    case "Quantity":
+                        m.propDiv.$.CswFieldTypeQuantity('save', m); 
+                        break;
+                    case "Question":
+                        m.propDiv.$.CswFieldTypeQuestion('save', m); 
+                        break;
+                    case "Relationship":
+                        m.propDiv.$.CswFieldTypeRelationship('save', m); 
+                        break;
+                    case "Scientific":
+                        m.propDiv.$.CswFieldTypeScientific('save', m); 
+                        break;
+                    case "TimeInterval":
+                        m.propDiv.$.CswFieldTypeTimeInterval('save', m); 
+                        break;
+
+                } // switch(fieldtype)
+            } // save
+        };
+
+        // Method calling logic
+        if (methods[method]) {
+            return methods[method].apply(this, Array.prototype.slice.call(arguments, 1));
+        } else if (typeof method === 'object' || !method) {
+            return methods.init.apply(this, arguments);
+        } else {
+            $.error('Method ' + method + ' does not exist on ' + pluginName);
+            return false;
+        }
+    };        // $.CswFieldTypeFactory
+}(jQuery));

@@ -251,14 +251,14 @@ namespace ChemSW.Nbt.PropTypes
 
             if( null != JObject["options"] )
             {
-                JArray Data = (JArray) JObject["options"];
+                JArray Data = CswConvert.ToJArray( JObject["options"] );
 
                 foreach( JObject ItemObj in Data )
                 {
                     string key = CswConvert.ToString( ItemObj["key"] );
                     //string name = CswConvert.ToString( ItemObj["label"] );
-                    JArray Values = (JArray) ItemObj["values"];
-                    bool value = CswConvert.ToBoolean( Values[0] );
+                    JArray Values = CswConvert.ToJArray( ItemObj["values"] );
+                    bool value = null != Values && CswConvert.ToBoolean( Values.First );
                     if( value )
                     {
                         NewSelectedNodeTypeIds.Add( key );

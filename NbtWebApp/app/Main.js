@@ -882,7 +882,7 @@ window.initMain = window.initMain || function (undefined) {
 
         function getTabs(options) {
             //if (debugOn()) Csw.debug.log('Main.getTabs()');
-
+            Csw.publish('initPropertyTearDown');
             var o = {
                 nodeid: '',
                 cswnbtnodekey: ''
@@ -934,7 +934,7 @@ window.initMain = window.initMain || function (undefined) {
 
         function refreshSelected(options) {
             //if (debugOn()) Csw.debug.log('Main.refreshSelected()');
-
+            Csw.publish('initPropertyTearDown');    
             if (Csw.clientChanges.manuallyCheckChanges()) {
                 var o = {
                     nodeid: '',
