@@ -65,18 +65,16 @@ namespace ChemSW.Nbt.Schema
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase27439_Part2() ) );                        //01Q-032  //01R-024
 
             #endregion ROMEO
-            
+
             #region SEBASTIAN
 
-            //_addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCaseXXXXX() ) );                            //01Q-033  //01R-025  //01S-001
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase27578() ) );                              //01Q-034 //01R-024 //01S-001
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase27648() ) );                              //01Q-035 //01R-025 //01S-002
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase27646() ) );                              //01Q-036 //01R-026 //01S-003
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase26760() ) );                              //01Q-037 //01R-027 //01S-004
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase27629() ) );                              //01Q-038 //01R-028 //01S-005
 
             #endregion SEBASTIAN
-
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase27578() ) );                                    //01R-024 //031
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase27648() ) );                                    //01R-025 //032
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase27646() ) );                                    //01R-026 //033
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase26760() ) );                                    //01R-027 //034
-
 
             // This automatically detects the latest version
             _LatestVersion = _MinimumVersion;
