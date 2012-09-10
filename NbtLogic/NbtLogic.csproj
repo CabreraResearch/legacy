@@ -124,6 +124,8 @@
     <Compile Include="csw\ObjClasses\CswNbtObjClassInventoryLevel.cs" />
     <Compile Include="csw\Schema\scripts\infr\RunBeforeEveryExecutionOfUpdater_01b.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase27612.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26760.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase27646.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase27648.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase27578.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase27439.cs" />

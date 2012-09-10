@@ -378,7 +378,7 @@ namespace ChemSW.Nbt
                                   NodeSpecies.Root,
                                   true,
                                   false,
-                                  true,
+                                  ViewRoot.Included,
                                   out _RootNode,
                                   out _RootNodeKey );
             }
