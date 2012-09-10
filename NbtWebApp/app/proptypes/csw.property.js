@@ -98,6 +98,9 @@
                         case Csw.enums.subFieldsMap.Text.name:
                             cswPublic = Csw.properties.text(cswPrivate);
                             break;
+                        case Csw.enums.subFieldsMap.TimeInterval.name:
+                            cswPublic = Csw.properties.timeInterval(cswPrivate);
+                            break;
                             
                         case Csw.enums.subFieldsMap.UserSelect.name:
                             cswPublic = Csw.properties.userSelect(cswPrivate);

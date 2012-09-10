@@ -62,9 +62,6 @@
                     case "Scientific":
                         m.propDiv.$.CswFieldTypeScientific('init', m); 
                         break;
-                    case "TimeInterval":
-                        m.propDiv.$.CswFieldTypeTimeInterval('init', m); 
-                        break;
                 } // switch (fieldtype)
                 return m;
             }, // make
@@ -97,9 +94,6 @@
                         break;
                     case "Scientific":
                         m.propDiv.$.CswFieldTypeScientific('save', m); 
-                        break;
-                    case "TimeInterval":
-                        m.propDiv.$.CswFieldTypeTimeInterval('save', m); 
                         break;
 
                 } // switch(fieldtype)
