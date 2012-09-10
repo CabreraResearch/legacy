@@ -99,6 +99,9 @@
                         case Csw.enums.subFieldsMap.Question.name:
                             cswPublic = Csw.properties.question(cswPrivate);
                             break;
+                        case Csw.enums.subFieldsMap.Relationship.name:
+                            cswPublic = Csw.properties.relationship(cswPrivate);
+                            break;
                         case Csw.enums.subFieldsMap.Sequence.name:
                             cswPublic = Csw.properties.sequence(cswPrivate);
                             break;
