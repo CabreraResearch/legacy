@@ -27,15 +27,16 @@
             var cswPublic = cswParent.div({ text: '&nbsp;' });
 
             cswPrivate.url = function () {
-                // Case 24112: IE7 processes url() using https but handles the response as http--prompting the security dialog.
-                var port = document.location.port;
-                var prefix = document.location.protocol + "//" + document.location.hostname;
-                if (false === Csw.isNullOrEmpty(port) && port !== 80) {
-                    prefix += ':' + port;
-                }
-                prefix += '/NbtWebApp';
+//                // Case 24112: IE7 processes url() using https but handles the response as http--prompting the security dialog.
+//                var port = document.location.port;
+//                var prefix = document.location.protocol + "//" + document.location.hostname;
+//                if (false === Csw.isNullOrEmpty(port) && port !== 80) {
+//                    prefix += ':' + port;
+//                }
+//                prefix += '/NbtWebApp';
 
-                return prefix + '/' + cswPrivate.iconFilePrefix + cswPrivate.size + cswPrivate.iconFileSuffix;
+//                return prefix + '/' + cswPrivate.iconFilePrefix + cswPrivate.size + cswPrivate.iconFileSuffix;
+                return cswPrivate.iconFilePrefix + cswPrivate.size + cswPrivate.iconFileSuffix;
             }; // url()
 
             cswPrivate.offsetCss = function (state) {

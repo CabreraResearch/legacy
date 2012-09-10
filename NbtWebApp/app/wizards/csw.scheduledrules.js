@@ -96,7 +96,7 @@
                             });
 
                         Csw.ajax.post({
-                            url: '/NbtWebApp/wsNBT.asmx/getActiveAccessIds',
+                            urlMethod: 'getActiveAccessIds',
                             success: function (data) {
                                 var values = data.customerids;
                                 customerIdSelect.setOptions(values);
@@ -191,7 +191,7 @@
                         disabledText: 'Clearing...',
                         onClick: function() {
                             Csw.ajax.post({
-                                url: '/NbtWebApp/wsNBT.asmx/updateAllScheduledRules',
+                                urlMethod: 'updateAllScheduledRules',
                                 data: { AccessId: cswPrivate.selectedCustomerId, Action: 'ClearAllReprobates' },
                                 success: cswPrivate.makeStepTwo
                             });

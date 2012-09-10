@@ -127,10 +127,8 @@
 
                         cswPrivate.cellCol += 1;
 
-                        if (cswPrivate.Required) {
-                            cswPublic.unitSelect.addClass('required');
-                            cswPublic.quantityTextBox.addClass('required');
-                        }
+                        cswPublic.unitSelect.required(cswPrivate.Required);
+                        cswPublic.quantityTextBox.required(cswPrivate.Required);
 
                         $.validator.addMethod('validateInteger', function () {
                             return (cswPrivate.precision != 0 || Csw.validateInteger(cswPublic.quantityTextBox.val()));

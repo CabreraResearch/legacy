@@ -3,7 +3,7 @@
 
 (function ($) {
     "use strict";
-    var authenticateUrl = '/NbtWebApp/wsNBT.asmx/authenticate';
+    //var authenticateUrl = 'authenticate';
 
     // Called with context
     $.fn.CswLogin = function (method) {

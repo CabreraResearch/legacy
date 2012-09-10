@@ -149,7 +149,7 @@ function CswMobilePageOnline(onlineDef, $parent, mobileStorage, mobileSync, mobi
         }
     }
 
-    var SendLogUrl = '/NbtWebApp/wsNBT.asmx/collectClientLogInfo';
+    var SendLogUrl = 'wsNBT.asmx/collectClientLogInfo';
     function setStopLog() {
         if (!doLogging()) {
             $('.debug').removeClass('debug-on')

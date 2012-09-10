@@ -77,7 +77,7 @@ function CswMobilePageNodes(nodesDef, $parent, mobileStorage, $contentRole) {
     
     function refreshNodeJson(onSuccess) {
         ///<summary>Fetches the nodes from the selected view from the web server and rebuilds the list.</summary>
-        var getView = '/NbtWebApp/wsNBT.asmx/GetView',
+        var getView = 'wsNBT.asmx/GetView',
             jsonData = {
                 SessionId: mobileStorage.sessionid(),
                 ParentId: viewId,

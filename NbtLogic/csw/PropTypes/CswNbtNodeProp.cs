@@ -82,9 +82,26 @@ namespace ChemSW.Nbt.PropTypes
             get
             {
                 return ( _CswNbtNodePropData.WasModified );
-            }//
+            }
 
         }//WasModified
+
+        /// <summary>
+        /// True if the value was modified or not in such a way as to signal a Notification.  Cannot be set.
+        /// </summary>
+        /// <remark>
+        /// You don't want to put a setter here. We want CswNbtNodePropData
+        /// to be entirely in charge of the meaning of "WasModifiedForNotification";
+        /// Use clearModifyFlag() if you want to do a reset
+        /// </remark>
+        public bool WasModifiedForNotification
+        {
+            get
+            {
+                return ( _CswNbtNodePropData.WasModifiedForNotification );
+            }
+
+        }//WasModifiedForNotification
 
         /// <summary>
         /// True prevents the ModifiedFlag from changing

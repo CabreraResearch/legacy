@@ -64,7 +64,7 @@ function CswMobilePageViews(viewsDef, $parent, mobileStorage, $contentRole) {
     
     function refreshViewJson(onSuccess, runOnce) {
         ///<summary>Fetches the current views list from the web server and rebuilds the list.</summary>
-        var getViewsUrl = '/NbtWebApp/wsNBT.asmx/GetViewsList',
+        var getViewsUrl = 'wsNBT.asmx/GetViewsList',
             ret = {};
         
         var jsonData = {

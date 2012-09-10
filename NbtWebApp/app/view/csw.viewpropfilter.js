@@ -321,7 +321,7 @@
                 };
 
                 Csw.ajax.post({
-                    url: '/NbtWebApp/wsNBT.asmx/makeViewPropFilter',
+                    urlMethod: 'makeViewPropFilter',
                     data: jsonData,
                     success: function (data) {
                         if (Csw.isFunction(o.onSuccess)) {
