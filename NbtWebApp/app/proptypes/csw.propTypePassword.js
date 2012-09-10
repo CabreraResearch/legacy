@@ -22,14 +22,14 @@
                     cswPrivate.passwordcomplexity = Csw.number(cswPrivate.propVals.passwordcomplexity, 0);
                     cswPrivate.passwordlength = Csw.number(cswPrivate.propVals.passwordlength, 0);
 
+                    cswPublic.control = cswPrivate.parent.table({
+                        ID: Csw.makeId(cswPublic.data.ID, 'tbl'),
+                        OddCellRightAlign: true
+                    });
+                    
                     if (cswPublic.data.ReadOnly) {
-                        // show nothing
+                        //show nothing
                     } else {
-                        cswPublic.control = cswPrivate.parent.table({
-                            ID: Csw.makeId(cswPublic.data.ID, 'tbl'),
-                            OddCellRightAlign: true
-                        });
-
                         cswPublic.control.cell(1, 1).text('Set New');
                         cswPrivate.cell12 = cswPublic.control.cell(1, 2);
                         cswPublic.control.cell(2, 1).text('Confirm');

@@ -86,6 +86,12 @@
                     Csw.error.throwException('Cannot create a Csw propertyOption without an object to define the property control.', 'propertyOption', 'csw.propertyOption.js', 86);
                 }
 
+                //ugly, persist this for full backwards compatability--for now
+                //TODO: unify ID/ReadOnly/Required properties on this object
+                cswPublic.ID = Csw.makeId(cswPublic.propDiv.getId(), cswPublic.propData.id);
+                cswPublic.Required = Csw.bool(cswPublic.propData.required);
+                cswPublic.ReadOnly = Csw.bool(cswPublic.propData.readonly);
+
                 Csw.extend(cswPublic, cswPrivate);
                 cswPublic.onPropChange = function(attributes) {
                 	/// <summary>
