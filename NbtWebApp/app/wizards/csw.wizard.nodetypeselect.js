@@ -3,8 +3,8 @@
 
 (function () {
 
-    Csw.nbt.wizard.nodeTypeSelect = Csw.nbt.wizard.nodeTypeSelect ||
-        Csw.nbt.wizard.register('nodeTypeSelect', function (cswParent, options) {
+    Csw.wizard.nodeTypeSelect = Csw.wizard.nodeTypeSelect ||
+        Csw.wizard.register('nodeTypeSelect', function (cswParent, options) {
             'use strict';
             ///<summary>Creates a basic grid with an Add menu.</summary>
 

@@ -19,30 +19,13 @@
                 allowEditRow: true,
                 width: 180,
                 preventSelectTrigger: false //,
-//                canEdit: true,
-//                pagermode: 'default',
-//                gridOpts: {
-//                    height: 180,
-//                    rowNum: 10,
-//                    onSelectRow: function (selRowid) {
-//                        if (false === cswPrivate.preventSelectTrigger && false === Csw.isNullOrEmpty(selRowid)) {
-//                            var cellVal = cswPublic.grid.getValueForColumn('CHANGEDATE', selRowid);
-//                            Csw.tryExec(cswPrivate.onSelectRow, cellVal);
-//                        }
-//                    },
-//                    add: false,
-//                    view: false,
-//                    del: false,
-//                    refresh: false,
-//                    search: false
-//                }
             };
-            if (options) Csw.extend(cswPrivate, options);
+            Csw.extend(cswPrivate, options);
 
             var cswPublic = { };
             cswParent.empty();
 
-            var gridId = cswPrivate.ID + '_auditGrid';
+            var gridId = Csw.makeId(cswPrivate.ID, 'auditGrid', window.Ext.id());
             cswParent.grid({
                 ID: gridId,
                 storeId: gridId,

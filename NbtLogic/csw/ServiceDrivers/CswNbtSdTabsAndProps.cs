@@ -14,6 +14,7 @@ using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
 using ChemSW.Nbt.Statistics;
+using ChemSW.StructureSearch;
 using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.ServiceDrivers
@@ -890,41 +891,51 @@ namespace ChemSW.Nbt.ServiceDrivers
             return ret;
         } // ClearPropValue()
 
-        public bool saveMolProp( string moldata, string propIdAttr )
+        public JObject saveMolProp( string moldata, string propIdAttr )
         {
-            bool ret = false;
-
+            JObject Ret = new JObject();
+            bool Succeeded = false;
             CswPropIdAttr PropId = new CswPropIdAttr( propIdAttr );
             CswNbtMetaDataNodeTypeProp MetaDataProp = _CswNbtResources.MetaData.getNodeTypeProp( PropId.NodeTypePropId );
             if( Int32.MinValue != PropId.NodeId.PrimaryKey )
             {
                 CswNbtNode Node = _CswNbtResources.Nodes[PropId.NodeId];
-                CswNbtNodePropWrapper PropWrapper = Node.Properties[MetaDataProp];
-
-                // Do the update directly
-                CswTableUpdate JctUpdate = _CswNbtResources.makeCswTableUpdate( "Clobber_save_update", "jct_nodes_props" );
-                //JctUpdate.AllowBlobColumns = true;
-                if( PropWrapper.JctNodePropId > 0 )
+                if( null != Node )
                 {
-                    DataTable JctTable = JctUpdate.getTable( "jctnodepropid", PropWrapper.JctNodePropId );
-                    JctTable.Rows[0]["clobdata"] = moldata;
-                    JctUpdate.update( JctTable );
+                    CswNbtNodePropMol PropMol = Node.Properties[MetaDataProp];
+                    if( null != PropMol )
+                    {
+                        // Do the update directly
+                        CswTableUpdate JctUpdate = _CswNbtResources.makeCswTableUpdate( "Clobber_save_update", "jct_nodes_props" );
+                        //JctUpdate.AllowBlobColumns = true;
+                        if( PropMol.JctNodePropId > 0 )
+                        {
+                            DataTable JctTable = JctUpdate.getTable( "jctnodepropid", PropMol.JctNodePropId );
+                            JctTable.Rows[0]["clobdata"] = moldata;
+                            JctUpdate.update( JctTable );
+                        }
+                        else
+                        {
+                            DataTable JctTable = JctUpdate.getEmptyTable();
+                            DataRow JRow = JctTable.NewRow();
+                            JRow["nodetypepropid"] = CswConvert.ToDbVal( PropId.NodeTypePropId );
+                            JRow["nodeid"] = CswConvert.ToDbVal( Node.NodeId.PrimaryKey );
+                            JRow["nodeidtablename"] = Node.NodeId.TableName;
+                            JRow["clobdata"] = moldata;
+                            JctTable.Rows.Add( JRow );
+                            JctUpdate.update( JctTable );
+                        }
+                        Succeeded = true;
+                        Ret["mol"] = PropMol.Mol;
+                        byte[] molImage = CswStructureSearch.GetImage( moldata );
+                        string Href;
+                        SetPropBlobValue( molImage, "mol.jpeg", "image/jpeg", propIdAttr, "blobdata", out Href );
+                        Ret["href"] = Href;
+                    }
                 }
-                else
-                {
-                    DataTable JctTable = JctUpdate.getEmptyTable();
-                    DataRow JRow = JctTable.NewRow();
-                    JRow["nodetypepropid"] = CswConvert.ToDbVal( PropId.NodeTypePropId );
-                    JRow["nodeid"] = CswConvert.ToDbVal( Node.NodeId.PrimaryKey );
-                    JRow["nodeidtablename"] = Node.NodeId.TableName;
-                    JRow["clobdata"] = moldata;
-                    JctTable.Rows.Add( JRow );
-                    JctUpdate.update( JctTable );
-                }
-                ret = true;
-
             } // if( Int32.MinValue != NbtNodeKey.NodeId.PrimaryKey )
-            return ret;
+            Ret["succeeded"] = Succeeded;
+            return Ret;
         }
 
         public bool SetPropBlobValue( byte[] Data, string FileName, string ContentType, string PropIdAttr, string Column, out string Href )

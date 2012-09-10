@@ -30,19 +30,22 @@
                 keyCol: '',
                 valCol: '',
                 valColName: '',
-                storeDataId: ''
+                storeDataId: '',
+                dataStore: {
+                    cols: [],
+                    data: []
+                },
+                oldDataStore: {
+                    col: '',
+                    row: ''
+                }
             };
             var cswPublic = {};
 
             cswPrivate.transmogrify = function () {
-                var dataStore = {
-                    cols: [],
-                    data: []
-                };
                 var data = [],
                     values;
                 var cols, i, v, thisSet, firstProp, column, fieldname;
-
 
                 if (false === Csw.isNullOrEmpty(cswPrivate.dataAry) && cswPrivate.dataAry.length > 0) {
                     // get columns
@@ -81,30 +84,20 @@
                         }
                     }
 
-                    dataStore.cols = cols;
-                    dataStore.data = data;
-                    Csw.clientDb.setItem(cswPrivate.storeDataId, dataStore);
+                    cswPrivate.dataStore.cols = cols;
+                    cswPrivate.dataStore.data = data;
                 }
-                return dataStore;
+                return cswPrivate.dataStore;
             };
 
             (function () {
-                if (options) {
-                    Csw.extend(cswPrivate, options);
-                }
-
-                cswPrivate.storeDataId = Csw.makeId(cswPrivate.ID, cswPrivate.storedDataSuffix, '', '', false);
-                cswPrivate.cbaPrevSelected = Csw.makeId(cswPrivate.storeDataId, cswPrivate.cbaPrevSelectedSuffix, '', '', false);
-
-                Csw.clientDb.removeItem(cswPrivate.storeDataId);
-                Csw.clientDb.removeItem(cswPrivate.cbaPrevSelected);
+                Csw.extend(cswPrivate, options);
 
                 cswPrivate.cbaDiv = cswParent.div({
-                    ID: cswPrivate.storeDataId,
+                    ID: window.Ext.id(),
                     height: (25 * cswPrivate.HeightInRows) + 'px'
                 });
                 cswPublic = Csw.dom({ }, cswPrivate.cbaDiv);
-                //Csw.controls.factory(cswPrivate.$parent, cswPublic);
 
                 var cbaData = cswPrivate.transmogrify({
                     dataAry: cswPrivate.dataAry,
@@ -123,7 +116,8 @@
                     checkType = Csw.enums.inputTypes.radio;
                 }
 
-                Csw.clientDb.setItem(cswPrivate.storeDataId, { columns: cswPrivate.cols, data: cswPrivate.data });
+                cswPrivate.dataStore.cols = cswPrivate.cols;
+                cswPrivate.dataStore.data = cswPrivate.data;
 
                 if (cswPrivate.ReadOnly) {
                     for (var r = 0; r < cswPrivate.data.length; r += 1) {
@@ -206,29 +200,20 @@
                         //var cB = this;
                         var col = cB.propNonDom('col');
                         var row = cB.propNonDom('row');
-                        var isChecked = Csw.bool(cB.propDom('checked'));
-                        //                    if (false === isChecked) {
-                        //                        if (cswPrivate.checked > 0) {
-                        //                            cswPrivate.checked -= 1;
-                        //                        }
-                        //                    } else {
-                        //                        cswPrivate.checked += 1;
-                        //                    }
-                        var cache = Csw.clientDb.getItem(cswPrivate.storeDataId);
-                        cache.MultiIsUnchanged = false;
-                        if (Csw.contains(cache.data, row) && Csw.contains(cache.data[row], 'values')) {
-                            cache.data[row].values[col] = cB.$.is(':checked');
+                        
+                        cswPrivate.dataStore.MultiIsUnchanged = false;
+                        if (Csw.contains(cswPrivate.dataStore.data, row) && Csw.contains(cswPrivate.dataStore.data[row], 'values')) {
+                            cswPrivate.dataStore.data[row].values[col] = cB.$.is(':checked');
                         }
                         if (cswPrivate.UseRadios) { //we're toggling--cache the prev selected row/col to deselect on later change
-                            var data = Csw.clientDb.getItem(cswPrivate.cbaPrevSelected);
-                            if (Csw.contains(data, 'row') && Csw.contains(data, 'col')) {
-                                if (Csw.contains(cache.data, data.row) && Csw.contains(cache.data[data.row], 'values')) {
-                                    cache.data[data.row].values[data.col] = false;
+                            if (Csw.contains(cswPrivate.oldDataStore, 'row') && Csw.contains(cswPrivate.oldDataStore, 'col')) {
+                                if (Csw.contains(cswPrivate.dataStore.data, cswPrivate.oldDataStore.row) && Csw.contains(cswPrivate.dataStore.data[cswPrivate.oldDataStore.row], 'values')) {
+                                    cswPrivate.dataStore.data[cswPrivate.oldDataStore.row].values[cswPrivate.oldDataStore.col] = false;
                                 }
                             }
-                            Csw.clientDb.setItem(cswPrivate.cbaPrevSelected, { row: row, col: col });
+                            cswPrivate.oldDataStore.row = row; 
+                            cswPrivate.oldDataStore.col = col;
                         }
-                        Csw.clientDb.setItem(cswPrivate.storeDataId, cache);
                     };
 
                     // Data
@@ -258,7 +243,8 @@
 
                             if (sRow.values[f]) {
                                 if (cswPrivate.UseRadios) {
-                                    Csw.clientDb.setItem(cswPrivate.cbaPrevSelected, { col: f, row: s });
+                                    cswPrivate.oldDataStore.col = f; 
+                                    cswPrivate.oldDataStore.row = s;
                                 }
                             }
                         } // for(var c = 0; c < cswPrivate.cols.length; c++)
@@ -288,19 +274,6 @@
 
             } ());
 
-            cswPublic.getdata = function (opts) {
-                var _internal = {
-                    ID: ''
-                };
-
-                if (opts) {
-                    Csw.extend(_internal, opts);
-                }
-
-                var data = Csw.clientDb.getItem(cswPrivate.storeDataId);
-                return data;
-            };
-
             cswPublic.toggleCheckAll = function () {
                 var checkBoxes = cswPublic.find('.CBACheckBox_' + cswPrivate.ID);
                 if (checkBoxes.isValid) {
@@ -317,6 +290,10 @@
                     checkBoxes.trigger('click'); // this toggles again
                 }
             }; // ToggleCheckAll()
+
+            cswPublic.val = function() {
+                return cswPrivate.dataStore;
+            };
 
             return cswPublic;
         });
