@@ -532,6 +532,7 @@
                                                 ID: Csw.tryExec(Csw.makeId, 'quantityNumberBox'),
                                                 MinValue: 0,
                                                 isClosedSet: false,
+                                                Required: true,//TODO - case 27665 - change to false when it is handled appropraitely serverside
                                                 width: '60px'
                                             });
                                             cswPublic.unitsCtrl = cswCell.select({
@@ -612,19 +613,16 @@
                                             newSize.dispensibleChecked = cswPublic.dispensibleCtrl.val();
                                             formCols = formCols.concat([newSize.dispensibleChecked]);
                                         }
-                                        if (false === Csw.isNullOrEmpty(newSize.quantity)) {
-                                            if (newSize.quantity <= 0) {
-                                                $.CswDialog('AlertDialog', 'Quantity must be greater than zero.');
-                                            } else {
-                                                if (isSizeNew(newSize)) {
-                                                    cswPublic.sizes.push(extractNewAmount(newSize));
-                                                    cswPublic.sizeGrid.addRows(formCols);
-                                                } else {
-                                                    $.CswDialog('AlertDialog', 'This size is already defined. Please define a new, unique size.');
-                                                }
-                                            }
+                                        if (Csw.isNullOrEmpty(newSize.quantity) && false === Csw.bool(newSize.quantEditableChecked)) {
+                                            $.CswDialog('AlertDialog', 'A quantity must be specified when creating a size that does not have Quantity Editable checked. ' +
+                                            'Please specify the quantity or set the Quantity Editable checkbox.');
                                         } else {
-                                            $.CswDialog('AlertDialog', 'A quantity must be specified when creating a size. Please specify the quantity.');
+                                            if (isSizeNew(newSize)) {
+                                                cswPublic.sizes.push(extractNewAmount(newSize));
+                                                cswPublic.sizeGrid.addRows(formCols);
+                                            } else {
+                                                $.CswDialog('AlertDialog', 'This size is already defined. Please define a new, unique size.');
+                                            }
                                         }
                                     }
                                 },
