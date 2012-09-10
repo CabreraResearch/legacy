@@ -112,9 +112,7 @@
                         }, 'Value precision cannot exceed ' + ceilingVal + '.');
                         cswPublic.addClass(cswPrivate.ID + '_validateDb_15_6_FieldLength');
                     }
-                    if (cswPrivate.Required) {
-                        cswPublic.addClass('required');
-                    }
+                    cswPublic.required(cswPrivate.Required);
                 } /* else */
             } ());
             return cswPublic;

@@ -360,22 +360,17 @@ namespace ChemSW.Nbt
         {
             get
             {
-                //CswNbtNodePropWrapper ReturnVal = null;
-                //
-                //foreach( CswNbtMetaDataNodeTypeProp Prop in _NodeType.getNodeTypeProps() )
-                //{
-                //    if( Prop.ObjectClassProp != null )
-                //    {
-                //        if( Prop.ObjectClassProp.PropName.ToLower() == ObjectClassPropName.ToLower() )
-                //        {
-                //            ReturnVal = this[Prop];
-                //            break;
-                //        }
-                //    }
-                //}
-                //
-                //return ( ReturnVal );
-                return this[_CswNbtResources.MetaData.getNodeTypePropByObjectClassProp( _NodeTypeId, ObjectClassPropName )];
+                CswNbtNodePropWrapper ReturnVal = null;
+                CswNbtMetaDataNodeTypeProp MetaDataProp = _CswNbtResources.MetaData.getNodeTypePropByObjectClassProp( _NodeTypeId, ObjectClassPropName );
+                if( null != MetaDataProp )
+                {
+                    ReturnVal = this[MetaDataProp];
+                }
+                else
+                {
+                    throw new CswDniException( ErrorType.Error, "Invalid Property", "CswNbtNodePropColl[] for node ["+ _NodePk.ToString() + "] could not find object class prop: " + ObjectClassPropName );
+                }
+                return ReturnVal;
             }
         }// this[ string ObjectClassPropName ]
 

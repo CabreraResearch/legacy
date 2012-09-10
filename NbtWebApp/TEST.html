@@ -61,7 +61,7 @@
 	$('#dombutton_old').click(testDom);
 
 	function textXml() {
-	    CswAjaxXml({ 'url': '/NbtWebApp/wsNBT.asmx/ConnectTest',
+	    CswAjaxXml({ 'url': 'wsNBT.asmx/ConnectTest',
 	        'success': function (X$xml)
 	        {
 	            var testGet = X$xml.CswAttrXml('success');

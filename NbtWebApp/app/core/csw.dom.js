@@ -388,6 +388,21 @@
                 return cswPublic;
             };
 
+            cswPublic.required = function (truthy) {
+                /// <summary>Mark the required status of the element.</summary>
+                /// <returns type="Object">Classless jQuery element (for chaining)</returns> 
+                switch(Csw.bool(truthy)) {
+                    case true:
+                        cswPublic.addClass('required');
+                        break;
+                    case false:
+                        cswPublic.removeClass('required');
+                        break;
+                }
+                
+                return cswPublic;
+            };
+
             cswPublic.root = cswPublic.root || function () {
                 /// <summary>Get the root (great, great, great grandparent) of this control</summary>
                 /// <returns type="Object">The Csw object (for chaining)</returns> 

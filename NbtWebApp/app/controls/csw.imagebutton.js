@@ -34,19 +34,19 @@
             cswPublic.setButtonType = function(newButtonType) {
                 var multiplier = -18;
                 //Case 24112: IE7 processes url() using https but randles the response as http--prompting the security dialog.
-                var port = document.location.port;
-                var prefix = document.location.protocol + "//" + document.location.hostname;
-                if (false === Csw.isNullOrEmpty(port) && port !== 80) {
-                    prefix += ':' + port;
-                }
-                prefix += '/NbtWebApp';
+//                var port = document.location.port;
+//                var prefix = document.location.protocol + "//" + document.location.hostname;
+//                if (false === Csw.isNullOrEmpty(port) && port !== 80) {
+//                    prefix += ':' + port;
+//                }
+//                prefix += '/NbtWebApp';
                 if (newButtonType !== undefined && newButtonType !== Csw.enums.imageButton_ButtonType.None) {
 
                     var offset = 0;
                     if (cswPrivate.Active) {
                         offset = -36;
                     }
-                    cswPublic.$.get(0).style.background = 'url(\'' + prefix + '/Images/buttons/buttons18.gif\') ' + offset + 'px ' + newButtonType * multiplier + 'px no-repeat';
+                    cswPublic.$.get(0).style.background = 'url(\'Images/buttons/buttons18.gif\') ' + offset + 'px ' + newButtonType * multiplier + 'px no-repeat';
 
                     cswPublic.unbind('mouseover');
                     cswPublic.unbind('mouseout');

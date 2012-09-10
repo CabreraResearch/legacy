@@ -85,7 +85,7 @@ function CswMobilePageLogin(loginDef, $parent, mobileStorage, loginSuccess, $con
         $password.clickOnEnter($loginBtn);
 
         function onLoginSubmit() {
-            var authenticateUrl = '/NbtWebApp/wsNBT.asmx/authenticate';
+            var authenticateUrl = 'wsNBT.asmx/authenticate';
             if (mobileStorage.amOnline()) {
                 var userName = $username.val();
                 var accessId = $customerId.val();

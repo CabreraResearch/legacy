@@ -22,7 +22,7 @@
         };
 
         Csw.ajax.post({
-            url: '/NbtWebApp/wsNBT.asmx/CopyNode',
+            urlMethod: 'CopyNode',
             data: {
                 NodeId: Csw.string(o.nodeid),
                 NodeKey: Csw.string(o.nodekey)
@@ -58,7 +58,7 @@
         };
 
         Csw.ajax.post({
-            url: '/NbtWebApp/wsNBT.asmx/DeleteNodes',
+            urlMethod: 'DeleteNodes',
             data: jData,
             success: function (data) {
                 /* clear selected node cookies */

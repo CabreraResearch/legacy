@@ -29,7 +29,7 @@
                         onClickAction: null
                     };
                     Csw.extend(cswPrivate, options);
-                    cswPrivate.div = cswParent.div();
+                    cswPrivate.div = cswParent.div({ID: window.Ext.id()});
                     cswPrivate.div.empty();
 
                     cswPrivate.table = cswPrivate.div.table({
@@ -70,18 +70,7 @@
                                             if (false === cswPrivate.useToolTip) {
                                                 cswPublic.messageDiv.text(data.message);
                                             } else {
-                                                window.Ext.create('Ext.tip.ToolTip', {
-                                                    target: Csw.makeId(cswPrivate.ID, 'tbl'),
-                                                    html: data.message,
-                                                    autoShow: true,
-                                                    focusOnToFront: true,
-                                                    autoHide: false,
-                                                    closable: true,
-                                                    anchor: 'left',
-                                                    bodyStyle: {
-                                                        background: '#ffff00'
-                                                    }
-                                                });
+                                                cswPrivate.btnCell.quickTip({ html: data.message });
                                             }
                                         }
                                         Csw.publish(Csw.enums.events.objectClassButtonClick, actionData);
@@ -163,10 +152,7 @@
                         ID: Csw.makeId(cswPrivate.buttonId, 'msg'),
                         cssclass: 'buttonmessage'
                     });
-
-                    if (cswPrivate.Required) {
-                        cswPublic.button.addClass('required');
-                    }
+                    cswPublic.button.required(cswPrivate.Required);
                 } ());
             });
             return cswPublic;

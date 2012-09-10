@@ -3,8 +3,8 @@
 
 (function () {
 
-    Csw.nbt.wizard.addLayout = Csw.nbt.wizard.addLayout ||
-        Csw.nbt.wizard.register('addLayout', function (cswParent, options) {
+    Csw.wizard.addLayout = Csw.wizard.addLayout ||
+        Csw.wizard.register('addLayout', function (cswParent, options) {
             'use strict';
             ///<summary>Creates a tabsandprops Add layout for a nodetype.</summary>
 
