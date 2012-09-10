@@ -43,9 +43,6 @@
                 m.ReadOnly = m.ReadOnly || Csw.bool(m.propData.readonly) || m.EditMode === Csw.enums.editMode.PrintReport;
 
                 switch (m.fieldtype) {
-                    case "MTBF":
-                        m.propDiv.$.CswFieldTypeMTBF('init', m); 
-                        break;
                     case "NFPA":
                         m.propDiv.$.CswFieldTypeNFPA('init', m); 
                         break;
@@ -85,9 +82,7 @@
                 m.ReadOnly = Csw.bool(m.propData.readonly);
 
                 switch (m.fieldtype) {
-                    case "MTBF":
-                        m.propDiv.$.CswFieldTypeMTBF('save', m); 
-                        break;
+
                     case "NFPA":
                         m.propDiv.$.CswFieldTypeNFPA('save', m); 
                         break;
