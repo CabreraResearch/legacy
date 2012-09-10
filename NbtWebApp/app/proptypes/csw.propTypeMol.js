@@ -34,14 +34,24 @@
                     cswPrivate.href = Csw.string(cswPrivate.propVals.href);
                     cswPrivate.href += '&usenodetypeasplaceholder=false';     // case 27596
 
-                    cswPrivate.cell11.a({
-                        href: cswPrivate.href,
-                        target: '_blank'
-                    }).img({
-                        src: cswPrivate.href,
-                        height: cswPrivate.propVals.height,
-                        width: cswPrivate.width
-                    });
+                    cswPrivate.initMol = (function() {
+                        function init(molData) {
+                            cswPrivate.cell11.empty();
+                            if (molData) {
+                                cswPrivate.cell11.a({
+                                    href: molData.href,
+                                    target: '_blank'
+                                }).img({
+                                    src: molData.href,
+                                    height: cswPrivate.propVals.height,
+                                    width: cswPrivate.width
+                                });
+                            }
+                        }
+
+                        init(cswPrivate);
+                        return init;
+                    }());
 
                     if (false === Csw.bool(cswPublic.data.ReadOnly) && cswPublic.data.EditMode !== Csw.enums.editMode.Add) {
                         /* Edit Button */
@@ -52,14 +62,16 @@
                                 hovertext: 'Edit',
                                 size: 16,
                                 isButton: true,
-                                onClick: function () {
+                                onClick: function() {
                                     $.CswDialog('EditMolDialog', {
                                         TextUrl: 'saveMolPropText',
                                         FileUrl: 'saveMolPropFile',
                                         PropId: cswPublic.data.propData.id,
                                         molData: cswPrivate.mol,
-                                        onSuccess: function () {
-                                            cswPublic.data.onReload();
+                                        onSuccess: function(data) {
+                                            var val = data;
+                                            cswPrivate.initMol(data);
+                                            cswPublic.data.onPropChange({ href: data.href, mol: data.mol });
                                         }
                                     });
                                 }
@@ -73,7 +85,7 @@
                                 hovertext: 'Clear Mol',
                                 size: 16,
                                 isButton: true,
-                                onClick: function () {
+                                onClick: function() {
                                     /* remember: confirm is globally blocking call */
                                     if (confirm("Are you sure you want to clear this structure?")) {
                                         var dataJson = {
@@ -84,13 +96,16 @@
                                         Csw.ajax.post({
                                             urlMethod: 'clearProp',
                                             data: dataJson,
-                                            success: function () { cswPublic.data.onReload(); }
+                                            success: function() {
+                                                cswPrivate.initMol();
+                                                cswPublic.data.onPropChange({ href: '', mol: '' });
+                                            }
                                         });
                                     }
                                 }
                             });
 
-
+                    }
                 };
 
                 cswPublic.data.bindRender(render);
