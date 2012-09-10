@@ -16,37 +16,58 @@
             var yellow = (false === o.Multi) ? propVals.reactivity : Csw.enums.multiEditDefaultValue;
             var blue = (false === o.Multi) ? propVals.health : Csw.enums.multiEditDefaultValue;
             var white = (false === o.Multi) ? propVals.special : Csw.enums.multiEditDefaultValue;
+            var displayMode = propVals.displaymode;
+            var hideSpecial = propVals.hidespecial;
 
             var outerTable = propDiv.table({
                 ID: Csw.makeId(o.ID, 'tbl')
             });
 
-            var table = outerTable.cell(1, 1).table({ID: Csw.makeId(o.ID, 'tbl1')})
-                                   .addClass('CswFieldTypeNFPA_table');
+            var table = outerTable.cell(1, 1).table({ ID: Csw.makeId(o.ID, 'tbl1') }).addClass('CswFieldTypeNFPA_table');
+            var redDiv, yellowDiv, blueDiv, whiteDiv;
+            if (displayMode === Csw.enums.NFPADisplayMode.Diamond) {
+                table.addClass('CswFieldTypeNFPA_rotation');
+                redDiv = table.cell(1, 1)
+                               .div({ cssclass: 'CswFieldTypeNFPA_cell CswFieldTypeNFPA_redDiamond' })
+                               .div({ cssclass: 'CswFieldTypeNFPA_text CswFieldTypeNFPA_textRotated' });
 
-            var redDiv = table.cell(1, 1)
-                               .div({ cssclass: 'CswFieldTypeNFPA_cell CswFieldTypeNFPA_red' })
+                yellowDiv = table.cell(1, 2)
+                               .div({ cssclass: 'CswFieldTypeNFPA_cell CswFieldTypeNFPA_yellowDiamond' })
+                               .div({ cssclass: 'CswFieldTypeNFPA_text CswFieldTypeNFPA_textRotated' });
+
+                blueDiv = table.cell(2, 1)
+                               .div({ cssclass: 'CswFieldTypeNFPA_cell CswFieldTypeNFPA_blueDiamond' })
+                               .div({ cssclass: 'CswFieldTypeNFPA_text CswFieldTypeNFPA_textRotated' });
+                whiteDiv = table.cell(2, 2)
+                               .div({ cssclass: 'CswFieldTypeNFPA_cell CswFieldTypeNFPA_whiteDiamond' })
+                               .div({ cssclass: 'CswFieldTypeNFPA_text CswFieldTypeNFPA_whitetext CswFieldTypeNFPA_textRotated' });
+            } else {
+                redDiv = table.cell(1, 1)
+                               .div({ cssclass: 'CswFieldTypeNFPA_cell CswFieldTypeNFPA_redLinear' })
                                .div({ cssclass: 'CswFieldTypeNFPA_text' });
 
-            var yellowDiv = table.cell(1, 2)
-                               .div({ cssclass: 'CswFieldTypeNFPA_cell CswFieldTypeNFPA_yellow' })
+                yellowDiv = table.cell(1, 2)
+                               .div({ cssclass: 'CswFieldTypeNFPA_cell CswFieldTypeNFPA_yellowLinear' })
                                .div({ cssclass: 'CswFieldTypeNFPA_text' });
 
-            var blueDiv = table.cell(2, 1)
-                               .div({ cssclass: 'CswFieldTypeNFPA_cell CswFieldTypeNFPA_blue' })
+                blueDiv = table.cell(1, 3)
+                               .div({ cssclass: 'CswFieldTypeNFPA_cell CswFieldTypeNFPA_blueLinear' })
                                .div({ cssclass: 'CswFieldTypeNFPA_text' });
 
-            var whiteDiv = table.cell(2, 2)
-                               .div({ cssclass: 'CswFieldTypeNFPA_cell CswFieldTypeNFPA_white' })
-                               .div({ cssclass: 'CswFieldTypeNFPA_text CswFieldTypeNFPA_whitetext' });
+                whiteDiv = table.cell(1, 4)
+                               .div({ cssclass: 'CswFieldTypeNFPA_cell CswFieldTypeNFPA_whiteLinear' })
+                               .div({ cssclass: 'CswFieldTypeNFPA_text CswFieldTypeNFPA_whitetextLinear' });
+            }
 
             function setValue(div, value) {
-                div.text(value);
+                if (false == Csw.isNullOrEmpty(div)) {
+                    div.text(value);
 
-                if (value === 'W') {
-                    div.addClass("strikethrough");
-                } else {
-                    div.removeClass("strikethrough");
+                    if (value === 'W') {
+                        div.addClass("strikethrough");
+                    } else {
+                        div.removeClass("strikethrough");
+                    }
                 }
             }
 
@@ -87,13 +108,14 @@
                 editTable.cell(1, 1).text('Flammability');
                 editTable.cell(2, 1).text('Reactivity');
                 editTable.cell(3, 1).text('Health');
-                editTable.cell(4, 1).text('Special');
+                var whiteText = editTable.cell(4, 1).text('Special');
 
                 makeSelect(editTable.cell(1, 2), 'red', red, redDiv);
                 makeSelect(editTable.cell(2, 2), 'yellow', yellow, yellowDiv);
                 makeSelect(editTable.cell(3, 2), 'blue', blue, blueDiv);
 
-                var whiteVals = [
+                if (false === hideSpecial) {
+                    var whiteVals = [
                     { value: '', display: '' },
                     { value: 'ACID', display: 'ACID' },
                     { value: 'ALK', display: 'ALK' },
@@ -105,10 +127,10 @@
                     { value: 'POI', display: 'POI' },
                     { value: 'RAD', display: 'RAD' },
                     { value: 'W', display: 'W'}];
-                if (o.Multi) {
-                    whiteVals.push({ value: Csw.enums.multiEditDefaultValue, display: Csw.enums.multiEditDefaultValue });
-                }
-                var whiteSelect = editTable.cell(4, 2)
+                    if (o.Multi) {
+                        whiteVals.push({ value: Csw.enums.multiEditDefaultValue, display: Csw.enums.multiEditDefaultValue });
+                    }
+                    var whiteSelect = editTable.cell(4, 2)
                                           .select({
                                               ID: Csw.makeId(o.ID, 'white'),
                                               selected: white,
@@ -118,8 +140,18 @@
                                                   setValue(whiteDiv, whiteSelect.val());
                                               }
                                           });
-
+                }
             } // if(!o.ReadOnly)
+            if (hideSpecial) {
+                if (displayMode === Csw.enums.NFPADisplayMode.Diamond) {
+                    table.cell(2, 2).hide(); //white cell for diamond display
+                } else {
+                    table.cell(1, 4).hide(); //white cell for linear display
+                }
+                whiteSelect.hide();
+                whiteDiv.hide();
+                whiteText.hide();
+            }
         },
         save: function (o) {
             var attributes = {

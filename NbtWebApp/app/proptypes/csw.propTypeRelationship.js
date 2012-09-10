@@ -135,9 +135,9 @@
                         });
                         cellCol++;
 
-                        var toggleButton = table.cell(1, cellCol).imageButton({
-                            ButtonType: Csw.enums.imageButton_ButtonType.Edit,
-                            AlternateText: 'Edit',
+                        var toggleButton = table.cell(1, cellCol).icon({
+                            iconType: Csw.enums.iconType.pencil,
+                            isButton: true,
                             ID: Csw.makeId(o.ID, 'toggle'),
                             onClick: function () {
                                 selectBox.show();

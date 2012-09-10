@@ -32,7 +32,7 @@
             var ret = '';
 
             Csw.each(cswEnum, function (value, name) {
-                if(value === enumValue) {
+                if (value === enumValue) {
                     ret = name;
                     return true;
                 }
@@ -308,7 +308,7 @@
             add: 72, //called left above but the file is 'back.png'
             search: 73 //called ?? above but the file is 'back.png'
         });
-    
+
     Csw.enums.searchCssClasses = Csw.enums.searchCssClasses ||
         Csw.enums.register('searchCssClasses', {
             nodetype_select: { name: 'csw_search_nodetype_select' },
@@ -551,8 +551,14 @@
 
     Csw.enums.toggleState = Csw.enums.toggleState ||
         Csw.enums.register('toggleState', {
-            on: {name: 'on'},
-            off: {name: 'off'}
+            on: { name: 'on' },
+            off: { name: 'off' }
+        });
+
+    Csw.enums.NFPADisplayMode = Csw.enums.NFPADisplayMode ||
+        Csw.enums.register('NFPADisplayMode', {
+            Linear: 'Linear',
+            Diamond: 'Diamond'
         });
 
 } ());

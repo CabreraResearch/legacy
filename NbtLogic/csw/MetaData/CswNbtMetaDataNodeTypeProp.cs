@@ -72,7 +72,12 @@ namespace ChemSW.Nbt.MetaData
             isquicksearch,
             extended,
             hideinmobile,
-            mobilesearch
+            mobilesearch,
+            attribute1,
+            attribute2,
+            attribute3,
+            attribute4,
+            attribute5
         }
 
         public static NodeTypePropAttributes getNodeTypePropAttributesFromString( string AttributeName )
@@ -973,6 +978,65 @@ namespace ChemSW.Nbt.MetaData
             }
         }
 
+        public string Attribute1
+        {
+            get
+            {
+                return _NodeTypePropRow[NodeTypePropAttributes.attribute1.ToString()].ToString();
+            }
+            set
+            {
+                _NodeTypePropRow[NodeTypePropAttributes.attribute1.ToString()] = value;
+            }
+        }
+
+        public string Attribute2
+        {
+            get
+            {
+                return _NodeTypePropRow[NodeTypePropAttributes.attribute2.ToString()].ToString();
+            }
+            set
+            {
+                _NodeTypePropRow[NodeTypePropAttributes.attribute2.ToString()] = value;
+            }
+        }
+
+        public string Attribute3
+        {
+            get
+            {
+                return _NodeTypePropRow[NodeTypePropAttributes.attribute3.ToString()].ToString();
+            }
+            set
+            {
+                _NodeTypePropRow[NodeTypePropAttributes.attribute3.ToString()] = value;
+            }
+        }
+
+        public string Attribute4
+        {
+            get
+            {
+                return _NodeTypePropRow[NodeTypePropAttributes.attribute4.ToString()].ToString();
+            }
+            set
+            {
+                _NodeTypePropRow[NodeTypePropAttributes.attribute4.ToString()] = value;
+            }
+        }
+
+        public string Attribute5
+        {
+            get
+            {
+                return _NodeTypePropRow[NodeTypePropAttributes.attribute5.ToString()].ToString();
+            }
+            set
+            {
+                _NodeTypePropRow[NodeTypePropAttributes.attribute5.ToString()] = value;
+            }
+        }
 
         public bool HasSubProps()
         {
