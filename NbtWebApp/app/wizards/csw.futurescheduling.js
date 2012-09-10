@@ -12,8 +12,8 @@
                 onCancel: null, //function ($wizard) {},
                 onFinish: null, //function (viewid, viewmode) {},
 
-                treeurl: '/NbtWebApp/wsNBT.asmx/getGeneratorsTree',
-                futureurl: '/NbtWebApp/wsNBT.asmx/futureScheduling',
+                treeurl: 'getGeneratorsTree',
+                futureurl: 'futureScheduling',
                 $wizard: null,
                 startingStep: 1,
                 currentStepNo: 1,
@@ -57,7 +57,7 @@
                 });
 
                 Csw.ajax.post({
-                    url: cswPrivate.futureurl,
+                    urlMethod: cswPrivate.futureurl,
                     data: {
                         SelectedGeneratorNodeKeys: checkedNodeKeys,
                         EndDate: cswPrivate.endDatePicker.val().date
@@ -144,7 +144,7 @@
                 var cell42 = step1table.cell(4, 2);
 
                 Csw.ajax.post({
-                    url: cswPrivate.treeurl,
+                    urlMethod: cswPrivate.treeurl,
                     data: {},
                     success: function (data) {
 

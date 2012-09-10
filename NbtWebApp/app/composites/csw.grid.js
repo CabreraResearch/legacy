@@ -388,7 +388,7 @@
                 var printStore = cswPrivate.makeStore(cswPrivate.ID + '_printstore', false);
                 var printGrid = cswPrivate.makeGrid('', printStore);
 
-                window.Ext.ux.grid.Printer.stylesheetPath = '/NbtWebApp/js/thirdparty/extJS-4.1.0/ux/grid/gridPrinterCss/print.css';
+                window.Ext.ux.grid.Printer.stylesheetPath = 'js/thirdparty/extJS-4.1.0/ux/grid/gridPrinterCss/print.css';
                 window.Ext.ux.grid.Printer.print(printGrid);
             });
 

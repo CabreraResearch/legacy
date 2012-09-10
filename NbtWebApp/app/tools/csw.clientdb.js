@@ -77,10 +77,6 @@
             return ret;
         });
 
-    Csw.clientDb = Csw.clientDb ||
-        Csw.register('clientDb', Csw.makeNameSpace());
-
-
     Csw.clientDb.clear = Csw.clientDb.clear ||
         Csw.clientDb.register('clear', function (clearAll) {
             if (Csw.bool(clearAll)) {

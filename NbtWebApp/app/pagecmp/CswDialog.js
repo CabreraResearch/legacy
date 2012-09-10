@@ -182,7 +182,7 @@
                     }
 
                     Csw.ajax.post({
-                        url: '/NbtWebApp/wsNBT.asmx/createView',
+                        urlMethod: 'createView',
                         data: createData,
                         success: function (data) {
                             div.$.dialog('close');
@@ -376,7 +376,7 @@
                 onClick: function () {
                     var newNodeTypeName = nodeTypeInp.val();
                     Csw.ajax.post({
-                        url: '/NbtWebApp/wsNBT.asmx/IsNodeTypeNameUnique',
+                        urlMethod: 'IsNodeTypeNameUnique',
                         async: false,
                         data: { 'NodeTypeName': newNodeTypeName },
                         success: function () {
@@ -454,7 +454,7 @@
                     values: [],
                     onChange: function () {
                         Csw.ajax.post({
-                            url: '/NbtWebApp/wsNBT.asmx/addPropertyToLayout',
+                            urlMethod: 'addPropertyToLayout',
                             data: {
                                 PropId: Csw.string(addSelect.val()),
                                 TabId: Csw.string(cswNodeTabOptions.tabid),
@@ -474,7 +474,7 @@
                     LayoutType: layoutSelect.val()
                 };
                 Csw.ajax.post({
-                    url: '/NbtWebApp/wsNBT.asmx/getPropertiesForLayoutAdd',
+                    urlMethod: 'getPropertiesForLayoutAdd',
                     data: ajaxdata,
                     success: function (data) {
                         var propOpts = [{ value: '', display: 'Select...'}];
@@ -755,7 +755,7 @@
 
             var div = Csw.literals.div();
             Csw.ajax.post({
-                url: '/NbtWebApp/wsNBT.asmx/getAbout',
+                urlMethod: 'getAbout',
                 data: {},
                 success: function (data) {
                     div.append('NBT Assembly Version: ' + data.assembly + '<br/><br/>');
@@ -807,7 +807,7 @@
 
             uploadBtn.$.fileupload({
                 datatype: 'json',
-                url: o.url + '?' + $.param(o.params),
+                url: Csw.enums.ajaxUrlPrefix + o.url + '?' + $.param(o.params),
                 paramName: 'fileupload',
                 success: function (result, textStatus, jqXHR) {
                     div.$.dialog('close');
@@ -850,7 +850,7 @@
 
             uploadBtn.$.fileupload({
                 datatype: 'json',
-                url: o.FileUrl + '?' + $.param({ PropId: o.PropId }),
+                url: Csw.enums.ajaxUrlPrefix + o.FileUrl + '?' + $.param({ PropId: o.PropId }),
                 paramName: 'fileupload',
                 done: function (e, data) {
                     div.$.dialog('close');
@@ -873,7 +873,7 @@
                 disabledText: 'Saving...',
                 onClick: function () {
                     Csw.ajax.post({
-                        url: o.TextUrl,
+                        urlMethod: o.TextUrl,
                         data: {
                             molData: molTxtArea.val(),
                             PropId: o.PropId
@@ -900,8 +900,8 @@
         }, // FileUploadDialog
         ShowLicenseDialog: function (options) {
             var o = {
-                GetLicenseUrl: '/NbtWebApp/wsNBT.asmx/getLicense',
-                AcceptLicenseUrl: '/NbtWebApp/wsNBT.asmx/acceptLicense',
+                GetLicenseUrl: 'getLicense',
+                AcceptLicenseUrl: 'acceptLicense',
                 onAccept: function () { },
                 onDecline: function () { }
             };
@@ -915,7 +915,7 @@
             div.br();
 
             Csw.ajax.post({
-                url: o.GetLicenseUrl,
+                urlMethod: o.GetLicenseUrl,
                 success: function (data) {
                     licenseTextArea.text(data.license);
                 }
@@ -927,7 +927,7 @@
                 disabledText: 'Accepting...',
                 onClick: function () {
                     Csw.ajax.post({
-                        url: o.AcceptLicenseUrl,
+                        urlMethod: o.AcceptLicenseUrl,
                         success: function () {
                             div.$.dialog('close');
                             Csw.tryExec(o.onAccept);
@@ -952,8 +952,8 @@
             ///<summary>Creates an Print Label dialog and returns an object represent that dialog.</summary>
             var cswPrivate = {
                 ID: 'print_label',
-                GetPrintLabelsUrl: '/NbtWebApp/wsNBT.asmx/getLabels',
-                GetEPLTextUrl: '/NbtWebApp/wsNBT.asmx/getEPLText',
+                GetPrintLabelsUrl: 'getLabels',
+                GetEPLTextUrl: 'getEPLText',
                 nodeid: '',
                 propid: ''
             };
@@ -990,7 +990,7 @@
 
             var jData = { PropId: cswPrivate.propid };
             Csw.ajax.post({
-                url: cswPrivate.GetPrintLabelsUrl,
+                urlMethod: cswPrivate.GetPrintLabelsUrl,
                 data: jData,
                 success: function (data) {
                     if (data.labels.length > 0) {
@@ -1035,7 +1035,7 @@
             var div = Csw.literals.div();
 
             Csw.ajax.post({
-                url: '/NbtWebApp/wsNBT.asmx/getUsers',
+                urlMethod: 'getUsers',
                 success: function (data) {
                     if (Csw.bool(data.result)) {
                         var usersel = div.select({

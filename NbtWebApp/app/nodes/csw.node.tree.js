@@ -20,10 +20,10 @@
             height: '',
             width: '',
 
-            RunTreeUrl: '/NbtWebApp/wsNBT.asmx/runTree',
-            fetchTreeFirstLevelUrl: '/NbtWebApp/wsNBT.asmx/fetchTreeFirstLevel',
-            fetchTreeLevelUrl: '/NbtWebApp/wsNBT.asmx/fetchTreeLevel',
-            NodeTreeUrl: '/NbtWebApp/wsNBT.asmx/getTreeOfNode',
+            RunTreeUrl: 'runTree',
+            fetchTreeFirstLevelUrl: 'fetchTreeFirstLevel',
+            fetchTreeLevelUrl: 'fetchTreeLevel',
+            NodeTreeUrl: 'getTreeOfNode',
             rootnode: null,
             toggleLink: null
         };
@@ -230,7 +230,7 @@
             }
 
             Csw.ajax.post({
-                url: url,
+                urlMethod: url,
                 data: dataParam,
                 stringify: false,
                 success: function (data) {

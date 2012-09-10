@@ -9,9 +9,9 @@
 
         initTable: function (options) {
             var o = {
-                Url: '/NbtWebApp/wsNBT.asmx/getWelcomeItems',
-                moveWelcomeItemUrl: '/NbtWebApp/wsNBT.asmx/moveWelcomeItems',
-                RemoveWelcomeItemUrl: '/NbtWebApp/wsNBT.asmx/deleteWelcomeItem',
+                Url: 'getWelcomeItems',
+                moveWelcomeItemUrl: 'moveWelcomeItems',
+                RemoveWelcomeItemUrl: 'deleteWelcomeItem',
                 onLinkClick: null, //function (optSelect) { }, //viewid, actionid, reportid
                 //onSearchClick: null, //function (optSelect) { }, //viewid
                 onAddClick: null, //function (nodetypeid) { },
@@ -29,7 +29,7 @@
             };
 
             Csw.ajax.post({
-                url: o.Url,
+                urlMethod: o.Url,
                 data: jsonData,
                 success: function (data) {
                     var welcomeDiv = parent.div({ ID: 'welcomediv' })
@@ -127,8 +127,8 @@
 
         'getAddItemForm': function (options) {
             var o = {
-                'AddWelcomeItemUrl': '/NbtWebApp/wsNBT.asmx/addWelcomeItem',
-                'onAdd': function () { }
+                AddWelcomeItemUrl: 'addWelcomeItem',
+                onAdd: function () { }
             };
             if (options) {
                 Csw.extend(o, options);
@@ -340,7 +340,7 @@
                 };
 
                 Csw.ajax.post({
-                    url: r.RemoveWelcomeItemUrl,
+                    urlMethod: r.RemoveWelcomeItemUrl,
                     data: dataJson,
                     success: function () {
                         Csw.tryExec(r.onSuccess);
@@ -377,7 +377,7 @@
         };
 
         Csw.ajax.post({
-            url: a.AddWelcomeItemUrl,
+            urlMethod: a.AddWelcomeItemUrl,
             data: dataJson,
             success: function () {
                 Csw.tryExec(a.onSuccess);
@@ -421,7 +421,7 @@
                 };
 
                 Csw.ajax.post({
-                    url: moveWelcomeItemUrl,
+                    urlMethod: moveWelcomeItemUrl,
                     data: dataJson
                 });
             }

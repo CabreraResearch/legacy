@@ -14,7 +14,7 @@
         'init': function (options) {
 
             var o = {
-                runGridUrl: '/NbtWebApp/wsNBT.asmx/runGrid',
+                runGridUrl: 'runGrid',
                 viewid: '',
                 showempty: false,
                 ID: '',
@@ -53,7 +53,7 @@
                                     ID: o.ID,
                                     stateId: o.viewid,
                                     ajax: {
-                                        url: o.runGridUrl,
+                                        urlMethod: o.runGridUrl,
                                         data: {
                                             ViewId: o.viewid,
                                             IncludeNodeKey: o.cswnbtnodekey,
