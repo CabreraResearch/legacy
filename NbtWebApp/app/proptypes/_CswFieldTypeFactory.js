@@ -43,9 +43,6 @@
                 m.ReadOnly = m.ReadOnly || Csw.bool(m.propData.readonly) || m.EditMode === Csw.enums.editMode.PrintReport;
 
                 switch (m.fieldtype) {
-                    case "Question":
-                        m.propDiv.$.CswFieldTypeQuestion('init', m); 
-                        break;
                     case "Relationship":
                         m.propDiv.$.CswFieldTypeRelationship('init', m); 
                         break;
@@ -66,9 +63,7 @@
                 m.ReadOnly = Csw.bool(m.propData.readonly);
 
                 switch (m.fieldtype) {
-                    case "Question":
-                        m.propDiv.$.CswFieldTypeQuestion('save', m); 
-                        break;
+
                     case "Relationship":
                         m.propDiv.$.CswFieldTypeRelationship('save', m); 
                         break;
