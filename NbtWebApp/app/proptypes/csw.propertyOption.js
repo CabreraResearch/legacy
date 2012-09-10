@@ -4,7 +4,7 @@
 (function () {
     'use strict';
     
-    var cswInternal = {
+    var cswStaticInternalClosure = {
         preparePropJsonForSaveRecursive: function (isMulti, propVals, attributes) {
             ///<summary>Recurses over the subfields and sub-subfields of a property to update its JSON.</summary>
             ///<param name="isMulti" type="Boolean">True if this is Multi-Edit</param>
@@ -19,7 +19,7 @@
                         var attr = attributes[key];
                         //don't bother sending this to server unless it's changed
                         if (Csw.isPlainObject(attr)) {
-                            wasModified = cswInternal.preparePropJsonForSaveRecursive(isMulti, propVals[key], attr) || wasModified;
+                            wasModified = cswStaticInternalClosure.preparePropJsonForSaveRecursive(isMulti, propVals[key], attr) || wasModified;
                         } else if ((false === isMulti && propVals[key] !== attr) ||
                             (isMulti && false === Csw.isNullOrUndefined(attr) && attr !== Csw.enums.multiEditDefaultValue)) {
                             wasModified = true;
@@ -41,7 +41,7 @@
             if (false === Csw.isNullOrEmpty(propData)) {
                 if (Csw.contains(propData, 'values')) {
                     var propVals = propData.values;
-                    wasModified = cswInternal.preparePropJsonForSaveRecursive(isMulti, propVals, attributes);
+                    wasModified = cswStaticInternalClosure.preparePropJsonForSaveRecursive(isMulti, propVals, attributes);
                 }
                 propData.wasmodified = propData.wasmodified || wasModified;
             }
@@ -93,7 +93,7 @@
                 	/// </summary>
                     'use strict';
                     attributes = attributes || {};
-                    cswInternal.preparePropJsonForSave(cswPublic.Multi, cswPublic.propData, attributes);
+                    cswStaticInternalClosure.preparePropJsonForSave(cswPublic.Multi, cswPublic.propData, attributes);
                 };
 
                 cswPublic.bindRender = function (callBack) {
