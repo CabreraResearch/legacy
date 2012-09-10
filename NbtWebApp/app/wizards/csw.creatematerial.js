@@ -496,7 +496,7 @@
                                 return ret;
                             };
 
-                            cswPrivate.header = [cswPrivate.config.quantityName, cswPrivate.config.numberName, cswPrivate.config.unitCountName];
+                            cswPrivate.header = [cswPrivate.config.unitCountName, cswPrivate.config.quantityName, cswPrivate.config.numberName];
                             if (cswPrivate.state.showQuantityEditable) {
                                 cswPrivate.header = cswPrivate.header.concat([cswPrivate.config.quantityEditableName]);
                             }
@@ -527,12 +527,26 @@
                                     };
 
                                     switch (columnName) {
+                                        case cswPrivate.config.unitCountName:
+                                            cswPublic.unitCountCtrl = cswCell.numberTextBox({
+                                                ID: Csw.tryExec(Csw.makeId, 'sizeUnitCount'),
+                                                value: 1,
+                                                MinValue: 1,
+                                                Precision: 0,
+                                                //Required: false, //TODO - case 27665 - change to false when it is handled appropraitely serverside
+                                                onChange: function (value) {
+                                                    thisSize.unitCount = cswPublic.unitCountCtrl.val();
+                                                    extendNewAmount(thisSize);
+                                                }
+                                            });
+                                            cswCell.span({ text: ' x' });
+                                            break;
                                         case cswPrivate.config.quantityName:
                                             cswPublic.quantityCtrl = cswCell.numberTextBox({
                                                 ID: Csw.tryExec(Csw.makeId, 'quantityNumberBox'),
                                                 MinValue: 0,
                                                 isClosedSet: false,
-                                                Required: true,//TODO - case 27665 - change to false when it is handled appropraitely serverside
+                                                Required: true,
                                                 width: '60px'
                                             });
                                             cswPublic.unitsCtrl = cswCell.select({
@@ -570,18 +584,6 @@
                                                 }
                                             });
                                             break;
-                                        case cswPrivate.config.unitCountName:
-                                            cswPublic.unitCountCtrl = cswCell.numberTextBox({
-                                                ID: Csw.tryExec(Csw.makeId, 'sizeUnitCount'),
-                                                value: 1,
-                                                MinValue: 1,
-                                                Precision: 0,
-                                                Required: true,
-                                                onChange: function (value) {
-                                                    thisSize.unitCount = cswPublic.unitCountCtrl.val();
-                                                    extendNewAmount(thisSize);
-                                                }
-                                            });
                                     }
                                     extendNewAmount(thisSize);
                                 },
@@ -604,7 +606,7 @@
                                         newSize.unitid = getID(newSize.unit);
                                         newSize.unitCount = cswPublic.unitCountCtrl.val();
 
-                                        var formCols = [newSize.quantity + ' ' + newSize.unit, newSize.catalogNo, newSize.unitCount];
+                                        var formCols = [newSize.unitCount + ' x', newSize.quantity + ' ' + newSize.unit, newSize.catalogNo];
                                         if (cswPrivate.state.showQuantityEditable) {
                                             newSize.quantEditableChecked = cswPublic.quantEditableCtrl.val();
                                             formCols = formCols.concat([newSize.quantEditableChecked]);
