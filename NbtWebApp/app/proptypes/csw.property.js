@@ -102,6 +102,9 @@
                         case Csw.enums.subFieldsMap.Relationship.name:
                             cswPublic = Csw.properties.relationship(cswPrivate);
                             break;
+                        case Csw.enums.subFieldsMap.Scientific.name:
+                            cswPublic = Csw.properties.scientific(cswPrivate);
+                            break;
                         case Csw.enums.subFieldsMap.Sequence.name:
                             cswPublic = Csw.properties.sequence(cswPrivate);
                             break;
@@ -114,11 +117,9 @@
                         case Csw.enums.subFieldsMap.TimeInterval.name:
                             cswPublic = Csw.properties.timeInterval(cswPrivate);
                             break;
-                            
                         case Csw.enums.subFieldsMap.UserSelect.name:
                             cswPublic = Csw.properties.userSelect(cswPrivate);
                             break;
-                            
                         case Csw.enums.subFieldsMap.ViewPickList.name:
                             cswPublic = Csw.properties.viewPickList(cswPrivate);
                             break;
@@ -126,7 +127,7 @@
                             cswPublic = Csw.properties.viewReference(cswPrivate);
                             break;
                         default:
-                            cswPublic = $.CswFieldTypeFactory('make', cswPrivate);
+                            Csw.error.throwException('No matching property type for "' + cswPrivate.fieldtype + '" could be found.', 'Csw.property', 'csw.property.js', 130);
                     }
                 }());
 
