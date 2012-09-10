@@ -43,10 +43,6 @@
                 m.ReadOnly = m.ReadOnly || Csw.bool(m.propData.readonly) || m.EditMode === Csw.enums.editMode.PrintReport;
 
                 switch (m.fieldtype) {
-                    
-                    case "PropertyReference":
-                        m.propDiv.$.CswFieldTypePropertyReference('init', m); 
-                        break;
                     case "Quantity":
                         m.propDiv.$.CswFieldTypeQuantity('init', m); 
                         break;
@@ -73,10 +69,6 @@
                 m.ReadOnly = Csw.bool(m.propData.readonly);
 
                 switch (m.fieldtype) {
-
-                    case "PropertyReference":
-                        m.propDiv.$.CswFieldTypePropertyReference('save', m); 
-                        break;
                     case "Quantity":
                         m.propDiv.$.CswFieldTypeQuantity('save', m); 
                         break;

@@ -89,7 +89,10 @@
                             break;      
                         case Csw.enums.subFieldsMap.Password.name:
                             cswPublic = Csw.properties.password(cswPrivate);
-                            break;   
+                            break;
+                        case Csw.enums.subFieldsMap.PropertyReference.name:
+                            cswPublic = Csw.properties.propertyReference(cswPrivate);
+                            break;
                         case Csw.enums.subFieldsMap.Sequence.name:
                             cswPublic = Csw.properties.sequence(cswPrivate);
                             break;
