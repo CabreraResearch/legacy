@@ -23,7 +23,7 @@
                     if (cswPublic.data.ReadOnly) {
                         cswPublic.control = propDiv.append(cswPrivate.value);
                     } else {
-                        cswPublic.control = propDiv.input({
+                        cswPublic.control = cswPrivate.parent.input({
                             ID: cswPublic.data.ID,
                             type: Csw.enums.inputTypes.text,
                             value: cswPrivate.value,

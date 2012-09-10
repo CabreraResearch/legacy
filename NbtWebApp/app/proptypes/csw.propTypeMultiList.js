@@ -27,10 +27,10 @@
                     };
 
                     if (cswPublic.data.ReadOnly) {
-                        cswPublic.control = propDiv.append(cswPrivate.gestalt);
+                        cswPublic.control = cswPrivate.parent.append(cswPrivate.gestalt);
                     } else {
                         /* Select Box */
-                        cswPublic.control = propDiv.multiSelect({
+                        cswPublic.control = cswPrivate.parent.multiSelect({
                             ID: cswPublic.data.ID,
                             cssclass: 'selectinput',
                             values: cswPrivate.options,
