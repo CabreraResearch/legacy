@@ -1,165 +1,149 @@
 /// <reference path="~/app/CswApp-vsdoc.js" />
 
 
-(function ($) {
-    "use strict";
-    var pluginName = 'CswFieldTypeQuantity';
+(function () {
+    'use strict';
+    Csw.properties.quantity = Csw.properties.quantity ||
+        Csw.properties.register('quantity',
+            Csw.method(function (propertyOption) {
+                'use strict';
+                var cswPrivate = {};
+                var cswPublic = {
+                    data: propertyOption || Csw.nbt.propertyOption(propertyOption)
+                };
 
-    var methods = {
-        init: function (o) {
+                var render = function () {
+                    'use strict';
 
-            var isMultiEditValid = function (value) {
-                return o.Multi && value === Csw.enums.multiEditDefaultValue;
-            }
+                    cswPrivate.isMultiEditValid = function (value) {
+                        return cswPublic.data.Multi && value === Csw.enums.multiEditDefaultValue;
+                    };
 
-            var propDiv = o.propDiv;
-            propDiv.empty();
-            var propVals = o.propData.values,
-                precision = Csw.number(propVals.precision, 6),
-                ceilingVal = '999999999' + Csw.getMaxValueForPrecision(precision),
-                selectedNodeId = (false === o.Multi) ? Csw.string(propVals.relatednodeid).trim() : Csw.enums.multiEditDefaultValue,
-                selectedName = (false === o.Multi) ? Csw.string(propVals.name).trim() : Csw.enums.multiEditDefaultValue,
-                nodeTypeId = Csw.string(propVals.nodetypeid).trim(),
-                objectClassId = Csw.string(propVals.objectclassid).trim(),
-                options = propVals.options,
-                relationships = [],
-                fractional = Csw.bool(propVals.fractional),
-                cellCol = 1;
+                    cswPrivate.propVals = cswPublic.data.propData.values;
+                    cswPrivate.parent = cswPublic.data.propDiv;
 
-            if (false === fractional) {
-                precision = 0;
-            }
-            if (Csw.bool(o.propData.readonly)) {
-                propDiv.span({ text: o.propData.gestalt });
-            } else {
+                    cswPrivate.precision = Csw.number(cswPrivate.propVals.precision, 6);
+                    cswPrivate.ceilingVal = '999999999' + Csw.getMaxValueForPrecision(cswPrivate.precision);
+                    cswPrivate.selectedNodeId = (false === cswPublic.data.Multi) ? Csw.string(cswPrivate.propVals.relatednodeid).trim() : Csw.enums.multiEditDefaultValue;
+                    cswPrivate.selectedName = (false === cswPublic.data.Multi) ? Csw.string(cswPrivate.propVals.name).trim() : Csw.enums.multiEditDefaultValue;
+                    cswPrivate.nodeTypeId = Csw.string(cswPrivate.propVals.nodetypeid).trim();
+                    cswPrivate.objectClassId = Csw.string(cswPrivate.propVals.objectclassid).trim();
+                    cswPrivate.options = cswPrivate.propVals.options;
+                    cswPrivate.relationships = [];
+                    cswPrivate.fractional = Csw.bool(cswPrivate.propVals.fractional);
+                    cswPrivate.cellCol = 1;
 
-                if (false === Csw.isNullOrEmpty(o.relatednodeid) &&
-                    Csw.isNullOrEmpty(selectedNodeId) &&
-                    false === o.Multi &&
-                    (Csw.number(o.relatednodetypeid) === Csw.number(nodeTypeId) ||
-                      Csw.number(o.relatedobjectclassid) === Csw.number(objectClassId))) {
-                    selectedNodeId = o.relatednodeid;
-                    selectedName = o.relatednodename;
-                }
-
-                var table = propDiv.table({
-                    ID: Csw.makeId(o.ID, 'tbl')
-                });
-
-                var numberTextBox = table.cell(1, cellCol).numberTextBox({
-                    ID: o.ID + '_qty',
-                    value: (false === o.Multi) ? Csw.string(propVals.value).trim() : Csw.enums.multiEditDefaultValue,
-                    MinValue: Csw.number(propVals.minvalue),
-                    MaxValue: Csw.number(propVals.maxvalue),
-                    ceilingVal: Csw.number(ceilingVal),
-                    Precision: 6, //case 24646 - precision is being handled in the validator below, so we don't want to use the one in numberTextBox.
-                    ReadOnly: Csw.bool(o.ReadOnly),
-                    Required: Csw.bool(o.Required),
-                    onChange: o.onChange,
-                    isValid: isMultiEditValid
-                });
-                cellCol++;
-
-                if (false === Csw.isNullOrEmpty(numberTextBox) && numberTextBox.length > 0) {
-                    numberTextBox.clickOnEnter(o.saveBtn);
-                }
-
-                if (o.Multi) {
-                    relationships.push({ value: Csw.enums.multiEditDefaultValue, display: Csw.enums.multiEditDefaultValue });
-                }
-                if (false === o.Required) {
-                    relationships.push({ value: '', display: '', frac: true });
-                }
-                var foundSelected = false;
-                Csw.crawlObject(options, function (relatedObj) {
-                    if (relatedObj.id === selectedNodeId) {
-                        foundSelected = true;
-                        fractional = Csw.bool(relatedObj.fractional);
+                    if (false === cswPrivate.fractional) {
+                        cswPrivate.precision = 0;
                     }
-                    relationships.push({ value: relatedObj.id, display: relatedObj.value, frac: Csw.bool(relatedObj.fractional) });
-                }, false);
-                if (false === o.Multi && false === foundSelected && false === Csw.isNullOrEmpty(selectedNodeId)) {
-                    relationships.push({ value: selectedNodeId, display: selectedName, frac: Csw.bool(propVals.fractional) });
-                }
-                var selectBox = table.cell(1, cellCol).select({
-                    ID: o.ID,
-                    cssclass: 'selectinput',
-                    onChange: function () {
-                        Csw.crawlObject(options, function (relatedObj) {
-                            if (relatedObj.id === selectBox.val()) {
-                                fractional = Csw.bool(relatedObj.fractional);
+                    if (Csw.bool(cswPublic.data.propData.readonly)) {
+                        cswPublic.control = cswPrivate.parent.span({ text: cswPublic.data.propData.gestalt });
+                    } else {
+
+                        if (false === Csw.isNullOrEmpty(cswPublic.data.relatednodeid) &&
+                            Csw.isNullOrEmpty(cswPrivate.selectedNodeId) &&
+                            false === cswPublic.data.Multi &&
+                            (Csw.number(cswPublic.data.relatednodetypeid) === Csw.number(cswPrivate.nodeTypeId) ||
+                              Csw.number(cswPublic.data.relatedobjectclassid) === Csw.number(cswPrivate.objectClassId))) {
+                            cswPrivate.selectedNodeId = cswPublic.data.relatednodeid;
+                            cswPrivate.selectedName = cswPublic.data.relatednodename;
+                        }
+
+                        cswPublic.control = cswPrivate.parent.table({
+                            ID: Csw.makeId(cswPublic.data.ID, 'tbl')
+                        });
+
+                        cswPrivate.numberTextBox = cswPublic.control.cell(1, cswPrivate.cellCol).numberTextBox({
+                            ID: cswPublic.data.ID + '_qty',
+                            value: (false === cswPublic.data.Multi) ? Csw.string(cswPrivate.propVals.value).trim() : Csw.enums.multiEditDefaultValue,
+                            MinValue: Csw.number(cswPrivate.propVals.minvalue),
+                            MaxValue: Csw.number(cswPrivate.propVals.maxvalue),
+                            ceilingVal: Csw.number(cswPrivate.ceilingVal),
+                            Precision: 6, //case 24646 - precision is being handled in the validator below, so we don't want to use the one in numberTextBox.
+                            ReadOnly: Csw.bool(cswPublic.data.ReadOnly),
+                            Required: Csw.bool(cswPublic.data.Required),
+                            onChange: function () {
+                                var val = cswPrivate.numberTextBox.val();
+                                Csw.tryExec(cswPublic.data.onChange, val);
+                                cswPublic.data.onPropChange({ value: val });
+                            },
+                            isValid: cswPrivate.isMultiEditValid
+                        });
+                        cswPrivate.cellCol++;
+
+                        if (false === Csw.isNullOrEmpty(cswPrivate.numberTextBox) && cswPrivate.numberTextBox.length > 0) {
+                            cswPrivate.numberTextBox.clickOnEnter(cswPublic.data.saveBtn);
+                        }
+
+                        if (cswPublic.data.Multi) {
+                            cswPrivate.relationships.push({ value: Csw.enums.multiEditDefaultValue, display: Csw.enums.multiEditDefaultValue });
+                        }
+                        if (false === cswPublic.data.Required) {
+                            cswPrivate.relationships.push({ value: '', display: '', frac: true });
+                        }
+
+                        cswPrivate.foundSelected = false;
+                        Csw.crawlObject(cswPrivate.options, function (relatedObj) {
+                            if (relatedObj.id === cswPrivate.selectedNodeId) {
+                                cswPrivate.foundSelected = true;
+                                cswPrivate.fractional = Csw.bool(relatedObj.fractional);
                             }
+                            cswPrivate.relationships.push({ value: relatedObj.id, display: relatedObj.value, frac: Csw.bool(relatedObj.fractional) });
                         }, false);
-                        precision = false === fractional ? 0 : Csw.number(propVals.precision, 6);
-                        o.onChange();
-                    },
-                    values: relationships,
-                    selected: selectedNodeId
-                });
-                cellCol++;
+                        if (false === cswPublic.data.Multi && false === cswPrivate.foundSelected && false === Csw.isNullOrEmpty(cswPrivate.selectedNodeId)) {
+                            cswPrivate.relationships.push({ value: cswPrivate.selectedNodeId, display: cswPrivate.selectedName, frac: Csw.bool(cswPrivate.propVals.fractional) });
+                        }
+                        cswPrivate.selectBox = cswPublic.control.cell(1, cswPrivate.cellCol).select({
+                            ID: cswPublic.data.ID,
+                            cssclass: 'selectinput',
+                            onChange: function () {
+                                var val = cswPrivate.selectBox.val();
+                                Csw.crawlObject(cswPrivate.options, function (relatedObj) {
+                                    if (relatedObj.id === val) {
+                                        cswPrivate.fractional = Csw.bool(relatedObj.fractional);
+                                    }
+                                }, false);
+                                cswPrivate.precision = false === cswPrivate.fractional ? 0 : Csw.number(cswPrivate.propVals.precision, 6);
+                                Csw.tryExec(cswPublic.data.onChange, val);
+                                cswPublic.data.onPropChange({ nodeid: val });
+                            },
+                            values: cswPrivate.relationships,
+                            selected: cswPrivate.selectedNodeId
+                        });
+                        cswPrivate.cellCol += 1;
 
-                if (o.Required) {
-                    selectBox.addClass('required');
-                    numberTextBox.addClass('required');
-                }
+                        cswPrivate.selectBox.required(cswPublic.data.Required);
+                        cswPrivate.numberTextBox.required(cswPublic.data.Required);
 
-                $.validator.addMethod('validateInteger', function (value, element) {
-                    return (isMultiEditValid(value) || precision != 0 || Csw.validateInteger(numberTextBox.val()));
-                }, 'Value must be a whole number');
-                numberTextBox.addClass('validateInteger');
+                        $.validator.addMethod('validateInteger', function (value, element) {
+                            return (cswPrivate.isMultiEditValid(value) || cswPrivate.precision != 0 || Csw.validateInteger(cswPrivate.numberTextBox.val()));
+                        }, 'Value must be a whole number');
+                        cswPrivate.numberTextBox.addClass('validateInteger');
 
-                $.validator.addMethod('validateIntegerGreaterThanZero', function (value, element) {
-                    return (isMultiEditValid(value) || Csw.validateIntegerGreaterThanZero(numberTextBox.val()));
-                }, 'Value must be a non-zero, positive number');
-                numberTextBox.addClass('validateIntegerGreaterThanZero');
+                        $.validator.addMethod('validateIntegerGreaterThanZero', function (value, element) {
+                            return (cswPrivate.isMultiEditValid(value) || Csw.validateIntegerGreaterThanZero(cswPrivate.numberTextBox.val()));
+                        }, 'Value must be a non-zero, positive number');
+                        cswPrivate.numberTextBox.addClass('validateIntegerGreaterThanZero');
 
-                $.validator.addMethod('validateUnitPresent', function (value, element) {
-                    return (isMultiEditValid(value) || false === Csw.isNullOrEmpty(selectBox.val()) || Csw.isNullOrEmpty(numberTextBox.val()));
-                }, 'Unit must be selected if Quantity is present.');
-                selectBox.addClass('validateUnitPresent');
+                        $.validator.addMethod('validateUnitPresent', function (value, element) {
+                            return (cswPrivate.isMultiEditValid(value) || false === Csw.isNullOrEmpty(cswPrivate.selectBox.val()) || Csw.isNullOrEmpty(cswPrivate.numberTextBox.val()));
+                        }, 'Unit must be selected if Quantity is present.');
+                        cswPrivate.selectBox.addClass('validateUnitPresent');
 
-                $.validator.addMethod('validateQuantityPresent', function (value, element) {
-                    return (isMultiEditValid(value) || false === Csw.isNullOrEmpty(numberTextBox.val()) || Csw.isNullOrEmpty(selectBox.val()));
-                }, 'Quantity must have a value if Unit is selected.');
-                selectBox.addClass('validateQuantityPresent');
+                        $.validator.addMethod('validateQuantityPresent', function (value, element) {
+                            return (cswPrivate.isMultiEditValid(value) || false === Csw.isNullOrEmpty(cswPrivate.numberTextBox.val()) || Csw.isNullOrEmpty(cswPrivate.selectBox.val()));
+                        }, 'Quantity must have a value if Unit is selected.');
+                        cswPrivate.selectBox.addClass('validateQuantityPresent');
 
-                propDiv.$.hover(function (event) { Csw.nodeHoverIn(event, selectBox.val()); },
-                                function (event) { Csw.nodeHoverOut(event, selectBox.val()); });
-            }
-        },
-        save: function (o) {
-            var attributes = {
-                value: null,
-                nodeid: null
-            };
-            var compare = {};
-            if (false === Csw.bool(o.propData.readonly)) {
-                var propDiv = o.propDiv.find('#' + o.ID + '_qty');
-                if (false == Csw.isNullOrEmpty(propDiv)) {
-                    attributes.value = propDiv.val();
-                    compare = attributes;
-                }
+                        cswPrivate.parent.$.hover(function (event) { Csw.nodeHoverIn(event, cswPrivate.selectBox.val()); },
+                                        function (event) { Csw.nodeHoverOut(event, cswPrivate.selectBox.val()); });
+                    }
 
-                var selectBox = o.propDiv.find('select');
-                if (false === Csw.isNullOrEmpty(selectBox)) {
-                    attributes.nodeid = selectBox.val();
-                    compare = attributes;
-                }
-            }
-            Csw.preparePropJsonForSave(o.Multi, o.propData, compare);
-        }
-    };
+                };
 
-    // Method calling logic
-    $.fn.CswFieldTypeQuantity = function (method) {
+                cswPublic.data.bindRender(render);
+                return cswPublic;
+            }));
 
-        if (methods[method]) {
-            return methods[method].apply(this, Array.prototype.slice.call(arguments, 1));
-        } else if (typeof method === 'object' || !method) {
-            return methods.init.apply(this, arguments);
-        } else {
-            $.error('Method ' + method + ' does not exist on ' + pluginName); return false;
-        }
-
-    };
-})(jQuery);
+}());
+        
