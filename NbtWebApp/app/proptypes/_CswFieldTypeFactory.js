@@ -43,9 +43,6 @@
                 m.ReadOnly = m.ReadOnly || Csw.bool(m.propData.readonly) || m.EditMode === Csw.enums.editMode.PrintReport;
 
                 switch (m.fieldtype) {
-                    case "NFPA":
-                        m.propDiv.$.CswFieldTypeNFPA('init', m); 
-                        break;
                     
                     case "Password":
                         m.propDiv.$.CswFieldTypePassword('init', m); 
@@ -83,9 +80,6 @@
 
                 switch (m.fieldtype) {
 
-                    case "NFPA":
-                        m.propDiv.$.CswFieldTypeNFPA('save', m); 
-                        break;
                     case "Password":
                         m.propDiv.$.CswFieldTypePassword('save', m); 
                         break;

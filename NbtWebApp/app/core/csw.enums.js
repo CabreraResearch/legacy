@@ -473,6 +473,7 @@
             },
             MTBF: { name: 'MTBF', subfields: {} },
             MultiList: { name: 'MultiList', subfields: {} },
+            NFPA: { name: 'NFPA', subfields: {} },
             NodeTypeSelect: { name: 'NodeTypeSelect', subfields: {} },
             Number: {
                 name: 'Number',
