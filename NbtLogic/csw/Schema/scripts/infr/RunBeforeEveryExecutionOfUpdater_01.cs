@@ -36,8 +36,30 @@ namespace ChemSW.Nbt.Schema
             
             #region SEBASTIAN
 
+            //Add 5 generic nodetype prop attribute columns
+            if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( "nodetype_props", "attribute1" ) )
+            {
+                _CswNbtSchemaModTrnsctn.addStringColumn( "nodetype_props", "attribute1", "Generic nodetype prop attribute col", false, false, 100 );
+            }
+            if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( "nodetype_props", "attribute2" ) )
+            {
+                _CswNbtSchemaModTrnsctn.addStringColumn( "nodetype_props", "attribute2", "Generic nodetype prop attribute col", false, false, 100 );
+            }
+            if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( "nodetype_props", "attribute3" ) )
+            {
+                _CswNbtSchemaModTrnsctn.addStringColumn( "nodetype_props", "attribute3", "Generic nodetype prop attribute col", false, false, 100 );
+            }
+            if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( "nodetype_props", "attribute4" ) )
+            {
+                _CswNbtSchemaModTrnsctn.addStringColumn( "nodetype_props", "attribute4", "Generic nodetype prop attribute col", false, false, 100 );
+            }
+            if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( "nodetype_props", "attribute5" ) )
+            {
+                _CswNbtSchemaModTrnsctn.addStringColumn( "nodetype_props", "attribute5", "Generic nodetype prop attribute col", false, false, 100 );
+            }
 
             #endregion SEBASTIAN
+
 
         }//Update()
 
