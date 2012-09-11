@@ -45,30 +45,51 @@
                     cswPrivate.yellow = (false === cswPublic.data.Multi) ? cswPrivate.propVals.reactivity : Csw.enums.multiEditDefaultValue;
                     cswPrivate.blue = (false === cswPublic.data.Multi) ? cswPrivate.propVals.health : Csw.enums.multiEditDefaultValue;
                     cswPrivate.white = (false === cswPublic.data.Multi) ? cswPrivate.propVals.special : Csw.enums.multiEditDefaultValue;
-
+                    cswPrivate.displayMode = cswPrivate.propVals.displaymode;
+                    cswPrivate.hideSpecial = cswPrivate.propVals.hidespecial;
+                    
                     cswPublic.control = cswPrivate.parent.table({
                         ID: Csw.makeId(cswPublic.data.ID, 'tbl')
                     });
 
-                    cswPrivate.table = cswPublic.control.cell(1, 1).table({ ID: Csw.makeId(cswPublic.data.ID, 'tbl1') })
-                                           .addClass('CswFieldTypeNFPA_table');
+                    cswPrivate.table = cswPublic.control.cell(1, 1).table({
+                        ID: Csw.makeId(cswPublic.data.ID, 'tbl1'),
+                        TableCssClass: 'CswFieldTypeNFPA_table'
+                    });
 
-                    cswPrivate.redDiv = cswPrivate.table.cell(1, 1)
-                                       .div({ cssclass: 'CswFieldTypeNFPA_cell CswFieldTypeNFPA_red' })
-                                       .div({ cssclass: 'CswFieldTypeNFPA_text' });
+                    if (cswPrivate.displayMode === Csw.enums.NFPADisplayMode.Diamond) {
+                        cswPrivate.redDiv = cswPrivate.table.cell(1, 1)
+                            .div({ cssclass: 'CswFieldTypeNFPA_cell CswFieldTypeNFPA_red' + cswPrivate.displayMode })
+                            .div({ cssclass: 'CswFieldTypeNFPA_text CswFieldTypeNFPA_textRotated' });
 
-                    cswPrivate.yellowDiv = cswPrivate.table.cell(1, 2)
-                                       .div({ cssclass: 'CswFieldTypeNFPA_cell CswFieldTypeNFPA_yellow' })
-                                       .div({ cssclass: 'CswFieldTypeNFPA_text' });
+                        cswPrivate.yellowDiv = cswPrivate.table.cell(1, 2)
+                            .div({ cssclass: 'CswFieldTypeNFPA_cell CswFieldTypeNFPA_yellow' + cswPrivate.displayMode })
+                            .div({ cssclass: 'CswFieldTypeNFPA_text CswFieldTypeNFPA_textRotated' });
 
-                    cswPrivate.blueDiv = cswPrivate.table.cell(2, 1)
-                                       .div({ cssclass: 'CswFieldTypeNFPA_cell CswFieldTypeNFPA_blue' })
-                                       .div({ cssclass: 'CswFieldTypeNFPA_text' });
+                        cswPrivate.blueDiv = cswPrivate.table.cell(2, 1)
+                            .div({ cssclass: 'CswFieldTypeNFPA_cell CswFieldTypeNFPA_blue' + cswPrivate.displayMode })
+                            .div({ cssclass: 'CswFieldTypeNFPA_text CswFieldTypeNFPA_textRotated' });
 
-                    cswPrivate.whiteDiv = cswPrivate.table.cell(2, 2)
-                                       .div({ cssclass: 'CswFieldTypeNFPA_cell CswFieldTypeNFPA_white' })
-                                       .div({ cssclass: 'CswFieldTypeNFPA_text CswFieldTypeNFPA_whitetext' });
+                        cswPrivate.whiteDiv = cswPrivate.table.cell(2, 2)
+                            .div({ cssclass: 'CswFieldTypeNFPA_cell CswFieldTypeNFPA_white' + cswPrivate.displayMode })
+                            .div({ cssclass: 'CswFieldTypeNFPA_text CswFieldTypeNFPA_whitetext CswFieldTypeNFPA_textRotated' });
+                    } else {
+                        cswPrivate.redDiv = cswPrivate.table.cell(1, 1)
+                            .div({ cssclass: 'CswFieldTypeNFPA_cell CswFieldTypeNFPA_red' + cswPrivate.displayMode })
+                            .div({ cssclass: 'CswFieldTypeNFPA_text' });
 
+                        cswPrivate.yellowDiv = cswPrivate.table.cell(1, 2)
+                            .div({ cssclass: 'CswFieldTypeNFPA_cell CswFieldTypeNFPA_yellow' + cswPrivate.displayMode })
+                            .div({ cssclass: 'CswFieldTypeNFPA_text' });
+
+                        cswPrivate.blueDiv = cswPrivate.table.cell(1, 3)
+                            .div({ cssclass: 'CswFieldTypeNFPA_cell CswFieldTypeNFPA_blue' + cswPrivate.displayMode })
+                            .div({ cssclass: 'CswFieldTypeNFPA_text' });
+
+                        cswPrivate.whiteDiv = cswPrivate.table.cell(1, 4)
+                            .div({ cssclass: 'CswFieldTypeNFPA_cell CswFieldTypeNFPA_white' + cswPrivate.displayMode })
+                            .div({ cssclass: 'CswFieldTypeNFPA_text CswFieldTypeNFPA_whitetextLinear' });
+                    }
                     cswPrivate.setValue = function (div, value) {
                         div.text(value);
 
@@ -128,16 +149,25 @@
                         cswPrivate.editTable.cell(1, 1).text('Flammability');
                         cswPrivate.editTable.cell(2, 1).text('Reactivity');
                         cswPrivate.editTable.cell(3, 1).text('Health');
-                        cswPrivate.editTable.cell(4, 1).text('Special');
-
+                        if (false === cswPrivate.hideSpecial) {
+                            cswPrivate.editTable.cell(4, 1).text('Special');
+                        }
                         cswPrivate.makeSelect(cswPrivate.editTable.cell(1, 2), 'red', cswPrivate.red, cswPrivate.redDiv);
                         cswPrivate.makeSelect(cswPrivate.editTable.cell(2, 2), 'yellow', cswPrivate.yellow, cswPrivate.yellowDiv);
                         cswPrivate.makeSelect(cswPrivate.editTable.cell(3, 2), 'blue', cswPrivate.blue, cswPrivate.blueDiv);
-                        cswPrivate.makeSelect(cswPrivate.editTable.cell(4, 2), 'white', cswPrivate.white, cswPrivate.whiteDiv);
-                        
+                        if (false === cswPrivate.hideSpecial) {
+                            cswPrivate.makeSelect(cswPrivate.editTable.cell(4, 2), 'white', cswPrivate.white, cswPrivate.whiteDiv);
+                        }
 
                     } // if(!o.ReadOnly)
-
+                    if (cswPrivate.hideSpecial) {
+                        if (cswPrivate.displayMode === Csw.enums.NFPADisplayMode.Diamond) {
+                            cswPrivate.table.cell(2, 2).hide(); //white cell for diamond display
+                        } else {
+                            cswPrivate.table.cell(1, 4).hide(); //white cell for linear display
+                        }
+                        cswPrivate.whiteDiv.hide();
+                    }
                 };
 
                 cswPublic.data.bindRender(render);
