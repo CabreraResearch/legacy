@@ -256,11 +256,11 @@
                 var grid = window.Ext.create('Ext.grid.Panel', gridopts);
 
                 setTimeout(function() {   // this delay solves case 26792
-                    // This should make the grid fill the parent container, but doesn't seem to work
                     if(false === Csw.isNullOrEmpty(renderTo))
                     {
                         var panelopts = {
-                            layout: 'fit',
+                            layout: 'hbox',   // case 27651
+                            minWidth: 500,    // case 27651
                             renderTo: renderTo,
                             items: [ grid ]
                         };
