@@ -48,7 +48,7 @@
                     } else {
 
                         cswPublic.control = cswPrivate.parent.table({
-                            ID: Csw.makeId(cswPublic.data.ID, 'tbl')
+                            ID: Csw.makeId(cswPublic.data.ID, window.Ext.id())
                         });
 
 
@@ -68,6 +68,7 @@
                             cswPrivate.cellCol += 1;
 
                             cswPublic.control.cell(1, cswPrivate.cellCol).icon({
+                                ID: Csw.makeId(cswPublic.data.ID,window.Ext.id()),
                                 iconType: Csw.enums.iconType.magglass,
                                 hovertext: "Search " + cswPublic.data.propData.name,
                                 size: 16,
@@ -115,7 +116,7 @@
                             }
 
                             cswPrivate.selectBox = cswPublic.control.cell(1, cswPrivate.cellCol).select({
-                                ID: cswPublic.data.ID,
+                                ID: Csw.makeId(cswPublic.data.ID,window.Ext.id()),
                                 name: cswPublic.data.ID,
                                 cssclass: 'selectinput',
                                 onChange: function () {
@@ -145,7 +146,7 @@
                             cswPrivate.toggleButton = cswPublic.control.cell(1, cswPrivate.cellCol).icon({
                                 iconType: Csw.enums.iconType.pencil,
                                 isButton: true,
-                                ID: Csw.makeId(cswPublic.data.ID, 'toggle'),
+                                ID: Csw.makeId(cswPublic.data.ID,window.Ext.id()),
                                 onClick: function () {
                                     cswPrivate.selectBox.show();
                                     cswPrivate.toggleButton.hide();
@@ -214,6 +215,7 @@
                             cswPrivate.makeAddImage = function (nodeTypeCount, lastNodeTypeId) {
                                 cswPrivate.addImage = cswPublic.control.cell(1, cswPrivate.cellCol).div()
                                     .buttonExt({
+                                        ID: Csw.makeId(cswPublic.data.ID,window.Ext.id()),
                                         icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.add),
                                         size: 'small',
                                         tooltip: { title: 'Add New ' + cswPublic.data.propData.name },
