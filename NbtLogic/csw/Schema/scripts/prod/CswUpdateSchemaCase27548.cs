@@ -11,7 +11,6 @@ namespace ChemSW.Nbt.Schema
         public override void update()
         {
             CswNbtMetaDataObjectClass MailReportOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.MailReportClass );
-            CswNbtMetaDataObjectClassProp WarningDaysOcp = MailReportOc.getObjectClassProp( CswNbtObjClassMailReport.PropertyName.WarningDays );
 
             foreach( CswNbtMetaDataNodeType MailReportNt in MailReportOc.getNodeTypes() )
             {
@@ -19,11 +18,13 @@ namespace ChemSW.Nbt.Schema
                 WarningDaysNtp.removeFromAllLayouts();
                 WarningDaysNtp.DefaultValue.AsNumber.Value = 0;
             }
-            foreach( CswNbtNode MailReportNode in MailReportOc.getNodes( true, false ) )
+            foreach( CswNbtObjClassMailReport MailReportNode in MailReportOc.getNodes( false, false ) )
             {
-                CswNbtObjClassMailReport NodeAsReport = MailReportNode;
-                NodeAsReport.WarningDays.Value = 0;
-                NodeAsReport.postChanges( false );
+                if( null != MailReportNode.WarningDays )
+                {
+                    NodeAsReport.WarningDays.Value = 0;
+                    NodeAsReport.postChanges( false );
+                }
             }
         }//Update()
 
