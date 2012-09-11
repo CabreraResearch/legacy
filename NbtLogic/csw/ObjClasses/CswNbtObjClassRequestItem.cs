@@ -34,6 +34,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string Fulfill = "Fulfill";
             public const string InventoryGroup = "Inventory Group";
             public const string TotalDispensed = "Total Dispensed";
+            public const string Name = "Name";
         }
 
         public sealed class Types
@@ -233,7 +234,6 @@ namespace ChemSW.Nbt.ObjClasses
                     }
                 }
             }
-
             _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
         }//beforeWriteNode()
 
@@ -694,6 +694,8 @@ namespace ChemSW.Nbt.ObjClasses
                 }
             }
         }
+
+        public CswNbtNodePropText Name { get { return _CswNbtNode.Properties[PropertyName.Name]; } }
 
         #endregion
     }//CswNbtObjClassRequestItem
