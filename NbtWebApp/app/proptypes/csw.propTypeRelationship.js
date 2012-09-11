@@ -126,7 +126,7 @@
                                 values: cswPrivate.relationships,
                                 selected: cswPrivate.selectedNodeId
                             });
-                            cswPrivate.selectBox.hide(); //hide this until the "edit" button is clicked
+                            
                             cswPrivate.cellCol += 1;
 
                             cswPrivate.nodeLinkText = '';
@@ -142,9 +142,9 @@
                             });
                             cswPrivate.cellCol += 1;
 
-                            cswPrivate.toggleButton = cswPublic.control.cell(1, cswPrivate.cellCol).imageButton({
-                                ButtonType: Csw.enums.imageButton_ButtonType.Edit,
-                                AlternateText: 'Edit',
+                            cswPrivate.toggleButton = cswPublic.control.cell(1, cswPrivate.cellCol).icon({
+                                iconType: Csw.enums.iconType.pencil,
+                                isButton: true,
                                 ID: Csw.makeId(cswPublic.data.ID, 'toggle'),
                                 onClick: function () {
                                     cswPrivate.selectBox.show();
@@ -153,6 +153,15 @@
                                 }
                             });
                             cswPrivate.cellCol += 1;
+
+                            if (cswPublic.data.EditMode === Csw.enums.editMode.Add || (cswPublic.data.Required && Csw.isNullOrEmpty(cswPrivate.selectedNodeId))) {
+                                cswPrivate.selectBox.show();
+                                cswPrivate.toggleButton.hide();
+                                cswPrivate.nodeLinkText.hide();
+                            } else {
+                                cswPrivate.selectBox.hide();
+                            }
+
 
                             if (cswPublic.data.Required) {
                                 cswPrivate.selectBox.addClass("required");
