@@ -427,6 +427,11 @@
                     };
                 } ());
 
+                var roundToPrecision = function (num) {
+                    var precision = Csw.number(cswPrivate.state.precision);
+                    return Math.round(Csw.number(num) * Math.pow(10, precision)) / Math.pow(10, precision);
+                };
+
                 cswPrivate.updateQuantityAfterDispense = function (enableFinishButton, quantityDeltaValue, quantityDeltaUnitId, deductingValue) {
                     if (quantityDeltaUnitId !== cswPrivate.state.unitId) {
                         Csw.ajax.post({
@@ -442,7 +447,7 @@
                                     quantityDeltaValue = 0;
                                 } else {
                                     var precision = Csw.number(cswPrivate.state.precision);
-                                    quantityDeltaValue = Math.round(Csw.number(data.convertedvalue) * Math.pow(10, precision)) / Math.pow(10, precision);
+                                    quantityDeltaValue = roundToPrecision(Csw.number(data.convertedvalue));
                                 }
                             },
                             error: function () {
@@ -451,9 +456,9 @@
                         });
                     }
                     if (deductingValue) {
-                        cswPrivate.state.quantityAfterDispense = Csw.number(cswPrivate.state.quantityAfterDispense) - Csw.number(quantityDeltaValue);
+                        cswPrivate.state.quantityAfterDispense = roundToPrecision(Csw.number(cswPrivate.state.quantityAfterDispense) - Csw.number(quantityDeltaValue));
                     } else {
-                        cswPrivate.state.quantityAfterDispense = Csw.number(cswPrivate.state.quantityAfterDispense) + Csw.number(quantityDeltaValue);
+                        cswPrivate.state.quantityAfterDispense = roundToPrecision(Csw.number(cswPrivate.state.quantityAfterDispense) + Csw.number(quantityDeltaValue));
                     }
                     if (Csw.bool(cswPrivate.state.netQuantityEnforced)) {
                         if (cswPrivate.state.quantityAfterDispense < 0) {
