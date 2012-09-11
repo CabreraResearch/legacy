@@ -81,7 +81,7 @@ namespace ChemSW.Nbt.ObjClasses
 
 
         #region Inherited Events
-        
+
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
             _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
@@ -168,10 +168,6 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropQuantity CurrentQuantity { get { return _CswNbtNode.Properties[PropertyName.CurrentQuantity]; } }
         private void OnCurrrentQuantityPropChange( CswNbtNodeProp Prop )
         {
-            if( _LevelMgr.doSendEmail( this ) )
-            {
-                LastNotified.DateTimeValue = _LevelMgr.sendPastThreshholdEmail( this );
-            }
             if( _LevelMgr.isLevelPastThreshhold( this ) )
             {
                 if( CurrentQuantity.Quantity > Level.Quantity )
@@ -186,6 +182,10 @@ namespace ChemSW.Nbt.ObjClasses
             else
             {
                 Status.Value = Statuses.Ok;
+            }
+            if( _LevelMgr.doSendEmail( this ) )
+            {
+                LastNotified.DateTimeValue = _LevelMgr.sendPastThreshholdEmail( this );
             }
         }
 
