@@ -148,22 +148,25 @@
                                 isButton: true,
                                 ID: Csw.makeId(cswPublic.data.ID,window.Ext.id()),
                                 onClick: function () {
-                                    cswPrivate.selectBox.show();
-                                    cswPrivate.toggleButton.hide();
-                                    cswPrivate.nodeLinkText.hide();
+                                    cswPrivate.toggleOptions(true);
                                 }
                             });
                             cswPrivate.cellCol += 1;
 
-                            if (cswPublic.data.EditMode === Csw.enums.editMode.Add || (cswPublic.data.Required && Csw.isNullOrEmpty(cswPrivate.selectedNodeId))) {
-                                cswPrivate.selectBox.show();
-                                cswPrivate.toggleButton.hide();
-                                cswPrivate.nodeLinkText.hide();
-                            } else {
-                                cswPrivate.selectBox.hide();
-                            }
+                            cswPrivate.toggleOptions = function(on) {
+                                if (Csw.bool(on)) {
+                                    cswPrivate.selectBox.show();
+                                    cswPrivate.toggleButton.hide();
+                                    cswPrivate.nodeLinkText.hide();
+                                } else {
+                                    cswPrivate.selectBox.hide();
+                                    cswPrivate.toggleButton.show();
+                                    cswPrivate.nodeLinkText.show();
+                                }
+                            };
 
-
+                            cswPrivate.toggleOptions(cswPublic.data.EditMode === Csw.enums.editMode.Add || (cswPublic.data.Required && Csw.isNullOrEmpty(cswPrivate.selectedNodeId)));
+                                                                                                                                                                                      
                             if (cswPublic.data.Required) {
                                 cswPrivate.selectBox.addClass("required");
                             }
@@ -171,6 +174,8 @@
                             cswPrivate.onAddNodeFunc = function (nodeid, nodekey, nodename) {
                                 cswPrivate.selectBox.option({ value: nodeid, display: nodename });
                                 cswPrivate.selectBox.val(nodeid);
+                                cswPrivate.toggleOptions(true);
+                                cswPublic.data.onPropChange({ nodeid: nodeid });
                             };
 
                             cswPrivate.parent.$.hover(function (event) { Csw.nodeHoverIn(event, cswPrivate.selectBox.val()); },
