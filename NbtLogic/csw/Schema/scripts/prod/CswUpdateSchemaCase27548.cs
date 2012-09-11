@@ -20,11 +20,8 @@ namespace ChemSW.Nbt.Schema
             }
             foreach( CswNbtObjClassMailReport MailReportNode in MailReportOc.getNodes( false, false ) )
             {
-                if( null != MailReportNode.WarningDays )
-                {
-                    MailReportNode.WarningDays.Value = 0;
-                    MailReportNode.postChanges( false );
-                }
+                MailReportNode.WarningDays.Value = 0;
+                MailReportNode.postChanges( false );
             }
         }//Update()
 

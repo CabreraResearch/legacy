@@ -674,78 +674,80 @@ namespace ChemSW.Nbt
 
         #region Notifications
 
+        //Case 27721. Disable Notifications completely until refactored by case 27720.
 
-        private Dictionary<CswNbtNotificationKey, CswNbtObjClassNotification> _Notifs = null;
-        private void _initNotifications( bool Reinit )
-        {
-            if( _Notifs == null || Reinit )
-            {
-                _Notifs = new Dictionary<CswNbtNotificationKey, CswNbtObjClassNotification>();
-                //ICswNbtTree NotifTree = Trees.getTreeFromObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.NotificationClass );
-                //for( int n = 0; n < NotifTree.getChildNodeCount(); n++ )
+        //private Dictionary<CswNbtNotificationKey, CswNbtObjClassNotification> _Notifs = null;
+        //private void _initNotifications( bool Reinit )
                 //{
-                //    NotifTree.goToNthChild( n );
+        //    if( _Notifs == null || Reinit )
+        //    {
+        //        _Notifs = new Dictionary<CswNbtNotificationKey, CswNbtObjClassNotification>();
+        //        //ICswNbtTree NotifTree = Trees.getTreeFromObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.NotificationClass );
+        //        //for( int n = 0; n < NotifTree.getChildNodeCount(); n++ )
+        //        //{
+        //        //    NotifTree.goToNthChild( n );
 
-                //    CswNbtNode ThisNode = NotifTree.getNodeForCurrentPosition();
+        //        //    CswNbtNode ThisNode = NotifTree.getNodeForCurrentPosition();
 
-                CswNbtMetaDataObjectClass NotificationOC = MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.NotificationClass );
-                foreach( CswNbtNode ThisNode in NotificationOC.getNodes( true, false ) )
-                {
-                    CswNbtObjClassNotification NotifNode = (CswNbtObjClassNotification) ThisNode;
-                    if( NotifNode.TargetNodeType != null )
-                    {
-                        CswNbtNotificationKey NKey = new CswNbtNotificationKey( NotifNode.TargetNodeType.NodeTypeId, NotifNode.SelectedEvent, NotifNode.Property.Value, NotifNode.Value.Text );
-                        if( !_Notifs.ContainsKey( NKey ) )   // because we don't have compound unique rules yet
-                            _Notifs.Add( NKey, NotifNode );  // this means that if we have redundant events, only one will be processed
-                    }
-                }
-                //NotifTree.goToParentNode();
+        //        CswNbtMetaDataObjectClass NotificationOC = MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.NotificationClass );
+        //        foreach( CswNbtNode ThisNode in NotificationOC.getNodes( true, false ) )
+        //        {
+        //            CswNbtObjClassNotification NotifNode = (CswNbtObjClassNotification) ThisNode;
+        //            if( NotifNode.TargetNodeType != null )
+        //            {
+        //                CswNbtNotificationKey NKey = new CswNbtNotificationKey( NotifNode.TargetNodeType.NodeTypeId, NotifNode.SelectedEvent, NotifNode.Property.Value, NotifNode.Value.Text );
+        //                if( !_Notifs.ContainsKey( NKey ) )   // because we don't have compound unique rules yet
+        //                    _Notifs.Add( NKey, NotifNode );  // this means that if we have redundant events, only one will be processed
                 //}
-            }
-        }
+        //        }
+        //        //NotifTree.goToParentNode();
+        //        //}
+        //    }
+        //}
 
         /// <summary>
         /// Generate a notification based on a node event
         /// </summary>
         public void runNotification( CswNbtMetaDataNodeType TargetNodeType, CswNbtObjClassNotification.EventOption EventOpt, CswNbtNode TargetNode, string PropName, string NewValue )
         {
-            _initNotifications( false );
-            // case 
-            CswNbtNotificationKey NKey = new CswNbtNotificationKey( TargetNodeType.FirstVersionNodeTypeId, EventOpt, PropName, NewValue );
-            if( _Notifs.ContainsKey( NKey ) )
-            {
-                Collection<CswMailMessage> MailMessages = new Collection<CswMailMessage>();
-                CswNbtObjClassNotification NotifNode = _Notifs[NKey];
 
-                CswCommaDelimitedString SubscribedUserIdsString = NotifNode.SubscribedUsers.SelectedUserIds;
-                Collection<Int32> SubscribedUserIds = SubscribedUserIdsString.ToIntCollection();
-                string Subject = NotifNode.Subject.Text;
-                string Message = NotifNode.Message.Text;
+            //    _initNotifications( false );
+            //    // case 
+            //    CswNbtNotificationKey NKey = new CswNbtNotificationKey( TargetNodeType.FirstVersionNodeTypeId, EventOpt, PropName, NewValue );
+            //    if( _Notifs.ContainsKey( NKey ) )
+            //    {
+            //        Collection<CswMailMessage> MailMessages = new Collection<CswMailMessage>();
+            //        CswNbtObjClassNotification NotifNode = _Notifs[NKey];
 
-                //CswNbtMetaDataNodeType TargetNodeType = this.MetaData.getNodeType( NodeTypeId );
-                CswNbtMetaDataNodeTypeProp TargetProp = TargetNodeType.getNodeTypeProp( PropName );
+            //        CswCommaDelimitedString SubscribedUserIdsString = NotifNode.SubscribedUsers.SelectedUserIds;
+            //        Collection<Int32> SubscribedUserIds = SubscribedUserIdsString.ToIntCollection();
+            //        string Subject = NotifNode.Subject.Text;
+            //        string Message = NotifNode.Message.Text;
 
-                Message = Message.Replace( CswNbtObjClassNotification.MessageNodeNameReplacement, TargetNode.NodeName );
-                if( TargetProp != null )
-                    Message = Message.Replace( CswNbtObjClassNotification.MessagePropertyValueReplacement, TargetNode.Properties[TargetProp].Gestalt );
+            //        //CswNbtMetaDataNodeType TargetNodeType = this.MetaData.getNodeType( NodeTypeId );
+            //        CswNbtMetaDataNodeTypeProp TargetProp = TargetNodeType.getNodeTypeProp( PropName );
 
-                foreach( Int32 UserId in SubscribedUserIds )
-                {
-                    CswNbtNode UserNode = this.Nodes[new CswPrimaryKey( "nodes", UserId )];
-                    CswNbtObjClassUser UserNodeAsUser = (CswNbtObjClassUser) UserNode;
-                    string EmailAddy = UserNodeAsUser.Email.Trim();
-                    CswMailMessage MailMessage = CswMail.makeMailMessage( Subject, Message, EmailAddy, UserNodeAsUser.FirstName + " " + UserNodeAsUser.LastName );
-                    if( null != MailMessage )
-                    {
-                        MailMessages.Add( MailMessage );
-                    }
-                } // foreach( Int32 UserId in SubscribedUserIds )
+            //        Message = Message.Replace( CswNbtObjClassNotification.MessageNodeNameReplacement, TargetNode.NodeName );
+            //        if( TargetProp != null )
+            //            Message = Message.Replace( CswNbtObjClassNotification.MessagePropertyValueReplacement, TargetNode.Properties[TargetProp].Gestalt );
 
-                if( MailMessages.Count > 0 )
-                {
-                    sendEmailNotification( MailMessages );
-                }
-            } // if( _Notifs.ContainsKey( NKey ) )
+            //        foreach( Int32 UserId in SubscribedUserIds )
+            //        {
+            //            CswNbtNode UserNode = this.Nodes[new CswPrimaryKey( "nodes", UserId )];
+            //            CswNbtObjClassUser UserNodeAsUser = (CswNbtObjClassUser) UserNode;
+            //            string EmailAddy = UserNodeAsUser.Email.Trim();
+            //            CswMailMessage MailMessage = CswMail.makeMailMessage( Subject, Message, EmailAddy, UserNodeAsUser.FirstName + " " + UserNodeAsUser.LastName );
+            //            if( null != MailMessage )
+            //            {
+            //                MailMessages.Add( MailMessage );
+            //            }
+            //        } // foreach( Int32 UserId in SubscribedUserIds )
+
+            //        if( MailMessages.Count > 0 )
+            //        {
+            //            sendEmailNotification( MailMessages );
+            //        }
+            //    } // if( _Notifs.ContainsKey( NKey ) )
         } // runNotification()
 
         #endregion Notifications
