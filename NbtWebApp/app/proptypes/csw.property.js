@@ -105,7 +105,7 @@
                             cswPublic = Csw.properties.sequence(cswPrivate);
                             break;
                         case Csw.enums.subFieldsMap.Static.name:
-                            cswPublic = Csw.properties.static(cswPrivate);
+                            cswPublic = Csw.properties['static'](cswPrivate);
                             break;
                         case Csw.enums.subFieldsMap.Text.name:
                             cswPublic = Csw.properties.text(cswPrivate);

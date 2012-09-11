@@ -2,17 +2,15 @@
 
 (function () {
     'use strict';
-    Csw.properties.static = Csw.properties.static ||
+    Csw.properties['static'] = Csw.properties['static'] ||
         Csw.properties.register('static',
             Csw.method(function (propertyOption) {
-                'use strict';
                 var cswPrivate = {};
                 var cswPublic = {
                     data: propertyOption
                 };
 
                 var render = function () {
-                    'use strict';
                     cswPublic.data = cswPublic.data || Csw.nbt.propertyOption(propertyOption);
 
                     cswPrivate.propVals = cswPublic.data.propData.values;
