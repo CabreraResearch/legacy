@@ -234,6 +234,54 @@ namespace ChemSW.Nbt.ObjClasses
                     }
                 }
             }
+
+            if( false == IsTemp )
+            {
+                switch( Type.Value )
+                {
+                    case Types.Request:
+                        if( null != Material.RelatedNodeId )
+                        {
+                            if( null != Size.RelatedNodeId ) //request material by size
+                            {
+                                CswNbtObjClassSize sizeNode = _CswNbtResources.Nodes.GetNode( Size.RelatedNodeId );
+                                Name.Text = "Request " + Count.Value + " x " + sizeNode.Node.NodeName;
+                            }
+                            else //request material by bulk
+                            {
+                                Name.Text = "Request " + Quantity.Quantity + Quantity.CachedUnitName;
+                            }
+                        }
+                        break;
+                    case Types.Dispense:
+                        if( null != Container.RelatedNodeId )
+                        {
+                            CswNbtObjClassContainer containerNode = _CswNbtResources.Nodes.GetNode( Container.RelatedNodeId );
+                            Name.Text = "Dispense " + containerNode.Quantity.Quantity + containerNode.Quantity.CachedUnitName + " from Container " + containerNode.Barcode.Barcode;
+                        }
+                        break;
+                    case Types.Dispose:
+                        if( null != Container.RelatedNodeId )
+                        {
+                            CswNbtObjClassContainer containerNode = _CswNbtResources.Nodes.GetNode( Container.RelatedNodeId );
+                            Name.Text = "Dispose Container " + containerNode.Barcode.Barcode;
+                        }
+                        break;
+                    case Types.Move:
+                        if( null != Container.RelatedNodeId )
+                        {
+                            CswNbtObjClassContainer containerNode = _CswNbtResources.Nodes.GetNode( Container.RelatedNodeId );
+                            Name.Text = "Move Container " + containerNode.Barcode.Barcode;
+                        }
+                        break;
+                    default:
+                        throw new CswDniException( ErrorType.Warning,
+                            "An invalid request type was encountered",
+                            "An invald request type of " + Type.Value + " was encountered." );
+                        break;
+                }
+            }
+
             _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
         }//beforeWriteNode()
 
