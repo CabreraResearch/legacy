@@ -512,7 +512,7 @@
                                 hasHeader: true,
                                 rows: cswPrivate.rows,
                                 allowDelete: true,
-                                allowAdd: false,
+                                allowAdd: true,
                                 makeAddRow: function (cswCell, columnName, rowid) {
                                     'use strict';
                                     var thisSize = {
@@ -633,21 +633,6 @@
                                         return size.rowid != rowid;
                                     });
                                     cswPublic.sizes = reducedSizes;
-                                }
-                            });
-
-                            cswPrivate.divStep3.br();
-
-                            cswPublic.sizeGridAddButton = cswPrivate.divStep3.buttonExt({
-                                enabledText: 'Add Row',
-                                size: 'small',
-                                tooltip: { title: 'Add Row' },
-                                icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.add),
-                                onClick: function () {
-                                    if (cswPublic.sizeGrid.commitRow()) {
-                                        cswPublic.sizeGrid.makeNewAddRow();
-                                    }
-                                    cswPublic.sizeGridAddButton.enable();
                                 }
                             });
                         };

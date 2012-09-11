@@ -218,7 +218,7 @@
                         hasHeader: true,
                         rows: cswPrivate.rows,
                         allowDelete: true,
-                        allowAdd: false,
+                        allowAdd: true,
                         makeAddRow: executeMakeAddRow,
                         onAdd: function () {
                             if (Csw.isNumeric(Csw.number(newAmount.containerNo)) && false === Csw.isNullOrEmpty(newAmount.quantity)) {
@@ -269,21 +269,6 @@
                         cswPublic.thinGrid.commitRow();
                         return Csw.bool(cswPublic.quantities.length > 0);
                     };
-
-                    cswParent.br();
-
-                    cswPublic.thinGridAddButton = cswParent.div({ ID: window.Ext.id() }).buttonExt({
-                        enabledText: 'Add Row',
-                        size: 'small',
-                        tooltip: { title: 'Add Row' },
-                        icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.add),
-                        onClick: function () {
-                            if (cswPublic.thinGrid.commitRow()) {
-                                cswPublic.thinGrid.makeNewAddRow();
-                            }
-                            cswPublic.thinGridAddButton.enable();
-                        }
-                    });
 
                     cswParent.br();
 

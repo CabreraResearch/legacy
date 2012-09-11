@@ -323,7 +323,10 @@
                         Csw.tryExec(cswPrivate.onDeselect, record.data);
                     },
                     afterrender: function (component) {
-                        component.getDockedComponent('bottomtoolbar').items.get('refresh').hide();
+                        var bottomToolbar = component.getDockedComponent('bottomtoolbar');
+                        if(false === Csw.isNullOrEmpty(bottomToolbar)) {
+                            bottomToolbar.items.get('refresh').hide();
+                        }                        
                     }
                 });
                 
