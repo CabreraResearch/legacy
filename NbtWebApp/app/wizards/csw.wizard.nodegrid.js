@@ -3,8 +3,8 @@
 
 (function () {
 
-    Csw.nbt.wizard.nodeGrid = Csw.nbt.wizard.nodeGrid ||
-        Csw.nbt.wizard.register('nodeGrid', function (cswParent, options) {
+    Csw.wizard.nodeGrid = Csw.wizard.nodeGrid ||
+        Csw.wizard.register('nodeGrid', function (cswParent, options) {
             'use strict';
             ///<summary>Creates a basic grid with an Add menu.</summary>
 

@@ -4,9 +4,6 @@
 (function () {
     'use strict';
 
-    Csw.error = Csw.error ||
-        Csw.register('error', Csw.makeNameSpace());
-
     Csw.error.makeErrorObj = Csw.error.makeErrorObj ||
         Csw.error.register('makeErrorObj', function (errorType, friendlyMsg, esotericMsg) {
             'use strict';

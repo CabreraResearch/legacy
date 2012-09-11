@@ -443,20 +443,22 @@ namespace ChemSW.Nbt.PropTypes
                 null != JObject["logicalsetjson"]["data"] &&
                 null != JObject["logicalsetjson"]["columns"] )
             {
-                JArray Data = (JArray) JObject["logicalsetjson"]["data"];
-                JArray ColumnsAry = (JArray) JObject["logicalsetjson"]["columns"];
+                JArray Data = CswConvert.ToJArray( JObject["logicalsetjson"]["data"] );
+                JArray ColumnsAry = CswConvert.ToJArray( JObject["logicalsetjson"]["columns"] );
                 CswCommaDelimitedString ColumnNames = new CswCommaDelimitedString();
                 ColumnNames.FromArray( ColumnsAry );
-
-                foreach( JObject ItemObj in Data )
+                if( null != Data )
                 {
-                    string key = CswConvert.ToString( ItemObj["key"] );
-                    string name = CswConvert.ToString( ItemObj["label"] );
-                    JArray Values = (JArray) ItemObj["values"];
-                    for( Int32 i = 0; i < ColumnNames.Count; i++ )
+                    foreach( JObject ItemObj in Data )
                     {
-                        bool Val = CswConvert.ToBoolean( Values[i] );
-                        SetValue( ColumnNames[i], name, Val );
+                        string key = CswConvert.ToString( ItemObj["key"] );
+                        string name = CswConvert.ToString( ItemObj["label"] );
+                        JArray Values = CswConvert.ToJArray( ItemObj["values"] );
+                        for( Int32 i = 0; i < ColumnNames.Count; i++ )
+                        {
+                            bool Val = null != Values && CswConvert.ToBoolean( Values[i] );
+                            SetValue( ColumnNames[i], name, Val );
+                        }
                     }
                 }
             }

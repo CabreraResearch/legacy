@@ -62,9 +62,7 @@
                         {
                             cswPrivate.dateBox.$.datepicker({ 'dateFormat': Csw.serverDateFormatToJQuery(cswPrivate.DateFormat) });
                         }
-                        if (cswPrivate.Required) {
-                            cswPrivate.dateBox.addClass('required');
-                        }
+                        cswPrivate.dateBox.required(cswPrivate.Required);
                     }
 
                     if (cswPrivate.DisplayMode === 'Time' || cswPrivate.DisplayMode === 'DateTime') {
@@ -84,10 +82,7 @@
                             },
                             enabledText: 'Now'
                         });
-
-                        if (cswPrivate.Required) {
-                            cswPrivate.timeBox.addClass('required');
-                        }
+                        cswPrivate.timeBox.required(cswPrivate.Required);
                     }
 
                     if(Csw.bool(cswPrivate.showTodayButton)) {

@@ -4,9 +4,6 @@
 (function _cswEnums() {
     'use strict';
 
-    Csw.enums = Csw.enums ||
-        Csw.register('enums', Csw.makeNameSpace());
-
     Csw.enums.constants = Csw.enums.constants ||
         Csw.enums.register('constants', { unknownEnum: 'unknown' });
 
@@ -35,7 +32,7 @@
             var ret = '';
 
             Csw.each(cswEnum, function (value, name) {
-                if(value === enumValue) {
+                if (value === enumValue) {
                     ret = name;
                     return true;
                 }
@@ -311,7 +308,7 @@
             add: 72, //called left above but the file is 'back.png'
             search: 73 //called ?? above but the file is 'back.png'
         });
-    
+
     Csw.enums.searchCssClasses = Csw.enums.searchCssClasses ||
         Csw.enums.register('searchCssClasses', {
             nodetype_select: { name: 'csw_search_nodetype_select' },
@@ -418,6 +415,7 @@
                     Text: Csw.enums.subFieldNames.Text
                 }
             },
+            Comments: { name: 'Comments', subfields: {} },
             Composite: { name: 'Composite', subfields: {} },
             DateTime: {
                 name: 'DateTime',
@@ -438,6 +436,7 @@
             File: { name: 'File', subfields: {} },
             Grid: { name: 'Grid', subfields: {} },
             Image: { name: 'Image', subfields: {} },
+            ImageList: { name: 'ImageList', subfields: {} },
             Link: {
                 name: 'Link',
                 subfields: {
@@ -552,8 +551,14 @@
 
     Csw.enums.toggleState = Csw.enums.toggleState ||
         Csw.enums.register('toggleState', {
-            on: {name: 'on'},
-            off: {name: 'off'}
+            on: { name: 'on' },
+            off: { name: 'off' }
+        });
+
+    Csw.enums.NFPADisplayMode = Csw.enums.NFPADisplayMode ||
+        Csw.enums.register('NFPADisplayMode', {
+            Linear: 'Linear',
+            Diamond: 'Diamond'
         });
 
 } ());
