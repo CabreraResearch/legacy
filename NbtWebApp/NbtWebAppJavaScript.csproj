@@ -115,7 +115,6 @@
     <Content Include="app\fieldtypes_dep\CswFieldTypeUserSelect.js" />
     <Content Include="app\fieldtypes_dep\CswFieldTypeViewPickList.js" />
     <Content Include="app\fieldtypes_dep\CswFieldTypeViewReference.js" />
-    <Content Include="app\proptypes\_CswFieldTypeFactory.js" />
     <Content Include="app\nodes\csw.node.table.js" />
     <Content Include="app\proptypes\csw.property.js" />
     <Content Include="app\proptypes\csw.propertyOption.js" />

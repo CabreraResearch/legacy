@@ -36,11 +36,11 @@
                             onChange: function () {
                                 var val = cswPrivate.valueNtb.val();
                                 Csw.tryExec(cswPublic.data.onChange, val);
-                                cswPublic.data.onPropChange({ nodeid: val });
+                                cswPublic.data.onPropChange({ base: val });
                             },
                             width: '65px'
                         });
-                        cswPrivate.parent.append('E');
+                        cswPublic.control.append('E');
                         cswPrivate.exponentNtb = cswPublic.control.numberTextBox({
                             ID: cswPublic.data.ID + '_exp',
                             value: (false === cswPublic.data.Multi) ? Csw.string(cswPrivate.propVals.exponent).trim() : Csw.enums.multiEditDefaultValue,
@@ -50,7 +50,7 @@
                             onChange: function () {
                                 var val = cswPrivate.exponentNtb.val();
                                 Csw.tryExec(cswPublic.data.onChange, val);
-                                cswPublic.data.onPropChange({ base: val });
+                                cswPublic.data.onPropChange({ exponent: val });
                             },
                             width: '40px'
                         });

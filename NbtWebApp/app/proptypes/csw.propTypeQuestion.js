@@ -35,14 +35,13 @@
                             cswPrivate.correctiveActionLabel.hide();
                             cswPrivate.correctiveActionTextBox.hide();
                         }
-                        if (isCompliant) {
+                        cswPrivate.isActionRequired = (false === isCompliant);
+                        if (false === cswPrivate.isActionRequired) {
                             cswPrivate.answerSel.removeClass('CswFieldTypeQuestion_Deficient');
                         } else {
                             cswPrivate.answerSel.addClass('CswFieldTypeQuestion_Deficient');
-                            if (cswPrivate.isActionRequired) { //case 25035
-                                cswPrivate.correctiveActionLabel.show();
-                                cswPrivate.correctiveActionTextBox.show();
-                            }
+                            cswPrivate.correctiveActionLabel.show();
+                            cswPrivate.correctiveActionTextBox.show();
                         }
                         //}
                     }; // checkCompliance()
