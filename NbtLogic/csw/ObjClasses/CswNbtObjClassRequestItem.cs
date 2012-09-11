@@ -240,17 +240,14 @@ namespace ChemSW.Nbt.ObjClasses
                 switch( Type.Value )
                 {
                     case Types.Request:
-                        if( null != Material.RelatedNodeId )
+                        if( RequestBy.Value.Equals( RequestsBy.Size ) && null != Size.RelatedNodeId ) //request material by size
                         {
-                            if( null != Size.RelatedNodeId ) //request material by size
-                            {
-                                CswNbtObjClassSize sizeNode = _CswNbtResources.Nodes.GetNode( Size.RelatedNodeId );
-                                Name.Text = "Request " + Count.Value + " x " + sizeNode.Node.NodeName;
-                            }
-                            else //request material by bulk
-                            {
-                                Name.Text = "Request " + Quantity.Quantity + Quantity.CachedUnitName;
-                            }
+                            CswNbtObjClassSize sizeNode = _CswNbtResources.Nodes.GetNode( Size.RelatedNodeId );
+                            Name.Text = "Request " + Count.Value + " x " + sizeNode.Node.NodeName;
+                        }
+                        else //request material by bulk
+                        {
+                            Name.Text = "Request " + Quantity.Quantity + Quantity.CachedUnitName;
                         }
                         break;
                     case Types.Dispense:
