@@ -22,8 +22,8 @@ namespace ChemSW.Nbt.Schema
             {
                 if( null != MailReportNode.WarningDays )
                 {
-                    NodeAsReport.WarningDays.Value = 0;
-                    NodeAsReport.postChanges( false );
+                    MailReportNode.WarningDays.Value = 0;
+                    MailReportNode.postChanges( false );
                 }
             }
         }//Update()
