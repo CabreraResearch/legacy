@@ -793,7 +793,7 @@
         }, // AboutDialog
         FileUploadDialog: function (options) {
             var o = {
-                url: '',
+                urlMethod: 'fileForProp',
                 params: {},
                 onSuccess: function () { }
             };
@@ -807,7 +807,7 @@
 
             uploadBtn.$.fileupload({
                 datatype: 'json',
-                url: Csw.enums.ajaxUrlPrefix + o.url + '?' + $.param(o.params),
+                url: Csw.enums.ajaxUrlPrefix + o.urlMethod + '?' + $.param(o.params),
                 paramName: 'fileupload',
                 success: function (result, textStatus, jqXHR) {
                     div.$.dialog('close');
