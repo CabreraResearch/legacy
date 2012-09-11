@@ -278,7 +278,6 @@ namespace ChemSW.Nbt.ObjClasses
                         throw new CswDniException( ErrorType.Warning,
                             "An invalid request type was encountered",
                             "An invald request type of " + Type.Value + " was encountered." );
-                        break;
                 }
             }
 
