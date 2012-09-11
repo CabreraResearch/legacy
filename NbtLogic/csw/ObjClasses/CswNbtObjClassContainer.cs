@@ -41,9 +41,9 @@ namespace ChemSW.Nbt.ObjClasses
         }
         public sealed class RequestMenu
         {
-            public const string Dispense = "Dispense";
-            public const string Dispose = "Dispose";
-            public const string Move = "Move";
+            public const string Dispense = "Dispense Container";
+            public const string Dispose = "Dispose Container";
+            public const string Move = "Move Container";
 
             public static readonly CswCommaDelimitedString Options = new CswCommaDelimitedString
                 {
