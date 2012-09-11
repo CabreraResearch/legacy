@@ -52,12 +52,15 @@
                         ID: Csw.makeId(cswPublic.data.ID, 'tbl')
                     });
 
-                    cswPrivate.table = cswPublic.control.cell(1, 1).table({
-                        ID: Csw.makeId(cswPublic.data.ID, 'tbl1'),
-                        TableCssClass: 'CswFieldTypeNFPA_table'
-                    });
+                    cswPrivate.table = cswPublic.control
+                        .cell(1, 1)
+                        .table({
+                            ID: Csw.makeId(cswPublic.data.ID, 'tbl1')
+                        })
+                        .addClass('CswFieldTypeNFPA_table');
 
                     if (cswPrivate.displayMode === Csw.enums.NFPADisplayMode.Diamond) {
+                        cswPrivate.table.addClass('CswFieldTypeNFPA_rotation');
                         cswPrivate.redDiv = cswPrivate.table.cell(1, 1)
                             .div({ cssclass: 'CswFieldTypeNFPA_cell CswFieldTypeNFPA_red' + cswPrivate.displayMode })
                             .div({ cssclass: 'CswFieldTypeNFPA_text CswFieldTypeNFPA_textRotated' });
@@ -100,11 +103,11 @@
                         }
                     };
 
-                    cswPrivate.makeSelect = function (cell, id, selected, div) {
+                    cswPrivate.makeSelect = function (cell, id, selected, div, vals) {
                         var select = cell.select({
                             ID: Csw.makeId(cswPublic.data.ID, id),
                             selected: selected,
-                            values: cswPrivate.selVals,
+                            values: vals || cswPrivate.selVals,
                             cssclass: '',
                             onChange: function () {
                                 var val = select.val();
@@ -152,11 +155,11 @@
                         if (false === cswPrivate.hideSpecial) {
                             cswPrivate.editTable.cell(4, 1).text('Special');
                         }
-                        cswPrivate.makeSelect(cswPrivate.editTable.cell(1, 2), 'red', cswPrivate.red, cswPrivate.redDiv);
-                        cswPrivate.makeSelect(cswPrivate.editTable.cell(2, 2), 'yellow', cswPrivate.yellow, cswPrivate.yellowDiv);
-                        cswPrivate.makeSelect(cswPrivate.editTable.cell(3, 2), 'blue', cswPrivate.blue, cswPrivate.blueDiv);
+                        cswPrivate.makeSelect(cswPrivate.editTable.cell(1, 2), 'red', cswPrivate.red, cswPrivate.redDiv, cswPrivate.selVals);
+                        cswPrivate.makeSelect(cswPrivate.editTable.cell(2, 2), 'yellow', cswPrivate.yellow, cswPrivate.yellowDiv, cswPrivate.selVals);
+                        cswPrivate.makeSelect(cswPrivate.editTable.cell(3, 2), 'blue', cswPrivate.blue, cswPrivate.blueDiv, cswPrivate.selVals);
                         if (false === cswPrivate.hideSpecial) {
-                            cswPrivate.makeSelect(cswPrivate.editTable.cell(4, 2), 'white', cswPrivate.white, cswPrivate.whiteDiv);
+                            cswPrivate.makeSelect(cswPrivate.editTable.cell(4, 2), 'white', cswPrivate.white, cswPrivate.whiteDiv, cswPrivate.whiteVals);
                         }
 
                     } // if(!o.ReadOnly)
