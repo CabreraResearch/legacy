@@ -189,6 +189,7 @@ namespace ChemSW.Nbt.WebServices
                 Capacity.ToJSON( Ret );
                 Ret["qtyReadonly"] = "false";
                 Ret["unitReadonly"] = "false";
+                Ret["unitCount"] = "1";
                 if( Action.ToLower() == ChemSW.Nbt.ObjClasses.CswNbtObjClass.NbtButtonAction.receive.ToString() )
                 {
                     Ret["unitReadonly"] = "true";
@@ -196,6 +197,7 @@ namespace ChemSW.Nbt.WebServices
                     {
                         Ret["qtyReadonly"] = "true";
                     }
+                    Ret["unitCount"] = Size.UnitCount.Value.ToString();
                 }
             }
             return Ret;

@@ -64,9 +64,6 @@
         }
     };
 
-    Csw.clientSession = Csw.clientSession ||
-        Csw.register('clientSession', Csw.makeNameSpace());
-
     Csw.clientSession.currentAccessId = Csw.clientSession.currentAccessId ||
         Csw.clientSession.register('currentAccessId', function () {
             return Csw.string(Csw.cookie.get(Csw.cookie.cookieNames.CustomerId), cswPrivate.AccessId);
