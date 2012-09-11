@@ -16,13 +16,11 @@ namespace ChemSW.Nbt.Schema
         {
 
             CswNbtMetaDataObjectClass problemOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.ProblemClass );
+            CswNbtMetaDataObjectClassProp closedOCP = problemOC.getObjectClassProp( CswNbtObjClassProblem.PropertyName.Closed );
             foreach( CswNbtMetaDataNodeType problemNT in problemOC.getNodeTypes() )
             {
-                CswNbtMetaDataNodeTypeProp closedNTP = problemNT.getNodeTypeProp( CswNbtObjClassProblem.PropertyName.Closed );
-                if( null != closedNTP )
-                {
-                    closedNTP.removeFromLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add );
-                }
+                CswNbtMetaDataNodeTypeProp closedNTP = problemNT.getNodeTypePropByObjectClassProp( closedOCP.ObjectClassPropId );
+                closedNTP.removeFromLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add );
             }
 
         }//Update()
