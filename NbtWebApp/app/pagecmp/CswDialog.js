@@ -1341,6 +1341,7 @@
                     posX = cswPrivate.origXAccessor();
                     posY = cswPrivate.origYAccessor();
                 }
+                div.remove(); //case 27566
             },
             dragStop: function () {
                 var newPos = div.$.dialog("option", "position");
