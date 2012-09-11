@@ -28,7 +28,8 @@ my @components = (
 	"NbtImport",
 	"NbtHelp",
 	"DailyBuildTools",
-	"StructureSearch"
+	"StructureSearch",
+        "chemsw-fe"
 );
 
 my %repopaths;
@@ -45,6 +46,10 @@ foreach my $component (@components)
 	elsif($component eq "DailyBuildTools")
 	{
 		$repopaths{$component} = "$kilnpath/$component";
+	} 
+        elsif($component eq "chemsw-fe")
+	{
+		$repopaths{$component} = "$kilnpath/incandescentsw/$component";
 	} else {
 		$repopaths{$component} = "$kilnpath/Common/$component";
 	}
@@ -82,7 +87,7 @@ foreach my $component (@components)
 	printf("Setting $component to $datestr.$increment\n");
 	
 	my $file;
-	if($component eq "NbtImport" || $component eq "NbtHelp")
+	if($component eq "NbtImport" || $component eq "NbtHelp" || $component eq "chemsw-fe")
 	{
 		# no file to update
 	}
