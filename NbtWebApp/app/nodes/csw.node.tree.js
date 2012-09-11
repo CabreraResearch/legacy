@@ -336,8 +336,8 @@
             var cell12 = cswPrivate.table.cell(1,2);
             var cell21 = cswPrivate.table.cell(2,1);
 
-            cell11.css({ width: '50%', verticalAlign: 'middle' });
-            cell12.css({ width: '50%' });
+            cell11.css({ width: '100px', verticalAlign: 'middle' });
+            cell12.css({ width: '170px' });
             cell21.propDom('colspan', 2);
 
             cswPrivate.toggleDiv = cell11.div({ ID: Csw.makeId({ ID: cswPrivate.IdPrefix, suffix: 'toggleDiv' }) });
