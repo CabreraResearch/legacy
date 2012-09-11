@@ -169,6 +169,7 @@
         cswPublic.error = cswPublic.error || cswPublic.register('error', makeNameSpace());
         cswPublic.layouts = cswPublic.layouts || cswPublic.register('layouts', makeNameSpace());
         cswPublic.literals = cswPublic.literals || cswPublic.register('literals', makeNameSpace());
+        cswPublic.main = cswPublic.main || cswPublic.register('main', makeNameSpace());
         cswPublic.nbt = cswPublic.nbt || cswPublic.register('nbt', makeNameSpace());
         cswPublic.properties = cswPublic.properties || cswPublic.register('properties', makeNameSpace());
         cswPublic.window = cswPublic.window || cswPublic.register('window', makeNameSpace());

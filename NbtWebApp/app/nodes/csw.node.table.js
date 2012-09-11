@@ -27,7 +27,8 @@
                 compactResults: false,
                 extraAction: null,
                 extraActionIcon: Csw.enums.iconType.none,
-                onExtraAction: null  // function(nodeObj) {}
+                onExtraAction: null,  // function(nodeObj) {}
+                properties: []
             };
             if (params) Csw.extend(cswPrivate, params);
             
@@ -147,7 +148,6 @@
                     }
                     textCell.br();
 
-                    //var thumbtable = thumbnailCell.table({ width: '100%', cellpadding: 0, cellspacing: 0 });
                     var texttable = textCell.table({ width: '100%', cellpadding: 0, cellspacing: 0 });
                     cswPrivate.texttables.push(texttable);
 
@@ -163,31 +163,11 @@
                             src: nodeObj.thumbnailurl
                         }).css({ width: imgwidth, height: imgheight });
                     }
-//                    var moreinfoimg = thumbtable.cell(1, 2).css({ width: '25px' })
-//                            .img({
-//                                src: 'Images/newicons/18/info.png',
-//                                title: 'More Info'
-//                            });
-//                    moreinfoimg.propNonDom({ valign: 'top' });
-//                    moreinfoimg.$.hover(function (event) { Csw.nodeHoverIn(event, nodeid, '', 0); }, Csw.nodeHoverOut);
+
                     thumbnailCell.$.hover(function (event) { Csw.nodeHoverIn(event, nodeid, ''); },
                                           function (event) { Csw.nodeHoverOut(event, nodeid, ''); });
                     textCell.$.hover(function (event) { Csw.nodeHoverIn(event, nodeid, ''); },
                                      function (event) { Csw.nodeHoverOut(event, nodeid, ''); });
-
-                    //thumbnailCell.br();
-
-                    // Name
-                    //var maintextcell = texttable.cell(1, 1);
-                    //maintextcell.append('<b>' + nodeObj.nodename + '</b>');
-
-                    //                        if (Csw.bool(nodeObj.locked)) {
-                    //                            maintextcell.img({
-                    //                                src: 'Images/quota/lock.gif',
-                    //                                title: 'Quota exceeded'
-                    //                            });
-                    //                        }
-                    //                        maintextcell.br();
 
                     var btnTable = btncell.table({
                         ID: Csw.makeId(cswPrivate.ID, nodeid + '_btntbl'),
@@ -202,7 +182,6 @@
                             // Object Class Buttons
                             var propDiv = btnTable.cell(1, btncol).div();
 
-                            var propId = propObj.id;
                             propObj.size = 'small';
                             propObj.nodeid = nodeid;
                             propObj.ID = Csw.makeId(cswPrivate.ID, propObj.id, 'tbl');
@@ -214,10 +193,9 @@
                             };
                             var fieldOpt = Csw.nbt.propertyOption(propObj, propDiv);
 
-                            cswPrivate.properties[propId] = Csw.nbt.property(fieldOpt);
+                            cswPrivate.properties[propObj.id] = Csw.nbt.property(fieldOpt);
 
-                            //$.CswFieldTypeFactory('make', {
-                                
+                               
                             btncol += 1;
 
                         } else {
@@ -226,7 +204,7 @@
                             //maintextcell.br();
                         }
                     });
-
+                    Csw.publish('render_' + nodeid);
                     // System Buttons
                     if (Csw.bool(cswPrivate.compactResults)) {
                         btnTable.cell(1, btncol).buttonExt({
@@ -312,8 +290,8 @@
 
             cswPrivate.makeTable = function () {
                 var i;
-                cswPrivate.tableDiv.$.empty();
-                cswPrivate.pagerDiv.$.empty();
+                cswPrivate.tableDiv.empty();
+                cswPrivate.pagerDiv.empty();
                 cswPrivate.r = 1;
                 cswPrivate.c = 1;
                 cswPrivate.pagenodecount = 0;
