@@ -1,102 +1,118 @@
 /// <reference path="~/app/CswApp-vsdoc.js" />
 
+(function () {
+    'use strict';
+    Csw.properties.mol = Csw.properties.mol ||
+        Csw.properties.register('mol',
+            Csw.method(function (propertyOption) {
+                'use strict';
+                var cswPrivate = {};
+                var cswPublic = {
+                    data: propertyOption
+                };
 
-(function ($) {
-    "use strict";
-    var pluginName = 'CswFieldTypeMol';
+                var render = function () {
+                    'use strict';
+                    cswPublic.data = cswPublic.data || Csw.nbt.propertyOption(propertyOption);
 
-    var methods = {
-        init: function (o) {
+                    cswPrivate.propVals = cswPublic.data.propData.values;
+                    cswPrivate.parent = cswPublic.data.propDiv;
+                    cswPrivate.width = 200; //Csw.string(propVals.width);
+                    cswPrivate.mol = Csw.string(cswPrivate.propVals.mol).trim();
 
-            var propDiv = o.propDiv;
-            propDiv.empty();
-            var propVals = o.propData.values;
-            var width = 200; //Csw.string(propVals.width);
-            var mol = Csw.string(propVals.mol).trim();
-
-            var table = propDiv.table({
-                ID: Csw.makeId(o.ID, 'tbl')
-            });
-            var cell11 = table.cell(1, 1).propDom('colspan', '3');
-            var cell21 = table.cell(2, 1).css('width', width - 36);
-            var cell22 = table.cell(2, 2).css('textAlign', 'right');
-            var cell23 = table.cell(2, 3).css('textAlign', 'right');
-
-            var href = Csw.string(propVals.href);
-            href += '&usenodetypeasplaceholder=false';     // case 27596
-
-            cell11.a({
-                href: href,
-                target: '_blank'
-            }).img({
-                src: href,
-                height: propVals.height,
-                width: width
-            });
-
-            if (false === Csw.bool(o.ReadOnly) && o.EditMode !== Csw.enums.editMode.Add) {
-                /* Edit Button */
-                cell22.div()
-                    .icon({
-                        ID: o.ID + '_edit',
-                        iconType: Csw.enums.iconType.pencil,
-                        hovertext: 'Edit',
-                        size: 16,
-                        isButton: true,
-                        onClick: function () {
-                            $.CswDialog('EditMolDialog', {
-                                TextUrl: 'saveMolPropText',
-                                FileUrl: 'saveMolPropFile',
-                                PropId: o.propData.id,
-                                molData: mol,
-                                onSuccess: function () {
-                                    o.onReload();
-                                }
-                            });
-                        }
+                    cswPublic.control = cswPrivate.parent.table({
+                        ID: Csw.makeId(cswPublic.data.ID, 'tbl')
                     });
+                    
+                    cswPrivate.cell11 = cswPublic.control.cell(1, 1).propDom('colspan', '3');
+                    
+                    cswPublic.control.cell(2, 1).css('width', cswPrivate.width - 36);
+                    
+                    cswPrivate.cell22 = cswPublic.control.cell(2, 2).css('textAlign', 'right');
+                    cswPrivate.cell23 = cswPublic.control.cell(2, 3).css('textAlign', 'right');
 
-                /* Clear Button */
-                cell23.div()
-                    .icon({
-                        ID: o.ID + '_clr',
-                        iconType: Csw.enums.iconType.trash,
-                        hovertext: 'Clear Mol',
-                        size: 16,
-                        isButton: true,
-                        onClick: function () {
-                            /* remember: confirm is globally blocking call */
-                            if (confirm("Are you sure you want to clear this structure?")) {
-                                var dataJson = {
-                                    PropId: o.propData.id,
-                                    IncludeBlob: true
-                                };
+                    cswPrivate.href = Csw.string(cswPrivate.propVals.href);
+                    cswPrivate.href += '&usenodetypeasplaceholder=false';     // case 27596
 
-                                Csw.ajax.post({
-                                    urlMethod: 'clearProp',
-                                    data: dataJson,
-                                    success: function () { o.onReload(); }
+                    cswPrivate.initMol = (function() {
+                        function init(molData) {
+                            cswPrivate.cell11.empty();
+                            if (molData) {
+                                cswPrivate.cell11.a({
+                                    href: molData.href,
+                                    target: '_blank'
+                                }).img({
+                                    src: molData.href,
+                                    height: cswPrivate.propVals.height,
+                                    width: cswPrivate.width
                                 });
                             }
                         }
-                    });
-            }
-        },
-        save: function (o) { //$propdiv, o.propData
-            Csw.preparePropJsonForSave(o.propData);
-        }
-    };
 
-    // Method calling logic
-    $.fn.CswFieldTypeMol = function (method) {
+                        init(cswPrivate);
+                        return init;
+                    }());
 
-        if (methods[method]) {
-            return methods[method].apply(this, Array.prototype.slice.call(arguments, 1));
-        } else if (typeof method === 'object' || !method) {
-            return methods.init.apply(this, arguments);
-        } else {
-            $.error('Method ' + method + ' does not exist on ' + pluginName); return false;
-        }
+                    if (false === Csw.bool(cswPublic.data.ReadOnly) && cswPublic.data.EditMode !== Csw.enums.editMode.Add) {
+                        /* Edit Button */
+                        cswPrivate.cell22.div()
+                            .icon({
+                                ID: cswPublic.data.ID + '_edit',
+                                iconType: Csw.enums.iconType.pencil,
+                                hovertext: 'Edit',
+                                size: 16,
+                                isButton: true,
+                                onClick: function() {
+                                    $.CswDialog('EditMolDialog', {
+                                        TextUrl: 'saveMolPropText',
+                                        FileUrl: 'saveMolPropFile',
+                                        PropId: cswPublic.data.propData.id,
+                                        molData: cswPrivate.mol,
+                                        onSuccess: function(data) {
+                                            var val = data;
+                                            cswPrivate.initMol(data);
+                                            cswPublic.data.onPropChange({ href: data.href, mol: data.mol });
+                                        }
+                                    });
+                                }
+                            });
 
-    };
-})(jQuery);
+                        /* Clear Button */
+                        cswPrivate.cell23.div()
+                            .icon({
+                                ID: cswPublic.data.ID + '_clr',
+                                iconType: Csw.enums.iconType.trash,
+                                hovertext: 'Clear Mol',
+                                size: 16,
+                                isButton: true,
+                                onClick: function() {
+                                    /* remember: confirm is globally blocking call */
+                                    if (confirm("Are you sure you want to clear this structure?")) {
+                                        var dataJson = {
+                                            PropId: cswPublic.data.propData.id,
+                                            IncludeBlob: true
+                                        };
+
+                                        Csw.ajax.post({
+                                            urlMethod: 'clearProp',
+                                            data: dataJson,
+                                            success: function() {
+                                                cswPrivate.initMol();
+                                                cswPublic.data.onPropChange({ href: '', mol: '' });
+                                            }
+                                        });
+                                    }
+                                }
+                            });
+
+                    }
+                };
+
+                cswPublic.data.bindRender(render);
+                return cswPublic;
+            }));
+
+}());
+
+
+

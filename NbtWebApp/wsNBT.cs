@@ -24,7 +24,6 @@ using ChemSW.Nbt.Statistics;
 using ChemSW.Nbt.Welcome;
 using ChemSW.Security;
 using ChemSW.Session;
-using ChemSW.StructureSearch;
 using ChemSW.WebSvc;
 using Newtonsoft.Json.Linq;
 
@@ -2545,7 +2544,7 @@ namespace ChemSW.Nbt.WebServices
         //dch
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string saveMolPropFile()
+        public void saveMolPropFile()
         {
             JObject ReturnVal = new JObject();
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
@@ -2571,8 +2570,8 @@ namespace ChemSW.Nbt.WebServices
                             FileData[CurrentIndex] = br.ReadByte();
                         }
                         string MolData = CswTools.ByteArrayToString( FileData ).Replace( "\r", "" );
-
-                        ReturnVal = _saveMolProps( MolData, PropId );
+                        CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources, _CswNbtStatisticsEvents );
+                        ReturnVal = ws.saveMolProp( MolData, PropId );
                     }
                 }
 
@@ -2586,7 +2585,13 @@ namespace ChemSW.Nbt.WebServices
 
             CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
 
-            return ReturnVal.ToString();
+            //This is the only way to get the content back down to the client using jQuery File Upload.
+            //DO NOT TOUCH.
+            Context.Response.Clear();
+            Context.Response.ContentType = "application/json";
+            Context.Response.Flush();
+            Context.Response.Write( ReturnVal.ToString() );
+            //return ReturnVal.ToString();
 
         } // saveMolPropFile()
 
@@ -2603,7 +2608,8 @@ namespace ChemSW.Nbt.WebServices
 
                 if( AuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
-                    ReturnVal = _saveMolProps( molData, PropId );
+                    CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources, _CswNbtStatisticsEvents );
+                    ReturnVal = ws.saveMolProp( molData, PropId );
                 }
                 _deInitResources();
             }
@@ -2619,26 +2625,6 @@ namespace ChemSW.Nbt.WebServices
             return ReturnVal.ToString();
 
         } // saveMolProp()
-
-        private JObject _saveMolProps( string molData, string PropId )
-        {
-            JObject ReturnVal = new JObject();
-
-            CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources, _CswNbtStatisticsEvents );
-            bool Succeeded = ws.saveMolProp( molData, PropId );
-            ReturnVal["success"] = Succeeded;
-            if( Succeeded )
-            {
-                ReturnVal["molData"] = molData;
-            }
-
-            //now create the image and save it as a blob
-            byte[] molImage = CswStructureSearch.GetImage( molData );
-            string Href;
-            ws.SetPropBlobValue( molImage, "mol.jpeg", "image/jpeg", PropId, "blobdata", out Href );
-
-            return ReturnVal;
-        }
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]

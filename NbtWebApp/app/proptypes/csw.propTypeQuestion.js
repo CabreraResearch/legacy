@@ -1,149 +1,133 @@
 /// <reference path="~/app/CswApp-vsdoc.js" />
 
+(function () {
+    'use strict';
+    Csw.properties.question = Csw.properties.question ||
+        Csw.properties.register('question',
+            Csw.method(function (propertyOption) {
+                'use strict';
+                var cswPrivate = {};
+                var cswPublic = {
+                    data: propertyOption || Csw.nbt.propertyOption(propertyOption)
+                };
 
-(function ($) {
-    "use strict";
-    var pluginName = 'CswFieldTypeQuestion';
-    var multi = false;
-    var methods = {
-        init: function (o) {
-            var propDiv = o.propDiv;
-            propDiv.empty();
-            var propVals = o.propData.values;
-            var answer = (false === o.Multi) ? Csw.string(propVals.answer).trim() : Csw.enums.multiEditDefaultValue;
-            var allowedAnswers = Csw.string(propVals.allowedanswers).trim();
-            var compliantAnswers = Csw.string(propVals.compliantanswers).trim();
-            var comments = (false === o.Multi) ? Csw.string(propVals.comments).trim() : Csw.enums.multiEditDefaultValue;
-            var correctiveAction = (false === o.Multi) ? Csw.string(propVals.correctiveaction).trim() : Csw.enums.multiEditDefaultValue;
-            multi = o.Multi;
+                var render = function () {
+                    'use strict';
 
-            var dateAnswered = (false === o.Multi) ? Csw.string(propVals.dateanswered.date).trim() : '';
-            var dateCorrected = (false === o.Multi) ? Csw.string(propVals.datecorrected.date).trim() : '';
+                    cswPrivate.propVals = cswPublic.data.propData.values;
+                    cswPrivate.parent = cswPublic.data.propDiv;
 
-            var isActionRequired = Csw.bool(propVals.isactionrequired); //case 25035
+                    cswPrivate.checkCompliance = function() {
+                        var defaultText = (false === cswPrivate.multi) ? '' : Csw.enums.multiEditDefaultValue;
+                        //if (false === multi) {//cases 26445 and 26442
+                        var splitCompliantAnswers = cswPrivate.compliantAnswers.split(',');
+                        var isCompliant = true;
+                        var selectedAnswer = cswPrivate.answerSel.val();
+                        var correctiveAction = cswPrivate.correctiveActionTextBox.val();
 
-            if (o.ReadOnly) {
-                propDiv.append('Answer: ' + answer);
-                if (dateAnswered !== '') {
-                    propDiv.append(' (' + dateAnswered + ')');
-                }
-                propDiv.br();
-                propDiv.append('Corrective Action: ' + correctiveAction);
-                if (dateCorrected !== '') {
-                    propDiv.append(' (' + dateCorrected + ')');
-                }
-                propDiv.br();
-                propDiv.append('Comments: ' + comments);
-                propDiv.br();
-            } else {
-                var table = propDiv.table({
-                    ID: Csw.makeId(o.ID, 'tbl'),
-                    FirstCellRightAlign: true
-                });
+                        if (correctiveAction === defaultText) {
+                            if (selectedAnswer !== defaultText) {
+                                isCompliant = false;
+                                for (var i = 0; i < splitCompliantAnswers.length; i += 1) {
+                                    isCompliant = isCompliant || (Csw.string(splitCompliantAnswers[i]).trim().toLowerCase() === Csw.string(selectedAnswer).trim().toLowerCase());
+                                }
+                            }
+                            cswPrivate.correctiveActionLabel.hide();
+                            cswPrivate.correctiveActionTextBox.hide();
+                        }
+                        if (isCompliant) {
+                            cswPrivate.answerSel.removeClass('CswFieldTypeQuestion_Deficient');
+                        } else {
+                            cswPrivate.answerSel.addClass('CswFieldTypeQuestion_Deficient');
+                            if (cswPrivate.isActionRequired) { //case 25035
+                                cswPrivate.correctiveActionLabel.show();
+                                cswPrivate.correctiveActionTextBox.show();
+                            }
+                        }
+                        //}
+                    }; // checkCompliance()
 
-                table.cell(1, 1).text('Answer');
-                var splitAnswers = allowedAnswers.split(',');
-                if (o.Multi) {
-                    splitAnswers.push(Csw.enums.multiEditDefaultValue);
-                } else {
-                    splitAnswers.push('');
-                }
-                var answerSel = table.cell(1, 2)
-                                      .select({
-                                          ID: o.ID + '_ans',
-                                          onChange: function () {
-                                              checkCompliance(compliantAnswers, answerSel, correctiveActionLabel, correctiveActionTextBox, isActionRequired);
-                                              o.onChange();
-                                          },
-                                          values: splitAnswers,
-                                          selected: answer
-                                      });
 
-                var correctiveActionLabel = table.cell(2, 1).text('Corrective Action');
-                var correctiveActionTextBox = table.cell(2, 2).textArea({
-                    ID: o.ID + '_cor',
-                    text: correctiveAction,
-                    onChange: function () {
-                        checkCompliance(compliantAnswers, answerSel, correctiveActionLabel, correctiveActionTextBox, isActionRequired);
-                        o.onChange();
+                    cswPrivate.answer = (false === cswPublic.data.Multi) ? Csw.string(cswPrivate.propVals.answer).trim() : Csw.enums.multiEditDefaultValue;
+                    cswPrivate.allowedAnswers = Csw.string(cswPrivate.propVals.allowedanswers).trim();
+                    cswPrivate.compliantAnswers = Csw.string(cswPrivate.propVals.compliantanswers).trim();
+                    cswPrivate.comments = (false === cswPublic.data.Multi) ? Csw.string(cswPrivate.propVals.comments).trim() : Csw.enums.multiEditDefaultValue;
+                    cswPrivate.correctiveAction = (false === cswPublic.data.Multi) ? Csw.string(cswPrivate.propVals.correctiveaction).trim() : Csw.enums.multiEditDefaultValue;
+                    cswPrivate.multi = cswPublic.data.Multi;
+                    cswPrivate.dateAnswered = (false === cswPublic.data.Multi) ? Csw.string(cswPrivate.propVals.dateanswered.date).trim() : '';
+                    cswPrivate.dateCorrected = (false === cswPublic.data.Multi) ? Csw.string(cswPrivate.propVals.datecorrected.date).trim() : '';
+                    cswPrivate.isActionRequired = Csw.bool(cswPrivate.propVals.isactionrequired); //case 25035
+                    
+                    if (cswPublic.data.ReadOnly) {
+                        cswPublic.control = cswPrivate.parent.div();
+                        cswPublic.control.append('Answer: ' + cswPrivate.answer);
+                        if (cswPrivate.dateAnswered !== '') {
+                            cswPublic.control.append(' (' + cswPrivate.dateAnswered + ')');
+                        }
+                        cswPublic.control.br();
+                        cswPublic.control.append('Corrective Action: ' + cswPrivate.correctiveAction);
+                        if (cswPrivate.dateCorrected !== '') {
+                            cswPublic.control.append(' (' + cswPrivate.dateCorrected + ')');
+                        }
+                        cswPublic.control.br();
+                        cswPublic.control.append('Comments: ' + cswPrivate.comments);
+                        cswPublic.control.br();
+                    } else {
+                        cswPublic.control = cswPrivate.parent.table({
+                            ID: Csw.makeId(cswPublic.data.ID, 'tbl'),
+                            FirstCellRightAlign: true
+                        });
+
+                        cswPublic.control.cell(1, 1).text('Answer');
+                        cswPrivate.splitAnswers = cswPrivate.allowedAnswers.split(',');
+                        if (cswPublic.data.Multi) {
+                            cswPrivate.splitAnswers.push(Csw.enums.multiEditDefaultValue);
+                        } else {
+                            cswPrivate.splitAnswers.push('');
+                        }
+                        cswPrivate.answerSel = cswPublic.control.cell(1, 2)
+                                              .select({
+                                                  ID: cswPublic.data.ID + '_ans',
+                                                  onChange: function () {
+                                                      cswPrivate.checkCompliance();
+                                                      var val = cswPrivate.answerSel.val();
+                                                      Csw.tryExec(cswPublic.data.onChange, val);
+                                                      cswPublic.data.onPropChange({ answer: val });
+                                                  },
+                                                  values: cswPrivate.splitAnswers,
+                                                  selected: cswPrivate.answer
+                                              });
+
+                        cswPrivate.correctiveActionLabel = cswPublic.control.cell(2, 1).text('Corrective Action');
+                        cswPrivate.correctiveActionTextBox = cswPublic.control.cell(2, 2).textArea({
+                            ID: cswPublic.data.ID + '_cor',
+                            text: cswPrivate.correctiveAction,
+                            onChange: function () {
+                                cswPrivate.checkCompliance();
+                                var val = cswPrivate.correctiveActionTextBox.val();
+                                Csw.tryExec(cswPublic.data.onChange, val);
+                                cswPublic.data.onPropChange({ correctiveaction: val });
+                            }
+                        });
+
+                        cswPublic.control.cell(3, 1).text('Comments');
+                        cswPrivate.commentsArea = cswPublic.control.cell(3, 2).textArea({
+                            ID: cswPublic.data.ID + '_com',
+                            text: cswPrivate.comments,
+                            onChange: function () {
+                                var val = cswPrivate.commentsArea.val();
+                                Csw.tryExec(cswPublic.data.onChange, val);
+                                cswPublic.data.onPropChange({ comments: val });
+                            }
+                        });
+
+                        cswPrivate.checkCompliance();
                     }
-                });
 
-                table.cell(3, 1).text('Comments');
-                table.cell(3, 2).textArea({
-                    ID: o.ID + '_com',
-                    text: comments,
-                    onChange: o.onChange
-                });
+                };
 
-                checkCompliance(compliantAnswers, answerSel, correctiveActionLabel, correctiveActionTextBox, isActionRequired);
-            }
-        },
-        save: function (o) {
-            var attributes = {
-                answer: null,
-                correctiveaction: null,
-                comments: null
-            };
-            var compare = {};
-            var answer = o.propDiv.find('#' + o.ID + '_ans');
-            if (false === Csw.isNullOrEmpty(answer, true)) {
-                attributes.answer = answer.val();
-                compare = attributes;
-            }
-            var correct = o.propDiv.find('#' + o.ID + '_cor');
-            if (false === Csw.isNullOrEmpty(correct, true)) {
-                attributes.correctiveaction = correct.val();
-                compare = attributes;
-            }
-            var comments = o.propDiv.find('#' + o.ID + '_com');
-            if (false === Csw.isNullOrEmpty(comments, true)) {
-                attributes.comments = comments.val();
-                compare = attributes;
-            }
-            Csw.preparePropJsonForSave(o.Multi, o.propData, compare);
-        }
-    };
+                cswPublic.data.bindRender(render);
+                return cswPublic;
+            }));
 
-    function checkCompliance(compliantAnswers, answerSel, correctiveActionLabel, correctiveActionTextBox, isActionRequired) {
-        var defaultText = (false === multi) ? '' : Csw.enums.multiEditDefaultValue;
-        //if (false === multi) {//cases 26445 and 26442
-            var splitCompliantAnswers = compliantAnswers.split(',');
-            var isCompliant = true;
-            var selectedAnswer = answerSel.val();
-            var correctiveAction = correctiveActionTextBox.val();
-
-            if (correctiveAction === defaultText) {
-                if (selectedAnswer !== defaultText) {
-                    isCompliant = false;
-                    for (var i = 0; i < splitCompliantAnswers.length; i += 1) {
-                        isCompliant = isCompliant || (Csw.string(splitCompliantAnswers[i]).trim().toLowerCase() === Csw.string(selectedAnswer).trim().toLowerCase());
-                    }
-                }
-                correctiveActionLabel.hide();
-                correctiveActionTextBox.hide();
-            }
-            if (isCompliant) {
-                answerSel.removeClass('CswFieldTypeQuestion_Deficient');    
-            } else {
-                answerSel.addClass('CswFieldTypeQuestion_Deficient');
-                if (isActionRequired) {//case 25035
-                    correctiveActionLabel.show();
-                    correctiveActionTextBox.show();
-                }
-            }
-        //}
-    } // checkCompliance()
-
-    // Method calling logic
-    $.fn.CswFieldTypeQuestion = function (method) {
-
-        if (methods[method]) {
-            return methods[method].apply(this, Array.prototype.slice.call(arguments, 1));
-        } else if (typeof method === 'object' || !method) {
-            return methods.init.apply(this, arguments);
-        } else {
-            $.error('Method ' + method + ' does not exist on ' + pluginName); return false;
-        }
-    };
-})(jQuery);
+}());
