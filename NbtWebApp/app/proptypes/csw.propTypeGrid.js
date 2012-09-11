@@ -110,6 +110,7 @@
                             success: function (data) {
                                 cswPublic.control = cswPrivate.parent.thinGrid({
                                     rows: data.rows,
+                                    hasHeader: true,
                                     onLinkClick: function () {
                                         $.CswDialog('OpenEmptyDialog', {
                                             title: cswPublic.data.nodename + ' ' + cswPublic.data.propData.name,

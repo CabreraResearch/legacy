@@ -40,9 +40,7 @@
                 allowAdd: false,
                 makeAddRow: null,
                 onAdd: null,
-                onDelete: null,
-                TableCssClass: 'CswThinGridTable',
-                CellCssClass: 'CswThinGridCells'
+                onDelete: null
             };
             var cswPublic = {};
 
@@ -51,7 +49,25 @@
                     Csw.extend(cswPrivate, options);
                 }
                 var form = cswParent.form();
-                cswPrivate.table = form.table(cswPrivate);
+                var table = form.table({
+                    cellpadding: 5,
+                    TableCssClass: 'CswThinGridTable',
+                    CellCssClass: 'CswThinGridCells'
+                });
+                cswPrivate.table = table.cell(1, 1).table(cswPrivate);
+                if (cswPrivate.allowAdd) {
+                    var thinGridAddButton = table.cell(2, 1).buttonExt({
+                        enabledText: 'Add Row',
+                        size: 'small',
+                        tooltip: { title: 'Add Row' },
+                        icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.add),
+                        onClick: function () {
+                            cswPublic.commitRow();
+                            cswPublic.makeNewAddRow();
+                            thinGridAddButton.enable();
+                        }
+                    });
+                }
                 cswPublic = Csw.dom({}, form);
                 cswPublic.form = form;
             } ());
@@ -133,30 +149,11 @@
                 });
             });
 
-            cswPrivate.addAddBtn = Csw.method(function (row, col) {
-                /// <summary>
-                /// 
-                /// </summary>
-                /// <param name="row"></param>
-                /// <param name="col"></param>
-                var cell = cswPublic.addCell('', row, col);
-                cell.buttonExt({
-                    icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.check),
-                    size: 'small',
-                    tooltip: { title: 'OK' },
-                    disableOnClick: false,
-                    onClick: cswPublic.commitRow
-                });
-            });
-
             cswPublic.commitRow = Csw.method(function () {
                 var rowCommitted = false;
                 if (cswPublic.form.isFormValid() && Csw.contains(cswPrivate.rowElements, cswPrivate.rowCount)) {
                     cswPublic.deleteRow(cswPrivate.rowCount);
                     Csw.tryExec(cswPrivate.onAdd, cswPrivate.rowCount);
-                    if (cswPrivate.allowAdd) {
-                        Csw.tryExec(cswPublic.makeAddRow, cswPrivate.makeAddRow);
-                    }
                     rowCommitted = true;
                 }
                 return rowCommitted;
@@ -224,9 +221,6 @@
                         var cell = cswPublic.addCell('', cswPrivate.rowCount, index);
                         Csw.tryExec(callBack, cell, element, cswPrivate.rowCount);
                     });
-                    if (cswPrivate.allowAdd) {
-                        cswPrivate.addAddBtn(cswPrivate.rowCount, cswPrivate.header.length);
-                    }
                 }
             });
 
