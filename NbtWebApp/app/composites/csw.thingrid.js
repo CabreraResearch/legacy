@@ -62,8 +62,9 @@
                         tooltip: { title: 'Add Row' },
                         icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.add),
                         onClick: function () {
-                            cswPublic.commitRow();
-                            cswPublic.makeNewAddRow();
+                            //cswPublic.commitRow();
+                            Csw.tryExec(cswPrivate.onAdd, cswPrivate.rowCount);
+                            Csw.tryExec(cswPublic.makeAddRow, cswPrivate.makeAddRow);
                             thinGridAddButton.enable();
                         }
                     });
@@ -122,7 +123,6 @@
                     thisCell.append(Csw.string(value, '&nbsp;'));
                 }
                 thisCell.addClass(cssClass);
-
                 if (false === Csw.isArray(cswPrivate.rowElements[row])) {
                     cswPrivate.rowElements[row] = [thisCell];
                 } else {
@@ -149,20 +149,6 @@
                 });
             });
 
-            cswPublic.commitRow = Csw.method(function () {
-                var rowCommitted = false;
-                if (cswPublic.form.isFormValid() && Csw.contains(cswPrivate.rowElements, cswPrivate.rowCount)) {
-                    cswPublic.deleteRow(cswPrivate.rowCount);
-                    Csw.tryExec(cswPrivate.onAdd, cswPrivate.rowCount);
-                    rowCommitted = true;
-                }
-                return rowCommitted;
-            });
-
-            cswPublic.makeNewAddRow = Csw.method(function () {
-                Csw.tryExec(cswPublic.makeAddRow, cswPrivate.makeAddRow);
-            });
-
             cswPublic.addRows = Csw.method(function (dataRows, row, col) {
                 /// <summary>
                 /// 
@@ -177,6 +163,7 @@
                     Csw.each(dataRows, function (cellVal) {
                         if (Csw.isArray(cellVal)) {
                             cswPublic.addRows(cellVal, cswPrivate.rowCount, col);
+                            cswPrivate.rowCount += 1;
                         } else {
                             col += 1;
                             cswPublic.addCell(cellVal, row, col);
@@ -187,13 +174,12 @@
                         cswPrivate.addDeleteBtn(row, col);
                     }
                 }
-                cswPrivate.rowCount += 1;
                 return row;
             });
 
             cswPublic.deleteRow = Csw.method(function (rowid) {
                 /// <summary>
-                /// 
+                /// Deletes all of the cells in a given row.
                 /// </summary>
                 /// <param name="rowid"></param>
                 Csw.debug.assert(Csw.contains(cswPrivate.rowElements, rowid), 'No such row exists.');
@@ -202,6 +188,8 @@
                         cell.remove();
                     });
                     delete cswPrivate.rowElements[rowid];
+                    //We can't reduce rowCount because we can't (easily) shift the table cells.
+                    //It's easier to delete the row (leaving an undefined space) and build on top of that.
                     //cswPrivate.rowCount -= 1;
                     Csw.tryExec(cswPrivate.onDelete, rowid);
                 }
@@ -216,11 +204,14 @@
                 ///</summary>
                 /// <param name="callBack" type="Function">A function to be called for each column in the thin grid. callBack receives parameters: cell, columnName, row.</param>
                 if (Csw.isFunction(callBack)) {
-                    cswPrivate.rowCount += 1;
                     cswPrivate.header.forEach(function (element, index, array) {
                         var cell = cswPublic.addCell('', cswPrivate.rowCount, index);
                         Csw.tryExec(callBack, cell, element, cswPrivate.rowCount);
                     });
+                    if (cswPrivate.allowDelete) {
+                        cswPrivate.addDeleteBtn(cswPrivate.rowCount, cswPrivate.header.length);
+                    }
+                    cswPrivate.rowCount += 1;
                 }
             });
 
@@ -235,19 +226,18 @@
                 } else {
                     cswPrivate.rowCount = 0;
                 }
-
                 cswPublic.addRows(cswPrivate.rows);
-
                 if (cswPrivate.linkText && cswPrivate.onLinkClick) {
                     cswPrivate.table.cell(cswPrivate.rowCount, 1).a({
                         text: cswPrivate.linkText,
                         onClick: cswPrivate.onLinkClick
                     });
+                    cswPrivate.rowCount += 1;
                 }
+                Csw.tryExec(cswPrivate.onAdd, cswPrivate.rowCount);
                 Csw.tryExec(cswPublic.makeAddRow, cswPrivate.makeAddRow);
 
             } ());
-
 
             return cswPublic;
         });

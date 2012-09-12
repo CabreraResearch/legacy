@@ -474,25 +474,13 @@
                                 }
                             });
 
-                            var newSize = {
-                                rowid: 1,
-                                catalogNo: '',
-                                quantity: '',
-                                unit: '',
-                                unitid: '',
-                                unitCount: '',
-                                quantEditableChecked: 'true',
-                                dispensibleChecked: 'true',
-                                nodetypeid: cswPrivate.state.sizeNodeTypeId
-                            };
-
-                            var extendNewAmount = function (object) {
-                                //To mitigate the risk of unknowingly passing the outer scope thisAmount, we're explicitly mapping the values down
-                                Csw.extend(newSize, object);
-                            };
-
-                            var extractNewAmount = function (object) {
-                                var ret = Csw.extend({}, object, true);
+                            var getID = function (unitType) {
+                                var ret = '';
+                                for (var key in unitsOfMeasure) {
+                                    if (unitsOfMeasure[key] === unitType) {
+                                        ret = key;
+                                    }
+                                }
                                 return ret;
                             };
 
@@ -515,16 +503,6 @@
                                 allowAdd: true,
                                 makeAddRow: function (cswCell, columnName, rowid) {
                                     'use strict';
-                                    var thisSize = {
-                                        rowid: rowid,
-                                        catalogNo: '',
-                                        quantity: '',
-                                        unit: '',
-                                        unitid: '',
-                                        unitCount: '',
-                                        quantEditableChecked: 'true',
-                                        dispensibleChecked: 'true'
-                                    };
 
                                     switch (columnName) {
                                         case cswPrivate.config.unitCountName:
@@ -533,10 +511,8 @@
                                                 value: 1,
                                                 MinValue: 1,
                                                 Precision: 0,
-                                                //Required: false, //TODO - case 27665 - change to false when it is handled appropraitely serverside
                                                 onChange: function (value) {
-                                                    thisSize.unitCount = cswPublic.unitCountCtrl.val();
-                                                    extendNewAmount(thisSize);
+                                                    cswPublic.sizes[rowid].unitCount = cswPublic.unitCountCtrl.val();
                                                 }
                                             });
                                             cswCell.span({ text: ' x' });
@@ -546,21 +522,28 @@
                                                 ID: Csw.tryExec(Csw.makeId, 'quantityNumberBox'),
                                                 MinValue: 0,
                                                 isClosedSet: false,
-                                                Required: true,
-                                                width: '60px'
+                                                width: '60px',
+                                                onChange: function (value) {
+                                                    cswPublic.sizes[rowid].quantity = cswPublic.quantityCtrl.val();
+                                                }
                                             });
                                             cswPublic.unitsCtrl = cswCell.select({
                                                 ID: Csw.tryExec(Csw.makeId, 'unitsOfMeasureSelect'),
-                                                values: unitsOfMeasure
+                                                values: unitsOfMeasure,
+                                                onChange: function (value) {
+                                                    cswPublic.sizes[rowid].unit = cswPublic.unitsCtrl.val();
+                                                    cswPublic.sizes[rowid].unitid = getID(cswPublic.sizes[rowid].unit);
+                                                }
                                             });
+                                            cswPublic.sizes[rowid].unit = cswPublic.unitsCtrl.val();
+                                            cswPublic.sizes[rowid].unitid = getID(cswPublic.sizes[rowid].unit);
                                             break;
                                         case cswPrivate.config.numberName:
                                             cswPublic.catalogNoCtrl = cswCell.input({
                                                 ID: Csw.tryExec(Csw.makeId, 'sizeCatalogNo'),
                                                 width: '80px',
                                                 onChange: function (value) {
-                                                    thisSize.catalogNo = value;
-                                                    extendNewAmount(thisSize);
+                                                    cswPublic.sizes[rowid].catalogNo = value;
                                                 }
                                             });
                                             break;
@@ -569,8 +552,7 @@
                                                 ID: Csw.tryExec(Csw.makeId, 'sizeQuantEditable'),
                                                 Checked: true,
                                                 onChange: function (value) {
-                                                    thisSize.quantEditableChecked = cswPublic.quantEditableCtrl.val();
-                                                    extendNewAmount(thisSize);
+                                                    cswPublic.sizes[rowid].quantEditableChecked = cswPublic.quantEditableCtrl.val();
                                                 }
                                             });
                                             break;
@@ -579,60 +561,37 @@
                                                 ID: Csw.tryExec(Csw.makeId, 'sizeDispensible'),
                                                 Checked: true,
                                                 onChange: function (value) {
-                                                    thisSize.dispensibleChecked = cswPublic.dispensibleCtrl.val();
-                                                    extendNewAmount(thisSize);
+                                                    cswPublic.sizes[rowid].dispensibleChecked = cswPublic.dispensibleCtrl.val();
                                                 }
                                             });
                                             break;
                                     }
-                                    extendNewAmount(thisSize);
                                 },
-                                onAdd: function () {
-
-                                    var getID = function (unitType) {
-                                        var ret = '';
-                                        for (var key in unitsOfMeasure) {
-                                            if (unitsOfMeasure[key] === unitType) {
-                                                ret = key;
-                                            }
-                                        }
+                                onAdd: function (newRowid) {
+                                    var newSize = {};
+                                    //This while loop serves as a buffer to remove the +1/-1 issues when comparing the data with the table cell rows in the thingrid.
+                                    //This puts the burden on the user of thingrid to ensure their data lines up with the table cells.
+                                    while (cswPublic.sizes.length < newRowid) {
+                                        cswPublic.sizes.push(newSize);
+                                    }
+                                    newSize = {
+                                        catalogNo: '',
+                                        quantity: '',
+                                        unit: '',
+                                        unitid: '',
+                                        unitCount: 1,
+                                        quantEditableChecked: 'true',
+                                        dispensibleChecked: 'true',
+                                        nodetypeid: cswPrivate.state.sizeNodeTypeId
+                                    };
+                                    var extractNewAmount = function (object) {
+                                        var ret = Csw.extend({}, object, true);
                                         return ret;
                                     };
-
-                                    if (cswPublic.sizesForm.isFormValid()) {
-                                        newSize.quantity = cswPublic.quantityCtrl.val();
-                                        newSize.unit = cswPublic.unitsCtrl.val();
-                                        newSize.catalogNo = cswPublic.catalogNoCtrl.val();
-                                        newSize.unitid = getID(newSize.unit);
-                                        newSize.unitCount = cswPublic.unitCountCtrl.val();
-
-                                        var formCols = [newSize.unitCount + ' x', newSize.quantity + ' ' + newSize.unit, newSize.catalogNo];
-                                        if (cswPrivate.state.showQuantityEditable) {
-                                            newSize.quantEditableChecked = cswPublic.quantEditableCtrl.val();
-                                            formCols = formCols.concat([newSize.quantEditableChecked]);
-                                        }
-                                        if (cswPrivate.state.showDispensable) {
-                                            newSize.dispensibleChecked = cswPublic.dispensibleCtrl.val();
-                                            formCols = formCols.concat([newSize.dispensibleChecked]);
-                                        }
-                                        if (Csw.isNullOrEmpty(newSize.quantity) && false === Csw.bool(newSize.quantEditableChecked)) {
-                                            $.CswDialog('AlertDialog', 'A quantity must be specified when creating a size that does not have Quantity Editable checked. ' +
-                                            'Please specify the quantity or set the Quantity Editable checkbox.');
-                                        } else {
-                                            if (isSizeNew(newSize)) {
-                                                cswPublic.sizes.push(extractNewAmount(newSize));
-                                                cswPublic.sizeGrid.addRows(formCols);
-                                            } else {
-                                                $.CswDialog('AlertDialog', 'This size is already defined. Please define a new, unique size.');
-                                            }
-                                        }
-                                    }
+                                    cswPublic.sizes.push(extractNewAmount(newSize));
                                 },
                                 onDelete: function (rowid) {
-                                    var reducedSizes = cswPublic.sizes.filter(function (size) {
-                                        return size.rowid != rowid;
-                                    });
-                                    cswPublic.sizes = reducedSizes;
+                                    delete cswPublic.sizes[rowid];
                                 }
                             });
                         };
