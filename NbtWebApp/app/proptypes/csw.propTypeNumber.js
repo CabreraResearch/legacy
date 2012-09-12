@@ -1,62 +1,53 @@
 /// <reference path="~/app/CswApp-vsdoc.js" />
 
+(function () {
+    'use strict';
+    Csw.properties.number = Csw.properties.number ||
+        Csw.properties.register('number',
+            Csw.method(function (propertyOption) {
+                'use strict';
+                var cswPrivate = {};
+                var cswPublic = {
+                    data: propertyOption
+                };
 
-(function ($) {
-    "use strict";
-    var pluginName = 'CswFieldTypeNumber';
+                var render = function () {
+                    'use strict';
+                    cswPublic.data = cswPublic.data || Csw.nbt.propertyOption(propertyOption);
 
-    var methods = {
-        init: function (o) {
+                    cswPrivate.isMultiEditValid = function(value) {
+                        return cswPublic.data.Multi && value === Csw.enums.multiEditDefaultValue;
+                    };
 
-            var isMultiEditValid = function (value) {
-                return o.Multi && value === Csw.enums.multiEditDefaultValue;
-            }
+                    cswPrivate.propVals = cswPublic.data.propData.values;
+                    cswPrivate.parent = cswPublic.data.propDiv;
+                    cswPrivate.precision = Csw.number(cswPrivate.propVals.precision, 6);
+                    cswPrivate.ceilingVal = '999999999' + Csw.getMaxValueForPrecision(cswPrivate.precision);
 
-            var propDiv = o.propDiv;
-            propDiv.empty();
-            var propVals = o.propData.values,
-                precision = Csw.number(propVals.precision, 6),
-                ceilingVal = '999999999' + Csw.getMaxValueForPrecision(precision);
+                    cswPublic.control = cswPrivate.parent.numberTextBox({
+                        ID: cswPublic.data.ID + '_num',
+                        value: (false === cswPublic.data.Multi) ? Csw.string(cswPrivate.propVals.value).trim() : Csw.enums.multiEditDefaultValue,
+                        MinValue: Csw.number(cswPrivate.propVals.minvalue),
+                        MaxValue: Csw.number(cswPrivate.propVals.maxvalue),
+                        ceilingVal: cswPrivate.ceilingVal,
+                        Precision: cswPrivate.precision,
+                        ReadOnly: Csw.bool(cswPublic.data.ReadOnly),
+                        Required: Csw.bool(cswPublic.data.Required),
+                        onChange: function () {
+                            var val = cswPublic.control.val();
+                            Csw.tryExec(cswPublic.data.onChange, val);
+                            cswPublic.data.onPropChange({ value: val });
+                        },
+                        isValid: cswPrivate.isMultiEditValid
+                    });
 
-            var numberTextBox = propDiv.numberTextBox({
-                ID: o.ID + '_num',
-                value: (false === o.Multi) ? Csw.string(propVals.value).trim() : Csw.enums.multiEditDefaultValue,
-                MinValue: Csw.number(propVals.minvalue),
-                MaxValue: Csw.number(propVals.maxvalue),
-                ceilingVal: ceilingVal,
-                Precision: precision,
-                ReadOnly: Csw.bool(o.ReadOnly),
-                Required: Csw.bool(o.Required),
-                onChange: o.onChange,
-                isValid: isMultiEditValid
-            });
+                    if (false === Csw.isNullOrEmpty(cswPublic.control) && cswPublic.control.length > 0) {
+                        cswPublic.control.clickOnEnter(cswPublic.data.saveBtn);
+                    }
+                };
 
-            if (false === Csw.isNullOrEmpty(numberTextBox) && numberTextBox.length > 0) {
-                numberTextBox.clickOnEnter(o.saveBtn);
-            }
-        },
-        save: function (o) { //$propdiv, $xml
-            var attributes = { value: null };
-            var compare = {};
-            var propDiv = o.propDiv.find('#' + o.ID + '_num');
-            if (false === Csw.isNullOrEmpty(propDiv)) {
-                attributes.value = propDiv.val();
-                compare = attributes;
-            }
-            Csw.preparePropJsonForSave(o.Multi, o.propData, compare);
-        }
-    };
+                cswPublic.data.bindRender(render);
+                return cswPublic;
+            }));
 
-    // Method calling logic
-    $.fn.CswFieldTypeNumber = function (method) {
-
-        if (methods[method]) {
-            return methods[method].apply(this, Array.prototype.slice.call(arguments, 1));
-        } else if (typeof method === 'object' || !method) {
-            return methods.init.apply(this, arguments);
-        } else {
-            $.error('Method ' + method + ' does not exist on ' + pluginName); return false;
-        }
-
-    };
-})(jQuery);
+}());

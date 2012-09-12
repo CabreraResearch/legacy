@@ -1,111 +1,114 @@
 /// <reference path="~/app/CswApp-vsdoc.js" />
 
 
-(function ($) {
-    "use strict";
-    var pluginName = 'CswFieldTypeMTBF';
+(function () {
+    'use strict';
+    Csw.properties.mtbf = Csw.properties.mtbf ||
+        Csw.properties.register('mtbf',
+            Csw.method(function (propertyOption) {
+                'use strict';
+                var cswPrivate = {};
+                var cswPublic = {
+                    data: propertyOption
+                };
+                //var attributes = {
+                //    startdatetime: {
+                //        date: null,
+                //        time: null
+                //    },
+                //    units: null
+                //};
+                //var compare = {};
+                //var startDate = o.propDiv.find('#' + o.ID + '_sd_date'),
+                //    dateVal;
 
-    var methods = {
-        init: function (o) {
+                //if (false === Csw.isNullOrEmpty(startDate)) {
+                //    dateVal = startDate.val();
+                //    attributes.startdatetime.date = dateVal;
+                //    compare = attributes;
+                //    //attributes.startdatetime.time = dateVal.time;
+                //}
 
-            var propDiv = o.propDiv;
-            propDiv.empty();
-            var propVals = o.propData.values;
-            var startDate = (false === o.Multi) ? Csw.string(propVals.startdatetime.date) : Csw.enums.multiEditDefaultValue;
-            var dateFormat = Csw.serverDateFormatToJQuery(propVals.startdatetime.dateformat);
+                //var units = o.propDiv.find('#' + o.ID + '_units');
+                //if (false === Csw.isNullOrEmpty(units)) {
+                //    attributes.units = units.val();
+                //    compare = attributes;
+                //}
+                //Csw.preparePropJsonForSave(o.Multi, o.propData, compare);
+                var render = function () {
+                    'use strict';
+                    cswPublic.data = cswPublic.data || Csw.nbt.propertyOption(propertyOption);
 
-            var value = (false === o.Multi) ? Csw.string(propVals.value).trim() : Csw.enums.multiEditDefaultValue;
-            var units = (false === o.Multi) ? Csw.string(propVals.units).trim() : Csw.enums.multiEditDefaultValue;
+                    cswPrivate.propVals = cswPublic.data.propData.values;
+                    cswPrivate.parent = cswPublic.data.propDiv;
 
-            var table = propDiv.table({
-                ID: Csw.makeId(o.ID, 'tbl')
-            });
+                    cswPrivate.startDate = (false === cswPublic.data.Multi) ? Csw.string(cswPrivate.propVals.startdatetime.date) : Csw.enums.multiEditDefaultValue;
+                    cswPrivate.dateFormat = Csw.serverDateFormatToJQuery(cswPrivate.propVals.startdatetime.dateformat);
 
-            var mtbfStatic = (units !== Csw.enums.multiEditDefaultValue) ? value + '&nbsp;' + units : value;
-            table.cell(1, 1).append(mtbfStatic);
+                    cswPrivate.value = (false === cswPublic.data.Multi) ? Csw.string(cswPrivate.propVals.value).trim() : Csw.enums.multiEditDefaultValue;
+                    cswPrivate.units = (false === cswPublic.data.Multi) ? Csw.string(cswPrivate.propVals.units).trim() : Csw.enums.multiEditDefaultValue;
 
-            var cell12 = table.cell(1, 2);
-
-            if (false === o.ReadOnly) {
-                cell12.icon({
-                    ID: o.ID,
-                    iconType: Csw.enums.iconType.pencil,
-                    hovertext: 'Edit',
-                    size: 16,
-                    isButton: true,
-                    onClick: function () {
-                        editTable.show();
-                    }
-                });
-
-                var editTable = table.cell(2, 2).table({ ID: Csw.makeId(o.ID, 'edittbl') });
-                editTable.cell(1, 1).text('Start Date');
-
-                editTable.cell(1, 2)
-                    .dateTimePicker({
-                        ID: o.ID + '_sd',
-                        Date: startDate,
-                        DateFormat: dateFormat,
-                        DisplayMode: 'Date',
-                        ReadOnly: o.ReadOnly,
-                        Required: o.Required,
-                        onChange: o.onChange
+                    cswPublic.control = cswPrivate.parent.table({
+                        ID: Csw.makeId(cswPublic.data.ID, 'tbl')
                     });
 
-                editTable.cell(3, 1).text('Units');
-                var unitVals = ['hours', 'days'];
-                if (o.Multi) {
-                    unitVals.push(Csw.enums.multiEditDefaultValue);
-                }
-                editTable.cell(3, 2).select({
-                    ID: o.ID + '_units',
-                    onChange: o.onChange,
-                    values: unitVals,
-                    selected: units
-                });
+                    cswPrivate.mtbfStatic = (cswPrivate.units !== Csw.enums.multiEditDefaultValue) ? cswPrivate.value + '&nbsp;' + cswPrivate.units : cswPrivate.value;
+                    cswPublic.control.cell(1, 1).append(cswPrivate.mtbfStatic);
 
-                editTable.hide();
-            }
-        },
-        save: function (o) { //$propdiv, $xml
+                    cswPrivate.cell12 = cswPublic.control.cell(1, 2);
 
-            var attributes = {
-                startdatetime: {
-                    date: null,
-                    time: null
-                },
-                units: null
-            };
-            var compare = {};
-            var startDate = o.propDiv.find('#' + o.ID + '_sd_date'),
-                dateVal;
+                    if (false === cswPublic.data.ReadOnly) {
+                        cswPrivate.cell12.icon({
+                            ID: cswPublic.data.ID,
+                            iconType: Csw.enums.iconType.pencil,
+                            hovertext: 'Edit',
+                            size: 16,
+                            isButton: true,
+                            onClick: function() {
+                                cswPrivate.editTable.show();
+                            }
+                        });
 
-            if (false === Csw.isNullOrEmpty(startDate)) {
-                dateVal = startDate.val();
-                attributes.startdatetime.date = dateVal;
-                compare = attributes;
-                //attributes.startdatetime.time = dateVal.time;
-            }
+                        cswPrivate.editTable = cswPublic.control.cell(2, 2).table({ ID: Csw.makeId(cswPublic.data.ID, 'edittbl') });
+                        cswPrivate.editTable.cell(1, 1).text('Start Date');
 
-            var units = o.propDiv.find('#' + o.ID + '_units');
-            if (false === Csw.isNullOrEmpty(units)) {
-                attributes.units = units.val();
-                compare = attributes;
-            }
-            Csw.preparePropJsonForSave(o.Multi, o.propData, compare);
-        }
-    };
+                        cswPrivate.datePicker = cswPrivate.editTable.cell(1, 2)
+                            .dateTimePicker({
+                                ID: cswPublic.data.ID + '_sd',
+                                Date: cswPrivate.startDate,
+                                DateFormat: cswPrivate.dateFormat,
+                                DisplayMode: 'Date',
+                                ReadOnly: cswPublic.data.ReadOnly,
+                                Required: cswPublic.data.Required,
+                                onChange: function() {
+                                    var val = cswPrivate.datePicker.val();
+                                    Csw.tryExec(cswPublic.data.onChange, val);
+                                    cswPublic.data.onPropChange({ startdatetime: val });
+                                }
+                            });
 
-    // Method calling logic
-    $.fn.CswFieldTypeMTBF = function (method) {
+                        cswPrivate.editTable.cell(3, 1).text('Units');
+                        cswPrivate.unitVals = ['hours', 'days'];
+                        if (cswPublic.data.Multi) {
+                            cswPrivate.unitVals.push(Csw.enums.multiEditDefaultValue);
+                        }
+                        cswPrivate.unitSelect = cswPrivate.editTable.cell(3, 2).select({
+                            ID: cswPublic.data.ID + '_units',
+                            onChange: function () {
+                                var val = cswPrivate.unitSelect.val();
+                                Csw.tryExec(cswPublic.data.onChange, val);
+                                cswPublic.data.onPropChange({ unit: val });
+                            },
+                            values: cswPrivate.unitVals,
+                            selected: cswPrivate.units
+                        });
 
-        if (methods[method]) {
-            return methods[method].apply(this, Array.prototype.slice.call(arguments, 1));
-        } else if (typeof method === 'object' || !method) {
-            return methods.init.apply(this, arguments);
-        } else {
-            $.error('Method ' + method + ' does not exist on ' + pluginName); return false;
-        }
+                        cswPrivate.editTable.hide();
+                    }
+                };
 
-    };
-})(jQuery);
+                cswPublic.data.bindRender(render);
+                return cswPublic;
+            }));
+
+}());

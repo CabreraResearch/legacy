@@ -1,72 +1,56 @@
 /// <reference path="~/app/CswApp-vsdoc.js" />
 
+(function () {
+    'use strict';
+    Csw.properties.multiList = Csw.properties.multiList ||
+        Csw.properties.register('multiList',
+            Csw.method(function (propertyOption) {
+                'use strict';
+                var cswPrivate = {};
+                var cswPublic = {
+                    data: propertyOption
+                };
 
-(function ($) {
-    "use strict";
-    var pluginName = 'CswFieldTypeMultiList';
+                var render = function () {
+                    'use strict';
+                    cswPublic.data = cswPublic.data || Csw.nbt.propertyOption(propertyOption);
 
-    var methods = {
-        init: function (o) {
+                    cswPrivate.propVals = cswPublic.data.propData.values;
+                    cswPrivate.parent = cswPublic.data.propDiv;
+                    cswPrivate.gestalt = Csw.string(cswPublic.data.propData.gestalt).trim();
+                    cswPrivate.options = cswPrivate.propVals.options;
 
-            var propDiv = o.propDiv;
-            propDiv.empty();
-            var propVals = o.propData.values;
-            var gestalt = Csw.string(o.propData.gestalt).trim();
-            var options = propVals.options;
+                    cswPrivate.sortVals = function() {
+                        //multiSelect sorts the val for us, sort values.value to make comparision work
+                        var uniqueVals = Csw.delimitedString(cswPrivate.propVals.value.split(','));
+                        cswPrivate.propVals.value = uniqueVals.toString();
+                    };
 
-            if (o.ReadOnly) {
-                propDiv.append(gestalt);
-            } else {
-                /* Select Box */
-                propDiv.multiSelect({ //$.CswMultiSelect({
-                    ID: o.ID,
-                    cssclass: 'selectinput',
-                    values: options,
-                    readonlyless: propVals.readonlyless,
-                    readonlymore: propVals.readonlymore,
-                    isMultiEdit: o.Multi,
-                    EditMode: o.EditMode
-                });
-            }
-        },
-        save: function (o) { //$propdiv, $xml
-
-            var attributes = { value: null },
-                multi = o.propDiv.find('#' + o.ID),
-                cachedVals,
-                distinctVals = [];
-            var compare = {};
-            if (false === Csw.isNullOrEmpty(multi)) {
-                attributes.value = multi.val().split(',').sort().join(',');
-                compare = attributes;
-            }
-
-            //multiSelect sorts the val for us, sort o.propData.values.value to make comparision work
-            if (false === Csw.isNullOrEmpty(o.propData.values.value)) {
-                cachedVals = o.propData.values.value.split(',');
-                Csw.each(cachedVals, function (value) {
-                    //Guarantee the values are distinct locally
-                    if (false === Csw.contains(distinctVals, value)) {
-                        distinctVals.push(value);
+                    if (cswPublic.data.ReadOnly) {
+                        cswPublic.control = cswPrivate.parent.append(cswPrivate.gestalt);
+                    } else {
+                        /* Select Box */
+                        cswPublic.control = cswPrivate.parent.multiSelect({
+                            ID: cswPublic.data.ID,
+                            cssclass: 'selectinput',
+                            values: cswPrivate.options,
+                            readonlyless: cswPrivate.propVals.readonlyless,
+                            readonlymore: cswPrivate.propVals.readonlymore,
+                            isMultiEdit: cswPublic.data.Multi,
+                            EditMode: cswPublic.data.EditMode,
+                            onChange: function () {
+                               var val = cswPublic.control.val();
+                               Csw.tryExec(cswPublic.data.onChange, val);
+                               cswPrivate.sortVals();
+                               cswPublic.data.onPropChange({ value: val });
+                            }
+                        });
                     }
-                });
-            }
-            o.propData.values.value = distinctVals.sort().join(',');
 
-            Csw.preparePropJsonForSave(o.Multi, o.propData, compare);
-        }
-    };
+                };
 
-    // Method calling logic
-    $.fn.CswFieldTypeMultiList = function (method) {
+                cswPublic.data.bindRender(render);
+                return cswPublic;
+            }));
 
-        if (methods[method]) {
-            return methods[method].apply(this, Array.prototype.slice.call(arguments, 1));
-        } else if (typeof method === 'object' || !method) {
-            return methods.init.apply(this, arguments);
-        } else {
-            $.error('Method ' + method + ' does not exist on ' + pluginName); return false;
-        }
-
-    };
-})(jQuery);
+}());

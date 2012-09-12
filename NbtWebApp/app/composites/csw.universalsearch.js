@@ -9,9 +9,9 @@
             'use strict';
             var cswPrivate = {
                 ID: 'newsearch',
-                $searchbox_parent: null,
-                $searchresults_parent: null,
-                $searchfilters_parent: null,
+                searchBoxParent: {},
+                searchResultsParent: {},
+                searchFiltersParent: {},
                 nodetypeid: '',       // automatically filter results to this nodetype
                 objectclassid: '',    // automatically filter results to this objectclass
                 onBeforeSearch: null,
@@ -53,19 +53,18 @@
 
                 cell11.propDom('colspan', 2);
 
-                cswPrivate.$searchbox_parent = cell11.div({ ID: 'searchdialog_searchdiv' }).$;
-                cswPrivate.$searchresults_parent = cswPrivate.table.cell(2, 2).div({ ID: 'searchdialog_resultsdiv' }).$;
-                cswPrivate.$searchfilters_parent = cswPrivate.table.cell(2, 1).div({ ID: 'searchdialog_filtersdiv' }).$;
+                cswPrivate.searchBoxParent = cell11.div({ ID: 'searchdialog_searchdiv' });
+                cswPrivate.searchResultsParent = cswPrivate.table.cell(2, 2).div({ ID: 'searchdialog_resultsdiv' });
+                cswPrivate.searchFiltersParent = cswPrivate.table.cell(2, 1).div({ ID: 'searchdialog_filtersdiv' });
             }
             var cswPublic = {};
 
             // Constructor
             // Adds a searchbox to the form
             (function () {
-                cswPrivate.$searchbox_parent.empty();
-                var cswtable = Csw.literals.table({
-                    ID: Csw.makeId(cswPrivate.ID, '', '_div'),
-                    $parent: cswPrivate.$searchbox_parent
+                cswPrivate.searchBoxParent.empty();
+                var cswtable = cswPrivate.searchBoxParent.table({
+                    ID: Csw.makeId(cswPrivate.ID, '', '_div')
                 });
 
                 cswPrivate.searchinput = cswtable.cell(1, 1).input({
@@ -83,7 +82,6 @@
                     bindOnEnter: true,
                     onClick: function () {
                         cswPrivate.searchterm = cswPrivate.searchinput.val();
-                        //cswPrivate.filters = {};
                         cswPrivate.newsearch();
                     }
                 });
@@ -117,12 +115,11 @@
                 function _renderResultsTable(columns) {
                     var nodeTable;
 
-                    cswPrivate.$searchresults_parent.contents().remove();
-                    cswPrivate.$searchresults_parent.css({ paddingTop: '15px' });
+                    cswPrivate.searchResultsParent.empty();
+                    cswPrivate.searchResultsParent.css({ paddingTop: '15px' });
 
-                    var resultstable = Csw.literals.table({
+                    var resultstable = cswPrivate.searchResultsParent.table({
                         ID: Csw.makeId(cswPrivate.ID, '', 'resultstbl'),
-                        $parent: cswPrivate.$searchresults_parent,
                         width: '100%'
                     });
 
@@ -201,12 +198,11 @@
                 _renderResultsTable(1);
 
                 // Filter panel
-                cswPrivate.$searchfilters_parent.contents().remove();
+                cswPrivate.searchFiltersParent.empty();
 
                 filtersdivid = Csw.makeId(cswPrivate.ID, '', 'filtersdiv');
-                fdiv = Csw.literals.div({
-                    ID: filtersdivid,
-                    $parent: cswPrivate.$searchfilters_parent
+                fdiv = cswPrivate.searchFiltersParent.div({
+                    ID: filtersdivid
                 }).css({
                     paddingTop: '15px'
                     //height: cswPrivate.searchresults_maxheight + 'px',
@@ -279,9 +275,8 @@
                     var thisfilterdivid = Csw.makeId(filtersdivid, '', Name);
                     //var thisfilterdiv = fdiv.div({ ID: thisfilterdivid });
                     var filterCount = 0;
-                    var moreDiv = Csw.literals.moreDiv({
-                        ID: thisfilterdivid,
-                        $parent: fdiv.$
+                    var moreDiv = fdiv.moreDiv({
+                        ID: thisfilterdivid
                     });
 
                     moreDiv.shownDiv.append('<b>' + Name + ':</b>');
@@ -363,16 +358,18 @@
                 });
             }; // restoreSearch()
 
-            cswPublic.getFilterToNodeTypeId = function () {
+            cswPublic.getFilterToNodeTypeId = function() {
                 var ret = '';
+
                 function findFilterToNodeTypeId(thisFilter) {
                     if (Csw.isNullOrEmpty(ret) && thisFilter.filtername == 'Filter To') {
                         ret = thisFilter.firstversionid;
                     }
                 } // findFilterToNodeTypeId()
+
                 Csw.each(cswPrivate.data.filtersapplied, findFilterToNodeTypeId);
                 return ret;
-            } // getFilterToNodeTypeId()
+            }; // getFilterToNodeTypeId()
 
             return cswPublic;
         });

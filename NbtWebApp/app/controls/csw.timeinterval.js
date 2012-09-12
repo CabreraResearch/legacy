@@ -30,9 +30,9 @@
             cswPrivate.now = new Date();
             cswPrivate.nowString = (cswPrivate.now.getMonth() + 1) + '/' + cswPrivate.now.getDate() + '/' + cswPrivate.now.getFullYear();
 
-            cswPrivate.saveRateInterval = function () {
-                Csw.clientDb.setItem(cswPrivate.ID + '_rateIntervalSave', cswPublic.rateInterval);
-            };
+            //cswPrivate.saveRateInterval = function () {
+            //    Csw.clientDb.setItem(cswPrivate.ID + '_rateIntervalSave', cswPublic.rateInterval);
+            //};
 
             cswPrivate.weekDayDef = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
@@ -73,12 +73,10 @@
                         cswPublic.rateInterval.ratetype = thisRateType;
                         cswPublic.rateInterval.dateformat = cswPrivate.dateFormat;
                         cswPublic.rateInterval[dayPropName] = weekdays.join(',');
-                        cswPrivate.saveRateInterval();
+                        Csw.tryExec(cswPrivate.onChange);
                     }
 
                     function dayChange(val, checkbox) {
-                        Csw.tryExec(cswPrivate.onChange);
-
                         var day = cswPrivate.weekDayDef[val - 1];
                         if (checkbox.checked()) {
                             if (false === isWeekly) {
@@ -147,7 +145,6 @@
                             if (Csw.isNullOrEmpty(weeklyStartDate)) {
                                 weeklyStartDate = cswPrivate.nowString;
                                 cswPublic.rateInterval.startingdate = { date: cswPrivate.nowString, dateformat: cswPrivate.dateFormat };
-                                cswPrivate.saveRateInterval();
                             }
 
                             startingDate = weeklyTableCell.dateTimePicker({
@@ -158,7 +155,6 @@
                                 ReadOnly: cswPrivate.ReadOnly,
                                 Required: cswPrivate.Required,
                                 onChange: function () {
-                                    Csw.tryExec(cswPrivate.onChange);
                                     saveWeekInterval();
                                 }
                             });
@@ -213,7 +209,7 @@
                         cswPublic.rateInterval.monthlyfrequency = monthlyRateSelect.find(':selected').val();
                         cswPublic.rateInterval.startingmonth = startOnMonth.find(':selected').val();
                         cswPublic.rateInterval.startingyear = startOnYear.find(':selected').val();
-                        cswPrivate.saveRateInterval();
+                        Csw.tryExec(cswPrivate.onChange);
                     }
 
                     function makeMonthlyByDateSelect(monParent) {
@@ -232,7 +228,6 @@
                             name: monthlyRadioId,
                             type: Csw.enums.inputTypes.radio,
                             onChange: function () {
-                                Csw.tryExec(cswPrivate.onChange);
                                 cswPrivate.rateType = ret.find('[name="' + monthlyRadioId + '"]:checked').val();
                                 saveMonthInterval();
                             },
@@ -244,7 +239,6 @@
                         monthlyDateSelect = byDate.select({
                             ID: Csw.makeId(cswPrivate.ID, 'monthly', 'date'),
                             onChange: function () {
-                                Csw.tryExec(cswPrivate.onChange);
                                 saveMonthInterval();
                             },
                             values: daysInMonth,
@@ -269,7 +263,6 @@
                         monthlyRateSelect = divEvery.select({
                             ID: Csw.makeId(cswPrivate.ID, 'monthly', 'rate'),
                             onChange: function () {
-                                Csw.tryExec(cswPrivate.onChange);
                                 saveMonthInterval();
                             },
                             values: frequency,
@@ -297,7 +290,6 @@
                             name: monthlyRadioId,
                             type: Csw.enums.inputTypes.radio,
                             onChange: function () {
-                                Csw.tryExec(cswPrivate.onChange);
                                 cswPrivate.rateType = ret.find('[name="' + monthlyRadioId + '"]:checked').val();
                                 saveMonthInterval();
                             },
@@ -319,7 +311,6 @@
                             values: weeksInMonth,
                             selected: selected,
                             onChange: function () {
-                                Csw.tryExec(cswPrivate.onChange);
                                 saveMonthInterval();
                             }
                         });
@@ -354,7 +345,6 @@
                             values: monthsInYear,
                             selected: selectedMonth,
                             onChange: function () {
-                                Csw.tryExec(cswPrivate.onChange);
                                 saveMonthInterval();
                             }
                         });
@@ -366,7 +356,6 @@
                             values: yearsToAllow,
                             selected: selectedYear,
                             onChange: function () {
-                                Csw.tryExec(cswPrivate.onChange);
                                 saveMonthInterval();
                             }
                         });
@@ -413,7 +402,7 @@
                             cswPublic.rateInterval.yearlydate = {};
                         }
                         cswPublic.rateInterval.yearlydate.dateformat = cswPrivate.dateFormat;
-                        cswPrivate.saveRateInterval();
+                        Csw.tryExec(cswPrivate.onChange);
                     }
 
                     if (false === yearlyDatePickerComplete) {
@@ -441,7 +430,6 @@
                             ReadOnly: cswPrivate.ReadOnly,
                             Required: cswPrivate.Required,
                             onChange: function () {
-                                Csw.tryExec(cswPrivate.onChange);
                                 saveYearInterval();
                             }
                         });
@@ -457,7 +445,6 @@
             cswPrivate.makeRateType = function (table) {
 
                 function onChange(newRateType) {
-                    Csw.tryExec(cswPrivate.onChange);
                     cswPrivate.rateType = newRateType;
                     cswPublic.rateInterval.ratetype = cswPrivate.rateType;
 
@@ -493,8 +480,6 @@
                             }
                             break;
                     }
-
-                    cswPrivate.saveRateInterval();
                 }
 
                 var subTable = table.cell(2, 1).table();
