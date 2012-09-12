@@ -146,10 +146,6 @@
                     Steps: cswPrivate.wizardSteps,
                     StartingStep: cswPrivate.startingStep,
                     FinishText: 'Finish',
-                    onBeforeNext: function () {
-                        var ret = cswPrivate.amountsGrid.amountsGridOnAdd();
-                        return ret;
-                    },
                     onNext: cswPrivate.handleStep,
                     onPrevious: cswPrivate.handleStep,
                     onCancel: cswPrivate.onCancel,
