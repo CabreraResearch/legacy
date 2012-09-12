@@ -64,7 +64,7 @@
         } else {
             _initStepTwo($wizard);
         }
-    
+
         // Step 1 - Choose a View
         var $div1 = $($wizard.CswWizard('div', Csw.enums.wizardSteps_ViewEditor.viewselect.step));
         var instructions = "A <em>View</em> controls the arrangement of information you see in a tree or grid.  " +
@@ -470,67 +470,67 @@
                             $viewgrid.empty();
                         }
 
-//                        var g = {
-//                            ID: o.ID,
-//                            pagermode: 'none',
-//                            gridOpts: {
-//                                autowidth: true,
-//                                height: 180,
-//                                onSelectRow: function (id, selected) {
-//                                    rowid = id;
-//                                    if (selected) {
-//                                        copyViewBtn.enable();
-//                                        deleteViewBtn.enable();
-//                                        $selview_span.text(_getSelectedViewName(id));
-//                                        $wizard.CswWizard('button', 'next', 'enable');
-//                                    } else {
-//                                        copyViewBtn.disable();
-//                                        deleteViewBtn.disable();
-//                                        $selview_span.text("");
-//                                        $wizard.CswWizard('button', 'next', 'disable');
-//                                        cswViewGrid.resetSelection();
-//                                    }
-//                                }
-//                            }
-//                        };
-//                        Csw.extend(g.gridOpts, gridJson);
-//                        g.gridOpts.rowNum = 100000;
+                        //                        var g = {
+                        //                            ID: o.ID,
+                        //                            pagermode: 'none',
+                        //                            gridOpts: {
+                        //                                autowidth: true,
+                        //                                height: 180,
+                        //                                onSelectRow: function (id, selected) {
+                        //                                    rowid = id;
+                        //                                    if (selected) {
+                        //                                        copyViewBtn.enable();
+                        //                                        deleteViewBtn.enable();
+                        //                                        $selview_span.text(_getSelectedViewName(id));
+                        //                                        $wizard.CswWizard('button', 'next', 'enable');
+                        //                                    } else {
+                        //                                        copyViewBtn.disable();
+                        //                                        deleteViewBtn.disable();
+                        //                                        $selview_span.text("");
+                        //                                        $wizard.CswWizard('button', 'next', 'disable');
+                        //                                        cswViewGrid.resetSelection();
+                        //                                    }
+                        //                                }
+                        //                            }
+                        //                        };
+                        //                        Csw.extend(g.gridOpts, gridJson);
+                        //                        g.gridOpts.rowNum = 100000;
 
 
                         var parent = Csw.literals.factory($viewgrid);
                         cswViewGrid = parent.grid({
-                                ID: o.ID + '_grid',
-                                storeId: o.ID + '_store',
-                                title: '',
-                                stateId: o.ID + '_gridstate',
-                                usePaging: false,
-                                showActionColumn: false,
-                                height: 230,
-                                fields: gridJson.grid.fields,  
-                                columns: gridJson.grid.columns,
-                                data: gridJson.grid.data,     
-                                pageSize: gridJson.grid.pageSize,
-                                canSelectRow: true,
-                                onSelect: function(row){
-                                    copyViewBtn.enable();
-                                    deleteViewBtn.enable();
-                                    $selview_span.text(row.viewname);
-                                    $wizard.CswWizard('button', 'next', 'enable');
-                                },
-                                onDeselect: function(row){
-                                    copyViewBtn.disable();
-                                    deleteViewBtn.disable();
-                                    $selview_span.text("");
-                                    $wizard.CswWizard('button', 'next', 'disable');
-                                    //cswViewGrid.resetSelection();
-                                },
-                                onLoad: function(grid) {
-                                    if (false === Csw.isNullOrEmpty(gridJson.selectedpk)) {
-                                        rowid = grid.getRowIdForVal(o.ColumnViewId, gridJson.selectedpk);
-                                        grid.setSelection(rowid);
-                                        grid.scrollToRow(rowid);
-                                    }
+                            ID: o.ID + '_grid',
+                            storeId: o.ID + '_store',
+                            title: '',
+                            stateId: o.ID + '_gridstate',
+                            usePaging: false,
+                            showActionColumn: false,
+                            height: 230,
+                            fields: gridJson.grid.fields,
+                            columns: gridJson.grid.columns,
+                            data: gridJson.grid.data,
+                            pageSize: gridJson.grid.pageSize,
+                            canSelectRow: true,
+                            onSelect: function (row) {
+                                copyViewBtn.enable();
+                                deleteViewBtn.enable();
+                                $selview_span.text(row.viewname);
+                                $wizard.CswWizard('button', 'next', 'enable');
+                            },
+                            onDeselect: function (row) {
+                                copyViewBtn.disable();
+                                deleteViewBtn.disable();
+                                $selview_span.text("");
+                                $wizard.CswWizard('button', 'next', 'disable');
+                                //cswViewGrid.resetSelection();
+                            },
+                            onLoad: function (grid) {
+                                if (false === Csw.isNullOrEmpty(gridJson.selectedpk)) {
+                                    rowid = grid.getRowIdForVal(o.ColumnViewId, gridJson.selectedpk);
+                                    grid.setSelection(rowid);
+                                    grid.scrollToRow(rowid);
                                 }
+                            }
                         });
                         //cswViewGrid.gridPager.css({ width: '100%', height: '20px' });
                     } // success
@@ -712,14 +712,14 @@
 
                     var showInGridcheck = gridTable.cell(1, 1)
                                                    .append('Show In Grid')
-                                                   .input({ 
-                                                            ID: o.ID + '_showingrid',
-                                                            type: Csw.enums.inputTypes.checkbox,
-                                                            onChange: function () {
-                                                                viewNodeData.showingrid = showInGridcheck.$.is(':checked');
-                                                                toggleShowInGridAttr();
-                                                            }
-                                                    });
+                                                   .input({
+                                                       ID: o.ID + '_showingrid',
+                                                       type: Csw.enums.inputTypes.checkbox,
+                                                       onChange: function () {
+                                                           viewNodeData.showingrid = showInGridcheck.$.is(':checked');
+                                                           toggleShowInGridAttr();
+                                                       }
+                                                   });
                     if (Csw.bool(viewNodeData.showingrid)) {
                         showInGridcheck.propDom('checked', 'true');
                     }
@@ -729,12 +729,12 @@
                     showInGridTable.cell(1, 1).text('Sort By');
                     var sortByCheckCell = showInGridTable.cell(1, 2);
                     var sortbycheck = sortByCheckCell.input({
-                                ID: o.ID + '_sortcb',
-                                type: Csw.enums.inputTypes.checkbox,
-                                onChange: function () {
-                                    viewNodeData.sortby = sortbycheck.$.is(':checked');
-                                }
-                            });
+                        ID: o.ID + '_sortcb',
+                        type: Csw.enums.inputTypes.checkbox,
+                        onChange: function () {
+                            viewNodeData.sortby = sortbycheck.$.is(':checked');
+                        }
+                    });
                     if (Csw.bool(viewNodeData.sortby)) {
                         sortbycheck.propDom('checked', 'true');
                     }
@@ -742,12 +742,12 @@
                     showInGridTable.cell(2, 1).text('Grid Column Order');
                     var colOrderTextCell = showInGridTable.cell(2, 2);
                     var colordertextbox = colOrderTextCell.input({
-                                ID: o.ID + '_gcotb',
-                                type: Csw.enums.inputTypes.text,
-                                onChange: function () {
-                                    viewNodeData.order = colordertextbox.val();
-                                }
-                            });
+                        ID: o.ID + '_gcotb',
+                        type: Csw.enums.inputTypes.text,
+                        onChange: function () {
+                            viewNodeData.order = colordertextbox.val();
+                        }
+                    });
                     colordertextbox.val(viewNodeData.order);
 
                     showInGridTable.cell(3, 1).text('Grid Column Width (in characters)');
@@ -808,7 +808,7 @@
                 var listResultMode = filterTable.cell(3, 2)
                     .select({
                         ID: o.ID + '_resultmode',
-                        values: ['Hide', {value: 'Disabled', display: 'Show Disabled'}],
+                        values: ['Hide', { value: 'Disabled', display: 'Show Disabled'}],
                         onChange: function () {
                             //var $this = $(this);
                             viewNodeData.resultmode = listResultMode.val();
@@ -816,7 +816,190 @@
                         selected: viewNodeData.resultmode
                     });
             });
-        }
+
+
+            // case 27553 - export to code
+            var cell21 = table6.cell(2, 1);
+            cell21.empty();
+            cell21.buttonExt({
+                ID: 'vieweditor_expcodebtn',
+                enabledText: 'Export to Code',
+                disableOnClick: false,
+                icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.doc),
+                onClick: function () {
+                    var codepopup = window.open();
+                    codepopup.document.write('<textarea rows="20" cols="60">' + _makeCode(currentViewJson) + '</textarea>');
+                },
+                isEnabled: true,
+                size: 'small'
+            });
+
+
+        } // makeTuningStep()
+
+        function _makeCode(viewJson) {
+            var code = '';
+            var elmcount = 1;
+            var viewname = 'myView';
+
+            function rootToCode(root) {
+                code += 'CswNbtView ' + viewname + ' = _CswNbtSchemaModTrnsctn.makeView();\n';
+
+                var visroleid = 'null';
+                var visuserid = 'null';
+                if (false === Csw.isNullOrEmpty(root.visibilityroleid)) {
+                    visroleid = 'new CswPrimaryKey("nodes", ' + root.visibilityroleid + ')';
+                }
+                if (false === Csw.isNullOrEmpty(root.visibilityuserid)) {
+                    visuserid = 'new CswPrimaryKey("nodes", ' + root.visibilityuserid + ')';
+                }
+                code += viewname + '.makeNew( "' + root.viewname + '", NbtViewVisibility.' + root.visibility + ', ' + visroleid + ', ' + visuserid + ');\n';
+
+                code += viewname + '.ViewMode = NbtViewRenderingMode.' + root.mode + ';\n';
+                if (false === Csw.isNullOrEmpty(root.category)) {
+                    code += viewname + '.Category = "' + root.category + '";\n';
+                }
+                if (Csw.bool(root.formobile)) {
+                    code += viewname + '.ForMobile = ' + root.formobile + ';\n';
+                }
+                if (false === Csw.isNullOrEmpty(root.width)) {
+                    code += viewname + '.Width = ' + root.width + ';\n';
+                }
+                code += '\n';
+
+                Csw.each(root.childrelationships, function (child) { rootRelationshipToCode(child); });
+
+                code += viewname + '.save();\n';
+            } // rootToCode()
+
+            function rootRelationshipToCode(rel) {
+                var elmid = "Rel" + elmcount;
+                elmcount += 1;
+
+                if (rel.secondtype === 'NodeTypeId') {
+                    code += 'CswNbtMetaDataNodeType ' + elmid + 'SecondNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "' + rel.secondname + '" );\n';
+                    code += 'CswNbtViewRelationship ' + elmid + ' = ' + viewname + '.AddViewRelationship( ' + elmid + 'SecondNT, true );\n';
+                } else {
+                    code += 'CswNbtMetaDataObjectClass ' + elmid + 'SecondOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.' + rel.secondname + ' );\n';
+                    code += 'CswNbtViewRelationship ' + elmid + ' = ' + viewname + '.AddViewRelationship( ' + elmid + 'SecondOC, true );\n';
+                }
+                if (false === Csw.bool(rel.showintree)) {
+                    code += elmid + '.ShowInTree = ' + rel.showintree + ';\n';
+                }
+                code += '\n';
+
+                Csw.each(rel.properties, function (child) { propertyToCode(elmid, rel, child); });
+                Csw.each(rel.childrelationships, function (child) { childRelationshipToCode(elmid, rel, child); });
+            } // rootRelationshipToCode()
+
+            function childRelationshipToCode(parentelmid, parentrel, rel) {
+                var elmid = "Rel" + elmcount;
+                elmcount += 1;
+
+                if (rel.propowner == "First") {
+                    if (parentrel.secondtype === 'NodeTypeId') {
+                        code += 'CswNbtMetaDataNodeTypeProp ' + elmid + 'Prop = ' + parentelmid + 'SecondNT.getNodeTypeProp( "' + rel.propname + '" );\n';
+                        if (rel.secondtype === 'NodeTypeId') {
+                            code += 'CswNbtMetaDataNodeType ' + elmid + 'SecondNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "' + rel.secondname + '" );\n';
+                        } else {
+                            code += 'CswNbtMetaDataObjectClass ' + elmid + 'SecondOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.' + rel.secondname + ' );\n';
+                        }
+                    } else {
+                        code += 'CswNbtMetaDataObjectClassProp ' + elmid + 'Prop = ' + parentelmid + 'SecondOC.getObjectClassProp( CswNbtObjClass' + parentrel.secondname.replace('Class', '') + '.PropertyName.' + rel.propname.replace(' ', '') + ' );\n';
+                        if (rel.secondtype === 'NodeTypeId') {
+                            code += 'CswNbtMetaDataNodeType ' + elmid + 'SecondNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "' + rel.secondname + '" );\n';
+                        } else {
+                            code += 'CswNbtMetaDataObjectClass ' + elmid + 'SecondOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.' + rel.secondname + ' );\n';
+                        }
+                    }
+                } else {
+                    if (rel.secondtype === 'NodeTypeId') {
+                        code += 'CswNbtMetaDataNodeType ' + elmid + 'SecondNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "' + rel.secondname + '" );\n';
+                        code += 'CswNbtMetaDataNodeTypeProp ' + elmid + 'Prop = ' + elmid + 'SecondNT.getNodeTypeProp( "' + rel.propname + '" );\n';
+                    } else {
+                        code += 'CswNbtMetaDataObjectClass ' + elmid + 'SecondOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.' + rel.secondname + ' );\n';
+
+                        code += 'CswNbtMetaDataObjectClassProp ' + elmid + 'Prop = ' + elmid + 'SecondOC.getObjectClassProp( CswNbtObjClass' + rel.secondname.replace('Class', '') + '.PropertyName.' + rel.propname.replace(' ', '') + ' );\n';
+                    }
+                }
+
+                code += 'CswNbtViewRelationship ' + elmid + ' = ' + viewname + '.AddViewRelationship( ' + parentelmid + ', NbtViewPropOwnerType.' + rel.propowner + ', ' + elmid + 'Prop, true );\n';
+                if (false === Csw.bool(rel.showintree)) {
+                    code += elmid + '.ShowInTree = ' + rel.showintree + ';\n';
+                }
+                code += '\n';
+
+                Csw.each(rel.properties, function (child) { propertyToCode(elmid, rel, child); });
+                Csw.each(rel.childrelationships, function (child) { childRelationshipToCode(elmid, rel, child); });
+            } // childRelationshipToCode()
+
+            function propertyToCode(parentelmid, parentrel, prop) {
+                var elmid = "Prop" + elmcount;
+                elmcount += 1;
+
+                if (parentrel.secondtype === 'NodeTypeId') {
+                    if (prop.type === 'NodeTypePropId') {
+                        code += 'CswNbtMetaDataNodeType ' + elmid + 'NTP = ' + parentelmid + 'SecondNT.getNodeTypeProp( "' + prop.name + '" );\n';
+                        code += 'CswNbtViewProperty ' + elmid + ' = ' + viewname + '.AddViewProperty( ' + parentelmid + ', ' + elmid + 'NTP );\n';
+                    } else {
+                        code += 'CswNbtMetaDataObjectClass ' + elmid + 'OCP = ' + parentelmid + 'SecondNT.getNodeTypeProp( "' + prop.name + '" ).ObjectClassProp;\n';
+                        code += 'CswNbtViewProperty ' + elmid + ' = ' + viewname + '.AddViewProperty( ' + parentelmid + ', ' + elmid + 'OCP );\n';
+                    }
+                } else {
+                    if (prop.type === 'NodeTypePropId') {
+                        code += 'CswNbtViewProperty ' + elmid + ' = null;\n';
+                        code += 'foreach( CswNbtMetaDataNodeType ' + parentelmid + 'NT in ' + parentelmid + 'SecondOC.getNodeTypes() )\n';
+                        code += '{\n';
+                        code += '    CswNbtMetaDataNodeType ' + elmid + 'NTP = ' + parentelmid + 'NT.getNodeTypeProp( "' + prop.name + '" );\n';
+                        code += '    if( null != ' + elmid + 'NTP )\n';
+                        code += '    {\n';
+                        code += '        ' + elmid + ' = ' + viewname + '.AddViewProperty( ' + parentelmid + ', ' + elmid + 'NTP );\n';
+                        code += '        break;\n';
+                        code += '    }\n';
+                        code += '}\n';
+                    } else {
+                        code += 'CswNbtMetaDataObjectClassProp ' + elmid + 'OCP = ' + parentelmid + 'SecondOC.getObjectClassProp( CswNbtObjClass' + parentrel.secondname.replace('Class', '') + '.PropertyName.' + prop.name.replace(' ', '') + ' );\n';
+                        code += 'CswNbtViewProperty ' + elmid + ' = ' + viewname + '.AddViewProperty( ' + parentelmid + ', ' + elmid + 'OCP );\n';
+                    }
+                }
+
+                if (Csw.bool(prop.sortby)) {
+                    code += elmid + '.SortBy = ' + prop.sortby + ';\n';
+                    code += elmid + '.SortMethod = NbtViewPropertySortMethod.' + prop.sortmethod + ';\n';
+                }
+                if (false === Csw.isNullOrEmpty(prop.order)) {
+                    code += elmid + '.Order = ' + prop.order + ';\n';
+                }
+                if (false === Csw.isNullOrEmpty(prop.width)) {
+                    code += elmid + '.Width = ' + prop.width + ';\n';
+                }
+                if (false === Csw.bool(prop.showingrid)) {
+                    code += elmid + '.ShowInGrid = ' + prop.showingrid + ';\n';
+                }
+
+                Csw.each(prop.filters, function (child) { filterToCode(elmid, child); });
+            } // propertyToCode()
+
+            function filterToCode(parentelmid, filt) {
+                var elmid = "Filt" + elmcount;
+                elmcount += 1;
+
+                code += 'CswNbtViewFilter ' + elmid + ' = ' + viewname + '.AddViewPropertyFilter( ' + parentelmid + ',\n';
+                code += '                                          CswNbtPropFilterSql.PropertyFilterConjunction.' + filt.conjunction + ',\n';
+                code += '                                          CswNbtPropFilterSql.FilterResultMode.' + filt.resultmode + ',\n';
+                code += '                                          CswNbtSubField.SubFieldName.' + filt.subfieldname + ',\n';
+                code += '                                          CswNbtPropFilterSql.PropertyFilterMode.' + filt.filtermode + ',\n';
+                code += '                                          "' + filt.value + '",\n';
+                code += '                                          ' + filt.casesensitive + ',\n';
+                code += '                                          ' + filt.showatruntime + ' );\n';
+                code += '\n';
+
+            } // filterToCode()
+
+            rootToCode(viewJson);
+            return code;
+        } // _makeCode()
+
 
         function _makeViewTree(stepno, $content) {
             var doTree = function () {
