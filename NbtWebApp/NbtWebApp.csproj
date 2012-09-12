@@ -1397,6 +1397,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="temp\" />
+    <Folder Include="WebSvc\Logic\Session\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Common\CswCommon\CswCommon.csproj">

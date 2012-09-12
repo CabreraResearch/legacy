@@ -6,36 +6,34 @@ using Newtonsoft.Json.Linq;
 
 namespace NbtWebApp.WebSvc.Returns
 {
+    public class CswWcfFault
+    {
+        [DataContract]
+        public enum FaultCode
+        {
+            [EnumMember]
+            ERROR,
+            [EnumMember]
+            INCORRECT_PARAMETER
+        }
+
+        [DataContract]
+        public class FaultException
+        {
+            [DataMember]
+            public FaultCode ErrorCode;
+            [DataMember]
+            public string Message;
+            [DataMember]
+            public string Details;
+        }
+    }
+
     /// <summary>
     /// Base DataContracts for all web service returns
     /// </summary>
     public class CswWebSvcReturnBase
     {
-        /// <summary>
-        /// Contract for Authentication status
-        /// </summary>
-        [DataContract]
-        public class Authentication
-        {
-            private string _AuthenticationStatus = ChemSW.Security.AuthenticationStatus.Unknown.ToString();
-
-            [DataMember]
-            public string AuthenticationStatus
-            {
-                get { return _AuthenticationStatus; }
-                set { _AuthenticationStatus = value; }
-            }
-
-            private string _TimeOut = "0";
-
-            [DataMember]
-            public string TimeOut
-            {
-                get { return _TimeOut; }
-                set { _TimeOut = value; }
-            }
-        }
-
         /// <summary>
         /// Contract for communicating performance data surrounding this request
         /// </summary>
@@ -155,6 +153,5 @@ namespace NbtWebApp.WebSvc.Returns
             [DataMember]
             public bool DisplayErrors = false;
         }
-
     }
 }

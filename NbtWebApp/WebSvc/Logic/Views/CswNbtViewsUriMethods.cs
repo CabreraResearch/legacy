@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel;
-using System.Runtime.Serialization;
 using System.ServiceModel;
 using System.ServiceModel.Activation;
 using System.ServiceModel.Web;
@@ -7,29 +6,10 @@ using System.Web;
 using ChemSW.Nbt;
 using ChemSW.Nbt.WebServices;
 using ChemSW.WebSvc;
+using NbtWebApp.WebSvc.Returns;
 
 namespace NbtWebApp.WebSvc.Logic.Views
 {
-    [DataContract]
-    public enum FaultCode
-    {
-        [EnumMember]
-        ERROR,
-        [EnumMember]
-        INCORRECT_PARAMETER
-    }
-
-    [DataContract]
-    public class SampleFaultException
-    {
-        [DataMember]
-        public FaultCode errorcode;
-        [DataMember]
-        public string message;
-        [DataMember]
-        public string details;
-    }
-
     /// <summary>
     /// WCF Web Methods for View operations
     /// </summary>
@@ -45,14 +25,14 @@ namespace NbtWebApp.WebSvc.Logic.Views
         /// </summary>
         [OperationContract]
         [WebInvoke( Method = "POST" )]
-        [FaultContract( typeof( SampleFaultException ) )]
+        [FaultContract( typeof( CswWcfFault.FaultException ) )]
         [Description( "Generate a View Select" )]
         public CswNbtViewReturn ViewSelect( ViewSelect.Request Request )
         {
             //delegate has to be static because you can't create an instance yet: you don't have resources until the delegate is actually called
             CswNbtViewReturn Ret = new CswNbtViewReturn();
             var GetViewDriverType = new CswWebSvcDriver<CswNbtViewReturn, ViewSelect.Request>(
-                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context ),
+                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
                 ReturnObj: Ret,
                 WebSvcMethodPtr: CswNbtWebServiceView.getViewSelectWebSvc,
                 ParamObj: Request
@@ -60,7 +40,6 @@ namespace NbtWebApp.WebSvc.Logic.Views
 
             GetViewDriverType.run();
             return ( Ret );
-
         }
     }
 }
