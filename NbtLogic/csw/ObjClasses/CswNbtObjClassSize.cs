@@ -14,6 +14,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string QuantityEditable = "Quantity Editable";
             public const string Dispensable = "Dispensable";
             public const string CatalogNo = "Catalog No";
+            public const string UnitCount = "Unit Count";
         }
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
@@ -46,7 +47,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
-            if( null == Material.RelatedNodeId )
+            if( null == Material.RelatedNodeId && _CswNbtResources.CurrentNbtUser.Cookies.ContainsKey( "csw_currentnodeid" ) )
             {
                 CswPrimaryKey pk = CswConvert.ToPrimaryKey( _CswNbtResources.CurrentNbtUser.Cookies["csw_currentnodeid"] );
                 if( null != pk && _isMaterialID( pk ) ) //only assign the id if we got a real nodeid from cookies and it's indeed a material id
@@ -110,6 +111,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropLogical QuantityEditable { get { return _CswNbtNode.Properties[PropertyName.QuantityEditable]; } }
         public CswNbtNodePropLogical Dispensable { get { return _CswNbtNode.Properties[PropertyName.Dispensable]; } }
         public CswNbtNodePropText CatalogNo { get { return _CswNbtNode.Properties[PropertyName.CatalogNo]; } }
+        public CswNbtNodePropNumber UnitCount { get { return _CswNbtNode.Properties[PropertyName.UnitCount]; } }
 
         #endregion
 

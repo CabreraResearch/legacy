@@ -1,102 +1,90 @@
 /// <reference path="~/app/CswApp-vsdoc.js" />
 
+(function () {
+    'use strict';
+    Csw.properties.scientific = Csw.properties.scientific ||
+        Csw.properties.register('scientific',
+            Csw.method(function (propertyOption) {
+                'use strict';
+                var cswPrivate = {};
+                var cswPublic = {
+                    data: propertyOption || Csw.nbt.propertyOption(propertyOption)
+                };
 
-(function ($) {
-    "use strict";
-    var pluginName = 'CswFieldTypeScientific';
+                var render = function () {
+                    'use strict';
 
-    var methods = {
-        init: function (o) {
+                    cswPrivate.propVals = cswPublic.data.propData.values;
+                    cswPrivate.parent = cswPublic.data.propDiv;
+                    cswPrivate.minValue = Csw.number(cswPrivate.propVals.minvalue);
+                    cswPrivate.precision = Csw.number(cswPrivate.propVals.precision, 6);
+                    cswPrivate.ceilingVal = '999999999' + Csw.getMaxValueForPrecision(cswPrivate.precision);
+                    cswPrivate.realValue = '';
+                    cswPublic.control = cswPrivate.parent.div();
+                    
+                    if (Csw.bool(cswPublic.data.ReadOnly)) {
+                        cswPublic.control.append(cswPrivate.propVals.gestalt);
+                    }
+                    else {
+                        cswPrivate.valueNtb = cswPublic.control.numberTextBox({
+                            ID: cswPublic.data.ID + '_val',
+                            value: (false === cswPublic.data.Multi) ? Csw.string(cswPrivate.propVals.base).trim() : Csw.enums.multiEditDefaultValue,
+                            ceilingVal: Csw.number(cswPrivate.ceilingVal),
+                            Precision: cswPrivate.precision,
+                            ReadOnly: cswPublic.data.ReadOnly,
+                            Required: cswPublic.data.Required,
+                            onChange: function () {
+                                var val = cswPrivate.valueNtb.val();
+                                Csw.tryExec(cswPublic.data.onChange, val);
+                                cswPublic.data.onPropChange({ base: val });
+                            },
+                            width: '65px'
+                        });
+                        cswPublic.control.append('E');
+                        cswPrivate.exponentNtb = cswPublic.control.numberTextBox({
+                            ID: cswPublic.data.ID + '_exp',
+                            value: (false === cswPublic.data.Multi) ? Csw.string(cswPrivate.propVals.exponent).trim() : Csw.enums.multiEditDefaultValue,
+                            Precision: 0,
+                            ReadOnly: cswPublic.data.ReadOnly,
+                            Required: cswPublic.data.Required,
+                            onChange: function () {
+                                var val = cswPrivate.exponentNtb.val();
+                                Csw.tryExec(cswPublic.data.onChange, val);
+                                cswPublic.data.onPropChange({ exponent: val });
+                            },
+                            width: '40px'
+                        });
 
-            var propDiv = o.propDiv;
-            propDiv.empty();
-            var propVals = o.propData.values,
-                minValue = Csw.number(propVals.minvalue),
-                precision = Csw.number(propVals.precision, 6),
-                ceilingVal = '999999999' + Csw.getMaxValueForPrecision(precision),
-                realValue;
-            if (Csw.bool(o.ReadOnly)) {
-                propDiv.append(propVals.gestalt);
-            }
-            else {
-                var valueNtb = propDiv.numberTextBox({
-                    ID: o.ID + '_val',
-                    value: (false === o.Multi) ? Csw.string(propVals.base).trim() : Csw.enums.multiEditDefaultValue,
-                    ceilingVal: Csw.number(ceilingVal),
-                    Precision: precision,
-                    ReadOnly: o.ReadOnly,
-                    Required: o.Required,
-                    onChange: o.onChange,
-                    width: '65px'
-                });
-                propDiv.append('E');
-                var exponentNtb = propDiv.numberTextBox({
-                    ID: o.ID + '_exp',
-                    value: (false === o.Multi) ? Csw.string(propVals.exponent).trim() : Csw.enums.multiEditDefaultValue,
-                    Precision: 0,
-                    ReadOnly: o.ReadOnly,
-                    Required: o.Required,
-                    onChange: o.onChange,
-                    width: '40px'
-                });
+                        if (cswPrivate.valueNtb && cswPrivate.valueNtb.length() > 0) {
+                            cswPrivate.valueNtb.clickOnEnter(cswPublic.data.saveBtn);
+                        }
+                        if (cswPrivate.exponentNtb && cswPrivate.exponentNtb.length() > 0) {
+                            cswPrivate.exponentNtb.clickOnEnter(cswPublic.data.saveBtn);
+                        }
+                        //Case 24645 - scientific-specific number validation (i.e. - ensuring that the evaluated number is positive)
+                        if (Csw.isNumber(cswPrivate.minValue) && Csw.isNumeric(cswPrivate.minValue)) {
+                            $.validator.addMethod('validateMinValue', function () {
+                                var realValue = Csw.number(cswPrivate.valueNtb.val()) * Math.pow(10, Csw.number(cswPrivate.exponentNtb.val()));
+                                return (realValue > cswPrivate.minValue || Csw.string(realValue).length === 0);
+                            }, 'Evaluated expression must be greater than ' + cswPrivate.minValue);
+                            cswPrivate.valueNtb.addClass('validateMinValue');
+                            //exponentNtb.addClass('validateMinValue');//Case 26668, Review 26672
+                        }
 
-                if (valueNtb && valueNtb.length() > 0) {
-                    valueNtb.clickOnEnter(o.saveBtn);
-                }
-                if (exponentNtb && exponentNtb.length() > 0) {
-                    exponentNtb.clickOnEnter(o.saveBtn);
-                }
-                //Case 24645 - scientific-specific number validation (i.e. - ensuring that the evaluated number is positive)
-                if (Csw.isNumber(minValue) && Csw.isNumeric(minValue)) {
-                    $.validator.addMethod('validateMinValue', function () {
-                        var realValue = Csw.number(valueNtb.val()) * Math.pow(10, Csw.number(exponentNtb.val()));
-                        return (realValue > minValue || Csw.string(realValue).length === 0);
-                    }, 'Evaluated expression must be greater than ' + minValue);
-                    valueNtb.addClass('validateMinValue');
-                    //exponentNtb.addClass('validateMinValue');//Case 26668, Review 26672
-                }
+                        $.validator.addMethod('validateExponentPresent', function (value, element) {
+                            return (false === Csw.isNullOrEmpty(cswPrivate.exponentNtb.val()) || Csw.isNullOrEmpty(cswPrivate.valueNtb.val()));
+                        }, 'Exponent must be defined if Base is defined.');
+                        cswPrivate.exponentNtb.addClass('validateExponentPresent');
 
-                $.validator.addMethod('validateExponentPresent', function (value, element) {
-                    return (false === Csw.isNullOrEmpty(exponentNtb.val()) || Csw.isNullOrEmpty(valueNtb.val()));
-                }, 'Exponent must be defined if Base is defined.');
-                exponentNtb.addClass('validateExponentPresent');
+                        $.validator.addMethod('validateBasePresent', function (value, element) {
+                            return (false === Csw.isNullOrEmpty(cswPrivate.valueNtb.val()) || Csw.isNullOrEmpty(cswPrivate.exponentNtb.val()));
+                        }, 'Base must be defined if Exponent is defined.');
+                        cswPrivate.exponentNtb.addClass('validateBasePresent');
+                    }
+                };
 
-                $.validator.addMethod('validateBasePresent', function (value, element) {
-                    return (false === Csw.isNullOrEmpty(valueNtb.val()) || Csw.isNullOrEmpty(exponentNtb.val()));
-                }, 'Base must be defined if Exponent is defined.');
-                exponentNtb.addClass('validateBasePresent');
-            }
-        },
-        save: function (o) { //$propdiv, $xml
-            var attributes = {
-                base: null,
-                exponent: null
-            };
-            var compare = {};
-            var base = o.propDiv.find('#' + o.ID + '_val');
-            if (false === Csw.isNullOrEmpty(base)) {
-                attributes.base = base.val();
-                compare = attributes;
-            }
-            var exp = o.propDiv.find('#' + o.ID + '_exp');
-            if (false === Csw.isNullOrEmpty(exp)) {
-                attributes.exponent = exp.val();
-                compare = attributes;
-            }
-            Csw.preparePropJsonForSave(o.Multi, o.propData, compare);
-        }
-    };
+                cswPublic.data.bindRender(render);
+                return cswPublic;
+            }));
 
-    // Method calling logic
-    $.fn.CswFieldTypeScientific = function (method) {
-
-        if (methods[method]) {
-            return methods[method].apply(this, Array.prototype.slice.call(arguments, 1));
-        } else if (typeof method === 'object' || !method) {
-            return methods.init.apply(this, arguments);
-        } else {
-            $.error('Method ' + method + ' does not exist on ' + pluginName); return false;
-        }
-
-    };
-})(jQuery);
+}()); 

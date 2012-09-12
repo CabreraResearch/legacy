@@ -681,7 +681,6 @@
                         relatednodetypeid: cswPrivate.relatednodetypeid,
                         relatedobjectclassid: cswPrivate.relatedobjectclassid,
                         propid: propId,
-                        propDiv: propDiv,
                         saveBtn: cswPrivate.saveBtn,
                         propData: propData,
                         onReload: function (afterReload) {
@@ -708,7 +707,7 @@
                         ReadOnly: Csw.bool(propData.readonly) || cswPrivate.Config
                     }, propDiv);
 
-                    cswPrivate.properties[propId] = Csw.nbt.property(propDiv, fieldOpt);
+                    cswPrivate.properties[propId] = Csw.nbt.property(fieldOpt);
 
                     if (Csw.contains(propData, 'subprops')) {
                         // recurse on sub-props
@@ -760,18 +759,19 @@
                 /// <param name="$savebtn" type="JQuery"> A save button </param>
                 /// <returns type="void"></returns>
                 'use strict';
-                /*
-                Case 24449: 
-                $.CswFieldTypeFactory('save') depends on the result of the onChange event which triggers this method.
-                Normally, the page is ready when 'Save' is clicked; however, 
-                before we can evaluate subprop behavior, the governing controls must update with the result of their change event.
-                */
+                
+                //Case 25352: the factory is no longer responsible for calling the save method
+                    //Case 24449: 
+                    //$.CswFieldTypeFactory('save') depends on the result of the onChange event which triggers this method.
+                    //Normally, the page is ready when 'Save' is clicked; however, 
+                    //before we can evaluate subprop behavior, the governing controls must update with the result of their change event.
+                
                 Csw.defer(function () {
                     // do a fake 'save' to update the json with the current value
-                    $.CswFieldTypeFactory('save', fieldOpt);
-                    if (cswPrivate.EditMode == Csw.enums.editMode.Add) {
-                        fieldOpt.propData.wasmodified = true;
-                    }
+                    //$.CswFieldTypeFactory('save', fieldOpt);
+                    //if (cswPrivate.EditMode == Csw.enums.editMode.Add) {
+                    //    fieldOpt.propData.wasmodified = true;
+                    //}
                     if (fieldOpt.propData.wasmodified) {
                         // update the propxml from the server
                         var jsonData = {
@@ -826,7 +826,7 @@
                         propOpt.propCell = cswPrivate.getPropertyCell(cellSet);
                         propOpt.propDiv = propOpt.propCell.children('div').first();
 
-                        $.CswFieldTypeFactory('save', propOpt);
+                        //$.CswFieldTypeFactory('save', propOpt);
                         if (propOpt.propData.wasmodified) {
                             propIds.push(propOpt.propData.id);
                         }

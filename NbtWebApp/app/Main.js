@@ -16,23 +16,35 @@ window.initMain = window.initMain || function (undefined) {
 
     var mainviewselect;
 
-    Csw.body = Csw.literals.factory($('body'));     // case 27563 review K3663 comment 1
+    (function _initMain() {
+        Csw.main.body = Csw.main.body || Csw.main.register('body', Csw.literals.factory($('body')));     // case 27563 review K3663 comment 1
+        Csw.main.ajaxImage = Csw.main.ajaxImage || Csw.main.register('ajaxImage', Csw.literals.factory($('#AjaxImage')));
+        Csw.main.ajaxSpacer = Csw.main.ajaxSpacer || Csw.main.register('ajaxSpacer', Csw.literals.factory($('#AjaxSpacer')));    
+        Csw.main.centerBottomDiv = Csw.main.centerBottomDiv || Csw.main.register('centerBottomDiv', Csw.literals.factory($('#CenterBottomDiv')));
+        Csw.main.centerTopDiv = Csw.main.centerTopDiv || Csw.main.register('centerTopDiv', Csw.literals.factory($('#CenterTopDiv')));
+        Csw.main.headerDashboard = Csw.main.headerDashboard || Csw.main.register('headerDashboard', Csw.literals.factory($('#header_dashboard')));
+        Csw.main.headerMenu = Csw.main.headerMenu || Csw.main.register('headerMenu', Csw.literals.factory($('#header_menu')));
+        Csw.main.headerQuota = Csw.main.headerQuota || Csw.main.register('headerQuota', Csw.literals.factory($('#header_quota')));
+        Csw.main.headerUsername = Csw.main.headerUsername || Csw.main.register('headerUsername', Csw.literals.factory($('#header_username')));
+        Csw.main.leftDiv = Csw.main.leftDiv || Csw.main.register('leftDiv', Csw.literals.factory($('#LeftDiv')));
+        Csw.main.mainMenuDiv = Csw.main.mainMenuDiv || Csw.main.register('mainMenuDiv', Csw.literals.factory($('#MainMenuDiv')));
+        Csw.main.rightDiv = Csw.main.rightDiv || Csw.main.register('rightDiv', Csw.literals.factory($('#RightDiv')));
+        Csw.main.searchDiv = Csw.main.searchDiv || Csw.main.register('searchDiv', Csw.literals.factory($('#SearchDiv')));
+        Csw.main.viewSelectDiv = Csw.main.viewSelectDiv || Csw.main.register('viewSelectDiv', Csw.literals.factory($('#ViewSelectDiv')));
+        Csw.main.watermark = Csw.main.watermark || Csw.main.register('watermark', Csw.literals.factory($('#watermark')));
+        
+    }());
+    
 
     function startSpinner() {
-        $('#ajaxSpacer').hide();
-        $('#ajaxImage').show();
-        //if (true === window.displayAllExceptions) {
-        //    Csw.debug.group('ajax');
-        //}
+        Csw.main.ajaxImage.show();
+        Csw.main.ajaxSpacer.hide();
     }
     Csw.subscribe(Csw.enums.events.ajax.globalAjaxStart, startSpinner);
 
     function stopSpinner() {
-        $('#ajaxImage').hide();
-        $('#ajaxSpacer').show();
-        //if (true === window.displayAllExceptions) {
-        //    Csw.debug.groupEnd('ajax');
-        //}
+        Csw.main.ajaxImage.hide();
+        Csw.main.ajaxSpacer.show();
     };
     Csw.subscribe(Csw.enums.events.ajax.globalAjaxStop, stopSpinner);
     
@@ -77,7 +89,7 @@ window.initMain = window.initMain || function (undefined) {
             urlMethod: 'getWatermark',
             success: function (result) {
                 if (false === Csw.isNullOrEmpty(result.watermark)) {
-                    $('#watermark').text(result.watermark);
+                    Csw.main.watermark.text(result.watermark);
                 }
             }
         });
@@ -99,10 +111,9 @@ window.initMain = window.initMain || function (undefined) {
     }
 
     function refreshHeaderMenu() {
-        var $header = $('#header_menu');
         var u = Csw.cookie.get(Csw.cookie.cookieNames.Username);
-        $header.empty();
-        $header.CswMenuHeader({
+        Csw.main.headerMenu.empty();
+        Csw.main.headerMenu.$.CswMenuHeader({
             onLogout: function () {
                 Csw.clientSession.logout();
             },
@@ -196,17 +207,16 @@ window.initMain = window.initMain || function (undefined) {
     }
 
     function initAll(onSuccess) {
-        //if (debugOn()) Csw.debug.log('Main.initAll()');
-        $('#CenterBottomDiv').CswLogin('init', {
+        Csw.main.centerBottomDiv.$.CswLogin('init', {
             'onAuthenticate': function (u) {
-                $('#header_username').text(u)
-                     .hover(function () { $(this).CswAttrDom('title', Csw.clientSession.getExpireTime()); });
+                Csw.main.headerUsername.text(u)
+                     .$.hover(function () { $(this).CswAttrDom('title', Csw.clientSession.getExpireTime()); });
                 refreshDashboard();
                 refreshHeaderMenu();
                 universalsearch = Csw.composites.universalSearch({}, {
-                    $searchbox_parent: $('#SearchDiv'),
-                    $searchresults_parent: $('#RightDiv'),
-                    $searchfilters_parent: $('#LeftDiv'),
+                    searchBoxParent: Csw.main.searchDiv,
+                    searchResultsParent: Csw.main.rightDiv,
+                    searchFiltersParent: Csw.main.leftDiv,
                     onBeforeSearch: function () {
                         clear({ all: true });
                     },
@@ -228,8 +238,7 @@ window.initMain = window.initMain || function (undefined) {
                     }
                 });
 
-                var headerQuota = Csw.literals.factory($('#header_quota'));
-                Csw.actions.quotaImage(headerQuota);
+                Csw.actions.quotaImage(Csw.main.headerQuota);
                 
                 // handle querystring arguments
                 var loadCurrent = handleQueryString();
@@ -272,15 +281,14 @@ window.initMain = window.initMain || function (undefined) {
     }
     initAll();
     function refreshDashboard() {
-        $('#header_dashboard').empty().CswDashboard();
+        Csw.main.headerDashboard.empty().$.CswDashboard();
     }
 
     // initAll()
 
     function refreshViewSelect(onSuccess) {
-        var selectDiv = Csw.literals.factory($('#ViewSelectDiv'));
-        selectDiv.empty();
-        mainviewselect = selectDiv.viewSelect({
+        Csw.main.viewSelectDiv.empty();
+        mainviewselect = Csw.main.viewSelectDiv.viewSelect({
             ID: 'mainviewselect',
             onSelect: handleItemSelect,
             onSuccess: onSuccess
@@ -309,20 +317,20 @@ window.initMain = window.initMain || function (undefined) {
         }
 
         if (o.all || o.left) {
-            $('#LeftDiv').empty();
+            Csw.main.leftDiv.empty();
         }
         if (o.all || o.right) {
-            $('#RightDiv').empty();
+            Csw.main.rightDiv.empty();
         }
         if (o.all || o.centertop) {
-            $('#CenterTopDiv').empty();
+            Csw.main.centerTopDiv.empty();
         }
         if (o.all || o.centerbottom) {
-            $('#CenterBottomDiv').empty();
+            Csw.main.centerBottomDiv.empty();
         }
         if (o.all) {
             Csw.setGlobalProp('uniqueIdCount', 0);
-            $('#MainMenuDiv').empty();
+            Csw.main.mainMenuDiv.empty();
         }
     }
     Csw.subscribe(Csw.enums.events.main.clear, function (eventObj, opts) {
@@ -330,17 +338,10 @@ window.initMain = window.initMain || function (undefined) {
     });
 
     function refreshWelcome() {
-        //if (debugOn()) Csw.debug.log('Main.refreshWelcome()');
         clear({ all: true });
 
-        $('#CenterBottomDiv').CswWelcome('initTable', {
+        Csw.main.centerBottomDiv.$.CswWelcome('initTable', {
             'onLinkClick': handleItemSelect,
-            //            'onSearchClick': function (view) {
-            //                var viewid = view.viewid;
-            //                var viewmode = view.viewmode;
-            //                handleItemSelect({ 'viewid': viewid, 'viewmode': viewmode, 'linktype': 'search' });
-            //                refreshSearchPanel({ 'viewid': viewid, 'searchType': 'view' });
-            //            },
             'onAddClick': function (nodetypeid) {
                 $.CswDialog('AddNodeDialog', {
                     'nodetypeid': nodetypeid,
@@ -465,20 +466,20 @@ window.initMain = window.initMain || function (undefined) {
 
         function refreshMainMenu(options) {
             var o = {
-            parent: Csw.literals.factory($('#MainMenuDiv')),
+                parent: Csw.main.mainMenuDiv,
                 viewid: '',
                 viewmode: '',
                 nodeid: '',
                 cswnbtnodekey: '',
-            nodetypeid: '',
-            propid: '',
-            grid: '',
-            limitMenuTo: '',
-            readonly: false
+                nodetypeid: '',
+                propid: '',
+                grid: '',
+                limitMenuTo: '',
+                readonly: false
             };
-        if (options) Csw.extend(o, options);
+            Csw.extend(o, options);
 
-        $('#MainMenuDiv').children().remove();
+            Csw.main.mainMenuDiv.empty();
 
         var menuOpts = { 
             width: '',
@@ -537,124 +538,9 @@ window.initMain = window.initMain || function (undefined) {
 
         o.parent.menu( menuOpts );
 
-    } // refreshMainMenu()
-
-        //    function refreshSearchPanel(options) {
-        //        //if (debugOn()) Csw.debug.log('Main.refreshSearchPanel()');
-
-        //        var o = {
-        //            viewid: '',
-        //            nodetypeid: '',
-        //            cswnbtnodekey: '',
-        //            viewSearchId: '',
-        //            genericSearchId: '',
-        //            searchType: 'generic'
-        //        };
-
-        //        if (options) {
-        //            Csw.extend(o, options);
-        //        }
-
-        //        $('#CenterTopDiv').children('#' + o.viewSearchId)
-        //             .empty();
-        //        $('#CenterTopDiv').children('#' + o.genericSearchId)
-        //             .empty();
-        //        var $thisSearchForm = '';
-
-        //        switch (o.searchType.toLowerCase()) {
-        //            case 'generic':
-        //                {
-        //                    $thisSearchForm = makeSearchForm({ 'cswnbtnodekey': o.cswnbtnodekey, 'ID': o.genericSearchId });
-        //                    break;
-        //                }
-        //            case 'view':
-        //                {
-        //                    $thisSearchForm = makeSearchForm({ 'viewid': o.viewid, 'cswnbtnodekey': o.cswnbtnodekey, 'ID': o.viewSearchId });
-        //                    break;
-        //                }
-        //        }
-        //        return $thisSearchForm;
-        //    }
-
-        //    function makeSearchForm(options) {
-        //        var o = {
-        //            viewid: '',
-        //            nodetypeid: '',
-        //            cswnbtnodekey: '',
-        //            ID: ''
-        //        };
-        //        if (options) {
-        //            Csw.extend(o, options);
-        //        }
-
-        //        clear({ centertop: true });
-
-        //        var onSearchSubmit = function (searchviewid, searchviewmode) {
-        //            clear({ right: true, centerbottom: true });
-        //            var viewMode = searchviewmode;
-        //            if (viewMode === 'list') {
-        //                viewMode = 'tree';
-        //            }
-        //            Csw.clientState.setCurrentView(searchviewid, viewMode);
-
-        //            refreshSelected({
-        //                viewmode: viewMode,
-        //                viewid: searchviewid,
-        //                forsearch: true,
-        //                showempty: false,
-        //                cswnbtnodekey: '', //do not want a view of only this node
-        //                nodeid: ''
-        //            });
-        //        };
-        //        var onClearSubmit = function (parentviewid, parentviewmode) {
-        //            clear({ centertop: true }); //clear Search first
-
-        //            var viewid;
-        //            if (Csw.isNullOrEmpty(parentviewid)) {
-        //                viewid = Csw.cookie.get(Csw.cookie.cookieNames.CurrentViewId);
-        //            } else {
-        //                viewid = parentviewid;
-        //            }
-
-        //            if (false === Csw.isNullOrEmpty(viewid)) {
-        //                clear({ right: true, centerbottom: true }); //wait to clear rest until we have a valid viewid
-        //                var viewmode;
-        //                if (Csw.isNullOrEmpty(parentviewmode)) {
-        //                    viewmode = Csw.cookie.get(Csw.cookie.cookieNames.CurrentViewMode);
-        //                } else {
-        //                    viewmode = (parentviewmode === 'list') ? 'tree' : parentviewmode;
-        //                }
-
-        //                Csw.clientState.setCurrentView(viewid, viewmode);
-
-        //                refreshSelected({
-        //                    viewmode: viewmode,
-        //                    viewid: viewid,
-        //                    forsearch: true,
-        //                    showempty: false,
-        //                    cswnbtnodekey: '', //do not want a view of only this node
-        //                    nodeid: ''
-        //                });
-        //            }
-        //        };
-        //        var onSearchClose = function () {
-        //            clear({ centertop: true });
-        //        };
-        //        var $search = $('#CenterTopDiv').CswSearch({
-        //            'parentviewid': o.viewid,
-        //            'cswnbtnodekey': o.cswnbtnodekey,
-        //            'nodetypeid': o.nodetypeid,
-        //            'ID': o.ID,
-        //            'onSearchSubmit': onSearchSubmit,
-        //            'onClearSubmit': onClearSubmit,
-        //            'onSearchClose': onSearchClose
-        //        });
-        //        return $search;
-        //    }
+    } 
 
         function getViewGrid(options) {
-            //if (debugOn()) Csw.debug.log('Main.getViewGrid()');
-
             var o = {
                 viewid: '',
                 nodeid: '',
@@ -693,7 +579,7 @@ window.initMain = window.initMain || function (undefined) {
 
             var viewfilters = Csw.nbt.viewFilters({
                 ID: 'main_viewfilters',
-                parent: Csw.literals.factory($('#CenterTopDiv')),
+                parent: Csw.main.centerTopDiv,
                 viewid: o.viewid,
                 onEditFilters: function (newviewid) {
                     var newopts = o;
@@ -704,7 +590,7 @@ window.initMain = window.initMain || function (undefined) {
                 } // onEditFilters
             }); // viewFilters
 
-            $('#CenterBottomDiv').CswNodeGrid('init', {
+            Csw.main.centerBottomDiv.$.CswNodeGrid('init', {
                 viewid: o.viewid,
                 nodeid: o.nodeid,
                 cswnbtnodekey: o.cswnbtnodekey,
@@ -772,7 +658,7 @@ window.initMain = window.initMain || function (undefined) {
 
             var viewfilters = Csw.nbt.viewFilters({
                 ID: 'main_viewfilters',
-                parent: Csw.literals.factory($('#CenterTopDiv')),
+                parent: Csw.main.centerTopDiv,
                 viewid: o.viewid,
                 onEditFilters: function (newviewid) {
                     var newopts = o;
@@ -783,7 +669,7 @@ window.initMain = window.initMain || function (undefined) {
                 } // onEditFilters
             }); // viewFilters
         
-        Csw.nbt.nodeTable($('#CenterBottomDiv'), {
+        Csw.nbt.nodeTable(Csw.main.centerBottomDiv, {
                 viewid: o.viewid,
                 nodeid: o.nodeid,
                 cswnbtnodekey: o.cswnbtnodekey,
@@ -854,7 +740,7 @@ window.initMain = window.initMain || function (undefined) {
             };
             if (viewopts) Csw.extend(v, viewopts);
             clear({ right: true });
-            $('#RightDiv').CswDefaultContent(v);
+            Csw.main.rightDiv.$.CswDefaultContent(v);
 
         } // showDefaultContentTree()
 
@@ -868,8 +754,7 @@ window.initMain = window.initMain || function (undefined) {
             };
             if (viewopts) Csw.extend(v, viewopts);
             clear({ centerbottom: true });
-            var div = Csw.literals.div({
-                $parent: $('#CenterBottomDiv'),
+            var div = Csw.main.centerBottomDiv.div({
                 ID: 'deftbldiv',
                 align: 'center'
             });
@@ -881,25 +766,21 @@ window.initMain = window.initMain || function (undefined) {
         } // showDefaultContentTable()
 
         function getTabs(options) {
-            //if (debugOn()) Csw.debug.log('Main.getTabs()');
             Csw.publish('initPropertyTearDown');
             var o = {
                 nodeid: '',
                 cswnbtnodekey: ''
             };
-            if (options) Csw.extend(o, options);
+            Csw.extend(o, options);
 
             clear({ right: true });
-            var parent = Csw.literals.factory($('#RightDiv'));
-            //$('#RightDiv').CswNodeTabs({
-            Csw.layouts.tabsAndProps(parent, {
+            
+            Csw.layouts.tabsAndProps(Csw.main.rightDiv, {
                 ID: 'nodetabs',
                 nodeids: [o.nodeid],
                 nodekeys: [o.cswnbtnodekey],
                 onSave: function () {
                     Csw.clientChanges.unsetChanged();
-                    // case 24304
-                    // refreshSelected({ 'nodeid': nodeid, 'cswnbtnodekey': nodekey });
                 },
                 tabid: Csw.cookie.get(Csw.cookie.cookieNames.CurrentTabId),
                 onBeforeTabSelect: function () {
@@ -933,7 +814,6 @@ window.initMain = window.initMain || function (undefined) {
         }
 
         function refreshSelected(options) {
-            //if (debugOn()) Csw.debug.log('Main.refreshSelected()');
             Csw.publish('initPropertyTearDown');    
             if (Csw.clientChanges.manuallyCheckChanges()) {
                 var o = {
@@ -947,7 +827,7 @@ window.initMain = window.initMain || function (undefined) {
                     forsearch: false,
                     IncludeNodeRequired: false
                 };
-                if (options) Csw.extend(o, options);
+                Csw.extend(o, options);
 
                 if (Csw.isNullOrEmpty(o.viewid)) {
                     o.viewid = Csw.cookie.get(Csw.cookie.cookieNames.CurrentViewId);
@@ -987,7 +867,6 @@ window.initMain = window.initMain || function (undefined) {
                         });
                         break;
                     case 'tree':
-                        //default: //tree
                         refreshNodesTree({
                             nodeid: o.nodeid,
                             cswnbtnodekey: o.cswnbtnodekey,
@@ -1000,7 +879,6 @@ window.initMain = window.initMain || function (undefined) {
                         });
                         break;
                     default:
-                        // reload the welcome page
                         refreshWelcome();
                         break;
                 } // switch
@@ -1011,8 +889,6 @@ window.initMain = window.initMain || function (undefined) {
         var multi = false;
 
         function refreshNodesTree(options) {
-            //if (debugOn()) Csw.debug.log('Main.refreshNodesTree()');
-
             var o = {
                 'nodeid': '',
                 'cswnbtnodekey': '',
@@ -1024,9 +900,7 @@ window.initMain = window.initMain || function (undefined) {
                 'viewmode': 'tree',
                 'IncludeNodeRequired': false
             };
-            if (options) {
-                Csw.extend(o, options);
-            }
+            Csw.extend(o, options);
 
             var getEmptyTree = (Csw.bool(o.showempty));
             if (Csw.isNullOrEmpty(o.nodeid)) {
@@ -1043,7 +917,7 @@ window.initMain = window.initMain || function (undefined) {
 
             var viewfilters = Csw.nbt.viewFilters({
                 ID: 'main_viewfilters',
-                parent: Csw.literals.factory($('#LeftDiv')),
+                parent: Csw.main.leftDiv,
                 viewid: o.viewid,
                 onEditFilters: function (newviewid) {
                     var newopts = o;
@@ -1056,9 +930,8 @@ window.initMain = window.initMain || function (undefined) {
 
             mainTree = Csw.nbt.nodeTree({
                 ID: 'main',
-                parent: Csw.literals.factory($('#LeftDiv')),
+                parent: Csw.main.leftDiv,
                 forsearch: o.forsearch,
-                //showempty: getEmptyTree,
                 onSelectNode: function (optSelect) {
                     onSelectTreeNode({
                     tree: mainTree,
@@ -1074,15 +947,12 @@ window.initMain = window.initMain || function (undefined) {
                 viewmode: o.viewmode,
                 nodeid: o.nodeid,
                 cswnbtnodekey: o.cswnbtnodekey,
-                //nodename: o.nodename,
                 IncludeNodeRequired: o.IncludeNodeRequired,
                 onViewChange: function (newviewid, newviewmode) {
                     Csw.clientState.setCurrentView(newviewid, newviewmode);
                 }
             });
-        }
-
-        // refreshNodesTree()
+        }    // refreshNodesTree()
 
 
         function handleAction(options) {
@@ -1098,8 +968,7 @@ window.initMain = window.initMain || function (undefined) {
             var designOpt = {};
 
             Csw.clientState.setCurrentAction(o.actionname, o.actionurl);
-            var centerTopDiv = Csw.literals.factory($('#CenterTopDiv'));
-
+            
             Csw.ajax.post({
                 urlMethod: 'SaveActionToQuickLaunch',
                 'data': { 'ActionName': o.actionname }
@@ -1110,11 +979,6 @@ window.initMain = window.initMain || function (undefined) {
 
             var actionName = Csw.string(o.actionname).replace('_', ' ').trim().toLowerCase();
             switch (actionName) {
-                //			case 'Assign_Inspection':                                                                                
-                //				break;                                                                                
-                //			case 'Assign_Tests':                                                                                
-                //				break;                                                                                
-                // NOTE: Create Inspection currently only works if you are logged in as chemsw_admin                                                                                
                 case 'create inspection':
                     designOpt = {
                         ID: 'cswInspectionDesignWizard',
@@ -1138,14 +1002,12 @@ window.initMain = window.initMain || function (undefined) {
                         startingStep: o.ActionOptions.startingStep,
                         menuRefresh: refreshSelected
                     };
-                    Csw.nbt.createInspectionWizard(centerTopDiv, designOpt);
+                    Csw.nbt.createInspectionWizard(Csw.main.centerTopDiv, designOpt);
 
                     break;
 
                 case 'create material':
                     var createOpt = {
-                        //                    viewid: o.ActionOptions.viewid,
-                        //                    viewmode: o.ActionOptions.viewmode,
                         onCancel: function () {
                             clear({ 'all': true });
                             Csw.clientState.setCurrent(Csw.clientState.getLast());
@@ -1160,9 +1022,8 @@ window.initMain = window.initMain || function (undefined) {
                             });
                         },
                         startingStep: o.ActionOptions.startingStep
-                        //                    menuRefresh: refreshSelected
                     };
-                    Csw.nbt.createMaterialWizard(centerTopDiv, createOpt);
+                    Csw.nbt.createMaterialWizard(Csw.main.centerTopDiv, createOpt);
                     break;
 
                 case 'dispensecontainer':
@@ -1208,12 +1069,9 @@ window.initMain = window.initMain || function (undefined) {
                             });
                         }
                     };
-                    Csw.nbt.dispenseContainerWizard(centerTopDiv, designOpt);
-
+                    Csw.nbt.dispenseContainerWizard(Csw.main.centerTopDiv, designOpt);
                     break;
-
-                    //			case 'Design':                                                                                  
-                    //				break;                                                                                  
+                                                                  
                 case 'edit view':
                     var editViewOptions = {
                         'viewid': o.ActionOptions.viewid,
@@ -1234,7 +1092,6 @@ window.initMain = window.initMain || function (undefined) {
                             }
                         },
                         onAddView: function (deletedviewid) {
-                            //refreshViewSelect();
                         },
                         onDeleteView: function (deletedviewid) {
                             var current = Csw.clientState.getCurrent();
@@ -1250,14 +1107,12 @@ window.initMain = window.initMain || function (undefined) {
                         'startingStep': o.ActionOptions.startingStep
                     };
 
-                    $('#CenterTopDiv').CswViewEditor(editViewOptions);
-
+                    Csw.main.centerTopDiv.$.CswViewEditor(editViewOptions);
                     break;
-                    //			case 'Enter_Results':                                                                                  
-                    //				break;                                                                                  
+                                                                       
 
                 case 'future scheduling':
-                    Csw.nbt.futureSchedulingWizard(centerTopDiv, {
+                    Csw.nbt.futureSchedulingWizard(Csw.main.centerTopDiv, {
                         onCancel: refreshSelected,
                         onFinish: function (viewid, viewmode) {
                             handleItemSelect({ itemid: viewid, mode: viewmode });
@@ -1270,16 +1125,15 @@ window.initMain = window.initMain || function (undefined) {
                     //			case 'Inspection_Design':                                                                                  
                     //				break;                                                                                  
                 case 'quotas':
-                    Csw.actions.quotas(centerTopDiv, {
+                    Csw.actions.quotas(Csw.main.centerTopDiv, {
                         onQuotaChange: function () {
-                            var quotaHeader = Csw.literals.factory($('#header_quota'));
-                            Csw.actions.quotaImage(quotaHeader);
+                            Csw.actions.quotaImage(Csw.main.headerQuota);
                         }
                     });
 
                     break;
                 case 'modules':
-                    Csw.actions.modules(centerTopDiv, {
+                    Csw.actions.modules(Csw.main.centerTopDiv, {
                         onModuleChange: function () {
                             refreshDashboard();
                             refreshViewSelect();
@@ -1300,14 +1154,14 @@ window.initMain = window.initMain || function (undefined) {
                         Csw.clientState.setCurrent(Csw.clientState.getLast());
                         refreshSelected();
                     };
-                    Csw.nbt.receiveMaterialWizard(centerTopDiv, o);
+                    Csw.nbt.receiveMaterialWizard(Csw.main.centerTopDiv, o);
                     break;
                 case 'sessions':
-                    Csw.actions.sessions(centerTopDiv);
+                    Csw.actions.sessions(Csw.main.centerTopDiv);
                     break;
 
                 case 'submit request':
-                    Csw.actions.submitRequest(centerTopDiv, {
+                    Csw.actions.submitRequest(Csw.main.centerTopDiv, {
                         onSubmit: function () {
                             clear({ 'all': true });
                             Csw.clientState.setCurrent(Csw.clientState.getLast());
@@ -1323,7 +1177,7 @@ window.initMain = window.initMain || function (undefined) {
                     break;
 
                 case 'subscriptions':
-                    Csw.actions.subscriptions(centerTopDiv);
+                    Csw.actions.subscriptions(Csw.main.centerTopDiv);
                     break;
 
                 case 'view scheduled rules':
@@ -1336,16 +1190,9 @@ window.initMain = window.initMain || function (undefined) {
                         menuRefresh: refreshSelected
                     };
 
-                    Csw.nbt.scheduledRulesWizard(centerTopDiv, rulesOpt);
+                    Csw.nbt.scheduledRulesWizard(Csw.main.centerTopDiv, rulesOpt);
                     break;
-                    //			case 'Load_Mobile_Data':                                                                                  
-                    //				break;                                                                                  
-                    //			case 'Receiving':                                                                                  
-                    //				break;                                                                                  
-                    //			case 'Split_Samples':                                                                                  
-                    //				break;                                                                                  
-                    //			case 'View_By_Location':                                                                                  
-                    //				break;                                                                                  
+                                                                    
                 default:
                     if (false == Csw.isNullOrEmpty(o.actionurl)) {
                         Csw.window.location(o.actionurl);
