@@ -29,7 +29,10 @@
                 stepFourComplete: false,
                 config: {
                     quantityName: 'Initial Quantity *',
-                    numberName: 'Catalog No.'
+                    numberName: 'Catalog No.',
+                    dispensibleName: 'Dispensible',
+                    quantityEditableName: 'Quantity Editable',
+                    unitCountName: 'Unit Count'
                 },
                 rows: [],
                 tabsAndProps: null,
@@ -48,15 +51,21 @@
                     properties: {},
                     documentProperties: {},
                     useExistingMaterial: false,
-                    materialProperies: {}
+                    materialProperies: {},
+                    showQuantityEditable: false,
+                    showDispensable: false
                 }
             };
 
             var cswPublic = {
                 catalogNoCtrl: null,
                 quantityCtrl: null,
+                dispensibleCtrl: null,
+                quantEditableCtrl: null,
+                unitCountCtrl: null,
                 sizesForm: null,
                 sizeGrid: null,
+                sizeGridAddButton: null,
                 sizes: []
             };
 
@@ -198,7 +207,7 @@
                     doNextOnInit: false
                 });
 
-            }());
+            } ());
 
 
             cswPrivate.toggleButton = function (button, isEnabled, doClick) {
@@ -244,7 +253,7 @@
                             hasChanged = true;
                             cswPrivate.state.partNo = cswPrivate.partNoInput.val();
                         }
-                        
+
                         if (hasChanged) {
                             cswPrivate.state.materialId = '';
                             cswPrivate.state.documentId = '';
@@ -299,6 +308,7 @@
                             ID: cswPrivate.wizard.makeStepId('supplier'),
                             cssclass: 'required',
                             objectClassName: 'VendorClass',
+                            addNodeDialogTitle: 'Vendor',
                             useWide: true,
                             selectedNodeId: cswPrivate.state.supplierId || cswPrivate.state.supplier.val,
                             labelText: 'Supplier*: ',
@@ -353,7 +363,7 @@
                                         Csw.publish('CreateMaterialSuccess');
                                     }
                                 },
-                                error: function() {
+                                error: function () {
                                     cswPrivate.toggleButton(cswPrivate.buttons.prev, false, true);
                                 }
                             });
@@ -362,7 +372,7 @@
                         cswPrivate.stepOneComplete = true;
                     }
                 };
-            }());
+            } ());
 
             cswPrivate.makeStep2 = (function () {
                 cswPrivate.stepTwoComplete = false;
@@ -387,7 +397,7 @@
                         cswPrivate.divStep2.br({ number: 4 });
 
                         div = cswPrivate.divStep2.div();
-                        Csw.subscribe('CreateMaterialSuccess', function() {
+                        Csw.subscribe('CreateMaterialSuccess', function () {
                             cswPrivate.tabsAndProps = Csw.layouts.tabsAndProps(div, {
                                 nodeids: [cswPrivate.state.materialId],
                                 nodetypeid: cswPrivate.state.materialType.val,
@@ -405,7 +415,7 @@
                     }
                 };
 
-            }());
+            } ());
 
             cswPrivate.makeStep3 = (function () {
                 cswPrivate.stepThreeComplete = false;
@@ -417,7 +427,8 @@
                         var ret = true;
                         for (var i = 0; i < cswPublic.sizes.length; i++) {
                             if (cswPublic.sizes[i]["quantity"] === size["quantity"] &&
-                                cswPublic.sizes[i]["unit"] === size["unit"]
+                                cswPublic.sizes[i]["unit"] === size["unit"] &&
+                                cswPublic.sizes[i]["catalogNo"] === size["catalogNo"]
                             ) {
                                 ret = false;
                             }
@@ -469,6 +480,9 @@
                                 quantity: '',
                                 unit: '',
                                 unitid: '',
+                                unitCount: '',
+                                quantEditableChecked: 'true',
+                                dispensibleChecked: 'true',
                                 nodetypeid: cswPrivate.state.sizeNodeTypeId
                             };
 
@@ -482,7 +496,13 @@
                                 return ret;
                             };
 
-                            cswPrivate.header = [cswPrivate.config.quantityName, cswPrivate.config.numberName];
+                            cswPrivate.header = [cswPrivate.config.unitCountName, cswPrivate.config.quantityName, cswPrivate.config.numberName];
+                            if (cswPrivate.state.showQuantityEditable) {
+                                cswPrivate.header = cswPrivate.header.concat([cswPrivate.config.quantityEditableName]);
+                            }
+                            if (cswPrivate.state.showDispensable) {
+                                cswPrivate.header = cswPrivate.header.concat([cswPrivate.config.dispensibleName]);
+                            }
                             if (cswPrivate.rows.length === 0) {
                                 cswPrivate.rows.push(cswPrivate.header);
                             }
@@ -500,13 +520,33 @@
                                         catalogNo: '',
                                         quantity: '',
                                         unit: '',
-                                        unitid: ''
+                                        unitid: '',
+                                        unitCount: '',
+                                        quantEditableChecked: 'true',
+                                        dispensibleChecked: 'true'
                                     };
 
                                     switch (columnName) {
+                                        case cswPrivate.config.unitCountName:
+                                            cswPublic.unitCountCtrl = cswCell.numberTextBox({
+                                                ID: Csw.tryExec(Csw.makeId, 'sizeUnitCount'),
+                                                value: 1,
+                                                MinValue: 1,
+                                                Precision: 0,
+                                                //Required: false, //TODO - case 27665 - change to false when it is handled appropraitely serverside
+                                                onChange: function (value) {
+                                                    thisSize.unitCount = cswPublic.unitCountCtrl.val();
+                                                    extendNewAmount(thisSize);
+                                                }
+                                            });
+                                            cswCell.span({ text: ' x' });
+                                            break;
                                         case cswPrivate.config.quantityName:
                                             cswPublic.quantityCtrl = cswCell.numberTextBox({
                                                 ID: Csw.tryExec(Csw.makeId, 'quantityNumberBox'),
+                                                MinValue: 0,
+                                                isClosedSet: false,
+                                                Required: true,
                                                 width: '60px'
                                             });
                                             cswPublic.unitsCtrl = cswCell.select({
@@ -520,6 +560,26 @@
                                                 width: '80px',
                                                 onChange: function (value) {
                                                     thisSize.catalogNo = value;
+                                                    extendNewAmount(thisSize);
+                                                }
+                                            });
+                                            break;
+                                        case cswPrivate.config.quantityEditableName:
+                                            cswPublic.quantEditableCtrl = cswCell.checkBox({
+                                                ID: Csw.tryExec(Csw.makeId, 'sizeQuantEditable'),
+                                                Checked: true,
+                                                onChange: function (value) {
+                                                    thisSize.quantEditableChecked = cswPublic.quantEditableCtrl.val();
+                                                    extendNewAmount(thisSize);
+                                                }
+                                            });
+                                            break;
+                                        case cswPrivate.config.dispensibleName:
+                                            cswPublic.dispensibleCtrl = cswCell.checkBox({
+                                                ID: Csw.tryExec(Csw.makeId, 'sizeDispensible'),
+                                                Checked: true,
+                                                onChange: function (value) {
+                                                    thisSize.dispensibleChecked = cswPublic.dispensibleCtrl.val();
                                                     extendNewAmount(thisSize);
                                                 }
                                             });
@@ -544,15 +604,27 @@
                                         newSize.unit = cswPublic.unitsCtrl.val();
                                         newSize.catalogNo = cswPublic.catalogNoCtrl.val();
                                         newSize.unitid = getID(newSize.unit);
-                                        if (false === Csw.isNullOrEmpty(newSize.quantity)) {
+                                        newSize.unitCount = cswPublic.unitCountCtrl.val();
+
+                                        var formCols = [newSize.unitCount + ' x', newSize.quantity + ' ' + newSize.unit, newSize.catalogNo];
+                                        if (cswPrivate.state.showQuantityEditable) {
+                                            newSize.quantEditableChecked = cswPublic.quantEditableCtrl.val();
+                                            formCols = formCols.concat([newSize.quantEditableChecked]);
+                                        }
+                                        if (cswPrivate.state.showDispensable) {
+                                            newSize.dispensibleChecked = cswPublic.dispensibleCtrl.val();
+                                            formCols = formCols.concat([newSize.dispensibleChecked]);
+                                        }
+                                        if (Csw.isNullOrEmpty(newSize.quantity) && false === Csw.bool(newSize.quantEditableChecked)) {
+                                            $.CswDialog('AlertDialog', 'A quantity must be specified when creating a size that does not have Quantity Editable checked. ' +
+                                            'Please specify the quantity or set the Quantity Editable checkbox.');
+                                        } else {
                                             if (isSizeNew(newSize)) {
                                                 cswPublic.sizes.push(extractNewAmount(newSize));
-                                                cswPublic.sizeGrid.addRows([newSize.quantity + ' ' + newSize.unit, newSize.catalogNo]);
+                                                cswPublic.sizeGrid.addRows(formCols);
                                             } else {
                                                 $.CswDialog('AlertDialog', 'This size is already defined. Please define a new, unique size.');
                                             }
-                                        } else {
-                                            $.CswDialog('AlertDialog', 'A quantity must be specified when creating a size. Please specify the quantity.');
                                         }
                                     }
                                 },
@@ -564,6 +636,7 @@
                                 }
                             });
                         };
+
                         div.br();
 
                         /* Size Select (hidden if only 1 NodeType present) - to get size node type */
@@ -591,7 +664,7 @@
                     }
                 };
 
-            }());
+            } ());
 
             //MSDS upload
             cswPrivate.makeStep4 = (function () {
@@ -642,10 +715,10 @@
                     }
                 };
 
-            }());
+            } ());
 
             cswPrivate.makeStep1();
 
             return cswPublic;
         });
-}());
+} ());

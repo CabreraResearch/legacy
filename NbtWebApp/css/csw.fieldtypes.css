@@ -12,7 +12,8 @@
 .CswFieldTypeNFPA_table
 {
 	padding: 20px;
-	
+}
+.CswFieldTypeNFPA_rotation{
      -moz-transform: rotate(45deg);  /* FF3.5+ */
        -o-transform: rotate(45deg);  /* Opera 10.5 */
   -webkit-transform: rotate(45deg);  /* Saf3.1+, Chrome */
@@ -27,7 +28,7 @@
 	height: 50px;
 }
 
-.CswFieldTypeNFPA_red
+.CswFieldTypeNFPA_redDiamond
 {
 	background-color: #ff0000;
 	border-top: 2px solid #000000;
@@ -35,7 +36,7 @@
 	border-bottom: 1px solid #000000;
 	border-left: 2px solid #000000;
 }
-.CswFieldTypeNFPA_yellow
+.CswFieldTypeNFPA_yellowDiamond
 {
 	background-color: &cswbgcolorhilite;
 	border-top: 2px solid #000000;
@@ -43,7 +44,7 @@
 	border-bottom: 1px solid #000000;
 	border-left: 1px solid #000000;
 }
-.CswFieldTypeNFPA_blue
+.CswFieldTypeNFPA_blueDiamond
 {
 	background-color: #0000ff;
 	border-top: 1px solid #000000;
@@ -51,7 +52,7 @@
 	border-bottom: 2px solid #000000;
 	border-left: 2px solid #000000;
 }
-.CswFieldTypeNFPA_white
+.CswFieldTypeNFPA_whiteDiamond
 {
 	background-color: #ffffff;
 	border-top: 1px solid #000000;
@@ -66,16 +67,58 @@
 	color: &cswtextcolor;
 	padding: 10px;
 	font-weight: bold;
-	
+}
+.CswFieldTypeNFPA_textRotated
+{
      -moz-transform: rotate(315deg);  /* FF3.5+ */
        -o-transform: rotate(315deg);  /* Opera 10.5 */
   -webkit-transform: rotate(315deg);  /* Saf3.1+, Chrome */
       -ms-transform: rotate(315deg);  /* IE9 */
           transform: rotate(315deg);  
 }
-
 .CswFieldTypeNFPA_whitetext
 {
     font-size: 1.2em;
     padding-left: 0px;
+}
+
+.CswFieldTypeNFPA_redLinear
+{
+	background-color: #ff0000;
+	border-top: 1px solid #000000;
+	border-right: 1px solid #000000;
+	border-bottom: 1px solid #000000;
+	border-left: 1px solid #000000;
+}
+.CswFieldTypeNFPA_yellowLinear
+{
+	background-color: &cswbgcolorhilite;
+	border-top: 1px solid #000000;
+	border-right: 1px solid #000000;
+	border-bottom: 1px solid #000000;
+	border-left: 1px solid #000000;
+}
+.CswFieldTypeNFPA_blueLinear
+{
+	background-color: #0000ff;
+	border-top: 1px solid #000000;
+	border-right: 1px solid #000000;
+	border-bottom: 1px solid #000000;
+	border-left: 1px solid #000000;
+}
+.CswFieldTypeNFPA_whiteLinear
+{
+	background-color: #ffffff;
+	border-top: 1px solid #000000;
+	border-right: 1px solid #000000;
+	border-bottom: 1px solid #000000;
+	border-left: 1px solid #000000;
+}
+.CswFieldTypeNFPA_whitetextLinear
+{
+    padding-top: 15px;
+    padding-left: 5px;
+    padding-right: 5px;
+    font-size: 1.05em;
+    text-align: center;
 }

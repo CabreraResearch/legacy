@@ -14,6 +14,10 @@ namespace ChemSW.Nbt.Schema
 
         public override void update()
         {
+            // This script is for adding object class properties, 
+            // which often become required by other business logic and can cause prior scripts to fail.
+
+            #region ROMEO
 
             // moved from CswUpdateSchemaCase24525 for case 27706
             #region ADD ARCHIVED PROP TO USER
@@ -43,9 +47,13 @@ namespace ChemSW.Nbt.Schema
             }
             #endregion
 
-        
-        
-        
+            #endregion ROMEO
+
+
+            #region SEBASTIAN
+
+            #endregion SEBASTIAN
+
         }//Update()
 
     }//class RunBeforeEveryExecutionOfUpdater_01b
