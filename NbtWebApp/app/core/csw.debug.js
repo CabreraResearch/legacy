@@ -6,16 +6,18 @@
     
     var cswPrivate = {
         prepMsg: function (msg) {
-            var ret = msg;
+            var ret = {};
+            var data = msg || { };
             if (window.internetExplorerVersionNo > -1) {
-                if (false === Csw.isPlainObject(msg)) {
-                    ret = { message: Csw.string(msg) }; 
+                if (false === Csw.isPlainObject(data)) {
+                    data = { message: Csw.string(data) }; 
                 } 
             }
             ret.customerid = ret.customerid || Csw.clientSession.currentAccessId();
             ret.username = ret.username || Csw.clientSession.currentUserName();
             ret.sessionid = ret.sessionid || Csw.clientSession.currentSessionId();
             ret.server = ret.server || Csw.clientSession.currentServer();
+            ret.data = data;
             return ret;
         },
         logLevels: ['info','performance','warn','error','none']
@@ -70,7 +72,7 @@
         /// <summary>Evaluates the truthiness of truth and throws an exception with msg val if false.</summary>
         if (Csw.clientSession.isDebug()) {
             try {
-                msg = cswPrivate.prepMsg(msg);
+                msg = msg || {};
                 console.assert(truth, msg);
             } catch(e) {
                 /* Do nothing */
@@ -82,7 +84,7 @@
         /// <summary>Displays a count of the number of time the msg has been met in the console log(Webkit,FF).</summary>
         if (Csw.clientSession.isDebug()) {
             try {
-                msg = cswPrivate.prepMsg(msg);
+                msg = msg || {};
                 console.count(msg);
             } catch(e) {
                 /* Do nothing */
@@ -93,12 +95,13 @@
     cswPublic.error = function (msg) {
         /// <summary>Outputs an error message to the console log(Webkit,FF)</summary>
         try {
-            msg = cswPrivate.prepMsg(msg);
             if(Csw.clientSession.isDebug()) {
+                msg = msg || { };
                 console.error(msg);
             }
             try {
                 if (cswPrivate.isLogLevelSupported('error')) {
+                    msg = cswPrivate.prepMsg(msg);
                     msg.type = 'Error';
                     Csw.debug.loggly.error.error(Csw.serialize(msg));
                 }
@@ -112,7 +115,7 @@
         /// <summary>Begins a named message group in console log(Webkit,FF)</summary>
         if (Csw.clientSession.isDebug()) {
             try {
-                name = cswPrivate.prepMsg(name);
+                name = name || '';
                 console.group(name);
             } catch(e) {
                 /* Do nothing */
@@ -124,7 +127,7 @@
         /// <summary>Creates a named, collapsed message group in the console log(Webkit,FF)</summary>
         if (Csw.clientSession.isDebug()) {
             try {
-                name = cswPrivate.prepMsg(name);
+                name = name || '';
                 console.groupCollapsed(name);
             } catch(e) {
                 /* Do nothing */
@@ -136,7 +139,7 @@
         /// <summary>Ends a named message group in the console log(Webkit,FF)</summary>
         if (Csw.clientSession.isDebug()) {
             try {
-                name = cswPrivate.prepMsg(name);
+                name = name || '';
                 console.groupEnd(name);
             } catch(e) {
                 /* Do nothing */
@@ -147,12 +150,13 @@
     cswPublic.perf = function (msg) {
         /// <summary>Outputs an info message to the console log(Webkit,FF)</summary>
         try {
-            msg = cswPrivate.prepMsg(msg);
             if(Csw.clientSession.isDebug()) {
+                msg = msg || {};
                 console.info(msg);
             }
             try {
                 if (cswPrivate.isLogLevelSupported('performance')) {
+                    msg = cswPrivate.prepMsg(msg);
                     msg.type = 'Performance';
                     Csw.debug.loggly.perf.info(Csw.serialize(msg));
                 }
@@ -166,12 +170,13 @@
     cswPublic.log = function (msg) {
         /// <summary>Outputs an unstyled message to the console log(Webkit,FF)</summary>
         try {
-            msg = cswPrivate.prepMsg(msg);
             if (Csw.clientSession.isDebug()) {
+                msg = msg || {};
                 console.log(msg);
             }
             try {
                 if (cswPrivate.isLogLevelSupported('info')) {
+                    msg = cswPrivate.prepMsg(msg);
                     msg.type = 'Info';
                     Csw.debug.loggly.info.debug(Csw.serialize(msg));
                 }
@@ -189,6 +194,7 @@
         /// <summary>Beginds a named profile in the console log(Webkit,FF)</summary>
         if (Csw.clientSession.isDebug()) {
             try {
+                name = name || '';
                 if (window.internetExplorerVersionNo === -1) {
                     console.profile(name);
                 }
@@ -202,6 +208,7 @@
         /// <summary>Ends a named profile in the console log(Webkit,FF)</summary>
         if (Csw.clientSession.isDebug()) {
             try {
+                name = name || '';
                 if (window.internetExplorerVersionNo === -1) {
                     console.profileEnd(name);
                 }
@@ -215,7 +222,7 @@
         /// <summary>Begins a named timer in the console log(Webkit,FF)</summary>
         if (Csw.clientSession.isDebug()) {
             try {
-                name = cswPrivate.prepMsg(name);
+                name = name || '';
                 console.time(name);
             } catch(e) {
                 /* Do nothing */
@@ -227,7 +234,7 @@
         /// <summary>Ends a named timer in the console log(Webkit,FF)</summary>
         if (Csw.clientSession.isDebug()) {
             try {
-                name = cswPrivate.prepMsg(name);
+                name = name || '';
                 console.timeEnd(name);
             } catch(e) {
                 /* Do nothing */
@@ -249,12 +256,13 @@
     cswPublic.warn = function (msg) {
         /// <summary>Outputs an warning message to the console log(Webkit,FF)</summary>
         try {
-            msg = cswPrivate.prepMsg(msg);
             if (Csw.clientSession.isDebug()) {
+                msg = msg || {};
                 console.warn(msg);
             }
             try {
                 if (cswPrivate.isLogLevelSupported('warn')) {
+                    msg = cswPrivate.prepMsg(msg);
                     msg.type = 'Warning';
                     Csw.debug.loggly.warn.warn(Csw.serialize(msg));
                 }
