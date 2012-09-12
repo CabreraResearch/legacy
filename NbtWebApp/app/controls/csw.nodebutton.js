@@ -29,7 +29,7 @@
                         onClickAction: null
                     };
                     Csw.extend(cswPrivate, options);
-                    cswPrivate.div = cswParent.div({ID: window.Ext.id()});
+                    cswPrivate.div = cswParent.div({ ID: window.Ext.id() });
                     cswPrivate.div.empty();
 
                     cswPrivate.table = cswPrivate.div.table({
@@ -133,8 +133,8 @@
                                 }
                             });
                             break;
-                        //case 'link':                 
-                        //this is a fallthrough case                 
+                        //case 'link':                   
+                        //this is a fallthrough case                   
                         default:
                             cswPublic.button = cswPrivate.btnCell.a({
                                 ID: cswPrivate.buttonId,
