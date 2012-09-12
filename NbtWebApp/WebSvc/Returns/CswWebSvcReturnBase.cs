@@ -6,29 +6,6 @@ using Newtonsoft.Json.Linq;
 
 namespace NbtWebApp.WebSvc.Returns
 {
-    public class CswWcfFault
-    {
-        [DataContract]
-        public enum FaultCode
-        {
-            [EnumMember]
-            ERROR,
-            [EnumMember]
-            INCORRECT_PARAMETER
-        }
-
-        [DataContract]
-        public class FaultException
-        {
-            [DataMember]
-            public FaultCode ErrorCode;
-            [DataMember]
-            public string Message;
-            [DataMember]
-            public string Details;
-        }
-    }
-
     /// <summary>
     /// Base DataContracts for all web service returns
     /// </summary>

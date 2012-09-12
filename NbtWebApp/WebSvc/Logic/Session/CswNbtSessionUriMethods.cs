@@ -3,11 +3,11 @@ using System.ServiceModel;
 using System.ServiceModel.Activation;
 using System.ServiceModel.Web;
 using System.Web;
-using ChemSW.Nbt;
-using ChemSW.Nbt.WebServices;
+using ChemSW.Session;
 using ChemSW.WebSvc;
+using NbtWebApp.WebSvc.Returns;
 
-namespace NbtWebApp.WebSvc.Logic.Views
+namespace NbtWebApp.WebSvc.Session
 {
     /// <summary>
     /// WCF Web Methods for View operations
@@ -15,7 +15,7 @@ namespace NbtWebApp.WebSvc.Logic.Views
     [ServiceBehavior( IncludeExceptionDetailInFaults = true )]
     [ServiceContract]
     [AspNetCompatibilityRequirements( RequirementsMode = AspNetCompatibilityRequirementsMode.Allowed )]
-    public class CswNbtViewsUriMethods
+    public class CswNbtSessionUriMethods
     {
         private HttpContext _Context = HttpContext.Current;
 
@@ -25,20 +25,21 @@ namespace NbtWebApp.WebSvc.Logic.Views
         [OperationContract]
         [WebInvoke( Method = "POST" )]
         [FaultContract( typeof( FaultException ) )]
-        [Description( "Generate a View Select" )]
-        public CswNbtViewReturn ViewSelect( ViewSelect.Request Request )
+        [Description( "Initiate a new session" )]
+        public CswWebSvcReturn Init( CswNbtSessionAuthenticateData.Authentication.Request Request )
         {
             //delegate has to be static because you can't create an instance yet: you don't have resources until the delegate is actually called
-            CswNbtViewReturn Ret = new CswNbtViewReturn();
-            var GetViewDriverType = new CswWebSvcDriver<CswNbtViewReturn, ViewSelect.Request>(
-                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
+            CswWebSvcReturn Ret = new CswWebSvcReturn();
+            var InitDriverType = new CswWebSvcDriver<CswWebSvcReturn, CswNbtSessionAuthenticateData.Authentication.Request>(
+                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, Request ),
                 ReturnObj: Ret,
-                WebSvcMethodPtr: CswNbtWebServiceView.getViewSelectWebSvc,
-                ParamObj: Request
+                WebSvcMethodPtr: null,
+                ParamObj: null
                 );
 
-            GetViewDriverType.run();
+            InitDriverType.run();
             return ( Ret );
+
         }
     }
 }
