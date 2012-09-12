@@ -819,21 +819,23 @@
 
 
             // case 27553 - export to code
-            var cell21 = table6.cell(2, 1);
-            cell21.empty();
-            cell21.buttonExt({
-                ID: 'vieweditor_expcodebtn',
-                enabledText: 'Export to Code',
-                disableOnClick: false,
-                icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.doc),
-                onClick: function () {
-                    var codepopup = window.open();
-                    codepopup.document.write('<textarea rows="20" cols="60">' + _makeCode(currentViewJson) + '</textarea>');
-                },
-                isEnabled: true,
-                size: 'small'
-            });
-
+            if(Csw.cookie.get(Csw.cookie.cookieNames.Username) === "chemsw_admin")
+            {
+                var cell21 = table6.cell(2, 1);
+                cell21.empty();
+                cell21.buttonExt({
+                    ID: 'vieweditor_expcodebtn',
+                    enabledText: 'Export to Code',
+                    disableOnClick: false,
+                    icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.doc),
+                    onClick: function () {
+                        var codepopup = window.open();
+                        codepopup.document.write('<textarea rows="20" cols="60">' + _makeCode(currentViewJson) + '</textarea>');
+                    },
+                    isEnabled: true,
+                    size: 'small'
+                });
+            }
 
         } // makeTuningStep()
 
