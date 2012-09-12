@@ -44,9 +44,6 @@
         cswPrivate.attachedToWindow = true;
     }
 
-    Csw.clientChanges = Csw.clientChanges ||
-        Csw.register('clientChanges', Csw.makeNameSpace());
-
     Csw.clientChanges.register('setChanged', function () {
         /// <summary>Register a change.</summary>
         /// <returns type="Boolean">True if registered.</returns>

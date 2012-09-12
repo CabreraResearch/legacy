@@ -366,7 +366,7 @@ namespace ChemSW.Nbt.PropTypes
 
             if( null != JObject["options"] )
             {
-                JArray OptionsObj = (JArray) JObject["options"];
+                JArray OptionsObj = CswConvert.ToJArray( JObject["options"] );
 
                 foreach( JObject ViewObj in OptionsObj )
                 {
@@ -374,8 +374,8 @@ namespace ChemSW.Nbt.PropTypes
                     //string name = CswConvert.ToString( ViewObj["label"] );
                     if( null != ViewObj.Property( "values" ) && JTokenType.Array == ViewObj.Property( "values" ).Value.Type )
                     {
-                        JArray Values = (JArray) ViewObj["values"];
-                        bool value = CswConvert.ToBoolean( Values[0] );
+                        JArray Values = CswConvert.ToJArray( ViewObj["values"] );
+                        bool value = null != Values && CswConvert.ToBoolean( Values.First );
                         if( value )
                         {
                             NewSelectedViewIds.Add( key );

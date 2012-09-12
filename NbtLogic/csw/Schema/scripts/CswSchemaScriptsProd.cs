@@ -24,47 +24,59 @@ namespace ChemSW.Nbt.Schema
             // This is where you add new versions.
             // e.g. _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCaseXXXXX() ) );
 
-            #region QA
+            #region QUINCE
 
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_MaterialComponents_Case27462() ) );                //01Q-001
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_Requesting_Case27470() ) );                        //01Q-002
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase27401() ) );                                    //01Q-003            
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase_GridsAndButtons_27479() ) );                   //01Q-004
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase27513() ) );                                    //01Q-005
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase27523() ) );                                    //01Q-006
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_PrintLabels_Case26704() ) );                       //01Q-007 Quince_2012.8.17.1
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase27612() ) );                                    //01Q-008
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_MaterialComponents_Case27462() ) );          //01Q-001
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_Requesting_Case27470() ) );                  //01Q-002
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase27401() ) );                              //01Q-003            
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase_GridsAndButtons_27479() ) );             //01Q-004
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase27513() ) );                              //01Q-005
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase27523() ) );                              //01Q-006
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_PrintLabels_Case26704() ) );                 //01Q-007 Quince_2012.8.17.1
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase27612() ) );                              //01Q-008
 
-            #endregion QA
+            #endregion QUINCE
 
-            #region Dev
+            #region ROMEO
 
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase27145() ) );                                    //01R-001 //008
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_Requesting_Case27542() ) );                        //01R-002 //009
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_Logging_Case27504() ) );                           //01R-003 //010
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_Size_Case27438() ) );                              //01R-004 //011
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase27548() ) );                                    //01R-005 //012                  
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_Documents_Case27435() ) );                         //01R-006 //013
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase27493() ) );                                    //01R-007 //014
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_RequestItem_Case27488() ) );                       //01R-008 //015       
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase27500() ) );                                    //01R-009 //016      
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_MSDS_Case27435() ) );                              //01R-010 //017
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase27432() ) );                                    //01R-011 //018
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase27431() ) );                                    //01R-012 //019
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase27274() ) );                                    //01R-013 //020
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase24525() ) );                                    //01R-014 //021
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase24632() ) );                                    //01R-015 //022
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase27551() ) );                                    //01R-016 //023
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase27549() ) );                                    //01R-017 //024
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase27401_part2() ) );                              //01R-018 //025
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase27278() ) );                                    //01R-019 //026
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase27622() ) );                                    //01R-020 //027
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase26924() ) );                                    //01R-021 //028
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase27439() ) );                                    //01R-022 //029
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase27628() ) );                                    //01R-023 //030
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase27439_Part2() ) );                              //01R-024 //031
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase27145() ) );                              //01Q-009  //01R-001
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_Requesting_Case27542() ) );                  //01Q-010  //01R-002
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_Logging_Case27504() ) );                     //01Q-011  //01R-003
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_Size_Case27438() ) );                        //01Q-012  //01R-004
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase27548() ) );                              //01Q-013  //01R-005                  
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_Documents_Case27435() ) );                   //01Q-014  //01R-006
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase27493() ) );                              //01Q-015  //01R-007
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_RequestItem_Case27488() ) );                 //01Q-016  //01R-008       
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase27500() ) );                              //01Q-017  //01R-009      
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_MSDS_Case27435() ) );                        //01Q-018  //01R-010
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase27432() ) );                              //01Q-019  //01R-011
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase27431() ) );                              //01Q-020  //01R-012
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase27274() ) );                              //01Q-021  //01R-013
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase24525() ) );                              //01Q-022  //01R-014
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase24632() ) );                              //01Q-023  //01R-015
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase27551() ) );                              //01Q-024  //01R-016
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase27549() ) );                              //01Q-025  //01R-017
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase27401_part2() ) );                        //01Q-026  //01R-018
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase27278() ) );                              //01Q-027  //01R-019
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase27622() ) );                              //01Q-028  //01R-020
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase26924() ) );                              //01Q-029  //01R-021
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase27439() ) );                              //01Q-030  //01R-022
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase27628() ) );                              //01Q-031  //01R-023
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase27439_Part2() ) );                        //01Q-032  //01R-024
 
-            #endregion Dev
+            #endregion ROMEO
+            
+            #region SEBASTIAN
+
+            //_addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCaseXXXXX() ) );                            //01Q-033  //01R-025  //01S-001
+
+            #endregion SEBASTIAN
+
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase27578() ) );                                    //01R-024 //031
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase27648() ) );                                    //01R-025 //032
+
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase27647() ) );                                    //01S-001 //031
+
 
             // This automatically detects the latest version
             _LatestVersion = _MinimumVersion;

@@ -212,7 +212,7 @@
                                             Csw.error.throwException(Csw.error.exception('Could not get a grid of containers for this request item.', '', 'csw.dispensecontainer.js', 141));
                                         }
 
-                                        cswPrivate.containerGrid = Csw.nbt.wizard.nodeGrid(cswPrivate.divStep1, {
+                                        cswPrivate.containerGrid = Csw.wizard.nodeGrid(cswPrivate.divStep1, {
                                             hasMenu: false,
                                             viewid: data.viewid,
                                             ReadOnly: true,
@@ -359,7 +359,7 @@
 
                             var makeQuantityForm = function () {
 
-                                cswPrivate.amountsGrid = Csw.nbt.wizard.amountsGrid(quantityTable.cell(8, 1), {
+                                cswPrivate.amountsGrid = Csw.wizard.amountsGrid(quantityTable.cell(8, 1), {
                                     ID: cswPrivate.wizard.makeStepId('wizardAmountsThinGrid'),
                                     onAdd: function (hasQuantity, quantityToDeduct, unitToDeduct) {
                                         var enableFinishButton = cswPrivate.updateQuantityAfterDispense(hasQuantity, quantityToDeduct, unitToDeduct, true);
@@ -427,6 +427,11 @@
                     };
                 } ());
 
+                var roundToPrecision = function (num) {
+                    var precision = Csw.number(cswPrivate.state.precision);
+                    return Math.round(Csw.number(num) * Math.pow(10, precision)) / Math.pow(10, precision);
+                };
+
                 cswPrivate.updateQuantityAfterDispense = function (enableFinishButton, quantityDeltaValue, quantityDeltaUnitId, deductingValue) {
                     if (quantityDeltaUnitId !== cswPrivate.state.unitId) {
                         Csw.ajax.post({
@@ -442,7 +447,7 @@
                                     quantityDeltaValue = 0;
                                 } else {
                                     var precision = Csw.number(cswPrivate.state.precision);
-                                    quantityDeltaValue = Math.round(Csw.number(data.convertedvalue) * Math.pow(10, precision)) / Math.pow(10, precision);
+                                    quantityDeltaValue = roundToPrecision(Csw.number(data.convertedvalue));
                                 }
                             },
                             error: function () {
@@ -451,9 +456,9 @@
                         });
                     }
                     if (deductingValue) {
-                        cswPrivate.state.quantityAfterDispense = Csw.number(cswPrivate.state.quantityAfterDispense) - Csw.number(quantityDeltaValue);
+                        cswPrivate.state.quantityAfterDispense = roundToPrecision(Csw.number(cswPrivate.state.quantityAfterDispense) - Csw.number(quantityDeltaValue));
                     } else {
-                        cswPrivate.state.quantityAfterDispense = Csw.number(cswPrivate.state.quantityAfterDispense) + Csw.number(quantityDeltaValue);
+                        cswPrivate.state.quantityAfterDispense = roundToPrecision(Csw.number(cswPrivate.state.quantityAfterDispense) + Csw.number(quantityDeltaValue));
                     }
                     if (Csw.bool(cswPrivate.state.netQuantityEnforced)) {
                         if (cswPrivate.state.quantityAfterDispense < 0) {
