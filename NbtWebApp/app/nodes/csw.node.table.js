@@ -6,8 +6,8 @@
         Csw.nbt.register('nodeTable', function (cswParent, params) {
             'use strict';
             var cswPrivate = {
-                TableSearchUrl: '/NbtWebApp/wsNBT.asmx/getTableSearch',
-                TableViewUrl: '/NbtWebApp/wsNBT.asmx/getTableView',
+                //TableSearchUrl: 'getTableSearch',
+                TableViewUrl: 'getTableView',
                 viewid: '',
                 ID: '',
                 nodeid: '',
@@ -27,7 +27,8 @@
                 compactResults: false,
                 extraAction: null,
                 extraActionIcon: Csw.enums.iconType.none,
-                onExtraAction: null  // function(nodeObj) {}
+                onExtraAction: null,  // function(nodeObj) {}
+                properties: []
             };
             if (params) Csw.extend(cswPrivate, params);
             
@@ -147,7 +148,6 @@
                     }
                     textCell.br();
 
-                    //var thumbtable = thumbnailCell.table({ width: '100%', cellpadding: 0, cellspacing: 0 });
                     var texttable = textCell.table({ width: '100%', cellpadding: 0, cellspacing: 0 });
                     cswPrivate.texttables.push(texttable);
 
@@ -163,31 +163,11 @@
                             src: nodeObj.thumbnailurl
                         }).css({ width: imgwidth, height: imgheight });
                     }
-//                    var moreinfoimg = thumbtable.cell(1, 2).css({ width: '25px' })
-//                            .img({
-//                                src: 'Images/newicons/18/info.png',
-//                                title: 'More Info'
-//                            });
-//                    moreinfoimg.propNonDom({ valign: 'top' });
-//                    moreinfoimg.$.hover(function (event) { Csw.nodeHoverIn(event, nodeid, '', 0); }, Csw.nodeHoverOut);
+
                     thumbnailCell.$.hover(function (event) { Csw.nodeHoverIn(event, nodeid, ''); },
                                           function (event) { Csw.nodeHoverOut(event, nodeid, ''); });
                     textCell.$.hover(function (event) { Csw.nodeHoverIn(event, nodeid, ''); },
                                      function (event) { Csw.nodeHoverOut(event, nodeid, ''); });
-
-                    //thumbnailCell.br();
-
-                    // Name
-                    //var maintextcell = texttable.cell(1, 1);
-                    //maintextcell.append('<b>' + nodeObj.nodename + '</b>');
-
-                    //                        if (Csw.bool(nodeObj.locked)) {
-                    //                            maintextcell.img({
-                    //                                src: 'Images/quota/lock.gif',
-                    //                                title: 'Quota exceeded'
-                    //                            });
-                    //                        }
-                    //                        maintextcell.br();
 
                     var btnTable = btncell.table({
                         ID: Csw.makeId(cswPrivate.ID, nodeid + '_btntbl'),
@@ -202,25 +182,20 @@
                             // Object Class Buttons
                             var propDiv = btnTable.cell(1, btncol).div();
 
-                            $.CswFieldTypeFactory('make', {
-                                nodeid: nodeid,
-                                fieldtype: propObj.fieldtype,
-                                size: 'small',
-                                propid: propObj.propid,
-                                propDiv: propDiv,
-                                propData: propObj.propData,
-                                ID: Csw.makeId(cswPrivate.ID, propObj.id, 'tbl'),
-                                EditMode: Csw.enums.editMode.Table,
-                                doSave: function (saveoptions) {
-                                    // Nothing to save in this case, so just call onSuccess
-                                    var s = { onSuccess: null };
-                                    if (saveoptions) {
-                                        Csw.extend(s, saveoptions, true);
-                                    }
-                                    Csw.tryExec(s.onSuccess);
-                                },
-                                onReload: null
-                            });
+                            propObj.size = 'small';
+                            propObj.nodeid = nodeid;
+                            propObj.ID = Csw.makeId(cswPrivate.ID, propObj.id, 'tbl');
+                            propObj.EditMode = Csw.enums.editMode.Table;
+                            propObj.doSave = function(saveoptions) {
+                                // Nothing to save in this case, so just call onSuccess
+                                saveoptions = saveoptions || { onSuccess: null };
+                                Csw.tryExec(saveoptions.onSuccess);
+                            };
+                            var fieldOpt = Csw.nbt.propertyOption(propObj, propDiv);
+
+                            cswPrivate.properties[propObj.id] = Csw.nbt.property(fieldOpt);
+
+                               
                             btncol += 1;
 
                         } else {
@@ -229,7 +204,7 @@
                             //maintextcell.br();
                         }
                     });
-
+                    Csw.publish('render_' + nodeid);
                     // System Buttons
                     if (Csw.bool(cswPrivate.compactResults)) {
                         btnTable.cell(1, btncol).buttonExt({
@@ -315,8 +290,8 @@
 
             cswPrivate.makeTable = function () {
                 var i;
-                cswPrivate.tableDiv.$.empty();
-                cswPrivate.pagerDiv.$.empty();
+                cswPrivate.tableDiv.empty();
+                cswPrivate.pagerDiv.empty();
                 cswPrivate.r = 1;
                 cswPrivate.c = 1;
                 cswPrivate.pagenodecount = 0;
@@ -423,7 +398,7 @@
                     cswPrivate.HandleTableData();
                 } else {
                     Csw.ajax.post({
-                        url: cswPrivate.TableViewUrl,
+                        urlMethod: cswPrivate.TableViewUrl,
                         data: {
                             ViewId: cswPrivate.viewid,
                             NodeId: cswPrivate.nodeid,

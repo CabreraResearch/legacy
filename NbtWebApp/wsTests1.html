@@ -26,7 +26,7 @@ function _execAction($table,testno, actname, actdata, nextfunc) {
     var ajaxStartTime = new Date();
 
     Csw.ajax.post({
-        'url': '/NbtWebApp/wsNBT.asmx/' + actname,
+        'url': 'wsNBT.asmx/' + actname,
         'data': actdata,
         showAuth: true,
         success: function (outputdata)
@@ -101,7 +101,7 @@ function _beginTests(accessid,username,password) {
     var ajaxend;
 
     Csw.ajax.post({
-        'url': '/NbtWebApp/wsNBT.asmx/authenticate',
+        'url': 'wsNBT.asmx/authenticate',
         'data': { "AccessId": accessid, "UserName": username, "Password": password, "ForMobile": "false" },
         showAuth: true,
         success: function (outputdata)
@@ -151,7 +151,7 @@ function _endTests($table,errorstr) {
     var ajaxEnd;
     //deauthenticate or bust
     Csw.ajax.post({
-        'url': '/NbtWebApp/wsNBT.asmx/deauthenticate',
+        'url': 'wsNBT.asmx/deauthenticate',
         'data': {},
         success: function (outputdata) {
             ajaxEnd = new Date();

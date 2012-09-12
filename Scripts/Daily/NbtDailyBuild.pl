@@ -5,6 +5,7 @@ use File::Copy;
 # Arguments
 
 my $increment = "1";
+my $kilnpath = "C:\kiln";
 if($#ARGV != 1)
 {
 	die( "Usage: DeployNbt.pl [increment] [kilnpath]\n" );
@@ -27,11 +28,9 @@ my @components = (
 	"NbtImport",
 	"NbtHelp",
 	"DailyBuildTools",
-	"StructureSearch"
+	"StructureSearch",
+        "chemsw-fe"
 );
-
-my $orcldumpdir = "ChemSWDumpDirectory";
-my $masterdumpdir = "ChemSWDumpDirectory";
 
 my %repopaths;
 foreach my $component (@components)
@@ -47,6 +46,10 @@ foreach my $component (@components)
 	elsif($component eq "DailyBuildTools")
 	{
 		$repopaths{$component} = "$kilnpath/$component";
+	} 
+        elsif($component eq "chemsw-fe")
+	{
+		$repopaths{$component} = "$kilnpath/incandescentsw/$component";
 	} else {
 		$repopaths{$component} = "$kilnpath/Common/$component";
 	}
@@ -84,7 +87,7 @@ foreach my $component (@components)
 	printf("Setting $component to $datestr.$increment\n");
 	
 	my $file;
-	if($component eq "NbtImport" || $component eq "NbtHelp")
+	if($component eq "NbtImport" || $component eq "NbtHelp" || $component eq "chemsw-fe")
 	{
 		# no file to update
 	}

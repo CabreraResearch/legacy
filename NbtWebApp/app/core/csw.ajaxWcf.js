@@ -127,7 +127,7 @@
         Csw.publish(Csw.enums.events.ajax.ajaxStart, cswInternal.watchGlobal);
         cswExternal.ajax = $.ajax({
             type: 'POST',
-            url: '/NbtWebApp/Views/' + cswInternal.urlMethod,
+            url: 'Views/' + cswInternal.urlMethod,
             xhrFields: {
                 withCredentials: true
             },
@@ -144,9 +144,6 @@
         }); /* $.ajax({ */
         return cswExternal;
     }); /* cswPrivate.jsonPost */
-    
-    Csw.ajaxWcf = Csw.ajaxWcf ||
-        Csw.register('ajaxWcf', Csw.makeNameSpace(null, cswPrivate));
 
     Csw.ajaxWcf.post = Csw.ajaxWcf.post ||
         Csw.ajaxWcf.register('post', function (options, type) {

@@ -20,10 +20,10 @@
             height: '',
             width: '',
 
-            RunTreeUrl: '/NbtWebApp/wsNBT.asmx/runTree',
-            fetchTreeFirstLevelUrl: '/NbtWebApp/wsNBT.asmx/fetchTreeFirstLevel',
-            fetchTreeLevelUrl: '/NbtWebApp/wsNBT.asmx/fetchTreeLevel',
-            NodeTreeUrl: '/NbtWebApp/wsNBT.asmx/getTreeOfNode',
+            RunTreeUrl: 'runTree',
+            fetchTreeFirstLevelUrl: 'fetchTreeFirstLevel',
+            fetchTreeLevelUrl: 'fetchTreeLevel',
+            NodeTreeUrl: 'getTreeOfNode',
             rootnode: null,
             toggleLink: null
         };
@@ -230,7 +230,7 @@
             }
 
             Csw.ajax.post({
-                url: url,
+                urlMethod: url,
                 data: dataParam,
                 stringify: false,
                 success: function (data) {
@@ -336,8 +336,8 @@
             var cell12 = cswPrivate.table.cell(1,2);
             var cell21 = cswPrivate.table.cell(2,1);
 
-            cell11.css({ width: '50%', verticalAlign: 'middle' });
-            cell12.css({ width: '50%' });
+            cell11.css({ width: '100px', verticalAlign: 'middle' });
+            cell12.css({ width: '170px' });
             cell21.propDom('colspan', 2);
 
             cswPrivate.toggleDiv = cell11.div({ ID: Csw.makeId({ ID: cswPrivate.IdPrefix, suffix: 'toggleDiv' }) });

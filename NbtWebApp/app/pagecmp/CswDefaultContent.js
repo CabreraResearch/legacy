@@ -7,7 +7,7 @@
 
         var o = {
             ID: 'defcont',
-            Url: '/NbtWebApp/wsNBT.asmx/getDefaultContent',
+            Url: 'getDefaultContent',
             viewid: '',
             viewmode: '',
             onAddNode: null
@@ -17,7 +17,7 @@
         var $parent = $(this);
 
         Csw.ajax.post({
-            url: o.Url,
+            urlMethod: o.Url,
             data: { ViewId: o.viewid },
             success: function (data) {
 

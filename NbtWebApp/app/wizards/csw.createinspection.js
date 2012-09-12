@@ -107,7 +107,7 @@
             cswPrivate.checkIsNodeTypeNameUnique = function (name, success, error) {
                 if (cswPrivate.checkTargetIsClientSideUnique()) {
                     Csw.ajax.post({
-                        url: '/NbtWebApp/wsNBT.asmx/IsNodeTypeNameUnique',
+                        urlMethod: 'IsNodeTypeNameUnique',
                         async: false,
                         data: { 'NodeTypeName': name },
                         success: function (data) {
@@ -460,7 +460,7 @@
             //File upload button for Step 3
             cswPrivate.makeInspectionDesignUpload = function (control) {
                 var f = {
-                    url: '/NbtWebApp/wsNBT.asmx/previewInspectionFile',
+                    url: Csw.enums.ajaxUrlPrefix + 'previewInspectionFile',
                     onSuccess: function () {
                         cswPrivate.toggleButton(cswPrivate.buttons.next, true, true);
                     },
@@ -506,7 +506,7 @@
                             helpText.empty();
                             helpText.span({ text: 'Create a new <b>' + cswPrivate.selectedInspectionDesign.name + '</b> Design using the Excel template.' })
                                 .p()
-                                .a({ href: '/NbtWebApp/etc/InspectionDesign.xls', text: 'Download Template' })
+                                .a({ href: 'etc/InspectionDesign.xls', text: 'Download Template' })
                                 .$.button();
                         };
                         if (false === stepThreeComplete) {
@@ -724,7 +724,7 @@
                 };
 
                 Csw.ajax.post({
-                    url: '/NbtWebApp/wsNBT.asmx/finalizeInspectionDesign',
+                    urlMethod: 'finalizeInspectionDesign',
                     data: jsonData,
                     success: function (data) {
                         //Come back and hammer this out

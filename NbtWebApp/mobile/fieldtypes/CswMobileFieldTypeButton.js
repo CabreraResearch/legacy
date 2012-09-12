@@ -43,7 +43,7 @@ function CswMobileFieldTypeButton(ftDef) {
             $button.button('disable');
 
             CswAjaxJson({
-                url: '/NbtWebApp/wsNBT.asmx/onObjectClassButtonClick',
+                url: 'wsNBT.asmx/onObjectClassButtonClick',
                 data: {
                     NodeTypePropAttr: realNodePropId,
                     SelectedText: p.propName

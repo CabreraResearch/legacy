@@ -238,7 +238,8 @@
                         xtype: 'pagingtoolbar',
                         store: cswPrivate.store,
                         dock: 'bottom',
-                        displayInfo: true
+                        displayInfo: true,
+                        itemId: 'bottomtoolbar'
                     }];
                     
                     var rows = cswPrivate.data.items.length;
@@ -256,11 +257,11 @@
                 var grid = window.Ext.create('Ext.grid.Panel', gridopts);
 
                 setTimeout(function() {   // this delay solves case 26792
-                    // This should make the grid fill the parent container, but doesn't seem to work
                     if(false === Csw.isNullOrEmpty(renderTo))
                     {
                         var panelopts = {
-                            layout: 'fit',
+                            layout: 'hbox',   // case 27651
+                            minWidth: 500,    // case 27651
                             renderTo: renderTo,
                             items: [ grid ]
                         };
@@ -320,6 +321,12 @@
                     },
                     deselect: function (rowModel, record, index, eOpts) {
                         Csw.tryExec(cswPrivate.onDeselect, record.data);
+                    },
+                    afterrender: function (component) {
+                        var bottomToolbar = component.getDockedComponent('bottomtoolbar');
+                        if(false === Csw.isNullOrEmpty(bottomToolbar)) {
+                            bottomToolbar.items.get('refresh').hide();
+                        }                        
                     }
                 });
                 
@@ -384,7 +391,7 @@
                 var printStore = cswPrivate.makeStore(cswPrivate.ID + '_printstore', false);
                 var printGrid = cswPrivate.makeGrid('', printStore);
 
-                window.Ext.ux.grid.Printer.stylesheetPath = '/NbtWebApp/js/thirdparty/extJS-4.1.0/ux/grid/gridPrinterCss/print.css';
+                window.Ext.ux.grid.Printer.stylesheetPath = 'js/thirdparty/extJS-4.1.0/ux/grid/gridPrinterCss/print.css';
                 window.Ext.ux.grid.Printer.print(printGrid);
             });
 

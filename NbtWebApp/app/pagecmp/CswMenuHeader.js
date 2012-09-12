@@ -6,7 +6,7 @@
     $.fn.CswMenuHeader = function (options) {
 
         var o = {
-            Url: '/NbtWebApp/wsNBT.asmx/getHeaderMenu',
+            //Url: 'getHeaderMenu',
             onLogout: function () { },
             onQuotas: function () { },
             onModules: function () { },

@@ -14,31 +14,10 @@ namespace ChemSW.Nbt.Schema
     {
         public override void update()
         {
-            #region ADD ARCHIVED PROP TO USER
-            CswNbtMetaDataFieldType logicalFT = _CswNbtSchemaModTrnsctn.MetaData.getFieldType( CswNbtMetaDataFieldType.NbtFieldType.Logical );
-            CswNbtMetaDataObjectClass userOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
-            CswNbtMetaDataObjectClassProp archivedOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( userOC )
-            {
-                PropName = CswNbtObjClassUser.PropertyName.Archived,
-                FieldType = CswNbtMetaDataFieldType.NbtFieldType.Logical,
-                IsFk = false,
-                IsRequired = true,
-                ValuePropType = logicalFT.FieldType,
-                ValuePropId = logicalFT.FieldTypeId,
-            } );
-            //set the default val to false - we don't want new users to be archived
-            _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( archivedOCP, archivedOCP.getFieldTypeRule().SubFields.Default.Name, Tristate.False );
-
-            _CswNbtSchemaModTrnsctn.MetaData.makeMissingNodeTypeProps();
-
-            foreach( CswNbtNode userNode in userOC.getNodes( false, false ) )
-            {
-                userNode.Properties[CswNbtObjClassUser.PropertyName.Archived].AsLogical.Checked = Tristate.False;
-                userNode.postChanges( false );
-            }
-            #endregion
-
             #region UPDATE VIEWS
+            CswNbtMetaDataObjectClass userOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
+            CswNbtMetaDataObjectClassProp archivedOCP = userOC.getObjectClassProp( CswNbtObjClassUser.PropertyName.Archived );
+
             foreach( CswNbtMetaDataNodeTypeProp relationshipProp in _CswNbtSchemaModTrnsctn.MetaData.getNodeTypeProps( CswNbtMetaDataFieldType.NbtFieldType.Relationship ) )
             {
                 if( relationshipProp.IsUserRelationship() )

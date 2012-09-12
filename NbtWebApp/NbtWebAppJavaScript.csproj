@@ -75,8 +75,49 @@
     <NoWarn>1591</NoWarn>
   </PropertyGroup>
   <ItemGroup>
+    <Content Include="app\controls\csw.quickTip.js" />
+    <Content Include="app\proptypes\_propTypeTemplate.js" />
+    <Content Include="app\_reference.js" />
     <Content Include="app\core\csw.ajaxWcf.js" />
     <Content Include="app\nodes\csw.node.table.js" />
+    <Content Include="app\proptypes\csw.property.js" />
+    <Content Include="app\proptypes\csw.propertyOption.js" />
+    <Content Include="app\proptypes\csw.propTypeAuditHistoryGrid.js" />
+    <Content Include="app\proptypes\csw.propTypeBarcode.js" />
+    <Content Include="app\proptypes\csw.propTypeButton.js" />
+    <Content Include="app\proptypes\csw.propTypeComments.js" />
+    <Content Include="app\proptypes\csw.propTypeComposite.js" />
+    <Content Include="app\proptypes\csw.propTypeDateTime.js" />
+    <Content Include="app\proptypes\csw.propTypeFile.js" />
+    <Content Include="app\proptypes\csw.propTypeGrid.js" />
+    <Content Include="app\proptypes\csw.propTypeImage.js" />
+    <Content Include="app\proptypes\csw.propTypeImageList.js" />
+    <Content Include="app\proptypes\csw.propTypeLink.js" />
+    <Content Include="app\proptypes\csw.propTypeList.js" />
+    <Content Include="app\proptypes\csw.propTypeLocation.js" />
+    <Content Include="app\proptypes\csw.propTypeLocationContents.js" />
+    <Content Include="app\proptypes\csw.propTypeLogical.js" />
+    <Content Include="app\proptypes\csw.propTypeLogicalSet.js" />
+    <Content Include="app\proptypes\csw.propTypeMemo.js" />
+    <Content Include="app\proptypes\csw.propTypeMol.js" />
+    <Content Include="app\proptypes\csw.propTypeMtbf.js" />
+    <Content Include="app\proptypes\csw.propTypeMultiList.js" />
+    <Content Include="app\proptypes\csw.propTypeNfpa.js" />
+    <Content Include="app\proptypes\csw.propTypeNodeTypeSelect.js" />
+    <Content Include="app\proptypes\csw.propTypeNumber.js" />
+    <Content Include="app\proptypes\csw.propTypePassword.js" />
+    <Content Include="app\proptypes\csw.propTypePropertyReference.js" />
+    <Content Include="app\proptypes\csw.propTypeQuantity.js" />
+    <Content Include="app\proptypes\csw.propTypeQuestion.js" />
+    <Content Include="app\proptypes\csw.propTypeRelationship.js" />
+    <Content Include="app\proptypes\csw.propTypeScientific.js" />
+    <Content Include="app\proptypes\csw.propTypeSequence.js" />
+    <Content Include="app\proptypes\csw.propTypeStatic.js" />
+    <Content Include="app\proptypes\csw.propTypeText.js" />
+    <Content Include="app\proptypes\csw.propTypeTimeInterval.js" />
+    <Content Include="app\proptypes\csw.propTypeUserSelect.js" />
+    <Content Include="app\proptypes\csw.propTypeViewPickList.js" />
+    <Content Include="app\proptypes\csw.propTypeViewReference.js" />
     <Content Include="ConnectTest.html" />
     <Content Include="etc\far.exe" />
     <Content Include="ExternalLogin.html" />
@@ -596,56 +637,13 @@
     <Content Include="app\_first-vsdoc.js" />
     <Content Include="app\_last-vsdoc.js" />
     <Content Include="app\literals\CswInput.js" />
-    <Content Include="app\fieldtypes\CswFieldTypeAuditHistoryGrid.js" />
-    <Content Include="app\fieldtypes\CswFieldTypeBarcode.js" />
-    <Content Include="app\fieldtypes\CswFieldTypeButton.js" />
-    <Content Include="app\fieldtypes\CswFieldTypeComments.js" />
-    <Content Include="app\fieldtypes\CswFieldTypeComposite.js" />
-    <Content Include="app\fieldtypes\CswFieldTypeDateTime.js" />
-    <Content Include="app\fieldtypes\CswFieldTypeFile.js" />
-    <Content Include="app\fieldtypes\CswFieldTypeGrid.js" />
-    <Content Include="app\fieldtypes\CswFieldTypeImage.js" />
-    <Content Include="app\fieldtypes\CswFieldTypeImageList.js" />
-    <Content Include="app\fieldtypes\CswFieldTypeLink.js" />
-    <Content Include="app\fieldtypes\CswFieldTypeList.js" />
-    <Content Include="app\fieldtypes\CswFieldTypeLocation.js" />
-    <Content Include="app\fieldtypes\CswFieldTypeLocationContents.js" />
-    <Content Include="app\fieldtypes\CswFieldTypeLogical.js" />
-    <Content Include="app\fieldtypes\CswFieldTypeLogicalSet.js" />
-    <Content Include="app\fieldtypes\CswFieldTypeMemo.js" />
-    <Content Include="app\fieldtypes\CswFieldTypeMol.js" />
-    <Content Include="app\fieldtypes\CswFieldTypeMTBF.js" />
-    <Content Include="app\fieldtypes\CswFieldTypeMultiList.js" />
-    <Content Include="app\fieldtypes\CswFieldTypeNFPA.js" />
-    <Content Include="app\fieldtypes\CswFieldTypeNodeTypeSelect.js" />
-    <Content Include="app\fieldtypes\CswFieldTypeNumber.js" />
-    <Content Include="app\fieldtypes\CswFieldTypePassword.js" />
-    <Content Include="app\fieldtypes\CswFieldTypePropertyReference.js" />
-    <Content Include="app\fieldtypes\CswFieldTypeQuantity.js" />
-    <Content Include="app\fieldtypes\CswFieldTypeQuestion.js" />
-    <Content Include="app\fieldtypes\CswFieldTypeRelationship.js" />
-    <Content Include="app\fieldtypes\CswFieldTypeScientific.js" />
-    <Content Include="app\fieldtypes\CswFieldTypeSequence.js" />
-    <Content Include="app\fieldtypes\CswFieldTypeStatic.js" />
-    <Content Include="app\fieldtypes\CswFieldTypeText.js" />
-    <Content Include="app\fieldtypes\CswFieldTypeTimeInterval.js" />
-    <Content Include="app\fieldtypes\CswFieldTypeUserSelect.js" />
-    <Content Include="app\fieldtypes\CswFieldTypeViewPickList.js" />
-    <Content Include="app\fieldtypes\CswFieldTypeViewReference.js" />
-    <Content Include="app\fieldtypes\_CswFieldTypeFactory.js" />
     <Content Include="app\nodes\CswNodeGrid.js" />
-    <Content Include="app\nodes\CswNodePreview.js" />
-    <Content Include="app\nodes\CswNodeTree.js" />
     <Content Include="app\pagecmp\CswDashboard.js" />
     <Content Include="app\pagecmp\CswDefaultContent.js" />
     <Content Include="app\pagecmp\CswDialog.js" />
     <Content Include="app\pagecmp\CswErrorMessage.js" />
     <Content Include="app\pagecmp\CswLogin.js" />
-    <Content Include="app\pagecmp\CswMenu.js" />
     <Content Include="app\pagecmp\CswMenuHeader.js" />
-    <Content Include="app\pagecmp\CswMenuMain.js" />
-    <Content Include="app\pagecmp\CswQuickLaunch.js" />
-    <Content Include="app\pagecmp\CswSearch.js" />
     <Content Include="app\pagecmp\CswWelcome.js" />
     <Content Include="app\pagecmp\CswWizard.js" />
     <Content Include="app\tools\CswAttr.js" />
@@ -738,7 +736,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="css\_compressor.pl" />
-    <None Include="app\_concatAppVsDoc.pl" />
     <None Include="app\_compileApp.pl" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -758,6 +755,6 @@ $(ProjectDir)app\_pruneMaps.bat $(ProjectDir)
   <PropertyGroup>
     <PreBuildEvent>call $(ProjectDir)app\_updateIncludes.pl $(ProjectDir)
 call $(ProjectDir)css\_compressor.pl $(ProjectDir)
-call $(ProjectDir)app\_concatAppVsDoc.pl $(ProjectDir)</PreBuildEvent>
+</PreBuildEvent>
   </PropertyGroup>
 </Project>

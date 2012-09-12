@@ -5,13 +5,13 @@
     "use strict";
     $.fn.CswViewEditor = function (options) {
         var o = {
-            ViewGridUrl: '/NbtWebApp/wsNBT.asmx/getViewGrid',
-            ViewInfoUrl: '/NbtWebApp/wsNBT.asmx/getViewInfo',
-            SaveViewUrl: '/NbtWebApp/wsNBT.asmx/saveViewInfo',
-            CopyViewUrl: '/NbtWebApp/wsNBT.asmx/copyView',
-            DeleteViewUrl: '/NbtWebApp/wsNBT.asmx/deleteView',
-            ChildOptionsUrl: '/NbtWebApp/wsNBT.asmx/getViewChildOptions',
-            PropNamesUrl: '/NbtWebApp/wsNBT.asmx/getPropNames',
+            ViewGridUrl: 'getViewGrid',
+            ViewInfoUrl: 'getViewInfo',
+            SaveViewUrl: 'saveViewInfo',
+            CopyViewUrl: 'copyView',
+            DeleteViewUrl: 'deleteView',
+            ChildOptionsUrl: 'getViewChildOptions',
+            PropNamesUrl: 'getPropNames',
             FiltersUrlMethod: 'getAllViewPropFilters',
             filtersData: {},
             newProps: [],
@@ -119,7 +119,7 @@
                     };
 
                     Csw.ajax.post({
-                        url: o.CopyViewUrl,
+                        urlMethod: o.CopyViewUrl,
                         data: dataJson,
                         success: function (gridJson) {
                             _getViewsGrid(gridJson.copyviewid);
@@ -147,7 +147,7 @@
                         };
 
                         Csw.ajax.post({
-                            url: o.DeleteViewUrl,
+                            urlMethod: o.DeleteViewUrl,
                             data: dataJson,
                             success: function () {
                                 _getViewsGrid();
@@ -304,7 +304,7 @@
             };
 
             Csw.ajax.post({
-                url: o.ViewInfoUrl,
+                urlMethod: o.ViewInfoUrl,
                 data: jsonData,
                 success: function (data) {
                     currentViewJson = data.TreeView;
@@ -438,7 +438,7 @@
                 };
 
                 Csw.ajax.post({
-                    url: o.SaveViewUrl,
+                    urlMethod: o.SaveViewUrl,
                     data: jsonData,
                     success: function () {
                         o.onFinish(viewid, _getSelectedViewMode());
@@ -460,7 +460,7 @@
                 };
 
                 Csw.ajax.post({
-                    url: o.ViewGridUrl,
+                    urlMethod: o.ViewGridUrl,
                     data: dataJson,
                     success: function (gridJson) {
 
@@ -644,7 +644,7 @@
                     Id: viewnodejson.secondid
                 };
                 Csw.ajax.post({
-                    url: o.PropNamesUrl,
+                    urlMethod: o.PropNamesUrl,
                     data: jsonData,
                     success: function (data) {
                         groupBySelect.empty();
@@ -1238,7 +1238,7 @@
                 };
 
                 Csw.ajax.post({
-                    url: o.ChildOptionsUrl,
+                    urlMethod: o.ChildOptionsUrl,
                     data: dataJson,
                     success: function (data) {
                         var $successSelect = $('#' + stepno + '_' + arbid + '_child');

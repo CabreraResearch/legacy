@@ -8,7 +8,7 @@
 
     $.fn.CswViewContentTree = function (options) {
         var o = {
-            ViewInfoUrl: '/NbtWebApp/wsNBT.asmx/getViewInfo',
+            ViewInfoUrl: 'getViewInfo',
             viewid: ''
         };
         if (options) Csw.extend(o, options);
@@ -166,7 +166,7 @@
         var $tree = $(this);
 
         Csw.ajax.post({
-            url: o.ViewInfoUrl,
+            urlMethod: o.ViewInfoUrl,
             data: { ViewId: o.viewid },
             success: function (data) {
                 var viewJson = data.TreeView;

@@ -14,6 +14,7 @@
                 nodeTypeId: '',
                 objectClassId: '',
                 objectClassName: '',
+                addNodeDialogTitle: '',
                 relatedTo: {
                     objectClassName: '',
                     nodeId: ''
@@ -132,6 +133,7 @@
                         if (canAdd) {
                             var openAddNodeDialog = function (nodetypeToAdd) {
                                 $.CswDialog('AddNodeDialog', {
+                                    text: cswPrivate.addNodeDialogTitle,
                                     nodetypeid: nodetypeToAdd,
                                     relatednodeid: cswPrivate.relatedTo.nodeId,
                                     relatedobjectclassid: cswPrivate.relatedTo.objectClassId,

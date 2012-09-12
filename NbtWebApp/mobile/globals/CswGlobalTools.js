@@ -89,7 +89,7 @@ var ChemSW = ChemSW || (function(undefined) {
                     case 'js':
                         if (jQuery && (($.browser.msie && $.browser.version <= 8) || useJquery)) {
                             $.ajax({
-                                url: '/NbtWebApp/' + filename,
+                                url: filename,
                                 dataType: 'script'
                             });
                         } else {
