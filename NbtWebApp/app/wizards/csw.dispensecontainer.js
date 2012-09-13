@@ -476,6 +476,13 @@
                         }
                     }
                     cswPrivate.quantityAfterDispenseSpan.text(cswPrivate.state.quantityAfterDispense + ' ' + cswPrivate.state.currentUnitName);
+                    if (false === Csw.isNullOrEmpty(cswPrivate.amountsGrid)) {
+                        enableFinishButton = Csw.bool(cswPrivate.amountsGrid.containerCount > 0 &&
+                            cswPrivate.amountsGrid.containerCount <= cswPrivate.amountsGrid.containerlimit);
+                    }
+                    if (cswPrivate.state.quantityAfterDispense === cswPrivate.state.currentQuantity) {
+                        enableFinishButton = false;
+                    }
                     return enableFinishButton;
                 }
 

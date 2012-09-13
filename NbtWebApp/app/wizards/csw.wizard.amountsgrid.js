@@ -12,7 +12,9 @@
                 containerNoControl: [],
                 thinGrid: null,
                 thinGridAddButton: null,
-                amountsGridOnAdd: null
+                amountsGridOnAdd: null,
+                containerlimit: 25,
+                containerCount: ''
             };
 
             Csw.tryExec(function () {
@@ -22,8 +24,7 @@
                     onAdd: null,
                     onDelete: null,
                     onChange: null,
-                    quantity: {},
-                    containerlimit: 25,
+                    quantity: {},                    
                     makeId: function (text) {
                         return text;
                     },
@@ -100,9 +101,15 @@
                     if (Csw.isNullOrEmpty(cswParent)) {
                         Csw.error.throwException(Csw.error.exception('Cannot create a Wizard amounts grid without a parent.', '', 'csw.wizard.amountsgrid.js', 22));
                     }
-                    cswPrivate.count = 0;
+                    cswPublic.containerCount = 0;
                     cswParent.br({ number: 2 });
                     cswParent.span({ text: '<b>Enter the Amounts to ' + cswPrivate.action + ':</b>' });
+                    cswParent.br({ number: 2 });
+                    cswParent.span({ text: '<b>Total number of containers: </b>' });
+                    var containerNoSpan = cswParent.span({ text: cswPublic.containerCount });
+                    var containerLimitExceededSpan = cswParent.span({ cssclass: 'CswErrorMessage_ValidatorError', text: ' The limit for containers created at receipt is [' + cswPublic.containerlimit + '].' });
+                    containerLimitExceededSpan.hide();
+
                     cswParent.br({ number: 2 });
 
                     var executeMakeAddRow = function (cswCell, columnName, rowid) {
@@ -121,28 +128,25 @@
                                 cswPublic.quantities[rowid].containerNo = Csw.number(cswPrivate.quantity.unitCount, 1);
                             }
                             Csw.tryExec(cswPrivate.onChange, cswPublic.quantities);
-                        };
+                        };                        
                         switch (columnName) {
                             case cswPrivate.config.numberName:
                                 var containerNoControl = cswCell.numberTextBox({
                                     ID: Csw.tryExec(cswPrivate.makeId, 'containerCount'),
                                     value: 1,
                                     MinValue: cswPrivate.containerMinimum,
-                                    MaxValue: cswPrivate.containerlimit,
+                                    MaxValue: cswPublic.containerlimit,
                                     width: (3 * 8) + 'px', //3 characters wide, 8 is the characters-to-pixels ratio
                                     Precision: 0,
                                     onChange: function (value) {
                                         cswPublic.quantities[rowid].containerNo = value;
-                                        cswPrivate.count = getTotalContainerQuantity();
-                                        if (cswPrivate.count > cswPrivate.containerlimit) {
-                                            //This QuickTip does exactly work as expected - perhaps replace it with a container limit validator (like netquantity on dispensecontainer)?
-                                            containerNoControl.quickTip({ html: 'The limit for containers created at receipt is [' + cswPrivate.containerlimit + ']. You have already added [' + cswPrivate.count + '] containers.' });
-                                        }
+                                        updateTotalContainerCount();
                                         Csw.tryExec(cswPrivate.onChange, cswPublic.quantities);
                                     }
                                 });
                                 cswPublic.containerNoControl[rowid] = containerNoControl;
                                 cswPublic.quantities[rowid].containerNo = cswPublic.containerNoControl[rowid].val();
+                                updateTotalContainerCount();
                                 break;
                             case cswPrivate.config.sizeName:
                                 var sizeControl = cswCell.nodeSelect({
@@ -212,6 +216,16 @@
                         return totalContainerQuantity;
                     }
 
+                    var updateTotalContainerCount = function () {
+                        cswPublic.containerCount = getTotalContainerQuantity();
+                        containerNoSpan.text(cswPublic.containerCount);
+                        if (cswPublic.containerCount > cswPublic.containerlimit) {
+                            containerLimitExceededSpan.show();
+                        } else {
+                            containerLimitExceededSpan.hide();
+                        }                        
+                    };
+
                     cswPublic.thinGrid = cswParent.thinGrid({
                         linkText: '',
                         hasHeader: true,
@@ -241,11 +255,11 @@
                             };
                             cswPublic.quantities.push(extractNewAmount(newAmount));
                         },
-                        onDelete: function (rowid) {
-                            cswPrivate.count -= Csw.number(cswPublic.quantities[rowid].containerNo, 0);
+                        onDelete: function (rowid) {                            
                             delete cswPublic.quantities[rowid];
                             delete cswPublic.qtyControl[rowid];
                             delete cswPublic.containerNoControl[rowid];
+                            updateTotalContainerCount();
                             Csw.tryExec(cswPrivate.onChange, cswPublic.quantities);
                         }
                     });
