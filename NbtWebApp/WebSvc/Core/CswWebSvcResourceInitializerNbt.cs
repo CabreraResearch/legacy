@@ -19,6 +19,8 @@ namespace ChemSW.WebSvc
         private CswTimer _Timer = new CswTimer();
         private HttpContext _HttpContext = null;
         private CswNbtSessionAuthenticateData.Authentication.Request _AuthenticationRequest;
+        private delegate void _OnDeInitDelegate();
+        private _OnDeInitDelegate _OnDeInit;
 
         private void _setHttpContextOnRequest()
         {
@@ -59,6 +61,7 @@ namespace ChemSW.WebSvc
             _CswNbtResources = _CswSessionResourcesNbt.CswNbtResources;
             _CswNbtResources.beginTransaction();
             _SessionAuthenticate = new CswNbtSessionAuthenticate( _CswNbtResources, _CswSessionResourcesNbt.CswSessionManager, _AuthenticationRequest );
+            _OnDeInit = new _OnDeInitDelegate( _deInitResources );
             return ( _CswNbtResources );
 
         }//_initResources() 
@@ -70,8 +73,6 @@ namespace ChemSW.WebSvc
             {
                 Ret = _SessionAuthenticate.authenticate();
             }
-            //bury the overhead of nuking old sessions in the overhead of authenticating
-            _CswSessionResourcesNbt.purgeExpiredSessions();
 
             _CswNbtResources.ServerInitTime = _Timer.ElapsedDurationInMilliseconds;
 
@@ -79,15 +80,23 @@ namespace ChemSW.WebSvc
 
         }//autheticate
 
-        public void deInitResources()
+        private void _deInitResources()
         {
             if( _CswSessionResourcesNbt != null )
             {
                 _CswSessionResourcesNbt.endSession();
 
+                //bury the overhead of nuking old sessions in the overhead of authenticating
+                _CswSessionResourcesNbt.purgeExpiredSessions();
+
                 _CswSessionResourcesNbt.finalize();
                 _CswSessionResourcesNbt.release();
             }
+        }
+
+        public void deInitResources()
+        {
+            _OnDeInit.BeginInvoke( null, null );
 
             _CswNbtResources.TotalServerTime = _Timer.ElapsedDurationInMilliseconds;
 

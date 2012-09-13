@@ -12,7 +12,7 @@
         onAuthenticate: null, // function (UserName) {} 
         onFail: null, // function (errormessage) {} 
         logoutpath: '',
-        authenticateUrl: 'authenticate',
+        authenticateUrl: 'Session/Init',
         DeauthenticateUrl: 'deauthenticate',
         expiretimeInterval: '',
         expiretime: '',
@@ -151,13 +151,13 @@
                 Csw.extend(cswPrivate, loginopts);
             }
             cswPrivate.isAuthenticated = true;
-            Csw.ajax.post({
+            Csw.ajaxWcf.post({
                 urlMethod: cswPrivate.authenticateUrl,
                 data: {
-                    AccessId: cswPrivate.AccessId,
+                    CustomerId: cswPrivate.AccessId,
                     UserName: cswPrivate.UserName,
                     Password: cswPrivate.Password,
-                    ForMobile: cswPrivate.ForMobile
+                    IsMobile: cswPrivate.ForMobile
                 },
                 success: function () {
                     Csw.cookie.set(Csw.cookie.cookieNames.CustomerId, cswPrivate.AccessId);

@@ -193,7 +193,7 @@ namespace ChemSW.WebSvc
                 }
                 if( SvcReturn.Authentication.AuthenticationStatus == AuthenticationStatus.ExpiredPassword )
                 {
-                    SvcReturn.Authentication.ExpirationReset = new CswNbtSessionAuthenticateData.Authentication.ExpirationReset();
+                    SvcReturn.Authentication.ExpirationReset = new CswNbtSessionAuthenticateData.Authentication.Response.Expired();
                     ICswNbtUser CurrentUser = CswNbtResources.CurrentNbtUser;
                     SvcReturn.Authentication.ExpirationReset.NodeId = CurrentUser.UserId.ToString();
                     CswNbtNodeKey FakeKey = new CswNbtNodeKey( CswNbtResources )

@@ -13,13 +13,13 @@ namespace ChemSW.Session
             [DataContract]
             public class Request
             {
-                [DataMember]
+                [DataMember( IsRequired = true )]
                 public string UserName = "";
-                [DataMember]
+                [DataMember( IsRequired = true )]
                 public string Password = "";
-                [DataMember]
+                [DataMember( IsRequired = true )]
                 public string CustomerId = "";
-                [DataMember]
+                [DataMember( EmitDefaultValue = false, IsRequired = false )]
                 public bool IsMobile = false;
 
                 public string IpAddress = "";
@@ -28,6 +28,42 @@ namespace ChemSW.Session
                 public string SessionId = "";
             }
 
+
+            [DataContract]
+            public class Response
+            {
+                private string _AuthenticationStatus = Security.AuthenticationStatus.Unknown;
+
+                [DataMember]
+                public string AuthenticationStatus
+                {
+                    get { return _AuthenticationStatus; }
+                    set { _AuthenticationStatus = value; }
+                }
+
+                private string _TimeOut = "0";
+
+                [DataMember]
+                public string TimeOut
+                {
+                    get { return _TimeOut; }
+                    set { _TimeOut = value; }
+                }
+
+                [DataMember]
+                public Expired ExpirationReset = null;
+
+                [DataContract]
+                public class Expired
+                {
+                    [DataMember]
+                    public string NodeId = "";
+                    [DataMember]
+                    public string CswNbtNodeKey = "";
+                    [DataMember]
+                    public string PasswordPropId = "";
+                }
+            }
         }
     } // CswNbtSessionDataItem
 } // namespace ChemSW.Nbt

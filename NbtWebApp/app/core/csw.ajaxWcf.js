@@ -127,13 +127,13 @@
         Csw.publish(Csw.enums.events.ajax.ajaxStart, cswInternal.watchGlobal);
         cswExternal.ajax = $.ajax({
             type: 'POST',
-            url: 'Views/' + cswInternal.urlMethod,
+            url: cswInternal.urlMethod,
             xhrFields: {
                 withCredentials: true
             },
             dataType: 'json',
             contentType: 'application/json; charset=utf-8',
-            processdata: false,
+            //processdata: false,
             data: Csw.serialize(cswInternal.data),
             success: function (data) {
                 cswPrivate.onJsonSuccess(cswInternal, data, cswInternal.url);
