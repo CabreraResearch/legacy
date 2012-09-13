@@ -126,9 +126,14 @@
                         cswPrivate['makeStep' + newStepNo]();
 
                         if (cswPrivate.currentStepNo === 2) {
-                            if (cswPrivate.lastStepNo === 1) {
-                                cswPrivate.createMaterial();
+                            if (cswPrivate.lastStepNo === 3) {
+                                cswPrivate.state.materialId = '';
+                                cswPrivate.state.documentId = '';
+                                cswPrivate.state.properties = {};
+                                cswPrivate.state.useExistingMaterial = false;
+                                cswPrivate.reinitSteps(2);
                             }
+                            cswPrivate.createMaterial();
                             if (cswPrivate.isDuplicateMaterial) {
                                 cswPrivate.toggleButton(cswPrivate.buttons.prev, true, true);
                             }
@@ -410,7 +415,7 @@
                                 async: false
                             });
 
-                            cswPrivate.stepTwoComplete = true;
+                            //cswPrivate.stepTwoComplete = true;
                         });
                     }
                 };
