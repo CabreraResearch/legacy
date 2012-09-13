@@ -195,7 +195,7 @@ namespace ChemSW.WebSvc
                 {
                     SvcReturn.Authentication.ExpirationReset = new CswNbtSessionAuthenticateData.Authentication.Response.Expired();
                     ICswNbtUser CurrentUser = CswNbtResources.CurrentNbtUser;
-                    SvcReturn.Authentication.ExpirationReset.NodeId = CurrentUser.UserId.ToString();
+                    SvcReturn.Authentication.ExpirationReset.UserId = CurrentUser.UserId.ToString();
                     CswNbtNodeKey FakeKey = new CswNbtNodeKey( CswNbtResources )
                     {
                         NodeId = CurrentUser.UserId,
@@ -203,9 +203,9 @@ namespace ChemSW.WebSvc
                         NodeTypeId = CurrentUser.UserNodeTypeId,
                         ObjectClassId = CurrentUser.UserObjectClassId
                     };
-                    SvcReturn.Authentication.ExpirationReset.CswNbtNodeKey = FakeKey.ToString();
+                    SvcReturn.Authentication.ExpirationReset.UserKey = FakeKey.ToString();
                     CswPropIdAttr PasswordPropIdAttr = new CswPropIdAttr( CurrentUser.UserId, CurrentUser.PasswordPropertyId );
-                    SvcReturn.Authentication.ExpirationReset.PasswordPropId = PasswordPropIdAttr.ToString();
+                    SvcReturn.Authentication.ExpirationReset.PasswordId = PasswordPropIdAttr.ToString();
                 }
 
                 SvcReturn.Performance = SvcReturn.Performance ?? new CswWebSvcReturnBase.Performance();

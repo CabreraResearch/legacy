@@ -11,6 +11,13 @@ namespace NbtWebApp.WebSvc.Returns
     /// </summary>
     public class CswWebSvcReturnBase
     {
+        [DataContract]
+        public class Data
+        {
+            [DataMember]
+            public bool Succeeded = false;
+        }
+
         /// <summary>
         /// Contract for communicating performance data surrounding this request
         /// </summary>

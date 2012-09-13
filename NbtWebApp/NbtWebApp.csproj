@@ -117,6 +117,7 @@
     <Compile Include="WebSvc\Logic\Generators\CswNbtWebServiceGenerators.cs" />
     <Compile Include="WebSvc\Logic\Nodes\CswNbtWebServiceReport.cs" />
     <Compile Include="WebSvc\Logic\Session\CswNbtSessionUriMethods.cs" />
+    <Compile Include="WebSvc\Logic\Session\CswNbtWebServiceSession.cs" />
     <Compile Include="WebSvc\Logic\Views\CswNbtViewsUriMethods.cs" />
     <Compile Include="WebSvc\Logic\Views\wsTreeOfView.cs">
       <SubType>Component</SubType>
