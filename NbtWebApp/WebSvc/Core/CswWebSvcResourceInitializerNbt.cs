@@ -85,6 +85,11 @@ namespace ChemSW.WebSvc
 
         }//autheticate
 
+        public void deauthenticate()
+        {
+            _SessionAuthenticate.deauthenticate();
+        }//autheticate
+
         private void _deInitResources()
         {
             if( _CswSessionResourcesNbt != null )

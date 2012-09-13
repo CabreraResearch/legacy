@@ -13,7 +13,7 @@
         onFail: null, // function (errormessage) {} 
         logoutpath: '',
         authenticateUrl: 'Session/Init',
-        DeauthenticateUrl: 'deauthenticate',
+        DeauthenticateUrl: 'Session/End',
         expiretimeInterval: '',
         expiretime: '',
         expiredInterval: '',
@@ -183,7 +183,7 @@
                 Csw.extend(cswPrivate, options);
             }
             cswPrivate.isAuthenticated = false;
-            Csw.ajax.post({
+            Csw.ajaxWcf['get']({
                 urlMethod: cswPrivate.DeauthenticateUrl,
                 data: {},
                 success: function () {

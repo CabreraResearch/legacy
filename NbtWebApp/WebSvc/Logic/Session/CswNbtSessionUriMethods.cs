@@ -53,6 +53,8 @@ namespace NbtWebApp.WebSvc.Session
         public void End()
         {
             CswWebSvcResourceInitializerNbt Resource = new CswWebSvcResourceInitializerNbt( _Context, null );
+            Resource.initResources();
+            Resource.deauthenticate();
             Resource.deInitResources();
         }
 
