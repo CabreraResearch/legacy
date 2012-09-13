@@ -107,7 +107,7 @@ namespace ChemSW.Nbt
                 // Verify permissions
                 // this could be a performance problem
                 CswNbtMetaDataNodeType ThisNodeType = _CswNbtResources.MetaData.getNodeType( ThisNodeTypeId );
-                if( false == RequireViewPermissions || _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, ThisNodeType, true, null, _RunAsUser, ThisNodePk ) )
+                if( false == RequireViewPermissions || _CswNbtResources.Permit.canNode( CswNbtPermit.NodeTypePermission.View, ThisNodeType, ThisNodePk, null, _RunAsUser ) )
                 {
                     // Handle property multiplexing
                     // This assumes that property rows for the same nodeid are next to one another
@@ -616,7 +616,7 @@ namespace ChemSW.Nbt
                     } // if we have a filter
                 } // foreach( CswNbtViewPropertyFilter Filter in Prop.Filters )
             } // foreach( CswNbtViewProperty Prop in Relationship.Properties )
-            if(FilterWhere != string.Empty)
+            if( FilterWhere != string.Empty )
             {
                 Where += "and (" + FilterWhere + ")";
             }

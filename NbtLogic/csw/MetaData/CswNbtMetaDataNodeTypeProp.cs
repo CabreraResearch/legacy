@@ -509,7 +509,7 @@ namespace ChemSW.Nbt.MetaData
             var ret = ( ( false == InPopUp || IsOnAdd ) &&
                 FilterNodeTypePropId == Int32.MinValue && /* Keep these out */
                         false == Node.Properties[this].Hidden &&
-                        _CswNbtMetaDataResources.CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, this.getNodeType(), false, null, User, Node.NodeId, this ) );
+                        _CswNbtMetaDataResources.CswNbtResources.Permit.canNode( CswNbtPermit.NodeTypePermission.Edit, this.getNodeType(), Node.NodeId, this ) );
             return ret;
         }
 

@@ -113,7 +113,7 @@ namespace ChemSW.Nbt.WebServices
                 {
                     hasPermission = hasPermission && RetNodeType.getObjectClass().CanAdd;
                 }
-                hasPermission = hasPermission && _CswNbtResources.Permit.can( PermissionType, RetNodeType );
+                hasPermission = hasPermission && _CswNbtResources.Permit.canNodeType( PermissionType, RetNodeType );
             }
             return hasPermission;
         }

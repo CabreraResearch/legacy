@@ -112,7 +112,7 @@ namespace ChemSW.Nbt.PropTypes
         /// Get the Current state of the Property's value using a specific subfield
         /// </summary>
         public string GetPropRowValue( CswNbtSubField.PropColumn Column ) { return _CswNbtNodePropData.GetPropRowValue( Column ); }
-        
+
         /// <summary>
         /// Get the Prior state of the Property's value using the fieldtype rule's default subfield
         /// </summary>
@@ -190,7 +190,7 @@ namespace ChemSW.Nbt.PropTypes
                 {
                     NodeId = _Node.NodeId;
                 }
-                bool Ret = _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, NodeTypeProp.getNodeType(), false, _Tab, null, NodeId, NodeTypeProp );
+                bool Ret = _CswNbtResources.Permit.canNode( CswNbtPermit.NodeTypePermission.Edit, NodeTypeProp.getNodeType(), NodeId, NodeTypeProp );
                 return Ret;
             }
         }
@@ -203,7 +203,7 @@ namespace ChemSW.Nbt.PropTypes
                 {
                     NodeId = _Node.NodeId;
                 }
-                bool Ret = _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Create, NodeTypeProp.getNodeType(), false, null, null, NodeId, NodeTypeProp );
+                bool Ret = _CswNbtResources.Permit.canNode( CswNbtPermit.NodeTypePermission.Create, NodeTypeProp.getNodeType(), NodeId, NodeTypeProp );
                 return Ret;
             }
         }

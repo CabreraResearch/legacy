@@ -243,12 +243,12 @@ namespace ChemSW.Nbt.MetaData
         public bool CanSave()
         {
             return ( ( !IsLocked || IsLatestVersion() ) &&
-                     ( _CswNbtMetaDataResources.CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, this ) ) );
+                     ( _CswNbtMetaDataResources.CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Edit, this ) ) );
         }
         public bool CanDelete()
         {
             return ( ( !IsLocked || IsLatestVersion() ) &&
-                     ( _CswNbtMetaDataResources.CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Delete, this ) ) );
+                     ( _CswNbtMetaDataResources.CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Delete, this ) ) );
         }
 
 
@@ -335,7 +335,7 @@ namespace ChemSW.Nbt.MetaData
         {
             foreach( CswNbtMetaDataNodeTypeTab Tab in _CswNbtMetaDataResources.CswNbtMetaData.getNodeTypeTabs( NodeTypeId ) )
             {
-                if( _CswNbtMetaDataResources.CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, this, NodeTypeTab: Tab ) )
+                if( _CswNbtMetaDataResources.CswNbtResources.Permit.canTab( CswNbtPermit.NodeTypePermission.View, this, NodeTypeTab: Tab ) )
                 {
                     yield return Tab;
                 }
@@ -632,7 +632,7 @@ namespace ChemSW.Nbt.MetaData
         {
             get
             {
-                return( ChemSW.Audit.AuditLevel.Parse( _NodeTypeRow[_CswAuditMetaData.AuditLevelColName].ToString() ) );
+                return ( ChemSW.Audit.AuditLevel.Parse( _NodeTypeRow[_CswAuditMetaData.AuditLevelColName].ToString() ) );
             }
             set
             {

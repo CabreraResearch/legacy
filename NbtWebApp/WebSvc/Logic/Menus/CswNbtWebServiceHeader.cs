@@ -10,8 +10,8 @@ using ChemSW.DB;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
-using Newtonsoft.Json.Linq;
 using ChemSW.Session;
+using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.WebServices
 {
@@ -185,7 +185,7 @@ namespace ChemSW.Nbt.WebServices
             IEnumerable<CswNbtMetaDataNodeType> feedbackNodeTypes = feedbackOC.getNodeTypes();
             if( feedbackNodeTypes.Any() )
             {
-                if( _CswNbtResources.Permit.can( Security.CswNbtPermit.NodeTypePermission.Create, feedbackNodeTypes.First() ) )
+                if( _CswNbtResources.Permit.canNodeType( Security.CswNbtPermit.NodeTypePermission.Create, feedbackNodeTypes.First() ) )
                 {
                     Ret["Help"]["Give Feedback"] = new JObject();
                     //Ret["Help"]["Give Feedback"]["action"] = "AddNode";

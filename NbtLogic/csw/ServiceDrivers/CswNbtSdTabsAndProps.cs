@@ -93,7 +93,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                 if( null != Node )
                 {
                     foreach( CswNbtMetaDataNodeTypeTab Tab in _CswNbtResources.MetaData.getNodeTypeTabs( Node.NodeTypeId )
-                                                                .Where( Tab => _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, Node.getNodeType(), false, Tab ) )
+                                                                .Where( Tab => _CswNbtResources.Permit.canTab( CswNbtPermit.NodeTypePermission.View, Node.getNodeType(), Tab ) )
                                                                 .OrderBy( _getTabOrder ) )
                     {
                         _makeTab( Ret, Tab.TabOrder, Tab.TabId.ToString(), Tab.TabName, _canEditLayout() );
@@ -106,7 +106,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                         NodeType.AuditLevel != Audit.AuditLevel.NoAudit &&
                         CswConvert.ToBoolean( _CswNbtResources.ConfigVbls.getConfigVariableValue( "auditing" ) ) )
                     {
-                        if( _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, NodeType ) )
+                        if( _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.View, NodeType ) )
                         {
                             _makeTab( Ret, Int32.MaxValue, HistoryTabPrefix + NodeId, "History", false );
                         }
@@ -146,7 +146,7 @@ namespace ChemSW.Nbt.ServiceDrivers
             CswNbtNode Ret = null;
             if( null != NodeType )
             {
-                if( _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Create, NodeType ) )
+                if( _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Create, NodeType ) )
                 {
                     NodeOp = NodeOp ?? CswNbtNodeCollection.MakeNodeOperation.MakeTemp;
                     Ret = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeType.NodeTypeId, NodeOp );
@@ -165,7 +165,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                 NodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeId );
                 if( null != NodeType )
                 {
-                    CanCreate = _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Create, NodeType );
+                    CanCreate = _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Create, NodeType );
 
                     if( CanCreate )
                     {
@@ -225,7 +225,7 @@ namespace ChemSW.Nbt.ServiceDrivers
             if( false == _IsMultiEdit && TabId.StartsWith( HistoryTabPrefix ) )
             {
                 CswNbtNode Node = _CswNbtResources.getNode( NodeId, NodeKey, Date );
-                if( _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, Node.getNodeType() ) )
+                if( _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.View, Node.getNodeType() ) )
                 {
                     _getAuditHistoryGridProp( Ret, Node );
                 }
@@ -247,7 +247,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                     if( Node != null )
                     {
                         NodeType = _CswNbtResources.MetaData.getNodeType( Node.NodeTypeId );
-                        CanCreate = _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Create, NodeType );
+                        CanCreate = _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Create, NodeType );
                     }
                 }
                 return getProps( Node, TabId, FilterPropIdAttr, LayoutType, CanCreate );
@@ -788,7 +788,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                         {
                             CswNbtNode CopyToNode = _CswNbtResources.Nodes[CopyToNodePk];
                             if( CopyToNode != null &&
-                                _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, CopyToNode.getNodeType(), false, null, null, CopyToNode.NodeId, null ) )
+                                _CswNbtResources.Permit.canNode( CswNbtPermit.NodeTypePermission.Edit, CopyToNode.getNodeType(), CopyToNode.NodeId, null ) )
                             {
                                 foreach( CswNbtMetaDataNodeTypeProp NodeTypeProp in PropIds.Select( PropIdAttr => new CswPropIdAttr( PropIdAttr ) )
                                     .Select( PropId => _CswNbtResources.MetaData.getNodeTypeProp( PropId.NodeTypePropId ) ) )

@@ -83,7 +83,7 @@ namespace NbtWebAppServices.Response
                             if( null != InspectionNt )
                             {
                                 //Can edit the nodetype
-                                if( _CswNbtWcfSessionResources.CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, InspectionNt ) )
+                                if( _CswNbtWcfSessionResources.CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Edit, InspectionNt ) )
                                 {
                                     foreach( CswNbtWcfInspectionsDataModel.CswNbtInspection.QuestionAnswer Question in Inspection.Questions )
                                     {
