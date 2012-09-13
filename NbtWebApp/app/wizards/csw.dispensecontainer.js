@@ -439,7 +439,8 @@
                         if (false === Csw.isNullOrEmpty(quantity)) {
                             var containerNo = quantity.containerNo;
                             if (Csw.number(containerNo) === 0) {
-                                containerNo = 1;//Not all deducted quantity needs to go into a container
+                                //Not all deducted quantity needs to go into a container, but the quantity remaining still needs to be updated
+                                containerNo = 1;
                             }
                             if (quantity.unitid !== cswPrivate.state.unitId) {
                                 Csw.ajax.post({

@@ -87,9 +87,7 @@
                             }
                         });
                     }
-                    if (false === ret) {
-                        //Case 27444 - instead of throwing, Quantity is set to null and readonly until a Size is created to populate it
-                        //    Csw.error.throwException(Csw.error.exception('Cannot create a Wizard amounts grid without the Initial Quantity of a Size.', '', 'csw.wizard.amountsgrid.js', 68));
+                    if (false === ret) {                        
                         cswPrivate.quantity = {
                             qtyReadonly: true,
                             unitReadonly: true
@@ -274,10 +272,7 @@
 
                 } ());
 
-
-                (function _post() {
-
-                } ());
+                (function _post() {} ());
 
             });
 

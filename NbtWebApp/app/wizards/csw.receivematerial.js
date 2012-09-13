@@ -104,7 +104,6 @@
                         cswPrivate.lastStepNo = cswPrivate.currentStepNo;
                         cswPrivate.currentStepNo = newStepNo;
                         cswPrivate['makeStep' + newStepNo]();
-                        //Csw.clientDb.setItem(cswReceiveMaterialWizardState, cswPrivate);
                     }
                 };
 

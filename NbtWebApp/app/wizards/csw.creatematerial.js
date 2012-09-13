@@ -11,7 +11,7 @@
 
             var cswPrivate = {
                 ID: 'cswCreateMaterialWizard',
-                exitFunc: null, //function ($wizard) {},
+                exitFunc: null,
                 startingStep: 1,
                 wizard: null,
                 buttons: {

@@ -62,7 +62,6 @@
                         tooltip: { title: 'Add Row' },
                         icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.add),
                         onClick: function () {
-                            //cswPublic.commitRow();
                             Csw.tryExec(cswPrivate.onAdd, cswPrivate.rowCount);
                             Csw.tryExec(cswPublic.makeAddRow, cswPrivate.makeAddRow);
                             thinGridAddButton.enable();
@@ -75,7 +74,7 @@
 
             cswPublic.hide = function () {
                 /// <summary>
-                /// 
+                /// Hides the thingrid
                 /// </summary>
                 /// <returns></returns>
                 cswPrivate.div.hide();
@@ -84,7 +83,7 @@
 
             cswPublic.show = function () {
                 /// <summary>
-                /// 
+                /// Displays the thingrid
                 /// </summary>
                 /// <returns></returns>
                 cswPrivate.div.show();
@@ -133,7 +132,7 @@
 
             cswPrivate.addDeleteBtn = Csw.method(function (row, col) {
                 /// <summary>
-                /// 
+                /// Add a delete button to a cell in the thingrid
                 /// </summary>
                 /// <param name="row"></param>
                 /// <param name="col"></param>
@@ -151,7 +150,8 @@
 
             cswPublic.addRows = Csw.method(function (dataRows, row, col) {
                 /// <summary>
-                /// 
+                /// Adds one or more cells to a given row.
+                /// This method is recursively called once per cell.
                 /// </summary>
                 /// <param name="dataRows"></param>
                 /// <param name="row"></param>
