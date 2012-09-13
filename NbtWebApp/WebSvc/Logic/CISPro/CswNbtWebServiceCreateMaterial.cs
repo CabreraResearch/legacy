@@ -407,7 +407,8 @@ namespace ChemSW.Nbt.WebServices
         /// </summary>
         private void _addMaterialSizes( JArray SizesArray, CswNbtNode MaterialNode )
         {
-            foreach( JObject SizeObj in SizesArray )
+            JArray ArrayToIterate = (JArray) SizesArray.DeepClone();
+            foreach( JObject SizeObj in ArrayToIterate )
             {
                 if( SizeObj.HasValues )
                 {

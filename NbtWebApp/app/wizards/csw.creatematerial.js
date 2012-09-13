@@ -592,6 +592,7 @@
                                 },
                                 onDelete: function (rowid) {
                                     delete cswPublic.sizes[rowid];
+                                    cswPublic.sizes[rowid] = {};
                                 }
                             });
                         };

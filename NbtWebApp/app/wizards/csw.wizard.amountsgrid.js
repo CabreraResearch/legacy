@@ -24,7 +24,7 @@
                     onAdd: null,
                     onDelete: null,
                     onChange: null,
-                    quantity: {},                    
+                    quantity: {},
                     makeId: function (text) {
                         return text;
                     },
@@ -128,7 +128,7 @@
                                 cswPublic.quantities[rowid].containerNo = Csw.number(cswPrivate.quantity.unitCount, 1);
                             }
                             Csw.tryExec(cswPrivate.onChange, cswPublic.quantities);
-                        };                        
+                        };
                         switch (columnName) {
                             case cswPrivate.config.numberName:
                                 var containerNoControl = cswCell.numberTextBox({
@@ -223,7 +223,7 @@
                             containerLimitExceededSpan.show();
                         } else {
                             containerLimitExceededSpan.hide();
-                        }                        
+                        }
                     };
 
                     cswPublic.thinGrid = cswParent.thinGrid({
@@ -255,8 +255,9 @@
                             };
                             cswPublic.quantities.push(extractNewAmount(newAmount));
                         },
-                        onDelete: function (rowid) {                            
+                        onDelete: function (rowid) {
                             delete cswPublic.quantities[rowid];
+                            cswPublic.quantities[rowid] = {};
                             delete cswPublic.qtyControl[rowid];
                             delete cswPublic.containerNoControl[rowid];
                             updateTotalContainerCount();
