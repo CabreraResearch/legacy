@@ -219,12 +219,9 @@
                 passwordpropid: '',
                 ForMobile: false
             };
-            if (options) {
-                Csw.extend(o, options);
-            }
+            Csw.extend(o, options);
 
-            var txt = '';
-            var goodEnoughForMobile = false; //Ignore password expirery and license accept for Mobile for now
+            var txt = null;
             switch (o.status) {
                 case 'Authenticated':
                     o.success();
@@ -287,10 +284,14 @@
                 case 'Ignore':
                     o.success();
                     break;
-                default:                    
-                    Csw.tryExec(o.failure, txt, o.status);
+                default:
+                    txt = 'An error occurred';
                     break;
             }
+            if(false === Csw.isNullOrEmpty(txt)) {
+                Csw.tryExec(o.failure, txt, o.status);
+            }
+
         });
 
     Csw.clientSession.isAdministrator = Csw.clientSession.isAdministrator ||
