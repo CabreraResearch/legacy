@@ -10,6 +10,7 @@
                 quantities: [],
                 qtyControl: [],
                 containerNoControl: [],
+                barcodeControl: [],
                 thinGrid: null,
                 thinGridAddButton: null,
                 amountsGridOnAdd: null,
@@ -129,6 +130,17 @@
                             }
                             Csw.tryExec(cswPrivate.onChange, cswPublic.quantities);
                         };
+                        var updateBarcodes = function (value) {
+                            var parseBarcodes = function (anArray) {
+                                if (anArray.length > cswPublic.quantities[rowid].containerNo) {
+                                    anArray.splice(cswPublic.quantities[rowid].containerNo, anArray.length - cswPublic.quantities[rowid].containerNo);
+                                }
+                                value = anArray.join(',');
+                            };
+                            var barcodeToParse = Csw.delimitedString(Csw.string(value).trim()).array;
+                            parseBarcodes(barcodeToParse);
+                            cswPublic.quantities[rowid].barcodes = value;
+                        };
                         switch (columnName) {
                             case cswPrivate.config.numberName:
                                 var containerNoControl = cswCell.numberTextBox({
@@ -141,6 +153,7 @@
                                     onChange: function (value) {
                                         cswPublic.quantities[rowid].containerNo = value;
                                         updateTotalContainerCount();
+                                        updateBarcodes(cswPublic.barcodeControl[rowid].val());
                                         Csw.tryExec(cswPrivate.onChange, cswPublic.quantities);
                                     }
                                 });
@@ -190,18 +203,10 @@
                                     rows: 1,
                                     cols: 14,
                                     onChange: function (value) {
-                                        //TODO - test this change!
-                                        var parseBarcodes = function (anArray) {
-                                            if (anArray.length > cswPublic.quantities[rowid].containerNo) {
-                                                anArray.splice(0, anArray.length - cswPublic.quantities[rowid].containerNo);
-                                            }
-                                            value = barcodeToParse.join(',');
-                                        };
-                                        var barcodeToParse = Csw.delimitedString(value).array;
-                                        parseBarcodes(barcodeToParse);
-                                        cswPublic.quantities[rowid].barcodes = barcodeToParse;
+                                        updateBarcodes(value);
                                     }
                                 });
+                                cswPublic.barcodeControl[rowid] = barcodeControl;
                                 break;
                         }
                     };
