@@ -526,7 +526,14 @@ namespace ChemSW.Nbt.MetaData
                 }
             }
             var ret = ( false == hasFilter() && false == Node.Properties[this].Hidden &&
-                        _CswNbtMetaDataResources.CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, this.getNodeType(), false, Tab, User, Node.NodeId, this ) );
+                        (
+                           _CswNbtMetaDataResources.CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.View, this.getNodeType() ) ||
+                           _CswNbtMetaDataResources.CswNbtResources.Permit.canTab( CswNbtPermit.NodeTypePermission.View, this.getNodeType(), Tab ) ||
+                           _CswNbtMetaDataResources.CswNbtResources.Permit.canNode( CswNbtPermit.NodeTypePermission.View, this.getNodeType(), Node.NodeId )
+                        )
+                      );
+
+            //_CswNbtMetaDataResources.CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, this.getNodeType(), false, Tab, User, Node.NodeId, this ) );
             return ret;
         }
 
