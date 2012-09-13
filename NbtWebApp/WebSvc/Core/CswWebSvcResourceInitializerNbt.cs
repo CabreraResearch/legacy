@@ -68,10 +68,15 @@ namespace ChemSW.WebSvc
 
         public AuthenticationStatus authenticate()
         {
-            AuthenticationStatus Ret = _CswSessionResourcesNbt.attemptRefresh();
-            if( Ret != AuthenticationStatus.Authenticated )
+            AuthenticationStatus Ret = AuthenticationStatus.Unknown;
+            //We're keeping this logic here, because we don't want to contaminate NbtLogic with the necessary web libraries required to support CswSessionResourcesNbt
+            if( null != _AuthenticationRequest && _AuthenticationRequest.IsValid() )
             {
                 Ret = _SessionAuthenticate.authenticate();
+            }
+            else
+            {
+                Ret = _CswSessionResourcesNbt.attemptRefresh();
             }
 
             _CswNbtResources.ServerInitTime = _Timer.ElapsedDurationInMilliseconds;

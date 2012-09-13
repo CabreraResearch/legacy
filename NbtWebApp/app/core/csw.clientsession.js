@@ -264,42 +264,32 @@
                     txt = 'Your session has timed out.  Please login again.';
                     break;
                 case 'ExpiredPassword':
-                    goodEnoughForMobile = true;
-                    if (!o.ForMobile) {
-                        $.CswDialog('EditNodeDialog', {
-                            nodeids: [o.usernodeid],
-                            nodekeys: [o.usernodekey],
-                            filterToPropId: o.passwordpropid,
-                            title: 'Your password has expired.  Please change it now:',
-                            onEditNode: function () {
-                                o.success();
-                            }
-                        });
-                    }
+                    $.CswDialog('EditNodeDialog', {
+                        nodeids: [o.data.ExpirationReset.UserId],
+                        nodekeys: [o.data.ExpirationReset.UserKey],
+                        filterToPropId: o.data.ExpirationReset.PasswordId,
+                        title: 'Your password has expired.  Please change it now:',
+                        onEditNode: function () {
+                            Csw.tryExec(o.success);
+                        }
+                    });
                     break;
                 case 'ShowLicense':
-                    goodEnoughForMobile = true;
-                    if (!o.ForMobile) {
-                        $.CswDialog('ShowLicenseDialog', {
-                            'onAccept': function () {
-                                o.success();
-                            },
-                            'onDecline': function () {
-                                o.failure('You must accept the license agreement to use this application');
-                            }
-                        });
-                    }
+                    $.CswDialog('ShowLicenseDialog', {
+                        'onAccept': function () {
+                            o.success();
+                        },
+                        'onDecline': function () {
+                            o.failure('You must accept the license agreement to use this application');
+                        }
+                    });
                     break;
                 case 'Ignore':
                     o.success();
                     break;
-            }
-
-            if (o.ForMobile &&
-                (o.status !== 'Authenticated' && goodEnoughForMobile)) {
-                o.success();
-            } else if (false === Csw.isNullOrEmpty(txt) && o.status !== 'Authenticated') {
-                o.failure(txt, o.status);
+                default:                    
+                    Csw.tryExec(o.failure, txt, o.status);
+                    break;
             }
         });
 

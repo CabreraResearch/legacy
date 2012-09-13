@@ -26,6 +26,12 @@ namespace ChemSW.Session
                 public string CurrentViewId = "";
                 public string CurrentActionName = "";
                 public string SessionId = "";
+                public bool IsValid()
+                {
+                    return false == string.IsNullOrEmpty( Password ) &&
+                        false == string.IsNullOrEmpty( CustomerId ) &&
+                        false == string.IsNullOrEmpty( UserName );
+                }
             }
 
 
@@ -57,11 +63,13 @@ namespace ChemSW.Session
                 public class Expired
                 {
                     [DataMember]
-                    public string NodeId = "";
+                    public string UserId = "";
                     [DataMember]
-                    public string CswNbtNodeKey = "";
+                    public string UserKey = "";
                     [DataMember]
-                    public string PasswordPropId = "";
+                    public string PasswordId = "";
+                    [DataMember]
+                    public string NewPassword = "";
                 }
             }
         }
