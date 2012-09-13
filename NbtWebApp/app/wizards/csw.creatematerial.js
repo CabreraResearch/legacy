@@ -454,7 +454,7 @@
                         div = cswPrivate.divStep3.div();
 
                         div.label({
-                            text: "Sizes are used to receive material inventory. This step is optional - you may create sizes for this material elsewhere.",
+                            text: "Sizes are used to receive material inventory.  You can create additional sizes for this material elsewhere.",
                             cssclass: "wizardHelpDesc"
                         });
                         div.br({ number: 1 });
