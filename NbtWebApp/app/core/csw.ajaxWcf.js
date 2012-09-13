@@ -82,7 +82,7 @@
             Csw.clientSession.handleAuthenticationStatus({
                 status: auth,
                 success: function () {
-                    Csw.tryExec(o.success, cswPrivate.response.Authentication);
+                    Csw.tryExec(o.success, cswPrivate.response.Data);
                 },
                 failure: o.onloginfail,
                 data: cswPrivate.response.Authentication
