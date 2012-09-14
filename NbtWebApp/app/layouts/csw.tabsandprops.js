@@ -709,12 +709,16 @@
 
                     cswPrivate.properties[propId] = Csw.nbt.property(fieldOpt);
 
-                    if (Csw.contains(propData, 'subprops')) {
+                    if (Csw.contains(propData, 'subprops') && false === Csw.isNullOrEmpty(propData.subprops)) {
                         // recurse on sub-props
                         var subProps = propData.subprops;
 
                         var subLayoutTable = propCell.layoutTable({
                             ID: fieldOpt.propid + '_subproptable',
+                            width: '',
+                            styles: {
+                                border: '1px solid #ccc'
+                            },
                             OddCellRightAlign: true,
                             ReadOnly: (cswPrivate.EditMode === Csw.enums.editMode.PrintReport || cswPrivate.ReadOnly),
                             cellSet: {
