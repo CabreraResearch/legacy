@@ -2,8 +2,9 @@ using System.Web;
 using ChemSW.Config;
 using ChemSW.Core;
 using ChemSW.Nbt;
-using ChemSW.Nbt.Actions;
 using ChemSW.Security;
+using ChemSW.Session;
+
 // supports ScriptService attribute
 // supports ScriptService attribute
 
@@ -16,10 +17,29 @@ namespace ChemSW.WebSvc
     public class CswWebSvcResourceInitializerNbt : ICswWebSvcResourceInitializer
     {
         private CswTimer _Timer = new CswTimer();
-        HttpContext _HttpContext = null;
-        public CswWebSvcResourceInitializerNbt( HttpContext HttpContext )
+        private HttpContext _HttpContext = null;
+        private CswNbtSessionAuthenticateData.Authentication.Request _AuthenticationRequest;
+        private delegate void _OnDeInitDelegate();
+        private _OnDeInitDelegate _OnDeInit;
+
+        private void _setHttpContextOnRequest()
+        {
+            if( null != _HttpContext.Request.Cookies["csw_currentviewid"] )
+            {
+                _AuthenticationRequest.CurrentViewId = _HttpContext.Request.Cookies["csw_currentviewid"].Value;
+            }
+            if( null != _HttpContext.Request.Cookies["csw_currentactionname"] )
+            {
+                _AuthenticationRequest.CurrentActionName = _HttpContext.Request.Cookies["csw_currentactionname"].Value;
+            }
+            _AuthenticationRequest.IpAddress = CswWebSvcCommonMethods.getIpAddress();
+        }
+
+        public CswWebSvcResourceInitializerNbt( HttpContext HttpContext, CswNbtSessionAuthenticateData.Authentication.Request AuthenticationRequest ) //TODO: add Username/Password
         {
             _HttpContext = HttpContext;
+            _AuthenticationRequest = AuthenticationRequest ?? new CswNbtSessionAuthenticateData.Authentication.Request();
+            _setHttpContextOnRequest();
         }
 
         private CswSessionResourcesNbt _CswSessionResourcesNbt = null;
@@ -33,69 +53,60 @@ namespace ChemSW.WebSvc
             }
         }
 
+        private CswNbtSessionAuthenticate _SessionAuthenticate = null;
 
         public ICswResources initResources()
         {
             _CswSessionResourcesNbt = new CswSessionResourcesNbt( _HttpContext.Application, _HttpContext.Request, _HttpContext.Response, _HttpContext, string.Empty, SetupMode.NbtWeb );
             _CswNbtResources = _CswSessionResourcesNbt.CswNbtResources;
             _CswNbtResources.beginTransaction();
-
+            _SessionAuthenticate = new CswNbtSessionAuthenticate( _CswNbtResources, _CswSessionResourcesNbt.CswSessionManager, _AuthenticationRequest );
+            _OnDeInit = new _OnDeInitDelegate( _deInitResources );
             return ( _CswNbtResources );
 
         }//_initResources() 
 
         public AuthenticationStatus authenticate()
         {
-            AuthenticationStatus ReturnVal = _CswSessionResourcesNbt.attemptRefresh();
-
-            if( ReturnVal == AuthenticationStatus.Authenticated )
+            AuthenticationStatus Ret = AuthenticationStatus.Unknown;
+            //We're keeping this logic here, because we don't want to contaminate NbtLogic with the necessary web libraries required to support CswSessionResourcesNbt
+            if( null != _AuthenticationRequest && _AuthenticationRequest.IsValid() )
             {
-                // Set audit context
-                string ContextViewId = string.Empty;
-                string ContextActionName = string.Empty;
-                if( _HttpContext.Request.Cookies["csw_currentviewid"] != null )
-                {
-                    ContextViewId = _HttpContext.Request.Cookies["csw_currentviewid"].Value;
-                }
-                if( _HttpContext.Request.Cookies["csw_currentactionname"] != null )
-                {
-                    ContextActionName = _HttpContext.Request.Cookies["csw_currentactionname"].Value;
-                }
-
-                if( ContextViewId != string.Empty )
-                {
-
-                    CswNbtView ContextView = CswWebSvcCommonMethods.getView( _CswNbtResources, ContextViewId );
-                    if( ContextView != null )
-                    {
-                        _CswNbtResources.AuditContext = ContextView.ViewName + " (" + ContextView.ViewId.ToString() + ")";
-                    }
-                }
-                else if( ContextActionName != string.Empty )
-                {
-                    CswNbtAction ContextAction = _CswNbtResources.Actions[CswNbtAction.ActionNameStringToEnum( ContextActionName )];
-                    if( ContextAction != null )
-                    {
-                        _CswNbtResources.AuditContext = CswNbtAction.ActionNameEnumToString( ContextAction.Name ) + " (Action_" + ContextAction.ActionId.ToString() + ")";
-                    }
-                }
+                Ret = _SessionAuthenticate.authenticate();
+            }
+            else
+            {
+                Ret = _CswSessionResourcesNbt.attemptRefresh();
             }
 
             _CswNbtResources.ServerInitTime = _Timer.ElapsedDurationInMilliseconds;
 
-            return ( ReturnVal );
+            return ( Ret );
 
         }//autheticate
 
-        public void deInitResources()
+        public void deauthenticate()
+        {
+            _SessionAuthenticate.deauthenticate();
+        }//autheticate
+
+        private void _deInitResources()
         {
             if( _CswSessionResourcesNbt != null )
             {
                 _CswSessionResourcesNbt.endSession();
 
+                //bury the overhead of nuking old sessions in the overhead of authenticating
+                _CswSessionResourcesNbt.purgeExpiredSessions();
+
                 _CswSessionResourcesNbt.finalize();
                 _CswSessionResourcesNbt.release();
             }
+        }
+
+        public void deInitResources()
+        {
+            _OnDeInit.BeginInvoke( null, null );
 
             _CswNbtResources.TotalServerTime = _Timer.ElapsedDurationInMilliseconds;
 

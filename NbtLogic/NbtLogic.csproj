@@ -176,6 +176,8 @@
     <Compile Include="csw\ServiceDrivers\CswNbtSdTabsAndProps.cs" />
     <Compile Include="csw\ServiceDrivers\CswNbtSdNode.cs" />
     <Compile Include="csw\ServiceDrivers\CswPropIdAttr.cs" />
+    <Compile Include="csw\Session\CswNbtSessionAuthenticate.cs" />
+    <Compile Include="csw\Session\CswNbtSessionAuthenticateData.cs" />
     <Compile Include="csw\Tree\CswNbtTreeLoaderFromXmlViewByLevelWith.cs" />
     <Compile Include="csw\UnitsOfMeasure\CswNbtUnitViewBuilder.cs" />
     <Compile Include="csw\UnitsOfMeasure\CswNbtUnitConversion.cs" />
