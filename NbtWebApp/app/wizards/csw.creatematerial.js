@@ -481,11 +481,11 @@
 
                             var getID = function (unitType) {
                                 var ret = '';
-                                for (var key in unitsOfMeasure) {
+                                Csw.each(unitsOfMeasure, function (obj, key) {
                                     if (unitsOfMeasure[key] === unitType) {
                                         ret = key;
                                     }
-                                }
+                                });
                                 return ret;
                             };
 
