@@ -26,7 +26,6 @@
                         btnCell: {},
                         size: 'medium',
                         propId: '',
-                        onClickSuccess: null,
                         onClickAction: null
                     };
                     Csw.extend(cswPrivate, options);
@@ -47,14 +46,14 @@
                     } else {
                         // Case 27263: prompt to save instead
                         if (Csw.clientChanges.manuallyCheckChanges()) {
-                            var performOnObjectClassButtonClick = function() {
+                            var performOnObjectClassButtonClick = function () {
                                 Csw.ajax.post({
                                     urlMethod: 'onObjectClassButtonClick',
                                     data: {
                                         NodeTypePropAttr: cswPrivate.propId,
                                         SelectedText: Csw.string(cswPublic.button.selectedOption, Csw.string(cswPrivate.value))
                                     },
-                                    success: function(data) {
+                                    success: function (data) {
                                         cswPublic.button.enable();
 
                                         var actionData = {
@@ -74,12 +73,9 @@
                                                 cswPrivate.btnCell.quickTip({ html: data.message });
                                             }
                                         }
-                                        var continueToPub = false === Csw.isFunction(cswPrivate.onClickSuccess) || Csw.tryExec(cswPrivate.onClickSuccess, data);
-                                        if (Csw.bool(data.success) && continueToPub) {
-                                            Csw.publish(Csw.enums.events.objectClassButtonClick, actionData);
-                                        }
+                                        Csw.publish(Csw.enums.events.objectClassButtonClick, actionData);
                                     }, // ajax success()
-                                    error: function() {
+                                    error: function () {
                                         cswPublic.button.enable();
                                     }
                                 }); // ajax.post()
@@ -137,8 +133,8 @@
                                 }
                             });
                             break;
-                        //case 'link':           
-                        //this is a fallthrough case           
+                        //case 'link':                 
+                        //this is a fallthrough case                 
                         default:
                             cswPublic.button = cswPrivate.btnCell.a({
                                 ID: cswPrivate.buttonId,

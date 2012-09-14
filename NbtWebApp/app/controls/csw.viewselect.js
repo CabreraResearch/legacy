@@ -9,7 +9,7 @@
 
             var cswPrivate = {
                 uri: 'Views',
-                viewMethod: 'ViewSelect',
+                viewMethod: 'Views/ViewSelect',
                 ID: 'viewselect',
                 onSelect: null,
                 onSuccess: null,

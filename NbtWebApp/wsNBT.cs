@@ -372,7 +372,7 @@ namespace ChemSW.Nbt.WebServices
 
             if( AuthenticationStatus == AuthenticationStatus.Unknown )
             {
-                AuthenticationStatus = _CswSessionResources.CswSessionManager.beginSession( UserName, Password, CswWebControls.CswNbtWebTools.getIpAddress(), IsMobile );
+                AuthenticationStatus = _CswSessionResources.CswSessionManager.beginSession( UserName, Password, CswWebSvcCommonMethods.getIpAddress(), IsMobile );
             }
 
             // case 21211

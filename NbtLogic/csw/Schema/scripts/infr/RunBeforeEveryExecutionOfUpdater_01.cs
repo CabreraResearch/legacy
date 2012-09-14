@@ -33,7 +33,6 @@ namespace ChemSW.Nbt.Schema
             
             #endregion ROMEO
 
-            
             #region SEBASTIAN
 
             //Add 5 generic nodetype prop attribute columns

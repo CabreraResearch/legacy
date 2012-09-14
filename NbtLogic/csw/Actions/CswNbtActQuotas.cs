@@ -118,19 +118,23 @@ namespace ChemSW.Nbt.Actions
 
             // Look up the object class of all nodes (deleted or no)
             string SqlSelect = @"select count(distinct nodeid) cnt, firstversionid, objectclassid 
-                                   from (select n.nodeid, t.firstversionid, o.objectclassid
-                                           from nodes_audit n
+                                   from (select n.nodeid, t.firstversionid, o.objectclassid, n.istemp
+                                           from nodes n
                                            left outer join nodetypes t on n.nodetypeid = t.nodetypeid
                                            left outer join object_class o on t.objectclassid = o.objectclassid
                                         UNION
-                                         select n.nodeid, ta.firstversionid, o.objectclassid
+                                         select n.nodeid, ta.firstversionid, o.objectclassid, n.istemp
                                            from nodes_audit n
                                            left outer join nodetypes_audit ta on n.nodetypeid = ta.nodetypeid
                                            left outer join object_class o on ta.objectclassid = o.objectclassid)";
 
             if( ObjectClassId != Int32.MinValue )
             {
-                SqlSelect += "where objectclassid = '" + ObjectClassId.ToString() + "'";
+                SqlSelect += "where objectclassid = '" + ObjectClassId.ToString() + "' and istemp = 0";
+            }
+            else
+            {
+                SqlSelect += "where istemp = 0";
             }
             SqlSelect += "group by objectclassid, firstversionid";
 

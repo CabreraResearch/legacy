@@ -7,7 +7,6 @@ using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Search;
-using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt
 {
@@ -314,7 +313,7 @@ namespace ChemSW.Nbt
                         }
                         foreach( CswNbtNode DoomedNode in DoomedNodes )
                         {
-                            DoomedNode.delete( DeleteAllRequiredRelatedNodes: true );
+                            DoomedNode.delete( DeleteAllRequiredRelatedNodes: true, OverridePermissions: true );
                         }
                     }
                 }
