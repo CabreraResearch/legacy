@@ -120,6 +120,15 @@ namespace ChemSW.Nbt
         }
 
         /// <summary>
+        /// Is Demo View
+        /// </summary>
+        public bool IsDemo
+        {
+            get { return Root.IsDemo; }
+            set { Root.IsDemo = value; }
+        }
+
+        /// <summary>
         /// Use view in Mobile
         /// </summary>
         public bool ForMobile
@@ -207,7 +216,7 @@ namespace ChemSW.Nbt
         }
 
         #region Child constructors
-        
+
         /// <summary>
         /// Creates a new <see cref="CswNbtViewRelationship"/> for this view.
         /// For copying an existing relationship
@@ -340,7 +349,7 @@ namespace ChemSW.Nbt
                         }
                         break;
                     case CswNbtMetaDataFieldType.NbtFieldType.Button:
-                        foreach (CswNbtMetaDataNodeTypeProp ButtonNtp in NodeType.getButtonProperties())
+                        foreach( CswNbtMetaDataNodeTypeProp ButtonNtp in NodeType.getButtonProperties() )
                         {
                             AddViewProperty( ParentViewRelationship, ButtonNtp );
                         }
@@ -388,13 +397,13 @@ namespace ChemSW.Nbt
             return AddViewPropertyFilter( ParentViewProperty, Conjunction, CswNbtPropFilterSql.FilterResultMode.Hide, SubFieldName, FilterMode, Value, CaseSensitive, ShowAtRuntime );
         }
 
-        public CswNbtViewPropertyFilter AddViewPropertyFilter( CswNbtViewProperty ParentViewProperty, 
-                                                               CswNbtPropFilterSql.PropertyFilterConjunction Conjunction, 
-                                                               CswNbtPropFilterSql.FilterResultMode ResultMode, 
-                                                               CswNbtSubField.SubFieldName SubFieldName = null, 
-                                                               CswNbtPropFilterSql.PropertyFilterMode FilterMode = null, 
-                                                               string Value = "", 
-                                                               bool CaseSensitive = false, 
+        public CswNbtViewPropertyFilter AddViewPropertyFilter( CswNbtViewProperty ParentViewProperty,
+                                                               CswNbtPropFilterSql.PropertyFilterConjunction Conjunction,
+                                                               CswNbtPropFilterSql.FilterResultMode ResultMode,
+                                                               CswNbtSubField.SubFieldName SubFieldName = null,
+                                                               CswNbtPropFilterSql.PropertyFilterMode FilterMode = null,
+                                                               string Value = "",
+                                                               bool CaseSensitive = false,
                                                                bool ShowAtRuntime = false )
         {
             SubFieldName = SubFieldName ?? ParentViewProperty.MetaDataProp.getFieldTypeRule().SubFields.Default.Name;
@@ -659,6 +668,7 @@ namespace ChemSW.Nbt
             ViewTable.Rows[0]["formobile"] = CswConvert.ToDbVal( ForMobile );
             ViewTable.Rows[0]["visibility"] = Visibility.ToString();
             ViewTable.Rows[0]["viewmode"] = ViewMode.ToString();
+            ViewTable.Rows[0]["isdemo"] = CswConvert.ToDbVal( IsDemo );
             if( Visibility == NbtViewVisibility.Role )
                 ViewTable.Rows[0]["roleid"] = CswConvert.ToDbVal( VisibilityRoleId.PrimaryKey );
             else
@@ -950,7 +960,7 @@ namespace ChemSW.Nbt
                 {
                     // Must be globally unique 
                 }
-                
+
                 // don't include Property or Hidden views for uniqueness
                 WhereClause += " and visibility <> '" + NbtViewVisibility.Property.ToString() + "'";
                 WhereClause += " and visibility <> '" + NbtViewVisibility.Hidden.ToString() + "'";
