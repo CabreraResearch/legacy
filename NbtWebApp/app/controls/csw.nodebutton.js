@@ -29,7 +29,7 @@
                         onClickAction: null
                     };
                     Csw.extend(cswPrivate, options);
-                    cswPrivate.div = cswParent.div({ID: window.Ext.id()});
+                    cswPrivate.div = cswParent.div({ ID: window.Ext.id() });
                     cswPrivate.div.empty();
 
                     cswPrivate.table = cswPrivate.div.table({
@@ -73,7 +73,9 @@
                                                 cswPrivate.btnCell.quickTip({ html: data.message });
                                             }
                                         }
-                                        Csw.publish(Csw.enums.events.objectClassButtonClick, actionData);
+                                        if (Csw.bool(data.success)) {
+                                            Csw.publish(Csw.enums.events.objectClassButtonClick, actionData);
+                                        }
                                     }, // ajax success()
                                     error: function () {
                                         cswPublic.button.enable();
@@ -133,8 +135,8 @@
                                 }
                             });
                             break;
-                        //case 'link':                 
-                        //this is a fallthrough case                 
+                        //case 'link':                     
+                        //this is a fallthrough case                     
                         default:
                             cswPublic.button = cswPrivate.btnCell.a({
                                 ID: cswPrivate.buttonId,
