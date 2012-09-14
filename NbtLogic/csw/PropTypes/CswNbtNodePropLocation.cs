@@ -207,6 +207,7 @@ namespace ChemSW.Nbt.PropTypes
             bool IsLocationNode = ( null != Prop && Prop.getNodeType().ObjectClassId == LocationOC.ObjectClassId );
 
             Ret.ViewName = TopLevelName;
+            Ret.Root.Included = IsLocationNode;
 
             CswNbtViewRelationship LocationLevel1 = Ret.AddViewRelationship( LocationOC, true );
             if( NodeId != null )

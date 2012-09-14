@@ -224,7 +224,7 @@
                             ID: Csw.makeId(cswPrivate.ID, nodeid, 'editbtn'),
                             enabledText: 'Details',
                             //tooltip: { title: btntext },
-                            icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.pencil),
+                            icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.magglass),
                             onClick: function () {
                                 $.CswDialog('EditNodeDialog', {
                                     nodeids: [nodeid],

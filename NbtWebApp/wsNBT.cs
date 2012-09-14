@@ -1618,8 +1618,8 @@ namespace ChemSW.Nbt.WebServices
                             NewViewName = NewViewNameOrig + " " + Increment.ToString();
                         }
 
-                        NewView.makeNew( NewViewName, SourceView.Visibility, SourceView.VisibilityRoleId, SourceView.VisibilityUserId, SourceView );
-                        NewView.save();
+                        NewView.saveNew( NewViewName, SourceView.Visibility, SourceView.VisibilityRoleId, SourceView.VisibilityUserId, SourceView );
+                        //NewView.save();
                         ReturnVal.Add( new JProperty( "copyviewid", NewView.ViewId.ToString() ) );
                     }
                 }
@@ -1716,7 +1716,7 @@ namespace ChemSW.Nbt.WebServices
                     }
 
                     CswNbtView NewView = new CswNbtView( _CswNbtResources );
-                    NewView.makeNew( ViewName, RealVisibility, RealVisibilityRoleId, RealVisibilityUserId, CopyView );
+                    NewView.saveNew( ViewName, RealVisibility, RealVisibilityRoleId, RealVisibilityUserId, CopyView );
                     NewView.Category = Category;
 
                     if( ViewMode != string.Empty )

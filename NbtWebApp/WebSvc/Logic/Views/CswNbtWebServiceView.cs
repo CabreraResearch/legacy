@@ -596,6 +596,7 @@ namespace ChemSW.Nbt.WebServices
                             OtherParentProp.FieldType == ViewParentProp.FieldType &&
                             OtherPropFilter.Value == ViewPropFilter.Value )
                         {
+                            OtherPropFilter.Conjunction = (CswNbtPropFilterSql.PropertyFilterConjunction) NewFilter["conjunction"].ToString();
                             OtherPropFilter.FilterMode = (CswNbtPropFilterSql.PropertyFilterMode) NewFilter["filter"].ToString();
                             OtherPropFilter.SubfieldName = (CswNbtSubField.SubFieldName) NewFilter["subfieldname"].ToString();
                             OtherPropFilter.Value = NewFilter["filtervalue"].ToString();

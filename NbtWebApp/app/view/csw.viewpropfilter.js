@@ -299,6 +299,7 @@
                     filtarbitraryid: cswPrivate.filtarbitraryid,
                     proparbitraryid: cswPrivate.proparbitraryid,
                     relatedidtype: cswPrivate.relatedidtype,
+                    conjunction: cswPrivate.selectedConjunction,
                     subfieldname: cswPrivate.selectedSubFieldName,
                     filter: cswPrivate.selectedFilterMode,
                     filtervalue: cswPrivate.selectedValue.trim()
