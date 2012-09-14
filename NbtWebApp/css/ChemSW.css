@@ -343,7 +343,6 @@ ul li div {
 {
     vertical-align: top;
     padding: 4px 4px 4px 10px;
-    text-align: right;
 }
 
 .propertylabel
@@ -356,7 +355,7 @@ ul li div {
 .propertyvaluecell
 {
     vertical-align: top;
-    padding: 4px 0px 4px 0px;
+    padding: 4px 0px 10px 10px;
 }
 
 .ErrorContent
