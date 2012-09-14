@@ -298,11 +298,7 @@
             };
 
             cswPrivate.getPropertyCell = function (cellSet) {
-                return cellSet[2][1].children('div');
-            };
-
-            cswPrivate.getSpacerCell = function (cellSet) {
-                return cellSet[3][1].children('div');
+                return cellSet[1][2].children('div');
             };
 
             cswPrivate.getCellSet = function (layoutTable, tabgroup, displayrow, displaycol) {
@@ -315,7 +311,7 @@
                     if (Csw.isNullOrEmpty(cswPrivate.tabgrouptables[safetabgroup])) {
                         var cellSet = layoutTable.cellSet(displayrow, displaycol);
                         var propCell = cswPrivate.getPropertyCell(cellSet);
-                        cswPrivate.getSpacerCell(cellSet).br();
+
                         var $fieldset = $('<fieldset>');
                         $fieldset.append('<legend>' + tabgroup + '</legend>');
                         propCell.append($fieldset);
@@ -326,11 +322,11 @@
 
                         var tabgroupLayoutTable = div.layoutTable({
                             ID: safetabgroup,
-                            OddCellRightAlign: false,
+                            OddCellRightAlign: true,
                             ReadOnly: (cswPrivate.EditMode === Csw.enums.editMode.PrintReport || cswPrivate.ReadOnly),
                             cellSet: {
-                                rows: 3,
-                                columns: 1
+                                rows: 1,
+                                columns: 2
                             },
                             onSwap: function (e, onSwapData) {
                                 cswPrivate.onSwap(tabid, onSwapData);
@@ -393,16 +389,15 @@
                     var formTable = cswPrivate.form.table({
                         ID: cswPrivate.ID + '_formtbl_' + tabid + window.Ext.id(),
                         width: '100%'
-                        
                     });
 
                     var layoutOpts = {
                         ID: cswPrivate.ID + '_props_' + tabid,
-                        OddCellRightAlign: false,
+                        OddCellRightAlign: true,
                         ReadOnly: (cswPrivate.EditMode === Csw.enums.editMode.PrintReport || cswPrivate.ReadOnly),
                         cellSet: {
-                            rows: 3,
-                            columns: 1
+                            rows: 1,
+                            columns: 2
                         },
                         onSwap: function (e, onSwapData) {
                             cswPrivate.onSwap(tabid, onSwapData);
@@ -430,6 +425,7 @@
                                 false === Csw.isNullOrEmpty(key) &&
                                 Csw.bool(thisProp.hassubprops)) {
 
+                                var propId = key; 
                                 var subTable = cswPrivate.layoutTable[thisProp.id + '_subproptable'];
                                 var parentCell = Csw.literals.factory(subTable.table.$.parent().parent().parent());
                                 var cellSet = cswPrivate.getCellSet(cswPrivate.layoutTable, thisProp.tabgroup, parentCell.propNonDom('row'), parentCell.propNonDom('column'));
@@ -467,7 +463,6 @@
                     }
 
                     if (cswPrivate.EditMode !== Csw.enums.editMode.PrintReport && Csw.bool(cswPrivate.showSaveButton)) {
-                        formTable.cell(2, 1).br({ number: 1 });
                         cswPrivate.saveBtn = formTable.cell(2, 1).buttonExt({
                             ID: 'SaveTab' + window.Ext.id,
                             icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.save),
@@ -478,8 +473,8 @@
                     }
                     cswPrivate.atLeastOne = cswPrivate.handleProperties(null, tabContentDiv, tabid, false);
                     if (false === Csw.isNullOrEmpty(cswPrivate.layoutTable.cellSet(1, 1)) &&
-                            false === Csw.isNullOrEmpty(cswPrivate.layoutTable.cellSet(1, 1)[2][1])) {
-                        cswPrivate.layoutTable.cellSet(1, 1)[2][1].trigger('focus');
+                            false === Csw.isNullOrEmpty(cswPrivate.layoutTable.cellSet(1, 1)[1][2])) {
+                        cswPrivate.layoutTable.cellSet(1, 1)[1][2].trigger('focus');
                     }
                     // Validation
                     cswPrivate.initValidator();
@@ -610,7 +605,6 @@
                     labelCell = {};
 
                 cellSet = cswPrivate.getCellSet(layoutTable, propData.tabgroup, propData.displayrow, propData.displaycol);
-                //cswPrivate.getSpacerCell(cellSet).br();
                 layoutTable.addCellSetAttributes(cellSet, { propId: propid });
 
                 if (cswPrivate.canDisplayProp(propData, configMode) &&
@@ -721,7 +715,7 @@
 
                         var subLayoutTable = propCell.layoutTable({
                             ID: fieldOpt.propid + '_subproptable',
-                            OddCellRightAlign: false,
+                            OddCellRightAlign: true,
                             ReadOnly: (cswPrivate.EditMode === Csw.enums.editMode.PrintReport || cswPrivate.ReadOnly),
                             cellSet: {
                                 rows: 1,
