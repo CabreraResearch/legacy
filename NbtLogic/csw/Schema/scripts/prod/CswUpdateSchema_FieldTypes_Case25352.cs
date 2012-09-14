@@ -11,13 +11,21 @@ namespace ChemSW.Nbt.Schema
 
         public override void update()
         {
-            CswNbtMetaDataNodeType FieldTypeNt = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Csw Dev Field Type" );
+            CswNbtMetaDataNodeType FieldTypeNt = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Csw Dev FieldType Test" );
             if( null == FieldTypeNt )
             {
-                FieldTypeNt = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( CswNbtMetaDataObjectClass.NbtObjectClass.GenericClass.ToString(), "Csw Dev Field Type", "Csw Dev" );
+                FieldTypeNt = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( CswNbtMetaDataObjectClass.NbtObjectClass.GenericClass.ToString(), "Csw Dev FieldType Test", "Csw Dev" );
                 _CswNbtSchemaModTrnsctn.createModuleNodeTypeJunction( CswNbtModuleName.Dev, FieldTypeNt.NodeTypeId );
 
-                CswNbtMetaDataNodeTypeTab SimpleTab = _CswNbtSchemaModTrnsctn.MetaData.makeNewTab( FieldTypeNt, "Simple", 1 );
+                CswNbtMetaDataNodeTypeTab SimpleTab = FieldTypeNt.getNodeTypeTab( "Csw Dev FieldType Test" );
+                if( null != SimpleTab )
+                {
+                    SimpleTab.TabName = "Simple";
+                }
+                else
+                {
+                    SimpleTab = _CswNbtSchemaModTrnsctn.MetaData.makeNewTab( FieldTypeNt, "Simple", 1 );
+                }
                 CswNbtMetaDataNodeTypeTab LessSimpleTab = _CswNbtSchemaModTrnsctn.MetaData.makeNewTab( FieldTypeNt, "Less Simple", 2 );
                 CswNbtMetaDataNodeTypeTab ComplexTab = _CswNbtSchemaModTrnsctn.MetaData.makeNewTab( FieldTypeNt, "Complex", 3 );
 
