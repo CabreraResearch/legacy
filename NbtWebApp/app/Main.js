@@ -114,6 +114,11 @@ window.initMain = window.initMain || function (undefined) {
         var u = Csw.cookie.get(Csw.cookie.cookieNames.Username);
         Csw.main.headerMenu.empty();
         Csw.main.headerMenu.menu({
+            width: '100%',
+            ajax: { 
+                urlMethod: 'getHeaderMenu', 
+                data: {} 
+            },
             onLogout: function () {
                 Csw.clientSession.logout();
             },
