@@ -6,7 +6,7 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Schema Update for case 27479
     /// </summary>
-    public class CswUpdateSchemaCase_FieldTypes_25352 : CswUpdateSchemaTo
+    public class CswUpdateSchema_FieldTypes_Case25352 : CswUpdateSchemaTo
     {
 
         public override void update()
@@ -19,7 +19,7 @@ namespace ChemSW.Nbt.Schema
 
                 CswNbtMetaDataNodeTypeTab SimpleTab = _CswNbtSchemaModTrnsctn.MetaData.makeNewTab( FieldTypeNt, "Simple", 1 );
                 CswNbtMetaDataNodeTypeTab LessSimpleTab = _CswNbtSchemaModTrnsctn.MetaData.makeNewTab( FieldTypeNt, "Less Simple", 2 );
-                CswNbtMetaDataNodeTypeTab ComplexTab = _CswNbtSchemaModTrnsctn.MetaData.makeNewTab( FieldTypeNt, "Simple", 3 );
+                CswNbtMetaDataNodeTypeTab ComplexTab = _CswNbtSchemaModTrnsctn.MetaData.makeNewTab( FieldTypeNt, "Complex", 3 );
 
                 foreach( CswNbtMetaDataFieldType CswNbtMetaDataFieldType in _CswNbtSchemaModTrnsctn.MetaData.getFieldTypes() )
                 {
@@ -72,6 +72,7 @@ namespace ChemSW.Nbt.Schema
                 CswNbtView FieldTypeView = _CswNbtSchemaModTrnsctn.makeNewView( "Field Types", NbtViewVisibility.User, null, _CswNbtSchemaModTrnsctn.Nodes.makeUserNodeFromUsername( CswNbtObjClassUser.ChemSWAdminUsername ).NodeId );
                 FieldTypeView.AddViewRelationship( FieldTypeNt, false );
                 FieldTypeView.Category = "Csw Dev";
+                FieldTypeView.save();
 
                 CswNbtNode Node1 = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( FieldTypeNt.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode );
                 CswNbtNode Node2 = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( FieldTypeNt.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode );
