@@ -24,7 +24,7 @@
                         confirmmessage: '',
                         table: {},
                         btnCell: {},
-                        size: 'medium',
+                        size: 'small',
                         propId: '',
                         onClickSuccess: null,
                         onClickAction: null

@@ -6,7 +6,9 @@
         Csw.properties.register('button',
             Csw.method(function(propertyOption) {
                 'use strict';
-                var cswPrivate = { };
+                var cswPrivate = {
+                    size: 'small'
+                };
                 var cswPublic = {
                     data: propertyOption
                 };
@@ -22,7 +24,8 @@
                     cswPrivate.state = cswPrivate.propVals.state;
                     cswPrivate.text = cswPrivate.propVals.text;
                     cswPrivate.selectedText = cswPrivate.propVals.selectedText;
-
+                    cswPrivate.selectedText = cswPrivate.propVals.selectedText;
+                    
                     cswPrivate.onClickSuccess = function(data) {
                         var isRefresh = data.action == Csw.enums.nbtButtonAction.refresh;
                         if (isRefresh) { //cases 26201, 26107 
@@ -43,6 +46,7 @@
                     cswPublic.control = cswPrivate.propDiv.nodeButton({
                         ID: Csw.makeId(cswPublic.data.propid, cswPrivate.text, 'btn'),
                         value: cswPrivate.value,
+                        size: cswPublic.data.size,
                         mode: cswPrivate.mode,
                         state: cswPrivate.state,
                         menuOptions: cswPrivate.menuoptions,
