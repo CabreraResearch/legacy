@@ -407,7 +407,8 @@ namespace ChemSW.Nbt.WebServices
         /// </summary>
         private void _addMaterialSizes( JArray SizesArray, CswNbtNode MaterialNode )
         {
-            foreach( JObject SizeObj in SizesArray )
+            JArray ArrayToIterate = (JArray) SizesArray.DeepClone();
+            foreach( JObject SizeObj in ArrayToIterate )
             {
                 if( SizeObj.HasValues )
                 {
@@ -442,7 +443,7 @@ namespace ChemSW.Nbt.WebServices
         public static JObject getMaterialUnitsOfMeasure( string MaterialId, CswNbtResources CswNbtResources )
         {
             JObject ret = new JObject();
-            string PhysicalState = CswNbtObjClassMaterial.PhysicalStates.NA;
+            string PhysicalState = CswNbtObjClassMaterial.PhysicalStates.Solid;
             CswNbtObjClassMaterial Material = CswNbtResources.Nodes[MaterialId];
             if( null != Material &&
                 false == string.IsNullOrEmpty( Material.PhysicalState.Value ) )

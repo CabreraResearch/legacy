@@ -104,7 +104,6 @@
                         cswPrivate.lastStepNo = cswPrivate.currentStepNo;
                         cswPrivate.currentStepNo = newStepNo;
                         cswPrivate['makeStep' + newStepNo]();
-                        //Csw.clientDb.setItem(cswReceiveMaterialWizardState, cswPrivate);
                     }
                 };
 
@@ -147,7 +146,8 @@
                     StartingStep: cswPrivate.startingStep,
                     FinishText: 'Finish',
                     onBeforeNext: function () {
-                        var ret = cswPrivate.amountsGrid.amountsGridOnAdd();
+                        var ret = Csw.bool(cswPrivate.amountsGrid.containerCount > 0 &&
+                            cswPrivate.amountsGrid.containerCount <= cswPrivate.amountsGrid.containerlimit);
                         return ret;
                     },
                     onNext: cswPrivate.handleStep,
