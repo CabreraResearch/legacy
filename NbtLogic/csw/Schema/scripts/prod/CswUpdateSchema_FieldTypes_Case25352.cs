@@ -76,7 +76,9 @@ namespace ChemSW.Nbt.Schema
 
                 CswNbtNode Node1 = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( FieldTypeNt.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode );
                 CswNbtNode Node2 = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( FieldTypeNt.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode );
+                Node1.IsDemo = true;
                 Node1.postChanges( ForceUpdate: false );
+                Node2.IsDemo = true;
                 Node2.postChanges( ForceUpdate: false );
 
             }
