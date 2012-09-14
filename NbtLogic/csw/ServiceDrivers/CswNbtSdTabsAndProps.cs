@@ -492,7 +492,19 @@ namespace ChemSW.Nbt.ServiceDrivers
 
             if( PropWrapper != null )
             {
-                PropObj["readonly"] = PropWrapper.IsReadOnly().ToString().ToLower();
+
+
+                //PropObj["readonly"] = PropWrapper.IsReadOnly().ToString().ToLower();
+                if( _CswNbtResources.Permit.canProp( CswNbtPermit.NodeTypePermission.Edit, Prop ) )
+                {
+
+                    PropObj["readonly"] = false.ToString().ToLower();
+                }
+                else
+                {
+                    PropObj["readonly"] = true.ToString().ToLower();
+                }
+
                 PropObj["gestalt"] = PropWrapper.Gestalt.Replace( "\"", "&quot;" );
                 PropObj["highlight"] = PropWrapper.AuditChanged.ToString().ToLower();
                 PropWrapper.ToJSON( PropObj, Tab );
