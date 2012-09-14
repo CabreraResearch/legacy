@@ -507,7 +507,7 @@ namespace ChemSW.Nbt.ServiceDrivers
 
                 PropObj["gestalt"] = PropWrapper.Gestalt.Replace( "\"", "&quot;" );
                 PropObj["highlight"] = PropWrapper.AuditChanged.ToString().ToLower();
-                PropWrapper.ToJSON( PropObj, Tab );
+                PropWrapper.ToJSON( PropObj  );
             }
             return ret;
         } // makePropJson()

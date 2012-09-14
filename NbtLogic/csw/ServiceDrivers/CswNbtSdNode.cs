@@ -144,7 +144,7 @@ namespace ChemSW.Nbt.ServiceDrivers
 
             if( _CswNbtResources.Permit.canProp( Security.CswNbtPermit.NodeTypePermission.Edit, MetaDataProp ) )
             {
-                Node.Properties[MetaDataProp].ReadJSON( PropObj, null, null, Tab );
+                Node.Properties[MetaDataProp].ReadJSON( PropObj, null, null );
 
                 // Recurse on sub-props
                 if( null != PropObj["subprops"] )

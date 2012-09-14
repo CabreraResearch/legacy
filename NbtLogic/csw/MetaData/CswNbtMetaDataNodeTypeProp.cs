@@ -727,7 +727,7 @@ namespace ChemSW.Nbt.MetaData
 
                 if( _DefaultValueRow != null )
                 {
-                    _DefaultValue = CswNbtNodePropFactory.makeNodeProp( _CswNbtMetaDataResources.CswNbtResources, _DefaultValueRow, _DefaultValueRow.Table, null, this, null );
+                    _DefaultValue = CswNbtNodePropFactory.makeNodeProp( _CswNbtMetaDataResources.CswNbtResources, _DefaultValueRow, _DefaultValueRow.Table, null, this );
                 }
 
             } // if( _DefaultValue == null )

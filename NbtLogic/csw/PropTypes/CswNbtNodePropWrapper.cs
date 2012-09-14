@@ -21,15 +21,15 @@ namespace ChemSW.Nbt.PropTypes
         private CswNbtNodePropData _CswNbtNodePropData = null;
         private CswNbtResources _CswNbtResources = null;
         private CswNbtNode _Node = null;
-        private CswNbtMetaDataNodeTypeTab _Tab = null;
+//        private CswNbtMetaDataNodeTypeTab _Tab = null;
 
-        public CswNbtNodePropWrapper( CswNbtResources CswNbtResources, CswNbtNode Node, CswNbtNodeProp CswNbtNodeProp, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeTab Tab = null )
+        public CswNbtNodePropWrapper( CswNbtResources CswNbtResources, CswNbtNode Node, CswNbtNodeProp CswNbtNodeProp, CswNbtNodePropData CswNbtNodePropData  )
         {
             _CswNbtNodeProp = CswNbtNodeProp;
             _CswNbtNodePropData = CswNbtNodePropData;
             _CswNbtResources = CswNbtResources;
             _Node = Node;
-            _Tab = Tab;
+//            _Tab = Tab;
         }//ctor
 
         //bz # 8287: rearranged a few things
@@ -264,10 +264,10 @@ namespace ChemSW.Nbt.PropTypes
         /// </summary>
         /// <param name="JObject">JToken class JObject</param>
         /// <param name="Tab"></param>
-        public void ToJSON( JObject JObject, CswNbtMetaDataNodeTypeTab Tab )
+        public void ToJSON( JObject JObject )
         {
             JObject Values = new JObject();
-            _Tab = Tab;
+//            _Tab = Tab;
             JObject["values"] = Values;
             _CswNbtNodeProp.ToJSON( Values );
         }
@@ -283,11 +283,11 @@ namespace ChemSW.Nbt.PropTypes
         /// <summary>
         /// Parses defined Field Type attributes/subfields into a JToken class JObject
         /// </summary>
-        public void ReadJSON( JObject Object, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap, CswNbtMetaDataNodeTypeTab Tab )
+        public void ReadJSON( JObject Object, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap  )
         {
             if( null != Object ) //&& false == Hidden )
             {
-                _Tab = Tab;
+//                _Tab = Tab;
                 if( null != Object["values"] &&
                     //                    false == IsReadOnly() &&
                     _wasModified( Object ) )
