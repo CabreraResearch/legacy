@@ -3,6 +3,7 @@ using System.Runtime.Serialization;
 using ChemSW;
 using ChemSW.Nbt;
 using ChemSW.Security;
+using ChemSW.Session;
 using ChemSW.WebSvc;
 
 namespace NbtWebApp.WebSvc.Returns
@@ -18,7 +19,7 @@ namespace NbtWebApp.WebSvc.Returns
         /// </summary>
         public CswWebSvcReturn()
         {
-            Authentication = new CswWebSvcReturnBase.Authentication();
+            Authentication = new CswNbtSessionAuthenticateData.Authentication.Response();
             Status = new CswWebSvcReturnBase.Status();
             Performance = new CswWebSvcReturnBase.Performance();
             Logging = new CswWebSvcReturnBase.Logging();
@@ -42,7 +43,7 @@ namespace NbtWebApp.WebSvc.Returns
         /// Authentication status and Timeout for this request's response 
         /// </summary>
         [DataMember]
-        public CswWebSvcReturnBase.Authentication Authentication { get; set; }
+        public CswNbtSessionAuthenticateData.Authentication.Response Authentication { get; set; }
 
         /// <summary>
         /// Status of this request's response, include error content (if any)

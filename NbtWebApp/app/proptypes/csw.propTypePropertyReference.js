@@ -1,42 +1,36 @@
 /// <reference path="~/app/CswApp-vsdoc.js" />
 
+(function () {
+    'use strict';
+    Csw.properties.propertyReference = Csw.properties.propertyReference ||
+        Csw.properties.register('propertyReference',
+            Csw.method(function (propertyOption) {
+                'use strict';
+                var cswPrivate = {};
+                var cswPublic = {
+                    data: propertyOption || Csw.nbt.propertyOption(propertyOption)
+                };
 
-(function ($) {
-    "use strict";
-    var pluginName = 'CswFieldTypePropertyReference';
+                var render = function () {
+                    'use strict';
 
-    var methods = {
-        init: function (o) {
+                    cswPrivate.propVals = cswPublic.data.propData.values;
+                    cswPrivate.parent = cswPublic.data.propDiv;
+                    cswPrivate.text = (false === cswPublic.data.Multi) ? Csw.string(cswPrivate.propVals.value, cswPublic.data.propData.gestalt).trim() : Csw.enums.multiEditDefaultValue;
 
-            var propDiv = o.propDiv;
-            propDiv.empty();
+                    cswPrivate.text += '&nbsp;&nbsp;';
+                    /* Static Div */
+                    cswPrivate.parent.div({
+                        ID: cswPublic.data.ID,
+                        cssclass: 'staticvalue',
+                        text: cswPrivate.text
+                    });
 
-            var propVals = o.propData.values;
-            var text = (false === o.Multi) ? Csw.string(propVals.value, o.propData.gestalt).trim() : Csw.enums.multiEditDefaultValue;
+                };
 
-            text += '&nbsp;&nbsp;';
-            /* Static Div */
-            propDiv.div({
-                ID: o.ID,
-                cssclass: 'staticvalue',
-                text: text
-            });
-        },
-        save: function (o) { //$propdiv, $xml
-            Csw.preparePropJsonForSave(o.propData);
-        }
-    };
+                cswPublic.data.bindRender(render);
+                return cswPublic;
+            }));
 
-    // Method calling logic
-    $.fn.CswFieldTypePropertyReference = function (method) {
+}());
 
-        if (methods[method]) {
-            return methods[method].apply(this, Array.prototype.slice.call(arguments, 1));
-        } else if (typeof method === 'object' || !method) {
-            return methods.init.apply(this, arguments);
-        } else {
-            $.error('Method ' + method + ' does not exist on ' + pluginName); return false;
-        }
-
-    };
-})(jQuery);

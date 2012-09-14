@@ -11,29 +11,11 @@ namespace NbtWebApp.WebSvc.Returns
     /// </summary>
     public class CswWebSvcReturnBase
     {
-        /// <summary>
-        /// Contract for Authentication status
-        /// </summary>
         [DataContract]
-        public class Authentication
+        public class Data
         {
-            private string _AuthenticationStatus = ChemSW.Security.AuthenticationStatus.Unknown.ToString();
-
             [DataMember]
-            public string AuthenticationStatus
-            {
-                get { return _AuthenticationStatus; }
-                set { _AuthenticationStatus = value; }
-            }
-
-            private string _TimeOut = "0";
-
-            [DataMember]
-            public string TimeOut
-            {
-                get { return _TimeOut; }
-                set { _TimeOut = value; }
-            }
+            public bool Succeeded = false;
         }
 
         /// <summary>
@@ -155,6 +137,5 @@ namespace NbtWebApp.WebSvc.Returns
             [DataMember]
             public bool DisplayErrors = false;
         }
-
     }
 }

@@ -250,13 +250,19 @@ namespace ChemSW.Nbt.WebServices
             UnitIdPK.FromString( SizeObj["unitid"].ToString() );
             NodeAsSize.InitialQuantity.UnitId = UnitIdPK;
             NodeAsSize.CatalogNo.Text = SizeObj["catalogNo"].ToString();
+            NodeAsSize.QuantityEditable.Checked = CswConvert.ToTristate( SizeObj["quantEditableChecked"] );
+            NodeAsSize.Dispensable.Checked = CswConvert.ToTristate( SizeObj["dispensibleChecked"] );
+            NodeAsSize.UnitCount.Value = CswConvert.ToInt32( SizeObj["unitCount"] );
 
             JArray Row = new JArray();
             Ret["row"] = Row;
 
             Row.Add( "(New Size)" );
             Row.Add( NodeAsSize.InitialQuantity.Gestalt );
+            Row.Add( NodeAsSize.Dispensable.Gestalt );
+            Row.Add( NodeAsSize.QuantityEditable.Gestalt );
             Row.Add( NodeAsSize.CatalogNo.Gestalt );
+            Row.Add( NodeAsSize.UnitCount.Gestalt );
 
             if( WriteNode )
             {

@@ -793,7 +793,7 @@
         }, // AboutDialog
         FileUploadDialog: function (options) {
             var o = {
-                url: '',
+                urlMethod: 'fileForProp',
                 params: {},
                 onSuccess: function () { }
             };
@@ -807,7 +807,7 @@
 
             uploadBtn.$.fileupload({
                 datatype: 'json',
-                url: Csw.enums.ajaxUrlPrefix + o.url + '?' + $.param(o.params),
+                url: Csw.enums.ajaxUrlPrefix + o.urlMethod + '?' + $.param(o.params),
                 paramName: 'fileupload',
                 success: function (result, textStatus, jqXHR) {
                     div.$.dialog('close');
@@ -854,7 +854,7 @@
                 paramName: 'fileupload',
                 done: function (e, data) {
                     div.$.dialog('close');
-                    o.onSuccess();
+                    o.onSuccess(data.result);
                 }
             });
 
@@ -1341,6 +1341,7 @@
                     posX = cswPrivate.origXAccessor();
                     posY = cswPrivate.origYAccessor();
                 }
+                div.remove(); //case 27566
             },
             dragStop: function () {
                 var newPos = div.$.dialog("option", "position");

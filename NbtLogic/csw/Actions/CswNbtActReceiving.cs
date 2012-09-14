@@ -238,8 +238,13 @@ namespace ChemSW.Nbt.Actions
             {
                 Doc.IsTemp = false;
                 SdTabsAndProps.saveProps( Doc.NodeId, Int32.MinValue, CswConvert.ToString( Obj["documentProperties"] ), Doc.NodeTypeId, null );
-                Doc.Owner.RelatedNodeId = NodeAsMaterial.NodeId;
-                Doc.postChanges( ForceUpdate: false );
+                if( ( Doc.FileType.Value == CswNbtObjClassDocument.FileTypes.File && false == string.IsNullOrEmpty( Doc.File.FileName ) ) ||
+                    ( Doc.FileType.Value == CswNbtObjClassDocument.FileTypes.Link && false == string.IsNullOrEmpty( Doc.Link.Href ) ) )
+                {
+                    Doc.Owner.RelatedNodeId = NodeAsMaterial.NodeId;
+                    Doc.postChanges( ForceUpdate: false );
+                }
+
             }
             return Doc;
         }

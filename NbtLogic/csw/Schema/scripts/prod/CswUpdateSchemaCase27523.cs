@@ -9,7 +9,10 @@ namespace ChemSW.Nbt.Schema
         public override void update()
         {
             CswNbtView DoomedUoMView = _CswNbtSchemaModTrnsctn.restoreView( "Units of Measure" );
-            DoomedUoMView.Delete();
+            if( null != DoomedUoMView )
+            {
+                DoomedUoMView.Delete();
+            }
         }//Update()
 
     }//class CswUpdateSchemaCase27523

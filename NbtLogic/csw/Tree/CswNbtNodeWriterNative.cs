@@ -85,32 +85,6 @@ namespace ChemSW.Nbt
             if( Node.NodeId.TableName != "nodes" )
                 throw new CswDniException( ErrorType.Error, "Internal System Error", "CswNbtNodeWriterNative.updateRelationsToThisNode() called on a non-native node" );
 
-            // case 26484
-            // You can't use a PK-based in clause for this, because it may exceed 1000 values.
-
-            //CswStaticSelect RelatedsQuerySelect = _CswNbtResources.makeCswStaticSelect( "updateRelationsToThisNode_select", "getRelationshipsToNode" );
-            //CswStaticParam StaticParam = new CswStaticParam( "getnodeid", Node.NodeId.PrimaryKey.ToString() );
-            //RelatedsQuerySelect.S4Parameters.Add( "getnodeid", StaticParam );
-            //DataTable RelatedsTable = RelatedsQuerySelect.getTable();
-
-            //// Update the jct_nodes_props directly, to avoid having to fetch all the node info for every node with a relationship to this node
-            //string PkString = string.Empty;
-            //foreach( DataRow RelatedsRow in RelatedsTable.Rows )
-            //{
-            //    if( PkString != string.Empty ) PkString += ",";
-            //    PkString += RelatedsRow["jctnodepropid"].ToString();
-            //}
-            //if( PkString != string.Empty )
-            //{
-            //    CswTableUpdate JctNodesPropsUpdate = _CswNbtResources.makeCswTableUpdate( "updateRelationsToThisNode_jctnodeprops_update", "jct_nodes_props" );
-            //    DataTable JctNodesPropsTable = JctNodesPropsUpdate.getTable( "where jctnodepropid in (" + PkString + ")" );
-            //    foreach( DataRow JctNodesPropsRow in JctNodesPropsTable.Rows )
-            //    {
-            //        JctNodesPropsRow["pendingupdate"] = "1";
-            //    }
-            //    JctNodesPropsUpdate.update( JctNodesPropsTable );
-            //}
-
             string SQL = @"update jct_nodes_props 
                               set pendingupdate = '" + CswConvert.ToDbVal( true ) + @"' 
                             where jctnodepropid in (select j.jctnodepropid
@@ -135,33 +109,35 @@ namespace ChemSW.Nbt
                 CswTableUpdate CswTableUpdateJct = _CswNbtResources.makeCswTableUpdate( "deletenode_update", "jct_nodes_props" );
                 DataTable JctTable = CswTableUpdateJct.getTable( " where nodeid=" + CswNbtNode.NodeId.PrimaryKey.ToString() );
                 foreach( DataRow Row in JctTable.Rows )
+                {
                     Row.Delete();
+                }
                 CswTableUpdateJct.update( JctTable );
 
                 // Delete property values of relationships to this node
                 if( CswNbtNode.NodeId.TableName != "nodes" )
-                    throw new CswDniException( ErrorType.Error, "Internal System Error", "CswNbtNodeWriterNative.delete() called on a non-native node" );
-
-                CswStaticSelect RelationshipsSelect = _CswNbtResources.makeCswStaticSelect( "deletenode_select", "getRelationshipsToNode" );
-                RelationshipsSelect.S4Parameters.Add( "getnodeid", new CswStaticParam( "getnodeid", CswNbtNode.NodeId.PrimaryKey.ToString() ) );
-                DataTable RelationshipsTable = RelationshipsSelect.getTable();
-                if( RelationshipsTable.Rows.Count > 0 )
                 {
-                    string InClause = string.Empty;
-                    foreach( DataRow Row in RelationshipsTable.Rows )
-                    {
-                        if( InClause != string.Empty ) InClause += ",";
-                        InClause += Row["jctnodepropid"].ToString();
-                    }
-                    DataTable RelatedJctTable = CswTableUpdateJct.getTable( " where jctnodepropid in (" + InClause + ")" );
-                    foreach( DataRow Row in RelatedJctTable.Rows )
-                        Row.Delete();
-                    CswTableUpdateJct.update( RelatedJctTable );
+                    throw new CswDniException( ErrorType.Error, "Internal System Error", "CswNbtNodeWriterNative.delete() called on a non-native node" );
                 }
+
+                // From getRelationshipsToNode.  see case 27711
+                string InClause = @"select j.jctnodepropid
+                                      from jct_nodes_props j
+                                      join nodes n on j.nodeid = n.nodeid
+                                      join nodetype_props p on j.nodetypepropid = p.nodetypepropid
+                                      join field_types f on p.fieldtypeid = f.fieldtypeid
+                                     where (f.fieldtype = 'Relationship' or f.fieldtype = 'Location')
+                                       and j.field1_fk = " + CswNbtNode.NodeId.PrimaryKey.ToString();
+
+                DataTable RelatedJctTable = CswTableUpdateJct.getTable( " where jctnodepropid in (" + InClause + ")" );
+                foreach( DataRow Row in RelatedJctTable.Rows )
+                {
+                    Row.Delete();
+                }
+                CswTableUpdateJct.update( RelatedJctTable );
 
                 // Delete the node
 
-                //CswTableCaddy CswTableCaddyNodes = _CswNbtResources.makeCswTableCaddy( "nodes" );
                 DataTable NodesTable = CswTableUpdateNodes.getTable( "nodeid", CswNbtNode.NodeId.PrimaryKey, true );
                 NodesTable.Rows[0].Delete();
                 CswTableUpdateNodes.update( NodesTable );

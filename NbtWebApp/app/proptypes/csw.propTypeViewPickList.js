@@ -1,59 +1,54 @@
 /// <reference path="~/app/CswApp-vsdoc.js" />
 
+(function () {
+    'use strict';
+    var nameCol = 'label',
+        keyCol = 'key',
+        valueCol = 'value';
 
-(function ($) {
-    "use strict";
-    var pluginName = 'CswFieldTypeViewPickList';
-    var nameCol = 'label';
-    var keyCol = 'key';
-    var valueCol = 'value';
+    Csw.properties.viewPickList = Csw.properties.viewPickList ||
+        Csw.properties.register('viewPickList',
+            Csw.method(function (propertyOption) {
+                'use strict';
+                var cswPrivate = {};
+                var cswPublic = {
+                    data: propertyOption
+                };
 
-    var methods = {
-        init: function (o) {
+                var render = function () {
+                    'use strict';
+                    cswPublic.data = cswPublic.data || Csw.nbt.propertyOption(propertyOption);
 
-            var propDiv = o.propDiv;
-            propDiv.empty();
-            var propVals = o.propData.values;
-            var optionData = propVals.options;
-            var selectMode = propVals.selectmode;
-            propDiv.div()
-                .checkBoxArray({
-                    ID: o.ID + '_cba',
-                    UseRadios: (selectMode === 'Single'),
-                    Required: o.Required,
-                    ReadOnly: o.ReadOnly,
-                    Multi: o.Multi,
-                    onChange: o.onChange,
-                    dataAry: optionData,
-                    nameCol: nameCol,
-                    keyCol: keyCol,
-                    valCol: valueCol,
-                    valColName: 'Include'
-                });
-            return propDiv;
-        },
-        'save': function (o) {
-            var attributes = { options: null };
-            var compare = {};
-            var formdata = Csw.clientDb.getItem(o.ID + '_cba' + '_cswCbaArrayDataStore'); 
-            if (false === o.Multi || false === formdata.MultiIsUnchanged) {
-                attributes.options = formdata.data;
-                compare = attributes;
-            }
-            Csw.preparePropJsonForSave(o.Multi, o.propData, compare);
-        }
-    };
+                    cswPrivate.propVals = cswPublic.data.propData.values;
+                    cswPrivate.parent = cswPublic.data.propDiv;
+                    cswPrivate.optData = cswPrivate.propVals.options;
+                    cswPrivate.selectMode = cswPrivate.propVals.selectmode; // Single, Multiple, Blank
 
-    // Method calling logic
-    $.fn.CswFieldTypeViewPickList = function (method) {
+                    cswPublic.control = cswPrivate.parent.div()
+                           .checkBoxArray({
+                               ID: cswPublic.data.ID + '_cba',
+                               UseRadios: (cswPrivate.selectMode === 'Single'),
+                               Required: cswPublic.data.Required,
+                               ReadOnly: cswPublic.data.ReadOnly,
+                               Multi: cswPublic.data.Multi,
+                               dataAry: cswPrivate.optData,
+                               nameCol: nameCol,
+                               keyCol: keyCol,
+                               valCol: valueCol,
+                               valColName: 'Include',
+                               onChange: function () {
+                                   var val = cswPublic.control.val();
+                                   Csw.tryExec(cswPublic.data.onChange, val);
+                                   if (false === cswPublic.data.Multi || false === val.MultiIsUnchanged) {
+                                       cswPublic.data.onPropChange({ options: val.data });
+                                   }
+                               }
+                           });
+                    cswPublic.control.required(cswPublic.data.Required);
+                };
 
-        if (methods[method]) {
-            return methods[method].apply(this, Array.prototype.slice.call(arguments, 1));
-        } else if (typeof method === 'object' || !method) {
-            return methods.init.apply(this, arguments);
-        } else {
-            $.error('Method ' + method + ' does not exist on ' + pluginName); return false;
-        }
+                cswPublic.data.bindRender(render);
+                return cswPublic;
+            }));
 
-    };
-})(jQuery);
+}());

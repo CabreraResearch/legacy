@@ -9,7 +9,9 @@
             var cswPublic = {
                 quantities: [],
                 qtyControl: null,
+                containerNoControl: null,
                 thinGrid: null,
+                thinGridAddButton: null,
                 amountsGridOnAdd: null
             };
 
@@ -134,14 +136,19 @@
                             extendNewAmount({ sizeid: sizeControl.selectedNodeId() });
                             extendNewAmount({ sizename: sizeControl.selectedText() });
                         };
-                        var updateQuantityVals = function () {
+                        var updateColumnVals = function () {
                             extendNewAmount({ quantity: cswPublic.qtyControl.quantityValue });
                             extendNewAmount({ unit: cswPublic.qtyControl.unitText });
                             extendNewAmount({ unitid: cswPublic.qtyControl.unitVal });
+                            if (false === Csw.isNumeric(Csw.number(cswPrivate.quantity.unitCount))) {
+                                cswPrivate.quantity.unitCount = 1;
+                            }
+                            cswPublic.containerNoControl.val(cswPrivate.quantity.unitCount);
+                            extendNewAmount({ containerNo: cswPrivate.quantity.unitCount });
                         };
                         switch (columnName) {
                             case cswPrivate.config.numberName:
-                                var countControl = cswCell.numberTextBox({
+                                cswPublic.containerNoControl = cswCell.numberTextBox({
                                     ID: Csw.tryExec(cswPrivate.makeId, 'containerCount'),
                                     value: cswPublic.quantities.length === 0 ? 1 : '',
                                     MinValue: cswPrivate.containerMinimum,
@@ -156,13 +163,14 @@
                                         extendNewAmount({ containerNo: value });
                                     }
                                 });
-                                extendNewAmount({ containerNo: countControl.val() });
+                                extendNewAmount({ containerNo: cswPublic.containerNoControl.val() });
                                 break;
                             case cswPrivate.config.sizeName:
                                 var sizeControl = cswCell.nodeSelect({
                                     ID: Csw.tryExec(cswPrivate.makeId, 'sizes'),
                                     async: false,
                                     objectClassName: 'SizeClass',
+                                    addNodeDialogTitle: 'Size',
                                     relatedTo: {
                                         objectClassName: 'MaterialClass',
                                         nodeId: cswPrivate.materialId
@@ -171,7 +179,7 @@
                                         updateSizeVals();
                                         cswPrivate.getQuantity();
                                         cswPublic.qtyControl.refresh(cswPrivate.quantity);
-                                        updateQuantityVals();
+                                        updateColumnVals();
                                     },
                                     canAdd: true
                                 });
@@ -179,8 +187,10 @@
                                 break;
                             case cswPrivate.config.quantityName:
                                 cswPrivate.getQuantity();
+                                cswPrivate.quantity.minvalue = 0;
+                                cswPrivate.quantity.isClosedSet = false;
                                 cswPrivate.quantity.onChange = function () {
-                                    updateQuantityVals();
+                                    updateColumnVals();
                                 };
                                 if (cswPrivate.action === 'Receive') {
                                     cswPrivate.quantity.Required = true;
@@ -188,7 +198,7 @@
                                 cswPrivate.quantity.ID = Csw.tryExec(cswPrivate.makeId, 'containerQuantity');
                                 cswPrivate.quantity.qtyWidth = (7 * 8) + 'px'; //7 characters wide, 8 is the characters-to-pixels ratio
                                 cswPublic.qtyControl = cswCell.quantity(cswPrivate.quantity);
-                                updateQuantityVals();
+                                updateColumnVals();
                                 break;
                             case cswPrivate.config.barcodeName:
                                 var barcodeControl = cswCell.textArea({
@@ -211,7 +221,36 @@
                         allowAdd: true,
                         makeAddRow: executeMakeAddRow,
                         onAdd: function () {
-                            executeOnAdd();
+                            if (Csw.isNumeric(Csw.number(newAmount.containerNo)) && false === Csw.isNullOrEmpty(newAmount.quantity)) {
+                                var newCount = cswPrivate.count + Csw.number(newAmount.containerNo);
+                                if (newCount <= cswPrivate.containerlimit) {
+                                    cswPrivate.count = newCount;
+
+                                    var parseBarcodes = function (anArray) {
+                                        if (anArray.length > newAmount.containerNo) {
+                                            anArray.splice(0, anArray.length - newAmount.containerNo);
+                                        }
+                                        newAmount.barcodes = barcodeToParse.join(',');
+                                    };
+                                    var barcodeToParse = Csw.delimitedString(newAmount.barcodes).array;
+                                    parseBarcodes(barcodeToParse);
+
+                                    //we need to make sure the columns here match the header columns
+                                    var formCols = [newAmount.containerNo];
+                                    if (false === Csw.isNullOrEmpty(cswPrivate.materialId) && cswPrivate.action === 'Receive') {
+                                        formCols = formCols.concat([newAmount.sizename]);
+                                    }
+                                    formCols = formCols.concat([newAmount.quantity + ' ' + newAmount.unit]);
+                                    if (cswPrivate.customBarcodes) {
+                                        formCols = formCols.concat([newAmount.barcodes]);
+                                    }
+                                    newAmount.rowid = cswPublic.thinGrid.addRows(formCols);
+                                    cswPublic.quantities.push(extractNewAmount(newAmount));
+                                } else {
+                                    $.CswDialog('AlertDialog', 'The limit for containers created at receipt is [' + cswPrivate.containerlimit + ']. You have already added [' + cswPrivate.count + '] containers.', 'Cannot add [' + newCount + '] containers.');
+                                }
+                                Csw.tryExec(cswPrivate.onAdd, (cswPrivate.count > 0), Csw.number(newAmount.quantity * newAmount.containerNo), newAmount.unitid);
+                            }
                         },
                         onDelete: function (rowid) {
                             Csw.debug.assert(false === Csw.isNullOrEmpty(rowid), 'Rowid is null.');
@@ -221,51 +260,17 @@
                                 var reducedQuantities = cswPublic.quantities.filter(function (quantity, index, array) { return quantity.rowid !== rowid; });
                                 Csw.debug.assert(reducedQuantities !== cswPublic.quantities, 'Rowid is null.');
                                 cswPublic.quantities = reducedQuantities;
-                                Csw.tryExec(cswPrivate.onDelete, (cswPrivate.count > 0), Csw.number( quantityToRemove[0].quantity * quantityToRemove[0].containerNo ), quantityToRemove[0].unitid);
+                                Csw.tryExec(cswPrivate.onDelete, (cswPrivate.count > 0), Csw.number(quantityToRemove[0].quantity * quantityToRemove[0].containerNo), quantityToRemove[0].unitid);
                             }
                         }
                     });
 
-                    var executeOnAdd = function () {
-                        if (Csw.isNumeric(Csw.number(newAmount.containerNo)) && false === Csw.isNullOrEmpty(newAmount.quantity)) {
-                            var newCount = cswPrivate.count + Csw.number(newAmount.containerNo);
-                            if (newCount <= cswPrivate.containerlimit) {
-                                cswPrivate.count = newCount;
-
-                                var parseBarcodes = function (anArray) {
-                                    if (anArray.length > newAmount.containerNo) {
-                                        anArray.splice(0, anArray.length - newAmount.containerNo);
-                                    }
-                                    newAmount.barcodes = barcodeToParse.join(',');
-                                };
-                                var barcodeToParse = Csw.delimitedString(newAmount.barcodes).array;
-                                parseBarcodes(barcodeToParse);
-
-                                //we need to make sure the columns here match the header columns
-                                var formCols = [newAmount.containerNo];
-                                if (false === Csw.isNullOrEmpty(cswPrivate.materialId) && cswPrivate.action === 'Receive') {
-                                    formCols = formCols.concat([newAmount.sizename]);
-                                }
-                                formCols = formCols.concat([newAmount.quantity + ' ' + newAmount.unit]);
-                                if (cswPrivate.customBarcodes) {
-                                    formCols = formCols.concat([newAmount.barcodes]);
-                                }
-                                newAmount.rowid = cswPublic.thinGrid.addRows(formCols);
-                                cswPublic.quantities.push(extractNewAmount(newAmount));
-                            } else {
-                                $.CswDialog('AlertDialog', 'The limit for containers created at receipt is [' + cswPrivate.containerlimit + ']. You have already added [' + cswPrivate.count + '] containers.', 'Cannot add [' + newCount + '] containers.');
-                            }
-                            Csw.tryExec(cswPrivate.onAdd, (cswPrivate.count > 0), Csw.number( newAmount.quantity * newAmount.containerNo ), newAmount.unitid);
-                        }
-                    };
-
                     cswPublic.amountsGridOnAdd = function () {
-                        var rowid = cswPublic.thinGrid.getRowCount();
-                        cswPublic.thinGrid.deleteRow(rowid);
-                        executeOnAdd();
-                        Csw.tryExec(cswPublic.thinGrid.makeAddRow, executeMakeAddRow);
+                        cswPublic.thinGrid.commitRow();
                         return Csw.bool(cswPublic.quantities.length > 0);
                     };
+
+                    cswParent.br();
 
                 } ());
 

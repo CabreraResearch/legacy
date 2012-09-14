@@ -1,60 +1,49 @@
 /// <reference path="~/app/CswApp-vsdoc.js" />
 
+(function () {
+    'use strict';
+    Csw.properties.sequence = Csw.properties.sequence ||
+        Csw.properties.register('sequence',
+            Csw.method(function (propertyOption) {
+                'use strict';
+                var cswPrivate = {};
+                var cswPublic = {
+                    data: propertyOption
+                };
 
-(function ($) {
-    "use strict";        
-    var pluginName = 'CswFieldTypeSequence';
+                var render = function () {
+                    'use strict';
+                    cswPublic.data = cswPublic.data || Csw.nbt.propertyOption(propertyOption);
 
-    var methods = {
-        init: function (o) { 
+                    cswPrivate.propVals = cswPublic.data.propData.values;
+                    cswPrivate.parent = cswPublic.data.propDiv;
+                    cswPrivate.value = (false === cswPublic.data.Multi) ? Csw.string(cswPrivate.propVals.sequence).trim() : Csw.enums.multiEditDefaultValue;
 
-            var propDiv = o.propDiv;
-            propDiv.empty();
-            var propVals = o.propData.values;
-            var value = (false === o.Multi) ? Csw.string(propVals.sequence).trim() : Csw.enums.multiEditDefaultValue;
+                    if (cswPublic.data.ReadOnly || cswPublic.data.Multi) {
+                        cswPublic.control = cswPrivate.parent.append(cswPrivate.value);
+                    } else {
+                        cswPublic.control = cswPrivate.parent.input({
+                            ID: cswPublic.data.ID,
+                            type: Csw.enums.inputTypes.text,
+                            cssclass: 'textinput',
+                            onChange: function() {
+                                var val = cswPublic.control.val();
+                                cswPublic.data.onChange();
+                                cswPublic.data.onPropChange({ sequence: val });
+                            },
+                            value: cswPrivate.value,
+                            required: cswPublic.data.Required
+                        });
 
-            if (o.ReadOnly || o.Multi) {
-                propDiv.append(value);
-            } else {
-                var textBox = propDiv.input({
-                    ID: o.ID,
-                    type: Csw.enums.inputTypes.text,
-                    cssclass: 'textinput',
-                    onChange: o.onChange,
-                    value: value,
-                    required: o.Required
-                }); 
+                        cswPublic.control.required(cswPublic.data.Required);
+                        cswPublic.control.clickOnEnter(cswPublic.data.saveBtn);
+                    }
 
-                if(o.Required) {
-                    textBox.addClass('required');
-                }
-                textBox.clickOnEnter(o.saveBtn);
-            }
-        },
-        save: function (o) {
-            var attributes = {
-                sequence: null
-            };
-            var compare = {};
-            var sequence = o.propDiv.find('input');
-            if (false === Csw.isNullOrEmpty(sequence)) {
-                attributes.sequence = sequence.val();
-                compare = attributes;
-            }
-            Csw.preparePropJsonForSave(o.Multi, o.propData, compare);
-        }
-    };
-    
-    // Method calling logic
-    $.fn.CswFieldTypeSequence = function (method) {
-        
-        if ( methods[method] ) {
-          return methods[ method ].apply( this, Array.prototype.slice.call( arguments, 1 ));
-        } else if ( typeof method === 'object' || ! method ) {
-          return methods.init.apply( this, arguments );
-        } else {
-          $.error( 'Method ' +  method + ' does not exist on ' + pluginName ); return false;
-        }    
-  
-    };
-})(jQuery);
+                };
+
+                cswPublic.data.bindRender(render);
+                return cswPublic;
+            }));
+
+}());
+
