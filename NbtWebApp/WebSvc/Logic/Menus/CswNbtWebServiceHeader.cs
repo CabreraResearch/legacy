@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -10,8 +11,8 @@ using ChemSW.DB;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
-using Newtonsoft.Json.Linq;
 using ChemSW.Session;
+using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.WebServices
 {
@@ -215,7 +216,7 @@ namespace ChemSW.Nbt.WebServices
             JObject ComponentObj = new JObject();
             JProperty ComponentsProp = new JProperty( "components", ComponentObj );
             ret.Add( ComponentsProp );
-
+            string ThisYear = DateTime.Now.Year.ToString();
             string VersionFilePath = System.Web.Hosting.HostingEnvironment.ApplicationPhysicalPath + "/_Version.txt";
             if( File.Exists( VersionFilePath ) )
             {
@@ -224,25 +225,40 @@ namespace ChemSW.Nbt.WebServices
                                         new JObject(
                                             new JProperty( "name", "NbtWebApp" ),
                                             new JProperty( "version", VersionFileReader.ReadLine() ),
-                                            new JProperty( "copyright", "Copyright &copy; ChemSW, Inc. 2005-2011" )
+                                            new JProperty( "copyright", "Copyright &copy; ChemSW, Inc. 2005-" + ThisYear )
                                             )
                              ) );
                 VersionFileReader.Close();
             }
 
-            ArrayList Assemblies = new ArrayList();
-            Assemblies.Add( "CrystalDecisions.Web, Version=13.0.2000.0, Culture=neutral, PublicKeyToken=692fbea5521e1304" );
-            Assemblies.Add( "CswCommon" );
-            Assemblies.Add( "CswWebControls" );
-            Assemblies.Add( "NbtConfig" );
-            Assemblies.Add( "NbtLogic" );
-            Assemblies.Add( "NbtWebControls" );
-            Assemblies.Add( "Telerik.Web.UI" );
+            ArrayList CswAssemblies = new ArrayList();
+            CswAssemblies.Add( "CswCommon" );
+            CswAssemblies.Add( "CswWebControls" );
+            CswAssemblies.Add( "NbtConfig" );
+            CswAssemblies.Add( "NbtLogic" );
+            CswAssemblies.Add( "NbtWebControls" );
 
-            foreach( string AssemblyName in Assemblies )
+            foreach( string AssemblyName in CswAssemblies )
             {
-                string name = string.Empty;
-                name = AssemblyName.Contains( "," ) ? AssemblyName.Substring( 0, AssemblyName.IndexOf( ',' ) ) : AssemblyName;
+                string name = AssemblyName.Contains( "," ) ? AssemblyName.Substring( 0, AssemblyName.IndexOf( ',' ) ) : AssemblyName;
+
+                JObject AssemObj = new JObject();
+                ComponentObj.Add( new JProperty( name, AssemObj ) );
+
+                Assembly AssemblyInfo = Assembly.Load( AssemblyName );
+                string Version = AssemblyInfo.GetName().Version.ToString();
+                AssemObj.Add( new JProperty( "name", name ) );
+                AssemObj.Add( new JProperty( "version", Version ) );
+                AssemObj.Add( new JProperty( "copyright", "Copyright &copy; ChemSW, Inc. 2005-" + ThisYear ) );
+            }
+
+            ArrayList ThirdAssemblies = new ArrayList();
+            ThirdAssemblies.Add( "CrystalDecisions.Web, Version=13.0.2000.0, Culture=neutral, PublicKeyToken=692fbea5521e1304" );
+            ThirdAssemblies.Add( "Telerik.Web.UI" );
+
+            foreach( string AssemblyName in ThirdAssemblies )
+            {
+                string name = AssemblyName.Contains( "," ) ? AssemblyName.Substring( 0, AssemblyName.IndexOf( ',' ) ) : AssemblyName;
 
                 JObject AssemObj = new JObject();
                 ComponentObj.Add( new JProperty( name, AssemObj ) );
@@ -265,10 +281,12 @@ namespace ChemSW.Nbt.WebServices
                                     new JObject(
                                         new JProperty( "name", "Schema" ),
                                         new JProperty( "version", _CswNbtResources.ConfigVbls.getConfigVariableValue( "schemaversion" ) ),
-                                        new JProperty( "copyright", "Copyright &copy; ChemSW, Inc. 2005-2011" )
+                                        new JProperty( "copyright", "Copyright &copy; ChemSW, Inc. 2005-" + ThisYear )
                                         )
 
                          ) );
+
+
 
             SortedList<string, CswSessionsListEntry> sessions = _CswSessionResources.CswSessionManager.SessionsList.AllSessions;
             CswDateTime loginDate = new CswDateTime( _CswNbtResources );
