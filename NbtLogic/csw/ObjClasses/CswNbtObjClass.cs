@@ -120,16 +120,12 @@ namespace ChemSW.Nbt.ObjClasses
         // For validating object class casting
         protected static bool _Validate( CswNbtNode Node, CswNbtMetaDataObjectClass.NbtObjectClass TargetObjectClass )
         {
-            if( Node == null )
+            bool isValid = true;
+            if( Node == null || !( Node.getObjectClass().ObjectClass == TargetObjectClass ) )
             {
-                throw new CswDniException( ErrorType.Error, "Invalid node", "CswNbtObjClass._Validate was given a null node as a parameter" );
+                isValid = false;
             }
-
-            if( !( Node.getObjectClass().ObjectClass == TargetObjectClass ) )
-            {
-                throw ( new CswDniException( ErrorType.Error, "Invalid cast", "Can't cast current object class as " + TargetObjectClass.ToString() + "; Current object class is " + Node.getObjectClass().ObjectClass.ToString() ) );
-            }
-            return true;
+            return isValid;
         }
 
 

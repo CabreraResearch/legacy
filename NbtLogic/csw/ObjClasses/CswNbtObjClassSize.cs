@@ -2,7 +2,6 @@ using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.UnitsOfMeasure;
-using System;
 
 namespace ChemSW.Nbt.ObjClasses
 {
@@ -122,14 +121,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             bool isMaterialID = true;
             CswNbtNode node = _CswNbtResources.Nodes.GetNode( nodeid );
-            try
-            {
-                isMaterialID = _Validate( node, CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass );
-            }
-            catch( Exception )
-            {
-                isMaterialID = false;
-            }
+            isMaterialID = _Validate( node, CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass );
             return isMaterialID;
         }
 
