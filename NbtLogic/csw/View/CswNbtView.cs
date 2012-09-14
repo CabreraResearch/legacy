@@ -636,7 +636,7 @@ namespace ChemSW.Nbt
         public void save()
         {
             if( !ViewId.isSet() )
-                throw new CswDniException( ErrorType.Error, "Invalid View", "You must call makeNewView() before calling save() on a new view" );
+                throw new CswDniException( ErrorType.Error, "Invalid View", "You must call saveNew() before calling save() on a new view" );
 
             CswTableUpdate ViewTableUpdate = _CswNbtResources.makeCswTableUpdate( "CswNbtView_save_update", "node_views" );
             DataTable ViewTable = ViewTableUpdate.getTable( "nodeviewid", ViewId.get(), true );
@@ -697,7 +697,7 @@ namespace ChemSW.Nbt
         /// <param name="RoleId">Primary key of role restriction (if Visibility is Role-based)</param>
         /// <param name="UserId">Primary key of user restriction (if Visibility is User-based)</param>
         /// <param name="CopyViewId">Primary key of view to copy</param>
-        public void makeNew( string ViewName, NbtViewVisibility Visibility, CswPrimaryKey RoleId = null, CswPrimaryKey UserId = null, Int32 CopyViewId = Int32.MinValue )
+        public void saveNew( string ViewName, NbtViewVisibility Visibility, CswPrimaryKey RoleId = null, CswPrimaryKey UserId = null, Int32 CopyViewId = Int32.MinValue )
         {
             CswNbtView CopyView = null;
             if( CopyViewId > 0 )
@@ -711,7 +711,7 @@ namespace ChemSW.Nbt
                     CopyView.LoadXml( CopyViewAsString );
                 }
             }
-            makeNew( ViewName, Visibility, RoleId, UserId, CopyView );
+            saveNew( ViewName, Visibility, RoleId, UserId, CopyView );
         }
 
         public delegate void BeforeNewViewEventHandler();
@@ -727,10 +727,10 @@ namespace ChemSW.Nbt
         /// <param name="RoleId">Primary key of role restriction (if Visibility is Role-based)</param>
         /// <param name="UserId">Primary key of user restriction (if Visibility is User-based)</param>
         /// <param name="CopyView">View to copy</param>
-        public void makeNew( string ViewName, NbtViewVisibility Visibility, CswPrimaryKey RoleId, CswPrimaryKey UserId, CswNbtView CopyView )
+        public void saveNew( string ViewName, NbtViewVisibility Visibility, CswPrimaryKey RoleId, CswPrimaryKey UserId, CswNbtView CopyView )
         {
             if( ViewName == string.Empty )
-                throw new CswDniException( ErrorType.Warning, "View name cannot be blank", "CswNbtView.makeNew() called with empty ViewName parameter" );
+                throw new CswDniException( ErrorType.Warning, "View name cannot be blank", "CswNbtView.saveNew() called with empty ViewName parameter" );
 
             // Enforce name-visibility compound unique constraint
             if( !ViewIsUnique( _CswNbtResources, new CswNbtViewId(), ViewName, Visibility, UserId, RoleId ) )
@@ -796,7 +796,7 @@ namespace ChemSW.Nbt
         /// </summary>
         public void ImportView( string ViewName, string ViewXml, Dictionary<Int32, Int32> NodeTypeMap, Dictionary<Int32, Int32> NodeTypePropMap, Dictionary<string, Int32> NodeMap )
         {
-            this.makeNew( ViewName, NbtViewVisibility.Unknown, null, null, null );
+            this.saveNew( ViewName, NbtViewVisibility.Unknown, null, null, null );
             CswNbtViewId NewViewId = this.ViewId;
             this.LoadXml( ViewXml );  // this overwrites the viewid
             this.ViewId = NewViewId;  // so set it back

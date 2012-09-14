@@ -559,8 +559,8 @@ namespace ChemSW.Nbt.PropTypes
             {
                 CswNbtView View = _CswNbtResources.ViewSelect.restoreView( Source.NodeTypeProp.DefaultValue.AsViewReference.ViewId );
                 CswNbtView ViewCopy = new CswNbtView( _CswNbtResources );
-                ViewCopy.makeNew( View.ViewName, View.Visibility, View.VisibilityRoleId, View.VisibilityUserId, View );
-                ViewCopy.save();
+                ViewCopy.saveNew( View.ViewName, View.Visibility, View.VisibilityRoleId, View.VisibilityUserId, View );
+                //ViewCopy.save();
                 this.Field1_Fk = ViewCopy.ViewId.get();
             }
             else

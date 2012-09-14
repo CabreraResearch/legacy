@@ -12,8 +12,6 @@ namespace ChemSW.Nbt
 {
     public class CswNbtTreeLoaderFromXmlViewByLevel : CswNbtTreeLoader
     {
-        //public Int32 ResultLimit = 1001;  // BZ 8460
-
         private CswNbtResources _CswNbtResources = null;
         private CswNbtView _View;
         private ICswNbtUser _RunAsUser;
@@ -26,24 +24,7 @@ namespace ChemSW.Nbt
             _RunAsUser = RunAsUser;
             _View = View;
             _IncludeSystemNodes = IncludeSystemNodes;
-
-            //string ResultLimitString = CswNbtResources.ConfigVbls.getConfigVariableValue( "treeview_resultlimit" );
-            //if( CswTools.IsInteger( ResultLimitString ) )
-            //    ResultLimit = CswConvert.ToInt32( ResultLimitString );
         }
-
-        ///// <summary>
-        ///// Deprecated, non-functional, old interface
-        ///// </summary>
-        //public override void load( ref CswNbtNodeKey ParentNodeKey,
-        //                           CswNbtViewRelationship ChildRelationshipToStartWith,
-        //                           Int32 PageSize,
-        //                           bool FetchAllPrior,
-        //                           bool SingleLevelOnly,
-        //                           CswNbtNodeKey IncludedKey,
-        //                           bool RequireViewPermissions )
-        //{
-        //}
 
         public override void load( bool RequireViewPermissions )
         {
@@ -588,8 +569,7 @@ namespace ChemSW.Nbt
                                     FilterClause += @"            join object_class_props op on (op.objectclasspropid = " + Prop.ObjectClassPropId + @")
                                                                   join nodetype_props p on (p.objectclasspropid = op.objectclasspropid) ";
                                 }
-                                FilterClause += @"                left outer join jct_nodes_props jnp on (jnp.nodeid = n.nodeid
-                                                                                                     and jnp.nodetypepropid = p.nodetypepropid)
+                                FilterClause += @"                join jct_nodes_props jnp on (jnp.nodeid = n.nodeid and jnp.nodetypepropid = p.nodetypepropid)
                                                                   where " + FilterValue + @"))";
 
 
