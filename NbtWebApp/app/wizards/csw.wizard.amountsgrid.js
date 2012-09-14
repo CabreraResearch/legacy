@@ -111,104 +111,6 @@
 
                     cswParent.br({ number: 2 });
 
-                    var executeMakeAddRow = function (cswCell, columnName, rowid) {
-                        'use strict';
-                        var updateSizeVals = function () {
-                            cswPrivate.selectedSizeId = sizeControl.selectedNodeId();
-                            cswPublic.quantities[rowid].sizeid = sizeControl.selectedNodeId();
-                            cswPublic.quantities[rowid].sizename = sizeControl.selectedText();
-                        };
-                        var updateColumnVals = function (changeContainerNo) {
-                            cswPublic.quantities[rowid].quantity = cswPublic.qtyControl[rowid].quantityValue;
-                            cswPublic.quantities[rowid].unit = cswPublic.qtyControl[rowid].unitText;
-                            cswPublic.quantities[rowid].unitid = cswPublic.qtyControl[rowid].unitVal;
-                            if (changeContainerNo) {
-                                cswPublic.containerNoControl[rowid].val(Csw.number(cswPrivate.quantity.unitCount, 1));
-                                cswPublic.quantities[rowid].containerNo = Csw.number(cswPrivate.quantity.unitCount, 1);
-                            }
-                            Csw.tryExec(cswPrivate.onChange, cswPublic.quantities);
-                        };
-                        var updateBarcodes = function (value) {
-                            var parseBarcodes = function (anArray) {
-                                if (anArray.length > cswPublic.quantities[rowid].containerNo) {
-                                    anArray.splice(cswPublic.quantities[rowid].containerNo, anArray.length - cswPublic.quantities[rowid].containerNo);
-                                }
-                                value = anArray.join(',');
-                            };
-                            var barcodeToParse = Csw.delimitedString(Csw.string(value).trim()).array;
-                            parseBarcodes(barcodeToParse);
-                            cswPublic.quantities[rowid].barcodes = value;
-                        };
-                        switch (columnName) {
-                            case cswPrivate.config.numberName:
-                                var containerNoControl = cswCell.numberTextBox({
-                                    ID: Csw.tryExec(cswPrivate.makeId, 'containerCount'),
-                                    value: 1,
-                                    MinValue: cswPrivate.containerMinimum,
-                                    MaxValue: cswPublic.containerlimit,
-                                    width: (3 * 8) + 'px', //3 characters wide, 8 is the characters-to-pixels ratio
-                                    Precision: 0,
-                                    onChange: function (value) {
-                                        cswPublic.quantities[rowid].containerNo = value;
-                                        updateTotalContainerCount();
-                                        updateBarcodes(cswPublic.barcodeControl[rowid].val());
-                                        Csw.tryExec(cswPrivate.onChange, cswPublic.quantities);
-                                    }
-                                });
-                                cswPublic.containerNoControl[rowid] = containerNoControl;
-                                cswPublic.quantities[rowid].containerNo = cswPublic.containerNoControl[rowid].val();
-                                updateTotalContainerCount();
-                                break;
-                            case cswPrivate.config.sizeName:
-                                var sizeControl = cswCell.nodeSelect({
-                                    ID: Csw.tryExec(cswPrivate.makeId, 'sizes'),
-                                    async: false,
-                                    objectClassName: 'SizeClass',
-                                    addNodeDialogTitle: 'Size',
-                                    relatedTo: {
-                                        objectClassName: 'MaterialClass',
-                                        nodeId: cswPrivate.materialId
-                                    },
-                                    onSelect: function () {
-                                        updateSizeVals();
-                                        cswPrivate.getQuantity();
-                                        cswPublic.qtyControl[rowid].refresh(cswPrivate.quantity);
-                                        updateColumnVals(true);
-                                    },
-                                    canAdd: true
-                                });
-                                updateSizeVals();
-                                break;
-                            case cswPrivate.config.quantityName:
-                                cswPrivate.getQuantity();
-                                cswPrivate.quantity.minvalue = 0;
-                                cswPrivate.quantity.isClosedSet = false;
-                                cswPrivate.quantity.onChange = function () {
-                                    updateColumnVals(false);
-                                };
-                                if (cswPrivate.action === 'Receive') {
-                                    cswPrivate.quantity.Required = true;
-                                }
-                                cswPrivate.quantity.ID = Csw.tryExec(cswPrivate.makeId, 'containerQuantity');
-                                cswPrivate.quantity.qtyWidth = (7 * 8) + 'px'; //7 characters wide, 8 is the characters-to-pixels ratio
-                                var qtyControl = cswCell.quantity(cswPrivate.quantity);
-                                cswPublic.qtyControl[rowid] = qtyControl;
-                                updateColumnVals(false);
-                                break;
-                            case cswPrivate.config.barcodeName:
-                                var barcodeControl = cswCell.textArea({
-                                    ID: Csw.tryExec(cswPrivate.makeId, 'containerBarcodes'),
-                                    rows: 1,
-                                    cols: 14,
-                                    onChange: function (value) {
-                                        updateBarcodes(value);
-                                    }
-                                });
-                                cswPublic.barcodeControl[rowid] = barcodeControl;
-                                break;
-                        }
-                    };
-
                     var getTotalContainerQuantity = function () {
                         var totalContainerQuantity = 0;
                         Csw.each(cswPublic.quantities, function (quantity) {
@@ -235,7 +137,103 @@
                         rows: cswPrivate.rows,
                         allowDelete: true,
                         allowAdd: true,
-                        makeAddRow: executeMakeAddRow,
+                        makeAddRow: function (cswCell, columnName, rowid) {
+                            'use strict';
+                            var updateSizeVals = function () {
+                                cswPrivate.selectedSizeId = sizeControl.selectedNodeId();
+                                cswPublic.quantities[rowid].sizeid = sizeControl.selectedNodeId();
+                                cswPublic.quantities[rowid].sizename = sizeControl.selectedText();
+                            };
+                            var updateColumnVals = function (changeContainerNo) {
+                                cswPublic.quantities[rowid].quantity = cswPublic.qtyControl[rowid].quantityValue;
+                                cswPublic.quantities[rowid].unit = cswPublic.qtyControl[rowid].unitText;
+                                cswPublic.quantities[rowid].unitid = cswPublic.qtyControl[rowid].unitVal;
+                                if (changeContainerNo) {
+                                    cswPublic.containerNoControl[rowid].val(Csw.number(cswPrivate.quantity.unitCount, 1));
+                                    cswPublic.quantities[rowid].containerNo = Csw.number(cswPrivate.quantity.unitCount, 1);
+                                }
+                                Csw.tryExec(cswPrivate.onChange, cswPublic.quantities);
+                            };
+                            var updateBarcodes = function (value) {
+                                var parseBarcodes = function (anArray) {
+                                    if (anArray.length > cswPublic.quantities[rowid].containerNo) {
+                                        anArray.splice(cswPublic.quantities[rowid].containerNo, anArray.length - cswPublic.quantities[rowid].containerNo);
+                                    }
+                                    value = anArray.join(',');
+                                };
+                                var barcodeToParse = Csw.delimitedString(Csw.string(value).trim()).array;
+                                parseBarcodes(barcodeToParse);
+                                cswPublic.quantities[rowid].barcodes = value;
+                            };
+                            switch (columnName) {
+                                case cswPrivate.config.numberName:
+                                    var containerNoControl = cswCell.numberTextBox({
+                                        ID: Csw.tryExec(cswPrivate.makeId, 'containerCount'),
+                                        value: 1,
+                                        MinValue: cswPrivate.containerMinimum,
+                                        MaxValue: cswPublic.containerlimit,
+                                        width: (3 * 8) + 'px', //3 characters wide, 8 is the characters-to-pixels ratio
+                                        Precision: 0,
+                                        onChange: function (value) {
+                                            cswPublic.quantities[rowid].containerNo = value;
+                                            updateTotalContainerCount();
+                                            updateBarcodes(cswPublic.barcodeControl[rowid].val());
+                                            Csw.tryExec(cswPrivate.onChange, cswPublic.quantities);
+                                        }
+                                    });
+                                    cswPublic.containerNoControl[rowid] = containerNoControl;
+                                    cswPublic.quantities[rowid].containerNo = cswPublic.containerNoControl[rowid].val();
+                                    updateTotalContainerCount();
+                                    break;
+                                case cswPrivate.config.sizeName:
+                                    var sizeControl = cswCell.nodeSelect({
+                                        ID: Csw.tryExec(cswPrivate.makeId, 'sizes'),
+                                        async: false,
+                                        objectClassName: 'SizeClass',
+                                        addNodeDialogTitle: 'Size',
+                                        relatedTo: {
+                                            objectClassName: 'MaterialClass',
+                                            nodeId: cswPrivate.materialId
+                                        },
+                                        onSelect: function () {
+                                            updateSizeVals();
+                                            cswPrivate.getQuantity();
+                                            cswPublic.qtyControl[rowid].refresh(cswPrivate.quantity);
+                                            updateColumnVals(true);
+                                        },
+                                        canAdd: true
+                                    });
+                                    updateSizeVals();
+                                    break;
+                                case cswPrivate.config.quantityName:
+                                    cswPrivate.getQuantity();
+                                    cswPrivate.quantity.minvalue = 0;
+                                    cswPrivate.quantity.isClosedSet = false;
+                                    cswPrivate.quantity.onChange = function () {
+                                        updateColumnVals(false);
+                                    };
+                                    if (cswPrivate.action === 'Receive') {
+                                        cswPrivate.quantity.Required = true;
+                                    }
+                                    cswPrivate.quantity.ID = Csw.tryExec(cswPrivate.makeId, 'containerQuantity');
+                                    cswPrivate.quantity.qtyWidth = (7 * 8) + 'px'; //7 characters wide, 8 is the characters-to-pixels ratio
+                                    var qtyControl = cswCell.quantity(cswPrivate.quantity);
+                                    cswPublic.qtyControl[rowid] = qtyControl;
+                                    updateColumnVals(false);
+                                    break;
+                                case cswPrivate.config.barcodeName:
+                                    var barcodeControl = cswCell.textArea({
+                                        ID: Csw.tryExec(cswPrivate.makeId, 'containerBarcodes'),
+                                        rows: 1,
+                                        cols: 14,
+                                        onChange: function (value) {
+                                            updateBarcodes(value);
+                                        }
+                                    });
+                                    cswPublic.barcodeControl[rowid] = barcodeControl;
+                                    break;
+                            }
+                        },
                         onAdd: function (newRowid) {
                             var newAmount = {};
                             //This while loop serves as a buffer to remove the +1/-1 issues when comparing the data with the table cell rows in the thingrid.

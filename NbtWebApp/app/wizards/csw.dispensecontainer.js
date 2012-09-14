@@ -72,7 +72,9 @@
                         RequestContainer: 'RequestContainer'
                     },
                     printBarcodes: false,
-                    formIsValid: false
+                    formIsValid: false,
+                    roundToPrecision: null,
+                    getTotalQuantityToDispense: null
                 };
 
                 cswPrivate.setDispenseMode = function () {
@@ -428,12 +430,12 @@
                     };
                 } ());
 
-                var roundToPrecision = function (num) {
+                cswPrivate.roundToPrecision = function (num) {
                     var precision = Csw.number(cswPrivate.state.precision);
                     return Math.round(Csw.number(num) * Math.pow(10, precision)) / Math.pow(10, precision);
                 };
 
-                var getTotalQuantityToDispense = function (quantities) {
+                cswPrivate.getTotalQuantityToDispense = function (quantities) {
                     var totalQuantityToDispense = 0;
                     Csw.each(quantities, function (quantity) {
                         if (false === Csw.isNullOrEmpty(quantity)) {
@@ -454,12 +456,12 @@
                                     success: function (data) {
                                         if (false === Csw.isNullOrEmpty(data)) {
                                             var precision = Csw.number(cswPrivate.state.precision);
-                                            totalQuantityToDispense += roundToPrecision(Csw.number(data.convertedvalue) * Csw.number(containerNo, 0));
+                                            totalQuantityToDispense += cswPrivate.roundToPrecision(Csw.number(data.convertedvalue) * Csw.number(containerNo, 0));
                                         }
                                     }
                                 });
                             } else {
-                                totalQuantityToDispense += roundToPrecision(Csw.number(quantity.quantity, 0) * Csw.number(containerNo, 0));
+                                totalQuantityToDispense += cswPrivate.roundToPrecision(Csw.number(quantity.quantity, 0) * Csw.number(containerNo, 0));
                             }
                         }
                     });
@@ -468,7 +470,7 @@
 
                 cswPrivate.updateQuantityAfterDispense = function (quantities) {
                     var enableFinishButton = true;
-                    cswPrivate.state.quantityAfterDispense = roundToPrecision(Csw.number(cswPrivate.state.currentQuantity - getTotalQuantityToDispense(quantities)));
+                    cswPrivate.state.quantityAfterDispense = cswPrivate.roundToPrecision(Csw.number(cswPrivate.state.currentQuantity - cswPrivate.getTotalQuantityToDispense(quantities)));
 
                     if (false === Csw.isNullOrEmpty(cswPrivate.amountsGrid)) {
                         enableFinishButton = Csw.bool(cswPrivate.amountsGrid.containerCount >= 0 &&
