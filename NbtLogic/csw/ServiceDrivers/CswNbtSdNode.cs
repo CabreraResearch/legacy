@@ -62,7 +62,7 @@ namespace ChemSW.Nbt.ServiceDrivers
 
         public bool DeleteNode( CswPrimaryKey NodePk, bool DeleteAllRequiredRelatedNodes = false )
         {
-            return _DeleteNode(NodePk, _CswNbtResources, DeleteAllRequiredRelatedNodes: DeleteAllRequiredRelatedNodes);
+            return _DeleteNode( NodePk, _CswNbtResources, DeleteAllRequiredRelatedNodes: DeleteAllRequiredRelatedNodes );
         }
 
         private bool _DeleteNode( CswPrimaryKey NodePk, CswNbtResources NbtResources, bool DeleteAllRequiredRelatedNodes = false )
@@ -141,23 +141,28 @@ namespace ChemSW.Nbt.ServiceDrivers
 
             CswNbtMetaDataNodeTypeProp MetaDataProp = _CswNbtResources.MetaData.getNodeTypeProp( PropIdAttr.NodeTypePropId );
 
-            Node.Properties[MetaDataProp].ReadJSON( PropObj, null, null, Tab );
 
-            // Recurse on sub-props
-            if( null != PropObj["subprops"] )
+            if( _CswNbtResources.Permit.canProp( Security.CswNbtPermit.NodeTypePermission.Edit, MetaDataProp ) )
             {
-                JObject SubPropsObj = (JObject) PropObj["subprops"];
-                if( SubPropsObj.HasValues )
+                Node.Properties[MetaDataProp].ReadJSON( PropObj, null, null, Tab );
+
+                // Recurse on sub-props
+                if( null != PropObj["subprops"] )
                 {
-                    foreach( JObject ChildPropObj in SubPropsObj.Properties()
-                                .Where( ChildProp => null != ChildProp.Value && ChildProp.Value.HasValues )
-                                .Select( ChildProp => (JObject) ChildProp.Value )
-                                .Where( ChildPropObj => ChildPropObj.HasValues ) )
+                    JObject SubPropsObj = (JObject) PropObj["subprops"];
+                    if( SubPropsObj.HasValues )
                     {
-                        addSingleNodeProp( Node, ChildPropObj, Tab );
+                        foreach( JObject ChildPropObj in SubPropsObj.Properties()
+                                    .Where( ChildProp => null != ChildProp.Value && ChildProp.Value.HasValues )
+                                    .Select( ChildProp => (JObject) ChildProp.Value )
+                                    .Where( ChildPropObj => ChildPropObj.HasValues ) )
+                        {
+                            addSingleNodeProp( Node, ChildPropObj, Tab );
+                        }
                     }
                 }
-            }
+
+            }//if user has permission to edit the property
 
         } // _applyPropJson
 

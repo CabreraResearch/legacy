@@ -227,18 +227,18 @@ namespace ChemSW.Nbt.PropTypes
         /// <summary>
         /// Determine whether the property is readonly for any reason
         /// </summary>
-        public bool IsReadOnly()
-        {
-            return ( ( ( _CswNbtNodePropData.ReadOnly ||       // jct_nodes_props.readonly
-                      NodeTypeProp.ReadOnly ) && _CswNbtResources.EditMode != NodeEditMode.Add ) ||
-                     NodeTypeProp.ServerManaged ||         // nodetype_props.servermanaged
-                     _CswNbtResources.EditMode == NodeEditMode.Preview ||
-                     _CswNbtResources.EditMode == NodeEditMode.PrintReport ||
-                     _CswNbtResources.EditMode == NodeEditMode.AuditHistoryInPopup ||
-                     ( _CswNbtResources.EditMode == NodeEditMode.Add && false == CanAdd ) ||
-                     ( ( _CswNbtResources.EditMode == NodeEditMode.Edit || _CswNbtResources.EditMode == NodeEditMode.EditInPopup ) && false == CanEdit ) ||
-                     ( null != _Node && ( _Node.ReadOnly || _Node.Locked ) ) ); // nodes.readonly or nodes.locked
-        }
+        //public bool IsReadOnly()
+        //{
+        //    return ( ( ( _CswNbtNodePropData.ReadOnly ||       // jct_nodes_props.readonly
+        //              NodeTypeProp.ReadOnly ) && _CswNbtResources.EditMode != NodeEditMode.Add ) ||
+        //             NodeTypeProp.ServerManaged ||         // nodetype_props.servermanaged
+        //             _CswNbtResources.EditMode == NodeEditMode.Preview ||
+        //             _CswNbtResources.EditMode == NodeEditMode.PrintReport ||
+        //             _CswNbtResources.EditMode == NodeEditMode.AuditHistoryInPopup ||
+        //             ( _CswNbtResources.EditMode == NodeEditMode.Add && false == CanAdd ) ||
+        //             ( ( _CswNbtResources.EditMode == NodeEditMode.Edit || _CswNbtResources.EditMode == NodeEditMode.EditInPopup ) && false == CanEdit ) ||
+        //             ( null != _Node && ( _Node.ReadOnly || _Node.Locked ) ) ); // nodes.readonly or nodes.locked
+        //}
 
         /// <summary>
         /// Returns defined Field Type attributes/subfields as XmlDocument class XmlNode
@@ -289,7 +289,7 @@ namespace ChemSW.Nbt.PropTypes
             {
                 _Tab = Tab;
                 if( null != Object["values"] &&
-                    false == IsReadOnly() &&
+                    //                    false == IsReadOnly() &&
                     _wasModified( Object ) )
                 {
                     JObject Values = (JObject) Object["values"];
