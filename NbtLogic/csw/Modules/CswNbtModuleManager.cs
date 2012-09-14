@@ -111,6 +111,11 @@ namespace ChemSW.Nbt
         {
             bool ret = false;
 
+            if( _ModuleRules.Count == 0 )
+            {
+                initModules();
+            }
+
             CswTableUpdate ModulesUpdate = _CswNbtResources.makeCswTableUpdate( "CswNbtResources.UpdateModules_update", "modules" );
             DataTable ModulesTable = ModulesUpdate.getTable();
             foreach( DataRow ModuleRow in ModulesTable.Rows )
