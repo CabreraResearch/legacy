@@ -98,7 +98,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                 if( null != Node )
                 {
                     foreach( CswNbtMetaDataNodeTypeTab Tab in _CswNbtResources.MetaData.getNodeTypeTabs( Node.NodeTypeId )
-                                                                .Where( Tab => _CswNbtResources.Permit.canTab( CswNbtPermit.NodeTypePermission.View, Node.getNodeType(), Tab ) )
+                                                                .Where( Tab => ( _CswNbtResources.Permit.canTab( CswNbtPermit.NodeTypePermission.View, Node.getNodeType(), Tab ) ) || _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.View, Node.getNodeType() ) )
                                                                 .OrderBy( _getTabOrder ) )
                     {
                         _makeTab( Ret, Tab.TabOrder, Tab.TabId.ToString(), Tab.TabName, _canEditLayout() );
@@ -507,7 +507,7 @@ namespace ChemSW.Nbt.ServiceDrivers
 
                 PropObj["gestalt"] = PropWrapper.Gestalt.Replace( "\"", "&quot;" );
                 PropObj["highlight"] = PropWrapper.AuditChanged.ToString().ToLower();
-                PropWrapper.ToJSON( PropObj  );
+                PropWrapper.ToJSON( PropObj );
             }
             return ret;
         } // makePropJson()

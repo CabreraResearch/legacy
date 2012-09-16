@@ -391,7 +391,7 @@ namespace ChemSW.Nbt
 
                     if( ( ( ThisView.Root.ChildRelationships.Count > 0 &&
                             ( ThisView.Root.ChildRelationships.Where( R => R.SecondType != NbtViewRelatedIdType.NodeTypeId ||
-                                                                           _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.View, _CswNbtResources.MetaData.getNodeType( R.SecondId ), User ) ).Count() > 0 )
+                                                                           _CswNbtResources.Permit.canAnyTab( CswNbtPermit.NodeTypePermission.View, _CswNbtResources.MetaData.getNodeType( R.SecondId ), User ) ).Count() > 0 )
                           ) || IncludeEmptyViews ) &&
                         ThisView.IsFullyEnabled() &&
                         ( IncludeEmptyViews || ThisView.ViewMode != NbtViewRenderingMode.Grid || null != ThisView.findFirstProperty() ) &&
