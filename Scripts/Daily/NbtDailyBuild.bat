@@ -103,6 +103,7 @@ exit | >>%LogFile% sqlplus %ResetSchemaUsername%/%ResetSchemaPassword%@%ResetSch
 >>%LogFile% date /T
 >>%LogFile% time /T
 
+>>%LogFile% net start W3SVC
 >>%LogFile% iisreset
 >>%LogFile% net start "%SchedServiceName%"
 >>%LogFile% C:\Windows\Microsoft.NET\Framework64\v4.0.30319\aspnet_compiler.exe -v /NbtWebApp -p %KilnPath%\Nbt\Nbt\NbtWebApp
