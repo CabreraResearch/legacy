@@ -29,8 +29,8 @@ namespace ChemSW.Nbt.ObjClasses
             public const string ExpirationDate = "Expiration Date";
             public const string Size = "Size";
             public const string Request = "Request";
-            public const string Dispense = "Dispense";
-            public const string Dispose = "Dispose";
+            public const string Dispense = "Dispense this Container";
+            public const string Dispose = "Dispose this Container";
             public const string Undispose = "Undispose";
             public const string Owner = "Owner";
         }
