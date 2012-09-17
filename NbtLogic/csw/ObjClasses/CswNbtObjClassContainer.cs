@@ -327,8 +327,11 @@ namespace ChemSW.Nbt.ObjClasses
         private double _getDispenseAmountInProperUnits( double Quantity, CswPrimaryKey OldUnitId, CswPrimaryKey NewUnitId )
         {
             double convertedValue = Quantity;
-            CswNbtUnitConversion ConversionObj = new CswNbtUnitConversion( _CswNbtResources, OldUnitId, NewUnitId, Material.RelatedNodeId );
-            convertedValue = ConversionObj.convertUnit( Quantity );
+            if( OldUnitId != NewUnitId )
+            {
+                CswNbtUnitConversion ConversionObj = new CswNbtUnitConversion( _CswNbtResources, OldUnitId, NewUnitId, Material.RelatedNodeId );
+                convertedValue = ConversionObj.convertUnit( Quantity );
+            }
             return convertedValue;
         }
 
