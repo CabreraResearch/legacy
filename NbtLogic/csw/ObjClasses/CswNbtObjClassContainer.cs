@@ -41,15 +41,15 @@ namespace ChemSW.Nbt.ObjClasses
         }
         public sealed class RequestMenu
         {
-            public const string Dispense = "Dispense Container";
-            public const string Dispose = "Dispose Container";
-            public const string Move = "Move Container";
+            public const string Move = "Request Move";
+            public const string Dispose = "Request Dispose";
+            public const string Dispense = "Request Dispense";
 
             public static readonly CswCommaDelimitedString Options = new CswCommaDelimitedString
                 {
-                    Dispense,
+                    Move,
                     Dispose,
-                    Move
+                    Dispense
                 };
 
         }
@@ -91,22 +91,16 @@ namespace ChemSW.Nbt.ObjClasses
         {
             bool IsDisposed = Disposed.Checked == Tristate.True;
             CswCommaDelimitedString MenuOpts = new CswCommaDelimitedString();
-            string SelectedOpt = RequestMenu.Dispose;
             if( false == IsDisposed )
             {
+                MenuOpts.Add( RequestMenu.Move );
                 if( Missing.Checked != Tristate.True && Quantity.Quantity > 0 )
                 {
                     MenuOpts.Add( RequestMenu.Dispense );
-                    SelectedOpt = RequestMenu.Dispense;
                 }
-                else
-                {
-                    SelectedOpt = RequestMenu.Move;
-                }
-                MenuOpts.Add( RequestMenu.Move );
                 MenuOpts.Add( RequestMenu.Dispose );
             }
-            Request.State = SelectedOpt;
+            Request.State = RequestMenu.Move;
             Request.MenuOptions = MenuOpts.ToString();
         }
 
