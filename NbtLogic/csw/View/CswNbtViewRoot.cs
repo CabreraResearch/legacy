@@ -246,7 +246,23 @@ namespace ChemSW.Nbt
             }
         } // Included
 
-        private Int32 _PropCount = 17;
+        // 17 - IsDemo
+        public bool IsDemo
+        {
+            get
+            {
+                bool ret = true;
+                if( _RootString[17] != string.Empty )
+                    ret = CswConvert.ToBoolean( _RootString[17] );
+                return ret;
+            }
+            set
+            {
+                _RootString[17] = value.ToString();
+            }
+        } // IsDemo
+
+        private Int32 _PropCount = 18;
 
         #endregion Properties in _RootString
 
@@ -353,6 +369,8 @@ namespace ChemSW.Nbt
                     ForMobile = Convert.ToBoolean( Node.Attributes["formobile"].Value );
                 if( Node.Attributes["included"] != null )
                     Included = Convert.ToBoolean( Node.Attributes["included"].Value );
+                if( Node.Attributes["isdemo"] != null )
+                    IsDemo = Convert.ToBoolean( Node.Attributes["isdemo"].Value );
             }
             catch( Exception ex )
             {
@@ -453,6 +471,12 @@ namespace ChemSW.Nbt
                 {
                     bool _included = CswConvert.ToBoolean( Node["included"] );
                     Included = _included;
+                }
+
+                if( Node["isdemo"] != null )
+                {
+                    bool _isDemo = CswConvert.ToBoolean( Node["isdemo"] );
+                    IsDemo = _isDemo;
                 }
             }
             catch( Exception ex )
@@ -582,6 +606,10 @@ namespace ChemSW.Nbt
             IncludedAttribute.Value = Included.ToString().ToLower();
             RootXmlNode.Attributes.Append( IncludedAttribute );
 
+            XmlAttribute IsDemoAttribute = XmlDoc.CreateAttribute( "isdemo" );
+            IsDemoAttribute.Value = Included.ToString().ToLower();
+            RootXmlNode.Attributes.Append( IsDemoAttribute );
+
             // Recurse on child ViewNodes
             foreach( CswNbtViewRelationship ChildRelationship in this.ChildRelationships )
             {
@@ -613,6 +641,7 @@ namespace ChemSW.Nbt
             RootPropObj["visibilityuserid"] = ( VisibilityUserId != null ) ? VisibilityUserId.PrimaryKey.ToString() : "";
             RootPropObj["formobile"] = ForMobile.ToString().ToLower();
             RootPropObj["included"] = Included.ToString().ToLower();
+            RootPropObj["isdemo"] = IsDemo.ToString().ToLower();
 
             JObject ChildObject = new JObject();
             if( null == RootPropObj[_ChildRelationshipsName] ||

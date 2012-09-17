@@ -257,7 +257,6 @@
                     txt = 'An Unknown Error Occurred';
                     break;
                 case 'TimedOut':
-                    goodEnoughForMobile = true;
                     txt = 'Your session has timed out.  Please login again.';
                     break;
                 case 'ExpiredPassword':

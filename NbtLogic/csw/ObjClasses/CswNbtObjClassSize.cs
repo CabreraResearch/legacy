@@ -119,8 +119,10 @@ namespace ChemSW.Nbt.ObjClasses
 
         private bool _isMaterialID( CswPrimaryKey nodeid )
         {
+            bool isMaterialID = true;
             CswNbtNode node = _CswNbtResources.Nodes.GetNode( nodeid );
-            return _Validate( node, CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass );
+            isMaterialID = ( null != node && CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass == node.getObjectClass().ObjectClass );
+            return isMaterialID;
         }
 
         #endregion
