@@ -59,9 +59,14 @@
                 cswPrivate.gridId = cswPrivate.ID + '_csw_requestGrid_outer';
                 cswPublic.gridParent = cswPrivate.actionTbl.cell(4, 1).div({ ID: cswPrivate.gridId }); //, align: 'center' });
 
-                cswPrivate.initGrid = function () {
+                cswPrivate.initGrid = function (opts) {
 
                     // This really ought to be a CswNodeGrid
+                    opts = opts || {
+                        urlMethod: 'getCurrentRequest',
+                        data: {},
+                        onSuccess: null 
+                    };
 
                     var gridId = Csw.makeId(cswPrivate.ID, '_srgrid');
                     cswPublic.grid = cswPublic.gridParent.grid({
@@ -73,8 +78,8 @@
                         height: 180,
 
                         ajax: {
-                            urlMethod: 'getCurrentRequest',
-                            data: {}
+                            urlMethod: opts.urlMethod,
+                            data: opts.data
                         },
 
                         showCheckboxes: false,
@@ -84,6 +89,7 @@
                         onLoad: function (grid, json) {
                             cswPrivate.cartnodeid = json.cartnodeid;
                             cswPrivate.cartviewid = json.cartviewid;
+                            Csw.tryExec(opts.onSuccess);
                         },
                         onEdit: function (rows) {
                             // this works for both Multi-edit and regular
@@ -103,7 +109,9 @@
                                 nodekeys: cswnbtnodekeys,
                                 nodenames: nodenames,
                                 Multi: (nodeids.length > 1),
-                                onEditNode: cswPrivate.initGrid
+                                onEditNode: function () {
+                                    cswPrivate.initGrid(); //Case 27619--don't pass the function by reference, because we want to control the parameters with which it is called
+                                }
                             });
                         }, // onEdit
                         onDelete: function (rows) {
@@ -144,6 +152,9 @@
                         data: {
                             CopyFromRequestId: cswPrivate.copyFromNodeId,
                             CopyToRequestId: cswPrivate.cartnodeid
+                        },
+                        onSuccess: function() {
+                            Csw.publish(Csw.enums.events.main.refreshHeader);
                         }
                     });
                 }; // copyRequest()
