@@ -61,6 +61,7 @@
                 var buildQuantityTextBox = function () {
                     cswPublic.quantityTextBox = cswPublic.table.cell(1, cswPrivate.cellCol).numberTextBox({
                         ID: cswPrivate.ID + '_qty',
+                        name: cswPrivate.ID + '_qty',
                         labelText: cswPrivate.labelText,
                         useWide: cswPrivate.useWide,
                         width: cswPrivate.qtyWidth,
@@ -105,7 +106,8 @@
                             cswPrivate.relationships.push({ value: cswPrivate.selectedNodeId, display: cswPrivate.selectedName, frac: cswPrivate.fractional });
                         }
                         cswPublic.unitSelect = cswPublic.table.cell(1, cswPrivate.cellCol).select({
-                            ID: cswPrivate.ID,
+                            ID: cswPrivate.ID + '_select',
+                            name: cswPrivate.ID + '_select',
                             cssclass: 'selectinput',
                             onChange: function () {
                                 var val = cswPublic.unitSelect.val();

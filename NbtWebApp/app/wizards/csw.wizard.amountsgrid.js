@@ -87,7 +87,7 @@
                             }
                         });
                     }
-                    if (false === ret) {                        
+                    if (false === ret) {
                         cswPrivate.quantity = {
                             qtyReadonly: true,
                             unitReadonly: true
@@ -168,7 +168,8 @@
                             switch (columnName) {
                                 case cswPrivate.config.numberName:
                                     var containerNoControl = cswCell.numberTextBox({
-                                        ID: Csw.tryExec(cswPrivate.makeId, 'containerCount'),
+                                        ID: Csw.tryExec(cswPrivate.makeId + rowid, 'containerCount'),
+                                        name: Csw.tryExec(cswPrivate.makeId + rowid, 'containerCount'),
                                         value: 1,
                                         MinValue: cswPrivate.containerMinimum,
                                         MaxValue: cswPublic.containerlimit,
@@ -189,7 +190,8 @@
                                     break;
                                 case cswPrivate.config.sizeName:
                                     var sizeControl = cswCell.nodeSelect({
-                                        ID: Csw.tryExec(cswPrivate.makeId, 'sizes'),
+                                        ID: Csw.tryExec(cswPrivate.makeId + rowid, 'sizes'),
+                                        name: Csw.tryExec(cswPrivate.makeId + rowid, 'sizes'),
                                         async: false,
                                         objectClassName: 'SizeClass',
                                         addNodeDialogTitle: 'Size',
@@ -208,16 +210,13 @@
                                     updateSizeVals();
                                     break;
                                 case cswPrivate.config.quantityName:
-                                    cswPrivate.getQuantity();
+                                    cswPrivate.getQuantity();                                    
                                     cswPrivate.quantity.minvalue = 0;
                                     cswPrivate.quantity.isClosedSet = false;
                                     cswPrivate.quantity.onChange = function () {
                                         updateColumnVals(false);
                                     };
-                                    if (cswPrivate.action === 'Receive') {
-                                        cswPrivate.quantity.Required = true;
-                                    }
-                                    cswPrivate.quantity.ID = Csw.tryExec(cswPrivate.makeId, 'containerQuantity');
+                                    cswPrivate.quantity.ID = Csw.tryExec(cswPrivate.makeId + rowid, 'containerQuantity');
                                     cswPrivate.quantity.qtyWidth = (7 * 8) + 'px'; //7 characters wide, 8 is the characters-to-pixels ratio
                                     var qtyControl = cswCell.quantity(cswPrivate.quantity);
                                     cswPublic.qtyControl[rowid] = qtyControl;
@@ -225,7 +224,8 @@
                                     break;
                                 case cswPrivate.config.barcodeName:
                                     var barcodeControl = cswCell.textArea({
-                                        ID: Csw.tryExec(cswPrivate.makeId, 'containerBarcodes'),
+                                        ID: Csw.tryExec(cswPrivate.makeId + rowid, 'containerBarcodes'),
+                                        name: Csw.tryExec(cswPrivate.makeId + rowid, 'containerBarcodes'),
                                         rows: 1,
                                         cols: 14,
                                         onChange: function (value) {
@@ -272,7 +272,7 @@
 
                 } ());
 
-                (function _post() {} ());
+                (function _post() { } ());
 
             });
 
