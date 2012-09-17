@@ -242,35 +242,40 @@ namespace ChemSW.Nbt.WebServices
             JObject Ret = new JObject();
 
             SizeNode = CswNbtResources.Nodes.makeNodeFromNodeTypeId( SizeNodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing, true );
-            //CswNbtWebServiceNode NodeWs = new CswNbtWebServiceNode( CswNbtResources, CswNbtStatisticsEvents );
-            //NodeWs.addNodeProps( SizeNode, SizeObj, null );
-            CswNbtObjClassSize NodeAsSize = (CswNbtObjClassSize) SizeNode;
-            NodeAsSize.InitialQuantity.Quantity = CswConvert.ToDouble( SizeObj["quantity"] );
             CswPrimaryKey UnitIdPK = new CswPrimaryKey();
             UnitIdPK.FromString( SizeObj["unitid"].ToString() );
-            NodeAsSize.InitialQuantity.UnitId = UnitIdPK;
-            NodeAsSize.CatalogNo.Text = SizeObj["catalogNo"].ToString();
-            NodeAsSize.QuantityEditable.Checked = CswConvert.ToTristate( SizeObj["quantEditableChecked"] );
-            NodeAsSize.Dispensable.Checked = CswConvert.ToTristate( SizeObj["dispensibleChecked"] );
-            NodeAsSize.UnitCount.Value = CswConvert.ToInt32( SizeObj["unitCount"] );
-
-            JArray Row = new JArray();
-            Ret["row"] = Row;
-
-            Row.Add( "(New Size)" );
-            Row.Add( NodeAsSize.InitialQuantity.Gestalt );
-            Row.Add( NodeAsSize.Dispensable.Gestalt );
-            Row.Add( NodeAsSize.QuantityEditable.Gestalt );
-            Row.Add( NodeAsSize.CatalogNo.Gestalt );
-            Row.Add( NodeAsSize.UnitCount.Gestalt );
-
-            if( Tristate.False == NodeAsSize.QuantityEditable.Checked && false == CswTools.IsDouble( NodeAsSize.InitialQuantity.Quantity ) )
+            if( null != UnitIdPK )
             {
-                SizeNode = null;//Case 27665 - instead of throwing a serverside warning, just throw out the size
+                CswNbtObjClassSize NodeAsSize = (CswNbtObjClassSize) SizeNode;
+                NodeAsSize.InitialQuantity.Quantity = CswConvert.ToDouble( SizeObj["quantity"] );
+                NodeAsSize.InitialQuantity.UnitId = UnitIdPK;
+                NodeAsSize.CatalogNo.Text = SizeObj["catalogNo"].ToString();
+                NodeAsSize.QuantityEditable.Checked = CswConvert.ToTristate( SizeObj["quantEditableChecked"] );
+                NodeAsSize.Dispensable.Checked = CswConvert.ToTristate( SizeObj["dispensibleChecked"] );
+                NodeAsSize.UnitCount.Value = CswConvert.ToInt32( SizeObj["unitCount"] );
+
+                JArray Row = new JArray();
+                Ret["row"] = Row;
+
+                Row.Add( "(New Size)" );
+                Row.Add( NodeAsSize.InitialQuantity.Gestalt );
+                Row.Add( NodeAsSize.Dispensable.Gestalt );
+                Row.Add( NodeAsSize.QuantityEditable.Gestalt );
+                Row.Add( NodeAsSize.CatalogNo.Gestalt );
+                Row.Add( NodeAsSize.UnitCount.Gestalt );
+
+                if( Tristate.False == NodeAsSize.QuantityEditable.Checked && false == CswTools.IsDouble( NodeAsSize.InitialQuantity.Quantity ) )
+                {
+                    SizeNode = null;//Case 27665 - instead of throwing a serverside warning, just throw out the size
+                }
+                else if( WriteNode )
+                {
+                    SizeNode.postChanges( true );
+                }
             }
-            else if( WriteNode )
+            else
             {
-                SizeNode.postChanges( true );
+                SizeNode = null;
             }
 
             return Ret;
