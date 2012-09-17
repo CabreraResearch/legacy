@@ -37,6 +37,8 @@
                 rows: [],
                 tabsAndProps: null,
                 documentTabsAndProps: null,
+                showQuantityEditable: false,
+                showDispensable: false,
                 state: {
                     sizeNodeTypeId: '',
                     relatedNodeId: null,
@@ -51,9 +53,7 @@
                     properties: {},
                     documentProperties: {},
                     useExistingMaterial: false,
-                    materialProperies: {},
-                    showQuantityEditable: false,
-                    showDispensable: false
+                    materialProperies: {}
                 }
             };
 
@@ -193,7 +193,7 @@
                             Csw.tryExec(cswPrivate.onFinish, viewid);
                         }
                     });
-                };
+                };                
 
                 cswPrivate.wizard = Csw.layouts.wizard(cswParent.div(), {
                     ID: Csw.makeId(cswPrivate.ID, 'wizard'),
@@ -426,7 +426,7 @@
                 cswPrivate.stepThreeComplete = false;
 
                 return function () {
-                    var div, selectDiv;
+                    var div, selectDiv;                    
 
                     function isSizeNew(size) {
                         var ret = true;
@@ -446,7 +446,7 @@
                         if (count > 1) {
                             selectDiv.show();
                         }
-                    }
+                    }                    
 
                     cswPrivate.toggleButton(cswPrivate.buttons.prev, true);
                     cswPrivate.toggleButton(cswPrivate.buttons.cancel, true);
@@ -457,6 +457,8 @@
                         cswPrivate.divStep3 = cswPrivate.divStep3 || cswPrivate.wizard.div(3);
                         cswPrivate.divStep3.empty();
                         div = cswPrivate.divStep3.div();
+
+                        
 
                         div.label({
                             text: "Sizes are used to receive material inventory.  You can create additional sizes for this material elsewhere.",
@@ -490,10 +492,10 @@
                             };
 
                             cswPrivate.header = [cswPrivate.config.unitCountName, cswPrivate.config.quantityName, cswPrivate.config.numberName];
-                            if (cswPrivate.state.showQuantityEditable) {
+                            if (cswPrivate.showQuantityEditable) {
                                 cswPrivate.header = cswPrivate.header.concat([cswPrivate.config.quantityEditableName]);
                             }
-                            if (cswPrivate.state.showDispensable) {
+                            if (cswPrivate.showDispensable) {
                                 cswPrivate.header = cswPrivate.header.concat([cswPrivate.config.dispensibleName]);
                             }
                             if (cswPrivate.rows.length === 0) {
@@ -615,6 +617,15 @@
                             onSelect: sizeSelect,
                             onSuccess: function (retObj, count) {
                                 sizeSelect(retObj, count);
+                                Csw.ajax.post({
+                                    urlMethod: 'getSizeLogicalsVisibility',
+                                    data: { SizeNodeTypeId: cswPrivate.state.sizeNodeTypeId },
+                                    async: false,
+                                    success: function (data) {
+                                        cswPrivate.showDispensable = Csw.bool(data.showDispensable);
+                                        cswPrivate.showQuantityEditable = Csw.bool(data.showQuantityEditable);
+                                    }
+                                });
                                 makeGrid();
                             },
                             relatedToNodeTypeId: cswPrivate.state.materialType.val,

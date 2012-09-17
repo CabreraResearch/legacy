@@ -479,6 +479,28 @@ namespace ChemSW.Nbt.WebServices
             return ret;
         }
 
+        public JObject getSizeLogicalsVisibility( int SizeNodeTypeId )
+        {
+            JObject ret = new JObject();
+            ret["showQuantityEditable"] = "false";
+            ret["showDispensable"] = "false";
+            CswNbtMetaDataNodeType SizeNt = _CswNbtResources.MetaData.getNodeType( SizeNodeTypeId );
+            if( null != SizeNt )
+            {
+                CswNbtMetaDataNodeTypeProp QuantityEditable = SizeNt.getNodeTypePropByObjectClassProp( CswNbtObjClassSize.PropertyName.QuantityEditable );
+                if( null != QuantityEditable.AddLayout )
+                {
+                    ret["showQuantityEditable"] = "true";
+                }
+                CswNbtMetaDataNodeTypeProp Dispensable = SizeNt.getNodeTypePropByObjectClassProp( CswNbtObjClassSize.PropertyName.Dispensable );
+                if( null != Dispensable.AddLayout )
+                {
+                    ret["showDispensable"] = "true";
+                }
+            }
+            return ret;
+        }
+
         #endregion Public
 
     }
