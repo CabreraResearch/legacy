@@ -1,4 +1,6 @@
 
+using ChemSW.Config;
+
 namespace ChemSW.Nbt
 {
     /// <summary>
@@ -11,8 +13,20 @@ namespace ChemSW.Nbt
         {
         }
         public override CswNbtModuleName ModuleName { get { return CswNbtModuleName.Dev; } }
-        public override void OnEnable() { }
-        public override void OnDisable() { }
+        public override void OnEnable()
+        {
+            if( _CswNbtResources.ConfigVbls.doesConfigVarExist( CswConfigurationVariables.ConfigurationVariableNames.Logging_Level ) )
+            {
+                _CswNbtResources.ConfigVbls.setConfigVariableValue( CswConfigurationVariables.ConfigurationVariableNames.Logging_Level.ToString(), "Info" );
+            }
+        }
+        public override void OnDisable()
+        {
+            if( _CswNbtResources.ConfigVbls.doesConfigVarExist( CswConfigurationVariables.ConfigurationVariableNames.Logging_Level ) )
+            {
+                _CswNbtResources.ConfigVbls.setConfigVariableValue( CswConfigurationVariables.ConfigurationVariableNames.Logging_Level.ToString(), "None" );
+            }
+        }
 
     } // class CswNbtModuleRuleDev
 }// namespace ChemSW.Nbt
