@@ -85,42 +85,31 @@ namespace ChemSW.Nbt
 
         public void write( CswNbtNode Node, bool ForceSave, bool IsCopy, bool OverrideUniqueValidation )
         {
-            try
+            if( NodeSpecies.Plain == Node.NodeSpecies &&
+                ( ForceSave || NodeModificationState.Modified == Node.ModificationState ) )
             {
-                if( NodeSpecies.Plain == Node.NodeSpecies &&
-                    ( ForceSave || NodeModificationState.Modified == Node.ModificationState ) )
+                //When CswNbtNode.NodeId is Int32.MinValue, we know that the node data was not 
+                //filled from an existing node and therefore needs to be written to 
+                //the db, after which it will have a node id
+                if( null == Node.NodeId )
                 {
-                    //When CswNbtNode.NodeId is Int32.MinValue, we know that the node data was not 
-                    //filled from an existing node and therefore needs to be written to 
-                    //the db, after which it will have a node id
-                    if( null == Node.NodeId )
-                    {
-                        makeNewNodeEntry( Node, true, IsCopy, OverrideUniqueValidation );
-                        //setDefaultPropertyValues( Node );
-                    }
+                    makeNewNodeEntry( Node, true, IsCopy, OverrideUniqueValidation );
+                    //setDefaultPropertyValues( Node );
+                }
 
-                    //propcoll knows whether or not he's got new 
-                    //values to update (presumably)
+                //propcoll knows whether or not he's got new 
+                //values to update (presumably)
 
-                    //bz # 5878
-                    //Node.Properties.ManageTransaction = _ManageTransaction;
-                    Node.Properties.update( IsCopy, OverrideUniqueValidation );
+                //bz # 5878
+                //Node.Properties.ManageTransaction = _ManageTransaction;
+                Node.Properties.update( IsCopy, OverrideUniqueValidation );
 
-                    //set nodename with updated prop values
-                    _synchNodeName( Node );
+                //set nodename with updated prop values
+                _synchNodeName( Node );
 
-                    getWriterImpl( Node.NodeId ).write( Node, ForceSave, IsCopy );
+                getWriterImpl( Node.NodeId ).write( Node, ForceSave, IsCopy );
 
-                }//if node was modified
-
-            }//try
-
-            catch( System.Exception Exception )
-            {
-
-                throw ( Exception );
-
-            }// catch
+            }//if node was modified
 
         }//write()
 

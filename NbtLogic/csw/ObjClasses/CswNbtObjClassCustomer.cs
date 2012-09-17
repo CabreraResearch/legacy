@@ -11,15 +11,19 @@ namespace ChemSW.Nbt.ObjClasses
 {
     public class CswNbtObjClassCustomer : CswNbtObjClass
     {
-        public static string IPFilterRegexPropertyName { get { return "IP Filter Regex"; } }
-        public static string SubscriptionExpirationDatePropertyName { get { return "Subscription Expiration Date"; } }
-        public static string DeactivatedPropertyName { get { return "Deactivated"; } }
-        public static string CompanyIDPropertyName { get { return "Company ID"; } }
-        public static string UserCountPropertyName { get { return "User Count"; } }
-        public static string ModulesEnabledPropertyName { get { return "Modules Enabled"; } }
-        public static string LoginPropertyName { get { return "Login"; } }
-        public static string SchemaNamePropertyName { get { return "Schema Name"; } }
-        public static string SchemaVersionPropertyName { get { return "Schema Version"; } }
+        public sealed class PropertyName
+        {
+            public const string IPFilterRegex = "IP Filter Regex";
+            public const string SubscriptionExpirationDate = "Subscription Expiration Date";
+            public const string Deactivated = "Deactivated";
+            public const string CompanyID = "Company ID";
+            public const string UserCount = "User Count";
+            public const string ModulesEnabled = "Modules Enabled";
+            public const string Login = "Login";
+            public const string SchemaName = "Schema Name";
+            public const string SchemaVersion = "Schema Version";
+        }
+
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
 
@@ -73,19 +77,6 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Inherited Events
 
-        public override void beforeCreateNode( bool OverrideUniqueValidation )
-        {
-            _checkForConfigFileUpdate();
-            _CswNbtObjClassDefault.beforeCreateNode( OverrideUniqueValidation );
-        } // beforeCreateNode()
-
-        public override void afterCreateNode()
-        {
-            _doConfigFileUpdate();
-            _CswNbtObjClassDefault.afterCreateNode();
-        } // afterCreateNode()
-
-
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
             _checkForConfigFileUpdate();
@@ -100,13 +91,13 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 if( ModulesEnabled.WasModified )
                 {
-                    Collection<CswNbtResources.CswNbtModule> ModulesToEnable = new Collection<CswNbtResources.CswNbtModule>();
-                    Collection<CswNbtResources.CswNbtModule> ModulesToDisable = new Collection<CswNbtResources.CswNbtModule>();
+                    Collection<CswNbtModuleName> ModulesToEnable = new Collection<CswNbtModuleName>();
+                    Collection<CswNbtModuleName> ModulesToDisable = new Collection<CswNbtModuleName>();
 
                     foreach( string ModuleName in ModulesEnabled.YValues )
                     {
-                        CswNbtResources.CswNbtModule Module;
-                        Enum.TryParse( ModuleName, true, out Module );
+                        CswNbtModuleName Module = ModuleName;
+                        //Enum.TryParse( ModuleName, true, out Module );
                         if( ModulesEnabled.CheckValue( ModulesEnabledXValue, ModuleName ) )
                         {
                             ModulesToEnable.Add( Module );
@@ -119,7 +110,7 @@ namespace ChemSW.Nbt.ObjClasses
 
                     // switch to target schema
                     CswNbtResources OtherResources = makeOtherResources();
-                    OtherResources.UpdateModules( ModulesToEnable, ModulesToDisable );
+                    OtherResources.Modules.UpdateModules( ModulesToEnable, ModulesToDisable );
                     finalizeOtherResources( OtherResources );
 
                 } // if( ModulesEnabled.WasModified )
@@ -182,9 +173,12 @@ namespace ChemSW.Nbt.ObjClasses
                 this.SchemaName.StaticText = _CswNbtResources.CswDbCfgInfo.CurrentUserName;
 
                 CswCommaDelimitedString YValues = new CswCommaDelimitedString();
-                foreach( CswNbtResources.CswNbtModule Module in Enum.GetValues( typeof( CswNbtResources.CswNbtModule ) ) )
+                foreach( CswNbtModuleName ModuleName in CswNbtModuleName._All )
                 {
-                    YValues.Add( Module.ToString() );
+                    if( CswNbtModuleName.Unknown != ModuleName )
+                    {
+                        YValues.Add( ModuleName.ToString() );
+                    }
                 }
                 ModulesEnabled.YValues = YValues;
                 ModulesEnabled.XValues = new CswCommaDelimitedString() { ModulesEnabledXValue };
@@ -194,8 +188,8 @@ namespace ChemSW.Nbt.ObjClasses
                 //_CswNbtResources.AccessId = CompanyID.Text;
                 CswNbtResources OtherResources = makeOtherResources();
 
-                Collection<CswNbtResources.CswNbtModule> Modules = new Collection<CswNbtResources.CswNbtModule>();
-                foreach( CswNbtResources.CswNbtModule Module in OtherResources.ModulesEnabled() )
+                Collection<CswNbtModuleName> Modules = new Collection<CswNbtModuleName>();
+                foreach( CswNbtModuleName Module in OtherResources.Modules.ModulesEnabled() )
                 {
                     Modules.Add( Module );
                 }
@@ -207,9 +201,12 @@ namespace ChemSW.Nbt.ObjClasses
                 //_CswNbtResources.AccessId = OriginalAccessId;
                 finalizeOtherResources( OtherResources );
 
-                foreach( CswNbtResources.CswNbtModule Module in Enum.GetValues( typeof( CswNbtResources.CswNbtModule ) ) )
+                foreach( CswNbtModuleName ModuleName in CswNbtModuleName._All )
                 {
-                    ModulesEnabled.SetValue( ModulesEnabledXValue, Module.ToString(), Modules.Contains( Module ) );
+                    if( CswNbtModuleName.Unknown != ModuleName )
+                    {
+                        ModulesEnabled.SetValue( ModulesEnabledXValue, ModuleName.ToString(), Modules.Contains( ModuleName ) );
+                    }
                 }
 
                 this.SchemaVersion.StaticText = OtherSchemaVersion;
@@ -233,7 +230,7 @@ namespace ChemSW.Nbt.ObjClasses
             CswNbtMetaDataObjectClassProp OCP = ButtonData.NodeTypeProp.getObjectClassProp();
             if( null != ButtonData.NodeTypeProp && null != OCP )
             {
-                if( LoginPropertyName == OCP.PropName )
+                if( PropertyName.Login == OCP.PropName )
                 {
                     ButtonData.Action = NbtButtonAction.reauthenticate;
                 }
@@ -250,66 +247,65 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get
             {
-                return ( _CswNbtNode.Properties[IPFilterRegexPropertyName].AsText );
+                return ( _CswNbtNode.Properties[PropertyName.IPFilterRegex] );
             }
         }
         public CswNbtNodePropDateTime SubscriptionExpirationDate
         {
             get
             {
-                return ( _CswNbtNode.Properties[SubscriptionExpirationDatePropertyName].AsDateTime );
+                return ( _CswNbtNode.Properties[PropertyName.SubscriptionExpirationDate] );
             }
         }
         public CswNbtNodePropLogical Deactivated
         {
             get
             {
-                return ( _CswNbtNode.Properties[DeactivatedPropertyName].AsLogical );
+                return ( _CswNbtNode.Properties[PropertyName.Deactivated] );
             }
         }
         public CswNbtNodePropText CompanyID
         {
             get
             {
-                return ( _CswNbtNode.Properties[CompanyIDPropertyName].AsText );
+                return ( _CswNbtNode.Properties[PropertyName.CompanyID] );
             }
         }
         public CswNbtNodePropNumber UserCount
         {
             get
             {
-                return ( _CswNbtNode.Properties[UserCountPropertyName].AsNumber );
+                return ( _CswNbtNode.Properties[PropertyName.UserCount] );
             }
         }
         public CswNbtNodePropLogicalSet ModulesEnabled
         {
             get
             {
-                return ( _CswNbtNode.Properties[ModulesEnabledPropertyName].AsLogicalSet );
+                return ( _CswNbtNode.Properties[PropertyName.ModulesEnabled] );
             }
         }
         public CswNbtNodePropButton Login
         {
             get
             {
-                return ( _CswNbtNode.Properties[LoginPropertyName].AsButton );
+                return ( _CswNbtNode.Properties[PropertyName.Login] );
             }
         }
         public CswNbtNodePropStatic SchemaVersion
         {
             get
             {
-                return ( _CswNbtNode.Properties[SchemaVersionPropertyName].AsStatic );
+                return ( _CswNbtNode.Properties[PropertyName.SchemaVersion] );
             }
         }
         public CswNbtNodePropStatic SchemaName
         {
             get
             {
-                return ( _CswNbtNode.Properties[SchemaNamePropertyName].AsStatic );
+                return ( _CswNbtNode.Properties[PropertyName.SchemaName] );
             }
         }
-
 
         #endregion
 

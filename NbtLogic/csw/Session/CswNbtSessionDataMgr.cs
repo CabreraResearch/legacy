@@ -4,8 +4,9 @@ using System.Data;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Nbt.Actions;
+using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Search;
-using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt
 {
@@ -57,7 +58,7 @@ namespace ChemSW.Nbt
             return ret;
         }
 
-        public void getQuickLaunchJson( ref JObject ParentObj )
+        public void getQuickLaunchJson( ref ViewSelect.Response.Category Category )
         {
             CswTableSelect SessionDataSelect = _CswNbtResources.makeCswTableSelect( "getQuickLaunchXml_select", "session_data" );
             Collection<OrderByClause> OrderBy = new Collection<OrderByClause>();
@@ -73,22 +74,19 @@ namespace ChemSW.Nbt
                 bool KeepInQuickLaunch = CswConvert.ToBoolean( Row[SessionDataColumn_KeepInQuickLaunch] );
                 if( KeepInQuickLaunch )
                 {
-                    _addQuickLaunchProp( Row, ParentObj );
+                    _addQuickLaunchProp( Row, Category );
                 }
                 else if( RowCount < 5 )
                 {
-                    _addQuickLaunchProp( Row, ParentObj );
+                    _addQuickLaunchProp( Row, Category );
                     RowCount++;
                 }
             }
         } // getQuickLaunchJson()
 
-        private void _addQuickLaunchProp( DataRow Row, JObject ParentObj )
+        private void _addQuickLaunchProp( DataRow Row, ViewSelect.Response.Category Category )
         {
             Int32 ItemId = CswConvert.ToInt32( Row[SessionDataColumn_PrimaryKey] );
-
-            JObject QlObj = new JObject();
-            ParentObj["item_" + ItemId] = QlObj;
 
             CswNbtSessionDataItem.SessionDataType SessionType = (CswNbtSessionDataItem.SessionDataType) Enum.Parse( typeof( CswNbtSessionDataItem.SessionDataType ), Row[SessionDataColumn_SessionDataType].ToString() );
             string Name = Row[SessionDataColumn_Name].ToString();
@@ -97,47 +95,52 @@ namespace ChemSW.Nbt
             if( SessionType == CswNbtSessionDataItem.SessionDataType.Action )
             {
                 Int32 ActionId = CswConvert.ToInt32( Row[SessionDataColumn_ActionId] );
-                _addQuickLaunchAction( QlObj, SessionType, Name, SessionDataId, _CswNbtResources.Actions[ActionId].Name, _CswNbtResources.Actions[ActionId].Url );
+                _addQuickLaunchAction( Category, Name, SessionDataId, _CswNbtResources.Actions[ActionId].Name, _CswNbtResources.Actions[ActionId].Url );
             }
             else if( SessionType == CswNbtSessionDataItem.SessionDataType.View )
             {
                 //Int32 ViewId = CswConvert.ToInt32( Row[SessionDataColumn_ViewId] );
-                _addQuickLaunchView( QlObj, SessionType, Name, SessionDataId, Row[SessionDataColumn_ViewMode].ToString() );
+                _addQuickLaunchView( Category, Name, SessionDataId, Row[SessionDataColumn_ViewMode].ToString() );
             }
             else if( SessionType == CswNbtSessionDataItem.SessionDataType.Search )
             {
-                _addQuickLaunchSearch( QlObj, SessionType, Name, SessionDataId );
+                _addQuickLaunchSearch( Category, Name, SessionDataId );
             }
         } // _addQuickLaunchProp()
 
-        private void _addQuickLaunchView( JObject ParentObj, CswNbtSessionDataItem.SessionDataType LaunchType, string Text, CswNbtSessionDataId SessionDataId, string ViewMode )
+        private void _addQuickLaunchView( ViewSelect.Response.Category Category, string Text, CswNbtSessionDataId SessionDataId, string ViewMode )
         {
-            ParentObj["type"] = CswConvert.ToString( LaunchType );
-            ParentObj["name"] = Text;
-            ParentObj["id"] = SessionDataId.ToString();
-            ParentObj["iconurl"] = "Images/view/view" + ViewMode.ToString().ToLower() + ".gif";
-            ParentObj["viewid"] = SessionDataId.ToString();
-            ParentObj["viewmode"] = ViewMode;
+            Category.items.Add(
+                new ViewSelect.Response.Item( ItemType.View )
+            {
+                name = Text,
+                itemid = SessionDataId.ToString(),
+                iconurl = "Images/view/view" + ViewMode.ToString().ToLower() + ".gif",
+                mode = ViewMode
+            });
         }
 
-        private void _addQuickLaunchAction( JObject ParentObj, CswNbtSessionDataItem.SessionDataType LaunchType, string Text, CswNbtSessionDataId SessionDataId, CswNbtActionName ActionName, string ActionUrl )
+        private void _addQuickLaunchAction( ViewSelect.Response.Category Category, string Text, CswNbtSessionDataId SessionDataId, CswNbtActionName ActionName, string ActionUrl )
         {
-            ParentObj["type"] = CswConvert.ToString( LaunchType );
-            ParentObj["name"] = Text;
-            ParentObj["id"] = SessionDataId.ToString();
-            ParentObj["iconurl"] = "Images/view/action.gif";
-            ParentObj["actionname"] = CswConvert.ToString( ActionName );
-            ParentObj["actionid"] = CswConvert.ToString( ActionName );
-            ParentObj["actionurl"] = CswConvert.ToString( ActionUrl );
+            Category.items.Add(
+                new ViewSelect.Response.Item( ItemType.Action )
+                {
+                    name = Text,
+                    itemid = SessionDataId.ToString(),
+                    iconurl = CswNbtMetaDataObjectClass.IconPrefix16 + "wizard.png",
+                    url = CswConvert.ToString( ActionUrl )
+                } );
         }
 
-        private void _addQuickLaunchSearch( JObject ParentObj, CswNbtSessionDataItem.SessionDataType LaunchType, string Text, CswNbtSessionDataId SessionDataId )
+        private void _addQuickLaunchSearch( ViewSelect.Response.Category Category, string Text, CswNbtSessionDataId SessionDataId )
         {
-            ParentObj["type"] = CswConvert.ToString( LaunchType );
-            ParentObj["name"] = Text;
-            ParentObj["id"] = SessionDataId.ToString();
-            ParentObj["iconurl"] = "Images/view/search.gif";
-            ParentObj["searchid"] = SessionDataId.ToString();
+            Category.items.Add(
+                new ViewSelect.Response.Item( ItemType.Search )
+                {
+                    name = Text,
+                    itemid = SessionDataId.ToString(),
+                    iconurl = CswNbtMetaDataObjectClass.IconPrefix16 + "magglass.png"
+                } );
         }
 
 
@@ -243,7 +246,7 @@ namespace ChemSW.Nbt
             CswTableUpdate SessionDataUpdate = _CswNbtResources.makeCswTableUpdate( "removeSessionData_View_update", SessionDataTableName );
             string WhereClause = @"where " + SessionDataColumn_SessionId + @"='" + _CswNbtResources.Session.SessionId + @"' 
                                      and " + SessionDataColumn_ViewId + @" = '" + View.ViewId.get() + @"'";
-            
+
             DataTable SessionDataTable = SessionDataUpdate.getTable( WhereClause );
             foreach( DataRow Row in SessionDataTable.Rows )
             {
@@ -289,6 +292,29 @@ namespace ChemSW.Nbt
                         foreach( DataRow Row in DoomedRows )
                             Row.Delete();
                         SessionDataUpdate.update( SessionDataTable );
+                    }
+
+                    CswArbitrarySelect SessionNodeSelect = _CswNbtResources.makeCswArbitrarySelect( "removeSessionData_update_nodes", "select nodeid from nodes n where istemp=1 or ( n.sessionid is not null and n.sessionid <> '' and not exists (select sessionid from sessionlist s where s.sessionid = n.sessionid))" );
+                    DataTable NodesTable = SessionNodeSelect.getTable();
+                    if( NodesTable.Rows.Count > 0 )
+                    {
+                        Collection<CswNbtNode> DoomedNodes = new Collection<CswNbtNode>();
+                        foreach( DataRow Row in NodesTable.Rows )
+                        {
+                            CswPrimaryKey NodeId = new CswPrimaryKey( "nodes", CswConvert.ToInt32( Row["nodeid"] ) );
+                            if( CswTools.IsPrimaryKey( NodeId ) )
+                            {
+                                CswNbtNode TempNode = _CswNbtResources.Nodes[NodeId];
+                                if( null != TempNode )
+                                {
+                                    DoomedNodes.Add( TempNode );
+                                }
+                            }
+                        }
+                        foreach( CswNbtNode DoomedNode in DoomedNodes )
+                        {
+                            DoomedNode.delete( DeleteAllRequiredRelatedNodes: true, OverridePermissions: true );
+                        }
                     }
                 }
             }

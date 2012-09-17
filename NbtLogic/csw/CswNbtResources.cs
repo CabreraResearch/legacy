@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
@@ -7,7 +6,6 @@ using ChemSW.Audit;
 using ChemSW.Config;
 using ChemSW.Core;
 using ChemSW.DB;
-using ChemSW.Exceptions;
 using ChemSW.Log;
 using ChemSW.Mail;
 using ChemSW.Nbt.Actions;
@@ -16,6 +14,7 @@ using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Security;
 using ChemSW.RscAdo;
 using ChemSW.Security;
+using ChemSW.Session;
 using ChemSW.TblDn;
 
 namespace ChemSW.Nbt
@@ -93,6 +92,10 @@ namespace ChemSW.Nbt
             /// </summary>
             mobileview_resultlim,
             /// <summary>
+            /// When set to 1, total quantity to deduct in DispenseContainer cannot exceed container netquantity.
+            /// </summary>
+            netquantity_enforced,
+            /// <summary>
             /// Number of days before a password expires
             /// </summary>
             passwordexpiry_days,
@@ -150,6 +153,9 @@ namespace ChemSW.Nbt
         private bool _ExcludeDisabledModules = true;
         public bool ExcludeDisabledModules { get { return _ExcludeDisabledModules; } }
 
+        public double ServerInitTime = 0;
+        public double TotalServerTime = 0;
+
         public PooledConnectionState PooledConnectionState { get { return ( _CswResources.PooledConnectionState ); } }
 
 
@@ -162,6 +168,9 @@ namespace ChemSW.Nbt
         /// Provides a means to get session data
         /// </summary>
         public CswNbtSessionDataMgr SessionDataMgr;
+
+        public CswSessionManager CswSessionManager = null;
+
 
         ///// <summary>
         ///// Stores all Views used in this session, indexed by SessionViewId
@@ -413,141 +422,17 @@ namespace ChemSW.Nbt
 
         #region Modules
 
-        /// <summary>
-        /// Modules for the NBT application
-        /// </summary>
-        public enum CswNbtModule
+        private CswNbtModuleManager _CswNbtModuleManager = null;
+        public CswNbtModuleManager Modules
         {
-            /// <summary>
-            /// BioSafety
-            /// </summary>
-            BioSafety,
-            /// <summary>
-            /// Control Chart Pro
-            /// </summary>
-            CCPro,
-            /// <summary>
-            /// Chemical Inventory
-            /// </summary>
-            CISPro,
-            /// <summary>
-            /// Mobile
-            /// </summary>
-            Mobile,
-            /// <summary>
-            /// Instrument Maintenance and Calibration
-            /// </summary>
-            IMCS,
-            /// <summary>
-            /// NBT Management Application
-            /// </summary>
-            NBTManager,
-            /// <summary>
-            /// Site Inspection
-            /// </summary>
-            SI,
-            /// <summary>
-            /// Sample Tracking
-            /// </summary>
-            STIS
-        }
-
-        private SortedList ModulesHt = new SortedList();
-        private void initModules()
-        {
-            ModulesHt.Clear();
-            foreach( CswNbtModule Module in Enum.GetValues( typeof( CswNbtModule ) ) )
+            get
             {
-                ModulesHt.Add( Module, false );
-            }
-
-            // Fetch modules from database
-            if( _CswResources.IsInitializedForDbAccess )
-            {
-                CswTableSelect ModulesTableSelect = makeCswTableSelect( "modules_select", "modules" );
-                DataTable ModulesTable = ModulesTableSelect.getTable();
-                foreach( DataRow ModuleRow in ModulesTable.Rows )
+                if( null == _CswNbtModuleManager )
                 {
-                    try
-                    {
-                        CswNbtModule Module;
-                        Enum.TryParse( ModuleRow["name"].ToString(), true, out Module );
-                        ModulesHt[Module] = ( ModuleRow["enabled"].ToString() == "1" );
-                    }
-                    catch( Exception ex )
-                    {
-                        throw new CswDniException( ErrorType.Error, "Invalid Module", "An invalid module was detected in the Modules table: " + ModuleRow["name"].ToString(), ex );
-                    }
+                    _CswNbtModuleManager = new CswNbtModuleManager( this );
                 }
-            } // if( _CswResources.IsInitializedForDbAccess )
-        } // initModules()
-
-        /// <summary>
-        /// Returns whether a module is enabled
-        /// </summary>
-        public bool IsModuleEnabled( CswNbtModule Module )
-        {
-            if( ModulesHt.Count == 0 )
-            {
-                initModules();
+                return _CswNbtModuleManager;
             }
-
-            if( ModulesHt.Count > 0 )
-                return (bool) ModulesHt[Module];
-            else
-                return false;   // Assume modules are disabled if we have no db connection (for login page)
-        }
-
-        /// <summary>
-        /// Collection of all enabled modules
-        /// </summary>
-        public Collection<CswNbtModule> ModulesEnabled()
-        {
-            if( ModulesHt.Count == 0 )
-            {
-                initModules();
-            }
-
-            Collection<CswNbtModule> EnabledModules = new Collection<CswNbtModule>();
-            foreach( CswNbtModule Module in ModulesHt.Keys )
-            {
-                if( (bool) ModulesHt[Module] )
-                    EnabledModules.Add( Module );
-            }
-            return EnabledModules;
-        }
-
-        /// <summary>
-        /// This will explicitly enable or disable a set of modules.  
-        /// Any modules not listed in either list will not be altered.
-        /// </summary>
-        public bool UpdateModules( Collection<CswNbtModule> ModulesToEnable, Collection<CswNbtModule> ModulesToDisable )
-        {
-            bool ret = false;
-
-            CswTableUpdate ModulesUpdate = makeCswTableUpdate( "CswNbtResources.UpdateModules_update", "modules" );
-            DataTable ModulesTable = ModulesUpdate.getTable();
-            foreach( DataRow ModuleRow in ModulesTable.Rows )
-            {
-                CswNbtModule Module;
-                Enum.TryParse( ModuleRow["name"].ToString(), true, out Module );
-                if( ModulesToEnable.Contains( Module ) )
-                {
-                    ModuleRow["enabled"] = CswConvert.ToDbVal( true );
-                }
-                if( ModulesToDisable.Contains( Module ) )
-                {
-                    ModuleRow["enabled"] = CswConvert.ToDbVal( false );
-                }
-            }
-            ret = ModulesUpdate.update( ModulesTable );
-
-            initModules();
-
-            // case 26029
-            MetaData.ResetEnabledNodeTypes();
-
-            return ret;
         }
 
         #endregion Modules
@@ -593,7 +478,7 @@ namespace ChemSW.Nbt
         public void ClearCache()
         {
             _clear();
-            ClearModulesCache();
+            Modules.ClearModulesCache();
             //_initNotifications( true );
             ClearActionsCache();
         }
@@ -605,16 +490,6 @@ namespace ChemSW.Nbt
         {
             _ActionCollection = new CswNbtActionCollection( this, _ExcludeDisabledModules );
         }
-
-        /// <summary>
-        /// Refresh the Modules Collection
-        /// </summary>
-        public void ClearModulesCache()
-        {
-            initModules();
-        }
-
-
 
         /// <summary>
         /// Stores the datetime that this class was cached
@@ -847,9 +722,14 @@ namespace ChemSW.Nbt
             //    Collection<Int32> SubscribedUserIds = SubscribedUserIdsString.ToIntCollection();
             //    string Subject = NotifNode.Subject.Text;
             //    string Message = NotifNode.Message.Text;
+            //    {
+            //        Collection<CswMailMessage> MailMessages = new Collection<CswMailMessage>();
+            //        CswNbtObjClassNotification NotifNode = _Notifs[NKey];
 
             //    //CswNbtMetaDataNodeType TargetNodeType = this.MetaData.getNodeType( NodeTypeId );
             //    CswNbtMetaDataNodeTypeProp TargetProp = TargetNodeType.getNodeTypeProp( PropName );
+            //        string Subject = NotifNode.Subject.Text;
+            //        string Message = NotifNode.Message.Text;
 
             //    Message = Message.Replace( CswNbtObjClassNotification.MessageNodeNameReplacement, TargetNode.NodeName );
             //    if( TargetProp != null )
@@ -872,6 +752,18 @@ namespace ChemSW.Nbt
             //        sendEmailNotification( MailMessages );
             //    }
             //} // if( _Notifs.ContainsKey( NKey ) )
+            //            CswMailMessage MailMessage = CswMail.makeMailMessage( Subject, Message, EmailAddy, UserNodeAsUser.FirstName + " " + UserNodeAsUser.LastName );
+            //            if( null != MailMessage )
+            //            {
+            //                MailMessages.Add( MailMessage );
+            //            }
+            //        } // foreach( Int32 UserId in SubscribedUserIds )
+
+            //        if( MailMessages.Count > 0 )
+            //        {
+            //            sendEmailNotification( MailMessages );
+            //        }
+            //    } // if( _Notifs.ContainsKey( NKey ) )
         } // runNotification()
 
         #endregion Notifications

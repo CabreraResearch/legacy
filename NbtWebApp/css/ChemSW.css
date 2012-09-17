@@ -1172,6 +1172,19 @@ ul li div {
 {
     font-size: 16px;
 }
+.WelcomeImage
+{
+    padding: 5px;
+    background-color: #e8e9f2;
+    border-top: 5px solid #7b7bb1;
+    border-right: 5px solid #54548f;
+    border-bottom: 5px solid #54548f;
+    border-left: 5px solid #7b7bb1;
+    -moz-border-radius: 20px;
+    -webkit-border-radius: 20px;
+    -khtml-border-radius: 20px;
+    border-radius: 20px;
+}
 .ResetButton
 {
     color: #ff0000;
@@ -1365,4 +1378,13 @@ ul li div {
     color: #3e73be !Important;
     font-family: verdana !Important;
     font-size: &cswtextfontsize !Important;
+}
+
+
+.NodeTableOddRow
+{
+    background-color: #dddddd;
+}
+.NodeTableEvenRow
+{
 }

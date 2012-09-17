@@ -32,6 +32,10 @@ namespace ChemSW.Nbt.Grid.ExtJs
         /// </summary>
         public Collection<CswNbtGridExtJsRow> rows = new Collection<CswNbtGridExtJsRow>();
         /// <summary>
+        /// Button data
+        /// </summary>
+        public Collection<CswNbtGridExtJsButton> buttons = new Collection<CswNbtGridExtJsButton>();
+        /// <summary>
         /// Page size
         /// </summary>
         public Int32 PageSize = 25;
@@ -40,13 +44,13 @@ namespace ChemSW.Nbt.Grid.ExtJs
         /// </summary>
         public bool Truncated = false;
 
-        public CswNbtGridExtJsGrid()
+        public CswNbtGridExtJsGrid( string UniquePrefix )
         {
             // add hidden canview/canedit/candelete columns
             string[] columnNames = new string[] { "canView", "canEdit", "canDelete", "isLocked" };
             foreach( string columnName in columnNames )
             {
-                CswNbtGridExtJsDataIndex dataIndex = new CswNbtGridExtJsDataIndex( columnName );
+                CswNbtGridExtJsDataIndex dataIndex = new CswNbtGridExtJsDataIndex( UniquePrefix, columnName );
                 CswNbtGridExtJsField fld = new CswNbtGridExtJsField()
                 {
                     dataIndex = dataIndex,
@@ -92,6 +96,7 @@ namespace ChemSW.Nbt.Grid.ExtJs
             JArray Jfields = new JArray();
             JArray Jcolumns = new JArray();
             JArray Jdataitems = new JArray();
+            JArray Jdatabuttons = new JArray();
 
             foreach( CswNbtGridExtJsField fld in fields )
             {
@@ -105,7 +110,10 @@ namespace ChemSW.Nbt.Grid.ExtJs
             {
                 Jdataitems.Add( Row.ToJson() );
             }
-
+            foreach( CswNbtGridExtJsButton Button in buttons )
+            {
+                Jdatabuttons.Add( Button.ToJson() );
+            }
             JObject Jret = new JObject();
             Jret["grid"] = new JObject();
             Jret["grid"]["title"] = title;
@@ -118,6 +126,8 @@ namespace ChemSW.Nbt.Grid.ExtJs
             Jret["grid"]["pageSize"] = PageSize;
             Jret["grid"]["data"] = new JObject();
             Jret["grid"]["data"]["items"] = Jdataitems;
+            Jret["grid"]["data"]["buttons"] = Jdatabuttons;
+
             return Jret;
         } // ToJson()
 

@@ -10,6 +10,10 @@ namespace ChemSW.Nbt.MetaData
 {
     public class CswNbtMetaDataObjectClass : ICswNbtMetaDataObject, IEquatable<CswNbtMetaDataObjectClass>
     {
+        public static string IconPrefix16 = "Images/newicons/16/";
+        public static string IconPrefix18 = "Images/newicons/18/";
+        public static string IconPrefix100 = "Images/newicons/100/";
+
         public enum NbtObjectClass
         {
             Unknown,
@@ -42,6 +46,7 @@ namespace ChemSW.Nbt.MetaData
             ParameterClass,
             PrintLabelClass,
             ProblemClass,
+            RegulatoryListClass,
             ReportClass,
             ResultClass,
             RequestClass,

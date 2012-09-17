@@ -328,31 +328,22 @@ namespace ChemSW.Nbt
 
         public void update( bool IsCopy, bool OverrideUniqueValidation )
         {
-            try
+            // Do BeforeUpdateNodePropRow on each row
+
+            ICswNbtNodePropCollData PropCollData = getPropCollData( _NodeType.TableName, DateTime.MinValue );
+            foreach( DataRow CurrentRow in PropCollData.PropsTable.Rows )
             {
-                // Do BeforeUpdateNodePropRow on each row
+                if( CurrentRow.IsNull( "nodetypepropid" ) )
+                    throw ( new CswDniException( "A node prop row is missing its nodetypepropid" ) );
+                //bz # 6542
+                CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp = _CswNbtResources.MetaData.getNodeTypeProp( CswConvert.ToInt32( CurrentRow["nodetypepropid"] ) );
 
-                ICswNbtNodePropCollData PropCollData = getPropCollData( _NodeType.TableName, DateTime.MinValue );
-                foreach( DataRow CurrentRow in PropCollData.PropsTable.Rows )
-                {
-                    if( CurrentRow.IsNull( "nodetypepropid" ) )
-                        throw ( new CswDniException( "A node prop row is missing its nodetypepropid" ) );
-                    //bz # 6542
-                    CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp = _CswNbtResources.MetaData.getNodeTypeProp( CswConvert.ToInt32( CurrentRow["nodetypepropid"] ) );
+                if( null != CswNbtMetaDataNodeTypeProp )
+                    this[CswNbtMetaDataNodeTypeProp].onBeforeUpdateNodePropRow( IsCopy, OverrideUniqueValidation );
+            }
 
-                    if( null != CswNbtMetaDataNodeTypeProp )
-                        this[CswNbtMetaDataNodeTypeProp].onBeforeUpdateNodePropRow( IsCopy, OverrideUniqueValidation );
-                }
-
-                // Do the Update
-                PropCollData.update();
-
-            }//try
-            catch( System.Exception Exception )
-            {
-                throw ( Exception );
-            }//catch
-
+            // Do the Update
+            PropCollData.update();
         }
 
 
@@ -360,22 +351,17 @@ namespace ChemSW.Nbt
         {
             get
             {
-                //CswNbtNodePropWrapper ReturnVal = null;
-                //
-                //foreach( CswNbtMetaDataNodeTypeProp Prop in _NodeType.getNodeTypeProps() )
-                //{
-                //    if( Prop.ObjectClassProp != null )
-                //    {
-                //        if( Prop.ObjectClassProp.PropName.ToLower() == ObjectClassPropName.ToLower() )
-                //        {
-                //            ReturnVal = this[Prop];
-                //            break;
-                //        }
-                //    }
-                //}
-                //
-                //return ( ReturnVal );
-                return this[_CswNbtResources.MetaData.getNodeTypePropByObjectClassProp( _NodeTypeId, ObjectClassPropName )];
+                CswNbtNodePropWrapper ReturnVal = null;
+                CswNbtMetaDataNodeTypeProp MetaDataProp = _CswNbtResources.MetaData.getNodeTypePropByObjectClassProp( _NodeTypeId, ObjectClassPropName );
+                if( null != MetaDataProp )
+                {
+                    ReturnVal = this[MetaDataProp];
+                }
+                else
+                {
+                    throw new CswDniException( ErrorType.Error, "Invalid Property", "CswNbtNodePropColl[] for node ["+ _NodePk.ToString() + "] could not find object class prop: " + ObjectClassPropName );
+                }
+                return ReturnVal;
             }
         }// this[ string ObjectClassPropName ]
 

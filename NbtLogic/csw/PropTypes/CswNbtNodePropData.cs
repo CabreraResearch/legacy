@@ -440,18 +440,20 @@ namespace ChemSW.Nbt.PropTypes
             return ret;
         } // GetPropRowValueDate()
 
-        [DebuggerStepThrough]
         public string GetOriginalPropRowValue( CswNbtSubField.PropColumn Column )
         {
             // see case 22613
             string ret = string.Empty;
-            try
+            if( null != _PropRow )
             {
-                ret = _PropRow[Column.ToString(), DataRowVersion.Original].ToString();
-            }
-            catch( System.Data.VersionNotFoundException )
-            {
-                ret = _PropRow[Column.ToString()].ToString();
+                try
+                {
+                    ret = _PropRow[Column.ToString(), DataRowVersion.Original].ToString();
+                }
+                catch( System.Data.VersionNotFoundException )
+                {
+                    ret = _PropRow[Column.ToString()].ToString();
+                }
             }
             return ret;
         }

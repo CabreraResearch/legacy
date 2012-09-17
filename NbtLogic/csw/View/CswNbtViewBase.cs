@@ -145,6 +145,10 @@ namespace ChemSW.Nbt
         /// The View is used by a Property (relationship or grid)
         /// </summary>
         public static readonly NbtViewVisibility Property = new NbtViewVisibility( "Property" );
+        /// <summary>
+        /// The View is used internally
+        /// </summary>
+        public static readonly NbtViewVisibility Hidden = new NbtViewVisibility( "Hidden" );
     }
 
     /// <summary>

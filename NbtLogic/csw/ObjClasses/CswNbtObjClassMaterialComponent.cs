@@ -1,4 +1,6 @@
+using ChemSW.Core;
 using ChemSW.Exceptions;
+using ChemSW.Nbt.Batch;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
 
@@ -19,9 +21,12 @@ namespace ChemSW.Nbt.ObjClasses
             get { return _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.MaterialComponentClass ); }
         }
 
-        public const string PercentagePropertyName = "Percentage";
-        public const string MixturePropertyName = "Mixture";
-        public const string ConstituentPropertyName = "Constituent";
+        public sealed class PropertyName
+        {
+            public const string Percentage = "Percentage";
+            public const string Mixture = "Mixture";
+            public const string Constituent = "Constituent";
+        }
 
         /// <summary>
         /// Convert a CswNbtNode to a CswNbtObjClassMaterialComponent
@@ -38,23 +43,19 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Inherited Events
 
-        public override void beforeCreateNode( bool OverrideUniqueValidation )
-        {
-            _CswNbtObjClassDefault.beforeCreateNode( OverrideUniqueValidation );
-        } // beforeCreateNode()
-
-        public override void afterCreateNode()
-        {
-            _CswNbtObjClassDefault.afterCreateNode();
-        } // afterCreateNode()
-
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
-            if( null != Mixture.RelatedNodeId && null != Constituent.RelatedNodeId )
+            Core.CswPrimaryKey pk = new Core.CswPrimaryKey();
+            pk.FromString( _CswNbtResources.CurrentUser.Cookies["csw_currentnodeid"] );
+            if( null != Constituent.RelatedNodeId && false == IsTemp )
             {
-                if( Mixture.RelatedNodeId == Constituent.RelatedNodeId )
+                if( null == Mixture.RelatedNodeId )
                 {
-                    throw new CswDniException( ErrorType.Warning, "Mixture material and Constituent material cannot be the same", "Mixture material and Constituent material cannot be the same" );
+                    Mixture.RelatedNodeId = pk;
+                }
+                if( Constituent.RelatedNodeId.Equals( Mixture.RelatedNodeId ) && false == IsTemp )
+                {
+                    throw new CswDniException( ErrorType.Warning, "Constituent cannot be the same as Mixture", "" );
                 }
             }
             _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
@@ -62,22 +63,27 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void afterWriteNode()
         {
+            if( Mixture.WasModified || Constituent.WasModified )
+            {
+                _recalculateRegListMembership();
+            }
             _CswNbtObjClassDefault.afterWriteNode();
         }//afterWriteNode()
 
         public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false )
         {
             _CswNbtObjClassDefault.beforeDeleteNode( DeleteAllRequiredRelatedNodes );
-
         }//beforeDeleteNode()
 
         public override void afterDeleteNode()
         {
+            _recalculateRegListMembership();
             _CswNbtObjClassDefault.afterDeleteNode();
         }//afterDeleteNode()        
 
         public override void afterPopulateProps()
         {
+            Mixture.SetOnPropChange( OnMixturePropChange );
             _CswNbtObjClassDefault.afterPopulateProps();
         }//afterPopulateProps()
 
@@ -98,32 +104,45 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Object class specific properties
 
-        public CswNbtNodePropNumber Percentage
+        public CswNbtNodePropNumber Percentage { get { return ( _CswNbtNode.Properties[PropertyName.Percentage] ); } }
+
+        public CswNbtNodePropRelationship Mixture { get { return ( _CswNbtNode.Properties[PropertyName.Mixture] ); } }
+        private void OnMixturePropChange( CswNbtNodeProp Prop )
         {
-            get
+            if( null != Mixture.RelatedNodeId && null != Constituent.RelatedNodeId )
             {
-                return ( _CswNbtNode.Properties[PercentagePropertyName] );
+                if( Mixture.RelatedNodeId.Equals( Constituent.RelatedNodeId ) )
+                {
+                    Mixture.RelatedNodeId = null;
+                    Constituent.RelatedNodeId = null;
+                }
             }
         }
 
-        public CswNbtNodePropRelationship Mixture
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[MixturePropertyName] );
-            }
-        }
+        public CswNbtNodePropRelationship Constituent { get { return ( _CswNbtNode.Properties[PropertyName.Constituent] ); } }
 
-        public CswNbtNodePropRelationship Constituent
+        #endregion
+
+        #region Custom logic
+
+        /*
+         * When a material component is changed in any way, we have to assume this changes the playing field for regulatory list membership
+         * This means we have to re-calculate the regulatory list membership for each material and reg list
+         */
+        private void _recalculateRegListMembership()
         {
-            get
+            if( false == IsTemp )
             {
-                return ( _CswNbtNode.Properties[ConstituentPropertyName] );
+                CswCommaDelimitedString parents = new CswCommaDelimitedString();
+                CswNbtObjClassMaterial constituentNode = _CswNbtResources.Nodes.GetNode( Constituent.RelatedNodeId );
+                constituentNode.getParentMaterials( ref parents );
+                parents.Add( Mixture.RelatedNodeId.ToString() );
+                CswNbtBatchOpUpdateRegulatoryListsForMaterials BatchOp = new CswNbtBatchOpUpdateRegulatoryListsForMaterials( _CswNbtResources );
+                BatchOp.makeBatchOp( parents );
             }
         }
 
         #endregion
-
 
     }//CswNbtObjClassMaterialComponent
 

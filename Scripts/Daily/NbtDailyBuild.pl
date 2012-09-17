@@ -5,13 +5,15 @@ use File::Copy;
 # Arguments
 
 my $increment = "1";
-if($#ARGV > 0)
+my $kilnpath = "C:\kiln";
+if($#ARGV != 1)
 {
-	die( "Usage: DeployNbt.pl [increment]\n" );
+	die( "Usage: DeployNbt.pl [increment] [kilnpath]\n" );
 }
-elsif($#ARGV == 0)
+else
 {
 	$increment = $ARGV[0];
+	$kilnpath = $ARGV[1];
 }
 
 #---------------------------------------------------------------------------------
@@ -26,29 +28,30 @@ my @components = (
 	"NbtImport",
 	"NbtHelp",
 	"DailyBuildTools",
-	"StructureSearch"
+	"StructureSearch",
+        "chemsw-fe"
 );
-
-my $orclserver = "golem";
-my $orcldumpdir = "ChemSWDumpDirectory";
-my $masterdumpdir = "ChemSWDumpDirectory";
 
 my %repopaths;
 foreach my $component (@components)
 {
 	if($component eq "NbtHelp")
 	{
-		$repopaths{$component} = "d:/kiln/Nbt/Nbt/NbtWebApp/help";
+		$repopaths{$component} = "$kilnpath/Nbt/Nbt/NbtWebApp/help";
 	}
 	elsif($component eq "Nbt" || $component eq "NbtImport")
 	{
-		$repopaths{$component} = "d:/kiln/Nbt/$component";
+		$repopaths{$component} = "$kilnpath/Nbt/$component";
 	}
 	elsif($component eq "DailyBuildTools")
 	{
-		$repopaths{$component} = "d:/kiln/$component";
+		$repopaths{$component} = "$kilnpath/$component";
+	} 
+        elsif($component eq "chemsw-fe")
+	{
+		$repopaths{$component} = "$kilnpath/incandescentsw/$component";
 	} else {
-		$repopaths{$component} = "d:/kiln/Common/$component";
+		$repopaths{$component} = "$kilnpath/Common/$component";
 	}
 }
 
@@ -84,7 +87,7 @@ foreach my $component (@components)
 	printf("Setting $component to $datestr.$increment\n");
 	
 	my $file;
-	if($component eq "NbtImport" || $component eq "NbtHelp")
+	if($component eq "NbtImport" || $component eq "NbtHelp" || $component eq "chemsw-fe")
 	{
 		# no file to update
 	}

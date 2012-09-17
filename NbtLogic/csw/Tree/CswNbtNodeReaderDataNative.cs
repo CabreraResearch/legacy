@@ -42,6 +42,8 @@ namespace ChemSW.Nbt
                 CswNbtNode.setReadOnly( value: CswConvert.ToBoolean( NodesTable.Rows[0]["readonly"] ), SaveToDb: true );
                 CswNbtNode.IsDemo = CswConvert.ToBoolean( NodesTable.Rows[0]["isdemo"] );
                 CswNbtNode.Locked = CswConvert.ToBoolean( NodesTable.Rows[0]["locked"] );
+                CswNbtNode.IsTemp = CswConvert.ToBoolean( NodesTable.Rows[0]["istemp"] );
+                CswNbtNode.SessionId = CswConvert.ToString( NodesTable.Rows[0]["sessionid"] );
                 CswNbtNode.PendingUpdate = CswConvert.ToBoolean( NodesTable.Rows[0]["pendingupdate"] );
                 ReturnVal = true;
             }

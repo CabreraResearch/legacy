@@ -1,14 +1,18 @@
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
-using Newtonsoft.Json.Linq;
+using System.Collections.Generic;
+using ChemSW.Exceptions;
 
 namespace ChemSW.Nbt.ObjClasses
 {
     public class CswNbtObjClassVendor : CswNbtObjClass
     {
-
-        public static string VendorNamePropertyName { get { return "Vendor Name"; } }
-
+        public sealed class PropertyName
+        {
+            public const string VendorName = "Vendor Name";
+            public const string CorporateEntityName = "Corporate Entity";
+            public const string VendorTypeName = "Vendor Type";
+        }
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
 
@@ -22,7 +26,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get { return _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.VendorClass ); }
         }
-        
+
         /// <summary>
         /// Convert a CswNbtNode to a CswNbtObjClassVendor
         /// </summary>
@@ -38,18 +42,27 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Inherited Events
 
-        public override void beforeCreateNode( bool OverrideUniqueValidation )
-        {
-            _CswNbtObjClassDefault.beforeCreateNode( OverrideUniqueValidation );
-        } // beforeCreateNode()
-
-        public override void afterCreateNode()
-        {
-            _CswNbtObjClassDefault.afterCreateNode();
-        } // afterCreateNode()
-
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
+            if( VendorType.WasModified || CorporateIdentity.WasModified )
+            {
+                //For each Corporate Entity, there can only be one vendortype of Corporate aka Highlander attribute
+                if( false == VendorType.Empty && false == CorporateIdentity.Empty )
+                {
+                    foreach( CswNbtObjClassVendor vendorNode in this.NodeType.getNodes( false, false ) )
+                    {
+                        if( vendorNode.NodeId != this.NodeId &&
+                            vendorNode.CorporateIdentity.Text.Equals( CorporateIdentity.Text ) &&
+                            vendorNode.VendorType.Value.Equals( "Corporate" ) &&
+                            this.VendorType.Value.Equals( "Corporate" ) )
+                        {
+                            throw new CswDniException( ErrorType.Warning,
+                                    "Multiple Corporate Entities with a Vendor Type of \"Corporate\" are not allowed",
+                                    "A Vendor with a Corporate Entity of " + vendorNode.CorporateIdentity.Text + " already exists with a Vendor Type of " + vendorNode.VendorType.Value );
+                        }
+                    }
+                }
+            }
             _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
         }//beforeWriteNode()
 
@@ -58,9 +71,9 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault.afterWriteNode();
         }//afterWriteNode()
 
-        public override void beforeDeleteNode(bool DeleteAllRequiredRelatedNodes = false)
+        public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false )
         {
-            _CswNbtObjClassDefault.beforeDeleteNode(DeleteAllRequiredRelatedNodes);
+            _CswNbtObjClassDefault.beforeDeleteNode( DeleteAllRequiredRelatedNodes );
 
         }//beforeDeleteNode()
 
@@ -81,9 +94,9 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override bool onButtonClick( NbtButtonData ButtonData )
         {
-            
-            
-            
+
+
+
             if( null != ButtonData && null != ButtonData.NodeTypeProp ) { /*Do Something*/ }
             return true;
         }
@@ -91,13 +104,9 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Object class specific properties
 
-        public CswNbtNodePropText VendorName
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[VendorNamePropertyName].AsText );
-            }
-        }
+        public CswNbtNodePropText VendorName { get { return ( _CswNbtNode.Properties[PropertyName.VendorName] ); } }
+        public CswNbtNodePropText CorporateIdentity { get { return ( _CswNbtNode.Properties[PropertyName.CorporateEntityName] ); } }
+        public CswNbtNodePropList VendorType { get { return ( _CswNbtNode.Properties[PropertyName.VendorTypeName] ); } }
 
         #endregion
 

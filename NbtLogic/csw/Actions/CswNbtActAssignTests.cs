@@ -31,7 +31,7 @@ namespace ChemSW.Nbt.Actions
             // First, get all parameters for all tests
             CswNbtMetaDataObjectClass TestObjectClass = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.TestClass );
             CswNbtMetaDataObjectClass ParameterObjectClass = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.ParameterClass );
-            CswNbtMetaDataObjectClassProp ParameterTestObjectClassProp = ParameterObjectClass.getObjectClassProp( CswNbtObjClassParameter.TestPropertyName );
+            CswNbtMetaDataObjectClassProp ParameterTestObjectClassProp = ParameterObjectClass.getObjectClassProp( CswNbtObjClassParameter.PropertyName.Test );
             
             CswNbtView ParameterView = new CswNbtView( _CswNbtResources );
             ParameterView.ViewName = "AssignTest().Parameters";

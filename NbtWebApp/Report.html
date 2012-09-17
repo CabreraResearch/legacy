@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
@@ -20,7 +20,7 @@
 
             function showCrystal(reportid) {
                 Csw.ajax.post({
-                    url: '/NbtWebApp/wsNBT.asmx/doesReportSupportCrystal',
+                    url: 'wsNBT.asmx/doesReportSupportCrystal',
                     data: { reportid: reportid },
                     success: function (data) {
                         if (Csw.bool(data.result)) {
@@ -58,7 +58,7 @@
 
 
             if ('csv' == rformat.toLowerCase()) {
-                Csw.window.location('/NbtWebApp/wsNBT.asmx/report?rformat=csv&reportid=' + reportid);
+                Csw.window.location('wsNBT.asmx/report?rformat=csv&reportid=' + reportid);
             }
             else {
 

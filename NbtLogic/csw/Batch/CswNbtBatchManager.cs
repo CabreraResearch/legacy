@@ -76,8 +76,8 @@ namespace ChemSW.Nbt.Batch
         public static void runNextBatchOp( CswNbtResources CswNbtResources )
         {
             CswNbtMetaDataObjectClass BatchOpOC = CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.BatchOpClass );
-            CswNbtMetaDataObjectClassProp StatusOCP = BatchOpOC.getObjectClassProp( CswNbtObjClassBatchOp.StatusPropertyName );
-            CswNbtMetaDataObjectClassProp PriorityOCP = BatchOpOC.getObjectClassProp( CswNbtObjClassBatchOp.PriorityPropertyName );
+            CswNbtMetaDataObjectClassProp StatusOCP = BatchOpOC.getObjectClassProp( CswNbtObjClassBatchOp.PropertyName.Status );
+            CswNbtMetaDataObjectClassProp PriorityOCP = BatchOpOC.getObjectClassProp( CswNbtObjClassBatchOp.PropertyName.Priority );
 
 
             CswNbtView NextBatchOpView = new CswNbtView( CswNbtResources );
@@ -117,6 +117,14 @@ namespace ChemSW.Nbt.Batch
                 else if( OpName == NbtBatchOpName.MailReport )
                 {
                     op = new CswNbtBatchOpMailReport( CswNbtResources );
+                }
+                else if( OpName == NbtBatchOpName.UpdateRegulatoryLists )
+                {
+                    op = new CswNbtBatchOpUpdateRegulatoryLists( CswNbtResources );
+                }
+                else if( OpName == NbtBatchOpName.UpdateRegulatoryListsForMaterials )
+                {
+                    op = new CswNbtBatchOpUpdateRegulatoryListsForMaterials( CswNbtResources );
                 }
                 // New batch ops go here
                 // else if( OpName == NbtBatchOpName.NEWNAME ) 

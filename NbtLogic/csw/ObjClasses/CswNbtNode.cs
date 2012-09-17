@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
@@ -11,48 +12,157 @@ namespace ChemSW.Nbt
     /// <summary>
     /// Editing and Display mode for Nodes
     /// </summary>
-    public enum NodeEditMode
+    public sealed class NodeEditMode : IEquatable<NodeEditMode>
     {
+        private static Dictionary<string, string> _Enums = new Dictionary<string, string>( StringComparer.OrdinalIgnoreCase )
+                                                                   {
+                                                                       { Edit, Edit },
+                                                                       { Add, Add },
+                                                                       { EditInPopup, EditInPopup },
+                                                                       { Demo, Demo },
+                                                                       { PrintReport, PrintReport },
+                                                                       { DefaultValue, DefaultValue },
+                                                                       { AuditHistoryInPopup, AuditHistoryInPopup },
+                                                                       { Preview, Preview },
+                                                                       { Table, Table },
+                                                                       { Temp, Temp }
+                                                                   };
+        /// <summary>
+        /// 
+        /// </summary>
+        public readonly string Value;
+
+        private static string _Parse( string Val )
+        {
+            string ret = CswResources.UnknownEnum;
+            if( _Enums.ContainsKey( Val ) )
+            {
+                ret = _Enums[Val];
+            }
+            return ret;
+        }
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        public NodeEditMode( string ItemName = CswResources.UnknownEnum )
+        {
+            Value = _Parse( ItemName );
+        }
+
+        /// <summary>
+        /// Implicit case to Enum
+        /// </summary>
+        public static implicit operator NodeEditMode( string Val )
+        {
+            return new NodeEditMode( Val );
+        }
+
+        /// <summary>
+        /// Implicit cast to string
+        /// </summary>
+        public static implicit operator string( NodeEditMode item )
+        {
+            return item.Value;
+        }
+
+        /// <summary>
+        /// ToString
+        /// </summary>
+        public override string ToString()
+        {
+            return Value;
+        }
+
         /// <summary>
         /// Regular editing
         /// </summary>
-        Edit,
+        public const string Edit = "Edit";
+
         /// <summary>
         /// Adding a new node in a popup
         /// </summary>
-        Add,
+        public const string Add = "Add";
+
+        /// <summary>
+        /// Adding/Editing a temporary node
+        /// </summary>
+        public const string Temp = "Temp";
+
         /// <summary>
         /// Editing a node in a popup
         /// </summary>
-        EditInPopup,
+        public const string EditInPopup = "EditInPopup";
+
         /// <summary>
         /// Editing fake property values (as in Design mode)
         /// </summary>
-        Demo,
+        public const string Demo = "Demo";
+
         /// <summary>
         /// Displaying values for a print report
         /// </summary>
-        PrintReport,
+        public const string PrintReport = "PrintReport";
+
         /// <summary>
         /// Editing the default value of a property (in Design)
         /// </summary>
-        DefaultValue,
+        public const string DefaultValue = "DefaultValue";
+
         /// <summary>
         /// Showing node audit history in a popup
         /// </summary>
-        AuditHistoryInPopup,
+        public const string AuditHistoryInPopup = "AuditHistoryInPopup";
+
         /// <summary>
         /// A preview of the node, displayed when hovering
         /// </summary>
-        Preview,
+        public const string Preview = "Preview";
+
         /// <summary>
         /// Properties of a node displayed in a Table Layout
         /// </summary>
-        Table,
+        public const string Table = "Table";
+
+        #region IEquatable (CswEnum)
+
+        public static bool operator ==( NodeEditMode ft1, NodeEditMode ft2 )
+        {
+            //do a string comparison on the fieldtypes
+            return ft1.ToString() == ft2.ToString();
+        }
+
+        public static bool operator !=( NodeEditMode ft1, NodeEditMode ft2 )
+        {
+            return !( ft1 == ft2 );
+        }
+
+        public override bool Equals( object obj )
+        {
+            if( !( obj is NodeEditMode ) )
+                return false;
+            return this == (NodeEditMode) obj;
+        }
+
+        public bool Equals( NodeEditMode obj )
+        {
+            return this == obj;
+        }
+
         /// <summary>
-        /// Unknown
+        /// Get Hash Code
         /// </summary>
-        Unknown
+        public override int GetHashCode()
+        {
+            int ret = 23, prime = 37;
+            ret = ( ret * prime ) + Value.GetHashCode();
+            ret = ( ret * prime ) + _Enums.GetHashCode();
+            return ret;
+        }
+
+        #endregion IEquatable (NodeEditMode)
+
+
     }; // NodeEditMode
 } // namespace ChemSW.Nbt
 
@@ -62,58 +172,153 @@ namespace ChemSW.Nbt.ObjClasses
     /// <summary>
     /// Type of Node 
     /// </summary>
-    public enum NodeSpecies
+    public sealed class NodeSpecies : IEquatable<NodeSpecies>
     {
         /// <summary>
         /// Unknown
         /// </summary>
-        UnKnown,
+        public const string UnKnown = CswNbtResources.UnknownEnum;
+
         /// <summary>
         /// Regular, run-of-the-mill Node
         /// </summary>
-        Plain,
+        public const string Plain = "Plain";
+
         /// <summary>
         /// Audit Node
         /// </summary>
-        Audit,
+        public const string Audit = "Audit";
+
         /// <summary>
         /// Group
         /// </summary>
-        Group,
+        public const string Group = "Group";
+
         /// <summary>
         /// Root Node
         /// </summary>
-        Root,
+        public const string Root = "Root";
+
         /// <summary>
         /// More Node
         /// </summary>
-        More
+        public const string More = "More";
+
+        /// <summary>
+        /// Temporary Node
+        /// </summary>
+        public const string Temp = "Temp";
+
+        private static Dictionary<string, string> _Enums = new Dictionary<string, string>( StringComparer.OrdinalIgnoreCase )
+                                                                   {
+                                                                       { Plain, Plain },
+                                                                       { Audit, Audit },
+                                                                       { Group, Group },
+                                                                       { More, More },
+                                                                       { Temp, Temp },
+                                                                       { Root, Root }
+                                                                   };
+
+        public readonly string Value;
+
+        private static string _Parse( string Val )
+        {
+            string ret = CswResources.UnknownEnum;
+            if( _Enums.ContainsKey( Val ) )
+            {
+                ret = _Enums[Val];
+            }
+            return ret;
+        }
+        public NodeSpecies( string ItemName = CswResources.UnknownEnum )
+        {
+            Value = _Parse( ItemName );
+        }
+
+        public static implicit operator NodeSpecies( string Val )
+        {
+            return new NodeSpecies( Val );
+        }
+        public static implicit operator string( NodeSpecies item )
+        {
+            return item.Value;
+        }
+
+        public override string ToString()
+        {
+            return Value;
+        }
+
+        #region IEquatable (CswEnum)
+
+        public static bool operator ==( NodeSpecies ft1, NodeSpecies ft2 )
+        {
+            //do a string comparison on the fieldtypes
+            return ft1.ToString() == ft2.ToString();
+        }
+
+        public static bool operator !=( NodeSpecies ft1, NodeSpecies ft2 )
+        {
+            return !( ft1 == ft2 );
+        }
+
+        public override bool Equals( object obj )
+        {
+            if( !( obj is NodeSpecies ) )
+                return false;
+            return this == (NodeSpecies) obj;
+        }
+
+        public bool Equals( NodeSpecies obj )
+        {
+            return this == obj;
+        }
+
+        /// <summary>
+        /// Get Hash Code
+        /// </summary>
+        public override int GetHashCode()
+        {
+            int ret = 23, prime = 37;
+            ret = ( ret * prime ) + Value.GetHashCode();
+            ret = ( ret * prime ) + _Enums.GetHashCode();
+            return ret;
+        }
+
+        #endregion IEquatable (NodeSpecies)
+
     };
 
     //bz # 5943
-    public enum NodeModificationState
+    /// <summary>
+    /// State of node
+    /// </summary>
+    public sealed class NodeModificationState : IEquatable<NodeModificationState>
     {
         /// <summary>
         /// Unknown
         /// </summary>
-        Unknown,
+        public const string Unknown = CswNbtResources.UnknownEnum;
+
         /// <summary>
         /// The node contains no data
         /// </summary>
-        Empty,
+        public const string Empty = "Empty";
+
         /// <summary>
         /// The node and its properties have been read from the database
         /// </summary>
-        Unchanged,
+        public const string Unchanged = "Unchanged";
+
         /// <summary>
         /// The value one of the node's selectors or of its properties has been modified
         /// </summary>
-        Modified,
+        public const string Modified = "Modified";
         //Set,
         /// <summary>
         /// The Node's data has been written to the database, but not yet committed
         /// </summary>
-        Posted,
+        public const string Posted = "Posted";
         ///// <summary>
         ///// The data written in the Posted phase has been committed
         ///// </summary>
@@ -121,7 +326,84 @@ namespace ChemSW.Nbt.ObjClasses
         /// <summary>
         /// The node has been removed from the database
         /// </summary>
-        Deleted
+        public const string Deleted = "Deleted";
+
+        private static Dictionary<string, string> _Enums = new Dictionary<string, string>( StringComparer.OrdinalIgnoreCase )
+                                                                   {
+                                                                       { Empty, Empty },
+                                                                       { Unchanged, Unchanged },
+                                                                       { Modified, Modified },
+                                                                       { Posted, Posted },
+                                                                       { Deleted, Deleted }
+                                                                   };
+        public readonly string Value;
+
+        private static string _Parse( string Val )
+        {
+            string ret = CswResources.UnknownEnum;
+            if( _Enums.ContainsKey( Val ) )
+            {
+                ret = _Enums[Val];
+            }
+            return ret;
+        }
+        public NodeModificationState( string ItemName = CswResources.UnknownEnum )
+        {
+            Value = _Parse( ItemName );
+        }
+
+        public static implicit operator NodeModificationState( string Val )
+        {
+            return new NodeModificationState( Val );
+        }
+        public static implicit operator string( NodeModificationState item )
+        {
+            return item.Value;
+        }
+
+        public override string ToString()
+        {
+            return Value;
+        }
+
+        #region IEquatable (NodeModificationState)
+
+        public static bool operator ==( NodeModificationState ft1, NodeModificationState ft2 )
+        {
+            //do a string comparison on the fieldtypes
+            return ft1.ToString() == ft2.ToString();
+        }
+
+        public static bool operator !=( NodeModificationState ft1, NodeModificationState ft2 )
+        {
+            return !( ft1 == ft2 );
+        }
+
+        public override bool Equals( object obj )
+        {
+            if( !( obj is NodeModificationState ) )
+                return false;
+            return this == (NodeModificationState) obj;
+        }
+
+        public bool Equals( NodeModificationState obj )
+        {
+            return this == obj;
+        }
+
+        /// <summary>
+        /// Get Hash Code
+        /// </summary>
+        public override int GetHashCode()
+        {
+            int ret = 23, prime = 37;
+            ret = ( ret * prime ) + Value.GetHashCode();
+            ret = ( ret * prime ) + _Enums.GetHashCode();
+            return ret;
+        }
+
+        #endregion IEquatable (NodeModificationState)
+
     };
 
 
@@ -214,6 +496,29 @@ namespace ChemSW.Nbt.ObjClasses
 
         private bool _IsDemo = false;
         public bool IsDemo { get { return _IsDemo; } set { _IsDemo = value; } }
+
+        private bool _IsTemp = false;
+        /// <summary>
+        /// If true, this is a temporary node
+        /// </summary>
+        public bool IsTemp
+        {
+            get { return _IsTemp; }
+            set
+            {
+                if( false == value )
+                {
+                    SessionId = string.Empty;
+                }
+                _IsTemp = value;
+            }
+        }
+
+        private string _SessionId = string.Empty;
+        /// <summary>
+        /// If IsTemp, the SessionId associated with the Node
+        /// </summary>
+        public string SessionId { get { return _SessionId; } set { _SessionId = value; } }
 
         private bool _ReadOnly = false;
         private bool _ReadOnlyTemporary = false;
@@ -508,20 +813,14 @@ namespace ChemSW.Nbt.ObjClasses
                 bool IsNew = ( this.NodeId == null || this.NodeId.PrimaryKey == Int32.MinValue );
                 if( null != _CswNbtObjClass )
                 {
-                    if( IsNew )
-                        _CswNbtObjClass.beforeCreateNode( OverrideUniqueValidation );
-                    else
-                        _CswNbtObjClass.beforeWriteNode( IsCopy, OverrideUniqueValidation );
+                    _CswNbtObjClass.beforeWriteNode( IsCopy, OverrideUniqueValidation );
                 }
 
                 OnRequestWriteNode( this, ForceUpdate, IsCopy, OverrideUniqueValidation );
 
                 if( null != _CswNbtObjClass )
                 {
-                    if( IsNew )
-                        _CswNbtObjClass.afterCreateNode();
-                    else
-                        _CswNbtObjClass.afterWriteNode();
+                    _CswNbtObjClass.afterWriteNode();
                 }
 
                 _NodeModificationState = NodeModificationState.Posted;
@@ -564,14 +863,19 @@ namespace ChemSW.Nbt.ObjClasses
         }
 
         //bz # 5943
-        public void delete( bool DeleteAllRequiredRelatedNodes = false )
+        /// <summary>
+        /// Deletes the node from the database.
+        /// </summary>
+        /// <param name="DeleteAllRequiredRelatedNodes"></param>
+        /// <param name="OverridePermissions">For internal use only. When set to true, ignores user permissions.</param>
+        public void delete( bool DeleteAllRequiredRelatedNodes = false, bool OverridePermissions = false )
         {
             if( null == OnRequestDeleteNode )
             {
                 throw ( new CswDniException( "There is no delete handler" ) );
             }
             CswNbtMetaDataNodeType thisNT = this.getNodeType();
-            if( !_CswNbtResources.Permit.can( Security.CswNbtPermit.NodeTypePermission.Delete, thisNT ) )
+            if( false == OverridePermissions && false == _CswNbtResources.Permit.can( Security.CswNbtPermit.NodeTypePermission.Delete, thisNT ) )
             {
                 throw ( new CswDniException( ErrorType.Warning, "You do not have permission to delete this " + thisNT.NodeTypeName, "User attempted to delete a " + thisNT.NodeTypeName + " without Delete permissions" ) );
             }

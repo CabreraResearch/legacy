@@ -74,6 +74,29 @@ namespace ChemSW.Nbt.PropTypes
                     _SelectedUserIds.OnChange += _SelectedUserIds_OnChange;
                     _SelectedUserIds.FromString( _CswNbtNodePropData.GetPropRowValue( _SelectedUserIdsSubField.Column ) );
                 }
+                //removed archived or invalid users
+                Collection<Int32> UserIdsToRemove = new Collection<Int32>();
+                foreach( Int32 UserId in _SelectedUserIds.ToIntCollection() )
+                {
+                    bool Remove = true;
+                    if( Int32.MinValue != UserId );
+                    {
+                        CswPrimaryKey pk = new CswPrimaryKey( "nodes", UserId );
+                        CswNbtObjClassUser node = _CswNbtResources.Nodes.GetNode( pk );
+                        if( null != node && false == node.IsArchived() )
+                        {
+                            Remove = false;
+                        }
+                    }
+                    if( Remove )
+                    {
+                        UserIdsToRemove.Add( UserId );
+                    }
+                }
+                foreach( Int32 DoomedUserId in UserIdsToRemove )
+                {
+                    _SelectedUserIds.Remove( DoomedUserId.ToString() );
+                }
                 return _SelectedUserIds;
             }
             set
@@ -171,16 +194,19 @@ namespace ChemSW.Nbt.PropTypes
             CswNbtMetaDataObjectClass UserOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
             foreach( CswNbtNode UserNode in UserOC.getNodes( false, false ) )
             {
-                DataRow NTRow = Data.NewRow();
-                NTRow[NameColumn] = UserNode.NodeName; // UsersTree.getNodeNameForCurrentPosition();
-                NTRow[KeyColumn] = UserNode.NodeId.PrimaryKey; //  UsersTree.getNodeIdForCurrentPosition().PrimaryKey;
-                NTRow[StringKeyColumn] = UserNode.NodeId.ToString(); //  UsersTree.getNodeIdForCurrentPosition().PrimaryKey;
-                NTRow[ValueColumn] = ( SelectedUserIds.Contains( UserNode.NodeId.PrimaryKey.ToString() ) ||  //UsersTree.getNodeIdForCurrentPosition().PrimaryKey.ToString() ) ) ||
-                                       ( first && Required && SelectedUserIds.Count == 0 ) );
-                Data.Rows.Add( NTRow );
-                first = false;
+                if( Tristate.True != UserNode.Properties[CswNbtObjClassUser.PropertyName.Archived].AsLogical.Checked )
+                {
+                    DataRow NTRow = Data.NewRow();
+                    NTRow[NameColumn] = UserNode.NodeName; // UsersTree.getNodeNameForCurrentPosition();
+                    NTRow[KeyColumn] = UserNode.NodeId.PrimaryKey; //  UsersTree.getNodeIdForCurrentPosition().PrimaryKey;
+                    NTRow[StringKeyColumn] = UserNode.NodeId.ToString(); //  UsersTree.getNodeIdForCurrentPosition().PrimaryKey;
+                    NTRow[ValueColumn] = ( SelectedUserIds.Contains( UserNode.NodeId.PrimaryKey.ToString() ) ||  //UsersTree.getNodeIdForCurrentPosition().PrimaryKey.ToString() ) ) ||
+                                           ( first && Required && SelectedUserIds.Count == 0 ) );
+                    Data.Rows.Add( NTRow );
+                    first = false;
 
-                //UsersTree.goToParentNode();
+                    //UsersTree.goToParentNode();
+                }
             }
             return Data;
         } // UserOptions()

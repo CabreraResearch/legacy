@@ -11,11 +11,11 @@ namespace ChemSW.Nbt.Schema
         public override void update()
         {
             CswNbtMetaDataObjectClass MaterialComponentOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.MaterialComponentClass );
-            CswNbtMetaDataObjectClassProp PercentageOcp = MaterialComponentOc.getObjectClassProp( CswNbtObjClassMaterialComponent.PercentagePropertyName );
+            CswNbtMetaDataObjectClassProp PercentageOcp = MaterialComponentOc.getObjectClassProp( CswNbtObjClassMaterialComponent.PropertyName.Percentage );
             _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( PercentageOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.setvalonadd, true );
             _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( PercentageOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.isrequired, true );
 
-            CswNbtMetaDataObjectClassProp MixtureOcp = MaterialComponentOc.getObjectClassProp( CswNbtObjClassMaterialComponent.MixturePropertyName );
+            CswNbtMetaDataObjectClassProp MixtureOcp = MaterialComponentOc.getObjectClassProp( CswNbtObjClassMaterialComponent.PropertyName.Mixture );
             _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( MixtureOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.setvalonadd, true );
             _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( MixtureOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.isrequired, true );
 

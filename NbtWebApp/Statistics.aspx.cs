@@ -61,7 +61,7 @@ namespace ChemSW.Nbt.WebPages
         {
             try
             {
-                _NbtMgrEnabled = Master.CswNbtResources.IsModuleEnabled( CswNbtResources.CswNbtModule.NBTManager );
+                _NbtMgrEnabled = Master.CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.NBTManager );
 
                 _DisplayMode = StatisticsDisplayMode.Schema;
                 if( Request.QueryString["mode"] == "user" )
@@ -817,7 +817,7 @@ namespace ChemSW.Nbt.WebPages
             CswNbtMetaDataObjectClass CustomerObjectClass = Master.CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.CustomerClass );
             CswNbtView CustomerView = new CswNbtView( Master.CswNbtResources );
             CswNbtViewRelationship CustomerRelationship = CustomerView.AddViewRelationship( CustomerObjectClass, true );
-            CswNbtViewProperty AccessIdProperty = CustomerView.AddViewProperty( CustomerRelationship, CustomerObjectClass.getObjectClassProp( CswNbtObjClassCustomer.CompanyIDPropertyName ) );
+            CswNbtViewProperty AccessIdProperty = CustomerView.AddViewProperty( CustomerRelationship, CustomerObjectClass.getObjectClassProp( CswNbtObjClassCustomer.PropertyName.CompanyID ) );
             CswNbtViewPropertyFilter AccessIdFilter = CustomerView.AddViewPropertyFilter( AccessIdProperty, CswNbtSubField.SubFieldName.Unknown, CswNbtPropFilterSql.PropertyFilterMode.Equals, AccessId, false );
 
             CswNbtNode CustomerNode = null;
