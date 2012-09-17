@@ -35,7 +35,8 @@
                 },
                 FirstCellRightAlign: false,
                 OddCellRightAlign: false,
-                border: 0
+                border: 0, 
+                styles: {}
             };
             var cswPublic = { };
 
@@ -63,6 +64,7 @@
                         width: cswPrivate.width,
                         align: cswPrivate.align
                     });
+                    cswPublic.css(cswPrivate.styles);
                     cswPublic.propNonDom({
                         cellpadding: cswPrivate.cellpadding,
                         cellspacing: cswPrivate.cellspacing,

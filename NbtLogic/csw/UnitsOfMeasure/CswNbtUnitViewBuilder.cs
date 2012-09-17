@@ -72,7 +72,7 @@ namespace ChemSW.Nbt.UnitsOfMeasure
                 if( null == Ret )
                 {
                     Ret = new CswNbtView( _CswNbtResources );
-                    Ret.makeNew( MaterialNodeAsMaterial.Node.NodeName + " Units Of Measure View", NbtViewVisibility.Property );
+                    Ret.saveNew( MaterialNodeAsMaterial.Node.NodeName + " Units Of Measure View", NbtViewVisibility.Property );
                 }
                 else
                 {

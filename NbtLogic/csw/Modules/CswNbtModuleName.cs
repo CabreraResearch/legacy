@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using ChemSW.Core;
 
@@ -31,6 +30,10 @@ namespace ChemSW.Nbt
         /// </summary>
         public static readonly CswNbtModuleName CISPro = new CswNbtModuleName( "CISPro" );
         /// <summary>
+        /// Development
+        /// </summary>
+        public static readonly CswNbtModuleName Dev = new CswNbtModuleName( "Dev" );
+        /// <summary>
         /// Mobile
         /// </summary>
         public static readonly CswNbtModuleName Mobile = new CswNbtModuleName( "Mobile" );
@@ -50,6 +53,6 @@ namespace ChemSW.Nbt
         /// Sample Tracking
         /// </summary>
         public static readonly CswNbtModuleName STIS = new CswNbtModuleName( "STIS" );
-    
+
     } // class CswNbtModule
 }// namespace ChemSW.Nbt

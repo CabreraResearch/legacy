@@ -6,9 +6,6 @@
     /// <summary> Instance a Csw State object.</summary>
     /// <returns type="Object">Collection of methods to manage state.</returns>
 
-    Csw.clientState = Csw.clientState ||
-        Csw.register('clientState', Csw.makeNameSpace());
-
     Csw.clientState.clearCurrent = Csw.clientState.clearCurrent ||
         Csw.clientState.register('clearCurrent', function () {
             /// <summary> Clear all current state cookies  </summary>

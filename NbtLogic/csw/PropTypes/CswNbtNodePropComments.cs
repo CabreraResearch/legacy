@@ -158,6 +158,7 @@ namespace ChemSW.Nbt.PropTypes
                     {
                         commenter += "," + _CswNbtResources.CurrentNbtUser.FirstName;
                     }
+                    commenter += " (" + _CswNbtResources.CurrentNbtUser.Username + ")";
                 }
                 JArray _CommentsJson = CommentsJson;
                 //comments:  [ { datetime: '12/31/2012', commenter: 'david', message: 'yuck' }, { ... } ]
