@@ -100,9 +100,6 @@
                         Csw.error.throwException(Csw.error.exception('Cannot create a Wizard amounts grid without a parent.', '', 'csw.wizard.amountsgrid.js', 22));
                     }
                     cswPublic.containerCount = 0;
-                    cswParent.br({ number: 2 });
-                    cswParent.span({ text: '<b>Enter the Amounts to ' + cswPrivate.action + ':</b>' });
-                    cswParent.br({ number: 2 });
                     cswParent.span({ text: '<b>Total number of containers: </b>' });
                     var containerNoSpan = cswParent.span({ text: cswPublic.containerCount });
                     var containerLimitExceededSpan = cswParent.span({ cssclass: 'CswErrorMessage_ValidatorError', text: ' The limit for containers created at receipt is [' + cswPublic.containerlimit + '].' });
