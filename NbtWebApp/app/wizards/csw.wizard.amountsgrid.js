@@ -177,7 +177,9 @@
                                         onChange: function (value) {
                                             cswPublic.quantities[rowid].containerNo = value;
                                             updateTotalContainerCount();
-                                            updateBarcodes(cswPublic.barcodeControl[rowid].val());
+                                            if (false === Csw.isNullOrEmpty(cswPublic.barcodeControl[rowid])) {
+                                                updateBarcodes(cswPublic.barcodeControl[rowid].val());
+                                            }
                                             Csw.tryExec(cswPrivate.onChange, cswPublic.quantities);
                                         }
                                     });
