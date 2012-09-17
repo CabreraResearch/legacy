@@ -11,9 +11,8 @@
                 qtyControl: [],
                 containerNoControl: [],
                 barcodeControl: [],
+                sizeControl: [],
                 thinGrid: null,
-                thinGridAddButton: null,
-                amountsGridOnAdd: null,
                 containerlimit: 25,
                 containerCount: ''
             };
@@ -140,9 +139,9 @@
                         makeAddRow: function (cswCell, columnName, rowid) {
                             'use strict';
                             var updateSizeVals = function () {
-                                cswPrivate.selectedSizeId = sizeControl.selectedNodeId();
-                                cswPublic.quantities[rowid].sizeid = sizeControl.selectedNodeId();
-                                cswPublic.quantities[rowid].sizename = sizeControl.selectedText();
+                                cswPrivate.selectedSizeId = cswPublic.sizeControl[rowid].selectedNodeId();
+                                cswPublic.quantities[rowid].sizeid = cswPublic.sizeControl[rowid].selectedNodeId();
+                                cswPublic.quantities[rowid].sizename = cswPublic.sizeControl[rowid].selectedText();
                             };
                             var updateColumnVals = function (changeContainerNo) {
                                 cswPublic.quantities[rowid].quantity = cswPublic.qtyControl[rowid].quantityValue;
@@ -167,7 +166,7 @@
                             };
                             switch (columnName) {
                                 case cswPrivate.config.numberName:
-                                    var containerNoControl = cswCell.numberTextBox({
+                                    cswPublic.containerNoControl[rowid] = cswCell.numberTextBox({
                                         ID: Csw.tryExec(cswPrivate.makeId + rowid, 'containerCount'),
                                         name: Csw.tryExec(cswPrivate.makeId + rowid, 'containerCount'),
                                         value: 1,
@@ -184,12 +183,11 @@
                                             Csw.tryExec(cswPrivate.onChange, cswPublic.quantities);
                                         }
                                     });
-                                    cswPublic.containerNoControl[rowid] = containerNoControl;
                                     cswPublic.quantities[rowid].containerNo = cswPublic.containerNoControl[rowid].val();
                                     updateTotalContainerCount();
                                     break;
                                 case cswPrivate.config.sizeName:
-                                    var sizeControl = cswCell.nodeSelect({
+                                    cswPublic.sizeControl[rowid] = cswCell.nodeSelect({
                                         ID: Csw.tryExec(cswPrivate.makeId + rowid, 'sizes'),
                                         name: Csw.tryExec(cswPrivate.makeId + rowid, 'sizes'),
                                         async: false,
@@ -218,12 +216,11 @@
                                     };
                                     cswPrivate.quantity.ID = Csw.tryExec(cswPrivate.makeId + rowid, 'containerQuantity');
                                     cswPrivate.quantity.qtyWidth = (7 * 8) + 'px'; //7 characters wide, 8 is the characters-to-pixels ratio
-                                    var qtyControl = cswCell.quantity(cswPrivate.quantity);
-                                    cswPublic.qtyControl[rowid] = qtyControl;
+                                    cswPublic.qtyControl[rowid] = cswCell.quantity(cswPrivate.quantity);
                                     updateColumnVals(false);
                                     break;
                                 case cswPrivate.config.barcodeName:
-                                    var barcodeControl = cswCell.textArea({
+                                    cswPublic.barcodeControl[rowid] = cswCell.textArea({
                                         ID: Csw.tryExec(cswPrivate.makeId + rowid, 'containerBarcodes'),
                                         name: Csw.tryExec(cswPrivate.makeId + rowid, 'containerBarcodes'),
                                         rows: 1,
@@ -232,7 +229,6 @@
                                             updateBarcodes(value);
                                         }
                                     });
-                                    cswPublic.barcodeControl[rowid] = barcodeControl;
                                     break;
                             }
                         },
