@@ -313,13 +313,13 @@ namespace ChemSW.Nbt.PropTypes
 
             if( null != JObject["options"] )
             {
-                JArray OptionsObj = (JArray) JObject["options"];
+                JArray OptionsObj = CswConvert.ToJArray( JObject["options"] );
 
                 foreach( JObject UserObj in OptionsObj )
                 {
                     string Key = CswConvert.ToString( UserObj[KeyColumn] );
-                    JArray Values = (JArray) UserObj["values"];
-                    bool Value = CswConvert.ToBoolean( Values[0] );
+                    JArray Values = CswConvert.ToJArray( UserObj["values"] );
+                    bool Value = null != Values && CswConvert.ToBoolean( Values.First );
                     if( Value )
                     {
                         NewSelectedUserIds.Add( Key );

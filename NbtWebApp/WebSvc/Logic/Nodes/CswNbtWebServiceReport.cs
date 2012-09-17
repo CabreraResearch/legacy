@@ -30,6 +30,11 @@ namespace ChemSW.Nbt.WebServices
                 string ReportSql = report.getUserContextSql( _CswNbtResources.CurrentNbtUser.Username );
                 CswArbitrarySelect cswRptSql = _CswNbtResources.makeCswArbitrarySelect( "report_sql", ReportSql );
                 DataTable rptDataTbl = cswRptSql.getTable();
+                if( string.IsNullOrEmpty( rptDataTbl.TableName ) && null != _reportNode )
+                {
+                    CswNbtObjClassReport nodeAsReport = _reportNode;
+                    rptDataTbl.TableName = nodeAsReport.ReportName.Text;
+                }
 
                 if( "csv" == rformat.ToLower() )
                 {

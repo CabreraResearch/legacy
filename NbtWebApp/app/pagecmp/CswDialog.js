@@ -854,7 +854,7 @@
                 paramName: 'fileupload',
                 done: function (e, data) {
                     div.$.dialog('close');
-                    o.onSuccess();
+                    o.onSuccess(data.result);
                 }
             });
 

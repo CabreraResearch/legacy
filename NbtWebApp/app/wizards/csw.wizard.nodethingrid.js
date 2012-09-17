@@ -3,11 +3,11 @@
 
 (function () {
 
-    Csw.nbt.wizard.nodeThinGrid = Csw.nbt.wizard.nodeThinGrid ||
-        Csw.nbt.wizard.register('nodeThinGrid', function (cswParent, options) {
+    Csw.wizard.nodeThinGrid = Csw.wizard.nodeThinGrid ||
+        Csw.wizard.register('nodeThinGrid', function (cswParent, options) {
             'use strict';
             ///<summary>Creates a thin grid with an Add form.</summary>
-            Csw.error.throwException(Csw.error.exception('Csw.nbt.wizard.nodeThinGrid probably (possibly [maybe {dubiously} ] ) works, but it hasn\'t been tested. At all. Not even a little. You could start by uncommenting this line.', '', 'csw.wizard.nodethingrid.js', 22));
+            Csw.error.throwException(Csw.error.exception('Csw.wizard.nodeThinGrid probably (possibly [maybe {dubiously} ] ) works, but it hasn\'t been tested. At all. Not even a little. You could start by uncommenting this line.', '', 'csw.wizard.nodethingrid.js', 22));
             var cswPrivate = {
                 ID: 'wizardNodeThinGrid',
                 viewid: '',
@@ -48,7 +48,7 @@
                 function addNodeLayout() {
                     cswPrivate.addDiv = addDiv || cswPublic.rootDiv.div();
                     cswPrivate.addDiv.empty();
-                    cswPrivate.tabsAndProps = Csw.nbt.wizard.addLayout(cswPrivate.addDiv, {
+                    cswPrivate.tabsAndProps = Csw.wizard.addLayout(cswPrivate.addDiv, {
                         nodetypeid: cswPrivate.nodetypeid,
                         excludeOcProps: cswPrivate.excludeOcProps
                     });

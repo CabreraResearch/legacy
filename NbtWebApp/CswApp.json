@@ -1,0 +1,28 @@
+{
+  "name": "NBT",
+  "title": "ChemSW Live",
+  "description": "",
+  "version": "0.1.0",
+  "homepage": "nbtdaily.chemswlive.com",
+  "author": {
+    "name": "CF",
+    "email": "cfroehlich@chemsw.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "none"
+  },
+  "bugs": {
+    "url": "fogbugz.chemswlive.com"
+  },
+  "licenses": [
+    {
+      "type": "none",
+      "url": "nbtdaily.chemswlive.com/blob/master/LICENSE-none"
+    }
+  ],
+  "dependencies": {
+    "jquery": "1.7.1"
+  },
+  "keywords": []
+}
