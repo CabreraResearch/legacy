@@ -176,6 +176,7 @@
                                 cswPrivate.selectBox.val(nodeid);
                                 cswPrivate.toggleOptions(true);
                                 cswPublic.data.onPropChange({ nodeid: nodeid });
+                                cswPrivate.selectBox.$.valid();
                             };
 
                             cswPrivate.parent.$.hover(function (event) { Csw.nodeHoverIn(event, cswPrivate.selectBox.val()); },
