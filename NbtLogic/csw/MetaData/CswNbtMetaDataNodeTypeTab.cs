@@ -144,11 +144,6 @@ namespace ChemSW.Nbt.MetaData
             }
         }
 
-        public bool HasLabel
-        {
-            get { return CswConvert.ToBoolean( _DataRow["haslabel"] ); }
-        }
-
         public void CopyTabToNewNodeTypeTabRow( DataRow NewTabRow )
         {
             foreach( DataColumn TabColumn in NewTabRow.Table.Columns )
