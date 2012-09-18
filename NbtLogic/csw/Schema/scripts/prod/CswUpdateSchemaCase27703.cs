@@ -25,9 +25,14 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataObjectClassProp requestOCP = materialOC.getObjectClassProp( CswNbtObjClassMaterial.PropertyName.Request );
             _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( requestOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.extended, CswNbtNodePropButton.ButtonMode.menu );
 
-            //change Material "request" prop to have the request by list options
+            //change Material "request" prop on all material nodes to have the request by list options
             string opts = CswNbtObjClassRequestItem.RequestsBy.Options.ToString();
-            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( requestOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.Unknown, opts );
+            foreach( CswNbtObjClassMaterial materialNode in materialOC.getNodes( false, false ) )
+            {
+                materialNode.Request.MenuOptions = opts;
+                materialNode.Request.State = CswNbtObjClassRequestItem.RequestsBy.Size;
+                materialNode.postChanges( false );
+            }
 
             //change Request Items "Request By" prop to use the newly named list options
             CswNbtMetaDataObjectClassProp requestByOCP = requestItemOC.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.RequestBy );
@@ -39,11 +44,14 @@ namespace ChemSW.Nbt.Schema
             //remove the filters on "Count," "Size," and "Quantity" - these will now show/hide based on Materials "Request" button click
             CswNbtMetaDataObjectClassProp countOCP = requestItemOC.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Count );
             CswNbtMetaDataObjectClassProp sizeOCP = requestItemOC.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Size );
-            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( countOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.filter, "Field1|Equals|" + CswNbtObjClassRequestItem.RequestsBy.Size );
-            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( sizeOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.filter, "Field1|Equals|" + CswNbtObjClassRequestItem.RequestsBy.Size );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( countOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.filter, "" );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( countOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.filterpropid, "" );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( sizeOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.filter, "" );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( sizeOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.filterpropid, "" );
 
             CswNbtMetaDataObjectClassProp quantityOCP = requestItemOC.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Quantity );
-            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( quantityOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.filter, "Field1|NotEquals|" + CswNbtObjClassRequestItem.RequestsBy.Size );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( quantityOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.filter, "" );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( quantityOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.filterpropid, "" );
 
             #endregion
 
