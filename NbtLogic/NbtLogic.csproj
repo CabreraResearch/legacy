@@ -151,6 +151,7 @@
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase24632.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase27548.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_DevModule_Case27759.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_PrintLabel_Case21701.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_Size_Case27438.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase27523.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase27513.cs" />
