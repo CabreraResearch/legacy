@@ -141,12 +141,15 @@
                                 cswPublic.quantities[rowid].sizename = cswPublic.sizeControl[rowid].selectedText();
                             };
                             var updateColumnVals = function (changeContainerNo) {
-                                cswPublic.quantities[rowid].quantity = cswPublic.qtyControl[rowid].quantityValue;
-                                cswPublic.quantities[rowid].unit = cswPublic.qtyControl[rowid].unitText;
-                                cswPublic.quantities[rowid].unitid = cswPublic.qtyControl[rowid].unitVal;
+                                if (false === Csw.isNullOrEmpty(cswPublic.qtyControl[rowid])) {
+                                    cswPublic.quantities[rowid].quantity = cswPublic.qtyControl[rowid].quantityValue;
+                                    cswPublic.quantities[rowid].unit = cswPublic.qtyControl[rowid].unitText;
+                                    cswPublic.quantities[rowid].unitid = cswPublic.qtyControl[rowid].unitVal;
+                                }
                                 if (changeContainerNo) {
                                     cswPublic.containerNoControl[rowid].val(Csw.number(cswPrivate.quantity.unitCount, 1));
                                     cswPublic.quantities[rowid].containerNo = Csw.number(cswPrivate.quantity.unitCount, 1);
+                                    updateTotalContainerCount();
                                 }
                                 Csw.tryExec(cswPrivate.onChange, cswPublic.quantities);
                             };
@@ -180,8 +183,7 @@
                                             Csw.tryExec(cswPrivate.onChange, cswPublic.quantities);
                                         }
                                     });
-                                    cswPublic.quantities[rowid].containerNo = cswPublic.containerNoControl[rowid].val();
-                                    updateTotalContainerCount();
+                                    cswPublic.quantities[rowid].containerNo = cswPublic.containerNoControl[rowid].val();                                    
                                     break;
                                 case cswPrivate.config.sizeName:
                                     cswPublic.sizeControl[rowid] = cswCell.nodeSelect({
@@ -205,7 +207,7 @@
                                     updateSizeVals();
                                     break;
                                 case cswPrivate.config.quantityName:
-                                    cswPrivate.getQuantity();                                    
+                                    cswPrivate.getQuantity();
                                     cswPrivate.quantity.minvalue = 0;
                                     cswPrivate.quantity.isClosedSet = false;
                                     cswPrivate.quantity.onChange = function () {
@@ -214,7 +216,7 @@
                                     cswPrivate.quantity.ID = Csw.tryExec(cswPrivate.makeId + rowid, 'containerQuantity');
                                     cswPrivate.quantity.qtyWidth = (7 * 8) + 'px'; //7 characters wide, 8 is the characters-to-pixels ratio
                                     cswPublic.qtyControl[rowid] = cswCell.quantity(cswPrivate.quantity);
-                                    updateColumnVals(false);
+                                    updateColumnVals(true);
                                     break;
                                 case cswPrivate.config.barcodeName:
                                     cswPublic.barcodeControl[rowid] = cswCell.textArea({
