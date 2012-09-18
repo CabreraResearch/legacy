@@ -152,9 +152,10 @@ namespace ChemSW.WebSvc
 
                 SvcReturn["server"] = Environment.MachineName;
                 SvcReturn["timer"] = new JObject();
-                SvcReturn["timer"]["serverinit"] = Math.Round( CswNbtResources.ServerInitTime, 3 );
+
                 if( null != CswNbtResources )
                 {
+                    SvcReturn["timer"]["serverinit"] = Math.Round( CswNbtResources.ServerInitTime, 3 );
                     LogLevels LogLevel = CswNbtResources.ConfigVbls.getConfigVariableValue( CswConfigurationVariables.ConfigurationVariableNames.Logging_Level );
                     if( LogLevel == CswNbtResources.UnknownEnum )
                     {
@@ -168,9 +169,9 @@ namespace ChemSW.WebSvc
                     SvcReturn["timer"]["dbcommit"] = Math.Round( CswNbtResources.CswLogger.DbCommitTime, 3 );
                     SvcReturn["timer"]["dbdeinit"] = Math.Round( CswNbtResources.CswLogger.DbDeInitTime, 3 );
                     SvcReturn["timer"]["treeloadersql"] = Math.Round( CswNbtResources.CswLogger.TreeLoaderSQLTime, 3 );
-
+                    SvcReturn["timer"]["servertotal"] = Math.Round( CswNbtResources.TotalServerTime, 3 );
                 }
-                SvcReturn["timer"]["servertotal"] = Math.Round( CswNbtResources.TotalServerTime, 3 );
+
                 SvcReturn["AuthenticationStatus"] = AuthenticationStatusIn.ToString();
             }
         }
