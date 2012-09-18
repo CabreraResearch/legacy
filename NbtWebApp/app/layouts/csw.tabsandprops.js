@@ -704,7 +704,8 @@
                         Multi: cswPrivate.Multi,
                         onEditView: cswPrivate.onEditView,
                         onAfterButtonClick: cswPrivate.onAfterButtonClick,
-                        ReadOnly: Csw.bool(propData.readonly) || cswPrivate.Config
+                        ReadOnly: Csw.bool(propData.readonly) || cswPrivate.Config,
+                        Required: Csw.bool(propData.required)
                     }, propDiv);
 
                     cswPrivate.properties[propId] = Csw.nbt.property(fieldOpt);
