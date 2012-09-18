@@ -1,6 +1,7 @@
 ﻿using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
+using ChemSW.Nbt.PropTypes;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -14,8 +15,40 @@ namespace ChemSW.Nbt.Schema
         /// </summary>
         public override void update()
         {
-
             CswNbtMetaDataObjectClass requestItemOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.RequestItemClass );
+            CswNbtMetaDataNodeType requestItemNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Request Item" );
+
+            #region PART 1 - BUTTON NAMING AND LIST OPTIONS
+
+            //change materials Request button to a menu button
+            CswNbtMetaDataObjectClass materialOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass );
+            CswNbtMetaDataObjectClassProp requestOCP = materialOC.getObjectClassProp( CswNbtObjClassMaterial.PropertyName.Request );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( requestOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.extended, CswNbtNodePropButton.ButtonMode.menu );
+
+            //change Material "request" prop to have the request by list options
+            string opts = CswNbtObjClassRequestItem.RequestsBy.Options.ToString();
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( requestOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.Unknown, opts );
+
+            //change Request Items "Request By" prop to use the newly named list options
+            CswNbtMetaDataObjectClassProp requestByOCP = requestItemOC.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.RequestBy );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( requestByOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.listoptions, opts );
+
+            //make Request Items "request by" server managed
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( requestByOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.servermanaged, true );
+
+            //remove the filters on "Count," "Size," and "Quantity" - these will now show/hide based on Materials "Request" button click
+            CswNbtMetaDataObjectClassProp countOCP = requestItemOC.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Count );
+            CswNbtMetaDataObjectClassProp sizeOCP = requestItemOC.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Size );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( countOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.filter, "Field1|Equals|" + CswNbtObjClassRequestItem.RequestsBy.Size );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( sizeOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.filter, "Field1|Equals|" + CswNbtObjClassRequestItem.RequestsBy.Size );
+
+            CswNbtMetaDataObjectClassProp quantityOCP = requestItemOC.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Quantity );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( quantityOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.filter, "Field1|NotEquals|" + CswNbtObjClassRequestItem.RequestsBy.Size );
+
+            #endregion
+
+            #region PART 2 - ADD NAME PROPERTY TO REQUEST ITEM
+
             CswNbtMetaDataObjectClassProp nameOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( requestItemOC )
             {
                 PropName = "Name",
@@ -24,12 +57,14 @@ namespace ChemSW.Nbt.Schema
             } );
 
             string newNameTemplate = CswNbtMetaData.MakeTemplateEntry( CswNbtObjClassRequestItem.PropertyName.Name );
-            foreach( CswNbtMetaDataNodeType requestItemNT in requestItemOC.getNodeTypes() )
+            if( null != requestItemNT )
             {
                 requestItemNT.setNameTemplateText( newNameTemplate );
                 CswNbtMetaDataNodeTypeProp nameNTP = _CswNbtSchemaModTrnsctn.MetaData.getNodeTypePropByObjectClassProp( requestItemNT.NodeTypeId, nameOCP.ObjectClassPropId );
                 nameNTP.removeFromLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add );
             }
+
+            #endregion
 
         }//Update()
 
