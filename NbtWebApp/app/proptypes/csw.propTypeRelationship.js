@@ -167,10 +167,8 @@
 
                             cswPrivate.toggleOptions(cswPublic.data.EditMode === Csw.enums.editMode.Add || (cswPublic.data.Required && Csw.isNullOrEmpty(cswPrivate.selectedNodeId)));
                                                                                                                                                                                       
-                            if (cswPublic.data.Required) {
-                                cswPrivate.selectBox.addClass("required");
-                            }
-
+                            cswPrivate.selectBox.required(cswPublic.data.Required);
+                            
                             cswPrivate.onAddNodeFunc = function (nodeid, nodekey, nodename) {
                                 cswPrivate.selectBox.option({ value: nodeid, display: nodename });
                                 cswPrivate.selectBox.val(nodeid);

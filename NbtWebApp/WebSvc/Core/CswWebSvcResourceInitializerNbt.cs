@@ -106,10 +106,15 @@ namespace ChemSW.WebSvc
 
         public void deInitResources()
         {
-            _OnDeInit.BeginInvoke( null, null );
-
-            _CswNbtResources.TotalServerTime = _Timer.ElapsedDurationInMilliseconds;
-
+            if( null != _OnDeInit )
+            {
+                //for example, Oracle is down and we never finished Init
+                _OnDeInit.BeginInvoke( null, null );
+            }
+            if( null != _CswNbtResources )
+            {
+                _CswNbtResources.TotalServerTime = _Timer.ElapsedDurationInMilliseconds;
+            }
         } // _deInitResources()
 
     } // class CswWebSvcResourceInitializerCommon
