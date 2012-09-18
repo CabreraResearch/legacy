@@ -239,7 +239,7 @@ namespace ChemSW.Nbt.WebServices
         {
             JObject Ret = new JObject();
 
-            SizeNode = CswNbtResources.Nodes.makeNodeFromNodeTypeId( SizeNodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing, true );
+            SizeNode = CswNbtResources.Nodes.makeNodeFromNodeTypeId( SizeNodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode, true );
             CswPrimaryKey UnitIdPK = new CswPrimaryKey();
             UnitIdPK.FromString( SizeObj["unitid"].ToString() );
             if( null != UnitIdPK )
@@ -392,6 +392,7 @@ namespace ChemSW.Nbt.WebServices
                         RetObj["createdmaterial"] = true;
 
                         /* 2. Add the sizes */
+                        SizesArray = _removeDuplicateSizes( SizesArray );
                         _addMaterialSizes( SizesArray, MaterialNode );
                         RetObj["sizescount"] = SizesArray.Count;
 
@@ -408,6 +409,38 @@ namespace ChemSW.Nbt.WebServices
             return RetObj;
         }
 
+        private JArray _removeDuplicateSizes( JArray SizesArray )
+        {
+            JArray ArrayToIterate = (JArray) SizesArray.DeepClone();
+            JArray UniqueSizesArray = new JArray();
+            foreach( JObject SizeObj in ArrayToIterate )
+            {
+                bool addSizeToCompare = true;
+                if( SizeObj.HasValues )
+                {
+                    foreach( JObject UniqueSizeObj in UniqueSizesArray )
+                    {
+                        if( UniqueSizeObj["unitid"].ToString() == SizeObj["unitid"].ToString() &&
+                            UniqueSizeObj["quantity"].ToString() == SizeObj["quantity"].ToString() &&
+                            UniqueSizeObj["catalogNo"].ToString() == SizeObj["catalogNo"].ToString() )
+                        {
+                            SizesArray.Remove( SizeObj );
+                            addSizeToCompare = false;
+                        }                        
+                    }
+                    if( addSizeToCompare )
+                    { 
+                        UniqueSizesArray.Add( SizeObj );
+                    }
+                }
+                else
+                {
+                    SizesArray.Remove( SizeObj );
+                }
+            }
+            return UniqueSizesArray;
+        }
+
         /// <summary>
         /// Make nodes for defined sizes, else remove undefinable sizes from the JArray
         /// </summary>
@@ -422,7 +455,7 @@ namespace ChemSW.Nbt.WebServices
                     Int32 SizeNtId = CswConvert.ToInt32( SizeObj["nodetypeid"] );
                     if( Int32.MinValue != SizeNtId )
                     {
-                        getSizeNodeProps( _CswNbtResources, _CswNbtStatisticsEvents, SizeNtId, SizeObj, true, out SizeNode );
+                        getSizeNodeProps( _CswNbtResources, _CswNbtStatisticsEvents, SizeNtId, SizeObj, false, out SizeNode );
                         if( null != SizeNode )
                         {
                             CswNbtObjClassSize NodeAsSize = (CswNbtObjClassSize) SizeNode;
