@@ -100,7 +100,7 @@ namespace ChemSW.Nbt.WebServices
             return _TabsPropsSd.ClearPropValue( PropIdAttr, IncludeBlob );
         } // ClearPropValue()
 
-        public bool saveMolProp( string moldata, string propIdAttr )
+        public JObject saveMolProp( string moldata, string propIdAttr )
         {
             return _TabsPropsSd.saveMolProp( moldata, propIdAttr );
         }

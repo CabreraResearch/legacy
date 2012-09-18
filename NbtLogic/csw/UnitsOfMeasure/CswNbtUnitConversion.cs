@@ -111,7 +111,7 @@ namespace ChemSW.Nbt.csw.Conversion
                 }
                 else
                 {
-                    throw new CswDniException( ErrorType.Warning, "Conversion failed: Unable to apply unit conversion between the selected unit types.", "Conversion failed: Unsupported unit type match." );
+                    _CswNbtResources.logMessage( "Conversion failed: Unable to apply unit conversion between the selected unit types." );
                 }
             }
             else
@@ -125,7 +125,7 @@ namespace ChemSW.Nbt.csw.Conversion
                 {
                     UserMessage = "Conversion failed: The unit of measurement with which to convert is undefined.";
                 }
-                throw new CswDniException( ErrorType.Error, UserMessage, "Conversion failed: Unable to determine appropriate conversion factors." );
+                _CswNbtResources.logMessage( UserMessage + " Conversion failed: Unable to determine appropriate conversion factors." );
             }
             return ConvertedValue;
         }

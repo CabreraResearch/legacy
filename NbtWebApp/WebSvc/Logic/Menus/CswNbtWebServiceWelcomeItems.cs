@@ -156,7 +156,7 @@ namespace ChemSW.Nbt.WebServices
                             if( null != ThisReportNode )
                             {
                                 LinkText = WelcomeRow["displaytext"].ToString() != string.Empty ? WelcomeRow["displaytext"].ToString() : ThisReportNode.NodeName;
-                                Ret[WelcomeId]["reportid"] = WelcomeRow["reportid"].ToString();
+                                Ret[WelcomeId]["reportid"] = "nodes_" + WelcomeRow["reportid"].ToString();
                                 Ret[WelcomeId]["type"] = "report";
                                 Ret[WelcomeId]["buttonicon"] = CswNbtMetaDataObjectClass.IconPrefix100 + ThisReportNode.getNodeType().IconFileName;
                             }

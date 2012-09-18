@@ -52,12 +52,13 @@
                 atLeastOne: {},
                 saveBtn: {},
                 propertyData: null,
+                properties: [],
                 excludeOcProps: [],
                 async: true
             };
             var cswPublic = {};
 
-            (function () {
+            (function _preCtor() {
                 if (options) {
                     Csw.extend(cswPrivate, options);
                 }
@@ -65,6 +66,8 @@
                 cswPrivate.outerTabDiv = cswParent.tabDiv({ ID: cswPrivate.ID + '_tabdiv' });
                 cswPrivate.tabcnt = 0;
             } ());
+
+            //#region Tabs
 
             cswPrivate.clearTabs = function () {
                 cswPrivate.outerTabDiv.empty();
@@ -166,6 +169,7 @@
                                                 ret = true;
                                             }
                                         }
+                                        Csw.publish('initPropertyTearDown_' + cswPublic.getNodeId());
                                         return ret;
                                     } // select()
                                 }); // tabs
@@ -180,6 +184,170 @@
                     }); // ajax
                 } // if-else editmode is add or preview
             }; // getTabs()
+
+            //#endregion Tabs
+
+            //#region Validator
+            
+            cswPrivate.initValidator = function () {
+                cswPublic.validator = cswPrivate.form.$.validate({
+                    highlight: function (element) {
+                        var $elm = $(element);
+                        $elm.attr('csw_invalid', '1');
+                        $elm.animate({ backgroundColor: '#ff6666' });
+                    },
+                    unhighlight: function (element) {
+                        var $elm = $(element);
+                        if ($elm.attr('csw_invalid') === '1')  // only unhighlight where we highlighted
+                        {
+                            $elm.css('background-color', '#66ff66');
+                            $elm.attr('csw_invalid', '0');
+                            setTimeout(function () { $elm.animate({ backgroundColor: 'transparent' }); }, 500);
+                        }
+                    }
+                }); // validate()
+            };
+
+            cswPublic.isFormValid = function () {
+                return cswPrivate.form.$.valid();
+            };
+
+            //#endregion Validator
+
+            //#region Helper Methods
+
+            cswPublic.getNodeId = function () {
+                return cswPrivate.nodeids[0];
+            };
+
+            cswPrivate.enableSaveBtn = function () {
+                if (false === Csw.isNullOrEmpty(cswPrivate.saveBtn, true)) {
+                    cswPrivate.saveBtn.enable();
+                }
+            };
+
+            cswPublic.getPropJson = function () {
+                cswPrivate.updatePropJsonFromLayoutTable();
+                return cswPrivate.propertyData;
+            };
+
+            //#endregion Helper Methods
+            
+            //#region Layout Config
+
+            cswPrivate.onRemove = function (tabid, onRemoveData) {
+                'use strict';
+                var propid = '';
+                var propDiv = cswPrivate.getPropertyCell(onRemoveData.cellSet).children('div');
+                if (false === Csw.isNullOrEmpty(propDiv)) {
+                    propid = propDiv.first().propNonDom('propId');
+                }
+
+                Csw.ajax.post({
+                    watchGlobal: cswPrivate.AjaxWatchGlobal,
+                    urlMethod: cswPrivate.RemovePropUrlMethod,
+                    data: { PropId: propid, EditMode: cswPrivate.EditMode, TabId: tabid },
+                    success: function () {
+                        cswPrivate.onPropertyRemove(propid);
+                    }
+                });
+
+            };
+
+            // onRemove()
+
+            cswPrivate.onSwap = function (tabid, onSwapData) {
+                //case 26418
+                var propIdOrig = cswPrivate.moveProp(cswPrivate.getPropertyCell(onSwapData.cellSet), tabid, onSwapData.swaprow, onSwapData.swapcolumn, onSwapData.cellSet[1][1].propNonDom('propid'));
+                var propIdSwap = cswPrivate.moveProp(cswPrivate.getPropertyCell(onSwapData.swapcellset), tabid, onSwapData.row, onSwapData.column, onSwapData.swapcellset[1][1].propNonDom('propid'));
+                onSwapData.cellSet[1][1].propNonDom('propid', propIdSwap);
+                onSwapData.swapcellset[1][1].propNonDom('propid', propIdOrig);
+            };
+
+            // onSwap()
+
+            cswPrivate.moveProp = function (propDiv, tabid, newrow, newcolumn, propId) {
+                'use strict';
+                if (propDiv.length() > 0) {
+                    var propid = Csw.string(propDiv.propNonDom('propid'), propId);
+                    var dataJson = {
+                        PropId: propid,
+                        TabId: tabid,
+                        NewRow: newrow,
+                        NewColumn: newcolumn,
+                        EditMode: cswPrivate.EditMode
+                    };
+
+                    Csw.ajax.post({
+                        watchGlobal: cswPrivate.AjaxWatchGlobal,
+                        urlMethod: cswPrivate.MovePropUrlMethod,
+                        data: dataJson
+                    });
+                }
+                return propid;
+            };
+
+            // _moveProp()
+
+            //#endregion Layout Config
+
+            //#region Layout Table Cell Set
+
+            cswPrivate.getLabelCell = function (cellSet) {
+                return cellSet[1][1].children('div');
+            };
+
+            cswPrivate.getPropertyCell = function (cellSet) {
+                return cellSet[1][2].children('div');
+            };
+
+            cswPrivate.getCellSet = function (layoutTable, tabgroup, displayrow, displaycol) {
+                var ret;
+                if (false === Csw.isNullOrEmpty(tabgroup)) {
+                    var safetabgroup = Csw.makeSafeId(tabgroup);
+                    if (Csw.isNullOrEmpty(cswPrivate.tabgrouptables)) {
+                        cswPrivate.tabgrouptables = [];
+                    }
+                    if (Csw.isNullOrEmpty(cswPrivate.tabgrouptables[safetabgroup])) {
+                        var cellSet = layoutTable.cellSet(displayrow, displaycol);
+                        var propCell = cswPrivate.getPropertyCell(cellSet);
+
+                        var $fieldset = $('<fieldset>');
+                        $fieldset.append('<legend>' + tabgroup + '</legend>');
+                        propCell.append($fieldset);
+
+                        var div = Csw.literals.div({
+                            $parent: $fieldset
+                        });
+
+                        var tabgroupLayoutTable = div.layoutTable({
+                            ID: safetabgroup,
+                            OddCellRightAlign: true,
+                            ReadOnly: (cswPrivate.EditMode === Csw.enums.editMode.PrintReport || cswPrivate.ReadOnly),
+                            cellSet: {
+                                rows: 1,
+                                columns: 2
+                            },
+                            onSwap: function (e, onSwapData) {
+                                cswPrivate.onSwap(tabid, onSwapData);
+                            },
+                            showConfigButton: false,
+                            showExpandRowButton: false,
+                            showExpandColButton: false,
+                            showRemoveButton: false
+                        });
+                        cswPrivate.tabgrouptables[safetabgroup] = tabgroupLayoutTable;
+                    }
+                    ret = cswPrivate.tabgrouptables[safetabgroup].cellSet(displayrow, displaycol);
+                } else {
+                    ret = layoutTable.cellSet(displayrow, displaycol);
+                }
+                return ret;
+            }; // getCellSet()
+
+            //#endregion Layout Table Cell Set
+
+            //#region Properties
 
             cswPrivate.getProps = function (tabContentDiv, tabid, onSuccess) {
                 'use strict';
@@ -206,29 +374,10 @@
                 }
             }; // getProps()
 
-            cswPrivate.initValidator = function () {
-                cswPublic.validator = cswPrivate.form.$.validate({
-                    highlight: function (element) {
-                        var $elm = $(element);
-                        $elm.attr('csw_invalid', '1');
-                        $elm.animate({ backgroundColor: '#ff6666' });
-                    },
-                    unhighlight: function (element) {
-                        var $elm = $(element);
-                        if ($elm.attr('csw_invalid') === '1')  // only unhighlight where we highlighted
-                        {
-                            $elm.css('background-color', '#66ff66');
-                            $elm.attr('csw_invalid', '0');
-                            setTimeout(function () { $elm.animate({ backgroundColor: 'transparent' }); }, 500);
-                        }
-                    }
-                }); // validate()
-            };
-
             cswPrivate.getPropsImpl = function (tabContentDiv, tabid, onSuccess) {
                 'use strict';
                 cswPrivate.tabgrouptables = [];  // case 26957, 27117
-                
+
                 function makePropLayout() {
                     cswPrivate.form = tabContentDiv.children('form');
                     cswPrivate.form.empty();
@@ -241,8 +390,7 @@
                         ID: cswPrivate.ID + '_formtbl_' + tabid + window.Ext.id(),
                         width: '100%'
                     });
-                    //var formTblCell11 = formTable.cell(1, 1);
-                    //var formTblCell12 = formTable.cell(1, 2);
+
                     var layoutOpts = {
                         ID: cswPrivate.ID + '_props_' + tabid,
                         OddCellRightAlign: true,
@@ -269,19 +417,17 @@
                         } // onRemove
                     };
 
-                    cswPrivate.layoutTable = formTable.cell(1, 1).layoutTable(layoutOpts); // Csw.literals.layoutTable()
+                    cswPrivate.layoutTable = formTable.cell(1, 1).layoutTable(layoutOpts); 
 
                     function doUpdateSubProps(configOn) {
                         var updOnSuccess = function (thisProp, key) {
                             if (false === Csw.isNullOrEmpty(thisProp) &&
                                 false === Csw.isNullOrEmpty(key) &&
                                 Csw.bool(thisProp.hassubprops)) {
-                                
-                                var propId = key; //key
+
+                                var propId = key; 
                                 var subTable = cswPrivate.layoutTable[thisProp.id + '_subproptable'];
-                                //var parentCell = subTable.parent().parent();
                                 var parentCell = Csw.literals.factory(subTable.table.$.parent().parent().parent());
-                                //var cellSet = cswPrivate.layoutTable.cellSet(parentCell.propNonDom('row'), parentCell.propNonDom('column'));
                                 var cellSet = cswPrivate.getCellSet(cswPrivate.layoutTable, thisProp.tabgroup, parentCell.propNonDom('row'), parentCell.propNonDom('column'));
 
                                 cswPrivate.layoutTable.addCellSetAttributes(cellSet, { propId: thisProp.id });
@@ -340,7 +486,7 @@
                                 cswPrivate.filterToPropId === '' &&
                                     cswPrivate.EditMode !== Csw.enums.editMode.PrintReport &&
                                         Csw.bool(tabContentDiv.data('canEditLayout'))) {
-                        /* Case 24437 */
+                            /* Case 24437 */
                         var editLayoutOpt = {
                             ID: cswPrivate.ID,
                             nodeids: cswPrivate.nodeids,
@@ -425,71 +571,7 @@
                     }
                     makePropLayout();
                 }
-            };
-
-            // getPropsImpl()
-
-            cswPrivate.onRemove = function (tabid, onRemoveData) {
-                'use strict';
-                var propid = '';
-                var propDiv = cswPrivate.getPropertyCell(onRemoveData.cellSet).children('div');
-                if (false === Csw.isNullOrEmpty(propDiv)) {
-                    propid = propDiv.first().propNonDom('propId');
-                }
-
-                Csw.ajax.post({
-                    watchGlobal: cswPrivate.AjaxWatchGlobal,
-                    urlMethod: cswPrivate.RemovePropUrlMethod,
-                    data: { PropId: propid, EditMode: cswPrivate.EditMode, TabId: tabid },
-                    success: function () {
-                        cswPrivate.onPropertyRemove(propid);
-                    }
-                });
-
-            };
-
-            // onRemove()
-
-            cswPrivate.onSwap = function (tabid, onSwapData) {
-                //case 26418
-                var propIdOrig = cswPrivate.moveProp(cswPrivate.getPropertyCell(onSwapData.cellSet), tabid, onSwapData.swaprow, onSwapData.swapcolumn, onSwapData.cellSet[1][1].propNonDom('propid'));
-                var propIdSwap = cswPrivate.moveProp(cswPrivate.getPropertyCell(onSwapData.swapcellset), tabid, onSwapData.row, onSwapData.column, onSwapData.swapcellset[1][1].propNonDom('propid'));
-                onSwapData.cellSet[1][1].propNonDom('propid', propIdSwap);
-                onSwapData.swapcellset[1][1].propNonDom('propid', propIdOrig);
-            };
-
-            // onSwap()
-
-            cswPrivate.moveProp = function (propDiv, tabid, newrow, newcolumn, propId) {
-                'use strict';
-                if (propDiv.length() > 0) {
-                    var propid = Csw.string(propDiv.propNonDom('propid'), propId);
-                    var dataJson = {
-                        PropId: propid,
-                        TabId: tabid,
-                        NewRow: newrow,
-                        NewColumn: newcolumn,
-                        EditMode: cswPrivate.EditMode
-                    };
-
-                    Csw.ajax.post({
-                        watchGlobal: cswPrivate.AjaxWatchGlobal,
-                        urlMethod: cswPrivate.MovePropUrlMethod,
-                        data: dataJson
-                    });
-                }
-                return propid;
-            };
-
-            // _moveProp()
-
-            cswPrivate.getLabelCell = function (cellSet) {
-                return cellSet[1][1].children('div');
-            };
-
-            cswPrivate.getPropertyCell = function (cellSet) {
-                return cellSet[1][2].children('div');
-            };
+            }; // getPropsImpl()
 
             cswPrivate.handleProperties = function (layoutTable, tabContentDiv, tabid, configMode) {
                 'use strict';
@@ -509,54 +591,11 @@
                         cswPrivate.saveBtn.show();
                     }
                 }
+                Csw.publish('render_' + cswPublic.getNodeId());
                 return cswPrivate.atLeastOne;
             }; // _handleProperties()
 
-            cswPrivate.getCellSet = function(layoutTable, tabgroup, displayrow, displaycol) {
-                var ret;
-                if(false === Csw.isNullOrEmpty(tabgroup)) {
-                    var safetabgroup = Csw.makeSafeId(tabgroup);
-                    if(Csw.isNullOrEmpty(cswPrivate.tabgrouptables)) {
-                        cswPrivate.tabgrouptables = [];
-                    }
-                    if(Csw.isNullOrEmpty(cswPrivate.tabgrouptables[safetabgroup])) {
-                        var cellSet = layoutTable.cellSet(displayrow, displaycol);
-                        var propCell = cswPrivate.getPropertyCell(cellSet);
-
-                        var $fieldset = $('<fieldset>');
-                        $fieldset.append('<legend>' + tabgroup + '</legend>');
-                        propCell.append($fieldset);
-
-                        var div = Csw.literals.div({
-                            $parent: $fieldset
-                        });
-
-                        var tabgroupLayoutTable = div.layoutTable({
-                            ID: safetabgroup,
-                            OddCellRightAlign: true,
-                            ReadOnly: (cswPrivate.EditMode === Csw.enums.editMode.PrintReport || cswPrivate.ReadOnly),
-                            cellSet: {
-                                rows: 1,
-                                columns: 2
-                            },
-                            onSwap: function (e, onSwapData) {
-                                cswPrivate.onSwap(tabid, onSwapData);
-                            },
-                            showConfigButton: false,
-                            showExpandRowButton: false,
-                            showExpandColButton: false,
-                            showRemoveButton: false
-                        });
-                        cswPrivate.tabgrouptables[safetabgroup] = tabgroupLayoutTable;
-                    }
-                    ret = cswPrivate.tabgrouptables[safetabgroup].cellSet(displayrow, displaycol);
-                } else {
-                    ret = layoutTable.cellSet(displayrow, displaycol);
-                }
-                return ret;
-            }; // getCellSet()
-
-
+            
             cswPrivate.handleProp = function (layoutTable, propData, tabContentDiv, tabid, configMode) {
                 'use strict';
                 var propid = propData.id,
@@ -632,8 +671,8 @@
                 if (cswPrivate.canDisplayProp(propData, configMode)) {
                     var propId = propData.id;
                     var propName = propData.name;
-
-                    var fieldOpt = {
+                    var propDiv = propCell.div();
+                    var fieldOpt = Csw.nbt.propertyOption({
                         fieldtype: propData.fieldtype,
                         nodeid: Csw.tryParseObjByIdx(cswPrivate.nodeids, 0),
                         nodename: cswPrivate.nodename,
@@ -642,19 +681,22 @@
                         relatednodetypeid: cswPrivate.relatednodetypeid,
                         relatedobjectclassid: cswPrivate.relatedobjectclassid,
                         propid: propId,
-                        propDiv: propCell.div(),
                         saveBtn: cswPrivate.saveBtn,
                         propData: propData,
-                        onChange: function () {
-                        },
                         onReload: function (afterReload) {
                             cswPrivate.getProps(tabContentDiv, tabid, afterReload);
+                        },
+                        onChange: function() {
+                            if (Csw.bool(propData.hassubprops)) {
+                                Csw.tryExec(cswPrivate.updateSubProps, fieldOpt, propId, propData, propCell, tabContentDiv, tabid, false, layoutTable);
+                            }
+                            Csw.tryExec(cswPrivate.onPropertyChange, fieldOpt.propid, propName);
                         },
                         doSave: function (saveopts) {
                             var s = {
                                 onSuccess: null
                             };
-                            if (saveopts) Csw.extend(s, saveopts);
+                            Csw.extend(s, saveopts);
                             cswPublic.save(tabContentDiv, tabid, s.onSuccess);
                         },
                         cswnbtnodekey: Csw.tryParseObjByIdx(cswPrivate.nodekeys, 0),
@@ -663,28 +705,20 @@
                         onEditView: cswPrivate.onEditView,
                         onAfterButtonClick: cswPrivate.onAfterButtonClick,
                         ReadOnly: Csw.bool(propData.readonly) || cswPrivate.Config
-                    };
-                    fieldOpt.propDiv.propNonDom({
-                        'nodeid': fieldOpt.nodeid,
-                        'propid': fieldOpt.propid,
-                        'cswnbtnodekey': fieldOpt.cswnbtnodekey
-                    });
+                    }, propDiv);
 
-                    fieldOpt.onChange = function () { if (Csw.isFunction(cswPrivate.onPropertyChange)) cswPrivate.onPropertyChange(fieldOpt.propid, propName); };
-                    if (Csw.bool(propData.hassubprops)) {
-                        fieldOpt.onChange = function () {
-                            cswPrivate.updateSubProps(fieldOpt, propId, propData, propCell, tabContentDiv, tabid, false, layoutTable);
-                            if (Csw.isFunction(cswPrivate.onPropertyChange)) cswPrivate.onPropertyChange(fieldOpt.propid, propName);
-                        };
-                    } // if (Csw.bool(propData.hassubprops)) {
-                    $.CswFieldTypeFactory('make', fieldOpt);
+                    cswPrivate.properties[propId] = Csw.nbt.property(fieldOpt);
 
-                    if (Csw.contains(propData, 'subprops')) {
+                    if (Csw.contains(propData, 'subprops') && false === Csw.isNullOrEmpty(propData.subprops)) {
                         // recurse on sub-props
                         var subProps = propData.subprops;
 
                         var subLayoutTable = propCell.layoutTable({
                             ID: fieldOpt.propid + '_subproptable',
+                            width: '',
+                            styles: {
+                                border: '1px solid #ccc'
+                            },
                             OddCellRightAlign: true,
                             ReadOnly: (cswPrivate.EditMode === Csw.enums.editMode.PrintReport || cswPrivate.ReadOnly),
                             cellSet: {
@@ -715,9 +749,7 @@
                         Csw.crawlObject(subProps, subOnSuccess, false);
                     }
                 } // if (propData.display != 'false' || ConfigMode )
-            };
-
-            // _makeProp()
+            }; // _makeProp()
 
             cswPrivate.updateSubProps = function (fieldOpt, propId, propData, propCell, tabContentDiv, tabid, configMode, layoutTable) {
                 /// <summary>Update a properties sub props</summary>
@@ -731,18 +763,19 @@
                 /// <param name="$savebtn" type="JQuery"> A save button </param>
                 /// <returns type="void"></returns>
                 'use strict';
-                /*
-                Case 24449: 
-                $.CswFieldTypeFactory('save') depends on the result of the onChange event which triggers this method.
-                Normally, the page is ready when 'Save' is clicked; however, 
-                before we can evaluate subprop behavior, the governing controls must update with the result of their change event.
-                */
-                setTimeout(function () {
+                
+                //Case 25352: the factory is no longer responsible for calling the save method
+                    //Case 24449: 
+                    //$.CswFieldTypeFactory('save') depends on the result of the onChange event which triggers this method.
+                    //Normally, the page is ready when 'Save' is clicked; however, 
+                    //before we can evaluate subprop behavior, the governing controls must update with the result of their change event.
+                
+                Csw.defer(function () {
                     // do a fake 'save' to update the json with the current value
-                    $.CswFieldTypeFactory('save', fieldOpt);
-                    if (cswPrivate.EditMode == Csw.enums.editMode.Add) {
-                        fieldOpt.propData.wasmodified = true;
-                    }
+                    //$.CswFieldTypeFactory('save', fieldOpt);
+                    //if (cswPrivate.EditMode == Csw.enums.editMode.Add) {
+                    //    fieldOpt.propData.wasmodified = true;
+                    //}
                     if (fieldOpt.propData.wasmodified) {
                         // update the propxml from the server
                         var jsonData = {
@@ -797,7 +830,7 @@
                         propOpt.propCell = cswPrivate.getPropertyCell(cellSet);
                         propOpt.propDiv = propOpt.propCell.children('div').first();
 
-                        $.CswFieldTypeFactory('save', propOpt);
+                        //$.CswFieldTypeFactory('save', propOpt);
                         if (propOpt.propData.wasmodified) {
                             propIds.push(propOpt.propData.id);
                         }
@@ -805,7 +838,7 @@
                         // recurse on subprops
                         if (Csw.bool(thisProp.hassubprops) && Csw.contains(thisProp, 'subprops')) {
                             var subProps = thisProp.subprops;
-                            if (false === Csw.isNullOrEmpty(subProps)) { //&& $subprops.children('[display != "false"]').length > 0)
+                            if (false === Csw.isNullOrEmpty(subProps)) { 
                                 var subTable = layoutTable[thisProp.id + '_subproptable'];
                                 if (false === Csw.isNullOrEmpty(subTable)) {
                                     cswPrivate.updatePropJsonFromLayoutTable(subTable, subProps);
@@ -819,24 +852,7 @@
                 });
             }; // updatePropJsonFromLayoutTable()
 
-            cswPrivate.enableSaveBtn = function () {
-                if (false === Csw.isNullOrEmpty(cswPrivate.saveBtn, true)) {
-                    cswPrivate.saveBtn.enable();
-                }
-            };
-
-            cswPublic.getPropJson = function () {
-                cswPrivate.updatePropJsonFromLayoutTable();
-                return cswPrivate.propertyData;
-            };
-
-            cswPublic.isFormValid = function () {
-                return cswPrivate.form.$.valid();
-            };
-
-            cswPublic.getNodeId = function() {
-                return cswPrivate.nodeids[0];
-            };
+            
 
             cswPublic.save = function (tabContentDiv, tabid, onSuccess, async) {
                 'use strict';
@@ -846,7 +862,7 @@
                         var propIds = cswPrivate.updatePropJsonFromLayoutTable();
                         var sourcenodeid = Csw.tryParseObjByIdx(cswPrivate.nodeids, 0);
                         var sourcenodekey = Csw.tryParseObjByIdx(cswPrivate.nodekeys, 0);
-                        async = Csw.bool(async, true) && false === cswPrivate.Multi; //
+                        async = Csw.bool(async, true) && false === cswPrivate.Multi; 
                         Csw.ajax.post({
                             watchGlobal: cswPrivate.AjaxWatchGlobal,
                             urlMethod: cswPrivate.SavePropUrlMethod,
@@ -894,15 +910,11 @@
 
                                 if (cswPrivate.ShowCheckboxes) {
                                     // apply the newly saved checked property values on this node to the checked nodes
-                                    //var $nodechecks = $('.' + o.NodeCheckTreeId + '_check:checked');
-                                    //var nodechecks = $('#' + o.NodeCheckTreeId).CswNodeTree('checkedNodes');
                                     var nodechecks = cswPrivate.nodeTreeCheck.checkedNodes();
                                     var $propchecks = $('.' + cswPrivate.ID + '_check:checked');
 
                                     if (nodechecks.length > 0 && $propchecks.length > 0) {
-                                        //$nodechecks.each(function () {
                                         Csw.each(nodechecks, function (thisObj) {
-                                            //var nodeid = $(this).attr('nodeid');
                                             dataJson.CopyNodeIds.push(thisObj.nodeid);
                                         });
 
@@ -911,7 +923,7 @@
                                             dataJson.PropIds.push(propid);
                                         });
                                         copyNodeProps();
-                                    } // if($nodechecks.length > 0 && $propchecks.length > 0)
+                                    } // if (nodechecks.length > 0 && $propchecks.length > 0)
                                     else {
                                         doSave = false;
                                         $.CswDialog('AlertDialog', 'You have not selected any properties to save.');
@@ -929,42 +941,16 @@
                                 if (doSave) {
                                     // reload tab
                                     var onSaveSuccess = function () {
-
                                         var onSaveRefresh = function () {
                                             Csw.tryExec(cswPrivate.onSave, successData.nodeid, successData.cswnbtnodekey, cswPrivate.tabcnt, successData.nodename);
                                             Csw.tryExec(onSuccess);
                                         };
 
-                                        //                                        switch (successData.action) {
-                                        //                                            case 'loadView':
-                                        //                                                //Csw.ajax('getviewofnode'
-                                        //                                                //success: load view(data.viewid)
-                                        //                                               
-
-                                        //                                                var dialogOptions = {
-                                        //                                                    div: Csw.literals.div({ text: 'Warning: You are about to lose your work!' }),
-                                        //                                                    title: '',
-                                        //                                                    onOk: onSaveRefresh,
-                                        //                                                    onCancel: null,
-                                        //                                                    onClose: null,
-                                        //                                                    height: 400,
-                                        //                                                    width: 600,
-                                        //                                                    okText: 'Continue Working',
-                                        //                                                    cancelText: 'Go to My Feedback'
-                                        //                                                };
-
-                                        //                                                $.CswDialog('GenericDialog', dialogOptions)
-
-                                        //                                                break;
-                                        //default:
                                         onSaveRefresh();
-                                        //  break;
-                                        // }
                                     };
                                     if (cswPrivate.ReloadTabOnSave) {
                                         cswPrivate.getProps(tabContentDiv, tabid, onSaveSuccess);
                                     } else {
-                                        // cswPublic events
                                         onSaveSuccess();
                                     }
                                 }
@@ -972,14 +958,16 @@
                             }, // success
                             error: cswPrivate.enableSaveBtn
                         }); // ajax
-                    } // if(cswPrivate.form.$.valid())
+                    } // if(cswPrivate.isValid())
                     else {
                         cswPrivate.enableSaveBtn();
                     }
                 });
             }; // Save()
 
-            (function () {
+            //#endregion Properties
+
+            (function _postCtor() {
                 cswPrivate.getTabs(cswPrivate.outerTabDiv);
 
                 if (cswPrivate.EditMode !== Csw.enums.editMode.PrintReport) {
@@ -994,8 +982,7 @@
                     }
                 }
             } ());
-
-
+            
             return cswPublic;
         });
 } ());

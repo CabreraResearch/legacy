@@ -105,7 +105,8 @@ namespace ChemSW.Nbt.Actions
                         int NumOfContainers = CswConvert.ToInt32( CurrentRow["containerNo"] );
                         double QuantityToDispense = CswConvert.ToDouble( CurrentRow["quantity"] );
                         string UnitId = CswConvert.ToString( CurrentRow["unitid"] );
-                        string Barcode = CswConvert.ToString( CurrentRow["barcodes"] );
+                        CswCommaDelimitedString Barcodes = new CswCommaDelimitedString();
+                        Barcodes.FromString( CswConvert.ToString( CurrentRow["barcodes"] ) );
 
                         CswPrimaryKey UnitOfMeasurePK = new CswPrimaryKey();
                         UnitOfMeasurePK.FromString( UnitId );
@@ -122,7 +123,7 @@ namespace ChemSW.Nbt.Actions
                             for( Int32 c = 0; c < NumOfContainers; c += 1 )
                             {
                                 CswNbtObjClassContainer ChildContainer = _createChildContainer( ContainerNodeTypeId,
-                                                                                               UnitOfMeasurePK, Barcode );
+                                                                                               UnitOfMeasurePK, Barcodes[c] );
                                 _SourceContainer.DispenseOut(
                                     CswNbtObjClassContainerDispenseTransaction.DispenseType.Dispense, QuantityToDispense,
                                     UnitOfMeasurePK, RequestItemPk, ChildContainer );

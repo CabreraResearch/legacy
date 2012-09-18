@@ -14,6 +14,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string QuantityEditable = "Quantity Editable";
             public const string Dispensable = "Dispensable";
             public const string CatalogNo = "Catalog No";
+            public const string UnitCount = "Unit Count";
         }
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
@@ -110,6 +111,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropLogical QuantityEditable { get { return _CswNbtNode.Properties[PropertyName.QuantityEditable]; } }
         public CswNbtNodePropLogical Dispensable { get { return _CswNbtNode.Properties[PropertyName.Dispensable]; } }
         public CswNbtNodePropText CatalogNo { get { return _CswNbtNode.Properties[PropertyName.CatalogNo]; } }
+        public CswNbtNodePropNumber UnitCount { get { return _CswNbtNode.Properties[PropertyName.UnitCount]; } }
 
         #endregion
 
@@ -117,8 +119,10 @@ namespace ChemSW.Nbt.ObjClasses
 
         private bool _isMaterialID( CswPrimaryKey nodeid )
         {
+            bool isMaterialID = true;
             CswNbtNode node = _CswNbtResources.Nodes.GetNode( nodeid );
-            return _Validate( node, CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass );
+            isMaterialID = ( null != node && CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass == node.getObjectClass().ObjectClass );
+            return isMaterialID;
         }
 
         #endregion

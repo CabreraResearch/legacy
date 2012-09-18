@@ -3,6 +3,7 @@ using System.ServiceModel.Activation;
 using System.Web;
 using System.Web.Routing;
 using NbtWebApp.WebSvc.Logic.Views;
+using NbtWebApp.WebSvc.Session;
 
 namespace NbtWebAppServices
 {
@@ -18,6 +19,7 @@ namespace NbtWebAppServices
         {
             WebServiceHostFactory Factory = new WebServiceHostFactory();
             RouteTable.Routes.Add( new ServiceRoute( "Views", Factory, typeof( CswNbtViewsUriMethods ) ) );
+            RouteTable.Routes.Add( new ServiceRoute( "Session", Factory, typeof( CswNbtSessionUriMethods ) ) );
         }
 
         /// <summary>
