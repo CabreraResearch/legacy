@@ -27,7 +27,8 @@
                         size: 'medium',
                         propId: '',
                         onClickSuccess: null,
-                        onClickAction: null
+                        onClickAction: null,
+                        editmode: ''
                     };
                     Csw.extend(cswPrivate, options);
                     cswPrivate.div = cswParent.div();
@@ -132,7 +133,8 @@
                                 enabledText: cswPrivate.value,
                                 disabledText: cswPrivate.value,
                                 disableOnClick: true,
-                                onClick: cswPrivate.onButtonClick
+                                onClick: cswPrivate.onButtonClick,
+                                editmode: cswPrivate.editmode
                             });
                             break;
                         case 'menu':
@@ -145,7 +147,8 @@
                                 onClick: function (selectedOption) {
                                     cswPrivate.selectedText = selectedOption;
                                     cswPrivate.onButtonClick();
-                                }
+                                },
+                                editmode: cswPrivate.editmode
                             });
                             break;
                         //case 'link':           
