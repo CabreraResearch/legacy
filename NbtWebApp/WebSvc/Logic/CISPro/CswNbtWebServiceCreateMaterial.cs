@@ -99,14 +99,12 @@ namespace ChemSW.Nbt.WebServices
             }
         }
 
-        private void _getMaterialPropsFromObject( JObject Obj, out string Tradename, out CswPrimaryKey SupplierId, out string PartNo, out string PhysicalState )
+        private void _getMaterialPropsFromObject( JObject Obj, out string Tradename, out CswPrimaryKey SupplierId, out string PartNo )
         {
             Tradename = CswConvert.ToString( Obj["tradename"] );
             SupplierId = new CswPrimaryKey();
             string SupplierPk = CswConvert.ToString( Obj["supplierid"] );
             SupplierId.FromString( SupplierPk );
-            PhysicalState = CswConvert.ToString( Obj["physicalState"] );
-
             PartNo = CswConvert.ToString( Obj["partno"] );
             if( string.IsNullOrEmpty( Tradename ) || Int32.MinValue == SupplierId.PrimaryKey )
             {
@@ -342,14 +340,12 @@ namespace ChemSW.Nbt.WebServices
                         string Tradename;
                         CswPrimaryKey SupplierId;
                         string PartNo;
-                        string PhysicalState;
-                        _getMaterialPropsFromObject( MaterialObj, out Tradename, out SupplierId, out PartNo, out PhysicalState );
+                        _getMaterialPropsFromObject( MaterialObj, out Tradename, out SupplierId, out PartNo );
 
                         CswNbtObjClassMaterial NodeAsMaterial = Ret;
                         NodeAsMaterial.TradeName.Text = Tradename;
                         NodeAsMaterial.Supplier.RelatedNodeId = SupplierId;
                         NodeAsMaterial.PartNumber.Text = PartNo;
-                        NodeAsMaterial.PhysicalState.Value = PhysicalState;
                         Ret.postChanges( true );
 
                         CswNbtActReceiving.commitDocumentNode( _CswNbtResources, NodeAsMaterial, MaterialObj );

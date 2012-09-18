@@ -49,7 +49,6 @@
                     tradeName: '',
                     supplier: { name: '', val: '' },
                     partNo: '',
-                    physicalState: '',
                     properties: {},
                     documentProperties: {},
                     useExistingMaterial: false,
@@ -94,7 +93,6 @@
                 cswPrivate.stepThreeComplete = false;
 
                 if (startWithStep <= 2) {
-                    cswPrivate.state.physicalState = '';
                     cswPrivate.stepTwoComplete = false;
 
                     if (startWithStep <= 1) {
@@ -167,7 +165,6 @@
                             createMaterialDef.documentid = cswPrivate.state.documentId;
                             createMaterialDef.supplierid = cswPrivate.state.supplier.val;
                             createMaterialDef.suppliername = cswPrivate.state.supplier.name;
-                            createMaterialDef.physicalState = cswPrivate.state.physicalState;
                             createMaterialDef.sizeNodes = cswPublic.sizes;
                             createMaterialDef.properties = cswPrivate.state.properties;
                             if (false === Csw.isNullOrEmpty(cswPrivate.documentTabsAndProps)) {
