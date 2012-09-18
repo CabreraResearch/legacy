@@ -40,7 +40,7 @@
                         },
                         isValid: cswPrivate.isMultiEditValid
                     });
-
+                    cswPublic.control.required(cswPublic.data.propData.required);
                     if (false === Csw.isNullOrEmpty(cswPublic.control) && cswPublic.control.length > 0) {
                         cswPublic.control.clickOnEnter(cswPublic.data.saveBtn);
                     }

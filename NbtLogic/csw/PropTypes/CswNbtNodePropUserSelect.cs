@@ -79,7 +79,7 @@ namespace ChemSW.Nbt.PropTypes
                 foreach( Int32 UserId in _SelectedUserIds.ToIntCollection() )
                 {
                     bool Remove = true;
-                    if( Int32.MinValue != UserId );
+                    if( Int32.MinValue != UserId )
                     {
                         CswPrimaryKey pk = new CswPrimaryKey( "nodes", UserId );
                         CswNbtObjClassUser node = _CswNbtResources.Nodes.GetNode( pk );
