@@ -240,8 +240,7 @@ namespace ChemSW.Nbt.WebServices
             JObject Ret = new JObject();
 
             SizeNode = CswNbtResources.Nodes.makeNodeFromNodeTypeId( SizeNodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode, true );
-            CswPrimaryKey UnitIdPK = new CswPrimaryKey();
-            UnitIdPK.FromString( SizeObj["unitid"].ToString() );
+            CswPrimaryKey UnitIdPK = CswConvert.ToPrimaryKey( SizeObj["unitid"].ToString() );
             if( null != UnitIdPK )
             {
                 CswNbtObjClassSize NodeAsSize = (CswNbtObjClassSize) SizeNode;
@@ -426,10 +425,10 @@ namespace ChemSW.Nbt.WebServices
                         {
                             SizesArray.Remove( SizeObj );
                             addSizeToCompare = false;
-                        }                        
+                        }
                     }
                     if( addSizeToCompare )
-                    { 
+                    {
                         UniqueSizesArray.Add( SizeObj );
                     }
                 }
