@@ -50,7 +50,6 @@ namespace ChemSW.Nbt.ObjClasses
         {
             public const string Bulk = "Request By Bulk";
             public const string Size = "Request By Size";
-            public const string Quantity = "Quantity"; //what is this for?
 
             public static readonly CswCommaDelimitedString Options = new CswCommaDelimitedString { Bulk, Size };
         }
@@ -562,7 +561,6 @@ namespace ChemSW.Nbt.ObjClasses
                     Quantity.UnitId = null;
                     Quantity.Quantity = Double.NaN;
                     break;
-                case RequestsBy.Quantity:
                 case RequestsBy.Bulk:
                     Size.CachedNodeName = "";
                     Size.RelatedNodeId = null;
