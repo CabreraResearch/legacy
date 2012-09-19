@@ -178,8 +178,8 @@
                             switch (columnName) {
                                 case cswPrivate.config.numberName:
                                     cswPublic.rows[rowid].containerNoControl = cswCell.numberTextBox({
-                                        ID: Csw.tryExec(cswPrivate.makeId + rowid, 'containerCount'),
-                                        name: Csw.tryExec(cswPrivate.makeId + rowid, 'containerCount'),
+                                        ID: Csw.tryExec(cswPrivate.makeId, 'containerCount' + rowid),
+                                        name: Csw.tryExec(cswPrivate.makeId, 'containerCount' + rowid),
                                         value: 1,
                                         MinValue: cswPrivate.containerMinimum,
                                         MaxValue: cswPublic.containerlimit,
@@ -198,8 +198,8 @@
                                     break;
                                 case cswPrivate.config.sizeName:
                                     cswPublic.rows[rowid].sizeControl = cswCell.nodeSelect({
-                                        ID: Csw.tryExec(cswPrivate.makeId + rowid, 'sizes'),
-                                        name: Csw.tryExec(cswPrivate.makeId + rowid, 'sizes'),
+                                        ID: Csw.tryExec(cswPrivate.makeId, 'sizes' + rowid),
+                                        name: Csw.tryExec(cswPrivate.makeId, 'sizes' + rowid),
                                         async: false,
                                         objectClassName: 'SizeClass',
                                         addNodeDialogTitle: 'Size',
@@ -224,15 +224,15 @@
                                     cswPrivate.quantity.onChange = function () {
                                         updateColumnVals(false);
                                     };
-                                    cswPrivate.quantity.ID = Csw.tryExec(cswPrivate.makeId + rowid, 'containerQuantity');
+                                    cswPrivate.quantity.ID = Csw.tryExec(cswPrivate.makeId, 'containerQuantity' + rowid);
                                     cswPrivate.quantity.qtyWidth = (7 * 8) + 'px'; //7 characters wide, 8 is the characters-to-pixels ratio
                                     cswPublic.rows[rowid].qtyControl = cswCell.quantity(cswPrivate.quantity);
                                     updateColumnVals(true);
                                     break;
                                 case cswPrivate.config.barcodeName:
                                     cswPublic.rows[rowid].barcodeControl = cswCell.textArea({
-                                        ID: Csw.tryExec(cswPrivate.makeId + rowid, 'containerBarcodes'),
-                                        name: Csw.tryExec(cswPrivate.makeId + rowid, 'containerBarcodes'),
+                                        ID: Csw.tryExec(cswPrivate.makeId, 'containerBarcodes' + rowid),
+                                        name: Csw.tryExec(cswPrivate.makeId, 'containerBarcodes' + rowid),
                                         rows: 1,
                                         cols: 14,
                                         onChange: function (value) {

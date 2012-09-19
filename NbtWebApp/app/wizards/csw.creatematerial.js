@@ -519,7 +519,7 @@
                                     switch (columnName) {
                                         case cswPrivate.config.unitCountName:
                                             cswPublic.rows[rowid].unitCountCtrl = cswCell.numberTextBox({
-                                                ID: Csw.tryExec(Csw.makeId, 'sizeUnitCount'),
+                                                ID: Csw.tryExec(Csw.makeId, 'sizeUnitCount' + rowid),
                                                 value: 1,
                                                 MinValue: 1,
                                                 Precision: 0,
@@ -531,7 +531,7 @@
                                             break;
                                         case cswPrivate.config.quantityName:
                                             cswPublic.rows[rowid].quantityCtrl = cswCell.numberTextBox({
-                                                ID: Csw.tryExec(Csw.makeId, 'quantityNumberBox'),
+                                                ID: Csw.tryExec(Csw.makeId, 'quantityNumberBox' + rowid),
                                                 MinValue: 0,
                                                 isClosedSet: false,
                                                 width: '60px',
@@ -540,7 +540,7 @@
                                                 }
                                             });
                                             cswPublic.rows[rowid].unitsCtrl = cswCell.select({
-                                                ID: Csw.tryExec(Csw.makeId, 'unitsOfMeasureSelect'),
+                                                ID: Csw.tryExec(Csw.makeId, 'unitsOfMeasureSelect' + rowid),
                                                 values: unitsOfMeasure,
                                                 onChange: function (value) {
                                                     cswPublic.rows[rowid].sizeValues.unit = cswPublic.rows[rowid].unitsCtrl.val();
@@ -552,7 +552,7 @@
                                             break;
                                         case cswPrivate.config.numberName:
                                             cswPublic.rows[rowid].catalogNoCtrl = cswCell.input({
-                                                ID: Csw.tryExec(Csw.makeId, 'sizeCatalogNo'),
+                                                ID: Csw.tryExec(Csw.makeId, 'sizeCatalogNo' + rowid),
                                                 width: '80px',
                                                 onChange: function (value) {
                                                     cswPublic.rows[rowid].sizeValues.catalogNo = value;
@@ -561,7 +561,7 @@
                                             break;
                                         case cswPrivate.config.quantityEditableName:
                                             cswPublic.rows[rowid].quantEditableCtrl = cswCell.checkBox({
-                                                ID: Csw.tryExec(Csw.makeId, 'sizeQuantEditable'),
+                                                ID: Csw.tryExec(Csw.makeId, 'sizeQuantEditable' + rowid),
                                                 Checked: true,
                                                 onChange: function (value) {
                                                     cswPublic.rows[rowid].sizeValues.quantEditableChecked = cswPublic.rows[rowid].quantEditableCtrl.val();
@@ -570,7 +570,7 @@
                                             break;
                                         case cswPrivate.config.dispensibleName:
                                             cswPublic.rows[rowid].dispensibleCtrl = cswCell.checkBox({
-                                                ID: Csw.tryExec(Csw.makeId, 'sizeDispensible'),
+                                                ID: Csw.tryExec(Csw.makeId, 'sizeDispensible' + rowid),
                                                 Checked: true,
                                                 onChange: function (value) {
                                                     cswPublic.rows[rowid].sizeValues.dispensibleChecked = cswPublic.rows[rowid].dispensibleCtrl.val();
