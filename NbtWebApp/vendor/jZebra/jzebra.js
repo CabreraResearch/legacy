@@ -13,7 +13,7 @@
             applet.findPrinter(document.getElementById("printerField").value);
         }
         jZebra.monitorFinding();
-    }
+    };
 
     jZebra.findPrinters = function (defaultPrinter) {
         var applet = document.jzebra;
@@ -22,7 +22,7 @@
             applet.findPrinter(",");
         }
         jZebra.monitorFinding2(defaultPrinter);
-    }
+    };
 
     jZebra.print = function () {
         var applet = document.jzebra;
@@ -59,7 +59,7 @@
           *  applet.append(chr(218));
           */
 
-    }
+    };
 
     jZebra.print64 = function () {
         var applet = document.jzebra;
@@ -72,7 +72,7 @@
             applet.print();
         }
         jZebra.monitorPrinting();
-    }
+    };
 
     jZebra.printPages = function () {
         var applet = document.jzebra;
@@ -127,7 +127,7 @@
 
         }
         jZebra.monitorPrinting();
-    }
+    };
 
     jZebra.printXML = function () {
         var applet = document.jzebra;
@@ -149,7 +149,7 @@
 
         // Monitor the append status of the xml file, prints when appending if finished
         jZebra.monitorAppending();
-    }
+    };
 
     jZebra.printHex = function () {
         var applet = document.jzebra;
@@ -176,7 +176,7 @@
           *  // CHR(27) is commonly called the "ESCAPE" character
           *  document.jzebra.append(String.fromCharCode(27) + String.fromCharCode(29));
           */
-    }
+    };
 
 
     jZebra.printFile = function () {
@@ -194,7 +194,7 @@
         }
 
         jZebra.monitorPrinting();
-    }
+    };
 
     jZebra.printImage = function () {
         var applet = document.jzebra;
@@ -235,20 +235,20 @@
 
         // Very important for images, uses printPS() insetad of print()
         jZebra.monitorAppending2();
-    }
+    };
 
     jZebra.chr = function (i) {
         return String.fromCharCode(i);
-    }
+    };
 
     jZebra.monitorFinding = function () {
         jZebra.monitorApplet('isDoneFinding()', 'alert("Found printer [" + document.jzebra.getPrinter() + "]")', 'monitor finding job');
-    }
+    };
 
     jZebra.monitorPrinting = function () {
         //"alert\(\"Data sent to printer successfully\"\)"
         jZebra.monitorApplet("isDonePrinting()", 'alert("Data sent to printer [" + document.jzebra.getPrinter() + "] successfully.")', "monitor printing job");
-    }
+    };
 
     /**
      * Monitors the Java applet until it is complete with the specified function
@@ -296,7 +296,7 @@
         } else {
             alert("jZebra Exception:  " + NOT_LOADED);
         }
-    }
+    };
 
     // Used to show/hide code snippets on sample.html page
 
@@ -307,7 +307,7 @@
         link.innerHTML = (elem.style.display == "none") ?
             link.innerHTML.replace("-", "+").replace("hide", "show") :
             link.innerHTML.replace("+", "-").replace("show", "hide");
-    }
+    };
 
     /*function monitorPrinting() {
     var applet = document.jzebra;
@@ -360,7 +360,7 @@
         } else {
             alert("Applet not loaded!");
         }
-    }
+    };
 
     jZebra.monitorAppending = function () {
         var applet = document.jzebra;
@@ -374,7 +374,7 @@
         } else {
             alert("Applet not loaded!");
         }
-    }
+    };
 
     jZebra.monitorAppending2 = function () {
         var applet = document.jzebra;
@@ -388,7 +388,7 @@
         } else {
             alert("Applet not loaded!");
         }
-    }
+    };
 
     jZebra.monitorLoading = function () {
         var applet = document.jzebra;
@@ -409,7 +409,7 @@
         } else {
             window.setTimeout(jZebra.monitorLoading, 100);
         }
-    }
+    };
 
     jZebra.displayLogo = function () {
         if (navigator.appName == "Microsoft Internet Explorer") { // IE Fix
@@ -418,7 +418,7 @@
             window.alert('no img');
         }
         jZebra.monitorLoading();
-    }
+    };
 
     window.jZebra = jZebra;
 
