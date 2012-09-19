@@ -8,7 +8,6 @@ using ChemSW.DB;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Security;
-
 namespace ChemSW.Nbt
 {
     public class CswNbtViewSelect
@@ -389,9 +388,47 @@ namespace ChemSW.Nbt
                     CswNbtView ThisView = new CswNbtView( _CswNbtResources );
                     ThisView.LoadXml( Row["viewxml"].ToString() );
 
+
+                    //if( ThisView.Root.ChildRelationships.Count > 0 )
+                    //{
+
+                    //    foreach( CswNbtViewRelationship CurrentRelationship in ThisView.Root.ChildRelationships )
+                    //    {
+                    //        CswNbtMetaDataNodeType ViewNodeType = _CswNbtResources.MetaData.getNodeType( CurrentRelationship.SecondId );
+                    //        bool CanThisNodeType = _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.View, ViewNodeType, User );
+                    //        bool CanAnyTab = _CswNbtResources.Permit.canAnyTab( CswNbtPermit.NodeTypePermission.View, ViewNodeType, User );
+
+                    //        if(
+                    //            (
+                    //            ( CurrentRelationship.SecondType != NbtViewRelatedIdType.NodeTypeId ||
+                    //            CanThisNodeType ||
+                    //            CanAnyTab )
+                    //            ||
+                    //            IncludeEmptyViews
+                    //            )
+                    //            &&
+                    //            ThisView.IsFullyEnabled() &&
+                    //            ( IncludeEmptyViews || ThisView.ViewMode != NbtViewRenderingMode.Grid || null != ThisView.findFirstProperty() ) &&
+                    //            ( !SearchableOnly || ThisView.IsSearchable() )
+                    //            )
+                    //        {
+                    //            Ret.Add( ThisView.ViewId, ThisView );
+                    //        }
+                    //        else
+                    //        {
+                    //            RowsToRemove.Add( Row );
+                    //        }
+                    //    }//iterate relationships
+
+                    //}//if there are relationships
+
+
                     if( ( ( ThisView.Root.ChildRelationships.Count > 0 &&
-                            ( ThisView.Root.ChildRelationships.Where( R => R.SecondType != NbtViewRelatedIdType.NodeTypeId ||
-                                                                           _CswNbtResources.Permit.canAnyTab( CswNbtPermit.NodeTypePermission.View, _CswNbtResources.MetaData.getNodeType( R.SecondId ), User ) ).Count() > 0 )
+                            (
+                               ThisView.Root.ChildRelationships.Where( R => R.SecondType != NbtViewRelatedIdType.NodeTypeId ||
+                             _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.View, _CswNbtResources.MetaData.getNodeType( R.SecondId ), User ) ||
+                             _CswNbtResources.Permit.canAnyTab( CswNbtPermit.NodeTypePermission.View, _CswNbtResources.MetaData.getNodeType( R.SecondId ), User )
+                             ).Count() > 0 )
                           ) || IncludeEmptyViews ) &&
                         ThisView.IsFullyEnabled() &&
                         ( IncludeEmptyViews || ThisView.ViewMode != NbtViewRenderingMode.Grid || null != ThisView.findFirstProperty() ) &&
@@ -403,6 +440,8 @@ namespace ChemSW.Nbt
                     {
                         RowsToRemove.Add( Row );
                     }
+
+
                 } // foreach( DataRow Row in ViewsTable.Rows )
                 foreach( DataRow Row in RowsToRemove )
                 {
