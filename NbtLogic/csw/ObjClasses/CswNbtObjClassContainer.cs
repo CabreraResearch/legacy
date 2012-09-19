@@ -29,8 +29,8 @@ namespace ChemSW.Nbt.ObjClasses
             public const string ExpirationDate = "Expiration Date";
             public const string Size = "Size";
             public const string Request = "Request";
-            public const string Dispense = "Dispense";
-            public const string Dispose = "Dispose";
+            public const string Dispense = "Dispense this Container";
+            public const string Dispose = "Dispose this Container";
             public const string Undispose = "Undispose";
             public const string Owner = "Owner";
         }
@@ -41,15 +41,15 @@ namespace ChemSW.Nbt.ObjClasses
         }
         public sealed class RequestMenu
         {
-            public const string Dispense = "Dispense";
-            public const string Dispose = "Dispose";
-            public const string Move = "Move";
+            public const string Move = "Request Move";
+            public const string Dispose = "Request Dispose";
+            public const string Dispense = "Request Dispense";
 
             public static readonly CswCommaDelimitedString Options = new CswCommaDelimitedString
                 {
-                    Dispense,
+                    Move,
                     Dispose,
-                    Move
+                    Dispense
                 };
 
         }
@@ -91,22 +91,16 @@ namespace ChemSW.Nbt.ObjClasses
         {
             bool IsDisposed = Disposed.Checked == Tristate.True;
             CswCommaDelimitedString MenuOpts = new CswCommaDelimitedString();
-            string SelectedOpt = RequestMenu.Dispose;
             if( false == IsDisposed )
             {
+                MenuOpts.Add( RequestMenu.Move );
                 if( Missing.Checked != Tristate.True && Quantity.Quantity > 0 )
                 {
                     MenuOpts.Add( RequestMenu.Dispense );
-                    SelectedOpt = RequestMenu.Dispense;
                 }
-                else
-                {
-                    SelectedOpt = RequestMenu.Move;
-                }
-                MenuOpts.Add( RequestMenu.Move );
                 MenuOpts.Add( RequestMenu.Dispose );
             }
-            Request.State = SelectedOpt;
+            Request.State = RequestMenu.Move;
             Request.MenuOptions = MenuOpts.ToString();
         }
 

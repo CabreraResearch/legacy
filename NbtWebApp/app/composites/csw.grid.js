@@ -239,7 +239,8 @@
                         xtype: 'pagingtoolbar',
                         store: cswPrivate.store,
                         dock: 'bottom',
-                        displayInfo: true
+                        displayInfo: true,
+                        itemId: 'bottomtoolbar'
                     }];
                     
                     var rows = cswPrivate.data.items.length;
@@ -321,6 +322,12 @@
                     },
                     deselect: function (rowModel, record, index, eOpts) {
                         Csw.tryExec(cswPrivate.onDeselect, record.data);
+                    },
+                    afterrender: function (component) {
+                        var bottomToolbar = component.getDockedComponent('bottomtoolbar');
+                        if(false === Csw.isNullOrEmpty(bottomToolbar)) {
+                            bottomToolbar.items.get('refresh').hide();
+                        }                        
                     }
                 });
                 
