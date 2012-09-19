@@ -34,6 +34,14 @@ namespace ChemSW.Nbt.Schema
                 materialNode.postChanges( false );
             }
 
+            CswNbtMetaDataObjectClass containerOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.ContainerClass );
+            string fulFillOpts = CswNbtObjClassRequestItem.FulfillMenu.Options.ToString();
+            foreach( CswNbtObjClassContainer containerNode in containerOC.getNodes( false, false ) )
+            {
+                containerNode.updateRequestMenu();
+                containerNode.postChanges( false );
+            }
+
             //change Request Items "Request By" prop to use the newly named list options
             CswNbtMetaDataObjectClassProp requestByOCP = requestItemOC.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.RequestBy );
             _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( requestByOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.listoptions, opts );

@@ -87,7 +87,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Inherited Events
 
-        private void _updateRequestMenu()
+        public void updateRequestMenu()
         {
             bool IsDisposed = Disposed.Checked == Tristate.True;
             CswCommaDelimitedString MenuOpts = new CswCommaDelimitedString();
@@ -106,7 +106,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
-            _updateRequestMenu();
+            updateRequestMenu();
 
             _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
         }//beforeWriteNode()
@@ -621,7 +621,7 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 _updateRequestItems( CswNbtObjClassRequestItem.Types.Dispose );
             }
-            _updateRequestMenu();
+            updateRequestMenu();
         }
         public CswNbtNodePropRelationship SourceContainer { get { return ( _CswNbtNode.Properties[PropertyName.SourceContainer] ); } }
         private void OnSourceContainerChange( CswNbtNodeProp Prop )
@@ -638,7 +638,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropQuantity Quantity { get { return ( _CswNbtNode.Properties[PropertyName.Quantity] ); } }
         private void OnQuantityPropChange( CswNbtNodeProp Prop )
         {
-            _updateRequestMenu();
+            updateRequestMenu();
             if( false == _InventoryLevelModified )
             {
                 CswNbtSdInventoryLevelMgr Mgr = new CswNbtSdInventoryLevelMgr( _CswNbtResources );
