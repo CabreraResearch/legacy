@@ -294,6 +294,7 @@
                             labelText: 'Select a Material Type*: ',
                             objectClassName: 'MaterialClass',
                             value: cswPrivate.state.materialType.val || cswPrivate.state.materialNodeTypeId,
+                            selectedName: 'Chemical',
                             onSelect: changeMaterial,
                             onChange: changeMaterial,
                             onSuccess: changeMaterial
