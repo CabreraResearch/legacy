@@ -54,6 +54,7 @@
                         confirmmessage: cswPrivate.propVals.confirmmessage,
                         propId: cswPublic.data.propid,
                         ReadOnly: Csw.bool(cswPublic.data.ReadOnly),
+                        editmode: o.EditMode
                         Required: Csw.bool(cswPublic.data.Required),
                         onClickSuccess: cswPrivate.onClickSuccess
                     });
