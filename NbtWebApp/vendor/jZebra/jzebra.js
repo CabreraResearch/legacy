@@ -24,6 +24,10 @@
         jZebra.monitorFinding2(defaultPrinter);
     };
 
+    //#endregion find
+
+    //#region print
+
     jZebra.print = function () {
         var applet = document.jzebra;
         if (applet != null) {
@@ -419,6 +423,8 @@
         }
         jZebra.monitorLoading();
     };
+
+    //#endregion helper
 
     window.jZebra = jZebra;
 
