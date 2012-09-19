@@ -61,7 +61,7 @@
                 var buildQuantityTextBox = function () {
                     cswPublic.quantityTextBox = cswPublic.table.cell(1, cswPrivate.cellCol).numberTextBox({
                         ID: cswPrivate.ID + '_qty',
-                        name: cswPrivate.ID + '_qty',
+                        name: cswPrivate.name,
                         labelText: cswPrivate.labelText,
                         useWide: cswPrivate.useWide,
                         width: cswPrivate.qtyWidth,
@@ -107,7 +107,7 @@
                         }
                         cswPublic.unitSelect = cswPublic.table.cell(1, cswPrivate.cellCol).select({
                             ID: cswPrivate.ID + '_select',
-                            name: cswPrivate.ID + '_select',
+                            name: cswPrivate.name,
                             cssclass: 'selectinput',
                             onChange: function () {
                                 var val = cswPublic.unitSelect.val();

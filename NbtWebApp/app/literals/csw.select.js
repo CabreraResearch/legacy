@@ -8,6 +8,7 @@
 
             var cswPrivate = {
                 ID: '',
+                name: '',
                 selected: '',
                 values: [],
                 cssclass: '',
@@ -132,7 +133,7 @@
                 return optExternal;
             };
 
-            (function() {
+            (function () {
                 var html = '',
                     attr = Csw.makeAttr(),
                     style = Csw.makeStyle();
@@ -142,6 +143,9 @@
                 }
 
                 cswPrivate.ID = Csw.string(cswPrivate.ID, cswPrivate.name);
+                if (false === Csw.isNullOrEmpty(cswPrivate.name)) {
+                    cswPrivate.name = cswPrivate.ID;
+                }
 
                 attr.add('id', cswPrivate.ID);
                 attr.add('class', cswPrivate.cssclass);
@@ -175,7 +179,7 @@
                     cswPublic.propDom('multiple', 'multiple');
                 }
 
-            }());
+            } ());
 
             return cswPublic;
         });
