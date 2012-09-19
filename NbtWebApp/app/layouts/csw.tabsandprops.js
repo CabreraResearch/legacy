@@ -217,7 +217,7 @@
             //#region Helper Methods
 
             cswPublic.getNodeId = function () {
-                return cswPrivate.nodeids[0];
+                return Csw.string(cswPrivate.nodeids[0], 'newnode');
             };
 
             cswPrivate.enableSaveBtn = function () {
@@ -674,7 +674,7 @@
                     var propDiv = propCell.div();
                     var fieldOpt = Csw.nbt.propertyOption({
                         fieldtype: propData.fieldtype,
-                        nodeid: Csw.tryParseObjByIdx(cswPrivate.nodeids, 0),
+                        nodeid: cswPublic.getNodeId(),
                         nodename: cswPrivate.nodename,
                         relatednodeid: cswPrivate.relatednodeid,
                         relatednodename: cswPrivate.relatednodename,

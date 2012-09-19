@@ -1406,7 +1406,7 @@ namespace ChemSW.Nbt.MetaData
                 _CswNbtMetaDataResources.NodeTypePropTableUpdate.update( NewPropsTable );
 
                 // Fix layout
-                foreach( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType LayoutType in Enum.GetValues( typeof( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType ) ) )
+                foreach( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType LayoutType in CswNbtMetaDataNodeTypeLayoutMgr.LayoutType._All )
                 {
                     Dictionary<Int32, CswNbtMetaDataNodeTypeLayoutMgr.NodeTypeLayout> OriginalLayouts = NodeTypeLayout.getLayout( LayoutType, NodeTypeProp.PropId );
                     foreach( CswNbtMetaDataNodeTypeLayoutMgr.NodeTypeLayout OriginalLayout in OriginalLayouts.Values )
