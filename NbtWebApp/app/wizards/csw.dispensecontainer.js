@@ -560,7 +560,7 @@
                     if (false === Csw.isNullOrEmpty(cswPrivate.amountsGrid)) {
                         finalQuantity = cswPrivate.state.quantity;
                         finalUnit = cswPrivate.state.unitId;
-                        designGrid = Csw.serialize(cswPrivate.amountsGrid.quantities);
+                        designGrid = Csw.serialize(cswPrivate.amountsGrid.quantities());
                     }
                     if (false === Csw.isNullOrEmpty(cswPrivate.quantityControl) && cswPrivate.state.dispenseType !== cswPrivate.dispenseTypes.Dispense) {
                         finalQuantity = cswPrivate.quantityControl.quantityValue;

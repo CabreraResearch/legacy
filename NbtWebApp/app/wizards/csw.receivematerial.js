@@ -112,7 +112,7 @@
                     var container = {
                         materialid: cswPrivate.state.materialId,
                         containernodetypeid: cswPrivate.state.containerNodeTypeId,
-                        quantities: cswPrivate.amountsGrid.quantities,
+                        quantities: cswPrivate.amountsGrid.quantities(),
                         sizeid: cswPrivate.state.selectedSizeId,
                         props: cswPrivate.tabsAndProps.getPropJson(),
                         documentid: cswPrivate.state.documentId
