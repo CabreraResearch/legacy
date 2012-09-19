@@ -235,15 +235,19 @@ namespace ChemSW.Nbt.ObjClasses
                 }
             }
 
+            //case 2753 - naming logic
             if( false == IsTemp )
             {
                 switch( Type.Value )
                 {
                     case Types.Request:
-                        if( RequestBy.Value.Equals( RequestsBy.Size ) && null != Size.RelatedNodeId ) //request material by size
+                        if( RequestBy.Value.Equals( RequestsBy.Size ) && CswTools.IsPrimaryKey( Size.RelatedNodeId ) ) //request material by size
                         {
                             CswNbtObjClassSize sizeNode = _CswNbtResources.Nodes.GetNode( Size.RelatedNodeId );
-                            Name.Text = "Request " + Count.Value + " x " + sizeNode.Node.NodeName;
+                            if( null != sizeNode )
+                            {
+                                Name.Text = "Request " + Count.Value + " x " + sizeNode.Node.NodeName;
+                            }
                         }
                         else //request material by bulk
                         {
