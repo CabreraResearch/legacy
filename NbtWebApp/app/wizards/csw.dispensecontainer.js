@@ -22,7 +22,7 @@
                         currentUnitName: '',
                         precision: 6,
                         quantityAfterDispense: '',
-                        capacity: '',
+                        initialQuantity: '',
                         dispenseType: 'Dispense into a Child Container',
                         quantity: '',
                         unitId: '',
@@ -370,7 +370,7 @@
                                         cswPrivate.formIsValid = cswPrivate.updateQuantityAfterDispense(quantities);
                                         cswPrivate.toggleButton(cswPrivate.buttons.finish, cswPrivate.formIsValid);
                                     },
-                                    quantity: cswPrivate.state.capacity,
+                                    quantity: cswPrivate.state.initialQuantity,
                                     containerlimit: cswPrivate.containerlimit,
                                     makeId: cswPrivate.wizard.makeStepId,
                                     containerMinimum: 0,
@@ -424,11 +424,11 @@
                                 quantityTable.cell(qtyTableCol, 1).br();
                                 quantityTable.cell(qtyTableCol, 1).span({ text: 'Set quantity for dispense:' });                                
                                 qtyTableCol++;
-                                cswPrivate.state.capacity.onChange = function () {
+                                cswPrivate.state.initialQuantity.onChange = function () {
                                     getQuantityAfterDispense();
                                 }
                                 quantityTable.cell(qtyTableCol, 1).br({ number: 2 });
-                                cswPrivate.quantityControl = quantityTable.cell(qtyTableCol, 1).quantity(cswPrivate.state.capacity);
+                                cswPrivate.quantityControl = quantityTable.cell(qtyTableCol, 1).quantity(cswPrivate.state.initialQuantity);
                                 qtyTableCol++;
                                 getQuantityAfterDispense();
                             }
@@ -615,7 +615,7 @@
                         sourceContainerNodeId: cswPrivate.state.sourceContainerNodeId,
                         currentQuantity: cswPrivate.state.currentQuantity,
                         currentUnitName: cswPrivate.state.currentUnitName,
-                        capacity: cswPrivate.state.capacity,
+                        initialQuantity: cswPrivate.state.initialQuantity,
                         Title: Csw.string(cswPrivate.title),
                         StepCount: 2,
                         Steps: cswPrivate.wizardSteps,

@@ -1049,7 +1049,7 @@ window.initMain = window.initMain || function (undefined) {
                         currentQuantity: o.currentQuantity,
                         currentUnitName: o.currentUnitName,
                         precision: o.precision,
-                        capacity: Csw.deserialize(o.capacity),
+                        initialQuantity: Csw.deserialize(o.initialQuantity),
                         requestItemId: requestItemId,
                         title: title,
                         location: o.location,
