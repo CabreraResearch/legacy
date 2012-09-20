@@ -159,7 +159,7 @@ namespace ChemSW.Nbt.Actions
                 //{
                 //    throw new CswDniException( ErrorType.Warning, "Only one pending request may be open at a time.", "There is more than one Pending request assigned to the current user." );
                 //}
-                else if( CartCount == 0 && 
+                else if( CartCount == 0 &&
                          _CreateDefaultRequestNode )
                 {
                     CswNbtMetaDataNodeType RequestNt = _RequestOc.getLatestVersionNodeTypes().FirstOrDefault();
@@ -298,7 +298,7 @@ namespace ChemSW.Nbt.Actions
                 }
             }
             return new CswNbtActSubmitRequest( _CswNbtResources, CreateDefaultRequestNode: true, RequestNodeId: CopyToNodeId );
-        } 
+        }
 
         /// <summary>
         /// Instance a new request item according to Object Class rules. Note: this does not get the properties.
@@ -329,6 +329,7 @@ namespace ChemSW.Nbt.Actions
                 {
                     SelectedLocationId = Container.Location.SelectedNodeId;
                 }
+                ButtonData.Action = CswNbtObjClass.NbtButtonAction.request;
                 switch( ButtonData.SelectedText )
                 {
                     case CswNbtObjClassContainer.RequestMenu.Dispense:
@@ -345,26 +346,20 @@ namespace ChemSW.Nbt.Actions
                             CswNbtUnitViewBuilder Vb = new CswNbtUnitViewBuilder( _CswNbtResources );
                             Vb.setQuantityUnitOfMeasureView( MaterialNode, RetAsRequestItem.Quantity );
                         }
-                        
-                        ButtonData.Action = CswNbtObjClass.NbtButtonAction.request;
                         break;
                     case CswNbtObjClassContainer.RequestMenu.Dispose:
                         RetAsRequestItem.IsTemp = false; /* This is the only condition in which we want to commit the node upfront. */
                         RetAsRequestItem.Type.Value = CswNbtObjClassRequestItem.Types.Dispose;
-                        
+
                         /* Kludge Alert: We don't have compound conditionals yet. Set it and hide it for now to squash the Quantity subprop. TODO: Remove this when compound conditionals arrive. */
                         RetAsRequestItem.RequestBy.Value = CswNbtObjClassRequestItem.RequestsBy.Size;
-                        
                         SelectedLocationId = Container.Location.SelectedNodeId;
-                        ButtonData.Action = CswNbtObjClass.NbtButtonAction.nothing;
                         break;
                     case CswNbtObjClassContainer.RequestMenu.Move:
-                        RetAsRequestItem.Type.Value = CswNbtObjClassRequestItem.Types.Move;    
-                        
+                        RetAsRequestItem.Type.Value = CswNbtObjClassRequestItem.Types.Move;
+
                         /* Kludge Alert: We don't have compound conditionals yet. Set it and hide it for now to squash the Quantity subprop. TODO: Remove this when compound conditionals arrive. */
                         RetAsRequestItem.RequestBy.Value = CswNbtObjClassRequestItem.RequestsBy.Size;
-                        
-                        ButtonData.Action = CswNbtObjClass.NbtButtonAction.request;
                         break;
                     default:
                         throw new CswDniException( ErrorType.Error, "No action has been defined for this button menu.", "Menu option named " + ButtonData.SelectedText + " has not implemented a button click event." );
