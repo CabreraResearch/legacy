@@ -18,18 +18,19 @@
                 selectedText: '',
                 onClick: null,
                 state: '',
-                width: 240
+                width: 240,
+                editmode: ''
             };
             var cswPublic = {};
-            
-            cswPrivate.handleMenuItemClick = function(selectedOption) {
+
+            cswPrivate.handleMenuItemClick = function (selectedOption) {
                 if (false === Csw.isString(selectedOption)) {
                     selectedOption = cswPrivate.selectedText;
                 }
                 cswPublic.selectedOption = selectedOption;
                 Csw.tryExec(cswPrivate.onClick);
             }; // handleMenuItemClick()
-            
+
             //constructor
             (function () {
                 if (options) {
@@ -37,22 +38,23 @@
                 }
                 cswParent.empty();
 
-                Csw.each(cswPrivate.menuOptions, function(val, key) {
+                Csw.each(cswPrivate.menuOptions, function (val, key) {
                     //http://docs.sencha.com/ext-js/4-1/#!/api/Ext.button.Button-event-click
                     cswPrivate.menu.push({ text: val, handler: function () { Csw.tryExec(cswPrivate.handleMenuItemClick, val); } });
                 });
-                
+
                 cswPublic.menu = window.Ext.create('Ext.button.Split', {
                     renderTo: cswParent.getId(),
                     text: cswPrivate.selectedText,
                     handler: cswPrivate.handleMenuItemClick,
                     scale: Csw.string(cswPrivate.size, 'medium'),
-                    menu: new window.Ext.menu.Menu({items: cswPrivate.menu})
+                    menu: new window.Ext.menu.Menu({ items: cswPrivate.menu }),
+                    disabled: (Csw.enums.editMode.PrintReport === cswPrivate.editmode || Csw.enums.editMode.AuditHistoryInPopup === cswPrivate.editmode)
                 });
 
             } ()); // constructor
 
-            cswPublic.disable = function() {
+            cswPublic.disable = function () {
 
             };
 
@@ -64,6 +66,6 @@
         });
 
 
-    
+
 
 } ());

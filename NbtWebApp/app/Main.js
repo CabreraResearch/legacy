@@ -782,8 +782,9 @@ window.initMain = window.initMain || function (undefined) {
                     getViewTable(newopts);
                 } // onEditFilters
             }); // viewFilters
-        
-        Csw.nbt.nodeTable($('#CenterBottomDiv'), {
+
+        var parent = Csw.literals.factory($('#CenterBottomDiv'));
+        Csw.nbt.nodeTable(parent, {
                 viewid: o.viewid,
                 nodeid: o.nodeid,
                 cswnbtnodekey: o.cswnbtnodekey,

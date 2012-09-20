@@ -49,7 +49,8 @@
                 propId: o.propid,
                 ReadOnly: Csw.bool(o.ReadOnly),
                 Required: Csw.bool(o.Required),
-                onClickSuccess: onClickSuccess
+                onClickSuccess: onClickSuccess,
+                editmode: o.EditMode
             });
 
         },
