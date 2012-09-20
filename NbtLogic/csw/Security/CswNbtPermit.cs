@@ -59,8 +59,7 @@ namespace ChemSW.Nbt.Security
                     {
                         if( null != User )
                         {
-                            CswNbtNode RoleNode = _CswNbtResources.Nodes[User.RoleId];
-                            _CswNbtObjClassRole = (CswNbtObjClassRole) RoleNode;
+                            _CswNbtObjClassRole = _CswNbtResources.Nodes[User.RoleId];
                         }
 
                     }//if role is null
