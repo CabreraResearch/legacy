@@ -55,8 +55,8 @@
                         confirmmessage: cswPrivate.propVals.confirmmessage,
                         propId: cswPublic.data.propid,
                         ReadOnly: Csw.bool(cswPublic.data.ReadOnly),
-                        Required: Csw.bool(cswPublic.data.Required),
-                        onClickSuccess: cswPrivate.onClickSuccess
+                        onClickSuccess: cswPrivate.onClickSuccess,
+                        editmode: cswPublic.data.EditMode
                     });
                 };
 

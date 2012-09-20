@@ -676,6 +676,7 @@ window.initMain = window.initMain || function (undefined) {
         }); // viewFilters
 
         Csw.nbt.nodeTable(Csw.main.centerBottomDiv, {
+
             viewid: o.viewid,
             nodeid: o.nodeid,
             cswnbtnodekey: o.cswnbtnodekey,
