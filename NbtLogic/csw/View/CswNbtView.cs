@@ -120,6 +120,15 @@ namespace ChemSW.Nbt
         }
 
         /// <summary>
+        /// Is Demo View
+        /// </summary>
+        public bool IsDemo
+        {
+            get { return Root.IsDemo; }
+            set { Root.IsDemo = value; }
+        }
+
+        /// <summary>
         /// Use view in Mobile
         /// </summary>
         public bool ForMobile
@@ -207,7 +216,7 @@ namespace ChemSW.Nbt
         }
 
         #region Child constructors
-        
+
         /// <summary>
         /// Creates a new <see cref="CswNbtViewRelationship"/> for this view.
         /// For copying an existing relationship
@@ -340,7 +349,7 @@ namespace ChemSW.Nbt
                         }
                         break;
                     case CswNbtMetaDataFieldType.NbtFieldType.Button:
-                        foreach (CswNbtMetaDataNodeTypeProp ButtonNtp in NodeType.getButtonProperties())
+                        foreach( CswNbtMetaDataNodeTypeProp ButtonNtp in NodeType.getButtonProperties() )
                         {
                             AddViewProperty( ParentViewRelationship, ButtonNtp );
                         }
@@ -388,13 +397,13 @@ namespace ChemSW.Nbt
             return AddViewPropertyFilter( ParentViewProperty, Conjunction, CswNbtPropFilterSql.FilterResultMode.Hide, SubFieldName, FilterMode, Value, CaseSensitive, ShowAtRuntime );
         }
 
-        public CswNbtViewPropertyFilter AddViewPropertyFilter( CswNbtViewProperty ParentViewProperty, 
-                                                               CswNbtPropFilterSql.PropertyFilterConjunction Conjunction, 
-                                                               CswNbtPropFilterSql.FilterResultMode ResultMode, 
-                                                               CswNbtSubField.SubFieldName SubFieldName = null, 
-                                                               CswNbtPropFilterSql.PropertyFilterMode FilterMode = null, 
-                                                               string Value = "", 
-                                                               bool CaseSensitive = false, 
+        public CswNbtViewPropertyFilter AddViewPropertyFilter( CswNbtViewProperty ParentViewProperty,
+                                                               CswNbtPropFilterSql.PropertyFilterConjunction Conjunction,
+                                                               CswNbtPropFilterSql.FilterResultMode ResultMode,
+                                                               CswNbtSubField.SubFieldName SubFieldName = null,
+                                                               CswNbtPropFilterSql.PropertyFilterMode FilterMode = null,
+                                                               string Value = "",
+                                                               bool CaseSensitive = false,
                                                                bool ShowAtRuntime = false )
         {
             SubFieldName = SubFieldName ?? ParentViewProperty.MetaDataProp.getFieldTypeRule().SubFields.Default.Name;
@@ -627,7 +636,7 @@ namespace ChemSW.Nbt
         public void save()
         {
             if( !ViewId.isSet() )
-                throw new CswDniException( ErrorType.Error, "Invalid View", "You must call makeNewView() before calling save() on a new view" );
+                throw new CswDniException( ErrorType.Error, "Invalid View", "You must call saveNew() before calling save() on a new view" );
 
             CswTableUpdate ViewTableUpdate = _CswNbtResources.makeCswTableUpdate( "CswNbtView_save_update", "node_views" );
             DataTable ViewTable = ViewTableUpdate.getTable( "nodeviewid", ViewId.get(), true );
@@ -659,6 +668,7 @@ namespace ChemSW.Nbt
             ViewTable.Rows[0]["formobile"] = CswConvert.ToDbVal( ForMobile );
             ViewTable.Rows[0]["visibility"] = Visibility.ToString();
             ViewTable.Rows[0]["viewmode"] = ViewMode.ToString();
+            ViewTable.Rows[0]["isdemo"] = CswConvert.ToDbVal( IsDemo );
             if( Visibility == NbtViewVisibility.Role )
                 ViewTable.Rows[0]["roleid"] = CswConvert.ToDbVal( VisibilityRoleId.PrimaryKey );
             else
@@ -687,7 +697,7 @@ namespace ChemSW.Nbt
         /// <param name="RoleId">Primary key of role restriction (if Visibility is Role-based)</param>
         /// <param name="UserId">Primary key of user restriction (if Visibility is User-based)</param>
         /// <param name="CopyViewId">Primary key of view to copy</param>
-        public void makeNew( string ViewName, NbtViewVisibility Visibility, CswPrimaryKey RoleId = null, CswPrimaryKey UserId = null, Int32 CopyViewId = Int32.MinValue )
+        public void saveNew( string ViewName, NbtViewVisibility Visibility, CswPrimaryKey RoleId = null, CswPrimaryKey UserId = null, Int32 CopyViewId = Int32.MinValue )
         {
             CswNbtView CopyView = null;
             if( CopyViewId > 0 )
@@ -701,7 +711,7 @@ namespace ChemSW.Nbt
                     CopyView.LoadXml( CopyViewAsString );
                 }
             }
-            makeNew( ViewName, Visibility, RoleId, UserId, CopyView );
+            saveNew( ViewName, Visibility, RoleId, UserId, CopyView );
         }
 
         public delegate void BeforeNewViewEventHandler();
@@ -717,10 +727,10 @@ namespace ChemSW.Nbt
         /// <param name="RoleId">Primary key of role restriction (if Visibility is Role-based)</param>
         /// <param name="UserId">Primary key of user restriction (if Visibility is User-based)</param>
         /// <param name="CopyView">View to copy</param>
-        public void makeNew( string ViewName, NbtViewVisibility Visibility, CswPrimaryKey RoleId, CswPrimaryKey UserId, CswNbtView CopyView )
+        public void saveNew( string ViewName, NbtViewVisibility Visibility, CswPrimaryKey RoleId, CswPrimaryKey UserId, CswNbtView CopyView )
         {
             if( ViewName == string.Empty )
-                throw new CswDniException( ErrorType.Warning, "View name cannot be blank", "CswNbtView.makeNew() called with empty ViewName parameter" );
+                throw new CswDniException( ErrorType.Warning, "View name cannot be blank", "CswNbtView.saveNew() called with empty ViewName parameter" );
 
             // Enforce name-visibility compound unique constraint
             if( !ViewIsUnique( _CswNbtResources, new CswNbtViewId(), ViewName, Visibility, UserId, RoleId ) )
@@ -786,7 +796,7 @@ namespace ChemSW.Nbt
         /// </summary>
         public void ImportView( string ViewName, string ViewXml, Dictionary<Int32, Int32> NodeTypeMap, Dictionary<Int32, Int32> NodeTypePropMap, Dictionary<string, Int32> NodeMap )
         {
-            this.makeNew( ViewName, NbtViewVisibility.Unknown, null, null, null );
+            this.saveNew( ViewName, NbtViewVisibility.Unknown, null, null, null );
             CswNbtViewId NewViewId = this.ViewId;
             this.LoadXml( ViewXml );  // this overwrites the viewid
             this.ViewId = NewViewId;  // so set it back
@@ -950,7 +960,7 @@ namespace ChemSW.Nbt
                 {
                     // Must be globally unique 
                 }
-                
+
                 // don't include Property or Hidden views for uniqueness
                 WhereClause += " and visibility <> '" + NbtViewVisibility.Property.ToString() + "'";
                 WhereClause += " and visibility <> '" + NbtViewVisibility.Hidden.ToString() + "'";

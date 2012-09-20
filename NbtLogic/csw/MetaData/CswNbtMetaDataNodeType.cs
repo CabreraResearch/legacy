@@ -22,7 +22,6 @@ namespace ChemSW.Nbt.MetaData
         public CswNbtMetaDataNodeType( CswNbtMetaDataResources CswNbtMetaDataResources, DataRow Row )
         {
             _CswNbtMetaDataResources = CswNbtMetaDataResources;
-            //Reassign( Row );
             _NodeTypeRow = Row;
             _UniqueId = CswConvert.ToInt32( Row[UniqueIdFieldName] );
         }
@@ -30,29 +29,16 @@ namespace ChemSW.Nbt.MetaData
         public DataRow _DataRow
         {
             get { return _NodeTypeRow; }
-            //set { _NodeTypeRow = value; }
         }
 
         private Int32 _UniqueId;
         public Int32 UniqueId
         {
             get { return _UniqueId; }
-            //set { _UniqueId = value; }
         }
 
         public const string MetaDataUniqueType = "nodetypeid";
         public string UniqueIdFieldName { get { return MetaDataUniqueType; } }
-
-        //public void Reassign( DataRow NewRow )
-        //{
-        //    _NodeTypeRow = NewRow;
-        //    _UniqueId = CswConvert.ToInt32( NewRow[UniqueIdFieldName] );
-
-        //    // BZ 8370 - Remove cached data entities
-        //    _FirstVersionNodeType = null;
-        //    _PriorVersionNodeType = null;
-        //    _BarcodeProperty = null;
-        //}
 
         public override string ToString()
         {
@@ -299,10 +285,11 @@ namespace ChemSW.Nbt.MetaData
             return ret;
         }
 
-        //public CswNbtMetaDataObjectClass ObjectClass
-        //{
-        //    get { return _CswNbtMetaDataResources.CswNbtMetaData.getObjectClass( CswConvert.ToInt32( _NodeTypeRow["objectclassid"].ToString() ) ); }
-        //}
+        public bool HasLabel
+        {
+            get { return CswConvert.ToBoolean( _DataRow["haslabel"] ); }
+            set { _DataRow["haslabel"] = CswConvert.ToDbVal( value ); }
+        }
 
         public CswNbtMetaDataObjectClass getObjectClass()
         {
@@ -316,12 +303,6 @@ namespace ChemSW.Nbt.MetaData
                 return CswConvert.ToInt32( _NodeTypeRow["objectclassid"].ToString() );
             }
         }
-
-
-        //public Collection<Int32> NodeTypeTabIds { get { return _CswNbtMetaDataResources.NodeTypeTabsCollection.getNodeTypeTabIds( NodeTypeId ); } }
-        //public IEnumerable<CswNbtMetaDataNodeTypeTab> NodeTypeTabs { get { return _CswNbtMetaDataResources.NodeTypeTabsCollection.getNodeTypeTabs( NodeTypeId ); } }
-        //public Collection<Int32> NodeTypePropIds { get { return _CswNbtMetaDataResources.NodeTypePropsCollection.getNodeTypePropIds( NodeTypeId ); } }
-        //public IEnumerable<CswNbtMetaDataNodeTypeProp> NodeTypeProps { get { return _CswNbtMetaDataResources.NodeTypePropsCollection.getNodeTypeProps( NodeTypeId ); } }
 
         public Collection<Int32> getNodeTypeTabIds()
         {
@@ -455,29 +436,18 @@ namespace ChemSW.Nbt.MetaData
             return MaximumTabOrder;
         }
 
-        //public Int32 getCurrentMaxDisplayRowAdd()
-        //{
-        //    Int32 Max = 0;
-        //    foreach( CswNbtMetaDataNodeTypeProp Prop in NodeTypeProps )
-        //    {
-        //        if( Prop.DisplayRowAdd > Max )
-        //            Max = Prop.DisplayRowAdd;
-        //    }
-        //    return Max;
-        //}
-
-        public static string _Element_MetaDataNodeType = "MetaDataNodeType";
-        public static string _Attribute_NodeTypeId = "nodetypeid";
-        public static string _Attribute_ObjectClassId = "objectclassid";
-        public static string _Attribute_NodeTypeName = "nodetypename";
-        public static string _Attribute_IconFileName = "iconfilename";
-        public static string _Attribute_Version = "version";
-        public static string _Attribute_Category = "category";
-        public static string _Attribute_IsLatestVersion = "islatestversion";
-        public static string _Attribute_TableName = "tablename";
-        public static string _Attribute_PriorNodeTypeId = "priorversionid";
-        public static string _Attribute_FirstNodeTypeId = "firstversionid";
-        public static string _Attribute_NameTemplate = "nametemplate";
+        public const string _Element_MetaDataNodeType = "MetaDataNodeType";
+        public const string _Attribute_NodeTypeId = "nodetypeid";
+        public const string _Attribute_ObjectClassId = "objectclassid";
+        public const string _Attribute_NodeTypeName = "nodetypename";
+        public const string _Attribute_IconFileName = "iconfilename";
+        public const string _Attribute_Version = "version";
+        public const string _Attribute_Category = "category";
+        public const string _Attribute_IsLatestVersion = "islatestversion";
+        public const string _Attribute_TableName = "tablename";
+        public const string _Attribute_PriorNodeTypeId = "priorversionid";
+        public const string _Attribute_FirstNodeTypeId = "firstversionid";
+        public const string _Attribute_NameTemplate = "nametemplate";
 
         public XmlDocument ToXml( CswNbtView View, bool ForMobile, bool PropsInViewOnly )
         {
@@ -632,7 +602,7 @@ namespace ChemSW.Nbt.MetaData
         {
             get
             {
-                return( ChemSW.Audit.AuditLevel.Parse( _NodeTypeRow[_CswAuditMetaData.AuditLevelColName].ToString() ) );
+                return ( ChemSW.Audit.AuditLevel.Parse( _NodeTypeRow[_CswAuditMetaData.AuditLevelColName].ToString() ) );
             }
             set
             {

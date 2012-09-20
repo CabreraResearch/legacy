@@ -116,6 +116,8 @@
     <Compile Include="WebSvc\Logic\CISPro\CswNbtWebServiceCreateMaterial.cs" />
     <Compile Include="WebSvc\Logic\Generators\CswNbtWebServiceGenerators.cs" />
     <Compile Include="WebSvc\Logic\Nodes\CswNbtWebServiceReport.cs" />
+    <Compile Include="WebSvc\Logic\Session\CswNbtSessionUriMethods.cs" />
+    <Compile Include="WebSvc\Logic\Session\CswNbtWebServiceSession.cs" />
     <Compile Include="WebSvc\Logic\Views\CswNbtViewsUriMethods.cs" />
     <Compile Include="WebSvc\Logic\Views\wsTreeOfView.cs">
       <SubType>Component</SubType>
@@ -1338,6 +1340,7 @@
     </Compile>
     <Compile Include="WebSvc\Core\CswWebSvcCommonMethods.cs" />
     <Compile Include="WebSvc\Core\CswWebSvcResourceInitializerNbt.cs" />
+    <Compile Include="WebSvc\Returns\CswWebSvcReturnError.cs" />
     <Compile Include="WebSvc\Returns\CswWebSvcReturnBase.cs" />
     <Compile Include="WebSvc\Returns\CswWebSvcReturn.cs" />
     <Compile Include="wsNBT.cs">
