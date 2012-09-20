@@ -149,6 +149,14 @@
                     return Csw.controls.numberTextBox(cswParent, opts);
                 };
 
+                cswParent.quickTip = function (opts) {
+                    /// <summary> Creates a Csw.quickTip on this element</summary>
+                    /// <param name="opts" type="Object">Options to define the quickTip.</param>
+                    /// <returns type="Csw.controls.quickTip">A Csw.controls.quickTip</returns>
+                    opts = cswPrivate.controlPreProcessing(opts, 'quickTip');
+                    return Csw.controls.quickTip(cswParent, opts);
+                };
+
                 cswParent.radiobutton = function (opts) {
                     /// <summary> Creates a Csw.radiobutton on this element</summary>
                     /// <param name="opts" type="Object">Options to define the radiobutton.</param>

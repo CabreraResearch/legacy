@@ -28,7 +28,8 @@
                     gestalt: '',
                     qtyWidth: '',
                     qtyReadonly: false,
-                    unitReadonly: false
+                    unitReadonly: false,
+                    isClosedSet: true
                 };
                 if (options) Csw.extend(cswPrivate, options);
 
@@ -66,6 +67,7 @@
                         value: Csw.string(cswPrivate.value).trim(),
                         MinValue: Csw.number(cswPrivate.minvalue),
                         MaxValue: Csw.number(cswPrivate.maxvalue),
+                        isClosedSet: Csw.bool(cswPrivate.isClosedSet),
                         ceilingVal: Csw.number(cswPrivate.ceilingVal),
                         Precision: 6, //case 24646 - precision is being handled in the validator below, so we don't want to use the one in numberTextBox.
                         ReadOnly: Csw.bool(cswPrivate.qtyReadonly),
@@ -127,10 +129,8 @@
 
                         cswPrivate.cellCol += 1;
 
-                        if (cswPrivate.Required) {
-                            cswPublic.unitSelect.addClass('required');
-                            cswPublic.quantityTextBox.addClass('required');
-                        }
+                        cswPublic.unitSelect.required(cswPrivate.Required);
+                        cswPublic.quantityTextBox.required(cswPrivate.Required);
 
                         $.validator.addMethod('validateInteger', function () {
                             return (cswPrivate.precision != 0 || Csw.validateInteger(cswPublic.quantityTextBox.val()));

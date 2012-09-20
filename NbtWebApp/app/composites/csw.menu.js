@@ -191,8 +191,6 @@
             (function () {
                 if (options) Csw.extend(cswPrivate, options);
 
-                cswParent.empty();
-
                 Csw.ajax.post({
                     urlMethod: cswPrivate.ajax.urlMethod,
                     data: cswPrivate.ajax.data,
@@ -236,6 +234,9 @@
                             }
                             items.push(thisItem);
                         }); // each
+                        
+                        cswParent.empty();
+
                         if (false === Csw.isNullOrEmpty($('#' + cswParent.getId()), true)) {
                             window.Ext.create('Ext.toolbar.Toolbar', {
                                 renderTo: cswParent.getId(),
