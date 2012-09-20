@@ -18,7 +18,7 @@ namespace ChemSW.Nbt.Schema
         public override void update()
         {
 
-            #region PART 1 - Hide the settings tab on the Equipment Schedule NT
+            #region PART 1 - Hide the settings tab on the Equipment/Assembly Schedule NT
 
             List<int> ntpIdsToHide = new List<int>();
 
