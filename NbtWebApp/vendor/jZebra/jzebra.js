@@ -6,6 +6,171 @@
 
     var sleepCounter = 0;
 
+ //#region monitor methods
+
+    jZebra.monitorFinding = function () {
+        jZebra.monitorApplet('isDoneFinding()', 'alert("Found printer [" + document.jzebra.getPrinter() + "]")', 'monitor finding job');
+    };
+
+    jZebra.monitorPrinting = function () {
+        //"alert\(\"Data sent to printer successfully\"\)"
+        jZebra.monitorApplet("isDonePrinting()", 'alert("Data sent to printer [" + document.jzebra.getPrinter() + "] successfully.")', "monitor printing job");
+    };
+
+    /**
+     * Monitors the Java applet until it is complete with the specified function
+     *    appletFunction:  should return a "true" or "false"
+     *    finishedFunction:  will be called if the function completes without error
+     *    description:  optional description for errors, etc
+     *
+     * Example:
+     *    monitorApplet('isDoneFinding()', 'alert(\\"Success\\")', '');
+     */
+
+    jZebra.monitorApplet = function (appletFunction, finishedFunction, description) {
+        var NOT_LOADED = "jZebra hasn't loaded yet.";
+        var INVALID_FUNCTION = 'jZebra does not recognize function: "' + appletFunction;
+        +'"';
+        var INVALID_PRINTER = "jZebra could not find the specified printer";
+        if (document.jzebra != null) {
+            var finished = false;
+            try {
+                finished = eval('document.jzebra.' + appletFunction);
+            } catch (err) {
+                alert('jZebra Exception:  ' + INVALID_FUNCTION);
+                return;
+            }
+            if (!finished) {
+                window.setTimeout(
+                    function () {
+                        jZebra.monitorApplet(appletFunction, finishedFunction.replace(/\"/g, '\\"'), description)
+                    }, 100);
+            } else {
+                var p = document.jzebra.getPrinterName();
+                if (p == null) {
+                    alert("jZebra Exception:  " + INVALID_PRINTER);
+                    return;
+                }
+                var e = document.jzebra.getException();
+                if (e != null) {
+                    var desc = description == "" ? "" : " [" + description + "] ";
+                    alert("jZebra Exception: " + desc + document.jzebra.getExceptionMessage());
+                    document.jzebra.clearException();
+                } else {
+                    eval(finishedFunction);
+                }
+            }
+        } else {
+            alert("jZebra Exception:  " + NOT_LOADED);
+        }
+    };
+
+    /*function monitorPrinting() {
+    var applet = document.jzebra;
+    if (applet != null) {
+     if (!applet.isDonePrinting()) {
+        window.setTimeout('monitorPrinting()', 100);
+     } else {
+        var e = applet.getException();
+        alert(e == null ? "Printed Successfully" : "Exception occured: " + e.getLocalizedMessage());
+     }
+    } else {
+          alert("Applet not loaded!");
+      }
+    }*/
+
+    /*function monitorFinding() {
+    var applet = document.jzebra;
+    if (applet != null) {
+     if (!applet.isDoneFinding()) {
+        window.setTimeout('monitorFinding()', 100);
+     } else {
+        var printer = applet.getPrinterName();
+            alert(printer == null ? "Printer not found" : "Printer \"" + printer + "\" found");
+     }
+    } else {
+          alert("Applet not loaded!");
+      }
+    }*/
+
+    jZebra.monitorFinding2 = function (defaultPrinter) {
+        var applet = document.jzebra;
+        if (applet != null) {
+            if (!applet.isDoneFinding()) {
+                window.setTimeout(function () {
+                    jZebra.monitorFinding2(defaultPrinter)
+                }, 100);
+            } else {
+                var listing = applet.getPrinters();
+                var printers = listing.split(',');
+                for (var i in printers) {
+                    if (defaultPrinter == printers[i]) {
+                        document.getElementById("printersList").options[i] = new Option(printers[i], printers[i], true);
+                    } else {
+                        document.getElementById("printersList").options[i] = new Option(printers[i], printers[i]);
+                    }
+                    //alert(printers[i]);
+                }
+                $('#printersList').val(defaultPrinter);
+            }
+        } else {
+            alert("Applet not loaded!");
+        }
+    };
+
+    jZebra.monitorAppending = function () {
+        var applet = document.jzebra;
+        if (applet != null) {
+            if (!applet.isDoneAppending()) {
+                window.setTimeout(jZebra.monitorAppending, 100);
+            } else {
+                applet.print(); // Don't print until all of the data has been appended
+                jZebra.monitorPrinting();
+            }
+        } else {
+            alert("Applet not loaded!");
+        }
+    };
+
+    jZebra.monitorAppending2 = function () {
+        var applet = document.jzebra;
+        if (applet != null) {
+            if (!applet.isDoneAppending()) {
+                window.setTimeout(jZebra.monitorAppending2, 100);
+            } else {
+                applet.printPS(); // Don't print until all of the image data has been appended
+                jZebra.monitorPrinting();
+            }
+        } else {
+            alert("Applet not loaded!");
+        }
+    };
+
+    jZebra.monitorLoading = function () {
+        var applet = document.jzebra;
+        if (document.jzebra != null) {
+            try {
+                if (document.jzebra.isActive()) {
+                    document.getElementById("version").innerHTML = "<strong>Status:</strong>  jZebra " + applet.getVersion() + " loaded.";
+                    if (navigator.appName == "Microsoft Internet Explorer") { // IE Fix
+                        document.getElementById("logo").src = "http://jzebra.googlecode.com/files/logo_small.png"
+                    } else { // Use embedded logo
+                        window.alert('no img');
+                    }
+                }
+            } catch (err) {
+                // Firefox fix
+                window.setTimeout(jZebra.monitorLoading, 500);
+            }
+        } else {
+            window.setTimeout(jZebra.monitorLoading, 100);
+        }
+    };
+
+    //#endregion monitor methods
+
+   //#region find
+
     jZebra.findPrinter = function() {
         var applet = document.jzebra;
         if (applet != null) {
@@ -241,65 +406,12 @@
         jZebra.monitorAppending2();
     };
 
+    //#endregion print
+
+    //#region helper
+
     jZebra.chr = function (i) {
         return String.fromCharCode(i);
-    };
-
-    jZebra.monitorFinding = function () {
-        jZebra.monitorApplet('isDoneFinding()', 'alert("Found printer [" + document.jzebra.getPrinter() + "]")', 'monitor finding job');
-    };
-
-    jZebra.monitorPrinting = function () {
-        //"alert\(\"Data sent to printer successfully\"\)"
-        jZebra.monitorApplet("isDonePrinting()", 'alert("Data sent to printer [" + document.jzebra.getPrinter() + "] successfully.")', "monitor printing job");
-    };
-
-    /**
-     * Monitors the Java applet until it is complete with the specified function
-     *    appletFunction:  should return a "true" or "false"
-     *    finishedFunction:  will be called if the function completes without error
-     *    description:  optional description for errors, etc
-     *
-     * Example:
-     *    monitorApplet('isDoneFinding()', 'alert(\\"Success\\")', '');
-     */
-
-    jZebra.monitorApplet = function (appletFunction, finishedFunction, description) {
-        var NOT_LOADED = "jZebra hasn't loaded yet.";
-        var INVALID_FUNCTION = 'jZebra does not recognize function: "' + appletFunction;
-        +'"';
-        var INVALID_PRINTER = "jZebra could not find the specified printer";
-        if (document.jzebra != null) {
-            var finished = false;
-            try {
-                finished = eval('document.jzebra.' + appletFunction);
-            } catch(err) {
-                alert('jZebra Exception:  ' + INVALID_FUNCTION);
-                return;
-            }
-            if (!finished) {
-                window.setTimeout(
-                    function () {
-                        jZebra.monitorApplet(appletFunction, finishedFunction.replace(/\"/g, '\\"'), description)
-                    }, 100);
-            } else {
-                var p = document.jzebra.getPrinterName();
-                if (p == null) {
-                    alert("jZebra Exception:  " + INVALID_PRINTER);
-                    return;
-                }
-                var e = document.jzebra.getException();
-                if (e != null) {
-                    var desc = description == "" ? "" : " [" + description + "] ";
-                    alert("jZebra Exception: " + desc + document.jzebra.getExceptionMessage());
-                    document.jzebra.clearException();
-                } else {
-                    eval(finishedFunction);
-                }
-            }
-        } else {
-            alert("jZebra Exception:  " + NOT_LOADED);
-        }
     };
 
     // Used to show/hide code snippets on sample.html page
@@ -312,108 +424,7 @@
             link.innerHTML.replace("-", "+").replace("hide", "show") :
             link.innerHTML.replace("+", "-").replace("show", "hide");
     };
-
-    /*function monitorPrinting() {
-    var applet = document.jzebra;
-    if (applet != null) {
-     if (!applet.isDonePrinting()) {
-        window.setTimeout('monitorPrinting()', 100);
-     } else {
-        var e = applet.getException();
-        alert(e == null ? "Printed Successfully" : "Exception occured: " + e.getLocalizedMessage());
-     }
-    } else {
-          alert("Applet not loaded!");
-      }
-    }*/
-
-    /*function monitorFinding() {
-    var applet = document.jzebra;
-    if (applet != null) {
-     if (!applet.isDoneFinding()) {
-        window.setTimeout('monitorFinding()', 100);
-     } else {
-        var printer = applet.getPrinterName();
-            alert(printer == null ? "Printer not found" : "Printer \"" + printer + "\" found");
-     }
-    } else {
-          alert("Applet not loaded!");
-      }
-    }*/
-
-    jZebra.monitorFinding2 = function (defaultPrinter) {
-        var applet = document.jzebra;
-        if (applet != null) {
-            if (!applet.isDoneFinding()) {
-                window.setTimeout(function () {
-                    jZebra.monitorFinding2(defaultPrinter)
-                }, 100);
-            } else {
-                var listing = applet.getPrinters();
-                var printers = listing.split(',');
-                for (var i in printers) {
-                    if (defaultPrinter == printers[i]) {
-                        document.getElementById("printersList").options[i] = new Option(printers[i], printers[i], true);
-                    } else {
-                        document.getElementById("printersList").options[i] = new Option(printers[i], printers[i]);
-                    }
-                    //alert(printers[i]);
-                }
-                $('#printersList').val(defaultPrinter);
-            }
-        } else {
-            alert("Applet not loaded!");
-        }
-    };
-
-    jZebra.monitorAppending = function () {
-        var applet = document.jzebra;
-        if (applet != null) {
-            if (!applet.isDoneAppending()) {
-                window.setTimeout(jZebra.monitorAppending, 100);
-            } else {
-                applet.print(); // Don't print until all of the data has been appended
-                jZebra.monitorPrinting();
-            }
-        } else {
-            alert("Applet not loaded!");
-        }
-    };
-
-    jZebra.monitorAppending2 = function () {
-        var applet = document.jzebra;
-        if (applet != null) {
-            if (!applet.isDoneAppending()) {
-                window.setTimeout(jZebra.monitorAppending2, 100);
-            } else {
-                applet.printPS(); // Don't print until all of the image data has been appended
-                jZebra.monitorPrinting();
-            }
-        } else {
-            alert("Applet not loaded!");
-        }
-    };
-
-    jZebra.monitorLoading = function () {
-        var applet = document.jzebra;
-        if (document.jzebra != null) {
-            try {
-                if (document.jzebra.isActive()) {
-                    document.getElementById("version").innerHTML = "<strong>Status:</strong>  jZebra " + applet.getVersion() + " loaded.";
-                    if (navigator.appName == "Microsoft Internet Explorer") { // IE Fix
-                        document.getElementById("logo").src = "http://jzebra.googlecode.com/files/logo_small.png"
-                    } else { // Use embedded logo
-                        window.alert('no img');
-                    }
-                }
-            } catch(err) {
-                // Firefox fix
-                window.setTimeout(jZebra.monitorLoading, 500);
-            }
-        } else {
-            window.setTimeout(jZebra.monitorLoading, 100);
-        }
-    };
+   
 
     jZebra.displayLogo = function () {
         if (navigator.appName == "Microsoft Internet Explorer") { // IE Fix
