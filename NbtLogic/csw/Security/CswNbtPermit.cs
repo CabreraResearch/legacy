@@ -327,7 +327,7 @@ namespace ChemSW.Nbt.Security
                 if( _CswNbtPermitInfo.shouldPermissionCheckProceed() )
                 {
                     NodeTypeTabPermission TabPermission = (NodeTypeTabPermission) Enum.Parse( typeof( NodeTypeTabPermission ), Permission.ToString() );
-                    foreach( CswNbtMetaDataNodeTypeTab CurrentTab in NodeType.getNodeTypeTabs() )
+                    foreach( CswNbtMetaDataNodeTypeTab CurrentTab in _CswNbtPermitInfo.NodeType.getNodeTypeTabs() )
                     {
                         ret = _CswNbtPermitInfo.Role.NodeTypePermissions.CheckValue( CswNbtObjClassRole.MakeNodeTypeTabPermissionValue( _CswNbtPermitInfo.NodeType.FirstVersionNodeTypeId, CurrentTab.FirstTabVersionId, TabPermission ) );
                         if( TabPermission == NodeTypeTabPermission.View )
@@ -354,6 +354,81 @@ namespace ChemSW.Nbt.Security
             return ( ret );
 
         }//canAllTabs() 
+
+
+        public bool canPropOnAnyOtherTab( NodeTypePermission Permission, CswNbtMetaDataNodeTypeTab NodeTypeTab, CswNbtMetaDataNodeTypeProp NodeTypeProp, ICswNbtUser User = null )
+        {
+
+            bool ret = false;
+
+
+            if( ( null != NodeTypeProp ) && ( null != NodeTypeTab ) )
+            {
+                CswNbtMetaDataNodeType NodeType = NodeTypeProp.getNodeType();
+
+
+                _initPermissionInfo( User, NodeType, Permission );
+
+                if( false == _CswNbtPermitInfo.IsUberUser )
+                {
+
+                    if( _CswNbtPermitInfo.shouldPermissionCheckProceed() )
+                    {
+                        NodeTypeTabPermission TabPermission = (NodeTypeTabPermission) Enum.Parse( typeof( NodeTypeTabPermission ), Permission.ToString() );
+                        foreach( CswNbtMetaDataNodeTypeTab CurrentTab in NodeType.getNodeTypeTabs() )
+                        {
+
+                            if( CurrentTab.TabId != NodeTypeTab.TabId )
+                            {
+
+                                bool OtherTabHasPermission = false;
+                                OtherTabHasPermission = _CswNbtPermitInfo.Role.NodeTypePermissions.CheckValue( CswNbtObjClassRole.MakeNodeTypeTabPermissionValue( _CswNbtPermitInfo.NodeType.FirstVersionNodeTypeId, CurrentTab.FirstTabVersionId, TabPermission ) );
+                                if( TabPermission == NodeTypeTabPermission.View )
+                                {
+                                    // Having 'Edit' grants 'View' automatically
+                                    OtherTabHasPermission = OtherTabHasPermission || _CswNbtPermitInfo.Role.NodeTypePermissions.CheckValue( CswNbtObjClassRole.MakeNodeTypeTabPermissionValue( _CswNbtPermitInfo.NodeType.FirstVersionNodeTypeId, CurrentTab.FirstTabVersionId, NodeTypeTabPermission.Edit ) );
+                                }
+
+                                if( OtherTabHasPermission )
+                                {
+                                    foreach( CswNbtMetaDataNodeTypeProp CurrentProp in CurrentTab.getNodeTypeProps() )
+                                    {
+
+                                        if( CurrentProp.PropId == NodeTypeProp.PropId )
+                                        {
+                                            ret = true;
+                                            break;
+                                        }
+
+                                    }//iterate props on this tab
+
+                                }//if other tab has permission
+
+
+                                //We're looking for any one tab that lets; if another one doesn't let, you come back with false when you shouldn't be
+                                if( ret )
+                                {
+                                    break;
+                                }
+
+                            }//if this is an _other_ tab
+
+                        }//iterate tabs
+
+                    }//if pre-reqs are in order
+                }
+                else
+                {
+                    ret = true;
+                }
+
+
+            }//if prop is not null
+
+            return ( ret );
+
+
+        }//canPropOnAnyTab
 
 
         //public bool canProp( NodeTypePermission Permission, CswNbtMetaDataNodeTypeProp Prop, ICswNbtUser User = null )
