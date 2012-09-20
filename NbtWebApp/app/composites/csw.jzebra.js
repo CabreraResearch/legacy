@@ -75,15 +75,8 @@
                     
                 }());
 
-                cswPrivate.initAttempts = 0;
 
-                cswPrivate.initJava = function() {
-                    cswPrivate.initAttempts += 1;
-                    if (false === Csw.isNullOrEmpty(document.jZebra) &&
-                        window.internetExplorerVersionNo > 0 ||
-                        (Csw.isFunction(document.jZebra.findPrinter) &&
-                        document.jZebra.isActive() )) {
-                        cswPublic.zebraJava = document.jZebra;
+                cswPublic.zebraJava = document.jzebra;
 
                         cswPublic.print = function(eplText) {
                             if (false === Csw.isNullOrEmpty(eplText)) {
@@ -99,19 +92,21 @@
                             //This will populate cswPrivate.printerSel with available printers
                             cswPublic.zebraJs.findPrinters(cswPublic.defaultPrinter);
                         };
-                        Csw.publish('jZebra_Ready');
-                    } else if (cswPrivate.initAttempts < 5) {
-                        window.setTimeout(cswPrivate.initJava, 1000);
-                    }
-                };
 
                 cswPublic.setDefaultPrinter = function(defaultPrinter) {
                     cswPublic.defaultPrinter = defaultPrinter;
                     Csw.cookie.set('defaultPrinter', defaultPrinter);
                 };
 
+                cswPublic.onZebraReady = function(onSuccess) {
+                    cswPublic.zebraJs.monitorApplet('findPrinter', function () {
+                        cswPublic.findPrinters();
+                        Csw.tryExec(onSuccess);
+                    }, 'Init printers list');
+                };
+
                 (function _post() {
-                    cswPrivate.initJava();
+                    //cswPublic.onZebraReady(cswPrivate.onSuccess);
                 }());
 
             });
