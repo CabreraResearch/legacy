@@ -20,8 +20,10 @@ namespace ChemSW.Nbt.Schema
 
             #region PART 1 - Hide the settings tab on the Equipment Schedule NT
 
-            CswNbtMetaDataNodeType equipmentScheduleNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Equipment Schedule" );
             List<int> ntpIdsToHide = new List<int>();
+
+            //get the props from the Settings tab and then delete the tab on Equipment Schedule
+            CswNbtMetaDataNodeType equipmentScheduleNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Equipment Schedule" );
             if( null != equipmentScheduleNT )
             {
                 foreach( CswNbtMetaDataNodeTypeTab tab in equipmentScheduleNT.getNodeTypeTabs() )
@@ -35,11 +37,30 @@ namespace ChemSW.Nbt.Schema
                         _CswNbtSchemaModTrnsctn.MetaData.DeleteNodeTypeTab( tab );
                     }
                 }
-                foreach( int ntpId in ntpIdsToHide )
+            }
+
+            //get the props from the Settings tab and then delete the tab on Assembly Schedule
+            CswNbtMetaDataNodeType assemblyScheduleNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Assembly Schedule" );
+            if( null != assemblyScheduleNT )
+            {
+                foreach( CswNbtMetaDataNodeTypeTab tab in assemblyScheduleNT.getNodeTypeTabs() )
                 {
-                    CswNbtMetaDataNodeTypeProp ntp = _CswNbtSchemaModTrnsctn.MetaData.getNodeTypeProp( ntpId );
-                    ntp.removeFromAllLayouts();
+                    if( tab.TabName.Equals( "Settings" ) )
+                    {
+                        foreach( CswNbtMetaDataNodeTypeProp ntp in tab.getNodeTypeProps() )
+                        {
+                            ntpIdsToHide.Add( ntp.PropId );
+                        }
+                        _CswNbtSchemaModTrnsctn.MetaData.DeleteNodeTypeTab( tab );
+                    }
                 }
+            }
+
+            //hide the props
+            foreach( int ntpId in ntpIdsToHide )
+            {
+                CswNbtMetaDataNodeTypeProp ntp = _CswNbtSchemaModTrnsctn.MetaData.getNodeTypeProp( ntpId );
+                ntp.removeFromAllLayouts();
             }
 
             #endregion
