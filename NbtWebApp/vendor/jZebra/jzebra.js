@@ -162,7 +162,26 @@
 
     //#endregion monitor methods
 
-   //#region find
+    //#region jZebra Overrides
+
+    jZebra.doneFinding = function () {
+
+    };
+    window.jzebraDoneFinding = window.jzebraDoneFinding || jZebra.doneFinding;
+
+    jZebra.donePrinting = function () {
+
+    };
+    window.jzebraDonePrinting = window.jzebraDonePrinting || jZebra.donePrinting;
+
+    jZebra.doneAppending = function () {
+
+    };
+    window.jzebraDoneAppending = window.jzebraDoneAppending || jZebra.doneAppending;
+
+    //#region jZebra Overrides    
+
+    //#region find
 
     jZebra.findPrinter = function() {
         var applet = document.jzebra;
