@@ -56,27 +56,36 @@
                 'use strict';
                 
                 var cswPublic = {
-                    id: '', //propId
-                    name: '', //propName
-                    nodeid: '',
+                    ID: '',
+                    tabState: {
+                        nodeid: '',
+                        nodename: '',
+                        EditMode: Csw.enums.editMode.Edit,
+                        Multi: false,
+                        ReadOnly: false,
+                        Config: false,
+                        showSaveButton: true,
+                        relatednodeid: '',
+                        relatednodename: '',
+                        relatednodetypeid: '',
+                        relatedobjectclassid: '',
+                        tabid: '',
+                        nodetypeid: ''
+                    },
                     fieldtype: '',
                     propDiv: cswParent,
                     saveBtn: {},
-                    propData: {},
+                    propData: {
+                        id: '',
+                        name: '',
+                        readonly: false,
+                        required: false,
+                        values: {}
+                    },
                     onChange: function () {
                     },
                     onReload: function () {
                     },    // if a control needs to reload the tab
-                    cswnbtnodekey: '',
-                    relatednodeid: '',
-                    relatednodename: '',
-                    relatednodetypeid: '',
-                    relatedobjectclassid: '',
-                    ID: '',
-                    Required: false,
-                    ReadOnly: false,
-                    EditMode: Csw.enums.editMode.Edit,
-                    Multi: false,
                     onEditView: function () {
                     },
                     onAfterButtonClick: function () {
@@ -86,11 +95,25 @@
                     Csw.error.throwException('Cannot create a Csw propertyOption without an object to define the property control.', 'propertyOption', 'csw.propertyOption.js', 86);
                 }
 
+                cswPublic.isReadOnly = function() {
+                    return Csw.bool(cswPublic.tabState.ReadOnly) ||
+                        Csw.bool(cswPublic.tabState.Config) ||
+                        cswPublic.tabState.EditMode === Csw.enums.editMode.PrintReport ||
+                        cswPublic.tabState.EditMode === Csw.enums.editMode.Preview ||
+                        Csw.bool(cswPublic.propData.readonly);
+                };
+
+                cswPublic.isRequired = function() {
+                    return Csw.bool(cswPublic.propData.required);
+                };
+
+                cswPublic.isMulti = function() {
+                    return Csw.bool(cswPublic.tabState.Multi);
+                };
+
                 //ugly, persist this for full backwards compatability--for now
                 //TODO: unify ID/ReadOnly/Required properties on this object
                 cswPublic.ID = Csw.makeId(cswPublic.propDiv.getId(), cswPublic.propData.id);
-                cswPublic.Required = Csw.bool(cswPublic.propData.required);
-                cswPublic.ReadOnly = Csw.bool(cswPublic.propData.readonly);
 
                 Csw.extend(cswPublic, cswPrivate);
                 cswPublic.onPropChange = function(attributes) {
@@ -99,7 +122,7 @@
                 	/// </summary>
                     'use strict';
                     attributes = attributes || {};
-                    cswStaticInternalClosure.preparePropJsonForSave(cswPublic.Multi, cswPublic.propData, attributes);
+                    cswStaticInternalClosure.preparePropJsonForSave(cswPublic.isMulti(), cswPublic.propData, attributes);
                 };
 
                 cswPublic.bindRender = function (callBack) {
@@ -113,9 +136,9 @@
                         /// Unbind all properties on this node's layout from the 
                         /// </summary>
                         'use strict';
-                        Csw.unsubscribe('render_' + cswPublic.nodeid, cswPrivate.renderer);
+                        Csw.unsubscribe('render_' + cswPublic.tabState.nodeid, cswPrivate.renderer);
                         Csw.unsubscribe('initPropertyTearDown', cswPrivate.tearDown);
-                        Csw.unsubscribe('initPropertyTearDown_' + cswPublic.nodeid, cswPrivate.tearDown);
+                        Csw.unsubscribe('initPropertyTearDown_' + cswPublic.tabState.nodeid, cswPrivate.tearDown);
                         Csw.tryExec(cswPrivate.tearDownCallback);
                     };
                     
@@ -127,16 +150,16 @@
                         cswPublic.propDiv.empty();
                         Csw.tryExec(callBack, cswPublic);
                         Csw.subscribe('initPropertyTearDown', cswPrivate.tearDown);
-                        Csw.subscribe('initPropertyTearDown_' + cswPublic.nodeid, cswPrivate.tearDown);
+                        Csw.subscribe('initPropertyTearDown_' + cswPublic.tabState.nodeid, cswPrivate.tearDown);
                     };
-                    Csw.subscribe('render_' + cswPublic.nodeid, cswPrivate.renderer);
+                    Csw.subscribe('render_' + cswPublic.tabState.nodeid, cswPrivate.renderer);
                 };
 
                 if(false === Csw.isNullOrEmpty(cswPublic.propDiv)) {
                     cswPublic.propDiv.propNonDom({
-                        nodeid: cswPublic.nodeid,
+                        nodeid: cswPublic.tabState.nodeid,
                         propid: cswPublic.propid,
-                        cswnbtnodekey: cswPublic.cswnbtnodekey
+                        cswnbtnodekey: cswPublic.tabState.cswnbtnodekey
                     });
                 }
 
