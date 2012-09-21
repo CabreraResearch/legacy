@@ -204,7 +204,7 @@ namespace ChemSW.Nbt.WebServices
                     JObject PrintObj = null;
 
                     // PRINT LABEL
-                    if( _MenuItems.Contains( "Print Label" ) &&
+                    if( _MenuItems.Contains( "Print" ) &&
                         false == string.IsNullOrEmpty( SafeNodeKey ) &&
                         null != Node &&
                         null != Node.getNodeType() )

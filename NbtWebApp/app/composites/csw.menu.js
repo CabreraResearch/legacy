@@ -33,7 +33,32 @@
             };
             var cswPublic = {};
 
-
+            cswPrivate.getSelectedNodes = function(menuItemJson) {
+                var ret = { };
+                var nodechecks = null;
+                
+                if (false == Csw.isNullOrEmpty(cswPrivate.nodeTreeCheck)) {
+                    nodechecks = Csw.tryExec(cswPrivate.nodeTreeCheck.checkedNodes);
+                }
+                if (false === Csw.isNullOrEmpty(nodechecks, true)) {
+                    Csw.each(nodechecks, function(thisObj) {
+                        ret[thisObj.nodeid] = {
+                            nodeid: thisObj.nodeid,
+                            cswnbtnodekey: thisObj.cswnbtnodekey,
+                            nodename: thisObj.nodename
+                        };
+                    });
+                }
+                if(Csw.isNullOrEmpty(ret)) {
+                    ret[menuItemJson.nodeid] = {
+                        nodeid: menuItemJson.nodeid,
+                        nodename: menuItemJson.nodename,
+                        nodetypeid: menuItemJson.nodetypeid
+                    };
+                }
+                return ret;
+            };
+            
             cswPrivate.handleMenuItemClick = function (menuItemName, menuItemJson) {
                 if (false === Csw.isNullOrEmpty(menuItemJson)) {
 
@@ -77,8 +102,7 @@
                                 break;
                             case 'DeleteNode':
                                 $.CswDialog('DeleteNodeDialog', {
-                                    nodenames: [nodename],
-                                    nodeids: [nodeid],
+                                    nodes: cswPrivate.getSelectedNodes(menuItemJson),
                                     onDeleteNode: cswPrivate.onAlterNode,
                                     nodeTreeCheck: cswPrivate.nodeTreeCheck,
                                     Multi: cswPrivate.Multi
@@ -108,7 +132,7 @@
                                 break;
                             case 'PrintLabel':
                                 $.CswDialog('PrintLabelDialog', {
-                                    nodeids: [ nodeid ],
+                                    nodes: cswPrivate.getSelectedNodes(menuItemJson),
                                     nodetypeid: Csw.string(menuItemJson.nodetypeid)
                                 });
                                 break;

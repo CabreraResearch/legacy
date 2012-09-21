@@ -673,6 +673,7 @@
         }, // CopyNodeDialog       
         DeleteNodeDialog: function (options) {
             var cswPrivate = {
+                nodes: {},
                 nodenames: [],
                 nodeids: [],
                 cswnbtnodekeys: [],
@@ -693,33 +694,15 @@
                 }
             };
 
-            cswPublic.div.span({ text: 'Are you sure you want to delete' });
-
-            if (cswPrivate.Multi) {
-                //var $nodechecks = $('.' + o.NodeCheckTreeId + '_check:checked');
-                //var nodechecked = $('#' + o.NodeCheckTreeId).CswNodeTree('checkedNodes');
-                cswPublic.div.span({ text: '&nbsp;the following?' }).br();
-                var nodechecks = null;
-                if (false == Csw.isNullOrEmpty(cswPrivate.nodeTreeCheck)) {
-                    nodechecks = cswPrivate.nodeTreeCheck.checkedNodes();
-                }
-                if (false === Csw.isNullOrEmpty(nodechecks, true) && (cswPrivate.nodeids.length === 0 || cswPrivate.cswnbtnodekeys.length === 0)) {
-                    var n = 0;
-                    //$nodechecks.each(function () {
-                    Csw.each(nodechecks, function (thisObj) {
-                        cswPrivate.nodeids[n] = thisObj.nodeid;
-                        cswPrivate.cswnbtnodekeys[n] = thisObj.cswnbtnodekey;
-                        cswPublic.div.span({ text: thisObj.nodename }).css({ 'padding-left': '10px' }).br();
-                        n += 1;
-                    });
-                } else {
-                    for (var i = 0; i < cswPrivate.nodenames.length; i++) {
-                        cswPublic.div.span({ text: cswPrivate.nodenames[i] }).css({ 'padding-left': '10px' }).br();
-                    }
-                }
-            } else {
-                cswPublic.div.span({ text: ':&nbsp;' + cswPrivate.nodenames + '?' });
-            }
+            cswPublic.div.span({ text: 'Are you sure you want to delete the following?' }).br();
+            var n = 0;
+            Csw.each(cswPrivate.nodes, function(nodeObj) {
+                cswPrivate.nodeids[n] = nodeObj.nodeid;
+                cswPrivate.cswnbtnodekeys[n] = nodeObj.cswnbtnodekey;
+                cswPublic.div.span({ text: nodeObj.nodename }).css({ 'padding-left': '10px' }).br();
+                n += 1;
+            });
+                
             cswPublic.div.br({ number: 2 });
 
             var deleteBtn = cswPublic.div.button({ ID: 'deletenode_submit',
@@ -953,6 +936,7 @@
             var cswPrivate = {
                 ID: 'print_label',
                 GetPrintLabelsUrl: 'Labels/type/',
+                nodes: {},
                 nodeids: [],
                 nodetypeid: ''
             };
@@ -960,15 +944,24 @@
                 Csw.error.throwException(Csw.error.exception('Cannot create an Print Label Dialog without options.', '', 'CswDialog.js', 893));
             }
             Csw.extend(cswPrivate, options);
+
+           
+
             var cswPublic = {
-                div: Csw.literals.div({ text: 'Select a Label to Print:' }),
+                div: Csw.literals.div({ text: 'Print labels for the following: ' }),
                 close: function () {
                     cswPublic.div.$.dialog('close');
                 }
             };
 
+            cswPublic.div.br();
+            Csw.each(cswPrivate.nodes, function (nodeObj, nodeId) {
+                cswPrivate.nodeids.push(nodeId);
+                cswPublic.div.span({ text: nodeObj.nodename }).css({ 'padding-left': '10px' }).br();
+            });
+
             var getEplContext = function () {
-                Csw.openPopup('Print.html?TargetId=' + cswPrivate.nodeids + '&PrintLabelNodeId=' + labelSel.val(), 'Print ' + labelSel.selectedText(), {
+                Csw.openPopup('Print.html?TargetId=' + cswPrivate.nodeids.join(',') + '&PrintLabelNodeId=' + labelSel.val(), 'Print ' + labelSel.selectedText(), {
                     width: 477,
                     height: 204,
                     location: 'no',
@@ -981,6 +974,7 @@
                 cswPublic.close();
             };
 
+            cswPublic.div.div({ text: 'Select a label to Print' });
             cswPublic.div.br();
             var labelSelDiv = cswPublic.div.div();
             var labelSel = labelSelDiv.select({
