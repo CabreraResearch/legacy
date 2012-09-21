@@ -48,9 +48,7 @@
                     }
                     
                     cswPublic.defaultPrinter = Csw.string(Csw.cookie.get('defaultPrinter'));
-
-                    cswPrivate.div.span({ text: 'Select a Printer: ' }).br();
-
+                    
                     //To minimize hacking jZebra, use their ID
                     Csw.tryExec(function() {
                         var doomedElement = $('#printersList');

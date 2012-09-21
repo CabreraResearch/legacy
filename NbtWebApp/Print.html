@@ -6,14 +6,13 @@
     <link rel="shortcut icon" href="images/favicon.ico" />
     <title>ChemSW Live</title>
     <!--#include file="MainIncludes.html" -->
-    <!--#include file="MainCswIncludes.html" -->
+    <!--#include file="DevIncludes.html" -->
     <script type="text/javascript">
 
         window.onload = Csw.method(function () {
                 var cswPublic = { };
                 var cswPrivate = {
                     ID: 'print_label',
-                    GetEPLTextUrl: 'getEPLText',
                     nodeid: '',
                     propid: '',
                     parent: Csw.literals.factory($('#divBody'), cswPublic),
@@ -26,21 +25,14 @@
                     doPrint: '',
                     jZeb: {}
                 };
-                cswPublic.table = cswPrivate.parent.table();
-                
+                                
                 Csw.subscribe(Csw.enums.events.ajax.globalAjaxStop, cswPrivate.stopSpinner);
                 Csw.subscribe(Csw.enums.events.ajax.globalAjaxStart, cswPrivate.startSpinner);
-                
+                cswPrivate.table = cswPublic.table();
                 cswPrivate.queryString = Csw.queryString();
-
                 
-                    var data = {
-                        PropIds: Csw.string(cswPrivate.queryString.PropIds),
-                        PrintLabelNodeId: Csw.string(cswPrivate.queryString.PrintLabelNodeId)
-                    };
-                    var ret = Csw.ajax.post({
-                        urlMethod: cswPrivate.GetEPLTextUrl,
-                        data: data,
+                    var ret = Csw.ajaxWcf.get({
+                        urlMethod: 'Labels/label/' + Csw.string(cswPrivate.queryString.PrintLabelNodeId) + '/target/' + Csw.string(cswPrivate.queryString.TargetId),
                         success: function(data) {
                             //TODO: display x of n labels printing
                             //TODO: each(label in data) print(); update counter;
@@ -68,8 +60,9 @@
                         }
                     }); // ajax
                 
-                    var printBtn = cswPublic.table.cell(1,2).buttonExt({
+                    var printBtn = cswPrivate.table.cell(1,2).buttonExt({
                     icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.barcode),
+                        size: 'medium',
                         width: '100px',
                         bindOnEnter: true,
                         ID: 'print_label_print',
@@ -79,9 +72,8 @@
                             cswPrivate.doPrint();
                         }
                     });
-                
 
-                cswPrivate.jZeb = cswPublic.table.cell(1,1).jZebra();
+                cswPrivate.jZeb = cswPrivate.table.cell(1,1).jZebra();
 
                 return cswPublic;
 
@@ -92,16 +84,30 @@
     </script>
 </head>
 <body>
-    <div id="spinner" width="100%" style="text-align: center; display: none;">
-        <img src="images/ajax/progress.gif" /></div>
-    <div id="rptDiv">
-        <div id="divBody"></div>
+   
+    <div id="content">
+         <div id="spinner" width="100%" style="text-align: center; display: none;">
+            <img src="images/ajax/progress.gif" />
+        </div>
+
+    <h4 id="title">Select a Raw Text printer and click Print to begin printing barcodes.</h4>
+    <h5 id"processing"></h5>
+    <div id="divBody">
+
+
     </div>
+
+
     <div id="DialogErrorDiv"></div>
     <div id="hiddenDiv" style="visibility: hidden; border: 1px solid red;">
         <applet id="jzebra" name="jzebra" code="jzebra.PrintApplet.class" archive="/vendor/jZebra/jzebra.jar" width="0" height="0"></applet>    
         <OBJECT ID="labelx" Name="labelx" classid="clsid:A8926827-7F19-48A1-A086-B1A5901DB7F0" codebase="CafLabelPrintUtil.cab#version=0,1,6,0" width=0 height=0 align=center hspace=0 vspace=0></OBJECT>
     </div>    
+    <div id="bottom" align="right" stye="text-align: right;">
+        <h6 id="footer"></h6>
+    </div>
 
+    </div>
+    
 </body>
 </html>
