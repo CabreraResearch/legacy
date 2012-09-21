@@ -33,14 +33,6 @@ namespace NbtWebApp.WebSvc.Logic.Labels
         [DataMember( IsRequired = true )]
         [Description( "The EPL Text to define the Print Label" )]
         public string EplText = string.Empty;
-
-        /// <summary>
-        /// The print mechanism (ActiveX or jZebra)
-        /// </summary>
-        [DataMember( IsRequired = false )]
-        [Description( "Client-side mechanism to print the label (ActiveX or jZebra)" )]
-        public string ControlType = CswNbtObjClassPrintLabel.ControlTypes.jZebra;
-
     }
 
     /// <summary>
@@ -161,6 +153,14 @@ namespace NbtWebApp.WebSvc.Logic.Labels
                 [DataMember]
                 [Description( "Collection of labels" )]
                 public Collection<PrintLabel> Labels = new Collection<PrintLabel>();
+
+                /// <summary>
+                /// The print mechanism (ActiveX or jZebra)
+                /// </summary>
+                [DataMember( IsRequired = false )]
+                [Description( "Client-side mechanism to print the label (ActiveX or jZebra)" )]
+                public string ControlType = CswNbtObjClassPrintLabel.ControlTypes.jZebra;
+
             }
 
             /// <summary>

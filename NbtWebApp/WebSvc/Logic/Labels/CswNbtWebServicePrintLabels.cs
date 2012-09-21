@@ -92,25 +92,25 @@ namespace ChemSW.Nbt.WebServices
             CswNbtObjClassPrintLabel NodeAsPrintLabel = NbtResources.Nodes[Request.LabelId];
             if( null != NodeAsPrintLabel )
             {
+                string EPLText = NodeAsPrintLabel.EplText.Text;
+                string Params = NodeAsPrintLabel.Params.Text;
+                string ControlType = NodeAsPrintLabel.ControlType.Value;
+                if( string.IsNullOrEmpty( ControlType ) )
+                {
+                    ControlType = CswNbtObjClassPrintLabel.ControlTypes.jZebra;
+                }
+                Return.Data.ControlType = ControlType;
+
                 foreach( string TargetId in Request.TargetIds )
                 {
                     CswNbtNode TargetNode = NbtResources.Nodes[TargetId];
                     if( null != TargetNode )
                     {
-                        string EPLText = NodeAsPrintLabel.EplText.Text;
-                        string Params = NodeAsPrintLabel.Params.Text;
-                        string ControlType = NodeAsPrintLabel.ControlType.Value;
-                        if( string.IsNullOrEmpty( ControlType ) )
-                        {
-                            ControlType = CswNbtObjClassPrintLabel.ControlTypes.jZebra;
-                        }
-
                         // BZ 6118 - this prevents " from being turned into &quot;
                         // BUT SEE BZ 7881!
                         string EplText = GenerateEPLScript( NbtResources, EPLText, Params, TargetNode ) + "\n";
                         Return.Data.Labels.Add( new PrintLabel
                         {
-                            ControlType = ControlType,
                             TargetId = TargetNode.NodeId.ToString(),
                             TargetName = TargetNode.NodeName,
                             EplText = EplText
