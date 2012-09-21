@@ -10,15 +10,19 @@
 
             var cswPrivate = {
                 ID: 'wizardTabsAndPropsAddLayout',
-                nodetypeid: '',
-                showSaveButton: false,
-                EditMode: Csw.enums.editMode.Add,
-                propertyData: {},
-                ReloadTabOnSave: false,
-                ShowAsReport: false,
-                excludeOcProps: []
+                globalState: {
+                    propertyData: {},
+                    ShowAsReport: false,
+                    excludeOcProps: []
+                },
+                tabState: {
+                    nodetypeid: '',
+                    showSaveButton: false,
+                    EditMode: Csw.enums.editMode.Add
+                },
+                ReloadTabOnSave: false
             };
-            if (options) Csw.extend(cswPrivate, options);
+            Csw.extend(cswPrivate, options);
 
             var cswPublic = {};
 

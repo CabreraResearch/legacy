@@ -78,11 +78,11 @@
                             //                        resizeWithParent: false,
                             //                        resizeWithParentElement: $('#nodetabs_props'),
                             viewid: viewid,
-                            nodeid: cswPublic.data.nodeid,
-                            cswnbtnodekey: cswPublic.data.cswnbtnodekey,
-                            readonly: cswPublic.data.ReadOnly,
+                            nodeid: cswPublic.data.tabState.nodeid,
+                            cswnbtnodekey: cswPublic.data.tabState.cswnbtnodekey,
+                            readonly: cswPublic.data.isReadOnly(),
                             reinit: false,
-                            EditMode: cswPublic.data.EditMode,
+                            EditMode: cswPublic.data.tabState.EditMode,
                             onEditNode: function () {
                                 //o.onReload();
                                 cswPrivate.reinitGrid();
@@ -104,7 +104,7 @@
                             urlMethod: 'getThinGrid',
                             data: {
                                 ViewId: cswPrivate.viewid,
-                                IncludeNodeKey: cswPublic.data.cswnbtnodekey,
+                                IncludeNodeKey: cswPublic.data.tabState.cswnbtnodekey,
                                 MaxRows: cswPrivate.maxRows
                             },
                             success: function (data) {
@@ -113,7 +113,7 @@
                                     hasHeader: true,
                                     onLinkClick: function () {
                                         $.CswDialog('OpenEmptyDialog', {
-                                            title: cswPublic.data.nodename + ' ' + cswPublic.data.propData.name,
+                                            title: cswPublic.data.tabState.nodename + ' ' + cswPublic.data.propData.name,
                                             onOpen: function (dialogDiv) {
                                                 cswPrivate.makeFullGrid(cswPrivate.viewid, dialogDiv);
                                             },
@@ -132,7 +132,7 @@
                             urlMethod: 'getGridRowCount',
                             data: {
                                 ViewId: cswPrivate.viewid,
-                                IncludeNodeKey: cswPublic.data.cswnbtnodekey
+                                IncludeNodeKey: cswPublic.data.tabState.cswnbtnodekey
                             },
                             success: function (data) {
                                 cswPublic.control = cswPrivate.parent.linkGrid({
@@ -153,7 +153,7 @@
                         });
                     };
 
-                    if (cswPublic.data.EditMode === Csw.enums.editMode.AuditHistoryInPopup || cswPublic.data.Multi) {
+                    if (cswPublic.data.tabState.EditMode === Csw.enums.editMode.AuditHistoryInPopup || cswPublic.data.isMulti()) {
                         cswPublic.control = cswPrivate.parent.append('[Grid display disabled]');
                     } else {
                         

@@ -238,14 +238,19 @@
             }
             cswPublic.tabsAndProps = Csw.layouts.tabsAndProps(cswPublic.div, {
                 ID: Csw.makeId(cswPrivate.ID, 'tabsAndProps'),
-                nodeids: [ cswPrivate.nodeid ],
-                nodetypeid: cswPrivate.nodetypeid,
-                relatednodeid: cswPrivate.relatednodeid,
-                relatednodename: cswPrivate.relatednodename,
-                relatednodetypeid: cswPrivate.relatednodetypeid,
-                relatedobjectclassid: cswPrivate.relatedobjectclassid,
-                propertyData: cswPrivate.propertyData,
-                EditMode: Csw.enums.editMode.Add,
+                globalState: {
+                    propertyData: cswPrivate.propertyData,
+                    ShowAsReport: false,
+                    nodeids: [cswPrivate.nodeid]
+                },
+                tabState: {
+                    nodetypeid: cswPrivate.nodetypeid,
+                    relatednodeid: cswPrivate.relatednodeid,
+                    relatednodename: cswPrivate.relatednodename,
+                    relatednodetypeid: cswPrivate.relatednodetypeid,
+                    relatedobjectclassid: cswPrivate.relatedobjectclassid,
+                    EditMode: Csw.enums.editMode.Add
+                },
                 ReloadTabOnSave: false,
                 onSave: function (nodeid, cswnbtnodekey, tabcount, nodename) {
                     cswPublic.div.$.dialog('close');
@@ -254,8 +259,8 @@
                 },
                 onInitFinish: function () {
                     //openDialog(cswPublic.div, 800, 600, null, cswPublic.title);
-                },
-                ShowAsReport: false
+                }
+                
             });
             return cswPublic;
         },
@@ -279,8 +284,13 @@
             };
 
             cswPublic.tabsAndProps = Csw.layouts.tabsAndProps(cswPublic.div, {
-                nodetypeid: cswPrivate.nodetypeid,
-                EditMode: Csw.enums.editMode.Add,
+                globalState: {
+                    ShowAsReport: false
+                },
+                tabState: {
+                    nodetypeid: cswPrivate.nodetypeid,
+                    EditMode: Csw.enums.editMode.Add
+                },
                 ReloadTabOnSave: false,
                 onSave: function (nodeid, cswnbtnodekey, tabcount, nodename) {
                     Csw.ajax.post({
@@ -309,8 +319,8 @@
                 },
                 onInitFinish: function () {
                     openDialog(cswPublic.div, 800, 600, null, cswPublic.title);
-                },
-                ShowAsReport: false
+                }
+                
             });
             return cswPublic;
         }, // AddFeedbackDialog
@@ -399,11 +409,16 @@
         }, // AddNodeTypeDialog
         EditLayoutDialog: function (cswNodeTabOptions) {
             cswNodeTabOptions.ID = cswNodeTabOptions.ID + '_editlayout';
-            cswNodeTabOptions.Config = true;
-            cswNodeTabOptions.ShowAsReport = false;
-            cswNodeTabOptions.EditMode = 'Edit';
+            cswNodeTabOptions.tabState = {
+                Config: true,
+                EditMode: 'Edit'
+            };
+            cswNodeTabOptions.globalState = {
+                ShowAsReport: false
+            };
+            
             cswNodeTabOptions.onTabSelect = function (tabid) {
-                cswNodeTabOptions.tabid = tabid;
+                cswNodeTabOptions.tabState.tabid = tabid;
                 _configAddOptions();
             };
             cswNodeTabOptions.onPropertyRemove = function () {
@@ -429,7 +444,7 @@
                 selected: 'Edit',
                 values: ['Add', 'Edit', 'Preview', 'Table'],
                 onChange: function () {
-                    cswNodeTabOptions.EditMode = $('#EditLayoutDialog_layoutselect option:selected').val();
+                    cswNodeTabOptions.tabState.EditMode = $('#EditLayoutDialog_layoutselect option:selected').val();
                     _resetLayout();
                 }
             });
@@ -457,7 +472,7 @@
                             urlMethod: 'addPropertyToLayout',
                             data: {
                                 PropId: Csw.string(addSelect.val()),
-                                TabId: Csw.string(cswNodeTabOptions.tabid),
+                                TabId: Csw.string(cswNodeTabOptions.tabState.tabid),
                                 LayoutType: layoutSelect.val()
                             },
                             success: function () {
@@ -467,10 +482,10 @@
                     } // onChange
                 }); // 
                 var ajaxdata = {
-                    NodeId: Csw.string(cswNodeTabOptions.nodeids[0]),
-                    NodeKey: Csw.string(cswNodeTabOptions.nodekeys[0]),
-                    NodeTypeId: Csw.string(cswNodeTabOptions.nodetypeid),
-                    TabId: Csw.string(cswNodeTabOptions.tabid),
+                    NodeId: Csw.string(cswNodeTabOptions.globalState.nodeids[0]),
+                    NodeKey: Csw.string(cswNodeTabOptions.globalState.nodekeys[0]),
+                    NodeTypeId: Csw.string(cswNodeTabOptions.tabState.nodetypeid),
+                    TabId: Csw.string(cswNodeTabOptions.tabState.tabid),
                     LayoutType: layoutSelect.val()
                 };
                 Csw.ajax.post({
@@ -554,16 +569,21 @@
                 //tabCell.$.CswNodeTabs({
 
                 cswPublic.tabsAndProps = Csw.layouts.tabsAndProps(tabCell, {
-                    nodeids: cswPrivate.nodeids,
-                    nodekeys: cswPrivate.nodekeys,
-                    nodenames: cswPrivate.nodenames,
-                    filterToPropId: cswPrivate.filterToPropId,
-                    Multi: cswPrivate.Multi,
-                    ReadOnly: cswPrivate.ReadOnly,
-                    EditMode: myEditMode,
-                    //title: o.title,
-                    tabid: Csw.cookie.get(Csw.cookie.cookieNames.CurrentTabId),
-                    date: date,
+                    globalState: {
+                        date: date,
+                        nodeids: cswPrivate.nodeids,
+                        nodekeys: cswPrivate.nodekeys,
+                        nodenames: cswPrivate.nodenames,
+                        filterToPropId: cswPrivate.filterToPropId
+                        //title: o.title,
+                    },
+                    tabState: {
+                        Multi: cswPrivate.Multi,
+                        ReadOnly: cswPrivate.ReadOnly,
+                        EditMode: myEditMode,
+                        tabid: Csw.cookie.get(Csw.cookie.cookieNames.CurrentTabId)
+                    },
+                    
                     ReloadTabOnSave: true,
                     Refresh: cswPrivate.onRefresh,
                     onEditView: function (viewid) {
@@ -575,7 +595,6 @@
                         if (tabcount === 2 || cswPrivate.Multi) { /* Ignore history tab */
                             cswPublic.close();
                         }
-                        //setupTabs(date);//case 26107
                         Csw.tryExec(cswPrivate.onEditNode, nodeids, nodekeys, cswPublic.close);
                     },
                     onBeforeTabSelect: function () {

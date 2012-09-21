@@ -278,8 +278,12 @@
 
                         cswPrivate.tabsAndProps = Csw.wizard.addLayout(cswPrivate.divStep2, {
                             ID: cswPrivate.state.containerNodeTypeId + 'add_layout',
-                            nodetypeid: cswPrivate.state.containerNodeTypeId,
-                            propertyData: cswPrivate.state.containerAddLayout
+                            tabState: {
+                                nodetypeid: cswPrivate.state.containerNodeTypeId
+                            },
+                            globalState: {
+                                propertyData: cswPrivate.state.containerAddLayout
+                            }
                         });
 
                         cswPrivate.stepTwoComplete = true;
@@ -319,19 +323,22 @@
                             div = cswPrivate.divStep3.div();
 
                             cswPrivate.documentTabsAndProps = Csw.layouts.tabsAndProps(div, {
-                                nodetypeid: cswPrivate.state.documentTypeId,
-                                showSaveButton: false,
-                                EditMode: Csw.enums.editMode.Add,
+                                tabState: {
+                                    showSaveButton: false,
+                                    EditMode: Csw.enums.editMode.Add,
+                                    nodetypeid: cswPrivate.state.documentTypeId
+                                },
+                                globalState: {
+                                    ShowAsReport: false,
+                                    excludeOcProps: ['owner']
+                                },
                                 ReloadTabOnSave: false,
-                                ShowAsReport: false,
-                                excludeOcProps: ['owner'],
                                 onNodeIdSet: function (documentId) {
                                     cswPrivate.state.documentId = documentId;
                                 }
                             });
 
                         }
-
                         cswPrivate.stepThreeComplete = true;
                     }
                 };

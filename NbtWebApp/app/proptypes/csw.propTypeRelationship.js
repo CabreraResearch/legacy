@@ -17,8 +17,8 @@
                     cswPrivate.propVals = cswPublic.data.propData.values;
                     cswPrivate.parent = cswPublic.data.propDiv;
 
-                    cswPrivate.selectedNodeId = (false === cswPublic.data.Multi) ? Csw.string(cswPrivate.propVals.relatednodeid).trim() : Csw.enums.multiEditDefaultValue;
-                    cswPrivate.selectedName = (false === cswPublic.data.Multi) ? Csw.string(cswPrivate.propVals.name).trim() : Csw.enums.multiEditDefaultValue;
+                    cswPrivate.selectedNodeId = (false === cswPublic.data.isMulti()) ? Csw.string(cswPrivate.propVals.relatednodeid).trim() : Csw.enums.multiEditDefaultValue;
+                    cswPrivate.selectedName = (false === cswPublic.data.isMulti()) ? Csw.string(cswPrivate.propVals.name).trim() : Csw.enums.multiEditDefaultValue;
                     cswPrivate.nodeTypeId = Csw.string(cswPrivate.propVals.nodetypeid).trim();
                     cswPrivate.objectClassId = Csw.string(cswPrivate.propVals.objectclassid).trim();
                     cswPrivate.allowAdd = Csw.bool(cswPrivate.propVals.allowadd);
@@ -31,17 +31,17 @@
                     cswPrivate.onAddNodeFunc = { };
 
                     // Default to selected node as relationship value for new nodes being added
-                    if (false === Csw.isNullOrEmpty(cswPublic.data.relatednodeid) &&
+                    if (false === Csw.isNullOrEmpty(cswPublic.data.tabState.relatednodeid) &&
                         Csw.isNullOrEmpty(cswPrivate.selectedNodeId) &&
-                        false === cswPublic.data.Multi &&
-                        (Csw.number(cswPublic.data.relatednodetypeid) === Csw.number(cswPrivate.nodeTypeId) ||
-                          Csw.number(cswPublic.data.relatedobjectclassid) === Csw.number(cswPrivate.objectClassId))) {
+                        false === cswPublic.data.isMulti() &&
+                        (Csw.number(cswPublic.data.tabState.relatednodetypeid) === Csw.number(cswPrivate.nodeTypeId) ||
+                          Csw.number(cswPublic.data.tabState.relatedobjectclassid) === Csw.number(cswPrivate.objectClassId))) {
 
-                        cswPrivate.selectedNodeId = cswPublic.data.relatednodeid;
-                        cswPrivate.selectedName = cswPublic.data.relatednodename;
+                        cswPrivate.selectedNodeId = cswPublic.data.tabState.relatednodeid;
+                        cswPrivate.selectedName = cswPublic.data.tabState.relatednodename;
                     }
 
-                    if (cswPublic.data.ReadOnly) {
+                    if (cswPublic.data.isReadOnly()) {
                         cswPublic.control = cswPrivate.parent.append(cswPrivate.selectedName);
                         cswPrivate.parent.$.hover(function (event) { Csw.nodeHoverIn(event, cswPrivate.selectedNodeId); },
                                         function (event) { Csw.nodeHoverOut(event, cswPrivate.selectedNodeId); });
@@ -100,7 +100,7 @@
                         } else {
                             // Select value in a selectbox
 
-                            if (cswPublic.data.Multi) {
+                            if (cswPublic.data.isMulti()) {
                                 cswPrivate.relationships.push({ value: Csw.enums.multiEditDefaultValue, display: Csw.enums.multiEditDefaultValue });
                             }
                             cswPrivate.foundSelected = false;
@@ -110,7 +110,7 @@
                                 }
                                 cswPrivate.relationships.push({ value: relatedObj.id, display: relatedObj.value });
                             }, false);
-                            if (false === cswPublic.data.Multi && false === cswPrivate.foundSelected) {
+                            if (false === cswPublic.data.isMulti() && false === cswPrivate.foundSelected) {
                                 // case 25820 - guarantee selected option appears
                                 cswPrivate.relationships.push({ value: cswPrivate.selectedNodeId, display: cswPrivate.selectedName });
                             }
@@ -165,9 +165,9 @@
                                 }
                             };
 
-                            cswPrivate.toggleOptions(cswPublic.data.EditMode === Csw.enums.editMode.Add || (cswPublic.data.Required && Csw.isNullOrEmpty(cswPrivate.selectedNodeId)));
+                            cswPrivate.toggleOptions(cswPublic.data.tabState.EditMode === Csw.enums.editMode.Add || (cswPublic.data.isRequired() && Csw.isNullOrEmpty(cswPrivate.selectedNodeId)));
                                                                                                                                                                                       
-                            cswPrivate.selectBox.required(cswPublic.data.Required);
+                            cswPrivate.selectBox.required(cswPublic.data.isRequired());
                             
                             cswPrivate.onAddNodeFunc = function (nodeid, nodekey, nodename) {
                                 cswPrivate.selectBox.option({ value: nodeid, display: nodename });

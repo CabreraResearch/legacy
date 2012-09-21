@@ -41,10 +41,10 @@
                     cswPrivate.propVals = cswPublic.data.propData.values;
                     cswPrivate.parent = cswPublic.data.propDiv;
 
-                    cswPrivate.red = (false === cswPublic.data.Multi) ? cswPrivate.propVals.flammability : Csw.enums.multiEditDefaultValue;
-                    cswPrivate.yellow = (false === cswPublic.data.Multi) ? cswPrivate.propVals.reactivity : Csw.enums.multiEditDefaultValue;
-                    cswPrivate.blue = (false === cswPublic.data.Multi) ? cswPrivate.propVals.health : Csw.enums.multiEditDefaultValue;
-                    cswPrivate.white = (false === cswPublic.data.Multi) ? cswPrivate.propVals.special : Csw.enums.multiEditDefaultValue;
+                    cswPrivate.red = (false === cswPublic.data.isMulti()) ? cswPrivate.propVals.flammability : Csw.enums.multiEditDefaultValue;
+                    cswPrivate.yellow = (false === cswPublic.data.isMulti()) ? cswPrivate.propVals.reactivity : Csw.enums.multiEditDefaultValue;
+                    cswPrivate.blue = (false === cswPublic.data.isMulti()) ? cswPrivate.propVals.health : Csw.enums.multiEditDefaultValue;
+                    cswPrivate.white = (false === cswPublic.data.isMulti()) ? cswPrivate.propVals.special : Csw.enums.multiEditDefaultValue;
                     cswPrivate.displayMode = cswPrivate.propVals.displaymode;
                     cswPrivate.hideSpecial = cswPrivate.propVals.hidespecial;
                     
@@ -138,13 +138,13 @@
                     cswPrivate.setValue(cswPrivate.blueDiv, cswPrivate.blue);
                     cswPrivate.setValue(cswPrivate.whiteDiv, cswPrivate.white);
 
-                    if (false === cswPublic.data.ReadOnly) {
+                    if (false === cswPublic.data.isReadOnly()) {
                         cswPrivate.editTable = cswPublic.control.cell(1, 2).table({
                             ID: Csw.makeId(cswPublic.data.ID, 'edittbl'),
                             FirstCellRightAlign: true
                         });
 
-                        if (cswPublic.data.Multi) {
+                        if (cswPublic.data.isMulti()) {
                             cswPrivate.selVals.push({ value: Csw.enums.multiEditDefaultValue, display: Csw.enums.multiEditDefaultValue });
                             cswPrivate.whiteVals.push({ value: Csw.enums.multiEditDefaultValue, display: Csw.enums.multiEditDefaultValue });
                         }

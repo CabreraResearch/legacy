@@ -16,7 +16,7 @@
                     'use strict';
 
                     cswPrivate.isMultiEditValid = function (value) {
-                        return cswPublic.data.Multi && value === Csw.enums.multiEditDefaultValue;
+                        return cswPublic.data.isMulti() && value === Csw.enums.multiEditDefaultValue;
                     };
 
                     cswPrivate.propVals = cswPublic.data.propData.values;
@@ -24,8 +24,8 @@
 
                     cswPrivate.precision = Csw.number(cswPrivate.propVals.precision, 6);
                     cswPrivate.ceilingVal = '999999999' + Csw.getMaxValueForPrecision(cswPrivate.precision);
-                    cswPrivate.selectedNodeId = (false === cswPublic.data.Multi) ? Csw.string(cswPrivate.propVals.relatednodeid).trim() : Csw.enums.multiEditDefaultValue;
-                    cswPrivate.selectedName = (false === cswPublic.data.Multi) ? Csw.string(cswPrivate.propVals.name).trim() : Csw.enums.multiEditDefaultValue;
+                    cswPrivate.selectedNodeId = (false === cswPublic.data.isMulti()) ? Csw.string(cswPrivate.propVals.relatednodeid).trim() : Csw.enums.multiEditDefaultValue;
+                    cswPrivate.selectedName = (false === cswPublic.data.isMulti()) ? Csw.string(cswPrivate.propVals.name).trim() : Csw.enums.multiEditDefaultValue;
                     cswPrivate.nodeTypeId = Csw.string(cswPrivate.propVals.nodetypeid).trim();
                     cswPrivate.objectClassId = Csw.string(cswPrivate.propVals.objectclassid).trim();
                     cswPrivate.options = cswPrivate.propVals.options;
@@ -40,13 +40,13 @@
                         cswPublic.control = cswPrivate.parent.span({ text: cswPublic.data.propData.gestalt });
                     } else {
 
-                        if (false === Csw.isNullOrEmpty(cswPublic.data.relatednodeid) &&
+                        if (false === Csw.isNullOrEmpty(cswPublic.data.tabState.relatednodeid) &&
                             Csw.isNullOrEmpty(cswPrivate.selectedNodeId) &&
-                            false === cswPublic.data.Multi &&
-                            (Csw.number(cswPublic.data.relatednodetypeid) === Csw.number(cswPrivate.nodeTypeId) ||
-                              Csw.number(cswPublic.data.relatedobjectclassid) === Csw.number(cswPrivate.objectClassId))) {
-                            cswPrivate.selectedNodeId = cswPublic.data.relatednodeid;
-                            cswPrivate.selectedName = cswPublic.data.relatednodename;
+                            false === cswPublic.data.isMulti() &&
+                            (Csw.number(cswPublic.data.tabState.relatednodetypeid) === Csw.number(cswPrivate.nodeTypeId) ||
+                              Csw.number(cswPublic.data.tabState.relatedobjectclassid) === Csw.number(cswPrivate.objectClassId))) {
+                            cswPrivate.selectedNodeId = cswPublic.data.tabState.relatednodeid;
+                            cswPrivate.selectedName = cswPublic.data.tabState.relatednodename;
                         }
 
                         cswPublic.control = cswPrivate.parent.table({
@@ -55,13 +55,13 @@
 
                         cswPrivate.numberTextBox = cswPublic.control.cell(1, cswPrivate.cellCol).numberTextBox({
                             ID: cswPublic.data.ID + '_qty',
-                            value: (false === cswPublic.data.Multi) ? Csw.string(cswPrivate.propVals.value).trim() : Csw.enums.multiEditDefaultValue,
+                            value: (false === cswPublic.data.isMulti()) ? Csw.string(cswPrivate.propVals.value).trim() : Csw.enums.multiEditDefaultValue,
                             MinValue: Csw.number(cswPrivate.propVals.minvalue),
                             MaxValue: Csw.number(cswPrivate.propVals.maxvalue),
                             ceilingVal: Csw.number(cswPrivate.ceilingVal),
                             Precision: 6, //case 24646 - precision is being handled in the validator below, so we don't want to use the one in numberTextBox.
-                            ReadOnly: Csw.bool(cswPublic.data.ReadOnly),
-                            Required: Csw.bool(cswPublic.data.Required),
+                            ReadOnly: Csw.bool(cswPublic.data.isReadOnly()),
+                            Required: Csw.bool(cswPublic.data.isRequired()),
                             onChange: function () {
                                 var val = cswPrivate.numberTextBox.val();
                                 Csw.tryExec(cswPublic.data.onChange, val);
@@ -75,10 +75,10 @@
                             cswPrivate.numberTextBox.clickOnEnter(cswPublic.data.saveBtn);
                         }
 
-                        if (cswPublic.data.Multi) {
+                        if (cswPublic.data.isMulti()) {
                             cswPrivate.relationships.push({ value: Csw.enums.multiEditDefaultValue, display: Csw.enums.multiEditDefaultValue });
                         }
-                        if (false === cswPublic.data.Required) {
+                        if (false === cswPublic.data.isRequired()) {
                             cswPrivate.relationships.push({ value: '', display: '', frac: true });
                         }
 
@@ -90,7 +90,7 @@
                             }
                             cswPrivate.relationships.push({ value: relatedObj.id, display: relatedObj.value, frac: Csw.bool(relatedObj.fractional) });
                         }, false);
-                        if (false === cswPublic.data.Multi && false === cswPrivate.foundSelected && false === Csw.isNullOrEmpty(cswPrivate.selectedNodeId)) {
+                        if (false === cswPublic.data.isMulti() && false === cswPrivate.foundSelected && false === Csw.isNullOrEmpty(cswPrivate.selectedNodeId)) {
                             cswPrivate.relationships.push({ value: cswPrivate.selectedNodeId, display: cswPrivate.selectedName, frac: Csw.bool(cswPrivate.propVals.fractional) });
                         }
                         cswPrivate.selectBox = cswPublic.control.cell(1, cswPrivate.cellCol).select({
@@ -112,8 +112,8 @@
                         });
                         cswPrivate.cellCol += 1;
 
-                        cswPrivate.selectBox.required(cswPublic.data.Required);
-                        cswPrivate.numberTextBox.required(cswPublic.data.Required);
+                        cswPrivate.selectBox.required(cswPublic.data.isRequired());
+                        cswPrivate.numberTextBox.required(cswPublic.data.isRequired());
 
                         $.validator.addMethod('validateInteger', function (value, element) {
                             return (cswPrivate.isMultiEditValid(value) || cswPrivate.precision != 0 || Csw.validateInteger(cswPrivate.numberTextBox.val()));

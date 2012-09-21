@@ -47,17 +47,17 @@
                     }; // checkCompliance()
 
 
-                    cswPrivate.answer = (false === cswPublic.data.Multi) ? Csw.string(cswPrivate.propVals.answer).trim() : Csw.enums.multiEditDefaultValue;
+                    cswPrivate.answer = (false === cswPublic.data.isMulti()) ? Csw.string(cswPrivate.propVals.answer).trim() : Csw.enums.multiEditDefaultValue;
                     cswPrivate.allowedAnswers = Csw.string(cswPrivate.propVals.allowedanswers).trim();
                     cswPrivate.compliantAnswers = Csw.string(cswPrivate.propVals.compliantanswers).trim();
-                    cswPrivate.comments = (false === cswPublic.data.Multi) ? Csw.string(cswPrivate.propVals.comments).trim() : Csw.enums.multiEditDefaultValue;
-                    cswPrivate.correctiveAction = (false === cswPublic.data.Multi) ? Csw.string(cswPrivate.propVals.correctiveaction).trim() : Csw.enums.multiEditDefaultValue;
-                    cswPrivate.multi = cswPublic.data.Multi;
-                    cswPrivate.dateAnswered = (false === cswPublic.data.Multi) ? Csw.string(cswPrivate.propVals.dateanswered.date).trim() : '';
-                    cswPrivate.dateCorrected = (false === cswPublic.data.Multi) ? Csw.string(cswPrivate.propVals.datecorrected.date).trim() : '';
+                    cswPrivate.comments = (false === cswPublic.data.isMulti()) ? Csw.string(cswPrivate.propVals.comments).trim() : Csw.enums.multiEditDefaultValue;
+                    cswPrivate.correctiveAction = (false === cswPublic.data.isMulti()) ? Csw.string(cswPrivate.propVals.correctiveaction).trim() : Csw.enums.multiEditDefaultValue;
+                    cswPrivate.multi = cswPublic.data.isMulti();
+                    cswPrivate.dateAnswered = (false === cswPublic.data.isMulti()) ? Csw.string(cswPrivate.propVals.dateanswered.date).trim() : '';
+                    cswPrivate.dateCorrected = (false === cswPublic.data.isMulti()) ? Csw.string(cswPrivate.propVals.datecorrected.date).trim() : '';
                     cswPrivate.isActionRequired = Csw.bool(cswPrivate.propVals.isactionrequired); //case 25035
                     
-                    if (cswPublic.data.ReadOnly) {
+                    if (cswPublic.data.isReadOnly()) {
                         cswPublic.control = cswPrivate.parent.div();
                         cswPublic.control.append('Answer: ' + cswPrivate.answer);
                         if (cswPrivate.dateAnswered !== '') {
@@ -79,7 +79,7 @@
 
                         cswPublic.control.cell(1, 1).text('Answer');
                         cswPrivate.splitAnswers = cswPrivate.allowedAnswers.split(',');
-                        if (cswPublic.data.Multi) {
+                        if (cswPublic.data.isMulti()) {
                             cswPrivate.splitAnswers.push(Csw.enums.multiEditDefaultValue);
                         } else {
                             cswPrivate.splitAnswers.push('');
