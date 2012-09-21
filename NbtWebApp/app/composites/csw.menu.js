@@ -108,8 +108,8 @@
                                 break;
                             case 'PrintLabel':
                                 $.CswDialog('PrintLabelDialog', {
-                                    nodeid: nodeid,
-                                    propids: [ Csw.string(menuItemJson.propid) ]
+                                    nodeids: [ nodeid ],
+                                    nodetypeid: Csw.string(menuItemJson.nodetypeid)
                                 });
                                 break;
                             case 'Logout':

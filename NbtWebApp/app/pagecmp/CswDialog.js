@@ -952,10 +952,9 @@
             ///<summary>Creates an Print Label dialog and returns an object represent that dialog.</summary>
             var cswPrivate = {
                 ID: 'print_label',
-                GetPrintLabelsUrl: 'getLabels',
-                GetEPLTextUrl: 'getEPLText',
-                nodeid: '',
-                propids: []
+                GetPrintLabelsUrl: 'Labels/type/',
+                nodeids: [],
+                nodetypeid: ''
             };
             if (Csw.isNullOrEmpty(options)) {
                 Csw.error.throwException(Csw.error.exception('Cannot create an Print Label Dialog without options.', '', 'CswDialog.js', 893));
@@ -969,9 +968,9 @@
             };
 
             var getEplContext = function () {
-                Csw.openPopup('Print.html?PropIds=' + cswPrivate.propid + '&PrintLabelNodeId=' + labelSel.val(), 'Print ' + labelSel.selectedText(), {
-                    width: 400,
-                    height: 200,
+                Csw.openPopup('Print.html?TargetId=' + cswPrivate.nodeids + '&PrintLabelNodeId=' + labelSel.val(), 'Print ' + labelSel.selectedText(), {
+                    width: 477,
+                    height: 204,
                     location: 'no',
                     toolbar: 'no',
                     status: 'no',
@@ -988,15 +987,13 @@
                 ID: cswPrivate.ID + '_labelsel'
             });
 
-            var jData = { PropId: cswPrivate.propid };
-            Csw.ajax.post({
-                urlMethod: cswPrivate.GetPrintLabelsUrl,
-                data: jData,
+            Csw.ajaxWcf.get({
+                urlMethod: cswPrivate.GetPrintLabelsUrl + cswPrivate.nodetypeid,
                 success: function (data) {
-                    if (data.labels.length > 0) {
-                        for (var i = 0; i < data.labels.length; i++) {
-                            var label = data.labels[i];
-                            labelSel.option({ value: label.nodeid, display: label.name });
+                    if (data.Labels && data.Labels.length > 0) {
+                        for (var i = 0; i < data.Labels.length; i += 1) {
+                            var label = data.Labels[i];
+                            labelSel.option({ value: label.Id, display: label.Name });
                         }
                     } else {
 

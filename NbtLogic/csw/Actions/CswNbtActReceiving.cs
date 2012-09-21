@@ -184,8 +184,7 @@ namespace ChemSW.Nbt.Actions
                                                 AsContainer.DispenseIn( CswNbtObjClassContainerDispenseTransaction.DispenseType.Receive, QuantityValue, UnitId );
                                                 AsContainer.postChanges( true );
                                                 ContainerIds.Add( AsContainer.NodeId );
-                                                CswPropIdAttr BarcodeAttr = new CswPropIdAttr( AsContainer, AsContainer.Barcode.NodeTypeProp );
-                                                jBarcodes.Add( BarcodeAttr.ToString() );
+                                                jBarcodes.Add( AsContainer.NodeId.ToString() );
                                             }
                                         }
                                     }

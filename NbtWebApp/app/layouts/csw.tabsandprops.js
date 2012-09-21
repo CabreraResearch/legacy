@@ -96,6 +96,11 @@
                 return tabContentDiv;
             };
 
+            cswPrivate.setPrivateProp = function(obj, propName) {
+                cswPrivate[propName] = obj[propName];
+                delete obj[propName];
+            };
+
             cswPrivate.getTabs = function (tabContentDiv) {
                 'use strict';
                 // For performance, don't bother getting tabs if we're in Add, Temp, Preview or Table
@@ -129,8 +134,8 @@
                             var selectedtabno = 0;
                             var tabno = 0;
                             var tabDiv, tabUl;
-                            cswPrivate.nodename = data.nodename;
-                            delete data.nodename;
+                            cswPrivate.setPrivateProp(data, 'nodename');
+                            cswPrivate.setPrivateProp(data, 'nodetypeid');
                             var tabFunc = function (thisTab) {
                                 var thisTabId = thisTab.id;
 
@@ -675,6 +680,7 @@
                     var fieldOpt = Csw.nbt.propertyOption({
                         fieldtype: propData.fieldtype,
                         nodeid: cswPublic.getNodeId(),
+                        nodetypeid: cswPrivate.nodetypeid,
                         nodename: cswPrivate.nodename,
                         relatednodeid: cswPrivate.relatednodeid,
                         relatednodename: cswPrivate.relatednodename,

@@ -133,8 +133,8 @@
                                         data.barcodes.length > 0) {
 
                                         $.CswDialog('PrintLabelDialog', {
-                                            nodeid: data.containerId,
-                                            propids: data.barcodes
+                                            nodeid: data.barcodes,
+                                            nodetypeid: cswPrivate.state.containerNodeTypeId
                                         });
                                     } else {
                                         //handle warning

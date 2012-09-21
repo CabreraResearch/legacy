@@ -5,7 +5,6 @@ using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Security;
-using ChemSW.Nbt.ServiceDrivers;
 using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.WebServices
@@ -215,11 +214,7 @@ namespace ChemSW.Nbt.WebServices
                             PrintObj = PrintObj ?? new JObject( new JProperty( "haschildren", true ) );
                             PrintObj["Print Label"] = new JObject();
                             PrintObj["Print Label"]["nodeid"] = Node.NodeId.ToString();
-                            CswNbtMetaDataNodeTypeProp BarcodeProperty = Node.getNodeType().getBarcodeProperty();
-                            if( null != BarcodeProperty )
-                            {
-                                PrintObj["Print Label"]["propid"] = new CswPropIdAttr( Node, BarcodeProperty ).ToString();
-                            }
+                            PrintObj["Print Label"]["nodetypeid"] = Node.NodeTypeId;
                             PrintObj["Print Label"]["action"] = MenuActions.PrintLabel.ToString();
                         }
                     }

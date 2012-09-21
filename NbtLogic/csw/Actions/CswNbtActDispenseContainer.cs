@@ -132,8 +132,7 @@ namespace ChemSW.Nbt.Actions
                                     UnitOfMeasurePK, RequestItemPk, ChildContainer );
                                 //ChildContainer.DispenseIn( CswNbtObjClassContainerDispenseTransaction.DispenseType.Dispense, QuantityToDispense, UnitOfMeasurePK, RequestItemPk, _SourceContainer );
                                 ChildContainer.postChanges( false );
-                                CswPropIdAttr BarcodeAttr = new CswPropIdAttr( ChildContainer, ChildContainer.Barcode.NodeTypeProp );
-                                jBarcodes.Add( BarcodeAttr.ToString() );
+                                jBarcodes.Add( ChildContainer.NodeId.ToString() );
                             }
                             _SourceContainer.postChanges( false );
                         }
