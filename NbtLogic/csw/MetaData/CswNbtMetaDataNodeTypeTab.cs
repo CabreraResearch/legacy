@@ -22,14 +22,12 @@ namespace ChemSW.Nbt.MetaData
         public DataRow _DataRow
         {
             get { return _NodeTypeTabRow; }
-            //set { _NodeTypeTabRow = value; }
         }
 
         private Int32 _UniqueId;
         public Int32 UniqueId
         {
             get { return _UniqueId; }
-            //set { _UniqueId = value; }
         }
 
         public string UniqueIdFieldName { get { return "nodetypetabsetid"; } }
@@ -44,49 +42,6 @@ namespace ChemSW.Nbt.MetaData
         public Collection<Int32> getNodeTypePropIds() { return _CswNbtMetaDataResources.NodeTypePropsCollection.getNodeTypePropIdsByTab( TabId ); }
         public IEnumerable<CswNbtMetaDataNodeTypeProp> getNodeTypeProps() { return _CswNbtMetaDataResources.NodeTypePropsCollection.getNodeTypePropsByTab( TabId ); }
         public IEnumerable<CswNbtMetaDataNodeTypeProp> getNodeTypePropsByDisplayOrder() { return _CswNbtMetaDataResources.NodeTypePropsCollection.getNodeTypePropsByDisplayOrder( NodeTypeId, TabId ); }
-
-        //public CswNbtMetaDataNodeTypeProp FirstPropByDisplayOrder()
-        //{
-        //    CswNbtMetaDataNodeTypeProp ret = null;
-        //    ICollection Props = NodeTypePropsByDisplayOrder;
-        //    // Weird, I know.
-        //    foreach( CswNbtMetaDataNodeTypeProp Prop in Props )
-        //    {
-        //        ret = Prop;
-        //        break;
-        //    }
-        //}
-
-        //public CswNbtMetaDataNodeTypeProp getNextPropByDisplayOrder( CswNbtMetaDataNodeTypeProp PreviousProp )
-        //{
-        //    CswNbtMetaDataNodeTypeProp ret = null;
-        //    ICollection Props = NodeTypePropsByDisplayOrder;
-        //    bool GetNext = false;
-        //    foreach( CswNbtMetaDataNodeTypeProp Prop in Props )
-        //    {
-        //        if( GetNext )
-        //        {
-        //            ret = Prop;
-        //            break;
-        //        }
-        //        if( Prop == PreviousProp )
-        //            GetNext = true;
-        //    }
-        //    return ret;
-        //}
-        //public CswNbtMetaDataNodeTypeProp getPreviousPropByDisplayOrder( CswNbtMetaDataNodeTypeProp NextProp )
-        //{
-        //    CswNbtMetaDataNodeTypeProp ret = null;
-        //    ICollection Props = NodeTypePropsByDisplayOrder;
-        //    //bool GetNext = false;
-        //    foreach( CswNbtMetaDataNodeTypeProp Prop in Props )
-        //    {
-        //        if( Prop == NextProp )
-        //            break;
-        //        ret = Prop;
-        //    }
-        //    return ret;
-        //}
 
         public Int32 TabId
         {
@@ -204,26 +159,10 @@ namespace ChemSW.Nbt.MetaData
             }
         }
 
-        //public Int32 GetPropDisplayOrder( CswNbtMetaDataNodeTypeProp Prop )
-        //{
-        //    return _CswNbtMetaDataResources.NodeTypePropsCollection.getNodeTypePropDisplayOrder( TabId, Prop );
-        //}
-
-        //public Int32 getCurrentMaxDisplayRow()
-        //{
-        //    Int32 Max = 0;
-        //    foreach( CswNbtMetaDataNodeTypeProp Prop in NodeTypeProps )
-        //    {
-        //        if( Prop.DisplayRow > Max )
-        //            Max = Prop.DisplayRow;
-        //    }
-        //    return Max;
-        //}
-
-        public static string _Element_MetaDataNodeTypeTab = "MetaDataNodeTypeTab";
-        public static string _Attribute_TabId = "tabid";
-        public static string _Attribute_TabName = "tabname";
-        public static string _Attribute_Order = "order";
+        public const string _Element_MetaDataNodeTypeTab = "MetaDataNodeTypeTab";
+        public const string _Attribute_TabId = "tabid";
+        public const string _Attribute_TabName = "tabname";
+        public const string _Attribute_Order = "order";
 
         public XmlNode ToXml( CswNbtView View, XmlDocument XmlDoc, bool ForMobile, bool PropsInViewOnly )
         {

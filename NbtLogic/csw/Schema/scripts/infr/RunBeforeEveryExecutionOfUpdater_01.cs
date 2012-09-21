@@ -1,7 +1,3 @@
-using ChemSW.Core;
-using ChemSW.Nbt;
-using ChemSW.Nbt.MetaData;
-using ChemSW.Nbt.ObjClasses;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -30,10 +26,9 @@ namespace ChemSW.Nbt.Schema
                 _CswNbtSchemaModTrnsctn.addStringColumn( "nodes", "sessionid", "Session ID of temporary node", logicaldelete: false, required: false, datatypesize: 50 );
             }
             _CswNbtSchemaModTrnsctn.execArbitraryPlatformNeutralSql( "update nodes set istemp='0', sessionid=''" );
-            
+
             #endregion ROMEO
 
-            
             #region SEBASTIAN
 
             //Add 5 generic nodetype prop attribute columns
@@ -57,6 +52,11 @@ namespace ChemSW.Nbt.Schema
             {
                 _CswNbtSchemaModTrnsctn.addStringColumn( "nodetype_props", "attribute5", "Generic nodetype prop attribute col", false, false, 100 );
             }
+            if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( "nodetypes", "haslabel" ) )
+            {
+                _CswNbtSchemaModTrnsctn.addBooleanColumn( "nodetypes", "haslabel", "Indicated whether the NodeType maps to a print label", false, false );
+            }
+
 
             #endregion SEBASTIAN
 

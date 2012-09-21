@@ -53,7 +53,7 @@ namespace ChemSW.Nbt.Actions
             {
                 CswNbtNode ChemSwAdminRoleNode = _CswNbtResources.Nodes.makeRoleNodeFromRoleName( CswNbtObjClassRole.ChemSWAdminRoleName );
                 Ret = new CswNbtView( _CswNbtResources );
-                Ret.makeNew( ViewName.ToString(), NbtViewVisibility.Role, ChemSwAdminRoleNode.NodeId );
+                Ret.saveNew( ViewName.ToString(), NbtViewVisibility.Role, ChemSwAdminRoleNode.NodeId );
                 Ret.Category = SiViewCategory;
                 Ret.ViewMode = NbtViewRenderingMode.List;
                 ReInit = true;
@@ -101,7 +101,7 @@ namespace ChemSW.Nbt.Actions
             {
                 CswNbtNode ChemSwAdminRoleNode = _CswNbtResources.Nodes.makeRoleNodeFromRoleName( CswNbtObjClassRole.ChemSWAdminRoleName );
                 Ret = new CswNbtView( _CswNbtResources );
-                Ret.makeNew( SystemViewName.SIInspectionsbyUser.ToString(), NbtViewVisibility.Role, ChemSwAdminRoleNode.NodeId );
+                Ret.saveNew( SystemViewName.SIInspectionsbyUser.ToString(), NbtViewVisibility.Role, ChemSwAdminRoleNode.NodeId );
                 Ret.Category = SiViewCategory;
                 Ret.ViewMode = NbtViewRenderingMode.List;
                 ReInit = true;
@@ -129,7 +129,7 @@ namespace ChemSW.Nbt.Actions
             {
                 CswNbtNode ChemSwAdminRoleNode = _CswNbtResources.Nodes.makeRoleNodeFromRoleName( CswNbtObjClassRole.ChemSWAdminRoleName );
                 Ret = new CswNbtView( _CswNbtResources );
-                Ret.makeNew( SystemViewName.SIInspectionsbyBarcode.ToString(), NbtViewVisibility.Role, ChemSwAdminRoleNode.NodeId );
+                Ret.saveNew( SystemViewName.SIInspectionsbyBarcode.ToString(), NbtViewVisibility.Role, ChemSwAdminRoleNode.NodeId );
                 Ret.Category = SiViewCategory;
                 Ret.ViewMode = NbtViewRenderingMode.List;
                 ReInit = true;
@@ -167,7 +167,7 @@ namespace ChemSW.Nbt.Actions
             {
                 CswNbtNode ChemSwAdminRoleNode = _CswNbtResources.Nodes.makeRoleNodeFromRoleName( CswNbtObjClassRole.ChemSWAdminRoleName );
                 Ret = new CswNbtView( _CswNbtResources );
-                Ret.makeNew( SystemViewName.SILocationsTree.ToString(), NbtViewVisibility.Role, ChemSwAdminRoleNode.NodeId );
+                Ret.saveNew( SystemViewName.SILocationsTree.ToString(), NbtViewVisibility.Role, ChemSwAdminRoleNode.NodeId );
                 Ret.Category = SiViewCategory;
                 Ret.ViewMode = NbtViewRenderingMode.Tree;
                 ReInit = true;
@@ -193,7 +193,7 @@ namespace ChemSW.Nbt.Actions
                 CswNbtNode ChemSwAdminRoleNode =
                     _CswNbtResources.Nodes.makeRoleNodeFromRoleName( CswNbtObjClassRole.ChemSWAdminRoleName );
                 Ret = new CswNbtView( _CswNbtResources );
-                Ret.makeNew( SystemViewName.SILocationsList.ToString(), NbtViewVisibility.Role,
+                Ret.saveNew( SystemViewName.SILocationsList.ToString(), NbtViewVisibility.Role,
                             ChemSwAdminRoleNode.NodeId );
                 Ret.Category = SiViewCategory;
                 Ret.ViewMode = NbtViewRenderingMode.List;
@@ -219,7 +219,7 @@ namespace ChemSW.Nbt.Actions
             {
                 Ret = new CswNbtView( _CswNbtResources );
                 CswNbtNode ChemSwAdminRoleNode = _CswNbtResources.Nodes.makeRoleNodeFromRoleName( CswNbtObjClassRole.ChemSWAdminRoleName );
-                Ret.makeNew( SystemViewName.CISProRequestCart.ToString(), NbtViewVisibility.Role, ChemSwAdminRoleNode.NodeId );
+                Ret.saveNew( SystemViewName.CISProRequestCart.ToString(), NbtViewVisibility.Role, ChemSwAdminRoleNode.NodeId );
                 ReInit = true;
             }
             if( ReInit )
@@ -262,7 +262,7 @@ namespace ChemSW.Nbt.Actions
             {
                 CswNbtNode ChemSwAdminRoleNode = _CswNbtResources.Nodes.makeRoleNodeFromRoleName( CswNbtObjClassRole.ChemSWAdminRoleName );
                 Ret = new CswNbtView( _CswNbtResources );
-                Ret.makeNew( SystemViewName.CISProRequestHistory.ToString(), NbtViewVisibility.Role, ChemSwAdminRoleNode.NodeId );
+                Ret.saveNew( SystemViewName.CISProRequestHistory.ToString(), NbtViewVisibility.Role, ChemSwAdminRoleNode.NodeId );
                 Ret.Category = "Request Configuration";
                 Ret.ViewMode = NbtViewRenderingMode.Tree;
                 ReInit = true;

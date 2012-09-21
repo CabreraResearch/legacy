@@ -119,6 +119,7 @@
     <Content Include="app\proptypes\csw.propTypeViewPickList.js" />
     <Content Include="app\proptypes\csw.propTypeViewReference.js" />
     <Content Include="ConnectTest.html" />
+    <Content Include="PrintTest.html" />
     <Content Include="etc\far.exe" />
     <Content Include="ExternalLogin.html" />
     <Content Include="app\composites\csw.jzebra.js" />
@@ -584,8 +585,12 @@
     <Content Include="vendor\jsTree.v.1.0rc2\_lib\jquery.cookie.js" />
     <Content Include="vendor\jsTree.v.1.0rc2\_lib\jquery.hotkeys.js" />
     <Content Include="vendor\jsTree.v.1.0rc2\_lib\jquery.js" />
+    <Content Include="vendor\jZebra\directPrint.js" />
+    <Content Include="vendor\jZebra\html2canvas.js" />
+    <Content Include="vendor\jZebra\jquery.plugin.html2canvas.js" />
     <Content Include="vendor\jZebra\jzebra.jar" />
     <Content Include="vendor\jZebra\jzebra.js" />
+    <Content Include="vendor\jZebra\jzebra_batch.js" />
     <Content Include="vendor\jZebra\lib\pdf-renderer.jar" />
     <Content Include="vendor\jZebra\loading.html" />
     <Content Include="vendor\jZebra\loading_green.gif" />
@@ -643,7 +648,6 @@
     <Content Include="app\pagecmp\CswDialog.js" />
     <Content Include="app\pagecmp\CswErrorMessage.js" />
     <Content Include="app\pagecmp\CswLogin.js" />
-    <Content Include="app\pagecmp\CswMenuHeader.js" />
     <Content Include="app\pagecmp\CswWelcome.js" />
     <Content Include="app\pagecmp\CswWizard.js" />
     <Content Include="app\tools\CswAttr.js" />

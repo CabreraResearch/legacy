@@ -21,5 +21,6 @@ call %1\Nbt\Nbt\Scripts\Links\make_one_link %1 \Nbt\Nbt\NbtSchemaImporter\bin
 call %1\Nbt\Nbt\Scripts\Links\make_one_link %1 \Nbt\Nbt\NbtSchemaUpdater\bin
 call %1\Nbt\Nbt\Scripts\Links\make_one_link %1 \Nbt\Nbt\NbtSchemaUpdaterCmdLn\bin
 call %1\Nbt\Nbt\Scripts\Links\make_one_link %1 \Nbt\Nbt\NbtWebApp
+call %1\Nbt\Nbt\Scripts\Links\make_one_link %1 \Nbt\Nbt\NbtWcfServices
 
 :End

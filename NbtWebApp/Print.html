@@ -9,8 +9,7 @@
     <!--#include file="MainCswIncludes.html" -->
     <script type="text/javascript">
 
-        $(document).ready(
-            Csw.method(function () {
+        window.onload = Csw.method(function () {
                 var cswPublic = { };
                 var cswPrivate = {
                     ID: 'print_label',
@@ -34,7 +33,7 @@
                 
                 cswPrivate.queryString = Csw.queryString();
 
-                Csw.subscribe('jZebra_Ready', function() {
+                
                     var data = {
                         PropId: Csw.string(cswPrivate.queryString.PropId),
                         PrintLabelNodeId: Csw.string(cswPrivate.queryString.PrintLabelNodeId)
@@ -53,6 +52,7 @@
                                     labelx.Print();
                                 };
                             } else {
+                            //cswPrivate.onZebraReady();
                                 cswPrivate.jZeb.findPrinters();
                                 cswPrivate.doPrint = function() {
                                     var printer = $('#printersList').val();
@@ -68,27 +68,26 @@
                     }); // ajax
                 
                     var printBtn = cswPublic.table.cell(1,2).buttonExt({
-                        icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.print),
+                    icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.barcode),
                         width: '100px',
                         bindOnEnter: true,
                         ID: 'print_label_print',
                         enabledText: 'Print',
-                        //disabledText: 'Printing...', 
                         disableOnClick: false,
                         onClick: function() {
                             cswPrivate.doPrint();
                         }
                     });
-                });
+                
 
                 cswPrivate.jZeb = cswPublic.table.cell(1,1).jZebra();
 
                 return cswPublic;
 
-            })
+            });
         
 
-        );
+        
     </script>
 </head>
 <body>
@@ -99,7 +98,7 @@
     </div>
     <div id="DialogErrorDiv"></div>
     <div id="hiddenDiv" style="visibility: hidden; border: 1px solid red;">
-        <applet id="jZebra" name="jZebra" code="jzebra.PrintApplet.class" archive="js/thirdparty/jZebra/jzebra.jar" width="0" height="0"></applet>
+        <applet id="jzebra" name="jzebra" code="jzebra.PrintApplet.class" archive="/vendor/jZebra/jzebra.jar" width="0" height="0"></applet>    
         <OBJECT ID="labelx" Name="labelx" classid="clsid:A8926827-7F19-48A1-A086-B1A5901DB7F0" codebase="CafLabelPrintUtil.cab#version=0,1,6,0" width=0 height=0 align=center hspace=0 vspace=0></OBJECT>
     </div>    
 

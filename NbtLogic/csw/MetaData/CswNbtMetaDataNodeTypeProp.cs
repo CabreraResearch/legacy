@@ -375,7 +375,7 @@ namespace ChemSW.Nbt.MetaData
                 {
                     // This prop is missing a view, so make one
                     CswNbtView ThisView = new CswNbtView( _CswNbtMetaDataResources.CswNbtResources );
-                    ThisView.makeNew( this.PropName, NbtViewVisibility.Property, null, null, Int32.MinValue );
+                    ThisView.saveNew( this.PropName, NbtViewVisibility.Property, null, null, Int32.MinValue );
                     if( this.getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.Grid )
                     {
                         // BZ 9203 - View starts with this property's nodetype at root
@@ -819,8 +819,8 @@ namespace ChemSW.Nbt.MetaData
                         // We can't point to the same view.  We need to copy the view, and refer to the copy.
                         CswNbtView View = _CswNbtMetaDataResources.CswNbtResources.ViewSelect.restoreView( new CswNbtViewId( CswConvert.ToInt32( _NodeTypePropRow[PropColumn.ColumnName] ) ) );
                         CswNbtView ViewCopy = new CswNbtView( _CswNbtMetaDataResources.CswNbtResources );
-                        ViewCopy.makeNew( View.ViewName, View.Visibility, View.VisibilityRoleId, View.VisibilityUserId, View );
-                        ViewCopy.save();
+                        ViewCopy.saveNew( View.ViewName, View.Visibility, View.VisibilityRoleId, View.VisibilityUserId, View );
+                        //ViewCopy.save();
                         NewPropRow[PropColumn.ColumnName] = CswConvert.ToDbVal( ViewCopy.ViewId.get() );
                     }
                     else if( PropColumn.ColumnName.ToLower() == "defaultvalueid" && CswTools.IsInteger( _NodeTypePropRow[PropColumn.ColumnName].ToString() ) )

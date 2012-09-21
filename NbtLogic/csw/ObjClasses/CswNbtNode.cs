@@ -508,8 +508,10 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 if( false == value )
                 {
+                    _NodeModificationState = NodeModificationState.Modified;
                     SessionId = string.Empty;
                 }
+
                 _IsTemp = value;
             }
         }
