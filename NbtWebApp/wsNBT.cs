@@ -1856,7 +1856,7 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string getTabs( string EditMode, string NodeId, string SafeNodeKey, string NodeTypeId, string Date, string filterToPropId, string Multi, string ConfigMode )
+        public string getTabs( string EditMode, string NodeId, string SafeNodeKey, string Date, string filterToPropId, string Multi, string ConfigMode )
         {
             JObject ReturnVal = new JObject();
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
@@ -1871,7 +1871,7 @@ namespace ChemSW.Nbt.WebServices
                     _setEditMode( EditMode );
                     CswDateTime InDate = new CswDateTime( _CswNbtResources );
                     InDate.FromClientDateTimeString( Date );
-                    ReturnVal = ws.getTabs( NodeId, SafeNodeKey, CswConvert.ToInt32( NodeTypeId ), InDate, filterToPropId );
+                    ReturnVal = ws.getTabs( NodeId, SafeNodeKey, InDate, filterToPropId );
                 }
 
                 _deInitResources();
@@ -2626,68 +2626,68 @@ namespace ChemSW.Nbt.WebServices
 
         } // saveMolProp()
 
-        [WebMethod( EnableSession = false )]
-        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string getLabels( string PropId )
-        {
-            JObject ReturnVal = new JObject();
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
-            try
-            {
-                _initResources();
-                AuthenticationStatus = _attemptRefresh();
+        //[WebMethod( EnableSession = false )]
+        //[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        //public string getLabels( string PropId )
+        //{
+        //    JObject ReturnVal = new JObject();
+        //    AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+        //    try
+        //    {
+        //        _initResources();
+        //        AuthenticationStatus = _attemptRefresh();
 
-                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
-                {
+        //        if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+        //        {
 
-                    CswNbtWebServicePrintLabels ws = new CswNbtWebServicePrintLabels( _CswNbtResources );
-                    ReturnVal = ws.getLabels( PropId );
-                }
+        //            CswNbtWebServicePrintLabels ws = new CswNbtWebServicePrintLabels( _CswNbtResources );
+        //            ReturnVal = ws.getLabels( PropId );
+        //        }
 
-                _deInitResources();
-            }
-            catch( Exception Ex )
-            {
-                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
-            }
+        //        _deInitResources();
+        //    }
+        //    catch( Exception Ex )
+        //    {
+        //        ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
+        //    }
 
-            CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
+        //    CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
 
-            return ReturnVal.ToString();
+        //    return ReturnVal.ToString();
 
-        }
+        //}
 
-        [WebMethod( EnableSession = false )]
-        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string getEPLText( string PropId, string PrintLabelNodeId )
-        {
-            JObject ReturnVal = new JObject();
+        //[WebMethod( EnableSession = false )]
+        //[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        //public string getEPLText( string PropId, string PrintLabelNodeId )
+        //{
+        //    JObject ReturnVal = new JObject();
 
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
-            try
-            {
-                _initResources();
-                AuthenticationStatus = _attemptRefresh();
+        //    AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+        //    try
+        //    {
+        //        _initResources();
+        //        AuthenticationStatus = _attemptRefresh();
 
-                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
-                {
+        //        if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+        //        {
 
-                    CswNbtWebServicePrintLabels ws = new CswNbtWebServicePrintLabels( _CswNbtResources );
-                    ReturnVal = ws.getEPLText( PropId, PrintLabelNodeId );
-                }
+        //            CswNbtWebServicePrintLabels ws = new CswNbtWebServicePrintLabels( _CswNbtResources );
+        //            ReturnVal = ws.getEPLText( PropId, PrintLabelNodeId );
+        //        }
 
-                _deInitResources();
-            }
-            catch( Exception Ex )
-            {
-                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
-            }
+        //        _deInitResources();
+        //    }
+        //    catch( Exception Ex )
+        //    {
+        //        ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
+        //    }
 
-            CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
+        //    CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
 
-            return ReturnVal.ToString();
+        //    return ReturnVal.ToString();
 
-        }
+        //}
 
         #endregion Misc
 
