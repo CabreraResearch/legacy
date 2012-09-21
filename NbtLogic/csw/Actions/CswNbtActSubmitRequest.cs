@@ -381,7 +381,7 @@ namespace ChemSW.Nbt.Actions
         /// <summary>
         /// Instance a new request item according to Object Class rules. Note: this does not get the properties.
         /// </summary>
-        public CswNbtObjClassRequestItem makeMaterialRequestItem( RequestItem Item, CswPrimaryKey NodeId, CswNbtMetaDataObjectClassProp OCP )
+        public CswNbtObjClassRequestItem makeMaterialRequestItem( RequestItem Item, CswPrimaryKey NodeId, CswNbtObjClass.NbtButtonData ButtonData )
         {
             CswNbtSdTabsAndProps PropsAction = new CswNbtSdTabsAndProps( _CswNbtResources );
 
@@ -393,6 +393,7 @@ namespace ChemSW.Nbt.Actions
             if( null != CurrentRequestNodeId() )
             {
                 RetAsRequestItem.Request.RelatedNodeId = CurrentRequestNodeId();
+                RetAsRequestItem.RequestBy.Value = ButtonData.SelectedText;
                 if( null != _CswNbtResources.CurrentNbtUser.DefaultLocationId )
                 {
                     CswNbtObjClassLocation DefaultAsLocation =

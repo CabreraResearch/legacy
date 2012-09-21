@@ -67,6 +67,9 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
+            Request.MenuOptions = CswNbtObjClassRequestItem.RequestsBy.Options.ToString();
+            Request.State = CswNbtObjClassRequestItem.RequestsBy.Size;
+
             if( ApprovalStatus.WasModified )
             {
                 Receive.setHidden( value: ApprovalStatus.Checked != Tristate.True, SaveToDb: true );
@@ -138,10 +141,22 @@ namespace ChemSW.Nbt.ObjClasses
                             HasPermission = true;
                             CswNbtActSubmitRequest RequestAct = new CswNbtActSubmitRequest( _CswNbtResources, CreateDefaultRequestNode: true );
 
-                            CswNbtObjClassRequestItem NodeAsRequestItem = RequestAct.makeMaterialRequestItem( new CswNbtActSubmitRequest.RequestItem( CswNbtActSubmitRequest.RequestItem.Material ), NodeId, OCP );
+                            CswNbtObjClassRequestItem NodeAsRequestItem = RequestAct.makeMaterialRequestItem( new CswNbtActSubmitRequest.RequestItem( CswNbtActSubmitRequest.RequestItem.Material ), NodeId, ButtonData );
+                            NodeAsRequestItem.RequestBy.Value = ButtonData.SelectedText;
+                            if( ButtonData.SelectedText.Equals( CswNbtObjClassRequestItem.RequestsBy.Size ) )
+                            {
+                                NodeAsRequestItem.Quantity.setHidden( true, true );
+                            }
+                            else
+                            {
+                                NodeAsRequestItem.Size.setHidden( true, true );
+                                NodeAsRequestItem.Count.setHidden( true, true );
+                            }
+                            NodeAsRequestItem.RequestBy.setHidden( true, true );
                             NodeAsRequestItem.postChanges( false );
+
                             ButtonData.Data["requestaction"] = OCP.PropName;
-                            ButtonData.Data["titleText"] = "Request for " + TradeName.Text;
+                            ButtonData.Data["titleText"] = ButtonData.SelectedText + " for " + TradeName.Text;
                             ButtonData.Data["requestItemProps"] = RequestAct.getRequestItemAddProps( NodeAsRequestItem );
                             ButtonData.Data["requestItemNodeTypeId"] = RequestAct.RequestItemNt.NodeTypeId;
                             ButtonData.Action = NbtButtonAction.request;
