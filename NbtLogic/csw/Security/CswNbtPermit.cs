@@ -71,30 +71,28 @@ namespace ChemSW.Nbt.Security
             }//Role
 
 
-            private enum UserType { Unknown, Uber, Unter };
-            private UserType _UserType = UserType.Unknown;
+            private bool _UserTypeIsKnown = false;
+            private bool _IsUberUser = false;
             public bool IsUberUser
             {
                 get
                 {
-                    if( UserType.Unknown == _UserType )
+                    if( false == _UserTypeIsKnown )
                     {
+                        _UserTypeIsKnown = true;
+
                         if( null != User )
                         {
                             if( User is CswNbtSystemUser || User.Username == CswNbtObjClassUser.ChemSWAdminUsername )
                             {
-                                _UserType = UserType.Uber;
-                            }
-                            else
-                            {
-                                _UserType = UserType.Unter;
+                                _IsUberUser = true;
                             }
 
                         }//if user is not null
 
                     }//if we haven't set the user level yet
 
-                    return ( UserType.Uber == _UserType );
+                    return ( _IsUberUser );
                 }
             }//IsUberUser
 
