@@ -35,6 +35,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string InventoryGroup = "Inventory Group";
             public const string TotalDispensed = "Total Dispensed";
             public const string Name = "Name";
+            public const string Requestor = "Requestor";
         }
 
         public sealed class Types
@@ -742,6 +743,8 @@ namespace ChemSW.Nbt.ObjClasses
         }
 
         public CswNbtNodePropText Name { get { return _CswNbtNode.Properties[PropertyName.Name]; } }
+
+        public CswNbtNodePropPropertyReference Requestor { get { return _CswNbtNode.Properties[PropertyName.Requestor]; } }
 
         #endregion
     }//CswNbtObjClassRequestItem
