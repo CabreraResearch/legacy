@@ -42,7 +42,7 @@
                                     href: molData.href,
                                     target: '_blank'
                                 }).img({
-                                    src: molData.href,
+                                    src: molData.href + '&foo=' + window.Ext.id(),
                                     height: cswPrivate.propVals.height,
                                     width: cswPrivate.width
                                 });
