@@ -201,8 +201,7 @@
                                         value: colObj.header,
                                         ID: Csw.makeId('nodebutton', window.Ext.id()),
                                         size: 'small',
-                                        propId: thisBtn[0].propattr,
-                                        editmode: cswPublic.data.EditMode
+                                        propId: thisBtn[0].propattr
                                     });
                                 }, 100);
                             }
