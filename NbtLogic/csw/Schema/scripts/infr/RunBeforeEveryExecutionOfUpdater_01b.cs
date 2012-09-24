@@ -52,6 +52,21 @@ namespace ChemSW.Nbt.Schema
 
             #region SEBASTIAN
 
+            // case 27703 - change containers dispose/dispense buttons to say "Dispose this Container" and "Dispense this Container"
+            CswNbtMetaDataObjectClass containerOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.ContainerClass );
+
+            CswNbtMetaDataObjectClassProp dispenseOCP = containerOC.getObjectClassProp( "Dispense" );
+            if( null != dispenseOCP ) //have to null check because property might have already been updated
+            {
+                _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( dispenseOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.propname, "Dispense this Container" );
+            }
+
+            CswNbtMetaDataObjectClassProp disposeOCP = containerOC.getObjectClassProp( "Dispose" );
+            if( null != disposeOCP ) //have to null check here because property might have been updated
+            {
+                _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( disposeOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.propname, "Dispose this Container" );
+            }
+
             #endregion SEBASTIAN
 
         }//Update()

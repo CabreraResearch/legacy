@@ -33,7 +33,7 @@ window.initMain = window.initMain || function (undefined) {
         Csw.main.viewSelectDiv = Csw.main.viewSelectDiv || Csw.main.register('viewSelectDiv', Csw.literals.factory($('#ViewSelectDiv')));
         Csw.main.watermark = Csw.main.watermark || Csw.main.register('watermark', Csw.literals.factory($('#watermark')));
 
-    }());
+    } ());
 
 
     function startSpinner() {
@@ -115,9 +115,9 @@ window.initMain = window.initMain || function (undefined) {
         Csw.main.headerMenu.empty();
         Csw.main.headerMenu.menu({
             width: '100%',
-            ajax: { 
-                urlMethod: 'getHeaderMenu', 
-                data: {} 
+            ajax: {
+                urlMethod: 'getHeaderMenu',
+                data: {}
             },
             onLogout: function () {
                 Csw.clientSession.logout();
@@ -189,8 +189,8 @@ window.initMain = window.initMain || function (undefined) {
             }
 
         } else if (false == Csw.isNullOrEmpty(qs.reportid)) {
-                //Csw.clientState.setCurrentReport(qs.reportid);
-                //Csw.window.location("Main.html");
+            //Csw.clientState.setCurrentReport(qs.reportid);
+            //Csw.window.location("Main.html");
             handleReport(qs.reportid);
             ret = true;  // load the current context (probably the welcome page) below the report
 
@@ -500,7 +500,8 @@ window.initMain = window.initMain || function (undefined) {
                 }
             },
             onAlterNode: function (nodeid, cswnbtnodekey) {
-                refreshSelected({ 'nodeid': nodeid, 'cswnbtnodekey': cswnbtnodekey, 'IncludeNodeRequired': true });
+                var state = Csw.clientState.getCurrent();
+                refreshSelected({ 'nodeid': nodeid, 'cswnbtnodekey': cswnbtnodekey, 'IncludeNodeRequired': true, 'searchid': state.searchid });
             },
             onMultiEdit: function () {
                 switch (o.viewmode) {
@@ -675,6 +676,7 @@ window.initMain = window.initMain || function (undefined) {
         }); // viewFilters
 
         Csw.nbt.nodeTable(Csw.main.centerBottomDiv, {
+
             viewid: o.viewid,
             nodeid: o.nodeid,
             cswnbtnodekey: o.cswnbtnodekey,
@@ -828,6 +830,7 @@ window.initMain = window.initMain || function (undefined) {
                 iconurl: '',
                 viewid: '',
                 viewmode: '',
+                searchid: '',
                 showempty: false,
                 forsearch: false,
                 IncludeNodeRequired: false
@@ -841,54 +844,58 @@ window.initMain = window.initMain || function (undefined) {
                 o.viewmode = Csw.cookie.get(Csw.cookie.cookieNames.CurrentViewMode);
             }
 
-            var viewMode = Csw.string(o.viewmode).toLowerCase();
-            switch (viewMode) {
-                case 'grid':
-                    getViewGrid({
-                        viewid: o.viewid,
-                        nodeid: o.nodeid,
-                        cswnbtnodekey: o.cswnbtnodekey,
-                        showempty: o.showempty,
-                        forsearch: o.forsearch
-                    });
-                    break;
-                case 'list':
-                    refreshNodesTree({
-                        nodeid: o.nodeid,
-                        cswnbtnodekey: o.cswnbtnodekey,
-                        nodename: o.nodename,
-                        viewid: o.viewid,
-                        viewmode: o.viewmode,
-                        showempty: o.showempty,
-                        forsearch: o.forsearch,
-                        IncludeNodeRequired: o.IncludeNodeRequired
-                    });
-                    break;
-                case 'table':
-                    getViewTable({
-                        viewid: o.viewid,
-                        nodeid: o.nodeid,
-                        cswnbtnodekey: o.cswnbtnodekey
-                    });
-                    break;
-                case 'tree':
-                    refreshNodesTree({
-                        nodeid: o.nodeid,
-                        cswnbtnodekey: o.cswnbtnodekey,
-                        nodename: o.nodename,
-                        viewid: o.viewid,
-                        viewmode: o.viewmode,
-                        showempty: o.showempty,
-                        forsearch: o.forsearch,
-                        IncludeNodeRequired: o.IncludeNodeRequired
-                    });
-                    break;
-                default:
-                    refreshWelcome();
-                    break;
-            } // switch
+            if (false === Csw.isNullOrEmpty(o.searchid)) { //if we have a searchid, we are probably looking at a search
+                universalsearch.restoreSearch(o.searchid);
+            } else {
+                var viewMode = Csw.string(o.viewmode).toLowerCase();
+                switch (viewMode) {
+                    case 'grid':
+                        getViewGrid({
+                            viewid: o.viewid,
+                            nodeid: o.nodeid,
+                            cswnbtnodekey: o.cswnbtnodekey,
+                            showempty: o.showempty,
+                            forsearch: o.forsearch
+                        });
+                        break;
+                    case 'list':
+                        refreshNodesTree({
+                            nodeid: o.nodeid,
+                            cswnbtnodekey: o.cswnbtnodekey,
+                            nodename: o.nodename,
+                            viewid: o.viewid,
+                            viewmode: o.viewmode,
+                            showempty: o.showempty,
+                            forsearch: o.forsearch,
+                            IncludeNodeRequired: o.IncludeNodeRequired
+                        });
+                        break;
+                    case 'table':
+                        getViewTable({
+                            viewid: o.viewid,
+                            nodeid: o.nodeid,
+                            cswnbtnodekey: o.cswnbtnodekey
+                        });
+                        break;
+                    case 'tree':
+                        refreshNodesTree({
+                            nodeid: o.nodeid,
+                            cswnbtnodekey: o.cswnbtnodekey,
+                            nodename: o.nodename,
+                            viewid: o.viewid,
+                            viewmode: o.viewmode,
+                            showempty: o.showempty,
+                            forsearch: o.forsearch,
+                            IncludeNodeRequired: o.IncludeNodeRequired
+                        });
+                        break;
+                    default:
+                        refreshWelcome();
+                        break;
+                } // switch
+            } // if (false === Csw.isNullOrEmpty(o.searchid))
         } // if (manuallyCheckChanges())
-    }// refreshSelected()
+    } // refreshSelected()
     Csw.subscribe(Csw.enums.events.main.refreshSelected, refreshSelected);
 
     var multi = false;
@@ -1125,10 +1132,10 @@ window.initMain = window.initMain || function (undefined) {
                 });
                 break;
 
-                //			case 'Import_Fire_Extinguisher_Data':                                                                                  
-                //				break;                                                                                  
-                //			case 'Inspection_Design':                                                                                  
-                //				break;                                                                                  
+            //			case 'Import_Fire_Extinguisher_Data':                                                                                            
+            //				break;                                                                                            
+            //			case 'Inspection_Design':                                                                                            
+            //				break;                                                                                            
             case 'quotas':
                 Csw.actions.quotas(Csw.main.centerTopDiv, {
                     onQuotaChange: function () {

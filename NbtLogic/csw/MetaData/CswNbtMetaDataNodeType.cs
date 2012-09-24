@@ -572,21 +572,21 @@ namespace ChemSW.Nbt.MetaData
             return _LocationProperty;
         } // getBarcodeProperty()
 
-        public CswNbtView CreateDefaultView()
+        public CswNbtView CreateDefaultView( bool includeDefaultFilters = true )
         {
             CswNbtView DefaultView = new CswNbtView( _CswNbtMetaDataResources.CswNbtResources );
             DefaultView.ViewName = this.NodeTypeName;
 
-            CswNbtViewRelationship RelationshipToMe = DefaultView.AddViewRelationship( this, true );
+            CswNbtViewRelationship RelationshipToMe = DefaultView.AddViewRelationship( this, includeDefaultFilters );
             //RelationshipToMe.ArbitraryId = RelationshipToMe.SecondId.ToString();
 
             return DefaultView;
         }
 
-        public Collection<CswNbtNode> getNodes( bool forceReInit, bool includeSystemNodes )
+        public Collection<CswNbtNode> getNodes( bool forceReInit, bool includeSystemNodes, bool includeDefaultFilters = false )
         {
             Collection<CswNbtNode> Collection = new Collection<CswNbtNode>();
-            CswNbtView View = CreateDefaultView();
+            CswNbtView View = CreateDefaultView( includeDefaultFilters );
             ICswNbtTree Tree = _CswNbtMetaDataResources.CswNbtResources.Trees.getTreeFromView( View, forceReInit, true, true, includeSystemNodes );
             for( Int32 c = 0; c < Tree.getChildNodeCount(); c++ )
             {

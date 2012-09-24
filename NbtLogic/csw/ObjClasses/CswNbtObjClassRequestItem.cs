@@ -34,6 +34,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string Fulfill = "Fulfill";
             public const string InventoryGroup = "Inventory Group";
             public const string TotalDispensed = "Total Dispensed";
+            public const string Name = "Name";
         }
 
         public sealed class Types
@@ -47,9 +48,8 @@ namespace ChemSW.Nbt.ObjClasses
 
         public sealed class RequestsBy
         {
-            public const string Bulk = "Bulk";
-            public const string Size = "Size";
-            public const string Quantity = "Quantity";
+            public const string Bulk = "Request By Bulk";
+            public const string Size = "Request By Size";
 
             public static readonly CswCommaDelimitedString Options = new CswCommaDelimitedString { Bulk, Size };
         }
@@ -76,9 +76,9 @@ namespace ChemSW.Nbt.ObjClasses
         {
             public const string Order = "Order";
             public const string Receive = "Receive";
-            public const string Dispense = "Dispense";
+            public const string Dispense = "Dispense this Container";
             public const string Move = "Move";
-            public const string Dispose = "Dispose";
+            public const string Dispose = "Dispose this Container";
             public const string Complete = "Complete Request";
             public const string Cancel = "Cancel Request";
 
@@ -231,6 +231,53 @@ namespace ChemSW.Nbt.ObjClasses
                                                   " type of Request Item, the Inventory Group of the Request must match the Inventory Group of the Container's Location.",
                                                   "Attempted to edit node without matching Container and Request Inventory Group relationships." );
                     }
+                }
+            }
+
+            //case 2753 - naming logic
+            if( false == IsTemp )
+            {
+                switch( Type.Value )
+                {
+                    case Types.Request:
+                        if( RequestBy.Value.Equals( RequestsBy.Size ) && CswTools.IsPrimaryKey( Size.RelatedNodeId ) ) //request material by size
+                        {
+                            CswNbtObjClassSize sizeNode = _CswNbtResources.Nodes.GetNode( Size.RelatedNodeId );
+                            if( null != sizeNode )
+                            {
+                                Name.Text = "Request " + Count.Value + " x " + sizeNode.Node.NodeName;
+                            }
+                        }
+                        else //request material by bulk
+                        {
+                            Name.Text = "Request " + Quantity.Quantity + Quantity.CachedUnitName;
+                        }
+                        break;
+                    case Types.Dispense:
+                        if( null != Container.RelatedNodeId )
+                        {
+                            CswNbtObjClassContainer containerNode = _CswNbtResources.Nodes.GetNode( Container.RelatedNodeId );
+                            Name.Text = "Dispense " + containerNode.Quantity.Quantity + containerNode.Quantity.CachedUnitName + " from Container " + containerNode.Barcode.Barcode;
+                        }
+                        break;
+                    case Types.Dispose:
+                        if( null != Container.RelatedNodeId )
+                        {
+                            CswNbtObjClassContainer containerNode = _CswNbtResources.Nodes.GetNode( Container.RelatedNodeId );
+                            Name.Text = "Dispose Container " + containerNode.Barcode.Barcode;
+                        }
+                        break;
+                    case Types.Move:
+                        if( null != Container.RelatedNodeId )
+                        {
+                            CswNbtObjClassContainer containerNode = _CswNbtResources.Nodes.GetNode( Container.RelatedNodeId );
+                            Name.Text = "Move Container " + containerNode.Barcode.Barcode;
+                        }
+                        break;
+                    default:
+                        throw new CswDniException( ErrorType.Warning,
+                            "An invalid request type was encountered",
+                            "An invald request type of " + Type.Value + " was encountered." );
                 }
             }
 
@@ -514,7 +561,6 @@ namespace ChemSW.Nbt.ObjClasses
                     Quantity.UnitId = null;
                     Quantity.Quantity = Double.NaN;
                     break;
-                case RequestsBy.Quantity:
                 case RequestsBy.Bulk:
                     Size.CachedNodeName = "";
                     Size.RelatedNodeId = null;
@@ -694,6 +740,8 @@ namespace ChemSW.Nbt.ObjClasses
                 }
             }
         }
+
+        public CswNbtNodePropText Name { get { return _CswNbtNode.Properties[PropertyName.Name]; } }
 
         #endregion
     }//CswNbtObjClassRequestItem
