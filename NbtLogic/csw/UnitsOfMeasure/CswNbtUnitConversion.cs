@@ -130,38 +130,6 @@ namespace ChemSW.Nbt.csw.Conversion
             return ConvertedValue;
         }
 
-        /// <summary>
-        /// Takes a numeric value and interconverts it between different Unit Types using the given UnitOfMeasure and Material nodes.
-        /// If unit conversion cannot be applied, an error is thrown.
-        /// </summary>
-        public static Double convertUnit( Double ValueToConvert, CswNbtNode OldUnitOfMeasureNode, CswNbtNode NewUnitOfMeasureNode, CswNbtNode MaterialNodeIn = null )
-        {
-            Double ConvertedValue = ValueToConvert;
-
-            if( OldUnitOfMeasureNode != null && NewUnitOfMeasureNode != null )
-            {
-                CswNbtObjClassUnitOfMeasure OldUnitNode = OldUnitOfMeasureNode;
-                CswNbtObjClassUnitOfMeasure NewUnitNode = NewUnitOfMeasureNode;
-
-                CswNbtUnitConversion UnitConverter = new CswNbtUnitConversion();
-
-                UnitConverter.setOldUnitProps( OldUnitNode );
-                UnitConverter.setNewUnitProps( NewUnitNode );
-                if( MaterialNodeIn != null )
-                {
-                    CswNbtObjClassMaterial MaterialNode = MaterialNodeIn;
-                    UnitConverter.setMaterialProps( MaterialNode );
-                }
-                ConvertedValue = UnitConverter.convertUnit( ValueToConvert );
-            }
-            else
-            {
-                throw new CswDniException( ErrorType.Error, "Conversion failed: Insufficient data supplied.", "Conversion failed: Null Node(s) provided." );
-            }
-
-            return ConvertedValue;
-        }
-
         #endregion
 
         #region Conversion Logic
@@ -170,7 +138,7 @@ namespace ChemSW.Nbt.csw.Conversion
         /// Takes a numeric value and converts it from one Unit of Measurement into another using the given Conversion Factor values
         /// If unit conversion cannot be applied, an error is thrown.
         /// </summary>
-        public static double applyUnitConversion( Double ValueToConvert, Double OldConversionFactor, Double NewConversionFactor, Double SpecificGravity = 1 )
+        public double applyUnitConversion( Double ValueToConvert, Double OldConversionFactor, Double NewConversionFactor, Double SpecificGravity = 1 )
         {
             Double ConvertedValue;
             if( CswTools.IsDouble( OldConversionFactor ) && OldConversionFactor != 0 && CswTools.IsDouble( NewConversionFactor ) && NewConversionFactor != 0 )
@@ -192,7 +160,7 @@ namespace ChemSW.Nbt.csw.Conversion
         /// <summary>
         /// Evaluates the numeric value of a Node's Scientific Property.
         /// </summary>
-        private static Double _getScientificValue( CswNbtNodePropScientific ScientificNodeProp )
+        private Double _getScientificValue( CswNbtNodePropScientific ScientificNodeProp )
         {
             return ScientificNodeProp.Base * Math.Pow( 10, ScientificNodeProp.Exponent );
         }
@@ -204,7 +172,7 @@ namespace ChemSW.Nbt.csw.Conversion
         /// <summary>
         /// Identifies the UnitType relationship between two UnitTypes.
         /// </summary>
-        private static CswNbtUnitConversionEnums.UnitTypeRelationship _getUnitTypeRelationship( CswNbtObjClassUnitOfMeasure.UnitTypes OldUnitType, CswNbtObjClassUnitOfMeasure.UnitTypes NewUnitType )
+        private CswNbtUnitConversionEnums.UnitTypeRelationship _getUnitTypeRelationship( CswNbtObjClassUnitOfMeasure.UnitTypes OldUnitType, CswNbtObjClassUnitOfMeasure.UnitTypes NewUnitType )
         {
             CswNbtUnitConversionEnums.UnitTypeRelationship UnitRelationship = CswNbtUnitConversionEnums.UnitTypeRelationship.Unknown;
 
