@@ -4,7 +4,8 @@
 (function csw_nbt_nodeTree() {
     "use strict";
 
-    var nodeTree = function _nodeTree(opts) {
+    Csw.nbt.nodeTree = Csw.nbt.nodeTree ||
+    Csw.nbt.register('nodeTree', function (opts) {
 
         var cswPrivate = {
             ID: '',
@@ -37,29 +38,29 @@
 
         cswPrivate.make = function (data, viewid, viewmode, url) {
 
-            var treeThemes = { "dots": true };
+            var treeThemes = { dots: true };
             if (viewmode === Csw.enums.viewMode.list.name) {
-                treeThemes = { "dots": false };
+                treeThemes = { dots: false };
             }
             cswPublic.treeDiv.$.jstree({
-                "json_data": {
-                    "data": data.root
+                json_data: {
+                    data: data.root
                 },
-                "core": {
-                    "open_parents": true
+                core: {
+                    open_parents: true
                 },
-                "ui": {
-                    "select_limit": 1,
-                    "selected_parent_close": false,
-                    "selected_parent_open": true
+                ui: {
+                    select_limit: 1,
+                    selected_parent_close: false,
+                    selected_parent_open: true
                 },
-                "themes": treeThemes,
-                "types": {
-                    "types": data.types,
-                    "max_children": -2,
-                    "max_depth": -2
+                themes: treeThemes,
+                types: {
+                    types: data.types,
+                    max_children: -2,
+                    max_depth: -2
                 },
-                "plugins": ["themes", "ui", "types", "crrm", "json_data"]
+                plugins: ["themes", "ui", "types", "crrm", "json_data"]
             }); // jstree()
 
             function selectNode(e, newData) {
@@ -102,14 +103,27 @@
                 var thislocked = Csw.bool($childObj.CswAttrNonDom('locked'));
                 var thisdisabled = ($childObj.CswAttrNonDom('disabled') === 'disabled');
 
-                if (Csw.bool(cswPrivate.ShowCheckboxes)) {
-                    var $cb = $('<input type="checkbox" class="' + cswPrivate.idPrefix + 'check" id="check_' + thisid + '" rel="' + thisrel + '" nodeid="' + thisnodeid + '" nodename="' + thisnodename + '" cswnbtnodekey="' + thiskey + '"></input>');
-                    $cb.prependTo($childObj);
-                    if (cswPrivate.ValidateCheckboxes) {
-                        $cb.click(function () { return cswPrivate.validateCheck($cb); });
-                    }
-                } // if (Csw.bool(cswPrivate.ShowCheckboxes)) {
-
+                var $cb = $('<input type="checkbox" class="' + cswPrivate.idPrefix + 'check" id="check_' + thisid + '" rel="' + thisrel + '" nodeid="' + thisnodeid + '" nodename="' + thisnodename + '" cswnbtnodekey="' + thiskey + '"></input>');
+                $cb.prependTo($childObj);
+                if (false === Csw.bool(cswPrivate.ShowCheckboxes)) {
+                    $cb.hide();
+                }
+                Csw.subscribe('CswMultiEdit', (function() {
+                    return function(eventObj, multiOpts) {
+                        //Csw.debug.assert(multiOpts.viewid === viewid, 'CswMultiEdit event pusblished for viewid "' + multiOpts.viewid + '" but was subscribed to from viewid "' + viewid + '".');
+                        if (multiOpts && multiOpts.viewid === viewid) {
+                            if (multiOpts.multi || Csw.bool(cswPrivate.ShowCheckboxes)) {
+                                $cb.show();
+                                if (cswPrivate.ValidateCheckboxes) {
+                                    $cb.click(function() { return cswPrivate.validateCheck($cb); });
+                                }
+                            } else { // if (Csw.bool(cswPrivate.ShowCheckboxes)) {
+                                $cb.hide();
+                            }
+                        }
+                    };
+                }()));
+                
                 if (thislocked) {
                     $('<img src="Images/quota/lock.gif" title="Quota exceeded" />')
                         .appendTo($childObj.children('a').first());
@@ -369,9 +383,7 @@
         })(); // constructor
 
         return cswPublic;
-    };
-
-    Csw.nbt.register('nodeTree', nodeTree);
-    Csw.nbt.nodeTree = Csw.nbt.nodeTree || nodeTree;
+    });
+    
 
 })();

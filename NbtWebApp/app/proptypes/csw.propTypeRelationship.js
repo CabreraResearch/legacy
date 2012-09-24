@@ -30,6 +30,12 @@
                     cswPrivate.addImage = { };
                     cswPrivate.onAddNodeFunc = { };
 
+                    cswPrivate.showSelectOnLoad = function() {
+                        return cswPublic.data.tabState.EditMode === Csw.enums.editMode.Add ||
+                               cswPublic.data.isMulti() ||
+                            (cswPublic.data.isRequired() && Csw.isNullOrEmpty(cswPrivate.selectedNodeId));
+                    };
+
                     // Default to selected node as relationship value for new nodes being added
                     if (false === Csw.isNullOrEmpty(cswPublic.data.tabState.relatednodeid) &&
                         Csw.isNullOrEmpty(cswPrivate.selectedNodeId) &&
@@ -102,10 +108,13 @@
 
                             if (cswPublic.data.isMulti()) {
                                 cswPrivate.relationships.push({ value: Csw.enums.multiEditDefaultValue, display: Csw.enums.multiEditDefaultValue });
+                                cswPrivate.foundSelected = true;
+                            } else {
+                                cswPrivate.foundSelected = false;
                             }
-                            cswPrivate.foundSelected = false;
+                            
                             Csw.crawlObject(cswPrivate.options, function (relatedObj) {
-                                if (relatedObj.id === cswPrivate.selectedNodeId) {
+                                if (false === cswPublic.data.isMulti() && relatedObj.id === cswPrivate.selectedNodeId) {
                                     cswPrivate.foundSelected = true;
                                 }
                                 cswPrivate.relationships.push({ value: relatedObj.id, display: relatedObj.value });
@@ -129,20 +138,21 @@
                             });
                             
                             cswPrivate.cellCol += 1;
-
-                            cswPrivate.nodeLinkText = '';
-                            Csw.ajax.post({
-                                urlMethod: 'GetNodeRef',
-                                async: false,
-                                data: { nodeId: cswPrivate.selectedNodeId },
-                                success: function (data) {
-                                    cswPrivate.nodeLinkText = cswPublic.control.cell(1, cswPrivate.cellCol).nodeLink({
-                                        text: data.noderef
-                                    });
-                                }
-                            });
+                            cswPrivate.nodeLinkText = cswPublic.control.cell(1, cswPrivate.cellCol);
                             cswPrivate.cellCol += 1;
-
+                            if (false === cswPublic.data.isMulti()) {
+                                Csw.ajax.post({
+                                    urlMethod: 'GetNodeRef',
+                                    async: false,
+                                    data: { nodeId: cswPrivate.selectedNodeId },
+                                    success: function(data) {
+                                        cswPrivate.nodeLinkText = cswPrivate.nodeLinkText.nodeLink({
+                                            text: data.noderef
+                                        });
+                                    }
+                                });
+                            }
+                            
                             cswPrivate.toggleButton = cswPublic.control.cell(1, cswPrivate.cellCol).icon({
                                 iconType: Csw.enums.iconType.pencil,
                                 isButton: true,
@@ -165,7 +175,7 @@
                                 }
                             };
 
-                            cswPrivate.toggleOptions(cswPublic.data.tabState.EditMode === Csw.enums.editMode.Add || (cswPublic.data.isRequired() && Csw.isNullOrEmpty(cswPrivate.selectedNodeId)));
+                            cswPrivate.toggleOptions(cswPrivate.showSelectOnLoad());
                                                                                                                                                                                       
                             cswPrivate.selectBox.required(cswPublic.data.isRequired());
                             

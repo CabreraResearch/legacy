@@ -73,7 +73,7 @@
 
                 cswPrivate.outerTabDiv = cswParent.tabDiv({ ID: cswPrivate.ID + '_tabdiv' });
                 cswPrivate.tabcnt = 0;
-            } ());
+            }());
 
             //#region Tabs
 
@@ -104,7 +104,7 @@
                 return tabContentDiv;
             };
 
-            cswPrivate.setPrivateProp = function(obj, propName) {
+            cswPrivate.setPrivateProp = function (obj, propName) {
                 cswPrivate[propName] = obj[propName];
                 delete obj[propName];
             };
@@ -202,7 +202,7 @@
             //#endregion Tabs
 
             //#region Validator
-            
+
             cswPrivate.initValidator = function () {
                 cswPublic.validator = cswPrivate.form.$.validate({
                     highlight: function (element) {
@@ -230,7 +230,7 @@
 
             //#region Helper Methods
 
-            cswPrivate.setNodeId = function(data) {
+            cswPrivate.setNodeId = function (data) {
                 var nodeid = data.nodeid;
                 Csw.tryExec(cswPrivate.onNodeIdSet, nodeid);
                 cswPrivate.tabState.nodeid = nodeid;
@@ -259,7 +259,7 @@
             };
 
             //#endregion Helper Methods
-            
+
             //#region Layout Config
 
             cswPrivate.onRemove = function (tabid, onRemoveData) {
@@ -444,7 +444,7 @@
                         } // onRemove
                     };
 
-                    cswPrivate.layoutTable = formTable.cell(1, 1).layoutTable(layoutOpts); 
+                    cswPrivate.layoutTable = formTable.cell(1, 1).layoutTable(layoutOpts);
 
                     function doUpdateSubProps(configOn) {
                         var updOnSuccess = function (thisProp, key) {
@@ -597,7 +597,7 @@
                 return cswPrivate.atLeastOne;
             }; // _handleProperties()
 
-            
+
             cswPrivate.handleProp = function (layoutTable, propData, tabContentDiv, tabid, configMode) {
                 'use strict';
                 var propid = propData.id,
@@ -633,19 +633,34 @@
                         labelCell.setLabelText(propName, propData.required, propData.readonly);
                     }
 
-                    /* Case 25936 */
+                    var inpPropCheck = labelCell.input({
+                        ID: 'check_' + propid,
+                        type: Csw.enums.inputTypes.checkbox,
+                        value: false, // Value --not defined?,
+                        cssclass: cswPrivate.ID + '_check'
+                    });
+                    inpPropCheck.propNonDom('propid', propid);
+                    inpPropCheck.hide();
                     if (false === Csw.bool(propData.readonly)) {
                         cswPrivate.atLeastOne.Saveable = true;
-                        if (cswPrivate.globalState.ShowCheckboxes && Csw.bool(propData.copyable)) {
-                            var inpPropCheck = labelCell.input({
-                                ID: 'check_' + propid,
-                                type: Csw.enums.inputTypes.checkbox,
-                                value: false, // Value --not defined?,
-                                cssclass: cswPrivate.ID + '_check'
-                            });
-                            inpPropCheck.propNonDom('propid', propid);
-                        }
                     }
+                    Csw.subscribe('CswMultiEdit', (function () {
+                        return function (eventObj, multiOpts) {
+                            /* Case 25936 */
+                            var showCheckBoxes = (cswPrivate.globalState.ShowCheckboxes && Csw.bool(propData.copyable));
+                            //Csw.debug.assert(multiOpts.nodeid === cswPublic.getNodeId(), 'CswMultiEdit event pusblished for nodeid "' + multiOpts.nodeid + '" but was subscribed to from nodeid "' + cswPublic.getNodeId() + '".');
+                            if (multiOpts && multiOpts.nodeid === cswPublic.getNodeId()) {
+                                cswPrivate.tabState.Multi = multiOpts.multi;
+                                if (showCheckBoxes || multiOpts.multi) {
+                                    inpPropCheck.show();
+                                } else {
+                                    inpPropCheck.hide();
+                                }
+                            }
+                            return showCheckBoxes;
+
+                        };
+                    }()));
                 }
 
                 var propCell = cswPrivate.getPropertyCell(cellSet);
@@ -682,7 +697,7 @@
                         onReload: function (afterReload) {
                             cswPrivate.getProps(tabContentDiv, tabid, afterReload);
                         },
-                        onChange: function() {
+                        onChange: function () {
                             if (Csw.bool(propData.hassubprops)) {
                                 Csw.tryExec(cswPrivate.updateSubProps, propData, propCell, tabContentDiv, tabid, false, layoutTable);
                             }
@@ -755,7 +770,7 @@
                 /// <param name="$savebtn" type="JQuery"> A save button </param>
                 /// <returns type="void"></returns>
                 'use strict';
-               
+
                 Csw.defer(function () {
                     if (propData.wasmodified) {
                         var jsonData = {
@@ -817,7 +832,7 @@
                         // recurse on subprops
                         if (Csw.bool(thisProp.hassubprops) && Csw.contains(thisProp, 'subprops')) {
                             var subProps = thisProp.subprops;
-                            if (false === Csw.isNullOrEmpty(subProps)) { 
+                            if (false === Csw.isNullOrEmpty(subProps)) {
                                 var subTable = layoutTable[thisProp.id + '_subproptable'];
                                 if (false === Csw.isNullOrEmpty(subTable)) {
                                     cswPrivate.updatePropJsonFromLayoutTable(subTable, subProps);
@@ -831,17 +846,17 @@
                 });
             }; // updatePropJsonFromLayoutTable()
 
-            
+
 
             cswPublic.save = function (tabContentDiv, tabid, onSuccess, async) {
                 'use strict';
                 Csw.tryExec(function () {
 
-                    if (cswPublic.isFormValid()) {
+                    if (cswPrivate.tabState.Multi || cswPublic.isFormValid()) {
                         var propIds = cswPrivate.updatePropJsonFromLayoutTable();
                         var sourcenodeid = Csw.tryParseObjByIdx(cswPrivate.globalState.nodeids, 0);
                         var sourcenodekey = Csw.tryParseObjByIdx(cswPrivate.globalState.nodekeys, 0);
-                        async = Csw.bool(async, true) && false === cswPrivate.tabState.Multi; 
+                        async = Csw.bool(async, true) && false === cswPrivate.tabState.Multi;
                         Csw.ajax.post({
                             watchGlobal: cswPrivate.AjaxWatchGlobal,
                             urlMethod: cswPrivate.urls.SavePropUrlMethod,
@@ -910,7 +925,7 @@
                                 } // if(o.globalState.ShowCheckboxes)
                                 else if (cswPrivate.tabState.Multi) {
                                     dataJson.CopyNodeIds = cswPrivate.globalState.nodeids;
-                                    dataJson.CopyglobalState.nodekeys = cswPrivate.globalState.nodekeys;
+                                    dataJson.CopyNodeKeys = cswPrivate.globalState.nodekeys;
                                     dataJson.PropIds = propIds;
                                     copyNodeProps();
                                 }
@@ -960,9 +975,9 @@
                         });
                     }
                 }
-            } ());
-            
+            }());
+
             return cswPublic;
         });
-} ());
+}());
 

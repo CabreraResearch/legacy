@@ -3,7 +3,7 @@
 
 (function () {
     'use strict';
-    
+
     var cswStaticInternalClosure = {
         preparePropJsonForSaveRecursive: function (isMulti, propVals, attributes) {
             ///<summary>Recurses over the subfields and sub-subfields of a property to update its JSON.</summary>
@@ -54,7 +54,7 @@
                 /// <summary>Extends an Object with properties specific to NBT FieldTypes (for the purpose of Intellisense)</summary>
                 /// <returns type="Csw.nbt.propertyOption">An Object represent a CswNbtNodeProp</returns> 
                 'use strict';
-                
+
                 var cswPublic = {
                     ID: '',
                     tabState: {
@@ -95,7 +95,7 @@
                     Csw.error.throwException('Cannot create a Csw propertyOption without an object to define the property control.', 'propertyOption', 'csw.propertyOption.js', 86);
                 }
 
-                cswPublic.isReadOnly = function() {
+                cswPublic.isReadOnly = function () {
                     return Csw.bool(cswPublic.tabState.ReadOnly) ||
                         Csw.bool(cswPublic.tabState.Config) ||
                         cswPublic.tabState.EditMode === Csw.enums.editMode.PrintReport ||
@@ -103,32 +103,38 @@
                         Csw.bool(cswPublic.propData.readonly);
                 };
 
-                cswPublic.isRequired = function() {
+                cswPublic.isRequired = function () {
                     return Csw.bool(cswPublic.propData.required);
                 };
 
-                cswPublic.isMulti = function() {
+                cswPublic.isMulti = function () {
                     return Csw.bool(cswPublic.tabState.Multi);
                 };
 
-                //ugly, persist this for full backwards compatability--for now
-                //TODO: unify ID/ReadOnly/Required properties on this object
                 cswPublic.ID = Csw.makeId(cswPublic.propDiv.getId(), cswPublic.propData.id);
 
                 Csw.extend(cswPublic, cswPrivate);
-                cswPublic.onPropChange = function(attributes) {
-                	/// <summary>
-                	/// Update cswPublic.data as the DOM changes. Each propType is responsible for implementing a call to this method for each relevant subfield.
-                	/// </summary>
+                cswPublic.onPropChange = function (attributes) {
+                    /// <summary>
+                    /// Update cswPublic.data as the DOM changes. Each propType is responsible for implementing a call to this method for each relevant subfield.
+                    /// </summary>
                     'use strict';
                     attributes = attributes || {};
                     cswStaticInternalClosure.preparePropJsonForSave(cswPublic.isMulti(), cswPublic.propData, attributes);
                 };
 
+                cswPublic.toggleMulti = function (eventObj, multiOpts) {
+                    Csw.debug.assert(multiOpts.nodeid === cswPublic.tabState.nodeid, 'CswMultiEdit event pusblished for nodeid "' + multiOpts.nodeid + '" but was subscribed to from nodeid "' + cswPublic.tabState.nodeid + '".');
+                    if (multiOpts && multiOpts.nodeid === cswPublic.tabState.nodeid) {
+                        cswPublic.tabState.Multi = multiOpts.multi;
+                        cswPrivate.renderThisProp();
+                    }
+                };
+
                 cswPublic.bindRender = function (callBack) {
-                	/// <summary>
-                	/// Subscribe to the render and teardown events
-                	/// </summary>
+                    /// <summary>
+                    /// Subscribe to the render and teardown events
+                    /// </summary>
 
                     'use strict';
                     cswPrivate.tearDown = function () {
@@ -138,24 +144,35 @@
                         'use strict';
                         Csw.unsubscribe('render_' + cswPublic.tabState.nodeid, cswPrivate.renderer);
                         Csw.unsubscribe('initPropertyTearDown', cswPrivate.tearDown);
+                        Csw.unsubscribe('CswMultiEdit', cswPublic.toggleMulti);
                         Csw.unsubscribe('initPropertyTearDown_' + cswPublic.tabState.nodeid, cswPrivate.tearDown);
                         Csw.tryExec(cswPrivate.tearDownCallback);
                     };
-                    
-                    cswPrivate.renderer = function () {
-                    	/// <summary>
-                    	/// Execute the render callback method on publish
-                    	/// </summary>
+
+                    cswPrivate.renderThisProp = (function () {
                         'use strict';
-                        cswPublic.propDiv.empty();
-                        Csw.tryExec(callBack, cswPublic);
-                        Csw.subscribe('initPropertyTearDown', cswPrivate.tearDown);
-                        Csw.subscribe('initPropertyTearDown_' + cswPublic.tabState.nodeid, cswPrivate.tearDown);
+                        return function () {
+                            cswPublic.propDiv.empty();
+                            Csw.tryExec(callBack, cswPublic);
+                        };
+                    }());
+
+                    cswPrivate.renderer = function () {
+                        /// <summary>
+                        /// Execute the render callback method on publish
+                        /// </summary>
+                        'use strict';
+                        cswPrivate.renderThisProp();
                     };
+
+                    //We only want to subscribe once--not on every possible publish to render
                     Csw.subscribe('render_' + cswPublic.tabState.nodeid, cswPrivate.renderer);
+                    Csw.subscribe('CswMultiEdit', cswPublic.toggleMulti);
+                    Csw.subscribe('initPropertyTearDown', cswPrivate.tearDown);
+                    Csw.subscribe('initPropertyTearDown_' + cswPublic.tabState.nodeid, cswPrivate.tearDown);
                 };
 
-                if(false === Csw.isNullOrEmpty(cswPublic.propDiv)) {
+                if (false === Csw.isNullOrEmpty(cswPublic.propDiv)) {
                     cswPublic.propDiv.propNonDom({
                         nodeid: cswPublic.tabState.nodeid,
                         propid: cswPublic.propid,
@@ -163,10 +180,10 @@
                     });
                 }
 
-                cswPublic.unBindRender = function(callback) {
-                	/// <summary>
-                	/// This is where you would define a callback to assign to the tearDown events
-                	/// </summary>
+                cswPublic.unBindRender = function (callback) {
+                    /// <summary>
+                    /// This is where you would define a callback to assign to the tearDown events
+                    /// </summary>
                     cswPrivate.tearDownCallback = callback;
                 };
 
@@ -174,6 +191,6 @@
             }));
 
 
-} ());
+}());
 
 

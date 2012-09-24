@@ -510,7 +510,12 @@ window.initMain = window.initMain || function (undefined) {
                         break;
                     default:
                         multi = (false === multi);
-                        refreshSelected({ nodeid: o.nodeid, viewmode: o.viewmode, cswnbtnodekey: o.cswnbtnodekey });
+                        Csw.publish('CswMultiEdit', {
+                            multi: multi,
+                            nodeid: o.nodeid,
+                            viewid: o.viewid
+                        });
+                        //refreshSelected({ nodeid: o.nodeid, viewmode: o.viewmode, cswnbtnodekey: o.cswnbtnodekey });
                         break;
                 } // switch
             },
