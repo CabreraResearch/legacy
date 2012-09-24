@@ -220,7 +220,7 @@
                                 case cswPrivate.config.quantityName:
                                     cswPrivate.getQuantity();
                                     cswPrivate.quantity.minvalue = 0;
-                                    cswPrivate.quantity.isClosedSet = false;
+                                    cswPrivate.quantity.isOpenSet = true;
                                     cswPrivate.quantity.onChange = function () {
                                         updateColumnVals(false);
                                     };

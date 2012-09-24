@@ -534,7 +534,7 @@
                                             cswPublic.rows[rowid].quantityCtrl = cswCell.numberTextBox({
                                                 ID: Csw.tryExec(Csw.makeId, 'quantityNumberBox' + rowid),
                                                 MinValue: 0,
-                                                isClosedSet: false,
+                                                isOpenSet: true,
                                                 width: '60px',
                                                 onChange: function (value) {
                                                     cswPublic.rows[rowid].sizeValues.quantity = cswPublic.rows[rowid].quantityCtrl.val();

@@ -86,6 +86,18 @@ namespace ChemSW.Nbt.PropTypes
                 return _CswNbtMetaDataNodeTypeProp.MaxValue;
             }
         }
+
+        /// <summary>
+        /// When set to true, minValue and MaxValue are not included in Quantity's number range.
+        /// </summary>
+        public bool IsOpenSet
+        {
+            get
+            {
+                return CswConvert.ToBoolean( _CswNbtMetaDataNodeTypeProp.Attribute2 );
+            }
+        }
+
         /// <summary>
         /// When set to true, quantity can be blank even if the field is required.
         /// </summary>
@@ -362,6 +374,7 @@ namespace ChemSW.Nbt.PropTypes
             ParentObject["minvalue"] = MinValue.ToString();
             ParentObject["maxvalue"] = MaxValue.ToString();
             ParentObject["precision"] = Precision.ToString();
+            ParentObject["isOpenSet"] = IsOpenSet.ToString();
             ParentObject["quantityoptional"] = QuantityOptional.ToString();
 
             ParentObject[_UnitIdSubField.ToXmlNodeName( true )] = default( string );
