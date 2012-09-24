@@ -1,4 +1,5 @@
 ﻿
+using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 namespace ChemSW.Nbt.Schema
@@ -25,6 +26,16 @@ namespace ChemSW.Nbt.Schema
                         TimeNode.ConversionFactor.Exponent = -2;
                         TimeNode.postChanges( false );
                     }
+                }
+            }
+
+            CswNbtMetaDataObjectClass MaterialOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass );
+            foreach( CswNbtMetaDataNodeType MaterialNt in MaterialOc.getNodeTypes() )
+            {
+                CswNbtMetaDataNodeTypeProp SpecificGravityNtp = MaterialNt.getNodeTypePropByObjectClassProp( CswNbtObjClassMaterial.PropertyName.SpecificGravity );
+                if( null != SpecificGravityNtp )
+                {
+                    SpecificGravityNtp.Attribute1 = CswConvert.ToDbVal( true ).ToString();
                 }
             }
         }//Update()

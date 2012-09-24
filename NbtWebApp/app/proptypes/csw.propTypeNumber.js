@@ -29,6 +29,7 @@
                         value: (false === cswPublic.data.Multi) ? Csw.string(cswPrivate.propVals.value).trim() : Csw.enums.multiEditDefaultValue,
                         MinValue: Csw.number(cswPrivate.propVals.minvalue),
                         MaxValue: Csw.number(cswPrivate.propVals.maxvalue),
+                        isOpenSet: Csw.bool(cswPrivate.propVals.isOpenSet),
                         ceilingVal: cswPrivate.ceilingVal,
                         Precision: cswPrivate.precision,
                         ReadOnly: Csw.bool(cswPublic.data.ReadOnly),
