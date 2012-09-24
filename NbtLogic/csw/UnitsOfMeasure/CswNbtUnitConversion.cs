@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.ObjClasses;
-using ChemSW.Nbt.PropTypes;
 
 namespace ChemSW.Nbt.csw.Conversion
 {
@@ -47,7 +46,7 @@ namespace ChemSW.Nbt.csw.Conversion
         {
             if( OldUnitNode != null )
             {
-                _OldConversionFactor = _getScientificValue( OldUnitNode.ConversionFactor );
+                _OldConversionFactor = OldUnitNode.ConversionFactor.RealValue;
                 _OldUnitType = (CswNbtObjClassUnitOfMeasure.UnitTypes) OldUnitNode.UnitType.Value;
             }
         }
@@ -56,7 +55,7 @@ namespace ChemSW.Nbt.csw.Conversion
         {
             if( NewUnitNode != null )
             {
-                _NewConversionFactor = _getScientificValue( NewUnitNode.ConversionFactor );
+                _NewConversionFactor = NewUnitNode.ConversionFactor.RealValue;
                 _NewUnitType = (CswNbtObjClassUnitOfMeasure.UnitTypes) NewUnitNode.UnitType.Value;
             }
         }
@@ -81,18 +80,21 @@ namespace ChemSW.Nbt.csw.Conversion
         public Double convertUnit( Double ValueToConvert )
         {
             Double ConvertedValue = ValueToConvert;
+            if( false == CswTools.IsDouble( ConvertedValue ) )
+            {
+                ConvertedValue = 0.0;
+            }
 
             if( CswTools.IsDouble( _OldConversionFactor ) && CswTools.IsDouble( _NewConversionFactor ) )
             {
                 CswNbtUnitConversionEnums.UnitTypeRelationship UnitRelationship = _getUnitTypeRelationship( _OldUnitType, _NewUnitType );
-
                 if( UnitRelationship == CswNbtUnitConversionEnums.UnitTypeRelationship.Same )
                 {
                     ConvertedValue = applyUnitConversion( ValueToConvert, _OldConversionFactor, _NewConversionFactor );
                 }
                 else if( UnitRelationship != CswNbtUnitConversionEnums.UnitTypeRelationship.NotSupported )
                 {
-                    if( CswTools.IsDouble( _MaterialSpecificGravity ) && _MaterialSpecificGravity > 0 )
+                    if( CswTools.IsDouble( _MaterialSpecificGravity ) )
                     {
                         //UnitType-specific logic (Operator logic defined in W1005)
                         if( UnitRelationship == CswNbtUnitConversionEnums.UnitTypeRelationship.WeightToVolume )
@@ -106,7 +108,7 @@ namespace ChemSW.Nbt.csw.Conversion
                     }
                     else
                     {
-                        throw new CswDniException( ErrorType.Error, "Conversion failed: The Container Material's specific gravity is zero, negative, or undefined.", "Specific Gravity must be defined as a positive number." );
+                        _CswNbtResources.logMessage( "Conversion failed: The Container Material's specific gravity is undefined." );
                     }
                 }
                 else
@@ -116,23 +118,10 @@ namespace ChemSW.Nbt.csw.Conversion
             }
             else
             {
-                string UserMessage = "Conversion failed: Insufficient data supplied.";
-                if( false == CswTools.IsDouble( ValueToConvert ) )
-                {
-                    UserMessage = "Conversion failed: Container has no Quantity defined.";
-                }
-                else if( false == CswTools.IsDouble( _NewConversionFactor ) )
-                {
-                    UserMessage = "Conversion failed: The unit of measurement with which to convert is undefined.";
-                }
-                _CswNbtResources.logMessage( UserMessage + " Conversion failed: Unable to determine appropriate conversion factors." );
+                _CswNbtResources.logMessage( "Conversion failed: Unable to determine appropriate conversion factors." );
             }
             return ConvertedValue;
         }
-
-        #endregion
-
-        #region Conversion Logic
 
         /// <summary>
         /// Takes a numeric value and converts it from one Unit of Measurement into another using the given Conversion Factor values
@@ -140,29 +129,58 @@ namespace ChemSW.Nbt.csw.Conversion
         /// </summary>
         public double applyUnitConversion( Double ValueToConvert, Double OldConversionFactor, Double NewConversionFactor, Double SpecificGravity = 1 )
         {
-            Double ConvertedValue;
-            if( CswTools.IsDouble( OldConversionFactor ) && OldConversionFactor != 0 && CswTools.IsDouble( NewConversionFactor ) && NewConversionFactor != 0 )
-            {
-                //Operator logic defined in W1005 - Math is hard.
-                ConvertedValue = ValueToConvert / OldConversionFactor * SpecificGravity * NewConversionFactor;
-            }
-            else
-            {
-                throw new CswDniException( ErrorType.Error, "Conversion Factor must be defined as a positive number.", "Conversion Factor must be defined as a positive number." );
-            }
-            if( false == CswTools.IsDouble( ConvertedValue ) )
-            {
-                throw new CswDniException( ErrorType.Error, "Conversion failed: Insufficient data provided.", "Conversion failed: One or more parameters are negative or undefined." );
-            }
+            _validateValuesForConversion( ValueToConvert, OldConversionFactor, NewConversionFactor, SpecificGravity );
+            Double ConvertedValue = ValueToConvert / OldConversionFactor * SpecificGravity * NewConversionFactor; //See W1005 for more details
             return ConvertedValue;
         }
 
+        #endregion
+
+        #region Validation
+
         /// <summary>
-        /// Evaluates the numeric value of a Node's Scientific Property.
+        /// Determines if a UnitOfMeasure node is valid for unit conversion.  Does not apply to Each units.
         /// </summary>
-        private Double _getScientificValue( CswNbtNodePropScientific ScientificNodeProp )
+        public static void validateUnitForConversion( CswNbtObjClassUnitOfMeasure UnitNode )
         {
-            return ScientificNodeProp.Base * Math.Pow( 10, ScientificNodeProp.Exponent );
+            if( UnitNode.UnitType.Value != ChemSW.Nbt.ObjClasses.CswNbtObjClassUnitOfMeasure.UnitTypes.Each.ToString() &&
+                false == CswTools.IsDouble( UnitNode.ConversionFactor.RealValue ) )
+            {
+                throw new CswDniException
+                (
+                    ErrorType.Warning,
+                    "Units of type " + UnitNode.UnitType.Value + " must have a Conversion Factor.",
+                    "Unit of Measure cannot be used for unit conversion."
+                );
+            }
+        }
+
+        /// <summary>
+        /// Determines if a set of values are valid for unit conversion.
+        /// </summary>
+        private void _validateValuesForConversion( Double ValueToConvert, Double OldConversionFactor, Double NewConversionFactor, Double SpecificGravity )
+        {
+            string ErrorMessage = String.Empty;
+            if( false == CswTools.IsDouble( ValueToConvert ) )
+            {
+                ErrorMessage = "Value to convert is undefined: " + ValueToConvert;
+            }
+            else if( false == CswTools.IsDouble( OldConversionFactor ) || OldConversionFactor <= 0 )
+            {
+                ErrorMessage = "Current unit's conversion factor is invalid: " + OldConversionFactor;
+            }
+            else if( false == CswTools.IsDouble( NewConversionFactor ) || NewConversionFactor <= 0 )
+            {
+                ErrorMessage = "New unit's conversion factor is invalid: " + NewConversionFactor;
+            }
+            else if( false == CswTools.IsDouble( SpecificGravity ) || SpecificGravity <= 0 )
+            {
+                ErrorMessage = "Material's specific gravity is invalid: " + SpecificGravity;
+            }
+            if( false == String.IsNullOrEmpty( ErrorMessage ) )
+            {
+                throw new CswDniException( ErrorType.Warning, ErrorMessage, "Unit conversion failed." );
+            }
         }
 
         #endregion
