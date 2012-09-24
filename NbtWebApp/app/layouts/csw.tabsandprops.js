@@ -645,10 +645,9 @@
                         cswPrivate.atLeastOne.Saveable = true;
                     }
                     Csw.subscribe('CswMultiEdit', (function () {
-                        return function (eventObj, multiOpts) {
+                        var onMultiEdit = function (eventObj, multiOpts) {
                             /* Case 25936 */
                             var showCheckBoxes = (cswPrivate.globalState.ShowCheckboxes && Csw.bool(propData.copyable));
-                            Csw.debug.assert(multiOpts.nodeid === cswPublic.getNodeId(), 'CswMultiEdit event pusblished for nodeid "' + multiOpts.nodeid + '" but was subscribed to from nodeid "' + cswPublic.getNodeId() + '".');
                             if (multiOpts && multiOpts.nodeid === cswPublic.getNodeId()) {
                                 cswPrivate.tabState.Multi = multiOpts.multi;
                                 if (showCheckBoxes || multiOpts.multi) {
@@ -656,10 +655,13 @@
                                 } else {
                                     inpPropCheck.hide();
                                 }
+                            } else {
+                                //Csw.debug.assert(multiOpts.nodeid === cswPublic.getNodeId(), 'CswMultiEdit event pusblished for nodeid "' + multiOpts.nodeid + '" but was subscribed to from nodeid "' + cswPublic.getNodeId() + '".');
+                                Csw.unsubscribe('CswMultiEdit', onMultiEdit);
                             }
                             return showCheckBoxes;
-
                         };
+                        return onMultiEdit;
                     }()));
                 }
 

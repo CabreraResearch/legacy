@@ -109,8 +109,7 @@
                     $cb.hide();
                 }
                 Csw.subscribe('CswMultiEdit', (function() {
-                    return function(eventObj, multiOpts) {
-                        //Csw.debug.assert(multiOpts.viewid === viewid, 'CswMultiEdit event pusblished for viewid "' + multiOpts.viewid + '" but was subscribed to from viewid "' + viewid + '".');
+                    var onMultiEdit = function(eventObj, multiOpts) {
                         if (multiOpts && multiOpts.viewid === viewid) {
                             if (multiOpts.multi || Csw.bool(cswPrivate.ShowCheckboxes)) {
                                 $cb.show();
@@ -120,8 +119,12 @@
                             } else { // if (Csw.bool(cswPrivate.ShowCheckboxes)) {
                                 $cb.hide();
                             }
+                        } else {
+                            //Csw.debug.assert(multiOpts.viewid === viewid, 'CswMultiEdit event pusblished for viewid "' + multiOpts.viewid + '" but was subscribed to from viewid "' + viewid + '".');
+                            Csw.unsubscribe('CswMultiEdit', onMultiEdit);
                         }
                     };
+                    return onMultiEdit;
                 }()));
                 
                 if (thislocked) {

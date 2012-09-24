@@ -124,10 +124,12 @@
                 };
 
                 cswPublic.toggleMulti = function (eventObj, multiOpts) {
-                    Csw.debug.assert(multiOpts.nodeid === cswPublic.tabState.nodeid, 'CswMultiEdit event pusblished for nodeid "' + multiOpts.nodeid + '" but was subscribed to from nodeid "' + cswPublic.tabState.nodeid + '".');
                     if (multiOpts && multiOpts.nodeid === cswPublic.tabState.nodeid) {
                         cswPublic.tabState.Multi = multiOpts.multi;
                         cswPrivate.renderThisProp();
+                    } else {
+                        //Csw.debug.assert(multiOpts.nodeid === cswPublic.tabState.nodeid, 'CswMultiEdit event pusblished for nodeid "' + multiOpts.nodeid + '" but was subscribed to from nodeid "' + cswPublic.tabState.nodeid + '".');
+                        Csw.unsubscribe('CswMultiEdit', cswPublic.toggleMulti);
                     }
                 };
 
