@@ -509,7 +509,7 @@ namespace ChemSW.Nbt.MetaData
             var ret = ( ( false == InPopUp || IsOnAdd ) &&
                 FilterNodeTypePropId == Int32.MinValue && /* Keep these out */
                         false == Node.Properties[this].Hidden &&
-                        _CswNbtMetaDataResources.CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, this.getNodeType(), false, null, User, Node.NodeId, this ) );
+                        _CswNbtMetaDataResources.CswNbtResources.Permit.canNode( CswNbtPermit.NodeTypePermission.Edit, this.getNodeType(), Node.NodeId, this ) );
             return ret;
         }
 
@@ -526,7 +526,14 @@ namespace ChemSW.Nbt.MetaData
                 }
             }
             var ret = ( false == hasFilter() && false == Node.Properties[this].Hidden &&
-                        _CswNbtMetaDataResources.CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, this.getNodeType(), false, Tab, User, Node.NodeId, this ) );
+                        (
+                           _CswNbtMetaDataResources.CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.View, this.getNodeType() ) ||
+                           _CswNbtMetaDataResources.CswNbtResources.Permit.canTab( CswNbtPermit.NodeTypePermission.View, this.getNodeType(), Tab ) ||
+                           _CswNbtMetaDataResources.CswNbtResources.Permit.canNode( CswNbtPermit.NodeTypePermission.View, this.getNodeType(), Node.NodeId )
+                        )
+                      );
+
+            //_CswNbtMetaDataResources.CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, this.getNodeType(), false, Tab, User, Node.NodeId, this ) );
             return ret;
         }
 
@@ -720,7 +727,7 @@ namespace ChemSW.Nbt.MetaData
 
                 if( _DefaultValueRow != null )
                 {
-                    _DefaultValue = CswNbtNodePropFactory.makeNodeProp( _CswNbtMetaDataResources.CswNbtResources, _DefaultValueRow, _DefaultValueRow.Table, null, this, null );
+                    _DefaultValue = CswNbtNodePropFactory.makeNodeProp( _CswNbtMetaDataResources.CswNbtResources, _DefaultValueRow, _DefaultValueRow.Table, null, this );
                 }
 
             } // if( _DefaultValue == null )

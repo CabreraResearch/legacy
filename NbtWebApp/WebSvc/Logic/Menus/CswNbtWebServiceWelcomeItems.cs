@@ -78,7 +78,7 @@ namespace ChemSW.Nbt.WebServices
                             CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( CswConvert.ToInt32( WelcomeRow["nodetypeid"] ) );
                             if( NodeType != null )
                             {
-                                bool CanAdd = NodeType.getObjectClass().CanAdd && _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Create, NodeType );
+                                bool CanAdd = NodeType.getObjectClass().CanAdd && _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Create, NodeType );
                                 if( CanAdd )
                                 {
                                     if( WelcomeRow["displaytext"].ToString() != string.Empty )

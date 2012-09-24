@@ -202,7 +202,7 @@ namespace ChemSW.Nbt.WebPages
                 switch( _AddType )
                 {
                     case CswNodeTypeTree.NodeTypeTreeSelectedType.Property:
-                        if( !Master.CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Create, SelectedNodeTypeTab.getNodeType() ) )
+                        if( !Master.CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Create, SelectedNodeTypeTab.getNodeType() ) )
                             throw new CswDniException( "You do not have permission to add properties to this NodeType" );
 
                         create_AddPropertyPage();
@@ -224,7 +224,7 @@ namespace ChemSW.Nbt.WebPages
                         //LeftHeaderContentLiteral.Text = "Add " + LabelNodeTypeProp + " to " + LabelNodeTypeTab + ": " + SelectedNodeTypeTab.TabName;
                         break;
                     case CswNodeTypeTree.NodeTypeTreeSelectedType.Tab:
-                        if( !Master.CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Create, SelectedNodeType ) )
+                        if( !Master.CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Create, SelectedNodeType ) )
                             throw new CswDniException( "You do not have permission to add tabs to this NodeType" );
 
                         create_AddTabPage();

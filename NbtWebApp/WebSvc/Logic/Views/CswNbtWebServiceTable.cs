@@ -145,9 +145,9 @@ namespace ChemSW.Nbt.WebServices
             ret["disabled"] = ( false == Included ).ToString().ToLower();
 
             //CswNbtViewRelationship ViewRel = (CswNbtViewRelationship) View.FindViewNodeByUniqueId( NodeKey.ViewNodeUniqueId );
-            bool CanView = _CswNbtResources.Permit.can( Security.CswNbtPermit.NodeTypePermission.View, NodeType );
-            bool CanEdit = _CswNbtResources.Permit.can( Security.CswNbtPermit.NodeTypePermission.Edit, NodeType );
-            bool CanDelete = _CswNbtResources.Permit.can( Security.CswNbtPermit.NodeTypePermission.Delete, NodeType );
+            bool CanView = _CswNbtResources.Permit.canNodeType( Security.CswNbtPermit.NodeTypePermission.View, NodeType );
+            bool CanEdit = _CswNbtResources.Permit.canNodeType( Security.CswNbtPermit.NodeTypePermission.Edit, NodeType );
+            bool CanDelete = _CswNbtResources.Permit.canNodeType( Security.CswNbtPermit.NodeTypePermission.Delete, NodeType );
             if( ViewRel != null )
             {
                 CanView = CanView && ViewRel.AllowView;

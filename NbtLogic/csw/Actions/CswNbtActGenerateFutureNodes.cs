@@ -2,12 +2,11 @@ using System;
 using System.Collections;
 using ChemSW.Core;
 using ChemSW.Exceptions;
+using ChemSW.Nbt.Batch;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropertySets;
-using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
-using ChemSW.Nbt.Batch;
 
 namespace ChemSW.Nbt.Actions
 {
@@ -66,7 +65,7 @@ namespace ChemSW.Nbt.Actions
             //Int32 ReturnVal = 0;
 
             // Must have create permissions on this generator's target's nodetype
-            if( _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Create, _CswNbtResources.MetaData.getNodeType( TargetNodeTypeId ) ) )
+            if( _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Create, _CswNbtResources.MetaData.getNodeType( TargetNodeTypeId ) ) )
             {
                 deleteExistingFutureNodes( CswNbtNodeGenerator );
 
@@ -141,7 +140,7 @@ namespace ChemSW.Nbt.Actions
                 //if( Generator.TargetType.SelectedNodeTypeIds.Count != 0 )   // BZ 8544
                 foreach( String nodeTypeId in Generator.TargetType.SelectedNodeTypeIds )
                 {
-                    
+
                     Int32 CurrentTargetNodeTypeId = CswConvert.ToInt32( nodeTypeId );
                     if( !( TargetNodeTypeIds.Contains( CurrentTargetNodeTypeId ) ) )
                         TargetNodeTypeIds.Add( CurrentTargetNodeTypeId );

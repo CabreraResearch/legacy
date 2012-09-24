@@ -281,7 +281,7 @@ namespace ChemSW.Nbt
                         break;
                     }
                 }
-                CswNbtNodePropWrapper AddedProp = CswNbtNodePropFactory.makeNodeProp( _CswNbtResources, PropRow, PropCollData.PropsTable, _CswNbtNode, MetaDataProp, _CswNbtMetaDataNodeTypeTab );
+                CswNbtNodePropWrapper AddedProp = CswNbtNodePropFactory.makeNodeProp( _CswNbtResources, PropRow, PropCollData.PropsTable, _CswNbtNode, MetaDataProp );
                 //if( MetaDataProp.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Barcode ||
                 //    MetaDataProp.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Sequence )
                 //{

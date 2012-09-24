@@ -289,7 +289,7 @@ namespace ChemSW.Nbt.WebServices
             {
                 CswNbtMetaDataNodeType MetaDataNodeType = _CswNbtResources.MetaData.getNodeType( RealNodeTypeId );
                 Nodes = MetaDataNodeType.getNodes( true, false );
-                CanAdd = _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Create, MetaDataNodeType );
+                CanAdd = _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Create, MetaDataNodeType );
             }
             else
             {
@@ -359,7 +359,7 @@ namespace ChemSW.Nbt.WebServices
                     {
                         Nodes = MetaDataObjectClass.getNodes( true, false );
                     }
-                    CanAdd = MetaDataObjectClass.getLatestVersionNodeTypes().Aggregate( false, ( current, NodeType ) => current || _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Create, NodeType ) );
+                    CanAdd = MetaDataObjectClass.getLatestVersionNodeTypes().Aggregate( false, ( current, NodeType ) => current || _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Create, NodeType ) );
                 }
                 else
                 {

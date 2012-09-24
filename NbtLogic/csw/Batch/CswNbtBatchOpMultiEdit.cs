@@ -111,8 +111,9 @@ namespace ChemSW.Nbt.Batch
                             {
                                 CswNbtNode CopyToNode = _CswNbtResources.Nodes[CopyToNodePk];
                                 if( CopyToNode != null &&
-                                    _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, CopyToNode.getNodeType(), false, null, null, CopyToNode.NodeId, null ) )
+                                    _CswNbtResources.Permit.canNode( CswNbtPermit.NodeTypePermission.Edit, CopyToNode.getNodeType(), CopyToNode.NodeId, null ) )
                                 {
+
                                     foreach( CswNbtMetaDataNodeTypeProp NodeTypeProp in BatchData.NodeTypePropIds.Select( PropId => _CswNbtResources.MetaData.getNodeTypeProp( CswConvert.ToInt32( PropId ) ) ) )
                                     {
                                         CopyToNode.Properties[NodeTypeProp].copy( SourceNode.Properties[NodeTypeProp] );
