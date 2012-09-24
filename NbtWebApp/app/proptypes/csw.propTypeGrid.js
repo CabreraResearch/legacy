@@ -21,32 +21,38 @@
                     cswPrivate.maxRows = Csw.string(cswPrivate.propVals.maxrows);
                     cswPrivate.viewid = Csw.string(cswPrivate.propVals.viewid).trim();
                     
-                    cswPrivate.makeGridMenu = function(menuDiv, o, gridOpts, cswGrid, viewid) {
+                    cswPrivate.makeGridMenu = function(grid) {
                         //Case 21741
-                        if (o.EditMode !== Csw.enums.editMode.PrintReport) {
+                        if (cswPublic.data.tabState.EditMode !== Csw.enums.editMode.PrintReport) {
 
                             var menuOpts = {
                                 width: 150,
                                 ajax: {
                                     urlMethod: 'getMainMenu',
                                     data: {
-                                        ViewId: viewid,
-                                        SafeNodeKey: o.cswnbtnodekey,
+                                        ViewId: cswPrivate.viewid,
+                                        SafeNodeKey: cswPublic.data.tabState.cswnbtnodekey,
                                         NodeTypeId: '',
-                                        PropIdAttr: o.ID,
+                                        PropIdAttr: cswPublic.data.ID,
                                         LimitMenuTo: '',
-                                        ReadOnly: o.ReadOnly
+                                        ReadOnly: cswPublic.data.isReadOnly()
                                     }
                                 },
-                                onAlterNode: function() { cswPrivate.reinitGrid(); },
-                                onMultiEdit: function() { cswGrid.toggleShowCheckboxes(); },
-                                onEditView: function() { Csw.tryExec(o.onEditView, viewid); },
-                                onSaveView: null,
-                                onPrintView: function() { cswGrid.print(); },
-                                Multi: false,
-                                nodeTreeCheck: ''
+                                onAlterNode: function() { 
+                                    cswPrivate.reinitGrid(); 
+                                },
+                                onMultiEdit: function () { 
+                                    grid.toggleShowCheckboxes(); 
+                                },
+                                onEditView: function() { 
+                                    Csw.tryExec(cswPublic.data.onEditView, cswPrivate.viewid); 
+                                },
+                                onPrintView: function () { 
+                                    grid.print(); 
+                                },
+                                Multi: false
                             };
-                            menuDiv.menu(menuOpts);
+                            cswPrivate.menuDiv.menu(menuOpts);
 
                         } // if( o.EditMode !== Csw.enums.editMode.PrintReport )
                     }; // makeGridMenu()
@@ -54,10 +60,8 @@
                     cswPrivate.makeFullGrid = function (viewid, newDiv) {
                         'use strict';
                         newDiv.empty();
-                        var menuDiv = newDiv.div({ ID: Csw.makeId(cswPublic.data.ID + window.Ext.id(), 'grid_as_fieldtype_menu') }).css({ height: '25px' });
-                        //newDiv.br();
+                        cswPrivate.menuDiv = newDiv.div({ ID: Csw.makeId(cswPublic.data.ID + window.Ext.id(), 'grid_as_fieldtype_menu') }).css({ height: '25px' });
                         var filterDiv = newDiv.div({ ID: Csw.makeId(cswPublic.data.ID + window.Ext.id(), 'grid_as_fieldtype_filter') });
-                        //newDiv.br();
                         var gridDiv = newDiv.div({ ID: Csw.makeId(cswPublic.data.ID + window.Ext.id(), 'grid_as_fieldtype') });
                         cswPrivate.reinitGrid = (function () {
                             return function () {
@@ -75,8 +79,6 @@
 
                         var gridOpts = {
                             ID: cswPublic.data.ID + '_fieldtypegrid',
-                            //                        resizeWithParent: false,
-                            //                        resizeWithParentElement: $('#nodetabs_props'),
                             viewid: viewid,
                             nodeid: cswPublic.data.tabState.nodeid,
                             cswnbtnodekey: cswPublic.data.tabState.cswnbtnodekey,
@@ -84,15 +86,13 @@
                             reinit: false,
                             EditMode: cswPublic.data.tabState.EditMode,
                             onEditNode: function () {
-                                //o.onReload();
                                 cswPrivate.reinitGrid();
                             },
                             onDeleteNode: function () {
-                                //o.onReload();
                                 cswPrivate.reinitGrid();
                             },
                             onSuccess: function (grid) {
-                                cswPrivate.makeGridMenu(menuDiv, cswPublic.data, gridOpts, grid, viewid);
+                                cswPrivate.makeGridMenu(grid);
                             }
                         };
                         cswPublic.control = gridDiv.$.CswNodeGrid('init', gridOpts);
