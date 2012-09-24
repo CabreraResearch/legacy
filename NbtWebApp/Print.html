@@ -34,54 +34,43 @@
                 cswPrivate.queryString = Csw.queryString();
 
                 
-                    var data = {
-                        PropId: Csw.string(cswPrivate.queryString.PropId),
-                        PrintLabelNodeId: Csw.string(cswPrivate.queryString.PrintLabelNodeId)
-                    };
-                    var ret = Csw.ajax.post({
-                        urlMethod: cswPrivate.GetEPLTextUrl,
-                        data: data,
-                        success: function(data) {
+                var data = {
+                    PropId: Csw.string(cswPrivate.queryString.PropId),
+                    PrintLabelNodeId: Csw.string(cswPrivate.queryString.PrintLabelNodeId)
+                };
+                var ret = Csw.ajax.post({
+                    urlMethod: cswPrivate.GetEPLTextUrl,
+                    data: data,
+                    success: function(data) {
 
-                            var labelx;
+                        var labelx;
 
-                            if (data.controltype === 'ActiveX') {
-                                cswPrivate.doPrint = function() {
-                                    labelx = $('#labelx').get(0);
-                                    labelx.EPLScript = data.epl;
-                                    labelx.Print();
-                                };
-                            } else {
-                            //cswPrivate.onZebraReady();
-                                cswPrivate.jZeb.findPrinters();
-                                cswPrivate.doPrint = function() {
-                                    var printer = $('#printersList').val();
-                                    cswPrivate.jZeb.setDefaultPrinter(printer);
-                                    return cswPrivate.jZeb.print(data.epl);
-                                };
-                            }
+                        cswPrivate.jZeb = cswPublic.table.cell(1,1).jZebra();
+                        cswPrivate.jZeb.findPrinters();
+                        cswPrivate.doPrint = function() {
+                            var printer = $('#printersList').val();
+                            cswPrivate.jZeb.setDefaultPrinter(printer);
+                            return cswPrivate.jZeb.print(data.epl);
+                        };
 
-                        },
-                        error: function (data) {
+                    },
+                    error: function (data) {
 
-                        }
-                    }); // ajax
+                    }
+                }); // ajax
+            
+                var printBtn = cswPublic.table.cell(1,2).buttonExt({
+                icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.barcode),
+                    width: '100px',
+                    bindOnEnter: true,
+                    ID: 'print_label_print',
+                    enabledText: 'Print',
+                    disableOnClick: false,
+                    onClick: function() {
+                        cswPrivate.doPrint();
+                    }
+                });
                 
-                    var printBtn = cswPublic.table.cell(1,2).buttonExt({
-                    icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.barcode),
-                        width: '100px',
-                        bindOnEnter: true,
-                        ID: 'print_label_print',
-                        enabledText: 'Print',
-                        disableOnClick: false,
-                        onClick: function() {
-                            cswPrivate.doPrint();
-                        }
-                    });
-                
-
-                cswPrivate.jZeb = cswPublic.table.cell(1,1).jZebra();
-
                 return cswPublic;
 
             });
@@ -91,16 +80,26 @@
     </script>
 </head>
 <body>
-    <div id="spinner" width="100%" style="text-align: center; display: none;">
-        <img src="images/ajax/progress.gif" /></div>
-    <div id="rptDiv">
-        <div id="divBody"></div>
-    </div>
-    <div id="DialogErrorDiv"></div>
-    <div id="hiddenDiv" style="visibility: hidden; border: 1px solid red;">
-        <applet id="jzebra" name="jzebra" code="jzebra.PrintApplet.class" archive="/vendor/jZebra/jzebra.jar" width="0" height="0"></applet>    
-        <OBJECT ID="labelx" Name="labelx" classid="clsid:A8926827-7F19-48A1-A086-B1A5901DB7F0" codebase="CafLabelPrintUtil.cab#version=0,1,6,0" width=0 height=0 align=center hspace=0 vspace=0></OBJECT>
-    </div>    
+    <div id="content">
+        <div id="spinner" width="100%" style="text-align: center; display: none;">
+            <img src="images/ajax/progress.gif" />
+        </div>
 
+        <h4 id="title">Select a Raw Text printer and click Print to begin printing.</h4>
+        <h5 id="processing"></h5>
+        <div id="divBody">
+
+        </div>
+
+        <div id="DialogErrorDiv"></div>
+
+        <div id="hiddenDiv" style="visibility: hidden; border: 1px solid red;">
+            <applet id="jzebra" name="jzebra" code="jzebra.PrintApplet.class" archive="/vendor/jZebra/jzebra.jar" width="50" height="50"></applet>    
+        </div>    
+
+        <div id="bottom" align="right" stye="text-align: right;">
+            <h6 id="footer"></h6>
+        </div>
+    </div>
 </body>
 </html>
