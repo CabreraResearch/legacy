@@ -410,9 +410,8 @@ namespace ChemSW.Nbt.WebServices
 
         private JArray _removeDuplicateSizes( JArray SizesArray )
         {
-            JArray ArrayToIterate = (JArray) SizesArray.DeepClone();
             JArray UniqueSizesArray = new JArray();
-            foreach( JObject SizeObj in ArrayToIterate )
+            foreach( JObject SizeObj in SizesArray )
             {
                 bool addSizeToCompare = true;
                 if( SizeObj.HasValues )
@@ -423,7 +422,6 @@ namespace ChemSW.Nbt.WebServices
                             UniqueSizeObj["quantity"].ToString() == SizeObj["quantity"].ToString() &&
                             UniqueSizeObj["catalogNo"].ToString() == SizeObj["catalogNo"].ToString() )
                         {
-                            SizesArray.Remove( SizeObj );
                             addSizeToCompare = false;
                         }
                     }
@@ -431,10 +429,6 @@ namespace ChemSW.Nbt.WebServices
                     {
                         UniqueSizesArray.Add( SizeObj );
                     }
-                }
-                else
-                {
-                    SizesArray.Remove( SizeObj );
                 }
             }
             return UniqueSizesArray;
