@@ -871,6 +871,17 @@ namespace ChemSW.Nbt.Schema
         }
 
         /// <summary>
+        /// For manipulating modules
+        /// </summary>
+        public CswNbtModuleManager Modules
+        {
+            get
+            {
+                return _CswNbtResources.Modules;
+            }
+        }
+
+        /// <summary>
         /// Convenience function for making new Scheduled Rule
         /// </summary>
         public Int32 createScheduledRule( NbtScheduleRuleNames RuleName, Recurrence Recurrence, Int32 Interval )
