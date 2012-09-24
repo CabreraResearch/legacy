@@ -52,7 +52,7 @@
                                 onClick: function () {
                             $.CswDialog('PrintLabelDialog', {
                                 nodeids: [cswPublic.data.tabState.nodeid],
-                                nodetypeid: cswPublic.data.nodetypeid
+                                nodetypeid: cswPublic.data.tabState.nodetypeid
                             });
                                 },
                                 editMode: cswPublic.data.tabState.EditMode
