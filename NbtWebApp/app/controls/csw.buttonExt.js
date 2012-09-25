@@ -39,7 +39,7 @@
                     width: 100,
                     showDelay: 1000
                 },
-                editMode: ''
+                disabled: false
             };
             var cswPublic = {};
 
@@ -153,7 +153,7 @@
                         icon: icon,
                         cls: Csw.string(cswPrivate.cssclass),
                         scale: Csw.string(cswPrivate.size, 'medium'),
-                        disabled: (Csw.enums.editMode.PrintReport === cswPrivate.editMode || Csw.enums.editMode.AuditHistoryInPopup === cswPrivate.editMode)
+                        disabled: cswPrivate.disabled
                     });
 
                     if (false === Csw.isNullOrEmpty(cswPrivate.tooltip.title)) {

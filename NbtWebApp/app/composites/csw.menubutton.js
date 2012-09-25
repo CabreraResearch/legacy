@@ -19,7 +19,7 @@
                 onClick: null,
                 state: '',
                 width: 240,
-                editmode: ''
+                disabled: false
             };
             var cswPublic = {};
 
@@ -49,7 +49,7 @@
                     handler: cswPrivate.handleMenuItemClick,
                     scale: Csw.string(cswPrivate.size, 'medium'),
                     menu: new window.Ext.menu.Menu({ items: cswPrivate.menu }),
-                    disabled: (Csw.enums.editMode.PrintReport === cswPrivate.editmode || Csw.enums.editMode.AuditHistoryInPopup === cswPrivate.editmode)
+                    disabled: cswPrivate.disabled
                 });
 
             } ()); // constructor

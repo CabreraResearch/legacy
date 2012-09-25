@@ -27,7 +27,7 @@
                         size: 'small',
                         propId: '',
                         onClickAction: null,
-                        editmode: ''
+                        disabled: false
                     };
                     Csw.extend(cswPrivate, options);
                     cswPrivate.div = cswParent.div({ ID: window.Ext.id() });
@@ -121,7 +121,7 @@
                                 disabledText: cswPrivate.value,
                                 disableOnClick: true,
                                 onClick: cswPrivate.onButtonClick,
-                                editmode: cswPrivate.editmode
+                                disabled: cswPrivate.disabled
                             });
                             break;
                         case 'menu':
@@ -135,7 +135,7 @@
                                     cswPrivate.selectedText = selectedOption;
                                     cswPrivate.onButtonClick();
                                 },
-                                editmode: cswPrivate.editmode
+                                disabled: cswPrivate.disabled
                             });
                             break;
                         //case 'link':                     

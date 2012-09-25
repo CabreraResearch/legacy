@@ -56,7 +56,7 @@
                         propId: cswPublic.data.propid,
                         ReadOnly: Csw.bool(cswPublic.data.ReadOnly),
                         onClickSuccess: cswPrivate.onClickSuccess,
-                        editmode: cswPublic.data.EditMode
+                        disabled: (Csw.enums.editMode.PrintReport === cswPublic.data.EditMode || Csw.enums.editMode.AuditHistoryInPopup ===cswPublic.data.EditMode)
                     });
                 };
 
