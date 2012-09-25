@@ -35,22 +35,22 @@
                     }
                     cswPrivate.div = cswParent.div();
                     
-                    if (cswPrivate.dynamicallyInjectApplet &&
-                        Csw.isNullOrEmpty(document.jZebra)) {
-                        //The 3rd party Java applet
-                        cswPrivate.applet = cswPrivate.div.applet({
-                            name: 'jZebra',
-                            code: 'jzebra.PrintApplet.class',
-                            archive: 'js/thirdparty/jZebra/jzebra.jar'
-                        });
-                    } else {
-                        cswPrivate.applet = cswPrivate.div.find('#jZebra');
-                    }
+                    //We don't have a need yet to dynamically inject a Java applet. When we do, this is what it would look like.
+
+                    //if (cswPrivate.dynamicallyInjectApplet &&
+                    //    Csw.isNullOrEmpty(document.jZebra)) {
+                    //    //The 3rd party Java applet
+                    //    cswPrivate.applet = cswPrivate.div.applet({
+                    //        name: 'jZebra',
+                    //        code: 'jzebra.PrintApplet.class',
+                    //        archive: 'js/thirdparty/jZebra/jzebra.jar'
+                    //    });
+                    //} else {
+                    //    cswPrivate.applet = cswPrivate.div.find('#jZebra');
+                    //}
                     
                     cswPublic.defaultPrinter = Csw.string(Csw.cookie.get('defaultPrinter'));
-
-                    cswPrivate.div.span({ text: 'Select a Printer: ' }).br();
-
+                    
                     //To minimize hacking jZebra, use their ID
                     Csw.tryExec(function() {
                         var doomedElement = $('#printersList');

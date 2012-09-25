@@ -495,7 +495,15 @@ namespace ChemSW.Nbt.ObjClasses
         }//ModificationState
 
         private bool _IsDemo = false;
-        public bool IsDemo { get { return _IsDemo; } set { _IsDemo = value; } }
+        public bool IsDemo
+        {
+            get { return _IsDemo; }
+            set
+            {
+                _NodeModificationState = NodeModificationState.Modified;
+                _IsDemo = value;
+            }
+        }
 
         private bool _IsTemp = false;
         /// <summary>
@@ -506,10 +514,15 @@ namespace ChemSW.Nbt.ObjClasses
             get { return _IsTemp; }
             set
             {
+                _NodeModificationState = NodeModificationState.Modified;
                 if( false == value )
                 {
                     _NodeModificationState = NodeModificationState.Modified;
                     SessionId = string.Empty;
+                }
+                else if( string.IsNullOrEmpty( SessionId ) )
+                {
+                    SessionId = _CswNbtResources.Session.SessionId;
                 }
 
                 _IsTemp = value;
