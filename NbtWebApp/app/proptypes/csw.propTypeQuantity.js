@@ -110,6 +110,9 @@
                             values: cswPrivate.relationships,
                             selected: cswPrivate.selectedNodeId
                         });
+                        if(Csw.isNullOrEmpty(cswPrivate.selectedNodeId)) {
+                            cswPublic.data.onPropChange({ nodeid: cswPrivate.selectBox.val() })
+                        }
                         cswPrivate.cellCol += 1;
 
                         cswPrivate.selectBox.required(cswPublic.data.isRequired());
