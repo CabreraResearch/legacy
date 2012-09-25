@@ -28,8 +28,7 @@
                 rel: '',
                 media: '',
                 target: '',
-                onClick: null, //function () {},
-                disabled: false
+                onClick: null //function () {}
             };
             var cswPublic = {};
 
@@ -45,11 +44,7 @@
 
                 cswPrivate.ID = Csw.string(cswPrivate.ID, cswPrivate.name);
 
-                if (cswPrivate.disabled) {
-                    html += '<p';
-                } else {
-                    html += '<a';
-                }
+                html += '<a ';
                 attr.add('id', cswPrivate.ID);
                 attr.add('class', cswPrivate.cssclass);
                 attr.add('href', cswPrivate.href);
@@ -66,17 +61,12 @@
 
                 html += Csw.string(cswPrivate.text, cswPrivate.value);
 
-                if (cswPrivate.disabled) {
-                    html += '</p>';
-                } else {
-                    html += '</a>';
-                }
-
+                html += '</a>';
                 $link = $(html);
 
                 Csw.literals.factory($link, cswPublic);
 
-                cswPublic.propDom('title', cswPrivate.title); //case 25692
+                cswPublic.propDom('title', cswPrivate.title);//case 25692
 
                 // Click binding
 
