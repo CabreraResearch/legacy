@@ -329,6 +329,7 @@ namespace ChemSW.Nbt.Actions
                 {
                     SelectedLocationId = Container.Location.SelectedNodeId;
                 }
+                ButtonData.Action = CswNbtObjClass.NbtButtonAction.request;
                 switch( ButtonData.SelectedText )
                 {
                     case CswNbtObjClassContainer.RequestMenu.Dispense:
@@ -345,8 +346,6 @@ namespace ChemSW.Nbt.Actions
                             CswNbtUnitViewBuilder Vb = new CswNbtUnitViewBuilder( _CswNbtResources );
                             Vb.setQuantityUnitOfMeasureView( MaterialNode, RetAsRequestItem.Quantity );
                         }
-
-                        ButtonData.Action = CswNbtObjClass.NbtButtonAction.request;
                         break;
                     case CswNbtObjClassContainer.RequestMenu.Dispose:
                         RetAsRequestItem.IsTemp = false; /* This is the only condition in which we want to commit the node upfront. */
@@ -354,17 +353,13 @@ namespace ChemSW.Nbt.Actions
 
                         /* Kludge Alert: We don't have compound conditionals yet. Set it and hide it for now to squash the Quantity subprop. TODO: Remove this when compound conditionals arrive. */
                         RetAsRequestItem.RequestBy.Value = CswNbtObjClassRequestItem.RequestsBy.Size;
-
                         SelectedLocationId = Container.Location.SelectedNodeId;
-                        ButtonData.Action = CswNbtObjClass.NbtButtonAction.nothing;
                         break;
                     case CswNbtObjClassContainer.RequestMenu.Move:
                         RetAsRequestItem.Type.Value = CswNbtObjClassRequestItem.Types.Move;
 
                         /* Kludge Alert: We don't have compound conditionals yet. Set it and hide it for now to squash the Quantity subprop. TODO: Remove this when compound conditionals arrive. */
                         RetAsRequestItem.RequestBy.Value = CswNbtObjClassRequestItem.RequestsBy.Size;
-
-                        ButtonData.Action = CswNbtObjClass.NbtButtonAction.request;
                         break;
                     default:
                         throw new CswDniException( ErrorType.Error, "No action has been defined for this button menu.", "Menu option named " + ButtonData.SelectedText + " has not implemented a button click event." );

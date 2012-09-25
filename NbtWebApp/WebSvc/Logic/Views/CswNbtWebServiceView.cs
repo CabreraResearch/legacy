@@ -476,7 +476,7 @@ namespace ChemSW.Nbt.WebServices
                         // Set NextOptions to be all viewable nodetypes and objectclasses
                         foreach( CswNbtMetaDataNodeType LatestNodeType in from CswNbtMetaDataNodeType _LatestNodeType in _CswNbtResources.MetaData.getNodeTypesLatestVersion() orderby _LatestNodeType.NodeTypeName select _LatestNodeType )
                         {
-                            if( _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, LatestNodeType ) )
+                            if( _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.View, LatestNodeType ) )
                             {
                                 // This is purposefully not the typical way of creating CswNbtViewRelationships.
                                 CswNbtViewRelationship R = new CswNbtViewRelationship( _CswNbtResources, View, LatestNodeType.getFirstVersionNodeType(), false );
@@ -645,7 +645,7 @@ namespace ChemSW.Nbt.WebServices
                         ( PropRow["fktype"].ToString() == NbtViewRelatedIdType.NodeTypeId.ToString() &&
                           PropRow["fkvalue"].ToString() == FirstVersionNodeType.NodeTypeId.ToString() ) )
                     {
-                        if( _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, FirstVersionNodeType ) )
+                        if( _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.View, FirstVersionNodeType ) )
                         {
                             // Special case -- relationship to my own type
                             // We need to create two relationships from this
@@ -711,7 +711,7 @@ namespace ChemSW.Nbt.WebServices
                                 R.overrideSecond( _CswNbtResources.MetaData.getNodeType( CswConvert.ToInt32( PropRow["fkvalue"] ) ) );
 
                             if( R.SecondType != NbtViewRelatedIdType.NodeTypeId ||
-                                _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, _CswNbtResources.MetaData.getNodeType( R.SecondId ) ) )
+                                _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.View, _CswNbtResources.MetaData.getNodeType( R.SecondId ) ) )
                             {
                                 //Relationships.Add( R );
                                 _InsertRelationship( Relationships, R );
@@ -732,7 +732,7 @@ namespace ChemSW.Nbt.WebServices
                                     R.overrideSecond( _CswNbtResources.MetaData.getNodeType( CswConvert.ToInt32( PropRow["typeid"] ) ) );
 
                                 if( R.SecondType != NbtViewRelatedIdType.NodeTypeId ||
-                                    _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, _CswNbtResources.MetaData.getNodeType( R.SecondId ) ) )
+                                    _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.View, _CswNbtResources.MetaData.getNodeType( R.SecondId ) ) )
                                 {
                                     //Relationships.Add( R );
                                     _InsertRelationship( Relationships, R );

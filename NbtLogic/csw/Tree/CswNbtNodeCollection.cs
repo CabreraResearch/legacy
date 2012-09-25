@@ -561,10 +561,6 @@ namespace ChemSW.Nbt
             Node.OnRequestDeleteNode += new CswNbtNode.OnRequestDeleteNodeHandler( OnAfterDeleteNode );
             Node.fillFromNodeTypeId( NodeTypeId );
             Node.IsTemp = MakeNodeOperation.MakeTemp == Op;
-            if( Node.IsTemp )
-            {
-                Node.SessionId = _CswNbtResources.Session.SessionId;
-            }
 
             switch( Op )
             {

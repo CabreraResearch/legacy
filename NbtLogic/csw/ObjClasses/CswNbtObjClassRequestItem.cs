@@ -447,7 +447,7 @@ namespace ChemSW.Nbt.ObjClasses
                                 break;
                         } //switch( ButtonData.SelectedText )
 
-                        Status.Value = _getNextStatus( ButtonData.SelectedText );
+                        _getNextStatus( ButtonData.SelectedText );
                         postChanges( true );
                         ButtonData.Data["requestitem"] = ButtonData.Data["requestitem"] ?? new JObject();
                         ButtonData.Data["requestitem"]["requestitemid"] = NodeId.ToString();
@@ -460,19 +460,29 @@ namespace ChemSW.Nbt.ObjClasses
             return true;
         }
 
-        private string _getNextStatus( string ButtonText )
+        private void _getNextStatus( string ButtonText )
         {
-            string Ret = Status.Value;
             switch( ButtonText )
             {
                 case FulfillMenu.Cancel:
-                    Ret = Statuses.Cancelled;
+                    setNextStatus( Statuses.Cancelled );
                     break;
                 case FulfillMenu.Complete:
-                    Ret = Statuses.Completed;
+                    setNextStatus( Statuses.Completed );
+                    break;
+                case FulfillMenu.Dispose:
+                    setNextStatus( Statuses.Disposed );
+                    break;
+                case FulfillMenu.Move:
+                    setNextStatus( Statuses.Moved );
+                    break;
+                case FulfillMenu.Order:
+                    setNextStatus( Statuses.Ordered );
+                    break;
+                case FulfillMenu.Receive:
+                    setNextStatus( Statuses.Received );
                     break;
             }
-            return Ret;
         }
 
         public void setNextStatus( string StatusVal )

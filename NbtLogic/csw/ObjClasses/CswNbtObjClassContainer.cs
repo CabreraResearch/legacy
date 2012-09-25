@@ -207,7 +207,7 @@ namespace ChemSW.Nbt.ObjClasses
                             CswNbtObjClassRequestItem NodeAsRequestItem = RequestAct.makeContainerRequestItem( this, ButtonData );
 
                             ButtonData.Data["titleText"] = OCP.PropName + " " + Barcode.Barcode;
-                            ButtonData.Data["requestaction"] = OCP.PropName;
+                            ButtonData.Data["requestaction"] = ButtonData.SelectedText;
                             ButtonData.Data["requestItemProps"] = RequestAct.getRequestItemAddProps( NodeAsRequestItem );
                             ButtonData.Data["requestItemNodeTypeId"] = RequestAct.RequestItemNt.NodeTypeId;
                         }
@@ -627,7 +627,8 @@ namespace ChemSW.Nbt.ObjClasses
         private void OnDisposedPropChange( CswNbtNodeProp Prop )
         {
             Disposed.setHidden( value: true, SaveToDb: true );
-            if( Disposed.Checked == Tristate.True )
+            if( CswConvert.ToTristate( Disposed.GetOriginalPropRowValue() ) != Disposed.Checked &&
+                Disposed.Checked == Tristate.True )
             {
                 _updateRequestItems( CswNbtObjClassRequestItem.Types.Dispose );
             }

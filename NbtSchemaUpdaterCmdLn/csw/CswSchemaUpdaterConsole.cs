@@ -270,6 +270,9 @@ namespace ChemSW.Nbt.Schema.CmdLn
             if( UpdateSucceeded )
             {
 
+                // refresh current version in case it was altered
+                CswNbtResources.ConfigVbls.refresh();
+                CurrentVersion = CswSchemaUpdater.CurrentVersion( CswNbtResources );
 
                 while( UpdateSucceeded && CurrentVersion != CswSchemaUpdater.LatestVersion )
                 {

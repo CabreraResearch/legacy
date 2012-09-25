@@ -1,8 +1,8 @@
 using System;
 using ChemSW.Core;
+using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
-using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.ServiceDrivers;
 using Newtonsoft.Json.Linq;
 
@@ -61,93 +61,105 @@ namespace ChemSW.Nbt.WebServices
         {
             JObject Ret = new JObject();
 
-            CswPrimaryKey PrintLabelId = new CswPrimaryKey();
-            PrintLabelId.FromString( PrintLabelNodeIdStr );
-
-            CswNbtNode PrintLabelNode = _CswNbtResources.Nodes.GetNode( PrintLabelId );
-            CswNbtObjClassPrintLabel NodeAsPrintLabel = (CswNbtObjClassPrintLabel) PrintLabelNode;
-
-            CswPropIdAttr PropId = new CswPropIdAttr( PropIdAttr );
-            CswNbtNode TargetNode = _CswNbtResources.Nodes.GetNode( PropId.NodeId );
-
-            string EPLText = NodeAsPrintLabel.EplText.Text;
-            string Params = NodeAsPrintLabel.Params.Text;
-            string ControlType = NodeAsPrintLabel.ControlType.Value;
-            if( string.IsNullOrEmpty( ControlType ) )
+            CswNbtObjClassPrintLabel NodeAsPrintLabel = _CswNbtResources.Nodes[PrintLabelNodeIdStr];
+            if( null != NodeAsPrintLabel )
             {
-                ControlType = CswNbtObjClassPrintLabel.ControlTypes.jZebra;
+                CswPropIdAttr PropId = new CswPropIdAttr( PropIdAttr );
+                CswNbtNode TargetNode = _CswNbtResources.Nodes[PropId.NodeId];
+                if( null != TargetNode )
+                {
+                    string EPLText = NodeAsPrintLabel.EplText.Text;
+                    string Params = NodeAsPrintLabel.Params.Text;
+                    string ControlType = NodeAsPrintLabel.ControlType.Value;
+                    if( string.IsNullOrEmpty( ControlType ) )
+                    {
+                        ControlType = CswNbtObjClassPrintLabel.ControlTypes.jZebra;
+                    }
+
+                    // BZ 6118 - this prevents " from being turned into &quot;
+                    // BUT SEE BZ 7881!
+                    Ret["epl"] = GenerateEPLScript( EPLText, Params, TargetNode ) + "\n";
+                    Ret["controltype"] = ControlType;
+                }
             }
-
-            // BZ 6118 - this prevents " from being turned into &quot;
-            // BUT SEE BZ 7881!
-            Ret["epl"] = GenerateEPLScript( EPLText, Params, TargetNode ) + "\n";
-            Ret["controltype"] = ControlType;
-            //if( CheckedNodeIds != string.Empty )
-            //{
-            //    foreach( string NodeIdToPrintString in CheckedNodeIds.Split( ',' ) )
-            //    {
-            //        CswPrimaryKey NodeIdToPrint = new CswPrimaryKey( "nodes", CswConvert.ToInt32( NodeIdToPrintString ) );
-            //        if( NodeIdToPrint != TargetNode.NodeId )
-            //        {
-            //            CswNbtNode NodeToPrint = Master.CswNbtResources.Nodes.GetNode( NodeIdToPrint );
-            //            _EPLBox.Text += GenerateEPLScript( EPLText, Params, NodeToPrint ) + "\n";
-            //        }
-            //    }
-            //}
-
+            if( false == Ret.HasValues )
+            {
+                throw new CswDniException( ErrorType.Error, "Failed to get valid EPL text from the provided parameters.", "getEplText received invalid PropIdAttr and PrintLabelNodeIdStr parameters." );
+            }
             return Ret;
         } // getEPLText()
 
         private string GenerateEPLScript( string EPLText, string Params, CswNbtNode Node )
         {
-            string EPLScript = EPLText;
-            string[] ParamsArray = Params.Split( '\n' );
-
-            while( EPLScript.Contains( "{" ) )
+            string EPLScript = string.Empty;
+            if( false == string.IsNullOrEmpty( EPLText ) )
             {
-                Int32 ParamStartIndex = EPLScript.IndexOf( "{" );
-                Int32 ParamEndIndex = EPLScript.IndexOf( "}" );
-
-                string PropertyParamString = EPLScript.Substring( ParamStartIndex, ParamEndIndex - ParamStartIndex + 1 );
-                string PropertyParamName = PropertyParamString.Substring( 1, PropertyParamString.Length - 2 );
-                // Find the property
-                CswNbtMetaDataNodeType MetaDataNodeType = _CswNbtResources.MetaData.getNodeType( Node.NodeTypeId );
-                CswNbtMetaDataNodeTypeProp MetaDataProp = MetaDataNodeType.getNodeTypeProp( PropertyParamName );
-                string PropertyValue = ( (CswNbtNodePropWrapper) Node.Properties[MetaDataProp] ).Gestalt;
-
-                bool FoundMatch = false;
-                foreach( string ParamNVP in ParamsArray )
+                EPLScript = EPLText;
+                if( false == string.IsNullOrEmpty( Params ) )
                 {
-                    string[] ParamSplit = ParamNVP.Split( '=' );
-                    if( ParamSplit[0] == PropertyParamName && CswTools.IsInteger( ParamSplit[1] ) )
+                    string[] ParamsArray = Params.Split( '\n' );
+
+                    while( EPLScript.Contains( "{" ) )
                     {
-                        FoundMatch = true;
-                        Int32 MaxLength = CswConvert.ToInt32( ParamSplit[1] );
-                        Int32 CurrentIteration = 1;
-                        while( ParamStartIndex >= 0 )
+                        Int32 ParamStartIndex = EPLScript.IndexOf( "{" );
+                        Int32 ParamEndIndex = EPLScript.IndexOf( "}" );
+
+                        string PropertyParamString = EPLScript.Substring( ParamStartIndex, ParamEndIndex - ParamStartIndex + 1 );
+                        string PropertyParamName = PropertyParamString.Substring( 1, PropertyParamString.Length - 2 );
+                        // Find the property
+                        if( null != Node )
                         {
-                            if( PropertyValue.Length > MaxLength )
+                            CswNbtMetaDataNodeType MetaDataNodeType = _CswNbtResources.MetaData.getNodeType( Node.NodeTypeId );
+                            if( null != MetaDataNodeType )
                             {
-                                EPLScript = EPLScript.Substring( 0, ParamStartIndex ) + PropertyValue.Substring( 0, MaxLength ) + EPLScript.Substring( ParamEndIndex + 1 );
-                                PropertyValue = PropertyValue.Substring( MaxLength + 1 );
+                                CswNbtMetaDataNodeTypeProp MetaDataProp = MetaDataNodeType.getNodeTypeProp( PropertyParamName );
+                                if( null != MetaDataProp )
+                                {
+                                    string PropertyValue = Node.Properties[MetaDataProp].Gestalt;
+
+                                    bool FoundMatch = false;
+                                    foreach( string ParamNVP in ParamsArray )
+                                    {
+                                        string[] ParamSplit = ParamNVP.Split( '=' );
+                                        if( ParamSplit.Length > 1 &&
+                                            ParamSplit[0] == PropertyParamName &&
+                                            CswTools.IsInteger( ParamSplit[1] ) )
+                                        {
+                                            FoundMatch = true;
+                                            Int32 MaxLength = CswConvert.ToInt32( ParamSplit[1] );
+                                            Int32 CurrentIteration = 1;
+                                            while( ParamStartIndex >= 0 )
+                                            {
+                                                if( PropertyValue.Length > MaxLength )
+                                                {
+                                                    EPLScript = EPLScript.Substring( 0, ParamStartIndex ) + PropertyValue.Substring( 0, MaxLength ) + EPLScript.Substring( ParamEndIndex + 1 );
+                                                    PropertyValue = PropertyValue.Substring( MaxLength + 1 );
+                                                }
+                                                else
+                                                {
+                                                    EPLScript = EPLScript.Substring( 0, ParamStartIndex ) + PropertyValue + EPLScript.Substring( ParamEndIndex + 1 );
+                                                    PropertyValue = "";
+                                                }
+                                                CurrentIteration += 1;
+                                                ParamStartIndex = EPLScript.IndexOf( "{" + PropertyParamName + "_" + CurrentIteration + "}" );
+                                                ParamEndIndex = ParamStartIndex + ( "{" + PropertyParamName + "_" + CurrentIteration + "}" ).Length - 1;
+                                            }
+                                        }
+                                    }
+                                    if( false == FoundMatch )
+                                    {
+                                        EPLScript = EPLScript.Substring( 0, ParamStartIndex ) + PropertyValue + EPLScript.Substring( ParamEndIndex + 1 );
+                                    }
+                                }
                             }
-                            else
-                            {
-                                EPLScript = EPLScript.Substring( 0, ParamStartIndex ) + PropertyValue + EPLScript.Substring( ParamEndIndex + 1 );
-                                PropertyValue = "";
-                            }
-                            CurrentIteration++;
-                            ParamStartIndex = EPLScript.IndexOf( "{" + PropertyParamName + "_" + CurrentIteration + "}" );
-                            ParamEndIndex = ParamStartIndex + ( "{" + PropertyParamName + "_" + CurrentIteration + "}" ).Length - 1;
                         }
                     }
                 }
-                if( !FoundMatch )
-                {
-                    EPLScript = EPLScript.Substring( 0, ParamStartIndex ) + PropertyValue + EPLScript.Substring( ParamEndIndex + 1 );
-                }
             }
-
+            if( string.IsNullOrEmpty( EPLScript ) )
+            {
+                throw new CswDniException( ErrorType.Error, "Could not generate an EPL script from the provided parameters.", "EPL Text='" + EPLText + "', Params='" + Params + "'" );
+            }
             return EPLScript;
         } // GenerateEPLScript()
 
