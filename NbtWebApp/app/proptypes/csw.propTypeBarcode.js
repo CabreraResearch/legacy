@@ -52,7 +52,7 @@
                                 onClick: function () {
                                     $.CswDialog('PrintLabelDialog', { 'nodeid': cswPublic.data.nodeid, 'propid': cswPublic.data.propid });
                                 },
-                                editMode: cswPublic.data.EditMode
+                                disabled: (Csw.enums.editMode.PrintReport === cswPublic.data.EditMode || Csw.enums.editMode.AuditHistoryInPopup === cswPublic.data.EditMode)
                             });
                     }
                 };
