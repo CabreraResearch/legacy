@@ -31,7 +31,8 @@
                     cswPrivate.options = cswPrivate.propVals.options;
                     cswPrivate.relationships = [];
                     cswPrivate.fractional = Csw.bool(cswPrivate.propVals.fractional);
-                    cswPrivate.cellCol = 1;
+                    cswPrivate.quantityoptional = Csw.bool(cswPrivate.propVals.quantityoptional);
+                    cswPrivate.cellCol = 1;                    
 
                     if (false === cswPrivate.fractional) {
                         cswPrivate.precision = 0;
@@ -58,10 +59,11 @@
                             value: (false === cswPublic.data.isMulti()) ? Csw.string(cswPrivate.propVals.value).trim() : Csw.enums.multiEditDefaultValue,
                             MinValue: Csw.number(cswPrivate.propVals.minvalue),
                             MaxValue: Csw.number(cswPrivate.propVals.maxvalue),
+                            isOpenSet: Csw.bool(cswPrivate.propVals.isOpenSet),
                             ceilingVal: Csw.number(cswPrivate.ceilingVal),
                             Precision: 6, //case 24646 - precision is being handled in the validator below, so we don't want to use the one in numberTextBox.
                             ReadOnly: Csw.bool(cswPublic.data.isReadOnly()),
-                            Required: Csw.bool(cswPublic.data.isRequired()),
+                            Required: Csw.bool(cswPublic.data.isRequired()) && false === cswPrivate.quantityoptional,
                             onChange: function () {
                                 var val = cswPrivate.numberTextBox.val();
                                 Csw.tryExec(cswPublic.data.onChange, val);
@@ -116,7 +118,6 @@
                         cswPrivate.cellCol += 1;
 
                         cswPrivate.selectBox.required(cswPublic.data.isRequired());
-                        cswPrivate.numberTextBox.required(cswPublic.data.isRequired());
 
                         $.validator.addMethod('validateInteger', function (value, element) {
                             return (cswPrivate.isMultiEditValid(value) || cswPrivate.precision != 0 || Csw.validateInteger(cswPrivate.numberTextBox.val()));
@@ -133,10 +134,14 @@
                         }, 'Unit must be selected if Quantity is present.');
                         cswPrivate.selectBox.addClass('validateUnitPresent');
 
-                        $.validator.addMethod('validateQuantityPresent', function (value, element) {
-                            return (cswPrivate.isMultiEditValid(value) || false === Csw.isNullOrEmpty(cswPrivate.numberTextBox.val()) || Csw.isNullOrEmpty(cswPrivate.selectBox.val()));
-                        }, 'Quantity must have a value if Unit is selected.');
-                        cswPrivate.selectBox.addClass('validateQuantityPresent');
+                        if (false === cswPrivate.quantityoptional) {
+                            cswPrivate.numberTextBox.required(cswPublic.data.isRequired());
+
+                            $.validator.addMethod('validateQuantityPresent', function (value, element) {
+                                return (cswPrivate.isMultiEditValid(value) || false === Csw.isNullOrEmpty(cswPrivate.numberTextBox.val()) || Csw.isNullOrEmpty(cswPrivate.selectBox.val()));
+                            }, 'Quantity must have a value if Unit is selected.');
+                            cswPrivate.selectBox.addClass('validateQuantityPresent');
+                        }
 
                         cswPrivate.selectBox.$.hover(function (event) { Csw.nodeHoverIn(event, cswPrivate.selectBox.val()); },
                                         function (event) { Csw.nodeHoverOut(event, cswPrivate.selectBox.val()); });
@@ -148,5 +153,5 @@
                 return cswPublic;
             }));
 
-}());
+} ());
         

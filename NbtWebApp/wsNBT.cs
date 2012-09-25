@@ -4105,6 +4105,31 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        public string getSizeLogicalsVisibility( string SizeNodeTypeId )
+        {
+            JObject ReturnVal = new JObject();
+            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            try
+            {
+                _initResources();
+                AuthenticationStatus = _attemptRefresh( true );
+                CswNbtWebServiceCreateMaterial ws = new CswNbtWebServiceCreateMaterial( _CswNbtResources, _CswNbtStatisticsEvents );
+                ReturnVal = ws.getSizeLogicalsVisibility( CswConvert.ToInt32( SizeNodeTypeId ) );
+
+                _deInitResources();
+            }
+            catch( Exception Ex )
+            {
+                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
+            }
+
+            CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
+
+            return ReturnVal.ToString();
+        } // getSizeLogicalsVisibility()
+
+        [WebMethod( EnableSession = false )]
+        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
         public string commitMaterial( string MaterialDefinition )
         {
             JObject ReturnVal = new JObject();

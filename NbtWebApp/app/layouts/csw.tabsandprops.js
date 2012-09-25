@@ -715,6 +715,7 @@
                         onEditView: cswPrivate.onEditView,
                         onAfterButtonClick: cswPrivate.onAfterButtonClick
                     }, propCell.div());
+                        Required: Csw.bool(propData.required)
 
                     cswPrivate.properties[propId] = Csw.nbt.property(fieldOpt);
 

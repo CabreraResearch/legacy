@@ -74,15 +74,15 @@
     Csw.register('isNumeric', isNumeric);
     Csw.isNumeric = Csw.isNumeric || isNumeric;
 
-    function validateFloatMinValue(value, minvalue, isClosedSet) {
+    function validateFloatMinValue(value, minvalue, isOpenSet) {
         var nValue = parseFloat(value);
         var nMinValue = parseFloat(minvalue);
         var isValid = true;
-        if ( isClosedSet === undefined ) {
-            isClosedSet = true;
+        if (isOpenSet === undefined) {
+            isOpenSet = false;
         }
         if (nMinValue !== undefined) {
-            if (nValue === undefined || isClosedSet ? nValue < nMinValue : nValue <= nMinValue) {
+            if (nValue === undefined || isOpenSet ? nValue <= nMinValue : nValue < nMinValue) {
                 isValid = false;
             }
         }
@@ -91,15 +91,15 @@
     Csw.register('validateFloatMinValue', validateFloatMinValue);
     Csw.validateFloatMinValue = Csw.validateFloatMinValue || validateFloatMinValue;
 
-    function validateFloatMaxValue(value, maxvalue, isClosedSet) {
+    function validateFloatMaxValue(value, maxvalue, isOpenSet) {
         var nValue = parseFloat(value);
         var nMaxValue = parseFloat(maxvalue);
         var isValid = true;
-        if ( isClosedSet === undefined ) {
-            isClosedSet = true;
+        if (isOpenSet === undefined) {
+            isOpenSet = false;
         }
         if (nMaxValue !== undefined) {
-            if (nValue === undefined || isClosedSet ? nValue > nMaxValue : nValue >= nMaxValue) {
+            if (nValue === undefined || isOpenSet ? nValue >= nMaxValue : nValue > nMaxValue) {
                 isValid = false;
             }
         }

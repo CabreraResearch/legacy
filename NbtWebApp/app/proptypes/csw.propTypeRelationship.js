@@ -184,6 +184,7 @@
                                 cswPrivate.selectBox.val(nodeid);
                                 cswPrivate.toggleOptions(true);
                                 cswPublic.data.onPropChange({ nodeid: nodeid });
+                                cswPrivate.selectBox.$.valid();
                             };
 
                             cswPrivate.nodeLinkText.$.hover(function (event) { Csw.nodeHoverIn(event, cswPrivate.selectBox.val()); },

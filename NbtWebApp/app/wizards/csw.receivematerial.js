@@ -112,7 +112,7 @@
                     var container = {
                         materialid: cswPrivate.state.materialId,
                         containernodetypeid: cswPrivate.state.containerNodeTypeId,
-                        quantities: cswPrivate.amountsGrid.quantities,
+                        quantities: cswPrivate.amountsGrid.quantities(),
                         sizeid: cswPrivate.state.selectedSizeId,
                         props: cswPrivate.tabsAndProps.getPropJson(),
                         documentid: cswPrivate.state.documentId
@@ -196,7 +196,7 @@
                             text: 'Select the number of containers and their quantities to receive.',
                             cssclass: "wizardHelpDesc"
                         });
-                        cswPrivate.divStep1.br({ number: 4 });
+                        cswPrivate.divStep1.br({ number: 2 });
 
                         //If multiple container nodetypes exist
                         cswPrivate.container = {};

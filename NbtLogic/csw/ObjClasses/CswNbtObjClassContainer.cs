@@ -321,8 +321,11 @@ namespace ChemSW.Nbt.ObjClasses
         private double _getDispenseAmountInProperUnits( double Quantity, CswPrimaryKey OldUnitId, CswPrimaryKey NewUnitId )
         {
             double convertedValue = Quantity;
-            CswNbtUnitConversion ConversionObj = new CswNbtUnitConversion( _CswNbtResources, OldUnitId, NewUnitId, Material.RelatedNodeId );
-            convertedValue = ConversionObj.convertUnit( Quantity );
+            if( OldUnitId != NewUnitId )
+            {
+                CswNbtUnitConversion ConversionObj = new CswNbtUnitConversion( _CswNbtResources, OldUnitId, NewUnitId, Material.RelatedNodeId );
+                convertedValue = ConversionObj.convertUnit( Quantity );
+            }
             return convertedValue;
         }
 
@@ -344,8 +347,8 @@ namespace ChemSW.Nbt.ObjClasses
                 ActionDataObj["currentUnitName"] = unitNode.Name.Text;
                 ActionDataObj["precision"] = Quantity.Precision.ToString();
             }
-            JObject CapacityObj = _getCapacityJSON();
-            ActionDataObj["capacity"] = CapacityObj.ToString();
+            JObject InitialQuantityObj = _getInitialQuantityJSON();
+            ActionDataObj["initialQuantity"] = InitialQuantityObj.ToString();
             bool customBarcodes = CswConvert.ToBoolean( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswNbtResources.ConfigurationVariables.custom_barcodes.ToString() ) );
             ActionDataObj["customBarcodes"] = customBarcodes;
             bool netQuantityEnforced = CswConvert.ToBoolean( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswNbtResources.ConfigurationVariables.netquantity_enforced.ToString() ) );
@@ -353,20 +356,27 @@ namespace ChemSW.Nbt.ObjClasses
             return ActionDataObj;
         }
 
-        private JObject _getCapacityJSON()
+        private JObject _getInitialQuantityJSON()
         {
-            JObject CapacityObj = new JObject();
+            JObject InitialQuantityObj = new JObject();
             CswNbtObjClassSize sizeNode = _CswNbtResources.Nodes.GetNode( Size.RelatedNodeId );
             if( null != sizeNode )
             {
-                CswNbtNodePropQuantity Capacity = sizeNode.InitialQuantity;
-                Capacity.ToJSON( CapacityObj );
+                CswNbtNodePropQuantity InitialQuantity = sizeNode.InitialQuantity;
+                InitialQuantity.ToJSON( InitialQuantityObj );
+                CswNbtObjClassUnitOfMeasure UnitNode = _CswNbtResources.Nodes.GetNode( sizeNode.InitialQuantity.UnitId );
+                if( null != UnitNode && 
+                    ( UnitNode.UnitType.Value == CswNbtObjClassUnitOfMeasure.UnitTypes.Each.ToString() || 
+                    false == CswTools.IsDouble( UnitNode.ConversionFactor.Base ) ) )
+                {
+                    InitialQuantityObj["unitReadonly"] = "true";
+                }
             }
             else
             {
                 throw new CswDniException( ErrorType.Error, "Cannot dispense container: Container's size is undefined.", "Dispense fail - null Size relationship." );
             }
-            return CapacityObj;
+            return InitialQuantityObj;
         }
 
 

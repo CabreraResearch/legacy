@@ -97,6 +97,17 @@ namespace ChemSW.Nbt.PropTypes
             }
         }
 
+        /// <summary>
+        /// When set to true, minValue and MaxValue are not included in the number range.
+        /// </summary>
+        public bool IsOpenSet
+        {
+            get
+            {
+                return CswConvert.ToBoolean( _CswNbtMetaDataNodeTypeProp.Attribute1 );
+            }
+        }
+
         public override void ToXml( XmlNode ParentNode )
         {
             XmlNode ValueNode = CswXmlDocument.AppendXmlNode( ParentNode, _ValueSubField.ToXmlNodeName() );
@@ -123,6 +134,7 @@ namespace ChemSW.Nbt.PropTypes
             ParentObject["minvalue"] = MinValue.ToString();
             ParentObject["maxvalue"] = MaxValue.ToString();
             ParentObject["precision"] = Precision.ToString();
+            ParentObject["isOpenSet"] = IsOpenSet.ToString();
         }
 
         public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
