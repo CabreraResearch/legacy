@@ -33,7 +33,8 @@
 
                         cswPublic.control.cell(1, 1).a({
                             href: cswPrivate.href,
-                            text: cswPrivate.text
+                            text: cswPrivate.text,
+                            disabled: (Csw.enums.editMode.PrintReport === cswPublic.data.EditMode || Csw.enums.editMode.AuditHistoryInPopup === cswPublic.data.EditMode)
                         });
                         cswPrivate.cell12 = cswPublic.control.cell(1, 2).div();
 

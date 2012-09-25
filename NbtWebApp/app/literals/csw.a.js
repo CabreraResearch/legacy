@@ -28,7 +28,8 @@
                 rel: '',
                 media: '',
                 target: '',
-                onClick: null //function () {}
+                onClick: null, //function () {},
+                disabled: false
             };
             var cswPublic = {};
 
@@ -44,7 +45,11 @@
 
                 cswPrivate.ID = Csw.string(cswPrivate.ID, cswPrivate.name);
 
-                html += '<a ';
+                if (cswPrivate.disabled) {
+                    html += '<p';
+                } else {
+                    html += '<a';
+                }
                 attr.add('id', cswPrivate.ID);
                 attr.add('class', cswPrivate.cssclass);
                 attr.add('href', cswPrivate.href);
@@ -61,12 +66,17 @@
 
                 html += Csw.string(cswPrivate.text, cswPrivate.value);
 
-                html += '</a>';
+                if (cswPrivate.disabled) {
+                    html += '</p>';
+                } else {
+                    html += '</a>';
+                }
+
                 $link = $(html);
 
                 Csw.literals.factory($link, cswPublic);
 
-                cswPublic.propDom('title', cswPrivate.title);//case 25692
+                cswPublic.propDom('title', cswPrivate.title); //case 25692
 
                 // Click binding
 

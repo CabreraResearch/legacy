@@ -40,7 +40,8 @@
                             if (molData) {
                                 cswPrivate.cell11.a({
                                     href: molData.href,
-                                    target: '_blank'
+                                    target: '_blank',
+                                    disabled: (Csw.enums.editMode.PrintReport === cswPublic.data.EditMode || Csw.enums.editMode.AuditHistoryInPopup === cswPublic.data.EditMode)
                                 }).img({
                                     src: molData.href + '&foo=' + window.Ext.id(),
                                     height: cswPrivate.propVals.height,
