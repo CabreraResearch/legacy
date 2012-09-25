@@ -517,12 +517,14 @@ namespace ChemSW.Nbt.ObjClasses
                 _NodeModificationState = NodeModificationState.Modified;
                 if( false == value )
                 {
+                    _NodeModificationState = NodeModificationState.Modified;
                     SessionId = string.Empty;
                 }
                 else if( string.IsNullOrEmpty( SessionId ) )
                 {
                     SessionId = _CswNbtResources.Session.SessionId;
                 }
+
                 _IsTemp = value;
             }
         }

@@ -1,5 +1,7 @@
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
+using ChemSW.Exceptions;
+using ChemSW.Core;
 
 namespace ChemSW.Nbt.ObjClasses
 {
@@ -49,6 +51,44 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
+            //case 27692 - uniqueness rule based on InventoryGroup + Role + WorkUnit
+            if( false == IsTemp )
+            {
+                CswNbtView matchingPermissionsView = new CswNbtView( _CswNbtResources );
+                CswNbtMetaDataObjectClassProp WorkUnitOCP = this.ObjectClass.getObjectClassProp( WorkUnit.ObjectClassPropId );
+                CswNbtMetaDataObjectClassProp RoleOCP = this.ObjectClass.getObjectClassProp( Role.ObjectClassPropId );
+                CswNbtMetaDataObjectClassProp InvGroupOCP = this.ObjectClass.getObjectClassProp( InventoryGroup.ObjectClassPropId );
+
+                CswNbtViewRelationship parent = matchingPermissionsView.AddViewRelationship( this.ObjectClass, false ); //add the InventoryGroupPermission OC to the root of the view
+                matchingPermissionsView.AddViewPropertyAndFilter( parent,
+                    MetaDataProp: WorkUnitOCP,
+                    Value: WorkUnit.CachedNodeName,
+                    SubFieldName: CswNbtSubField.SubFieldName.Name,
+                    FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+                matchingPermissionsView.AddViewPropertyAndFilter( parent,
+                    MetaDataProp: RoleOCP,
+                    Value: Role.CachedNodeName,
+                    SubFieldName: CswNbtSubField.SubFieldName.Name,
+                    FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+                matchingPermissionsView.AddViewPropertyAndFilter( parent,
+                    MetaDataProp: InvGroupOCP,
+                    Value: InventoryGroup.CachedNodeName,
+                    SubFieldName: CswNbtSubField.SubFieldName.Name,
+                    FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+
+                ICswNbtTree matchingPermissionsTree = _CswNbtResources.Trees.getTreeFromView( matchingPermissionsView, false );
+                matchingPermissionsTree.goToRoot();
+                if( matchingPermissionsTree.getChildNodeCount() > 0 )
+                {
+                    matchingPermissionsTree.goToNthChild( 0 );
+                    CswPrimaryKey duplicateNodeId = matchingPermissionsTree.getNodeIdForCurrentPosition();
+                    throw new CswDniException(
+                        ErrorType.Warning,
+                        "An InventoryGroupPermission with this Role, WorkUnit and InventoryGroup already exists",
+                        "A node of nodeid " + duplicateNodeId.ToString() + " already exists with Role: \"" + Role.CachedNodeName + "\", WorkUnit: \"" + WorkUnit.CachedNodeName + "\", and InventoryGroup: \"" + InventoryGroup.CachedNodeName + "\" already exists." );
+                }
+            }
+
             _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
         }//beforeWriteNode()
 

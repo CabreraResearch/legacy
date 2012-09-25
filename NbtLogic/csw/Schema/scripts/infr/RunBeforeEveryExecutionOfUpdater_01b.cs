@@ -14,6 +14,10 @@ namespace ChemSW.Nbt.Schema
 
         public override void update()
         {
+            // This script is for adding object class properties, 
+            // which often become required by other business logic and can cause prior scripts to fail.
+
+            #region ROMEO
 
             // moved from CswUpdateSchemaCase24525 for case 27706
             #region ADD ARCHIVED PROP TO USER
@@ -43,9 +47,28 @@ namespace ChemSW.Nbt.Schema
             }
             #endregion
 
-        
-        
-        
+            #endregion ROMEO
+
+
+            #region SEBASTIAN
+
+            // case 27703 - change containers dispose/dispense buttons to say "Dispose this Container" and "Dispense this Container"
+            CswNbtMetaDataObjectClass containerOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.ContainerClass );
+
+            CswNbtMetaDataObjectClassProp dispenseOCP = containerOC.getObjectClassProp( "Dispense" );
+            if( null != dispenseOCP ) //have to null check because property might have already been updated
+            {
+                _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( dispenseOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.propname, "Dispense this Container" );
+            }
+
+            CswNbtMetaDataObjectClassProp disposeOCP = containerOC.getObjectClassProp( "Dispose" );
+            if( null != disposeOCP ) //have to null check here because property might have been updated
+            {
+                _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( disposeOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.propname, "Dispose this Container" );
+            }
+
+            #endregion SEBASTIAN
+
         }//Update()
 
     }//class RunBeforeEveryExecutionOfUpdater_01b

@@ -391,7 +391,6 @@ namespace ChemSW.Nbt.ObjClasses
                                                                  ? InspectionStatus.Completed
                                                                  : InspectionStatus.Completed_Late );
                                 ButtonData.Message = "Inspection marked " + StatusValue + ".";
-                                ButtonData.Action = NbtButtonAction.refresh;
                                 this.Status.Value = StatusValue;
                             }
                             if( true == this.InspectionDate.Empty )
@@ -433,7 +432,6 @@ namespace ChemSW.Nbt.ObjClasses
 
                     case PropertyName.Cancel:
                         ButtonData.Message = "Inspection has been cancelled.";
-                        ButtonData.Action = NbtButtonAction.refresh;
                         Finish.setReadOnly( value: true, SaveToDb: true );
                         Finish.setHidden( value: true, SaveToDb: true );
                         Cancel.setReadOnly( value: true, SaveToDb: true );
@@ -454,12 +452,12 @@ namespace ChemSW.Nbt.ObjClasses
                                 QuestionProp.Answer = QuestionProp.PreferredAnswer;
                             }
                         }
-                        ButtonData.Action = NbtButtonAction.refresh;
                         ButtonData.Message = "Unanswered questions have been set to their preferred answer.";
                         SetPreferred.setReadOnly( value: true, SaveToDb: true );
                         SetPreferred.setHidden( value: true, SaveToDb: true );
                         break;
                 }
+                ButtonData.Action = NbtButtonAction.refresh;
                 this.postChanges( false );
             } // if( null != NodeTypeProp )
             return true;

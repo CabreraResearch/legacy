@@ -3,22 +3,26 @@
 
 (function () {
 
-    Csw.nbt.wizard.addLayout = Csw.nbt.wizard.addLayout ||
-        Csw.nbt.wizard.register('addLayout', function (cswParent, options) {
+    Csw.wizard.addLayout = Csw.wizard.addLayout ||
+        Csw.wizard.register('addLayout', function (cswParent, options) {
             'use strict';
             ///<summary>Creates a tabsandprops Add layout for a nodetype.</summary>
 
             var cswPrivate = {
                 ID: 'wizardTabsAndPropsAddLayout',
-                nodetypeid: '',
-                showSaveButton: false,
-                EditMode: Csw.enums.editMode.Add,
-                propertyData: {},
-                ReloadTabOnSave: false,
-                ShowAsReport: false,
-                excludeOcProps: []
+                globalState: {
+                    propertyData: {},
+                    ShowAsReport: false,
+                    excludeOcProps: []
+                },
+                tabState: {
+                    nodetypeid: '',
+                    showSaveButton: false,
+                    EditMode: Csw.enums.editMode.Add
+                },
+                ReloadTabOnSave: false
             };
-            if (options) Csw.extend(cswPrivate, options);
+            Csw.extend(cswPrivate, options);
 
             var cswPublic = {};
 

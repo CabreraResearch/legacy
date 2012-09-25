@@ -4,9 +4,6 @@
 (function () {
     'use strict';
 
-    Csw.cookie = Csw.cookie ||
-        Csw.register('cookie', Csw.makeNameSpace());
-
     Csw.cookie.cookieNames = Csw.cookie.cookieNames ||
         Csw.enums.register('cookieNames',
             {

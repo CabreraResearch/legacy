@@ -14,6 +14,7 @@ using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
 using ChemSW.Nbt.Statistics;
+using ChemSW.StructureSearch;
 using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.ServiceDrivers
@@ -37,60 +38,37 @@ namespace ChemSW.Nbt.ServiceDrivers
             _CswNbtStatisticsEvents = CswNbtStatisticsEvents;
         }
 
-        public JObject getTabs( string NodeId, string NodeKey, Int32 NodeTypeId, CswDateTime Date, string filterToPropId )
+        public JObject getTabs( string NodeId, string NodeKey, CswDateTime Date, string filterToPropId )
         {
             JObject Ret = new JObject();
             TabOrderModifier = 0;
 
             CswNbtNode Node = _CswNbtResources.Nodes.GetNode( NodeId, NodeKey, Date );
             CswNbtMetaDataNodeType NodeType = Node.getNodeType();
-
+            Int32 NodeTypeId = Int32.MinValue;
             if( filterToPropId != string.Empty )
             {
                 CswPropIdAttr PropId = new CswPropIdAttr( filterToPropId );
                 CswNbtMetaDataNodeTypeProp Prop = _CswNbtResources.MetaData.getNodeTypeProp( PropId.NodeTypePropId );
-                foreach( CswNbtMetaDataNodeTypeLayoutMgr.NodeTypeLayout EditLayout in Prop.getEditLayouts().Values )
+                if( null != Prop )
                 {
-                    CswNbtMetaDataNodeTypeTab Tab = _CswNbtResources.MetaData.getNodeTypeTab( EditLayout.TabId );
-                    if( _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, Prop.getNodeType(), false, Tab, _CswNbtResources.CurrentNbtUser, Node.NodeId, Prop ) )
+                    NodeTypeId = Prop.NodeTypeId;
+                    foreach( CswNbtMetaDataNodeTypeLayoutMgr.NodeTypeLayout EditLayout in Prop.getEditLayouts().Values )
                     {
-                        _makeTab( Ret, Tab.TabOrder, Tab.TabId.ToString(), Tab.TabName, false );
-                        break;
+                        CswNbtMetaDataNodeTypeTab Tab = _CswNbtResources.MetaData.getNodeTypeTab( EditLayout.TabId );
+                        if( _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, Prop.getNodeType(), false, Tab, _CswNbtResources.CurrentNbtUser, Node.NodeId, Prop ) )
+                        {
+                            _makeTab( Ret, Tab.TabOrder, Tab.TabId.ToString(), Tab.TabName, false );
+                            break;
+                        }
                     }
                 }
             }
             else
             {
-                //switch( EditMode )
-                //{
-                //    case NodeEditMode.AddInPopup:
-
-                //        CswNbtMetaDataNodeType NodeType = null;
-                //        if( NodeTypeId != Int32.MinValue )
-                //        {
-                //            NodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeId );
-                //        }
-                //        else if( Node != null )
-                //        {
-                //            NodeType = Node.NodeType;
-                //        }
-
-                //        if( NodeType != null && _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Create, NodeType ) )
-                //        {
-                //            _makeTab( Ret, "0", "newtab", "Add New " + NodeType.NodeTypeName, false );
-                //        }
-                //        break;
-
-                //    case NodeEditMode.Preview:
-                //        if( Node != null )
-                //        {
-                //            _makeTab( Ret, "0", "previewtab", Node.NodeType.NodeTypeName, false );
-                //        }
-                //        break;
-
-                //    default:
                 if( null != Node )
                 {
+                    NodeTypeId = Node.NodeTypeId;
                     foreach( CswNbtMetaDataNodeTypeTab Tab in _CswNbtResources.MetaData.getNodeTypeTabs( Node.NodeTypeId )
                                                                 .Where( Tab => _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, Node.getNodeType(), false, Tab ) )
                                                                 .OrderBy( _getTabOrder ) )
@@ -117,6 +95,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                 //} // switch(EditMode)
 
             } // if-else( filterToPropId != string.Empty )
+            Ret["nodetypeid"] = NodeTypeId;
             return Ret;
         } // getTabs()
 
@@ -890,41 +869,51 @@ namespace ChemSW.Nbt.ServiceDrivers
             return ret;
         } // ClearPropValue()
 
-        public bool saveMolProp( string moldata, string propIdAttr )
+        public JObject saveMolProp( string moldata, string propIdAttr )
         {
-            bool ret = false;
-
+            JObject Ret = new JObject();
+            bool Succeeded = false;
             CswPropIdAttr PropId = new CswPropIdAttr( propIdAttr );
             CswNbtMetaDataNodeTypeProp MetaDataProp = _CswNbtResources.MetaData.getNodeTypeProp( PropId.NodeTypePropId );
             if( Int32.MinValue != PropId.NodeId.PrimaryKey )
             {
                 CswNbtNode Node = _CswNbtResources.Nodes[PropId.NodeId];
-                CswNbtNodePropWrapper PropWrapper = Node.Properties[MetaDataProp];
-
-                // Do the update directly
-                CswTableUpdate JctUpdate = _CswNbtResources.makeCswTableUpdate( "Clobber_save_update", "jct_nodes_props" );
-                //JctUpdate.AllowBlobColumns = true;
-                if( PropWrapper.JctNodePropId > 0 )
+                if( null != Node )
                 {
-                    DataTable JctTable = JctUpdate.getTable( "jctnodepropid", PropWrapper.JctNodePropId );
-                    JctTable.Rows[0]["clobdata"] = moldata;
-                    JctUpdate.update( JctTable );
+                    CswNbtNodePropMol PropMol = Node.Properties[MetaDataProp];
+                    if( null != PropMol )
+                    {
+                        // Do the update directly
+                        CswTableUpdate JctUpdate = _CswNbtResources.makeCswTableUpdate( "Clobber_save_update", "jct_nodes_props" );
+                        //JctUpdate.AllowBlobColumns = true;
+                        if( PropMol.JctNodePropId > 0 )
+                        {
+                            DataTable JctTable = JctUpdate.getTable( "jctnodepropid", PropMol.JctNodePropId );
+                            JctTable.Rows[0]["clobdata"] = moldata;
+                            JctUpdate.update( JctTable );
+                        }
+                        else
+                        {
+                            DataTable JctTable = JctUpdate.getEmptyTable();
+                            DataRow JRow = JctTable.NewRow();
+                            JRow["nodetypepropid"] = CswConvert.ToDbVal( PropId.NodeTypePropId );
+                            JRow["nodeid"] = CswConvert.ToDbVal( Node.NodeId.PrimaryKey );
+                            JRow["nodeidtablename"] = Node.NodeId.TableName;
+                            JRow["clobdata"] = moldata;
+                            JctTable.Rows.Add( JRow );
+                            JctUpdate.update( JctTable );
+                        }
+                        Succeeded = true;
+                        Ret["mol"] = PropMol.Mol;
+                        byte[] molImage = CswStructureSearch.GetImage( moldata );
+                        string Href;
+                        SetPropBlobValue( molImage, "mol.jpeg", "image/jpeg", propIdAttr, "blobdata", out Href );
+                        Ret["href"] = Href;
+                    }
                 }
-                else
-                {
-                    DataTable JctTable = JctUpdate.getEmptyTable();
-                    DataRow JRow = JctTable.NewRow();
-                    JRow["nodetypepropid"] = CswConvert.ToDbVal( PropId.NodeTypePropId );
-                    JRow["nodeid"] = CswConvert.ToDbVal( Node.NodeId.PrimaryKey );
-                    JRow["nodeidtablename"] = Node.NodeId.TableName;
-                    JRow["clobdata"] = moldata;
-                    JctTable.Rows.Add( JRow );
-                    JctUpdate.update( JctTable );
-                }
-                ret = true;
-
             } // if( Int32.MinValue != NbtNodeKey.NodeId.PrimaryKey )
-            return ret;
+            Ret["succeeded"] = Succeeded;
+            return Ret;
         }
 
         public bool SetPropBlobValue( byte[] Data, string FileName, string ContentType, string PropIdAttr, string Column, out string Href )

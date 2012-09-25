@@ -65,6 +65,7 @@ namespace ChemSW.Nbt
                         ReturnVal.VisibilityUserId = new CswPrimaryKey( "nodes", CswConvert.ToInt32( ViewTable.Rows[0]["userid"] ) );
                         ReturnVal.Category = ViewTable.Rows[0]["category"].ToString();
                         ReturnVal.ViewName = ViewTable.Rows[0]["viewname"].ToString();
+                        ReturnVal.IsDemo = CswConvert.ToBoolean( ViewTable.Rows[0]["isdemo"].ToString() );
                     }
                 }
             }
