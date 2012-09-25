@@ -22,7 +22,7 @@
                 },
                 ReloadTabOnSave: false
             };
-            Csw.extend(cswPrivate, options);
+            Csw.extend(cswPrivate, options, true);
 
             var cswPublic = {};
 
@@ -30,7 +30,7 @@
                 if (Csw.isNullOrEmpty(cswParent)) {
                     Csw.error.throwException(Csw.error.exception('Cannot create a Wizard addLayout without a parent.', '', 'csw.wizard.addlayout.js', 25));
                 }
-                if (Csw.isNullOrEmpty(cswPrivate.nodetypeid)) {
+                if (Csw.isNullOrEmpty(cswPrivate.tabState.nodetypeid)) {
                     Csw.error.throwException(Csw.error.exception('Cannot create a Wizard addLayout without a NodeType ID.', '', 'csw.wizard.addlayout.js', 28));
                 }
                 var div = cswParent.div({width: '80%'});

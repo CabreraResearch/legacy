@@ -32,7 +32,7 @@
                     ShowAsReport: true
                 },
                 tabState: {
-                    nodeid: '',
+                    nodeid: 'newnode',
                     nodename: '',
                     EditMode: Csw.enums.editMode.Edit,
                     Multi: false,

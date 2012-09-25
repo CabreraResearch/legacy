@@ -41,66 +41,68 @@ namespace ChemSW.Nbt.ServiceDrivers
         public JObject getTabs( string NodeId, string NodeKey, CswDateTime Date, string filterToPropId )
         {
             JObject Ret = new JObject();
-            TabOrderModifier = 0;
-
             CswNbtNode Node = _CswNbtResources.Nodes.GetNode( NodeId, NodeKey, Date );
-            CswNbtMetaDataNodeType NodeType = Node.getNodeType();
-            Int32 NodeTypeId = Int32.MinValue;
-            if( filterToPropId != string.Empty )
+            if( null != Node )
             {
-                CswPropIdAttr PropId = new CswPropIdAttr( filterToPropId );
-                CswNbtMetaDataNodeTypeProp Prop = _CswNbtResources.MetaData.getNodeTypeProp( PropId.NodeTypePropId );
-                if( null != Prop )
+                TabOrderModifier = 0;
+                CswNbtMetaDataNodeType NodeType = Node.getNodeType();
+                Int32 NodeTypeId = Int32.MinValue;
+                if( filterToPropId != string.Empty )
                 {
-                    NodeTypeId = Prop.NodeTypeId;
-                    foreach( CswNbtMetaDataNodeTypeLayoutMgr.NodeTypeLayout EditLayout in Prop.getEditLayouts().Values )
+                    CswPropIdAttr PropId = new CswPropIdAttr( filterToPropId );
+                    CswNbtMetaDataNodeTypeProp Prop = _CswNbtResources.MetaData.getNodeTypeProp( PropId.NodeTypePropId );
+                    if( null != Prop )
                     {
-                    //_CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, Prop.getNodeType(), false, Tab, _CswNbtResources.CurrentNbtUser, Node.NodeId, Prop )
-                        CswNbtMetaDataNodeTypeTab Tab = _CswNbtResources.MetaData.getNodeTypeTab( EditLayout.TabId );
-                    if(
-                          _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.View, NodeType ) ||
-                          _CswNbtResources.Permit.canTab( CswNbtPermit.NodeTypePermission.View, NodeType, Tab ) ||
-                          _CswNbtResources.Permit.canNode( CswNbtPermit.NodeTypePermission.View, NodeType, Node.NodeId, Prop )
-                       )
+                        NodeTypeId = Prop.NodeTypeId;
+                        foreach( CswNbtMetaDataNodeTypeLayoutMgr.NodeTypeLayout EditLayout in Prop.getEditLayouts().Values )
                         {
-                            _makeTab( Ret, Tab.TabOrder, Tab.TabId.ToString(), Tab.TabName, false );
-                            break;
+                            //_CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, Prop.getNodeType(), false, Tab, _CswNbtResources.CurrentNbtUser, Node.NodeId, Prop )
+                            CswNbtMetaDataNodeTypeTab Tab = _CswNbtResources.MetaData.getNodeTypeTab( EditLayout.TabId );
+                            if(
+                                _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.View, NodeType ) ||
+                                _CswNbtResources.Permit.canTab( CswNbtPermit.NodeTypePermission.View, NodeType, Tab ) ||
+                                _CswNbtResources.Permit.canNode( CswNbtPermit.NodeTypePermission.View, NodeType, Node.NodeId, Prop )
+                                )
+                            {
+                                _makeTab( Ret, Tab.TabOrder, Tab.TabId.ToString(), Tab.TabName, false );
+                                break;
+                            }
                         }
                     }
                 }
-            }
-            else
-            {
-                if( null != Node )
+                else
                 {
-                    NodeTypeId = Node.NodeTypeId;
-                    foreach( CswNbtMetaDataNodeTypeTab Tab in _CswNbtResources.MetaData.getNodeTypeTabs( Node.NodeTypeId )
-                                                                .Where( Tab => ( _CswNbtResources.Permit.canTab( CswNbtPermit.NodeTypePermission.View, Node.getNodeType(), Tab ) ) || _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.View, Node.getNodeType() ) )
-                                                                .OrderBy( _getTabOrder ) )
+                    if( null != Node )
                     {
-                        _makeTab( Ret, Tab.TabOrder, Tab.TabId.ToString(), Tab.TabName, _canEditLayout() );
-                    }
-
-                    // History tab
-                    if( false == _ConfigMode &&
-                        false == _IsMultiEdit &&
-                        Date.IsNull &&
-                        NodeType.AuditLevel != Audit.AuditLevel.NoAudit &&
-                        CswConvert.ToBoolean( _CswNbtResources.ConfigVbls.getConfigVariableValue( "auditing" ) ) )
-                    {
-                        if( _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.View, NodeType ) )
+                        NodeTypeId = Node.NodeTypeId;
+                        foreach( CswNbtMetaDataNodeTypeTab Tab in _CswNbtResources.MetaData.getNodeTypeTabs( Node.NodeTypeId )
+                            .Where( Tab => ( _CswNbtResources.Permit.canTab( CswNbtPermit.NodeTypePermission.View, Node.getNodeType(), Tab ) ) || _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.View, Node.getNodeType() ) )
+                            .OrderBy( _getTabOrder ) )
                         {
-                            _makeTab( Ret, Int32.MaxValue, HistoryTabPrefix + NodeId, "History", false );
+                            _makeTab( Ret, Tab.TabOrder, Tab.TabId.ToString(), Tab.TabName, _canEditLayout() );
                         }
-                    }
-                    Ret["nodename"] = Node.NodeName;
 
-                } // if( Node != null )
-                //        break;
-                //} // switch(EditMode)
+                        // History tab
+                        if( false == _ConfigMode &&
+                            false == _IsMultiEdit &&
+                            Date.IsNull &&
+                            NodeType.AuditLevel != Audit.AuditLevel.NoAudit &&
+                            CswConvert.ToBoolean( _CswNbtResources.ConfigVbls.getConfigVariableValue( "auditing" ) ) )
+                        {
+                            if( _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.View, NodeType ) )
+                            {
+                                _makeTab( Ret, Int32.MaxValue, HistoryTabPrefix + NodeId, "History", false );
+                            }
+                        }
+                        Ret["nodename"] = Node.NodeName;
 
-            } // if-else( filterToPropId != string.Empty )
-            Ret["nodetypeid"] = NodeTypeId;
+                    } // if( Node != null )
+                    //        break;
+                    //} // switch(EditMode)
+
+                } // if-else( filterToPropId != string.Empty )
+                Ret["nodetypeid"] = NodeTypeId;
+            }
             return Ret;
         } // getTabs()
 
