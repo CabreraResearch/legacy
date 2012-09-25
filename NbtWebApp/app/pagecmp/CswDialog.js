@@ -981,8 +981,8 @@
 
             var getEplContext = function () {
                 Csw.openPopup('Print.html?TargetId=' + cswPrivate.nodeids.join(',') + '&PrintLabelNodeId=' + labelSel.val(), 'Print ' + labelSel.selectedText(), {
-                    width: 477,
-                    height: 204,
+                    width: 500,
+                    height: 250,
                     location: 'no',
                     toolbar: 'no',
                     status: 'no',
@@ -993,8 +993,8 @@
                 cswPublic.close();
             };
 
-            cswPublic.div.div({ text: 'Select a label to Print' });
             cswPublic.div.br();
+            cswPublic.div.div({ text: 'Select a label to Print' });
             var labelSelDiv = cswPublic.div.div();
             var labelSel = labelSelDiv.select({
                 ID: cswPrivate.ID + '_labelsel'

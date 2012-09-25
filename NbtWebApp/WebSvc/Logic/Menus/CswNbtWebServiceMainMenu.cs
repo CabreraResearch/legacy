@@ -218,6 +218,7 @@ namespace ChemSW.Nbt.WebServices
                                     PrintObj["Print Label"] = new JObject();
                                     PrintObj["Print Label"]["nodeid"] = Node.NodeId.ToString();
                                     PrintObj["Print Label"]["nodetypeid"] = Node.NodeTypeId;
+                                    PrintObj["Print Label"]["nodename"] = Node.NodeName;
                                     PrintObj["Print Label"]["action"] = MenuActions.PrintLabel.ToString();
                                 }
                             }

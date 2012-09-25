@@ -42,6 +42,10 @@
                         cswPrivate.input.clickOnEnter(cswPublic.data.saveBtn);
                     }
                     if (false === cswPublic.data.isMulti()) {
+                        var nodeObj = {};
+                        nodeObj[cswPublic.data.tabState.nodeid] = {};
+                        nodeObj[cswPublic.data.tabState.nodeid].nodeid = cswPublic.data.tabState.nodeid;
+                        nodeObj[cswPublic.data.tabState.nodeid].nodename = cswPublic.data.tabState.nodename;
                         cswPublic.control.cell(1, 2).div({ ID: Csw.makeId(cswPublic.data.ID, 'parent', window.Ext.id()) })
                             .buttonExt({
                                 ID: Csw.makeId(cswPublic.data.ID, 'print', window.Ext.id()),
@@ -51,7 +55,7 @@
                                 icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.barcode),
                                 onClick: function () {
                             $.CswDialog('PrintLabelDialog', {
-                                nodeids: [cswPublic.data.tabState.nodeid],
+                                nodes: nodeObj,
                                 nodetypeid: cswPublic.data.tabState.nodetypeid
                             });
                                 },

@@ -41,14 +41,9 @@
                     var processingTtl = cswPrivate.labelData.length;
                     Csw.each(cswPrivate.labelData, function(label, idx){
                         processingCnt += 1;
-                        processingNow.empty();
+                        //processingNow.empty();
                         processingNow.span({text: 'Printing label ' + processingCnt + ' of ' + processingTtl + ' for target ' + label.TargetName + '.'});
-                        
-               
-                        
-                       
-                            cswPrivate.jZeb.print(label.EplText);
-                        
+                        cswPrivate.jZeb.print(label.EplText);
                     });
                 };
 
@@ -56,12 +51,9 @@
                     urlMethod: 'Labels/label/' + Csw.string(cswPrivate.queryString.PrintLabelNodeId) + '/target/' + Csw.string(cswPrivate.queryString.TargetId),
                     success: function(data) {
                         if(data.Labels) {
-                            cswPrivate.controlType = data.ControlType;
-                            if(cswPrivate.controlType !== 'ActiveX') {
-                                cswPrivate.jZeb = cswPrivate.table.cell(1,1).jZebra();
-                                cswPrivate.jZeb.findPrinters();
-                    }
 
+                            cswPrivate.jZeb = cswPrivate.table.cell(1,1).jZebra();
+                            cswPrivate.jZeb.findPrinters();
                             cswPrivate.labelData = data.Labels;
                             cswPrivate.processingDiv.span({text: 'Received EPL Text for ' + data.Labels.length + ' labels.'});
                                                             
@@ -78,6 +70,15 @@
                                 }
                             });
 
+                            var refresh = Csw.literals.factory($('#footer'));
+                            refresh.buttonExt({
+                                icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.refresh),
+                                size: 'small',
+                                onClick: function() {
+                                    window.location.refresh(true);
+                                },
+                                disableOnClick: false
+                            });
                         } else {
                             Csw.error.throwException(Csw.error.exception('No EPL content matched the request print operation.', '', 'Print.html', 81));
                         }

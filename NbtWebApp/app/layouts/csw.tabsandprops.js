@@ -105,7 +105,7 @@
             };
 
             cswPrivate.setPrivateProp = function (obj, propName) {
-                cswPrivate[propName] = obj[propName];
+                cswPrivate.tabState[propName] = obj[propName];
                 delete obj[propName];
             };
 
