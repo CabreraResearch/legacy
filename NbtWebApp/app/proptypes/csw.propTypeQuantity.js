@@ -63,7 +63,7 @@
                             ceilingVal: Csw.number(cswPrivate.ceilingVal),
                             Precision: 6, //case 24646 - precision is being handled in the validator below, so we don't want to use the one in numberTextBox.
                             ReadOnly: Csw.bool(cswPublic.data.ReadOnly),
-                            Required: Csw.bool(cswPublic.data.Required),
+                            Required: Csw.bool(cswPublic.data.Required) && false === cswPrivate.quantityoptional,
                             onChange: function () {
                                 var val = cswPrivate.numberTextBox.val();
                                 Csw.tryExec(cswPublic.data.onChange, val);
