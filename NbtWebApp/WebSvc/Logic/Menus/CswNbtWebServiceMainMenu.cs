@@ -162,7 +162,7 @@ namespace ChemSW.Nbt.WebServices
                         false == ReadOnly &&
                         null != Node && Node.NodeSpecies == NodeSpecies.Plain &&
                         View.ViewMode != NbtViewRenderingMode.Grid &&
-                        _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Create, Node.getNodeType() ) )
+                        _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Create, Node.getNodeType() ) )
                     {
                         string BadPropertyName = string.Empty;
                         if( false == Node.getNodeType().IsUniqueAndRequired( ref BadPropertyName ) )
@@ -182,7 +182,7 @@ namespace ChemSW.Nbt.WebServices
                         null != Node &&
                         View.ViewMode != NbtViewRenderingMode.Grid &&
                         Node.NodeSpecies == NodeSpecies.Plain &&
-                        _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Delete, Node.getNodeType(), false, null, null, Node.NodeId, null ) )
+                        _CswNbtResources.Permit.canNode( CswNbtPermit.NodeTypePermission.Delete, Node.getNodeType(), Node.NodeId ) )
                     {
                         MoreObj["Delete"] = new JObject();
                         MoreObj["Delete"]["action"] = MenuActions.DeleteNode.ToString();

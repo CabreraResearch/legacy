@@ -970,8 +970,8 @@
 
             var getEplContext = function () {
                 Csw.openPopup('Print.html?PropId=' + cswPrivate.propid + '&PrintLabelNodeId=' + labelSel.val(), 'Print ' + labelSel.selectedText(), {
-                    width: 400,
-                    height: 200,
+                    width: 477,
+                    height: 204,
                     location: 'no',
                     toolbar: 'no',
                     status: 'no',

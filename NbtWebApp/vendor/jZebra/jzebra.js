@@ -1,4 +1,4 @@
-﻿(function() {
+(function() {
 
     var jZebra = {
         
@@ -469,9 +469,9 @@
     jZebra.jzebraReady = function() {
         // Change title to reflect version
         var applet = document.jzebra;
-        var title = document.getElementById("title");
+        var footer = document.getElementById("footer");
         if (applet != null) {
-            title.innerHTML = title.innerHTML + " " + applet.getVersion();
+            footer.innerHTML = footer.innerHTML + " jZebra Version No. " + applet.getVersion();
             document.getElementById("content").style.background = "#F0F0F0";
         }
     };

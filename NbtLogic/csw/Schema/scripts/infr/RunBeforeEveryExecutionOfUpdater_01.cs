@@ -60,6 +60,12 @@ namespace ChemSW.Nbt.Schema
 
             #endregion SEBASTIAN
 
+            // hack for backwards support of Quince schemata
+            if( "01Q-008" == _CswNbtSchemaModTrnsctn.getConfigVariableValue( "schemaversion" ) )
+            {
+                _CswNbtSchemaModTrnsctn.setConfigVariableValue( "schemaversion", "01R-008" );
+            }
+
 
         }//Update()
 
