@@ -33,7 +33,7 @@
 
                         if ((Csw.enums.editMode.PrintReport === cswPublic.data.EditMode || Csw.enums.editMode.AuditHistoryInPopup === cswPublic.data.EditMode)) {
                             cswPublic.control.cell(1, 1).p({
-                                text: cswPrivate.text;
+                                text: cswPrivate.text
                             });
                         } else {
                             cswPublic.control.cell(1, 1).a({
