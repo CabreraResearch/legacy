@@ -94,12 +94,6 @@ namespace ChemSW.Nbt.WebServices
             {
                 string EPLText = NodeAsPrintLabel.EplText.Text;
                 string Params = NodeAsPrintLabel.Params.Text;
-                string ControlType = NodeAsPrintLabel.ControlType.Value;
-                if( string.IsNullOrEmpty( ControlType ) )
-                {
-                    ControlType = CswNbtObjClassPrintLabel.ControlTypes.jZebra;
-                }
-                Return.Data.ControlType = ControlType;
 
                 foreach( string TargetId in Request.TargetIds )
                 {

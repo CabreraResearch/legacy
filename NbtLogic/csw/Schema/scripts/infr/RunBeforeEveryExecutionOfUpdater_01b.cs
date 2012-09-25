@@ -1,5 +1,4 @@
 using ChemSW.Core;
-using ChemSW.Nbt;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 
@@ -65,6 +64,13 @@ namespace ChemSW.Nbt.Schema
             if( null != disposeOCP ) //have to null check here because property might have been updated
             {
                 _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( disposeOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.propname, "Dispose this Container" );
+            }
+
+            CswNbtMetaDataObjectClass PrintLabelOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.PrintLabelClass );
+            CswNbtMetaDataObjectClassProp ControlTypeOcp = PrintLabelOc.getObjectClassProp( "Control Type" );
+            if( null != ControlTypeOcp )
+            {
+                _CswNbtSchemaModTrnsctn.MetaData.DeleteObjectClassProp( ControlTypeOcp, DeleteNodeTypeProps: true );
             }
 
             #endregion SEBASTIAN

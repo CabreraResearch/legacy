@@ -3,7 +3,6 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.Serialization;
 using ChemSW.Core;
-using ChemSW.Nbt.ObjClasses;
 
 namespace NbtWebApp.WebSvc.Logic.Labels
 {
@@ -153,14 +152,6 @@ namespace NbtWebApp.WebSvc.Logic.Labels
                 [DataMember]
                 [Description( "Collection of labels" )]
                 public Collection<PrintLabel> Labels = new Collection<PrintLabel>();
-
-                /// <summary>
-                /// The print mechanism (ActiveX or jZebra)
-                /// </summary>
-                [DataMember( IsRequired = false )]
-                [Description( "Client-side mechanism to print the label (ActiveX or jZebra)" )]
-                public string ControlType = CswNbtObjClassPrintLabel.ControlTypes.jZebra;
-
             }
 
             /// <summary>
