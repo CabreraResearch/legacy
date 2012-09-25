@@ -18,10 +18,10 @@
                     cswPrivate.propVals = cswPublic.data.propData.values;
                     cswPrivate.parent = cswPublic.data.propDiv;
 
-                    cswPrivate.text = (false === cswPublic.data.Multi) ? Csw.string(cswPrivate.propVals.text).trim() : Csw.enums.multiEditDefaultValue;
-                    cswPrivate.href = (false === cswPublic.data.Multi) ? Csw.string(cswPrivate.propVals.href).trim() : Csw.enums.multiEditDefaultValue;
+                    cswPrivate.text = (false === cswPublic.data.isMulti()) ? Csw.string(cswPrivate.propVals.text).trim() : Csw.enums.multiEditDefaultValue;
+                    cswPrivate.href = (false === cswPublic.data.isMulti()) ? Csw.string(cswPrivate.propVals.href).trim() : Csw.enums.multiEditDefaultValue;
 
-                    if (cswPublic.data.ReadOnly) {
+                    if (cswPublic.data.isReadOnly()) {
                         cswPublic.control = cswPrivate.parent.a({
                             href: cswPrivate.href,
                             text: cswPrivate.text
@@ -80,9 +80,9 @@
                             }
                         });
 
-                        cswPrivate.editText.required(cswPublic.data.Required);
-                        cswPrivate.editHref.required(cswPublic.data.Required);
-                        if (cswPublic.data.Required && cswPrivate.href === '') {
+                        cswPrivate.editText.required(cswPublic.data.isRequired());
+                        cswPrivate.editHref.required(cswPublic.data.isRequired());
+                        if (cswPublic.data.isRequired() && cswPrivate.href === '') {
                             cswPrivate.editTable.show();
                         }
                         cswPrivate.editText.clickOnEnter(cswPublic.data.saveBtn);

@@ -59,7 +59,7 @@
                                 };
                             })()
                         });
-                        cswPrivate.comboBox.required(cswPublic.data.Required);
+                        cswPrivate.comboBox.required(cswPublic.data.isRequired());
                         locationTree = Csw.nbt.nodeTree({
                             ID: cswPublic.data.ID,
                             parent: cswPrivate.comboBox.pickList,
@@ -88,21 +88,21 @@
                     cswPrivate.locationobjectclassid = cswPrivate.propVals.locationobjectclassid;
                     cswPrivate.locationnodetypeids = cswPrivate.propVals.locationnodetypeids;  // array
 
-                    cswPrivate.relatedmatch = (cswPublic.data.relatedobjectclassid === cswPrivate.locationobjectclassid);
+                    cswPrivate.relatedmatch = (cswPublic.data.tabState.relatedobjectclassid === cswPrivate.locationobjectclassid);
                     Csw.each(cswPrivate.locationnodetypeids, function (thisNTid) {
-                        cswPrivate.relatedmatch = (cswPrivate.relatedmatch || thisNTid === cswPublic.data.relatednodetypeid);
+                        cswPrivate.relatedmatch = (cswPrivate.relatedmatch || thisNTid === cswPublic.data.tabState.relatednodetypeid);
                     });
 
                     cswPrivate.nodeKey = ''; //(false === o.Multi) ? Csw.string(propVals.nodekey).trim() : '';
-                    if (Csw.bool(cswPublic.data.Multi)) {
+                    if (Csw.bool(cswPublic.data.isMulti())) {
                         cswPrivate.nodeId = '';
                         cswPrivate.name = Csw.enums.multiEditDefaultValue;
                         cswPrivate.path = Csw.enums.multiEditDefaultValue;
                     }
                     else if (cswPrivate.relatedmatch) {
-                        cswPrivate.nodeId = Csw.string(cswPrivate.propVals.nodeid, cswPublic.data.relatednodeid).trim();
-                        cswPrivate.name = Csw.string(cswPrivate.propVals.name, cswPublic.data.relatednodename).trim();
-                        cswPrivate.path = Csw.string(cswPrivate.propVals.path, cswPublic.data.relatednodename).trim();
+                        cswPrivate.nodeId = Csw.string(cswPrivate.propVals.nodeid, cswPublic.data.tabState.relatednodeid).trim();
+                        cswPrivate.name = Csw.string(cswPrivate.propVals.name, cswPublic.data.tabState.relatednodename).trim();
+                        cswPrivate.path = Csw.string(cswPrivate.propVals.path, cswPublic.data.tabState.relatednodename).trim();
                     } else {
                         cswPrivate.nodeId = Csw.string(cswPrivate.propVals.nodeid, '').trim();
                         cswPrivate.name = Csw.string(cswPrivate.propVals.name, '').trim();
@@ -125,9 +125,9 @@
                     });
 
                     cswPrivate.table.cell(2, 1).hide();
-                    if (false === cswPublic.data.ReadOnly) {
+                    if (false === cswPublic.data.isReadOnly()) {
                         
-                        if (cswPublic.data.EditMode === Csw.enums.editMode.Add) {
+                        if (cswPublic.data.tabState.EditMode === Csw.enums.editMode.Add) {
                             cswPrivate.makeLocationCombo();
                         } else {
                             cswPrivate.table.cell(1, 2).icon({

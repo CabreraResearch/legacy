@@ -16,7 +16,7 @@
                     cswPublic.data = cswPublic.data || Csw.nbt.propertyOption(propertyOption);
 
                     cswPrivate.isMultiEditValid = function(value) {
-                        return cswPublic.data.Multi && value === Csw.enums.multiEditDefaultValue;
+                        return cswPublic.data.isMulti() && value === Csw.enums.multiEditDefaultValue;
                     };
 
                     cswPrivate.propVals = cswPublic.data.propData.values;
@@ -26,13 +26,13 @@
 
                     cswPublic.control = cswPrivate.parent.numberTextBox({
                         ID: cswPublic.data.ID + '_num',
-                        value: (false === cswPublic.data.Multi) ? Csw.string(cswPrivate.propVals.value).trim() : Csw.enums.multiEditDefaultValue,
+                        value: (false === cswPublic.data.isMulti()) ? Csw.string(cswPrivate.propVals.value).trim() : Csw.enums.multiEditDefaultValue,
                         MinValue: Csw.number(cswPrivate.propVals.minvalue),
                         MaxValue: Csw.number(cswPrivate.propVals.maxvalue),
                         ceilingVal: cswPrivate.ceilingVal,
                         Precision: cswPrivate.precision,
-                        ReadOnly: Csw.bool(cswPublic.data.ReadOnly),
-                        Required: Csw.bool(cswPublic.data.Required),
+                        ReadOnly: Csw.bool(cswPublic.data.isReadOnly()),
+                        Required: Csw.bool(cswPublic.data.isRequired()),
                         onChange: function () {
                             var val = cswPublic.control.val();
                             Csw.tryExec(cswPublic.data.onChange, val);

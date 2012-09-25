@@ -27,9 +27,9 @@
                            .checkBoxArray({
                                ID: cswPublic.data.ID + '_cba',
                                UseRadios: false,
-                               Required: cswPublic.data.Required,
-                               Multi: cswPublic.data.Multi,
-                               ReadOnly: cswPublic.data.ReadOnly,
+                               Required: cswPublic.data.isRequired(),
+                               Multi: cswPublic.data.isMulti(),
+                               ReadOnly: cswPublic.data.isReadOnly(),
                                dataAry: cswPrivate.options,
                                nameCol: nameCol,
                                keyCol: keyCol,
@@ -38,7 +38,7 @@
                                onChange: function () {
                                    var val = cswPublic.control.val();
                                    Csw.tryExec(cswPublic.data.onChange, val);
-                                   if (false === cswPublic.data.Multi || false === val.MultiIsUnchanged) {
+                                   if (false === cswPublic.data.isMulti() || false === val.MultiIsUnchanged) {
                                        cswPublic.data.onPropChange({ options: val.data });
                                    }
                                }

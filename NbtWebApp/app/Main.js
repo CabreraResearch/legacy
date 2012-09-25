@@ -510,7 +510,12 @@ window.initMain = window.initMain || function (undefined) {
                         break;
                     default:
                         multi = (false === multi);
-                        refreshSelected({ nodeid: o.nodeid, viewmode: o.viewmode, cswnbtnodekey: o.cswnbtnodekey });
+                        Csw.publish('CswMultiEdit', {
+                            multi: multi,
+                            nodeid: o.nodeid,
+                            viewid: o.viewid
+                        });
+                        //refreshSelected({ nodeid: o.nodeid, viewmode: o.viewmode, cswnbtnodekey: o.cswnbtnodekey });
                         break;
                 } // switch
             },
@@ -784,12 +789,17 @@ window.initMain = window.initMain || function (undefined) {
 
         Csw.layouts.tabsAndProps(Csw.main.rightDiv, {
             ID: 'nodetabs',
-            nodeids: [o.nodeid],
-            nodekeys: [o.cswnbtnodekey],
+            globalState: {
+                nodeids: [o.nodeid],
+                nodekeys: [o.cswnbtnodekey]
+            },
+            tabState: {
+                ShowCheckboxes: multi,
+                tabid: Csw.cookie.get(Csw.cookie.cookieNames.CurrentTabId)
+            },
             onSave: function () {
                 Csw.clientChanges.unsetChanged();
             },
-            tabid: Csw.cookie.get(Csw.cookie.cookieNames.CurrentTabId),
             onBeforeTabSelect: function () {
                 return Csw.clientChanges.manuallyCheckChanges();
             },
@@ -806,8 +816,8 @@ window.initMain = window.initMain || function (undefined) {
             },
             onEditView: function (viewid) {
                 handleAction({
-                    'actionname': 'Edit_View',
-                    'ActionOptions': {
+                    actionname: 'Edit_View',
+                    ActionOptions: {
                         viewid: viewid,
                         viewmode: Csw.enums.viewMode.grid.name,
                         startingStep: 2,
@@ -815,7 +825,6 @@ window.initMain = window.initMain || function (undefined) {
                     }
                 });
             },
-            ShowCheckboxes: multi,
             nodeTreeCheck: mainTree
         });
     }

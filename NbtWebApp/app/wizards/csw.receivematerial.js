@@ -128,9 +128,16 @@
                                 Csw.error.throwException(Csw.error.exception('Failed to create any containers.'));
                             } else {
                                 Csw.tryExec(cswPrivate.onFinish, data.viewid);
-                                if (false === Csw.isNullOrEmpty(data.barcodeId)) {
-                                    if (cswPrivate.printBarcodes) {
-                                        $.CswDialog('PrintLabelDialog', { 'nodeid': data.containerId, 'propid': data.barcodeId });
+                                if (cswPrivate.printBarcodes) {
+                                    if (false === Csw.isNullOrEmpty(data.barcodes) &&
+                                        data.barcodes.length > 0) {
+
+                                        $.CswDialog('PrintLabelDialog', {
+                                            nodeid: data.barcodes,
+                                            nodetypeid: cswPrivate.state.containerNodeTypeId
+                                        });
+                                    } else {
+                                        //handle warning
                                     }
                                 }
                             }
@@ -271,8 +278,12 @@
 
                         cswPrivate.tabsAndProps = Csw.wizard.addLayout(cswPrivate.divStep2, {
                             ID: cswPrivate.state.containerNodeTypeId + 'add_layout',
-                            nodetypeid: cswPrivate.state.containerNodeTypeId,
-                            propertyData: cswPrivate.state.containerAddLayout
+                            tabState: {
+                                nodetypeid: cswPrivate.state.containerNodeTypeId
+                            },
+                            globalState: {
+                                propertyData: cswPrivate.state.containerAddLayout
+                            }
                         });
 
                         cswPrivate.stepTwoComplete = true;
@@ -312,19 +323,22 @@
                             div = cswPrivate.divStep3.div();
 
                             cswPrivate.documentTabsAndProps = Csw.layouts.tabsAndProps(div, {
-                                nodetypeid: cswPrivate.state.documentTypeId,
-                                showSaveButton: false,
-                                EditMode: Csw.enums.editMode.Add,
+                                tabState: {
+                                    showSaveButton: false,
+                                    EditMode: Csw.enums.editMode.Add,
+                                    nodetypeid: cswPrivate.state.documentTypeId
+                                },
+                                globalState: {
+                                    ShowAsReport: false,
+                                    excludeOcProps: ['owner']
+                                },
                                 ReloadTabOnSave: false,
-                                ShowAsReport: false,
-                                excludeOcProps: ['owner'],
                                 onNodeIdSet: function (documentId) {
                                     cswPrivate.state.documentId = documentId;
                                 }
                             });
 
                         }
-
                         cswPrivate.stepThreeComplete = true;
                     }
                 };

@@ -404,14 +404,18 @@
                         div = cswPrivate.divStep2.div();
                         Csw.subscribe('CreateMaterialSuccess', function () {
                             cswPrivate.tabsAndProps = Csw.layouts.tabsAndProps(div, {
-                                nodeids: [cswPrivate.state.materialId],
-                                nodetypeid: cswPrivate.state.materialType.val,
-                                propertyData: cswPrivate.state.properties,
-                                showSaveButton: false,
-                                EditMode: Csw.enums.editMode.Temp, //This is intentional. We don't want the node accidental upversioned to a real node.
+                                globalState: {
+                                    excludeOcProps: ['tradename', 'supplier', 'partno'],
+                                    nodeids: [cswPrivate.state.materialId],
+                                    nodetypeid: cswPrivate.state.materialType.val,
+                                    propertyData: cswPrivate.state.properties,
+                                    ShowAsReport: false
+                                },
+                                tabState: {
+                                    showSaveButton: false,
+                                    EditMode: Csw.enums.editMode.Temp //This is intentional. We don't want the node accidental upversioned to a real node.
+                                },
                                 ReloadTabOnSave: false,
-                                ShowAsReport: false,
-                                excludeOcProps: ['tradename', 'supplier', 'partno'],
                                 async: false
                             });
 
@@ -663,12 +667,16 @@
                             div = cswPrivate.divStep4.div();
 
                             cswPrivate.documentTabsAndProps = Csw.layouts.tabsAndProps(div, {
-                                nodetypeid: cswPrivate.state.documentTypeId,
-                                showSaveButton: false,
-                                EditMode: Csw.enums.editMode.Add,
+                                globalState: {
+                                    ShowAsReport: false,
+                                    excludeOcProps: ['owner']
+                                },
+                                tabState: {
+                                    nodetypeid: cswPrivate.state.documentTypeId,
+                                    showSaveButton: false,
+                                    EditMode: Csw.enums.editMode.Add
+                                },
                                 ReloadTabOnSave: false,
-                                ShowAsReport: false,
-                                excludeOcProps: ['owner'],
                                 onNodeIdSet: function (documentId) {
                                     cswPrivate.state.documentId = documentId;
                                 }

@@ -42,11 +42,11 @@
                     cswPrivate.propVals = cswPublic.data.propData.values;
                     cswPrivate.parent = cswPublic.data.propDiv;
 
-                    cswPrivate.startDate = (false === cswPublic.data.Multi) ? Csw.string(cswPrivate.propVals.startdatetime.date) : Csw.enums.multiEditDefaultValue;
+                    cswPrivate.startDate = (false === cswPublic.data.isMulti()) ? Csw.string(cswPrivate.propVals.startdatetime.date) : Csw.enums.multiEditDefaultValue;
                     cswPrivate.dateFormat = Csw.serverDateFormatToJQuery(cswPrivate.propVals.startdatetime.dateformat);
 
-                    cswPrivate.value = (false === cswPublic.data.Multi) ? Csw.string(cswPrivate.propVals.value).trim() : Csw.enums.multiEditDefaultValue;
-                    cswPrivate.units = (false === cswPublic.data.Multi) ? Csw.string(cswPrivate.propVals.units).trim() : Csw.enums.multiEditDefaultValue;
+                    cswPrivate.value = (false === cswPublic.data.isMulti()) ? Csw.string(cswPrivate.propVals.value).trim() : Csw.enums.multiEditDefaultValue;
+                    cswPrivate.units = (false === cswPublic.data.isMulti()) ? Csw.string(cswPrivate.propVals.units).trim() : Csw.enums.multiEditDefaultValue;
 
                     cswPublic.control = cswPrivate.parent.table({
                         ID: Csw.makeId(cswPublic.data.ID, 'tbl')
@@ -57,7 +57,7 @@
 
                     cswPrivate.cell12 = cswPublic.control.cell(1, 2);
 
-                    if (false === cswPublic.data.ReadOnly) {
+                    if (false === cswPublic.data.isReadOnly()) {
                         cswPrivate.cell12.icon({
                             ID: cswPublic.data.ID,
                             iconType: Csw.enums.iconType.pencil,
@@ -78,8 +78,8 @@
                                 Date: cswPrivate.startDate,
                                 DateFormat: cswPrivate.dateFormat,
                                 DisplayMode: 'Date',
-                                ReadOnly: cswPublic.data.ReadOnly,
-                                Required: cswPublic.data.Required,
+                                ReadOnly: cswPublic.data.isReadOnly(),
+                                Required: cswPublic.data.isRequired(),
                                 onChange: function() {
                                     var val = cswPrivate.datePicker.val();
                                     Csw.tryExec(cswPublic.data.onChange, val);
@@ -89,7 +89,7 @@
 
                         cswPrivate.editTable.cell(3, 1).text('Units');
                         cswPrivate.unitVals = ['hours', 'days'];
-                        if (cswPublic.data.Multi) {
+                        if (cswPublic.data.isMulti()) {
                             cswPrivate.unitVals.push(Csw.enums.multiEditDefaultValue);
                         }
                         cswPrivate.unitSelect = cswPrivate.editTable.cell(3, 2).select({

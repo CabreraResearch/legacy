@@ -112,6 +112,8 @@
     </Compile>
     <Compile Include="WebSvc\Logic\CISPro\CswNbtWebServiceContainer.cs" />
     <Compile Include="WebSvc\Logic\CISPro\CswNbtWebServiceRequesting.cs" />
+    <Compile Include="WebSvc\Logic\Labels\CswNbtLabelData.cs" />
+    <Compile Include="WebSvc\Logic\Labels\CswNbtLabelUriMethods.cs" />
     <Compile Include="WebSvc\Logic\MetaData\CswNbtWebServiceModules.cs" />
     <Compile Include="WebSvc\Logic\CISPro\CswNbtWebServiceCreateMaterial.cs" />
     <Compile Include="WebSvc\Logic\Generators\CswNbtWebServiceGenerators.cs" />
@@ -720,7 +722,6 @@
     <Content Include="Images\quota\half.gif" />
     <Content Include="Images\quota\lock.gif" />
     <Content Include="Images\view\viewtable.gif" />
-    <Content Include="jzebra.jar" />
     <Content Include="NodeTypeTreeService.asmx" />
     <Content Include="Report.aspx" />
     <Content Include="Scripts\es5-shim.js" />
@@ -1224,7 +1225,7 @@
     <Compile Include="WebSvc\Logic\MetaData\CswNbtWebServiceMetaData.cs" />
     <Compile Include="WebSvc\Logic\SI\CswNbtWebServiceMobile.cs" />
     <Compile Include="WebSvc\Logic\Nodes\CswNbtWebServiceNode.cs" />
-    <Compile Include="WebSvc\Logic\Nodes\CswNbtWebServicePrintLabels.cs" />
+    <Compile Include="WebSvc\Logic\Labels\CswNbtWebServicePrintLabels.cs" />
     <Compile Include="WebSvc\Logic\Menus\CswNbtWebServiceQuickLaunchItems.cs" />
     <Compile Include="WebSvc\Logic\Views\CswNbtWebServiceSearch.cs" />
     <Compile Include="WebSvc\Logic\Nodes\CswNbtWebServiceTabsAndProps.cs" />

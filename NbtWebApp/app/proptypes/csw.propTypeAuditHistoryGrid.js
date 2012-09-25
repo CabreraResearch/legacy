@@ -13,18 +13,18 @@
                 var render = function() {
                     'use strict';
                     cswPublic.data = cswPublic.data || Csw.nbt.propertyOption(propertyOption);
-                    if (false === cswPublic.data.Multi) {
+                    if (false === cswPublic.data.isMulti()) {
                         cswPublic.control = Csw.actions.auditHistory(cswPublic.data.propDiv, {
                             ID: Csw.makeId(cswPublic.data.ID, window.Ext.id()),
-                            nodeid: cswPublic.data.nodeid,
-                            cswnbtnodekey: cswPublic.data.cswnbtnodekey,
-                            EditMode: cswPublic.data.EditMode,
+                            nodeid: cswPublic.data.tabState.nodeid,
+                            cswnbtnodekey: cswPublic.data.tabState.cswnbtnodekey,
+                            EditMode: cswPublic.data.tabState.EditMode,
                             width: '100%',
-                            allowEditRow: (cswPublic.data.EditMode !== Csw.enums.editMode.PrintReport),
+                            allowEditRow: (cswPublic.data.tabState.EditMode !== Csw.enums.editMode.PrintReport),
                             onEditRow: function(date) {
                                 $.CswDialog('EditNodeDialog', {
-                                    nodeids: [cswPublic.data.nodeid],
-                                    nodekeys: [cswPublic.data.cswnbtnodekey],
+                                    nodeids: [cswPublic.data.tabState.nodeid],
+                                    nodekeys: [cswPublic.data.tabState.cswnbtnodekey],
                                     onEditNode: cswPublic.data.onEditNode,
                                     date: date
                                 });

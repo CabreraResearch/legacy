@@ -18,10 +18,10 @@
                     var propVals = cswPublic.data.propData.values;
                     var parent = cswPublic.data.propDiv;
                     var checkOpt = {
-                        Checked: (false === cswPublic.data.Multi) ? Csw.string(propVals.checked).trim() : null,
-                        Required: Csw.bool(cswPublic.data.Required),
-                        ReadOnly: Csw.bool(cswPublic.data.ReadOnly),
-                        Multi: cswPublic.data.Multi,
+                        Checked: (false === cswPublic.data.isMulti()) ? Csw.string(propVals.checked).trim() : null,
+                        Required: Csw.bool(cswPublic.data.isRequired()),
+                        ReadOnly: Csw.bool(cswPublic.data.isReadOnly()),
+                        Multi: cswPublic.data.isMulti(),
                         onChange: function () {
                             var val = cswPublic.control.val();
                             Csw.tryExec(cswPublic.data.onChange, val);

@@ -582,9 +582,16 @@
                                 var viewId = data.viewId;
                                 Csw.tryExec(cswPrivate.onFinish, viewId);
                                 cswPrivate.clearState();
-                                if (false === Csw.isNullOrEmpty(data.barcodeId)) {
-                                    if (cswPrivate.printBarcodes) {
-                                        $.CswDialog('PrintLabelDialog', { 'nodeid': cswPrivate.state.sourceContainerNodeId, 'propid': data.barcodeId });
+                                if (cswPrivate.printBarcodes) {
+                                    if (false === Csw.isNullOrEmpty(data.barcodes) &&
+                                        data.barcodes.length > 0) {
+
+                                        $.CswDialog('PrintLabelDialog', {
+                                            nodeids: data.barcodes,
+                                            nodetypeid: cswPrivate.state.containerNodeTypeId
+                                        });
+                                    } else {
+                                        //handle warning
                                     }
                                 }
                             },

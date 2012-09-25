@@ -74,11 +74,15 @@
                 
                 Csw.layouts.tabsAndProps(cswPrivate.div, {
                     ID: cswPrivate.ID + 'tabs',
-                    nodeids: [cswPrivate.nodeid],
-                    cswnbtnodekeys: [cswPrivate.cswnbtnodekey],
-                    EditMode: Csw.enums.editMode.Preview,
+                    globalState: {
+                        nodeids: [cswPrivate.nodeid],
+                        cswnbtnodekeys: [cswPrivate.cswnbtnodekey],
+                        ShowAsReport: false
+                    },
+                    tabState: {
+                        EditMode: Csw.enums.editMode.Preview
+                    },
                     AjaxWatchGlobal: false,
-                    ShowAsReport: false,
                     onInitFinish: function (AtLeastOneProp) {
                         cswPrivate.loadingDiv.remove();
                         if (AtLeastOneProp) {

@@ -62,7 +62,7 @@
                         cell3.addClass(cswPrivate.bgclass);
                         cell3.append(acomment.message);
                     });
-                    if (false === cswPublic.data.ReadOnly) {
+                    if (false === cswPublic.data.isReadOnly()) {
                         cswPublic.control = cswPrivate.parent.textArea({
                             rows: cswPrivate.rows,
                             cols: cswPrivate.columns,

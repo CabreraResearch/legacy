@@ -17,10 +17,10 @@
 
                     cswPrivate.propVals = cswPublic.data.propData.values;
                     cswPrivate.parent = cswPublic.data.propDiv;
-                    cswPrivate.value = (false === cswPublic.data.Multi) ? Csw.string(cswPrivate.propVals.text).trim() : Csw.enums.multiEditDefaultValue;
+                    cswPrivate.value = (false === cswPublic.data.isMulti()) ? Csw.string(cswPrivate.propVals.text).trim() : Csw.enums.multiEditDefaultValue;
                     cswPrivate.length = Csw.number(cswPrivate.propVals.length, 14);
 
-                    if (cswPublic.data.ReadOnly) {
+                    if (cswPublic.data.isReadOnly()) {
                         cswPublic.control = cswPrivate.parent.append(cswPrivate.value);
                     } else {
                         cswPublic.control = cswPrivate.parent.input({
@@ -34,10 +34,10 @@
                                 Csw.tryExec(cswPublic.data.onChange, val);
                                 cswPublic.data.onPropChange({ text: val });
                             },
-                            required: cswPublic.data.Required
+                            required: cswPublic.data.isRequired()
                         });
                         
-                        cswPublic.control.required(cswPublic.data.Required);
+                        cswPublic.control.required(cswPublic.data.isRequired());
                         cswPublic.control.clickOnEnter(cswPublic.data.saveBtn);
                     }
 

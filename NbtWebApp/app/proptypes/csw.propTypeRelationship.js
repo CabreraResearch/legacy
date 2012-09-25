@@ -17,8 +17,8 @@
                     cswPrivate.propVals = cswPublic.data.propData.values;
                     cswPrivate.parent = cswPublic.data.propDiv;
 
-                    cswPrivate.selectedNodeId = (false === cswPublic.data.Multi) ? Csw.string(cswPrivate.propVals.relatednodeid).trim() : Csw.enums.multiEditDefaultValue;
-                    cswPrivate.selectedName = (false === cswPublic.data.Multi) ? Csw.string(cswPrivate.propVals.name).trim() : Csw.enums.multiEditDefaultValue;
+                    cswPrivate.selectedNodeId = (false === cswPublic.data.isMulti()) ? Csw.string(cswPrivate.propVals.relatednodeid).trim() : Csw.enums.multiEditDefaultValue;
+                    cswPrivate.selectedName = (false === cswPublic.data.isMulti()) ? Csw.string(cswPrivate.propVals.name).trim() : Csw.enums.multiEditDefaultValue;
                     cswPrivate.nodeTypeId = Csw.string(cswPrivate.propVals.nodetypeid).trim();
                     cswPrivate.objectClassId = Csw.string(cswPrivate.propVals.objectclassid).trim();
                     cswPrivate.allowAdd = Csw.bool(cswPrivate.propVals.allowadd);
@@ -30,18 +30,24 @@
                     cswPrivate.addImage = { };
                     cswPrivate.onAddNodeFunc = { };
 
-                    // Default to selected node as relationship value for new nodes being added
-                    if (false === Csw.isNullOrEmpty(cswPublic.data.relatednodeid) &&
-                        Csw.isNullOrEmpty(cswPrivate.selectedNodeId) &&
-                        false === cswPublic.data.Multi &&
-                        (Csw.number(cswPublic.data.relatednodetypeid) === Csw.number(cswPrivate.nodeTypeId) ||
-                          Csw.number(cswPublic.data.relatedobjectclassid) === Csw.number(cswPrivate.objectClassId))) {
+                    cswPrivate.showSelectOnLoad = function() {
+                        return cswPublic.data.tabState.EditMode === Csw.enums.editMode.Add ||
+                               cswPublic.data.isMulti() ||
+                            (cswPublic.data.isRequired() && Csw.isNullOrEmpty(cswPrivate.selectedNodeId));
+                    };
 
-                        cswPrivate.selectedNodeId = cswPublic.data.relatednodeid;
-                        cswPrivate.selectedName = cswPublic.data.relatednodename;
+                    // Default to selected node as relationship value for new nodes being added
+                    if (false === Csw.isNullOrEmpty(cswPublic.data.tabState.relatednodeid) &&
+                        Csw.isNullOrEmpty(cswPrivate.selectedNodeId) &&
+                        false === cswPublic.data.isMulti() &&
+                        (Csw.number(cswPublic.data.tabState.relatednodetypeid) === Csw.number(cswPrivate.nodeTypeId) ||
+                          Csw.number(cswPublic.data.tabState.relatedobjectclassid) === Csw.number(cswPrivate.objectClassId))) {
+
+                        cswPrivate.selectedNodeId = cswPublic.data.tabState.relatednodeid;
+                        cswPrivate.selectedName = cswPublic.data.tabState.relatednodename;
                     }
 
-                    if (cswPublic.data.ReadOnly) {
+                    if (cswPublic.data.isReadOnly()) {
                         cswPublic.control = cswPrivate.parent.append(cswPrivate.selectedName);
                         cswPrivate.parent.$.hover(function (event) { Csw.nodeHoverIn(event, cswPrivate.selectedNodeId); },
                                         function (event) { Csw.nodeHoverOut(event, cswPrivate.selectedNodeId); });
@@ -100,17 +106,20 @@
                         } else {
                             // Select value in a selectbox
 
-                            if (cswPublic.data.Multi) {
+                            if (cswPublic.data.isMulti()) {
                                 cswPrivate.relationships.push({ value: Csw.enums.multiEditDefaultValue, display: Csw.enums.multiEditDefaultValue });
+                                cswPrivate.foundSelected = true;
+                            } else {
+                                cswPrivate.foundSelected = false;
                             }
-                            cswPrivate.foundSelected = false;
+                            
                             Csw.crawlObject(cswPrivate.options, function (relatedObj) {
-                                if (relatedObj.id === cswPrivate.selectedNodeId) {
+                                if (false === cswPublic.data.isMulti() && relatedObj.id === cswPrivate.selectedNodeId) {
                                     cswPrivate.foundSelected = true;
                                 }
                                 cswPrivate.relationships.push({ value: relatedObj.id, display: relatedObj.value });
                             }, false);
-                            if (false === cswPublic.data.Multi && false === cswPrivate.foundSelected) {
+                            if (false === cswPublic.data.isMulti() && false === cswPrivate.foundSelected) {
                                 // case 25820 - guarantee selected option appears
                                 cswPrivate.relationships.push({ value: cswPrivate.selectedNodeId, display: cswPrivate.selectedName });
                             }
@@ -129,20 +138,21 @@
                             });
                             
                             cswPrivate.cellCol += 1;
-
-                            cswPrivate.nodeLinkText = '';
-                            Csw.ajax.post({
-                                urlMethod: 'GetNodeRef',
-                                async: false,
-                                data: { nodeId: cswPrivate.selectedNodeId },
-                                success: function (data) {
-                                    cswPrivate.nodeLinkText = cswPublic.control.cell(1, cswPrivate.cellCol).nodeLink({
-                                        text: data.noderef
-                                    });
-                                }
-                            });
+                            cswPrivate.nodeLinkText = cswPublic.control.cell(1, cswPrivate.cellCol);
                             cswPrivate.cellCol += 1;
-
+                            if (false === cswPublic.data.isMulti()) {
+                                Csw.ajax.post({
+                                    urlMethod: 'GetNodeRef',
+                                    async: false,
+                                    data: { nodeId: cswPrivate.selectedNodeId },
+                                    success: function(data) {
+                                        cswPrivate.nodeLinkText = cswPrivate.nodeLinkText.nodeLink({
+                                            text: data.noderef
+                                        });
+                                    }
+                                });
+                            }
+                            
                             cswPrivate.toggleButton = cswPublic.control.cell(1, cswPrivate.cellCol).icon({
                                 iconType: Csw.enums.iconType.pencil,
                                 isButton: true,
@@ -165,9 +175,9 @@
                                 }
                             };
 
-                            cswPrivate.toggleOptions(cswPublic.data.EditMode === Csw.enums.editMode.Add || (cswPublic.data.Required && Csw.isNullOrEmpty(cswPrivate.selectedNodeId)));
+                            cswPrivate.toggleOptions(cswPrivate.showSelectOnLoad());
                                                                                                                                                                                       
-                            cswPrivate.selectBox.required(cswPublic.data.Required);
+                            cswPrivate.selectBox.required(cswPublic.data.isRequired());
                             
                             cswPrivate.onAddNodeFunc = function (nodeid, nodekey, nodename) {
                                 cswPrivate.selectBox.option({ value: nodeid, display: nodename });

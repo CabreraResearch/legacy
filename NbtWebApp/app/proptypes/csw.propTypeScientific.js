@@ -22,17 +22,17 @@
                     cswPrivate.realValue = '';
                     cswPublic.control = cswPrivate.parent.div();
                     
-                    if (Csw.bool(cswPublic.data.ReadOnly)) {
+                    if (Csw.bool(cswPublic.data.isReadOnly())) {
                         cswPublic.control.append(cswPrivate.propVals.gestalt);
                     }
                     else {
                         cswPrivate.valueNtb = cswPublic.control.numberTextBox({
                             ID: cswPublic.data.ID + '_val',
-                            value: (false === cswPublic.data.Multi) ? Csw.string(cswPrivate.propVals.base).trim() : Csw.enums.multiEditDefaultValue,
+                            value: (false === cswPublic.data.isMulti()) ? Csw.string(cswPrivate.propVals.base).trim() : Csw.enums.multiEditDefaultValue,
                             ceilingVal: Csw.number(cswPrivate.ceilingVal),
                             Precision: cswPrivate.precision,
-                            ReadOnly: cswPublic.data.ReadOnly,
-                            Required: cswPublic.data.Required,
+                            ReadOnly: cswPublic.data.isReadOnly(),
+                            Required: cswPublic.data.isRequired(),
                             onChange: function () {
                                 var val = cswPrivate.valueNtb.val();
                                 Csw.tryExec(cswPublic.data.onChange, val);
@@ -43,10 +43,10 @@
                         cswPublic.control.append('E');
                         cswPrivate.exponentNtb = cswPublic.control.numberTextBox({
                             ID: cswPublic.data.ID + '_exp',
-                            value: (false === cswPublic.data.Multi) ? Csw.string(cswPrivate.propVals.exponent).trim() : Csw.enums.multiEditDefaultValue,
+                            value: (false === cswPublic.data.isMulti()) ? Csw.string(cswPrivate.propVals.exponent).trim() : Csw.enums.multiEditDefaultValue,
                             Precision: 0,
-                            ReadOnly: cswPublic.data.ReadOnly,
-                            Required: cswPublic.data.Required,
+                            ReadOnly: cswPublic.data.isReadOnly(),
+                            Required: cswPublic.data.isRequired(),
                             onChange: function () {
                                 var val = cswPrivate.exponentNtb.val();
                                 Csw.tryExec(cswPublic.data.onChange, val);

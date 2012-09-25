@@ -5,7 +5,6 @@ using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Security;
-using ChemSW.Nbt.ServiceDrivers;
 using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.WebServices
@@ -205,22 +204,33 @@ namespace ChemSW.Nbt.WebServices
                     JObject PrintObj = null;
 
                     // PRINT LABEL
-                    if( _MenuItems.Contains( "Print Label" ) &&
+                    if( _MenuItems.Contains( "Print" ) &&
                         false == string.IsNullOrEmpty( SafeNodeKey ) &&
-                        null != Node &&
-                        null != Node.getNodeType() )
+                        null != Node )
                     {
-                        if( Node.getNodeType().HasLabel )
+                        if( View.ViewMode != NbtViewRenderingMode.Grid || View.Root.ChildRelationships.Count == 1 )
                         {
-                            PrintObj = PrintObj ?? new JObject( new JProperty( "haschildren", true ) );
-                            PrintObj["Print Label"] = new JObject();
-                            PrintObj["Print Label"]["nodeid"] = Node.NodeId.ToString();
-                            CswNbtMetaDataNodeTypeProp BarcodeProperty = Node.getNodeType().getBarcodeProperty();
-                            if( null != BarcodeProperty )
+                            if( View.Visibility != NbtViewVisibility.Property )
                             {
-                                PrintObj["Print Label"]["propid"] = new CswPropIdAttr( Node, BarcodeProperty ).ToString();
+                                if( null != Node.getNodeType() && Node.getNodeType().HasLabel )
+                                {
+                                    PrintObj = PrintObj ?? new JObject( new JProperty( "haschildren", true ) );
+                                    PrintObj["Print Label"] = new JObject();
+                                    PrintObj["Print Label"]["nodeid"] = Node.NodeId.ToString();
+                                    PrintObj["Print Label"]["nodetypeid"] = Node.NodeTypeId;
+                                    PrintObj["Print Label"]["action"] = MenuActions.PrintLabel.ToString();
+                                }
                             }
-                            PrintObj["Print Label"]["action"] = MenuActions.PrintLabel.ToString();
+                            else if( View.Root.ChildRelationships[0].ChildRelationships.Count == 1 )
+                            {
+                                CswNbtViewRelationship Relationship = View.Root.ChildRelationships[0].ChildRelationships[0];
+                                ICswNbtMetaDataObject MetaDataObject = Relationship.SecondMetaDataObject();
+                                if( null != MetaDataObject )
+                                {
+
+                                }
+
+                            }
                         }
                     }
                     // PRINT
@@ -267,9 +277,11 @@ namespace ChemSW.Nbt.WebServices
                     false == ReadOnly &&
                     null != View &&
                     _CswNbtResources.Permit.can( CswNbtActionName.Multi_Edit ) &&
+                    // Per discussion with David, for the short term eliminate the need to validate the selection of nodes across different nodetypes in Grid views.
+                    // Case 21701: for Grid Properties, we need to look one level deeper
                     ( View.ViewMode != NbtViewRenderingMode.Grid ||
-                    /* Per discussion with David, for the short term eliminate the need to validate the selection of nodes across different nodetypes in Grid views. */
-                      View.Root.ChildRelationships.Count == 1 )
+                    ( View.Root.ChildRelationships.Count == 1 &&
+                    ( View.Visibility != NbtViewVisibility.Property || View.Root.ChildRelationships[0].ChildRelationships.Count == 1 ) ) )
                     )
                 {
                     MoreObj["Multi-Edit"] = new JObject();
