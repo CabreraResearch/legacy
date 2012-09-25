@@ -95,7 +95,7 @@
                             });
                             cswPrivate.cellCol += 1;
 
-                            cswPrivate.parent.$.hover(function (event) { Csw.nodeHoverIn(event, cswPrivate.hiddenValue.val()); },
+                            cswPrivate.nameSpan.$.hover(function (event) { Csw.nodeHoverIn(event, cswPrivate.hiddenValue.val()); },
                                             function (event) { Csw.nodeHoverOut(event, cswPrivate.hiddenValue.val()); });
 
                             cswPrivate.onAddNodeFunc = function (nodeid, nodekey, nodename) {
@@ -186,7 +186,7 @@
                                 cswPublic.data.onPropChange({ nodeid: nodeid });
                             };
 
-                            cswPrivate.parent.$.hover(function (event) { Csw.nodeHoverIn(event, cswPrivate.selectBox.val()); },
+                            cswPrivate.nodeLinkText.$.hover(function (event) { Csw.nodeHoverIn(event, cswPrivate.selectBox.val()); },
                                             function (event) { Csw.nodeHoverOut(event, cswPrivate.selectBox.val()); });
                         } //if-else(useSearch)
                         if (cswPrivate.allowAdd) {

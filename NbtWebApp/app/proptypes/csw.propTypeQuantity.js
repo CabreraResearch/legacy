@@ -135,7 +135,7 @@
                         }, 'Quantity must have a value if Unit is selected.');
                         cswPrivate.selectBox.addClass('validateQuantityPresent');
 
-                        cswPrivate.parent.$.hover(function (event) { Csw.nodeHoverIn(event, cswPrivate.selectBox.val()); },
+                        cswPrivate.selectBox.$.hover(function (event) { Csw.nodeHoverIn(event, cswPrivate.selectBox.val()); },
                                         function (event) { Csw.nodeHoverOut(event, cswPrivate.selectBox.val()); });
                     }
 

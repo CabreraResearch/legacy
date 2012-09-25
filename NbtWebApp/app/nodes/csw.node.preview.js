@@ -80,7 +80,8 @@
                         ShowAsReport: false
                     },
                     tabState: {
-                        EditMode: Csw.enums.editMode.Preview
+                        EditMode: Csw.enums.editMode.Preview,
+                        showSaveButton: false
                     },
                     AjaxWatchGlobal: false,
                     onInitFinish: function (AtLeastOneProp) {
