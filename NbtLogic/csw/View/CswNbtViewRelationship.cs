@@ -167,15 +167,17 @@ namespace ChemSW.Nbt
                     _SecondId = SecondNodeType.FirstVersionNodeTypeId;
             }
             _SecondName = InSecondName;
-            string IconFileNamePrefix = CswNbtMetaDataObjectClass.IconPrefix16;
-            if( InIconFileName.Length > IconFileNamePrefix.Length &&
-                InIconFileName.Substring( 0, IconFileNamePrefix.Length ) == IconFileNamePrefix )
+            if( InIconFileName.ToLower().StartsWith( "images/" ) )
             {
+                //string IconFileNamePrefix = CswNbtMetaDataObjectClass.IconPrefix16;
+                //if( InIconFileName.Length > IconFileNamePrefix.Length &&
+                //    InIconFileName.Substring( 0, IconFileNamePrefix.Length ) == IconFileNamePrefix )
+                //{
                 _SecondIconFileName = InIconFileName;
             }
             else if( false == string.IsNullOrEmpty( InIconFileName ) )
             {
-                _SecondIconFileName = IconFileNamePrefix + InIconFileName;
+                _SecondIconFileName = CswNbtMetaDataObjectClass.IconPrefix16 + InIconFileName;
             }
         }
 
