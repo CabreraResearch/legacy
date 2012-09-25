@@ -9,16 +9,16 @@
         var origX = 0; //150
         var origY = 0; //30
 
-        this.origXAccessor = function() {
+        this.origXAccessor = function () {
             return origX;
         };
-        this.origYAccessor = function() {
+        this.origYAccessor = function () {
             return origY;
         };
-        this.windowWidth = function() {
+        this.windowWidth = function () {
             return document.documentElement.clientWidth;
         };
-        this.windowHeight = function() {
+        this.windowHeight = function () {
             return document.documentElement.clientHeight;
         };
     };
@@ -233,7 +233,7 @@
             };
 
             openDialog(cswPublic.div, 800, 600, null, cswPublic.title);
-            if(false === Csw.isNullOrEmpty(cswPrivate.propertyData) && false === Csw.isNullOrEmpty(cswPrivate.propertyData.nodeid)) {
+            if (false === Csw.isNullOrEmpty(cswPrivate.propertyData) && false === Csw.isNullOrEmpty(cswPrivate.propertyData.nodeid)) {
                 cswPrivate.nodeid = Csw.string(cswPrivate.nodeid, cswPrivate.propertyData.nodeid);
             }
             cswPublic.tabsAndProps = Csw.layouts.tabsAndProps(cswPublic.div, {
@@ -260,7 +260,7 @@
                 onInitFinish: function () {
                     //openDialog(cswPublic.div, 800, 600, null, cswPublic.title);
                 }
-                
+
             });
             return cswPublic;
         },
@@ -320,7 +320,7 @@
                 onInitFinish: function () {
                     openDialog(cswPublic.div, 800, 600, null, cswPublic.title);
                 }
-                
+
             });
             return cswPublic;
         }, // AddFeedbackDialog
@@ -416,7 +416,7 @@
             cswNodeTabOptions.globalState = {
                 ShowAsReport: false
             };
-            
+
             cswNodeTabOptions.onTabSelect = function (tabid) {
                 cswNodeTabOptions.tabState.tabid = tabid;
                 _configAddOptions();
@@ -492,7 +492,7 @@
                     urlMethod: 'getPropertiesForLayoutAdd',
                     data: ajaxdata,
                     success: function (data) {
-                        var propOpts = [{ value: '', display: 'Select...'}];
+                        var propOpts = [{ value: '', display: 'Select...' }];
                         Csw.each(data.add, function (p) {
                             var display = p.propname;
                             if (Csw.bool(p.hidden)) {
@@ -583,7 +583,7 @@
                         EditMode: myEditMode,
                         tabid: Csw.cookie.get(Csw.cookie.cookieNames.CurrentTabId)
                     },
-                    
+
                     ReloadTabOnSave: true,
                     Refresh: cswPrivate.onRefresh,
                     onEditView: function (viewid) {
@@ -655,7 +655,8 @@
                         cell11.append('Copying: ' + cswPrivate.nodename);
                         cell11.br({ number: 2 });
 
-                        var copyBtn = cell21.button({ ID: 'copynode_submit',
+                        var copyBtn = cell21.button({
+                            ID: 'copynode_submit',
                             enabledText: 'Copy',
                             disabledText: 'Copying',
                             onClick: function () {
@@ -680,7 +681,8 @@
             }); // ajax
 
             /* Cancel Button */
-            cell22.button({ ID: 'copynode_cancel',
+            cell22.button({
+                ID: 'copynode_cancel',
                 enabledText: 'Cancel',
                 disabledText: 'Canceling',
                 onClick: function () {
@@ -715,16 +717,17 @@
 
             cswPublic.div.span({ text: 'Are you sure you want to delete the following?' }).br();
             var n = 0;
-            Csw.each(cswPrivate.nodes, function(nodeObj) {
+            Csw.each(cswPrivate.nodes, function (nodeObj) {
                 cswPrivate.nodeids[n] = nodeObj.nodeid;
                 cswPrivate.cswnbtnodekeys[n] = nodeObj.cswnbtnodekey;
                 cswPublic.div.span({ text: nodeObj.nodename }).css({ 'padding-left': '10px' }).br();
                 n += 1;
             });
-                
+
             cswPublic.div.br({ number: 2 });
 
-            var deleteBtn = cswPublic.div.button({ ID: 'deletenode_submit',
+            var deleteBtn = cswPublic.div.button({
+                ID: 'deletenode_submit',
                 enabledText: 'Delete',
                 disabledText: 'Deleting',
                 onClick: function () {
@@ -743,7 +746,8 @@
                 }
             });
             /* Cancel Button */
-            cswPublic.div.button({ ID: 'deletenode_cancel',
+            cswPublic.div.button({
+                ID: 'deletenode_cancel',
                 enabledText: 'Cancel',
                 disabledText: 'Canceling',
                 onClick: function () {
@@ -808,16 +812,22 @@
             var uploadBtn = div.input({ ID: 'fileupload', type: Csw.enums.inputTypes.file });
 
             uploadBtn.$.fileupload({
-                datatype: 'json',
+                dataType: 'json',
                 url: Csw.enums.ajaxUrlPrefix + o.urlMethod + '?' + $.param(o.params),
-                paramName: 'fileupload',
-                success: function (result, textStatus, jqXHR) {
+                done: function (e, jqXHR) {
+                    var data = {};
+                    if (jqXHR.result && jqXHR.result.data) {
+                        data = jqXHR.result.data;
+                    } else if (jqXHR.data) { 
+                        data = jqXHR.data;
+                    }
                     div.$.dialog('close');
-                    Csw.tryExec(o.onSuccess, result.data);
+                    Csw.tryExec(o.onSuccess, data);
                 }
             });
 
-            div.button({ ID: 'fileupload_cancel',
+            div.button({
+                ID: 'fileupload_cancel',
                 enabledText: 'Cancel',
                 disabledText: 'Canceling',
                 onClick: function () {
@@ -870,7 +880,8 @@
 
             var buttonsDiv = div.div({ align: 'right' });
 
-            saveBtn = buttonsDiv.button({ ID: 'txt_save',
+            saveBtn = buttonsDiv.button({
+                ID: 'txt_save',
                 enabledText: 'Save',
                 disabledText: 'Saving...',
                 onClick: function () {
@@ -939,7 +950,8 @@
                 } // onClick
             }); // 
 
-            div.button({ ID: 'license_decline',
+            div.button({
+                ID: 'license_decline',
                 enabledText: 'I Decline',
                 disabledText: 'Declining...',
                 onClick: function () {
@@ -964,7 +976,7 @@
             }
             Csw.extend(cswPrivate, options);
 
-           
+
 
             var cswPublic = {
                 div: Csw.literals.div({ text: 'Print labels for the following: ' }),
@@ -1015,7 +1027,8 @@
                 } // success
             }); // ajax
 
-            cswPublic.div.button({ ID: 'print_label_close',
+            cswPublic.div.button({
+                ID: 'print_label_close',
                 enabledText: 'Close',
                 disabledText: 'Closing...',
                 onClick: function () {

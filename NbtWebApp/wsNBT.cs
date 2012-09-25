@@ -2532,9 +2532,7 @@ namespace ChemSW.Nbt.WebServices
 
             //This is the only way to get the content back down to the client using jQuery File Upload.
             //DO NOT TOUCH.
-            Context.Response.Clear();
-            Context.Response.ContentType = "application/json";
-            Context.Response.Flush();
+            Context.Response.ContentType = "text/plain";
             Context.Response.Write( ReturnVal.ToString() );
 
         } // fileForProp()
