@@ -123,6 +123,7 @@
     <Compile Include="csw\ObjClasses\CswNbtObjClassFeedback.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassInventoryLevel.cs" />
     <Compile Include="csw\Schema\scripts\infr\RunBeforeEveryExecutionOfUpdater_01b.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase27538.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase27612.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase27439.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26924.cs" />

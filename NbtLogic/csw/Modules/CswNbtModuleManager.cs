@@ -144,6 +144,22 @@ namespace ChemSW.Nbt
         }
 
         /// <summary>
+        /// Trigger the event appropriate to whether the module is currently enabled or disabled
+        /// Use this to sync new or edited events with existing schemata
+        /// </summary>
+        public void triggerEvent( CswNbtModuleName ModuleName )
+        {
+            if( IsModuleEnabled( ModuleName ) )
+            {
+                _ModuleRules[ModuleName].OnEnable();
+            }
+            else
+            {
+                _ModuleRules[ModuleName].OnDisable();
+            }
+        }
+
+        /// <summary>
         /// Refresh the Modules Collection
         /// </summary>
         public void ClearModulesCache()
