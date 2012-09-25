@@ -17,7 +17,7 @@
             if (Csw.number(delay, -1) >= 0) {
                 previewopts.openDelay = delay;
             }
-            previews[nodeid] = Csw.nbt.nodePreview(Csw.body, previewopts);
+            previews[nodeid] = Csw.nbt.nodePreview(Csw.main.body, previewopts);
             previews[nodeid].open();
     }); // Csw.nodeHoverIn 
 
@@ -74,11 +74,15 @@
                 
                 Csw.layouts.tabsAndProps(cswPrivate.div, {
                     ID: cswPrivate.ID + 'tabs',
-                    nodeids: [cswPrivate.nodeid],
-                    cswnbtnodekeys: [cswPrivate.cswnbtnodekey],
-                    EditMode: Csw.enums.editMode.Preview,
+                    globalState: {
+                        nodeids: [cswPrivate.nodeid],
+                        cswnbtnodekeys: [cswPrivate.cswnbtnodekey],
+                        ShowAsReport: false
+                    },
+                    tabState: {
+                        EditMode: Csw.enums.editMode.Preview
+                    },
                     AjaxWatchGlobal: false,
-                    ShowAsReport: false,
                     onInitFinish: function (AtLeastOneProp) {
                         cswPrivate.loadingDiv.remove();
                         if (AtLeastOneProp) {

@@ -517,12 +517,14 @@ namespace ChemSW.Nbt.ObjClasses
                 _NodeModificationState = NodeModificationState.Modified;
                 if( false == value )
                 {
+                    _NodeModificationState = NodeModificationState.Modified;
                     SessionId = string.Empty;
                 }
                 else if( string.IsNullOrEmpty( SessionId ) )
                 {
                     SessionId = _CswNbtResources.Session.SessionId;
                 }
+
                 _IsTemp = value;
             }
         }
@@ -888,7 +890,7 @@ namespace ChemSW.Nbt.ObjClasses
                 throw ( new CswDniException( "There is no delete handler" ) );
             }
             CswNbtMetaDataNodeType thisNT = this.getNodeType();
-            if( false == OverridePermissions && false == _CswNbtResources.Permit.can( Security.CswNbtPermit.NodeTypePermission.Delete, thisNT ) )
+            if( false == OverridePermissions && false == _CswNbtResources.Permit.canNodeType( Security.CswNbtPermit.NodeTypePermission.Delete, thisNT ) )
             {
                 throw ( new CswDniException( ErrorType.Warning, "You do not have permission to delete this " + thisNT.NodeTypeName, "User attempted to delete a " + thisNT.NodeTypeName + " without Delete permissions" ) );
             }

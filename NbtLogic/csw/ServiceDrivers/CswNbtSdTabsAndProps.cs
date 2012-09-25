@@ -14,6 +14,7 @@ using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
 using ChemSW.Nbt.Statistics;
+using ChemSW.StructureSearch;
 using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.ServiceDrivers
@@ -37,62 +38,44 @@ namespace ChemSW.Nbt.ServiceDrivers
             _CswNbtStatisticsEvents = CswNbtStatisticsEvents;
         }
 
-        public JObject getTabs( string NodeId, string NodeKey, Int32 NodeTypeId, CswDateTime Date, string filterToPropId )
+        public JObject getTabs( string NodeId, string NodeKey, CswDateTime Date, string filterToPropId )
         {
             JObject Ret = new JObject();
             TabOrderModifier = 0;
 
             CswNbtNode Node = _CswNbtResources.Nodes.GetNode( NodeId, NodeKey, Date );
             CswNbtMetaDataNodeType NodeType = Node.getNodeType();
-
+            Int32 NodeTypeId = Int32.MinValue;
             if( filterToPropId != string.Empty )
             {
                 CswPropIdAttr PropId = new CswPropIdAttr( filterToPropId );
                 CswNbtMetaDataNodeTypeProp Prop = _CswNbtResources.MetaData.getNodeTypeProp( PropId.NodeTypePropId );
-                foreach( CswNbtMetaDataNodeTypeLayoutMgr.NodeTypeLayout EditLayout in Prop.getEditLayouts().Values )
+                if( null != Prop )
                 {
-                    CswNbtMetaDataNodeTypeTab Tab = _CswNbtResources.MetaData.getNodeTypeTab( EditLayout.TabId );
-                    if( _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, Prop.getNodeType(), false, Tab, _CswNbtResources.CurrentNbtUser, Node.NodeId, Prop ) )
+                    NodeTypeId = Prop.NodeTypeId;
+                    foreach( CswNbtMetaDataNodeTypeLayoutMgr.NodeTypeLayout EditLayout in Prop.getEditLayouts().Values )
                     {
-                        _makeTab( Ret, Tab.TabOrder, Tab.TabId.ToString(), Tab.TabName, false );
-                        break;
+                    //_CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, Prop.getNodeType(), false, Tab, _CswNbtResources.CurrentNbtUser, Node.NodeId, Prop )
+                        CswNbtMetaDataNodeTypeTab Tab = _CswNbtResources.MetaData.getNodeTypeTab( EditLayout.TabId );
+                    if(
+                          _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.View, NodeType ) ||
+                          _CswNbtResources.Permit.canTab( CswNbtPermit.NodeTypePermission.View, NodeType, Tab ) ||
+                          _CswNbtResources.Permit.canNode( CswNbtPermit.NodeTypePermission.View, NodeType, Node.NodeId, Prop )
+                       )
+                        {
+                            _makeTab( Ret, Tab.TabOrder, Tab.TabId.ToString(), Tab.TabName, false );
+                            break;
+                        }
                     }
                 }
             }
             else
             {
-                //switch( EditMode )
-                //{
-                //    case NodeEditMode.AddInPopup:
-
-                //        CswNbtMetaDataNodeType NodeType = null;
-                //        if( NodeTypeId != Int32.MinValue )
-                //        {
-                //            NodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeId );
-                //        }
-                //        else if( Node != null )
-                //        {
-                //            NodeType = Node.NodeType;
-                //        }
-
-                //        if( NodeType != null && _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Create, NodeType ) )
-                //        {
-                //            _makeTab( Ret, "0", "newtab", "Add New " + NodeType.NodeTypeName, false );
-                //        }
-                //        break;
-
-                //    case NodeEditMode.Preview:
-                //        if( Node != null )
-                //        {
-                //            _makeTab( Ret, "0", "previewtab", Node.NodeType.NodeTypeName, false );
-                //        }
-                //        break;
-
-                //    default:
                 if( null != Node )
                 {
+                    NodeTypeId = Node.NodeTypeId;
                     foreach( CswNbtMetaDataNodeTypeTab Tab in _CswNbtResources.MetaData.getNodeTypeTabs( Node.NodeTypeId )
-                                                                .Where( Tab => _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, Node.getNodeType(), false, Tab ) )
+                                                                .Where( Tab => ( _CswNbtResources.Permit.canTab( CswNbtPermit.NodeTypePermission.View, Node.getNodeType(), Tab ) ) || _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.View, Node.getNodeType() ) )
                                                                 .OrderBy( _getTabOrder ) )
                     {
                         _makeTab( Ret, Tab.TabOrder, Tab.TabId.ToString(), Tab.TabName, _canEditLayout() );
@@ -105,7 +88,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                         NodeType.AuditLevel != Audit.AuditLevel.NoAudit &&
                         CswConvert.ToBoolean( _CswNbtResources.ConfigVbls.getConfigVariableValue( "auditing" ) ) )
                     {
-                        if( _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, NodeType ) )
+                        if( _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.View, NodeType ) )
                         {
                             _makeTab( Ret, Int32.MaxValue, HistoryTabPrefix + NodeId, "History", false );
                         }
@@ -117,6 +100,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                 //} // switch(EditMode)
 
             } // if-else( filterToPropId != string.Empty )
+            Ret["nodetypeid"] = NodeTypeId;
             return Ret;
         } // getTabs()
 
@@ -145,7 +129,7 @@ namespace ChemSW.Nbt.ServiceDrivers
             CswNbtNode Ret = null;
             if( null != NodeType )
             {
-                if( _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Create, NodeType ) )
+                if( _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Create, NodeType ) )
                 {
                     NodeOp = NodeOp ?? CswNbtNodeCollection.MakeNodeOperation.MakeTemp;
                     Ret = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeType.NodeTypeId, NodeOp );
@@ -164,7 +148,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                 NodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeId );
                 if( null != NodeType )
                 {
-                    CanCreate = _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Create, NodeType );
+                    CanCreate = _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Create, NodeType );
 
                     if( CanCreate )
                     {
@@ -224,7 +208,7 @@ namespace ChemSW.Nbt.ServiceDrivers
             if( false == _IsMultiEdit && TabId.StartsWith( HistoryTabPrefix ) )
             {
                 CswNbtNode Node = _CswNbtResources.getNode( NodeId, NodeKey, Date );
-                if( _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, Node.getNodeType() ) )
+                if( _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.View, Node.getNodeType() ) )
                 {
                     _getAuditHistoryGridProp( Ret, Node );
                 }
@@ -246,7 +230,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                     if( Node != null )
                     {
                         NodeType = _CswNbtResources.MetaData.getNodeType( Node.NodeTypeId );
-                        CanCreate = _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Create, NodeType );
+                        CanCreate = _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Create, NodeType );
                     }
                 }
                 return getProps( Node, TabId, FilterPropIdAttr, LayoutType, CanCreate );
@@ -486,10 +470,24 @@ namespace ChemSW.Nbt.ServiceDrivers
 
             if( PropWrapper != null )
             {
-                PropObj["readonly"] = PropWrapper.IsReadOnly().ToString().ToLower();
+
+
+                //PropObj["readonly"] = PropWrapper.IsReadOnly().ToString().ToLower();
+                //if( _CswNbtResources.Permit.canProp( CswNbtPermit.NodeTypePermission.Edit, Prop ) )
+                CswNbtMetaDataNodeType NodeType = Prop.getNodeType();
+                if( _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Edit, NodeType ) || _CswNbtResources.Permit.canTab( CswNbtPermit.NodeTypePermission.Edit, NodeType, Tab ) || _CswNbtResources.Permit.canPropOnAnyOtherTab( CswNbtPermit.NodeTypePermission.Edit, Tab, Prop ) )
+                {
+
+                    PropObj["readonly"] = false.ToString().ToLower();
+                }
+                else
+                {
+                    PropObj["readonly"] = true.ToString().ToLower();
+                }
+
                 PropObj["gestalt"] = PropWrapper.Gestalt.Replace( "\"", "&quot;" );
                 PropObj["highlight"] = PropWrapper.AuditChanged.ToString().ToLower();
-                PropWrapper.ToJSON( PropObj, Tab );
+                PropWrapper.ToJSON( PropObj );
             }
             return ret;
         } // makePropJson()
@@ -576,7 +574,11 @@ namespace ChemSW.Nbt.ServiceDrivers
                 {
                     Ret = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeType.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode );
                 }
-                bool CanEdit = _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, NodeType, false, NodeTypeTab, null, Ret.NodeId );
+                bool CanEdit = (
+                                    _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Edit, NodeType ) ||
+                                    _CswNbtResources.Permit.canTab( CswNbtPermit.NodeTypePermission.Edit, NodeType, NodeTypeTab ) ||
+                                    _CswNbtResources.Permit.canNode( CswNbtPermit.NodeTypePermission.Edit, NodeType, Ret.NodeId )
+                               );
                 if( CanEdit )
                 {
                     RetNbtNodeKey = _saveProp( Ret, PropsObj, View, NodeTypeTab, true );
@@ -643,7 +645,14 @@ namespace ChemSW.Nbt.ServiceDrivers
                     default:
                         if( null != Node )
                         {
-                            bool CanEdit = _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, NodeType, false, NodeTypeTab, null, Node.NodeId );
+                            bool CanEdit = (
+                                               _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Edit, NodeType ) ||
+                                               _CswNbtResources.Permit.canTab( CswNbtPermit.NodeTypePermission.Edit, NodeType, NodeTypeTab ) ||
+                                               _CswNbtResources.Permit.canAnyTab( CswNbtPermit.NodeTypePermission.Edit, NodeType ) ||
+                                               _CswNbtResources.Permit.canNode( CswNbtPermit.NodeTypePermission.Edit, NodeType, Node.NodeId ) // ||
+                                // _CswNbtResources.Permit.canPropOnAnyOtherTab( CswNbtPermit.NodeTypePermission.Edit, NodeTypeTab, null )
+
+                                           );
                             if( CanEdit )
                             {
                                 if( Node.PendingUpdate )
@@ -787,7 +796,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                         {
                             CswNbtNode CopyToNode = _CswNbtResources.Nodes[CopyToNodePk];
                             if( CopyToNode != null &&
-                                _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, CopyToNode.getNodeType(), false, null, null, CopyToNode.NodeId, null ) )
+                                _CswNbtResources.Permit.canNode( CswNbtPermit.NodeTypePermission.Edit, CopyToNode.getNodeType(), CopyToNode.NodeId, null ) )
                             {
                                 foreach( CswNbtMetaDataNodeTypeProp NodeTypeProp in PropIds.Select( PropIdAttr => new CswPropIdAttr( PropIdAttr ) )
                                     .Select( PropId => _CswNbtResources.MetaData.getNodeTypeProp( PropId.NodeTypePropId ) ) )
@@ -890,41 +899,51 @@ namespace ChemSW.Nbt.ServiceDrivers
             return ret;
         } // ClearPropValue()
 
-        public bool saveMolProp( string moldata, string propIdAttr )
+        public JObject saveMolProp( string moldata, string propIdAttr )
         {
-            bool ret = false;
-
+            JObject Ret = new JObject();
+            bool Succeeded = false;
             CswPropIdAttr PropId = new CswPropIdAttr( propIdAttr );
             CswNbtMetaDataNodeTypeProp MetaDataProp = _CswNbtResources.MetaData.getNodeTypeProp( PropId.NodeTypePropId );
             if( Int32.MinValue != PropId.NodeId.PrimaryKey )
             {
                 CswNbtNode Node = _CswNbtResources.Nodes[PropId.NodeId];
-                CswNbtNodePropWrapper PropWrapper = Node.Properties[MetaDataProp];
-
-                // Do the update directly
-                CswTableUpdate JctUpdate = _CswNbtResources.makeCswTableUpdate( "Clobber_save_update", "jct_nodes_props" );
-                //JctUpdate.AllowBlobColumns = true;
-                if( PropWrapper.JctNodePropId > 0 )
+                if( null != Node )
                 {
-                    DataTable JctTable = JctUpdate.getTable( "jctnodepropid", PropWrapper.JctNodePropId );
-                    JctTable.Rows[0]["clobdata"] = moldata;
-                    JctUpdate.update( JctTable );
+                    CswNbtNodePropMol PropMol = Node.Properties[MetaDataProp];
+                    if( null != PropMol )
+                    {
+                        // Do the update directly
+                        CswTableUpdate JctUpdate = _CswNbtResources.makeCswTableUpdate( "Clobber_save_update", "jct_nodes_props" );
+                        //JctUpdate.AllowBlobColumns = true;
+                        if( PropMol.JctNodePropId > 0 )
+                        {
+                            DataTable JctTable = JctUpdate.getTable( "jctnodepropid", PropMol.JctNodePropId );
+                            JctTable.Rows[0]["clobdata"] = moldata;
+                            JctUpdate.update( JctTable );
+                        }
+                        else
+                        {
+                            DataTable JctTable = JctUpdate.getEmptyTable();
+                            DataRow JRow = JctTable.NewRow();
+                            JRow["nodetypepropid"] = CswConvert.ToDbVal( PropId.NodeTypePropId );
+                            JRow["nodeid"] = CswConvert.ToDbVal( Node.NodeId.PrimaryKey );
+                            JRow["nodeidtablename"] = Node.NodeId.TableName;
+                            JRow["clobdata"] = moldata;
+                            JctTable.Rows.Add( JRow );
+                            JctUpdate.update( JctTable );
+                        }
+                        Succeeded = true;
+                        Ret["mol"] = PropMol.Mol;
+                        byte[] molImage = CswStructureSearch.GetImage( moldata );
+                        string Href;
+                        SetPropBlobValue( molImage, "mol.jpeg", "image/jpeg", propIdAttr, "blobdata", out Href );
+                        Ret["href"] = Href;
+                    }
                 }
-                else
-                {
-                    DataTable JctTable = JctUpdate.getEmptyTable();
-                    DataRow JRow = JctTable.NewRow();
-                    JRow["nodetypepropid"] = CswConvert.ToDbVal( PropId.NodeTypePropId );
-                    JRow["nodeid"] = CswConvert.ToDbVal( Node.NodeId.PrimaryKey );
-                    JRow["nodeidtablename"] = Node.NodeId.TableName;
-                    JRow["clobdata"] = moldata;
-                    JctTable.Rows.Add( JRow );
-                    JctUpdate.update( JctTable );
-                }
-                ret = true;
-
             } // if( Int32.MinValue != NbtNodeKey.NodeId.PrimaryKey )
-            return ret;
+            Ret["succeeded"] = Succeeded;
+            return Ret;
         }
 
         public bool SetPropBlobValue( byte[] Data, string FileName, string ContentType, string PropIdAttr, string Column, out string Href )

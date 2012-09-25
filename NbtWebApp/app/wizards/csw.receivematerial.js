@@ -104,7 +104,6 @@
                         cswPrivate.lastStepNo = cswPrivate.currentStepNo;
                         cswPrivate.currentStepNo = newStepNo;
                         cswPrivate['makeStep' + newStepNo]();
-                        //Csw.clientDb.setItem(cswReceiveMaterialWizardState, cswPrivate);
                     }
                 };
 
@@ -129,9 +128,16 @@
                                 Csw.error.throwException(Csw.error.exception('Failed to create any containers.'));
                             } else {
                                 Csw.tryExec(cswPrivate.onFinish, data.viewid);
-                                if (false === Csw.isNullOrEmpty(data.barcodeId)) {
-                                    if (cswPrivate.printBarcodes) {
-                                        $.CswDialog('PrintLabelDialog', { 'nodeid': data.containerId, 'propid': data.barcodeId });
+                                if (cswPrivate.printBarcodes) {
+                                    if (false === Csw.isNullOrEmpty(data.barcodes) &&
+                                        data.barcodes.length > 0) {
+
+                                        $.CswDialog('PrintLabelDialog', {
+                                            nodeid: data.barcodes,
+                                            nodetypeid: cswPrivate.state.containerNodeTypeId
+                                        });
+                                    } else {
+                                        //handle warning
                                     }
                                 }
                             }
@@ -147,7 +153,8 @@
                     StartingStep: cswPrivate.startingStep,
                     FinishText: 'Finish',
                     onBeforeNext: function () {
-                        var ret = cswPrivate.amountsGrid.amountsGridOnAdd();
+                        var ret = Csw.bool(cswPrivate.amountsGrid.containerCount > 0 &&
+                            cswPrivate.amountsGrid.containerCount <= cswPrivate.amountsGrid.containerlimit);
                         return ret;
                     },
                     onNext: cswPrivate.handleStep,
@@ -193,7 +200,7 @@
 
                         //If multiple container nodetypes exist
                         cswPrivate.container = {};
-                        var containerSelect = Csw.nbt.wizard.nodeTypeSelect(cswPrivate.divStep1, {
+                        var containerSelect = Csw.wizard.nodeTypeSelect(cswPrivate.divStep1, {
                             labelText: 'Select a Container: ',
                             objectClassName: 'ContainerClass',
                             data: cswPrivate.state.container,
@@ -214,7 +221,7 @@
                             cswPrivate.amountsDiv = cswPrivate.amountsDiv || cswPrivate.divStep1.div();
                             cswPrivate.amountsDiv.empty();
 
-                            cswPrivate.amountsGrid = Csw.nbt.wizard.amountsGrid(cswPrivate.amountsDiv, {
+                            cswPrivate.amountsGrid = Csw.wizard.amountsGrid(cswPrivate.amountsDiv, {
                                 ID: cswPrivate.wizard.makeStepId('wizardAmountsThinGrid'),
                                 quantity: cswPrivate.state.quantity,
                                 containerlimit: cswPrivate.state.containerlimit,
@@ -269,10 +276,14 @@
                         });
                         cswPrivate.divStep2.br({ number: 4 });
 
-                        cswPrivate.tabsAndProps = Csw.nbt.wizard.addLayout(cswPrivate.divStep2, {
+                        cswPrivate.tabsAndProps = Csw.wizard.addLayout(cswPrivate.divStep2, {
                             ID: cswPrivate.state.containerNodeTypeId + 'add_layout',
-                            nodetypeid: cswPrivate.state.containerNodeTypeId,
-                            propertyData: cswPrivate.state.containerAddLayout
+                            tabState: {
+                                nodetypeid: cswPrivate.state.containerNodeTypeId
+                            },
+                            globalState: {
+                                propertyData: cswPrivate.state.containerAddLayout
+                            }
                         });
 
                         cswPrivate.stepTwoComplete = true;
@@ -312,19 +323,22 @@
                             div = cswPrivate.divStep3.div();
 
                             cswPrivate.documentTabsAndProps = Csw.layouts.tabsAndProps(div, {
-                                nodetypeid: cswPrivate.state.documentTypeId,
-                                showSaveButton: false,
-                                EditMode: Csw.enums.editMode.Add,
+                                tabState: {
+                                    showSaveButton: false,
+                                    EditMode: Csw.enums.editMode.Add,
+                                    nodetypeid: cswPrivate.state.documentTypeId
+                                },
+                                globalState: {
+                                    ShowAsReport: false,
+                                    excludeOcProps: ['owner']
+                                },
                                 ReloadTabOnSave: false,
-                                ShowAsReport: false,
-                                excludeOcProps: ['owner'],
                                 onNodeIdSet: function (documentId) {
                                     cswPrivate.state.documentId = documentId;
                                 }
                             });
 
                         }
-
                         cswPrivate.stepThreeComplete = true;
                     }
                 };

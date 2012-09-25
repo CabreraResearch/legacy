@@ -158,30 +158,34 @@ namespace ChemSW.Nbt.Actions
                                     Debug.Assert( ( Int32.MinValue != UnitId.PrimaryKey ), "The request did not specify a valid unit." );
                                     if( NoContainers > 0 && QuantityValue > 0 && Int32.MinValue != UnitId.PrimaryKey )
                                     {
+                                        JArray jBarcodes = new JArray();
+                                        Ret["barcodes"] = jBarcodes;
                                         for( Int32 C = 0; C < NoContainers; C += 1 )
                                         {
                                             CswNbtNodeKey ContainerNodeKey;
-                                            CswNbtNode Container = SdTabsAndProps.addNode( ContainerNt, null, ContainerAddProps, out ContainerNodeKey );
-                                            CswNbtObjClassContainer AsContainer = Container;
-                                            if( Barcodes.Count <= NoContainers && false == string.IsNullOrEmpty( Barcodes[C] ) )
+                                            CswNbtObjClassContainer AsContainer = SdTabsAndProps.addNode( ContainerNt, null, ContainerAddProps, out ContainerNodeKey );
+                                            if( null != AsContainer )
                                             {
-                                                AsContainer.Barcode.setBarcodeValueOverride( Barcodes[C], false );
+                                                if( Barcodes.Count <= NoContainers && false == string.IsNullOrEmpty( Barcodes[C] ) )
+                                                {
+                                                    AsContainer.Barcode.setBarcodeValueOverride( Barcodes[C], false );
+                                                }
+                                                AsContainer.Size.RelatedNodeId = SizeId;
+                                                AsContainer.Material.RelatedNodeId = NodeAsMaterial.NodeId;
+                                                if( AsSize.QuantityEditable.Checked != Tristate.True )
+                                                {
+                                                    QuantityValue = AsSize.InitialQuantity.Quantity;
+                                                    UnitId = AsSize.InitialQuantity.UnitId;
+                                                }
+                                                if( null == AsContainer.Quantity.UnitId || Int32.MinValue == AsContainer.Quantity.UnitId.PrimaryKey )
+                                                {
+                                                    AsContainer.Quantity.UnitId = UnitId;
+                                                }
+                                                AsContainer.DispenseIn( CswNbtObjClassContainerDispenseTransaction.DispenseType.Receive, QuantityValue, UnitId );
+                                                AsContainer.postChanges( true );
+                                                ContainerIds.Add( AsContainer.NodeId );
+                                                jBarcodes.Add( AsContainer.NodeId.ToString() );
                                             }
-                                            AsContainer.Size.RelatedNodeId = SizeId;
-                                            AsContainer.Material.RelatedNodeId = NodeAsMaterial.NodeId;
-                                            if( AsSize.QuantityEditable.Checked != Tristate.True )
-                                            {
-                                                QuantityValue = AsSize.InitialQuantity.Quantity;
-                                                UnitId = AsSize.InitialQuantity.UnitId;
-                                            }
-                                            if( null == AsContainer.Quantity.UnitId || Int32.MinValue == AsContainer.Quantity.UnitId.PrimaryKey )
-                                            {
-                                                AsContainer.Quantity.UnitId = UnitId;
-                                            }
-                                            AsContainer.DispenseIn( CswNbtObjClassContainerDispenseTransaction.DispenseType.Receive, QuantityValue, UnitId );
-                                            AsContainer.postChanges( true );
-                                            ContainerIds.Add( AsContainer.NodeId );
-                                            Ret["barcodeId"] = AsContainer.NodeId.ToString() + "_" + AsContainer.Barcode.NodeTypePropId.ToString();
                                         }
                                     }
                                 }

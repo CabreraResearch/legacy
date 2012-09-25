@@ -11,6 +11,7 @@ using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Statistics;
 using ChemSW.Security;
 using ChemSW.Session;
+using ChemSW.WebSvc;
 
 namespace ChemSW.Nbt.WebPages
 {
@@ -52,7 +53,7 @@ namespace ChemSW.Nbt.WebPages
         }
         public AuthenticationStatus Authenticate( string username, string password )
         {
-            return ( CswSessionManager.beginSession( username, password, CswNbtWebTools.getIpAddress(), false ) );
+            return ( CswSessionManager.beginSession( username, password, CswWebSvcCommonMethods.getIpAddress(), false ) );
         }//Authenticate()
 
 

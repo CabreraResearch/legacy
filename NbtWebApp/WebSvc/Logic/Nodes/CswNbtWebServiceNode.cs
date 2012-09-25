@@ -104,15 +104,7 @@ namespace ChemSW.Nbt.WebServices
                 /* Get a new CswNbtResources as the System User */
                 CswNbtWebServiceMetaData wsMd = new CswNbtWebServiceMetaData( _CswNbtResources );
                 CswNbtResources NbtSystemResources = wsMd.makeSystemUserResources( _CswNbtResources.AccessId, false, false );
-
-                //CswTableSelect NodesSelect = new CswTableSelect( NbtSystemResources.CswResources, "delete_demodata_nodes", "nodes" );
-                CswTableSelect NodesSelect = _CswNbtResources.makeCswTableSelect( "delete_demodata_nodes", "nodes" );
-
-                DataTable NodesTable = NodesSelect.getTable( new CswCommaDelimitedString { "nodeid" },
-                                                            " where isdemo='" + CswConvert.ToDbVal( true ) + "' " );
-                Total = NodesTable.Rows.Count;
                 Collection<Exception> Exceptions = new Collection<Exception>();
-
                 try
                 {
                     CswNbtResources UserSystemResources = wsMd.makeSystemUserResources( _CswNbtResources.AccessId, false, false );
@@ -129,7 +121,10 @@ namespace ChemSW.Nbt.WebServices
                 {
                     Exceptions.Add( Ex );
                 }
-
+                #region Delete Demo Nodes
+                CswTableSelect NodesSelect = _CswNbtResources.makeCswTableSelect( "delete_demodata_nodes", "nodes" );
+                DataTable NodesTable = NodesSelect.getTable( new CswCommaDelimitedString { "nodeid" }, " where isdemo='" + CswConvert.ToDbVal( true ) + "' " );
+                Total = NodesTable.Rows.Count;
                 foreach( DataRow NodeRow in NodesTable.Rows )
                 {
                     try
@@ -146,6 +141,29 @@ namespace ChemSW.Nbt.WebServices
                         Exceptions.Add( Exception );
                     }
                 }
+                #endregion Delete Demo Nodes
+
+                #region Delete Demo Views
+                CswTableSelect ViewsSelect = _CswNbtResources.makeCswTableSelect( "delete_demodata_views", "node_views" );
+                DataTable ViewsTable = ViewsSelect.getTable( new CswCommaDelimitedString { "nodeviewid" }, " where isdemo='" + CswConvert.ToDbVal( true ) + "' " );
+                Total += ViewsTable.Rows.Count;
+                foreach( DataRow ViewRow in ViewsTable.Rows )
+                {
+                    try
+                    {
+                        CswNbtViewId ViewId = new CswNbtViewId( CswConvert.ToInt32( ViewRow["nodeviewid"] ) );
+                        CswNbtView View = _CswNbtResources.ViewSelect.restoreView( ViewId );
+                        View.Delete();
+                        Succeeded += 1;
+                    }
+                    catch( Exception Exception )
+                    {
+                        Failed += 1;
+                        Exceptions.Add( Exception );
+                    }
+                }
+                #endregion Delete Demo Views
+
                 wsMd.finalizeOtherResources( NbtSystemResources );
                 if( Exceptions.Count > 0 )
                 {
@@ -189,6 +207,7 @@ namespace ChemSW.Nbt.WebServices
                 Capacity.ToJSON( Ret );
                 Ret["qtyReadonly"] = "false";
                 Ret["unitReadonly"] = "false";
+                Ret["unitCount"] = "1";
                 if( Action.ToLower() == ChemSW.Nbt.ObjClasses.CswNbtObjClass.NbtButtonAction.receive.ToString() )
                 {
                     Ret["unitReadonly"] = "true";
@@ -196,6 +215,7 @@ namespace ChemSW.Nbt.WebServices
                     {
                         Ret["qtyReadonly"] = "true";
                     }
+                    Ret["unitCount"] = Size.UnitCount.Value.ToString();
                 }
             }
             return Ret;
@@ -269,7 +289,7 @@ namespace ChemSW.Nbt.WebServices
             {
                 CswNbtMetaDataNodeType MetaDataNodeType = _CswNbtResources.MetaData.getNodeType( RealNodeTypeId );
                 Nodes = MetaDataNodeType.getNodes( true, false );
-                CanAdd = _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Create, MetaDataNodeType );
+                CanAdd = _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Create, MetaDataNodeType );
             }
             else
             {
@@ -339,7 +359,7 @@ namespace ChemSW.Nbt.WebServices
                     {
                         Nodes = MetaDataObjectClass.getNodes( true, false );
                     }
-                    CanAdd = MetaDataObjectClass.getLatestVersionNodeTypes().Aggregate( false, ( current, NodeType ) => current || _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Create, NodeType ) );
+                    CanAdd = MetaDataObjectClass.getLatestVersionNodeTypes().Aggregate( false, ( current, NodeType ) => current || _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Create, NodeType ) );
                 }
                 else
                 {

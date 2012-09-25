@@ -482,7 +482,7 @@ namespace ChemSW.NbtWebControls
         private bool _IncludeThisNodeType( CswNbtMetaDataNodeType NodeType )
         {
             // BZ 7121 - Must have view permission on the nodetype
-			return ( _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, NodeType.getFirstVersionNodeType() ) &&
+			return ( _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.View, NodeType.getFirstVersionNodeType() ) &&
                      ( ( NodeTypeIdsToFilterOut == null || !( delimiter + NodeTypeIdsToFilterOut + delimiter ).Contains( delimiter + NodeType.FirstVersionNodeTypeId.ToString() + delimiter ) ) &&
                        ( NodeTypeIdsToInclude == null || ( delimiter + NodeTypeIdsToInclude + delimiter ).Contains( delimiter + NodeType.FirstVersionNodeTypeId.ToString() + delimiter ) ) &&
                        ( ObjectClassIdsToInclude == null || ( delimiter + ObjectClassIdsToInclude + delimiter ).Contains( delimiter + NodeType.ObjectClassId.ToString() + delimiter ) ) ) );
