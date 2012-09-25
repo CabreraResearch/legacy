@@ -3,8 +3,7 @@
 
 (function ($) {
     "use strict";
-    var pluginName = "CswWelcome",
-        addClickDisabled = false;
+    var pluginName = "CswWelcome";
 
     var methods = {
 
@@ -107,12 +106,7 @@
                                     textCell.a({
                                         href: 'javascript:void(0);',
                                         value: thisItem.text,
-                                        onClick: function () {
-                                            if (false === addClickDisabled) {
-                                                addClickDisabled = true;
-                                                onClick();
-                                            }
-                                        }
+                                        onClick: onClick
                                     });
                                     if (false === Csw.isNullOrEmpty(link)) {
                                         link.bind('click', onClick);
@@ -248,7 +242,7 @@
         var itemid = Csw.string(c.itemData.itemid, c.itemData.viewid);
         itemid = Csw.string(itemid, c.itemData.actionid);
         itemid = Csw.string(itemid, c.itemData.reportid);
-
+        
         var optSelect = {
             type: c.itemData.type,
             mode: c.itemData.viewmode,
@@ -264,7 +258,6 @@
             switch (optSelect.linktype.toLowerCase()) {
                 case 'add':
                     Csw.tryExec(c.onAddClick, c.itemData.nodetypeid);
-                    addClickDisabled = false;
                     break;
                 case 'link':
                     Csw.tryExec(c.onLinkClick, optSelect);
