@@ -27,6 +27,8 @@ namespace ChemSW.Nbt.Schema
                 NodeAsUnitOfMeasure = NodeAsUnitOfMeasure ?? _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( TimeUnitNodeType.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode );
                 NodeAsUnitOfMeasure.Name.Text = "Months";
                 NodeAsUnitOfMeasure.Fractional.Checked = Tristate.False;
+                NodeAsUnitOfMeasure.ConversionFactor.Base = 3.285496;
+                NodeAsUnitOfMeasure.ConversionFactor.Exponent = -2;
                 NodeAsUnitOfMeasure.postChanges( true );
 
                 CswNbtMetaDataObjectClass MaterialOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass );

@@ -139,23 +139,6 @@ namespace ChemSW.Nbt.csw.Conversion
         #region Validation
 
         /// <summary>
-        /// Determines if a UnitOfMeasure node is valid for unit conversion.  Does not apply to Each units.
-        /// </summary>
-        public static void validateUnitForConversion( CswNbtObjClassUnitOfMeasure UnitNode )
-        {
-            if( UnitNode.UnitType.Value != ChemSW.Nbt.ObjClasses.CswNbtObjClassUnitOfMeasure.UnitTypes.Each.ToString() &&
-                false == CswTools.IsDouble( UnitNode.ConversionFactor.RealValue ) )
-            {
-                throw new CswDniException
-                (
-                    ErrorType.Warning,
-                    "Units of type " + UnitNode.UnitType.Value + " must have a Conversion Factor.",
-                    "Unit of Measure cannot be used for unit conversion."
-                );
-            }
-        }
-
-        /// <summary>
         /// Determines if a set of values are valid for unit conversion.
         /// </summary>
         private void _validateValuesForConversion( Double ValueToConvert, Double OldConversionFactor, Double NewConversionFactor, Double SpecificGravity )
