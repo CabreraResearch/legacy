@@ -126,8 +126,10 @@
     <Compile Include="csw\Schema\scripts\infr\RunBeforeEveryExecutionOfUpdater_01b.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase27779.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase27538.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase27769.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase27800.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase27780.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase27665.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase27632.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase27691.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase27703.cs" />
@@ -145,6 +147,7 @@
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase27278.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase27628.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase27647.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase27670.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_FieldTypes_Case25352.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_RequestItem_Case27488.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase27431.cs" />

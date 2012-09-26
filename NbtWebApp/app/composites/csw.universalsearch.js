@@ -64,7 +64,7 @@
             (function () {
                 cswPrivate.searchBoxParent.empty();
                 var cswtable = cswPrivate.searchBoxParent.table({
-                    ID: Csw.makeId(cswPrivate.ID, '', '_div')
+                    ID: Csw.makeId(cswPrivate.ID, '_div')
                 });
 
                 cswPrivate.searchinput = cswtable.cell(1, 1).input({
@@ -75,8 +75,9 @@
                 });
 
                 cswPrivate.searchbutton = cswtable.cell(1, 2).div({ ID: cswPrivate.ID + window.Ext.id() }).buttonExt({
-                    ID: Csw.makeId(cswPrivate.ID, '', '_srchbtn'),
+                    ID: Csw.makeId(cswPrivate.ID, '_srchbtn'),
                     icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.search),
+                    width: ('Search'.length * 11) + 16,
                     enabledText: 'Search',
                     disabledText: 'Searching...',
                     bindOnEnter: true,

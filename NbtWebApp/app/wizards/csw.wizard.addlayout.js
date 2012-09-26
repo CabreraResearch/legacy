@@ -10,15 +10,19 @@
 
             var cswPrivate = {
                 ID: 'wizardTabsAndPropsAddLayout',
-                nodetypeid: '',
-                showSaveButton: false,
-                EditMode: Csw.enums.editMode.Add,
-                propertyData: {},
-                ReloadTabOnSave: false,
-                ShowAsReport: false,
-                excludeOcProps: []
+                globalState: {
+                    propertyData: {},
+                    ShowAsReport: false,
+                    excludeOcProps: []
+                },
+                tabState: {
+                    nodetypeid: '',
+                    showSaveButton: false,
+                    EditMode: Csw.enums.editMode.Add
+                },
+                ReloadTabOnSave: false
             };
-            if (options) Csw.extend(cswPrivate, options);
+            Csw.extend(cswPrivate, options, true);
 
             var cswPublic = {};
 
@@ -26,7 +30,7 @@
                 if (Csw.isNullOrEmpty(cswParent)) {
                     Csw.error.throwException(Csw.error.exception('Cannot create a Wizard addLayout without a parent.', '', 'csw.wizard.addlayout.js', 25));
                 }
-                if (Csw.isNullOrEmpty(cswPrivate.nodetypeid)) {
+                if (Csw.isNullOrEmpty(cswPrivate.tabState.nodetypeid)) {
                     Csw.error.throwException(Csw.error.exception('Cannot create a Wizard addLayout without a NodeType ID.', '', 'csw.wizard.addlayout.js', 28));
                 }
                 var div = cswParent.div({width: '80%'});

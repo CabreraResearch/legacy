@@ -19,7 +19,7 @@
                         ID: Csw.makeId(cswPublic.data.ID, 'tbl')
                     });
 
-                    if (cswPublic.data.Multi) {
+                    if (cswPublic.data.isMulti()) {
                         cswPublic.control.cell(1,1).append(Csw.enums.multiEditDefaultValue);
                     } else {
 
@@ -32,7 +32,7 @@
                         cswPrivate.cell12 = cswPublic.control.cell(1, 2).div();
                         cswPrivate.cell13 = cswPublic.control.cell(1, 3).div();
 
-                        if (false === cswPublic.data.ReadOnly) {
+                        if (false === cswPublic.data.isReadOnly()) {
                             //Edit button
                             cswPrivate.cell12.icon({
                                 ID: cswPublic.data.ID + '_edit',

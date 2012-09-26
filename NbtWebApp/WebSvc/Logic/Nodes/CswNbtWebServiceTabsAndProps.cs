@@ -20,9 +20,9 @@ namespace ChemSW.Nbt.WebServices
 
         }
 
-        public JObject getTabs( string NodeId, string NodeKey, Int32 NodeTypeId, CswDateTime Date, string filterToPropId )
+        public JObject getTabs( string NodeId, string NodeKey, CswDateTime Date, string filterToPropId )
         {
-            return _TabsPropsSd.getTabs( NodeId, NodeKey, NodeTypeId, Date, filterToPropId );
+            return _TabsPropsSd.getTabs( NodeId, NodeKey, Date, filterToPropId );
         } // getTabs()
 
         public void _makeTab( JObject ParentObj, Int32 TabOrder, string Id, string Name, bool CanEditLayout )

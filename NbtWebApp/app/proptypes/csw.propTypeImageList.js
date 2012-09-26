@@ -18,7 +18,7 @@
 
                     cswPrivate.propVals = cswPublic.data.propData.values;
                     cswPrivate.parent = cswPublic.data.propDiv;
-                    cswPrivate.value = (false === cswPublic.data.Multi) ? Csw.string(cswPrivate.propVals.value).trim() : Csw.enums.multiEditDefaultValue;
+                    cswPrivate.value = (false === cswPublic.data.isMulti()) ? Csw.string(cswPrivate.propVals.value).trim() : Csw.enums.multiEditDefaultValue;
                     cswPrivate.options = cswPrivate.propVals.options;
                     cswPrivate.width = Csw.string(cswPrivate.propVals.width);
                     cswPrivate.height = Csw.string(cswPrivate.propVals.height);
@@ -80,7 +80,7 @@
                         if (name !== href) {
                             nameCell.a({ href: href, target: '_blank', text: name });
                         }
-                        if (false === cswPublic.data.ReadOnly && (false === cswPublic.data.Required || cswPrivate.allowMultiple)) {
+                        if (false === cswPublic.data.isReadOnly() && (false === cswPublic.data.isRequired() || cswPrivate.allowMultiple)) {
                             nameCell.icon({
                                 ID: Csw.makeId('image', cswPrivate.imgTblCol, 'rembtn'),
                                 iconType: Csw.enums.iconType.trash,
@@ -125,17 +125,17 @@
                         cswPrivate.saveProp();
                     };
 
-                    if (false === cswPublic.data.ReadOnly) {
+                    if (false === cswPublic.data.isReadOnly()) {
                         cswPrivate.imageSelectList = cswPublic.control.cell(1, 2).select({ id: cswPublic.data.ID });
                         cswPrivate.selectOption = cswPrivate.imageSelectList.option({ value: '', display: 'Select...' });
-                        if (cswPublic.data.Multi) {
+                        if (cswPublic.data.isMulti()) {
                             cswPrivate.imageSelectList.option({ value: Csw.enums.multiEditDefaultValue, display: Csw.enums.multiEditDefaultValue, isSelected: true });
                         }
 
                         cswPrivate.imageSelectList.bind('change', function () {
                             var selected = cswPrivate.imageSelectList.children(':selected');
                             cswPrivate.changeImage(selected.text(), selected.val(), true, selected);
-                            if (cswPublic.data.Required && false === cswPrivate.allowMultiple) {
+                            if (cswPublic.data.isRequired() && false === cswPrivate.allowMultiple) {
                                 cswPrivate.selectOption.remove();
                             }
                             Csw.tryExec(cswPublic.data.onChange, cswPrivate.selectedValues);
@@ -147,7 +147,7 @@
                                     cswPrivate.selectedValues.push(thisOpt.value);
                                     cswPrivate.addImage(thisOpt.text, thisOpt.value, false);
                                 } else {
-                                    if (false === cswPublic.data.ReadOnly) {
+                                    if (false === cswPublic.data.isReadOnly()) {
                                         cswPrivate.imageSelectList.option({ value: thisOpt.value, display: thisOpt.text });
                                     }
                                 }
@@ -155,8 +155,8 @@
                             false
                         );
 
-                        cswPrivate.imageSelectList.required(cswPublic.data.Required);
-                        if (cswPublic.data.Required) {
+                        cswPrivate.imageSelectList.required(cswPublic.data.isRequired());
+                        if (cswPublic.data.isRequired()) {
                             $.validator.addMethod('imageRequired', function (value, element) {
                                 return (cswPrivate.selectedValues.length > 0);
                             }, 'An image is required.');

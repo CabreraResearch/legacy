@@ -21,7 +21,7 @@
                     cswPrivate.propVals = cswPublic.data.propData.values;
                     cswPrivate.parent = cswPublic.data.propDiv;
 
-                    if (cswPublic.data.Multi) {
+                    if (cswPublic.data.isMulti()) {
                         cswPublic.control = cswPrivate.parent.append(Csw.enums.multiEditDefaultValue);
                     } else {
 
@@ -105,7 +105,7 @@
                         };
                         cswPrivate.makeImg(cswPrivate);
 
-                        if (false === cswPublic.data.ReadOnly && cswPublic.data.EditMode !== Csw.enums.editMode.Add) {
+                        if (false === cswPublic.data.isReadOnly()) {
                             //Edit button
                             cswPrivate.cell22.icon({
                                 ID: Csw.makeId(cswPublic.data.ID, 'edit'),

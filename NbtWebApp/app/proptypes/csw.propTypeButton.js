@@ -54,7 +54,7 @@
                         selectedText: cswPrivate.selectedText,
                         confirmmessage: cswPrivate.propVals.confirmmessage,
                         propId: cswPublic.data.propid,
-                        ReadOnly: Csw.bool(cswPublic.data.ReadOnly),
+                        ReadOnly: Csw.bool(cswPublic.data.isReadOnly()),
                         onClickSuccess: cswPrivate.onClickSuccess,
                         disabled: (Csw.enums.editMode.PrintReport === cswPublic.data.EditMode || Csw.enums.editMode.AuditHistoryInPopup ===cswPublic.data.EditMode)
                     });

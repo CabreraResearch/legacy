@@ -1,4 +1,3 @@
-using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
 
@@ -18,18 +17,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string EplText = "epltext";
             public const string Params = "params";
             public const string NodeTypes = "NodeTypes";
-            public const string ControlType = "Control Type";
             public const string LabelName = "Label Name";
-        }
-
-        /// <summary>
-        /// Supported UI Controls to Print from
-        /// </summary>
-        public sealed class ControlTypes
-        {
-            public const string ActiveX = "ActiveX";
-            public const string jZebra = "jZebra";
-            public static CswCommaDelimitedString Options = new CswCommaDelimitedString { ActiveX, jZebra };
         }
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
@@ -112,7 +100,6 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
-        public CswNbtNodePropList ControlType { get { return _CswNbtNode.Properties[PropertyName.ControlType]; } }
         public CswNbtNodePropText LabelName { get { return _CswNbtNode.Properties[PropertyName.LabelName]; } }
 
         #endregion

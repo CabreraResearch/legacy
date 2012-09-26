@@ -13,7 +13,7 @@
                 var render = function () {
                     cswPublic.data = cswPublic.data || Csw.nbt.propertyOption(propertyOption);
                     cswPrivate.propVals = cswPublic.data.propData.values;
-                    cswPrivate.value = (false === cswPublic.data.Multi) ? Csw.string(cswPrivate.propVals.value).trim() : Csw.enums.multiEditDefaultValue;
+                    cswPrivate.value = (false === cswPublic.data.isMulti()) ? Csw.string(cswPrivate.propVals.value).trim() : Csw.enums.multiEditDefaultValue;
                     
                     cswPublic.control = cswPublic.data.propDiv;
                     cswPublic.control.append(cswPrivate.value);

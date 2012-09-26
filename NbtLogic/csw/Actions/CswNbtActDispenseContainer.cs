@@ -4,6 +4,7 @@ using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
+using ChemSW.Nbt.ServiceDrivers;
 using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.Actions
@@ -97,6 +98,8 @@ namespace ChemSW.Nbt.Actions
                 CswPrimaryKey RequestItemPk = new CswPrimaryKey();
                 RequestItemPk.FromString( RequestItemId );
                 JArray GridArray = JArray.Parse( DispenseGrid );
+                JArray jBarcodes = new JArray();
+                ret["barcodes"] = jBarcodes;
                 for( Int32 i = 0; i < GridArray.Count; i += 1 )
                 {
                     if( GridArray[i].Type == JTokenType.Object )
@@ -129,6 +132,7 @@ namespace ChemSW.Nbt.Actions
                                     UnitOfMeasurePK, RequestItemPk, ChildContainer );
                                 //ChildContainer.DispenseIn( CswNbtObjClassContainerDispenseTransaction.DispenseType.Dispense, QuantityToDispense, UnitOfMeasurePK, RequestItemPk, _SourceContainer );
                                 ChildContainer.postChanges( false );
+                                jBarcodes.Add( ChildContainer.NodeId.ToString() );
                             }
                             _SourceContainer.postChanges( false );
                         }
@@ -138,8 +142,6 @@ namespace ChemSW.Nbt.Actions
 
                 string ViewId = _getViewForAllDispenseContainers();
                 ret["viewId"] = ViewId;
-                ret["barcodeId"] = _SourceContainer.NodeId.ToString() + "_" +
-                                   _SourceContainer.Barcode.NodeTypePropId.ToString();
             }
             return ret;
         }

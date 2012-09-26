@@ -17,8 +17,8 @@
                     cswPrivate.propVals = cswPublic.data.propData.values;
                     cswPrivate.parent = cswPublic.data.propDiv;
 
-                    cswPrivate.isExpired = (false === cswPublic.data.Multi) ? Csw.bool(cswPrivate.propVals.isexpired) : null;
-                    cswPrivate.isAdmin = (false === cswPublic.data.Multi) ? Csw.bool(cswPrivate.propVals.isadmin) : null;
+                    cswPrivate.isExpired = (false === cswPublic.data.isMulti()) ? Csw.bool(cswPrivate.propVals.isexpired) : null;
+                    cswPrivate.isAdmin = (false === cswPublic.data.isMulti()) ? Csw.bool(cswPrivate.propVals.isadmin) : null;
                     cswPrivate.passwordcomplexity = Csw.number(cswPrivate.propVals.passwordcomplexity, 0);
                     cswPrivate.passwordlength = Csw.number(cswPrivate.propVals.passwordlength, 0);
 
@@ -27,7 +27,7 @@
                         OddCellRightAlign: true
                     });
                     
-                    if (cswPublic.data.ReadOnly) {
+                    if (cswPublic.data.isReadOnly()) {
                         //show nothing
                     } else {
                         cswPublic.control.cell(1, 1).text('Set New');
@@ -41,7 +41,7 @@
                             ID: cswPublic.data.ID + '_pwd1',
                             type: Csw.enums.inputTypes.password,
                             cssclass: 'textinput',
-                            value: (false === cswPublic.data.Multi) ? '' : Csw.enums.multiEditDefaultValue,
+                            value: (false === cswPublic.data.isMulti()) ? '' : Csw.enums.multiEditDefaultValue,
                             onChange: function () {
                                 var val = cswPrivate.textBox1.val();
                                 Csw.tryExec(cswPublic.data.onChange, val);
@@ -53,7 +53,7 @@
                         cswPrivate.cell22.input({
                             ID: cswPublic.data.ID + '_pwd2',
                             type: Csw.enums.inputTypes.password,
-                            value: (false === cswPublic.data.Multi) ? '' : Csw.enums.multiEditDefaultValue,
+                            value: (false === cswPublic.data.isMulti()) ? '' : Csw.enums.multiEditDefaultValue,
                             cssclass: 'textinput password2',
                             onChange: cswPublic.data.onChange
                         });
@@ -71,7 +71,7 @@
                             });
                         }
 
-                        if (cswPublic.data.Required && Csw.isNullOrEmpty(cswPrivate.propVals.password)) {
+                        if (cswPublic.data.isRequired() && Csw.isNullOrEmpty(cswPrivate.propVals.password)) {
                             cswPrivate.textBox1.addClass('required');
                         }
 

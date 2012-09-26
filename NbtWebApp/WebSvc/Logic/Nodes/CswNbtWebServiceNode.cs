@@ -203,8 +203,8 @@ namespace ChemSW.Nbt.WebServices
             CswNbtObjClassSize Size = _CswNbtResources.Nodes.GetNode( SizeId );
             if( null != Size )
             {
-                CswNbtNodePropQuantity Capacity = Size.InitialQuantity;
-                Capacity.ToJSON( Ret );
+                CswNbtNodePropQuantity InitialQuantity = Size.InitialQuantity;
+                InitialQuantity.ToJSON( Ret );
                 Ret["qtyReadonly"] = "false";
                 Ret["unitReadonly"] = "false";
                 Ret["unitCount"] = "1";
@@ -216,6 +216,16 @@ namespace ChemSW.Nbt.WebServices
                         Ret["qtyReadonly"] = "true";
                     }
                     Ret["unitCount"] = Size.UnitCount.Value.ToString();
+                }
+                else if( Action.ToLower() == ChemSW.Nbt.ObjClasses.CswNbtObjClass.NbtButtonAction.dispense.ToString() )
+                {
+                    CswNbtObjClassUnitOfMeasure UnitNode = _CswNbtResources.Nodes.GetNode( Size.InitialQuantity.UnitId );
+                    if( null != UnitNode &&
+                    ( UnitNode.UnitType.Value == CswNbtObjClassUnitOfMeasure.UnitTypes.Each.ToString() ||
+                    false == CswTools.IsDouble( UnitNode.ConversionFactor.Base ) ) )
+                    {
+                        Ret["unitReadonly"] = "true";
+                    }
                 }
             }
             return Ret;
