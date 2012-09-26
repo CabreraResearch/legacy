@@ -1209,7 +1209,7 @@
             div.$.CswErrorMessage(error);
         },
 
-        AlertDialog: function (message, title) {
+        AlertDialog: function (message, title, onClose, height, width) {
 
             var div = Csw.literals.div({
                 ID: Csw.string(title, 'an alert dialog').replace(' ', '_'),
@@ -1223,13 +1223,14 @@
                 enabledText: 'OK',
                 onClick: function () {
                     div.$.dialog('close');
+                    Csw.tryExec(onClose);
                 }
             });
 
-            openDialog(div, 400, 200, null, title);
+            openDialog(div, Csw.number(width, 400), Csw.number(height, 200), null, title);
         },
         ConfirmDialog: function (message, title, okFunc, cancelFunc) {
-            var width = Csw.number((message.length * 7), 200);
+            
             var div = Csw.literals.div({
                 ID: Csw.string(title, 'an alert dialog').replace(' ', '_'),
                 text: message,
@@ -1254,7 +1255,7 @@
                 }
             });
 
-            openDialog(div, width, 200, null, title);
+            openDialog(div, 400, 150, null, title);
         },
         NavigationSelectDialog: function (options) {
             var o = {
