@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
@@ -32,7 +33,25 @@ namespace ChemSW.Nbt.ObjClasses
             public const string OutputFormat = "Output Format";
         }
 
+        /// <summary>
+        /// Event Options
+        /// </summary>
+        public sealed class EventOption : CswEnum<EventOption>
+        {
+            private EventOption( string Name ) : base( Name ) { }
+            public static IEnumerable<EventOption> _All { get { return All; } }
+            public static implicit operator EventOption( string str )
+            {
+                EventOption ret = Parse( str );
+                return ret ?? Unknown;
+            }
+            public static readonly EventOption Unknown = new EventOption( "Unknown" );
 
+            public static readonly EventOption Exists = new EventOption( "Exists" );
+            public static readonly EventOption Create = new EventOption( "Create" );
+            public static readonly EventOption Edit = new EventOption( "Edit" );
+            public static readonly EventOption Delete = new EventOption( "Delete" );
+        }
 
         public const string TypeOptionReport = "Report";
         public const string TypeOptionView = "View";

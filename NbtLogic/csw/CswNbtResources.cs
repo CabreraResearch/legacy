@@ -708,7 +708,7 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Generate a notification based on a node event
         /// </summary>
-        public void runNotification( CswNbtMetaDataNodeType TargetNodeType, CswNbtObjClassNotification.EventOption EventOpt, CswNbtNode TargetNode, string PropName, string NewValue )
+        public void runNotification( CswNbtMetaDataNodeType TargetNodeType, CswNbtObjClassMailReport.EventOption EventOpt, CswNbtNode TargetNode, string PropName, string NewValue )
         {
             //_initNotifications( false );
             //// case 

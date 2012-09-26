@@ -6,11 +6,11 @@ namespace ChemSW.Nbt
     public class CswNbtNotificationKey : IEquatable<CswNbtNotificationKey>
     {
         public Int32 NodeTypeId;
-        public CswNbtObjClassNotification.EventOption EventOpt;
+        public CswNbtObjClassMailReport.EventOption EventOpt;
         public string PropName;
         public string TargetValue;
 
-        public CswNbtNotificationKey( Int32 inNodeTypeId, CswNbtObjClassNotification.EventOption inEventOpt, string inPropName, string inTargetValue )
+        public CswNbtNotificationKey( Int32 inNodeTypeId, CswNbtObjClassMailReport.EventOption inEventOpt, string inPropName, string inTargetValue )
         {
             NodeTypeId = inNodeTypeId;
             EventOpt = inEventOpt;
