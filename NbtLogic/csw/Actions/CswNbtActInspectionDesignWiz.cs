@@ -646,10 +646,10 @@ namespace ChemSW.Nbt.Actions
                 if( false == AllInspections )
                 {
                     ICswNbtFieldTypeRule FTRule = StatusNtp.getFieldTypeRule();
-                    RetView.AddViewPropertyFilter( StatusVp, FTRule.SubFields.Default.Name, CswNbtPropFilterSql.PropertyFilterMode.NotEquals, CswNbtObjClassInspectionDesign.InspectionStatusAsString( CswNbtObjClassInspectionDesign.InspectionStatus.Cancelled ), false );
-                    RetView.AddViewPropertyFilter( StatusVp, FTRule.SubFields.Default.Name, CswNbtPropFilterSql.PropertyFilterMode.NotEquals, CswNbtObjClassInspectionDesign.InspectionStatusAsString( CswNbtObjClassInspectionDesign.InspectionStatus.Completed ), false );
-                    RetView.AddViewPropertyFilter( StatusVp, FTRule.SubFields.Default.Name, CswNbtPropFilterSql.PropertyFilterMode.NotEquals, CswNbtObjClassInspectionDesign.InspectionStatusAsString( CswNbtObjClassInspectionDesign.InspectionStatus.Completed_Late ), false );
-                    RetView.AddViewPropertyFilter( StatusVp, FTRule.SubFields.Default.Name, CswNbtPropFilterSql.PropertyFilterMode.NotEquals, CswNbtObjClassInspectionDesign.InspectionStatusAsString( CswNbtObjClassInspectionDesign.InspectionStatus.Missed ), false );
+                    RetView.AddViewPropertyFilter( StatusVp, FTRule.SubFields.Default.Name, CswNbtPropFilterSql.PropertyFilterMode.NotEquals, CswNbtObjClassInspectionDesign.InspectionStatus.Cancelled, false );
+                    RetView.AddViewPropertyFilter( StatusVp, FTRule.SubFields.Default.Name, CswNbtPropFilterSql.PropertyFilterMode.NotEquals, CswNbtObjClassInspectionDesign.InspectionStatus.Completed, false );
+                    RetView.AddViewPropertyFilter( StatusVp, FTRule.SubFields.Default.Name, CswNbtPropFilterSql.PropertyFilterMode.NotEquals, CswNbtObjClassInspectionDesign.InspectionStatus.CompletedLate, false );
+                    RetView.AddViewPropertyFilter( StatusVp, FTRule.SubFields.Default.Name, CswNbtPropFilterSql.PropertyFilterMode.NotEquals, CswNbtObjClassInspectionDesign.InspectionStatus.Missed, false );
                 }
 
                 if( DateTime.MinValue != DueDate )
