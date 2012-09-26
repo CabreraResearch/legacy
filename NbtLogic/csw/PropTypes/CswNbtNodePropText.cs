@@ -67,7 +67,7 @@ namespace ChemSW.Nbt.PropTypes
                 if( false == String.IsNullOrEmpty( _CswNbtMetaDataNodeTypeProp.Attribute1 ) )
                     return CswConvert.ToInt32( _CswNbtMetaDataNodeTypeProp.Attribute1 );
                 else
-                    return 40;
+                    return 25;
             }
             //set
             //{
