@@ -887,7 +887,7 @@ namespace ChemSW.Nbt.WebPages
                         PropToSave.removeFromLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add );
                     }
                     PropToSave.DateToday = Convert.ToBoolean( getPropAttributeValue( "EditProp_DateTodayValue" + OldSelectedNodeTypePropId.ToString(), typeof( bool ), EditPropPlaceHolder ) );
-                    PropToSave.Length = CswConvert.ToInt32( getPropAttributeValue( "EditProp_LengthValue" + OldSelectedNodeTypePropId.ToString(), typeof( Int32 ), EditPropPlaceHolder ) );
+                    //PropToSave.Length = CswConvert.ToInt32( getPropAttributeValue( "EditProp_LengthValue" + OldSelectedNodeTypePropId.ToString(), typeof( Int32 ), EditPropPlaceHolder ) );
                     PropToSave.TextAreaRows = CswConvert.ToInt32( getPropAttributeValue( "EditProp_RowsValue" + OldSelectedNodeTypePropId.ToString(), typeof( Int32 ), EditPropPlaceHolder ) );
                     PropToSave.TextAreaColumns = CswConvert.ToInt32( getPropAttributeValue( "EditProp_ColsValue" + OldSelectedNodeTypePropId.ToString(), typeof( Int32 ), EditPropPlaceHolder ) );
                     PropToSave.setCompositeTemplateText( getPropAttributeValue( "EditProp_TemplateValue" + OldSelectedNodeTypePropId.ToString(), EditPropPlaceHolder ) );
@@ -1740,9 +1740,9 @@ namespace ChemSW.Nbt.WebPages
                             ( (Literal) FileLengthRow.Cells[0].Controls[0] ).Text = "Length:";
                             TextBox FileLengthValue = new TextBox();
                             FileLengthValue.CssClass = "textinput";
-                            FileLengthValue.ID = "EditProp_LengthValue" + SelectedNodeTypeProp.PropId.ToString();
-                            if( SelectedNodeTypeProp.Length != Int32.MinValue )
-                                FileLengthValue.Text = SelectedNodeTypeProp.Length.ToString();
+                            FileLengthValue.ID = "EditProp_Attribue1" + SelectedNodeTypeProp.PropId.ToString();
+                            if( CswConvert.ToInt32( SelectedNodeTypeProp.Attribute1 ) != Int32.MinValue )
+                                FileLengthValue.Text = SelectedNodeTypeProp.Attribute1.ToString();
                             FileLengthRow.Cells[1].Controls.Add( FileLengthValue );
                             break;
 
@@ -2551,14 +2551,14 @@ namespace ChemSW.Nbt.WebPages
                             break;
 
                         case CswNbtMetaDataFieldType.NbtFieldType.Text:
-                            TableRow LengthRow = makeEditPropTableRow( EditPropPlaceHolder );
-                            ( (Literal) LengthRow.Cells[0].Controls[0] ).Text = "Length:";
-                            TextBox LengthValue = new TextBox();
-                            LengthValue.CssClass = "textinput";
-                            LengthValue.ID = "EditProp_LengthValue" + SelectedNodeTypeProp.PropId.ToString();
-                            if( SelectedNodeTypeProp.Length != Int32.MinValue )
-                                LengthValue.Text = SelectedNodeTypeProp.Length.ToString();
-                            LengthRow.Cells[1].Controls.Add( LengthValue );
+                            TableRow SizeRow = makeEditPropTableRow( EditPropPlaceHolder );
+                            ( (Literal) SizeRow.Cells[0].Controls[0] ).Text = "Size:";
+                            TextBox SizeValue = new TextBox();
+                            SizeValue.CssClass = "textinput";
+                            SizeValue.ID = "EditProp_Attribute1" + SelectedNodeTypeProp.PropId.ToString();
+                            if( CswConvert.ToInt32( SelectedNodeTypeProp.Attribute1 ) != Int32.MinValue )
+                                SizeValue.Text = SelectedNodeTypeProp.Attribute1.ToString();
+                            SizeRow.Cells[1].Controls.Add( SizeValue );
                             break;
 
                         case CswNbtMetaDataFieldType.NbtFieldType.ViewPickList:

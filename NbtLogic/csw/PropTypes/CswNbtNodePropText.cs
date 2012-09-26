@@ -64,8 +64,8 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                if( _CswNbtMetaDataNodeTypeProp.Length != Int32.MinValue )
-                    return _CswNbtMetaDataNodeTypeProp.Length;
+                if( false == String.IsNullOrEmpty( _CswNbtMetaDataNodeTypeProp.Attribute1 ) )
+                    return CswConvert.ToInt32( _CswNbtMetaDataNodeTypeProp.Attribute1 );
                 else
                     return 40;
             }

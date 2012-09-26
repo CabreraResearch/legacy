@@ -609,11 +609,6 @@ namespace ChemSW.Nbt.MetaData
             get { return _NodeTypePropRow["compositetemplate"].ToString(); }
             set { _setAttribute( "compositetemplate", value, false ); }
         }
-        public Int32 Length
-        {
-            get { return CswConvert.ToInt32( _NodeTypePropRow[NodeTypePropAttributes.attribute1.ToString()] ); }
-            set { _setAttribute( NodeTypePropAttributes.attribute1.ToString(), value, false ); }
-        }
         public bool DateToday
         {
             get { return CswConvert.ToBoolean( _NodeTypePropRow["datetoday"] ); }
