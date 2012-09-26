@@ -30,7 +30,7 @@ namespace ChemSW.Nbt.MetaData
             isrequired,
             isunique,
             iscompoundunique,
-            length,
+            //length,
             //nodetypeid, 
             //nodetypepropid, 
             //nodetypetabsetid, 
@@ -611,8 +611,8 @@ namespace ChemSW.Nbt.MetaData
         }
         public Int32 Length
         {
-            get { return CswConvert.ToInt32( _NodeTypePropRow["length"] ); }
-            set { _setAttribute( "length", value, false ); }
+            get { return CswConvert.ToInt32( _NodeTypePropRow[NodeTypePropAttributes.attribute1.ToString()] ); }
+            set { _setAttribute( NodeTypePropAttributes.attribute1.ToString(), value, false ); }
         }
         public bool DateToday
         {
