@@ -56,7 +56,7 @@
             attr.add('type', cswPrivate.type.name);
             attr.add('placeholder', cswPrivate.placeholder);
             attr.add('width', Csw.string(cswPrivate.width, cswPrivate.type.defaultwidth));
-            style.add('width', Csw.string(cswPrivate.width, cswPrivate.type.defaultwidth));
+            style.add('width', Csw.string(cswPrivate.width, cswPrivate.type.defaultwidth) + "px"); //width needs a type
             attr.add('maxlength', cswPrivate.maxlength);
             //attr.add('value', cswPrivate.value);//case 26109
 
