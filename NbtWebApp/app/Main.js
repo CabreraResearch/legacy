@@ -18,8 +18,8 @@ window.initMain = window.initMain || function (undefined) {
 
     (function _initMain() {
         Csw.main.body = Csw.main.body || Csw.main.register('body', Csw.literals.factory($('body')));     // case 27563 review K3663 comment 1
-        Csw.main.ajaxImage = Csw.main.ajaxImage || Csw.main.register('ajaxImage', Csw.literals.factory($('#AjaxImage')));
-        Csw.main.ajaxSpacer = Csw.main.ajaxSpacer || Csw.main.register('ajaxSpacer', Csw.literals.factory($('#AjaxSpacer')));
+        Csw.main.ajaxImage = Csw.main.ajaxImage || Csw.main.register('ajaxImage', Csw.literals.factory($('#ajaxImage')));
+        Csw.main.ajaxSpacer = Csw.main.ajaxSpacer || Csw.main.register('ajaxSpacer', Csw.literals.factory($('#ajaxSpacer')));
         Csw.main.centerBottomDiv = Csw.main.centerBottomDiv || Csw.main.register('centerBottomDiv', Csw.literals.factory($('#CenterBottomDiv')));
         Csw.main.centerTopDiv = Csw.main.centerTopDiv || Csw.main.register('centerTopDiv', Csw.literals.factory($('#CenterTopDiv')));
         Csw.main.headerDashboard = Csw.main.headerDashboard || Csw.main.register('headerDashboard', Csw.literals.factory($('#header_dashboard')));
@@ -36,13 +36,13 @@ window.initMain = window.initMain || function (undefined) {
     } ());
 
 
-    function startSpinner() {
+    var startSpinner = function() {
         Csw.main.ajaxImage.show();
         Csw.main.ajaxSpacer.hide();
     }
     Csw.subscribe(Csw.enums.events.ajax.globalAjaxStart, startSpinner);
 
-    function stopSpinner() {
+    var stopSpinner = function() {
         Csw.main.ajaxImage.hide();
         Csw.main.ajaxSpacer.show();
     };
