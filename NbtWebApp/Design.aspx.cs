@@ -1740,7 +1740,7 @@ namespace ChemSW.Nbt.WebPages
                             ( (Literal) FileLengthRow.Cells[0].Controls[0] ).Text = "Length:";
                             TextBox FileLengthValue = new TextBox();
                             FileLengthValue.CssClass = "textinput";
-                            FileLengthValue.ID = "EditProp_Attribue1" + SelectedNodeTypeProp.PropId.ToString();
+                            FileLengthValue.ID = "EditProp_Attribute1" + SelectedNodeTypeProp.PropId.ToString();
                             if( CswConvert.ToInt32( SelectedNodeTypeProp.Attribute1 ) != Int32.MinValue )
                                 FileLengthValue.Text = SelectedNodeTypeProp.Attribute1.ToString();
                             FileLengthRow.Cells[1].Controls.Add( FileLengthValue );
