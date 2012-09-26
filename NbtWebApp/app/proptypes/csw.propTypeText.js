@@ -19,6 +19,7 @@
                     cswPrivate.parent = cswPublic.data.propDiv;
                     cswPrivate.value = (false === cswPublic.data.isMulti()) ? Csw.string(cswPrivate.propVals.text).trim() : Csw.enums.multiEditDefaultValue;
                     cswPrivate.size = Csw.number(cswPrivate.propVals.size, 14);
+                    cswPrivate.maxlength = Csw.number(cswPrivate.propVals.maxlength, 14);
 
                     if (cswPublic.data.isReadOnly()) {
                         cswPublic.control = cswPrivate.parent.append(cswPrivate.value);
@@ -34,7 +35,8 @@
                                 Csw.tryExec(cswPublic.data.onChange, val);
                                 cswPublic.data.onPropChange({ text: val });
                             },
-                            required: cswPublic.data.isRequired()
+                            required: cswPublic.data.isRequired(),
+                            maxlength: cswPrivate.maxlength
                         });
                         
                         cswPublic.control.required(cswPublic.data.isRequired());

@@ -2559,6 +2559,15 @@ namespace ChemSW.Nbt.WebPages
                             if( CswConvert.ToInt32( SelectedNodeTypeProp.Attribute1 ) != Int32.MinValue )
                                 SizeValue.Text = SelectedNodeTypeProp.Attribute1.ToString();
                             SizeRow.Cells[1].Controls.Add( SizeValue );
+
+                            TableRow MaxLenRow = makeEditPropTableRow( EditPropPlaceHolder );
+                            ( (Literal) MaxLenRow.Cells[0].Controls[0] ).Text = "Max Length:";
+                            TextBox MaxLenValue = new TextBox();
+                            MaxLenValue.CssClass = "textinput";
+                            MaxLenValue.ID = "EditProp_Attribute2" + SelectedNodeTypeProp.PropId.ToString();
+                            if( CswConvert.ToInt32( SelectedNodeTypeProp.Attribute2 ) != Int32.MinValue )
+                                MaxLenValue.Text = SelectedNodeTypeProp.Attribute2.ToString();
+                            MaxLenRow.Cells[1].Controls.Add( MaxLenValue );
                             break;
 
                         case CswNbtMetaDataFieldType.NbtFieldType.ViewPickList:

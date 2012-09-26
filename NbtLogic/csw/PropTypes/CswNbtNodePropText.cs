@@ -75,6 +75,17 @@ namespace ChemSW.Nbt.PropTypes
             //}
         }
 
+        public Int32 MaxLength
+        {
+            get
+            {
+                if( false == String.IsNullOrEmpty( _CswNbtMetaDataNodeTypeProp.Attribute2 ) )
+                    return CswConvert.ToInt32( _CswNbtMetaDataNodeTypeProp.Attribute2 );
+                else
+                    return 255;
+            }
+        }
+
         //private string _ElemName_Value = "Value";
 
         public override void ToXml( XmlNode ParentNode )
@@ -93,6 +104,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             ParentObject[_TextSubField.ToXmlNodeName( true )] = Text;
             ParentObject["size"] = Size.ToString();
+            ParentObject["maxlength"] = MaxLength.ToString();
         }
 
         public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
