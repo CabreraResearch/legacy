@@ -20,27 +20,30 @@ namespace ChemSW.Nbt.Schema
 
             /* PART 3 - add the Requestor of the Request NT as a property reference to the RequestItem NT */
             CswNbtMetaDataNodeType requestItemNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Request Item" );
-            if( null != requestItemNT )
-            {
-                CswNbtMetaDataNodeTypeTab requestItemNTT = requestItemNT.getFirstNodeTypeTab();
-                if( null != requestItemNTT )
-                {
-                    CswNbtMetaDataObjectClass requestOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.RequestClass );
-                    CswNbtMetaDataObjectClassProp requestorOCP = requestOC.getObjectClassProp( CswNbtObjClassRequest.PropertyName.Requestor );
+            //if( null != requestItemNT )
+            //{
+            //    CswNbtMetaDataNodeTypeTab requestItemNTT = requestItemNT.getFirstNodeTypeTab();
+            //    if( null != requestItemNTT )
+            //    {
+            //        CswNbtMetaDataObjectClass requestOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.RequestClass );
+            //        CswNbtMetaDataObjectClassProp requestorOCP = requestOC.getObjectClassProp( CswNbtObjClassRequest.PropertyName.Requestor );
 
-                    CswNbtMetaDataObjectClass requestItemOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.RequestItemClass );
-                    CswNbtMetaDataObjectClassProp requestOCP = requestItemOC.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Request );
+            //        CswNbtMetaDataObjectClass requestItemOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.RequestItemClass );
+            //        CswNbtMetaDataObjectClassProp requestOCP = requestItemOC.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Request );
 
-                    CswNbtMetaDataNodeTypeProp reqItemRequestorNTP = _CswNbtSchemaModTrnsctn.MetaData.makeNewProp(
-                        NodeType: requestItemNT,
-                        FieldType: CswNbtMetaDataFieldType.NbtFieldType.PropertyReference,
-                        PropName: "Requestor",
-                        TabId: requestItemNTT.TabId );
+            //        CswNbtMetaDataNodeTypeProp reqItemRequestorNTP = _CswNbtSchemaModTrnsctn.MetaData.makeNewProp(
+            //            NodeType: requestItemNT,
+            //            FieldType: CswNbtMetaDataFieldType.NbtFieldType.PropertyReference,
+            //            PropName: "Requestor",
+            //            TabId: requestItemNTT.TabId );
 
-                    reqItemRequestorNTP.SetFK( NbtViewPropIdType.ObjectClassPropId.ToString(), requestOCP.PropId, NbtViewPropIdType.ObjectClassPropId.ToString(), requestorOCP.PropId );
-                    reqItemRequestorNTP.removeFromLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add );
-                }
-            }
+            //        reqItemRequestorNTP.SetFK( NbtViewPropIdType.ObjectClassPropId.ToString(), requestOCP.PropId, NbtViewPropIdType.ObjectClassPropId.ToString(), requestorOCP.PropId );
+            //        reqItemRequestorNTP.removeFromLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add );
+            //    }
+            //}
+
+            //NOTE -  the above is commented out due to Case 27800
+
         }//Update()
     }
 
