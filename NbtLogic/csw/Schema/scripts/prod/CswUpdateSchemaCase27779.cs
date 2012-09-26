@@ -30,8 +30,11 @@ namespace ChemSW.Nbt.Schema
             foreach( DataRow row in nodetype_props.Rows ) //copy the value of length into new attribute 1 to preserve the data
             {
                 row["attribute1"] = row["length"].ToString();
+                row["length"] = DBNull.Value;
             }
             nodetype_propsTU.update( nodetype_props );
+
+            _CswNbtSchemaModTrnsctn.commitTransaction(); //have to commit after updating the table so the next Drop operation doesn't see data in the length column
 
             //delete the length column
             _CswNbtSchemaModTrnsctn.dropColumn( "nodetype_props", "length" );
