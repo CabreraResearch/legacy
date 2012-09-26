@@ -60,7 +60,7 @@ namespace ChemSW.Nbt.PropTypes
                 _CswNbtNodePropData.Gestalt = value;
             }
         }
-        public Int32 Length
+        public Int32 Size
         {
             get
             {
@@ -80,19 +80,19 @@ namespace ChemSW.Nbt.PropTypes
         public override void ToXml( XmlNode ParentNode )
         {
             XmlNode TextNode = CswXmlDocument.AppendXmlNode( ParentNode, _TextSubField.ToXmlNodeName(), Text );
-            CswXmlDocument.AppendXmlAttribute( TextNode, "length", Length.ToString() );
+            CswXmlDocument.AppendXmlAttribute( TextNode, "size", Size.ToString() );
         }
 
         public override void ToXElement( XElement ParentNode )
         {
             ParentNode.Add( new XElement( _TextSubField.ToXmlNodeName( true ), Text,
-                new XAttribute( "length", Length.ToString() ) ) );
+                new XAttribute( "size", Size.ToString() ) ) );
         }
 
         public override void ToJSON( JObject ParentObject )
         {
             ParentObject[_TextSubField.ToXmlNodeName( true )] = Text;
-            ParentObject["length"] = Length.ToString();
+            ParentObject["size"] = Size.ToString();
         }
 
         public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )

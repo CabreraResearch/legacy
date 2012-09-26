@@ -18,7 +18,7 @@
                     cswPrivate.propVals = cswPublic.data.propData.values;
                     cswPrivate.parent = cswPublic.data.propDiv;
                     cswPrivate.value = (false === cswPublic.data.isMulti()) ? Csw.string(cswPrivate.propVals.text).trim() : Csw.enums.multiEditDefaultValue;
-                    cswPrivate.length = Csw.number(cswPrivate.propVals.length, 14);
+                    cswPrivate.size = Csw.number(cswPrivate.propVals.size, 14);
 
                     if (cswPublic.data.isReadOnly()) {
                         cswPublic.control = cswPrivate.parent.append(cswPrivate.value);
@@ -28,7 +28,7 @@
                             type: Csw.enums.inputTypes.text,
                             value: cswPrivate.value,
                             cssclass: 'textinput',
-                            width: cswPrivate.length * 7,
+                            width: cswPrivate.size * 7,
                             onChange: function() {
                                 var val = cswPublic.control.val();
                                 Csw.tryExec(cswPublic.data.onChange, val);
