@@ -42,11 +42,11 @@ namespace NbtWebAppServices.Response
             }
         }
 
-        string Completed = CswNbtObjClassInspectionDesign.InspectionStatusAsString( CswNbtObjClassInspectionDesign.InspectionStatus.Completed );
-        string Cancelled = CswNbtObjClassInspectionDesign.InspectionStatusAsString( CswNbtObjClassInspectionDesign.InspectionStatus.Cancelled );
-        string CompletedLate = CswNbtObjClassInspectionDesign.InspectionStatusAsString( CswNbtObjClassInspectionDesign.InspectionStatus.Completed_Late );
-        string Missed = CswNbtObjClassInspectionDesign.InspectionStatusAsString( CswNbtObjClassInspectionDesign.InspectionStatus.Missed );
-        string ActionRequired = CswNbtObjClassInspectionDesign.InspectionStatusAsString( CswNbtObjClassInspectionDesign.InspectionStatus.Action_Required );
+        string Completed = CswNbtObjClassInspectionDesign.InspectionStatus.Completed;
+        string Cancelled = CswNbtObjClassInspectionDesign.InspectionStatus.Cancelled;
+        string CompletedLate = CswNbtObjClassInspectionDesign.InspectionStatus.CompletedLate;
+        string Missed = CswNbtObjClassInspectionDesign.InspectionStatus.Missed;
+        string ActionRequired = CswNbtObjClassInspectionDesign.InspectionStatus.ActionRequired;
 
         private bool _updateInspectionNode( CswNbtWcfInspectionsDataModel.CswNbtInspection Inspection )
         {
