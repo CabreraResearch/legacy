@@ -1296,223 +1296,258 @@
 			<PropertyValue name="ShowAllTabs">false</PropertyValue>
 			<PropertyValue name="Version">1</PropertyValue>
 			<PropertyValue name="DeletedTabCount">0</PropertyValue>
-			<PropertyValue name="Tab0.ID">ToolboxCategory_WinOEActivities</PropertyValue>
-			<PropertyValue name="Tab0.Name">Windows Workflow v3.0</PropertyValue>
+			<PropertyValue name="Tab0.Name">NbtWebApp Components</PropertyValue>
 			<PropertyValue name="Tab0.View">0</PropertyValue>
 			<PropertyValue name="Tab0.UseDefaultName">true</PropertyValue>
-			<PropertyValue name="Tab0.RecordType">4</PropertyValue>
-			<PropertyValue name="Tab0.Position">1</PropertyValue>
-			<PropertyValue name="Tab1.ID">{e7f851c8-6267-4794-b0fe-7bcab6dacbb4}-#1071</PropertyValue>
-			<PropertyValue name="Tab1.Name">Standard</PropertyValue>
+			<PropertyValue name="Tab0.RecordType">1</PropertyValue>
+			<PropertyValue name="Tab0.Position">0</PropertyValue>
+			<PropertyValue name="Tab1.Name">CswLogService Components</PropertyValue>
 			<PropertyValue name="Tab1.View">0</PropertyValue>
 			<PropertyValue name="Tab1.UseDefaultName">true</PropertyValue>
-			<PropertyValue name="Tab1.RecordType">4</PropertyValue>
-			<PropertyValue name="Tab1.Position">2</PropertyValue>
-			<PropertyValue name="Tab2.ID">Control Flow</PropertyValue>
-			<PropertyValue name="Tab2.Name">Control Flow</PropertyValue>
+			<PropertyValue name="Tab1.RecordType">1</PropertyValue>
+			<PropertyValue name="Tab1.Position">1</PropertyValue>
+			<PropertyValue name="Tab2.Name">NbtWebControls Components</PropertyValue>
 			<PropertyValue name="Tab2.View">0</PropertyValue>
 			<PropertyValue name="Tab2.UseDefaultName">true</PropertyValue>
-			<PropertyValue name="Tab2.RecordType">4</PropertyValue>
-			<PropertyValue name="Tab2.Position">3</PropertyValue>
-			<PropertyValue name="Tab3.ID">XAML Common</PropertyValue>
-			<PropertyValue name="Tab3.Name">Common WPF Controls</PropertyValue>
+			<PropertyValue name="Tab2.RecordType">1</PropertyValue>
+			<PropertyValue name="Tab2.Position">2</PropertyValue>
+			<PropertyValue name="Tab3.Name">NbtSchedService Components</PropertyValue>
 			<PropertyValue name="Tab3.View">0</PropertyValue>
 			<PropertyValue name="Tab3.UseDefaultName">true</PropertyValue>
-			<PropertyValue name="Tab3.RecordType">4</PropertyValue>
-			<PropertyValue name="Tab3.Position">4</PropertyValue>
-			<PropertyValue name="Tab4.ID">ToolboxCategory_WinOEActivities_v3.5</PropertyValue>
-			<PropertyValue name="Tab4.Name">Windows Workflow v3.5</PropertyValue>
+			<PropertyValue name="Tab3.RecordType">1</PropertyValue>
+			<PropertyValue name="Tab3.Position">3</PropertyValue>
+			<PropertyValue name="Tab4.Name">NbtLogic Components</PropertyValue>
 			<PropertyValue name="Tab4.View">0</PropertyValue>
 			<PropertyValue name="Tab4.UseDefaultName">true</PropertyValue>
-			<PropertyValue name="Tab4.RecordType">4</PropertyValue>
-			<PropertyValue name="Tab4.Position">5</PropertyValue>
-			<PropertyValue name="Tab5.ID">{e7f851c8-6267-4794-b0fe-7bcab6dacbb4}-#1072</PropertyValue>
-			<PropertyValue name="Tab5.Name">Data </PropertyValue>
+			<PropertyValue name="Tab4.RecordType">1</PropertyValue>
+			<PropertyValue name="Tab4.Position">4</PropertyValue>
+			<PropertyValue name="Tab5.Name">CswWebControls Components</PropertyValue>
 			<PropertyValue name="Tab5.View">0</PropertyValue>
 			<PropertyValue name="Tab5.UseDefaultName">true</PropertyValue>
-			<PropertyValue name="Tab5.RecordType">4</PropertyValue>
-			<PropertyValue name="Tab5.Position">6</PropertyValue>
-			<PropertyValue name="Tab6.ID">Flowchart</PropertyValue>
-			<PropertyValue name="Tab6.Name">Flowchart</PropertyValue>
+			<PropertyValue name="Tab5.RecordType">1</PropertyValue>
+			<PropertyValue name="Tab5.Position">5</PropertyValue>
+			<PropertyValue name="Tab6.Name">CswFormsControls Components</PropertyValue>
 			<PropertyValue name="Tab6.View">0</PropertyValue>
 			<PropertyValue name="Tab6.UseDefaultName">true</PropertyValue>
-			<PropertyValue name="Tab6.RecordType">4</PropertyValue>
-			<PropertyValue name="Tab6.Position">7</PropertyValue>
-			<PropertyValue name="Tab7.ID">{7b5d447b-0b12-41ea-a84e-c822034422d4}-#1106</PropertyValue>
-			<PropertyValue name="Tab7.Name">All Windows Forms</PropertyValue>
+			<PropertyValue name="Tab6.RecordType">1</PropertyValue>
+			<PropertyValue name="Tab6.Position">6</PropertyValue>
+			<PropertyValue name="Tab7.ID">ToolboxCategory_WinOEActivities</PropertyValue>
+			<PropertyValue name="Tab7.Name">Windows Workflow v3.0</PropertyValue>
 			<PropertyValue name="Tab7.View">0</PropertyValue>
 			<PropertyValue name="Tab7.UseDefaultName">true</PropertyValue>
 			<PropertyValue name="Tab7.RecordType">4</PropertyValue>
 			<PropertyValue name="Tab7.Position">8</PropertyValue>
-			<PropertyValue name="Tab8.ID">XAML Controls</PropertyValue>
-			<PropertyValue name="Tab8.Name">All WPF Controls</PropertyValue>
+			<PropertyValue name="Tab8.ID">{e7f851c8-6267-4794-b0fe-7bcab6dacbb4}-#1071</PropertyValue>
+			<PropertyValue name="Tab8.Name">Standard</PropertyValue>
 			<PropertyValue name="Tab8.View">0</PropertyValue>
 			<PropertyValue name="Tab8.UseDefaultName">true</PropertyValue>
 			<PropertyValue name="Tab8.RecordType">4</PropertyValue>
 			<PropertyValue name="Tab8.Position">9</PropertyValue>
-			<PropertyValue name="Tab9.ID">{e7f851c8-6267-4794-b0fe-7bcab6dacbb4}-#1073</PropertyValue>
-			<PropertyValue name="Tab9.Name">Validation</PropertyValue>
+			<PropertyValue name="Tab9.ID">Control Flow</PropertyValue>
+			<PropertyValue name="Tab9.Name">Control Flow</PropertyValue>
 			<PropertyValue name="Tab9.View">0</PropertyValue>
 			<PropertyValue name="Tab9.UseDefaultName">true</PropertyValue>
 			<PropertyValue name="Tab9.RecordType">4</PropertyValue>
 			<PropertyValue name="Tab9.Position">10</PropertyValue>
-			<PropertyValue name="Tab10.ID">Messaging</PropertyValue>
-			<PropertyValue name="Tab10.Name">Messaging</PropertyValue>
+			<PropertyValue name="Tab10.ID">XAML Common</PropertyValue>
+			<PropertyValue name="Tab10.Name">Common WPF Controls</PropertyValue>
 			<PropertyValue name="Tab10.View">0</PropertyValue>
 			<PropertyValue name="Tab10.UseDefaultName">true</PropertyValue>
 			<PropertyValue name="Tab10.RecordType">4</PropertyValue>
 			<PropertyValue name="Tab10.Position">11</PropertyValue>
-			<PropertyValue name="Tab11.ID">{7b5d447b-0b12-41ea-a84e-c822034422d4}-#1107</PropertyValue>
-			<PropertyValue name="Tab11.Name">Common Controls</PropertyValue>
+			<PropertyValue name="Tab11.ID">ToolboxCategory_WinOEActivities_v3.5</PropertyValue>
+			<PropertyValue name="Tab11.Name">Windows Workflow v3.5</PropertyValue>
 			<PropertyValue name="Tab11.View">0</PropertyValue>
 			<PropertyValue name="Tab11.UseDefaultName">true</PropertyValue>
 			<PropertyValue name="Tab11.RecordType">4</PropertyValue>
 			<PropertyValue name="Tab11.Position">12</PropertyValue>
-			<PropertyValue name="Tab12.ID">Silverlight Common</PropertyValue>
-			<PropertyValue name="Tab12.Name">Common Silverlight Controls</PropertyValue>
+			<PropertyValue name="Tab12.ID">{e7f851c8-6267-4794-b0fe-7bcab6dacbb4}-#1072</PropertyValue>
+			<PropertyValue name="Tab12.Name">Data </PropertyValue>
 			<PropertyValue name="Tab12.View">0</PropertyValue>
 			<PropertyValue name="Tab12.UseDefaultName">true</PropertyValue>
 			<PropertyValue name="Tab12.RecordType">4</PropertyValue>
 			<PropertyValue name="Tab12.Position">13</PropertyValue>
-			<PropertyValue name="Tab13.ID">{e7f851c8-6267-4794-b0fe-7bcab6dacbb4}-#1074</PropertyValue>
-			<PropertyValue name="Tab13.Name">Navigation</PropertyValue>
+			<PropertyValue name="Tab13.ID">Flowchart</PropertyValue>
+			<PropertyValue name="Tab13.Name">Flowchart</PropertyValue>
 			<PropertyValue name="Tab13.View">0</PropertyValue>
 			<PropertyValue name="Tab13.UseDefaultName">true</PropertyValue>
 			<PropertyValue name="Tab13.RecordType">4</PropertyValue>
 			<PropertyValue name="Tab13.Position">14</PropertyValue>
-			<PropertyValue name="Tab14.ID">Runtime</PropertyValue>
-			<PropertyValue name="Tab14.Name">Runtime</PropertyValue>
+			<PropertyValue name="Tab14.ID">{7b5d447b-0b12-41ea-a84e-c822034422d4}-#1106</PropertyValue>
+			<PropertyValue name="Tab14.Name">All Windows Forms</PropertyValue>
 			<PropertyValue name="Tab14.View">0</PropertyValue>
 			<PropertyValue name="Tab14.UseDefaultName">true</PropertyValue>
 			<PropertyValue name="Tab14.RecordType">4</PropertyValue>
 			<PropertyValue name="Tab14.Position">15</PropertyValue>
-			<PropertyValue name="Tab15.ID">{7b5d447b-0b12-41ea-a84e-c822034422d4}-#1102</PropertyValue>
-			<PropertyValue name="Tab15.Name">Containers</PropertyValue>
+			<PropertyValue name="Tab15.ID">XAML Controls</PropertyValue>
+			<PropertyValue name="Tab15.Name">All WPF Controls</PropertyValue>
 			<PropertyValue name="Tab15.View">0</PropertyValue>
 			<PropertyValue name="Tab15.UseDefaultName">true</PropertyValue>
 			<PropertyValue name="Tab15.RecordType">4</PropertyValue>
 			<PropertyValue name="Tab15.Position">16</PropertyValue>
-			<PropertyValue name="Tab16.ID">Silverlight Controls</PropertyValue>
-			<PropertyValue name="Tab16.Name">All Silverlight Controls</PropertyValue>
+			<PropertyValue name="Tab16.ID">{e7f851c8-6267-4794-b0fe-7bcab6dacbb4}-#1073</PropertyValue>
+			<PropertyValue name="Tab16.Name">Validation</PropertyValue>
 			<PropertyValue name="Tab16.View">0</PropertyValue>
 			<PropertyValue name="Tab16.UseDefaultName">true</PropertyValue>
 			<PropertyValue name="Tab16.RecordType">4</PropertyValue>
 			<PropertyValue name="Tab16.Position">17</PropertyValue>
-			<PropertyValue name="Tab17.ID">MSVSTORibbonV10</PropertyValue>
-			<PropertyValue name="Tab17.Name">Office Ribbon Controls</PropertyValue>
+			<PropertyValue name="Tab17.ID">Messaging</PropertyValue>
+			<PropertyValue name="Tab17.Name">Messaging</PropertyValue>
 			<PropertyValue name="Tab17.View">0</PropertyValue>
 			<PropertyValue name="Tab17.UseDefaultName">true</PropertyValue>
 			<PropertyValue name="Tab17.RecordType">4</PropertyValue>
-			<PropertyValue name="Tab17.Position">20</PropertyValue>
-			<PropertyValue name="Tab18.ID">{73422BED-2F83-4587-8A50-5B2BBE45F4B1}-#1000</PropertyValue>
-			<PropertyValue name="Tab18.Name">SharePoint Controls</PropertyValue>
+			<PropertyValue name="Tab17.Position">18</PropertyValue>
+			<PropertyValue name="Tab18.ID">{7b5d447b-0b12-41ea-a84e-c822034422d4}-#1107</PropertyValue>
+			<PropertyValue name="Tab18.Name">Common Controls</PropertyValue>
 			<PropertyValue name="Tab18.View">0</PropertyValue>
 			<PropertyValue name="Tab18.UseDefaultName">true</PropertyValue>
 			<PropertyValue name="Tab18.RecordType">4</PropertyValue>
-			<PropertyValue name="Tab18.Position">21</PropertyValue>
-			<PropertyValue name="Tab19.ID">SharePoint Workflow</PropertyValue>
-			<PropertyValue name="Tab19.Name">SharePoint Workflow</PropertyValue>
+			<PropertyValue name="Tab18.Position">19</PropertyValue>
+			<PropertyValue name="Tab19.ID">Silverlight Common</PropertyValue>
+			<PropertyValue name="Tab19.Name">Common Silverlight Controls</PropertyValue>
 			<PropertyValue name="Tab19.View">0</PropertyValue>
 			<PropertyValue name="Tab19.UseDefaultName">true</PropertyValue>
 			<PropertyValue name="Tab19.RecordType">4</PropertyValue>
-			<PropertyValue name="Tab19.Position">22</PropertyValue>
-			<PropertyValue name="Tab20.ID">{e7f851c8-6267-4794-b0fe-7bcab6dacbb4}-#1075</PropertyValue>
-			<PropertyValue name="Tab20.Name">Login</PropertyValue>
+			<PropertyValue name="Tab19.Position">20</PropertyValue>
+			<PropertyValue name="Tab20.ID">{e7f851c8-6267-4794-b0fe-7bcab6dacbb4}-#1074</PropertyValue>
+			<PropertyValue name="Tab20.Name">Navigation</PropertyValue>
 			<PropertyValue name="Tab20.View">0</PropertyValue>
 			<PropertyValue name="Tab20.UseDefaultName">true</PropertyValue>
 			<PropertyValue name="Tab20.RecordType">4</PropertyValue>
-			<PropertyValue name="Tab20.Position">23</PropertyValue>
-			<PropertyValue name="Tab21.ID">Primitives</PropertyValue>
-			<PropertyValue name="Tab21.Name">Primitives</PropertyValue>
+			<PropertyValue name="Tab20.Position">21</PropertyValue>
+			<PropertyValue name="Tab21.ID">Runtime</PropertyValue>
+			<PropertyValue name="Tab21.Name">Runtime</PropertyValue>
 			<PropertyValue name="Tab21.View">0</PropertyValue>
 			<PropertyValue name="Tab21.UseDefaultName">true</PropertyValue>
 			<PropertyValue name="Tab21.RecordType">4</PropertyValue>
-			<PropertyValue name="Tab21.Position">24</PropertyValue>
-			<PropertyValue name="Tab22.ID">{7b5d447b-0b12-41ea-a84e-c822034422d4}-#1103</PropertyValue>
-			<PropertyValue name="Tab22.Name">Menus &amp; Toolbars</PropertyValue>
+			<PropertyValue name="Tab21.Position">22</PropertyValue>
+			<PropertyValue name="Tab22.ID">{7b5d447b-0b12-41ea-a84e-c822034422d4}-#1102</PropertyValue>
+			<PropertyValue name="Tab22.Name">Containers</PropertyValue>
 			<PropertyValue name="Tab22.View">0</PropertyValue>
 			<PropertyValue name="Tab22.UseDefaultName">true</PropertyValue>
 			<PropertyValue name="Tab22.RecordType">4</PropertyValue>
-			<PropertyValue name="Tab22.Position">25</PropertyValue>
-			<PropertyValue name="Tab23.ID">{e7f851c8-6267-4794-b0fe-7bcab6dacbb4}-#1076</PropertyValue>
-			<PropertyValue name="Tab23.Name">WebParts</PropertyValue>
+			<PropertyValue name="Tab22.Position">23</PropertyValue>
+			<PropertyValue name="Tab23.ID">Silverlight Controls</PropertyValue>
+			<PropertyValue name="Tab23.Name">All Silverlight Controls</PropertyValue>
 			<PropertyValue name="Tab23.View">0</PropertyValue>
 			<PropertyValue name="Tab23.UseDefaultName">true</PropertyValue>
 			<PropertyValue name="Tab23.RecordType">4</PropertyValue>
-			<PropertyValue name="Tab23.Position">26</PropertyValue>
-			<PropertyValue name="Tab24.ID">Transaction</PropertyValue>
-			<PropertyValue name="Tab24.Name">Transaction</PropertyValue>
+			<PropertyValue name="Tab23.Position">24</PropertyValue>
+			<PropertyValue name="Tab24.ID">MSVSTORibbonV10</PropertyValue>
+			<PropertyValue name="Tab24.Name">Office Ribbon Controls</PropertyValue>
 			<PropertyValue name="Tab24.View">0</PropertyValue>
 			<PropertyValue name="Tab24.UseDefaultName">true</PropertyValue>
 			<PropertyValue name="Tab24.RecordType">4</PropertyValue>
 			<PropertyValue name="Tab24.Position">27</PropertyValue>
-			<PropertyValue name="Tab25.ID">Data</PropertyValue>
-			<PropertyValue name="Tab25.Name">Data</PropertyValue>
+			<PropertyValue name="Tab25.ID">{73422BED-2F83-4587-8A50-5B2BBE45F4B1}-#1000</PropertyValue>
+			<PropertyValue name="Tab25.Name">SharePoint Controls</PropertyValue>
 			<PropertyValue name="Tab25.View">0</PropertyValue>
 			<PropertyValue name="Tab25.UseDefaultName">true</PropertyValue>
 			<PropertyValue name="Tab25.RecordType">4</PropertyValue>
 			<PropertyValue name="Tab25.Position">28</PropertyValue>
-			<PropertyValue name="Tab26.ID">{e7f851c8-6267-4794-b0fe-7bcab6dacbb4}-#1077</PropertyValue>
-			<PropertyValue name="Tab26.Name">Mobile Web Forms</PropertyValue>
+			<PropertyValue name="Tab26.ID">SharePoint Workflow</PropertyValue>
+			<PropertyValue name="Tab26.Name">SharePoint Workflow</PropertyValue>
 			<PropertyValue name="Tab26.View">0</PropertyValue>
 			<PropertyValue name="Tab26.UseDefaultName">true</PropertyValue>
 			<PropertyValue name="Tab26.RecordType">4</PropertyValue>
 			<PropertyValue name="Tab26.Position">29</PropertyValue>
-			<PropertyValue name="Tab27.ID">Collection</PropertyValue>
-			<PropertyValue name="Tab27.Name">Collection</PropertyValue>
+			<PropertyValue name="Tab27.ID">{e7f851c8-6267-4794-b0fe-7bcab6dacbb4}-#1075</PropertyValue>
+			<PropertyValue name="Tab27.Name">Login</PropertyValue>
 			<PropertyValue name="Tab27.View">0</PropertyValue>
 			<PropertyValue name="Tab27.UseDefaultName">true</PropertyValue>
 			<PropertyValue name="Tab27.RecordType">4</PropertyValue>
 			<PropertyValue name="Tab27.Position">30</PropertyValue>
-			<PropertyValue name="Tab28.ID">{7b5d447b-0b12-41ea-a84e-c822034422d4}-#1101</PropertyValue>
-			<PropertyValue name="Tab28.Name">Components</PropertyValue>
+			<PropertyValue name="Tab28.ID">Primitives</PropertyValue>
+			<PropertyValue name="Tab28.Name">Primitives</PropertyValue>
 			<PropertyValue name="Tab28.View">0</PropertyValue>
 			<PropertyValue name="Tab28.UseDefaultName">true</PropertyValue>
 			<PropertyValue name="Tab28.RecordType">4</PropertyValue>
 			<PropertyValue name="Tab28.Position">31</PropertyValue>
-			<PropertyValue name="Tab29.ID">{e7f851c8-6267-4794-b0fe-7bcab6dacbb4}-#1078</PropertyValue>
-			<PropertyValue name="Tab29.Name">AJAX Extensions</PropertyValue>
+			<PropertyValue name="Tab29.ID">{7b5d447b-0b12-41ea-a84e-c822034422d4}-#1103</PropertyValue>
+			<PropertyValue name="Tab29.Name">Menus &amp; Toolbars</PropertyValue>
 			<PropertyValue name="Tab29.View">0</PropertyValue>
 			<PropertyValue name="Tab29.UseDefaultName">true</PropertyValue>
 			<PropertyValue name="Tab29.RecordType">4</PropertyValue>
 			<PropertyValue name="Tab29.Position">32</PropertyValue>
-			<PropertyValue name="Tab30.ID">Error Handling</PropertyValue>
-			<PropertyValue name="Tab30.Name">Error Handling</PropertyValue>
+			<PropertyValue name="Tab30.ID">{e7f851c8-6267-4794-b0fe-7bcab6dacbb4}-#1076</PropertyValue>
+			<PropertyValue name="Tab30.Name">WebParts</PropertyValue>
 			<PropertyValue name="Tab30.View">0</PropertyValue>
 			<PropertyValue name="Tab30.UseDefaultName">true</PropertyValue>
 			<PropertyValue name="Tab30.RecordType">4</PropertyValue>
 			<PropertyValue name="Tab30.Position">33</PropertyValue>
-			<PropertyValue name="Tab31.ID">{7b5d447b-0b12-41ea-a84e-c822034422d4}-#1104</PropertyValue>
-			<PropertyValue name="Tab31.Name">Printing</PropertyValue>
+			<PropertyValue name="Tab31.ID">Transaction</PropertyValue>
+			<PropertyValue name="Tab31.Name">Transaction</PropertyValue>
 			<PropertyValue name="Tab31.View">0</PropertyValue>
 			<PropertyValue name="Tab31.UseDefaultName">true</PropertyValue>
 			<PropertyValue name="Tab31.RecordType">4</PropertyValue>
 			<PropertyValue name="Tab31.Position">34</PropertyValue>
-			<PropertyValue name="Tab32.ID">{e7f851c8-6267-4794-b0fe-7bcab6dacbb4}-#1079</PropertyValue>
-			<PropertyValue name="Tab32.Name">Dynamic Data</PropertyValue>
+			<PropertyValue name="Tab32.ID">Data</PropertyValue>
+			<PropertyValue name="Tab32.Name">Data</PropertyValue>
 			<PropertyValue name="Tab32.View">0</PropertyValue>
 			<PropertyValue name="Tab32.UseDefaultName">true</PropertyValue>
 			<PropertyValue name="Tab32.RecordType">4</PropertyValue>
 			<PropertyValue name="Tab32.Position">35</PropertyValue>
-			<PropertyValue name="Tab33.ID">Migration</PropertyValue>
-			<PropertyValue name="Tab33.Name">Migration</PropertyValue>
+			<PropertyValue name="Tab33.ID">{e7f851c8-6267-4794-b0fe-7bcab6dacbb4}-#1077</PropertyValue>
+			<PropertyValue name="Tab33.Name">Mobile Web Forms</PropertyValue>
 			<PropertyValue name="Tab33.View">0</PropertyValue>
 			<PropertyValue name="Tab33.UseDefaultName">true</PropertyValue>
 			<PropertyValue name="Tab33.RecordType">4</PropertyValue>
 			<PropertyValue name="Tab33.Position">36</PropertyValue>
-			<PropertyValue name="Tab34.ID">{7b5d447b-0b12-41ea-a84e-c822034422d4}-#1105</PropertyValue>
-			<PropertyValue name="Tab34.Name">Dialogs</PropertyValue>
+			<PropertyValue name="Tab34.ID">Collection</PropertyValue>
+			<PropertyValue name="Tab34.Name">Collection</PropertyValue>
 			<PropertyValue name="Tab34.View">0</PropertyValue>
 			<PropertyValue name="Tab34.UseDefaultName">true</PropertyValue>
 			<PropertyValue name="Tab34.RecordType">4</PropertyValue>
 			<PropertyValue name="Tab34.Position">37</PropertyValue>
-			<PropertyValue name="Tab35.ID">Microsoft.VisualStudio.SharePoint.Designers.BusinessDataConnectivity.BusinessDataConnectivityToolboxTab</PropertyValue>
-			<PropertyValue name="Tab35.Name">BusinessDataConnectivity</PropertyValue>
+			<PropertyValue name="Tab35.ID">{7b5d447b-0b12-41ea-a84e-c822034422d4}-#1101</PropertyValue>
+			<PropertyValue name="Tab35.Name">Components</PropertyValue>
 			<PropertyValue name="Tab35.View">0</PropertyValue>
 			<PropertyValue name="Tab35.UseDefaultName">true</PropertyValue>
 			<PropertyValue name="Tab35.RecordType">4</PropertyValue>
-			<PropertyValue name="Tab35.Position">44</PropertyValue>
-			<PropertyValue name="TabCount">36</PropertyValue>
+			<PropertyValue name="Tab35.Position">38</PropertyValue>
+			<PropertyValue name="Tab36.ID">{e7f851c8-6267-4794-b0fe-7bcab6dacbb4}-#1078</PropertyValue>
+			<PropertyValue name="Tab36.Name">AJAX Extensions</PropertyValue>
+			<PropertyValue name="Tab36.View">0</PropertyValue>
+			<PropertyValue name="Tab36.UseDefaultName">true</PropertyValue>
+			<PropertyValue name="Tab36.RecordType">4</PropertyValue>
+			<PropertyValue name="Tab36.Position">39</PropertyValue>
+			<PropertyValue name="Tab37.ID">Error Handling</PropertyValue>
+			<PropertyValue name="Tab37.Name">Error Handling</PropertyValue>
+			<PropertyValue name="Tab37.View">0</PropertyValue>
+			<PropertyValue name="Tab37.UseDefaultName">true</PropertyValue>
+			<PropertyValue name="Tab37.RecordType">4</PropertyValue>
+			<PropertyValue name="Tab37.Position">40</PropertyValue>
+			<PropertyValue name="Tab38.ID">{7b5d447b-0b12-41ea-a84e-c822034422d4}-#1104</PropertyValue>
+			<PropertyValue name="Tab38.Name">Printing</PropertyValue>
+			<PropertyValue name="Tab38.View">0</PropertyValue>
+			<PropertyValue name="Tab38.UseDefaultName">true</PropertyValue>
+			<PropertyValue name="Tab38.RecordType">4</PropertyValue>
+			<PropertyValue name="Tab38.Position">41</PropertyValue>
+			<PropertyValue name="Tab39.ID">{e7f851c8-6267-4794-b0fe-7bcab6dacbb4}-#1079</PropertyValue>
+			<PropertyValue name="Tab39.Name">Dynamic Data</PropertyValue>
+			<PropertyValue name="Tab39.View">0</PropertyValue>
+			<PropertyValue name="Tab39.UseDefaultName">true</PropertyValue>
+			<PropertyValue name="Tab39.RecordType">4</PropertyValue>
+			<PropertyValue name="Tab39.Position">42</PropertyValue>
+			<PropertyValue name="Tab40.ID">Migration</PropertyValue>
+			<PropertyValue name="Tab40.Name">Migration</PropertyValue>
+			<PropertyValue name="Tab40.View">0</PropertyValue>
+			<PropertyValue name="Tab40.UseDefaultName">true</PropertyValue>
+			<PropertyValue name="Tab40.RecordType">4</PropertyValue>
+			<PropertyValue name="Tab40.Position">43</PropertyValue>
+			<PropertyValue name="Tab41.ID">{7b5d447b-0b12-41ea-a84e-c822034422d4}-#1105</PropertyValue>
+			<PropertyValue name="Tab41.Name">Dialogs</PropertyValue>
+			<PropertyValue name="Tab41.View">0</PropertyValue>
+			<PropertyValue name="Tab41.UseDefaultName">true</PropertyValue>
+			<PropertyValue name="Tab41.RecordType">4</PropertyValue>
+			<PropertyValue name="Tab41.Position">44</PropertyValue>
+			<PropertyValue name="Tab42.ID">Microsoft.VisualStudio.SharePoint.Designers.BusinessDataConnectivity.BusinessDataConnectivityToolboxTab</PropertyValue>
+			<PropertyValue name="Tab42.Name">BusinessDataConnectivity</PropertyValue>
+			<PropertyValue name="Tab42.View">0</PropertyValue>
+			<PropertyValue name="Tab42.UseDefaultName">true</PropertyValue>
+			<PropertyValue name="Tab42.RecordType">4</PropertyValue>
+			<PropertyValue name="Tab42.Position">51</PropertyValue>
+			<PropertyValue name="TabCount">43</PropertyValue>
 			<PropertyValue name="DeletedItem0.ID">Pointer</PropertyValue>
 			<PropertyValue name="DeletedItem0.Name">Pointer</PropertyValue>
 			<PropertyValue name="DeletedItem0.TabID"/>
@@ -2008,7 +2043,7 @@
 									<wm:ToolWindowView ForceCreate="ForceCreate" IconIndex="0" IconResourceID="2" IconResourcePackage="8e01ec3e-2928-4aa5-b720-e28c163818e6" Name="ST:0:0:{131369f2-062d-44a2-8671-91ff31efb4f4}" DockedHeight="537.6" DockedWidth="632.8" FloatingTop="76.8" FloatingLeft="819.2" FloatingHeight="537.6" FloatingWidth="204.8"/>
 									<wm:ToolWindowView ForceCreate="ForceCreate" IconIndex="0" IconResourceID="6651" IconResourcePackage="da9fb551-c724-11d0-ae1f-00a0c90fffc3" Name="ST:0:0:{c9c0ae26-aa77-11d2-b3f0-0000f87570ee}" DockedHeight="537.6" DockedWidth="632.8" FloatingTop="76.8" FloatingLeft="819.2" FloatingHeight="537.6" FloatingWidth="204.8"/>
 									<wm:ToolWindowView ContextVisibilityEnabled="False" ForceCreate="ForceCreate" Name="ST:0:0:{de1fc918-f32e-4dd7-a915-1792a051f26b}" DockedHeight="537.6" DockedWidth="632.8" FloatingTop="76.8" FloatingLeft="819.2" FloatingHeight="537.6" FloatingWidth="204.8"/>
-									<wm:ToolWindowView ContextVisibilityEnabled="False" ForceCreate="ForceCreate" IconIndex="0" IconResourceID="402" IconResourcePackage="a659f1b3-ad34-11d1-abad-0080c7b89c95" Name="ST:0:0:{07cd18b4-3ba1-11d2-890a-0060083196c6}" IsVisible="True" DockedHeight="537.6" DockedWidth="632.8" FloatingTop="76.8" FloatingLeft="819.2" FloatingHeight="537.6" FloatingWidth="204.8"/>
+									<wm:ToolWindowView ContextVisibilityEnabled="False" ForceCreate="ForceCreate" IconIndex="0" IconResourceID="402" IconResourcePackage="a659f1b3-ad34-11d1-abad-0080c7b89c95" Name="ST:0:0:{07cd18b4-3ba1-11d2-890a-0060083196c6}" DockedHeight="537.6" DockedWidth="632.8" FloatingTop="76.8" FloatingLeft="819.2" FloatingHeight="537.6" FloatingWidth="204.8"/>
 									<wm:ToolWindowView ContextVisibilityEnabled="False" ForceCreate="ForceCreate" Name="ST:0:0:{2d7728c2-de0a-45b5-99aa-89b609dfde73}" DockedHeight="537.6" DockedWidth="632.8" FloatingTop="76.8" FloatingLeft="819.2" FloatingHeight="537.6" FloatingWidth="204.8"/>
 									<wm:ToolWindowView ForceCreate="ForceCreate" Name="ST:0:0:{3addf8e2-81cc-41a0-9785-dbd2d86064bd}" DockedHeight="537.6" DockedWidth="632.8" FloatingTop="76.8" FloatingLeft="819.2" FloatingHeight="537.6" FloatingWidth="204.8"/>
 									<wm:ToolWindowView ContextVisibilityEnabled="False" ForceCreate="ForceCreate" Name="ST:0:0:{0db31cc8-2322-4f59-a610-1fdc8423df77}" DockedHeight="537.6" DockedWidth="632.8" FloatingTop="76.8" FloatingLeft="819.2" FloatingHeight="537.6" FloatingWidth="204.8"/>
@@ -2047,7 +2082,7 @@
 									<wm:ToolWindowView ForceCreate="ForceCreate" Name="ST:0:0:{778b5376-ad77-4751-acdc-f3d18343f8dd}" DockedHeight="280" DockedWidth="1024" FloatingTop="576" FloatingLeft="102.4" FloatingHeight="192" FloatingWidth="614.4"/>
 									<wm:ToolWindowView ContextVisibilityEnabled="False" ForceCreate="ForceCreate" IconIndex="11" IconResourceID="6650" IconResourcePackage="da9fb551-c724-11d0-ae1f-00a0c90fffc3" Name="ST:0:0:{0f887920-c2b6-11d2-9375-0080c747d9a0}" IsVisible="True" DockedHeight="280" DockedWidth="1024" FloatingTop="576" FloatingLeft="102.4" FloatingHeight="192" FloatingWidth="307.2"/>
 									<wm:ToolWindowView ContextVisibilityEnabled="False" ForceCreate="ForceCreate" Name="ST:0:0:{0f887921-c2b6-11d2-9375-0080c747d9a0}" DockedHeight="280" DockedWidth="1024" FloatingTop="576" FloatingLeft="102.4" FloatingHeight="192" FloatingWidth="614.4"/>
-									<wm:ToolWindowView ContextVisibilityEnabled="False" ForceCreate="ForceCreate" Name="ST:0:0:{68487888-204a-11d3-87eb-00c04f7971a5}" DockedHeight="280" DockedWidth="1024" FloatingTop="576" FloatingLeft="102.4" FloatingHeight="192" FloatingWidth="614.4"/>
+									<wm:ToolWindowView ContextVisibilityEnabled="False" ForceCreate="ForceCreate" IconIndex="13" IconResourceID="6650" IconResourcePackage="da9fb551-c724-11d0-ae1f-00a0c90fffc3" Name="ST:0:0:{68487888-204a-11d3-87eb-00c04f7971a5}" IsVisible="True" DockedHeight="280" DockedWidth="1024" FloatingTop="576" FloatingLeft="102.4" FloatingHeight="192" FloatingWidth="614.4"/>
 									<wm:ToolWindowView ContextVisibilityEnabled="False" Name="ST:0:0:{fdffccf2-5f63-404f-86ad-33693f544948}" DockedHeight="280" DockedWidth="1024" FloatingTop="576" FloatingLeft="102.4" FloatingHeight="192" FloatingWidth="614.4"/>
 									<wm:ToolWindowView ContextVisibilityEnabled="False" Name="ST:0:0:{73f6dd5b-437e-11d3-b88e-00c04f79f802}" DockedHeight="280" DockedWidth="1024" FloatingTop="576" FloatingLeft="102.4" FloatingHeight="192" FloatingWidth="614.4"/>
 									<wm:ToolWindowView ForceCreate="DontForceCreate" IconIndex="5" IconResourceID="300" IconResourcePackage="2c309824-a7a7-4f97-b241-70e87a4164c7" Name="ST:0:0:{fbc4f7d1-f791-4449-a5c9-04a4079aa9d2}" DockedHeight="280" DockedWidth="1024" FloatingTop="100" FloatingLeft="100" FloatingHeight="450" FloatingWidth="450"/>
@@ -2377,8 +2412,8 @@
 													<wm:ToolWindowView ForceCreate="ForceCreate" Name="ST:0:0:{92547016-2bd0-4dfe-bd4f-5b52bdce0037}" DockedHeight="229.68" DockedWidth="420.048865619546" FloatingHeight="199.68" FloatingWidth="512"/>
 													<wm:ToolWindowView OnTopWhenLastInContext="False" ContextVisibilityEnabled="False" ForceCreate="ForceCreate" IconIndex="4" IconResourceID="5123" IconResourcePackage="c9dd4a57-47fb-11d2-83e7-00c04f9902c1" Name="ST:0:0:{4a18f9d0-b838-11d0-93eb-00a0c90f2734}" DockedHeight="229.68" DockedWidth="420.048865619546" FloatingHeight="199.68" FloatingWidth="512"/>
 													<wm:ToolWindowView ContextVisibilityEnabled="False" ForceCreate="ForceCreate" Name="ST:0:0:{f2e84780-2af1-11d1-a7fa-00a0c9110051}" DockedHeight="229.68" DockedWidth="420.048865619546" FloatingHeight="199.68" FloatingWidth="512"/>
-													<wm:ToolWindowView OnTopWhenLastInContext="False" ForceCreate="ForceCreate" IconIndex="9" IconResourceID="5123" IconResourcePackage="c9dd4a57-47fb-11d2-83e7-00c04f9902c1" Name="ST:1:0:{90243340-bd7a-11d0-93ef-00a0c90f2734}" IsVisible="True" DockedHeight="229.68" DockedWidth="420.048865619546" FloatingHeight="199.68" FloatingWidth="512"/>
-													<wm:ToolWindowView ContextVisibilityEnabled="False" ForceCreate="ForceCreate" IconIndex="16" IconResourceID="6650" IconResourcePackage="da9fb551-c724-11d0-ae1f-00a0c90fffc3" Name="ST:0:0:{ecb7191a-597b-41f5-9843-03a4cf275dde}" IsSelected="True" IsVisible="True" DockedHeight="229.68" DockedWidth="420.048865619546" FloatingTop="463" FloatingLeft="467" FloatingWidth="470"/>
+													<wm:ToolWindowView OnTopWhenLastInContext="False" ForceCreate="ForceCreate" IconIndex="9" IconResourceID="5123" IconResourcePackage="c9dd4a57-47fb-11d2-83e7-00c04f9902c1" Name="ST:1:0:{90243340-bd7a-11d0-93ef-00a0c90f2734}" IsSelected="True" IsVisible="True" DockedHeight="229.68" DockedWidth="420.048865619546" FloatingHeight="199.68" FloatingWidth="512"/>
+													<wm:ToolWindowView ContextVisibilityEnabled="False" ForceCreate="ForceCreate" IconIndex="16" IconResourceID="6650" IconResourcePackage="da9fb551-c724-11d0-ae1f-00a0c90fffc3" Name="ST:0:0:{ecb7191a-597b-41f5-9843-03a4cf275dde}" DockedHeight="229.68" DockedWidth="420.048865619546" FloatingTop="463" FloatingLeft="467" FloatingWidth="470"/>
 													<wm:ToolWindowView ContextVisibilityEnabled="False" ForceCreate="ForceCreate" Name="ST:2:0:{90243340-bd7a-11d0-93ef-00a0c90f2734}" DockedHeight="229.68" DockedWidth="420.048865619546" FloatingHeight="199.68" FloatingWidth="512"/>
 													<wm:ToolWindowView ContextVisibilityEnabled="False" ForceCreate="ForceCreate" Name="ST:3:0:{90243340-bd7a-11d0-93ef-00a0c90f2734}" DockedHeight="229.68" DockedWidth="420.048865619546" FloatingHeight="199.68" FloatingWidth="512"/>
 													<wm:ToolWindowView ContextVisibilityEnabled="False" ForceCreate="ForceCreate" Name="ST:4:0:{90243340-bd7a-11d0-93ef-00a0c90f2734}" DockedHeight="229.68" DockedWidth="420.048865619546" FloatingHeight="199.68" FloatingWidth="512"/>
@@ -2435,8 +2470,8 @@
 											</TabGroup>
 										</DockGroup>
 									</DockGroup>
-									<DockGroup IsVisible="True" DockedHeight="174" DockedWidth="462">
-										<wm:ToolWindowView OnTopWhenLastInContext="False" ForceCreate="ForceCreate" IconIndex="2" IconResourceID="5123" IconResourcePackage="c9dd4a57-47fb-11d2-83e7-00c04f9902c1" Name="ST:0:0:{be4d7042-ba3f-11d2-840e-00c04f9902c1}" IsSelected="True" IsVisible="True" DockedHeight="174" DockedWidth="454.136170212766" FloatingTop="682" FloatingLeft="491" FloatingWidth="470"/>
+									<DockGroup DockedHeight="174" DockedWidth="462">
+										<wm:ToolWindowView OnTopWhenLastInContext="False" ContextVisibilityEnabled="False" ForceCreate="ForceCreate" IconIndex="2" IconResourceID="5123" IconResourcePackage="c9dd4a57-47fb-11d2-83e7-00c04f9902c1" Name="ST:0:0:{be4d7042-ba3f-11d2-840e-00c04f9902c1}" IsSelected="True" DockedHeight="174" DockedWidth="454.136170212766" FloatingTop="682" FloatingLeft="491" FloatingWidth="470"/>
 										<TabGroup DockedHeight="174" DockedWidth="462" FloatingTop="766" FloatingLeft="670" FloatingWidth="470">
 											<wm:ToolWindowView ContextVisibilityEnabled="False" ForceCreate="ForceCreate" Name="ST:0:0:{4a9b7e51-aa16-11d0-a8c5-00a0c921a4d2}" DockedHeight="174" DockedWidth="462" FloatingWidth="470"/>
 											<wm:ToolWindowView ForceCreate="DontForceCreate" Name="ST:0:0:{fbc4f7d1-f791-4449-a5c9-04a4079aa9d2}" DockedHeight="174" DockedWidth="462" FloatingTop="100" FloatingLeft="100" FloatingHeight="450" FloatingWidth="450"/>
@@ -2721,7 +2756,7 @@
 	</Category>
 	<Category name="PowerCommands_General" Category="{df0d89f1-c9a3-47bf-b277-42e0c178f1a0}" Package="{24e33dbf-cadf-4da8-acfe-566366fc8468}" RegisteredName="PowerCommands_General" PackageName="Microsoft.PowerCommands.PowerCommandsPackage, PowerCommands, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
 		<PropertyValue name="FormatOnSave">True</PropertyValue>
-		<PropertyValue name="RemoveAndSortUsingsOnSave">True</PropertyValue>
+		<PropertyValue name="RemoveAndSortUsingsOnSave">False</PropertyValue>
 	</Category>
 	<Category name="HTML Tag Specific" Category="{7583bb73-a453-40e8-8951-b6986ddb1d9b}" Package="{1B437D20-F8FE-11D2-A6AE-00104BCC7269}" RegisteredName="HTML Tag Specific" PackageName="Visual Studio HTM Editor Package"/>
 	<Category name="Performance" Category="{7A697B67-8D8F-43c2-A11C-57568FE3F513}" Package="{f4a63b2a-49ab-4b2d-aa59-a10f01026c89}" RegisteredName="Performance" PackageName="PerformancePackage">
