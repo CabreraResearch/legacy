@@ -1,0 +1,552 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"ro",
+				"rowid"
+			],
+			[
+				"add",
+				"addDeleteBtn"
+			],
+			[
+				"del",
+				"deleteRow"
+			],
+			[
+				"csw",
+				"cswPrivate"
+			],
+			[
+				"fun",
+				"function"
+			],
+			[
+				"e",
+				"each"
+			],
+			[
+				"row",
+				"rowElements"
+			],
+			[
+				"th",
+				"thisCell"
+			]
+		]
+	},
+	"buffers":
+	[
+		{
+			"file": "NbtApp.sublime-project",
+			"settings":
+			{
+				"buffer_size": 73,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "nodes/CswNodeTree.js",
+			"settings":
+			{
+				"buffer_size": 0,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "pagecmp/CswSearch.js",
+			"settings":
+			{
+				"buffer_size": 0,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "pagecmp/CswWizard.js",
+			"settings":
+			{
+				"buffer_size": 7902,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "pagecmp/CswErrorMessage.js",
+			"settings":
+			{
+				"buffer_size": 2851,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "pagecmp/CswDefaultContent.js",
+			"settings":
+			{
+				"buffer_size": 3085,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "pagecmp/CswMenuMain.js",
+			"settings":
+			{
+				"buffer_size": 0,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "pagecmp/CswMenuHeader.js",
+			"settings":
+			{
+				"buffer_size": 4443,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "pagecmp/CswMenu.js",
+			"settings":
+			{
+				"buffer_size": 1473,
+				"line_ending": "Windows"
+			}
+		}
+	],
+	"build_system": "Packages/JSHint/JSHint.sublime-build",
+	"command_palette":
+	{
+		"height": 392.0,
+		"selected_items":
+		[
+			[
+				"ins",
+				"Package Control: Install Package"
+			],
+			[
+				"inst",
+				"Package Control: Install Package"
+			],
+			[
+				"in",
+				"Package Control: Install Package"
+			],
+			[
+				"insta",
+				"Package Control: Install Package"
+			],
+			[
+				"inst	",
+				"Package Control: Install Package"
+			],
+			[
+				"insta	",
+				"Package Control: Install Package"
+			],
+			[
+				"Insta	",
+				"Package Control: Install Package"
+			],
+			[
+				"Dis",
+				"Package Control: Discover Packages"
+			]
+		],
+		"width": 528.0
+	},
+	"console":
+	{
+		"height": 125.0
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"file_history":
+	[
+		"/C/kiln/incandescentsw/chemsw-fe/app/js/config/envs/test.js",
+		"/C/Users/ChemSW/AppData/Local/Temp/Temp1_jZebra 1.4.3.zip/dist/sample2.html",
+		"/C/kiln/Nbt/Nbt/NbtWebApp/Print.html",
+		"/C/kiln/Common/CswCommon/Csw/Security/CswAuthenticator.cs",
+		"/C/kiln/incandescentsw/chemsw-fe/app/js/app.js",
+		"/C/kiln/incandescentsw/chemsw-fe/app/index.html",
+		"/C/kiln/incandescentsw/chemsw-fe/app/frame.html",
+		"/C/kiln/incandescentsw/chemsw-fe/app/js/config/config.js",
+		"/C/kiln/incandescentsw/chemsw-fe/app/js/init.js",
+		"/C/kiln/incandescentsw/chemsw-fe/app/js/namespace.js",
+		"/C/kiln/incandescentsw/chemsw-fe/app/js/files.js",
+		"/C/kiln/Nbt/Nbt/NbtWebApp/js/nbt/pagecmp/CswLogin.js",
+		"/C/kiln/Nbt/Nbt/NbtWebApp/Dev.html",
+		"/C/kiln/ThirdParty/jZebra/sample.html",
+		"/C/kiln/ThirdParty/jZebra/sample2.html",
+		"/C/Users/ChemSW/AppData/Local/Temp/Temp1_jZebra 1.4.3.zip/dist/sample.html",
+		"/C/kiln/ThirdParty/jZebra/jsquery.js",
+		"/C/kiln/Nbt/Nbt/NbtWebApp/MainFooter.html",
+		"/C/kiln/Nbt/Nbt/NbtWebApp/DevIncludes.html",
+		"/C/kiln/Nbt/Nbt/NbtWebApp/MainIncludes.html",
+		"/C/kiln/Nbt/Nbt/NbtWebApp/DevHeader.html",
+		"/C/kiln/Nbt/Nbt/NbtWebApp/grunt.js",
+		"/C/kiln/Nbt/Nbt/NbtWebApp/MainCswIncludes.html",
+		"/C/kiln/Nbt/Nbt/NbtWebApp/MainHeader.html",
+		"/C/kiln/Nbt/Nbt/NbtWebApp/MainHead.html",
+		"/C/kiln/Nbt/Nbt/NbtWebApp/Main.html",
+		"/C/kiln/Nbt/Nbt/NbtWebApp/js/common/literals/csw.button.js",
+		"/C/kiln/Nbt/Nbt/NbtWebApp/js/common/composites/csw.gridExtJs.js",
+		"/C/kiln/Nbt/Nbt/NbtWebApp/js/nbt/wizards/csw.wizard.amountsgrid.js",
+		"/C/kiln/Nbt/Nbt/NbtWebApp/js/common/composites/csw.thingrid.js",
+		"/C/Users/ChemSW/AppData/Roaming/Sublime Text 2/Packages/Default/Preferences.sublime-settings",
+		"/C/Users/ChemSW/AppData/Roaming/Sublime Text 2/Packages/User/Minifier.sublime-settings",
+		"/C/Users/ChemSW/AppData/Roaming/Sublime Text 2/Packages/JsMinifier/Minifier.sublime-settings",
+		"/C/Users/ChemSW/AppData/Roaming/Sublime Text 2/Packages/User/Preferences.sublime-settings",
+		"/C/kiln/ThirdParty/docu/readme.md"
+	],
+	"find":
+	{
+		"height": 34.0
+	},
+	"find_in_files":
+	{
+		"height": 0.0,
+		"where_history":
+		[
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			"request",
+			"delete"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"selected": 8,
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"file": "NbtApp.sublime-project",
+					"settings":
+					{
+						"buffer_size": 73,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								73,
+								73
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JSON.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "nodes/CswNodeTree.js",
+					"settings":
+					{
+						"buffer_size": 0,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 5056.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "pagecmp/CswSearch.js",
+					"settings":
+					{
+						"buffer_size": 0,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 6622.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "pagecmp/CswWizard.js",
+					"settings":
+					{
+						"buffer_size": 7902,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								429,
+								429
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 90.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "pagecmp/CswErrorMessage.js",
+					"settings":
+					{
+						"buffer_size": 2851,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "pagecmp/CswDefaultContent.js",
+					"settings":
+					{
+						"buffer_size": 3085,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 6,
+					"file": "pagecmp/CswMenuMain.js",
+					"settings":
+					{
+						"buffer_size": 0,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 1800.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 7,
+					"file": "pagecmp/CswMenuHeader.js",
+					"settings":
+					{
+						"buffer_size": 4443,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 8,
+					"file": "pagecmp/CswMenu.js",
+					"settings":
+					{
+						"buffer_size": 1473,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 630.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				}
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 0.0
+	},
+	"input":
+	{
+		"height": 0.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.exec":
+	{
+		"height": 100.0
+	},
+	"replace":
+	{
+		"height": 0.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 500.0,
+		"selected_items":
+		[
+		],
+		"width": 380.0
+	},
+	"show_minimap": true,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 237.0,
+	"status_bar_visible": true
+}

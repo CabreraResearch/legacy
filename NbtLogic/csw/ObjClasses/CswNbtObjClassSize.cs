@@ -1,4 +1,5 @@
 using ChemSW.Core;
+using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.UnitsOfMeasure;
@@ -14,6 +15,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string QuantityEditable = "Quantity Editable";
             public const string Dispensable = "Dispensable";
             public const string CatalogNo = "Catalog No";
+            public const string UnitCount = "Unit Count";
         }
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
@@ -53,6 +55,10 @@ namespace ChemSW.Nbt.ObjClasses
                 {
                     Material.RelatedNodeId = pk;
                 }
+            }
+            if( Tristate.False == this.QuantityEditable.Checked && false == CswTools.IsDouble( this.InitialQuantity.Quantity ) )
+            {
+                throw new CswDniException( ErrorType.Warning, "Cannot have a null Initial Quantity if Quantity Editable is unchecked.", "Cannot have a null Initial Quantity if Quantity Editable is unchecked." );
             }
 
             _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
@@ -97,7 +103,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropRelationship Material { get { return _CswNbtNode.Properties[PropertyName.Material]; } }
         private void OnMaterialChange( CswNbtNodeProp Prop )
         {
-            //case 25759 - set capacity unittype view based on related material physical state
+            //case 25759 - set initialQuantity unittype view based on related material physical state
             CswNbtNode MaterialNode = _CswNbtResources.Nodes.GetNode( Material.RelatedNodeId );
             if( MaterialNode != null )
             {
@@ -110,6 +116,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropLogical QuantityEditable { get { return _CswNbtNode.Properties[PropertyName.QuantityEditable]; } }
         public CswNbtNodePropLogical Dispensable { get { return _CswNbtNode.Properties[PropertyName.Dispensable]; } }
         public CswNbtNodePropText CatalogNo { get { return _CswNbtNode.Properties[PropertyName.CatalogNo]; } }
+        public CswNbtNodePropNumber UnitCount { get { return _CswNbtNode.Properties[PropertyName.UnitCount]; } }
 
         #endregion
 
@@ -117,8 +124,10 @@ namespace ChemSW.Nbt.ObjClasses
 
         private bool _isMaterialID( CswPrimaryKey nodeid )
         {
+            bool isMaterialID = true;
             CswNbtNode node = _CswNbtResources.Nodes.GetNode( nodeid );
-            return _Validate( node, CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass );
+            isMaterialID = ( null != node && CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass == node.getObjectClass().ObjectClass );
+            return isMaterialID;
         }
 
         #endregion

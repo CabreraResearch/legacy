@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using ChemSW.Core;
+using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
 
@@ -68,6 +69,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void afterPopulateProps()
         {
+            ConversionFactor.SetOnPropChange( OnConversionFactorPropChange );
             _CswNbtObjClassDefault.afterPopulateProps();
         }//afterPopulateProps()
 
@@ -92,6 +94,18 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropText Name { get { return ( _CswNbtNode.Properties[PropertyName.Name] ); } }
         public CswNbtNodePropText BaseUnit { get { return ( _CswNbtNode.Properties[PropertyName.BaseUnit] ); } }
         public CswNbtNodePropScientific ConversionFactor { get { return ( _CswNbtNode.Properties[PropertyName.ConversionFactor] ); } }
+        private void OnConversionFactorPropChange( CswNbtNodeProp Prop )
+        {
+            if( UnitType.Value != UnitTypes.Each.ToString() && false == CswTools.IsDouble( ConversionFactor.RealValue ) )
+            {
+                throw new CswDniException
+                (
+                    ErrorType.Warning,
+                    "Units of type " + UnitType.Value + " must have a Conversion Factor.",
+                    "Unit of Measure cannot be used for unit conversion."
+                );
+            }
+        }
         public CswNbtNodePropLogical Fractional { get { return ( _CswNbtNode.Properties[PropertyName.Fractional] ); } }
         public CswNbtNodePropList UnitType { get { return ( _CswNbtNode.Properties[PropertyName.UnitType] ); } }
 

@@ -1,4 +1,3 @@
-using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
 
@@ -18,18 +17,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string EplText = "epltext";
             public const string Params = "params";
             public const string NodeTypes = "NodeTypes";
-            public const string ControlType = "Control Type";
             public const string LabelName = "Label Name";
-        }
-
-        /// <summary>
-        /// Supported UI Controls to Print from
-        /// </summary>
-        public sealed class ControlTypes
-        {
-            public const string ActiveX = "ActiveX";
-            public const string jZebra = "jZebra";
-            public static CswCommaDelimitedString Options = new CswCommaDelimitedString { ActiveX, jZebra };
         }
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
@@ -59,7 +47,7 @@ namespace ChemSW.Nbt.ObjClasses
         }
 
         #region Inherited Events
-        
+
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
             _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
@@ -83,6 +71,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void afterPopulateProps()
         {
+            NodeTypes.SetOnPropChange( OnNodeTypesPropChange );
             _CswNbtObjClassDefault.afterPopulateProps();
         }//afterPopulateProps()
 
@@ -93,9 +82,6 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override bool onButtonClick( NbtButtonData ButtonData )
         {
-
-
-
             if( null != ButtonData && null != ButtonData.NodeTypeProp ) { /*Do Something*/ }
             return true;
         }
@@ -106,7 +92,14 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropMemo EplText { get { return _CswNbtNode.Properties[PropertyName.EplText]; } }
         public CswNbtNodePropMemo Params { get { return _CswNbtNode.Properties[PropertyName.Params]; } }
         public CswNbtNodePropNodeTypeSelect NodeTypes { get { return _CswNbtNode.Properties[PropertyName.NodeTypes]; } }
-        public CswNbtNodePropList ControlType { get { return _CswNbtNode.Properties[PropertyName.ControlType]; } }
+        private void OnNodeTypesPropChange( CswNbtNodeProp NodeProp )
+        {
+            foreach( CswNbtMetaDataNodeType NodeType in _CswNbtResources.MetaData.getNodeTypesLatestVersion() )
+            {
+                NodeType.HasLabel = NodeTypes.SelectedNodeTypeIds.Contains( NodeType.NodeTypeId );
+            }
+        }
+
         public CswNbtNodePropText LabelName { get { return _CswNbtNode.Properties[PropertyName.LabelName]; } }
 
         #endregion

@@ -64,6 +64,9 @@
                     /// </summary>
                     return cswPublic.array.toString();
                 },
+                toString: function() {
+                    return cswPublic.string();
+                },
                 add: function (str) {
                     /// <summary>
                     /// Adds an item to the delimited string and returns the delimitedString object

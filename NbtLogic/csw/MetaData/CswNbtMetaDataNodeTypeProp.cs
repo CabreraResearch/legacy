@@ -72,7 +72,12 @@ namespace ChemSW.Nbt.MetaData
             isquicksearch,
             extended,
             hideinmobile,
-            mobilesearch
+            mobilesearch,
+            attribute1,
+            attribute2,
+            attribute3,
+            attribute4,
+            attribute5
         }
 
         public static NodeTypePropAttributes getNodeTypePropAttributesFromString( string AttributeName )
@@ -370,7 +375,7 @@ namespace ChemSW.Nbt.MetaData
                 {
                     // This prop is missing a view, so make one
                     CswNbtView ThisView = new CswNbtView( _CswNbtMetaDataResources.CswNbtResources );
-                    ThisView.makeNew( this.PropName, NbtViewVisibility.Property, null, null, Int32.MinValue );
+                    ThisView.saveNew( this.PropName, NbtViewVisibility.Property, null, null, Int32.MinValue );
                     if( this.getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.Grid )
                     {
                         // BZ 9203 - View starts with this property's nodetype at root
@@ -504,7 +509,7 @@ namespace ChemSW.Nbt.MetaData
             var ret = ( ( false == InPopUp || IsOnAdd ) &&
                 FilterNodeTypePropId == Int32.MinValue && /* Keep these out */
                         false == Node.Properties[this].Hidden &&
-                        _CswNbtMetaDataResources.CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, this.getNodeType(), false, null, User, Node.NodeId, this ) );
+                        _CswNbtMetaDataResources.CswNbtResources.Permit.canNode( CswNbtPermit.NodeTypePermission.Edit, this.getNodeType(), Node.NodeId, this ) );
             return ret;
         }
 
@@ -521,7 +526,14 @@ namespace ChemSW.Nbt.MetaData
                 }
             }
             var ret = ( false == hasFilter() && false == Node.Properties[this].Hidden &&
-                        _CswNbtMetaDataResources.CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, this.getNodeType(), false, Tab, User, Node.NodeId, this ) );
+                        (
+                           _CswNbtMetaDataResources.CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.View, this.getNodeType() ) ||
+                           _CswNbtMetaDataResources.CswNbtResources.Permit.canTab( CswNbtPermit.NodeTypePermission.View, this.getNodeType(), Tab ) ||
+                           _CswNbtMetaDataResources.CswNbtResources.Permit.canNode( CswNbtPermit.NodeTypePermission.View, this.getNodeType(), Node.NodeId )
+                        )
+                      );
+
+            //_CswNbtMetaDataResources.CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, this.getNodeType(), false, Tab, User, Node.NodeId, this ) );
             return ret;
         }
 
@@ -715,7 +727,7 @@ namespace ChemSW.Nbt.MetaData
 
                 if( _DefaultValueRow != null )
                 {
-                    _DefaultValue = CswNbtNodePropFactory.makeNodeProp( _CswNbtMetaDataResources.CswNbtResources, _DefaultValueRow, _DefaultValueRow.Table, null, this, null );
+                    _DefaultValue = CswNbtNodePropFactory.makeNodeProp( _CswNbtMetaDataResources.CswNbtResources, _DefaultValueRow, _DefaultValueRow.Table, null, this );
                 }
 
             } // if( _DefaultValue == null )
@@ -807,8 +819,8 @@ namespace ChemSW.Nbt.MetaData
                         // We can't point to the same view.  We need to copy the view, and refer to the copy.
                         CswNbtView View = _CswNbtMetaDataResources.CswNbtResources.ViewSelect.restoreView( new CswNbtViewId( CswConvert.ToInt32( _NodeTypePropRow[PropColumn.ColumnName] ) ) );
                         CswNbtView ViewCopy = new CswNbtView( _CswNbtMetaDataResources.CswNbtResources );
-                        ViewCopy.makeNew( View.ViewName, View.Visibility, View.VisibilityRoleId, View.VisibilityUserId, View );
-                        ViewCopy.save();
+                        ViewCopy.saveNew( View.ViewName, View.Visibility, View.VisibilityRoleId, View.VisibilityUserId, View );
+                        //ViewCopy.save();
                         NewPropRow[PropColumn.ColumnName] = CswConvert.ToDbVal( ViewCopy.ViewId.get() );
                     }
                     else if( PropColumn.ColumnName.ToLower() == "defaultvalueid" && CswTools.IsInteger( _NodeTypePropRow[PropColumn.ColumnName].ToString() ) )
@@ -973,6 +985,65 @@ namespace ChemSW.Nbt.MetaData
             }
         }
 
+        public string Attribute1
+        {
+            get
+            {
+                return _NodeTypePropRow[NodeTypePropAttributes.attribute1.ToString()].ToString();
+            }
+            set
+            {
+                _NodeTypePropRow[NodeTypePropAttributes.attribute1.ToString()] = value;
+            }
+        }
+
+        public string Attribute2
+        {
+            get
+            {
+                return _NodeTypePropRow[NodeTypePropAttributes.attribute2.ToString()].ToString();
+            }
+            set
+            {
+                _NodeTypePropRow[NodeTypePropAttributes.attribute2.ToString()] = value;
+            }
+        }
+
+        public string Attribute3
+        {
+            get
+            {
+                return _NodeTypePropRow[NodeTypePropAttributes.attribute3.ToString()].ToString();
+            }
+            set
+            {
+                _NodeTypePropRow[NodeTypePropAttributes.attribute3.ToString()] = value;
+            }
+        }
+
+        public string Attribute4
+        {
+            get
+            {
+                return _NodeTypePropRow[NodeTypePropAttributes.attribute4.ToString()].ToString();
+            }
+            set
+            {
+                _NodeTypePropRow[NodeTypePropAttributes.attribute4.ToString()] = value;
+            }
+        }
+
+        public string Attribute5
+        {
+            get
+            {
+                return _NodeTypePropRow[NodeTypePropAttributes.attribute5.ToString()].ToString();
+            }
+            set
+            {
+                _NodeTypePropRow[NodeTypePropAttributes.attribute5.ToString()] = value;
+            }
+        }
 
         public bool HasSubProps()
         {

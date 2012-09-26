@@ -99,14 +99,12 @@ namespace ChemSW.Nbt.WebServices
             }
         }
 
-        private void _getMaterialPropsFromObject( JObject Obj, out string Tradename, out CswPrimaryKey SupplierId, out string PartNo, out string PhysicalState )
+        private void _getMaterialPropsFromObject( JObject Obj, out string Tradename, out CswPrimaryKey SupplierId, out string PartNo )
         {
             Tradename = CswConvert.ToString( Obj["tradename"] );
             SupplierId = new CswPrimaryKey();
             string SupplierPk = CswConvert.ToString( Obj["supplierid"] );
             SupplierId.FromString( SupplierPk );
-            PhysicalState = CswConvert.ToString( Obj["physicalState"] );
-
             PartNo = CswConvert.ToString( Obj["partno"] );
             if( string.IsNullOrEmpty( Tradename ) || Int32.MinValue == SupplierId.PrimaryKey )
             {
@@ -241,27 +239,42 @@ namespace ChemSW.Nbt.WebServices
         {
             JObject Ret = new JObject();
 
-            SizeNode = CswNbtResources.Nodes.makeNodeFromNodeTypeId( SizeNodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing, true );
-            //CswNbtWebServiceNode NodeWs = new CswNbtWebServiceNode( CswNbtResources, CswNbtStatisticsEvents );
-            //NodeWs.addNodeProps( SizeNode, SizeObj, null );
-            CswNbtObjClassSize NodeAsSize = (CswNbtObjClassSize) SizeNode;
-            NodeAsSize.InitialQuantity.Quantity = CswConvert.ToDouble( SizeObj["quantity"] );
-            CswPrimaryKey UnitIdPK = new CswPrimaryKey();
-            UnitIdPK.FromString( SizeObj["unitid"].ToString() );
-            NodeAsSize.InitialQuantity.UnitId = UnitIdPK;
-            NodeAsSize.CatalogNo.Text = SizeObj["catalogNo"].ToString();
-
-            JArray Row = new JArray();
-            Ret["row"] = Row;
-
-            Row.Add( "(New Size)" );
-            Row.Add( NodeAsSize.InitialQuantity.Gestalt );
-            Row.Add( NodeAsSize.CatalogNo.Gestalt );
-
-            if( WriteNode )
+            SizeNode = CswNbtResources.Nodes.makeNodeFromNodeTypeId( SizeNodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode, true );
+            CswPrimaryKey UnitIdPK = CswConvert.ToPrimaryKey( SizeObj["unitid"].ToString() );
+            if( null != UnitIdPK )
             {
-                SizeNode.postChanges( true );
+                CswNbtObjClassSize NodeAsSize = (CswNbtObjClassSize) SizeNode;
+                NodeAsSize.InitialQuantity.Quantity = CswConvert.ToDouble( SizeObj["quantity"] );
+                NodeAsSize.InitialQuantity.UnitId = UnitIdPK;
+                NodeAsSize.CatalogNo.Text = SizeObj["catalogNo"].ToString();
+                NodeAsSize.QuantityEditable.Checked = CswConvert.ToTristate( SizeObj["quantEditableChecked"] );
+                NodeAsSize.Dispensable.Checked = CswConvert.ToTristate( SizeObj["dispensibleChecked"] );
+                NodeAsSize.UnitCount.Value = CswConvert.ToInt32( SizeObj["unitCount"] );
+
+                JArray Row = new JArray();
+                Ret["row"] = Row;
+
+                Row.Add( "(New Size)" );
+                Row.Add( NodeAsSize.InitialQuantity.Gestalt );
+                Row.Add( NodeAsSize.Dispensable.Gestalt );
+                Row.Add( NodeAsSize.QuantityEditable.Gestalt );
+                Row.Add( NodeAsSize.CatalogNo.Gestalt );
+                Row.Add( NodeAsSize.UnitCount.Gestalt );
+
+                if( Tristate.False == NodeAsSize.QuantityEditable.Checked && false == CswTools.IsDouble( NodeAsSize.InitialQuantity.Quantity ) )
+                {
+                    SizeNode = null;//Case 27665 - instead of throwing a serverside warning, just throw out the size
+                }
+                else if( WriteNode )
+                {
+                    SizeNode.postChanges( true );
+                }
             }
+            else
+            {
+                SizeNode = null;
+            }
+
             return Ret;
         }
 
@@ -326,14 +339,12 @@ namespace ChemSW.Nbt.WebServices
                         string Tradename;
                         CswPrimaryKey SupplierId;
                         string PartNo;
-                        string PhysicalState;
-                        _getMaterialPropsFromObject( MaterialObj, out Tradename, out SupplierId, out PartNo, out PhysicalState );
+                        _getMaterialPropsFromObject( MaterialObj, out Tradename, out SupplierId, out PartNo );
 
                         CswNbtObjClassMaterial NodeAsMaterial = Ret;
                         NodeAsMaterial.TradeName.Text = Tradename;
                         NodeAsMaterial.Supplier.RelatedNodeId = SupplierId;
                         NodeAsMaterial.PartNumber.Text = PartNo;
-                        NodeAsMaterial.PhysicalState.Value = PhysicalState;
                         Ret.postChanges( true );
 
                         CswNbtActReceiving.commitDocumentNode( _CswNbtResources, NodeAsMaterial, MaterialObj );
@@ -380,6 +391,7 @@ namespace ChemSW.Nbt.WebServices
                         RetObj["createdmaterial"] = true;
 
                         /* 2. Add the sizes */
+                        SizesArray = _removeDuplicateSizes( SizesArray );
                         _addMaterialSizes( SizesArray, MaterialNode );
                         RetObj["sizescount"] = SizesArray.Count;
 
@@ -396,12 +408,39 @@ namespace ChemSW.Nbt.WebServices
             return RetObj;
         }
 
+        private JArray _removeDuplicateSizes( JArray SizesArray )
+        {
+            JArray UniqueSizesArray = new JArray();
+            foreach( JObject SizeObj in SizesArray )
+            {
+                bool addSizeToCompare = true;
+                if( SizeObj.HasValues )
+                {
+                    foreach( JObject UniqueSizeObj in UniqueSizesArray )
+                    {
+                        if( UniqueSizeObj["unitid"].ToString() == SizeObj["unitid"].ToString() &&
+                            UniqueSizeObj["quantity"].ToString() == SizeObj["quantity"].ToString() &&
+                            UniqueSizeObj["catalogNo"].ToString() == SizeObj["catalogNo"].ToString() )
+                        {
+                            addSizeToCompare = false;
+                        }
+                    }
+                    if( addSizeToCompare )
+                    {
+                        UniqueSizesArray.Add( SizeObj );
+                    }
+                }
+            }
+            return UniqueSizesArray;
+        }
+
         /// <summary>
         /// Make nodes for defined sizes, else remove undefinable sizes from the JArray
         /// </summary>
         private void _addMaterialSizes( JArray SizesArray, CswNbtNode MaterialNode )
         {
-            foreach( JObject SizeObj in SizesArray )
+            JArray ArrayToIterate = (JArray) SizesArray.DeepClone();
+            foreach( JObject SizeObj in ArrayToIterate )
             {
                 if( SizeObj.HasValues )
                 {
@@ -409,7 +448,7 @@ namespace ChemSW.Nbt.WebServices
                     Int32 SizeNtId = CswConvert.ToInt32( SizeObj["nodetypeid"] );
                     if( Int32.MinValue != SizeNtId )
                     {
-                        getSizeNodeProps( _CswNbtResources, _CswNbtStatisticsEvents, SizeNtId, SizeObj, true, out SizeNode );
+                        getSizeNodeProps( _CswNbtResources, _CswNbtStatisticsEvents, SizeNtId, SizeObj, false, out SizeNode );
                         if( null != SizeNode )
                         {
                             CswNbtObjClassSize NodeAsSize = (CswNbtObjClassSize) SizeNode;
@@ -436,7 +475,7 @@ namespace ChemSW.Nbt.WebServices
         public static JObject getMaterialUnitsOfMeasure( string MaterialId, CswNbtResources CswNbtResources )
         {
             JObject ret = new JObject();
-            string PhysicalState = CswNbtObjClassMaterial.PhysicalStates.NA;
+            string PhysicalState = CswNbtObjClassMaterial.PhysicalStates.Solid;
             CswNbtObjClassMaterial Material = CswNbtResources.Nodes[MaterialId];
             if( null != Material &&
                 false == string.IsNullOrEmpty( Material.PhysicalState.Value ) )
@@ -464,6 +503,28 @@ namespace ChemSW.Nbt.WebServices
                 ret[nodeAsUnitOfMeasure.NodeId.ToString()] = nodeAsUnitOfMeasure.Name.Gestalt;
             }
 
+            return ret;
+        }
+
+        public JObject getSizeLogicalsVisibility( int SizeNodeTypeId )
+        {
+            JObject ret = new JObject();
+            ret["showQuantityEditable"] = "false";
+            ret["showDispensable"] = "false";
+            CswNbtMetaDataNodeType SizeNt = _CswNbtResources.MetaData.getNodeType( SizeNodeTypeId );
+            if( null != SizeNt )
+            {
+                CswNbtMetaDataNodeTypeProp QuantityEditable = SizeNt.getNodeTypePropByObjectClassProp( CswNbtObjClassSize.PropertyName.QuantityEditable );
+                if( null != QuantityEditable.AddLayout )
+                {
+                    ret["showQuantityEditable"] = "true";
+                }
+                CswNbtMetaDataNodeTypeProp Dispensable = SizeNt.getNodeTypePropByObjectClassProp( CswNbtObjClassSize.PropertyName.Dispensable );
+                if( null != Dispensable.AddLayout )
+                {
+                    ret["showDispensable"] = "true";
+                }
+            }
             return ret;
         }
 

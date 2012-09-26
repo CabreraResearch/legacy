@@ -365,6 +365,8 @@ namespace ChemSW.Nbt.Actions
                         throw new CswDniException( ErrorType.Error, "No action has been defined for this button menu.", "Menu option named " + ButtonData.SelectedText + " has not implemented a button click event." );
                 }
 
+                _setRequestItemSizesView( RetAsRequestItem.Size.View.ViewId, Container.Material.RelatedNodeId );
+
                 RetAsRequestItem.Location.SelectedNodeId = SelectedLocationId;
                 RetAsRequestItem.Location.RefreshNodeName();
 
@@ -381,7 +383,7 @@ namespace ChemSW.Nbt.Actions
         /// <summary>
         /// Instance a new request item according to Object Class rules. Note: this does not get the properties.
         /// </summary>
-        public CswNbtObjClassRequestItem makeMaterialRequestItem( RequestItem Item, CswPrimaryKey NodeId, CswNbtMetaDataObjectClassProp OCP )
+        public CswNbtObjClassRequestItem makeMaterialRequestItem( RequestItem Item, CswPrimaryKey NodeId, CswNbtObjClass.NbtButtonData ButtonData )
         {
             CswNbtSdTabsAndProps PropsAction = new CswNbtSdTabsAndProps( _CswNbtResources );
 
@@ -393,6 +395,7 @@ namespace ChemSW.Nbt.Actions
             if( null != CurrentRequestNodeId() )
             {
                 RetAsRequestItem.Request.RelatedNodeId = CurrentRequestNodeId();
+                RetAsRequestItem.RequestBy.Value = ButtonData.SelectedText;
                 if( null != _CswNbtResources.CurrentNbtUser.DefaultLocationId )
                 {
                     CswNbtObjClassLocation DefaultAsLocation =
@@ -404,6 +407,7 @@ namespace ChemSW.Nbt.Actions
                         RetAsRequestItem.Location.CachedPath = DefaultAsLocation.Location.CachedPath;
                     }
                 }
+
                 switch( Item.Value )
                 {
                     case RequestItem.Material:
@@ -418,6 +422,7 @@ namespace ChemSW.Nbt.Actions
                         RetAsRequestItem.Container.setHidden( value: true, SaveToDb: true );
                         RetAsRequestItem.Container.setReadOnly( value: true, SaveToDb: true );
                         RetAsRequestItem.Type.Value = CswNbtObjClassRequestItem.Types.Request;
+                        _setRequestItemSizesView( RetAsRequestItem.Size.View.ViewId, RetAsRequestItem.Material.RelatedNodeId );
                         break;
                 }
             }
@@ -436,6 +441,21 @@ namespace ChemSW.Nbt.Actions
         }
 
         #endregion Public methods and props
+
+        #region Private helper functions
+
+        private void _setRequestItemSizesView( CswNbtViewId SizeViewId, CswPrimaryKey SizeMaterialId )
+        {
+            CswNbtMetaDataObjectClass SizeOc = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.SizeClass );
+            CswNbtMetaDataObjectClassProp SizeMaterialOcp = SizeOc.getObjectClassProp( CswNbtObjClassSize.PropertyName.Material );
+            CswNbtView SizeView = _CswNbtResources.ViewSelect.restoreView( SizeViewId );
+            SizeView.Root.ChildRelationships.Clear();
+            CswNbtViewRelationship SizeVr = SizeView.AddViewRelationship( SizeOc, false );
+            SizeView.AddViewPropertyAndFilter( SizeVr, SizeMaterialOcp, SizeMaterialId.PrimaryKey.ToString(), SubFieldName: CswNbtSubField.SubFieldName.NodeID );
+            SizeView.save();
+        }
+
+        #endregion
     }
 
 

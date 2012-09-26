@@ -155,7 +155,7 @@ namespace ChemSW.Nbt.ObjClasses
                 } // if(CurrentProp.WasModified)
             } // foreach (CswNbtNodePropWrapper CurrentProp in _CswNbtNode.Properties)
 
-            if( CompoundUniqueProps.Count > 0 )
+            if( CompoundUniqueProps.Count > 0  && NodeId != null )
             {
 
                 if( false == IsCopy && false == OverrideUniqueValidation )

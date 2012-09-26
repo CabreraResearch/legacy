@@ -78,7 +78,7 @@ namespace ChemSW.Nbt.WebServices
                             CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( CswConvert.ToInt32( WelcomeRow["nodetypeid"] ) );
                             if( NodeType != null )
                             {
-                                bool CanAdd = NodeType.getObjectClass().CanAdd && _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Create, NodeType );
+                                bool CanAdd = NodeType.getObjectClass().CanAdd && _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Create, NodeType );
                                 if( CanAdd )
                                 {
                                     if( WelcomeRow["displaytext"].ToString() != string.Empty )
@@ -156,7 +156,9 @@ namespace ChemSW.Nbt.WebServices
                             if( null != ThisReportNode )
                             {
                                 LinkText = WelcomeRow["displaytext"].ToString() != string.Empty ? WelcomeRow["displaytext"].ToString() : ThisReportNode.NodeName;
-                                Ret[WelcomeId]["reportid"] = WelcomeRow["reportid"].ToString();
+                                int idAsInt = CswConvert.ToInt32( WelcomeRow["reportid"] );
+                                CswPrimaryKey reportPk = new CswPrimaryKey( "nodes", idAsInt );
+                                Ret[WelcomeId]["reportid"] = reportPk.ToString();
                                 Ret[WelcomeId]["type"] = "report";
                                 Ret[WelcomeId]["buttonicon"] = CswNbtMetaDataObjectClass.IconPrefix100 + ThisReportNode.getNodeType().IconFileName;
                             }

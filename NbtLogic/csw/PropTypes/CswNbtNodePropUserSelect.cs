@@ -79,7 +79,7 @@ namespace ChemSW.Nbt.PropTypes
                 foreach( Int32 UserId in _SelectedUserIds.ToIntCollection() )
                 {
                     bool Remove = true;
-                    if( Int32.MinValue != UserId );
+                    if( Int32.MinValue != UserId )
                     {
                         CswPrimaryKey pk = new CswPrimaryKey( "nodes", UserId );
                         CswNbtObjClassUser node = _CswNbtResources.Nodes.GetNode( pk );
@@ -313,13 +313,13 @@ namespace ChemSW.Nbt.PropTypes
 
             if( null != JObject["options"] )
             {
-                JArray OptionsObj = (JArray) JObject["options"];
+                JArray OptionsObj = CswConvert.ToJArray( JObject["options"] );
 
                 foreach( JObject UserObj in OptionsObj )
                 {
                     string Key = CswConvert.ToString( UserObj[KeyColumn] );
-                    JArray Values = (JArray) UserObj["values"];
-                    bool Value = CswConvert.ToBoolean( Values[0] );
+                    JArray Values = CswConvert.ToJArray( UserObj["values"] );
+                    bool Value = null != Values && CswConvert.ToBoolean( Values.First );
                     if( Value )
                     {
                         NewSelectedUserIds.Add( Key );

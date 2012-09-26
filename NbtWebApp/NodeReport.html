@@ -26,12 +26,15 @@
                 if (Csw.queryString) {
                     var qs = Csw.queryString();
                     var parent = Csw.literals.factory($('#ReportContent'));
-                    //$('#ReportContent').CswNodeTabs({
                     Csw.layouts.tabsAndProps(parent, {
                         ID: 'nodereporttabs',
-                        nodeids: [qs.nodeid],
-                        nodekeys: [qs.cswnbtnodekey],
-                        EditMode: Csw.enums.editMode.PrintReport
+                        globalState: {
+                            nodeids: [qs.nodeid],
+                            nodekeys: [qs.cswnbtnodekey]
+                        },
+                        tabState: {
+                            EditMode: Csw.enums.editMode.PrintReport
+                        }
                     });
                 }
             };
