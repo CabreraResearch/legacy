@@ -73,6 +73,17 @@ namespace ChemSW.Nbt.Schema
                 _CswNbtSchemaModTrnsctn.MetaData.DeleteObjectClassProp( ControlTypeOcp, DeleteNodeTypeProps: true );
             }
 
+            #region case 27720 
+            
+            // remove Notification nodes, nodetypes, and object class
+            CswNbtMetaDataObjectClass NotificationOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( "NotificationClass" );
+            if( null != NotificationOC )
+            {
+                _CswNbtSchemaModTrnsctn.MetaData.DeleteObjectClass( NotificationOC );
+            }
+
+            #endregion case 27720
+            
             #endregion SEBASTIAN
 
         }//Update()
