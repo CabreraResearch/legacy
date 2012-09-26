@@ -34,7 +34,7 @@ namespace ChemSW.Nbt.Schema
             nodetype_propsTU.update( nodetype_props );
 
             //delete the length column
-            _CswNbtSchemaModTrnsctn.execArbitraryPlatformNeutralSql( "ALTER TABLE nodetype_props DROP COLUMN length" );
+            _CswNbtSchemaModTrnsctn.dropColumn( "nodetype_props", "length" );
 
         }//Update()
 
