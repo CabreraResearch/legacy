@@ -34,7 +34,7 @@ namespace NbtWebApp.WebSvc.Session
             var InitDriverType = new CswWebSvcDriver<CswWebSvcReturn, CswNbtSessionAuthenticateData.Authentication.Request>(
                 CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, Request ),
                 ReturnObj: Ret,
-                WebSvcMethodPtr: null,
+                WebSvcMethodPtr: CswNbtWebServiceSession.doNothing,
                 ParamObj: null
                 );
 
