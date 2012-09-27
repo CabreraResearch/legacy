@@ -98,9 +98,9 @@ namespace ChemSW.Nbt.PropTypes
         }
 
         /// <summary>
-        /// When set to true, minValue and MaxValue are not included in the number range.
+        /// When set to true, the MinValue and MaxValue limits are not included in the allowed number range.
         /// </summary>
-        public bool IsOpenSet
+        public bool ExcludeRangeLimits
         {
             get
             {
@@ -134,7 +134,7 @@ namespace ChemSW.Nbt.PropTypes
             ParentObject["minvalue"] = MinValue.ToString();
             ParentObject["maxvalue"] = MaxValue.ToString();
             ParentObject["precision"] = Precision.ToString();
-            ParentObject["isOpenSet"] = IsOpenSet.ToString();
+            ParentObject["excludeRangeLimits"] = ExcludeRangeLimits.ToString();
         }
 
         public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
