@@ -13,6 +13,7 @@ namespace ChemSW.Nbt.ObjClasses
     /// </summary>
     public class CswNbtObjClassInspectionDesign : CswNbtObjClass, ICswNbtPropertySetGeneratorTarget
     {
+        #region Enums
         public sealed class PropertyName
         {
             /// <summary>
@@ -276,6 +277,9 @@ namespace ChemSW.Nbt.ObjClasses
                 ret = TargetStatus.Null;
             return ret;
         }
+        #endregion Enums
+
+        #region PropertySet
 
         //ICswNbtPropertySetRuleGeneratorTarget
         /// <summary>
@@ -310,6 +314,70 @@ namespace ChemSW.Nbt.ObjClasses
             get { return PropertyName.Owner; }
         }
 
+        #endregion PropertySet
+
+        private class InspectionState
+        {
+            private CswNbtPropEnmrtrFiltered _QuestionsFlt;
+
+            public InspectionState( CswNbtObjClassInspectionDesign Design, bool IsAdmin )
+            {
+                Deficient = false;
+                AllAnswered = true;
+                AllAnsweredInTime = true;
+                UnAnsweredQuestions = new CswCommaDelimitedString();
+
+                if( null != Design && null != Design.Node )
+                {
+                    _QuestionsFlt = Design.Node.Properties[(CswNbtMetaDataFieldType.NbtFieldType) CswNbtMetaDataFieldType.NbtFieldType.Question];
+                    foreach( CswNbtNodePropWrapper PropWrapper in _QuestionsFlt )
+                    {
+                        CswNbtNodePropQuestion QuestionProp = PropWrapper;
+                        Deficient = ( Deficient || false == QuestionProp.IsCompliant );
+                        AllAnswered = ( false == Deficient && AllAnswered && false == string.IsNullOrEmpty( QuestionProp.Answer.Trim() ) );
+                        AllAnsweredInTime = ( AllAnswered &&
+                                              AllAnsweredInTime &&
+                                              DateTime.MinValue != QuestionProp.DateAnswered.Date &&
+                                              QuestionProp.DateAnswered.Date <= Design.Date.DateTimeValue );
+                        if( string.IsNullOrEmpty( QuestionProp.Answer.Trim() ) )
+                        {
+                            UnAnsweredQuestions.Add( QuestionProp.Question );
+                        }
+
+                        // case 25035
+                        if( Design.Status.Value == InspectionStatus.ActionRequired )
+                        {
+                            QuestionProp.IsActionRequired = true;
+                        }
+                        // case 26705
+                        QuestionProp.SetOnPropChange( Design.onQuestionChange );
+
+                    }
+
+                    Design.SetPreferred.setReadOnly( value: AllAnswered, SaveToDb: true );
+                    // case 26584
+                    if( false == IsAdmin )
+                    {
+                        if( Design.Status.Value == InspectionStatus.Cancelled ||
+                            Design.Status.Value == InspectionStatus.Completed ||
+                            Design.Status.Value == InspectionStatus.CompletedLate ||
+                            Design.Status.Value == InspectionStatus.Missed )
+                        {
+                            Design.Node.setReadOnly( value: true, SaveToDb: false );
+                        }
+                        Design.Status.setReadOnly( value: true, SaveToDb: false );
+                    }
+                }
+            }
+
+            public bool Deficient;
+            public bool AllAnswered;
+            public bool AllAnsweredInTime;
+            public CswCommaDelimitedString UnAnsweredQuestions;
+        }
+
+        private InspectionState _InspectionState;
+
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
 
         /// <summary>
@@ -319,6 +387,7 @@ namespace ChemSW.Nbt.ObjClasses
             : base( CswNbtResources, Node )
         {
             _CswNbtObjClassDefault = new CswNbtObjClassDefault( _CswNbtResources, Node );
+            _InspectionState = new InspectionState( this, _CswNbtResources.CurrentNbtUser.IsAdministrator() );
         }
 
         //ctor()
@@ -411,41 +480,8 @@ namespace ChemSW.Nbt.ObjClasses
         {
             Generator.SetOnPropChange( OnGeneratorChange );
             IsFuture.SetOnPropChange( OnIsFutureChange );
-            CswNbtPropEnmrtrFiltered QuestionsFlt = this.Node.Properties[(CswNbtMetaDataFieldType.NbtFieldType) CswNbtMetaDataFieldType.NbtFieldType.Question];
-            QuestionsFlt.Reset();
-            bool AllAnswered = true;
-            foreach( CswNbtNodePropWrapper Prop in QuestionsFlt )
-            {
-                CswNbtNodePropQuestion QuestionProp = Prop.AsQuestion;
-
-                // case 25035
-                if( this.Status.Value == InspectionStatus.ActionRequired )
-                {
-                    QuestionProp.IsActionRequired = true;
-                }
-
-                AllAnswered = ( false == string.IsNullOrEmpty( QuestionProp.Answer ) ) && AllAnswered;
-
-                // case 26705
-                QuestionProp.SetOnPropChange( onQuestionChange );
-            }
-
-            SetPreferred.setReadOnly( value: AllAnswered, SaveToDb: true );
-
+            Status.SetOnPropChange( OnStatusPropChange );
             _CswNbtObjClassDefault.afterPopulateProps();
-
-            // case 26584
-            if( false == _CswNbtResources.CurrentNbtUser.IsAdministrator() )
-            {
-                if( this.Status.Value == InspectionStatus.Cancelled ||
-                    this.Status.Value == InspectionStatus.Completed ||
-                    this.Status.Value == InspectionStatus.CompletedLate ||
-                    this.Status.Value == InspectionStatus.Missed )
-                {
-                    _CswNbtNode.setReadOnly( value: true, SaveToDb: false );
-                }
-                this.Status.setReadOnly( value: true, SaveToDb: false );
-            }
         }
 
         //afterPopulateProps()
@@ -475,80 +511,32 @@ namespace ChemSW.Nbt.ObjClasses
                 switch( ButtonOCP.PropName )
                 {
                     case PropertyName.Finish:
-                        bool _Deficient = false;
-                        bool _allAnswered = true;
-                        bool _allAnsweredinTime = true;
 
-                        QuestionsFlt = Node.Properties[(CswNbtMetaDataFieldType.NbtFieldType) CswNbtMetaDataFieldType.NbtFieldType.Question];
-                        QuestionsFlt.Reset();
-                        CswCommaDelimitedString UnansweredQuestions = new CswCommaDelimitedString();
-                        foreach( CswNbtNodePropWrapper Prop in QuestionsFlt )
-                        {
-                            CswNbtNodePropQuestion QuestionProp = Prop;
-                            _Deficient = ( _Deficient || !QuestionProp.IsCompliant );
-                            if( QuestionProp.Answer.Trim() == string.Empty )
-                            {
-                                UnansweredQuestions.Add( Prop.NodeTypeProp.FullQuestionNo );
-                                _allAnswered = false;
-                            }
-                            _allAnsweredinTime = ( _allAnsweredinTime &&
-                                                   DateTime.MinValue != QuestionProp.DateAnswered.Date &&
-                                                   QuestionProp.DateAnswered.Date <= this.Date.DateTimeValue );
-                        }
 
-                        if( _allAnswered )
+                        if( _InspectionState.AllAnswered )
                         {
-                            if( _Deficient )
+                            if( _InspectionState.Deficient )
                             {
                                 ButtonData.Message = "Inspection is deficient and requires further action.";
                                 this.Status.Value = InspectionStatus.ActionRequired;
                             }
                             else
                             {
-                                string StatusValue = _allAnsweredinTime ? InspectionStatus.Completed : InspectionStatus.CompletedLate;
+                                string StatusValue = _InspectionState.AllAnsweredInTime ? InspectionStatus.Completed : InspectionStatus.CompletedLate;
                                 ButtonData.Message = "Inspection marked " + StatusValue + ".";
                                 this.Status.Value = StatusValue;
                             }
-                            if( true == this.InspectionDate.Empty )
-                            {
-                                this.InspectionDate.DateTimeValue = DateTime.Now;
-                                this.Inspector.RelatedNodeId = _CswNbtResources.CurrentNbtUser.UserId;
-                            }
-                            CswNbtNode ParentNode = _CswNbtResources.Nodes.GetNode( this.Parent.RelatedNodeId );
-                            if( ParentNode != null )
-                            {
-                                ICswNbtPropertySetInspectionParent Parent =
-                                    CswNbtPropSetCaster.AsPropertySetInspectionParent( ParentNode );
-                                if( false == _Deficient ) //case 25041
-                                {
-                                    _Deficient = areMoreActionsRequired();
-                                }
-                                Finish.setReadOnly( value: true, SaveToDb: true );
-                                Finish.setHidden( value: true, SaveToDb: true );
-                                Cancel.setReadOnly( value: true, SaveToDb: true );
-                                Cancel.setHidden( value: true, SaveToDb: true );
-                                SetPreferred.setReadOnly( value: true, SaveToDb: true );
-                                SetPreferred.setHidden( value: true, SaveToDb: true );
-
-                                Parent.Status.Value = _Deficient
-                                                          ? TargetStatusAsString( TargetStatus.Deficient )
-                                                          : TargetStatusAsString( TargetStatus.OK );
-                                //Parent.LastInspectionDate.DateTimeValue = DateTime.Now;
-                                ParentNode.postChanges( false );
-                            }
-
                         } // if( _allAnswered )
                         else
                         {
                             ButtonData.Message =
                                 "Inspection can not be finished until all questions are answered.  Questions remaining: " +
-                                UnansweredQuestions.ToString();
+                                _InspectionState.UnAnsweredQuestions.ToString();
                         }
                         break;
 
                     case PropertyName.Cancel:
                         ButtonData.Message = "Inspection has been cancelled.";
-
                         this.Status.Value = InspectionStatus.Cancelled;
                         break;
 
@@ -726,6 +714,16 @@ namespace ChemSW.Nbt.ObjClasses
             get { return ( _CswNbtNode.Properties[GeneratorTargetParentPropertyName] ); }
         }
 
+        private void _toggleButtons( bool Disabled )
+        {
+            Finish.setReadOnly( value: Disabled, SaveToDb: true );
+            Finish.setHidden( value: Disabled, SaveToDb: true );
+            Cancel.setReadOnly( value: Disabled, SaveToDb: true );
+            Cancel.setHidden( value: Disabled, SaveToDb: true );
+            SetPreferred.setReadOnly( value: Disabled, SaveToDb: true );
+            SetPreferred.setHidden( value: Disabled, SaveToDb: true );
+        }
+
         /// <summary>
         /// Actual status of Inspection
         /// </summary>
@@ -737,19 +735,41 @@ namespace ChemSW.Nbt.ObjClasses
         {
             switch( Status.Value )
             {
-                case "Cancelled":
-                    Finish.setReadOnly( value: true, SaveToDb: true );
-                    Finish.setHidden( value: true, SaveToDb: true );
-                    Cancel.setReadOnly( value: true, SaveToDb: true );
-                    Cancel.setHidden( value: true, SaveToDb: true );
-                    SetPreferred.setReadOnly( value: true, SaveToDb: true );
-                    SetPreferred.setHidden( value: true, SaveToDb: true );
+                case InspectionStatus.Completed:
+                case InspectionStatus.CompletedLate:
+                    if( false == _InspectionState.AllAnswered )
+                    {
+                        Status.Value = InspectionStatus.ActionRequired;
+                    }
+                    else
+                    {
+                        if( true == this.InspectionDate.Empty )
+                        {
+                            this.InspectionDate.DateTimeValue = DateTime.Now;
+                            this.Inspector.RelatedNodeId = _CswNbtResources.CurrentNbtUser.UserId;
+                        }
+                        CswNbtNode ParentNode = _CswNbtResources.Nodes.GetNode( this.Parent.RelatedNodeId );
+                        if( ParentNode != null )
+                        {
+                            ICswNbtPropertySetInspectionParent Parent = CswNbtPropSetCaster.AsPropertySetInspectionParent( ParentNode );
+                            if( false == _InspectionState.Deficient ) //case 25041
+                            {
+                                _InspectionState.Deficient = areMoreActionsRequired();
+                            }
+                            _toggleButtons( Disabled: true );
+
+                            Parent.Status.Value = _InspectionState.Deficient ? TargetStatusAsString( TargetStatus.Deficient ) : TargetStatusAsString( TargetStatus.OK );
+                            //Parent.LastInspectionDate.DateTimeValue = DateTime.Now;
+                            ParentNode.postChanges( false );
+                        }
+                    }
+                    break;
+                case InspectionStatus.Cancelled:
+                    _toggleButtons( Disabled: true );
                     break;
 
             }
         }
-
-
 
 
         /// <summary>
