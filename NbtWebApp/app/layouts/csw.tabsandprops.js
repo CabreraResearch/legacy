@@ -495,10 +495,14 @@
                             /* Case 24437 */
                         var editLayoutOpt = {
                             ID: cswPrivate.ID,
-                            nodeids: cswPrivate.globalState.nodeids,
-                            nodekeys: cswPrivate.globalState.nodekeys,
-                            tabid: cswPrivate.tabState.tabid,
-                            nodetypeid: cswPrivate.tabState.nodetypeid,
+                            globalState: {
+                                nodeids: cswPrivate.globalState.nodeids,
+                                nodekeys: cswPrivate.globalState.nodekeys,
+                                nodetypeid: cswPrivate.tabState.nodetypeid
+                            },
+                            tabState: {
+                                tabid: cswPrivate.tabState.tabid
+                            },
                             Refresh: function () {
                                 Csw.tryExec(cswPrivate.Refresh);
                                 cswPrivate.tabState.Config = false;
