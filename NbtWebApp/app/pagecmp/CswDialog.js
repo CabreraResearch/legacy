@@ -421,7 +421,7 @@
                 },
                 Refresh: null
             };
-            if(options) $.extend(cswPrivate, options);
+            if(options) Csw.extend(cswPrivate, options);
 
             cswPrivate.ShowAsReport = false;
             cswPrivate.tabState.Config = true;
