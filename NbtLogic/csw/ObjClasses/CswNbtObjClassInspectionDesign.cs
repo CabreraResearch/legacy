@@ -330,6 +330,7 @@ namespace ChemSW.Nbt.ObjClasses
                 if( null != Design && null != Design.Node )
                 {
                     _QuestionsFlt = Design.Node.Properties[(CswNbtMetaDataFieldType.NbtFieldType) CswNbtMetaDataFieldType.NbtFieldType.Question];
+                    IsInstanced = true;
                     foreach( CswNbtNodePropWrapper PropWrapper in _QuestionsFlt )
                     {
                         CswNbtNodePropQuestion QuestionProp = PropWrapper;
@@ -345,10 +346,8 @@ namespace ChemSW.Nbt.ObjClasses
                         }
 
                         // case 25035
-                        if( Design.Status.Value == InspectionStatus.ActionRequired )
-                        {
-                            QuestionProp.IsActionRequired = true;
-                        }
+                        QuestionProp.IsActionRequired = ( Design.Status.Value == InspectionStatus.ActionRequired );
+
                         // case 26705
                         QuestionProp.SetOnPropChange( Design.onQuestionChange );
 
@@ -356,20 +355,14 @@ namespace ChemSW.Nbt.ObjClasses
 
                     Design.SetPreferred.setReadOnly( value: AllAnswered, SaveToDb: true );
                     // case 26584
-                    if( false == IsAdmin )
+                    if( IsAdmin )
                     {
-                        if( Design.Status.Value == InspectionStatus.Cancelled ||
-                            Design.Status.Value == InspectionStatus.Completed ||
-                            Design.Status.Value == InspectionStatus.CompletedLate ||
-                            Design.Status.Value == InspectionStatus.Missed )
-                        {
-                            Design.Node.setReadOnly( value: true, SaveToDb: false );
-                        }
-                        Design.Status.setReadOnly( value: true, SaveToDb: false );
+                        Design.Status.setReadOnly( value: false, SaveToDb: false );
                     }
                 }
             }
 
+            public readonly bool IsInstanced = false;
             public bool Deficient;
             public bool AllAnswered;
             public bool AllAnsweredInTime;
@@ -478,6 +471,10 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void afterPopulateProps()
         {
+            if( false == _InspectionState.IsInstanced )
+            {
+                _InspectionState = new InspectionState( this, _CswNbtResources.CurrentNbtUser.IsAdministrator() );
+            }
             Generator.SetOnPropChange( OnGeneratorChange );
             IsFuture.SetOnPropChange( OnIsFutureChange );
             Status.SetOnPropChange( OnStatusPropChange );
@@ -507,12 +504,10 @@ namespace ChemSW.Nbt.ObjClasses
             if( null != ButtonData && null != ButtonData.NodeTypeProp )
             {
                 CswNbtMetaDataObjectClassProp ButtonOCP = ButtonData.NodeTypeProp.getObjectClassProp();
-                CswNbtPropEnmrtrFiltered QuestionsFlt;
+
                 switch( ButtonOCP.PropName )
                 {
                     case PropertyName.Finish:
-
-
                         if( _InspectionState.AllAnswered )
                         {
                             if( _InspectionState.Deficient )
@@ -541,6 +536,7 @@ namespace ChemSW.Nbt.ObjClasses
                         break;
 
                     case PropertyName.SetPreferred:
+                        CswNbtPropEnmrtrFiltered QuestionsFlt;
                         QuestionsFlt = Node.Properties[(CswNbtMetaDataFieldType.NbtFieldType) CswNbtMetaDataFieldType.NbtFieldType.Question];
                         QuestionsFlt.Reset();
                         foreach( CswNbtNodePropWrapper Prop in QuestionsFlt )
@@ -638,43 +634,27 @@ namespace ChemSW.Nbt.ObjClasses
         /// Inspection target == owner == parent. 
         /// In FE, target == Inspection Target
         /// </summary>
-        public CswNbtNodePropRelationship Target
-        {
-            get { return ( _CswNbtNode.Properties[PropertyName.Target] ); }
-        }
+        public CswNbtNodePropRelationship Target { get { return ( _CswNbtNode.Properties[PropertyName.Target] ); } }
 
         /// <summary>
         /// Inspection name
         /// </summary>
-        public CswNbtNodePropText Name
-        {
-            get { return ( _CswNbtNode.Properties[PropertyName.Name] ); }
-        }
+        public CswNbtNodePropText Name { get { return ( _CswNbtNode.Properties[PropertyName.Name] ); } }
 
         /// <summary>
         /// Due Date of inspection
         /// </summary>
-        public CswNbtNodePropDateTime Date
-        {
-            get { return ( _CswNbtNode.Properties[PropertyName.Date] ); }
-        }
+        public CswNbtNodePropDateTime Date { get { return ( _CswNbtNode.Properties[PropertyName.Date] ); } }
 
         /// <summary>
         /// Date the inspection was generated
         /// </summary>
-        public CswNbtNodePropDateTime GeneratedDate
-        {
-            get { return ( _CswNbtNode.Properties[GeneratorTargetGeneratedDatePropertyName] ); }
-        }
+        public CswNbtNodePropDateTime GeneratedDate { get { return ( _CswNbtNode.Properties[GeneratorTargetGeneratedDatePropertyName] ); } }
 
         /// <summary>
         /// Inspection is preemptively generated for future date
         /// </summary>
-        public CswNbtNodePropLogical IsFuture
-        {
-            get { return ( _CswNbtNode.Properties[PropertyName.IsFuture] ); }
-        }
-
+        public CswNbtNodePropLogical IsFuture { get { return ( _CswNbtNode.Properties[PropertyName.IsFuture] ); } }
         private void OnIsFutureChange( CswNbtNodeProp NodeProp )
         {
             if( false == _genFutureNodesHasRun ) //redundant--for readability
@@ -684,11 +664,7 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
-        public CswNbtNodePropRelationship Generator
-        {
-            get { return ( _CswNbtNode.Properties[PropertyName.Generator] ); }
-        }
-
+        public CswNbtNodePropRelationship Generator { get { return ( _CswNbtNode.Properties[PropertyName.Generator] ); } }
         private void OnGeneratorChange( CswNbtNodeProp NodeProp )
         {
             if( false == _genFutureNodesHasRun ) //redundant--for readability
@@ -701,18 +677,12 @@ namespace ChemSW.Nbt.ObjClasses
         /// <summary>
         /// In this context owner == parent
         /// </summary>
-        public CswNbtNodePropRelationship Owner
-        {
-            get { return ( _CswNbtNode.Properties[PropertyName.Owner] ); }
-        }
+        public CswNbtNodePropRelationship Owner { get { return ( _CswNbtNode.Properties[PropertyName.Owner] ); } }
 
         /// <summary>
         /// In this context parent == owner
         /// </summary>
-        public CswNbtNodePropRelationship Parent
-        {
-            get { return ( _CswNbtNode.Properties[GeneratorTargetParentPropertyName] ); }
-        }
+        public CswNbtNodePropRelationship Parent { get { return ( _CswNbtNode.Properties[GeneratorTargetParentPropertyName] ); } }
 
         private void _toggleButtons( bool Disabled )
         {
@@ -762,10 +732,14 @@ namespace ChemSW.Nbt.ObjClasses
                             //Parent.LastInspectionDate.DateTimeValue = DateTime.Now;
                             ParentNode.postChanges( false );
                         }
+                        Node.setReadOnly( value: true, SaveToDb: true );
                     }
                     break;
+
                 case InspectionStatus.Cancelled:
+                case InspectionStatus.Missed:
                     _toggleButtons( Disabled: true );
+                    Node.setReadOnly( value: true, SaveToDb: true );
                     break;
 
             }
@@ -775,79 +749,37 @@ namespace ChemSW.Nbt.ObjClasses
         /// <summary>
         /// Finish button
         /// </summary>
-        public CswNbtNodePropButton Finish
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[PropertyName.Finish] );
-            }
-        }
+        public CswNbtNodePropButton Finish { get { return ( _CswNbtNode.Properties[PropertyName.Finish] ); } }
 
         /// <summary>
         /// Cancel button
         /// </summary>
-        public CswNbtNodePropButton Cancel
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[PropertyName.Cancel] );
-            }
-        }
+        public CswNbtNodePropButton Cancel { get { return ( _CswNbtNode.Properties[PropertyName.Cancel] ); } }
 
         /// <summary>
         /// Optional reason for cancelling inspection.
         /// </summary>
-        public CswNbtNodePropMemo CancelReason
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[PropertyName.CancelReason] );
-            }
-        }
+        public CswNbtNodePropMemo CancelReason { get { return ( _CswNbtNode.Properties[PropertyName.CancelReason] ); } }
 
         /// <summary>
         /// Location of Inspection's Target
         /// </summary>
-        public CswNbtNodePropPropertyReference Location
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[PropertyName.Location] );
-            }
-        }
+        public CswNbtNodePropPropertyReference Location { get { return ( _CswNbtNode.Properties[PropertyName.Location] ); } }
 
         /// <summary>
         /// Nodetype Version of the Inspection
         /// </summary>
-        public CswNbtNodePropText Version
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[PropertyName.Version] );
-            }
-        }
+        public CswNbtNodePropText Version { get { return ( _CswNbtNode.Properties[PropertyName.Version] ); } }
 
         /// <summary>
         /// Date the inspection switched to action required or completed...
         /// </summary>
-        public CswNbtNodePropDateTime InspectionDate
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[PropertyName.InspectionDate] );
-            }
-        }
+        public CswNbtNodePropDateTime InspectionDate { get { return ( _CswNbtNode.Properties[PropertyName.InspectionDate] ); } }
 
         /// <summary>
         /// inspector is a user
         /// </summary>
-        public CswNbtNodePropRelationship Inspector
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[PropertyName.Inspector] );
-            }
-        }
+        public CswNbtNodePropRelationship Inspector { get { return ( _CswNbtNode.Properties[PropertyName.Inspector] ); } }
 
         public CswNbtNodePropButton SetPreferred { get { return _CswNbtNode.Properties[PropertyName.SetPreferred]; } }
 
