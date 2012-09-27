@@ -11,7 +11,7 @@ using NbtWebApp.WebSvc.Returns;
 namespace NbtWebApp.WebSvc.Session
 {
     /// <summary>
-    /// WCF Web Methods for View operations
+    /// WCF Web Methods for Session operations
     /// </summary>
     [ServiceBehavior( IncludeExceptionDetailInFaults = true )]
     [ServiceContract]
