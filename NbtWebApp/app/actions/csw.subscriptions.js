@@ -18,13 +18,21 @@
 
                 Csw.ajaxWcf.get({
                     urlMethod: 'Reports/getSubscriptions',
-                    success: function (data) {
+                    success: function (ajaxdata) {
                         var row = 1,
                             atLeastOne = false;
 
-                        cswParent.br();
+                        cswPrivate.data = {
+                            Subscriptions: [{
+                                Name: '',
+                                NodeId: '',
+                                Subscribed: '',
+                                Modified: ''   
+                            }]
+                        };
+                        Csw.extend(cswPrivate.data, ajaxdata);
 
-                        cswPrivate.data = data;
+                        cswParent.br();
 
                         cswPrivate.descriptionSpan = cswParent.span({ text: "Subscribe to Mail Reports:" }).css({ fontWeight: 'bold' });
                         cswPrivate.table = cswParent.table({
