@@ -59,7 +59,7 @@
                             value: (false === cswPublic.data.isMulti()) ? Csw.string(cswPrivate.propVals.value).trim() : Csw.enums.multiEditDefaultValue,
                             MinValue: Csw.number(cswPrivate.propVals.minvalue),
                             MaxValue: Csw.number(cswPrivate.propVals.maxvalue),
-                            isOpenSet: Csw.bool(cswPrivate.propVals.isOpenSet),
+                            excludeRangeLimits: Csw.bool(cswPrivate.propVals.excludeRangeLimits),
                             ceilingVal: Csw.number(cswPrivate.ceilingVal),
                             Precision: 6, //case 24646 - precision is being handled in the validator below, so we don't want to use the one in numberTextBox.
                             ReadOnly: Csw.bool(cswPublic.data.isReadOnly()),

@@ -29,7 +29,7 @@
                     qtyWidth: '',
                     qtyReadonly: false,
                     unitReadonly: false,
-                    isOpenSet: false
+                    excludeRangeLimits: false
                 };
                 if (options) Csw.extend(cswPrivate, options);
 
@@ -68,7 +68,7 @@
                         value: Csw.string(cswPrivate.value).trim(),
                         MinValue: Csw.number(cswPrivate.minvalue),
                         MaxValue: Csw.number(cswPrivate.maxvalue),
-                        isOpenSet: Csw.bool(cswPrivate.isOpenSet),
+                        excludeRangeLimits: Csw.bool(cswPrivate.excludeRangeLimits),
                         ceilingVal: Csw.number(cswPrivate.ceilingVal),
                         Precision: 6, //case 24646 - precision is being handled in the validator below, so we don't want to use the one in numberTextBox.
                         ReadOnly: Csw.bool(cswPrivate.qtyReadonly),
