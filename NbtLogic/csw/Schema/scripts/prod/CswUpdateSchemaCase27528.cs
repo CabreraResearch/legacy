@@ -30,7 +30,8 @@ namespace ChemSW.Nbt.Schema
                 {
                     foreach( CswNbtObjClassInventoryGroupPermission InvGrpPermNode in InvGrpPermOc.getNodes( false, false ) )
                     {
-                        if( null != CISProInventoryGroup && InvGrpPermNode.InventoryGroup.RelatedNodeId == CISProInventoryGroup.NodeId )
+                        if( ( null != CISProInventoryGroup && InvGrpPermNode.InventoryGroup.RelatedNodeId == CISProInventoryGroup.NodeId ) ||
+                            InvGrpPermNode.InventoryGroup.Gestalt == "CISPro" )
                         {
                             InvGrpPermNode.InventoryGroup.RelatedNodeId = DefaultInventoryGroup.NodeId;
                             InvGrpPermNode.WorkUnit.RelatedNodeId = DefaultWorkUnit.NodeId;
@@ -46,11 +47,11 @@ namespace ChemSW.Nbt.Schema
                         }
                     }
 
-                    if( false == MakeAdminNode )
+                    if( MakeAdminNode )
                     {
                         _createInventoryGroupPermission( InvGrpPermNt.NodeTypeId, AdminRole.NodeId, DefaultInventoryGroup.NodeId, DefaultWorkUnit.NodeId );
                     }
-                    if( false == MakeChemSWAdminNode )
+                    if( MakeChemSWAdminNode )
                     {
                         _createInventoryGroupPermission( InvGrpPermNt.NodeTypeId, ChemSWAdminRole.NodeId, DefaultInventoryGroup.NodeId, DefaultWorkUnit.NodeId );
                     }
@@ -113,7 +114,7 @@ namespace ChemSW.Nbt.Schema
 
         private void _createInventoryGroupPermission( int NodeTypeId, CswPrimaryKey RoleId, CswPrimaryKey InvGroupId, CswPrimaryKey WorkUnitId )
         {
-            CswNbtObjClassInventoryGroupPermission InvGrpPermNode = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode );
+            CswNbtObjClassInventoryGroupPermission InvGrpPermNode = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing );
 
             InvGrpPermNode.InventoryGroup.RelatedNodeId = InvGroupId;
             InvGrpPermNode.Role.RelatedNodeId = RoleId;
