@@ -53,6 +53,9 @@
 
                     function isChecked(day) {
                         var thisDay = cswPrivate.weekDayDef[day - 1];
+                        if (weekdays.length === 0) {
+                            weekdays.push(thisDay);
+                        }                        
                         return false === cswPrivate.Multi && Csw.contains(weekdays, thisDay);
                     }
 
@@ -73,22 +76,7 @@
                         cswPublic.rateInterval.ratetype = thisRateType;
                         cswPublic.rateInterval.dateformat = cswPrivate.dateFormat;
                         cswPublic.rateInterval[dayPropName] = weekdays.join(',');
-                        validateWeekDayPicker();
                         Csw.tryExec(cswPrivate.onChange);
-                    }
-
-                    var validateWeekDayPicker = function () {
-                        if (cswPublic.rateInterval.ratetype === Csw.enums.rateIntervalTypes.WeeklyByDay) {
-                            if (false === Csw.contains(cswPublic.rateInterval, 'startingdate') ||
-                            false === Csw.contains(cswPublic.rateInterval.startingdate, 'date') ||
-                            Csw.isNullOrEmpty(cswPublic.rateInterval.startingdate.date)) {
-                                weeklyTableCell.quickTip({ html: 'Cannot add a Weekly time interval without a starting date. ' });
-                            }
-                            if (false === Csw.contains(cswPublic.rateInterval, 'weeklyday') ||
-                            Csw.isNullOrEmpty(cswPublic.rateInterval.weeklyday)) {
-                                weeklyTable.cell(1, 2).quickTip({ html: 'Cannot add a Weekly time interval without at least one weekday selected. ' });
-                            }
-                        }
                     }
 
                     function dayChange(val, checkbox) {
@@ -102,6 +90,9 @@
                             }
                         } else {
                             weekdays.splice(weekdays.indexOf(day), 1);
+                            if (weekdays.length === 0) {
+                                checkbox.click();
+                            }
                         }
                         saveWeekInterval();
                     }
@@ -116,6 +107,9 @@
                         });
 
                         weekdays = Csw.string(cswPublic.rateInterval[dayPropName]).split(',');
+                        if (Csw.isNullOrEmpty(weekdays[0])) {
+                            weekdays.splice(weekdays[0], 1);
+                        }
 
                         weeklyTable.cell(1, 1).text('Every:');
                         if (thisRateType === Csw.enums.rateIntervalTypes.WeeklyByDay) {
@@ -150,7 +144,7 @@
                                     value: i,
                                     checked: isChecked(i)
                                 });
-                        } //for (i = 1; i <= 7; i += 1)
+                        } //for (i = 1; i <= 7; i += 1)                        
 
                         //Starting Date
                         if (isWeekly) {
@@ -224,17 +218,7 @@
                         cswPublic.rateInterval.monthlyfrequency = monthlyRateSelect.find(':selected').val();
                         cswPublic.rateInterval.startingmonth = startOnMonth.find(':selected').val();
                         cswPublic.rateInterval.startingyear = startOnYear.find(':selected').val();
-                        validateMonthlyPicker();
                         Csw.tryExec(cswPrivate.onChange);
-                    }
-
-                    var validateMonthlyPicker = function () {
-                        if (cswPublic.rateInterval.ratetype === Csw.enums.rateIntervalTypes.MonthlyByWeekAndDay) {
-                            if (false === Csw.contains(cswPublic.rateInterval, 'monthlyday') ||
-                            Csw.isNullOrEmpty(cswPublic.rateInterval.monthlyday)) {
-                                monthlyWeekSelect.quickTip({ html: 'Cannot add a Monthly time interval without a Weekday selected. ' });
-                            }
-                        }
                     }
 
                     function makeMonthlyByDateSelect(monParent) {
@@ -374,8 +358,6 @@
                             }
                         });
 
-                        //divStartOn.append('/');
-
                         startOnYear = divStartOn.select({
                             ID: Csw.makeId(cswPrivate.ID, 'monthly', 'startYear'),
                             values: yearsToAllow,
@@ -427,19 +409,8 @@
                             cswPublic.rateInterval.yearlydate = {};
                         }
                         cswPublic.rateInterval.yearlydate.dateformat = cswPrivate.dateFormat;
-                        validateYearlyDatePicker();
                         Csw.tryExec(cswPrivate.onChange);
                     }
-
-                    var validateYearlyDatePicker = function () {
-                        if (cswPublic.rateInterval.ratetype === Csw.enums.rateIntervalTypes.YearlyByDate) {
-                            if (false === Csw.contains(cswPublic.rateInterval, 'yearlydate') ||
-                            false === Csw.contains(cswPublic.rateInterval.yearlydate, 'date') ||
-                            Csw.isNullOrEmpty(cswPublic.rateInterval.yearlydate.date)) {
-                                yearlyDate.quickTip({ html: 'Cannot addd a Yearly time interval without a starting date. ' });
-                            }
-                        }
-                    };
 
                     if (false === yearlyDatePickerComplete) {
                         retDiv = cswPrivate.pickerCell.div();
@@ -618,7 +589,6 @@
                         cswPrivate.divYearly = cswPrivate.makeYearlyDatePicker();
                         break;
                 } // switch(RateType)
-
 
             } ());
 
