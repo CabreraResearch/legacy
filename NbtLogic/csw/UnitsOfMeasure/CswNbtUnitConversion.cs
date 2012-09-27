@@ -84,8 +84,7 @@ namespace ChemSW.Nbt.csw.Conversion
             {
                 ConvertedValue = 0.0;
             }
-
-            if( CswTools.IsDouble( _OldConversionFactor ) && CswTools.IsDouble( _NewConversionFactor ) )
+            else if( CswTools.IsDouble( _OldConversionFactor ) && CswTools.IsDouble( _NewConversionFactor ) )
             {
                 CswNbtUnitConversionEnums.UnitTypeRelationship UnitRelationship = _getUnitTypeRelationship( _OldUnitType, _NewUnitType );
                 if( UnitRelationship == CswNbtUnitConversionEnums.UnitTypeRelationship.Same )
