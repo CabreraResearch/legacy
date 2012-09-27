@@ -76,12 +76,12 @@ namespace ChemSW.Nbt.Schema
             //upgrade RequestItem Requestor prop from NTP to OCP
             CswNbtMetaDataObjectClass requestItemOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.RequestItemClass );
             CswNbtMetaDataNodeType requestItemNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Request Item" );
-            if( null != requestItemNT && null == requestItemOC.getObjectClassProp( "Requestor" ) )
+            if( null != requestItemNT && null == requestItemOC.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Requestor ) )
             {
 
                 CswNbtMetaDataObjectClassProp reqItemrequestorOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( requestItemOC )
                 {
-                    PropName = "Requestor",
+                    PropName = CswNbtObjClassRequestItem.PropertyName.Requestor,
                     FieldType = CswNbtMetaDataFieldType.NbtFieldType.PropertyReference
                 } );
 
