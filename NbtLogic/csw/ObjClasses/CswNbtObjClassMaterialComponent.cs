@@ -47,6 +47,13 @@ namespace ChemSW.Nbt.ObjClasses
         {
             Core.CswPrimaryKey pk = new Core.CswPrimaryKey();
             pk.FromString( _CswNbtResources.CurrentUser.Cookies["csw_currentnodeid"] );
+
+            CswNbtNode node = _CswNbtResources.Nodes.GetNode( pk );
+            if( this.NodeTypeId != node.NodeTypeId )
+            {
+                Mixture.setHidden( true, false );
+            }
+
             if( null != Constituent.RelatedNodeId && false == IsTemp )
             {
                 if( null == Mixture.RelatedNodeId )
