@@ -17,7 +17,10 @@ namespace ChemSW.Nbt.Schema
         {
 
             //delete the length column
-            _CswNbtSchemaModTrnsctn.dropColumn( "nodetype_props", "length" );
+            if( _CswNbtSchemaModTrnsctn.isColumnDefined( "nodetype_props", "length" ) )
+            {
+                _CswNbtSchemaModTrnsctn.dropColumn( "nodetype_props", "length" );
+            }
 
         }//Update()
 
