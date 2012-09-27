@@ -25,7 +25,7 @@
             cssclass: '',
             value: '',
             labelText: null,
-            width: '',
+            size: '',
             maxlength: '',
             autofocus: false,
             autocomplete: 'on',
@@ -55,8 +55,7 @@
             attr.add('class', cswPrivate.cssclass);
             attr.add('type', cswPrivate.type.name);
             attr.add('placeholder', cswPrivate.placeholder);
-            attr.add('width', Csw.string(cswPrivate.width, cswPrivate.type.defaultwidth) + "px");
-            style.add('width', Csw.string(cswPrivate.width, cswPrivate.type.defaultwidth) + "px"); //width needs a type
+            attr.add('size', Csw.string(cswPrivate.size, cswPrivate.type.defaultsize));
             attr.add('maxlength', cswPrivate.maxlength);
             //attr.add('value', cswPrivate.value);//case 26109
 

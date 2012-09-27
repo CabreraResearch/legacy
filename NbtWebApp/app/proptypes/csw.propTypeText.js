@@ -29,7 +29,7 @@
                             type: Csw.enums.inputTypes.text,
                             value: cswPrivate.value,
                             cssclass: 'textinput',
-                            width: cswPrivate.size * 7,
+                            size: cswPrivate.size,
                             onChange: function() {
                                 var val = cswPublic.control.val();
                                 Csw.tryExec(cswPublic.data.onChange, val);
