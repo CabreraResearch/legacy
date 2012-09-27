@@ -4,7 +4,7 @@
 		<ToolsOptionsCategory name="Environment" RegisteredName="Environment">
 			<ToolsOptionsSubCategory name="Documents" RegisteredName="Documents" PackageName="Visual Studio Environment Package">
 				<PropertyValue name="ShowMiscFilesProject">false</PropertyValue>
-				<PropertyValue name="AutoloadExternalChanges">false</PropertyValue>
+				<PropertyValue name="AutoloadExternalChanges">true</PropertyValue>
 				<PropertyValue name="CheckForConsistentLineEndings">true</PropertyValue>
 				<PropertyValue name="SaveDocsAsUnicodeWhenDataLoss">false</PropertyValue>
 				<PropertyValue name="InitializeOpenFileFromCurrentDocument">true</PropertyValue>
@@ -41,7 +41,7 @@
 				<PropertyValue name="ProjectsLocation">%vsspv_visualstudio_dir%\Projects</PropertyValue>
 				<PropertyValue name="PromptForRenameSymbol">true</PropertyValue>
 				<PropertyValue name="TrackFileSelectionInExplorer">false</PropertyValue>
-				<PropertyValue name="ShowOutputWindowBeforeBuild">false</PropertyValue>
+				<PropertyValue name="ShowOutputWindowBeforeBuild">true</PropertyValue>
 				<PropertyValue name="OnRunWhenErrors">2</PropertyValue>
 				<PropertyValue name="OnRunWhenOutOfDate">4</PropertyValue>
 				<PropertyValue name="AlwaysShowSolutionNode">true</PropertyValue>
@@ -57,7 +57,7 @@
 				<PropertyValue name="SaveNewProjects">true</PropertyValue>
 			</ToolsOptionsSubCategory>
 			<ToolsOptionsSubCategory name="Startup" RegisteredName="Startup" PackageName="Visual Studio Environment Package">
-				<PropertyValue name="OnStartUp">4</PropertyValue>
+				<PropertyValue name="OnStartUp">1</PropertyValue>
 				<PropertyValue name="StartPageRefreshDownloadedContent">false</PropertyValue>
 				<PropertyValue name="StartPageRSSUrl">http://go.microsoft.com/fwlink/?linkid=87676&amp;clcid=%VSSPV_LCID_HEX%</PropertyValue>
 				<PropertyValue name="StartPageRefreshInterval">60</PropertyValue>
@@ -189,7 +189,7 @@
 			</ToolsOptionsSubCategory>
 			<ToolsOptionsSubCategory name="CSharp" RegisteredName="CSharp" PackageName="Text Management Package">
 				<PropertyValue name="TabSize">4</PropertyValue>
-				<PropertyValue name="AutoListMembers">false</PropertyValue>
+				<PropertyValue name="AutoListMembers">true</PropertyValue>
 				<PropertyValue name="IndentStyle">2</PropertyValue>
 				<PropertyValue name="HideAdvancedMembers">false</PropertyValue>
 				<PropertyValue name="ShowNavigationBar">true</PropertyValue>
@@ -201,7 +201,7 @@
 				<PropertyValue name="WordWrap">false</PropertyValue>
 				<PropertyValue name="IndentSize">4</PropertyValue>
 				<PropertyValue name="CutCopyBlankLines">true</PropertyValue>
-				<PropertyValue name="AutoListParams">false</PropertyValue>
+				<PropertyValue name="AutoListParams">true</PropertyValue>
 			</ToolsOptionsSubCategory>
 			<ToolsOptionsSubCategory name="CSharp-Specific" RegisteredName="CSharp-Specific" PackageName="Visual C# Language Service Package">
 				<PropertyValue name="NewLines_QueryExpression_EachClause">1</PropertyValue>
@@ -426,7 +426,7 @@ CSS 3.0;CSS 3.0</PropertyValue>
 				<PropertyValue name="RequireAngleBracketForTagIntellisense">-1</PropertyValue>
 				<PropertyValue name="AutoIdOnPasteSourceView">-1</PropertyValue>
 				<PropertyValue name="RulerAndGridGridSpacing">20</PropertyValue>
-				<PropertyValue name="EditorOptionFlags">8388616</PropertyValue>
+				<PropertyValue name="EditorOptionFlags">8388608</PropertyValue>
 				<PropertyValue name="JsMaxCacheFiles">5</PropertyValue>
 				<PropertyValue name="IdleYield">-1</PropertyValue>
 				<PropertyValue name="IdleParseDelay">750</PropertyValue>
@@ -549,7 +549,7 @@ CSS 3.0;CSS 3.0</PropertyValue>
 			<ToolsOptionsSubCategory name="PlainText" RegisteredName="PlainText" PackageName="Text Management Package">
 				<PropertyValue name="TabSize">4</PropertyValue>
 				<PropertyValue name="AutoListMembers">true</PropertyValue>
-				<PropertyValue name="IndentStyle">0</PropertyValue>
+				<PropertyValue name="IndentStyle">1</PropertyValue>
 				<PropertyValue name="HideAdvancedMembers">true</PropertyValue>
 				<PropertyValue name="ShowNavigationBar">false</PropertyValue>
 				<PropertyValue name="VirtualSpace">false</PropertyValue>
@@ -1102,17 +1102,22 @@ CSS 3.0;CSS 3.0</PropertyValue>
 					</Category>
 					<Category GUID="{75A05685-00A8-4DED-BAE5-E7A50BFA929A}" FontIsDefault="Yes">
 						<Items>
+							<Item Name="MarkerFormatDefinition/HighlightedReference" Foreground="0x02000000" Background="0x00800080" BoldFont="No"/>
+							<Item Name="Comment" Foreground="0x00C0C0C0" Background="0x02000000" BoldFont="No"/>
+							<Item Name="Keyword" Foreground="0x00FFFF00" Background="0x02000000" BoldFont="No"/>
+							<Item Name="Literal" Foreground="0x0000FFFF" Background="0x02000000" BoldFont="No"/>
+							<Item Name="String" Foreground="0x0000FFFF" Background="0x02000000" BoldFont="No"/>
+							<Item Name="Number" Foreground="0x0000FFFF" Background="0x02000000" BoldFont="No"/>
+							<Item Name="outlining.collapsehintadornment" Foreground="0x00E8DDD7" Background="0x02000000" BoldFont="No"/>
+							<Item Name="urlformat" Foreground="0x0000FFFF" Background="0x02000000" BoldFont="No"/>
 							<Item Name="Selected Text" Foreground="0x02000000" Background="0x00FF0000" BoldFont="No"/>
 							<Item Name="Inactive Selected Text" Foreground="0x02000000" Background="0x00808080" BoldFont="No"/>
-							<Item Name="outlining.collapsehintadornment" Foreground="0x00E8DDD7" Background="0x02000000" BoldFont="No"/>
-							<Item Name="Comment" Foreground="0x00C0C0C0" Background="0x02000000" BoldFont="No"/>
-							<Item Name="CSS Comment" Foreground="0x00C0C0C0" Background="0x02000000" BoldFont="No"/>
 							<Item Name="CSS Keyword" Foreground="0x00FFFF00" Background="0x02000000" BoldFont="No"/>
+							<Item Name="CSS Comment" Foreground="0x00C0C0C0" Background="0x02000000" BoldFont="No"/>
+							<Item Name="CSS Selector" Foreground="0x02000000" Background="0x02000000" BoldFont="No"/>
 							<Item Name="CSS Property Name" Foreground="0x02000000" Background="0x02000000" BoldFont="No"/>
 							<Item Name="CSS Property Value" Foreground="0x0000FFFF" Background="0x02000000" BoldFont="No"/>
-							<Item Name="CSS Selector" Foreground="0x02000000" Background="0x02000000" BoldFont="No"/>
 							<Item Name="CSS String Value" Foreground="0x0000FFFF" Background="0x02000000" BoldFont="No"/>
-							<Item Name="MarkerFormatDefinition/HighlightedReference" Foreground="0x02000000" Background="0x00800080" BoldFont="No"/>
 							<Item Name="HTML Attribute" Foreground="0x00FFFF00" Background="0x02000000" BoldFont="No"/>
 							<Item Name="HTML Attribute Value" Foreground="0x0000FFFF" Background="0x02000000" BoldFont="No"/>
 							<Item Name="HTML Comment" Foreground="0x00C0C0C0" Background="0x02000000" BoldFont="No"/>
@@ -1120,30 +1125,36 @@ CSS 3.0;CSS 3.0</PropertyValue>
 							<Item Name="HTML Entity" Foreground="0x02000000" Background="0x02000000" BoldFont="No"/>
 							<Item Name="HTML Operator" Foreground="0x00FFFF00" Background="0x02000000" BoldFont="No"/>
 							<Item Name="HTML Tag Delimiter" Foreground="0x00FFFF00" Background="0x02000000" BoldFont="No"/>
-							<Item Name="Keyword" Foreground="0x00FFFF00" Background="0x02000000" BoldFont="No"/>
-							<Item Name="Literal" Foreground="0x0000FFFF" Background="0x02000000" BoldFont="No"/>
-							<Item Name="Number" Foreground="0x0000FFFF" Background="0x02000000" BoldFont="No"/>
-							<Item Name="String" Foreground="0x0000FFFF" Background="0x02000000" BoldFont="No"/>
-							<Item Name="urlformat" Foreground="0x0000FFFF" Background="0x02000000" BoldFont="No"/>
+						</Items>
+					</Category>
+					<Category GUID="{B36B0228-DBAD-4DB0-B9C7-2AD3E572010F}" FontName="Tahoma" FontSize="8" CharSet="1" FontIsDefault="No">
+						<Items>
+							<Item Name="Different content" Foreground="0x000014E5" Background="0x00FFFFFF" BoldFont="No"/>
+							<Item Name="Identical content" Foreground="0x00000000" Background="0x00FFFFFF" BoldFont="No"/>
+							<Item Name="Source Only" Foreground="0x00000000" Background="0x00FFFFFF" BoldFont="No"/>
+							<Item Name="Target Only" Foreground="0x00000000" Background="0x00FFFFFF" BoldFont="No"/>
+							<Item Name="Not Downloaded" Foreground="0x00999999" Background="0x00FFFFFF" BoldFont="No"/>
+							<Item Name="Even Row Items" Foreground="0x00000000" Background="0x00FFFFFF" BoldFont="No"/>
+							<Item Name="Odd Row Items" Foreground="0x00000000" Background="0x00FFFFFF" BoldFont="No"/>
 						</Items>
 					</Category>
 					<Category GUID="{E0187991-B458-4F7E-8CA9-42C9A573B56C}" FontIsDefault="Yes">
 						<Items>
-							<Item Name="Comment" Foreground="0x00C0C0C0" Background="0x02000000" BoldFont="No"/>
 							<Item Name="Keyword" Foreground="0x00FFFF00" Background="0x02000000" BoldFont="No"/>
-							<Item Name="Number" Foreground="0x0000FFFF" Background="0x02000000" BoldFont="No"/>
+							<Item Name="Comment" Foreground="0x00C0C0C0" Background="0x02000000" BoldFont="No"/>
 							<Item Name="String" Foreground="0x0000FFFF" Background="0x02000000" BoldFont="No"/>
-							<Item Name="String(C# @ Verbatim)" Foreground="0x0000FFFF" Background="0x02000000" BoldFont="No"/>
-							<Item Name="Text" Foreground="0x0000FF00" Background="0x02000000" BoldFont="No"/>
-							<Item Name="XML Attribute" Foreground="0x00FFFF00" Background="0x02000000" BoldFont="No"/>
-							<Item Name="XML Attribute Quotes" Foreground="0x00FFFF00" Background="0x02000000" BoldFont="No"/>
-							<Item Name="XML Attribute Value" Foreground="0x0000FFFF" Background="0x02000000" BoldFont="No"/>
+							<Item Name="Number" Foreground="0x0000FFFF" Background="0x02000000" BoldFont="No"/>
 							<Item Name="XML CData Section" Foreground="0x02000000" Background="0x02000000" BoldFont="No"/>
 							<Item Name="XML Comment" Foreground="0x00C0C0C0" Background="0x02000000" BoldFont="No"/>
-							<Item Name="XML Delimiter" Foreground="0x00FFFF00" Background="0x02000000" BoldFont="No"/>
-							<Item Name="XML Keyword" Foreground="0x00FFFF00" Background="0x02000000" BoldFont="No"/>
-							<Item Name="XML Name" Foreground="0x02000000" Background="0x02000000" BoldFont="No"/>
+							<Item Name="String(C# @ Verbatim)" Foreground="0x0000FFFF" Background="0x02000000" BoldFont="No"/>
+							<Item Name="Text" Foreground="0x0000FF00" Background="0x02000000" BoldFont="No"/>
 							<Item Name="XML Text" Foreground="0x0000FF00" Background="0x02000000" BoldFont="No"/>
+							<Item Name="XML Keyword" Foreground="0x00FFFF00" Background="0x02000000" BoldFont="No"/>
+							<Item Name="XML Delimiter" Foreground="0x00FFFF00" Background="0x02000000" BoldFont="No"/>
+							<Item Name="XML Name" Foreground="0x02000000" Background="0x02000000" BoldFont="No"/>
+							<Item Name="XML Attribute" Foreground="0x00FFFF00" Background="0x02000000" BoldFont="No"/>
+							<Item Name="XML Attribute Value" Foreground="0x0000FFFF" Background="0x02000000" BoldFont="No"/>
+							<Item Name="XML Attribute Quotes" Foreground="0x00FFFF00" Background="0x02000000" BoldFont="No"/>
 						</Items>
 					</Category>
 					<Category GUID="{FF349800-EA43-46C1-8C98-878E78F46501}" FontIsDefault="Yes">
@@ -1642,300 +1653,6 @@ CSS 3.0;CSS 3.0</PropertyValue>
 						<Column Name="Priority" Width="20" Visibility="Visible" SortPriority="0" SortDirection="Up"/>
 						<Column Name="Bitmap" Width="17" Visibility="Visible" SortPriority="-1" SortDirection="Up"/>
 						<Column Name="ProviderKnowsOrder" Width="19" Visibility="Invisible" SortPriority="2" SortDirection="Up"/>
-						<Column Name="Checked" Width="28" Visibility="Visible" SortPriority="-1" SortDirection="Up"/>
-						<Column Name="Description" Width="250" Visibility="Visible" SortPriority="7" SortDirection="Up"/>
-						<Column Name="File" Width="120" Visibility="Visible" SortPriority="4" SortDirection="Up"/>
-						<Column Name="Line" Width="70" Visibility="Visible" SortPriority="5" SortDirection="Up"/>
-						<Column Name="Column" Width="70" Visibility="Invisible" SortPriority="6" SortDirection="Up"/>
-						<Column Name="Category" Width="0" Visibility="Invisible" SortPriority="1" SortDirection="Up"/>
-						<Column Name="Subcategory" Width="0" Visibility="Invisible" SortPriority="3" SortDirection="Up"/>
-					</Columns>
-				</Provider>
-				<Provider GUID="{00000000-0000-0000-0000-000000000000}">
-					<Columns>
-						<Column Name="Priority" Width="20" Visibility="Visible" SortPriority="0" SortDirection="Up"/>
-						<Column Name="Bitmap" Width="17" Visibility="Visible" SortPriority="-1" SortDirection="Up"/>
-						<Column Name="ProviderKnowsOrder" Width="17" Visibility="Invisible" SortPriority="2" SortDirection="Up"/>
-						<Column Name="Checked" Width="28" Visibility="Visible" SortPriority="-1" SortDirection="Up"/>
-						<Column Name="Description" Width="250" Visibility="Visible" SortPriority="7" SortDirection="Up"/>
-						<Column Name="File" Width="120" Visibility="Visible" SortPriority="4" SortDirection="Up"/>
-						<Column Name="Line" Width="70" Visibility="Visible" SortPriority="5" SortDirection="Up"/>
-						<Column Name="Column" Width="70" Visibility="Invisible" SortPriority="6" SortDirection="Up"/>
-						<Column Name="Category" Width="0" Visibility="Invisible" SortPriority="1" SortDirection="Up"/>
-						<Column Name="Subcategory" Width="0" Visibility="Invisible" SortPriority="3" SortDirection="Up"/>
-					</Columns>
-				</Provider>
-				<Provider GUID="{00000000-0000-0000-0000-000000000000}">
-					<Columns>
-						<Column Name="Priority" Width="20" Visibility="Visible" SortPriority="0" SortDirection="Up"/>
-						<Column Name="Bitmap" Width="17" Visibility="Visible" SortPriority="-1" SortDirection="Up"/>
-						<Column Name="ProviderKnowsOrder" Width="17" Visibility="Invisible" SortPriority="2" SortDirection="Up"/>
-						<Column Name="Checked" Width="28" Visibility="Visible" SortPriority="-1" SortDirection="Up"/>
-						<Column Name="Description" Width="250" Visibility="Visible" SortPriority="7" SortDirection="Up"/>
-						<Column Name="File" Width="120" Visibility="Visible" SortPriority="4" SortDirection="Up"/>
-						<Column Name="Line" Width="70" Visibility="Visible" SortPriority="5" SortDirection="Up"/>
-						<Column Name="Column" Width="70" Visibility="Invisible" SortPriority="6" SortDirection="Up"/>
-						<Column Name="Category" Width="0" Visibility="Invisible" SortPriority="1" SortDirection="Up"/>
-						<Column Name="Subcategory" Width="0" Visibility="Invisible" SortPriority="3" SortDirection="Up"/>
-					</Columns>
-				</Provider>
-				<Provider GUID="{00000000-0000-0000-0000-000000000000}">
-					<Columns>
-						<Column Name="Priority" Width="20" Visibility="Visible" SortPriority="0" SortDirection="Up"/>
-						<Column Name="Bitmap" Width="17" Visibility="Visible" SortPriority="-1" SortDirection="Up"/>
-						<Column Name="ProviderKnowsOrder" Width="17" Visibility="Invisible" SortPriority="2" SortDirection="Up"/>
-						<Column Name="Checked" Width="28" Visibility="Visible" SortPriority="-1" SortDirection="Up"/>
-						<Column Name="Description" Width="250" Visibility="Visible" SortPriority="7" SortDirection="Up"/>
-						<Column Name="File" Width="120" Visibility="Visible" SortPriority="4" SortDirection="Up"/>
-						<Column Name="Line" Width="70" Visibility="Visible" SortPriority="5" SortDirection="Up"/>
-						<Column Name="Column" Width="70" Visibility="Invisible" SortPriority="6" SortDirection="Up"/>
-						<Column Name="Category" Width="0" Visibility="Invisible" SortPriority="1" SortDirection="Up"/>
-						<Column Name="Subcategory" Width="0" Visibility="Invisible" SortPriority="3" SortDirection="Up"/>
-					</Columns>
-				</Provider>
-				<Provider GUID="{00000000-0000-0000-0000-000000000000}">
-					<Columns>
-						<Column Name="Priority" Width="20" Visibility="Visible" SortPriority="0" SortDirection="Up"/>
-						<Column Name="Bitmap" Width="17" Visibility="Visible" SortPriority="-1" SortDirection="Up"/>
-						<Column Name="ProviderKnowsOrder" Width="17" Visibility="Invisible" SortPriority="2" SortDirection="Up"/>
-						<Column Name="Checked" Width="28" Visibility="Visible" SortPriority="-1" SortDirection="Up"/>
-						<Column Name="Description" Width="250" Visibility="Visible" SortPriority="7" SortDirection="Up"/>
-						<Column Name="File" Width="120" Visibility="Visible" SortPriority="4" SortDirection="Up"/>
-						<Column Name="Line" Width="70" Visibility="Visible" SortPriority="5" SortDirection="Up"/>
-						<Column Name="Column" Width="70" Visibility="Invisible" SortPriority="6" SortDirection="Up"/>
-						<Column Name="Category" Width="0" Visibility="Invisible" SortPriority="1" SortDirection="Up"/>
-						<Column Name="Subcategory" Width="0" Visibility="Invisible" SortPriority="3" SortDirection="Up"/>
-					</Columns>
-				</Provider>
-				<Provider GUID="{00000000-0000-0000-0000-000000000000}">
-					<Columns>
-						<Column Name="Priority" Width="20" Visibility="Visible" SortPriority="0" SortDirection="Up"/>
-						<Column Name="Bitmap" Width="17" Visibility="Visible" SortPriority="-1" SortDirection="Up"/>
-						<Column Name="ProviderKnowsOrder" Width="17" Visibility="Invisible" SortPriority="2" SortDirection="Up"/>
-						<Column Name="Checked" Width="28" Visibility="Visible" SortPriority="-1" SortDirection="Up"/>
-						<Column Name="Description" Width="250" Visibility="Visible" SortPriority="7" SortDirection="Up"/>
-						<Column Name="File" Width="120" Visibility="Visible" SortPriority="4" SortDirection="Up"/>
-						<Column Name="Line" Width="70" Visibility="Visible" SortPriority="5" SortDirection="Up"/>
-						<Column Name="Column" Width="70" Visibility="Invisible" SortPriority="6" SortDirection="Up"/>
-						<Column Name="Category" Width="0" Visibility="Invisible" SortPriority="1" SortDirection="Up"/>
-						<Column Name="Subcategory" Width="0" Visibility="Invisible" SortPriority="3" SortDirection="Up"/>
-					</Columns>
-				</Provider>
-				<Provider GUID="{00000000-0000-0000-0000-000000000000}">
-					<Columns>
-						<Column Name="Priority" Width="20" Visibility="Visible" SortPriority="0" SortDirection="Up"/>
-						<Column Name="Bitmap" Width="17" Visibility="Visible" SortPriority="-1" SortDirection="Up"/>
-						<Column Name="ProviderKnowsOrder" Width="17" Visibility="Invisible" SortPriority="2" SortDirection="Up"/>
-						<Column Name="Checked" Width="28" Visibility="Visible" SortPriority="-1" SortDirection="Up"/>
-						<Column Name="Description" Width="250" Visibility="Visible" SortPriority="7" SortDirection="Up"/>
-						<Column Name="File" Width="120" Visibility="Visible" SortPriority="4" SortDirection="Up"/>
-						<Column Name="Line" Width="70" Visibility="Visible" SortPriority="5" SortDirection="Up"/>
-						<Column Name="Column" Width="70" Visibility="Invisible" SortPriority="6" SortDirection="Up"/>
-						<Column Name="Category" Width="0" Visibility="Invisible" SortPriority="1" SortDirection="Up"/>
-						<Column Name="Subcategory" Width="0" Visibility="Invisible" SortPriority="3" SortDirection="Up"/>
-					</Columns>
-				</Provider>
-				<Provider GUID="{00000000-0000-0000-0000-000000000000}">
-					<Columns>
-						<Column Name="Priority" Width="20" Visibility="Visible" SortPriority="0" SortDirection="Up"/>
-						<Column Name="Bitmap" Width="17" Visibility="Visible" SortPriority="-1" SortDirection="Up"/>
-						<Column Name="ProviderKnowsOrder" Width="17" Visibility="Invisible" SortPriority="2" SortDirection="Up"/>
-						<Column Name="Checked" Width="28" Visibility="Visible" SortPriority="-1" SortDirection="Up"/>
-						<Column Name="Description" Width="250" Visibility="Visible" SortPriority="7" SortDirection="Up"/>
-						<Column Name="File" Width="120" Visibility="Visible" SortPriority="4" SortDirection="Up"/>
-						<Column Name="Line" Width="70" Visibility="Visible" SortPriority="5" SortDirection="Up"/>
-						<Column Name="Column" Width="70" Visibility="Invisible" SortPriority="6" SortDirection="Up"/>
-						<Column Name="Category" Width="0" Visibility="Invisible" SortPriority="1" SortDirection="Up"/>
-						<Column Name="Subcategory" Width="0" Visibility="Invisible" SortPriority="3" SortDirection="Up"/>
-					</Columns>
-				</Provider>
-				<Provider GUID="{00000000-0000-0000-0000-000000000000}">
-					<Columns>
-						<Column Name="Priority" Width="20" Visibility="Visible" SortPriority="0" SortDirection="Up"/>
-						<Column Name="Bitmap" Width="17" Visibility="Visible" SortPriority="-1" SortDirection="Up"/>
-						<Column Name="ProviderKnowsOrder" Width="17" Visibility="Invisible" SortPriority="2" SortDirection="Up"/>
-						<Column Name="Checked" Width="28" Visibility="Visible" SortPriority="-1" SortDirection="Up"/>
-						<Column Name="Description" Width="250" Visibility="Visible" SortPriority="7" SortDirection="Up"/>
-						<Column Name="File" Width="120" Visibility="Visible" SortPriority="4" SortDirection="Up"/>
-						<Column Name="Line" Width="70" Visibility="Visible" SortPriority="5" SortDirection="Up"/>
-						<Column Name="Column" Width="70" Visibility="Invisible" SortPriority="6" SortDirection="Up"/>
-						<Column Name="Category" Width="0" Visibility="Invisible" SortPriority="1" SortDirection="Up"/>
-						<Column Name="Subcategory" Width="0" Visibility="Invisible" SortPriority="3" SortDirection="Up"/>
-					</Columns>
-				</Provider>
-				<Provider GUID="{00000000-0000-0000-0000-000000000000}">
-					<Columns>
-						<Column Name="Priority" Width="20" Visibility="Visible" SortPriority="0" SortDirection="Up"/>
-						<Column Name="Bitmap" Width="17" Visibility="Visible" SortPriority="-1" SortDirection="Up"/>
-						<Column Name="ProviderKnowsOrder" Width="17" Visibility="Invisible" SortPriority="2" SortDirection="Up"/>
-						<Column Name="Checked" Width="28" Visibility="Visible" SortPriority="-1" SortDirection="Up"/>
-						<Column Name="Description" Width="250" Visibility="Visible" SortPriority="7" SortDirection="Up"/>
-						<Column Name="File" Width="120" Visibility="Visible" SortPriority="4" SortDirection="Up"/>
-						<Column Name="Line" Width="70" Visibility="Visible" SortPriority="5" SortDirection="Up"/>
-						<Column Name="Column" Width="70" Visibility="Invisible" SortPriority="6" SortDirection="Up"/>
-						<Column Name="Category" Width="0" Visibility="Invisible" SortPriority="1" SortDirection="Up"/>
-						<Column Name="Subcategory" Width="0" Visibility="Invisible" SortPriority="3" SortDirection="Up"/>
-					</Columns>
-				</Provider>
-				<Provider GUID="{00000000-0000-0000-0000-000000000000}">
-					<Columns>
-						<Column Name="Priority" Width="20" Visibility="Visible" SortPriority="0" SortDirection="Up"/>
-						<Column Name="Bitmap" Width="17" Visibility="Visible" SortPriority="-1" SortDirection="Up"/>
-						<Column Name="ProviderKnowsOrder" Width="17" Visibility="Invisible" SortPriority="2" SortDirection="Up"/>
-						<Column Name="Checked" Width="28" Visibility="Visible" SortPriority="-1" SortDirection="Up"/>
-						<Column Name="Description" Width="250" Visibility="Visible" SortPriority="7" SortDirection="Up"/>
-						<Column Name="File" Width="120" Visibility="Visible" SortPriority="4" SortDirection="Up"/>
-						<Column Name="Line" Width="70" Visibility="Visible" SortPriority="5" SortDirection="Up"/>
-						<Column Name="Column" Width="70" Visibility="Invisible" SortPriority="6" SortDirection="Up"/>
-						<Column Name="Category" Width="0" Visibility="Invisible" SortPriority="1" SortDirection="Up"/>
-						<Column Name="Subcategory" Width="0" Visibility="Invisible" SortPriority="3" SortDirection="Up"/>
-					</Columns>
-				</Provider>
-				<Provider GUID="{00000000-0000-0000-0000-000000000000}">
-					<Columns>
-						<Column Name="Priority" Width="20" Visibility="Visible" SortPriority="0" SortDirection="Up"/>
-						<Column Name="Bitmap" Width="17" Visibility="Visible" SortPriority="-1" SortDirection="Up"/>
-						<Column Name="ProviderKnowsOrder" Width="17" Visibility="Invisible" SortPriority="2" SortDirection="Up"/>
-						<Column Name="Checked" Width="28" Visibility="Visible" SortPriority="-1" SortDirection="Up"/>
-						<Column Name="Description" Width="250" Visibility="Visible" SortPriority="7" SortDirection="Up"/>
-						<Column Name="File" Width="120" Visibility="Visible" SortPriority="4" SortDirection="Up"/>
-						<Column Name="Line" Width="70" Visibility="Visible" SortPriority="5" SortDirection="Up"/>
-						<Column Name="Column" Width="70" Visibility="Invisible" SortPriority="6" SortDirection="Up"/>
-						<Column Name="Category" Width="0" Visibility="Invisible" SortPriority="1" SortDirection="Up"/>
-						<Column Name="Subcategory" Width="0" Visibility="Invisible" SortPriority="3" SortDirection="Up"/>
-					</Columns>
-				</Provider>
-				<Provider GUID="{00000000-0000-0000-0000-000000000000}">
-					<Columns>
-						<Column Name="Priority" Width="20" Visibility="Visible" SortPriority="0" SortDirection="Up"/>
-						<Column Name="Bitmap" Width="17" Visibility="Visible" SortPriority="-1" SortDirection="Up"/>
-						<Column Name="ProviderKnowsOrder" Width="17" Visibility="Invisible" SortPriority="2" SortDirection="Up"/>
-						<Column Name="Checked" Width="28" Visibility="Visible" SortPriority="-1" SortDirection="Up"/>
-						<Column Name="Description" Width="250" Visibility="Visible" SortPriority="7" SortDirection="Up"/>
-						<Column Name="File" Width="120" Visibility="Visible" SortPriority="4" SortDirection="Up"/>
-						<Column Name="Line" Width="70" Visibility="Visible" SortPriority="5" SortDirection="Up"/>
-						<Column Name="Column" Width="70" Visibility="Invisible" SortPriority="6" SortDirection="Up"/>
-						<Column Name="Category" Width="0" Visibility="Invisible" SortPriority="1" SortDirection="Up"/>
-						<Column Name="Subcategory" Width="0" Visibility="Invisible" SortPriority="3" SortDirection="Up"/>
-					</Columns>
-				</Provider>
-				<Provider GUID="{00000000-0000-0000-0000-000000000000}">
-					<Columns>
-						<Column Name="Priority" Width="20" Visibility="Visible" SortPriority="0" SortDirection="Up"/>
-						<Column Name="Bitmap" Width="17" Visibility="Visible" SortPriority="-1" SortDirection="Up"/>
-						<Column Name="ProviderKnowsOrder" Width="17" Visibility="Invisible" SortPriority="2" SortDirection="Up"/>
-						<Column Name="Checked" Width="28" Visibility="Visible" SortPriority="-1" SortDirection="Up"/>
-						<Column Name="Description" Width="250" Visibility="Visible" SortPriority="7" SortDirection="Up"/>
-						<Column Name="File" Width="120" Visibility="Visible" SortPriority="4" SortDirection="Up"/>
-						<Column Name="Line" Width="70" Visibility="Visible" SortPriority="5" SortDirection="Up"/>
-						<Column Name="Column" Width="70" Visibility="Invisible" SortPriority="6" SortDirection="Up"/>
-						<Column Name="Category" Width="0" Visibility="Invisible" SortPriority="1" SortDirection="Up"/>
-						<Column Name="Subcategory" Width="0" Visibility="Invisible" SortPriority="3" SortDirection="Up"/>
-					</Columns>
-				</Provider>
-				<Provider GUID="{00000000-0000-0000-0000-000000000000}">
-					<Columns>
-						<Column Name="Priority" Width="20" Visibility="Visible" SortPriority="0" SortDirection="Up"/>
-						<Column Name="Bitmap" Width="17" Visibility="Visible" SortPriority="-1" SortDirection="Up"/>
-						<Column Name="ProviderKnowsOrder" Width="17" Visibility="Invisible" SortPriority="2" SortDirection="Up"/>
-						<Column Name="Checked" Width="28" Visibility="Visible" SortPriority="-1" SortDirection="Up"/>
-						<Column Name="Description" Width="250" Visibility="Visible" SortPriority="7" SortDirection="Up"/>
-						<Column Name="File" Width="120" Visibility="Visible" SortPriority="4" SortDirection="Up"/>
-						<Column Name="Line" Width="70" Visibility="Visible" SortPriority="5" SortDirection="Up"/>
-						<Column Name="Column" Width="70" Visibility="Invisible" SortPriority="6" SortDirection="Up"/>
-						<Column Name="Category" Width="0" Visibility="Invisible" SortPriority="1" SortDirection="Up"/>
-						<Column Name="Subcategory" Width="0" Visibility="Invisible" SortPriority="3" SortDirection="Up"/>
-					</Columns>
-				</Provider>
-				<Provider GUID="{00000000-0000-0000-0000-000000000000}">
-					<Columns>
-						<Column Name="Priority" Width="20" Visibility="Visible" SortPriority="0" SortDirection="Up"/>
-						<Column Name="Bitmap" Width="17" Visibility="Visible" SortPriority="-1" SortDirection="Up"/>
-						<Column Name="ProviderKnowsOrder" Width="17" Visibility="Invisible" SortPriority="2" SortDirection="Up"/>
-						<Column Name="Checked" Width="28" Visibility="Visible" SortPriority="-1" SortDirection="Up"/>
-						<Column Name="Description" Width="250" Visibility="Visible" SortPriority="7" SortDirection="Up"/>
-						<Column Name="File" Width="120" Visibility="Visible" SortPriority="4" SortDirection="Up"/>
-						<Column Name="Line" Width="70" Visibility="Visible" SortPriority="5" SortDirection="Up"/>
-						<Column Name="Column" Width="70" Visibility="Invisible" SortPriority="6" SortDirection="Up"/>
-						<Column Name="Category" Width="0" Visibility="Invisible" SortPriority="1" SortDirection="Up"/>
-						<Column Name="Subcategory" Width="0" Visibility="Invisible" SortPriority="3" SortDirection="Up"/>
-					</Columns>
-				</Provider>
-				<Provider GUID="{00000000-0000-0000-0000-000000000000}">
-					<Columns>
-						<Column Name="Priority" Width="20" Visibility="Visible" SortPriority="0" SortDirection="Up"/>
-						<Column Name="Bitmap" Width="17" Visibility="Visible" SortPriority="-1" SortDirection="Up"/>
-						<Column Name="ProviderKnowsOrder" Width="17" Visibility="Invisible" SortPriority="2" SortDirection="Up"/>
-						<Column Name="Checked" Width="28" Visibility="Visible" SortPriority="-1" SortDirection="Up"/>
-						<Column Name="Description" Width="250" Visibility="Visible" SortPriority="7" SortDirection="Up"/>
-						<Column Name="File" Width="120" Visibility="Visible" SortPriority="4" SortDirection="Up"/>
-						<Column Name="Line" Width="70" Visibility="Visible" SortPriority="5" SortDirection="Up"/>
-						<Column Name="Column" Width="70" Visibility="Invisible" SortPriority="6" SortDirection="Up"/>
-						<Column Name="Category" Width="0" Visibility="Invisible" SortPriority="1" SortDirection="Up"/>
-						<Column Name="Subcategory" Width="0" Visibility="Invisible" SortPriority="3" SortDirection="Up"/>
-					</Columns>
-				</Provider>
-				<Provider GUID="{00000000-0000-0000-0000-000000000000}">
-					<Columns>
-						<Column Name="Priority" Width="20" Visibility="Visible" SortPriority="0" SortDirection="Up"/>
-						<Column Name="Bitmap" Width="17" Visibility="Visible" SortPriority="-1" SortDirection="Up"/>
-						<Column Name="ProviderKnowsOrder" Width="17" Visibility="Invisible" SortPriority="2" SortDirection="Up"/>
-						<Column Name="Checked" Width="28" Visibility="Visible" SortPriority="-1" SortDirection="Up"/>
-						<Column Name="Description" Width="250" Visibility="Visible" SortPriority="7" SortDirection="Up"/>
-						<Column Name="File" Width="120" Visibility="Visible" SortPriority="4" SortDirection="Up"/>
-						<Column Name="Line" Width="70" Visibility="Visible" SortPriority="5" SortDirection="Up"/>
-						<Column Name="Column" Width="70" Visibility="Invisible" SortPriority="6" SortDirection="Up"/>
-						<Column Name="Category" Width="0" Visibility="Invisible" SortPriority="1" SortDirection="Up"/>
-						<Column Name="Subcategory" Width="0" Visibility="Invisible" SortPriority="3" SortDirection="Up"/>
-					</Columns>
-				</Provider>
-				<Provider GUID="{00000000-0000-0000-0000-000000000000}">
-					<Columns>
-						<Column Name="Priority" Width="20" Visibility="Visible" SortPriority="0" SortDirection="Up"/>
-						<Column Name="Bitmap" Width="17" Visibility="Visible" SortPriority="-1" SortDirection="Up"/>
-						<Column Name="ProviderKnowsOrder" Width="17" Visibility="Invisible" SortPriority="2" SortDirection="Up"/>
-						<Column Name="Checked" Width="28" Visibility="Visible" SortPriority="-1" SortDirection="Up"/>
-						<Column Name="Description" Width="250" Visibility="Visible" SortPriority="7" SortDirection="Up"/>
-						<Column Name="File" Width="120" Visibility="Visible" SortPriority="4" SortDirection="Up"/>
-						<Column Name="Line" Width="70" Visibility="Visible" SortPriority="5" SortDirection="Up"/>
-						<Column Name="Column" Width="70" Visibility="Invisible" SortPriority="6" SortDirection="Up"/>
-						<Column Name="Category" Width="0" Visibility="Invisible" SortPriority="1" SortDirection="Up"/>
-						<Column Name="Subcategory" Width="0" Visibility="Invisible" SortPriority="3" SortDirection="Up"/>
-					</Columns>
-				</Provider>
-				<Provider GUID="{00000000-0000-0000-0000-000000000000}">
-					<Columns>
-						<Column Name="Priority" Width="20" Visibility="Visible" SortPriority="0" SortDirection="Up"/>
-						<Column Name="Bitmap" Width="17" Visibility="Visible" SortPriority="-1" SortDirection="Up"/>
-						<Column Name="ProviderKnowsOrder" Width="17" Visibility="Invisible" SortPriority="2" SortDirection="Up"/>
-						<Column Name="Checked" Width="28" Visibility="Visible" SortPriority="-1" SortDirection="Up"/>
-						<Column Name="Description" Width="250" Visibility="Visible" SortPriority="7" SortDirection="Up"/>
-						<Column Name="File" Width="120" Visibility="Visible" SortPriority="4" SortDirection="Up"/>
-						<Column Name="Line" Width="70" Visibility="Visible" SortPriority="5" SortDirection="Up"/>
-						<Column Name="Column" Width="70" Visibility="Invisible" SortPriority="6" SortDirection="Up"/>
-						<Column Name="Category" Width="0" Visibility="Invisible" SortPriority="1" SortDirection="Up"/>
-						<Column Name="Subcategory" Width="0" Visibility="Invisible" SortPriority="3" SortDirection="Up"/>
-					</Columns>
-				</Provider>
-				<Provider GUID="{00000000-0000-0000-0000-000000000000}">
-					<Columns>
-						<Column Name="Priority" Width="20" Visibility="Visible" SortPriority="0" SortDirection="Up"/>
-						<Column Name="Bitmap" Width="17" Visibility="Visible" SortPriority="-1" SortDirection="Up"/>
-						<Column Name="ProviderKnowsOrder" Width="17" Visibility="Invisible" SortPriority="2" SortDirection="Up"/>
-						<Column Name="Checked" Width="28" Visibility="Visible" SortPriority="-1" SortDirection="Up"/>
-						<Column Name="Description" Width="250" Visibility="Visible" SortPriority="7" SortDirection="Up"/>
-						<Column Name="File" Width="120" Visibility="Visible" SortPriority="4" SortDirection="Up"/>
-						<Column Name="Line" Width="70" Visibility="Visible" SortPriority="5" SortDirection="Up"/>
-						<Column Name="Column" Width="70" Visibility="Invisible" SortPriority="6" SortDirection="Up"/>
-						<Column Name="Category" Width="0" Visibility="Invisible" SortPriority="1" SortDirection="Up"/>
-						<Column Name="Subcategory" Width="0" Visibility="Invisible" SortPriority="3" SortDirection="Up"/>
-					</Columns>
-				</Provider>
-				<Provider GUID="{00000000-0000-0000-0000-000000000000}">
-					<Columns>
-						<Column Name="Priority" Width="20" Visibility="Visible" SortPriority="0" SortDirection="Up"/>
-						<Column Name="Bitmap" Width="17" Visibility="Visible" SortPriority="-1" SortDirection="Up"/>
-						<Column Name="ProviderKnowsOrder" Width="17" Visibility="Invisible" SortPriority="2" SortDirection="Up"/>
 						<Column Name="Checked" Width="28" Visibility="Visible" SortPriority="-1" SortDirection="Up"/>
 						<Column Name="Description" Width="250" Visibility="Visible" SortPriority="7" SortDirection="Up"/>
 						<Column Name="File" Width="120" Visibility="Visible" SortPriority="4" SortDirection="Up"/>
@@ -3641,7 +3358,7 @@ CSS 3.0;CSS 3.0</PropertyValue>
 									</TabGroup>
 									<DockGroup Orientation="Vertical" IsVisible="True" DockedHeight="*" DockedWidth="*">
 										<DocumentGroupContainer IsVisible="True" DockedHeight="*" DockedWidth="*" DockRestriction="DocumentGroup, Document">
-											<wm:WMDocumentGroup IsVisible="True" DockedHeight="190.010857763301">
+											<wm:WMDocumentGroup DockedHeight="190.010857763301">
 												<wm:ToolWindowView ForceCreate="DontForceCreate" Name="ST:0:0:{387cb18d-6153-4156-9257-9ac3f9207bbe}" DockedHeight="190.010857763301" FloatingTop="76.8" FloatingLeft="102.4" FloatingHeight="537.6" FloatingWidth="716.8"/>
 												<wm:ToolWindowView ForceCreate="ForceCreate" Name="ST:0:0:{c79b74ff-f1d7-4c94-aefa-4d22bfe1b1f9}" DockedHeight="190.010857763301" FloatingTop="76.8" FloatingLeft="102.4" FloatingHeight="537.6" FloatingWidth="716.8"/>
 												<wm:ToolWindowView ContextVisibilityEnabled="False" ForceCreate="DontForceCreate" Name="ST:0:0:{e8b06f52-6d01-11d2-aa7d-00c04f990343}" DockedHeight="190.010857763301" FloatingTop="76.8" FloatingLeft="102.4" FloatingHeight="537.6" FloatingWidth="716.8"/>
@@ -4316,7 +4033,7 @@ CSS 3.0;CSS 3.0</PropertyValue>
 			<PropertyValue name="EnableSingleClickPreviewInFindResults">True</PropertyValue>
 			<PropertyValue name="EnableSingleClickPreviewInSolutionExplorer">True</PropertyValue>
 			<PropertyValue name="MaintainPinStatus">False</PropertyValue>
-			<PropertyValue name="ShowAutoHiddenWindowsOnHover">False</PropertyValue>
+			<PropertyValue name="ShowAutoHiddenWindowsOnHover">True</PropertyValue>
 			<PropertyValue name="ShowPinButtonInUnpinnedTabs">True</PropertyValue>
 			<PropertyValue name="ShowPinnedTabsInSeparateRow">False</PropertyValue>
 		</Category>
@@ -4350,11 +4067,12 @@ CSS 3.0;CSS 3.0</PropertyValue>
 		<PropertyValue name="FormatOnSave">True</PropertyValue>
 		<PropertyValue name="RemoveAndSortUsingsOnSave">True</PropertyValue>
 	</Category>
-	<Category name="Source Control_TeamFoundation" Category="{2A718788-A6D9-44C5-90EF-438BF5B06A74}" Package="{4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}" RegisteredName="Source Control_TeamFoundation" PackageName="Microsoft.VisualStudio.TeamFoundation.VersionControl.HatPackage, Microsoft.VisualStudio.TeamFoundation.VersionControl, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+	<Category name="Source Control_TeamFoundation" Category="{2A718788-A6D9-44C5-90EF-438BF5B06A74}" Package="{4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}" RegisteredName="Source Control_TeamFoundation" PackageName="Microsoft.VisualStudio.TeamFoundation.VersionControl.HatPackage, Microsoft.VisualStudio.TeamFoundation.VersionControl, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
 		<PropertyValue name="IsProxyEnabled">False</PropertyValue>
 		<PropertyValue name="ProxyUrl"/>
-		<PropertyValue name="ShowDeletedItems">false</PropertyValue>
 		<PropertyValue name="GetLatestOnCheckOut">false</PropertyValue>
+		<PropertyValue name="AttemptToAutoResolveConflicts">true</PropertyValue>
+		<PropertyValue name="ShowDeletedItems">false</PropertyValue>
 		<PropertyValue name="OpenSceToMostRecentPath">true</PropertyValue>
 		<PropertyValue name="PromptToConfirmMergeResult">-1</PropertyValue>
 	</Category>
