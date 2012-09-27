@@ -9,8 +9,6 @@ namespace ChemSW.Nbt.Schema
     /// </summary>
     public class CswUpdateSchemaCase27528 : CswUpdateSchemaTo
     {
-        CswNbtNode DoomedCISProInvGrpNode = null;
-
         public override void update()
         {
             bool MakeAdminNode = true;
@@ -71,7 +69,7 @@ namespace ChemSW.Nbt.Schema
                             LocationNode.postChanges( false );
                         }
                     }
-                    DoomedCISProInvGrpNode.delete();
+                    CISProInventoryGroup.Node.delete();
                 }
             }
 
@@ -102,16 +100,11 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataNodeType InvGrpNt = InvGrpOc.FirstNodeType;
             if( null != InvGrpNt )
             {
-                foreach( CswNbtNode InventoryGroupNode in InvGrpNt.getNodes( false, false ) )
+                foreach( CswNbtObjClassInventoryGroup InventoryGroupNode in InvGrpNt.getNodes( false, false ) )
                 {
-                    CswNbtObjClassInventoryGroup NodeAsInventoryGroup = InventoryGroupNode;
-                    if( Name == NodeAsInventoryGroup.Name.Text )
+                    if( Name == InventoryGroupNode.Name.Text )
                     {
-                        DefaultInventoryGroup = NodeAsInventoryGroup;
-                        if( Name == "CISPro" )
-                        {
-                            DoomedCISProInvGrpNode = InventoryGroupNode;
-                        }
+                        DefaultInventoryGroup = InventoryGroupNode;
                     }
                 }
             }
