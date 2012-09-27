@@ -407,11 +407,12 @@ namespace ChemSW.Nbt.ObjClasses
                                 if( false == _Deficient ) //case 25041
                                 {
                                     _Deficient = areMoreActionsRequired();
+
+                                    Finish.setReadOnly( value: true, SaveToDb: true );
+                                    Finish.setHidden( value: true, SaveToDb: true );
+                                    Cancel.setReadOnly( value: true, SaveToDb: true );
+                                    Cancel.setHidden( value: true, SaveToDb: true );
                                 }
-                                Finish.setReadOnly( value: true, SaveToDb: true );
-                                Finish.setHidden( value: true, SaveToDb: true );
-                                Cancel.setReadOnly( value: true, SaveToDb: true );
-                                Cancel.setHidden( value: true, SaveToDb: true );
                                 SetPreferred.setReadOnly( value: true, SaveToDb: true );
                                 SetPreferred.setHidden( value: true, SaveToDb: true );
 
