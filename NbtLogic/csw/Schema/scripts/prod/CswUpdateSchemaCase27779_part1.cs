@@ -6,9 +6,9 @@ using System.Data;
 namespace ChemSW.Nbt.Schema
 {
     /// <summary>
-    /// Schema Update for case 27779
+    /// Schema Update for case 27779_part1
     /// </summary>
-    public class CswUpdateSchemaCase27779 : CswUpdateSchemaTo
+    public class CswUpdateSchemaCase27779_part1 : CswUpdateSchemaTo
     {
         /// <summary>
         /// Update logic
@@ -33,11 +33,6 @@ namespace ChemSW.Nbt.Schema
                 row["length"] = DBNull.Value;
             }
             nodetype_propsTU.update( nodetype_props );
-
-            _CswNbtSchemaModTrnsctn.commitTransaction(); //have to commit after updating the table so the next Drop operation doesn't see data in the length column
-
-            //delete the length column
-            _CswNbtSchemaModTrnsctn.dropColumn( "nodetype_props", "length" );
 
         }//Update()
 
