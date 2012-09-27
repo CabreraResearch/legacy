@@ -79,18 +79,20 @@ namespace ChemSW.Nbt.Schema
             if( null != requestItemNT && null == requestItemOC.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Requestor ) )
             {
 
+                CswNbtMetaDataObjectClass requestOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.RequestClass );
+                CswNbtMetaDataObjectClassProp requestorOCP = requestOC.getObjectClassProp( CswNbtObjClassRequest.PropertyName.Requestor );
+
                 CswNbtMetaDataObjectClassProp reqItemrequestorOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( requestItemOC )
                 {
                     PropName = CswNbtObjClassRequestItem.PropertyName.Requestor,
-                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.PropertyReference
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.PropertyReference,
+                    IsFk = true,
+                    FkType = NbtViewPropIdType.ObjectClassPropId.ToString(),
+                    FkValue = requestorOCP.PropId
                 } );
 
                 CswNbtMetaDataNodeTypeProp reqItemRequestorNTP = _CswNbtSchemaModTrnsctn.MetaData.getNodeTypePropByObjectClassProp( requestItemNT.NodeTypeId, reqItemrequestorOCP.PropId );
 
-                CswNbtMetaDataObjectClass requestOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.RequestClass );
-                CswNbtMetaDataObjectClassProp requestorOCP = requestOC.getObjectClassProp( CswNbtObjClassRequest.PropertyName.Requestor );
-                CswNbtMetaDataObjectClassProp requestOCP = requestItemOC.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Request );
-                reqItemRequestorNTP.SetFK( NbtViewPropIdType.ObjectClassPropId.ToString(), requestOCP.PropId, NbtViewPropIdType.ObjectClassPropId.ToString(), requestorOCP.PropId );
                 reqItemRequestorNTP.removeFromLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add );
             }
 
