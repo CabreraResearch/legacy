@@ -31,6 +31,9 @@ namespace ChemSW.Nbt.ObjClasses
             public const string Enabled = "Enabled";
             public const string RunNow = "Run Now";
             public const string OutputFormat = "Output Format";
+            public const string TargetType = "Target Type";
+            public const string Event = "Event";
+            public const string NodesToReport = "Nodes To Report";
         }
 
         /// <summary>
@@ -205,8 +208,33 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropTimeInterval DueDateInterval { get { return ( _CswNbtNode.Properties[PropertyName.DueDateInterval] ); } }
         public CswNbtNodePropDateTime RunTime { get { return ( _CswNbtNode.Properties[PropertyName.RunTime] ); } }
         public CswNbtNodePropLogical Enabled { get { return ( _CswNbtNode.Properties[PropertyName.Enabled] ); } }
+        public CswNbtNodePropNodeTypeSelect TargetType { get { return ( _CswNbtNode.Properties[PropertyName.TargetType] ); } }
+        public CswNbtNodePropList Event { get { return ( _CswNbtNode.Properties[PropertyName.Event] ); } }
+        public CswNbtNodePropMemo NodesToReport { get { return ( _CswNbtNode.Properties[PropertyName.NodesToReport] ); } }
 
         #endregion
+
+        public void GetNodesToReport()
+        {
+            CswCommaDelimitedString NodesStr = new CswCommaDelimitedString();
+            NodesStr.FromString( NodesToReport.Text );
+            return NodesStr;
+        } // GetNodesToReport()
+
+        public void AddNodeToReport( CswNbtNode Node )
+        {
+            CswCommaDelimitedString NodesStr = new CswCommaDelimitedString();
+            NodesStr.FromString( NodesToReport.Text );
+
+            NodesStr.Add( Node.NodeId.PrimaryKey.ToString(), AllowNullOrEmpty: false, IsUnique: true );
+
+            NodesToReport.Text = NodesStr.ToString();
+        } // AddNodeToReport()
+
+        public void ClearNodesToReport()
+        {
+            NodesToReport.Text = string.Empty;
+        } // ClearNodesToReport()
 
     }//CswNbtObjClassMailReport
 

@@ -112,15 +112,19 @@ namespace ChemSW.Nbt.Sched
                                 {
                                     // BZ 7124 - set runtime
                                     if( CurrentMailReport.RunTime.DateTimeValue != DateTime.MinValue )
-                                        ThisDueDateValue = ThisDueDateValue.AddTicks( CurrentMailReport.RunTime.DateTimeValue.TimeOfDay.Ticks );
-
-                                    Int32 WarnDays = (Int32) CurrentMailReport.WarningDays.Value;
-                                    if( WarnDays > 0 )
                                     {
-                                        TimeSpan WarningDaysSpan = new TimeSpan( WarnDays, 0, 0, 0, 0 );
-                                        ThisDueDateValue = ThisDueDateValue.Subtract( WarningDaysSpan );
-                                        InitialDueDateValue = InitialDueDateValue.Subtract( WarningDaysSpan );
+                                        ThisDueDateValue = ThisDueDateValue.AddTicks( CurrentMailReport.RunTime.DateTimeValue.TimeOfDay.Ticks );
                                     }
+
+                                    // Warning days makes no sense for mail reports
+
+                                    //Int32 WarnDays = (Int32) CurrentMailReport.WarningDays.Value;
+                                    //if( WarnDays > 0 )
+                                    //{
+                                    //    TimeSpan WarningDaysSpan = new TimeSpan( WarnDays, 0, 0, 0, 0 );
+                                    //    ThisDueDateValue = ThisDueDateValue.Subtract( WarningDaysSpan );
+                                    //    InitialDueDateValue = InitialDueDateValue.Subtract( WarningDaysSpan );
+                                    //}
 
                                     CswNbtMailReportStatus CswNbtMailReportStatus = new CswNbtMailReportStatus();
                                     // if we're within the initial and final due dates, but past the current due date (- warning days) and runtime
@@ -239,16 +243,47 @@ namespace ChemSW.Nbt.Sched
                                         ViewLink = makeViewUrl( ViewId );
                                         CswNbtView ReportView = _CswNbtResources.ViewSelect.restoreView( ViewId );
                                         ICswNbtTree ReportTree = _CswNbtResources.Trees.getTreeFromView( UserNodeAsUser as ICswNbtUser, ReportView, true, true, false, false );
-                                        EmailMessageSubject = CurrentMailReport.Type.Value + " Notification: " + ReportView.ViewName;
 
-                                        if( ReportTree.getChildNodeCount() > 0 )
+                                        if( CswNbtObjClassMailReport.EventOption.Exists.ToString() != CurrentMailReport.Event.Value )
                                         {
-                                            EmailMessageBody = _setStatusHaveData( CurrentMailReport, CswNbtMailReportStatus, ViewLink );
+                                            // case 27720 - check mail report events to find nodes that match the view results
+                                            Collection<CswPrimaryKey> NodesToMail = new Collection<CswPrimaryKey>();
+                                            foreach( Int32 NodeId in CurrentMailReport.GetNodesToReport() )
+                                            {
+                                                CswPrimaryKey ThisNodeId = new CswPrimaryKey( "nodes", CswConvert.ToInt32( MRERow["nodeid"] ) );
+                                                ReportTree.makeNodeCurrent( ThisNodeId );
+                                                if( ReportTree.isCurrentNodeDefined() )
+                                                {
+                                                    NodesToMail.Add( ThisNodeId );
+                                                }
+                                            }
+                                            if( NodesToMail.Count > 0 )
+                                            {
+                                                EmailMessageSubject = CurrentMailReport.Type.Value + " Notification: " + ReportView.ViewName;
+
+                                                if( ReportTree.getChildNodeCount() > 0 )
+                                                {
+                                                    EmailMessageBody = _setStatusHaveData( CurrentMailReport, CswNbtMailReportStatus, ViewLink );
+                                                }
+                                                else
+                                                {
+                                                    EmailMessageBody = _setStatusDoNotHaveData( CurrentMailReport, CswNbtMailReportStatus );
+                                                }//if-else the view got a result
+                                            }
                                         }
                                         else
                                         {
-                                            EmailMessageBody = _setStatusDoNotHaveData( CurrentMailReport, CswNbtMailReportStatus );
-                                        }//if-else the view got a result
+                                            EmailMessageSubject = CurrentMailReport.Type.Value + " Notification: " + ReportView.ViewName;
+
+                                            if( ReportTree.getChildNodeCount() > 0 )
+                                            {
+                                                EmailMessageBody = _setStatusHaveData( CurrentMailReport, CswNbtMailReportStatus, ViewLink );
+                                            }
+                                            else
+                                            {
+                                                EmailMessageBody = _setStatusDoNotHaveData( CurrentMailReport, CswNbtMailReportStatus );
+                                            }//if-else the view got a result
+                                        }
 
                                         EmailReportStatusMessage = _sendMailMessage( CurrentMailReport, CswNbtMailReportStatus, EmailMessageBody, UserNodeAsUser.LastName, UserNodeAsUser.FirstName, UserNodeAsUser.Node.NodeName, EmailMessageSubject, CurrentEmailAddress, null );
                                     }
@@ -307,6 +342,10 @@ namespace ChemSW.Nbt.Sched
                 }//foreach( Int32 UserId in RecipientUserIds )
 
             }//if( !CurrentMailReport.Recipients.Empty )
+
+            // case 27720 - clear existing Mail Report Event records for this mail report
+            CurrentMailReport.ClearNodesToReport();
+
             return EmailReportStatusMessage;
         }//processMailReport()
 

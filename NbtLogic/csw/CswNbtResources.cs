@@ -479,7 +479,6 @@ namespace ChemSW.Nbt
         {
             _clear();
             Modules.ClearModulesCache();
-            //_initNotifications( true );
             ClearActionsCache();
         }
 
@@ -672,101 +671,47 @@ namespace ChemSW.Nbt
         #endregion Database Interaction
 
 
-        #region Notifications
-
-        //Case 27721. Disable Notifications completely until refactored by case 27720.
-
-        //private Dictionary<CswNbtNotificationKey, CswNbtObjClassNotification> _Notifs = null;
-        //private void _initNotifications( bool Reinit )
-        //{
-        //    if( _Notifs == null || Reinit )
-        //    {
-        //        _Notifs = new Dictionary<CswNbtNotificationKey, CswNbtObjClassNotification>();
-        //        //ICswNbtTree NotifTree = Trees.getTreeFromObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.NotificationClass );
-        //        //for( int n = 0; n < NotifTree.getChildNodeCount(); n++ )
-        //        //{
-        //        //    NotifTree.goToNthChild( n );
-
-        //        //    CswNbtNode ThisNode = NotifTree.getNodeForCurrentPosition();
-
-        //        CswNbtMetaDataObjectClass NotificationOC = MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.NotificationClass );
-        //        foreach( CswNbtNode ThisNode in NotificationOC.getNodes( true, false ) )
-        //        {
-        //            CswNbtObjClassNotification NotifNode = (CswNbtObjClassNotification) ThisNode;
-        //            if( NotifNode.TargetNodeType != null )
-        //            {
-        //                CswNbtNotificationKey NKey = new CswNbtNotificationKey( NotifNode.TargetNodeType.NodeTypeId, NotifNode.SelectedEvent, NotifNode.Property.Value, NotifNode.Value.Text );
-        //                if( !_Notifs.ContainsKey( NKey ) )   // because we don't have compound unique rules yet
-        //                    _Notifs.Add( NKey, NotifNode );  // this means that if we have redundant events, only one will be processed
-        //            }
-        //        }
-        //        //NotifTree.goToParentNode();
-        //        //}
-        //    }
-        //}
+        #region Mail Report Events
 
         /// <summary>
-        /// Generate a notification based on a node event
+        /// Store a nodeid on a mail report for emails later, based on node events
         /// </summary>
-        public void runNotification( CswNbtMetaDataNodeType TargetNodeType, CswNbtObjClassMailReport.EventOption EventOpt, CswNbtNode TargetNode, string PropName, string NewValue )
+        public void runMailReportEvents( CswNbtMetaDataNodeType TargetNodeType, CswNbtObjClassMailReport.EventOption EventOpt, CswNbtNode TargetNode )
         {
-            //_initNotifications( false );
-            //// case 
-            //CswNbtNotificationKey NKey = new CswNbtNotificationKey( TargetNodeType.FirstVersionNodeTypeId, EventOpt, PropName, NewValue );
-            //if( _Notifs.ContainsKey( NKey ) )
-            //{
-            //    Collection<CswMailMessage> MailMessages = new Collection<CswMailMessage>();
-            //    CswNbtObjClassNotification NotifNode = _Notifs[NKey];
+            // Find any matching mail reports
+            CswNbtMetaDataObjectClass MailReportOC = MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.MailReportClass );
+            CswNbtMetaDataObjectClassProp TargetTypeOCP = MailReportOC.getObjectClassProp( CswNbtObjClassMailReport.PropertyName.TargetType );
+            CswNbtMetaDataObjectClassProp EventOCP = MailReportOC.getObjectClassProp( CswNbtObjClassMailReport.PropertyName.Event );
+            CswNbtMetaDataObjectClassProp NodesToReportOCP = MailReportOC.getObjectClassProp( CswNbtObjClassMailReport.PropertyName.NodesToReport );
 
-            //    CswCommaDelimitedString SubscribedUserIdsString = NotifNode.SubscribedUsers.SelectedUserIds;
-            //    Collection<Int32> SubscribedUserIds = SubscribedUserIdsString.ToIntCollection();
-            //    string Subject = NotifNode.Subject.Text;
-            //    string Message = NotifNode.Message.Text;
-            //    {
-            //        Collection<CswMailMessage> MailMessages = new Collection<CswMailMessage>();
-            //        CswNbtObjClassNotification NotifNode = _Notifs[NKey];
+            CswNbtView MailReportsView = new CswNbtView( this );
+            MailReportsView.ViewName = "runMailReportEventsView";
+            CswNbtViewRelationship Rel1 = MailReportsView.AddViewRelationship( MailReportOC, false );
+            // Nodetype matches
+            MailReportsView.AddViewPropertyAndFilter( ParentViewRelationship: Rel1,
+                                                      MetaDataProp: TargetTypeOCP,
+                                                      FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Contains,
+                                                      Value: TargetNodeType.FirstVersionNodeTypeId.ToString() );
+            // Event matches
+            MailReportsView.AddViewPropertyAndFilter( ParentViewRelationship: Rel1,
+                                                      MetaDataProp: EventOCP,
+                                                      FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals,
+                                                      Value: EventOpt.ToString() );
+            // Can't check the view, because it depends on the user
+            ICswNbtTree MailReportsTree = Trees.getTreeFromView( MailReportsView, RequireViewPermissions: false, IncludeSystemNodes: true );
+            for( Int32 i = 0; i < MailReportsTree.getChildNodeCount(); i++ )
+            {
+                MailReportsTree.goToNthChild( i );
+                
+                CswNbtObjClassMailReport ThisMailReport = MailReportsTree.getNodeForCurrentPosition();
+                ThisMailReport.AddNodeToReport( TargetNode );
+                ThisMailReport.postChanges( false );
 
-            //    //CswNbtMetaDataNodeType TargetNodeType = this.MetaData.getNodeType( NodeTypeId );
-            //    CswNbtMetaDataNodeTypeProp TargetProp = TargetNodeType.getNodeTypeProp( PropName );
-            //        string Subject = NotifNode.Subject.Text;
-            //        string Message = NotifNode.Message.Text;
+                MailReportsTree.goToParentNode();
+            }
+        } // runMailReportEvents()
 
-            //    Message = Message.Replace( CswNbtObjClassNotification.MessageNodeNameReplacement, TargetNode.NodeName );
-            //    if( TargetProp != null )
-            //        Message = Message.Replace( CswNbtObjClassNotification.MessagePropertyValueReplacement, TargetNode.Properties[TargetProp].Gestalt );
-
-            //    foreach( Int32 UserId in SubscribedUserIds )
-            //    {
-            //        CswNbtNode UserNode = this.Nodes[new CswPrimaryKey( "nodes", UserId )];
-            //        CswNbtObjClassUser UserNodeAsUser = (CswNbtObjClassUser) UserNode;
-            //        string EmailAddy = UserNodeAsUser.Email.Trim();
-            //        CswMailMessage MailMessage = CswMail.makeMailMessage( Subject, Message, EmailAddy, UserNodeAsUser.FirstName + " " + UserNodeAsUser.LastName );
-            //        if( null != MailMessage )
-            //        {
-            //            MailMessages.Add( MailMessage );
-            //        }
-            //    } // foreach( Int32 UserId in SubscribedUserIds )
-
-            //    if( MailMessages.Count > 0 )
-            //    {
-            //        sendEmailNotification( MailMessages );
-            //    }
-            //} // if( _Notifs.ContainsKey( NKey ) )
-            //            CswMailMessage MailMessage = CswMail.makeMailMessage( Subject, Message, EmailAddy, UserNodeAsUser.FirstName + " " + UserNodeAsUser.LastName );
-            //            if( null != MailMessage )
-            //            {
-            //                MailMessages.Add( MailMessage );
-            //            }
-            //        } // foreach( Int32 UserId in SubscribedUserIds )
-
-            //        if( MailMessages.Count > 0 )
-            //        {
-            //            sendEmailNotification( MailMessages );
-            //        }
-            //    } // if( _Notifs.ContainsKey( NKey ) )
-        } // runNotification()
-
-        #endregion Notifications
+        #endregion Mail Report Events
 
 
         #region Pass-thru to CswResources

@@ -73,8 +73,8 @@ namespace ChemSW.Nbt.Schema
                 _CswNbtSchemaModTrnsctn.MetaData.DeleteObjectClassProp( ControlTypeOcp, DeleteNodeTypeProps: true );
             }
 
-            #region case 27720 
-            
+            #region case 27720
+
             // remove Notification nodes, nodetypes, and object class
             CswNbtMetaDataObjectClass NotificationOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( "NotificationClass" );
             if( null != NotificationOC )
@@ -82,8 +82,46 @@ namespace ChemSW.Nbt.Schema
                 _CswNbtSchemaModTrnsctn.MetaData.DeleteObjectClass( NotificationOC );
             }
 
+            // add properties to mail reports
+            CswNbtMetaDataObjectClass MailReportOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.MailReportClass );
+            CswNbtMetaDataObjectClassProp TypeOCP = MailReportOC.getObjectClassProp( CswNbtObjClassMailReport.PropertyName.Type );
+            if( null == MailReportOC.getObjectClassProp( CswNbtObjClassMailReport.PropertyName.TargetType ) )
+            {
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp()
+                {
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.NodeTypeSelect,
+                    PropName = CswNbtObjClassMailReport.PropertyName.TargetType,
+                    FilterPropId = TypeOCP.PropId,
+                    Filter = CswNbtObjClassMailReport.TypeOptionView
+                } );
+            }
+            if( null == MailReportOC.getObjectClassProp( CswNbtObjClassMailReport.PropertyName.Event ) )
+            {
+                CswCommaDelimitedString Options = new CswCommaDelimitedString();
+                foreach( CswNbtObjClassMailReport.EventOption EventOpt in CswNbtObjClassMailReport.EventOption._All )
+                {
+                    Options.Add( EventOpt.ToString() );
+                }
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp()
+                {
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.List,
+                    PropName = CswNbtObjClassMailReport.PropertyName.Event,
+                    ListOptions = Options.ToString(),
+                    FilterPropId = TypeOCP.PropId,
+                    Filter = CswNbtObjClassMailReport.TypeOptionView
+                } );
+            }
+            if( null == MailReportOC.getObjectClassProp( CswNbtObjClassMailReport.PropertyName.NodesToReport ) )
+            {
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp()
+                {
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Memo,
+                    PropName = CswNbtObjClassMailReport.PropertyName.NodesToReport
+                } );
+            }
+
             #endregion case 27720
-            
+
             #endregion SEBASTIAN
 
         }//Update()
