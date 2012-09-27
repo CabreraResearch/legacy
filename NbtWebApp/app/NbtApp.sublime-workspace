@@ -1,0 +1,449 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"pro",
+				"processingTtl"
+			],
+			[
+				"con",
+				"controlType"
+			],
+			[
+				"csw",
+				"cswPrivate"
+			],
+			[
+				"d",
+				"div"
+			],
+			[
+				"ro",
+				"rowid"
+			],
+			[
+				"add",
+				"addDeleteBtn"
+			],
+			[
+				"del",
+				"deleteRow"
+			],
+			[
+				"fun",
+				"function"
+			],
+			[
+				"e",
+				"each"
+			],
+			[
+				"row",
+				"rowElements"
+			],
+			[
+				"th",
+				"thisCell"
+			]
+		]
+	},
+	"buffers":
+	[
+		{
+			"file": "/C/kiln/Nbt/Nbt/NbtWebApp/Print.html",
+			"settings":
+			{
+				"buffer_size": 3813,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "/C/kiln/Nbt/Nbt/NbtWebApp/DevIncludes.html",
+			"settings":
+			{
+				"buffer_size": 13784,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "/C/kiln/Nbt/Nbt/NbtWebApp/MainIncludes.html",
+			"settings":
+			{
+				"buffer_size": 7418,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "/C/kiln/Nbt/Nbt/NbtWebApp/DevHeader.html",
+			"settings":
+			{
+				"buffer_size": 4360,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "/C/kiln/Nbt/Nbt/NbtWebApp/PrintTest.html",
+			"settings":
+			{
+				"buffer_size": 30751,
+				"line_ending": "Windows"
+			}
+		}
+	],
+	"build_system": "Packages/JSHint/JSHint.sublime-build",
+	"command_palette":
+	{
+		"height": 392.0,
+		"selected_items":
+		[
+			[
+				"ins",
+				"Package Control: Install Package"
+			],
+			[
+				"inst",
+				"Package Control: Install Package"
+			],
+			[
+				"in",
+				"Package Control: Install Package"
+			],
+			[
+				"insta",
+				"Package Control: Install Package"
+			],
+			[
+				"inst	",
+				"Package Control: Install Package"
+			],
+			[
+				"insta	",
+				"Package Control: Install Package"
+			],
+			[
+				"Insta	",
+				"Package Control: Install Package"
+			],
+			[
+				"Dis",
+				"Package Control: Discover Packages"
+			]
+		],
+		"width": 528.0
+	},
+	"console":
+	{
+		"height": 125.0
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"file_history":
+	[
+		"/C/kiln/Nbt/Nbt/NbtWebApp/app/NbtApp.sublime-project",
+		"/C/kiln/Nbt/Nbt/NbtWebApp/DevIncludes.html",
+		"/C/tincr/FileWatcher.js",
+		"/C/kiln/Nbt/Nbt/NbtWebApp/grunt.js",
+		"/C/kiln/Nbt/Nbt/NbtWebApp/CswApp.2012.9.12.min.js",
+		"/C/kiln/Nbt/Nbt/NbtWebApp/Web.Config",
+		"/C/kiln/Nbt/Nbt/NbtWebApp/README.md",
+		"/C/kiln/Nbt/Nbt/NbtWebApp/app/nodes/CswNodeTree.js",
+		"/C/kiln/Nbt/Nbt/NbtWebApp/app/pagecmp/CswSearch.js",
+		"/C/kiln/Nbt/Nbt/NbtWebApp/app/pagecmp/CswWizard.js",
+		"/C/kiln/Nbt/Nbt/NbtWebApp/app/pagecmp/CswErrorMessage.js",
+		"/C/kiln/Nbt/Nbt/NbtWebApp/app/pagecmp/CswDefaultContent.js",
+		"/C/kiln/Nbt/Nbt/NbtWebApp/app/pagecmp/CswMenuMain.js",
+		"/C/kiln/Nbt/Nbt/NbtWebApp/app/pagecmp/CswMenuHeader.js",
+		"/C/kiln/Nbt/Nbt/NbtWebApp/app/pagecmp/CswMenu.js",
+		"/C/kiln/Nbt/Nbt/NbtWebApp/app/view/CswViewPropFilter.js",
+		"/C/kiln/Nbt/Nbt/NbtWebApp/app/CswApp-vsdoc.js",
+		"/C/kiln/incandescentsw/chemsw-fe/app/js/config/envs/test.js",
+		"/C/Users/ChemSW/AppData/Local/Temp/Temp1_jZebra 1.4.3.zip/dist/sample2.html",
+		"/C/kiln/Nbt/Nbt/NbtWebApp/Print.html",
+		"/C/kiln/Common/CswCommon/Csw/Security/CswAuthenticator.cs",
+		"/C/kiln/incandescentsw/chemsw-fe/app/js/app.js",
+		"/C/kiln/incandescentsw/chemsw-fe/app/index.html",
+		"/C/kiln/incandescentsw/chemsw-fe/app/frame.html",
+		"/C/kiln/incandescentsw/chemsw-fe/app/js/config/config.js",
+		"/C/kiln/incandescentsw/chemsw-fe/app/js/init.js",
+		"/C/kiln/incandescentsw/chemsw-fe/app/js/namespace.js",
+		"/C/kiln/incandescentsw/chemsw-fe/app/js/files.js",
+		"/C/kiln/Nbt/Nbt/NbtWebApp/js/nbt/pagecmp/CswLogin.js",
+		"/C/kiln/Nbt/Nbt/NbtWebApp/Dev.html",
+		"/C/kiln/ThirdParty/jZebra/sample.html",
+		"/C/kiln/ThirdParty/jZebra/sample2.html",
+		"/C/Users/ChemSW/AppData/Local/Temp/Temp1_jZebra 1.4.3.zip/dist/sample.html",
+		"/C/kiln/ThirdParty/jZebra/jsquery.js",
+		"/C/kiln/Nbt/Nbt/NbtWebApp/MainFooter.html",
+		"/C/kiln/Nbt/Nbt/NbtWebApp/MainIncludes.html",
+		"/C/kiln/Nbt/Nbt/NbtWebApp/DevHeader.html",
+		"/C/kiln/Nbt/Nbt/NbtWebApp/MainCswIncludes.html",
+		"/C/kiln/Nbt/Nbt/NbtWebApp/MainHeader.html",
+		"/C/kiln/Nbt/Nbt/NbtWebApp/MainHead.html",
+		"/C/kiln/Nbt/Nbt/NbtWebApp/Main.html",
+		"/C/kiln/Nbt/Nbt/NbtWebApp/js/common/literals/csw.button.js",
+		"/C/kiln/Nbt/Nbt/NbtWebApp/js/common/composites/csw.gridExtJs.js",
+		"/C/kiln/Nbt/Nbt/NbtWebApp/js/nbt/wizards/csw.wizard.amountsgrid.js",
+		"/C/kiln/Nbt/Nbt/NbtWebApp/js/common/composites/csw.thingrid.js",
+		"/C/Users/ChemSW/AppData/Roaming/Sublime Text 2/Packages/Default/Preferences.sublime-settings",
+		"/C/Users/ChemSW/AppData/Roaming/Sublime Text 2/Packages/User/Minifier.sublime-settings",
+		"/C/Users/ChemSW/AppData/Roaming/Sublime Text 2/Packages/JsMinifier/Minifier.sublime-settings",
+		"/C/Users/ChemSW/AppData/Roaming/Sublime Text 2/Packages/User/Preferences.sublime-settings",
+		"/C/kiln/ThirdParty/docu/readme.md"
+	],
+	"find":
+	{
+		"height": 34.0
+	},
+	"find_in_files":
+	{
+		"height": 0.0,
+		"where_history":
+		[
+			"C:\\kiln\\Nbt\\Nbt\\NbtWebApp"
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			"jzebra",
+			"\\libs",
+			"radiobutton",
+			"fieldtypes",
+			"proptypes",
+			"request",
+			"delete"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"selected": 1,
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"file": "/C/kiln/Nbt/Nbt/NbtWebApp/Print.html",
+					"settings":
+					{
+						"buffer_size": 3813,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								3588,
+								3588
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/HTML/HTML.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 1035.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "/C/kiln/Nbt/Nbt/NbtWebApp/DevIncludes.html",
+					"settings":
+					{
+						"buffer_size": 13784,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								13,
+								13
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/HTML/HTML.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "/C/kiln/Nbt/Nbt/NbtWebApp/MainIncludes.html",
+					"settings":
+					{
+						"buffer_size": 7418,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1440,
+								1440
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/HTML/HTML.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "/C/kiln/Nbt/Nbt/NbtWebApp/DevHeader.html",
+					"settings":
+					{
+						"buffer_size": 4360,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								523,
+								523
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/HTML/HTML.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "/C/kiln/Nbt/Nbt/NbtWebApp/PrintTest.html",
+					"settings":
+					{
+						"buffer_size": 30751,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								28278,
+								28278
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/HTML/HTML.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 8154.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				}
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 0.0
+	},
+	"input":
+	{
+		"height": 0.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.exec":
+	{
+		"height": 100.0
+	},
+	"replace":
+	{
+		"height": 0.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 500.0,
+		"selected_items":
+		[
+		],
+		"width": 380.0
+	},
+	"show_minimap": true,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 237.0,
+	"status_bar_visible": true
+}

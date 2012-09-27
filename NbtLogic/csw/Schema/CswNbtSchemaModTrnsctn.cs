@@ -525,7 +525,7 @@ namespace ChemSW.Nbt.Schema
         public CswNbtView makeNewView( string ViewName, NbtViewVisibility Visibility, CswPrimaryKey RoleId = null, CswPrimaryKey UserId = null, Int32 CopyViewId = Int32.MinValue )
         {
             CswNbtView Ret = new CswNbtView( _CswNbtResources );
-            Ret.makeNew( ViewName, Visibility, RoleId, UserId, CopyViewId );
+            Ret.saveNew( ViewName, Visibility, RoleId, UserId, CopyViewId );
             return Ret;
         }
         public CswNbtView restoreView( CswNbtViewId ViewId ) { return ViewSelect.restoreView( ViewId ); }

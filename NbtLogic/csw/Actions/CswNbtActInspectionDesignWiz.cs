@@ -531,11 +531,11 @@ namespace ChemSW.Nbt.Actions
                     RetView = new CswNbtView( _CswNbtResources );
                     if( NbtViewVisibility.Global == _newViewVis )
                     {
-                        RetView.makeNew( InspectionSchedulesViewName, _newViewVis, null, null, null );
+                        RetView.saveNew( InspectionSchedulesViewName, _newViewVis, null, null, null );
                     }
                     else
                     {
-                        RetView.makeNew( InspectionSchedulesViewName, _newViewVis, _CurrentUser.RoleId, _CurrentUser.UserId, null );
+                        RetView.saveNew( InspectionSchedulesViewName, _newViewVis, _CurrentUser.RoleId, _CurrentUser.UserId, null );
                     }
                     RetView.ViewMode = NbtViewRenderingMode.Tree;
                     RetView.Category = Category;
@@ -589,11 +589,11 @@ namespace ChemSW.Nbt.Actions
                     RetView = new CswNbtView( _CswNbtResources );
                     if( NbtViewVisibility.Global == _newViewVis )
                     {
-                        RetView.makeNew( GroupAssignmentViewName, _newViewVis, null, null, null );
+                        RetView.saveNew( GroupAssignmentViewName, _newViewVis, null, null, null );
                     }
                     else
                     {
-                        RetView.makeNew( GroupAssignmentViewName, _newViewVis, _CurrentUser.RoleId, _CurrentUser.UserId, null );
+                        RetView.saveNew( GroupAssignmentViewName, _newViewVis, _CurrentUser.RoleId, _CurrentUser.UserId, null );
                     }
                     RetView.ViewMode = NbtViewRenderingMode.Tree;
                     RetView.Category = Category;
@@ -632,7 +632,7 @@ namespace ChemSW.Nbt.Actions
             CswNbtView RetView = new CswNbtView( _CswNbtResources );
             try
             {
-                RetView.makeNew( InspectionsViewName, NbtViewVisibility.Property, null, null, null );
+                RetView.saveNew( InspectionsViewName, NbtViewVisibility.Property, null, null, null );
                 RetView.ViewMode = ViewMode;
                 RetView.Category = Category;
 
@@ -646,10 +646,10 @@ namespace ChemSW.Nbt.Actions
                 if( false == AllInspections )
                 {
                     ICswNbtFieldTypeRule FTRule = StatusNtp.getFieldTypeRule();
-                    RetView.AddViewPropertyFilter( StatusVp, FTRule.SubFields.Default.Name, CswNbtPropFilterSql.PropertyFilterMode.NotEquals, CswNbtObjClassInspectionDesign.InspectionStatusAsString( CswNbtObjClassInspectionDesign.InspectionStatus.Cancelled ), false );
-                    RetView.AddViewPropertyFilter( StatusVp, FTRule.SubFields.Default.Name, CswNbtPropFilterSql.PropertyFilterMode.NotEquals, CswNbtObjClassInspectionDesign.InspectionStatusAsString( CswNbtObjClassInspectionDesign.InspectionStatus.Completed ), false );
-                    RetView.AddViewPropertyFilter( StatusVp, FTRule.SubFields.Default.Name, CswNbtPropFilterSql.PropertyFilterMode.NotEquals, CswNbtObjClassInspectionDesign.InspectionStatusAsString( CswNbtObjClassInspectionDesign.InspectionStatus.Completed_Late ), false );
-                    RetView.AddViewPropertyFilter( StatusVp, FTRule.SubFields.Default.Name, CswNbtPropFilterSql.PropertyFilterMode.NotEquals, CswNbtObjClassInspectionDesign.InspectionStatusAsString( CswNbtObjClassInspectionDesign.InspectionStatus.Missed ), false );
+                    RetView.AddViewPropertyFilter( StatusVp, FTRule.SubFields.Default.Name, CswNbtPropFilterSql.PropertyFilterMode.NotEquals, CswNbtObjClassInspectionDesign.InspectionStatus.Cancelled, false );
+                    RetView.AddViewPropertyFilter( StatusVp, FTRule.SubFields.Default.Name, CswNbtPropFilterSql.PropertyFilterMode.NotEquals, CswNbtObjClassInspectionDesign.InspectionStatus.Completed, false );
+                    RetView.AddViewPropertyFilter( StatusVp, FTRule.SubFields.Default.Name, CswNbtPropFilterSql.PropertyFilterMode.NotEquals, CswNbtObjClassInspectionDesign.InspectionStatus.CompletedLate, false );
+                    RetView.AddViewPropertyFilter( StatusVp, FTRule.SubFields.Default.Name, CswNbtPropFilterSql.PropertyFilterMode.NotEquals, CswNbtObjClassInspectionDesign.InspectionStatus.Missed, false );
                 }
 
                 if( DateTime.MinValue != DueDate )
@@ -686,11 +686,11 @@ namespace ChemSW.Nbt.Actions
                     RetView = new CswNbtView( _CswNbtResources );
                     if( NbtViewVisibility.Global == _newViewVis )
                     {
-                        RetView.makeNew( InspectionTargetViewName, _newViewVis, null, null, null );
+                        RetView.saveNew( InspectionTargetViewName, _newViewVis, null, null, null );
                     }
                     else
                     {
-                        RetView.makeNew( InspectionTargetViewName, _newViewVis, _CurrentUser.RoleId, _CurrentUser.UserId, null );
+                        RetView.saveNew( InspectionTargetViewName, _newViewVis, _CurrentUser.RoleId, _CurrentUser.UserId, null );
                     }
 
                     RetView.ViewMode = NbtViewRenderingMode.Tree;
@@ -724,7 +724,7 @@ namespace ChemSW.Nbt.Actions
 
             try
             {
-                RetView.makeNew( AllInspectionPointsViewName, NbtViewVisibility.Property, null, null, null );
+                RetView.saveNew( AllInspectionPointsViewName, NbtViewVisibility.Property, null, null, null );
                 RetView.Category = Category;
                 RetView.ViewMode = ViewMode;
 

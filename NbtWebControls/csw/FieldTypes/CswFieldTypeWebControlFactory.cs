@@ -5,7 +5,6 @@ using ChemSW.Nbt;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
-using ChemSW.Nbt.Security;
 
 namespace ChemSW.NbtWebControls.FieldTypes
 {
@@ -171,9 +170,9 @@ namespace ChemSW.NbtWebControls.FieldTypes
                 case CswNbtMetaDataFieldType.NbtFieldType.Quantity:
                     Control = new CswQuantity( CswNbtResources, MetaDataProp, EditMode );
                     break;
-                
+
                 case CswNbtMetaDataFieldType.NbtFieldType.Question:
-                    Control = new CswQuestion(CswNbtResources, MetaDataProp, EditMode);
+                    Control = new CswQuestion( CswNbtResources, MetaDataProp, EditMode );
                     break;
 
                 case CswNbtMetaDataFieldType.NbtFieldType.Relationship:
@@ -232,20 +231,20 @@ namespace ChemSW.NbtWebControls.FieldTypes
 
         }//makeControl()
 
-        
+
         private static void _setReadOnly( CswNbtResources CswNbtResources, CswFieldTypeWebControl Control, CswNbtNodePropWrapper PropWrapper, CswNbtNode Node, NodeEditMode EditMode )
         {
             if( false == Control.ReadOnly )
             {
                 Control.ReadOnly = ( ( EditMode == NodeEditMode.PrintReport || EditMode == NodeEditMode.AuditHistoryInPopup ) ||
-                                     ( PropWrapper != null && PropWrapper.IsReadOnly() ) );
+                                     ( PropWrapper != null /*&& PropWrapper.IsReadOnly() */ ) );
             }
 
             // BZ 8307
             if( EditMode == NodeEditMode.DefaultValue )
                 Control.ReadOnly = false;
         }
-        
+
         //public delegate void ErrorHandler( Exception ex );
         //public event ErrorHandler OnError;
 

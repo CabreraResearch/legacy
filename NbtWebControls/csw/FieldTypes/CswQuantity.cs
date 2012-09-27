@@ -5,7 +5,6 @@ using ChemSW.Core;
 using ChemSW.CswWebControls;
 using ChemSW.Nbt;
 using ChemSW.Nbt.MetaData;
-using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Security;
 
 namespace ChemSW.NbtWebControls.FieldTypes
@@ -54,7 +53,7 @@ namespace ChemSW.NbtWebControls.FieldTypes
                 _UnitLabel.Text = Prop.AsQuantity.CachedUnitName + "&nbsp;";
 
                 if( Prop.AsQuantity.TargetType == NbtViewRelatedIdType.NodeTypeId && !ReadOnly )
-                    ReadOnly = !( _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, _CswNbtResources.MetaData.getNodeType( Prop.AsQuantity.TargetId ) ) );
+                    ReadOnly = !( _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.View, _CswNbtResources.MetaData.getNodeType( Prop.AsQuantity.TargetId ) ) );
 
                 CswNbtMetaDataObjectClass Unit_ObjectClass = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UnitOfMeasureClass );
                 CswNbtView View = new CswNbtView( _CswNbtResources );

@@ -21,16 +21,14 @@ namespace ChemSW.Nbt.ServiceDrivers
             _construct( NodeId, PropId );
         }
 
+        public CswPropIdAttr( CswNbtObjClass AsNode, CswNbtMetaDataNodeTypeProp Prop )
+        {
+            _construct( AsNode != null ? AsNode.NodeId : null, Prop.PropId );
+        }
+
         public CswPropIdAttr( CswNbtNode Node, CswNbtMetaDataNodeTypeProp Prop )
         {
-            if( Node != null )
-            {
-                _construct( Node.NodeId, Prop.PropId );
-            }
-            else
-            {
-                _construct( null, Prop.PropId );
-            }
+            _construct( Node != null ? Node.NodeId : null, Prop.PropId );
         }
 
         private void _construct( CswPrimaryKey NodeId, Int32 PropId )

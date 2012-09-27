@@ -42,11 +42,11 @@ namespace NbtWebAppServices.Response
             }
         }
 
-        string Completed = CswNbtObjClassInspectionDesign.InspectionStatusAsString( CswNbtObjClassInspectionDesign.InspectionStatus.Completed );
-        string Cancelled = CswNbtObjClassInspectionDesign.InspectionStatusAsString( CswNbtObjClassInspectionDesign.InspectionStatus.Cancelled );
-        string CompletedLate = CswNbtObjClassInspectionDesign.InspectionStatusAsString( CswNbtObjClassInspectionDesign.InspectionStatus.Completed_Late );
-        string Missed = CswNbtObjClassInspectionDesign.InspectionStatusAsString( CswNbtObjClassInspectionDesign.InspectionStatus.Missed );
-        string ActionRequired = CswNbtObjClassInspectionDesign.InspectionStatusAsString( CswNbtObjClassInspectionDesign.InspectionStatus.Action_Required );
+        string Completed = CswNbtObjClassInspectionDesign.InspectionStatus.Completed;
+        string Cancelled = CswNbtObjClassInspectionDesign.InspectionStatus.Cancelled;
+        string CompletedLate = CswNbtObjClassInspectionDesign.InspectionStatus.CompletedLate;
+        string Missed = CswNbtObjClassInspectionDesign.InspectionStatus.Missed;
+        string ActionRequired = CswNbtObjClassInspectionDesign.InspectionStatus.ActionRequired;
 
         private bool _updateInspectionNode( CswNbtWcfInspectionsDataModel.CswNbtInspection Inspection )
         {
@@ -83,7 +83,7 @@ namespace NbtWebAppServices.Response
                             if( null != InspectionNt )
                             {
                                 //Can edit the nodetype
-                                if( _CswNbtWcfSessionResources.CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, InspectionNt ) )
+                                if( _CswNbtWcfSessionResources.CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Edit, InspectionNt ) )
                                 {
                                     foreach( CswNbtWcfInspectionsDataModel.CswNbtInspection.QuestionAnswer Question in Inspection.Questions )
                                     {
@@ -93,7 +93,11 @@ namespace NbtWebAppServices.Response
                                             CswNbtMetaDataNodeTypeTab Tab = InspectionNt.getNodeTypeTab( Ntp.FirstEditLayout.TabId );
                                             if( null != Tab )
                                             {
-                                                bool CanEdit = _CswNbtWcfSessionResources.CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, InspectionNt, NodeTypeTab: Tab, MetaDataProp: Ntp );
+                                                bool CanEdit = (
+                                                                    _CswNbtWcfSessionResources.CswNbtResources.Permit.canTab( CswNbtPermit.NodeTypePermission.Edit, InspectionNt, Tab ) ||
+                                                                    _CswNbtWcfSessionResources.CswNbtResources.Permit.canNode( CswNbtPermit.NodeTypePermission.Edit, InspectionNt, null, Ntp )
+                                                                );
+
                                                 CswNbtNodePropQuestion PropAsQuestion = InspectionNode.Properties[Ntp];
                                                 if( CanEdit )
                                                 {
@@ -144,7 +148,11 @@ namespace NbtWebAppServices.Response
                                         {
                                             CswNbtMetaDataNodeTypeTab ButtonTab = _CswNbtWcfSessionResources.CswNbtResources.MetaData.getNodeTypeTab( ButtonNtp.FirstEditLayout.TabId );
                                             if( null != ButtonTab &&
-                                                _CswNbtWcfSessionResources.CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, InspectionNt, NodeTypeTab: ButtonTab, MetaDataProp: ButtonNtp ) )
+                                                    (
+                                                        _CswNbtWcfSessionResources.CswNbtResources.Permit.canTab( CswNbtPermit.NodeTypePermission.Edit, InspectionNt, NodeTypeTab: ButtonTab ) ||
+                                                        _CswNbtWcfSessionResources.CswNbtResources.Permit.canNode( CswNbtPermit.NodeTypePermission.Edit, InspectionNt, null, MetaDataProp: ButtonNtp )
+                                                    )
+                                               )
                                             {
                                                 _InspectionDesignOc = _InspectionDesignOc ?? _CswNbtWcfSessionResources.CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass );
                                                 CswNbtObjClass NbtObjClass = CswNbtObjClassFactory.makeObjClass( _CswNbtWcfSessionResources.CswNbtResources, _InspectionDesignOc, InspectionNode );
