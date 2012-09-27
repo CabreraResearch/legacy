@@ -214,7 +214,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         #endregion
 
-        public void GetNodesToReport()
+        public CswCommaDelimitedString GetNodesToReport()
         {
             CswCommaDelimitedString NodesStr = new CswCommaDelimitedString();
             NodesStr.FromString( NodesToReport.Text );

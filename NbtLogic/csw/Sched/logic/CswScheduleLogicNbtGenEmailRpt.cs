@@ -248,9 +248,9 @@ namespace ChemSW.Nbt.Sched
                                         {
                                             // case 27720 - check mail report events to find nodes that match the view results
                                             Collection<CswPrimaryKey> NodesToMail = new Collection<CswPrimaryKey>();
-                                            foreach( Int32 NodeId in CurrentMailReport.GetNodesToReport() )
+                                            foreach( Int32 NodeId in CurrentMailReport.GetNodesToReport().ToIntCollection() )
                                             {
-                                                CswPrimaryKey ThisNodeId = new CswPrimaryKey( "nodes", CswConvert.ToInt32( MRERow["nodeid"] ) );
+                                                CswPrimaryKey ThisNodeId = new CswPrimaryKey( "nodes", NodeId );
                                                 ReportTree.makeNodeCurrent( ThisNodeId );
                                                 if( ReportTree.isCurrentNodeDefined() )
                                                 {

@@ -35,14 +35,6 @@ namespace ChemSW.Nbt.Schema
                 } );
                 //set the default val to false - we don't want new users to be archived
                 _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( archivedOCP, archivedOCP.getFieldTypeRule().SubFields.Default.Name, Tristate.False );
-
-                _CswNbtSchemaModTrnsctn.MetaData.makeMissingNodeTypeProps();
-
-                foreach( CswNbtNode userNode in userOC.getNodes( false, false ) )
-                {
-                    userNode.Properties[CswNbtObjClassUser.PropertyName.Archived].AsLogical.Checked = Tristate.False;
-                    userNode.postChanges( false );
-                }
             }
             #endregion
 
@@ -87,7 +79,7 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataObjectClassProp TypeOCP = MailReportOC.getObjectClassProp( CswNbtObjClassMailReport.PropertyName.Type );
             if( null == MailReportOC.getObjectClassProp( CswNbtObjClassMailReport.PropertyName.TargetType ) )
             {
-                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp()
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( MailReportOC )
                 {
                     FieldType = CswNbtMetaDataFieldType.NbtFieldType.NodeTypeSelect,
                     PropName = CswNbtObjClassMailReport.PropertyName.TargetType,
@@ -102,7 +94,7 @@ namespace ChemSW.Nbt.Schema
                 {
                     Options.Add( EventOpt.ToString() );
                 }
-                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp()
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( MailReportOC )
                 {
                     FieldType = CswNbtMetaDataFieldType.NbtFieldType.List,
                     PropName = CswNbtObjClassMailReport.PropertyName.Event,
@@ -113,7 +105,7 @@ namespace ChemSW.Nbt.Schema
             }
             if( null == MailReportOC.getObjectClassProp( CswNbtObjClassMailReport.PropertyName.NodesToReport ) )
             {
-                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp()
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( MailReportOC )
                 {
                     FieldType = CswNbtMetaDataFieldType.NbtFieldType.Memo,
                     PropName = CswNbtObjClassMailReport.PropertyName.NodesToReport
@@ -123,6 +115,16 @@ namespace ChemSW.Nbt.Schema
             #endregion case 27720
 
             #endregion SEBASTIAN
+
+            _CswNbtSchemaModTrnsctn.MetaData.makeMissingNodeTypeProps();
+            
+            #region Also romeo (has to be last)
+            foreach( CswNbtNode userNode in userOC.getNodes( false, false ) )
+            {
+                userNode.Properties[CswNbtObjClassUser.PropertyName.Archived].AsLogical.Checked = Tristate.False;
+                userNode.postChanges( false );
+            }
+            #endregion Also romeo (has to be last)
 
         }//Update()
 
