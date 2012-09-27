@@ -14,18 +14,21 @@
                 cswnbtnodekey: cswnbtnodekey,
                 eventArg: event
             };
-            if (Csw.number(delay, -1) >= 0) {
-                previewopts.openDelay = delay;
+            if (false === Csw.isNullOrEmpty(nodeid) || false === Csw.isNullOrEmpty(cswnbtnodekey)) {
+                if (Csw.number(delay, -1) >= 0) {
+                    previewopts.openDelay = delay;
+                }
+                previews[nodeid] = Csw.nbt.nodePreview(Csw.main.body, previewopts);
+                previews[nodeid].open();
             }
-            previews[nodeid] = Csw.nbt.nodePreview(Csw.main.body, previewopts);
-            previews[nodeid].open();
-    }); // Csw.nodeHoverIn 
+        }); // Csw.nodeHoverIn 
 
 
     Csw.nodeHoverOut = Csw.nodeHoverOut ||
         Csw.register('nodeHoverOut', function (event, nodeid) {
             'use strict';
-            if (false === Csw.isNullOrEmpty(previews[nodeid])) {
+            if (false === Csw.isNullOrEmpty(nodeid) &&
+                false === Csw.isNullOrEmpty(previews[nodeid])) {
                 previews[nodeid].close(); 
                 previews[nodeid] = undefined;
             }
@@ -46,7 +49,7 @@
             Csw.extend(cswPrivate, options);
                 
             var cswPublic = {};
-            
+
             cswPrivate.fixDimensions = function() {
                 // Make sure preview div is within the window
                 var windowX = $(window).width() - 10;
@@ -67,11 +70,11 @@
                     left: X + 'px'
                 });
                 cswPrivate.div.css('z-index', '100');
-            } // fixDimensions()
+            };// fixDimensions()
 
             cswPrivate.loadPreview = function() {
                 cswPrivate.div.show();
-                
+
                 Csw.layouts.tabsAndProps(cswPrivate.div, {
                     ID: cswPrivate.ID + 'tabs',
                     globalState: {
@@ -84,7 +87,7 @@
                         showSaveButton: false
                     },
                     AjaxWatchGlobal: false,
-                    onInitFinish: function (AtLeastOneProp) {
+                    onInitFinish: function(AtLeastOneProp) {
                         cswPrivate.loadingDiv.remove();
                         if (AtLeastOneProp) {
                             cswPrivate.fixDimensions();
@@ -93,7 +96,7 @@
                         }
                     }
                 });
-            } // loadPreview()
+            }; // loadPreview()
 
             cswPrivate.hoverIn = function() {
                 clearTimeout(cswPrivate.closeTimeoutHandle);
@@ -118,7 +121,8 @@
 
             // constructor
             (function() {
-                cswPrivate.div = cswParent.div({ 
+
+                cswPrivate.div = cswParent.div({
                         ID: cswPrivate.ID, 
                         cssclass: 'CswNodePreview' 
                     })

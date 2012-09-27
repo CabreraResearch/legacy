@@ -109,10 +109,12 @@
                                 });
                                 break;
                             case 'DeleteDemoNodes':
-                                $.CswDialog('ConfirmDialog', 'You are about to delete all demo data nodes from the database. Are you sure?', 'Delete All Demo Data', function () {
+                                $.CswDialog('ConfirmDialog', 'You are about to delete all demo data nodes from the database.<br>This could take a few minutes to complete. Are you sure?<br>', 'Delete All Demo Data', function () {
                                     Csw.ajax.post({
                                         url: Csw.enums.ajaxUrlPrefix + 'DeleteDemoDataNodes',
-                                        success: Csw.goHome
+                                        success: function (data) {
+                                            $.CswDialog('AlertDialog', data.Succeeded.message, 'Finished ' + data.Succeeded.total + ' deletes', Csw.goHome, 800, 600);
+                                        }
                                     });
                                 }, 'Cancel');
                                 break;

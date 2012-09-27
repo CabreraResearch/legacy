@@ -83,10 +83,10 @@ namespace ChemSW.Nbt.Actions
 
             CswNbtMetaDataObjectClassProp StatusOcp = InspectionDesignOc.getObjectClassProp( CswNbtObjClassInspectionDesign.PropertyName.Status );
             CswNbtViewProperty StatusVp = View.AddViewProperty( InspectionDesignVr, StatusOcp );
-            string Completed = CswNbtObjClassInspectionDesign.InspectionStatusAsString( CswNbtObjClassInspectionDesign.InspectionStatus.Completed );
-            string Cancelled = CswNbtObjClassInspectionDesign.InspectionStatusAsString( CswNbtObjClassInspectionDesign.InspectionStatus.Cancelled );
-            string CompletedLate = CswNbtObjClassInspectionDesign.InspectionStatusAsString( CswNbtObjClassInspectionDesign.InspectionStatus.Completed_Late );
-            string Missed = CswNbtObjClassInspectionDesign.InspectionStatusAsString( CswNbtObjClassInspectionDesign.InspectionStatus.Missed );
+            string Completed = CswNbtObjClassInspectionDesign.InspectionStatus.Completed;
+            string Cancelled = CswNbtObjClassInspectionDesign.InspectionStatus.Cancelled;
+            string CompletedLate = CswNbtObjClassInspectionDesign.InspectionStatus.CompletedLate;
+            string Missed = CswNbtObjClassInspectionDesign.InspectionStatus.Missed;
 
             View.AddViewPropertyFilter( StatusVp, StatusOcp.getFieldTypeRule().SubFields.Default.Name, CswNbtPropFilterSql.PropertyFilterMode.NotEquals, Completed, false );
             View.AddViewPropertyFilter( StatusVp, StatusOcp.getFieldTypeRule().SubFields.Default.Name, CswNbtPropFilterSql.PropertyFilterMode.NotEquals, Cancelled, false );

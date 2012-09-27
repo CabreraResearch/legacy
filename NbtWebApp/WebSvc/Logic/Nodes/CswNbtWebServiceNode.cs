@@ -53,9 +53,8 @@ namespace ChemSW.Nbt.WebServices
             {
                 foreach( string NodePk in NodePks )
                 {
-                    CswPrimaryKey PrimaryKey = new CswPrimaryKey();
-                    PrimaryKey.FromString( NodePk );
-                    if( null != PrimaryKey && !NodePrimaryKeys.Contains( PrimaryKey ) )
+                    CswPrimaryKey PrimaryKey = CswConvert.ToPrimaryKey( NodePk );
+                    if( CswTools.IsPrimaryKey( PrimaryKey ) && false == NodePrimaryKeys.Contains( PrimaryKey ) )
                     {
                         NodePrimaryKeys.Add( PrimaryKey );
                     }
@@ -66,9 +65,15 @@ namespace ChemSW.Nbt.WebServices
                 if( NodePrimaryKeys.Count < CswNbtBatchManager.getBatchThreshold( _CswNbtResources ) )
                 {
                     bool success = true;
+                    string DeletedNodes = "";
                     foreach( CswPrimaryKey Npk in NodePrimaryKeys )
                     {
-                        success = DeleteNode( Npk ) && success;
+                        string DeletedNode = "";
+                        success = DeleteNode( Npk, out DeletedNode ) && success;
+                        if( success )
+                        {
+                            DeletedNodes += DeletedNode;
+                        }
                     }
                     ret["Succeeded"] = success.ToString();
                 }
@@ -83,9 +88,9 @@ namespace ChemSW.Nbt.WebServices
             return ret;
         }
 
-        public bool DeleteNode( CswPrimaryKey NodePk, bool DeleteAllRequiredRelatedNodes = false )
+        public bool DeleteNode( CswPrimaryKey NodePk, out string DeletedNodeName, bool DeleteAllRequiredRelatedNodes = false )
         {
-            return _NodeSd.DeleteNode( NodePk, DeleteAllRequiredRelatedNodes );
+            return _NodeSd.DeleteNode( NodePk, out DeletedNodeName, DeleteAllRequiredRelatedNodes );
         }
 
         public JObject doObjectClassButtonClick( CswPropIdAttr PropId, string SelectedText )
@@ -96,9 +101,10 @@ namespace ChemSW.Nbt.WebServices
         public JObject deleteDemoDataNodes()
         {
             JObject Ret = new JObject();
-            Int32 Succeeded = 0;
+            CswCommaDelimitedString SuccessfulDeletes = new CswCommaDelimitedString();
+            CswCommaDelimitedString FailedDeletes = new CswCommaDelimitedString();
             Int32 Total = 0;
-            Int32 Failed = 0;
+            string SuccessText = "";
             if( _CswNbtResources.CurrentNbtUser.IsAdministrator() )
             {
                 /* Get a new CswNbtResources as the System User */
@@ -111,8 +117,22 @@ namespace ChemSW.Nbt.WebServices
                     CswNbtMetaDataObjectClass UserOc = UserSystemResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
                     foreach( CswNbtObjClassUser User in UserOc.getNodes( forceReInit: true, includeSystemNodes: false ) )
                     {
-                        User.WorkUnitProperty.RelatedNodeId = null;
-                        User.DefaultLocationProperty.SelectedNodeId = null;
+                        if( CswTools.IsPrimaryKey( User.WorkUnitProperty.RelatedNodeId ) )
+                        {
+                            CswNbtNode WorkUnit = UserSystemResources.Nodes[User.WorkUnitProperty.RelatedNodeId];
+                            if( null != WorkUnit && WorkUnit.IsDemo )
+                            {
+                                User.WorkUnitProperty.RelatedNodeId = null;
+                            }
+                        }
+                        if( CswTools.IsPrimaryKey( User.DefaultLocationProperty.SelectedNodeId ) )
+                        {
+                            CswNbtNode Location = UserSystemResources.Nodes[User.DefaultLocationProperty.SelectedNodeId];
+                            if( null != Location && Location.IsDemo )
+                            {
+                                User.DefaultLocationProperty.SelectedNodeId = null;
+                            }
+                        }
                         User.postChanges( ForceUpdate: true );
                     }
                     wsMd.finalizeOtherResources( UserSystemResources );
@@ -127,20 +147,38 @@ namespace ChemSW.Nbt.WebServices
                 Total = NodesTable.Rows.Count;
                 foreach( DataRow NodeRow in NodesTable.Rows )
                 {
+                    string DeletedNodeName = "";
                     try
                     {
                         CswPrimaryKey NodePk = new CswPrimaryKey( "nodes", CswConvert.ToInt32( NodeRow["nodeid"] ) );
-                        if( _NodeSd.DeleteNode( NodePk, DeleteAllRequiredRelatedNodes: true ) )
+
+                        if( _NodeSd.DeleteNode( NodePk, out DeletedNodeName, DeleteAllRequiredRelatedNodes: true ) )
                         {
-                            Succeeded += 1;
+                            SuccessfulDeletes.Add( DeletedNodeName );
+                        }
+                        else if( false == string.IsNullOrEmpty( DeletedNodeName ) )
+                        {
+                            //The cascading delete from above has actually failed to delete this node
+                            FailedDeletes.Add( DeletedNodeName );
                         }
                     }
                     catch( Exception Exception )
                     {
-                        Failed += 1;
+                        FailedDeletes.Add( DeletedNodeName );
                         Exceptions.Add( Exception );
                     }
                 }
+
+                CswTableSelect PostDeleteNodesSelect = _CswNbtResources.makeCswTableSelect( "delete_demodata_nodes", "nodes" );
+                DataTable PostDeleteNodesTable = PostDeleteNodesSelect.getTable( new CswCommaDelimitedString { "nodeid" }, " where isdemo='" + CswConvert.ToDbVal( true ) + "' " );
+                if( PostDeleteNodesTable.Rows.Count == 0 )
+                {
+                    //Since DeleteNode() cascades across all required relationships, not all nodes iterated above will be deleted in the visible loop. 
+                    //As we can't know the nodenames of these deletes, eliminate confusion and make the numbers match.
+                    Total = SuccessfulDeletes.Count;
+                    FailedDeletes = new CswCommaDelimitedString();
+                }
+
                 #endregion Delete Demo Nodes
 
                 #region Delete Demo Views
@@ -149,35 +187,61 @@ namespace ChemSW.Nbt.WebServices
                 Total += ViewsTable.Rows.Count;
                 foreach( DataRow ViewRow in ViewsTable.Rows )
                 {
+                    Int32 ViewPk = CswConvert.ToInt32( ViewRow["nodeviewid"] );
+                    string ViewName = "View: ViewId " + ViewPk;
                     try
                     {
-                        CswNbtViewId ViewId = new CswNbtViewId( CswConvert.ToInt32( ViewRow["nodeviewid"] ) );
+                        CswNbtViewId ViewId = new CswNbtViewId( ViewPk );
                         CswNbtView View = _CswNbtResources.ViewSelect.restoreView( ViewId );
-                        View.Delete();
-                        Succeeded += 1;
+                        if( null != View )
+                        {
+                            ViewName = "View: " + View.ViewName;
+                            SuccessfulDeletes.Add( ViewName );
+                            View.Delete();
+                        }
+                        else
+                        {
+                            FailedDeletes.Add( ViewName );
+                        }
                     }
                     catch( Exception Exception )
                     {
-                        Failed += 1;
+                        FailedDeletes.Add( ViewName );
                         Exceptions.Add( Exception );
                     }
                 }
                 #endregion Delete Demo Views
 
                 wsMd.finalizeOtherResources( NbtSystemResources );
-                if( Exceptions.Count > 0 )
+
+
+                SuccessText += SuccessfulDeletes.Count + " deletes succeeded out of " + Total + " total. <br>";
+                SuccessText += "The following items were successfully deleted: <br>";
+                foreach( string SuccessfulDelete in SuccessfulDeletes )
                 {
-                    string ExceptionText = "";
+                    SuccessText += SuccessfulDelete + ", ";
+                }
+
+                if( FailedDeletes.Count > 0 )
+                {
+                    SuccessText += "<br>";
+                    SuccessText += "Not all demo data was deleted. " + FailedDeletes.Count + " deletes failed out of " + Total + " total.<br>";
+                    SuccessText += "The following items have not been deleted: \n";
+                    foreach( string FailedDelete in FailedDeletes )
+                    {
+                        SuccessText += FailedDelete + ", ";
+                    }
+                    SuccessText += "<br><br>";
                     foreach( Exception ex in Exceptions )
                     {
-                        ExceptionText += ex.Message + " " + ex.InnerException + " /n";
+                        SuccessText += ex.Message + " " + ex.InnerException + " <br><br>";
                     }
-                    throw new CswDniException( ErrorType.Warning, "Not all demo data nodes were deleted. " + Failed + " failed out of " + Total + " total.", "The following exception(s) occurred: " + ExceptionText );
                 }
             }
-            Ret["succeeded"] = Succeeded;
+            Ret["message"] = SuccessText;
+            Ret["succeeded"] = SuccessfulDeletes.Count;
             Ret["total"] = Total;
-            Ret["failed"] = Failed;
+            Ret["failed"] = FailedDeletes.Count;
 
             return Ret;
         }

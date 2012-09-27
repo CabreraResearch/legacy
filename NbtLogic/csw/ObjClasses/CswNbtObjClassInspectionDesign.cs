@@ -13,6 +13,7 @@ namespace ChemSW.Nbt.ObjClasses
     /// </summary>
     public class CswNbtObjClassInspectionDesign : CswNbtObjClass, ICswNbtPropertySetGeneratorTarget
     {
+        #region Enums
         public sealed class PropertyName
         {
             /// <summary>
@@ -81,44 +82,155 @@ namespace ChemSW.Nbt.ObjClasses
         }
 
 
-
-        /// <summary>
-        /// Possible status values for Inspection. Should match List values on ID Status attribute.
-        /// </summary>
-        public enum InspectionStatus
+        public sealed class InspectionStatus : IEquatable<InspectionStatus>
         {
+            #region Internals
+            private static Dictionary<string, string> _Enums = new Dictionary<string, string>( StringComparer.OrdinalIgnoreCase )
+                                                                   {
+                                                                       { Pending       , Pending },
+                                                                       { Overdue       , Overdue },
+                                                                       { ActionRequired, ActionRequired },
+                                                                       { Missed        , Missed },
+                                                                       { Completed     , Completed },
+                                                                       { CompletedLate , CompletedLate },
+                                                                       { Cancelled     , Cancelled }
+                                                                   };
+            /// <summary>
+            /// The string value of the current instance
+            /// </summary>
+            public readonly string Value;
+
+            private static string _Parse( string Val )
+            {
+                string ret = CswResources.UnknownEnum;
+                if( _Enums.ContainsKey( Val ) )
+                {
+                    ret = _Enums[Val];
+                }
+                return ret;
+            }
+
+            /// <summary>
+            /// The enum constructor
+            /// </summary>
+            public InspectionStatus( string ItemName = CswResources.UnknownEnum )
+            {
+                Value = _Parse( ItemName );
+            }
+
+            /// <summary>
+            /// Implicit cast to Enum
+            /// </summary>
+            public static implicit operator InspectionStatus( string Val )
+            {
+                return new InspectionStatus( Val );
+            }
+
+            /// <summary>
+            /// Implicit cast to string
+            /// </summary>
+            public static implicit operator string( InspectionStatus item )
+            {
+                return item.Value;
+            }
+
+            /// <summary>
+            /// Override of ToString
+            /// </summary>
+            public override string ToString()
+            {
+                return Value;
+            }
+
+            #endregion Internals
+
+            #region Enum members
+
             /// <summary>
             /// No action has been taken, not yet due
             /// </summary>
-            Pending,
+            public const string Pending = "Pending";
             /// <summary>
             /// No action has been taken, past due
             /// </summary>
-            Overdue,
+            public const string Overdue = "Overdue";
             /// <summary>
             /// Inspection finished, some answers Deficient
             /// </summary>
-            Action_Required,
+            public const string ActionRequired = "Action Required";
             /// <summary>
             /// Inspection was never finished, past missed date
             /// </summary>
-            Missed,
+            public const string Missed = "Missed";
             /// <summary>
             /// Inspection complete, all answers OK
             /// </summary>
-            Completed,
+            public const string Completed = "Completed";
+
             /// <summary>
             /// Inspection completed late, all answers OK
             /// </summary>
-            Completed_Late,
+            public const string CompletedLate = "Completed Late";
+
             /// <summary>
             /// Admin has cancelled the Inspection
             /// </summary>
-            Cancelled,
+            public const string Cancelled = "Cancelled";
+
+            #endregion Enum members
+
+            #region IEquatable (InspectionStatus)
+
             /// <summary>
-            /// For unset values
+            /// == Equality operator guarantees we're evaluating instance values
             /// </summary>
-            Null
+            public static bool operator ==( InspectionStatus ft1, InspectionStatus ft2 )
+            {
+                //do a string comparison on the fieldtypes
+                return CswConvert.ToString( ft1 ) == CswConvert.ToString( ft2 );
+            }
+
+            /// <summary>
+            ///  != Inequality operator guarantees we're evaluating instance values
+            /// </summary>
+            public static bool operator !=( InspectionStatus ft1, InspectionStatus ft2 )
+            {
+                return !( ft1 == ft2 );
+            }
+
+            /// <summary>
+            /// Equals
+            /// </summary>
+            public override bool Equals( object obj )
+            {
+                if( !( obj is InspectionStatus ) )
+                {
+                    return false;
+                }
+                return this == (InspectionStatus) obj;
+            }
+
+            /// <summary>
+            /// Equals
+            /// </summary>
+            public bool Equals( InspectionStatus obj )
+            {
+                return this == obj;
+            }
+
+            /// <summary>
+            /// Get Hash Code
+            /// </summary>
+            public override int GetHashCode()
+            {
+                int ret = 23, prime = 37;
+                ret = ( ret * prime ) + Value.GetHashCode();
+                ret = ( ret * prime ) + _Enums.GetHashCode();
+                return ret;
+            }
+
+            #endregion IEquatable (InspectionStatus)
+
         };
 
         public enum TargetStatus
@@ -127,40 +239,21 @@ namespace ChemSW.Nbt.ObjClasses
             /// Not yet inspected
             /// </summary>
             Not_Inspected,
+
             /// <summary>
             /// Last inspection complete and in compliance
             /// </summary>
             OK,
+
             /// <summary>
             /// Deficient, Out of compliance
             /// </summary>
             Deficient,
+
             /// <summary>
             /// For unset values
             /// </summary>
             Null
-        }
-
-        /// <summary>
-        /// Replaces underscore with space in enum
-        /// </summary>
-        public static string InspectionStatusAsString( InspectionStatus Status )
-        {
-            string ret = string.Empty;
-            if( Status != InspectionStatus.Null )
-                ret = Status.ToString().Replace( '_', ' ' );
-            return ret;
-        }
-
-        /// <summary>
-        /// Replaces space with underscore in enum
-        /// </summary>
-        public static InspectionStatus InspectionStatusFromString( string Status )
-        {
-            InspectionStatus ret;
-            if( !Enum.TryParse<InspectionStatus>( Status.Replace( ' ', '_' ), out ret ) )
-                ret = InspectionStatus.Null;
-            return ret;
         }
 
         /// <summary>
@@ -184,24 +277,99 @@ namespace ChemSW.Nbt.ObjClasses
                 ret = TargetStatus.Null;
             return ret;
         }
+        #endregion Enums
+
+        #region PropertySet
 
         //ICswNbtPropertySetRuleGeneratorTarget
         /// <summary>
         /// Due Date
         /// </summary>
-        public string GeneratorTargetGeneratedDatePropertyName { get { return PropertyName.Date; } }
+        public string GeneratorTargetGeneratedDatePropertyName
+        {
+            get { return PropertyName.Date; }
+        }
+
         /// <summary>
         /// Is Future
         /// </summary>
-        public string GeneratorTargetIsFuturePropertyName { get { return PropertyName.IsFuture; } }
+        public string GeneratorTargetIsFuturePropertyName
+        {
+            get { return PropertyName.IsFuture; }
+        }
+
         /// <summary>
         /// Schedule generating Inspection
         /// </summary>
-        public string GeneratorTargetGeneratorPropertyName { get { return PropertyName.Generator; } }
+        public string GeneratorTargetGeneratorPropertyName
+        {
+            get { return PropertyName.Generator; }
+        }
+
         /// <summary>
         /// Parent == Owner == Target
         /// </summary>
-        public string GeneratorTargetParentPropertyName { get { return PropertyName.Owner; } }
+        public string GeneratorTargetParentPropertyName
+        {
+            get { return PropertyName.Owner; }
+        }
+
+        #endregion PropertySet
+
+        private class InspectionState
+        {
+            private CswNbtPropEnmrtrFiltered _QuestionsFlt;
+
+            public InspectionState( CswNbtObjClassInspectionDesign Design, bool IsAdmin )
+            {
+                Deficient = false;
+                AllAnswered = true;
+                AllAnsweredInTime = true;
+                UnAnsweredQuestions = new CswCommaDelimitedString();
+
+                if( null != Design && null != Design.Node )
+                {
+                    _QuestionsFlt = Design.Node.Properties[(CswNbtMetaDataFieldType.NbtFieldType) CswNbtMetaDataFieldType.NbtFieldType.Question];
+                    IsInstanced = true;
+                    foreach( CswNbtNodePropWrapper PropWrapper in _QuestionsFlt )
+                    {
+                        CswNbtNodePropQuestion QuestionProp = PropWrapper;
+                        Deficient = ( Deficient || false == QuestionProp.IsCompliant );
+                        AllAnswered = ( false == Deficient && AllAnswered && false == string.IsNullOrEmpty( QuestionProp.Answer.Trim() ) );
+                        AllAnsweredInTime = ( AllAnswered &&
+                                              AllAnsweredInTime &&
+                                              DateTime.MinValue != QuestionProp.DateAnswered.Date &&
+                                              QuestionProp.DateAnswered.Date <= Design.Date.DateTimeValue );
+                        if( string.IsNullOrEmpty( QuestionProp.Answer.Trim() ) )
+                        {
+                            UnAnsweredQuestions.Add( QuestionProp.Question );
+                        }
+
+                        // case 25035
+                        QuestionProp.IsActionRequired = ( Design.Status.Value == InspectionStatus.ActionRequired );
+
+                        // case 26705
+                        QuestionProp.SetOnPropChange( Design.onQuestionChange );
+
+                    }
+
+                    Design.SetPreferred.setReadOnly( value: AllAnswered, SaveToDb: true );
+                    // case 26584
+                    if( IsAdmin )
+                    {
+                        Design.Status.setReadOnly( value: false, SaveToDb: false );
+                    }
+                }
+            }
+
+            public readonly bool IsInstanced = false;
+            public bool Deficient;
+            public bool AllAnswered;
+            public bool AllAnsweredInTime;
+            public CswCommaDelimitedString UnAnsweredQuestions;
+        }
+
+        private InspectionState _InspectionState;
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
 
@@ -212,7 +380,10 @@ namespace ChemSW.Nbt.ObjClasses
             : base( CswNbtResources, Node )
         {
             _CswNbtObjClassDefault = new CswNbtObjClassDefault( _CswNbtResources, Node );
-        }//ctor()
+            _InspectionState = new InspectionState( this, _CswNbtResources.CurrentNbtUser.IsAdministrator() );
+        }
+
+        //ctor()
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
@@ -256,7 +427,9 @@ namespace ChemSW.Nbt.ObjClasses
                 _genFutureNodes();
             }
             _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
-        }//beforeWriteNode()
+        }
+
+        //beforeWriteNode()
 
         /// <summary>
         /// Update Parent Status (OK,Deficient) if Inspection is submitted
@@ -264,7 +437,9 @@ namespace ChemSW.Nbt.ObjClasses
         public override void afterWriteNode()
         {
             _CswNbtObjClassDefault.afterWriteNode();
-        }//afterWriteNode()
+        }
+
+        //afterWriteNode()
 
         public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false )
         {
@@ -282,54 +457,31 @@ namespace ChemSW.Nbt.ObjClasses
 
             _CswNbtObjClassDefault.beforeDeleteNode( DeleteAllRequiredRelatedNodes );
 
-        }//beforeDeleteNode()
+        }
+
+        //beforeDeleteNode()
 
         public override void afterDeleteNode()
         {
             _CswNbtObjClassDefault.afterDeleteNode();
 
-        }//afterDeleteNode()        
+        }
+
+        //afterDeleteNode()        
 
         public override void afterPopulateProps()
         {
+            if( false == _InspectionState.IsInstanced )
+            {
+                _InspectionState = new InspectionState( this, _CswNbtResources.CurrentNbtUser.IsAdministrator() );
+            }
             Generator.SetOnPropChange( OnGeneratorChange );
             IsFuture.SetOnPropChange( OnIsFutureChange );
-            CswNbtPropEnmrtrFiltered QuestionsFlt = this.Node.Properties[(CswNbtMetaDataFieldType.NbtFieldType) CswNbtMetaDataFieldType.NbtFieldType.Question];
-            QuestionsFlt.Reset();
-            bool AllAnswered = true;
-            foreach( CswNbtNodePropWrapper Prop in QuestionsFlt )
-            {
-                CswNbtNodePropQuestion QuestionProp = Prop.AsQuestion;
-
-                // case 25035
-                if( this.Status.Value == InspectionStatusAsString( InspectionStatus.Action_Required ) )
-                {
-                    QuestionProp.IsActionRequired = true;
-                }
-
-                AllAnswered = ( false == string.IsNullOrEmpty( QuestionProp.Answer ) ) && AllAnswered;
-
-                // case 26705
-                QuestionProp.SetOnPropChange( onQuestionChange );
-            }
-
-            SetPreferred.setReadOnly( value: AllAnswered, SaveToDb: true );
-
+            Status.SetOnPropChange( OnStatusPropChange );
             _CswNbtObjClassDefault.afterPopulateProps();
+        }
 
-            // case 26584
-            if( false == _CswNbtResources.CurrentNbtUser.IsAdministrator() )
-            {
-                if( this.Status.Value == InspectionStatusAsString( InspectionStatus.Cancelled ) ||
-                    this.Status.Value == InspectionStatusAsString( InspectionStatus.Completed ) ||
-                    this.Status.Value == InspectionStatusAsString( InspectionStatus.Completed_Late ) ||
-                    this.Status.Value == InspectionStatusAsString( InspectionStatus.Missed ) )
-                {
-                    _CswNbtNode.setReadOnly( value: true, SaveToDb: false );
-                }
-                this.Status.setReadOnly( value: true, SaveToDb: false );
-            }
-        }//afterPopulateProps()
+        //afterPopulateProps()
 
         public void onQuestionChange( CswNbtNodeProp Prop )
         {
@@ -352,96 +504,40 @@ namespace ChemSW.Nbt.ObjClasses
             if( null != ButtonData && null != ButtonData.NodeTypeProp )
             {
                 CswNbtMetaDataObjectClassProp ButtonOCP = ButtonData.NodeTypeProp.getObjectClassProp();
-                CswNbtPropEnmrtrFiltered QuestionsFlt;
+
                 switch( ButtonOCP.PropName )
                 {
                     case PropertyName.Finish:
-                        bool _Deficient = false;
-                        bool _allAnswered = true;
-                        bool _allAnsweredinTime = true;
-
-                        QuestionsFlt = Node.Properties[(CswNbtMetaDataFieldType.NbtFieldType) CswNbtMetaDataFieldType.NbtFieldType.Question];
-                        QuestionsFlt.Reset();
-                        CswCommaDelimitedString UnansweredQuestions = new CswCommaDelimitedString();
-                        foreach( CswNbtNodePropWrapper Prop in QuestionsFlt )
+                        if( _InspectionState.AllAnswered )
                         {
-                            CswNbtNodePropQuestion QuestionProp = Prop;
-                            _Deficient = ( _Deficient || !QuestionProp.IsCompliant );
-                            if( QuestionProp.Answer.Trim() == string.Empty )
-                            {
-                                UnansweredQuestions.Add( Prop.NodeTypeProp.FullQuestionNo );
-                                _allAnswered = false;
-                            }
-                            _allAnsweredinTime = ( _allAnsweredinTime &&
-                                                   DateTime.MinValue != QuestionProp.DateAnswered.Date &&
-                                                   QuestionProp.DateAnswered.Date <= this.Date.DateTimeValue );
-                        }
-
-                        if( _allAnswered )
-                        {
-                            if( _Deficient )
+                            if( _InspectionState.Deficient )
                             {
                                 ButtonData.Message = "Inspection is deficient and requires further action.";
-                                this.Status.Value = InspectionStatusAsString( InspectionStatus.Action_Required );
+                                this.Status.Value = InspectionStatus.ActionRequired;
                             }
                             else
                             {
-                                string StatusValue =
-                                    InspectionStatusAsString( _allAnsweredinTime
-                                                                 ? InspectionStatus.Completed
-                                                                 : InspectionStatus.Completed_Late );
+                                string StatusValue = _InspectionState.AllAnsweredInTime ? InspectionStatus.Completed : InspectionStatus.CompletedLate;
                                 ButtonData.Message = "Inspection marked " + StatusValue + ".";
                                 this.Status.Value = StatusValue;
-                            }
-                            if( true == this.InspectionDate.Empty )
-                            {
-                                this.InspectionDate.DateTimeValue = DateTime.Now;
-                                this.Inspector.RelatedNodeId = _CswNbtResources.CurrentNbtUser.UserId;
-                            }
-                            CswNbtNode ParentNode = _CswNbtResources.Nodes.GetNode( this.Parent.RelatedNodeId );
-                            if( ParentNode != null )
-                            {
-                                ICswNbtPropertySetInspectionParent Parent =
-                                    CswNbtPropSetCaster.AsPropertySetInspectionParent( ParentNode );
-                                if( false == _Deficient ) //case 25041
-                                {
-                                    _Deficient = areMoreActionsRequired();
-                                }
-                                Finish.setReadOnly( value: true, SaveToDb: true );
-                                Finish.setHidden( value: true, SaveToDb: true );
-                                Cancel.setReadOnly( value: true, SaveToDb: true );
-                                Cancel.setHidden( value: true, SaveToDb: true );
-                                SetPreferred.setReadOnly( value: true, SaveToDb: true );
-                                SetPreferred.setHidden( value: true, SaveToDb: true );
-
-                                Parent.Status.Value = _Deficient
-                                                          ? TargetStatusAsString( TargetStatus.Deficient )
-                                                          : TargetStatusAsString( TargetStatus.OK );
-                                //Parent.LastInspectionDate.DateTimeValue = DateTime.Now;
-                                ParentNode.postChanges( false );
                             }
 
                         } // if( _allAnswered )
                         else
                         {
                             ButtonData.Message =
-                                 "Inspection can not be finished until all questions are answered.  Questions remaining: " +
-                                 UnansweredQuestions.ToString();
+                                "Inspection can not be finished until all questions are answered.  Questions remaining: " +
+                                _InspectionState.UnAnsweredQuestions.ToString();
                         }
                         break;
 
                     case PropertyName.Cancel:
                         ButtonData.Message = "Inspection has been cancelled.";
-                        Finish.setReadOnly( value: true, SaveToDb: true );
-                        Finish.setHidden( value: true, SaveToDb: true );
-                        Cancel.setReadOnly( value: true, SaveToDb: true );
-                        Cancel.setHidden( value: true, SaveToDb: true );
-                        SetPreferred.setReadOnly( value: true, SaveToDb: true );
-                        SetPreferred.setHidden( value: true, SaveToDb: true );
-                        this.Status.Value = InspectionStatusAsString( InspectionStatus.Cancelled );
+                        this.Status.Value = InspectionStatus.Cancelled;
                         break;
 
                     case PropertyName.SetPreferred:
+                        CswNbtPropEnmrtrFiltered QuestionsFlt;
                         QuestionsFlt = Node.Properties[(CswNbtMetaDataFieldType.NbtFieldType) CswNbtMetaDataFieldType.NbtFieldType.Question];
                         QuestionsFlt.Reset();
                         foreach( CswNbtNodePropWrapper Prop in QuestionsFlt )
@@ -461,9 +557,11 @@ namespace ChemSW.Nbt.ObjClasses
                 this.postChanges( false );
             } // if( null != NodeTypeProp )
             return true;
-        } // onButtonClick()
+        }
 
-        private bool areMoreActionsRequired()//case 25041
+        // onButtonClick()
+
+        private bool areMoreActionsRequired() //case 25041
         {
             CswNbtView SiblingView = new CswNbtView( _CswNbtResources );
             SiblingView.ViewName = "SiblingView";
@@ -472,7 +570,7 @@ namespace ChemSW.Nbt.ObjClasses
             SiblingView.AddViewPropertyAndFilter(
                 ParentRelationship,
                 this.NodeType.getNodeTypePropByObjectClassProp( PropertyName.Status ),
-                InspectionStatusAsString( InspectionStatus.Action_Required ),
+                InspectionStatus.ActionRequired,
                 CswNbtSubField.SubFieldName.Value,
                 false,
                 CswNbtPropFilterSql.PropertyFilterMode.Equals
@@ -490,11 +588,13 @@ namespace ChemSW.Nbt.ObjClasses
 
             return 0 < NumOfSiblings;
         }
+
         #endregion
 
         #region Object class specific properties
 
         private bool _genFutureNodesHasRun = false;
+
         private void _genFutureNodes()
         {
             if( Tristate.True != this.IsFuture.Checked &&
@@ -515,8 +615,8 @@ namespace ChemSW.Nbt.ObjClasses
                         NodeStatus = PriorInspection.Status.Value;
 
                         if( //Inspection status is Pending, Overdue or not set
-                            ( InspectionStatusAsString( InspectionStatus.Overdue ) == NodeStatus ||
-                              InspectionStatusAsString( InspectionStatus.Pending ) == NodeStatus ||
+                            ( InspectionStatus.Overdue == NodeStatus ||
+                              InspectionStatus.Pending == NodeStatus ||
                               String.Empty == NodeStatus ) &&
                             //Inspections have the same target, and we're comparing different Inspection nodes
                             ( this.Target.RelatedNodeId == InspectionNode.Properties[PropertyName.Target].AsRelationship.RelatedNodeId &&
@@ -535,57 +635,27 @@ namespace ChemSW.Nbt.ObjClasses
         /// Inspection target == owner == parent. 
         /// In FE, target == Inspection Target
         /// </summary>
-        public CswNbtNodePropRelationship Target
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[PropertyName.Target] );
-            }
-        }
+        public CswNbtNodePropRelationship Target { get { return ( _CswNbtNode.Properties[PropertyName.Target] ); } }
 
         /// <summary>
         /// Inspection name
         /// </summary>
-        public CswNbtNodePropText Name
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[PropertyName.Name] );
-            }
-        }
+        public CswNbtNodePropText Name { get { return ( _CswNbtNode.Properties[PropertyName.Name] ); } }
 
         /// <summary>
         /// Due Date of inspection
         /// </summary>
-        public CswNbtNodePropDateTime Date
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[PropertyName.Date] );
-            }
-        }
+        public CswNbtNodePropDateTime Date { get { return ( _CswNbtNode.Properties[PropertyName.Date] ); } }
 
         /// <summary>
         /// Date the inspection was generated
         /// </summary>
-        public CswNbtNodePropDateTime GeneratedDate
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[GeneratorTargetGeneratedDatePropertyName] );
-            }
-        }
+        public CswNbtNodePropDateTime GeneratedDate { get { return ( _CswNbtNode.Properties[GeneratorTargetGeneratedDatePropertyName] ); } }
 
         /// <summary>
         /// Inspection is preemptively generated for future date
         /// </summary>
-        public CswNbtNodePropLogical IsFuture
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[PropertyName.IsFuture] );
-            }
-        }
+        public CswNbtNodePropLogical IsFuture { get { return ( _CswNbtNode.Properties[PropertyName.IsFuture] ); } }
         private void OnIsFutureChange( CswNbtNodeProp NodeProp )
         {
             if( false == _genFutureNodesHasRun ) //redundant--for readability
@@ -594,13 +664,8 @@ namespace ChemSW.Nbt.ObjClasses
                 _genFutureNodes();
             }
         }
-        public CswNbtNodePropRelationship Generator
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[PropertyName.Generator] );
-            }
-        }
+
+        public CswNbtNodePropRelationship Generator { get { return ( _CswNbtNode.Properties[PropertyName.Generator] ); } }
         private void OnGeneratorChange( CswNbtNodeProp NodeProp )
         {
             if( false == _genFutureNodesHasRun ) //redundant--for readability
@@ -609,26 +674,25 @@ namespace ChemSW.Nbt.ObjClasses
                 _genFutureNodes();
             }
         }
+
         /// <summary>
         /// In this context owner == parent
         /// </summary>
-        public CswNbtNodePropRelationship Owner
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[PropertyName.Owner] );
-            }
-        }
+        public CswNbtNodePropRelationship Owner { get { return ( _CswNbtNode.Properties[PropertyName.Owner] ); } }
 
         /// <summary>
         /// In this context parent == owner
         /// </summary>
-        public CswNbtNodePropRelationship Parent
+        public CswNbtNodePropRelationship Parent { get { return ( _CswNbtNode.Properties[GeneratorTargetParentPropertyName] ); } }
+
+        private void _toggleButtons( bool Disabled )
         {
-            get
-            {
-                return ( _CswNbtNode.Properties[GeneratorTargetParentPropertyName] );
-            }
+            Finish.setReadOnly( value: Disabled, SaveToDb: true );
+            Finish.setHidden( value: Disabled, SaveToDb: true );
+            Cancel.setReadOnly( value: Disabled, SaveToDb: true );
+            Cancel.setHidden( value: Disabled, SaveToDb: true );
+            SetPreferred.setReadOnly( value: Disabled, SaveToDb: true );
+            SetPreferred.setHidden( value: Disabled, SaveToDb: true );
         }
 
         /// <summary>
@@ -636,87 +700,87 @@ namespace ChemSW.Nbt.ObjClasses
         /// </summary>
         public CswNbtNodePropList Status
         {
-            get
+            get { return ( _CswNbtNode.Properties[PropertyName.Status] ); }
+        }
+        private void OnStatusPropChange( CswNbtNodeProp NodeProp )
+        {
+            switch( Status.Value )
             {
-                return ( _CswNbtNode.Properties[PropertyName.Status] );
+                case InspectionStatus.Completed:
+                case InspectionStatus.CompletedLate:
+                    if( false == _InspectionState.AllAnswered )
+                    {
+                        Status.Value = InspectionStatus.ActionRequired;
+                    }
+                    else
+                    {
+                        if( true == this.InspectionDate.Empty )
+                        {
+                            this.InspectionDate.DateTimeValue = DateTime.Now;
+                            this.Inspector.RelatedNodeId = _CswNbtResources.CurrentNbtUser.UserId;
+                        }
+                        CswNbtNode ParentNode = _CswNbtResources.Nodes.GetNode( this.Parent.RelatedNodeId );
+                        if( ParentNode != null )
+                        {
+                            ICswNbtPropertySetInspectionParent Parent = CswNbtPropSetCaster.AsPropertySetInspectionParent( ParentNode );
+                            if( false == _InspectionState.Deficient ) //case 25041
+                            {
+                                _InspectionState.Deficient = areMoreActionsRequired();
+                            }
+                            _toggleButtons( Disabled: true );
+
+                            Parent.Status.Value = _InspectionState.Deficient ? TargetStatusAsString( TargetStatus.Deficient ) : TargetStatusAsString( TargetStatus.OK );
+                            //Parent.LastInspectionDate.DateTimeValue = DateTime.Now;
+                            ParentNode.postChanges( false );
+                        }
+                        Node.setReadOnly( value: true, SaveToDb: true );
+                    }
+                    break;
+
+                case InspectionStatus.Cancelled:
+                case InspectionStatus.Missed:
+                    _toggleButtons( Disabled: true );
+                    Node.setReadOnly( value: true, SaveToDb: true );
+                    break;
+
             }
         }
+
+
         /// <summary>
         /// Finish button
         /// </summary>
-        public CswNbtNodePropButton Finish
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[PropertyName.Finish] );
-            }
-        }
+        public CswNbtNodePropButton Finish { get { return ( _CswNbtNode.Properties[PropertyName.Finish] ); } }
 
         /// <summary>
         /// Cancel button
         /// </summary>
-        public CswNbtNodePropButton Cancel
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[PropertyName.Cancel] );
-            }
-        }
+        public CswNbtNodePropButton Cancel { get { return ( _CswNbtNode.Properties[PropertyName.Cancel] ); } }
 
         /// <summary>
         /// Optional reason for cancelling inspection.
         /// </summary>
-        public CswNbtNodePropMemo CancelReason
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[PropertyName.CancelReason] );
-            }
-        }
+        public CswNbtNodePropMemo CancelReason { get { return ( _CswNbtNode.Properties[PropertyName.CancelReason] ); } }
 
         /// <summary>
         /// Location of Inspection's Target
         /// </summary>
-        public CswNbtNodePropPropertyReference Location
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[PropertyName.Location] );
-            }
-        }
+        public CswNbtNodePropPropertyReference Location { get { return ( _CswNbtNode.Properties[PropertyName.Location] ); } }
 
         /// <summary>
         /// Nodetype Version of the Inspection
         /// </summary>
-        public CswNbtNodePropText Version
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[PropertyName.Version] );
-            }
-        }
+        public CswNbtNodePropText Version { get { return ( _CswNbtNode.Properties[PropertyName.Version] ); } }
 
         /// <summary>
         /// Date the inspection switched to action required or completed...
         /// </summary>
-        public CswNbtNodePropDateTime InspectionDate
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[PropertyName.InspectionDate] );
-            }
-        }
+        public CswNbtNodePropDateTime InspectionDate { get { return ( _CswNbtNode.Properties[PropertyName.InspectionDate] ); } }
 
         /// <summary>
         /// inspector is a user
         /// </summary>
-        public CswNbtNodePropRelationship Inspector
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[PropertyName.Inspector] );
-            }
-        }
+        public CswNbtNodePropRelationship Inspector { get { return ( _CswNbtNode.Properties[PropertyName.Inspector] ); } }
 
         public CswNbtNodePropButton SetPreferred { get { return _CswNbtNode.Properties[PropertyName.SetPreferred]; } }
 
