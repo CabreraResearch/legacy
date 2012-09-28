@@ -81,6 +81,7 @@ namespace ChemSW.Nbt.Schema
 
                 CswNbtMetaDataObjectClass requestOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.RequestClass );
                 CswNbtMetaDataObjectClassProp requestorOCP = requestOC.getObjectClassProp( CswNbtObjClassRequest.PropertyName.Requestor );
+                CswNbtMetaDataObjectClassProp requestOCP = requestItemOC.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Request );
 
                 CswNbtMetaDataObjectClassProp reqItemrequestorOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( requestItemOC )
                 {
@@ -88,7 +89,9 @@ namespace ChemSW.Nbt.Schema
                     FieldType = CswNbtMetaDataFieldType.NbtFieldType.PropertyReference,
                     IsFk = true,
                     FkType = NbtViewPropIdType.ObjectClassPropId.ToString(),
-                    FkValue = requestorOCP.PropId
+                    FkValue = requestOCP.PropId,
+                    ValuePropType = NbtViewPropIdType.ObjectClassPropId.ToString(),
+                    ValuePropId = requestorOCP.PropId
                 } );
 
                 CswNbtMetaDataNodeTypeProp reqItemRequestorNTP = _CswNbtSchemaModTrnsctn.MetaData.getNodeTypePropByObjectClassProp( requestItemNT.NodeTypeId, reqItemrequestorOCP.PropId );
