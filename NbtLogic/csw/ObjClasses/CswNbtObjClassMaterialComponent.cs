@@ -103,13 +103,17 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropRelationship Mixture { get { return ( _CswNbtNode.Properties[PropertyName.Mixture] ); } }
         private void OnMixturePropChange( CswNbtNodeProp Prop )
         {
-            if( null != Mixture.RelatedNodeId && null != Constituent.RelatedNodeId )
+            if( null != Mixture.RelatedNodeId )
             {
-                if( Mixture.RelatedNodeId.Equals( Constituent.RelatedNodeId ) )
-                {
-                    Constituent.RelatedNodeId = null;
-                }
+                //Mixture.setReadOnly( true, true );
                 Mixture.setHidden( true, true );
+                if( null != Constituent.RelatedNodeId )
+                {
+                    if( Mixture.RelatedNodeId.Equals( Constituent.RelatedNodeId ) )
+                    {
+                        Constituent.RelatedNodeId = null;
+                    }
+                }
             }
         }
 
