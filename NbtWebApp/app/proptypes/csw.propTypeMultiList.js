@@ -26,7 +26,7 @@
                         cswPrivate.propVals.value = uniqueVals.toString();
                     };
 
-                    if (cswPublic.data.ReadOnly) {
+                    if (cswPublic.data.isReadOnly()) {
                         cswPublic.control = cswPrivate.parent.append(cswPrivate.gestalt);
                     } else {
                         /* Select Box */
@@ -36,8 +36,8 @@
                             values: cswPrivate.options,
                             readonlyless: cswPrivate.propVals.readonlyless,
                             readonlymore: cswPrivate.propVals.readonlymore,
-                            isMultiEdit: cswPublic.data.Multi,
-                            EditMode: cswPublic.data.EditMode,
+                            isMultiEdit: cswPublic.data.isMulti(),
+                            EditMode: cswPublic.data.tabState.EditMode,
                             onChange: function () {
                                var val = cswPublic.control.val();
                                Csw.tryExec(cswPublic.data.onChange, val);

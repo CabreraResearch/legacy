@@ -49,8 +49,12 @@
                     cswPrivate.addDiv = addDiv || cswPublic.rootDiv.div();
                     cswPrivate.addDiv.empty();
                     cswPrivate.tabsAndProps = Csw.wizard.addLayout(cswPrivate.addDiv, {
-                        nodetypeid: cswPrivate.nodetypeid,
-                        excludeOcProps: cswPrivate.excludeOcProps
+                        tabState: {
+                            nodetypeid: cswPrivate.nodetypeid
+                        },
+                        globalState: {
+                            excludeOcProps: cswPrivate.excludeOcProps
+                        }
                     });
 
                     cswPrivate.addNodeBtn = cswPrivate.addDiv.button({

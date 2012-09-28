@@ -149,6 +149,7 @@
                     cswPublic.button = window.Ext.create('Ext.Button', {
                         renderTo: cswParent.getId(),
                         text: Csw.string(cswPrivate.enabledText),
+                        width: cswPrivate.width,
                         handler: cswPrivate.onClick,
                         icon: icon,
                         cls: Csw.string(cswPrivate.cssclass),

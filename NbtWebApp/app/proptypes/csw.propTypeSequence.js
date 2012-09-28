@@ -17,9 +17,9 @@
 
                     cswPrivate.propVals = cswPublic.data.propData.values;
                     cswPrivate.parent = cswPublic.data.propDiv;
-                    cswPrivate.value = (false === cswPublic.data.Multi) ? Csw.string(cswPrivate.propVals.sequence).trim() : Csw.enums.multiEditDefaultValue;
+                    cswPrivate.value = (false === cswPublic.data.isMulti()) ? Csw.string(cswPrivate.propVals.sequence).trim() : Csw.enums.multiEditDefaultValue;
 
-                    if (cswPublic.data.ReadOnly || cswPublic.data.Multi) {
+                    if (cswPublic.data.isReadOnly() || cswPublic.data.isMulti()) {
                         cswPublic.control = cswPrivate.parent.append(cswPrivate.value);
                     } else {
                         cswPublic.control = cswPrivate.parent.input({
@@ -32,10 +32,10 @@
                                 cswPublic.data.onPropChange({ sequence: val });
                             },
                             value: cswPrivate.value,
-                            required: cswPublic.data.Required
+                            required: cswPublic.data.isRequired()
                         });
 
-                        cswPublic.control.required(cswPublic.data.Required);
+                        cswPublic.control.required(cswPublic.data.isRequired());
                         cswPublic.control.clickOnEnter(cswPublic.data.saveBtn);
                     }
 

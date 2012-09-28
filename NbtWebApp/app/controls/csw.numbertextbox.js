@@ -22,7 +22,7 @@
                 width: '',
                 ceilingVal: 999999999.999999,
                 isValid: null,
-                isClosedSet: true
+                excludeRangeLimits: false
             };
             var cswPublic = {};
             //        cswPublic.val = function (newValue) {
@@ -93,16 +93,16 @@
 
                     if (Csw.isNumber(minValue) && Csw.isNumeric(minValue)) {
                         $.validator.addMethod(cswPrivate.ID + '_validateFloatMinValue', function (value, element) {
-                            return (Csw.tryExec(cswPrivate.isValid, value) || this.optional(element) || Csw.validateFloatMinValue($(element).val(), minValue, cswPrivate.isClosedSet));
-                        }, 'Number must be greater than' + (Csw.bool(cswPrivate.isClosedSet) ? ' or equal to ' : ' ') + minValue);
+                            return (Csw.tryExec(cswPrivate.isValid, value) || this.optional(element) || Csw.validateFloatMinValue($(element).val(), minValue, cswPrivate.excludeRangeLimits));
+                        }, 'Number must be greater than' + (Csw.bool(cswPrivate.excludeRangeLimits) ? ' ' : ' or equal to ') + minValue);
                         cswPublic.addClass(cswPrivate.ID + '_validateFloatMinValue');
                     }
                     if (Csw.isNumber(maxValue) &&
                         Csw.isNumeric(maxValue) &&
                             maxValue > minValue) {
                         $.validator.addMethod(cswPrivate.ID + '_validateFloatMaxValue', function (value, element) {
-                            return (Csw.tryExec(cswPrivate.isValid, value) || this.optional(element) || Csw.validateFloatMaxValue($(element).val(), maxValue, cswPrivate.isClosedSet));
-                        }, 'Number must be less than' + (Csw.bool(cswPrivate.isClosedSet) ? ' or equal to ' : ' ') + maxValue);
+                            return (Csw.tryExec(cswPrivate.isValid, value) || this.optional(element) || Csw.validateFloatMaxValue($(element).val(), maxValue, cswPrivate.excludeRangeLimits));
+                        }, 'Number must be less than' + (Csw.bool(cswPrivate.excludeRangeLimits) ? ' ' : ' or equal to ') + maxValue);
                         cswPublic.addClass(cswPrivate.ID + '_validateFloatMaxValue');
                     }
 

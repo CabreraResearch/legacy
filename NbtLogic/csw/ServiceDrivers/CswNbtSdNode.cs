@@ -60,17 +60,20 @@ namespace ChemSW.Nbt.ServiceDrivers
             return RetKey;
         }
 
-        public bool DeleteNode( CswPrimaryKey NodePk, bool DeleteAllRequiredRelatedNodes = false )
+        public bool DeleteNode( CswPrimaryKey NodePk, out string NodeName, bool DeleteAllRequiredRelatedNodes = false )
         {
-            return _DeleteNode( NodePk, _CswNbtResources, DeleteAllRequiredRelatedNodes: DeleteAllRequiredRelatedNodes );
+            return _DeleteNode( NodePk, _CswNbtResources, out NodeName, DeleteAllRequiredRelatedNodes: DeleteAllRequiredRelatedNodes );
         }
 
-        private bool _DeleteNode( CswPrimaryKey NodePk, CswNbtResources NbtResources, bool DeleteAllRequiredRelatedNodes = false )
+        private bool _DeleteNode( CswPrimaryKey NodePk, CswNbtResources NbtResources, out string NodeName, bool DeleteAllRequiredRelatedNodes = false )
         {
             bool ret = false;
-            CswNbtNode NodeToDelete = NbtResources.Nodes.GetNode( NodePk );
+            NodeName = "";
+            CswNbtNode NodeToDelete = NbtResources.Nodes[NodePk];
             if( null != NodeToDelete )
             {
+                CswNbtMetaDataNodeType NodeType = NodeToDelete.getNodeType();
+                NodeName = NodeType.NodeTypeName + ": " + NodeToDelete.NodeName;
                 NodeToDelete.delete( DeleteAllRequiredRelatedNodes: DeleteAllRequiredRelatedNodes );
                 ret = true;
             }

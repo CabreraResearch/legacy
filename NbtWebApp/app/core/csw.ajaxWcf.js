@@ -90,9 +90,18 @@
         }
     });
 
-    cswPrivate.onJsonError = Csw.method(function (xmlHttpRequest, textStatus, o) {
+    cswPrivate.onJsonError = Csw.method(function (xmlHttpRequest, textStatus, param1, o) {
         Csw.publish(Csw.enums.events.ajax.ajaxStop, o.watchGlobal, xmlHttpRequest, textStatus);
-        Csw.debug.error('Webservice Request (' + o.url + ') Failed: ' + textStatus);
+        Csw.debug.error({
+            'Webservice Request': o.urlMethod,
+            data: o.data,
+            Failed: textStatus,
+            state: xmlHttpRequest.state(),
+            status: xmlHttpRequest.status,
+            statusText: xmlHttpRequest.statusText,
+            readyState: xmlHttpRequest.readyState,
+            responseText: xmlHttpRequest.responseText
+        });
         Csw.tryExec(o.error, textStatus);
     });
 
@@ -108,7 +117,7 @@
         verb = verb || 'POST';
         var cswInternal = {
             urlMethod: '',
-            data: {},
+            data: '',
             onloginfail: function () {
                 Csw.clientSession.finishLogout();
             },
@@ -125,6 +134,14 @@
         var cswExternal = { };
         cswInternal.url = Csw.string(cswInternal.url, cswInternal.urlPrefix + cswInternal.urlMethod);
         cswInternal.startTime = new Date();
+        if(false === Csw.isNullOrEmpty(cswInternal.data)) {
+            if (verb === 'POST') {
+                cswInternal.data = Csw.serialize(cswInternal.data);
+            }
+            else {
+                cswInternal.data = Csw.params(cswInternal.data);
+            }
+        }
 
         Csw.publish(Csw.enums.events.ajax.ajaxStart, cswInternal.watchGlobal);
         cswExternal.ajax = $.ajax({
@@ -136,12 +153,12 @@
             dataType: 'json',
             contentType: 'application/json; charset=utf-8',
             //processdata: false,
-            data: Csw.serialize(cswInternal.data),
+            data: cswInternal.data,
             success: function (data) {
                 cswPrivate.onJsonSuccess(cswInternal, data, cswInternal.url);
             }, /* success{} */
-            error: function (xmlHttpRequest, textStatus) {
-                cswPrivate.onJsonError(xmlHttpRequest, textStatus, cswInternal);
+            error: function (xmlHttpRequest, textStatus, param1) {
+                cswPrivate.onJsonError(xmlHttpRequest, textStatus, param1, cswInternal);
             }
         }); /* $.ajax({ */
         return cswExternal;

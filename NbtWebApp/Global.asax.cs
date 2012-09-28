@@ -18,6 +18,7 @@ namespace NbtWebAppServices
         protected void Application_Start( object sender, EventArgs e )
         {
             WebServiceHostFactory Factory = new WebServiceHostFactory();
+            RouteTable.Routes.Add( new ServiceRoute( "Labels", Factory, typeof( CswNbtLabelUriMethods ) ) );
             RouteTable.Routes.Add( new ServiceRoute( "Views", Factory, typeof( CswNbtViewsUriMethods ) ) );
             RouteTable.Routes.Add( new ServiceRoute( "Session", Factory, typeof( CswNbtSessionUriMethods ) ) );
         }

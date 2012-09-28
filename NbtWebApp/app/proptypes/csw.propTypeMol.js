@@ -53,7 +53,7 @@
                         return init;
                     }());
 
-                    if (false === Csw.bool(cswPublic.data.ReadOnly) && cswPublic.data.EditMode !== Csw.enums.editMode.Add) {
+                    if (false === Csw.bool(cswPublic.data.isReadOnly())) {
                         /* Edit Button */
                         cswPrivate.cell22.div()
                             .icon({

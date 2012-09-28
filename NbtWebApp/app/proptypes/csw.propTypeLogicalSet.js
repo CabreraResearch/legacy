@@ -26,16 +26,16 @@
                     cswPublic.control = parent.div()
                            .checkBoxArray({
                                ID: cswPublic.data.ID + '_cba',
-                               ReadOnly: cswPublic.data.ReadOnly,
+                               ReadOnly: cswPublic.data.isReadOnly(),
                                dataAry: logicalSetJson.data,
                                cols: logicalSetJson.columns,
                                nameCol: nameCol,
                                keyCol: keyCol,
-                               Multi: cswPublic.data.Multi,
+                               Multi: cswPublic.data.isMulti(),
                                onChange: function() {
                                    var val = cswPublic.control.val();
                                    Csw.tryExec(cswPublic.data.onChange, val);
-                                   if (false === cswPublic.data.Multi || false === val.MultiIsUnchanged) {
+                                   if (false === cswPublic.data.isMulti() || false === val.MultiIsUnchanged) {
                                        cswPublic.data.onPropChange({ logicalsetjson: val });
                                    }
                                }

@@ -17,7 +17,7 @@
 
                     cswPrivate.propVals = cswPublic.data.propData.values;
                     cswPrivate.parent = cswPublic.data.propDiv;
-                    cswPrivate.value = (false === cswPublic.data.Multi) ? Csw.string(cswPrivate.propVals.text).trim() : Csw.enums.multiEditDefaultValue;
+                    cswPrivate.value = (false === cswPublic.data.isMulti()) ? Csw.string(cswPrivate.propVals.text).trim() : Csw.enums.multiEditDefaultValue;
                     cswPrivate.rows = Csw.string(cswPrivate.propVals.rows);
                     cswPrivate.columns = Csw.string(cswPrivate.propVals.columns);
 
@@ -31,9 +31,9 @@
                         rows: cswPrivate.rows,
                         cols: cswPrivate.columns,
                         value: cswPrivate.value,
-                        disabled: cswPublic.data.ReadOnly,
-                        required: cswPublic.data.Required,
-                        readonly: cswPublic.data.ReadOnly
+                        disabled: cswPublic.data.isReadOnly(),
+                        required: cswPublic.data.isRequired(),
+                        readonly: cswPublic.data.isReadOnly()
                     });
 
                 };

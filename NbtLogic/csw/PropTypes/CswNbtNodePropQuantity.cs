@@ -87,6 +87,28 @@ namespace ChemSW.Nbt.PropTypes
             }
         }
 
+        /// <summary>
+        /// When set to true, the MinValue and MaxValue limits are not included in the allowed number range.
+        /// </summary>
+        public bool ExcludeRangeLimits
+        {
+            get
+            {
+                return CswConvert.ToBoolean( _CswNbtMetaDataNodeTypeProp.Attribute2 );
+            }
+        }
+
+        /// <summary>
+        /// When set to true, quantity can be blank even if the field is required.
+        /// </summary>
+        public bool QuantityOptional
+        {
+            get
+            {
+                return CswConvert.ToBoolean( _CswNbtMetaDataNodeTypeProp.Attribute1 );
+            }
+        }
+
         public Collection<CswNbtNode> UnitNodes
         {
             get
@@ -120,7 +142,7 @@ namespace ChemSW.Nbt.PropTypes
                 string StringVal = string.Empty;
                 if( Double.IsNaN( value ) )
                 {
-                    if( Required )
+                    if( Required && false == QuantityOptional )
                     {
                         throw new CswDniException( ErrorType.Warning, "Cannot save a Quantity without a value if the Property is required.", "Attempted to save the Quantity of a Quantity with an invalid number." );
                     }
@@ -352,6 +374,8 @@ namespace ChemSW.Nbt.PropTypes
             ParentObject["minvalue"] = MinValue.ToString();
             ParentObject["maxvalue"] = MaxValue.ToString();
             ParentObject["precision"] = Precision.ToString();
+            ParentObject["excludeRangeLimits"] = ExcludeRangeLimits.ToString();
+            ParentObject["quantityoptional"] = QuantityOptional.ToString();
 
             ParentObject[_UnitIdSubField.ToXmlNodeName( true )] = default( string );
             if( UnitId != null && Int32.MinValue != UnitId.PrimaryKey )

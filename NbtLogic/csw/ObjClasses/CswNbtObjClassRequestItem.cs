@@ -368,25 +368,25 @@ namespace ChemSW.Nbt.ObjClasses
                                 {
                                     ButtonData.Data["containernodetypeid"] = Container.TargetId;
                                     ButtonData.Data["containerobjectclassid"] = Container.TargetId;
-                                    JObject Capacity = null;
+                                    JObject InitialQuantity = null;
                                     if( null != Size.RelatedNodeId && Int32.MinValue != Size.RelatedNodeId.PrimaryKey )
                                     {
                                         CswNbtObjClassSize NodeAsSize = _CswNbtResources.Nodes[Size.RelatedNodeId];
                                         if( null != NodeAsSize )
                                         {
-                                            Capacity = new JObject();
-                                            NodeAsSize.InitialQuantity.ToJSON( Capacity );
-                                            ButtonData.Data["capacity"] = Capacity;
+                                            InitialQuantity = new JObject();
+                                            NodeAsSize.InitialQuantity.ToJSON( InitialQuantity );
+                                            ButtonData.Data["initialQuantity"] = InitialQuantity;
                                         }
                                     }
                                     else if( false == Quantity.Empty )
                                     {
-                                        Capacity = new JObject();
-                                        Quantity.ToJSON( Capacity );
+                                        InitialQuantity = new JObject();
+                                        Quantity.ToJSON( InitialQuantity );
                                     }
-                                    if( null != Capacity )
+                                    if( null != InitialQuantity )
                                     {
-                                        ButtonData.Data["capacity"] = Capacity;
+                                        ButtonData.Data["initialQuantity"] = InitialQuantity;
                                     }
                                     ButtonData.Action = NbtButtonAction.dispense;
                                 }

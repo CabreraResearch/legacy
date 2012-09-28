@@ -18,8 +18,8 @@ window.initMain = window.initMain || function (undefined) {
 
     (function _initMain() {
         Csw.main.body = Csw.main.body || Csw.main.register('body', Csw.literals.factory($('body')));     // case 27563 review K3663 comment 1
-        Csw.main.ajaxImage = Csw.main.ajaxImage || Csw.main.register('ajaxImage', Csw.literals.factory($('#AjaxImage')));
-        Csw.main.ajaxSpacer = Csw.main.ajaxSpacer || Csw.main.register('ajaxSpacer', Csw.literals.factory($('#AjaxSpacer')));
+        Csw.main.ajaxImage = Csw.main.ajaxImage || Csw.main.register('ajaxImage', Csw.literals.factory($('#ajaxImage')));
+        Csw.main.ajaxSpacer = Csw.main.ajaxSpacer || Csw.main.register('ajaxSpacer', Csw.literals.factory($('#ajaxSpacer')));
         Csw.main.centerBottomDiv = Csw.main.centerBottomDiv || Csw.main.register('centerBottomDiv', Csw.literals.factory($('#CenterBottomDiv')));
         Csw.main.centerTopDiv = Csw.main.centerTopDiv || Csw.main.register('centerTopDiv', Csw.literals.factory($('#CenterTopDiv')));
         Csw.main.headerDashboard = Csw.main.headerDashboard || Csw.main.register('headerDashboard', Csw.literals.factory($('#header_dashboard')));
@@ -36,13 +36,13 @@ window.initMain = window.initMain || function (undefined) {
     } ());
 
 
-    function startSpinner() {
+    var startSpinner = function() {
         Csw.main.ajaxImage.show();
         Csw.main.ajaxSpacer.hide();
     }
     Csw.subscribe(Csw.enums.events.ajax.globalAjaxStart, startSpinner);
 
-    function stopSpinner() {
+    var stopSpinner = function() {
         Csw.main.ajaxImage.hide();
         Csw.main.ajaxSpacer.show();
     };
@@ -510,7 +510,12 @@ window.initMain = window.initMain || function (undefined) {
                         break;
                     default:
                         multi = (false === multi);
-                        refreshSelected({ nodeid: o.nodeid, viewmode: o.viewmode, cswnbtnodekey: o.cswnbtnodekey });
+                        Csw.publish('CswMultiEdit', {
+                            multi: multi,
+                            nodeid: o.nodeid,
+                            viewid: o.viewid
+                        });
+                        //refreshSelected({ nodeid: o.nodeid, viewmode: o.viewmode, cswnbtnodekey: o.cswnbtnodekey });
                         break;
                 } // switch
             },
@@ -784,12 +789,17 @@ window.initMain = window.initMain || function (undefined) {
 
         Csw.layouts.tabsAndProps(Csw.main.rightDiv, {
             ID: 'nodetabs',
-            nodeids: [o.nodeid],
-            nodekeys: [o.cswnbtnodekey],
+            globalState: {
+                nodeids: [o.nodeid],
+                nodekeys: [o.cswnbtnodekey]
+            },
+            tabState: {
+                ShowCheckboxes: multi,
+                tabid: Csw.cookie.get(Csw.cookie.cookieNames.CurrentTabId)
+            },
             onSave: function () {
                 Csw.clientChanges.unsetChanged();
             },
-            tabid: Csw.cookie.get(Csw.cookie.cookieNames.CurrentTabId),
             onBeforeTabSelect: function () {
                 return Csw.clientChanges.manuallyCheckChanges();
             },
@@ -806,8 +816,8 @@ window.initMain = window.initMain || function (undefined) {
             },
             onEditView: function (viewid) {
                 handleAction({
-                    'actionname': 'Edit_View',
-                    'ActionOptions': {
+                    actionname: 'Edit_View',
+                    ActionOptions: {
                         viewid: viewid,
                         viewmode: Csw.enums.viewMode.grid.name,
                         startingStep: 2,
@@ -815,7 +825,6 @@ window.initMain = window.initMain || function (undefined) {
                     }
                 });
             },
-            ShowCheckboxes: multi,
             nodeTreeCheck: mainTree
         });
     }
@@ -1056,7 +1065,7 @@ window.initMain = window.initMain || function (undefined) {
                         currentQuantity: o.currentQuantity,
                         currentUnitName: o.currentUnitName,
                         precision: o.precision,
-                        capacity: Csw.deserialize(o.capacity),
+                        initialQuantity: Csw.deserialize(o.initialQuantity),
                         requestItemId: requestItemId,
                         title: title,
                         location: o.location,

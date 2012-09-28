@@ -51,8 +51,8 @@ namespace ChemSW.Nbt.Sched
         }
 
         //private CswNbtNode _CswNbtNodeGenerator;
-        private string _Pending = CswNbtObjClassInspectionDesign.InspectionStatusAsString( CswNbtObjClassInspectionDesign.InspectionStatus.Pending );
-        private string _Overdue = CswNbtObjClassInspectionDesign.InspectionStatusAsString( CswNbtObjClassInspectionDesign.InspectionStatus.Overdue );
+        private string _Pending = CswNbtObjClassInspectionDesign.InspectionStatus.Pending;
+        private string _Overdue = CswNbtObjClassInspectionDesign.InspectionStatus.Overdue;
         public void threadCallBack()
         {
             _LogicRunStatus = LogicRunStatus.Running;

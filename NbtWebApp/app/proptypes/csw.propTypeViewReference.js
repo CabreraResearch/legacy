@@ -25,7 +25,7 @@
                         ID: Csw.makeId(cswPublic.data.ID, 'tbl')
                     });
 
-                    if (cswPublic.data.EditMode !== Csw.enums.editMode.Add && false === cswPublic.data.Multi) {
+                    if (false === cswPublic.data.isMulti()) {
                         cswPublic.control.cell(1, 1).$.CswViewContentTree({
                             viewid: cswPrivate.viewId
                         });
@@ -45,7 +45,7 @@
                                 Csw.window.location(Csw.getGlobalProp('homeUrl'));
                             }
                         });
-                        if (false === cswPublic.data.ReadOnly) {
+                        if (false === cswPublic.data.isReadOnly()) {
                             cswPublic.control.cell(1, 3).icon({
                                 ID: cswPublic.data.ID + '_edit',
                                 hovertext: 'Edit',
@@ -57,7 +57,7 @@
                                 }
                             });
                         }
-                    } /* if(o.EditMode != Csw.enums.editMode.Add) */
+                    } 
 
                 };
 

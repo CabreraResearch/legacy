@@ -19,13 +19,13 @@
                     cswPrivate.propVals = cswPublic.data.propData.values;
                     cswPrivate.parent = cswPublic.data.propDiv;
 
-                    if (false === Csw.bool(cswPublic.data.ReadOnly)) {
+                    if (false === Csw.bool(cswPublic.data.isReadOnly())) {
 
                         cswPublic.control = cswPrivate.parent.timeInterval({
                             propVals: cswPrivate.propVals,
-                            Multi: cswPublic.data.Multi,
-                            ReadOnly: cswPublic.data.ReadOnly,
-                            Required: cswPublic.data.Required,
+                            Multi: cswPublic.data.isMulti(),
+                            ReadOnly: cswPublic.data.isReadOnly(),
+                            Required: cswPublic.data.isRequired(),
                             rateType: cswPublic.data.ratetype,
                             dateFormat: cswPublic.data.dateformat,
                             onChange: function () {
@@ -56,7 +56,7 @@
                                 };
 
                                 var newInterval = attributes.Interval.rateintervalvalue;
-                                if (false === cswPublic.data.Multi || parent.find('#' + cswPublic.data.ID + '_textvalue').text() !== Csw.enums.multiEditDefaultValue) {
+                                if (false === cswPublic.data.isMulti() || parent.find('#' + cswPublic.data.ID + '_textvalue').text() !== Csw.enums.multiEditDefaultValue) {
                                     Csw.extend(newInterval, val, true);
                                     compare = attributes;
                                 }

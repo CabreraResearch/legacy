@@ -15,7 +15,7 @@
                     cswPublic.data = cswPublic.data || Csw.nbt.propertyOption(propertyOption);
                     
                     cswPrivate.propVals = cswPublic.data.propData.values;
-                    cswPrivate.value = (false === cswPublic.data.Multi) ? Csw.string(cswPrivate.propVals.barcode).trim() : Csw.enums.multiEditDefaultValue;
+                    cswPrivate.value = (false === cswPublic.data.isMulti()) ? Csw.string(cswPrivate.propVals.barcode).trim() : Csw.enums.multiEditDefaultValue;
 
                     cswPublic.control = cswPublic.data.propDiv.table({
                         ID: Csw.makeId(cswPublic.data.ID, 'tbl')
@@ -23,7 +23,7 @@
 
                     cswPrivate.cell1 = cswPublic.control.cell(1, 1);
 
-                    if (cswPublic.data.ReadOnly) {
+                    if (cswPublic.data.isReadOnly()) {
                         cswPrivate.cell1.text(cswPrivate.value);
                     } else {
 
@@ -38,10 +38,14 @@
                             },
                             value: cswPrivate.value
                         });
-                        cswPrivate.input.required(cswPublic.data.Required);
+                        cswPrivate.input.required(cswPublic.data.isRequired());
                         cswPrivate.input.clickOnEnter(cswPublic.data.saveBtn);
                     }
-                    if (false === cswPublic.data.Multi) {
+                    if (false === cswPublic.data.isMulti()) {
+                        var nodeObj = {};
+                        nodeObj[cswPublic.data.tabState.nodeid] = {};
+                        nodeObj[cswPublic.data.tabState.nodeid].nodeid = cswPublic.data.tabState.nodeid;
+                        nodeObj[cswPublic.data.tabState.nodeid].nodename = cswPublic.data.tabState.nodename;
                         cswPublic.control.cell(1, 2).div({ ID: Csw.makeId(cswPublic.data.ID, 'parent', window.Ext.id()) })
                             .buttonExt({
                                 ID: Csw.makeId(cswPublic.data.ID, 'print', window.Ext.id()),
@@ -50,9 +54,12 @@
                                 tooltip: { title: 'Print Barcode Label' },
                                 icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.barcode),
                                 onClick: function () {
-                                    $.CswDialog('PrintLabelDialog', { 'nodeid': cswPublic.data.nodeid, 'propid': cswPublic.data.propid });
+                            $.CswDialog('PrintLabelDialog', {
+                                nodes: nodeObj,
+                                nodetypeid: cswPublic.data.tabState.nodetypeid
+                            });
                                 },
-                                editMode: cswPublic.data.EditMode
+                                editMode: cswPublic.data.tabState.EditMode
                             });
                     }
                 };

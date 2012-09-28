@@ -16,7 +16,7 @@
 
                     cswPrivate.propVals = cswPublic.data.propData.values;
                     cswPrivate.parent = cswPublic.data.propDiv;
-                    cswPrivate.text = (false === cswPublic.data.Multi) ? Csw.string(cswPrivate.propVals.value, cswPublic.data.propData.gestalt).trim() : Csw.enums.multiEditDefaultValue;
+                    cswPrivate.text = (false === cswPublic.data.isMulti()) ? Csw.string(cswPrivate.propVals.value, cswPublic.data.propData.gestalt).trim() : Csw.enums.multiEditDefaultValue;
 
                     cswPrivate.text += '&nbsp;&nbsp;';
                     /* Static Div */

@@ -29,7 +29,7 @@
                     qtyWidth: '',
                     qtyReadonly: false,
                     unitReadonly: false,
-                    isClosedSet: true
+                    excludeRangeLimits: false
                 };
                 if (options) Csw.extend(cswPrivate, options);
 
@@ -61,13 +61,14 @@
                 var buildQuantityTextBox = function () {
                     cswPublic.quantityTextBox = cswPublic.table.cell(1, cswPrivate.cellCol).numberTextBox({
                         ID: cswPrivate.ID + '_qty',
+                        name: cswPrivate.name,
                         labelText: cswPrivate.labelText,
                         useWide: cswPrivate.useWide,
                         width: cswPrivate.qtyWidth,
                         value: Csw.string(cswPrivate.value).trim(),
                         MinValue: Csw.number(cswPrivate.minvalue),
                         MaxValue: Csw.number(cswPrivate.maxvalue),
-                        isClosedSet: Csw.bool(cswPrivate.isClosedSet),
+                        excludeRangeLimits: Csw.bool(cswPrivate.excludeRangeLimits),
                         ceilingVal: Csw.number(cswPrivate.ceilingVal),
                         Precision: 6, //case 24646 - precision is being handled in the validator below, so we don't want to use the one in numberTextBox.
                         ReadOnly: Csw.bool(cswPrivate.qtyReadonly),
@@ -105,7 +106,8 @@
                             cswPrivate.relationships.push({ value: cswPrivate.selectedNodeId, display: cswPrivate.selectedName, frac: cswPrivate.fractional });
                         }
                         cswPublic.unitSelect = cswPublic.table.cell(1, cswPrivate.cellCol).select({
-                            ID: cswPrivate.ID,
+                            ID: cswPrivate.ID + '_select',
+                            name: cswPrivate.name,
                             cssclass: 'selectinput',
                             onChange: function () {
                                 var val = cswPublic.unitSelect.val();

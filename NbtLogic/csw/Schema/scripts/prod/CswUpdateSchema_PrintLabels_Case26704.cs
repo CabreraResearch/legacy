@@ -16,26 +16,6 @@ namespace ChemSW.Nbt.Schema
         public override void update()
         {
             CswNbtMetaDataObjectClass PrintLabelOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.PrintLabelClass );
-            CswNbtMetaDataObjectClassProp ControlTypeOcp = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( PrintLabelOc )
-                {
-                    PropName = CswNbtObjClassPrintLabel.PropertyName.ControlType,
-                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.List,
-                    ListOptions = CswNbtObjClassPrintLabel.ControlTypes.Options.ToString(),
-                    IsRequired = true
-                } );
-            _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( ControlTypeOcp, ControlTypeOcp.getFieldTypeRule().SubFields.Default.Name, CswNbtObjClassPrintLabel.ControlTypes.jZebra );
-
-            foreach( CswNbtObjClassPrintLabel PrintLabel in PrintLabelOc.getNodes( forceReInit: true, includeSystemNodes: false ) )
-            {
-                if( null != PrintLabel )
-                {
-                    PrintLabel.ControlType.Value = CswNbtObjClassPrintLabel.ControlTypes.jZebra;
-                    PrintLabel.postChanges( ForceUpdate: false );
-                }
-            }
-
-            _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( ControlTypeOcp, ControlTypeOcp.getFieldTypeRule().SubFields.Default.Name, CswNbtObjClassPrintLabel.ControlTypes.jZebra );
-
             _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( PrintLabelOc )
                 {
                     PropName = CswNbtObjClassPrintLabel.PropertyName.LabelName,
@@ -43,21 +23,12 @@ namespace ChemSW.Nbt.Schema
                     SetValOnAdd = true
                 } );
 
-            foreach( CswNbtObjClassPrintLabel PrintLabel in PrintLabelOc.getNodes( forceReInit: true, includeSystemNodes: false ) )
-            {
-                if( null != PrintLabel )
-                {
-                    PrintLabel.ControlType.Value = CswNbtObjClassPrintLabel.ControlTypes.jZebra;
-                }
-            }
-
             CswNbtMetaDataNodeType PrintLabelNt = PrintLabelOc.getLatestVersionNodeTypes().FirstOrDefault();
             if( null != PrintLabelNt )
             {
                 CswNbtObjClassPrintLabel PrintLabel = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( PrintLabelNt.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode, OverrideUniqueValidation: false );
                 if( null != PrintLabel )
                 {
-                    PrintLabel.ControlType.Value = CswNbtObjClassPrintLabel.ControlTypes.jZebra;
                     //Whitespace is treated literally
                     PrintLabel.EplText.Text = @"I8,1,001
 q664
