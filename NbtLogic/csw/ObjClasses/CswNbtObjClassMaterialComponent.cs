@@ -45,15 +45,9 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
-            Core.CswPrimaryKey pk = new Core.CswPrimaryKey();
-            pk.FromString( _CswNbtResources.CurrentUser.Cookies["csw_currentnodeid"] );
-            if( null != Constituent.RelatedNodeId && false == IsTemp )
+            if( null != Mixture.RelatedNodeId )
             {
-                if( null == Mixture.RelatedNodeId )
-                {
-                    Mixture.RelatedNodeId = pk;
-                }
-                if( Constituent.RelatedNodeId.Equals( Mixture.RelatedNodeId ) && false == IsTemp )
+                if( Mixture.RelatedNodeId.Equals( Constituent.RelatedNodeId ) && false == IsTemp )
                 {
                     throw new CswDniException( ErrorType.Warning, "Constituent cannot be the same as Mixture", "" );
                 }
@@ -109,12 +103,15 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropRelationship Mixture { get { return ( _CswNbtNode.Properties[PropertyName.Mixture] ); } }
         private void OnMixturePropChange( CswNbtNodeProp Prop )
         {
-            if( null != Mixture.RelatedNodeId && null != Constituent.RelatedNodeId )
+            if( null != Mixture.RelatedNodeId )
             {
-                if( Mixture.RelatedNodeId.Equals( Constituent.RelatedNodeId ) )
+                Mixture.setReadOnly( true, true );
+                if( null != Constituent.RelatedNodeId )
                 {
-                    Mixture.RelatedNodeId = null;
-                    Constituent.RelatedNodeId = null;
+                    if( Mixture.RelatedNodeId.Equals( Constituent.RelatedNodeId ) )
+                    {
+                        Constituent.RelatedNodeId = null;
+                    }
                 }
             }
         }

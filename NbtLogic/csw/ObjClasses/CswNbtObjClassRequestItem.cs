@@ -35,6 +35,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string InventoryGroup = "Inventory Group";
             public const string TotalDispensed = "Total Dispensed";
             public const string Name = "Name";
+            public const string Requestor = "Requestor";
         }
 
         public sealed class Types
@@ -663,6 +664,14 @@ namespace ChemSW.Nbt.ObjClasses
             Fulfill.setHidden( value: ( Status.Value == Statuses.Pending || Status.Value == Statuses.Completed || Status.Value == Statuses.Cancelled ), SaveToDb: true );
             TotalDispensed.setHidden( value: ( Status.Value == Statuses.Pending || ( Type.Value != Types.Dispense && Type.Value != Types.Request ) ), SaveToDb: true );
 
+            //27800 - don't show redundant props when status is pending
+            Request.setHidden( value: ( Status.Value == Statuses.Pending ), SaveToDb: true );
+            RequestBy.setHidden( value: ( Status.Value == Statuses.Pending ), SaveToDb: true );
+            Name.setHidden( value: ( Status.Value == Statuses.Pending ), SaveToDb: true );
+            Requestor.setHidden( value: ( Status.Value == Statuses.Pending ), SaveToDb: true );
+            Status.setHidden( value: ( Status.Value == Statuses.Pending ), SaveToDb: true );
+            Type.setHidden( value: ( Status.Value == Statuses.Pending ), SaveToDb: true );
+
             switch( Status.Value )
             {
                 case Statuses.Submitted:
@@ -752,6 +761,8 @@ namespace ChemSW.Nbt.ObjClasses
         }
 
         public CswNbtNodePropText Name { get { return _CswNbtNode.Properties[PropertyName.Name]; } }
+
+        public CswNbtNodePropPropertyReference Requestor { get { return _CswNbtNode.Properties[PropertyName.Requestor]; } }
 
         #endregion
     }//CswNbtObjClassRequestItem
