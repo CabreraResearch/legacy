@@ -993,11 +993,11 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string gridExportCSV( string ViewId )
+        public string gridExportCSV( string ViewId, string SafeNodeKey )
         {
             UseCompression();
             JObject ReturnVal = new JObject();
-            //bool IsQuickLaunch = false;
+            bool IsQuickLaunch = false;
 
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
             try
@@ -1005,10 +1005,11 @@ namespace ChemSW.Nbt.WebServices
                 _initResources();
                 AuthenticationStatus = _attemptRefresh( true );
 
-                CswNbtView View = _getView( ViewId );
+                CswNbtNodeKey RealNodeKey = null;
+                CswNbtView View = _prepGridView( ViewId, SafeNodeKey, ref RealNodeKey, ref IsQuickLaunch );
                 if( null != View )
                 {
-                    CswNbtWebServiceGrid ws = new CswNbtWebServiceGrid( _CswNbtResources, View, true );
+                    var ws = new CswNbtWebServiceGrid( _CswNbtResources, View, ParentNodeKey: RealNodeKey, ForReport: false );
                     ws.ExportCsv( Context );
                 }
 
