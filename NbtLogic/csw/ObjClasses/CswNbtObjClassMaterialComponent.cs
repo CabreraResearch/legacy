@@ -105,8 +105,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             if( null != Mixture.RelatedNodeId )
             {
-                //Mixture.setReadOnly( true, true );
-                Mixture.setHidden( true, true );
+                Mixture.setReadOnly( true, true );
                 if( null != Constituent.RelatedNodeId )
                 {
                     if( Mixture.RelatedNodeId.Equals( Constituent.RelatedNodeId ) )
