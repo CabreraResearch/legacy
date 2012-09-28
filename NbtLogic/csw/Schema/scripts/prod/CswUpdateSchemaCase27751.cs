@@ -14,7 +14,13 @@ namespace ChemSW.Nbt.Schema
     {
         public override void update()
         {
-            _CswNbtSchemaModTrnsctn.execArbitraryPlatformNeutralSql( "update configuration_variables set issystem = '1' where variablename = 'loc_use_images'" );
+            CswTableUpdate ConfigVarUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "loc_use_images_update", "configuration_variables" );
+            DataTable ConfigVarTable = ConfigVarUpdate.getTable( " where variablename = 'loc_use_images'" );
+            foreach( DataRow ConfigVarRow in ConfigVarTable.Rows )
+            {
+                ConfigVarRow["issystem"] = "1";
+            }
+            ConfigVarUpdate.update( ConfigVarTable );
         }//Update()
 
     }//class CswUpdateSchemaCase27751 
