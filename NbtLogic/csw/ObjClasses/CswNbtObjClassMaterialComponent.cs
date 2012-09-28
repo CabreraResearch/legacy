@@ -45,22 +45,10 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
-            Core.CswPrimaryKey pk = new Core.CswPrimaryKey();
-            pk.FromString( _CswNbtResources.CurrentUser.Cookies["csw_currentnodeid"] );
-
-            CswNbtNode node = _CswNbtResources.Nodes.GetNode( pk );
-            if( this.NodeTypeId != node.NodeTypeId )
+            if( null != Mixture.RelatedNodeId )
             {
-                Mixture.setHidden( true, false );
-            }
-
-            if( null != Constituent.RelatedNodeId && false == IsTemp )
-            {
-                if( null == Mixture.RelatedNodeId )
-                {
-                    Mixture.RelatedNodeId = pk;
-                }
-                if( Constituent.RelatedNodeId.Equals( Mixture.RelatedNodeId ) && false == IsTemp )
+                Mixture.setReadOnly( true, false );
+                if( Mixture.RelatedNodeId.Equals( Constituent.RelatedNodeId ) && false == IsTemp )
                 {
                     throw new CswDniException( ErrorType.Warning, "Constituent cannot be the same as Mixture", "" );
                 }
@@ -120,7 +108,6 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 if( Mixture.RelatedNodeId.Equals( Constituent.RelatedNodeId ) )
                 {
-                    Mixture.RelatedNodeId = null;
                     Constituent.RelatedNodeId = null;
                 }
             }
