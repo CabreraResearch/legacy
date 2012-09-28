@@ -761,7 +761,7 @@
                 } // if (propData.display != 'false' || ConfigMode )
             }; // _makeProp()
 
-            cswPrivate.updateSubProps = function (propData, propCell, tabContentDiv, tabid, configMode, layoutTable) {
+            cswPrivate.updateSubProps = function (singlePropData, propCell, tabContentDiv, tabid, configMode, layoutTable) {
                 /// <summary>Update a properties sub props</summary>
                 /// <param name="fieldOpt" type="Object"> An object defining a prop's fieldtype </param>
                 /// <param name="propId" type="String"> A propertyid </param>
@@ -775,14 +775,14 @@
                 'use strict';
 
                 Csw.defer(function () {
-                    if (propData.wasmodified) {
+                    if (singlePropData.wasmodified) {
                         var jsonData = {
                             EditMode: Csw.string(cswPrivate.tabState.EditMode, 'Edit'),
                             NodeId: Csw.tryParseObjByIdx(cswPrivate.globalState.nodeids, 0),
-                            SafeNodeKey: cswPrivate.tabState.cswnbtnodekey,
-                            PropId: propId,
-                            NodeTypeId: cswPrivate.tabState.nodetypeid,
-                            NewPropJson: JSON.stringify(propData)
+                            SafeNodeKey: Csw.string(cswPrivate.tabState.cswnbtnodekey),
+                            PropId: singlePropData.id,
+                            NodeTypeId: Csw.string(cswPrivate.tabState.nodetypeid),
+                            NewPropJson: JSON.stringify(singlePropData)
                         };
 
                         Csw.ajax.post({
@@ -790,8 +790,12 @@
                             urlMethod: cswPrivate.urls.SinglePropUrlMethod,
                             data: jsonData,
                             success: function (data) {
-                                data.wasmodified = true; // keep the fact that the parent property was modified
-                                cswPrivate.makeProp(propCell, data, tabContentDiv, tabid, configMode, layoutTable);
+                                singlePropData.wasmodified = true;
+                                singlePropData.subprops = data.subprops;
+
+                                // keep the fact that the parent property was modified
+                                cswPrivate.makeProp(propCell, singlePropData, tabContentDiv, tabid, configMode, layoutTable);
+                                Csw.publish('render_' + cswPublic.getNodeId());
                             }
                         });
                     }

@@ -1,16 +1,10 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
 using ChemSW.Core;
-using ChemSW.Exceptions;
-using ChemSW.Nbt.Actions;
-using ChemSW.Nbt.MetaData;
-using ChemSW.Nbt.ObjClasses;
-using ChemSW.Nbt.Security;
-using ChemSW.Security;
 using ChemSW.DB;
+using ChemSW.Exceptions;
 
 namespace ChemSW.Nbt
 {
@@ -80,7 +74,7 @@ namespace ChemSW.Nbt
             }
             return ret;
         } // IsModuleEnabled()
-        
+
 
         /// <summary>
         /// Collection of all enabled modules
@@ -104,6 +98,22 @@ namespace ChemSW.Nbt
         }
 
         /// <summary>
+        /// Enable a Module and trigger its enable event
+        /// </summary>
+        public bool EnableModule( CswNbtModuleName ModuleToEnable )
+        {
+            return UpdateModules( new Collection<CswNbtModuleName> { ModuleToEnable }, null );
+        }
+
+        /// <summary>
+        /// Disable a Module and trigger its disable event
+        /// </summary>
+        public bool DisableModule( CswNbtModuleName ModuleToDisable )
+        {
+            return UpdateModules( null, new Collection<CswNbtModuleName> { ModuleToDisable } );
+        }
+
+        /// <summary>
         /// This will explicitly enable or disable a set of modules.  
         /// Any modules not listed in either list will not be altered.
         /// </summary>
@@ -122,11 +132,13 @@ namespace ChemSW.Nbt
             {
                 CswNbtModuleName Module = ModuleRow["name"].ToString();
                 //Enum.TryParse( ModuleRow["name"].ToString(), true, out Module );
+                ModulesToEnable = ModulesToEnable ?? new Collection<CswNbtModuleName>();
                 if( ModulesToEnable.Contains( Module ) )
                 {
                     ModuleRow["enabled"] = CswConvert.ToDbVal( true );
                     _ModuleRules[Module].OnEnable();
                 }
+                ModulesToDisable = ModulesToDisable ?? new Collection<CswNbtModuleName>();
                 if( ModulesToDisable.Contains( Module ) )
                 {
                     ModuleRow["enabled"] = CswConvert.ToDbVal( false );
