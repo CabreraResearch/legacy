@@ -9,6 +9,7 @@
     <AssemblyName>NbtLogic</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <JSLintSkip>\csw\Schema\scripts\tests\</JSLintSkip>
   </PropertyGroup>
   <PropertyGroup>
     <RootNamespace>ChemSW.Nbt</RootNamespace>
@@ -147,6 +148,7 @@
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase27628.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase27647.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase27670.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_MobileModule_Case27859.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_FieldTypes_Case25352.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_RequestItem_Case27488.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase27431.cs" />
