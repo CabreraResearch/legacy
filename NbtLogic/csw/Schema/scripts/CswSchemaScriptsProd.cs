@@ -80,10 +80,15 @@ namespace ChemSW.Nbt.Schema
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_PrintLabel_Case21701() ) );                  //01R-044 //01S-011
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase27703() ) );                              //01R-045 //01S-012
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase27780() ) );                              //01R-046 //01S-013
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase27665() ) );                              //01Q-047 //01S-014
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase27670() ) );                              //01Q-048 //01S-015
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase27769() ) );                              //01Q-049 //01S-016
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase27528() ) );                              //01Q-050 //01S-017
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase27665() ) );                              //01R-047 //01S-014
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase27670() ) );                              //01R-048 //01S-015
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase27769() ) );                              //01R-049 //01S-016
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase27528() ) );                              //01R-050 //01S-017
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_MobileModule_Case27859() ) );                //01Q-051 //01S-018
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase27779_part1() ) );                        //01R-052 //01S-019
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase27779_part2() ) );                        //01R-053 //01S-020
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase27551_part2() ) );                        //01R-054 //01S-021
+
 
             #endregion SEBASTIAN
 

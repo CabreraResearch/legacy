@@ -30,7 +30,7 @@ namespace ChemSW.Nbt.MetaData
             isrequired,
             isunique,
             iscompoundunique,
-            length,
+            //length,
             //nodetypeid, 
             //nodetypepropid, 
             //nodetypetabsetid, 
@@ -609,11 +609,6 @@ namespace ChemSW.Nbt.MetaData
         {
             get { return _NodeTypePropRow["compositetemplate"].ToString(); }
             set { _setAttribute( "compositetemplate", value, false ); }
-        }
-        public Int32 Length
-        {
-            get { return CswConvert.ToInt32( _NodeTypePropRow["length"] ); }
-            set { _setAttribute( "length", value, false ); }
         }
         public bool DateToday
         {
@@ -1379,7 +1374,7 @@ namespace ChemSW.Nbt.MetaData
         public static string _Attribute_readonly = "readonly";
         public static string _Attribute_isrequired = "isrequired";
         public static string _Attribute_isunique = "isunique";
-        public static string _Attribute_length = "length";
+        //public static string _Attribute_length = "length";
         public static string _Attribute_datetoday = "datetoday";
         public static string _Attribute_listoptions = "listoptions";
         public static string _Attribute_numberprecision = "numberprecision";
@@ -1397,6 +1392,11 @@ namespace ChemSW.Nbt.MetaData
         public static string _Attribute_SubFieldName = "SubFieldName";
         public static string _Attribute_RelationalTable = "RelationalTable";
         public static string _Attribute_RelationalColumn = "RelationalColumn";
+        public static string _Attribute_attribute1 = "attribute1";
+        public static string _Attribute_attribute2 = "attribute2";
+        public static string _Attribute_attribute3 = "attribute3";
+        public static string _Attribute_attribute4 = "attribute4";
+        public static string _Attribute_attribute5 = "attribute5";
 
         public XmlNode ToXml( XmlDocument XmlDoc, bool ForMobile )
         {
@@ -1486,12 +1486,12 @@ namespace ChemSW.Nbt.MetaData
             IsUniqueAttr.Value = IsUnique().ToString().ToLower();
             PropNode.Attributes.Append( IsUniqueAttr );
 
-            XmlAttribute LengthAttr = XmlDoc.CreateAttribute( _Attribute_length );
-            PropNode.Attributes.Append( LengthAttr );
-            if( Length > 0 )
-                LengthAttr.Value = Length.ToString();
-            else
-                LengthAttr.Value = Int32.MinValue.ToString();
+            //XmlAttribute LengthAttr = XmlDoc.CreateAttribute( _Attribute_length );
+            //PropNode.Attributes.Append( LengthAttr );
+            //if( Length > 0 )
+            //    LengthAttr.Value = Length.ToString();
+            //else
+            //    LengthAttr.Value = Int32.MinValue.ToString();
 
             XmlAttribute DateTodayAttr = XmlDoc.CreateAttribute( _Attribute_datetoday );
             DateTodayAttr.Value = DateToday.ToString();
@@ -1525,6 +1525,26 @@ namespace ChemSW.Nbt.MetaData
             XmlAttribute StaticTextAttr = XmlDoc.CreateAttribute( _Attribute_statictext );
             StaticTextAttr.Value = StaticText;
             PropNode.Attributes.Append( StaticTextAttr );
+
+            XmlAttribute Attribute1Attr = XmlDoc.CreateAttribute( _Attribute_attribute1 );
+            Attribute1Attr.Value = Attribute1;
+            PropNode.Attributes.Append( Attribute1Attr );
+
+            XmlAttribute Attribute2Attr = XmlDoc.CreateAttribute( _Attribute_attribute2 );
+            Attribute2Attr.Value = Attribute2;
+            PropNode.Attributes.Append( Attribute2Attr );
+
+            XmlAttribute Attribute3Attr = XmlDoc.CreateAttribute( _Attribute_attribute3 );
+            Attribute3Attr.Value = Attribute3;
+            PropNode.Attributes.Append( Attribute3Attr );
+
+            XmlAttribute Attribute4Attr = XmlDoc.CreateAttribute( _Attribute_attribute4 );
+            Attribute4Attr.Value = Attribute4;
+            PropNode.Attributes.Append( Attribute4Attr );
+
+            XmlAttribute Attribute5Attr = XmlDoc.CreateAttribute( _Attribute_attribute5 );
+            Attribute5Attr.Value = Attribute5;
+            PropNode.Attributes.Append( Attribute5Attr );
 
             // Default value is a subnode, not an attribute
             if( HasDefaultValue() )
@@ -1584,7 +1604,7 @@ namespace ChemSW.Nbt.MetaData
             {
                 this.setIsUnique( CswConvert.ToBoolean( PropXmlRow[_Attribute_isunique] ) );
             }
-            this.Length = CswConvert.ToInt32( PropXmlRow[_Attribute_length] );
+            //this.Length = CswConvert.ToInt32( PropXmlRow[_Attribute_length] );
             this.ListOptions = PropXmlRow[_Attribute_listoptions].ToString();
             this.MaxValue = CswConvert.ToDouble( PropXmlRow[_Attribute_maxvalue] );
             this.MinValue = CswConvert.ToDouble( PropXmlRow[_Attribute_minvalue] );

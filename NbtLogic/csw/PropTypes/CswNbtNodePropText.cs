@@ -60,14 +60,14 @@ namespace ChemSW.Nbt.PropTypes
                 _CswNbtNodePropData.Gestalt = value;
             }
         }
-        public Int32 Length
+        public Int32 Size
         {
             get
             {
-                if( _CswNbtMetaDataNodeTypeProp.Length != Int32.MinValue )
-                    return _CswNbtMetaDataNodeTypeProp.Length;
+                if( false == String.IsNullOrEmpty( _CswNbtMetaDataNodeTypeProp.Attribute1 ) )
+                    return CswConvert.ToInt32( _CswNbtMetaDataNodeTypeProp.Attribute1 );
                 else
-                    return 40;
+                    return 25;
             }
             //set
             //{
@@ -75,24 +75,36 @@ namespace ChemSW.Nbt.PropTypes
             //}
         }
 
+        public Int32 MaxLength
+        {
+            get
+            {
+                if( false == String.IsNullOrEmpty( _CswNbtMetaDataNodeTypeProp.Attribute2 ) )
+                    return CswConvert.ToInt32( _CswNbtMetaDataNodeTypeProp.Attribute2 );
+                else
+                    return 255;
+            }
+        }
+
         //private string _ElemName_Value = "Value";
 
         public override void ToXml( XmlNode ParentNode )
         {
             XmlNode TextNode = CswXmlDocument.AppendXmlNode( ParentNode, _TextSubField.ToXmlNodeName(), Text );
-            CswXmlDocument.AppendXmlAttribute( TextNode, "length", Length.ToString() );
+            CswXmlDocument.AppendXmlAttribute( TextNode, "size", Size.ToString() );
         }
 
         public override void ToXElement( XElement ParentNode )
         {
             ParentNode.Add( new XElement( _TextSubField.ToXmlNodeName( true ), Text,
-                new XAttribute( "length", Length.ToString() ) ) );
+                new XAttribute( "size", Size.ToString() ) ) );
         }
 
         public override void ToJSON( JObject ParentObject )
         {
             ParentObject[_TextSubField.ToXmlNodeName( true )] = Text;
-            ParentObject["length"] = Length.ToString();
+            ParentObject["size"] = Size.ToString();
+            ParentObject["maxlength"] = MaxLength.ToString();
         }
 
         public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )

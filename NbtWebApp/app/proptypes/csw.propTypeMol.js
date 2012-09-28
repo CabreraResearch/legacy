@@ -23,35 +23,43 @@
                     cswPublic.control = cswPrivate.parent.table({
                         ID: Csw.makeId(cswPublic.data.ID, 'tbl')
                     });
-                    
+
                     cswPrivate.cell11 = cswPublic.control.cell(1, 1).propDom('colspan', '3');
-                    
+
                     cswPublic.control.cell(2, 1).css('width', cswPrivate.width - 36);
-                    
+
                     cswPrivate.cell22 = cswPublic.control.cell(2, 2).css('textAlign', 'right');
                     cswPrivate.cell23 = cswPublic.control.cell(2, 3).css('textAlign', 'right');
 
                     cswPrivate.href = Csw.string(cswPrivate.propVals.href);
                     cswPrivate.href += '&usenodetypeasplaceholder=false';     // case 27596
 
-                    cswPrivate.initMol = (function() {
+                    cswPrivate.initMol = (function () {
                         function init(molData) {
                             cswPrivate.cell11.empty();
                             if (molData) {
-                                cswPrivate.cell11.a({
-                                    href: molData.href,
-                                    target: '_blank'
-                                }).img({
-                                    src: molData.href,
-                                    height: cswPrivate.propVals.height,
-                                    width: cswPrivate.width
-                                });
+                                if (Csw.enums.editMode.PrintReport === cswPublic.data.EditMode || Csw.enums.editMode.AuditHistoryInPopup === cswPublic.data.EditMode) {
+                                    cswPrivate.cell11.img({
+                                        src: molData.href + '&uid=' + window.Ext.id(), //case 27492 - FF and IE cache URLs, so we have to make it unique to get new content to display
+                                        height: cswPrivate.propVals.height,
+                                        width: cswPrivate.width
+                                    });
+                                } else {
+                                    cswPrivate.cell11.a({
+                                        href: molData.href,
+                                        target: '_blank'
+                                    }).img({
+                                        src: molData.href + '&foo=' + window.Ext.id(),
+                                        height: cswPrivate.propVals.height,
+                                        width: cswPrivate.width
+                                    });
+                                }
                             }
                         }
 
                         init(cswPrivate);
                         return init;
-                    }());
+                    } ());
 
                     if (false === Csw.bool(cswPublic.data.isReadOnly())) {
                         /* Edit Button */
@@ -62,13 +70,13 @@
                                 hovertext: 'Edit',
                                 size: 16,
                                 isButton: true,
-                                onClick: function() {
+                                onClick: function () {
                                     $.CswDialog('EditMolDialog', {
                                         TextUrl: 'saveMolPropText',
                                         FileUrl: 'saveMolPropFile',
                                         PropId: cswPublic.data.propData.id,
                                         molData: cswPrivate.mol,
-                                        onSuccess: function(data) {
+                                        onSuccess: function (data) {
                                             var val = data;
                                             cswPrivate.initMol(data);
                                             cswPublic.data.onPropChange({ href: data.href, mol: data.mol });
@@ -85,7 +93,7 @@
                                 hovertext: 'Clear Mol',
                                 size: 16,
                                 isButton: true,
-                                onClick: function() {
+                                onClick: function () {
                                     /* remember: confirm is globally blocking call */
                                     if (confirm("Are you sure you want to clear this structure?")) {
                                         var dataJson = {
@@ -96,7 +104,7 @@
                                         Csw.ajax.post({
                                             urlMethod: 'clearProp',
                                             data: dataJson,
-                                            success: function() {
+                                            success: function () {
                                                 cswPrivate.initMol();
                                                 cswPublic.data.onPropChange({ href: '', mol: '' });
                                             }
@@ -112,7 +120,7 @@
                 return cswPublic;
             }));
 
-}());
+} ());
 
 
 

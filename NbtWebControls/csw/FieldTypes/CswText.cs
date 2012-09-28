@@ -26,7 +26,7 @@ namespace ChemSW.NbtWebControls.FieldTypes
             if( Prop != null )
             {
                 Text = Prop.AsText.Text;
-                _TextBox.Columns = Prop.AsText.Length;
+                _TextBox.Columns = Prop.AsText.Size;
             }
         }
 
@@ -78,7 +78,7 @@ namespace ChemSW.NbtWebControls.FieldTypes
         {
             get
             {
-                EnsureChildControls(); 
+                EnsureChildControls();
                 return _TextBox.AutoPostBack;
             }
             set
@@ -98,7 +98,7 @@ namespace ChemSW.NbtWebControls.FieldTypes
             _TextBox = new TextBox();
             _TextBox.ID = "text_" + _CswNbtMetaDataNodeTypeProp.PropId.ToString();
             _TextBox.CssClass = CswFieldTypeWebControl.TextBoxCssClass;
-            this.Controls.Add(_TextBox);
+            this.Controls.Add( _TextBox );
 
             base.CreateChildControls();
 
@@ -123,15 +123,15 @@ namespace ChemSW.NbtWebControls.FieldTypes
         /// <summary>
         /// Render event
         /// </summary>
-        public override void RenderControl(HtmlTextWriter writer)
+        public override void RenderControl( HtmlTextWriter writer )
         {
-            if (ReadOnly)
+            if( ReadOnly )
             {
-                writer.Write(this.Text);
+                writer.Write( this.Text );
             }
             else
             {
-                base.RenderControl(writer);
+                base.RenderControl( writer );
             }
         }
     }

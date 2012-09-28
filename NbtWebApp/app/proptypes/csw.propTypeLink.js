@@ -4,14 +4,14 @@
     'use strict';
     Csw.properties.link = Csw.properties.link ||
         Csw.properties.register('link',
-            Csw.method(function(propertyOption) {
+            Csw.method(function (propertyOption) {
                 'use strict';
-                var cswPrivate = { };
+                var cswPrivate = {};
                 var cswPublic = {
                     data: propertyOption
                 };
-                
-                var render = function() {
+
+                var render = function () {
                     'use strict';
                     cswPublic.data = cswPublic.data || Csw.nbt.propertyOption(propertyOption);
 
@@ -31,10 +31,16 @@
                             ID: Csw.makeId(cswPublic.data.ID, 'tbl')
                         });
 
-                        cswPublic.control.cell(1, 1).a({
-                            href: cswPrivate.href,
-                            text: cswPrivate.text
-                        });
+                        if ((Csw.enums.editMode.PrintReport === cswPublic.data.EditMode || Csw.enums.editMode.AuditHistoryInPopup === cswPublic.data.EditMode)) {
+                            cswPublic.control.cell(1, 1).p({
+                                text: cswPrivate.text
+                            });
+                        } else {
+                            cswPublic.control.cell(1, 1).a({
+                                href: cswPrivate.href,
+                                text: cswPrivate.text
+                            });
+                        }
                         cswPrivate.cell12 = cswPublic.control.cell(1, 2).div();
 
                         cswPrivate.cell12.icon({
@@ -59,7 +65,7 @@
                             ID: cswPublic.data.ID + '_text',
                             type: Csw.enums.inputTypes.text,
                             value: cswPrivate.text,
-                            onChange: function() {
+                            onChange: function () {
                                 var val = cswPrivate.editText.val();
                                 Csw.tryExec(cswPublic.data.onChange, val);
                                 cswPublic.data.onPropChange({ text: val });
@@ -94,6 +100,6 @@
                 cswPublic.data.bindRender(render);
                 return cswPublic;
             }));
-    
-}());
+
+} ());
   

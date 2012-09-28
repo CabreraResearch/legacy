@@ -1,7 +1,7 @@
+using ChemSW.Core;
+using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
-using ChemSW.Exceptions;
-using ChemSW.Core;
 
 namespace ChemSW.Nbt.ObjClasses
 {
@@ -75,6 +75,7 @@ namespace ChemSW.Nbt.ObjClasses
                     Value: InventoryGroup.CachedNodeName,
                     SubFieldName: CswNbtSubField.SubFieldName.Name,
                     FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+                parent.NodeIdsToFilterOut.Add( this.NodeId );
 
                 ICswNbtTree matchingPermissionsTree = _CswNbtResources.Trees.getTreeFromView( matchingPermissionsView, false );
                 matchingPermissionsTree.goToRoot();
