@@ -971,8 +971,14 @@ namespace ChemSW.Nbt.MetaData
         {
             get
             {
-                return _CswNbtMetaDataResources.CswNbtResources.EditMode == NodeEditMode.Add &&
-                       null != AddLayout;
+                bool ret = false;
+
+                if( false == ServerManaged )
+                {
+                    ret = _CswNbtMetaDataResources.CswNbtResources.EditMode == NodeEditMode.Add && null != AddLayout;
+                }
+
+                return ( ret );
             }
         }
 
