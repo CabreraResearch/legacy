@@ -31,11 +31,13 @@ namespace ChemSW.Nbt.Schema
                     CswNbtMetaDataObjectClass requestItemOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.RequestItemClass );
                     CswNbtMetaDataObjectClassProp requestOCP = requestItemOC.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Request );
 
-                    CswNbtMetaDataNodeTypeProp reqItemRequestorNTP = _CswNbtSchemaModTrnsctn.MetaData.makeNewProp(
-                        NodeType: requestItemNT,
-                        FieldType: CswNbtMetaDataFieldType.NbtFieldType.PropertyReference,
-                        PropName: "Requestor",
-                        TabId: requestItemNTT.TabId );
+                    CswNbtMetaDataObjectClassProp reqItemrequestorOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( requestItemOC )
+                    {
+                        PropName = "Requestor",
+                        FieldType = CswNbtMetaDataFieldType.NbtFieldType.PropertyReference
+                    } );
+
+                    CswNbtMetaDataNodeTypeProp reqItemRequestorNTP = _CswNbtSchemaModTrnsctn.MetaData.getNodeTypePropByObjectClassProp( requestItemNT.NodeTypeId, reqItemrequestorOCP.PropId );
 
                     reqItemRequestorNTP.SetFK( NbtViewPropIdType.ObjectClassPropId.ToString(), requestOCP.PropId, NbtViewPropIdType.ObjectClassPropId.ToString(), requestorOCP.PropId );
                     reqItemRequestorNTP.removeFromLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add );
