@@ -47,12 +47,6 @@
                 multiSelectCell.hide();
                 cswPublic = Csw.dom({}, cswPrivate.select);
 
-                if (Csw.isFunction(cswPrivate.onChange)) {
-                    cswPrivate.select.bind('change', function () {
-                        cswPrivate.onChange(cswPrivate.select);
-                    });
-                }
-
                 Csw.each(values, function (opt) {
                     var value = Csw.string(opt.value, opt.text),
                         text = Csw.string(opt.text, value),
@@ -72,16 +66,23 @@
                     }
                 }
 
-                var makeMultiSelect = function () {
+                cswPrivate.multiSelect = { };
+                var makeMultiSelect = function() {
                     moreDivCell.hide();
                     editBtnCell.hide();
+                    cswPrivate.multiSelect = cswPrivate.select.$.multiselect({
+                        click: Csw.method(cswPrivate.onChange, cswPrivate.select),
+                        checkall: Csw.method(cswPrivate.onChange, cswPrivate.select),
+                        uncheckall: Csw.method(cswPrivate.onChange, cswPrivate.select),
+                        optgrouptoggle: Csw.method(cswPrivate.onChange, cswPrivate.select),
+                        close: Csw.method(cswPrivate.onChange, cswPrivate.select)
+                    });
                     if (optionCount > 20) {
-                        cswPrivate.select.$.multiselect().multiselectfilter();
-                    } else {
-                        cswPrivate.select.$.multiselect();
-                    }
+                        cswPrivate.multiSelect.multiselectfilter();
+                    } 
+                    
                     multiSelectCell.show();
-                }
+                };
 
                 if (cswPrivate.EditMode === Csw.enums.editMode.Add) {
                     makeMultiSelect();
