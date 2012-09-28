@@ -45,6 +45,13 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
+            if( null != Mixture.RelatedNodeId )
+            {
+                if( Mixture.RelatedNodeId.Equals( Constituent.RelatedNodeId ) && false == IsTemp )
+                {
+                    throw new CswDniException( ErrorType.Warning, "Constituent cannot be the same as Mixture", "" );
+                }
+            }
             _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
         }//beforeWriteNode()
 
@@ -102,11 +109,7 @@ namespace ChemSW.Nbt.ObjClasses
                 {
                     Constituent.RelatedNodeId = null;
                 }
-                Mixture.setReadOnly( true, true );
-                if( Mixture.RelatedNodeId.Equals( Constituent.RelatedNodeId ) && false == IsTemp )
-                {
-                    throw new CswDniException( ErrorType.Warning, "Constituent cannot be the same as Mixture", "" );
-                }
+                Mixture.setHidden( true, true );
             }
         }
 
