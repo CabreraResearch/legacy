@@ -714,7 +714,7 @@ namespace ChemSW.Nbt.MetaData
                             if( DefaultValueTable.Rows.Count > 0 )
                                 _DefaultValueRow = DefaultValueTable.Rows[0];
                         }
-                        if( CreateMissingRow || _DefaultValueRow == null )
+                        else if( CreateMissingRow )
                         {
                             DataTable NewDefaultValueTable = _CswNbtMetaDataResources.JctNodesPropsTableUpdate.getEmptyTable();
                             _DefaultValueRow = NewDefaultValueTable.NewRow();
