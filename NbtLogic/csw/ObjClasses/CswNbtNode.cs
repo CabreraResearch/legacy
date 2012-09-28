@@ -542,7 +542,7 @@ namespace ChemSW.Nbt.ObjClasses
         /// </summary>
         public bool ReadOnly
         {
-            get { return _ReadOnly || _ReadOnlyTemporary; }
+            get { return _ReadOnly || _ReadOnlyTemporary || Locked; }
         }
         /// <summary>
         /// Should only be used by CswNbtNodeWriter

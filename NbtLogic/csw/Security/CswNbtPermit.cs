@@ -3,6 +3,7 @@ using ChemSW.Core;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
+using ChemSW.Nbt.PropTypes;
 
 namespace ChemSW.Nbt.Security
 {
@@ -428,54 +429,74 @@ namespace ChemSW.Nbt.Security
         }//canPropOnAnyTab
 
 
-        //public bool canProp( NodeTypePermission Permission, CswNbtMetaDataNodeTypeProp Prop, ICswNbtUser User = null )
-        //{
-
-        //    bool ret = false;
-
-        //    _initPermissionInfo( User, Prop.getNodeType(), Permission );
+        //TO DO: This is not done until the prop code is factord out of canNode()
+        public bool canProp( NodeTypePermission Permission, CswNbtMetaDataNodeTypeProp MetaDataProp, CswNbtNodePropWrapper NodePropWrapper = null, ICswNbtUser User = null )
+        {
+            bool ret = true;
 
 
-        //    if( false == _CswNbtPermitInfo.IsUberUser )
-        //    {
+            if( null != MetaDataProp )
+            {
+                _initPermissionInfo( User, MetaDataProp.getNodeType(), Permission );
 
-        //        if( null != Prop )
-        //        {
+                if( false == _CswNbtPermitInfo.IsUberUser )
+                {
 
-        //            if( _CswNbtPermitInfo.shouldPermissionCheckProceed() )
-        //            {
+                    if( _CswNbtPermitInfo.shouldPermissionCheckProceed() )
+                    {
 
-        //                ret = canNodeType( _CswNbtPermitInfo.Permission, _CswNbtPermitInfo.NodeType, _CswNbtPermitInfo.User );
+                        // You can't edit readonly properties
+                        if(
+                            ( Permission != NodeTypePermission.View ) &&
+                            ( MetaDataProp.ReadOnly || ( ( null != NodePropWrapper ) && NodePropWrapper.ReadOnly ) ) &&
+                            ( false == MetaDataProp.AllowReadOnlyAdd )
+                            ) /* Case 24514. Conditionally Permit edit on create. */
+                        {
+                            ret = false;
+                        }
 
-        //                foreach( CswNbtMetaDataNodeTypeLayoutMgr.NodeTypeLayout CurrentTabLayout in Prop.getEditLayouts().Values )
-        //                {
-        //                    CswNbtMetaDataNodeTypeTab CurrentTab = _CswNbtPermitInfo.NodeType.getNodeTypeTab( CurrentTabLayout.TabId );
-        //                    NodeTypeTabPermission TabPermission = (NodeTypeTabPermission) Enum.Parse( typeof( NodeTypeTabPermission ), Permission.ToString() );
-        //                    ret = _CswNbtPermitInfo.Role.NodeTypePermissions.CheckValue( CswNbtObjClassRole.MakeNodeTypeTabPermissionValue( _CswNbtPermitInfo.NodeType.FirstVersionNodeTypeId, CurrentTab.FirstTabVersionId, TabPermission ) );
-        //                    if( TabPermission == NodeTypeTabPermission.View )
-        //                    {
-        //                        // Having 'Edit' grants 'View' automatically
-        //                        ret = ret || _CswNbtPermitInfo.Role.NodeTypePermissions.CheckValue( CswNbtObjClassRole.MakeNodeTypeTabPermissionValue( _CswNbtPermitInfo.NodeType.FirstVersionNodeTypeId, CurrentTab.FirstTabVersionId, NodeTypeTabPermission.Edit ) );
-        //                    }
+                        CswNbtMetaDataObjectClassProp OCP = MetaDataProp.getObjectClassProp();
 
-        //                }//iterate tabs
+                        // case 8218 - Certain properties on the user's preferences are not allowed to be edited
+                        if( ret &&
+                            _CswNbtPermitInfo.NodeType.getObjectClass().ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.UserClass &&
+                            false == _CswNbtPermitInfo.User.IsAdministrator() &&
+                            OCP != null &&
+                            ( OCP.PropName == CswNbtObjClassUser.PropertyName.Username ||
+                              OCP.PropName == CswNbtObjClassUser.PropertyName.Role ||
+                              OCP.PropName == CswNbtObjClassUser.PropertyName.FailedLoginCount ||
+                              OCP.PropName == CswNbtObjClassUser.PropertyName.AccountLocked ) )
+                        {
+                            ret = false;
+                        }
 
-        //            }//if pre-reqs are satisifed
+                        // Only admins can change other people's passwords
+                        if( ret &&
+                            _CswNbtPermitInfo.NodeType.getObjectClass().ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.UserClass &&
+                            false == _CswNbtPermitInfo.User.IsAdministrator() &&
+                            ( null != NodePropWrapper && _CswNbtPermitInfo.User.UserId != NodePropWrapper.NodeId ) &&
+                            OCP != null &&
+                            OCP.PropName == CswNbtObjClassUser.PropertyName.Password )
+                        {
+                            ret = false;
+                        }
 
-        //        }//if prop is not null
+                    }//if pre-reqs are satisfied
+                }
+                else
+                {
+                    ret = true;
+                }//f-else is uber user
 
-        //    }
-        //    else
-        //    {
-        //        ret = true;
-        //    }
+            }//if-else we have metadata prop
 
-        //    return ( ret );
+            return ( ret );
 
-        //}//can prop
+        }//canProp
 
 
-        public bool canNode( NodeTypePermission Permission, CswNbtMetaDataNodeType NodeType, CswPrimaryKey NodeId, CswNbtMetaDataNodeTypeProp MetaDataProp = null, ICswNbtUser User = null )
+
+        public bool canNode( NodeTypePermission Permission, CswNbtMetaDataNodeType NodeType, CswPrimaryKey NodeId, ICswNbtUser User = null )
         {
 
             bool ret = false;
@@ -515,47 +536,52 @@ namespace ChemSW.Nbt.Security
                             ret = ret && canContainer( NodeId, Permission, null, _CswNbtPermitInfo.User );
                         }
 
+                        CswNbtNode Node = _CswNbtResources.Nodes[NodeId];
+                        if( null != Node )
+                        {
+                            ret = ret && ( false == Node.ReadOnly );
+                        }
 
                     }//if NodeId is not null
 
-                    if( MetaDataProp != null )
-                    {
+                    //if( MetaDataProp != null )
+                    //{
 
-                        // You can't edit readonly properties
-                        if( ret &&
-                            Permission != NodeTypePermission.View &&
-                            MetaDataProp.ReadOnly && false == MetaDataProp.AllowReadOnlyAdd ) /* Case 24514. Conditionally Permit edit on create. */
-                        {
-                            ret = false;
-                        }
+                    //    // You can't edit readonly properties
+                    //    if( ret &&
+                    //        Permission != NodeTypePermission.View &&
+                    //        MetaDataProp.ReadOnly && false == MetaDataProp.AllowReadOnlyAdd ) /* Case 24514. Conditionally Permit edit on create. */
+                    //    {
+                    //        ret = false;
+                    //    }
 
-                        CswNbtMetaDataObjectClassProp OCP = MetaDataProp.getObjectClassProp();
+                    //    CswNbtMetaDataObjectClassProp OCP = MetaDataProp.getObjectClassProp();
 
-                        // case 8218 - Certain properties on the user's preferences are not allowed to be edited
-                        if( ret &&
-                            _CswNbtPermitInfo.NodeType.getObjectClass().ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.UserClass &&
-                            false == _CswNbtPermitInfo.User.IsAdministrator() &&
-                            OCP != null &&
-                            ( OCP.PropName == CswNbtObjClassUser.PropertyName.Username ||
-                              OCP.PropName == CswNbtObjClassUser.PropertyName.Role ||
-                              OCP.PropName == CswNbtObjClassUser.PropertyName.FailedLoginCount ||
-                              OCP.PropName == CswNbtObjClassUser.PropertyName.AccountLocked ) )
-                        {
-                            ret = false;
-                        }
+                    //    // case 8218 - Certain properties on the user's preferences are not allowed to be edited
+                    //    if( ret &&
+                    //        _CswNbtPermitInfo.NodeType.getObjectClass().ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.UserClass &&
+                    //        false == _CswNbtPermitInfo.User.IsAdministrator() &&
+                    //        OCP != null &&
+                    //        ( OCP.PropName == CswNbtObjClassUser.PropertyName.Username ||
+                    //          OCP.PropName == CswNbtObjClassUser.PropertyName.Role ||
+                    //          OCP.PropName == CswNbtObjClassUser.PropertyName.FailedLoginCount ||
+                    //          OCP.PropName == CswNbtObjClassUser.PropertyName.AccountLocked ) )
+                    //    {
+                    //        ret = false;
+                    //    }
 
-                        // Only admins can change other people's passwords
-                        if( ret &&
-                            _CswNbtPermitInfo.NodeType.getObjectClass().ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.UserClass &&
-                            false == _CswNbtPermitInfo.User.IsAdministrator() &&
-                            _CswNbtPermitInfo.User.UserId != NodeId &&
-                            OCP != null &&
-                            OCP.PropName == CswNbtObjClassUser.PropertyName.Password )
-                        {
-                            ret = false;
-                        }
+                    //    // Only admins can change other people's passwords
+                    //    if( ret &&
+                    //        _CswNbtPermitInfo.NodeType.getObjectClass().ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.UserClass &&
+                    //        false == _CswNbtPermitInfo.User.IsAdministrator() &&
+                    //        _CswNbtPermitInfo.User.UserId != NodeId &&
+                    //        OCP != null &&
+                    //        OCP.PropName == CswNbtObjClassUser.PropertyName.Password )
+                    //    {
+                    //        ret = false;
+                    //    }
 
-                    } // if( MetaDataProp != null )
+                    //} // if( MetaDataProp != null )
 
                 }//if pre-reqs are satisifed
 
