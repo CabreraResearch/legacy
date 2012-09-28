@@ -115,7 +115,7 @@ namespace ChemSW.Nbt.Schema
         private void _createInventoryGroupPermission( int NodeTypeId, CswPrimaryKey RoleId, CswPrimaryKey InvGroupId, CswPrimaryKey WorkUnitId )
         {
             CswNbtObjClassInventoryGroupPermission InvGrpPermNode = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing );
-
+            InvGrpPermNode.IsDemo = true;
             InvGrpPermNode.InventoryGroup.RelatedNodeId = InvGroupId;
             InvGrpPermNode.Role.RelatedNodeId = RoleId;
             InvGrpPermNode.WorkUnit.RelatedNodeId = WorkUnitId;
