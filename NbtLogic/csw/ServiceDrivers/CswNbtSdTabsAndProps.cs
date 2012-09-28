@@ -59,10 +59,13 @@ namespace ChemSW.Nbt.ServiceDrivers
                             //_CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, Prop.getNodeType(), false, Tab, _CswNbtResources.CurrentNbtUser, Node.NodeId, Prop )
                             CswNbtMetaDataNodeTypeTab Tab = _CswNbtResources.MetaData.getNodeTypeTab( EditLayout.TabId );
                             if(
-                                _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.View, NodeType ) ||
-                                _CswNbtResources.Permit.canTab( CswNbtPermit.NodeTypePermission.View, NodeType, Tab ) ||
-                                _CswNbtResources.Permit.canNode( CswNbtPermit.NodeTypePermission.View, NodeType, Node.NodeId, Prop )
-                                )
+                                    _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.View, NodeType ) ||
+                                    _CswNbtResources.Permit.canTab( CswNbtPermit.NodeTypePermission.View, NodeType, Tab ) ||
+                                    (
+                                     _CswNbtResources.Permit.canNode( CswNbtPermit.NodeTypePermission.View, NodeType, Node.NodeId ) &&
+                                     _CswNbtResources.Permit.canProp( CswNbtPermit.NodeTypePermission.View, Prop )
+                                    )
+                               )
                             {
                                 _makeTab( Ret, Tab.TabOrder, Tab.TabId.ToString(), Tab.TabName, false );
                                 break;
@@ -478,7 +481,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                 //if( _CswNbtResources.Permit.canProp( CswNbtPermit.NodeTypePermission.Edit, Prop ) )
                 CswNbtMetaDataNodeType NodeType = Prop.getNodeType();
                 if( _CswNbtResources.Permit.canProp( CswNbtPermit.NodeTypePermission.Edit, Prop, PropWrapper ) &&
-                    _CswNbtResources.Permit.canNode( CswNbtPermit.NodeTypePermission.Edit, NodeType, NodeId, Prop ) &&
+                    _CswNbtResources.Permit.canNode( CswNbtPermit.NodeTypePermission.Edit, NodeType, NodeId ) &&
                     ( _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Edit, NodeType ) ||
                     _CswNbtResources.Permit.canTab( CswNbtPermit.NodeTypePermission.Edit, NodeType, Tab ) ||
                     _CswNbtResources.Permit.canPropOnAnyOtherTab( CswNbtPermit.NodeTypePermission.Edit, Tab, Prop ) )

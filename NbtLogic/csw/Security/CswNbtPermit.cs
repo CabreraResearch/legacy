@@ -448,7 +448,7 @@ namespace ChemSW.Nbt.Security
                         // You can't edit readonly properties
                         if(
                             ( Permission != NodeTypePermission.View ) &&
-                            ( MetaDataProp.ReadOnly || NodePropWrapper.ReadOnly ) &&
+                            ( MetaDataProp.ReadOnly || ( ( null != NodePropWrapper ) && NodePropWrapper.ReadOnly ) ) &&
                             ( false == MetaDataProp.AllowReadOnlyAdd )
                             ) /* Case 24514. Conditionally Permit edit on create. */
                         {
@@ -496,7 +496,7 @@ namespace ChemSW.Nbt.Security
 
 
 
-        public bool canNode( NodeTypePermission Permission, CswNbtMetaDataNodeType NodeType, CswPrimaryKey NodeId, CswNbtMetaDataNodeTypeProp MetaDataProp = null, ICswNbtUser User = null )
+        public bool canNode( NodeTypePermission Permission, CswNbtMetaDataNodeType NodeType, CswPrimaryKey NodeId, ICswNbtUser User = null )
         {
 
             bool ret = false;
