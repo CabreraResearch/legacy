@@ -111,7 +111,7 @@
                     return Csw.bool(cswPublic.tabState.Multi);
                 };
 
-                cswPublic.isEnabled(){
+                cswPublic.isEnabled = function () {
                     return !(Csw.enums.editMode.PrintReport === cswPublic.tabState.EditMode || Csw.enums.editMode.AuditHistoryInPopup === cswPublic.tabState.EditMode);
                 }
 
@@ -161,7 +161,7 @@
                             cswPublic.propDiv.empty();
                             Csw.tryExec(callBack, cswPublic);
                         };
-                    }());
+                    } ());
 
                     cswPrivate.renderer = function () {
                         /// <summary>
@@ -197,6 +197,6 @@
             }));
 
 
-}());
+} ());
 
 
