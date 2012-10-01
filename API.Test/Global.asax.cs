@@ -2,14 +2,19 @@
 using System.ServiceModel.Activation;
 using System.Web;
 using System.Web.Routing;
+using API.Test.Services;
 
 namespace API.Test
 {
+
     /// <summary>
     /// Global API.TEST
     /// </summary>
-    public class Global : System.Web.HttpApplication
+    public class Global : HttpApplication
     {
+
+
+
         /// <summary>
         /// Application Start
         /// </summary>
@@ -17,6 +22,7 @@ namespace API.Test
         {
             WebServiceHostFactory Factory = new WebServiceHostFactory();
             RouteTable.Routes.Add( new ServiceRoute( "Properties", Factory, typeof( Properties ) ) );
+            RouteTable.Routes.Add( new ServiceRoute( "Foo", Factory, typeof( Foo ) ) );
         }
 
         /// <summary>

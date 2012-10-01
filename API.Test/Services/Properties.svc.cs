@@ -2,7 +2,7 @@
 using System.ServiceModel.Activation;
 using System.ServiceModel.Web;
 
-namespace API.Test
+namespace API.Test.Services
 {
     /// <summary>
     /// 
@@ -33,6 +33,8 @@ namespace API.Test
         {
             return "";
         }
+
+
 
 
         // Add more operations here and mark them with [OperationContract]
