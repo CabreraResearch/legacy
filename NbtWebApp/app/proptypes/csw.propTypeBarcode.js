@@ -59,7 +59,7 @@
                                         nodetypeid: cswPublic.data.tabState.nodetypeid
                                     });
                                 },
-                                disabled: cswPublic.data.isEnabled();
+                                disabled: cswPublic.data.isDisabled()
                             });
                     }
                 };

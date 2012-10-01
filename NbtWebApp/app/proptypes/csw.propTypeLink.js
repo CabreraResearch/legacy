@@ -31,7 +31,7 @@
                             ID: Csw.makeId(cswPublic.data.ID, 'tbl')
                         });
 
-                        if (cswPublic.data.isEnabled()) {
+                        if (cswPublic.data.isDisabled()) {
                             cswPublic.control.cell(1, 1).p({
                                 text: cswPrivate.text
                             });

@@ -56,7 +56,7 @@
                         propId: cswPublic.data.propid,
                         ReadOnly: Csw.bool(cswPublic.data.isReadOnly()),
                         onClickSuccess: cswPrivate.onClickSuccess,
-                        disabled: cswPublic.data.isEnabled()
+                        disabled: cswPublic.data.isDisabled()
                     });
                 };
 

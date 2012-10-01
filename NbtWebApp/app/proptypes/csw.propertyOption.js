@@ -111,8 +111,8 @@
                     return Csw.bool(cswPublic.tabState.Multi);
                 };
 
-                cswPublic.isEnabled = function () {
-                    return !(Csw.enums.editMode.PrintReport === cswPublic.tabState.EditMode || Csw.enums.editMode.AuditHistoryInPopup === cswPublic.tabState.EditMode);
+                cswPublic.isDisabled = function () {
+                    return (Csw.enums.editMode.PrintReport === cswPublic.tabState.EditMode || Csw.enums.editMode.AuditHistoryInPopup === cswPublic.tabState.EditMode);
                 }
 
                 cswPublic.ID = Csw.makeId(cswPublic.propDiv.getId(), cswPublic.propData.id);
