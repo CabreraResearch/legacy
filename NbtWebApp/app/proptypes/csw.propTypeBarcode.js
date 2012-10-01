@@ -4,16 +4,16 @@
     'use strict';
     Csw.properties.barcode = Csw.properties.barcode ||
         Csw.properties.register('barcode',
-            Csw.method(function(propertyOption) {
+            Csw.method(function (propertyOption) {
                 'use strict';
-                var cswPrivate = { };
+                var cswPrivate = {};
                 var cswPublic = {
                     data: propertyOption
                 };
                 var render = function () {
                     'use strict';
                     cswPublic.data = cswPublic.data || Csw.nbt.propertyOption(propertyOption);
-                    
+
                     cswPrivate.propVals = cswPublic.data.propData.values;
                     cswPrivate.value = (false === cswPublic.data.isMulti()) ? Csw.string(cswPrivate.propVals.barcode).trim() : Csw.enums.multiEditDefaultValue;
 
@@ -54,12 +54,12 @@
                                 tooltip: { title: 'Print Barcode Label' },
                                 icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.barcode),
                                 onClick: function () {
-                            $.CswDialog('PrintLabelDialog', {
-                                nodes: nodeObj,
-                                nodetypeid: cswPublic.data.tabState.nodetypeid
-                            });
+                                    $.CswDialog('PrintLabelDialog', {
+                                        nodes: nodeObj,
+                                        nodetypeid: cswPublic.data.tabState.nodetypeid
+                                    });
                                 },
-                                disabled: (Csw.enums.editMode.PrintReport === cswPublic.data.EditMode || Csw.enums.editMode.AuditHistoryInPopup === cswPublic.data.EditMode)
+                                disabled: (Csw.enums.editMode.PrintReport === cswPublic.data.tabState.EditMode || Csw.enums.editMode.AuditHistoryInPopup === cswPublic.data.tabState.EditMode)
                             });
                     }
                 };
@@ -68,4 +68,4 @@
                 return cswPublic;
 
             }));
-}());
+} ());
