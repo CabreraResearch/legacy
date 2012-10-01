@@ -59,7 +59,7 @@
                                         nodetypeid: cswPublic.data.tabState.nodetypeid
                                     });
                                 },
-                                disabled: (Csw.enums.editMode.PrintReport === cswPublic.data.tabState.EditMode || Csw.enums.editMode.AuditHistoryInPopup === cswPublic.data.tabState.EditMode)
+                                disabled: cswPublic.data.isEnabled();
                             });
                     }
                 };

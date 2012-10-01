@@ -31,7 +31,7 @@
                             ID: Csw.makeId(cswPublic.data.ID, 'tbl')
                         });
 
-                        if ((Csw.enums.editMode.PrintReport === cswPublic.data.tabState.EditMode || Csw.enums.editMode.AuditHistoryInPopup === cswPublic.data.tabState.EditMode)) {
+                        if (cswPublic.data.isEnabled()) {
                             cswPublic.control.cell(1, 1).p({
                                 text: cswPrivate.text
                             });
