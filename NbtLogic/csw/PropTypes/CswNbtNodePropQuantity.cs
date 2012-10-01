@@ -390,10 +390,12 @@ namespace ChemSW.Nbt.PropTypes
                 ParentObject["nodetypeid"] = TargetId.ToString();
             }
 
+            CswNbtNode RelatedNode = _CswNbtResources.Nodes[UnitId];
             ParentObject["relatednodeid"] = default( string );
-            if( null != UnitId && Int32.MinValue != UnitId.PrimaryKey )
+            if( null != RelatedNode )
             {
-                ParentObject["relatednodeid"] = UnitId.ToString();
+                ParentObject["relatednodeid"] = RelatedNode.NodeId.ToString();
+                ParentObject["relatednodelink"] = RelatedNode.NodeId.ToString();
             }
 
             ParentObject["fractional"] = TargetFractional.ToString().ToLower();

@@ -17,7 +17,11 @@
 
                     cswPrivate.propVals = cswPublic.data.propData.values;
                     cswPrivate.parent = cswPublic.data.propDiv;
-
+                    cswPrivate.locationobjectclassid = cswPrivate.propVals.locationobjectclassid;
+                    cswPrivate.locationnodetypeids = cswPrivate.propVals.locationnodetypeids;  // array
+                    cswPrivate.relatedmatch = (cswPublic.data.tabState.relatedobjectclassid === cswPrivate.locationobjectclassid);
+                    cswPrivate.nodeKey = ''; //(false === o.Multi) ? Csw.string(propVals.nodekey).trim() : '';
+                    
                     cswPrivate.onTreeSelect = function (optSelect) {
                         optSelect = optSelect || { nodeid: '', nodename: '', iconurl: '' };
                         if (optSelect.nodeid === 'root' ||
@@ -82,18 +86,11 @@
                         });
                     }; // makeLocationCombo()
 
-                    cswPrivate.parent = cswPublic.data.propDiv;
-                    cswPrivate.propVals = cswPublic.data.propData.values;
-
-                    cswPrivate.locationobjectclassid = cswPrivate.propVals.locationobjectclassid;
-                    cswPrivate.locationnodetypeids = cswPrivate.propVals.locationnodetypeids;  // array
-
-                    cswPrivate.relatedmatch = (cswPublic.data.tabState.relatedobjectclassid === cswPrivate.locationobjectclassid);
                     Csw.each(cswPrivate.locationnodetypeids, function (thisNTid) {
                         cswPrivate.relatedmatch = (cswPrivate.relatedmatch || thisNTid === cswPublic.data.tabState.relatednodetypeid);
                     });
 
-                    cswPrivate.nodeKey = ''; //(false === o.Multi) ? Csw.string(propVals.nodekey).trim() : '';
+                    
                     if (Csw.bool(cswPublic.data.isMulti())) {
                         cswPrivate.nodeId = '';
                         cswPrivate.name = Csw.enums.multiEditDefaultValue;
@@ -114,6 +111,7 @@
                         ID: Csw.makeId(cswPublic.data.ID, 'tbl')
                     });
 
+                    //TODO: Add nodeLink here
                     cswPrivate.table.cell(1, 1).text(cswPrivate.path);
 
                     cswPrivate.selectDiv = cswPrivate.table.cell(2, 1).div({
