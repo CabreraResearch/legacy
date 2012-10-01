@@ -395,7 +395,7 @@ namespace ChemSW.Nbt.PropTypes
             if( null != RelatedNode )
             {
                 ParentObject["relatednodeid"] = RelatedNode.NodeId.ToString();
-                ParentObject["relatednodelink"] = RelatedNode.NodeId.ToString();
+                ParentObject["relatednodelink"] = RelatedNode.NodeLink;
             }
 
             ParentObject["fractional"] = TargetFractional.ToString().ToLower();
