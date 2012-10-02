@@ -10,7 +10,7 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Schema Update for case 27780
     /// </summary>
-    public class CswUpdateSchemaCase27780 : CswUpdateSchemaTo
+    public class CswUpdateSchema_01S_Case27780 : CswUpdateSchemaTo
     {
         /// <summary>
         /// Update logic
