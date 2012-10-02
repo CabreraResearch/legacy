@@ -3289,6 +3289,69 @@ namespace ChemSW.Nbt.WebServices
             return ReturnVal.ToString();
         }
 
+        [WebMethod( EnableSession = false )]
+        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        public string getFeedbackNode( string nodetypeid, string author, string actionname, string viewid, string selectednodeid, string viewmode )
+        {
+            JObject ReturnVal = new JObject();
+            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            try
+            {
+                _initResources();
+                AuthenticationStatus = _attemptRefresh( true );
+
+                CswNbtSdTabsAndProps tabsandprops = new CswNbtSdTabsAndProps( _CswNbtResources );
+
+                CswNbtMetaDataNodeType feedbackNT = _CswNbtResources.MetaData.getNodeType( CswConvert.ToInt32( nodetypeid ) );
+                CswNbtObjClassFeedback newFeedbackNode = tabsandprops.getAddNode( feedbackNT );
+
+                //newFeedbackNode.Author.RelatedNodeId = _CswNbtResources.CurrentNbtUser.UserId;
+                //newFeedbackNode.DateSubmitted.DateTimeValue = System.DateTime.Now;
+
+                //if we have an action this is all we want/need/care about
+                if( false == String.IsNullOrEmpty( actionname ) )
+                {
+                    newFeedbackNode.Action.Text = actionname.Replace( "%20", "_" );
+                }
+                //else //if we DONT have an action, we want the info required to load a view
+                //{
+                //    if( false == String.IsNullOrEmpty( viewid ) )
+                //    {
+                //        CswNbtViewId CurrentViewId = new CswNbtViewId( viewid );
+
+                //        CswNbtView cookieView = _getView( viewid ); //this view doesn't exist in the the DB, which is why we save it below
+
+                //        CswNbtView view = _CswNbtResources.ViewSelect.restoreView( newFeedbackNode.View.ViewId ); //WARNING!!!! calling View.ViewId creates a ViewId if there isn't one!
+                //        view.LoadXml( cookieView.ToXml() );
+                //        view.ViewId = newFeedbackNode.View.ViewId; //correct view.ViewId because of above problem.
+                //        view.ViewName = cookieView.ViewName; //same as above, but name
+                //        view.Visibility = NbtViewVisibility.Hidden; // see case 26799
+                //        view.save();
+                //    }
+                //    newFeedbackNode.SelectedNodeId.Text = selectednodeid;
+                //    newFeedbackNode.CurrentViewMode.Text = viewmode;
+                //}
+                //newFeedbackNode.Subject.Text = "Hello";
+                newFeedbackNode.postChanges( false ); //DO I REALLY BREAK THIS?
+
+                //CswNbtSdTabsAndProps tabsandprops = new CswNbtSdTabsAndProps( _CswNbtResources );
+                _CswNbtResources.EditMode = NodeEditMode.Add;
+                ////CswNbtMetaDataNodeType feedbackNT = _CswNbtResources.MetaData.getNodeType( newFeedbackNode.NodeTypeId );
+                //CswNbtMetaDataNodeTypeTab feedbackNTT = feedbackNT.getFirstNodeTypeTab();
+                ReturnVal["propdata"] = tabsandprops.getProps( newFeedbackNode.Node, "", null, CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, true ); //DO I REALLY BREAK THIS?
+                ReturnVal["nodeid"] = newFeedbackNode.NodeId.ToString();
+
+            }
+            catch( Exception Ex )
+            {
+                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
+            }
+
+            CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
+
+            return ReturnVal.ToString();
+        }
+
         #endregion Node DML
 
         #region Welcome Region
