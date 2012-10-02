@@ -18,6 +18,7 @@
                     cswPrivate.parent = cswPublic.data.propDiv;
 
                     cswPrivate.selectedNodeId = (false === cswPublic.data.isMulti()) ? Csw.string(cswPrivate.propVals.relatednodeid).trim() : Csw.enums.multiEditDefaultValue;
+                    cswPrivate.selectedNodeLink = (false === cswPublic.data.isMulti()) ? Csw.string(cswPrivate.propVals.relatednodelink).trim() : Csw.enums.multiEditDefaultValue;
                     cswPrivate.selectedName = (false === cswPublic.data.isMulti()) ? Csw.string(cswPrivate.propVals.name).trim() : Csw.enums.multiEditDefaultValue;
                     cswPrivate.nodeTypeId = Csw.string(cswPrivate.propVals.nodetypeid).trim();
                     cswPrivate.objectClassId = Csw.string(cswPrivate.propVals.objectclassid).trim();
@@ -141,15 +142,8 @@
                             cswPrivate.nodeLinkText = cswPublic.control.cell(1, cswPrivate.cellCol);
                             cswPrivate.cellCol += 1;
                             if (false === cswPublic.data.isMulti()) {
-                                Csw.ajax.post({
-                                    urlMethod: 'GetNodeRef',
-                                    async: false,
-                                    data: { nodeId: cswPrivate.selectedNodeId },
-                                    success: function(data) {
-                                        cswPrivate.nodeLinkText = cswPrivate.nodeLinkText.nodeLink({
-                                            text: data.noderef
-                                        });
-                                    }
+                                cswPrivate.nodeLinkText = cswPrivate.nodeLinkText.nodeLink({
+                                    text: cswPrivate.selectedNodeLink
                                 });
                             }
                             

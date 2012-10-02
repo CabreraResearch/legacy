@@ -422,9 +422,11 @@ namespace ChemSW.Nbt.PropTypes
             }
 
             ParentObject["relatednodeid"] = default( string );
-            if( null != RelatedNodeId && Int32.MinValue != RelatedNodeId.PrimaryKey )
+            CswNbtNode RelatedNode = _CswNbtResources.Nodes[RelatedNodeId];
+            if( null != RelatedNode )
             {
-                ParentObject["relatednodeid"] = RelatedNodeId.ToString();
+                ParentObject["relatednodeid"] = RelatedNode.NodeId.ToString();
+                ParentObject["relatednodelink"] = RelatedNode.NodeLink;
             }
 
             ParentObject["usesearch"] = false;

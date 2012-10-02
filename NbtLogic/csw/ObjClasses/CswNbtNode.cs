@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using ChemSW.Core;
 using ChemSW.Exceptions;
@@ -629,41 +628,6 @@ namespace ChemSW.Nbt.ObjClasses
             }//set
 
         }//NodeId
-
-        //private CswNbtNodeKey _NodeKey = null;
-        //public CswNbtNodeKey NodeKey
-        //{
-        //    get { return ( _NodeKey ); }
-
-        //    set
-        //    {
-        //        _NodeKey = value;
-        //        if( null != onAfterSetNodeKey )
-        //        {
-        //            onAfterSetNodeKey( this );
-        //        }//
-        //    }//set
-
-        //}//NodeKey
-
-        //private Int32 _ParentNodeId = 0;
-        //public Int32 ParentNodeId { get { return ( _ParentNodeId ); } set { _ParentNodeId = value; } }
-
-        //private CswNbtNode _ParentNode = null;
-        //public CswNbtNode ParentNode 
-        //{ 
-        //    get { return ( _ParentNode ); } 
-
-        //    set { 
-
-        //        _ParentNode = value;
-        //        if( null != _ParentNode.NodeKey && null != NodeKey )
-        //        {
-        //            NodeKey.ParentNodeKey = _ParentNode.NodeKey;
-        //        }
-        //    } 
-        //}
-
         private Int32 _NodeTypeId = 0;
         public Int32 NodeTypeId
         {
@@ -677,8 +641,6 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
-
-        //private CswNbtMetaDataNodeType _NodeType = null;
         public CswNbtMetaDataNodeType getNodeType()
         {
             return _CswNbtResources.MetaData.getNodeType( NodeTypeId );
@@ -688,9 +650,6 @@ namespace ChemSW.Nbt.ObjClasses
         {
             return _CswNbtResources.MetaData.getNodeTypeLatestVersion( NodeTypeId );
         }
-
-        //private string _NodeTypeName = "";
-        //public string NodeTypeName { get { return ( _NodeTypeName ); } set { _NodeTypeName = value; } }
 
         public Int32 getObjectClassId()
         {
@@ -745,44 +704,10 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
-        private ArrayList _TemplatePropsAl = new ArrayList();
-        //private string _NameTemplate = "";
-        //public string NameTemplate
-        //{
-        //    get { return ( _NameTemplate ); }
-
-        //    set
-        //    {
-        //        _NameTemplate = value;
-        //    }
-
-        //}//NameTemplate 
-
-        //public IEnumerable TemplateProps
-        //{
-        //    get
-        //    {
-        //        if( NodeType.NameTemplate.Length > 0 && 0 == _TemplatePropsAl.Count )
-        //        {
-        //            RegexOptions RegExOpts = new RegexOptions();
-        //            RegExOpts |= RegexOptions.IgnoreCase;
-        //            string TemplateRegEx = @"\[(.*?)\]";
-        //            Regex RegEx = new Regex( TemplateRegEx, RegExOpts );
-        //            Match RegExMatch = RegEx.Match( _NameTemplate );
-        //            while( RegExMatch.Success )
-        //            {
-        //                string TemplateParameter = RegExMatch.Groups[ 1 ].ToString();
-        //                _TemplatePropsAl.Add( TemplateParameter );
-        //                RegExMatch = RegExMatch.NextMatch();
-        //            }//iterate matches
-        //        }//
-
-        //        return ( _TemplatePropsAl );
-        //    }//
-
-        //}//TemplateProps
-
-
+        public string NodeLink
+        {
+            get { return "[[" + NodeId + "][" + NodeName + "]]"; }
+        }
 
         private string _IconFileName = "";
         public string IconFileName { get { return ( _IconFileName ); } set { _IconFileName = value; } }
@@ -790,18 +715,10 @@ namespace ChemSW.Nbt.ObjClasses
         private bool _Selectable = true;
         public bool Selectable { get { return ( _Selectable ); } set { _Selectable = value; } }
 
-        //private bool _ShowInGrid = true;
-        //public bool ShowInGrid { get { return ( _ShowInGrid ); } set { _ShowInGrid = value; } }
         private bool _ShowInTree = true;
         public bool ShowInTree { get { return ( _ShowInTree ); } set { _ShowInTree = value; } }
 
-        //private CswNbtView.AddChildrenSetting _AddChildren = CswNbtView.AddChildrenSetting.None;
-        //public CswNbtView.AddChildrenSetting AddChildren { get { return ( _AddChildren ); } set { _AddChildren = value; } }
-
         public CswNbtNodePropColl Properties { get { return ( _CswNbtNodePropColl ); } }
-
-        //private CswNbtViewNode _ViewNode;
-        //public CswNbtViewNode ViewNode { get { return _ViewNode; } set { _ViewNode = value; } }
 
         public override int GetHashCode()
         {

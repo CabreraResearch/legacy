@@ -182,7 +182,7 @@ namespace ChemSW.Nbt.WebServices
                 }
                 else
                 {
-                    Ret["noderef"] = _CswNbtResources.makeClientNodeReference( NodeAsMaterial.Node ); //for the link
+                    Ret["noderef"] = NodeAsMaterial.Node.NodeLink; //for the link
                 }
             }
 
