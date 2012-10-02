@@ -1,4 +1,6 @@
 
+using ChemSW.Nbt.csw.Dev;
+
 namespace ChemSW.Nbt.Schema
 {
 
@@ -24,7 +26,14 @@ namespace ChemSW.Nbt.Schema
 			
 			_CswTstCaseRsrc.assertColumnIsAbsent( _CswTstCaseRsrc_016.FakeTestTableName, _CswTstCaseRsrc_016.FakeValColumnName02, "destination of rename operation still exists after rollback" );
             _CswTstCaseRsrc.assertColumnIsPresent( _CswTstCaseRsrc_016.FakeTestTableName, _CswTstCaseRsrc_016.FakeValColumnName01, "target of rename operation does not exist after rollback" );
-        }//runTest()
+        }
+
+        public override CswDeveloper Author
+        {
+            get { return CswDeveloper.PG; }
+        }
+
+        //runTest()
 
     }//CswSchemaUpdaterTestCaseDropColumnRollback
 

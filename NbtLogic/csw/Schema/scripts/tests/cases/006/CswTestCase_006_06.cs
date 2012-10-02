@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using ChemSW.Nbt.csw.Dev;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -32,7 +33,14 @@ namespace ChemSW.Nbt.Schema
                 _CswTstCaseRsrc.assertTableIsAbsent( CurrentPair.FkTableName );
             }
 
-        }//runTest()
+        }
+
+        public override CswDeveloper Author
+        {
+            get { return CswDeveloper.PG; }
+        }
+
+        //runTest()
 
     }//CswSchemaUpdaterTestCaseDropColumnRollback
 

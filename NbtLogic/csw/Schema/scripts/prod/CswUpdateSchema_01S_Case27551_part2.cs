@@ -1,7 +1,4 @@
-﻿using System;
-using System.Data;
-using ChemSW.Core;
-using ChemSW.DB;
+﻿using ChemSW.Nbt.csw.Dev;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 
@@ -20,7 +17,14 @@ namespace ChemSW.Nbt.Schema
 
             _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( mixtureOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.servermanaged, false );
 
-        }//Update()
+        }
+
+        public override CswDeveloper Author
+        {
+            get { return CswDeveloper.MB; }
+        }
+
+        //Update()
 
     }//class CswUpdateSchemaCase27551_part2
 

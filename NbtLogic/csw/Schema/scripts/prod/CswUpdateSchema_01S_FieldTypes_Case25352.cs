@@ -1,4 +1,6 @@
 ﻿
+using ChemSW.Nbt.csw.Dev;
+
 namespace ChemSW.Nbt.Schema
 {
     /// <summary>
@@ -92,7 +94,14 @@ namespace ChemSW.Nbt.Schema
 
             //}
             // This is a placeholder script that does nothing.
-        }//Update()
+        }
+
+        public override CswDeveloper Author
+        {
+            get { return CswDeveloper.CF; }
+        }
+
+        //Update()
 
     }//class CswUpdateSchemaCase_GridsAndButtons_27479
 

@@ -1,4 +1,6 @@
 ﻿
+using ChemSW.Nbt.csw.Dev;
+
 namespace ChemSW.Nbt.Schema
 {
     /// <summary>
@@ -13,7 +15,14 @@ namespace ChemSW.Nbt.Schema
         {
             _CswNbtSchemaModTrnsctn.createModule( "ChemSW Development Module", CswNbtModuleName.Dev.ToString(), false );
 
-        }//Update()
+        }
+
+        public override CswDeveloper Author
+        {
+            get { return CswDeveloper.CF; }
+        }
+
+        //Update()
 
     }
 

@@ -2,6 +2,7 @@ using System;
 using System.Data;
 using ChemSW.Core;
 using ChemSW.DB;
+using ChemSW.Nbt.csw.Dev;
 using ChemSW.Nbt.MetaData;
 
 namespace ChemSW.Nbt.Schema
@@ -52,7 +53,14 @@ namespace ChemSW.Nbt.Schema
 
             CswTableUpdate.update( DataTable );
 
-        }//runTest()
+        }
+
+        public override CswDeveloper Author
+        {
+            get { return CswDeveloper.PG; }
+        }
+
+        //runTest()
 
     }//CswSchemaUpdaterTestCaseDropColumnRollback
 

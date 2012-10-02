@@ -1,5 +1,6 @@
 using System.Data;
 using ChemSW.DB;
+using ChemSW.Nbt.csw.Dev;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -39,7 +40,14 @@ namespace ChemSW.Nbt.Schema
 
             CswArbitraryTableUpdate.update( DataTableArbitrary );
 
-        }//runTest()
+        }
+
+        public override CswDeveloper Author
+        {
+            get { return CswDeveloper.PG; }
+        }
+
+        //runTest()
 
     }//CswSchemaUpdaterTestCaseDropColumnRollback
 

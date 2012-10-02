@@ -1,6 +1,7 @@
 using System;
 using ChemSW.Core;
 using ChemSW.Exceptions;
+using ChemSW.Nbt.csw.Dev;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -37,7 +38,14 @@ namespace ChemSW.Nbt.Schema
                 throw ( new CswDniException( "An unexpected exception was thrown when adding two columns to data_dictionary:"  + Exception.Message ) );
             }//catch()  
         
-        }//runTest()
+        }
+
+        public override CswDeveloper Author
+        {
+            get { return CswDeveloper.PG; }
+        }
+
+        //runTest()
 
     }//CswSchemaUpdaterTestCaseDropColumnRollback
 

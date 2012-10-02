@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using ChemSW.Exceptions;
+using ChemSW.Nbt.csw.Dev;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -32,7 +33,14 @@ namespace ChemSW.Nbt.Schema
             }
 
             throw ( new CswDniExceptionIgnoreDeliberately() );
-        }//runTest()
+        }
+
+        public override CswDeveloper Author
+        {
+            get { return CswDeveloper.PG; }
+        }
+
+        //runTest()
 
     }//CswSchemaUpdaterTestCaseDropColumnRollback
 

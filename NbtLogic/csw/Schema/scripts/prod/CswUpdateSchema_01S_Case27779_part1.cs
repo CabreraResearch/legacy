@@ -1,7 +1,8 @@
-﻿using ChemSW.DB;
-using ChemSW.Core;
-using System;
+﻿using System;
 using System.Data;
+using ChemSW.Core;
+using ChemSW.DB;
+using ChemSW.Nbt.csw.Dev;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -34,7 +35,14 @@ namespace ChemSW.Nbt.Schema
             }
             nodetype_propsTU.update( nodetype_props );
 
-        }//Update()
+        }
+
+        public override CswDeveloper Author
+        {
+            get { return CswDeveloper.MB; }
+        }
+
+        //Update()
 
     }
 

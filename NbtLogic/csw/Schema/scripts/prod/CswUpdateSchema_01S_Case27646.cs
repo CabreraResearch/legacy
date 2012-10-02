@@ -1,6 +1,6 @@
-﻿using ChemSW.Nbt.ObjClasses;
+﻿using ChemSW.Nbt.csw.Dev;
 using ChemSW.Nbt.MetaData;
-using ChemSW.Nbt.Properties;
+using ChemSW.Nbt.ObjClasses;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -42,7 +42,14 @@ namespace ChemSW.Nbt.Schema
                 }
             }
 
-        }//Update()
+        }
+
+        public override CswDeveloper Author
+        {
+            get { return CswDeveloper.MB; }
+        }
+
+        //Update()
 
     }
 

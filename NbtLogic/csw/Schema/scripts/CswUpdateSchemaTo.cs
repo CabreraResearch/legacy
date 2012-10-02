@@ -1,4 +1,5 @@
-﻿
+﻿using ChemSW.Nbt.csw.Dev;
+
 namespace ChemSW.Nbt.Schema
 {
     public abstract class CswUpdateSchemaTo
@@ -15,6 +16,14 @@ namespace ChemSW.Nbt.Schema
         private string _Description = string.Empty;
         public virtual string Description { set { _Description = value; } get { return ( _Description ); } }
 
+        /// <summary>
+        /// The logic to execute in each Schema Script
+        /// </summary>
         public abstract void update();
+
+        /// <summary>
+        /// The author of the script
+        /// </summary>
+        public abstract CswDeveloper Author { get; }
     }
 }

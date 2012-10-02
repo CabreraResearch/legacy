@@ -1,5 +1,6 @@
 ﻿//using ChemSW.RscAdo;
 using ChemSW.Core;
+using ChemSW.Nbt.csw.Dev;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -19,7 +20,10 @@ namespace ChemSW.Nbt.Schema
 
         }//ctor
 
-
+        public override CswDeveloper Author
+        {
+            get { return CswDeveloper.PG; }
+        }
 
         public override void update()
         {

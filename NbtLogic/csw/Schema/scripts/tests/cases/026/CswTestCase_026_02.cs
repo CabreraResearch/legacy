@@ -1,4 +1,6 @@
 ﻿
+using ChemSW.Nbt.csw.Dev;
+
 namespace ChemSW.Nbt.Schema
 {
 
@@ -31,7 +33,14 @@ namespace ChemSW.Nbt.Schema
             //_CswTstCaseRsrc_026.JctNodePropIdOfBuiltInProp = _CswTstCaseRsrc_026.TestNode.Properties[_CswTstCaseRsrc_026.BuiltInProp].JctNodePropId;
             //_CswTstCaseRsrc_026.JctNodePropIdOfAddedProp = _CswTstCaseRsrc_026.TestNode.Properties[_CswTstCaseRsrc_026.AddedProp].JctNodePropId;
 
-        }//runTest()
+        }
+
+        public override CswDeveloper Author
+        {
+            get { return CswDeveloper.PG; }
+        }
+
+        //runTest()
 
     }//CswSchemaUpdaterTestCaseDropColumnRollback
 

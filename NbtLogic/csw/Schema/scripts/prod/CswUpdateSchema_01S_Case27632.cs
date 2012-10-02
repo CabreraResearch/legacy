@@ -1,4 +1,5 @@
 ﻿
+using ChemSW.Nbt.csw.Dev;
 using ChemSW.Nbt.ObjClasses;
 namespace ChemSW.Nbt.Schema
 {
@@ -40,7 +41,14 @@ namespace ChemSW.Nbt.Schema
             _markViewAsDemoData( "Inspections, Lab Safety Checklist: Lab Safety (demo)" );
             _markViewAsDemoData( "Lab Safety By Location (demo)" );
             _markViewAsDemoData( "Scheduling, Lab Safety Checklist: Lab Safety (demo)" );
-        }//Update()
+        }
+
+        public override CswDeveloper Author
+        {
+            get { return CswDeveloper.BV; }
+        }
+
+        //Update()
 
         private void _markRoleAsDemoData( string RoleName )
         {

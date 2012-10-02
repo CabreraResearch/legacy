@@ -1,6 +1,8 @@
 ﻿
 
 
+using ChemSW.Nbt.csw.Dev;
+
 namespace ChemSW.Nbt.Schema
 {
 
@@ -28,7 +30,14 @@ namespace ChemSW.Nbt.Schema
 
             _CswTstCaseRsrc_031.setChangedValue();
 
-        }//runTest()
+        }
+
+        public override CswDeveloper Author
+        {
+            get { return CswDeveloper.PG; }
+        }
+
+        //runTest()
 
     }//CswSchemaUpdaterTestCaseDropColumnRollback
 

@@ -1,4 +1,6 @@
 ﻿
+using ChemSW.Nbt.csw.Dev;
+
 namespace ChemSW.Nbt.Schema
 {
     /// <summary>
@@ -9,7 +11,14 @@ namespace ChemSW.Nbt.Schema
         public override void update()
         {
             _CswNbtSchemaModTrnsctn.Modules.EnableModule( CswNbtModuleName.Mobile );
-        }//Update()
+        }
+
+        public override CswDeveloper Author
+        {
+            get { return CswDeveloper.CF; }
+        }
+
+        //Update()
 
     }//class 
 

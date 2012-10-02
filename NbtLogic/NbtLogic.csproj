@@ -97,6 +97,7 @@
     <Compile Include="csw\Batch\CswNbtBatchOpUpdateRegulatoryLists.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="csw\Dev\CswDeveloper.cs" />
     <Compile Include="csw\Modules\CswNbtModuleRuleDev.cs" />
     <Compile Include="csw\Modules\CswNbtModuleRuleSTIS.cs" />
     <Compile Include="csw\Modules\CswNbtModuleRuleSI.cs" />

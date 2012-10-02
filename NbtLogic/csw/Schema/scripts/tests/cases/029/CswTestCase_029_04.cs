@@ -1,8 +1,5 @@
-﻿using System.Data;
-
-using ChemSW.DB;
-
-
+﻿
+using ChemSW.Nbt.csw.Dev;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -27,7 +24,14 @@ namespace ChemSW.Nbt.Schema
         public override void update()
         {
             _CswNbtSchemaModTrnsctn.dropTable( _CswTstCaseRsrc_029.ArbitraryTableName_01 );
- 		}//runTest()
+        }
+
+        public override CswDeveloper Author
+        {
+            get { return CswDeveloper.PG; }
+        }
+
+        //runTest()
 
     }//CswSchemaUpdaterTestCaseDropColumnRollback
 

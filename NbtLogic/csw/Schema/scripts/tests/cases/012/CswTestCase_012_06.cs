@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using System.Data;
 using ChemSW.DB;
 using ChemSW.Exceptions;
+using ChemSW.Nbt.csw.Dev;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -43,7 +44,14 @@ namespace ChemSW.Nbt.Schema
             if( DataTable.Rows[2][_CswTstCaseRsrc_012.FakeValColumnName].ToString() != _CswTstCaseRsrc_012.Val_Row_3 )
                 throw ( new CswDniException( "Row three does not have value " + _CswTstCaseRsrc_012.Val_Row_3 ) );
 
-        }//runTest()
+        }
+
+        public override CswDeveloper Author
+        {
+            get { return CswDeveloper.PG; }
+        }
+
+        //runTest()
 
     }//CswSchemaUpdaterTestCaseDropColumnRollback
 

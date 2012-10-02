@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Data;
-using ChemSW.Core;
 using ChemSW.DB;
-using ChemSW.Nbt.MetaData;
-using ChemSW.Nbt.ObjClasses;
+using ChemSW.Nbt.csw.Dev;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -21,7 +19,14 @@ namespace ChemSW.Nbt.Schema
                 ConfigVarRow["defaultvalueid"] = DBNull.Value;
             }
             ConfigVarUpdate.update( ConfigVarTable );
-        }//Update()
+        }
+
+        public override CswDeveloper Author
+        {
+            get { return CswDeveloper.BV; }
+        }
+
+        //Update()
 
     }//class CswUpdateSchemaCase27858
 

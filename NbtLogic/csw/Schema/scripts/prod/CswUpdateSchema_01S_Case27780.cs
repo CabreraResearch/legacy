@@ -1,9 +1,9 @@
-﻿using ChemSW.Core;
-using ChemSW.DB;
-using ChemSW.Nbt.MetaData;
-using ChemSW.Nbt.ObjClasses;
+﻿using System.Collections.Generic;
 using System.Data;
-using System.Collections.Generic;
+using ChemSW.Core;
+using ChemSW.DB;
+using ChemSW.Nbt.csw.Dev;
+using ChemSW.Nbt.MetaData;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -87,7 +87,14 @@ namespace ChemSW.Nbt.Schema
 
             #endregion
 
-        }//Update()
+        }
+
+        public override CswDeveloper Author
+        {
+            get { return CswDeveloper.MB; }
+        }
+
+        //Update()
 
     }
 

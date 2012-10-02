@@ -1,4 +1,5 @@
 ﻿
+using ChemSW.Nbt.csw.Dev;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 namespace ChemSW.Nbt.Schema
@@ -37,7 +38,14 @@ namespace ChemSW.Nbt.Schema
                 SizeNode.UnitCount.Value = 1;
                 SizeNode.postChanges( false );
             }
-        }//Update()
+        }
+
+        public override CswDeveloper Author
+        {
+            get { return CswDeveloper.BV; }
+        }
+
+        //Update()
 
     }//class CswUpdateSchemaCase27647
 

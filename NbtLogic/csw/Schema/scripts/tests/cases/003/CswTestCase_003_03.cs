@@ -1,4 +1,5 @@
 ﻿using ChemSW.Exceptions;
+using ChemSW.Nbt.csw.Dev;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -28,7 +29,14 @@ namespace ChemSW.Nbt.Schema
             throw ( new CswDniExceptionIgnoreDeliberately() );//this will cause the rollback dropping the column as a result of which this test case has as its purpose
 
 
-        }//runTest()
+        }
+
+        public override CswDeveloper Author
+        {
+            get { return CswDeveloper.PG; }
+        }
+
+        //runTest()
 
     }//CswSchemaUpdaterTestCaseDropColumnRollback
 

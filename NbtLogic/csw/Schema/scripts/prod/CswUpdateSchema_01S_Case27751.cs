@@ -1,9 +1,6 @@
-﻿using System;
-using System.Data;
-using ChemSW.Core;
+﻿using System.Data;
 using ChemSW.DB;
-using ChemSW.Nbt.MetaData;
-using ChemSW.Nbt.ObjClasses;
+using ChemSW.Nbt.csw.Dev;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -21,7 +18,14 @@ namespace ChemSW.Nbt.Schema
                 ConfigVarRow["issystem"] = "1";
             }
             ConfigVarUpdate.update( ConfigVarTable );
-        }//Update()
+        }
+
+        public override CswDeveloper Author
+        {
+            get { return CswDeveloper.BV; }
+        }
+
+        //Update()
 
     }//class CswUpdateSchemaCase27751 
 

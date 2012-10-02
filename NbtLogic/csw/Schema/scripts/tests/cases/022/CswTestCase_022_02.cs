@@ -1,4 +1,6 @@
 ﻿
+using ChemSW.Nbt.csw.Dev;
+
 namespace ChemSW.Nbt.Schema
 {
 
@@ -27,7 +29,14 @@ namespace ChemSW.Nbt.Schema
 
             _CswNbtSchemaModTrnsctn.makeTableNotAuditable( _CswTstCaseRsrc_022.ArbitraryTableName_01 );
 
-        }//runTest()
+        }
+
+        public override CswDeveloper Author
+        {
+            get { return CswDeveloper.PG; }
+        }
+
+        //runTest()
 
     }//CswSchemaUpdaterTestCaseDropColumnRollback
 

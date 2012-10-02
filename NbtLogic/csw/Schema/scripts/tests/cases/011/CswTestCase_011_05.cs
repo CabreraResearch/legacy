@@ -1,6 +1,7 @@
 using System.Data;
 using ChemSW.DB;
 using ChemSW.Exceptions;
+using ChemSW.Nbt.csw.Dev;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -34,7 +35,14 @@ namespace ChemSW.Nbt.Schema
 
             _CswNbtSchemaModTrnsctn.dropTable( _CswTstCaseRsrc_011.FakeTestTableName ); 
 
-        }//runTest()
+        }
+
+        public override CswDeveloper Author
+        {
+            get { return CswDeveloper.PG; }
+        }
+
+        //runTest()
 
     }//CswSchemaUpdaterTestCaseDropColumnRollback
 

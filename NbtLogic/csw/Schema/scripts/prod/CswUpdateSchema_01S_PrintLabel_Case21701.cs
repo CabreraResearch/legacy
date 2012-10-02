@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using ChemSW.Nbt.csw.Dev;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 
@@ -37,7 +38,14 @@ namespace ChemSW.Nbt.Schema
             {
                 NodeType.HasLabel = ( SelectedNodeTypeIds.Contains( NodeType.FirstVersionNodeTypeId ) || SelectedNodeTypeIds.Contains( NodeType.NodeTypeId ) );
             }
-        }//Update()
+        }
+
+        public override CswDeveloper Author
+        {
+            get { return CswDeveloper.CF; }
+        }
+
+        //Update()
 
     }
 

@@ -1,3 +1,4 @@
+using ChemSW.Nbt.csw.Dev;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 
@@ -73,7 +74,14 @@ namespace ChemSW.Nbt.Schema
             #endregion TITANIA
 
 
-        }//Update()
+        }
+
+        public override CswDeveloper Author
+        {
+            get { return CswDeveloper.NBT; }
+        }
+
+        //Update()
 
     }//class RunBeforeEveryExecutionOfUpdater_01b
 

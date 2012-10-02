@@ -1,4 +1,6 @@
 ﻿using ChemSW.Exceptions;
+using ChemSW.Nbt.csw.Dev;
+
 //using ChemSW.RscAdo;
 
 namespace ChemSW.Nbt.Schema
@@ -22,7 +24,10 @@ namespace ChemSW.Nbt.Schema
 			_CswTstCaseRsrc_001 = (CswTstCaseRsrc_001) CswTstCaseRsc;
 		}//ctor
 
-
+        public override CswDeveloper Author
+        {
+            get { return CswDeveloper.PG; }
+        }
 
         public override void update()
         {

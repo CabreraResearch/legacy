@@ -1,6 +1,7 @@
 using System.Data;
 using ChemSW.DB;
 using ChemSW.Exceptions;
+using ChemSW.Nbt.csw.Dev;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -32,7 +33,14 @@ namespace ChemSW.Nbt.Schema
                 throw ( new CswDniException( "Test data were not cleaned up (materials record with materialid = " + _CswTstCaseRsrc_014.InsertedMaterialsRecordPk.ToString() + ")" ) );
 
 
-        }//runTest()
+        }
+
+        public override CswDeveloper Author
+        {
+            get { return CswDeveloper.PG; }
+        }
+
+        //runTest()
 
     }//CswSchemaUpdaterTestCaseDropColumnRollback
 

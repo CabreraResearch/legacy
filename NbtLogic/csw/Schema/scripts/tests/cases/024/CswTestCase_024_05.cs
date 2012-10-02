@@ -1,4 +1,5 @@
 ﻿using ChemSW.Audit;
+using ChemSW.Nbt.csw.Dev;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -29,7 +30,14 @@ namespace ChemSW.Nbt.Schema
             _CswNbtSchemaModTrnsctn.dropTable( _CswTstCaseRsrc_024.ArbitraryTableName_01 );
             _CswNbtSchemaModTrnsctn.dropTable( CswAuditMetaData.makeAuditTableName( _CswTstCaseRsrc_024.ArbitraryTableName_01 ) );
             _CswTstCaseRsrc_024.restoreAuditSetting(); 
-        }//runTest()
+        }
+
+        public override CswDeveloper Author
+        {
+            get { return CswDeveloper.PG; }
+        }
+
+        //runTest()
 
     }//CswSchemaUpdaterTestCaseDropColumnRollback
 

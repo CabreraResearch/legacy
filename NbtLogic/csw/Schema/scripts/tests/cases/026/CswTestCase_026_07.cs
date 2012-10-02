@@ -1,4 +1,6 @@
 ﻿
+using ChemSW.Nbt.csw.Dev;
+
 namespace ChemSW.Nbt.Schema
 {
 
@@ -28,7 +30,14 @@ namespace ChemSW.Nbt.Schema
             //_CswTstCaseRsrc.assertTableIsAbsent( _CswTstCaseRsrc_026.ArbitraryTableName_01 );
             //_CswTstCaseRsrc.assertTableIsAbsent( CswAuditMetaData.makeAuditTableName( _CswTstCaseRsrc_026.ArbitraryTableName_01 ) );
             //_CswTstCaseRsrc_026.assertAuditSettingIsRestored(); 
-        }//runTest()
+        }
+
+        public override CswDeveloper Author
+        {
+            get { return CswDeveloper.PG; }
+        }
+
+        //runTest()
 
     }//CswSchemaUpdaterTestCaseDropColumnRollback
 

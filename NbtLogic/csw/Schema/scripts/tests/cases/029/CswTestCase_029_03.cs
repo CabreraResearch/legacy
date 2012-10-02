@@ -2,8 +2,7 @@
 using System.Data;
 using ChemSW.DB;
 using ChemSW.Exceptions;
-
-
+using ChemSW.Nbt.csw.Dev;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -65,7 +64,8 @@ namespace ChemSW.Nbt.Schema
                 if( Exception.Message.Contains( "ORA-00001: unique constraint" ) )
                 {
                     CorrectExceptionWasThrown = true;
-                } else
+                }
+                else
                 {
                     throw ( new CswDniException( "Exception thrown while testing for unique constraint violation was not the exception expected : " + Exception.Message ) );
                 }
@@ -76,7 +76,14 @@ namespace ChemSW.Nbt.Schema
                 throw( new CswDniException( "An exception should have been thrown when trying to add the same value to a uniquely constrained column, but, alas, 'twas not thrown!" ) ); 
             }
 
-        }//runTest()
+        }
+
+        public override CswDeveloper Author
+        {
+            get { return CswDeveloper.PG; }
+        }
+
+        //runTest()
 
     }//CswSchemaUpdaterTestCaseDropColumnRollback
 
