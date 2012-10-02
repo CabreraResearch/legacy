@@ -25,7 +25,7 @@ namespace ChemSw.Nbt.Test
 
         internal TestData()
         {
-            _CswNbtResources = CswNbtResourcesFactory.makeCswNbtResources( AppType.Nbt, SetupMode.NbtTest, true, false );
+            _CswNbtResources = CswNbtResourcesFactory.makeCswNbtResources( AppType.Nbt, SetupMode.NbtExe, true, false );
             _CswDbCfgInfoNbt = new CswDbCfgInfoNbt( SetupMode.NbtExe, IsMobile: false );
             _CswNbtResources.InitCurrentUser = _InitUser;
             _CswNbtResources.AccessId = _CswDbCfgInfoNbt.MasterAccessId;
