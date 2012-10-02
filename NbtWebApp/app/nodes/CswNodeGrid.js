@@ -105,7 +105,7 @@
                                         $.CswDialog('DeleteNodeDialog', {
                                             nodes: nodes,
                                             onDeleteNode: o.onDeleteNode,
-                                            Multi: (nodeids.length > 1),
+                                            Multi: (nodes.length > 1),
                                             publishDeleteEvent: false
                                         });
                                     } // onDelete

@@ -2226,34 +2226,40 @@ namespace ChemSW.Nbt.WebPages
                                 RelatedPropRow.Cells[1].Controls.Add( RelatedPropType );
 
                                 IEnumerable<CswNbtMetaDataNodeType> NodeTypeCol = null;
-                                if( RelationshipProp.FKType == NbtViewRelatedIdType.NodeTypeId.ToString() )
+                                if( RelationshipProp != null )
                                 {
-                                    NodeTypeCol = new Collection<CswNbtMetaDataNodeType>() { 
-                                        Master.CswNbtResources.MetaData.getNodeType( RelationshipProp.FKValue ) 
-                                    };
-                                }
-                                else
-                                {
-                                    CswNbtMetaDataObjectClass RelatedObjectClass = Master.CswNbtResources.MetaData.getObjectClass( RelationshipProp.FKValue );
-                                    if( RelatedObjectClass != null )
+                                    if( RelationshipProp.FKType == NbtViewRelatedIdType.NodeTypeId.ToString() )
                                     {
-                                        NodeTypeCol = RelatedObjectClass.getNodeTypes();
+                                        NodeTypeCol = new Collection<CswNbtMetaDataNodeType>()
+                                                          {
+                                                              Master.CswNbtResources.MetaData.getNodeType(
+                                                                  RelationshipProp.FKValue)
+                                                          };
                                     }
-                                }
-
-                                foreach( CswNbtMetaDataNodeType RelatedNodeType in NodeTypeCol )
-                                {
-                                    if( RelatedNodeType != null )
+                                    else
                                     {
-                                        RelatedPropType.Value = NbtViewPropIdType.NodeTypePropId.ToString();
-                                        IEnumerable<CswNbtMetaDataNodeTypeProp> RelatedProps = RelatedNodeType.getNodeTypeProps();
-                                        if( RelatedProps != null )
+                                        CswNbtMetaDataObjectClass RelatedObjectClass =
+                                            Master.CswNbtResources.MetaData.getObjectClass( RelationshipProp.FKValue );
+                                        if( RelatedObjectClass != null )
                                         {
-                                            foreach( CswNbtMetaDataNodeTypeProp RelatedProp in RelatedProps )
+                                            NodeTypeCol = RelatedObjectClass.getNodeTypes();
+                                        }
+                                    }
+
+                                    foreach( CswNbtMetaDataNodeType RelatedNodeType in NodeTypeCol )
+                                    {
+                                        if( RelatedNodeType != null )
+                                        {
+                                            RelatedPropType.Value = NbtViewPropIdType.NodeTypePropId.ToString();
+                                            IEnumerable<CswNbtMetaDataNodeTypeProp> RelatedProps = RelatedNodeType.getNodeTypeProps();
+                                            if( RelatedProps != null )
                                             {
-                                                if( null == RelatedPropValue.Items.FindByText( RelatedProp.PropName ) )
+                                                foreach( CswNbtMetaDataNodeTypeProp RelatedProp in RelatedProps )
                                                 {
-                                                    RelatedPropValue.Items.Add( new ListItem( RelatedProp.PropName, RelatedProp.FirstPropVersionId.ToString() ) );
+                                                    if( null == RelatedPropValue.Items.FindByText( RelatedProp.PropName ) )
+                                                    {
+                                                        RelatedPropValue.Items.Add( new ListItem( RelatedProp.PropName, RelatedProp.FirstPropVersionId.ToString() ) );
+                                                    }
                                                 }
                                             }
                                         }

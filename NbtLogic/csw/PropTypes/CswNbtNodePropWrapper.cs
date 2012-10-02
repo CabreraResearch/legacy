@@ -21,15 +21,15 @@ namespace ChemSW.Nbt.PropTypes
         private CswNbtNodePropData _CswNbtNodePropData = null;
         private CswNbtResources _CswNbtResources = null;
         private CswNbtNode _Node = null;
-//        private CswNbtMetaDataNodeTypeTab _Tab = null;
+        //        private CswNbtMetaDataNodeTypeTab _Tab = null;
 
-        public CswNbtNodePropWrapper( CswNbtResources CswNbtResources, CswNbtNode Node, CswNbtNodeProp CswNbtNodeProp, CswNbtNodePropData CswNbtNodePropData  )
+        public CswNbtNodePropWrapper( CswNbtResources CswNbtResources, CswNbtNode Node, CswNbtNodeProp CswNbtNodeProp, CswNbtNodePropData CswNbtNodePropData )
         {
             _CswNbtNodeProp = CswNbtNodeProp;
             _CswNbtNodePropData = CswNbtNodePropData;
             _CswNbtResources = CswNbtResources;
             _Node = Node;
-//            _Tab = Tab;
+            //            _Tab = Tab;
         }//ctor
 
         //bz # 8287: rearranged a few things
@@ -190,7 +190,10 @@ namespace ChemSW.Nbt.PropTypes
                 {
                     NodeId = _Node.NodeId;
                 }
-                bool Ret = _CswNbtResources.Permit.canNode( CswNbtPermit.NodeTypePermission.Edit, NodeTypeProp.getNodeType(), NodeId, NodeTypeProp );
+                bool Ret = (
+                               _CswNbtResources.Permit.canNode( CswNbtPermit.NodeTypePermission.Edit, NodeTypeProp.getNodeType(), NodeId ) &&
+                               _CswNbtResources.Permit.canProp( CswNbtPermit.NodeTypePermission.Edit, NodeTypeProp )
+                           );
                 return Ret;
             }
         }
@@ -203,7 +206,10 @@ namespace ChemSW.Nbt.PropTypes
                 {
                     NodeId = _Node.NodeId;
                 }
-                bool Ret = _CswNbtResources.Permit.canNode( CswNbtPermit.NodeTypePermission.Create, NodeTypeProp.getNodeType(), NodeId, NodeTypeProp );
+                bool Ret = (
+                                _CswNbtResources.Permit.canNode( CswNbtPermit.NodeTypePermission.Create, NodeTypeProp.getNodeType(), NodeId ) &&
+                                _CswNbtResources.Permit.canProp( CswNbtPermit.NodeTypePermission.Create, NodeTypeProp )
+                           );
                 return Ret;
             }
         }
@@ -267,7 +273,7 @@ namespace ChemSW.Nbt.PropTypes
         public void ToJSON( JObject JObject )
         {
             JObject Values = new JObject();
-//            _Tab = Tab;
+            //            _Tab = Tab;
             JObject["values"] = Values;
             _CswNbtNodeProp.ToJSON( Values );
         }
@@ -283,11 +289,11 @@ namespace ChemSW.Nbt.PropTypes
         /// <summary>
         /// Parses defined Field Type attributes/subfields into a JToken class JObject
         /// </summary>
-        public void ReadJSON( JObject Object, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap  )
+        public void ReadJSON( JObject Object, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
             if( null != Object ) //&& false == Hidden )
             {
-//                _Tab = Tab;
+                //                _Tab = Tab;
                 if( null != Object["values"] &&
                     //                    false == IsReadOnly() &&
                     _wasModified( Object ) )

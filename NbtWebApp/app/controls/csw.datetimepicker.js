@@ -33,7 +33,7 @@
                     isControl: cswPrivate.isControl,
                     ID: cswPrivate.id
                 });
-                cswPublic = Csw.dom({ }, cswPrivate.dateTimeDiv);
+                cswPublic = Csw.dom({}, cswPrivate.dateTimeDiv);
                 //Csw.extend(cswPublic, Csw.literals.div(cswPrivate));
 
                 if (cswPrivate.ReadOnly) {
@@ -58,8 +58,7 @@
                             width: '80px',
                             cssclass: 'textinput'
                         });
-                        if(cswPrivate.Date.substr(0, 'today'.length) !== 'today')
-                        {
+                        if (cswPrivate.Date.substr(0, 'today'.length) !== 'today') {
                             cswPrivate.dateBox.$.datepicker({ 'dateFormat': Csw.serverDateFormatToJQuery(cswPrivate.DateFormat) });
                         }
                         cswPrivate.dateBox.required(cswPrivate.Required);
@@ -79,13 +78,14 @@
                             disableOnClick: false,
                             onClick: function () {
                                 cswPrivate.timeBox.val(Csw.getTimeString(new Date(), cswPrivate.TimeFormat));
+                                cswPrivate.onChange();
                             },
                             enabledText: 'Now'
                         });
                         cswPrivate.timeBox.required(cswPrivate.Required);
                     }
 
-                    if(Csw.bool(cswPrivate.showTodayButton)) {
+                    if (Csw.bool(cswPrivate.showTodayButton)) {
                         cswPrivate.dateTimeDiv.button({
                             ID: cswPrivate.ID + '_today',
                             disableOnClick: false,

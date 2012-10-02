@@ -315,6 +315,12 @@ namespace ChemSW.Nbt.PropTypes
             ParentObject[_PathSubField.ToXmlNodeName( true )] = CachedPath;
             ParentObject[_BarcodeSubField.ToXmlNodeName( true )] = CachedBarcode;
 
+            CswNbtNode SelectedNode = _CswNbtResources.Nodes[SelectedNodeId];
+            if( null != SelectedNode )
+            {
+                ParentObject["selectednodelink"] = SelectedNode.NodeLink;
+            }
+
             View.SaveToCache( false );
             ParentObject["viewid"] = View.SessionViewId.ToString();
 

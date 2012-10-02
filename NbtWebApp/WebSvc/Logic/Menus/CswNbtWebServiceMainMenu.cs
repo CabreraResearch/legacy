@@ -259,7 +259,14 @@ namespace ChemSW.Nbt.WebServices
 
                             View.SaveToCache( false );
                             ExportObj["CSV"] = new JObject();
-                            ExportObj["CSV"]["popup"] = "wsNBT.asmx/gridExportCSV?ViewId=" + View.SessionViewId.ToString();
+                            string ExportLink = "wsNBT.asmx/gridExportCSV?ViewId=" + View.SessionViewId + "&SafeNodeKey='";
+                            if( NbtViewVisibility.Property == View.Visibility )
+                            {
+                                ExportLink += SafeNodeKey;
+                            }
+                            ExportLink += "'";
+
+                            ExportObj["CSV"]["popup"] = ExportLink;
 
                             ExportObj["haschildren"] = true;
                         }

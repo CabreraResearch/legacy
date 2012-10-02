@@ -993,11 +993,11 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string gridExportCSV( string ViewId )
+        public string gridExportCSV( string ViewId, string SafeNodeKey )
         {
             UseCompression();
             JObject ReturnVal = new JObject();
-            //bool IsQuickLaunch = false;
+            bool IsQuickLaunch = false;
 
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
             try
@@ -1005,10 +1005,11 @@ namespace ChemSW.Nbt.WebServices
                 _initResources();
                 AuthenticationStatus = _attemptRefresh( true );
 
-                CswNbtView View = _getView( ViewId );
+                CswNbtNodeKey RealNodeKey = null;
+                CswNbtView View = _prepGridView( ViewId, SafeNodeKey, ref RealNodeKey, ref IsQuickLaunch );
                 if( null != View )
                 {
-                    CswNbtWebServiceGrid ws = new CswNbtWebServiceGrid( _CswNbtResources, View, true );
+                    var ws = new CswNbtWebServiceGrid( _CswNbtResources, View, ParentNodeKey: RealNodeKey, ForReport: false );
                     ws.ExportCsv( Context );
                 }
 
@@ -3858,7 +3859,7 @@ namespace ChemSW.Nbt.WebServices
                         {
                             CswNbtObjClassFeedback feedbackNode = node;
                             ReturnVal["casenumber"] = feedbackNode.CaseNumber.Sequence;
-                            ReturnVal["noderef"] = _CswNbtResources.makeClientNodeReference( node );
+                            ReturnVal["noderef"] = node.NodeLink;
                         }
                     }
                 }
@@ -4205,42 +4206,6 @@ namespace ChemSW.Nbt.WebServices
 
             return ReturnVal.ToString();
         } // getMaterialUnitsOfMeasure()
-
-        [WebMethod( EnableSession = false )]
-        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string GetNodeRef( string nodeId )
-        {
-            JObject ReturnVal = new JObject();
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
-            try
-            {
-                _initResources();
-                AuthenticationStatus = _attemptRefresh();
-
-                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
-                {
-                    CswPrimaryKey pk = new CswPrimaryKey();
-                    pk.FromString( nodeId );
-                    CswNbtNode node = _CswNbtResources.Nodes.GetNode( pk );
-                    if( null != node )
-                    {
-                        ReturnVal["noderef"] = _CswNbtResources.makeClientNodeReference( node );
-                    }
-                }
-
-                _deInitResources();
-            }
-
-            catch( Exception Ex )
-            {
-                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
-            }
-
-            //_jAddAuthenticationStatus( ReturnVal, AuthenticationStatus.Authenticated );
-            CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus.Authenticated );
-
-            return ReturnVal.ToString();
-        }
 
         #endregion CISPro
 
@@ -4638,7 +4603,6 @@ namespace ChemSW.Nbt.WebServices
         } // saveModules()
 
         #endregion Modules
-
 
         #region Inspection Design
 

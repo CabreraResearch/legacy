@@ -277,9 +277,9 @@ window.initMain = window.initMain || function (undefined) {
                             refreshWelcome();
                         }
                     };
-                }
-                refreshViewSelect(onSuccess);
-
+                } 
+                onSuccess();
+                
             } // onAuthenticate
         }); // CswLogin
 
@@ -299,12 +299,7 @@ window.initMain = window.initMain || function (undefined) {
             onSuccess: onSuccess
         });
     }
-
-    function refreshQuickLaunch() {
-        // Refresh the 'Recent' category in the view selector
-        mainviewselect.refreshRecent();
-    }
-
+    
     function clear(options) {
         ///<summary>Clears the contents of the page.</summary>
         ///<param name="options">An object representing the elements to clear: all, left, right, centertop, centerbottom.</param>
@@ -359,7 +354,7 @@ window.initMain = window.initMain || function (undefined) {
             'onAddComponent': refreshWelcome
         });
         refreshMainMenu();
-        refreshQuickLaunch();
+        refreshViewSelect();
     }
 
     // refreshWelcome()
@@ -459,7 +454,7 @@ window.initMain = window.initMain || function (undefined) {
                         break;
                 }
 
-                refreshQuickLaunch();
+                refreshViewSelect();
             }
         }   //if (Csw.clientChanges.manuallyCheckChanges() && itemIsSupported()) {
 
@@ -1012,13 +1007,12 @@ window.initMain = window.initMain || function (undefined) {
                     },
                     onFinish: function (viewid) {
                         clear({ 'all': true });
-                        refreshViewSelect(function () {
-                            handleItemSelect({
-                                type: 'view',
-                                mode: 'tree',
-                                itemid: viewid
-                            });
+                        handleItemSelect({
+                            type: 'view',
+                            mode: 'tree',
+                            itemid: viewid
                         });
+                        
                     },
                     startingStep: o.ActionOptions.startingStep,
                     menuRefresh: refreshSelected
@@ -1104,7 +1098,7 @@ window.initMain = window.initMain || function (undefined) {
                     },
                     'onFinish': function (viewid, viewmode) {
                         clear({ 'all': true });
-                        refreshViewSelect();
+                        //refreshViewSelect();
                         if (Csw.bool(o.ActionOptions.IgnoreReturn)) {
                             Csw.clientState.setCurrent(Csw.clientState.getLast());
                             refreshSelected();

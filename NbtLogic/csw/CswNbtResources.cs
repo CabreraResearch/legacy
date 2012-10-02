@@ -291,12 +291,6 @@ namespace ChemSW.Nbt
             return _CswNbtNodeCollection.GetNode( NodeId, NodeKey, Date );
         }
 
-
-        public string makeClientNodeReference( CswNbtNode Node )
-        {
-            return "[[" + Node.NodeId.ToString() + "][" + Node.NodeName + "]]";
-        }
-
         #endregion Nodes and Trees
 
 
