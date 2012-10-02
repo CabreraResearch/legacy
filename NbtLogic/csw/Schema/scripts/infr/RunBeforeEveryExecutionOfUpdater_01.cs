@@ -15,20 +15,6 @@ namespace ChemSW.Nbt.Schema
 
             // NOTE: This script will be run many times, so make sure your changes are safe!
 
-            #region ROMEO
-
-            if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( "nodes", "istemp" ) )
-            {
-                _CswNbtSchemaModTrnsctn.addBooleanColumn( "nodes", "istemp", "Node is temporary", logicaldelete: false, required: true );
-            }
-            if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( "nodes", "sessionid" ) )
-            {
-                _CswNbtSchemaModTrnsctn.addStringColumn( "nodes", "sessionid", "Session ID of temporary node", logicaldelete: false, required: false, datatypesize: 50 );
-            }
-            _CswNbtSchemaModTrnsctn.execArbitraryPlatformNeutralSql( "update nodes set istemp='0', sessionid=''" );
-
-            #endregion ROMEO
-
             #region SEBASTIAN
 
             //Add 5 generic nodetype prop attribute columns
@@ -60,12 +46,9 @@ namespace ChemSW.Nbt.Schema
 
             #endregion SEBASTIAN
 
-            // hack for backwards support of Quince schemata
-            if( "01Q-008" == _CswNbtSchemaModTrnsctn.getConfigVariableValue( "schemaversion" ) )
-            {
-                _CswNbtSchemaModTrnsctn.setConfigVariableValue( "schemaversion", "01R-008" );
-            }
+            #region TITANIA
 
+            #endregion TITANIA
 
         }//Update()
 
