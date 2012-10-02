@@ -13,8 +13,7 @@
                 ReadOnly: false,
                 Multi: false,
                 cssclass: 'CswTristateCheckBox',
-                onChange: function () {
-                },
+                onChange: null, // function (newval) {},
                 value: 'false',
                 btnValue: Csw.enums.imageButton_ButtonType.CheckboxFalse
             };
@@ -74,7 +73,7 @@
                     cswPublic.val(cswPrivate.value);
                     cswPublic.propNonDom('value', cswPrivate.value);
                     cswPublic.propDom('title', cswPrivate.value);
-                    cswPrivate.onChange();
+                    cswPrivate.onChange(cswPrivate.value);
                     return cswPrivate.checkBox.click(cswPrivate.btnValue);
                 }; // onClick()
 

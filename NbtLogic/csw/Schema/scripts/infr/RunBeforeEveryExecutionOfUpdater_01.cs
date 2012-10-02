@@ -27,6 +27,12 @@ namespace ChemSW.Nbt.Schema
             }
             _CswNbtSchemaModTrnsctn.execArbitraryPlatformNeutralSql( "update nodes set istemp='0', sessionid=''" );
 
+            // hack for backwards support of Quince schemata
+            if( "01Q-008" == _CswNbtSchemaModTrnsctn.getConfigVariableValue( "schemaversion" ) )
+            {
+                _CswNbtSchemaModTrnsctn.setConfigVariableValue( "schemaversion", "01R-008" );
+            }
+
             #endregion ROMEO
 
             #region SEBASTIAN
@@ -57,15 +63,7 @@ namespace ChemSW.Nbt.Schema
                 _CswNbtSchemaModTrnsctn.addBooleanColumn( "nodetypes", "haslabel", "Indicated whether the NodeType maps to a print label", false, false );
             }
 
-
             #endregion SEBASTIAN
-
-            // hack for backwards support of Quince schemata
-            if( "01Q-008" == _CswNbtSchemaModTrnsctn.getConfigVariableValue( "schemaversion" ) )
-            {
-                _CswNbtSchemaModTrnsctn.setConfigVariableValue( "schemaversion", "01R-008" );
-            }
-
 
         }//Update()
 

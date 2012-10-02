@@ -1124,6 +1124,10 @@ namespace ChemSW.Nbt.Schema
                     RetProp = ObjectClassOc.getObjectClassProp( PropName );
                 }
             }
+            else
+            {
+                throw new CswDniException( ErrorType.Error, "Error creating new object class property", "CswNbtSchemaModTrnsctn.createObjectClassProp() called without an object class" );
+            }
             return RetProp;
         }
 

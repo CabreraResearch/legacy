@@ -245,16 +245,14 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 if( CurrentProp.WasModifiedForNotification )
                 {
-                    // Prop-specific notifications  
-                    _CswNbtResources.runNotification( this.NodeType, CswNbtObjClassNotification.EventOption.Edit, _CswNbtNode, CurrentProp.PropName, string.Empty );
-                    _CswNbtResources.runNotification( this.NodeType, CswNbtObjClassNotification.EventOption.Edit, _CswNbtNode, CurrentProp.PropName, CurrentProp.Gestalt );
                     SomethingModified = true;
                 }
             }
             // Generic edit notifications  
             if( SomethingModified )
-                _CswNbtResources.runNotification( this.NodeType, CswNbtObjClassNotification.EventOption.Edit, _CswNbtNode, string.Empty, string.Empty );
-
+            {
+                _CswNbtResources.runMailReportEvents( this.NodeType, CswNbtObjClassMailReport.EventOption.Edit, _CswNbtNode );
+            }
         }//afterWriteNode()
 
         public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false )
@@ -307,7 +305,7 @@ namespace ChemSW.Nbt.ObjClasses
             //_CswNbtResources.Trees.clear();
 
             // BZ 10094 - Notification event
-            _CswNbtResources.runNotification( this.NodeType, CswNbtObjClassNotification.EventOption.Delete, _CswNbtNode, string.Empty, string.Empty );
+            _CswNbtResources.runMailReportEvents( this.NodeType, CswNbtObjClassMailReport.EventOption.Delete, _CswNbtNode );
         }
 
 
