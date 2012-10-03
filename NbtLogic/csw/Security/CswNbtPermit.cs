@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using ChemSW.Core;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
@@ -360,7 +361,7 @@ namespace ChemSW.Nbt.Security
             bool ret = false;
 
 
-            if( ( null != NodeTypeProp ) && ( null != NodeTypeTab ) )
+            if( ( null != NodeTypeProp ) )
             {
                 CswNbtMetaDataNodeType NodeType = NodeTypeProp.getNodeType();
 
@@ -373,12 +374,11 @@ namespace ChemSW.Nbt.Security
                     if( _CswNbtPermitInfo.shouldPermissionCheckProceed() )
                     {
                         NodeTypeTabPermission TabPermission = (NodeTypeTabPermission) Enum.Parse( typeof( NodeTypeTabPermission ), Permission.ToString() );
-                        foreach( CswNbtMetaDataNodeTypeTab CurrentTab in NodeType.getNodeTypeTabs() )
+                        foreach( CswNbtMetaDataNodeTypeTab CurrentTab in from _CurrentTab
+                                                                             in NodeType.getNodeTypeTabs()
+                                                                         where NodeTypeTab == null || _CurrentTab.TabId != NodeTypeTab.TabId
+                                                                         select _CurrentTab )
                         {
-
-                            if( CurrentTab.TabId != NodeTypeTab.TabId )
-                            {
-
                                 bool OtherTabHasPermission = false;
                                 OtherTabHasPermission = _CswNbtPermitInfo.Role.NodeTypePermissions.CheckValue( CswNbtObjClassRole.MakeNodeTypeTabPermissionValue( _CswNbtPermitInfo.NodeType.FirstVersionNodeTypeId, CurrentTab.FirstTabVersionId, TabPermission ) );
                                 if( TabPermission == NodeTypeTabPermission.View )
@@ -389,17 +389,7 @@ namespace ChemSW.Nbt.Security
 
                                 if( OtherTabHasPermission )
                                 {
-                                    foreach( CswNbtMetaDataNodeTypeProp CurrentProp in CurrentTab.getNodeTypeProps() )
-                                    {
-
-                                        if( CurrentProp.PropId == NodeTypeProp.PropId )
-                                        {
-                                            ret = true;
-                                            break;
-                                        }
-
-                                    }//iterate props on this tab
-
+                                ret = ( CurrentTab.getNodeTypeProps().Any( CurrentProp => CurrentProp.PropId == NodeTypeProp.PropId ) );
                                 }//if other tab has permission
 
 
@@ -408,9 +398,6 @@ namespace ChemSW.Nbt.Security
                                 {
                                     break;
                                 }
-
-                            }//if this is an _other_ tab
-
                         }//iterate tabs
 
                     }//if pre-reqs are in order
