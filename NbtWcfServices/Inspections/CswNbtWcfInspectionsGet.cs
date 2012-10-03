@@ -65,29 +65,32 @@ namespace NbtWebAppServices.Response
 
                     IEnumerable<CswNbtMetaDataNodeTypeProp> NodeTypeProps = NodeTypeTab.getNodeTypePropsByDisplayOrder();
                     //Debug.Assert( NodeTypeProps != null, "NodeTypeProps != null" );
+
+                    IEnumerable<CswNbtMetaDataNodeTypeProp> TypeProps = NodeTypeProps as CswNbtMetaDataNodeTypeProp[] ?? NodeTypeProps.ToArray();
                     foreach( CswNbtMetaDataNodeTypeProp NodeTypeProp in from CswNbtMetaDataNodeTypeProp _NodeTypeProp
-                                                                            in NodeTypeProps
+                                                                            in TypeProps
                                                                         where _NodeTypeProp.getFieldType().FieldType != CswNbtMetaDataFieldType.NbtFieldType.Question &&
                                                                               _propIsSupportedInMobile( _NodeTypeProp.getFieldType().FieldType )
                                                                         select _NodeTypeProp )
                     {
 
-                        var ResponseProperty = new CswNbtWcfInspectionsDataModel.CswNbtInspectionDesign.SectionProperty
-                                                   {
-                                                       HelpText = NodeTypeProp.HelpText,
-                                                       Type = NodeTypeProp.getFieldType().FieldType.ToString(),
-                                                       QuestionId = NodeTypeProp.PropId,
-                                                       Text = NodeTypeProp.PropName,
-                                                       Choices = null,
-                                                       ReadOnly = _CswNbtWcfSessionResources.CswNbtResources.Permit.canPropOnAnyOtherTab( CswNbtPermit.NodeTypePermission.Edit, null, NodeTypeProp )
-                                                   };
-                        ResponseSection.Properties.Add( ResponseProperty );
+                        ResponseSection.Properties.Add( new CswNbtWcfInspectionsDataModel.CswNbtInspectionDesign.SectionProperty
+                        {
+                            HelpText = NodeTypeProp.HelpText,
+                            Type = NodeTypeProp.getFieldType().FieldType.ToString(),
+                            QuestionId = NodeTypeProp.PropId,
+                            Text = NodeTypeProp.PropName,
+                            Choices = null,
+                            ReadOnly = _CswNbtWcfSessionResources.CswNbtResources.Permit.canPropOnAnyOtherTab( CswNbtPermit.NodeTypePermission.Edit, null, NodeTypeProp )
+                        } );
                     }
 
                     foreach( CswNbtMetaDataNodeTypeProp NodeTypeProp in from CswNbtMetaDataNodeTypeProp _NodeTypeProp
-                                                                            in NodeTypeProps
+                                                                            in TypeProps
                                                                         orderby _NodeTypeProp.PropNameWithQuestionNo
-                                                                        where _NodeTypeProp.getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.Question
+                                                                        where _NodeTypeProp.getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.Question &&
+                                                                              false == _NodeTypeProp.ReadOnly &&
+                                                                              _CswNbtWcfSessionResources.CswNbtResources.Permit.canPropOnAnyOtherTab( CswNbtPermit.NodeTypePermission.Edit, null, _NodeTypeProp )
                                                                         select _NodeTypeProp )
                     {
                         var ResponseProperty = new CswNbtWcfInspectionsDataModel.CswNbtInspectionDesign.SectionProperty
@@ -97,7 +100,7 @@ namespace NbtWebAppServices.Response
                             QuestionId = NodeTypeProp.PropId,
                             PreferredAnswer = NodeTypeProp.Extended,
                             Text = "Question " + NodeTypeProp.QuestionNo + ": " + NodeTypeProp.PropName,
-                            ReadOnly = _CswNbtWcfSessionResources.CswNbtResources.Permit.canPropOnAnyOtherTab( CswNbtPermit.NodeTypePermission.Edit, null, NodeTypeProp )
+                            ReadOnly = false
                         };
 
                         CswCommaDelimitedString PossibleAnswers = new CswCommaDelimitedString();
@@ -106,13 +109,11 @@ namespace NbtWebAppServices.Response
                         CompliantAnswers.FromString( NodeTypeProp.ValueOptions );
                         foreach( string Answer in PossibleAnswers )
                         {
-                            var Choice =
-                                new CswNbtWcfInspectionsDataModel.CswNbtInspectionDesign.AnswerChoice
+                            ResponseProperty.Choices.Add( new CswNbtWcfInspectionsDataModel.CswNbtInspectionDesign.AnswerChoice
                                 {
                                     Text = Answer,
                                     IsCompliant = CompliantAnswers.Contains( Answer, false )
-                                };
-                            ResponseProperty.Choices.Add( Choice );
+                                } );
                         }
                         ResponseSection.Properties.Add( ResponseProperty );
                     }
@@ -153,7 +154,8 @@ namespace NbtWebAppServices.Response
 
         private void _addInspectionDesignNodeNodeToResponse( CswNbtNode InspectionNode )
         {
-            if( false == InspectionDesignNodeIds.Contains( InspectionNode.NodeId ) )
+            if( false == InspectionDesignNodeIds.Contains( InspectionNode.NodeId ) &&
+                false == InspectionNode.ReadOnly )
             {
                 InspectionDesignNodeIds.Add( InspectionNode.NodeId );
                 CswNbtObjClassInspectionDesign NodeAsInspectionDesign = InspectionNode;
@@ -169,12 +171,13 @@ namespace NbtWebAppServices.Response
                     Status = NodeAsInspectionDesign.Status.Value,
                     Counts = new CswNbtWcfInspectionsDataModel.CswNbtInspection.QuestionCounts(),
                     ReadOnly = InspectionNode.ReadOnly
-
                 };
 
                 foreach( CswNbtNodePropWrapper Prop in InspectionNode.Properties )
                 {
-                    if( Prop.getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.Question )
+                    if( Prop.getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.Question &&
+                        false == Prop.ReadOnly &&
+                        _CswNbtWcfSessionResources.CswNbtResources.Permit.canPropOnAnyOtherTab( CswNbtPermit.NodeTypePermission.Edit, null, Prop.NodeTypeProp ) )
                     {
                         CswNbtNodePropQuestion PropAsQuestion = Prop.AsQuestion;
                         ResponseInspection.Counts.Total += 1;
