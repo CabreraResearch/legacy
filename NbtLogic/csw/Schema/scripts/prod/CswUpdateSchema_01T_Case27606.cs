@@ -1,5 +1,4 @@
-﻿using System;
-using ChemSW.Nbt.csw.Dev;
+﻿using ChemSW.Nbt.csw.Dev;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -10,7 +9,8 @@ namespace ChemSW.Nbt.Schema
     {
         public override void update()
         {
-            throw new Exception( "This is exceptional!" );
+            //To test Author and CaseNo, uncomment the following.
+            //throw new Exception( "This is exceptional!" );
         }
 
         public override CswDeveloper Author
