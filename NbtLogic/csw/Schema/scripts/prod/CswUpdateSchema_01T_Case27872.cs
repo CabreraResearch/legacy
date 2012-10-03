@@ -76,6 +76,14 @@ namespace ChemSW.Nbt.Schema
                 CswNbtViewRelationship LQNoRelationship = LQNoView.AddViewRelationship( LQNoNt, true );
                 LQNoView.AddViewRelationship( LQNoRelationship, NbtViewPropOwnerType.Second, LQNoNtp, false );
                 LQNoView.save();
+
+                //Update Chemical to include UN Code
+                CswNbtMetaDataNodeType ChemicalNt = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Chemical" );
+                if( ChemicalNt != null )
+                {
+                    CswNbtMetaDataNodeTypeProp ChemUNCodeNtp = _createNewProp( ChemicalNt, "UN Code", CswNbtMetaDataFieldType.NbtFieldType.Relationship, false );
+                    ChemUNCodeNtp.SetFK( NbtViewRelatedIdType.NodeTypeId.ToString(), UNCodeNt.NodeTypeId );
+                }
             }
         } //Update()
 
