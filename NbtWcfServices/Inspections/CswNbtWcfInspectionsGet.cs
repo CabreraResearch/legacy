@@ -177,7 +177,7 @@ namespace NbtWebAppServices.Response
                 {
                     if( Prop.getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.Question &&
                         false == Prop.ReadOnly &&
-                        _CswNbtWcfSessionResources.CswNbtResources.Permit.canProp( CswNbtPermit.NodeTypePermission.Edit, null, null, Prop ) )
+                        _CswNbtWcfSessionResources.CswNbtResources.Permit.canProp( CswNbtPermit.NodeTypePermission.Edit, Prop.NodeTypeProp, null ) )
                     {
                         CswNbtNodePropQuestion PropAsQuestion = Prop.AsQuestion;
                         ResponseInspection.Counts.Total += 1;
