@@ -206,7 +206,7 @@ namespace ChemSW.Nbt.ObjClasses
 
                             CswNbtObjClassRequestItem NodeAsRequestItem = RequestAct.makeContainerRequestItem( this, ButtonData );
 
-                            ButtonData.Data["titleText"] = OCP.PropName + " " + Barcode.Barcode;
+                            ButtonData.Data["titleText"] = "addition to cart - " + NodeAsRequestItem.Type.Value + " " + Barcode.Barcode;
                             ButtonData.Data["requestaction"] = ButtonData.SelectedText;
                             ButtonData.Data["requestItemProps"] = RequestAct.getRequestItemAddProps( NodeAsRequestItem );
                             ButtonData.Data["requestItemNodeTypeId"] = RequestAct.RequestItemNt.NodeTypeId;
@@ -365,8 +365,8 @@ namespace ChemSW.Nbt.ObjClasses
                 CswNbtNodePropQuantity InitialQuantity = sizeNode.InitialQuantity;
                 InitialQuantity.ToJSON( InitialQuantityObj );
                 CswNbtObjClassUnitOfMeasure UnitNode = _CswNbtResources.Nodes.GetNode( sizeNode.InitialQuantity.UnitId );
-                if( null != UnitNode && 
-                    ( UnitNode.UnitType.Value == CswNbtObjClassUnitOfMeasure.UnitTypes.Each.ToString() || 
+                if( null != UnitNode &&
+                    ( UnitNode.UnitType.Value == CswNbtObjClassUnitOfMeasure.UnitTypes.Each.ToString() ||
                     false == CswTools.IsDouble( UnitNode.ConversionFactor.Base ) ) )
                 {
                     InitialQuantityObj["unitReadonly"] = "true";
