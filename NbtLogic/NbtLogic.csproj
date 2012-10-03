@@ -122,6 +122,7 @@
     <Compile Include="csw\Actions\CswNbtActSubmitRequest.cs" />
     <Compile Include="csw\Actions\CswNbtActSystemViews.cs" />
     <Compile Include="csw\Grid\CswNbtGridExtJsButton.cs" />
+    <Compile Include="csw\ObjClasses\CswNbtObjClassMethod.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassRegulatoryList.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassFeedback.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassInventoryLevel.cs" />

@@ -82,6 +82,14 @@ namespace ChemSW.Nbt.ObjClasses
                     ReturnVal = new CswNbtObjClassInspectionRoute( CswNbtResources, Node );
                     break;
 
+                case CswNbtMetaDataObjectClass.NbtObjectClass.InspectionTargetClass:
+                    ReturnVal = new CswNbtObjClassInspectionTarget( CswNbtResources, Node );
+                    break;
+
+                case CswNbtMetaDataObjectClass.NbtObjectClass.InspectionTargetGroupClass:
+                    ReturnVal = new CswNbtObjClassInspectionTargetGroup( CswNbtResources, Node );
+                    break;
+
                 case CswNbtMetaDataObjectClass.NbtObjectClass.InventoryGroupClass:
                     ReturnVal = new CswNbtObjClassInventoryGroup( CswNbtResources, Node );
                     break;
@@ -114,12 +122,8 @@ namespace ChemSW.Nbt.ObjClasses
                     ReturnVal = new CswNbtObjClassMailReport( CswNbtResources, Node );
                     break;
 
-                case CswNbtMetaDataObjectClass.NbtObjectClass.InspectionTargetClass:
-                    ReturnVal = new CswNbtObjClassInspectionTarget( CswNbtResources, Node );
-                    break;
-
-                case CswNbtMetaDataObjectClass.NbtObjectClass.InspectionTargetGroupClass:
-                    ReturnVal = new CswNbtObjClassInspectionTargetGroup( CswNbtResources, Node );
+                case CswNbtMetaDataObjectClass.NbtObjectClass.MethodClass:
+                    ReturnVal = new CswNbtObjClassMethod( CswNbtResources, Node );
                     break;
 
                 case CswNbtMetaDataObjectClass.NbtObjectClass.NotificationClass:

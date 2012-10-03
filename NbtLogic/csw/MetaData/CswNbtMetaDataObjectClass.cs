@@ -40,6 +40,7 @@ namespace ChemSW.Nbt.MetaData
             MailReportClass,
             MaterialClass,
             MaterialSynonymClass,
+            MethodClass,
             InspectionTargetClass,
             InspectionTargetGroupClass,
             NotificationClass,

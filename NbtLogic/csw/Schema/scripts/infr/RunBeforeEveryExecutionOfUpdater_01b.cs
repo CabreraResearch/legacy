@@ -71,6 +71,63 @@ namespace ChemSW.Nbt.Schema
 
             #region TITANIA
 
+            #region Case 27869 - Method Object Class
+
+            CswNbtMetaDataObjectClass MethodOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.MethodClass );
+            if( null == MethodOc )
+            {
+                //Create new ObjectClass
+                MethodOc = _CswNbtSchemaModTrnsctn.createObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.MethodClass, "newicons/16/barchart.png", true, false );
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( MethodOc )
+                    {
+                        PropName = CswNbtObjClassMethod.PropertyName.MethodNo,
+                        FieldType = CswNbtMetaDataFieldType.NbtFieldType.Text,
+                        IsRequired = true,
+                        IsUnique = true,
+                        SetValOnAdd = true
+                    } );
+
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( MethodOc )
+                    {
+                        PropName = CswNbtObjClassMethod.PropertyName.MethodDescription,
+                        FieldType = CswNbtMetaDataFieldType.NbtFieldType.Text,
+                        SetValOnAdd = true
+                    } );
+
+                _CswNbtSchemaModTrnsctn.createModuleObjectClassJunction( CswNbtModuleName.CISPro, MethodOc.ObjectClassId );
+            }
+
+            CswNbtMetaDataNodeType MethodNt = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Method" );
+            if( null == MethodNt )
+            {
+                //Create new NodeType
+                MethodNt = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( MethodOc.ObjectClassId, "Method", "MLM" );
+                _CswNbtSchemaModTrnsctn.createModuleNodeTypeJunction( CswNbtModuleName.CISPro, MethodNt.NodeTypeId );
+
+                string NameTemplate = CswNbtMetaData.MakeTemplateEntry( CswNbtObjClassMethod.PropertyName.MethodNo );
+                MethodNt.setNameTemplateText( NameTemplate );
+
+                //Create Demo Data
+                CswNbtObjClassMethod MethodNode = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( MethodNt.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode );
+                MethodNode.MethodNo.Text = "000001";
+                MethodNode.MethodDescription.Text = "Demo Method";
+                MethodNode.IsDemo = true;
+                MethodNode.postChanges( false );
+            }
+
+            CswNbtView MethodView = _CswNbtSchemaModTrnsctn.restoreView( "Methods" );
+            if( null == MethodView )
+            {
+                //Create new View
+                MethodView = _CswNbtSchemaModTrnsctn.makeNewView( "Methods", NbtViewVisibility.Global );
+                MethodView.Category = "MLM";
+                MethodView.ViewMode = NbtViewRenderingMode.Tree;
+                MethodView.AddViewRelationship( MethodOc, true );
+                MethodView.save();
+            }
+
+            #endregion Case 27869 - Method Object Class
+
             #endregion TITANIA
 
 
