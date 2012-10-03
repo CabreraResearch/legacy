@@ -25,6 +25,7 @@ namespace ChemSW.Nbt.MetaData
             ContainerDispenseTransactionClass,
             CustomerClass,
             DocumentClass,
+            EnterprisePartClass,
             EquipmentAssemblyClass,
             EquipmentClass,
             EquipmentTypeClass,

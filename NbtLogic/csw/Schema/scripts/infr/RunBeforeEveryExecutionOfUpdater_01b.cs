@@ -71,6 +71,32 @@ namespace ChemSW.Nbt.Schema
 
             #region TITANIA
 
+            #region Case 27865 part 1 - Enterprise Part (EP)
+
+            CswNbtMetaDataObjectClass enterprisePartOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.EnterprisePartClass );
+            if( null == enterprisePartOC )
+            {
+                enterprisePartOC = _CswNbtSchemaModTrnsctn.createObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.EnterprisePartClass, "gear.png", false, false );
+
+                CswNbtMetaDataObjectClassProp gcasOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( enterprisePartOC )
+                {
+                    PropName = CswNbtObjClassEnterprisePart.PropertyName.GCAS,
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Text,
+                    IsUnique = true
+                } );
+
+                CswNbtMetaDataObjectClassProp requestOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( enterprisePartOC )
+                {
+                    PropName = CswNbtObjClassEnterprisePart.PropertyName.Request,
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Button
+                } );
+
+                _CswNbtSchemaModTrnsctn.createModuleObjectClassJunction( CswNbtModuleName.CISPro, enterprisePartOC.ObjectClassId );
+
+            }
+
+            #endregion
+
             #endregion TITANIA
 
 
