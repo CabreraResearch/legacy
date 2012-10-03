@@ -119,34 +119,6 @@ namespace ChemSW.Nbt.Schema
                 _CswNbtSchemaModTrnsctn.createModuleObjectClassJunction( CswNbtModuleName.CISPro, JurisdictionOc.ObjectClassId );
             }
 
-            CswNbtMetaDataNodeType JurisdictionNt = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Jurisdiction" );
-            if( null == JurisdictionNt )
-            {
-                //Create new NodeType
-                JurisdictionNt = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( JurisdictionOc.ObjectClassId, "Jurisdiction", "MLM" );
-                _CswNbtSchemaModTrnsctn.createModuleNodeTypeJunction( CswNbtModuleName.CISPro, JurisdictionNt.NodeTypeId );
-
-                string NameTemplate = CswNbtMetaData.MakeTemplateEntry( CswNbtObjClassJurisdiction.PropertyName.Name );
-                JurisdictionNt.setNameTemplateText( NameTemplate );
-
-                //Create Demo Data
-                CswNbtObjClassJurisdiction JurisdictionNode = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( JurisdictionNt.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode );
-                JurisdictionNode.Name.Text = "Default Jurisdiction";
-                JurisdictionNode.IsDemo = true;
-                JurisdictionNode.postChanges( false );
-            }
-
-            CswNbtView JurisdictionView = _CswNbtSchemaModTrnsctn.restoreView( "Jurisdictions" );
-            if( null == JurisdictionView )
-            {
-                //Create new View
-                JurisdictionView = _CswNbtSchemaModTrnsctn.makeNewView( "Jurisdictions", NbtViewVisibility.Global );
-                JurisdictionView.Category = "MLM";
-                JurisdictionView.ViewMode = NbtViewRenderingMode.Tree;
-                JurisdictionView.AddViewRelationship( JurisdictionOc, true );
-                JurisdictionView.save();
-            }
-
             CswNbtMetaDataObjectClass UserOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
             if( null != UserOc )
             {
