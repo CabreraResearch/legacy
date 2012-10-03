@@ -111,6 +111,10 @@
                     return Csw.bool(cswPublic.tabState.Multi);
                 };
 
+                cswPublic.isDisabled = function () {
+                    return (Csw.enums.editMode.PrintReport === cswPublic.tabState.EditMode || Csw.enums.editMode.AuditHistoryInPopup === cswPublic.tabState.EditMode);
+                }
+
                 cswPublic.ID = Csw.makeId(cswPublic.propDiv.getId(), cswPublic.propData.id);
 
                 Csw.extend(cswPublic, cswPrivate);
@@ -157,7 +161,7 @@
                             cswPublic.propDiv.empty();
                             Csw.tryExec(callBack, cswPublic);
                         };
-                    }());
+                    } ());
 
                     cswPrivate.renderer = function () {
                         /// <summary>
@@ -193,6 +197,6 @@
             }));
 
 
-}());
+} ());
 
 
