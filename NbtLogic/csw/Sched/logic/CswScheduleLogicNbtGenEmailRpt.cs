@@ -234,63 +234,55 @@ namespace ChemSW.Nbt.Sched
 
                             if( "View" == CurrentMailReport.Type.Value )
                             {
-                                Int32 ViewIdInt = CswConvert.ToInt32( CurrentMailReport.ReportView.SelectedViewIds );
-                                if( Int32.MinValue != ViewIdInt )
+                                CswNbtViewId ViewId = CurrentMailReport.ReportView.ViewId;
+                                if( ViewId.isSet() )
                                 {
-                                    CswNbtViewId ViewId = new CswNbtViewId( ViewIdInt );
-                                    if( ViewId.isSet() )
+                                    ViewLink = makeViewUrl( ViewId );
+                                    CswNbtView ReportView = _CswNbtResources.ViewSelect.restoreView( ViewId );
+                                    ICswNbtTree ReportTree = _CswNbtResources.Trees.getTreeFromView( UserNodeAsUser as ICswNbtUser, ReportView, true, true, false, false );
+
+                                    if( CswNbtObjClassMailReport.EventOption.Exists.ToString() != CurrentMailReport.Event.Value )
                                     {
-                                        ViewLink = makeViewUrl( ViewId );
-                                        CswNbtView ReportView = _CswNbtResources.ViewSelect.restoreView( ViewId );
-                                        ICswNbtTree ReportTree = _CswNbtResources.Trees.getTreeFromView( UserNodeAsUser as ICswNbtUser, ReportView, true, true, false, false );
-
-                                        if( CswNbtObjClassMailReport.EventOption.Exists.ToString() != CurrentMailReport.Event.Value )
+                                        // case 27720 - check mail report events to find nodes that match the view results
+                                        Collection<CswPrimaryKey> NodesToMail = new Collection<CswPrimaryKey>();
+                                        foreach( Int32 NodeId in CurrentMailReport.GetNodesToReport().ToIntCollection() )
                                         {
-                                            // case 27720 - check mail report events to find nodes that match the view results
-                                            Collection<CswPrimaryKey> NodesToMail = new Collection<CswPrimaryKey>();
-                                            foreach( Int32 NodeId in CurrentMailReport.GetNodesToReport().ToIntCollection() )
+                                            CswPrimaryKey ThisNodeId = new CswPrimaryKey( "nodes", NodeId );
+                                            ReportTree.makeNodeCurrent( ThisNodeId );
+                                            if( ReportTree.isCurrentNodeDefined() )
                                             {
-                                                CswPrimaryKey ThisNodeId = new CswPrimaryKey( "nodes", NodeId );
-                                                ReportTree.makeNodeCurrent( ThisNodeId );
-                                                if( ReportTree.isCurrentNodeDefined() )
-                                                {
-                                                    NodesToMail.Add( ThisNodeId );
-                                                }
+                                                NodesToMail.Add( ThisNodeId );
                                             }
-                                            if( NodesToMail.Count > 0 )
-                                            {
-                                                EmailMessageSubject = CurrentMailReport.Type.Value + " Notification: " + ReportView.ViewName;
-
-                                                if( ReportTree.getChildNodeCount() > 0 )
-                                                {
-                                                    EmailMessageBody = _setStatusHaveData( CurrentMailReport, CswNbtMailReportStatus, ViewLink );
-                                                }
-                                                else
-                                                {
-                                                    EmailMessageBody = _setStatusDoNotHaveData( CurrentMailReport, CswNbtMailReportStatus );
-                                                }//if-else the view got a result
-                                            }
+                                        }
+                                        EmailMessageSubject = CurrentMailReport.Type.Value + " Notification: " + ReportView.ViewName;
+                                        if( NodesToMail.Count > 0 )
+                                        {
+                                            EmailMessageBody = _setStatusHaveData( CurrentMailReport, CswNbtMailReportStatus, ViewLink );
                                         }
                                         else
                                         {
-                                            EmailMessageSubject = CurrentMailReport.Type.Value + " Notification: " + ReportView.ViewName;
-
-                                            if( ReportTree.getChildNodeCount() > 0 )
-                                            {
-                                                EmailMessageBody = _setStatusHaveData( CurrentMailReport, CswNbtMailReportStatus, ViewLink );
-                                            }
-                                            else
-                                            {
-                                                EmailMessageBody = _setStatusDoNotHaveData( CurrentMailReport, CswNbtMailReportStatus );
-                                            }//if-else the view got a result
-                                        }
-
-                                        EmailReportStatusMessage = _sendMailMessage( CurrentMailReport, CswNbtMailReportStatus, EmailMessageBody, UserNodeAsUser.LastName, UserNodeAsUser.FirstName, UserNodeAsUser.Node.NodeName, EmailMessageSubject, CurrentEmailAddress, null );
+                                            EmailMessageBody = _setStatusDoNotHaveData( CurrentMailReport, CswNbtMailReportStatus );
+                                        }//if-else the view got a result
                                     }
                                     else
                                     {
-                                        EmailReportStatusMessage = "Unable to process email report " + CurrentMailReport.Node.NodeName + ": the associated view's ViewId is not set";
+                                        EmailMessageSubject = CurrentMailReport.Type.Value + " Notification: " + ReportView.ViewName;
+
+                                        if( ReportTree.getChildNodeCount() > 0 )
+                                        {
+                                            EmailMessageBody = _setStatusHaveData( CurrentMailReport, CswNbtMailReportStatus, ViewLink );
+                                        }
+                                        else
+                                        {
+                                            EmailMessageBody = _setStatusDoNotHaveData( CurrentMailReport, CswNbtMailReportStatus );
+                                        }//if-else the view got a result
                                     }
+
+                                    EmailReportStatusMessage = _sendMailMessage( CurrentMailReport, CswNbtMailReportStatus, EmailMessageBody, UserNodeAsUser.LastName, UserNodeAsUser.FirstName, UserNodeAsUser.Node.NodeName, EmailMessageSubject, CurrentEmailAddress, null );
+                                }
+                                else
+                                {
+                                    EmailReportStatusMessage = "Unable to process email report " + CurrentMailReport.Node.NodeName + ": the associated view's ViewId is not set";
                                 }
                             }
                             else if( "Report" == CurrentMailReport.Type.Value )

@@ -14,13 +14,19 @@ namespace ChemSW.Nbt.Schema
     {
         public override void update()
         {
-            // remove Nodes to Report from all layouts
+            
             CswNbtMetaDataObjectClass MailReportOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.MailReportClass );
             foreach( CswNbtMetaDataNodeType MailReportNT in MailReportOC.getNodeTypes() )
             {
+                // remove 'Nodes to Report' from all layouts
                 CswNbtMetaDataNodeTypeProp NodesToReportNTP = MailReportNT.getNodeTypePropByObjectClassProp( CswNbtObjClassMailReport.PropertyName.NodesToReport );
                 _CswNbtSchemaModTrnsctn.MetaData.NodeTypeLayout.removePropFromAllLayouts( NodesToReportNTP );
+
+                // remove Run Status from Add layout
+                CswNbtMetaDataNodeTypeProp RunStatusNTP = MailReportNT.getNodeTypePropByObjectClassProp( CswNbtObjClassMailReport.PropertyName.RunStatus );
+                RunStatusNTP.removeFromLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add );
             }
+
         }//Update()
 
     }//class CswUpdateSchemaCase27720
