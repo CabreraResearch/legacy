@@ -47,8 +47,8 @@ namespace ChemSW.Nbt.Schema
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01S_Case27779_part1() ) );                        //01S-019
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01S_Case27779_part2() ) );                        //01S-020
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01S_Case27551_part2() ) );                        //01S-021
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01S_Case27751() ) );                              //01S-019 
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01S_Case27858() ) );                              //01S-020
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01S_Case27751() ) );                              //01S-022 
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01S_Case27858() ) );                              //01S-023
 
             #endregion SEBASTIAN
 
@@ -56,7 +56,7 @@ namespace ChemSW.Nbt.Schema
 
             //Titania Starts here
 
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01T_Case27606() ) );                         //01S-21    01T-01
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01T_Case27872() ) );                              //01S-024    01T-01
 
             #endregion TITANIA
 
