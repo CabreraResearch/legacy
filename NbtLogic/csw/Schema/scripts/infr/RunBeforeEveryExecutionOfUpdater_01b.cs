@@ -77,7 +77,7 @@ namespace ChemSW.Nbt.Schema
             if( null == MethodOc )
             {
                 //Create new ObjectClass
-                MethodOc = _CswNbtSchemaModTrnsctn.createObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.MethodClass, "newicons/16/barchart.png", true, false );
+                MethodOc = _CswNbtSchemaModTrnsctn.createObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.MethodClass, "barchart.png", true, false );
                 _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( MethodOc )
                     {
                         PropName = CswNbtObjClassMethod.PropertyName.MethodNo,
@@ -128,8 +128,69 @@ namespace ChemSW.Nbt.Schema
 
             #endregion Case 27869 - Method Object Class
 
-            #endregion TITANIA
+            #region Case 27873 - Jurisdiction Object Class
 
+            CswNbtMetaDataObjectClass JurisdictionOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.JurisdictionClass );
+            if( null == JurisdictionOc )
+            {
+                //Create new ObjectClass
+                JurisdictionOc = _CswNbtSchemaModTrnsctn.createObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.JurisdictionClass, "person.png", true, false );
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( JurisdictionOc )
+                {
+                    PropName = CswNbtObjClassJurisdiction.PropertyName.Name,
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Text,
+                    IsRequired = true,
+                    SetValOnAdd = true
+                } );
+
+                _CswNbtSchemaModTrnsctn.createModuleObjectClassJunction( CswNbtModuleName.CISPro, JurisdictionOc.ObjectClassId );
+            }
+
+            CswNbtMetaDataNodeType JurisdictionNt = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Jurisdiction" );
+            if( null == JurisdictionNt )
+            {
+                //Create new NodeType
+                JurisdictionNt = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( JurisdictionOc.ObjectClassId, "Jurisdiction", "MLM" );
+                _CswNbtSchemaModTrnsctn.createModuleNodeTypeJunction( CswNbtModuleName.CISPro, JurisdictionNt.NodeTypeId );
+
+                string NameTemplate = CswNbtMetaData.MakeTemplateEntry( CswNbtObjClassJurisdiction.PropertyName.Name );
+                JurisdictionNt.setNameTemplateText( NameTemplate );
+
+                //Create Demo Data
+                CswNbtObjClassJurisdiction JurisdictionNode = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( JurisdictionNt.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode );
+                JurisdictionNode.Name.Text = "Default Jurisdiction";
+                JurisdictionNode.IsDemo = true;
+                JurisdictionNode.postChanges( false );
+            }
+
+            CswNbtView JurisdictionView = _CswNbtSchemaModTrnsctn.restoreView( "Jurisdictions" );
+            if( null == JurisdictionView )
+            {
+                //Create new View
+                JurisdictionView = _CswNbtSchemaModTrnsctn.makeNewView( "Jurisdictions", NbtViewVisibility.Global );
+                JurisdictionView.Category = "MLM";
+                JurisdictionView.ViewMode = NbtViewRenderingMode.Tree;
+                JurisdictionView.AddViewRelationship( JurisdictionOc, true );
+                JurisdictionView.save();
+            }
+
+            CswNbtMetaDataObjectClass UserOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
+            if( null != UserOc )
+            {
+                //Create new User Prop
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( UserOc )
+                {
+                    PropName = CswNbtObjClassUser.PropertyName.Jurisdiction,
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Relationship,
+                    IsFk = true,
+                    FkType = NbtViewRelatedIdType.ObjectClassId.ToString(),
+                    FkValue = JurisdictionOc.ObjectClassId
+                } );
+            }
+
+            #endregion Case 27873 - Jurisdiction Object Class
+
+            #endregion TITANIA
 
         }
 
