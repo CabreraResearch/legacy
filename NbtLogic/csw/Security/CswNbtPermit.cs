@@ -506,7 +506,8 @@ namespace ChemSW.Nbt.Security
                         }
 
                         CswNbtNode Node = _CswNbtResources.Nodes[NodeId];
-                        if( null != Node )
+                        if( null != Node &&
+                            Permission != NodeTypePermission.View && Permission != NodeTypePermission.Delete )
                         {
                             ret = ret && ( false == Node.ReadOnly );
                         }
