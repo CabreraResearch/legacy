@@ -90,7 +90,7 @@ namespace NbtWebAppServices.Response
                                                                         orderby _NodeTypeProp.PropNameWithQuestionNo
                                                                         where _NodeTypeProp.getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.Question &&
                                                                               false == _NodeTypeProp.ReadOnly &&
-                                                                              _CswNbtWcfSessionResources.CswNbtResources.Permit.canPropOnAnyOtherTab( CswNbtPermit.NodeTypePermission.Edit, null, _NodeTypeProp )
+                                                                              _CswNbtWcfSessionResources.CswNbtResources.Permit.canProp( CswNbtPermit.NodeTypePermission.Edit, _NodeTypeProp, null )
                                                                         select _NodeTypeProp )
                     {
                         var ResponseProperty = new CswNbtWcfInspectionsDataModel.CswNbtInspectionDesign.SectionProperty
@@ -152,7 +152,7 @@ namespace NbtWebAppServices.Response
                    );
         }
 
-        private void _addInspectionDesignNodeNodeToResponse( CswNbtNode InspectionNode )
+        private void _addChecklistNodesToResponse( CswNbtNode InspectionNode )
         {
             if( false == InspectionDesignNodeIds.Contains( InspectionNode.NodeId ) &&
                 false == InspectionNode.ReadOnly )
@@ -177,7 +177,7 @@ namespace NbtWebAppServices.Response
                 {
                     if( Prop.getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.Question &&
                         false == Prop.ReadOnly &&
-                        _CswNbtWcfSessionResources.CswNbtResources.Permit.canPropOnAnyOtherTab( CswNbtPermit.NodeTypePermission.Edit, null, Prop.NodeTypeProp ) )
+                        _CswNbtWcfSessionResources.CswNbtResources.Permit.canProp( CswNbtPermit.NodeTypePermission.Edit, null, null, Prop ) )
                     {
                         CswNbtNodePropQuestion PropAsQuestion = Prop.AsQuestion;
                         ResponseInspection.Counts.Total += 1;
@@ -230,7 +230,7 @@ namespace NbtWebAppServices.Response
                         if( NodeForCurrentPosition.ObjClass.ObjectClass.ObjectClass == _InspectionDesignOc.ObjectClass )
                         {
                             _addNodeTypeInspectionDesignToResponse( NodeForCurrentPosition );
-                            _addInspectionDesignNodeNodeToResponse( NodeForCurrentPosition );
+                            _addChecklistNodesToResponse( NodeForCurrentPosition );
                         }
                     }
                     if( Tree.getChildNodeCount() > 0 )

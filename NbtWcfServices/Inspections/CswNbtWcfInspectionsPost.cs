@@ -95,7 +95,7 @@ namespace NbtWebAppServices.Response
                                             {
                                                 bool CanEdit = (
                                                                     _CswNbtWcfSessionResources.CswNbtResources.Permit.canTab( CswNbtPermit.NodeTypePermission.Edit, InspectionNt, Tab ) ||
-                                                                    _CswNbtWcfSessionResources.CswNbtResources.Permit.canProp( CswNbtPermit.NodeTypePermission.Edit, Ntp )
+                                                                    _CswNbtWcfSessionResources.CswNbtResources.Permit.canProp( CswNbtPermit.NodeTypePermission.Edit, Ntp, Tab )
                                                                 );
 
                                                 CswNbtNodePropQuestion PropAsQuestion = InspectionNode.Properties[Ntp];
@@ -150,7 +150,7 @@ namespace NbtWebAppServices.Response
                                             if( null != ButtonTab &&
                                                     (
                                                         _CswNbtWcfSessionResources.CswNbtResources.Permit.canTab( CswNbtPermit.NodeTypePermission.Edit, InspectionNt, NodeTypeTab: ButtonTab ) ||
-                                                        _CswNbtWcfSessionResources.CswNbtResources.Permit.canProp( CswNbtPermit.NodeTypePermission.Edit, ButtonNtp )
+                                                        _CswNbtWcfSessionResources.CswNbtResources.Permit.canProp( CswNbtPermit.NodeTypePermission.Edit, ButtonNtp, ButtonTab )
                                                     )
                                                )
                                             {

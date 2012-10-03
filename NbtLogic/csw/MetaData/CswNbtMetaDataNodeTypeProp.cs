@@ -508,7 +508,7 @@ namespace ChemSW.Nbt.MetaData
                 FilterNodeTypePropId == Int32.MinValue && /* Keep these out */
                         false == Node.Properties[this].Hidden &&
                         ( _CswNbtMetaDataResources.CswNbtResources.Permit.canNode( CswNbtPermit.NodeTypePermission.Edit, this.getNodeType(), Node.NodeId ) ) &&
-                          _CswNbtMetaDataResources.CswNbtResources.Permit.canProp( CswNbtPermit.NodeTypePermission.Edit, this ) );
+                          _CswNbtMetaDataResources.CswNbtResources.Permit.canProp( CswNbtPermit.NodeTypePermission.Edit, this, null ) );
             return ret;
         }
 
