@@ -67,8 +67,7 @@ namespace NbtWebAppServices.Response
                     //Debug.Assert( NodeTypeProps != null, "NodeTypeProps != null" );
                     foreach( CswNbtMetaDataNodeTypeProp NodeTypeProp in from CswNbtMetaDataNodeTypeProp _NodeTypeProp
                                                                             in NodeTypeProps
-                                                                        where true != _NodeTypeProp.HideInMobile &&
-                                                                              _NodeTypeProp.getFieldType().FieldType != CswNbtMetaDataFieldType.NbtFieldType.Question &&
+                                                                        where _NodeTypeProp.getFieldType().FieldType != CswNbtMetaDataFieldType.NbtFieldType.Question &&
                                                                               _propIsSupportedInMobile( _NodeTypeProp.getFieldType().FieldType )
                                                                         select _NodeTypeProp )
                     {
@@ -79,7 +78,8 @@ namespace NbtWebAppServices.Response
                                                        Type = NodeTypeProp.getFieldType().FieldType.ToString(),
                                                        QuestionId = NodeTypeProp.PropId,
                                                        Text = NodeTypeProp.PropName,
-                                                       Choices = null
+                                                       Choices = null,
+                                                       ReadOnly = _CswNbtWcfSessionResources.CswNbtResources.Permit.canPropOnAnyOtherTab( CswNbtPermit.NodeTypePermission.Edit, null, NodeTypeProp )
                                                    };
                         ResponseSection.Properties.Add( ResponseProperty );
                     }
@@ -87,8 +87,7 @@ namespace NbtWebAppServices.Response
                     foreach( CswNbtMetaDataNodeTypeProp NodeTypeProp in from CswNbtMetaDataNodeTypeProp _NodeTypeProp
                                                                             in NodeTypeProps
                                                                         orderby _NodeTypeProp.PropNameWithQuestionNo
-                                                                        where true != _NodeTypeProp.HideInMobile &&
-                                                                              _NodeTypeProp.getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.Question
+                                                                        where _NodeTypeProp.getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.Question
                                                                         select _NodeTypeProp )
                     {
                         var ResponseProperty = new CswNbtWcfInspectionsDataModel.CswNbtInspectionDesign.SectionProperty
@@ -97,7 +96,8 @@ namespace NbtWebAppServices.Response
                             Type = CswNbtMetaDataFieldType.NbtFieldType.Question,
                             QuestionId = NodeTypeProp.PropId,
                             PreferredAnswer = NodeTypeProp.Extended,
-                            Text = "Question " + NodeTypeProp.QuestionNo + ": " + NodeTypeProp.PropName
+                            Text = "Question " + NodeTypeProp.QuestionNo + ": " + NodeTypeProp.PropName,
+                            ReadOnly = _CswNbtWcfSessionResources.CswNbtResources.Permit.canPropOnAnyOtherTab( CswNbtPermit.NodeTypePermission.Edit, null, NodeTypeProp )
                         };
 
                         CswCommaDelimitedString PossibleAnswers = new CswCommaDelimitedString();
@@ -167,7 +167,8 @@ namespace NbtWebAppServices.Response
                     LocationPath = NodeAsInspectionDesign.Location.Gestalt,
                     RouteName = default( string ),
                     Status = NodeAsInspectionDesign.Status.Value,
-                    Counts = new CswNbtWcfInspectionsDataModel.CswNbtInspection.QuestionCounts()
+                    Counts = new CswNbtWcfInspectionsDataModel.CswNbtInspection.QuestionCounts(),
+                    ReadOnly = InspectionNode.ReadOnly
 
                 };
 
