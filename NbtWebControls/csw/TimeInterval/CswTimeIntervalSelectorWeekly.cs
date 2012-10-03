@@ -65,8 +65,8 @@ namespace ChemSW.NbtWebControls
             EnsureChildControls();
             if( RateInterval.RateType == CswRateInterval.RateIntervalType.WeeklyByDay )
             {
-                WeeklyDayPickerTable.setWeekDayPickerCheckBoxSelectedValues( ( (CswRateIntervalWeekly) RateInterval.RateInterval ).WeeklyDays );
-                StartDatePicker.SelectedDate = ( (CswRateIntervalWeekly) RateInterval.RateInterval ).StartingDate;
+                WeeklyDayPickerTable.setWeekDayPickerCheckBoxSelectedValues( RateInterval.Data.WeeklyDays );
+                StartDatePicker.SelectedDate = RateInterval.Data.StartingDate;
             }
         }
 
