@@ -135,6 +135,33 @@ namespace ChemSW.Nbt.Schema
 
             #endregion Case 27873 - Jurisdiction ObjectClass
 
+            #region Case 27870 - New InventoryGroup ObjClassProps
+
+            CswNbtMetaDataObjectClass InventoryGroupOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.InventoryGroupClass );
+            if( null != InventoryGroupOc )
+            {
+                CswNbtMetaDataObjectClassProp CentralOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( InventoryGroupOc )
+                {
+                    PropName = CswNbtObjClassInventoryGroup.PropertyName.Central,
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Logical,
+                    IsRequired = true,
+                    SetValOnAdd = true
+                } );
+
+                _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( CentralOCP, CentralOCP.getFieldTypeRule().SubFields.Default.Name, Tristate.False );
+
+                CswNbtMetaDataObjectClassProp AutoCertAppOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( InventoryGroupOc )
+                {
+                    PropName = CswNbtObjClassInventoryGroup.PropertyName.AutomaticCertificateApproval,
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Logical,
+                    IsRequired = true
+                } );
+
+                _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( AutoCertAppOCP, AutoCertAppOCP.getFieldTypeRule().SubFields.Default.Name, Tristate.False );
+            }
+
+            #endregion Case 27870 - New InventoryGroup ObjClassProps
+
             #endregion TITANIA
 
         }
