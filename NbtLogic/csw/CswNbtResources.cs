@@ -11,6 +11,7 @@ using ChemSW.Mail;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
+using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
 using ChemSW.RscAdo;
 using ChemSW.Security;
@@ -670,7 +671,7 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Store a nodeid on a mail report for emails later, based on node events
         /// </summary>
-        public void runMailReportEvents( CswNbtMetaDataNodeType TargetNodeType, CswNbtObjClassMailReport.EventOption EventOpt, CswNbtNode TargetNode )
+        public void runMailReportEvents( CswNbtMetaDataNodeType TargetNodeType, CswNbtObjClassMailReport.EventOption EventOpt, CswNbtNode TargetNode, Collection<CswNbtNodePropWrapper> ModifiedProperties )
         {
             // Find any matching mail reports
             CswNbtMetaDataObjectClass MailReportOC = MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.MailReportClass );
@@ -692,17 +693,32 @@ namespace ChemSW.Nbt
                                                       FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals,
                                                       Value: EventOpt.ToString() );
             // Can't check the view, because it depends on the user
+            // But check for a matching property value being altered
             ICswNbtTree MailReportsTree = Trees.getTreeFromView( MailReportsView, RequireViewPermissions: false, IncludeSystemNodes: true );
             for( Int32 i = 0; i < MailReportsTree.getChildNodeCount(); i++ )
             {
                 MailReportsTree.goToNthChild( i );
                 
                 CswNbtObjClassMailReport ThisMailReport = MailReportsTree.getNodeForCurrentPosition();
-                ThisMailReport.AddNodeToReport( TargetNode );
+                CswNbtView MailReportView = this.ViewSelect.restoreView( ThisMailReport.ReportView.ViewId );
+                bool IncludeNode = false;
+                foreach( CswNbtNodePropWrapper PropWrapper in ModifiedProperties )
+                {
+                    CswNbtViewProperty ViewProp = MailReportView.findPropertyByName( PropWrapper.PropName );
+                    if( null != ViewProp )
+                    {
+                        IncludeNode = true;
+                        break; // if one property matches, that's enough
+                    }
+                } // foreach( CswNbtNodePropWrapper PropWrapper in Properties )
+                if( IncludeNode )
+                {
+                    ThisMailReport.AddNodeToReport( TargetNode );
+                }
                 ThisMailReport.postChanges( false );
 
                 MailReportsTree.goToParentNode();
-            }
+            } // for( Int32 i = 0; i < MailReportsTree.getChildNodeCount(); i++ )
         } // runMailReportEvents()
 
         #endregion Mail Report Events

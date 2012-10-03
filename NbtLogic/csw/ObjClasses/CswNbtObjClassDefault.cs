@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Data;
 using ChemSW.Core;
 using ChemSW.DB;
@@ -240,18 +241,17 @@ namespace ChemSW.Nbt.ObjClasses
         public override void afterWriteNode()
         {
             // BZ 10094 - Notification event
-            bool SomethingModified = false;
+            Collection<CswNbtNodePropWrapper> ModifiedProps = new Collection<CswNbtNodePropWrapper>();
             foreach( CswNbtNodePropWrapper CurrentProp in _CswNbtNode.Properties )
             {
                 if( CurrentProp.WasModifiedForNotification )
                 {
-                    SomethingModified = true;
+                    ModifiedProps.Add( CurrentProp );
                 }
             }
-            // Generic edit notifications  
-            if( SomethingModified )
+            if( ModifiedProps.Count > 0 )
             {
-                _CswNbtResources.runMailReportEvents( this.NodeType, CswNbtObjClassMailReport.EventOption.Edit, _CswNbtNode );
+                _CswNbtResources.runMailReportEvents( this.NodeType, CswNbtObjClassMailReport.EventOption.Edit, _CswNbtNode, ModifiedProps );
             }
         }//afterWriteNode()
 
@@ -305,7 +305,7 @@ namespace ChemSW.Nbt.ObjClasses
             //_CswNbtResources.Trees.clear();
 
             // BZ 10094 - Notification event
-            _CswNbtResources.runMailReportEvents( this.NodeType, CswNbtObjClassMailReport.EventOption.Delete, _CswNbtNode );
+            //_CswNbtResources.runMailReportEvents( this.NodeType, CswNbtObjClassMailReport.EventOption.Delete, _CswNbtNode );
         }
 
 

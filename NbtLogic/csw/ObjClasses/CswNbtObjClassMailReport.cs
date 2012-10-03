@@ -51,9 +51,9 @@ namespace ChemSW.Nbt.ObjClasses
             public static readonly EventOption Unknown = new EventOption( "Unknown" );
 
             public static readonly EventOption Exists = new EventOption( "Exists" );
-            public static readonly EventOption Create = new EventOption( "Create" );
+            //public static readonly EventOption Create = new EventOption( "Create" );
             public static readonly EventOption Edit = new EventOption( "Edit" );
-            public static readonly EventOption Delete = new EventOption( "Delete" );
+            //public static readonly EventOption Delete = new EventOption( "Delete" );
         }
 
         public const string TypeOptionReport = "Report";
@@ -192,7 +192,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Object class specific properties
 
-        public CswNbtNodePropViewPickList ReportView { get { return ( _CswNbtNode.Properties[PropertyName.ReportView] ); } }
+        public CswNbtNodePropViewReference ReportView { get { return ( _CswNbtNode.Properties[PropertyName.ReportView] ); } }
         public CswNbtNodePropRelationship Report { get { return ( _CswNbtNode.Properties[PropertyName.Report] ); } }
         public CswNbtNodePropMemo Message { get { return ( _CswNbtNode.Properties[PropertyName.Message] ); } }
         public CswNbtNodePropMemo NoDataNotification { get { return ( _CswNbtNode.Properties[PropertyName.NoDataNotification] ); } }
