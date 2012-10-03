@@ -1,4 +1,6 @@
 ﻿
+using ChemSW.Nbt.csw.Dev;
+
 namespace ChemSW.Nbt.Schema
 {
     /// <summary>
@@ -18,7 +20,19 @@ namespace ChemSW.Nbt.Schema
             //case 23784
             _CswNbtSchemaModTrnsctn.execArbitraryPlatformNeutralSql( "update scheduledrules set reprobate=0,totalroguecount=0,failedcount=0" );
 
-        }//Update()
+        }
+
+        public override CswDeveloper Author
+        {
+            get { return CswDeveloper.NBT; }
+        }
+
+        public override int CaseNo
+        {
+            get { return 0; }
+        }
+
+        //Update()
 
     }//class RunAfterEveryExecutionOfUpdater_01
 

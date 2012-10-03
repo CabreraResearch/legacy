@@ -2,6 +2,7 @@
 using System.Data;
 using ChemSW.Audit;
 using ChemSW.Exceptions;
+using ChemSW.Nbt.csw.Dev;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -73,7 +74,19 @@ namespace ChemSW.Nbt.Schema
             }
 
 
-        }//runTest()
+        }
+
+        public override CswDeveloper Author
+        {
+            get { return CswDeveloper.PG; }
+        }
+
+        public override int CaseNo
+        {
+            get { return 0; }
+        }
+
+        //runTest()
 
     }//CswSchemaUpdaterTestCaseDropColumnRollback
 

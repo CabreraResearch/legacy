@@ -1,9 +1,4 @@
-﻿using System;
-using System.Data;
-using ChemSW.Core;
-using ChemSW.DB;
-using ChemSW.Nbt.MetaData;
-using ChemSW.Nbt.ObjClasses;
+﻿using ChemSW.Nbt.csw.Dev;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -15,7 +10,19 @@ namespace ChemSW.Nbt.Schema
         public override void update()
         {
             // This is a placeholder script that does nothing.
-        }//Update()
+        }
+
+        public override CswDeveloper Author
+        {
+            get { return CswDeveloper.SS; }
+        }
+
+        public override int CaseNo
+        {
+            get { return 0; }
+        }
+
+        //Update()
 
     }//class CswUpdateSchemaCaseXXXXX
 

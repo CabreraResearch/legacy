@@ -1,4 +1,6 @@
 
+using ChemSW.Nbt.csw.Dev;
+
 namespace ChemSW.Nbt.Schema
 {
 
@@ -25,7 +27,19 @@ namespace ChemSW.Nbt.Schema
 			_CswNbtSchemaModTrnsctn.addTable( _CswTstCaseRsrc_015.FakeTestTableName, _CswTstCaseRsrc_015.FakePkColumnName );
             _CswNbtSchemaModTrnsctn.addStringColumn( _CswTstCaseRsrc_015.FakeTestTableName, _CswTstCaseRsrc_015.FakeValColumnName01, "test", false, false, 240 );
 
-        }//runTest()
+        }
+
+        public override CswDeveloper Author
+        {
+            get { return CswDeveloper.PG; }
+        }
+
+        public override int CaseNo
+        {
+            get { return 0; }
+        }
+
+        //runTest()
 
     }//CswSchemaUpdaterTestCaseDropColumnRollback
 
