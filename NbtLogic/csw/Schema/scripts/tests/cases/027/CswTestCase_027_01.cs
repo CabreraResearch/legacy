@@ -51,6 +51,11 @@ namespace ChemSW.Nbt.Schema
             get { return CswDeveloper.PG; }
         }
 
+        public override int CaseNo
+        {
+            get { return 0; }
+        }
+
         //runTest()
 
     }//CswSchemaUpdaterTestCaseDropColumnRollback

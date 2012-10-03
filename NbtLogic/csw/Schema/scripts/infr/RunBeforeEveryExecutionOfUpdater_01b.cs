@@ -81,6 +81,11 @@ namespace ChemSW.Nbt.Schema
             get { return CswDeveloper.NBT; }
         }
 
+        public override int CaseNo
+        {
+            get { return 0; }
+        }
+
         //Update()
 
     }//class RunBeforeEveryExecutionOfUpdater_01b

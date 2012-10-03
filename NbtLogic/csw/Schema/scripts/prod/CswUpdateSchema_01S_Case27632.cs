@@ -48,6 +48,11 @@ namespace ChemSW.Nbt.Schema
             get { return CswDeveloper.BV; }
         }
 
+        public override int CaseNo
+        {
+            get { return 27632; }
+        }
+
         //Update()
 
         private void _markRoleAsDemoData( string RoleName )

@@ -101,6 +101,11 @@ namespace ChemSW.Nbt.Schema
             get { return CswDeveloper.CF; }
         }
 
+        public override int CaseNo
+        {
+            get { return 25352; }
+        }
+
         //Update()
 
     }//class CswUpdateSchemaCase_GridsAndButtons_27479

@@ -82,6 +82,11 @@ namespace ChemSW.Nbt.Schema
             get { return CswDeveloper.BV; }
         }
 
+        public override int CaseNo
+        {
+            get { return 27528; }
+        }
+
         //Update()
 
         private CswNbtObjClassWorkUnit _getDefaultWorkUnit()

@@ -45,6 +45,11 @@ namespace ChemSW.Nbt.Schema
             get { return CswDeveloper.CF; }
         }
 
+        public override int CaseNo
+        {
+            get { return 21701; }
+        }
+
         //Update()
 
     }

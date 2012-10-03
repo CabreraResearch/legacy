@@ -1,4 +1,5 @@
-﻿using ChemSW.Nbt.csw.Dev;
+﻿using System;
+using ChemSW.Nbt.csw.Dev;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -14,7 +15,12 @@ namespace ChemSW.Nbt.Schema
         //public abstract string Description { set; get; }
 
         private string _Description = string.Empty;
-        public virtual string Description { set { _Description = value; } get { return ( _Description ); } }
+
+        public virtual string Description
+        {
+            set { _Description = value; }
+            get { return ( _Description ); }
+        }
 
         /// <summary>
         /// The logic to execute in each Schema Script
@@ -25,5 +31,27 @@ namespace ChemSW.Nbt.Schema
         /// The author of the script
         /// </summary>
         public abstract CswDeveloper Author { get; }
+
+        /// <summary>
+        /// The FogBugz Case number associated with this script
+        /// </summary>
+        public abstract Int32 CaseNo { get; }
+
+        /// <summary>
+        /// Get the Case number as a link to FogBugz
+        /// </summary>
+        public string getCaseLink()
+        {
+            string Ret = string.Empty;
+            if( CaseNo > 0 )
+            {
+                Ret = @"<a href=\""https://fogbugz.chemswlive.com/default.asp?" + CaseNo + @"\"">" + CaseNo + "</a>";
+    }
+            else
+            {
+                Ret = "No case link for case " + CaseNo;
+}
+            return Ret;
+        }
     }
 }
