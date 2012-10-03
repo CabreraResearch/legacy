@@ -1,6 +1,8 @@
 using ChemSW.Nbt.csw.Dev;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
+using ChemSW.Nbt.PropTypes;
+using ChemSW.Core;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -71,7 +73,7 @@ namespace ChemSW.Nbt.Schema
 
             #region TITANIA
 
-            #region Case 27869 - Method Object Class
+            #region Case 27869 - Method ObjectClass
 
             CswNbtMetaDataObjectClass MethodOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.MethodClass );
             if( null == MethodOc )
@@ -97,38 +99,9 @@ namespace ChemSW.Nbt.Schema
                 _CswNbtSchemaModTrnsctn.createModuleObjectClassJunction( CswNbtModuleName.CISPro, MethodOc.ObjectClassId );
             }
 
-            CswNbtMetaDataNodeType MethodNt = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Method" );
-            if( null == MethodNt )
-            {
-                //Create new NodeType
-                MethodNt = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( MethodOc.ObjectClassId, "Method", "MLM" );
-                _CswNbtSchemaModTrnsctn.createModuleNodeTypeJunction( CswNbtModuleName.CISPro, MethodNt.NodeTypeId );
+            #endregion Case 27869 - Method ObjectClass
 
-                string NameTemplate = CswNbtMetaData.MakeTemplateEntry( CswNbtObjClassMethod.PropertyName.MethodNo );
-                MethodNt.setNameTemplateText( NameTemplate );
-
-                //Create Demo Data
-                CswNbtObjClassMethod MethodNode = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( MethodNt.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode );
-                MethodNode.MethodNo.Text = "000001";
-                MethodNode.MethodDescription.Text = "Demo Method";
-                MethodNode.IsDemo = true;
-                MethodNode.postChanges( false );
-            }
-
-            CswNbtView MethodView = _CswNbtSchemaModTrnsctn.restoreView( "Methods" );
-            if( null == MethodView )
-            {
-                //Create new View
-                MethodView = _CswNbtSchemaModTrnsctn.makeNewView( "Methods", NbtViewVisibility.Global );
-                MethodView.Category = "MLM";
-                MethodView.ViewMode = NbtViewRenderingMode.Tree;
-                MethodView.AddViewRelationship( MethodOc, true );
-                MethodView.save();
-            }
-
-            #endregion Case 27869 - Method Object Class
-
-            #region Case 27873 - Jurisdiction Object Class
+            #region Case 27873 - Jurisdiction ObjectClass
 
             CswNbtMetaDataObjectClass JurisdictionOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.JurisdictionClass );
             if( null == JurisdictionOc )
@@ -188,7 +161,7 @@ namespace ChemSW.Nbt.Schema
                 } );
             }
 
-            #endregion Case 27873 - Jurisdiction Object Class
+            #endregion Case 27873 - Jurisdiction ObjectClass
 
             #endregion TITANIA
 
