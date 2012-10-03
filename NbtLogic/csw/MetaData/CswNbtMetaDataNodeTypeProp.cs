@@ -71,8 +71,6 @@ namespace ChemSW.Nbt.MetaData
             //defaultvalueid, 
             isquicksearch,
             extended,
-            hideinmobile,
-            mobilesearch,
             attribute1,
             attribute2,
             attribute3,
@@ -923,20 +921,6 @@ namespace ChemSW.Nbt.MetaData
             }
         }//UseNumbering
 
-        // This should not trigger versioning
-        public bool HideInMobile
-        {
-            get { return CswConvert.ToBoolean( _NodeTypePropRow["hideinmobile"] ); }
-            set { _DataRow["hideinmobile"] = CswConvert.ToDbVal( value ); }
-        }
-
-        // This should not trigger versioning
-        public bool MobileSearch
-        {
-            get { return CswConvert.ToBoolean( _NodeTypePropRow["mobilesearch"] ); }
-            set { _DataRow["mobilesearch"] = CswConvert.ToDbVal( value ); }
-        }
-
         //public Int32 DisplayColAdd
         //{
         //    get { return CswConvert.ToInt32( _NodeTypePropRow["display_col_add"] ); }
@@ -1398,7 +1382,7 @@ namespace ChemSW.Nbt.MetaData
         public static string _Attribute_attribute4 = "attribute4";
         public static string _Attribute_attribute5 = "attribute5";
 
-        public XmlNode ToXml( XmlDocument XmlDoc, bool ForMobile )
+        public XmlNode ToXml( XmlDocument XmlDoc, bool UseQuestionNo )
         {
             CswNbtMetaDataFieldType thisFieldType = getFieldType();
 
@@ -1409,10 +1393,14 @@ namespace ChemSW.Nbt.MetaData
             PropNode.Attributes.Append( PropIdAttr );
 
             XmlAttribute NameAttr = XmlDoc.CreateAttribute( _Attribute_NodeTypePropName );
-            if( ForMobile )
+            if( UseQuestionNo )
+            {
                 NameAttr.Value = PropNameWithQuestionNo;
+            }
             else    // BZ 8644
+            {
                 NameAttr.Value = PropName;
+            }
             PropNode.Attributes.Append( NameAttr );
 
             //XmlAttribute OrderAttr = XmlDoc.CreateAttribute( _Attribute_order );
@@ -1472,7 +1460,7 @@ namespace ChemSW.Nbt.MetaData
 
             //bz #7632: Locations should be editable
             XmlAttribute ReadOnlyAttr = XmlDoc.CreateAttribute( _Attribute_readonly );
-            if( ForMobile && ( ( CswNbtMetaDataFieldType.NbtFieldType.Location != thisFieldType.FieldType ) && false == thisFieldType.IsSimpleType() ) )
+            if( UseQuestionNo && ( ( CswNbtMetaDataFieldType.NbtFieldType.Location != thisFieldType.FieldType ) && false == thisFieldType.IsSimpleType() ) )
                 ReadOnlyAttr.Value = "true";
             else
                 ReadOnlyAttr.Value = ReadOnly.ToString().ToLower();
