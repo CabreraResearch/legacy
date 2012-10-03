@@ -45,7 +45,7 @@ namespace ChemSW.Nbt.Schema
             string Ret = string.Empty;
             if( CaseNo > 0 )
             {
-                Ret = @"<a href=\""https://fogbugz.chemswlive.com/default.asp?" + CaseNo + @"\"">" + CaseNo + "</a>";
+                Ret = @"<a href=""https://fogbugz.chemswlive.com/default.asp?" + CaseNo + @""">Case " + CaseNo + "</a>";
     }
             else
             {
