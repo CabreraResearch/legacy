@@ -87,6 +87,6 @@ namespace ChemSW.Nbt.ObjClasses
 
         #endregion
 
-    }//CswNbtObjClassSize
+    }//CswNbtObjClassMethod
 
 }//namespace ChemSW.Nbt.ObjClasses
