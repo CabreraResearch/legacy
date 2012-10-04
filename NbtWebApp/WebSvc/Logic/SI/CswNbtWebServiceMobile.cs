@@ -147,10 +147,14 @@ namespace ChemSW.Nbt.WebServices
 
         private JProperty _getNode( string NodePkStr, bool RunProps = true )
         {
-            CswPrimaryKey NodePk = new CswPrimaryKey();
-            NodePk.FromString( NodePkStr );
-            CswNbtNode ThisNode = _CswNbtResources.Nodes.GetNode( NodePk );
-            return _getNode( ThisNode, RunProps );
+            JProperty Ret = null;
+            CswPrimaryKey NodePk = CswConvert.ToPrimaryKey( NodePkStr );
+            if( CswTools.IsPrimaryKey( NodePk ) )
+            {
+                CswNbtNode ThisNode = _CswNbtResources.Nodes.GetNode( NodePk );
+                Ret = _getNode( ThisNode, RunProps );
+            }
+            return Ret;
         }
 
         private JProperty _getNode( CswNbtNode ThisNode, bool RunProps = true, NodeSpecies ThisNodeSpecies = null )
@@ -159,12 +163,12 @@ namespace ChemSW.Nbt.WebServices
             if( null != ThisNode )
             {
                 string ThisNodeName = ThisNode.NodeName;
-                 
+
                 Ret = new JProperty( NodeIdPrefix + ThisNode.NodeId );
                 JObject NodeProps = new JObject();
                 Ret.Value = NodeProps;
 
-                NodeSpecies NodeSpecie = ( ThisNodeSpecies != NodeSpecies.UnKnown ) ? ThisNodeSpecies : ThisNode.NodeSpecies;
+                NodeSpecies NodeSpecie = ThisNodeSpecies ?? ThisNode.NodeSpecies;
                 if( NodeSpecies.More == NodeSpecie )
                 {
                     ThisNodeName = "Results Truncated at " + _MobilePageSize;

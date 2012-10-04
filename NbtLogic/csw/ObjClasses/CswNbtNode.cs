@@ -175,11 +175,6 @@ namespace ChemSW.Nbt.ObjClasses
     public sealed class NodeSpecies : IEquatable<NodeSpecies>
     {
         /// <summary>
-        /// Unknown
-        /// </summary>
-        public const string UnKnown = CswNbtResources.UnknownEnum;
-
-        /// <summary>
         /// Regular, run-of-the-mill Node
         /// </summary>
         public const string Plain = "Plain";
@@ -204,18 +199,12 @@ namespace ChemSW.Nbt.ObjClasses
         /// </summary>
         public const string More = "More";
 
-        /// <summary>
-        /// Temporary Node
-        /// </summary>
-        public const string Temp = "Temp";
-
         private static Dictionary<string, string> _Enums = new Dictionary<string, string>( StringComparer.OrdinalIgnoreCase )
                                                                    {
                                                                        { Plain, Plain },
                                                                        { Audit, Audit },
                                                                        { Group, Group },
                                                                        { More, More },
-                                                                       { Temp, Temp },
                                                                        { Root, Root }
                                                                    };
 
@@ -603,7 +592,7 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }//New
 
-        private NodeSpecies _NodeSpecies = NodeSpecies.UnKnown;
+        private NodeSpecies _NodeSpecies = NodeSpecies.Plain;
         public NodeSpecies NodeSpecies { get { return ( _NodeSpecies ); } }
 
 
