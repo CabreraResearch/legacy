@@ -81,7 +81,10 @@ namespace ChemSW.Nbt.Schema
             if( null == CertMethodTemplateOc )
             {
                 CertMethodTemplateOc = _CswNbtSchemaModTrnsctn.createObjectClass( CswNbtMetaDataObjectClassName.NbtObjectClass.CertMethodTemplateClass, CswNbtMetaDataIconName.NbtIcon.flask, true );
+                _CswNbtSchemaModTrnsctn.createModuleObjectClassJunction( CswNbtModuleName.MLM, CertMethodTemplateOc.ObjectClassId );
             }
+
+
             CswNbtMetaDataObjectClassProp CmtMaterialOcp = CertMethodTemplateOc.getObjectClassProp( CswNbtObjClassCertMethodTemplate.PropertyName.Material );
             if( null == CmtMaterialOcp )
             {
