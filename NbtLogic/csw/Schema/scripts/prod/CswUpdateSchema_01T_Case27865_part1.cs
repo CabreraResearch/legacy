@@ -6,9 +6,9 @@ using ChemSW.Nbt.PropTypes;
 namespace ChemSW.Nbt.Schema
 {
     /// <summary>
-    /// Schema Update for case CswUpdateSchema_01T_Case27865
+    /// Schema Update for case CswUpdateSchema_01T_Case27865_part1
     /// </summary>
-    public class CswUpdateSchema_01T_Case27865 : CswUpdateSchemaTo
+    public class CswUpdateSchema_01T_Case27865_part1 : CswUpdateSchemaTo
     {
         public override void update()
         {
@@ -59,6 +59,6 @@ namespace ChemSW.Nbt.Schema
 
         //Update()
 
-    }//class CswUpdateSchemaCaseCswUpdateSchema_01T_Case27865
+    }//class CswUpdateSchemaCaseCswUpdateSchema_01T_Case27865_part1
 
 }//namespace ChemSW.Nbt.Schema
