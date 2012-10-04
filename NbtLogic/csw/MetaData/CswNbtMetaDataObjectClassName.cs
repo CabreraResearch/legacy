@@ -23,6 +23,7 @@ namespace ChemSW.Nbt.MetaData
                                                                        { BatchOpClass                      , BatchOpClass                       },
                                                                        { BiologicalClass                   , BiologicalClass                    },
                                                                        { MaterialComponentClass            , MaterialComponentClass             },
+                                                                       { CertMethodTemplateClass           , CertMethodTemplateClass            },
                                                                        { ContainerClass                    , ContainerClass                     },
                                                                        { ContainerDispenseTransactionClass , ContainerDispenseTransactionClass  },
                                                                        { CustomerClass                     , CustomerClass                      },

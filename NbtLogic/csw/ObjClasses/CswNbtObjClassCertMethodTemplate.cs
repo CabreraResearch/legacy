@@ -1,9 +1,28 @@
 using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.PropTypes;
 
 namespace ChemSW.Nbt.ObjClasses
 {
     public class CswNbtObjClassCertMethodTemplate : CswNbtObjClass
     {
+        /// <summary>
+        /// Object Class property names
+        /// </summary>
+        public sealed class PropertyName
+        {
+            public const string Material = "Material";
+            public const string CertMethodId = "C of A Method ID";
+            public const string Description = "Description";
+            public const string MethodNo = "Method No";
+            public const string Conditions = "Conditions";
+            public const string Lower = "Lower";
+            public const string Upper = "Upper";
+            public const string Units = "Units";
+            public const string Qualified = "Qualified";
+            public const string CertDefConditionSet = "CertDef Condition Set";
+            public const string Obsolete = "Obsolete";
+        }
+
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
 
         public CswNbtObjClassCertMethodTemplate( CswNbtResources CswNbtResources, CswNbtNode Node )
@@ -73,7 +92,18 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Object class specific properties
 
-        // GENERIC SHOULD NOT HAVE ANY!!!
+        public CswNbtNodePropRelationship Material { get { return ( _CswNbtNode.Properties[PropertyName.Material] ); } }
+        //TODO: Implement this property when the PropRefSequence FieldType is implemented
+        //public CswNbtNodePropPropRefSequence Material { get { return ( _CswNbtNode.Properties[PropertyName.Material] ); } }
+        public CswNbtNodePropText Description { get { return ( _CswNbtNode.Properties[PropertyName.Description] ); } }
+        public CswNbtNodePropText MethodNo { get { return ( _CswNbtNode.Properties[PropertyName.MethodNo] ); } }
+        public CswNbtNodePropText Conditions { get { return ( _CswNbtNode.Properties[PropertyName.Conditions] ); } }
+        public CswNbtNodePropNumber Lower { get { return ( _CswNbtNode.Properties[PropertyName.Lower] ); } }
+        public CswNbtNodePropNumber Upper { get { return ( _CswNbtNode.Properties[PropertyName.Upper] ); } }
+        public CswNbtNodePropText Units { get { return ( _CswNbtNode.Properties[PropertyName.Units] ); } }
+        public CswNbtNodePropLogical Qualified { get { return ( _CswNbtNode.Properties[PropertyName.Qualified] ); } }
+        public CswNbtNodePropRelationship CertDefContionSet { get { return ( _CswNbtNode.Properties[PropertyName.CertDefConditionSet] ); } }
+        public CswNbtNodePropLogical Obsolete { get { return ( _CswNbtNode.Properties[PropertyName.Obsolete] ); } }
 
         #endregion
 

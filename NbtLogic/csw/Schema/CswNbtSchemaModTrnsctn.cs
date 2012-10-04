@@ -964,6 +964,10 @@ namespace ChemSW.Nbt.Schema
         /// </summary>
         public CswNbtMetaDataObjectClass createObjectClass( CswNbtMetaDataObjectClassName.NbtObjectClass ObjectClass, string IconFileName, bool AuditLevel )
         {
+            if( ObjectClass == CswNbtResources.UnknownEnum )
+            {
+                throw new CswDniException( ErrorType.Error, "Cannot create an ObjectClass of Unknown.", "The provided Object Class name was not defined." );
+            }
             CswNbtMetaDataObjectClass NewObjectClass = _CswNbtResources.MetaData.getObjectClass( ObjectClass );
             if( null == NewObjectClass )
             {
