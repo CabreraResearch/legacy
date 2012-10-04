@@ -113,15 +113,8 @@ namespace ChemSw.Nbt.Test
             Double Actual = 0;
 
             CswNbtUnitConversion ConversionObj = new CswNbtUnitConversion( TestData.CswNbtResources, null, LiterNode.NodeId );
-            try
-            {
                 Actual = ConversionObj.convertUnit( ValueToConvert );
-                Assert.Fail( "Exception should have been thrown." );
-            }
-            catch( Exception e )
-            {
-                Assert.IsTrue( e.Message.StartsWith( "Conversion failed: The unit of measurement with which to convert is undefined.: Conversion failed: Unable to determine appropriate conversion factors." ) );
-            }
+            Assert.AreEqual( ValueToConvert, Actual );
         }
 
         /// <summary>
@@ -133,18 +126,10 @@ namespace ChemSw.Nbt.Test
             Double ValueToConvert = Double.NaN;
             CswNbtNode LiterNode = TestData.createUnitOfMeasureNode( "Volume", "Liters", 1.0, 0, Tristate.True );
             CswNbtNode MilliliterNode = TestData.createUnitOfMeasureNode( "Volume", "mL", 1.0, 3, Tristate.True );
-            Double Actual = 0;
-
+            Double Expected = 0;
             CswNbtUnitConversion ConversionObj = new CswNbtUnitConversion( TestData.CswNbtResources, LiterNode.NodeId, MilliliterNode.NodeId );
-            try
-            {
-                Actual = ConversionObj.convertUnit( ValueToConvert );
-                Assert.Fail( "Exception should have been thrown." );
-            }
-            catch( Exception e )
-            {
-                Assert.IsTrue( e.Message.StartsWith( "Conversion failed: Insufficient data provided.: Conversion failed: One or more parameters are negative or undefined." ) );
-            }
+            Double Actual = ConversionObj.convertUnit( ValueToConvert );
+            Assert.AreEqual( Expected, Actual );
         }
 
         /// <summary>
@@ -155,15 +140,8 @@ namespace ChemSw.Nbt.Test
         {
             double convertedValue = Double.NaN;
             CswNbtUnitConversion ConversionObj = new CswNbtUnitConversion( TestData.CswNbtResources, null, null );
-            try
-            {
                 convertedValue = ConversionObj.convertUnit( 1 );
-                Assert.Fail( "Exception should have been thrown." );
+            Assert.AreEqual( convertedValue, 1 );
             }
-            catch( Exception e )
-            {
-                Assert.IsTrue( e.Message.StartsWith( "Conversion failed: The unit of measurement with which to convert is undefined.: Conversion failed: Unable to determine appropriate conversion factors." ) );
             }
         }
-    }
-}

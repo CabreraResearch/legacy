@@ -413,12 +413,12 @@
                                 globalState: {
                                     excludeOcProps: ['tradename', 'supplier', 'partno'],
                                     nodeids: [cswPrivate.state.materialId],
-                                    nodetypeid: cswPrivate.state.materialType.val,
                                     propertyData: cswPrivate.state.properties,
                                     ShowAsReport: false
                                 },
                                 tabState: {
                                     showSaveButton: false,
+                                    nodetypeid: cswPrivate.state.materialType.val,
                                     EditMode: Csw.enums.editMode.Temp //This is intentional. We don't want the node accidental upversioned to a real node.
                                 },
                                 ReloadTabOnSave: false,
