@@ -277,7 +277,7 @@ namespace NbtWebAppServices.Response
         {
             try
             {
-                if( ObjectClass != CswNbtMetaDataObjectClass.NbtObjectClass.Unknown )
+                if( ObjectClass != CswNbtResources.UnknownEnum )
                 {
                     FilterMode = FilterMode ?? CswNbtPropFilterSql.PropertyFilterMode.Contains;
                     CswNbtMetaDataObjectClass InstanceOc = _CswNbtWcfSessionResources.CswNbtResources.MetaData.getObjectClass( ObjectClass );

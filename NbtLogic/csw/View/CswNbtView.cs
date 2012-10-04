@@ -223,7 +223,7 @@ namespace ChemSW.Nbt
         /// </summary>
         public CswNbtViewRelationship AddViewRelationship( CswNbtMetaDataObjectClass.NbtObjectClass NbtObjectClass, bool IncludeDefaultFilters, out CswNbtMetaDataObjectClass ObjectClass )
         {
-            if( NbtObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.Unknown )
+            if( NbtObjectClass == CswNbtResources.UnknownEnum )
             {
                 throw new CswDniException( ErrorType.Error, "Cannot create an view relationship if the object class is unknown.", "Attempted to call AddViewRelationship with an Unknown Object Class." );
             }

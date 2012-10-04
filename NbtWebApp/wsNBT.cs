@@ -2223,9 +2223,8 @@ namespace ChemSW.Nbt.WebServices
                     CswNbtMetaDataObjectClass ObjectClass = null;
                     if( false == string.IsNullOrEmpty( ObjectClassName ) )
                     {
-                        CswNbtMetaDataObjectClass.NbtObjectClass OC;
-                        Enum.TryParse( ObjectClassName, true, out OC );
-                        if( CswNbtMetaDataObjectClass.NbtObjectClass.Unknown != OC )
+                        CswNbtMetaDataObjectClass.NbtObjectClass OC = ObjectClassName;
+                        if( CswNbtResources.UnknownEnum != OC )
                         {
                             ObjectClass = _CswNbtResources.MetaData.getObjectClass( OC );
                         }

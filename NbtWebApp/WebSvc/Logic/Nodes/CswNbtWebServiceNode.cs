@@ -346,8 +346,7 @@ namespace ChemSW.Nbt.WebServices
 
             Int32 RealNodeTypeId = CswConvert.ToInt32( NodeTypeId );
             Int32 RealObjectClassId = CswConvert.ToInt32( ObjectClassId );
-            CswNbtMetaDataObjectClass.NbtObjectClass RealObjectClass;
-            Enum.TryParse( ObjectClass, true, out RealObjectClass );
+            CswNbtMetaDataObjectClass.NbtObjectClass RealObjectClass = ObjectClass;
             bool CanAdd;
             Collection<CswNbtNode> Nodes = new Collection<CswNbtNode>();
             bool UseSearch = false;
@@ -372,7 +371,7 @@ namespace ChemSW.Nbt.WebServices
                 {
                     MetaDataObjectClass = _CswNbtResources.MetaData.getObjectClass( RealObjectClassId );
                 }
-                else if( RealObjectClass != CswNbtMetaDataObjectClass.NbtObjectClass.Unknown )
+                else if( RealObjectClass != CswNbtResources.UnknownEnum )
                 {
                     MetaDataObjectClass = _CswNbtResources.MetaData.getObjectClass( RealObjectClass );
                     RealObjectClassId = MetaDataObjectClass.ObjectClassId;
@@ -382,8 +381,7 @@ namespace ChemSW.Nbt.WebServices
                     bool doGetNodes = true;
                     if( false == string.IsNullOrEmpty( RelatedToObjectClass ) && false == string.IsNullOrEmpty( RelatedToNodeId ) )
                     {
-                        CswNbtMetaDataObjectClass.NbtObjectClass RealRelatedObjectClass;
-                        Enum.TryParse( RelatedToObjectClass, true, out RealRelatedObjectClass );
+                        CswNbtMetaDataObjectClass.NbtObjectClass RealRelatedObjectClass = RelatedToObjectClass;
                         CswPrimaryKey RelatedNodePk = new CswPrimaryKey();
                         RelatedNodePk.FromString( RelatedToNodeId );
                         if( Int32.MinValue != RelatedNodePk.PrimaryKey )

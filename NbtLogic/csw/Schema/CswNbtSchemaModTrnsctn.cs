@@ -1045,7 +1045,7 @@ namespace ChemSW.Nbt.Schema
                                                                     CswNbtWcfMetaDataModel.ObjectClassProp OcpModel )
         {
             CswNbtMetaDataObjectClassProp RetProp = null;
-            if( NbtObjectClass != CswNbtMetaDataObjectClass.NbtObjectClass.Unknown )
+            if( NbtObjectClass != CswNbtResources.UnknownEnum )
             {
                 CswNbtMetaDataObjectClass ObjectClassOc = MetaData.getObjectClass( NbtObjectClass );
                 OcpModel.ObjectClass = ObjectClassOc;
@@ -1082,7 +1082,7 @@ namespace ChemSW.Nbt.Schema
 
 
             CswNbtMetaDataObjectClassProp RetProp = null;
-            if( NbtObjectClass != CswNbtMetaDataObjectClass.NbtObjectClass.Unknown )
+            if( NbtObjectClass != CswNbtResources.UnknownEnum )
             {
                 CswNbtMetaDataObjectClass ObjectClassOc = MetaData.getObjectClass( NbtObjectClass );
                 RetProp = ObjectClassOc.getObjectClassProp( PropName );

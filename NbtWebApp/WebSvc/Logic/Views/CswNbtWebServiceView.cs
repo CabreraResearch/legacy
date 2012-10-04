@@ -147,7 +147,7 @@ namespace ChemSW.Nbt.WebServices
             if( false == Request.LimitToRecent )
             {
                 ViewReturn.Data = getViewSelect( (CswNbtResources) CswResources, Request );
-            } 
+            }
             else
             {
                 ViewReturn.Data = getViewSelectRecent( (CswNbtResources) CswResources );
@@ -508,7 +508,7 @@ namespace ChemSW.Nbt.WebServices
                             from CswNbtMetaDataObjectClass _ObjectClass
                                 in _CswNbtResources.MetaData.getObjectClasses()
                             orderby _ObjectClass.ObjectClass
-                            where _ObjectClass.ObjectClass != CswNbtMetaDataObjectClass.NbtObjectClass.Unknown
+                            where _ObjectClass.ObjectClass != CswNbtResources.UnknownEnum
                             select _ObjectClass )
                         {
                             // This is purposefully not the typical way of creating CswNbtViewRelationships.
