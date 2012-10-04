@@ -38,7 +38,7 @@
                         function init(molData) {
                             cswPrivate.cell11.empty();
                             if (molData) {
-                                if (Csw.enums.editMode.PrintReport === cswPublic.data.EditMode || Csw.enums.editMode.AuditHistoryInPopup === cswPublic.data.EditMode) {
+                                if (cswPublic.data.isDisabled()) {
                                     cswPrivate.cell11.img({
                                         src: molData.href + '&uid=' + window.Ext.id(), //case 27492 - FF and IE cache URLs, so we have to make it unique to get new content to display
                                         height: cswPrivate.propVals.height,

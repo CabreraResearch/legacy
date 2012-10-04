@@ -742,6 +742,11 @@ namespace ChemSW.Nbt.ObjClasses
                     _toggleButtons( Disabled: true );
                     Node.setReadOnly( value: true, SaveToDb: true );
                     break;
+                case InspectionStatus.Pending:
+                    Finish.setHidden( false, true );
+                    SetPreferred.setHidden( false, true );
+                    Cancel.setHidden( false, true );
+                    break;
 
             }
         }
