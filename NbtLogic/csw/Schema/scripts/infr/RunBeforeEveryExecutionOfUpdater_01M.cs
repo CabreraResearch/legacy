@@ -1,3 +1,4 @@
+using System;
 using ChemSW.Nbt.csw.Dev;
 
 namespace ChemSW.Nbt.Schema
@@ -21,7 +22,15 @@ namespace ChemSW.Nbt.Schema
 
             #region TITANIA
 
-
+            Int32 MlmId = _CswNbtSchemaModTrnsctn.getModuleId( CswNbtModuleName.MLM );
+            if( Int32.MinValue == MlmId )
+            {
+                _CswNbtSchemaModTrnsctn.createModule( "Material Life-Cycle Management", CswNbtModuleName.MLM.ToString(), false );
+            }
+            else if( false == _CswNbtSchemaModTrnsctn.Modules.IsModuleEnabled( CswNbtModuleName.MLM ) )
+            {
+                _CswNbtSchemaModTrnsctn.Modules.EnableModule( CswNbtModuleName.MLM );
+            }
 
             #endregion TITANIA
 
