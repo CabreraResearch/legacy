@@ -676,14 +676,14 @@ namespace ChemSW.Nbt
         //    if( _Notifs == null || Reinit )
         //    {
         //        _Notifs = new Dictionary<CswNbtNotificationKey, CswNbtObjClassNotification>();
-        //        //ICswNbtTree NotifTree = Trees.getTreeFromObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.NotificationClass );
+        //        //ICswNbtTree NotifTree = Trees.getTreeFromObjectClass( CswNbtMetaDataObjectClassName.NbtObjectClass.NotificationClass );
         //        //for( int n = 0; n < NotifTree.getChildNodeCount(); n++ )
         //        //{
         //        //    NotifTree.goToNthChild( n );
 
         //        //    CswNbtNode ThisNode = NotifTree.getNodeForCurrentPosition();
 
-        //        CswNbtMetaDataObjectClass NotificationOC = MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.NotificationClass );
+        //        CswNbtMetaDataObjectClass NotificationOC = MetaData.getObjectClass( CswNbtMetaDataObjectClassName.NbtObjectClass.NotificationClass );
         //        foreach( CswNbtNode ThisNode in NotificationOC.getNodes( true, false ) )
         //        {
         //            CswNbtObjClassNotification NotifNode = (CswNbtObjClassNotification) ThisNode;

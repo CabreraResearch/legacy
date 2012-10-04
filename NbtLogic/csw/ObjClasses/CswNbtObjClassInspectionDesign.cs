@@ -387,7 +387,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
-            get { return _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass ); }
+            get { return _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClassName.NbtObjectClass.InspectionDesignClass ); }
         }
 
         /// <summary>
@@ -396,7 +396,7 @@ namespace ChemSW.Nbt.ObjClasses
         public static implicit operator CswNbtObjClassInspectionDesign( CswNbtNode Node )
         {
             CswNbtObjClassInspectionDesign ret = null;
-            if( null != Node && _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass ) )
+            if( null != Node && _Validate( Node, CswNbtMetaDataObjectClassName.NbtObjectClass.InspectionDesignClass ) )
             {
                 ret = (CswNbtObjClassInspectionDesign) Node.ObjClass;
             }

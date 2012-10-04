@@ -48,7 +48,7 @@ namespace ChemSW.Nbt.Batch
                                                      Double Priority = Double.NaN )
         {
             CswNbtObjClassBatchOp BatchNode = null;
-            CswNbtMetaDataObjectClass BatchOpOC = CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.BatchOpClass );
+            CswNbtMetaDataObjectClass BatchOpOC = CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClassName.NbtObjectClass.BatchOpClass );
             if( BatchOpOC != null )
             {
                 CswNbtMetaDataNodeType BatchOpNT = BatchOpOC.getNodeTypes().First();
@@ -75,7 +75,7 @@ namespace ChemSW.Nbt.Batch
 
         public static void runNextBatchOp( CswNbtResources CswNbtResources )
         {
-            CswNbtMetaDataObjectClass BatchOpOC = CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.BatchOpClass );
+            CswNbtMetaDataObjectClass BatchOpOC = CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClassName.NbtObjectClass.BatchOpClass );
             CswNbtMetaDataObjectClassProp StatusOCP = BatchOpOC.getObjectClassProp( CswNbtObjClassBatchOp.PropertyName.Status );
             CswNbtMetaDataObjectClassProp PriorityOCP = BatchOpOC.getObjectClassProp( CswNbtObjClassBatchOp.PropertyName.Priority );
 

@@ -16,7 +16,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
-            get { return _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.MaterialSynonymClass ); }
+            get { return _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClassName.NbtObjectClass.MaterialSynonymClass ); }
         }
 
         public sealed class PropertyName
@@ -31,7 +31,7 @@ namespace ChemSW.Nbt.ObjClasses
         public static implicit operator CswNbtObjClassMaterialSynonym( CswNbtNode Node )
         {
             CswNbtObjClassMaterialSynonym ret = null;
-            if( null != Node && _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.MaterialSynonymClass ) )
+            if( null != Node && _Validate( Node, CswNbtMetaDataObjectClassName.NbtObjectClass.MaterialSynonymClass ) )
             {
                 ret = (CswNbtObjClassMaterialSynonym) Node.ObjClass;
             }

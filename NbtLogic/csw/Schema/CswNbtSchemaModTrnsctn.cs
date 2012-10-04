@@ -558,7 +558,7 @@ namespace ChemSW.Nbt.Schema
         //}
 
         //public CswNbtView getTreeViewOfNodeType( Int32 NodeTypeId ) { return _CswNbtResources.Trees.getTreeViewOfNodeType( NodeTypeId ); }
-        //public CswNbtView getTreeViewOfObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass ObjectClass ) { return _CswNbtResources.Trees.getTreeViewOfObjectClass( ObjectClass ); }
+        //public CswNbtView getTreeViewOfObjectClass( CswNbtMetaDataObjectClassName.NbtObjectClass ObjectClass ) { return _CswNbtResources.Trees.getTreeViewOfObjectClass( ObjectClass ); }
 
         public ICswNbtTree getTreeFromView( CswNbtView View, bool IncludeSystemNodes ) { return _CswNbtResources.Trees.getTreeFromView( View, true, true, false, IncludeSystemNodes ); }
         public List<CswNbtView> restoreViews( string ViewName )
@@ -962,7 +962,7 @@ namespace ChemSW.Nbt.Schema
         /// <summary>
         /// Convenience function for making new Object Classes
         /// </summary>
-        public CswNbtMetaDataObjectClass createObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass ObjectClass, string IconFileName, bool AuditLevel, bool UseBatchEntry )
+        public CswNbtMetaDataObjectClass createObjectClass( CswNbtMetaDataObjectClassName.NbtObjectClass ObjectClass, string IconFileName, bool AuditLevel )
         {
             CswNbtMetaDataObjectClass NewObjectClass = _CswNbtResources.MetaData.getObjectClass( ObjectClass );
             if( null == NewObjectClass )
@@ -974,7 +974,6 @@ namespace ChemSW.Nbt.Schema
                 NewOCRow["objectclass"] = ObjectClass.ToString();
                 NewOCRow["iconfilename"] = IconFileName;
                 NewOCRow["auditlevel"] = CswConvert.ToDbVal( AuditLevel );
-                NewOCRow["use_batch_entry"] = CswConvert.ToDbVal( UseBatchEntry );
                 NewObjectClassTable.Rows.Add( NewOCRow );
                 Int32 NewObjectClassId = CswConvert.ToInt32( NewOCRow["objectclassid"] );
                 ObjectClassTableUpdate.update( NewObjectClassTable );
@@ -1041,7 +1040,7 @@ namespace ChemSW.Nbt.Schema
         /// <summary>
         /// Convenience wrapper for creating an Object Class Prop
         /// </summary>
-        public CswNbtMetaDataObjectClassProp createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass NbtObjectClass,
+        public CswNbtMetaDataObjectClassProp createObjectClassProp( CswNbtMetaDataObjectClassName.NbtObjectClass NbtObjectClass,
                                                                     CswNbtWcfMetaDataModel.ObjectClassProp OcpModel )
         {
             CswNbtMetaDataObjectClassProp RetProp = null;
@@ -1057,7 +1056,7 @@ namespace ChemSW.Nbt.Schema
         /// <summary>
         /// (Deprecated) Convenience wrapper for creating an Object Class Prop
         /// </summary>
-        public CswNbtMetaDataObjectClassProp createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass NbtObjectClass,
+        public CswNbtMetaDataObjectClassProp createObjectClassProp( CswNbtMetaDataObjectClassName.NbtObjectClass NbtObjectClass,
                                                                     string PropName,
                                                                     CswNbtMetaDataFieldType.NbtFieldType FieldType,
                                                                     bool IsBatchEntry = false,

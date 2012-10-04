@@ -1043,7 +1043,7 @@ namespace ChemSW.Nbt.ImportExport
 
                                 if( false == DeletedImportNodesThisCycle.Contains( CurrentNbtNode.NodeId ) )
                                 {
-                                    if( CurrentNbtNode.getObjectClass().ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.EquipmentClass )
+                                    if( CurrentNbtNode.getObjectClass().ObjectClass == CswNbtMetaDataObjectClassName.NbtObjectClass.EquipmentClass )
                                     {
                                         if( CurrentNbtNode.Properties[_CswNbtResources.MetaData.getNodeTypePropByObjectClassProp( CurrentNbtNode.NodeTypeId, "Assembly" )].AsRelationship.RelatedNodeId != null )
                                         {

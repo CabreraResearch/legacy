@@ -72,7 +72,7 @@ namespace ChemSW.Nbt.WebPages
             {
                 bool CanVersion = ( false == SelectedNodeType.IsLocked &&
                                     SelectedNodeType.IsLatestVersion() &&
-                                    SelectedNodeType.getObjectClass().ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass );
+                                    SelectedNodeType.getObjectClass().ObjectClass == CswNbtMetaDataObjectClassName.NbtObjectClass.InspectionDesignClass );
                 return CanVersion;
             }
         }
@@ -319,7 +319,7 @@ namespace ChemSW.Nbt.WebPages
                 if( _Mode == NbtDesignMode.Inspection )
                 {
                     NodeTypeTree.ShowQuestionNumbers = true;
-                    NodeTypeTree.ObjectClassIdsToInclude = Master.CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass ).ObjectClassId.ToString();
+                    NodeTypeTree.ObjectClassIdsToInclude = Master.CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClassName.NbtObjectClass.InspectionDesignClass ).ObjectClassId.ToString();
                     NodeTypeTree.TreeName = "Inspection Design";
                     NodeTypeTree.TreeView.OnClientNodePopulating = "NodeTypeTree_OnNodePopulating_InspectionMode";
                 }
@@ -666,7 +666,7 @@ namespace ChemSW.Nbt.WebPages
             try
             {
                 CswNbtMetaDataObjectClass SelectedObjectClass = SelectedNodeType.getObjectClass();
-                if( SelectedObjectClass.ObjectClass != CswNbtMetaDataObjectClass.NbtObjectClass.GenericClass )
+                if( SelectedObjectClass.ObjectClass != CswNbtMetaDataObjectClassName.NbtObjectClass.GenericClass )
                 {
                     string ObjectClass = SelectedObjectClass.ObjectClass.ToString();
                     string NodeTypeName = SelectedNodeType.NodeTypeName;
@@ -1268,7 +1268,7 @@ namespace ChemSW.Nbt.WebPages
             if( _SelectedType == CswNodeTypeTree.NodeTypeTreeSelectedType.NodeType && CswConvert.ToInt32( _SelectedValue ) > 0 )
             {
                 CswNbtMetaDataObjectClass ObjectClass = SelectedNodeType.getObjectClass();
-                if( ObjectClass.ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.GenericClass )
+                if( ObjectClass.ObjectClass == CswNbtMetaDataObjectClassName.NbtObjectClass.GenericClass )
                 {
                     ChangeObjectClassLabel.Visible = true;
                     ChangeObjectClassSelect.Visible = true;
@@ -1279,7 +1279,7 @@ namespace ChemSW.Nbt.WebPages
                 EditNodeTypeName.Text = SelectedNodeType.NodeTypeName;
 
                 // case 24294 part 6
-                if( SelectedNodeType.getObjectClass().ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.GeneratorClass &&
+                if( SelectedNodeType.getObjectClass().ObjectClass == CswNbtMetaDataObjectClassName.NbtObjectClass.GeneratorClass &&
                     SelectedNodeType.NodeTypeName == CswNbtObjClassGenerator.InspectionGeneratorNodeTypeName )
                 {
                     EditNodeTypeName.Enabled = false;
@@ -1912,7 +1912,7 @@ namespace ChemSW.Nbt.WebPages
 
                             HiddenField LocationFkValue = new HiddenField();
                             LocationFkValue.ID = "EditProp_FkValueValue" + SelectedNodeTypeProp.PropId.ToString();
-                            LocationFkValue.Value = Master.CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.LocationClass ).ObjectClassId.ToString();
+                            LocationFkValue.Value = Master.CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClassName.NbtObjectClass.LocationClass ).ObjectClassId.ToString();
                             EditPropPlaceHolder.Controls.Add( LocationFkValue );
                             break;
 

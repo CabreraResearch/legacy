@@ -28,7 +28,7 @@ namespace ChemSW.Nbt
             CswNbtMetaDataNodeType FieldTypeNt = _CswNbtResources.MetaData.getNodeType( "Csw Dev FieldType Test" );
             if( null == FieldTypeNt )
             {
-                FieldTypeNt = _CswNbtResources.MetaData.makeNewNodeType( CswNbtMetaDataObjectClass.NbtObjectClass.GenericClass.ToString(), "Csw Dev FieldType Test", "Csw Dev" );
+                FieldTypeNt = _CswNbtResources.MetaData.makeNewNodeType( CswNbtMetaDataObjectClassName.NbtObjectClass.GenericClass.ToString(), "Csw Dev FieldType Test", "Csw Dev" );
 
                 CswNbtMetaDataNodeTypeTab SimpleTab = FieldTypeNt.getNodeTypeTab( "Csw Dev FieldType Test" );
                 if( null != SimpleTab )

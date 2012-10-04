@@ -54,7 +54,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
-            get { return _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.GeneratorClass ); }
+            get { return _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClassName.NbtObjectClass.GeneratorClass ); }
         }
 
         /// <summary>
@@ -63,7 +63,7 @@ namespace ChemSW.Nbt.ObjClasses
         public static implicit operator CswNbtObjClassGenerator( CswNbtNode Node )
         {
             CswNbtObjClassGenerator ret = null;
-            if( null != Node && _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.GeneratorClass ) )
+            if( null != Node && _Validate( Node, CswNbtMetaDataObjectClassName.NbtObjectClass.GeneratorClass ) )
             {
                 ret = (CswNbtObjClassGenerator) Node.ObjClass;
             }
@@ -120,11 +120,11 @@ namespace ChemSW.Nbt.ObjClasses
                 bool SetDefaultParentType = ( ( false == ParentType.WasModified ||
                                                 ParentType.SelectedNodeTypeIds.Count == 0 ) &&
                                                 null != OwnerNode &&
-                                                OwnerNode.getObjectClass().ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.InspectionTargetGroupClass &&
+                                                OwnerNode.getObjectClass().ObjectClass == CswNbtMetaDataObjectClassName.NbtObjectClass.InspectionTargetGroupClass &&
                                                 ParentType.SelectMode != PropertySelectMode.Blank );
                 if( SetDefaultParentType )
                 {
-                    CswNbtMetaDataObjectClass InspectionTargetOc = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.InspectionTargetClass );
+                    CswNbtMetaDataObjectClass InspectionTargetOc = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClassName.NbtObjectClass.InspectionTargetClass );
                     foreach( CswNbtMetaDataNodeType InspectionTargetNt in InspectionTargetOc.getNodeTypes() )
                     {
                         if( InspectionTargetNt.IsLatestVersion() )
@@ -166,7 +166,7 @@ namespace ChemSW.Nbt.ObjClasses
                             if( null != InspectionTargetNt )
                             {
                                 CswNbtMetaDataNodeType LatestInspectionTargetNt = InspectionTargetNt.getNodeTypeLatestVersion();
-                                if( LatestInspectionTargetNt.getObjectClass().ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.InspectionTargetClass &&
+                                if( LatestInspectionTargetNt.getObjectClass().ObjectClass == CswNbtMetaDataObjectClassName.NbtObjectClass.InspectionTargetClass &&
                                     false == MatchingInspectionTargetNts.Contains( LatestInspectionTargetNt ) )
                                 {
                                     MatchingInspectionTargetNts.Add( LatestInspectionTargetNt );
@@ -176,7 +176,7 @@ namespace ChemSW.Nbt.ObjClasses
                     }
                     if( MatchingInspectionTargetNts.Count > 0 )
                     {
-                        CswNbtMetaDataObjectClass InspectionDesignOc = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass );
+                        CswNbtMetaDataObjectClass InspectionDesignOc = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClassName.NbtObjectClass.InspectionDesignClass );
                         foreach( CswNbtMetaDataNodeType InspectionDesignNt in InspectionDesignOc.getNodeTypes() )
                         {
                             if( InspectionDesignNt.IsLatestVersion() )

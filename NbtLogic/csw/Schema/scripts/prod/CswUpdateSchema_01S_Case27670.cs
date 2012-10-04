@@ -14,7 +14,7 @@ namespace ChemSW.Nbt.Schema
         /// </summary>
         public override void update()
         {
-            CswNbtMetaDataObjectClass SizeOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.SizeClass );
+            CswNbtMetaDataObjectClass SizeOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClassName.NbtObjectClass.SizeClass );
             CswNbtMetaDataNodeType SizeNt = SizeOc.FirstNodeType;
             if( null != SizeNt ) 
             {

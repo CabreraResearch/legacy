@@ -55,7 +55,7 @@ namespace ChemSW.NbtWebControls.FieldTypes
                 if( Prop.AsQuantity.TargetType == NbtViewRelatedIdType.NodeTypeId && !ReadOnly )
                     ReadOnly = !( _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.View, _CswNbtResources.MetaData.getNodeType( Prop.AsQuantity.TargetId ) ) );
 
-                CswNbtMetaDataObjectClass Unit_ObjectClass = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UnitOfMeasureClass );
+                CswNbtMetaDataObjectClass Unit_ObjectClass = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClassName.NbtObjectClass.UnitOfMeasureClass );
                 CswNbtView View = new CswNbtView( _CswNbtResources );
                 View.ViewName = "CswNbtNodePropQuantity()";
                 View.AddViewRelationship( Unit_ObjectClass, true );

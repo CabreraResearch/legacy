@@ -27,7 +27,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
-            get { return _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.EquipmentAssemblyClass ); }
+            get { return _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClassName.NbtObjectClass.EquipmentAssemblyClass ); }
         }
 
         /// <summary>
@@ -36,7 +36,7 @@ namespace ChemSW.Nbt.ObjClasses
         public static implicit operator CswNbtObjClassEquipmentAssembly( CswNbtNode Node )
         {
             CswNbtObjClassEquipmentAssembly ret = null;
-            if( null != Node && _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.EquipmentAssemblyClass ) )
+            if( null != Node && _Validate( Node, CswNbtMetaDataObjectClassName.NbtObjectClass.EquipmentAssemblyClass ) )
             {
                 ret = (CswNbtObjClassEquipmentAssembly) Node.ObjClass;
             }
@@ -58,8 +58,8 @@ namespace ChemSW.Nbt.ObjClasses
 
         private void _updateEquipment()
         {
-            //CswNbtMetaDataObjectClass AssemblyObjectClass = _CswNbtResources.MetaData.getObjectClass(CswNbtMetaDataObjectClass.NbtObjectClass.EquipmentAssemblyClass);
-            //CswNbtMetaDataObjectClass EquipmentObjectClass = _CswNbtResources.MetaData.getObjectClass(CswNbtMetaDataObjectClass.NbtObjectClass.EquipmentClass);
+            //CswNbtMetaDataObjectClass AssemblyObjectClass = _CswNbtResources.MetaData.getObjectClass(CswNbtMetaDataObjectClassName.NbtObjectClass.EquipmentAssemblyClass);
+            //CswNbtMetaDataObjectClass EquipmentObjectClass = _CswNbtResources.MetaData.getObjectClass(CswNbtMetaDataObjectClassName.NbtObjectClass.EquipmentClass);
 
             // For each equipment related to this assembly, mark matching properties as pending update
             if( NodeModificationState.Modified == _CswNbtNode.ModificationState )

@@ -17,7 +17,7 @@ namespace ChemSW.Nbt.Schema
             //CswNbtMetaDataNodeType FieldTypeNt = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Csw Dev FieldType Test" );
             //if( null == FieldTypeNt )
             //{
-            //    FieldTypeNt = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( CswNbtMetaDataObjectClass.NbtObjectClass.GenericClass.ToString(), "Csw Dev FieldType Test", "Csw Dev" );
+            //    FieldTypeNt = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( CswNbtMetaDataObjectClassName.NbtObjectClass.GenericClass.ToString(), "Csw Dev FieldType Test", "Csw Dev" );
             //    _CswNbtSchemaModTrnsctn.createModuleNodeTypeJunction( CswNbtModuleName.Dev, FieldTypeNt.NodeTypeId );
 
             //    CswNbtMetaDataNodeTypeTab SimpleTab = FieldTypeNt.getNodeTypeTab( "Csw Dev FieldType Test" );

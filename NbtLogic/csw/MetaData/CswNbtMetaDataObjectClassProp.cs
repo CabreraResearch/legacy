@@ -520,12 +520,12 @@ namespace ChemSW.Nbt.MetaData
                     if( TargetType == NbtViewRelatedIdType.NodeTypeId )
                     {
                         CswNbtMetaDataNodeType TargetNodeType = _CswNbtMetaDataResources.CswNbtResources.MetaData.getNodeType( FKValue );
-                        ret = ( TargetNodeType.getObjectClass().ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
+                        ret = ( TargetNodeType.getObjectClass().ObjectClass == CswNbtMetaDataObjectClassName.NbtObjectClass.UserClass );
                     }
                     else if( TargetType == NbtViewRelatedIdType.ObjectClassId )
                     {
                         CswNbtMetaDataObjectClass TargetObjectClass = _CswNbtMetaDataResources.CswNbtResources.MetaData.getObjectClass( FKValue );
-                        ret = ( TargetObjectClass.ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
+                        ret = ( TargetObjectClass.ObjectClass == CswNbtMetaDataObjectClassName.NbtObjectClass.UserClass );
 
                     }
                 }

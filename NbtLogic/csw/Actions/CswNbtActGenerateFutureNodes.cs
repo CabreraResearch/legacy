@@ -128,7 +128,7 @@ namespace ChemSW.Nbt.Actions
             CswNbtView ReturnVal = new CswNbtView( _CswNbtResources );
             ReturnVal.ViewName = "All Future Nodes";
 
-            CswNbtMetaDataObjectClass GeneratorObjectClass = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.GeneratorClass );
+            CswNbtMetaDataObjectClass GeneratorObjectClass = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClassName.NbtObjectClass.GeneratorClass );
 
             CswNbtViewRelationship GeneratorRelationship = ReturnVal.AddViewRelationship( GeneratorObjectClass, false );
 

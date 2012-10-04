@@ -99,8 +99,8 @@ namespace ChemSW.Nbt.WebPages
                     AccessIdListBox.SelectionMode = ListSelectionMode.Multiple;
                     AccessIdListBox.Height = Unit.Parse( "300px" );
 
-                    CswNbtMetaDataObjectClass CustomerOC = Master.CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.CustomerClass );
-                    //CswNbtView CustomerView = Master.CswNbtResources.Trees.getTreeViewOfObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.CustomerClass );
+                    CswNbtMetaDataObjectClass CustomerOC = Master.CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClassName.NbtObjectClass.CustomerClass );
+                    //CswNbtView CustomerView = Master.CswNbtResources.Trees.getTreeViewOfObjectClass( CswNbtMetaDataObjectClassName.NbtObjectClass.CustomerClass );
                     //ICswNbtTree CustomerTree = Master.CswNbtResources.Trees.getTreeFromView( CustomerView, true, true, false, false );
                     Collection<CswNbtNode> CustomerNodes = CustomerOC.getNodes( false, false );
                     // Sort by Customer Name
@@ -153,7 +153,7 @@ namespace ChemSW.Nbt.WebPages
                     UserIdListBox.SelectionMode = ListSelectionMode.Multiple;
                     UserIdListBox.Height = Unit.Parse( "300px" );
 
-                    //CswNbtView UserView = Master.CswNbtResources.Trees.getTreeViewOfObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
+                    //CswNbtView UserView = Master.CswNbtResources.Trees.getTreeViewOfObjectClass( CswNbtMetaDataObjectClassName.NbtObjectClass.UserClass );
                     //ICswNbtTree UserTree = Master.CswNbtResources.Trees.getTreeFromView( UserView, true, true, false, false );
 
                     //UserTree.goToRoot();
@@ -161,7 +161,7 @@ namespace ChemSW.Nbt.WebPages
                     //{
                     //    UserTree.goToNthChild( i );
                     //    CswNbtNode ThisUserNode = UserTree.getNodeForCurrentPosition();
-                    CswNbtMetaDataObjectClass UserOC = Master.CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
+                    CswNbtMetaDataObjectClass UserOC = Master.CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClassName.NbtObjectClass.UserClass );
                     foreach( CswNbtNode ThisUserNode in UserOC.getNodes( false, false ) )
                     {
                         UserIdListBox.Items.Add( new ListItem( ThisUserNode.NodeName, ThisUserNode.NodeId.PrimaryKey.ToString() ) );
@@ -412,8 +412,8 @@ namespace ChemSW.Nbt.WebPages
             else
             {
                 NodesSelect = Master.CswNbtResources.makeCswTableSelect( "totalnodes_select", "nodes" );
-                CswNbtMetaDataObjectClass UserOC = Master.CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
-                UserView = UserOC.CreateDefaultView(); // Master.CswNbtResources.Trees.getTreeViewOfObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
+                CswNbtMetaDataObjectClass UserOC = Master.CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClassName.NbtObjectClass.UserClass );
+                UserView = UserOC.CreateDefaultView(); // Master.CswNbtResources.Trees.getTreeViewOfObjectClass( CswNbtMetaDataObjectClassName.NbtObjectClass.UserClass );
                 UserTree = Master.CswNbtResources.Trees.getTreeFromView( UserView, true, true, false, false );
             }
 
@@ -814,7 +814,7 @@ namespace ChemSW.Nbt.WebPages
 
         private CswNbtNode _getCustomerNode( string AccessId )
         {
-            CswNbtMetaDataObjectClass CustomerObjectClass = Master.CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.CustomerClass );
+            CswNbtMetaDataObjectClass CustomerObjectClass = Master.CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClassName.NbtObjectClass.CustomerClass );
             CswNbtView CustomerView = new CswNbtView( Master.CswNbtResources );
             CswNbtViewRelationship CustomerRelationship = CustomerView.AddViewRelationship( CustomerObjectClass, true );
             CswNbtViewProperty AccessIdProperty = CustomerView.AddViewProperty( CustomerRelationship, CustomerObjectClass.getObjectClassProp( CswNbtObjClassCustomer.PropertyName.CompanyID ) );

@@ -21,7 +21,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
-            get { return _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.InspectionTargetGroupClass ); }
+            get { return _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClassName.NbtObjectClass.InspectionTargetGroupClass ); }
         }
 
         /// <summary>
@@ -30,7 +30,7 @@ namespace ChemSW.Nbt.ObjClasses
         public static implicit operator CswNbtObjClassInspectionTargetGroup( CswNbtNode Node )
         {
             CswNbtObjClassInspectionTargetGroup ret = null;
-            if( null != Node && _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.InspectionTargetGroupClass ) )
+            if( null != Node && _Validate( Node, CswNbtMetaDataObjectClassName.NbtObjectClass.InspectionTargetGroupClass ) )
             {
                 ret = (CswNbtObjClassInspectionTargetGroup) Node.ObjClass;
             }
@@ -41,7 +41,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             if( string.IsNullOrEmpty( Name.Text ) )
             {
-                CswNbtMetaDataObjectClass GeneratorOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.GeneratorClass );
+                CswNbtMetaDataObjectClass GeneratorOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClassName.NbtObjectClass.GeneratorClass );
                 CswNbtMetaDataObjectClassProp OwnerOCP = GeneratorOC.getObjectClassProp( CswNbtObjClassGenerator.PropertyName.Owner );
                 CswNbtMetaDataNodeTypeProp OwnerNTP;
                 CswNbtMetaDataNodeType OwnerNT;

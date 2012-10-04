@@ -628,7 +628,7 @@ namespace ChemSW.Nbt.ImportExport
                 if( x % 100 == 1 )
                     _StatusUpdate( "Processing Node: " + x.ToString() + " of " + NodesTable.Rows.Count.ToString() );
 
-                if( Node.getObjectClass().ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.EquipmentClass )
+                if( Node.getObjectClass().ObjectClass == CswNbtMetaDataObjectClassName.NbtObjectClass.EquipmentClass )
                 {
                     if( Node.Properties[_CswNbtResources.MetaData.getNodeTypePropByObjectClassProp( Node.NodeTypeId, "Assembly" )].AsRelationship.RelatedNodeId != null )
                     {

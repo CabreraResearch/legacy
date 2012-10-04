@@ -103,6 +103,8 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="csw\Dev\CswDeveloper.cs" />
+    <Compile Include="csw\MetaData\CswNbtMetaDataObjectClassName.cs" />
+    <Compile Include="csw\MetaData\CswNbtMetaDataIconName.cs" />
     <Compile Include="csw\Modules\CswNbtModuleRuleMLM.cs" />
     <Compile Include="csw\Modules\CswNbtModuleRuleDev.cs" />
     <Compile Include="csw\Modules\CswNbtModuleRuleSTIS.cs" />

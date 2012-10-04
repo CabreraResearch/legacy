@@ -68,7 +68,7 @@ namespace ChemSW.Nbt.UnitsOfMeasure
                     PhysicalState = MaterialNodeAsMaterial.PhysicalState.DefaultValue.AsList.Value; //some materials do only use one default phys state
                 }
 
-                CswNbtMetaDataObjectClass UnitOfMeasureOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UnitOfMeasureClass );
+                CswNbtMetaDataObjectClass UnitOfMeasureOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClassName.NbtObjectClass.UnitOfMeasureClass );
                 if( null == Ret )
                 {
                     Ret = new CswNbtView( _CswNbtResources );
@@ -94,7 +94,7 @@ namespace ChemSW.Nbt.UnitsOfMeasure
         public CswNbtView getQuantityUnitOfMeasureView( string PhysicalState )
         {
             CswNbtView Ret = null;
-            CswNbtMetaDataObjectClass UnitOfMeasureOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UnitOfMeasureClass );
+            CswNbtMetaDataObjectClass UnitOfMeasureOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClassName.NbtObjectClass.UnitOfMeasureClass );
             Ret = new CswNbtView( _CswNbtResources );
 
             foreach( CswNbtMetaDataNodeType UnitOfMeasureNodeType in UnitOfMeasureOC.getNodeTypes() )

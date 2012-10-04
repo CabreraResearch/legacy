@@ -882,7 +882,7 @@
                     code += 'CswNbtMetaDataNodeType ' + elmid + 'SecondNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "' + rel.secondname + '" );\n';
                     code += 'CswNbtViewRelationship ' + elmid + ' = ' + viewname + '.AddViewRelationship( ' + elmid + 'SecondNT, true );\n';
                 } else {
-                    code += 'CswNbtMetaDataObjectClass ' + elmid + 'SecondOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.' + rel.secondname + ' );\n';
+                    code += 'CswNbtMetaDataObjectClass ' + elmid + 'SecondOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClassName.NbtObjectClass.' + rel.secondname + ' );\n';
                     code += 'CswNbtViewRelationship ' + elmid + ' = ' + viewname + '.AddViewRelationship( ' + elmid + 'SecondOC, true );\n';
                 }
                 if (false === Csw.bool(rel.showintree)) {
@@ -904,14 +904,14 @@
                         if (rel.secondtype === 'NodeTypeId') {
                             code += 'CswNbtMetaDataNodeType ' + elmid + 'SecondNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "' + rel.secondname + '" );\n';
                         } else {
-                            code += 'CswNbtMetaDataObjectClass ' + elmid + 'SecondOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.' + rel.secondname + ' );\n';
+                            code += 'CswNbtMetaDataObjectClass ' + elmid + 'SecondOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClassName.NbtObjectClass.' + rel.secondname + ' );\n';
                         }
                     } else {
                         code += 'CswNbtMetaDataObjectClassProp ' + elmid + 'Prop = ' + parentelmid + 'SecondOC.getObjectClassProp( CswNbtObjClass' + parentrel.secondname.replace('Class', '') + '.PropertyName.' + rel.propname.replace(' ', '') + ' );\n';
                         if (rel.secondtype === 'NodeTypeId') {
                             code += 'CswNbtMetaDataNodeType ' + elmid + 'SecondNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "' + rel.secondname + '" );\n';
                         } else {
-                            code += 'CswNbtMetaDataObjectClass ' + elmid + 'SecondOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.' + rel.secondname + ' );\n';
+                            code += 'CswNbtMetaDataObjectClass ' + elmid + 'SecondOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClassName.NbtObjectClass.' + rel.secondname + ' );\n';
                         }
                     }
                 } else {
@@ -919,7 +919,7 @@
                         code += 'CswNbtMetaDataNodeType ' + elmid + 'SecondNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "' + rel.secondname + '" );\n';
                         code += 'CswNbtMetaDataNodeTypeProp ' + elmid + 'Prop = ' + elmid + 'SecondNT.getNodeTypeProp( "' + rel.propname + '" );\n';
                     } else {
-                        code += 'CswNbtMetaDataObjectClass ' + elmid + 'SecondOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.' + rel.secondname + ' );\n';
+                        code += 'CswNbtMetaDataObjectClass ' + elmid + 'SecondOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClassName.NbtObjectClass.' + rel.secondname + ' );\n';
 
                         code += 'CswNbtMetaDataObjectClassProp ' + elmid + 'Prop = ' + elmid + 'SecondOC.getObjectClassProp( CswNbtObjClass' + rel.secondname.replace('Class', '') + '.PropertyName.' + rel.propname.replace(' ', '') + ' );\n';
                     }

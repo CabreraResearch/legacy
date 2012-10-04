@@ -22,7 +22,7 @@ namespace ChemSW.Nbt.WebPages
 
         private bool _CheckVersioning()
         {
-            bool CauseVersioning = ( SelectedNodeType.getObjectClass().ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass &&
+            bool CauseVersioning = ( SelectedNodeType.getObjectClass().ObjectClass == CswNbtMetaDataObjectClassName.NbtObjectClass.InspectionDesignClass &&
                                 _VersionSelect == _NewNodesNewVersion );
             if( CauseVersioning )
             {
@@ -212,7 +212,7 @@ namespace ChemSW.Nbt.WebPages
                         AddTable.addControl( 1, 1, AddPropTabSelect );
                         AddTable.addControl( 2, 0, AddPropNameLabel );
                         AddTable.addControl( 2, 1, AddPropName );
-                        if( SelectedNodeType.getObjectClass().ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass )
+                        if( SelectedNodeType.getObjectClass().ObjectClass == CswNbtMetaDataObjectClassName.NbtObjectClass.InspectionDesignClass )
                         {
                             AddTable.addControl( 3, 0, AddNewPropVersionLabel );
                             AddTable.addControl( 3, 1, AddNewPropVersionSelect );
@@ -232,7 +232,7 @@ namespace ChemSW.Nbt.WebPages
                         AddTable.addControl( 0, 1, AddTabNameTextBox );
                         AddTable.addControl( 1, 0, AddTabOrderLabel );
                         AddTable.addControl( 1, 1, AddTabOrderTextBox );
-                        if( SelectedNodeType.getObjectClass().ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass )
+                        if( SelectedNodeType.getObjectClass().ObjectClass == CswNbtMetaDataObjectClassName.NbtObjectClass.InspectionDesignClass )
                         {
                             AddTable.addControl( 2, 0, AddNewTabVersionLabel );
                             AddTable.addControl( 2, 1, AddNewTabVersionSelect );
@@ -404,13 +404,13 @@ namespace ChemSW.Nbt.WebPages
             }
             if( _Mode == NbtDesignMode.Inspection )
             {
-                ObjectClassSelect.SelectedValue = Master.CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass ).ObjectClassId.ToString();
+                ObjectClassSelect.SelectedValue = Master.CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClassName.NbtObjectClass.InspectionDesignClass ).ObjectClassId.ToString();
                 ObjectClassLabel.Style.Add( HtmlTextWriterStyle.Display, "none" );
                 ObjectClassSelect.Style.Add( HtmlTextWriterStyle.Display, "none" );
             }
             else
             {
-                ObjectClassSelect.SelectedValue = Master.CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.GenericClass ).ObjectClassId.ToString();
+                ObjectClassSelect.SelectedValue = Master.CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClassName.NbtObjectClass.GenericClass ).ObjectClassId.ToString();
             }
             if( _SelectedType == CswNodeTypeTree.NodeTypeTreeSelectedType.Category && _SelectedValue != string.Empty )
                 NewNodeTypeCategory.Text = _SelectedValue;

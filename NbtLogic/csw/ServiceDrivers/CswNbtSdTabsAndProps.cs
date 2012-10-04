@@ -715,12 +715,12 @@ namespace ChemSW.Nbt.ServiceDrivers
             return ret;
         } // saveProps()
 
-        private string _determineAction( CswNbtMetaDataObjectClass.NbtObjectClass objectClass )
+        private string _determineAction( CswNbtMetaDataObjectClassName.NbtObjectClass objectClass )
         {
             CswNbtObjClass.NbtButtonAction ret;
             switch( objectClass )
             {
-                case CswNbtMetaDataObjectClass.NbtObjectClass.FeedbackClass:
+                case CswNbtMetaDataObjectClassName.NbtObjectClass.FeedbackClass:
                     ret = CswNbtObjClass.NbtButtonAction.loadView;
                     break;
                 default:
@@ -1000,7 +1000,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                     JctTable.Rows.Add( JRow );
                     JctUpdate.update( JctTable );
                 }
-                if( Node.getObjectClass().ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.ReportClass )
+                if( Node.getObjectClass().ObjectClass == CswNbtMetaDataObjectClassName.NbtObjectClass.ReportClass )
                 {
                     CswNbtObjClassReport Report = Node;
                     CswFilePath FilePathTools = new CswFilePath( _CswNbtResources );

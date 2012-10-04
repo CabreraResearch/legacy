@@ -28,7 +28,7 @@ namespace ChemSW.Nbt.WebServices
 
             CswNbtMetaDataNodeType Ret = _CswNbtResources.MetaData.getNodeType( NodeTypeId );
             if( null == Ret ||
-                Ret.getObjectClass().ObjectClass != CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass )
+                Ret.getObjectClass().ObjectClass != CswNbtMetaDataObjectClassName.NbtObjectClass.MaterialClass )
             {
                 throw new CswDniException( ErrorType.Error,
                                            "The provided material type was not a valid material.",
@@ -44,7 +44,7 @@ namespace ChemSW.Nbt.WebServices
             if( MaterialNode != null )
             {
                 Ret = MaterialNode.getViewOfNode();
-                CswNbtMetaDataObjectClass SizeOc = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.SizeClass );
+                CswNbtMetaDataObjectClass SizeOc = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClassName.NbtObjectClass.SizeClass );
                 CswNbtMetaDataObjectClassProp MaterialOcp = SizeOc.getObjectClassProp( CswNbtObjClassSize.PropertyName.Material );
                 Ret.AddViewRelationship( Ret.Root.ChildRelationships[0], NbtViewPropOwnerType.Second, MaterialOcp, false );
                 Ret.ViewName = "New Material: " + MaterialNode.NodeName;
@@ -77,7 +77,7 @@ namespace ChemSW.Nbt.WebServices
             Ret.AddViewPropertyAndFilter( MaterialRel, SupplierNtp, SupplierId.PrimaryKey.ToString(), CswNbtSubField.SubFieldName.NodeID );
             Ret.AddViewPropertyAndFilter( MaterialRel, PartNoNtp, PartNo );
 
-            CswNbtMetaDataObjectClass SizeOc = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.SizeClass );
+            CswNbtMetaDataObjectClass SizeOc = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClassName.NbtObjectClass.SizeClass );
             CswNbtMetaDataObjectClassProp MaterialOcp = SizeOc.getObjectClassProp( CswNbtObjClassSize.PropertyName.Material );
             Ret.AddViewRelationship( MaterialRel, NbtViewPropOwnerType.Second, MaterialOcp, false );
 
@@ -292,7 +292,7 @@ namespace ChemSW.Nbt.WebServices
             CswNbtNode MaterialNode = CswNbtResources.Nodes.GetNode( MaterialId );
 
             if( null == MaterialNode ||
-                 MaterialNode.getObjectClass().ObjectClass != CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass )
+                 MaterialNode.getObjectClass().ObjectClass != CswNbtMetaDataObjectClassName.NbtObjectClass.MaterialClass )
             {
                 throw new CswDniException( ErrorType.Error,
                                            "The provided node was not a valid material.",
@@ -301,7 +301,7 @@ namespace ChemSW.Nbt.WebServices
 
             CswNbtView SizesView = new CswNbtView( CswNbtResources );  //MaterialNode.getNodeType().CreateDefaultView();
             SizesView.ViewMode = NbtViewRenderingMode.Grid;
-            CswNbtMetaDataObjectClass SizeOc = CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.SizeClass );
+            CswNbtMetaDataObjectClass SizeOc = CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClassName.NbtObjectClass.SizeClass );
 
             CswNbtMetaDataObjectClassProp SizeMaterialOcp = SizeOc.getObjectClassProp( CswNbtObjClassSize.PropertyName.Material );
             CswNbtViewRelationship SizeRel = SizesView.AddViewRelationship( SizeOc, false );
