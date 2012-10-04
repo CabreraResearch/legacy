@@ -42,6 +42,7 @@ namespace ChemSW.Nbt.Schema
                 enterprisePartsView.Category = "MLM";
                 enterprisePartsView.ViewMode = NbtViewRenderingMode.Tree;
                 enterprisePartsView.AddViewRelationship( enterprisePartOC, true );
+                enterprisePartsView.IsDemo = false;
                 enterprisePartsView.save();
             }
 
