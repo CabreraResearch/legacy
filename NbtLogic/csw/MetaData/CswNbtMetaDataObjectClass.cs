@@ -123,6 +123,7 @@ namespace ChemSW.Nbt.MetaData
             public const string AliquotClass = "AliquotClass";
             public const string BatchOpClass = "BatchOpClass";
             public const string BiologicalClass = "BiologicalClass";
+            public const string CertMethodTemplateClass = "CertMethodTemplateClass";
             public const string ContainerClass = "ContainerClass";
             public const string ContainerDispenseTransactionClass = "ContainerDispenseTransactionClass";
             public const string CustomerClass = "CustomerClass";

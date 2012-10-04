@@ -38,6 +38,10 @@ namespace ChemSW.Nbt.ObjClasses
                     ReturnVal = new CswNbtObjClassBatchOp( CswNbtResources, Node );
                     break;
 
+                case CswNbtMetaDataObjectClass.NbtObjectClass.CertMethodTemplateClass:
+                    ReturnVal = new CswNbtObjClassCertMethodTemplate( CswNbtResources, Node );
+                    break;
+
                 case CswNbtMetaDataObjectClass.NbtObjectClass.ContainerClass:
                     ReturnVal = new CswNbtObjClassContainer( CswNbtResources, Node );
                     break;
