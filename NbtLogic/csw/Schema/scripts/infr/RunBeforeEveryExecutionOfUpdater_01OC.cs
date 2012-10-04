@@ -13,66 +13,8 @@ namespace ChemSW.Nbt.Schema
     {
         public static string Title = "Pre-Script: OC";
 
-        public override void update()
+        private void _makeCertMethodTemplateOc()
         {
-            // This script is for adding object class properties, 
-            // which often become required by other business logic and can cause prior scripts to fail.
-
-            #region SEBASTIAN
-
-            // case 27703 - change containers dispose/dispense buttons to say "Dispose this Container" and "Dispense this Container"
-            CswNbtMetaDataObjectClass containerOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClassName.NbtObjectClass.ContainerClass );
-
-            CswNbtMetaDataObjectClassProp dispenseOCP = containerOC.getObjectClassProp( "Dispense" );
-            if( null != dispenseOCP ) //have to null check because property might have already been updated
-            {
-                _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( dispenseOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.propname, "Dispense this Container" );
-            }
-
-            CswNbtMetaDataObjectClassProp disposeOCP = containerOC.getObjectClassProp( "Dispose" );
-            if( null != disposeOCP ) //have to null check here because property might have been updated
-            {
-                _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( disposeOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.propname, "Dispose this Container" );
-            }
-
-            CswNbtMetaDataObjectClass PrintLabelOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClassName.NbtObjectClass.PrintLabelClass );
-            CswNbtMetaDataObjectClassProp ControlTypeOcp = PrintLabelOc.getObjectClassProp( "Control Type" );
-            if( null != ControlTypeOcp )
-            {
-                _CswNbtSchemaModTrnsctn.MetaData.DeleteObjectClassProp( ControlTypeOcp, DeleteNodeTypeProps: true );
-            }
-
-            //upgrade RequestItem Requestor prop from NTP to OCP
-            CswNbtMetaDataObjectClass requestItemOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClassName.NbtObjectClass.RequestItemClass );
-            CswNbtMetaDataNodeType requestItemNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Request Item" );
-            if( null != requestItemNT && null == requestItemOC.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Requestor ) )
-            {
-
-                CswNbtMetaDataObjectClass requestOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClassName.NbtObjectClass.RequestClass );
-                CswNbtMetaDataObjectClassProp requestorOCP = requestOC.getObjectClassProp( CswNbtObjClassRequest.PropertyName.Requestor );
-                CswNbtMetaDataObjectClassProp requestOCP = requestItemOC.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Request );
-
-                CswNbtMetaDataObjectClassProp reqItemrequestorOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( requestItemOC )
-                {
-                    PropName = CswNbtObjClassRequestItem.PropertyName.Requestor,
-                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.PropertyReference,
-                    IsFk = true,
-                    FkType = NbtViewPropIdType.ObjectClassPropId.ToString(),
-                    FkValue = requestOCP.PropId,
-                    ValuePropType = NbtViewPropIdType.ObjectClassPropId.ToString(),
-                    ValuePropId = requestorOCP.PropId
-                } );
-
-                CswNbtMetaDataNodeTypeProp reqItemRequestorNTP = _CswNbtSchemaModTrnsctn.MetaData.getNodeTypePropByObjectClassProp( requestItemNT.NodeTypeId, reqItemrequestorOCP.PropId );
-
-                reqItemRequestorNTP.removeFromLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add );
-            }
-
-
-            #endregion SEBASTIAN
-
-            #region TITANIA
-
             #region CertMethodTemplate
 
             _acceptBlame( CswDeveloper.CF, 27868 );
@@ -191,8 +133,190 @@ namespace ChemSW.Nbt.Schema
             _resetBlame();
 
             #endregion CertMethodTemplate
+        }
+
+        private void _makeCertMethodOc()
+        {
+            #region CertMethod
+
+            _acceptBlame( CswDeveloper.CF, 27868 );
+
+            CswNbtMetaDataObjectClass CertMethodOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClassName.NbtObjectClass.CertMethodClass );
+            if( null == CertMethodOc )
+            {
+                CertMethodOc = _CswNbtSchemaModTrnsctn.createObjectClass( CswNbtMetaDataObjectClassName.NbtObjectClass.CertMethodClass, CswNbtMetaDataIconName.NbtIcon.flask, true );
+                _CswNbtSchemaModTrnsctn.createModuleObjectClassJunction( CswNbtModuleName.MLM, CertMethodOc.ObjectClassId );
+            }
+
+            CswNbtMetaDataObjectClassProp CmTemplateOcp = CertMethodOc.getObjectClassProp( CswNbtObjClassCertMethod.PropertyName.CertMethodTemplate );
+            if( null == CmTemplateOcp )
+            {
+                CswNbtMetaDataObjectClass CertMethodTemplateOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClassName.NbtObjectClass.CertMethodTemplateClass );
+                CmTemplateOcp = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( CertMethodOc )
+                {
+                    PropName = CswNbtObjClassCertMethod.PropertyName.CertMethodTemplate,
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Relationship,
+                    ServerManaged = true,
+                    IsFk = true,
+                    FkType = NbtViewRelatedIdType.ObjectClassId.ToString(),
+                    FkValue = CertMethodTemplateOc.ObjectClassId
+                } );
+            }
+
+            //TODO: Create ReceiptLot Relationship Property when Receipt Lot Object Class is implemented
+
+            CswNbtMetaDataObjectClassProp CmDescriptionOcp = CertMethodOc.getObjectClassProp( CswNbtObjClassCertMethod.PropertyName.Description );
+            if( null == CmDescriptionOcp )
+            {
+                CmDescriptionOcp = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( CertMethodOc )
+                {
+                    PropName = CswNbtObjClassCertMethod.PropertyName.Description,
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Text,
+                    ReadOnly = true
+                } );
+            }
+
+            CswNbtMetaDataObjectClassProp CmMethodNoOcp = CertMethodOc.getObjectClassProp( CswNbtObjClassCertMethod.PropertyName.MethodNo );
+            if( null == CmMethodNoOcp )
+            {
+                CmMethodNoOcp = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( CertMethodOc )
+                {
+                    PropName = CswNbtObjClassCertMethod.PropertyName.MethodNo,
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Text,
+                    ReadOnly = true
+                } );
+            }
+
+            CswNbtMetaDataObjectClassProp CmConditionsOcp = CertMethodOc.getObjectClassProp( CswNbtObjClassCertMethod.PropertyName.Conditions );
+            if( null == CmConditionsOcp )
+            {
+                CmConditionsOcp = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( CertMethodOc )
+                {
+                    PropName = CswNbtObjClassCertMethod.PropertyName.Conditions,
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Text,
+                    ReadOnly = true
+                } );
+            }
+
+            CswNbtMetaDataObjectClassProp CmLowerOcp = CertMethodOc.getObjectClassProp( CswNbtObjClassCertMethod.PropertyName.Lower );
+            if( null == CmLowerOcp )
+            {
+                CmLowerOcp = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( CertMethodOc )
+                {
+                    PropName = CswNbtObjClassCertMethod.PropertyName.Lower,
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Number
+                } );
+            }
+
+            CswNbtMetaDataObjectClassProp CmUpperOcp = CertMethodOc.getObjectClassProp( CswNbtObjClassCertMethod.PropertyName.Upper );
+            if( null == CmUpperOcp )
+            {
+                CmUpperOcp = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( CertMethodOc )
+                {
+                    PropName = CswNbtObjClassCertMethod.PropertyName.Upper,
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Number
+                } );
+            }
+
+            CswNbtMetaDataObjectClassProp CmUnitsOcp = CertMethodOc.getObjectClassProp( CswNbtObjClassCertMethod.PropertyName.Units );
+            if( null == CmUnitsOcp )
+            {
+                CmUnitsOcp = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( CertMethodOc )
+                {
+                    PropName = CswNbtObjClassCertMethod.PropertyName.Units,
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Text,
+                    ReadOnly = true
+                } );
+            }
+
+            CswNbtMetaDataObjectClassProp CmValueOcp = CertMethodOc.getObjectClassProp( CswNbtObjClassCertMethod.PropertyName.Value );
+            if( null == CmValueOcp )
+            {
+                CmValueOcp = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( CertMethodOc )
+                {
+                    PropName = CswNbtObjClassCertMethod.PropertyName.Units,
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Text
+                } );
+            }
+
+            CswNbtMetaDataObjectClassProp CmQualifiedOcp = CertMethodOc.getObjectClassProp( CswNbtObjClassCertMethod.PropertyName.Qualified );
+            if( null == CmQualifiedOcp )
+            {
+                CmQualifiedOcp = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( CertMethodOc )
+                {
+                    PropName = CswNbtObjClassCertMethod.PropertyName.Qualified,
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Logical,
+                    ReadOnly = true
+                } );
+            }
+
+            _resetBlame();
+
+            #endregion CertMethod
+        }
+
+        public override void update()
+        {
+            // This script is for adding object class properties, 
+            // which often become required by other business logic and can cause prior scripts to fail.
+
+            #region SEBASTIAN
+
+            // case 27703 - change containers dispose/dispense buttons to say "Dispose this Container" and "Dispense this Container"
+            CswNbtMetaDataObjectClass containerOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClassName.NbtObjectClass.ContainerClass );
+
+            CswNbtMetaDataObjectClassProp dispenseOCP = containerOC.getObjectClassProp( "Dispense" );
+            if( null != dispenseOCP ) //have to null check because property might have already been updated
+            {
+                _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( dispenseOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.propname, "Dispense this Container" );
+            }
+
+            CswNbtMetaDataObjectClassProp disposeOCP = containerOC.getObjectClassProp( "Dispose" );
+            if( null != disposeOCP ) //have to null check here because property might have been updated
+            {
+                _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( disposeOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.propname, "Dispose this Container" );
+            }
+
+            CswNbtMetaDataObjectClass PrintLabelOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClassName.NbtObjectClass.PrintLabelClass );
+            CswNbtMetaDataObjectClassProp ControlTypeOcp = PrintLabelOc.getObjectClassProp( "Control Type" );
+            if( null != ControlTypeOcp )
+            {
+                _CswNbtSchemaModTrnsctn.MetaData.DeleteObjectClassProp( ControlTypeOcp, DeleteNodeTypeProps: true );
+            }
+
+            //upgrade RequestItem Requestor prop from NTP to OCP
+            CswNbtMetaDataObjectClass requestItemOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClassName.NbtObjectClass.RequestItemClass );
+            CswNbtMetaDataNodeType requestItemNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Request Item" );
+            if( null != requestItemNT && null == requestItemOC.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Requestor ) )
+            {
+
+                CswNbtMetaDataObjectClass requestOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClassName.NbtObjectClass.RequestClass );
+                CswNbtMetaDataObjectClassProp requestorOCP = requestOC.getObjectClassProp( CswNbtObjClassRequest.PropertyName.Requestor );
+                CswNbtMetaDataObjectClassProp requestOCP = requestItemOC.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Request );
+
+                CswNbtMetaDataObjectClassProp reqItemrequestorOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( requestItemOC )
+                {
+                    PropName = CswNbtObjClassRequestItem.PropertyName.Requestor,
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.PropertyReference,
+                    IsFk = true,
+                    FkType = NbtViewPropIdType.ObjectClassPropId.ToString(),
+                    FkValue = requestOCP.PropId,
+                    ValuePropType = NbtViewPropIdType.ObjectClassPropId.ToString(),
+                    ValuePropId = requestorOCP.PropId
+                } );
+
+                CswNbtMetaDataNodeTypeProp reqItemRequestorNTP = _CswNbtSchemaModTrnsctn.MetaData.getNodeTypePropByObjectClassProp( requestItemNT.NodeTypeId, reqItemrequestorOCP.PropId );
+
+                reqItemRequestorNTP.removeFromLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add );
+            }
 
 
+            #endregion SEBASTIAN
+
+            #region TITANIA
+
+            _makeCertMethodTemplateOc();
+            _makeCertMethodOc();
 
             #endregion TITANIA
 
