@@ -64,7 +64,6 @@ namespace ChemSW.Nbt.Schema
                 mepsView.IsDemo = false;
                 mepsView.save();
             }
-
         }
 
         public override CswDeveloper Author
@@ -74,7 +73,7 @@ namespace ChemSW.Nbt.Schema
 
         public override int CaseNo
         {
-            get { return 0; }
+            get { return 27865; }
         }
 
         //Update()

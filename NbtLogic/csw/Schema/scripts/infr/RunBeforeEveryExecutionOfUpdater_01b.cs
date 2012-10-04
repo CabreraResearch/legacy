@@ -132,8 +132,16 @@ namespace ChemSW.Nbt.Schema
                     FkType = NbtViewRelatedIdType.ObjectClassId.ToString(),
                     FkValue = vendorOC.ObjectClassId
                 } );
+
                 CswNbtMetaDataObjectClassProp vendorTypeOCP = vendorOC.getObjectClassProp( CswNbtObjClassVendor.PropertyName.VendorTypeName );
-                manufacturerOCP.setFilter( vendorTypeOCP, vendorTypeOCP.getFieldTypeRule().SubFields.Default, CswNbtPropFilterSql.PropertyFilterMode.Equals, "Manufacturing" );
+                CswNbtView manufacturerOCPView = _CswNbtSchemaModTrnsctn.makeNewView( "mepManufacturerOCP", NbtViewVisibility.Property );
+                CswNbtViewRelationship parent = manufacturerOCPView.AddViewRelationship( vendorOC, true );
+                manufacturerOCPView.AddViewPropertyAndFilter( parent,
+                    MetaDataProp: vendorTypeOCP,
+                    Value: "Manufacturing",
+                    SubFieldName: CswNbtSubField.SubFieldName.Value,
+                    FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+                _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( manufacturerOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.viewxml, manufacturerOCPView.ToString() );
 
                 _CswNbtSchemaModTrnsctn.createModuleObjectClassJunction( CswNbtModuleName.CISPro, manufactuerEquivalentPartOC.ObjectClassId );
             }
