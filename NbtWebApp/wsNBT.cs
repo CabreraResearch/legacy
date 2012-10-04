@@ -3544,7 +3544,7 @@ namespace ChemSW.Nbt.WebServices
             JObject Connected = new JObject();
             Connected["result"] = "OK";
             //            _jAddAuthenticationStatus( Connected, AuthenticationStatus.Authenticated, true );  // we don't want to trigger session timeouts
-            CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, Connected, AuthenticationStatus.Authenticated );
+            CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, Connected, AuthenticationStatus.Authenticated, IsMobile: true );
             return ( Connected.ToString() );
         }
 
@@ -3572,7 +3572,7 @@ namespace ChemSW.Nbt.WebServices
                 Connected["result"] = "OK";
             }
 
-            CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, Connected, AuthenticationStatus.Authenticated );
+            CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, Connected, AuthenticationStatus.Authenticated, IsMobile: true );
             //_jAddAuthenticationStatus( Connected, AuthenticationStatus.Authenticated );  // we don't want to trigger session timeouts
             return ( Connected.ToString() );
 
@@ -3777,7 +3777,7 @@ namespace ChemSW.Nbt.WebServices
                 ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
             }
 
-            CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
+            CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus, IsMobile: true );
             //_jAddAuthenticationStatus( ReturnVal, AuthenticationStatus, ForMobile );
 
             return ReturnVal.ToString();
@@ -3814,7 +3814,7 @@ namespace ChemSW.Nbt.WebServices
             }
 
             //_jAddAuthenticationStatus( ReturnVal, AuthenticationStatus.Authenticated, ForMobile );
-            CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus.Authenticated );
+            CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus.Authenticated, IsMobile: true );
 
             return ReturnVal.ToString();
         } // GetViews()
@@ -3848,11 +3848,13 @@ namespace ChemSW.Nbt.WebServices
                 ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
             }
 
-            CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus.Authenticated );
+            CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus.Authenticated, IsMobile: true );
             //_jAddAuthenticationStatus( ReturnVal, AuthenticationStatus.Authenticated, ForMobile );
 
             return ReturnVal.ToString();
         } // GetViews()
+
+        #endregion Mobile
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
@@ -3926,8 +3928,6 @@ namespace ChemSW.Nbt.WebServices
 
         //    return ReturnVal.ToString();
         //} // GetViews()
-
-        #endregion Mobile
 
         #region Nbt Manager
 

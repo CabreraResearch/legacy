@@ -718,7 +718,6 @@
     <Content Include="Images\quota\half.gif" />
     <Content Include="Images\quota\lock.gif" />
     <Content Include="Images\view\viewtable.gif" />
-    <Content Include="jzebra.jar" />
     <Content Include="NodeTypeTreeService.asmx" />
     <Content Include="Report.aspx" />
     <Content Include="Scripts\es5-shim.js" />
