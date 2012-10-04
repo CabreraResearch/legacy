@@ -642,7 +642,7 @@ namespace ChemSW.Nbt.WebServices
                     if( _CswNbtResources.CurrentNbtUser.IsAdministrator() )
                     {
                         JArray UsersArray = new JArray();
-                        CswNbtMetaDataObjectClass UserOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClassName.NbtObjectClass.UserClass );
+                        CswNbtMetaDataObjectClass UserOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.UserClass );
                         foreach( CswNbtObjClassUser ThisUser in ( from _UserNode in UserOC.getNodes( false, false )
                                                                   select (CswNbtObjClassUser) _UserNode ) )
                         {
@@ -2223,7 +2223,7 @@ namespace ChemSW.Nbt.WebServices
                     CswNbtMetaDataObjectClass ObjectClass = null;
                     if( false == string.IsNullOrEmpty( ObjectClassName ) )
                     {
-                        CswNbtMetaDataObjectClassName.NbtObjectClass OC = ObjectClassName;
+                        NbtObjectClass OC = ObjectClassName;
                         if( CswNbtResources.UnknownEnum != OC )
                         {
                             ObjectClass = _CswNbtResources.MetaData.getObjectClass( OC );
@@ -3749,7 +3749,7 @@ namespace ChemSW.Nbt.WebServices
                     CswNbtNode node = _CswNbtResources.Nodes[_getNodeId( nodeId )];
                     if( null != node )
                     {
-                        if( node.getObjectClass().ObjectClass == CswNbtMetaDataObjectClassName.NbtObjectClass.FeedbackClass )
+                        if( node.getObjectClass().ObjectClass == NbtObjectClass.FeedbackClass )
                         {
                             CswNbtObjClassFeedback feedbackNode = node;
                             ReturnVal["casenumber"] = feedbackNode.CaseNumber.Sequence;

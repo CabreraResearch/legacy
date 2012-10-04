@@ -27,7 +27,7 @@ namespace NbtWebAppServices.Response
         private void _initInspectionResources( CswNbtActSystemViews.SystemViewName ViewName )
         {
             _CswNbtWcfSessionResources = _InspectionsResponse.CswNbtWcfSessionResources;
-            _InspectionDesignOc = _CswNbtWcfSessionResources.CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClassName.NbtObjectClass.InspectionDesignClass );
+            _InspectionDesignOc = _CswNbtWcfSessionResources.CswNbtResources.MetaData.getObjectClass( NbtObjectClass.InspectionDesignClass );
             _NbtSystemView = new CswNbtActSystemViews( _CswNbtWcfSessionResources.CswNbtResources,
                                                        ViewName,
                                                        _InspectionDesignOc
@@ -273,7 +273,7 @@ namespace NbtWebAppServices.Response
             return new CswDateTime( _CswNbtWcfSessionResources.CswNbtResources, Date );
         }
 
-        public void addSystemViewPropFilter( CswNbtMetaDataObjectClassName.NbtObjectClass ObjectClass, string PropertyName, object FilterValue, CswNbtPropFilterSql.PropertyFilterMode FilterMode = null, CswNbtMetaDataFieldType.NbtFieldType FieldType = null )
+        public void addSystemViewPropFilter( NbtObjectClass ObjectClass, string PropertyName, object FilterValue, CswNbtPropFilterSql.PropertyFilterMode FilterMode = null, CswNbtMetaDataFieldType.NbtFieldType FieldType = null )
         {
             try
             {

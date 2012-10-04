@@ -15,13 +15,13 @@ namespace ChemSW.Nbt.Schema
         /// </summary>
         public override void update()
         {
-            CswNbtMetaDataObjectClass requestItemOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClassName.NbtObjectClass.RequestItemClass );
+            CswNbtMetaDataObjectClass requestItemOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.RequestItemClass );
             CswNbtMetaDataNodeType requestItemNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Request Item" );
 
             #region PART 1 - BUTTON NAMING AND LIST OPTIONS
 
             //change materials Request button to a menu button
-            CswNbtMetaDataObjectClass materialOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClassName.NbtObjectClass.MaterialClass );
+            CswNbtMetaDataObjectClass materialOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.MaterialClass );
             CswNbtMetaDataObjectClassProp requestOCP = materialOC.getObjectClassProp( CswNbtObjClassMaterial.PropertyName.Request );
             _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( requestOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.extended, CswNbtNodePropButton.ButtonMode.menu );
 
@@ -34,7 +34,7 @@ namespace ChemSW.Nbt.Schema
                 materialNode.postChanges( false );
             }
 
-            CswNbtMetaDataObjectClass containerOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClassName.NbtObjectClass.ContainerClass );
+            CswNbtMetaDataObjectClass containerOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.ContainerClass );
             string fulFillOpts = CswNbtObjClassRequestItem.FulfillMenu.Options.ToString();
             foreach( CswNbtObjClassContainer containerNode in containerOC.getNodes( false, false ) )
             {

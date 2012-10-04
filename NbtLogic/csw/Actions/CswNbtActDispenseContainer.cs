@@ -179,7 +179,7 @@ namespace ChemSW.Nbt.Actions
             CswNbtView DispenseContainerView = new CswNbtView( _CswNbtResources );
             DispenseContainerView.ViewName = "Containers Dispensed at " + DateTime.Now.ToShortTimeString();
 
-            CswNbtMetaDataObjectClass ContainerOc = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClassName.NbtObjectClass.ContainerClass );
+            CswNbtMetaDataObjectClass ContainerOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.ContainerClass );
             CswNbtViewRelationship RootRelationship = DispenseContainerView.AddViewRelationship( ContainerOc, false );
             RootRelationship.NodeIdsToFilterIn = SourceContainerRoot;
 
@@ -208,7 +208,7 @@ namespace ChemSW.Nbt.Actions
                     Ret.ViewMode = NbtViewRenderingMode.Grid;
                     Ret.Category = "Dispensing";
 
-                    CswNbtMetaDataObjectClass ContainerOc = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClassName.NbtObjectClass.ContainerClass );
+                    CswNbtMetaDataObjectClass ContainerOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.ContainerClass );
                     CswNbtViewRelationship ContainerRel = Ret.AddViewRelationship( ContainerOc, true );
                     CswNbtViewProperty BarcodeVp = Ret.AddViewProperty( ContainerRel, ContainerOc.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Barcode ) );
                     CswNbtViewProperty MaterialVp = Ret.AddViewProperty( ContainerRel, ContainerOc.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Material ) );

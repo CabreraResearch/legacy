@@ -116,7 +116,7 @@ namespace ChemSW.NbtWebControls
                     //for( Int32 r = 0; r < RolesTree.getChildNodeCount(); r++ )
                     //{
                     //    RolesTree.goToNthChild( r );
-                    CswNbtMetaDataObjectClass RoleOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClassName.NbtObjectClass.RoleClass );
+                    CswNbtMetaDataObjectClass RoleOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.RoleClass );
                     foreach( CswNbtNode RoleNode in RoleOC.getNodes( false, false ) )
                     {
                         //_RoleSelect.Items.Add( new ListItem( RolesTree.getNodeNameForCurrentPosition(), RolesTree.getNodeIdForCurrentPosition().ToString() ) );

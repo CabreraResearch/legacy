@@ -19,7 +19,7 @@ namespace ChemSW.Nbt.ObjClasses
         public static implicit operator CswNbtObjClassRequest( CswNbtNode Node )
         {
             CswNbtObjClassRequest ret = null;
-            if( null != Node && _Validate( Node, CswNbtMetaDataObjectClassName.NbtObjectClass.RequestClass ) )
+            if( null != Node && _Validate( Node, NbtObjectClass.RequestClass ) )
             {
                 ret = (CswNbtObjClassRequest) Node.ObjClass;
             }
@@ -36,7 +36,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
-            get { return _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClassName.NbtObjectClass.RequestClass ); }
+            get { return _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.RequestClass ); }
         }
 
         private void _setDefaultValues()
@@ -122,7 +122,7 @@ namespace ChemSW.Nbt.ObjClasses
         private ICswNbtTree _getRelatedRequestItemsTree( bool FilterByPending = false )
         {
             CswNbtView RequestItemView = new CswNbtView( _CswNbtResources );
-            CswNbtMetaDataObjectClass RequestItemOc = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClassName.NbtObjectClass.RequestItemClass );
+            CswNbtMetaDataObjectClass RequestItemOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.RequestItemClass );
             CswNbtMetaDataObjectClassProp RequestOcp = RequestItemOc.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Request );
             CswNbtViewRelationship RiRelationship = RequestItemView.AddViewRelationship( RequestItemOc, false );
             if( FilterByPending )

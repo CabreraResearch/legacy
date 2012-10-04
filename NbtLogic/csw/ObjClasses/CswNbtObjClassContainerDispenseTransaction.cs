@@ -76,7 +76,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
-            get { return _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClassName.NbtObjectClass.ContainerDispenseTransactionClass ); }
+            get { return _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.ContainerDispenseTransactionClass ); }
         }
 
         /// <summary>
@@ -85,7 +85,7 @@ namespace ChemSW.Nbt.ObjClasses
         public static implicit operator CswNbtObjClassContainerDispenseTransaction( CswNbtNode Node )
         {
             CswNbtObjClassContainerDispenseTransaction ret = null;
-            if( null != Node && _Validate( Node, CswNbtMetaDataObjectClassName.NbtObjectClass.ContainerDispenseTransactionClass ) )
+            if( null != Node && _Validate( Node, NbtObjectClass.ContainerDispenseTransactionClass ) )
             {
                 ret = (CswNbtObjClassContainerDispenseTransaction) Node.ObjClass;
             }

@@ -33,7 +33,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
-            get { return _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClassName.NbtObjectClass.CertMethodTemplateClass ); }
+            get { return _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.CertMethodTemplateClass ); }
         }
 
         /// <summary>
@@ -42,7 +42,7 @@ namespace ChemSW.Nbt.ObjClasses
         public static implicit operator CswNbtObjClassCertMethodTemplate( CswNbtNode Node )
         {
             CswNbtObjClassCertMethodTemplate ret = null;
-            if( null != Node && _Validate( Node, CswNbtMetaDataObjectClassName.NbtObjectClass.CertMethodTemplateClass ) )
+            if( null != Node && _Validate( Node, NbtObjectClass.CertMethodTemplateClass ) )
             {
                 ret = (CswNbtObjClassCertMethodTemplate) Node.ObjClass;
             }

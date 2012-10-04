@@ -112,9 +112,9 @@ namespace ChemSW.Nbt.Security
 
                         // Only Administrators can edit Roles
 
-                        CswNbtMetaDataObjectClassName.NbtObjectClass ObjectClass = NodeType.getObjectClass().ObjectClass;
+                        NbtObjectClass ObjectClass = NodeType.getObjectClass().ObjectClass;
 
-                        if( ObjectClass == CswNbtMetaDataObjectClassName.NbtObjectClass.RoleClass &&
+                        if( ObjectClass == NbtObjectClass.RoleClass &&
                           Permission != NodeTypePermission.View &&
                           false == User.IsAdministrator() )
                         {
@@ -122,7 +122,7 @@ namespace ChemSW.Nbt.Security
                         }
 
                         // case 24510
-                        if( ObjectClass == CswNbtMetaDataObjectClassName.NbtObjectClass.ContainerDispenseTransactionClass )
+                        if( ObjectClass == NbtObjectClass.ContainerDispenseTransactionClass )
                         {
                             _NoExceptionCases = Permission != NodeTypePermission.Delete;
                         }
@@ -427,7 +427,7 @@ namespace ChemSW.Nbt.Security
                                 CswNbtMetaDataObjectClassProp OCP = MetaDataProp.getObjectClassProp();
 
                                 // case 8218 - Certain properties on the user's preferences are not allowed to be edited
-                                if( _CswNbtPermitInfo.NodeType.getObjectClass().ObjectClass == CswNbtMetaDataObjectClassName.NbtObjectClass.UserClass &&
+                                if( _CswNbtPermitInfo.NodeType.getObjectClass().ObjectClass == NbtObjectClass.UserClass &&
                                     false == _CswNbtPermitInfo.User.IsAdministrator() &&
                                     OCP != null &&
                                     ( OCP.PropName == CswNbtObjClassUser.PropertyName.Username ||
@@ -440,7 +440,7 @@ namespace ChemSW.Nbt.Security
 
                                 // Only admins can change other people's passwords
                                 if( ret &&
-                                    _CswNbtPermitInfo.NodeType.getObjectClass().ObjectClass == CswNbtMetaDataObjectClassName.NbtObjectClass.UserClass &&
+                                    _CswNbtPermitInfo.NodeType.getObjectClass().ObjectClass == NbtObjectClass.UserClass &&
                                     false == _CswNbtPermitInfo.User.IsAdministrator() &&
                                     ( null != NodePropWrapper && _CswNbtPermitInfo.User.UserId != NodePropWrapper.NodeId ) &&
                                     OCP != null &&
@@ -500,7 +500,7 @@ namespace ChemSW.Nbt.Security
 
 
                         // case 24510
-                        if( _CswNbtPermitInfo.NodeType.getObjectClass().ObjectClass == CswNbtMetaDataObjectClassName.NbtObjectClass.ContainerClass )
+                        if( _CswNbtPermitInfo.NodeType.getObjectClass().ObjectClass == NbtObjectClass.ContainerClass )
                         {
                             ret = ret && canContainer( NodeId, Permission, null, _CswNbtPermitInfo.User );
                         }
@@ -1005,10 +1005,10 @@ namespace ChemSW.Nbt.Security
 
                 ret = false;
 
-                CswNbtMetaDataObjectClass ContainerOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClassName.NbtObjectClass.ContainerClass );
-                CswNbtMetaDataObjectClass LocationOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClassName.NbtObjectClass.LocationClass );
-                CswNbtMetaDataObjectClass InvGrpOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClassName.NbtObjectClass.InventoryGroupClass );
-                CswNbtMetaDataObjectClass InvGrpPermOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClassName.NbtObjectClass.InventoryGroupPermissionClass );
+                CswNbtMetaDataObjectClass ContainerOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.ContainerClass );
+                CswNbtMetaDataObjectClass LocationOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.LocationClass );
+                CswNbtMetaDataObjectClass InvGrpOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.InventoryGroupClass );
+                CswNbtMetaDataObjectClass InvGrpPermOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.InventoryGroupPermissionClass );
 
                 CswNbtMetaDataObjectClassProp ContainerLocationOCP = ContainerOC.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Location );
                 CswNbtMetaDataObjectClassProp LocationInvGrpOCP = LocationOC.getObjectClassProp( CswNbtObjClassLocation.PropertyName.InventoryGroup );

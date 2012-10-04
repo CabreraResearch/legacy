@@ -37,9 +37,9 @@ namespace ChemSW.Nbt.MetaData
             return new CswNbtMetaDataObjectClass( Resources, Row );
         }
 
-        public Dictionary<CswNbtMetaDataObjectClassName.NbtObjectClass, Int32> getObjectClassIds()
+        public Dictionary<NbtObjectClass, Int32> getObjectClassIds()
         {
-            Dictionary<CswNbtMetaDataObjectClassName.NbtObjectClass, Int32> ret = new Dictionary<CswNbtMetaDataObjectClassName.NbtObjectClass, Int32>();
+            Dictionary<NbtObjectClass, Int32> ret = new Dictionary<NbtObjectClass, Int32>();
             Dictionary<string, Int32> OCDict = _CollImpl.getPkDict();
             foreach( string Key in OCDict.Keys )
             {
@@ -50,7 +50,7 @@ namespace ChemSW.Nbt.MetaData
             }
             return ret;
         }
-        public Int32 getObjectClassId( CswNbtMetaDataObjectClassName.NbtObjectClass ObjectClass )
+        public Int32 getObjectClassId( NbtObjectClass ObjectClass )
         {
             return _CollImpl.getPksFirst( "where objectclass = '" + ObjectClass.ToString() + "'" );
         }
@@ -60,7 +60,7 @@ namespace ChemSW.Nbt.MetaData
             return _CollImpl.getAll().Cast<CswNbtMetaDataObjectClass>();
         }
 
-        public CswNbtMetaDataObjectClass getObjectClass( CswNbtMetaDataObjectClassName.NbtObjectClass ObjectClass )
+        public CswNbtMetaDataObjectClass getObjectClass( NbtObjectClass ObjectClass )
         {
             return (CswNbtMetaDataObjectClass) _CollImpl.getWhereFirst( "where objectclass = '" + ObjectClass.ToString() + "'" );
         }

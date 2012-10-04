@@ -31,7 +31,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
-            get { return _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClassName.NbtObjectClass.ProblemClass ); }
+            get { return _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.ProblemClass ); }
         }
 
         /// <summary>
@@ -40,7 +40,7 @@ namespace ChemSW.Nbt.ObjClasses
         public static implicit operator CswNbtObjClassProblem( CswNbtNode Node )
         {
             CswNbtObjClassProblem ret = null;
-            if( null != Node && _Validate( Node, CswNbtMetaDataObjectClassName.NbtObjectClass.ProblemClass ) )
+            if( null != Node && _Validate( Node, NbtObjectClass.ProblemClass ) )
             {
                 ret = (CswNbtObjClassProblem) Node.ObjClass;
             }
@@ -106,7 +106,7 @@ namespace ChemSW.Nbt.ObjClasses
                 CswNbtNode EquipmentOrAssemblyNode = _CswNbtResources.Nodes[Owner.RelatedNodeId];
                 if( EquipmentOrAssemblyNode != null )
                 {
-                    if( EquipmentOrAssemblyNode.getObjectClass().ObjectClass == CswNbtMetaDataObjectClassName.NbtObjectClass.EquipmentClass )
+                    if( EquipmentOrAssemblyNode.getObjectClass().ObjectClass == NbtObjectClass.EquipmentClass )
                     {
                         CswCommaDelimitedString NewYValues = new CswCommaDelimitedString();
                         CswNbtObjClassEquipment EquipmentNodeAsEquipment = (CswNbtObjClassEquipment) EquipmentOrAssemblyNode;
@@ -118,7 +118,7 @@ namespace ChemSW.Nbt.ObjClasses
                         }
                         this.Parts.YValues = NewYValues;
                     }
-                    else if( EquipmentOrAssemblyNode.getObjectClass().ObjectClass == CswNbtMetaDataObjectClassName.NbtObjectClass.EquipmentAssemblyClass )
+                    else if( EquipmentOrAssemblyNode.getObjectClass().ObjectClass == NbtObjectClass.EquipmentAssemblyClass )
                     {
                         CswCommaDelimitedString NewYValues = new CswCommaDelimitedString();
                         CswNbtObjClassEquipmentAssembly AssemblyNodeAsAssembly = (CswNbtObjClassEquipmentAssembly) EquipmentOrAssemblyNode;

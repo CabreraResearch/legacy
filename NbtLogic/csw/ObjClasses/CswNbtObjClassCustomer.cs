@@ -35,7 +35,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
-            get { return _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClassName.NbtObjectClass.CustomerClass ); }
+            get { return _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.CustomerClass ); }
         }
 
         private bool _CompanyIDDefined()
@@ -68,7 +68,7 @@ namespace ChemSW.Nbt.ObjClasses
         public static implicit operator CswNbtObjClassCustomer( CswNbtNode Node )
         {
             CswNbtObjClassCustomer ret = null;
-            if( null != Node && _Validate( Node, CswNbtMetaDataObjectClassName.NbtObjectClass.CustomerClass ) )
+            if( null != Node && _Validate( Node, NbtObjectClass.CustomerClass ) )
             {
                 ret = (CswNbtObjClassCustomer) Node.ObjClass;
             }

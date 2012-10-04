@@ -191,7 +191,7 @@ namespace ChemSW.Nbt.PropTypes
             //for( int c = 0; c < UsersTree.getChildNodeCount(); c++ )
             //{
             //    UsersTree.goToNthChild( c );
-            CswNbtMetaDataObjectClass UserOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClassName.NbtObjectClass.UserClass );
+            CswNbtMetaDataObjectClass UserOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.UserClass );
             foreach( CswNbtNode UserNode in UserOC.getNodes( false, false ) )
             {
                 if( Tristate.True != UserNode.Properties[CswNbtObjClassUser.PropertyName.Archived].AsLogical.Checked )
@@ -362,7 +362,7 @@ namespace ChemSW.Nbt.PropTypes
             //for( int c = 0; c < UsersTree.getChildNodeCount(); c++ )
             //{
             //    UsersTree.goToNthChild( c );
-            CswNbtMetaDataObjectClass UserOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClassName.NbtObjectClass.UserClass );
+            CswNbtMetaDataObjectClass UserOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.UserClass );
             foreach( CswNbtNode UserNode in UserOC.getNodes( false, false ) )
             {
                 CswPrimaryKey ThisUserId = UserNode.NodeId;  //UsersTree.getNodeIdForCurrentPosition();

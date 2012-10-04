@@ -39,7 +39,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
-            get { return _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClassName.NbtObjectClass.RoleClass ); }
+            get { return _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.RoleClass ); }
         }
 
         /// <summary>
@@ -48,7 +48,7 @@ namespace ChemSW.Nbt.ObjClasses
         public static implicit operator CswNbtObjClassRole( CswNbtNode Node )
         {
             CswNbtObjClassRole ret = null;
-            if( null != Node && _Validate( Node, CswNbtMetaDataObjectClassName.NbtObjectClass.RoleClass ) )
+            if( null != Node && _Validate( Node, NbtObjectClass.RoleClass ) )
             {
                 ret = (CswNbtObjClassRole) Node.ObjClass;
             }
@@ -124,7 +124,7 @@ namespace ChemSW.Nbt.ObjClasses
                             /* Case 24447 */
                             if( Action.Name == CswNbtActionName.Create_Material )
                             {
-                                CswNbtMetaDataObjectClass MaterialOc = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClassName.NbtObjectClass.MaterialClass );
+                                CswNbtMetaDataObjectClass MaterialOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.MaterialClass );
 
                                 bool HasOneMaterialCreate = false;
                                 foreach( CswNbtMetaDataNodeType MaterialNt in MaterialOc.getNodeTypes() )

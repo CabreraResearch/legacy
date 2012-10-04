@@ -157,7 +157,7 @@ namespace ChemSW.Nbt.PropTypes
             if( this.NodeId != null )
             {
                 // BZ 6779
-                CswNbtMetaDataObjectClass ProblemOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClassName.NbtObjectClass.ProblemClass );
+                CswNbtMetaDataObjectClass ProblemOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.ProblemClass );
                 CswNbtMetaDataObjectClassProp OwnerOCP = ProblemOC.getObjectClassProp( CswNbtObjClassProblem.PropertyName.Owner );
                 CswNbtMetaDataObjectClassProp FailureOCP = ProblemOC.getObjectClassProp( CswNbtObjClassProblem.PropertyName.Failure );
                 CswNbtMetaDataObjectClassProp DateOpenedOCP = ProblemOC.getObjectClassProp( CswNbtObjClassProblem.PropertyName.DateOpened );

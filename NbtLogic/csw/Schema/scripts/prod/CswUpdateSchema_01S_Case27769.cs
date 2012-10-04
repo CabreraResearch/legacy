@@ -30,7 +30,7 @@ namespace ChemSW.Nbt.Schema
                 }
             }
 
-            CswNbtMetaDataObjectClass MaterialOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClassName.NbtObjectClass.MaterialClass );
+            CswNbtMetaDataObjectClass MaterialOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.MaterialClass );
             foreach( CswNbtMetaDataNodeType MaterialNt in MaterialOc.getNodeTypes() )
             {
                 CswNbtMetaDataNodeTypeProp SpecificGravityNtp = MaterialNt.getNodeTypePropByObjectClassProp( CswNbtObjClassMaterial.PropertyName.SpecificGravity );

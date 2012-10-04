@@ -68,7 +68,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                 //for( Int32 u = 0; u < UsersTree.getChildNodeCount(); u++ )
                 //{
                 //    UsersTree.goToNthChild( u );
-                CswNbtMetaDataObjectClass UserOC = _CswNbtFieldResources.CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClassName.NbtObjectClass.UserClass );
+                CswNbtMetaDataObjectClass UserOC = _CswNbtFieldResources.CswNbtResources.MetaData.getObjectClass( NbtObjectClass.UserClass );
                 foreach( CswNbtNode UserNode in UserOC.getNodes( false, false ) )
                 {
                     string UserNodeName = UserNode.NodeName; //UsersTree.getNodeNameForCurrentPosition();

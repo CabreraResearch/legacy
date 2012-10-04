@@ -1721,7 +1721,7 @@ namespace ChemSW.Nbt.MetaData
                         CswNbtMetaDataNodeType TargetNodeType = _CswNbtMetaDataResources.CswNbtResources.MetaData.getNodeType( FKValue );
                         if( null != TargetNodeType )
                         {
-                            ret = ( TargetNodeType.getObjectClass().ObjectClass == CswNbtMetaDataObjectClassName.NbtObjectClass.UserClass );
+                            ret = ( TargetNodeType.getObjectClass().ObjectClass == NbtObjectClass.UserClass );
                         }
                     }
                     else if( TargetType == NbtViewRelatedIdType.ObjectClassId )
@@ -1729,7 +1729,7 @@ namespace ChemSW.Nbt.MetaData
                         CswNbtMetaDataObjectClass TargetObjectClass = _CswNbtMetaDataResources.CswNbtResources.MetaData.getObjectClass( FKValue );
                         if( null != TargetObjectClass )
                         {
-                            ret = ( TargetObjectClass.ObjectClass == CswNbtMetaDataObjectClassName.NbtObjectClass.UserClass );
+                            ret = ( TargetObjectClass.ObjectClass == NbtObjectClass.UserClass );
                         }
                     }
                 }

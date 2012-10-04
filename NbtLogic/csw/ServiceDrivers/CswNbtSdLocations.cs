@@ -33,7 +33,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                 LocationTable = LocationSelect.getTable();
                 Collection<CswPrimaryKey> LocationPks = new Collection<CswPrimaryKey>();
                 LocationPks.Add( StartLocationId );
-                CswNbtMetaDataObjectClass LocationOc = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClassName.NbtObjectClass.LocationClass );
+                CswNbtMetaDataObjectClass LocationOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.LocationClass );
                 LocationRel = LocationsView.AddViewRelationship( LocationOc, false );
 
                 if( LocationTable.Rows.Count > 0 )

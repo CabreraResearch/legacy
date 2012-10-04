@@ -16,7 +16,7 @@ namespace ChemSW.Nbt.Schema
         /// </summary>
         public override void update()
         {
-            CswNbtMetaDataObjectClass PrintLabelOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClassName.NbtObjectClass.PrintLabelClass );
+            CswNbtMetaDataObjectClass PrintLabelOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.PrintLabelClass );
             Collection<Int32> SelectedNodeTypeIds = new Collection<Int32>();
             foreach( CswNbtObjClassPrintLabel Node in PrintLabelOc.getNodes( forceReInit: true, includeSystemNodes: false ) )
             {

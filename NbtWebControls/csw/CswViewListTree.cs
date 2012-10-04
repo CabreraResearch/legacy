@@ -247,7 +247,7 @@ namespace ChemSW.NbtWebControls
 
                         CswNbtView ReportView = new CswNbtView( _CswNbtResources );
                         ReportView.ViewName = "CswViewTree.DataBinding.ReportView";
-                        CswNbtMetaDataObjectClass ReportMetaDataObjectClass = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClassName.NbtObjectClass.ReportClass );
+                        CswNbtMetaDataObjectClass ReportMetaDataObjectClass = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.ReportClass );
                         CswNbtViewRelationship ReportRelationship = ReportView.AddViewRelationship( ReportMetaDataObjectClass, true );
 
                         ICswNbtTree ReportTree = _CswNbtResources.Trees.getTreeFromView( ReportView, true, true, false, false );

@@ -63,7 +63,7 @@ namespace ChemSW.Nbt.PropTypes
             set
             {
                 string UserName = string.Empty;
-                CswNbtMetaDataObjectClass UserOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClassName.NbtObjectClass.UserClass );
+                CswNbtMetaDataObjectClass UserOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.UserClass );
                 CswNbtMetaDataObjectClassProp UserPassword = UserOC.getObjectClassProp( CswNbtObjClassUser.PropertyName.Password );
 
                 if( this.ObjectClassPropId == UserPassword.ObjectClassPropId )

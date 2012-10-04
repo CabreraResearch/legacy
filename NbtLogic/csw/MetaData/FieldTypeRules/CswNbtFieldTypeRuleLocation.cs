@@ -126,7 +126,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             }
 
             // Locations have fixed fk relationship fields:
-            Int32 LocationObjectClassId = _CswNbtFieldResources.CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClassName.NbtObjectClass.LocationClass ).ObjectClassId;
+            Int32 LocationObjectClassId = _CswNbtFieldResources.CswNbtResources.MetaData.getObjectClass( NbtObjectClass.LocationClass ).ObjectClassId;
             NodeTypeProp.SetFK( NbtViewRelatedIdType.ObjectClassId.ToString(), LocationObjectClassId, string.Empty, Int32.MinValue );
 
             _CswNbtFieldTypeRuleDefault.afterCreateNodeTypeProp( NodeTypeProp );

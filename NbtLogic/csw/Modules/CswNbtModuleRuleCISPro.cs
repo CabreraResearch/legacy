@@ -19,7 +19,7 @@ namespace ChemSW.Nbt
             //   Location.Inventory Group
             //   Location.Storage Compatibility
             //   User.WorkUnit
-            CswNbtMetaDataObjectClass LocationOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClassName.NbtObjectClass.LocationClass );
+            CswNbtMetaDataObjectClass LocationOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.LocationClass );
             foreach( CswNbtMetaDataNodeType LocationNT in LocationOC.getNodeTypes() )
             {
                 CswNbtMetaDataNodeTypeProp LocationInvGrpNTP = LocationNT.getNodeTypePropByObjectClassProp( CswNbtObjClassLocation.PropertyName.InventoryGroup );
@@ -41,7 +41,7 @@ namespace ChemSW.Nbt
                     LocationInvLevelsNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, LocationInvLevelsTab.TabId );
                 }
             }
-            CswNbtMetaDataObjectClass UserOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClassName.NbtObjectClass.UserClass );
+            CswNbtMetaDataObjectClass UserOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.UserClass );
             foreach( CswNbtMetaDataNodeType UserNT in UserOC.getNodeTypes() )
             {
                 CswNbtMetaDataNodeTypeProp UserWorkUnitNTP = UserNT.getNodeTypePropByObjectClassProp( CswNbtObjClassUser.PropertyName.WorkUnit );
@@ -58,7 +58,7 @@ namespace ChemSW.Nbt
             //   Location.Storage Compatibility
             //   User.WorkUnit
             //   Location.Inventory Levels
-            CswNbtMetaDataObjectClass LocationOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClassName.NbtObjectClass.LocationClass );
+            CswNbtMetaDataObjectClass LocationOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.LocationClass );
             foreach( CswNbtMetaDataNodeType LocationNT in LocationOC.getNodeTypes() )
             {
                 CswNbtMetaDataNodeTypeProp LocationInvGrpNTP = LocationNT.getNodeTypePropByObjectClassProp( CswNbtObjClassLocation.PropertyName.InventoryGroup );
@@ -78,7 +78,7 @@ namespace ChemSW.Nbt
                     }
                 }
             }
-            CswNbtMetaDataObjectClass UserOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClassName.NbtObjectClass.UserClass );
+            CswNbtMetaDataObjectClass UserOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.UserClass );
             foreach( CswNbtMetaDataNodeType UserNT in UserOC.getNodeTypes() )
             {
                 CswNbtMetaDataNodeTypeProp UserWorkUnitNTP = UserNT.getNodeTypePropByObjectClassProp( CswNbtObjClassUser.PropertyName.WorkUnit );

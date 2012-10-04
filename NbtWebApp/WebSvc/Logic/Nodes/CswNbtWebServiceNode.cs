@@ -114,7 +114,7 @@ namespace ChemSW.Nbt.WebServices
                 try
                 {
                     CswNbtResources UserSystemResources = wsMd.makeSystemUserResources( _CswNbtResources.AccessId, false, false );
-                    CswNbtMetaDataObjectClass UserOc = UserSystemResources.MetaData.getObjectClass( CswNbtMetaDataObjectClassName.NbtObjectClass.UserClass );
+                    CswNbtMetaDataObjectClass UserOc = UserSystemResources.MetaData.getObjectClass( NbtObjectClass.UserClass );
                     foreach( CswNbtObjClassUser User in UserOc.getNodes( forceReInit: true, includeSystemNodes: false ) )
                     {
                         if( CswTools.IsPrimaryKey( User.WorkUnitProperty.RelatedNodeId ) )
@@ -307,14 +307,14 @@ namespace ChemSW.Nbt.WebServices
                 {
                     switch( RelatedNode.ObjClass.ObjectClass.ObjectClass )
                     {
-                        case CswNbtMetaDataObjectClassName.NbtObjectClass.ContainerClass:
+                        case NbtObjectClass.ContainerClass:
                             CswNbtObjClassContainer NodeAsContainer = Node;
                             if( null != NodeAsContainer )
                             {
                                 SizeId = NodeAsContainer.Size.RelatedNodeId.ToString();
                             }
                             break;
-                        case CswNbtMetaDataObjectClassName.NbtObjectClass.RequestItemClass:
+                        case NbtObjectClass.RequestItemClass:
                             CswNbtObjClassRequestItem NodeAsRequestItem = Node;
                             if( null != NodeAsRequestItem )
                             {
@@ -346,7 +346,7 @@ namespace ChemSW.Nbt.WebServices
 
             Int32 RealNodeTypeId = CswConvert.ToInt32( NodeTypeId );
             Int32 RealObjectClassId = CswConvert.ToInt32( ObjectClassId );
-            CswNbtMetaDataObjectClassName.NbtObjectClass RealObjectClass = ObjectClass;
+            NbtObjectClass RealObjectClass = ObjectClass;
             bool CanAdd;
             Collection<CswNbtNode> Nodes = new Collection<CswNbtNode>();
             bool UseSearch = false;
@@ -381,7 +381,7 @@ namespace ChemSW.Nbt.WebServices
                     bool doGetNodes = true;
                     if( false == string.IsNullOrEmpty( RelatedToObjectClass ) && false == string.IsNullOrEmpty( RelatedToNodeId ) )
                     {
-                        CswNbtMetaDataObjectClassName.NbtObjectClass RealRelatedObjectClass = RelatedToObjectClass;
+                        NbtObjectClass RealRelatedObjectClass = RelatedToObjectClass;
                         CswPrimaryKey RelatedNodePk = new CswPrimaryKey();
                         RelatedNodePk.FromString( RelatedToNodeId );
                         if( Int32.MinValue != RelatedNodePk.PrimaryKey )

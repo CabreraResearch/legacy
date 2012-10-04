@@ -284,7 +284,7 @@ namespace ChemSw.Nbt.Test
         private List<CswNbtObjClassContainer> _getNewContainers( CswPrimaryKey SourceContainerId )
         {
             List<CswNbtObjClassContainer> NewContainers = new List<CswNbtObjClassContainer>();
-            CswNbtMetaDataObjectClass ContainerOc = TestData.CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClassName.NbtObjectClass.ContainerClass );
+            CswNbtMetaDataObjectClass ContainerOc = TestData.CswNbtResources.MetaData.getObjectClass( NbtObjectClass.ContainerClass );
             IEnumerator CurrentNodes = TestData.CswNbtResources.Nodes.GetEnumerator();
             while( CurrentNodes.MoveNext() )
             {

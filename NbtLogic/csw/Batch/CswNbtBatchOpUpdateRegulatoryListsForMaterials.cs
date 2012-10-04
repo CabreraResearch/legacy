@@ -243,7 +243,7 @@ namespace ChemSW.Nbt.Batch
 
         private CswNbtView _getMaterialsByCASNoView( string CASNo )
         {
-            CswNbtMetaDataObjectClass materialOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClassName.NbtObjectClass.MaterialClass );
+            CswNbtMetaDataObjectClass materialOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.MaterialClass );
             CswNbtMetaDataObjectClassProp casNoOCP = materialOC.getObjectClassProp( CswNbtObjClassMaterial.PropertyName.CasNo );
 
             CswNbtView view = new CswNbtView( _CswNbtResources );
@@ -255,7 +255,7 @@ namespace ChemSW.Nbt.Batch
         private CswCommaDelimitedString _getRegListsIDs()
         {
             CswCommaDelimitedString RegListNodeIDs = new CswCommaDelimitedString();
-            CswNbtMetaDataObjectClass regListOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClassName.NbtObjectClass.RegulatoryListClass );
+            CswNbtMetaDataObjectClass regListOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.RegulatoryListClass );
             foreach( CswNbtNode regList in regListOC.getNodes( false, false ) )
             {
                 RegListNodeIDs.Add( regList.NodeId.ToString() );

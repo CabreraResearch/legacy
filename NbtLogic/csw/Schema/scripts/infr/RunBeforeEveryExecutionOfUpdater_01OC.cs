@@ -19,10 +19,10 @@ namespace ChemSW.Nbt.Schema
 
             _acceptBlame( CswDeveloper.CF, 27868 );
 
-            CswNbtMetaDataObjectClass CertMethodTemplateOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClassName.NbtObjectClass.CertMethodTemplateClass );
+            CswNbtMetaDataObjectClass CertMethodTemplateOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.CertMethodTemplateClass );
             if( null == CertMethodTemplateOc )
             {
-                CertMethodTemplateOc = _CswNbtSchemaModTrnsctn.createObjectClass( CswNbtMetaDataObjectClassName.NbtObjectClass.CertMethodTemplateClass, CswNbtMetaDataIconName.NbtIcon.flask, true );
+                CertMethodTemplateOc = _CswNbtSchemaModTrnsctn.createObjectClass( NbtObjectClass.CertMethodTemplateClass, NbtIcon.flask, true );
                 _CswNbtSchemaModTrnsctn.createModuleObjectClassJunction( CswNbtModuleName.MLM, CertMethodTemplateOc.ObjectClassId );
             }
 
@@ -30,7 +30,7 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataObjectClassProp CmtMaterialOcp = CertMethodTemplateOc.getObjectClassProp( CswNbtObjClassCertMethodTemplate.PropertyName.Material );
             if( null == CmtMaterialOcp )
             {
-                CswNbtMetaDataObjectClass MaterialOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClassName.NbtObjectClass.MaterialClass );
+                CswNbtMetaDataObjectClass MaterialOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.MaterialClass );
                 CmtMaterialOcp = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( CertMethodTemplateOc )
                 {
                     PropName = CswNbtObjClassCertMethodTemplate.PropertyName.Material,
@@ -141,17 +141,17 @@ namespace ChemSW.Nbt.Schema
 
             _acceptBlame( CswDeveloper.CF, 27868 );
 
-            CswNbtMetaDataObjectClass CertMethodOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClassName.NbtObjectClass.CertMethodClass );
+            CswNbtMetaDataObjectClass CertMethodOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.CertMethodClass );
             if( null == CertMethodOc )
             {
-                CertMethodOc = _CswNbtSchemaModTrnsctn.createObjectClass( CswNbtMetaDataObjectClassName.NbtObjectClass.CertMethodClass, CswNbtMetaDataIconName.NbtIcon.flask, true );
+                CertMethodOc = _CswNbtSchemaModTrnsctn.createObjectClass( NbtObjectClass.CertMethodClass, NbtIcon.flask, true );
                 _CswNbtSchemaModTrnsctn.createModuleObjectClassJunction( CswNbtModuleName.MLM, CertMethodOc.ObjectClassId );
             }
 
             CswNbtMetaDataObjectClassProp CmTemplateOcp = CertMethodOc.getObjectClassProp( CswNbtObjClassCertMethod.PropertyName.CertMethodTemplate );
             if( null == CmTemplateOcp )
             {
-                CswNbtMetaDataObjectClass CertMethodTemplateOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClassName.NbtObjectClass.CertMethodTemplateClass );
+                CswNbtMetaDataObjectClass CertMethodTemplateOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.CertMethodTemplateClass );
                 CmTemplateOcp = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( CertMethodOc )
                 {
                     PropName = CswNbtObjClassCertMethod.PropertyName.CertMethodTemplate,
@@ -263,7 +263,7 @@ namespace ChemSW.Nbt.Schema
             #region SEBASTIAN
 
             // case 27703 - change containers dispose/dispense buttons to say "Dispose this Container" and "Dispense this Container"
-            CswNbtMetaDataObjectClass containerOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClassName.NbtObjectClass.ContainerClass );
+            CswNbtMetaDataObjectClass containerOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.ContainerClass );
 
             CswNbtMetaDataObjectClassProp dispenseOCP = containerOC.getObjectClassProp( "Dispense" );
             if( null != dispenseOCP ) //have to null check because property might have already been updated
@@ -277,7 +277,7 @@ namespace ChemSW.Nbt.Schema
                 _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( disposeOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.propname, "Dispose this Container" );
             }
 
-            CswNbtMetaDataObjectClass PrintLabelOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClassName.NbtObjectClass.PrintLabelClass );
+            CswNbtMetaDataObjectClass PrintLabelOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.PrintLabelClass );
             CswNbtMetaDataObjectClassProp ControlTypeOcp = PrintLabelOc.getObjectClassProp( "Control Type" );
             if( null != ControlTypeOcp )
             {
@@ -285,12 +285,12 @@ namespace ChemSW.Nbt.Schema
             }
 
             //upgrade RequestItem Requestor prop from NTP to OCP
-            CswNbtMetaDataObjectClass requestItemOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClassName.NbtObjectClass.RequestItemClass );
+            CswNbtMetaDataObjectClass requestItemOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.RequestItemClass );
             CswNbtMetaDataNodeType requestItemNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Request Item" );
             if( null != requestItemNT && null == requestItemOC.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Requestor ) )
             {
 
-                CswNbtMetaDataObjectClass requestOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClassName.NbtObjectClass.RequestClass );
+                CswNbtMetaDataObjectClass requestOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.RequestClass );
                 CswNbtMetaDataObjectClassProp requestorOCP = requestOC.getObjectClassProp( CswNbtObjClassRequest.PropertyName.Requestor );
                 CswNbtMetaDataObjectClassProp requestOCP = requestItemOC.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Request );
 

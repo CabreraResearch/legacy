@@ -962,7 +962,7 @@ namespace ChemSW.Nbt.Schema
         /// <summary>
         /// Convenience function for making new Object Classes
         /// </summary>
-        public CswNbtMetaDataObjectClass createObjectClass( CswNbtMetaDataObjectClassName.NbtObjectClass ObjectClass, string IconFileName, bool AuditLevel )
+        public CswNbtMetaDataObjectClass createObjectClass( NbtObjectClass ObjectClass, string IconFileName, bool AuditLevel )
         {
             if( ObjectClass == CswNbtResources.UnknownEnum )
             {
@@ -1044,7 +1044,7 @@ namespace ChemSW.Nbt.Schema
         /// <summary>
         /// Convenience wrapper for creating an Object Class Prop
         /// </summary>
-        public CswNbtMetaDataObjectClassProp createObjectClassProp( CswNbtMetaDataObjectClassName.NbtObjectClass NbtObjectClass,
+        public CswNbtMetaDataObjectClassProp createObjectClassProp( NbtObjectClass NbtObjectClass,
                                                                     CswNbtWcfMetaDataModel.ObjectClassProp OcpModel )
         {
             CswNbtMetaDataObjectClassProp RetProp = null;
@@ -1060,7 +1060,7 @@ namespace ChemSW.Nbt.Schema
         /// <summary>
         /// (Deprecated) Convenience wrapper for creating an Object Class Prop
         /// </summary>
-        public CswNbtMetaDataObjectClassProp createObjectClassProp( CswNbtMetaDataObjectClassName.NbtObjectClass NbtObjectClass,
+        public CswNbtMetaDataObjectClassProp createObjectClassProp( NbtObjectClass NbtObjectClass,
                                                                     string PropName,
                                                                     CswNbtMetaDataFieldType.NbtFieldType FieldType,
                                                                     bool IsBatchEntry = false,

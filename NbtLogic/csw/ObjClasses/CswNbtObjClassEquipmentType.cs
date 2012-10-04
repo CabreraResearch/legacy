@@ -22,7 +22,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
-            get { return _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClassName.NbtObjectClass.EquipmentTypeClass ); }
+            get { return _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.EquipmentTypeClass ); }
         }
 
         /// <summary>
@@ -31,7 +31,7 @@ namespace ChemSW.Nbt.ObjClasses
         public static implicit operator CswNbtObjClassEquipmentType( CswNbtNode Node )
         {
             CswNbtObjClassEquipmentType ret = null;
-            if( null != Node && _Validate( Node, CswNbtMetaDataObjectClassName.NbtObjectClass.EquipmentTypeClass ) )
+            if( null != Node && _Validate( Node, NbtObjectClass.EquipmentTypeClass ) )
             {
                 ret = (CswNbtObjClassEquipmentType) Node.ObjClass;
             }

@@ -14,7 +14,7 @@ namespace ChemSW.Nbt.MetaData
         public const string IconPrefix18 = "Images/newicons/18/";
         public const string IconPrefix100 = "Images/newicons/100/";
 
-        public static CswNbtMetaDataObjectClassName.NbtObjectClass getObjectClassFromString( string ObjectClassName )
+        public static NbtObjectClass getObjectClassFromString( string ObjectClassName )
         {
             //bz # 7815 -- Should not care if the requested object class doesn't exist anymore
             return ( ObjectClassName );
@@ -59,7 +59,7 @@ namespace ChemSW.Nbt.MetaData
         //{
         //    get { return _ObjectClassRow["tablename"].ToString(); }
         //}
-        public CswNbtMetaDataObjectClassName.NbtObjectClass ObjectClass
+        public NbtObjectClass ObjectClass
         {
             get { return getObjectClassFromString( _ObjectClassRow["objectclass"].ToString() ); }
         }
@@ -187,14 +187,14 @@ namespace ChemSW.Nbt.MetaData
         {
             get
             {
-                return ( ( ( ObjectClass != CswNbtMetaDataObjectClassName.NbtObjectClass.RoleClass &&
-                             ObjectClass != CswNbtMetaDataObjectClassName.NbtObjectClass.UserClass ) ||
+                return ( ( ( ObjectClass != NbtObjectClass.RoleClass &&
+                             ObjectClass != NbtObjectClass.UserClass ) ||
                            _CswNbtMetaDataResources.CswNbtResources.CurrentNbtUser.IsAdministrator() ) &&
-                       ObjectClass != CswNbtMetaDataObjectClassName.NbtObjectClass.RequestItemClass &&
-                       ObjectClass != CswNbtMetaDataObjectClassName.NbtObjectClass.RequestClass &&
-                       ObjectClass != CswNbtMetaDataObjectClassName.NbtObjectClass.ContainerClass &&
-                       ObjectClass != CswNbtMetaDataObjectClassName.NbtObjectClass.MaterialClass &&
-                       ObjectClass != CswNbtMetaDataObjectClassName.NbtObjectClass.ContainerDispenseTransactionClass );
+                       ObjectClass != NbtObjectClass.RequestItemClass &&
+                       ObjectClass != NbtObjectClass.RequestClass &&
+                       ObjectClass != NbtObjectClass.ContainerClass &&
+                       ObjectClass != NbtObjectClass.MaterialClass &&
+                       ObjectClass != NbtObjectClass.ContainerDispenseTransactionClass );
             }
         } // CanAdd
 
