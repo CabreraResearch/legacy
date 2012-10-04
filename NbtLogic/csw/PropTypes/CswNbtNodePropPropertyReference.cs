@@ -65,10 +65,6 @@ namespace ChemSW.Nbt.PropTypes
             {
                 return _CswNbtMetaDataNodeTypeProp.FKValue;
             }
-            //set
-            //{
-            //    _CswNbtMetaDataNodeTypeProp.FKValue = value;
-            //}
         }
         public NbtViewPropIdType RelationshipType
         {
@@ -84,25 +80,13 @@ namespace ChemSW.Nbt.PropTypes
             {
                 return _CswNbtMetaDataNodeTypeProp.ValuePropId;
             }
-            //set
-            //{
-            //    _CswNbtMetaDataNodeTypeProp.ValuePropId = value;
-            //}
         }
         public NbtViewPropIdType RelatedPropType
         {
             get
             {
-                //if( _CswNbtMetaDataNodeTypeProp.ValuePropType != String.Empty )
-                //    return (NbtViewPropIdType) Enum.Parse( typeof( NbtViewPropIdType ), _CswNbtMetaDataNodeTypeProp.ValuePropType, true );
-                //else
-                //    return NbtViewPropIdType.Unknown;
                 return (NbtViewPropIdType) _CswNbtMetaDataNodeTypeProp.ValuePropType;
             }
-            //set
-            //{
-            //    _CswNbtMetaDataNodeTypeProp.ValuePropType = value.ToString();
-            //}
         }
 
 
@@ -133,15 +117,6 @@ namespace ChemSW.Nbt.PropTypes
                     throw new CswDniException( "RecalculateReferenceValue(): RelationshipId is not valid:" + RelationshipId.ToString() );
                 }
 
-                //ICswNbtMetaDataProp RelatedProp = null;
-                //if( RelatedPropType == NbtViewPropIdType.NodeTypePropId )
-                //    RelatedProp = _CswNbtResources.MetaData.getNodeTypeProp( RelatedPropId );
-                //else
-                //    RelatedProp = _CswNbtResources.MetaData.getObjectClassProp( RelatedPropId );
-
-                //if( RelatedProp == null )
-                //    throw new CswDniException( "RecalculateReferenceValue(): RelatedPropId is not valid:" + RelatedPropId.ToString() );
-
                 CswNbtView ReferenceView = new CswNbtView( _CswNbtResources );
                 ReferenceView.Root.Selectable = false;
                 ReferenceView.ViewName = "CswNbtNodePropPropertyReference.RecalculateReferenceValue()";
@@ -151,9 +126,6 @@ namespace ChemSW.Nbt.PropTypes
 
                 ReferenceView.AddViewRelationship( ThisNodeRelationship, NbtViewPropOwnerType.First, RelationshipProp, false );
 
-                //ReferenceView.Root.NodeIdsToFilterIn.Add(_CswNbtNodePropData.NodeId);
-                //ReferenceView.Root.FilterInNodesRecursively = false;
-                //ICswNbtTree ReferenceTree = _CswNbtResources.Trees.getTreeFromView(ReferenceView, _CswNbtNodePropData.NodeId, true);
                 ICswNbtTree ReferenceTree = _CswNbtResources.Trees.getTreeFromView( ReferenceView, true, true, false, false );
                 if( ReferenceTree == null )
                     throw new CswDniException( "RecalculateReferenceValue(): ReferenceTree is null" );
@@ -167,21 +139,6 @@ namespace ChemSW.Nbt.PropTypes
                     {
                         ReferenceTree.goToNthChild( 0 );
                         CswNbtNode RelatedNode = ReferenceTree.getNodeForCurrentPosition();
-                        //if( RelatedPropType == NbtViewPropIdType.NodeTypePropId )
-                        //{
-                        //    Value = ( (CswNbtNodePropWrapper) RelatedNode.Properties[_CswNbtResources.MetaData.getNodeTypePropVersion( RelatedNode.NodeTypeId, RelatedPropId )] ).Gestalt;
-                        //}
-                        //else
-                        //{
-                        //    foreach( CswNbtNodePropWrapper Prop in RelatedNode.Properties )
-                        //    {
-                        //        if( Prop.ObjectClassPropId == RelatedPropId )
-                        //            Value = Prop.Gestalt;
-                        //    }
-                        //}
-
-                        // Match by propname
-
                         CswNbtMetaDataNodeTypeProp StoredRelatedProp = null;
                         if( RelatedPropType == NbtViewPropIdType.NodeTypePropId )
                         {
