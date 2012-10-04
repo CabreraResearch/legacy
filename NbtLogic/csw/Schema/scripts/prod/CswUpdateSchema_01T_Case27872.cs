@@ -18,24 +18,24 @@ namespace ChemSW.Nbt.Schema
                 //LQNo NodeType
                 CswNbtMetaDataNodeType LQNoNt = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( GenericOc.ObjectClassId, "LQNo", "MLM" );
                 _CswNbtSchemaModTrnsctn.createModuleNodeTypeJunction( CswNbtModuleName.CISPro, LQNoNt.NodeTypeId );
-                CswNbtMetaDataNodeTypeProp LQNoNTP = _createNewProp( LQNoNt, "LQNo", CswNbtMetaDataFieldType.NbtFieldType.Text );
-                LQNoNTP.setIsUnique( true );
-                CswNbtMetaDataNodeTypeProp LimitNtp = _createNewProp( LQNoNt, "Limit", CswNbtMetaDataFieldType.NbtFieldType.Quantity );
-                LimitNtp.IsRequired = true;
+                CswNbtMetaDataNodeTypeProp LQNoLQNoNtp = _createNewProp( LQNoNt, "LQNo", CswNbtMetaDataFieldType.NbtFieldType.Text );
+                LQNoLQNoNtp.setIsUnique( true );
+                CswNbtMetaDataNodeTypeProp LQNoLimitNtp = _createNewProp( LQNoNt, "Limit", CswNbtMetaDataFieldType.NbtFieldType.Quantity );
+                LQNoLimitNtp.IsRequired = true;
                 CswNbtMetaDataNodeType WeightNt = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Unit (Weight)" );
                 if( null != WeightNt )
                 {
-                    LimitNtp.SetFK( NbtViewRelatedIdType.NodeTypeId.ToString(), WeightNt.NodeTypeId );
+                    LQNoLimitNtp.SetFK( NbtViewRelatedIdType.NodeTypeId.ToString(), WeightNt.NodeTypeId );
                 }
                 LQNoNt.setNameTemplateText( CswNbtMetaData.MakeTemplateEntry( "LQNo" ) );
 
                 //UNCode NodeType
                 CswNbtMetaDataNodeType UNCodeNt = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( GenericOc.ObjectClassId, "UN Code", "MLM" );
                 _CswNbtSchemaModTrnsctn.createModuleNodeTypeJunction( CswNbtModuleName.CISPro, UNCodeNt.NodeTypeId );
-                CswNbtMetaDataNodeTypeProp UNCodeNtp = _createNewProp( UNCodeNt, "UN Code", CswNbtMetaDataFieldType.NbtFieldType.Text );
-                UNCodeNtp.setIsUnique( true );
-                CswNbtMetaDataNodeTypeProp LQNoNtp = _createNewProp( UNCodeNt, "LQNo", CswNbtMetaDataFieldType.NbtFieldType.Relationship, false );
-                LQNoNtp.SetFK( NbtViewRelatedIdType.NodeTypeId.ToString(), LQNoNt.NodeTypeId );
+                CswNbtMetaDataNodeTypeProp UNCodeUNCodeNtp = _createNewProp( UNCodeNt, "UN Code", CswNbtMetaDataFieldType.NbtFieldType.Text );
+                UNCodeUNCodeNtp.setIsUnique( true );
+                CswNbtMetaDataNodeTypeProp UNCodeLQNoNtp = _createNewProp( UNCodeNt, "LQNo", CswNbtMetaDataFieldType.NbtFieldType.Relationship, false );
+                UNCodeLQNoNtp.SetFK( NbtViewRelatedIdType.NodeTypeId.ToString(), LQNoNt.NodeTypeId );
                 UNCodeNt.setNameTemplateText( CswNbtMetaData.MakeTemplateEntry( "UN Code" ) );
 
                 //Create Demo Data
@@ -50,15 +50,15 @@ namespace ChemSW.Nbt.Schema
                         }
                     }
                     CswNbtNode LQNoNode = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( LQNoNt.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode );
-                    LQNoNode.Properties[LQNoNTP].AsText.Text = "1 Metric Ton";
-                    LQNoNode.Properties[LimitNtp].AsQuantity.Quantity = 1000;
-                    LQNoNode.Properties[LimitNtp].AsQuantity.UnitId = kgNodeId;
+                    LQNoNode.Properties[LQNoLQNoNtp].AsText.Text = "1 Metric Ton";
+                    LQNoNode.Properties[LQNoLimitNtp].AsQuantity.Quantity = 1000;
+                    LQNoNode.Properties[LQNoLimitNtp].AsQuantity.UnitId = kgNodeId;
                     LQNoNode.IsDemo = true;
                     LQNoNode.postChanges( false );
 
                     CswNbtNode UNCodeNode = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( UNCodeNt.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode );
-                    UNCodeNode.Properties[LQNoNtp].AsRelationship.RelatedNodeId = LQNoNode.NodeId;
-                    UNCodeNode.Properties[UNCodeNtp].AsText.Text = "US ITH";
+                    UNCodeNode.Properties[UNCodeLQNoNtp].AsRelationship.RelatedNodeId = LQNoNode.NodeId;
+                    UNCodeNode.Properties[UNCodeUNCodeNtp].AsText.Text = "US ITH";
                     UNCodeNode.IsDemo = true;
                     UNCodeNode.postChanges( false );
                 }
@@ -74,7 +74,7 @@ namespace ChemSW.Nbt.Schema
                 LQNoView.Category = "MLM";
                 LQNoView.ViewMode = NbtViewRenderingMode.Tree;
                 CswNbtViewRelationship LQNoRelationship = LQNoView.AddViewRelationship( LQNoNt, true );
-                LQNoView.AddViewRelationship( LQNoRelationship, NbtViewPropOwnerType.Second, LQNoNtp, false );
+                LQNoView.AddViewRelationship( LQNoRelationship, NbtViewPropOwnerType.Second, UNCodeLQNoNtp, false );
                 LQNoView.save();
 
                 //Update Chemical to include UN Code
