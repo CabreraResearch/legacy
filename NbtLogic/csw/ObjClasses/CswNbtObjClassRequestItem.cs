@@ -40,11 +40,12 @@ namespace ChemSW.Nbt.ObjClasses
 
         public sealed class Types
         {
+            public const string CreateMaterial = "Create Material";
             public const string Dispense = "Dispense Container";
-            public const string Request = "Request Material";
-            public const string Move = "Move Container";
             public const string Dispose = "Dispose Container";
-            public static readonly CswCommaDelimitedString Options = new CswCommaDelimitedString { Dispense, Request, Move, Dispose };
+            public const string Move = "Move Container";
+            public const string Request = "Request Material";
+            public static readonly CswCommaDelimitedString Options = new CswCommaDelimitedString { CreateMaterial, Dispense, Dispose, Move, Request };
         }
 
         public sealed class RequestsBy
@@ -75,6 +76,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public sealed class FulfillMenu
         {
+            public const string CreateMaterial = "Create Material";
             public const string Order = "Order";
             public const string Receive = "Receive";
             public const string Dispense = "Dispense this Container";
@@ -87,18 +89,23 @@ namespace ChemSW.Nbt.ObjClasses
                 {
                     Order, Receive, Dispense, Dispose, Move, Complete, Cancel
                 };
+            public static readonly CswCommaDelimitedString CreateMaterialOptions = new CswCommaDelimitedString
+                {
+                    CreateMaterial, Complete, Cancel
+                };
             public static readonly CswCommaDelimitedString DispenseOptions = new CswCommaDelimitedString
                 {
                     Order, Receive, Dispense, Complete, Cancel
-                };
-            public static readonly CswCommaDelimitedString MoveOptions = new CswCommaDelimitedString
-                {
-                    Move, Complete, Cancel
                 };
             public static readonly CswCommaDelimitedString DisposeOptions = new CswCommaDelimitedString
                 {
                     Dispose, Complete, Cancel
                 };
+            public static readonly CswCommaDelimitedString MoveOptions = new CswCommaDelimitedString
+                {
+                    Move, Complete, Cancel
+                };
+
 
         }
 
