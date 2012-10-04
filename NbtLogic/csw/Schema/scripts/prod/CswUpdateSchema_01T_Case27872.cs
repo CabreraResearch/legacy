@@ -23,7 +23,7 @@ namespace ChemSW.Nbt.Schema
                 CswNbtMetaDataNodeTypeProp LimitNtp = _createNewProp( LQNoNt, "Limit", CswNbtMetaDataFieldType.NbtFieldType.Quantity );
                 LimitNtp.IsRequired = true;
                 CswNbtMetaDataNodeType WeightNt = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Unit (Weight)" );
-                if( WeightNt != null )
+                if( null != WeightNt )
                 {
                     LimitNtp.SetFK( NbtViewRelatedIdType.NodeTypeId.ToString(), WeightNt.NodeTypeId );
                 }
@@ -39,12 +39,12 @@ namespace ChemSW.Nbt.Schema
                 UNCodeNt.setNameTemplateText( CswNbtMetaData.MakeTemplateEntry( "UN Code" ) );
 
                 //Create Demo Data
-                if( WeightNt != null )
+                if( null != WeightNt )
                 {
                     CswPrimaryKey kgNodeId = null;
                     foreach( CswNbtObjClassUnitOfMeasure WeightNode in WeightNt.getNodes( false, false ) )
                     {
-                        if( WeightNode.Name.Text == "kg" )
+                        if( "kg" == WeightNode.Name.Text )
                         {
                             kgNodeId = WeightNode.NodeId;
                         }
@@ -79,7 +79,7 @@ namespace ChemSW.Nbt.Schema
 
                 //Update Chemical to include UN Code
                 CswNbtMetaDataNodeType ChemicalNt = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Chemical" );
-                if( ChemicalNt != null )
+                if( null != ChemicalNt )
                 {
                     CswNbtMetaDataNodeTypeProp ChemUNCodeNtp = _createNewProp( ChemicalNt, "UN Code", CswNbtMetaDataFieldType.NbtFieldType.Relationship, false );
                     ChemUNCodeNtp.SetFK( NbtViewRelatedIdType.NodeTypeId.ToString(), UNCodeNt.NodeTypeId );
