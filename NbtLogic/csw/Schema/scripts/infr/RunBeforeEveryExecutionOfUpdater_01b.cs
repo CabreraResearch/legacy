@@ -97,6 +97,49 @@ namespace ChemSW.Nbt.Schema
 
             #endregion
 
+            #region Case 27865 part 2 - Manufactuerer Equivalent Part
+
+            CswNbtMetaDataObjectClass manufactuerEquivalentPartOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.ManufacturerEquivalentPartClass );
+            if( null == manufactuerEquivalentPartOC )
+            {
+                manufactuerEquivalentPartOC = _CswNbtSchemaModTrnsctn.createObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.ManufacturerEquivalentPartClass, "gearset.png", false, false );
+
+                CswNbtMetaDataObjectClassProp epOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( manufactuerEquivalentPartOC )
+                {
+                    PropName = CswNbtObjClassManufacturerEquivalentPart.PropertyName.EnterprisePart,
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Relationship,
+                    IsFk = true,
+                    FkType = NbtViewRelatedIdType.ObjectClassId.ToString(),
+                    FkValue = enterprisePartOC.ObjectClassId
+                } );
+
+                CswNbtMetaDataObjectClass materialOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass );
+                CswNbtMetaDataObjectClassProp materialOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( manufactuerEquivalentPartOC )
+                {
+                    PropName = CswNbtObjClassManufacturerEquivalentPart.PropertyName.Material,
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Relationship,
+                    IsFk = true,
+                    FkType = NbtViewRelatedIdType.ObjectClassId.ToString(),
+                    FkValue = materialOC.ObjectClassId
+                } );
+
+                CswNbtMetaDataObjectClass vendorOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.VendorClass );
+                CswNbtMetaDataObjectClassProp manufacturerOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( manufactuerEquivalentPartOC )
+                {
+                    PropName = CswNbtObjClassManufacturerEquivalentPart.PropertyName.Manufacturer,
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Relationship,
+                    IsFk = true,
+                    FkType = NbtViewRelatedIdType.ObjectClassId.ToString(),
+                    FkValue = vendorOC.ObjectClassId
+                } );
+                CswNbtMetaDataObjectClassProp vendorTypeOCP = vendorOC.getObjectClassProp( CswNbtObjClassVendor.PropertyName.VendorTypeName );
+                manufacturerOCP.setFilter( vendorTypeOCP, vendorTypeOCP.getFieldTypeRule().SubFields.Default, CswNbtPropFilterSql.PropertyFilterMode.Equals, "Manufacturing" );
+
+                _CswNbtSchemaModTrnsctn.createModuleObjectClassJunction( CswNbtModuleName.CISPro, manufactuerEquivalentPartOC.ObjectClassId );
+            }
+
+            #endregion
+
             #endregion TITANIA
 
 
