@@ -155,7 +155,7 @@ namespace ChemSW.Nbt.ObjClasses
                 } // if(CurrentProp.WasModified)
             } // foreach (CswNbtNodePropWrapper CurrentProp in _CswNbtNode.Properties)
 
-            if( CompoundUniqueProps.Count > 0 )
+            if( CompoundUniqueProps.Count > 0 && NodeId != null )
             {
 
                 if( false == IsCopy && false == OverrideUniqueValidation )
@@ -281,7 +281,12 @@ namespace ChemSW.Nbt.ObjClasses
                     }
                     else
                     {
-                        InUseStr.Add( _CswNbtResources.makeClientNodeReference( _CswNbtResources.Nodes[MatchNodePk] ) );
+                        CswNbtNode RelatedNode = _CswNbtResources.Nodes[MatchNodePk];
+                        if( null != RelatedNode )
+                        {
+                            InUseStr.Add( RelatedNode.NodeLink );
+                        }
+
                     }
                 }
                 if( false == DeleteAllRequiredRelatedNodes )

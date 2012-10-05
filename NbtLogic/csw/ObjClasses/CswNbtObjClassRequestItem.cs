@@ -34,6 +34,8 @@ namespace ChemSW.Nbt.ObjClasses
             public const string Fulfill = "Fulfill";
             public const string InventoryGroup = "Inventory Group";
             public const string TotalDispensed = "Total Dispensed";
+            public const string Name = "Name";
+            public const string Requestor = "Requestor";
         }
 
         public sealed class Types
@@ -47,9 +49,8 @@ namespace ChemSW.Nbt.ObjClasses
 
         public sealed class RequestsBy
         {
-            public const string Bulk = "Bulk";
-            public const string Size = "Size";
-            public const string Quantity = "Quantity";
+            public const string Bulk = "Request By Bulk";
+            public const string Size = "Request By Size";
 
             public static readonly CswCommaDelimitedString Options = new CswCommaDelimitedString { Bulk, Size };
         }
@@ -76,9 +77,9 @@ namespace ChemSW.Nbt.ObjClasses
         {
             public const string Order = "Order";
             public const string Receive = "Receive";
-            public const string Dispense = "Dispense";
+            public const string Dispense = "Dispense this Container";
             public const string Move = "Move";
-            public const string Dispose = "Dispose";
+            public const string Dispose = "Dispose this Container";
             public const string Complete = "Complete Request";
             public const string Cancel = "Cancel Request";
 
@@ -234,6 +235,53 @@ namespace ChemSW.Nbt.ObjClasses
                 }
             }
 
+            //case 2753 - naming logic
+            if( false == IsTemp )
+            {
+                switch( Type.Value )
+                {
+                    case Types.Request:
+                        if( RequestBy.Value.Equals( RequestsBy.Size ) && CswTools.IsPrimaryKey( Size.RelatedNodeId ) ) //request material by size
+                        {
+                            CswNbtObjClassSize sizeNode = _CswNbtResources.Nodes.GetNode( Size.RelatedNodeId );
+                            if( null != sizeNode )
+                            {
+                                Name.Text = "Request " + Count.Value + " x " + sizeNode.Node.NodeName;
+                            }
+                        }
+                        else //request material by bulk
+                        {
+                            Name.Text = "Request " + Quantity.Quantity + Quantity.CachedUnitName;
+                        }
+                        break;
+                    case Types.Dispense:
+                        if( null != Container.RelatedNodeId )
+                        {
+                            CswNbtObjClassContainer containerNode = _CswNbtResources.Nodes.GetNode( Container.RelatedNodeId );
+                            Name.Text = "Dispense " + containerNode.Quantity.Quantity + containerNode.Quantity.CachedUnitName + " from Container " + containerNode.Barcode.Barcode;
+                        }
+                        break;
+                    case Types.Dispose:
+                        if( null != Container.RelatedNodeId )
+                        {
+                            CswNbtObjClassContainer containerNode = _CswNbtResources.Nodes.GetNode( Container.RelatedNodeId );
+                            Name.Text = "Dispose Container " + containerNode.Barcode.Barcode;
+                        }
+                        break;
+                    case Types.Move:
+                        if( null != Container.RelatedNodeId )
+                        {
+                            CswNbtObjClassContainer containerNode = _CswNbtResources.Nodes.GetNode( Container.RelatedNodeId );
+                            Name.Text = "Move Container " + containerNode.Barcode.Barcode;
+                        }
+                        break;
+                    default:
+                        throw new CswDniException( ErrorType.Warning,
+                            "An invalid request type was encountered",
+                            "An invald request type of " + Type.Value + " was encountered." );
+                }
+            }
+
             _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
         }//beforeWriteNode()
 
@@ -321,25 +369,25 @@ namespace ChemSW.Nbt.ObjClasses
                                 {
                                     ButtonData.Data["containernodetypeid"] = Container.TargetId;
                                     ButtonData.Data["containerobjectclassid"] = Container.TargetId;
-                                    JObject Capacity = null;
+                                    JObject InitialQuantity = null;
                                     if( null != Size.RelatedNodeId && Int32.MinValue != Size.RelatedNodeId.PrimaryKey )
                                     {
                                         CswNbtObjClassSize NodeAsSize = _CswNbtResources.Nodes[Size.RelatedNodeId];
                                         if( null != NodeAsSize )
                                         {
-                                            Capacity = new JObject();
-                                            NodeAsSize.InitialQuantity.ToJSON( Capacity );
-                                            ButtonData.Data["capacity"] = Capacity;
+                                            InitialQuantity = new JObject();
+                                            NodeAsSize.InitialQuantity.ToJSON( InitialQuantity );
+                                            ButtonData.Data["initialQuantity"] = InitialQuantity;
                                         }
                                     }
                                     else if( false == Quantity.Empty )
                                     {
-                                        Capacity = new JObject();
-                                        Quantity.ToJSON( Capacity );
+                                        InitialQuantity = new JObject();
+                                        Quantity.ToJSON( InitialQuantity );
                                     }
-                                    if( null != Capacity )
+                                    if( null != InitialQuantity )
                                     {
-                                        ButtonData.Data["capacity"] = Capacity;
+                                        ButtonData.Data["initialQuantity"] = InitialQuantity;
                                     }
                                     ButtonData.Action = NbtButtonAction.dispense;
                                 }
@@ -359,12 +407,18 @@ namespace ChemSW.Nbt.ObjClasses
                                     NodeAsContainer = _CswNbtResources.Nodes.GetNode( Container.RelatedNodeId );
                                     if( null != NodeAsContainer )
                                     {
-                                        ButtonData.Data["nodeid"] = Container.RelatedNodeId.ToString();
-                                        CswPropIdAttr LocIdAttr = new CswPropIdAttr( NodeAsContainer.Node, NodeAsContainer.Location.NodeTypeProp );
-                                        ButtonData.Data["propidattr"] = LocIdAttr.ToString();
-                                        Status.Value = Statuses.Moved;
-                                        ButtonData.Action = NbtButtonAction.editprop;
-                                        ButtonData.Data["title"] = "Set " + NodeAsContainer.Node.NodeName + " Container's Location";
+                                        NodeAsContainer.Location.SelectedNodeId = Location.SelectedNodeId;
+                                        NodeAsContainer.Location.CachedNodeName = Location.CachedNodeName;
+                                        NodeAsContainer.Location.CachedPath = Location.CachedPath;
+                                        NodeAsContainer.postChanges( false );
+                                        Status.Value = Statuses.Completed;
+                                        ButtonData.Action = NbtButtonAction.refresh;
+                                        //ButtonData.Data["nodeid"] = Container.RelatedNodeId.ToString();
+                                        //CswPropIdAttr LocIdAttr = new CswPropIdAttr( NodeAsContainer.Node, NodeAsContainer.Location.NodeTypeProp );
+                                        //ButtonData.Data["propidattr"] = LocIdAttr.ToString();
+                                        //Status.Value = Statuses.Moved;
+                                        //ButtonData.Action = NbtButtonAction.editprop;
+                                        //ButtonData.Data["title"] = "Set " + NodeAsContainer.Node.NodeName + " Container's Location";
                                     }
                                 }
                                 break;
@@ -518,7 +572,6 @@ namespace ChemSW.Nbt.ObjClasses
                     Quantity.UnitId = null;
                     Quantity.Quantity = Double.NaN;
                     break;
-                case RequestsBy.Quantity:
                 case RequestsBy.Bulk:
                     Size.CachedNodeName = "";
                     Size.RelatedNodeId = null;
@@ -611,6 +664,14 @@ namespace ChemSW.Nbt.ObjClasses
             Fulfill.setHidden( value: ( Status.Value == Statuses.Pending || Status.Value == Statuses.Completed || Status.Value == Statuses.Cancelled ), SaveToDb: true );
             TotalDispensed.setHidden( value: ( Status.Value == Statuses.Pending || ( Type.Value != Types.Dispense && Type.Value != Types.Request ) ), SaveToDb: true );
 
+            //27800 - don't show redundant props when status is pending
+            Request.setHidden( value: ( Status.Value == Statuses.Pending ), SaveToDb: true );
+            RequestBy.setHidden( value: ( Status.Value == Statuses.Pending ), SaveToDb: true );
+            Name.setHidden( value: ( Status.Value == Statuses.Pending ), SaveToDb: true );
+            Requestor.setHidden( value: ( Status.Value == Statuses.Pending ), SaveToDb: true );
+            Status.setHidden( value: ( Status.Value == Statuses.Pending ), SaveToDb: true );
+            Type.setHidden( value: ( Status.Value == Statuses.Pending ), SaveToDb: true );
+
             switch( Status.Value )
             {
                 case Statuses.Submitted:
@@ -698,6 +759,10 @@ namespace ChemSW.Nbt.ObjClasses
                 }
             }
         }
+
+        public CswNbtNodePropText Name { get { return _CswNbtNode.Properties[PropertyName.Name]; } }
+
+        public CswNbtNodePropPropertyReference Requestor { get { return _CswNbtNode.Properties[PropertyName.Requestor]; } }
 
         #endregion
     }//CswNbtObjClassRequestItem

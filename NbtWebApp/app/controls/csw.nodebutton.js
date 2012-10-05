@@ -24,14 +24,13 @@
                         confirmmessage: '',
                         table: {},
                         btnCell: {},
-                        size: 'medium',
+                        size: 'small',
                         propId: '',
-                        onClickSuccess: null,
                         onClickAction: null,
-                        editmode: ''
+                        disabled: false
                     };
                     Csw.extend(cswPrivate, options);
-                    cswPrivate.div = cswParent.div();
+                    cswPrivate.div = cswParent.div({ ID: window.Ext.id() });
                     cswPrivate.div.empty();
 
                     cswPrivate.table = cswPrivate.div.table({
@@ -48,14 +47,14 @@
                     } else {
                         // Case 27263: prompt to save instead
                         if (Csw.clientChanges.manuallyCheckChanges()) {
-                            var performOnObjectClassButtonClick = function() {
+                            var performOnObjectClassButtonClick = function () {
                                 Csw.ajax.post({
                                     urlMethod: 'onObjectClassButtonClick',
                                     data: {
                                         NodeTypePropAttr: cswPrivate.propId,
                                         SelectedText: Csw.string(cswPublic.button.selectedOption, Csw.string(cswPrivate.value))
                                     },
-                                    success: function(data) {
+                                    success: function (data) {
                                         cswPublic.button.enable();
 
                                         var actionData = {
@@ -72,26 +71,14 @@
                                             if (false === cswPrivate.useToolTip) {
                                                 cswPublic.messageDiv.text(data.message);
                                             } else {
-                                                window.Ext.create('Ext.tip.ToolTip', {
-                                                    target: Csw.makeId(cswPrivate.ID, 'tbl'),
-                                                    html: data.message,
-                                                    autoShow: true,
-                                                    focusOnToFront: true,
-                                                    autoHide: false,
-                                                    closable: true,
-                                                    anchor: 'left',
-                                                    bodyStyle: {
-                                                        background: '#ffff00'
-                                                    }
-                                                });
+                                                cswPrivate.btnCell.quickTip({ html: data.message });
                                             }
                                         }
-                                        var continueToPub = false === Csw.isFunction(cswPrivate.onClickSuccess) || Csw.tryExec(cswPrivate.onClickSuccess, data);
-                                        if (Csw.bool(data.success) && continueToPub) {
+                                        if (Csw.bool(data.success)) {
                                             Csw.publish(Csw.enums.events.objectClassButtonClick, actionData);
                                         }
                                     }, // ajax success()
-                                    error: function() {
+                                    error: function () {
                                         cswPublic.button.enable();
                                     }
                                 }); // ajax.post()
@@ -134,7 +121,7 @@
                                 disabledText: cswPrivate.value,
                                 disableOnClick: true,
                                 onClick: cswPrivate.onButtonClick,
-                                editmode: cswPrivate.editmode
+                                disabled: cswPrivate.disabled
                             });
                             break;
                         case 'menu':
@@ -148,11 +135,11 @@
                                     cswPrivate.selectedText = selectedOption;
                                     cswPrivate.onButtonClick();
                                 },
-                                editmode: cswPrivate.editmode
+                                disabled: cswPrivate.disabled
                             });
                             break;
-                        //case 'link':           
-                        //this is a fallthrough case           
+                        //case 'link':                     
+                        //this is a fallthrough case                     
                         default:
                             cswPublic.button = cswPrivate.btnCell.a({
                                 ID: cswPrivate.buttonId,
@@ -170,10 +157,7 @@
                         ID: Csw.makeId(cswPrivate.buttonId, 'msg'),
                         cssclass: 'buttonmessage'
                     });
-                    
-                    if (cswPrivate.Required) {
-                        cswPublic.button.addClass('required');
-                    }
+                    //cswPublic.button.required(cswPrivate.Required);
                 } ());
             });
             return cswPublic;

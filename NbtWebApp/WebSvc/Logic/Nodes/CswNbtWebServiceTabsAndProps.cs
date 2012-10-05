@@ -20,9 +20,9 @@ namespace ChemSW.Nbt.WebServices
 
         }
 
-        public JObject getTabs( string NodeId, string NodeKey, Int32 NodeTypeId, CswDateTime Date, string filterToPropId )
+        public JObject getTabs( string NodeId, string NodeKey, CswDateTime Date, string filterToPropId )
         {
-            return _TabsPropsSd.getTabs( NodeId, NodeKey, NodeTypeId, Date, filterToPropId );
+            return _TabsPropsSd.getTabs( NodeId, NodeKey, Date, filterToPropId );
         } // getTabs()
 
         public void _makeTab( JObject ParentObj, Int32 TabOrder, string Id, string Name, bool CanEditLayout )
@@ -100,7 +100,7 @@ namespace ChemSW.Nbt.WebServices
             return _TabsPropsSd.ClearPropValue( PropIdAttr, IncludeBlob );
         } // ClearPropValue()
 
-        public bool saveMolProp( string moldata, string propIdAttr )
+        public JObject saveMolProp( string moldata, string propIdAttr )
         {
             return _TabsPropsSd.saveMolProp( moldata, propIdAttr );
         }

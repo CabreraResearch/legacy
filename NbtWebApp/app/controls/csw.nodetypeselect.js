@@ -10,6 +10,7 @@
                 $parent: '',
                 ID: '',
                 value: '',
+                selectedName: '',
                 nodeTypesUrlMethod: 'getNodeTypes',
                 nodetypeid: '',
                 objectClassName: '',
@@ -77,8 +78,11 @@
                                 delete thisNodeType.name;
                                 lastNodeTypeId = id;
                                 ret.nodetypecount += 1;
-                                if (false === Csw.isNullOrEmpty(cswPrivate.value) &&
-                                    Csw.number(cswPrivate.value) === Csw.number(id)) {
+                                if ((false === Csw.isNullOrEmpty(cswPrivate.value) &&
+                                    Csw.number(cswPrivate.value) === Csw.number(id)) ||
+                                    (Csw.isNullOrEmpty(cswPrivate.value) &&
+                                    false === Csw.isNullOrEmpty(cswPrivate.selectedName) &&
+                                    cswPrivate.selectedName === name)) {
                                     option = cswPublic.option({ value: id, display: name, isSelected: true });
                                 } else {
                                     option = cswPublic.option({ value: id, display: name });

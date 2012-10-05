@@ -9,7 +9,7 @@
 
             var cswPrivate = {
                 uri: 'Views',
-                viewMethod: 'ViewSelect',
+                viewMethod: 'Views/ViewSelect',
                 ID: 'viewselect',
                 onSelect: null,
                 onSuccess: null,
@@ -146,21 +146,7 @@
             };
 
             cswPublic.val = cswPublic.value;
-
-            cswPublic.refreshRecent = function () {
-                if (cswPrivate.includeRecent) {
-                    Csw.ajaxWcf.post({
-                        urlMethod: cswPrivate.viewMethod,
-                        data: {
-                            LimitToRecent: true
-                        },
-                        success: function (data) {
-                            Csw.each(data.categories, cswPrivate.addCategory);
-                        }
-                    });
-                }
-            }; // refreshRecent()
-
+            
             return cswPublic;
         });
 })();

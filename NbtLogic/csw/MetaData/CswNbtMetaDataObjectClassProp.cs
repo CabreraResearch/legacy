@@ -329,13 +329,16 @@ namespace ChemSW.Nbt.MetaData
         {
             get { return CswConvert.ToBoolean( _ObjectClassPropRow["servermanaged"] ); }
         }
+
         public string FKType
         {
             get { return _ObjectClassPropRow["fktype"].ToString(); }
+            private set { _ObjectClassPropRow["fktype"] = value; }
         }
         public bool IsFK
         {
             get { return CswConvert.ToBoolean( _ObjectClassPropRow["isfk"] ); }
+            private set { _ObjectClassPropRow["isfk"] = CswConvert.ToDbVal( value ); }
         }
         public Int32 FKValue
         {
@@ -346,15 +349,18 @@ namespace ChemSW.Nbt.MetaData
                 else
                     return Int32.MinValue;
             }
+            private set { _ObjectClassPropRow["fkvalue"] = value; }
         }
 
         public Int32 ValuePropId
         {
             get { return CswConvert.ToInt32( _ObjectClassPropRow["valuepropid"] ); }
+            private set { _ObjectClassPropRow["valuepropid"] = value; }
         }
         public string ValuePropType
         {
             get { return _ObjectClassPropRow["valueproptype"].ToString(); }
+            private set { _ObjectClassPropRow["valueproptype"] = value; }
         }
 
         public Int32 DisplayColAdd

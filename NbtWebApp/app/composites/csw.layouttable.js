@@ -22,6 +22,7 @@
                 cellpadding: 0,
                 cellspacing: 0,
                 width: '100%',
+                styles: {},
                 align: 'left',
                 showConfigButton: false,
                 showAddButton: false,
@@ -394,7 +395,7 @@
                 if (options) {
                     Csw.extend(cswPrivate, options);
                 }
-                var layoutDiv = cswParent.div(cswPrivate);
+                var layoutDiv = cswParent.div({ ID: Csw.makeId(cswPrivate.ID,window.Ext.id()) });
                 
                 //Csw.extend(cswPublic, Csw.literals.div(cswPrivate));
                 var buttonDiv = layoutDiv.div({
@@ -425,7 +426,8 @@
                         if (false === Csw.isNullOrEmpty(newCell)) {
                             cswPrivate.onCreateCell(newCell, realrow, realcolumn);
                         }
-                    }
+                    },
+                    styles: cswPrivate.styles
                 });
                 cswPublic.table.propNonDom({
                     'cellset_rows': cswPrivate.cellSet.rows,

@@ -317,7 +317,7 @@ namespace ChemSW.Nbt.PropTypes
                 }
 
                 _addOptionsRecurse( Options, CswNbtTree, TargetNodeTypeId, TargetObjectClassId );
-                
+
                 CswNbtTree.goToParentNode();
             } // for( Int32 c = 0; c < CswNbtTree.getChildNodeCount(); c++ )
         } // _addOptionsRecurse()
@@ -336,7 +336,7 @@ namespace ChemSW.Nbt.PropTypes
             {
                 CswXmlDocument.AppendXmlNode( ParentNode, "nodetypeid", TargetId.ToString() );
             }
-            if( _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Create, _CswNbtResources.MetaData.getNodeType( TargetId ) ) )
+            if( _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Create, _CswNbtResources.MetaData.getNodeType( TargetId ) ) )
             {
                 CswXmlDocument.AppendXmlNode( ParentNode, "allowadd", "true" );
             }
@@ -369,7 +369,7 @@ namespace ChemSW.Nbt.PropTypes
             {
                 ParentNode.Add( new XElement( "nodetypeid", TargetId.ToString() ) );
             }
-            if( _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Create, _CswNbtResources.MetaData.getNodeType( TargetId ) ) )
+            if( _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Create, _CswNbtResources.MetaData.getNodeType( TargetId ) ) )
             {
                 ParentNode.Add( new XElement( "allowadd", "true" ) );
             }
@@ -416,15 +416,17 @@ namespace ChemSW.Nbt.PropTypes
             ParentObject["allowadd"] = false;
 
             if( TargetObjectClass != null && TargetObjectClass.CanAdd && // case 27189
-                ( TargetNodeType == null || _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Create, TargetNodeType ) ) )
+                ( TargetNodeType == null || _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Create, TargetNodeType ) ) )
             {
                 ParentObject["allowadd"] = "true";
             }
 
             ParentObject["relatednodeid"] = default( string );
-            if( null != RelatedNodeId && Int32.MinValue != RelatedNodeId.PrimaryKey )
+            CswNbtNode RelatedNode = _CswNbtResources.Nodes[RelatedNodeId];
+            if( null != RelatedNode )
             {
-                ParentObject["relatednodeid"] = RelatedNodeId.ToString();
+                ParentObject["relatednodeid"] = RelatedNode.NodeId.ToString();
+                ParentObject["relatednodelink"] = RelatedNode.NodeLink;
             }
 
             ParentObject["usesearch"] = false;

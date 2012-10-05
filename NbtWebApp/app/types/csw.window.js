@@ -67,9 +67,7 @@
             window.sessionStorage = newLocalStorage;
         }    
     }
-
-    Csw.window = Csw.window || Csw.register('window', Csw.makeNameSpace());
-
+    
     Csw.window.location = Csw.window.location ||
         Csw.window.register('location', function (path) {
             if (false === Csw.isNullOrEmpty(path)) {

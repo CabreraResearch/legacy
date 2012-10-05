@@ -278,7 +278,7 @@ namespace ChemSW.Nbt.WebServices
                     SubItemsJProp[CurrentTab.TabName][PropId]["gestalt"] = CswTools.SafeJavascriptParam( PropWrapper.Gestalt );
                     SubItemsJProp[CurrentTab.TabName][PropId]["ocpname"] = CswTools.SafeJavascriptParam( PropWrapper.ObjectClassPropName );
 
-                    PropWrapper.ToJSON( (JObject) SubItemsJProp[CurrentTab.TabName][PropId], Tabs[i] );
+                    PropWrapper.ToJSON( (JObject) SubItemsJProp[CurrentTab.TabName][PropId] );
                 }
             }
         }
@@ -376,7 +376,7 @@ namespace ChemSW.Nbt.WebServices
                     JObject PropObj = (JObject) Prop.Value;
 
                     CswNbtMetaDataNodeTypeTab Tab = _CswNbtResources.MetaData.getNodeTypeTab( Node.NodeTypeId, CswConvert.ToString( PropObj["currenttab"] ) );
-                    Node.Properties[MetaDataProp].ReadJSON( PropObj, null, null, Tab );
+                    Node.Properties[MetaDataProp].ReadJSON( PropObj, null, null );
 
                     //Case 20964. Client needs to know whether the inspection is complete.
                     if( false == Ret && Node.getObjectClass().ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass )

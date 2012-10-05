@@ -207,6 +207,7 @@ namespace ChemSW.Nbt.PropTypes
             bool IsLocationNode = ( null != Prop && Prop.getNodeType().ObjectClassId == LocationOC.ObjectClassId );
 
             Ret.ViewName = TopLevelName;
+            Ret.Root.Included = IsLocationNode;
 
             CswNbtViewRelationship LocationLevel1 = Ret.AddViewRelationship( LocationOC, true );
             if( NodeId != null )
@@ -313,6 +314,12 @@ namespace ChemSW.Nbt.PropTypes
             ParentObject[_NameSubField.ToXmlNodeName( true )] = CachedNodeName;
             ParentObject[_PathSubField.ToXmlNodeName( true )] = CachedPath;
             ParentObject[_BarcodeSubField.ToXmlNodeName( true )] = CachedBarcode;
+
+            CswNbtNode SelectedNode = _CswNbtResources.Nodes[SelectedNodeId];
+            if( null != SelectedNode )
+            {
+                ParentObject["selectednodelink"] = SelectedNode.NodeLink;
+            }
 
             View.SaveToCache( false );
             ParentObject["viewid"] = View.SessionViewId.ToString();

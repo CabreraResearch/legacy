@@ -1,5 +1,3 @@
-using System;
-using ChemSW.Core;
 using ChemSW.Exceptions;
 
 namespace ChemSW.Nbt
@@ -24,6 +22,10 @@ namespace ChemSW.Nbt
             {
                 ret = new CswNbtModuleRuleCISPro( CswNbtResources );
             }
+            else if( CswNbtModuleName.Dev == ModuleName )
+            {
+                ret = new CswNbtModuleRuleDev( CswNbtResources );
+            }
             else if( CswNbtModuleName.IMCS == ModuleName )
             {
                 ret = new CswNbtModuleRuleIMCS( CswNbtResources );
@@ -46,12 +48,12 @@ namespace ChemSW.Nbt
             }
             else
             {
-                throw new CswDniException( ErrorType.Error, 
-                                           "Unhandled ModuleName: "+ ModuleName.ToString(), 
-                                           "CswNbtModuleRuleFactory did not recognize module name: "+ ModuleName.ToString());
+                throw new CswDniException( ErrorType.Error,
+                                           "Unhandled ModuleName: " + ModuleName.ToString(),
+                                           "CswNbtModuleRuleFactory did not recognize module name: " + ModuleName.ToString() );
             }
             return ret;
         }
-    
+
     } // class CswNbtModuleBioSafety
 }// namespace ChemSW.Nbt

@@ -30,7 +30,7 @@ namespace ChemSW.Nbt.MetaData
             isrequired,
             isunique,
             iscompoundunique,
-            length,
+            //length,
             //nodetypeid, 
             //nodetypepropid, 
             //nodetypetabsetid, 
@@ -72,7 +72,12 @@ namespace ChemSW.Nbt.MetaData
             isquicksearch,
             extended,
             hideinmobile,
-            mobilesearch
+            mobilesearch,
+            attribute1,
+            attribute2,
+            attribute3,
+            attribute4,
+            attribute5
         }
 
         public static NodeTypePropAttributes getNodeTypePropAttributesFromString( string AttributeName )
@@ -370,7 +375,7 @@ namespace ChemSW.Nbt.MetaData
                 {
                     // This prop is missing a view, so make one
                     CswNbtView ThisView = new CswNbtView( _CswNbtMetaDataResources.CswNbtResources );
-                    ThisView.makeNew( this.PropName, NbtViewVisibility.Property, null, null, Int32.MinValue );
+                    ThisView.saveNew( this.PropName, NbtViewVisibility.Property, null, null, Int32.MinValue );
                     if( this.getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.Grid )
                     {
                         // BZ 9203 - View starts with this property's nodetype at root
@@ -498,13 +503,14 @@ namespace ChemSW.Nbt.MetaData
         public bool EditProp( CswNbtNode Node, ICswNbtUser User, bool InPopUp )
         {
             //CswNbtMetaDataNodeTypeProp Prop = this;
-            bool IsOnAdd = ( ( IsRequired && DefaultValue.Empty ) ||
+            bool IsOnAdd = ( ( IsRequired && ( ( null != DefaultValue ) && ( DefaultValue.Empty ) ) ) ||
                              Node.Properties[this].TemporarilyRequired ||
                              AddLayout != null );
             var ret = ( ( false == InPopUp || IsOnAdd ) &&
                 FilterNodeTypePropId == Int32.MinValue && /* Keep these out */
                         false == Node.Properties[this].Hidden &&
-                        _CswNbtMetaDataResources.CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, this.getNodeType(), false, null, User, Node.NodeId, this ) );
+                        ( _CswNbtMetaDataResources.CswNbtResources.Permit.canNode( CswNbtPermit.NodeTypePermission.Edit, this.getNodeType(), Node.NodeId ) ) &&
+                          _CswNbtMetaDataResources.CswNbtResources.Permit.canProp( CswNbtPermit.NodeTypePermission.Edit, this ) );
             return ret;
         }
 
@@ -521,7 +527,14 @@ namespace ChemSW.Nbt.MetaData
                 }
             }
             var ret = ( false == hasFilter() && false == Node.Properties[this].Hidden &&
-                        _CswNbtMetaDataResources.CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, this.getNodeType(), false, Tab, User, Node.NodeId, this ) );
+                        (
+                           _CswNbtMetaDataResources.CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.View, this.getNodeType() ) ||
+                           _CswNbtMetaDataResources.CswNbtResources.Permit.canTab( CswNbtPermit.NodeTypePermission.View, this.getNodeType(), Tab ) ||
+                           _CswNbtMetaDataResources.CswNbtResources.Permit.canNode( CswNbtPermit.NodeTypePermission.View, this.getNodeType(), Node.NodeId )
+                        )
+                      );
+
+            //_CswNbtMetaDataResources.CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, this.getNodeType(), false, Tab, User, Node.NodeId, this ) );
             return ret;
         }
 
@@ -596,11 +609,6 @@ namespace ChemSW.Nbt.MetaData
         {
             get { return _NodeTypePropRow["compositetemplate"].ToString(); }
             set { _setAttribute( "compositetemplate", value, false ); }
-        }
-        public Int32 Length
-        {
-            get { return CswConvert.ToInt32( _NodeTypePropRow["length"] ); }
-            set { _setAttribute( "length", value, false ); }
         }
         public bool DateToday
         {
@@ -715,7 +723,7 @@ namespace ChemSW.Nbt.MetaData
 
                 if( _DefaultValueRow != null )
                 {
-                    _DefaultValue = CswNbtNodePropFactory.makeNodeProp( _CswNbtMetaDataResources.CswNbtResources, _DefaultValueRow, _DefaultValueRow.Table, null, this, null );
+                    _DefaultValue = CswNbtNodePropFactory.makeNodeProp( _CswNbtMetaDataResources.CswNbtResources, _DefaultValueRow, _DefaultValueRow.Table, null, this );
                 }
 
             } // if( _DefaultValue == null )
@@ -807,8 +815,8 @@ namespace ChemSW.Nbt.MetaData
                         // We can't point to the same view.  We need to copy the view, and refer to the copy.
                         CswNbtView View = _CswNbtMetaDataResources.CswNbtResources.ViewSelect.restoreView( new CswNbtViewId( CswConvert.ToInt32( _NodeTypePropRow[PropColumn.ColumnName] ) ) );
                         CswNbtView ViewCopy = new CswNbtView( _CswNbtMetaDataResources.CswNbtResources );
-                        ViewCopy.makeNew( View.ViewName, View.Visibility, View.VisibilityRoleId, View.VisibilityUserId, View );
-                        ViewCopy.save();
+                        ViewCopy.saveNew( View.ViewName, View.Visibility, View.VisibilityRoleId, View.VisibilityUserId, View );
+                        //ViewCopy.save();
                         NewPropRow[PropColumn.ColumnName] = CswConvert.ToDbVal( ViewCopy.ViewId.get() );
                     }
                     else if( PropColumn.ColumnName.ToLower() == "defaultvalueid" && CswTools.IsInteger( _NodeTypePropRow[PropColumn.ColumnName].ToString() ) )
@@ -959,8 +967,14 @@ namespace ChemSW.Nbt.MetaData
         {
             get
             {
-                return _CswNbtMetaDataResources.CswNbtResources.EditMode == NodeEditMode.Add &&
-                       null != AddLayout;
+                bool ret = false;
+
+                if( false == ServerManaged )
+                {
+                    ret = _CswNbtMetaDataResources.CswNbtResources.EditMode == NodeEditMode.Add && null != AddLayout;
+                }
+
+                return ( ret );
             }
         }
 
@@ -973,6 +987,65 @@ namespace ChemSW.Nbt.MetaData
             }
         }
 
+        public string Attribute1
+        {
+            get
+            {
+                return _NodeTypePropRow[NodeTypePropAttributes.attribute1.ToString()].ToString();
+            }
+            set
+            {
+                _NodeTypePropRow[NodeTypePropAttributes.attribute1.ToString()] = value;
+            }
+        }
+
+        public string Attribute2
+        {
+            get
+            {
+                return _NodeTypePropRow[NodeTypePropAttributes.attribute2.ToString()].ToString();
+            }
+            set
+            {
+                _NodeTypePropRow[NodeTypePropAttributes.attribute2.ToString()] = value;
+            }
+        }
+
+        public string Attribute3
+        {
+            get
+            {
+                return _NodeTypePropRow[NodeTypePropAttributes.attribute3.ToString()].ToString();
+            }
+            set
+            {
+                _NodeTypePropRow[NodeTypePropAttributes.attribute3.ToString()] = value;
+            }
+        }
+
+        public string Attribute4
+        {
+            get
+            {
+                return _NodeTypePropRow[NodeTypePropAttributes.attribute4.ToString()].ToString();
+            }
+            set
+            {
+                _NodeTypePropRow[NodeTypePropAttributes.attribute4.ToString()] = value;
+            }
+        }
+
+        public string Attribute5
+        {
+            get
+            {
+                return _NodeTypePropRow[NodeTypePropAttributes.attribute5.ToString()].ToString();
+            }
+            set
+            {
+                _NodeTypePropRow[NodeTypePropAttributes.attribute5.ToString()] = value;
+            }
+        }
 
         public bool HasSubProps()
         {
@@ -1301,7 +1374,7 @@ namespace ChemSW.Nbt.MetaData
         public static string _Attribute_readonly = "readonly";
         public static string _Attribute_isrequired = "isrequired";
         public static string _Attribute_isunique = "isunique";
-        public static string _Attribute_length = "length";
+        //public static string _Attribute_length = "length";
         public static string _Attribute_datetoday = "datetoday";
         public static string _Attribute_listoptions = "listoptions";
         public static string _Attribute_numberprecision = "numberprecision";
@@ -1319,6 +1392,11 @@ namespace ChemSW.Nbt.MetaData
         public static string _Attribute_SubFieldName = "SubFieldName";
         public static string _Attribute_RelationalTable = "RelationalTable";
         public static string _Attribute_RelationalColumn = "RelationalColumn";
+        public static string _Attribute_attribute1 = "attribute1";
+        public static string _Attribute_attribute2 = "attribute2";
+        public static string _Attribute_attribute3 = "attribute3";
+        public static string _Attribute_attribute4 = "attribute4";
+        public static string _Attribute_attribute5 = "attribute5";
 
         public XmlNode ToXml( XmlDocument XmlDoc, bool ForMobile )
         {
@@ -1408,12 +1486,12 @@ namespace ChemSW.Nbt.MetaData
             IsUniqueAttr.Value = IsUnique().ToString().ToLower();
             PropNode.Attributes.Append( IsUniqueAttr );
 
-            XmlAttribute LengthAttr = XmlDoc.CreateAttribute( _Attribute_length );
-            PropNode.Attributes.Append( LengthAttr );
-            if( Length > 0 )
-                LengthAttr.Value = Length.ToString();
-            else
-                LengthAttr.Value = Int32.MinValue.ToString();
+            //XmlAttribute LengthAttr = XmlDoc.CreateAttribute( _Attribute_length );
+            //PropNode.Attributes.Append( LengthAttr );
+            //if( Length > 0 )
+            //    LengthAttr.Value = Length.ToString();
+            //else
+            //    LengthAttr.Value = Int32.MinValue.ToString();
 
             XmlAttribute DateTodayAttr = XmlDoc.CreateAttribute( _Attribute_datetoday );
             DateTodayAttr.Value = DateToday.ToString();
@@ -1447,6 +1525,26 @@ namespace ChemSW.Nbt.MetaData
             XmlAttribute StaticTextAttr = XmlDoc.CreateAttribute( _Attribute_statictext );
             StaticTextAttr.Value = StaticText;
             PropNode.Attributes.Append( StaticTextAttr );
+
+            XmlAttribute Attribute1Attr = XmlDoc.CreateAttribute( _Attribute_attribute1 );
+            Attribute1Attr.Value = Attribute1;
+            PropNode.Attributes.Append( Attribute1Attr );
+
+            XmlAttribute Attribute2Attr = XmlDoc.CreateAttribute( _Attribute_attribute2 );
+            Attribute2Attr.Value = Attribute2;
+            PropNode.Attributes.Append( Attribute2Attr );
+
+            XmlAttribute Attribute3Attr = XmlDoc.CreateAttribute( _Attribute_attribute3 );
+            Attribute3Attr.Value = Attribute3;
+            PropNode.Attributes.Append( Attribute3Attr );
+
+            XmlAttribute Attribute4Attr = XmlDoc.CreateAttribute( _Attribute_attribute4 );
+            Attribute4Attr.Value = Attribute4;
+            PropNode.Attributes.Append( Attribute4Attr );
+
+            XmlAttribute Attribute5Attr = XmlDoc.CreateAttribute( _Attribute_attribute5 );
+            Attribute5Attr.Value = Attribute5;
+            PropNode.Attributes.Append( Attribute5Attr );
 
             // Default value is a subnode, not an attribute
             if( HasDefaultValue() )
@@ -1506,7 +1604,7 @@ namespace ChemSW.Nbt.MetaData
             {
                 this.setIsUnique( CswConvert.ToBoolean( PropXmlRow[_Attribute_isunique] ) );
             }
-            this.Length = CswConvert.ToInt32( PropXmlRow[_Attribute_length] );
+            //this.Length = CswConvert.ToInt32( PropXmlRow[_Attribute_length] );
             this.ListOptions = PropXmlRow[_Attribute_listoptions].ToString();
             this.MaxValue = CswConvert.ToDouble( PropXmlRow[_Attribute_maxvalue] );
             this.MinValue = CswConvert.ToDouble( PropXmlRow[_Attribute_minvalue] );

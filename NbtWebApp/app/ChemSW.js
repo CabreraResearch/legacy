@@ -1,48 +1,51 @@
 /// <reference path="~/app/CswApp-vsdoc.js" />
 
-window.internetExplorerVersionNo = window.internetExplorerVersionNo || -1;
+(function() {
 
-window.ChemSW = window.Csw = (function () {
-    'use strict';
-    var internal = {
-        document: window.document,
-        navigator: window.navigator,
-        location: window.location,
-        $: $,
-        homeUrl: 'Main.html',
-        methods: ['register'],
-        uniqueIdCount: 0,
-        protectedmethods: ['register', 'deregister', 'getGlobalProp', 'setGlobalProp', 'displayAllExceptions']
-    };
+    window.internetExplorerVersionNo = window.internetExplorerVersionNo || -1;
 
-    var external = {};
-
-    /* 
-    * We are deliberately not assigning this method to the 'global' internal or external collection 
-    * We don't want to inadvertantly allow for cross-pollination among namespaces. 
-    * makeNameSpace's only tie to the Csw closure is against internal for default values.
-    */
-    function makeNameSpace(externalCollection, anInternalCollection) {
+    window.ChemSW = window.Csw = (function() {
         'use strict';
-        var internalCollection = {
-            document: internal.document,
-            navigator: internal.navigator,
-            location: internal.location,
-            $: internal.$,
+        var cswPrivate = {
+            document: window.document,
+            navigator: window.navigator,
+            location: window.location,
+            $: $,
             homeUrl: 'Main.html',
             methods: ['register'],
             uniqueIdCount: 0,
-            protectedmethods: ['register', 'deregister', 'getGlobalProp', 'setGlobalProp']
+            protectedmethods: ['register', 'deregister', 'getGlobalProp', 'setGlobalProp', 'displayAllExceptions']
         };
-        /* If supplied, expose the internalCollection to the namespace */
-        if (anInternalCollection) {
-            $.extend(anInternalCollection, internalCollection);
-        }
 
-        externalCollection = externalCollection || {};
+        var cswPublic = { };
 
-        externalCollection.register = externalCollection.register ||
-                function (name, obj, isProtected) {
+        /* 
+        * We are deliberately not assigning this method to the 'global' internal or external collection 
+        * We don't want to inadvertantly allow for cross-pollination among namespaces. 
+        * makeNameSpace's only tie to the Csw closure is against internal for default values.
+        */
+
+        function makeNameSpace(externalCollection, anInternalCollection) {
+            'use strict';
+            var internalCollection = {
+                document: cswPrivate.document,
+                navigator: cswPrivate.navigator,
+                location: cswPrivate.location,
+                $: cswPrivate.$,
+                homeUrl: 'Main.html',
+                methods: ['register'],
+                uniqueIdCount: 0,
+                protectedmethods: ['register', 'deregister', 'getGlobalProp', 'setGlobalProp']
+            };
+            /* If supplied, expose the internalCollection to the namespace */
+            if (anInternalCollection) {
+                $.extend(anInternalCollection, internalCollection);
+            }
+
+            externalCollection = externalCollection || { };
+
+            externalCollection.register = externalCollection.register ||
+                function(name, obj, isProtected) {
                     /// <summary>
                     ///   Register an Object in the ChemSW namespace
                     /// </summary>
@@ -64,8 +67,8 @@ window.ChemSW = window.Csw = (function () {
                     return obj;
                 };
 
-        externalCollection.deregister = externalCollection.deregister ||
-                externalCollection.register('deregister', function (name) {
+            externalCollection.deregister = externalCollection.deregister ||
+                externalCollection.register('deregister', function(name) {
                     /// <summary>
                     ///   Deregister an Object from the ChemSW namespace
                     /// </summary>
@@ -77,14 +80,14 @@ window.ChemSW = window.Csw = (function () {
                         if (internalCollection.methods.indexOf(name) !== -1) {
                             internalCollection.methods.splice(name, 1);
                         }
-                        delete external[name];
+                        delete cswPublic[name];
                         succeeded = true;
                     }
                     return succeeded;
                 });
 
-        externalCollection.getGlobalProp = externalCollection.getGlobalProp ||
-                externalCollection.register('getGlobalProp', function (propName) {
+            externalCollection.getGlobalProp = externalCollection.getGlobalProp ||
+                externalCollection.register('getGlobalProp', function(propName) {
                     /// <summary>
                     ///   Fetch a dereferenced copy of a property from the private universe collection
                     /// </summary>
@@ -95,14 +98,14 @@ window.ChemSW = window.Csw = (function () {
                     if (propName && internalCollection.hasOwnProperty(propName)) {
                         retVal = internalCollection[propName];
                     } else {
-                        retVal = {};
+                        retVal = { };
                         $.extend(retVal, internalCollection);
                     }
                     return retVal;
                 });
 
-        externalCollection.setGlobalProp = externalCollection.setGlobalProp ||
-                externalCollection.register('setGlobalProp', function (prop, val) {
+            externalCollection.setGlobalProp = externalCollection.setGlobalProp ||
+                externalCollection.register('setGlobalProp', function(prop, val) {
                     /// <summary>
                     ///   Change the value of a property in the private universe collection
                     /// </summary>
@@ -117,8 +120,8 @@ window.ChemSW = window.Csw = (function () {
                     return success;
                 });
 
-        externalCollection.addGlobalProp = externalCollection.addGlobalProp ||
-                externalCollection.register('addGlobalProp', function (propName, val) {
+            externalCollection.addGlobalProp = externalCollection.addGlobalProp ||
+                externalCollection.register('addGlobalProp', function(propName, val) {
                     /// <summary>
                     ///   Add a property to the private universe collection
                     /// </summary>
@@ -134,8 +137,8 @@ window.ChemSW = window.Csw = (function () {
                     return success;
                 });
 
-        externalCollection.getCswInternalMethods = externalCollection.getCswInternalMethods ||
-                externalCollection.register('getCswInternalMethods', function () {
+            externalCollection.getCswInternalMethods = externalCollection.getCswInternalMethods ||
+                externalCollection.register('getCswInternalMethods', function() {
                     /// <summary>
                     ///   Fetch a dereferenced copy of the currently registered properties on the ChemSW namespace
                     /// </summary>
@@ -144,60 +147,75 @@ window.ChemSW = window.Csw = (function () {
                     var methods = internalCollection.methods.slice(0);
                     return methods;
                 });
-        externalCollection.makeNameSpace = externalCollection.makeNameSpace ||
+            externalCollection.makeNameSpace = externalCollection.makeNameSpace ||
                 externalCollection.register('makeNameSpace', makeNameSpace);
-        return externalCollection;
-    }
+            return externalCollection;
+        }
 
-    makeNameSpace(external, internal);
+        makeNameSpace(cswPublic, cswPrivate);
 
-    external.actions = external.actions || external.register('actions', makeNameSpace());
-    external.layouts = external.layouts || external.register('layouts', makeNameSpace());
-    external.literals = external.literals || external.register('literals', makeNameSpace());
-    external.composites = external.composites || external.register('composites', makeNameSpace());
-    external.controls = external.controls || external.register('controls', makeNameSpace());
-    external.nbt = external.nbt || external.register('nbt', makeNameSpace());
-    external.nbt.wizard = external.nbt.wizard || external.nbt.register('wizard', makeNameSpace());
-    
-    external.isFunction = external.isFunction ||
-        external.register('isFunction', function (obj) {
-            'use strict';
-            /// <summary> Returns true if the object is a function</summary>
-            /// <param name="obj" type="Object"> Object to test</param>
-            /// <returns type="Boolean" />
-            var ret = ($.isFunction(obj));
-            return ret;
-        });
+        cswPublic.actions = cswPublic.actions || cswPublic.register('actions', makeNameSpace());
+        cswPublic.ajax = cswPublic.ajax || cswPublic.register('ajax', makeNameSpace());
+        cswPublic.ajaxWcf = cswPublic.ajaxWcf || cswPublic.register('ajaxWcf', makeNameSpace());
+        cswPublic.actions = cswPublic.actions || cswPublic.register('actions', makeNameSpace());
+        cswPublic.clientChanges = cswPublic.clientChanges || cswPublic.register('clientChanges', makeNameSpace());
+        cswPublic.clientSession = cswPublic.clientSession || cswPublic.register('clientSession', makeNameSpace());
+        cswPublic.clientState = cswPublic.clientState || cswPublic.register('clientState', makeNameSpace());
+        cswPublic.clientDb = cswPublic.clientDb || cswPublic.register('clientDb', makeNameSpace());
+        cswPublic.composites = cswPublic.composites || cswPublic.register('composites', makeNameSpace());
+        cswPublic.controls = cswPublic.controls || cswPublic.register('controls', makeNameSpace());
+        cswPublic.cookie = cswPublic.cookie || cswPublic.register('cookie', makeNameSpace());
+        cswPublic.enums = cswPublic.enums || cswPublic.register('enums', makeNameSpace());
+        cswPublic.error = cswPublic.error || cswPublic.register('error', makeNameSpace());
+        cswPublic.layouts = cswPublic.layouts || cswPublic.register('layouts', makeNameSpace());
+        cswPublic.literals = cswPublic.literals || cswPublic.register('literals', makeNameSpace());
+        cswPublic.main = cswPublic.main || cswPublic.register('main', makeNameSpace());
+        cswPublic.nbt = cswPublic.nbt || cswPublic.register('nbt', makeNameSpace());
+        cswPublic.properties = cswPublic.properties || cswPublic.register('properties', makeNameSpace());
+        cswPublic.window = cswPublic.window || cswPublic.register('window', makeNameSpace());
+        cswPublic.wizard = cswPublic.wizard || cswPublic.register('wizard', makeNameSpace());
 
-    external.tryExec = external.tryExec ||
-        external.register('tryExec', function (func) {
-            'use strict';
-            /// <summary> If the supplied argument is a function, execute it. </summary>
-            /// <param name="func" type="Function"> Function to evaluate </param>
-            /// <returns type="undefined" />
-            try {
-                if (Csw.isFunction(func)) {
-                    return func.apply(this, Array.prototype.slice.call(arguments, 1));
+        cswPublic.isFunction = cswPublic.isFunction ||
+            cswPublic.register('isFunction', function(obj) {
+                'use strict';
+                /// <summary> Returns true if the object is a function</summary>
+                /// <param name="obj" type="Object"> Object to test</param>
+                /// <returns type="Boolean" />
+                var ret = ($.isFunction(obj));
+                return ret;
+            });
+
+        cswPublic.tryExec = cswPublic.tryExec ||
+            cswPublic.register('tryExec', function(func) {
+                'use strict';
+                /// <summary> If the supplied argument is a function, execute it. </summary>
+                /// <param name="func" type="Function"> Function to evaluate </param>
+                /// <returns type="undefined" />
+                try {
+                    if (Csw.isFunction(func)) {
+                        return func.apply(this, Array.prototype.slice.call(arguments, 1));
+                    }
+                } catch(exception) {
+                    if (exception.name !== 'TypeError' || exception.type !== 'called_non_callable') { /* ignore errors failing to exec self-executing functions */
+                        Csw.error.catchException(exception);
+                    }
                 }
-            } catch (exception) {
-                if (exception.name !== 'TypeError' || exception.type !== 'called_non_callable') { /* ignore errors failing to exec self-executing functions */
-                    Csw.error.catchException(exception);
-                }
-            }
-        });
+            });
 
-    external.method = external.method ||
-        external.register('method', function (func) {
-            'use strict';
-            var that = this;
-            return function () {
-                var args = Array.prototype.slice.call(arguments, 0);
-                args.unshift(func);
-                return Csw.tryExec.apply(that, args);
-            };
-        });
+        cswPublic.method = cswPublic.method ||
+            cswPublic.register('method', function(func) {
+                'use strict';
+                var that = this;
+                return function() {
+                    var args = Array.prototype.slice.call(arguments, 0);
+                    args.unshift(func);
+                    return Csw.tryExec.apply(that, args);
+                };
+            });
 
-    return external;
+        return cswPublic;
 
-} ());
+    }());
+
+}());
 
