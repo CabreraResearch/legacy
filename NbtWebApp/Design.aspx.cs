@@ -2273,7 +2273,7 @@ namespace ChemSW.Nbt.WebPages
                                 RelatedPropRow.Cells[1].Controls.Add( RelatedPropValue );
                             }
 
-                            //UseSequence CheckBox  // why won't it save? it's either the propname ID or the boolean conversion that's not working...
+                            //UseSequence CheckBox
                             TableRow UseSequenceRow = makeEditPropTableRow( EditPropPlaceHolder );
                             ( (Literal) UseSequenceRow.Cells[0].Controls[0] ).Text = "Sequence:";
                             CheckBox UseSequenceValue = new CheckBox();
