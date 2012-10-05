@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Web.UI;
@@ -73,12 +74,12 @@ namespace ChemSW.NbtWebControls
         public bool LoadPostData( String postDataKey, NameValueCollection values )
         {
             EnsureChildControls();
-            Collection<DayOfWeek> SelectedWeeklyDays = new Collection<DayOfWeek>();
+            SortedList SelectedWeeklyDays = new SortedList();
             foreach( DayOfWeek Day in Enum.GetValues( typeof( DayOfWeek ) ) )
             {
                 string ThisKey = this.UniqueID + "$" + WeeklyDayPickerRadioGroupName + "_" + Day.ToString();
                 if( values[ThisKey] != null && values[ThisKey] == "on" )
-                    SelectedWeeklyDays.Add( Day );
+                    SelectedWeeklyDays.Add( Day, Day );
             }
             if( values[StartDatePicker.DatePicker.UniqueID] != null && values[StartDatePicker.DatePicker.UniqueID].ToString() != string.Empty )
             {
