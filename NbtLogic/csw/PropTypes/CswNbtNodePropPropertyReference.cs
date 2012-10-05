@@ -57,7 +57,12 @@ namespace ChemSW.Nbt.PropTypes
 
         private void _setGestalt( string PropRefVal, string SeqVal )
         {
-            _CswNbtNodePropData.SetPropRowValue( CswNbtSubField.PropColumn.Gestalt, PropRefVal + "-" + SeqVal );
+            string NewGestalt = PropRefVal;
+            if( UseSequence && false == String.IsNullOrEmpty( PropRefVal ) )
+            {
+                NewGestalt = PropRefVal + "-" + SeqVal;
+            }
+            _CswNbtNodePropData.SetPropRowValue( CswNbtSubField.PropColumn.Gestalt, NewGestalt );
         }
 
         public string CachedValue
@@ -212,6 +217,17 @@ namespace ChemSW.Nbt.PropTypes
         }
 
         /// <summary>
+        /// When set to true, display Sequence alongside PropertyReference value
+        /// </summary>
+        public bool UseSequence
+        {
+            get
+            {
+                return CswConvert.ToBoolean( _CswNbtMetaDataNodeTypeProp.Attribute1 );
+            }
+        }
+
+        /// <summary>
         /// Sets Sequence to the next sequence value
         /// </summary>
         public void setSequenceValue()
@@ -274,6 +290,7 @@ namespace ChemSW.Nbt.PropTypes
         public override void ToJSON( JObject ParentObject )
         {
             ParentObject[_CachedValueSubField.ToXmlNodeName( true )] = CachedValue;
+            ParentObject["useSequence"] = UseSequence.ToString();
             ParentObject[_SequenceSubField.ToXmlNodeName( true )] = Sequence;
             ParentObject[_SequenceNumberSubField.ToXmlNodeName( true )] = SequenceNumber;
         }

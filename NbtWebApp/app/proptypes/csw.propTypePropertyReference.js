@@ -17,6 +17,10 @@
                     cswPrivate.propVals = cswPublic.data.propData.values;
                     cswPrivate.parent = cswPublic.data.propDiv;
                     cswPrivate.text = (false === cswPublic.data.isMulti()) ? Csw.string(cswPrivate.propVals.value, cswPublic.data.propData.gestalt).trim() : Csw.enums.multiEditDefaultValue;
+                    cswPrivate.sequenceValue = (false === cswPublic.data.isMulti()) ? Csw.string(cswPrivate.propVals.sequence).trim() : Csw.enums.multiEditDefaultValue;
+                    if (false === Csw.isNullOrEmpty(cswPrivate.propVals.value) && Csw.bool(cswPrivate.propVals.useSequence)) {
+                        cswPrivate.text += '-' + cswPrivate.sequenceValue;
+                    }
 
                     cswPrivate.text += '&nbsp;&nbsp;';
                     /* Static Div */
@@ -32,5 +36,5 @@
                 return cswPublic;
             }));
 
-}());
+} ());
 

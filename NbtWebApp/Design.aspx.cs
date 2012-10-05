@@ -2272,6 +2272,24 @@ namespace ChemSW.Nbt.WebPages
                                     RelatedPropValue.SelectedValue = SelectedNodeTypeProp.ValuePropId.ToString();
                                 RelatedPropRow.Cells[1].Controls.Add( RelatedPropValue );
                             }
+
+                            //UseSequence CheckBox  // why won't it save? it's either the propname ID or the boolean conversion that's not working...
+                            TableRow UseSequenceRow = makeEditPropTableRow( EditPropPlaceHolder );
+                            ( (Literal) UseSequenceRow.Cells[0].Controls[0] ).Text = "Sequence:";
+                            CheckBox UseSequenceValue = new CheckBox();
+                            UseSequenceValue.ID = "EditProp_Attribute1" + SelectedNodeTypeProp.PropId.ToString();
+                            UseSequenceValue.Text = "Use Sequence";
+                            UseSequenceValue.Checked = CswConvert.ToBoolean( SelectedNodeTypeProp.Attribute1 );
+                            UseSequenceRow.Cells[1].Controls.Add( UseSequenceValue );
+
+                            //Sequence
+                            TableRow PropRefSequenceRow = makeEditPropTableRow( EditPropPlaceHolder );
+                            ( (Literal) PropRefSequenceRow.Cells[0].Controls[0] ).Text = "";
+                            CswSequencesEditor PropRefSequencesEditor = new CswSequencesEditor( Master.CswNbtResources, Master.AjaxManager, SelectedNodeTypeProp.PropId );
+                            PropRefSequencesEditor.ID = "EditProp_SequenceValue" + SelectedNodeTypeProp.PropId.ToString();
+                            PropRefSequencesEditor.DataBind();
+                            PropRefSequenceRow.Cells[1].Controls.Add( PropRefSequencesEditor );
+
                             break;
 
                         case CswNbtMetaDataFieldType.NbtFieldType.Quantity:
