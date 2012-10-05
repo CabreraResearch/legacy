@@ -72,7 +72,6 @@
         /// <summary>Evaluates the truthiness of truth and throws an exception with msg val if false.</summary>
         if (Csw.clientSession.isDebug()) {
             try {
-                msg = msg || {};
                 console.assert(truth, msg);
             } catch(e) {
                 /* Do nothing */
@@ -84,7 +83,6 @@
         /// <summary>Displays a count of the number of time the msg has been met in the console log(Webkit,FF).</summary>
         if (Csw.clientSession.isDebug()) {
             try {
-                msg = msg || {};
                 console.count(msg);
             } catch(e) {
                 /* Do nothing */
@@ -96,7 +94,6 @@
         /// <summary>Outputs an error message to the console log(Webkit,FF)</summary>
         try {
             if(Csw.clientSession.isDebug()) {
-                msg = msg || { };
                 console.error(msg);
             }
             try {
@@ -151,7 +148,6 @@
         /// <summary>Outputs an info message to the console log(Webkit,FF)</summary>
         try {
             if(Csw.clientSession.isDebug()) {
-                msg = msg || {};
                 console.info(msg);
             }
             try {
@@ -171,7 +167,6 @@
         /// <summary>Outputs an unstyled message to the console log(Webkit,FF)</summary>
         try {
             if (Csw.clientSession.isDebug()) {
-                msg = msg || {};
                 console.log(msg);
             }
             try {
@@ -257,7 +252,6 @@
         /// <summary>Outputs an warning message to the console log(Webkit,FF)</summary>
         try {
             if (Csw.clientSession.isDebug()) {
-                msg = msg || {};
                 console.warn(msg);
             }
             try {
