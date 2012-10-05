@@ -52,7 +52,10 @@ namespace ChemSW.Nbt
 
         public override void OnDisable()
         {
-            _CswNbtResources.Modules.DisableModule( CswNbtModuleName.CISPro );
+            if( _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.MLM ) )
+            {
+                _CswNbtResources.Modules.DisableModule( CswNbtModuleName.MLM );
+            }
             // case 26717 - When CISPro is disabled, hide the following properties:
             //   Location.Inventory Group
             //   Location.Storage Compatibility
