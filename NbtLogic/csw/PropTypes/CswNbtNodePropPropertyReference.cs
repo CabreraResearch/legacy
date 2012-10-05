@@ -1,9 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Xml;
-using System.Xml.Linq;
-using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
@@ -211,31 +208,9 @@ namespace ChemSW.Nbt.PropTypes
             return Value;
         }
 
-        public override void ToXml( XmlNode ParentNode )
-        {
-            CswXmlDocument.AppendXmlNode( ParentNode, _CachedValueSubField.ToXmlNodeName(), CachedValue );
-        }
-
-        public override void ToXElement( XElement ParentNode )
-        {
-            ParentNode.Add( new XElement( _CachedValueSubField.ToXmlNodeName( true ), CachedValue ) );
-        }
-
         public override void ToJSON( JObject ParentObject )
         {
             ParentObject[_CachedValueSubField.ToXmlNodeName( true )] = CachedValue;
-        }
-
-        public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
-        {
-            //nothing to restore
-            PendingUpdate = true;
-        }
-
-        public override void ReadXElement( XElement XmlNode, Dictionary<int, int> NodeMap, Dictionary<int, int> NodeTypeMap )
-        {
-            //nothing to restore
-            PendingUpdate = true;
         }
 
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )

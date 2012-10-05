@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Xml;
-using System.Xml.Linq;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
@@ -71,40 +69,10 @@ namespace ChemSW.Nbt.PropTypes
             }
         }
 
-        public override void ToXml( XmlNode ParentNode )
-        {
-            CswXmlDocument.AppendXmlNode( ParentNode, _TextSubField.ToXmlNodeName(), Text );
-            CswXmlDocument.AppendXmlNode( ParentNode, _HrefSubField.ToXmlNodeName(), Href );
-        }
-
-        public override void ToXElement( XElement ParentNode )
-        {
-            ParentNode.Add( new XElement( _TextSubField.ToXmlNodeName( true ), Text ),
-                new XElement( _HrefSubField.ToXmlNodeName( true ), Href ) );
-        }
-
         public override void ToJSON( JObject ParentObject )
         {
             ParentObject[_HrefSubField.ToXmlNodeName( true )] = Href;
             ParentObject[_TextSubField.ToXmlNodeName( true )] = Text;
-        }
-
-        public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
-        {
-            Text = CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _TextSubField.ToXmlNodeName() );
-            Href = CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _HrefSubField.ToXmlNodeName() );
-        }
-
-        public override void ReadXElement( XElement XmlNode, Dictionary<int, int> NodeMap, Dictionary<int, int> NodeTypeMap )
-        {
-            if( null != XmlNode.Element( _TextSubField.ToXmlNodeName( true ) ) )
-            {
-                Text = XmlNode.Element( _TextSubField.ToXmlNodeName( true ) ).Value;
-            }
-            if( null != XmlNode.Element( _HrefSubField.ToXmlNodeName( true ) ) )
-            {
-                Href = XmlNode.Element( _HrefSubField.ToXmlNodeName( true ) ).Value;
-            }
         }
 
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )

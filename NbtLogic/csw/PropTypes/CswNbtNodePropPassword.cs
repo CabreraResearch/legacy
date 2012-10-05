@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Xml;
-using System.Xml.Linq;
 using ChemSW.Core;
 using ChemSW.Encryption;
 using ChemSW.Exceptions;
@@ -125,22 +123,6 @@ namespace ChemSW.Nbt.PropTypes
             }
         }
 
-        public override void ToXml( XmlNode ParentNode )
-        {
-            CswXmlDocument.AppendXmlNode( ParentNode, _EncryptedPasswordSubField.ToXmlNodeName(), EncryptedPassword );
-
-            // We don't provide the raw password, but we do provide a node in which someone can set a new password for saving
-            CswXmlDocument.AppendXmlNode( ParentNode, "newpassword", "" );
-            CswXmlDocument.AppendXmlNode( ParentNode, "isexpired", IsExpired.ToString().ToLower() );
-            CswXmlDocument.AppendXmlNode( ParentNode, "isadmin", _CswNbtResources.CurrentNbtUser.IsAdministrator().ToString().ToLower() );
-        }
-
-        public override void ToXElement( XElement ParentNode )
-        {
-            ParentNode.Add( new XElement( _EncryptedPasswordSubField.ToXmlNodeName( true ), EncryptedPassword ),
-                new XElement( "newpassword" ) );
-        }
-
         public override void ToJSON( JObject ParentObject )
         {
             ParentObject[_EncryptedPasswordSubField.ToXmlNodeName( true )] = EncryptedPassword;
@@ -149,31 +131,6 @@ namespace ChemSW.Nbt.PropTypes
             ParentObject["newpassword"] = string.Empty;
             ParentObject["isexpired"] = IsExpired.ToString().ToLower();
             ParentObject["isadmin"] = _CswNbtResources.CurrentNbtUser.IsAdministrator().ToString().ToLower();
-        }
-
-        public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
-        {
-            EncryptedPassword = CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _EncryptedPasswordSubField.ToXmlNodeName() );
-
-            bool inIsExpired = CswXmlDocument.ChildXmlNodeValueAsBoolean( XmlNode, "isexpired" );
-            if( inIsExpired && !IsExpired )
-            {
-                ChangedDate = DateTime.MinValue;
-            }
-
-            _saveProp( CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, "newpassword" ) );
-        }
-
-        public override void ReadXElement( XElement XmlNode, Dictionary<int, int> NodeMap, Dictionary<int, int> NodeTypeMap )
-        {
-            if( null != XmlNode.Element( _EncryptedPasswordSubField.ToXmlNodeName( true ) ) )
-            {
-                EncryptedPassword = XmlNode.Element( _EncryptedPasswordSubField.ToXmlNodeName( true ) ).Value;
-            }
-            if( null != XmlNode.Element( "newpassword" ) )
-            {
-                _saveProp( XmlNode.Element( "newpassword" ).Value );
-            }
         }
 
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )

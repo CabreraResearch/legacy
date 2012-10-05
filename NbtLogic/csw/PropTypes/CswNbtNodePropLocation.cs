@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Xml;
-using System.Xml.Linq;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
@@ -251,61 +249,6 @@ namespace ChemSW.Nbt.PropTypes
             get { return _View ?? ( _View = LocationPropertyView( _CswNbtResources, NodeTypeProp, NodeId ) ); } // get
         } // View
 
-        public override void ToXml( XmlNode ParentNode )
-        {
-            XmlNode SelectedNodeNode = CswXmlDocument.AppendXmlNode( ParentNode, _NodeIdSubField.ToXmlNodeName() );
-            if( SelectedNodeId != null )
-                SelectedNodeNode.InnerText = SelectedNodeId.ToString();
-
-            XmlNode SelectedColumnNode = CswXmlDocument.AppendXmlNode( ParentNode, _ColumnSubField.ToXmlNodeName() );
-            if( SelectedColumn != Int32.MinValue )
-                SelectedColumnNode.InnerText = SelectedColumn.ToString();
-
-            XmlNode SelectedRowNode = CswXmlDocument.AppendXmlNode( ParentNode, _RowSubField.ToXmlNodeName() );
-            if( SelectedRow != Int32.MinValue )
-                SelectedRowNode.InnerText = SelectedRow.ToString();
-
-            CswXmlDocument.AppendXmlNode( ParentNode, _NameSubField.ToXmlNodeName(), CachedNodeName );
-            CswXmlDocument.AppendXmlNode( ParentNode, _PathSubField.ToXmlNodeName(), CachedPath );
-            CswXmlDocument.AppendXmlNode( ParentNode, _BarcodeSubField.ToXmlNodeName(), CachedBarcode );
-
-            View.SaveToCache( false );
-            CswXmlDocument.AppendXmlNode( ParentNode, "viewid", View.SessionViewId.ToString() );
-
-            if( NodeId != null && NodeId.PrimaryKey != Int32.MinValue )
-            {
-                ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( View, true, true, false, false );
-                CswNbtNodeKey NodeKey = Tree.getNodeKeyByNodeId( NodeId );
-                if( NodeKey != null )
-                {
-                    CswXmlDocument.AppendXmlNode( ParentNode, "nodekey", NodeKey.ToString() );
-                }
-            }
-        }
-
-        public override void ToXElement( XElement ParentNode )
-        {
-            ParentNode.Add( new XElement( _NodeIdSubField.ToXmlNodeName( true ), ( SelectedNodeId != null ) ? SelectedNodeId.ToString() : string.Empty ),
-                            new XElement( _ColumnSubField.ToXmlNodeName( true ), ( SelectedColumn != Int32.MinValue ) ? SelectedColumn.ToString() : string.Empty ),
-                            new XElement( _RowSubField.ToXmlNodeName( true ), ( SelectedRow != Int32.MinValue ) ? SelectedRow.ToString() : string.Empty ),
-                            new XElement( _NameSubField.ToXmlNodeName( true ), CachedNodeName ),
-                            new XElement( _PathSubField.ToXmlNodeName( true ), CachedPath ),
-                            new XElement( _BarcodeSubField.ToXmlNodeName( true ), CachedBarcode ) );
-
-            View.SaveToCache( false );
-            ParentNode.Add( new XElement( "viewid", View.SessionViewId.ToString() ) );
-
-            if( NodeId != null && NodeId.PrimaryKey != Int32.MinValue )
-            {
-                ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( View, true, true, false, false );
-                CswNbtNodeKey NodeKey = Tree.getNodeKeyByNodeId( NodeId );
-                if( NodeKey != null )
-                {
-                    ParentNode.Add( new XElement( "nodekey", NodeKey.ToString() ) );
-                }
-            }
-        }
-
         public override void ToJSON( JObject ParentObject )
         {
             ParentObject[_NodeIdSubField.ToXmlNodeName( true )] = ( SelectedNodeId != null ) ? SelectedNodeId.ToString() : string.Empty;
@@ -344,52 +287,7 @@ namespace ChemSW.Nbt.PropTypes
             //}
         }
 
-        public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
-        {
-            // Getting the value as a string is on purpose.
-            //SelectedNodeId = new CswPrimaryKey( "nodes", _HandleReference( CswXmlDocument.ChildXmlNodeValueAsInteger( XmlNode, _NodeIdSubField.ToXmlNodeName() ), CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _BarcodeSubField.ToXmlNodeName() ), NodeMap ) );
-            string LocationNodeIdStr = CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _NodeIdSubField.ToXmlNodeName() );
-            string LocationBarcode = CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _BarcodeSubField.ToXmlNodeName() );
-            Int32 Row = CswXmlDocument.ChildXmlNodeValueAsInteger( XmlNode, _RowSubField.ToXmlNodeName() );
-            Int32 Column = CswXmlDocument.ChildXmlNodeValueAsInteger( XmlNode, _ColumnSubField.ToXmlNodeName() );
-
-            string SelectedNodeId = _saveProp( LocationNodeIdStr, LocationBarcode, NodeMap, Row, Column );
-            if( !string.IsNullOrEmpty( SelectedNodeId ) )
-            {
-                CswXmlDocument.AppendXmlAttribute( XmlNode, "destnodeid", SelectedNodeId );
-            }
-        } // ReadXml()
-
-
-
-        public override void ReadXElement( XElement XmlNode, Dictionary<int, int> NodeMap, Dictionary<int, int> NodeTypeMap )
-        {
-            string LocationNodeIdStr = string.Empty;
-            string LocationBarcode = string.Empty;
-            Int32 Row = Int32.MinValue;
-            Int32 Column = Int32.MinValue;
-            if( null != XmlNode.Element( _NodeIdSubField.ToXmlNodeName( true ) ) )
-            {
-                LocationNodeIdStr = XmlNode.Element( _NodeIdSubField.ToXmlNodeName( true ) ).Value;
-            }
-            if( null != XmlNode.Element( _BarcodeSubField.ToXmlNodeName( true ) ) )
-            {
-                LocationBarcode = XmlNode.Element( _BarcodeSubField.ToXmlNodeName( true ) ).Value;
-            }
-            if( null != XmlNode.Element( _RowSubField.ToXmlNodeName( true ) ) )
-            {
-                Row = CswConvert.ToInt32( XmlNode.Element( _RowSubField.ToXmlNodeName( true ) ).Value );
-            }
-            if( null != XmlNode.Element( _ColumnSubField.ToXmlNodeName( true ) ) )
-            {
-                Column = CswConvert.ToInt32( XmlNode.Element( _ColumnSubField.ToXmlNodeName( true ) ).Value );
-            }
-            string SelectedNodeId = _saveProp( LocationNodeIdStr, LocationBarcode, NodeMap, Row, Column );
-            if( !string.IsNullOrEmpty( SelectedNodeId ) )
-            {
-                XmlNode.Add( new XElement( "destnodeid", SelectedNodeId ) );
-            }
-        }
+        // ReadXml()
 
         public override void ReadJSON( JObject JObject, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {

@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Xml;
-using System.Xml.Linq;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
@@ -152,24 +150,6 @@ namespace ChemSW.Nbt.PropTypes
             }
         } // DisplayMode
 
-        public override void ToXml( XmlNode ParentNode )
-        {
-            //CswXmlDocument.AppendXmlNode( ParentNode, _DateValueSubField.ToXmlNodeName(), DateValue.Date.ToString( _CswNbtResources.CurrentUser.DateFormat ) );
-
-            XmlNode DateValueNode = CswXmlDocument.AppendXmlNode( ParentNode, _DateValueSubField.ToXmlNodeName() );
-            CswXmlDocument.AppendXmlAttribute( DateValueNode, "displaymode", DisplayMode.ToString() );
-
-            CswDateTime CswDate = new CswDateTime( _CswNbtResources, DateTimeValue );
-            CswXmlDocument.AppendXmlAttribute( DateValueNode, "datetime", CswDate.ToClientAsDateTimeString() );
-            CswXmlDocument.AppendXmlAttribute( DateValueNode, "dateformat", CswDate.ClientDateFormat.ToString() );
-            CswXmlDocument.AppendXmlAttribute( DateValueNode, "timeformat", CswDate.ClientTimeFormat.ToString() );
-        }
-
-        public override void ToXElement( XElement ParentNode )
-        {
-            ParentNode.Add( new XElement( _DateValueSubField.ToXmlNodeName( true ), DateTimeValue.Date.ToString( _CswNbtResources.CurrentUser.DateFormat ) ) );
-        }
-
         public override void ToJSON( JObject ParentObject )
         {
             //ParentObject.Add( new JProperty( _DateValueSubField.ToXmlNodeName( true ), DateValue.Date.ToString( _CswNbtResources.CurrentUser.DateFormat ) ) );
@@ -181,22 +161,7 @@ namespace ChemSW.Nbt.PropTypes
 
         } // ToJSON()
 
-        public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
-        {
-            //DateValue = CswXmlDocument.ChildXmlNodeValueAsDate( XmlNode, _DateValueSubField.ToXmlNodeName() );
-            XmlNode DateValueNode = CswXmlDocument.ChildXmlNode( XmlNode, _DateValueSubField.ToXmlNodeName() );
-            CswDateTime CswDateTime = new CswDateTime( _CswNbtResources, DateValueNode.Attributes["dateformat"].Value, DateValueNode.Attributes["timeformat"].Value );
-            CswDateTime.FromClientDateTimeString( DateValueNode.Attributes["datetime"].Value );
-            DateTimeValue = CswDateTime.ToDateTime();
-        } // ReadXml()
-
-        public override void ReadXElement( XElement XmlNode, Dictionary<int, int> NodeMap, Dictionary<int, int> NodeTypeMap )
-        {
-            if( null != XmlNode.Element( _DateValueSubField.ToXmlNodeName( true ) ) )
-            {
-                DateTimeValue = CswConvert.ToDateTime( XmlNode.Element( _DateValueSubField.ToXmlNodeName( true ) ).Value );
-            }
-        }
+        // ReadXml()
 
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
