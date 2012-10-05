@@ -1,5 +1,7 @@
 ﻿//using ChemSW.RscAdo;
 
+using ChemSW.Nbt.csw.Dev;
+
 namespace ChemSW.Nbt.Schema
 {
 
@@ -28,7 +30,19 @@ namespace ChemSW.Nbt.Schema
 			_CswTstCaseRsrc_002.CswNbtSchemaModTrnsctn = _CswNbtSchemaModTrnsctn;
 			
 			_CswTstCaseRsrc.assertColumnIsAbsent( _TestTableName, _TestColumnName );
-        }//runTest()
+        }
+
+        public override CswDeveloper Author
+        {
+            get { return CswDeveloper.PG; }
+        }
+
+        public override int CaseNo
+        {
+            get { return 0; }
+        }
+
+        //runTest()
 
     }//CswSchemaUpdaterTestCaseDropColumnRollback
 

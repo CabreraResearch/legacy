@@ -226,18 +226,22 @@ namespace ChemSW.Nbt.MetaData
         /// Set the default value for an object class prop, and cascade the change to all existing NodeTypeProps
         /// </summary>
         /// <param name="ObjectClassProp"></param>
-        /// <param name="SubFieldName"></param>
+        /// <param name="SubFieldName">Optional. Use the default subfield if null.</param>
         /// <param name="Value"></param>
         public void SetObjectClassPropDefaultValue( CswNbtMetaDataObjectClassProp ObjectClassProp, CswNbtSubField.SubFieldName SubFieldName, object Value )
         {
-            ObjectClassProp.DefaultValue.SetPropRowValue( ObjectClassProp.getFieldTypeRule().SubFields[SubFieldName].Column, Value );
-            // We're going to regret this day
-            ObjectClassProp.DefaultValue.SetPropRowValue( CswNbtSubField.PropColumn.Gestalt, Value );
-
-            foreach( CswNbtMetaDataNodeTypeProp NodeTypeProp in ObjectClassProp.getNodeTypeProps() )
+            if( null != ObjectClassProp )
             {
-                NodeTypeProp.DefaultValue.SetPropRowValue( ObjectClassProp.getFieldTypeRule().SubFields[SubFieldName].Column, Value );
-                NodeTypeProp.DefaultValue.SetPropRowValue( CswNbtSubField.PropColumn.Gestalt, Value );
+                SubFieldName = SubFieldName ?? ObjectClassProp.getFieldTypeRule().SubFields.Default.Name;
+                ObjectClassProp.DefaultValue.SetPropRowValue( ObjectClassProp.getFieldTypeRule().SubFields[SubFieldName].Column, Value );
+                // We're going to regret this day
+                ObjectClassProp.DefaultValue.SetPropRowValue( CswNbtSubField.PropColumn.Gestalt, Value );
+
+                foreach( CswNbtMetaDataNodeTypeProp NodeTypeProp in ObjectClassProp.getNodeTypeProps() )
+                {
+                    NodeTypeProp.DefaultValue.SetPropRowValue( ObjectClassProp.getFieldTypeRule().SubFields[SubFieldName].Column, Value );
+                    NodeTypeProp.DefaultValue.SetPropRowValue( CswNbtSubField.PropColumn.Gestalt, Value );
+                }
             }
         }
 

@@ -642,7 +642,7 @@ namespace ChemSW.Nbt.WebServices
                     if( _CswNbtResources.CurrentNbtUser.IsAdministrator() )
                     {
                         JArray UsersArray = new JArray();
-                        CswNbtMetaDataObjectClass UserOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
+                        CswNbtMetaDataObjectClass UserOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.UserClass );
                         foreach( CswNbtObjClassUser ThisUser in ( from _UserNode in UserOC.getNodes( false, false )
                                                                   select (CswNbtObjClassUser) _UserNode ) )
                         {
@@ -2223,9 +2223,8 @@ namespace ChemSW.Nbt.WebServices
                     CswNbtMetaDataObjectClass ObjectClass = null;
                     if( false == string.IsNullOrEmpty( ObjectClassName ) )
                     {
-                        CswNbtMetaDataObjectClass.NbtObjectClass OC;
-                        Enum.TryParse( ObjectClassName, true, out OC );
-                        if( CswNbtMetaDataObjectClass.NbtObjectClass.Unknown != OC )
+                        NbtObjectClass OC = ObjectClassName;
+                        if( CswNbtResources.UnknownEnum != OC )
                         {
                             ObjectClass = _CswNbtResources.MetaData.getObjectClass( OC );
                         }
@@ -3734,111 +3733,6 @@ namespace ChemSW.Nbt.WebServices
 
         #endregion Actions
 
-        #region Mobile
-        [WebMethod( EnableSession = false )]
-        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string UpdateProperties( string SessionId, string ParentId, string UpdatedViewJson, bool ForMobile )
-        {
-            JObject ReturnVal = new JObject();
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
-            try
-            {
-                _initResources();
-                AuthenticationStatus = _attemptRefresh();
-
-                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
-                {
-                    CswNbtWebServiceMobile wsM = new CswNbtWebServiceMobile( _CswNbtResources, ForMobile );
-                    bool CompletedNodes = wsM.updateViewProps( UpdatedViewJson );
-                    ReturnVal = wsM.getNode( ParentId );
-                    ReturnVal["completed"] = CompletedNodes;
-                }
-
-                _deInitResources();
-            }
-
-            catch( Exception Ex )
-            {
-                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
-            }
-
-            CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus, IsMobile: true );
-            //_jAddAuthenticationStatus( ReturnVal, AuthenticationStatus, ForMobile );
-
-            return ReturnVal.ToString();
-
-        } // UpdateNodeProps()
-
-        [WebMethod( EnableSession = false )]
-        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string GetViewsList( string SessionId, string ParentId, bool ForMobile )
-        {
-            JObject ReturnVal = new JObject();
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
-            try
-            {
-                _initResources();
-                AuthenticationStatus = _attemptRefresh();
-
-                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
-                {
-                    ICswNbtUser CurrentUser = _CswNbtResources.CurrentNbtUser;
-                    if( null != CurrentUser )
-                    {
-                        CswNbtWebServiceMobile wsView = new CswNbtWebServiceMobile( _CswNbtResources, ForMobile );
-                        ReturnVal = wsView.getViewsList( ParentId, CurrentUser );
-                    }
-                }
-
-                _deInitResources();
-            }
-
-            catch( Exception Ex )
-            {
-                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
-            }
-
-            //_jAddAuthenticationStatus( ReturnVal, AuthenticationStatus.Authenticated, ForMobile );
-            CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus.Authenticated, IsMobile: true );
-
-            return ReturnVal.ToString();
-        } // GetViews()
-
-        [WebMethod( EnableSession = false )]
-        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string GetView( string SessionId, string ParentId, bool ForMobile )
-        {
-            JObject ReturnVal = new JObject();
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
-            try
-            {
-                _initResources();
-                AuthenticationStatus = _attemptRefresh();
-
-                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
-                {
-                    ICswNbtUser CurrentUser = _CswNbtResources.CurrentNbtUser;
-                    if( null != CurrentUser )
-                    {
-                        CswNbtWebServiceMobile wsView = new CswNbtWebServiceMobile( _CswNbtResources, ForMobile );
-                        ReturnVal = wsView.getView( ParentId, CurrentUser );
-                    }
-                }
-
-                _deInitResources();
-            }
-
-            catch( Exception Ex )
-            {
-                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
-            }
-
-            CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus.Authenticated, IsMobile: true );
-            //_jAddAuthenticationStatus( ReturnVal, AuthenticationStatus.Authenticated, ForMobile );
-
-            return ReturnVal.ToString();
-        } // GetViews()
-
         #endregion Mobile
 
         [WebMethod( EnableSession = false )]
@@ -3857,7 +3751,7 @@ namespace ChemSW.Nbt.WebServices
                     CswNbtNode node = _CswNbtResources.Nodes[_getNodeId( nodeId )];
                     if( null != node )
                     {
-                        if( node.getObjectClass().ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.FeedbackClass )
+                        if( node.getObjectClass().ObjectClass == NbtObjectClass.FeedbackClass )
                         {
                             CswNbtObjClassFeedback feedbackNode = node;
                             ReturnVal["casenumber"] = feedbackNode.CaseNumber.Sequence;
@@ -3880,39 +3774,6 @@ namespace ChemSW.Nbt.WebServices
             return ReturnVal.ToString();
         } // GetFeedbackCaseNumber
 
-        //[WebMethod( EnableSession = false )]
-        //[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        //public string GetViewFromNodeId( string nodeId )
-        //{
-        //    JObject ReturnVal = new JObject();
-        //    AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
-        //    try
-        //    {
-        //        _initResources();
-        //        AuthenticationStatus = _attemptRefresh( true );
-
-        //        CswPrimaryKey nodePk = _getNodeId( nodeId );
-        //        if( null != nodePk )
-        //        {
-        //            CswNbtNode Node = _CswNbtResources.Nodes.GetNode( nodePk );
-        //            CswNbtView NodeView = Node.getViewOfNode();
-        //            NodeView.SaveToCache();
-        //            //CswNbtWebServiceTree view = new CswNbtWebServiceTree( _CswNbtResources, NodeView );
-        //            ReturnVal["viewid"] = NodeView.SessionViewId.ToString();
-        //        }
-
-        //        _deInitResources();
-        //    }
-
-        //    catch( Exception Ex )
-        //    {
-        //        CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
-        //    }
-
-        //    _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus.Authenticated, ForMobile );
-
-        //    return ReturnVal.ToString();
-        //} // GetViews()
 
         #region Nbt Manager
 

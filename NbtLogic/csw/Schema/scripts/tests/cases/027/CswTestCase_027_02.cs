@@ -1,4 +1,6 @@
 ﻿
+using ChemSW.Nbt.csw.Dev;
+
 namespace ChemSW.Nbt.Schema
 {
 
@@ -38,7 +40,19 @@ namespace ChemSW.Nbt.Schema
             _CswNbtSchemaModTrnsctn.CswLogger.reportAppState( Description + ": ProcessMemory Delta " + _CswTstCaseRsrc_027.ProcessMemoryDelta );
             _CswNbtSchemaModTrnsctn.CswLogger.reportAppState( Description + ": GCMemory Delta " + _CswTstCaseRsrc_027.GCMemoryDelta );
 
-        }//runTest()
+        }
+
+        public override CswDeveloper Author
+        {
+            get { return CswDeveloper.PG; }
+        }
+
+        public override int CaseNo
+        {
+            get { return 0; }
+        }
+
+        //runTest()
 
     }//CswSchemaUpdaterTestCaseDropColumnRollback
 

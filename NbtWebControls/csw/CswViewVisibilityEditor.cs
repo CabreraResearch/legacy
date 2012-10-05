@@ -28,7 +28,7 @@ namespace ChemSW.NbtWebControls
                 _NewViewVisibilityDropDown.Items.Add( new ListItem( "Everyone", NbtViewVisibility.Global.ToString() ) );
 
                 // Role dropdown
-                CswNbtMetaDataObjectClass Role_ObjectClass = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.RoleClass );
+                CswNbtMetaDataObjectClass Role_ObjectClass = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.RoleClass );
 
                 CswNbtView RoleView = new CswNbtView( _CswNbtResources );
                 CswNbtViewRelationship RoleRelationship = RoleView.AddViewRelationship( Role_ObjectClass, true );
@@ -51,7 +51,7 @@ namespace ChemSW.NbtWebControls
             }
 
             // User dropdown
-            CswNbtMetaDataObjectClass User_ObjectClass = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
+            CswNbtMetaDataObjectClass User_ObjectClass = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.UserClass );
 
             CswNbtView UserView = new CswNbtView( _CswNbtResources );
             CswNbtViewRelationship UserRelationship = UserView.AddViewRelationship( User_ObjectClass, true );

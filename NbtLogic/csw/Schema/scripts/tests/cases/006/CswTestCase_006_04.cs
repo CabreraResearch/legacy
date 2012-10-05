@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using ChemSW.DB;
 using ChemSW.Exceptions;
+using ChemSW.Nbt.csw.Dev;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -52,7 +53,19 @@ namespace ChemSW.Nbt.Schema
                 throw ( new CswDniException( "No exception was thrown after the removal of a foreign key constraint was rolled back on table table " + PkFkPairs[0].FkTableName ) );
 
 
-        }//runTest()
+        }
+
+        public override CswDeveloper Author
+        {
+            get { return CswDeveloper.PG; }
+        }
+
+        public override int CaseNo
+        {
+            get { return 0; }
+        }
+
+        //runTest()
 
     }//CswSchemaUpdaterTestCaseDropColumnRollback
 

@@ -34,6 +34,10 @@ namespace ChemSW.Nbt
             {
                 ret = new CswNbtModuleRuleMobile( CswNbtResources );
             }
+            else if( CswNbtModuleName.MLM == ModuleName )
+            {
+                ret = new CswNbtModuleRuleMLM( CswNbtResources );
+            }
             else if( CswNbtModuleName.NBTManager == ModuleName )
             {
                 ret = new CswNbtModuleRuleNBTManager( CswNbtResources );

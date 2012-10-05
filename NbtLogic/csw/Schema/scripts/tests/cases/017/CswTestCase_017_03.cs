@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using ChemSW.Nbt.csw.Dev;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -29,7 +30,19 @@ namespace ChemSW.Nbt.Schema
                 _CswNbtSchemaModTrnsctn.renameColumn( CurrentPair.FkTableName, CurrentPair.FkTablePkColumnName, CurrentPair.FkTablePkColumnName + _CswTstCaseRsrc_017.PkTablePkColumnNameNewNameSuffix );
             }
         
-        }//runTest()
+        }
+
+        public override CswDeveloper Author
+        {
+            get { return CswDeveloper.PG; }
+        }
+
+        public override int CaseNo
+        {
+            get { return 0; }
+        }
+
+        //runTest()
 
     }//CswSchemaUpdaterTestCaseDropColumnRollback
 

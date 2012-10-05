@@ -1,4 +1,6 @@
 
+using ChemSW.Nbt.csw.Dev;
+
 namespace ChemSW.Nbt.Schema
 {
 
@@ -25,7 +27,19 @@ namespace ChemSW.Nbt.Schema
 			_CswTstCaseRsrc.assertColumnIsAbsent( _CswTstCaseRsrc.getRealTestTableName( TestTableNamesReal.DataDictionary ), _CswTstCaseRsrc.getFakeTestColumnName( TestColumnNamesFake.TestColumn01 ) );
             _CswTstCaseRsrc.assertColumnIsAbsent( _CswTstCaseRsrc.getRealTestTableName( TestTableNamesReal.DataDictionary ), _CswTstCaseRsrc.getFakeTestColumnName( TestColumnNamesFake.TestColumn02 ) );
 
-        }//runTest()
+        }
+
+        public override CswDeveloper Author
+        {
+            get { return CswDeveloper.PG; }
+        }
+
+        public override int CaseNo
+        {
+            get { return 0; }
+        }
+
+        //runTest()
 
     }//CswSchemaUpdaterTestCaseDropColumnRollback
 

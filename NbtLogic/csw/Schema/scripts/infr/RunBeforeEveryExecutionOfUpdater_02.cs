@@ -1,14 +1,4 @@
-﻿using System;
-using System.IO;
-using System.Windows.Forms;
-using System.Data;
-using System.Collections.Generic;
-using ChemSW.Core;
-using ChemSW.DB;
-using ChemSW.Nbt.MetaData;
-using ChemSW.Nbt.MetaData.FieldTypeRules;
-using ChemSW.Nbt.ObjClasses;
-using System.Diagnostics;
+﻿using ChemSW.Nbt.csw.Dev;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -24,7 +14,19 @@ namespace ChemSW.Nbt.Schema
         public override void update()
         {
             _CswNbtSchemaModTrnsctn.runExternalSqlScript( FileName, ChemSW.Nbt.Properties.Resources.nbt_initialize_ora_sql );
-        }//update()
+        }
+
+        public override CswDeveloper Author
+        {
+            get { return CswDeveloper.NBT; }
+        }
+
+        public override int CaseNo
+        {
+            get { return 0; }
+        }
+
+        //update()
 
     }//class RunBeforeEveryExecutionOfUpdater_02
 

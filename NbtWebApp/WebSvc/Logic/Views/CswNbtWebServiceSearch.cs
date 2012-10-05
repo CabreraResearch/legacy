@@ -66,23 +66,23 @@ namespace ChemSW.Nbt.WebServices
 
         //        if( _CswNbtResources.Modules.IsModuleEnabled( CswNbtModule.IMCS ) )
         //        {
-        //            SearchOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.EquipmentClass );
+        //            SearchOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClassName.NbtObjectClass.EquipmentClass );
         //        }
         //        else if( _CswNbtResources.Modules.IsModuleEnabled( CswNbtModule.CISPro ) )
         //        {
-        //            SearchOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass );
+        //            SearchOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClassName.NbtObjectClass.MaterialClass );
         //        }
         //        else if( _CswNbtResources.Modules.IsModuleEnabled( CswNbtModule.BioSafety ) )
         //        {
-        //            SearchOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.BiologicalClass );
+        //            SearchOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClassName.NbtObjectClass.BiologicalClass );
         //        }
         //        else if( _CswNbtResources.Modules.IsModuleEnabled( CswNbtModule.SI ) )
         //        {
-        //            SearchOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.InspectionTargetClass );
+        //            SearchOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClassName.NbtObjectClass.InspectionTargetClass );
         //        }
         //        else
         //        {
-        //            SearchOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.GenericClass );
+        //            SearchOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClassName.NbtObjectClass.GenericClass );
         //        }
 
         //        if( null != SearchOC.getNodeTypes() )
@@ -118,7 +118,7 @@ namespace ChemSW.Nbt.WebServices
         //    ObjectClassSelObj["label"] = "Generic Types";
 
         //    foreach( CswNbtMetaDataObjectClass ObjectClass in _CswNbtResources.MetaData.getObjectClasses().Cast<CswNbtMetaDataObjectClass>()
-        //                                                      .Where( ObjectClass => CswNbtMetaDataObjectClass.NbtObjectClass.GenericClass != ObjectClass.ObjectClass &&
+        //                                                      .Where( ObjectClass => CswNbtMetaDataObjectClassName.NbtObjectClass.GenericClass != ObjectClass.ObjectClass &&
         //                                                              ( ObjectClass.getObjectClassProps().Count() > 0 &&
         //                                                                ObjectClass.getNodeTypes().Count() > 0 ) ) )
         //    {

@@ -63,7 +63,7 @@ namespace ChemSW.Nbt.PropTypes
             set
             {
                 string UserName = string.Empty;
-                CswNbtMetaDataObjectClass UserOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
+                CswNbtMetaDataObjectClass UserOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.UserClass );
                 CswNbtMetaDataObjectClassProp UserPassword = UserOC.getObjectClassProp( CswNbtObjClassUser.PropertyName.Password );
 
                 if( this.ObjectClassPropId == UserPassword.ObjectClassPropId )
@@ -72,7 +72,7 @@ namespace ChemSW.Nbt.PropTypes
                     if( //null != UserNode &&
                         false == (
                                     _CswNbtResources.Permit.canNode( CswNbtPermit.NodeTypePermission.Edit, NodeTypeProp.getNodeType(), this.NodeId ) ) &&
-                                    _CswNbtResources.Permit.canProp( CswNbtPermit.NodeTypePermission.Edit, NodeTypeProp )
+                                    _CswNbtResources.Permit.canProp( CswNbtPermit.NodeTypePermission.Edit, NodeTypeProp, null )
                                  )
                     {
                         throw new CswDniException( ErrorType.Warning, "User does not have permission to edit this password", "Permit.can() returned false for UserNode '" + this.NodeId + "'." );

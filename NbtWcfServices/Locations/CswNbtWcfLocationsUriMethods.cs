@@ -45,7 +45,7 @@ namespace NbtWebAppServices.WebServices
 
                     if( LocationCount > 0 )
                     {
-                        CswNbtMetaDataObjectClass LocationsOc = _CswNbtWcfSessionResources.CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.LocationClass );
+                        CswNbtMetaDataObjectClass LocationsOc = _CswNbtWcfSessionResources.CswNbtResources.MetaData.getObjectClass( NbtObjectClass.LocationClass );
                         Collection<CswNbtWcfLocationsDataModel.CswNbtLocationNodeModel> Locations = new Collection<CswNbtWcfLocationsDataModel.CswNbtLocationNodeModel>();
                         for( Int32 N = 0; N < LocationCount; N += 1 )
                         {

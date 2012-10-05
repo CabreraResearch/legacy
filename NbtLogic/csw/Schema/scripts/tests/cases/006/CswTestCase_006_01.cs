@@ -1,4 +1,6 @@
 
+using ChemSW.Nbt.csw.Dev;
+
 namespace ChemSW.Nbt.Schema
 {
 
@@ -23,7 +25,19 @@ namespace ChemSW.Nbt.Schema
 			_CswTstCaseRsrc_006.CswNbtSchemaModTrnsctn = _CswNbtSchemaModTrnsctn;
 			
 			_CswTstCaseRsrc_006.makePkFkTables();
-        }//runTest()
+        }
+
+        public override CswDeveloper Author
+        {
+            get { return CswDeveloper.PG; }
+        }
+
+        public override int CaseNo
+        {
+            get { return 0; }
+        }
+
+        //runTest()
 
     }//CswSchemaUpdaterTestCaseDropColumnRollback
 

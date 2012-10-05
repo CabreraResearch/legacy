@@ -200,7 +200,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             CswNbtView Ret = new CswNbtView( CswNbtResources );
 
-            CswNbtMetaDataObjectClass LocationOC = CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.LocationClass );
+            CswNbtMetaDataObjectClass LocationOC = CswNbtResources.MetaData.getObjectClass( NbtObjectClass.LocationClass );
             CswNbtMetaDataObjectClassProp LocationLocationOCP = LocationOC.getObjectClassProp( CswNbtObjClassLocation.PropertyName.Location );
             CswNbtMetaDataObjectClassProp LocationAllowInventoryOCP = LocationOC.getObjectClassProp( CswNbtObjClassLocation.PropertyName.AllowInventory );
 
@@ -324,7 +324,7 @@ namespace ChemSW.Nbt.PropTypes
             View.SaveToCache( false );
             ParentObject["viewid"] = View.SessionViewId.ToString();
 
-            CswNbtMetaDataObjectClass LocationOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.LocationClass );
+            CswNbtMetaDataObjectClass LocationOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.LocationClass );
             ParentObject["locationobjectclassid"] = LocationOC.ObjectClassId.ToString();
             JArray LocationNTArray = new JArray();
             foreach( CswNbtMetaDataNodeType LocationNT in LocationOC.getNodeTypes() )
@@ -499,7 +499,7 @@ namespace ChemSW.Nbt.PropTypes
                 if( LocationNodeId.PrimaryKey == Int32.MinValue && LocationBarcode != string.Empty )
                 {
                     // Find the location with this barcode value
-                    CswNbtMetaDataObjectClass LocationObjectClass = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.LocationClass );
+                    CswNbtMetaDataObjectClass LocationObjectClass = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.LocationClass );
                     CswNbtMetaDataObjectClassProp BarcodeObjectClassProp = LocationObjectClass.getObjectClassProp( CswNbtObjClassLocation.PropertyName.Barcode );
 
                     CswNbtView LocationView = new CswNbtView( _CswNbtResources );

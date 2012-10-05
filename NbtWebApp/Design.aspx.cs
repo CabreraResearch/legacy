@@ -72,7 +72,7 @@ namespace ChemSW.Nbt.WebPages
             {
                 bool CanVersion = ( false == SelectedNodeType.IsLocked &&
                                     SelectedNodeType.IsLatestVersion() &&
-                                    SelectedNodeType.getObjectClass().ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass );
+                                    SelectedNodeType.getObjectClass().ObjectClass == NbtObjectClass.InspectionDesignClass );
                 return CanVersion;
             }
         }
@@ -319,7 +319,7 @@ namespace ChemSW.Nbt.WebPages
                 if( _Mode == NbtDesignMode.Inspection )
                 {
                     NodeTypeTree.ShowQuestionNumbers = true;
-                    NodeTypeTree.ObjectClassIdsToInclude = Master.CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass ).ObjectClassId.ToString();
+                    NodeTypeTree.ObjectClassIdsToInclude = Master.CswNbtResources.MetaData.getObjectClass( NbtObjectClass.InspectionDesignClass ).ObjectClassId.ToString();
                     NodeTypeTree.TreeName = "Inspection Design";
                     NodeTypeTree.TreeView.OnClientNodePopulating = "NodeTypeTree_OnNodePopulating_InspectionMode";
                 }
@@ -666,7 +666,7 @@ namespace ChemSW.Nbt.WebPages
             try
             {
                 CswNbtMetaDataObjectClass SelectedObjectClass = SelectedNodeType.getObjectClass();
-                if( SelectedObjectClass.ObjectClass != CswNbtMetaDataObjectClass.NbtObjectClass.GenericClass )
+                if( SelectedObjectClass.ObjectClass != NbtObjectClass.GenericClass )
                 {
                     string ObjectClass = SelectedObjectClass.ObjectClass.ToString();
                     string NodeTypeName = SelectedNodeType.NodeTypeName;
@@ -899,8 +899,6 @@ namespace ChemSW.Nbt.WebPages
                     PropToSave.StaticText = getPropAttributeValue( "EditProp_TextValue" + OldSelectedNodeTypePropId.ToString(), EditPropPlaceHolder );
                     PropToSave.ReadOnly = Convert.ToBoolean( getPropAttributeValue( "EditProp_ReadOnlyValue" + OldSelectedNodeTypePropId.ToString(), typeof( bool ), EditPropPlaceHolder ) );
                     PropToSave.UseNumbering = Convert.ToBoolean( getPropAttributeValue( "EditProp_UseNumbering" + OldSelectedNodeTypePropId.ToString(), typeof( bool ), EditPropPlaceHolder ) );
-                    PropToSave.HideInMobile = Convert.ToBoolean( getPropAttributeValue( "EditProp_HideInMobile" + OldSelectedNodeTypePropId.ToString(), typeof( bool ), EditPropPlaceHolder ) );
-                    PropToSave.MobileSearch = Convert.ToBoolean( getPropAttributeValue( "EditProp_MobileSearch" + OldSelectedNodeTypePropId.ToString(), typeof( bool ), EditPropPlaceHolder ) );
                     PropToSave.SetFK( NewFKType, NewFKValue,
                                       getPropAttributeValue( "EditProp_RelatedPropType" + OldSelectedNodeTypePropId.ToString(), EditPropPlaceHolder ),
                                       CswConvert.ToInt32( getPropAttributeValue( "EditProp_RelatedPropValue" + OldSelectedNodeTypePropId.ToString(), typeof( Int32 ), EditPropPlaceHolder ) ) );
@@ -1270,7 +1268,7 @@ namespace ChemSW.Nbt.WebPages
             if( _SelectedType == CswNodeTypeTree.NodeTypeTreeSelectedType.NodeType && CswConvert.ToInt32( _SelectedValue ) > 0 )
             {
                 CswNbtMetaDataObjectClass ObjectClass = SelectedNodeType.getObjectClass();
-                if( ObjectClass.ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.GenericClass )
+                if( ObjectClass.ObjectClass == NbtObjectClass.GenericClass )
                 {
                     ChangeObjectClassLabel.Visible = true;
                     ChangeObjectClassSelect.Visible = true;
@@ -1281,7 +1279,7 @@ namespace ChemSW.Nbt.WebPages
                 EditNodeTypeName.Text = SelectedNodeType.NodeTypeName;
 
                 // case 24294 part 6
-                if( SelectedNodeType.getObjectClass().ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.GeneratorClass &&
+                if( SelectedNodeType.getObjectClass().ObjectClass == NbtObjectClass.GeneratorClass &&
                     SelectedNodeType.NodeTypeName == CswNbtObjClassGenerator.InspectionGeneratorNodeTypeName )
                 {
                     EditNodeTypeName.Enabled = false;
@@ -1914,7 +1912,7 @@ namespace ChemSW.Nbt.WebPages
 
                             HiddenField LocationFkValue = new HiddenField();
                             LocationFkValue.ID = "EditProp_FkValueValue" + SelectedNodeTypeProp.PropId.ToString();
-                            LocationFkValue.Value = Master.CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.LocationClass ).ObjectClassId.ToString();
+                            LocationFkValue.Value = Master.CswNbtResources.MetaData.getObjectClass( NbtObjectClass.LocationClass ).ObjectClassId.ToString();
                             EditPropPlaceHolder.Controls.Add( LocationFkValue );
                             break;
 
@@ -2813,22 +2811,6 @@ namespace ChemSW.Nbt.WebPages
                         UseNumberingValue.Checked = SelectedNodeTypeProp.UseNumbering;
                         UseNumberingRow.Cells[1].Controls.Add( UseNumberingValue );
                     }
-
-                    TableRow HideInMobileRow = makeEditPropTableRow( EditPropPlaceHolder );
-                    ( (Literal) HideInMobileRow.Cells[0].Controls[0] ).Text = "";
-                    CheckBox HideInMobileValue = new CheckBox();
-                    HideInMobileValue.ID = "EditProp_HideInMobile" + SelectedNodeTypeProp.PropId.ToString();
-                    HideInMobileValue.Text = "Hide in Mobile";
-                    HideInMobileValue.Checked = SelectedNodeTypeProp.HideInMobile;
-                    HideInMobileRow.Cells[1].Controls.Add( HideInMobileValue );
-
-                    TableRow MobileSearchRow = makeEditPropTableRow( EditPropPlaceHolder );
-                    ( (Literal) MobileSearchRow.Cells[0].Controls[0] ).Text = "";
-                    CheckBox MobileSearchValue = new CheckBox();
-                    MobileSearchValue.ID = "EditProp_MobileSearch" + SelectedNodeTypeProp.PropId.ToString();
-                    MobileSearchValue.Text = "Use For Mobile Search";
-                    MobileSearchValue.Checked = SelectedNodeTypeProp.MobileSearch;
-                    MobileSearchRow.Cells[1].Controls.Add( MobileSearchValue );
 
                     // BZ 7957
                     if( FieldType.ShowLabel() )

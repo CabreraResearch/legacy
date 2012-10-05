@@ -25,7 +25,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
-            get { return _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.RegulatoryListClass ); }
+            get { return _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.RegulatoryListClass ); }
         }
 
         /// <summary>
@@ -34,7 +34,7 @@ namespace ChemSW.Nbt.ObjClasses
         public static implicit operator CswNbtObjClassRegulatoryList( CswNbtNode Node )
         {
             CswNbtObjClassRegulatoryList ret = null;
-            if( null != Node && _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.RegulatoryListClass ) )
+            if( null != Node && _Validate( Node, NbtObjectClass.RegulatoryListClass ) )
             {
                 ret = (CswNbtObjClassRegulatoryList) Node.ObjClass;
             }
@@ -103,7 +103,7 @@ namespace ChemSW.Nbt.ObjClasses
         private void _removeListFromMaterials()
         {
             CswNbtView materialsWithThisList = new CswNbtView( _CswNbtResources );
-            CswNbtMetaDataObjectClass materialOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass );
+            CswNbtMetaDataObjectClass materialOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.MaterialClass );
             CswNbtMetaDataObjectClassProp regListsOCP = materialOC.getObjectClassProp( CswNbtObjClassMaterial.PropertyName.RegulatoryLists );
             CswNbtViewRelationship parent = materialsWithThisList.AddViewRelationship( materialOC, false );
             string OriginalName = Name.GetOriginalPropRowValue();

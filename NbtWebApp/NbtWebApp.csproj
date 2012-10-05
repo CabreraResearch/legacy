@@ -60,6 +60,7 @@
     <CodeAnalysisIgnoreBuiltInRules>true</CodeAnalysisIgnoreBuiltInRules>
     <DocumentationFile>bin\NbtWebApp.XML</DocumentationFile>
     <NoWarn>1591,1572,1571,1573,1587,1570</NoWarn>
+    <WarningLevel>0</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug %28Fast%29|x64'">
     <DebugSymbols>true</DebugSymbols>
@@ -1222,7 +1223,6 @@
     <Compile Include="WebSvc\Logic\Menus\CswNbtWebServiceHeader.cs" />
     <Compile Include="WebSvc\Logic\Menus\CswNbtWebServiceMainMenu.cs" />
     <Compile Include="WebSvc\Logic\MetaData\CswNbtWebServiceMetaData.cs" />
-    <Compile Include="WebSvc\Logic\SI\CswNbtWebServiceMobile.cs" />
     <Compile Include="WebSvc\Logic\Nodes\CswNbtWebServiceNode.cs" />
     <Compile Include="WebSvc\Logic\Labels\CswNbtWebServicePrintLabels.cs" />
     <Compile Include="WebSvc\Logic\Menus\CswNbtWebServiceQuickLaunchItems.cs" />

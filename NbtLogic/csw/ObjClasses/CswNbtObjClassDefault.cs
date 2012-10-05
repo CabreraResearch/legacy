@@ -18,7 +18,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
-            get { return _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.Unknown ); }
+            get { return _CswNbtResources.MetaData.getObjectClass( CswNbtResources.UnknownEnum ); }
         }
 
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )

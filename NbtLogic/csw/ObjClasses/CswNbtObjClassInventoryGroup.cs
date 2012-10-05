@@ -21,7 +21,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
-            get { return _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.InventoryGroupClass ); }
+            get { return _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.InventoryGroupClass ); }
         }
 
         /// <summary>
@@ -30,7 +30,7 @@ namespace ChemSW.Nbt.ObjClasses
         public static implicit operator CswNbtObjClassInventoryGroup( CswNbtNode Node )
         {
             CswNbtObjClassInventoryGroup ret = null;
-            if( null != Node && _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.InventoryGroupClass ) )
+            if( null != Node && _Validate( Node, NbtObjectClass.InventoryGroupClass ) )
             {
                 ret = (CswNbtObjClassInventoryGroup) Node.ObjClass;
             }

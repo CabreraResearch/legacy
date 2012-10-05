@@ -187,11 +187,11 @@ namespace ChemSW.Nbt.PropTypes
             Data.Columns.Add( ValueColumn, typeof( bool ) );
 
             bool first = true;
-            //ICswNbtTree UsersTree = _CswNbtResources.Trees.getTreeFromObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
+            //ICswNbtTree UsersTree = _CswNbtResources.Trees.getTreeFromObjectClass( CswNbtMetaDataObjectClassName.NbtObjectClass.UserClass );
             //for( int c = 0; c < UsersTree.getChildNodeCount(); c++ )
             //{
             //    UsersTree.goToNthChild( c );
-            CswNbtMetaDataObjectClass UserOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
+            CswNbtMetaDataObjectClass UserOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.UserClass );
             foreach( CswNbtNode UserNode in UserOC.getNodes( false, false ) )
             {
                 if( Tristate.True != UserNode.Properties[CswNbtObjClassUser.PropertyName.Archived].AsLogical.Checked )
@@ -358,11 +358,11 @@ namespace ChemSW.Nbt.PropTypes
         public CswCommaDelimitedString SelectedUserNames()
         {
             CswCommaDelimitedString SelectedUserNames = new CswCommaDelimitedString();
-            //ICswNbtTree UsersTree = _CswNbtResources.Trees.getTreeFromObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
+            //ICswNbtTree UsersTree = _CswNbtResources.Trees.getTreeFromObjectClass( CswNbtMetaDataObjectClassName.NbtObjectClass.UserClass );
             //for( int c = 0; c < UsersTree.getChildNodeCount(); c++ )
             //{
             //    UsersTree.goToNthChild( c );
-            CswNbtMetaDataObjectClass UserOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
+            CswNbtMetaDataObjectClass UserOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.UserClass );
             foreach( CswNbtNode UserNode in UserOC.getNodes( false, false ) )
             {
                 CswPrimaryKey ThisUserId = UserNode.NodeId;  //UsersTree.getNodeIdForCurrentPosition();

@@ -1,5 +1,6 @@
 using System;
 using ChemSW.Exceptions;
+using ChemSW.Nbt.csw.Dev;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -36,7 +37,19 @@ namespace ChemSW.Nbt.Schema
 
             _CswNbtSchemaModTrnsctn.dropTable( _CswTstCaseRsrc_009.FakeTestTableName );
 
-        }//runTest()
+        }
+
+        public override CswDeveloper Author
+        {
+            get { return CswDeveloper.PG; }
+        }
+
+        public override int CaseNo
+        {
+            get { return 0; }
+        }
+
+        //runTest()
 
     }//CswSchemaUpdaterTestCaseDropColumnRollback
 
