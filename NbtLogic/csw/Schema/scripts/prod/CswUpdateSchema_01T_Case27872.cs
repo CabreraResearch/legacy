@@ -63,15 +63,17 @@ namespace ChemSW.Nbt.Schema
                     UNCodeNode.postChanges( false );
                 }
 
-                //Create new Views
+                //Create demo Views
                 CswNbtView UNCodeView = _CswNbtSchemaModTrnsctn.makeNewView( "UN Codes", NbtViewVisibility.Global );
-                UNCodeView.Category = "MLM";
+                UNCodeView.Category = "MLM (demo)";
+                UNCodeView.IsDemo = true;
                 UNCodeView.ViewMode = NbtViewRenderingMode.Tree;
                 UNCodeView.AddViewRelationship( UNCodeNt, true );
                 UNCodeView.save();
 
                 CswNbtView LQNoView = _CswNbtSchemaModTrnsctn.makeNewView( "UN Codes by LQNo", NbtViewVisibility.Global );
-                LQNoView.Category = "MLM";
+                LQNoView.Category = "MLM (demo)";
+                LQNoView.IsDemo = true;
                 LQNoView.ViewMode = NbtViewRenderingMode.Tree;
                 CswNbtViewRelationship LQNoRelationship = LQNoView.AddViewRelationship( LQNoNt, true );
                 LQNoView.AddViewRelationship( LQNoRelationship, NbtViewPropOwnerType.Second, UNCodeLQNoNtp, false );
