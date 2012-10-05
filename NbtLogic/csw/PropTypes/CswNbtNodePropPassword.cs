@@ -104,11 +104,54 @@ namespace ChemSW.Nbt.PropTypes
             }
         }
 
+        private string _validatePassword( string NewPassword )
+        {
+            if( string.IsNullOrEmpty( NewPassword ) )
+            {
+                throw new CswDniException( ErrorType.Warning, "Passwords cannot be empty.", "The supplied password was null or empty." );
+            }
+            string Ret = NewPassword.Trim();
+            if( string.IsNullOrEmpty( Ret ) )
+            {
+                throw new CswDniException( ErrorType.Warning, "Passwords cannot be empty.", "The supplied password was null or empty." );
+            }
+            if( _CswNbtResources.ConfigVbls.doesConfigVarExist( ChemSW.Config.CswConfigurationVariables.ConfigurationVariableNames.Password_Length ) )
+            {
+                Int32 Length = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( ChemSW.Config.CswConfigurationVariables.ConfigurationVariableNames.Password_Length ) );
+                if( Ret.Length < Length )
+                {
+                    throw new CswDniException( ErrorType.Warning, "Passwords must be at least " + Length + " characters long.", "The supplied password was not long enough." );
+                }
+            }
+            if( _CswNbtResources.ConfigVbls.doesConfigVarExist( ChemSW.Config.CswConfigurationVariables.ConfigurationVariableNames.Password_Complexity ) )
+            {
+                Int32 ComplexityLevel = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( ChemSW.Config.CswConfigurationVariables.ConfigurationVariableNames.Password_Complexity ) );
+                if( ComplexityLevel > 0 )
+                {
+                    if( false == CswTools.HasAlpha( Ret ) || false == CswTools.HasNumber( Ret ) )
+                    {
+                        throw new CswDniException( ErrorType.Warning, "Password complexity requires that passwords contain at least 1 number and 1 letter.", "The supplied password did not contain both a letter and a number." );
+                    }
+
+                    if( ComplexityLevel > 1 )
+                    {
+                        if( false == CswTools.HasSpecialCharacter( Ret ) )
+                        {
+                            throw new CswDniException( ErrorType.Warning, "Password complexity requires that passwords contain at least 1 special character.", "The supplied password contained only alphanumeric characters." );
+                        }
+                    }
+                }
+
+            }
+            return Ret;
+        }
+
         public string Password
         {
             set
             {
-                EncryptedPassword = _CswEncryption.getMd5Hash( value );
+                string NewPassword = _validatePassword( value );
+                EncryptedPassword = _CswEncryption.getMd5Hash( NewPassword );
                 ChangedDate = DateTime.Now;
             }
         }
