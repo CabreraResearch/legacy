@@ -148,8 +148,89 @@ namespace ChemSW.Nbt.Schema
 
             #endregion
 
-            #endregion TITANIA
+            #region 27867 - Receipt Lot
 
+            CswNbtMetaDataObjectClass receiptLotOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.ReceiptLotClass );
+            if( null == receiptLotOC )
+            {
+                receiptLotOC = _CswNbtSchemaModTrnsctn.createObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.ReceiptLotClass, "options.png", false, false );
+
+                /*
+                 * Receipt Lot No OCP- waiting on 27877
+                 */
+
+                CswNbtMetaDataObjectClass materialOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass );
+                CswNbtMetaDataObjectClassProp materialOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( receiptLotOC )
+                {
+                    PropName = CswNbtObjClassReceiptLot.PropertyName.Material,
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Relationship,
+                    IsFk = true,
+                    FkType = NbtViewRelatedIdType.ObjectClassId.ToString(),
+                    FkValue = materialOC.ObjectClassId,
+                    ServerManaged = true,
+                    SetValOnAdd = true
+                } );
+
+                /*
+                 * Material ID - waiting on 27864
+                 */
+
+                CswNbtMetaDataObjectClassProp expirationDateOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( receiptLotOC )
+                {
+                    PropName = CswNbtObjClassReceiptLot.PropertyName.ExpirationDate,
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.DateTime
+                } );
+
+                CswNbtMetaDataObjectClassProp underInvestigationOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( receiptLotOC )
+                {
+                    PropName = CswNbtObjClassReceiptLot.PropertyName.UnderInvestigation,
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Logical,
+                    IsRequired = true
+                } );
+                _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( underInvestigationOCP, CswNbtSubField.SubFieldName.Checked, false );
+
+                CswNbtMetaDataObjectClassProp investigationNotesOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( receiptLotOC )
+                {
+                    PropName = CswNbtObjClassReceiptLot.PropertyName.InvestigationNotes,
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Comments
+                } );
+
+                CswNbtMetaDataObjectClass vendorOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.VendorClass );
+                CswNbtMetaDataObjectClassProp manufacturerOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( receiptLotOC )
+                {
+                    PropName = CswNbtObjClassReceiptLot.PropertyName.Manufacturer,
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Relationship,
+                    IsFk = true,
+                    FkType = NbtViewRelatedIdType.ObjectClassId.ToString(),
+                    FkValue = vendorOC.ObjectClassId
+                } );
+
+                CswNbtMetaDataObjectClassProp vendorTypeOCP = vendorOC.getObjectClassProp( CswNbtObjClassVendor.PropertyName.VendorTypeName );
+                CswNbtView manufacturerOCPView = _CswNbtSchemaModTrnsctn.makeNewView( "mepManufacturerOCP", NbtViewVisibility.Property );
+                CswNbtViewRelationship parent = manufacturerOCPView.AddViewRelationship( vendorOC, true );
+                manufacturerOCPView.AddViewPropertyAndFilter( parent,
+                    MetaDataProp: vendorTypeOCP,
+                    Value: "Manufacturing",
+                    SubFieldName: CswNbtSubField.SubFieldName.Value,
+                    FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+                _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( manufacturerOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.viewxml, manufacturerOCPView.ToString() );
+
+                CswNbtMetaDataObjectClass requestItemOC_27867 = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.RequestItemClass );
+                CswNbtMetaDataObjectClassProp requestItemOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( receiptLotOC )
+                {
+                    PropName = CswNbtObjClassReceiptLot.PropertyName.RequestItem,
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Relationship,
+                    IsFk = true,
+                    FkType = NbtViewRelatedIdType.ObjectClassId.ToString(),
+                    FkValue = requestItemOC_27867.ObjectClassId
+                } );
+
+                _CswNbtSchemaModTrnsctn.createModuleObjectClassJunction( CswNbtModuleName.CISPro, receiptLotOC.ObjectClassId );
+            }
+
+            #endregion
+
+            #endregion TITANIA
 
         }
 

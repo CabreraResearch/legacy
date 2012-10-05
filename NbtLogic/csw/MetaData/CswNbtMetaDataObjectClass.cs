@@ -48,6 +48,7 @@ namespace ChemSW.Nbt.MetaData
             ParameterClass,
             PrintLabelClass,
             ProblemClass,
+            ReceiptLotClass,
             RegulatoryListClass,
             ReportClass,
             ResultClass,
