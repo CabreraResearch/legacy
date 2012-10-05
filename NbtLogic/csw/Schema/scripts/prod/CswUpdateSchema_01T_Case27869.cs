@@ -36,7 +36,8 @@ namespace ChemSW.Nbt.Schema
                 {
                     //Create new View
                     MethodView = _CswNbtSchemaModTrnsctn.makeNewView( "Methods", NbtViewVisibility.Global );
-                    MethodView.Category = "MLM";
+                    MethodView.Category = "MLM (demo)";
+                    MethodView.IsDemo = true;
                     MethodView.ViewMode = NbtViewRenderingMode.Tree;
                     MethodView.AddViewRelationship( MethodOc, true );
                     MethodView.save();
