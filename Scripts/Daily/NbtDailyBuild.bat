@@ -67,13 +67,12 @@ timeout /T 30
 >>%LogFile% 2>&1 %KilnPath%\nbt\nbt\Scripts\Daily\NbtDailyBuild.pl %VersionNo% %KilnPath%
 
 >>%LogFile% echo ====================================================================
->>%LogFile% echo Starting Build
+>>%LogFile% echo Starting Quiet Build (Only build errors will appear)
 >>%LogFile% date /T
 >>%LogFile% time /T
 
->>%LogFile% msbuild %KilnPath%\Documentation\Documentation.sln /p:Configuration=Debug
->>%LogFile% msbuild %KilnPath%\Nbt\Nbt\Nbt.sln /p:Configuration=Release /p:Platform="x64"
->>%LogFile% msbuild %KilnPath%\DailyBuildTools\DailyBuildWeb\DailyBuildWeb.sln /p:Configuration=Release
+>>%LogFile% msbuild %KilnPath%\Documentation\Documentation.sln /p:Configuration=Debug /m /v:q
+>>%LogFile% msbuild %KilnPath%\Nbt\Nbt\Nbt.sln /p:Configuration=Release /p:Platform="x64" /m /v:q
 >>%LogFile% net start "ChemSW Log Service"
 
 
@@ -97,6 +96,15 @@ exit | >>%LogFile% sqlplus %ResetSchemaUsername%/%ResetSchemaPassword%@%ResetSch
 
 >>%LogFile% %KilnPath%\Nbt\Nbt\NbtSchemaUpdaterCmdLn\bin\Release\NbtUpdt.exe -all
 
+
+>>%LogFile% echo ====================================================================
+>>%LogFile% net stop "ChemSW Log Service"
+>>%LogFile% echo Starting Verbose Build (All diagnostic build content will appear)
+>>%LogFile% date /T
+>>%LogFile% time /T
+
+>>%LogFile% msbuild %KilnPath%\Nbt\Nbt\Nbt.sln /p:Configuration=Release /p:Platform="x64" /m /clp:PerformanceSummary /v:d
+>>%LogFile% net start "ChemSW Log Service"
 
 >>%LogFile% echo ====================================================================
 >>%LogFile% echo Starting Services
