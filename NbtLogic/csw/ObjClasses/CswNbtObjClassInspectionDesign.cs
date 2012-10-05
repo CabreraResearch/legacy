@@ -521,8 +521,6 @@ namespace ChemSW.Nbt.ObjClasses
                                 ButtonData.Message = "Inspection marked " + StatusValue + ".";
                                 this.Status.Value = StatusValue;
                             }
-                                }
-
                         } // if( _allAnswered )
                         else
                         {
