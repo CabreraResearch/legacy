@@ -33,9 +33,10 @@ namespace ChemSW.Nbt.Schema
                 CswNbtView JurisdictionView = _CswNbtSchemaModTrnsctn.restoreView( "Jurisdictions" );
                 if( null == JurisdictionView )
                 {
-                    //Create new View
+                    //Create demo View
                     JurisdictionView = _CswNbtSchemaModTrnsctn.makeNewView( "Jurisdictions", NbtViewVisibility.Global );
-                    JurisdictionView.Category = "MLM";
+                    JurisdictionView.Category = "MLM (demo)";
+                    JurisdictionView.IsDemo = true;
                     JurisdictionView.ViewMode = NbtViewRenderingMode.Tree;
                     JurisdictionView.AddViewRelationship( JurisdictionOc, true );
                     JurisdictionView.save();
