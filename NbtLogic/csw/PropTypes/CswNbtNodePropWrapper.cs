@@ -20,7 +20,6 @@ namespace ChemSW.Nbt.PropTypes
         private CswNbtNodePropData _CswNbtNodePropData = null;
         private CswNbtResources _CswNbtResources = null;
         private CswNbtNode _Node = null;
-        //        private CswNbtMetaDataNodeTypeTab _Tab = null;
 
         public CswNbtNodePropWrapper( CswNbtResources CswNbtResources, CswNbtNode Node, CswNbtNodeProp CswNbtNodeProp, CswNbtNodePropData CswNbtNodePropData )
         {
@@ -28,7 +27,6 @@ namespace ChemSW.Nbt.PropTypes
             _CswNbtNodePropData = CswNbtNodePropData;
             _CswNbtResources = CswNbtResources;
             _Node = Node;
-            //            _Tab = Tab;
         }//ctor
 
         //bz # 8287: rearranged a few things
@@ -42,21 +40,6 @@ namespace ChemSW.Nbt.PropTypes
         {
             _CswNbtNodeProp.clearModifiedFlag();
         }//clearModifiedFlag()
-
-
-        //public int CompareTo( object obj )
-        //{
-        //    if( !( obj is CswNbtNodePropWrapper ) )
-        //        throw new ArgumentException( "object is not a CswNbtNodePropWrapper" );
-
-
-        //    CswNbtNodePropWrapper CswNbtNodePropWrapper = ( CswNbtNodePropWrapper ) obj;
-
-        //    //return ( string.Compare( FieldType.FieldType.ToString(), CswNbtNodePropWrapper.FieldType.FieldType.ToString() ) );
-
-        //    return ( string.Compare( FieldType.FieldType.ToString(), CswNbtNodePropWrapper.FieldType.FieldType.ToString() ) );
-
-        //}//CompareTo() 
 
         public bool WasModified
         {
@@ -88,17 +71,10 @@ namespace ChemSW.Nbt.PropTypes
             }
         }//SuspendModifyTracking
 
-        //public void ensureEmptyVal()
-        //{
-        //    _CswNbtNodePropData.ensureEmptyVal();
-        //}
-
         public string Gestalt { get { return ( _CswNbtNodeProp.Gestalt ); } }
         public string ClobData { get { return ( _CswNbtNodePropData.ClobData ); } }
 
         public bool Empty { get { return ( _CswNbtNodeProp.Empty ); } }
-        //        public abstract CswNbtNodePropData Attributes { get; }
-
 
         public CswNbtMetaDataFieldType getFieldType() { return ( _CswNbtNodeProp.getFieldType() ); }
         public CswNbtMetaDataNodeTypeProp NodeTypeProp { get { return ( _CswNbtNodeProp.NodeTypeProp ); } }
@@ -129,7 +105,6 @@ namespace ChemSW.Nbt.PropTypes
         public Int32 ObjectClassPropId { get { return ( _CswNbtNodeProp.ObjectClassPropId ); } }
         public string ObjectClassPropName { get { return ( _CswNbtNodeProp.ObjectClassPropName ); } }
         public CswPrimaryKey NodeId { get { return ( _CswNbtNodePropData.NodeId ); } set { _CswNbtNodePropData.NodeId = value; } }
-        //public bool ReadOnly { get { return ( _CswNbtNodePropData.ReadOnly ); } set { _CswNbtNodePropData.ReadOnly = value; } }
         public bool Hidden { get { return ( _CswNbtNodePropData.Hidden ); } }
         public void setHidden( bool value, bool SaveToDb ) { _CswNbtNodePropData.setHidden( value, SaveToDb ); }
         public string Field1 { get { return ( _CswNbtNodePropData.Field1 ); } set { _CswNbtNodePropData.Field1 = value; } }
@@ -137,7 +112,6 @@ namespace ChemSW.Nbt.PropTypes
         public string Field3 { get { return ( _CswNbtNodePropData.Field3 ); } set { _CswNbtNodePropData.Field3 = value; } }
         public string Field4 { get { return ( _CswNbtNodePropData.Field4 ); } set { _CswNbtNodePropData.Field4 = value; } }
         public string Field5 { get { return ( _CswNbtNodePropData.Field5 ); } set { _CswNbtNodePropData.Field5 = value; } }
-        //public bool IsPropRow( DataRow DataRow ) { return ( _CswNbtNodeProp.IsPropRow( DataRow ) ); }
         public bool Required { get { return ( _CswNbtNodeProp.Required ); } }
         /// <summary>
         /// Determines whether to treat the property as required, temporarily
@@ -153,9 +127,6 @@ namespace ChemSW.Nbt.PropTypes
 
         public void onBeforeUpdateNodePropRow( bool IsCopy, bool OverrideUniqueValidation ) { _CswNbtNodeProp.onBeforeUpdateNodePropRow( IsCopy, OverrideUniqueValidation ); }
         public void onNodePropRowFilled() { _CswNbtNodeProp.onNodePropRowFilled(); }
-
-        //public bool IsNodeReference( XmlNode PropertyValueNode ) { return _CswNbtNodeProp.IsNodeReference( PropertyValueNode ); }
-        //public bool IsNodeTypeReference( XmlNode PropertyValueNode ) { return _CswNbtNodeProp.IsNodeTypeReference( PropertyValueNode ); }
 
         public bool AuditChanged { get { return _CswNbtNodePropData.AuditChanged; } }
 
@@ -230,22 +201,6 @@ namespace ChemSW.Nbt.PropTypes
         }
 
         /// <summary>
-        /// Determine whether the property is readonly for any reason
-        /// </summary>
-        //public bool IsReadOnly()
-        //{
-        //    return ( ( ( _CswNbtNodePropData.ReadOnly ||       // jct_nodes_props.readonly
-        //              NodeTypeProp.ReadOnly ) && _CswNbtResources.EditMode != NodeEditMode.Add ) ||
-        //             NodeTypeProp.ServerManaged ||         // nodetype_props.servermanaged
-        //             _CswNbtResources.EditMode == NodeEditMode.Preview ||
-        //             _CswNbtResources.EditMode == NodeEditMode.PrintReport ||
-        //             _CswNbtResources.EditMode == NodeEditMode.AuditHistoryInPopup ||
-        //             ( _CswNbtResources.EditMode == NodeEditMode.Add && false == CanAdd ) ||
-        //             ( ( _CswNbtResources.EditMode == NodeEditMode.Edit || _CswNbtResources.EditMode == NodeEditMode.EditInPopup ) && false == CanEdit ) ||
-        //             ( null != _Node && ( _Node.ReadOnly || _Node.Locked ) ) ); // nodes.readonly or nodes.locked
-        //}
-
-        /// <summary>
         /// Returns defined Field Type attributes/subfields as XmlDocument class XmlNode
         /// </summary>
         /// <param name="Parent">XmlDocument class XmlNode</param>
@@ -283,9 +238,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             if( null != Object ) //&& false == Hidden )
             {
-                //                _Tab = Tab;
                 if( null != Object["values"] &&
-                    //                    false == IsReadOnly() &&
                     _wasModified( Object ) )
                 {
                     JObject Values = (JObject) Object["values"];
@@ -567,17 +520,6 @@ namespace ChemSW.Nbt.PropTypes
 
         }//AsMTBF
 
-        //public CswNbtNodePropMultiRelationship AsMultiRelationship
-        //{
-        //    get
-        //    {
-        //        if( !( _CswNbtNodeProp is CswNbtNodePropMultiRelationship ) )
-        //            throw ( new CswDniException( _makeTypeErrorMessage( typeof( CswNbtNodePropMultiRelationship ) ) ) );
-        //        return ( (CswNbtNodePropMultiRelationship) _CswNbtNodeProp );
-        //    }
-
-        //}//AsMultiRelationship
-
         public CswNbtNodePropMultiList AsMultiList
         {
             get
@@ -709,16 +651,6 @@ namespace ChemSW.Nbt.PropTypes
                 return ( (CswNbtNodePropText) _CswNbtNodeProp );
             }
         }//Text
-
-        //public CswNbtNodePropDateTime AsTime
-        //{
-        //    get
-        //    {
-        //        if( !( _CswNbtNodeProp is CswNbtNodePropTime ) )
-        //            throw ( new CswDniException( _makeTypeErrorMessage( typeof( CswNbtNodePropTime ) ) ) );
-        //        return ( (CswNbtNodePropTime) _CswNbtNodeProp );
-        //    }
-        //}//Time
 
         public CswNbtNodePropTimeInterval AsTimeInterval
         {
