@@ -58,10 +58,10 @@ namespace ChemSW.Nbt.Schema
             if( null == mepsView )
             {
                 mepsView = _CswNbtSchemaModTrnsctn.makeNewView( "Manufacturing Equivalent Parts", NbtViewVisibility.Global );
-                mepsView.Category = "MLM";
+                mepsView.Category = "MLM (demo)";
                 mepsView.ViewMode = NbtViewRenderingMode.Tree;
                 mepsView.AddViewRelationship( mepOC, true );
-                mepsView.IsDemo = false;
+                mepsView.IsDemo = true;
                 mepsView.save();
             }
         }

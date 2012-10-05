@@ -39,10 +39,10 @@ namespace ChemSW.Nbt.Schema
             if( null == enterprisePartsView )
             {
                 enterprisePartsView = _CswNbtSchemaModTrnsctn.makeNewView( "Enterprise Parts", NbtViewVisibility.Global );
-                enterprisePartsView.Category = "MLM";
+                enterprisePartsView.Category = "MLM (demo)";
                 enterprisePartsView.ViewMode = NbtViewRenderingMode.Tree;
                 enterprisePartsView.AddViewRelationship( enterprisePartOC, true );
-                enterprisePartsView.IsDemo = false;
+                enterprisePartsView.IsDemo = true;
                 enterprisePartsView.save();
             }
 
