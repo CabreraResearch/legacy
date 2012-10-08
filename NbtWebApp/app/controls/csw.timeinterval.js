@@ -1,6 +1,5 @@
 /// <reference path="~/app/CswApp-vsdoc.js" />
 
-
 (function () {
 
     Csw.controls.timeInterval = Csw.controls.timeInterval ||
@@ -8,592 +7,550 @@
             'use strict';
             var cswPrivate = {
                 ID: '',
-                values: {},
+                rateIntervalValue: {
+                    text: '',
+                    ratetype: '',
+                    startingdate: {
+                        date: '',
+                        dateformat: ''
+                    },
+                    startingmonth: '',
+                    startingyear: '',
+                    hours: '',
+                    weeklyday: '',
+                    monthlyfrequency: '',
+                    monthlydate: '',
+                    monthlyweek: '',
+                    monthlyday: '',
+                    yearlydate: {
+                        date: '',
+                        dateformat: ''
+                    }
+                },
                 Multi: false,
                 ReadOnly: false,
                 Required: false,
                 onChange: null,
-                rateType: {},
+
+                divHourly: '',
                 divWeekly: '',
                 divMonthly: '',
                 divYearly: '',
-                dateFormat: ''
+                weekDayDef: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
             };
+            if (options) Csw.extend(cswPrivate, options, true);
+
+            // link rateIntervalValue directly (our version of databinding)
+            cswPrivate.rateIntervalValue = options.rateIntervalValue;
+
             var cswPublic = {
                 rateInterval: {}
             };
 
-            if (options) {
-                Csw.extend(cswPrivate, options, true);
-            }
 
-            cswPrivate.now = new Date();
-            cswPrivate.nowString = (cswPrivate.now.getMonth() + 1) + '/' + cswPrivate.now.getDate() + '/' + cswPrivate.now.getFullYear();
 
-            //cswPrivate.saveRateInterval = function () {
-            //    Csw.clientDb.setItem(cswPrivate.ID + '_rateIntervalSave', cswPublic.rateInterval);
-            //};
+            cswPrivate.makeWeekDayPicker = function (params) {
+                var i, type;
+                var p = {
+                    parent: null,
+                    IDPrefix: '',
+                    selectedWeekDays: [],
+                    useRadio: false,
+                    onChange: null
+                };
+                if (params) Csw.extend(p, params);
 
-            cswPrivate.weekDayDef = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-
-            cswPrivate.makeWeekDayPicker = function (thisRateType) {
-                //return (function () {
-                var weeklyDayPickerComplete = false,
-                    ret, weekdays, startingDate,
-                    isWeekly = (thisRateType === Csw.enums.rateIntervalTypes.WeeklyByDay),
-                    dayPropName = 'weeklyday';
-
-                if (false === isWeekly) {
-                    dayPropName = 'monthlyday';
+                function dayChange(val, checkbox) {
+                    var day = cswPrivate.weekDayDef[val - 1];
+                    if (p.useRadio) {
+                        p.selectedWeekDays = [];
+                    }
+                    if (checkbox.checked()) {
+                        if (false === Csw.contains(p.selectedWeekDays, day)) {
+                            p.selectedWeekDays.push(day);
+                        }
+                    } else {
+                        p.selectedWeekDays.splice(p.selectedWeekDays.indexOf(day), 1);
+                        if (p.selectedWeekDays.length === 0) {
+                            checkbox.click();
+                        }
+                    }
+                    Csw.tryExec(p.onChange, p.selectedWeekDays);
                 }
 
-                return function (onChange, useRadio, elemId, parent) {
-                    var id = elemId || cswPrivate.ID + '_weeklyday',
-                        pickerTable, i, type, weeklyStartDate = {}, weeklyTable, weeklyTableCell;
+                var pickerTable = p.parent.table({
+                    ID: Csw.makeId(p.IDPrefix, 'weekdaypicker'),
+                    cellalign: 'center'
+                });
 
-                    function isChecked(day) {
-                        var thisDay = cswPrivate.weekDayDef[day - 1];
-                        if (weekdays.length === 0) {
-                            weekdays.push(thisDay);
-                        }                        
-                        return false === cswPrivate.Multi && Csw.contains(weekdays, thisDay);
+                pickerTable.cell(1, 1).text('Su');
+                pickerTable.cell(1, 2).text('M');
+                pickerTable.cell(1, 3).text('Tu');
+                pickerTable.cell(1, 4).text('W');
+                pickerTable.cell(1, 5).text('Th');
+                pickerTable.cell(1, 6).text('F');
+                pickerTable.cell(1, 7).text('Sa');
+
+                for (i = 1; i <= 7; i += 1) {
+                    type = Csw.enums.inputTypes.checkbox;
+                    if (p.useRadio) {
+                        type = Csw.enums.inputTypes.radio;
                     }
+                    pickerTable.cell(2, i)
+                        .input({
+                            ID: p.IDPrefix + '_' + i,
+                            name: p.IDPrefix,
+                            type: type,
+                            onChange: dayChange,
+                            value: i,
+                            checked: Csw.contains(p.selectedWeekDays, cswPrivate.weekDayDef[i - 1])
+                        });
+                } //for (i = 1; i <= 7; i += 1)
 
-                    function saveWeekInterval() {
-                        if (isWeekly) {
-                            Csw.each(cswPublic.rateInterval, function (prop, key) {
-                                if (key !== 'dateformat' && key !== 'ratetype' && key !== 'startingdate' && key !== 'weeklyday') {
-                                    delete cswPublic.rateInterval[key];
-                                }
-                            });
-                            if (startingDate) {
-                                cswPublic.rateInterval.startingdate = startingDate.val();
-                            } else {
-                                cswPublic.rateInterval.startingdate = {};
-                            }
-                            cswPublic.rateInterval.startingdate.dateformat = cswPrivate.dateFormat;
-                        }
-                        cswPublic.rateInterval.ratetype = thisRateType;
-                        cswPublic.rateInterval.dateformat = cswPrivate.dateFormat;
-                        cswPublic.rateInterval[dayPropName] = weekdays.join(',');
+                return pickerTable;
+            }; // makeWeekDayPicker
+
+
+
+            cswPrivate.hideDivs = function () {
+                cswPrivate.divHourly.hide();
+                cswPrivate.divWeekly.hide();
+                cswPrivate.divMonthly.hide();
+                cswPrivate.divYearly.hide();
+            }; // hideDivs()
+
+
+            cswPrivate.makeRateTypeDiv = function (parent) {
+                var subTable = parent.table();
+
+                //Hourly
+                subTable.cell(1, 2).span({ text: '&nbsp;Hourly' });
+                subTable.cell(1, 1).input({
+                    ID: Csw.makeId(cswPrivate.ID, 'type', 'hourly'),
+                    name: Csw.makeId(cswPrivate.ID, 'type', '', '', false),
+                    type: Csw.enums.inputTypes.radio,
+                    value: 'hourly',
+                    checked: cswPublic.rateInterval.ratetype === Csw.enums.rateIntervalTypes.Hourly,
+                    onClick: function () {
+                        cswPublic.rateInterval.ratetype = Csw.enums.rateIntervalTypes.Hourly;
+                        cswPrivate.hideDivs();
+                        cswPrivate.divHourly.show();
                         Csw.tryExec(cswPrivate.onChange);
                     }
-
-                    function dayChange(val, checkbox) {
-                        var day = cswPrivate.weekDayDef[val - 1];
-                        if (checkbox.checked()) {
-                            if (false === isWeekly) {
-                                weekdays = [];
-                            }
-                            if (false === Csw.contains(weekdays, day)) {
-                                weekdays.push(day);
-                            }
-                        } else {
-                            weekdays.splice(weekdays.indexOf(day), 1);
-                            if (weekdays.length === 0) {
-                                checkbox.click();
-                            }
-                        }
-                        saveWeekInterval();
-                    }
-
-                    if (false === weeklyDayPickerComplete) {
-                        ret = parent || cswPrivate.pickerCell.div();
-
-                        weeklyTable = ret.table({
-                            ID: Csw.makeId(id, 'weeklytbl'),
-                            cellalign: 'center',
-                            FirstCellRightAlign: true
-                        });
-
-                        weekdays = Csw.string(cswPublic.rateInterval[dayPropName]).split(',');
-                        if (Csw.isNullOrEmpty(weekdays[0])) {
-                            weekdays.splice(weekdays[0], 1);
-                        }
-
-                        weeklyTable.cell(1, 1).text('Every:');
-                        if (thisRateType === Csw.enums.rateIntervalTypes.WeeklyByDay) {
-                            weeklyTable.cell(2, 1).text('Starting On:');
-                        }
-
-                        weeklyTableCell = weeklyTable.cell(2, 2);
-                        pickerTable = weeklyTable.cell(1, 2).table({
-                            ID: Csw.makeId(id, 'weeklytblpicker'),
-                            cellalign: 'center'
-                        });
-
-                        pickerTable.cell(1, 1).text('Su');
-                        pickerTable.cell(1, 2).text('M');
-                        pickerTable.cell(1, 3).text('Tu');
-                        pickerTable.cell(1, 4).text('W');
-                        pickerTable.cell(1, 5).text('Th');
-                        pickerTable.cell(1, 6).text('F');
-                        pickerTable.cell(1, 7).text('Sa');
-
-                        for (i = 1; i <= 7; i += 1) {
-                            type = Csw.enums.inputTypes.checkbox;
-                            if (useRadio) {
-                                type = Csw.enums.inputTypes.radio;
-                            }
-                            pickerTable.cell(2, i)
-                                .input({
-                                    ID: id + '_' + i,
-                                    name: id,
-                                    type: type,
-                                    onChange: dayChange,
-                                    value: i,
-                                    checked: isChecked(i)
-                                });
-                        } //for (i = 1; i <= 7; i += 1)                        
-
-                        //Starting Date
-                        if (isWeekly) {
-                            if (false === cswPrivate.Multi && Csw.contains(cswPublic.rateInterval, 'startingdate')) {
-                                weeklyStartDate = Csw.string(cswPublic.rateInterval.startingdate.date);
-                            }
-                            if (Csw.isNullOrEmpty(weeklyStartDate)) {
-                                weeklyStartDate = cswPrivate.nowString;
-                                cswPublic.rateInterval.startingdate = { date: cswPrivate.nowString, dateformat: cswPrivate.dateFormat };
-                            }
-
-                            startingDate = weeklyTableCell.dateTimePicker({
-                                ID: Csw.makeId(cswPrivate.ID, 'weekly', 'sd'),
-                                Date: weeklyStartDate,
-                                DateFormat: cswPrivate.dateFormat,
-                                DisplayMode: 'Date',
-                                ReadOnly: cswPrivate.ReadOnly,
-                                Required: cswPrivate.Required,
-                                onChange: function () {
-                                    saveWeekInterval();
-                                }
-                            });
-                        } //if(isWeekly)
-
-                        saveWeekInterval();
-
-                        weeklyDayPickerComplete = true;
-                        ret.addClass('CswFieldTypeTimeInterval_Div');
-                    } // if (false === weeklyDayComplete)
-
-                    return ret;
-                };
-                // } ()); // cswPrivate.makeWeekDayPicker()
-            };
-
-            cswPrivate.weeklyWeekPicker = cswPrivate.makeWeekDayPicker(Csw.enums.rateIntervalTypes.WeeklyByDay);
-            cswPrivate.monthlyWeekPicker = cswPrivate.makeWeekDayPicker(Csw.enums.rateIntervalTypes.MonthlyByWeekAndDay);
-
-            cswPrivate.makeMonthlyPicker = (function () {
-                var monthlyPickerComplete = false,
-                    ret;
-
-                return function () {
-                    var monthlyRateSelect, monthlyDateSelect, monthlyWeekSelect, startOnMonth, startOnYear,
-                        monthlyRadioId = Csw.makeId(cswPrivate.ID, 'monthly'),
-                        monthlyDayPickerId = Csw.makeId(cswPrivate.ID, 'monthly', 'day');
-
-                    function saveMonthInterval() {
-                        Csw.each(cswPublic.rateInterval, function (prop, key) {
-                            if (key !== 'dateformat' &&
-                                key !== 'ratetype' &&
-                                    key !== 'monthlyday' &&
-                                        key !== 'monthlydate' &&
-                                            key !== 'monthlyfrequency' &&
-                                                key !== 'startingmonth' &&
-                                                    key !== 'startingyear') {
-                                delete cswPublic.rateInterval[key];
-                            }
-                        });
-                        if (cswPrivate.rateType === Csw.enums.rateIntervalTypes.MonthlyByDate) {
-                            delete cswPublic.rateInterval.monthlyday;
-                            delete cswPublic.rateInterval.monthlyweek;
-                            cswPublic.rateInterval.monthlydate = monthlyDateSelect.find(':selected').val();
-                        } else {
-                            delete cswPublic.rateInterval.monthlydate;
-                            cswPublic.rateInterval.monthlyweek = monthlyWeekSelect.find(':selected').val();
-                        }
-
-                        cswPublic.rateInterval.ratetype = cswPrivate.rateType;
-                        cswPublic.rateInterval.dateformat = cswPrivate.dateFormat;
-                        cswPublic.rateInterval.monthlyfrequency = monthlyRateSelect.find(':selected').val();
-                        cswPublic.rateInterval.startingmonth = startOnMonth.find(':selected').val();
-                        cswPublic.rateInterval.startingyear = startOnYear.find(':selected').val();
-                        Csw.tryExec(cswPrivate.onChange);
-                    }
-
-                    function makeMonthlyByDateSelect(monParent) {
-                        var byDate = monParent.div(),
-                            daysInMonth = ChemSW.makeSequentialArray(1, 31), selectedDay = '';
-
-                        if (Csw.bool(cswPrivate.Multi)) {
-                            selectedDay = Csw.enums.multiEditDefaultValue;
-                            daysInMonth.unshift(Csw.enums.multiEditDefaultValue);
-                        } else if (Csw.contains(cswPublic.rateInterval, 'monthlydate')) {
-                            selectedDay = Csw.number(cswPublic.rateInterval.monthlydate, cswPrivate.now.getDay());
-                        }
-
-                        byDate.input({
-                            ID: Csw.makeId(cswPrivate.ID, 'monthly', 'by_date'),
-                            name: monthlyRadioId,
-                            type: Csw.enums.inputTypes.radio,
-                            onChange: function () {
-                                cswPrivate.rateType = ret.find('[name="' + monthlyRadioId + '"]:checked').val();
-                                saveMonthInterval();
-                            },
-                            value: Csw.enums.rateIntervalTypes.MonthlyByDate,
-                            checked: cswPrivate.rateType === Csw.enums.rateIntervalTypes.MonthlyByDate
-                        });
-                        byDate.append('On Day of Month:&nbsp;');
-
-                        monthlyDateSelect = byDate.select({
-                            ID: Csw.makeId(cswPrivate.ID, 'monthly', 'date'),
-                            onChange: function () {
-                                saveMonthInterval();
-                            },
-                            values: daysInMonth,
-                            selected: selectedDay
-                        });
-
-                        return byDate;
-                    }
-
-                    function makeEveryMonthSelect(monParent) {
-                        var divEvery = monParent.div({ text: 'Every' }),
-                            frequency = ChemSW.makeSequentialArray(1, 12),
-                            selected;
-
-                        if (Csw.bool(cswPrivate.Multi)) {
-                            frequency.unshift(Csw.enums.multiEditDefaultValue);
-                            selected = Csw.enums.multiEditDefaultValue;
-                        } else {
-                            selected = Csw.number(cswPublic.rateInterval.monthlyfrequency, 1);
-                        }
-
-                        monthlyRateSelect = divEvery.select({
-                            ID: Csw.makeId(cswPrivate.ID, 'monthly', 'rate'),
-                            onChange: function () {
-                                saveMonthInterval();
-                            },
-                            values: frequency,
-                            selected: selected
-                        });
-
-                        divEvery.append(' Month(s)').br();
-                        return divEvery;
-                    }
-
-                    function makeMonthlyByDayOfWeek(monParent) {
-                        var divByDay = monParent.div(),
-                            monthlyWeekId = Csw.makeId(cswPrivate.ID, 'monthly', 'week'),
-                            monthlyByDayId = Csw.makeId(cswPrivate.ID, 'monthly', 'by_day'),
-                            selected,
-                            weeksInMonth = [
-                                { value: 1, display: 'First:' },
-                                { value: 2, display: 'Second:' },
-                                { value: 3, display: 'Third:' },
-                                { value: 4, display: 'Fourth:' }
-                            ];
-
-                        divByDay.input({
-                            ID: monthlyByDayId,
-                            name: monthlyRadioId,
-                            type: Csw.enums.inputTypes.radio,
-                            onChange: function () {
-                                cswPrivate.rateType = ret.find('[name="' + monthlyRadioId + '"]:checked').val();
-                                saveMonthInterval();
-                            },
-                            value: Csw.enums.rateIntervalTypes.MonthlyByWeekAndDay,
-                            checked: cswPrivate.rateType === Csw.enums.rateIntervalTypes.MonthlyByWeekAndDay
-                        });
-
-                        divByDay.append('Every&nbsp;');
-
-                        if (cswPrivate.Multi) {
-                            weeksInMonth.unshift({ value: Csw.enums.multiEditDefaultValue, display: Csw.enums.multiEditDefaultValue });
-                            selected = Csw.enums.multiEditDefaultValue;
-                        } else {
-                            selected = Csw.number(cswPublic.rateInterval.monthlyweek, 1);
-                        }
-
-                        monthlyWeekSelect = divByDay.select({
-                            ID: monthlyWeekId,
-                            values: weeksInMonth,
-                            selected: selected,
-                            onChange: function () {
-                                saveMonthInterval();
-                            }
-                        });
-                        divByDay.br();
-
-                        cswPrivate.monthlyWeekPicker(cswPrivate.onChange, true, monthlyDayPickerId, divByDay);
-                        return divByDay;
-                    }
-
-                    function makeStartOnSelects(monParent) {
-                        var divStartOn = monParent.div(),
-                            monthsInYear = ChemSW.makeSequentialArray(1, 12),
-                            year = cswPrivate.now.getFullYear(),
-                            yearsToAllow = ChemSW.makeSequentialArray(year - 10, year + 10),
-                            selectedMonth, selectedYear;
-
-                        divStartOn.br();
-                        divStartOn.append('Starting On:&nbsp;');
-
-                        if (cswPrivate.Multi) {
-                            monthsInYear.unshift(Csw.enums.multiEditDefaultValue);
-                            yearsToAllow.unshift(Csw.enums.multiEditDefaultValue);
-                            selectedMonth = Csw.enums.multiEditDefaultValue;
-                            selectedYear = Csw.enums.multiEditDefaultValue;
-                        } else {
-                            selectedMonth = Csw.number(cswPublic.rateInterval.startingmonth, (cswPrivate.now.getMonth() + 1));
-                            selectedYear = Csw.number(cswPublic.rateInterval.startingyear, year);
-                        }
-
-                        startOnMonth = divStartOn.select({
-                            ID: Csw.makeId(cswPrivate.ID, 'monthly', 'startMonth'),
-                            values: monthsInYear,
-                            selected: selectedMonth,
-                            onChange: function () {
-                                saveMonthInterval();
-                            }
-                        });
-
-                        startOnYear = divStartOn.select({
-                            ID: Csw.makeId(cswPrivate.ID, 'monthly', 'startYear'),
-                            values: yearsToAllow,
-                            selected: selectedYear,
-                            onChange: function () {
-                                saveMonthInterval();
-                            }
-                        });
-                        return divStartOn;
-                    }
-
-                    if (false === monthlyPickerComplete) {
-                        ret = cswPrivate.pickerCell.div();
-                        makeEveryMonthSelect(ret);
-                        makeMonthlyByDateSelect(ret);
-                        ret.br();
-                        makeMonthlyByDayOfWeek(ret);
-                        makeStartOnSelects(ret);
-                        ret.addClass('CswFieldTypeTimeInterval_Div');
-
-                        saveMonthInterval();
-
-                        monthlyPickerComplete = true;
-                    } // if (false === monthlyPickerComplete)
-
-                    return ret;
-                };
-            } ());
-
-            cswPrivate.makeYearlyDatePicker = (function () {
-                var yearlyDatePickerComplete = false,
-                    retDiv, yearlyDate;
-                return function () {
-
-                    function saveYearInterval() {
-                        Csw.each(cswPublic.rateInterval, function (prop, key) {
-                            if (key !== 'dateformat' &&
-                                key !== 'ratetype' &&
-                                    key !== 'yearlydate') {
-                                delete cswPublic.rateInterval[key];
-                            }
-                        });
-
-                        cswPublic.rateInterval.ratetype = cswPrivate.rateType;
-                        cswPublic.rateInterval.dateformat = cswPrivate.dateFormat;
-                        if (yearlyDate) {
-                            cswPublic.rateInterval.yearlydate = yearlyDate.val();
-                        } else {
-                            cswPublic.rateInterval.yearlydate = {};
-                        }
-                        cswPublic.rateInterval.yearlydate.dateformat = cswPrivate.dateFormat;
-                        Csw.tryExec(cswPrivate.onChange);
-                    }
-
-                    if (false === yearlyDatePickerComplete) {
-                        retDiv = cswPrivate.pickerCell.div();
-
-                        var yearlyStartDate = '';
-
-                        if (Csw.bool(cswPrivate.Multi)) {
-                            yearlyStartDate = Csw.enums.multiEditDefaultValue;
-                        } else if (Csw.contains(cswPublic.rateInterval, 'yearlydate')) {
-                            yearlyStartDate = Csw.string(cswPublic.rateInterval.yearlydate.date, cswPrivate.now.toLocaleDateString());
-                        }
-                        if (Csw.isNullOrEmpty(yearlyStartDate)) {
-                            yearlyStartDate = cswPrivate.nowString;
-                            cswPublic.rateInterval.yearlydate = { date: cswPrivate.nowString, dateformat: cswPrivate.dateFormat };
-                        }
-
-                        retDiv.append('Every Year, Starting On: ').br();
-
-                        yearlyDate = retDiv.div().dateTimePicker({
-                            ID: Csw.makeId(cswPrivate.ID, 'yearly', 'sd'),
-                            Date: yearlyStartDate,
-                            DateFormat: cswPrivate.dateFormat,
-                            DisplayMode: 'Date',
-                            ReadOnly: cswPrivate.ReadOnly,
-                            Required: cswPrivate.Required,
-                            onChange: function () {
-                                saveYearInterval();
-                            }
-                        });
-
-                        saveYearInterval();
-
-                        yearlyDatePickerComplete = true;
-                    } // if (false === yearlyDatePickerComplete)
-                    return retDiv.addClass('CswFieldTypeTimeInterval_Div');
-                };
-            } ());
-
-            cswPrivate.makeRateType = function (table) {
-
-                function onChange(newRateType) {
-                    cswPrivate.rateType = newRateType;
-                    cswPublic.rateInterval.ratetype = cswPrivate.rateType;
-
-                    if (false === Csw.isNullOrEmpty(cswPrivate.divWeekly, true)) {
-                        cswPrivate.divWeekly.hide();
-                    }
-                    if (false === Csw.isNullOrEmpty(cswPrivate.divMonthly, true)) {
-                        cswPrivate.divMonthly.hide();
-                    }
-                    if (false === Csw.isNullOrEmpty(cswPrivate.divYearly, true)) {
-                        cswPrivate.divYearly.hide();
-                    }
-
-                    switch (newRateType) {
-                        case Csw.enums.rateIntervalTypes.WeeklyByDay:
-                            if (cswPrivate.divWeekly) {
-                                cswPrivate.divWeekly.show();
-                            }
-                            break;
-                        case Csw.enums.rateIntervalTypes.MonthlyByDate:
-                            if (cswPrivate.divMonthly) {
-                                cswPrivate.divMonthly.show();
-                            }
-                            break;
-                        case Csw.enums.rateIntervalTypes.MonthlyByWeekAndDay:
-                            if (cswPrivate.divMonthly) {
-                                cswPrivate.divMonthly.show();
-                            }
-                            break;
-                        case Csw.enums.rateIntervalTypes.YearlyByDate:
-                            if (cswPrivate.divYearly) {
-                                cswPrivate.divYearly.show();
-                            }
-                            break;
-                    }
-                }
-
-                var subTable = table.cell(2, 1).table();
+                });
 
                 //Weekly
-                subTable.cell(1, 2).span({ text: '&nbsp;Weekly' });
-                subTable.cell(1, 1).input({
+                subTable.cell(2, 2).span({ text: '&nbsp;Weekly' });
+                subTable.cell(2, 1).input({
                     ID: Csw.makeId(cswPrivate.ID, 'type', 'weekly'),
                     name: Csw.makeId(cswPrivate.ID, 'type', '', '', false),
                     type: Csw.enums.inputTypes.radio,
                     value: 'weekly',
-                    checked: cswPrivate.rateType === Csw.enums.rateIntervalTypes.WeeklyByDay,
+                    checked: cswPublic.rateInterval.ratetype === Csw.enums.rateIntervalTypes.WeeklyByDay,
                     onClick: function () {
-                        onChange(Csw.enums.rateIntervalTypes.WeeklyByDay);
-                        cswPrivate.divWeekly = cswPrivate.divWeekly || cswPrivate.weeklyWeekPicker(cswPrivate.onChange, false);
+                        cswPublic.rateInterval.ratetype = Csw.enums.rateIntervalTypes.WeeklyByDay;
+                        cswPrivate.hideDivs();
+                        cswPrivate.divWeekly.show();
+                        Csw.tryExec(cswPrivate.onChange);
                     }
                 });
 
                 //Monthly
-                subTable.cell(2, 2).span({ text: '&nbsp;Monthly' });
-                subTable.cell(2, 1).input({
+                subTable.cell(3, 2).span({ text: '&nbsp;Monthly' });
+                subTable.cell(3, 1).input({
                     ID: Csw.makeId(cswPrivate.ID, 'type', 'monthly'),
                     name: Csw.makeId(cswPrivate.ID, 'type', '', '', false),
                     type: Csw.enums.inputTypes.radio,
                     value: 'monthly',
-                    checked: cswPrivate.rateType === Csw.enums.rateIntervalTypes.MonthlyByDate || cswPrivate.rateType === Csw.enums.rateIntervalTypes.MonthlyByWeekAndDay,
+                    checked: (cswPublic.rateInterval.ratetype === Csw.enums.rateIntervalTypes.MonthlyByDate || cswPublic.rateInterval.ratetype === Csw.enums.rateIntervalTypes.MonthlyByWeekAndDay),
                     onClick: function () {
-                        onChange(Csw.enums.rateIntervalTypes.MonthlyByDate);
-                        cswPrivate.divMonthly = cswPrivate.divMonthly || cswPrivate.makeMonthlyPicker();
+                        cswPublic.rateInterval.ratetype = Csw.enums.rateIntervalTypes.MonthlyByDate;
+                        cswPrivate.hideDivs();
+                        cswPrivate.divMonthly.show();
+                        Csw.tryExec(cswPrivate.onChange);
                     }
                 });
 
                 //Yearly
-                subTable.cell(3, 2).span({ text: '&nbsp;Yearly' });
-                subTable.cell(3, 1).input({
+                subTable.cell(4, 2).span({ text: '&nbsp;Yearly' });
+                subTable.cell(4, 1).input({
                     ID: Csw.makeId(cswPrivate.ID, 'type', 'yearly'),
                     name: Csw.makeId(cswPrivate.ID, 'type', '', '', false),
                     type: Csw.enums.inputTypes.radio,
                     value: 'yearly',
-                    checked: cswPrivate.rateType === Csw.enums.rateIntervalTypes.YearlyByDate,
+                    checked: cswPublic.rateInterval.ratetype === Csw.enums.rateIntervalTypes.YearlyByDate,
                     onClick: function () {
-                        onChange(Csw.enums.rateIntervalTypes.YearlyByDate);
-                        cswPrivate.divYearly = cswPrivate.divYearly || cswPrivate.makeYearlyDatePicker();
+                        cswPublic.rateInterval.ratetype = Csw.enums.rateIntervalTypes.YearlyByDate;
+                        cswPrivate.hideDivs();
+                        cswPrivate.divYearly.show();
+                        Csw.tryExec(cswPrivate.onChange);
                     }
                 });
-            };
+            }; // makeRateTypeDiv
 
-            (function () {
-                cswPrivate.interval = cswParent.div({
-                    ID: cswPrivate.ID
+
+            cswPrivate.makeHourlyDiv = function (parent) {
+                var hourOptions = ChemSW.makeSequentialArray(1, 24),
+                    hoursSelect, startingDatePicker;
+
+                cswPrivate.divHourly = parent.div({
+                    ID: Csw.makeId(cswPrivate.ID, 'divhourly'),
+                    cssclass: 'CswFieldTypeTimeInterval_Div'
                 });
-                cswPublic = Csw.dom({}, cswPrivate.interval);
-                //Csw.literals.factory(cswPrivate.$parent, cswPublic);
-                cswPublic.rateInterval = {};
 
-                var propVals = cswPrivate.propVals,
-                    textValue,
-                    table;
+                // Hours
+                cswPrivate.divHourly.append('Every ');
+                hoursSelect = cswPrivate.divHourly.select({
+                    ID: Csw.makeId(cswPrivate.ID, 'hourly', 'rate'),
+                    onChange: function () {
+                        cswPublic.rateInterval.hours = hoursSelect.val();
+                        Csw.tryExec(cswPrivate.onChange);
+                    },
+                    values: hourOptions,
+                    selected: Csw.number(cswPublic.rateInterval.hours)
+                });
+                cswPrivate.divHourly.append(' hour(s)');
+
+                cswPrivate.divHourly.br();
+
+                // Starting Date
+                cswPrivate.divHourly.append('Starting On:');
+                startingDatePicker = cswPrivate.divHourly.dateTimePicker({
+                    ID: Csw.makeId(cswPrivate.ID, 'hourly', 'sd'),
+                    Date: Csw.string(cswPublic.rateInterval.startingdate.date),
+                    DateFormat: cswPublic.rateInterval.startingdate.dateformat,
+                    DisplayMode: 'Date',
+                    ReadOnly: cswPrivate.ReadOnly,
+                    Required: cswPrivate.Required,
+                    onChange: function () {
+                        cswPublic.rateInterval.startingdate.date = startingDatePicker.val().date;
+                        Csw.tryExec(cswPrivate.onChange);
+                    }
+                });
+            }; // makeHourlyDiv
+
+
+
+            cswPrivate.makeWeeklyDiv = function (parent) {
+                var weeklyTable, startingDatePicker;
+
+                cswPrivate.divWeekly = parent.div({
+                    ID: Csw.makeId(cswPrivate.ID, 'divweekly'),
+                    cssclass: 'CswFieldTypeTimeInterval_Div'
+                });
+
+                // Weekday picker
+                weeklyTable = cswPrivate.divWeekly.table({
+                    ID: Csw.makeId(cswPrivate.ID, 'weeklytbl'),
+                    cellalign: 'center',
+                    FirstCellRightAlign: true
+                });
+
+                weeklyTable.cell(1, 1).text('Every:');
+                weeklyTable.cell(2, 1).text('Starting On:');
+
+                cswPrivate.makeWeekDayPicker({
+                    parent: weeklyTable.cell(1, 2),
+                    IDPrefix: cswPrivate.ID + 'weeklyday',
+                    selectedWeekDays: cswPublic.rateInterval.weeklyday.split(','),
+                    useRadio: false,
+                    onChange: function (selecteddays) {
+                        cswPublic.rateInterval.weeklyday = selecteddays.join(',');
+                        Csw.tryExec(cswPrivate.onChange);
+                    }
+                }); // makeWeekDayPicker()
+
+                // Starting Date
+                startingDatePicker = weeklyTable.cell(2, 2).dateTimePicker({
+                    ID: Csw.makeId(cswPrivate.ID, 'weekly', 'sd'),
+                    Date: Csw.string(cswPublic.rateInterval.startingdate.date),
+                    DateFormat: cswPublic.rateInterval.startingdate.dateformat,
+                    DisplayMode: 'Date',
+                    ReadOnly: cswPrivate.ReadOnly,
+                    Required: cswPrivate.Required,
+                    onChange: function () {
+                        cswPublic.rateInterval.startingdate.date = startingDatePicker.val().date;
+                        Csw.tryExec(cswPrivate.onChange);
+                    }
+                });
+            }; // makeWeeklyDiv
+
+
+            cswPrivate.makeMonthlyDiv = function (parent) {
+                var monthlyRateSelect, monthlyDateSelect, monthlyWeekSelect, startingMonthSelect, startingYearSelect,
+                    everySpan,
+                    monthlyRadioId = Csw.makeId(cswPrivate.ID, 'monthly'),
+                    monthlyDayPickerId = Csw.makeId(cswPrivate.ID, 'monthly', 'day'),
+                    daysInMonth = ChemSW.makeSequentialArray(1, 31),
+                    monthsInYear = ChemSW.makeSequentialArray(1, 12),
+                    year = cswPrivate.now.getFullYear(),
+                    yearsToAllow = ChemSW.makeSequentialArray(year - 10, year + 10),
+                    frequency = ChemSW.makeSequentialArray(1, 12),
+                    weeksInMonth = [
+                        { value: 1, display: 'First:' },
+                        { value: 2, display: 'Second:' },
+                        { value: 3, display: 'Third:' },
+                        { value: 4, display: 'Fourth:' }
+                    ];
+
+                cswPrivate.divMonthly = parent.div({
+                    ID: Csw.makeId(cswPrivate.ID, 'divmonthly'),
+                    cssclass: 'CswFieldTypeTimeInterval_Div'
+                });
+
+                // Monthly Frequency
+                everySpan = cswPrivate.divMonthly.span();
+                everySpan.append('Every ');
+                monthlyRateSelect = everySpan.select({
+                    ID: Csw.makeId(cswPrivate.ID, 'monthly', 'rate'),
+                    onChange: function () {
+                        cswPublic.rateInterval.monthlyfrequency = monthlyRateSelect.val();
+                        Csw.tryExec(cswPrivate.onChange);
+                    },
+                    values: frequency,
+                    selected: Csw.number(cswPublic.rateInterval.monthlyfrequency)
+                });
+                everySpan.append(' Month(s)');
+
+                cswPrivate.divMonthly.br();
+
+                // Monthly By Date
+                cswPrivate.divMonthly.input({
+                    ID: Csw.makeId(cswPrivate.ID, 'monthly', 'by_date'),
+                    name: monthlyRadioId,
+                    type: Csw.enums.inputTypes.radio,
+                    onChange: function () {
+                        cswPublic.rateInterval.ratetype = Csw.enums.rateIntervalTypes.MonthlyByDate;
+                        Csw.tryExec(cswPrivate.onChange);
+                    },
+                    value: Csw.enums.rateIntervalTypes.MonthlyByDate,
+                    checked: cswPublic.rateInterval.rateType !== Csw.enums.rateIntervalTypes.MonthlyByWeekAndDay    // check this by default unless MonthlyByWeekAndDay is set
+                });
+                cswPrivate.divMonthly.span({ text: 'On Day of Month:&nbsp;' });
+                monthlyDateSelect = cswPrivate.divMonthly.select({
+                    ID: Csw.makeId(cswPrivate.ID, 'monthly', 'date'),
+                    onChange: function () {
+                        cswPublic.rateInterval.monthlydate = monthlyDateSelect.val();
+                        Csw.tryExec(cswPrivate.onChange);
+                    },
+                    values: daysInMonth,
+                    selected: Csw.number(cswPublic.rateInterval.monthlydate)
+                });
+
+                cswPrivate.divMonthly.br();
+
+                // Monthly by Week and Day
+                cswPrivate.divMonthly.input({
+                    ID: Csw.makeId(cswPrivate.ID, 'monthly', 'by_day'),
+                    name: monthlyRadioId,
+                    type: Csw.enums.inputTypes.radio,
+                    onChange: function () {
+                        cswPublic.rateInterval.ratetype = Csw.enums.rateIntervalTypes.MonthlyByWeekAndDay;
+                        Csw.tryExec(cswPrivate.onChange);
+                    },
+                    value: Csw.enums.rateIntervalTypes.MonthlyByWeekAndDay,
+                    checked: cswPublic.rateInterval.rateType === Csw.enums.rateIntervalTypes.MonthlyByWeekAndDay
+                });
+                cswPrivate.divMonthly.append('Every&nbsp;');
+                monthlyWeekSelect = cswPrivate.divMonthly.select({
+                    ID: Csw.makeId(cswPrivate.ID, 'monthly', 'week'),
+                    values: weeksInMonth,
+                    selected: Csw.number(cswPublic.rateInterval.monthlyweek),
+                    onChange: function () {
+                        cswPublic.rateInterval.monthlyweek = monthlyWeekSelect.val();
+                        Csw.tryExec(cswPrivate.onChange);
+                    }
+                });
+                cswPrivate.divMonthly.br();
+                cswPrivate.makeWeekDayPicker({
+                    parent: cswPrivate.divMonthly,
+                    IDPrefix: cswPrivate.ID + 'monthlyday',
+                    selectedWeekDays: cswPublic.rateInterval.monthlyday.split(','),
+                    useRadio: true,
+                    onChange: function (selectedDays) {
+                        cswPublic.rateInterval.monthlyday = selectedDays.join(',');
+                        Csw.tryExec(cswPrivate.onChange);
+                    }
+                }); // makeWeekDayPicker()
+                cswPrivate.divMonthly.br();
+
+                // Starting On
+                cswPrivate.divMonthly.append('Starting On:&nbsp;');
+                startingMonthSelect = cswPrivate.divMonthly.select({
+                    ID: Csw.makeId(cswPrivate.ID, 'monthly', 'startMonth'),
+                    values: monthsInYear,
+                    selected: Csw.number(cswPublic.rateInterval.startingmonth),
+                    onChange: function () {
+                        cswPublic.rateInterval.startingmonth = startingMonthSelect.val();
+                        Csw.tryExec(cswPrivate.onChange);
+                    }
+                });
+                startingYearSelect = cswPrivate.divMonthly.select({
+                    ID: Csw.makeId(cswPrivate.ID, 'monthly', 'startYear'),
+                    values: yearsToAllow,
+                    selected: Csw.number(cswPublic.rateInterval.startingyear),
+                    onChange: function () {
+                        cswPublic.rateInterval.startingyear = startingYearSelect.val();
+                        Csw.tryExec(cswPrivate.onChange);
+                    }
+                });
+            }; // makeMonthlyDiv
+
+            cswPrivate.makeYearlyDiv = function (parent) {
+                var yearPicker;
+
+                cswPrivate.divYearly = parent.div({
+                    ID: Csw.makeId(cswPrivate.ID, 'divyearly'),
+                    cssclass: 'CswFieldTypeTimeInterval_Div'
+                });
+
+                cswPrivate.divYearly.append('Every Year, Starting On: ').br();
+
+                yearPicker = cswPrivate.divYearly.dateTimePicker({
+                    ID: Csw.makeId(cswPrivate.ID, 'yearly', 'sd'),
+                    Date: cswPublic.rateInterval.yearlydate.date,
+                    DateFormat: cswPublic.rateInterval.yearlydate.dateformat,
+                    DisplayMode: 'Date',
+                    ReadOnly: cswPrivate.ReadOnly,
+                    Required: cswPrivate.Required,
+                    onChange: function () {
+                        cswPublic.rateInterval.yearlydate.date = yearPicker.val().date;
+                        Csw.tryExec(cswPrivate.onChange);
+                    }
+                });
+            }; // makeYearlyDiv
+
+
+            cswPrivate.setDefaults = function() {
+                var doOnChange = false;
+
+                if (Csw.isNullOrEmpty(cswPublic.rateInterval.ratetype)) {
+                    cswPublic.rateInterval.ratetype = Csw.enums.rateIntervalTypes.WeeklyByDay;
+                    doOnChange = true;
+                }
+                if (Csw.isNullOrEmpty(cswPublic.rateInterval.startingdate)) {
+                    cswPublic.rateInterval.startingdate = {
+                        date: cswPrivate.nowString,
+                        dateformat: cswPublic.rateInterval.startingdate.dateformat
+                    };
+                    doOnChange = true;
+                }
+                if (Csw.isNullOrEmpty(cswPublic.rateInterval.startingmonth)) {
+                    cswPublic.rateInterval.startingmonth = 1;
+                    doOnChange = true;
+                }
+                if (Csw.isNullOrEmpty(cswPublic.rateInterval.startingyear)) {
+                    cswPublic.rateInterval.startingyear = cswPrivate.now.getYear();
+                    doOnChange = true;
+                }
+                if (Csw.isNullOrEmpty(cswPublic.rateInterval.weeklyday)) {
+                    cswPublic.rateInterval.weeklyday = 'Monday';
+                    doOnChange = true;
+                }
+                if (Csw.isNullOrEmpty(cswPublic.rateInterval.hours)) {
+                    cswPublic.rateInterval.hours = 24;
+                    doOnChange = true;
+                }
+                if (Csw.isNullOrEmpty(cswPublic.rateInterval.monthlyfrequency)) {
+                    cswPublic.rateInterval.monthlyfrequency = 1;
+                    doOnChange = true;
+                }
+                if (Csw.isNullOrEmpty(cswPublic.rateInterval.monthlydate)) {
+                    cswPublic.rateInterval.monthlydate = 1;
+                    doOnChange = true;
+                }
+                if (Csw.isNullOrEmpty(cswPublic.rateInterval.monthlyweek)) {
+                    cswPublic.rateInterval.monthlyweek = 1;
+                    doOnChange = true;
+                }
+                if (Csw.isNullOrEmpty(cswPublic.rateInterval.monthlyday)) {
+                    cswPublic.rateInterval.monthlyday = 'Monday';
+                    doOnChange = true;
+                }
+                if (Csw.isNullOrEmpty(cswPublic.rateInterval.yearlydate)) {
+                    cswPublic.rateInterval.yearlydate = {
+                        date: cswPrivate.nowString,
+                        dateformat: cswPublic.rateInterval.startingdate.dateformat
+                    };
+                    doOnChange = true;
+                }
+                if (doOnChange) {
+                    Csw.tryExec(cswPrivate.onChange);
+                }
+
+            }; // cswPrivate.setDefaults
+
+            // constructor
+            (function () {
+                var textValue;
+                //Csw.extend(cswPublic.rateInterval, cswPrivate.rateIntervalValue, true);
+                cswPublic.rateInterval = cswPrivate.rateIntervalValue;
+
+                cswPrivate.now = new Date();
+                //cswPrivate.nowString = (cswPrivate.now.getMonth() + 1) + '/' + cswPrivate.now.getDate() + '/' + cswPrivate.now.getFullYear();
+                cswPrivate.nowString = $.datepicker.formatDate(cswPublic.rateInterval.startingdate.dateformat, cswPrivate.now);
 
                 if (cswPrivate.Multi) {
-                    //cswPublic.rateInterval = Csw.enums.multiEditDefaultValue;
                     textValue = Csw.enums.multiEditDefaultValue;
-                    cswPrivate.rateType = Csw.enums.rateIntervalTypes.WeeklyByDay;
                 } else {
-                    Csw.extend(cswPublic.rateInterval, propVals.Interval.rateintervalvalue, true);
-                    textValue = Csw.string(propVals.Interval.text).trim();
-                    cswPrivate.rateType = cswPublic.rateInterval.ratetype;
+                    textValue = Csw.string(cswPrivate.rateIntervalValue.text).trim();
                 }
-                cswPrivate.dateFormat = Csw.string(cswPublic.rateInterval.dateformat, 'M/d/yyyy');
-                cswPublic.interval = cswPrivate.interval.div({
-                    ID: Csw.makeId(cswPrivate.ID, 'cswTimeInterval')
-                });
+                if (Csw.isNullOrEmpty(textValue)) {
+                    textValue = '[none set]';
+                }
 
-                //Page Components
-                cswPublic.interval.span({
-                    ID: Csw.makeId(cswPrivate.ID, 'textvalue'),
-                    text: textValue
-                });
-                table = cswPrivate.interval.table({
-                    ID: Csw.makeId(cswPrivate.ID, 'tbl'),
-                    cellspacing: 5
-                });
+                cswPrivate.setDefaults();
 
-                cswPrivate.makeRateType(table);
+                cswPrivate.div = cswParent.div({ ID: cswPrivate.ID });
 
-                cswPrivate.pickerCell = table.cell(1, 3).propDom('rowspan', '3');
+                cswPrivate.textValueSpan = cswPrivate.div.span({ text: textValue }).css({ paddingRight: '5px' });
+                if(false === cswPrivate.ReadOnly)
+                {
+                    cswPrivate.editButton = cswPrivate.div.icon({
+                        ID: Csw.makeSafeId(cswPrivate.ID, 'editbtn'),
+                        iconType: Csw.enums.iconType.pencil,
+                        isButton: true,
+                        size: 16,
+                        onClick: function () {
+                            cswPrivate.textValueSpan.hide();
+                            cswPrivate.editButton.hide();
 
-                // Set selected values
-                switch (cswPrivate.rateType) {
-                    case Csw.enums.rateIntervalTypes.WeeklyByDay:
-                        cswPrivate.divWeekly = cswPrivate.weeklyWeekPicker(cswPrivate.onChange, false);
-                        break;
-                    case Csw.enums.rateIntervalTypes.MonthlyByDate:
-                        cswPrivate.divMonthly = cswPrivate.makeMonthlyPicker();
-                        break;
-                    case Csw.enums.rateIntervalTypes.MonthlyByWeekAndDay:
-                        cswPrivate.divMonthly = cswPrivate.makeMonthlyPicker();
-                        break;
-                    case Csw.enums.rateIntervalTypes.YearlyByDate:
-                        cswPrivate.divYearly = cswPrivate.makeYearlyDatePicker();
-                        break;
-                } // switch(RateType)
+                            cswPrivate.table = cswPrivate.div.table({ cellspacing: 5 });
+                            cswPrivate.makeRateTypeDiv(cswPrivate.table.cell(1, 1));
 
-            } ());
+                            var divCell = cswPrivate.table.cell(1, 2);
+                            cswPrivate.makeHourlyDiv(divCell);
+                            cswPrivate.makeWeeklyDiv(divCell);
+                            cswPrivate.makeMonthlyDiv(divCell);
+                            cswPrivate.makeYearlyDiv(divCell);
+
+                            cswPrivate.hideDivs();
+                            switch (cswPublic.rateInterval.ratetype) {
+                                case Csw.enums.rateIntervalTypes.Hourly:
+                                    cswPrivate.divHourly.show();
+                                    break;
+                                case Csw.enums.rateIntervalTypes.WeeklyByDay:
+                                    cswPrivate.divWeekly.show();
+                                    break;
+                                case Csw.enums.rateIntervalTypes.MonthlyByDate:
+                                    cswPrivate.divMonthly.show();
+                                    break;
+                                case Csw.enums.rateIntervalTypes.MonthlyByWeekAndDay:
+                                    cswPrivate.divMonthly.show();
+                                    break;
+                                case Csw.enums.rateIntervalTypes.YearlyByDate:
+                                    cswPrivate.divYearly.show();
+                                    break;
+                            } // switch
+                        } // onClick
+                    }); // editButton
+                } // if(false === cswPrivate.ReadOnly)
+
+            } ()); // constructor
+
 
             cswPublic.rateType = function () {
-                return cswPrivate.rateType;
+                return cswPublic.rateInterval.ratetype;
             };
             cswPublic.val = function () {
                 return cswPublic.rateInterval;
@@ -601,6 +558,4 @@
 
             return cswPublic;
         });
-
-
 } ());

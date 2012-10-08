@@ -5,56 +5,83 @@
 
     Csw.actions.subscriptions = Csw.actions.subscriptions ||
         Csw.actions.register('subscriptions', function (cswParent, options) {
-            var o = {
-                urlMethod: 'getSubscriptions',
+
+            var cswPrivate = {
                 ID: 'action_subscriptions'
             };
-            if (options) Csw.extend(o, options)
+            if (options) Csw.extend(cswPrivate, options)
 
-            var description,
-                controlTables,
-                notificationControl = { table: null, row: 1 },
-                mailReportControl = { table: null, row: 1 };
+            var cswPublic = {};
 
-            var initializeNotificationTable = function () {
-                notificationControl.table = controlTables.cell(2, 1).table({
-                    suffix: 'tbl',
-                    border: 1,
-                    cellpadding: 5
-                });
+            // constructor
+            (function () {
 
-                notificationControl.table.cell(notificationControl.row, 1).b({ text: 'Notification' });
-                notificationControl.table.cell(notificationControl.row, 2).b({ text: 'Subscribe' });
-                notificationControl.row += 1;
-            }
+                Csw.ajaxWcf.get({
+                    urlMethod: 'Reports/getSubscriptions',
+                    success: function (ajaxdata) {
+                        var row = 1,
+                            atLeastOne = false;
 
-            var initializeMailReportTable = function () {
-                mailReportControl.table = controlTables.cell(2, 2).table({
-                    suffix: 'tbl',
-                    border: 1,
-                    cellpadding: 5
-                });
+                        cswPrivate.data = {
+                            Subscriptions: [{
+                                Name: '',
+                                NodeId: '',
+                                Subscribed: '',
+                                Modified: ''   
+                            }]
+                        };
+                        Csw.extend(cswPrivate.data, ajaxdata);
 
-                mailReportControl.table.cell(mailReportControl.row, 1).b({ text: 'Mail Report' });
-                mailReportControl.table.cell(mailReportControl.row, 2).b({ text: 'Subscribe' });
-                mailReportControl.row += 1;
-            }
+                        cswParent.br();
 
-            var initializeUI = function () {
-                cswParent.br();
-                
-                controlTables = cswParent.table({
-                    suffix: 'tbl',
-                    cellpadding: 10
-                });
-                description = controlTables.cell(1,1).span({ text: "Edit Your Subscriptions to Notifications and Mail Reports:" });
-                initializeNotificationTable();
-                initializeMailReportTable();
-                //ajax call - loading of two tables - one for notifications, and one for mail reports, with a CheckAll func below
-                //save button, onClick ajax call - takes all checked items and subscribes them
-            }
+                        cswPrivate.descriptionSpan = cswParent.span({ text: "Subscribe to Mail Reports:" }).css({ fontWeight: 'bold' });
+                        cswPrivate.table = cswParent.table({
+                            suffix: 'tbl',
+                            cellpadding: 0
+                        }).css({ padding: '10px' });
 
-            initializeUI();
+                        Csw.each(cswPrivate.data.Subscriptions, function (subObj) {
+                            atLeastOne = true;
+                            cswPrivate.table.cell(row, 1).css({ width: '15px' })
+                                                         .checkBox({
+                                                             ID: Csw.makeId(cswPrivate.ID, subObj.NodeId),
+                                                             onChange: function (newval) {
+                                                                 subObj.Subscribed = newval;
+                                                                 subObj.Modified = true;
+                                                             },
+                                                             Checked: subObj.Subscribed
+                                                         }); // checkBox
+                            cswPrivate.table.cell(row, 2).text(subObj.Name);
+                            row += 1;
+                        }); // each
 
+                        //save button, onClick ajax call - takes all checked items and subscribes them
+                        cswPrivate.saveBtn = cswParent.buttonExt({
+                            ID: Csw.makeId(cswPrivate.ID, 'save'),
+                            enabledText: 'Save Subscriptions',
+                            disabledText: 'Saving...',
+                            icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.save),
+                            onClick: function () {
+                                Csw.ajaxWcf.post({
+                                    urlMethod: 'Reports/saveSubscriptions',
+                                    data: cswPrivate.data,
+                                    success: function (data) {
+                                        cswPrivate.saveBtn.enable();
+                                    } // success
+                                }); // ajax
+                            } // onClick
+                        }); // saveBtn
+
+                        if (false === atLeastOne) {
+                            cswPrivate.descriptionSpan.text('No Mail Reports are available.');
+                            cswPrivate.table.hide();
+                            cswPrivate.saveBtn.hide();
+                        }
+
+                    } // success
+                }); // ajax
+            } ());
+
+            return cswPublic;
         });
 } ());

@@ -296,6 +296,10 @@ namespace ChemSW.Nbt
         /// Sets a given node to be the currently indexed node in the tree, by node key
         /// </summary>
         void makeNodeCurrent( CswNbtNodeKey CswNbtNodeKey );
+        /// <summary>
+        /// Sets a given node to be the currently indexed node in the tree, by node id
+        /// </summary>
+        void makeNodeCurrent( CswPrimaryKey NodeId );
         ///// <summary>
         ///// Sets a given node to be the currently indexed node in the tree, by path
         ///// </summary>

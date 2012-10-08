@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
@@ -30,9 +31,30 @@ namespace ChemSW.Nbt.ObjClasses
             public const string Enabled = "Enabled";
             public const string RunNow = "Run Now";
             public const string OutputFormat = "Output Format";
+            public const string TargetType = "Target Type";
+            public const string Event = "Event";
+            public const string NodesToReport = "Nodes To Report";
         }
 
+        /// <summary>
+        /// Event Options
+        /// </summary>
+        public sealed class EventOption : CswEnum<EventOption>
+        {
+            private EventOption( string Name ) : base( Name ) { }
+            public static IEnumerable<EventOption> _All { get { return All; } }
+            public static implicit operator EventOption( string str )
+            {
+                EventOption ret = Parse( str );
+                return ret ?? Unknown;
+            }
+            public static readonly EventOption Unknown = new EventOption( "Unknown" );
 
+            public static readonly EventOption Exists = new EventOption( "Exists" );
+            //public static readonly EventOption Create = new EventOption( "Create" );
+            public static readonly EventOption Edit = new EventOption( "Edit" );
+            //public static readonly EventOption Delete = new EventOption( "Delete" );
+        }
 
         public const string TypeOptionReport = "Report";
         public const string TypeOptionView = "View";
@@ -170,7 +192,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Object class specific properties
 
-        public CswNbtNodePropViewPickList ReportView { get { return ( _CswNbtNode.Properties[PropertyName.ReportView] ); } }
+        public CswNbtNodePropViewReference ReportView { get { return ( _CswNbtNode.Properties[PropertyName.ReportView] ); } }
         public CswNbtNodePropRelationship Report { get { return ( _CswNbtNode.Properties[PropertyName.Report] ); } }
         public CswNbtNodePropMemo Message { get { return ( _CswNbtNode.Properties[PropertyName.Message] ); } }
         public CswNbtNodePropMemo NoDataNotification { get { return ( _CswNbtNode.Properties[PropertyName.NoDataNotification] ); } }
@@ -186,8 +208,33 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropTimeInterval DueDateInterval { get { return ( _CswNbtNode.Properties[PropertyName.DueDateInterval] ); } }
         public CswNbtNodePropDateTime RunTime { get { return ( _CswNbtNode.Properties[PropertyName.RunTime] ); } }
         public CswNbtNodePropLogical Enabled { get { return ( _CswNbtNode.Properties[PropertyName.Enabled] ); } }
+        public CswNbtNodePropNodeTypeSelect TargetType { get { return ( _CswNbtNode.Properties[PropertyName.TargetType] ); } }
+        public CswNbtNodePropList Event { get { return ( _CswNbtNode.Properties[PropertyName.Event] ); } }
+        public CswNbtNodePropMemo NodesToReport { get { return ( _CswNbtNode.Properties[PropertyName.NodesToReport] ); } }
 
         #endregion
+
+        public CswCommaDelimitedString GetNodesToReport()
+        {
+            CswCommaDelimitedString NodesStr = new CswCommaDelimitedString();
+            NodesStr.FromString( NodesToReport.Text );
+            return NodesStr;
+        } // GetNodesToReport()
+
+        public void AddNodeToReport( CswNbtNode Node )
+        {
+            CswCommaDelimitedString NodesStr = new CswCommaDelimitedString();
+            NodesStr.FromString( NodesToReport.Text );
+
+            NodesStr.Add( Node.NodeId.PrimaryKey.ToString(), AllowNullOrEmpty: false, IsUnique: true );
+
+            NodesToReport.Text = NodesStr.ToString();
+        } // AddNodeToReport()
+
+        public void ClearNodesToReport()
+        {
+            NodesToReport.Text = string.Empty;
+        } // ClearNodesToReport()
 
     }//CswNbtObjClassMailReport
 

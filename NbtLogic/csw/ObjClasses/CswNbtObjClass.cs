@@ -43,6 +43,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public Int32 NodeTypeId { get { return _CswNbtNode.NodeTypeId; } }
         public CswNbtMetaDataNodeType NodeType { get { return _CswNbtResources.MetaData.getNodeType( _CswNbtNode.NodeTypeId ); } }
+        public string NodeName { get { return _CswNbtNode.NodeName; } }
         public CswPrimaryKey NodeId { get { return _CswNbtNode.NodeId; } }
         public CswNbtNode Node { get { return _CswNbtNode; } }
         public bool IsDemo { get { return _CswNbtNode.IsDemo; } set { _CswNbtNode.IsDemo = value; } }

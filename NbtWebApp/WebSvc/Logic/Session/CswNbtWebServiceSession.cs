@@ -9,7 +9,7 @@ namespace ChemSW.Nbt.WebServices
     public class CswNbtWebServiceSession
     {
         /// <summary>
-        /// View Select Return Object
+        /// Session Return Object
         /// </summary>
         [DataContract]
         public class CswNbtSessionReturn : CswWebSvcReturn
@@ -21,6 +21,13 @@ namespace ChemSW.Nbt.WebServices
             [DataMember]
             public CswWebSvcReturnBase.Data Data;
         }
+
+
+        public static void doNothing( ICswResources CswResources, object Ret, object Req )
+        {
+            // like he says
+        }
+
 
         /// <summary>
         /// WCF wrapper around resetPassword

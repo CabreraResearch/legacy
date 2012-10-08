@@ -42,7 +42,7 @@ namespace ChemSW.Nbt.MetaData
             MaterialSynonymClass,
             InspectionTargetClass,
             InspectionTargetGroupClass,
-            NotificationClass,
+            //NotificationClass,
             ParameterClass,
             PrintLabelClass,
             ProblemClass,

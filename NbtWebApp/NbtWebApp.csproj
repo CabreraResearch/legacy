@@ -118,6 +118,8 @@
     <Compile Include="WebSvc\Logic\CISPro\CswNbtWebServiceCreateMaterial.cs" />
     <Compile Include="WebSvc\Logic\Generators\CswNbtWebServiceGenerators.cs" />
     <Compile Include="WebSvc\Logic\Nodes\CswNbtWebServiceReport.cs" />
+    <Compile Include="WebSvc\Logic\Reports\CswNbtWebServiceMailReports.cs" />
+    <Compile Include="WebSvc\Logic\Reports\CswNbtMailReportsUriMethods.cs" />
     <Compile Include="WebSvc\Logic\Session\CswNbtSessionUriMethods.cs" />
     <Compile Include="WebSvc\Logic\Session\CswNbtWebServiceSession.cs" />
     <Compile Include="WebSvc\Logic\Views\CswNbtViewsUriMethods.cs" />
@@ -1326,7 +1328,6 @@
     </Compile>
     <Compile Include="Subscriptions.aspx.cs">
       <DependentUpon>Subscriptions.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Subscriptions.aspx.designer.cs">
       <DependentUpon>Subscriptions.aspx</DependentUpon>
