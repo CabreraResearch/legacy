@@ -32,6 +32,8 @@ namespace ChemSW.Nbt.Schema
                 CswNbtMetaDataNodeTypeProp EventNTP = MailReportNT.getNodeTypePropByObjectClassProp( CswNbtObjClassMailReport.PropertyName.Event );
                 TargetTypeNTP.setFilter( TypeNTP, TypeNTP.getFieldTypeRule().SubFields.Default, CswNbtPropFilterSql.PropertyFilterMode.Equals, CswNbtObjClassMailReport.TypeOptionView );
                 EventNTP.setFilter( TypeNTP, TypeNTP.getFieldTypeRule().SubFields.Default, CswNbtPropFilterSql.PropertyFilterMode.Equals, CswNbtObjClassMailReport.TypeOptionView );
+                TargetTypeNTP.removeFromLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add );
+                EventNTP.removeFromLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add );
 
                 // add help text to Report View
                 CswNbtMetaDataNodeTypeProp ReportViewNTP = MailReportNT.getNodeTypePropByObjectClassProp( CswNbtObjClassMailReport.PropertyName.ReportView );

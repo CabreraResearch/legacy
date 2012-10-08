@@ -241,6 +241,7 @@ namespace ChemSW.Nbt.Sched
                                     CswNbtView ReportView = _CswNbtResources.ViewSelect.restoreView( ViewId );
                                     ICswNbtTree ReportTree = _CswNbtResources.Trees.getTreeFromView( UserNodeAsUser as ICswNbtUser, ReportView, true, true, false, false );
 
+                                    EmailMessageSubject = CurrentMailReport.NodeName;
                                     if( CswNbtObjClassMailReport.EventOption.Exists.ToString() != CurrentMailReport.Event.Value )
                                     {
                                         // case 27720 - check mail report events to find nodes that match the view results
@@ -254,7 +255,6 @@ namespace ChemSW.Nbt.Sched
                                                 NodesToMail.Add( ThisNodeId );
                                             }
                                         }
-                                        EmailMessageSubject = CurrentMailReport.Type.Value + " Notification: " + ReportView.ViewName;
                                         if( NodesToMail.Count > 0 )
                                         {
                                             EmailMessageBody = _setStatusHaveData( CurrentMailReport, CswNbtMailReportStatus, ViewLink );
@@ -266,8 +266,6 @@ namespace ChemSW.Nbt.Sched
                                     }
                                     else
                                     {
-                                        EmailMessageSubject = CurrentMailReport.Type.Value + " Notification: " + ReportView.ViewName;
-
                                         if( ReportTree.getChildNodeCount() > 0 )
                                         {
                                             EmailMessageBody = _setStatusHaveData( CurrentMailReport, CswNbtMailReportStatus, ViewLink );
@@ -343,42 +341,42 @@ namespace ChemSW.Nbt.Sched
 
         private string _sendMailMessage( CswNbtObjClassMailReport CurrentMailReport, CswNbtMailReportStatus CswNbtMailReportStatus, string MailReportMessage, string LastName, string FirstName, string UserName, string Subject, string CurrentEmailAddress, DataTable ReportTable )
         {
-
             string ReturnVal = string.Empty;
-
-            CswMail CswMail = _CswNbtResources.CswMail;
-
-            CswNbtMailReportStatus.EmailSentReason = "Recipients: ";
-
-            CswMailMessage MailMessage = new CswMailMessage();
-            MailMessage.Recipient = CurrentEmailAddress;
-            MailMessage.RecipientDisplayName = FirstName + " " + LastName;
-            MailMessage.Subject = Subject;
-            MailMessage.Content = MailReportMessage;
-
-
-            if( null != ReportTable )
+            if( CswNbtMailReportStatus.ReportDataExist )
             {
-                string TableAsCSV = ( (CswDataTable) ReportTable ).ToCsv();
+                CswMail CswMail = _CswNbtResources.CswMail;
 
-                byte[] Buffer = new System.Text.UTF8Encoding().GetBytes( TableAsCSV );
-                System.IO.MemoryStream MemoryStream = new System.IO.MemoryStream( Buffer, false );
+                CswNbtMailReportStatus.EmailSentReason = "Recipients: ";
 
-                MailMessage.Attachment = MemoryStream;
-                MailMessage.AttachmentDisplayName = CurrentMailReport.Node.NodeName + ".csv";
+                CswMailMessage MailMessage = new CswMailMessage();
+                MailMessage.Recipient = CurrentEmailAddress;
+                MailMessage.RecipientDisplayName = FirstName + " " + LastName;
+                MailMessage.Subject = Subject;
+                MailMessage.Content = MailReportMessage;
+
+
+                if( null != ReportTable )
+                {
+                    string TableAsCSV = ( (CswDataTable) ReportTable ).ToCsv();
+
+                    byte[] Buffer = new System.Text.UTF8Encoding().GetBytes( TableAsCSV );
+                    System.IO.MemoryStream MemoryStream = new System.IO.MemoryStream( Buffer, false );
+
+                    MailMessage.Attachment = MemoryStream;
+                    MailMessage.AttachmentDisplayName = CurrentMailReport.Node.NodeName + ".csv";
+                }
+
+                if( CswMail.send( MailMessage ) )
+                {
+                    CswNbtMailReportStatus.EmailSentReason += UserName + " at " + CurrentEmailAddress + " (succeeded); ";
+                    ReturnVal = CswNbtMailReportStatus.EmailSentReason;
+                }
+                else
+                {
+                    CswNbtMailReportStatus.EmailFailureReason += UserName + " at " + CurrentEmailAddress + " (failed: " + CswMail.Status + "); ";
+                    ReturnVal = CswNbtMailReportStatus.EmailFailureReason;
+                }
             }
-
-            if( CswMail.send( MailMessage ) )
-            {
-                CswNbtMailReportStatus.EmailSentReason += UserName + " at " + CurrentEmailAddress + " (succeeded); ";
-                ReturnVal = CswNbtMailReportStatus.EmailSentReason;
-            }
-            else
-            {
-                CswNbtMailReportStatus.EmailFailureReason += UserName + " at " + CurrentEmailAddress + " (failed: " + CswMail.Status + "); ";
-                ReturnVal = CswNbtMailReportStatus.EmailFailureReason;
-            }
-
             return ( ReturnVal );
 
         }//_sendMailMessage()
