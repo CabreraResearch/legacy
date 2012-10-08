@@ -1654,12 +1654,11 @@ namespace ChemSW.Nbt.Schema
 
                 // Start external process
                 System.Diagnostics.Process p = new System.Diagnostics.Process();
-                p.StartInfo.UseShellExecute = false;
                 p.StartInfo.FileName = BatchFilePath;
                 p.StartInfo.Arguments = " " + serverName + " " + userName + " " + passWord + " " + FileLocations + " " + SqlFileName;
                 p.StartInfo.WindowStyle = ProcessWindowStyle.Normal;
                 p.StartInfo.UseShellExecute = false;
-                p.StartInfo.RedirectStandardOutput = false;
+                p.StartInfo.RedirectStandardOutput = true;
 
                 Process SpawnedProcess = System.Diagnostics.Process.Start( p.StartInfo );
                 if( false == SpawnedProcess.WaitForExit( UpdtShellWaitMsec ) )
