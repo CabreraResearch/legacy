@@ -344,7 +344,7 @@ namespace ChemSW.Nbt
                               string.Empty,
                               false,
                               null,
-                              NodeSpecies.UnKnown,
+                              NodeSpecies.Plain,
                               true,
                               false,
                               true,
