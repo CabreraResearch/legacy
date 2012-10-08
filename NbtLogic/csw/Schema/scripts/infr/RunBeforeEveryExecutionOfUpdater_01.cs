@@ -17,6 +17,12 @@ namespace ChemSW.Nbt.Schema
 
             // NOTE: This script will be run many times, so make sure your changes are safe!
 
+            // hack for backwards support of Quince schemata
+            if( "01Q-008" == _CswNbtSchemaModTrnsctn.getConfigVariableValue( "schemaversion" ) )
+            {
+                _CswNbtSchemaModTrnsctn.setConfigVariableValue( "schemaversion", "01R-008" );
+            }
+
             #region SEBASTIAN
 
             //Add 5 generic nodetype prop attribute columns
@@ -45,7 +51,6 @@ namespace ChemSW.Nbt.Schema
                 _CswNbtSchemaModTrnsctn.addBooleanColumn( "nodetypes", "haslabel", "Indicated whether the NodeType maps to a print label", false, false );
             }
 
-
             #endregion SEBASTIAN
 
             #region TITANIA
@@ -58,12 +63,10 @@ namespace ChemSW.Nbt.Schema
         {
             get { return CswDeveloper.NBT; }
         }
-
         public override int CaseNo
         {
             get { return 0; }
         }
-
         //Update()
 
     }//class RunBeforeEveryExecutionOfUpdater_01

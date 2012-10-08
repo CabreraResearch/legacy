@@ -4,8 +4,15 @@
 (function () {
     'use strict';
 
-    var cswPrivate = {
-        response: {
+    var cswPrivate = {};
+
+    cswPrivate.handleAjaxError = function (errorJson) {
+        Csw.error.showError(errorJson);
+    }; /* cswPrivate.handleAjaxError() */
+
+    cswPrivate.onJsonSuccess = Csw.method(function (o, data, url) {
+
+        var response = {
             Data: '',
             Authentication: {
                 AuthenticationStatus: 'Unknown',
@@ -31,39 +38,33 @@
                 Errors: [],
                 DisplayErrors: false
             }
-        }
-    };
+        };
 
-    cswPrivate.handleAjaxError = function (errorJson) {
-        Csw.error.showError(errorJson);
-    }; /* cswPrivate.handleAjaxError() */
-
-    cswPrivate.onJsonSuccess = Csw.method(function (o, data, url) {
         Csw.publish(Csw.enums.events.ajax.ajaxStop, o.watchGlobal);
-        Csw.extend(cswPrivate.response, data, true);
+        Csw.extend(response, data, true);
         
-        if (false === cswPrivate.response.Status.Success &&
-            cswPrivate.response.Status.Errors.length > 0) {
-            var lastErr = cswPrivate.response.Status.Errors.length - 1;
+        if (false === response.Status.Success &&
+            response.Status.Errors.length > 0) {
+            var lastErr = response.Status.Errors.length - 1;
             if (false === o.overrideError) {
                 cswPrivate.handleAjaxError({
-                    display: cswPrivate.response.Status.Errors[lastErr].Display,
-                    type: cswPrivate.response.Status.Errors[lastErr].Type,
-                    message: cswPrivate.response.Status.Errors[lastErr].Message,
-                    detail: cswPrivate.response.Status.Errors[lastErr].Detail
+                    display: response.Status.Errors[lastErr].Display,
+                    type: response.Status.Errors[lastErr].Type,
+                    message: response.Status.Errors[lastErr].Message,
+                    detail: response.Status.Errors[lastErr].Detail
                     }, '');
                 
             }
-            Csw.tryExec(o.error, cswPrivate.response.Status.Errors[lastErr]);
+            Csw.tryExec(o.error, response.Status.Errors[lastErr]);
         } else {
 
-            var auth = Csw.string(cswPrivate.response.Authentication.AuthenticationStatus, 'Unknown');
+            var auth = Csw.string(response.Authentication.AuthenticationStatus, 'Unknown');
             if (false === o.formobile) {
-                Csw.clientSession.setExpireTime(Csw.string(cswPrivate.response.Authentication.TimeOut, ''));
+                Csw.clientSession.setExpireTime(Csw.string(response.Authentication.TimeOut, ''));
             }
 
-            if (false === Csw.isNullOrEmpty(cswPrivate.response.Performance)) {
-                cswPrivate.response.Performance.url = url;
+            if (false === Csw.isNullOrEmpty(response.Performance)) {
+                response.Performance.url = url;
                 
                 var endTime = new Date();
                 var etms = Csw.string(endTime.getMilliseconds());
@@ -71,21 +72,21 @@
                     etms = '0' + etms;
                 }
                 
-                cswPrivate.response.Performance.TimeStamp = endTime.toLocaleTimeString() + '.' + etms;
-                cswPrivate.response.Performance.Client = (endTime - o.startTime);
+                response.Performance.TimeStamp = endTime.toLocaleTimeString() + '.' + etms;
+                response.Performance.Client = (endTime - o.startTime);
                 
-                Csw.clientSession.setLogglyInput(cswPrivate.response.Logging.LogglyInput, cswPrivate.response.Logging.LogLevel, cswPrivate.response.Logging.Server);
-                Csw.debug.perf(cswPrivate.response.Performance);
+                Csw.clientSession.setLogglyInput(response.Logging.LogglyInput, response.Logging.LogLevel, response.Logging.Server);
+                Csw.debug.perf(response.Performance);
                 
             }
             
             Csw.clientSession.handleAuthenticationStatus({
                 status: auth,
                 success: function () {
-                    Csw.tryExec(o.success, cswPrivate.response.Data);
+                    Csw.tryExec(o.success, response.Data);
                 },
                 failure: o.onloginfail,
-                data: cswPrivate.response.Authentication
+                data: response.Authentication
             });
         }
     });

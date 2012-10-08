@@ -138,9 +138,9 @@ namespace ChemSW.Nbt.ObjClasses
                     ReturnVal = new CswNbtObjClassMethod( CswNbtResources, Node );
                     break;
 
-                case CswNbtMetaDataObjectClass.NbtObjectClass.NotificationClass:
-                    ReturnVal = new CswNbtObjClassNotification( CswNbtResources, Node );
-                    break;
+                //case CswNbtMetaDataObjectClass.NbtObjectClass.NotificationClass:
+                //    ReturnVal = new CswNbtObjClassNotification( CswNbtResources, Node );
+                //    break;
 
                 case CswNbtMetaDataObjectClass.NbtObjectClass.ParameterClass:
                     ReturnVal = new CswNbtObjClassParameter( CswNbtResources, Node );

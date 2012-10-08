@@ -495,10 +495,14 @@
                             /* Case 24437 */
                         var editLayoutOpt = {
                             ID: cswPrivate.ID,
-                            nodeids: cswPrivate.globalState.nodeids,
-                            nodekeys: cswPrivate.globalState.nodekeys,
-                            tabid: cswPrivate.tabState.tabid,
-                            nodetypeid: cswPrivate.tabState.nodetypeid,
+                            globalState: {
+                                nodeids: cswPrivate.globalState.nodeids,
+                                nodekeys: cswPrivate.globalState.nodekeys,
+                                nodetypeid: cswPrivate.tabState.nodetypeid
+                            },
+                            tabState: {
+                                tabid: cswPrivate.tabState.tabid
+                            },
                             Refresh: function () {
                                 Csw.tryExec(cswPrivate.Refresh);
                                 cswPrivate.tabState.Config = false;
@@ -696,6 +700,7 @@
                         propid: propData.id,
                         saveBtn: cswPrivate.saveBtn,
                         propData: propData,
+                        Required: Csw.bool(propData.required),
                         onReload: function (afterReload) {
                             cswPrivate.getProps(tabContentDiv, tabid, afterReload);
                         },
@@ -715,7 +720,6 @@
                         onEditView: cswPrivate.onEditView,
                         onAfterButtonClick: cswPrivate.onAfterButtonClick
                     }, propCell.div());
-                        Required: Csw.bool(propData.required)
 
                     cswPrivate.properties[propId] = Csw.nbt.property(fieldOpt);
 

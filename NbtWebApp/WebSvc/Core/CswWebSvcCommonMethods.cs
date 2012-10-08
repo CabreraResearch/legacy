@@ -125,7 +125,7 @@ namespace ChemSW.WebSvc
             return IPAddress;
         }
 
-        public static void jAddAuthenticationStatus( CswNbtResources CswNbtResources, CswSessionResourcesNbt CswSessionResources, JObject SvcReturn, AuthenticationStatus AuthenticationStatusIn )
+        public static void jAddAuthenticationStatus( CswNbtResources CswNbtResources, CswSessionResourcesNbt CswSessionResources, JObject SvcReturn, AuthenticationStatus AuthenticationStatusIn, bool IsMobile = false )
         {
             if( SvcReturn != null )
             {
@@ -139,29 +139,24 @@ namespace ChemSW.WebSvc
                         {
                             SvcReturn["timeout"] = CswDateTime.ToClientAsJavascriptString( CswNbtResources.CswSessionManager.TimeoutDate );
                         }
-                if( AuthenticationStatusIn == AuthenticationStatus.ExpiredPassword )
-                {
-                    ICswNbtUser CurrentUser = CswNbtResources.CurrentNbtUser;
-                    SvcReturn.Add( new JProperty( "nodeid", CurrentUser.UserId.ToString() ) );
-                    CswNbtNodeKey FakeKey = new CswNbtNodeKey( CswNbtResources )
-                    {
-                        NodeId = CurrentUser.UserId,
-                        NodeSpecies = NodeSpecies.Plain,
-                        NodeTypeId = CurrentUser.UserNodeTypeId,
-                        ObjectClassId = CurrentUser.UserObjectClassId
-                    };
-                    SvcReturn.Add( new JProperty( "cswnbtnodekey", FakeKey.ToString() ) );
-                    CswPropIdAttr PasswordPropIdAttr = new CswPropIdAttr( CurrentUser.UserId, CurrentUser.PasswordPropertyId );
-                    SvcReturn.Add( new JProperty( "passwordpropid", PasswordPropIdAttr.ToString() ) );
-                }
+                        if( AuthenticationStatusIn == AuthenticationStatus.ExpiredPassword )
+                        {
+                            ICswNbtUser CurrentUser = CswNbtResources.CurrentNbtUser;
+                            SvcReturn.Add( new JProperty( "nodeid", CurrentUser.UserId.ToString() ) );
+                            CswNbtNodeKey FakeKey = new CswNbtNodeKey( CswNbtResources )
+                            {
+                                NodeId = CurrentUser.UserId,
+                                NodeSpecies = NodeSpecies.Plain,
+                                NodeTypeId = CurrentUser.UserNodeTypeId,
+                                ObjectClassId = CurrentUser.UserObjectClassId
+                            };
+                            SvcReturn.Add( new JProperty( "cswnbtnodekey", FakeKey.ToString() ) );
+                            CswPropIdAttr PasswordPropIdAttr = new CswPropIdAttr( CurrentUser.UserId, CurrentUser.PasswordPropertyId );
+                            SvcReturn.Add( new JProperty( "passwordpropid", PasswordPropIdAttr.ToString() ) );
+                        }
 
-                SvcReturn["server"] = Environment.MachineName;
-                SvcReturn["timer"] = new JObject();
-
-
-                if( null != CswNbtResources )
-                {
-                    SvcReturn["timer"]["serverinit"] = Math.Round( CswNbtResources.ServerInitTime, 3 );
+                        SvcReturn["timer"] = new JObject();
+                        SvcReturn["timer"]["serverinit"] = Math.Round( CswNbtResources.ServerInitTime, 3 );
                         LogLevels LogLevel = CswNbtResources.ConfigVbls.getConfigVariableValue( CswConfigurationVariables.ConfigurationVariableNames.Logging_Level );
                         if( LogLevel == CswNbtResources.UnknownEnum )
                         {
@@ -175,10 +170,9 @@ namespace ChemSW.WebSvc
                         SvcReturn["timer"]["dbcommit"] = Math.Round( CswNbtResources.CswLogger.DbCommitTime, 3 );
                         SvcReturn["timer"]["dbdeinit"] = Math.Round( CswNbtResources.CswLogger.DbDeInitTime, 3 );
                         SvcReturn["timer"]["treeloadersql"] = Math.Round( CswNbtResources.CswLogger.TreeLoaderSQLTime, 3 );
+                        SvcReturn["timer"]["servertotal"] = Math.Round( CswNbtResources.TotalServerTime, 3 );
                     }
-                    SvcReturn["timer"]["servertotal"] = Math.Round( CswNbtResources.TotalServerTime, 3 );
                 }
-
             }
         }
 

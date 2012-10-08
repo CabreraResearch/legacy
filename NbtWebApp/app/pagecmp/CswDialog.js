@@ -424,21 +424,29 @@
             });
             openDialog(div, 400, 200, null, o.title);
         }, // AddNodeTypeDialog
-        EditLayoutDialog: function (cswNodeTabOptions) {
-            cswNodeTabOptions.ID = cswNodeTabOptions.ID + '_editlayout';
-            cswNodeTabOptions.tabState = {
-                Config: true,
-                EditMode: 'Edit'
+        EditLayoutDialog: function (options) {
+            var cswPrivate = {
+                ID: 'editlayout',
+                globalState: {
+                    nodeids: [],
+                    nodekeys: [],
+                    nodenames: []
+                },
+                tabState: {
+                    tabid: '',
+                    EditMode: 'Edit'
+                },
+                Refresh: null
             };
-            cswNodeTabOptions.globalState = {
-                ShowAsReport: false
-            };
+            if(options) Csw.extend(cswPrivate, options);
 
-            cswNodeTabOptions.onTabSelect = function (tabid) {
-                cswNodeTabOptions.tabState.tabid = tabid;
+            cswPrivate.ShowAsReport = false;
+            cswPrivate.tabState.Config = true;
+            cswPrivate.onTabSelect = function (tabid) {
+                cswPrivate.tabState.tabid = tabid;
                 _configAddOptions();
             };
-            cswNodeTabOptions.onPropertyRemove = function () {
+            cswPrivate.onPropertyRemove = function () {
                 _configAddOptions();
             };
 
@@ -461,7 +469,7 @@
                 selected: 'Edit',
                 values: ['Add', 'Edit', 'Preview', 'Table'],
                 onChange: function () {
-                    cswNodeTabOptions.tabState.EditMode = $('#EditLayoutDialog_layoutselect option:selected').val();
+                    cswPrivate.tabState.EditMode = $('#EditLayoutDialog_layoutselect option:selected').val();
                     _resetLayout();
                 }
             });
@@ -470,8 +478,7 @@
 
             function _resetLayout() {
                 cell12.empty();
-                //cell12.$.CswNodeTabs(cswNodeTabOptions);
-                Csw.layouts.tabsAndProps(cell12, cswNodeTabOptions);
+                Csw.layouts.tabsAndProps(cell12, cswPrivate);
                 _configAddOptions();
             }
 
@@ -489,7 +496,7 @@
                             urlMethod: 'addPropertyToLayout',
                             data: {
                                 PropId: Csw.string(addSelect.val()),
-                                TabId: Csw.string(cswNodeTabOptions.tabState.tabid),
+                                TabId: Csw.string(cswPrivate.tabState.tabid),
                                 LayoutType: layoutSelect.val()
                             },
                             success: function () {
@@ -499,10 +506,10 @@
                     } // onChange
                 }); // 
                 var ajaxdata = {
-                    NodeId: Csw.string(cswNodeTabOptions.globalState.nodeids[0]),
-                    NodeKey: Csw.string(cswNodeTabOptions.globalState.nodekeys[0]),
-                    NodeTypeId: Csw.string(cswNodeTabOptions.tabState.nodetypeid),
-                    TabId: Csw.string(cswNodeTabOptions.tabState.tabid),
+                    NodeId: Csw.string(cswPrivate.globalState.nodeids[0]),
+                    NodeKey: Csw.string(cswPrivate.globalState.nodekeys[0]),
+                    NodeTypeId: Csw.string(cswPrivate.globalState.nodetypeid),
+                    TabId: Csw.string(cswPrivate.tabState.tabid),
                     LayoutType: layoutSelect.val()
                 };
                 Csw.ajax.post({
@@ -526,7 +533,7 @@
             } // _configAddOptions()
 
             function _onclose() {
-                Csw.tryExec(cswNodeTabOptions.Refresh);
+                Csw.tryExec(cswPrivate.Refresh);
             }
 
             _resetLayout();
