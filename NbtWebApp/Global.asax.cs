@@ -4,6 +4,7 @@ using System.Web;
 using System.Web.Routing;
 using NbtWebApp.WebSvc.Logic.Views;
 using NbtWebApp.WebSvc.Session;
+using NbtWebApp.WebSvc.Logic.Reports;
 
 namespace NbtWebAppServices
 {
@@ -21,6 +22,7 @@ namespace NbtWebAppServices
             RouteTable.Routes.Add( new ServiceRoute( "Labels", Factory, typeof( CswNbtLabelUriMethods ) ) );
             RouteTable.Routes.Add( new ServiceRoute( "Views", Factory, typeof( CswNbtViewsUriMethods ) ) );
             RouteTable.Routes.Add( new ServiceRoute( "Session", Factory, typeof( CswNbtSessionUriMethods ) ) );
+            RouteTable.Routes.Add( new ServiceRoute( "Reports", Factory, typeof( CswNbtMailReportsUriMethods ) ) );
         }
 
         /// <summary>
