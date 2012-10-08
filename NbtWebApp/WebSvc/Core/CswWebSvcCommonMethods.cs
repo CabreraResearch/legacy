@@ -130,10 +130,15 @@ namespace ChemSW.WebSvc
             if( SvcReturn != null )
             {
                 SvcReturn["AuthenticationStatus"] = AuthenticationStatusIn.ToString();
-                if( ( null != CswNbtResources ) && ( null != CswNbtResources.CswSessionManager ) )
+                if( false == IsMobile )
                 {
-                    SvcReturn["timeout"] = CswDateTime.ToClientAsJavascriptString( CswNbtResources.CswSessionManager.TimeoutDate );
-                }
+                    SvcReturn["server"] = Environment.MachineName;
+                    if( null != CswNbtResources )
+                    {
+                        if( null != CswNbtResources.CswSessionManager )
+                        {
+                            SvcReturn["timeout"] = CswDateTime.ToClientAsJavascriptString( CswNbtResources.CswSessionManager.TimeoutDate );
+                        }
                 if( AuthenticationStatusIn == AuthenticationStatus.ExpiredPassword )
                 {
                     ICswNbtUser CurrentUser = CswNbtResources.CurrentNbtUser;
@@ -153,26 +158,27 @@ namespace ChemSW.WebSvc
                 SvcReturn["server"] = Environment.MachineName;
                 SvcReturn["timer"] = new JObject();
 
+
                 if( null != CswNbtResources )
                 {
                     SvcReturn["timer"]["serverinit"] = Math.Round( CswNbtResources.ServerInitTime, 3 );
-                    LogLevels LogLevel = CswNbtResources.ConfigVbls.getConfigVariableValue( CswConfigurationVariables.ConfigurationVariableNames.Logging_Level );
-                    if( LogLevel == CswNbtResources.UnknownEnum )
-                    {
-                        LogLevel = LogLevels.Error;
-                    }
-                    SvcReturn["LogLevel"] = LogLevel.ToString().ToLower();
+                        LogLevels LogLevel = CswNbtResources.ConfigVbls.getConfigVariableValue( CswConfigurationVariables.ConfigurationVariableNames.Logging_Level );
+                        if( LogLevel == CswNbtResources.UnknownEnum )
+                        {
+                            LogLevel = LogLevels.Error;
+                        }
+                        SvcReturn["LogLevel"] = LogLevel.ToString().ToLower();
 
-                    SvcReturn["timer"]["customerid"] = CswNbtResources.AccessId;
-                    SvcReturn["timer"]["dbinit"] = Math.Round( CswNbtResources.CswLogger.DbInitTime, 3 );
-                    SvcReturn["timer"]["dbquery"] = Math.Round( CswNbtResources.CswLogger.DbQueryTime, 3 );
-                    SvcReturn["timer"]["dbcommit"] = Math.Round( CswNbtResources.CswLogger.DbCommitTime, 3 );
-                    SvcReturn["timer"]["dbdeinit"] = Math.Round( CswNbtResources.CswLogger.DbDeInitTime, 3 );
-                    SvcReturn["timer"]["treeloadersql"] = Math.Round( CswNbtResources.CswLogger.TreeLoaderSQLTime, 3 );
+                        SvcReturn["timer"]["customerid"] = CswNbtResources.AccessId;
+                        SvcReturn["timer"]["dbinit"] = Math.Round( CswNbtResources.CswLogger.DbInitTime, 3 );
+                        SvcReturn["timer"]["dbquery"] = Math.Round( CswNbtResources.CswLogger.DbQueryTime, 3 );
+                        SvcReturn["timer"]["dbcommit"] = Math.Round( CswNbtResources.CswLogger.DbCommitTime, 3 );
+                        SvcReturn["timer"]["dbdeinit"] = Math.Round( CswNbtResources.CswLogger.DbDeInitTime, 3 );
+                        SvcReturn["timer"]["treeloadersql"] = Math.Round( CswNbtResources.CswLogger.TreeLoaderSQLTime, 3 );
+                    }
                     SvcReturn["timer"]["servertotal"] = Math.Round( CswNbtResources.TotalServerTime, 3 );
                 }
 
-                SvcReturn["AuthenticationStatus"] = AuthenticationStatusIn.ToString();
             }
         }
 
