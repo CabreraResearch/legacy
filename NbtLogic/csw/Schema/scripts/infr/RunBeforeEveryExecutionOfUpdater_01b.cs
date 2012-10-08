@@ -117,7 +117,7 @@ namespace ChemSW.Nbt.Schema
             }
 
             // Change "Report View" from ViewPickList to ViewReference
-            CswNbtMetaDataObjectClassProp ReportViewOCP = MailReportOC.getObjectClassProp( CswNbtObjClassMailReport.PropertyName.ReportView);
+            CswNbtMetaDataObjectClassProp ReportViewOCP = MailReportOC.getObjectClassProp( CswNbtObjClassMailReport.PropertyName.ReportView );
             if( ReportViewOCP.getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.ViewPickList )
             {
                 // map jct_nodes_props records
@@ -141,8 +141,10 @@ namespace ChemSW.Nbt.Schema
             #endregion SEBASTIAN
 
             _CswNbtSchemaModTrnsctn.MetaData.makeMissingNodeTypeProps();
-            
+
             #region Also romeo (has to be last)
+            CswNbtMetaDataObjectClass userOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
+
             foreach( CswNbtNode userNode in userOC.getNodes( false, false ) )
             {
                 userNode.Properties[CswNbtObjClassUser.PropertyName.Archived].AsLogical.Checked = Tristate.False;

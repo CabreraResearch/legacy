@@ -49,18 +49,16 @@ namespace ChemSW.Nbt.Schema
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01S_Case27551_part2() ) );                        //01S-021
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01S_Case27751() ) );                              //01S-022 
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01S_Case27858() ) );                              //01S-023
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01S_Case27800() ) );                              //01S-024
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01S_Case27720() ) );                              //01S-025
 
             #endregion SEBASTIAN
 
             #region TITANIA
 
-            //Titania Starts here
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase27800() ) );                              //01Q-054 //01S-021
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase27720() ) );                              //01Q-055 //01S-022
-
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01T_Case27869() ) );                              //01S-024    01T-01
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01T_Case27873() ) );                              //01S-025    01T-02
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01T_Case27872() ) );                              //01S-026    01T-03
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01T_Case27869() ) );                              //01S-026    01T-01
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01T_Case27873() ) );                              //01S-027    01T-02
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01T_Case27872() ) );                              //01S-028    01T-03
 
             #endregion TITANIA
 

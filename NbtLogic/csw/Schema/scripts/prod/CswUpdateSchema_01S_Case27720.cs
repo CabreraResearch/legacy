@@ -1,16 +1,13 @@
-﻿using System;
-using System.Data;
-using ChemSW.Core;
-using ChemSW.DB;
-using ChemSW.Nbt.MetaData;
+﻿using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
+using ChemSW.Nbt.csw.Dev;
 
 namespace ChemSW.Nbt.Schema
 {
     /// <summary>
     /// Schema Update for case 27720
     /// </summary>
-    public class CswUpdateSchemaCase27720 : CswUpdateSchemaTo
+    public class CswUpdateSchema_01S_Case27720 : CswUpdateSchemaTo
     {
         public override void update()
         {
@@ -72,6 +69,16 @@ namespace ChemSW.Nbt.Schema
             } // foreach( CswNbtMetaDataNodeType MailReportNT in MailReportOC.getNodeTypes() )
 
         }//Update()
+
+        public override CswDeveloper Author
+        {
+            get { return CswDeveloper.SS; }
+        }
+
+        public override int CaseNo
+        {
+            get { return 27720; }
+        }
 
     }//class CswUpdateSchemaCase27720
 
