@@ -54,6 +54,26 @@ namespace ChemSW.Nbt.ObjClasses
 
         }
 
+        public sealed class Statuses
+        {
+            public const string LabUseOnly = "Lab Use Only";
+            public const string Central = "Central";
+            public const string Approved = "Approved";
+            public const string OutOfCompliance = "Out of Compliance";
+            public const string Rejected = "Rejected";
+            public const string Expired = "Expired";
+
+            public static readonly CswCommaDelimitedString Options = new CswCommaDelimitedString
+                {
+                    LabUseOnly,
+                    Central,
+                    Approved,
+                    OutOfCompliance,
+                    Rejected,
+                    Expired
+                };
+        }
+
         /// <summary>
         /// Has the corresponding Inventory Level been modified in a change event on this instance?
         /// </summary>
