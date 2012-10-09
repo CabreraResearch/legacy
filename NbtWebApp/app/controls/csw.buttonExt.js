@@ -147,7 +147,8 @@
                 }
                 cswPrivate.initBtn = function () {
                     cswPublic.button = window.Ext.create('Ext.Button', {
-                        renderTo: cswParent.getId(),
+                        id: cswPrivate.ID,
+						renderTo: cswParent.getId(),
                         text: Csw.string(cswPrivate.enabledText),
                         width: cswPrivate.width,
                         handler: cswPrivate.onClick,
