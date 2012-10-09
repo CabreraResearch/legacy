@@ -23,7 +23,7 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataNodeTypeProp MailReportNameNTP = MailReportNT.getNodeTypeProp( "Name" );
 
             CswNbtMetaDataNodeType UserNT = UserOC.FirstNodeType;
-            CswNbtMetaDataNodeTypeProp UserLockedNTP = MailReportNT.getNodeTypePropByObjectClassProp( CswNbtObjClassUser.PropertyName.AccountLocked );
+            CswNbtMetaDataNodeTypeProp UserLockedNTP = UserNT.getNodeTypePropByObjectClassProp( CswNbtObjClassUser.PropertyName.AccountLocked );
 
 
             if( null != MailReportNT && null != UserNT )
@@ -54,6 +54,7 @@ namespace ChemSW.Nbt.Schema
                 ReportView.Root.ChildRelationships.Clear();
                 CswNbtViewRelationship UserRel = ReportView.AddViewRelationship( UserNT, false );
                 ReportView.AddViewPropertyAndFilter( UserRel, UserLockedNTP, Tristate.True.ToString() );
+                ReportView.save();
 
             } // if( null != MailReportNT )
 
