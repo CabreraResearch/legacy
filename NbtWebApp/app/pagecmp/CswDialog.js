@@ -229,7 +229,7 @@
                 close: function () {
                     cswPublic.div.$.dialog('close');
                 },
-                title: 'New ' + cswPrivate.text
+                title: cswPrivate.text
             };
 
             openDialog(cswPublic.div, 800, 600, null, cswPublic.title);
