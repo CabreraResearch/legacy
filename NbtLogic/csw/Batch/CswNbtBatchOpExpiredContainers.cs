@@ -95,32 +95,32 @@ namespace ChemSW.Nbt.Batch
             public CswCommaDelimitedString expiredContainerIDs = new CswCommaDelimitedString();
             public int totalExpiredContainers;
 
-            public ExpiredContainerBatchData( CswCommaDelimitedString expiredContainerIDs, int ContainersProcessedPerIteration )
+            public ExpiredContainerBatchData( CswCommaDelimitedString expiredContainerIDsIn, int ContainersProcessedPerIterationIn )
             {
-                this.ContainersProcessedPerIteration = ContainersProcessedPerIteration;
-                this.expiredContainerIDs = expiredContainerIDs;
-                this.totalExpiredContainers = expiredContainerIDs.Count;
+                this.ContainersProcessedPerIteration = ContainersProcessedPerIterationIn;
+                this.expiredContainerIDs = expiredContainerIDsIn;
+                this.totalExpiredContainers = expiredContainerIDsIn.Count;
             }
 
-            public ExpiredContainerBatchData( CswCommaDelimitedString expiredContainerIDs, int ContainersProcessedPerIteration, int totalContainers )
+            public ExpiredContainerBatchData( CswCommaDelimitedString expiredContainerIDsIn, int ContainersProcessedPerIterationIn, int totalContainersIn )
             {
-                this.ContainersProcessedPerIteration = ContainersProcessedPerIteration;
-                this.expiredContainerIDs = expiredContainerIDs;
-                this.totalExpiredContainers = totalContainers;
+                this.ContainersProcessedPerIteration = ContainersProcessedPerIterationIn;
+                this.expiredContainerIDs = expiredContainerIDsIn;
+                this.totalExpiredContainers = totalContainersIn;
             }
 
             public static implicit operator ExpiredContainerBatchData( string item )
             {
                 JObject Obj = CswConvert.ToJObject( item );
 
-                CswCommaDelimitedString expiredContainerIDs = new CswCommaDelimitedString();
-                expiredContainerIDs.FromString( Obj["expiredContainerIDs"].ToString() );
+                CswCommaDelimitedString expiredContainerIDsFromItem = new CswCommaDelimitedString();
+                expiredContainerIDsFromItem.FromString( Obj["expiredContainerIDs"].ToString() );
 
                 int total = CswConvert.ToInt32( Obj["totalExpiredContainers"] );
 
-                int ContainersProcessedPerIteration = CswConvert.ToInt32( Obj["ContainersProcessedPerIteration"] );
+                int ContainersProcessedPerIterationFromItem = CswConvert.ToInt32( Obj["ContainersProcessedPerIteration"] );
 
-                return new ExpiredContainerBatchData( expiredContainerIDs, ContainersProcessedPerIteration, total );
+                return new ExpiredContainerBatchData( expiredContainerIDsFromItem, ContainersProcessedPerIterationFromItem, total );
             }
 
             public static implicit operator string( ExpiredContainerBatchData item )
