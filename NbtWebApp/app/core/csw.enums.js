@@ -175,6 +175,7 @@
 
     Csw.enums.rateIntervalTypes = Csw.enums.rateIntervalTypes ||
         Csw.enums.register('rateIntervalTypes', {
+            Hourly: 'Hourly',
             WeeklyByDay: 'WeeklyByDay',
             MonthlyByDate: 'MonthlyByDate',
             MonthlyByWeekAndDay: 'MonthlyByWeekAndDay',

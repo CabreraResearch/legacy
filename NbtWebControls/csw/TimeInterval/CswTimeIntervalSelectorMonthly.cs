@@ -126,21 +126,21 @@ namespace ChemSW.NbtWebControls
             if( RateInterval.RateType == CswRateInterval.RateIntervalType.MonthlyByWeekAndDay )
             {
                 MonthlyByWeekAndDay.Checked = true;
-                MonthFrequencySelect.SelectedValue = ( (CswRateIntervalMonthlyWeek) RateInterval.RateInterval ).MonthlyFrequency.ToString();
-                if( ( (CswRateIntervalMonthlyWeek) RateInterval.RateInterval ).MonthlyWeek != Int32.MinValue )
-                    MonthWeekSelect.SelectedValue = ( (CswRateIntervalMonthlyWeek) RateInterval.RateInterval ).MonthlyWeek.ToString();
-                MonthlyDayPickerTable.setWeekDayPickerRadioSelectedValue( ( (CswRateIntervalMonthlyWeek) RateInterval.RateInterval ).MonthlyDay );
-                StartMonthSelect.SelectedValue = ( (CswRateIntervalMonthlyWeek) RateInterval.RateInterval ).StartingMonth.ToString();
-                StartYearSelect.SelectedValue = ( (CswRateIntervalMonthlyWeek) RateInterval.RateInterval ).StartingYear.ToString();
+                MonthFrequencySelect.SelectedValue = RateInterval.Data.MonthlyFrequency.ToString();
+                if( RateInterval.Data.MonthlyWeek != Int32.MinValue )
+                    MonthWeekSelect.SelectedValue = RateInterval.Data.MonthlyWeek.ToString();
+                MonthlyDayPickerTable.setWeekDayPickerRadioSelectedValue( RateInterval.Data.MonthlyDay );
+                StartMonthSelect.SelectedValue = RateInterval.Data.StartingMonth.ToString();
+                StartYearSelect.SelectedValue = RateInterval.Data.StartingYear.ToString();
             }
             if( RateInterval.RateType == CswRateInterval.RateIntervalType.MonthlyByDate )
             {
                 MonthlyByDate.Checked = true;
-                MonthFrequencySelect.SelectedValue = ( (CswRateIntervalMonthlyDate) RateInterval.RateInterval ).MonthlyFrequency.ToString();
-                if( ( (CswRateIntervalMonthlyDate) RateInterval.RateInterval ).MonthlyDate != Int32.MinValue )
-                    MonthDateSelect.SelectedValue = ( (CswRateIntervalMonthlyDate) RateInterval.RateInterval ).MonthlyDate.ToString();
-                StartMonthSelect.SelectedValue = ( (CswRateIntervalMonthlyDate) RateInterval.RateInterval ).StartingMonth.ToString();
-                StartYearSelect.SelectedValue = ( (CswRateIntervalMonthlyDate) RateInterval.RateInterval ).StartingYear.ToString();
+                MonthFrequencySelect.SelectedValue = RateInterval.Data.MonthlyFrequency.ToString();
+                if( RateInterval.Data.MonthlyDate != Int32.MinValue )
+                    MonthDateSelect.SelectedValue = RateInterval.Data.MonthlyDate.ToString();
+                StartMonthSelect.SelectedValue = RateInterval.Data.StartingMonth.ToString();
+                StartYearSelect.SelectedValue = RateInterval.Data.StartingYear.ToString();
             }
         }
 

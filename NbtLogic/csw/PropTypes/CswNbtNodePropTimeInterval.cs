@@ -92,7 +92,7 @@ namespace ChemSW.Nbt.PropTypes
         public override void ToXml( XmlNode ParentNode )
         {
             XmlNode RateIntervalNode = CswXmlDocument.AppendXmlNode( ParentNode, _IntervalSubField.ToXmlNodeName() );
-            CswXmlDocument.AppendXmlAttribute( RateIntervalNode, "text", RateInterval.ToString() );
+            //CswXmlDocument.AppendXmlAttribute( RateIntervalNode, "text", RateInterval.ToString() );
             //CswXmlDocument.SetInnerTextAsCData( RateIntervalNode, RateInterval.ToXmlString() );
             RateInterval.ToXml( RateIntervalNode );
         }
@@ -106,7 +106,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             JObject IntervalObj = new JObject();
             ParentObject[_IntervalSubField.ToXmlNodeName()] = IntervalObj;
-            IntervalObj["text"] = RateInterval.ToString();
+            //IntervalObj["text"] = RateInterval.ToString();
             RateInterval.ToJson( IntervalObj );
         }
 

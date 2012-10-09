@@ -1,6 +1,9 @@
+using System;
+using System.Data;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
+using ChemSW.DB;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -15,39 +18,6 @@ namespace ChemSW.Nbt.Schema
         {
             // This script is for adding object class properties, 
             // which often become required by other business logic and can cause prior scripts to fail.
-
-            #region ROMEO
-
-            // moved from CswUpdateSchemaCase24525 for case 27706
-            #region ADD ARCHIVED PROP TO USER
-            CswNbtMetaDataFieldType logicalFT = _CswNbtSchemaModTrnsctn.MetaData.getFieldType( CswNbtMetaDataFieldType.NbtFieldType.Logical );
-            CswNbtMetaDataObjectClass userOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
-            if( null == userOC.getObjectClassProp( CswNbtObjClassUser.PropertyName.Archived ) )
-            {
-                CswNbtMetaDataObjectClassProp archivedOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( userOC )
-                {
-                    PropName = CswNbtObjClassUser.PropertyName.Archived,
-                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Logical,
-                    IsFk = false,
-                    IsRequired = true,
-                    ValuePropType = logicalFT.FieldType,
-                    ValuePropId = logicalFT.FieldTypeId,
-                } );
-                //set the default val to false - we don't want new users to be archived
-                _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( archivedOCP, archivedOCP.getFieldTypeRule().SubFields.Default.Name, Tristate.False );
-
-                _CswNbtSchemaModTrnsctn.MetaData.makeMissingNodeTypeProps();
-
-                foreach( CswNbtNode userNode in userOC.getNodes( false, false ) )
-                {
-                    userNode.Properties[CswNbtObjClassUser.PropertyName.Archived].AsLogical.Checked = Tristate.False;
-                    userNode.postChanges( false );
-                }
-            }
-            #endregion
-
-            #endregion ROMEO
-
 
             #region SEBASTIAN
 
@@ -75,10 +45,8 @@ namespace ChemSW.Nbt.Schema
 
             //upgrade RequestItem Requestor prop from NTP to OCP
             CswNbtMetaDataObjectClass requestItemOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.RequestItemClass );
-            CswNbtMetaDataNodeType requestItemNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Request Item" );
-            if( null != requestItemNT && null == requestItemOC.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Requestor ) )
+            if( null == requestItemOC.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Requestor ) )
             {
-
                 CswNbtMetaDataObjectClass requestOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.RequestClass );
                 CswNbtMetaDataObjectClassProp requestorOCP = requestOC.getObjectClassProp( CswNbtObjClassRequest.PropertyName.Requestor );
                 CswNbtMetaDataObjectClassProp requestOCP = requestItemOC.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Request );
@@ -93,14 +61,98 @@ namespace ChemSW.Nbt.Schema
                     ValuePropType = NbtViewPropIdType.ObjectClassPropId.ToString(),
                     ValuePropId = requestorOCP.PropId
                 } );
-
-                CswNbtMetaDataNodeTypeProp reqItemRequestorNTP = _CswNbtSchemaModTrnsctn.MetaData.getNodeTypePropByObjectClassProp( requestItemNT.NodeTypeId, reqItemrequestorOCP.PropId );
-
-                reqItemRequestorNTP.removeFromLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add );
             }
 
 
+            #region case 27720
+
+            // remove Notification nodes, nodetypes, and object class
+            CswNbtMetaDataObjectClass NotificationOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( "NotificationClass" );
+            if( null != NotificationOC )
+            {
+                _CswNbtSchemaModTrnsctn.MetaData.DeleteObjectClass( NotificationOC );
+            }
+
+            // add properties to mail reports
+            CswNbtMetaDataObjectClass MailReportOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.MailReportClass );
+            CswNbtMetaDataObjectClassProp TypeOCP = MailReportOC.getObjectClassProp( CswNbtObjClassMailReport.PropertyName.Type );
+            if( null == MailReportOC.getObjectClassProp( CswNbtObjClassMailReport.PropertyName.TargetType ) )
+            {
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( MailReportOC )
+                {
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.NodeTypeSelect,
+                    PropName = CswNbtObjClassMailReport.PropertyName.TargetType,
+                    FilterPropId = TypeOCP.PropId,
+                    Filter = CswNbtObjClassMailReport.TypeOptionView
+                } );
+            }
+            if( null == MailReportOC.getObjectClassProp( CswNbtObjClassMailReport.PropertyName.Event ) )
+            {
+                CswCommaDelimitedString Options = new CswCommaDelimitedString();
+                foreach( CswNbtObjClassMailReport.EventOption EventOpt in CswNbtObjClassMailReport.EventOption._All )
+                {
+                    if( EventOpt != CswNbtObjClassMailReport.EventOption.Unknown )
+                    {
+                        Options.Add( EventOpt.ToString() );
+                    }
+                }
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( MailReportOC )
+                {
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.List,
+                    PropName = CswNbtObjClassMailReport.PropertyName.Event,
+                    ListOptions = Options.ToString(),
+                    FilterPropId = TypeOCP.PropId,
+                    Filter = CswNbtObjClassMailReport.TypeOptionView
+                } );
+            }
+            if( null == MailReportOC.getObjectClassProp( CswNbtObjClassMailReport.PropertyName.NodesToReport ) )
+            {
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( MailReportOC )
+                {
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Memo,
+                    PropName = CswNbtObjClassMailReport.PropertyName.NodesToReport
+                } );
+            }
+
+            // Change "Report View" from ViewPickList to ViewReference
+            // NOTE: Due to case 27950, we have to fix nodetypes and object classes separately
+            CswNbtMetaDataFieldType ViewReferenceFT = _CswNbtSchemaModTrnsctn.MetaData.getFieldType( CswNbtMetaDataFieldType.NbtFieldType.ViewReference );
+            foreach( CswNbtMetaDataNodeType MailReportNT in MailReportOC.getNodeTypes() )
+            {
+                CswNbtMetaDataNodeTypeProp ReportViewNTP = MailReportNT.getNodeTypePropByObjectClassProp( CswNbtObjClassMailReport.PropertyName.ReportView );
+                if( ReportViewNTP.getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.ViewPickList )
+                {
+                    // map jct_nodes_props records
+                    //   ViewReference: Name = field1, ViewId = field1_fk
+                    //   ViewPickList: Name = gestalt, ViewId = field1
+                    CswTableUpdate JctUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "27720_update_jnp", "jct_nodes_props" );
+                    DataTable JctTable = JctUpdate.getTable( "nodetypepropid", ReportViewNTP.PropId );
+                    foreach( DataRow JctRow in JctTable.Rows )
+                    {
+                        JctRow["field1_fk"] = JctRow["field1"];
+                        JctRow["field1"] = JctRow["gestalt"];
+                    }
+                    JctUpdate.update( JctTable );
+
+                    // fix the nodetype_prop record
+                    // slightly kludgey, but works
+                    ReportViewNTP._DataRow["fieldtypeid"] = ViewReferenceFT.FieldTypeId;
+                }
+
+            }
+
+            // fix the object class record
+            CswNbtMetaDataObjectClassProp ReportViewOCP = MailReportOC.getObjectClassProp( CswNbtObjClassMailReport.PropertyName.ReportView );
+            if( ReportViewOCP.getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.ViewPickList )
+            {
+                _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( ReportViewOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.fieldtypeid, ViewReferenceFT.FieldTypeId );
+            }
+
+            #endregion case 27720
+
             #endregion SEBASTIAN
+
+            _CswNbtSchemaModTrnsctn.MetaData.makeMissingNodeTypeProps();
 
         }//Update()
 
