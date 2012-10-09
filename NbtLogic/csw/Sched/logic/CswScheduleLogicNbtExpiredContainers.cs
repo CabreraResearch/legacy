@@ -81,7 +81,8 @@ namespace ChemSW.Nbt.Sched
                     }
 
                     CswNbtBatchOpExpiredContainers batchOp = new CswNbtBatchOpExpiredContainers( _CswNbtResources );
-                    batchOp.makeBatchOp( expiredContainers, 10 );
+                    int ContainersProcessedPerIteration = 10;
+                    batchOp.makeBatchOp( expiredContainers, ContainersProcessedPerIteration );
 
                     _CswScheduleLogicDetail.StatusMessage = "Completed without error";
                     _LogicRunStatus = MtSched.Core.LogicRunStatus.Succeeded; //last line
