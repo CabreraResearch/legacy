@@ -470,7 +470,7 @@
 
                     if (cswPrivate.tabState.EditMode !== Csw.enums.editMode.PrintReport && Csw.bool(cswPrivate.tabState.showSaveButton)) {
                         cswPrivate.saveBtn = formTable.cell(2, 1).buttonExt({
-                            ID: 'SaveTab' + window.Ext.id,
+                            ID: 'SaveTab' + window.Ext.id(),
                             icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.save),
                             enabledText: 'Save Changes',
                             disabledText: 'Saving...',

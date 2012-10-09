@@ -47,11 +47,12 @@ namespace ChemSW.Nbt.Schema
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase27779_part1() ) );                        //01S-019
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase27779_part2() ) );                        //01S-020
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase27551_part2() ) );                        //01S-021
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase27751() ) );                              //01S-022 
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase27751() ) );                              //01S-022
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase27858() ) );                              //01S-023
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase27800() ) );                              //01S-024
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase27720() ) );                              //01S-025
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase27720_part2() ) );                        //01S-026
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase27904() ) );                              //01S-024
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase27800() ) );                              //01S-025
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase27720() ) );                              //01S-026
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase27720_part2() ) );                        //01S-027
 
             #endregion SEBASTIAN
 
