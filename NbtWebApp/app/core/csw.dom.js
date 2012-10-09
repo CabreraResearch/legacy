@@ -549,7 +549,7 @@
 
             elementId = o.ID;
             //toReplace = [/'/gi, / /gi, /\//g];
-            toReplace = [/\(/g, /\)/g, /'/gi, / /gi, /\//g];
+            toReplace = [/\(/g, /\)/g, /'/gi, / /gi, /\//g, /&#58/gi, /:/gi];
             if (false === Csw.isNullOrEmpty(o.prefix) && false === Csw.isNullOrEmpty(elementId)) {
                 elementId = o.prefix + o.Delimiter + elementId;
             }
