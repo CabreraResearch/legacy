@@ -69,6 +69,14 @@ namespace ChemSW.Nbt.Sched
             ret += ViewId.ToString();
             return ret;
         }
+        private string makeNodeUrl( CswPrimaryKey NodeId )
+        {
+            string ret = _CswNbtResources.SetupVbls["MailReportUrlStem"];
+            if( !ret.EndsWith( "/" ) ) ret += "/";
+            ret += "Main.html?nodeid=";
+            ret += NodeId.ToString();
+            return ret;
+        }
         private string makeReportUrl( CswNbtObjClassReport ReportObjClass )
         {
             string ret = _CswNbtResources.SetupVbls["MailReportUrlStem"];
@@ -229,7 +237,7 @@ namespace ChemSW.Nbt.Sched
                             CswNbtObjClassReport ReportObjClass = null;
 
                             string ViewLink = string.Empty;
-                            string EmailMessageSubject = string.Empty;
+                            string EmailMessageSubject = CurrentMailReport.NodeName;
                             string EmailMessageBody = string.Empty;
 
                             if( "View" == CurrentMailReport.Type.Value )
@@ -241,23 +249,22 @@ namespace ChemSW.Nbt.Sched
                                     CswNbtView ReportView = _CswNbtResources.ViewSelect.restoreView( ViewId );
                                     ICswNbtTree ReportTree = _CswNbtResources.Trees.getTreeFromView( UserNodeAsUser as ICswNbtUser, ReportView, true, true, false, false );
 
-                                    EmailMessageSubject = CurrentMailReport.NodeName;
                                     if( CswNbtObjClassMailReport.EventOption.Exists.ToString() != CurrentMailReport.Event.Value )
                                     {
                                         // case 27720 - check mail report events to find nodes that match the view results
-                                        Collection<CswPrimaryKey> NodesToMail = new Collection<CswPrimaryKey>();
+                                        Dictionary<CswPrimaryKey, string> NodesToMail = new Dictionary<CswPrimaryKey, string>();
                                         foreach( Int32 NodeId in CurrentMailReport.GetNodesToReport().ToIntCollection() )
                                         {
                                             CswPrimaryKey ThisNodeId = new CswPrimaryKey( "nodes", NodeId );
                                             ReportTree.makeNodeCurrent( ThisNodeId );
                                             if( ReportTree.isCurrentNodeDefined() )
                                             {
-                                                NodesToMail.Add( ThisNodeId );
+                                                NodesToMail.Add( ThisNodeId, ReportTree.getNodeNameForCurrentPosition() );
                                             }
                                         }
                                         if( NodesToMail.Count > 0 )
                                         {
-                                            EmailMessageBody = _setStatusHaveData( CurrentMailReport, CswNbtMailReportStatus, ViewLink );
+                                            EmailMessageBody = _setStatusHaveData( CurrentMailReport, CswNbtMailReportStatus, string.Empty, NodesToMail );
                                         }
                                         else
                                         {
@@ -293,8 +300,6 @@ namespace ChemSW.Nbt.Sched
 
                                     CswArbitrarySelect ReportSelect = _CswNbtResources.makeCswArbitrarySelect( "MailReport_" + ReportNode.NodeId.ToString() + "_Select", ReportSql );
                                     ReportTable = ReportSelect.getTable();
-
-                                    EmailMessageSubject = CurrentMailReport.Type.Value + " Notification: " + ReportNode.NodeName;
 
                                     if( ReportTable.Rows.Count > 0 )
                                     {
@@ -382,20 +387,21 @@ namespace ChemSW.Nbt.Sched
         }//_sendMailMessage()
 
 
-        private string _setStatusHaveData( CswNbtObjClassMailReport CurrentMailReport, CswNbtMailReportStatus CswNbtMailReportStatus, string ViewLink )
+        private string _setStatusHaveData( CswNbtObjClassMailReport CurrentMailReport, CswNbtMailReportStatus CswNbtMailReportStatus, string ViewLink, Dictionary<CswPrimaryKey, string> NodeDict = null )
         {
             string ReturnVal = string.Empty;
 
-
             CswNbtMailReportStatus.ReportDataExist = true;
             ReturnVal = CurrentMailReport.Message.Text + "\r\n";
-
-
-
-            if( string.Empty != ViewLink )
+            if( null != NodeDict )
             {
-                ReturnVal += ViewLink;
+                foreach( CswPrimaryKey NodeId in NodeDict.Keys )
+                {
+                    ReturnVal += "<a href=\"" + makeNodeUrl( NodeId ) + "\">" + NodeDict[NodeId] + "</a>\r\n";
+                }
             }
+            ReturnVal += "\r\n";
+            ReturnVal += ViewLink + "\r\n";
 
             CswNbtMailReportStatus.ReportReason = "The report's view returned data ";
 
@@ -411,7 +417,6 @@ namespace ChemSW.Nbt.Sched
 
             if( string.Empty != CswNbtObjClassMailReport.NoDataNotification.Text )
             {
-
                 CswNbtMailReportStatus.ReportDataExist = true;
                 ReturnVal = CswNbtObjClassMailReport.NoDataNotification.Text;
                 CswNbtMailReportStatus.ReportReason = "Report sent with no data message ";
