@@ -400,16 +400,6 @@ namespace ChemSW.Nbt.Schema
             }
             #endregion
 
-            #region Case 27866 part 1 - Container Group
-
-            //CswNbtMetaDataObjectClass containerGroupOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.ContainerGroupClass );
-            //if( null == containerGroupOC )
-            //{
-
-            //}
-
-            #endregion
-
             #endregion TITANIA
         }
 
