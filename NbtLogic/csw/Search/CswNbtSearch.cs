@@ -192,7 +192,7 @@ namespace ChemSW.Nbt.Search
                 }
             } // foreach(JObject FilterObj in FiltersApplied)
 
-            ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromSearch( SearchTerm, WhereClause, true, false );
+            ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromSearch( SearchTerm, WhereClause, true, false, false );
             return Tree;
         }
 
