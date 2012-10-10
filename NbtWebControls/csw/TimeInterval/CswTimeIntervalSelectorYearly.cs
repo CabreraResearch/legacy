@@ -52,8 +52,8 @@ namespace ChemSW.NbtWebControls
             DatePicker.Required = false;
             if( RateInterval.RateType == CswRateInterval.RateIntervalType.YearlyByDate )
             {
-                if( ( (CswRateIntervalYearly) RateInterval.RateInterval ).YearlyDate != DateTime.MinValue )
-                    DatePicker.SelectedDate = ( (CswRateIntervalYearly) RateInterval.RateInterval ).YearlyDate;
+                if( RateInterval.Data.YearlyDate != DateTime.MinValue )
+                    DatePicker.SelectedDate = RateInterval.Data.YearlyDate;
             }
         }
         public bool LoadPostData( String postDataKey, NameValueCollection values )

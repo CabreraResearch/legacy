@@ -35,6 +35,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string WorkUnit = "Work Unit";
             public const string LogLevel = "Log Level";
             public const string Archived = "Archived";
+            public const string Jurisdiction = "Jurisdiction";
         }
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
@@ -407,6 +408,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropRelationship WorkUnitProperty { get { return _CswNbtNode.Properties[PropertyName.WorkUnit]; } }
         public CswPrimaryKey WorkUnitId { get { return WorkUnitProperty.RelatedNodeId; } }
         public CswNbtNodePropLogical Archived { get { return _CswNbtNode.Properties[PropertyName.Archived]; } }
+        public CswNbtNodePropRelationship Jurisdiction { get { return _CswNbtNode.Properties[PropertyName.Jurisdiction]; } }
 
         #endregion
 

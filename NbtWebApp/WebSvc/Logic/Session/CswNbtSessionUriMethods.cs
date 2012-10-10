@@ -11,7 +11,7 @@ using NbtWebApp.WebSvc.Returns;
 namespace NbtWebApp.WebSvc.Session
 {
     /// <summary>
-    /// WCF Web Methods for View operations
+    /// WCF Web Methods for Session operations
     /// </summary>
     [ServiceBehavior( IncludeExceptionDetailInFaults = true )]
     [ServiceContract]
@@ -34,7 +34,7 @@ namespace NbtWebApp.WebSvc.Session
             var InitDriverType = new CswWebSvcDriver<CswWebSvcReturn, CswNbtSessionAuthenticateData.Authentication.Request>(
                 CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, Request ),
                 ReturnObj: Ret,
-                WebSvcMethodPtr: null,
+                WebSvcMethodPtr: CswNbtWebServiceSession.doNothing,
                 ParamObj: null
                 );
 

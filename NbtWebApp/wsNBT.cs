@@ -3734,6 +3734,8 @@ namespace ChemSW.Nbt.WebServices
         #endregion Actions
 
 
+        #endregion Mobile
+
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
         public string GetFeedbackCaseNumber( string nodeId )

@@ -1,8 +1,12 @@
 using System;
 using ChemSW.Core;
 using ChemSW.Nbt.csw.Dev;
+using System.Data;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
+using ChemSW.DB;
+using ChemSW.Nbt.PropTypes;
+using ChemSW.Core;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -286,10 +290,8 @@ namespace ChemSW.Nbt.Schema
 
             //upgrade RequestItem Requestor prop from NTP to OCP
             CswNbtMetaDataObjectClass requestItemOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.RequestItemClass );
-            CswNbtMetaDataNodeType requestItemNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Request Item" );
-            if( null != requestItemNT && null == requestItemOC.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Requestor ) )
+            if( null == requestItemOC.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Requestor ) )
             {
-
                 CswNbtMetaDataObjectClass requestOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.RequestClass );
                 CswNbtMetaDataObjectClassProp requestorOCP = requestOC.getObjectClassProp( CswNbtObjClassRequest.PropertyName.Requestor );
                 CswNbtMetaDataObjectClassProp requestOCP = requestItemOC.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Request );
@@ -304,22 +306,190 @@ namespace ChemSW.Nbt.Schema
                     ValuePropType = NbtViewPropIdType.ObjectClassPropId.ToString(),
                     ValuePropId = requestorOCP.PropId
                 } );
-
-                CswNbtMetaDataNodeTypeProp reqItemRequestorNTP = _CswNbtSchemaModTrnsctn.MetaData.getNodeTypePropByObjectClassProp( requestItemNT.NodeTypeId, reqItemrequestorOCP.PropId );
-
-                reqItemRequestorNTP.removeFromLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add );
             }
 
 
+            #region case 27720
+
+            // remove Notification nodes, nodetypes, and object class
+            CswNbtMetaDataObjectClass NotificationOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( "NotificationClass" );
+            if( null != NotificationOC )
+            {
+                _CswNbtSchemaModTrnsctn.MetaData.DeleteObjectClass( NotificationOC );
+            }
+
+            // add properties to mail reports
+            CswNbtMetaDataObjectClass MailReportOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.MailReportClass );
+            CswNbtMetaDataObjectClassProp TypeOCP = MailReportOC.getObjectClassProp( CswNbtObjClassMailReport.PropertyName.Type );
+            if( null == MailReportOC.getObjectClassProp( CswNbtObjClassMailReport.PropertyName.TargetType ) )
+            {
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( MailReportOC )
+                {
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.NodeTypeSelect,
+                    PropName = CswNbtObjClassMailReport.PropertyName.TargetType,
+                    FilterPropId = TypeOCP.PropId,
+                    Filter = CswNbtObjClassMailReport.TypeOptionView
+                } );
+            }
+            if( null == MailReportOC.getObjectClassProp( CswNbtObjClassMailReport.PropertyName.Event ) )
+            {
+                CswCommaDelimitedString Options = new CswCommaDelimitedString();
+                foreach( CswNbtObjClassMailReport.EventOption EventOpt in CswNbtObjClassMailReport.EventOption._All )
+                {
+                    if( EventOpt != CswNbtObjClassMailReport.EventOption.Unknown )
+                    {
+                        Options.Add( EventOpt.ToString() );
+                    }
+                }
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( MailReportOC )
+                {
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.List,
+                    PropName = CswNbtObjClassMailReport.PropertyName.Event,
+                    ListOptions = Options.ToString(),
+                    FilterPropId = TypeOCP.PropId,
+                    Filter = CswNbtObjClassMailReport.TypeOptionView
+                } );
+            }
+            if( null == MailReportOC.getObjectClassProp( CswNbtObjClassMailReport.PropertyName.NodesToReport ) )
+            {
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( MailReportOC )
+                {
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Memo,
+                    PropName = CswNbtObjClassMailReport.PropertyName.NodesToReport
+                } );
+            }
+
+            // Change "Report View" from ViewPickList to ViewReference
+            CswNbtMetaDataObjectClassProp ReportViewOCP = MailReportOC.getObjectClassProp( CswNbtObjClassMailReport.PropertyName.ReportView );
+            if( ReportViewOCP.getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.ViewPickList )
+            {
+                // map jct_nodes_props records
+                //   ViewReference: Name = field1, ViewId = field1_fk
+                //   ViewPickList: Name = gestalt, ViewId = field1
+                CswTableUpdate JctUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "27720_update_jnp", "jct_nodes_props" );
+                DataTable JctTable = JctUpdate.getTable( "where nodetypepropid in (select nodetypepropid from nodetype_props where objectclasspropid = " + ReportViewOCP.ObjectClassPropId + ")" );
+                foreach( DataRow JctRow in JctTable.Rows )
+                {
+                    JctRow["field1_fk"] = JctRow["field1"];
+                    JctRow["field1"] = JctRow["gestalt"];
+                }
+                JctUpdate.update( JctTable );
+
+                // update the field types
+                CswNbtMetaDataFieldType ViewReferenceFT = _CswNbtSchemaModTrnsctn.MetaData.getFieldType( CswNbtMetaDataFieldType.NbtFieldType.ViewReference );
+                _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( ReportViewOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.fieldtypeid, ViewReferenceFT.FieldTypeId );
+            }
+            #endregion case 27720
+
             #endregion SEBASTIAN
 
-            #region TITANIA
+            _CswNbtSchemaModTrnsctn.MetaData.makeMissingNodeTypeProps();
 
+            #region Also romeo (has to be last)
+            CswNbtMetaDataObjectClass userOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
+
+            foreach( CswNbtNode userNode in userOC.getNodes( false, false ) )
+            {
+                userNode.Properties[CswNbtObjClassUser.PropertyName.Archived].AsLogical.Checked = Tristate.False;
+                userNode.postChanges( false );
+            }
+            #endregion Also romeo (has to be last)
+
+            #region TITANIA
+            
             _makeCertMethodTemplateOc();
             _makeCertMethodOc();
+                        
+            #region Case 27869 - Method ObjectClass
+
+            CswNbtMetaDataObjectClass MethodOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.MethodClass );
+            if( null == MethodOc )
+            {
+                //Create new ObjectClass
+                MethodOc = _CswNbtSchemaModTrnsctn.createObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.MethodClass, "barchart.png", true, false );
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( MethodOc )
+                    {
+                        PropName = CswNbtObjClassMethod.PropertyName.MethodNo,
+                        FieldType = CswNbtMetaDataFieldType.NbtFieldType.Text,
+                        IsRequired = true,
+                        IsUnique = true,
+                        SetValOnAdd = true
+                    } );
+
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( MethodOc )
+                    {
+                        PropName = CswNbtObjClassMethod.PropertyName.MethodDescription,
+                        FieldType = CswNbtMetaDataFieldType.NbtFieldType.Text,
+                        SetValOnAdd = true
+                    } );
+
+                _CswNbtSchemaModTrnsctn.createModuleObjectClassJunction( CswNbtModuleName.CISPro, MethodOc.ObjectClassId );
+            }
+
+            #endregion Case 27869 - Method ObjectClass
+
+            #region Case 27873 - Jurisdiction ObjectClass
+
+            CswNbtMetaDataObjectClass JurisdictionOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.JurisdictionClass );
+            if( null == JurisdictionOc )
+            {
+                //Create new ObjectClass
+                JurisdictionOc = _CswNbtSchemaModTrnsctn.createObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.JurisdictionClass, "person.png", true, false );
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( JurisdictionOc )
+                {
+                    PropName = CswNbtObjClassJurisdiction.PropertyName.Name,
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Text,
+                    IsRequired = true,
+                    SetValOnAdd = true
+                } );
+
+                _CswNbtSchemaModTrnsctn.createModuleObjectClassJunction( CswNbtModuleName.CISPro, JurisdictionOc.ObjectClassId );
+            }
+
+            CswNbtMetaDataObjectClass UserOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
+            if( null != UserOc )
+            {
+                //Create new User Prop
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( UserOc )
+                {
+                    PropName = CswNbtObjClassUser.PropertyName.Jurisdiction,
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Relationship,
+                    IsFk = true,
+                    FkType = NbtViewRelatedIdType.ObjectClassId.ToString(),
+                    FkValue = JurisdictionOc.ObjectClassId
+                } );
+            }
+
+            #endregion Case 27873 - Jurisdiction ObjectClass
+
+            #region Case 27870 - New InventoryGroup ObjClassProps
+
+            CswNbtMetaDataObjectClass InventoryGroupOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.InventoryGroupClass );
+            if( null != InventoryGroupOc )
+            {
+                CswNbtMetaDataObjectClassProp CentralOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( InventoryGroupOc )
+                {
+                    PropName = CswNbtObjClassInventoryGroup.PropertyName.Central,
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Logical,
+                    IsRequired = true,
+                    SetValOnAdd = true
+                } );
+
+                _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( CentralOCP, CentralOCP.getFieldTypeRule().SubFields.Default.Name, Tristate.False );
+
+                CswNbtMetaDataObjectClassProp AutoCertAppOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( InventoryGroupOc )
+                {
+                    PropName = CswNbtObjClassInventoryGroup.PropertyName.AutomaticCertificateApproval,
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Logical,
+                    IsRequired = true
+                } );
+
+                _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( AutoCertAppOCP, AutoCertAppOCP.getFieldTypeRule().SubFields.Default.Name, Tristate.False );
+            }
+
+            #endregion Case 27870 - New InventoryGroup ObjClassProps
 
             #endregion TITANIA
-
 
         }
 

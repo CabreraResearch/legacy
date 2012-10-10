@@ -72,12 +72,12 @@ namespace ChemSW.NbtWebControls
                 ( (RadioButton) RadioControl ).Checked = true;
         }
 
-        public void setWeekDayPickerCheckBoxSelectedValues( Collection<DayOfWeek> SelectedDays )
+        public void setWeekDayPickerCheckBoxSelectedValues( SortedList SelectedDays )
         {
             foreach( DayOfWeek Day in Enum.GetValues( typeof( DayOfWeek ) ) )
             {
                 CheckBox DayCheck = (CheckBox) _Table.FindControl( _RadioGroupName + "_" + Day.ToString() );
-                DayCheck.Checked = SelectedDays.Contains( Day );
+                DayCheck.Checked = SelectedDays.ContainsKey( Day );
             }
         }
 

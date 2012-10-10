@@ -207,16 +207,6 @@ namespace ChemSW.Nbt.Welcome
                     NewWelcomeRow["buttonicon"] = ButtonIcon;
                     NewWelcomeRow["displaytext"] = DisplayText;
                     break;
-                //case WelcomeComponentType.Search:
-                //    if( ViewType == CswNbtView.ViewType.View )
-                //    {
-                //        NewWelcomeRow["nodeviewid"] = CswConvert.ToDbVal( new CswNbtViewId( PkValue ).get() );
-                //        NewWelcomeRow["buttonicon"] = ButtonIcon;
-                //        NewWelcomeRow["displaytext"] = DisplayText;
-                //    }
-                //    else
-                //        throw new CswDniException( ErrorType.Warning, "You must select a view", "No view was selected for new Search Welcome Page Component" );
-                //    break;
                 case WelcomeComponentType.Text:
                     if( DisplayText != string.Empty )
                     {

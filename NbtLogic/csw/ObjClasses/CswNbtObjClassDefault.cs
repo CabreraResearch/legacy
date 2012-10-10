@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Data;
 using ChemSW.Core;
 using ChemSW.DB;
@@ -240,21 +241,18 @@ namespace ChemSW.Nbt.ObjClasses
         public override void afterWriteNode()
         {
             // BZ 10094 - Notification event
-            bool SomethingModified = false;
+            Collection<CswNbtNodePropWrapper> ModifiedProps = new Collection<CswNbtNodePropWrapper>();
             foreach( CswNbtNodePropWrapper CurrentProp in _CswNbtNode.Properties )
             {
                 if( CurrentProp.WasModifiedForNotification )
                 {
-                    // Prop-specific notifications  
-                    _CswNbtResources.runNotification( this.NodeType, CswNbtObjClassNotification.EventOption.Edit, _CswNbtNode, CurrentProp.PropName, string.Empty );
-                    _CswNbtResources.runNotification( this.NodeType, CswNbtObjClassNotification.EventOption.Edit, _CswNbtNode, CurrentProp.PropName, CurrentProp.Gestalt );
-                    SomethingModified = true;
+                    ModifiedProps.Add( CurrentProp );
                 }
             }
-            // Generic edit notifications  
-            if( SomethingModified )
-                _CswNbtResources.runNotification( this.NodeType, CswNbtObjClassNotification.EventOption.Edit, _CswNbtNode, string.Empty, string.Empty );
-
+            if( ModifiedProps.Count > 0 )
+            {
+                _CswNbtResources.runMailReportEvents( this.NodeType, CswNbtObjClassMailReport.EventOption.Edit, _CswNbtNode, ModifiedProps );
+            }
         }//afterWriteNode()
 
         public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false )
@@ -307,7 +305,7 @@ namespace ChemSW.Nbt.ObjClasses
             //_CswNbtResources.Trees.clear();
 
             // BZ 10094 - Notification event
-            _CswNbtResources.runNotification( this.NodeType, CswNbtObjClassNotification.EventOption.Delete, _CswNbtNode, string.Empty, string.Empty );
+            //_CswNbtResources.runMailReportEvents( this.NodeType, CswNbtObjClassMailReport.EventOption.Delete, _CswNbtNode );
         }
 
 

@@ -357,6 +357,14 @@ namespace ChemSW.Nbt
         {
             _CswNbtTreeNodes.makeNodeCurrent( CswNbtNodeKey );
         }//makeNodeCurrent() 
+        /// <summary>
+        /// Sets a given node to be the currently indexed node in the tree, by node id
+        /// </summary>
+        /// <param name="CswPrimaryKey">NodeId representing the node</param>
+        public void makeNodeCurrent( CswPrimaryKey NodeId )
+        {
+            _CswNbtTreeNodes.makeNodeCurrent( NodeId );
+        }//makeNodeCurrent() 
 
         /// <summary>
         /// Returns true if there is a currently indexed node 

@@ -14,6 +14,9 @@ namespace ChemSW.Nbt.MetaData
         public const string IconPrefix18 = "Images/newicons/18/";
         public const string IconPrefix100 = "Images/newicons/100/";
 
+            InspectionTargetClass,
+            InspectionTargetGroupClass,
+            JurisdictionClass,
         public static NbtObjectClass getObjectClassFromString( string ObjectClassName )
         {
             //bz # 7815 -- Should not care if the requested object class doesn't exist anymore

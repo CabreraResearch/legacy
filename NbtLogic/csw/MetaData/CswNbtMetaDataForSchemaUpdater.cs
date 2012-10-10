@@ -193,7 +193,7 @@ namespace ChemSW.Nbt.MetaData
             ObjectClassProp._DataRow.Delete();
             _CswNbtMetaDataResources.ObjectClassPropTableUpdate.update( ObjectClassProp._DataRow.Table );
             return Ret;
-        }
+        } // DeleteObjectClassProp()
 
 
         /// <summary>
@@ -201,7 +201,7 @@ namespace ChemSW.Nbt.MetaData
         /// </summary>
         public void DeleteObjectClass( CswNbtMetaDataObjectClass ObjectClass )
         {
-            // Delete Nodetype Props first
+            // Delete Nodetypes first
             foreach( CswNbtMetaDataNodeType NodeType in ObjectClass.getNodeTypes() )
             {
                 DeleteNodeTypeAllVersions( NodeType );
@@ -209,7 +209,8 @@ namespace ChemSW.Nbt.MetaData
 
             // Update MetaData
             _CswNbtMetaDataResources.ObjectClassesCollection.clearCache();
-
+            
+            // Delete the Object Class Props
             foreach( CswNbtMetaDataObjectClassProp OcProp in ObjectClass.getObjectClassProps() )
             {
                 DeleteObjectClassProp( OcProp, false );
@@ -217,10 +218,10 @@ namespace ChemSW.Nbt.MetaData
 
             _CswNbtMetaDataResources.ObjectClassPropsCollection.clearCache();
 
-            // Delete the Object Class Prop
+            // Delete the Object Class
             ObjectClass._DataRow.Delete();
             _CswNbtMetaDataResources.ObjectClassTableUpdate.update( ObjectClass._DataRow.Table );
-        }
+        } // DeleteObjectClass()
 
         /// <summary>
         /// Set the default value for an object class prop, and cascade the change to all existing NodeTypeProps

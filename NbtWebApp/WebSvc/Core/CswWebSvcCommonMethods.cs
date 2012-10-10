@@ -157,7 +157,6 @@ namespace ChemSW.WebSvc
 
                         SvcReturn["timer"] = new JObject();
 
-
                         SvcReturn["timer"]["serverinit"] = Math.Round( CswNbtResources.ServerInitTime, 3 );
                         LogLevels LogLevel = CswNbtResources.ConfigVbls.getConfigVariableValue( CswConfigurationVariables.ConfigurationVariableNames.Logging_Level );
                         if( LogLevel == CswNbtResources.UnknownEnum )

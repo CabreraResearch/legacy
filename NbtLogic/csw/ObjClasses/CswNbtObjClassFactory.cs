@@ -90,7 +90,17 @@ namespace ChemSW.Nbt.ObjClasses
                     ReturnVal = new CswNbtObjClassInspectionRoute( CswNbtResources, Node );
                     break;
 
-                case NbtObjectClass.InventoryGroupClass:
+case NbtObjectClass.InspectionTargetClass:
+
+                    ReturnVal = new CswNbtObjClassInspectionTarget( CswNbtResources, Node );
+                    break;
+
+                case CswNbtMetaDataObjectClass.NbtObjectClass.InspectionTargetGroupClass:
+                    ReturnVal = new CswNbtObjClassInspectionTargetGroup( CswNbtResources, Node );
+                    break;
+
+case NbtObjectClass.InventoryGroupClass:
+
                     ReturnVal = new CswNbtObjClassInventoryGroup( CswNbtResources, Node );
                     break;
 
@@ -102,7 +112,13 @@ namespace ChemSW.Nbt.ObjClasses
                     ReturnVal = new CswNbtObjClassInventoryLevel( CswNbtResources, Node );
                     break;
 
-                case NbtObjectClass.LocationClass:
+case NbtObjectClass.JurisdictionClass:
+
+                    ReturnVal = new CswNbtObjClassJurisdiction( CswNbtResources, Node );
+                    break;
+
+case NbtObjectClass.LocationClass:
+
                     ReturnVal = new CswNbtObjClassLocation( CswNbtResources, Node );
                     break;
 
@@ -122,17 +138,17 @@ namespace ChemSW.Nbt.ObjClasses
                     ReturnVal = new CswNbtObjClassMailReport( CswNbtResources, Node );
                     break;
 
-                case NbtObjectClass.InspectionTargetClass:
-                    ReturnVal = new CswNbtObjClassInspectionTarget( CswNbtResources, Node );
+case NbtObjectClass.MethodClass:
+
+                    ReturnVal = new CswNbtObjClassMethod( CswNbtResources, Node );
                     break;
 
-                case NbtObjectClass.InspectionTargetGroupClass:
-                    ReturnVal = new CswNbtObjClassInspectionTargetGroup( CswNbtResources, Node );
-                    break;
+//case NbtObjectClass.NotificationClass:
 
-                case NbtObjectClass.NotificationClass:
-                    ReturnVal = new CswNbtObjClassNotification( CswNbtResources, Node );
-                    break;
+                //    ReturnVal = new CswNbtObjClassNotification( CswNbtResources, Node );
+                //    break;
+
+
 
                 case NbtObjectClass.ParameterClass:
                     ReturnVal = new CswNbtObjClassParameter( CswNbtResources, Node );

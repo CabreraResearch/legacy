@@ -1,22 +1,21 @@
 using ChemSW.Core;
+using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
+using ChemSW.Nbt.UnitsOfMeasure;
 
 namespace ChemSW.Nbt.ObjClasses
 {
-    public class CswNbtObjClassInventoryGroup : CswNbtObjClass
+    public class CswNbtObjClassJurisdiction : CswNbtObjClass
     {
         public sealed class PropertyName
         {
             public const string Name = "Name";
-            public const string Central = "Central";
-            public const string AutomaticCertificateApproval = "Automatic Certificate Approval";
         }
-
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
 
-        public CswNbtObjClassInventoryGroup( CswNbtResources CswNbtResources, CswNbtNode Node )
+        public CswNbtObjClassJurisdiction( CswNbtResources CswNbtResources, CswNbtNode Node )
             : base( CswNbtResources, Node )
         {
             _CswNbtObjClassDefault = new CswNbtObjClassDefault( _CswNbtResources, Node );
@@ -24,18 +23,18 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
-            get { return _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.InventoryGroupClass ); }
+            get { return _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.JurisdictionClass ); }
         }
 
         /// <summary>
-        /// Convert a CswNbtNode to a CswNbtObjClassInventoryGroup
+        /// Convert a CswNbtNode to a CswNbtObjClassJurisdiction
         /// </summary>
-        public static implicit operator CswNbtObjClassInventoryGroup( CswNbtNode Node )
+        public static implicit operator CswNbtObjClassJurisdiction( CswNbtNode Node )
         {
-            CswNbtObjClassInventoryGroup ret = null;
-            if( null != Node && _Validate( Node, NbtObjectClass.InventoryGroupClass ) )
+            CswNbtObjClassJurisdiction ret = null;
+            if( null != Node && _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.JurisdictionClass ) )
             {
-                ret = (CswNbtObjClassInventoryGroup) Node.ObjClass;
+                ret = (CswNbtObjClassJurisdiction) Node.ObjClass;
             }
             return ret;
         }
@@ -65,7 +64,6 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void afterPopulateProps()
         {
-            AutomaticCertificateApproval.setHidden( Central.Checked != Tristate.True, false );
             _CswNbtObjClassDefault.afterPopulateProps();
         }//afterPopulateProps()
 
@@ -76,9 +74,6 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override bool onButtonClick( NbtButtonData ButtonData )
         {
-
-
-
             if( null != ButtonData && null != ButtonData.NodeTypeProp ) { /*Do Something*/ }
             return true;
         }
@@ -87,11 +82,9 @@ namespace ChemSW.Nbt.ObjClasses
         #region Object class specific properties
 
         public CswNbtNodePropText Name { get { return _CswNbtNode.Properties[PropertyName.Name]; } }
-        public CswNbtNodePropLogical Central { get { return _CswNbtNode.Properties[PropertyName.Central]; } }
-        public CswNbtNodePropLogical AutomaticCertificateApproval { get { return _CswNbtNode.Properties[PropertyName.AutomaticCertificateApproval]; } }
 
         #endregion
 
-    }//CswNbtObjClassInventoryGroup
+    }//CswNbtObjClassJurisdiction
 
 }//namespace ChemSW.Nbt.ObjClasses

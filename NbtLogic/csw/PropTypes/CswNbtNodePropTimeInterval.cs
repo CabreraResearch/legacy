@@ -92,7 +92,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             JObject IntervalObj = new JObject();
             ParentObject[_IntervalSubField.ToXmlNodeName()] = IntervalObj;
-            IntervalObj["text"] = RateInterval.ToString();
+            //IntervalObj["text"] = RateInterval.ToString();
             RateInterval.ToJson( IntervalObj );
         }
 

@@ -443,7 +443,18 @@ namespace ChemSW.Nbt
                 } // if( ThisNode == null )
             }
             return ThisNode;
-        }
+        } // _getJSONNodeFromKey()
+
+        private JObject _getJSONNodeFromId( CswPrimaryKey NodeId )
+        {
+            JObject ret = null;
+            if( NodesById.Keys.Contains( NodeId ) && NodesById[NodeId].Count > 0 )
+            {
+                CswNbtNodeKey ThisNodeKey = NodesById[NodeId].First();
+                ret = _getJSONNodeFromKey( ThisNodeKey );
+            }
+            return ret;
+        } // _getJSONNodeFromId()
 
         private CswNbtNode _getNbtNodeObjFromJSONNode( JObject NodeObj )
         {
@@ -556,6 +567,11 @@ namespace ChemSW.Nbt
             {
                 _CurrentNode = null;
             }
+        }
+
+        public void makeNodeCurrent( CswPrimaryKey NodeId )
+        {
+            _CurrentNode = _getJSONNodeFromId( NodeId );
         }
 
         public CswNbtNode getCurrentNode()

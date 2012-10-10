@@ -43,9 +43,6 @@ namespace ChemSW.Nbt.WebServices
         public JObject GetWelcomeItems( string strRoleId )
         {
             JObject Ret = new JObject();
-            //string ret = string.Empty;
-            //var ReturnXML = new XmlDocument();
-            //XmlNode WelcomeNode = CswXmlDocument.SetDocumentElement( ReturnXML, "welcome" );
 
             CswPrimaryKey RolePk = new CswPrimaryKey();
             RolePk.FromString( strRoleId );
@@ -54,7 +51,6 @@ namespace ChemSW.Nbt.WebServices
             // Welcome components from database
             DataTable WelcomeTable = _getWelcomeTable( RoleId );
 
-            // see BZ 10234
             if( WelcomeTable.Rows.Count == 0 )
             {
                 ResetWelcomeItems( strRoleId );
@@ -100,15 +96,6 @@ namespace ChemSW.Nbt.WebServices
                             if( null != ThisView && ThisView.IsFullyEnabled() && VisibleViews.ContainsKey( ThisView.ViewId ) )
                             {
                                 LinkText = WelcomeRow["displaytext"].ToString() != string.Empty ? WelcomeRow["displaytext"].ToString() : ThisView.ViewName;
-
-                                // FogBugz case 9552, Keith Baldwin 7/27/2011
-                                // This performs poorly for large views.  
-                                // It needs to be cached and refreshed by the user, rather than run every time the welcome page is loaded.
-                                //ICswNbtTree CswNbtTree = _CswNbtResources.Trees.getTreeFromView( ThisView, false, true, false, false );
-                                //if( null != CswNbtTree )
-                                //{
-                                //    LinkText += " (" + CswNbtTree.getChildNodeCount().ToString() + ")";
-                                //}
 
                                 Ret[WelcomeId]["viewid"] = new CswNbtViewId( CswConvert.ToInt32( WelcomeRow["nodeviewid"] ) ).ToString();
                                 Ret[WelcomeId]["viewmode"] = ThisView.ViewMode.ToString().ToLower();
@@ -165,21 +152,6 @@ namespace ChemSW.Nbt.WebServices
                         }
                         break;
 
-                    // case 25734 - no more search links
-                    // case CswNbtWelcomeTable.WelcomeComponentType.Search:
-                    //if( CswConvert.ToInt32( WelcomeRow["nodeviewid"] ) != Int32.MinValue )
-                    //{
-                    //    CswNbtView ThisView = _CswNbtResources.ViewSelect.restoreView( new CswNbtViewId( CswConvert.ToInt32( WelcomeRow["nodeviewid"] ) ) );
-                    //    if( null != ThisView && ThisView.IsSearchable() )
-                    //    {
-                    //        LinkText = WelcomeRow["displaytext"].ToString() != string.Empty ? WelcomeRow["displaytext"].ToString() : ThisView.ViewName;
-                    //        Ret[WelcomeId]["viewid"] = new CswNbtViewId( CswConvert.ToInt32( WelcomeRow["nodeviewid"] ) ).ToString();
-                    //        Ret[WelcomeId]["viewmode"] = ThisView.ViewMode.ToString().ToLower();
-                    //        Ret[WelcomeId]["type"] = "view";
-                    //    }
-                    //}
-                    //break;
-
                     case CswNbtWelcomeTable.WelcomeComponentType.Text:
                         LinkText = WelcomeRow["displaytext"].ToString();
                         break;
@@ -189,10 +161,6 @@ namespace ChemSW.Nbt.WebServices
                 if( LinkText != string.Empty )
                 {
                     Ret[WelcomeId]["linktype"] = WelcomeRow["componenttype"].ToString();
-                    //if( WelcomeRow["buttonicon"].ToString() != string.Empty )
-                    //{
-                    //    Ret[WelcomeId]["buttonicon"] = IconImageRoot + WelcomeRow["buttonicon"].ToString();
-                    //}
                     Ret[WelcomeId]["text"] = LinkText;
                     Ret[WelcomeId]["displayrow"] = WelcomeRow["display_row"].ToString();
                     Ret[WelcomeId]["displaycol"] = WelcomeRow["display_col"].ToString();
@@ -234,8 +202,6 @@ namespace ChemSW.Nbt.WebServices
         {
             JObject Ret = new JObject();
 
-            //ret.Add( new XElement( "icon", new XAttribute( "filename", "blank.gif" ) ) );
-
             DirectoryInfo d = new System.IO.DirectoryInfo( System.Web.HttpContext.Current.Request.PhysicalApplicationPath + CswWelcomeTable.IconImageRoot );
             FileInfo[] IconFiles = d.GetFiles();
             foreach( FileInfo IconFile in IconFiles
@@ -245,7 +211,6 @@ namespace ChemSW.Nbt.WebServices
             }
             return Ret;
         } // _initButtonIconList()
-
 
     } // class CswNbtWebServiceWelcomeItems
 } // namespace ChemSW.Nbt.WebServices
