@@ -345,7 +345,7 @@ namespace ChemSW.Nbt.Security
 
             return ( ret );
 
-        }//canAllTabs() 
+        }//canAnyTab() 
 
 
         public bool canPropOnAnyOtherTab( NodeTypePermission Permission, CswNbtMetaDataNodeTypeTab NodeTypeTab, CswNbtMetaDataNodeTypeProp NodeTypeProp, ICswNbtUser User = null )
@@ -423,7 +423,6 @@ namespace ChemSW.Nbt.Security
         }//canPropOnAnyTab
 
 
-        //TO DO: This is not done until the prop code is factord out of canNode()
         public bool canProp( NodeTypePermission Permission, CswNbtMetaDataNodeTypeProp MetaDataProp, CswNbtNodePropWrapper NodePropWrapper = null, ICswNbtUser User = null )
         {
             bool ret = true;
