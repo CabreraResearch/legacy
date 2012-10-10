@@ -2,49 +2,43 @@
 
 (function () {
     'use strict';
-    var nameCol = 'name';
-    var keyCol = 'key';
-
     Csw.properties.logicalSet = Csw.properties.logicalSet ||
-        Csw.properties.register('logicalSet',
-            Csw.method(function (propertyOption) {
+        Csw.properties.register('logicalSet', Csw.method(function (propertyOption) {
+            'use strict';
+            var cswPrivate = {};
+            var cswPublic = {
+                data: propertyOption
+            };
+
+            var render = function () {
                 'use strict';
-                var cswPrivate = {};
-                var cswPublic = {
-                    data: propertyOption
-                };
+                cswPublic.data = cswPublic.data || Csw.nbt.propertyOption(propertyOption);
 
-                var render = function () {
-                    'use strict';
-                    cswPublic.data = cswPublic.data || Csw.nbt.propertyOption(propertyOption);
+                cswPrivate.propVals = cswPublic.data.propData.values;
+                cswPrivate.parent = cswPublic.data.propDiv;
+                cswPrivate.logicalSetJson = propVals.logicalsetjson;
 
-                    var propVals = cswPublic.data.propData.values;
-                    var parent = cswPublic.data.propDiv;
+                cswPublic.control = cswPrivate.parent.checkBoxArray({
+                    ID: cswPublic.data.ID + '_cba',
+                    cols: cswPrivate.logicalSetJson.columns,
+                    data: cswPrivate.logicalSetJson.data,
+                    UseRadios: false,
+                    Required: cswPublic.data.isRequired(),
+                    ReadOnly: cswPublic.data.isReadOnly(),
+                    Multi: cswPublic.data.isMulti(),
+                    nameCol: 'name',
+                    onChange: function () {
+                        var val = cswPublic.control.val();
+                        Csw.tryExec(cswPublic.data.onChange, val);
+                        if (false === cswPublic.data.isMulti() || false === cswPublic.control.MultiIsUnchanged() ) {
+                            cswPublic.data.onPropChange({ options: val.data });
+                        }
+                    }
+                }); // checkBoxArray
+                cswPublic.control.required(cswPublic.data.isRequired());
+            }; // render()
 
-                    var logicalSetJson = propVals.logicalsetjson;
-
-                    cswPublic.control = parent.div()
-                           .checkBoxArray({
-                               ID: cswPublic.data.ID + '_cba',
-                               ReadOnly: cswPublic.data.isReadOnly(),
-                               dataAry: logicalSetJson.data,
-                               cols: logicalSetJson.columns,
-                               nameCol: nameCol,
-                               keyCol: keyCol,
-                               Multi: cswPublic.data.isMulti(),
-                               onChange: function() {
-                                   var val = cswPublic.control.val();
-                                   Csw.tryExec(cswPublic.data.onChange, val);
-                                   if (false === cswPublic.data.isMulti() || false === val.MultiIsUnchanged) {
-                                       cswPublic.data.onPropChange({ logicalsetjson: val });
-                                   }
-                               }
-                           });
-
-                };
-
-                cswPublic.data.bindRender(render);
-                return cswPublic;
-            }));
-
+            cswPublic.data.bindRender(render);
+            return cswPublic;
+        }));
 }());

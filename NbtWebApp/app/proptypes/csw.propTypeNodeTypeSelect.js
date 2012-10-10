@@ -2,53 +2,43 @@
 
 (function () {
     'use strict';
-    var nameCol = 'label',
-        keyCol = 'key',
-        valueCol = 'value';
-
     Csw.properties.nodeTypeSelect = Csw.properties.nodeTypeSelect ||
-        Csw.properties.register('nodeTypeSelect',
-            Csw.method(function (propertyOption) {
+        Csw.properties.register('nodeTypeSelect', Csw.method(function (propertyOption) {
+            'use strict';
+            var cswPrivate = {};
+            var cswPublic = {
+                data: propertyOption
+            };
+
+            var render = function () {
                 'use strict';
-                var cswPrivate = {};
-                var cswPublic = {
-                    data: propertyOption
-                };
+                cswPublic.data = cswPublic.data || Csw.nbt.propertyOption(propertyOption);
 
-                var render = function () {
-                    'use strict';
-                    cswPublic.data = cswPublic.data || Csw.nbt.propertyOption(propertyOption);
+                cswPrivate.propVals = cswPublic.data.propData.values;
+                cswPrivate.parent = cswPublic.data.propDiv;
+                cswPrivate.options = cswPrivate.propVals.options;
+                cswPrivate.selectMode = cswPrivate.propVals.selectmode; // Single, Multiple, Blank
 
-                    cswPrivate.propVals = cswPublic.data.propData.values;
-                    cswPrivate.parent = cswPublic.data.propDiv;
-                    cswPrivate.optData = cswPrivate.propVals.options;
-                    cswPrivate.selectMode = cswPrivate.propVals.selectmode; // Single, Multiple, Blank
+                cswPublic.control = cswPrivate.parent.checkBoxArray({
+                    ID: cswPublic.data.ID + '_cba',
+                    cols: cswPrivate.options.columns,
+                    data: cswPrivate.options.data,
+                    UseRadios: (cswPrivate.selectMode === 'Single'),
+                    Required: cswPublic.data.isRequired(),
+                    ReadOnly: cswPublic.data.isReadOnly(),
+                    Multi: cswPublic.data.isMulti(),
+                    onChange: function () {
+                        var val = cswPublic.control.val();
+                        Csw.tryExec(cswPublic.data.onChange, val);
+                        if (false === cswPublic.data.isMulti() || false === cswPublic.control.MultiIsUnchanged() ) {
+                            cswPublic.data.onPropChange({ options: val.data });
+                        }
+                    }
+                }); // checkBoxArray
+                cswPublic.control.required(cswPublic.data.isRequired());
+            }; // render()
 
-                    cswPublic.control = cswPrivate.parent.div()
-                           .checkBoxArray({
-                               ID: cswPublic.data.ID + '_cba',
-                               UseRadios: (cswPrivate.selectMode === 'Single'),
-                               Required: cswPublic.data.isRequired(),
-                               ReadOnly: cswPublic.data.isReadOnly(),
-                               Multi: cswPublic.data.isMulti(),
-                               dataAry: cswPrivate.optData,
-                               nameCol: nameCol,
-                               keyCol: keyCol,
-                               valCol: valueCol,
-                               valColName: 'Include',
-                               onChange: function () {
-                                   var val = cswPublic.control.val();
-                                   Csw.tryExec(cswPublic.data.onChange, val);
-                                   if (false === cswPublic.data.isMulti() || false === val.MultiIsUnchanged) {
-                                       cswPublic.data.onPropChange({ options: val.data });
-                                   }
-                               }
-                           });
-                    cswPublic.control.required(cswPublic.data.isRequired());
-                };
-
-                cswPublic.data.bindRender(render);
-                return cswPublic;
-            }));
-
+            cswPublic.data.bindRender(render);
+            return cswPublic;
+        }));
 }());

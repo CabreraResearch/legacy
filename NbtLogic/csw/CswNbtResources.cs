@@ -677,6 +677,7 @@ namespace ChemSW.Nbt
             CswNbtMetaDataObjectClass MailReportOC = MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.MailReportClass );
             CswNbtMetaDataObjectClassProp TargetTypeOCP = MailReportOC.getObjectClassProp( CswNbtObjClassMailReport.PropertyName.TargetType );
             CswNbtMetaDataObjectClassProp EventOCP = MailReportOC.getObjectClassProp( CswNbtObjClassMailReport.PropertyName.Event );
+            CswNbtMetaDataObjectClassProp EnabledOCP = MailReportOC.getObjectClassProp( CswNbtObjClassMailReport.PropertyName.Enabled );
             CswNbtMetaDataObjectClassProp NodesToReportOCP = MailReportOC.getObjectClassProp( CswNbtObjClassMailReport.PropertyName.NodesToReport );
 
             CswNbtView MailReportsView = new CswNbtView( this );
@@ -692,6 +693,11 @@ namespace ChemSW.Nbt
                                                       MetaDataProp: EventOCP,
                                                       FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals,
                                                       Value: EventOpt.ToString() );
+            // Enabled
+            MailReportsView.AddViewPropertyAndFilter( ParentViewRelationship: Rel1,
+                                                      MetaDataProp: EnabledOCP,
+                                                      FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals,
+                                                      Value: Tristate.True.ToString() );
             // Can't check the view, because it depends on the user
             // But check for a matching property value being altered
             ICswNbtTree MailReportsTree = Trees.getTreeFromView( MailReportsView, RequireViewPermissions: false, IncludeSystemNodes: true );

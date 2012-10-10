@@ -368,33 +368,33 @@ namespace ChemSW.Nbt.PropTypes
         public override void ToJSON( JObject ParentObject )
         {
             ParentObject[_ElemName_LogicalSetJson] = new JObject();
-
-            JArray DataArray = new JArray();
-            ParentObject[_ElemName_LogicalSetJson]["data"] = DataArray;
-
-            JArray ColumnArray = new JArray();
-            ParentObject[_ElemName_LogicalSetJson]["columns"] = ColumnArray;
-            CswCommaDelimitedString ColumnNames = new CswCommaDelimitedString();
+            
+            CswCheckBoxArrayOptions CBAOptions = new CswCheckBoxArrayOptions();
 
             DataTable Data = GetDataAsTable( _NameColumn, _KeyColumn );
-            foreach( DataRow Row in Data.Rows )
+            foreach( DataColumn Column in Data.Columns )
             {
-                JObject ItemNodeObj = new JObject();
-                DataArray.Add( ItemNodeObj );
-                foreach( DataColumn Column in Data.Columns )
+                if( Column.ColumnName != _NameColumn &&
+                    Column.ColumnName != _KeyColumn &&
+                    false == CBAOptions.Columns.Contains( Column.ColumnName ) )
                 {
-                    ItemNodeObj[Column.ColumnName] = Row[Column].ToString();
-                    if( Column.ColumnName != _NameColumn && Column.ColumnName != _KeyColumn && false == ColumnNames.Contains( Column.ColumnName ) )
-                    {
-                        ColumnNames.Add( Column.ColumnName );
-                    }
+                    CBAOptions.Columns.Add( Column.ColumnName );
                 }
             }
-            foreach( string ColumnName in ColumnNames )
+            foreach( DataRow Row in Data.Rows )
             {
-                ColumnArray.Add( ColumnName );
+                CswCheckBoxArrayOptions.Option Option = new CswCheckBoxArrayOptions.Option();
+                Option.Key = Row[_KeyColumn].ToString();
+                Option.Label = Row[_NameColumn].ToString();
+                for(Int32 i = 0; i < CBAOptions.Columns.Count; i++)
+                {
+                    Option.Values[i] = CswConvert.ToBoolean( Row[CBAOptions.Columns[i]].ToString() );
+                }
+                CBAOptions.Options.Add( Option );
             }
-        }
+
+            CBAOptions.ToJSON( (JObject) ParentObject[_ElemName_LogicalSetJson] );
+        } // ToJSON()
 
         /// <summary>
         /// Initialize this object with data from the given XmlNode
@@ -437,34 +437,20 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ReadJSON( JObject JObject, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
-
-            if( null != JObject["logicalsetjson"] &&
-                JObject["logicalsetjson"].HasValues &&
-                null != JObject["logicalsetjson"]["data"] &&
-                null != JObject["logicalsetjson"]["columns"] )
+            CswCheckBoxArrayOptions CBAOptions = new CswCheckBoxArrayOptions();
+            if( null != JObject[_ElemName_LogicalSetJson] )
             {
-                JArray Data = CswConvert.ToJArray( JObject["logicalsetjson"]["data"] );
-                JArray ColumnsAry = CswConvert.ToJArray( JObject["logicalsetjson"]["columns"] );
-                CswCommaDelimitedString ColumnNames = new CswCommaDelimitedString();
-                ColumnNames.FromArray( ColumnsAry );
-                if( null != Data )
+                CBAOptions.ReadJson( (JObject) JObject[_ElemName_LogicalSetJson] );
+            }
+            foreach( CswCheckBoxArrayOptions.Option Option in CBAOptions.Options )
+            {
+                for(Int32 i = 0; i < Option.Values.Count; i++ )
                 {
-                    foreach( JObject ItemObj in Data )
-                    {
-                        string key = CswConvert.ToString( ItemObj["key"] );
-                        string name = CswConvert.ToString( ItemObj["label"] );
-                        JArray Values = CswConvert.ToJArray( ItemObj["values"] );
-                        for( Int32 i = 0; i < ColumnNames.Count; i++ )
-                        {
-                            bool Val = null != Values && CswConvert.ToBoolean( Values[i] );
-                            SetValue( ColumnNames[i], name, Val );
-                        }
-                    }
+                    SetValue( CBAOptions.Columns[i], Option.Label, Option.Values[i] );
                 }
             }
-
             Save();
-        }
+        } // ReadJSON()
 
         /// <summary>
         /// Initialize this object with data from the given DataRow
