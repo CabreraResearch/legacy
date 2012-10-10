@@ -230,8 +230,18 @@ namespace ChemSW.Nbt.Schema
                 } );
 
                 _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( CentralOCP, CentralOCP.getFieldTypeRule().SubFields.Default.Name, Tristate.False );
+
+                CswNbtMetaDataObjectClassProp AutoCertAppOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( InventoryGroupOc )
+                {
+                    PropName = CswNbtObjClassInventoryGroup.PropertyName.AutomaticCertificateApproval,
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Logical,
+                    IsRequired = true
+                } );
+
+                _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( AutoCertAppOCP, AutoCertAppOCP.getFieldTypeRule().SubFields.Default.Name, Tristate.False );
+            }
             #endregion
-            
+
             #region Case 27865 part 1 - Enterprise Part (EP)
 
             CswNbtMetaDataObjectClass enterprisePartOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.EnterprisePartClass );
@@ -309,7 +319,7 @@ namespace ChemSW.Nbt.Schema
 
             #endregion
 
-            #region 27867 - Receipt Lot
+            #region Case 27867 - Receipt Lot
 
             CswNbtMetaDataObjectClass receiptLotOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.ReceiptLotClass );
             if( null == receiptLotOC )
@@ -388,22 +398,21 @@ namespace ChemSW.Nbt.Schema
 
                 _CswNbtSchemaModTrnsctn.createModuleObjectClassJunction( CswNbtModuleName.CISPro, receiptLotOC.ObjectClassId );
             }
+            #endregion
 
-                CswNbtMetaDataObjectClassProp AutoCertAppOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( InventoryGroupOc )
-                {
-                    PropName = CswNbtObjClassInventoryGroup.PropertyName.AutomaticCertificateApproval,
-                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Logical,
-                    IsRequired = true
-                } );
+            #region Case 27866 part 1 - Container Group
 
-                _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( AutoCertAppOCP, AutoCertAppOCP.getFieldTypeRule().SubFields.Default.Name, Tristate.False );
-            }
+            //CswNbtMetaDataObjectClass containerGroupOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.ContainerGroupClass );
+            //if( null == containerGroupOC )
+            //{
 
-            #endregion Case 27870 - New InventoryGroup ObjClassProps
+            //}
+
+            #endregion
 
             #endregion TITANIA
-
         }
+
 
         public override CswDeveloper Author
         {
