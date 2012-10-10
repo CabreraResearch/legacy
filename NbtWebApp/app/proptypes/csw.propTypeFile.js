@@ -6,7 +6,7 @@
         Csw.properties.register('file',
             Csw.method(function (propertyOption) {
                 'use strict';
-                var cswPrivate = { };
+                var cswPrivate = {};
                 var cswPublic = {
                     data: propertyOption
                 };
@@ -14,13 +14,13 @@
                     cswPublic.data = cswPublic.data || Csw.nbt.propertyOption(propertyOption);
                     cswPrivate.propVals = cswPublic.data.propData.values;
                     cswPrivate.parent = cswPublic.data.propDiv;
-                    
+
                     cswPublic.control = cswPrivate.parent.table({
                         ID: Csw.makeId(cswPublic.data.ID, 'tbl')
                     });
 
                     if (cswPublic.data.isMulti()) {
-                        cswPublic.control.cell(1,1).append(Csw.enums.multiEditDefaultValue);
+                        cswPublic.control.cell(1, 1).append(Csw.enums.multiEditDefaultValue);
                     } else {
 
                         cswPrivate.href = Csw.string(cswPrivate.propVals.href).trim();
@@ -42,7 +42,7 @@
                                 isButton: true,
                                 onClick: function () {
                                     $.CswDialog('FileUploadDialog', {
-                                    urlMethod: 'fileForProp',
+                                        urlMethod: 'fileForProp',
                                         params: {
                                             PropId: cswPublic.data.propData.id
                                         },
@@ -77,9 +77,17 @@
                                         };
 
                                         Csw.ajax.post({
-                                        urlMethod: 'clearProp',
+                                            urlMethod: 'clearProp',
                                             data: dataJson,
-                                            success: function () { cswPublic.data.onReload(); }
+                                            success: function () {
+                                                var val = {
+                                                    href: '',
+                                                    name: '',
+                                                    contenttype: ''
+                                                };
+                                                cswPublic.data.onPropChange(val);
+                                                cswPublic.data.onReload();
+                                            }
                                         });
                                     }
                                 }
@@ -94,4 +102,4 @@
                 return cswPublic;
             }));
 
-}());
+} ());
