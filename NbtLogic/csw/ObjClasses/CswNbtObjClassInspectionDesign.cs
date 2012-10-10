@@ -335,7 +335,7 @@ namespace ChemSW.Nbt.ObjClasses
                     {
                         CswNbtNodePropQuestion QuestionProp = PropWrapper;
                         Deficient = ( Deficient || false == QuestionProp.IsCompliant );
-                        AllAnswered = ( false == Deficient && AllAnswered && false == string.IsNullOrEmpty( QuestionProp.Answer.Trim() ) );
+                        AllAnswered = ( AllAnswered && false == string.IsNullOrEmpty( QuestionProp.Answer.Trim() ) );
                         AllAnsweredInTime = ( AllAnswered &&
                                               AllAnsweredInTime &&
                                               DateTime.MinValue != QuestionProp.DateAnswered.Date &&
