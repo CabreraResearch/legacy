@@ -27,6 +27,7 @@ namespace ChemSW.Nbt
             _RunAsUser = RunAsUser;
             _View = View;
             _IncludeSystemNodes = IncludeSystemNodes;
+            _IncludeHiddenNodes = IncludeHiddenNodes;
         }
 
         public override void load( bool RequireViewPermissions )
