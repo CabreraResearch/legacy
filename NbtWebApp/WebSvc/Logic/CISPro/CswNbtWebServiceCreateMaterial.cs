@@ -384,6 +384,7 @@ namespace ChemSW.Nbt.WebServices
                     if( null != MaterialNode )
                     {
                         CswNbtView MaterialNodeView = _getMaterialNodeView( MaterialNode );
+                        MaterialNodeView.SaveToCache( false );
 
                         /* 1. Validate the new material and get its properties and sizes */
 
@@ -395,13 +396,11 @@ namespace ChemSW.Nbt.WebServices
                         _addMaterialSizes( SizesArray, MaterialNode );
                         RetObj["sizescount"] = SizesArray.Count;
 
-                        /* 3. Add possible secondary actions 
-                         * Recieve Material and Request Material workflows don't exist yet.
-                         * For now, return a view of the new Node.             
-                         */
-                        MaterialNodeView.SaveToCache( false );
-                        RetObj["nextoptions"] = new JObject();
-                        RetObj["nextoptions"]["nodeview"] = MaterialNodeView.SessionViewId.ToString();
+                        /* 3. Add landingpage data */
+                        RetObj["landingpagedata"] = new JObject();
+                        RetObj["landingpagedata"]["title"] = "Created " + MaterialNode.NodeName;
+                        RetObj["landingpagedata"]["materialid"] = MaterialObj["materialId"];
+                        RetObj["landingpagedata"]["materialviewid"] = MaterialNodeView.SessionViewId.ToString();
                     }
                 }
             }

@@ -76,6 +76,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Content Include="app\controls\csw.quickTip.js" />
+    <Content Include="app\layouts\csw.landingpage.js" />
     <Content Include="app\proptypes\_propTypeTemplate.js" />
     <Content Include="app\core\csw.ajaxWcf.js" />
     <Content Include="app\nodes\csw.node.table.js" />

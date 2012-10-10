@@ -191,11 +191,7 @@
                         },
                         success: function (data) {
                             cswPrivate.clearState();
-                            var viewid = '';
-                            if (Csw.contains(data, 'nextoptions')) {
-                                viewid = data.nextoptions.nodeview;
-                            }
-                            Csw.tryExec(cswPrivate.onFinish, viewid);
+                            Csw.tryExec(cswPrivate.onFinish, data.landingpagedata);
                         }
                     });
                 };
