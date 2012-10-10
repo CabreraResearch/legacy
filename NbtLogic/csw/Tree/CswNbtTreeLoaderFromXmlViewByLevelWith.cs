@@ -18,8 +18,9 @@ namespace ChemSW.Nbt
         private CswNbtView _View;
         private ICswNbtUser _RunAsUser;
         private bool _IncludeSystemNodes = false;
+        private bool _IncludeHiddenNodes;
 
-        public CswNbtTreeLoaderFromXmlViewByLevelWith( CswNbtResources CswNbtResources, ICswNbtUser RunAsUser, ICswNbtTree pCswNbtTree, CswNbtView View, bool IncludeSystemNodes )
+        public CswNbtTreeLoaderFromXmlViewByLevelWith( CswNbtResources CswNbtResources, ICswNbtUser RunAsUser, ICswNbtTree pCswNbtTree, CswNbtView View, bool IncludeSystemNodes, bool IncludeHiddenNodes )
             : base( pCswNbtTree )
         {
             _CswNbtResources = CswNbtResources;
@@ -626,6 +627,10 @@ namespace ChemSW.Nbt
             if( !_IncludeSystemNodes )
             {
                 Where += " and n.issystem = '0' ";
+            }
+            if( false == _IncludeHiddenNodes )
+            {
+                Where += " and n.hidden = '0' ";
             }
             Where += " and n.istemp= '0' ";
             string ret = Select + " " + From + " " + Where;
