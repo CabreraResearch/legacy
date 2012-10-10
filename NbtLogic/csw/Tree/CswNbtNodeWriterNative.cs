@@ -50,6 +50,7 @@ namespace ChemSW.Nbt
             NewNodeRow["readonly"] = CswConvert.ToDbVal( false );
             NewNodeRow["isdemo"] = CswConvert.ToDbVal( false );
             NewNodeRow["issystem"] = CswConvert.ToDbVal( false );
+            NewNodeRow["hidden"] = CswConvert.ToDbVal( false );
             NewNodeTable.Rows.Add( NewNodeRow );
 
             Node.NodeId = new CswPrimaryKey( "nodes", CswConvert.ToInt32( NewNodeTable.Rows[0]["nodeid"] ) );
