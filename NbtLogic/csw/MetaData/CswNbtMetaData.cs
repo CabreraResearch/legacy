@@ -1724,43 +1724,52 @@ namespace ChemSW.Nbt.MetaData
 
         private CswNbtMetaDataNodeType DeleteNodeTypeTab( CswNbtMetaDataNodeTypeTab NodeTypeTab, bool CauseVersioning )
         {
-            CswNbtMetaDataNodeType ret = NodeTypeTab.getNodeType();
-            if( CauseVersioning )
+            CswNbtMetaDataNodeType ret = null;
+            if( null != NodeTypeTab )
             {
-                string OriginalTabName = NodeTypeTab.TabName;
-                CswNbtMetaDataNodeType NodeType = CheckVersioning( NodeTypeTab.getNodeType() );
-                NodeTypeTab = NodeType.getNodeTypeTab( OriginalTabName );
+                if( NodeTypeTab.ServerManaged )
+                {
+                    throw new CswDniException( ErrorType.Warning, "Cannot delete Server Managed tabs.", "User attempted to delete " + NodeTypeTab.TabName + ", which is Server Managed." );
+                }
+
+                ret = NodeTypeTab.getNodeType();
+                if( CauseVersioning )
+                {
+                    string OriginalTabName = NodeTypeTab.TabName;
+                    CswNbtMetaDataNodeType NodeType = CheckVersioning( NodeTypeTab.getNodeType() );
+                    NodeTypeTab = NodeType.getNodeTypeTab( OriginalTabName );
+                }
+
+                // This breaks deleting nodetypes.  Instead, the menu doesn't display the delete button.
+                //if (this.NodeType.NodeTypeTabs.Count <= 1)
+                //    throw new CswDniException("You cannot delete the last tab of a nodetype", "User attempted to delete the only tab on a nodetype");
+
+                // Move the properties to another tab
+                CswNbtMetaDataNodeTypeTab NewTab = NodeTypeTab.getNodeType().getFirstNodeTypeTab();
+                if( NewTab == NodeTypeTab ) // BZ 8353
+                    NewTab = NodeTypeTab.getNodeType().getSecondNodeTypeTab();
+
+                Collection<CswNbtMetaDataNodeTypeProp> PropsToReassign = new Collection<CswNbtMetaDataNodeTypeProp>();
+                foreach( CswNbtMetaDataNodeTypeProp Prop in NodeTypeTab.getNodeTypeProps() )
+                    PropsToReassign.Add( Prop );
+
+                foreach( CswNbtMetaDataNodeTypeProp Prop in PropsToReassign )
+                {
+                    Prop.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, NewTab.TabId, Int32.MinValue, Int32.MinValue );
+                    // BZ 8353 - To avoid constraint errors, post this change immediately
+                    _CswNbtMetaDataResources.NodeTypePropTableUpdate.update( Prop._DataRow.Table );
+                }
+
+
+                // Update MetaData
+                refreshAll();
+                //_CswNbtMetaDataResources.NodeTypeTabsCollection.clearCache();
+
+                // Delete NodeType Tab record
+                NodeTypeTab._DataRow.Delete();
+                _CswNbtMetaDataResources.NodeTypeTabTableUpdate.update( NodeTypeTab._DataRow.Table );
+
             }
-
-            // This breaks deleting nodetypes.  Instead, the menu doesn't display the delete button.
-            //if (this.NodeType.NodeTypeTabs.Count <= 1)
-            //    throw new CswDniException("You cannot delete the last tab of a nodetype", "User attempted to delete the only tab on a nodetype");
-
-            // Move the properties to another tab
-            CswNbtMetaDataNodeTypeTab NewTab = NodeTypeTab.getNodeType().getFirstNodeTypeTab();
-            if( NewTab == NodeTypeTab )  // BZ 8353
-                NewTab = NodeTypeTab.getNodeType().getSecondNodeTypeTab();
-
-            Collection<CswNbtMetaDataNodeTypeProp> PropsToReassign = new Collection<CswNbtMetaDataNodeTypeProp>();
-            foreach( CswNbtMetaDataNodeTypeProp Prop in NodeTypeTab.getNodeTypeProps() )
-                PropsToReassign.Add( Prop );
-
-            foreach( CswNbtMetaDataNodeTypeProp Prop in PropsToReassign )
-            {
-                Prop.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, NewTab.TabId, Int32.MinValue, Int32.MinValue );
-                // BZ 8353 - To avoid constraint errors, post this change immediately
-                _CswNbtMetaDataResources.NodeTypePropTableUpdate.update( Prop._DataRow.Table );
-            }
-
-
-            // Update MetaData
-            refreshAll();
-            //_CswNbtMetaDataResources.NodeTypeTabsCollection.clearCache();
-
-            // Delete NodeType Tab record
-            NodeTypeTab._DataRow.Delete();
-            _CswNbtMetaDataResources.NodeTypeTabTableUpdate.update( NodeTypeTab._DataRow.Table );
-
             return ret;
         } // DeleteNodeTypeTab
 
