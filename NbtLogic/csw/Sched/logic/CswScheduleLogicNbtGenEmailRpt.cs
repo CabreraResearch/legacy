@@ -11,8 +11,6 @@ using ChemSW.MtSched.Sched;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Security;
 
-
-
 namespace ChemSW.Nbt.Sched
 {
 
@@ -61,31 +59,30 @@ namespace ChemSW.Nbt.Sched
         }//init() 
 
 
-        private string makeViewUrl( CswNbtViewId ViewId )
+        private string _makeViewLink( CswNbtViewId ViewId, string ViewName )
         {
-            string ret = _CswNbtResources.SetupVbls["MailReportUrlStem"];
-            if( !ret.EndsWith( "/" ) ) ret += "/";
-            ret += "Main.html?viewid=";
-            ret += ViewId.ToString();
+            return _makeLink( "Main.html?viewid=" + ViewId.ToString(), ViewName );
+        }
+        private string _makeNodeLink( CswPrimaryKey NodeId, string NodeName )
+        {
+            return _makeLink( "Main.html?nodeid=" + NodeId.ToString(), NodeName );
+        }
+        private string _makeReportLink( CswNbtObjClassReport ReportObjClass )
+        {
+            return _makeLink( "Main.html?reportid=" + ReportObjClass.NodeId.ToString(), ReportObjClass.ReportName.Text );
+        }
+        private string _makeLink( string Href, string Text )
+        {
+            string ret = "<a href=\"";
+            ret += _CswNbtResources.SetupVbls["MailReportUrlStem"];
+            if( !ret.EndsWith( "/" ) )
+            {
+                ret += "/";
+            }
+            ret += Href + "\">" + Text + "</a>";
             return ret;
         }
-        private string makeNodeUrl( CswPrimaryKey NodeId )
-        {
-            string ret = _CswNbtResources.SetupVbls["MailReportUrlStem"];
-            if( !ret.EndsWith( "/" ) ) ret += "/";
-            ret += "Main.html?nodeid=";
-            ret += NodeId.ToString();
-            return ret;
-        }
-        private string makeReportUrl( CswNbtObjClassReport ReportObjClass )
-        {
-            string ret = _CswNbtResources.SetupVbls["MailReportUrlStem"];
-            if( !ret.EndsWith( "/" ) ) ret += "/";
-            //ret += ReportObjClass.ReportUrl;
-            ret += "Main.html?reportid=";
-            ret += ReportObjClass.NodeId.ToString();
-            return ret;
-        }
+
 
         public void threadCallBack()
         {
@@ -236,7 +233,6 @@ namespace ChemSW.Nbt.Sched
                             CswNbtNode ReportNode = null;
                             CswNbtObjClassReport ReportObjClass = null;
 
-                            string ViewLink = string.Empty;
                             string EmailMessageSubject = CurrentMailReport.NodeName;
                             string EmailMessageBody = string.Empty;
 
@@ -245,7 +241,6 @@ namespace ChemSW.Nbt.Sched
                                 CswNbtViewId ViewId = CurrentMailReport.ReportView.ViewId;
                                 if( ViewId.isSet() )
                                 {
-                                    ViewLink = makeViewUrl( ViewId );
                                     CswNbtView ReportView = _CswNbtResources.ViewSelect.restoreView( ViewId );
                                     ICswNbtTree ReportTree = _CswNbtResources.Trees.getTreeFromView( UserNodeAsUser as ICswNbtUser, ReportView, true, true, false, false );
 
@@ -275,7 +270,7 @@ namespace ChemSW.Nbt.Sched
                                     {
                                         if( ReportTree.getChildNodeCount() > 0 )
                                         {
-                                            EmailMessageBody = _setStatusHaveData( CurrentMailReport, CswNbtMailReportStatus, ViewLink );
+                                            EmailMessageBody = _setStatusHaveData( CurrentMailReport, CswNbtMailReportStatus, _makeViewLink( ViewId, ReportView.ViewName ) );
                                         }
                                         else
                                         {
@@ -307,7 +302,7 @@ namespace ChemSW.Nbt.Sched
                                         MailRptFormatOptions MailRptFormat = (MailRptFormatOptions) Enum.Parse( typeof( MailRptFormatOptions ), CurrentMailReport.OutputFormat.Value.ToString() );
                                         if( MailRptFormatOptions.Link == MailRptFormat )
                                         {
-                                            ReportLink = makeReportUrl( ReportObjClass );
+                                            ReportLink = _makeReportLink( ReportObjClass );
                                             ReportTable = null; //so we don't end up attaching the CSV
                                         }
 
@@ -358,7 +353,7 @@ namespace ChemSW.Nbt.Sched
                 MailMessage.RecipientDisplayName = FirstName + " " + LastName;
                 MailMessage.Subject = Subject;
                 MailMessage.Content = MailReportMessage;
-
+                MailMessage.Format = Quiksoft.EasyMail.SMTP.BodyPartFormat.HTML;
 
                 if( null != ReportTable )
                 {
@@ -387,21 +382,21 @@ namespace ChemSW.Nbt.Sched
         }//_sendMailMessage()
 
 
-        private string _setStatusHaveData( CswNbtObjClassMailReport CurrentMailReport, CswNbtMailReportStatus CswNbtMailReportStatus, string ViewLink, Dictionary<CswPrimaryKey, string> NodeDict = null )
+        private string _setStatusHaveData( CswNbtObjClassMailReport CurrentMailReport, CswNbtMailReportStatus CswNbtMailReportStatus, string Link, Dictionary<CswPrimaryKey, string> NodeDict = null )
         {
             string ReturnVal = string.Empty;
 
             CswNbtMailReportStatus.ReportDataExist = true;
-            ReturnVal = CurrentMailReport.Message.Text + "\r\n";
+            ReturnVal = CurrentMailReport.Message.Text.Replace( "\r\n", "<br>" ) + "<br>";
             if( null != NodeDict )
             {
                 foreach( CswPrimaryKey NodeId in NodeDict.Keys )
                 {
-                    ReturnVal += "<a href=\"" + makeNodeUrl( NodeId ) + "\">" + NodeDict[NodeId] + "</a>\r\n";
+                    ReturnVal += _makeNodeLink( NodeId, NodeDict[NodeId] ) + "<br>";
                 }
             }
-            ReturnVal += "\r\n";
-            ReturnVal += ViewLink + "\r\n";
+            ReturnVal += "<br>";
+            ReturnVal += Link + "<br>";
 
             CswNbtMailReportStatus.ReportReason = "The report's view returned data ";
 

@@ -39,8 +39,11 @@ namespace ChemSW.Nbt.Schema
                 MailReportNode.Event.Value = CswNbtObjClassMailReport.EventOption.Edit.ToString();
                 MailReportNode.TargetType.SelectedNodeTypeIds.Add( UserNT.NodeTypeId.ToString() );
                 MailReportNode.Message.Text = "The following user accounts have been locked:";
-                MailReportNode.DueDateInterval.RateInterval.setHourly( 1, DateTime.Now );
                 MailReportNode.Enabled.Checked = Tristate.False;
+
+                CswRateInterval HourlyRate = _CswNbtSchemaModTrnsctn.makeRateInterval();
+                HourlyRate.setHourly( 1, DateTime.Now );
+                MailReportNode.DueDateInterval.RateInterval = HourlyRate;
 
                 CswNbtObjClassUser AdminUser = _CswNbtSchemaModTrnsctn.Nodes.makeUserNodeFromUsername( "admin" );
                 if( null != AdminUser )
