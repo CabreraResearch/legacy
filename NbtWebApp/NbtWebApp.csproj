@@ -134,13 +134,6 @@
     <Compile Include="WebSvc\Logic\Nodes\CswNbtWebServiceAuditing.cs" />
     <Compile Include="WebSvc\Logic\SI\CswNbtWebServiceInspectionDesign.cs" />
     <Content Include="ConfigVars.aspx" />
-    <Content Include="Content\images\ajax-loader.png" />
-    <Content Include="Content\images\icons-18-black.png" />
-    <Content Include="Content\images\icons-18-white.png" />
-    <Content Include="Content\images\icons-36-black.png" />
-    <Content Include="Content\images\icons-36-white.png" />
-    <Content Include="Content\jquery.mobile-1.0rc1.css" />
-    <Content Include="Content\jquery.mobile-1.0rc1.min.css" />
     <Content Include="crystal\ActiveXControls\PrintControl.cab" />
     <Content Include="crystal\ActiveXControls\PrintControl_res_cs.cab" />
     <Content Include="crystal\ActiveXControls\PrintControl_res_da.cab" />
@@ -1400,6 +1393,7 @@
     <Service Include="{C0C07587-41A7-46C8-8FBD-3F9C8EBE2DDC}" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Content\" />
     <Folder Include="temp\" />
   </ItemGroup>
   <ItemGroup>
