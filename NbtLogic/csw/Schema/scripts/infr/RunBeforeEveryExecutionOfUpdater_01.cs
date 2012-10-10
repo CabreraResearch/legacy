@@ -1,4 +1,5 @@
 
+using System;
 using ChemSW.Nbt.csw.Dev;
 
 namespace ChemSW.Nbt.Schema
@@ -55,17 +56,44 @@ namespace ChemSW.Nbt.Schema
 
             #region TITANIA
 
+            _acceptBlame( CswDeveloper.CF, 27965 );
+
+            if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( "nodetype_tabset", "servermanaged" ) )
+            {
+                _CswNbtSchemaModTrnsctn.addBooleanColumn( "nodetype_tabset", "servermanaged", "Indicates that the tab is Server Managed", logicaldelete: false, required: false );
+            }
+
+            _resetBlame();
+
+
             #endregion TITANIA
 
         }
 
+        private void _acceptBlame( CswDeveloper BlameMe, Int32 BlameCaseNo )
+        {
+            _Author = BlameMe;
+            _CaseNo = BlameCaseNo;
+        }
+
+        private void _resetBlame()
+        {
+            _Author = CswDeveloper.NBT;
+            _CaseNo = 0;
+        }
+
+        private CswDeveloper _Author = CswDeveloper.NBT;
+
         public override CswDeveloper Author
         {
-            get { return CswDeveloper.NBT; }
+            get { return _Author; }
         }
+
+        private Int32 _CaseNo = 0;
+
         public override int CaseNo
         {
-            get { return 0; }
+            get { return _CaseNo; }
         }
         //Update()
 
