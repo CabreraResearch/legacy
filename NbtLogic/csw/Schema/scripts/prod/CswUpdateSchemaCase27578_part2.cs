@@ -19,21 +19,24 @@ namespace ChemSW.Nbt.Schema
             if( null != sizeNT )
             {
                 CswNbtMetaDataNodeTypeProp containerTypeNTP = sizeNT.getNodeTypeProp( "Container Type" );
-                containerTypeNTP.ListOptions = "Aboveground Tank [A]," +
-                                                   "Bag [J]," +
-                                                   "Belowground Tank [B]," +
-                                                   "Box [K]," +
-                                                   "Can [F]," +
-                                                   "Carboy [G]," +
-                                                   "Cylinder [L]," +
-                                                   "Fiberdrum [I]," +
-                                                   "Glass Bottle or Jug [M]," +
-                                                   "Plastic [N]," +
-                                                   "Plastic or Non-Metal Drum [E]," +
-                                                   "Steel Drum [D]," +
-                                                   "Tank Inside Building [C]," +
-                                                   "Tank Wagon [P]," +
-                                                   "Tote Bin [O]";
+                if( null != containerTypeNTP )
+                {
+                    containerTypeNTP.ListOptions = "Aboveground Tank [A]," +
+                                                       "Bag [J]," +
+                                                       "Belowground Tank [B]," +
+                                                       "Box [K]," +
+                                                       "Can [F]," +
+                                                       "Carboy [G]," +
+                                                       "Cylinder [L]," +
+                                                       "Fiberdrum [I]," +
+                                                       "Glass Bottle or Jug [M]," +
+                                                       "Plastic [N]," +
+                                                       "Plastic or Non-Metal Drum [E]," +
+                                                       "Steel Drum [D]," +
+                                                       "Tank Inside Building [C]," +
+                                                       "Tank Wagon [P]," +
+                                                       "Tote Bin [O]";
+                }
             }
 
         }//Update()
