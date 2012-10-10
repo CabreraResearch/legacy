@@ -1,12 +1,10 @@
 using System;
-using ChemSW.Core;
-using ChemSW.Nbt.csw.Dev;
 using System.Data;
+using ChemSW.Core;
+using ChemSW.DB;
+using ChemSW.Nbt.csw.Dev;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
-using ChemSW.DB;
-using ChemSW.Nbt.PropTypes;
-using ChemSW.Core;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -259,6 +257,110 @@ namespace ChemSW.Nbt.Schema
             #endregion CertMethod
         }
 
+        private void _makeMethodOc()
+        {
+            #region Case 27869 - Method ObjectClass
+
+            _acceptBlame( CswDeveloper.BV, 27869 );
+
+            CswNbtMetaDataObjectClass MethodOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.MethodClass );
+            if( null == MethodOc )
+            {
+                //Create new ObjectClass
+                MethodOc = _CswNbtSchemaModTrnsctn.createObjectClass( NbtObjectClass.MethodClass, "barchart.png", true );
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( MethodOc )
+                {
+                    PropName = CswNbtObjClassMethod.PropertyName.MethodNo,
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Text,
+                    IsRequired = true,
+                    IsUnique = true,
+                    SetValOnAdd = true
+                } );
+
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( MethodOc )
+                {
+                    PropName = CswNbtObjClassMethod.PropertyName.MethodDescription,
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Text,
+                    SetValOnAdd = true
+                } );
+
+                _CswNbtSchemaModTrnsctn.createModuleObjectClassJunction( CswNbtModuleName.CISPro, MethodOc.ObjectClassId );
+
+                _resetBlame();
+            }
+
+            #endregion Case 27869 - Method ObjectClass
+        }
+
+        private void _makeJurisdictionOc()
+        {
+            #region Case 27873 - Jurisdiction ObjectClass
+            _acceptBlame( CswDeveloper.BV, 27873 );
+
+            CswNbtMetaDataObjectClass JurisdictionOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.JurisdictionClass );
+            if( null == JurisdictionOc )
+            {
+                //Create new ObjectClass
+                JurisdictionOc = _CswNbtSchemaModTrnsctn.createObjectClass( NbtObjectClass.JurisdictionClass, "person.png", true );
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( JurisdictionOc )
+                {
+                    PropName = CswNbtObjClassJurisdiction.PropertyName.Name,
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Text,
+                    IsRequired = true,
+                    SetValOnAdd = true
+                } );
+
+                _CswNbtSchemaModTrnsctn.createModuleObjectClassJunction( CswNbtModuleName.CISPro, JurisdictionOc.ObjectClassId );
+            }
+
+            CswNbtMetaDataObjectClass UserOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.UserClass );
+            if( null != UserOc )
+            {
+                //Create new User Prop
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( UserOc )
+                {
+                    PropName = CswNbtObjClassUser.PropertyName.Jurisdiction,
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Relationship,
+                    IsFk = true,
+                    FkType = NbtViewRelatedIdType.ObjectClassId.ToString(),
+                    FkValue = JurisdictionOc.ObjectClassId
+                } );
+            }
+            _resetBlame();
+
+            #endregion Case 27873 - Jurisdiction ObjectClass
+        }
+
+        public void _makeNewInvGroupProps()
+        {
+            #region Case 27870 - New InventoryGroup ObjClassProps
+            _acceptBlame( CswDeveloper.BV, 27870 );
+            CswNbtMetaDataObjectClass InventoryGroupOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.InventoryGroupClass );
+            if( null != InventoryGroupOc )
+            {
+                CswNbtMetaDataObjectClassProp CentralOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( InventoryGroupOc )
+                {
+                    PropName = CswNbtObjClassInventoryGroup.PropertyName.Central,
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Logical,
+                    IsRequired = true,
+                    SetValOnAdd = true
+                } );
+
+                _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( CentralOCP, CentralOCP.getFieldTypeRule().SubFields.Default.Name, Tristate.False );
+
+                CswNbtMetaDataObjectClassProp AutoCertAppOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( InventoryGroupOc )
+                {
+                    PropName = CswNbtObjClassInventoryGroup.PropertyName.AutomaticCertificateApproval,
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Logical,
+                    IsRequired = true
+                } );
+
+                _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( AutoCertAppOCP, AutoCertAppOCP.getFieldTypeRule().SubFields.Default.Name, Tristate.False );
+            }
+            _resetBlame();
+            #endregion Case 27870 - New InventoryGroup ObjClassProps
+        }
+
         public override void update()
         {
             // This script is for adding object class properties, 
@@ -319,7 +421,7 @@ namespace ChemSW.Nbt.Schema
             }
 
             // add properties to mail reports
-            CswNbtMetaDataObjectClass MailReportOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.MailReportClass );
+            CswNbtMetaDataObjectClass MailReportOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.MailReportClass );
             CswNbtMetaDataObjectClassProp TypeOCP = MailReportOC.getObjectClassProp( CswNbtObjClassMailReport.PropertyName.Type );
             if( null == MailReportOC.getObjectClassProp( CswNbtObjClassMailReport.PropertyName.TargetType ) )
             {
@@ -386,7 +488,7 @@ namespace ChemSW.Nbt.Schema
             _CswNbtSchemaModTrnsctn.MetaData.makeMissingNodeTypeProps();
 
             #region Also romeo (has to be last)
-            CswNbtMetaDataObjectClass userOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
+            CswNbtMetaDataObjectClass userOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.UserClass );
 
             foreach( CswNbtNode userNode in userOC.getNodes( false, false ) )
             {
@@ -396,98 +498,12 @@ namespace ChemSW.Nbt.Schema
             #endregion Also romeo (has to be last)
 
             #region TITANIA
-            
+
             _makeCertMethodTemplateOc();
             _makeCertMethodOc();
-                        
-            #region Case 27869 - Method ObjectClass
-
-            CswNbtMetaDataObjectClass MethodOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.MethodClass );
-            if( null == MethodOc )
-            {
-                //Create new ObjectClass
-                MethodOc = _CswNbtSchemaModTrnsctn.createObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.MethodClass, "barchart.png", true, false );
-                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( MethodOc )
-                    {
-                        PropName = CswNbtObjClassMethod.PropertyName.MethodNo,
-                        FieldType = CswNbtMetaDataFieldType.NbtFieldType.Text,
-                        IsRequired = true,
-                        IsUnique = true,
-                        SetValOnAdd = true
-                    } );
-
-                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( MethodOc )
-                    {
-                        PropName = CswNbtObjClassMethod.PropertyName.MethodDescription,
-                        FieldType = CswNbtMetaDataFieldType.NbtFieldType.Text,
-                        SetValOnAdd = true
-                    } );
-
-                _CswNbtSchemaModTrnsctn.createModuleObjectClassJunction( CswNbtModuleName.CISPro, MethodOc.ObjectClassId );
-            }
-
-            #endregion Case 27869 - Method ObjectClass
-
-            #region Case 27873 - Jurisdiction ObjectClass
-
-            CswNbtMetaDataObjectClass JurisdictionOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.JurisdictionClass );
-            if( null == JurisdictionOc )
-            {
-                //Create new ObjectClass
-                JurisdictionOc = _CswNbtSchemaModTrnsctn.createObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.JurisdictionClass, "person.png", true, false );
-                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( JurisdictionOc )
-                {
-                    PropName = CswNbtObjClassJurisdiction.PropertyName.Name,
-                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Text,
-                    IsRequired = true,
-                    SetValOnAdd = true
-                } );
-
-                _CswNbtSchemaModTrnsctn.createModuleObjectClassJunction( CswNbtModuleName.CISPro, JurisdictionOc.ObjectClassId );
-            }
-
-            CswNbtMetaDataObjectClass UserOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
-            if( null != UserOc )
-            {
-                //Create new User Prop
-                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( UserOc )
-                {
-                    PropName = CswNbtObjClassUser.PropertyName.Jurisdiction,
-                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Relationship,
-                    IsFk = true,
-                    FkType = NbtViewRelatedIdType.ObjectClassId.ToString(),
-                    FkValue = JurisdictionOc.ObjectClassId
-                } );
-            }
-
-            #endregion Case 27873 - Jurisdiction ObjectClass
-
-            #region Case 27870 - New InventoryGroup ObjClassProps
-
-            CswNbtMetaDataObjectClass InventoryGroupOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.InventoryGroupClass );
-            if( null != InventoryGroupOc )
-            {
-                CswNbtMetaDataObjectClassProp CentralOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( InventoryGroupOc )
-                {
-                    PropName = CswNbtObjClassInventoryGroup.PropertyName.Central,
-                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Logical,
-                    IsRequired = true,
-                    SetValOnAdd = true
-                } );
-
-                _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( CentralOCP, CentralOCP.getFieldTypeRule().SubFields.Default.Name, Tristate.False );
-
-                CswNbtMetaDataObjectClassProp AutoCertAppOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( InventoryGroupOc )
-                {
-                    PropName = CswNbtObjClassInventoryGroup.PropertyName.AutomaticCertificateApproval,
-                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Logical,
-                    IsRequired = true
-                } );
-
-                _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( AutoCertAppOCP, AutoCertAppOCP.getFieldTypeRule().SubFields.Default.Name, Tristate.False );
-            }
-
-            #endregion Case 27870 - New InventoryGroup ObjClassProps
+            _makeMethodOc();
+            _makeJurisdictionOc();
+            _makeNewInvGroupProps();
 
             #endregion TITANIA
 

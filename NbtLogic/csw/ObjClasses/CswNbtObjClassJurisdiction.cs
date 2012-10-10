@@ -23,7 +23,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
-            get { return _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.JurisdictionClass ); }
+            get { return _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.JurisdictionClass ); }
         }
 
         /// <summary>
@@ -32,7 +32,7 @@ namespace ChemSW.Nbt.ObjClasses
         public static implicit operator CswNbtObjClassJurisdiction( CswNbtNode Node )
         {
             CswNbtObjClassJurisdiction ret = null;
-            if( null != Node && _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.JurisdictionClass ) )
+            if( null != Node && _Validate( Node, NbtObjectClass.JurisdictionClass ) )
             {
                 ret = (CswNbtObjClassJurisdiction) Node.ObjClass;
             }

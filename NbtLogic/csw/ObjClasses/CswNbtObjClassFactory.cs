@@ -95,7 +95,7 @@ case NbtObjectClass.InspectionTargetClass:
                     ReturnVal = new CswNbtObjClassInspectionTarget( CswNbtResources, Node );
                     break;
 
-                case CswNbtMetaDataObjectClass.NbtObjectClass.InspectionTargetGroupClass:
+                case NbtObjectClass.InspectionTargetGroupClass:
                     ReturnVal = new CswNbtObjClassInspectionTargetGroup( CswNbtResources, Node );
                     break;
 

@@ -49,7 +49,7 @@
 //        public static implicit operator CswNbtObjClassNotification( CswNbtNode Node )
 //        {
 //            CswNbtObjClassNotification ret = null;
-//            if( null != Node && _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.NotificationClass ) )
+//            if( null != Node && _Validate( Node, NbtObjectClass.NotificationClass ) )
 //            {
 //                ret = (CswNbtObjClassNotification) Node.ObjClass;
 //            }

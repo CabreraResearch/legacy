@@ -35,10 +35,12 @@ namespace ChemSW.Nbt.MetaData
             { InventoryGroupClass               , InventoryGroupClass                },
             { InventoryGroupPermissionClass     , InventoryGroupPermissionClass      },
             { InventoryLevelClass               , InventoryLevelClass                },
+            { JurisdictionClass                 , JurisdictionClass                  },
             { LocationClass                     , LocationClass                      },
             { MailReportClass                   , MailReportClass                    },
             { MaterialClass                     , MaterialClass                      },
             { MaterialSynonymClass              , MaterialSynonymClass               },
+            { MethodClass                       , MethodClass                        },
             { InspectionTargetClass             , InspectionTargetClass              },
             { InspectionTargetGroupClass        , InspectionTargetGroupClass         },
             { NotificationClass                 , NotificationClass                  },
@@ -134,11 +136,13 @@ namespace ChemSW.Nbt.MetaData
         public const string InventoryGroupClass = "InventoryGroupClass";
         public const string InventoryGroupPermissionClass = "InventoryGroupPermissionClass";
         public const string InventoryLevelClass = "InventoryLevelClass";
+        public const string JurisdictionClass = "JurisdictionClass";
         public const string LocationClass = "LocationClass";
         public const string MailReportClass = "MailReportClass";
         public const string MaterialClass = "MaterialClass";
         public const string MaterialComponentClass = "MaterialComponentClass";
         public const string MaterialSynonymClass = "MaterialSynonymClass";
+        public const string MethodClass = "MethodClass";
         public const string InspectionTargetClass = "InspectionTargetClass";
         public const string InspectionTargetGroupClass = "InspectionTargetGroupClass";
         public const string NotificationClass = "NotificationClass";
