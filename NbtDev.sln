@@ -384,6 +384,7 @@ Global
 		{DABF9D08-70E8-4D42-AF7A-577335A7129F}.Debug|Any CPU.ActiveCfg = Debug|x64
 		{DABF9D08-70E8-4D42-AF7A-577335A7129F}.Debug|Mixed Platforms.ActiveCfg = Debug|x64
 		{DABF9D08-70E8-4D42-AF7A-577335A7129F}.Debug|x64.ActiveCfg = Debug|x64
+		{DABF9D08-70E8-4D42-AF7A-577335A7129F}.Debug|x64.Build.0 = Debug|x64
 		{DABF9D08-70E8-4D42-AF7A-577335A7129F}.Release|Any CPU.ActiveCfg = Release|x64
 		{DABF9D08-70E8-4D42-AF7A-577335A7129F}.Release|Mixed Platforms.ActiveCfg = Release|x64
 		{DABF9D08-70E8-4D42-AF7A-577335A7129F}.Release|x64.ActiveCfg = Release|x64
