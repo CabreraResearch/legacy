@@ -80,8 +80,8 @@ namespace CswCommon.Test
             DateTime CurrentDate = StartDate;
             for( Int32 i = 1; i <= 24; i++ )
             {
-                CurrentDate = CurrentDate.AddMonths( f );
-                Assert.AreEqual( r.getNext( CurrentDate ), CurrentDate.AddMonths( f ) );
+                CurrentDate = CurrentDate.AddMonths( 1 );
+                Assert.AreEqual( r.getNext( CurrentDate ), CurrentDate.AddMonths( 1 ) );
             }
         }
 
