@@ -698,7 +698,7 @@ namespace ChemSW.Nbt
             for( Int32 i = 0; i < MailReportsTree.getChildNodeCount(); i++ )
             {
                 MailReportsTree.goToNthChild( i );
-                
+
                 CswNbtObjClassMailReport ThisMailReport = MailReportsTree.getNodeForCurrentPosition();
                 CswNbtView MailReportView = this.ViewSelect.restoreView( ThisMailReport.ReportView.ViewId );
                 bool IncludeNode = false;
@@ -835,9 +835,12 @@ namespace ChemSW.Nbt
         ////public ICollection ConfigVariables { get { return _CswResources.ConfigVariables; } }
         //public CswConfigurationVariables CswConfigVbls { get { return ( _CswResources.ConfigVbls ); } }
 
-        public bool isSystemUser
+        /// <summary>
+        /// True if the user is the system user
+        /// </summary>
+        public bool IsSystemUser
         {
-            get { return _CswNbtResources.CurrentNbtUser is CswNbtSystemUser; }
+            get { return CurrentNbtUser is CswNbtSystemUser; }
         }
 
         /// <summary>

@@ -98,7 +98,7 @@ namespace ChemSW.Nbt.MetaData
 
         private bool _CanEditTab()
         {
-            return false == ServerManaged || _CswNbtMetaDataResources.CswNbtResources.isSystemUser;
+            return false == ServerManaged || _CswNbtMetaDataResources.CswNbtResources.IsSystemUser;
         }
 
         public bool ServerManaged

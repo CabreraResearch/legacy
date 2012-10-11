@@ -367,6 +367,11 @@ namespace ChemSW.Nbt.MetaData
             return SecondTab;
         }
 
+        public CswNbtMetaDataNodeTypeTab getIdentityTab()
+        {
+            return getNodeTypeTab( CswNbtMetaData.IdentityTabName );
+        }
+
         public CswNbtMetaDataNodeTypeTab getNodeTypeTab( string NodeTypeTabName )
         {
             return _CswNbtMetaDataResources.NodeTypeTabsCollection.getNodeTypeTab( NodeTypeId, NodeTypeTabName );
