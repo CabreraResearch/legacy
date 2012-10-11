@@ -305,7 +305,7 @@ namespace ChemSW.Nbt.Schema
                 } );
 
                 CswNbtMetaDataObjectClassProp vendorTypeOCP = vendorOC.getObjectClassProp( CswNbtObjClassVendor.PropertyName.VendorTypeName );
-                CswNbtView manufacturerOCPView = _CswNbtSchemaModTrnsctn.makeNewView( "mepManufacturerOCP", NbtViewVisibility.Property );
+                CswNbtView manufacturerOCPView = _CswNbtSchemaModTrnsctn.makeView();
                 CswNbtViewRelationship parent = manufacturerOCPView.AddViewRelationship( vendorOC, true );
                 manufacturerOCPView.AddViewPropertyAndFilter( parent,
                     MetaDataProp: vendorTypeOCP,
@@ -377,7 +377,7 @@ namespace ChemSW.Nbt.Schema
                 } );
 
                 CswNbtMetaDataObjectClassProp vendorTypeOCP = vendorOC.getObjectClassProp( CswNbtObjClassVendor.PropertyName.VendorTypeName );
-                CswNbtView manufacturerOCPView = _CswNbtSchemaModTrnsctn.makeNewView( "mepManufacturerOCP", NbtViewVisibility.Property );
+                CswNbtView manufacturerOCPView = _CswNbtSchemaModTrnsctn.makeView();
                 CswNbtViewRelationship parent = manufacturerOCPView.AddViewRelationship( vendorOC, true );
                 manufacturerOCPView.AddViewPropertyAndFilter( parent,
                     MetaDataProp: vendorTypeOCP,
