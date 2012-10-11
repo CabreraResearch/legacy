@@ -77,7 +77,7 @@ namespace ChemSW.Nbt.ObjClasses
                     FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
                 parent.NodeIdsToFilterOut.Add( this.NodeId );
 
-                ICswNbtTree matchingPermissionsTree = _CswNbtResources.Trees.getTreeFromView( matchingPermissionsView, false );
+                ICswNbtTree matchingPermissionsTree = _CswNbtResources.Trees.getTreeFromView( matchingPermissionsView, false, false, false );
                 matchingPermissionsTree.goToRoot();
                 if( matchingPermissionsTree.getChildNodeCount() > 0 )
                 {

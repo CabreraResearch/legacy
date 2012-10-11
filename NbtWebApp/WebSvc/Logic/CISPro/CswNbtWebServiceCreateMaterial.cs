@@ -119,7 +119,7 @@ namespace ChemSW.Nbt.WebServices
             CswNbtObjClassMaterial Ret = null;
 
             CswNbtView MaterialNodeView = _getMaterialNodeView( MaterialNodeTypeId, TradeName, SupplierId, PartNo );
-            ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( MaterialNodeView, false );
+            ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( MaterialNodeView, false, false, false );
             bool MaterialExists = Tree.getChildNodeCount() > 0;
 
             if( MaterialExists )

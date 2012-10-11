@@ -1062,7 +1062,7 @@ namespace ChemSW.Nbt.Security
                 {
                     InvGrpPermView.AddViewPropertyAndFilter( InvGrpPermVR, PermWorkUnitOCP, User.WorkUnitId.PrimaryKey.ToString(), CswNbtSubField.SubFieldName.NodeID );
                 }
-                ICswNbtTree InvGrpPermTree = _CswNbtResources.Trees.getTreeFromView( InvGrpPermView, false, true );
+                ICswNbtTree InvGrpPermTree = _CswNbtResources.Trees.getTreeFromView( InvGrpPermView, false, true, false );
 
                 if( InvGrpPermTree.getChildNodeCount() > 0 )
                 {

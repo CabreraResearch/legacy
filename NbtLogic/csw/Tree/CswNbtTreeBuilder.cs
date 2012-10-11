@@ -168,14 +168,6 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Deprecated
         /// </summary>
-        public ICswNbtTree getTreeFromView( ICswNbtUser RunAsUser, CswNbtView View, bool ForceReInit, bool FetchAllPrior, bool SingleLevelOnly, bool IncludeSystemNodes )
-        {
-            return getTreeFromView( RunAsUser, View, true, IncludeSystemNodes );
-        }
-
-        /// <summary>
-        /// Deprecated
-        /// </summary>
         public ICswNbtTree getTreeFromView( CswNbtView View, bool ForceReInit, ref CswNbtNodeKey ParentNodeKey, CswNbtViewRelationship ChildRelationshipToStartWith, Int32 PageSize, bool FetchAllPrior, bool SingleLevelOnly, CswNbtNodeKey IncludedKey, bool IncludeSystemNodes )
         {
             return getTreeFromView( View, true, IncludeSystemNodes );
@@ -184,27 +176,27 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Deprecated
         /// </summary>
-        public ICswNbtTree getTreeFromView( CswNbtView View, bool IncludeSystemNodes )
+        public ICswNbtTree getTreeFromView( CswNbtView View, bool IncludeSystemNodes, bool IncludeHiddenNodes )
         {
-            return getTreeFromView( _CswNbtResources.CurrentNbtUser, View, true, IncludeSystemNodes );
+            return getTreeFromView( _CswNbtResources.CurrentNbtUser, View, true, IncludeSystemNodes, IncludeHiddenNodes );
         }
 
         /// <summary>
         /// Instance a Tree from a View
         /// </summary>
-        public ICswNbtTree getTreeFromView( CswNbtView View, bool RequireViewPermissions, bool IncludeSystemNodes )
+        public ICswNbtTree getTreeFromView( CswNbtView View, bool RequireViewPermissions, bool IncludeSystemNodes, bool IncludeHiddenNodes )
         {
-            return getTreeFromView( _CswNbtResources.CurrentNbtUser, View, RequireViewPermissions, IncludeSystemNodes );
+            return getTreeFromView( _CswNbtResources.CurrentNbtUser, View, RequireViewPermissions, IncludeSystemNodes, IncludeHiddenNodes );
         }
 
         /// <summary>
         /// Instance a Tree from a View
         /// </summary>
-        public ICswNbtTree getTreeFromView( ICswNbtUser RunAsUser, CswNbtView View, bool RequireViewPermissions, bool IncludeSystemNodes )
+        public ICswNbtTree getTreeFromView( ICswNbtUser RunAsUser, CswNbtView View, bool RequireViewPermissions, bool IncludeSystemNodes, bool IncludeHiddenNodes )
         {
             ICswNbtTree ReturnVal = _makeTree( View, true );
 
-            CswNbtTreeLoaderFromXmlViewByLevel TreeLoader = new CswNbtTreeLoaderFromXmlViewByLevel( _CswNbtResources, RunAsUser, ReturnVal, View, IncludeSystemNodes );
+            CswNbtTreeLoaderFromXmlViewByLevel TreeLoader = new CswNbtTreeLoaderFromXmlViewByLevel( _CswNbtResources, RunAsUser, ReturnVal, View, IncludeSystemNodes, IncludeHiddenNodes );
             TreeLoader.load( RequireViewPermissions );
 
             return ( ReturnVal );

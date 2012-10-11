@@ -39,7 +39,7 @@ namespace NbtWebAppServices.WebServices
                     CswNbtResources NbtResources = _CswNbtWcfSessionResources.CswNbtResources;
                     CswNbtActSystemViews LocationSystemView = new CswNbtActSystemViews( NbtResources, CswNbtActSystemViews.SystemViewName.SILocationsList, null );
                     CswNbtView LocationsListView = LocationSystemView.SystemView;
-                    ICswNbtTree Tree = NbtResources.Trees.getTreeFromView( LocationsListView, true, false );
+                    ICswNbtTree Tree = NbtResources.Trees.getTreeFromView( LocationsListView, true, false, false );
                     Int32 LocationCount = Tree.getChildNodeCount();
                     CswNbtWcfLocationsDataModel WcfLocationModel = new CswNbtWcfLocationsDataModel();
 

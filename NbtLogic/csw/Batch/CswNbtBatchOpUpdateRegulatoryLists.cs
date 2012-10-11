@@ -88,7 +88,7 @@ namespace ChemSW.Nbt.Batch
                         CswNbtView materialsByCASNoView = _getMaterialsByCASNoView( BatchData.CurrentCASNo );
 
                         //add all the materials that match the current CASNo and add them to the list if they don't already have the List on their regulatory lists property
-                        ICswNbtTree materialsByCASNoTree = _CswNbtResources.Trees.getTreeFromView( materialsByCASNoView, false );
+                        ICswNbtTree materialsByCASNoTree = _CswNbtResources.Trees.getTreeFromView( materialsByCASNoView, false, false, false );
                         int nodeCount = materialsByCASNoTree.getChildNodeCount();
                         for( int i = 0; i < nodeCount; i++ )
                         {

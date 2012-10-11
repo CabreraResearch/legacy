@@ -71,7 +71,7 @@ namespace ChemSW.Nbt.Sched
                         FilterMode: CswNbtPropFilterSql.PropertyFilterMode.LessThan );
 
                     CswCommaDelimitedString expiredContainers = new CswCommaDelimitedString();
-                    ICswNbtTree expiredContainersTree = _CswNbtResources.Trees.getTreeFromView( expiredContainersView, false );
+                    ICswNbtTree expiredContainersTree = _CswNbtResources.Trees.getTreeFromView( expiredContainersView, false, false, false );
                     int expiredContainersCount = expiredContainersTree.getChildNodeCount();
                     for( int i = 0; i < expiredContainersCount; i++ )
                     {

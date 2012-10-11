@@ -242,7 +242,7 @@ namespace NbtWebAppServices.Response
         {
             if( null != _SystemView )
             {
-                ICswNbtTree Tree = _CswNbtWcfSessionResources.CswNbtResources.Trees.getTreeFromView( _SystemView, true, false );
+                ICswNbtTree Tree = _CswNbtWcfSessionResources.CswNbtResources.Trees.getTreeFromView( _SystemView, true, false, false );
                 _iterateTree( Tree );
             }
         }

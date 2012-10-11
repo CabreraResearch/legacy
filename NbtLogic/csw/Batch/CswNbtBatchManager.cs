@@ -89,7 +89,7 @@ namespace ChemSW.Nbt.Batch
             CswNbtViewProperty PriorityVP = NextBatchOpView.AddViewProperty( BatchVR, PriorityOCP );
             NextBatchOpView.setSortProperty( PriorityVP, NbtViewPropertySortMethod.Descending );
 
-            ICswNbtTree BatchOpTree = CswNbtResources.Trees.getTreeFromView( NextBatchOpView, false, true );
+            ICswNbtTree BatchOpTree = CswNbtResources.Trees.getTreeFromView( NextBatchOpView, false, true, false );
             if( BatchOpTree.getChildNodeCount() > 0 )
             {
                 BatchOpTree.goToNthChild( 0 );

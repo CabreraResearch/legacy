@@ -131,7 +131,7 @@ namespace ChemSW.Nbt.WebServices
             //    RetObj["data"] = getAllGridRows();
             //}
             //return RetObj;
-            ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( _View, false );
+            ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( _View, false, false, false );
             return _CswNbtGrid.TreeToJson( _View, Tree, ( _View.Visibility == NbtViewVisibility.Property ) );
         } // runGrid()
 
@@ -252,7 +252,7 @@ namespace ChemSW.Nbt.WebServices
         {
             DataTable DT = new DataTable();
 
-            ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( _View, false );
+            ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( _View, false, false, false );
             Tree.goToRoot();
             if( _View.Visibility == NbtViewVisibility.Property )
             {
@@ -303,7 +303,7 @@ namespace ChemSW.Nbt.WebServices
         public JArray getThinGridRows( Int32 MaxRows, bool AlwaysShowHeader = false )
         {
             JArray RetRows = new JArray();
-            ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( _View, false );
+            ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( _View, false, false, false );
             if( _View.Visibility == NbtViewVisibility.Property )
             {
                 Tree.goToNthChild( 0 );
@@ -384,7 +384,7 @@ namespace ChemSW.Nbt.WebServices
         public JObject getGridRowCount()
         {
             JObject Ret = new JObject();
-            ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( _View, false );
+            ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( _View, false, false, false );
             Int32 rowCount = Tree.getChildNodeCount();
             if( _View.Visibility == NbtViewVisibility.Property &&
                 rowCount > 0 )

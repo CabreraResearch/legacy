@@ -427,7 +427,7 @@ namespace ChemSW.Nbt.ObjClasses
                     CswNbtPropFilterSql.PropertyFilterMode.Equals
                     );
 
-                ICswNbtTree DispenseTransactionTree = _CswNbtResources.Trees.getTreeFromView( DisposedContainerTransactionsView, false, true );
+                ICswNbtTree DispenseTransactionTree = _CswNbtResources.Trees.getTreeFromView( DisposedContainerTransactionsView, false, true, false );
                 int NumOfTransactions = DispenseTransactionTree.getChildNodeCount();
                 if( NumOfTransactions > 0 )
                 {
@@ -540,7 +540,7 @@ namespace ChemSW.Nbt.ObjClasses
                     RequestItemView.AddViewPropertyAndFilter( RiRelationship, LocationOcp, SubFieldName: CswNbtSubField.SubFieldName.NodeID, Value: Location.SelectedNodeId.PrimaryKey.ToString() );
                 }
 
-                ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( RequestItemView, IncludeSystemNodes: false, RequireViewPermissions: false );
+                ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( RequestItemView, IncludeSystemNodes: false, RequireViewPermissions: false, IncludeHiddenNodes: false );
                 if( Tree.getChildNodeCount() > 0 )
                 {
                     for( Int32 N = 0; N < Tree.getChildNodeCount(); N += 1 )

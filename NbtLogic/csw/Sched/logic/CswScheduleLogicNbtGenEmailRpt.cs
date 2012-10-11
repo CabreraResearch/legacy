@@ -239,7 +239,13 @@ namespace ChemSW.Nbt.Sched
                                 {
                                     ViewLink = makeViewUrl( ViewId );
                                     CswNbtView ReportView = _CswNbtResources.ViewSelect.restoreView( ViewId );
-                                    ICswNbtTree ReportTree = _CswNbtResources.Trees.getTreeFromView( UserNodeAsUser as ICswNbtUser, ReportView, true, true, false, false );
+                                    ICswNbtTree ReportTree = _CswNbtResources.Trees.getTreeFromView(
+                                        RunAsUser: UserNodeAsUser as ICswNbtUser,
+                                        View: ReportView,
+                                        RequireViewPermissions: true,
+                                        IncludeSystemNodes: false,
+                                        IncludeHiddenNodes: false );
+                                    //ICswNbtTree ReportTree = _CswNbtResources.Trees.getTreeFromView( UserNodeAsUser as ICswNbtUser, ReportView, true, true, false, false );
 
                                     if( CswNbtObjClassMailReport.EventOption.Exists.ToString() != CurrentMailReport.Event.Value )
                                     {
