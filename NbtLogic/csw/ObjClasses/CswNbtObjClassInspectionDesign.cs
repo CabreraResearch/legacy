@@ -353,7 +353,7 @@ namespace ChemSW.Nbt.ObjClasses
 
                     }
 
-                    Design.SetPreferred.setReadOnly( value: AllAnswered, SaveToDb: true );
+                    Design.SetPreferred.setReadOnly( value: AllAnswered && false == Deficient, SaveToDb: true );
                     // case 26584
                     if( IsAdmin )
                     {
@@ -708,16 +708,16 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 case InspectionStatus.Completed:
                 case InspectionStatus.CompletedLate:
-                    if( false == _InspectionState.AllAnswered )
+                    if( _InspectionState.Deficient )
                     {
                         Status.Value = InspectionStatus.ActionRequired;
                     }
                     else
                     {
-                        if( true == this.InspectionDate.Empty )
+                        if( InspectionDate.Empty )
                         {
-                            this.InspectionDate.DateTimeValue = DateTime.Now;
-                            this.Inspector.RelatedNodeId = _CswNbtResources.CurrentNbtUser.UserId;
+                            InspectionDate.DateTimeValue = DateTime.Now;
+                            Inspector.RelatedNodeId = _CswNbtResources.CurrentNbtUser.UserId;
                         }
                         CswNbtNode ParentNode = _CswNbtResources.Nodes.GetNode( this.Parent.RelatedNodeId );
                         if( ParentNode != null )
