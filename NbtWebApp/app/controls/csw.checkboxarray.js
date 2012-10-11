@@ -24,9 +24,7 @@
                 nameCol: 'label',
                 keyCol: 'key',
                 valCol: 'values',
-                useEditButton: true,
-
-                MultiIsUnchanged: true
+                useEditButton: true
             };
             var cswPublic = {};
 
@@ -219,7 +217,6 @@
                                 cswPrivate.cbaDiv.css({
                                     height: (25 * cswPrivate.HeightInRows) + 'px'
                                 });
-                                cswPrivate.MultiIsUnchanged = false;
                                 cswPrivate.makeTable(cswPrivate.cbaDiv);
                             } // onClick
                         }); // editButton
@@ -247,10 +244,6 @@
 
             cswPublic.val = function () {
                 return cswPrivate.data;
-            };
-
-            cswPublic.MultiIsUnchanged = function () {
-                return cswPrivate.MultiIsUnchanged;
             };
 
             return cswPublic;
