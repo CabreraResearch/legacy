@@ -239,6 +239,8 @@ namespace ChemSW.Nbt.PropTypes
         public const string KeyColumn = "key";
         public const string ValueColumn = "value";
 
+        public const string ElemName_Options = "options";
+
         public DataTable ViewsForCBA()
         {
             DataTable _ViewsForCBA = new CswDataTable( "viewpicklistdatatable", "" );
@@ -273,7 +275,7 @@ namespace ChemSW.Nbt.PropTypes
             XmlNode SelectedViewIdsNode = CswXmlDocument.AppendXmlNode( ParentNode, _SelectedViewIdsSubField.ToXmlNodeName(), SelectedViewIds.ToString() );
             CswXmlDocument.AppendXmlAttribute( SelectedViewIdsNode, "SelectMode", SelectMode.ToString() );
             XmlNode CachedViewNameNode = CswXmlDocument.AppendXmlNode( ParentNode, _CachedViewNameSubField.ToXmlNodeName(), CachedViewNames.ToString() );
-            XmlNode OptionsNode = CswXmlDocument.AppendXmlNode( ParentNode, "options" );
+            XmlNode OptionsNode = CswXmlDocument.AppendXmlNode( ParentNode, ElemName_Options );
             DataTable ViewsTable = ViewsForCBA();
             foreach( DataRow ViewRow in ViewsTable.Rows )
             {
@@ -304,19 +306,23 @@ namespace ChemSW.Nbt.PropTypes
             ParentObject["selectmode"] = SelectMode.ToString();
             ParentObject[_CachedViewNameSubField.ToXmlNodeName()] = CachedViewNames.ToString();
 
-            JArray ViewsArray = new JArray();
-            ParentObject["options"] = ViewsArray;
+            ParentObject[ElemName_Options] = new JObject();
+
+            CswCheckBoxArrayOptions CBAOptions = new CswCheckBoxArrayOptions();
+            CBAOptions.Columns.Add( "Include" );
 
             DataTable ViewsTable = ViewsForCBA();
             foreach( DataRow ViewRow in ViewsTable.Rows )
             {
-                JObject ViewObj = new JObject();
-                ViewsArray.Add( ViewObj );
-                ViewObj[NameColumn] = ViewRow[NameColumn].ToString();
-                ViewObj[KeyColumn] = ViewRow[KeyColumn].ToString();
-                ViewObj[ValueColumn] = ViewRow[ValueColumn].ToString();
+                CswCheckBoxArrayOptions.Option Option = new CswCheckBoxArrayOptions.Option();
+                Option.Key = ViewRow[KeyColumn].ToString();
+                Option.Label = ViewRow[NameColumn].ToString();
+                Option.Values.Add( CswConvert.ToBoolean( ViewRow[ValueColumn] ) );
+                CBAOptions.Options.Add( Option );
             }
-        }
+
+            CBAOptions.ToJSON( (JObject) ParentObject[ElemName_Options] );
+        } // ToJSON()
 
         public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
@@ -364,29 +370,22 @@ namespace ChemSW.Nbt.PropTypes
         {
             CswCommaDelimitedString NewSelectedViewIds = new CswCommaDelimitedString();
 
-            if( null != JObject["options"] )
+            CswCheckBoxArrayOptions CBAOptions = new CswCheckBoxArrayOptions();
+            if( null != JObject[ElemName_Options] )
             {
-                JArray OptionsObj = CswConvert.ToJArray( JObject["options"] );
-
-                foreach( JObject ViewObj in OptionsObj )
-                {
-                    string key = CswConvert.ToString( ViewObj["key"] );
-                    //string name = CswConvert.ToString( ViewObj["label"] );
-                    if( null != ViewObj.Property( "values" ) && JTokenType.Array == ViewObj.Property( "values" ).Value.Type )
-                    {
-                        JArray Values = CswConvert.ToJArray( ViewObj["values"] );
-                        bool value = null != Values && CswConvert.ToBoolean( Values.First );
-                        if( value )
-                        {
-                            NewSelectedViewIds.Add( key );
-                        }
-                    }
-                } // foreach( JProperty UserProp in OptionsObj.Properties() )
-
-                SelectedViewIds = NewSelectedViewIds;
-                RefreshViewName();
+                CBAOptions.ReadJson( (JObject) JObject[ElemName_Options] );
             }
-        }
+            foreach( CswCheckBoxArrayOptions.Option Option in CBAOptions.Options )
+            {
+                if( Option.Values.Count > 0 && true == Option.Values[0] )
+                {
+                    NewSelectedViewIds.Add( Option.Key );
+                }
+            }
+            SelectedViewIds = NewSelectedViewIds;
+            RefreshViewName();
+        } // ReadJSON()
+
     }//CswNbtNodeProp
 
 }//namespace ChemSW.Nbt.PropTypes
