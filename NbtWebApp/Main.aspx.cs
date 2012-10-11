@@ -434,7 +434,7 @@ namespace ChemSW.Nbt.WebPages
                 // Get View
                 if( Master.CswNbtView != null )
                 {
-                    CswNbtTree = Master.CswNbtResources.Trees.getTreeFromView( Master.CswNbtView, false, false );
+                    CswNbtTree = Master.CswNbtResources.Trees.getTreeFromView( Master.CswNbtResources.CurrentNbtUser, Master.CswNbtView, true, false, false );
                     //_MainFilterEditor.LoadView( Master.CswNbtView );
                     _MainMenu.View = Master.CswNbtView;
                 }
@@ -577,7 +577,10 @@ namespace ChemSW.Nbt.WebPages
                 // Get View
                 if( Master.CswNbtView != null )
                 {
-                    CswNbtTree = Master.CswNbtResources.Trees.getTreeFromView( Master.CswNbtView,
+                    CswNbtTree = Master.CswNbtResources.Trees.getTreeFromView(
+                        RunAsUser: Master.CswNbtResources.CurrentNbtUser,
+                        View: Master.CswNbtView,
+                        RequireViewPermissions: true,
                         IncludeSystemNodes: false,
                         IncludeHiddenNodes: false );
 

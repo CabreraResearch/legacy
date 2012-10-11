@@ -92,7 +92,7 @@ namespace ChemSW.NbtWebControls
                     NoResults = true;
                 else
                 {
-                    ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( View, false, false );
+                    ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( _CswNbtResources.CurrentNbtUser, View, true, false, false );
                     if( Tree == null )
                         NoResults = true;
                     else

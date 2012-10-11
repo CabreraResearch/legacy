@@ -167,7 +167,9 @@ namespace ChemSW.NbtWebControls
 
                     // Note - Second parameter true for BZ 9200
                     CswNbtTree = _CswNbtResources.Trees.getTreeFromView(
+                        RunAsUser: _CswNbtResources.CurrentNbtUser,
                         View: View,
+                        RequireViewPermissions: true,
                         IncludeSystemNodes: false,
                         IncludeHiddenNodes: false );
                     //_MainFilterEditor.LoadView(Master.CswNbtView);

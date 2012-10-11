@@ -158,7 +158,7 @@ namespace ChemSW.Nbt
         }
 
         /// <summary>
-        /// Deprecated
+        /// Deprecated //--------------
         /// </summary>
         public ICswNbtTree getTreeFromView( CswNbtView View, bool IncludeSystemNodes, bool IncludeHiddenNodes )
         {
