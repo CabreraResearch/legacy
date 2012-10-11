@@ -1012,7 +1012,6 @@
     <Content Include="Images\view\viewtree.gif" />
     <Content Include="Images\vld\bad.gif" />
     <Content Include="Images\vld\good.gif" />
-    <Content Include="iphone.html" />
     <Content Include="Scripts\jquery.cookie.min.js" />
     <Content Include="License.aspx" />
     <Content Include="Main.aspx" />
