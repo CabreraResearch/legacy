@@ -148,15 +148,6 @@ namespace ChemSW.Nbt
 
         }//_makeTree()
 
-
-        /// <summary>
-        /// Deprecated
-        /// </summary>
-        public ICswNbtTree getTreeFromView( CswNbtView View, bool ForceReInit, bool FetchAllPrior, bool SingleLevelOnly, bool IncludeSystemNodes, Int32 PageSize = Int32.MinValue )
-        {
-            return getTreeFromView( View, true, IncludeSystemNodes );
-        }
-
         /// <summary>
         /// Deprecated //--------------
         /// </summary>

@@ -67,7 +67,7 @@ namespace ChemSW.Nbt.Actions
                         //Case 24572
                         CswNbtView.AddViewPropertyFilter( DueDateProp, CswNbtSubField.SubFieldName.Value, CswNbtPropFilterSql.PropertyFilterMode.Equals, TargetDateFilter, false );
 
-                        ICswNbtTree ExistingNodesTree = _CswNbtResources.Trees.getTreeFromView( CswNbtView, true, true, false, false );
+                        ICswNbtTree ExistingNodesTree = _CswNbtResources.Trees.getTreeFromView( _CswNbtResources.CurrentNbtUser, CswNbtView, true, false, false );
 
                         if( ExistingNodesTree.getChildNodeCount() > 0 )
                         {

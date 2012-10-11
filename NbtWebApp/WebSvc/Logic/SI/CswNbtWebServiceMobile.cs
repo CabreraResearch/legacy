@@ -69,7 +69,7 @@ namespace ChemSW.Nbt.WebServices
                     RetJson.Add( _getSearchNodes( View ) );
                 }
 
-                ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( View, true, false, false, false, _MobilePageSize );
+                ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( _CswNbtResources.CurrentNbtUser, View, true, false, false );
 
                 if( Tree.getChildNodeCount() > 0 )
                 {

@@ -19,8 +19,8 @@ namespace ChemSW.Nbt.WebPages
         {
             get
             {
-                if (Request.QueryString["type"] != null)
-                    return (CswNodeTypeTree.NodeTypeTreeSelectedType)Enum.Parse(typeof(CswNodeTypeTree.NodeTypeTreeSelectedType), Request.QueryString["type"].ToString());
+                if( Request.QueryString["type"] != null )
+                    return (CswNodeTypeTree.NodeTypeTreeSelectedType) Enum.Parse( typeof( CswNodeTypeTree.NodeTypeTreeSelectedType ), Request.QueryString["type"].ToString() );
                 else
                     return CswNodeTypeTree.NodeTypeTreeSelectedType.Root;
             }
@@ -29,7 +29,7 @@ namespace ChemSW.Nbt.WebPages
         {
             get
             {
-                if (Request.QueryString["value"] != null)
+                if( Request.QueryString["value"] != null )
                     return Request.QueryString["value"].ToString();
                 else
                     return string.Empty;
@@ -43,7 +43,7 @@ namespace ChemSW.Nbt.WebPages
         private void InitSelectedMetaDataObjects()
         {
             EnsureChildControls();
-            switch (_SelectedType)
+            switch( _SelectedType )
             {
                 case CswNodeTypeTree.NodeTypeTreeSelectedType.Category:
                     _SelectedNodeType = null;
@@ -52,9 +52,9 @@ namespace ChemSW.Nbt.WebPages
                     break;
 
                 case CswNodeTypeTree.NodeTypeTreeSelectedType.NodeType:
-                    if (Convert.ToInt32(_SelectedValue) > 0)
+                    if( Convert.ToInt32( _SelectedValue ) > 0 )
                     {
-                        _SelectedNodeType = Master.CswNbtResources.MetaData.getNodeType(Convert.ToInt32(_SelectedValue));
+                        _SelectedNodeType = Master.CswNbtResources.MetaData.getNodeType( Convert.ToInt32( _SelectedValue ) );
                     }
                     else
                     {
@@ -65,11 +65,11 @@ namespace ChemSW.Nbt.WebPages
                     break;
 
                 case CswNodeTypeTree.NodeTypeTreeSelectedType.Property:
-                    if (Convert.ToInt32(_SelectedValue) > 0)
+                    if( Convert.ToInt32( _SelectedValue ) > 0 )
                     {
-                        _SelectedNodeTypeProp = Master.CswNbtResources.MetaData.getNodeTypeProp(Convert.ToInt32(_SelectedValue));
+                        _SelectedNodeTypeProp = Master.CswNbtResources.MetaData.getNodeTypeProp( Convert.ToInt32( _SelectedValue ) );
                         _SelectedNodeType = _SelectedNodeTypeProp.getNodeType();
-						_SelectedNodeTypeTab = Master.CswNbtResources.MetaData.getNodeTypeTab( _SelectedNodeTypeProp.FirstEditLayout.TabId );
+                        _SelectedNodeTypeTab = Master.CswNbtResources.MetaData.getNodeTypeTab( _SelectedNodeTypeProp.FirstEditLayout.TabId );
                     }
                     else
                     {
@@ -86,9 +86,9 @@ namespace ChemSW.Nbt.WebPages
                     break;
 
                 case CswNodeTypeTree.NodeTypeTreeSelectedType.Tab:
-                    if (Convert.ToInt32(_SelectedValue) > 0)
+                    if( Convert.ToInt32( _SelectedValue ) > 0 )
                     {
-                        _SelectedNodeTypeTab = Master.CswNbtResources.MetaData.getNodeTypeTab(Convert.ToInt32(_SelectedValue));
+                        _SelectedNodeTypeTab = Master.CswNbtResources.MetaData.getNodeTypeTab( Convert.ToInt32( _SelectedValue ) );
                         _SelectedNodeType = _SelectedNodeTypeTab.getNodeType();
                     }
                     else
@@ -105,7 +105,7 @@ namespace ChemSW.Nbt.WebPages
         {
             get
             {
-                if (_SelectedNodeType == null)
+                if( _SelectedNodeType == null )
                     InitSelectedMetaDataObjects();
                 return _SelectedNodeType;
             }
@@ -114,7 +114,7 @@ namespace ChemSW.Nbt.WebPages
         {
             get
             {
-                if (_SelectedNodeTypeTab == null)
+                if( _SelectedNodeTypeTab == null )
                     InitSelectedMetaDataObjects();
                 return _SelectedNodeTypeTab;
             }
@@ -123,7 +123,7 @@ namespace ChemSW.Nbt.WebPages
         {
             get
             {
-                if (_SelectedNodeTypeProp == null)
+                if( _SelectedNodeTypeProp == null )
                     InitSelectedMetaDataObjects();
                 return _SelectedNodeTypeProp;
             }
@@ -135,8 +135,8 @@ namespace ChemSW.Nbt.WebPages
         private Button OKButton;
         private Button CancelButton;
         private CswAutoTable DeleteTable;
-        
-        protected void Page_Load(object sender, EventArgs e)
+
+        protected void Page_Load( object sender, EventArgs e )
         {
             try
             {
@@ -218,7 +218,7 @@ namespace ChemSW.Nbt.WebPages
         private ListBox ViewsOfDeletedNodeType;
         private Button EditSelectedViewsButton;
         private RadTreeView TreeOfDeletedNodeType;
-        
+
         private void create_DeleteNodeTypePage()
         {
             Label4 = new Label();
@@ -283,7 +283,7 @@ namespace ChemSW.Nbt.WebPages
         private Label DeleteTabNameLabel;
         private Label DeleteTabName;
         private Label DeleteTabNoteLabel;
-        
+
         private void create_DeleteTabPage()
         {
             DeleteTabNameLabel = new Label();
@@ -300,7 +300,7 @@ namespace ChemSW.Nbt.WebPages
 
         private void init_DeleteTabPage()
         {
-            if (_SelectedType == CswNodeTypeTree.NodeTypeTreeSelectedType.Tab && _SelectedValue != string.Empty)
+            if( _SelectedType == CswNodeTypeTree.NodeTypeTreeSelectedType.Tab && _SelectedValue != string.Empty )
             {
                 DeleteTabName.Text = SelectedNodeTypeTab.TabName;
             }
@@ -309,16 +309,16 @@ namespace ChemSW.Nbt.WebPages
 
         private void init_DeleteNodeTypePage()
         {
-            if (_SelectedType == CswNodeTypeTree.NodeTypeTreeSelectedType.NodeType && _SelectedValue != string.Empty)
+            if( _SelectedType == CswNodeTypeTree.NodeTypeTreeSelectedType.NodeType && _SelectedValue != string.Empty )
             {
                 // NodeTypeName Delete Label
                 DeleteNodeTypeName.Text = SelectedNodeType.NodeTypeName;
 
                 // Delete Nodetype
-				CswNbtMetaDataNodeType SelectedNT = Master.CswNbtResources.MetaData.getNodeType( Convert.ToInt32( _SelectedValue ) );
-				CswNbtView DeleteNodeTypeView = SelectedNT.CreateDefaultView();
+                CswNbtMetaDataNodeType SelectedNT = Master.CswNbtResources.MetaData.getNodeType( Convert.ToInt32( _SelectedValue ) );
+                CswNbtView DeleteNodeTypeView = SelectedNT.CreateDefaultView();
                 DeleteNodeTypeView.ViewName = "Nodes to Delete";
-                ICswNbtTree CswNbtTree = Master.CswNbtResources.Trees.getTreeFromView(DeleteNodeTypeView, false, true, false, true);
+                ICswNbtTree CswNbtTree = Master.CswNbtResources.Trees.getTreeFromView( Master.CswNbtResources.CurrentNbtUser, DeleteNodeTypeView, true, true, false );
                 // BROKEN BY case 24709
                 //string XmlStr = CswNbtTree.getTreeAsXml();
                 //TreeOfDeletedNodeType.LoadXml(XmlStr);
@@ -331,10 +331,10 @@ namespace ChemSW.Nbt.WebPages
                 //}
                 //else
                 //{
-                    TreeOfDeletedNodeType.Visible = false;
+                TreeOfDeletedNodeType.Visible = false;
                 //}
 
-                DataTable ViewsOfNodeType = getViewsUsingNodeType(Convert.ToInt32(_SelectedValue));
+                DataTable ViewsOfNodeType = getViewsUsingNodeType( Convert.ToInt32( _SelectedValue ) );
 
                 ViewsOfDeletedNodeType.Items.Clear();
                 ViewsOfDeletedNodeType.Visible = false;
@@ -345,7 +345,7 @@ namespace ChemSW.Nbt.WebPages
                 //    DeleteNodeTypeGenericLabel.Visible = false;
                 //}
 
-                if (ViewsOfNodeType.Rows.Count > 0)
+                if( ViewsOfNodeType.Rows.Count > 0 )
                 {
                     ViewsOfDeletedNodeType.DataTextField = "viewname";
                     ViewsOfDeletedNodeType.DataValueField = "nodeviewid";
@@ -364,7 +364,7 @@ namespace ChemSW.Nbt.WebPages
 
         private void init_DeletePropertyPage()
         {
-            if (_SelectedType == CswNodeTypeTree.NodeTypeTreeSelectedType.Property && _SelectedValue != string.Empty)
+            if( _SelectedType == CswNodeTypeTree.NodeTypeTreeSelectedType.Property && _SelectedValue != string.Empty )
             {
                 DeletePropName.Text = SelectedNodeTypeProp.PropName;
 
@@ -373,8 +373,8 @@ namespace ChemSW.Nbt.WebPages
                 EditSelectedViewsButtonProp.Visible = false;
                 Label3.Visible = false;
 
-                DataTable ViewsOfNodeTypeProp = getViewsUsingNodeTypeProp(Convert.ToInt32(_SelectedValue));
-                if (ViewsOfNodeTypeProp.Rows.Count > 0)
+                DataTable ViewsOfNodeTypeProp = getViewsUsingNodeTypeProp( Convert.ToInt32( _SelectedValue ) );
+                if( ViewsOfNodeTypeProp.Rows.Count > 0 )
                 {
                     ViewsOfDeletedNodeTypeProp.DataTextField = "viewname";
                     ViewsOfDeletedNodeTypeProp.DataValueField = "nodeviewid";
@@ -400,7 +400,7 @@ namespace ChemSW.Nbt.WebPages
             ArrayList RowsToRemove = new ArrayList();
             foreach( DataRow CurrentRow in ViewsTable.Rows )
             {
-				CswNbtView CurrentView = Master.CswNbtResources.ViewSelect.restoreView( new CswNbtViewId( CswConvert.ToInt32( CurrentRow["nodeviewid"] ) ) );
+                CswNbtView CurrentView = Master.CswNbtResources.ViewSelect.restoreView( new CswNbtViewId( CswConvert.ToInt32( CurrentRow["nodeviewid"] ) ) );
                 if( CurrentView != null && !CurrentView.ContainsNodeType( NodeType ) )
                     RowsToRemove.Add( CurrentRow );
             }
@@ -425,7 +425,7 @@ namespace ChemSW.Nbt.WebPages
             ArrayList RowsToRemove = new ArrayList();
             foreach( DataRow CurrentRow in ViewsTable.Rows )
             {
-				CswNbtView CurrentView = Master.CswNbtResources.ViewSelect.restoreView( new CswNbtViewId( CswConvert.ToInt32( CurrentRow["nodeviewid"] ) ) );
+                CswNbtView CurrentView = Master.CswNbtResources.ViewSelect.restoreView( new CswNbtViewId( CswConvert.ToInt32( CurrentRow["nodeviewid"] ) ) );
                 if( CurrentView != null && !CurrentView.ContainsNodeTypeProp( NodeTypeProp ) )
                     RowsToRemove.Add( CurrentRow );
             }

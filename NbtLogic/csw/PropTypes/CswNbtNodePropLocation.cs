@@ -274,7 +274,7 @@ namespace ChemSW.Nbt.PropTypes
 
             if( NodeId != null && NodeId.PrimaryKey != Int32.MinValue )
             {
-                ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( View, true, true, false, false );
+                ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( _CswNbtResources.CurrentNbtUser, View, true, false, false );
                 CswNbtNodeKey NodeKey = Tree.getNodeKeyByNodeId( NodeId );
                 if( NodeKey != null )
                 {
@@ -297,7 +297,7 @@ namespace ChemSW.Nbt.PropTypes
 
             if( NodeId != null && NodeId.PrimaryKey != Int32.MinValue )
             {
-                ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( View, true, true, false, false );
+                ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( _CswNbtResources.CurrentNbtUser, View, true, false, false );
                 CswNbtNodeKey NodeKey = Tree.getNodeKeyByNodeId( NodeId );
                 if( NodeKey != null )
                 {
@@ -510,7 +510,7 @@ namespace ChemSW.Nbt.PropTypes
                     // ..equal to the given barcode
                     CswNbtViewPropertyFilter BarcodeViewPropertyFilter = LocationView.AddViewPropertyFilter( BarcodeViewProperty, CswNbtSubField.SubFieldName.Barcode, CswNbtPropFilterSql.PropertyFilterMode.Equals, LocationBarcode, false );
 
-                    ICswNbtTree LocationTree = _CswNbtResources.Trees.getTreeFromView( LocationView, true, true, false, false );
+                    ICswNbtTree LocationTree = _CswNbtResources.Trees.getTreeFromView( _CswNbtResources.CurrentNbtUser, LocationView, true, false, false );
                     if( LocationTree.getChildNodeCount() > 0 )
                     {
                         LocationTree.goToNthChild( 0 );

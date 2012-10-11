@@ -19,11 +19,11 @@ namespace ChemSW.NbtWebControls
     public class CswViewListTree : CompositeControl, INamingContainer
     {
         private CswNbtResources _CswNbtResources;
-        private ICswWebClientStorage _CswWebClientStorage = null; 
+        private ICswWebClientStorage _CswWebClientStorage = null;
 
         public static string SessionCachedXmlName = "CswViewListTree_Xml";
 
-        public CswViewListTree( CswNbtResources CswNbtResources, ICswWebClientStorage CswWebClientStorage , bool UseCombo)
+        public CswViewListTree( CswNbtResources CswNbtResources, ICswWebClientStorage CswWebClientStorage, bool UseCombo )
         {
             _CswWebClientStorage = CswWebClientStorage;
             _CswNbtResources = CswNbtResources;
@@ -35,7 +35,7 @@ namespace ChemSW.NbtWebControls
         {
             ClearCache( Session );
         }
-        
+
         // BZ 10048
         public static void AfterModifyReport( System.Web.SessionState.HttpSessionState Session )
         {
@@ -124,7 +124,7 @@ namespace ChemSW.NbtWebControls
                 if( PreviousActionId > 0 )
                 {
                     CswNbtAction Action = _CswNbtResources.Actions[PreviousActionId];
-                    Ret = _makeTreeViewXmlNode( XmlDoc, Action.ActionId.ToString(), ViewType.Action, Action.Name.ToString().Replace( '_', ' ' ), 
+                    Ret = _makeTreeViewXmlNode( XmlDoc, Action.ActionId.ToString(), ViewType.Action, Action.Name.ToString().Replace( '_', ' ' ),
                                                 CswNbtMetaDataObjectClass.IconPrefix16 + "wizard.png", true, false );
                 }
             }
@@ -232,14 +232,14 @@ namespace ChemSW.NbtWebControls
 
                         foreach( CswNbtAction Action in _CswNbtResources.Actions )
                         {
-							if( Action.ShowInList &&
-								( _CswNbtResources.ConfigVbls.getConfigVariableValue( "loc_use_images" ) != "0" ) &&
-								  _CswNbtResources.Permit.can( Action.Name ) )
-							{
-								XmlNode CategoryNode = _getCategoryNode( DocRoot, Action.Category );
-								CategoryNode.AppendChild( _makeTreeViewXmlNode( XmlDoc, Action.ActionId.ToString(), ViewType.Action, Action.Name.ToString().Replace( '_', ' ' ), 
+                            if( Action.ShowInList &&
+                                ( _CswNbtResources.ConfigVbls.getConfigVariableValue( "loc_use_images" ) != "0" ) &&
+                                  _CswNbtResources.Permit.can( Action.Name ) )
+                            {
+                                XmlNode CategoryNode = _getCategoryNode( DocRoot, Action.Category );
+                                CategoryNode.AppendChild( _makeTreeViewXmlNode( XmlDoc, Action.ActionId.ToString(), ViewType.Action, Action.Name.ToString().Replace( '_', ' ' ),
                                                                                 CswNbtMetaDataObjectClass.IconPrefix16 + "wizard.png", true, false ) );
-							}
+                            }
                         }
 
 
@@ -250,7 +250,7 @@ namespace ChemSW.NbtWebControls
                         CswNbtMetaDataObjectClass ReportMetaDataObjectClass = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.ReportClass );
                         CswNbtViewRelationship ReportRelationship = ReportView.AddViewRelationship( ReportMetaDataObjectClass, true );
 
-                        ICswNbtTree ReportTree = _CswNbtResources.Trees.getTreeFromView( ReportView, true, true, false, false );
+                        ICswNbtTree ReportTree = _CswNbtResources.Trees.getTreeFromView( _CswNbtResources.CurrentNbtUser, ReportView, true, false, false );
 
                         for( int i = 0; i < ReportTree.getChildNodeCount(); i++ )
                         {

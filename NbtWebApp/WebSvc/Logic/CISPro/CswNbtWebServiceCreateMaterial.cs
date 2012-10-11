@@ -488,7 +488,7 @@ namespace ChemSW.Nbt.WebServices
             CswNbtView unitsView = unitViewBuilder.getQuantityUnitOfMeasureView( PhysicalState );
 
             Collection<CswNbtNode> _UnitNodes = new Collection<CswNbtNode>();
-            ICswNbtTree UnitsTree = CswNbtResources.Trees.getTreeFromView( unitsView, false, true, false, false );
+            ICswNbtTree UnitsTree = CswNbtResources.Trees.getTreeFromView( CswNbtResources.CurrentNbtUser, unitsView, true, false, false );
             UnitsTree.goToRoot();
             for( int i = 0; i < UnitsTree.getChildNodeCount(); i++ )
             {

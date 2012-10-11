@@ -414,7 +414,7 @@ namespace ChemSW.Nbt.WebPages
                 NodesSelect = Master.CswNbtResources.makeCswTableSelect( "totalnodes_select", "nodes" );
                 CswNbtMetaDataObjectClass UserOC = Master.CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
                 UserView = UserOC.CreateDefaultView(); // Master.CswNbtResources.Trees.getTreeViewOfObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
-                UserTree = Master.CswNbtResources.Trees.getTreeFromView( UserView, true, true, false, false );
+                UserTree = Master.CswNbtResources.Trees.getTreeFromView( Master.CswNbtResources.CurrentNbtUser, UserView, true, false, false );
             }
 
             // ------------------------------------------------------------------------------
@@ -821,7 +821,7 @@ namespace ChemSW.Nbt.WebPages
             CswNbtViewPropertyFilter AccessIdFilter = CustomerView.AddViewPropertyFilter( AccessIdProperty, CswNbtSubField.SubFieldName.Unknown, CswNbtPropFilterSql.PropertyFilterMode.Equals, AccessId, false );
 
             CswNbtNode CustomerNode = null;
-            ICswNbtTree Tree = Master.CswNbtResources.Trees.getTreeFromView( CustomerView, false, true, false, false );
+            ICswNbtTree Tree = Master.CswNbtResources.Trees.getTreeFromView( Master.CswNbtResources.CurrentNbtUser, CustomerView, true, false, false );
             if( Tree.getChildNodeCount() > 0 )
             {
                 Tree.goToNthChild( 0 );

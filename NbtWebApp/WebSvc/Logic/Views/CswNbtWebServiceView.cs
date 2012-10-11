@@ -147,7 +147,7 @@ namespace ChemSW.Nbt.WebServices
             if( false == Request.LimitToRecent )
             {
                 ViewReturn.Data = getViewSelect( (CswNbtResources) CswResources, Request );
-            } 
+            }
             else
             {
                 ViewReturn.Data = getViewSelectRecent( (CswNbtResources) CswResources );
@@ -228,7 +228,7 @@ namespace ChemSW.Nbt.WebServices
                 CswNbtMetaDataObjectClass ReportMetaDataObjectClass = CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.ReportClass );
                 CswNbtView ReportView = ReportMetaDataObjectClass.CreateDefaultView();
                 ReportView.ViewName = "CswViewTree.DataBinding.ReportView";
-                ICswNbtTree ReportTree = CswNbtResources.Trees.getTreeFromView( ReportView, true, true, false, false );
+                ICswNbtTree ReportTree = CswNbtResources.Trees.getTreeFromView( CswNbtResources.CurrentNbtUser, ReportView, true, false, false );
                 for( int i = 0; i < ReportTree.getChildNodeCount(); i++ )
                 {
                     ReportTree.goToNthChild( i );

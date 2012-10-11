@@ -125,7 +125,7 @@ namespace ChemSW.Nbt.PropTypes
                 if( _CswNbtMetaDataNodeTypeProp == null )
                     throw new CswDniException( "RecalculateReferenceValue(): _CswNbtMetaDataNodeTypeProp is null" );
                 CswNbtView ReferenceView = _getReferenceView();
-                ICswNbtTree ReferenceTree = _CswNbtResources.Trees.getTreeFromView( ReferenceView, true, true, false, false );
+                ICswNbtTree ReferenceTree = _CswNbtResources.Trees.getTreeFromView( _CswNbtResources.CurrentNbtUser, ReferenceView, true, false, false );
                 if( ReferenceTree == null )
                     throw new CswDniException( "RecalculateReferenceValue(): ReferenceTree is null" );
 

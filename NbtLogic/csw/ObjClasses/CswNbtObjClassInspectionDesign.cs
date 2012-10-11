@@ -583,7 +583,7 @@ namespace ChemSW.Nbt.ObjClasses
                 false,
                 CswNbtPropFilterSql.PropertyFilterMode.Equals
                 );
-            ICswNbtTree SiblingTree = _CswNbtResources.Trees.getTreeFromView( SiblingView, true, true, false, false );
+            ICswNbtTree SiblingTree = _CswNbtResources.Trees.getTreeFromView( _CswNbtResources.CurrentNbtUser, SiblingView, true, false, false );
             int NumOfSiblings = SiblingTree.getChildNodeCount();
 
             return 0 < NumOfSiblings;

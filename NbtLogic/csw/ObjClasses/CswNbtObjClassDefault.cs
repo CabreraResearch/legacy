@@ -193,7 +193,7 @@ namespace ChemSW.Nbt.ObjClasses
                         }
                     }
 
-                    ICswNbtTree NodeTree = _CswNbtResources.Trees.getTreeFromView( CswNbtView, true, true, false, false );
+                    ICswNbtTree NodeTree = _CswNbtResources.Trees.getTreeFromView( _CswNbtResources.CurrentNbtUser, CswNbtView, true, false, false );
 
                     if( NodeTree.getChildNodeCount() > 0 )
                     {
