@@ -160,22 +160,6 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Deprecated
         /// </summary>
-        public ICswNbtTree getTreeFromView( CswNbtView View, bool ForceReInit, bool FetchAllPrior, bool SingleLevelOnly, bool IncludeSystemNodes, bool RequireViewPermissions )
-        {
-            return getTreeFromView( View, true, IncludeSystemNodes );
-        }
-
-        /// <summary>
-        /// Deprecated
-        /// </summary>
-        public ICswNbtTree getTreeFromView( CswNbtView View, bool ForceReInit, ref CswNbtNodeKey ParentNodeKey, CswNbtViewRelationship ChildRelationshipToStartWith, Int32 PageSize, bool FetchAllPrior, bool SingleLevelOnly, CswNbtNodeKey IncludedKey, bool IncludeSystemNodes )
-        {
-            return getTreeFromView( View, true, IncludeSystemNodes );
-        }
-
-        /// <summary>
-        /// Deprecated
-        /// </summary>
         public ICswNbtTree getTreeFromView( CswNbtView View, bool IncludeSystemNodes, bool IncludeHiddenNodes )
         {
             return getTreeFromView( _CswNbtResources.CurrentNbtUser, View, true, IncludeSystemNodes, IncludeHiddenNodes );

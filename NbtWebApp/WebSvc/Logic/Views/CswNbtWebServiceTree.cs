@@ -413,7 +413,7 @@ namespace ChemSW.Nbt.WebServices
                     _View.ViewName = "New " + IncludeKeyNodeType.NodeTypeName;
                     _View.Root.ChildRelationships[0].NodeIdsToFilterIn.Add( IncludeNodeKey.NodeId );
                     _View.SaveToCache( true ); // case 22713
-                    Tree = _CswNbtResources.Trees.getTreeFromView( _View, true, ref ParentNodeKey, null, PageSize, IsFirstLoad, UsePaging, IncludeNodeKey, false );
+                    Tree = _CswNbtResources.Trees.getTreeFromView( _View, false, false );
                 }
 
                 if( ( Tree.getChildNodeCount() > 0 ) )

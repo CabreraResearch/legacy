@@ -166,7 +166,10 @@ namespace ChemSW.NbtWebControls
                     }
 
                     // Note - Second parameter true for BZ 9200
-                    CswNbtTree = _CswNbtResources.Trees.getTreeFromView( View, true, ref ParentKey, null, ResultsLimit, true, false, null, false );
+                    CswNbtTree = _CswNbtResources.Trees.getTreeFromView(
+                        View: View,
+                        IncludeSystemNodes: false,
+                        IncludeHiddenNodes: false );
                     //_MainFilterEditor.LoadView(Master.CswNbtView);
 
                     // BROKEN BY case 24709
