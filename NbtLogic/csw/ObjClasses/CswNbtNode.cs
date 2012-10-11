@@ -521,7 +521,11 @@ namespace ChemSW.Nbt.ObjClasses
         public bool Hidden
         {
             get { return _Hidden; }
-            set { _Hidden = value; }
+            set
+            {
+                _NodeModificationState = NodeModificationState.Modified;
+                _Hidden = value;
+            }
         }
 
         private string _SessionId = string.Empty;
