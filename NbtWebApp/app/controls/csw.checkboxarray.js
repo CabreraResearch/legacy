@@ -31,41 +31,54 @@
             var cswPublic = {};
 
 
-            
 
-            cswPrivate.makeTextValue = function() { 
-                var ret = '';
-                for (var r = 0; r < cswPrivate.data.length; r += 1) {
-                    var rRow = cswPrivate.data[r];
-                    var rowlabeled = false;
-                    var first = true;
-                    for (var c = 0; c < cswPrivate.cols.length; c += 1) {
-                        if (Csw.bool(rRow[cswPrivate.valCol][c])) {
-                            if (false === rowlabeled) {
-                                ret += rRow[cswPrivate.nameCol] + ": ";
-                                rowlabeled = true;
+
+            cswPrivate.makeTextValue = function () {
+                var ret = '', r, c;
+
+                if(cswPrivate.cols.length === 1) {
+                    for (r = 0; r < cswPrivate.data.length; r += 1) {
+                        var row = cswPrivate.data[r];
+                        if (Csw.bool(row[cswPrivate.valCol][0])) {
+                            if(false === Csw.isNullOrEmpty(ret)) {
+                                ret += ', ';
                             }
-                            if (false === first) {
-                                ret += ", ";
-                            }
-                            if (false === cswPrivate.UseRadios) {
-                                ret += cswPrivate.cols[c];
-                            }
-                            first = false;
+                            ret += row[cswPrivate.nameCol];
                         }
                     }
-                    if (rowlabeled) {
-                        ret += '<br>';
-                    }
+                } else {
+                    for (r = 0; r < cswPrivate.data.length; r += 1) {
+                        var row = cswPrivate.data[r];
+                        var rowlabeled = false;
+                        var first = true;
+                        for (c = 0; c < cswPrivate.cols.length; c += 1) {
+                            if (Csw.bool(row[cswPrivate.valCol][c])) {
+                                if (false === rowlabeled) {
+                                    ret += row[cswPrivate.nameCol];
+                                    rowlabeled = true;
+                                }
+                                if (first) {
+                                    ret += ": ";
+                                } else {
+                                    ret += ", ";
+                                }
+                                ret += cswPrivate.cols[c];
+                                first = false;
+                            }
+                        }
+                        if (rowlabeled) {
+                            ret += '<br>';
+                        }
+                    } // for (r = 0; r < cswPrivate.data.length; r += 1) {
                 }
                 return ret;
             }; // makeTextValue
 
 
-            cswPrivate.makeCheckboxRow = function (table, tablerownum, rowdata, rownum){
+            cswPrivate.makeCheckboxRow = function (table, tablerownum, rowdata, rownum) {
                 // Row label
                 var labelcell = table.cell(tablerownum, 1);
-                labelcell.text( rowdata[cswPrivate.nameCol] );
+                labelcell.text(rowdata[cswPrivate.nameCol]);
                 labelcell.addClass('cbarraycell');
 
                 for (var c = 0; c < cswPrivate.cols.length; c += 1) {
@@ -86,19 +99,24 @@
                         checked: rowdata[cswPrivate.valCol][c]
                     });
 
-                    check.propNonDom({ 
-                        key: rowdata[cswPrivate.keyCol], 
-                        rowlabel: rowdata[cswPrivate.nameCol], 
-                        collabel: cswPrivate.cols[c], 
-                        row: rownum, 
+                    check.propNonDom({
+                        key: rowdata[cswPrivate.keyCol],
+                        rowlabel: rowdata[cswPrivate.nameCol],
+                        collabel: cswPrivate.cols[c],
+                        row: rownum,
                         col: c
                     });
-                    
+
                     var onChange = function (cB) {
                         var col = cB.propNonDom('col');
                         var row = cB.propNonDom('row');
-                        if(row >= 0)
-                        {
+                        if(cswPrivate.UseRadios) {
+                            // clear all other values
+                            for (var r = 0; r < cswPrivate.data.length; r += 1) {
+                                cswPrivate.data[r][cswPrivate.valCol][col] = false;
+                            }
+                        }
+                        if (row >= 0) {
                             cswPrivate.data[row][cswPrivate.valCol][col] = cB.$.is(':checked');
                         }
 
@@ -107,11 +125,11 @@
                     var delChange = Csw.makeDelegate(onChange, check);
                     check.change(delChange);
                 } // for(var c = 0; c < cswPrivate.cols.length; c++)
-            
+
             }; // makeCheckboxRow()
 
-            
-            cswPrivate.makeTable = function(parent) {
+
+            cswPrivate.makeTable = function (parent) {
                 parent.empty();
 
                 var table = parent.table({
@@ -138,6 +156,7 @@
                     var noneRowData = {};
                     noneRowData[cswPrivate.nameCol] = '[none]';
                     noneRowData[cswPrivate.keyCol] = '';
+                    noneRowData[cswPrivate.valCol] = [];
                     for (var e = 0; e < cswPrivate.cols.length; e += 1) {
                         noneRowData[cswPrivate.valCol][e] = true;
                     }
@@ -148,7 +167,7 @@
 
                 // Data
                 for (var s = 0; s < cswPrivate.data.length; s += 1) {
-                    cswPrivate.makeCheckboxRow(table, tablerow + s, data[s], s);
+                    cswPrivate.makeCheckboxRow(table, tablerow + s, cswPrivate.data[s], s);
                 }
 
                 if (false === cswPrivate.UseRadios && cswPrivate.data.length > 0) {
@@ -161,13 +180,13 @@
                         isControl: cswPrivate.isControl,
                         align: 'right'
                     }).a({
-                            href: 'javascript:void(0)',
-                            text: checkAllLinkText,
-                            onClick: function () {
-                                cswPublic.toggleCheckAll();
-                                return false;
-                            }
-                        });
+                        href: 'javascript:void(0)',
+                        text: checkAllLinkText,
+                        onClick: function () {
+                            cswPublic.toggleCheckAll();
+                            return false;
+                        }
+                    });
                 } // if (false === cswPrivate.UseRadios && cswPrivate.data.length > 0) {
             }; // makeTable()
 
@@ -176,25 +195,30 @@
             (function () {
                 Csw.extend(cswPrivate, options);
 
-                cswPrivate.cbaDiv = cswParent.div({
-                    ID: cswPrivate.ID,
-                    height: (25 * cswPrivate.HeightInRows) + 'px'
-                });
-                cswPublic = Csw.dom({ }, cswPrivate.cbaDiv);
+                // link data directly (our version of databinding)
+                cswPrivate.data = options.data;
 
-                if(cswPrivate.useEditButton || cswPrivate.ReadOnly) {
-                    if(cswPrivate.Multi) {
-                        cswPrivate.cbaDiv.append( Csw.enums.multiEditDefaultValue );
+                cswPrivate.cbaDiv = cswParent.div({
+                    ID: cswPrivate.ID
+                });
+                cswPublic = Csw.dom({}, cswPrivate.cbaDiv);
+
+                if (cswPrivate.useEditButton || cswPrivate.ReadOnly) {
+                    if (cswPrivate.Multi) {
+                        cswPrivate.cbaDiv.append(Csw.enums.multiEditDefaultValue);
                     } else {
-                        cswPrivate.cbaDiv.append( cswPrivate.makeTextValue() );
+                        cswPrivate.cbaDiv.append(cswPrivate.makeTextValue());
                     }
 
-                    if(false === cswPrivate.ReadOnly) {
-                        cswPrivate.editButton = cswPrivate.div.icon({
+                    if (false === cswPrivate.ReadOnly) {
+                        cswPrivate.editButton = cswPrivate.cbaDiv.icon({
                             iconType: Csw.enums.iconType.pencil,
                             isButton: true,
                             ID: Csw.makeId(cswPrivate.ID, 'edit'),
                             onClick: function () {
+                                cswPrivate.cbaDiv.css({
+                                    height: (25 * cswPrivate.HeightInRows) + 'px'
+                                });
                                 cswPrivate.MultiIsUnchanged = false;
                                 cswPrivate.makeTable(cswPrivate.cbaDiv);
                             } // onClick
@@ -221,11 +245,11 @@
             }; // ToggleCheckAll()
 
 
-            cswPublic.val = function() {
+            cswPublic.val = function () {
                 return cswPrivate.data;
             };
 
-            cswPublic.MultiIsUnchanged = function() {
+            cswPublic.MultiIsUnchanged = function () {
                 return cswPrivate.MultiIsUnchanged;
             };
 

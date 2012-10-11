@@ -92,6 +92,9 @@ namespace ChemSW.Nbt.PropTypes
                                 o.Values.Add( v );
                             } // for( Int32 i = 0; i < ColumnNames.Count; i++ )
                         } // if( null != Values )
+                        
+                        Options.Add( o );
+
                     } // foreach( JObject ItemObj in Data )
                 } // if( null != Data )
             } // if( null != ParentObject[ElemName_Data] && null != ParentObject[ElemName_Columns] )

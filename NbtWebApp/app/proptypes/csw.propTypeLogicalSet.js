@@ -16,7 +16,7 @@
 
                 cswPrivate.propVals = cswPublic.data.propData.values;
                 cswPrivate.parent = cswPublic.data.propDiv;
-                cswPrivate.logicalSetJson = propVals.logicalsetjson;
+                cswPrivate.logicalSetJson = cswPrivate.propVals.logicalsetjson;
 
                 cswPublic.control = cswPrivate.parent.checkBoxArray({
                     ID: cswPublic.data.ID + '_cba',
@@ -26,13 +26,15 @@
                     Required: cswPublic.data.isRequired(),
                     ReadOnly: cswPublic.data.isReadOnly(),
                     Multi: cswPublic.data.isMulti(),
-                    nameCol: 'name',
                     onChange: function () {
-                        var val = cswPublic.control.val();
-                        Csw.tryExec(cswPublic.data.onChange, val);
-                        if (false === cswPublic.data.isMulti() || false === cswPublic.control.MultiIsUnchanged() ) {
-                            cswPublic.data.onPropChange({ options: val.data });
-                        }
+                        // We're bypassing this to avoid having to deal with the complexity of multiple copies of the checkboxarray JSON
+                        //var val = cswPublic.control.val();
+                        //Csw.tryExec(cswPublic.data.onChange, val);
+                        //if (false === cswPublic.data.isMulti() || false === cswPublic.control.MultiIsUnchanged() ) {
+                            //cswPublic.data.onPropChange({ options: val.data });
+                        //}
+                        cswPublic.data.propData.wasmodified = true;
+
                     }
                 }); // checkBoxArray
                 cswPublic.control.required(cswPublic.data.isRequired());

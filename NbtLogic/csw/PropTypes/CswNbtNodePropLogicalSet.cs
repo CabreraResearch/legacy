@@ -388,7 +388,7 @@ namespace ChemSW.Nbt.PropTypes
                 Option.Label = Row[_NameColumn].ToString();
                 for(Int32 i = 0; i < CBAOptions.Columns.Count; i++)
                 {
-                    Option.Values[i] = CswConvert.ToBoolean( Row[CBAOptions.Columns[i]].ToString() );
+                    Option.Values.Add( CswConvert.ToBoolean( Row[CBAOptions.Columns[i]].ToString() ) );
                 }
                 CBAOptions.Options.Add( Option );
             }
