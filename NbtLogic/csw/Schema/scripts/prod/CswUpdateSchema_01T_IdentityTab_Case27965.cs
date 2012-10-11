@@ -1,9 +1,11 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
+using ChemSW.Core;
 using ChemSW.Exceptions;
-using ChemSW.Nbt.ObjClasses;
-using ChemSW.Nbt.Security;
 using ChemSW.Nbt.csw.Dev;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.ObjClasses;
+using ChemSW.Nbt.Security;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -24,10 +26,13 @@ namespace ChemSW.Nbt.Schema
 
         public override void update()
         {
+            _CswNbtSchemaModTrnsctn.execArbitraryPlatformNeutralSql( "update nodetype_tabset set servermanaged=" + CswConvert.ToDbVal( false ) );
+
             CswNbtMetaDataObjectClass UserOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.UserClass );
             Collection<CswNbtNode> Users = UserOc.getNodes( true, false );
             foreach( CswNbtMetaDataNodeType NodeType in _CswNbtSchemaModTrnsctn.MetaData.getNodeTypesLatestVersion() )
             {
+                Int32 TabCount = NodeType.getNodeTypeTabIds().Count;
                 CswNbtMetaDataNodeTypeTab IdentityTab = NodeType.getIdentityTab();
                 if( null == IdentityTab )
                 {
@@ -38,6 +43,29 @@ namespace ChemSW.Nbt.Schema
                     throw new CswDniException( ErrorType.Error, "Could not find or create an Identity tab for " + NodeType.NodeTypeName + ".", "Identity tab creation failed." );
                 }
                 IdentityTab.ServerManaged = true;
+                if( TabCount > 1 )
+                {
+                    string NodeTypeNameTemplate = NodeType.NameTemplateValue
+                        .Replace( " ", "," )
+                        .Replace( "-", "," )
+                        .Replace( "}", "" )
+                        .Replace( "{", "" )
+                        .Replace( "(", "" )
+                        .Replace( ")", "" );
+                    CswCommaDelimitedString PropIds = new CswCommaDelimitedString();
+                    PropIds.FromString( NodeTypeNameTemplate );
+                    foreach( Int32 PropId in PropIds.ToIntCollection() )
+                    {
+                        if( Int32.MinValue != PropId )
+                        {
+                            CswNbtMetaDataNodeTypeProp IdentityProp = NodeType.getNodeTypeProp( PropId );
+                            if( null != IdentityProp )
+                            {
+                                IdentityProp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, false, IdentityTab.TabId );
+                            }
+                        }
+                    }
+                }
                 foreach( CswNbtObjClassUser User in Users )
                 {
                     if( null != User )
