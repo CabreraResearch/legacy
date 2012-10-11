@@ -262,7 +262,7 @@ namespace ChemSW.Nbt.WebServices
                 Row.Add( NodeAsSize.UnitCount.Gestalt );
 
                 if( ( Tristate.False == NodeAsSize.QuantityEditable.Checked && false == CswTools.IsDouble( NodeAsSize.InitialQuantity.Quantity ) )
-                    || CswTools.IsDouble( NodeAsSize.UnitCount.Value ) )
+                    || false == CswTools.IsDouble( NodeAsSize.UnitCount.Value ) )
                 {
                     SizeNode = null;//Case 27665 - instead of throwing a serverside warning, just throw out the size
                 }
