@@ -141,7 +141,7 @@ namespace ChemSW.Nbt.Schema
                     FieldType = CswNbtMetaDataFieldType.NbtFieldType.Logical,
                     IsRequired = true
                 } );
-                _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( CmtQualifiedOcp, null, Tristate.False );
+                _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( CmtQualifiedOcp, Tristate.False );
             }
 
             //TODO: Create CertDetConditionalSet when CertDef Object Class is implemented
@@ -155,7 +155,7 @@ namespace ChemSW.Nbt.Schema
                     FieldType = CswNbtMetaDataFieldType.NbtFieldType.Logical,
                     IsRequired = true
                 } );
-                _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( CmtObsoleteOcp, null, Tristate.False );
+                _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( CmtObsoleteOcp, Tristate.False );
             }
 
             _resetBlame();
@@ -372,7 +372,7 @@ namespace ChemSW.Nbt.Schema
                     SetValOnAdd = true
                 } );
 
-                _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( CentralOCP, CentralOCP.getFieldTypeRule().SubFields.Default.Name, Tristate.False );
+                _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( CentralOCP, Tristate.False );
 
                 CswNbtMetaDataObjectClassProp AutoCertAppOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( InventoryGroupOc )
                 {
@@ -381,7 +381,7 @@ namespace ChemSW.Nbt.Schema
                     IsRequired = true
                 } );
 
-                _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( AutoCertAppOCP, AutoCertAppOCP.getFieldTypeRule().SubFields.Default.Name, Tristate.False );
+                _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( AutoCertAppOCP, Tristate.False );
             }
             _resetBlame();
             #endregion Case 27870 - New InventoryGroup ObjClassProps
