@@ -24,6 +24,16 @@ namespace ChemSW.Nbt.Schema
                 Description: "How many nodes are processed at a time in chunking procedures",
                 VariableValue: "25",
                 IsSystem: false );
+
+            //remove the "NodesPerCycle" row from the scheduledparams table
+            CswTableUpdate tu = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "removeNodesPerCycle_27880", "scheduledruleparams" );
+            DataTable scheduledparams = tu.getTable( "where paramname = 'NodesPerCycle'" );
+            if( 1 == scheduledparams.Rows.Count ) //we should only get one row!
+            {
+                scheduledparams.Rows[0].Delete();
+            }
+            tu.update( scheduledparams );
+
         }
 
         public override CswDeveloper Author

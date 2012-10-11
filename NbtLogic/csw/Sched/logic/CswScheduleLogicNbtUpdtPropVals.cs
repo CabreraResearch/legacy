@@ -7,6 +7,7 @@ using ChemSW.MtSched.Core;
 using ChemSW.MtSched.Sched;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.ObjClasses;
+using ChemSW.Config;
 
 namespace ChemSW.Nbt.Sched
 {
@@ -51,7 +52,6 @@ namespace ChemSW.Nbt.Sched
         }
 
 
-        private const string _NodesPerCycleParamName = "NodesPerCycle";
         public void threadCallBack()
         {
             _LogicRunStatus = LogicRunStatus.Running;
@@ -70,17 +70,13 @@ namespace ChemSW.Nbt.Sched
                     CswStaticSelect OutOfDateNodesQuerySelect = _CswNbtResources.makeCswStaticSelect( "OutOfDateNodes_select", "ValuesToUpdate" );
                     DataTable OutOfDateNodes = null;
 
-                    Int32 NodesPerCycle = 1;
-                    if( _CswScheduleLogicDetail.RunParams.ContainsKey( _NodesPerCycleParamName ) )
-                    {
-                        NodesPerCycle = CswConvert.ToInt32( _CswScheduleLogicDetail.RunParams[_NodesPerCycleParamName] );
-                        OutOfDateNodesQuerySelect.getTable( false, false, 0, NodesPerCycle );
-                        OutOfDateNodes = OutOfDateNodesQuerySelect.getTable( false, false, 0, NodesPerCycle );
+                    int NodesPerCycle = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswConfigurationVariables.ConfigurationVariableNames.NodesProcessedPerCycle ) );
+                    OutOfDateNodesQuerySelect.getTable( false, false, 0, NodesPerCycle );
+                    OutOfDateNodes = OutOfDateNodesQuerySelect.getTable( false, false, 0, NodesPerCycle );
 
-                        if( NodesPerCycle > OutOfDateNodes.Rows.Count ) //in case we didn't actually retrieve that amount
-                        {
-                            NodesPerCycle = OutOfDateNodes.Rows.Count;
-                        }
+                    if( NodesPerCycle > OutOfDateNodes.Rows.Count ) //in case we didn't actually retrieve that amount
+                    {
+                        NodesPerCycle = OutOfDateNodes.Rows.Count;
                     }
                     else
                     {
