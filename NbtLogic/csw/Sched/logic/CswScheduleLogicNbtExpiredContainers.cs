@@ -8,6 +8,7 @@ using ChemSW.MtSched.Sched;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Batch;
+using ChemSW.Config;
 
 namespace ChemSW.Nbt.Sched
 {
@@ -81,7 +82,7 @@ namespace ChemSW.Nbt.Sched
                     }
 
                     CswNbtBatchOpExpiredContainers batchOp = new CswNbtBatchOpExpiredContainers( _CswNbtResources );
-                    int ContainersProcessedPerIteration = 10;
+                    int ContainersProcessedPerIteration = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswConfigurationVariables.ConfigurationVariableNames.NodesProcessedPerCycle ) );
                     batchOp.makeBatchOp( expiredContainers, ContainersProcessedPerIteration );
 
                     _CswScheduleLogicDetail.StatusMessage = "Completed without error";
