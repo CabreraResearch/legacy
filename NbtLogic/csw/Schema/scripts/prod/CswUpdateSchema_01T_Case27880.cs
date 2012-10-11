@@ -15,17 +15,7 @@ namespace ChemSW.Nbt.Schema
         {
 
             //add the expired containers scheduled rule to the scheduledrules table
-            CswTableUpdate tu = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "expiredContainerSchedRule_27880", "scheduledrules" );
-            DataTable scheduledrules = tu.getTable();
-            DataRow expiredContainersRow = scheduledrules.NewRow();
-            expiredContainersRow["rulename"] = "ExpiredContainers";
-            expiredContainersRow["recurrence"] = "Daily";
-            expiredContainersRow["interval"] = "1";
-            expiredContainersRow["disabled"] = CswConvert.ToDbVal( false );
-            expiredContainersRow["reprobatethreshold"] = "3";
-            expiredContainersRow["maxruntimems"] = "300000";
-            scheduledrules.Rows.Add( expiredContainersRow );
-            tu.update( scheduledrules );
+            _CswNbtSchemaModTrnsctn.createScheduledRule( NbtScheduleRuleNames.ExpiredContainers, MtSched.Core.Recurrence.Daily, 1 );
 
         }
 
