@@ -137,7 +137,7 @@ namespace ChemSW.Nbt.Actions
             return CategoryName;
         }
 
-        private void _validateNodeType( CswNbtMetaDataNodeType NodeType, CswNbtMetaDataObjectClass.NbtObjectClass ObjectClass )
+        private void _validateNodeType( CswNbtMetaDataNodeType NodeType, NbtObjectClass ObjectClass )
         {
             if( null == NodeType )
             {
@@ -310,7 +310,7 @@ namespace ChemSW.Nbt.Actions
             {
                 InspectionTargetNt = _createNewInspectionTargetAndGroup( InspectionTargetName, Category, InspectionDesignNt );
             }
-            _validateNodeType( InspectionTargetNt, CswNbtMetaDataObjectClass.NbtObjectClass.InspectionTargetClass );
+            _validateNodeType( InspectionTargetNt, NbtObjectClass.InspectionTargetClass );
 
             return InspectionTargetNt;
         }
@@ -322,18 +322,18 @@ namespace ChemSW.Nbt.Actions
             {
                 throw new CswDniException( ErrorType.Warning, "Cannot create Inspection Target without a name.", "InspectionTargetName was null or empty." );
             }
-            _validateNodeType( InspectionDesignNt, CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass );
+            _validateNodeType( InspectionDesignNt, NbtObjectClass.InspectionDesignClass );
 
             CswNbtMetaDataNodeType GeneratorNt = _CswNbtResources.MetaData.getNodeType( CswNbtObjClassGenerator.InspectionGeneratorNodeTypeName );
-            _validateNodeType( GeneratorNt, CswNbtMetaDataObjectClass.NbtObjectClass.GeneratorClass );
+            _validateNodeType( GeneratorNt, NbtObjectClass.GeneratorClass );
             _setNodeTypePermissions( GeneratorNt );
 
             string InspectionDesignName = InspectionDesignNt.NodeTypeName;
 
             //if we're here, we're validated
-            CswNbtMetaDataObjectClass InspectionTargetOc = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.InspectionTargetClass );
-            CswNbtMetaDataObjectClass InspectionTargetGroupOc = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.InspectionTargetGroupClass );
-            //CswNbtMetaDataObjectClass InspectionRouteOc = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.InspectionRouteClass );
+            CswNbtMetaDataObjectClass InspectionTargetOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.InspectionTargetClass );
+            CswNbtMetaDataObjectClass InspectionTargetGroupOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.InspectionTargetGroupClass );
+            //CswNbtMetaDataObjectClass InspectionRouteOc = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClassName.NbtObjectClass.InspectionRouteClass );
 
             //This will validate names and throw if not unique.
             //Case 24408: In Db, NodeTypeName == varchar(50)
@@ -394,7 +394,7 @@ namespace ChemSW.Nbt.Actions
 
         private void _setInspectionDesignTabsAndProps( CswNbtMetaDataNodeType InspectionDesignNt, CswNbtMetaDataNodeType InspectionTargetNt )
         {
-            _validateNodeType( InspectionDesignNt, CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass );
+            _validateNodeType( InspectionDesignNt, NbtObjectClass.InspectionDesignClass );
 
             _DesignNtId = InspectionDesignNt.FirstVersionNodeTypeId;
 
@@ -437,7 +437,7 @@ namespace ChemSW.Nbt.Actions
 
         private void _pruneSectionOneTab( CswNbtMetaDataNodeType InspectionDesignNt )
         {
-            _validateNodeType( InspectionDesignNt, CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass );
+            _validateNodeType( InspectionDesignNt, NbtObjectClass.InspectionDesignClass );
             CswNbtMetaDataNodeTypeTab SectionOneTab = InspectionDesignNt.getNodeTypeTab( "Section 1" );
             if( null != SectionOneTab )
             {
@@ -454,9 +454,9 @@ namespace ChemSW.Nbt.Actions
 
         private void _validateInspectionScheduleNt( CswNbtMetaDataNodeType InspectionScheduleNt )
         {
-            _validateNodeType( InspectionScheduleNt, CswNbtMetaDataObjectClass.NbtObjectClass.GeneratorClass );
+            _validateNodeType( InspectionScheduleNt, NbtObjectClass.GeneratorClass );
             CswNbtMetaDataNodeTypeProp OwnerNtp = InspectionScheduleNt.getNodeTypePropByObjectClassProp( CswNbtObjClassGenerator.PropertyName.Owner );
-            CswNbtMetaDataObjectClass GroupOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.InspectionTargetGroupClass );
+            CswNbtMetaDataObjectClass GroupOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.InspectionTargetGroupClass );
 
             if( OwnerNtp.FKType != NbtViewRelatedIdType.ObjectClassId.ToString() || OwnerNtp.FKValue != GroupOC.ObjectClassId )
             {
@@ -515,7 +515,7 @@ namespace ChemSW.Nbt.Actions
 
         private CswNbtView _createInspectionSchedulingView( CswNbtMetaDataNodeType InspectionDesignNt, string Category, CswNbtMetaDataNodeType InspectionTargetNt )
         {
-            _validateNodeType( InspectionDesignNt, CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass );
+            _validateNodeType( InspectionDesignNt, NbtObjectClass.InspectionDesignClass );
             CswNbtView RetView = null;
             string InspectionSchedulesViewName = "Scheduling, " + InspectionDesignNt.NodeTypeName + ": " + InspectionTargetNt.NodeTypeName;
 
@@ -541,12 +541,12 @@ namespace ChemSW.Nbt.Actions
                     RetView.Category = Category;
 
                     CswNbtMetaDataNodeType GeneratorNt = _CswNbtResources.MetaData.getNodeType( CswNbtObjClassGenerator.InspectionGeneratorNodeTypeName );
-                    _validateNodeType( GeneratorNt, CswNbtMetaDataObjectClass.NbtObjectClass.GeneratorClass );
+                    _validateNodeType( GeneratorNt, NbtObjectClass.GeneratorClass );
                     CswNbtMetaDataNodeTypeProp GnOwnerNtp = GeneratorNt.getNodeTypePropByObjectClassProp( CswNbtObjClassGenerator.PropertyName.Owner );
 
                     CswNbtMetaDataNodeTypeProp ItTargetGroupNtp = InspectionTargetNt.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionTarget.PropertyName.InspectionTargetGroup );
                     CswNbtMetaDataNodeType InspectionTargetGroupNt = _CswNbtResources.MetaData.getNodeType( ItTargetGroupNtp.FKValue );
-                    _validateNodeType( InspectionTargetGroupNt, CswNbtMetaDataObjectClass.NbtObjectClass.InspectionTargetGroupClass );
+                    _validateNodeType( InspectionTargetGroupNt, NbtObjectClass.InspectionTargetGroupClass );
 
                     /* View:
                         [Group]
@@ -568,10 +568,10 @@ namespace ChemSW.Nbt.Actions
 
         private CswNbtView _createInspectionGroupAssignmentView( string Category, CswNbtMetaDataNodeType InspectionTargetNt, CswNbtMetaDataNodeType InspectionDesignNt )
         {
-            _validateNodeType( InspectionTargetNt, CswNbtMetaDataObjectClass.NbtObjectClass.InspectionTargetClass );
+            _validateNodeType( InspectionTargetNt, NbtObjectClass.InspectionTargetClass );
             CswNbtMetaDataNodeTypeProp ItTargetGroupNtp = InspectionTargetNt.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionTarget.PropertyName.InspectionTargetGroup );
             CswNbtMetaDataNodeType InspectionTargetGroupNt = _CswNbtResources.MetaData.getNodeType( ItTargetGroupNtp.FKValue );
-            _validateNodeType( InspectionTargetGroupNt, CswNbtMetaDataObjectClass.NbtObjectClass.InspectionTargetGroupClass );
+            _validateNodeType( InspectionTargetGroupNt, NbtObjectClass.InspectionTargetGroupClass );
 
             CswNbtView RetView = null;
             string GroupAssignmentViewName = "Groups, " + InspectionDesignNt.NodeTypeName + ": " + InspectionTargetNt.NodeTypeName;
@@ -623,7 +623,7 @@ namespace ChemSW.Nbt.Actions
         private CswNbtView _createInspectionsGridView( CswNbtMetaDataNodeTypeProp InspectionsGridProp, CswNbtMetaDataNodeType InspectionDesignNt, string Category, NbtViewRenderingMode ViewMode,
              bool AllInspections, DateTime DueDate, string InspectionsViewName )
         {
-            _validateNodeType( InspectionDesignNt, CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass );
+            _validateNodeType( InspectionDesignNt, NbtObjectClass.InspectionDesignClass );
             if( string.IsNullOrEmpty( InspectionsViewName ) )
             {
                 throw new CswDniException( ErrorType.Warning, "Cannot create an Inspections view without a name.", "View name was null or empty." );
@@ -668,8 +668,8 @@ namespace ChemSW.Nbt.Actions
 
         private CswNbtView _createTargetInspectionsView( CswNbtMetaDataNodeType InspectionDesignNt, string Category, CswNbtMetaDataNodeType InspectionTargetNt )
         {
-            _validateNodeType( InspectionDesignNt, CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass );
-            _validateNodeType( InspectionTargetNt, CswNbtMetaDataObjectClass.NbtObjectClass.InspectionTargetClass );
+            _validateNodeType( InspectionDesignNt, NbtObjectClass.InspectionDesignClass );
+            _validateNodeType( InspectionTargetNt, NbtObjectClass.InspectionTargetClass );
 
             CswNbtView RetView = null;
             string InspectionTargetViewName = "Inspections, " + InspectionDesignNt.NodeTypeName + ": " + InspectionTargetNt.NodeTypeName;
@@ -719,7 +719,7 @@ namespace ChemSW.Nbt.Actions
         private CswNbtView _createAllInspectionPointsGridView( CswNbtMetaDataNodeType InspectionGroupNt, CswNbtMetaDataNodeType InspectionTargetNt, string Category, NbtViewRenderingMode ViewMode,
              string AllInspectionPointsViewName )
         {
-            _validateNodeType( InspectionTargetNt, CswNbtMetaDataObjectClass.NbtObjectClass.InspectionTargetClass );
+            _validateNodeType( InspectionTargetNt, NbtObjectClass.InspectionTargetClass );
             CswNbtView RetView = new CswNbtView( _CswNbtResources );
 
             try
@@ -948,7 +948,7 @@ namespace ChemSW.Nbt.Actions
 
             Int32 TotalRows = GridArray.Count;
 
-            CswNbtMetaDataNodeType InspectionDesignNt = _CswNbtResources.MetaData.makeNewNodeType( CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass.ToString(), InspectionDesignName, string.Empty );
+            CswNbtMetaDataNodeType InspectionDesignNt = _CswNbtResources.MetaData.makeNewNodeType( NbtObjectClass.InspectionDesignClass.ToString(), InspectionDesignName, string.Empty );
             _setNodeTypePermissions( InspectionDesignNt );
 
             //Get distinct tabs

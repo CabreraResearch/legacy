@@ -119,7 +119,7 @@ namespace ChemSW.Nbt.ObjClasses
         }
 
         // For validating object class casting
-        protected static bool _Validate( CswNbtNode Node, CswNbtMetaDataObjectClass.NbtObjectClass TargetObjectClass )
+        protected static bool _Validate( CswNbtNode Node, NbtObjectClass TargetObjectClass )
         {
             if( Node == null )
             {

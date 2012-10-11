@@ -144,7 +144,7 @@ namespace ChemSW.Nbt.MetaData
                 NodeTypeId = NodeType.NodeTypeId;
                 FieldType = NbtFieldType;
                 PropName = NbtPropName;
-                UseNumbering = ( NodeType.getObjectClass().ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass &&
+                UseNumbering = ( NodeType.getObjectClass().ObjectClass == NbtObjectClass.InspectionDesignClass &&
                                 FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Question );
                 if( FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.NodeTypeSelect )
                 {

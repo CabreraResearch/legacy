@@ -15,7 +15,7 @@ namespace ChemSW.Nbt.Schema
         public override void update()
         {
 
-            CswNbtMetaDataObjectClass problemOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.ProblemClass );
+            CswNbtMetaDataObjectClass problemOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.ProblemClass );
             CswNbtMetaDataObjectClassProp closedOCP = problemOC.getObjectClassProp( CswNbtObjClassProblem.PropertyName.Closed );
             foreach( CswNbtMetaDataNodeType problemNT in problemOC.getNodeTypes() )
             {

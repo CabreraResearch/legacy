@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Xml;
-using System.Xml.Linq;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
@@ -126,36 +124,10 @@ namespace ChemSW.Nbt.PropTypes
             setSequenceValue();
         }
 
-
-        public override void ToXml( XmlNode ParentNode )
-        {
-            CswXmlDocument.AppendXmlNode( ParentNode, _SequenceSubField.ToXmlNodeName(), Sequence );
-            CswXmlDocument.AppendXmlNode( ParentNode, _SequenceNumberSubField.ToXmlNodeName(), SequenceNumber );
-        }
-
-        public override void ToXElement( XElement ParentNode )
-        {
-            ParentNode.Add( new XElement( _SequenceSubField.ToXmlNodeName( true ), Sequence ),
-                new XElement( _SequenceNumberSubField.ToXmlNodeName( true ), SequenceNumber ) );
-        }
-
         public override void ToJSON( JObject ParentObject )
         {
             ParentObject[_SequenceSubField.ToXmlNodeName( true )] = Sequence;
             ParentObject[_SequenceNumberSubField.ToXmlNodeName( true )] = SequenceNumber;
-        }
-
-        public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
-        {
-            _saveProp( CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _SequenceSubField.ToXmlNodeName() ) );
-        }
-
-        public override void ReadXElement( XElement XmlNode, Dictionary<int, int> NodeMap, Dictionary<int, int> NodeTypeMap )
-        {
-            if( null != XmlNode.Element( _SequenceSubField.ToXmlNodeName( true ) ) )
-            {
-                _saveProp( XmlNode.Element( _SequenceSubField.ToXmlNodeName( true ) ).Value );
-            }
         }
 
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )

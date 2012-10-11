@@ -12,7 +12,7 @@ namespace ChemSW.Nbt.Schema
     {
         public override void update()
         {
-            CswNbtMetaDataObjectClass JurisdictionOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.JurisdictionClass );
+            CswNbtMetaDataObjectClass JurisdictionOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.JurisdictionClass );
             if( null != JurisdictionOc )
             {
                 CswNbtMetaDataNodeType JurisdictionNt = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Jurisdiction" );

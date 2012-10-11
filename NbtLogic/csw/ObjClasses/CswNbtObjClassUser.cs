@@ -77,8 +77,8 @@ namespace ChemSW.Nbt.ObjClasses
         {
             if( Node.NodeId != null )
             {
-                //CswNbtMetaDataObjectClass User_ObjectClass = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
-                //CswNbtMetaDataObjectClass Role_ObjectClass = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.RoleClass );
+                //CswNbtMetaDataObjectClass User_ObjectClass = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClassName.NbtObjectClass.UserClass );
+                //CswNbtMetaDataObjectClass Role_ObjectClass = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClassName.NbtObjectClass.RoleClass );
                 //CswNbtMetaDataObjectClassProp UserName_ObjectClassProp = User_ObjectClass.getObjectClassProp( CswNbtObjClassUser.UsernamePropertyName );
                 //CswNbtMetaDataObjectClassProp Role_ObjectClassProp = User_ObjectClass.getObjectClassProp( CswNbtObjClassUser.RolePropertyName );
 
@@ -147,7 +147,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
-            get { return _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass ); }
+            get { return _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.UserClass ); }
         }
 
         /// <summary>
@@ -156,7 +156,7 @@ namespace ChemSW.Nbt.ObjClasses
         public static implicit operator CswNbtObjClassUser( CswNbtNode Node )
         {
             CswNbtObjClassUser ret = null;
-            if( null != Node && _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.UserClass ) )
+            if( null != Node && _Validate( Node, NbtObjectClass.UserClass ) )
             {
                 ret = (CswNbtObjClassUser) Node.ObjClass;
             }
@@ -299,7 +299,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             //case 24525 - add default filter to ignore archived users in relationship props
             CswNbtView view = ParentRelationship.View;
-            CswNbtMetaDataObjectClass userOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
+            CswNbtMetaDataObjectClass userOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.UserClass );
             CswNbtMetaDataObjectClassProp archivedOCP = userOC.getObjectClassProp( PropertyName.Archived );
             view.AddViewPropertyAndFilter( ParentRelationship, archivedOCP, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.NotEquals, Value: Tristate.True.ToString() );
 

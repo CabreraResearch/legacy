@@ -72,7 +72,7 @@ namespace NbtWebApp.WebSvc.Logic.Reports
 
             CswPrimaryKey ThisUserPk = CswNbtResources.CurrentNbtUser.UserId;
 
-            CswNbtMetaDataObjectClass MailReportOC = CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.MailReportClass );
+            CswNbtMetaDataObjectClass MailReportOC = CswNbtResources.MetaData.getObjectClass( NbtObjectClass.MailReportClass );
             foreach( CswNbtObjClassMailReport MailReportNode in MailReportOC.getNodes( false, false ) )
             {
                 MailReportSubscriptions.Subscription sub = new MailReportSubscriptions.Subscription();
@@ -88,7 +88,7 @@ namespace NbtWebApp.WebSvc.Logic.Reports
         {
             CswNbtResources CswNbtResources = (CswNbtResources) CswResources;
             CswPrimaryKey ThisUserPk = CswNbtResources.CurrentNbtUser.UserId;
-            CswNbtMetaDataObjectClass MailReportOC = CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.MailReportClass );
+            CswNbtMetaDataObjectClass MailReportOC = CswNbtResources.MetaData.getObjectClass( NbtObjectClass.MailReportClass );
 
             foreach( MailReportSubscriptions.Subscription sub in Request.Subscriptions )
             {

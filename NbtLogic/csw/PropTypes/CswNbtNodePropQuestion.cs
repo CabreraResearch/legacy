@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Xml;
-using System.Xml.Linq;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
@@ -311,36 +309,6 @@ namespace ChemSW.Nbt.PropTypes
             }
         }
 
-        public override void ToXml( XmlNode ParentNode )
-        {
-            CswXmlDocument.AppendXmlNode( ParentNode, _AnswerSubField.ToXmlNodeName(), Answer );
-            CswXmlDocument.AppendXmlNode( ParentNode, CswNbtSubField.SubFieldName.AllowedAnswers.ToString().ToLower(), AllowedAnswersString );
-            CswXmlDocument.AppendXmlNode( ParentNode, CswNbtSubField.SubFieldName.CompliantAnswers.ToString().ToLower(), CompliantAnswersString );
-            CswXmlDocument.AppendXmlNode( ParentNode, _CommentsSubField.ToXmlNodeName(), Comments );
-            CswXmlDocument.AppendXmlNode( ParentNode, _CorrectiveActionSubField.ToXmlNodeName(), CorrectiveAction );
-            CswXmlDocument.AppendXmlNode( ParentNode, _IsCompliantSubField.ToXmlNodeName(), IsCompliant.ToString() );
-
-            CswXmlDocument.AppendXmlNode( ParentNode, _DateAnsweredSubField.ToXmlNodeName(), ( DateAnswered != DateTime.MinValue ) ?
-                DateAnswered.ToShortDateString() : string.Empty );
-
-            CswXmlDocument.AppendXmlNode( ParentNode, _DateCorrectedSubField.ToXmlNodeName(), ( DateCorrected != DateTime.MinValue ) ?
-                DateCorrected.ToShortDateString() : string.Empty );
-        }
-
-        public override void ToXElement( XElement ParentNode )
-        {
-            ParentNode.Add( new XElement( _AnswerSubField.ToXmlNodeName( true ), Answer ),
-                            new XElement( CswNbtSubField.SubFieldName.AllowedAnswers.ToString().ToLower(), AllowedAnswersString ),
-                            new XElement( CswNbtSubField.SubFieldName.CompliantAnswers.ToString().ToLower(), CompliantAnswersString ),
-                            new XElement( _CommentsSubField.ToXmlNodeName( true ), Comments ),
-                            new XElement( _CorrectiveActionSubField.ToXmlNodeName( true ), CorrectiveAction ),
-                            new XElement( _IsCompliantSubField.ToXmlNodeName( true ), IsCompliant.ToString() ),
-                            new XElement( _DateAnsweredSubField.ToXmlNodeName( true ), ( DateAnswered != DateTime.MinValue ) ?
-                                    DateAnswered.ToShortDateString() : string.Empty ),
-                            new XElement( _DateCorrectedSubField.ToXmlNodeName( true ), ( DateCorrected != DateTime.MinValue ) ?
-                                    DateCorrected.ToShortDateString() : string.Empty ) );
-        }
-
         public override void ToJSON( JObject ParentObject )
         {
             ParentObject[_AnswerSubField.ToXmlNodeName( true )] = Answer;
@@ -362,49 +330,6 @@ namespace ChemSW.Nbt.PropTypes
             ParentObject[_DateAnsweredSubField.ToXmlNodeName( true )] = CswDateAnswered.ToClientAsDateTimeJObject();
             CswDateTime CswDateCorrected = new CswDateTime( _CswNbtResources, DateCorrected );
             ParentObject[_DateCorrectedSubField.ToXmlNodeName( true )] = CswDateCorrected.ToClientAsDateTimeJObject();
-        }
-
-        public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
-        {
-            // case 21010 - set dates from data first, and only if they are currently blank
-            if( DateAnswered == DateTime.MinValue )
-                DateAnswered = CswXmlDocument.ChildXmlNodeValueAsDate( XmlNode, _DateAnsweredSubField.ToXmlNodeName() );
-            if( DateCorrected == DateTime.MinValue )
-                DateCorrected = CswXmlDocument.ChildXmlNodeValueAsDate( XmlNode, _DateCorrectedSubField.ToXmlNodeName() );
-
-            Answer = CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _AnswerSubField.ToXmlNodeName() );
-            Comments = CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _CommentsSubField.ToXmlNodeName() );
-            CorrectiveAction = CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _CorrectiveActionSubField.ToXmlNodeName() );
-        }
-
-        public override void ReadXElement( XElement XmlNode, Dictionary<int, int> NodeMap, Dictionary<int, int> NodeTypeMap )
-        {
-            if( DateAnswered == DateTime.MinValue )
-            {
-                if( null != XmlNode.Element( _DateAnsweredSubField.ToXmlNodeName( true ) ) )
-                {
-                    DateAnswered = CswConvert.ToDateTime( XmlNode.Element( _DateAnsweredSubField.ToXmlNodeName( true ) ).Value );
-                }
-            }
-            if( DateCorrected == DateTime.MinValue )
-            {
-                if( null != XmlNode.Element( _DateCorrectedSubField.ToXmlNodeName( true ) ) )
-                {
-                    DateCorrected = CswConvert.ToDateTime( XmlNode.Element( _DateCorrectedSubField.ToXmlNodeName( true ) ).Value );
-                }
-            }
-            if( null != XmlNode.Element( _AnswerSubField.ToXmlNodeName( true ) ) )
-            {
-                Answer = XmlNode.Element( _AnswerSubField.ToXmlNodeName( true ) ).Value;
-            }
-            if( null != XmlNode.Element( _CommentsSubField.ToXmlNodeName( true ) ) )
-            {
-                Comments = XmlNode.Element( _CommentsSubField.ToXmlNodeName( true ) ).Value;
-            }
-            if( null != XmlNode.Element( _CorrectiveActionSubField.ToXmlNodeName( true ) ) )
-            {
-                CorrectiveAction = XmlNode.Element( _CorrectiveActionSubField.ToXmlNodeName( true ) ).Value;
-            }
         }
 
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )

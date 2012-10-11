@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Xml;
-using System.Xml.Linq;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
@@ -372,10 +370,6 @@ namespace ChemSW.Nbt.PropTypes
         public enum IdRefContext { Unknown, Source, Destination };
         public enum IdRefState { Unknown, SourceResolved, SourceOpen, DestinationOpen, DestinationResolved };
 
-        abstract public void ToXml( XmlNode ParentNode );
-        abstract public void ToXElement( XElement ParentNode );
-        abstract public void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap );
-        abstract public void ReadXElement( XElement XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap );
         abstract public void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap );
         public abstract void ToJSON( JObject ParentObject );
         public abstract void ReadJSON( JObject JObject, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap );

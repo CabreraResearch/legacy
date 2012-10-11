@@ -22,7 +22,7 @@ namespace ChemSW.Nbt.Schema
             CswNbtObjClassRole AdminRole = _CswNbtSchemaModTrnsctn.Nodes.makeRoleNodeFromRoleName( "Administrator" );
             CswNbtObjClassRole ChemSWAdminRole = _CswNbtSchemaModTrnsctn.Nodes.makeRoleNodeFromRoleName( "chemsw_admin_role" );
 
-            CswNbtMetaDataObjectClass InvGrpPermOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.InventoryGroupPermissionClass );
+            CswNbtMetaDataObjectClass InvGrpPermOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.InventoryGroupPermissionClass );
             CswNbtMetaDataNodeType InvGrpPermNt = InvGrpPermOc.FirstNodeType;
 
             if( null != DefaultInventoryGroup )
@@ -58,7 +58,7 @@ namespace ChemSW.Nbt.Schema
                     }
                 }
 
-                CswNbtMetaDataObjectClass LocationOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.LocationClass );
+                CswNbtMetaDataObjectClass LocationOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.LocationClass );
                 CswNbtMetaDataNodeType LocationNt = LocationOc.FirstNodeType;
 
                 if( null != CISProInventoryGroup && null != LocationNt )
@@ -92,7 +92,7 @@ namespace ChemSW.Nbt.Schema
         private CswNbtObjClassWorkUnit _getDefaultWorkUnit()
         {
             CswNbtObjClassWorkUnit DefaultWorkUnit = null;
-            CswNbtMetaDataObjectClass WorkUnitOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.WorkUnitClass );
+            CswNbtMetaDataObjectClass WorkUnitOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.WorkUnitClass );
             CswNbtMetaDataNodeType WorkUnitNt = WorkUnitOc.FirstNodeType;
             if( null != WorkUnitNt )
             {
@@ -110,7 +110,7 @@ namespace ChemSW.Nbt.Schema
         private CswNbtObjClassInventoryGroup _getInventoryGroup( string Name )
         {
             CswNbtObjClassInventoryGroup DefaultInventoryGroup = null;
-            CswNbtMetaDataObjectClass InvGrpOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.InventoryGroupClass );
+            CswNbtMetaDataObjectClass InvGrpOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.InventoryGroupClass );
             CswNbtMetaDataNodeType InvGrpNt = InvGrpOc.FirstNodeType;
             if( null != InvGrpNt )
             {

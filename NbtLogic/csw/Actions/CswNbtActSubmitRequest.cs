@@ -42,8 +42,8 @@ namespace ChemSW.Nbt.Actions
                 RequestViewName = CswNbtActSystemViews.SystemViewName.CISProRequestCart;
             }
             _SystemViews = new CswNbtActSystemViews( _CswNbtResources, RequestViewName, null );
-            _RequestOc = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.RequestClass );
-            _RequestItemOc = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.RequestItemClass );
+            _RequestOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.RequestClass );
+            _RequestItemOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.RequestItemClass );
 
             if( null != RequestNodeId )
             {
@@ -446,7 +446,7 @@ namespace ChemSW.Nbt.Actions
 
         private void _setRequestItemSizesView( CswNbtViewId SizeViewId, CswPrimaryKey SizeMaterialId )
         {
-            CswNbtMetaDataObjectClass SizeOc = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.SizeClass );
+            CswNbtMetaDataObjectClass SizeOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.SizeClass );
             CswNbtMetaDataObjectClassProp SizeMaterialOcp = SizeOc.getObjectClassProp( CswNbtObjClassSize.PropertyName.Material );
             CswNbtView SizeView = _CswNbtResources.ViewSelect.restoreView( SizeViewId );
             SizeView.Root.ChildRelationships.Clear();

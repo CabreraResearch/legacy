@@ -38,8 +38,8 @@ namespace ChemSW.Nbt.Actions
 
             _MaterialOc = MaterialOc;
             _MaterialId = MaterialNodeId;
-            _ContainerOc = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.ContainerClass );
-            _SizeOc = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.SizeClass );
+            _ContainerOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.ContainerClass );
+            _SizeOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.SizeClass );
         }
 
         #endregion Constructor
@@ -55,7 +55,7 @@ namespace ChemSW.Nbt.Actions
                 SizeView.ViewMode = NbtViewRenderingMode.Grid;
 
                 CswNbtViewRelationship MaterialRel = SizeView.AddViewRelationship( _MaterialOc, true );
-                CswNbtMetaDataObjectClass SizeOc = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.SizeClass );
+                CswNbtMetaDataObjectClass SizeOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.SizeClass );
                 CswNbtMetaDataObjectClassProp InitialQuantityOcp = SizeOc.getObjectClassProp( CswNbtObjClassSize.PropertyName.InitialQuantity );
                 CswNbtMetaDataObjectClassProp MaterialOcp = SizeOc.getObjectClassProp( CswNbtObjClassSize.PropertyName.Material );
                 CswNbtMetaDataObjectClassProp CatalogNoOcp = SizeOc.getObjectClassProp( CswNbtObjClassSize.PropertyName.CatalogNo );
@@ -214,7 +214,7 @@ namespace ChemSW.Nbt.Actions
         public static Int32 getMaterialDocumentNodeTypeId( CswNbtResources CswNbtResources, CswNbtObjClassMaterial NodeAsMaterial )
         {
             Int32 Ret = Int32.MinValue;
-            CswNbtMetaDataObjectClass DocumentOc = CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.DocumentClass );
+            CswNbtMetaDataObjectClass DocumentOc = CswNbtResources.MetaData.getObjectClass( NbtObjectClass.DocumentClass );
             foreach( CswNbtMetaDataNodeType DocumentNt in from
                                                               _DocumentNt in
                                                               DocumentOc.getLatestVersionNodeTypes()

@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Xml;
-using System.Xml.Linq;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
@@ -68,35 +66,11 @@ namespace ChemSW.Nbt.PropTypes
             return ret;
         }
 
-        public override void ToXml( XmlNode ParentNode )
-        {
-            XmlNode MolNode = CswXmlDocument.AppendXmlNode( ParentNode, _MolSubField.ToXmlNodeName() );
-            CswXmlDocument.SetInnerTextAsCData( MolNode, Mol );
-        }
-
-        public override void ToXElement( XElement ParentNode )
-        {
-            ParentNode.Add( new XElement( _MolSubField.ToXmlNodeName( true ), Mol ) );
-        }
-
         public override void ToJSON( JObject ParentObject )
         {
             ParentObject[_MolSubField.ToXmlNodeName( true )] = Mol;
             ParentObject["column"] = _MolSubField.Column.ToString().ToLower();
             ParentObject[CswNbtSubField.SubFieldName.Href.ToString().ToLower()] = getLink( JctNodePropId, NodeId, NodeTypePropId );
-        }
-
-        public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
-        {
-            Mol = CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _MolSubField.ToXmlNodeName() );
-        }
-
-        public override void ReadXElement( XElement XmlNode, Dictionary<int, int> NodeMap, Dictionary<int, int> NodeTypeMap )
-        {
-            if( null != XmlNode.Element( _MolSubField.ToXmlNodeName( true ) ) )
-            {
-                Mol = XmlNode.Element( _MolSubField.ToXmlNodeName( true ) ).Value;
-            }
         }
 
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )

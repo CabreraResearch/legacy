@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Collections.ObjectModel;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Data;
 using System.Web.UI;
 using System.Web.UI.HtmlControls;
@@ -112,15 +112,15 @@ namespace ChemSW.NbtWebControls
 
                 if( _CswNbtResources.CurrentNbtUser.IsAdministrator() )
                 {
-					//ICswNbtTree RolesTree = _CswNbtResources.Trees.getTreeFromObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.RoleClass );
-					//for( Int32 r = 0; r < RolesTree.getChildNodeCount(); r++ )
-					//{
-					//    RolesTree.goToNthChild( r );
-					CswNbtMetaDataObjectClass RoleOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.RoleClass );
-					foreach(CswNbtNode RoleNode in RoleOC.getNodes(false, false))
-					{
-						//_RoleSelect.Items.Add( new ListItem( RolesTree.getNodeNameForCurrentPosition(), RolesTree.getNodeIdForCurrentPosition().ToString() ) );
-						_RoleSelect.Items.Add( new ListItem( RoleNode.NodeName, RoleNode.NodeId.ToString() ) );
+                    //ICswNbtTree RolesTree = _CswNbtResources.Trees.getTreeFromObjectClass( CswNbtMetaDataObjectClassName.NbtObjectClass.RoleClass );
+                    //for( Int32 r = 0; r < RolesTree.getChildNodeCount(); r++ )
+                    //{
+                    //    RolesTree.goToNthChild( r );
+                    CswNbtMetaDataObjectClass RoleOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.RoleClass );
+                    foreach( CswNbtNode RoleNode in RoleOC.getNodes( false, false ) )
+                    {
+                        //_RoleSelect.Items.Add( new ListItem( RolesTree.getNodeNameForCurrentPosition(), RolesTree.getNodeIdForCurrentPosition().ToString() ) );
+                        _RoleSelect.Items.Add( new ListItem( RoleNode.NodeName, RoleNode.NodeId.ToString() ) );
                         //RolesTree.goToParentNode();
                     }
                 }
@@ -244,16 +244,16 @@ namespace ChemSW.NbtWebControls
                 _RoleLiteral.Visible = true;
             }
 
-			if( _CswNbtResources.Permit.can( CswNbtActionName.Design ) )
-			{
-				_ConfigButton.Visible = true;
-				_AddButton.Visible = true;
-			}
-			else
-			{
-				_ConfigButton.Visible = false;
-				_AddButton.Visible = false;
-			}
+            if( _CswNbtResources.Permit.can( CswNbtActionName.Design ) )
+            {
+                _ConfigButton.Visible = true;
+                _AddButton.Visible = true;
+            }
+            else
+            {
+                _ConfigButton.Visible = false;
+                _AddButton.Visible = false;
+            }
 
             _ResetButton.OnClientClick = "return confirm(\"Are you sure you want to reset the content of this page?\");";
             _AddButton.OnClientClick = "WelcomeAddComponentDialog_openPopup(document.getElementById('" + _RoleSelect.ClientID + "')); return false;";
@@ -332,8 +332,8 @@ namespace ChemSW.NbtWebControls
             {
                 string[] SplitID = ( (LinkButton) sender ).ID.Split( '_' );
                 //CswViewListTree.ViewType ThisViewType = (CswViewListTree.ViewType) Enum.Parse( typeof( CswViewListTree.ViewType ), SplitID[1] );
-				CswNbtViewId ViewId = new CswNbtViewId( CswConvert.ToInt32( SplitID[2] ) );
-				CswNbtView ThisView = _CswNbtResources.ViewSelect.restoreView( ViewId );
+                CswNbtViewId ViewId = new CswNbtViewId( CswConvert.ToInt32( SplitID[2] ) );
+                CswNbtView ThisView = _CswNbtResources.ViewSelect.restoreView( ViewId );
                 //_setupSearchViewRecursive( _LayoutTable, ThisView.Root );
                 if( OnSearchClick != null )
                     OnSearchClick( ThisView.ToString() );
@@ -349,8 +349,8 @@ namespace ChemSW.NbtWebControls
             {
                 string[] SplitID = ( (ImageButton) sender ).ID.Split( '_' );
                 //CswViewListTree.ViewType ThisViewType = (CswViewListTree.ViewType) Enum.Parse( typeof( CswViewListTree.ViewType ), SplitID[1] );
-				CswNbtViewId ViewId = new CswNbtViewId( CswConvert.ToInt32( SplitID[2] ) );
-				CswNbtView ThisView = _CswNbtResources.ViewSelect.restoreView( ViewId );
+                CswNbtViewId ViewId = new CswNbtViewId( CswConvert.ToInt32( SplitID[2] ) );
+                CswNbtView ThisView = _CswNbtResources.ViewSelect.restoreView( ViewId );
                 //_setupSearchViewRecursive( _LayoutTable, ThisView.Root );
                 if( OnSearchClick != null )
                     OnSearchClick( ThisView.ToString() );
@@ -440,10 +440,10 @@ namespace ChemSW.NbtWebControls
                 WelcomeTable.Rows[i].Delete();
             }
 
-			CswNbtViewId EquipmentByTypeViewId = new CswNbtViewId();
-			CswNbtViewId TasksOpenViewId = new CswNbtViewId();
-			CswNbtViewId ProblemsOpenViewId = new CswNbtViewId();
-			CswNbtViewId FindEquipmentViewId = new CswNbtViewId();
+            CswNbtViewId EquipmentByTypeViewId = new CswNbtViewId();
+            CswNbtViewId TasksOpenViewId = new CswNbtViewId();
+            CswNbtViewId ProblemsOpenViewId = new CswNbtViewId();
+            CswNbtViewId FindEquipmentViewId = new CswNbtViewId();
 
             Dictionary<CswNbtViewId, CswNbtView> Views = _CswNbtResources.ViewSelect.getVisibleViews( false );
             foreach( CswNbtView View in Views.Values )
@@ -480,17 +480,17 @@ namespace ChemSW.NbtWebControls
             if( EquipmentNodeTypeId != Int32.MinValue )
                 AddWelcomeComponent( _CswNbtResources, WelcomeTable, WelcomeComponentType.Add, CswViewListTree.ViewType.View, Int32.MinValue, EquipmentNodeTypeId, string.Empty, 5, 1, "", RoleId );
             if( EquipmentByTypeViewId.isSet() )
-				AddWelcomeComponent( _CswNbtResources, WelcomeTable, WelcomeComponentType.Link, CswViewListTree.ViewType.View, EquipmentByTypeViewId.get(), Int32.MinValue, "All Equipment", 7, 1, "", RoleId );
+                AddWelcomeComponent( _CswNbtResources, WelcomeTable, WelcomeComponentType.Link, CswViewListTree.ViewType.View, EquipmentByTypeViewId.get(), Int32.MinValue, "All Equipment", 7, 1, "", RoleId );
 
             // Problems
             if( ProblemsOpenViewId.isSet() )
-				AddWelcomeComponent( _CswNbtResources, WelcomeTable, WelcomeComponentType.Link, CswViewListTree.ViewType.View, ProblemsOpenViewId.get(), Int32.MinValue, "Problems", 1, 3, "warning.gif", RoleId );
+                AddWelcomeComponent( _CswNbtResources, WelcomeTable, WelcomeComponentType.Link, CswViewListTree.ViewType.View, ProblemsOpenViewId.get(), Int32.MinValue, "Problems", 1, 3, "warning.gif", RoleId );
             if( ProblemNodeTypeId != Int32.MinValue )
                 AddWelcomeComponent( _CswNbtResources, WelcomeTable, WelcomeComponentType.Add, CswViewListTree.ViewType.View, Int32.MinValue, ProblemNodeTypeId, "Add New Problem", 5, 3, "", RoleId );
 
             // Schedules and Tasks
             if( TasksOpenViewId.isSet() )
-				AddWelcomeComponent( _CswNbtResources, WelcomeTable, WelcomeComponentType.Link, CswViewListTree.ViewType.View, TasksOpenViewId.get(), Int32.MinValue, "Tasks", 1, 5, "clipboard.gif", RoleId );
+                AddWelcomeComponent( _CswNbtResources, WelcomeTable, WelcomeComponentType.Link, CswViewListTree.ViewType.View, TasksOpenViewId.get(), Int32.MinValue, "Tasks", 1, 5, "clipboard.gif", RoleId );
             if( TaskNodeTypeId != Int32.MinValue )
                 AddWelcomeComponent( _CswNbtResources, WelcomeTable, WelcomeComponentType.Add, CswViewListTree.ViewType.View, Int32.MinValue, TaskNodeTypeId, "Add New Task", 5, 5, "", RoleId );
             if( ScheduleNodeTypeId != Int32.MinValue )
@@ -553,7 +553,7 @@ namespace ChemSW.NbtWebControls
                             NewWelcomeRow["reportid"] = CswConvert.ToDbVal( ViewValue );
                             break;
                         default:
-							throw new CswDniException( ErrorType.Warning, "You must select a view", "No view was selected for new Welcome Page Component" );
+                            throw new CswDniException( ErrorType.Warning, "You must select a view", "No view was selected for new Welcome Page Component" );
                     }
                     NewWelcomeRow["buttonicon"] = ButtonIcon;
                     NewWelcomeRow["displaytext"] = DisplayText;
@@ -566,7 +566,7 @@ namespace ChemSW.NbtWebControls
                         NewWelcomeRow["displaytext"] = DisplayText;
                     }
                     else
-						throw new CswDniException( ErrorType.Warning, "You must select a view", "No view was selected for new Welcome Page Component" );
+                        throw new CswDniException( ErrorType.Warning, "You must select a view", "No view was selected for new Welcome Page Component" );
                     break;
                 case CswWelcomeTable.WelcomeComponentType.Text:
                     NewWelcomeRow["displaytext"] = DisplayText;
@@ -614,7 +614,7 @@ namespace ChemSW.NbtWebControls
                 CswNbtMetaDataNodeType NodeType = null;
                 if( CswConvert.ToInt32( WelcomeRow["nodeviewid"] ) != Int32.MinValue )
                 {
-					ThisView = _CswNbtResources.ViewSelect.restoreView( new CswNbtViewId( CswConvert.ToInt32( WelcomeRow["nodeviewid"] ) ) );
+                    ThisView = _CswNbtResources.ViewSelect.restoreView( new CswNbtViewId( CswConvert.ToInt32( WelcomeRow["nodeviewid"] ) ) );
                     if( ThisView.IsFullyEnabled() )
                     {
                         IDSuffix += CswViewListTree.ViewType.View.ToString() + "_" + ThisView.ViewId.ToString() + "_" + WelcomeRow["welcomeid"].ToString();
@@ -627,14 +627,14 @@ namespace ChemSW.NbtWebControls
                 if( CswConvert.ToInt32( WelcomeRow["actionid"] ) != Int32.MinValue )
                 {
                     ThisAction = _CswNbtResources.Actions[CswConvert.ToInt32( WelcomeRow["actionid"] )];
-					if( _CswNbtResources.Permit.can( ThisAction.Name ) )
-					{
-						IDSuffix += CswViewListTree.ViewType.Action.ToString() + "_" + ThisAction.ActionId.ToString() + "_" + WelcomeRow["welcomeid"].ToString();
-						if( WelcomeRow["displaytext"].ToString() != string.Empty )
-							LinkText = WelcomeRow["displaytext"].ToString();
-						else
-							LinkText = ThisAction.Name.ToString();
-					}
+                    if( _CswNbtResources.Permit.can( ThisAction.Name ) )
+                    {
+                        IDSuffix += CswViewListTree.ViewType.Action.ToString() + "_" + ThisAction.ActionId.ToString() + "_" + WelcomeRow["welcomeid"].ToString();
+                        if( WelcomeRow["displaytext"].ToString() != string.Empty )
+                            LinkText = WelcomeRow["displaytext"].ToString();
+                        else
+                            LinkText = ThisAction.Name.ToString();
+                    }
                 }
                 if( CswConvert.ToInt32( WelcomeRow["reportid"] ) != Int32.MinValue )
                 {

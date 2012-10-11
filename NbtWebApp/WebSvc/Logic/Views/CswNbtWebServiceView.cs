@@ -225,7 +225,7 @@ namespace ChemSW.Nbt.WebServices
                 }
 
                 // Reports
-                CswNbtMetaDataObjectClass ReportMetaDataObjectClass = CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.ReportClass );
+                CswNbtMetaDataObjectClass ReportMetaDataObjectClass = CswNbtResources.MetaData.getObjectClass( NbtObjectClass.ReportClass );
                 CswNbtView ReportView = ReportMetaDataObjectClass.CreateDefaultView();
                 ReportView.ViewName = "CswViewTree.DataBinding.ReportView";
                 ICswNbtTree ReportTree = CswNbtResources.Trees.getTreeFromView( ReportView, true, true, false, false );
@@ -444,7 +444,7 @@ namespace ChemSW.Nbt.WebServices
                             from CswNbtMetaDataObjectClass _ObjectClass
                                 in _CswNbtResources.MetaData.getObjectClasses()
                             orderby _ObjectClass.ObjectClass
-                            where _ObjectClass.ObjectClass != CswNbtMetaDataObjectClass.NbtObjectClass.Unknown
+                            where _ObjectClass.ObjectClass != CswNbtResources.UnknownEnum
                             select _ObjectClass )
                         {
                             // This is purposefully not the typical way of creating CswNbtViewRelationships.
