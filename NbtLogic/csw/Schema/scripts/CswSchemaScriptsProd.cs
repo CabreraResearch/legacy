@@ -62,6 +62,7 @@ namespace ChemSW.Nbt.Schema
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase27628() ) );                                    //01R-031
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase27439_Part2() ) );                              //01R-032
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase27538() ) );                                    //01R-033
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase27939() ) );                                    //01R-034
 
             #endregion Romeo
 
