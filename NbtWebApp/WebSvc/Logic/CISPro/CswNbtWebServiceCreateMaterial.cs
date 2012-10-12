@@ -261,7 +261,8 @@ namespace ChemSW.Nbt.WebServices
                 Row.Add( NodeAsSize.CatalogNo.Gestalt );
                 Row.Add( NodeAsSize.UnitCount.Gestalt );
 
-                if( Tristate.False == NodeAsSize.QuantityEditable.Checked && false == CswTools.IsDouble( NodeAsSize.InitialQuantity.Quantity ) )
+                if( ( Tristate.False == NodeAsSize.QuantityEditable.Checked && false == CswTools.IsDouble( NodeAsSize.InitialQuantity.Quantity ) )
+                    || false == CswTools.IsDouble( NodeAsSize.UnitCount.Value ) )
                 {
                     SizeNode = null;//Case 27665 - instead of throwing a serverside warning, just throw out the size
                 }
@@ -451,7 +452,7 @@ namespace ChemSW.Nbt.WebServices
                         getSizeNodeProps( _CswNbtResources, _CswNbtStatisticsEvents, SizeNtId, SizeObj, false, out SizeNode );
                         if( null != SizeNode )
                         {
-                            CswNbtObjClassSize NodeAsSize = (CswNbtObjClassSize) SizeNode;
+                            CswNbtObjClassSize NodeAsSize = SizeNode;
                             NodeAsSize.Material.RelatedNodeId = MaterialNode.NodeId;
                             SizeNode.postChanges( true );
                         }

@@ -283,44 +283,61 @@
                 title: 'New ' + cswPrivate.text
             };
 
-            cswPublic.tabsAndProps = Csw.layouts.tabsAndProps(cswPublic.div, {
-                globalState: {
-                    ShowAsReport: false
+            var state = Csw.clientState.getCurrent();
+            Csw.ajax.post({
+                urlMethod: "getFeedbackNode",
+                data: {
+                    "nodetypeid": cswPrivate.nodetypeid,
+                    "actionname": state.actionname,
+                    "viewid": state.viewid,
+                    "viewmode": state.viewmode,
+                    "selectednodeid": Csw.cookie.get("csw_currentnodeid"),
+                    "author": Csw.cookie.get("csw_username")
                 },
-                tabState: {
-                    nodetypeid: cswPrivate.nodetypeid,
-                    EditMode: Csw.enums.editMode.Add
-                },
-                ReloadTabOnSave: false,
-                onSave: function (nodeid, cswnbtnodekey, tabcount, nodename) {
-                    Csw.ajax.post({
-                        urlMethod: 'GetFeedbackCaseNumber',
-                        data: { nodeId: nodeid },
-                        success: function (result) {
+                success: function (data) {
+                    cswPublic.tabsAndProps = Csw.layouts.tabsAndProps(cswPublic.div, {
+                        globalState: {
+                            ShowAsReport: false,
+                            nodeids: [data.nodeid],
+                            propertyData: data.propdata
+                        },
+                        tabState: {
+                            nodetypeid: cswPrivate.nodetypeid,
+                            EditMode: Csw.enums.editMode.Add,
+                            relatednodeid: data.nodeid
+                        },
+                        ReloadTabOnSave: false,
+                        onSave: function (nodeid, cswnbtnodekey, tabcount, nodename) {
+                            Csw.ajax.post({
+                                urlMethod: 'GetFeedbackCaseNumber',
+                                data: { nodeId: nodeid },
+                                success: function (result) {
 
-                            var closeDialog = function () { cswPublic.div.$.dialog('close'); };
+                                    var closeDialog = function () { cswPublic.div.$.dialog('close'); };
 
-                            cswPublic.div.$.empty();
-                            //div.text('Your feedback has been submitted. Your case number is ' + result.casenumber + '.');
-                            cswPublic.div.nodeLink({
-                                text: 'Your feedback has been submitted. Your case number is ' + result.noderef + '.',
-                                onClick: closeDialog
+                                    cswPublic.div.$.empty();
+                                    //div.text('Your feedback has been submitted. Your case number is ' + result.casenumber + '.');
+                                    cswPublic.div.nodeLink({
+                                        text: 'Your feedback has been submitted. Your case number is ' + result.noderef + '.',
+                                        onClick: closeDialog
+                                    });
+
+                                    cswPublic.div.br();
+                                    cswPublic.div.button({
+                                        ID: '_feedbackOk',
+                                        enabledText: 'OK',
+                                        onClick: closeDialog
+                                    });
+                                    Csw.tryExec(cswPrivate.onAddNode, nodeid, cswnbtnodekey, nodename);
+                                }
                             });
-
-                            cswPublic.div.br();
-                            cswPublic.div.button({
-                                ID: '_feedbackOk',
-                                enabledText: 'OK',
-                                onClick: closeDialog
-                            });
-                            Csw.tryExec(cswPrivate.onAddNode, nodeid, cswnbtnodekey, nodename);
+                        },
+                        onInitFinish: function () {
+                            openDialog(cswPublic.div, 800, 600, null, cswPublic.title);
                         }
-                    });
-                },
-                onInitFinish: function () {
-                    openDialog(cswPublic.div, 800, 600, null, cswPublic.title);
-                }
 
+                    });
+                }
             });
             return cswPublic;
         }, // AddFeedbackDialog
@@ -499,7 +516,7 @@
                     urlMethod: 'getPropertiesForLayoutAdd',
                     data: ajaxdata,
                     success: function (data) {
-                        var propOpts = [{ value: '', display: 'Select...' }];
+                        var propOpts = [{ value: '', display: 'Select...'}];
                         Csw.each(data.add, function (p) {
                             var display = p.propname;
                             if (Csw.bool(p.hidden)) {
@@ -825,7 +842,7 @@
                     var data = {};
                     if (jqXHR.result && jqXHR.result.data) {
                         data = jqXHR.result.data;
-                    } else if (jqXHR.data) { 
+                    } else if (jqXHR.data) {
                         data = jqXHR.data;
                     }
                     div.$.dialog('close');
@@ -1237,7 +1254,7 @@
             openDialog(div, Csw.number(width, 400), Csw.number(height, 200), null, title);
         },
         ConfirmDialog: function (message, title, okFunc, cancelFunc) {
-            
+
             var div = Csw.literals.div({
                 ID: Csw.string(title, 'an alert dialog').replace(' ', '_'),
                 text: message,

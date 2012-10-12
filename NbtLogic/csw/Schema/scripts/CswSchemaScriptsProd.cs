@@ -19,13 +19,12 @@ namespace ChemSW.Nbt.Schema
         public CswSchemaScriptsProd()
         {
             // This is where you manually set to the last version of the previous release
-            _MinimumVersion = new CswSchemaVersion( 1, 'R', 033 );
+            _MinimumVersion = new CswSchemaVersion( 1, 'R', 34 );
 
             // This is where you add new versions.
             // e.g. _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCaseXXXXX() ) );
 
             #region SEBASTIAN
-
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01S_Case27578() ) );                              //01S-001
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01S_Case27648() ) );                              //01S-002
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01S_Case27647() ) );                              //01S-003
@@ -51,7 +50,6 @@ namespace ChemSW.Nbt.Schema
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01S_Case27858() ) );                              //01S-023
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01S_Case27800() ) );                              //01S-024
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01S_Case27720() ) );                              //01S-025
-
             #endregion SEBASTIAN
 
             #region TITANIA
@@ -60,7 +58,6 @@ namespace ChemSW.Nbt.Schema
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01T_Case27873() ) );                              //01S-027    01T-02
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01T_Case27872() ) );                              //01S-028    01T-03
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01T_CertMethod_Case27868() ) );              //01S-22    01T-02
-
             #endregion TITANIA
 
 
@@ -175,7 +172,7 @@ namespace ChemSW.Nbt.Schema
             char ReleaseIdentifier = _MinimumVersion.ReleaseIdentifier;
             if( 'Z' != ReleaseIdentifier )
             {
-                char[] alpha = "ABCDEFGHIJKLMNOPRSTUVWXYZ".ToCharArray();   // removed Q for Quince!
+                char[] alpha = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".ToCharArray();
                 List<char> Chars = new List<char>( alpha );
                 int ReleaseIdInt = Chars.IndexOf( ReleaseIdentifier );
                 ReleaseIdInt++;
