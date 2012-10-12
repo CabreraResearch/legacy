@@ -340,9 +340,11 @@ window.initMain = window.initMain || function (undefined) {
     function refreshWelcome() {
         clear({ all: true });
 
-        Csw.main.centerBottomDiv.$.CswWelcome('initTable', {
-            'onLinkClick': handleItemSelect,
-            'onAddClick': function (nodetypeid) {
+        Csw.layouts.landingpage(Csw.main.centerBottomDiv, {
+            ID: 'welcomeLandingPage',
+            Title: '',
+            onLinkClick: handleItemSelect,
+            onAddClick: function (nodetypeid) {
                 $.CswDialog('AddNodeDialog', {
                     'nodetypeid': nodetypeid,
                     'onAddNode': function (nodeid, cswnbtnodekey) {
@@ -351,8 +353,12 @@ window.initMain = window.initMain || function (undefined) {
                     }
                 });
             },
-            'onAddComponent': refreshWelcome
+            onAddComponent: refreshWelcome,
+            actionData: { 
+                RoleId: ''
+            }
         });
+
         refreshMainMenu();
         refreshViewSelect();
     }
@@ -1028,13 +1034,22 @@ window.initMain = window.initMain || function (undefined) {
                         Csw.clientState.setCurrent(Csw.clientState.getLast());
                         refreshSelected();
                     },
-                    onFinish: function (viewid) {
+                    onFinish: function (actionData) {
                         clear({ 'all': true });
-                        handleItemSelect({
+                        handleItemSelect({//todo - replace with landingpage call below once webservice supports action landing pages
                             type: 'view',
                             mode: 'tree',
-                            itemid: viewid
+                            itemid: actionData.materialviewid
                         });
+
+//                        Csw.layouts.landingpage(Csw.main.centerBottomDiv, {
+//                            ID: 'createMaterialLandingPage',
+//                            Title: actionData.title,
+//                            onLinkClick: handleItemSelect,
+//                            actionData: actionData
+//                        });
+//                        refreshMainMenu();//Do we need these lines?
+//                        refreshViewSelect();
                     },
                     startingStep: o.ActionOptions.startingStep
                 };
