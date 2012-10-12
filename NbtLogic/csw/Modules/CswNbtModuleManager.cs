@@ -240,7 +240,7 @@ namespace ChemSW.Nbt
         }
 
         /// <summary>
-        /// Convience function for hiding views (null safe)
+        /// Convenience function for hiding views (null safe)
         /// </summary>
         /// <param name="hidden">True if the view should be hidden</param>
         /// <param name="viewName">The name of the view to hide/unhide</param>
@@ -255,6 +255,21 @@ namespace ChemSW.Nbt
                     view.SetVisibility( NbtViewVisibility.Hidden, null, null );
                     view.save();
                 }
+            }
+        }
+
+        /// <summary>
+        /// Convenience function for hiding all views in a category
+        /// </summary>
+        /// <param name="hidden">true if the views should be hidden</param>
+        /// <param name="category">the category to get all views in</param>
+        public void ToggleViewsInCategory( bool hidden, string category )
+        {
+            CswTableSelect tu = _CswNbtResources.makeCswTableSelect( "toggleViewsInCategory_26717", "node_views" );
+            DataTable nodeviews = tu.getTable( "where category = '" + category + "'" );
+            foreach( DataRow row in nodeviews.Rows )
+            {
+                _CswNbtResources.Modules.ToggleView( hidden, row["viewname"].ToString() );
             }
         }
 
