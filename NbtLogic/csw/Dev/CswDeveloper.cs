@@ -12,6 +12,7 @@ namespace ChemSW.Nbt.csw.Dev
         #region Internals
         private static Dictionary<string, string> _Enums = new Dictionary<string, string>( StringComparer.OrdinalIgnoreCase )
                                                                    {
+                                                                       { NBT, NBT },
                                                                        { BV, BV },
                                                                        { CF, CF },
                                                                        { CM, CM },

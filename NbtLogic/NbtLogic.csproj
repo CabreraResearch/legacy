@@ -51,6 +51,7 @@
     <CodeAnalysisFailOnMissingRules>false</CodeAnalysisFailOnMissingRules>
     <DocumentationFile>bin\NbtLogic.XML</DocumentationFile>
     <NoWarn>1591,1572,1571,1573,1587,1570</NoWarn>
+    <WarningLevel>0</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug %28Fast%29|x64'">
     <DebugSymbols>true</DebugSymbols>
@@ -74,6 +75,10 @@
     <Reference Include="CrystalDecisions.CrystalReports.Engine, Version=13.0.2000.0, Culture=neutral, PublicKeyToken=692fbea5521e1304, processorArchitecture=MSIL" />
     <Reference Include="CrystalDecisions.ReportSource, Version=13.0.2000.0, Culture=neutral, PublicKeyToken=692fbea5521e1304, processorArchitecture=MSIL" />
     <Reference Include="CrystalDecisions.Shared, Version=13.0.2000.0, Culture=neutral, PublicKeyToken=692fbea5521e1304, processorArchitecture=MSIL" />
+    <Reference Include="Microsoft.Build" />
+    <Reference Include="Microsoft.Build.Engine" />
+    <Reference Include="Microsoft.Build.Framework" />
+    <Reference Include="Microsoft.Build.Utilities.v4.0" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.4.5.4\lib\net40\Newtonsoft.Json.dll</HintPath>
@@ -99,6 +104,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="csw\Dev\CswDeveloper.cs" />
+    <Compile Include="csw\MetaData\CswNbtMetaDataObjectClassName.cs" />
+    <Compile Include="csw\MetaData\CswNbtMetaDataIconName.cs" />
+    <Compile Include="csw\Modules\CswNbtModuleRuleMLM.cs" />
     <Compile Include="csw\Modules\CswNbtModuleRuleDev.cs" />
     <Compile Include="csw\Modules\CswNbtModuleRuleSTIS.cs" />
     <Compile Include="csw\Modules\CswNbtModuleRuleSI.cs" />
@@ -123,6 +131,8 @@
     <Compile Include="csw\Actions\CswNbtActSubmitRequest.cs" />
     <Compile Include="csw\Actions\CswNbtActSystemViews.cs" />
     <Compile Include="csw\Grid\CswNbtGridExtJsButton.cs" />
+    <Compile Include="csw\ObjClasses\CswNbtObjClassCertMethod.cs" />
+    <Compile Include="csw\ObjClasses\CswNbtObjClassCertMethodTemplate.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassJurisdiction.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassMethod.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassReceiptLot.cs" />
@@ -131,8 +141,9 @@
     <Compile Include="csw\ObjClasses\CswNbtObjClassRegulatoryList.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassFeedback.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassInventoryLevel.cs" />
+    <Compile Include="csw\Schema\scripts\infr\RunBeforeEveryExecutionOfUpdater_01OC.cs" />
     <Compile Include="csw\Sched\logic\CswScheduleLogicNbtExpiredContainers.cs" />
-    <Compile Include="csw\Schema\scripts\infr\RunBeforeEveryExecutionOfUpdater_01b.cs" />
+    <Compile Include="csw\Schema\scripts\infr\RunBeforeEveryExecutionOfUpdater_01M.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01S_Case27800.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01T_Case27873.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01T_Case27869.cs" />
@@ -169,6 +180,7 @@
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01S_FieldTypes_Case25352.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01S_DevModule_Case27759.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01S_PrintLabel_Case21701.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01T_CertMethod_Case27868.cs" />
     <Compile Include="csw\Schema\scripts\tests\cases\029\CswTestCase_029_01.cs" />
     <Compile Include="csw\Schema\scripts\tests\cases\029\CswTestCase_029_02.cs" />
     <Compile Include="csw\Schema\scripts\tests\cases\029\CswTestCase_029_03.cs" />

@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Xml;
-using System.Xml.Linq;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
@@ -107,14 +105,6 @@ namespace ChemSW.Nbt.PropTypes
             //}
         }
 
-        public override void ToXml( XmlNode ParentNode )
-        {
-        }
-
-        public override void ToXElement( XElement ParentNode )
-        {
-        }
-
         public override void ToJSON( JObject ParentObject )
         {
             JArray _CommentsJson = CommentsJson;
@@ -127,14 +117,6 @@ namespace ChemSW.Nbt.PropTypes
             ParentObject["rows"] = Rows.ToString();
             ParentObject["columns"] = Columns.ToString();
             ParentObject["newmessage"] = "";
-        }
-
-        public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
-        {
-        }
-
-        public override void ReadXElement( XElement XmlNode, Dictionary<int, int> NodeMap, Dictionary<int, int> NodeTypeMap )
-        {
         }
 
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )

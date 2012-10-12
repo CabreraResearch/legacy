@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Xml;
-using System.Xml.Linq;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
@@ -324,70 +322,6 @@ namespace ChemSW.Nbt.PropTypes
 
         //public bool isNodeReference() { return true; }
 
-        public override void ToXml( XmlNode ParentNode )
-        {
-            XmlNode RelatedNodeIdNode = CswXmlDocument.AppendXmlNode( ParentNode, _NodeIDSubField.ToXmlNodeName() );
-            if( RelatedNodeId != null )
-                RelatedNodeIdNode.InnerText = RelatedNodeId.PrimaryKey.ToString();
-
-            CswXmlDocument.AppendXmlNode( ParentNode, _NameSubField.ToXmlNodeName(), CachedNodeName );
-
-            if( TargetType == NbtViewRelatedIdType.NodeTypeId )
-            {
-                CswXmlDocument.AppendXmlNode( ParentNode, "nodetypeid", TargetId.ToString() );
-            }
-            if( _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Create, _CswNbtResources.MetaData.getNodeType( TargetId ) ) )
-            {
-                CswXmlDocument.AppendXmlNode( ParentNode, "allowadd", "true" );
-            }
-
-            XmlNode OptionsNode = CswXmlDocument.AppendXmlNode( ParentNode, "options" );
-            Dictionary<CswPrimaryKey, string> Options = getOptions();
-            foreach( CswPrimaryKey NodePk in Options.Keys )
-            {
-                XmlNode OptionNode = CswXmlDocument.AppendXmlNode( OptionsNode, "option" );
-                if( NodePk != null && NodePk.PrimaryKey != Int32.MinValue )
-                {
-                    CswXmlDocument.AppendXmlAttribute( OptionNode, "id", NodePk.PrimaryKey.ToString() );
-                    CswXmlDocument.AppendXmlAttribute( OptionNode, "value", Options[NodePk] );
-                }
-                else
-                {
-                    CswXmlDocument.AppendXmlAttribute( OptionNode, "id", "" );
-                    CswXmlDocument.AppendXmlAttribute( OptionNode, "value", "" );
-                }
-            }
-        }
-
-        public override void ToXElement( XElement ParentNode )
-        {
-            ParentNode.Add( new XElement( _NodeIDSubField.ToXmlNodeName( true ), ( RelatedNodeId != null ) ?
-                RelatedNodeId.PrimaryKey.ToString() : string.Empty ),
-                            new XElement( _NameSubField.ToXmlNodeName( true ), CachedNodeName ) );
-
-            if( TargetType == NbtViewRelatedIdType.NodeTypeId )
-            {
-                ParentNode.Add( new XElement( "nodetypeid", TargetId.ToString() ) );
-            }
-            if( _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Create, _CswNbtResources.MetaData.getNodeType( TargetId ) ) )
-            {
-                ParentNode.Add( new XElement( "allowadd", "true" ) );
-            }
-
-            XElement OptionsNode = new XElement( "options" );
-            ParentNode.Add( OptionsNode );
-
-            Dictionary<CswPrimaryKey, string> Options = getOptions();
-            foreach( CswPrimaryKey NodePk in Options.Keys )
-            {
-                OptionsNode.Add( new XElement( "option",
-                                               new XAttribute( "id", ( NodePk != null && NodePk.PrimaryKey != Int32.MinValue ) ?
-                                                   NodePk.PrimaryKey.ToString() : "" ),
-                                               new XAttribute( "value", ( NodePk != null && NodePk.PrimaryKey != Int32.MinValue ) ?
-                                                   Options[NodePk] : "" ) ) );
-            }
-        }
-
         public override void ToJSON( JObject ParentObject )
         {
             ParentObject[_NodeIDSubField.ToXmlNodeName( true ).ToLower()] = default( string );
@@ -457,50 +391,6 @@ namespace ChemSW.Nbt.PropTypes
                 }
             }
         } // ToJSON()
-
-        public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
-        {
-            // Getting the value as a string is on purpose.
-            //RelatedNodeId = new CswPrimaryKey( "nodes", _HandleReference( CswXmlDocument.ChildXmlNodeValueAsInteger( XmlNode, _NodeIDSubField.ToXmlNodeName() ), NodeMap ) );
-            Int32 NodeId = CswXmlDocument.ChildXmlNodeValueAsInteger( XmlNode, _NodeIDSubField.ToXmlNodeName() );
-            if( NodeMap != null && NodeMap.ContainsKey( NodeId ) )
-            {
-                NodeId = NodeMap[NodeId];
-            }
-            RelatedNodeId = new CswPrimaryKey( "nodes", NodeId );
-            if( null != RelatedNodeId )
-            {
-                CswXmlDocument.AppendXmlAttribute( XmlNode, "destnodeid", RelatedNodeId.PrimaryKey.ToString() );
-                PendingUpdate = true;
-            }
-        }
-
-
-
-        public override void ReadXElement( XElement XmlNode, Dictionary<int, int> NodeMap, Dictionary<int, int> NodeTypeMap )
-        {
-            if( null != XmlNode.Element( _NodeIDSubField.ToXmlNodeName( true ) ) )
-            {
-                string NodePkString = XmlNode.Element( _NodeIDSubField.ToXmlNodeName( true ) ).Value;
-                CswPrimaryKey thisRelatedNodeId = new CswPrimaryKey();
-                bool validPk = thisRelatedNodeId.FromString( NodePkString );
-                if( false == validPk )
-                {
-                    thisRelatedNodeId.TableName = "nodes";
-                    thisRelatedNodeId.PrimaryKey = CswConvert.ToInt32( NodePkString );
-                }
-                if( thisRelatedNodeId.PrimaryKey != Int32.MinValue )
-                {
-                    if( NodeMap != null && NodeMap.ContainsKey( thisRelatedNodeId.PrimaryKey ) )
-                    {
-                        thisRelatedNodeId.PrimaryKey = NodeMap[thisRelatedNodeId.PrimaryKey];
-                    }
-                    RelatedNodeId = thisRelatedNodeId;
-                    XmlNode.Add( new XElement( "destnodeid", RelatedNodeId.PrimaryKey.ToString() ) );
-                    PendingUpdate = true;
-                }
-            }
-        }
 
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {

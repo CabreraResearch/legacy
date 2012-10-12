@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Data;
 using System.Linq;
 
@@ -38,22 +37,20 @@ namespace ChemSW.Nbt.MetaData
             return new CswNbtMetaDataObjectClass( Resources, Row );
         }
 
-        public Dictionary<CswNbtMetaDataObjectClass.NbtObjectClass, Int32> getObjectClassIds()
+        public Dictionary<NbtObjectClass, Int32> getObjectClassIds()
         {
-            Dictionary<CswNbtMetaDataObjectClass.NbtObjectClass, Int32> ret = new Dictionary<CswNbtMetaDataObjectClass.NbtObjectClass, Int32>();
+            Dictionary<NbtObjectClass, Int32> ret = new Dictionary<NbtObjectClass, Int32>();
             Dictionary<string, Int32> OCDict = _CollImpl.getPkDict();
-            CswNbtMetaDataObjectClass.NbtObjectClass OCKey = CswNbtMetaDataObjectClass.NbtObjectClass.Unknown;
             foreach( string Key in OCDict.Keys )
             {
-                Enum.TryParse<CswNbtMetaDataObjectClass.NbtObjectClass>( Key, out OCKey );
-                if( false == ret.ContainsKey( OCKey ) )
+                if( false == ret.ContainsKey( Key ) )
                 {
-                    ret.Add( OCKey, OCDict[Key] );
+                    ret.Add( Key, OCDict[Key] );
                 }
             }
             return ret;
         }
-        public Int32 getObjectClassId( CswNbtMetaDataObjectClass.NbtObjectClass ObjectClass )
+        public Int32 getObjectClassId( NbtObjectClass ObjectClass )
         {
             return _CollImpl.getPksFirst( "where objectclass = '" + ObjectClass.ToString() + "'" );
         }
@@ -63,7 +60,7 @@ namespace ChemSW.Nbt.MetaData
             return _CollImpl.getAll().Cast<CswNbtMetaDataObjectClass>();
         }
 
-        public CswNbtMetaDataObjectClass getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass ObjectClass )
+        public CswNbtMetaDataObjectClass getObjectClass( NbtObjectClass ObjectClass )
         {
             return (CswNbtMetaDataObjectClass) _CollImpl.getWhereFirst( "where objectclass = '" + ObjectClass.ToString() + "'" );
         }

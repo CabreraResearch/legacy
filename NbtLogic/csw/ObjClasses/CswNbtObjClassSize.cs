@@ -28,7 +28,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
-            get { return _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.SizeClass ); }
+            get { return _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.SizeClass ); }
         }
 
         /// <summary>
@@ -37,7 +37,7 @@ namespace ChemSW.Nbt.ObjClasses
         public static implicit operator CswNbtObjClassSize( CswNbtNode Node )
         {
             CswNbtObjClassSize ret = null;
-            if( null != Node && _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.SizeClass ) )
+            if( null != Node && _Validate( Node, NbtObjectClass.SizeClass ) )
             {
                 ret = (CswNbtObjClassSize) Node.ObjClass;
             }
@@ -126,7 +126,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             bool isMaterialID = true;
             CswNbtNode node = _CswNbtResources.Nodes.GetNode( nodeid );
-            isMaterialID = ( null != node && CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass == node.getObjectClass().ObjectClass );
+            isMaterialID = ( null != node && NbtObjectClass.MaterialClass == node.getObjectClass().ObjectClass );
             return isMaterialID;
         }
 

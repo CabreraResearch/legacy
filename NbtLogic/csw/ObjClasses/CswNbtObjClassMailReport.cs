@@ -80,7 +80,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
-            get { return _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.MailReportClass ); }
+            get { return _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.MailReportClass ); }
         }
 
         /// <summary>
@@ -89,7 +89,7 @@ namespace ChemSW.Nbt.ObjClasses
         public static implicit operator CswNbtObjClassMailReport( CswNbtNode Node )
         {
             CswNbtObjClassMailReport ret = null;
-            if( null != Node && _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.MailReportClass ) )
+            if( null != Node && _Validate( Node, NbtObjectClass.MailReportClass ) )
             {
                 ret = (CswNbtObjClassMailReport) Node.ObjClass;
             }

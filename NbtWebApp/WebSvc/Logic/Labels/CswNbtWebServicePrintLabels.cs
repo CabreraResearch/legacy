@@ -55,7 +55,7 @@ namespace ChemSW.Nbt.WebServices
                 CswNbtMetaDataNodeType TargetNodeType = NbtResources.MetaData.getNodeType( Request.TargetTypeId );
                 if( null != TargetNodeType )
                 {
-                    CswNbtMetaDataObjectClass PrintLabelObjectClass = NbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.PrintLabelClass );
+                    CswNbtMetaDataObjectClass PrintLabelObjectClass = NbtResources.MetaData.getObjectClass( NbtObjectClass.PrintLabelClass );
                     CswNbtMetaDataObjectClassProp NodeTypesProperty = PrintLabelObjectClass.getObjectClassProp( CswNbtObjClassPrintLabel.PropertyName.NodeTypes );
 
                     CswNbtView PrintLabelView = new CswNbtView( NbtResources );

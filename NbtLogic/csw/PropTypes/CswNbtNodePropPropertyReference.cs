@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Xml;
-using System.Xml.Linq;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
@@ -277,34 +275,12 @@ namespace ChemSW.Nbt.PropTypes
 
         #region Serialization
 
-        public override void ToXml( XmlNode ParentNode )
-        {
-            CswXmlDocument.AppendXmlNode( ParentNode, _CachedValueSubField.ToXmlNodeName(), CachedValue );
-        }
-
-        public override void ToXElement( XElement ParentNode )
-        {
-            ParentNode.Add( new XElement( _CachedValueSubField.ToXmlNodeName( true ), CachedValue ) );
-        }
-
         public override void ToJSON( JObject ParentObject )
         {
             ParentObject[_CachedValueSubField.ToXmlNodeName( true )] = CachedValue;
             ParentObject["useSequence"] = UseSequence.ToString();
             ParentObject[_SequenceSubField.ToXmlNodeName( true )] = Sequence;
             ParentObject[_SequenceNumberSubField.ToXmlNodeName( true )] = SequenceNumber;
-        }
-
-        public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
-        {
-            //nothing to restore
-            PendingUpdate = true;
-        }
-
-        public override void ReadXElement( XElement XmlNode, Dictionary<int, int> NodeMap, Dictionary<int, int> NodeTypeMap )
-        {
-            //nothing to restore
-            PendingUpdate = true;
         }
 
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )

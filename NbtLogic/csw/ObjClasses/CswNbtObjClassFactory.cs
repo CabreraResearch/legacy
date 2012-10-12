@@ -26,31 +26,39 @@ namespace ChemSW.Nbt.ObjClasses
 
             switch( ObjectClass.ObjectClass )
             {
-                case CswNbtMetaDataObjectClass.NbtObjectClass.AliquotClass:
+                case NbtObjectClass.AliquotClass:
                     ReturnVal = new CswNbtObjClassAliquot( CswNbtResources, Node );
                     break;
 
-                case CswNbtMetaDataObjectClass.NbtObjectClass.BiologicalClass:
+                case NbtObjectClass.BiologicalClass:
                     ReturnVal = new CswNbtObjClassBiological( CswNbtResources, Node );
                     break;
 
-                case CswNbtMetaDataObjectClass.NbtObjectClass.BatchOpClass:
+                case NbtObjectClass.BatchOpClass:
                     ReturnVal = new CswNbtObjClassBatchOp( CswNbtResources, Node );
                     break;
 
-                case CswNbtMetaDataObjectClass.NbtObjectClass.ContainerClass:
+                case NbtObjectClass.CertMethodClass:
+                    ReturnVal = new CswNbtObjClassCertMethod( CswNbtResources, Node );
+                    break;
+
+                case NbtObjectClass.CertMethodTemplateClass:
+                    ReturnVal = new CswNbtObjClassCertMethodTemplate( CswNbtResources, Node );
+                    break;
+
+                case NbtObjectClass.ContainerClass:
                     ReturnVal = new CswNbtObjClassContainer( CswNbtResources, Node );
                     break;
 
-                case CswNbtMetaDataObjectClass.NbtObjectClass.ContainerDispenseTransactionClass:
+                case NbtObjectClass.ContainerDispenseTransactionClass:
                     ReturnVal = new CswNbtObjClassContainerDispenseTransaction( CswNbtResources, Node );
                     break;
 
-                case CswNbtMetaDataObjectClass.NbtObjectClass.CustomerClass:
+                case NbtObjectClass.CustomerClass:
                     ReturnVal = new CswNbtObjClassCustomer( CswNbtResources, Node );
                     break;
 
-                case CswNbtMetaDataObjectClass.NbtObjectClass.DocumentClass:
+                case NbtObjectClass.DocumentClass:
                     ReturnVal = new CswNbtObjClassDocument( CswNbtResources, Node );
                     break;
 
@@ -58,59 +66,63 @@ namespace ChemSW.Nbt.ObjClasses
                     ReturnVal = new CswNbtObjClassEnterprisePart( CswNbtResources, Node );
                     break;
 
-                case CswNbtMetaDataObjectClass.NbtObjectClass.EquipmentAssemblyClass:
+                case CswNbtMetaDataObjectClass.NbtObjectClass.EqipmentAssemblyClass:
                     ReturnVal = new CswNbtObjClassEquipmentAssembly( CswNbtResources, Node );
                     break;
 
-                case CswNbtMetaDataObjectClass.NbtObjectClass.EquipmentClass:
+                case NbtObjectClass.EquipmentClass:
                     ReturnVal = new CswNbtObjClassEquipment( CswNbtResources, Node );
                     break;
 
-                case CswNbtMetaDataObjectClass.NbtObjectClass.EquipmentTypeClass:
+                case NbtObjectClass.EquipmentTypeClass:
                     ReturnVal = new CswNbtObjClassEquipmentType( CswNbtResources, Node );
                     break;
 
-                case CswNbtMetaDataObjectClass.NbtObjectClass.FeedbackClass:
+                case NbtObjectClass.FeedbackClass:
                     ReturnVal = new CswNbtObjClassFeedback( CswNbtResources, Node );
                     break;
 
-                case CswNbtMetaDataObjectClass.NbtObjectClass.GenericClass:
+                case NbtObjectClass.GenericClass:
                     ReturnVal = new CswNbtObjClassGeneric( CswNbtResources, Node );
                     break;
 
-                case CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass:
+                case NbtObjectClass.InspectionDesignClass:
                     ReturnVal = new CswNbtObjClassInspectionDesign( CswNbtResources, Node );
                     break;
 
-                case CswNbtMetaDataObjectClass.NbtObjectClass.InspectionRouteClass:
+                case NbtObjectClass.InspectionRouteClass:
                     ReturnVal = new CswNbtObjClassInspectionRoute( CswNbtResources, Node );
                     break;
 
-                case CswNbtMetaDataObjectClass.NbtObjectClass.InspectionTargetClass:
+                case NbtObjectClass.InspectionTargetClass:
+
                     ReturnVal = new CswNbtObjClassInspectionTarget( CswNbtResources, Node );
                     break;
 
-                case CswNbtMetaDataObjectClass.NbtObjectClass.InspectionTargetGroupClass:
+                case NbtObjectClass.InspectionTargetGroupClass:
                     ReturnVal = new CswNbtObjClassInspectionTargetGroup( CswNbtResources, Node );
                     break;
 
-                case CswNbtMetaDataObjectClass.NbtObjectClass.InventoryGroupClass:
+                case NbtObjectClass.InventoryGroupClass:
+
                     ReturnVal = new CswNbtObjClassInventoryGroup( CswNbtResources, Node );
                     break;
 
-                case CswNbtMetaDataObjectClass.NbtObjectClass.InventoryGroupPermissionClass:
+                case NbtObjectClass.InventoryGroupPermissionClass:
                     ReturnVal = new CswNbtObjClassInventoryGroupPermission( CswNbtResources, Node );
                     break;
 
-                case CswNbtMetaDataObjectClass.NbtObjectClass.InventoryLevelClass:
+                case NbtObjectClass.InventoryLevelClass:
                     ReturnVal = new CswNbtObjClassInventoryLevel( CswNbtResources, Node );
                     break;
 
-                case CswNbtMetaDataObjectClass.NbtObjectClass.JurisdictionClass:
+                case NbtObjectClass.JurisdictionClass:
+
                     ReturnVal = new CswNbtObjClassJurisdiction( CswNbtResources, Node );
                     break;
 
-                case CswNbtMetaDataObjectClass.NbtObjectClass.LocationClass:
+case NbtObjectClass.LocationClass:
+
                     ReturnVal = new CswNbtObjClassLocation( CswNbtResources, Node );
                     break;
 
@@ -118,39 +130,43 @@ namespace ChemSW.Nbt.ObjClasses
                     ReturnVal = new CswNbtObjClassManufacturerEquivalentPart( CswNbtResources, Node );
                     break;
 
-                case CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass:
+                case NbtObjectClass.MaterialClass:
                     ReturnVal = new CswNbtObjClassMaterial( CswNbtResources, Node );
                     break;
 
-                case CswNbtMetaDataObjectClass.NbtObjectClass.MaterialComponentClass:
+                case NbtObjectClass.MaterialComponentClass:
                     ReturnVal = new CswNbtObjClassMaterialComponent( CswNbtResources, Node );
                     break;
 
-                case CswNbtMetaDataObjectClass.NbtObjectClass.MaterialSynonymClass:
+                case NbtObjectClass.MaterialSynonymClass:
                     ReturnVal = new CswNbtObjClassMaterialSynonym( CswNbtResources, Node );
                     break;
 
-                case CswNbtMetaDataObjectClass.NbtObjectClass.MailReportClass:
+                case NbtObjectClass.MailReportClass:
                     ReturnVal = new CswNbtObjClassMailReport( CswNbtResources, Node );
                     break;
 
-                case CswNbtMetaDataObjectClass.NbtObjectClass.MethodClass:
+case NbtObjectClass.MethodClass:
+
                     ReturnVal = new CswNbtObjClassMethod( CswNbtResources, Node );
                     break;
 
-                //case CswNbtMetaDataObjectClass.NbtObjectClass.NotificationClass:
+//case NbtObjectClass.NotificationClass:
+
                 //    ReturnVal = new CswNbtObjClassNotification( CswNbtResources, Node );
                 //    break;
 
-                case CswNbtMetaDataObjectClass.NbtObjectClass.ParameterClass:
+
+
+                case NbtObjectClass.ParameterClass:
                     ReturnVal = new CswNbtObjClassParameter( CswNbtResources, Node );
                     break;
 
-                case CswNbtMetaDataObjectClass.NbtObjectClass.PrintLabelClass:
+                case NbtObjectClass.PrintLabelClass:
                     ReturnVal = new CswNbtObjClassPrintLabel( CswNbtResources, Node );
                     break;
 
-                case CswNbtMetaDataObjectClass.NbtObjectClass.ProblemClass:
+                case NbtObjectClass.ProblemClass:
                     ReturnVal = new CswNbtObjClassProblem( CswNbtResources, Node );
                     break;
 
@@ -158,71 +174,71 @@ namespace ChemSW.Nbt.ObjClasses
                     ReturnVal = new CswNbtObjClassReceiptLot( CswNbtResources, Node );
                     break;
 
-                case CswNbtMetaDataObjectClass.NbtObjectClass.RegulatoryListClass:
+                case NbtObjectClass.RegulatoryListClass:
                     ReturnVal = new CswNbtObjClassRegulatoryList( CswNbtResources, Node );
                     break;
 
-                case CswNbtMetaDataObjectClass.NbtObjectClass.ReportClass:
+                case NbtObjectClass.ReportClass:
                     ReturnVal = new CswNbtObjClassReport( CswNbtResources, Node );
                     break;
 
-                case CswNbtMetaDataObjectClass.NbtObjectClass.RequestClass:
+                case NbtObjectClass.RequestClass:
                     ReturnVal = new CswNbtObjClassRequest( CswNbtResources, Node );
                     break;
 
-                case CswNbtMetaDataObjectClass.NbtObjectClass.RequestItemClass:
+                case NbtObjectClass.RequestItemClass:
                     ReturnVal = new CswNbtObjClassRequestItem( CswNbtResources, Node );
                     break;
 
-                case CswNbtMetaDataObjectClass.NbtObjectClass.ResultClass:
+                case NbtObjectClass.ResultClass:
                     ReturnVal = new CswNbtObjClassResult( CswNbtResources, Node );
                     break;
 
-                case CswNbtMetaDataObjectClass.NbtObjectClass.RoleClass:
+                case NbtObjectClass.RoleClass:
                     ReturnVal = new CswNbtObjClassRole( CswNbtResources, Node );
                     break;
 
-                case CswNbtMetaDataObjectClass.NbtObjectClass.SampleClass:
+                case NbtObjectClass.SampleClass:
                     ReturnVal = new CswNbtObjClassSample( CswNbtResources, Node );
                     break;
 
-                case CswNbtMetaDataObjectClass.NbtObjectClass.GeneratorClass:
+                case NbtObjectClass.GeneratorClass:
                     ReturnVal = new CswNbtObjClassGenerator( CswNbtResources, Node );
                     break;
 
-                case CswNbtMetaDataObjectClass.NbtObjectClass.SizeClass:
+                case NbtObjectClass.SizeClass:
                     ReturnVal = new CswNbtObjClassSize( CswNbtResources, Node );
                     break;
 
-                case CswNbtMetaDataObjectClass.NbtObjectClass.TaskClass:
+                case NbtObjectClass.TaskClass:
                     ReturnVal = new CswNbtObjClassTask( CswNbtResources, Node );
                     break;
 
-                case CswNbtMetaDataObjectClass.NbtObjectClass.TestClass:
+                case NbtObjectClass.TestClass:
                     ReturnVal = new CswNbtObjClassTest( CswNbtResources, Node );
                     break;
 
-                //case CswNbtMetaDataObjectClass.NbtObjectClass.TestGroupClass:
+                //case CswNbtMetaDataObjectClassName.NbtObjectClass.TestGroupClass:
                 //    ReturnVal = new CswNbtObjClassTestGroup(CswNbtResources, Node);
                 //    break;
 
-                case CswNbtMetaDataObjectClass.NbtObjectClass.UnitOfMeasureClass:
+                case NbtObjectClass.UnitOfMeasureClass:
                     ReturnVal = new CswNbtObjClassUnitOfMeasure( CswNbtResources, Node );
                     break;
 
-                //case CswNbtMetaDataObjectClass.NbtObjectClass.UnitTypeClass:
+                //case CswNbtMetaDataObjectClassName.NbtObjectClass.UnitTypeClass:
                 //    ReturnVal = new CswNbtObjClassUnitType( CswNbtResources, Node );
                 //    break;//case 7608 - deprecated
 
-                case CswNbtMetaDataObjectClass.NbtObjectClass.UserClass:
+                case NbtObjectClass.UserClass:
                     ReturnVal = new CswNbtObjClassUser( CswNbtResources, Node );
                     break;
 
-                case CswNbtMetaDataObjectClass.NbtObjectClass.VendorClass:
+                case NbtObjectClass.VendorClass:
                     ReturnVal = new CswNbtObjClassVendor( CswNbtResources, Node );
                     break;
 
-                case CswNbtMetaDataObjectClass.NbtObjectClass.WorkUnitClass:
+                case NbtObjectClass.WorkUnitClass:
                     ReturnVal = new CswNbtObjClassWorkUnit( CswNbtResources, Node );
                     break;
 

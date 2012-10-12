@@ -12,7 +12,7 @@ namespace ChemSW.Nbt.Schema
     {
         public override void update()
         {
-            CswNbtMetaDataObjectClass MethodOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.MethodClass );
+            CswNbtMetaDataObjectClass MethodOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.MethodClass );
             if( null != MethodOc )
             {
                 CswNbtMetaDataNodeType MethodNt = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Method" );

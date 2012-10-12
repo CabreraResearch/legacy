@@ -38,7 +38,7 @@ namespace ChemSW.Nbt.Schema
         Int32 _NodeTypeId = Int32.MinValue;
         public void enableAuditing()
         {
-            //CswNbtObjClassEquipment CswNbtObjClassEquipment = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.EquipmentClass );
+            //CswNbtObjClassEquipment CswNbtObjClassEquipment = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClassName.NbtObjectClass.EquipmentClass );
             CswNbtMetaDataNodeType TestNodeType = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( TestNodeTypeName );
             _NodeTypeId = TestNodeType.NodeTypeId;
             foreach( CswNbtMetaDataNodeTypeProp CurrentProp in TestNodeType.getNodeTypeProps() )

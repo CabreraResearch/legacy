@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Xml;
-using System.Xml.Linq;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
@@ -118,19 +116,6 @@ namespace ChemSW.Nbt.PropTypes
             this.PendingUpdate = false;
         }
 
-        public override void ToXml( XmlNode ParentNode )
-        {
-            CswNbtView View = _CswNbtResources.ViewSelect.restoreView( ViewId );
-            XmlNode ViewIdNode = CswXmlDocument.AppendXmlNode( ParentNode, _ViewIdSubField.ToXmlNodeName(), ViewId.ToString() );
-            XmlNode ViewModeNode = CswXmlDocument.AppendXmlNode( ParentNode, "viewmode", View.ViewMode.ToString() );
-            XmlNode CachedViewNameNode = CswXmlDocument.AppendXmlNode( ParentNode, _CachedViewNameSubField.ToXmlNodeName(), CachedViewName.ToString() );
-        }
-
-        public override void ToXElement( XElement ParentNode )
-        {
-            //Not yet implemented
-        }
-
         public override void ToJSON( JObject ParentObject )
         {
             CswNbtView View = _CswNbtResources.ViewSelect.restoreView( ViewId );
@@ -140,17 +125,6 @@ namespace ChemSW.Nbt.PropTypes
                 ParentObject["viewmode"] = View.ViewMode.ToString();
                 ParentObject[_CachedViewNameSubField.ToXmlNodeName( true )] = CachedViewName.ToString();
             }
-        }
-
-        public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
-        {
-            ViewId = new CswNbtViewId( CswConvert.ToInt32( CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _ViewIdSubField.ToXmlNodeName() ) ) );
-            PendingUpdate = true;
-        }
-
-        public override void ReadXElement( XElement XmlNode, Dictionary<int, int> NodeMap, Dictionary<int, int> NodeTypeMap )
-        {
-            //Not yet implemented
         }
 
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )

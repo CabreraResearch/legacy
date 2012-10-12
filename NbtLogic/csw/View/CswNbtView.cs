@@ -221,9 +221,9 @@ namespace ChemSW.Nbt
         /// Creates a new <see cref="CswNbtViewRelationship"/> for this view.
         /// For copying an existing relationship
         /// </summary>
-        public CswNbtViewRelationship AddViewRelationship( CswNbtMetaDataObjectClass.NbtObjectClass NbtObjectClass, bool IncludeDefaultFilters, out CswNbtMetaDataObjectClass ObjectClass )
+        public CswNbtViewRelationship AddViewRelationship( NbtObjectClass NbtObjectClass, bool IncludeDefaultFilters, out CswNbtMetaDataObjectClass ObjectClass )
         {
-            if( NbtObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.Unknown )
+            if( NbtObjectClass == CswNbtResources.UnknownEnum )
             {
                 throw new CswDniException( ErrorType.Error, "Cannot create an view relationship if the object class is unknown.", "Attempted to call AddViewRelationship with an Unknown Object Class." );
             }
@@ -859,7 +859,7 @@ namespace ChemSW.Nbt
 
             // Reset user information
 
-            CswNbtMetaDataObjectClass User_ObjectClass = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
+            CswNbtMetaDataObjectClass User_ObjectClass = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.UserClass );
 
             // generate the view
             CswNbtView View = new CswNbtView( _CswNbtResources );

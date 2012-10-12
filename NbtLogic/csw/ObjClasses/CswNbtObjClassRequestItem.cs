@@ -17,34 +17,124 @@ namespace ChemSW.Nbt.ObjClasses
 
         public sealed class PropertyName
         {
-            public const string Request = "Request";
-            public const string Type = "Type";
-            public const string RequestBy = "Request By";
-            public const string Quantity = "Quantity";
-            public const string Size = "Size";
-            public const string Count = "Count";
-            public const string Material = "Material";
-            public const string Container = "Container";
-            public const string Comments = "Comments";
-            public const string Status = "Status";
-            public const string Number = "Number";
-            public const string ExternalOrderNumber = "External Order Number";
-            public const string Location = "Location";
+            /// <summary>
+            /// Relationship(<see cref="CswNbtNodePropRelationship"/> ) to the User (<see cref="CswNbtObjClassUser"/>) to whom the Request Item is assigned.
+            /// </summary>
             public const string AssignedTo = "Assigned To";
+
+            /// <summary>
+            /// Comments(<see cref="CswNbtNodePropComments"/>) on this Item
+            /// </summary>
+            public const string Comments = "Comments";
+
+            /// <summary>
+            /// Relationship(<see cref="CswNbtNodePropRelationship"/> ) to the Container (<see cref="CswNbtObjClassContainer"/>) from which the Request Item will be Fulfilled.
+            /// </summary>
+            public const string Container = "Container";
+
+            /// <summary>
+            /// For "Request By Size" items, the number(<see cref="CswNbtNodePropNumber"/>) of sizes(<see cref="Size"/>) to request. 
+            /// </summary>
+            public const string Count = "Count";
+
+            /// <summary>
+            /// External Order Number(<see cref="CswNbtNodePropText"/>)
+            /// </summary>
+            public const string ExternalOrderNumber = "External Order Number";
+
+            /// <summary>
+            /// Menu button(<see cref="CswNbtNodePropButton"/>) to fulfill request.
+            /// </summary>
             public const string Fulfill = "Fulfill";
+
+            /// <summary>
+            /// Relationship(<see cref="CswNbtNodePropRelationship"/> ) to the Inventory Group (<see cref="CswNbtObjClassInventoryGroup"/>) from which the Request Item will be Fulfilled.
+            /// </summary>
             public const string InventoryGroup = "Inventory Group";
-            public const string TotalDispensed = "Total Dispensed";
+
+            /// <summary>
+            /// Location(<see cref="CswNbtNodePropLocation"/> ) to which the request should be delivered
+            /// </summary>
+            public const string Location = "Location";
+
+            /// <summary>
+            /// Relationship(<see cref="CswNbtNodePropRelationship"/> ) to the Material (<see cref="CswNbtObjClassMaterial"/>) from which the Request Item will be Fulfilled.
+            /// </summary>
+            public const string Material = "Material";
+
+            /// <summary>
+            /// Name(<see cref="CswNbtNodePropText"/>) of this Item
+            /// </summary>
             public const string Name = "Name";
+
+            /// <summary>
+            /// The date(<see cref="CswNbtNodePropDateTime"/>) the item is needed.
+            /// </summary>
+            public const string NeededBy = "Needed By";
+
+            /// <summary>
+            /// Unique Identified of this Item, Sequence(<see cref="CswNbtNodePropSequence"/>)
+            /// </summary>
+            public const string Number = "Number";
+
+            /// <summary>
+            /// For "Request By Bulk" items, the Quantity(<see cref="CswNbtNodePropQuantity"/>) to request. 
+            /// </summary>
+            public const string Quantity = "Quantity";
+
+            /// <summary>
+            /// Relationship(<see cref="CswNbtNodePropRelationship"/> ) to the Request(<see cref="CswNbtObjClassRequest"/>) to which this Item belongs. 
+            /// <para>ServerManaged</para>
+            /// </summary>
+            public const string Request = "Request";
+
+            /// <summary>
+            /// For Material(<see cref="CswNbtObjClassMaterial"/>) requests, Bulk or Size List(<see cref="CswNbtNodePropList"/>) options.
+            /// <para>ServerManaged</para>
+            /// </summary>
+            public const string RequestBy = "Request By";
+
+            /// <summary>
+            /// The User (<see cref="CswNbtObjClassUser"/>) who initiated the Request(<see cref="CswNbtObjClassRequest"/>) as a Property Ref(<see cref="CswNbtNodePropPropertyReference"/>).
+            /// </summary>
             public const string Requestor = "Requestor";
+
+            /// <summary>
+            /// A relationship(<see cref="CswNbtNodePropRelationship"/>) to the User (<see cref="CswNbtObjClassUser"/>) for whom the Request(<see cref="CswNbtObjClassRequest"/>) is intended.
+            /// </summary>
+            public const string RequestedFor = "RequestedFor";
+
+            /// <summary>
+            /// For "Request By Size" items, a relationship(<see cref="CswNbtNodePropRelationship"/>) to the Size(<see cref="CswNbtObjClassSize"/>) to request. 
+            /// </summary>
+            public const string Size = "Size";
+
+            /// <summary>
+            /// The status(<see cref="CswNbtNodePropList"/>) of the item.
+            /// </summary>
+            public const string Status = "Status";
+
+            /// <summary>
+            /// For Dispense requests, the total amount(<see cref="CswNbtNodePropQuantity"/>) dispensed.
+            /// <para>ServerManaged</para>
+            /// </summary>
+            public const string TotalDispensed = "Total Dispensed";
+
+            /// <summary>
+            /// The request's type(<see cref="CswNbtNodePropList"/>)
+            /// <para>ServerManaged</para>
+            /// </summary>
+            public const string Type = "Type";
         }
 
         public sealed class Types
         {
+            public const string CreateMaterial = "Create Material";
             public const string Dispense = "Dispense Container";
-            public const string Request = "Request Material";
-            public const string Move = "Move Container";
             public const string Dispose = "Dispose Container";
-            public static readonly CswCommaDelimitedString Options = new CswCommaDelimitedString { Dispense, Request, Move, Dispose };
+            public const string Move = "Move Container";
+            public const string Request = "Request Material";
+            public static readonly CswCommaDelimitedString Options = new CswCommaDelimitedString { CreateMaterial, Dispense, Dispose, Move, Request };
         }
 
         public sealed class RequestsBy
@@ -75,6 +165,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public sealed class FulfillMenu
         {
+            public const string CreateMaterial = "Create Material";
             public const string Order = "Order";
             public const string Receive = "Receive";
             public const string Dispense = "Dispense this Container";
@@ -87,18 +178,23 @@ namespace ChemSW.Nbt.ObjClasses
                 {
                     Order, Receive, Dispense, Dispose, Move, Complete, Cancel
                 };
+            public static readonly CswCommaDelimitedString CreateMaterialOptions = new CswCommaDelimitedString
+                {
+                    CreateMaterial, Complete, Cancel
+                };
             public static readonly CswCommaDelimitedString DispenseOptions = new CswCommaDelimitedString
                 {
                     Order, Receive, Dispense, Complete, Cancel
-                };
-            public static readonly CswCommaDelimitedString MoveOptions = new CswCommaDelimitedString
-                {
-                    Move, Complete, Cancel
                 };
             public static readonly CswCommaDelimitedString DisposeOptions = new CswCommaDelimitedString
                 {
                     Dispose, Complete, Cancel
                 };
+            public static readonly CswCommaDelimitedString MoveOptions = new CswCommaDelimitedString
+                {
+                    Move, Complete, Cancel
+                };
+
 
         }
 
@@ -107,7 +203,7 @@ namespace ChemSW.Nbt.ObjClasses
         public static implicit operator CswNbtObjClassRequestItem( CswNbtNode Node )
         {
             CswNbtObjClassRequestItem ret = null;
-            if( null != Node && _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.RequestItemClass ) )
+            if( null != Node && _Validate( Node, NbtObjectClass.RequestItemClass ) )
             {
                 ret = (CswNbtObjClassRequestItem) Node.ObjClass;
             }
@@ -135,7 +231,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
-            get { return _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.RequestItemClass ); }
+            get { return _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.RequestItemClass ); }
         }
 
         #region Inherited Events

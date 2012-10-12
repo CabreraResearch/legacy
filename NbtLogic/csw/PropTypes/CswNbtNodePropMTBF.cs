@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Xml;
-using System.Xml.Linq;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
@@ -157,7 +155,7 @@ namespace ChemSW.Nbt.PropTypes
             if( this.NodeId != null )
             {
                 // BZ 6779
-                CswNbtMetaDataObjectClass ProblemOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.ProblemClass );
+                CswNbtMetaDataObjectClass ProblemOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.ProblemClass );
                 CswNbtMetaDataObjectClassProp OwnerOCP = ProblemOC.getObjectClassProp( CswNbtObjClassProblem.PropertyName.Owner );
                 CswNbtMetaDataObjectClassProp FailureOCP = ProblemOC.getObjectClassProp( CswNbtObjClassProblem.PropertyName.Failure );
                 CswNbtMetaDataObjectClassProp DateOpenedOCP = ProblemOC.getObjectClassProp( CswNbtObjClassProblem.PropertyName.DateOpened );
@@ -192,23 +190,6 @@ namespace ChemSW.Nbt.PropTypes
 
         } // _countProblems()
 
-
-
-        public override void ToXml( XmlNode ParentNode )
-        {
-            XmlNode StartDateNode = CswXmlDocument.AppendXmlNode( ParentNode, _StartDateTimeSubField.ToXmlNodeName() );
-            if( StartDateTime != DateTime.MinValue )
-                StartDateNode.InnerText = StartDateTime.ToShortDateString();
-            CswXmlDocument.AppendXmlNode( ParentNode, _ValueSubField.ToXmlNodeName(), CachedValue.ToString() );
-            CswXmlDocument.AppendXmlNode( ParentNode, _UnitsSubField.ToXmlNodeName(), Units );
-        }
-
-        public override void ToXElement( XElement ParentNode )
-        {
-            ParentNode.Add( new XElement( _StartDateTimeSubField.ToXmlNodeName( true ), ( StartDateTime != DateTime.MinValue ) ? StartDateTime.ToShortDateString() : string.Empty ),
-                new XElement( _ValueSubField.ToXmlNodeName( true ), CachedValue.ToString() ),
-                new XElement( _UnitsSubField.ToXmlNodeName( true ), Units ) );
-        }
         public override void ToJSON( JObject ParentObject )
         {
             //ParentObject[_StartDateTimeSubField.ToXmlNodeName( true )] = ( StartDateTime != DateTime.MinValue ) ? StartDateTime.ToShortDateString() : string.Empty;
@@ -217,28 +198,6 @@ namespace ChemSW.Nbt.PropTypes
 
             ParentObject[_ValueSubField.ToXmlNodeName( true )] = CachedValue.ToString();
             ParentObject[_UnitsSubField.ToXmlNodeName( true )] = Units;
-        }
-
-        public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
-        {
-            StartDateTime = CswXmlDocument.ChildXmlNodeValueAsDate( XmlNode, _StartDateTimeSubField.ToXmlNodeName() );
-            Units = CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _UnitsSubField.ToXmlNodeName() );
-            //PendingUpdate = true;
-            RefreshCachedValue();
-        }
-
-        public override void ReadXElement( XElement XmlNode, Dictionary<int, int> NodeMap, Dictionary<int, int> NodeTypeMap )
-        {
-            if( null != XmlNode.Element( _StartDateTimeSubField.ToXmlNodeName( true ) ) )
-            {
-                StartDateTime = CswConvert.ToDateTime( XmlNode.Element( _StartDateTimeSubField.ToXmlNodeName( true ) ).Value );
-            }
-            if( null != XmlNode.Element( _UnitsSubField.ToXmlNodeName( true ) ) )
-            {
-                Units = XmlNode.Element( _UnitsSubField.ToXmlNodeName( true ) ).Value;
-            }
-            //PendingUpdate = true;
-            RefreshCachedValue();
         }
 
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )

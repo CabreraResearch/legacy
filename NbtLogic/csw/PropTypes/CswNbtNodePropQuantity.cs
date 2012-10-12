@@ -2,8 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
-using System.Xml;
-using System.Xml.Linq;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
@@ -309,63 +307,7 @@ namespace ChemSW.Nbt.PropTypes
 
         #region Serialization Methods
 
-        public override void ToXml( XmlNode ParentNode )
-        {
-            XmlNode QtyNode = CswXmlDocument.AppendXmlNode( ParentNode, _QuantitySubField.ToXmlNodeName() );
-            CswXmlDocument.AppendXmlAttribute( QtyNode, "minvalue", MinValue.ToString() );
-            CswXmlDocument.AppendXmlAttribute( QtyNode, "maxvalue", MaxValue.ToString() );
-            CswXmlDocument.AppendXmlAttribute( QtyNode, "precision", Precision.ToString() );
-            if( !Double.IsNaN( Quantity ) )
-            {
-                QtyNode.InnerText = Quantity.ToString();
-            }
-
-            XmlNode UnitNodeIdNode = CswXmlDocument.AppendXmlNode( ParentNode, _UnitIdSubField.ToXmlNodeName() );
-            if( UnitId != null )
-                UnitNodeIdNode.InnerText = UnitId.PrimaryKey.ToString();
-
-            CswXmlDocument.AppendXmlNode( ParentNode, _UnitNameSubField.ToXmlNodeName(), CachedUnitName );
-
-            XmlNode OptionsNode = CswXmlDocument.AppendXmlNode( ParentNode, "options" );
-            foreach( CswNbtNode Node in UnitNodes )
-            {
-                XmlNode OptionNode = CswXmlDocument.AppendXmlNode( OptionsNode, "option" );
-                if( Node.NodeId != null && Node.NodeId.PrimaryKey != Int32.MinValue )
-                {
-                    CswXmlDocument.AppendXmlAttribute( OptionNode, "id", Node.NodeId.ToString() );
-                    CswXmlDocument.AppendXmlAttribute( OptionNode, "value", Node.NodeName );
-                }
-                else
-                {
-                    CswXmlDocument.AppendXmlAttribute( OptionNode, "id", "" );
-                    CswXmlDocument.AppendXmlAttribute( OptionNode, "value", "" );
-                }
-            }
-        } // ToXml()
-
-        public override void ToXElement( XElement ParentNode )
-        {
-            ParentNode.Add( new XElement( _QuantitySubField.ToXmlNodeName( true ), ( !Double.IsNaN( Quantity ) ) ? Quantity.ToString() : string.Empty,
-                new XAttribute( "minvalue", MinValue.ToString() ),
-                new XAttribute( "maxvalue", MaxValue.ToString() ),
-                new XAttribute( "precision", Precision.ToString() ) ) );
-
-            ParentNode.Add( new XElement( _UnitIdSubField.ToXmlNodeName( true ), ( UnitId != null ) ?
-                UnitId.PrimaryKey.ToString() : string.Empty ),
-                            new XElement( _UnitNameSubField.ToXmlNodeName( true ), CachedUnitName ) );
-
-            XElement OptionsNode = new XElement( "options" );
-            ParentNode.Add( OptionsNode );
-
-            foreach( CswNbtNode Node in UnitNodes )
-            {
-                OptionsNode.Add( new XElement( "option",
-                                               new XAttribute( "id", ( Node.NodeId != null && Node.NodeId.PrimaryKey != Int32.MinValue ) ?
-                                                   Node.NodeId.PrimaryKey.ToString() : "" ),
-                                               new XAttribute( "value", ( Node.NodeId != null && Node.NodeId.PrimaryKey != Int32.MinValue ) ?
-                                                   Node.NodeName : "" ) ) );
-            }
-        }
+        // ToXml()
 
         public override void ToJSON( JObject ParentObject )
         {
@@ -421,56 +363,6 @@ namespace ChemSW.Nbt.PropTypes
                         JOption["fractional"] = "";
                     }
                     JOptions.Add( JOption );
-                }
-            }
-        }
-
-        public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
-        {
-            Quantity = CswXmlDocument.ChildXmlNodeValueAsDouble( XmlNode, _QuantitySubField.ToXmlNodeName() );
-            CachedUnitName = CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _UnitNameSubField.ToXmlNodeName() );
-            Int32 NodeId = CswXmlDocument.ChildXmlNodeValueAsInteger( XmlNode, _UnitIdSubField.ToXmlNodeName() );
-            if( NodeMap != null && NodeMap.ContainsKey( NodeId ) )
-            {
-                NodeId = NodeMap[NodeId];
-            }
-            UnitId = new CswPrimaryKey( "nodes", NodeId );
-            if( null != UnitId )
-            {
-                CswXmlDocument.AppendXmlAttribute( XmlNode, "destnodeid", UnitId.PrimaryKey.ToString() );
-                PendingUpdate = true;
-            }
-        }
-
-        public override void ReadXElement( XElement XmlNode, Dictionary<int, int> NodeMap, Dictionary<int, int> NodeTypeMap )
-        {
-            if( null != XmlNode.Element( _QuantitySubField.ToXmlNodeName( true ) ) )
-            {
-                Quantity = CswConvert.ToDouble( XmlNode.Element( _QuantitySubField.ToXmlNodeName( true ) ).Value );
-            }
-            if( null != XmlNode.Element( _UnitNameSubField.ToXmlNodeName( true ) ) )
-            {
-                CachedUnitName = XmlNode.Element( _UnitNameSubField.ToXmlNodeName( true ) ).Value;
-            }
-            if( null != XmlNode.Element( _UnitIdSubField.ToXmlNodeName( true ) ) )
-            {
-                string NodePkString = XmlNode.Element( _UnitIdSubField.ToXmlNodeName( true ) ).Value;
-                CswPrimaryKey thisUnitId = new CswPrimaryKey();
-                bool validPk = thisUnitId.FromString( NodePkString );
-                if( false == validPk )
-                {
-                    thisUnitId.TableName = "nodes";
-                    thisUnitId.PrimaryKey = CswConvert.ToInt32( NodePkString );
-                }
-                if( thisUnitId.PrimaryKey != Int32.MinValue )
-                {
-                    if( NodeMap != null && NodeMap.ContainsKey( thisUnitId.PrimaryKey ) )
-                    {
-                        thisUnitId.PrimaryKey = NodeMap[thisUnitId.PrimaryKey];
-                    }
-                    UnitId = thisUnitId;
-                    XmlNode.Add( new XElement( "destnodeid", UnitId.PrimaryKey.ToString() ) );
-                    PendingUpdate = true;
                 }
             }
         }

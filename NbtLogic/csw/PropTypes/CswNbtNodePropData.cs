@@ -1,6 +1,5 @@
 using System;
 using System.Data;
-using System.Diagnostics;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
@@ -315,7 +314,7 @@ namespace ChemSW.Nbt.PropTypes
         /// </summary>
         public bool ReadOnly
         {
-            get { return _ReadOnlyTemporary || _getRowBoolVal( CswNbtSubField.PropColumn.ReadOnly ); }
+            get { return NodeTypeProp.ReadOnly || _ReadOnlyTemporary || _getRowBoolVal( CswNbtSubField.PropColumn.ReadOnly ); }
         }
         public void setReadOnly( bool value, bool SaveToDb )
         {

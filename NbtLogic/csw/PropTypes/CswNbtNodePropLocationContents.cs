@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Xml;
-using System.Xml.Linq;
 using ChemSW.Nbt.MetaData;
 using Newtonsoft.Json.Linq;
 
@@ -47,29 +45,9 @@ namespace ChemSW.Nbt.PropTypes
             }
         }
 
-        public override void ToXml( XmlNode Parent )
-        {
-            // Nothing to save
-        }
-
-        public override void ToXElement( XElement ParentNode )
-        {
-            // Nothing to save
-        }
-
         public override void ToJSON( JObject ParentObject )
         {
             // Nothing to save
-        }
-
-        public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
-        {
-            // Nothing to restore
-        }
-
-        public override void ReadXElement( XElement XmlNode, Dictionary<int, int> NodeMap, Dictionary<int, int> NodeTypeMap )
-        {
-            // Nothing to restore
         }
 
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
