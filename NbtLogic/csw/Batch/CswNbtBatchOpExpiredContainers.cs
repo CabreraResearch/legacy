@@ -62,12 +62,13 @@ namespace ChemSW.Nbt.Batch
                     //loop until we've hit the allowed limit of containers processed per iteration or there are no more containers to update
                     while( totalProcessedThisIteration <= BatchData.ContainersProcessedPerIteration && false == BatchData.expiredContainerIDs.IsEmpty )
                     {
-                        CswPrimaryKey pk = new CswPrimaryKey();
-                        pk.FromString( BatchData.expiredContainerIDs[0].ToString() );
+                        CswNbtObjClassContainer expiredContainer = _CswNbtResources.Nodes[CswConvert.ToString( BatchData.expiredContainerIDs[0] )];
                         BatchData.expiredContainerIDs.RemoveAt( 0 );
-                        CswNbtObjClassContainer expiredContainer = _CswNbtResources.Nodes.GetNode( pk );
-                        expiredContainer.Status.Value = CswNbtObjClassContainer.Statuses.Expired;
-                        expiredContainer.postChanges( false );
+                        if( null != expiredContainer )
+                        {
+                            expiredContainer.Status.Value = CswNbtObjClassContainer.Statuses.Expired;
+                            expiredContainer.postChanges( false );
+                        }
                         totalProcessedThisIteration++;
                     }
 
