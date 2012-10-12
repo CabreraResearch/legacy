@@ -1379,16 +1379,24 @@ namespace ChemSW.Nbt.MetaData
             // Delete Props
             Collection<CswNbtMetaDataNodeTypeProp> PropsToDelete = new Collection<CswNbtMetaDataNodeTypeProp>();
             foreach( CswNbtMetaDataNodeTypeProp Prop in NodeType.getNodeTypeProps() )
+            {
                 PropsToDelete.Add( Prop );
+            }
             foreach( CswNbtMetaDataNodeTypeProp Prop in PropsToDelete )
-                DeleteNodeTypeProp( Prop, true );
+            {
+                DeleteNodeTypeProp( Prop, Internal: true );
+            }
 
             // Delete Tabs
             Collection<CswNbtMetaDataNodeTypeTab> TabsToDelete = new Collection<CswNbtMetaDataNodeTypeTab>();
             foreach( CswNbtMetaDataNodeTypeTab Tab in NodeType.getNodeTypeTabs() )
+            {
                 TabsToDelete.Add( Tab );
+            }
             foreach( CswNbtMetaDataNodeTypeTab Tab in TabsToDelete )
-                DeleteNodeTypeTab( Tab, false );
+            {
+                DeleteNodeTypeTab( Tab, CauseVersioning: false, IsNodeTypeDelete: true );
+            }
 
             // Delete Nodes
             CswTableUpdate NodesUpdate = _CswNbtMetaDataResources.CswNbtResources.makeCswTableUpdate( "deletenodetype_NodesUpdate", "nodes" );
@@ -1410,7 +1418,9 @@ namespace ChemSW.Nbt.MetaData
                 //CurrentView.LoadXml(CswConvert.ToInt32(CurrentRow["nodeviewid"].ToString()));
                 CswNbtView CurrentView = _CswNbtMetaDataResources.CswNbtResources.ViewSelect.restoreView( new CswNbtViewId( CswConvert.ToInt32( CurrentRow["nodeviewid"] ) ) );
                 if( CurrentView.ContainsNodeType( NodeType ) )
+                {
                     CurrentView.Delete();
+                }
             }
             ViewsUpdate.update( ViewsTable );
 
@@ -1574,12 +1584,13 @@ namespace ChemSW.Nbt.MetaData
             return DeleteNodeTypeTab( NodeTypeTab, true );
         }
 
-        private CswNbtMetaDataNodeType DeleteNodeTypeTab( CswNbtMetaDataNodeTypeTab NodeTypeTab, bool CauseVersioning )
+        private CswNbtMetaDataNodeType DeleteNodeTypeTab( CswNbtMetaDataNodeTypeTab NodeTypeTab, bool CauseVersioning, bool IsNodeTypeDelete = false )
         {
             CswNbtMetaDataNodeType ret = null;
             if( null != NodeTypeTab )
             {
-                if( NodeTypeTab.ServerManaged )
+                if( false == IsNodeTypeDelete &&
+                    NodeTypeTab.ServerManaged )
                 {
                     throw new CswDniException( ErrorType.Warning, "Cannot delete Server Managed tabs.", "User attempted to delete " + NodeTypeTab.TabName + ", which is Server Managed." );
                 }
