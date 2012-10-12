@@ -12,7 +12,7 @@ namespace ChemSW.Nbt.Schema
         public override void update()
         {
             CswNbtMetaDataObjectClass UserOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
-            foreach( CswNbtObjClassUser UserNode in UserOC.getNodes( false, true ) )
+            foreach( CswNbtObjClassUser UserNode in UserOC.getNodes( false, true, IncludeDefaultFilters: false ) )
             {
                 if( UserNode.Archived.Checked == Tristate.Null )
                 {
