@@ -327,17 +327,11 @@ namespace ChemSW.Nbt.Security
                     NodeTypeTabPermission TabPermission = (NodeTypeTabPermission) Enum.Parse( typeof( NodeTypeTabPermission ), Permission.ToString() );
                     foreach( CswNbtMetaDataNodeTypeTab CurrentTab in _CswNbtPermitInfo.NodeType.getNodeTypeTabs() )
                     {
-                        ret = _CswNbtPermitInfo.Role.NodeTypePermissions.CheckValue( CswNbtObjClassRole.MakeNodeTypeTabPermissionValue( _CswNbtPermitInfo.NodeType.FirstVersionNodeTypeId, CurrentTab.FirstTabVersionId, TabPermission ) );
+                        ret = ret || _CswNbtPermitInfo.Role.NodeTypePermissions.CheckValue( CswNbtObjClassRole.MakeNodeTypeTabPermissionValue( _CswNbtPermitInfo.NodeType.FirstVersionNodeTypeId, CurrentTab.FirstTabVersionId, TabPermission ) );
                         if( TabPermission == NodeTypeTabPermission.View )
                         {
                             // Having 'Edit' grants 'View' automatically
                             ret = ret || _CswNbtPermitInfo.Role.NodeTypePermissions.CheckValue( CswNbtObjClassRole.MakeNodeTypeTabPermissionValue( _CswNbtPermitInfo.NodeType.FirstVersionNodeTypeId, CurrentTab.FirstTabVersionId, NodeTypeTabPermission.Edit ) );
-                        }
-
-                        //We're looking for any one tab that lets; if another one doesn't let, you come back with false when you shouldn't be
-                        if( ret )
-                        {
-                            break;
                         }
 
                     }//iterate tabs
@@ -351,85 +345,9 @@ namespace ChemSW.Nbt.Security
 
             return ( ret );
 
-        }//canAllTabs() 
+        }//canAnyTab() 
 
 
-        public bool canPropOnAnyOtherTab( NodeTypePermission Permission, CswNbtMetaDataNodeTypeTab NodeTypeTab, CswNbtMetaDataNodeTypeProp NodeTypeProp, ICswNbtUser User = null )
-        {
-
-            bool ret = false;
-
-
-            if( ( null != NodeTypeProp ) && ( null != NodeTypeTab ) )
-            {
-                CswNbtMetaDataNodeType NodeType = NodeTypeProp.getNodeType();
-
-
-                _initPermissionInfo( User, NodeType, Permission );
-
-                if( false == _CswNbtPermitInfo.IsUberUser )
-                {
-
-                    if( _CswNbtPermitInfo.shouldPermissionCheckProceed() )
-                    {
-                        NodeTypeTabPermission TabPermission = (NodeTypeTabPermission) Enum.Parse( typeof( NodeTypeTabPermission ), Permission.ToString() );
-                        foreach( CswNbtMetaDataNodeTypeTab CurrentTab in NodeType.getNodeTypeTabs() )
-                        {
-
-                            if( CurrentTab.TabId != NodeTypeTab.TabId )
-                            {
-
-                                bool OtherTabHasPermission = false;
-                                OtherTabHasPermission = _CswNbtPermitInfo.Role.NodeTypePermissions.CheckValue( CswNbtObjClassRole.MakeNodeTypeTabPermissionValue( _CswNbtPermitInfo.NodeType.FirstVersionNodeTypeId, CurrentTab.FirstTabVersionId, TabPermission ) );
-                                if( TabPermission == NodeTypeTabPermission.View )
-                                {
-                                    // Having 'Edit' grants 'View' automatically
-                                    OtherTabHasPermission = OtherTabHasPermission || _CswNbtPermitInfo.Role.NodeTypePermissions.CheckValue( CswNbtObjClassRole.MakeNodeTypeTabPermissionValue( _CswNbtPermitInfo.NodeType.FirstVersionNodeTypeId, CurrentTab.FirstTabVersionId, NodeTypeTabPermission.Edit ) );
-                                }
-
-                                if( OtherTabHasPermission )
-                                {
-                                    foreach( CswNbtMetaDataNodeTypeProp CurrentProp in CurrentTab.getNodeTypeProps() )
-                                    {
-
-                                        if( CurrentProp.PropId == NodeTypeProp.PropId )
-                                        {
-                                            ret = true;
-                                            break;
-                                        }
-
-                                    }//iterate props on this tab
-
-                                }//if other tab has permission
-
-
-                                //We're looking for any one tab that lets; if another one doesn't let, you come back with false when you shouldn't be
-                                if( ret )
-                                {
-                                    break;
-                                }
-
-                            }//if this is an _other_ tab
-
-                        }//iterate tabs
-
-                    }//if pre-reqs are in order
-                }
-                else
-                {
-                    ret = true;
-                }
-
-
-            }//if prop is not null
-
-            return ( ret );
-
-
-        }//canPropOnAnyTab
-
-
-        //TO DO: This is not done until the prop code is factord out of canNode()
         public bool canProp( NodeTypePermission Permission, CswNbtMetaDataNodeTypeProp MetaDataProp, CswNbtNodePropWrapper NodePropWrapper = null, ICswNbtUser User = null )
         {
             bool ret = true;
@@ -499,7 +417,7 @@ namespace ChemSW.Nbt.Security
         public bool canNode( NodeTypePermission Permission, CswNbtMetaDataNodeType NodeType, CswPrimaryKey NodeId, ICswNbtUser User = null )
         {
 
-            bool ret = false;
+            bool ret = true;
 
             _initPermissionInfo( User, NodeType, Permission );
 
@@ -508,8 +426,13 @@ namespace ChemSW.Nbt.Security
 
                 if( _CswNbtPermitInfo.shouldPermissionCheckProceed() )
                 {
-
-                    ret = canNodeType( Permission, _CswNbtPermitInfo.NodeType, _CswNbtPermitInfo.User );
+                    //the case in which it is a problem that we check nodetype permissions: 
+                    //  node type level permissions are off, but a tab has edit permission. 
+                    //  this is called from CswNbtSdTabsAndProps::makePropJson(). So here, canNodeType() 
+                    // gives us false, which means that the readOnly() status below does not get checked. 
+                    // Here's a case where it's better to balkanize these methods and let the caller 
+                    // decide how to piece them together. 
+                    //ret = canNodeType( Permission, _CswNbtPermitInfo.NodeType, _CswNbtPermitInfo.User );
 
                     if( null != NodeId && Int32.MinValue != NodeId.PrimaryKey )
                     {
@@ -544,44 +467,7 @@ namespace ChemSW.Nbt.Security
 
                     }//if NodeId is not null
 
-                    //if( MetaDataProp != null )
-                    //{
 
-                    //    // You can't edit readonly properties
-                    //    if( ret &&
-                    //        Permission != NodeTypePermission.View &&
-                    //        MetaDataProp.ReadOnly && false == MetaDataProp.AllowReadOnlyAdd ) /* Case 24514. Conditionally Permit edit on create. */
-                    //    {
-                    //        ret = false;
-                    //    }
-
-                    //    CswNbtMetaDataObjectClassProp OCP = MetaDataProp.getObjectClassProp();
-
-                    //    // case 8218 - Certain properties on the user's preferences are not allowed to be edited
-                    //    if( ret &&
-                    //        _CswNbtPermitInfo.NodeType.getObjectClass().ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.UserClass &&
-                    //        false == _CswNbtPermitInfo.User.IsAdministrator() &&
-                    //        OCP != null &&
-                    //        ( OCP.PropName == CswNbtObjClassUser.PropertyName.Username ||
-                    //          OCP.PropName == CswNbtObjClassUser.PropertyName.Role ||
-                    //          OCP.PropName == CswNbtObjClassUser.PropertyName.FailedLoginCount ||
-                    //          OCP.PropName == CswNbtObjClassUser.PropertyName.AccountLocked ) )
-                    //    {
-                    //        ret = false;
-                    //    }
-
-                    //    // Only admins can change other people's passwords
-                    //    if( ret &&
-                    //        _CswNbtPermitInfo.NodeType.getObjectClass().ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.UserClass &&
-                    //        false == _CswNbtPermitInfo.User.IsAdministrator() &&
-                    //        _CswNbtPermitInfo.User.UserId != NodeId &&
-                    //        OCP != null &&
-                    //        OCP.PropName == CswNbtObjClassUser.PropertyName.Password )
-                    //    {
-                    //        ret = false;
-                    //    }
-
-                    //} // if( MetaDataProp != null )
 
                 }//if pre-reqs are satisifed
 
