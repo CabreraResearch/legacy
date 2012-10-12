@@ -135,6 +135,7 @@
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase27779_part2.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase27779_part1.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase27751.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase27939.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase27769.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase27780.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase27665.cs" />

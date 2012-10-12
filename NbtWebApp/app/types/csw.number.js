@@ -131,8 +131,8 @@
     Csw.validateFloatPrecision = Csw.validateFloatPrecision || validateFloatPrecision;
 
     function validateInteger(value) {
-        var regex = /^\-?\d*$/g;
-        return (regex.test(value));
+        var regex = /^\-?\d+$/g;
+        return (regex.test(value) || value === null);
     }
     Csw.register('validateInteger', validateInteger);
     Csw.validateInteger = Csw.validateInteger || validateInteger;
