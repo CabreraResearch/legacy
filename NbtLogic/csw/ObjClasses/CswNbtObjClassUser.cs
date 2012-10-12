@@ -207,7 +207,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             return
                 false == String.IsNullOrEmpty( this.UsernameProperty.Text ) &&
-                false == CswTools.IsAlphaNumeric( this.UsernameProperty.Text ) &&
+                false == CswTools.IsValidUsername( this.UsernameProperty.Text ) &&
                 ( this.UsernameProperty.WasModified ||
                 ( this.AccountLocked.WasModified && this.AccountLocked.Checked == Tristate.False ) );
         }
