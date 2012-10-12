@@ -62,11 +62,11 @@ namespace ChemSW.Nbt.ObjClasses
                     ReturnVal = new CswNbtObjClassDocument( CswNbtResources, Node );
                     break;
 
-                case CswNbtMetaDataObjectClass.NbtObjectClass.EnterprisePartClass:
+                case NbtObjectClass.EnterprisePartClass:
                     ReturnVal = new CswNbtObjClassEnterprisePart( CswNbtResources, Node );
                     break;
 
-                case CswNbtMetaDataObjectClass.NbtObjectClass.EqipmentAssemblyClass:
+                case NbtObjectClass.EquipmentAssemblyClass:
                     ReturnVal = new CswNbtObjClassEquipmentAssembly( CswNbtResources, Node );
                     break;
 
@@ -126,7 +126,7 @@ case NbtObjectClass.LocationClass:
                     ReturnVal = new CswNbtObjClassLocation( CswNbtResources, Node );
                     break;
 
-                case CswNbtMetaDataObjectClass.NbtObjectClass.ManufacturerEquivalentPartClass:
+                case NbtObjectClass.ManufacturerEquivalentPartClass:
                     ReturnVal = new CswNbtObjClassManufacturerEquivalentPart( CswNbtResources, Node );
                     break;
 
@@ -170,7 +170,7 @@ case NbtObjectClass.MethodClass:
                     ReturnVal = new CswNbtObjClassProblem( CswNbtResources, Node );
                     break;
 
-                case CswNbtMetaDataObjectClass.NbtObjectClass.ReceiptLotClass:
+                case NbtObjectClass.ReceiptLotClass:
                     ReturnVal = new CswNbtObjClassReceiptLot( CswNbtResources, Node );
                     break;
 

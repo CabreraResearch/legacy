@@ -12,7 +12,7 @@ namespace ChemSW.Nbt.Schema
     {
         public override void update()
         {
-            CswNbtMetaDataObjectClass mepOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.ManufacturerEquivalentPartClass );
+            CswNbtMetaDataObjectClass mepOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.ManufacturerEquivalentPartClass );
 
             //create the MEP NT
             CswNbtMetaDataNodeType mepNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Manufacturing Equivalent Part" );

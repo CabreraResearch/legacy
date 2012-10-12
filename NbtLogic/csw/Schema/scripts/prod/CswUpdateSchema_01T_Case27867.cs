@@ -12,7 +12,7 @@ namespace ChemSW.Nbt.Schema
     {
         public override void update()
         {
-            CswNbtMetaDataObjectClass receiptLotOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.ReceiptLotClass );
+            CswNbtMetaDataObjectClass receiptLotOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.ReceiptLotClass );
 
             CswNbtMetaDataNodeType receiptLotNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Receipt Lot" );
             if( null == receiptLotNT )

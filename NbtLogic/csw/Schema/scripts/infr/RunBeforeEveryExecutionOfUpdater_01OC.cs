@@ -15,6 +15,32 @@ namespace ChemSW.Nbt.Schema
     {
         public static string Title = "Pre-Script: OC";
 
+        private CswDeveloper _Author = CswDeveloper.NBT;
+
+        public override CswDeveloper Author
+        {
+            get { return _Author; }
+        }
+
+        private Int32 _CaseNo = 0;
+
+        public override int CaseNo
+        {
+            get { return _CaseNo; }
+        }
+
+        private void _acceptBlame( CswDeveloper BlameMe, Int32 BlameCaseNo )
+        {
+            _Author = BlameMe;
+            _CaseNo = BlameCaseNo;
+        }
+
+        private void _resetBlame()
+        {
+            _Author = CswDeveloper.NBT;
+            _CaseNo = 0;
+        }
+
         private void _makeCertMethodTemplateOc()
         {
             #region CertMethodTemplate
@@ -505,29 +531,12 @@ namespace ChemSW.Nbt.Schema
             _makeJurisdictionOc();
             _makeNewInvGroupProps();
 
-            #endregion TITANIA
-
-        }
-
-        private void _acceptBlame( CswDeveloper BlameMe, Int32 BlameCaseNo )
-        {
-            _Author = BlameMe;
-            _CaseNo = BlameCaseNo;
-        }
-
-        private void _resetBlame()
-        {
-            _Author = CswDeveloper.NBT;
-            _CaseNo = 0;
-        }
-            #endregion
-
             #region Case 27865 part 1 - Enterprise Part (EP)
 
-            CswNbtMetaDataObjectClass enterprisePartOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.EnterprisePartClass );
+            CswNbtMetaDataObjectClass enterprisePartOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.EnterprisePartClass );
             if( null == enterprisePartOC )
             {
-                enterprisePartOC = _CswNbtSchemaModTrnsctn.createObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.EnterprisePartClass, "gear.png", false, false );
+                enterprisePartOC = _CswNbtSchemaModTrnsctn.createObjectClass( NbtObjectClass.EnterprisePartClass, "gear.png", false );
 
                 CswNbtMetaDataObjectClassProp gcasOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( enterprisePartOC )
                 {
@@ -549,10 +558,10 @@ namespace ChemSW.Nbt.Schema
 
             #region Case 27865 part 2 - Manufactuerer Equivalent Part
 
-            CswNbtMetaDataObjectClass manufactuerEquivalentPartOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.ManufacturerEquivalentPartClass );
+            CswNbtMetaDataObjectClass manufactuerEquivalentPartOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.ManufacturerEquivalentPartClass );
             if( null == manufactuerEquivalentPartOC )
             {
-                manufactuerEquivalentPartOC = _CswNbtSchemaModTrnsctn.createObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.ManufacturerEquivalentPartClass, "gearset.png", false, false );
+                manufactuerEquivalentPartOC = _CswNbtSchemaModTrnsctn.createObjectClass( NbtObjectClass.ManufacturerEquivalentPartClass, "gearset.png", false );
 
                 CswNbtMetaDataObjectClassProp epOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( manufactuerEquivalentPartOC )
                 {
@@ -563,7 +572,7 @@ namespace ChemSW.Nbt.Schema
                     FkValue = enterprisePartOC.ObjectClassId
                 } );
 
-                CswNbtMetaDataObjectClass materialOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass );
+                CswNbtMetaDataObjectClass materialOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.MaterialClass );
                 CswNbtMetaDataObjectClassProp materialOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( manufactuerEquivalentPartOC )
                 {
                     PropName = CswNbtObjClassManufacturerEquivalentPart.PropertyName.Material,
@@ -573,7 +582,7 @@ namespace ChemSW.Nbt.Schema
                     FkValue = materialOC.ObjectClassId
                 } );
 
-                CswNbtMetaDataObjectClass vendorOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.VendorClass );
+                CswNbtMetaDataObjectClass vendorOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.VendorClass );
                 CswNbtMetaDataObjectClassProp manufacturerOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( manufactuerEquivalentPartOC )
                 {
                     PropName = CswNbtObjClassManufacturerEquivalentPart.PropertyName.Manufacturer,
@@ -600,16 +609,16 @@ namespace ChemSW.Nbt.Schema
 
             #region Case 27867 - Receipt Lot
 
-            CswNbtMetaDataObjectClass receiptLotOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.ReceiptLotClass );
+            CswNbtMetaDataObjectClass receiptLotOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.ReceiptLotClass );
             if( null == receiptLotOC )
             {
-                receiptLotOC = _CswNbtSchemaModTrnsctn.createObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.ReceiptLotClass, "options.png", false, false );
+                receiptLotOC = _CswNbtSchemaModTrnsctn.createObjectClass( NbtObjectClass.ReceiptLotClass, "options.png", false );
 
                 /*
                  * Receipt Lot No OCP- waiting on 27877
                  */
 
-                CswNbtMetaDataObjectClass materialOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass );
+                CswNbtMetaDataObjectClass materialOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.MaterialClass );
                 CswNbtMetaDataObjectClassProp materialOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( receiptLotOC )
                 {
                     PropName = CswNbtObjClassReceiptLot.PropertyName.Material,
@@ -645,7 +654,7 @@ namespace ChemSW.Nbt.Schema
                     FieldType = CswNbtMetaDataFieldType.NbtFieldType.Comments
                 } );
 
-                CswNbtMetaDataObjectClass vendorOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.VendorClass );
+                CswNbtMetaDataObjectClass vendorOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.VendorClass );
                 CswNbtMetaDataObjectClassProp manufacturerOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( receiptLotOC )
                 {
                     PropName = CswNbtObjClassReceiptLot.PropertyName.Manufacturer,
@@ -665,7 +674,7 @@ namespace ChemSW.Nbt.Schema
                     FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
                 _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( manufacturerOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.viewxml, manufacturerOCPView.ToString() );
 
-                CswNbtMetaDataObjectClass requestItemOC_27867 = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.RequestItemClass );
+                CswNbtMetaDataObjectClass requestItemOC_27867 = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.RequestItemClass );
                 CswNbtMetaDataObjectClassProp requestItemOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( receiptLotOC )
                 {
                     PropName = CswNbtObjClassReceiptLot.PropertyName.RequestItem,
@@ -682,17 +691,6 @@ namespace ChemSW.Nbt.Schema
             #endregion TITANIA
         }
 
-        public override CswDeveloper Author
-        {
-            get { return _Author; }
-        }
-
-        private Int32 _CaseNo = 0;
-
-        public override int CaseNo
-        {
-            get { return _CaseNo; }
-        }
 
         //Update()
 
