@@ -103,7 +103,15 @@ namespace ChemSW.Nbt.ServiceDrivers
                         }
                     }
                     Ret["nodename"] = Node.NodeName;
-
+                    CswNbtMetaDataNodeTypeLayoutMgr.LayoutType LayoutType = _CswNbtResources.MetaData.NodeTypeLayout.LayoutTypeForEditMode( _CswNbtResources.EditMode );
+                    if( LayoutType == CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit )
+                    {
+                        CswNbtMetaDataNodeTypeTab IdentityTab = NodeType.getIdentityTab();
+                        if( _CswNbtResources.Permit.canTab( CswNbtPermit.NodeTypePermission.View, NodeType, IdentityTab ) )
+                        {
+                            Ret["IdentityTab"] = getProps( Node, IdentityTab.TabId.ToString(), null, LayoutType );
+                        }
+                    }
                 } // if-else( filterToPropId != string.Empty )
                 Ret["nodetypeid"] = NodeTypeId;
             }
@@ -196,7 +204,7 @@ namespace ChemSW.Nbt.ServiceDrivers
         /// <summary>
         /// Fetch or create a node, and return a JObject for all properties in a given tab
         /// </summary>
-        public JObject getProps( string NodeId, string NodeKey, string TabId, Int32 NodeTypeId, CswDateTime Date, string filterToPropId, string RelatedNodeId, string RelatedNodeTypeId, string RelatedObjectClassId, bool GetIdentityTab )
+        public JObject getProps( string NodeId, string NodeKey, string TabId, Int32 NodeTypeId, CswDateTime Date, string filterToPropId, string RelatedNodeId, string RelatedNodeTypeId, string RelatedObjectClassId )
         {
             JObject Ret = new JObject();
 
@@ -227,7 +235,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                 {
                     Node = _CswNbtResources.getNode( NodeId, NodeKey, Date );
                 }
-                return getProps( Node, TabId, FilterPropIdAttr, LayoutType, GetIdentityTab );
+                return getProps( Node, TabId, FilterPropIdAttr, LayoutType );
 
             } // if-else( TabId.StartsWith( HistoryTabPrefix ) )
             return Ret;
@@ -237,7 +245,7 @@ namespace ChemSW.Nbt.ServiceDrivers
         /// <summary>
         /// Get props of a Node instance
         /// </summary>
-        public JObject getProps( CswNbtNode Node, string TabId, CswPropIdAttr FilterPropIdAttr, CswNbtMetaDataNodeTypeLayoutMgr.LayoutType LayoutType, bool GetIdentityTab )
+        public JObject getProps( CswNbtNode Node, string TabId, CswPropIdAttr FilterPropIdAttr, CswNbtMetaDataNodeTypeLayoutMgr.LayoutType LayoutType )
         {
             JObject Ret = new JObject();
             if( Node != null )
@@ -247,16 +255,6 @@ namespace ChemSW.Nbt.ServiceDrivers
                     Ret["nodeid"] = Node.NodeId.ToString();
                 }
                 CswNbtMetaDataNodeType NodeType = Node.getNodeType();
-                if( GetIdentityTab &&
-                    LayoutType == CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit )
-                {
-                    CswNbtMetaDataNodeTypeTab IdentityTab = NodeType.getIdentityTab();
-                    if( IdentityTab.TabId.ToString() != TabId &&
-                        _CswNbtResources.Permit.canTab( CswNbtPermit.NodeTypePermission.View, NodeType, IdentityTab ) )
-                    {
-                        Ret["IdentityTab"] = getProps( Node, IdentityTab.TabId.ToString(), FilterPropIdAttr, LayoutType, GetIdentityTab: false );
-                    }
-                }
 
                 IEnumerable<CswNbtMetaDataNodeTypeProp> Props = _CswNbtResources.MetaData.NodeTypeLayout.getPropsInLayout( Node.NodeTypeId, CswConvert.ToInt32( TabId ), LayoutType );
 

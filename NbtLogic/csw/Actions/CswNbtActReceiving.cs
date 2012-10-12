@@ -105,7 +105,7 @@ namespace ChemSW.Nbt.Actions
             {
                 CswNbtSdTabsAndProps PropsAction = new CswNbtSdTabsAndProps( _CswNbtResources );
                 _CswNbtResources.EditMode = NodeEditMode.Add;
-                Ret = PropsAction.getProps( Container.Node, "", null, CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, GetIdentityTab: false );
+                Ret = PropsAction.getProps( Container.Node, "", null, CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add );
             }
             return Ret;
         }

@@ -437,7 +437,7 @@ namespace ChemSW.Nbt.Actions
             CswNbtSdTabsAndProps PropsAction = new CswNbtSdTabsAndProps( _CswNbtResources );
             _CswNbtResources.EditMode = NodeEditMode.Add;
 
-            return PropsAction.getProps( RetAsRequestItem.Node, "", null, CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, GetIdentityTab: false );
+            return PropsAction.getProps( RetAsRequestItem.Node, "", null, CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add );
         }
 
         #endregion Public methods and props
