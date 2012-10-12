@@ -283,7 +283,7 @@ namespace ChemSW.Nbt.Schema
                     SetValOnAdd = true
                 } );
 
-                _CswNbtSchemaModTrnsctn.createModuleObjectClassJunction( CswNbtModuleName.CISPro, MethodOc.ObjectClassId );
+                _CswNbtSchemaModTrnsctn.createModuleObjectClassJunction( CswNbtModuleName.MLM, MethodOc.ObjectClassId );
 
                 _resetBlame();
             }
