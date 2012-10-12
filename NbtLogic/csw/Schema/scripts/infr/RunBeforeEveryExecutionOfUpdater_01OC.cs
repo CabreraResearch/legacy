@@ -112,6 +112,7 @@ namespace ChemSW.Nbt.Schema
                 CmtQualifiedOcp = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( CertMethodTemplateOc )
                 {
                     PropName = CswNbtObjClassCertMethodTemplate.PropertyName.Qualified,
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Logical,
                     IsRequired = true
                 } );
                 _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( CmtQualifiedOcp, null, Tristate.False );
@@ -271,9 +272,10 @@ namespace ChemSW.Nbt.Schema
                 {
                     PropName = CswNbtObjClassMethod.PropertyName.MethodNo,
                     FieldType = CswNbtMetaDataFieldType.NbtFieldType.Text,
+                    IsRequired = true,
                     IsUnique = true,
                     SetValOnAdd = true
-
+                } );
                 _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( MethodOc )
                 {
                     PropName = CswNbtObjClassMethod.PropertyName.MethodDescription,
@@ -284,6 +286,7 @@ namespace ChemSW.Nbt.Schema
                 _CswNbtSchemaModTrnsctn.createModuleObjectClassJunction( CswNbtModuleName.CISPro, MethodOc.ObjectClassId );
 
                 _resetBlame();
+            }
             #endregion Case 27869 - Method ObjectClass
         }
 
@@ -456,7 +459,6 @@ namespace ChemSW.Nbt.Schema
 
             // Change "Report View" from ViewPickList to ViewReference
             // NOTE: Due to case 27950, we have to fix nodetypes and object classes separately
-            CswNbtMetaDataObjectClassProp ReportViewOCP = MailReportOC.getObjectClassProp( CswNbtObjClassMailReport.PropertyName.ReportView );
             CswNbtMetaDataFieldType ViewReferenceFT = _CswNbtSchemaModTrnsctn.MetaData.getFieldType( CswNbtMetaDataFieldType.NbtFieldType.ViewReference );
             foreach( CswNbtMetaDataNodeType MailReportNT in MailReportOC.getNodeTypes() )
             {

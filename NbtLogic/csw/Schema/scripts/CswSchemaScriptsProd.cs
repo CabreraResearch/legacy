@@ -25,6 +25,7 @@ namespace ChemSW.Nbt.Schema
             // e.g. _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCaseXXXXX() ) );
 
             #region SEBASTIAN
+
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01S_Case27578() ) );                              //01S-001
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01S_Case27648() ) );                              //01S-002
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01S_Case27647() ) );                              //01S-003
@@ -50,14 +51,17 @@ namespace ChemSW.Nbt.Schema
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01S_Case27858() ) );                              //01S-023
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01S_Case27800() ) );                              //01S-024
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01S_Case27720() ) );                              //01S-025
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01S_Case27904() ) );                              //01S-026
+
             #endregion SEBASTIAN
 
             #region TITANIA
 
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01T_Case27869() ) );                              //01S-026    01T-01
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01T_Case27873() ) );                              //01S-027    01T-02
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01T_Case27872() ) );                              //01S-028    01T-03
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01T_CertMethod_Case27868() ) );              //01S-22    01T-02
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01T_Case27869() ) );                              //01S-026    01T-001
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01T_Case27873() ) );                              //01S-027    01T-002
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01T_Case27872() ) );                              //01S-028    01T-003
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01T_CertMethod_Case27868() ) );                   //01S-029    01T-004
+
             #endregion TITANIA
 
 

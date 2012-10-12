@@ -327,26 +327,20 @@ namespace ChemSW.Nbt.Security
 
                 if( _CswNbtPermitInfo.shouldPermissionCheckProceed() )
                 {
-                    ret = ( from _CurrentTab
-                                in _CswNbtPermitInfo.NodeType.getNodeTypeTabs()
-                            where canTab( Permission, NodeType, _CurrentTab )
-                            select _CurrentTab ).Any();
-            if( ( null != NodeTypeProp ) )
-                        ret = canNodeType( Permission, NodeType );
-                        if( false == ret )
+                    NodeTypeTabPermission TabPermission = (NodeTypeTabPermission) Enum.Parse( typeof( NodeTypeTabPermission ), Permission.ToString() );
+                    foreach( CswNbtMetaDataNodeTypeTab CurrentTab in _CswNbtPermitInfo.NodeType.getNodeTypeTabs() )
+                    {
+                        ret = ret || _CswNbtPermitInfo.Role.NodeTypePermissions.CheckValue( CswNbtObjClassRole.MakeNodeTypeTabPermissionValue( _CswNbtPermitInfo.NodeType.FirstVersionNodeTypeId, CurrentTab.FirstTabVersionId, TabPermission ) );
+                        if( TabPermission == NodeTypeTabPermission.View )
                         {
-                            foreach( CswNbtMetaDataNodeTypeTab CurrentTab in from _CurrentTab
-                                                                                 in NodeType.getNodeTypeTabs()
-                                                                             where NodeTypeTab == null || _CurrentTab.TabId != NodeTypeTab.TabId
-                                                                             select _CurrentTab )
-                            {
-                                bool OtherTabHasPermission = canTab( Permission, NodeType, NodeTypeTab );
-                                    ret = ( CurrentTab.getNodeTypeProps().Any( CurrentProp => CurrentProp.PropId == NodeTypeProp.PropId ) );
-                                } //if other tab has permission
-                            } //iterate tabs
-                        } //if pre-reqs are in order
-                    }
-                }
+                            // Having 'Edit' grants 'View' automatically
+                            ret = ret || _CswNbtPermitInfo.Role.NodeTypePermissions.CheckValue( CswNbtObjClassRole.MakeNodeTypeTabPermissionValue( _CswNbtPermitInfo.NodeType.FirstVersionNodeTypeId, CurrentTab.FirstTabVersionId, NodeTypeTabPermission.Edit ) );
+                        }
+
+                    }//iterate tabs
+
+                }//if pre-reqs are in order
+            }
             else
             {
                 ret = true;
