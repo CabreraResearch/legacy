@@ -79,6 +79,7 @@ namespace ChemSW.Nbt.Batch
                     }
                     else if( BatchData.MatchingMaterialIDs.Count > 0 ) //update materials
                     {
+                        //loop until we hit the limit of nodes processed per iteration or the list is empty
                         while( BatchData.MatchingMaterialIDs.Count > 0 && processed <= NodesPerCycle )
                         {
                             CswPrimaryKey currentMaterialID = new CswPrimaryKey();

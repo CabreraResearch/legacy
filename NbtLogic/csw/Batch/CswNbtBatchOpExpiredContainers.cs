@@ -59,6 +59,7 @@ namespace ChemSW.Nbt.Batch
                     ExpiredContainerBatchData BatchData = BatchNode.BatchData.Text;
 
                     int totalProcessedThisIteration = 0;
+                    //loop until we've hit the allowed limit of containers processed per iteration or there are no more containers to update
                     while( totalProcessedThisIteration <= BatchData.ContainersProcessedPerIteration && false == BatchData.expiredContainerIDs.IsEmpty )
                     {
                         CswPrimaryKey pk = new CswPrimaryKey();

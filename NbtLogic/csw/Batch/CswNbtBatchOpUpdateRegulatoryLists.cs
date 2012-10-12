@@ -63,6 +63,7 @@ namespace ChemSW.Nbt.Batch
                     int NodesPerCycle = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswConfigurationVariables.ConfigurationVariableNames.NodesProcessedPerCycle ) );
                     if( BatchData.MatchingMaterialIDs.Count > 0 ) //update materials
                     {
+                        //loop until we hit the limit of nodes processed per iteration or the list is empty
                         while( BatchData.MatchingMaterialIDs.Count > 0 && processed <= NodesPerCycle )
                         {
                             CswPrimaryKey currentMaterialID = new CswPrimaryKey();
