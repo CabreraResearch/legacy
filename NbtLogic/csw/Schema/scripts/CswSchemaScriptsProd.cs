@@ -52,6 +52,7 @@ namespace ChemSW.Nbt.Schema
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase27904() ) );                              //01S-024
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase27800() ) );                              //01S-025
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase27720() ) );                              //01S-026
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase27939() ) );                              //01S-027
 
             #endregion SEBASTIAN
 
