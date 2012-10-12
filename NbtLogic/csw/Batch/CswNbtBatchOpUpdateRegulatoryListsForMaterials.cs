@@ -5,6 +5,7 @@ using ChemSW.Nbt.ServiceDrivers;
 using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Config;
 
 namespace ChemSW.Nbt.Batch
 {
@@ -57,6 +58,8 @@ namespace ChemSW.Nbt.Batch
                 {
                     BatchNode.start();
                     RegulatoryListsBatchData BatchData = BatchNode.BatchData.Text;
+                    int processed = 0;
+                    int NodesPerCycle = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswConfigurationVariables.ConfigurationVariableNames.NodesProcessedPerCycle ) );
                     if( BatchData.ExplicitIDs.Count > 0 && false == BatchData.CurrentCASNo.Equals( "" ) )
                     {
                         CswPrimaryKey currentMaterialID = new CswPrimaryKey();
@@ -76,31 +79,35 @@ namespace ChemSW.Nbt.Batch
                     }
                     else if( BatchData.MatchingMaterialIDs.Count > 0 ) //update materials
                     {
-                        CswPrimaryKey currentMaterialID = new CswPrimaryKey();
-                        currentMaterialID.FromString( BatchData.MatchingMaterialIDs[0] );
-                        BatchData.MatchingMaterialIDs.RemoveAt( 0 );
-
-                        CswNbtNode materialNode = _CswNbtResources.Nodes.GetNode( currentMaterialID );
-                        CswNbtObjClassMaterial nodeAsMaterial = (CswNbtObjClassMaterial) materialNode;
-
-                        if( false == BatchData.SeenIDs.Contains( nodeAsMaterial.NodeId.ToString() ) ) //if this is the first time we're seeing a material, delete it's regulatory lists
-                        {                                                                    //we have to assume that since a CASNo was updated the chain of Regulatory lists is broken and need to be rebuilt
-                            nodeAsMaterial.RegulatoryLists.StaticText = "";
-                            BatchData.SeenIDs.Add( nodeAsMaterial.NodeId.ToString() );
-                        }
-
-                        if( false == _materialHasList( BatchData.ListName, nodeAsMaterial ) )
+                        while( BatchData.MatchingMaterialIDs.Count > 0 && processed <= NodesPerCycle )
                         {
-                            //update the current material
-                            CswCommaDelimitedString RegLists = new CswCommaDelimitedString();
-                            RegLists.FromString( nodeAsMaterial.RegulatoryLists.StaticText );
-                            RegLists.Add( BatchData.ListName );
-                            nodeAsMaterial.RegulatoryLists.StaticText = RegLists.ToString(); //update the node
+                            CswPrimaryKey currentMaterialID = new CswPrimaryKey();
+                            currentMaterialID.FromString( BatchData.MatchingMaterialIDs[0] );
+                            BatchData.MatchingMaterialIDs.RemoveAt( 0 );
 
-                            //get materials using the current material as a component
-                            nodeAsMaterial.getParentMaterials( ref BatchData.MatchingMaterialIDs );
+                            CswNbtNode materialNode = _CswNbtResources.Nodes.GetNode( currentMaterialID );
+                            CswNbtObjClassMaterial nodeAsMaterial = (CswNbtObjClassMaterial) materialNode;
+
+                            if( false == BatchData.SeenIDs.Contains( nodeAsMaterial.NodeId.ToString() ) ) //if this is the first time we're seeing a material, delete it's regulatory lists
+                            {                                                                    //we have to assume that since a CASNo was updated the chain of Regulatory lists is broken and need to be rebuilt
+                                nodeAsMaterial.RegulatoryLists.StaticText = "";
+                                BatchData.SeenIDs.Add( nodeAsMaterial.NodeId.ToString() );
+                            }
+
+                            if( false == _materialHasList( BatchData.ListName, nodeAsMaterial ) )
+                            {
+                                //update the current material
+                                CswCommaDelimitedString RegLists = new CswCommaDelimitedString();
+                                RegLists.FromString( nodeAsMaterial.RegulatoryLists.StaticText );
+                                RegLists.Add( BatchData.ListName );
+                                nodeAsMaterial.RegulatoryLists.StaticText = RegLists.ToString(); //update the node
+
+                                //get materials using the current material as a component
+                                nodeAsMaterial.getParentMaterials( ref BatchData.MatchingMaterialIDs );
+                            }
+                            nodeAsMaterial.postChanges( false ); //update the node no matter what
+                            processed++;
                         }
-                        nodeAsMaterial.postChanges( false ); //update the node no matter what
                     }
                     else if( BatchData.CASNos.Count > 0 ) //we have more CASNos to process
                     {
