@@ -212,19 +212,19 @@ namespace ChemSW.Nbt.MetaData
             //    return null;
         }
 
-        public CswNbtView CreateDefaultView( bool includeDefaultFilters = true )
+        public CswNbtView CreateDefaultView( bool IncludeDefaultFilters = true )
         {
             CswNbtView DefaultView = new CswNbtView( _CswNbtMetaDataResources.CswNbtResources );
             DefaultView.ViewName = this.ObjectClass.ToString();
 
-            CswNbtViewRelationship RelationshipToMe = DefaultView.AddViewRelationship( this, includeDefaultFilters );
+            CswNbtViewRelationship RelationshipToMe = DefaultView.AddViewRelationship( this, IncludeDefaultFilters );
             //RelationshipToMe.ArbitraryId = RelationshipToMe.SecondId.ToString();
             //DefaultView.Root.addChildRelationship( RelationshipToMe );
 
             return DefaultView;
         }
 
-        public Collection<CswNbtNode> getNodes( bool forceReInit, bool includeSystemNodes, bool includeDefaultFilters = false )
+        public Collection<CswNbtNode> getNodes( bool forceReInit, bool includeSystemNodes, bool IncludeDefaultFilters = true )
         {
             Collection<CswNbtNode> Collection = new Collection<CswNbtNode>();
 

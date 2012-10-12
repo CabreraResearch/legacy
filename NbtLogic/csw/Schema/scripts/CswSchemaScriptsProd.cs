@@ -55,6 +55,7 @@ namespace ChemSW.Nbt.Schema
 
             #endregion SEBASTIAN
 
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase27939() ) );                                    //01R-034
 
 
             // This automatically detects the latest version
