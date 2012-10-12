@@ -228,7 +228,7 @@ namespace ChemSW.Nbt.MetaData
         {
             Collection<CswNbtNode> Collection = new Collection<CswNbtNode>();
 
-            CswNbtView View = CreateDefaultView( includeDefaultFilters );
+            CswNbtView View = CreateDefaultView( IncludeDefaultFilters );
             ICswNbtTree Tree = _CswNbtMetaDataResources.CswNbtResources.Trees.getTreeFromView( View, forceReInit, true, true, includeSystemNodes );
             for( Int32 c = 0; c < Tree.getChildNodeCount(); c++ )
             {
