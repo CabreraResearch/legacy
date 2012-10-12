@@ -400,6 +400,26 @@ namespace ChemSW.Nbt.Schema
             }
             #endregion
 
+            #region Case 27862 - set nodes hidden = "0" if null
+
+            if( _CswNbtSchemaModTrnsctn.isColumnDefined( "nodes", "hidden" ) )
+            {
+                //find all nodes where hidden = null and make it false (0)
+                CswTableUpdate tu = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "hiddenNodes_27862", "nodes" );
+                DataTable nodes = tu.getTable( "where hidden is null" );
+                if( nodes.Rows.Count > 0 ) //only do an update if there were results from the query
+                {
+                    foreach( DataRow row in nodes.Rows )
+                    {
+                        row["hidden"] = CswConvert.ToDbVal( false );
+                    }
+
+                    tu.update( nodes );
+                }
+            }
+
+            #endregion
+
             #endregion TITANIA
         }
 
