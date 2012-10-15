@@ -77,6 +77,7 @@ namespace ChemSW.Nbt.PropTypes
             set
             {
                 _SelectedNodeTypeIds = value;
+                _SelectedNodeTypeIds.OnChange += new CswDelimitedString.DelimitedStringChangeHandler( _SelectedNodeTypeIds_OnChange );
                 _SelectedNodeTypeIds_OnChange();
             }
         }

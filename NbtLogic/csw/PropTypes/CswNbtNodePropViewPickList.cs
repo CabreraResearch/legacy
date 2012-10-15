@@ -78,6 +78,7 @@ namespace ChemSW.Nbt.PropTypes
             set
             {
                 _SelectedViewIds = value;
+                _SelectedViewIds.OnChange += new CswDelimitedString.DelimitedStringChangeHandler( _SelectedViewIds_OnChange );
                 _SelectedViewIds_OnChange();
             }
         }
@@ -132,6 +133,7 @@ namespace ChemSW.Nbt.PropTypes
             set
             {
                 _CachedViewNames = value;
+                _CachedViewNames.OnChange += new CswDelimitedString.DelimitedStringChangeHandler( _CachedViewNames_OnChange );
                 _CachedViewNames_OnChange();
             }
         }
