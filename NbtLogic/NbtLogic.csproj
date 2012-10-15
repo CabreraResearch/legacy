@@ -130,6 +130,7 @@
     <Compile Include="csw\ObjClasses\CswNbtObjClassInventoryLevel.cs" />
     <Compile Include="csw\PropTypes\CswCheckBoxArrayOptions.cs" />
     <Compile Include="csw\Schema\scripts\infr\RunBeforeEveryExecutionOfUpdater_01b.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase27720_part4.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase27720_part3.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase27720_part2.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase27578_part2.cs" />
