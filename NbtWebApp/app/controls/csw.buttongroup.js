@@ -88,6 +88,7 @@
 
                 cswPrivate.makeButton = function (thisBtn, cell) {
                     cswPublic[thisBtn.suffix] = cell.buttonExt({
+                        ID: window.Ext.id(),
                         icon: thisBtn.icon,
                         tooltip: thisBtn.tooltip,
                         enabledText: thisBtn.text,
