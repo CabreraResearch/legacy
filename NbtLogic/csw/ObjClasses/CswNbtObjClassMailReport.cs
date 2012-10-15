@@ -105,14 +105,16 @@ namespace ChemSW.Nbt.ObjClasses
 
             _assertMailReportIsValid();
 
-            if( Type.Value == TypeOptionView )
+            // Set default value for target type to root of view
+            if( TargetType.Empty && Type.Value == TypeOptionView )
             {
-                OutputFormat.Value = MailRptFormatOptions.Link.ToString();
-                OutputFormat.setReadOnly( value: true, SaveToDb: true );
-            }
-            else if( Type.Value == TypeOptionReport )
-            {
-                OutputFormat.setReadOnly( value: false, SaveToDb: true );
+                CswNbtView View = _CswNbtResources.ViewSelect.restoreView( ReportView.ViewId );
+                if( null != View && 
+                    View.Root.ChildRelationships.Count > 0 &&
+                    View.Root.ChildRelationships[0].SecondType == NbtViewRelatedIdType.NodeTypeId )
+                {
+                    TargetType.SelectedNodeTypeIds.Add( View.Root.ChildRelationships[0].SecondId.ToString() );
+                }
             }
         }
 
@@ -166,6 +168,8 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void afterPopulateProps()
         {
+            Type.SetOnPropChange( OnTypePropChange );
+
             _CswNbtObjClassDefault.afterPopulateProps();
         }//afterPopulateProps()
 
@@ -197,7 +201,20 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropMemo Message { get { return ( _CswNbtNode.Properties[PropertyName.Message] ); } }
         public CswNbtNodePropMemo NoDataNotification { get { return ( _CswNbtNode.Properties[PropertyName.NoDataNotification] ); } }
         public CswNbtNodePropUserSelect Recipients { get { return ( _CswNbtNode.Properties[PropertyName.Recipients] ); } }
+        
         public CswNbtNodePropList Type { get { return ( _CswNbtNode.Properties[PropertyName.Type] ); } }
+        public void OnTypePropChange( CswNbtNodeProp Prop )
+        {
+            if( Type.Value == TypeOptionView )
+            {
+                OutputFormat.Value = MailRptFormatOptions.Link.ToString();
+                OutputFormat.setReadOnly( value: true, SaveToDb: true );
+            }
+            else if( Type.Value == TypeOptionReport )
+            {
+                OutputFormat.setReadOnly( value: false, SaveToDb: true );
+            }
+        } // OnTypePropChange()
         public CswNbtNodePropDateTime LastProcessed { get { return ( _CswNbtNode.Properties[PropertyName.LastProcessed] ); } }
         public CswNbtNodePropDateTime FinalDueDate { get { return ( _CswNbtNode.Properties[PropertyName.FinalDueDate] ); } }
         public CswNbtNodePropDateTime NextDueDate { get { return ( _CswNbtNode.Properties[PropertyName.NextDueDate] ); } }
