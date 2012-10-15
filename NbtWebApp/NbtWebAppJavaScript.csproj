@@ -596,7 +596,7 @@
     <Content Include="vendor\jZebra\loading_red.gif" />
     <Content Include="vendor\jZebra\loading_yellow.gif" />
     <Content Include="vendor\jZebra\PluginDetect.js" />
-    <Content Include="vendor\modernizr-2.5.3.js" />
+    <Content Include="vendor\modernizr.custom.06564.js" />
     <Content Include="vendor\mousetrap.min.js" />
     <Content Include="vendor\multiselect\jquery.multiselect.css" />
     <Content Include="vendor\multiselect\jquery.multiselect.filter.css" />

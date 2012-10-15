@@ -7,15 +7,15 @@ using ChemSW.Nbt;
 using ChemSW.Nbt.WebServices;
 using ChemSW.WebSvc;
 
-namespace NbtWebApp.WebSvc.Logic.Views
+namespace NbtWebApp
 {
     /// <summary>
     /// WCF Web Methods for View operations
     /// </summary>
     [ServiceBehavior( IncludeExceptionDetailInFaults = true )]
-    [ServiceContract]
+    [ServiceContract( Namespace = "NbtWebApp" )]
     [AspNetCompatibilityRequirements( RequirementsMode = AspNetCompatibilityRequirementsMode.Allowed )]
-    public class CswNbtViewsUriMethods
+    public class Views
     {
         private HttpContext _Context = HttpContext.Current;
 
@@ -23,7 +23,7 @@ namespace NbtWebApp.WebSvc.Logic.Views
         /// 
         /// </summary>
         [OperationContract]
-        [WebInvoke( Method = "POST" )]
+        [WebInvoke( Method = "POST", ResponseFormat = WebMessageFormat.Json )]
         [FaultContract( typeof( FaultException ) )]
         [Description( "Generate a View Select" )]
         public CswNbtViewReturn ViewSelect( ViewSelect.Request Request )

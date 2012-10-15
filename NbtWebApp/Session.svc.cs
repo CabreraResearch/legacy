@@ -8,15 +8,15 @@ using ChemSW.Session;
 using ChemSW.WebSvc;
 using NbtWebApp.WebSvc.Returns;
 
-namespace NbtWebApp.WebSvc.Session
+namespace NbtWebApp
 {
     /// <summary>
     /// WCF Web Methods for Session operations
     /// </summary>
     [ServiceBehavior( IncludeExceptionDetailInFaults = true )]
-    [ServiceContract]
+    [ServiceContract( Namespace = "NbtWebApp" )]
     [AspNetCompatibilityRequirements( RequirementsMode = AspNetCompatibilityRequirementsMode.Allowed )]
-    public class CswNbtSessionUriMethods
+    public class Session
     {
         private HttpContext _Context = HttpContext.Current;
 
@@ -24,7 +24,7 @@ namespace NbtWebApp.WebSvc.Session
         /// 
         /// </summary>
         [OperationContract]
-        [WebInvoke( Method = "POST" )]
+        [WebInvoke( Method = "POST", ResponseFormat = WebMessageFormat.Json )]
         [FaultContract( typeof( FaultException ) )]
         [Description( "Initiate a new session" )]
         public CswWebSvcReturn Init( CswNbtSessionAuthenticateData.Authentication.Request Request )
@@ -47,7 +47,7 @@ namespace NbtWebApp.WebSvc.Session
         /// 
         /// </summary>
         [OperationContract]
-        [WebGet]
+        [WebGet( ResponseFormat = WebMessageFormat.Json )]
         [FaultContract( typeof( FaultException ) )]
         [Description( "Terminate the current session" )]
         public void End()
@@ -62,7 +62,7 @@ namespace NbtWebApp.WebSvc.Session
         /// 
         /// </summary>
         [OperationContract]
-        [WebInvoke( Method = "POST" )]
+        [WebInvoke( Method = "POST", ResponseFormat = WebMessageFormat.Json )]
         [FaultContract( typeof( FaultException ) )]
         [Description( "Reset a user's password" )]
         public CswNbtWebServiceSession.CswNbtSessionReturn ResetPassword( CswNbtSessionAuthenticateData.Authentication.Response.Expired Request )
@@ -81,6 +81,5 @@ namespace NbtWebApp.WebSvc.Session
             return ( Ret );
 
         }
-
     }
 }

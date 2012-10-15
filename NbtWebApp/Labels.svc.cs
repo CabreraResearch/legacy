@@ -8,15 +8,15 @@ using ChemSW.Nbt.WebServices;
 using ChemSW.WebSvc;
 using NbtWebApp.WebSvc.Logic.Labels;
 
-namespace NbtWebApp.WebSvc.Session
+namespace NbtWebApp
 {
     /// <summary>
     /// WCF Web Methods for View operations
     /// </summary>
     [ServiceBehavior( IncludeExceptionDetailInFaults = true )]
-    [ServiceContract]
+    [ServiceContract( Namespace = "NbtWebApp" )]
     [AspNetCompatibilityRequirements( RequirementsMode = AspNetCompatibilityRequirementsMode.Allowed )]
-    public class CswNbtLabelUriMethods
+    public class Labels
     {
         private HttpContext _Context = HttpContext.Current;
 
@@ -24,7 +24,7 @@ namespace NbtWebApp.WebSvc.Session
         /// 
         /// </summary>
         [OperationContract]
-        [WebGet( UriTemplate = "type/{TargetTypeId}" )]
+        [WebGet( UriTemplate = "type/{TargetTypeId}", ResponseFormat = WebMessageFormat.Json )]
 
         [Description( "Get all Print labels matching this Target Type" )]
         public CswNbtLabelList list( string TargetTypeId )
@@ -47,7 +47,7 @@ namespace NbtWebApp.WebSvc.Session
         /// 
         /// </summary>
         [OperationContract]
-        [WebGet( UriTemplate = "label/{PrintLabelId}/target/{TargetId}" )]
+        [WebGet( UriTemplate = "label/{PrintLabelId}/target/{TargetId}", ResponseFormat = WebMessageFormat.Json )]
 
         [Description( "Get a collection of EPL texts for the selected Targets" )]
         public CswNbtLabelEpl get( string PrintLabelId, string TargetId )
@@ -64,6 +64,5 @@ namespace NbtWebApp.WebSvc.Session
             SvcDriver.run();
             return ( Ret );
         }
-
     }
 }

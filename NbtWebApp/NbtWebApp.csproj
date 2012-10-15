@@ -24,6 +24,7 @@
     <IISExpressAnonymousAuthentication />
     <IISExpressWindowsAuthentication />
     <IISExpressUseClassicPipelineMode />
+    <WcfConfigValidationEnabled>True</WcfConfigValidationEnabled>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
     <DebugSymbols>true</DebugSymbols>
@@ -111,19 +112,27 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Labels.svc.cs">
+      <DependentUpon>Labels.svc</DependentUpon>
+    </Compile>
+    <Compile Include="Reports.svc.cs">
+      <DependentUpon>Reports.svc</DependentUpon>
+    </Compile>
+    <Compile Include="Session.svc.cs">
+      <DependentUpon>Session.svc</DependentUpon>
+    </Compile>
+    <Compile Include="Views.svc.cs">
+      <DependentUpon>Views.svc</DependentUpon>
+    </Compile>
     <Compile Include="WebSvc\Logic\CISPro\CswNbtWebServiceContainer.cs" />
     <Compile Include="WebSvc\Logic\CISPro\CswNbtWebServiceRequesting.cs" />
     <Compile Include="WebSvc\Logic\Labels\CswNbtLabelData.cs" />
-    <Compile Include="WebSvc\Logic\Labels\CswNbtLabelUriMethods.cs" />
     <Compile Include="WebSvc\Logic\MetaData\CswNbtWebServiceModules.cs" />
     <Compile Include="WebSvc\Logic\CISPro\CswNbtWebServiceCreateMaterial.cs" />
     <Compile Include="WebSvc\Logic\Generators\CswNbtWebServiceGenerators.cs" />
     <Compile Include="WebSvc\Logic\Nodes\CswNbtWebServiceReport.cs" />
     <Compile Include="WebSvc\Logic\Reports\CswNbtWebServiceMailReports.cs" />
-    <Compile Include="WebSvc\Logic\Reports\CswNbtMailReportsUriMethods.cs" />
-    <Compile Include="WebSvc\Logic\Session\CswNbtSessionUriMethods.cs" />
     <Compile Include="WebSvc\Logic\Session\CswNbtWebServiceSession.cs" />
-    <Compile Include="WebSvc\Logic\Views\CswNbtViewsUriMethods.cs" />
     <Compile Include="WebSvc\Logic\Views\wsTreeOfView.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -717,8 +726,10 @@
     <Content Include="Images\quota\half.gif" />
     <Content Include="Images\quota\lock.gif" />
     <Content Include="Images\view\viewtable.gif" />
+    <Content Include="Labels.svc" />
     <Content Include="NodeTypeTreeService.asmx" />
     <Content Include="Report.aspx" />
+    <Content Include="Reports.svc" />
     <Content Include="Scripts\es5-shim.js" />
     <Content Include="Scripts\es5-shim.min.js" />
     <Content Include="Scripts\ES5.js" />
@@ -1018,6 +1029,7 @@
     <Content Include="Main.js" />
     <Content Include="Popup_DesignAdd.aspx" />
     <Content Include="Popup_DesignDelete.aspx" />
+    <Content Include="Session.svc" />
     <Content Include="SkinPrint\Calendar.ChemSWPrint.css" />
     <Content Include="SkinPrint\Calendar\arrowLeft.gif" />
     <Content Include="SkinPrint\Calendar\arrowLeftHover.gif" />
@@ -1174,6 +1186,7 @@
     <Content Include="style_print.css" />
     <Content Include="Subscriptions.aspx" />
     <Content Include="TermsOfUse.aspx" />
+    <Content Include="Views.svc" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>

@@ -1,34 +1,26 @@
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Runtime.Serialization;
+﻿using System.ComponentModel;
 using System.ServiceModel;
 using System.ServiceModel.Activation;
 using System.ServiceModel.Web;
 using System.Web;
-using ChemSW;
-using ChemSW.Core;
 using ChemSW.WebSvc;
-using ChemSW.Nbt;
-using ChemSW.Nbt.WebServices;
-using ChemSW.Nbt.MetaData;
-using ChemSW.Nbt.ObjClasses;
-using NbtWebApp.WebSvc.Logic.Labels;
+using NbtWebApp.WebSvc.Logic.Reports;
 using NbtWebApp.WebSvc.Returns;
 
-namespace NbtWebApp.WebSvc.Logic.Reports
+namespace NbtWebApp
 {
     /// <summary>
     /// WCF Web Methods for Mail Report operations
     /// </summary>
     [ServiceBehavior( IncludeExceptionDetailInFaults = true )]
-    [ServiceContract]
+    [ServiceContract( Namespace = "" )]
     [AspNetCompatibilityRequirements( RequirementsMode = AspNetCompatibilityRequirementsMode.Allowed )]
-    public class CswNbtMailReportsUriMethods
+    public class Reports
     {
         private HttpContext _Context = HttpContext.Current;
 
         [OperationContract]
-        [WebGet]
+        [WebGet( ResponseFormat = WebMessageFormat.Json )]
         [Description( "Generate subscription information for the current user" )]
         [FaultContract( typeof( FaultException ) )]
         public CswNbtWebServiceMailReports.MailReportSubscriptionsReturn getSubscriptions()
@@ -48,10 +40,10 @@ namespace NbtWebApp.WebSvc.Logic.Reports
         }
 
         [OperationContract]
-        [WebInvoke]
+        [WebInvoke( ResponseFormat = WebMessageFormat.Json )]
         [Description( "Save subscription information for the current user" )]
         [FaultContract( typeof( FaultException ) )]
-        public CswWebSvcReturn saveSubscriptions(CswNbtWebServiceMailReports.MailReportSubscriptions Subscriptions)
+        public CswWebSvcReturn saveSubscriptions( CswNbtWebServiceMailReports.MailReportSubscriptions Subscriptions )
         {
             //delegate has to be static because you can't create an instance yet: you don't have resources until the delegate is actually called
             CswWebSvcReturn Ret = new CswWebSvcReturn();
@@ -66,6 +58,5 @@ namespace NbtWebApp.WebSvc.Logic.Reports
             SvcDriver.run();
             return ( Ret );
         }
-
-    } // class CswNbtMailReportsUriMethods
-} // namespace NbtWebApp.WebSvc.Logic.Reports
+    }
+}
