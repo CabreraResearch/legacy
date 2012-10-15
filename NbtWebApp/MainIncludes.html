@@ -1,9 +1,13 @@
+<script type="text/javascript" src="vendor/modernizr.custom.06564.js"></script>
 <script type="text/javascript">
-    var scr = document.createElement("script");
-    var host = (("https:" == document.location.protocol) ? "https://d3eyf2cx8mbems.cloudfront.net" : "http://d3eyf2cx8mbems.cloudfront.net");
-    scr.type = "text/javascript";
-    scr.src = host + "/js/loggly-0.1.0.js";
-    document.documentElement.firstChild.appendChild(scr);
+    Modernizr.load([{
+        load: '//d3eyf2cx8mbems.cloudfront.net/js/loggly-0.1.0.js',
+        callback: function () {
+            if (!window.loggly) {
+                Modernizr.load('vendor/loggly-0.1.0.js');
+            }
+        }
+    }]);
 </script>
 <!--[if lte IE 8]>
  <script type="text/javascript" 
@@ -74,9 +78,6 @@ window.internetExplorerVersionNo = 9;
 <script defer type="text/javascript" src="vendor/jsTree.v.1.0rc2/jquery.jstree.js"></script>
 
 <script type="text/javascript" src="vendor/jquery.cookie.min.js"></script>
-
-<!-- <script type="text/javascript" src="Scripts/modernizr-2.5.3.js"></script> -->
-<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/modernizr/2.5.3/modernizr.min.js"></script>
 
 <script defer type="text/javascript" src="vendor/multiselect/jquery.multiselect.min.js"></script>
 <script defer type="text/javascript" src="vendor/multiselect/jquery.multiselect.filter.min.js"></script>
