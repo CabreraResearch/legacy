@@ -188,7 +188,7 @@ namespace ChemSW.Nbt
         /// <param name="modulename">The module of the nodes to hide</param>
         public void ToggleUserNodes( bool hidden, string modulename )
         {
-            CswNbtMetaDataObjectClass userOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
+            CswNbtMetaDataObjectClass userOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.UserClass );
             CswNbtMetaDataObjectClassProp usernameOCP = userOC.getObjectClassProp( CswNbtObjClassUser.PropertyName.Username );
             CswNbtView usersView = new CswNbtView( _CswNbtResources );
             CswNbtViewRelationship parent = usersView.AddViewRelationship( userOC, false );
@@ -217,7 +217,7 @@ namespace ChemSW.Nbt
         /// <param name="modulename">The module of the nodes to hide</param>
         public void ToggleRoleNodes( bool hidden, string modulename )
         {
-            CswNbtMetaDataObjectClass roleOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.RoleClass );
+            CswNbtMetaDataObjectClass roleOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.RoleClass );
             CswNbtMetaDataObjectClassProp nameOCP = roleOC.getObjectClassProp( CswNbtObjClassRole.PropertyName.Name );
             CswNbtView rolesView = new CswNbtView( _CswNbtResources );
             CswNbtViewRelationship parent = rolesView.AddViewRelationship( roleOC, false );

@@ -31,7 +31,7 @@ namespace ChemSW.Nbt
             _CswNbtResources.Modules.ToggleViewsInCategory( false, "Inspections" );
             _CswNbtResources.Modules.ToggleViewsInCategory( false, "Lab Safety" );
 
-            CswNbtMetaDataObjectClass reportOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.ReportClass );
+            CswNbtMetaDataObjectClass reportOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.ReportClass );
             CswNbtMetaDataObjectClassProp reportNameOCP = reportOC.getObjectClassProp( CswNbtObjClassReport.PropertyName.ReportName );
             CswNbtNode deficientInspectionsNode = _findNode( "Deficient Inspections", reportOC, reportNameOCP );
             if( null != deficientInspectionsNode )
@@ -55,7 +55,8 @@ namespace ChemSW.Nbt
             _CswNbtResources.Modules.ToggleViewsInCategory( true, "Inspections" );
             _CswNbtResources.Modules.ToggleViewsInCategory( true, "Lab Safety" );
 
-            CswNbtMetaDataObjectClass reportOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.ReportClass );
+
+            CswNbtMetaDataObjectClass reportOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.ReportClass );
             CswNbtMetaDataObjectClassProp reportNameOCP = reportOC.getObjectClassProp( CswNbtObjClassReport.PropertyName.ReportName );
             CswNbtNode deficientInspectionsNode = _findNode( "Deficient Inspections", reportOC, reportNameOCP );
             if( null != deficientInspectionsNode )
