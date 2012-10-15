@@ -194,7 +194,8 @@ namespace ChemSW.Nbt.MetaData
                        ObjectClass != NbtObjectClass.RequestClass &&
                        ObjectClass != NbtObjectClass.ContainerClass &&
                        ObjectClass != NbtObjectClass.MaterialClass &&
-                       ObjectClass != NbtObjectClass.ContainerDispenseTransactionClass );
+                       ObjectClass != NbtObjectClass.ContainerDispenseTransactionClass &&
+                       ObjectClass != NbtObjectClass.BatchOpClass );
             }
         } // CanAdd
 
