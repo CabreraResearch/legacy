@@ -144,6 +144,7 @@
     <Compile Include="csw\Schema\scripts\infr\RunBeforeEveryExecutionOfUpdater_01OC.cs" />
     <Compile Include="csw\Sched\logic\CswScheduleLogicNbtExpiredContainers.cs" />
     <Compile Include="csw\Schema\scripts\infr\RunBeforeEveryExecutionOfUpdater_01M.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01T_Case27801.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01S_Case27800.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01T_Case27740.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01T_Case27873.cs" />
