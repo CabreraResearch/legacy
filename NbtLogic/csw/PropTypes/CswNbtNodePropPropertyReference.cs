@@ -230,7 +230,7 @@ namespace ChemSW.Nbt.PropTypes
         /// </summary>
         public void setSequenceValue()
         {
-            if( Sequence.Trim() == string.Empty )
+            if( UseSequence && Sequence.Trim() == string.Empty )
             {
                 string value = _SequenceValue.Next;
                 setSequenceValueOverride( value, false );
@@ -246,15 +246,18 @@ namespace ChemSW.Nbt.PropTypes
         /// (set true if the value was not just generated from the sequence)</param>
         public void setSequenceValueOverride( string SeqValue, bool ResetSequence )
         {
-            _CswNbtNodePropData.SetPropRowValue( _SequenceSubField.Column, SeqValue );
-            Int32 ThisSeqValue = _SequenceValue.deformatSequence( SeqValue );
-            _CswNbtNodePropData.SetPropRowValue( _SequenceNumberSubField.Column, ThisSeqValue );
-            _setGestalt( CachedValue, SeqValue );
-
-            if( ResetSequence )
+            if( UseSequence )
             {
-                // Keep the sequence up to date
-                _SequenceValue.reSync( ThisSeqValue );
+                _CswNbtNodePropData.SetPropRowValue( _SequenceSubField.Column, SeqValue );
+                Int32 ThisSeqValue = _SequenceValue.deformatSequence( SeqValue );
+                _CswNbtNodePropData.SetPropRowValue( _SequenceNumberSubField.Column, ThisSeqValue );
+                _setGestalt( CachedValue, SeqValue );
+
+                if( ResetSequence )
+                {
+                    // Keep the sequence up to date
+                    _SequenceValue.reSync( ThisSeqValue );
+                }
             }
         }
 

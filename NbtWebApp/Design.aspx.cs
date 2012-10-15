@@ -2281,12 +2281,15 @@ namespace ChemSW.Nbt.WebPages
                             UseSequenceRow.Cells[1].Controls.Add( UseSequenceValue );
 
                             //Sequence
-                            TableRow PropRefSequenceRow = makeEditPropTableRow( EditPropPlaceHolder );
-                            ( (Literal) PropRefSequenceRow.Cells[0].Controls[0] ).Text = "";
-                            CswSequencesEditor PropRefSequencesEditor = new CswSequencesEditor( Master.CswNbtResources, Master.AjaxManager, SelectedNodeTypeProp.PropId );
-                            PropRefSequencesEditor.ID = "EditProp_SequenceValue" + SelectedNodeTypeProp.PropId.ToString();
-                            PropRefSequencesEditor.DataBind();
-                            PropRefSequenceRow.Cells[1].Controls.Add( PropRefSequencesEditor );
+                            if( UseSequenceValue.Checked )
+                            {
+                                TableRow PropRefSequenceRow = makeEditPropTableRow( EditPropPlaceHolder );
+                                ( (Literal) PropRefSequenceRow.Cells[0].Controls[0] ).Text = "";
+                                CswSequencesEditor PropRefSequencesEditor = new CswSequencesEditor( Master.CswNbtResources, Master.AjaxManager, SelectedNodeTypeProp.PropId );
+                                PropRefSequencesEditor.ID = "EditProp_SequenceValue" + SelectedNodeTypeProp.PropId.ToString();
+                                PropRefSequencesEditor.DataBind();
+                                PropRefSequenceRow.Cells[1].Controls.Add( PropRefSequencesEditor );
+                            }
 
                             break;
 
