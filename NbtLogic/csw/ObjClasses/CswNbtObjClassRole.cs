@@ -182,26 +182,6 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 throw new CswDniException( ErrorType.Warning, "The '" + ChemSWAdminRoleName + "' role cannot be deleted", "Current user (" + _CswNbtResources.CurrentUser.Username + ") attempted to delete the '" + ChemSWAdminRoleName + "' role." );
             }
-
-            //// case 22424
-            //// Prevent deleting roles in use
-            //CswNbtMetaDataObjectClass UserOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClassName.NbtObjectClass.UserClass );
-            //foreach( CswNbtNode UserNode in UserOC.getNodes( false, true ) )
-            //{
-            //    CswNbtObjClassUser UserNodeAsUser = (CswNbtObjClassUser) UserNode;
-            //    if( UserNodeAsUser.Role.RelatedNodeId == _CswNbtNode.NodeId )
-            //    {
-            //        throw ( new CswDniException( ErrorType.Warning, "This role cannot be deleted because it is in use by user: " + UserNodeAsUser.Username,
-            //                                     "Current user (" + _CswNbtResources.CurrentUser.Username + ") tried to delete a role that is in use (" + _CswNbtNode.NodeName + ") by user: " + UserNodeAsUser.Username ) );
-            //    }
-            //}
-
-            ////prevent user from deleting ScheduleRunner
-            //if (Name.Text.ToLower() == "schedulerunner")
-            //{
-            //    throw new CswDniException("You cannot delete the ScheduleRunner role", "Current user (" + _CswNbtResources.CurrentUser.Username + ") attempted to delete the ScheduleRunner role");
-            //}
-
         }//beforeDeleteNode()
 
         public override void afterDeleteNode()
@@ -247,9 +227,6 @@ namespace ChemSW.Nbt.ObjClasses
 
         private Dictionary<string, string> InitNodeTypePermissionOptions()
         {
-            // case 8411 - for backwards compatibility
-            //if( _CswNbtNode.Properties[NodeTypePermissionsPropertyName].getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.MultiList )
-            //{
             // set NodeType Permissions options
             // Could be a performance problem!!!
             Dictionary<string, string> NodeTypeOptions = new Dictionary<string, string>();
@@ -274,14 +251,10 @@ namespace ChemSW.Nbt.ObjClasses
                 } // foreach( CswNbtMetaDataNodeTypeTab Tab in NodeType.NodeTypeTabs )
             } // foreach( CswNbtMetaDataNodeType NodeType in _CswNbtResources.MetaData.NodeTypes )
             return NodeTypeOptions;
-            //} // if( _CswNbtNode.Properties[NodeTypePermissionsPropertyName].FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.MultiList )
         } // InitNodeTypePermissionOptions()
 
         private Dictionary<string, string> InitActionPermissionOptions()
         {
-            // case 8411 - for backwards compatibility
-            //if( _CswNbtNode.Properties[ActionPermissionsPropertyName].getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.MultiList )
-            //{
             // set Action Permissions options
             Dictionary<string, string> ActionOptions = new Dictionary<string, string>();
             foreach( CswNbtAction Action in _CswNbtResources.Actions )
@@ -291,7 +264,6 @@ namespace ChemSW.Nbt.ObjClasses
                 ActionOptions.Add( Key, Value );
             }
             return ActionOptions;
-            //}
         } // InitActionPermissionOptions()
 
         public override void afterPopulateProps()

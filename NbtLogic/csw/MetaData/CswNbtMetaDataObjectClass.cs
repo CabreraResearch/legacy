@@ -156,23 +156,23 @@ namespace ChemSW.Nbt.MetaData
             //    return null;
         }
 
-        public CswNbtView CreateDefaultView( bool includeDefaultFilters = true )
+        public CswNbtView CreateDefaultView( bool IncludeDefaultFilters = true )
         {
             CswNbtView DefaultView = new CswNbtView( _CswNbtMetaDataResources.CswNbtResources );
             DefaultView.ViewName = this.ObjectClass.ToString();
 
-            CswNbtViewRelationship RelationshipToMe = DefaultView.AddViewRelationship( this, includeDefaultFilters );
+            CswNbtViewRelationship RelationshipToMe = DefaultView.AddViewRelationship( this, IncludeDefaultFilters );
             //RelationshipToMe.ArbitraryId = RelationshipToMe.SecondId.ToString();
             //DefaultView.Root.addChildRelationship( RelationshipToMe );
 
             return DefaultView;
         }
 
-        public Collection<CswNbtNode> getNodes( bool forceReInit, bool includeSystemNodes, bool includeDefaultFilters = false )
+        public Collection<CswNbtNode> getNodes( bool forceReInit, bool includeSystemNodes, bool IncludeDefaultFilters = true )
         {
             Collection<CswNbtNode> Collection = new Collection<CswNbtNode>();
 
-            CswNbtView View = CreateDefaultView( includeDefaultFilters );
+            CswNbtView View = CreateDefaultView( IncludeDefaultFilters );
             ICswNbtTree Tree = _CswNbtMetaDataResources.CswNbtResources.Trees.getTreeFromView( View, forceReInit, true, true, includeSystemNodes );
             for( Int32 c = 0; c < Tree.getChildNodeCount(); c++ )
             {

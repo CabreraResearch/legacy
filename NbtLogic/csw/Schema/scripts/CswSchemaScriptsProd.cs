@@ -19,7 +19,7 @@ namespace ChemSW.Nbt.Schema
         public CswSchemaScriptsProd()
         {
             // This is where you manually set to the last version of the previous release
-            _MinimumVersion = new CswSchemaVersion( 1, 'R', 033 );
+            _MinimumVersion = new CswSchemaVersion( 1, 'R', 34 );
 
             // This is where you add new versions.
             // e.g. _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCaseXXXXX() ) );
@@ -52,21 +52,22 @@ namespace ChemSW.Nbt.Schema
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01S_Case27904() ) );                              //01S-024
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01S_Case27800() ) );                              //01S-025
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01S_Case27720() ) );                              //01S-026
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01S_Case27904() ) );                              //01S-027
 
             #endregion SEBASTIAN
 
             #region TITANIA
 
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01T_Case27869() ) );                         //01S-027    01T-01
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01T_Case27873() ) );                         //01S-028    01T-02
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01T_Case27872() ) );                         //01S-029    01T-03
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01T_CertMethod_Case27868() ) );              //01S-030    01T-05
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01T_Case27694() ) );                         //01S-031    01T-06
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01T_Case27865_part1() ) );                   //01S-032    01T-07
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01T_Case27865_part2() ) );                   //01S-033    01T-08
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01T_Case27867() ) );                         //01S-034    01T-09
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01T_Case27947() ) );                         //01S-035    01T-10
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01T_Case27880() ) );                         //01S-036    01T-11
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01T_Case27869() ) );                         //01S-028    01T-01
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01T_Case27873() ) );                         //01S-029    01T-02
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01T_Case27872() ) );                         //01S-030    01T-03
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01T_CertMethod_Case27868() ) );              //01S-031    01T-05
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01T_Case27694() ) );                         //01S-032    01T-06
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01T_Case27865_part1() ) );                   //01S-033    01T-07
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01T_Case27865_part2() ) );                   //01S-034    01T-08
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01T_Case27867() ) );                         //01S-035    01T-09
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01T_Case27947() ) );                         //01S-036    01T-10
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01T_Case27880() ) );                         //01S-037    01T-11
 
             #endregion TITANIA
 
@@ -182,7 +183,7 @@ namespace ChemSW.Nbt.Schema
             char ReleaseIdentifier = _MinimumVersion.ReleaseIdentifier;
             if( 'Z' != ReleaseIdentifier )
             {
-                char[] alpha = "ABCDEFGHIJKLMNOPRSTUVWXYZ".ToCharArray();   // removed Q for Quince!
+                char[] alpha = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".ToCharArray();
                 List<char> Chars = new List<char>( alpha );
                 int ReleaseIdInt = Chars.IndexOf( ReleaseIdentifier );
                 ReleaseIdInt++;

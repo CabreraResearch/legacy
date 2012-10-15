@@ -90,21 +90,21 @@
         }, // ExpireDialog
         AddWelcomeItemDialog: function (options) {
             var o = {
-                onAdd: function () { }
+                form: function () {},
+                onAdd: function () {}
             };
-
             if (options) Csw.extend(o, options);
 
             var div = Csw.literals.div();
 
-            div.$.CswWelcome('getAddItemForm', {
-                'onAdd': function () {
+            o.form(div, {
+                onAdd : function () {
                     div.$.dialog('close');
                     Csw.tryExec(o.onAdd);
                 }
             });
 
-            openDialog(div, 400, 400, null, 'New Welcome Item');
+            openDialog(div, 400, 400, null, 'New Landing Page Item');//should this be page-specific?
         }, // AddWelcomeItemDialog
         AddViewDialog: function (options) {
             var o = {
