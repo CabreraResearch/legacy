@@ -161,10 +161,10 @@ namespace ChemSW.Nbt.WebPages
                     UserLabel.Text = Master.CswNbtResources.CurrentUser.Username;
 
                     AdminMenuItem.Visible = false;
-					//if( Master.CswNbtResources.CurrentNbtUser.IsAdministrator() )
-					//{
-					//    AdminMenuItem.Visible = true;
-					//}
+                    //if( Master.CswNbtResources.CurrentNbtUser.IsAdministrator() )
+                    //{
+                    //    AdminMenuItem.Visible = true;
+                    //}
 
                     //BrandTitle.Visible = false;
                     //BrandTitle2.Visible = false;
@@ -285,7 +285,7 @@ namespace ChemSW.Nbt.WebPages
                     MainMenu.Visible = false;
                 }
                 MainMenu.DataBind();
-			}
+            }
             catch( Exception ex )
             {
                 HandleError( ex );
@@ -353,8 +353,7 @@ namespace ChemSW.Nbt.WebPages
                                                                                                     true );
                             UserRelationship.NodeIdsToFilterIn.Add( Master.CswNbtResources.CurrentUser.UserId );
 
-                            ICswNbtTree PrefsTree = Master.CswNbtResources.Trees.getTreeFromView( UserView, false, false,
-                                                                                                  false, false );
+                            ICswNbtTree PrefsTree = Master.CswNbtResources.Trees.getTreeFromView( Master.CswNbtResources.CurrentNbtUser, UserView, true, false, false );
                             PrefsTree.goToNthChild( 0 );
                             Session["Main_SelectedNodeKey"] = PrefsTree.getNodeKeyForCurrentPosition().ToString();
 
@@ -544,11 +543,11 @@ namespace ChemSW.Nbt.WebPages
             switch( ViewType )
             {
                 case CswViewListTree.ViewType.View:
-					Master.setViewId( new CswNbtViewId( Pk ) );
+                    Master.setViewId( new CswNbtViewId( Pk ) );
                     Master.GoMain();
                     break;
                 case CswViewListTree.ViewType.RecentView:
-					CswNbtView View = Master.CswNbtResources.ViewSelect.restoreView( new CswNbtViewId( Pk ) );
+                    CswNbtView View = Master.CswNbtResources.ViewSelect.restoreView( new CswNbtViewId( Pk ) );
                     Master.setViewXml( View.ToXml().InnerXml.ToString() );
                     Master.GoMain();
                     break;
@@ -562,7 +561,7 @@ namespace ChemSW.Nbt.WebPages
                     Master.Redirect( "Report.aspx?reportid=" + Pk.ToString() );
                     break;
                 default:
-					throw new CswDniException( ErrorType.Error, "Invalid Selection", "MainLayout.master.cs::ChangeMainView() got an invalid ViewType: " + ViewType.ToString() );
+                    throw new CswDniException( ErrorType.Error, "Invalid Selection", "MainLayout.master.cs::ChangeMainView() got an invalid ViewType: " + ViewType.ToString() );
             } // switch( SelectedViewType )
         } // ChangeMainView()
 
@@ -574,7 +573,7 @@ namespace ChemSW.Nbt.WebPages
             Master.GoMain();
         }
 
-		protected void _QuickLaunch_OnSessionViewLinkClick( CswNbtSessionDataId SessionViewId )
+        protected void _QuickLaunch_OnSessionViewLinkClick( CswNbtSessionDataId SessionViewId )
         {
             Master.setSessionViewId( SessionViewId );
             Master.GoMain();
@@ -640,10 +639,10 @@ namespace ChemSW.Nbt.WebPages
         public RadWindow DesignDeleteDialogWindow { get { return Master.DesignDeleteDialogWindow; } }
         public CswSessions SessionList { get { return ( Master.SessionList ); } }
         public void setAction( Int32 ActionId ) { Master.setAction( ActionId ); }
-		public void setViewId( CswNbtViewId ViewId ) { Master.setViewId( ViewId ); }
-		public void setViewId( CswNbtViewId ViewId, bool ForceReload ) { Master.setViewId( ViewId, ForceReload ); }
-		public void setSessionViewId( CswNbtSessionDataId ViewId, bool ForceReload ) { Master.setSessionViewId( ViewId, ForceReload ); }
-		public void setSessionViewId( CswNbtSessionDataId ViewId ) { Master.setSessionViewId( ViewId ); }
+        public void setViewId( CswNbtViewId ViewId ) { Master.setViewId( ViewId ); }
+        public void setViewId( CswNbtViewId ViewId, bool ForceReload ) { Master.setViewId( ViewId, ForceReload ); }
+        public void setSessionViewId( CswNbtSessionDataId ViewId, bool ForceReload ) { Master.setSessionViewId( ViewId, ForceReload ); }
+        public void setSessionViewId( CswNbtSessionDataId ViewId ) { Master.setSessionViewId( ViewId ); }
         public void setViewXml( string ViewXml ) { Master.setViewXml( ViewXml ); }
         public void setViewXml( string ViewXml, bool ForceReload ) { Master.setViewXml( ViewXml, ForceReload ); }
         public void clearView() { Master.clearView(); }
@@ -651,7 +650,7 @@ namespace ChemSW.Nbt.WebPages
         public void ReleaseAll() { Master.ReleaseAll(); }
         public void Redirect( string url ) { Master.Redirect( url ); }
         //public void GoHome() { Master.GoHome(); }
-		public void GoHome() { Master.Redirect( "Main.html?clear=y" ); }
+        public void GoHome() { Master.Redirect( "Main.html?clear=y" ); }
         public void GoMain() { Master.GoMain(); }
         public void LogMessage( string Message ) { Master.LogMessage( Message ); }
         public void LogTimerResult( string Message, string TimerResult ) { Master.LogTimerResult( Message, TimerResult ); }

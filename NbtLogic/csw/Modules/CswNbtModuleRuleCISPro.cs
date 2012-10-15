@@ -1,5 +1,6 @@
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
+using System.Data;
 
 namespace ChemSW.Nbt
 {
@@ -53,6 +54,15 @@ namespace ChemSW.Nbt
                 UserJurisdictionNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, false );
                 UserJurisdictionNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, UserNT.getFirstNodeTypeTab().TabId );
             }
+
+            //Case 27862 - show...
+            //   All CISPro roles and users
+            //   Unit of measure and work units views
+            //_CswNbtResources.Modules.ToggleRoleNodes()
+            _CswNbtResources.Modules.ToggleRoleNodes( false, "cispro" );
+            _CswNbtResources.Modules.ToggleUserNodes( false, "cispro" );
+            _CswNbtResources.Modules.ToggleView( false, "Units of Measurement" );
+            _CswNbtResources.Modules.ToggleView( false, "Work Units" );
         }
 
         public override void OnDisable()
@@ -95,6 +105,15 @@ namespace ChemSW.Nbt
                 CswNbtMetaDataNodeTypeProp UserJurisdictionNTP = UserNT.getNodeTypePropByObjectClassProp( CswNbtObjClassUser.PropertyName.Jurisdiction );
                 UserJurisdictionNTP.removeFromAllLayouts();
             }
+
+            //Case 27862 - hide...
+            //   All CISPro roles and users
+            //   Unit of measure and work units views
+            _CswNbtResources.Modules.ToggleRoleNodes( true, "cispro" );
+            _CswNbtResources.Modules.ToggleUserNodes( true, "cispro" );
+            _CswNbtResources.Modules.ToggleView( true, "Units of Measurement" );
+            _CswNbtResources.Modules.ToggleView( true, "Work Units" );
+
         } // OnDisable()
 
     } // class CswNbtModuleCISPro

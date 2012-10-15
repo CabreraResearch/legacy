@@ -284,7 +284,7 @@ namespace ChemSW.Nbt.ObjClasses
                 SubFieldName: CswNbtSubField.SubFieldName.NodeID );
             componentsView.AddViewRelationship( parent, NbtViewPropOwnerType.First, mixtureOCP, false );
 
-            ICswNbtTree componentsTree = _CswNbtResources.Trees.getTreeFromView( componentsView, false );
+            ICswNbtTree componentsTree = _CswNbtResources.Trees.getTreeFromView( componentsView, false, false, false );
             int nodesCount = componentsTree.getChildNodeCount();
             for( int i = 0; i < nodesCount; i++ )
             {

@@ -610,7 +610,8 @@ namespace ChemSW.Nbt.Schema
             nodetypeid,
             pendingupdate,
             issystem,
-            isdemo
+            isdemo,
+            hidden
         }
 
         public enum NodesAuditColumns

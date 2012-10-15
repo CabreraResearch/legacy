@@ -16,8 +16,9 @@ namespace ChemSW.Nbt
         private string _ExtraWhereClause;
         private ICswNbtUser _RunAsUser;
         private bool _IncludeSystemNodes = false;
+        private bool _IncludeHiddenNodes;
 
-        public CswNbtTreeLoaderFromSearchByLevel( CswNbtResources CswNbtResources, ICswNbtUser RunAsUser, ICswNbtTree pCswNbtTree, string SearchTerm, string WhereClause, bool IncludeSystemNodes )
+        public CswNbtTreeLoaderFromSearchByLevel( CswNbtResources CswNbtResources, ICswNbtUser RunAsUser, ICswNbtTree pCswNbtTree, string SearchTerm, string WhereClause, bool IncludeSystemNodes, bool IncludeHiddenNodes )
             : base( pCswNbtTree )
         {
             _CswNbtResources = CswNbtResources;
@@ -25,6 +26,7 @@ namespace ChemSW.Nbt
             _SearchTerm = SearchTerm;
             _ExtraWhereClause = WhereClause;
             _IncludeSystemNodes = IncludeSystemNodes;
+            _IncludeHiddenNodes = IncludeHiddenNodes;
         }
 
         /// <summary>
@@ -218,6 +220,11 @@ namespace ChemSW.Nbt
             if( !_IncludeSystemNodes )
             {
                 Where += " and n.issystem = '0' ";
+            }
+            //27862
+            if( false == _IncludeHiddenNodes )
+            {
+                Where += " and n.hidden = '0' ";
             }
             Where += " and n.istemp= '0' ";
 

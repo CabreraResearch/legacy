@@ -297,7 +297,12 @@ namespace ChemSW.Nbt.PropTypes
                 Int32 TargetObjectClassId = Int32.MinValue;
                 _getIds( TargetType, TargetId, out TargetNodeTypeId, out TargetObjectClassId );
 
-                ICswNbtTree CswNbtTree = _CswNbtResources.Trees.getTreeFromView( View, false, true, false, false, false );
+                //ICswNbtTree CswNbtTree = _CswNbtResources.Trees.getTreeFromView( View, false, true, false, false, false );
+                ICswNbtTree CswNbtTree = _CswNbtResources.Trees.getTreeFromView(
+                    View: View,
+                    IncludeSystemNodes: false,
+                    RequireViewPermissions: false,
+                    IncludeHiddenNodes: false );
                 _addOptionsRecurse( Options, CswNbtTree, TargetNodeTypeId, TargetObjectClassId );
             } // if( View != null )
             return Options;

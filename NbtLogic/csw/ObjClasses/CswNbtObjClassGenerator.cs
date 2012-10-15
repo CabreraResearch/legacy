@@ -238,7 +238,7 @@ namespace ChemSW.Nbt.ObjClasses
                         CswNbtViewProperty IsFutureProperty = View.AddViewProperty( TargetRelationship, IsFutureProp );
                         View.AddViewPropertyFilter( IsFutureProperty, CswNbtSubField.SubFieldName.Checked, CswNbtPropFilterSql.PropertyFilterMode.Equals, "True", false );
 
-                        ICswNbtTree TargetTree = _CswNbtResources.Trees.getTreeFromView( View, true, true, false, false );
+                        ICswNbtTree TargetTree = _CswNbtResources.Trees.getTreeFromView( _CswNbtResources.CurrentNbtUser, View, true, false, false );
 
                         TargetTree.goToRoot();
                         if( TargetTree.getChildNodeCount() > 0 ) // should always be the case

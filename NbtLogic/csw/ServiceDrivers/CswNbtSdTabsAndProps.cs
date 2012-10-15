@@ -745,7 +745,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                 if( View != null )
                 {
                     // Get the nodekey of this node in the current view
-                    Tree = _CswNbtResources.Trees.getTreeFromView( View, true, true, false, false );
+                    Tree = _CswNbtResources.Trees.getTreeFromView( _CswNbtResources.CurrentNbtUser, View, true, false, false );
                     Ret = Tree.getNodeKeyByNodeId( Node.NodeId );
                 }
                 if( Ret == null )
@@ -753,7 +753,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                     // Make a nodekey from the default view
                     View = Node.getNodeType().CreateDefaultView();
                     View.Root.ChildRelationships[0].NodeIdsToFilterIn.Add( Node.NodeId );
-                    Tree = _CswNbtResources.Trees.getTreeFromView( View, true, true, false, false );
+                    Tree = _CswNbtResources.Trees.getTreeFromView( _CswNbtResources.CurrentNbtUser, View, true, false, false );
                     Ret = Tree.getNodeKeyByNodeId( Node.NodeId );
                 }
             }
