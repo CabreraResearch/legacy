@@ -34,6 +34,7 @@ namespace ChemSW.Nbt.Schema
             get { return 27904; }
         }
 
-    }//class CswUpdateSchemaCase27904
+
+    }//class CswUpdateSchema_01S_Case27904
 
 }//namespace ChemSW.Nbt.Schema

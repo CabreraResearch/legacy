@@ -24,6 +24,7 @@ namespace ChemSW.Nbt.Batch
         public static readonly NbtBatchOpName MailReport = new NbtBatchOpName( "MailReport" );
         public static readonly NbtBatchOpName UpdateRegulatoryLists = new NbtBatchOpName( "UpdateRegulatoryLists" );
         public static readonly NbtBatchOpName UpdateRegulatoryListsForMaterials = new NbtBatchOpName( "UpdateRegulatoryListsForMaterials" );
+        public static readonly NbtBatchOpName ExpiredContainers = new NbtBatchOpName( "ExpiredContainers" );
     }
 
     /// <summary>

@@ -62,6 +62,10 @@ namespace ChemSW.Nbt.ObjClasses
                     ReturnVal = new CswNbtObjClassDocument( CswNbtResources, Node );
                     break;
 
+                case NbtObjectClass.EnterprisePartClass:
+                    ReturnVal = new CswNbtObjClassEnterprisePart( CswNbtResources, Node );
+                    break;
+
                 case NbtObjectClass.EquipmentAssemblyClass:
                     ReturnVal = new CswNbtObjClassEquipmentAssembly( CswNbtResources, Node );
                     break;
@@ -90,7 +94,7 @@ namespace ChemSW.Nbt.ObjClasses
                     ReturnVal = new CswNbtObjClassInspectionRoute( CswNbtResources, Node );
                     break;
 
-case NbtObjectClass.InspectionTargetClass:
+                case NbtObjectClass.InspectionTargetClass:
 
                     ReturnVal = new CswNbtObjClassInspectionTarget( CswNbtResources, Node );
                     break;
@@ -99,7 +103,7 @@ case NbtObjectClass.InspectionTargetClass:
                     ReturnVal = new CswNbtObjClassInspectionTargetGroup( CswNbtResources, Node );
                     break;
 
-case NbtObjectClass.InventoryGroupClass:
+                case NbtObjectClass.InventoryGroupClass:
 
                     ReturnVal = new CswNbtObjClassInventoryGroup( CswNbtResources, Node );
                     break;
@@ -112,7 +116,7 @@ case NbtObjectClass.InventoryGroupClass:
                     ReturnVal = new CswNbtObjClassInventoryLevel( CswNbtResources, Node );
                     break;
 
-case NbtObjectClass.JurisdictionClass:
+                case NbtObjectClass.JurisdictionClass:
 
                     ReturnVal = new CswNbtObjClassJurisdiction( CswNbtResources, Node );
                     break;
@@ -120,6 +124,10 @@ case NbtObjectClass.JurisdictionClass:
 case NbtObjectClass.LocationClass:
 
                     ReturnVal = new CswNbtObjClassLocation( CswNbtResources, Node );
+                    break;
+
+                case NbtObjectClass.ManufacturerEquivalentPartClass:
+                    ReturnVal = new CswNbtObjClassManufacturerEquivalentPart( CswNbtResources, Node );
                     break;
 
                 case NbtObjectClass.MaterialClass:
@@ -160,6 +168,10 @@ case NbtObjectClass.MethodClass:
 
                 case NbtObjectClass.ProblemClass:
                     ReturnVal = new CswNbtObjClassProblem( CswNbtResources, Node );
+                    break;
+
+                case NbtObjectClass.ReceiptLotClass:
+                    ReturnVal = new CswNbtObjClassReceiptLot( CswNbtResources, Node );
                     break;
 
                 case NbtObjectClass.RegulatoryListClass:

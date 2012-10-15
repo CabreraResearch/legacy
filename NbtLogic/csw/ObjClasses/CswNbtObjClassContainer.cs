@@ -54,6 +54,26 @@ namespace ChemSW.Nbt.ObjClasses
 
         }
 
+        public sealed class Statuses
+        {
+            public const string LabUseOnly = "Lab Use Only";
+            public const string Central = "Central";
+            public const string Approved = "Approved";
+            public const string OutOfCompliance = "Out of Compliance";
+            public const string Rejected = "Rejected";
+            public const string Expired = "Expired";
+
+            public static readonly CswCommaDelimitedString Options = new CswCommaDelimitedString
+                {
+                    LabUseOnly,
+                    Central,
+                    Approved,
+                    OutOfCompliance,
+                    Rejected,
+                    Expired
+                };
+        }
+
         /// <summary>
         /// Has the corresponding Inventory Level been modified in a change event on this instance?
         /// </summary>
@@ -206,7 +226,7 @@ namespace ChemSW.Nbt.ObjClasses
 
                             CswNbtObjClassRequestItem NodeAsRequestItem = RequestAct.makeContainerRequestItem( this, ButtonData );
 
-                            ButtonData.Data["titleText"] = OCP.PropName + " " + Barcode.Barcode;
+                            ButtonData.Data["titleText"] = "Add to Cart&#58 " + NodeAsRequestItem.Type.Value + " " + Barcode.Barcode;
                             ButtonData.Data["requestaction"] = ButtonData.SelectedText;
                             ButtonData.Data["requestItemProps"] = RequestAct.getRequestItemAddProps( NodeAsRequestItem );
                             ButtonData.Data["requestItemNodeTypeId"] = RequestAct.RequestItemNt.NodeTypeId;
@@ -365,8 +385,8 @@ namespace ChemSW.Nbt.ObjClasses
                 CswNbtNodePropQuantity InitialQuantity = sizeNode.InitialQuantity;
                 InitialQuantity.ToJSON( InitialQuantityObj );
                 CswNbtObjClassUnitOfMeasure UnitNode = _CswNbtResources.Nodes.GetNode( sizeNode.InitialQuantity.UnitId );
-                if( null != UnitNode && 
-                    ( UnitNode.UnitType.Value == CswNbtObjClassUnitOfMeasure.UnitTypes.Each.ToString() || 
+                if( null != UnitNode &&
+                    ( UnitNode.UnitType.Value == CswNbtObjClassUnitOfMeasure.UnitTypes.Each.ToString() ||
                     false == CswTools.IsDouble( UnitNode.ConversionFactor.Base ) ) )
                 {
                     InitialQuantityObj["unitReadonly"] = "true";
