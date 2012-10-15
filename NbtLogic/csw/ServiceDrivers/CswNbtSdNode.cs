@@ -146,8 +146,7 @@ namespace ChemSW.Nbt.ServiceDrivers
             CswNbtMetaDataNodeType NodeType = MetaDataProp.getNodeType();
 
             if( _CswNbtResources.Permit.canNodeType( Security.CswNbtPermit.NodeTypePermission.Edit, NodeType ) ||
-                _CswNbtResources.Permit.canTab( Security.CswNbtPermit.NodeTypePermission.Edit, NodeType, Tab ) ||
-                _CswNbtResources.Permit.canPropOnAnyOtherTab( Security.CswNbtPermit.NodeTypePermission.Edit, Tab, MetaDataProp ) )
+                _CswNbtResources.Permit.canTab( Security.CswNbtPermit.NodeTypePermission.Edit, NodeType, Tab ) )
             {
                 Node.Properties[MetaDataProp].ReadJSON( PropObj, null, null );
 
