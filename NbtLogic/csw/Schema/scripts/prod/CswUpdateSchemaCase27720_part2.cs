@@ -61,12 +61,6 @@ namespace ChemSW.Nbt.Schema
 
             } // if( null != MailReportNT )
 
-
-            // Remove Output Format from add layout
-            CswNbtMetaDataNodeTypeProp OutputFormatNTP = MailReportNT.getNodeTypePropByObjectClassProp( CswNbtObjClassMailReport.PropertyName.OutputFormat );
-            OutputFormatNTP.removeFromLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add );
-
-
         }//Update()
 
     }//class CswUpdateSchemaCase27720_part2

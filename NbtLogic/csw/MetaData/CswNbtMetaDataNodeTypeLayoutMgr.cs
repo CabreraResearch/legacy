@@ -285,6 +285,21 @@ namespace ChemSW.Nbt.MetaData
             LayoutUpdate.update( LayoutTable );
         } // removePropFromAllLayouts()
 
+        /// <summary>
+        /// Clear all properties from a layout
+        /// </summary>
+        public void clearLayout( LayoutType LayoutType, Int32 NodeTypeId )
+        {
+            CswTableUpdate LayoutUpdate = _CswNbtMetaDataResources.CswNbtResources.makeCswTableUpdate( "clearLayout_Update", "nodetype_layout" );
+            string WhereClause = "where layouttype = '" + LayoutType.ToString() + "' and nodetypeid = " + NodeTypeId.ToString();
+            DataTable LayoutTable = LayoutUpdate.getTable( WhereClause );
+            foreach( DataRow Row in LayoutTable.Rows )
+            {
+                Row.Delete();
+            }
+            LayoutUpdate.update( LayoutTable );
+        } // clearLayout()
+
         public Int32 getCurrentMaxDisplayRow( Int32 NodeTypeId, Int32 TabId, LayoutType LayoutType )
         {
             Int32 MaxRow = 0;
