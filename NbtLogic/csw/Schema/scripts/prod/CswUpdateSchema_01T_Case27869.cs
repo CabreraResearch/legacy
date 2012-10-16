@@ -20,7 +20,7 @@ namespace ChemSW.Nbt.Schema
                 {
                     //Create new NodeType
                     MethodNt = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( MethodOc.ObjectClassId, "Method", "MLM" );
-                    _CswNbtSchemaModTrnsctn.createModuleNodeTypeJunction( CswNbtModuleName.CISPro, MethodNt.NodeTypeId );
+                    _CswNbtSchemaModTrnsctn.createModuleNodeTypeJunction( CswNbtModuleName.MLM, MethodNt.NodeTypeId );
                     MethodNt.setNameTemplateText( CswNbtMetaData.MakeTemplateEntry( CswNbtObjClassMethod.PropertyName.MethodNo ) );
 
                     //Create Demo Data
