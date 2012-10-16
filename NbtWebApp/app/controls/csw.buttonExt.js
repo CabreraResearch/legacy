@@ -164,12 +164,12 @@
                         window.Ext.QuickTips.init();
                     }
                 };
-                if (false === Csw.isNullOrEmpty($('#' + cswParent.getId()), true)) {
+                if (false === Csw.isNullOrUndefined($('#' + cswParent.getId()), true)) {
                     cswPrivate.initBtn();
                 } else {
                     cswPublic.button = window.Ext.create('Ext.Button');
                     window.setTimeout(function () {
-                        if (false === Csw.isNullOrEmpty($('#' + cswParent.getId()), true)) {
+                        if (false === Csw.isNullOrUndefined($('#' + cswParent.getId()), true)) {
                             cswPrivate.initBtn();
                         }
                     }, 500);
