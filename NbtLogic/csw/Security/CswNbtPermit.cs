@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Linq;
+using System.Runtime.Serialization;
 using ChemSW.Core;
+using System.Collections.Generic;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
@@ -14,6 +16,64 @@ namespace ChemSW.Nbt.Security
     public class CswNbtPermit
     {
 
+        private Dictionary<CswNbtPermitInfoKey, CswNbtPermitInfo> _PermitInfoItems = new Dictionary<CswNbtPermitInfoKey, CswNbtPermitInfo>();
+
+        public class CswNbtPermitInfoKey : IEquatable<CswNbtPermitInfoKey>, IComparable<CswNbtPermitInfoKey>
+        {
+            public CswNbtPermitInfoKey( CswNbtObjClassRole CswNbtObjClassRole, CswNbtMetaDataNodeType NodeTypeIn )
+            {
+                Role = CswNbtObjClassRole;
+                NodeType = NodeTypeIn;
+            }
+
+            private char _Delimiter = '_';
+
+
+            public CswNbtObjClassRole Role = null;
+            public CswNbtMetaDataNodeType NodeType = null;
+
+            public bool Equals( CswNbtPermitInfoKey other )
+            {
+
+                bool ReturnVal = false;
+
+                if( ( null != Role ) && ( null != NodeType ) && ( null != other.Role ) && ( null != other.NodeType ) )
+                {
+                    if( ( other.Role.Name.Text == Role.Name.Text ) && ( other.NodeType.NodeTypeName == NodeType.NodeTypeName ) )
+                    {
+                        ReturnVal = true;
+                    }
+                }
+                else
+                {
+                    ReturnVal = true;
+                }//if-else all values are null
+
+                return ( ReturnVal );
+
+            }//equals
+
+            public int CompareTo( CswNbtPermitInfoKey other )
+            {
+                string ThisSortKey = this.ToString();
+                string OtherSortKey = other.ToString();
+
+                return ( String.Compare( ThisSortKey, OtherSortKey ) );
+            }
+
+            public override string ToString()
+            {
+                CswDelimitedString DelimStr = new CswDelimitedString( _Delimiter );
+                DelimStr.Add( Role.Name.Text );
+                DelimStr.Add( NodeType.NodeTypeName );
+                return DelimStr.ToString();
+            }
+
+            public override int GetHashCode()
+            {
+                return 17 * Role.GetHashCode() + NodeType.GetHashCode();
+            }
+        }//CswNbtPermitInfoKey
 
         private class CswNbtPermitInfo
         {
@@ -24,11 +84,12 @@ namespace ChemSW.Nbt.Security
             public NodeTypePermission Permission = NodeTypePermission.View;
 
 
-            public CswNbtPermitInfo( CswNbtResources CswNbtResources, ICswNbtUser CswNbtUser, CswNbtMetaDataNodeType NodeTypeIn, NodeTypePermission PermissionIn )
+            public CswNbtPermitInfo( CswNbtResources CswNbtResources, ICswNbtUser CswNbtUser, CswNbtObjClassRole CswNbtObjClassRole, CswNbtMetaDataNodeType NodeTypeIn, NodeTypePermission PermissionIn )
             {
                 NodeType = NodeTypeIn;
                 _CswNbtResources = CswNbtResources;
                 _CswNbtUser = CswNbtUser;
+                _CswNbtObjClassRole = CswNbtObjClassRole;
                 Permission = PermissionIn;
             }//ctor
 
@@ -42,11 +103,6 @@ namespace ChemSW.Nbt.Security
             {
                 get
                 {
-                    if( null == _CswNbtUser )
-                    {
-                        _CswNbtUser = _CswNbtResources.CurrentNbtUser;
-                    }
-
                     return ( _CswNbtUser );
 
                 }//get
@@ -57,14 +113,8 @@ namespace ChemSW.Nbt.Security
             {
                 get
                 {
-                    if( null == _CswNbtObjClassRole )
-                    {
-                        if( null != User )
-                        {
-                            _CswNbtObjClassRole = _CswNbtResources.Nodes[User.RoleId];
-                        }
+                    _CswNbtObjClassRole = _CswNbtResources.Nodes[User.RoleId];
 
-                    }//if role is null
 
                     return ( _CswNbtObjClassRole );
 
@@ -141,13 +191,42 @@ namespace ChemSW.Nbt.Security
         private CswNbtPermitInfo _CswNbtPermitInfo = null;
         private void _initPermissionInfo( ICswNbtUser CswNbtUser, CswNbtMetaDataNodeType NodeType, NodeTypePermission Permission )
         {
-
-            if( ( null == _CswNbtPermitInfo ) || ( _CswNbtPermitInfo.User != CswNbtUser ) || ( _CswNbtPermitInfo.NodeType != NodeType ) || ( _CswNbtPermitInfo.Permission != Permission ) )
+            CswNbtObjClassRole CswNbtObjClassRole = null;
+            CswPrimaryKey RoleId = null;
+            if( null != CswNbtUser )
             {
-                _CswNbtPermitInfo = new CswNbtPermitInfo( _CswNbtResources, CswNbtUser, NodeType, Permission );
+                RoleId = CswNbtUser.RoleId;
+            }
+            else
+            {
+                if( null != _CswNbtResources.CurrentNbtUser )
+                {
+                    RoleId = _CswNbtResources.CurrentNbtUser.RoleId;
+                }
             }
 
-        }//_initPreReqs()
+            if( ( ( null != RoleId ) && ( null != ( CswNbtObjClassRole = _getRole( RoleId ) ) ) ) )
+            {
+
+                CswNbtPermitInfoKey CswNbtPermitInfoKey = new CswNbtPermitInfoKey( CswNbtObjClassRole, NodeType );
+                if( _PermitInfoItems.ContainsKey( CswNbtPermitInfoKey ) )
+                {
+                    _CswNbtPermitInfo = _PermitInfoItems[CswNbtPermitInfoKey];
+
+                }
+                else
+                {
+                    _CswNbtPermitInfo = new CswNbtPermitInfo( _CswNbtResources, CswNbtUser, CswNbtObjClassRole, NodeType, Permission );
+                    _PermitInfoItems.Add( CswNbtPermitInfoKey, _CswNbtPermitInfo );
+
+                }
+            }
+            else //the permit info in this case is not catalogued, and permit info won't allow any ops to proceed
+            {
+                _CswNbtPermitInfo = new CswNbtPermitInfo( _CswNbtResources, CswNbtUser, CswNbtObjClassRole, NodeType, Permission );
+            }//if we were able to retrieve a role
+
+        }//_initPermissionInfo()
 
 
         /// <summary>
@@ -197,38 +276,19 @@ namespace ChemSW.Nbt.Security
         // This is probably a performance problem!
         private CswNbtObjClassRole _getRole( CswPrimaryKey RoleId )
         {
-            CswNbtNode RoleNode = _CswNbtResources.Nodes[RoleId];
-            return (CswNbtObjClassRole) RoleNode;
+            CswNbtObjClassRole ReturnVal = null;
+
+            if( null != RoleId )
+            {
+                CswNbtNode RoleNode = _CswNbtResources.Nodes[RoleId];
+                ReturnVal = (CswNbtObjClassRole) RoleNode;
+            }
+
+            return ( ReturnVal );
         }
 
         #region NodeTypes
 
-
-        //private ICswNbtUser _vetUser( ICswNbtUser User )
-        //{
-        //    ICswNbtUser ReturnVal = User;
-
-        //    if( null == ReturnVal )
-        //    {
-        //        ReturnVal = _CswNbtResources.CurrentNbtUser;
-        //    }
-
-        //    return ( ReturnVal );
-
-        //}//_vetUser()
-
-
-        //private bool _isUberUser( ICswNbtUser User )
-        //{
-        //    bool ReturnVal = false;
-
-        //    if( null != User )
-        //    {
-        //        ReturnVal = User is CswNbtSystemUser || User.Username == CswNbtObjClassUser.ChemSWAdminUsername;
-        //    }
-
-        //    return ( ReturnVal );
-        //}
 
         /// <summary>
         /// Does this User have this Permission on this nodetype?
