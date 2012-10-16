@@ -81,7 +81,7 @@
                                 break;
                             case 'AddNode':
                                 $.CswDialog('AddNodeDialog', {
-                                    text: menuItemName,
+                                    text: "New " + menuItemName,
                                     nodetypeid: Csw.string(menuItemJson.nodetypeid),
                                     relatednodeid: Csw.string(menuItemJson.relatednodeid), //for Grid Props
                                     relatednodename: Csw.string(menuItemJson.relatednodename), //for Grid Props
