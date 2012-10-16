@@ -1,9 +1,32 @@
+<script type="text/javascript" src="vendor/modernizr.custom.06564.js"></script>
 <script type="text/javascript">
-    var scr = document.createElement("script");
-    var host = (("https:" == document.location.protocol) ? "https://d3eyf2cx8mbems.cloudfront.net" : "http://d3eyf2cx8mbems.cloudfront.net");
-    scr.type = "text/javascript";
-    scr.src = host + "/js/loggly-0.1.0.js";
-    document.documentElement.firstChild.appendChild(scr);
+    Modernizr.load([{
+        load: '//d3eyf2cx8mbems.cloudfront.net/js/loggly-0.1.0.js',
+        callback: function () {
+            if (!window.loggly) {
+                Modernizr.load('vendor/loggly-0.1.0.js');
+            }
+        }
+    }]);
+
+    if (undefined === window.JSON ||
+        null === window.JSON ||
+        false === window.JSON.hasOwnProperty('parse') ||
+        false === window.JSON.hasOwnProperty('stringify')) {
+
+        Modernizr.load([{
+            load: '//cdnjs.cloudflare.com/ajax/libs/json2/20110223/json2.js',
+            callback: function () {
+                if (undefined === window.JSON ||
+                    null === window.JSON ||
+                    false === window.JSON.hasOwnProperty('parse') ||
+                    false === window.JSON.hasOwnProperty('stringify')) {
+                    Modernizr.load('vendor/json2.min.js');
+                }
+            }
+        }]);
+    }
+
 </script>
 <!--[if lte IE 8]>
  <script type="text/javascript" 
@@ -50,33 +73,27 @@ window.internetExplorerVersionNo = 9;
 <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/es5-shim/1.2.4/es5-shim.min.js"></script>
 
 <!-- <link rel="stylesheet" type="text/css" href="Content/themes/base/minified/jquery-ui.min.css" /> -->
-<!-- <link rel="stylesheet" type="text/css" href="js/thirdparty/theme-aristo/css/Aristo/Aristo.css" /> -->
 <link rel="stylesheet" type="text/css" href="//ajax.aspnetcdn.com/ajax/jquery.ui/1.8.19/themes/redmond/jquery-ui.css" />
-
-<!--<link defer rel="stylesheet" type="text/css" href="Content/jquery.jqGrid/ui.jqgrid.css" />-->
 
 <link defer rel="stylesheet" type="text/css" href="vendor/multiselect/jquery.multiselect.css" />
 <link defer rel="stylesheet" type="text/css" href="vendor/multiselect/jquery.multiselect.filter.css" />
 
 <script type="text/javascript" src="vendor/mousetrap.min.js"></script>
-<!-- <script type="text/javascript" src="Scripts/jquery-1.7.1.min.js"></script> -->
-<!-- https://developers.google.com/speed/libraries/devguide -->
+
 <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+<script>    window.jQuery || document.write('<script src="vendor/jquery-1.7.1.min.js">\x3C/script>')</script>
 
 <script type="text/javascript" src="vendor/harmony-collections.browser.min.js"></script>
-<!-- <script type="text/javascript" src="Scripts/jquery-ui-1.8.18.min.js"></script> -->
-<!-- http://www.asp.net/ajaxlibrary/CDNjQueryUI1819.ashx -->
-<script type="text/javascript" src="//ajax.aspnetcdn.com/ajax/jquery.ui/1.8.19/jquery-ui.min.js"></script>
 
-<!-- <script type="text/javascript" src="Scripts/jquery.validate.min.js"></script> -->
-<script type="text/javascript" src="//ajax.aspnetcdn.com/ajax/jquery.validate/1.9/jquery.validate.min.js"></script>
+<script type="text/javascript" src="//ajax.aspnetcdn.com/ajax/jquery.ui/1.8.19/jquery-ui.min.js"></script>
+<script>    window.jQuery.focus || document.write('<script src="vendor/jquery-ui.min.js">\x3C/script>')</script>
+
+<script defer type="text/javascript" src="//ajax.aspnetcdn.com/ajax/jquery.validate/1.9/jquery.validate.min.js"></script>
+<script>    window.jQuery.validate || document.write('<script src="vendor/jquery.validate.min.js">\x3C/script>')</script>
 
 <script defer type="text/javascript" src="vendor/jsTree.v.1.0rc2/jquery.jstree.js"></script>
 
 <script type="text/javascript" src="vendor/jquery.cookie.min.js"></script>
-
-<!-- <script type="text/javascript" src="Scripts/modernizr-2.5.3.js"></script> -->
-<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/modernizr/2.5.3/modernizr.min.js"></script>
 
 <script defer type="text/javascript" src="vendor/multiselect/jquery.multiselect.min.js"></script>
 <script defer type="text/javascript" src="vendor/multiselect/jquery.multiselect.filter.min.js"></script>
@@ -96,8 +113,10 @@ window.internetExplorerVersionNo = 9;
     };
 
 </script>
-<script type="text/javascript" src="vendor/extjs-4.1.0/ext-all.js"></script>
-<!-- <script type="text/javascript" charset="utf-8" src="http://cdn.sencha.io/ext-4.1.0-gpl/ext-all.js"></script> -->
+
+<script type="text/javascript" charset="utf-8" src="http://cdn.sencha.io/ext-4.1.0-gpl/ext-all.js"></script>
+<script>    window.Ext.Loader || document.write('<script src="vendor/extjs-4.1.0/ext-all.js">\x3C/script>')</script>
+
 <link rel="stylesheet" type="text/css" href="vendor/extjs-4.1.0/resources/css/ext-all-scoped.css">
 
 <script language="javascript">
@@ -159,16 +178,3 @@ window.internetExplorerVersionNo = 9;
 <!-- end ExtJS -->
 <script defer type="text/javascript" src="vendor/jZebra/jzebra.js"></script>
 
-<script type="text/javascript">
-
-    if (undefined === window.JSON ||
-        null === window.JSON ||
-        false === window.JSON.hasOwnProperty('parse') ||
-        false === window.JSON.hasOwnProperty('stringify')) {
-
-        document.write('<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/json2/20110223/json2.js"><\/script>');
-        /* document.write('<script type="text/javascript" src="Scripts/json2.min.js"><\/script>'); */
-    }
-
-
-</script>
