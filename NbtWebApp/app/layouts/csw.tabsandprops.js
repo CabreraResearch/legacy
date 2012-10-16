@@ -72,20 +72,22 @@
                     Csw.extend(cswPrivate, options, true);
                 }
 
-                cswPrivate.tabsTable = cswParent.table({ width: '100%' });
-                      //hide first then show if content exists
-                cswPrivate.identityFs = cswPrivate.tabsTable.cell(1, 1).fieldSet();
-                cswPrivate.identityFs.css({
-                    border: '1px solid #a6c9e2',
-                    background: '#eaf4fd',
-                    margin: '0px'
+                //hide first then show if content exists
+                cswPrivate.titleDiv = cswParent.div();
+                cswPrivate.identityWrapDiv = cswParent.div();
+                cswPrivate.identityWrapDiv.css({
+                    border: '1px solid #cddded',
+                    background: '#e5f0ff',
+                    margin: '0px',
+                    padding: '10px'
                 });
-                
-                cswPrivate.identityDiv = cswPrivate.identityFs; //.div();
 
-                //cswPrivate.outerTabFs = cswPrivate.tabsTable.cell(3, 1).fieldSet();
-//                cswPrivate.outerTabFs.legend({ value: 'Properties' });
-                cswPrivate.outerTabDiv = cswPrivate.tabsTable.cell(3, 1).tabDiv({ ID: cswPrivate.ID + '_tabdiv' });
+                cswPrivate.tabsTable = cswPrivate.identityWrapDiv.table({ width: '100%' });
+                cswPrivate.identityDiv = cswPrivate.tabsTable.cell(1, 1); //.div();
+
+                cswPrivate.outerTabDiv = cswPrivate.tabsTable
+                    .cell(3, 1)
+                    .tabDiv({ ID: cswPrivate.ID + '_tabdiv' });
                 cswPrivate.tabcnt = 0;
             }());
 
@@ -140,7 +142,7 @@
                     cswPrivate.setPrivateProp(data, 'IdentityTab');
 
                     if (Csw.isNullOrEmpty(cswPrivate.IdentityTab)) {
-                        cswPrivate.identityFs.remove();
+                        cswPrivate.identityWrapDiv.remove();
                     } else {
 
                         var layoutOpts = {
@@ -158,8 +160,8 @@
                         };
                         var tabId = cswPrivate.IdentityTab.tabid;
                         delete cswPrivate.IdentityTab.tabid;
-                        var leg = cswPrivate.identityFs.legend({ value: cswPrivate.tabState.nodename });
-                        leg.css({ 'font-size': '22px' });
+
+                        cswPrivate.titleDiv.append(cswPrivate.tabState.nodename).css({ 'font-size': '22px' });
                         cswPrivate.identityLayoutTable = cswPrivate.identityDiv.layoutTable(layoutOpts);
                         cswPrivate.handleProperties(cswPrivate.identityLayoutTable, cswPrivate.identityDiv, tabId, false, cswPrivate.IdentityTab);
                     }
