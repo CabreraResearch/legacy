@@ -335,7 +335,7 @@ namespace ChemSW.Nbt.WebServices
                     if( null != Ret )
                     {
                         Ret.IsTemp = false;
-                        wsTap.saveProps( Ret.NodeId, Int32.MinValue, MaterialProperties.ToString(), Ret.NodeTypeId, null );
+                        wsTap.saveProps( Ret.NodeId, Int32.MinValue, MaterialProperties.ToString(), Ret.NodeTypeId, null, IsIdentityTab: false );
                         string Tradename;
                         CswPrimaryKey SupplierId;
                         string PartNo;

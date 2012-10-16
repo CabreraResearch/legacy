@@ -112,6 +112,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                             JObject Props = getProps( Node, IdentityTab.TabId.ToString(), null, LayoutType );
                             Props.Remove( "nodeid" );
                             Ret["IdentityTab"] = Props;
+                            Ret["IdentityTab"]["tabid"] = IdentityTab.TabId;
                         }
                     }
                 } // if-else( filterToPropId != string.Empty )
@@ -610,7 +611,7 @@ namespace ChemSW.Nbt.ServiceDrivers
             return _addNode( NodeType, Node, PropsObj, out RetNbtNodeKey, View, NodeTypeTab );
         }
 
-        public JObject saveProps( CswPrimaryKey NodePk, Int32 TabId, string NewPropsJson, Int32 NodeTypeId, CswNbtView View )
+        public JObject saveProps( CswPrimaryKey NodePk, Int32 TabId, string NewPropsJson, Int32 NodeTypeId, CswNbtView View, bool IsIdentityTab )
         {
             JObject ret = new JObject();
             JObject PropsObj = JObject.Parse( NewPropsJson );
@@ -618,7 +619,16 @@ namespace ChemSW.Nbt.ServiceDrivers
             bool AllSucceeded = false;
             CswNbtNode Node = null;
             CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeId );
-            CswNbtMetaDataNodeTypeTab NodeTypeTab = _CswNbtResources.MetaData.getNodeTypeTab( TabId );
+            CswNbtMetaDataNodeTypeTab NodeTypeTab = null;
+            if( false == IsIdentityTab )
+            {
+                NodeTypeTab = _CswNbtResources.MetaData.getNodeTypeTab( TabId );
+            }
+            else if( null != NodeType )
+            {
+                NodeTypeTab = NodeType.getIdentityTab();
+            }
+
             if( null == NodeType && null != NodeTypeTab )
             {
                 NodeType = NodeTypeTab.getNodeType();

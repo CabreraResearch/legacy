@@ -241,7 +241,7 @@ namespace ChemSW.Nbt.Actions
             if( null != Doc )
             {
                 Doc.IsTemp = false;
-                SdTabsAndProps.saveProps( Doc.NodeId, Int32.MinValue, CswConvert.ToString( Obj["documentProperties"] ), Doc.NodeTypeId, null );
+                SdTabsAndProps.saveProps( Doc.NodeId, Int32.MinValue, CswConvert.ToString( Obj["documentProperties"] ), Doc.NodeTypeId, null, IsIdentityTab: false );
                 if( ( Doc.FileType.Value == CswNbtObjClassDocument.FileTypes.File && false == string.IsNullOrEmpty( Doc.File.FileName ) ) ||
                     ( Doc.FileType.Value == CswNbtObjClassDocument.FileTypes.Link && false == string.IsNullOrEmpty( Doc.Link.Href ) ) )
                 {
