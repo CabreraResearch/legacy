@@ -402,29 +402,17 @@ namespace ChemSW.Nbt.Sched
 
             return ( ReturnVal );
 
-        }//_handleYesDataCase()
+        }//_setStatusHaveData()
 
 
 
         private string _setStatusDoNotHaveData( CswNbtObjClassMailReport CswNbtObjClassMailReport, CswNbtMailReportStatus CswNbtMailReportStatus )
         {
             string ReturnVal = string.Empty;
-
-            if( string.Empty != CswNbtObjClassMailReport.NoDataNotification.Text )
-            {
-                CswNbtMailReportStatus.ReportDataExist = true;
-                ReturnVal = CswNbtObjClassMailReport.NoDataNotification.Text;
-                CswNbtMailReportStatus.ReportReason = "Report sent with no data message ";
-            }
-            else
-            {
-                CswNbtMailReportStatus.ReportDataExist = false;
-                CswNbtMailReportStatus.ReportNotMadeReason = "The report's view returned no data; a no-data message was not specified";
-            } //if-else there was nodata notification
-
+            CswNbtMailReportStatus.ReportDataExist = false;
+            CswNbtMailReportStatus.ReportNotMadeReason = "The report's view returned no data";
             return ( ReturnVal );
-
-        }//_handleNoDataCase()
+        }//_setStatusDoNotHaveData()
 
 
         public void stop()

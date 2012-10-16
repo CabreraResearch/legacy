@@ -14,7 +14,6 @@ namespace ChemSW.Nbt.ObjClasses
     {
         public sealed class PropertyName
         {
-            //public static string StatusPropertyName { get { return "Status"; } }
             public const string DueDateInterval = "Due Date Interval";
             public const string Enabled = "Enabled";
             public const string Event = "Event";
@@ -22,7 +21,6 @@ namespace ChemSW.Nbt.ObjClasses
             public const string LastProcessed = "Last Processed";
             public const string Message = "Message";
             public const string NextDueDate = "Next Due Date";
-            public const string NoDataNotification = "No Data Notification";
             public const string NodesToReport = "Nodes To Report";
             public const string OutputFormat = "Output Format";
             public const string Report = "Report";
@@ -203,7 +201,6 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropDateTime LastProcessed { get { return ( _CswNbtNode.Properties[PropertyName.LastProcessed] ); } }
         public CswNbtNodePropMemo Message { get { return ( _CswNbtNode.Properties[PropertyName.Message] ); } }
         public CswNbtNodePropDateTime NextDueDate { get { return ( _CswNbtNode.Properties[PropertyName.NextDueDate] ); } }
-        public CswNbtNodePropMemo NoDataNotification { get { return ( _CswNbtNode.Properties[PropertyName.NoDataNotification] ); } }
         public CswNbtNodePropMemo NodesToReport { get { return ( _CswNbtNode.Properties[PropertyName.NodesToReport] ); } }
         public CswNbtNodePropList OutputFormat { get { return ( _CswNbtNode.Properties[PropertyName.OutputFormat] ); } }
         public CswNbtNodePropUserSelect Recipients { get { return ( _CswNbtNode.Properties[PropertyName.Recipients] ); } }

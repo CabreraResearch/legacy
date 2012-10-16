@@ -27,7 +27,6 @@ namespace ChemSW.Nbt.Schema
                 CswNbtMetaDataNodeTypeProp MessageNTP = MailReportNT.getNodeTypePropByObjectClassProp( CswNbtObjClassMailReport.PropertyName.Message );
                 CswNbtMetaDataNodeTypeProp NameNTP = MailReportNT.getNodeTypeProp( "Name" );
                 CswNbtMetaDataNodeTypeProp NextDueDateNTP = MailReportNT.getNodeTypePropByObjectClassProp( CswNbtObjClassMailReport.PropertyName.NextDueDate );
-                CswNbtMetaDataNodeTypeProp NoDataNotificationNTP = MailReportNT.getNodeTypePropByObjectClassProp( CswNbtObjClassMailReport.PropertyName.NoDataNotification );
                 CswNbtMetaDataNodeTypeProp NodesToReportNTP = MailReportNT.getNodeTypePropByObjectClassProp( CswNbtObjClassMailReport.PropertyName.NodesToReport );
                 CswNbtMetaDataNodeTypeProp OutputFormatNTP = MailReportNT.getNodeTypePropByObjectClassProp( CswNbtObjClassMailReport.PropertyName.OutputFormat );
                 CswNbtMetaDataNodeTypeProp RecipientsNTP = MailReportNT.getNodeTypePropByObjectClassProp( CswNbtObjClassMailReport.PropertyName.Recipients );
@@ -65,10 +64,9 @@ namespace ChemSW.Nbt.Schema
                 TargetTypeNTP.updateLayout( LayoutEdit, true, Tab1.TabId, 6, 1 );
                 OutputFormatNTP.updateLayout( LayoutEdit, true, Tab1.TabId, 7, 1 );
                 MessageNTP.updateLayout( LayoutEdit, true, Tab1.TabId, 8, 1 );
-                NoDataNotificationNTP.updateLayout( LayoutEdit, true, Tab1.TabId, 9, 1 );
-                RecipientsNTP.updateLayout( LayoutEdit, true, Tab1.TabId, 10, 1 );
-                EnabledNTP.updateLayout( LayoutEdit, true, Tab1.TabId, 11, 1 );
-                RunNowNTP.updateLayout( LayoutEdit, true, Tab1.TabId, 12, 1 );
+                RecipientsNTP.updateLayout( LayoutEdit, true, Tab1.TabId, 9, 1 );
+                EnabledNTP.updateLayout( LayoutEdit, true, Tab1.TabId, 10, 1 );
+                RunNowNTP.updateLayout( LayoutEdit, true, Tab1.TabId, 11, 1 );
 
                 DueDateIntervalNTP.updateLayout( LayoutEdit, true, Tab2.TabId, 1, 1 );
                 NextDueDateNTP.updateLayout( LayoutEdit, true, Tab2.TabId, 2, 1 );
