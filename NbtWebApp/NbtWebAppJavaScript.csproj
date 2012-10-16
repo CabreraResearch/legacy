@@ -539,6 +539,7 @@
     <Content Include="vendor\harmony-collections.browser.min.js" />
     <Content Include="vendor\harmony-collections.js" />
     <Content Include="vendor\jquery-1.7.1.min.js" />
+    <Content Include="vendor\jquery-ui.min.js" />
     <Content Include="vendor\jquery.cookie.min.js" />
     <Content Include="vendor\jquery.validate.min.js" />
     <Content Include="vendor\jQueryFileUpload_2011.12.15\application.js" />
