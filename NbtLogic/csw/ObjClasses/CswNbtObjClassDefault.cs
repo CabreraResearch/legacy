@@ -185,12 +185,10 @@ namespace ChemSW.Nbt.ObjClasses
 
                     foreach( CswNbtNodePropWrapper CurrentCompoundUniqueProp in CompoundUniqueProps )
                     {
-                        if( false == _CswNbtResources.Nodes[CurrentCompoundUniqueProp.NodeId].Properties[CurrentCompoundUniqueProp.NodeTypeProp].Empty ) //case 26546 - allow unique props to be empty
-                        {
-                            CswNbtViewProperty CswNbtViewProperty = CswNbtView.AddViewProperty( ViewRelationship, CurrentCompoundUniqueProp.NodeTypeProp );
-                            ICswNbtFieldTypeRule ftRule = CurrentCompoundUniqueProp.NodeTypeProp.getFieldTypeRule();
-                            ftRule.AddUniqueFilterToView( CswNbtView, CswNbtViewProperty, CurrentCompoundUniqueProp );
-                        }
+                        //case 27670 - in order to reserve the right for compound unique props to be empty, it has to be explicitly stated when creating the ForCompundUnique view
+                        CswNbtViewProperty CswNbtViewProperty = CswNbtView.AddViewProperty( ViewRelationship, CurrentCompoundUniqueProp.NodeTypeProp );
+                        ICswNbtFieldTypeRule ftRule = CurrentCompoundUniqueProp.NodeTypeProp.getFieldTypeRule();
+                        ftRule.AddUniqueFilterToView( CswNbtView, CswNbtViewProperty, CurrentCompoundUniqueProp, true );
                     }
 
                     ICswNbtTree NodeTree = _CswNbtResources.Trees.getTreeFromView( CswNbtView, true, true, false, false );
