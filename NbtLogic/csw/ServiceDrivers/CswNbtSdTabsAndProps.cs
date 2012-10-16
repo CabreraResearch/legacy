@@ -109,7 +109,9 @@ namespace ChemSW.Nbt.ServiceDrivers
                         CswNbtMetaDataNodeTypeTab IdentityTab = NodeType.getIdentityTab();
                         if( _CswNbtResources.Permit.canTab( CswNbtPermit.NodeTypePermission.View, NodeType, IdentityTab ) )
                         {
-                            Ret["IdentityTab"] = getProps( Node, IdentityTab.TabId.ToString(), null, LayoutType );
+                            JObject Props = getProps( Node, IdentityTab.TabId.ToString(), null, LayoutType );
+                            Props.Remove( "nodeid" );
+                            Ret["IdentityTab"] = Props;
                         }
                     }
                 } // if-else( filterToPropId != string.Empty )

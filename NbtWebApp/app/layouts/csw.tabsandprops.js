@@ -127,12 +127,16 @@
             };
 
             cswPrivate.makeIdentityTab = function (data) {
-                if (false === Csw.isNullOrEmpty(data)   ){
+
+                if (false === Csw.isNullOrEmpty(data)) {
                     cswPrivate.setTabStateProp(data, 'nodename');
                     cswPrivate.setTabStateProp(data, 'nodetypeid');
-
-                    if (false === Csw.isNullOrEmpty(data.IdentityTab)) {
-                        cswPrivate.setPrivateProp(data, 'IdentityTab');
+                    cswPrivate.setPrivateProp(data, 'IdentityTab');
+                    
+                    if (Csw.isNullOrEmpty(cswPrivate.IdentityTab)) {
+                        cswPrivate.identityFs.remove();                        
+                    } else {
+                        
                         var layoutOpts = {
                             ID: cswPrivate.ID + window.Ext.id(),
                             styles: {
@@ -191,7 +195,7 @@
                             var selectedtabno = 0;
                             var tabno = 0;
                             var tabDiv, tabUl;
-                            
+
                             cswPrivate.makeIdentityTab(data);
 
                             var tabFunc = function (thisTab) {
@@ -657,7 +661,7 @@
                         cellSet,
                         helpText = Csw.string(propData.helptext),
                         propName = Csw.string(propData.name),
-                        labelCell = { };
+                        labelCell = {};
 
                     cellSet = cswPrivate.getCellSet(layoutTable, propData.tabgroup, propData.displayrow, propData.displaycol);
                     layoutTable.addCellSetAttributes(cellSet, { propId: propid });
@@ -676,7 +680,7 @@
                             labelCell.a({
                                 cssclass: 'cswprop_helplink',
                                 title: helpText,
-                                onClick: function() {
+                                onClick: function () {
                                     return false;
                                 },
                                 value: propName
@@ -697,8 +701,8 @@
                         if (false === Csw.bool(propData.readonly)) {
                             cswPrivate.atLeastOne.Saveable = true;
                         }
-                        Csw.subscribe('CswMultiEdit', (function() {
-                            var onMultiEdit = function(eventObj, multiOpts) {
+                        Csw.subscribe('CswMultiEdit', (function () {
+                            var onMultiEdit = function (eventObj, multiOpts) {
                                 /* Case 25936 */
                                 var showCheckBoxes = (cswPrivate.globalState.ShowCheckboxes && Csw.bool(propData.copyable));
                                 if (multiOpts && multiOpts.nodeid === cswPublic.getNodeId()) {
