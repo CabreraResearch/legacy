@@ -4,7 +4,7 @@
 (function () {
 
     Csw.composites.layoutTable = Csw.composites.layoutTable ||
-        Csw.composites.register('layoutTable', function(cswParent, options) {
+        Csw.composites.register('layoutTable', function (cswParent, options) {
             'use strict';
             var cswPrivate = {
                 ID: '',
@@ -32,9 +32,9 @@
                 OddCellRightAlign: false,
                 ReadOnly: false
             };
-            var cswPublic = { };
+            var cswPublic = {};
 
-            cswPrivate.onClick = function(ev, dd, row, column) {
+            cswPrivate.onClick = function (ev, dd, row, column) {
                 var removeCells;
                 if (cswPrivate.isRemoveMode(cswPublic.table)) {
                     removeCells = cswPublic.table.find('.CswLayoutTable_remove');
@@ -53,15 +53,15 @@
                 } // if(cswPrivate.isRemoveMode($cswPublic.table))
             }; // cswPrivate.onClick()
 
-            cswPrivate.isRemoveMode = function() {
+            cswPrivate.isRemoveMode = function () {
                 return (cswPublic.table.propNonDom('removemode') === "true");
             };
 
-            cswPrivate.setConfigMode = function(mode) {
+            cswPrivate.setConfigMode = function (mode) {
                 cswPublic.table.propNonDom('configmode', mode);
             };
 
-            cswPrivate.toggleRemove = function() {
+            cswPrivate.toggleRemove = function () {
                 if (cswPrivate.isRemoveMode(cswPublic.table)) {
                     cswPublic.table.propNonDom('removemode', 'false');
                     if (cswPrivate.removeBtn) {
@@ -75,7 +75,7 @@
                 }
             };
 
-            cswPrivate.expandLayoutTable = function(expRow, expCol) {
+            cswPrivate.expandLayoutTable = function (expRow, expCol) {
                 /// <summary>Expand the layout table by an additional cellSet row or column or both.</summary>
                 /// <param name="expRow" type="Boolean">True to expand by a cellSet row.</param>
                 /// <param name="expCol" type="Boolean">True to expand by a cellSet column.</param>
@@ -104,15 +104,15 @@
                 }
             };
 
-            cswPrivate.addRow = function() {
+            cswPrivate.addRow = function () {
                 cswPrivate.expandLayoutTable(true, false);
             }; // _addRowAndColumn()
 
-            cswPrivate.addColumn = function() {
+            cswPrivate.addColumn = function () {
                 cswPrivate.expandLayoutTable(false, true);
             }; // cswPrivate.addColumn()
 
-            cswPrivate.getCell = function(getRow, getColumn, cellsetrow, cellsetcolumn) {
+            cswPrivate.getCell = function (getRow, getColumn, cellsetrow, cellsetcolumn) {
                 var row = Csw.number(getRow),
                     column = Csw.number(getColumn),
                     realrow, realcolumn, cell;
@@ -130,28 +130,30 @@
                 return cell;
             };
 
-            cswPrivate.enableDrop = function(cell) {
+            cswPrivate.enableDrop = function (cell) {
                 var cellObj;
                 if (cell) {
                     cellObj = cell;
                 } else {
                     cellObj = cswPublic.table.find('.CswLayoutTable_celldiv');
                 }
-                cellObj.$.droppable('destroy');
+                try {
+                    cellObj.$.droppable('destroy');
+                } catch (e) { }
                 cellObj.$.droppable({
                     hoverClass: 'CswLayoutTable_hover',
-                    drop: function(ev, dd) {
+                    drop: function (ev, dd) {
                         cswPrivate.onDrop(ev, dd, $(this));
                     }
                 })
-                    .hover(function(ev, dd) {
+                    .hover(function (ev, dd) {
                         cswPrivate.onHoverIn(ev, dd, $(this));
-                    }, function(ev, dd) {
+                    }, function (ev, dd) {
                         cswPrivate.onHoverOut(ev, dd, $(this));
                     });
             };
 
-            cswPrivate.onCreateCell = function(cell, realRow, realCol) {
+            cswPrivate.onCreateCell = function (cell, realRow, realCol) {
                 var thisRow = Math.ceil(realRow / cswPrivate.cellSet.rows),
                     thisCol = Math.ceil(realCol / cswPrivate.cellSet.columns),
                     cellsetrow = Csw.number(cswPrivate.cellSet.rows - realRow % cswPrivate.cellSet.rows),
@@ -172,60 +174,60 @@
                     cellsetcolumn: cellsetcolumn
                 });
 
-                cell.bind('click', function(ev, dd) {
+                cell.bind('click', function (ev, dd) {
                     cswPrivate.onClick(ev, dd, thisRow, thisCol);
                 });
                 cswPrivate.enableDrop(cell);
                 cell.div({ cssclass: 'CswLayoutTable_celldiv' });
             };
 
-            cswPrivate.enableDrag = function() {
+            cswPrivate.enableDrag = function () {
                 cswPublic.table.find('.CswLayoutTable_celldiv')
                     .$.draggable({
                         revert: 'invalid',
-                        drag: function(ev, dd) {
+                        drag: function (ev, dd) {
                             cswPrivate.onDrag(ev, dd, $(this));
                         }
                     });
             };
 
-            cswPrivate.disableDrag = function() {
+            cswPrivate.disableDrag = function () {
                 cswPublic.table.find('.CswLayoutTable_celldiv')
                     .$.draggable('destroy');
             };
 
-            cswPrivate.onHoverIn = function(ev, dd, $cell) {
+            cswPrivate.onHoverIn = function (ev, dd, $cell) {
                 var cellSet;
                 if (cswPrivate.isRemoveMode()) {
                     cellSet = cswPublic.cellSet($cell.attr('row'), $cell.attr('column'));
-                    cswPrivate.eachCell(cellSet, function(cell) {
+                    cswPrivate.eachCell(cellSet, function (cell) {
                         cell.addClass('CswLayoutTable_remove');
                     });
                 }
             }; // cswPrivate.onHoverIn()
 
-            cswPrivate.onHoverOut = function(ev, dd, $cell) {
+            cswPrivate.onHoverOut = function (ev, dd, $cell) {
                 var cellSet;
                 if (cswPrivate.isRemoveMode()) {
                     cellSet = cswPublic.cellSet($cell.attr('row'), $cell.attr('column'));
-                    cswPrivate.eachCell(cellSet, function(cell) {
+                    cswPrivate.eachCell(cellSet, function (cell) {
                         cell.removeClass('CswLayoutTable_remove');
                     });
                 }
             }; // cswPrivate.onHoverOut()
 
-            cswPrivate.onDrag = function(ev, dd, $dragDiv) {
+            cswPrivate.onDrag = function (ev, dd, $dragDiv) {
                 var $dragCell, cells;
                 if (cswPublic.isConfig(cswPublic.table)) {
                     $dragCell = $dragDiv.parent();
                     cells = cswPublic.cellSet($dragCell.attr('row'), $dragCell.attr('column'));
-                    cswPrivate.eachCell(cells, function(cell) {
+                    cswPrivate.eachCell(cells, function (cell) {
                         cell.addClass('CswLayoutTable_dragcell');
                     });
                 }
             }; // cswPrivate.onDrag
 
-            cswPrivate.eachCell = function(cellSet, func) {
+            cswPrivate.eachCell = function (cellSet, func) {
                 for (var r = 1; r <= cswPrivate.cellSet.rows; r += 1) {
                     for (var c = 1; c <= cswPrivate.cellSet.columns; c += 1) {
                         if (cellSet[r] === undefined) {
@@ -236,11 +238,11 @@
                 }
             };
 
-            cswPrivate.onDrop = function(ev, dd, $dropCell) {
+            cswPrivate.onDrop = function (ev, dd, $dropCell) {
                 var $dragDiv, dragCell, dragCells, dropCells;
                 if (cswPublic.isConfig(cswPublic.table)) {
                     $dragDiv = dd.draggable;
-                    dragCell = Csw.literals.factory($dragDiv.parent(), { });
+                    dragCell = Csw.literals.factory($dragDiv.parent(), {});
 
                     dragCells = cswPublic.cellSet(dragCell.propNonDom('row'), dragCell.propNonDom('column')); // .table.findCell('[row="' + Csw.number(dragCell.propNonDom('row')) + '"][column="' + Csw.number(dragCell.propNonDom('column')) + '"]');
                     dropCells = cswPublic.cellSet($dropCell.attr('row'), $dropCell.attr('column')); //table.findCell('[row="' + Csw.number($dropCell.attr('row')) + '"][column="' + Csw.number($dropCell.attr('column')) + '"]');
@@ -289,13 +291,13 @@
                 } // if(cswPublic.isConfig($cswPublic.table))
             }; // cswPrivate.onDrop()
 
-            cswPublic.isConfig = function() {
+            cswPublic.isConfig = function () {
                 /// <summary>Determines whether layout table is in config mode.</summary>
                 /// <returns type="Boolean">True if config mode is on.</returns>
                 return Csw.bool(cswPublic.table.propNonDom('configmode'));
             };
 
-            cswPublic.cellSet = function(row, column) {
+            cswPublic.cellSet = function (row, column) {
                 /// <summary>Get the set of cells representing a layout item.</summary>
                 /// <param name="row" type="Number">Row number</param>
                 /// <param name="column" type="Number">Column number</param>
@@ -313,7 +315,7 @@
                 return cellSet;
             };
 
-            cswPublic.addCellSetAttributes = function(cellSet, attributes) {
+            cswPublic.addCellSetAttributes = function (cellSet, attributes) {
 
                 function applyAttributes(cell) {
                     if (false === Csw.isNullOrEmpty(attributes)) {
@@ -324,7 +326,7 @@
                 cswPrivate.eachCell(cellSet, applyAttributes);
             };
 
-            cswPublic.toggleConfig = function() {
+            cswPublic.toggleConfig = function () {
                 /// <summary>Toggles config mode.</summary>
                 /// <returns type="Boolean">The resulting config state.</returns>
                 var ret = false;
@@ -337,7 +339,7 @@
                 return ret;
             };
 
-            cswPublic.configOff = function() {
+            cswPublic.configOff = function () {
                 /// <summary>Turn config mode off on the layout table.</summary>
                 /// <returns type="Undefined"></returns>
                 if (cswPrivate.addBtn) {
@@ -363,7 +365,7 @@
                 //cswPrivate.toggleRemove();
             };
 
-            cswPublic.configOn = function() {
+            cswPublic.configOn = function () {
                 /// <summary>Turn config mode on, on the layout table. </summary>
                 /// <returns type="Undefined"></returns>
                 if (cswPrivate.addBtn) {
@@ -391,12 +393,12 @@
             }; // cswPublic.configOn()
 
             /* Ctor: Build the init table */
-            (function() {
+            (function () {
                 if (options) {
                     Csw.extend(cswPrivate, options);
                 }
-                var layoutDiv = cswParent.div({ ID: Csw.makeId(cswPrivate.ID,window.Ext.id()) });
-                
+                var layoutDiv = cswParent.div({ ID: Csw.makeId(cswPrivate.ID, window.Ext.id()) });
+
                 //Csw.extend(cswPublic, Csw.literals.div(cswPrivate));
                 var buttonDiv = layoutDiv.div({
                     ID: Csw.makeId(cswPrivate.ID, 'btnDiv')
@@ -422,7 +424,7 @@
                     OddCellRightAlign: cswPrivate.OddCellRightAlign,
                     width: cswPrivate.width,
                     align: cswPrivate.align,
-                    onCreateCell: function(ev, newCell, realrow, realcolumn) {
+                    onCreateCell: function (ev, newCell, realrow, realcolumn) {
                         if (false === Csw.isNullOrEmpty(newCell)) {
                             cswPrivate.onCreateCell(newCell, realrow, realcolumn);
                         }
@@ -449,7 +451,7 @@
                         hovertext: 'Add',
                         iconType: Csw.enums.iconType.plus,
                         isButton: true,
-                        onClick: function() {
+                        onClick: function () {
                             Csw.tryExec(cswPrivate.onAddClick);
                         },
                         size: 18
@@ -463,7 +465,7 @@
                         hovertext: 'Remove',
                         iconType: Csw.enums.iconType.trash,
                         isButton: true,
-                        onClick: function() {
+                        onClick: function () {
                             cswPrivate.toggleRemove();
                         },
                         size: 18
@@ -476,7 +478,7 @@
                         hovertext: 'Add Column',
                         iconType: Csw.enums.iconType.right,
                         isButton: true,
-                        onClick: function() {
+                        onClick: function () {
                             cswPrivate.addColumn();
                         },
                         size: 18
@@ -489,7 +491,7 @@
                         hovertext: 'Add Row',
                         iconType: Csw.enums.iconType.down,
                         isButton: true,
-                        onClick: function() {
+                        onClick: function () {
                             cswPrivate.addRow();
                         },
                         size: 18
@@ -502,7 +504,7 @@
                         hovertext: 'Configure',
                         iconType: Csw.enums.iconType.wrench,
                         isButton: true,
-                        onClick: function() {
+                        onClick: function () {
                             cswPublic.toggleConfig();
                         },
                         size: 18
@@ -515,5 +517,5 @@
         });
 
 
-} ());
+}());
 

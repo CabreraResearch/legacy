@@ -46,7 +46,7 @@
                     tabid: '',
                     nodetypeid: ''
                 },
-                identityTabState:  null,
+                identityTabState: null,
                 onNodeIdSet: null,
                 onSave: null,
                 ReloadTabOnSave: true,
@@ -72,7 +72,14 @@
                     Csw.extend(cswPrivate, options, true);
                 }
 
-                cswPrivate.outerTabDiv = cswParent.tabDiv({ ID: cswPrivate.ID + '_tabdiv' });
+                cswPrivate.tabsTable = cswParent.table({ width: '100%' });
+
+                cswPrivate.identityFs = cswPrivate.tabsTable.cell(1, 1).fieldSet();
+                cswPrivate.identityDiv = cswPrivate.identityFs.div();
+
+                cswPrivate.outerTabFs = cswPrivate.tabsTable.cell(3, 1).fieldSet();
+                cswPrivate.outerTabFs.legend({ value: 'Properties' });
+                cswPrivate.outerTabDiv = cswPrivate.outerTabFs.tabDiv({ ID: cswPrivate.ID + '_tabdiv' });
                 cswPrivate.tabcnt = 0;
             }());
 
@@ -119,6 +126,37 @@
                 }
             };
 
+            cswPrivate.makeIdentityTab = function (data) {
+                if (false === Csw.isNullOrEmpty(data)   ){
+                    cswPrivate.setTabStateProp(data, 'nodename');
+                    cswPrivate.setTabStateProp(data, 'nodetypeid');
+
+                    if (false === Csw.isNullOrEmpty(data.IdentityTab)) {
+                        cswPrivate.setPrivateProp(data, 'IdentityTab');
+                        var layoutOpts = {
+                            ID: cswPrivate.ID + window.Ext.id(),
+                            styles: {
+                                border: '1px solid #a6c9e2',
+                                background: '#eaf4fd'
+                            },
+                            OddCellRightAlign: true,
+                            ReadOnly: (cswPrivate.tabState.EditMode === Csw.enums.editMode.PrintReport || cswPrivate.tabState.ReadOnly),
+                            cellSet: {
+                                rows: 1,
+                                columns: 2
+                            },
+                            showConfigButton: false, //o.tabState.Config,
+                            showExpandRowButton: false,
+                            showExpandColButton: false,
+                            showRemoveButton: false
+                        };
+                        cswPrivate.identityFs.legend({ value: cswPrivate.tabState.nodename });
+                        cswPrivate.identityLayoutTable = cswPrivate.identityDiv.layoutTable(layoutOpts);
+                        cswPrivate.handleProperties(cswPrivate.identityLayoutTable, cswPrivate.identityDiv, 'Identity', false, cswPrivate.IdentityTab);
+                    }
+                }
+            };
+
             cswPrivate.getTabs = function (tabContentDiv) {
                 'use strict';
                 // For performance, don't bother getting tabs if we're in Add, Temp, Preview or Table
@@ -153,11 +191,8 @@
                             var selectedtabno = 0;
                             var tabno = 0;
                             var tabDiv, tabUl;
-                            cswPrivate.setTabStateProp(data, 'nodename');
-                            cswPrivate.setTabStateProp(data, 'nodetypeid');
-                            cswPrivate.setPrivateProp(data, 'IdentityTab');
                             
-                            cswPrivate.handleProperties(null, cswPrivate.outerTabDiv, 'Identity', false, cswPrivate.IdentityTab);
+                            cswPrivate.makeIdentityTab(data);
 
                             var tabFunc = function (thisTab) {
                                 var thisTabId = thisTab.id;
@@ -243,7 +278,7 @@
             //#endregion Validator
 
             //#region Helper Methods
-            
+
             cswPrivate.setNodeId = function (data) {
                 var nodeid = data.nodeid;
                 Csw.tryExec(cswPrivate.onNodeIdSet, nodeid);
@@ -352,14 +387,10 @@
                     if (Csw.isNullOrEmpty(cswPrivate.tabgrouptables[safetabgroup])) {
                         var cellSet = layoutTable.cellSet(displayrow, displaycol);
                         var propCell = cswPrivate.getPropertyCell(cellSet);
+                        var fieldSet = propCell.fieldSet();
+                        fieldSet.legend({ value: tabgroup });
 
-                        var $fieldset = $('<fieldset>');
-                        $fieldset.append('<legend>' + tabgroup + '</legend>');
-                        propCell.append($fieldset);
-
-                        var div = Csw.literals.div({
-                            $parent: $fieldset
-                        });
+                        var div = fieldSet.div();
 
                         var tabgroupLayoutTable = div.layoutTable({
                             ID: safetabgroup,
@@ -620,78 +651,81 @@
 
             cswPrivate.handleProp = function (layoutTable, propData, tabContentDiv, tabid, configMode) {
                 'use strict';
-                var propid = propData.id,
-                    cellSet,
-                    helpText = Csw.string(propData.helptext),
-                    propName = Csw.string(propData.name),
-                    labelCell = {};
+                Csw.debug.assert(Csw.isPlainObject(propData), 'handleProp was given an invalid object representing propertyData');
+                if (Csw.isPlainObject(propData)) {
+                    var propid = propData.id,
+                        cellSet,
+                        helpText = Csw.string(propData.helptext),
+                        propName = Csw.string(propData.name),
+                        labelCell = { };
 
-                cellSet = cswPrivate.getCellSet(layoutTable, propData.tabgroup, propData.displayrow, propData.displaycol);
-                layoutTable.addCellSetAttributes(cellSet, { propId: propid });
+                    cellSet = cswPrivate.getCellSet(layoutTable, propData.tabgroup, propData.displayrow, propData.displaycol);
+                    layoutTable.addCellSetAttributes(cellSet, { propId: propid });
 
-                if (cswPrivate.canDisplayProp(propData, configMode) &&
-                    Csw.bool(propData.showpropertyname)) {
+                    if (cswPrivate.canDisplayProp(propData, configMode) &&
+                        Csw.bool(propData.showpropertyname)) {
 
-                    labelCell = cswPrivate.getLabelCell(cellSet);
+                        labelCell = cswPrivate.getLabelCell(cellSet);
 
-                    labelCell.addClass('propertylabel');
-                    if (Csw.bool(propData.highlight)) {
-                        labelCell.addClass('ui-state-highlight');
-                    }
+                        labelCell.addClass('propertylabel');
+                        if (Csw.bool(propData.highlight)) {
+                            labelCell.addClass('ui-state-highlight');
+                        }
 
-                    if (false === Csw.isNullOrEmpty(helpText)) {
-                        labelCell.a({
-                            cssclass: 'cswprop_helplink',
-                            title: helpText,
-                            onClick: function () {
-                                return false;
-                            },
-                            value: propName
+                        if (false === Csw.isNullOrEmpty(helpText)) {
+                            labelCell.a({
+                                cssclass: 'cswprop_helplink',
+                                title: helpText,
+                                onClick: function() {
+                                    return false;
+                                },
+                                value: propName
+                            });
+
+                        } else {
+                            labelCell.setLabelText(propName, propData.required, propData.readonly);
+                        }
+
+                        var inpPropCheck = labelCell.input({
+                            ID: 'check_' + propid,
+                            type: Csw.enums.inputTypes.checkbox,
+                            value: false, // Value --not defined?,
+                            cssclass: cswPrivate.ID + '_check'
                         });
-
-                    } else {
-                        labelCell.setLabelText(propName, propData.required, propData.readonly);
-                    }
-
-                    var inpPropCheck = labelCell.input({
-                        ID: 'check_' + propid,
-                        type: Csw.enums.inputTypes.checkbox,
-                        value: false, // Value --not defined?,
-                        cssclass: cswPrivate.ID + '_check'
-                    });
-                    inpPropCheck.propNonDom('propid', propid);
-                    inpPropCheck.hide();
-                    if (false === Csw.bool(propData.readonly)) {
-                        cswPrivate.atLeastOne.Saveable = true;
-                    }
-                    Csw.subscribe('CswMultiEdit', (function () {
-                        var onMultiEdit = function (eventObj, multiOpts) {
-                            /* Case 25936 */
-                            var showCheckBoxes = (cswPrivate.globalState.ShowCheckboxes && Csw.bool(propData.copyable));
-                            if (multiOpts && multiOpts.nodeid === cswPublic.getNodeId()) {
-                                cswPrivate.tabState.Multi = multiOpts.multi;
-                                if (showCheckBoxes || multiOpts.multi) {
-                                    inpPropCheck.show();
+                        inpPropCheck.propNonDom('propid', propid);
+                        inpPropCheck.hide();
+                        if (false === Csw.bool(propData.readonly)) {
+                            cswPrivate.atLeastOne.Saveable = true;
+                        }
+                        Csw.subscribe('CswMultiEdit', (function() {
+                            var onMultiEdit = function(eventObj, multiOpts) {
+                                /* Case 25936 */
+                                var showCheckBoxes = (cswPrivate.globalState.ShowCheckboxes && Csw.bool(propData.copyable));
+                                if (multiOpts && multiOpts.nodeid === cswPublic.getNodeId()) {
+                                    cswPrivate.tabState.Multi = multiOpts.multi;
+                                    if (showCheckBoxes || multiOpts.multi) {
+                                        inpPropCheck.show();
+                                    } else {
+                                        inpPropCheck.hide();
+                                    }
                                 } else {
-                                    inpPropCheck.hide();
+                                    //Csw.debug.assert(multiOpts.nodeid === cswPublic.getNodeId(), 'CswMultiEdit event pusblished for nodeid "' + multiOpts.nodeid + '" but was subscribed to from nodeid "' + cswPublic.getNodeId() + '".');
+                                    Csw.unsubscribe('CswMultiEdit', onMultiEdit);
                                 }
-                            } else {
-                                //Csw.debug.assert(multiOpts.nodeid === cswPublic.getNodeId(), 'CswMultiEdit event pusblished for nodeid "' + multiOpts.nodeid + '" but was subscribed to from nodeid "' + cswPublic.getNodeId() + '".');
-                                Csw.unsubscribe('CswMultiEdit', onMultiEdit);
-                            }
-                            return showCheckBoxes;
-                        };
-                        return onMultiEdit;
-                    }()));
-                }
+                                return showCheckBoxes;
+                            };
+                            return onMultiEdit;
+                        }()));
+                    }
 
-                var propCell = cswPrivate.getPropertyCell(cellSet);
-                propCell.addClass('propertyvaluecell');
+                    var propCell = cswPrivate.getPropertyCell(cellSet);
+                    propCell.addClass('propertyvaluecell');
 
-                if (Csw.bool(propData.highlight)) {
-                    propCell.addClass('ui-state-highlight');
+                    if (Csw.bool(propData.highlight)) {
+                        propCell.addClass('ui-state-highlight');
+                    }
+                    cswPrivate.makeProp(propCell, propData, tabContentDiv, tabid, configMode, layoutTable);
                 }
-                cswPrivate.makeProp(propCell, propData, tabContentDiv, tabid, configMode, layoutTable);
             };
 
             cswPrivate.canDisplayProp = function (propData, configMode) {
