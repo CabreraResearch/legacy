@@ -42,6 +42,7 @@ namespace ChemSW.Nbt.Schema
                         MailReportNode.TargetType.SelectedNodeTypeIds.Add( InspectionNT.NodeTypeId.ToString() );
                         MailReportNode.Message.Text = "The following inspections have been marked Action Required:";
                         MailReportNode.Enabled.Checked = Tristate.True;
+                        MailReportNode.IsDemo = true;
 
                         CswRateInterval HourlyRate = _CswNbtSchemaModTrnsctn.makeRateInterval();
                         HourlyRate.setHourly( 2, DateTime.Now );
@@ -91,6 +92,7 @@ namespace ChemSW.Nbt.Schema
                         MailReportNode.Event.Value = CswNbtObjClassMailReport.EventOption.Edit.ToString();
                         MailReportNode.TargetType.SelectedNodeTypeIds.Add( ProblemNT.NodeTypeId.ToString() );
                         MailReportNode.Message.Text = "The following problems have been opened:";
+                        MailReportNode.IsDemo = true;
 
                         CswRateInterval HourlyRate = _CswNbtSchemaModTrnsctn.makeRateInterval();
                         HourlyRate.setHourly( 2, DateTime.Now );

@@ -40,6 +40,7 @@ namespace ChemSW.Nbt.Schema
                 MailReportNode.TargetType.SelectedNodeTypeIds.Add( UserNT.NodeTypeId.ToString() );
                 MailReportNode.Message.Text = "The following user accounts have been locked:";
                 MailReportNode.Enabled.Checked = Tristate.False;
+                MailReportNode.IsDemo = true;
 
                 CswRateInterval HourlyRate = _CswNbtSchemaModTrnsctn.makeRateInterval();
                 HourlyRate.setHourly( 1, DateTime.Now );
