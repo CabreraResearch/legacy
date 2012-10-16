@@ -8,6 +8,25 @@
             }
         }
     }]);
+    
+    if (undefined === window.JSON ||
+        null === window.JSON ||
+        false === window.JSON.hasOwnProperty('parse') ||
+        false === window.JSON.hasOwnProperty('stringify')) {
+
+        Modernizr.load([{
+            load: '//cdnjs.cloudflare.com/ajax/libs/json2/20110223/json2.js',
+            callback: function () {
+                if (undefined === window.JSON ||
+                    null === window.JSON ||
+                    false === window.JSON.hasOwnProperty('parse') ||
+                    false === window.JSON.hasOwnProperty('stringify')) {
+                    Modernizr.load('vendor/json2.min.js');
+                }
+            }
+        }]);
+    }
+
 </script>
 <!--[if lte IE 8]>
  <script type="text/javascript" 
@@ -54,15 +73,12 @@ window.internetExplorerVersionNo = 9;
 <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/es5-shim/1.2.4/es5-shim.min.js"></script>
 
 <!-- <link rel="stylesheet" type="text/css" href="Content/themes/base/minified/jquery-ui.min.css" /> -->
-<!-- <link rel="stylesheet" type="text/css" href="js/thirdparty/theme-aristo/css/Aristo/Aristo.css" /> -->
 <link rel="stylesheet" type="text/css" href="//ajax.aspnetcdn.com/ajax/jquery.ui/1.8.19/themes/redmond/jquery-ui.css" />
-
-<!--<link defer rel="stylesheet" type="text/css" href="Content/jquery.jqGrid/ui.jqgrid.css" />-->
 
 <link defer rel="stylesheet" type="text/css" href="vendor/multiselect/jquery.multiselect.css" />
 <link defer rel="stylesheet" type="text/css" href="vendor/multiselect/jquery.multiselect.filter.css" />
 
-<script type="text/javascript" src="vendor/mousetrap.min.js"></script>
+<script defer type="text/javascript" src="vendor/mousetrap.min.js"></script>
 <!-- <script type="text/javascript" src="Scripts/jquery-1.7.1.min.js"></script> -->
 <!-- https://developers.google.com/speed/libraries/devguide -->
 <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
@@ -73,7 +89,7 @@ window.internetExplorerVersionNo = 9;
 <script type="text/javascript" src="//ajax.aspnetcdn.com/ajax/jquery.ui/1.8.19/jquery-ui.min.js"></script>
 
 <!-- <script type="text/javascript" src="Scripts/jquery.validate.min.js"></script> -->
-<script type="text/javascript" src="//ajax.aspnetcdn.com/ajax/jquery.validate/1.9/jquery.validate.min.js"></script>
+<script defer type="text/javascript" src="//ajax.aspnetcdn.com/ajax/jquery.validate/1.9/jquery.validate.min.js"></script>
 
 <script defer type="text/javascript" src="vendor/jsTree.v.1.0rc2/jquery.jstree.js"></script>
 
@@ -160,16 +176,3 @@ window.internetExplorerVersionNo = 9;
 <!-- end ExtJS -->
 <script defer type="text/javascript" src="vendor/jZebra/jzebra.js"></script>
 
-<script type="text/javascript">
-
-    if (undefined === window.JSON ||
-        null === window.JSON ||
-        false === window.JSON.hasOwnProperty('parse') ||
-        false === window.JSON.hasOwnProperty('stringify')) {
-
-        document.write('<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/json2/20110223/json2.js"><\/script>');
-        /* document.write('<script type="text/javascript" src="Scripts/json2.min.js"><\/script>'); */
-    }
-
-
-</script>
