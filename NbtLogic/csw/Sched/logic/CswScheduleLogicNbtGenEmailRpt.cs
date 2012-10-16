@@ -79,9 +79,9 @@ namespace ChemSW.Nbt.Sched
                             {
                                 if( CurrentMailReport.Enabled.Checked == Tristate.True &&
                                     CurrentMailReport.Recipients.SelectedUserIds.Count > 0 &&
-                                    ( CurrentMailReport.Type != CswNbtObjClassMailReport.TypeOptionView ||         // for notifications, 
-                                      CurrentMailReport.Event != CswNbtObjClassMailReport.EventOption.Edit ||      // make sure at least one
-                                      false == String.IsNullOrEmpty( CurrentMailReport.NodesToReport.Text ) ) )    // node has changed
+                                    ( CurrentMailReport.Type.Value != CswNbtObjClassMailReport.TypeOptionView ||                    // for notifications, 
+                                      CurrentMailReport.Event.Value != CswNbtObjClassMailReport.EventOption.Edit.ToString() ||      // make sure at least one
+                                      false == String.IsNullOrEmpty( CurrentMailReport.NodesToReport.Text ) ) )                     // node has changed
                                 {
                                     if( false == CurrentMailReport.Type.Empty )
                                     {
