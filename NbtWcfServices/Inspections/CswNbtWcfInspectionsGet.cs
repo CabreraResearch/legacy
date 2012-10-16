@@ -55,12 +55,13 @@ namespace NbtWebAppServices.Response
                                                                   orderby _NodeTypeTab.TabOrder
                                                                   select _NodeTypeTab )
                 {
+                    bool canPropOnAnyOtherTab = ( false == _CswNbtWcfSessionResources.CswNbtResources.Permit.canTab( CswNbtPermit.NodeTypePermission.Edit, NewInspectionNodeType, NodeTypeTab: NodeTypeTab ) );
                     var ResponseSection = new CswNbtWcfInspectionsDataModel.CswNbtInspectionDesign.Section
                     {
                         Name = NodeTypeTab.TabName,
                         Order = NodeTypeTab.TabOrder,
                         SectionId = NodeTypeTab.TabId,
-                        ReadOnly = ( false == _CswNbtWcfSessionResources.CswNbtResources.Permit.canTab( CswNbtPermit.NodeTypePermission.Edit, NewInspectionNodeType, NodeTypeTab: NodeTypeTab ) )
+                        ReadOnly = canPropOnAnyOtherTab
                     };
 
                     IEnumerable<CswNbtMetaDataNodeTypeProp> NodeTypeProps = NodeTypeTab.getNodeTypePropsByDisplayOrder();
@@ -81,7 +82,7 @@ namespace NbtWebAppServices.Response
                             QuestionId = NodeTypeProp.PropId,
                             Text = NodeTypeProp.PropName,
                             Choices = null,
-                            ReadOnly = _CswNbtWcfSessionResources.CswNbtResources.Permit.canPropOnAnyOtherTab( CswNbtPermit.NodeTypePermission.Edit, null, NodeTypeProp )
+                            ReadOnly = canPropOnAnyOtherTab
                         } );
                     }
 

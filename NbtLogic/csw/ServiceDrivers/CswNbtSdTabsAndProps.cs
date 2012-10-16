@@ -476,15 +476,14 @@ namespace ChemSW.Nbt.ServiceDrivers
             if( PropWrapper != null )
             {
 
-
                 //PropObj["readonly"] = PropWrapper.IsReadOnly().ToString().ToLower();
                 //if( _CswNbtResources.Permit.canProp( CswNbtPermit.NodeTypePermission.Edit, Prop ) )
                 CswNbtMetaDataNodeType NodeType = Prop.getNodeType();
-                if( _CswNbtResources.Permit.canProp( CswNbtPermit.NodeTypePermission.Edit, Prop, Tab, PropWrapper ) &&
+                if( ( false == Prop.ServerManaged ) &&
+                    _CswNbtResources.Permit.canProp( CswNbtPermit.NodeTypePermission.Edit, Prop, Tab, PropWrapper ) &&
                     _CswNbtResources.Permit.canNode( CswNbtPermit.NodeTypePermission.Edit, NodeType, NodeId ) &&
                     ( _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Edit, NodeType ) ||
-                    _CswNbtResources.Permit.canTab( CswNbtPermit.NodeTypePermission.Edit, NodeType, Tab ) ||
-                    _CswNbtResources.Permit.canPropOnAnyOtherTab( CswNbtPermit.NodeTypePermission.Edit, Tab, Prop ) )
+                    _CswNbtResources.Permit.canTab( CswNbtPermit.NodeTypePermission.Edit, NodeType, Tab ) )
                     )
                 {
 

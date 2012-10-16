@@ -126,6 +126,10 @@ namespace ChemSW.Nbt.Batch
                 {
                     op = new CswNbtBatchOpUpdateRegulatoryListsForMaterials( CswNbtResources );
                 }
+                else if( OpName == NbtBatchOpName.ExpiredContainers )
+                {
+                    op = new CswNbtBatchOpExpiredContainers( CswNbtResources );
+                }
                 // New batch ops go here
                 // else if( OpName == NbtBatchOpName.NEWNAME ) 
                 if( null != op )

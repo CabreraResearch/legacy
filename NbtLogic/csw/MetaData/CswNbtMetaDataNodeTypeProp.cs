@@ -501,9 +501,10 @@ namespace ChemSW.Nbt.MetaData
         public bool EditProp( CswNbtNode Node, ICswNbtUser User, bool InPopUp )
         {
             //CswNbtMetaDataNodeTypeProp Prop = this;
-            bool IsOnAdd = ( ( IsRequired && ( ( null != DefaultValue ) && ( DefaultValue.Empty ) ) ) ||
+            bool IsOnAdd = ( ( IsRequired && ( ( null == DefaultValue ) || ( DefaultValue.Empty ) ) ) ||
                              Node.Properties[this].TemporarilyRequired ||
                              AddLayout != null );
+
             var ret = ( ( false == InPopUp || IsOnAdd ) &&
                 FilterNodeTypePropId == Int32.MinValue && /* Keep these out */
                         false == Node.Properties[this].Hidden &&

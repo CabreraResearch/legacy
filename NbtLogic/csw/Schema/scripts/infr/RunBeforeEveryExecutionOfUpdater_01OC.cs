@@ -302,7 +302,6 @@ namespace ChemSW.Nbt.Schema
                     IsUnique = true,
                     SetValOnAdd = true
                 } );
-
                 _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( MethodOc )
                 {
                     PropName = CswNbtObjClassMethod.PropertyName.MethodDescription,
@@ -310,11 +309,10 @@ namespace ChemSW.Nbt.Schema
                     SetValOnAdd = true
                 } );
 
-                _CswNbtSchemaModTrnsctn.createModuleObjectClassJunction( CswNbtModuleName.CISPro, MethodOc.ObjectClassId );
+                _CswNbtSchemaModTrnsctn.createModuleObjectClassJunction( CswNbtModuleName.MLM, MethodOc.ObjectClassId );
 
                 _resetBlame();
             }
-
             #endregion Case 27869 - Method ObjectClass
         }
 
@@ -335,7 +333,6 @@ namespace ChemSW.Nbt.Schema
                     IsRequired = true,
                     SetValOnAdd = true
                 } );
-
                 _CswNbtSchemaModTrnsctn.createModuleObjectClassJunction( CswNbtModuleName.CISPro, JurisdictionOc.ObjectClassId );
             }
 
@@ -387,11 +384,173 @@ namespace ChemSW.Nbt.Schema
             #endregion Case 27870 - New InventoryGroup ObjClassProps
         }
 
+        public void _makeEnterprisePartsAndManufacturerEquivalentPartsOCs()
+        {
+            #region Case 27865 part 1 - Enterprise Part (EP)
+
+            CswNbtMetaDataObjectClass enterprisePartOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.EnterprisePartClass );
+            if( null == enterprisePartOC )
+            {
+                enterprisePartOC = _CswNbtSchemaModTrnsctn.createObjectClass( NbtObjectClass.EnterprisePartClass, "gear.png", false );
+
+                CswNbtMetaDataObjectClassProp gcasOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( enterprisePartOC )
+                {
+                    PropName = CswNbtObjClassEnterprisePart.PropertyName.GCAS,
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Text,
+                    IsUnique = true
+                } );
+
+                CswNbtMetaDataObjectClassProp requestOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( enterprisePartOC )
+                {
+                    PropName = CswNbtObjClassEnterprisePart.PropertyName.Request,
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Button
+                } );
+
+                _CswNbtSchemaModTrnsctn.createModuleObjectClassJunction( CswNbtModuleName.CISPro, enterprisePartOC.ObjectClassId );
+            }
+
+            #endregion
+
+            #region Case 27865 part 2 - Manufactuerer Equivalent Part
+
+            CswNbtMetaDataObjectClass manufactuerEquivalentPartOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.ManufacturerEquivalentPartClass );
+            if( null == manufactuerEquivalentPartOC )
+            {
+                manufactuerEquivalentPartOC = _CswNbtSchemaModTrnsctn.createObjectClass( NbtObjectClass.ManufacturerEquivalentPartClass, "gearset.png", false );
+
+                CswNbtMetaDataObjectClassProp epOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( manufactuerEquivalentPartOC )
+                {
+                    PropName = CswNbtObjClassManufacturerEquivalentPart.PropertyName.EnterprisePart,
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Relationship,
+                    IsFk = true,
+                    FkType = NbtViewRelatedIdType.ObjectClassId.ToString(),
+                    FkValue = enterprisePartOC.ObjectClassId
+                } );
+
+                CswNbtMetaDataObjectClass materialOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.MaterialClass );
+                CswNbtMetaDataObjectClassProp materialOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( manufactuerEquivalentPartOC )
+                {
+                    PropName = CswNbtObjClassManufacturerEquivalentPart.PropertyName.Material,
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Relationship,
+                    IsFk = true,
+                    FkType = NbtViewRelatedIdType.ObjectClassId.ToString(),
+                    FkValue = materialOC.ObjectClassId
+                } );
+
+                CswNbtMetaDataObjectClass vendorOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.VendorClass );
+                CswNbtMetaDataObjectClassProp manufacturerOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( manufactuerEquivalentPartOC )
+                {
+                    PropName = CswNbtObjClassManufacturerEquivalentPart.PropertyName.Manufacturer,
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Relationship,
+                    IsFk = true,
+                    FkType = NbtViewRelatedIdType.ObjectClassId.ToString(),
+                    FkValue = vendorOC.ObjectClassId
+                } );
+
+                CswNbtMetaDataObjectClassProp vendorTypeOCP = vendorOC.getObjectClassProp( CswNbtObjClassVendor.PropertyName.VendorTypeName );
+                CswNbtView manufacturerOCPView = _CswNbtSchemaModTrnsctn.makeView();
+                CswNbtViewRelationship parent = manufacturerOCPView.AddViewRelationship( vendorOC, true );
+                manufacturerOCPView.AddViewPropertyAndFilter( parent,
+                    MetaDataProp: vendorTypeOCP,
+                    Value: "Manufacturing",
+                    SubFieldName: CswNbtSubField.SubFieldName.Value,
+                    FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+                _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( manufacturerOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.viewxml, manufacturerOCPView.ToString() );
+
+                _CswNbtSchemaModTrnsctn.createModuleObjectClassJunction( CswNbtModuleName.CISPro, manufactuerEquivalentPartOC.ObjectClassId );
+            }
+
+            #endregion
+        }
+
+        public void _makeReceiptLotOC()
+        {
+            #region Case 27867 - Receipt Lot
+
+            CswNbtMetaDataObjectClass receiptLotOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.ReceiptLotClass );
+            if( null == receiptLotOC )
+            {
+                receiptLotOC = _CswNbtSchemaModTrnsctn.createObjectClass( NbtObjectClass.ReceiptLotClass, "options.png", false );
+
+                /*
+                 * Receipt Lot No OCP- waiting on 27877
+                 */
+
+                CswNbtMetaDataObjectClass materialOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.MaterialClass );
+                CswNbtMetaDataObjectClassProp materialOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( receiptLotOC )
+                {
+                    PropName = CswNbtObjClassReceiptLot.PropertyName.Material,
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Relationship,
+                    IsFk = true,
+                    FkType = NbtViewRelatedIdType.ObjectClassId.ToString(),
+                    FkValue = materialOC.ObjectClassId,
+                    ServerManaged = true,
+                    SetValOnAdd = true
+                } );
+
+                /*
+                 * Material ID - waiting on 27864
+                 */
+
+                CswNbtMetaDataObjectClassProp expirationDateOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( receiptLotOC )
+                {
+                    PropName = CswNbtObjClassReceiptLot.PropertyName.ExpirationDate,
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.DateTime
+                } );
+
+                CswNbtMetaDataObjectClassProp underInvestigationOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( receiptLotOC )
+                {
+                    PropName = CswNbtObjClassReceiptLot.PropertyName.UnderInvestigation,
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Logical,
+                    IsRequired = true
+                } );
+                _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( underInvestigationOCP, CswNbtSubField.SubFieldName.Checked, false );
+
+                CswNbtMetaDataObjectClassProp investigationNotesOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( receiptLotOC )
+                {
+                    PropName = CswNbtObjClassReceiptLot.PropertyName.InvestigationNotes,
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Comments
+                } );
+
+                CswNbtMetaDataObjectClass vendorOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.VendorClass );
+                CswNbtMetaDataObjectClassProp manufacturerOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( receiptLotOC )
+                {
+                    PropName = CswNbtObjClassReceiptLot.PropertyName.Manufacturer,
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Relationship,
+                    IsFk = true,
+                    FkType = NbtViewRelatedIdType.ObjectClassId.ToString(),
+                    FkValue = vendorOC.ObjectClassId
+                } );
+
+                CswNbtMetaDataObjectClassProp vendorTypeOCP = vendorOC.getObjectClassProp( CswNbtObjClassVendor.PropertyName.VendorTypeName );
+                CswNbtView manufacturerOCPView = _CswNbtSchemaModTrnsctn.makeView();
+                CswNbtViewRelationship parent = manufacturerOCPView.AddViewRelationship( vendorOC, true );
+                manufacturerOCPView.AddViewPropertyAndFilter( parent,
+                    MetaDataProp: vendorTypeOCP,
+                    Value: "Manufacturing",
+                    SubFieldName: CswNbtSubField.SubFieldName.Value,
+                    FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+                _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( manufacturerOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.viewxml, manufacturerOCPView.ToString() );
+
+                CswNbtMetaDataObjectClass requestItemOC_27867 = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.RequestItemClass );
+                CswNbtMetaDataObjectClassProp requestItemOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( receiptLotOC )
+                {
+                    PropName = CswNbtObjClassReceiptLot.PropertyName.RequestItem,
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Relationship,
+                    IsFk = true,
+                    FkType = NbtViewRelatedIdType.ObjectClassId.ToString(),
+                    FkValue = requestItemOC_27867.ObjectClassId
+                } );
+
+                _CswNbtSchemaModTrnsctn.createModuleObjectClassJunction( CswNbtModuleName.CISPro, receiptLotOC.ObjectClassId );
+            }
+            #endregion
+        }
+
         public override void update()
         {
             // This script is for adding object class properties, 
             // which often become required by other business logic and can cause prior scripts to fail.
-
             #region SEBASTIAN
 
             // case 27703 - change containers dispose/dispense buttons to say "Dispose this Container" and "Dispense this Container"
@@ -488,40 +647,46 @@ namespace ChemSW.Nbt.Schema
             }
 
             // Change "Report View" from ViewPickList to ViewReference
+            // NOTE: Due to case 27950, we have to fix nodetypes and object classes separately
+            CswNbtMetaDataFieldType ViewReferenceFT = _CswNbtSchemaModTrnsctn.MetaData.getFieldType( CswNbtMetaDataFieldType.NbtFieldType.ViewReference );
+            foreach( CswNbtMetaDataNodeType MailReportNT in MailReportOC.getNodeTypes() )
+            {
+                CswNbtMetaDataNodeTypeProp ReportViewNTP = MailReportNT.getNodeTypePropByObjectClassProp( CswNbtObjClassMailReport.PropertyName.ReportView );
+                if( ReportViewNTP.getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.ViewPickList )
+                {
+                    // map jct_nodes_props records
+                    //   ViewReference: Name = field1, ViewId = field1_fk
+                    //   ViewPickList: Name = gestalt, ViewId = field1
+                    CswTableUpdate JctUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "27720_update_jnp", "jct_nodes_props" );
+                    DataTable JctTable = JctUpdate.getTable( "nodetypepropid", ReportViewNTP.PropId );
+                    foreach( DataRow JctRow in JctTable.Rows )
+                    {
+                        JctRow["field1_fk"] = JctRow["field1"];
+                        JctRow["field1"] = JctRow["gestalt"];
+                    }
+                    JctUpdate.update( JctTable );
+
+                    // fix the nodetype_prop record
+                    // slightly kludgey, but works
+                    ReportViewNTP._DataRow["fieldtypeid"] = ViewReferenceFT.FieldTypeId;
+                }
+
+            }
+
+            // fix the object class record
             CswNbtMetaDataObjectClassProp ReportViewOCP = MailReportOC.getObjectClassProp( CswNbtObjClassMailReport.PropertyName.ReportView );
             if( ReportViewOCP.getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.ViewPickList )
             {
-                // map jct_nodes_props records
-                //   ViewReference: Name = field1, ViewId = field1_fk
-                //   ViewPickList: Name = gestalt, ViewId = field1
-                CswTableUpdate JctUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "27720_update_jnp", "jct_nodes_props" );
-                DataTable JctTable = JctUpdate.getTable( "where nodetypepropid in (select nodetypepropid from nodetype_props where objectclasspropid = " + ReportViewOCP.ObjectClassPropId + ")" );
-                foreach( DataRow JctRow in JctTable.Rows )
-                {
-                    JctRow["field1_fk"] = JctRow["field1"];
-                    JctRow["field1"] = JctRow["gestalt"];
-                }
-                JctUpdate.update( JctTable );
-
-                // update the field types
-                CswNbtMetaDataFieldType ViewReferenceFT = _CswNbtSchemaModTrnsctn.MetaData.getFieldType( CswNbtMetaDataFieldType.NbtFieldType.ViewReference );
                 _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( ReportViewOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.fieldtypeid, ViewReferenceFT.FieldTypeId );
             }
+
             #endregion case 27720
 
             #endregion SEBASTIAN
 
             _CswNbtSchemaModTrnsctn.MetaData.makeMissingNodeTypeProps();
 
-            #region Also romeo (has to be last)
             CswNbtMetaDataObjectClass userOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.UserClass );
-
-            foreach( CswNbtNode userNode in userOC.getNodes( false, false ) )
-            {
-                userNode.Properties[CswNbtObjClassUser.PropertyName.Archived].AsLogical.Checked = Tristate.False;
-                userNode.postChanges( false );
-            }
-            #endregion Also romeo (has to be last)
 
             #region TITANIA
 
@@ -530,10 +695,10 @@ namespace ChemSW.Nbt.Schema
             _makeMethodOc();
             _makeJurisdictionOc();
             _makeNewInvGroupProps();
+            _makeEnterprisePartsAndManufacturerEquivalentPartsOCs();
+            _makeReceiptLotOC();
 
             #endregion TITANIA
-
-        }
 
         //Update()
 

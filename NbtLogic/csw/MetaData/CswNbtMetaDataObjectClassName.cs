@@ -24,6 +24,7 @@ namespace ChemSW.Nbt.MetaData
             { ContainerDispenseTransactionClass , ContainerDispenseTransactionClass  },
             { CustomerClass                     , CustomerClass                      },
             { DocumentClass                     , DocumentClass                      },
+            { EnterprisePartClass               , EnterprisePartClass                },
             { EquipmentAssemblyClass            , EquipmentAssemblyClass             },
             { EquipmentClass                    , EquipmentClass                     },
             { EquipmentTypeClass                , EquipmentTypeClass                 },
@@ -38,6 +39,7 @@ namespace ChemSW.Nbt.MetaData
             { JurisdictionClass                 , JurisdictionClass                  },
             { LocationClass                     , LocationClass                      },
             { MailReportClass                   , MailReportClass                    },
+            {ManufacturerEquivalentPartClass    , ManufacturerEquivalentPartClass    },
             { MaterialClass                     , MaterialClass                      },
             { MaterialSynonymClass              , MaterialSynonymClass               },
             { MethodClass                       , MethodClass                        },
@@ -47,6 +49,7 @@ namespace ChemSW.Nbt.MetaData
             { ParameterClass                    , ParameterClass                     },
             { PrintLabelClass                   , PrintLabelClass                    },
             { ProblemClass                      , ProblemClass                       },
+            { ReceiptLotClass                   , ReceiptLotClass                    },
             { RegulatoryListClass               , RegulatoryListClass                },
             { ReportClass                       , ReportClass                        },
             { ResultClass                       , ResultClass                        },
@@ -125,6 +128,7 @@ namespace ChemSW.Nbt.MetaData
         public const string ContainerDispenseTransactionClass = "ContainerDispenseTransactionClass";
         public const string CustomerClass = "CustomerClass";
         public const string DocumentClass = "DocumentClass";
+        public const string EnterprisePartClass = "EnterprisePartClass";
         public const string EquipmentAssemblyClass = "EquipmentAssemblyClass";
         public const string EquipmentClass = "EquipmentClass";
         public const string EquipmentTypeClass = "EquipmentTypeClass";
@@ -140,6 +144,7 @@ namespace ChemSW.Nbt.MetaData
         public const string LocationClass = "LocationClass";
         public const string MailReportClass = "MailReportClass";
         public const string MaterialClass = "MaterialClass";
+        public const string ManufacturerEquivalentPartClass = "ManufacturerEquivalentPartClass";
         public const string MaterialComponentClass = "MaterialComponentClass";
         public const string MaterialSynonymClass = "MaterialSynonymClass";
         public const string MethodClass = "MethodClass";
@@ -149,6 +154,7 @@ namespace ChemSW.Nbt.MetaData
         public const string ParameterClass = "ParameterClass";
         public const string PrintLabelClass = "PrintLabelClass";
         public const string ProblemClass = "ProblemClass";
+        public const string ReceiptLotClass = "ReceiptLotClass";
         public const string RegulatoryListClass = "RegulatoryListClass";
         public const string ReportClass = "ReportClass";
         public const string ResultClass = "ResultClass";
