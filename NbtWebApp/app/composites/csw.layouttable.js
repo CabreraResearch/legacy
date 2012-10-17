@@ -139,7 +139,10 @@
                 }
                 try {
                     cellObj.$.droppable('destroy');
-                } catch (e) { }
+                } catch (e) {
+                    Csw.debug.error('destroy() was called on a droppable before droppable was instanced on the control. This is non-fatal, but it should not happen.');
+                    Csw.debug.error(e);
+                }
                 cellObj.$.droppable({
                     hoverClass: 'CswLayoutTable_hover',
                     drop: function (ev, dd) {

@@ -726,7 +726,10 @@
                     } else {
                         $ret = $('#' + elementId);
                     }
-                } catch (e) { }
+                } catch (e) {
+                    Csw.debug.error('Could not fetch element by ID using jQuery.');
+                    Csw.debug.error(e);
+                }
 
                 if ($ret.length === 0) {
                     $ret = $(document.getElementById(elementId));
