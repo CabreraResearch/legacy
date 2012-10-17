@@ -53,16 +53,7 @@ namespace ChemSW.Nbt.Schema
                 IdentityTab.ServerManaged = true;
                 if( TabCount > 1 )
                 {
-                    string NodeTypeNameTemplate = NodeType.NameTemplateValue
-                        .Replace( " ", "," )
-                        .Replace( "-", "," )
-                        .Replace( "}", "" )
-                        .Replace( "{", "" )
-                        .Replace( "(", "" )
-                        .Replace( ")", "" );
-                    CswCommaDelimitedString PropIds = new CswCommaDelimitedString();
-                    PropIds.FromString( NodeTypeNameTemplate );
-                    foreach( Int32 PropId in PropIds.ToIntCollection() )
+                    foreach( Int32 PropId in NodeType.NameTemplatePropIds.ToIntCollection() )
                     {
                         if( Int32.MinValue != PropId )
                         {
