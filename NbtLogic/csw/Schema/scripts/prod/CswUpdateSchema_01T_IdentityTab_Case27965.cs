@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Data;
 using ChemSW.Core;
+using ChemSW.DB;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.csw.Dev;
 using ChemSW.Nbt.MetaData;
@@ -26,7 +28,13 @@ namespace ChemSW.Nbt.Schema
 
         public override void update()
         {
-            _CswNbtSchemaModTrnsctn.execArbitraryPlatformNeutralSql( "update nodetype_tabset set servermanaged=" + CswConvert.ToDbVal( false ) );
+            CswTableUpdate TableUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "nodetype_tabset_servermanaged", "nodetype_tabset" );
+            DataTable Table = TableUpdate.getTable();
+            foreach( DataRow Row in Table.Rows )
+            {
+                Row["servermanaged"] = CswConvert.ToDbVal( false );
+            }
+            TableUpdate.update( Table );
 
             CswNbtMetaDataObjectClass UserOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.UserClass );
             Collection<CswNbtNode> Users = UserOc.getNodes( true, false );
