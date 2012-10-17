@@ -73,15 +73,9 @@
                 }
 
                 //We don't have node name yet. Init the div in the right place and polyfill later.
-                cswPrivate.titleDiv = cswParent.div();
+                cswPrivate.titleDiv = cswParent.div({ cssclass: 'CswIdentityTabHeader' }).hide();
                 cswPrivate.identityWrapDiv = cswParent.div();
-                cswPrivate.identityWrapDiv.css({
-                    border: '1px solid #cddded',
-                    background: '#e5f0ff',
-                    margin: '0px',
-                    padding: '10px'
-                });
-
+                
                 cswPrivate.tabsTable = cswPrivate.identityWrapDiv.table({ width: '100%' });
                 cswPrivate.identityDiv = cswPrivate.tabsTable.cell(1, 1); //.div();
 
@@ -142,7 +136,7 @@
                     cswPrivate.setPrivateProp(data, 'IdentityTab');
 
                     if (Csw.isNullOrEmpty(cswPrivate.IdentityTab)) {
-                        cswPrivate.identityWrapDiv.remove();
+                        //
                     } else {
 
                         var layoutOpts = {
@@ -161,9 +155,14 @@
                         var tabId = cswPrivate.IdentityTab.tabid;
                         delete cswPrivate.IdentityTab.tabid;
 
-                        cswPrivate.titleDiv.append(cswPrivate.tabState.nodename).css({ 'font-size': '22px' });
-                        cswPrivate.identityLayoutTable = cswPrivate.identityDiv.layoutTable(layoutOpts);
-                        cswPrivate.handleProperties(cswPrivate.identityLayoutTable, cswPrivate.identityDiv, tabId, false, cswPrivate.IdentityTab);
+                        cswPrivate.titleDiv.append(cswPrivate.tabState.nodename);
+                        cswPrivate.titleDiv.show();
+
+                        if (false === Csw.isNullOrEmpty(cswPrivate.IdentityTab)) {
+                            cswPrivate.identityWrapDiv.addClass('CswIdentityTab');
+                            cswPrivate.identityLayoutTable = cswPrivate.identityDiv.layoutTable(layoutOpts);
+                            cswPrivate.handleProperties(cswPrivate.identityLayoutTable, cswPrivate.identityDiv, tabId, false, cswPrivate.IdentityTab);
+                        }
                     }
                 }
             };
