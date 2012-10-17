@@ -504,7 +504,7 @@ namespace ChemSW.Nbt.Schema
                     FieldType = CswNbtMetaDataFieldType.NbtFieldType.Logical,
                     IsRequired = true
                 } );
-                _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( underInvestigationOCP, CswNbtSubField.SubFieldName.Checked, false );
+                _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( underInvestigationOCP, false );
 
                 CswNbtMetaDataObjectClassProp investigationNotesOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( receiptLotOC )
                 {
@@ -551,6 +551,7 @@ namespace ChemSW.Nbt.Schema
         {
             // This script is for adding object class properties, 
             // which often become required by other business logic and can cause prior scripts to fail.
+
             #region SEBASTIAN
 
             // case 27703 - change containers dispose/dispense buttons to say "Dispose this Container" and "Dispense this Container"
@@ -699,6 +700,7 @@ namespace ChemSW.Nbt.Schema
             _makeReceiptLotOC();
 
             #endregion TITANIA
+        }
 
         //Update()
 
