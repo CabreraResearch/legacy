@@ -836,6 +836,14 @@ namespace ChemSW.Nbt
         //public CswConfigurationVariables CswConfigVbls { get { return ( _CswResources.ConfigVbls ); } }
 
         /// <summary>
+        /// True if the user is the system user
+        /// </summary>
+        public bool IsSystemUser
+        {
+            get { return CurrentNbtUser is CswNbtSystemUser; }
+        }
+
+        /// <summary>
         /// Information associated with the currently logged in user, Nbt-specific.
         /// </summary>
         public ICswNbtUser CurrentNbtUser { get { return _CswResources.CurrentUser as ICswNbtUser; } } //set { _CswResources.CurrentUser = (ICswNbtUser) value; } }

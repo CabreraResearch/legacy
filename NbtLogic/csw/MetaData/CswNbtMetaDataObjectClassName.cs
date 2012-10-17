@@ -18,8 +18,8 @@ namespace ChemSW.Nbt.MetaData
             { BatchOpClass                      , BatchOpClass                       },
             { BiologicalClass                   , BiologicalClass                    },
             { MaterialComponentClass            , MaterialComponentClass             },
-            { CertMethodClass                   , CertMethodClass                    },
-            { CertMethodTemplateClass           , CertMethodTemplateClass            },
+            { CofAMethodClass                   , CofAMethodClass                    },
+            { CofAMethodTemplateClass           , CofAMethodTemplateClass            },
             { ContainerClass                    , ContainerClass                     },
             { ContainerDispenseTransactionClass , ContainerDispenseTransactionClass  },
             { CustomerClass                     , CustomerClass                      },
@@ -122,8 +122,8 @@ namespace ChemSW.Nbt.MetaData
         public const string AliquotClass = "AliquotClass";
         public const string BatchOpClass = "BatchOpClass";
         public const string BiologicalClass = "BiologicalClass";
-        public const string CertMethodClass = "CertMethodClass";
-        public const string CertMethodTemplateClass = "CertMethodTemplateClass";
+        public const string CofAMethodClass = "CofAMethodClass";
+        public const string CofAMethodTemplateClass = "CofAMethodTemplateClass";
         public const string ContainerClass = "ContainerClass";
         public const string ContainerDispenseTransactionClass = "ContainerDispenseTransactionClass";
         public const string CustomerClass = "CustomerClass";

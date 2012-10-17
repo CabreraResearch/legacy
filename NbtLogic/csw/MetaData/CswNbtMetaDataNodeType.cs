@@ -140,6 +140,27 @@ namespace ChemSW.Nbt.MetaData
                 }
             }
         }
+
+        /// <summary>
+        /// Parse the <see cref="NameTemplateValue"/> removing "'{', '}', ' ', '-', '(', ')'" and return a comma delimited string
+        /// </summary>
+        /// <returns></returns>
+        public CswCommaDelimitedString NameTemplatePropIds
+        {
+            get
+            {
+                CswCommaDelimitedString Ret = new CswCommaDelimitedString();
+                string ParsedTemplateText = NameTemplateValue.Replace( " ", "," )
+                    .Replace( "-", "," )
+                    .Replace( "}", "" )
+                    .Replace( "{", "" )
+                    .Replace( "(", "" )
+                    .Replace( ")", "" );
+                Ret.FromString( ParsedTemplateText );
+                return Ret;
+            }
+        }
+
         public string getNameTemplateText()
         {
             return CswNbtMetaData.TemplateValueToTemplateText( getNodeTypeProps(), NameTemplateValue );
@@ -365,6 +386,11 @@ namespace ChemSW.Nbt.MetaData
                 }
             }
             return SecondTab;
+        }
+
+        public CswNbtMetaDataNodeTypeTab getIdentityTab()
+        {
+            return getNodeTypeTab( CswNbtMetaData.IdentityTabName );
         }
 
         public CswNbtMetaDataNodeTypeTab getNodeTypeTab( string NodeTypeTabName )

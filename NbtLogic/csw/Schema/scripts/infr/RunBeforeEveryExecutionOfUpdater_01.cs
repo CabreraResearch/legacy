@@ -1,4 +1,5 @@
 
+using System;
 using ChemSW.Nbt.csw.Dev;
 
 namespace ChemSW.Nbt.Schema
@@ -49,7 +50,20 @@ namespace ChemSW.Nbt.Schema
 
             #region TITANIA
 
+            _acceptBlame( CswDeveloper.CF, 27965 );
+
+            if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( "nodetype_tabset", "servermanaged" ) )
+            {
+                _CswNbtSchemaModTrnsctn.addBooleanColumn( "nodetype_tabset", "servermanaged", "Indicates that the tab is Server Managed", logicaldelete: false, required: false );
+            }
+
+            _resetBlame();
+
+
             #region Case 27862 - add "hidden" col to nodes table
+            
+            _acceptBlame( CswDeveloper.MB, 27862 );
+
             if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( "nodes", "hidden" ) )
             {
                 //Add a "hidden" column to nodes
@@ -60,19 +74,39 @@ namespace ChemSW.Nbt.Schema
                     logicaldelete: false,
                     required: true );
             }
+            
+             _resetBlame();
+
             #endregion
 
             #endregion TITANIA
 
         }
 
+        private void _acceptBlame( CswDeveloper BlameMe, Int32 BlameCaseNo )
+        {
+            _Author = BlameMe;
+            _CaseNo = BlameCaseNo;
+        }
+
+        private void _resetBlame()
+        {
+            _Author = CswDeveloper.NBT;
+            _CaseNo = 0;
+        }
+
+        private CswDeveloper _Author = CswDeveloper.NBT;
+
         public override CswDeveloper Author
         {
-            get { return CswDeveloper.NBT; }
+            get { return _Author; }
         }
+
+        private Int32 _CaseNo = 0;
+
         public override int CaseNo
         {
-            get { return 0; }
+            get { return _CaseNo; }
         }
         //Update()
 

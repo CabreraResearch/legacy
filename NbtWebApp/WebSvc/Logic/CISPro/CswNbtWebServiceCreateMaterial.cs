@@ -173,7 +173,7 @@ namespace ChemSW.Nbt.WebServices
                     Ret["nodetypeid"] = NodeAsMaterial.NodeTypeId;
                     _CswNbtResources.EditMode = NodeEditMode.Temp;
                     CswNbtSdTabsAndProps SdProps = new CswNbtSdTabsAndProps( _CswNbtResources );
-                    Ret["properties"] = SdProps.getProps( NodeAsMaterial.Node, string.Empty, null, CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, true );
+                    Ret["properties"] = SdProps.getProps( NodeAsMaterial.Node, string.Empty, null, CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add );
                     Int32 DocumentNodeTypeId = CswNbtActReceiving.getMaterialDocumentNodeTypeId( _CswNbtResources, NodeAsMaterial );
                     if( Int32.MinValue != DocumentNodeTypeId )
                     {
@@ -336,7 +336,7 @@ namespace ChemSW.Nbt.WebServices
                     if( null != Ret )
                     {
                         Ret.IsTemp = false;
-                        wsTap.saveProps( Ret.NodeId, Int32.MinValue, MaterialProperties.ToString(), Ret.NodeTypeId, null );
+                        wsTap.saveProps( Ret.NodeId, Int32.MinValue, MaterialProperties.ToString(), Ret.NodeTypeId, null, IsIdentityTab: false );
                         string Tradename;
                         CswPrimaryKey SupplierId;
                         string PartNo;

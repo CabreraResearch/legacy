@@ -61,7 +61,8 @@ namespace ChemSW.Nbt.Schema
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01T_Case27869() ) );                         //01S-028    01T-01
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01T_Case27873() ) );                         //01S-029    01T-02
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01T_Case27872() ) );                         //01S-030    01T-03
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01T_CertMethod_Case27868() ) );              //01S-031    01T-05
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01T_CertMethod_Case27868() ) );              //01S-030    01T-04
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01T_IdentityTab_Case27965() ) );             //01S-031    01T-05
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01T_Case27694() ) );                         //01S-032    01T-06
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01T_Case27865_part1() ) );                   //01S-033    01T-07
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01T_Case27865_part2() ) );                   //01S-034    01T-08

@@ -36,8 +36,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NbtWebApp", "NbtWebApp\NbtW
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NbtWebAppJavaScript", "NbtWebApp\NbtWebAppJavaScript.csproj", "{C8FE3288-E809-4CA1-BBA0-225D0E10DB9F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NbtWebAppJavaScriptMobile", "NbtWebApp\NbtWebAppJavaScriptMobile.csproj", "{B2DB6C68-B291-4C0E-9DB1-AFCCC92D8F4F}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NbtWcfServices", "NbtWcfServices\NbtWcfServices.csproj", "{22B27336-428C-4A59-9909-38BE803C9161}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{B0BE6B91-45A3-4EF1-BE1F-1B8D2BA04EC0}"
@@ -305,21 +303,6 @@ Global
 		{A082F357-1745-4578-AF1F-517BC6EF4007}.Release|Mixed Platforms.ActiveCfg = Release|x64
 		{A082F357-1745-4578-AF1F-517BC6EF4007}.Release|Mixed Platforms.Build.0 = Release|x64
 		{A082F357-1745-4578-AF1F-517BC6EF4007}.Release|x64.ActiveCfg = Release|x64
-		{B2DB6C68-B291-4C0E-9DB1-AFCCC92D8F4F}.Debug (Fast)|Any CPU.ActiveCfg = Debug (Fast)|x64
-		{B2DB6C68-B291-4C0E-9DB1-AFCCC92D8F4F}.Debug (Fast)|Mixed Platforms.ActiveCfg = Debug (Fast)|x64
-		{B2DB6C68-B291-4C0E-9DB1-AFCCC92D8F4F}.Debug (Fast)|Mixed Platforms.Build.0 = Debug (Fast)|x64
-		{B2DB6C68-B291-4C0E-9DB1-AFCCC92D8F4F}.Debug (Fast)|x64.ActiveCfg = Debug (Fast)|x64
-		{B2DB6C68-B291-4C0E-9DB1-AFCCC92D8F4F}.Debug (Fast)|x64.Build.0 = Debug (Fast)|x64
-		{B2DB6C68-B291-4C0E-9DB1-AFCCC92D8F4F}.Debug|Any CPU.ActiveCfg = Debug|x64
-		{B2DB6C68-B291-4C0E-9DB1-AFCCC92D8F4F}.Debug|Mixed Platforms.ActiveCfg = Debug|x64
-		{B2DB6C68-B291-4C0E-9DB1-AFCCC92D8F4F}.Debug|Mixed Platforms.Build.0 = Debug|x64
-		{B2DB6C68-B291-4C0E-9DB1-AFCCC92D8F4F}.Debug|x64.ActiveCfg = Debug|x64
-		{B2DB6C68-B291-4C0E-9DB1-AFCCC92D8F4F}.Debug|x64.Build.0 = Debug|x64
-		{B2DB6C68-B291-4C0E-9DB1-AFCCC92D8F4F}.Release|Any CPU.ActiveCfg = Release|x64
-		{B2DB6C68-B291-4C0E-9DB1-AFCCC92D8F4F}.Release|Mixed Platforms.ActiveCfg = Release|x64
-		{B2DB6C68-B291-4C0E-9DB1-AFCCC92D8F4F}.Release|Mixed Platforms.Build.0 = Release|x64
-		{B2DB6C68-B291-4C0E-9DB1-AFCCC92D8F4F}.Release|x64.ActiveCfg = Release|x64
-		{B2DB6C68-B291-4C0E-9DB1-AFCCC92D8F4F}.Release|x64.Build.0 = Release|x64
 		{B9AA98D2-572B-4C3B-98D2-A0D0A524E961}.Debug (Fast)|Any CPU.ActiveCfg = Debug|x64
 		{B9AA98D2-572B-4C3B-98D2-A0D0A524E961}.Debug (Fast)|Mixed Platforms.ActiveCfg = Debug|x64
 		{B9AA98D2-572B-4C3B-98D2-A0D0A524E961}.Debug (Fast)|Mixed Platforms.Build.0 = Debug|x64

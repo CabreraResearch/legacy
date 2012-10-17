@@ -2030,7 +2030,7 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string saveProps( string EditMode, string NodeId, string SafeNodeKey, string TabId, string NewPropsJson, string NodeTypeId, string ViewId )
+        public string saveProps( string EditMode, string NodeId, string SafeNodeKey, string TabId, string NewPropsJson, string IdentityTabJson, string NodeTypeId, string ViewId )
         {
             JObject ReturnVal = new JObject();
 
@@ -2055,7 +2055,10 @@ namespace ChemSW.Nbt.WebServices
                     CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources, _CswNbtStatisticsEvents );
                     _setEditMode( EditMode );
                     CswNbtView View = _getView( ViewId );
-                    ReturnVal = ws.saveProps( NodePk, CswConvert.ToInt32( TabId ), NewPropsJson, CswConvert.ToInt32( NodeTypeId ), View );
+                    //Identity
+                    ws.saveProps( NodePk, CswConvert.ToInt32( TabId ), IdentityTabJson, CswConvert.ToInt32( NodeTypeId ), View, IsIdentityTab: true );
+                    //Return
+                    ReturnVal = ws.saveProps( NodePk, CswConvert.ToInt32( TabId ), NewPropsJson, CswConvert.ToInt32( NodeTypeId ), View, IsIdentityTab: false );
                 }
                 _deInitResources();
             }
@@ -3337,7 +3340,7 @@ namespace ChemSW.Nbt.WebServices
                 _CswNbtResources.EditMode = NodeEditMode.Add;
                 ////CswNbtMetaDataNodeType feedbackNT = _CswNbtResources.MetaData.getNodeType( newFeedbackNode.NodeTypeId );
                 //CswNbtMetaDataNodeTypeTab feedbackNTT = feedbackNT.getFirstNodeTypeTab();
-                ReturnVal["propdata"] = tabsandprops.getProps( newFeedbackNode.Node, "", null, CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, true ); //DO I REALLY BREAK THIS?
+                ReturnVal["propdata"] = tabsandprops.getProps( newFeedbackNode.Node, "", null, CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add ); //DO I REALLY BREAK THIS?
                 ReturnVal["nodeid"] = newFeedbackNode.NodeId.ToString();
 
             }
