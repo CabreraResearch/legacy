@@ -148,7 +148,7 @@ namespace ChemSW.Nbt.Actions
                 RequestView.AddViewPropertyAndFilter( RequestVr, SubmittedDateOcp, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Null );
                 RequestView.AddViewPropertyAndFilter( RequestVr, CompletedDateOcp, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Null );
 
-                ICswNbtTree RequestTree = _CswNbtResources.Trees.getTreeFromView( RequestView, false, false );
+                ICswNbtTree RequestTree = _CswNbtResources.Trees.getTreeFromView( RequestView, false, false, false );
                 CartCount = RequestTree.getChildNodeCount();
                 if( CartCount >= 1 )
                 {
@@ -208,7 +208,7 @@ namespace ChemSW.Nbt.Actions
             if( null != CartNode )
             {
                 applyCartFilter( CartNode.NodeId );
-                ICswNbtTree CartTree = _CswNbtResources.Trees.getTreeFromView( _CurrentCartView, false, false );
+                ICswNbtTree CartTree = _CswNbtResources.Trees.getTreeFromView( _CurrentCartView, false, false, false );
                 CartContentCount = CartTree.getChildNodeCount();
                 if( null == _RequestItemNt )
                 {
@@ -229,7 +229,7 @@ namespace ChemSW.Nbt.Actions
         {
             JObject Ret = new JObject();
 
-            ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( RequestHistoryView, true, false );
+            ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( RequestHistoryView, true, false, false );
             Int32 RequestCount = Tree.getChildNodeCount();
             Ret["count"] = RequestCount;
             if( RequestCount > 0 )
@@ -278,7 +278,7 @@ namespace ChemSW.Nbt.Actions
         {
             if( null != CopyFromNodeId && null != CopyToNodeId )
             {
-                ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( CurrentCartView, false, false );
+                ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( CurrentCartView, false, false, false );
                 Int32 ItemCount = Tree.getChildNodeCount();
                 for( Int32 I = 0; I < ItemCount; I += 1 )
                 {

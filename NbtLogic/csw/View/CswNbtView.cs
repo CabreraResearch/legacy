@@ -867,7 +867,7 @@ namespace ChemSW.Nbt
             CswNbtViewRelationship UserRelationship = View.AddViewRelationship( User_ObjectClass, false );
 
             // generate the tree
-            ICswNbtTree UserTree = _CswNbtResources.Trees.getTreeFromView( View, false, true, false, false );
+            ICswNbtTree UserTree = _CswNbtResources.Trees.getTreeFromView( _CswNbtResources.CurrentNbtUser, View, true, false, false );
 
             // reset the default view and quick launch views
             UserTree.goToRoot();

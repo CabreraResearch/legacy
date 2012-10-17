@@ -31,20 +31,20 @@ namespace ChemSW.NbtWebControls
         public CswLocationImageGrid( CswNbtResources CswNbtResources, XmlNode ParentNode, CswPrimaryKey SelectedNodeId )
             : base( CswNbtResources, ParentNode, SelectedNodeId )
         {
-            XmlNodeList Rows = _ParentNodeSet.SelectNodes(CswNbtLocationTreeDeprecated.XmlNodeName_Row);
+            XmlNodeList Rows = _ParentNodeSet.SelectNodes( CswNbtLocationTreeDeprecated.XmlNodeName_Row );
             TotalRows = Rows.Count;
-            foreach (XmlNode Row in Rows)
+            foreach( XmlNode Row in Rows )
             {
-                Int32 currentCellCount = Row.SelectNodes(CswNbtLocationTreeDeprecated.XmlNodeName_Cell).Count;
-                if (currentCellCount > TotalColumns)
+                Int32 currentCellCount = Row.SelectNodes( CswNbtLocationTreeDeprecated.XmlNodeName_Cell ).Count;
+                if( currentCellCount > TotalColumns )
                     TotalColumns = currentCellCount;
             }
         }
 
-        protected override void OnLoad(EventArgs e)
+        protected override void OnLoad( EventArgs e )
         {
             EnsureChildControls();
-            base.OnLoad(e);
+            base.OnLoad( e );
         }
 
         private CswAutoTable _Table;
@@ -54,31 +54,31 @@ namespace ChemSW.NbtWebControls
             _Table.CellSpacing = 0;
             _Table.CellPadding = 0;
             _Table.CssClass = "LocationGridTable";
-            this.Controls.Add(_Table);
+            this.Controls.Add( _Table );
 
             Int32 currentRow = 0;
             Int32 currentCol = 0;
 
-            TableCell TitleCell = _Table.getCell(currentRow, currentCol);
-            TitleCell.ColumnSpan = TotalColumns+1;
-            TitleCell.Style.Add(HtmlTextWriterStyle.TextAlign, "center");
+            TableCell TitleCell = _Table.getCell( currentRow, currentCol );
+            TitleCell.ColumnSpan = TotalColumns + 1;
+            TitleCell.Style.Add( HtmlTextWriterStyle.TextAlign, "center" );
 
             CswImageOverlay Title = new CswImageOverlay();
             Title.ID = "title";
             Title.ButtonText = KeyPrefix + _ParentNodeId;
             Title.ImageUrl = "";
             Title.IsButton = true;
-            Title.Click += new EventHandler(Image_Click);
-            TitleCell.Controls.Add(Title);
+            Title.Click += new EventHandler( Image_Click );
+            TitleCell.Controls.Add( Title );
 
             Label TitleLabel = new Label();
             TitleLabel.ID = this.ID + "_label";
-            TitleLabel.Text = _ParentNode.SelectSingleNode(CswNbtLocationTreeDeprecated.XmlNodeName_Display).InnerText;
-            if (_SelectedNodeId == _ParentNodeId)
+            TitleLabel.Text = _ParentNode.SelectSingleNode( CswNbtLocationTreeDeprecated.XmlNodeName_Display ).InnerText;
+            if( _SelectedNodeId == _ParentNodeId )
                 TitleLabel.CssClass = "LocationTitleTextSelected";
             else
                 TitleLabel.CssClass = "LocationTitleText";
-            Title.Content.Add(TitleLabel);
+            Title.Content.Add( TitleLabel );
 
             currentRow++;
             currentCol = 0;
@@ -87,9 +87,9 @@ namespace ChemSW.NbtWebControls
 
             // Top Label Row
             currentCol++;  // blank cell
-            while (currentCol < TotalColumns + 1)
+            while( currentCol < TotalColumns + 1 )
             {
-                TableCell LabelCell = _Table.getCell(currentRow, currentCol);
+                TableCell LabelCell = _Table.getCell( currentRow, currentCol );
                 //LabelCell.HorizontalAlign = HorizontalAlign.Center;
                 LabelCell.CssClass = "LocationColumnLabelCell";
 
@@ -97,7 +97,7 @@ namespace ChemSW.NbtWebControls
                 ColLabel.ID = "ColLabel_" + currentCol.ToString();
                 ColLabel.Text = currentCol.ToString();
                 ColLabel.CssClass = "LocationColumnLabel";
-                LabelCell.Controls.Add(ColLabel);
+                LabelCell.Controls.Add( ColLabel );
                 currentCol++;
             }
             currentRow++;
@@ -106,17 +106,17 @@ namespace ChemSW.NbtWebControls
 
             // Top graphic row
             currentCol++;    // blank cell
-            
+
             Image TopLeft = new Image();
             TopLeft.ImageUrl = ImageUrlBase + "g_topleft.gif";
-            _Table.addControl(currentRow, currentCol, TopLeft);
+            _Table.addControl( currentRow, currentCol, TopLeft );
             currentCol++;
 
-            while (currentCol < TotalColumns + 1)
+            while( currentCol < TotalColumns + 1 )
             {
                 Image Top = new Image();
                 Top.ImageUrl = ImageUrlBase + "g_top.gif";
-                _Table.addControl(currentRow, currentCol, Top);
+                _Table.addControl( currentRow, currentCol, Top );
                 currentCol++;
             }
 
@@ -124,7 +124,7 @@ namespace ChemSW.NbtWebControls
             TopRight.ImageUrl = ImageUrlBase + "g_topright.gif";
             TopRight.Width = 17;
             TopRight.Height = 17;
-            _Table.addControl(currentRow, currentCol, TopRight);
+            _Table.addControl( currentRow, currentCol, TopRight );
             currentCol++;
 
             currentRow++;
@@ -139,44 +139,44 @@ namespace ChemSW.NbtWebControls
                 {
                     ( (CswNbtViewRelationship) View.Root.ChildRelationships[0] ).NodeIdsToFilterIn.Add( _ParentNodeId );
                 }
-                CswNbtTree = _CswNbtResources.Trees.getTreeFromView( View, true, true, false, false );
+                CswNbtTree = _CswNbtResources.Trees.getTreeFromView( _CswNbtResources.CurrentNbtUser, View, true, false, false );
             }
 
 
             // Main Rows
-            while (currentRow < TotalRows + 3)
+            while( currentRow < TotalRows + 3 )
             {
                 currentCol = 0;
-                
+
                 // Row Label
-                TableCell RowLabelCell = _Table.getCell(currentRow, currentCol);
+                TableCell RowLabelCell = _Table.getCell( currentRow, currentCol );
                 Label RowLabel = new Label();
                 RowLabel.ID = "RowLabel_" + currentRow.ToString();
-                RowLabel.Text = CswTools.NumberToLetter(currentRow - 2).ToString().ToUpper();
+                RowLabel.Text = CswTools.NumberToLetter( currentRow - 2 ).ToString().ToUpper();
                 RowLabel.CssClass = "LocationRowLabel";
                 //_Table.addControl(currentRow, currentCol, RowLabel);
-                RowLabelCell.Controls.Add(RowLabel);
+                RowLabelCell.Controls.Add( RowLabel );
                 RowLabelCell.CssClass = "LocationRowLabelCell";
                 currentCol++;
 
-                while (currentCol < TotalColumns + 1)
+                while( currentCol < TotalColumns + 1 )
                 {
                     // Content Cells
-                    XmlNode CellNode = _ParentNodeSet.SelectSingleNode(CswNbtLocationTreeDeprecated.XmlNodeName_Row + "[" + (currentRow - 2) + "]/" + CswNbtLocationTreeDeprecated.XmlNodeName_Cell + "[" + (currentCol) + "]");
-                   CswNbtLocationTreeDeprecated.GridLocationTemplate Template = (CswNbtLocationTreeDeprecated.GridLocationTemplate)Enum.Parse(typeof(CswNbtLocationTreeDeprecated.GridLocationTemplate), CellNode.Attributes[CswNbtLocationTreeDeprecated.XmlAttrName_LocationTemplate].Value, true);
+                    XmlNode CellNode = _ParentNodeSet.SelectSingleNode( CswNbtLocationTreeDeprecated.XmlNodeName_Row + "[" + ( currentRow - 2 ) + "]/" + CswNbtLocationTreeDeprecated.XmlNodeName_Cell + "[" + ( currentCol ) + "]" );
+                    CswNbtLocationTreeDeprecated.GridLocationTemplate Template = (CswNbtLocationTreeDeprecated.GridLocationTemplate) Enum.Parse( typeof( CswNbtLocationTreeDeprecated.GridLocationTemplate ), CellNode.Attributes[CswNbtLocationTreeDeprecated.XmlAttrName_LocationTemplate].Value, true );
 
                     CswImageOverlay CellImage = new CswImageOverlay();
-                    CellImage.ID = GridKeyPrefix + (currentRow - 3).ToString() +"_"+ (currentCol-1).ToString();
-                    if (Template !=CswNbtLocationTreeDeprecated.GridLocationTemplate.Empty)
+                    CellImage.ID = GridKeyPrefix + ( currentRow - 3 ).ToString() + "_" + ( currentCol - 1 ).ToString();
+                    if( Template != CswNbtLocationTreeDeprecated.GridLocationTemplate.Empty )
                     {
-                        CellImage.ID = GridKeyPrefix + (currentRow - 3).ToString() +"_"+ (currentCol-1).ToString();
-                        CellImage.ButtonText = GridKeyPrefix + (currentRow - 3).ToString() +"_"+ (currentCol-1).ToString();
+                        CellImage.ID = GridKeyPrefix + ( currentRow - 3 ).ToString() + "_" + ( currentCol - 1 ).ToString();
+                        CellImage.ButtonText = GridKeyPrefix + ( currentRow - 3 ).ToString() + "_" + ( currentCol - 1 ).ToString();
                     }
                     CellImage.ImageWidth = 101;
                     CellImage.ImageHeight = 101;
-                    CellImage.IsButton = (_MoveMode);
+                    CellImage.IsButton = ( _MoveMode );
 
-                    switch (Template)
+                    switch( Template )
                     {
                         case CswNbtLocationTreeDeprecated.GridLocationTemplate.Grid:
                             CellImage.ImageUrl = "g_grid";
@@ -186,10 +186,10 @@ namespace ChemSW.NbtWebControls
                             break;
                     }
 
-                    if (Template !=CswNbtLocationTreeDeprecated.GridLocationTemplate.Empty)
+                    if( Template != CswNbtLocationTreeDeprecated.GridLocationTemplate.Empty )
                     {
                         //CellImage.HoverImageUrl = CellImage.ImageUrl + "_hover";
-                        if (_SelectedNodeId == _ParentNodeId && SelectedRow == (currentRow - 3) && SelectedColumn == currentCol-1)
+                        if( _SelectedNodeId == _ParentNodeId && SelectedRow == ( currentRow - 3 ) && SelectedColumn == currentCol - 1 )
                         {
                             CellImage.ImageUrl += "_selected";
                             //CellImage.HoverImageUrl += "_selected";
@@ -197,16 +197,16 @@ namespace ChemSW.NbtWebControls
                     }
 
                     CellImage.ImageUrl = ImageUrlBase + CellImage.ImageUrl + ".gif";
-                    if (CellImage.HoverImageUrl != String.Empty)
+                    if( CellImage.HoverImageUrl != String.Empty )
                         CellImage.HoverImageUrl = ImageUrlBase + CellImage.HoverImageUrl + ".gif";
-                    
-                    CellImage.Click += new EventHandler(Image_Click);
-                    _Table.addControl(currentRow, currentCol, CellImage);
+
+                    CellImage.Click += new EventHandler( Image_Click );
+                    _Table.addControl( currentRow, currentCol, CellImage );
                     currentCol++;
 
                     // Non-Location Children
                     XmlNodeList ChildNodes = CellNode.SelectNodes( CswNbtLocationTreeDeprecated.XmlNodeName_ChildSet );
-                    foreach (XmlNode Child in ChildNodes)
+                    foreach( XmlNode Child in ChildNodes )
                     {
                         CswPrimaryKey ChildNodeId = new CswPrimaryKey( "nodes", CswConvert.ToInt32( Child.SelectSingleNode( CswNbtLocationTreeDeprecated.XmlNodeName_Key ).InnerText ) );
 
@@ -241,24 +241,24 @@ namespace ChemSW.NbtWebControls
                         CswImageOverlay NodeButton = new CswImageOverlay();
                         NodeButton.ID = NodePrefix + ChildNodeId.PrimaryKey.ToString();
                         NodeButton.ButtonText = NodePrefix + ChildNodeId.PrimaryKey.ToString();
-                        NodeButton.Click += new EventHandler(Image_Click);
-                        if (_MoveMode)
+                        NodeButton.Click += new EventHandler( Image_Click );
+                        if( _MoveMode )
                             NodeButton.IsButton = false;
                         if( OnClientSideLocationImageClick != string.Empty )
                             NodeButton.OnClientClick = OnClientSideLocationImageClick + "(" + ChildNodeId.ToString() + ");";
-                        CellImage.Content.Add(NodeButton);
+                        CellImage.Content.Add( NodeButton );
 
                         Image Icon = new Image();
-                        Icon.ImageUrl = "Images/icons/" + Child.SelectSingleNode(CswNbtLocationTreeDeprecated.XmlNodeName_IconFileName).InnerText;
-                        NodeButton.Content.Add(Icon);
+                        Icon.ImageUrl = "Images/icons/" + Child.SelectSingleNode( CswNbtLocationTreeDeprecated.XmlNodeName_IconFileName ).InnerText;
+                        NodeButton.Content.Add( Icon );
 
                         Label NodeLabel = new Label();
-                        NodeLabel.Text = Child.SelectSingleNode(CswNbtLocationTreeDeprecated.XmlNodeName_Display).InnerText + "<BR>";
-                        if(ChildNodeId == _SelectedNodeId)
+                        NodeLabel.Text = Child.SelectSingleNode( CswNbtLocationTreeDeprecated.XmlNodeName_Display ).InnerText + "<BR>";
+                        if( ChildNodeId == _SelectedNodeId )
                             NodeLabel.CssClass = "LocationTextSelected";
                         else
                             NodeLabel.CssClass = "LocationText";
-                        NodeButton.Content.Add(NodeLabel);
+                        NodeButton.Content.Add( NodeLabel );
 
                         if( ThisPropString != string.Empty )
                         {
@@ -268,14 +268,14 @@ namespace ChemSW.NbtWebControls
                         }
                     }
                 }
-                
+
                 // End Cell
                 Image Right = new Image();
-                if (currentRow == TotalRows + 2)
+                if( currentRow == TotalRows + 2 )
                     Right.ImageUrl = ImageUrlBase + "g_bottomright.gif";
                 else
                     Right.ImageUrl = ImageUrlBase + "g_right.gif";
-                _Table.addControl(currentRow, currentCol, Right);
+                _Table.addControl( currentRow, currentCol, Right );
                 currentRow++;
             }
 

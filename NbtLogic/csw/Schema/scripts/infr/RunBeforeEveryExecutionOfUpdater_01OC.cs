@@ -386,6 +386,7 @@ namespace ChemSW.Nbt.Schema
 
         public void _makeEnterprisePartsAndManufacturerEquivalentPartsOCs()
         {
+            _acceptBlame( CswDeveloper.MB, 27865 );
             #region Case 27865 part 1 - Enterprise Part (EP)
 
             CswNbtMetaDataObjectClass enterprisePartOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.EnterprisePartClass );
@@ -461,12 +462,13 @@ namespace ChemSW.Nbt.Schema
             }
 
             #endregion
+            _resetBlame();
         }
 
         public void _makeReceiptLotOC()
         {
             #region Case 27867 - Receipt Lot
-
+            _acceptBlame( CswDeveloper.MB, 27867 );
             CswNbtMetaDataObjectClass receiptLotOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.ReceiptLotClass );
             if( null == receiptLotOC )
             {
@@ -544,6 +546,30 @@ namespace ChemSW.Nbt.Schema
 
                 _CswNbtSchemaModTrnsctn.createModuleObjectClassJunction( CswNbtModuleName.CISPro, receiptLotOC.ObjectClassId );
             }
+            _resetBlame();
+            #endregion
+        }
+
+        public void _setNodesToHiddenIfNull()
+        {
+            #region Case 27862 - set nodes hidden = "0" if null
+            _acceptBlame( CswDeveloper.MB, 27862 );
+            if( _CswNbtSchemaModTrnsctn.isColumnDefined( "nodes", "hidden" ) )
+            {
+                //find all nodes where hidden = null and make it false (0)
+                CswTableUpdate tu = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "hiddenNodes_27862", "nodes" );
+                DataTable nodes = tu.getTable( "where hidden is null" );
+                if( nodes.Rows.Count > 0 ) //only do an update if there were results from the query
+                {
+                    foreach( DataRow row in nodes.Rows )
+                    {
+                        row["hidden"] = CswConvert.ToDbVal( false );
+                    }
+
+                    tu.update( nodes );
+                }
+            }
+            _resetBlame();
             #endregion
         }
 
@@ -698,6 +724,7 @@ namespace ChemSW.Nbt.Schema
             _makeNewInvGroupProps();
             _makeEnterprisePartsAndManufacturerEquivalentPartsOCs();
             _makeReceiptLotOC();
+            _setNodesToHiddenIfNull();
 
             #endregion TITANIA
         }

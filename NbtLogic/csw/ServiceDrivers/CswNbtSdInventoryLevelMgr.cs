@@ -114,7 +114,7 @@ namespace ChemSW.Nbt.ServiceDrivers
             CswNbtView ContainerView = GetCurrentQuantityView( InventoryLevel, InventoryLevel.Location.SelectedNodeId );
             if( null != ContainerView )
             {
-                ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( ContainerView, false, false );
+                ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( ContainerView, false, false, false );
                 Int32 LocationNodeCount = Tree.getChildNodeCount();
                 if( LocationNodeCount > 0 )
                 {
@@ -203,7 +203,7 @@ namespace ChemSW.Nbt.ServiceDrivers
             Collection<CswNbtObjClassInventoryLevel> Ret = new Collection<CswNbtObjClassInventoryLevel>();
             if( null != InventoryLevelView && InventoryLevelView.ViewName == _ParentLocationInventoryLevelViewName )
             {
-                ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( InventoryLevelView, false, false );
+                ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( InventoryLevelView, false, false, false );
                 Int32 LocationCount = Tree.getChildNodeCount();
                 if( LocationCount > 0 )
                 {

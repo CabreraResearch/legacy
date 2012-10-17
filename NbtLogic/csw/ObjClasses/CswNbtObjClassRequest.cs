@@ -134,7 +134,7 @@ namespace ChemSW.Nbt.ObjClasses
                                                           FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
             }
             RequestItemView.AddViewPropertyAndFilter( RiRelationship, RequestOcp, SubFieldName: CswNbtSubField.SubFieldName.NodeID, Value: NodeId.PrimaryKey.ToString() );
-            ICswNbtTree RequestItemTree = _CswNbtResources.Trees.getTreeFromView( RequestItemView, IncludeSystemNodes: false, RequireViewPermissions: false );
+            ICswNbtTree RequestItemTree = _CswNbtResources.Trees.getTreeFromView( RequestItemView, IncludeSystemNodes: false, RequireViewPermissions: false, IncludeHiddenNodes: false );
             return RequestItemTree;
         }
 

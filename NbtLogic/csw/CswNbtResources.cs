@@ -694,7 +694,7 @@ namespace ChemSW.Nbt
                                                       Value: EventOpt.ToString() );
             // Can't check the view, because it depends on the user
             // But check for a matching property value being altered
-            ICswNbtTree MailReportsTree = Trees.getTreeFromView( MailReportsView, RequireViewPermissions: false, IncludeSystemNodes: true );
+            ICswNbtTree MailReportsTree = Trees.getTreeFromView( MailReportsView, RequireViewPermissions: false, IncludeSystemNodes: true, IncludeHiddenNodes: false );
             for( Int32 i = 0; i < MailReportsTree.getChildNodeCount(); i++ )
             {
                 MailReportsTree.goToNthChild( i );

@@ -128,7 +128,7 @@ namespace ChemSW.Nbt.WebServices
                         {
                             if( string.IsNullOrEmpty( SafeNodeKey ) )
                             {
-                                ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( View, false, false );
+                                ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( View, false, false, false );
                                 Tree.goToNthChild( 0 );
                                 CswNbtNodeKey NodeKey = Tree.getNodeKeyForCurrentPosition();
                                 Node = _CswNbtResources.Nodes[NodeKey];

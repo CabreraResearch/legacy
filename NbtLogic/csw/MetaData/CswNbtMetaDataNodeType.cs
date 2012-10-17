@@ -613,7 +613,7 @@ namespace ChemSW.Nbt.MetaData
         {
             Collection<CswNbtNode> Collection = new Collection<CswNbtNode>();
             CswNbtView View = CreateDefaultView( includeDefaultFilters );
-            ICswNbtTree Tree = _CswNbtMetaDataResources.CswNbtResources.Trees.getTreeFromView( View, forceReInit, true, true, includeSystemNodes );
+            ICswNbtTree Tree = _CswNbtMetaDataResources.CswNbtResources.Trees.getTreeFromView( _CswNbtMetaDataResources.CswNbtResources.CurrentNbtUser, View, true, includeSystemNodes, false );
             for( Int32 c = 0; c < Tree.getChildNodeCount(); c++ )
             {
                 Tree.goToNthChild( c );

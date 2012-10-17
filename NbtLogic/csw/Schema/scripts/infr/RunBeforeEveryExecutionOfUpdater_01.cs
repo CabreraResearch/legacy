@@ -60,6 +60,25 @@ namespace ChemSW.Nbt.Schema
             _resetBlame();
 
 
+            #region Case 27862 - add "hidden" col to nodes table
+            
+            _acceptBlame( CswDeveloper.MB, 27862 );
+
+            if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( "nodes", "hidden" ) )
+            {
+                //Add a "hidden" column to nodes
+                _CswNbtSchemaModTrnsctn.addBooleanColumn(
+                    tablename: "nodes",
+                    columnname: "hidden",
+                    description: "whether the node is hidden or not",
+                    logicaldelete: false,
+                    required: true );
+            }
+            
+             _resetBlame();
+
+            #endregion
+
             #endregion TITANIA
 
         }
