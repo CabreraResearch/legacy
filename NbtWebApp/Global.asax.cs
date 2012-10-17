@@ -5,6 +5,7 @@ using System.Web.Routing;
 using NbtWebApp.WebSvc.Logic.Views;
 using NbtWebApp.WebSvc.Session;
 using NbtWebApp.WebSvc.Logic.Reports;
+using NbtWebApp.WebSvc.Logic.Menus.LandingPages;
 
 namespace NbtWebAppServices
 {
@@ -23,6 +24,7 @@ namespace NbtWebAppServices
             RouteTable.Routes.Add( new ServiceRoute( "Views", Factory, typeof( CswNbtViewsUriMethods ) ) );
             RouteTable.Routes.Add( new ServiceRoute( "Session", Factory, typeof( CswNbtSessionUriMethods ) ) );
             RouteTable.Routes.Add( new ServiceRoute( "Reports", Factory, typeof( CswNbtMailReportsUriMethods ) ) );
+            RouteTable.Routes.Add( new ServiceRoute( "LandingPages", Factory, typeof( CswNbtLandingPageItemsUriMethods ) ) );
         }
 
         /// <summary>

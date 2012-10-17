@@ -346,8 +346,8 @@ window.initMain = window.initMain || function (undefined) {
             onLinkClick: handleItemSelect,
             onAddClick: function (itemData) {
                 $.CswDialog('AddNodeDialog', {
-                    text: itemData.text,
-                    nodetypeid: itemData.nodetypeid,
+                    text: itemData.Text,
+                    nodetypeid: itemData.NodeTypeId,
                     onAddNode: function (nodeid, cswnbtnodekey) {
                         clear({ all: true });
                         refreshNodesTree({ 'nodeid': nodeid, 'cswnbtnodekey': cswnbtnodekey, 'IncludeNodeRequired': true });
@@ -355,7 +355,7 @@ window.initMain = window.initMain || function (undefined) {
                 });
             },
             onAddComponent: refreshWelcomeLandingPage,
-            actionData: { 
+            landingPageRequestData: { 
                 RoleId: ''
             }
         });
@@ -371,7 +371,7 @@ window.initMain = window.initMain || function (undefined) {
         var o = {
             type: 'view', // Action, Report, View, Search
             mode: 'tree', // Grid, Tree, List
-            linktype: 'link', // LandingPageComponentType: Link, Search, Text, Add
+            linktype: 'link', // LandingPageComponentType: Link, Text, Add
             itemid: '',
             name: '',
             url: '',
@@ -1057,7 +1057,7 @@ window.initMain = window.initMain || function (undefined) {
                 //                });
                 //            },
                 //            onAddComponent: refreshWelcomeLandingPage,
-//                            actionData: actionData
+//                            landingPageRequestData: actionData
 //                        });
 //                        refreshMainMenu();//Do we need these lines?
 //                        refreshViewSelect();

@@ -51,7 +51,7 @@ namespace NbtWebApp.WebSvc.Logic.Reports
         [WebInvoke]
         [Description( "Save subscription information for the current user" )]
         [FaultContract( typeof( FaultException ) )]
-        public CswWebSvcReturn saveSubscriptions(CswNbtWebServiceMailReports.MailReportSubscriptions Subscriptions)
+        public CswWebSvcReturn saveSubscriptions( CswNbtWebServiceMailReports.MailReportSubscriptions Subscriptions )
         {
             //delegate has to be static because you can't create an instance yet: you don't have resources until the delegate is actually called
             CswWebSvcReturn Ret = new CswWebSvcReturn();

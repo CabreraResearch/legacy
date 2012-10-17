@@ -11,7 +11,7 @@
                 onLinkClick: null,
                 onAddClick: null,
                 onAddComponent: null,
-                actionData: null
+                landingPageRequestData: null
             };
             if (options) {
                 Csw.extend(cswPrivate, options);
@@ -20,10 +20,30 @@
             var cswPublic = { };
 
             (function () {
-                Csw.ajax.post({
-                    urlMethod: 'getLandingPageItems',
-                    data: cswPrivate.actionData,
-                    success: function (data) {
+                Csw.ajaxWcf.post({
+                    urlMethod: 'LandingPages/getItems',
+                    data: cswPrivate.landingPageRequestData,
+                    success: function (ajaxdata) {
+                        cswPrivate.data = {
+                            LandingPageItems: [{
+                                LandingPageId: '',
+                                Text: '',
+                                DisplayRow: '',
+                                DisplayCol: '',
+                                ButtonIcon: '',
+                                Type: '',
+                                LinkType: '',
+                                NodeTypeId: '',
+                                ViewId: '',
+                                ViewMode: '',
+                                ActionId: '',
+                                ActionName: '',
+                                ActionUrl: '',
+                                ReportId: ''
+                            }]
+                        };
+                        Csw.extend(cswPrivate.data, ajaxdata);
+
                         cswPrivate.landingPageDiv = cswParent.div({ ID: 'landingPageDiv' })
                             .css({
                                 'text-align': 'center',
@@ -58,20 +78,20 @@
                             }
                         });
 
-                        Csw.each(data, function (landingPageItem, landingPageId) {
+                        Csw.each(cswPrivate.data.LandingPageItems, function (landingPageItem) {
                             var thisItem = landingPageItem;
                             if (false === Csw.isNullOrEmpty(thisItem)) {
-                                var cellSet = cswPrivate.layoutTable.cellSet(thisItem.displayrow, thisItem.displaycol);
-                                cswPrivate.layoutTable.addCellSetAttributes(cellSet, { landingpageid: landingPageId });
+                                var cellSet = cswPrivate.layoutTable.cellSet(thisItem.DisplayRow, thisItem.DisplayCol);
+                                cswPrivate.layoutTable.addCellSetAttributes(cellSet, { landingpageid: thisItem.LandingPageId });
                                 var imageCell = cellSet[1][1].children('div');
                                 var textCell = cellSet[2][1].children('div');
                                 var link = null;
-                                if (false === Csw.isNullOrEmpty(thisItem.buttonicon)) {
+                                if (false === Csw.isNullOrEmpty(thisItem.ButtonIcon)) {
                                     link = imageCell.a({
                                         href: 'javascript:void(0);'
                                     });
                                     link.img({
-                                        src: thisItem.buttonicon,
+                                        src: thisItem.ButtonIcon,
                                         border: '',
                                         cssclass: 'LandingPageImage'
                                     });
@@ -84,13 +104,13 @@
                                     onLinkClick: cswPrivate.onLinkClick
                                 };
 
-                                if (Csw.string(thisItem.linktype).toLowerCase() === 'text') {
-                                    textCell.span({ text: thisItem.text });
+                                if (Csw.string(thisItem.LinkType).toLowerCase() === 'text') {
+                                    textCell.span({ text: thisItem.Text });
                                 } else {
                                     var onClick = Csw.makeDelegate(cswPrivate.clickItem, clickopts);
                                     textCell.a({
                                         href: 'javascript:void(0);',
-                                        value: thisItem.text,
+                                        value: thisItem.Text,
                                         onClick: onClick
                                     });
                                     if (false === Csw.isNullOrEmpty(link)) {
@@ -99,10 +119,10 @@
                                 }
 
                                 var landingPageHidden = textCell.input({
-                                    ID: landingPageId,
+                                    ID: thisItem.LandingPageId,
                                     type: Csw.enums.inputTypes.hidden
                                 });
-                                landingPageHidden.propNonDom('landingpageid', landingPageId);
+                                landingPageHidden.propNonDom('landingpageid', thisItem.LandingPageId);
                             }
                         });
                     } // success{}
@@ -110,19 +130,18 @@
             } ());
 
             cswPrivate.clickItem = function (clickopts) {
-                var itemid = Csw.string(clickopts.itemData.itemid, clickopts.itemData.viewid);
-                itemid = Csw.string(itemid, clickopts.itemData.actionid);
-                itemid = Csw.string(itemid, clickopts.itemData.reportid);
+                var itemid = clickopts.itemData.ViewId;
+                itemid = Csw.string(itemid, clickopts.itemData.ActionId);
+                itemid = Csw.string(itemid, clickopts.itemData.ReportId);
 
                 var optSelect = {
-                    type: clickopts.itemData.type,
-                    mode: clickopts.itemData.viewmode,
+                    type: clickopts.itemData.Type,
+                    mode: clickopts.itemData.ViewMode,
                     itemid: itemid,
-                    text: clickopts.itemData.text,
-                    iconurl: clickopts.itemData.iconurl,
-                    name: clickopts.itemData.actionname,
-                    url: clickopts.itemData.actionurl,
-                    linktype: clickopts.itemData.linktype
+                    text: clickopts.itemData.Text,
+                    name: clickopts.itemData.ActionName,
+                    url: clickopts.itemData.ActionUrl,
+                    linktype: clickopts.itemData.LinkType
                 };
 
                 if (clickopts.layoutTable.isConfig() === false) {
@@ -152,13 +171,12 @@
                 if (textCell.length() > 0) {
                     if (false === Csw.isNullOrEmpty(landingpageid)) {
                         var dataJson = {
-                            RoleId: '',
                             LandingPageId: landingpageid,
                             NewRow: newrow,
                             NewColumn: newcolumn
                         };
-                        Csw.ajax.post({
-                            urlMethod: 'moveLandingPageItems',
+                        Csw.ajaxWcf.post({
+                            urlMethod: 'LandingPages/moveItem',
                             data: dataJson
                         });
                     }
@@ -174,12 +192,10 @@
                     landingpageid = textCell.propNonDom('landingpageid');
                     if (landingpageid) {
                         dataJson = {
-                            RoleId: '',
                             LandingPageId: landingpageid
                         };
-
-                        Csw.ajax.post({
-                            urlMethod: 'deleteLandingPageItem',
+                        Csw.ajaxWcf.post({
+                            urlMethod: 'LandingPages/deleteItem',
                             data: dataJson,
                             success: function () {
                                 Csw.tryExec(removedata.onSuccess);
@@ -249,7 +265,6 @@
                             viewvalue: viewvalue,
                             nodetypeid: ntSelect.val(),
                             text: landingPageText.val(),
-                            iconfilename: '',
                             onSuccess: addOptions.onAdd,
                             onError: function () { addButton.enable(); }
                         });
@@ -275,12 +290,11 @@
                     ViewType: addOptions.viewtype,
                     ViewValue: addOptions.viewvalue,
                     NodeTypeId: addOptions.nodetypeid,
-                    Text: addOptions.text,
-                    IconFileName: addOptions.iconfilename
+                    Text: addOptions.text
                 };
 
-                Csw.ajax.post({
-                    urlMethod: 'addLandingPageItem',
+                Csw.ajaxWcf.post({
+                    urlMethod: 'LandingPages/addItem',
                     data: dataJson,
                     success: function () {
                         Csw.tryExec(addOptions.onSuccess);
