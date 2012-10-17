@@ -69,7 +69,7 @@
                 cswPrivate.id = Csw.string(element.prop('id'));
                 cswPublic.isValid = true;
             } else if (false === Csw.isNullOrEmpty(element) && Csw.isJQuery(element.$)) {
-                /*This is already a Csw dom object*/
+                    /*This is already a Csw dom object*/
                 return element;
             } else {
                 cswPrivate.id = '';
@@ -113,12 +113,22 @@
                 return opts;
             };
 
+            cswPrivate.isControlStillValid = function () {
+                var ret = false === Csw.isNullOrEmpty(cswPublic);
+                if (false === ret) {
+                    Csw.error.throwException('cswPublic is null. The control may have been garbage collected while event bindings were not.');
+                }
+                return ret;
+            };
+
             cswPublic.addClass = function (name) {
                 /// <summary>Add a CSS class to an element.</summary>
                 /// <param name="$element" type="jQuery">An element to add class to.</param>
                 /// <param name="value" type="String">The value of the attribute</param>
                 /// <returns type="Object">Classy jQuery element (for chaining)</returns> 
-                cswPublic.$.addClass(name);
+                if (cswPrivate.isControlStillValid()) {
+                    cswPublic.$.addClass(name);
+                }
                 return cswPublic;
             };
 
@@ -126,12 +136,14 @@
                 /// <summary>Append an object to this element.</summary>
                 /// <param name="object" type="Object">Raw HTML, a jQuery object or text.</param>
                 /// <returns type="Object">The parent Csw object (for chaining)</returns> 
-                try {
-                    cswPublic.$.append(object);
-                } catch (e) {
-                    Csw.debug.log('Warning: append() failed, text() was used instead.', true);
-                    if (Csw.isString(object)) {
-                        cswPublic.$.text(object);
+                if (cswPrivate.isControlStillValid()) {
+                    try {
+                        cswPublic.$.append(object);
+                    } catch (e) {
+                        Csw.debug.log('Warning: append() failed, text() was used instead.', true);
+                        if (Csw.isString(object)) {
+                            cswPublic.$.text(object);
+                        }
                     }
                 }
                 return cswPublic;
@@ -143,10 +155,12 @@
                 /// <param name="isRequired" type="Object">whether or not this property is required</param>
                 /// <param name='isReadOnly" type="Object">whether or not this property is read only</param>
                 /// <returns type="Object">The parent Csw object (for chaining)</returns> 
-                if (Csw.bool(isRequired) && !Csw.bool(isReadOnly)) {
-                    propName = Csw.makeRequiredName(propName);
+                if (cswPrivate.isControlStillValid()) {
+                    if (Csw.bool(isRequired) && !Csw.bool(isReadOnly)) {
+                        propName = Csw.makeRequiredName(propName);
+                    }
+                    cswPublic.append(propName);
                 }
-                cswPublic.append(propName);
                 return cswPublic;
             };
 
@@ -163,15 +177,17 @@
                 /// <param name="object" type="Object">Raw HTML. Warning: Do not pass a selector to this method!</param>
                 /// <returns type="Object">The new Csw object (for chaining)</returns> 
                 var $child = null, ret;
-                try {
-                    $child = $(object);
-                    if (false === Csw.isNullOrEmpty($child)) {
-                        cswPublic.$.append($child);
+                if (cswPrivate.isControlStillValid()) {
+                    try {
+                        $child = $(object);
+                        if (false === Csw.isNullOrEmpty($child)) {
+                            cswPublic.$.append($child);
+                        }
+                    } catch (e) {
+                        /* One day we'll implement client-side error handling */
                     }
-                } catch (e) {
-                    /* One day we'll implement client-side error handling */
+                    ret = cswPrivate.makeControlForChain($child);
                 }
-                ret = cswPrivate.makeControlForChain($child);
                 return ret;
             };
 
@@ -181,7 +197,9 @@
                 /// <param name="eventName" type="String">The name of the event</param>
                 /// <param name="event" type="Function">A function to execute when the event fires</param>
                 /// <returns type="Object">The jQuery element (for chaining)</returns> 
-                cswPublic.$.bind(eventName, event);
+                if (cswPrivate.isControlStillValid()) {
+                    cswPublic.$.bind(eventName, event);
+                }
                 return cswPublic;
             };
 
@@ -190,25 +208,32 @@
                 /// <param name="searchTerm" type="String">(Optional) Some search term to limit child results</param>
                 /// <param name="selector" type="String">(Optional) A selector</param>
                 /// <returns type="Object">The Csw object (for chaining)</returns> 
-                var _$element = cswPublic.$.children(Csw.string(searchTerm), Csw.string(selector)),
-                        ret = cswPrivate.makeControlForChain(_$element);
+                var ret = null;
+                if (cswPrivate.isControlStillValid()) {
+                    var _$element = cswPublic.$.children(Csw.string(searchTerm), Csw.string(selector));
+                    ret = cswPrivate.makeControlForChain(_$element);
+                }
                 return ret;
             };
 
             cswPublic.clickOnEnter = function (cswControl) {
                 /// <summary>Bind an event to the enter key, when pressed in this control.</summary>
                 /// <returns type="Object">The Csw object (for chaining)</returns> 
-                cswPublic.$.clickOnEnter(cswControl.$);
+                if (cswPrivate.isControlStillValid()) {
+                    cswPublic.$.clickOnEnter(cswControl.$);
+                }
                 return cswPublic;
             };
 
             cswPublic.css = function (param1, param2) {
                 /// <param name="param1" type="Object">Either a single JSON object with CSS to apply, or a single CSS name</param>
                 /// <param name="param2" type="string">single CSS value</param>
-                if (arguments.length === 1) {
-                    cswPublic.$.css(param1);
-                } else {
-                    cswPublic.$.css(param1, param2);
+                if (cswPrivate.isControlStillValid()) {
+                    if (arguments.length === 1) {
+                        cswPublic.$.css(param1);
+                    } else {
+                        cswPublic.$.css(param1, param2);
+                    }
                 }
                 return cswPublic;
             };
@@ -216,21 +241,23 @@
             cswPublic.data = function (prop, val) {
                 /// <summary>Store property data on the control.</summary>
                 /// <returns type="Object">All properties, a single property, or the control if defining a property (for chaining).</returns> 
-                var ret = '',
-                        _internal = Csw.clientDb.getItem('control_data_' + cswPrivate.id) || {};
-                switch (arguments.length) {
-                    case 0:
-                        ret = _internal || cswPublic.$.data();
-                        break;
-                    case 1:
-                        ret = _internal[prop] || cswPublic.$.data(prop);
-                        break;
-                    case 2:
-                        _internal[prop] = val;
-                        cswPublic.$.data(prop, val);
-                        Csw.clientDb.setItem('control_data_' + cswPrivate.id, _internal);
-                        ret = cswPublic;
-                        break;
+                var ret = '';
+                if (cswPrivate.isControlStillValid()) {
+                    var _internal = Csw.clientDb.getItem('control_data_' + cswPrivate.id) || {};
+                    switch (arguments.length) {
+                        case 0:
+                            ret = _internal || cswPublic.$.data();
+                            break;
+                        case 1:
+                            ret = _internal[prop] || cswPublic.$.data(prop);
+                            break;
+                        case 2:
+                            _internal[prop] = val;
+                            cswPublic.$.data(prop, val);
+                            Csw.clientDb.setItem('control_data_' + cswPrivate.id, _internal);
+                            ret = cswPublic;
+                            break;
+                    }
                 }
                 return ret;
 
@@ -239,7 +266,9 @@
             cswPublic.empty = function () {
                 /// <summary>Empty the element.</summary>
                 /// <returns type="Object">The Csw object (for chaining)</returns> 
-                cswPublic.$.empty();
+                if (cswPrivate.isControlStillValid()) {
+                    cswPublic.$.empty();
+                }
                 return cswPublic;
             };
 
@@ -247,8 +276,11 @@
                 /// <summary>Filter the child elements of this DOM element according to this selector</summary>
                 /// <param name="selector" type="String">A filter string.</param>
                 /// <returns type="Object">The Csw object (for chaining)</returns> 
-                var _$element = cswPublic.$.filter(selector),
-                        ret = cswPrivate.makeControlForChain(_$element);
+                var ret = null;
+                if (cswPrivate.isControlStillValid()) {
+                    var _$element = cswPublic.$.filter(selector);
+                    ret = cswPrivate.makeControlForChain(_$element);
+                }
                 return ret;
             };
 
@@ -256,16 +288,22 @@
                 /// <summary>Find the child elements of this DOM element represented by this object</summary>
                 /// <param name="selector" type="String">A selector, id or jQuery object to find.</param>
                 /// <returns type="Object">The Csw object (for chaining)</returns> 
-                var _$element = cswPublic.$.find(Csw.string(selector)),
-                        ret = cswPrivate.makeControlForChain(_$element);
+                var ret = null;
+                if (cswPrivate.isControlStillValid()) {
+                    var _$element = cswPublic.$.find(Csw.string(selector));
+                    ret = cswPrivate.makeControlForChain(_$element);
+                }
                 return ret;
             };
 
             cswPublic.first = function () {
                 /// <summary>Find the first child element of this DOM element represented by this object</summary>
                 /// <returns type="Object">The Csw object (for chaining)</returns> 
-                var _$element = cswPublic.$.first(),
-                        ret = cswPrivate.makeControlForChain(_$element);
+                var ret = null;
+                if (cswPrivate.isControlStillValid()) {
+                    var _$element = cswPublic.$.first();
+                    ret = cswPrivate.makeControlForChain(_$element);
+                }
                 return ret;
             };
 
@@ -278,14 +316,18 @@
             cswPublic.hide = function () {
                 /// <summary>Make the element invisible.</summary>
                 /// <returns type="Object">The Csw object (for chaining)</returns> 
-                cswPublic.$.hide();
+                if (cswPrivate.isControlStillValid()) {
+                    cswPublic.$.hide();
+                }
                 return cswPublic;
             };
 
             cswPublic.toggle = function () {
                 /// <summary>Toggle the element's visibility.</summary>
                 /// <returns type="Object">The Csw object (for chaining)</returns> 
-                cswPublic.$.toggle();
+                if (cswPrivate.isControlStillValid()) {
+                    cswPublic.$.toggle();
+                }
                 return cswPublic;
             };
 
@@ -300,19 +342,23 @@
             cswPublic.length = function () {
                 /// <summary>Get the length of this element.</summary>
                 /// <returns type="Number">Number of elements at the current level of the tree.</returns> 
-                return Csw.number(cswPublic.$.length);
+                var ret = 0;
+                if (cswPrivate.isControlStillValid()) {
+                    ret = Csw.number(cswPublic.$.length);
+                }
+                return ret;
             };
 
             cswPublic.parent = cswPublic.parent || function () {
                 /// <summary>Get the parent of this control</summary>
                 /// <returns type="Object">The Csw object (for chaining)</returns> 
-                var _$element = cswPublic.$.parent(),
-                    ret;
-
-                if (false === Csw.isNullOrEmpty(_$element, true)) {
-                    ret = cswPublic.jquery(_$element);
-                } else {
-                    ret = {};
+                var ret = {};
+                if (cswPrivate.isControlStillValid()) {
+                    var _$element = cswPublic.$.parent();
+                 
+                    if (false === Csw.isNullOrEmpty(_$element, true)) {
+                        ret = cswPublic.jquery(_$element);
+                    } 
                 }
                 return ret;
             };
@@ -324,22 +370,25 @@
                 /// <param name="name" type="String">The name of the attribute</param>
                 /// <param name="value" type="String">The value of the attribute</param>
                 /// <returns type="Object">Either the value of the attribute (get) or this (set) for chaining</returns> 
-                var ret = cswPublic,
-                        prop;
-
-                try {
-                    if (typeof name === "object") {
-                        for (prop in name) {
-                            doProp(cswPublic.$, prop, name[prop]);
-                        }
-                    } else {
-                        ret = doProp(cswPublic.$, name, value);
-                    }
-                } catch (e) {
-                    //We're in IE hell. Do nothing.
-                }
-                if (arguments.length === 2 || Csw.isPlainObject(name)) {
+                var ret = null;
+                if (cswPrivate.isControlStillValid()) {
                     ret = cswPublic;
+                    var prop;
+
+                    try {
+                        if (typeof name === "object") {
+                            for (prop in name) {
+                                doProp(cswPublic.$, prop, name[prop]);
+                            }
+                        } else {
+                            ret = doProp(cswPublic.$, name, value);
+                        }
+                    } catch(e) {
+                        //We're in IE hell. Do nothing.
+                    }
+                    if (arguments.length === 2 || Csw.isPlainObject(name)) {
+                        ret = cswPublic;
+                    }
                 }
                 return ret;
             };
@@ -351,22 +400,26 @@
                 /// <param name="name" type="String">The name of the attribute</param>
                 /// <param name="value" type="String">The value of the attribute</param>
                 /// <returns type="Object">Either the value of the attribute (get) or this (set) for chaining</returns> 
-                var ret = cswPublic,
-                        prop;
-                try {
-                    if (typeof name === "object") {
-                        for (prop in name) {
-                            doAttr(cswPublic.$, prop, name[prop]);
-                        }
-                    } else {
-                        ret = doAttr(cswPublic.$, name, value);
-                    }
-                    // For proper chaining support
-                } catch (e) {
-                    //We're in IE hell. Do nothing.
-                }
-                if (arguments.length === 2 || Csw.isPlainObject(name)) {
+                var ret = null;
+                if (cswPrivate.isControlStillValid()) {
+
                     ret = cswPublic;
+                    var prop;
+                    try {
+                        if (typeof name === "object") {
+                            for (prop in name) {
+                                doAttr(cswPublic.$, prop, name[prop]);
+                            }
+                        } else {
+                            ret = doAttr(cswPublic.$, name, value);
+                        }
+                        // For proper chaining support
+                    } catch(e) {
+                        //We're in IE hell. Do nothing.
+                    }
+                    if (arguments.length === 2 || Csw.isPlainObject(name)) {
+                        ret = cswPublic;
+                    }
                 }
                 return ret;
             };
@@ -374,9 +427,15 @@
             cswPublic.remove = function () {
                 /// <summary>Remove the element and delete the object.</summary>
                 /// <returns type="null"></returns> 
-                cswPublic.$.remove();
-                cswPublic = null;
-                return cswPublic;
+                if (cswPrivate.isControlStillValid()) {
+                    cswPublic.$.remove();
+                    Csw.each(cswPublic, function (name) {
+                        cswPublic[name] = null;
+                        delete cswPublic[name];
+                    });
+                    cswPublic = null;
+                }
+                return null;
             };
 
             cswPublic.removeClass = function (name) {
@@ -384,37 +443,42 @@
                 /// <param name="$element" type="jQuery">An element to remove class from.</param>
                 /// <param name="value" type="String">The value of the attribute</param>
                 /// <returns type="Object">Classless jQuery element (for chaining)</returns> 
-                cswPublic.$.removeClass(name);
+                if (cswPrivate.isControlStillValid()) {
+                    cswPublic.$.removeClass(name);
+                }
                 return cswPublic;
             };
 
             cswPublic.required = function (truthy) {
                 /// <summary>Mark the required status of the element.</summary>
                 /// <returns type="Object">Classless jQuery element (for chaining)</returns> 
-                switch(Csw.bool(truthy)) {
+                if (cswPrivate.isControlStillValid()) {
+                    switch (Csw.bool(truthy)) {
                     case true:
                         cswPublic.addClass('required');
                         break;
                     case false:
                         cswPublic.removeClass('required');
                         break;
+                    }
                 }
-                
                 return cswPublic;
             };
 
             cswPublic.root = cswPublic.root || function () {
                 /// <summary>Get the root (great, great, great grandparent) of this control</summary>
                 /// <returns type="Object">The Csw object (for chaining)</returns> 
-                var _$element = cswPublic.$.parent(),
-                    ret;
-                while (false === Csw.isNullOrEmpty(_$element.parent(), true)) {
-                    _$element = _$element.parent();
-                }
-                if (false === Csw.isNullOrEmpty(_$element, true)) {
-                    ret = cswPublic.jquery(_$element);
-                } else {
-                    ret = {};
+                var ret = null;
+                if (cswPrivate.isControlStillValid()) {
+                    var _$element = cswPublic.$.parent();
+                    while (false === Csw.isNullOrEmpty(_$element.parent(), true)) {
+                        _$element = _$element.parent();
+                    }
+                    if (false === Csw.isNullOrEmpty(_$element, true)) {
+                        ret = cswPublic.jquery(_$element);
+                    } else {
+                        ret = { };
+                    }
                 }
                 return ret;
             };
@@ -422,18 +486,22 @@
             cswPublic.show = function () {
                 /// <summary>Make the element visible.</summary>
                 /// <returns type="Object">The Csw object (for chaining)</returns> 
-                cswPublic.$.show();
+                if (cswPrivate.isControlStillValid()) {
+                    cswPublic.$.show();
+                }
                 return cswPublic;
             };
 
             cswPublic.text = function (text) {
                 /// <summary>Get the value of the element.</summary>
                 /// <returns type="String">If get(), the value. If set(val), the Csw object (for chaining).</returns> 
-                if (arguments.length === 1 && false === Csw.isNullOrUndefined(text)) {
-                    cswPublic.$.text(text);
-                    return cswPublic;
-                } else {
-                    return Csw.string(cswPublic.$.text());
+                if (cswPrivate.isControlStillValid()) {
+                    if (arguments.length === 1 && false === Csw.isNullOrUndefined(text)) {
+                        cswPublic.$.text(text);
+                        return cswPublic;
+                    } else {
+                        return Csw.string(cswPublic.$.text());
+                    }
                 }
             };
 
@@ -443,7 +511,9 @@
                 /// <param name="eventName" type="String">The name of the event</param>
                 /// <param name="eventOpts" type="Object">Options collection to pass to the event handler.</param>
                 /// <returns type="Object">The jQuery element (for chaining)</returns> 
-                cswPublic.$.trigger(eventName, eventOpts);
+                if (cswPrivate.isControlStillValid()) {
+                    cswPublic.$.trigger(eventName, eventOpts);
+                }
                 return cswPublic;
             };
 
@@ -452,18 +522,22 @@
                 /// <param name="$element" type="jQuery">A jQuery element</param>
                 /// <param name="eventName" type="String">The name of the event</param>
                 /// <returns type="Object">The jQuery element (for chaining)</returns> 
-                cswPublic.$.unbind(eventName, event);
+                if (cswPrivate.isControlStillValid()) {
+                    cswPublic.$.unbind(eventName, event);
+                }
                 return cswPublic;
             };
 
             cswPublic.val = cswPublic.val || function (value) {
                 /// <summary>Get the value of the element.</summary>
                 /// <returns type="String">If get(), the value. If set(val), the Csw object (for chaining).</returns> 
-                if (arguments.length === 1 && false === Csw.isNullOrUndefined(value)) {
-                    cswPublic.$.val(value);
-                    return cswPublic;
-                } else {
-                    return Csw.string(cswPublic.$.val());
+                if (cswPrivate.isControlStillValid()) {
+                    if (arguments.length === 1 && false === Csw.isNullOrUndefined(value)) {
+                        cswPublic.$.val(value);
+                        return cswPublic;
+                    } else {
+                        return Csw.string(cswPublic.$.val());
+                    }
                 }
             };
 
@@ -652,8 +726,8 @@
                     } else {
                         $ret = $('#' + elementId);
                     }
-                } catch(e) { }
-                
+                } catch (e) { }
+
                 if ($ret.length === 0) {
                     $ret = $(document.getElementById(elementId));
                 }
@@ -664,6 +738,6 @@
             return $ret;
         });
 
-} ());
+}());
 
 
