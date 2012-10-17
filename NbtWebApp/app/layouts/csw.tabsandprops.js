@@ -72,7 +72,7 @@
                     Csw.extend(cswPrivate, options, true);
                 }
 
-                //hide first then show if content exists
+                //We don't have node name yet. Init the div in the right place and polyfill later.
                 cswPrivate.titleDiv = cswParent.div();
                 cswPrivate.identityWrapDiv = cswParent.div();
                 cswPrivate.identityWrapDiv.css({
