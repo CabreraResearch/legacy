@@ -135,8 +135,8 @@
     <Compile Include="csw\Actions\CswNbtActSubmitRequest.cs" />
     <Compile Include="csw\Actions\CswNbtActSystemViews.cs" />
     <Compile Include="csw\Grid\CswNbtGridExtJsButton.cs" />
-    <Compile Include="csw\ObjClasses\CswNbtObjClassCertMethod.cs" />
-    <Compile Include="csw\ObjClasses\CswNbtObjClassCertMethodTemplate.cs" />
+    <Compile Include="csw\ObjClasses\CswNbtObjClassCofAMethod.cs" />
+    <Compile Include="csw\ObjClasses\CswNbtObjClassCofAMethodTemplate.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassJurisdiction.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassMethod.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassReceiptLot.cs" />
@@ -149,7 +149,10 @@
     <Compile Include="csw\PropTypes\CswCheckBoxArrayOptions.cs" />
     <Compile Include="csw\Sched\logic\CswScheduleLogicNbtExpiredContainers.cs" />
     <Compile Include="csw\Schema\scripts\infr\RunBeforeEveryExecutionOfUpdater_01M.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01T_IdentityTab_Case27965.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01T_Case27801.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01S_Case27800.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01T_Case27740.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01T_Case27873.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01T_Case27869.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01S_Case27720.cs" />

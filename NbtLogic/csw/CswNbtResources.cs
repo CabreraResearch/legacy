@@ -700,11 +700,11 @@ namespace ChemSW.Nbt
                                                       Value: Tristate.True.ToString() );
             // Can't check the view, because it depends on the user
             // But check for a matching property value being altered
-            ICswNbtTree MailReportsTree = Trees.getTreeFromView( MailReportsView, RequireViewPermissions: false, IncludeSystemNodes: true );
+            ICswNbtTree MailReportsTree = Trees.getTreeFromView( MailReportsView, RequireViewPermissions: false, IncludeSystemNodes: true, IncludeHiddenNodes: false );
             for( Int32 i = 0; i < MailReportsTree.getChildNodeCount(); i++ )
             {
                 MailReportsTree.goToNthChild( i );
-                
+
                 CswNbtObjClassMailReport ThisMailReport = MailReportsTree.getNodeForCurrentPosition();
                 CswNbtView MailReportView = this.ViewSelect.restoreView( ThisMailReport.ReportView.ViewId );
                 bool IncludeNode = false;
@@ -840,6 +840,14 @@ namespace ChemSW.Nbt
         ///// </summary>
         ////public ICollection ConfigVariables { get { return _CswResources.ConfigVariables; } }
         //public CswConfigurationVariables CswConfigVbls { get { return ( _CswResources.ConfigVbls ); } }
+
+        /// <summary>
+        /// True if the user is the system user
+        /// </summary>
+        public bool IsSystemUser
+        {
+            get { return CurrentNbtUser is CswNbtSystemUser; }
+        }
 
         /// <summary>
         /// Information associated with the currently logged in user, Nbt-specific.

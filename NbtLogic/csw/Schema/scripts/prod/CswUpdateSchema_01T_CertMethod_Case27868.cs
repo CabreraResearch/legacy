@@ -10,7 +10,7 @@ namespace ChemSW.Nbt.Schema
     {
         public override void update()
         {
-            CswNbtMetaDataObjectClass CertMethodTempOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.CertMethodTemplateClass );
+            CswNbtMetaDataObjectClass CertMethodTempOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.CofAMethodTemplateClass );
             CswNbtMetaDataNodeType CertMethodTempNt = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( new CswNbtWcfMetaDataModel.NodeType( CertMethodTempOc )
             {
                 Category = "MLM",
@@ -18,7 +18,7 @@ namespace ChemSW.Nbt.Schema
 
             } );
 
-            CswNbtMetaDataObjectClass CertMethodOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.CertMethodClass );
+            CswNbtMetaDataObjectClass CertMethodOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.CofAMethodClass );
             CswNbtMetaDataNodeType CertMethodNt = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( new CswNbtWcfMetaDataModel.NodeType( CertMethodOc )
             {
                 Category = "MLM",

@@ -50,6 +50,7 @@ namespace ChemSW.Nbt
             NewNodeRow["readonly"] = CswConvert.ToDbVal( false );
             NewNodeRow["isdemo"] = CswConvert.ToDbVal( false );
             NewNodeRow["issystem"] = CswConvert.ToDbVal( false );
+            NewNodeRow["hidden"] = CswConvert.ToDbVal( false );
             NewNodeTable.Rows.Add( NewNodeRow );
 
             Node.NodeId = new CswPrimaryKey( "nodes", CswConvert.ToInt32( NewNodeTable.Rows[0]["nodeid"] ) );
@@ -76,6 +77,7 @@ namespace ChemSW.Nbt
             NodesTable.Rows[0]["isdemo"] = CswConvert.ToDbVal( Node.IsDemo );
             NodesTable.Rows[0]["istemp"] = CswConvert.ToDbVal( Node.IsTemp );
             NodesTable.Rows[0]["sessionid"] = CswConvert.ToDbVal( Node.SessionId );
+            NodesTable.Rows[0]["hidden"] = CswConvert.ToDbVal( Node.Hidden );
             CswTableUpdateNodes.update( NodesTable );
 
         }//write()

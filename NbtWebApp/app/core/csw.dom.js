@@ -646,11 +646,14 @@
             var $ret = $('');
             var document = Csw.getGlobalProp('document');
             if (false === Csw.isNullOrEmpty(elementId)) {
-                if (arguments.length === 2 && false === Csw.isNullOrEmpty($context)) {
-                    $ret = $('#' + elementId, $context);
-                } else {
-                    $ret = $('#' + elementId);
-                }
+                try {
+                    if (arguments.length === 2 && false === Csw.isNullOrEmpty($context)) {
+                        $ret = $('#' + elementId, $context);
+                    } else {
+                        $ret = $('#' + elementId);
+                    }
+                } catch(e) { }
+                
                 if ($ret.length === 0) {
                     $ret = $(document.getElementById(elementId));
                 }

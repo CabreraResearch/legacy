@@ -159,6 +159,13 @@ namespace ChemSW.Nbt.Sched
             }//if we're not shutting down
         }//threadCallBack()
 
+                                    ICswNbtTree ReportTree = _CswNbtResources.Trees.getTreeFromView(
+                                        RunAsUser: UserNodeAsUser as ICswNbtUser,
+                                        View: ReportView,
+                                        RequireViewPermissions: true,
+                                        IncludeSystemNodes: false,
+                                        IncludeHiddenNodes: false );
+                                    //ICswNbtTree ReportTree = _CswNbtResources.Trees.getTreeFromView( UserNodeAsUser as ICswNbtUser, ReportView, true, true, false, false );
         public void stop()
         {
             _LogicRunStatus = LogicRunStatus.Stopping;

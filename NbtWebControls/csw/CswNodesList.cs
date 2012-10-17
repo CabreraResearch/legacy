@@ -92,8 +92,7 @@ namespace ChemSW.NbtWebControls
                     NoResults = true;
                 else
                 {
-                    CswNbtNodeKey ParentKey = null;
-                    ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( View, ForceReload, ref ParentKey, null, Int32.MinValue, true, true, SelectedNodeKey, false );
+                    ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( _CswNbtResources.CurrentNbtUser, View, true, false, false );
                     if( Tree == null )
                         NoResults = true;
                     else
