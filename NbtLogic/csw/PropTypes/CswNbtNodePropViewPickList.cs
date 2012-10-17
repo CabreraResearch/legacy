@@ -293,8 +293,6 @@ namespace ChemSW.Nbt.PropTypes
             CBAOptions.ToJSON( (JObject) ParentObject[ElemName_Options] );
         } // ToJSON()
 
-        }
-
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
             SelectedViewIds.FromString( CswTools.XmlRealAttributeName( PropRow[_SelectedViewIdsSubField.ToXmlNodeName()].ToString() ) );

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Data;
-using ChemSW.Core;
-using ChemSW.DB;
+﻿using ChemSW.Nbt.csw.Dev;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 
@@ -12,9 +9,20 @@ namespace ChemSW.Nbt.Schema
     /// </summary>
     public class CswUpdateSchema_01S_Case27720_part3 : CswUpdateSchemaTo
     {
+
+        public override CswDeveloper Author
+        {
+            get { return CswDeveloper.SS; }
+        }
+
+        public override int CaseNo
+        {
+            get { return 27720; }
+        }
+
         public override void update()
         {
-            CswNbtMetaDataObjectClass MailReportOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.MailReportClass );
+            CswNbtMetaDataObjectClass MailReportOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.MailReportClass );
             CswNbtMetaDataNodeType MailReportNT = MailReportOC.FirstNodeType;
 
             if( null != MailReportNT )

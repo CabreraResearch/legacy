@@ -1,16 +1,11 @@
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Data;
 using ChemSW.Core;
-using ChemSW.DB;
 using ChemSW.Exceptions;
-using ChemSW.Mail;
 using ChemSW.MtSched.Core;
 using ChemSW.MtSched.Sched;
-using ChemSW.Nbt.ObjClasses;
-using ChemSW.Nbt.Security;
 using ChemSW.Nbt.Batch;
+using ChemSW.Nbt.ObjClasses;
 
 namespace ChemSW.Nbt.Sched
 {
@@ -159,13 +154,7 @@ namespace ChemSW.Nbt.Sched
             }//if we're not shutting down
         }//threadCallBack()
 
-                                    ICswNbtTree ReportTree = _CswNbtResources.Trees.getTreeFromView(
-                                        RunAsUser: UserNodeAsUser as ICswNbtUser,
-                                        View: ReportView,
-                                        RequireViewPermissions: true,
-                                        IncludeSystemNodes: false,
-                                        IncludeHiddenNodes: false );
-                                    //ICswNbtTree ReportTree = _CswNbtResources.Trees.getTreeFromView( UserNodeAsUser as ICswNbtUser, ReportView, true, true, false, false );
+
         public void stop()
         {
             _LogicRunStatus = LogicRunStatus.Stopping;
