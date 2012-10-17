@@ -386,14 +386,10 @@ namespace ChemSW.Nbt.ObjClasses
             CswNbtMetaDataObjectClassProp sourceContainerOCP = containerOC.getObjectClassProp( PropertyName.SourceContainer );
             int maxGenerations = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswConfigurationVariables.ConfigurationVariableNames.container_max_depth ) );
 
-
             CswNbtView familyView = new CswNbtView( _CswNbtResources );
+            familyView.ViewName = "Container Family for " + Barcode.Barcode;
             CswNbtViewRelationship parent = familyView.AddViewRelationship( containerOC, false ); //only this container should be at the top
-            familyView.AddViewPropertyAndFilter( parent,
-                MetaDataProp: barcodeOCP,
-                Value: this.Barcode.Barcode,
-                SubFieldName: CswNbtSubField.SubFieldName.Barcode,
-                FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+            parent.NodeIdsToFilterIn.Add( this.NodeId );
 
             List<CswNbtObjClassContainer> children = GetChildren();
             _getFamilyView( ref familyView, parent, children, 1, maxGenerations, sourceContainerOCP, barcodeOCP );
