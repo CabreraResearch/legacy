@@ -21,60 +21,13 @@ namespace ChemSW.Nbt.Schema
 
             #region SEBASTIAN
 
-            // case 27703 - change containers dispose/dispense buttons to say "Dispose this Container" and "Dispense this Container"
-            CswNbtMetaDataObjectClass containerOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.ContainerClass );
+            #region case 27720.1
 
-            CswNbtMetaDataObjectClassProp dispenseOCP = containerOC.getObjectClassProp( "Dispense" );
-            if( null != dispenseOCP ) //have to null check because property might have already been updated
-            {
-                _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( dispenseOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.propname, "Dispense this Container" );
-            }
+            CswNbtMetaDataObjectClass MailReportOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.MailReportClass );
 
-            CswNbtMetaDataObjectClassProp disposeOCP = containerOC.getObjectClassProp( "Dispose" );
-            if( null != disposeOCP ) //have to null check here because property might have been updated
-            {
-                _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( disposeOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.propname, "Dispose this Container" );
-            }
-
-            CswNbtMetaDataObjectClass PrintLabelOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.PrintLabelClass );
-            CswNbtMetaDataObjectClassProp ControlTypeOcp = PrintLabelOc.getObjectClassProp( "Control Type" );
-            if( null != ControlTypeOcp )
-            {
-                _CswNbtSchemaModTrnsctn.MetaData.DeleteObjectClassProp( ControlTypeOcp, DeleteNodeTypeProps: true );
-            }
-
-            //upgrade RequestItem Requestor prop from NTP to OCP
-            CswNbtMetaDataObjectClass requestItemOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.RequestItemClass );
-            if( null == requestItemOC.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Requestor ) )
-            {
-                CswNbtMetaDataObjectClass requestOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.RequestClass );
-                CswNbtMetaDataObjectClassProp requestorOCP = requestOC.getObjectClassProp( CswNbtObjClassRequest.PropertyName.Requestor );
-                CswNbtMetaDataObjectClassProp requestOCP = requestItemOC.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Request );
-
-                CswNbtMetaDataObjectClassProp reqItemrequestorOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( requestItemOC )
-                {
-                    PropName = CswNbtObjClassRequestItem.PropertyName.Requestor,
-                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.PropertyReference,
-                    IsFk = true,
-                    FkType = NbtViewPropIdType.ObjectClassPropId.ToString(),
-                    FkValue = requestOCP.PropId,
-                    ValuePropType = NbtViewPropIdType.ObjectClassPropId.ToString(),
-                    ValuePropId = requestorOCP.PropId
-                } );
-            }
-
-
-            #region case 27720
-
-            // remove Notification nodes, nodetypes, and object class
-            CswNbtMetaDataObjectClass NotificationOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( "NotificationClass" );
-            if( null != NotificationOC )
-            {
-                _CswNbtSchemaModTrnsctn.MetaData.DeleteObjectClass( NotificationOC );
-            }
+            // NOTE: Due to case 27956, this must happen FIRST!
 
             // add properties to mail reports
-            CswNbtMetaDataObjectClass MailReportOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.MailReportClass );
             CswNbtMetaDataObjectClassProp TypeOCP = MailReportOC.getObjectClassProp( CswNbtObjClassMailReport.PropertyName.Type );
             if( null == MailReportOC.getObjectClassProp( CswNbtObjClassMailReport.PropertyName.TargetType ) )
             {
@@ -148,13 +101,70 @@ namespace ChemSW.Nbt.Schema
                 _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( ReportViewOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.fieldtypeid, ViewReferenceFT.FieldTypeId );
             }
 
-            #endregion case 27720
+            #endregion case 27720.1
+
+
+            // case 27703 - change containers dispose/dispense buttons to say "Dispose this Container" and "Dispense this Container"
+            CswNbtMetaDataObjectClass containerOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.ContainerClass );
+
+            CswNbtMetaDataObjectClassProp dispenseOCP = containerOC.getObjectClassProp( "Dispense" );
+            if( null != dispenseOCP ) //have to null check because property might have already been updated
+            {
+                _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( dispenseOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.propname, "Dispense this Container" );
+            }
+
+            CswNbtMetaDataObjectClassProp disposeOCP = containerOC.getObjectClassProp( "Dispose" );
+            if( null != disposeOCP ) //have to null check here because property might have been updated
+            {
+                _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( disposeOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.propname, "Dispose this Container" );
+            }
+
+            CswNbtMetaDataObjectClass PrintLabelOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.PrintLabelClass );
+            CswNbtMetaDataObjectClassProp ControlTypeOcp = PrintLabelOc.getObjectClassProp( "Control Type" );
+            if( null != ControlTypeOcp )
+            {
+                _CswNbtSchemaModTrnsctn.MetaData.DeleteObjectClassProp( ControlTypeOcp, DeleteNodeTypeProps: true );
+            }
+
+            //upgrade RequestItem Requestor prop from NTP to OCP
+            CswNbtMetaDataObjectClass requestItemOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.RequestItemClass );
+            if( null == requestItemOC.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Requestor ) )
+            {
+                CswNbtMetaDataObjectClass requestOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.RequestClass );
+                CswNbtMetaDataObjectClassProp requestorOCP = requestOC.getObjectClassProp( CswNbtObjClassRequest.PropertyName.Requestor );
+                CswNbtMetaDataObjectClassProp requestOCP = requestItemOC.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Request );
+
+                CswNbtMetaDataObjectClassProp reqItemrequestorOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( requestItemOC )
+                {
+                    PropName = CswNbtObjClassRequestItem.PropertyName.Requestor,
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.PropertyReference,
+                    IsFk = true,
+                    FkType = NbtViewPropIdType.ObjectClassPropId.ToString(),
+                    FkValue = requestOCP.PropId,
+                    ValuePropType = NbtViewPropIdType.ObjectClassPropId.ToString(),
+                    ValuePropId = requestorOCP.PropId
+                } );
+            }
+
+
+            #region case 27720.2
+
+            // remove Notification nodes, nodetypes, and object class
+            CswNbtMetaDataObjectClass NotificationOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( "NotificationClass" );
+            if( null != NotificationOC )
+            {
+                _CswNbtSchemaModTrnsctn.MetaData.DeleteObjectClass( NotificationOC );
+            }
+
+            #endregion case 27720.2
 
 
             // case 28007 - Remove 'No Data Notification' property from Mail Reports
             CswNbtMetaDataObjectClassProp NoDataOCP = MailReportOC.getObjectClassProp( "No Data Notification" );
-            _CswNbtSchemaModTrnsctn.MetaData.DeleteObjectClassProp( NoDataOCP, true );
-
+            if( null != NoDataOCP )
+            {
+                _CswNbtSchemaModTrnsctn.MetaData.DeleteObjectClassProp( NoDataOCP, true );
+            }
 
             #endregion SEBASTIAN
 
