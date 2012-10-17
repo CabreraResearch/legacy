@@ -613,113 +613,115 @@ namespace ChemSW.Nbt.ServiceDrivers
         public JObject saveProps( CswPrimaryKey NodePk, Int32 TabId, string NewPropsJson, Int32 NodeTypeId, CswNbtView View, bool IsIdentityTab )
         {
             JObject ret = new JObject();
-            JObject PropsObj = JObject.Parse( NewPropsJson );
-            CswNbtNodeKey RetNbtNodeKey = null;
-            bool AllSucceeded = false;
-            CswNbtNode Node = null;
-            CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeId );
-            CswNbtMetaDataNodeTypeTab NodeTypeTab = null;
-            if( false == IsIdentityTab )
+            JObject PropsObj = CswConvert.ToJObject( NewPropsJson );
+            if( PropsObj.HasValues )
             {
-                NodeTypeTab = _CswNbtResources.MetaData.getNodeTypeTab( TabId );
-            }
-            else if( null != NodeType )
-            {
-                NodeTypeTab = NodeType.getIdentityTab();
-            }
-
-            if( null == NodeType && null != NodeTypeTab )
-            {
-                NodeType = NodeTypeTab.getNodeType();
-            }
-            if( null != NodeType )
-            {
-                Node = _CswNbtResources.Nodes.GetNode( NodePk );
-                switch( _CswNbtResources.EditMode )
+                CswNbtNodeKey RetNbtNodeKey = null;
+                bool AllSucceeded = false;
+                CswNbtNode Node = null;
+                CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeId );
+                CswNbtMetaDataNodeTypeTab NodeTypeTab = null;
+                if( false == IsIdentityTab )
                 {
-                    case NodeEditMode.Temp:
-                        if( null != Node )
-                        {
-                            addNode( NodeType, Node, PropsObj, out RetNbtNodeKey, View, NodeTypeTab );
-                        }
-                        else
-                        {
-                            Node = addNode( NodeType, null, PropsObj, out RetNbtNodeKey, View, NodeTypeTab );
-                        }
-                        break;
-                    case NodeEditMode.Add:
-                        if( null != Node )
-                        {
-                            Node.IsTemp = false;
-                            addNode( NodeType, Node, PropsObj, out RetNbtNodeKey, View, NodeTypeTab );
-                        }
-                        else
-                        {
-                            Node = addNode( NodeType, null, PropsObj, out RetNbtNodeKey, View, NodeTypeTab );
-                        }
+                    NodeTypeTab = _CswNbtResources.MetaData.getNodeTypeTab( TabId );
+                }
+                else if( null != NodeType )
+                {
+                    NodeTypeTab = NodeType.getIdentityTab();
+                }
 
-                        AllSucceeded = ( null != Node );
-                        break;
-                    default:
-                        if( null != Node )
-                        {
-                            bool CanEdit = (
-                                               _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Edit, NodeType ) ||
-                                               _CswNbtResources.Permit.canTab( CswNbtPermit.NodeTypePermission.Edit, NodeType, NodeTypeTab ) ||
-                                               _CswNbtResources.Permit.canAnyTab( CswNbtPermit.NodeTypePermission.Edit, NodeType ) ||
-                                               _CswNbtResources.Permit.canNode( CswNbtPermit.NodeTypePermission.Edit, NodeType, Node.NodeId ) // ||
-                                // _CswNbtResources.Permit.canPropOnAnyOtherTab( CswNbtPermit.NodeTypePermission.Edit, NodeTypeTab, null )
-
-                                           );
-                            if( CanEdit )
+                if( null == NodeType && null != NodeTypeTab )
+                {
+                    NodeType = NodeTypeTab.getNodeType();
+                }
+                if( null != NodeType )
+                {
+                    Node = _CswNbtResources.Nodes.GetNode( NodePk );
+                    switch( _CswNbtResources.EditMode )
+                    {
+                        case NodeEditMode.Temp:
+                            if( null != Node )
                             {
-                                if( Node.PendingUpdate )
+                                addNode( NodeType, Node, PropsObj, out RetNbtNodeKey, View, NodeTypeTab );
+                            }
+                            else
+                            {
+                                Node = addNode( NodeType, null, PropsObj, out RetNbtNodeKey, View, NodeTypeTab );
+                            }
+                            break;
+                        case NodeEditMode.Add:
+                            if( null != Node )
+                            {
+                                Node.IsTemp = false;
+                                addNode( NodeType, Node, PropsObj, out RetNbtNodeKey, View, NodeTypeTab );
+                            }
+                            else
+                            {
+                                Node = addNode( NodeType, null, PropsObj, out RetNbtNodeKey, View, NodeTypeTab );
+                            }
+
+                            AllSucceeded = ( null != Node );
+                            break;
+                        default:
+                            if( null != Node )
+                            {
+                                bool CanEdit = (
+                                                   _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Edit, NodeType ) ||
+                                                   _CswNbtResources.Permit.canTab( CswNbtPermit.NodeTypePermission.Edit, NodeType, NodeTypeTab ) ||
+                                                   _CswNbtResources.Permit.canAnyTab( CswNbtPermit.NodeTypePermission.Edit, NodeType ) ||
+                                                   _CswNbtResources.Permit.canNode( CswNbtPermit.NodeTypePermission.Edit, NodeType, Node.NodeId ) // ||
+                                    // _CswNbtResources.Permit.canPropOnAnyOtherTab( CswNbtPermit.NodeTypePermission.Edit, NodeTypeTab, null )
+
+                                               );
+                                if( CanEdit )
                                 {
-                                    CswNbtActUpdatePropertyValue Act = new CswNbtActUpdatePropertyValue( _CswNbtResources );
-                                    Act.UpdateNode( Node, false );
-                                }
-                                RetNbtNodeKey = _saveProp( Node, PropsObj, View, NodeTypeTab );
-                                if( null != RetNbtNodeKey )
-                                {
-                                    AllSucceeded = true;
+                                    if( Node.PendingUpdate )
+                                    {
+                                        CswNbtActUpdatePropertyValue Act = new CswNbtActUpdatePropertyValue( _CswNbtResources );
+                                        Act.UpdateNode( Node, false );
+                                    }
+                                    RetNbtNodeKey = _saveProp( Node, PropsObj, View, NodeTypeTab );
+                                    if( null != RetNbtNodeKey )
+                                    {
+                                        AllSucceeded = true;
+                                    }
                                 }
                             }
-                        }
-                        break;
-                } //switch( _CswNbtResources.EditMode )
-                if( AllSucceeded && null != RetNbtNodeKey )
-                {
-                    string RetNodeKey = RetNbtNodeKey.ToString();
-                    ret["cswnbtnodekey"] = RetNodeKey;
-                } //if( AllSucceeded && null != RetNbtNodeKey )
-                else
-                {
-                    string ErrString;
-                    if( _CswNbtResources.EditMode == NodeEditMode.Add )
+                            break;
+                    } //switch( _CswNbtResources.EditMode )
+                    if( AllSucceeded && null != RetNbtNodeKey )
                     {
-                        ErrString = "Attempt to Add failed.";
-                    }
+                        string RetNodeKey = RetNbtNodeKey.ToString();
+                        ret["cswnbtnodekey"] = RetNodeKey;
+                    } //if( AllSucceeded && null != RetNbtNodeKey )
                     else
                     {
-                        ErrString = "Prop updates failed";
-                    }
-                    ret["result"] = ErrString;
-                } //else
-            } //if( null != NodeType && null != NodeTypeTab )
+                        string ErrString;
+                        if( _CswNbtResources.EditMode == NodeEditMode.Add )
+                        {
+                            ErrString = "Attempt to Add failed.";
+                        }
+                        else
+                        {
+                            ErrString = "Prop updates failed";
+                        }
+                        ret["result"] = ErrString;
+                    } //else
+                } //if( null != NodeType && null != NodeTypeTab )
 
-            // Good opportunity to force an update on the node
-            if( Node != null )
-            {
-                CswNbtActUpdatePropertyValue ActUpdatePropVal = new CswNbtActUpdatePropertyValue( _CswNbtResources );
-                ActUpdatePropVal.UpdateNode( Node, true );
-                Node.postChanges( false );
-                ret["result"] = "Succeeded";
-                //If we're Adding, NodeName won't be valid until now.
-                ret["nodename"] = Node.NodeName;
-                ret["nodeid"] = Node.NodeId.ToString();
-                ret["action"] = _determineAction( Node.ObjClass.ObjectClass.ObjectClass );
+                // Good opportunity to force an update on the node
+                if( Node != null )
+                {
+                    CswNbtActUpdatePropertyValue ActUpdatePropVal = new CswNbtActUpdatePropertyValue( _CswNbtResources );
+                    ActUpdatePropVal.UpdateNode( Node, true );
+                    Node.postChanges( false );
+                    ret["result"] = "Succeeded";
+                    //If we're Adding, NodeName won't be valid until now.
+                    ret["nodename"] = Node.NodeName;
+                    ret["nodeid"] = Node.NodeId.ToString();
+                    ret["action"] = _determineAction( Node.ObjClass.ObjectClass.ObjectClass );
+                }
             }
-
             return ret;
         } // saveProps()
 
