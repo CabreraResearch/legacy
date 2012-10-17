@@ -413,7 +413,6 @@
     <Compile Include="csw\Sched\logic\CswScheduleLogicNbtUpdtPropVals.cs" />
     <Compile Include="csw\Sched\logic\CswScheduleLogicNbtUpdtMTBF.cs" />
     <Compile Include="csw\Sched\logic\CswScheduleLogicNbtGenEmailRpt.cs" />
-    <Compile Include="csw\Sched\logic\CswNbtMailReportStatus.cs" />
     <Compile Include="csw\Search\CswNbtSearchFilterWrapper.cs" />
     <Compile Include="csw\Tree\CswNbtTreeLoaderFromSearchByLevel.cs" />
     <Compile Include="csw\Search\CswNbtSearch.cs" />

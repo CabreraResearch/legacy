@@ -71,7 +71,6 @@ namespace ChemSW.Nbt.Sched
 
                     for( Int32 idx = 0; ( idx < MailReports.Count ) && ( LogicRunStatus.Stopping != _LogicRunStatus ); idx++ )
                     {
-                        CswNbtMailReportStatus CswNbtMailReportStatus = new CswNbtMailReportStatus();
                         CswNbtObjClassMailReport CurrentMailReport = CurrentMailReport = MailReports[idx];
                         if( null != CurrentMailReport )
                         {
@@ -115,15 +114,12 @@ namespace ChemSW.Nbt.Sched
                                     } // if( false == CurrentMailReport.Type.Empty )
                                     else
                                     {
-                                        CswNbtMailReportStatus.ReportFailureReason = "Report type is not specified";
-                                        InnerErrorMessage += CswNbtMailReportStatus.ReportFailureReason + "; ";
-
                                         //if the report type is specified 
 
                                         // might be redundant with CswNbtDbBasedSchdEvents.handleOnSchdItemWasRun()
-                                        CurrentMailReport.RunStatus.AddComment( CswNbtMailReportStatus.Message );
+                                        InnerErrorMessage = "Report type is not specified";
+                                        CurrentMailReport.RunStatus.AddComment( InnerErrorMessage );
                                         CurrentMailReport.postChanges( true );
-
                                     }
                                 }// if( CurrentMailReport.Enabled.Checked == Tristate.True )
 

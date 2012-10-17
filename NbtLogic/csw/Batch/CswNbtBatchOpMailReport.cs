@@ -84,8 +84,7 @@ namespace ChemSW.Nbt.Batch
 
                     if( null != BatchData.CurrentMailReport && BatchData.RecipientIds.Count > 0 )
                     {
-                        string statusMessage = processMailReport( BatchData, new CswNbtMailReportStatus() );
-                        BatchData.CurrentMailReport.RunStatus.AddComment( statusMessage );
+                        processMailReport( BatchData );
                         BatchData.CurrentMailReport.postChanges( false );
                     }
                     else if( BatchData.MailReportNodeIds.Count > 0 )
@@ -271,7 +270,7 @@ namespace ChemSW.Nbt.Batch
 
         #region Processing Mail Reports
 
-        private string processMailReport( MailReportBatchData BatchData, CswNbtMailReportStatus CswNbtMailReportStatus )
+        private void processMailReport( MailReportBatchData BatchData )
         {
             CswNbtObjClassMailReport CurrentMailReport = BatchData.CurrentMailReport;
 
@@ -279,7 +278,6 @@ namespace ChemSW.Nbt.Batch
 
             if( false == CurrentMailReport.Recipients.Empty )
             {
-                //Collection<Int32> RecipientUserIds = CurrentMailReport.Recipients.SelectedUserIds.ToIntCollection();
                 JArray NewRecipientIds = BatchData.RecipientIds;
                 for( Int32 u = 0; u < BatchData.RecipientIds.Count() && u < NodeLimit; u++ )
                 {
@@ -299,6 +297,7 @@ namespace ChemSW.Nbt.Batch
 
                             string EmailMessageSubject = CurrentMailReport.NodeName;
                             string EmailMessageBody = string.Empty;
+                            bool SendMail = false;
 
                             if( "View" == CurrentMailReport.Type.Value )
                             {
@@ -308,47 +307,40 @@ namespace ChemSW.Nbt.Batch
                                     CswNbtView ReportView = _CswNbtResources.ViewSelect.restoreView( ViewId );
                                     ICswNbtTree ReportTree = _CswNbtResources.Trees.getTreeFromView( UserNodeAsUser as ICswNbtUser, ReportView, true, true, false, false );
 
-                                    if( CswNbtObjClassMailReport.EventOption.Exists.ToString() != CurrentMailReport.Event.Value )
+                                    if( ReportTree.getChildNodeCount() > 0 )
                                     {
-                                        // case 27720 - check mail report events to find nodes that match the view results
-                                        Dictionary<CswPrimaryKey, string> NodesToMail = new Dictionary<CswPrimaryKey, string>();
-                                        foreach( Int32 NodeId in CurrentMailReport.GetNodesToReport().ToIntCollection() )
+                                        if( CswNbtObjClassMailReport.EventOption.Exists.ToString() != CurrentMailReport.Event.Value )
                                         {
-                                            CswPrimaryKey ThisNodeId = new CswPrimaryKey( "nodes", NodeId );
-                                            ReportTree.makeNodeCurrent( ThisNodeId );
-                                            if( ReportTree.isCurrentNodeDefined() )
+                                            // case 27720 - check mail report events to find nodes that match the view results
+                                            Dictionary<CswPrimaryKey, string> NodesToMail = new Dictionary<CswPrimaryKey, string>();
+                                            foreach( Int32 NodeId in CurrentMailReport.GetNodesToReport().ToIntCollection() )
                                             {
-                                                NodesToMail.Add( ThisNodeId, ReportTree.getNodeNameForCurrentPosition() );
+                                                CswPrimaryKey ThisNodeId = new CswPrimaryKey( "nodes", NodeId );
+                                                ReportTree.makeNodeCurrent( ThisNodeId );
+                                                if( ReportTree.isCurrentNodeDefined() )
+                                                {
+                                                    NodesToMail.Add( ThisNodeId, ReportTree.getNodeNameForCurrentPosition() );
+                                                }
+                                            }
+                                            if( NodesToMail.Count > 0 )
+                                            {
+                                                EmailMessageBody = _makeEmailBody( CurrentMailReport, string.Empty, NodesToMail );
+                                                SendMail = true;
                                             }
                                         }
-                                        if( NodesToMail.Count > 0 )
-                                        {
-                                            EmailMessageBody = _setStatusHaveData( CurrentMailReport, CswNbtMailReportStatus, string.Empty, NodesToMail );
-                                        }
                                         else
                                         {
-                                            EmailMessageBody = _setStatusDoNotHaveData( CurrentMailReport, CswNbtMailReportStatus );
-                                        }//if-else the view got a result
-                                    }
-                                    else
-                                    {
-                                        if( ReportTree.getChildNodeCount() > 0 )
-                                        {
-                                            EmailMessageBody = _setStatusHaveData( CurrentMailReport, CswNbtMailReportStatus, _makeViewLink( ViewId, ReportView.ViewName ) );
+                                            EmailMessageBody = _makeEmailBody( CurrentMailReport, _makeViewLink( ViewId, ReportView.ViewName ) );
+                                            SendMail = true;
                                         }
-                                        else
-                                        {
-                                            EmailMessageBody = _setStatusDoNotHaveData( CurrentMailReport, CswNbtMailReportStatus );
-                                        }//if-else the view got a result
-                                    }
-
-                                    EmailReportStatusMessage = _sendMailMessage( CurrentMailReport, CswNbtMailReportStatus, EmailMessageBody, UserNodeAsUser.LastName, UserNodeAsUser.FirstName, UserNodeAsUser.Node.NodeName, EmailMessageSubject, CurrentEmailAddress, null );
-                                }
+                                    } // if( ReportTree.getChildNodeCount() > 0 )
+                                } // if( ViewId.isSet() )
                                 else
                                 {
                                     EmailReportStatusMessage = "Unable to process email report " + CurrentMailReport.Node.NodeName + ": the associated view's ViewId is not set";
                                 }
-                            }
+                            } // if( "View" == CurrentMailReport.Type.Value )
+
                             else if( "Report" == CurrentMailReport.Type.Value )
                             {
                                 if( null != _CswNbtResources.Nodes[CurrentMailReport.Report.NodeId] )
@@ -370,31 +362,32 @@ namespace ChemSW.Nbt.Batch
                                             ReportTable = null; //so we don't end up attaching the CSV
                                         }
 
-                                        EmailMessageBody = _setStatusHaveData( CurrentMailReport, CswNbtMailReportStatus, ReportLink );
+                                        EmailMessageBody = _makeEmailBody( CurrentMailReport, ReportLink );
+                                        SendMail = true;
                                     }
-                                    else
-                                    {
-                                        EmailMessageBody = _setStatusDoNotHaveData( CurrentMailReport, CswNbtMailReportStatus );
-                                    }//if-else the view got a result
-
-                                    EmailReportStatusMessage = _sendMailMessage( CurrentMailReport, CswNbtMailReportStatus, EmailMessageBody, UserNodeAsUser.LastName, UserNodeAsUser.FirstName, UserNodeAsUser.Node.NodeName, EmailMessageSubject, CurrentEmailAddress, ReportTable );
                                 }
                                 else
                                 {
                                     EmailReportStatusMessage = "Unable to process email report " + CurrentMailReport.Node.NodeName + ": the associated report's NodeId is not set";
                                 }//if-else report's node id is present
-                            }
+                            } // else if( "Report" == CurrentMailReport.Type.Value )
+
                             else
                             {
                                 EmailReportStatusMessage = "Unable to process email report " + CurrentMailReport.Node.NodeName + ": the report type " + CurrentMailReport.Type.Value + " is unknown";
                             }//if-else-if on report type
 
+
+                            if( SendMail )
+                            {
+                                EmailReportStatusMessage = _sendMailMessage( CurrentMailReport, EmailMessageBody, UserNodeAsUser.LastName, UserNodeAsUser.FirstName, UserNodeAsUser.Node.NodeName, EmailMessageSubject, CurrentEmailAddress, ReportTable );
+                            }
                         }//if( Email Address != string.Empty )
 
                     }//if( Int32.MinValue != UserId )
 
                 }//for( Int32 u = 0; u < BatchData.RecipientIds.Count() && u < NodeLimit; u++ )
-                
+
                 BatchData.RecipientIds = NewRecipientIds;
 
             }//if( !CurrentMailReport.Recipients.Empty )
@@ -403,58 +396,49 @@ namespace ChemSW.Nbt.Batch
             CurrentMailReport.ClearNodesToReport();
             CurrentMailReport.LastProcessed.DateTimeValue = DateTime.Now;
             _CswScheduleNodeUpdater.update( CurrentMailReport.Node, EmailReportStatusMessage );
-
-            return EmailReportStatusMessage;
         }//processMailReport()
 
-        private string _sendMailMessage( CswNbtObjClassMailReport CurrentMailReport, CswNbtMailReportStatus CswNbtMailReportStatus, string MailReportMessage, string LastName, string FirstName, string UserName, string Subject, string CurrentEmailAddress, DataTable ReportTable )
+        private string _sendMailMessage( CswNbtObjClassMailReport CurrentMailReport, string MailReportMessage, string LastName, string FirstName, string UserName, string Subject, string CurrentEmailAddress, DataTable ReportTable )
         {
             string ReturnVal = string.Empty;
-            if( CswNbtMailReportStatus.ReportDataExist )
+            CswMail CswMail = _CswNbtResources.CswMail;
+
+            ReturnVal += "Recipients: ";
+
+            CswMailMessage MailMessage = new CswMailMessage();
+            MailMessage.Recipient = CurrentEmailAddress;
+            MailMessage.RecipientDisplayName = FirstName + " " + LastName;
+            MailMessage.Subject = Subject;
+            MailMessage.Content = MailReportMessage;
+            MailMessage.Format = Quiksoft.EasyMail.SMTP.BodyPartFormat.HTML;
+
+            if( null != ReportTable )
             {
-                CswMail CswMail = _CswNbtResources.CswMail;
+                string TableAsCSV = ( (CswDataTable) ReportTable ).ToCsv();
 
-                CswNbtMailReportStatus.EmailSentReason = "Recipients: ";
+                byte[] Buffer = new System.Text.UTF8Encoding().GetBytes( TableAsCSV );
+                System.IO.MemoryStream MemoryStream = new System.IO.MemoryStream( Buffer, false );
 
-                CswMailMessage MailMessage = new CswMailMessage();
-                MailMessage.Recipient = CurrentEmailAddress;
-                MailMessage.RecipientDisplayName = FirstName + " " + LastName;
-                MailMessage.Subject = Subject;
-                MailMessage.Content = MailReportMessage;
-                MailMessage.Format = Quiksoft.EasyMail.SMTP.BodyPartFormat.HTML;
+                MailMessage.Attachment = MemoryStream;
+                MailMessage.AttachmentDisplayName = CurrentMailReport.Node.NodeName + ".csv";
+            }
 
-                if( null != ReportTable )
-                {
-                    string TableAsCSV = ( (CswDataTable) ReportTable ).ToCsv();
-
-                    byte[] Buffer = new System.Text.UTF8Encoding().GetBytes( TableAsCSV );
-                    System.IO.MemoryStream MemoryStream = new System.IO.MemoryStream( Buffer, false );
-
-                    MailMessage.Attachment = MemoryStream;
-                    MailMessage.AttachmentDisplayName = CurrentMailReport.Node.NodeName + ".csv";
-                }
-
-                if( CswMail.send( MailMessage ) )
-                {
-                    CswNbtMailReportStatus.EmailSentReason += UserName + " at " + CurrentEmailAddress + " (succeeded); ";
-                    ReturnVal = CswNbtMailReportStatus.EmailSentReason;
-                }
-                else
-                {
-                    CswNbtMailReportStatus.EmailFailureReason += UserName + " at " + CurrentEmailAddress + " (failed: " + CswMail.Status + "); ";
-                    ReturnVal = CswNbtMailReportStatus.EmailFailureReason;
-                }
+            if( CswMail.send( MailMessage ) )
+            {
+                ReturnVal += UserName + " at " + CurrentEmailAddress + " (succeeded); ";
+            }
+            else
+            {
+                ReturnVal += UserName + " at " + CurrentEmailAddress + " (failed: " + CswMail.Status + "); ";
             }
             return ( ReturnVal );
 
         }//_sendMailMessage()
 
 
-        private string _setStatusHaveData( CswNbtObjClassMailReport CurrentMailReport, CswNbtMailReportStatus CswNbtMailReportStatus, string Link, Dictionary<CswPrimaryKey, string> NodeDict = null )
+        private string _makeEmailBody( CswNbtObjClassMailReport CurrentMailReport, string Link, Dictionary<CswPrimaryKey, string> NodeDict = null )
         {
             string ReturnVal = string.Empty;
-
-            CswNbtMailReportStatus.ReportDataExist = true;
             ReturnVal = CurrentMailReport.Message.Text.Replace( "\r\n", "<br>" ) + "<br>";
             if( null != NodeDict )
             {
@@ -463,25 +447,9 @@ namespace ChemSW.Nbt.Batch
                     ReturnVal += _makeNodeLink( NodeId, NodeDict[NodeId] ) + "<br>";
                 }
             }
-            ReturnVal += "<br>";
-            ReturnVal += Link + "<br>";
-
-            CswNbtMailReportStatus.ReportReason = "The report's view returned data ";
-
+            ReturnVal += "<br>" + Link + "<br>";
             return ( ReturnVal );
-
-        }//_setStatusHaveData()
-
-
-
-        private string _setStatusDoNotHaveData( CswNbtObjClassMailReport CswNbtObjClassMailReport, CswNbtMailReportStatus CswNbtMailReportStatus )
-        {
-            string ReturnVal = string.Empty;
-            CswNbtMailReportStatus.ReportDataExist = false;
-            CswNbtMailReportStatus.ReportNotMadeReason = "The report's view returned no data";
-            return ( ReturnVal );
-        }//_setStatusDoNotHaveData()
-
+        }//_makeEmailBody()
 
 
         private string _makeViewLink( CswNbtViewId ViewId, string ViewName )
