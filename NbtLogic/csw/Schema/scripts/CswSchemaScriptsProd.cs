@@ -70,6 +70,7 @@ namespace ChemSW.Nbt.Schema
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01T_Case27880() ) );                         //01S-037    01T-11
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01T_Case27740() ) );                         //01S-038    01T-12
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01T_Case27801() ) );                         //01S-039    01T-13
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_0T1_Case27884() ) );                         //01S-040    01T-14
 
             #endregion TITANIA
 
