@@ -10,7 +10,7 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Schema Update for case 27751
     /// </summary>
-    public class CswUpdateSchemaCase27751 : CswUpdateSchemaTo
+    public class CswUpdateSchema_01S_Case27751 : CswUpdateSchemaTo
     {
         public override void update()
         {
@@ -23,6 +23,6 @@ namespace ChemSW.Nbt.Schema
             ConfigVarUpdate.update( ConfigVarTable );
         }//Update()
 
-    }//class CswUpdateSchemaCase27751 
+    }//class CswUpdateSchema_01S_Case27751 
 
 }//namespace ChemSW.Nbt.Schema
