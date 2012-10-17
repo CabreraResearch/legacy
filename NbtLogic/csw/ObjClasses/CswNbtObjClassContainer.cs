@@ -9,7 +9,8 @@ using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
 using ChemSW.Nbt.ServiceDrivers;
 using Newtonsoft.Json.Linq;
-
+using System.Collections.Generic;
+using ChemSW.Config;
 
 namespace ChemSW.Nbt.ObjClasses
 {
@@ -334,6 +335,61 @@ namespace ChemSW.Nbt.ObjClasses
             }
         } // DispenseIn()
 
+        /// <summary>
+        /// Gets all containers where the source container nodeid equals this containers nodeid
+        /// </summary>
+        /// <returns>A list of all container this container dispensed into</returns>
+        public List<CswNbtObjClassContainer> GetChildren()
+        {
+            CswNbtMetaDataObjectClass containerOC = _CswNbtResources.MetaData.getObjectClass( this.ObjectClass.ObjectClassId );
+            CswNbtMetaDataObjectClassProp sourceContainerOCP = containerOC.getObjectClassProp( PropertyName.SourceContainer );
+
+            CswNbtView childrenView = new CswNbtView( _CswNbtResources );
+            CswNbtViewRelationship parent = childrenView.AddViewRelationship( containerOC, true );
+            childrenView.AddViewPropertyAndFilter( parent,
+                MetaDataProp: sourceContainerOCP,
+                Value: this.NodeId.PrimaryKey.ToString(),
+                SubFieldName: CswNbtSubField.SubFieldName.NodeID,
+                FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+
+            List<CswNbtObjClassContainer> children = new List<CswNbtObjClassContainer>();
+            ICswNbtTree childrenTree = _CswNbtResources.Trees.getTreeFromView( childrenView, false, false, false );
+            int childrenCount = childrenTree.getChildNodeCount();
+            for( int i = 0; i < childrenCount; i++ )
+            {
+                childrenTree.goToNthChild( i );
+                children.Add( childrenTree.getNodeForCurrentPosition() );
+                childrenTree.goToParentNode();
+            }
+            return children;
+        }
+
+        /// <summary>
+        /// Gets a tree view of this containers family
+        /// </summary>
+        /// <returns></returns>
+        public CswNbtView GetFamilyView()
+        {
+            CswNbtMetaDataObjectClass containerOC = _CswNbtResources.MetaData.getObjectClass( this.ObjectClass.ObjectClassId );
+            CswNbtMetaDataObjectClassProp barcodeOCP = containerOC.getObjectClassProp( PropertyName.Barcode );
+            CswNbtMetaDataObjectClassProp sourceContainerOCP = containerOC.getObjectClassProp( PropertyName.SourceContainer );
+            int maxGenerations = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswConfigurationVariables.ConfigurationVariableNames.container_max_depth ) );
+
+
+            CswNbtView familyView = new CswNbtView( _CswNbtResources );
+            CswNbtViewRelationship parent = familyView.AddViewRelationship( containerOC, false ); //only this container should be at the top
+            familyView.AddViewPropertyAndFilter( parent,
+                MetaDataProp: barcodeOCP,
+                Value: this.Barcode.Barcode,
+                SubFieldName: CswNbtSubField.SubFieldName.Barcode,
+                FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+
+            List<CswNbtObjClassContainer> children = GetChildren();
+            _getFamilyView( ref familyView, parent, children, 1, maxGenerations, sourceContainerOCP, barcodeOCP );
+
+            return familyView;
+        }
+
         #endregion Custom Logic
 
         #region Private Helper Methods
@@ -512,6 +568,36 @@ namespace ChemSW.Nbt.ObjClasses
                 }
             }
             return ret;
+        }
+
+        /// <summary>
+        /// private worker method to get younger generations of containers in the family.
+        /// </summary>
+        /// <param name="view"></param>
+        /// <param name="parent"></param>
+        /// <param name="children"></param>
+        /// <param name="generation"></param>
+        /// <param name="maxGenerations"></param>
+        /// <param name="sourceContainerOCP"></param>
+        /// <param name="barcodeOCP"></param>
+        private void _getFamilyView( ref CswNbtView view, CswNbtViewRelationship parent, List<CswNbtObjClassContainer> children, int generation, int maxGenerations,
+            CswNbtMetaDataObjectClassProp sourceContainerOCP, CswNbtMetaDataObjectClassProp barcodeOCP )
+        {
+            if( generation <= maxGenerations )
+            {
+                foreach( CswNbtObjClassContainer containerNode in children )
+                {
+                    CswNbtViewRelationship generationXParent = view.AddViewRelationship( parent, NbtViewPropOwnerType.Second, sourceContainerOCP, false );
+                    view.AddViewPropertyAndFilter( generationXParent,
+                        MetaDataProp: barcodeOCP,
+                        Value: containerNode.Barcode.Barcode,
+                        SubFieldName: CswNbtSubField.SubFieldName.Barcode,
+                        FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+
+                    List<CswNbtObjClassContainer> genXChildren = containerNode.GetChildren();
+                    _getFamilyView( ref view, generationXParent, genXChildren, generation + 1, maxGenerations, sourceContainerOCP, barcodeOCP );
+                }
+            }
         }
 
         #endregion
