@@ -38,7 +38,6 @@
                         <tel:RadWindow runat="Server" ID="MainDeleteDialog" Width="400" Height="300" ClientCallBackFunction="MainDelete_CallBack" />
                         <tel:RadWindow runat="Server" ID="MainAddDialog" Width="800" Height="600" ClientCallBackFunction="MainAdd_CallBack" />
                         <tel:RadWindow runat="Server" ID="RelationshipAddNodeDialog" Width="800" Height="600" ClientCallBackFunction="RelationshipAddNodeDialog_Callback" />
-                        <tel:RadWindow runat="Server" ID="WelcomeAddNodeDialog" Width="800" Height="600" ClientCallBackFunction="WelcomeAddNodeDialog_CallBack" />
                         <tel:RadWindow runat="Server" ID="MainEditDialog" Width="800" Height="600" ClientCallBackFunction="MainEdit_CallBack" OnClientClose="MainEditDialog_OnClientClose" />
                         <tel:RadWindow runat="Server" ID="AboutDialog" Width="600" Height="400" />
                         <tel:RadWindow runat="Server" ID="DeleteViewDialog" Width="400" Height="300" ClientCallBackFunction="DeleteView_CallBack" />
@@ -51,7 +50,6 @@
                         <tel:RadWindow runat="Server" ID="CopyNodeDialog" Width="400" Height="300" ClientCallBackFunction="CopyNode_CallBack" />
                         <tel:RadWindow runat="Server" ID="StatisticsDialog" Width="500" Height="300" ClientCallBackFunction="Statistics_CallBack" />
                         <tel:RadWindow runat="Server" ID="ConfigQuickLaunchDialog" Width="500" Height="450" ClientCallBackFunction="CswQuickLaunch_CallBack" />
-                        <tel:RadWindow runat="Server" ID="WelcomeAddComponentDialog" Width="500" Height="450" ClientCallBackFunction="WelcomeAddComponentDialog_Callback" />
                         <tel:RadWindow runat="Server" ID="SubscriptionsDialog" Width="600" Height="400" ClientCallBackFunction="Subscriptions_CallBack" />
                     </Windows>
                 </tel:RadWindowManager>

@@ -211,7 +211,7 @@ namespace ChemSW.Nbt
             }
         } // VisibilityUserId
 
-        // 13 - WelcomeText (defunct)
+        // 13 - LandingPageText (defunct)
         // 14 - RelatedViewIds (defunct)
 
         // 15 - ForMobile
@@ -361,8 +361,8 @@ namespace ChemSW.Nbt
                     VisibilityRoleId = new CswPrimaryKey( "nodes", CswConvert.ToInt32( Node.Attributes["visibilityroleid"].Value ) );
                 if( Node.Attributes["visibilityuserid"] != null && Node.Attributes["visibilityuserid"].Value != String.Empty )
                     VisibilityUserId = new CswPrimaryKey( "nodes", CswConvert.ToInt32( Node.Attributes["visibilityuserid"].Value ) );
-                //if( Node.Attributes["welcometext"] != null && Node.Attributes["welcometext"].Value != string.Empty )
-                //    WelcomeText = Node.Attributes["welcometext"].Value;
+                //if( Node.Attributes["landingpagetext"] != null && Node.Attributes["landingpagetext"].Value != string.Empty )
+                //    LandingPageText = Node.Attributes["landingpagetext"].Value;
                 //if( Node.Attributes["relatedviewids"] != null && Node.Attributes["relatedviewids"].Value != string.Empty )
                 //    RelatedViewIds = Node.Attributes["relatedviewids"].Value;
                 if( Node.Attributes["formobile"] != null )
@@ -590,9 +590,9 @@ namespace ChemSW.Nbt
                 VisibilityUserIdAttribute.Value = VisibilityUserId.PrimaryKey.ToString();
             RootXmlNode.Attributes.Append( VisibilityUserIdAttribute );
 
-            //XmlAttribute WelcomeTextAttribute = XmlDoc.CreateAttribute( "welcometext" );
-            //WelcomeTextAttribute.Value = WelcomeText;
-            //RootXmlNode.Attributes.Append( WelcomeTextAttribute );
+            //XmlAttribute LandingPageTextAttribute = XmlDoc.CreateAttribute( "landingpagetext" );
+            //LandingPageTextAttribute.Value = LandingPageText;
+            //RootXmlNode.Attributes.Append( LandingPageTextAttribute );
 
             //XmlAttribute RelatedViewIdsAttribute = XmlDoc.CreateAttribute( "relatedviewids" );
             //RelatedViewIdsAttribute.Value = RelatedViewIds;

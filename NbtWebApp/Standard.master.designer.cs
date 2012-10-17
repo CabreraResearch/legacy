@@ -94,15 +94,6 @@ namespace ChemSW.Nbt.WebPages {
         protected global::Telerik.Web.UI.RadWindow RelationshipAddNodeDialog;
         
         /// <summary>
-        /// WelcomeAddNodeDialog control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::Telerik.Web.UI.RadWindow WelcomeAddNodeDialog;
-        
-        /// <summary>
         /// MainEditDialog control.
         /// </summary>
         /// <remarks>
@@ -209,15 +200,6 @@ namespace ChemSW.Nbt.WebPages {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::Telerik.Web.UI.RadWindow ConfigQuickLaunchDialog;
-        
-        /// <summary>
-        /// WelcomeAddComponentDialog control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::Telerik.Web.UI.RadWindow WelcomeAddComponentDialog;
         
         /// <summary>
         /// SubscriptionsDialog control.
