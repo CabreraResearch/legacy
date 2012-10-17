@@ -47,6 +47,7 @@ namespace ChemSW.Nbt.Sched
         private CswNbtResources _CswNbtResources = null;
         private CswSchedItemTimingFactory _CswSchedItemTimingFactory = new CswSchedItemTimingFactory();
         private CswScheduleLogicNodes _CswScheduleLogicNodes = null;
+        private CswScheduleNodeUpdater _CswScheduleNodeUpdater;
 
         public void init( ICswResources RuleResources, CswScheduleLogicDetail CswScheduleLogicDetail )
         {
@@ -54,6 +55,7 @@ namespace ChemSW.Nbt.Sched
             _CswScheduleLogicDetail = CswScheduleLogicDetail;
             _CswScheduleLogicNodes = new CswScheduleLogicNodes( _CswNbtResources );
             _CswNbtResources.AuditContext = "Scheduler Task: " + RuleName;
+            _CswScheduleNodeUpdater = new CswScheduleNodeUpdater( _CswNbtResources );
         }//init() 
 
         public void threadCallBack()
@@ -84,30 +86,43 @@ namespace ChemSW.Nbt.Sched
                                 {
                                     if( false == CurrentMailReport.Type.Empty )
                                     {
-                                        DateTime ThisDueDateValue = CurrentMailReport.NextDueDate.DateTimeValue.Date;
-                                        DateTime InitialDueDateValue = CurrentMailReport.DueDateInterval.getStartDate().Date;
-                                        DateTime FinalDueDateValue = CurrentMailReport.FinalDueDate.DateTimeValue.Date;
+                                        DateTime ThisDueDateValue = CurrentMailReport.NextDueDate.DateTimeValue;
+                                        DateTime InitialDueDateValue = CurrentMailReport.DueDateInterval.getStartDate();
+                                        DateTime FinalDueDateValue = CurrentMailReport.FinalDueDate.DateTimeValue;
+                                        DateTime NowDateValue = DateTime.Now;
+                                        DateTime MinDateValue = DateTime.MinValue;
 
                                         // BZ 7866
                                         if( DateTime.MinValue != ThisDueDateValue )
                                         {
-                                            // BZ 7124 - set runtime
-                                            // Ignore runtime for hourly reports
-                                            if( CswRateInterval.RateIntervalType.Hourly != CurrentMailReport.DueDateInterval.RateInterval.RateType &&
-                                                CurrentMailReport.RunTime.DateTimeValue != DateTime.MinValue )
+                                            if( CswRateInterval.RateIntervalType.Hourly != CurrentMailReport.DueDateInterval.RateInterval.RateType )  // Ignore runtime for hourly reports
                                             {
-                                                ThisDueDateValue = ThisDueDateValue.AddTicks( CurrentMailReport.RunTime.DateTimeValue.TimeOfDay.Ticks );
+                                                // Trim times
+                                                ThisDueDateValue = ThisDueDateValue.Date;
+                                                InitialDueDateValue = InitialDueDateValue.Date;
+                                                FinalDueDateValue = FinalDueDateValue.Date;
+                                                NowDateValue = NowDateValue.Date;
+                                                MinDateValue = MinDateValue.Date;
+
+                                                // BZ 7124 - set runtime
+                                                if( CurrentMailReport.RunTime.DateTimeValue != DateTime.MinValue )
+                                                {
+                                                    ThisDueDateValue = ThisDueDateValue.AddTicks( CurrentMailReport.RunTime.DateTimeValue.TimeOfDay.Ticks );
+                                                }
                                             }
 
                                             // Note: Warning days makes no sense for mail reports
 
                                             // if we're within the initial and final due dates, but past the current due date (- warning days) and runtime
-                                            if( ( DateTime.Now.Date >= InitialDueDateValue ) &&
-                                                ( DateTime.Now.Date <= FinalDueDateValue || DateTime.MinValue.Date == FinalDueDateValue ) &&
-                                                ( DateTime.Now >= ThisDueDateValue ) )
+                                            if( ( NowDateValue >= InitialDueDateValue ) &&
+                                                ( NowDateValue <= FinalDueDateValue || MinDateValue == FinalDueDateValue ) &&
+                                                ( NowDateValue >= ThisDueDateValue ) )
                                             {
                                                 // Add to batch operation
                                                 MailReportIdsToRun.Add( CurrentMailReport.NodeId );
+
+                                                // Cycle the next due date so we don't make another batch op while this one is running
+                                                _CswScheduleNodeUpdater.update( CurrentMailReport.Node, string.Empty );
                                             }
                                         } // if( ThisDueDateValue != DateTime.MinValue )
 

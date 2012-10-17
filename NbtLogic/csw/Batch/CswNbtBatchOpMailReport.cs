@@ -17,13 +17,11 @@ namespace ChemSW.Nbt.Batch
     {
         private CswNbtResources _CswNbtResources;
         private NbtBatchOpName _BatchOpName = NbtBatchOpName.MailReport;
-        private CswScheduleNodeUpdater _CswScheduleNodeUpdater;
         private Int32 NodeLimit = 10;   // TODO: change me in Titania to use NodesProcessedPerIteration
 
         public CswNbtBatchOpMailReport( CswNbtResources CswNbtResources )
         {
             _CswNbtResources = CswNbtResources;
-            _CswScheduleNodeUpdater = new CswScheduleNodeUpdater( _CswNbtResources );
         }
 
         /// <summary>
@@ -82,10 +80,20 @@ namespace ChemSW.Nbt.Batch
                     BatchNode.start();
                     MailReportBatchData BatchData = new MailReportBatchData( _CswNbtResources, BatchNode.BatchData.Text );
 
-                    if( null != BatchData.CurrentMailReport && BatchData.RecipientIds.Count > 0 )
+                    if( null != BatchData.CurrentMailReport )
                     {
-                        processMailReport( BatchData );
-                        BatchData.CurrentMailReport.postChanges( false );
+                        if( BatchData.RecipientIds.Count > 0 )
+                        {
+                            processMailReport( BatchData );
+                            BatchData.CurrentMailReport.postChanges( false );
+                        }
+                        else
+                        {
+                            // case 27720 - clear existing Mail Report Event records for this mail report
+                            BatchData.CurrentMailReport.ClearNodesToReport();
+                            BatchData.CurrentMailReport.LastProcessed.DateTimeValue = DateTime.Now;
+                            BatchData.CurrentMailReportId = string.Empty;
+                        }
                     }
                     else if( BatchData.MailReportNodeIds.Count > 0 )
                     {
@@ -197,6 +205,7 @@ namespace ChemSW.Nbt.Batch
                 {
                     _CurrentMailReportId = value;
                     _BatchData["currentmailreportid"] = _CurrentMailReportId;
+                    _CurrentMailReport = null;
                 }
             } // CurrentMailReportId
 
@@ -205,7 +214,7 @@ namespace ChemSW.Nbt.Batch
             {
                 get
                 {
-                    if( null == _CurrentMailReport )
+                    if( null == _CurrentMailReport && false == String.IsNullOrEmpty( CurrentMailReportId ) )
                     {
                         CswPrimaryKey MailReportNodePk = new CswPrimaryKey();
                         MailReportNodePk.FromString( CurrentMailReportId );
@@ -268,13 +277,15 @@ namespace ChemSW.Nbt.Batch
 
         #endregion MailReportBatchData
 
+
+
         #region Processing Mail Reports
 
         private void processMailReport( MailReportBatchData BatchData )
         {
             CswNbtObjClassMailReport CurrentMailReport = BatchData.CurrentMailReport;
 
-            string EmailReportStatusMessage = string.Empty; //all conditions must give StatusMessage a value!
+            string EmailReportStatusMessage = string.Empty;
 
             if( false == CurrentMailReport.Recipients.Empty )
             {
@@ -390,12 +401,9 @@ namespace ChemSW.Nbt.Batch
 
                 BatchData.RecipientIds = NewRecipientIds;
 
+                CurrentMailReport.RunStatus.AddComment( EmailReportStatusMessage );
+                CurrentMailReport.postChanges( false );
             }//if( !CurrentMailReport.Recipients.Empty )
-
-            // case 27720 - clear existing Mail Report Event records for this mail report
-            CurrentMailReport.ClearNodesToReport();
-            CurrentMailReport.LastProcessed.DateTimeValue = DateTime.Now;
-            _CswScheduleNodeUpdater.update( CurrentMailReport.Node, EmailReportStatusMessage );
         }//processMailReport()
 
         private string _sendMailMessage( CswNbtObjClassMailReport CurrentMailReport, string MailReportMessage, string LastName, string FirstName, string UserName, string Subject, string CurrentEmailAddress, DataTable ReportTable )
