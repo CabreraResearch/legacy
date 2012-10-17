@@ -6,7 +6,7 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Schema Update for case 27670
     /// </summary>
-    public class CswUpdateSchemaCase27670 : CswUpdateSchemaTo
+    public class CswUpdateSchema_01S_Case27670 : CswUpdateSchemaTo
     {
         /// <summary>
         /// Update logic
@@ -36,6 +36,6 @@ namespace ChemSW.Nbt.Schema
             
         }//Update()
 
-    }//class CswUpdateSchemaCase27670
+    }//class CswUpdateSchema_01S_Case27670
 
 }//namespace ChemSW.Nbt.Schema

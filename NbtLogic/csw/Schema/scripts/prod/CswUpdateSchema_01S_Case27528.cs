@@ -7,7 +7,7 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Schema Update for case 27528
     /// </summary>
-    public class CswUpdateSchemaCase27528 : CswUpdateSchemaTo
+    public class CswUpdateSchema_01S_Case27528 : CswUpdateSchemaTo
     {
         public override void update()
         {
@@ -129,6 +129,6 @@ namespace ChemSW.Nbt.Schema
             InvGrpPermNode.postChanges( false );
         }
 
-    }//class CswUpdateSchemaCase27528
+    }//class CswUpdateSchema_01S_Case27528
 
 }//namespace ChemSW.Nbt.Schema
