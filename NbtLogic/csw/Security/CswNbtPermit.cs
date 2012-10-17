@@ -96,7 +96,7 @@ namespace ChemSW.Nbt.Security
 
             public bool shouldPermissionCheckProceed()
             {
-                return ( ( null != NodeType ) && ( null != User ) && ( null != Role ) && ( true == NoExceptionCases ) );
+                return ( ( null != NodeType ) && ( null != Role ) );
             }
 
             public ICswNbtUser User
@@ -113,7 +113,7 @@ namespace ChemSW.Nbt.Security
             {
                 get
                 {
-                    _CswNbtObjClassRole = _CswNbtResources.Nodes[User.RoleId];
+                    //                    _CswNbtObjClassRole = _CswNbtResources.Nodes[User.RoleId];
 
 
                     return ( _CswNbtObjClassRole );
@@ -201,7 +201,8 @@ namespace ChemSW.Nbt.Security
             {
                 if( null != _CswNbtResources.CurrentNbtUser )
                 {
-                    RoleId = _CswNbtResources.CurrentNbtUser.RoleId;
+                    CswNbtUser = _CswNbtResources.CurrentNbtUser;
+                    RoleId = CswNbtUser.RoleId;
                 }
             }
 
