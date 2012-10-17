@@ -1694,6 +1694,14 @@ namespace ChemSW.Nbt.Schema
             return ( null != AdminNode && ( (CswNbtObjClassUser) AdminNode ).LastLogin.DateTimeValue.Date == new DateTime( 2011, 12, 9 ) );
         }
 
+        /// <summary>
+        /// Create a Rate Interval instance
+        /// </summary>
+        public CswRateInterval makeRateInterval()
+        {
+            return new CswRateInterval( _CswNbtResources );
+        }
+
     }//class CswNbtSchemaModTrnsctn
 
 }//ChemSW.Nbt.Schema

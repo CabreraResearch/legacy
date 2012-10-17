@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Data;
 using ChemSW.Core;
 using ChemSW.DB;
@@ -18,9 +19,9 @@ namespace ChemSW.Nbt.Sched
         }//ctor
 
 
-        private List<CswNbtNode> _getRawNodes( NbtScheduleRuleNames NbtScheduleRuleName )
+        private Collection<CswNbtNode> _getRawNodes( NbtScheduleRuleNames NbtScheduleRuleName )
         {
-            List<CswNbtNode> ReturnVal = new List<CswNbtNode>();
+            Collection<CswNbtNode> ReturnVal = new Collection<CswNbtNode>();
 
             CswStaticSelect CswTableSelect = _CswNbtResources.makeCswStaticSelect( "query for s4: " + NbtScheduleRuleName.ToString(), NbtScheduleRuleName.ToString() );
             DataTable DataTable = CswTableSelect.getTable();
@@ -42,11 +43,11 @@ namespace ChemSW.Nbt.Sched
 
         }//getRawNodes() 
 
-        public List<CswNbtObjClassInspectionDesign> getInspectonDesigns()
+        public Collection<CswNbtObjClassInspectionDesign> getInspectonDesigns()
         {
-            List<CswNbtObjClassInspectionDesign> ReturnVal = new List<CswNbtObjClassInspectionDesign>();
+            Collection<CswNbtObjClassInspectionDesign> ReturnVal = new Collection<CswNbtObjClassInspectionDesign>();
 
-            List<CswNbtNode> RawNodes = _getRawNodes( NbtScheduleRuleNames.UpdtInspection );
+            Collection<CswNbtNode> RawNodes = _getRawNodes( NbtScheduleRuleNames.UpdtInspection );
             foreach( CswNbtNode CurrentRawNode in RawNodes )
             {
                 ReturnVal.Add( (CswNbtObjClassInspectionDesign) CurrentRawNode );
@@ -56,11 +57,11 @@ namespace ChemSW.Nbt.Sched
 
         }//getInspectons()
 
-        public List<CswNbtObjClassMailReport> getMailReports()
+        public Collection<CswNbtObjClassMailReport> getMailReports()
         {
-            List<CswNbtObjClassMailReport> ReturnVal = new List<CswNbtObjClassMailReport>();
+            Collection<CswNbtObjClassMailReport> ReturnVal = new Collection<CswNbtObjClassMailReport>();
 
-            List<CswNbtNode> RawNodes = _getRawNodes( NbtScheduleRuleNames.GenEmailRpt );
+            Collection<CswNbtNode> RawNodes = _getRawNodes( NbtScheduleRuleNames.GenEmailRpt );
             foreach( CswNbtNode CurrentRawNode in RawNodes )
             {
                 ReturnVal.Add( (CswNbtObjClassMailReport) CurrentRawNode );
@@ -70,11 +71,11 @@ namespace ChemSW.Nbt.Sched
 
         }//getMailReports()
 
-        public List<CswNbtObjClassGenerator> getGenerators()
+        public Collection<CswNbtObjClassGenerator> getGenerators()
         {
-            List<CswNbtObjClassGenerator> ReturnVal = new List<CswNbtObjClassGenerator>();
+            Collection<CswNbtObjClassGenerator> ReturnVal = new Collection<CswNbtObjClassGenerator>();
 
-            List<CswNbtNode> RawNodes = _getRawNodes( NbtScheduleRuleNames.GenNode );
+            Collection<CswNbtNode> RawNodes = _getRawNodes( NbtScheduleRuleNames.GenNode );
             foreach( CswNbtNode CurrentRawNode in RawNodes )
             {
                 ReturnVal.Add( (CswNbtObjClassGenerator) CurrentRawNode );

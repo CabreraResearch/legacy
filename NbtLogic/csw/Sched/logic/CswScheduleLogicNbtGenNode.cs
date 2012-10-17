@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.MtSched.Core;
@@ -66,7 +67,7 @@ namespace ChemSW.Nbt.Sched
                         GeneratorLimit = 1;
                     }
 
-                    List<CswNbtObjClassGenerator> ObjectGenerators = _CswScheduleLogicNodes.getGenerators();
+                    Collection<CswNbtObjClassGenerator> ObjectGenerators = _CswScheduleLogicNodes.getGenerators();
 
                     Int32 TotalGeneratorsProcessed = 0;
                     string GeneratorDescriptions = string.Empty;

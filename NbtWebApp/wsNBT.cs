@@ -793,7 +793,10 @@ namespace ChemSW.Nbt.WebServices
                 {
                     var ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources, _CswNbtStatisticsEvents );
                     CswNbtView View = _getView( ViewId );
-                    ReturnVal = ws.getDefaultContent( View );
+                    if( null != View )
+                    {
+                        ReturnVal = ws.getDefaultContent( View );
+                    }
                 }
 
                 _deInitResources();
@@ -1382,7 +1385,7 @@ namespace ChemSW.Nbt.WebServices
                     {
                         CswPrimaryKey NodeId = _getNodeId( NodePk );
                         CswNbtNode Node = _CswNbtResources.Nodes[NodeId];
-                        CswNbtView View = Node.getNodeType().CreateDefaultView();
+                        CswNbtView View = Node.getNodeType().CreateDefaultView( false );
                         View.Root.ChildRelationships[0].NodeIdsToFilterIn.Add( NodeId );
 
                         var ws = new CswNbtWebServiceTree( _CswNbtResources, View, IdPrefix );
