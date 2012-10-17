@@ -78,6 +78,10 @@
     <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.4.5.4\lib\net40\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="SMTP.Net, Version=3.0.0.3, Culture=neutral, PublicKeyToken=986a9aa31056680b">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\ThirdParty\SMTP\SMTP.Net.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
@@ -124,7 +128,11 @@
     <Compile Include="csw\ObjClasses\CswNbtObjClassRegulatoryList.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassFeedback.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassInventoryLevel.cs" />
+    <Compile Include="csw\PropTypes\CswCheckBoxArrayOptions.cs" />
     <Compile Include="csw\Schema\scripts\infr\RunBeforeEveryExecutionOfUpdater_01b.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase27720_part4.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase27720_part3.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase27720_part2.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase27578_part2.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase27904.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase27800.cs" />
@@ -405,7 +413,6 @@
     <Compile Include="csw\Sched\logic\CswScheduleLogicNbtUpdtPropVals.cs" />
     <Compile Include="csw\Sched\logic\CswScheduleLogicNbtUpdtMTBF.cs" />
     <Compile Include="csw\Sched\logic\CswScheduleLogicNbtGenEmailRpt.cs" />
-    <Compile Include="csw\Sched\logic\CswNbtMailReportStatus.cs" />
     <Compile Include="csw\Search\CswNbtSearchFilterWrapper.cs" />
     <Compile Include="csw\Tree\CswNbtTreeLoaderFromSearchByLevel.cs" />
     <Compile Include="csw\Search\CswNbtSearch.cs" />

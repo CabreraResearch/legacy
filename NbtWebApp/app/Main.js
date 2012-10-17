@@ -163,6 +163,13 @@ window.initMain = window.initMain || function (undefined) {
     function handleQueryString() {
         var ret = false;
         var qs = Csw.queryString();
+
+        if (Csw.bool(qs.debug) || 'dev.html' === Csw.string(qs.pageName).toLowerCase()) {
+            Csw.clientSession.enableDebug();
+            Csw.cookie.set(Csw.cookie.cookieNames.LogoutPath, 'Dev.html');
+            Csw.setGlobalProp('homeUrl', 'Dev.html');
+        }
+
         if (false == Csw.isNullOrEmpty(qs.action)) {
             var actopts = {};
             Csw.extend(actopts, qs);
@@ -188,9 +195,15 @@ window.initMain = window.initMain || function (undefined) {
                 setView(qs.viewid, Csw.string(qs.viewmode));
             }
 
+        } else if (false == Csw.isNullOrEmpty(qs.nodeid)) {
+            handleItemSelect({
+                type: 'view',
+                mode: 'tree',
+                linktype: 'link',
+                nodeid: qs.nodeid
+            });
+
         } else if (false == Csw.isNullOrEmpty(qs.reportid)) {
-            //Csw.clientState.setCurrentReport(qs.reportid);
-            //Csw.window.location("Main.html");
             handleReport(qs.reportid);
             ret = true;  // load the current context (probably the welcome page) below the report
 
@@ -200,12 +213,6 @@ window.initMain = window.initMain || function (undefined) {
 
         } else {
             ret = true;
-        }
-
-        if (Csw.bool(qs.debug) || 'dev.html' === Csw.string(qs.pageName).toLowerCase()) {
-            Csw.clientSession.enableDebug();
-            Csw.cookie.set(Csw.cookie.cookieNames.LogoutPath, 'Dev.html');
-            Csw.setGlobalProp('homeUrl', 'Dev.html');
         }
 
         return ret;
@@ -381,16 +388,16 @@ window.initMain = window.initMain || function (undefined) {
 
         var type = Csw.string(o.type).toLowerCase();
 
-        function itemIsSupported() {
-            var ret = (linkType === 'search' ||
-                false === Csw.isNullOrEmpty(o.itemid) ||
-                type === 'action' ||
-                type === 'search' ||
-                type === 'report');
-            return ret;
-        }
+//        function itemIsSupported() {
+//            var ret = (linkType === 'search' ||
+//                //false === Csw.isNullOrEmpty(o.itemid) ||
+//                type === 'action' ||
+//                type === 'search' ||
+//                type === 'report');
+//            return ret;
+//        }
 
-        if (Csw.clientChanges.manuallyCheckChanges() && itemIsSupported()) {
+        if (Csw.clientChanges.manuallyCheckChanges()) { // && itemIsSupported()) {
 
             if (false === Csw.isNullOrEmpty(type)) {
                 switch (type) {

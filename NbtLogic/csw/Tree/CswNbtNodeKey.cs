@@ -311,6 +311,7 @@ namespace ChemSW.Nbt
             set
             {
                 _NodeCountPath = value;
+                _NodeCountPath.OnChange += new CswDelimitedString.DelimitedStringChangeHandler( _NodeCountPath_OnChange );
                 _NodeCountPath_OnChange();
             }
         }
