@@ -111,6 +111,7 @@
                     Csw.subscribe(Csw.enums.events.CswNodeDelete, handle);
                 }
                 tabContentDiv.data('canEditLayout', canEditLayout);
+                tabContentDiv.data('tabid', tabid);
                 return tabContentDiv;
             };
 
@@ -214,6 +215,7 @@
                                     tabdivs[tabdivs.length] = tabDiv;
                                 }
                                 tabDiv = tabDiv || tabdivs[tabdivs.length - 1];
+                                tabDiv.data('tabid', thisTabId);
                                 tabUl = tabUl || tabDiv.ul();
                                 tabUl.li().a({ href: '#' + thisTabId, text: thisTab.name });
                                 cswPrivate.makeTabContentDiv(tabDiv, thisTabId, thisTab.canEditLayout);
@@ -233,7 +235,7 @@
                                     select: function (event, ui) {
                                         var ret = false;
                                         var selectTabContentDiv = thisTabDiv.children('div:eq(' + Csw.number(ui.index) + ')');
-                                        var selectTabid = selectTabContentDiv.getId();
+                                        var selectTabid = selectTabContentDiv.data('tabid');
                                         if (Csw.tryExec(cswPrivate.onBeforeTabSelect, selectedtabid)) {
                                             if (false === Csw.isNullOrEmpty(selectTabContentDiv)) {
                                                 cswPrivate.form.empty();
@@ -248,7 +250,7 @@
                                 }); // tabs
                                 var eachTabContentDiv = thisTabDiv.children('div:eq(' + Csw.number(thisTabDiv.tabs('option', 'selected')) + ')');
                                 if (eachTabContentDiv.isValid) {
-                                    var selectedtabid = eachTabContentDiv.getId();
+                                    var selectedtabid = eachTabContentDiv.data('tabid');
                                     cswPrivate.getProps(eachTabContentDiv, selectedtabid);
                                     Csw.tryExec(cswPrivate.onTabSelect, selectedtabid);
                                 }

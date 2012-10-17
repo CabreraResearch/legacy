@@ -59,7 +59,9 @@
             ///<returns type="Csw.dom">Object representing a Csw.dom</returns>
             'use strict';
 
-            var cswPrivate = {};
+            var cswPrivate = {
+                data: {}
+            };
             var cswPublic = options || {
                 parentId: ''
             };
@@ -120,6 +122,8 @@
                 }
                 return ret;
             };
+
+            cswPublic[0] = cswPublic.$[0];
 
             cswPublic.addClass = function (name) {
                 /// <summary>Add a CSS class to an element.</summary>
@@ -238,23 +242,66 @@
                 return cswPublic;
             };
 
+            
+            cswPrivate.getData = function(propName) {
+            	/// <summary>
+            	/// Get the value of a data prop from an Element (first from the DOM, then from memory, then from clientDb)
+            	/// </summary>
+                var ret = null;
+                if (cswPrivate.isControlStillValid() && 
+                    false === Csw.isNullOrEmpty(propName)) {
+                    
+                    if(cswPublic[0] && cswPublic[0].dataset && cswPublic[0].dataset[propName]) {
+                        ret = cswPublic[0].dataset.propName;
+                    }
+                    if(Csw.isNullOrEmpty(ret)) {
+                        ret = cswPrivate.data[propName] || cswPublic.$.data(propName);
+                    }
+                    //We can probably come back and delete this
+                    if(Csw.isNullOrEmpty(ret)) {
+                        ret = Csw.clientDb.getItem(propName + '_control_data_' + cswPrivate.id);
+                    }
+                }
+                return ret;
+            };
+
+            cswPrivate.setData = function(propName, value) {
+                /// <summary>
+                /// Set the value of a data prop from an Element (first to the DOM, then to memory, then to clientDb)
+                /// </summary>
+                var ret = null;
+                if (cswPrivate.isControlStillValid() && 
+                    false === Csw.isNullOrEmpty(propName)) {
+                    
+                    ret = value;
+                    if(cswPublic[0] && cswPublic[0].dataset) {
+                        cswPublic[0].dataset[propName] = value;
+                        //keep it in memory too, in case we lose a handle on the DOM
+                        cswPrivate.data[propName] = value;
+                    } else {
+                        //No HTML5 for us, keep it in memory
+                        cswPrivate.data[propName] = value;
+                        cswPublic.$.data(propName, val);
+                    }
+                }
+                return ret;
+            };
+
             cswPublic.data = function (prop, val) {
                 /// <summary>Store property data on the control.</summary>
                 /// <returns type="Object">All properties, a single property, or the control if defining a property (for chaining).</returns> 
                 var ret = '';
                 if (cswPrivate.isControlStillValid()) {
-                    var _internal = Csw.clientDb.getItem('control_data_' + cswPrivate.id) || {};
                     switch (arguments.length) {
-                        case 0:
-                            ret = _internal || cswPublic.$.data();
-                            break;
+                        //this isn't a valid use case
+                        //case 0:
+                        //    ret = _internal || cswPublic.$.data();
+                        //    break;
                         case 1:
-                            ret = _internal[prop] || cswPublic.$.data(prop);
+                            ret = cswPrivate.getData(prop);
                             break;
                         case 2:
-                            _internal[prop] = val;
-                            cswPublic.$.data(prop, val);
-                            Csw.clientDb.setItem('control_data_' + cswPrivate.id, _internal);
+                            cswPrivate.setData(prop, val);
                             ret = cswPublic;
                             break;
                     }
