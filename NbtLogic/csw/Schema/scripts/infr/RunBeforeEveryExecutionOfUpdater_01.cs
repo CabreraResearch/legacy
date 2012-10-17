@@ -1,5 +1,6 @@
 
 using ChemSW.Nbt.csw.Dev;
+using System;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -9,6 +10,32 @@ namespace ChemSW.Nbt.Schema
     public class RunBeforeEveryExecutionOfUpdater_01 : CswUpdateSchemaTo
     {
         public static string Title = "Pre-Script: DDL";
+
+        private CswDeveloper _Author = CswDeveloper.NBT;
+
+        public override CswDeveloper Author
+        {
+            get { return _Author; }
+        }
+
+        private Int32 _CaseNo = 0;
+
+        public override int CaseNo
+        {
+            get { return _CaseNo; }
+        }
+
+        private void _acceptBlame( CswDeveloper BlameMe, Int32 BlameCaseNo )
+        {
+            _Author = BlameMe;
+            _CaseNo = BlameCaseNo;
+        }
+
+        private void _resetBlame()
+        {
+            _Author = CswDeveloper.NBT;
+            _CaseNo = 0;
+        }
 
         public override void update()
         {
@@ -49,19 +76,45 @@ namespace ChemSW.Nbt.Schema
 
             #region TITANIA
 
+            _changeWelcomeTableToLandingPageTable();
+
             #endregion TITANIA
 
+        }//Update()
+
+        private void _changeWelcomeTableToLandingPageTable()
+        {
+            _acceptBlame( CswDeveloper.BV, 27881 );
+
+            if( false == _CswNbtSchemaModTrnsctn.isTableDefined( "landingpage" ) && _CswNbtSchemaModTrnsctn.isTableDefined( "welcome" ) )
+            {
+                _CswNbtSchemaModTrnsctn.copyTable( "welcome", "landingpage", false );
+                _CswNbtSchemaModTrnsctn.dropTable( "welcome" );
+            }
+            if( _CswNbtSchemaModTrnsctn.isTableDefined( "landingpage" ) )
+            {
+                if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( "landingpage", "for_actionid" ) )
+                {
+                    _CswNbtSchemaModTrnsctn.addLongColumn( "landingpage", "for_actionid", "Indicates the action to which this landing page is associated", false, false );
+                }
+                _renameLandingPageColumn( "welcomeid", "landingpageid" );
+                _renameLandingPageColumn( "roleid", "for_roleid" );
+                _renameLandingPageColumn( "nodeviewid", "to_nodeviewid" );
+                _renameLandingPageColumn( "nodetypeid", "to_nodetypeid" );
+                _renameLandingPageColumn( "actionid", "to_actionid" );
+                _renameLandingPageColumn( "reportid", "to_reportid" );
+            }
+
+            _resetBlame();
         }
 
-        public override CswDeveloper Author
+        private void _renameLandingPageColumn( string OldName, string NewName )
         {
-            get { return CswDeveloper.NBT; }
+            if( _CswNbtSchemaModTrnsctn.isColumnDefined( "landingpage", OldName ) && false == _CswNbtSchemaModTrnsctn.isColumnDefined( "landingpage", NewName ) )
+            {
+                _CswNbtSchemaModTrnsctn.renameColumn( "landingpage", OldName, NewName );
+            }
         }
-        public override int CaseNo
-        {
-            get { return 0; }
-        }
-        //Update()
 
     }//class RunBeforeEveryExecutionOfUpdater_01
 
