@@ -438,7 +438,7 @@
     <Compile Include="csw\Tree\CswNbtTreeLoaderFromSearchByLevel.cs" />
     <Compile Include="csw\Search\CswNbtSearch.cs" />
     <Compile Include="csw\View\CswNbtViewBuilder.cs" />
-    <Compile Include="csw\Welcome\CswNbtWelcomeTable.cs" />
+    <Compile Include="csw\Welcome\CswNbtLandingPageTable.cs" />
     <Compile Include="csw\Schema\scripts\CswSchemaScriptsProd.cs" />
     <Compile Include="csw\Schema\scripts\CswSchemaScriptsTest.cs" />
     <Compile Include="csw\Schema\scripts\ICswSchemaScripts.cs" />

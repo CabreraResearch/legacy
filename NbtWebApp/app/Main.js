@@ -192,7 +192,7 @@ window.initMain = window.initMain || function (undefined) {
             //Csw.clientState.setCurrentReport(qs.reportid);
             //Csw.window.location("Main.html");
             handleReport(qs.reportid);
-            ret = true;  // load the current context (probably the welcome page) below the report
+            ret = true;  // load the current context (probably the welcome landing page) below the report
 
         } else if (false == Csw.isNullOrEmpty(qs.clear)) {
             Csw.clientState.clearCurrent();
@@ -274,7 +274,7 @@ window.initMain = window.initMain || function (undefined) {
                                 itemid: current.searchid
                             });
                         } else {
-                            refreshWelcome();
+                            refreshWelcomeLandingPage();
                         }
                     };
                 } 
@@ -337,23 +337,24 @@ window.initMain = window.initMain || function (undefined) {
         clear(opts);
     });
 
-    function refreshWelcome() {
+    function refreshWelcomeLandingPage() {
         clear({ all: true });
 
         Csw.layouts.landingpage(Csw.main.centerBottomDiv, {
             ID: 'welcomeLandingPage',
             Title: '',
             onLinkClick: handleItemSelect,
-            onAddClick: function (nodetypeid) {
+            onAddClick: function (itemData) {
                 $.CswDialog('AddNodeDialog', {
-                    'nodetypeid': nodetypeid,
-                    'onAddNode': function (nodeid, cswnbtnodekey) {
+                    text: itemData.text,
+                    nodetypeid: itemData.nodetypeid,
+                    onAddNode: function (nodeid, cswnbtnodekey) {
                         clear({ all: true });
                         refreshNodesTree({ 'nodeid': nodeid, 'cswnbtnodekey': cswnbtnodekey, 'IncludeNodeRequired': true });
                     }
                 });
             },
-            onAddComponent: refreshWelcome,
+            onAddComponent: refreshWelcomeLandingPage,
             actionData: { 
                 RoleId: ''
             }
@@ -363,14 +364,14 @@ window.initMain = window.initMain || function (undefined) {
         refreshViewSelect();
     }
 
-    // refreshWelcome()
+    // refreshWelcomeLandingPage()
 
     function handleItemSelect(options) {
         //if (debugOn()) Csw.debug.log('Main.handleItemSelect()');
         var o = {
             type: 'view', // Action, Report, View, Search
             mode: 'tree', // Grid, Tree, List
-            linktype: 'link', // WelcomeComponentType: Link, Search, Text, Add
+            linktype: 'link', // LandingPageComponentType: Link, Search, Text, Add
             itemid: '',
             name: '',
             url: '',
@@ -900,7 +901,7 @@ window.initMain = window.initMain || function (undefined) {
                         });
                         break;
                     default:
-                        refreshWelcome();
+                        refreshWelcomeLandingPage();
                         break;
                 } // switch
             } // if (false === Csw.isNullOrEmpty(o.searchid))
@@ -1046,6 +1047,16 @@ window.initMain = window.initMain || function (undefined) {
 //                            ID: 'createMaterialLandingPage',
 //                            Title: actionData.title,
 //                            onLinkClick: handleItemSelect,
+                //            onAddClick: function (nodetypeid) {
+                //                $.CswDialog('AddNodeDialog', {
+                //                    'nodetypeid': nodetypeid,
+                //                    'onAddNode': function (nodeid, cswnbtnodekey) {
+                //                        clear({ all: true });
+                //                        refreshNodesTree({ 'nodeid': nodeid, 'cswnbtnodekey': cswnbtnodekey, 'IncludeNodeRequired': true });
+                //                    }
+                //                });
+                //            },
+                //            onAddComponent: refreshWelcomeLandingPage,
 //                            actionData: actionData
 //                        });
 //                        refreshMainMenu();//Do we need these lines?

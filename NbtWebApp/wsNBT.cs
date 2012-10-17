@@ -21,7 +21,7 @@ using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Security;
 using ChemSW.Nbt.ServiceDrivers;
 using ChemSW.Nbt.Statistics;
-using ChemSW.Nbt.Welcome;
+using ChemSW.Nbt.LandingPage;
 using ChemSW.Security;
 using ChemSW.Session;
 using ChemSW.WebSvc;
@@ -3353,12 +3353,12 @@ namespace ChemSW.Nbt.WebServices
 
         #endregion Node DML
 
-        #region Welcome Region
+        #region LandingPage Region
 
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string getWelcomeItems( string RoleId )
+        public string getLandingPageItems( string RoleId )
         {
             JObject ReturnVal = new JObject();
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
@@ -3370,15 +3370,15 @@ namespace ChemSW.Nbt.WebServices
                 if( AuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
 
-                    var ws = new CswNbtWebServiceWelcomeItems( _CswNbtResources );
-                    // Only administrators can get welcome content for other roles
+                    var ws = new CswNbtWebServiceLandingPageItems( _CswNbtResources );
+                    // Only administrators can get LandingPage content for other roles
                     if( RoleId != string.Empty && _CswNbtResources.CurrentNbtUser.IsAdministrator() )
                     {
-                        ReturnVal = ws.GetWelcomeItems( RoleId );
+                        ReturnVal = ws.GetLandingPageItems( RoleId );
                     }
                     else
                     {
-                        ReturnVal = ws.GetWelcomeItems( _CswNbtResources.CurrentNbtUser.RoleId.ToString() );
+                        ReturnVal = ws.GetLandingPageItems( _CswNbtResources.CurrentNbtUser.RoleId.ToString() );
                     }
                 }
 
@@ -3396,11 +3396,11 @@ namespace ChemSW.Nbt.WebServices
             return ReturnVal.ToString();
 
 
-        } // getWelcomeItems()
+        } // getLandingPageItems()
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string getWelcomeButtonIconList()
+        public string getLandingPageButtonIconList()
         {
             JObject ReturnVal = new JObject();
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
@@ -3412,7 +3412,7 @@ namespace ChemSW.Nbt.WebServices
                 if( AuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
 
-                    var ws = new CswNbtWebServiceWelcomeItems( _CswNbtResources );
+                    var ws = new CswNbtWebServiceLandingPageItems( _CswNbtResources );
                     ReturnVal = ws.getButtonIconList();
                 }
 
@@ -3428,11 +3428,11 @@ namespace ChemSW.Nbt.WebServices
 
             return ReturnVal.ToString();
 
-        } // getWelcomeButtonIconList()
+        } // getLandingPageButtonIconList()
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string addWelcomeItem( string RoleId, string Type, string ViewType, string ViewValue, string NodeTypeId, string Text, string IconFileName )
+        public string addLandingPageItem( string RoleId, string Type, string ViewType, string ViewValue, string NodeTypeId, string Text, string IconFileName )
         {
             JObject ReturnVal = new JObject();
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
@@ -3444,16 +3444,16 @@ namespace ChemSW.Nbt.WebServices
                 if( AuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
 
-                    CswNbtWebServiceWelcomeItems ws = new CswNbtWebServiceWelcomeItems( _CswNbtResources );
-                    // Only administrators can add welcome content to other roles
+                    CswNbtWebServiceLandingPageItems ws = new CswNbtWebServiceLandingPageItems( _CswNbtResources );
+                    // Only administrators can add LandingPage content to other roles
                     string UseRoleId = _CswNbtResources.CurrentNbtUser.RoleId.ToString();
                     if( RoleId != string.Empty && _CswNbtResources.CurrentNbtUser.IsAdministrator() )
                         UseRoleId = RoleId;
-                    CswNbtWelcomeTable.WelcomeComponentType ComponentType;
+                    CswNbtLandingPageTable.LandingPageComponentType ComponentType;
                     Enum.TryParse( Type, true, out ComponentType );
                     CswNbtView.ViewType RealViewType = (CswNbtView.ViewType) ViewType;
                     //Enum.TryParse( ViewType, true, out RealViewType );
-                    ws.AddWelcomeItem( ComponentType, RealViewType, ViewValue, CswConvert.ToInt32( NodeTypeId ), Text, Int32.MinValue, Int32.MinValue, IconFileName, UseRoleId );
+                    ws.AddLandingPageItem( ComponentType, RealViewType, ViewValue, CswConvert.ToInt32( NodeTypeId ), Text, Int32.MinValue, Int32.MinValue, IconFileName, UseRoleId );
                     ReturnVal.Add( new JProperty( "Succeeded", true ) );
                 }
 
@@ -3468,11 +3468,11 @@ namespace ChemSW.Nbt.WebServices
 
             return ReturnVal.ToString();
 
-        } // addWelcomeItem()
+        } // addLandingPageItem()
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string deleteWelcomeItem( string RoleId, string WelcomeId )
+        public string deleteLandingPageItem( string RoleId, string LandingPageId )
         {
             bool ret = false;
             JObject ReturnVal = new JObject();
@@ -3484,12 +3484,12 @@ namespace ChemSW.Nbt.WebServices
 
                 if( AuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
-                    CswNbtWebServiceWelcomeItems ws = new CswNbtWebServiceWelcomeItems( _CswNbtResources );
-                    // Only administrators can add welcome content to other roles
+                    CswNbtWebServiceLandingPageItems ws = new CswNbtWebServiceLandingPageItems( _CswNbtResources );
+                    // Only administrators can add LandingPage content to other roles
                     string UseRoleId = _CswNbtResources.CurrentNbtUser.RoleId.ToString();
                     if( RoleId != string.Empty && _CswNbtResources.CurrentNbtUser.IsAdministrator() )
                         UseRoleId = RoleId;
-                    ret = ws.DeleteWelcomeItem( UseRoleId, CswConvert.ToInt32( WelcomeId ) );
+                    ret = ws.DeleteLandingPageItem( UseRoleId, CswConvert.ToInt32( LandingPageId ) );
                     //ReturnVal = "{ \"Succeeded\": \"" + ret.ToString().ToLower() + "\" }";
                     ReturnVal.Add( "Succeeded", ret );
                 }
@@ -3505,13 +3505,13 @@ namespace ChemSW.Nbt.WebServices
 
             return ReturnVal.ToString();
 
-        } // deleteWelcomeItem()
+        } // deleteLandingPageItem()
 
 
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string moveWelcomeItems( string RoleId, string WelcomeId, string NewRow, string NewColumn )
+        public string moveLandingPageItems( string RoleId, string LandingPageId, string NewRow, string NewColumn )
         {
             bool ret = false;
             //string ReturnVal = string.Empty;
@@ -3524,12 +3524,12 @@ namespace ChemSW.Nbt.WebServices
 
                 if( AuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
-                    CswNbtWebServiceWelcomeItems ws = new CswNbtWebServiceWelcomeItems( _CswNbtResources );
-                    // Only administrators can move welcome content for other roles
+                    CswNbtWebServiceLandingPageItems ws = new CswNbtWebServiceLandingPageItems( _CswNbtResources );
+                    // Only administrators can move LandingPage content for other roles
                     string UseRoleId = _CswNbtResources.CurrentNbtUser.RoleId.ToString();
                     if( RoleId != string.Empty && _CswNbtResources.CurrentNbtUser.IsAdministrator() )
                         UseRoleId = RoleId;
-                    ret = ws.MoveWelcomeItems( UseRoleId, CswConvert.ToInt32( WelcomeId ), CswConvert.ToInt32( NewRow ), CswConvert.ToInt32( NewColumn ) );
+                    ret = ws.MoveLandingPageItems( UseRoleId, CswConvert.ToInt32( LandingPageId ), CswConvert.ToInt32( NewRow ), CswConvert.ToInt32( NewColumn ) );
                     //ReturnVal = "{ \"Succeeded\": \"" + ret.ToString().ToLower() + "\" }";
                     ReturnVal.Add( "Succeeded", ret );
                 }
@@ -3545,9 +3545,9 @@ namespace ChemSW.Nbt.WebServices
 
             return ReturnVal.ToString();
 
-        } // moveWelcomeItems()
+        } // moveLandingPageItems()
 
-        #endregion Welcome Region
+        #endregion LandingPage Region
 
         #region Permissions
 

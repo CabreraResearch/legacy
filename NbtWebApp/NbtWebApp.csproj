@@ -1232,7 +1232,7 @@
     <Compile Include="WebSvc\Logic\Nodes\CswNbtWebServiceTabsAndProps.cs" />
     <Compile Include="WebSvc\Logic\Views\CswNbtWebServiceTree.cs" />
     <Compile Include="WebSvc\Logic\Views\CswNbtWebServiceView.cs" />
-    <Compile Include="WebSvc\Logic\Menus\CswNbtWebServiceWelcomeItems.cs" />
+    <Compile Include="WebSvc\Logic\Menus\CswNbtWebServiceLandingPageItems.cs" />
     <Compile Include="WebSvc\Logic\Tools\TimingModule.cs" />
     <Compile Include="WebSvc\Logic\Tools\wsTools.cs" />
     <Compile Include="Base.master.cs">

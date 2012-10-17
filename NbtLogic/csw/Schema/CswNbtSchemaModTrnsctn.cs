@@ -31,7 +31,7 @@ namespace ChemSW.Nbt.Schema
 
         private CswDDL _CswDdl = null;
         CswAuditMetaData _CswAuditMetaData = new CswAuditMetaData();
-        ChemSW.Nbt.Welcome.CswNbtWelcomeTable _WelcomeTable = null;
+        ChemSW.Nbt.LandingPage.CswNbtLandingPageTable _LandingPageTable = null;
 
         public ICswDbCfgInfo CswDbCfgInfo
         {
@@ -96,13 +96,13 @@ namespace ChemSW.Nbt.Schema
             return ( new CswNbtActInspectionDesignWiz( _CswNbtResources, NbtViewVisibility.Global, null, true ) );
         }
 
-        public ChemSW.Nbt.Welcome.CswNbtWelcomeTable getWelcomeTable()
+        public ChemSW.Nbt.LandingPage.CswNbtLandingPageTable getLandingPageTable()
         {
-            if( null == _WelcomeTable )
+            if( null == _LandingPageTable )
             {
-                _WelcomeTable = new ChemSW.Nbt.Welcome.CswNbtWelcomeTable( _CswNbtResources );
+                _LandingPageTable = new ChemSW.Nbt.LandingPage.CswNbtLandingPageTable( _CswNbtResources );
             }
-            return ( _WelcomeTable );
+            return ( _LandingPageTable );
         }
 
         #region TransactionManagement

@@ -21,7 +21,7 @@
 
             (function () {
                 Csw.ajax.post({
-                    urlMethod: 'getWelcomeItems', //TODO - replace all things 'welcome' with 'landingPage' once webservice is refactored
+                    urlMethod: 'getLandingPageItems',
                     data: cswPrivate.actionData,
                     success: function (data) {
                         cswPrivate.landingPageDiv = cswParent.div({ ID: 'landingPageDiv' })
@@ -33,22 +33,22 @@
                         //add title here
 
                         cswPrivate.layoutTable = cswPrivate.landingPageDiv.layoutTable({
-                            ID: 'welcometable',
+                            ID: 'landingpagetable',
                             cellSet: { rows: 2, columns: 1 },
-                            TableCssClass: 'WelcomeTable',
+                            TableCssClass: 'LandingPageTable',
                             cellpadding: 10,
                             align: 'center',
                             width: null,
                             onSwap: function (ev, onSwapData) {
                                 cswPrivate.onSwap(onSwapData);
                             },
-                            showConfigButton: true,
+                            showConfigButton: true,//TODO - these flags will be contingent upon whether or not the user is an admin
                             showExpandRowButton: true,
                             showExpandColButton: true,
                             showAddButton: true,
                             showRemoveButton: true,
                             onAddClick: function () {
-                                $.CswDialog('AddWelcomeItemDialog', {
+                                $.CswDialog('AddLandingPageItemDialog', {
                                     form: cswPrivate.getAddItemForm,
                                     onAdd: cswPrivate.onAddComponent
                                 });
@@ -58,11 +58,11 @@
                             }
                         });
 
-                        Csw.each(data, function (welcomeItem, welcomeId) {
-                            var thisItem = welcomeItem;
+                        Csw.each(data, function (landingPageItem, landingPageId) {
+                            var thisItem = landingPageItem;
                             if (false === Csw.isNullOrEmpty(thisItem)) {
                                 var cellSet = cswPrivate.layoutTable.cellSet(thisItem.displayrow, thisItem.displaycol);
-                                cswPrivate.layoutTable.addCellSetAttributes(cellSet, { welcomeid: welcomeId });
+                                cswPrivate.layoutTable.addCellSetAttributes(cellSet, { landingpageid: landingPageId });
                                 var imageCell = cellSet[1][1].children('div');
                                 var textCell = cellSet[2][1].children('div');
                                 var link = null;
@@ -73,7 +73,7 @@
                                     link.img({
                                         src: thisItem.buttonicon,
                                         border: '',
-                                        cssclass: 'WelcomeImage'
+                                        cssclass: 'LandingPageImage'
                                     });
                                 }
 
@@ -98,11 +98,11 @@
                                     }
                                 }
 
-                                var welcomeHidden = textCell.input({
-                                    ID: welcomeId,
+                                var landingPageHidden = textCell.input({
+                                    ID: landingPageId,
                                     type: Csw.enums.inputTypes.hidden
                                 });
-                                welcomeHidden.propNonDom('welcomeid', welcomeId);
+                                landingPageHidden.propNonDom('landingpageid', landingPageId);
                             }
                         });
                     } // success{}
@@ -128,7 +128,7 @@
                 if (clickopts.layoutTable.isConfig() === false) {
                     switch (optSelect.linktype.toLowerCase()) {
                         case 'add':
-                            Csw.tryExec(clickopts.onAddClick, clickopts.itemData.nodetypeid);
+                            Csw.tryExec(clickopts.onAddClick, clickopts.itemData);
                             break;
                         case 'link':
                             Csw.tryExec(clickopts.onLinkClick, optSelect);
@@ -140,46 +140,46 @@
             };
 
             cswPrivate.onSwap = function (onSwapData) {
-                var welcomeIdOrig = cswPrivate.moveItem(onSwapData.cellSet, onSwapData.swaprow, onSwapData.swapcolumn);
-                var welcomeIdSwap = cswPrivate.moveItem(onSwapData.swapcellset, onSwapData.row, onSwapData.column);
-                onSwapData.cellSet[2][1].propNonDom('welcomeid', welcomeIdSwap);
-                onSwapData.swapcellset[2][1].propNonDom('welcomeid', welcomeIdOrig);
+                var landingpageidOrig = cswPrivate.moveItem(onSwapData.cellSet, onSwapData.swaprow, onSwapData.swapcolumn);
+                var landingpageidSwap = cswPrivate.moveItem(onSwapData.swapcellset, onSwapData.row, onSwapData.column);
+                onSwapData.cellSet[2][1].propNonDom('landingpageid', landingpageidSwap);
+                onSwapData.swapcellset[2][1].propNonDom('landingpageid', landingpageidOrig);
             };
 
             cswPrivate.moveItem = function (cellSet, newrow, newcolumn) {
                 var textCell = cellSet[2][1];
-                var welcomeid = textCell.propNonDom('welcomeid');
+                var landingpageid = textCell.propNonDom('landingpageid');
                 if (textCell.length() > 0) {
-                    if (false === Csw.isNullOrEmpty(welcomeid)) {
+                    if (false === Csw.isNullOrEmpty(landingpageid)) {
                         var dataJson = {
                             RoleId: '',
-                            WelcomeId: welcomeid,
+                            LandingPageId: landingpageid,
                             NewRow: newrow,
                             NewColumn: newcolumn
                         };
                         Csw.ajax.post({
-                            urlMethod: 'moveWelcomeItems',
+                            urlMethod: 'moveLandingPageItems',
                             data: dataJson
                         });
                     }
                 }
-                return welcomeid;
+                return landingpageid;
             };
 
             cswPrivate.removeItem = function (removedata) {
                 var textCell = removedata.cellSet[2][1],
-                    welcomeid,
+                    landingpageid,
                     dataJson;
                 if (textCell.length() > 0) {
-                    welcomeid = textCell.propNonDom('welcomeid');
-                    if (welcomeid) {
+                    landingpageid = textCell.propNonDom('landingpageid');
+                    if (landingpageid) {
                         dataJson = {
                             RoleId: '',
-                            WelcomeId: welcomeid
+                            LandingPageId: landingpageid
                         };
 
                         Csw.ajax.post({
-                            urlMethod: 'deleteWelcomeItem',
+                            urlMethod: 'deleteLandingPageItem',
                             data: dataJson,
                             success: function () {
                                 Csw.tryExec(removedata.onSuccess);
@@ -192,13 +192,13 @@
             cswPrivate.getAddItemForm = function (parentDiv, addOptions) {
                 var parent = parentDiv;
                 var table = parent.table({
-                    ID: 'addwelcomeitem_tbl'
+                    ID: 'addlandingpageitem_tbl'
                 });
 
                 /* Type Select Label */
                 table.cell(1, 1).span({ text: 'Type:' });
                 var typeSelect = table.cell(1, 2).select({
-                    ID: 'welcome_type'
+                    ID: 'landingpage_type'
                 });
                 typeSelect.option({ value: 'Add', display: 'Add', isSelected: true });
                 typeSelect.option({ value: 'Link', display: 'Link' });
@@ -211,7 +211,7 @@
                 });
 
                 var viewSelect = viewSelectTable.cell(1, 1).viewSelect({
-                    ID: 'welcome_viewsel',
+                    ID: 'landingpage_viewsel',
                     maxHeight: '275px',
                     includeRecent: false
                 });
@@ -220,17 +220,17 @@
                 var ntSelectLabel = table.cell(3, 1).span({ text: 'Add New:' });
                 var ntSelect = table.cell(3, 2)
                     .nodeTypeSelect({
-                        ID: 'welcome_ntsel',
+                        ID: 'landingpage_ntsel',
                         filterToPermission: 'Create'
                     });
 
-                /* Welcome Text Label */
+                /* Landing Page Item Text Label */
                 table.cell(4, 1).span({ text: 'Text:' });
 
-                var welcomeText = table.cell(4, 2).input({ ID: 'welcome_text' });
+                var landingPageText = table.cell(4, 2).input({ ID: 'landingpage_text' });
 
                 var addButton = table.cell(7, 2).button({
-                    ID: 'welcome_add',
+                    ID: 'landingpage_add',
                     enabledText: 'Add',
                     disabledText: 'Adding',
                     onClick: function () {
@@ -248,7 +248,7 @@
                             viewtype: viewtype,
                             viewvalue: viewvalue,
                             nodetypeid: ntSelect.val(),
-                            text: welcomeText.val(),
+                            text: landingPageText.val(),
                             iconfilename: '',
                             onSuccess: addOptions.onAdd,
                             onError: function () { addButton.enable(); }
@@ -280,7 +280,7 @@
                 };
 
                 Csw.ajax.post({
-                    urlMethod: 'addWelcomeItem',
+                    urlMethod: 'addLandingPageItem',
                     data: dataJson,
                     success: function () {
                         Csw.tryExec(addOptions.onSuccess);
