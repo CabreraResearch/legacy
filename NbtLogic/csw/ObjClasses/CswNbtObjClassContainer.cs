@@ -347,35 +347,6 @@ namespace ChemSW.Nbt.ObjClasses
         } // DispenseIn()
 
         /// <summary>
-        /// Gets all containers where the source container nodeid equals this containers nodeid
-        /// </summary>
-        /// <returns>A list of all container this container dispensed into</returns>
-        public List<CswNbtObjClassContainer> GetChildren()
-        {
-            CswNbtMetaDataObjectClass containerOC = _CswNbtResources.MetaData.getObjectClass( this.ObjectClass.ObjectClassId );
-            CswNbtMetaDataObjectClassProp sourceContainerOCP = containerOC.getObjectClassProp( PropertyName.SourceContainer );
-
-            CswNbtView childrenView = new CswNbtView( _CswNbtResources );
-            CswNbtViewRelationship parent = childrenView.AddViewRelationship( containerOC, true );
-            childrenView.AddViewPropertyAndFilter( parent,
-                MetaDataProp: sourceContainerOCP,
-                Value: this.NodeId.PrimaryKey.ToString(),
-                SubFieldName: CswNbtSubField.SubFieldName.NodeID,
-                FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
-
-            List<CswNbtObjClassContainer> children = new List<CswNbtObjClassContainer>();
-            ICswNbtTree childrenTree = _CswNbtResources.Trees.getTreeFromView( childrenView, false, false, false );
-            int childrenCount = childrenTree.getChildNodeCount();
-            for( int i = 0; i < childrenCount; i++ )
-            {
-                childrenTree.goToNthChild( i );
-                children.Add( childrenTree.getNodeForCurrentPosition() );
-                childrenTree.goToParentNode();
-            }
-            return children;
-        }
-
-        /// <summary>
         /// Gets a tree view of this containers family
         /// </summary>
         /// <returns></returns>
@@ -391,8 +362,7 @@ namespace ChemSW.Nbt.ObjClasses
             CswNbtViewRelationship parent = familyView.AddViewRelationship( containerOC, false ); //only this container should be at the top
             parent.NodeIdsToFilterIn.Add( this.NodeId );
 
-            List<CswNbtObjClassContainer> children = GetChildren();
-            _getFamilyView( ref familyView, parent, children, 1, maxGenerations, sourceContainerOCP, barcodeOCP );
+            _getFamilyView( ref familyView, parent, 1, maxGenerations, sourceContainerOCP, barcodeOCP );
 
             return familyView;
         }
@@ -587,23 +557,14 @@ namespace ChemSW.Nbt.ObjClasses
         /// <param name="maxGenerations"></param>
         /// <param name="sourceContainerOCP"></param>
         /// <param name="barcodeOCP"></param>
-        private void _getFamilyView( ref CswNbtView view, CswNbtViewRelationship parent, List<CswNbtObjClassContainer> children, int generation, int maxGenerations,
+        private void _getFamilyView( ref CswNbtView view, CswNbtViewRelationship parent, int generation, int maxGenerations,
             CswNbtMetaDataObjectClassProp sourceContainerOCP, CswNbtMetaDataObjectClassProp barcodeOCP )
         {
             if( generation <= maxGenerations )
             {
-                foreach( CswNbtObjClassContainer containerNode in children )
-                {
-                    CswNbtViewRelationship generationXParent = view.AddViewRelationship( parent, NbtViewPropOwnerType.Second, sourceContainerOCP, false );
-                    view.AddViewPropertyAndFilter( generationXParent,
-                        MetaDataProp: barcodeOCP,
-                        Value: containerNode.Barcode.Barcode,
-                        SubFieldName: CswNbtSubField.SubFieldName.Barcode,
-                        FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
-
-                    List<CswNbtObjClassContainer> genXChildren = containerNode.GetChildren();
-                    _getFamilyView( ref view, generationXParent, genXChildren, generation + 1, maxGenerations, sourceContainerOCP, barcodeOCP );
-                }
+                CswNbtViewRelationship generationXParent = view.AddViewRelationship( parent, NbtViewPropOwnerType.Second, sourceContainerOCP, false );
+                view.AddViewProperty( generationXParent, sourceContainerOCP );
+                _getFamilyView( ref view, generationXParent, generation + 1, maxGenerations, sourceContainerOCP, barcodeOCP );
             }
         }
 
