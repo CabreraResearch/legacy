@@ -234,6 +234,16 @@ namespace ChemSW.Nbt.ObjClasses
                             ButtonData.Data["requestItemNodeTypeId"] = RequestAct.RequestItemNt.NodeTypeId;
                         }
                         break;
+                    case PropertyName.ContainerFamily:
+                        HasPermission = true;
+                        CswNbtView containerFamilyView = GetFamilyView();
+                        containerFamilyView.SaveToCache( false );
+
+                        ButtonData.Action = NbtButtonAction.loadView;
+                        ButtonData.Data["viewid"] = containerFamilyView.SessionViewId.ToString();
+                        ButtonData.Data["viewmode"] = containerFamilyView.ViewMode.ToString();
+                        ButtonData.Data["type"] = "view";
+                        break;
                 }
                 if( false == HasPermission )
                 {
