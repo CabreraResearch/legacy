@@ -303,7 +303,6 @@ namespace ChemSW.Nbt.Batch
                         if( CurrentEmailAddress != string.Empty )
                         {
                             DataTable ReportTable = null;
-                            CswNbtNode ReportNode = null;
                             CswNbtObjClassReport ReportObjClass = null;
 
                             string EmailMessageSubject = CurrentMailReport.NodeName;
@@ -354,13 +353,12 @@ namespace ChemSW.Nbt.Batch
 
                             else if( "Report" == CurrentMailReport.Type.Value )
                             {
-                                if( null != _CswNbtResources.Nodes[CurrentMailReport.Report.NodeId] )
+                                ReportObjClass = (CswNbtObjClassReport) _CswNbtResources.Nodes[CurrentMailReport.Report.RelatedNodeId];
+                                if( null != ReportObjClass )
                                 {
-                                    ReportNode = _CswNbtResources.Nodes[CurrentMailReport.Report.RelatedNodeId];
-                                    ReportObjClass = (CswNbtObjClassReport) ReportNode;
                                     string ReportSql = ReportObjClass.getUserContextSql( UserNodeAsUser.Username );
 
-                                    CswArbitrarySelect ReportSelect = _CswNbtResources.makeCswArbitrarySelect( "MailReport_" + ReportNode.NodeId.ToString() + "_Select", ReportSql );
+                                    CswArbitrarySelect ReportSelect = _CswNbtResources.makeCswArbitrarySelect( "MailReport_" + ReportObjClass.NodeId.ToString() + "_Select", ReportSql );
                                     ReportTable = ReportSelect.getTable();
 
                                     if( ReportTable.Rows.Count > 0 )
