@@ -77,7 +77,7 @@ namespace ChemSW.Nbt.Schema
 
             #region TITANIA
 
-            _acceptBlame( CswDeveloper.CF, 27965 );            
+            _acceptBlame( CswDeveloper.CF, 27965 );
 
             if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( "nodetype_tabset", "servermanaged" ) )
             {
@@ -88,7 +88,7 @@ namespace ChemSW.Nbt.Schema
 
 
             #region Case 27862 - add "hidden" col to nodes table
-            
+
             _acceptBlame( CswDeveloper.MB, 27862 );
 
             if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( "nodes", "hidden" ) )
@@ -101,20 +101,20 @@ namespace ChemSW.Nbt.Schema
                     logicaldelete: false,
                     required: true );
             }
-            
-             _resetBlame();
+
+            _resetBlame();
 
             #endregion
-            
+
             _changeWelcomeTableToLandingPageTable();
 
             #endregion TITANIA
 
         }//Update()
-        
+
         private void _changeWelcomeTableToLandingPageTable()
         {
-            
+
             _acceptBlame( CswDeveloper.BV, 27881 );
 
             if( false == _CswNbtSchemaModTrnsctn.isTableDefined( "landingpage" ) && _CswNbtSchemaModTrnsctn.isTableDefined( "welcome" ) )
@@ -124,6 +124,7 @@ namespace ChemSW.Nbt.Schema
             }
 
             if( _CswNbtSchemaModTrnsctn.isTableDefined( "landingpage" ) )
+            {
                 if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( "landingpage", "for_actionid" ) )
                 {
                     _CswNbtSchemaModTrnsctn.addLongColumn( "landingpage", "for_actionid", "Indicates the action to which this landing page is associated", false, false );

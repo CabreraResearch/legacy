@@ -132,6 +132,7 @@
             <Compile Include="csw\ImportExport\CswNbtImportStatus.cs" />
             <Compile Include="csw\ImportExport\CswNbtPersistedImportState.cs" />
             <Compile Include="csw\ImportExport\ICswImporter.cs" />
+            <Compile Include="csw\LandingPage\CswNbtLandingPageTable.cs" />
             <Compile Include="csw\MetaData\CswNbtFieldResources.cs" />
             <Compile Include="csw\MetaData\CswNbtMetaData.cs" />
             <Compile Include="csw\MetaData\CswNbtMetaDataCollectionFieldType.cs" />
@@ -335,8 +336,7 @@
             <Compile Include="csw\Sched\logic\CswScheduleLogicNbtGenNode.cs" />
             <Compile Include="csw\Sched\logic\CswScheduleLogicNbtUpdtInspection.cs" />
             <Compile Include="csw\Sched\logic\CswScheduleLogicNbtUpdtMTBF.cs" />
-            <Compile Include="csw\Sched\logic\CswScheduleLogicNbtUpdtPropVals.cs" />
-    <Compile Include="csw\Welcome\CswNbtLandingPageTable.cs" />
+            <Compile Include="csw\Sched\logic\CswScheduleLogicNbtUpdtPropVals.cs" />    
             <Compile Include="csw\Schema\CswConstraintDdlOps.cs" />
             <Compile Include="csw\Schema\CswDDL.cs" />
             <Compile Include="csw\Schema\CswDemoDataManager.cs" />
@@ -659,7 +659,6 @@
             <Compile Include="csw\View\CswNbtViewRelationship.cs" />
             <Compile Include="csw\View\CswNbtViewRoot.cs" />
             <Compile Include="csw\View\CswNbtViewSelect.cs" />
-            <Compile Include="csw\Welcome\CswNbtWelcomeTable.cs" />
         <Compile Include="Properties\Resources.Designer.cs" />
         <Compile Include="csw\Actions\CswNbtActDispenseContainer.cs" />
         <Compile Include="csw\Actions\CswNbtActReceiving.cs" />
