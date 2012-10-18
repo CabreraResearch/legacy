@@ -685,16 +685,6 @@ namespace ChemSW.Nbt.ObjClasses
         /// </summary>
         public CswNbtNodePropRelationship Parent { get { return ( _CswNbtNode.Properties[GeneratorTargetParentPropertyName] ); } }
 
-        private void _toggleButtons( bool Disabled )
-        {
-            Finish.setReadOnly( value: Disabled, SaveToDb: true );
-            Finish.setHidden( value: Disabled, SaveToDb: true );
-            Cancel.setReadOnly( value: Disabled, SaveToDb: true );
-            Cancel.setHidden( value: Disabled, SaveToDb: true );
-            SetPreferred.setReadOnly( value: Disabled, SaveToDb: true );
-            SetPreferred.setHidden( value: Disabled, SaveToDb: true );
-        }
-
         /// <summary>
         /// Actual status of Inspection
         /// </summary>
@@ -719,21 +709,27 @@ namespace ChemSW.Nbt.ObjClasses
                             InspectionDate.DateTimeValue = DateTime.Now;
                             Inspector.RelatedNodeId = _CswNbtResources.CurrentNbtUser.UserId;
                         }
-                        _toggleButtons( Disabled: true );
+                        Finish.setReadOnly( true, true );
+                        SetPreferred.setReadOnly( true, true );
+                        Cancel.setReadOnly( true, true );
                         Node.setReadOnly( value: true, SaveToDb: true );
                     }
                     break;
 
                 case InspectionStatus.Cancelled:
                 case InspectionStatus.Missed:
-                    _toggleButtons( Disabled: true );
+                    Finish.setReadOnly( true, true );
+                    SetPreferred.setReadOnly( true, true );
+                    Cancel.setReadOnly( true, true );
                     Node.setReadOnly( value: true, SaveToDb: true );
                     break;
 
+                case InspectionStatus.Overdue:
+                case InspectionStatus.ActionRequired:
                 case InspectionStatus.Pending:
-                    Finish.setHidden( false, true );
-                    SetPreferred.setHidden( false, true );
-                    Cancel.setHidden( false, true );
+                    Finish.setReadOnly( false, true );
+                    SetPreferred.setReadOnly( false, true );
+                    Cancel.setReadOnly( false, true );
                     break;
 
             } // switch( Status.Value )
