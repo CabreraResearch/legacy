@@ -45,6 +45,7 @@ namespace ChemSW.Nbt.Schema
                 foreach( CswNbtObjClassMailReport MailReportNode in MailReportNT.getNodes( false, true ) )
                 {
                     MailReportNode.OutputFormat.setReadOnly( value: false, SaveToDb: true );
+                    MailReportNode.postChanges( false );
                 }
 
             } // foreach( CswNbtMetaDataNodeType MailReportNT in MailReportOC.getNodeTypes() )
