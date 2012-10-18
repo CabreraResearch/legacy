@@ -712,6 +712,8 @@
     <Content Include="crystal\prompting\js\promptengine_strings_zh_TW.js" />
     <Content Include="crystal\urlreporting\activexviewer.js" />
     <Content Include="crystal\urlreporting\appletviewer.js" />
+    <Content Include="Deprecated\style.css" />
+    <Content Include="Deprecated\style_print.css" />
     <Content Include="etc\far.exe" />
     <Content Include="ExternalLogin.aspx" />
     <Content Include="Global.asax" />
@@ -752,7 +754,7 @@
     <Content Include="Design_Layout.aspx" />
     <Content Include="DisplayLog.aspx" />
     <Content Include="etc\CswSetupVbls.xml" />
-    <Content Include="ie6style.css" />
+    <Content Include="Deprecated\ie6style.css" />
     <Content Include="Images\ajax\progress.gif" />
     <Content Include="Images\bigbuttons\add.png" />
     <Content Include="Images\bigbuttons\bear.gif" />
@@ -1027,7 +1029,7 @@
     <Content Include="Scripts\jquery.cookie.min.js" />
     <Content Include="License.aspx" />
     <Content Include="Main.aspx" />
-    <Content Include="Main.js" />
+    <Content Include="Deprecated\Main.js" />
     <Content Include="Popup_DesignAdd.aspx" />
     <Content Include="Popup_DesignDelete.aspx" />
     <Content Include="Session.svc" />
@@ -1183,8 +1185,6 @@
     <Content Include="Skin\Window\WindowSprites.gif" />
     <Content Include="Skin\Window\WindowVerticalSprites.gif" />
     <Content Include="Statistics.aspx" />
-    <Content Include="style.css" />
-    <Content Include="style_print.css" />
     <Content Include="Subscriptions.aspx" />
     <Content Include="TermsOfUse.aspx" />
     <Content Include="Views.svc" />
