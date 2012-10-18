@@ -75,6 +75,7 @@ namespace ChemSW.Nbt.PropTypes
             set
             {
                 _SelectedNodeTypeIds = value;
+                _SelectedNodeTypeIds.OnChange += new CswDelimitedString.DelimitedStringChangeHandler( _SelectedNodeTypeIds_OnChange );
                 _SelectedNodeTypeIds_OnChange();
             }
         }
@@ -160,27 +161,30 @@ namespace ChemSW.Nbt.PropTypes
         public const string ValueColumn = "value";
         public const string TableName = "nodetypeselectdatatable";
 
+        private const string _ElemName_Options = "options";
+
         public override void ToJSON( JObject ParentObject )
         {
             ParentObject[_SelectedNodeTypeIdsSubField.ToXmlNodeName().ToLower()] = SelectedNodeTypeIds.ToString();
             ParentObject["selectmode"] = SelectMode.ToString();
+            ParentObject[_ElemName_Options] = new JObject();
 
-            JArray OptionsAry = new JArray();
-            ParentObject["options"] = OptionsAry;
+            CswCheckBoxArrayOptions CBAOptions = new CswCheckBoxArrayOptions();
+            CBAOptions.Columns.Add( "Include" );
 
             DataTable Data = Options;
             foreach( DataRow Row in Data.Rows )
             {
-                JObject OptionObj = new JObject();
-                OptionsAry.Add( OptionObj );
-                foreach( DataColumn Column in Data.Columns )
-                {
-                    OptionObj[Column.ColumnName] = Row[Column].ToString();
-                }
+                CswCheckBoxArrayOptions.Option Option = new CswCheckBoxArrayOptions.Option();
+                Option.Key = CswConvert.ToString( Row[KeyColumn] );
+                Option.Label = CswConvert.ToString( Row[NameColumn] );
+                Option.Values.Add( CswConvert.ToBoolean( Row[ValueColumn] ) );
+                CBAOptions.Options.Add( Option );
             }
-        }
 
-        // ReadXml()
+            CBAOptions.ToJSON( (JObject) ParentObject[_ElemName_Options] );
+        } // ToJSON()
+
 
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
@@ -189,29 +193,22 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ReadJSON( JObject JObject, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
-            //SelectedNodeTypeIds.FromString( _HandleReferences( CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _SelectedNodeTypeIdsSubField.ToXmlNodeName() ), NodeTypeMap ) );
             CswCommaDelimitedString NewSelectedNodeTypeIds = new CswCommaDelimitedString();
 
-            if( null != JObject["options"] )
+            CswCheckBoxArrayOptions CBAOptions = new CswCheckBoxArrayOptions();
+            if( null != JObject[_ElemName_Options] )
             {
-                JArray Data = CswConvert.ToJArray( JObject["options"] );
-
-                foreach( JObject ItemObj in Data )
+                CBAOptions.ReadJson( (JObject) JObject[_ElemName_Options] );
+            }
+            foreach( CswCheckBoxArrayOptions.Option Option in CBAOptions.Options )
+            {
+                if( Option.Values.Count > 0 && true == Option.Values[0] )
                 {
-                    string key = CswConvert.ToString( ItemObj["key"] );
-                    //string name = CswConvert.ToString( ItemObj["label"] );
-                    JArray Values = CswConvert.ToJArray( ItemObj["values"] );
-                    bool value = null != Values && CswConvert.ToBoolean( Values.First );
-                    if( value )
-                    {
-                        NewSelectedNodeTypeIds.Add( key );
-                    }
+                    NewSelectedNodeTypeIds.Add( Option.Key );
                 }
             }
-
             SelectedNodeTypeIds = NewSelectedNodeTypeIds;
-
-        }
+        } // ReadJSON()
 
         private string _HandleReferences( string NodeTypeIds, Dictionary<Int32, Int32> NodeTypeMap )
         {
@@ -252,7 +249,7 @@ namespace ChemSW.Nbt.PropTypes
             } // foreach(string NodeTypeId in SelectedNodeTypeIds)
             if( 0 == NodeTypeNames.Count )
             {
-                NodeTypeNames.Add( "Select new NodeType" );
+                NodeTypeNames.Add( "[none]" );
             }
 
             // Sort alphabetically

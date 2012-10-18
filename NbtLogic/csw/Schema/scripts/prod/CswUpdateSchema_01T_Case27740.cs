@@ -1,8 +1,7 @@
-﻿using ChemSW.Nbt.csw.Dev;
+﻿using ChemSW.Core;
+using ChemSW.Nbt.csw.Dev;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
-using ChemSW.Nbt.PropTypes;
-using ChemSW.Core;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -25,20 +24,20 @@ namespace ChemSW.Nbt.Schema
 
             //Set View, Edit, Dispense, Request, Dispose and Undispose default values to unchecked
             CswNbtMetaDataObjectClassProp viewOCP = invGrpPermOC.getObjectClassProp( CswNbtObjClassInventoryGroupPermission.PropertyName.View );
-            _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( viewOCP, false, CswNbtSubField.SubFieldName.Checked );
+            _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( viewOCP, false );
 
             CswNbtMetaDataObjectClassProp editOCP = invGrpPermOC.getObjectClassProp( CswNbtObjClassInventoryGroupPermission.PropertyName.Edit );
-            _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( editOCP, false, CswNbtSubField.SubFieldName.Checked );
+            _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( editOCP, false );
 
             CswNbtMetaDataObjectClassProp dispenseOCP = invGrpPermOC.getObjectClassProp( CswNbtObjClassInventoryGroupPermission.PropertyName.Dispense );
-            _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( dispenseOCP, false, CswNbtSubField.SubFieldName.Checked );
+            _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( dispenseOCP, false );
 
             CswNbtMetaDataObjectClassProp requestOCP = invGrpPermOC.getObjectClassProp( CswNbtObjClassInventoryGroupPermission.PropertyName.Request );
-            _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( requestOCP, false, CswNbtSubField.SubFieldName.Checked );
+            _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( requestOCP, false );
 
-            _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( disposeOCP, false, CswNbtSubField.SubFieldName.Checked );
+            _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( disposeOCP, false );
 
-            _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( undisposeOCP, false, CswNbtSubField.SubFieldName.Checked );
+            _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( undisposeOCP, false );
 
             //A InvGrpPerm either allows or disallows the following. There are no half measures!
             foreach( CswNbtObjClassInventoryGroupPermission invGrpPermNode in invGrpPermOC.getNodes( false, false, false ) )

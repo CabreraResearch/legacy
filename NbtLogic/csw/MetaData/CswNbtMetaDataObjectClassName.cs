@@ -9,7 +9,7 @@ namespace ChemSW.Nbt.MetaData
     /// <summary>
     /// Nbt Object Class Name
     /// </summary>
-    public sealed class NbtObjectClass : IEquatable<NbtObjectClass>
+    public sealed class NbtObjectClass : IEquatable<NbtObjectClass>, IComparable<NbtObjectClass>
     {
         #region Internals
         private static Dictionary<string, string> _Enums = new Dictionary<string, string>( StringComparer.OrdinalIgnoreCase )
@@ -171,6 +171,16 @@ namespace ChemSW.Nbt.MetaData
         public const string WorkUnitClass = "WorkUnitClass";
 
         #endregion Enum members
+
+
+        #region IComparable
+
+        public int CompareTo( NbtObjectClass other )
+        {
+            return string.Compare( ToString(), other.ToString(), StringComparison.Ordinal );
+        }
+
+        #endregion IComparable
 
         #region IEquatable (NbtObjectClass)
 

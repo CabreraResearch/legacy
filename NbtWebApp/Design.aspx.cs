@@ -811,7 +811,7 @@ namespace ChemSW.Nbt.WebPages
                     //bool NewIsFk = false;
                     string NewFKType = NbtViewRelatedIdType.Unknown.ToString();
                     Int32 NewFKValue = Int32.MinValue;
-                    if( PropToSave.getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.Relationship )
+                    if( PropToSave.getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.Relationship || PropToSave.getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.Quantity )
                     {
                         string TargetValue = getPropAttributeValue( "EditProp_TargetValue" + OldSelectedNodeTypePropId.ToString(), EditPropPlaceHolder );
                         if( TargetValue != String.Empty )
@@ -2332,7 +2332,10 @@ namespace ChemSW.Nbt.WebPages
                             }
                             UnitValue.CssClass = "selectinput";
                             UnitValue.ID = "EditProp_TargetValue" + SelectedNodeTypeProp.PropId.ToString();
-                            UnitValue.ConstrainToObjectClassId = ObjectClassProp.FKValue;
+                            if( DerivesFromObjectClassProp )
+                            {
+                                UnitValue.ConstrainToObjectClassId = ObjectClassProp.FKValue;
+                            }
 
                             UnitValue.DataBind();
 

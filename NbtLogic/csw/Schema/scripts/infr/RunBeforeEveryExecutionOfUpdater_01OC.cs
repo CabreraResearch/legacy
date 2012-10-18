@@ -723,6 +723,12 @@ namespace ChemSW.Nbt.Schema
 
             #endregion case 27720
 
+
+            // case 28007 - Remove 'No Data Notification' property from Mail Reports
+            CswNbtMetaDataObjectClassProp NoDataOCP = MailReportOC.getObjectClassProp( "No Data Notification" );
+            _CswNbtSchemaModTrnsctn.MetaData.DeleteObjectClassProp( NoDataOCP, true );
+
+
             #endregion SEBASTIAN
 
             _CswNbtSchemaModTrnsctn.MetaData.makeMissingNodeTypeProps();
