@@ -12,6 +12,7 @@
                     ratetype: '',
                     startingdate: {
                         date: '',
+                        time: '',
                         dateformat: ''
                     },
                     startingmonth: '',
@@ -219,11 +220,12 @@
                     ID: Csw.makeId(cswPrivate.ID, 'hourly', 'sd'),
                     Date: Csw.string(cswPublic.rateInterval.startingdate.date),
                     DateFormat: cswPublic.rateInterval.startingdate.dateformat,
-                    DisplayMode: 'Date',
+                    DisplayMode: 'DateTime',
                     ReadOnly: cswPrivate.ReadOnly,
                     Required: cswPrivate.Required,
                     onChange: function () {
                         cswPublic.rateInterval.startingdate.date = startingDatePicker.val().date;
+                        cswPublic.rateInterval.startingdate.time = startingDatePicker.val().time;
                         Csw.tryExec(cswPrivate.onChange);
                     }
                 });
