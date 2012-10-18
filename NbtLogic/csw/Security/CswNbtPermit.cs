@@ -462,7 +462,9 @@ namespace ChemSW.Nbt.Security
                         CswNbtNode Node = _CswNbtResources.Nodes[NodeId];
                         if( null != Node )
                         {
-                            ret = ret && ( false == Node.ReadOnly );
+                            ret = ret && ( _CswNbtPermitInfo.Permission != NodeTypePermission.Edit ||
+                                           _CswNbtPermitInfo.User.IsAdministrator() ||
+                                           false == Node.ReadOnly );
                         }
 
                     }//if NodeId is not null

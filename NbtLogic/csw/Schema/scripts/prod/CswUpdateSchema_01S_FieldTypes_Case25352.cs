@@ -4,7 +4,7 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Schema Update for case 27479
     /// </summary>
-    public class CswUpdateSchema_FieldTypes_Case25352 : CswUpdateSchemaTo
+    public class CswUpdateSchema_01S_FieldTypes_Case25352 : CswUpdateSchemaTo
     {
 
         public override void update()

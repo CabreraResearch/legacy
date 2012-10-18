@@ -4,7 +4,7 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Schema Update for case 27859
     /// </summary>
-    public class CswUpdateSchema_MobileModule_Case27859 : CswUpdateSchemaTo
+    public class CswUpdateSchema_01S_MobileModule_Case27859 : CswUpdateSchemaTo
     {
         public override void update()
         {
