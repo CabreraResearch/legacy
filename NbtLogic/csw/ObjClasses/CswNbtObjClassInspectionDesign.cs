@@ -730,6 +730,7 @@ namespace ChemSW.Nbt.ObjClasses
                     Finish.setReadOnly( false, true );
                     SetPreferred.setReadOnly( false, true );
                     Cancel.setReadOnly( false, true );
+                    Node.setReadOnly( value: false, SaveToDb: true );
                     break;
 
             } // switch( Status.Value )
