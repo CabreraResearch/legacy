@@ -268,7 +268,6 @@ namespace ChemSW.Nbt.ServiceDrivers
                     IEnumerable<CswNbtMetaDataNodeTypeProp> FilteredProps = ( from _Prop in Props
                                                                               where CswNbtNodePropColl != null
                                                                               let Pw = CswNbtNodePropColl[_Prop]
-                                                                              where false == Pw.Hidden
                                                                               where _ConfigMode ||
                                                                                     _showProp( LayoutType, _Prop, FilterPropIdAttr, CswConvert.ToInt32( TabId ), Node )
                                                                               select _Prop );
@@ -368,7 +367,7 @@ namespace ChemSW.Nbt.ServiceDrivers
         {
             CswNbtMetaDataNodeTypeLayoutMgr.LayoutType LayoutType = _CswNbtResources.MetaData.NodeTypeLayout.LayoutTypeForEditMode( _CswNbtResources.EditMode );
             CswNbtMetaDataNodeTypeLayoutMgr.NodeTypeLayout Layout = Prop.getLayout( LayoutType, TabId );
-            if( false == Node.Properties[Prop].Hidden )
+            if( false == Node.Properties[Prop].Hidden || _ConfigMode )
             {
                 JProperty JpProp = makePropJson( Node.NodeId, TabId, Prop, Node.Properties[Prop], Layout.DisplayRow, Layout.DisplayColumn, Layout.TabGroup );
                 ParentObj.Add( JpProp );
