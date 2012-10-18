@@ -43,15 +43,28 @@
                     cswPrivate.menu.push({ text: val, handler: function () { Csw.tryExec(cswPrivate.handleMenuItemClick, val); } });
                 });
 
-                cswPublic.menu = window.Ext.create('Ext.button.Split', {
-                    renderTo: cswParent.getId(),
-                    text: cswPrivate.selectedText,
-                    handler: cswPrivate.handleMenuItemClick,
-                    scale: Csw.string(cswPrivate.size, 'medium'),
-                    menu: new window.Ext.menu.Menu({ items: cswPrivate.menu }),
-                    disabled: cswPrivate.disabled
-                });
+                cswPrivate.initBtn = function() {
 
+                    cswPublic.menu = window.Ext.create('Ext.button.Split', {
+                        renderTo: cswParent.getId(),
+                        text: cswPrivate.selectedText,
+                        handler: cswPrivate.handleMenuItemClick,
+                        scale: Csw.string(cswPrivate.size, 'medium'),
+                        menu: new window.Ext.menu.Menu({ items: cswPrivate.menu }),
+                        disabled: cswPrivate.disabled
+                    });
+                };
+                
+                if (false === Csw.isNullOrEmpty($('#' + cswParent.getId()), true)) {
+                    cswPrivate.initBtn();
+                } else {
+                    cswPublic.button = window.Ext.create('Ext.Button');
+                    window.setTimeout(function() {
+                        if (false === Csw.isNullOrEmpty($('#' + cswParent.getId()), true)) {
+                            cswPrivate.initBtn();
+                        }
+                    }, 500);
+                }
             } ()); // constructor
 
             cswPublic.disable = function () {

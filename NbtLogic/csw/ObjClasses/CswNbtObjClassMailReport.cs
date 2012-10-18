@@ -14,26 +14,24 @@ namespace ChemSW.Nbt.ObjClasses
     {
         public sealed class PropertyName
         {
-            public const string ReportView = "Report View";
-            public const string Report = "Report";
-            //public static string StatusPropertyName { get { return "Status"; } }
-            public const string Message = "Message";
-            public const string NoDataNotification = "No Data Notification";
-            public const string Recipients = "Recipients";
-            public const string Type = "Type";
-            public const string LastProcessed = "Last Processed";
-            public const string FinalDueDate = "Final Due Date";
-            public const string NextDueDate = "Next Due Date";
-            public const string RunStatus = "Run Status";
-            public const string WarningDays = "Warning Days";
             public const string DueDateInterval = "Due Date Interval";
-            public const string RunTime = "Run Time";
             public const string Enabled = "Enabled";
-            public const string RunNow = "Run Now";
-            public const string OutputFormat = "Output Format";
-            public const string TargetType = "Target Type";
             public const string Event = "Event";
+            public const string FinalDueDate = "Final Due Date";
+            public const string LastProcessed = "Last Processed";
+            public const string Message = "Message";
+            public const string NextDueDate = "Next Due Date";
             public const string NodesToReport = "Nodes To Report";
+            public const string OutputFormat = "Output Format";
+            public const string Report = "Report";
+            public const string ReportView = "Report View";
+            public const string Recipients = "Recipients";
+            public const string RunNow = "Run Now";
+            public const string RunStatus = "Run Status";
+            public const string RunTime = "Run Time";
+            public const string TargetType = "Target Type";
+            public const string Type = "Type";
+            public const string WarningDays = "Warning Days";
         }
 
         /// <summary>
@@ -105,14 +103,16 @@ namespace ChemSW.Nbt.ObjClasses
 
             _assertMailReportIsValid();
 
-            if( Type.Value == TypeOptionView )
+            // Set default value for target type to root of view
+            if( TargetType.Empty && Type.Value == TypeOptionView )
             {
-                OutputFormat.Value = MailRptFormatOptions.Link.ToString();
-                OutputFormat.setReadOnly( value: true, SaveToDb: true );
-            }
-            else if( Type.Value == TypeOptionReport )
-            {
-                OutputFormat.setReadOnly( value: false, SaveToDb: true );
+                CswNbtView View = _CswNbtResources.ViewSelect.restoreView( ReportView.ViewId );
+                if( null != View && 
+                    View.Root.ChildRelationships.Count > 0 &&
+                    View.Root.ChildRelationships[0].SecondType == NbtViewRelatedIdType.NodeTypeId )
+                {
+                    TargetType.SelectedNodeTypeIds.Add( View.Root.ChildRelationships[0].SecondId.ToString() );
+                }
             }
         }
 
@@ -166,6 +166,8 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void afterPopulateProps()
         {
+            Type.SetOnPropChange( OnTypePropChange );
+
             _CswNbtObjClassDefault.afterPopulateProps();
         }//afterPopulateProps()
 
@@ -192,25 +194,36 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Object class specific properties
 
-        public CswNbtNodePropViewReference ReportView { get { return ( _CswNbtNode.Properties[PropertyName.ReportView] ); } }
-        public CswNbtNodePropRelationship Report { get { return ( _CswNbtNode.Properties[PropertyName.Report] ); } }
-        public CswNbtNodePropMemo Message { get { return ( _CswNbtNode.Properties[PropertyName.Message] ); } }
-        public CswNbtNodePropMemo NoDataNotification { get { return ( _CswNbtNode.Properties[PropertyName.NoDataNotification] ); } }
-        public CswNbtNodePropUserSelect Recipients { get { return ( _CswNbtNode.Properties[PropertyName.Recipients] ); } }
-        public CswNbtNodePropList Type { get { return ( _CswNbtNode.Properties[PropertyName.Type] ); } }
-        public CswNbtNodePropDateTime LastProcessed { get { return ( _CswNbtNode.Properties[PropertyName.LastProcessed] ); } }
-        public CswNbtNodePropDateTime FinalDueDate { get { return ( _CswNbtNode.Properties[PropertyName.FinalDueDate] ); } }
-        public CswNbtNodePropDateTime NextDueDate { get { return ( _CswNbtNode.Properties[PropertyName.NextDueDate] ); } }
-        public CswNbtNodePropButton RunNow { get { return ( _CswNbtNode.Properties[PropertyName.RunNow] ); } }
-        public CswNbtNodePropList OutputFormat { get { return ( _CswNbtNode.Properties[PropertyName.OutputFormat] ); } }
-        public CswNbtNodePropComments RunStatus { get { return ( _CswNbtNode.Properties[PropertyName.RunStatus] ); } }
-        public CswNbtNodePropNumber WarningDays { get { return ( _CswNbtNode.Properties[PropertyName.WarningDays] ); } }
         public CswNbtNodePropTimeInterval DueDateInterval { get { return ( _CswNbtNode.Properties[PropertyName.DueDateInterval] ); } }
-        public CswNbtNodePropDateTime RunTime { get { return ( _CswNbtNode.Properties[PropertyName.RunTime] ); } }
         public CswNbtNodePropLogical Enabled { get { return ( _CswNbtNode.Properties[PropertyName.Enabled] ); } }
-        public CswNbtNodePropNodeTypeSelect TargetType { get { return ( _CswNbtNode.Properties[PropertyName.TargetType] ); } }
         public CswNbtNodePropList Event { get { return ( _CswNbtNode.Properties[PropertyName.Event] ); } }
+        public CswNbtNodePropDateTime FinalDueDate { get { return ( _CswNbtNode.Properties[PropertyName.FinalDueDate] ); } }
+        public CswNbtNodePropDateTime LastProcessed { get { return ( _CswNbtNode.Properties[PropertyName.LastProcessed] ); } }
+        public CswNbtNodePropMemo Message { get { return ( _CswNbtNode.Properties[PropertyName.Message] ); } }
+        public CswNbtNodePropDateTime NextDueDate { get { return ( _CswNbtNode.Properties[PropertyName.NextDueDate] ); } }
         public CswNbtNodePropMemo NodesToReport { get { return ( _CswNbtNode.Properties[PropertyName.NodesToReport] ); } }
+        public CswNbtNodePropList OutputFormat { get { return ( _CswNbtNode.Properties[PropertyName.OutputFormat] ); } }
+        public CswNbtNodePropUserSelect Recipients { get { return ( _CswNbtNode.Properties[PropertyName.Recipients] ); } }
+        public CswNbtNodePropRelationship Report { get { return ( _CswNbtNode.Properties[PropertyName.Report] ); } }
+        public CswNbtNodePropViewReference ReportView { get { return ( _CswNbtNode.Properties[PropertyName.ReportView] ); } }
+        public CswNbtNodePropButton RunNow { get { return ( _CswNbtNode.Properties[PropertyName.RunNow] ); } }
+        public CswNbtNodePropComments RunStatus { get { return ( _CswNbtNode.Properties[PropertyName.RunStatus] ); } }
+        public CswNbtNodePropDateTime RunTime { get { return ( _CswNbtNode.Properties[PropertyName.RunTime] ); } }
+        public CswNbtNodePropNodeTypeSelect TargetType { get { return ( _CswNbtNode.Properties[PropertyName.TargetType] ); } }
+        public CswNbtNodePropList Type { get { return ( _CswNbtNode.Properties[PropertyName.Type] ); } }
+        public void OnTypePropChange( CswNbtNodeProp Prop )
+        {
+            if( Type.Value == TypeOptionView )
+            {
+                OutputFormat.Value = MailRptFormatOptions.Link.ToString();
+                OutputFormat.setReadOnly( value: true, SaveToDb: true );
+            }
+            else if( Type.Value == TypeOptionReport )
+            {
+                OutputFormat.setReadOnly( value: false, SaveToDb: true );
+            }
+        } // OnTypePropChange()
+        public CswNbtNodePropNumber WarningDays { get { return ( _CswNbtNode.Properties[PropertyName.WarningDays] ); } }
 
         #endregion
 

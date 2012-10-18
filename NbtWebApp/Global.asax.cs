@@ -2,12 +2,9 @@
 using System.ServiceModel.Activation;
 using System.Web;
 using System.Web.Routing;
-using NbtWebApp.WebSvc.Logic.Views;
-using NbtWebApp.WebSvc.Session;
-using NbtWebApp.WebSvc.Logic.Reports;
 using NbtWebApp.WebSvc.Logic.Menus.LandingPages;
 
-namespace NbtWebAppServices
+namespace NbtWebApp
 {
     /// <summary>
     /// Global ASAX
@@ -20,10 +17,10 @@ namespace NbtWebAppServices
         protected void Application_Start( object sender, EventArgs e )
         {
             WebServiceHostFactory Factory = new WebServiceHostFactory();
-            RouteTable.Routes.Add( new ServiceRoute( "Labels", Factory, typeof( CswNbtLabelUriMethods ) ) );
-            RouteTable.Routes.Add( new ServiceRoute( "Views", Factory, typeof( CswNbtViewsUriMethods ) ) );
-            RouteTable.Routes.Add( new ServiceRoute( "Session", Factory, typeof( CswNbtSessionUriMethods ) ) );
-            RouteTable.Routes.Add( new ServiceRoute( "Reports", Factory, typeof( CswNbtMailReportsUriMethods ) ) );
+            RouteTable.Routes.Add( new ServiceRoute( "Labels", Factory, typeof( Labels ) ) );
+            RouteTable.Routes.Add( new ServiceRoute( "Views", Factory, typeof( Views ) ) );
+            RouteTable.Routes.Add( new ServiceRoute( "Session", Factory, typeof( Session ) ) );
+            RouteTable.Routes.Add( new ServiceRoute( "Reports", Factory, typeof( Reports ) ) );
             RouteTable.Routes.Add( new ServiceRoute( "LandingPages", Factory, typeof( CswNbtLandingPageItemsUriMethods ) ) );
         }
 

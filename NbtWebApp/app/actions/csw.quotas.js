@@ -31,10 +31,10 @@
                 row = 1;
 
                 // Header row
-                table.cell(row, 1).b({ text: 'Object Class' });
-                table.cell(row, 2).b({ text: 'Node Types' });
-                table.cell(row, 3).b({ text: 'Current Usage' });
-                table.cell(row, 4).b({ text: 'Quota' });
+                table.cell(row, 1).span({ cssclass: 'CswThinGridHeaderShow', text: 'Object Class' });
+                table.cell(row, 2).span({ cssclass: 'CswThinGridHeaderShow', text: 'Node Types' });
+                table.cell(row, 3).span({ cssclass: 'CswThinGridHeaderShow', text: 'Current Usage' });
+                table.cell(row, 4).span({ cssclass: 'CswThinGridHeaderShow', text: 'Quota' });
                 row += 1;
 
                 // Quota table

@@ -560,7 +560,7 @@ namespace ChemSW.Nbt.Schema
         //public CswNbtView getTreeViewOfNodeType( Int32 NodeTypeId ) { return _CswNbtResources.Trees.getTreeViewOfNodeType( NodeTypeId ); }
         //public CswNbtView getTreeViewOfObjectClass( CswNbtMetaDataObjectClassName.NbtObjectClass ObjectClass ) { return _CswNbtResources.Trees.getTreeViewOfObjectClass( ObjectClass ); }
 
-        public ICswNbtTree getTreeFromView( CswNbtView View, bool IncludeSystemNodes ) { return _CswNbtResources.Trees.getTreeFromView( View, true, true, false, IncludeSystemNodes ); }
+        public ICswNbtTree getTreeFromView( CswNbtView View, bool IncludeSystemNodes ) { return _CswNbtResources.Trees.getTreeFromView( _CswNbtResources.CurrentNbtUser, View, true, IncludeSystemNodes, false ); }
         public List<CswNbtView> restoreViews( string ViewName )
         {
             List<CswNbtView> ReturnVal = new List<CswNbtView>();
@@ -1692,6 +1692,14 @@ namespace ChemSW.Nbt.Schema
             // This is kind of a kludgey way to determine whether we're on a fresh master, but see case 25806
             CswNbtNode AdminNode = Nodes.makeUserNodeFromUsername( "admin" );
             return ( null != AdminNode && ( (CswNbtObjClassUser) AdminNode ).LastLogin.DateTimeValue.Date == new DateTime( 2011, 12, 9 ) );
+        }
+
+        /// <summary>
+        /// Create a Rate Interval instance
+        /// </summary>
+        public CswRateInterval makeRateInterval()
+        {
+            return new CswRateInterval( _CswNbtResources );
         }
 
     }//class CswNbtSchemaModTrnsctn

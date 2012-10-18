@@ -31,9 +31,9 @@ namespace ChemSW.NbtWebControls.FieldTypes
                     if( _AllowEditValue )
                     {
                         DataTable Data = Prop.AsUserSelect.getUserOptions();
-                    
-						_CBArray.UseRadios = false;
-                        _CBArray.CreateCheckBoxes( Data, "User Name", "userid" );
+
+                        _CBArray.UseRadios = false;
+                        _CBArray.CreateCheckBoxes( Data, "label", "userIdString" );
                     }
                 }
             }

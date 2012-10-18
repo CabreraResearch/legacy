@@ -63,11 +63,17 @@ namespace ChemSW.Nbt.MetaData
         }
         public string TabName
         {
-            get { return _NodeTypeTabRow["tabname"].ToString(); }
+            get { return CswConvert.ToString( _NodeTypeTabRow["tabname"] ); }
             set
             {
+                if( false == string.IsNullOrEmpty( TabName ) && false == _CanEditTab() )
+                {
+                    throw new CswDniException( ErrorType.Warning, "Server Managed tabs cannot be renamed.", "User attempted to change the name of a Server Managed tab " + TabName );
+                }
                 if( value == string.Empty )
+                {
                     throw new CswDniException( ErrorType.Warning, "Tab name cannot be empty", "User attempted to save a null tabname for tabid " + TabId );
+                }
 
                 if( _NodeTypeTabRow["tabname"].ToString() != value )
                 {
@@ -90,12 +96,26 @@ namespace ChemSW.Nbt.MetaData
             }
         }
 
+        private bool _CanEditTab()
+        {
+            return false == ServerManaged || _CswNbtMetaDataResources.CswNbtResources.IsSystemUser;
+        }
+
+        public bool ServerManaged
+        {
+            get { return CswConvert.ToBoolean( _NodeTypeTabRow["servermanaged"] ); }
+            set { _NodeTypeTabRow["servermanaged"] = CswConvert.ToDbVal( value ); }
+        }
 
         public Int32 TabOrder
         {
             get { return CswConvert.ToInt32( _NodeTypeTabRow["taborder"] ); }
             set
             {
+                if( Int32.MinValue != TabOrder && false == _CanEditTab() )
+                {
+                    throw new CswDniException( ErrorType.Warning, "Server Managed tabs cannot be reordered.", "User attempted to change the order of a Server Managed tab " + TabName );
+                }
                 if( CswConvert.ToInt32( _NodeTypeTabRow["taborder"] ) != value )
                 {
                     _checkVersioningTab();

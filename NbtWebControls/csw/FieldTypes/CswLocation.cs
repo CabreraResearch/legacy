@@ -41,8 +41,8 @@ namespace ChemSW.NbtWebControls.FieldTypes
                             CswNbtView View = Prop.AsLocation.View;
                             if( View != null )
                             {
-                                ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( View, false, true, false, false );
-                                
+                                ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( _CswNbtResources.CurrentNbtUser, View, true, false, false );
+
                                 // BROKEN BY case 24709
                                 //string XmlStr = Tree.getTreeAsXml();
                                 //_TreeView.LoadXml( XmlStr );
@@ -186,7 +186,7 @@ namespace ChemSW.NbtWebControls.FieldTypes
                     {
                         _Div = new HtmlGenericControl( "div" );
                         _Div.ID = "loctreediv";
-                        _Div.Attributes.Add("class", "loctreediv");
+                        _Div.Attributes.Add( "class", "loctreediv" );
                         this.Controls.Add( _Div );
 
                         _TreeView = new RadTreeView();

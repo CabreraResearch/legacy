@@ -142,6 +142,6 @@ namespace ChemSW.Nbt.Schema
             InvGrpPermNode.postChanges( false );
         }
 
-    }//class CswUpdateSchemaCase27528
+    }//class CswUpdateSchema_01S_Case27528
 
 }//namespace ChemSW.Nbt.Schema

@@ -80,8 +80,8 @@ namespace CswCommon.Test
             DateTime CurrentDate = StartDate;
             for( Int32 i = 1; i <= 24; i++ )
             {
-                CurrentDate = CurrentDate.AddMonths( f );
-                Assert.AreEqual( r.getNext( CurrentDate ), CurrentDate.AddMonths( f ) );
+                CurrentDate = CurrentDate.AddMonths( 1 );
+                Assert.AreEqual( r.getNext( CurrentDate ), CurrentDate.AddMonths( 1 ) );
             }
         }
 
@@ -98,7 +98,9 @@ namespace CswCommon.Test
             {
                 CurrentDate = new DateTime( CurrentDate.Year, CurrentDate.Month + 1, 1 );
                 DateTime TargetDate = CurrentDate;
-                while( TargetDate.Day < 8 && TargetDate.DayOfWeek != DayOfWeek.Monday ) { TargetDate.AddDays( 1 ); }
+                while( TargetDate.Day < 8 && TargetDate.DayOfWeek != DayOfWeek.Monday ) {
+                    TargetDate = TargetDate.AddDays( 1 ); 
+                }
                 Assert.AreEqual( r.getNext( CurrentDate ), TargetDate );
             }
         }

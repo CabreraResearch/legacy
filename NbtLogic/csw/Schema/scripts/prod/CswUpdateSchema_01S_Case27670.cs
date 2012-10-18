@@ -49,6 +49,6 @@ namespace ChemSW.Nbt.Schema
 
         //Update()
 
-    }//class CswUpdateSchemaCase27670
+    }//class CswUpdateSchema_01S_Case27670
 
 }//namespace ChemSW.Nbt.Schema

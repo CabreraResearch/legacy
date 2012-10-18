@@ -59,9 +59,7 @@
         } else {
 
             var auth = Csw.string(response.Authentication.AuthenticationStatus, 'Unknown');
-            if (false === o.formobile) {
                 Csw.clientSession.setExpireTime(Csw.string(response.Authentication.TimeOut, ''));
-            }
 
             if (false === Csw.isNullOrEmpty(response.Performance)) {
                 response.Performance.url = url;
@@ -125,7 +123,6 @@
             success: null,
             error: null,
             overrideError: false,
-            formobile: false,
             async: true,
             watchGlobal: true,
             removeTimer: true
@@ -174,7 +171,6 @@
             /// <para>options.data: {field1: value, field2: value}</para>
             /// <para>options.success: function () {}</para>
             /// <para>options.error: function () {}</para>
-            /// <para>options.formobile: false</para>
             /// </param>
             /// <param name="type" type="String">XML or JSON (default)</param>
             /// <return type="Object">Returns the results of the $.ajax() request in an object wrapper.</return>
@@ -190,7 +186,6 @@
             /// <para>options.data: {field1: value, field2: value}</para>
             /// <para>options.success: function () {}</para>
             /// <para>options.error: function () {}</para>
-            /// <para>options.formobile: false</para>
             /// </param>
             /// <param name="type" type="String">XML or JSON (default)</param>
             /// <return type="Object">Returns the results of the $.ajax() request in an object wrapper.</return>
@@ -206,7 +201,6 @@
             /// <para>options.data: {field1: value, field2: value}</para>
             /// <para>options.success: function () {}</para>
             /// <para>options.error: function () {}</para>
-            /// <para>options.formobile: false</para>
             /// </param>
             /// <param name="type" type="String">XML or JSON (default)</param>
             /// <return type="Object">Returns the results of the $.ajax() request in an object wrapper.</return>
@@ -222,7 +216,6 @@
             /// <para>options.data: {field1: value, field2: value}</para>
             /// <para>options.success: function () {}</para>
             /// <para>options.error: function () {}</para>
-            /// <para>options.formobile: false</para>
             /// </param>
             /// <param name="type" type="String">XML or JSON (default)</param>
             /// <return type="Object">Returns the results of the $.ajax() request in an object wrapper.</return>

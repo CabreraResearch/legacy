@@ -60,7 +60,7 @@ namespace ChemSW.Nbt.WebServices
                     } // if( ViewRel.SecondType == RelatedIdType.NodeTypeId )
                 } // foreach( CswNbtViewRelationship ViewRel in View.Root.ChildRelationships )
 
-                Tree = _CswNbtResources.Trees.getTreeFromView( _View, false );
+                Tree = _CswNbtResources.Trees.getTreeFromView( _View, false, false, false );
                 ret = makeTableFromTree( Tree, null );
             } // if( _View != null )
             return ret;

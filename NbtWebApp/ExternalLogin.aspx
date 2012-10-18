@@ -3,7 +3,7 @@
 <!doctype html xmlns="http://www.w3.org/1999/xhtml">
  <html>
     <head runat="server">
-        <meta http-equiv="X-UA-Compatible" content="IE=9">
+        <meta http-equiv="X-UA-Compatible" content="chrome=1">
         <title>Login</title>
         <!--#include file="MainIncludes.html" -->
         <!--#include file="MainCswIncludes.html" -->

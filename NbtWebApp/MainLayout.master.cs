@@ -353,8 +353,7 @@ namespace ChemSW.Nbt.WebPages
                                                                                                     true );
                             UserRelationship.NodeIdsToFilterIn.Add( Master.CswNbtResources.CurrentUser.UserId );
 
-                            ICswNbtTree PrefsTree = Master.CswNbtResources.Trees.getTreeFromView( UserView, false, false,
-                                                                                                  false, false );
+                            ICswNbtTree PrefsTree = Master.CswNbtResources.Trees.getTreeFromView( Master.CswNbtResources.CurrentNbtUser, UserView, true, false, false );
                             PrefsTree.goToNthChild( 0 );
                             Session["Main_SelectedNodeKey"] = PrefsTree.getNodeKeyForCurrentPosition().ToString();
 

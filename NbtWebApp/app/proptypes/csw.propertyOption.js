@@ -111,9 +111,9 @@
                     return Csw.bool(cswPublic.tabState.Multi);
                 };
 
-                cswPublic.isDisabled = function () {
+                cswPublic.isDisabled = function() {
                     return (Csw.enums.editMode.PrintReport === cswPublic.tabState.EditMode || Csw.enums.editMode.AuditHistoryInPopup === cswPublic.tabState.EditMode);
-                }
+                };
 
                 cswPublic.ID = Csw.makeId(cswPublic.propDiv.getId(), cswPublic.propData.id);
 
@@ -125,7 +125,17 @@
                     'use strict';
                     attributes = attributes || {};
                     cswStaticInternalClosure.preparePropJsonForSave(cswPublic.isMulti(), cswPublic.propData, attributes);
+                    Csw.publish('onPropChange_' + cswPublic.propid, { tabid: cswPublic.tabState.tabid, propData: cswPublic.propData });
                 };
+
+                cswPrivate.onPropChange = function(eventObj, data) {
+                    if(data.tabid !== cswPublic.tabState.tabid) {                    
+                        Csw.extend(cswPublic.propData, data.propData, true);
+                        cswPrivate.renderThisProp();
+                    } 
+                };
+
+                Csw.subscribe('onPropChange_' + cswPublic.propid, cswPrivate.onPropChange);
 
                 cswPublic.toggleMulti = function (eventObj, multiOpts) {
                     if (multiOpts && multiOpts.nodeid === cswPublic.tabState.nodeid) {

@@ -67,7 +67,7 @@ namespace ChemSW.Nbt.Actions
                         //Case 24572
                         CswNbtView.AddViewPropertyFilter( DueDateProp, CswNbtSubField.SubFieldName.Value, CswNbtPropFilterSql.PropertyFilterMode.Equals, TargetDateFilter, false );
 
-                        ICswNbtTree ExistingNodesTree = _CswNbtResources.Trees.getTreeFromView( CswNbtView, true, true, false, false );
+                        ICswNbtTree ExistingNodesTree = _CswNbtResources.Trees.getTreeFromView( _CswNbtResources.CurrentNbtUser, CswNbtView, true, false, false );
 
                         if( ExistingNodesTree.getChildNodeCount() > 0 )
                         {
@@ -154,7 +154,7 @@ namespace ChemSW.Nbt.Actions
             {
                 // Case 20482
                 ( ParentView.Root.ChildRelationships[0] ).NodeIdsToFilterIn.Add( GeneratorNodeAsGenerator.NodeId );
-                ICswNbtTree ParentsTree = _CswNbtResources.Trees.getTreeFromView( ParentView, false, false );
+                ICswNbtTree ParentsTree = _CswNbtResources.Trees.getTreeFromView( ParentView, false, false, false );
                 if( GeneratorNodeAsGenerator.ParentType.SelectMode == PropertySelectMode.Single )
                 {
                     Int32 ParentNtId = CswConvert.ToInt32( GeneratorNodeAsGenerator.ParentType.SelectedNodeTypeIds[0] );

@@ -25,13 +25,13 @@
                 row = 1;
 
                 // Header row
-                table.cell(row, 1).b({ text: 'End' });
-                table.cell(row, 2).b({ text: 'Access ID' });
-                table.cell(row, 3).b({ text: 'Username' });
-                table.cell(row, 4).b({ text: 'Login Date' });
-                table.cell(row, 5).b({ text: 'Timeout Date' });
-                table.cell(row, 6).b({ text: 'Is Mobile' });
-                table.cell(row, 7).b({ text: 'Session ID' });
+                table.cell(row, 1).span({ cssclass: 'CswThinGridHeaderShow', text: 'End' });
+                table.cell(row, 2).span({ cssclass: 'CswThinGridHeaderShow', text: 'Access ID' });
+                table.cell(row, 3).span({ cssclass: 'CswThinGridHeaderShow', text: 'Username' });
+                table.cell(row, 4).span({ cssclass: 'CswThinGridHeaderShow', text: 'Login Date' });
+                table.cell(row, 5).span({ cssclass: 'CswThinGridHeaderShow', text: 'Timeout Date' });
+                table.cell(row, 6).span({ cssclass: 'CswThinGridHeaderShow', text: 'Is Mobile' });
+                table.cell(row, 7).span({ cssclass: 'CswThinGridHeaderShow', text: 'Session ID' });
                 row += 1;
 
                 // Sessions table

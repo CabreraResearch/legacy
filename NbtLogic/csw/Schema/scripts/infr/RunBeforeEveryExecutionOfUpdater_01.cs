@@ -1,4 +1,5 @@
 
+using System;
 using ChemSW.Nbt.csw.Dev;
 using System;
 
@@ -76,14 +77,44 @@ namespace ChemSW.Nbt.Schema
 
             #region TITANIA
 
+            _acceptBlame( CswDeveloper.CF, 27965 );            
+
+            if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( "nodetype_tabset", "servermanaged" ) )
+            {
+                _CswNbtSchemaModTrnsctn.addBooleanColumn( "nodetype_tabset", "servermanaged", "Indicates that the tab is Server Managed", logicaldelete: false, required: false );
+            }
+
+            _resetBlame();
+
+
+            #region Case 27862 - add "hidden" col to nodes table
+            
+            _acceptBlame( CswDeveloper.MB, 27862 );
+
+            if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( "nodes", "hidden" ) )
+            {
+                //Add a "hidden" column to nodes
+                _CswNbtSchemaModTrnsctn.addBooleanColumn(
+                    tablename: "nodes",
+                    columnname: "hidden",
+                    description: "whether the node is hidden or not",
+                    logicaldelete: false,
+                    required: true );
+            }
+            
+             _resetBlame();
+
+            #endregion
+            
             _changeWelcomeTableToLandingPageTable();
 
             #endregion TITANIA
 
         }//Update()
-
+        
         private void _changeWelcomeTableToLandingPageTable()
         {
+            
             _acceptBlame( CswDeveloper.BV, 27881 );
 
             if( false == _CswNbtSchemaModTrnsctn.isTableDefined( "landingpage" ) && _CswNbtSchemaModTrnsctn.isTableDefined( "welcome" ) )
@@ -91,8 +122,8 @@ namespace ChemSW.Nbt.Schema
                 _CswNbtSchemaModTrnsctn.copyTable( "welcome", "landingpage", false );
                 _CswNbtSchemaModTrnsctn.dropTable( "welcome" );
             }
+
             if( _CswNbtSchemaModTrnsctn.isTableDefined( "landingpage" ) )
-            {
                 if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( "landingpage", "for_actionid" ) )
                 {
                     _CswNbtSchemaModTrnsctn.addLongColumn( "landingpage", "for_actionid", "Indicates the action to which this landing page is associated", false, false );
