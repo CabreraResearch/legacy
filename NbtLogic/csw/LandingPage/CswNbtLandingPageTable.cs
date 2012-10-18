@@ -15,7 +15,7 @@ namespace ChemSW.Nbt.LandingPage
         private CswNbtResources _CswNbtResources;
 
         /// <summary>
-        /// Types of LandingPage Page Components
+        /// Types of LandingPage Page Item
         /// </summary>
         public enum LandingPageItemType
         {
@@ -38,10 +38,18 @@ namespace ChemSW.Nbt.LandingPage
             _CswNbtResources = CswNbtResources;
         }
 
-        public DataTable getLandingPageTable( Int32 RoleId )
+        public DataTable getLandingPageTable( Int32 RoleId, string ActionId )
         {
             CswTableSelect LandingPageSelect = _CswNbtResources.makeCswTableSelect( "LandingPageSelect", "landingpage" );
-            string WhereClause = "where for_roleid = '" + RoleId.ToString() + "'";
+            string WhereClause;
+            if( false == String.IsNullOrEmpty( ActionId ) )
+            {
+                WhereClause = "where for_actionid = '" + ActionId + "'";
+            }
+            else
+            {
+                WhereClause = "where for_roleid = '" + RoleId.ToString() + "' and for_actionid is null";
+            }
             Collection<OrderByClause> OrderBy = new Collection<OrderByClause>();
             OrderBy.Add( new OrderByClause( "display_row", OrderByType.Ascending ) );
             OrderBy.Add( new OrderByClause( "display_col", OrderByType.Ascending ) );
@@ -50,88 +58,10 @@ namespace ChemSW.Nbt.LandingPage
             return LandingPageTable;
         }
 
-        public void ResetLandingPageItems( string strRoleId )
-        {
-            CswPrimaryKey RolePk = new CswPrimaryKey();
-            RolePk.FromString( strRoleId );
-            Int32 RoleId = RolePk.PrimaryKey;
-
-            // Reset the contents for this role to factory default
-            CswTableUpdate LandingPageUpdate = _CswNbtResources.makeCswTableUpdate( "LandingPageUpdateReset", "landingpage" );
-            DataTable LandingPageTable = LandingPageUpdate.getTable( "for_roleid", RoleId );
-            for( Int32 i = 0; i < LandingPageTable.Rows.Count; i++ )
-            {
-                LandingPageTable.Rows[i].Delete();
-            }
-
-            CswNbtViewId EquipmentByTypeViewId = new CswNbtViewId();
-            CswNbtViewId TasksOpenViewId = new CswNbtViewId();
-            CswNbtViewId ProblemsOpenViewId = new CswNbtViewId();
-
-            Dictionary<CswNbtViewId, CswNbtView> Views = _CswNbtResources.ViewSelect.getVisibleViews( false );
-            foreach( CswNbtView View in Views.Values )
-            {
-                if( View.ViewName == "All Equipment" )
-                    EquipmentByTypeViewId = View.ViewId;
-                if( View.ViewName == "Tasks: Open" )
-                    TasksOpenViewId = View.ViewId;
-                if( View.ViewName == "Problems: Open" )
-                    ProblemsOpenViewId = View.ViewId;
-            }
-
-            Int32 ProblemNodeTypeId = Int32.MinValue;
-            Int32 TaskNodeTypeId = Int32.MinValue;
-            Int32 ScheduleNodeTypeId = Int32.MinValue;
-            Int32 EquipmentNodeTypeId = Int32.MinValue;
-            foreach( CswNbtMetaDataNodeType NodeType in _CswNbtResources.MetaData.getNodeTypesLatestVersion() )
-            {
-                string NodeTypeName = NodeType.NodeTypeName;
-                Int32 FirstVersionNTId = NodeType.FirstVersionNodeTypeId;
-                if( NodeTypeName == "Equipment Problem" )
-                {
-                    ProblemNodeTypeId = FirstVersionNTId;
-                }
-                else if( NodeTypeName == "Equipment Task" )
-                {
-                    TaskNodeTypeId = FirstVersionNTId;
-                }
-                else if( NodeTypeName == "Equipment Schedule" )
-                {
-                    ScheduleNodeTypeId = FirstVersionNTId;
-                }
-                else if( NodeTypeName == "Equipment" )
-                {
-                    EquipmentNodeTypeId = FirstVersionNTId;
-                }
-            }
-
-            // Equipment            
-            if( EquipmentNodeTypeId != Int32.MinValue )
-                _AddLandingPageItem( LandingPageTable, LandingPageItemType.Add, CswNbtView.ViewType.View, string.Empty, EquipmentNodeTypeId, string.Empty, RoleId, 5, 1 );
-            if( EquipmentByTypeViewId.isSet() )
-                _AddLandingPageItem( LandingPageTable, LandingPageItemType.Link, CswNbtView.ViewType.View, EquipmentByTypeViewId.ToString(), Int32.MinValue, "All Equipment", RoleId, 7, 1 );
-
-            // Problems
-            if( ProblemsOpenViewId.isSet() )
-                _AddLandingPageItem( LandingPageTable, LandingPageItemType.Link, CswNbtView.ViewType.View, ProblemsOpenViewId.ToString(), Int32.MinValue, "Problems", RoleId, 1, 3, "warning.gif" );
-            if( ProblemNodeTypeId != Int32.MinValue )
-                _AddLandingPageItem( LandingPageTable, LandingPageItemType.Add, CswNbtView.ViewType.View, string.Empty, ProblemNodeTypeId, "Add New Problem", RoleId, 5, 3 );
-
-            // Schedules and Tasks
-            if( TasksOpenViewId.isSet() )
-                _AddLandingPageItem( LandingPageTable, LandingPageItemType.Link, CswNbtView.ViewType.View, TasksOpenViewId.ToString(), Int32.MinValue, "Tasks", RoleId, 1, 5, "clipboard.gif" );
-            if( TaskNodeTypeId != Int32.MinValue )
-                _AddLandingPageItem( LandingPageTable, LandingPageItemType.Add, CswNbtView.ViewType.View, string.Empty, TaskNodeTypeId, "Add New Task", RoleId, 5, 5 );
-            if( ScheduleNodeTypeId != Int32.MinValue )
-                _AddLandingPageItem( LandingPageTable, LandingPageItemType.Add, CswNbtView.ViewType.View, string.Empty, ScheduleNodeTypeId, "Scheduling", RoleId, 7, 5 );
-
-            LandingPageUpdate.update( LandingPageTable );
-        } // ResetLandingPageItems()
-
         /// <summary>
-        /// Adds a LandingPage component to the LandingPage page
+        /// Adds a new item to the LandingPage
         /// </summary>
-        public void addLandingPageItem( string Type, string ViewType, string PkValue, Int32 NodeTypeId, string DisplayText, string strRoleId )
+        public void addLandingPageItem( string Type, string ViewType, string PkValue, Int32 NodeTypeId, string DisplayText, string strRoleId, string ActionId )
         {
             if( strRoleId == string.Empty || false == _CswNbtResources.CurrentNbtUser.IsAdministrator() )
             {
@@ -146,42 +76,33 @@ namespace ChemSW.Nbt.LandingPage
 
             CswTableUpdate LandingPageUpdate = _CswNbtResources.makeCswTableUpdate( "AddLandingPageItem_Update", "landingpage" );
             DataTable LandingPageTable = LandingPageUpdate.getEmptyTable();
-            _AddLandingPageItem( LandingPageTable, itemType, RealViewType, PkValue, NodeTypeId, DisplayText, RoleId );
+            _addLandingPageItem( LandingPageTable, itemType, RealViewType, PkValue, NodeTypeId, DisplayText, RoleId, ActionId );
             LandingPageUpdate.update( LandingPageTable );
         }
 
-        private void _AddLandingPageItem( DataTable LandingPageTable, LandingPageItemType itemType, CswNbtView.ViewType ViewType, string PkValue,
-                                          Int32 NodeTypeId, string DisplayText, Int32 RoleId,
-                                          Int32 Row = Int32.MinValue, Int32 Column = Int32.MinValue, string ButtonIcon = "" )
+        private void _addLandingPageItem( DataTable LandingPageTable, LandingPageItemType ItemType, CswNbtView.ViewType ViewType, string PkValue,
+                                          Int32 NodeTypeId, string DisplayText, Int32 RoleId, string ActionId, string ButtonIcon = "" )
         {
-            if( Row == Int32.MinValue )
-            {
-                string SqlText = @"select max(display_row) maxcol
-                                     from landingpage
-                                    where display_col = 1
-                                      and (for_roleid = " + RoleId.ToString() + @")";
-                CswArbitrarySelect LandingPageSelect = _CswNbtResources.makeCswArbitrarySelect( "AddButton_Click_LandingPageSelect", SqlText );
-                DataTable LandingPageSelectTable = LandingPageSelect.getTable();
-                Int32 MaxRow = 0;
-                if( LandingPageSelectTable.Rows.Count > 0 )
-                {
-                    MaxRow = CswConvert.ToInt32( LandingPageSelectTable.Rows[0]["maxcol"] );
-                    if( MaxRow < 0 ) MaxRow = 0;
-                }
-                Row = MaxRow + 1;
-                Column = 1;
-            }
+            Int32 Row = _getNextAvailableRowForItem( RoleId, ActionId );
+            Int32 Column = 1;
 
             if( ButtonIcon == "blank.gif" )
                 ButtonIcon = string.Empty;
 
             DataRow NewLandingPageRow = LandingPageTable.NewRow();
-            NewLandingPageRow["for_roleid"] = RoleId;
-            NewLandingPageRow["componenttype"] = itemType.ToString();
+            if( Int32.MinValue != RoleId )
+            {
+                NewLandingPageRow["for_roleid"] = RoleId;
+            }
+            if( false == String.IsNullOrEmpty( ActionId ) )
+            {
+                NewLandingPageRow["for_actionid"] = ActionId;
+            }
+            NewLandingPageRow["componenttype"] = ItemType.ToString();
             NewLandingPageRow["display_col"] = Column;
             NewLandingPageRow["display_row"] = Row;
 
-            switch( itemType )
+            switch( ItemType )
             {
                 case LandingPageItemType.Add:
                     if( NodeTypeId != Int32.MinValue )
@@ -191,7 +112,7 @@ namespace ChemSW.Nbt.LandingPage
                         NewLandingPageRow["displaytext"] = DisplayText;
                     }
                     else
-                        throw new CswDniException( ErrorType.Warning, "You must select something to add", "No nodetype selected for new Add LandingPage Page Component" );
+                        throw new CswDniException( ErrorType.Warning, "You must select something to add", "No nodetype selected for new Add LandingPage Item" );
                     break;
                 case LandingPageItemType.Link:
                     if( ViewType == CswNbtView.ViewType.View )
@@ -211,7 +132,7 @@ namespace ChemSW.Nbt.LandingPage
                     }
                     else
                     {
-                        throw new CswDniException( ErrorType.Warning, "You must select a view", "No view was selected for new Link LandingPage Page Component" );
+                        throw new CswDniException( ErrorType.Warning, "You must select a view", "No view was selected for new Link LandingPage Item" );
                     }
                     NewLandingPageRow["buttonicon"] = ButtonIcon;
                     NewLandingPageRow["displaytext"] = DisplayText;
@@ -222,12 +143,31 @@ namespace ChemSW.Nbt.LandingPage
                         NewLandingPageRow["displaytext"] = DisplayText;
                     }
                     else
-                        throw new CswDniException( ErrorType.Warning, "You must enter text to display", "No text entered for new Text LandingPage Page Component" );
+                        throw new CswDniException( ErrorType.Warning, "You must enter text to display", "No text entered for new Text LandingPage Item" );
                     break;
             }
             LandingPageTable.Rows.Add( NewLandingPageRow );
 
         } // _AddLandingPageItem()
+
+        private Int32 _getNextAvailableRowForItem( Int32 RoleId, string ActionId )
+        {
+            String ActionText = String.Empty;
+            if( false == String.IsNullOrEmpty( ActionId ) )
+            {
+                ActionText = " and (for_actionid = " + ActionId + ")";
+            }
+            string SqlText = "select max(display_row) maxcol from landingpage where display_col = 1 and (for_roleid = " + RoleId.ToString() + ")" + ActionText;
+            CswArbitrarySelect LandingPageSelect = _CswNbtResources.makeCswArbitrarySelect( "LandingPageForRole", SqlText );
+            DataTable LandingPageSelectTable = LandingPageSelect.getTable();
+            Int32 MaxRow = 0;
+            if( LandingPageSelectTable.Rows.Count > 0 )
+            {
+                MaxRow = CswConvert.ToInt32( LandingPageSelectTable.Rows[0]["maxcol"] );
+                if( MaxRow < 0 ) MaxRow = 0;
+            }
+            return MaxRow + 1;
+        }
 
         public void moveLandingPageItem( Int32 LandingPageId, Int32 NewRow, Int32 NewColumn )
         {

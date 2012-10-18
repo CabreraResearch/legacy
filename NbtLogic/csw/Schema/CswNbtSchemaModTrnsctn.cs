@@ -96,11 +96,11 @@ namespace ChemSW.Nbt.Schema
             return ( new CswNbtActInspectionDesignWiz( _CswNbtResources, NbtViewVisibility.Global, null, true ) );
         }
 
-        public ChemSW.Nbt.LandingPage.CswNbtLandingPageTable getLandingPageTable()
+        public LandingPage.CswNbtLandingPageTable getLandingPageTable()
         {
             if( null == _LandingPageTable )
             {
-                _LandingPageTable = new ChemSW.Nbt.LandingPage.CswNbtLandingPageTable( _CswNbtResources );
+                _LandingPageTable = new LandingPage.CswNbtLandingPageTable( _CswNbtResources );
             }
             return ( _LandingPageTable );
         }

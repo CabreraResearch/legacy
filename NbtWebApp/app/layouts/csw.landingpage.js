@@ -8,6 +8,8 @@
             var cswPrivate = {
                 ID: 'landingpage',
                 Title: '',
+                RoleId: '',
+                ActionId: '',
                 onLinkClick: null,
                 onAddClick: null,
                 onAddComponent: null,
@@ -17,7 +19,7 @@
                 Csw.extend(cswPrivate, options);
             }
 
-            var cswPublic = { };
+            var cswPublic = {};
 
             (function () {
                 Csw.ajaxWcf.post({
@@ -50,7 +52,10 @@
                                 'font-size': '1.2em'
                             });
 
-                        //add title here
+                        cswPrivate.landingPageTitle = cswPrivate.landingPageDiv.span({
+                            cssclass: 'LandingPageTitle',
+                            text: cswPrivate.Title
+                        });
 
                         cswPrivate.layoutTable = cswPrivate.landingPageDiv.layoutTable({
                             ID: 'landingpagetable',
@@ -62,7 +67,7 @@
                             onSwap: function (ev, onSwapData) {
                                 cswPrivate.onSwap(onSwapData);
                             },
-                            showConfigButton: true,//TODO - these flags will be contingent upon whether or not the user is an admin
+                            showConfigButton: true, //TODO - these flags will be contingent upon whether or not the user is an admin
                             showExpandRowButton: true,
                             showExpandColButton: true,
                             showAddButton: true,
@@ -285,7 +290,8 @@
 
             cswPrivate.addItem = function (addOptions) {
                 var dataJson = {
-                    RoleId: '',
+                    RoleId: cswPrivate.RoleId,
+                    ActionId: cswPrivate.ActionId,
                     Type: addOptions.type,
                     ViewType: addOptions.viewtype,
                     ViewValue: addOptions.viewvalue,
@@ -301,7 +307,6 @@
                     },
                     error: addOptions.onError
                 });
-
             };
 
             cswPrivate.onTypeChange = function (controlOptions) {

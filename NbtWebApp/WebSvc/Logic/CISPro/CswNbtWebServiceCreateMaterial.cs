@@ -399,9 +399,10 @@ namespace ChemSW.Nbt.WebServices
 
                         /* 3. Add landingpage data */
                         RetObj["landingpagedata"] = new JObject();
-                        RetObj["landingpagedata"]["title"] = "Created " + MaterialNode.NodeName;
-                        RetObj["landingpagedata"]["materialid"] = MaterialObj["materialId"];
-                        RetObj["landingpagedata"]["materialviewid"] = MaterialNodeView.SessionViewId.ToString();
+                        RetObj["landingpagedata"]["ActionId"] = _CswNbtResources.Actions[CswNbtActionName.Create_Material].ActionId.ToString();
+                        RetObj["landingpagedata"]["Title"] = "Created " + MaterialNode.NodeName;
+                        RetObj["landingpagedata"]["NodeId"] = MaterialObj["materialId"];
+                        RetObj["landingpagedata"]["NodeViewId"] = MaterialNodeView.SessionViewId.ToString();
                     }
                 }
             }

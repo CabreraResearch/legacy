@@ -109,14 +109,6 @@ namespace NbtWebApp.WebSvc.Logic.Menus.LandingPages
 
         #endregion WCF Data Objects
 
-        private CswNbtResources _CswNbtResources;
-        private CswNbtLandingPageTable _CswNbtLandingPageTable;
-        public CswNbtWebServiceLandingPageItems( CswNbtResources CswNbtResources )
-        {
-            _CswNbtResources = CswNbtResources;
-            _CswNbtLandingPageTable = new CswNbtLandingPageTable( _CswNbtResources );
-        }
-
         public static void getLandingPageItems( ICswResources CswResources, LandingPageItemsReturn Return, LandingPageData.Request Request )
         {
             CswNbtResources _CswNbtResources = (CswNbtResources) CswResources;
@@ -131,12 +123,7 @@ namespace NbtWebApp.WebSvc.Logic.Menus.LandingPages
             RolePk.FromString( Request.RoleId );
             Int32 RoleId = RolePk.PrimaryKey;
 
-            DataTable LandingPageTable = _CswNbtLandingPageTable.getLandingPageTable( RoleId );
-            if( LandingPageTable.Rows.Count == 0 )
-            {
-                _CswNbtLandingPageTable.ResetLandingPageItems( Request.RoleId );
-                LandingPageTable = _CswNbtLandingPageTable.getLandingPageTable( RoleId );
-            }
+            DataTable LandingPageTable = _CswNbtLandingPageTable.getLandingPageTable( RoleId, Request.ActionId );
             Dictionary<CswNbtViewId, CswNbtView> VisibleViews = _CswNbtResources.ViewSelect.getVisibleViews( string.Empty, _CswNbtResources.CurrentNbtUser, true, false, false, NbtViewRenderingMode.Any );
 
             foreach( DataRow LandingPageRow in LandingPageTable.Rows )
@@ -213,7 +200,7 @@ namespace NbtWebApp.WebSvc.Logic.Menus.LandingPages
                                     LinkText = LandingPageRow["displaytext"].ToString() != string.Empty ? LandingPageRow["displaytext"].ToString() : CswNbtAction.ActionNameEnumToString( ThisAction.Name );
                                 }
                                 Item.ActionId = LandingPageRow["to_actionid"].ToString();
-                                Item.ActionName = ThisAction.Name.ToString();      // not using CswNbtAction.ActionNameEnumToString here
+                                Item.ActionName = ThisAction.Name.ToString();
                                 Item.ActionUrl = ThisAction.Url;
                                 Item.ButtonIcon = CswNbtMetaDataObjectClass.IconPrefix100 + "wizard.png";
                                 Item.Type = "action";
@@ -260,7 +247,15 @@ namespace NbtWebApp.WebSvc.Logic.Menus.LandingPages
         public static void addLandingPageItem( ICswResources CswResources, LandingPageItemsReturn Return, LandingPageData.Request Request )
         {
             CswNbtLandingPageTable _CswNbtLandingPageTable = new CswNbtLandingPageTable( (CswNbtResources) CswResources );
-            _CswNbtLandingPageTable.addLandingPageItem( Request.Type, Request.ViewType, Request.ViewValue, CswConvert.ToInt32( Request.NodeTypeId ), Request.Text, Request.RoleId );
+            _CswNbtLandingPageTable.addLandingPageItem(
+                Request.Type,
+                Request.ViewType,
+                Request.ViewValue,
+                CswConvert.ToInt32( Request.NodeTypeId ),
+                Request.Text,
+                Request.RoleId,
+                Request.ActionId
+                );
         }
 
         /// <summary>

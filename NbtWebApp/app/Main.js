@@ -36,13 +36,13 @@ window.initMain = window.initMain || function (undefined) {
     } ());
 
 
-    var startSpinner = function() {
+    var startSpinner = function () {
         Csw.main.ajaxImage.show();
         Csw.main.ajaxSpacer.hide();
     }
     Csw.subscribe(Csw.enums.events.ajax.globalAjaxStart, startSpinner);
 
-    var stopSpinner = function() {
+    var stopSpinner = function () {
         Csw.main.ajaxImage.hide();
         Csw.main.ajaxSpacer.show();
     };
@@ -284,9 +284,9 @@ window.initMain = window.initMain || function (undefined) {
                             refreshWelcomeLandingPage();
                         }
                     };
-                } 
+                }
                 onSuccess();
-                
+
             } // onAuthenticate
         }); // CswLogin
 
@@ -306,7 +306,7 @@ window.initMain = window.initMain || function (undefined) {
             onSuccess: onSuccess
         });
     }
-    
+
     function clear(options) {
         ///<summary>Clears the contents of the page.</summary>
         ///<param name="options">An object representing the elements to clear: all, left, right, centertop, centerbottom.</param>
@@ -345,40 +345,42 @@ window.initMain = window.initMain || function (undefined) {
     });
 
     function refreshWelcomeLandingPage() {
-        clear({ all: true });
-
-        Csw.layouts.landingpage(Csw.main.centerBottomDiv, {
-            ID: 'welcomeLandingPage',
-            Title: '',
-            onLinkClick: handleItemSelect,
-            onAddClick: function (itemData) {
-                $.CswDialog('AddNodeDialog', {
-                    text: itemData.Text,
-                    nodetypeid: itemData.NodeTypeId,
-                    onAddNode: function (nodeid, cswnbtnodekey) {
-                        clear({ all: true });
-                        refreshNodesTree({ 'nodeid': nodeid, 'cswnbtnodekey': cswnbtnodekey, 'IncludeNodeRequired': true });
-                    }
-                });
-            },
-            onAddComponent: refreshWelcomeLandingPage,
-            landingPageRequestData: { 
-                RoleId: ''
-            }
+        refreshLandingPage(function () {
+            Csw.layouts.landingpage(Csw.main.centerBottomDiv, {
+                ID: 'welcomeLandingPage',
+                Title: '',
+                onLinkClick: handleItemSelect,
+                onAddClick: function (itemData) {
+                    $.CswDialog('AddNodeDialog', {
+                        text: itemData.Text,
+                        nodetypeid: itemData.NodeTypeId,
+                        onAddNode: function (nodeid, cswnbtnodekey) {
+                            clear({ all: true });
+                            refreshNodesTree({ 'nodeid': nodeid, 'cswnbtnodekey': cswnbtnodekey, 'IncludeNodeRequired': true });
+                        }
+                    });
+                },
+                onAddComponent: refreshWelcomeLandingPage,
+                landingPageRequestData: {
+                    RoleId: ''
+                }
+            });
         });
+    }
 
+    function refreshLandingPage(loadLandingPage) {
+        clear({ all: true });
+        loadLandingPage();
         refreshMainMenu();
         refreshViewSelect();
     }
-
-    // refreshWelcomeLandingPage()
 
     function handleItemSelect(options) {
         //if (debugOn()) Csw.debug.log('Main.handleItemSelect()');
         var o = {
             type: 'view', // Action, Report, View, Search
             mode: 'tree', // Grid, Tree, List
-            linktype: 'link', // LandingPageComponentType: Link, Text, Add
+            linktype: 'link', // LandingPageItemType: Link, Text, Add
             itemid: '',
             name: '',
             url: '',
@@ -395,14 +397,14 @@ window.initMain = window.initMain || function (undefined) {
 
         var type = Csw.string(o.type).toLowerCase();
 
-//        function itemIsSupported() {
-//            var ret = (linkType === 'search' ||
-//                //false === Csw.isNullOrEmpty(o.itemid) ||
-//                type === 'action' ||
-//                type === 'search' ||
-//                type === 'report');
-//            return ret;
-//        }
+        //        function itemIsSupported() {
+        //            var ret = (linkType === 'search' ||
+        //                //false === Csw.isNullOrEmpty(o.itemid) ||
+        //                type === 'action' ||
+        //                type === 'search' ||
+        //                type === 'report');
+        //            return ret;
+        //        }
 
         if (Csw.clientChanges.manuallyCheckChanges()) { // && itemIsSupported()) {
 
@@ -1026,7 +1028,7 @@ window.initMain = window.initMain || function (undefined) {
                             mode: 'tree',
                             itemid: viewid
                         });
-                        
+
                     },
                     startingStep: o.ActionOptions.startingStep,
                     menuRefresh: refreshSelected
@@ -1043,31 +1045,29 @@ window.initMain = window.initMain || function (undefined) {
                         refreshSelected();
                     },
                     onFinish: function (actionData) {
-                        clear({ 'all': true });
-                        handleItemSelect({//todo - replace with landingpage call below once webservice supports action landing pages
-                            type: 'view',
-                            mode: 'tree',
-                            itemid: actionData.materialviewid
-                        });
-
-//                        Csw.layouts.landingpage(Csw.main.centerBottomDiv, {
-//                            ID: 'createMaterialLandingPage',
-//                            Title: actionData.title,
-//                            onLinkClick: handleItemSelect,
-                //            onAddClick: function (nodetypeid) {
-                //                $.CswDialog('AddNodeDialog', {
-                //                    'nodetypeid': nodetypeid,
-                //                    'onAddNode': function (nodeid, cswnbtnodekey) {
-                //                        clear({ all: true });
-                //                        refreshNodesTree({ 'nodeid': nodeid, 'cswnbtnodekey': cswnbtnodekey, 'IncludeNodeRequired': true });
-                //                    }
-                //                });
-                //            },
-                //            onAddComponent: refreshWelcomeLandingPage,
-//                            landingPageRequestData: actionData
-//                        });
-//                        refreshMainMenu();//Do we need these lines?
-//                        refreshViewSelect();
+                        var createMaterialLandingPage = function () {
+                            refreshLandingPage(function() {
+                                Csw.layouts.landingpage(Csw.main.centerBottomDiv, {
+                                    ID: 'createMaterialLandingPage',
+                                    Title: actionData.Title,
+                                    ActionId: actionData.ActionId,
+                                    onLinkClick: handleItemSelect,
+                                    onAddClick: function (itemData) {
+                                        $.CswDialog('AddNodeDialog', {
+                                            text: itemData.Text,
+                                            nodetypeid: itemData.NodeTypeId,
+                                            onAddNode: function (nodeid, cswnbtnodekey) {
+                                                clear({ all: true });
+                                                refreshNodesTree({ 'nodeid': nodeid, 'cswnbtnodekey': cswnbtnodekey, 'IncludeNodeRequired': true });
+                                            }
+                                        });
+                                    },
+                                    onAddComponent: createMaterialLandingPage,
+                                    landingPageRequestData: actionData
+                                });
+                            });
+                        };
+                        createMaterialLandingPage();
                     },
                     startingStep: o.ActionOptions.startingStep
                 };
@@ -1168,10 +1168,10 @@ window.initMain = window.initMain || function (undefined) {
                 });
                 break;
 
-            //			case 'Import_Fire_Extinguisher_Data':                                                                                            
-            //				break;                                                                                            
-            //			case 'Inspection_Design':                                                                                            
-            //				break;                                                                                            
+            //			case 'Import_Fire_Extinguisher_Data':                                                                                                
+            //				break;                                                                                                
+            //			case 'Inspection_Design':                                                                                                
+            //				break;                                                                                                
             case 'quotas':
                 Csw.actions.quotas(Csw.main.centerTopDiv, {
                     onQuotaChange: function () {
