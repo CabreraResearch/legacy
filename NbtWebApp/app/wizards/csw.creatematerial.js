@@ -284,7 +284,7 @@
                         cswPrivate.divStep1.br({ number: 4 });
 
                         cswPrivate.materialTypeSelect = cswPrivate.divStep1.nodeTypeSelect({
-                            name: cswPrivate.wizard.makeStepId('nodeTypeSelect'),
+                            name: 'nodeTypeSelect',
                             useWide: true,
                             labelText: 'Select a Material Type*: ',
                             objectClassName: 'MaterialClass',
@@ -298,7 +298,7 @@
 
                         /* TRADENAME */
                         cswPrivate.tradeNameInput = cswPrivate.divStep1.input({
-                            name: cswPrivate.wizard.makeStepId('tradename'),
+                            name: 'tradename',
                             useWide: true,
                             labelText: 'Tradename*: ',
                             cssclass: 'required',
@@ -311,7 +311,7 @@
 
                         /* SUPPLIER */
                         cswPrivate.supplierSelect = cswPrivate.divStep1.nodeSelect({
-                            name: cswPrivate.wizard.makeStepId('supplier'),
+                            name: 'supplier',
                             cssclass: 'required',
                             objectClassName: 'VendorClass',
                             addNodeDialogTitle: 'Vendor',
@@ -325,7 +325,7 @@
 
                         /* PARTNO */
                         cswPrivate.partNoInput = cswPrivate.divStep1.input({
-                            name: cswPrivate.wizard.makeStepId('partno'),
+                            name: 'partno',
                             useWide: true,
                             value: cswPrivate.state.partNo,
                             labelText: 'Part No: ',
@@ -615,7 +615,7 @@
                         /* Size Select (hidden if only 1 NodeType present) - to get size node type */
                         selectDiv = div.div();
                         cswPrivate.sizeSelect = selectDiv.nodeTypeSelect({
-                            name: cswPrivate.wizard.makeStepId('nodeTypeSelect'),
+                            name: 'nodeTypeSelect',
                             useWide: true,
                             value: cswPrivate.state.sizeNodeTypeId,
                             labelText: 'Select a Material Size: ',
