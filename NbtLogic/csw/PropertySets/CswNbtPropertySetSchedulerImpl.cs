@@ -35,9 +35,9 @@ namespace ChemSW.Nbt.PropertySets
                 DateTime CandidateDueDate = DateTime.MinValue;
                 if( _Scheduler.DueDateInterval.RateInterval.RateType != CswRateInterval.RateIntervalType.Unknown )
                 {
-                    CandidateDueDate = _Scheduler.DueDateInterval.getNextOccuranceAfter( DateTime.Now.Date ).Date;
+                    CandidateDueDate = _Scheduler.DueDateInterval.getNextOccuranceAfter( DateTime.Now.Date );
                     if( _Scheduler.FinalDueDate.DateTimeValue != DateTime.MinValue &&
-                        CandidateDueDate.Date > _Scheduler.FinalDueDate.DateTimeValue.Date )
+                        CandidateDueDate > _Scheduler.FinalDueDate.DateTimeValue )
                     {
                         CandidateDueDate = DateTime.MinValue;
                     }
@@ -54,8 +54,8 @@ namespace ChemSW.Nbt.PropertySets
             {
                 CswNbtActGenerateFutureNodes CswNbtActGenerateFutureNodes = new CswNbtActGenerateFutureNodes( _CswNbtResources );
 
-                DateTime LatestFutureDate = CswNbtActGenerateFutureNodes.getDateOfLastExistingFutureNode( _CswNbtNode ).Date;
-                if( LatestFutureDate > DateTime.MinValue.Date )
+                DateTime LatestFutureDate = CswNbtActGenerateFutureNodes.getDateOfLastExistingFutureNode( _CswNbtNode );
+                if( LatestFutureDate > DateTime.MinValue )
                 {
                     CswNbtActGenerateFutureNodes.deleteExistingFutureNodes( _CswNbtNode );
                     CswNbtActGenerateFutureNodes.makeNodesBatch( _CswNbtNode, LatestFutureDate );
