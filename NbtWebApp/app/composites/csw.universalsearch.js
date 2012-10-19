@@ -79,6 +79,7 @@
                         disabledText: 'Searching...',
                         bindOnEnter: true,
                         onClick: function () {
+                            Csw.publish('initPropertyTearDown');
                             cswPrivate.searchterm = cswPrivate.searchinput.val();
                             cswPrivate.newsearch();
                         }
