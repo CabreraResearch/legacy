@@ -256,7 +256,7 @@
                     disabledText: 'Adding',
                     onClick: function () {
                         var viewtype = '';
-                        var viewvalue = '';
+                        var pkvalue = '';
                         var selectedView;
                         if (false == viewSelect.$.is(':hidden')) {
                             selectedView = viewSelect.val();
@@ -267,7 +267,7 @@
                         cswPrivate.addItem({
                             type: typeSelect.val(),
                             viewtype: viewtype,
-                            viewvalue: viewvalue,
+                            pkvalue: pkvalue,
                             nodetypeid: ntSelect.val(),
                             text: landingPageText.val(),
                             onSuccess: addOptions.onAdd,
@@ -294,7 +294,7 @@
                     ActionId: cswPrivate.ActionId,
                     Type: addOptions.type,
                     ViewType: addOptions.viewtype,
-                    ViewValue: addOptions.viewvalue,
+                    PkValue: addOptions.pkvalue,
                     NodeTypeId: addOptions.nodetypeid,
                     Text: addOptions.text
                 };

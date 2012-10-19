@@ -32,13 +32,15 @@ namespace ChemSW.Nbt.LandingPage
             [DataMember]
             public string ViewType = string.Empty;
             [DataMember]
-            public string ViewValue = string.Empty;
+            public string PkValue = string.Empty;
             [DataMember]
             public string Text = string.Empty;
             [DataMember]
             public string NodeViewId = string.Empty;
             [DataMember]
             public string NodeId = string.Empty;
+            [DataMember]
+            public string ButtonIcon = string.Empty;
         }
 
         [DataContract]
