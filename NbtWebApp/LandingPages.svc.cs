@@ -3,17 +3,21 @@ using System.ServiceModel;
 using System.ServiceModel.Activation;
 using System.ServiceModel.Web;
 using System.Web;
+using ChemSW.Core;
+using ChemSW.Nbt.WebServices;
 using ChemSW.WebSvc;
+using NbtWebApp.WebSvc.Logic.Labels;
+using NbtWebApp.WebSvc.Logic.Menus.LandingPages;
 
-namespace NbtWebApp.WebSvc.Logic.Menus.LandingPages
+namespace NbtWebApp
 {
     /// <summary>
-    /// WCF Web Methods for LandingPage Items
+    /// WCF Web Methods for Landing Page operations
     /// </summary>
     [ServiceBehavior( IncludeExceptionDetailInFaults = true )]
-    [ServiceContract]
+    [ServiceContract( Namespace = "NbtWebApp" )]
     [AspNetCompatibilityRequirements( RequirementsMode = AspNetCompatibilityRequirementsMode.Allowed )]
-    public class CswNbtLandingPageItemsUriMethods
+    public class LandingPages
     {
         private HttpContext _Context = HttpContext.Current;
 
@@ -92,6 +96,5 @@ namespace NbtWebApp.WebSvc.Logic.Menus.LandingPages
             SvcDriver.run();
             return ( Ret );
         }
-
     }
 }

@@ -109,6 +109,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="LandingPages.svc.cs">
+      <DependentUpon>LandingPages.svc</DependentUpon>
+    </Compile>
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -127,7 +130,6 @@
     <Compile Include="WebSvc\Logic\CISPro\CswNbtWebServiceContainer.cs" />
     <Compile Include="WebSvc\Logic\CISPro\CswNbtWebServiceRequesting.cs" />
     <Compile Include="WebSvc\Logic\Labels\CswNbtLabelData.cs" />
-    <Compile Include="WebSvc\Logic\Menus\LandingPages\CswNbtLandingPageItemsUriMethods.cs" />
     <Compile Include="WebSvc\Logic\MetaData\CswNbtWebServiceModules.cs" />
     <Compile Include="WebSvc\Logic\CISPro\CswNbtWebServiceCreateMaterial.cs" />
     <Compile Include="WebSvc\Logic\Generators\CswNbtWebServiceGenerators.cs" />
@@ -144,6 +146,7 @@
     <Compile Include="WebSvc\Logic\Nodes\CswNbtWebServiceAuditing.cs" />
     <Compile Include="WebSvc\Logic\SI\CswNbtWebServiceInspectionDesign.cs" />
     <Content Include="ConfigVars.aspx" />
+    <Content Include="LandingPages.svc" />
     <Content Include="crystal\ActiveXControls\PrintControl.cab" />
     <Content Include="crystal\ActiveXControls\PrintControl_res_cs.cab" />
     <Content Include="crystal\ActiveXControls\PrintControl_res_da.cab" />
