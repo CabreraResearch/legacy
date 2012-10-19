@@ -76,13 +76,13 @@
                 //We don't have node name yet. Init the div in the right place and polyfill later.
                 cswPrivate.titleDiv = cswParent.div({ cssclass: 'CswIdentityTabHeader' }).hide();
                 cswPrivate.identityWrapDiv = cswParent.div();
-                
+
                 cswPrivate.tabsTable = cswPrivate.identityWrapDiv.table({ width: '100%' });
                 cswPrivate.identityDiv = cswPrivate.tabsTable.cell(1, 1); //.div();
 
                 cswPrivate.outerTabDiv = cswPrivate.tabsTable
                     .cell(3, 1)
-                    .tabDiv({  });
+                    .tabDiv({});
                 cswPrivate.tabcnt = 0;
             }());
 
@@ -139,7 +139,7 @@
 
                     if (Csw.isNullOrEmpty(cswPrivate.IdentityTab)) {
                         //
-                    } else if (false === cswPrivate.tabState.Config && 
+                    } else if (false === cswPrivate.tabState.Config &&
                         cswPrivate.tabState.EditMode !== Csw.enums.editMode.PrintReport
                         ) {
 
@@ -156,7 +156,7 @@
                             showExpandColButton: false,
                             showRemoveButton: false
                         };
-                        var tabId = cswPrivate.IdentityTab.tabid;
+                        cswPrivate.IdentityTabId = cswPrivate.IdentityTab.tabid;
                         delete cswPrivate.IdentityTab.tabid;
 
                         cswPrivate.titleDiv.empty();
@@ -167,7 +167,7 @@
                             cswPrivate.identityWrapDiv.addClass('CswIdentityTab');
                             cswPrivate.identityDiv.empty();
                             cswPrivate.identityLayoutTable = cswPrivate.identityDiv.layoutTable(layoutOpts);
-                            cswPrivate.handleProperties(cswPrivate.identityLayoutTable, cswPrivate.identityDiv, tabId, false, cswPrivate.IdentityTab);
+                            cswPrivate.handleProperties(cswPrivate.identityLayoutTable, cswPrivate.identityDiv, cswPrivate.IdentityTabId, false, cswPrivate.IdentityTab);
                         }
                     }
                 }
@@ -204,36 +204,45 @@
                         success: function (data) {
                             cswPrivate.makeIdentityTab(data);
                             function makeTabs() {
-                            cswPrivate.clearTabs();
-                            var tabdivs = [];
-                            var tabno = 0;
-                            var tabDiv, tabUl;
+                                cswPrivate.clearTabs();
 
-                            var tabFunc = function (thisTab) {
-                                var thisTabId = thisTab.id;
-
-                                if (cswPrivate.tabState.EditMode === Csw.enums.editMode.PrintReport || tabdivs.length === 0) {
-                                    // For PrintReports, we're going to make a separate tabstrip for each tab
-                                    tabDiv = cswPrivate.outerTabDiv.tabDiv();
-                                    tabUl = tabDiv.ul();
-                                    tabdivs[tabdivs.length] = tabDiv;
+                                var tabIds = Csw.delimitedString();
+                                Csw.each(data, function (tab) {
+                                    tabIds.add(tab.id);
+                                });
+                                if(false === tabIds.contains(cswPrivate.tabState.tabid)) {
+                                    cswPrivate.tabState.tabid = '';
                                 }
-                                tabDiv = tabDiv || tabdivs[tabdivs.length - 1];
 
-                                tabUl = tabUl || tabDiv.ul();
+                                var tabdivs = [];
+                                var tabno = 0;
+                                var tabDiv, tabUl;
+
+                                var tabFunc = function (thisTab) {
+                                    var thisTabId = thisTab.id;
+
+                                    if (cswPrivate.tabState.EditMode === Csw.enums.editMode.PrintReport || tabdivs.length === 0) {
+                                        // For PrintReports, we're going to make a separate tabstrip for each tab
+                                        tabDiv = cswPrivate.outerTabDiv.tabDiv();
+                                        tabUl = tabDiv.ul();
+                                        tabdivs[tabdivs.length] = tabDiv;
+                                    }
+                                    tabDiv = tabDiv || tabdivs[tabdivs.length - 1];
+
+                                    tabUl = tabUl || tabDiv.ul();
                                     tabUl.li().a({ href: '#' + thisTabId, text: thisTab.name }).data('tabid', thisTabId);
-                                cswPrivate.makeTabContentDiv(tabDiv, thisTabId, thisTab.canEditLayout);
-                                if (thisTabId === cswPrivate.tabState.tabid) {
+                                    cswPrivate.makeTabContentDiv(tabDiv, thisTabId, thisTab.canEditLayout);
+                                    if (thisTabId === cswPrivate.tabState.tabid) {
                                         cswPrivate.tabState.tabNo = tabno;
-                                }
-                                tabno += 1;
-                                return false;
-                            };
-                            Csw.crawlObject(data, tabFunc, false);
+                                    }
+                                    tabno += 1;
+                                    return false;
+                                };
+                                Csw.crawlObject(data, tabFunc, false);
 
-                            cswPrivate.tabcnt = tabno;
+                                cswPrivate.tabcnt = tabno;
 
-                                cswPrivate.genTab = function() {
+                                cswPrivate.genTab = function () {
                                     Csw.tryExec(cswPrivate.onBeforeTabSelect, cswPrivate.tabState.tabid);
                                     Csw.tryExec(cswPrivate.onTabSelect, cswPrivate.tabState.tabid);
                                     cswPrivate.form.empty();
@@ -242,29 +251,29 @@
                                     return false;
                                 };
 
-                            Csw.each(tabdivs, function (thisTabDiv) {
+                                Csw.each(tabdivs, function (thisTabDiv) {
                                     thisTabDiv.$.tabs({
                                         selected: cswPrivate.tabState.tabNo,
-                                    select: function (event, ui) {
-                                        var selectTabContentDiv = thisTabDiv.children('div:eq(' + Csw.number(ui.index) + ')');
+                                        select: function (event, ui) {
+                                            var selectTabContentDiv = thisTabDiv.children('div:eq(' + Csw.number(ui.index) + ')');
                                             cswPrivate.tabState.tabNo = Csw.number(ui.index);
                                             cswPrivate.tabState.tabid = selectTabContentDiv.data('tabid');
                                             return cswPrivate.genTab();
-                                    } // select()
-                                }); // tabs
+                                        } // select()
+                                    }); // tabs
                                     var eachTabContentDiv;
                                     if (Csw.isNullOrEmpty(cswPrivate.tabState.tabid)) {
                                         eachTabContentDiv = thisTabDiv.children('div:eq(' + Csw.number(thisTabDiv.tabs('option', 'selected')) + ')');
-                                if (eachTabContentDiv.isValid) {
+                                        if (eachTabContentDiv.isValid) {
                                             cswPrivate.tabState.tabid = eachTabContentDiv.data('tabid');
-                                }
-                                    }  else {
+                                        }
+                                    } else {
                                         eachTabContentDiv = thisTabDiv.children('div:eq(' + cswPrivate.tabState.tabNo + ')');
                                     }
                                     cswPrivate.getProps(eachTabContentDiv, cswPrivate.tabState.tabid);
                                     Csw.tryExec(cswPrivate.onTabSelect, cswPrivate.tabState.tabid);
-                                    
-                            }); // for(var t in tabdivs)
+
+                                }); // for(var t in tabdivs)
                             }
 
                             makeTabs();
