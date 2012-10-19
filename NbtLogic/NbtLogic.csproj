@@ -1,738 +1,737 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-    <PropertyGroup>
-        <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-        <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-        <ProjectGuid>{7E8253CA-37B0-4CE1-AA9C-8C3086AFD974}</ProjectGuid>
-        <OutputType>Library</OutputType>
-        <NoStandardLibraries>false</NoStandardLibraries>
-        <AssemblyName>NbtLogic</AssemblyName>
-        <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-        <FileAlignment>512</FileAlignment>
-        <JSLintSkip>\csw\Schema\scripts\tests\</JSLintSkip>
-    </PropertyGroup>
-    <PropertyGroup>
-        <RootNamespace>ChemSW.Nbt</RootNamespace>
-    </PropertyGroup>
-    <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
-        <DebugSymbols>true</DebugSymbols>
-        <OutputPath>bin\Debug\</OutputPath>
-        <DefineConstants>DEBUG;TRACE</DefineConstants>
-        <DebugType>full</DebugType>
-        <PlatformTarget>x64</PlatformTarget>
-        <CodeAnalysisLogFile>bin\Debug\NbtLogic.dll.CodeAnalysisLog.xml</CodeAnalysisLogFile>
-        <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
-        <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
-        <ErrorReport>prompt</ErrorReport>
-        <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-        <CodeAnalysisRuleSetDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets</CodeAnalysisRuleSetDirectories>
-        <CodeAnalysisIgnoreBuiltInRuleSets>false</CodeAnalysisIgnoreBuiltInRuleSets>
-        <CodeAnalysisRuleDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
-        <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
-        <CodeAnalysisFailOnMissingRules>false</CodeAnalysisFailOnMissingRules>
-        <DocumentationFile>bin\NbtLogic.XML</DocumentationFile>
-        <NoWarn>1591,1572,1571,1573,1587,1570</NoWarn>
-    </PropertyGroup>
-    <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
-        <OutputPath>bin\Release\</OutputPath>
-        <DefineConstants>TRACE</DefineConstants>
-        <Optimize>true</Optimize>
-        <DebugType>pdbonly</DebugType>
-        <PlatformTarget>x64</PlatformTarget>
-        <CodeAnalysisLogFile>bin\Release\NbtLogic.dll.CodeAnalysisLog.xml</CodeAnalysisLogFile>
-        <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
-        <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
-        <ErrorReport>prompt</ErrorReport>
-        <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-        <CodeAnalysisRuleSetDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets</CodeAnalysisRuleSetDirectories>
-        <CodeAnalysisIgnoreBuiltInRuleSets>false</CodeAnalysisIgnoreBuiltInRuleSets>
-        <CodeAnalysisRuleDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
-        <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
-        <CodeAnalysisFailOnMissingRules>false</CodeAnalysisFailOnMissingRules>
-        <DocumentationFile>bin\NbtLogic.XML</DocumentationFile>
-        <NoWarn>1591,1572,1571,1573,1587,1570</NoWarn>
-        <WarningLevel>0</WarningLevel>
-    </PropertyGroup>
-    <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug %28Fast%29|x64'">
-        <DebugSymbols>true</DebugSymbols>
-        <OutputPath>bin\x64\Debug %28Fast%29\</OutputPath>
-        <DefineConstants>DEBUG;TRACE</DefineConstants>
-        <DebugType>full</DebugType>
-        <PlatformTarget>x64</PlatformTarget>
-        <CodeAnalysisLogFile>bin\Debug\NbtLogic.dll.CodeAnalysisLog.xml</CodeAnalysisLogFile>
-        <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
-        <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
-        <ErrorReport>prompt</ErrorReport>
-        <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-        <CodeAnalysisRuleSetDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets</CodeAnalysisRuleSetDirectories>
-        <CodeAnalysisIgnoreBuiltInRuleSets>false</CodeAnalysisIgnoreBuiltInRuleSets>
-        <CodeAnalysisRuleDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
-        <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
-        <DocumentationFile>bin\NbtLogic.XML</DocumentationFile>
-        <NoWarn>1591,1572,1571,1573,1587,1570</NoWarn>
-    </PropertyGroup>
-    <ItemGroup>
-        <Reference Include="CrystalDecisions.CrystalReports.Engine, Version=13.0.2000.0, Culture=neutral, PublicKeyToken=692fbea5521e1304, processorArchitecture=MSIL" />
-        <Reference Include="CrystalDecisions.ReportSource, Version=13.0.2000.0, Culture=neutral, PublicKeyToken=692fbea5521e1304, processorArchitecture=MSIL" />
-        <Reference Include="CrystalDecisions.Shared, Version=13.0.2000.0, Culture=neutral, PublicKeyToken=692fbea5521e1304, processorArchitecture=MSIL" />
-        <Reference Include="Microsoft.Build" />
-        <Reference Include="Microsoft.Build.Engine" />
-        <Reference Include="Microsoft.Build.Framework" />
-        <Reference Include="Microsoft.Build.Utilities.v4.0" />
-        <Reference Include="Microsoft.CSharp" />
-        <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-            <HintPath>..\packages\Newtonsoft.Json.4.5.4\lib\net40\Newtonsoft.Json.dll</HintPath>
-        </Reference>
-        <Reference Include="SMTP.Net, Version=3.0.0.3, Culture=neutral, PublicKeyToken=986a9aa31056680b">
-            <SpecificVersion>False</SpecificVersion>
-            <HintPath>..\..\..\ThirdParty\SMTP\SMTP.Net.dll</HintPath>
-        </Reference>
-        <Reference Include="System" />
-        <Reference Include="System.Core" />
-        <Reference Include="System.Data" />
-        <Reference Include="System.Data.DataSetExtensions" />
-        <Reference Include="System.Drawing" />
-        <Reference Include="System.Runtime.Serialization" />
-        <Reference Include="System.Windows.Forms" />
-        <Reference Include="System.Xml" />
-        <Reference Include="System.Xml.Linq" />
-    </ItemGroup>
-    <ItemGroup>
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{7E8253CA-37B0-4CE1-AA9C-8C3086AFD974}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <NoStandardLibraries>false</NoStandardLibraries>
+    <AssemblyName>NbtLogic</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <JSLintSkip>\csw\Schema\scripts\tests\</JSLintSkip>
+  </PropertyGroup>
+  <PropertyGroup>
+    <RootNamespace>ChemSW.Nbt</RootNamespace>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <CodeAnalysisLogFile>bin\Debug\NbtLogic.dll.CodeAnalysisLog.xml</CodeAnalysisLogFile>
+    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
+    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSetDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets</CodeAnalysisRuleSetDirectories>
+    <CodeAnalysisIgnoreBuiltInRuleSets>false</CodeAnalysisIgnoreBuiltInRuleSets>
+    <CodeAnalysisRuleDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
+    <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
+    <CodeAnalysisFailOnMissingRules>false</CodeAnalysisFailOnMissingRules>
+    <DocumentationFile>bin\NbtLogic.XML</DocumentationFile>
+    <NoWarn>1591,1572,1571,1573,1587,1570</NoWarn>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <CodeAnalysisLogFile>bin\Release\NbtLogic.dll.CodeAnalysisLog.xml</CodeAnalysisLogFile>
+    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
+    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSetDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets</CodeAnalysisRuleSetDirectories>
+    <CodeAnalysisIgnoreBuiltInRuleSets>false</CodeAnalysisIgnoreBuiltInRuleSets>
+    <CodeAnalysisRuleDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
+    <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
+    <CodeAnalysisFailOnMissingRules>false</CodeAnalysisFailOnMissingRules>
+    <DocumentationFile>bin\NbtLogic.XML</DocumentationFile>
+    <NoWarn>1591,1572,1571,1573,1587,1570</NoWarn>
+    <WarningLevel>0</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug %28Fast%29|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Debug %28Fast%29\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <CodeAnalysisLogFile>bin\Debug\NbtLogic.dll.CodeAnalysisLog.xml</CodeAnalysisLogFile>
+    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
+    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSetDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets</CodeAnalysisRuleSetDirectories>
+    <CodeAnalysisIgnoreBuiltInRuleSets>false</CodeAnalysisIgnoreBuiltInRuleSets>
+    <CodeAnalysisRuleDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
+    <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
+    <DocumentationFile>bin\NbtLogic.XML</DocumentationFile>
+    <NoWarn>1591,1572,1571,1573,1587,1570</NoWarn>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="CrystalDecisions.CrystalReports.Engine, Version=13.0.2000.0, Culture=neutral, PublicKeyToken=692fbea5521e1304, processorArchitecture=MSIL" />
+    <Reference Include="CrystalDecisions.ReportSource, Version=13.0.2000.0, Culture=neutral, PublicKeyToken=692fbea5521e1304, processorArchitecture=MSIL" />
+    <Reference Include="CrystalDecisions.Shared, Version=13.0.2000.0, Culture=neutral, PublicKeyToken=692fbea5521e1304, processorArchitecture=MSIL" />
+    <Reference Include="Microsoft.Build" />
+    <Reference Include="Microsoft.Build.Engine" />
+    <Reference Include="Microsoft.Build.Framework" />
+    <Reference Include="Microsoft.Build.Utilities.v4.0" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.4.5.4\lib\net40\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="SMTP.Net, Version=3.0.0.3, Culture=neutral, PublicKeyToken=986a9aa31056680b">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\ThirdParty\SMTP\SMTP.Net.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="csw\LandingPage\CswNbtLandingPageDataContract.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01T_Case27881.cs" />
-            <Compile Include="Properties\AssemblyInfo.cs" />
-            <Compile Include="csw\Actions\CswNbtActAssignTests.cs" />
-            <Compile Include="csw\Actions\CswNbtActCopyNode.cs" />
-            <Compile Include="csw\Actions\CswNbtActGenerateFutureNodes.cs" />
-            <Compile Include="csw\Actions\CswNbtActGenerateNodes.cs" />
-            <Compile Include="csw\Actions\CswNbtActInspectionDesignWiz.cs" />
-            <Compile Include="csw\Actions\CswNbtActQuotas.cs" />
-            <Compile Include="csw\Actions\CswNbtActUpdatePropertyValue.cs" />
-            <Compile Include="csw\Actions\CswNbtAction.cs" />
-            <Compile Include="csw\Actions\CswNbtActionCollection.cs" />
-            <Compile Include="csw\Batch\CswNbtBatchOpUpdateRegulatoryListsForMaterials.cs" />
-            <Compile Include="csw\Batch\ICswNbtBatchOp.cs" />
-            <Compile Include="csw\CswNbtNotificationKey.cs" />
-            <Compile Include="csw\CswNbtResources.cs" />
-            <Compile Include="csw\CswNbtResourcesFactory.cs" />
-            <Compile Include="csw\Dev\CswDeveloper.cs" />
-            <Compile Include="csw\Grid\CswNbtGrid.cs" />
-            <Compile Include="csw\Grid\CswNbtGridExtJsButton.cs" />
-            <Compile Include="csw\Grid\CswNbtGridExtJsColumn.cs" />
-            <Compile Include="csw\Grid\CswNbtGridExtJsDataIndex.cs" />
-            <Compile Include="csw\Grid\CswNbtGridExtJsEnums.cs" />
-            <Compile Include="csw\Grid\CswNbtGridExtJsField.cs" />
-            <Compile Include="csw\Grid\CswNbtGridExtJsGrid.cs" />
-            <Compile Include="csw\Grid\CswNbtGridExtJsRow.cs" />
-            <Compile Include="csw\ImportExport\CswImportExportStatusReporter.cs" />
-            <Compile Include="csw\ImportExport\CswImporterDbTables.cs" />
-            <Compile Include="csw\ImportExport\CswImporterFactory.cs" />
-            <Compile Include="csw\ImportExport\CswImporterHashTables.cs" />
-            <Compile Include="csw\ImportExport\CswNbtImportExport.cs" />
-            <Compile Include="csw\ImportExport\CswNbtImportExportFrame.cs" />
-            <Compile Include="csw\ImportExport\CswNbtImportOptions.cs" />
-            <Compile Include="csw\ImportExport\CswNbtImportStatus.cs" />
-            <Compile Include="csw\ImportExport\CswNbtPersistedImportState.cs" />
-            <Compile Include="csw\ImportExport\ICswImporter.cs" />
-            <Compile Include="csw\LandingPage\CswNbtLandingPageTable.cs" />
-            <Compile Include="csw\MetaData\CswNbtFieldResources.cs" />
-            <Compile Include="csw\MetaData\CswNbtMetaData.cs" />
-            <Compile Include="csw\MetaData\CswNbtMetaDataCollectionFieldType.cs" />
-            <Compile Include="csw\MetaData\CswNbtMetaDataCollectionImpl.cs" />
-            <Compile Include="csw\MetaData\CswNbtMetaDataCollectionNodeType.cs" />
-            <Compile Include="csw\MetaData\CswNbtMetaDataCollectionNodeTypeProp.cs" />
-            <Compile Include="csw\MetaData\CswNbtMetaDataCollectionNodeTypeTab.cs" />
-            <Compile Include="csw\MetaData\CswNbtMetaDataCollectionObjectClass.cs" />
-            <Compile Include="csw\MetaData\CswNbtMetaDataCollectionObjectClassProp.cs" />
-            <Compile Include="csw\MetaData\CswNbtMetaDataEvents.cs" />
-            <Compile Include="csw\MetaData\CswNbtMetaDataFieldType.cs" />
-            <Compile Include="csw\MetaData\CswNbtMetaDataForSchemaUpdater.cs" />
-            <Compile Include="csw\MetaData\CswNbtMetaDataIconName.cs" />
-            <Compile Include="csw\MetaData\CswNbtMetaDataNodeType.cs" />
-            <Compile Include="csw\MetaData\CswNbtMetaDataNodeTypeLayoutMgr.cs" />
-            <Compile Include="csw\MetaData\CswNbtMetaDataNodeTypeProp.cs" />
-            <Compile Include="csw\MetaData\CswNbtMetaDataNodeTypeTab.cs" />
-            <Compile Include="csw\MetaData\CswNbtMetaDataObjectClass.cs" />
-            <Compile Include="csw\MetaData\CswNbtMetaDataObjectClassName.cs" />
-            <Compile Include="csw\MetaData\CswNbtMetaDataObjectClassProp.cs" />
-            <Compile Include="csw\MetaData\CswNbtMetaDataResources.cs" />
-            <Compile Include="csw\MetaData\CswNbtMetaDataTableCache.cs" />
-            <Compile Include="csw\MetaData\CswNbtPropFilterSql.cs" />
-            <Compile Include="csw\MetaData\CswNbtSubField.cs" />
-            <Compile Include="csw\MetaData\CswNbtSubFieldColl.cs" />
-            <Compile Include="csw\MetaData\CswNbtWcfMetaDataModel.cs" />
-            <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleBarCode.cs" />
-            <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleBlob.cs" />
-            <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleButton.cs" />
-            <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleComments.cs" />
-            <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleComposite.cs" />
-            <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleDateImpl.cs" />
-            <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleDateTime.cs" />
-            <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleDefaultImpl.cs" />
-            <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleExternal.cs" />
-            <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleFactory.cs" />
-            <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleGrid.cs" />
-            <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleImage.cs" />
-            <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleImageList.cs" />
-            <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleLink.cs" />
-            <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleList.cs" />
-            <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleLocation.cs" />
-            <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleLocationContents.cs" />
-            <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleLogical.cs" />
-            <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleLogicalSet.cs" />
-            <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleMTBF.cs" />
-            <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleMemo.cs" />
-            <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleMol.cs" />
-            <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleMultiList.cs" />
-            <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleMultiRelationship.cs" />
-            <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleNFPA.cs" />
-            <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleNodeTypeSelect.cs" />
-            <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleNumber.cs" />
-            <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRulePassword.cs" />
-            <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRulePropertyReference.cs" />
-            <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleQuantity.cs" />
-            <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleQuestion.cs" />
-            <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleRelationship.cs" />
-            <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleScientific.cs" />
-            <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleSequence.cs" />
-            <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleStatic.cs" />
-            <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleText.cs" />
-            <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleTimeInterval.cs" />
-            <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleUserSelect.cs" />
-            <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleViewPickList.cs" />
-            <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleViewReference.cs" />
-            <Compile Include="csw\MetaData\FieldTypeRules\ICswNbtFieldTypeRule.cs" />
-            <Compile Include="csw\MetaData\ICswNbtMetaDataObject.cs" />
-            <Compile Include="csw\MetaData\ICswNbtMetaDataObjectCollection.cs" />
-            <Compile Include="csw\MetaData\ICswNbtMetaDataProp.cs" />
-            <Compile Include="csw\Modules\CswNbtModuleManager.cs" />
-            <Compile Include="csw\Modules\CswNbtModuleName.cs" />
-            <Compile Include="csw\Modules\CswNbtModuleRule.cs" />
-            <Compile Include="csw\Modules\CswNbtModuleRuleBioSafety.cs" />
-            <Compile Include="csw\Modules\CswNbtModuleRuleCCPro.cs" />
-            <Compile Include="csw\Modules\CswNbtModuleRuleCISPro.cs" />
-            <Compile Include="csw\Modules\CswNbtModuleRuleDev.cs" />
-            <Compile Include="csw\Modules\CswNbtModuleRuleFactory.cs" />
-            <Compile Include="csw\Modules\CswNbtModuleRuleIMCS.cs" />
-            <Compile Include="csw\Modules\CswNbtModuleRuleMLM.cs" />
-            <Compile Include="csw\Modules\CswNbtModuleRuleMobile.cs" />
-            <Compile Include="csw\Modules\CswNbtModuleRuleNBTManager.cs" />
-            <Compile Include="csw\Modules\CswNbtModuleRuleSI.cs" />
-            <Compile Include="csw\Modules\CswNbtModuleRuleSTIS.cs" />
-            <Compile Include="csw\ObjClasses\CswNbtNode.cs" />
-            <Compile Include="csw\ObjClasses\CswNbtNodeModEventArgs.cs" />
-            <Compile Include="csw\ObjClasses\CswNbtObjClass.cs" />
-            <Compile Include="csw\ObjClasses\CswNbtObjClassAliquot.cs" />
-            <Compile Include="csw\ObjClasses\CswNbtObjClassBatchOp.cs" />
-            <Compile Include="csw\ObjClasses\CswNbtObjClassBiological.cs" />
-            <Compile Include="csw\ObjClasses\CswNbtObjClassCofAMethod.cs" />
-            <Compile Include="csw\ObjClasses\CswNbtObjClassCofAMethodTemplate.cs" />
-            <Compile Include="csw\ObjClasses\CswNbtObjClassContainer.cs" />
-            <Compile Include="csw\ObjClasses\CswNbtObjClassContainerDispenseTransaction.cs" />
-            <Compile Include="csw\ObjClasses\CswNbtObjClassCustomer.cs" />
-            <Compile Include="csw\ObjClasses\CswNbtObjClassDefault.cs" />
-            <Compile Include="csw\ObjClasses\CswNbtObjClassDocument.cs" />
-            <Compile Include="csw\ObjClasses\CswNbtObjClassEnterprisePart.cs" />
-            <Compile Include="csw\ObjClasses\CswNbtObjClassEquipment.cs" />
-            <Compile Include="csw\ObjClasses\CswNbtObjClassEquipmentAssembly.cs" />
-            <Compile Include="csw\ObjClasses\CswNbtObjClassEquipmentType.cs" />
-            <Compile Include="csw\ObjClasses\CswNbtObjClassFactory.cs" />
-            <Compile Include="csw\ObjClasses\CswNbtObjClassFeedback.cs" />
-            <Compile Include="csw\ObjClasses\CswNbtObjClassGenerator.cs" />
-            <Compile Include="csw\ObjClasses\CswNbtObjClassGeneric.cs" />
-            <Compile Include="csw\ObjClasses\CswNbtObjClassInspectionDesign.cs" />
-            <Compile Include="csw\ObjClasses\CswNbtObjClassInspectionRoute.cs" />
-            <Compile Include="csw\ObjClasses\CswNbtObjClassInspectionTarget.cs" />
-            <Compile Include="csw\ObjClasses\CswNbtObjClassInspectionTargetGroup.cs" />
-            <Compile Include="csw\ObjClasses\CswNbtObjClassInventoryGroup.cs" />
-            <Compile Include="csw\ObjClasses\CswNbtObjClassInventoryGroupPermission.cs" />
-            <Compile Include="csw\ObjClasses\CswNbtObjClassInventoryLevel.cs" />
-            <Compile Include="csw\ObjClasses\CswNbtObjClassJurisdiction.cs" />
-            <Compile Include="csw\ObjClasses\CswNbtObjClassLocation.cs" />
-            <Compile Include="csw\ObjClasses\CswNbtObjClassMailReport.cs" />
-            <Compile Include="csw\ObjClasses\CswNbtObjClassManufacturerEquivalentPart.cs" />
-            <Compile Include="csw\ObjClasses\CswNbtObjClassMaterial.cs" />
-            <Compile Include="csw\ObjClasses\CswNbtObjClassMaterialComponent.cs" />
-            <Compile Include="csw\ObjClasses\CswNbtObjClassMaterialSynonym.cs" />
-            <Compile Include="csw\ObjClasses\CswNbtObjClassMethod.cs" />
-            <Compile Include="csw\ObjClasses\CswNbtObjClassNotification.cs" />
-            <Compile Include="csw\ObjClasses\CswNbtObjClassParameter.cs" />
-            <Compile Include="csw\ObjClasses\CswNbtObjClassPrintLabel.cs" />
-            <Compile Include="csw\ObjClasses\CswNbtObjClassProblem.cs" />
-            <Compile Include="csw\ObjClasses\CswNbtObjClassReceiptLot.cs" />
-            <Compile Include="csw\ObjClasses\CswNbtObjClassRegulatoryList.cs" />
-            <Compile Include="csw\ObjClasses\CswNbtObjClassReport.cs" />
-            <Compile Include="csw\ObjClasses\CswNbtObjClassRequest.cs" />
-            <Compile Include="csw\ObjClasses\CswNbtObjClassRequestItem.cs" />
-            <Compile Include="csw\ObjClasses\CswNbtObjClassResult.cs" />
-            <Compile Include="csw\ObjClasses\CswNbtObjClassRole.cs" />
-            <Compile Include="csw\ObjClasses\CswNbtObjClassSample.cs" />
-            <Compile Include="csw\ObjClasses\CswNbtObjClassSize.cs" />
-            <Compile Include="csw\ObjClasses\CswNbtObjClassTask.cs" />
-            <Compile Include="csw\ObjClasses\CswNbtObjClassTest.cs" />
-            <Compile Include="csw\ObjClasses\CswNbtObjClassUnitOfMeasure.cs" />
-            <Compile Include="csw\ObjClasses\CswNbtObjClassUser.cs" />
-            <Compile Include="csw\ObjClasses\CswNbtObjClassVendor.cs" />
-            <Compile Include="csw\ObjClasses\CswNbtObjClassWorkUnit.cs" />
-            <Compile Include="csw\ObjClasses\ICswNbtObjClassFactory.cs" />
-            <Compile Include="csw\PropTypes\CswCheckBoxArrayOptions.cs" />
-            <Compile Include="csw\PropTypes\CswNbtNodeProp.cs" />
-            <Compile Include="csw\PropTypes\CswNbtNodePropBarcode.cs" />
-            <Compile Include="csw\PropTypes\CswNbtNodePropBlob.cs" />
-            <Compile Include="csw\PropTypes\CswNbtNodePropButton.cs" />
-            <Compile Include="csw\PropTypes\CswNbtNodePropComments.cs" />
-            <Compile Include="csw\PropTypes\CswNbtNodePropComposite.cs" />
-            <Compile Include="csw\PropTypes\CswNbtNodePropData.cs" />
-            <Compile Include="csw\PropTypes\CswNbtNodePropDateTime.cs" />
-            <Compile Include="csw\PropTypes\CswNbtNodePropFactory.cs" />
-            <Compile Include="csw\PropTypes\CswNbtNodePropGrid.cs" />
-            <Compile Include="csw\PropTypes\CswNbtNodePropImage.cs" />
-            <Compile Include="csw\PropTypes\CswNbtNodePropImageList.cs" />
-            <Compile Include="csw\PropTypes\CswNbtNodePropLink.cs" />
-            <Compile Include="csw\PropTypes\CswNbtNodePropList.cs" />
-            <Compile Include="csw\PropTypes\CswNbtNodePropLocation.cs" />
-            <Compile Include="csw\PropTypes\CswNbtNodePropLocationContents.cs" />
-            <Compile Include="csw\PropTypes\CswNbtNodePropLogical.cs" />
-            <Compile Include="csw\PropTypes\CswNbtNodePropLogicalSet.cs" />
-            <Compile Include="csw\PropTypes\CswNbtNodePropMTBF.cs" />
-            <Compile Include="csw\PropTypes\CswNbtNodePropMemo.cs" />
-            <Compile Include="csw\PropTypes\CswNbtNodePropMol.cs" />
-            <Compile Include="csw\PropTypes\CswNbtNodePropMultiList.cs" />
-            <Compile Include="csw\PropTypes\CswNbtNodePropMultiRelationship.cs" />
-            <Compile Include="csw\PropTypes\CswNbtNodePropNFPA.cs" />
-            <Compile Include="csw\PropTypes\CswNbtNodePropNodeTypeSelect.cs" />
-            <Compile Include="csw\PropTypes\CswNbtNodePropNumber.cs" />
-            <Compile Include="csw\PropTypes\CswNbtNodePropPassword.cs" />
-            <Compile Include="csw\PropTypes\CswNbtNodePropPropertyReference.cs" />
-            <Compile Include="csw\PropTypes\CswNbtNodePropQuantity.cs" />
-            <Compile Include="csw\PropTypes\CswNbtNodePropQuestion.cs" />
-            <Compile Include="csw\PropTypes\CswNbtNodePropRelationship.cs" />
-            <Compile Include="csw\PropTypes\CswNbtNodePropScientific.cs" />
-            <Compile Include="csw\PropTypes\CswNbtNodePropSequence.cs" />
-            <Compile Include="csw\PropTypes\CswNbtNodePropStatic.cs" />
-            <Compile Include="csw\PropTypes\CswNbtNodePropText.cs" />
-            <Compile Include="csw\PropTypes\CswNbtNodePropTime.cs" />
-            <Compile Include="csw\PropTypes\CswNbtNodePropTimeInterval.cs" />
-            <Compile Include="csw\PropTypes\CswNbtNodePropUserSelect.cs" />
-            <Compile Include="csw\PropTypes\CswNbtNodePropViewPickList.cs" />
-            <Compile Include="csw\PropTypes\CswNbtNodePropViewReference.cs" />
-            <Compile Include="csw\PropTypes\CswNbtNodePropWrapper.cs" />
-            <Compile Include="csw\PropTypes\CswNbtNodeTypePropListOption.cs" />
-            <Compile Include="csw\PropTypes\CswNbtNodeTypePropListOptions.cs" />
-            <Compile Include="csw\PropertySets\CswNbtPropSetCaster.cs" />
-            <Compile Include="csw\PropertySets\CswNbtPropertySetSchedulerImpl.cs" />
-            <Compile Include="csw\PropertySets\ICswNbtPropertySetGeneratorTarget.cs" />
-            <Compile Include="csw\PropertySets\ICswNbtPropertySetInspectionParent.cs" />
-            <Compile Include="csw\PropertySets\ICswNbtPropertySetScheduler.cs" />
-            <Compile Include="csw\Sched\core\CswScheduleLogicDetailPersistenceFactoryNbt.cs" />
-            <Compile Include="csw\Sched\core\CswScheduleLogicDetailPersistenceNbt.cs" />
-            <Compile Include="csw\Sched\core\CswScheduleLogicFactoryNbt.cs" />
-            <Compile Include="csw\Sched\core\CswScheduleLogicNodes.cs" />
-            <Compile Include="csw\Sched\core\CswScheduleLogicParamNbt.cs" />
-            <Compile Include="csw\Sched\core\CswScheduleNodeUpdater.cs" />
-            <Compile Include="csw\Sched\core\CswScheduleResourceFactoryNbt.cs" />
-            <Compile Include="csw\Sched\logic\CswScheduleLogicNbtBatchOps.cs" />
-            <Compile Include="csw\Sched\logic\CswScheduleLogicNbtDisableCswAdmin.cs" />
-            <Compile Include="csw\Sched\logic\CswScheduleLogicNbtExpiredContainers.cs" />
-            <Compile Include="csw\Sched\logic\CswScheduleLogicNbtGenEmailRpt.cs" />
-            <Compile Include="csw\Sched\logic\CswScheduleLogicNbtGenNode.cs" />
-            <Compile Include="csw\Sched\logic\CswScheduleLogicNbtUpdtInspection.cs" />
-            <Compile Include="csw\Sched\logic\CswScheduleLogicNbtUpdtMTBF.cs" />
-            <Compile Include="csw\Sched\logic\CswScheduleLogicNbtUpdtPropVals.cs" />    
-            <Compile Include="csw\Schema\CswConstraintDdlOps.cs" />
-            <Compile Include="csw\Schema\CswDDL.cs" />
-            <Compile Include="csw\Schema\CswDemoDataManager.cs" />
-            <Compile Include="csw\Schema\CswNbtNodeTypePermissions.cs" />
-            <Compile Include="csw\Schema\CswNbtSchemaModTrnsctn.cs" />
-            <Compile Include="csw\Schema\CswNbtSchemaUpdaterUser.cs" />
-            <Compile Include="csw\Schema\CswSchemaUpdateDriver.cs" />
-            <Compile Include="csw\Schema\CswSchemaUpdater.cs" />
-            <Compile Include="csw\Schema\CswSchemaVersion.cs" />
-            <Compile Include="csw\Schema\CswSequenceDdlOp.cs" />
-            <Compile Include="csw\Schema\CswTableDdlOp.cs" />
-            <Compile Include="csw\Schema\scripts\CswSchemaScriptsProd.cs" />
-            <Compile Include="csw\Schema\scripts\CswSchemaScriptsTest.cs" />
-            <Compile Include="csw\Schema\scripts\CswUpdateSchemaTo.cs" />
-            <Compile Include="csw\Schema\scripts\ICswSchemaScripts.cs" />
-            <Compile Include="csw\Schema\scripts\infr\RunAfterEveryExecutionOfUpdater_01.cs" />
-            <Compile Include="csw\Schema\scripts\infr\RunAfterEveryExecutionOfUpdater_02.cs" />
-            <Compile Include="csw\Schema\scripts\infr\RunAfterEveryExecutionOfUpdater_03.cs" />
-            <Compile Include="csw\Schema\scripts\infr\RunBeforeEveryExecutionOfUpdater_01.cs" />
-            <Compile Include="csw\Schema\scripts\infr\RunBeforeEveryExecutionOfUpdater_01M.cs" />
-            <Compile Include="csw\Schema\scripts\infr\RunBeforeEveryExecutionOfUpdater_01OC.cs" />
-            <Compile Include="csw\Schema\scripts\infr\RunBeforeEveryExecutionOfUpdater_02.cs" />
-            <Compile Include="csw\Schema\scripts\infr\RunBeforeEveryExecutionOfUpdater_03.cs" />
-            <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCaseXXXXX.cs" />
-            <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01S_Case26760.cs" />
-            <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01S_Case27528.cs" />
-            <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01S_Case27551_part2.cs" />
-            <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01S_Case27578.cs" />
-            <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01S_Case27578_part2.cs" />
-            <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01S_Case27629.cs" />
-            <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01S_Case27632.cs" />
-            <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01S_Case27646.cs" />
-            <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01S_Case27647.cs" />
-            <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01S_Case27648.cs" />
-            <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01S_Case27665.cs" />
-            <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01S_Case27670.cs" />
-            <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01S_Case27691.cs" />
-            <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01S_Case27703.cs" />
-            <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01S_Case27720.cs" />
-            <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01S_Case27720_part2.cs" />
-            <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01S_Case27720_part3.cs" />
-            <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01S_Case27720_part4.cs" />
-            <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01S_Case27751.cs" />
-            <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01S_Case27769.cs" />
-            <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01S_Case27779_part1.cs" />
-            <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01S_Case27779_part2.cs" />
-            <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01S_Case27780.cs" />
-            <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01S_Case27800.cs" />
-            <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01S_Case27858.cs" />
-            <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01S_Case27904.cs" />
-            <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01S_DevModule_Case27759.cs" />
-            <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01S_FieldTypes_Case25352.cs" />
-            <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01S_MobileModule_Case27859.cs" />
-            <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01S_PrintLabel_Case21701.cs" />
-            <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01T_Case27606.cs" />
-            <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01T_Case27694.cs" />
-            <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01T_Case27740.cs" />
-            <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01T_Case27801.cs" />
-            <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01T_Case27865_part1.cs" />
-            <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01T_Case27867.cs" />
-            <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01T_Case27869.cs" />
-            <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01T_Case27872.cs" />
-            <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01T_Case27873.cs" />
-            <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01T_Case27880.cs" />
-            <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01T_Case27947.cs" />
-            <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01T_CertMethod_Case27868.cs" />
-            <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01T_IdentityTab_Case27965.cs" />
-            <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_0T1_Case27865_part2.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\001\CswTestCase_001_01.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\001\CswTestCase_001_02.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\001\CswTestCase_001_03.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\001\CswTestCase_001_04.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\002\CswTestCase_002_01.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\002\CswTestCase_002_02.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\003\CswTestCase_003_01.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\003\CswTestCase_003_02.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\003\CswTestCase_003_03.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\003\CswTestCase_003_04.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\003\CswTestCase_003_05.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\004\CswTestCase_004_01.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\004\CswTestCase_004_02.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\004\CswTestCase_004_03.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\004\CswTestCase_004_04.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\005\CswTestCase_005_01.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\005\CswTestCase_005_02.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\006\CswTestCase_006_01.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\006\CswTestCase_006_02.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\006\CswTestCase_006_03.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\006\CswTestCase_006_04.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\006\CswTestCase_006_05.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\006\CswTestCase_006_06.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\007\CswTestCase_007_01.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\007\CswTestCase_007_02.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\007\CswTestCase_007_03.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\008\CswTestCase_008_01.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\009\CswTestCase_009_01.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\009\CswTestCase_009_02.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\009\CswTestCase_009_03.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\010\CswTestCase_010_01.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\011\CswTestCase_011_01.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\011\CswTestCase_011_02.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\011\CswTestCase_011_03.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\011\CswTestCase_011_04.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\011\CswTestCase_011_05.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\011\CswTestCase_011_06.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\012\CswTestCase_012_01.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\012\CswTestCase_012_02.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\012\CswTestCase_012_03.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\012\CswTestCase_012_04.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\012\CswTestCase_012_05.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\012\CswTestCase_012_06.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\012\CswTestCase_012_07.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\012\CswTestCase_012_08.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\013\CswTestCase_013_01.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\013\CswTestCase_013_02.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\013\CswTestCase_013_03.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\013\CswTestCase_013_04.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\013\CswTestCase_013_05.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\013\CswTestCase_013_06.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\013\CswTestCase_013_07.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\014\CswTestCase_014_01.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\014\CswTestCase_014_02.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\014\CswTestCase_014_03.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\014\CswTestCase_014_04.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\014\CswTestCase_014_05.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\015\CswTestCase_015_01.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\015\CswTestCase_015_02.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\015\CswTestCase_015_03.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\015\CswTestCase_015_04.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\015\CswTestCase_015_05.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\016\CswTestCase_016_01.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\016\CswTestCase_016_02.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\016\CswTestCase_016_03.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\016\CswTestCase_016_04.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\016\CswTestCase_016_05.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\017\CswTestCase_017_01.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\017\CswTestCase_017_02.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\017\CswTestCase_017_03.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\017\CswTestCase_017_04.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\017\CswTestCase_017_05.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\018\CswTestCase_018_01.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\018\CswTestCase_018_02.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\018\CswTestCase_018_03.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\018\CswTestCase_018_04.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\018\CswTestCase_018_05.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\019\CswTestCase_019_01.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\019\CswTestCase_019_02.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\019\CswTestCase_019_03.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\019\CswTestCase_019_04.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\020\CswTestCase_020_01.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\020\CswTestCase_020_02.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\020\CswTestCase_020_03.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\020\CswTestCase_020_04.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\020\CswTestCase_020_05.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\021\CswTestCase_021_01.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\021\CswTestCase_021_02.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\021\CswTestCase_021_03.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\021\CswTestCase_021_04.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\021\CswTestCase_021_05.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\022\CswTestCase_022_01.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\022\CswTestCase_022_02.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\022\CswTestCase_022_03.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\022\CswTestCase_022_04.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\022\CswTestCase_022_05.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\023\CswTestCase_023_01.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\023\CswTestCase_023_02.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\023\CswTestCase_023_03.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\023\CswTestCase_023_04.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\023\CswTestCase_023_05.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\024\CswTestCase_024_01.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\024\CswTestCase_024_02.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\024\CswTestCase_024_03.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\024\CswTestCase_024_04.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\024\CswTestCase_024_05.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\024\CswTestCase_024_06.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\025\CswTestCase_025_01.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\025\CswTestCase_025_02.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\025\CswTestCase_025_03.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\025\CswTestCase_025_04.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\025\CswTestCase_025_05.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\025\CswTestCase_025_06.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\025\CswTestCase_025_07.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\026\CswTestCase_026_01.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\026\CswTestCase_026_02.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\026\CswTestCase_026_03.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\026\CswTestCase_026_04.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\026\CswTestCase_026_05.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\026\CswTestCase_026_06.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\026\CswTestCase_026_07.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\027\CswTestCase_027_01.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\027\CswTestCase_027_02.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\027\CswTestCase_027_03.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\027\CswTestCase_027_04.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\027\CswTestCase_027_05.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\028\CswTestCase_028_01.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\028\CswTestCase_028_02.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\028\CswTestCase_028_03.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\028\CswTestCase_028_04.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\028\CswTestCase_028_05.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\029\CswTestCase_029_01.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\029\CswTestCase_029_02.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\029\CswTestCase_029_03.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\029\CswTestCase_029_04.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\030\CswTestCase_030_01.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\030\CswTestCase_030_02.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\030\CswTestCase_030_03.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\031\CswTestCase_031_01.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\031\CswTestCase_031_02.cs" />
-            <Compile Include="csw\Schema\scripts\tests\cases\031\CswTestCase_031_03.cs" />
-            <Compile Include="csw\Schema\scripts\tests\rsrcs\CswTestCaseRsrc.cs" />
-            <Compile Include="csw\Schema\scripts\tests\rsrcs\CswTstCaseRsrc_001.cs" />
-            <Compile Include="csw\Schema\scripts\tests\rsrcs\CswTstCaseRsrc_002.cs" />
-            <Compile Include="csw\Schema\scripts\tests\rsrcs\CswTstCaseRsrc_003.cs" />
-            <Compile Include="csw\Schema\scripts\tests\rsrcs\CswTstCaseRsrc_004.cs" />
-            <Compile Include="csw\Schema\scripts\tests\rsrcs\CswTstCaseRsrc_005.cs" />
-            <Compile Include="csw\Schema\scripts\tests\rsrcs\CswTstCaseRsrc_006.cs" />
-            <Compile Include="csw\Schema\scripts\tests\rsrcs\CswTstCaseRsrc_007.cs" />
-            <Compile Include="csw\Schema\scripts\tests\rsrcs\CswTstCaseRsrc_008.cs" />
-            <Compile Include="csw\Schema\scripts\tests\rsrcs\CswTstCaseRsrc_009.cs" />
-            <Compile Include="csw\Schema\scripts\tests\rsrcs\CswTstCaseRsrc_010.cs" />
-            <Compile Include="csw\Schema\scripts\tests\rsrcs\CswTstCaseRsrc_011.cs" />
-            <Compile Include="csw\Schema\scripts\tests\rsrcs\CswTstCaseRsrc_012.cs" />
-            <Compile Include="csw\Schema\scripts\tests\rsrcs\CswTstCaseRsrc_013.cs" />
-            <Compile Include="csw\Schema\scripts\tests\rsrcs\CswTstCaseRsrc_014.cs" />
-            <Compile Include="csw\Schema\scripts\tests\rsrcs\CswTstCaseRsrc_015.cs" />
-            <Compile Include="csw\Schema\scripts\tests\rsrcs\CswTstCaseRsrc_016.cs" />
-            <Compile Include="csw\Schema\scripts\tests\rsrcs\CswTstCaseRsrc_017.cs" />
-            <Compile Include="csw\Schema\scripts\tests\rsrcs\CswTstCaseRsrc_018.cs" />
-            <Compile Include="csw\Schema\scripts\tests\rsrcs\CswTstCaseRsrc_019.cs" />
-            <Compile Include="csw\Schema\scripts\tests\rsrcs\CswTstCaseRsrc_020.cs" />
-            <Compile Include="csw\Schema\scripts\tests\rsrcs\CswTstCaseRsrc_021.cs" />
-            <Compile Include="csw\Schema\scripts\tests\rsrcs\CswTstCaseRsrc_022.cs" />
-            <Compile Include="csw\Schema\scripts\tests\rsrcs\CswTstCaseRsrc_023.cs" />
-            <Compile Include="csw\Schema\scripts\tests\rsrcs\CswTstCaseRsrc_024.cs" />
-            <Compile Include="csw\Schema\scripts\tests\rsrcs\CswTstCaseRsrc_025.cs" />
-            <Compile Include="csw\Schema\scripts\tests\rsrcs\CswTstCaseRsrc_026.cs" />
-            <Compile Include="csw\Schema\scripts\tests\rsrcs\CswTstCaseRsrc_027.cs" />
-            <Compile Include="csw\Schema\scripts\tests\rsrcs\CswTstCaseRsrc_028.cs" />
-            <Compile Include="csw\Schema\scripts\tests\rsrcs\CswTstCaseRsrc_029.cs" />
-            <Compile Include="csw\Schema\scripts\tests\rsrcs\CswTstCaseRsrc_030.cs" />
-            <Compile Include="csw\Schema\scripts\tests\rsrcs\CswTstCaseRsrc_031.cs" />
-            <Compile Include="csw\Search\CswNbtSearch.cs" />
-            <Compile Include="csw\Search\CswNbtSearchFilterWrapper.cs" />
-            <Compile Include="csw\Security\CswNbtPermit.cs" />
-            <Compile Include="csw\Security\CswNbtSchemaAuthenticator.cs" />
-            <Compile Include="csw\Security\CswNbtSystemUser.cs" />
-            <Compile Include="csw\Security\CswNbtUser.cs" />
-            <Compile Include="csw\Security\ICswNbtUser.cs" />
-            <Compile Include="csw\Sequence\CswNbtSequenceManager.cs" />
-            <Compile Include="csw\Sequence\CswNbtSequenceValue.cs" />
-            <Compile Include="csw\Sequence\CswSequenceName.cs" />
-            <Compile Include="csw\ServiceDrivers\CswNbtSdGrid.cs" />
-            <Compile Include="csw\ServiceDrivers\CswNbtSdInventoryLevelMgr.cs" />
-            <Compile Include="csw\ServiceDrivers\CswNbtSdLocations.cs" />
-            <Compile Include="csw\ServiceDrivers\CswNbtSdNode.cs" />
-            <Compile Include="csw\ServiceDrivers\CswNbtSdTabsAndProps.cs" />
-            <Compile Include="csw\ServiceDrivers\CswPropIdAttr.cs" />
-            <Compile Include="csw\Session\CswNbtSessionAuthenticate.cs" />
-            <Compile Include="csw\Session\CswNbtSessionAuthenticateData.cs" />
-            <Compile Include="csw\Session\CswNbtSessionDataId.cs" />
-            <Compile Include="csw\Session\CswNbtSessionDataItem.cs" />
-            <Compile Include="csw\Session\CswNbtSessionDataMgr.cs" />
-            <Compile Include="csw\Statistics\CswNbtStatisticsEntry.cs" />
-            <Compile Include="csw\Statistics\CswNbtStatisticsEvents.cs" />
-            <Compile Include="csw\Statistics\CswNbtStatisticsStorageDb.cs" />
-            <Compile Include="csw\TableEvents\CswNbtTableEventAfterUpdateAuditing.cs" />
-            <Compile Include="csw\TableEvents\CswNbtTableEventBeforeUpdateNodeTypeProps.cs" />
-            <Compile Include="csw\TableEvents\CswNbtTableEventBeforeUpdateNodeTypes.cs" />
-            <Compile Include="csw\TableEvents\CswNbtTableEventBeforeUpdateSequences.cs" />
-            <Compile Include="csw\TableEvents\CswNbtTblFactory.cs" />
-            <Compile Include="csw\TableEvents\CswTableCaddyFactoryNbt.cs" />
-            <Compile Include="csw\TreeEvents\CswNbtTreeEventInsertNodeGeneric.cs" />
-            <Compile Include="csw\TreeEvents\CswNbtTreeFactory.cs" />
-            <Compile Include="csw\TreeEvents\CswNbtTreeRuleAliquot.cs" />
-            <Compile Include="csw\TreeEvents\CswPropertyValue.cs" />
-            <Compile Include="csw\TreeEvents\ICswNbtTreeRule.cs" />
-            <Compile Include="csw\Tree\CswNbtColumnNames.cs" />
-            <Compile Include="csw\Tree\CswNbtLocationTreeDeprecated.cs" />
-            <Compile Include="csw\Tree\CswNbtNodeCollection.cs" />
-            <Compile Include="csw\Tree\CswNbtNodeFactory.cs" />
-            <Compile Include="csw\Tree\CswNbtNodeKey.cs" />
-            <Compile Include="csw\Tree\CswNbtNodePropColl.cs" />
-            <Compile Include="csw\Tree\CswNbtNodePropCollDataNative.cs" />
-            <Compile Include="csw\Tree\CswNbtNodePropCollDataRelational.cs" />
-            <Compile Include="csw\Tree\CswNbtNodeReader.cs" />
-            <Compile Include="csw\Tree\CswNbtNodeReaderDataNative.cs" />
-            <Compile Include="csw\Tree\CswNbtNodeReaderDataRelationalDb.cs" />
-            <Compile Include="csw\Tree\CswNbtNodeTypeProp.cs" />
-            <Compile Include="csw\Tree\CswNbtNodeWriter.cs" />
-            <Compile Include="csw\Tree\CswNbtNodeWriterNative.cs" />
-            <Compile Include="csw\Tree\CswNbtNodeWriterRelationalDb.cs" />
-            <Compile Include="csw\Tree\CswNbtPropEnmrtrFiltered.cs" />
-            <Compile Include="csw\Tree\CswNbtTreeBuilder.cs" />
-            <Compile Include="csw\Tree\CswNbtTreeDomProxy.cs" />
-            <Compile Include="csw\Tree\CswNbtTreeKey.cs" />
-            <Compile Include="csw\Tree\CswNbtTreeLoader.cs" />
-            <Compile Include="csw\Tree\CswNbtTreeLoaderFromSearchByLevel.cs" />
-            <Compile Include="csw\Tree\CswNbtTreeLoaderFromXmlViewByLevel.cs" />
-            <Compile Include="csw\Tree\CswNbtTreeLoaderFromXmlViewByLevelWith.cs" />
-            <Compile Include="csw\Tree\CswNbtTreeModEventArgs.cs" />
-            <Compile Include="csw\Tree\CswNbtTreeNodes.cs" />
-            <Compile Include="csw\Tree\ICswNbtNodePropCollData.cs" />
-            <Compile Include="csw\Tree\ICswNbtNodeReaderData.cs" />
-            <Compile Include="csw\Tree\ICswNbtNodeWriterFactory.cs" />
-            <Compile Include="csw\Tree\ICswNbtNodeWriterImpl.cs" />
-            <Compile Include="csw\Tree\ICswNbtTree.cs" />
-            <Compile Include="csw\Tree\ICswNbtTreeFactory.cs" />
-            <Compile Include="csw\UnitsOfMeasure\CswNbtUnitConversion.cs" />
-            <Compile Include="csw\UnitsOfMeasure\CswNbtUnitViewBuilder.cs" />
-            <Compile Include="csw\View\CswNbtView.cs" />
-            <Compile Include="csw\View\CswNbtViewBase.cs" />
-            <Compile Include="csw\View\CswNbtViewBuilder.cs" />
-            <Compile Include="csw\View\CswNbtViewCache.cs" />
-            <Compile Include="csw\View\CswNbtViewDataContract.cs" />
-            <Compile Include="csw\View\CswNbtViewFactory.cs" />
-            <Compile Include="csw\View\CswNbtViewId.cs" />
-            <Compile Include="csw\View\CswNbtViewNode.cs" />
-            <Compile Include="csw\View\CswNbtViewProperty.cs" />
-            <Compile Include="csw\View\CswNbtViewPropertyFilter.cs" />
-            <Compile Include="csw\View\CswNbtViewRelationship.cs" />
-            <Compile Include="csw\View\CswNbtViewRoot.cs" />
-            <Compile Include="csw\View\CswNbtViewSelect.cs" />
-        <Compile Include="Properties\Resources.Designer.cs" />
-        <Compile Include="csw\Actions\CswNbtActDispenseContainer.cs" />
-        <Compile Include="csw\Actions\CswNbtActReceiving.cs" />
-        <Compile Include="csw\Actions\CswNbtActSubmitRequest.cs" />
-        <Compile Include="csw\Actions\CswNbtActSystemViews.cs" />
-        <Compile Include="csw\Batch\CswNbtBatchEnums.cs" />
-        <Compile Include="csw\Batch\CswNbtBatchManager.cs" />
-        <Compile Include="csw\Batch\CswNbtBatchOpExpiredContainers.cs" />
-        <Compile Include="csw\Batch\CswNbtBatchOpFutureNodes.cs" />
-        <Compile Include="csw\Batch\CswNbtBatchOpInventoryLevels.cs" />
-        <Compile Include="csw\Batch\CswNbtBatchOpMailReport.cs" />
-        <Compile Include="csw\Batch\CswNbtBatchOpMultiDelete.cs" />
-        <Compile Include="csw\Batch\CswNbtBatchOpMultiEdit.cs" />
-        <Compile Include="csw\Batch\CswNbtBatchOpUpdateRegulatoryLists.cs">
-            <AutoGen>True</AutoGen>
-            <DesignTime>True</DesignTime>
-            <DependentUpon>Resources.resx</DependentUpon>
-        </Compile>
-        <Compile Include="Resources\SqlRptViewDict.cs">
-            <AutoGen>True</AutoGen>
-            <DesignTime>True</DesignTime>
-            <DependentUpon>SqlRptViewDict.rpt</DependentUpon>
-            <SubType>Component</SubType>
-        </Compile>
-        <None Include="ChemSW.snk" />
-        <None Include="csw\Actions\Example.xsd">
-            <SubType>Designer</SubType>
-        </None>
-
-    </ItemGroup>
-
-    <ItemGroup>
-        <ProjectReference Include="..\..\..\Common\CswCommon\CswCommon.csproj">
-            <Project>{434091FB-F487-4787-8BDB-58C2336B73C2}</Project>
-            <Name>CswCommon</Name>
-        </ProjectReference>
-        <ProjectReference Include="..\..\..\Common\StructureSearch\StructureSearch\StructureSearch.csproj">
-            <Project>{e9156c9a-605e-4f21-8bb1-0970da055ff0}</Project>
-            <Name>StructureSearch</Name>
-        </ProjectReference>
-        <ProjectReference Include="..\..\..\Common\StructureSearch\StructureSearch\StructureSearch.csproj">
-            <Project>{E9156C9A-605E-4F21-8BB1-0970DA055FF0}</Project>
-            <Name>StructureSearch</Name>
-        </ProjectReference>
-        <ProjectReference Include="..\NbtConfig\NbtConfig.csproj">
-            <Project>{DABF9D08-70E8-4D42-AF7A-577335A7129F}</Project>
-            <Name>NbtConfig</Name>
-        </ProjectReference>
-    </ItemGroup>
-    <ItemGroup>
-        <Folder Include="csw\Schema\scripts\tests\cases\999-NotImportedFromOldTestTool\dundant\" />
-        <Folder Include="csw\Schema\scripts\tests\cases\999-NotImportedFromOldTestTool\review\" />
-    </ItemGroup>
-    <ItemGroup>
-        <EmbeddedResource Include="Properties\Resources.resx">
-            <Generator>ResXFileCodeGenerator</Generator>
-            <SubType>Designer</SubType>
-            <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-        </EmbeddedResource>
-        <None Include="Resources\runscript_bat" />
-        <None Include="Resources\nbt_initialize_ora_sql" />
-        <None Include="Resources\nbt_finalize_ora_sql" />
-        <None Include="Resources\indexes_sql" />
-        <None Include="Resources\SqlRptViewDict.rpt">
-            <Generator>CrystalDecisions.VSDesigner.CodeGen.ReportCodeGenerator</Generator>
-            <LastGenOutput>SqlRptViewDict.cs</LastGenOutput>
-        </None>
-    </ItemGroup>
-    <ItemGroup>
-        <Service Include="{C0C07587-41A7-46C8-8FBD-3F9C8EBE2DDC}" />
-    </ItemGroup>
-    <Import Project="$(MSBuildToolsPath)\Microsoft.CSHARP.Targets" />
-    <ProjectExtensions>
-        <VisualStudio AllowExistingFolder="true" />
-    </ProjectExtensions>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="csw\Actions\CswNbtActAssignTests.cs" />
+    <Compile Include="csw\Actions\CswNbtActCopyNode.cs" />
+    <Compile Include="csw\Actions\CswNbtActGenerateFutureNodes.cs" />
+    <Compile Include="csw\Actions\CswNbtActGenerateNodes.cs" />
+    <Compile Include="csw\Actions\CswNbtActInspectionDesignWiz.cs" />
+    <Compile Include="csw\Actions\CswNbtActQuotas.cs" />
+    <Compile Include="csw\Actions\CswNbtActUpdatePropertyValue.cs" />
+    <Compile Include="csw\Actions\CswNbtAction.cs" />
+    <Compile Include="csw\Actions\CswNbtActionCollection.cs" />
+    <Compile Include="csw\Batch\CswNbtBatchOpUpdateRegulatoryListsForMaterials.cs" />
+    <Compile Include="csw\Batch\ICswNbtBatchOp.cs" />
+    <Compile Include="csw\CswNbtNotificationKey.cs" />
+    <Compile Include="csw\CswNbtResources.cs" />
+    <Compile Include="csw\CswNbtResourcesFactory.cs" />
+    <Compile Include="csw\Dev\CswDeveloper.cs" />
+    <Compile Include="csw\Grid\CswNbtGrid.cs" />
+    <Compile Include="csw\Grid\CswNbtGridExtJsButton.cs" />
+    <Compile Include="csw\Grid\CswNbtGridExtJsColumn.cs" />
+    <Compile Include="csw\Grid\CswNbtGridExtJsDataIndex.cs" />
+    <Compile Include="csw\Grid\CswNbtGridExtJsEnums.cs" />
+    <Compile Include="csw\Grid\CswNbtGridExtJsField.cs" />
+    <Compile Include="csw\Grid\CswNbtGridExtJsGrid.cs" />
+    <Compile Include="csw\Grid\CswNbtGridExtJsRow.cs" />
+    <Compile Include="csw\ImportExport\CswImportExportStatusReporter.cs" />
+    <Compile Include="csw\ImportExport\CswImporterDbTables.cs" />
+    <Compile Include="csw\ImportExport\CswImporterFactory.cs" />
+    <Compile Include="csw\ImportExport\CswImporterHashTables.cs" />
+    <Compile Include="csw\ImportExport\CswNbtImportExport.cs" />
+    <Compile Include="csw\ImportExport\CswNbtImportExportFrame.cs" />
+    <Compile Include="csw\ImportExport\CswNbtImportOptions.cs" />
+    <Compile Include="csw\ImportExport\CswNbtImportStatus.cs" />
+    <Compile Include="csw\ImportExport\CswNbtPersistedImportState.cs" />
+    <Compile Include="csw\ImportExport\ICswImporter.cs" />
+    <Compile Include="csw\LandingPage\CswNbtLandingPageTable.cs" />
+    <Compile Include="csw\MetaData\CswNbtFieldResources.cs" />
+    <Compile Include="csw\MetaData\CswNbtMetaData.cs" />
+    <Compile Include="csw\MetaData\CswNbtMetaDataCollectionFieldType.cs" />
+    <Compile Include="csw\MetaData\CswNbtMetaDataCollectionImpl.cs" />
+    <Compile Include="csw\MetaData\CswNbtMetaDataCollectionNodeType.cs" />
+    <Compile Include="csw\MetaData\CswNbtMetaDataCollectionNodeTypeProp.cs" />
+    <Compile Include="csw\MetaData\CswNbtMetaDataCollectionNodeTypeTab.cs" />
+    <Compile Include="csw\MetaData\CswNbtMetaDataCollectionObjectClass.cs" />
+    <Compile Include="csw\MetaData\CswNbtMetaDataCollectionObjectClassProp.cs" />
+    <Compile Include="csw\MetaData\CswNbtMetaDataEvents.cs" />
+    <Compile Include="csw\MetaData\CswNbtMetaDataFieldType.cs" />
+    <Compile Include="csw\MetaData\CswNbtMetaDataForSchemaUpdater.cs" />
+    <Compile Include="csw\MetaData\CswNbtMetaDataIconName.cs" />
+    <Compile Include="csw\MetaData\CswNbtMetaDataNodeType.cs" />
+    <Compile Include="csw\MetaData\CswNbtMetaDataNodeTypeLayoutMgr.cs" />
+    <Compile Include="csw\MetaData\CswNbtMetaDataNodeTypeProp.cs" />
+    <Compile Include="csw\MetaData\CswNbtMetaDataNodeTypeTab.cs" />
+    <Compile Include="csw\MetaData\CswNbtMetaDataObjectClass.cs" />
+    <Compile Include="csw\MetaData\CswNbtMetaDataObjectClassName.cs" />
+    <Compile Include="csw\MetaData\CswNbtMetaDataObjectClassProp.cs" />
+    <Compile Include="csw\MetaData\CswNbtMetaDataResources.cs" />
+    <Compile Include="csw\MetaData\CswNbtMetaDataTableCache.cs" />
+    <Compile Include="csw\MetaData\CswNbtPropFilterSql.cs" />
+    <Compile Include="csw\MetaData\CswNbtSubField.cs" />
+    <Compile Include="csw\MetaData\CswNbtSubFieldColl.cs" />
+    <Compile Include="csw\MetaData\CswNbtWcfMetaDataModel.cs" />
+    <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleBarCode.cs" />
+    <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleBlob.cs" />
+    <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleButton.cs" />
+    <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleComments.cs" />
+    <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleComposite.cs" />
+    <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleDateImpl.cs" />
+    <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleDateTime.cs" />
+    <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleDefaultImpl.cs" />
+    <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleExternal.cs" />
+    <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleFactory.cs" />
+    <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleGrid.cs" />
+    <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleImage.cs" />
+    <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleImageList.cs" />
+    <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleLink.cs" />
+    <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleList.cs" />
+    <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleLocation.cs" />
+    <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleLocationContents.cs" />
+    <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleLogical.cs" />
+    <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleLogicalSet.cs" />
+    <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleMTBF.cs" />
+    <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleMemo.cs" />
+    <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleMol.cs" />
+    <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleMultiList.cs" />
+    <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleMultiRelationship.cs" />
+    <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleNFPA.cs" />
+    <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleNodeTypeSelect.cs" />
+    <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleNumber.cs" />
+    <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRulePassword.cs" />
+    <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRulePropertyReference.cs" />
+    <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleQuantity.cs" />
+    <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleQuestion.cs" />
+    <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleRelationship.cs" />
+    <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleScientific.cs" />
+    <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleSequence.cs" />
+    <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleStatic.cs" />
+    <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleText.cs" />
+    <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleTimeInterval.cs" />
+    <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleUserSelect.cs" />
+    <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleViewPickList.cs" />
+    <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleViewReference.cs" />
+    <Compile Include="csw\MetaData\FieldTypeRules\ICswNbtFieldTypeRule.cs" />
+    <Compile Include="csw\MetaData\ICswNbtMetaDataObject.cs" />
+    <Compile Include="csw\MetaData\ICswNbtMetaDataObjectCollection.cs" />
+    <Compile Include="csw\MetaData\ICswNbtMetaDataProp.cs" />
+    <Compile Include="csw\Modules\CswNbtModuleManager.cs" />
+    <Compile Include="csw\Modules\CswNbtModuleName.cs" />
+    <Compile Include="csw\Modules\CswNbtModuleRule.cs" />
+    <Compile Include="csw\Modules\CswNbtModuleRuleBioSafety.cs" />
+    <Compile Include="csw\Modules\CswNbtModuleRuleCCPro.cs" />
+    <Compile Include="csw\Modules\CswNbtModuleRuleCISPro.cs" />
+    <Compile Include="csw\Modules\CswNbtModuleRuleDev.cs" />
+    <Compile Include="csw\Modules\CswNbtModuleRuleFactory.cs" />
+    <Compile Include="csw\Modules\CswNbtModuleRuleIMCS.cs" />
+    <Compile Include="csw\Modules\CswNbtModuleRuleMLM.cs" />
+    <Compile Include="csw\Modules\CswNbtModuleRuleMobile.cs" />
+    <Compile Include="csw\Modules\CswNbtModuleRuleNBTManager.cs" />
+    <Compile Include="csw\Modules\CswNbtModuleRuleSI.cs" />
+    <Compile Include="csw\Modules\CswNbtModuleRuleSTIS.cs" />
+    <Compile Include="csw\ObjClasses\CswNbtNode.cs" />
+    <Compile Include="csw\ObjClasses\CswNbtNodeModEventArgs.cs" />
+    <Compile Include="csw\ObjClasses\CswNbtObjClass.cs" />
+    <Compile Include="csw\ObjClasses\CswNbtObjClassAliquot.cs" />
+    <Compile Include="csw\ObjClasses\CswNbtObjClassBatchOp.cs" />
+    <Compile Include="csw\ObjClasses\CswNbtObjClassBiological.cs" />
+    <Compile Include="csw\ObjClasses\CswNbtObjClassCofAMethod.cs" />
+    <Compile Include="csw\ObjClasses\CswNbtObjClassCofAMethodTemplate.cs" />
+    <Compile Include="csw\ObjClasses\CswNbtObjClassContainer.cs" />
+    <Compile Include="csw\ObjClasses\CswNbtObjClassContainerDispenseTransaction.cs" />
+    <Compile Include="csw\ObjClasses\CswNbtObjClassCustomer.cs" />
+    <Compile Include="csw\ObjClasses\CswNbtObjClassDefault.cs" />
+    <Compile Include="csw\ObjClasses\CswNbtObjClassDocument.cs" />
+    <Compile Include="csw\ObjClasses\CswNbtObjClassEnterprisePart.cs" />
+    <Compile Include="csw\ObjClasses\CswNbtObjClassEquipment.cs" />
+    <Compile Include="csw\ObjClasses\CswNbtObjClassEquipmentAssembly.cs" />
+    <Compile Include="csw\ObjClasses\CswNbtObjClassEquipmentType.cs" />
+    <Compile Include="csw\ObjClasses\CswNbtObjClassFactory.cs" />
+    <Compile Include="csw\ObjClasses\CswNbtObjClassFeedback.cs" />
+    <Compile Include="csw\ObjClasses\CswNbtObjClassGenerator.cs" />
+    <Compile Include="csw\ObjClasses\CswNbtObjClassGeneric.cs" />
+    <Compile Include="csw\ObjClasses\CswNbtObjClassInspectionDesign.cs" />
+    <Compile Include="csw\ObjClasses\CswNbtObjClassInspectionRoute.cs" />
+    <Compile Include="csw\ObjClasses\CswNbtObjClassInspectionTarget.cs" />
+    <Compile Include="csw\ObjClasses\CswNbtObjClassInspectionTargetGroup.cs" />
+    <Compile Include="csw\ObjClasses\CswNbtObjClassInventoryGroup.cs" />
+    <Compile Include="csw\ObjClasses\CswNbtObjClassInventoryGroupPermission.cs" />
+    <Compile Include="csw\ObjClasses\CswNbtObjClassInventoryLevel.cs" />
+    <Compile Include="csw\ObjClasses\CswNbtObjClassJurisdiction.cs" />
+    <Compile Include="csw\ObjClasses\CswNbtObjClassLocation.cs" />
+    <Compile Include="csw\ObjClasses\CswNbtObjClassMailReport.cs" />
+    <Compile Include="csw\ObjClasses\CswNbtObjClassManufacturerEquivalentPart.cs" />
+    <Compile Include="csw\ObjClasses\CswNbtObjClassMaterial.cs" />
+    <Compile Include="csw\ObjClasses\CswNbtObjClassMaterialComponent.cs" />
+    <Compile Include="csw\ObjClasses\CswNbtObjClassMaterialSynonym.cs" />
+    <Compile Include="csw\ObjClasses\CswNbtObjClassMethod.cs" />
+    <Compile Include="csw\ObjClasses\CswNbtObjClassNotification.cs" />
+    <Compile Include="csw\ObjClasses\CswNbtObjClassParameter.cs" />
+    <Compile Include="csw\ObjClasses\CswNbtObjClassPrintLabel.cs" />
+    <Compile Include="csw\ObjClasses\CswNbtObjClassProblem.cs" />
+    <Compile Include="csw\ObjClasses\CswNbtObjClassReceiptLot.cs" />
+    <Compile Include="csw\ObjClasses\CswNbtObjClassRegulatoryList.cs" />
+    <Compile Include="csw\ObjClasses\CswNbtObjClassReport.cs" />
+    <Compile Include="csw\ObjClasses\CswNbtObjClassRequest.cs" />
+    <Compile Include="csw\ObjClasses\CswNbtObjClassRequestItem.cs" />
+    <Compile Include="csw\ObjClasses\CswNbtObjClassResult.cs" />
+    <Compile Include="csw\ObjClasses\CswNbtObjClassRole.cs" />
+    <Compile Include="csw\ObjClasses\CswNbtObjClassSample.cs" />
+    <Compile Include="csw\ObjClasses\CswNbtObjClassSize.cs" />
+    <Compile Include="csw\ObjClasses\CswNbtObjClassTask.cs" />
+    <Compile Include="csw\ObjClasses\CswNbtObjClassTest.cs" />
+    <Compile Include="csw\ObjClasses\CswNbtObjClassUnitOfMeasure.cs" />
+    <Compile Include="csw\ObjClasses\CswNbtObjClassUser.cs" />
+    <Compile Include="csw\ObjClasses\CswNbtObjClassVendor.cs" />
+    <Compile Include="csw\ObjClasses\CswNbtObjClassWorkUnit.cs" />
+    <Compile Include="csw\ObjClasses\ICswNbtObjClassFactory.cs" />
+    <Compile Include="csw\PropTypes\CswCheckBoxArrayOptions.cs" />
+    <Compile Include="csw\PropTypes\CswNbtNodeProp.cs" />
+    <Compile Include="csw\PropTypes\CswNbtNodePropBarcode.cs" />
+    <Compile Include="csw\PropTypes\CswNbtNodePropBlob.cs" />
+    <Compile Include="csw\PropTypes\CswNbtNodePropButton.cs" />
+    <Compile Include="csw\PropTypes\CswNbtNodePropComments.cs" />
+    <Compile Include="csw\PropTypes\CswNbtNodePropComposite.cs" />
+    <Compile Include="csw\PropTypes\CswNbtNodePropData.cs" />
+    <Compile Include="csw\PropTypes\CswNbtNodePropDateTime.cs" />
+    <Compile Include="csw\PropTypes\CswNbtNodePropFactory.cs" />
+    <Compile Include="csw\PropTypes\CswNbtNodePropGrid.cs" />
+    <Compile Include="csw\PropTypes\CswNbtNodePropImage.cs" />
+    <Compile Include="csw\PropTypes\CswNbtNodePropImageList.cs" />
+    <Compile Include="csw\PropTypes\CswNbtNodePropLink.cs" />
+    <Compile Include="csw\PropTypes\CswNbtNodePropList.cs" />
+    <Compile Include="csw\PropTypes\CswNbtNodePropLocation.cs" />
+    <Compile Include="csw\PropTypes\CswNbtNodePropLocationContents.cs" />
+    <Compile Include="csw\PropTypes\CswNbtNodePropLogical.cs" />
+    <Compile Include="csw\PropTypes\CswNbtNodePropLogicalSet.cs" />
+    <Compile Include="csw\PropTypes\CswNbtNodePropMTBF.cs" />
+    <Compile Include="csw\PropTypes\CswNbtNodePropMemo.cs" />
+    <Compile Include="csw\PropTypes\CswNbtNodePropMol.cs" />
+    <Compile Include="csw\PropTypes\CswNbtNodePropMultiList.cs" />
+    <Compile Include="csw\PropTypes\CswNbtNodePropMultiRelationship.cs" />
+    <Compile Include="csw\PropTypes\CswNbtNodePropNFPA.cs" />
+    <Compile Include="csw\PropTypes\CswNbtNodePropNodeTypeSelect.cs" />
+    <Compile Include="csw\PropTypes\CswNbtNodePropNumber.cs" />
+    <Compile Include="csw\PropTypes\CswNbtNodePropPassword.cs" />
+    <Compile Include="csw\PropTypes\CswNbtNodePropPropertyReference.cs" />
+    <Compile Include="csw\PropTypes\CswNbtNodePropQuantity.cs" />
+    <Compile Include="csw\PropTypes\CswNbtNodePropQuestion.cs" />
+    <Compile Include="csw\PropTypes\CswNbtNodePropRelationship.cs" />
+    <Compile Include="csw\PropTypes\CswNbtNodePropScientific.cs" />
+    <Compile Include="csw\PropTypes\CswNbtNodePropSequence.cs" />
+    <Compile Include="csw\PropTypes\CswNbtNodePropStatic.cs" />
+    <Compile Include="csw\PropTypes\CswNbtNodePropText.cs" />
+    <Compile Include="csw\PropTypes\CswNbtNodePropTime.cs" />
+    <Compile Include="csw\PropTypes\CswNbtNodePropTimeInterval.cs" />
+    <Compile Include="csw\PropTypes\CswNbtNodePropUserSelect.cs" />
+    <Compile Include="csw\PropTypes\CswNbtNodePropViewPickList.cs" />
+    <Compile Include="csw\PropTypes\CswNbtNodePropViewReference.cs" />
+    <Compile Include="csw\PropTypes\CswNbtNodePropWrapper.cs" />
+    <Compile Include="csw\PropTypes\CswNbtNodeTypePropListOption.cs" />
+    <Compile Include="csw\PropTypes\CswNbtNodeTypePropListOptions.cs" />
+    <Compile Include="csw\PropertySets\CswNbtPropSetCaster.cs" />
+    <Compile Include="csw\PropertySets\CswNbtPropertySetSchedulerImpl.cs" />
+    <Compile Include="csw\PropertySets\ICswNbtPropertySetGeneratorTarget.cs" />
+    <Compile Include="csw\PropertySets\ICswNbtPropertySetInspectionParent.cs" />
+    <Compile Include="csw\PropertySets\ICswNbtPropertySetScheduler.cs" />
+    <Compile Include="csw\Sched\core\CswScheduleLogicDetailPersistenceFactoryNbt.cs" />
+    <Compile Include="csw\Sched\core\CswScheduleLogicDetailPersistenceNbt.cs" />
+    <Compile Include="csw\Sched\core\CswScheduleLogicFactoryNbt.cs" />
+    <Compile Include="csw\Sched\core\CswScheduleLogicNodes.cs" />
+    <Compile Include="csw\Sched\core\CswScheduleLogicParamNbt.cs" />
+    <Compile Include="csw\Sched\core\CswScheduleNodeUpdater.cs" />
+    <Compile Include="csw\Sched\core\CswScheduleResourceFactoryNbt.cs" />
+    <Compile Include="csw\Sched\logic\CswScheduleLogicNbtBatchOps.cs" />
+    <Compile Include="csw\Sched\logic\CswScheduleLogicNbtDisableCswAdmin.cs" />
+    <Compile Include="csw\Sched\logic\CswScheduleLogicNbtExpiredContainers.cs" />
+    <Compile Include="csw\Sched\logic\CswScheduleLogicNbtGenEmailRpt.cs" />
+    <Compile Include="csw\Sched\logic\CswScheduleLogicNbtGenNode.cs" />
+    <Compile Include="csw\Sched\logic\CswScheduleLogicNbtUpdtInspection.cs" />
+    <Compile Include="csw\Sched\logic\CswScheduleLogicNbtUpdtMTBF.cs" />
+    <Compile Include="csw\Sched\logic\CswScheduleLogicNbtUpdtPropVals.cs" />
+    <Compile Include="csw\Schema\CswConstraintDdlOps.cs" />
+    <Compile Include="csw\Schema\CswDDL.cs" />
+    <Compile Include="csw\Schema\CswDemoDataManager.cs" />
+    <Compile Include="csw\Schema\CswNbtNodeTypePermissions.cs" />
+    <Compile Include="csw\Schema\CswNbtSchemaModTrnsctn.cs" />
+    <Compile Include="csw\Schema\CswNbtSchemaUpdaterUser.cs" />
+    <Compile Include="csw\Schema\CswSchemaUpdateDriver.cs" />
+    <Compile Include="csw\Schema\CswSchemaUpdater.cs" />
+    <Compile Include="csw\Schema\CswSchemaVersion.cs" />
+    <Compile Include="csw\Schema\CswSequenceDdlOp.cs" />
+    <Compile Include="csw\Schema\CswTableDdlOp.cs" />
+    <Compile Include="csw\Schema\scripts\CswSchemaScriptsProd.cs" />
+    <Compile Include="csw\Schema\scripts\CswSchemaScriptsTest.cs" />
+    <Compile Include="csw\Schema\scripts\CswUpdateSchemaTo.cs" />
+    <Compile Include="csw\Schema\scripts\ICswSchemaScripts.cs" />
+    <Compile Include="csw\Schema\scripts\infr\RunAfterEveryExecutionOfUpdater_01.cs" />
+    <Compile Include="csw\Schema\scripts\infr\RunAfterEveryExecutionOfUpdater_02.cs" />
+    <Compile Include="csw\Schema\scripts\infr\RunAfterEveryExecutionOfUpdater_03.cs" />
+    <Compile Include="csw\Schema\scripts\infr\RunBeforeEveryExecutionOfUpdater_01.cs" />
+    <Compile Include="csw\Schema\scripts\infr\RunBeforeEveryExecutionOfUpdater_01M.cs" />
+    <Compile Include="csw\Schema\scripts\infr\RunBeforeEveryExecutionOfUpdater_01OC.cs" />
+    <Compile Include="csw\Schema\scripts\infr\RunBeforeEveryExecutionOfUpdater_02.cs" />
+    <Compile Include="csw\Schema\scripts\infr\RunBeforeEveryExecutionOfUpdater_03.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCaseXXXXX.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01S_Case26760.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01S_Case27528.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01S_Case27551_part2.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01S_Case27578.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01S_Case27578_part2.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01S_Case27629.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01S_Case27632.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01S_Case27646.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01S_Case27647.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01S_Case27648.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01S_Case27665.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01S_Case27670.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01S_Case27691.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01S_Case27703.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01S_Case27720.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01S_Case27720_part2.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01S_Case27720_part3.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01S_Case27720_part4.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01S_Case27751.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01S_Case27769.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01S_Case27779_part1.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01S_Case27779_part2.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01S_Case27780.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01S_Case27800.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01S_Case27858.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01S_Case27904.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01S_DevModule_Case27759.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01S_FieldTypes_Case25352.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01S_MobileModule_Case27859.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01S_PrintLabel_Case21701.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01T_Case27606.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01T_Case27694.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01T_Case27740.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01T_Case27801.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01T_Case27865_part1.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01T_Case27867.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01T_Case27869.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01T_Case27872.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01T_Case27873.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01T_Case27880.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01T_Case27947.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01T_CertMethod_Case27868.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01T_IdentityTab_Case27965.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_0T1_Case27865_part2.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\001\CswTestCase_001_01.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\001\CswTestCase_001_02.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\001\CswTestCase_001_03.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\001\CswTestCase_001_04.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\002\CswTestCase_002_01.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\002\CswTestCase_002_02.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\003\CswTestCase_003_01.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\003\CswTestCase_003_02.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\003\CswTestCase_003_03.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\003\CswTestCase_003_04.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\003\CswTestCase_003_05.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\004\CswTestCase_004_01.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\004\CswTestCase_004_02.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\004\CswTestCase_004_03.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\004\CswTestCase_004_04.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\005\CswTestCase_005_01.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\005\CswTestCase_005_02.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\006\CswTestCase_006_01.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\006\CswTestCase_006_02.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\006\CswTestCase_006_03.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\006\CswTestCase_006_04.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\006\CswTestCase_006_05.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\006\CswTestCase_006_06.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\007\CswTestCase_007_01.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\007\CswTestCase_007_02.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\007\CswTestCase_007_03.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\008\CswTestCase_008_01.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\009\CswTestCase_009_01.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\009\CswTestCase_009_02.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\009\CswTestCase_009_03.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\010\CswTestCase_010_01.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\011\CswTestCase_011_01.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\011\CswTestCase_011_02.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\011\CswTestCase_011_03.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\011\CswTestCase_011_04.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\011\CswTestCase_011_05.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\011\CswTestCase_011_06.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\012\CswTestCase_012_01.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\012\CswTestCase_012_02.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\012\CswTestCase_012_03.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\012\CswTestCase_012_04.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\012\CswTestCase_012_05.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\012\CswTestCase_012_06.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\012\CswTestCase_012_07.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\012\CswTestCase_012_08.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\013\CswTestCase_013_01.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\013\CswTestCase_013_02.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\013\CswTestCase_013_03.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\013\CswTestCase_013_04.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\013\CswTestCase_013_05.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\013\CswTestCase_013_06.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\013\CswTestCase_013_07.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\014\CswTestCase_014_01.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\014\CswTestCase_014_02.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\014\CswTestCase_014_03.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\014\CswTestCase_014_04.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\014\CswTestCase_014_05.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\015\CswTestCase_015_01.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\015\CswTestCase_015_02.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\015\CswTestCase_015_03.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\015\CswTestCase_015_04.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\015\CswTestCase_015_05.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\016\CswTestCase_016_01.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\016\CswTestCase_016_02.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\016\CswTestCase_016_03.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\016\CswTestCase_016_04.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\016\CswTestCase_016_05.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\017\CswTestCase_017_01.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\017\CswTestCase_017_02.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\017\CswTestCase_017_03.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\017\CswTestCase_017_04.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\017\CswTestCase_017_05.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\018\CswTestCase_018_01.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\018\CswTestCase_018_02.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\018\CswTestCase_018_03.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\018\CswTestCase_018_04.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\018\CswTestCase_018_05.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\019\CswTestCase_019_01.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\019\CswTestCase_019_02.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\019\CswTestCase_019_03.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\019\CswTestCase_019_04.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\020\CswTestCase_020_01.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\020\CswTestCase_020_02.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\020\CswTestCase_020_03.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\020\CswTestCase_020_04.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\020\CswTestCase_020_05.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\021\CswTestCase_021_01.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\021\CswTestCase_021_02.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\021\CswTestCase_021_03.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\021\CswTestCase_021_04.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\021\CswTestCase_021_05.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\022\CswTestCase_022_01.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\022\CswTestCase_022_02.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\022\CswTestCase_022_03.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\022\CswTestCase_022_04.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\022\CswTestCase_022_05.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\023\CswTestCase_023_01.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\023\CswTestCase_023_02.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\023\CswTestCase_023_03.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\023\CswTestCase_023_04.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\023\CswTestCase_023_05.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\024\CswTestCase_024_01.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\024\CswTestCase_024_02.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\024\CswTestCase_024_03.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\024\CswTestCase_024_04.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\024\CswTestCase_024_05.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\024\CswTestCase_024_06.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\025\CswTestCase_025_01.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\025\CswTestCase_025_02.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\025\CswTestCase_025_03.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\025\CswTestCase_025_04.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\025\CswTestCase_025_05.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\025\CswTestCase_025_06.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\025\CswTestCase_025_07.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\026\CswTestCase_026_01.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\026\CswTestCase_026_02.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\026\CswTestCase_026_03.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\026\CswTestCase_026_04.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\026\CswTestCase_026_05.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\026\CswTestCase_026_06.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\026\CswTestCase_026_07.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\027\CswTestCase_027_01.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\027\CswTestCase_027_02.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\027\CswTestCase_027_03.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\027\CswTestCase_027_04.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\027\CswTestCase_027_05.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\028\CswTestCase_028_01.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\028\CswTestCase_028_02.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\028\CswTestCase_028_03.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\028\CswTestCase_028_04.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\028\CswTestCase_028_05.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\029\CswTestCase_029_01.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\029\CswTestCase_029_02.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\029\CswTestCase_029_03.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\029\CswTestCase_029_04.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\030\CswTestCase_030_01.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\030\CswTestCase_030_02.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\030\CswTestCase_030_03.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\031\CswTestCase_031_01.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\031\CswTestCase_031_02.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\031\CswTestCase_031_03.cs" />
+    <Compile Include="csw\Schema\scripts\tests\rsrcs\CswTestCaseRsrc.cs" />
+    <Compile Include="csw\Schema\scripts\tests\rsrcs\CswTstCaseRsrc_001.cs" />
+    <Compile Include="csw\Schema\scripts\tests\rsrcs\CswTstCaseRsrc_002.cs" />
+    <Compile Include="csw\Schema\scripts\tests\rsrcs\CswTstCaseRsrc_003.cs" />
+    <Compile Include="csw\Schema\scripts\tests\rsrcs\CswTstCaseRsrc_004.cs" />
+    <Compile Include="csw\Schema\scripts\tests\rsrcs\CswTstCaseRsrc_005.cs" />
+    <Compile Include="csw\Schema\scripts\tests\rsrcs\CswTstCaseRsrc_006.cs" />
+    <Compile Include="csw\Schema\scripts\tests\rsrcs\CswTstCaseRsrc_007.cs" />
+    <Compile Include="csw\Schema\scripts\tests\rsrcs\CswTstCaseRsrc_008.cs" />
+    <Compile Include="csw\Schema\scripts\tests\rsrcs\CswTstCaseRsrc_009.cs" />
+    <Compile Include="csw\Schema\scripts\tests\rsrcs\CswTstCaseRsrc_010.cs" />
+    <Compile Include="csw\Schema\scripts\tests\rsrcs\CswTstCaseRsrc_011.cs" />
+    <Compile Include="csw\Schema\scripts\tests\rsrcs\CswTstCaseRsrc_012.cs" />
+    <Compile Include="csw\Schema\scripts\tests\rsrcs\CswTstCaseRsrc_013.cs" />
+    <Compile Include="csw\Schema\scripts\tests\rsrcs\CswTstCaseRsrc_014.cs" />
+    <Compile Include="csw\Schema\scripts\tests\rsrcs\CswTstCaseRsrc_015.cs" />
+    <Compile Include="csw\Schema\scripts\tests\rsrcs\CswTstCaseRsrc_016.cs" />
+    <Compile Include="csw\Schema\scripts\tests\rsrcs\CswTstCaseRsrc_017.cs" />
+    <Compile Include="csw\Schema\scripts\tests\rsrcs\CswTstCaseRsrc_018.cs" />
+    <Compile Include="csw\Schema\scripts\tests\rsrcs\CswTstCaseRsrc_019.cs" />
+    <Compile Include="csw\Schema\scripts\tests\rsrcs\CswTstCaseRsrc_020.cs" />
+    <Compile Include="csw\Schema\scripts\tests\rsrcs\CswTstCaseRsrc_021.cs" />
+    <Compile Include="csw\Schema\scripts\tests\rsrcs\CswTstCaseRsrc_022.cs" />
+    <Compile Include="csw\Schema\scripts\tests\rsrcs\CswTstCaseRsrc_023.cs" />
+    <Compile Include="csw\Schema\scripts\tests\rsrcs\CswTstCaseRsrc_024.cs" />
+    <Compile Include="csw\Schema\scripts\tests\rsrcs\CswTstCaseRsrc_025.cs" />
+    <Compile Include="csw\Schema\scripts\tests\rsrcs\CswTstCaseRsrc_026.cs" />
+    <Compile Include="csw\Schema\scripts\tests\rsrcs\CswTstCaseRsrc_027.cs" />
+    <Compile Include="csw\Schema\scripts\tests\rsrcs\CswTstCaseRsrc_028.cs" />
+    <Compile Include="csw\Schema\scripts\tests\rsrcs\CswTstCaseRsrc_029.cs" />
+    <Compile Include="csw\Schema\scripts\tests\rsrcs\CswTstCaseRsrc_030.cs" />
+    <Compile Include="csw\Schema\scripts\tests\rsrcs\CswTstCaseRsrc_031.cs" />
+    <Compile Include="csw\Search\CswNbtSearch.cs" />
+    <Compile Include="csw\Search\CswNbtSearchFilterWrapper.cs" />
+    <Compile Include="csw\Security\CswNbtPermit.cs" />
+    <Compile Include="csw\Security\CswNbtSchemaAuthenticator.cs" />
+    <Compile Include="csw\Security\CswNbtSystemUser.cs" />
+    <Compile Include="csw\Security\CswNbtUser.cs" />
+    <Compile Include="csw\Security\ICswNbtUser.cs" />
+    <Compile Include="csw\Sequence\CswNbtSequenceManager.cs" />
+    <Compile Include="csw\Sequence\CswNbtSequenceValue.cs" />
+    <Compile Include="csw\Sequence\CswSequenceName.cs" />
+    <Compile Include="csw\ServiceDrivers\CswNbtSdGrid.cs" />
+    <Compile Include="csw\ServiceDrivers\CswNbtSdInventoryLevelMgr.cs" />
+    <Compile Include="csw\ServiceDrivers\CswNbtSdLocations.cs" />
+    <Compile Include="csw\ServiceDrivers\CswNbtSdNode.cs" />
+    <Compile Include="csw\ServiceDrivers\CswNbtSdTabsAndProps.cs" />
+    <Compile Include="csw\ServiceDrivers\CswPropIdAttr.cs" />
+    <Compile Include="csw\Session\CswNbtSessionAuthenticate.cs" />
+    <Compile Include="csw\Session\CswNbtSessionAuthenticateData.cs" />
+    <Compile Include="csw\Session\CswNbtSessionDataId.cs" />
+    <Compile Include="csw\Session\CswNbtSessionDataItem.cs" />
+    <Compile Include="csw\Session\CswNbtSessionDataMgr.cs" />
+    <Compile Include="csw\Statistics\CswNbtStatisticsEntry.cs" />
+    <Compile Include="csw\Statistics\CswNbtStatisticsEvents.cs" />
+    <Compile Include="csw\Statistics\CswNbtStatisticsStorageDb.cs" />
+    <Compile Include="csw\TableEvents\CswNbtTableEventAfterUpdateAuditing.cs" />
+    <Compile Include="csw\TableEvents\CswNbtTableEventBeforeUpdateNodeTypeProps.cs" />
+    <Compile Include="csw\TableEvents\CswNbtTableEventBeforeUpdateNodeTypes.cs" />
+    <Compile Include="csw\TableEvents\CswNbtTableEventBeforeUpdateSequences.cs" />
+    <Compile Include="csw\TableEvents\CswNbtTblFactory.cs" />
+    <Compile Include="csw\TableEvents\CswTableCaddyFactoryNbt.cs" />
+    <Compile Include="csw\TreeEvents\CswNbtTreeEventInsertNodeGeneric.cs" />
+    <Compile Include="csw\TreeEvents\CswNbtTreeFactory.cs" />
+    <Compile Include="csw\TreeEvents\CswNbtTreeRuleAliquot.cs" />
+    <Compile Include="csw\TreeEvents\CswPropertyValue.cs" />
+    <Compile Include="csw\TreeEvents\ICswNbtTreeRule.cs" />
+    <Compile Include="csw\Tree\CswNbtColumnNames.cs" />
+    <Compile Include="csw\Tree\CswNbtLocationTreeDeprecated.cs" />
+    <Compile Include="csw\Tree\CswNbtNodeCollection.cs" />
+    <Compile Include="csw\Tree\CswNbtNodeFactory.cs" />
+    <Compile Include="csw\Tree\CswNbtNodeKey.cs" />
+    <Compile Include="csw\Tree\CswNbtNodePropColl.cs" />
+    <Compile Include="csw\Tree\CswNbtNodePropCollDataNative.cs" />
+    <Compile Include="csw\Tree\CswNbtNodePropCollDataRelational.cs" />
+    <Compile Include="csw\Tree\CswNbtNodeReader.cs" />
+    <Compile Include="csw\Tree\CswNbtNodeReaderDataNative.cs" />
+    <Compile Include="csw\Tree\CswNbtNodeReaderDataRelationalDb.cs" />
+    <Compile Include="csw\Tree\CswNbtNodeTypeProp.cs" />
+    <Compile Include="csw\Tree\CswNbtNodeWriter.cs" />
+    <Compile Include="csw\Tree\CswNbtNodeWriterNative.cs" />
+    <Compile Include="csw\Tree\CswNbtNodeWriterRelationalDb.cs" />
+    <Compile Include="csw\Tree\CswNbtPropEnmrtrFiltered.cs" />
+    <Compile Include="csw\Tree\CswNbtTreeBuilder.cs" />
+    <Compile Include="csw\Tree\CswNbtTreeDomProxy.cs" />
+    <Compile Include="csw\Tree\CswNbtTreeKey.cs" />
+    <Compile Include="csw\Tree\CswNbtTreeLoader.cs" />
+    <Compile Include="csw\Tree\CswNbtTreeLoaderFromSearchByLevel.cs" />
+    <Compile Include="csw\Tree\CswNbtTreeLoaderFromXmlViewByLevel.cs" />
+    <Compile Include="csw\Tree\CswNbtTreeLoaderFromXmlViewByLevelWith.cs" />
+    <Compile Include="csw\Tree\CswNbtTreeModEventArgs.cs" />
+    <Compile Include="csw\Tree\CswNbtTreeNodes.cs" />
+    <Compile Include="csw\Tree\ICswNbtNodePropCollData.cs" />
+    <Compile Include="csw\Tree\ICswNbtNodeReaderData.cs" />
+    <Compile Include="csw\Tree\ICswNbtNodeWriterFactory.cs" />
+    <Compile Include="csw\Tree\ICswNbtNodeWriterImpl.cs" />
+    <Compile Include="csw\Tree\ICswNbtTree.cs" />
+    <Compile Include="csw\Tree\ICswNbtTreeFactory.cs" />
+    <Compile Include="csw\UnitsOfMeasure\CswNbtUnitConversion.cs" />
+    <Compile Include="csw\UnitsOfMeasure\CswNbtUnitViewBuilder.cs" />
+    <Compile Include="csw\View\CswNbtView.cs" />
+    <Compile Include="csw\View\CswNbtViewBase.cs" />
+    <Compile Include="csw\View\CswNbtViewBuilder.cs" />
+    <Compile Include="csw\View\CswNbtViewCache.cs" />
+    <Compile Include="csw\View\CswNbtViewDataContract.cs" />
+    <Compile Include="csw\View\CswNbtViewFactory.cs" />
+    <Compile Include="csw\View\CswNbtViewId.cs" />
+    <Compile Include="csw\View\CswNbtViewNode.cs" />
+    <Compile Include="csw\View\CswNbtViewProperty.cs" />
+    <Compile Include="csw\View\CswNbtViewPropertyFilter.cs" />
+    <Compile Include="csw\View\CswNbtViewRelationship.cs" />
+    <Compile Include="csw\View\CswNbtViewRoot.cs" />
+    <Compile Include="csw\View\CswNbtViewSelect.cs" />
+    <Compile Include="Properties\Resources.Designer.cs" />
+    <Compile Include="csw\Actions\CswNbtActDispenseContainer.cs" />
+    <Compile Include="csw\Actions\CswNbtActReceiving.cs" />
+    <Compile Include="csw\Actions\CswNbtActSubmitRequest.cs" />
+    <Compile Include="csw\Actions\CswNbtActSystemViews.cs" />
+    <Compile Include="csw\Batch\CswNbtBatchEnums.cs" />
+    <Compile Include="csw\Batch\CswNbtBatchManager.cs" />
+    <Compile Include="csw\Batch\CswNbtBatchOpExpiredContainers.cs" />
+    <Compile Include="csw\Batch\CswNbtBatchOpFutureNodes.cs" />
+    <Compile Include="csw\Batch\CswNbtBatchOpInventoryLevels.cs" />
+    <Compile Include="csw\Batch\CswNbtBatchOpMailReport.cs" />
+    <Compile Include="csw\Batch\CswNbtBatchOpMultiDelete.cs" />
+    <Compile Include="csw\Batch\CswNbtBatchOpMultiEdit.cs" />
+    <Compile Include="csw\Batch\CswNbtBatchOpUpdateRegulatoryLists.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Resources\SqlRptViewDict.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>SqlRptViewDict.rpt</DependentUpon>
+      <SubType>Component</SubType>
+    </Compile>
+    <None Include="ChemSW.snk" />
+    <None Include="csw\Actions\Example.xsd">
+      <SubType>Designer</SubType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Common\CswCommon\CswCommon.csproj">
+      <Project>{434091FB-F487-4787-8BDB-58C2336B73C2}</Project>
+      <Name>CswCommon</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Common\StructureSearch\StructureSearch\StructureSearch.csproj">
+      <Project>{e9156c9a-605e-4f21-8bb1-0970da055ff0}</Project>
+      <Name>StructureSearch</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Common\StructureSearch\StructureSearch\StructureSearch.csproj">
+      <Project>{E9156C9A-605E-4F21-8BB1-0970DA055FF0}</Project>
+      <Name>StructureSearch</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\NbtConfig\NbtConfig.csproj">
+      <Project>{DABF9D08-70E8-4D42-AF7A-577335A7129F}</Project>
+      <Name>NbtConfig</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="csw\Schema\scripts\tests\cases\999-NotImportedFromOldTestTool\dundant\" />
+    <Folder Include="csw\Schema\scripts\tests\cases\999-NotImportedFromOldTestTool\review\" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <SubType>Designer</SubType>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <None Include="Resources\runscript_bat" />
+    <None Include="Resources\nbt_initialize_ora_sql" />
+    <None Include="Resources\nbt_finalize_ora_sql" />
+    <None Include="Resources\indexes_sql" />
+    <None Include="Resources\SqlRptViewDict.rpt">
+      <Generator>CrystalDecisions.VSDesigner.CodeGen.ReportCodeGenerator</Generator>
+      <LastGenOutput>SqlRptViewDict.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{C0C07587-41A7-46C8-8FBD-3F9C8EBE2DDC}" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSHARP.Targets" />
+  <ProjectExtensions>
+    <VisualStudio AllowExistingFolder="true" />
+  </ProjectExtensions>
 </Project>

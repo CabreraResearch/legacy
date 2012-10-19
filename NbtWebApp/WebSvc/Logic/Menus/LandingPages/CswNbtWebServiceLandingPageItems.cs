@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Data;
 using ChemSW.Core;
 using ChemSW.Nbt.Actions;
@@ -20,10 +19,9 @@ namespace NbtWebApp.WebSvc.Logic.Menus.LandingPages
     /// </summary>
     public class CswNbtWebServiceLandingPageItems
     {
-        #region WCF Data Objects
 
         /// <summary>
-        /// Return Object for LandingPageItems, which inherits from CswWebSvcReturn
+        /// Return Object for LandingPageItems
         /// </summary>
         [DataContract]
         public class LandingPageItemsReturn : CswWebSvcReturn
@@ -35,79 +33,6 @@ namespace NbtWebApp.WebSvc.Logic.Menus.LandingPages
             [DataMember]
             public LandingPageData Data;
         }
-
-        [DataContract]
-        public class LandingPageData
-        {
-            public LandingPageData()
-            {
-                LandingPageItems = new Collection<LandingPageItem>();
-            }
-
-            [DataContract]
-            public class Request
-            {
-                [DataMember]
-                public string RoleId = string.Empty;
-                [DataMember]
-                public string ActionId = string.Empty;
-                [DataMember]
-                public Int32 LandingPageId = Int32.MinValue;
-                [DataMember]
-                public Int32 NewRow = Int32.MinValue;
-                [DataMember]
-                public Int32 NewColumn = Int32.MinValue;
-                [DataMember]
-                public string NodeTypeId = string.Empty;
-                [DataMember]
-                public string Type = string.Empty;
-                [DataMember]
-                public string ViewType = string.Empty;
-                [DataMember]
-                public string ViewValue = string.Empty;
-                [DataMember]
-                public string Text = string.Empty;
-            }
-
-            [DataContract]
-            public class LandingPageItem
-            {
-                [DataMember]
-                public string LandingPageId = string.Empty;
-                [DataMember]
-                public string Text = string.Empty;
-                [DataMember]
-                public string DisplayRow = string.Empty;
-                [DataMember]
-                public string DisplayCol = string.Empty;
-                [DataMember]
-                public string ButtonIcon = string.Empty;
-                [DataMember]
-                public string Type = string.Empty;
-                [DataMember]
-                public string LinkType = string.Empty;
-                [DataMember]
-                public string NodeTypeId = string.Empty;
-                [DataMember]
-                public string ViewId = string.Empty;
-                [DataMember]
-                public string ViewMode = string.Empty;
-                [DataMember]
-                public string ActionId = string.Empty;
-                [DataMember]
-                public string ActionName = string.Empty;
-                [DataMember]
-                public string ActionUrl = string.Empty;
-                [DataMember]
-                public string ReportId = string.Empty;
-            }
-
-            [DataMember]
-            public Collection<LandingPageItem> LandingPageItems;
-
-        } // LandingPageData
-
-        #endregion WCF Data Objects
 
         public static void getLandingPageItems( ICswResources CswResources, LandingPageItemsReturn Return, LandingPageData.Request Request )
         {
@@ -161,12 +86,13 @@ namespace NbtWebApp.WebSvc.Logic.Menus.LandingPages
                     case CswNbtLandingPageTable.LandingPageItemType.Link:
                         if( CswConvert.ToInt32( LandingPageRow["to_nodeviewid"] ) != Int32.MinValue )
                         {
-                            CswNbtView ThisView = _CswNbtResources.ViewSelect.restoreView( new CswNbtViewId( CswConvert.ToInt32( LandingPageRow["to_nodeviewid"] ) ) );
+                            CswNbtViewId NodeViewId = new CswNbtViewId( CswConvert.ToInt32( LandingPageRow["to_nodeviewid"].ToString() ) );
+                            CswNbtView ThisView = _CswNbtResources.ViewSelect.restoreView( NodeViewId );
                             if( null != ThisView && ThisView.IsFullyEnabled() && VisibleViews.ContainsKey( ThisView.ViewId ) )
                             {
                                 LinkText = LandingPageRow["displaytext"].ToString() != string.Empty ? LandingPageRow["displaytext"].ToString() : ThisView.ViewName;
 
-                                Item.ViewId = new CswNbtViewId( CswConvert.ToInt32( LandingPageRow["to_nodeviewid"] ) ).ToString();
+                                Item.ViewId = NodeViewId.ToString();
                                 Item.ViewMode = ThisView.ViewMode.ToString().ToLower();
                                 if( ThisView.Root.ChildRelationships[0] != null )
                                 {
