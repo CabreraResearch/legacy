@@ -18,22 +18,38 @@ namespace ChemSW.Nbt.Schema
         {
             CswNbtLandingPageTable LandingPageObj = _CswNbtSchemaModTrnsctn.getLandingPageTable();
             string CreateMaterialActionId = _CswNbtSchemaModTrnsctn.Actions[CswNbtActionName.Create_Material].ActionId.ToString();
-            LandingPageObj.addLandingPageItem(
-                "Link",
-                "Action",
-                CreateMaterialActionId,
-                Int32.MinValue,
-                "Create Another Material",
-                "1",
-                CreateMaterialActionId
-            );
+
+            //Create Another Material
+            LandingPageData.Request Request = new LandingPageData.Request
+            {
+                Type = "Link",
+                ViewType = "Action",
+                PkValue = CreateMaterialActionId,
+                NodeTypeId = String.Empty,
+                Text = "Create Another Material",
+                RoleId = "nodes_1",
+                ActionId = CreateMaterialActionId
+            };
+            LandingPageObj.addLandingPageItem( Request );
+
+            //View this Material
+            Request = new LandingPageData.Request
+            {
+                Type = "Link",
+                ViewType = "View",
+                PkValue = "0",//this will probably change
+                NodeTypeId = String.Empty,
+                Text = "View this Material",
+                RoleId = "nodes_1",
+                ActionId = CreateMaterialActionId
+            };
+            LandingPageObj.addLandingPageItem( Request );
 
             //todo - add all default createMaterial landing page items:
             //GHS (tab)
             //Receive this Material (Action)
             //Request This Material (Action)
-            //View this Material (View)
-            //Defines Sizes for this Material
+            //Defines Sizes for this Material (tab? view?)
         } //Update()
 
         public override CswDeveloper Author

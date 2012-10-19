@@ -1,4 +1,3 @@
-using ChemSW.Core;
 using ChemSW.Nbt.LandingPage;
 using ChemSW.Nbt;
 using System.Runtime.Serialization;
@@ -50,7 +49,7 @@ namespace NbtWebApp.WebSvc.Logic.Menus.LandingPages
         public static void moveLandingPageItem( ICswResources CswResources, LandingPageItemsReturn Return, LandingPageData.Request Request )
         {
             CswNbtLandingPageTable _CswNbtLandingPageTable = new CswNbtLandingPageTable( (CswNbtResources) CswResources );
-            _CswNbtLandingPageTable.moveLandingPageItem( Request.LandingPageId, Request.NewRow, Request.NewColumn );
+            _CswNbtLandingPageTable.moveLandingPageItem( Request );
         }
 
         /// <summary>
@@ -59,7 +58,7 @@ namespace NbtWebApp.WebSvc.Logic.Menus.LandingPages
         public static void deleteLandingPageItem( ICswResources CswResources, LandingPageItemsReturn Return, LandingPageData.Request Request )
         {
             CswNbtLandingPageTable _CswNbtLandingPageTable = new CswNbtLandingPageTable( (CswNbtResources) CswResources );
-            _CswNbtLandingPageTable.deleteLandingPageItem( Request.LandingPageId );
+            _CswNbtLandingPageTable.deleteLandingPageItem( Request );
         }
     } // class CswNbtWebServiceLandingPageItems
 } // namespace ChemSW.Nbt.WebServices

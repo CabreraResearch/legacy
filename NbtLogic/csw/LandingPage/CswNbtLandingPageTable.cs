@@ -14,7 +14,6 @@ namespace ChemSW.Nbt.LandingPage
 {
     public class CswNbtLandingPageTable
     {
-
         private CswNbtResources _CswNbtResources;
 
         /// <summary>
@@ -305,28 +304,28 @@ namespace ChemSW.Nbt.LandingPage
             }
         }
 
-        public void moveLandingPageItem( Int32 LandingPageId, Int32 NewRow, Int32 NewColumn )
+        public void moveLandingPageItem( LandingPageData.Request Request )
         {
-            if( LandingPageId != Int32.MinValue )
+            if( Request.LandingPageId != Int32.MinValue )
             {
                 CswTableUpdate LandingPageUpdate = _CswNbtResources.makeCswTableUpdate( "MoveLandingPageItem", "landingpage" );
-                DataTable LandingPageTable = LandingPageUpdate.getTable( "landingpageid", LandingPageId );
+                DataTable LandingPageTable = LandingPageUpdate.getTable( "landingpageid", Request.LandingPageId );
                 if( LandingPageTable.Rows.Count > 0 )
                 {
                     DataRow LandingPageRow = LandingPageTable.Rows[0];
-                    LandingPageRow["display_row"] = CswConvert.ToDbVal( NewRow );
-                    LandingPageRow["display_col"] = CswConvert.ToDbVal( NewColumn );
+                    LandingPageRow["display_row"] = CswConvert.ToDbVal( Request.NewRow );
+                    LandingPageRow["display_col"] = CswConvert.ToDbVal( Request.NewColumn );
                     LandingPageUpdate.update( LandingPageTable );
                 }
             }
         }
 
-        public void deleteLandingPageItem( Int32 LandingPageId )
+        public void deleteLandingPageItem( LandingPageData.Request Request )
         {
-            if( LandingPageId != Int32.MinValue )
+            if( Request.LandingPageId != Int32.MinValue )
             {
                 CswTableUpdate LandingPageUpdate = _CswNbtResources.makeCswTableUpdate( "RemoveLandingPageItem", "landingpage" );
-                DataTable LandingPageTable = LandingPageUpdate.getTable( "landingpageid", LandingPageId );
+                DataTable LandingPageTable = LandingPageUpdate.getTable( "landingpageid", Request.LandingPageId );
                 if( LandingPageTable.Rows.Count > 0 )
                 {
                     foreach( DataRow LandingPageRow in LandingPageTable.Rows )
