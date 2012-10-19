@@ -444,6 +444,8 @@
             };
             Csw.extend(cswDlgPrivate, options);
 
+            var div = Csw.literals.div();
+
             cswDlgPrivate.onOpen = function () {
                 cswDlgPrivate.ShowAsReport = false;
                 cswDlgPrivate.tabState.Config = true;
@@ -455,7 +457,6 @@
                     _configAddOptions();
                 };
 
-                var div = Csw.literals.div();
                 var table = div.table({
                     name: 'EditLayoutDialog_table',
                     width: '100%'
@@ -543,7 +544,8 @@
             };
 
             function _onclose() {
-                Csw.tryExec(cswPrivate.Refresh);
+                Csw.publish('initPropertyTearDown');
+                Csw.tryExec(cswDlgPrivate.Refresh);
             }
 
             openDialog(div, 900, 600, _onclose, 'Edit Layout', cswDlgPrivate.onOpen);
