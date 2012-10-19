@@ -47,7 +47,7 @@
                                         href: molData.href,
                                         target: '_blank'
                                     }).img({
-                                        src: molData.href + '&foo=' + window.Ext.id(),
+                                        src: molData.href + '&uid=' + window.Ext.id(),  //case 27492 - FF and IE cache URLs, so we have to make it unique to get new content to display
                                         height: cswPrivate.propVals.height,
                                         width: cswPrivate.width
                                     });

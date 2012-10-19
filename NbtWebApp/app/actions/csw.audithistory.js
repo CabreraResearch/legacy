@@ -25,7 +25,7 @@
             var cswPublic = { };
             cswParent.empty();
 
-            var gridId = cswPrivate.name + '_auditGrid_' + window.Ext.id();
+            var gridId = cswPrivate.name + '_auditGrid';
             cswParent.grid({
                 name: gridId,
                 storeId: gridId,

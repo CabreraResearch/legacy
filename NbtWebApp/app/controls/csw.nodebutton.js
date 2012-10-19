@@ -14,7 +14,7 @@
 
                 (function _pre() {
                     cswPrivate = {
-                        name: 'nodebutton' + window.Ext.id(),
+                        name: 'nodebutton',
                         div: {},
                         value: '',
                         mode: 'button',
@@ -30,7 +30,7 @@
                         disabled: false
                     };
                     Csw.extend(cswPrivate, options);
-                    cswPrivate.div = cswParent.div({ name: window.Ext.id() });
+                    cswPrivate.div = cswParent.div();
                     cswPrivate.div.empty();
 
                     cswPrivate.table = cswPrivate.div.table();

@@ -144,7 +144,7 @@
                         ) {
 
                         var layoutOpts = {
-                            name: cswPrivate.name + window.Ext.id(),
+                            name: cswPrivate.name + '_layout',
                             OddCellRightAlign: true,
                             ReadOnly: (cswPrivate.tabState.EditMode === Csw.enums.editMode.PrintReport || cswPrivate.tabState.ReadOnly),
                             cellSet: {
@@ -492,7 +492,7 @@
                     }
 
                     var formTable = cswPrivate.form.table({
-                        name: cswPrivate.name + '_formtbl_' + tabid + window.Ext.id(),
+                        name: cswPrivate.name + '_formtbl_' + tabid,
                         width: '100%'
                     });
 
@@ -548,7 +548,7 @@
 
                     if (cswPrivate.tabState.EditMode !== Csw.enums.editMode.PrintReport && Csw.bool(cswPrivate.tabState.showSaveButton)) {
                         cswPrivate.saveBtn = formTable.cell(2, 1).buttonExt({
-                            name: 'SaveTab' + window.Ext.id(),
+                            name: 'SaveTab',
                             icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.save),
                             enabledText: 'Save Changes',
                             disabledText: 'Saving...',

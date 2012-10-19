@@ -190,6 +190,7 @@
 
                     Csw.each(cols, function(colObj, key) {
                         colObj.renderer = function (value, metaData, record, rowIndex, colIndex, store, view) {
+                            //This is an appropriate use of Ext.id() given the context
                             var id = window.Ext.id();
                             var thisBtn = cswPrivate.data.buttons.filter(function(btn) {
                                 return btn.index === colObj.dataIndex && btn.rowno === rowIndex;
