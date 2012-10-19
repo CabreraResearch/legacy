@@ -439,7 +439,7 @@
                 },
                 Refresh: null
             };
-            if(options) Csw.extend(cswPrivate, options);
+            Csw.extend(cswPrivate, options);
 
             cswPrivate.ShowAsReport = false;
             cswPrivate.tabState.Config = true;
@@ -542,7 +542,7 @@
             openDialog(div, 900, 600, _onclose, 'Edit Layout');
         }, // EditLayoutDialog
         EditNodeDialog: function (options) {
-            var cswPrivate = {
+            var cswDlgPrivate = {
                 nodeids: [],
                 nodepks: [],
                 nodekeys: [],
@@ -556,12 +556,12 @@
                 onRefresh: null,
                 onClose: null,
                 onAfterButtonClick: null,
-                date: ''     // viewing audit records
+                date: '' // viewing audit records
             };
             if (Csw.isNullOrEmpty(options)) {
                 Csw.error.throwException(Csw.error.exception('Cannot create an Add Dialog without options.', '', 'CswDialog.js', 177));
             }
-            Csw.extend(cswPrivate, options);
+            Csw.extend(cswDlgPrivate, options);
             var cswPublic = {
                 div: Csw.literals.div(),
                 close: function () {
@@ -569,77 +569,82 @@
                 }
             };
 
-            var myEditMode = Csw.enums.editMode.EditInPopup;
-            var tableId = cswPrivate.nodeids[0];
-            var table = cswPublic.div.table({ name: tableId });
-            if (false === Csw.isNullOrEmpty(cswPrivate.date) && false === cswPrivate.Multi) {
-                myEditMode = Csw.enums.editMode.AuditHistoryInPopup;
-                Csw.actions.auditHistory(table.cell(1, 1), {
-                    name: cswPrivate.nodeids[0] + '_history',
-                    nodeid: cswPrivate.nodeids[0],
-                    cswnbtnodekey: cswPrivate.nodekeys[0],
-                    onEditNode: cswPrivate.onEditNode,
-                    JustDateColumn: true,
-                    selectedDate: cswPrivate.date,
-                    onSelectRow: function (date) { setupTabs(date); },
-                    allowEditRow: false
-                });
-            }
-            var tabCell = table.cell(1, 2);
-
-            setupTabs(cswPrivate.date);
-
-            function setupTabs(date) {
-                tabCell.empty();
-                //tabCell.$.CswNodeTabs({
-
-                cswPublic.tabsAndProps = Csw.layouts.tabsAndProps(tabCell, {
-                    globalState: {
-                        date: date,
-                        nodeids: cswPrivate.nodeids,
-                        nodekeys: cswPrivate.nodekeys,
-                        nodenames: cswPrivate.nodenames,
-                        filterToPropId: cswPrivate.filterToPropId
-                        //title: o.title,
-                    },
-                    tabState: {
-                        Multi: cswPrivate.Multi,
-                        ReadOnly: cswPrivate.ReadOnly,
-                        EditMode: myEditMode,
-                        tabid: Csw.cookie.get(Csw.cookie.cookieNames.CurrentTabId)
-                    },
-
-                    ReloadTabOnSave: true,
-                    Refresh: cswPrivate.onRefresh,
-                    onEditView: function (viewid) {
-                        cswPublic.close();
-                        Csw.tryExec(cswPrivate.onEditView, viewid);
-                    },
-                    onSave: function (nodeids, nodekeys, tabcount) {
-                        Csw.clientChanges.unsetChanged();
-                        if (tabcount === 2 || cswPrivate.Multi) { /* Ignore history tab */
-                            cswPublic.close();
-                        }
-                        Csw.tryExec(cswPrivate.onEditNode, nodeids, nodekeys, cswPublic.close);
-                    },
-                    onBeforeTabSelect: function () {
-                        return Csw.clientChanges.manuallyCheckChanges();
-                    },
-                    onTabSelect: function (tabid) {
-                        Csw.cookie.set(Csw.cookie.cookieNames.CurrentTabId, tabid);
-                    },
-                    onPropertyChange: function () {
-                        Csw.clientChanges.setChanged();
-                    },
-                    onAfterButtonClick: cswPrivate.onAfterButtonClick
-                });
-            } // _setupTabs()
-            var title = Csw.string(cswPrivate.title);
+            var title = Csw.string(cswDlgPrivate.title);
             if (Csw.isNullOrEmpty(title)) {
-                title = (false === cswPrivate.Multi) ? cswPrivate.nodenames[0] : cswPrivate.nodenames.join(', ');
+                title = (false === cswDlgPrivate.Multi) ? cswDlgPrivate.nodenames[0] : cswDlgPrivate.nodenames.join(', ');
             }
             cswPublic.title = title;
-            openDialog(cswPublic.div, 900, 600, cswPrivate.onClose, title);
+
+            cswDlgPrivate.onOpen = function() {
+                var myEditMode = Csw.enums.editMode.EditInPopup;
+                var tableId = cswDlgPrivate.nodeids[0];
+                var table = cswPublic.div.table({ name: tableId });
+                if (false === Csw.isNullOrEmpty(cswDlgPrivate.date) && false === cswDlgPrivate.Multi) {
+                    myEditMode = Csw.enums.editMode.AuditHistoryInPopup;
+                    Csw.actions.auditHistory(table.cell(1, 1), {
+                        name: cswDlgPrivate.nodeids[0] + '_history',
+                        nodeid: cswDlgPrivate.nodeids[0],
+                        cswnbtnodekey: cswDlgPrivate.nodekeys[0],
+                        onEditNode: cswDlgPrivate.onEditNode,
+                        JustDateColumn: true,
+                        selectedDate: cswDlgPrivate.date,
+                        onSelectRow: function(date) { setupTabs(date); },
+                        allowEditRow: false
+                    });
+                }
+                var tabCell = table.cell(1, 2);
+
+                setupTabs(cswDlgPrivate.date);
+
+                function setupTabs(date) {
+                    tabCell.empty();
+                    //tabCell.$.CswNodeTabs({
+
+                    cswPublic.tabsAndProps = Csw.layouts.tabsAndProps(tabCell, {
+                        globalState: {
+                            date: date,
+                            nodeids: cswDlgPrivate.nodeids,
+                            nodekeys: cswDlgPrivate.nodekeys,
+                            nodenames: cswDlgPrivate.nodenames,
+                            filterToPropId: cswDlgPrivate.filterToPropId
+                            //title: o.title,
+                        },
+                        tabState: {
+                            Multi: cswDlgPrivate.Multi,
+                            ReadOnly: cswDlgPrivate.ReadOnly,
+                            EditMode: myEditMode,
+                            tabid: Csw.cookie.get(Csw.cookie.cookieNames.CurrentTabId)
+                        },
+
+                        ReloadTabOnSave: true,
+                        Refresh: cswDlgPrivate.onRefresh,
+                        onEditView: function(viewid) {
+                            cswPublic.close();
+                            Csw.tryExec(cswDlgPrivate.onEditView, viewid);
+                        },
+                        onSave: function(nodeids, nodekeys, tabcount) {
+                            Csw.clientChanges.unsetChanged();
+                            if (tabcount === 2 || cswDlgPrivate.Multi) { /* Ignore history tab */
+                                cswPublic.close();
+                            }
+                            Csw.tryExec(cswDlgPrivate.onEditNode, nodeids, nodekeys, cswPublic.close);
+                        },
+                        onBeforeTabSelect: function() {
+                            return Csw.clientChanges.manuallyCheckChanges();
+                        },
+                        onTabSelect: function(tabid) {
+                            Csw.cookie.set(Csw.cookie.cookieNames.CurrentTabId, tabid);
+                        },
+                        onPropertyChange: function() {
+                            Csw.clientChanges.setChanged();
+                        },
+                        onAfterButtonClick: cswDlgPrivate.onAfterButtonClick
+                    });
+                }
+
+                // _setupTabs()
+            };
+            openDialog(cswPublic.div, 900, 600, cswDlgPrivate.onClose, title, cswDlgPrivate.onOpen);
             return cswPublic;
         }, // EditNodeDialog
         CopyNodeDialog: function (options) {
@@ -1375,7 +1380,7 @@
     };
 
 
-    function openDialog(div, width, height, onClose, title) {
+    function openDialog(div, width, height, onClose, title, onOpen) {
         $('<div id="DialogErrorDiv" style="display: none;"></div>')
             .prependTo(div.$);
 
@@ -1413,6 +1418,7 @@
             },
             open: function () {
                 dialogsCount++;
+                Csw.tryExec(onOpen);
             }
         });
         posX += incrPosBy;
