@@ -161,7 +161,7 @@
                 },
                 success: function () {
                     Csw.cookie.set(Csw.cookie.cookieNames.CustomerId, cswPrivate.AccessId);
-                    Csw.cookie.set(Csw.cookie.cookieNames.Username, cswPrivate.UserName);
+                    Csw.clientSession.setUsername(cswPrivate.UserName);
                     Csw.cookie.set(Csw.cookie.cookieNames.LogoutPath, cswPrivate.logoutpath);
                     Csw.tryExec(cswPrivate.onAuthenticate, cswPrivate.UserName);
                 },
@@ -175,6 +175,12 @@
                 }
             }); // ajax
         });
+
+    Csw.clientSession.setUsername = Csw.clientSession.setUsername ||
+        Csw.clientSession.register('setUsername', function (username) {
+            Csw.cookie.set(Csw.cookie.cookieNames.Username, cswPrivate.UserName);
+        });
+
 
     Csw.clientSession.logout = Csw.clientSession.logout ||
         Csw.clientSession.register('logout', function (options) {

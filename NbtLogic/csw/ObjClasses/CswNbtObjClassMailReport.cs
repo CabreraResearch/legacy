@@ -216,11 +216,6 @@ namespace ChemSW.Nbt.ObjClasses
             if( Type.Value == TypeOptionView )
             {
                 OutputFormat.Value = MailRptFormatOptions.Link.ToString();
-                OutputFormat.setReadOnly( value: true, SaveToDb: true );
-            }
-            else if( Type.Value == TypeOptionReport )
-            {
-                OutputFormat.setReadOnly( value: false, SaveToDb: true );
             }
         } // OnTypePropChange()
         public CswNbtNodePropNumber WarningDays { get { return ( _CswNbtNode.Properties[PropertyName.WarningDays] ); } }
