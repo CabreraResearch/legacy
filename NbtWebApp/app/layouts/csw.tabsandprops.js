@@ -546,7 +546,11 @@
                         Csw.crawlObject(cswPrivate.globalState.propertyData, updOnSuccess, false);
                     }
 
-                    if (cswPrivate.tabState.EditMode !== Csw.enums.editMode.PrintReport && Csw.bool(cswPrivate.tabState.showSaveButton)) {
+                    if (cswPrivate.tabState.EditMode !== Csw.enums.editMode.Preview &&
+                        cswPrivate.tabState.EditMode !== Csw.enums.editMode.AuditHistoryInPopup &&
+                        cswPrivate.tabState.EditMode !== Csw.enums.editMode.PrintReport &&
+                        Csw.bool(cswPrivate.tabState.showSaveButton)) {
+
                         cswPrivate.saveBtn = formTable.cell(2, 1).buttonExt({
                             name: 'SaveTab',
                             icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.save),

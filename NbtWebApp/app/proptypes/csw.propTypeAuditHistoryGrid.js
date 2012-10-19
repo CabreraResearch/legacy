@@ -22,6 +22,7 @@
                             width: '100%',
                             allowEditRow: (cswPublic.data.tabState.EditMode !== Csw.enums.editMode.PrintReport),
                             onEditRow: function(date) {
+                                Csw.publish('initPropertyTearDown');
                                 $.CswDialog('EditNodeDialog', {
                                     nodeids: [cswPublic.data.tabState.nodeid],
                                     nodekeys: [cswPublic.data.tabState.cswnbtnodekey],
