@@ -140,7 +140,7 @@
                     if (Csw.isNullOrEmpty(cswPrivate.IdentityTab)) {
                         //
                     } else if (false === cswPrivate.tabState.Config && 
-                        cswPrivate.tabState.EditMode === Csw.enums.editMode.PrintReport
+                        cswPrivate.tabState.EditMode !== Csw.enums.editMode.PrintReport
                         ) {
 
                         var layoutOpts = {
