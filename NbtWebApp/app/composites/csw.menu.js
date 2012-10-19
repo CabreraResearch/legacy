@@ -263,15 +263,20 @@
                         
                         cswParent.empty();
 
-                        if (false === Csw.isNullOrEmpty($('#' + cswParent.getId()), true)) {
+                        //if (false === Csw.isNullOrEmpty($('#' + cswParent.getId()), true)) {
+                        try {
                             window.Ext.create('Ext.toolbar.Toolbar', {
                                 renderTo: cswParent.getId(),
                                 width: cswPrivate.width,
                                 items: items,
                                 cls: 'menutoolbar'
                             }); // toolbar
-                        } // success
-                    }
+                        } catch(e) {
+                            Csw.debug.error('Failed to create Ext.toolbar.Toolbar in csw.menu');
+                            Csw.debug.error(e);
+                        }
+                        //} 
+                    }       //success
                 }); // ajax
             } ()); // constructor
 

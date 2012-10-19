@@ -34,16 +34,21 @@
 
             (function _post() {                                             
                 'use strict';
-                window.Ext.create('Ext.tip.ToolTip', {
-                    target: cswParent.getId(),
-                    html: cswPrivate.html,
-                    autoShow: cswPrivate.autoShow,
-                    focusOnToFront: cswPrivate.focusOnToFront,
-                    autoHide: cswPrivate.autoHide,
-                    closable: cswPrivate.closable,
-                    anchor: cswPrivate.anchor,
-                    bodyStyle: cswPrivate.bodyStyle
-                });
+                try {
+                    window.Ext.create('Ext.tip.ToolTip', {
+                        target: cswParent.getId(),
+                        html: cswPrivate.html,
+                        autoShow: cswPrivate.autoShow,
+                        focusOnToFront: cswPrivate.focusOnToFront,
+                        autoHide: cswPrivate.autoHide,
+                        closable: cswPrivate.closable,
+                        anchor: cswPrivate.anchor,
+                        bodyStyle: cswPrivate.bodyStyle
+                    });
+                } catch (e) {
+                    Csw.debug.error('Failed to create Ext.tip.ToolTip in csw.quickTip');
+                    Csw.debug.error(e);
+                }
             }());
 
             return cswPublic;

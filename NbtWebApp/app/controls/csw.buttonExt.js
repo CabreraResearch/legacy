@@ -145,10 +145,13 @@
                 if (Csw.bool(cswPrivate.bindOnEnter)) {
                     window.Mousetrap.bind('enter', cswPrivate.onClick);
                 }
-                cswPrivate.initBtn = function () {
+                //cswPrivate.initBtn = function () {
+
+                cswPublic.button = window.Ext.create('Ext.Button');
+                try {
                     cswPublic.button = window.Ext.create('Ext.Button', {
                         id: cswPrivate.name,
-						renderTo: cswParent.getId(),
+                        renderTo: cswParent.getId(),
                         text: Csw.string(cswPrivate.enabledText),
                         width: cswPrivate.width,
                         handler: cswPrivate.onClick,
@@ -157,15 +160,24 @@
                         scale: Csw.string(cswPrivate.size, 'medium'),
                         disabled: cswPrivate.disabled
                     });
-
-                    if (false === Csw.isNullOrEmpty(cswPrivate.tooltip.title)) {
+                } catch (e) {
+                    Csw.debug.error('Failed to create Ext.Button in csw.buttonExt');
+                    Csw.debug.error(e);
+                }
+                
+                if (false === Csw.isNullOrEmpty(cswPrivate.tooltip.title)) {
                         cswPrivate.tooltip.target = cswPublic.button.getId();
+                    try {
                         window.Ext.create('Ext.tip.ToolTip', cswPrivate.tooltip);
                         window.Ext.QuickTips.init();
+                    } catch (e) {
+                        Csw.debug.error('Failed to create Ext.tip.ToolTip in csw.buttonExt');
+                        Csw.debug.error(e);
                     }
-                };
+                }
+                //};
                 //if (false === Csw.isNullOrEmpty($('#' + cswParent.getId()), true)) {
-                    cswPrivate.initBtn();
+                //    cswPrivate.initBtn();
                 //} else {
                 //    cswPublic.button = window.Ext.create('Ext.Button');
                 //    window.setTimeout(function () {
