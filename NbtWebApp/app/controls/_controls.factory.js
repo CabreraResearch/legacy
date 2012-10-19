@@ -28,7 +28,7 @@
                         cswParent[name] = function (opts) {
                             opts = cswPrivate.controlPreProcessing(opts, name);
                             return Csw.controls[name](cswParent, opts);
-                };
+                        };
                     }
                 });
 
@@ -37,6 +37,6 @@
             });
 
 
-} ());
+}());
 
 

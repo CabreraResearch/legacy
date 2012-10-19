@@ -12,7 +12,9 @@
             'use strict';
             //#region cswPrivate
 
-            var cswPrivate = {};
+            var cswPrivate = {
+                count: 0
+            };
             cswPublic = cswPublic || {};
 
             cswPrivate.controlPreProcessing = function (opts, controlName) {
@@ -21,11 +23,12 @@
                 Reference useful relationships. 
                 TODO: We must fix this to allow Csw style children() as well as parent()
                 */
+                cswPrivate.count += 1;
                 opts = opts || {};
                 opts.controlName = controlName;
                 opts.$parent = $element;
                 opts.root = cswPublic.root;
-                opts.ID = cswPublic.getId() + '_' + controlName;
+                opts.ID = cswPublic.getId() + '_' + controlName + '_' + cswPrivate.count;
                 if (false === Csw.isNullOrEmpty(opts.labelText)) {
                     cswPublic.label({ forAttr: opts.ID, text: opts.labelText, useWide: opts.useWide });
                 }
