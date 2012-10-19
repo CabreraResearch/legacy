@@ -178,7 +178,7 @@
 
     Csw.clientSession.setUsername = Csw.clientSession.setUsername ||
         Csw.clientSession.register('setUsername', function (username) {
-            Csw.cookie.set(Csw.cookie.cookieNames.Username, cswPrivate.UserName);
+            Csw.cookie.set(Csw.cookie.cookieNames.Username, username);
         });
 
 
