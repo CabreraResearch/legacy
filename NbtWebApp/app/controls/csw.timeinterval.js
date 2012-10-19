@@ -12,6 +12,7 @@
                     ratetype: '',
                     startingdate: {
                         date: '',
+                        time: '',
                         dateformat: ''
                     },
                     startingmonth: '',
@@ -218,12 +219,14 @@
                 startingDatePicker = cswPrivate.divHourly.dateTimePicker({
                     ID: Csw.makeId(cswPrivate.ID, 'hourly', 'sd'),
                     Date: Csw.string(cswPublic.rateInterval.startingdate.date),
+                    Time: Csw.string(cswPublic.rateInterval.startingdate.time),
                     DateFormat: cswPublic.rateInterval.startingdate.dateformat,
-                    DisplayMode: 'Date',
+                    DisplayMode: 'DateTime',
                     ReadOnly: cswPrivate.ReadOnly,
                     Required: cswPrivate.Required,
                     onChange: function () {
                         cswPublic.rateInterval.startingdate.date = startingDatePicker.val().date;
+                        cswPublic.rateInterval.startingdate.time = startingDatePicker.val().time;
                         Csw.tryExec(cswPrivate.onChange);
                     }
                 });

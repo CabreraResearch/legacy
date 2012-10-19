@@ -29,28 +29,28 @@
                 if (options) {
                     Csw.extend(cswPrivate, options);
                 }
-                cswPrivate.dateTimeDiv = cswParent.div({
+                cswPrivate.dateTimeTbl = cswParent.table({
                     isControl: cswPrivate.isControl,
                     ID: cswPrivate.id
                 });
-                cswPublic = Csw.dom({}, cswPrivate.dateTimeDiv);
+                cswPublic = Csw.dom({}, cswPrivate.dateTimeTbl);
                 //Csw.extend(cswPublic, Csw.literals.div(cswPrivate));
 
                 if (cswPrivate.ReadOnly) {
                     switch (cswPrivate.DisplayMode) {
                         case 'Date':
-                            cswPrivate.dateTimeDiv.div({ ID: cswPrivate.ID + '_date', value: cswPrivate.Date });
+                            cswPrivate.dateTimeTbl.cell(1,1).div({ ID: cswPrivate.ID + '_date', value: cswPrivate.Date });
                             break;
                         case 'Time':
-                            cswPrivate.dateTimeDiv.div({ ID: cswPrivate.ID + '_time', value: cswPrivate.Time });
+                            cswPrivate.dateTimeTbl.cell(1,1).div({ ID: cswPrivate.ID + '_time', value: cswPrivate.Time });
                             break;
                         case 'DateTime':
-                            cswPrivate.dateTimeDiv.div({ ID: cswPrivate.ID + '_time', value: cswPrivate.Date + ' ' + cswPrivate.Time });
+                            cswPrivate.dateTimeTbl.cell(1,1).div({ ID: cswPrivate.ID + '_time', value: cswPrivate.Date + ' ' + cswPrivate.Time });
                             break;
                     }
                 } else {
                     if (cswPrivate.DisplayMode === 'Date' || cswPrivate.DisplayMode === 'DateTime') {
-                        cswPrivate.dateBox = cswPrivate.dateTimeDiv.input({
+                        cswPrivate.dateBox = cswPrivate.dateTimeTbl.cell(1,1).input({
                             ID: cswPrivate.ID + '_date',
                             type: Csw.enums.inputTypes.text,
                             value: cswPrivate.Date,
@@ -65,7 +65,7 @@
                     }
 
                     if (cswPrivate.DisplayMode === 'Time' || cswPrivate.DisplayMode === 'DateTime') {
-                        cswPrivate.timeBox = cswPrivate.dateTimeDiv.input({
+                        cswPrivate.timeBox = cswPrivate.dateTimeTbl.cell(1,3).input({
                             ID: cswPrivate.ID + '_time',
                             type: Csw.enums.inputTypes.text,
                             cssclass: 'textinput',
@@ -73,7 +73,7 @@
                             value: cswPrivate.Time,
                             width: '80px'
                         });
-                        cswPrivate.dateTimeDiv.button({
+                        cswPrivate.dateTimeTbl.cell(1,4).button({
                             ID: cswPrivate.ID + '_now',
                             disableOnClick: false,
                             onClick: function () {
@@ -86,7 +86,7 @@
                     }
 
                     if (Csw.bool(cswPrivate.showTodayButton)) {
-                        cswPrivate.dateTimeDiv.button({
+                        cswPrivate.dateTimeTbl.cell(1,2).button({
                             ID: cswPrivate.ID + '_today',
                             disableOnClick: false,
                             onClick: function () {
