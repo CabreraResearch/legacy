@@ -159,7 +159,7 @@
                         var tabId = cswPrivate.IdentityTab.tabid;
                         delete cswPrivate.IdentityTab.tabid;
 
-                        //cswPrivate.titleDiv.empty();
+                        cswPrivate.titleDiv.empty();
                         cswPrivate.titleDiv.append(cswPrivate.tabState.nodename);
                         cswPrivate.titleDiv.show();
 
@@ -570,10 +570,10 @@
                             },
                             tabState: {
                                 tabid: tabid,
-                                tabNo:   cswPrivate.tabState.tabNo
+                                tabNo: cswPrivate.tabState.tabNo
                             },
                             Refresh: function () {
-                                Csw.tryExec(cswPrivate.Refresh);
+                                //Csw.tryExec(cswPrivate.Refresh);
                                 cswPrivate.tabState.Config = false;
                                 cswPrivate.getTabs(tabContentDiv);
                             }
