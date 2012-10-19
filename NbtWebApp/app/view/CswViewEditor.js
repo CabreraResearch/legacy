@@ -1083,7 +1083,7 @@
                 var $span = $(this);
                 var arbitraryId = $span.CswAttrNonDom('arbid');
 
-                var $btn = $span.find('#' + arbitraryId + '_addfiltbtn');
+                var $btn = $span.find('[name="' + arbitraryId + '_addfiltbtn"]');
                 $btn.bind('click', function () {
                     var $this = $(this);
                     $this.button({ label: $this.attr('disabledText'), disabled: true });
@@ -1091,7 +1091,7 @@
 
                     var propJson = objHelper.find('arbitraryid', arbitraryId);
 
-                    var $tbl = $span.find('#' + o.name + '_' + arbitraryId + '_propfilttbl');
+                    var $tbl = $span.find('[name="' + o.name + '_' + arbitraryId + '_propfilttbl"]');
                     var newFiltJson = $tbl.CswViewPropFilter('getFilterJson', {
                         name: o.name,
                         $parent: $span,

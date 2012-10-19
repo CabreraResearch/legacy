@@ -90,15 +90,15 @@
         }, // ExpireDialog
         AddWelcomeItemDialog: function (options) {
             var o = {
-                form: function () {},
-                onAdd: function () {}
+                form: function () { },
+                onAdd: function () { }
             };
             if (options) Csw.extend(o, options);
 
             var div = Csw.literals.div();
 
             o.form(div, {
-                onAdd : function () {
+                onAdd: function () {
                     div.$.dialog('close');
                     Csw.tryExec(o.onAdd);
                 }
@@ -266,7 +266,7 @@
         },
         AddFeedbackDialog: function (options) {
             ///<summary>Creates an Add Feedback dialog and returns an object represent that dialog.</summary>
-            var cswPrivate = {
+            var cswDlgPrivate = {
                 text: '',
                 nodetypeid: '',
                 onAddNode: function () { }
@@ -274,71 +274,74 @@
             if (Csw.isNullOrEmpty(options)) {
                 Csw.error.throwException(Csw.error.exception('Cannot create an Add Feedback without options.', '', 'CswDialog.js', 215));
             }
-            Csw.extend(cswPrivate, options);
+            Csw.extend(cswDlgPrivate, options);
             var cswPublic = {
                 div: Csw.literals.div(),
                 close: function () {
                     cswPublic.div.$.dialog('close');
                 },
-                title: 'New ' + cswPrivate.text
+                title: 'New ' + cswDlgPrivate.text
             };
 
-            var state = Csw.clientState.getCurrent();
-            Csw.ajax.post({
-                urlMethod: "getFeedbackNode",
-                data: {
-                    "nodetypeid": cswPrivate.nodetypeid,
-                    "actionname": state.actionname,
-                    "viewid": state.viewid,
-                    "viewmode": state.viewmode,
-                    "selectednodeid": Csw.cookie.get("csw_currentnodeid"),
-                    "author": Csw.cookie.get("csw_username")
-                },
-                success: function (data) {
-                    cswPublic.tabsAndProps = Csw.layouts.tabsAndProps(cswPublic.div, {
-                        globalState: {
-                            ShowAsReport: false,
-                            nodeids: [data.nodeid],
-                            propertyData: data.propdata
-                        },
-                        tabState: {
-                            nodetypeid: cswPrivate.nodetypeid,
-                            EditMode: Csw.enums.editMode.Add,
-                            relatednodeid: data.nodeid
-                        },
-                        ReloadTabOnSave: false,
-                        onSave: function (nodeid, cswnbtnodekey, tabcount, nodename) {
-                            Csw.ajax.post({
-                                urlMethod: 'GetFeedbackCaseNumber',
-                                data: { nodeId: nodeid },
-                                success: function (result) {
+            cswDlgPrivate.onOpen = function() {
 
-                                    var closeDialog = function () { cswPublic.div.$.dialog('close'); };
+                var state = Csw.clientState.getCurrent();
+                Csw.ajax.post({
+                    urlMethod: "getFeedbackNode",
+                    data: {
+                        'nodetypeid': cswDlgPrivate.nodetypeid,
+                        'actionname': state.actionname,
+                        'viewid': state.viewid,
+                        'viewmode': state.viewmode,
+                        'selectednodeid': Csw.cookie.get('csw_currentnodeid'),
+                        'author': Csw.cookie.get('csw_username')
+                    },
+                    success: function(data) {
+                        cswPublic.tabsAndProps = Csw.layouts.tabsAndProps(cswPublic.div, {
+                            globalState: {
+                                ShowAsReport: false,
+                                nodeids: [data.nodeid],
+                                propertyData: data.propdata
+                            },
+                            tabState: {
+                                nodetypeid: cswDlgPrivate.nodetypeid,
+                                EditMode: Csw.enums.editMode.Add,
+                                relatednodeid: data.nodeid
+                            },
+                            ReloadTabOnSave: false,
+                            onSave: function(nodeid, cswnbtnodekey, tabcount, nodename) {
+                                Csw.ajax.post({
+                                    urlMethod: 'GetFeedbackCaseNumber',
+                                    data: { nodeId: nodeid },
+                                    success: function(result) {
 
-                                    cswPublic.div.$.empty();
-                                    //div.text('Your feedback has been submitted. Your case number is ' + result.casenumber + '.');
-                                    cswPublic.div.nodeLink({
-                                        text: 'Your feedback has been submitted. Your case number is ' + result.noderef + '.',
-                                        onClick: closeDialog
-                                    });
+                                        var closeDialog = function() { cswPublic.div.$.dialog('close'); };
 
-                                    cswPublic.div.br();
-                                    cswPublic.div.button({
-                                        name: '_feedbackOk',
-                                        enabledText: 'OK',
-                                        onClick: closeDialog
-                                    });
-                                    Csw.tryExec(cswPrivate.onAddNode, nodeid, cswnbtnodekey, nodename);
-                                }
-                            });
-                        },
-                        onInitFinish: function () {
-                            openDialog(cswPublic.div, 800, 600, null, cswPublic.title);
-                        }
+                                        cswPublic.div.$.empty();
+                                        //div.text('Your feedback has been submitted. Your case number is ' + result.casenumber + '.');
+                                        cswPublic.div.nodeLink({
+                                            text: 'Your feedback has been submitted. Your case number is ' + result.noderef + '.',
+                                            onClick: closeDialog
+                                        });
 
-                    });
-                }
-            });
+                                        cswPublic.div.br();
+                                        cswPublic.div.button({
+                                            name: '_feedbackOk',
+                                            enabledText: 'OK',
+                                            onClick: closeDialog
+                                        });
+                                        Csw.tryExec(cswDlgPrivate.onAddNode, nodeid, cswnbtnodekey, nodename);
+                                    }
+                                });
+                            },
+                            onInitFinish: function() {
+                                
+                            }
+                        });
+                    }
+                });
+            };
+            openDialog(cswPublic.div, 800, 600, null, cswPublic.title, cswDlgPrivate.onOpen);
             return cswPublic;
         }, // AddFeedbackDialog
         AddNodeClientSideDialog: function (options) {
@@ -425,7 +428,7 @@
             openDialog(div, 400, 200, null, o.title);
         }, // AddNodeTypeDialog
         EditLayoutDialog: function (options) {
-            var cswPrivate = {
+            var cswDlgPrivate = {
                 name: 'editlayout',
                 globalState: {
                     nodeids: [],
@@ -439,107 +442,111 @@
                 },
                 Refresh: null
             };
-            Csw.extend(cswPrivate, options);
+            Csw.extend(cswDlgPrivate, options);
 
-            cswPrivate.ShowAsReport = false;
-            cswPrivate.tabState.Config = true;
-            cswPrivate.onTabSelect = function (tabid) {
-               // cswPrivate.tabState.tabid = tabid;
-               // _configAddOptions();
-            };
-            cswPrivate.onPropertyRemove = function () {
-                _configAddOptions();
-            };
-
-            var div = Csw.literals.div();
-            var table = div.table({
-                name: 'EditLayoutDialog_table',
-                width: '100%'
-            });
-
-            /* Keep the add content in the same space */
-            var table2 = table.cell(1, 1).table();
-            var cell11 = table2.cell(1, 1);
-            //cell11.append('Configure:');
-
-            var cell12 = table.cell(1, 2);
-
-            var layoutSelect = cell11.select({
-                name: 'EditLayoutDialog_layoutselect',
-                labelText: 'Configure: ',
-                selected: 'Edit',
-                values: ['Add', 'Edit', 'Preview', 'Table'],
-                onChange: function () {
-                    cswPrivate.tabState.EditMode = layoutSelect.val();
-                    _resetLayout();
-                }
-            });
-
-            var cell21 = table2.cell(2, 1);
-
-            function _resetLayout() {
-                cell12.empty();
-                Csw.layouts.tabsAndProps(cell12, cswPrivate);
-                _configAddOptions();
-            }
-
-            function _configAddOptions() {
-                cell21.empty();
-                cell21.br({ number: 2 });
-
-                var addSelect = cell21.select({
-                    name: 'EditLayoutDialog_addselect',
-                    labelText: 'Add: ',
-                    selected: '',
-                    values: [],
-                    onChange: function () {
-                        Csw.ajax.post({
-                            urlMethod: 'addPropertyToLayout',
-                            data: {
-                                PropId: Csw.string(addSelect.val()),
-                                TabId: Csw.string(cswPrivate.tabState.tabid),
-                                LayoutType: layoutSelect.val()
-                            },
-                            success: function () {
-                                _resetLayout();
-                            }
-                        }); // Csw.ajax
-                    } // onChange
-                }); // 
-                var ajaxdata = {
-                    NodeId: Csw.string(cswPrivate.globalState.nodeids[0]),
-                    NodeKey: Csw.string(cswPrivate.globalState.nodekeys[0]),
-                    NodeTypeId: Csw.string(cswPrivate.globalState.nodetypeid),
-                    TabId: Csw.string(cswPrivate.tabState.tabid),
-                    LayoutType: layoutSelect.val()
+            cswDlgPrivate.onOpen = function () {
+                cswDlgPrivate.ShowAsReport = false;
+                cswDlgPrivate.tabState.Config = true;
+                cswDlgPrivate.onTabSelect = function (tabid) {
+                    // cswDlgPrivate.tabState.tabid = tabid;
+                    // _configAddOptions();
                 };
-                Csw.ajax.post({
-                    urlMethod: 'getPropertiesForLayoutAdd',
-                    data: ajaxdata,
-                    success: function (data) {
-                        var propOpts = [{ value: '', display: 'Select...'}];
-                        Csw.each(data.add, function (p) {
-                            var display = p.propname;
-                            if (Csw.bool(p.hidden)) {
-                                display += ' (hidden)';
-                            }
-                            propOpts.push({
-                                value: p.propid,
-                                display: display
+                cswDlgPrivate.onPropertyRemove = function () {
+                    _configAddOptions();
+                };
+
+                var div = Csw.literals.div();
+                var table = div.table({
+                    name: 'EditLayoutDialog_table',
+                    width: '100%'
+                });
+
+                /* Keep the add content in the same space */
+                var table2 = table.cell(1, 1).table();
+                var cell11 = table2.cell(1, 1);
+                //cell11.append('Configure:');
+
+                var cell12 = table.cell(1, 2);
+
+                var layoutSelect = cell11.select({
+                    name: 'EditLayoutDialog_layoutselect',
+                    labelText: 'Configure: ',
+                    selected: 'Edit',
+                    values: ['Add', 'Edit', 'Preview', 'Table'],
+                    onChange: function () {
+                        cswDlgPrivate.tabState.EditMode = layoutSelect.val();
+                        _resetLayout();
+                    }
+                });
+
+                var cell21 = table2.cell(2, 1);
+
+                function _resetLayout() {
+                    cell12.empty();
+                    Csw.layouts.tabsAndProps(cell12, cswDlgPrivate);
+                    _configAddOptions();
+                }
+
+                function _configAddOptions() {
+                    cell21.empty();
+                    cell21.br({ number: 2 });
+
+                    var addSelect = cell21.select({
+                        name: 'EditLayoutDialog_addselect',
+                        labelText: 'Add: ',
+                        selected: '',
+                        values: [],
+                        onChange: function () {
+                            Csw.ajax.post({
+                                urlMethod: 'addPropertyToLayout',
+                                data: {
+                                    PropId: Csw.string(addSelect.val()),
+                                    TabId: Csw.string(cswDlgPrivate.tabState.tabid),
+                                    LayoutType: layoutSelect.val()
+                                },
+                                success: function () {
+                                    _resetLayout();
+                                }
+                            }); // Csw.ajax
+                        } // onChange
+                    }); // 
+                    var ajaxdata = {
+                        NodeId: Csw.string(cswDlgPrivate.globalState.nodeids[0]),
+                        NodeKey: Csw.string(cswDlgPrivate.globalState.nodekeys[0]),
+                        NodeTypeId: Csw.string(cswDlgPrivate.globalState.nodetypeid),
+                        TabId: Csw.string(cswDlgPrivate.tabState.tabid),
+                        LayoutType: layoutSelect.val()
+                    };
+                    Csw.ajax.post({
+                        urlMethod: 'getPropertiesForLayoutAdd',
+                        data: ajaxdata,
+                        success: function (data) {
+                            var propOpts = [{ value: '', display: 'Select...' }];
+                            Csw.each(data.add, function (p) {
+                                var display = p.propname;
+                                if (Csw.bool(p.hidden)) {
+                                    display += ' (hidden)';
+                                }
+                                propOpts.push({
+                                    value: p.propid,
+                                    display: display
+                                });
                             });
-                        });
-                        addSelect.setOptions(propOpts, '', true);
-                    } // success
-                });  // Csw.ajax
-            } // _configAddOptions()
+                            addSelect.setOptions(propOpts, '', true);
+                        } // success
+                    }); // Csw.ajax
+                }
+
+                // _configAddOptions()
+
+                _resetLayout();
+            };
 
             function _onclose() {
                 Csw.tryExec(cswPrivate.Refresh);
             }
 
-            _resetLayout();
-
-            openDialog(div, 900, 600, _onclose, 'Edit Layout');
+            openDialog(div, 900, 600, _onclose, 'Edit Layout', cswDlgPrivate.onOpen);
         }, // EditLayoutDialog
         EditNodeDialog: function (options) {
             var cswDlgPrivate = {
@@ -575,7 +582,7 @@
             }
             cswPublic.title = title;
 
-            cswDlgPrivate.onOpen = function() {
+            cswDlgPrivate.onOpen = function () {
                 var myEditMode = Csw.enums.editMode.EditInPopup;
                 var tableId = cswDlgPrivate.nodeids[0];
                 var table = cswPublic.div.table({ name: tableId });
@@ -588,7 +595,7 @@
                         onEditNode: cswDlgPrivate.onEditNode,
                         JustDateColumn: true,
                         selectedDate: cswDlgPrivate.date,
-                        onSelectRow: function(date) { setupTabs(date); },
+                        onSelectRow: function (date) { setupTabs(date); },
                         allowEditRow: false
                     });
                 }
@@ -618,24 +625,24 @@
 
                         ReloadTabOnSave: true,
                         Refresh: cswDlgPrivate.onRefresh,
-                        onEditView: function(viewid) {
+                        onEditView: function (viewid) {
                             cswPublic.close();
                             Csw.tryExec(cswDlgPrivate.onEditView, viewid);
                         },
-                        onSave: function(nodeids, nodekeys, tabcount) {
+                        onSave: function (nodeids, nodekeys, tabcount) {
                             Csw.clientChanges.unsetChanged();
                             if (tabcount === 2 || cswDlgPrivate.Multi) { /* Ignore history tab */
                                 cswPublic.close();
                             }
                             Csw.tryExec(cswDlgPrivate.onEditNode, nodeids, nodekeys, cswPublic.close);
                         },
-                        onBeforeTabSelect: function() {
+                        onBeforeTabSelect: function () {
                             return Csw.clientChanges.manuallyCheckChanges();
                         },
-                        onTabSelect: function(tabid) {
+                        onTabSelect: function (tabid) {
                             Csw.cookie.set(Csw.cookie.cookieNames.CurrentTabId, tabid);
                         },
-                        onPropertyChange: function() {
+                        onPropertyChange: function () {
                             Csw.clientChanges.setChanged();
                         },
                         onAfterButtonClick: cswDlgPrivate.onAfterButtonClick
@@ -915,7 +922,7 @@
             div.span({ text: 'MOL Text (Paste from Clipboard):' }).br();
 
             molTxtArea = div.textArea({
-                name: '', 
+                name: '',
                 rows: 6,
                 cols: 40
             });
