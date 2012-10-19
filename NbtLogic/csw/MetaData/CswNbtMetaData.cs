@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
+using System.Linq;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
@@ -1727,6 +1728,14 @@ namespace ChemSW.Nbt.MetaData
                 }
             }
             return Value;
+        }
+
+        /// <summary>
+        /// Find all properties in the name template
+        /// </summary>
+        public static IEnumerable<CswNbtMetaDataNodeTypeProp> TemplateValueToPropCollection( IEnumerable<CswNbtMetaDataNodeTypeProp> PropsCollection, string Template )
+        {
+            return ( from _Prop in PropsCollection where Template.Contains( MakeTemplateEntry( _Prop.PropId.ToString() ) ) select _Prop );
         }
 
         #endregion Templates (Node name, Composite)
