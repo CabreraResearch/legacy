@@ -165,6 +165,7 @@
 
                         if (false === Csw.isNullOrEmpty(cswPrivate.IdentityTab)) {
                             cswPrivate.identityWrapDiv.addClass('CswIdentityTab');
+                            cswPrivate.identityDiv.empty();
                             cswPrivate.identityLayoutTable = cswPrivate.identityDiv.layoutTable(layoutOpts);
                             cswPrivate.handleProperties(cswPrivate.identityLayoutTable, cswPrivate.identityDiv, tabId, false, cswPrivate.IdentityTab);
                         }
