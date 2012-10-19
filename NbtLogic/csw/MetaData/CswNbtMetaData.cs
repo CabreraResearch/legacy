@@ -523,11 +523,11 @@ namespace ChemSW.Nbt.MetaData
         /// <returns></returns>
         public CswNbtMetaDataNodeType makeNewNodeType( string ObjectClassName, string NodeTypeName, string Category )
         {
-            //Enum.Parse(
-            if( !Enum.IsDefined( typeof( NbtObjectClass ), ObjectClassName ) )
+            NbtObjectClass NbtObjectClass = ObjectClassName;
+            if( NbtObjectClass == CswNbtResources.UnknownEnum )
+            {
                 throw ( new CswDniException( "No such object class: " + ObjectClassName ) );
-
-            NbtObjectClass NbtObjectClass = (NbtObjectClass) Enum.Parse( typeof( NbtObjectClass ), ObjectClassName, true );
+            }
 
             Int32 ObjectClassId = getObjectClass( NbtObjectClass ).ObjectClassId;
 
