@@ -68,13 +68,11 @@
 
             if (Csw.isJQuery(element)) {
                 cswPublic.$ = element;
-                cswPrivate.id = Csw.string(element.prop('id'));
                 cswPublic.isValid = true;
             } else if (false === Csw.isNullOrEmpty(element) && Csw.isJQuery(element.$)) {
                     /*This is already a Csw dom object*/
                 return element;
             } else {
-                cswPrivate.id = '';
                 cswPublic.$ = {};
             }
 
@@ -105,10 +103,8 @@
             };
 
             cswPrivate.prepControl = function (opts, controlName) {
-                var id = opts.id || controlName;
                 opts = opts || {};
-                cswPrivate.id = cswPrivate.id || Csw.makeId(cswPublic.parentId, 'sub', id, '_', false);
-                //opts.ID = opts.ID || cswPrivate.makeId(cswPublic.parentId, 'sub', id, '_', false);
+                opts.controlName = controlName;
                 opts.$ = cswPublic.$;
                 opts.root = cswPublic.root;
 
@@ -357,7 +353,11 @@
             cswPublic.getId = function () {
                 /// <summary>Get the DOM Element ID of this object.</summary>
                 /// <returns type="String">Element ID.</returns> 
-                return cswPrivate.id;
+                var ret = null;
+                if (cswPrivate.isControlStillValid()) {
+                    ret = cswPublic[0].id;
+                }
+                return ret;
             };
 
             cswPublic.hide = function () {
@@ -593,98 +593,6 @@
             };
 
             return cswPublic;
-        });
-
-    Csw.makeId = Csw.makeId ||
-        Csw.register('makeId', function (options, id, suffix, delimiter, isUnique) {
-            /// <summary>
-            ///   Generates an ID for DOM assignment
-            /// </summary>
-            /// <param name="options" type="Object">
-            ///     A JSON Object or a prefix as string
-            ///     &#10;1 - options.id: Base ID string
-            ///     &#10;2 - options.prefix: String prefix to prepend
-            ///     &#10;3 - options.suffix: String suffix to append
-            ///     &#10;4 - options.Delimiter: String to use as delimiter for concatenation
-            /// </param>
-            /// <param name="ID" type="Object"></param>
-            /// <param name="suffix" type="Object"></param>
-            /// <param name="delimiter" type="Object"></param>
-            ///	<returns type="String">A concatenated string of provided values</returns>
-            var cswPrivate = {
-                idCount: 1 + Csw.number(Csw.getGlobalProp('uniqueIdCount'), 0),
-                prefix: '',
-                id: id,
-                suffix: suffix,
-                Delimiter: delimiter
-            };
-            var elementId = [];
-
-            if (Csw.isPlainObject(options)) {
-                Csw.extend(cswPrivate, options);
-            } else {
-                cswPrivate.prefix = options;
-            }
-            cswPrivate.Delimiter = Csw.string(cswPrivate.Delimiter, '_');
-
-            if (false === Csw.isNullOrEmpty(cswPrivate.prefix)) {
-                elementId.push(Csw.string(cswPrivate.prefix));
-            }
-            if (false === Csw.isNullOrEmpty(cswPrivate.id)) {
-                elementId.push(cswPrivate.id);
-            }
-
-            if (false === Csw.isNullOrEmpty(cswPrivate.suffix)) {
-                elementId.push(cswPrivate.suffix);
-            }
-            //            if (Csw.bool(isUnique, true)) {
-            //                Csw.setGlobalProp('uniqueIdCount', cswPrivate.idCount);
-            //                elementId.push(cswPrivate.idCount);
-            //            }
-            return elementId.join(cswPrivate.Delimiter);
-        });
-
-    Csw.makeSafeId = Csw.makeSafeId ||
-        Csw.register('makeSafeId', function (options, prefix, suffix, delimiter) {
-            /// <summary>   Generates a "safe" ID for DOM assignment </summary>
-            /// <param name="options" type="Object">
-            ///     A JSON Object
-            ///     &#10;1 - options.ID: Base ID string
-            ///     &#10;2 - options.prefix: String prefix to prepend
-            ///     &#10;3 - options.suffix: String suffix to append
-            ///     &#10;4 - options.Delimiter: String to use as delimiter for concatenation
-            /// </param>
-            /// <returns type="String">A concatenated string of provided values</returns>
-            var elementId, i, toReplace;
-            var o = {
-                ID: '',
-                prefix: Csw.string(prefix),
-                suffix: Csw.string(suffix),
-                Delimiter: Csw.string(delimiter, '_')
-            };
-            if (Csw.isPlainObject(options)) {
-                Csw.extend(o, options);
-            } else {
-                o.ID = Csw.string(options);
-            }
-
-            elementId = o.ID;
-            //toReplace = [/'/gi, / /gi, /\//g];
-            toReplace = [/\(/g, /\)/g, /'/gi, / /gi, /\//g, /&#58/gi, /:/gi];
-            if (false === Csw.isNullOrEmpty(o.prefix) && false === Csw.isNullOrEmpty(elementId)) {
-                elementId = o.prefix + o.Delimiter + elementId;
-            }
-            if (false === Csw.isNullOrEmpty(o.suffix) && false === Csw.isNullOrEmpty(elementId)) {
-                elementId += o.Delimiter + o.suffix;
-            }
-            for (i = 0; i < toReplace.length; i += 1) {
-                if (Csw.contains(toReplace, i)) {
-                    if (false === Csw.isNullOrEmpty(elementId)) {
-                        elementId = elementId.replace(toReplace[i], '');
-                    }
-                }
-            }
-            return elementId;
         });
 
     Csw.makeAttr = Csw.makeAttr ||
