@@ -81,12 +81,12 @@
                             .div({ cssclass: 'CswFieldTypeNFPA_cell CswFieldTypeNFPA_red' + cswPrivate.displayMode })
                             .div({ cssclass: 'CswFieldTypeNFPA_text' });
 
-                        cswPrivate.yellowDiv = cswPrivate.table.cell(1, 2)
-                            .div({ cssclass: 'CswFieldTypeNFPA_cell CswFieldTypeNFPA_yellow' + cswPrivate.displayMode })
+                        cswPrivate.blueDiv = cswPrivate.table.cell(1, 2)
+                            .div({ cssclass: 'CswFieldTypeNFPA_cell CswFieldTypeNFPA_blue' + cswPrivate.displayMode })
                             .div({ cssclass: 'CswFieldTypeNFPA_text' });
 
-                        cswPrivate.blueDiv = cswPrivate.table.cell(1, 3)
-                            .div({ cssclass: 'CswFieldTypeNFPA_cell CswFieldTypeNFPA_blue' + cswPrivate.displayMode })
+                        cswPrivate.yellowDiv = cswPrivate.table.cell(1, 3)
+                            .div({ cssclass: 'CswFieldTypeNFPA_cell CswFieldTypeNFPA_yellow' + cswPrivate.displayMode })
                             .div({ cssclass: 'CswFieldTypeNFPA_text' });
 
                         cswPrivate.whiteDiv = cswPrivate.table.cell(1, 4)
