@@ -111,11 +111,15 @@
                     return Csw.bool(cswPublic.tabState.Multi);
                 };
 
-                cswPublic.isDisabled = function() {
+                cswPublic.isDisabled = function () {
                     return (Csw.enums.editMode.PrintReport === cswPublic.tabState.EditMode || Csw.enums.editMode.AuditHistoryInPopup === cswPublic.tabState.EditMode);
                 };
 
                 cswPublic.name = cswPublic.propData.id;
+
+                cswPrivate.doPropChange = function () {
+                    return (false === cswPublic.isReadOnly() && false === cswPublic.tabState.Config);
+                }
 
                 Csw.extend(cswPublic, cswPrivate);
                 cswPublic.onPropChange = function (attributes) {
@@ -125,17 +129,21 @@
                     'use strict';
                     attributes = attributes || {};
                     cswStaticInternalClosure.preparePropJsonForSave(cswPublic.isMulti(), cswPublic.propData, attributes);
-                    Csw.publish('onPropChange_' + cswPublic.propid, { tabid: cswPublic.tabState.tabid, propData: cswPublic.propData });
+                    if (cswPrivate.doPropChange()) { //NOTE - if we don't verify that we're in config mode we'll get an INFINITE LOOP
+                        Csw.publish('onPropChange_' + cswPublic.propid, { tabid: cswPublic.tabState.tabid, propData: cswPublic.propData });
+                    }
                 };
 
-                cswPrivate.onPropChange = function(eventObj, data) {
-                    if(data.tabid !== cswPublic.tabState.tabid) {                    
+                cswPrivate.onPropChange = function (eventObj, data) {
+                    if (data.tabid !== cswPublic.tabState.tabid) {
                         Csw.extend(cswPublic.propData, data.propData, true);
                         cswPrivate.renderThisProp();
-                    } 
+                    }
                 };
 
-                Csw.subscribe('onPropChange_' + cswPublic.propid, cswPrivate.onPropChange);
+                if (cswPrivate.doPropChange()) { //NOTE - if we don't verify that we're in config mode we'll get an INFINITE LOOP
+                    Csw.subscribe('onPropChange_' + cswPublic.propid, cswPrivate.onPropChange);
+                }
 
                 cswPublic.toggleMulti = function (eventObj, multiOpts) {
                     if (multiOpts && multiOpts.nodeid === cswPublic.tabState.nodeid) {
