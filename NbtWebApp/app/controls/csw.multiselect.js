@@ -11,7 +11,7 @@
 
             var cswPrivate = {
                 $parent: '',
-                ID: '',
+                name: '',
                 values: [],
                 multiple: true,
                 cssclass: '',
@@ -34,12 +34,12 @@
                 var optionCount = 0,
                     isMultiEdit = Csw.bool(cswPrivate.isMultiEdit),
                     values = cswPrivate.values,
-                    parentDiv = cswParent.div({ ID: Csw.makeId(cswPrivate.ID, 'multiListDiv') }),
-                    table = parentDiv.table({ ID: Csw.makeId(cswPrivate.ID, 'tbl') }),
+                    parentDiv = cswParent.div({ name: 'multiListDiv' }),
+                    table = parentDiv.table({ name: 'tbl' }),
                     moreDivCell = table.cell(1, 1),
                     editBtnCell = table.cell(1, 2),
                     multiSelectCell = table.cell(2, 1),
-                    morediv = moreDivCell.moreDiv({ ID: Csw.makeId(cswPrivate.ID, cswPrivate.ID + '_morediv') });
+                    morediv = moreDivCell.moreDiv({ name: cswPrivate.name + '_morediv' });
 
                 delete cswPrivate.values;
                 morediv.moreLink.hide();
@@ -88,7 +88,7 @@
                     makeMultiSelect();
                 } else {
                     editBtnCell.icon({
-                        ID: Csw.makeId(cswPrivate.ID, 'toggle'),
+                        name: cswPrivate.name + '_toggle',
                         iconType: Csw.enums.iconType.pencil,
                         hovertext: 'Edit',
                         size: 16,

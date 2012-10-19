@@ -8,7 +8,7 @@
             'use strict';
             var cswPrivate = {
                 $parent: '',
-                ID: '',
+                name: '',
                 async: true,
                 nodesUrlMethod: 'getNodes',
                 nodeTypeId: '',
@@ -35,7 +35,7 @@
                 if (options) {
                     Csw.extend(cswPrivate, options);
                 }
-                cswPrivate.ID += '_nodesel';
+                cswPrivate.name += '_nodesel';
 
                 cswPrivate.table = cswParent.table();
                 cswPrivate.select = cswPrivate.table.cell(1, 1).select(cswPrivate);
@@ -94,12 +94,12 @@
                         if (useSearch) {
                             cswPrivate.select.hide();
                             var nameSpan = cswPrivate.table.cell(1, cellCol).span({
-                                ID: Csw.makeId(cswPrivate.ID, '', 'selectedname'),
+                                name: 'selectedname',
                                 text: cswPublic.selectedText()
                             });
 
                             var hiddenValue = cswPrivate.table.cell(1, cellCol).input({
-                                ID: Csw.makeId(cswPrivate.ID, '', 'hiddenvalue'),
+                                name: 'hiddenvalue',
                                 type: Csw.enums.inputTypes.hidden,
                                 value: cswPublic.selectedNodeId()
                             });

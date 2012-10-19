@@ -16,7 +16,7 @@
             /// <returns type="linkGrid">A linkGrid object</returns>
             'use strict';
             var cswPrivate = {
-                ID: 'jzebra',
+                name: 'jzebra',
                 cssclass: '',
                 dynamicallyInjectApplet: false
             };
@@ -60,7 +60,7 @@
                         }
                         
                         cswPrivate.printerSel = cswPrivate.div.select({
-                            ID: 'printersList'
+                            name: 'printersList'
                             /*
                             ,
                             selected: cswPublic.defaultPrinter,

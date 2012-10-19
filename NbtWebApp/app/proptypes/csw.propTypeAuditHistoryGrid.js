@@ -15,7 +15,7 @@
                     cswPublic.data = cswPublic.data || Csw.nbt.propertyOption(propertyOption);
                     if (false === cswPublic.data.isMulti()) {
                         cswPublic.control = Csw.actions.auditHistory(cswPublic.data.propDiv, {
-                            ID: Csw.makeId(cswPublic.data.ID, window.Ext.id()),
+                            name: cswPublic.data.name,
                             nodeid: cswPublic.data.tabState.nodeid,
                             cswnbtnodekey: cswPublic.data.tabState.cswnbtnodekey,
                             EditMode: cswPublic.data.tabState.EditMode,

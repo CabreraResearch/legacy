@@ -7,7 +7,7 @@
         Csw.controls.register('triStateCheckBox', function (cswParent, options) {
             'use strict';
             var cswPrivate = {
-                ID: '',
+                name: '',
                 prefix: '',
                 Checked: '',
                 ReadOnly: false,
@@ -97,7 +97,7 @@
                     }
                     cswPrivate.checkBox = cswParent.div(cswPrivate);
                 } else {
-                    cswPrivate.ID = Csw.makeId(cswPrivate.ID, 'tst');
+                    cswPrivate.name = cswPrivate.name + '_tst';
                     cswPrivate.ButtonType = cswPublic.getButtonType();
                     cswPrivate.checkBox = cswParent.imageButton(cswPrivate);
                     //cswPrivate.checkBox.imageButton(cswPrivate);

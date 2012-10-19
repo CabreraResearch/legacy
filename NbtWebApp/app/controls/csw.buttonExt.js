@@ -22,7 +22,7 @@
             /// </param>
             /// <returns type="button">A button object</returns>
             var cswPrivate = {
-                ID: '',
+                name: '',
                 enabledText: '',
                 disabledText: '',
                 cssclass: '',
@@ -147,7 +147,7 @@
                 }
                 cswPrivate.initBtn = function () {
                     cswPublic.button = window.Ext.create('Ext.Button', {
-                        id: cswPrivate.ID,
+                        id: cswPrivate.name,
 						renderTo: cswParent.getId(),
                         text: Csw.string(cswPrivate.enabledText),
                         width: cswPrivate.width,
@@ -164,16 +164,16 @@
                         window.Ext.QuickTips.init();
                     }
                 };
-                if (false === Csw.isNullOrEmpty($('#' + cswParent.getId()), true)) {
+                //if (false === Csw.isNullOrEmpty($('#' + cswParent.getId()), true)) {
                     cswPrivate.initBtn();
-                } else {
-                    cswPublic.button = window.Ext.create('Ext.Button');
-                    window.setTimeout(function () {
-                        if (false === Csw.isNullOrEmpty($('#' + cswParent.getId()), true)) {
-                            cswPrivate.initBtn();
-                        }
-                    }, 500);
-                }
+                //} else {
+                //    cswPublic.button = window.Ext.create('Ext.Button');
+                //    window.setTimeout(function () {
+                //        if (false === Csw.isNullOrEmpty($('#' + cswParent.getId()), true)) {
+                //            cswPrivate.initBtn();
+                //        }
+                //    }, 500);
+                //}
             } ());
 
             return cswPublic;

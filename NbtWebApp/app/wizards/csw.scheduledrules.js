@@ -8,7 +8,7 @@
             'use strict';
 
             var cswPrivate = {
-                ID: 'cswScheduledRulesGrid',
+                name: 'cswScheduledRulesGrid',
                 exitFunc: null, //function ($wizard) {},
                 startingStep: 1,
                 wizard: '',
@@ -51,12 +51,7 @@
                 }
                 return false;
             };
-
-            cswPrivate.makeStepId = function (suffix, stepNo) {
-                var step = stepNo || cswPrivate.currentStepNo;
-                return Csw.makeId({ prefix: 'step_' + step, ID: cswPrivate.ID, suffix: suffix });
-            };
-
+            
             cswPrivate.makeStepOne = (function () {
                 var stepOneComplete = false;
 
@@ -76,7 +71,7 @@
                         cswPrivate.divStep1.br();
 
                         customerIdTable = cswPrivate.divStep1.table({
-                            ID: cswPrivate.makeStepId('inspectionTable'),
+                            name: 'inspectionTable',
                             FirstCellRightAlign: true
                         });
 
@@ -85,7 +80,7 @@
 
                         customerIdSelect = customerIdTable.cell(1, 2)
                             .select({
-                                ID: Csw.makeSafeId('customerIdSelect'),
+                                name: 'customerIdSelect',
                                 selected: '',
                                 values: [{ value: '[ None ]', display: '[ None ]'}],
                                 onChange: function () {
@@ -112,51 +107,17 @@
 
             //Step 2: Review Scheduled Rules
             cswPrivate.makeStepTwo = function() {
-                var rulesGridId = cswPrivate.makeStepId('previewGrid_outer', 3),
+                var rulesGridId = 'previewGrid_outer',
                     rulesGridDiv, headerTable;
 
                 var makeRulesGrid = function() {
-                    rulesGridDiv = rulesGridDiv || cswPrivate.divStep2.div({ID: rulesGridId });
+                    rulesGridDiv = rulesGridDiv || cswPrivate.divStep2.div({name: rulesGridId });
                     rulesGridDiv.empty();
 
-//                    cswPrivate.gridOptions = {
-//                        ID: cswPrivate.makeStepId('rulesGrid'),
-//                        pagermode: 'default',
-//                        gridOpts: {
-//                            autowidth: true,
-//                            height: '200'
-//                        },
-//                        optNav: {
-//                            add: false,
-//                            del: false,
-//                            edit: true,
-//                            view: false,
-//                            editfunc: function(rowid) {
-//                                var onEdit = {
-//                                    url: '/NbtWebApp/wsNBT.asmx/updateScheduledRule',
-//                                    editData: { AccessId: cswPrivate.selectedCustomerId },
-//                                    reloadAfterSubmit: false,
-//                                    checkOnSubmit: true,
-//                                    closeAfterEdit: true,
-//                                    afterComplete: makeRulesGrid
-//                                };
-//                                return cswPrivate.scheduledRulesGrid.gridTable.$.jqGrid('editGridRow', rowid, onEdit);
-//                            }
-//                        }
-//                    };
-
-//                    Csw.ajax.post({
-//                        url: '/NbtWebApp/wsNBT.asmx/getScheduledRulesGrid',
-//                        data: { AccessId: cswPrivate.selectedCustomerId },
-//                        success: function(data) {
-//                            Csw.extend(cswPrivate.gridOptions.gridOpts, data);
-//                            cswPrivate.scheduledRulesGrid = rulesGridDiv.grid(cswPrivate.gridOptions);
-//                        }
-//                    });
-                    var gridId = cswPrivate.makeStepId('rulesGrid');
+                    var gridId = 'rulesGrid';
 
                     cswPrivate.scheduledRulesGrid = rulesGridDiv.grid({
-                        ID: gridId,
+                        name: gridId,
                         storeId: gridId,
                         title: 'Scheduled Rules',
                         stateId: gridId,
@@ -179,14 +140,14 @@
                 cswPrivate.toggleButton(cswPrivate.buttons.prev, true);
 
                 headerTable = cswPrivate.divStep2.table({
-                    ID: cswPrivate.makeStepId('headerTable')
+                    name: 'headerTable'
                 });
                 headerTable.cell(1, 1)
                     .span({ text: 'Review Customer ID <b>' + cswPrivate.selectedCustomerId + '\'s</b> Scheduled Rules. Make any necessary edits.' });
 
                 headerTable.cell(1, 2)
                     .button({
-                        ID: Csw.makeSafeId('clearAll'),
+                        name: 'clearAll',
                         enabledText: 'Clear All Reprobates',
                         disabledText: 'Clearing...',
                         onClick: function() {
@@ -222,7 +183,6 @@
                 },
 
             cswPrivate.wizard = Csw.layouts.wizard(cswPublic, {
-                ID: Csw.makeId({ ID: cswPrivate.ID, suffix: 'wizard' }),
                 Title: 'View Nbt Scheduler Rules by Schema',
                 StepCount: Csw.enums.wizardSteps_ScheduleRulesGrid.stepcount,
                 Steps: cswPrivate.wizardSteps,

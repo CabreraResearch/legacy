@@ -8,7 +8,7 @@
             'use strict';
             var cswPrivate = {
                 $parent: '',
-                ID: '',
+                name: '',
                 topContent: '',
                 selectContent: 'This ComboBox Is Empty!',
                 width: '180px',
@@ -42,19 +42,18 @@
                     Csw.extend(cswPrivate, options);
                 }
                 cswPrivate.comboDiv = cswParent.div({
-                    ID: cswPrivate.ID
+                    name: cswPrivate.name
                 });
                 cswPublic = Csw.dom({ }, cswPrivate.comboDiv);
                 //Csw.extend(cswPublic, Csw.literals.div(cswPrivate));
 
                 cswPrivate.topDiv = cswPrivate.comboDiv.div({
-                    ID: cswPrivate.ID + '_top',
+                    name: cswPrivate.name + '_top',
                     cssclass: 'CswComboBox_TopDiv',
                     width: cswPrivate.width
                 });
 
                 cswPrivate.topTable = cswPrivate.topDiv.table({
-                    ID: Csw.makeId(cswPrivate.ID, 'tbl'),
                     width: cswPrivate.width
                 });
 
@@ -66,13 +65,13 @@
                     .addClass('CswComboBox_ImageCell')
                     .imageButton({
                         'ButtonType': Csw.enums.imageButton_ButtonType.Select,
-                        ID: cswPrivate.ID + '_top_img',
+                        name: cswPrivate.name + '_top_img',
                         AlternateText: '',
                         onClick: handleClick
                     });
 
                 cswPublic.pickList = cswPrivate.comboDiv.div({
-                    ID: cswPrivate.ID + '_child',
+                    name: cswPrivate.name + '_child',
                     cssclass: 'CswComboBox_ChildDiv',
                     width: cswPrivate.width
                 })

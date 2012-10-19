@@ -45,7 +45,7 @@
                     //                    };
 
                     cswPublic.control = cswPrivate.propDiv.nodeButton({
-                        ID: Csw.makeId(cswPublic.data.propid, cswPrivate.text, 'btn'),
+                        name: cswPrivate.text,
                         value: cswPrivate.value,
                         size: cswPublic.data.size,
                         mode: cswPrivate.mode,

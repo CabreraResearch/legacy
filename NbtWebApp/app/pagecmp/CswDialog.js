@@ -77,7 +77,7 @@
             var btnTbl = tbl.cell(2, 1).table();
 
             btnTbl.cell(3, 1).button({
-                ID: 'renew_btn',
+                name: 'renew_btn',
                 enabledText: 'Yes',
                 bindOnEnter: div,
                 onClick: function () {
@@ -108,7 +108,7 @@
         }, // AddWelcomeItemDialog
         AddViewDialog: function (options) {
             var o = {
-                ID: 'addviewdialog',
+                name: 'addviewdialog',
                 onAddView: function () { },
                 viewid: '',
                 viewmode: '',
@@ -118,7 +118,7 @@
 
             var div = Csw.literals.div();
             var table = div.table({
-                ID: Csw.makeId(o.ID, 'tbl'),
+                name: 'tbl',
                 FirstCellRightAlign: true
             });
 
@@ -126,7 +126,7 @@
             table.cell(row, 1).text('Name:');
             var nameTextCell = table.cell(row, 2);
             var nameTextBox = nameTextCell.input({
-                ID: o.ID + '_nametb',
+                name: 'nametb',
                 type: Csw.enums.inputTypes.text,
                 cssclass: 'textinput'
             });
@@ -135,7 +135,7 @@
             table.cell(row, 1).text('Category:');
             var categoryTextCell = table.cell(row, 2);
             var categoryTextBox = categoryTextCell.input({
-                ID: o.ID + '_cattb',
+                name: 'cattb',
                 type: Csw.enums.inputTypes.text,
                 value: o.category,
                 cssclass: 'textinput'
@@ -145,7 +145,7 @@
             var displayModeSelect;
             if (Csw.isNullOrEmpty(o.viewmode)) {
                 table.cell(row, 1).text('Display Mode:');
-                displayModeSelect = table.cell(row, 2).select({ ID: o.ID + '_dmsel' });
+                displayModeSelect = table.cell(row, 2).select({ name: o.name + '_dmsel' });
                 displayModeSelect.option({ value: 'Grid' });
                 displayModeSelect.option({ value: 'List' });
                 displayModeSelect.option({ value: 'Table' });
@@ -156,7 +156,7 @@
             var visSelect = Csw.controls.makeViewVisibilitySelect(table, row, 'Available to:');
             row += 1;
             var saveBtn = div.button({
-                ID: o.ID + '_submit',
+                name: o.name + '_submit',
                 enabledText: 'Create View',
                 disabledText: 'Creating View',
                 onClick: function () {
@@ -195,7 +195,7 @@
 
             /* Cancel Button */
             div.button({
-                ID: o.ID + '_cancel',
+                name: o.name + '_cancel',
                 enabledText: 'Cancel',
                 disabledText: 'Canceling',
                 onClick: function () {
@@ -223,9 +223,9 @@
                 Csw.error.throwException(Csw.error.exception('Cannot create an Add Dialog without options.', '', 'CswDialog.js', 177));
             }
             Csw.extend(cswPrivate, options);
-            cswPrivate.ID = Csw.makeSafeId(cswPrivate.text, Math.floor(Math.random() * 99999));
+            cswPrivate.name = cswPrivate.text;
             var cswPublic = {
-                div: Csw.literals.div({ ID: cswPrivate.ID }),
+                div: Csw.literals.div({ name: cswPrivate.name }),
                 close: function () {
                     cswPublic.div.$.dialog('close');
                 },
@@ -237,7 +237,7 @@
                 cswPrivate.nodeid = Csw.string(cswPrivate.nodeid, cswPrivate.propertyData.nodeid);
             }
             cswPublic.tabsAndProps = Csw.layouts.tabsAndProps(cswPublic.div, {
-                ID: Csw.makeId(cswPrivate.ID, 'tabsAndProps'),
+                name: 'tabsAndProps',
                 globalState: {
                     propertyData: cswPrivate.propertyData,
                     ShowAsReport: false,
@@ -324,7 +324,7 @@
 
                                     cswPublic.div.br();
                                     cswPublic.div.button({
-                                        ID: '_feedbackOk',
+                                        name: '_feedbackOk',
                                         enabledText: 'OK',
                                         onClick: closeDialog
                                     });
@@ -343,7 +343,7 @@
         }, // AddFeedbackDialog
         AddNodeClientSideDialog: function (options) {
             var o = {
-                ID: '',
+                name: '',
                 nodetypename: '',
                 title: '',
                 onSuccess: null
@@ -357,10 +357,10 @@
                 newNode;
 
             div.append('New ' + o.nodetypename + ': ');
-            newNode = div.input({ ID: o.ID + '_newNode', type: Csw.enums.inputTypes.text });
+            newNode = div.input({ name: o.name + '_newNode', type: Csw.enums.inputTypes.text });
 
             div.button({
-                ID: o.objectClassId + '_add',
+                name: o.objectClassId + '_add',
                 enabledText: 'Add',
                 onClick: function () {
                     Csw.tryExec(o.onSuccess, newNode.val());
@@ -390,15 +390,15 @@
                 category = Csw.string(o.category);
 
             div.append('New ' + o.nodeTypeDescriptor + ': ');
-            nodeTypeInp = div.input({ ID: o.objectClassId + '_nodeType', type: Csw.enums.inputTypes.text, value: o.nodetypename, maxlength: o.maxlength });
+            nodeTypeInp = div.input({ name: o.objectClassId + '_nodeType', type: Csw.enums.inputTypes.text, value: o.nodetypename, maxlength: o.maxlength });
             div.br();
             if (Csw.isNullOrEmpty(category)) {
                 div.append('Category Name: ');
-                categoryInp = div.input({ ID: o.objectClassId + '_category', type: Csw.enums.inputTypes.text });
+                categoryInp = div.input({ name: o.objectClassId + '_category', type: Csw.enums.inputTypes.text });
                 div.br();
             }
             addBtn = div.button({
-                ID: o.objectClassId + '_add',
+                name: o.objectClassId + '_add',
                 enabledText: 'Add',
                 onClick: function () {
                     var newNodeTypeName = nodeTypeInp.val();
@@ -426,7 +426,7 @@
         }, // AddNodeTypeDialog
         EditLayoutDialog: function (options) {
             var cswPrivate = {
-                ID: 'editlayout',
+                name: 'editlayout',
                 globalState: {
                     nodeids: [],
                     nodekeys: [],
@@ -434,6 +434,7 @@
                 },
                 tabState: {
                     tabid: '',
+                    tabNo: 0,
                     EditMode: 'Edit'
                 },
                 Refresh: null
@@ -443,8 +444,8 @@
             cswPrivate.ShowAsReport = false;
             cswPrivate.tabState.Config = true;
             cswPrivate.onTabSelect = function (tabid) {
-                cswPrivate.tabState.tabid = tabid;
-                _configAddOptions();
+               // cswPrivate.tabState.tabid = tabid;
+               // _configAddOptions();
             };
             cswPrivate.onPropertyRemove = function () {
                 _configAddOptions();
@@ -452,7 +453,7 @@
 
             var div = Csw.literals.div();
             var table = div.table({
-                ID: 'EditLayoutDialog_table',
+                name: 'EditLayoutDialog_table',
                 width: '100%'
             });
 
@@ -464,12 +465,12 @@
             var cell12 = table.cell(1, 2);
 
             var layoutSelect = cell11.select({
-                ID: 'EditLayoutDialog_layoutselect',
+                name: 'EditLayoutDialog_layoutselect',
                 labelText: 'Configure: ',
                 selected: 'Edit',
                 values: ['Add', 'Edit', 'Preview', 'Table'],
                 onChange: function () {
-                    cswPrivate.tabState.EditMode = $('#EditLayoutDialog_layoutselect option:selected').val();
+                    cswPrivate.tabState.EditMode = layoutSelect.val();
                     _resetLayout();
                 }
             });
@@ -487,7 +488,7 @@
                 cell21.br({ number: 2 });
 
                 var addSelect = cell21.select({
-                    ID: 'EditLayoutDialog_addselect',
+                    name: 'EditLayoutDialog_addselect',
                     labelText: 'Add: ',
                     selected: '',
                     values: [],
@@ -569,12 +570,12 @@
             };
 
             var myEditMode = Csw.enums.editMode.EditInPopup;
-            var tableId = Csw.makeSafeId(cswPrivate.nodeids[0], Math.floor(Math.random() * 99999));
-            var table = cswPublic.div.table({ ID: tableId });
+            var tableId = cswPrivate.nodeids[0];
+            var table = cswPublic.div.table({ name: tableId });
             if (false === Csw.isNullOrEmpty(cswPrivate.date) && false === cswPrivate.Multi) {
                 myEditMode = Csw.enums.editMode.AuditHistoryInPopup;
                 Csw.actions.auditHistory(table.cell(1, 1), {
-                    ID: cswPrivate.nodeids[0] + '_history',
+                    name: cswPrivate.nodeids[0] + '_history',
                     nodeid: cswPrivate.nodeids[0],
                     cswnbtnodekey: cswPrivate.nodekeys[0],
                     onEditNode: cswPrivate.onEditNode,
@@ -655,14 +656,18 @@
             }
             Csw.extend(cswPrivate, options);
             var cswPublic = {
-                div: Csw.literals.div({ ID: 'CopyNodeDialogDiv' }),
+                div: Csw.literals.div({
+                    name: 'CopyNodeDialogDiv'
+                }),
                 close: function () {
                     cswPublic.div.$.dialog('close');
                 }
             };
 
             // Prevent copy if quota is reached
-            var tbl = cswPublic.div.table({ ID: 'CopyNodeDialogDiv_table' });
+            var tbl = cswPublic.div.table({
+                name: 'CopyNodeDialogDiv_table'
+            });
             var cell11 = tbl.cell(1, 1).propDom('colspan', '2');
             var cell21 = tbl.cell(2, 1);
             var cell22 = tbl.cell(2, 2);
@@ -680,7 +685,7 @@
                         cell11.br({ number: 2 });
 
                         var copyBtn = cell21.button({
-                            ID: 'copynode_submit',
+                            name: 'copynode_submit',
                             enabledText: 'Copy',
                             disabledText: 'Copying',
                             onClick: function () {
@@ -706,7 +711,7 @@
 
             /* Cancel Button */
             cell22.button({
-                ID: 'copynode_cancel',
+                name: 'copynode_cancel',
                 enabledText: 'Cancel',
                 disabledText: 'Canceling',
                 onClick: function () {
@@ -751,7 +756,7 @@
             cswPublic.div.br({ number: 2 });
 
             var deleteBtn = cswPublic.div.button({
-                ID: 'deletenode_submit',
+                name: 'deletenode_submit',
                 enabledText: 'Delete',
                 disabledText: 'Deleting',
                 onClick: function () {
@@ -771,7 +776,7 @@
             });
             /* Cancel Button */
             cswPublic.div.button({
-                ID: 'deletenode_cancel',
+                name: 'deletenode_cancel',
                 enabledText: 'Cancel',
                 disabledText: 'Canceling',
                 onClick: function () {
@@ -790,7 +795,7 @@
                 success: function (data) {
                     div.append('NBT Assembly Version: ' + data.assembly + '<br/><br/>');
                     var table = div.table({
-                        ID: 'abouttale'
+                        name: 'abouttale'
                     });
 
                     var row = 1;
@@ -833,7 +838,10 @@
 
             var div = Csw.literals.div();
 
-            var uploadBtn = div.input({ ID: 'fileupload', type: Csw.enums.inputTypes.file });
+            var uploadBtn = div.input({
+                name: 'fileupload',
+                type: Csw.enums.inputTypes.file
+            });
 
             uploadBtn.$.fileupload({
                 dataType: 'json',
@@ -851,7 +859,7 @@
             });
 
             div.button({
-                ID: 'fileupload_cancel',
+                name: 'fileupload_cancel',
                 enabledText: 'Cancel',
                 disabledText: 'Canceling',
                 onClick: function () {
@@ -882,7 +890,10 @@
 
             div.br({ number: 2 });
 
-            var uploadBtn = div.input({ ID: 'fileupload', type: Csw.enums.inputTypes.file });
+            var uploadBtn = div.input({
+                name: 'fileupload',
+                type: Csw.enums.inputTypes.file
+            });
 
             uploadBtn.$.fileupload({
                 datatype: 'json',
@@ -898,14 +909,18 @@
 
             div.span({ text: 'MOL Text (Paste from Clipboard):' }).br();
 
-            molTxtArea = div.textArea({ ID: '', rows: 6, cols: 40 });
+            molTxtArea = div.textArea({
+                name: '', 
+                rows: 6,
+                cols: 40
+            });
             molTxtArea.text(o.molData);
             div.br();
 
             var buttonsDiv = div.div({ align: 'right' });
 
             saveBtn = buttonsDiv.button({
-                ID: 'txt_save',
+                name: 'txt_save',
                 enabledText: 'Save',
                 disabledText: 'Saving...',
                 onClick: function () {
@@ -925,7 +940,7 @@
             }); // 
 
             buttonsDiv.button({
-                ID: 'fileupload_cancel',
+                name: 'fileupload_cancel',
                 enabledText: 'Cancel',
                 disabledText: 'Canceling',
                 onClick: function () {
@@ -948,7 +963,7 @@
 
             var div = Csw.literals.div({ align: 'center' });
             div.append('Service Level Agreement').br();
-            var licenseTextArea = div.textArea({ ID: 'license', rows: 30, cols: 80 }).propDom({ disabled: true });
+            var licenseTextArea = div.textArea({ name: 'license', rows: 30, cols: 80 }).propDom({ disabled: true });
             div.br();
 
             Csw.ajax.post({
@@ -959,7 +974,7 @@
             });
 
             var acceptBtn = div.button({
-                ID: 'license_accept',
+                name: 'license_accept',
                 enabledText: 'I Accept',
                 disabledText: 'Accepting...',
                 onClick: function () {
@@ -975,7 +990,7 @@
             }); // 
 
             div.button({
-                ID: 'license_decline',
+                name: 'license_decline',
                 enabledText: 'I Decline',
                 disabledText: 'Declining...',
                 onClick: function () {
@@ -989,7 +1004,7 @@
         PrintLabelDialog: function (options) {
             ///<summary>Creates an Print Label dialog and returns an object represent that dialog.</summary>
             var cswPrivate = {
-                ID: 'print_label',
+                name: 'print_label',
                 GetPrintLabelsUrl: 'Labels/type/',
                 nodes: {},
                 nodeids: [],
@@ -1033,7 +1048,7 @@
             cswPublic.div.div({ text: 'Select a label to Print' });
             var labelSelDiv = cswPublic.div.div();
             var labelSel = labelSelDiv.select({
-                ID: cswPrivate.ID + '_labelsel'
+                name: cswPrivate.name + '_labelsel'
             });
 
             Csw.ajaxWcf.get({
@@ -1052,7 +1067,7 @@
             }); // ajax
 
             cswPublic.div.button({
-                ID: 'print_label_close',
+                name: 'print_label_close',
                 enabledText: 'Close',
                 disabledText: 'Closing...',
                 onClick: function () {
@@ -1061,7 +1076,7 @@
             });
 
             cswPublic.div.button({
-                ID: 'print_label_print',
+                name: 'print_label_print',
                 enabledText: 'Print',
                 //disabledText: 'Printing...', 
                 disableOnClick: false,
@@ -1086,7 +1101,7 @@
                 success: function (data) {
                     if (Csw.bool(data.result)) {
                         var usersel = div.select({
-                            ID: 'ImpersonateSelect',
+                            name: 'ImpersonateSelect',
                             selected: ''
                         });
 
@@ -1095,7 +1110,7 @@
                         });
 
                         div.button({
-                            ID: 'ImpersonateButton',
+                            name: 'ImpersonateButton',
                             enabledText: 'Impersonate',
                             onClick: function () {
                                 Csw.tryExec(o.onImpersonate, usersel.val(), usersel.selectedText());
@@ -1104,7 +1119,7 @@
                         });
 
                         div.button({
-                            ID: 'CancelButton',
+                            name: 'CancelButton',
                             enabledText: 'Cancel',
                             onClick: function () {
                                 div.$.dialog('close');
@@ -1119,7 +1134,7 @@
 
         SearchDialog: function (options) {
             var cswPrivate = {
-                ID: 'searchdialog',
+                name: 'searchdialog',
                 propname: '',
                 title: '',
                 nodetypeid: '',
@@ -1131,7 +1146,7 @@
             }
             Csw.extend(cswPrivate, options);
             var cswPublic = {
-                div: Csw.literals.div({ ID: 'searchdialog_div' }),
+                div: Csw.literals.div({ name: 'searchdialog_div' }),
                 close: function () {
                     cswPublic.div.$.dialog('close');
                 },
@@ -1139,7 +1154,7 @@
             };
 
             cswPublic.search = Csw.composites.universalSearch(cswPublic.div, {
-                ID: cswPrivate.ID,
+                name: cswPrivate.name,
                 nodetypeid: cswPrivate.nodetypeid,
                 objectclassid: cswPrivate.objectclassid,
                 onBeforeSearch: function () { },
@@ -1205,7 +1220,7 @@
             };
             if (options) Csw.extend(o, options);
 
-            var div = Csw.literals.div({ ID: 'searchdialog_div' });
+            var div = Csw.literals.div({ name: 'searchdialog_div' });
 
             div.append('This ' + o.opname + ' will be performed as a batch operation');
 
@@ -1236,7 +1251,7 @@
         AlertDialog: function (message, title, onClose, height, width) {
 
             var div = Csw.literals.div({
-                ID: Csw.string(title, 'an alert dialog').replace(' ', '_'),
+                name: Csw.string(title, 'an alert dialog').replace(' ', '_'),
                 text: message,
                 align: 'center'
             });
@@ -1256,7 +1271,7 @@
         ConfirmDialog: function (message, title, okFunc, cancelFunc) {
 
             var div = Csw.literals.div({
-                ID: Csw.string(title, 'an alert dialog').replace(' ', '_'),
+                name: Csw.string(title, 'an alert dialog').replace(' ', '_'),
                 text: message,
                 align: 'center'
             });
@@ -1283,7 +1298,7 @@
         },
         NavigationSelectDialog: function (options) {
             var o = {
-                ID: '',
+                name: '',
                 title: 'Select from the following options',
                 navigationText: 'Click OK to continue',
                 buttons: Csw.enums.dialogButtons["1"],
@@ -1297,16 +1312,16 @@
             }
 
             var div = Csw.literals.div({
-                ID: o.ID
+                name: o.name
             });
             div.p({ text: o.navigationText });
             var select = div.select({
-                ID: Csw.makeId({ ID: o.ID, suffix: 'CswNavigationSelectDialog' }),
+                name: 'CswNavigationSelectDialog',
                 values: o.values
             });
 
             div.button({
-                ID: Csw.makeId({ ID: o.ID, suffix: 'CswNavigationSelectDialog_OK' }),
+                name: 'CswNavigationSelectDialog_OK',
                 enabledText: 'OK',
                 onClick: function () {
                     Csw.tryExec(o.onOkClick, select.find(':selected'));
@@ -1325,7 +1340,7 @@
         //							return popup;
         //						},
         OpenDialog: function (id, url) {
-            var div = Csw.literals.div({ ID: id });
+            var div = Csw.literals.div({ name: id });
             div.$.load(url,
                 function () {
                     openDialog(div, 600, 400);
@@ -1333,7 +1348,7 @@
         },
         OpenEmptyDialog: function (options) {
             var o = {
-                ID: '',
+                name: '',
                 title: '',
                 width: 900,
                 height: 600,
@@ -1343,7 +1358,7 @@
             if (options) {
                 Csw.extend(o, options);
             }
-            var div = Csw.literals.div(o.ID);
+            var div = Csw.literals.div(o.name);
             openDialog(div, o.width, o.height, o.onClose, o.title);
             Csw.tryExec(o.onOpen, div);
         },

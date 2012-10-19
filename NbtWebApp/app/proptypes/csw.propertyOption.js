@@ -56,7 +56,7 @@
                 'use strict';
 
                 var cswPublic = {
-                    ID: '',
+                    name: '',
                     tabState: {
                         nodeid: '',
                         nodename: '',
@@ -115,7 +115,7 @@
                     return (Csw.enums.editMode.PrintReport === cswPublic.tabState.EditMode || Csw.enums.editMode.AuditHistoryInPopup === cswPublic.tabState.EditMode);
                 };
 
-                cswPublic.ID = Csw.makeId(cswPublic.propDiv.getId(), cswPublic.propData.id);
+                cswPublic.name = cswPublic.propData.id;
 
                 Csw.extend(cswPublic, cswPrivate);
                 cswPublic.onPropChange = function (attributes) {

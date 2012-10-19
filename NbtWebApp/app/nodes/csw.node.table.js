@@ -9,7 +9,7 @@
                 //TableSearchUrl: 'getTableSearch',
                 TableViewUrl: 'getTableView',
                 viewid: '',
-                ID: '',
+                name: '',
                 nodeid: '',
                 cswnbtnodekey: '',
                 EditMode: Csw.enums.editMode.Edit,
@@ -31,15 +31,15 @@
                 properties: []
             };
             if (params) Csw.extend(cswPrivate, params);
-            
+
             var cswPublic = {};
 
 
             cswPrivate.getThumbnailCell = function (cellSet) {
                 return cellSet[1][1];
             };
-            
-            
+
+
             cswPrivate.getTextCell = function (cellSet) {
                 var ret;
                 if (cswPrivate.singleColumn) {
@@ -127,8 +127,7 @@
 
                     // Banding
                     if (cswPrivate.singleColumn) {
-                        if(cswPrivate.r % 2 === 1)
-                        {
+                        if (cswPrivate.r % 2 === 1) {
                             thumbnailCell.addClass('NodeTableOddRow');
                             textCell.addClass('NodeTableOddRow');
                             btncell.addClass('NodeTableOddRow');
@@ -170,7 +169,7 @@
                                      function (event) { Csw.nodeHoverOut(event, nodeid, ''); });
 
                     var btnTable = btncell.table({
-                        ID: Csw.makeId(cswPrivate.ID, nodeid + '_btntbl'),
+                        name: cswPrivate.name + '_' + nodeid + '_btntbl',
                         cellspacing: '5px'
                     });
                     var btncol = 1;
@@ -184,9 +183,9 @@
 
                             propObj.size = 'small';
                             propObj.nodeid = nodeid;
-                            propObj.ID = Csw.makeId(cswPrivate.ID, propObj.id, 'tbl');
+                            propObj.name = cswPrivate.name + '_' + propObj.id + 'tbl';
                             propObj.EditMode = Csw.enums.editMode.Table;
-                            propObj.doSave = function(saveoptions) {
+                            propObj.doSave = function (saveoptions) {
                                 // Nothing to save in this case, so just call onSuccess
                                 saveoptions = saveoptions || { onSuccess: null };
                                 Csw.tryExec(saveoptions.onSuccess);
@@ -195,7 +194,7 @@
 
                             cswPrivate.properties[propObj.id] = Csw.nbt.property(fieldOpt);
 
-                               
+
                             btncol += 1;
 
                         } else {
@@ -208,7 +207,7 @@
                     // System Buttons
                     if (Csw.bool(cswPrivate.compactResults)) {
                         btnTable.cell(1, btncol).buttonExt({
-                            ID: Csw.makeId(cswPrivate.ID, nodeid, 'morebtn'),
+                            name: Csw.delimitedString(cswPrivate.name, nodeid, 'morebtn').string('_'),
                             enabledText: 'More Info',
                             icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.info),
                             disableOnClick: false,
@@ -221,9 +220,8 @@
                     if (Csw.bool(cswPrivate.allowEdit) && (Csw.bool(nodeObj.allowview) || Csw.bool(nodeObj.allowedit))) {
 
                         btnTable.cell(1, btncol).buttonExt({
-                            ID: Csw.makeId(cswPrivate.ID, nodeid, 'editbtn'),
+                            name: Csw.delimitedString(cswPrivate.name, nodeid, 'editbtn').string('_'),
                             enabledText: 'Details',
-                            //tooltip: { title: btntext },
                             icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.magglass),
                             onClick: function () {
                                 $.CswDialog('EditNodeDialog', {
@@ -240,7 +238,7 @@
 
                     if (Csw.bool(cswPrivate.allowDelete) && Csw.bool(nodeObj.allowdelete)) {
                         btnTable.cell(1, btncol).buttonExt({
-                            ID: Csw.makeId(cswPrivate.ID, nodeid, 'delbtn'),
+                            name: Csw.delimitedString(cswPrivate.name, nodeid, 'morebtn').string('_'),
                             enabledText: 'Delete',
                             disabledOnClick: false,
                             //tooltip: { title: 'Delete' },
@@ -262,7 +260,7 @@
                         Csw.debug.assert(Csw.isFunction(cswPrivate.onExtraAction), 'No method specified for extraAction.');
 
                         btnTable.cell(1, btncol).buttonExt({
-                            ID: Csw.makeId(cswPrivate.ID, nodeid, 'extrabtn'),
+                            name: Csw.delimitedString(cswPrivate.name, nodeid, 'extbtn').string('_'),
                             enabledText: cswPrivate.extraAction,
                             //tooltip: { title: cswPrivate.extraAction },
                             icon: cswPrivate.extraActionIcon,
@@ -307,7 +305,7 @@
                 }
 
                 cswPrivate.layoutTable = cswPrivate.tableDiv.layoutTable({
-                    ID: cswPrivate.ID + '_tbl',
+                    name: cswPrivate.name + '_tbl',
                     cellSet: cellset,
                     cellalign: cellalign,
                     width: '',
@@ -318,10 +316,10 @@
 
                 // Pager control
                 if (cswPrivate.pagenodelimit < cswPrivate.results) {
-                    
+
                     if (cswPrivate.currentpage > 1) {
                         cswPrivate.pagerDiv.a({
-                            ID: 'tableprev',
+                            name: 'tableprev',
                             text: 'Previous Page',
                             onClick: function () {
                                 cswPrivate.currentpage -= 1;
@@ -335,7 +333,7 @@
                         pageoptions[i] = { value: Csw.string(i + 1), display: Csw.string(i + 1) };
                     }
                     var pagesel = cswPrivate.pagerDiv.select({
-                        ID: 'pageselect',
+                        name: 'pageselect',
                         values: pageoptions,
                         selected: Csw.string(cswPrivate.currentpage),
                         onChange: function () {
@@ -346,7 +344,7 @@
 
                     if (cswPrivate.currentpage < cswPrivate.totalpages) {
                         cswPrivate.pagerDiv.a({
-                            ID: 'tablenext',
+                            name: 'tablenext',
                             text: 'Next Page',
                             onClick: function () {
                                 cswPrivate.currentpage += 1;
@@ -369,10 +367,10 @@
                     });
                 } else {
                     cswPrivate.tableDiv = cswParent.div({
-                        ID: Csw.makeId({ id: cswPrivate.ID, suffix: '_scrolldiv' })
+                        name: 'scrolldiv'
                     }).css({ width: '100%' });
                     cswPrivate.pagerDiv = cswParent.div({
-                        ID: Csw.makeId({ id: cswPrivate.ID, suffix: '_pagerdiv' })
+                        name: 'pagerdiv'
                     });
                     cswPrivate.makeTable();
                 }
@@ -380,8 +378,8 @@
             }; // HandleTableData()
 
 
-            cswPublic.expandAll = function() {
-                Csw.each(cswPrivate.texttables, function(texttable) {
+            cswPublic.expandAll = function () {
+                Csw.each(cswPrivate.texttables, function (texttable) {
                     texttable.toggle();
                 });
             }; // expandAll()

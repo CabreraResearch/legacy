@@ -20,7 +20,7 @@
                     cswPrivate.text += '&nbsp;&nbsp;';
                     /* Static Div */
                     cswPrivate.parent.div({
-                        ID: cswPublic.data.ID,
+                        name: cswPublic.data.name,
                         cssclass: 'staticvalue',
                         text: cswPrivate.text
                     });

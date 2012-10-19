@@ -8,7 +8,7 @@
         Csw.composites.register('grid', function (cswParent, options) {
 
             var cswPrivate = {
-                ID: 'extjsGrid',
+                name: 'extjsGrid',
                 //storeId: '',
                 title: 'Untitled Grid',
                 truncated: false,
@@ -55,7 +55,7 @@
                 setTimeout(function () {
                     var cell = Csw.literals.factory($('#' + cellId));
                     var iconopts = {
-                        ID: cswPrivate.ID + '_' + cellId + '_' + buttonName,
+                        name: cswPrivate.name + '_' + cellId + '_' + buttonName,
                         hovertext: buttonName,
                         iconType: iconType,
                         state: Csw.enums.iconState.normal,
@@ -105,7 +105,7 @@
                 var columns = Csw.extend([], cswPrivate.columns);
 
                 var gridopts = {
-                    itemId: cswPrivate.ID,
+                    itemId: cswPrivate.name,
                     title: cswPrivate.title,
                     store: store,
                     columns: columns,
@@ -113,7 +113,7 @@
                     width: cswPrivate.width,
                     resizable: true,               // client side grid resizing
                     stateful: true,
-                    stateId: cswPrivate.ID,
+                    stateId: cswPrivate.name,
                     forceFit: cswPrivate.forceFit,
                     viewConfig: {
                         deferEmptyText: false,
@@ -144,8 +144,8 @@
                         resizable: false,
                         xtype: 'actioncolumn',
                         renderer: function (value, metaData, record, rowIndex, colIndex, store, view) {
-                            var cell1Id = cswPrivate.ID + '_action_' + rowIndex + '_' + colIndex + '_1';
-                            var cell2Id = cswPrivate.ID + '_action_' + rowIndex + '_' + colIndex + '_2';
+                            var cell1Id = cswPrivate.name + '_action_' + rowIndex + '_' + colIndex + '_1';
+                            var cell2Id = cswPrivate.name + '_action_' + rowIndex + '_' + colIndex + '_2';
                             var ret = '<table cellpadding="0"><tr>';
                             ret += '<td id="' + cell1Id + '" style="width: 26px;"/>';
                             ret += '<td id="' + cell2Id + '" style="width: 26px;"/>';
@@ -199,7 +199,6 @@
                                     var div = Csw.literals.factory($('#' + id));
                                     div.nodeButton({
                                         value: colObj.header,
-                                        ID: Csw.makeId('nodebutton', window.Ext.id()),
                                         size: 'small',
                                         propId: thisBtn[0].propattr
                                     });
@@ -312,7 +311,7 @@
             cswPrivate.init = Csw.method(function () {
                 cswParent.empty();
                 
-                cswPrivate.store = cswPrivate.makeStore(cswPrivate.ID + '_store', cswPrivate.usePaging);
+                cswPrivate.store = cswPrivate.makeStore(cswPrivate.name + '_store', cswPrivate.usePaging);
                 cswPrivate.grid = cswPrivate.makeGrid(cswParent.getId(), cswPrivate.store);
 
                 cswPrivate.grid.on({
@@ -388,7 +387,7 @@
 
             cswPublic.print = Csw.method(function (onSuccess) {
                 // turn paging off
-                var printStore = cswPrivate.makeStore(cswPrivate.ID + '_printstore', false);
+                var printStore = cswPrivate.makeStore(cswPrivate.name + '_printstore', false);
                 var printGrid = cswPrivate.makeGrid('', printStore);
 
                 window.Ext.ux.grid.Printer.stylesheetPath = 'js/thirdparty/extJS-4.1.0/ux/grid/gridPrinterCss/print.css';

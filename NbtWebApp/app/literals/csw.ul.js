@@ -12,8 +12,9 @@
             /// <returns type="ul">A ul object</returns>
             var cswPrivate = {
                 $parent: '',
-                number: 1,
+                count: 1,
                 ID: '',
+                name: '',
                 cssclass: ''
             };
             var cswPublic = {};
@@ -36,9 +37,11 @@
                         html = '',
                         attr = Csw.makeAttr();
 
-                    attr.add('id', cswPrivate.ID);
+                    cswPrivate.count += 1;
+                    attr.add('id', cswPrivate.ID + '_' + cswPrivate.count);
                     attr.add('class', cswPrivate.cssclass);
-
+                    attr.add('name', cswPrivate.name + '_' + cswPrivate.count);
+                    
                     html += '<li';
                     html += attr.get();
                     html += '>';

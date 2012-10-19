@@ -12,7 +12,7 @@
         window.onload = Csw.method(function () {
             var cswPublic = {};
             var cswPrivate = {
-                ID: 'print_label',
+                name: 'print_label',
                 nodeid: '',
                 propid: '',
                 parent: Csw.literals.factory($('#divBody'), cswPublic),
@@ -74,7 +74,7 @@
                             size: 'medium',
                             width: '100px',
                             bindOnEnter: true,
-                            ID: 'print_label_print',
+                            name: 'print_label_print',
                             enabledText: 'Print',
                             disableOnClick: false,
                             onClick: function () {

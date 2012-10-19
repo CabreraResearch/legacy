@@ -31,7 +31,7 @@
                     } else {
                         /* Select Box */
                         cswPublic.control = cswPrivate.parent.multiSelect({
-                            ID: cswPublic.data.ID,
+                            name: cswPublic.data.name,
                             cssclass: 'selectinput',
                             values: cswPrivate.options,
                             readonlyless: cswPrivate.propVals.readonlyless,
