@@ -550,7 +550,6 @@ namespace ChemSW.Nbt.ObjClasses
                         }
                         ButtonData.Message = "Unanswered questions have been set to their preferred answer.";
                         SetPreferred.setReadOnly( value: true, SaveToDb: true );
-                        SetPreferred.setHidden( value: true, SaveToDb: true );
                         break;
                 }
                 ButtonData.Action = NbtButtonAction.refresh;
