@@ -71,12 +71,12 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
 
                 //if( RelationshipProp != null && RelationshipProp.IsUserRelationship() )
                 //{
-                    if( CswNbtViewPropertyFilterIn.Value.ToLower() == "me" )
-                    {
-                        CswNbtViewPropertyFilterIn.SubfieldName = CachedValueSubField.Name;
-                        CswNbtViewPropertyFilterIn.FilterMode = CswNbtPropFilterSql.PropertyFilterMode.Equals;
-                        CswNbtViewPropertyFilterIn.Value = _CswNbtFieldResources.CswNbtResources.Nodes[RunAsUser.UserId].NodeName;
-                    }
+                if( CswNbtViewPropertyFilterIn.Value.ToLower() == "me" )
+                {
+                    CswNbtViewPropertyFilterIn.SubfieldName = CachedValueSubField.Name;
+                    CswNbtViewPropertyFilterIn.FilterMode = CswNbtPropFilterSql.PropertyFilterMode.Equals;
+                    CswNbtViewPropertyFilterIn.Value = _CswNbtFieldResources.CswNbtResources.Nodes[RunAsUser.UserId].NodeName;
+                }
                 //}
             }
             string ret = _CswNbtFieldTypeRuleDefault.renderViewPropFilter( RunAsUser, SubFields, CswNbtViewPropertyFilterIn, false );
@@ -93,9 +93,9 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             return _CswNbtFieldTypeRuleDefault.FilterModeToString( SubField, FilterMode );
         }
 
-        public void AddUniqueFilterToView( CswNbtView View, CswNbtViewProperty UniqueValueViewProperty, CswNbtNodePropWrapper PropertyValueToCheck )
+        public void AddUniqueFilterToView( CswNbtView View, CswNbtViewProperty UniqueValueViewProperty, CswNbtNodePropWrapper PropertyValueToCheck, bool EnforceNullEntries = false )
         {
-            _CswNbtFieldTypeRuleDefault.AddUniqueFilterToView( View, UniqueValueViewProperty, PropertyValueToCheck );
+            _CswNbtFieldTypeRuleDefault.AddUniqueFilterToView( View, UniqueValueViewProperty, PropertyValueToCheck, EnforceNullEntries );
         }
 
         private bool _validateRelationship( string FkType, Int32 FkValue, Int32 inValuePropId )

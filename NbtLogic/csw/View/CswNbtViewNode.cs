@@ -59,7 +59,6 @@ namespace ChemSW.Nbt
         public abstract string ArbitraryId
         {
             get;
-            //set;
         }
 
         public abstract CswNbtViewNode Parent
@@ -198,6 +197,7 @@ namespace ChemSW.Nbt
             GetAllChildrenOfTypeRecursive( ChildrenViewNodeType, this, ref Results );
             return Results;
         }
+
         private void GetAllChildrenOfTypeRecursive( NbtViewNodeType ChildrenViewNodeType, CswNbtViewNode CurrentViewNode, ref ArrayList Results )
         {
             if( CurrentViewNode.ViewNodeType == ChildrenViewNodeType )
@@ -229,30 +229,12 @@ namespace ChemSW.Nbt
                     GetAllChildrenOfTypeRecursive( ChildrenViewNodeType, Child, ref Results );
                 }
             }
-            //else if( CurrentViewNode.ViewNodeType == NbtViewNodeType.CswNbtViewPropertyFilter )
-            //{
-            //}
         } // GetAllChildrenOfTypeRecursive()
-
-        //public CswNbtView.AddChildrenSetting getAddChildren()
-        //{
-        //    CswNbtView.AddChildrenSetting ret = CswNbtView.AddChildrenSetting.None;
-        //    if (this is CswNbtViewRoot)
-        //    {
-        //        ret = ((CswNbtViewRoot)this).AddChildren;
-        //    }
-        //    else if (this is CswNbtViewRelationship)
-        //    {
-        //        ret = ((CswNbtViewRelationship)this).AddChildren;
-        //    }
-        //    return ret;
-        //}
 
         public Collection<CswNbtViewAddNodeTypeEntry> AllowedChildNodeTypes( bool LimitToFirstGeneration )
         {
             Collection<CswNbtViewAddNodeTypeEntry> ret = new Collection<CswNbtViewAddNodeTypeEntry>();
 
-            //NbtViewAddChildrenSetting AddChildrenSetting = NbtViewAddChildrenSetting.None;
             ArrayList ChildRelationships = new ArrayList();
             if( LimitToFirstGeneration && this is CswNbtViewRoot )
             {
@@ -260,7 +242,6 @@ namespace ChemSW.Nbt
             }
             else if( LimitToFirstGeneration && this is CswNbtViewRelationship )
             {
-                //    AddChildrenSetting = ( (CswNbtViewRelationship) this ).AddChildren;
                 ChildRelationships.AddRange( ( (CswNbtViewRelationship) this ).ChildRelationships );
             }
             else
@@ -268,11 +249,6 @@ namespace ChemSW.Nbt
                 ChildRelationships = _View.Root.GetAllChildrenOfType( NbtViewNodeType.CswNbtViewRelationship );
             }
 
-            //if( AddChildrenSetting == NbtViewAddChildrenSetting.InView )
-            //{
-            //foreach( CswNbtViewRelationship ChildRelationship in ChildRelationships )
-
-            // BZ 10025 - Always show all nodetypes in view
             foreach( CswNbtViewRelationship ChildRelationship in ChildRelationships )
             {
 
@@ -301,8 +277,6 @@ namespace ChemSW.Nbt
                     foreach( CswNbtMetaDataNodeType FirstVersionNodeType in PotentialNodeTypes )
                     {
                         CswNbtViewAddNodeTypeEntry NewEntry = new CswNbtViewAddNodeTypeEntry( FirstVersionNodeType.getNodeTypeLatestVersion(), ChildRelationship );
-                        //if( !ret.Contains( NewEntry ) )
-                        //{
                         CswNbtMetaDataObjectClass ObjectClass = FirstVersionNodeType.getObjectClass();
                         if( ObjectClass.CanAdd &&
                             _CswNbtResources.Permit.canNodeType( Security.CswNbtPermit.NodeTypePermission.Create, FirstVersionNodeType ) )
@@ -317,11 +291,9 @@ namespace ChemSW.Nbt
                             if( !FoundMatch )
                                 ret.Add( NewEntry );
                         }
-                        //}
                     }
                 }
             }
-            //}
 
             return ret;
         }
@@ -352,9 +324,7 @@ namespace ChemSW.Nbt
             {
                 foreach( CswNbtViewRelationship CurrentRelationship in Relationships )
                 {
-                    if(//((RelatedIdType.NodeTypeId == CurrentRelationship.FirstType) &&
-                        // (CurrentRelationship.FirstId == NodeTypeID)) ||
-                        ( ( NbtViewRelatedIdType.NodeTypeId == CurrentRelationship.SecondType ) &&
+                    if( ( ( NbtViewRelatedIdType.NodeTypeId == CurrentRelationship.SecondType ) &&
                          ( CurrentRelationship.SecondId == NodeTypeID ) ) ||
                         ( ( NbtViewRelatedIdType.ObjectClassId == CurrentRelationship.SecondType ) &&
                          ( CurrentRelationship.SecondId == _CswNbtResources.MetaData.getNodeType( NodeTypeID ).ObjectClassId ) ) )
