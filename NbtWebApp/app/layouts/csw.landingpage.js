@@ -261,7 +261,7 @@
                         if (false == viewSelect.$.is(':hidden')) {
                             selectedView = viewSelect.val();
                             viewtype = selectedView.type;
-                            viewvalue = selectedView.value;
+                            pkvalue = selectedView.value;
                         }
 
                         cswPrivate.addItem({

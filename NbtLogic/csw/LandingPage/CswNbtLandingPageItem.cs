@@ -1,28 +1,40 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Data;
+using ChemSW.DB;
+using ChemSW.Core;
 
 namespace ChemSW.Nbt.LandingPage
 {
     public abstract class CswNbtLandingPageItem
     {
-        protected CswNbtResources _CswNbtResources;
-        public int LandingPageId { get; set; }
+        protected CswNbtResources _CswNbtResources;        
+
+        protected CswTableUpdate _LandingPageUpdate;
+        protected DataTable _LandingPageTable;
+
+        protected DataRow _ItemRow;
+        public DataRow ItemRow { get { return _ItemRow; } }
+
         protected LandingPageData.LandingPageItem _ItemData;
-        public LandingPageData.LandingPageItem ItemData
-        {
-            get { return _ItemData; }
-        }
+        public LandingPageData.LandingPageItem ItemData { get { return _ItemData; } }
 
         protected CswNbtLandingPageItem( CswNbtResources CswNbtResources )
         {
             _CswNbtResources = CswNbtResources;
             _ItemData = new LandingPageData.LandingPageItem();
-        }        
+            initEmptyLandingPageTable();
+        }
 
-        protected virtual void _setCommonItemData( DataRow LandingPageRow )
+        public void initEmptyLandingPageTable()
+        {
+            _LandingPageUpdate = _CswNbtResources.makeCswTableUpdate( "AddLandingPageItem_Update", "landingpage" );
+            _LandingPageTable = _LandingPageUpdate.getEmptyTable();
+            _ItemRow = _LandingPageTable.NewRow();
+        }
+
+        public abstract void setItemDataForUI( DataRow LandingPageRow );        
+
+        protected virtual void _setCommonItemDataForUI( DataRow LandingPageRow )
         {
             _ItemData.LandingPageId = LandingPageRow["landingpageid"].ToString();
             if( false == String.IsNullOrEmpty( _ItemData.Text ) )
@@ -33,7 +45,60 @@ namespace ChemSW.Nbt.LandingPage
             }
         }
 
-        public abstract void setItemData( DataRow LandingPageRow );
-        //public abstract void OnDisable();
+        public abstract void setItemDataForDB( LandingPageData.Request Request );
+
+        protected virtual void _setCommonItemDataForDB( LandingPageData.Request Request )
+        {
+            if( Request.RoleId == string.Empty || false == _CswNbtResources.CurrentNbtUser.IsAdministrator() )
+            {
+                Request.RoleId = _CswNbtResources.CurrentNbtUser.RoleId.ToString();
+            }
+            CswPrimaryKey RolePk = new CswPrimaryKey();
+            RolePk.FromString( Request.RoleId );
+            Int32 RoleId = RolePk.PrimaryKey;
+
+            if( Request.ButtonIcon == "blank.gif" )
+            {
+                Request.ButtonIcon = string.Empty;
+            }
+            if( Int32.MinValue != RoleId )
+            {
+                _ItemRow["for_roleid"] = RoleId;
+            }
+            if( false == String.IsNullOrEmpty( Request.ActionId ) )
+            {
+                _ItemRow["for_actionid"] = Request.ActionId;
+            }
+            _ItemRow["componenttype"] = Request.Type;
+            _ItemRow["display_col"] = "1";
+            _ItemRow["display_row"] = _getNextAvailableRowForItem( RoleId, Request.ActionId );
+            _ItemRow["displaytext"] = Request.Text;
+            _ItemRow["buttonicon"] = Request.ButtonIcon;
+        }
+
+        private Int32 _getNextAvailableRowForItem( Int32 RoleId, string ActionId )
+        {
+            String ActionText = String.Empty;
+            if( false == String.IsNullOrEmpty( ActionId ) )
+            {
+                ActionText = " and (for_actionid = " + ActionId + ")";
+            }
+            string SqlText = "select max(display_row) maxcol from landingpage where display_col = 1 and (for_roleid = " + RoleId.ToString() + ")" + ActionText;
+            CswArbitrarySelect LandingPageSelect = _CswNbtResources.makeCswArbitrarySelect( "LandingPageForRole", SqlText );
+            DataTable LandingPageSelectTable = LandingPageSelect.getTable();
+            Int32 MaxRow = 0;
+            if( LandingPageSelectTable.Rows.Count > 0 )
+            {
+                MaxRow = CswConvert.ToInt32( LandingPageSelectTable.Rows[0]["maxcol"] );
+                if( MaxRow < 0 ) MaxRow = 0;
+            }
+            return MaxRow + 1;
+        }
+
+        public virtual void saveToDB()
+        {
+            _LandingPageTable.Rows.Add( _ItemRow );
+            _LandingPageUpdate.update( _LandingPageTable );
+        }
     }
 }

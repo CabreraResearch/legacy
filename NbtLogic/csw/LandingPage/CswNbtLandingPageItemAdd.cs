@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Data;
 using ChemSW.Core;
+using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.Security;
 
@@ -10,7 +11,7 @@ namespace ChemSW.Nbt.LandingPage
     {
         public CswNbtLandingPageItemAdd( CswNbtResources CswNbtResources ) : base( CswNbtResources ) { }
 
-        public override void setItemData( DataRow LandingPageRow )
+        public override void setItemDataForUI( DataRow LandingPageRow )
         {
             if( CswConvert.ToInt32( LandingPageRow["to_nodetypeid"] ) != Int32.MinValue )
             {
@@ -30,7 +31,21 @@ namespace ChemSW.Nbt.LandingPage
                     }
                 }
             }
-            _setCommonItemData( LandingPageRow );
+            _setCommonItemDataForUI( LandingPageRow );
+        }
+
+        public override void setItemDataForDB( LandingPageData.Request Request )
+        {
+            Int32 NodeTypeId = CswConvert.ToInt32( Request.NodeTypeId );
+            if( NodeTypeId != Int32.MinValue )
+            {
+                _ItemRow["to_nodetypeid"] = CswConvert.ToDbVal( NodeTypeId );
+            }
+            else
+            {
+                throw new CswDniException(ErrorType.Warning, "You must select something to add", "No nodetype selected for new Add LandingPage Item");
+            }
+            _setCommonItemDataForDB( Request );
         }
     }
 }

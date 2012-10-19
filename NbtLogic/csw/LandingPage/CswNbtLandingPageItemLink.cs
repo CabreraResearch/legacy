@@ -5,6 +5,7 @@ using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.ObjClasses;
 using System.Collections.Generic;
+using ChemSW.Exceptions;
 
 namespace ChemSW.Nbt.LandingPage
 {
@@ -12,7 +13,7 @@ namespace ChemSW.Nbt.LandingPage
     {
         public CswNbtLandingPageItemLink( CswNbtResources CswNbtResources ) : base( CswNbtResources ) { }
 
-        public override void setItemData( DataRow LandingPageRow )
+        public override void setItemDataForUI( DataRow LandingPageRow )
         {
             if( CswConvert.ToInt32( LandingPageRow["to_nodeviewid"] ) != Int32.MinValue )
             {
@@ -76,7 +77,32 @@ namespace ChemSW.Nbt.LandingPage
                     _ItemData.ButtonIcon = CswNbtMetaDataObjectClass.IconPrefix100 + ThisReportNode.getNodeType().IconFileName;
                 }
             }
-            _setCommonItemData( LandingPageRow );
+            _setCommonItemDataForUI( LandingPageRow );
+        }
+
+        public override void setItemDataForDB( LandingPageData.Request Request )
+        {
+            CswNbtView.ViewType ViewType = (CswNbtView.ViewType) Request.ViewType;
+            if( ViewType == CswNbtView.ViewType.View )
+            {
+                _ItemRow["to_nodeviewid"] = CswConvert.ToDbVal( new CswNbtViewId( Request.PkValue ).get() );
+            }
+            else if( ViewType == CswNbtView.ViewType.Action )
+            {
+                _ItemRow["to_actionid"] = CswConvert.ToDbVal( Request.PkValue );
+            }
+            else if( ViewType == CswNbtView.ViewType.Report )
+            {
+                CswPrimaryKey ReportPk = new CswPrimaryKey();
+                ReportPk.FromString( Request.PkValue );
+                Int32 PkVal = ReportPk.PrimaryKey;
+                _ItemRow["to_reportid"] = CswConvert.ToDbVal( PkVal );
+            }
+            else
+            {
+                throw new CswDniException( ErrorType.Warning, "You must select a view", "No view was selected for new Link LandingPage Item" );
+            }
+            _setCommonItemDataForDB( Request );
         }
     }
 }
