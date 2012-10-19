@@ -28,7 +28,7 @@
                 extraAction: null,
                 extraActionIcon: Csw.enums.iconType.none,
                 onExtraAction: null,  // function(nodeObj) {}
-                properties: []
+                properties: {}
             };
             if (params) Csw.extend(cswPrivate, params);
 
@@ -179,20 +179,20 @@
                         if (propObj.fieldtype === "Button") {
 
                             // Object Class Buttons
-                            var propDiv = btnTable.cell(1, btncol).div();
-
                             propObj.size = 'small';
                             propObj.nodeid = nodeid;
-                            propObj.name = cswPrivate.name + '_' + propObj.id + 'tbl';
+                            propObj.tabState = propObj.tabState || {};
+                            propObj.tabState.nodeid = nodeid;
+                            propObj.name = propObj.propname;
                             propObj.EditMode = Csw.enums.editMode.Table;
                             propObj.doSave = function (saveoptions) {
                                 // Nothing to save in this case, so just call onSuccess
                                 saveoptions = saveoptions || { onSuccess: null };
                                 Csw.tryExec(saveoptions.onSuccess);
                             };
-                            var fieldOpt = Csw.nbt.propertyOption(propObj, propDiv);
+                            var fieldOpt = Csw.nbt.propertyOption(propObj, btnTable.cell(1, btncol).div());
 
-                            cswPrivate.properties[propObj.id] = Csw.nbt.property(fieldOpt);
+                            cswPrivate.properties[propObj.propid] = Csw.nbt.property(fieldOpt);
 
 
                             btncol += 1;
