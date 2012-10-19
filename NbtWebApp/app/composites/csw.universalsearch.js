@@ -40,9 +40,8 @@
                 buttonSingleColumn: '',
                 buttonMultiColumn: ''
             };
-            if (params) {
-                Csw.extend(cswPrivate, params);
-            }
+            Csw.extend(cswPrivate, params);
+            
             if (false === Csw.isNullOrEmpty(cswParent)) {
                 cswPrivate.table = cswParent.table({
                     name: cswPrivate.name + '_table',
@@ -71,16 +70,18 @@
                     cssclass: 'mousetrap'
                 });
 
-                cswPrivate.searchbutton = cswtable.cell(1, 2).div({ name: cswPrivate.name + window.Ext.id() }).buttonExt({
-                    icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.search),
-                    width: ('Search'.length * 11) + 16,
-                    enabledText: 'Search',
-                    disabledText: 'Searching...',
-                    bindOnEnter: true,
-                    onClick: function () {
-                        cswPrivate.searchterm = cswPrivate.searchinput.val();
-                        cswPrivate.newsearch();
-                    }
+                cswPrivate.searchbutton = cswtable.cell(1, 2)
+                    .div({ name: cswPrivate.name })
+                    .buttonExt({
+                        icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.search),
+                        width: ('Search'.length * 11) + 16,
+                        enabledText: 'Search',
+                        disabledText: 'Searching...',
+                        bindOnEnter: true,
+                        onClick: function () {
+                            cswPrivate.searchterm = cswPrivate.searchinput.val();
+                            cswPrivate.newsearch();
+                        }
                 });
             })();
 

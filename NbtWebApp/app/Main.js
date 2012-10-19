@@ -225,7 +225,7 @@ window.initMain = window.initMain || function (undefined) {
                      .$.hover(function () { $(this).CswAttrDom('title', Csw.clientSession.getExpireTime()); });
                 refreshDashboard();
                 refreshHeaderMenu();
-                universalsearch = Csw.composites.universalSearch({}, {
+                universalsearch = Csw.composites.universalSearch(null, {
                     searchBoxParent: Csw.main.searchDiv,
                     searchResultsParent: Csw.main.rightDiv,
                     searchFiltersParent: Csw.main.leftDiv,
