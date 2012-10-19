@@ -142,14 +142,14 @@
                             break;
                     }
 
-                    if (Csw.bool(cswPrivate.ReadOnly)) {
+                    if (Csw.bool(cswPrivate.disabled)) {
                         cswPublic.button.disable();
                     }
 
                     cswPublic.messageDiv = cswPrivate.table.cell(1, 2).div({
                         cssclass: 'buttonmessage'
                     });
-                    //cswPublic.button.required(cswPrivate.Required);
+                    
                 } ());
             });
             return cswPublic;
