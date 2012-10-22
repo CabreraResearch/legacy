@@ -9,7 +9,7 @@
             ///<summary>Creates a basic grid with an Add menu.</summary>
 
             var cswPrivate = {
-                ID: 'wizardNodeGrid',
+                name: 'wizardNodeGrid',
                 reinitGrid: null,
                 viewid: '',
                 canSelectRow: true,
@@ -42,19 +42,19 @@
 
                 viewid = viewid || cswPrivate.viewid;
 
-                cswPrivate.menuDiv = cswPublic.rootDiv.div({ ID: Csw.makeId(cswPrivate.ID, 'menu') });
+                cswPrivate.menuDiv = cswPublic.rootDiv.div({ name: 'menu' });
                 if (cswPrivate.hasMenu) {
                     cswPrivate.menuDiv.css({ height: '25px' });
                 }
-                cswPrivate.filterDiv = cswPublic.rootDiv.div({ ID: Csw.makeId(cswPrivate.ID, 'filter') });
-                cswPrivate.gridDiv = cswPublic.rootDiv.div({ ID: Csw.makeId(cswPrivate.ID, 'property') });
+                cswPrivate.filterDiv = cswPublic.rootDiv.div({ name: 'filter' });
+                cswPrivate.gridDiv = cswPublic.rootDiv.div({ name: 'property' });
                 cswPrivate.reinitGrid = (function () {
                     return function (newviewid) {
                         cswPrivate.makeGrid(newviewid);
                     };
                 } ());
                 Csw.nbt.viewFilters({
-                    ID: cswPrivate.ID + '_viewfilters',
+                    name: cswPrivate.name + '_viewfilters',
                     parent: cswPrivate.filterDiv,
                     viewid: cswPrivate.viewid,
                     onEditFilters: function (newviewid) {
@@ -63,7 +63,7 @@
                 }); // viewFilters
 
                 cswPrivate.gridOpts = {
-                    ID: cswPrivate.ID + '_grid',
+                    name: cswPrivate.name + '_grid',
                     viewid: viewid,
                     nodeid: cswPrivate.nodeid,
                     cswnbtnodekey: cswPrivate.cswnbtnodekey,
@@ -101,7 +101,7 @@
                                 ViewId: viewid,
                                 SafeNodeKey: cswPrivate.cswnbtnodekey,
                                 NodeTypeId: '',
-                                PropIdAttr: cswPrivate.ID,
+                                PropIdAttr: cswPrivate.name,
                                 LimitMenuTo: 'Add',
                                 ReadOnly: false
                             }

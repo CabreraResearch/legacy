@@ -21,7 +21,7 @@
         var id = "error_" + date.getTime();
 
         var errorDiv = parent.div({
-            ID: id,
+            name: id,
             cssclass: 'CswErrorMessage_Message'
         });
 
@@ -34,7 +34,7 @@
         }
 
         var table = errorDiv.table({
-            ID: Csw.makeId(id, 'tbl'),
+            name: 'tbl',
             width: '100%'
         });
 
@@ -48,7 +48,7 @@
 
         cell13.css({ width: '18px' });
         cell13.icon({
-            ID: Csw.makeId(id, 'hidebtn'),
+            name: 'hidebtn',
             iconType: Csw.enums.iconType.x,
             hovertext: 'Hide',
             isButton: true,
@@ -65,7 +65,7 @@
             var togglebtn = cell11.imageButton({
                 ButtonType: Csw.enums.imageButton_ButtonType.ToggleInactive,
                 AlternateText: 'Expand',
-                ID: Csw.makeId(id, 'expandbtn'),
+                name: 'expandbtn',
                 onClick: function () {
                     cell22.$.toggle();
                     if (togglebtn.getButtonType() == Csw.enums.imageButton_ButtonType.ToggleActive) {

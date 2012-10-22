@@ -17,7 +17,7 @@
                 runGridUrl: 'runGrid',
                 viewid: '',
                 showempty: false,
-                ID: '',
+                name: '',
                 nodeid: '',
                 cswnbtnodekey: '',
                 reinit: false,
@@ -50,7 +50,7 @@
 
                 var parent = Csw.literals.factory($parent);
                 ret = parent.grid({
-                                    ID: o.ID,
+                                    name: o.name,
                                     stateId: o.viewid,
                                     ajax: {
                                         urlMethod: o.runGridUrl,

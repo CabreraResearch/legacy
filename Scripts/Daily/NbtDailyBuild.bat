@@ -7,7 +7,8 @@ IF EXIST %LOCALCONF% goto ConfigContinue
 REM Generate default setting file
 >%LOCALCONF% echo REM Configuration File
 >>%LOCALCONF% echo set KilnPath=D:\kiln
->>%LOCALCONF% echo set LogFile=D:\log\dailylog.txt
+>>%LOCALCONF% echo set SchemaPath=D:\iisroot\Schema
+>>%LOCALCONF% echo set LogFile=D:\log\dailyLogDev.txt
 >>%LOCALCONF% echo set SchedServiceName=ChemSW NBT Schedule Service
 >>%LOCALCONF% echo set ResetSchemaUsername=nbt_master
 >>%LOCALCONF% echo set ResetSchemaPassword=hj345defwu9
@@ -84,9 +85,9 @@ IF "%ResetSchema%" NEQ "Y" GOTO Continue
 >>%LogFile% time /T
 
 REM must reset nbt_master before schemaupdater runs
-exit | >>%LogFile% sqlplus %ResetSchemaUsername%/%ResetSchemaPassword%@%ResetSchemaServer% @%KilnPath%\nbt\Nbt\Schema\nbt_nuke.sql
+exit | >>%LogFile% sqlplus %ResetSchemaUsername%/%ResetSchemaPassword%@%ResetSchemaServer% @%SchemaPath%\nbt\Nbt\Schema\nbt_nuke.sql
 >>%LogFile% 2>&1 impdp.exe %ResetSchemaUsername%/%ResetSchemaPassword%@%ResetSchemaServer% DUMPFILE=NBT_MASTER_11G.DMP DIRECTORY=EXPORTS REMAP_SCHEMA=nbt_master:%ResetSchemaUsername% NOLOGFILE=Y
-exit | >>%LogFile% sqlplus %ResetSchemaUsername%/%ResetSchemaPassword%@%ResetSchemaServer% @%KilnPath%\nbt\Nbt\Schema\nbt_enable_cswadmin.sql
+exit | >>%LogFile% sqlplus %ResetSchemaUsername%/%ResetSchemaPassword%@%ResetSchemaServer% @%SchemaPath%\nbt\Nbt\Schema\nbt_enable_cswadmin.sql
 
 :Continue
 >>%LogFile% echo ====================================================================

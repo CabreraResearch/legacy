@@ -9,7 +9,7 @@
             ///<summary>Creates a thin grid with an Add form.</summary>
             Csw.error.throwException(Csw.error.exception('Csw.wizard.nodeThinGrid probably (possibly [maybe {dubiously} ] ) works, but it hasn\'t been tested. At all. Not even a little. You could start by uncommenting this line.', '', 'csw.wizard.nodethingrid.js', 22));
             var cswPrivate = {
-                ID: 'wizardNodeThinGrid',
+                name: 'wizardNodeThinGrid',
                 viewid: '',
                 nodetypeid: '',
                 excludeOcProps: []

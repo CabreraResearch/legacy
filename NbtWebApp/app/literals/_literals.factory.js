@@ -12,7 +12,9 @@
             'use strict';
             //#region cswPrivate
 
-            var cswPrivate = {};
+            var cswPrivate = {
+                count: 0
+            };
             cswPublic = cswPublic || {};
 
             cswPrivate.controlPreProcessing = function (opts, controlName) {
@@ -21,15 +23,12 @@
                 Reference useful relationships. 
                 TODO: We must fix this to allow Csw style children() as well as parent()
                 */
+                cswPrivate.count += 1;
                 opts = opts || {};
                 opts.controlName = controlName;
                 opts.$parent = $element;
                 opts.root = cswPublic.root;
-                if (opts.suffix) {
-                    opts.ID = Csw.makeId(cswPublic.getId(), opts.suffix);
-                } else if (Csw.isNullOrEmpty(opts.ID) && false === Csw.isNullOrEmpty(cswPublic.getId())) {
-                    opts.ID = Csw.makeId(cswPublic.getId(), controlName);
-                }
+                opts.ID = cswPublic.getId() + '_' + controlName + '_' + cswPrivate.count;
                 if (false === Csw.isNullOrEmpty(opts.labelText)) {
                     cswPublic.label({ forAttr: opts.ID, text: opts.labelText, useWide: opts.useWide });
                 }
@@ -82,8 +81,6 @@
 
             //#endregion cswPrivate
 
-            //#region Csw DOM classes
-
             Csw.each(Csw.literals, function(literal, name) {
                 if (false === Csw.contains(Csw, name) &&
                     name !== 'factory') {
@@ -99,8 +96,6 @@
                 /// <returns type="Csw.literals.jquery">A Csw.literals.jquery object</returns>
                 return cswPrivate.makeControlForChaining(opts, 'jquery', $jqElement);
             };
-
-            //#endregion Csw DOM classes
 
             return cswPublic;
         });

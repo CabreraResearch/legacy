@@ -53,15 +53,11 @@ namespace ChemSW.Nbt.Schema
                 IdentityTab.ServerManaged = true;
                 if( TabCount > 1 )
                 {
-                    foreach( Int32 PropId in NodeType.NameTemplatePropIds.ToIntCollection() )
+                    foreach( CswNbtMetaDataNodeTypeProp IdentityProp in CswNbtMetaData.TemplateValueToPropCollection( NodeType.getNodeTypeProps(), NodeType.NameTemplateValue ) )
                     {
-                        if( Int32.MinValue != PropId )
+                        if( null != IdentityProp )
                         {
-                            CswNbtMetaDataNodeTypeProp IdentityProp = NodeType.getNodeTypeProp( PropId );
-                            if( null != IdentityProp )
-                            {
-                                IdentityProp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, false, IdentityTab.TabId );
-                            }
+                            IdentityProp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, false, IdentityTab.TabId );
                         }
                     }
                 }

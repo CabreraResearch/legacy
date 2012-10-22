@@ -19,7 +19,7 @@
                 cswPrivate.options = cswPrivate.propVals.options;
 
                 cswPublic.control = cswPrivate.parent.checkBoxArray({
-                    ID: cswPublic.data.ID + '_cba',
+                    name: cswPublic.data.name + '_cba',
                     cols: cswPrivate.options.columns,
                     data: cswPrivate.options.data,
                     UseRadios: false,

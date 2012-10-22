@@ -229,6 +229,7 @@ namespace ChemSW.Nbt.MetaData
         /// <param name="ObjectClassProp"></param>
         /// <param name="Value"></param>
         /// <param name="SubFieldName">Optional. Use the default subfield if null.</param>
+        /// 
         public void SetObjectClassPropDefaultValue( CswNbtMetaDataObjectClassProp ObjectClassProp, object Value, CswNbtSubField.SubFieldName SubFieldName = null )
         {
             if( null != ObjectClassProp )

@@ -25,7 +25,7 @@
                     cswPrivate.ceilingVal = '999999999' + Csw.getMaxValueForPrecision(cswPrivate.precision);
 
                     cswPublic.control = cswPrivate.parent.numberTextBox({
-                        ID: cswPublic.data.ID + '_num',
+                        name: cswPublic.data.name + '_num',
                         value: (false === cswPublic.data.isMulti()) ? Csw.string(cswPrivate.propVals.value).trim() : Csw.enums.multiEditDefaultValue,
                         MinValue: Csw.number(cswPrivate.propVals.minvalue),
                         MaxValue: Csw.number(cswPrivate.propVals.maxvalue),

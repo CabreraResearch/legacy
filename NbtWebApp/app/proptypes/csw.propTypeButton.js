@@ -24,28 +24,9 @@
                     cswPrivate.state = cswPrivate.propVals.state;
                     cswPrivate.text = cswPrivate.propVals.text;
                     cswPrivate.selectedText = cswPrivate.propVals.selectedText;
-                    cswPrivate.selectedText = cswPrivate.propVals.selectedText;
-
-                    
-                    //                    cswPrivate.onClickSuccess = function(data) {
-                    //                        var isRefresh = data.action == Csw.enums.nbtButtonAction.refresh;
-                    //                        if (isRefresh) { //cases 26201, 26107 
-                    //                            Csw.tryExec(cswPublic.data.onReload,
-                    //                                (function(messagedivid) {
-                    //                                    return function() {
-                    //                                        if (false === Csw.isNullOrEmpty(data.message)) {
-                    //                                            var $newmessagediv = $('#' + messagedivid);
-                    //                                            $newmessagediv.text(data.message);
-                    //                                        }
-                    //                                    };
-                    //                                })(cswPublic.control.messageDiv.getId())
-                    //                            );
-                    //                        }
-                    //                        return false === isRefresh;
-                    //                    };
 
                     cswPublic.control = cswPrivate.propDiv.nodeButton({
-                        ID: Csw.makeId(cswPublic.data.propid, cswPrivate.text, 'btn'),
+                        name: cswPrivate.text,
                         value: cswPrivate.value,
                         size: cswPublic.data.size,
                         mode: cswPrivate.mode,
@@ -54,9 +35,8 @@
                         selectedText: cswPrivate.selectedText,
                         confirmmessage: cswPrivate.propVals.confirmmessage,
                         propId: cswPublic.data.propid,
-                        ReadOnly: Csw.bool(cswPublic.data.isReadOnly()),
                         onClickSuccess: cswPrivate.onClickSuccess,
-                        disabled: cswPublic.data.isDisabled()
+                        disabled: cswPublic.data.isDisabled() || cswPublic.data.isReadOnly()
                     });
                 };
 

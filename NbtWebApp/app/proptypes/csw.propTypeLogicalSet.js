@@ -19,7 +19,7 @@
                 cswPrivate.logicalSetJson = cswPrivate.propVals.logicalsetjson;
 
                 cswPublic.control = cswPrivate.parent.checkBoxArray({
-                    ID: cswPublic.data.ID + '_cba',
+                    name: cswPublic.data.name + '_cba',
                     cols: cswPrivate.logicalSetJson.columns,
                     data: cswPrivate.logicalSetJson.data,
                     UseRadios: false,

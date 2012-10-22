@@ -27,9 +27,7 @@
                             text: cswPrivate.text
                         });
                     } else {
-                        cswPublic.control = cswPrivate.parent.table({
-                            ID: Csw.makeId(cswPublic.data.ID, 'tbl')
-                        });
+                        cswPublic.control = cswPrivate.parent.table();
 
                         if (cswPublic.data.isDisabled()) {
                             cswPublic.control.cell(1, 1).p({
@@ -44,7 +42,6 @@
                         cswPrivate.cell12 = cswPublic.control.cell(1, 2).div();
 
                         cswPrivate.cell12.icon({
-                            ID: cswPublic.data.ID + '_edit',
                             iconType: Csw.enums.iconType.pencil,
                             hovertext: 'Edit',
                             size: 16,
@@ -54,15 +51,13 @@
                             }
                         });
 
-                        cswPrivate.editTable = cswPrivate.parent.table({
-                            ID: Csw.makeId(cswPublic.data.ID, 'edittbl')
-                        }).hide();
+                        cswPrivate.editTable = cswPrivate.parent.table().hide();
 
                         cswPrivate.editTable.cell(1, 1).span({ text: 'Text' });
 
                         cswPrivate.editTextCell = cswPrivate.editTable.cell(1, 2);
                         cswPrivate.editText = cswPrivate.editTextCell.input({
-                            ID: cswPublic.data.ID + '_text',
+                            name: cswPublic.data.name + '_text',
                             type: Csw.enums.inputTypes.text,
                             value: cswPrivate.text,
                             onChange: function () {
@@ -76,7 +71,7 @@
 
                         cswPrivate.editHrefCell = cswPrivate.editTable.cell(2, 2);
                         cswPrivate.editHref = cswPrivate.editHrefCell.input({
-                            ID: cswPublic.data.ID + '_href',
+                            name: cswPublic.data.name + '_href',
                             type: Csw.enums.inputTypes.text,
                             value: cswPrivate.href,
                             onChange: function () {

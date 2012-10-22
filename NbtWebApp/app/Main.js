@@ -225,7 +225,7 @@ window.initMain = window.initMain || function (undefined) {
                      .$.hover(function () { $(this).CswAttrDom('title', Csw.clientSession.getExpireTime()); });
                 refreshDashboard();
                 refreshHeaderMenu();
-                universalsearch = Csw.composites.universalSearch({}, {
+                universalsearch = Csw.composites.universalSearch(null, {
                     searchBoxParent: Csw.main.searchDiv,
                     searchResultsParent: Csw.main.rightDiv,
                     searchFiltersParent: Csw.main.leftDiv,
@@ -301,7 +301,7 @@ window.initMain = window.initMain || function (undefined) {
     function refreshViewSelect(onSuccess) {
         Csw.main.viewSelectDiv.empty();
         mainviewselect = Csw.main.viewSelectDiv.viewSelect({
-            ID: 'mainviewselect',
+            name: 'mainviewselect',
             onSelect: handleItemSelect,
             onSuccess: onSuccess
         });
@@ -347,7 +347,7 @@ window.initMain = window.initMain || function (undefined) {
     function refreshWelcomeLandingPage() {
         refreshLandingPage(function () {
             Csw.layouts.landingpage(Csw.main.centerBottomDiv, {
-                ID: 'welcomeLandingPage',
+            name: 'welcomeLandingPage',
                 Title: '',
                 onLinkClick: handleItemSelect,
                 onAddClick: function (itemData) {
@@ -599,8 +599,8 @@ window.initMain = window.initMain || function (undefined) {
         };
         clear({ centertop: true, centerbottom: true });
 
-        var viewfilters = Csw.nbt.viewFilters({
-            ID: 'main_viewfilters',
+        Csw.nbt.viewFilters({
+            name: 'main_viewfilters',
             parent: Csw.main.centerTopDiv,
             viewid: o.viewid,
             onEditFilters: function (newviewid) {
@@ -617,7 +617,7 @@ window.initMain = window.initMain || function (undefined) {
             nodeid: o.nodeid,
             cswnbtnodekey: o.cswnbtnodekey,
             showempty: getEmptyGrid,
-            ID: mainGridId,
+            name: mainGridId,
             //'onAddNode': o.onAddNode,
             onEditNode: o.onEditNode,
             onDeleteNode: o.onDeleteNode,
@@ -678,8 +678,8 @@ window.initMain = window.initMain || function (undefined) {
 
         clear({ centertop: true, centerbottom: true });
 
-        var viewfilters = Csw.nbt.viewFilters({
-            ID: 'main_viewfilters',
+        Csw.nbt.viewFilters({
+        name: 'main_viewfilters',
             parent: Csw.main.centerTopDiv,
             viewid: o.viewid,
             onEditFilters: function (newviewid) {
@@ -696,7 +696,7 @@ window.initMain = window.initMain || function (undefined) {
             viewid: o.viewid,
             nodeid: o.nodeid,
             cswnbtnodekey: o.cswnbtnodekey,
-            ID: mainTableId,
+            name: mainTableId,
             Multi: multi,
             //'onAddNode': o.onAddNode,
             onEditNode: o.onEditNode,
@@ -778,7 +778,7 @@ window.initMain = window.initMain || function (undefined) {
         if (viewopts) Csw.extend(v, viewopts);
         clear({ centerbottom: true });
         var div = Csw.main.centerBottomDiv.div({
-            ID: 'deftbldiv',
+            name: 'deftbldiv',
             align: 'center'
         });
         div.css({ textAlign: 'center' });
@@ -799,7 +799,7 @@ window.initMain = window.initMain || function (undefined) {
         clear({ right: true });
 
         Csw.layouts.tabsAndProps(Csw.main.rightDiv, {
-            ID: 'nodetabs',
+            name: 'nodetabs',
             globalState: {
                 nodeids: [o.nodeid],
                 nodekeys: [o.cswnbtnodekey]
@@ -934,7 +934,6 @@ window.initMain = window.initMain || function (undefined) {
         };
         Csw.extend(o, options);
 
-        var getEmptyTree = (Csw.bool(o.showempty));
         if (Csw.isNullOrEmpty(o.nodeid)) {
             o.nodeid = Csw.cookie.get(Csw.cookie.cookieNames.CurrentNodeId);
             if (Csw.isNullOrEmpty(o.cswnbtnodekey)) {
@@ -947,8 +946,8 @@ window.initMain = window.initMain || function (undefined) {
 
         clear({ left: true });
 
-        var viewfilters = Csw.nbt.viewFilters({
-            ID: 'main_viewfilters',
+        Csw.nbt.viewFilters({
+            name: 'main_viewfilters',
             parent: Csw.main.leftDiv,
             viewid: o.viewid,
             onEditFilters: function (newviewid) {
@@ -961,7 +960,7 @@ window.initMain = window.initMain || function (undefined) {
         }); // viewFilters
 
         mainTree = Csw.nbt.nodeTree({
-            ID: 'main',
+            name: 'main',
             parent: Csw.main.leftDiv,
             forsearch: o.forsearch,
             onSelectNode: function (optSelect) {
@@ -1013,7 +1012,7 @@ window.initMain = window.initMain || function (undefined) {
         switch (actionName) {
             case 'create inspection':
                 designOpt = {
-                    ID: 'cswInspectionDesignWizard',
+                    name: 'cswInspectionDesignWizard',
                     viewid: o.ActionOptions.viewid,
                     viewmode: o.ActionOptions.viewmode,
                     onCancel: function () {
@@ -1048,7 +1047,7 @@ window.initMain = window.initMain || function (undefined) {
                         var createMaterialLandingPage = function () {
                             refreshLandingPage(function() {
                                 Csw.layouts.landingpage(Csw.main.centerBottomDiv, {
-                                    ID: 'createMaterialLandingPage',
+                                    name: 'createMaterialLandingPage',
                                     Title: actionData.Title,
                                     onTitleClick: function () {
                                         handleItemSelect({
@@ -1101,7 +1100,6 @@ window.initMain = window.initMain || function (undefined) {
                     title += 'Selected Container';
                 }
                 designOpt = {
-                    ID: Csw.makeId('cswDispenseContainerWizard'),
                     state: {
                         sourceContainerNodeId: o.sourceContainerNodeId,
                         currentQuantity: o.currentQuantity,

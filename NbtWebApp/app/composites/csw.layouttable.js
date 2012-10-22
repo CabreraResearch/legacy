@@ -7,7 +7,7 @@
         Csw.composites.register('layoutTable', function (cswParent, options) {
             'use strict';
             var cswPrivate = {
-                ID: '',
+                name: '',
                 cellSet: { rows: 1, columns: 1 },
                 firstRow: null,
                 firstCol: null,
@@ -39,7 +39,7 @@
                 if (cswPrivate.isRemoveMode(cswPublic.table)) {
                     removeCells = cswPublic.table.find('.CswLayoutTable_remove');
                     if (removeCells.length() > 0) {
-                        cswPublic.table.trigger(cswPrivate.ID + 'CswLayoutTable_onRemove', {
+                        cswPublic.table.trigger(cswPrivate.name + 'CswLayoutTable_onRemove', {
                             table: cswPublic.table,
                             cellSet: cswPublic.cellSet(row, column),
                             row: removeCells.propNonDom('row'),
@@ -251,7 +251,7 @@
                     dropCells = cswPublic.cellSet($dropCell.attr('row'), $dropCell.attr('column')); //table.findCell('[row="' + Csw.number($dropCell.attr('row')) + '"][column="' + Csw.number($dropCell.attr('column')) + '"]');
 
                     // This must happen BEFORE we do the swap, in case the caller relies on the contents of the div being where it was
-                    cswPublic.table.trigger(cswPrivate.ID + 'CswLayoutTable_onSwap', {
+                    cswPublic.table.trigger(cswPrivate.name + 'CswLayoutTable_onSwap', {
                         table: cswPublic.table,
                         cellSet: dragCells,
                         swapcellset: dropCells,
@@ -367,7 +367,7 @@
                     cswPrivate.disableDrag();
                 }
                 cswPrivate.setConfigMode('false');
-                cswPublic.table.trigger(cswPrivate.ID + 'CswLayoutTable_onConfigOff');
+                cswPublic.table.trigger(cswPrivate.name + 'CswLayoutTable_onConfigOff');
                 //cswPrivate.toggleRemove();
             };
 
@@ -395,7 +395,7 @@
                     cswPrivate.enableDrag();
                 }
                 cswPrivate.setConfigMode('true');
-                cswPublic.table.trigger(cswPrivate.ID + 'CswLayoutTable_onConfigOn');
+                cswPublic.table.trigger(cswPrivate.name + 'CswLayoutTable_onConfigOn');
             }; // cswPublic.configOn()
 
             /* Ctor: Build the init table */
@@ -403,25 +403,20 @@
                 if (options) {
                     Csw.extend(cswPrivate, options);
                 }
-                var layoutDiv = cswParent.div({ ID: Csw.makeId(cswPrivate.ID, window.Ext.id()) });
+                var layoutDiv = cswParent.div();
 
                 //Csw.extend(cswPublic, Csw.literals.div(cswPrivate));
-                var buttonDiv = layoutDiv.div({
-                    ID: Csw.makeId(cswPrivate.ID, 'btnDiv')
-                });
+                var buttonDiv = layoutDiv.div();
                 buttonDiv.css({ 'float': 'right' });
 
                 if (cswPrivate.ReadOnly) {
                     buttonDiv.hide();
                 }
 
-                cswPrivate.tableId = Csw.makeId(cswPrivate.ID, 'tbl');
-                cswPrivate.buttonTableId = Csw.makeId(cswPrivate.ID, 'buttontbl');
                 cswPrivate.firstRow = 1;
                 cswPrivate.firstCol = 1;
 
                 cswPublic.table = layoutDiv.table({
-                    ID: cswPrivate.tableId,
                     TableCssClass: cswPrivate.TableCssClass + ' CswLayoutTable_table',
                     CellCssClass: cswPrivate.CellCssClass + ' CswLayoutTable_cell',
                     cellpadding: cswPrivate.cellpadding,
@@ -443,17 +438,15 @@
                 });
 
                 cswPrivate.setConfigMode('false');
-                cswPublic.table.bind(cswPrivate.ID + 'CswLayoutTable_onSwap', cswPrivate.onSwap);
-                cswPublic.table.bind(cswPrivate.ID + 'CswLayoutTable_onRemove', cswPrivate.onRemove);
-                cswPublic.table.bind(cswPrivate.ID + 'CswLayoutTable_onConfigOn', cswPrivate.onConfigOn);
-                cswPublic.table.bind(cswPrivate.ID + 'CswLayoutTable_onConfigOff', cswPrivate.onConfigOff);
+                cswPublic.table.bind(cswPrivate.name + 'CswLayoutTable_onSwap', cswPrivate.onSwap);
+                cswPublic.table.bind(cswPrivate.name + 'CswLayoutTable_onRemove', cswPrivate.onRemove);
+                cswPublic.table.bind(cswPrivate.name + 'CswLayoutTable_onConfigOn', cswPrivate.onConfigOn);
+                cswPublic.table.bind(cswPrivate.name + 'CswLayoutTable_onConfigOff', cswPrivate.onConfigOff);
 
-                cswPublic.buttonTable = buttonDiv.table({
-                    ID: Csw.makeId(cswPrivate.ID, 'buttontbl')
-                });
+                cswPublic.buttonTable = buttonDiv.table();
                 if (cswPrivate.showAddButton) {
                     cswPrivate.addBtn = cswPublic.buttonTable.cell(1, 1).icon({
-                        ID: cswPrivate.ID + 'addbtn',
+                        name: cswPrivate.name + 'addbtn',
                         hovertext: 'Add',
                         iconType: Csw.enums.iconType.plus,
                         isButton: true,
@@ -467,7 +460,7 @@
                 }
                 if (cswPrivate.showRemoveButton) {
                     cswPrivate.removeBtn = cswPublic.buttonTable.cell(1, 2).icon({
-                        ID: cswPrivate.ID + 'rembtn',
+                        name: cswPrivate.name + 'rembtn',
                         hovertext: 'Remove',
                         iconType: Csw.enums.iconType.trash,
                         isButton: true,
@@ -480,7 +473,7 @@
                 }
                 if (cswPrivate.showExpandColButton) {
                     cswPrivate.expandColBtn = cswPublic.buttonTable.cell(1, 3).icon({
-                        ID: cswPrivate.ID + 'addcolumnbtn',
+                        name: cswPrivate.name + 'addcolumnbtn',
                         hovertext: 'Add Column',
                         iconType: Csw.enums.iconType.right,
                         isButton: true,
@@ -493,7 +486,7 @@
                 }
                 if (cswPrivate.showExpandRowButton) {
                     cswPrivate.expandRowBtn = cswPublic.buttonTable.cell(1, 4).icon({
-                        ID: cswPrivate.ID + 'addrowbtn',
+                        name: cswPrivate.name + 'addrowbtn',
                         hovertext: 'Add Row',
                         iconType: Csw.enums.iconType.down,
                         isButton: true,
@@ -506,7 +499,7 @@
                 }
                 if (cswPrivate.showConfigButton) {
                     cswPrivate.configBtn = cswPublic.buttonTable.cell(1, 5).icon({
-                        ID: cswPrivate.ID + 'configbtn',
+                        name: cswPrivate.name + 'configbtn',
                         hovertext: 'Configure',
                         iconType: Csw.enums.iconType.wrench,
                         isButton: true,

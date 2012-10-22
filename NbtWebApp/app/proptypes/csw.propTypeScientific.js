@@ -27,7 +27,7 @@
                     }
                     else {
                         cswPrivate.valueNtb = cswPublic.control.numberTextBox({
-                            ID: cswPublic.data.ID + '_val',
+                            name: cswPublic.data.name + '_val',
                             value: (false === cswPublic.data.isMulti()) ? Csw.string(cswPrivate.propVals.base).trim() : Csw.enums.multiEditDefaultValue,
                             ceilingVal: Csw.number(cswPrivate.ceilingVal),
                             Precision: cswPrivate.precision,
@@ -42,7 +42,7 @@
                         });
                         cswPublic.control.append('E');
                         cswPrivate.exponentNtb = cswPublic.control.numberTextBox({
-                            ID: cswPublic.data.ID + '_exp',
+                            name: cswPublic.data.name + '_exp',
                             value: (false === cswPublic.data.isMulti()) ? Csw.string(cswPrivate.propVals.exponent).trim() : Csw.enums.multiEditDefaultValue,
                             Precision: 0,
                             ReadOnly: cswPublic.data.isReadOnly(),

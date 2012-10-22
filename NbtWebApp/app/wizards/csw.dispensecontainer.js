@@ -15,7 +15,7 @@
 
                 //#region Variable Declaration
                 var cswPrivate = {
-                    ID: 'cswDispenseContainerWizard',
+                    name: 'cswDispenseContainerWizard',
                     state: {
                         sourceContainerNodeId: '',
                         currentQuantity: '',
@@ -106,7 +106,7 @@
                 };
 
                 cswPrivate.getState = function () {
-                    var ret = Csw.clientDb.getItem(cswPrivate.ID + '_' + cswDispenseWizardStateName);
+                    var ret = Csw.clientDb.getItem(cswPrivate.name + '_' + cswDispenseWizardStateName);
                     if (false === Csw.isNullOrEmpty(cswPrivate.state.requestItemId)) {
                         ret.sourceContainerNodeId = null;
                         ret.barcode = null;
@@ -116,11 +116,11 @@
                 };
 
                 cswPrivate.setState = function () {
-                    Csw.clientDb.setItem(cswPrivate.ID + '_' + cswDispenseWizardStateName, cswPrivate.state);
+                    Csw.clientDb.setItem(cswPrivate.name + '_' + cswDispenseWizardStateName, cswPrivate.state);
                 };
 
                 cswPrivate.clearState = function () {
-                    Csw.clientDb.removeItem(cswPrivate.ID + '_' + cswDispenseWizardStateName);
+                    Csw.clientDb.removeItem(cswPrivate.name + '_' + cswDispenseWizardStateName);
                 };
 
                 (function _pre() {
@@ -142,11 +142,6 @@
                     } else {
                         cswPrivate.wizard[button].disable();
                     }
-                };
-
-                cswPrivate.makeStepId = function (suffix, stepNo) {
-                    var step = stepNo || cswPrivate.currentStepNo;
-                    return Csw.makeId({ prefix: 'step_' + step, ID: cswPrivate.ID, suffix: suffix });
                 };
 
                 //Step 1. Select a Dispense Type.
@@ -185,7 +180,7 @@
                                     cswPrivate.state.dispenseType = cswPrivate.dispenseTypes.Dispense;
 
                                     var dispenseTypeRadioGroup = cswPrivate.divStep1.radiobutton({
-                                        ID: 'dispensetypes',
+                                        name: 'dispensetypes',
                                         names: dispenseTypesArray,
                                         onChange: function () {
                                             if (false === Csw.isNullOrEmpty(dispenseTypeRadioGroup.val())) {
@@ -241,7 +236,7 @@
                             cswPrivate.divStep1.br({ number: 2 });
 
                             dispenseTypeTable = cswPrivate.divStep1.table({
-                                ID: cswPrivate.makeStepId('setDispenseTypeTable'),
+                                name: 'setDispenseTypeTable',
                                 cellpadding: '1px',
                                 cellalign: 'left',
                                 cellvalign: 'middle',
@@ -304,7 +299,7 @@
                             cswPrivate.divStep2.br();
 
                             quantityTable = cswPrivate.divStep2.table({
-                                ID: cswPrivate.makeStepId('setQuantityTable'),
+                                name: 'setQuantityTable',
                                 cellpadding: '1px',
                                 cellvalign: 'middle'
                             });
@@ -334,7 +329,7 @@
 
                             var makeContainerSelect = function () {
                                 var containerTypeTable = quantityTable.cell(qtyTableCol, 1).table({
-                                    ID: cswPrivate.makeStepId('setContainerTypeTable'),
+                                    name: 'setContainerTypeTable',
                                     cellpadding: '1px',
                                     cellvalign: 'middle'
                                 }).hide();
@@ -343,7 +338,7 @@
                                 containerTypeTable.cell(1, 1).span({ text: 'Select a Container Type' });
 
                                 var containerTypeSelect = containerTypeTable.cell(2, 1).nodeTypeSelect({
-                                    ID: Csw.makeSafeId('nodeTypeSelect'),
+                                    name: 'nodeTypeSelect',
                                     objectClassName: 'ContainerClass',
                                     blankOptionText: blankText,
                                     onSelect: function (data, nodeTypeCount) {
@@ -365,14 +360,13 @@
                             var makeQuantityForm = function () {
 
                                 cswPrivate.amountsGrid = Csw.wizard.amountsGrid(quantityTable.cell(qtyTableCol, 1), {
-                                    ID: cswPrivate.wizard.makeStepId('wizardAmountsThinGrid'),
+                                    name: 'wizardAmountsThinGrid',
                                     onChange: function (quantities) {
                                         cswPrivate.formIsValid = cswPrivate.updateQuantityAfterDispense(quantities);
                                         cswPrivate.toggleButton(cswPrivate.buttons.finish, cswPrivate.formIsValid);
                                     },
                                     quantity: cswPrivate.state.initialQuantity,
                                     containerlimit: cswPrivate.containerlimit,
-                                    makeId: cswPrivate.wizard.makeStepId,
                                     containerMinimum: 0,
                                     action: 'Dispense',
                                     relatedNodeId: cswPrivate.state.sourceContainerNodeId,
@@ -384,7 +378,7 @@
 
                             var makePrintBarcodesCheckBox = function () {
                                 var checkBoxTable = quantityTable.cell(qtyTableCol, 1).table({
-                                    ID: cswPrivate.makeStepId('checkboxTable'),
+                                    name: 'checkboxTable',
                                     cellpadding: '1px',
                                     cellvalign: 'middle'
                                 });
@@ -618,7 +612,6 @@
                 (function _post() {
 
                     cswPrivate.wizard = Csw.layouts.wizard(cswPublic, {
-                        ID: Csw.makeId({ ID: cswPrivate.ID, suffix: 'wizard' }),
                         sourceContainerNodeId: cswPrivate.state.sourceContainerNodeId,
                         currentQuantity: cswPrivate.state.currentQuantity,
                         currentUnitName: cswPrivate.state.currentUnitName,

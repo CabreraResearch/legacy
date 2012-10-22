@@ -12,7 +12,10 @@
             /// <returns type="ul">A ul object</returns>
             var cswPrivate = {
                 $parent: '',
-                number: 1
+                count: 1,
+                ID: '',
+                name: '',
+                cssclass: ''
             };
             var cswPublic = {};
 
@@ -21,7 +24,9 @@
                 /// <param name="options" type="Object">Options to define the li.</param>
                 /// <returns type="li">A li object</returns>
                 var liInternal = {
-                    text: ''
+                    text: ''  ,
+                    ID: '',
+                    cssclass: ''
                 };
                 var liExternal = {};
 
@@ -29,7 +34,17 @@
                     Csw.extend(liInternal, liOptions);
                     
                     var $li, 
-                        html = '<li>';
+                        html = '',
+                        attr = Csw.makeAttr();
+
+                    cswPrivate.count += 1;
+                    attr.add('id', cswPrivate.ID + '_' + cswPrivate.count);
+                    attr.add('class', cswPrivate.cssclass);
+                    attr.add('name', cswPrivate.name + '_' + cswPrivate.count);
+                    
+                    html += '<li';
+                    html += attr.get();
+                    html += '>';
                     html += Csw.string(liInternal.text);
                     html += '</li>';
                     
@@ -42,7 +57,15 @@
             };
 
             (function () {
-                var html = '<ul></ul>';
+                var html = '',
+                    attr = Csw.makeAttr();
+
+                attr.add('id', cswPrivate.ID);
+                attr.add('class', cswPrivate.cssclass);
+
+                html += '<ul';
+                html += attr.get();
+                html += '></ul>';
                 var $ul;
 
                 Csw.extend(cswPrivate, options);

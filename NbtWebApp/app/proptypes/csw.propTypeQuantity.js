@@ -50,12 +50,10 @@
                             cswPrivate.selectedName = cswPublic.data.tabState.relatednodename;
                         }
 
-                        cswPublic.control = cswPrivate.parent.table({
-                            ID: Csw.makeId(cswPublic.data.ID, 'tbl')
-                        });
+                        cswPublic.control = cswPrivate.parent.table();
 
                         cswPrivate.numberTextBox = cswPublic.control.cell(1, cswPrivate.cellCol).numberTextBox({
-                            ID: cswPublic.data.ID + '_qty',
+                            name: cswPublic.data.name + '_qty',
                             value: (false === cswPublic.data.isMulti()) ? Csw.string(cswPrivate.propVals.value).trim() : Csw.enums.multiEditDefaultValue,
                             MinValue: Csw.number(cswPrivate.propVals.minvalue),
                             MaxValue: Csw.number(cswPrivate.propVals.maxvalue),
@@ -96,7 +94,7 @@
                             cswPrivate.relationships.push({ value: cswPrivate.selectedNodeId, display: cswPrivate.selectedName, frac: Csw.bool(cswPrivate.propVals.fractional) });
                         }
                         cswPrivate.selectBox = cswPublic.control.cell(1, cswPrivate.cellCol).select({
-                            ID: cswPublic.data.ID,
+                            name: cswPublic.data.name,
                             cssclass: 'selectinput',
                             onChange: function () {
                                 var val = cswPrivate.selectBox.val();
@@ -112,8 +110,8 @@
                             values: cswPrivate.relationships,
                             selected: cswPrivate.selectedNodeId
                         });
-                        if(Csw.isNullOrEmpty(cswPrivate.selectedNodeId)) {
-                            cswPublic.data.onPropChange({ nodeid: cswPrivate.selectBox.val() })
+                        if(cswPublic.data.doPropChangeDataBind() && Csw.isNullOrEmpty(cswPrivate.selectedNodeId)) {
+                            cswPublic.data.onPropChange({ nodeid: cswPrivate.selectBox.val() });
                         }
                         cswPrivate.cellCol += 1;
 
