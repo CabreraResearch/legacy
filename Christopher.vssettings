@@ -528,7 +528,7 @@ CSS 3.0;CSS 3.0</PropertyValue>
 				<PropertyValue name="AutoListParams">true</PropertyValue>
 			</ToolsOptionsSubCategory>
 			<ToolsOptionsSubCategory name="JavaScript Specific" RegisteredName="JavaScript Specific" PackageName="Microsoft.VisualStudio.JSLS.JavaScriptLanguageServicePackage, Microsoft.VisualStudio.JSLS, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-				<PropertyValue name="ImplicitReferencesString">Implicit (Windows)|C:\Program Files (x86)\Microsoft Visual Studio 11.0\JavaScript\References\libhelp.js|C:\Program Files (x86)\Microsoft Visual Studio 11.0\JavaScript\References\sitetypesWindows.js|C:\Program Files (x86)\Microsoft Visual Studio 11.0\JavaScript\References\domWindows.js|C:\Program Files (x86)\Microsoft Visual Studio 11.0\JavaScript\References\underscorefilter.js|C:\Program Files (x86)\Microsoft Visual Studio 11.0\JavaScript\References\showPlainComments.js|C:\kiln\Nbt\Nbt\NbtWebApp\app\_reference.js;Implicit (Web)|C:\Program Files (x86)\Microsoft Visual Studio 11.0\JavaScript\References\libhelp.js|C:\Program Files (x86)\Microsoft Visual Studio 11.0\JavaScript\References\sitetypesWeb.js|C:\Program Files (x86)\Microsoft Visual Studio 11.0\JavaScript\References\domWeb.js|C:\Program Files (x86)\Microsoft Visual Studio 11.0\JavaScript\References\underscorefilter.js|C:\Program Files (x86)\Microsoft Visual Studio 11.0\JavaScript\References\showPlainComments.js|~/Scripts/_references.js|C:\kiln\Nbt\Nbt\NbtWebApp\app\_reference.js|C:\kiln\Nbt\Nbt\NbtWebApp\app\CswApp-vsdoc.js|C:\kiln\Nbt\Nbt\NbtWebApp\vendor\jZebra\jzebra.js;Dedicated Worker|C:\Program Files (x86)\Microsoft Visual Studio 11.0\JavaScript\References\libhelp.js|C:\Program Files (x86)\Microsoft Visual Studio 11.0\JavaScript\References\dedicatedworker.js|C:\Program Files (x86)\Microsoft Visual Studio 11.0\JavaScript\References\underscorefilter.js|C:\Program Files (x86)\Microsoft Visual Studio 11.0\JavaScript\References\showPlainComments.js;</PropertyValue>
+				<PropertyValue name="ImplicitReferencesString">Implicit (Windows)|C:\Program Files (x86)\Microsoft Visual Studio 11.0\JavaScript\References\libhelp.js|C:\Program Files (x86)\Microsoft Visual Studio 11.0\JavaScript\References\sitetypesWindows.js|C:\Program Files (x86)\Microsoft Visual Studio 11.0\JavaScript\References\domWindows.js|C:\Program Files (x86)\Microsoft Visual Studio 11.0\JavaScript\References\underscorefilter.js|C:\Program Files (x86)\Microsoft Visual Studio 11.0\JavaScript\References\showPlainComments.js|C:\kiln\Nbt\Nbt\NbtWebApp\app\_reference.js;Implicit (Web)|C:\Program Files (x86)\Microsoft Visual Studio 11.0\JavaScript\References\libhelp.js|C:\Program Files (x86)\Microsoft Visual Studio 11.0\JavaScript\References\sitetypesWeb.js|C:\Program Files (x86)\Microsoft Visual Studio 11.0\JavaScript\References\domWeb.js|C:\Program Files (x86)\Microsoft Visual Studio 11.0\JavaScript\References\underscorefilter.js|C:\Program Files (x86)\Microsoft Visual Studio 11.0\JavaScript\References\showPlainComments.js|~/Scripts/_references.js|C:\kiln\Nbt\Nbt\NbtWebApp\app\CswApp-vsdoc.js|C:\kiln\Nbt\Nbt\NbtWebApp\vendor\jZebra\jzebra.js|http:///cdn.sencha.io/ext-4.1.0-gpl/ext-all-debug.js;Dedicated Worker|C:\Program Files (x86)\Microsoft Visual Studio 11.0\JavaScript\References\libhelp.js|C:\Program Files (x86)\Microsoft Visual Studio 11.0\JavaScript\References\dedicatedworker.js|C:\Program Files (x86)\Microsoft Visual Studio 11.0\JavaScript\References\underscorefilter.js|C:\Program Files (x86)\Microsoft Visual Studio 11.0\JavaScript\References\showPlainComments.js;</PropertyValue>
 				<PropertyValue name="InsertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesis">false</PropertyValue>
 				<PropertyValue name="FormatOnPaste">true</PropertyValue>
 				<PropertyValue name="InsertSpaceAfterCommaDelimiter">true</PropertyValue>
@@ -537,7 +537,7 @@ CSS 3.0;CSS 3.0</PropertyValue>
 				<PropertyValue name="InsertSpaceAfterKeywordsInControlFlowStatements">true</PropertyValue>
 				<PropertyValue name="FormatCompletedBlockOnRightCurlyBrace">true</PropertyValue>
 				<PropertyValue name="InsertSpaceBeforeAndAfterBinaryOperators">true</PropertyValue>
-				<PropertyValue name="DownloadRemoteReferences">false</PropertyValue>
+				<PropertyValue name="DownloadRemoteReferences">true</PropertyValue>
 				<PropertyValue name="FormatCompletedStatementOnSemicolon">true</PropertyValue>
 				<PropertyValue name="OnlyUseTaborEnterToCommit">true</PropertyValue>
 				<PropertyValue name="ShowErrorsAsWarnings">false</PropertyValue>
@@ -1030,7 +1030,7 @@ CSS 3.0;CSS 3.0</PropertyValue>
 			<PropertyValue name="ErrorListShowsMessages">false</PropertyValue>
 			<PropertyValue name="ErrorListScopeFilteringActive">false</PropertyValue>
 			<PropertyValue name="ErrorListFilterScope">3</PropertyValue>
-			<PropertyValue name="ActiveProvider">{00000000-0000-0000-0000-000000000000}</PropertyValue>
+			<PropertyValue name="ActiveProvider">{7E5BB8D2-57E5-4FA9-9542-3870395C16A1}</PropertyValue>
 			<TaskProviders>
 				<Provider GUID="{7E5BB8D2-57E5-4FA9-9542-3870395C16A1}">
 					<Columns>
@@ -3032,6 +3032,34 @@ CSS 3.0;CSS 3.0</PropertyValue>
 						<Column Name="Subcategory" Width="0" Visibility="Invisible" SortPriority="3" SortDirection="Up"/>
 					</Columns>
 				</Provider>
+				<Provider GUID="{00000000-0000-0000-0000-000000000000}">
+					<Columns>
+						<Column Name="Priority" Width="20" Visibility="Visible" SortPriority="0" SortDirection="Up"/>
+						<Column Name="Bitmap" Width="17" Visibility="Visible" SortPriority="-1" SortDirection="Up"/>
+						<Column Name="ProviderKnowsOrder" Width="17" Visibility="Invisible" SortPriority="2" SortDirection="Up"/>
+						<Column Name="Checked" Width="28" Visibility="Visible" SortPriority="-1" SortDirection="Up"/>
+						<Column Name="Description" Width="250" Visibility="Visible" SortPriority="7" SortDirection="Up"/>
+						<Column Name="File" Width="120" Visibility="Visible" SortPriority="4" SortDirection="Up"/>
+						<Column Name="Line" Width="70" Visibility="Visible" SortPriority="5" SortDirection="Up"/>
+						<Column Name="Column" Width="70" Visibility="Invisible" SortPriority="6" SortDirection="Up"/>
+						<Column Name="Category" Width="0" Visibility="Invisible" SortPriority="1" SortDirection="Up"/>
+						<Column Name="Subcategory" Width="0" Visibility="Invisible" SortPriority="3" SortDirection="Up"/>
+					</Columns>
+				</Provider>
+				<Provider GUID="{00000000-0000-0000-0000-000000000000}">
+					<Columns>
+						<Column Name="Priority" Width="20" Visibility="Visible" SortPriority="0" SortDirection="Up"/>
+						<Column Name="Bitmap" Width="17" Visibility="Visible" SortPriority="-1" SortDirection="Up"/>
+						<Column Name="ProviderKnowsOrder" Width="17" Visibility="Invisible" SortPriority="2" SortDirection="Up"/>
+						<Column Name="Checked" Width="28" Visibility="Visible" SortPriority="-1" SortDirection="Up"/>
+						<Column Name="Description" Width="250" Visibility="Visible" SortPriority="7" SortDirection="Up"/>
+						<Column Name="File" Width="120" Visibility="Visible" SortPriority="4" SortDirection="Up"/>
+						<Column Name="Line" Width="70" Visibility="Visible" SortPriority="5" SortDirection="Up"/>
+						<Column Name="Column" Width="70" Visibility="Invisible" SortPriority="6" SortDirection="Up"/>
+						<Column Name="Category" Width="0" Visibility="Invisible" SortPriority="1" SortDirection="Up"/>
+						<Column Name="Subcategory" Width="0" Visibility="Invisible" SortPriority="3" SortDirection="Up"/>
+					</Columns>
+				</Provider>
 			</TaskProviders>
 		</Category>
 		<Category name="Environment_Toolbox" Category="{481999F2-7479-4e03-83D5-BE808BA142DF}" Package="{DA9FB551-C724-11d0-AE1F-00A0C90FFFC3}" RegisteredName="Environment_Toolbox" PackageName="Visual Studio Environment Package">
@@ -3691,8 +3719,8 @@ CSS 3.0;CSS 3.0</PropertyValue>
 									<wm:ToolWindowView ContextVisibilityEnabled="False" Name="ST:0:0:{73f6dd58-437e-11d3-b88e-00c04f79f802}" DockedHeight="537.6" DockedWidth="632.8" FloatingTop="76.8" FloatingLeft="819.2" FloatingHeight="537.6" FloatingWidth="204.8"/>
 									<wm:ToolWindowView ContextVisibilityEnabled="False" Name="ST:0:0:{57dc5d59-11c2-4955-a7b4-d7699d677e93}" DockedHeight="537.6" DockedWidth="632.8" FloatingTop="76.8" FloatingLeft="819.2" FloatingHeight="537.6" FloatingWidth="204.8"/>
 								</AutoHideGroup>
-								<AutoHideGroup IsVisible="True">
-									<wm:ToolWindowView OnTopWhenLastInContext="False" ForceCreate="ForceCreate" IconIndex="1" IconResourceID="6650" IconResourcePackage="da9fb551-c724-11d0-ae1f-00a0c90fffc3" Name="ST:0:0:{eefa5220-e298-11d0-8f78-00a0c9110057}" IsVisible="True" DockedHeight="384" DockedWidth="632.8" FloatingTop="76.8" FloatingLeft="819.2" FloatingHeight="384" FloatingWidth="204.8"/>
+								<AutoHideGroup>
+									<wm:ToolWindowView OnTopWhenLastInContext="False" ContextVisibilityEnabled="False" ForceCreate="ForceCreate" IconIndex="1" IconResourceID="6650" IconResourcePackage="da9fb551-c724-11d0-ae1f-00a0c90fffc3" Name="ST:0:0:{eefa5220-e298-11d0-8f78-00a0c9110057}" DockedHeight="384" DockedWidth="632.8" FloatingTop="76.8" FloatingLeft="819.2" FloatingHeight="384" FloatingWidth="204.8"/>
 								</AutoHideGroup>
 							</AutoHideChannel>
 							<AutoHideChannel Dock="Top"/>
@@ -3729,7 +3757,7 @@ CSS 3.0;CSS 3.0</PropertyValue>
 									<wm:ToolWindowView ContextVisibilityEnabled="False" Name="ST:0:0:{fdffccf2-5f63-404f-86ad-33693f544948}" DockedHeight="280" DockedWidth="1024" FloatingTop="576" FloatingLeft="102.4" FloatingHeight="192" FloatingWidth="614.4"/>
 									<wm:ToolWindowView ContextVisibilityEnabled="False" Name="ST:0:0:{73f6dd5b-437e-11d3-b88e-00c04f79f802}" DockedHeight="280" DockedWidth="1024" FloatingTop="576" FloatingLeft="102.4" FloatingHeight="192" FloatingWidth="614.4"/>
 									<wm:ToolWindowView ForceCreate="DontForceCreate" IconIndex="5" IconResourceID="300" IconResourcePackage="2c309824-a7a7-4f97-b241-70e87a4164c7" Name="ST:0:0:{fbc4f7d1-f791-4449-a5c9-04a4079aa9d2}" DockedHeight="280" DockedWidth="1024" FloatingTop="100" FloatingLeft="100" FloatingHeight="450" FloatingWidth="450"/>
-									<wm:ToolWindowView OnTopWhenLastInContext="False" ForceCreate="DontForceCreate" IconIndex="0" IconResourceID="10969" IconResourcePackage="24e33dbf-cadf-4da8-acfe-566366fc8468" Name="ST:0:0:{eccc9e97-fd3b-4c15-af76-ef71a71d8b17}" DockedHeight="280" DockedWidth="1024" FloatingTop="100" FloatingLeft="100" FloatingHeight="450" FloatingWidth="450"/>
+									<wm:ToolWindowView OnTopWhenLastInContext="False" ForceCreate="DontForceCreate" IconIndex="0" IconResourceID="10969" IconResourcePackage="24e33dbf-cadf-4da8-acfe-566366fc8468" Name="ST:0:0:{eccc9e97-fd3b-4c15-af76-ef71a71d8b17}" IsVisible="True" DockedHeight="280" DockedWidth="1024" FloatingTop="100" FloatingLeft="100" FloatingHeight="450" FloatingWidth="450"/>
 								</AutoHideGroup>
 							</AutoHideChannel>
 							<DockRoot IsVisible="True" DockedHeight="*" DockedWidth="*">
@@ -3982,6 +4010,9 @@ CSS 3.0;CSS 3.0</PropertyValue>
 					</wm:WMFloatSite>
 					<wm:WMFloatSite Id="b991e3a2-961d-4e7b-8046-8ffce7db9905" FloatingTop="100" FloatingLeft="100" FloatingHeight="450" FloatingWidth="712">
 						<wm:ToolWindowView ForceCreate="ForceCreate" IconIndex="0" IconResourceID="264" IconResourcePackage="0c6e6407-13fc-4878-869a-c8b4016c57fe" Name="ST:0:0:{9011e053-b6f5-58f4-94a9-cbe276db9bbc}" IsSelected="True" FloatingTop="100" FloatingLeft="100" FloatingHeight="450" FloatingWidth="712"/>
+					</wm:WMFloatSite>
+					<wm:WMFloatSite Id="f2a250f3-a37d-47ad-ab9a-42c0595b092b" FloatingTop="100" FloatingLeft="100" FloatingHeight="450" FloatingWidth="450">
+						<wm:ToolWindowView ForceCreate="ForceCreate" IconIndex="0" IconResourceID="269" IconResourcePackage="0c6e6407-13fc-4878-869a-c8b4016c57fe" Name="ST:0:0:{89a501a7-8cb2-5305-b270-7958b732a7e0}" IsSelected="True" FloatingTop="100" FloatingLeft="100" FloatingHeight="450" FloatingWidth="450"/>
 					</wm:WMFloatSite>
 				</WindowProfile>
 			</Design>
@@ -4244,6 +4275,9 @@ CSS 3.0;CSS 3.0</PropertyValue>
 					</wm:WMFloatSite>
 					<wm:WMFloatSite Id="39c7face-155a-42f0-a537-415db2c03419" FloatingTop="100" FloatingLeft="100" FloatingHeight="450" FloatingWidth="450">
 						<wm:ToolWindowView ForceCreate="ForceCreate" Name="ST:0:0:{9011e053-b6f5-58f4-94a9-cbe276db9bbc}" FloatingTop="100" FloatingLeft="100" FloatingHeight="450" FloatingWidth="450"/>
+					</wm:WMFloatSite>
+					<wm:WMFloatSite Id="31cf7f07-604a-4f49-bde7-ebe32c91a902" FloatingTop="100" FloatingLeft="100" FloatingHeight="450" FloatingWidth="450">
+						<wm:ToolWindowView ForceCreate="ForceCreate" Name="ST:0:0:{89a501a7-8cb2-5305-b270-7958b732a7e0}" FloatingTop="100" FloatingLeft="100" FloatingHeight="450" FloatingWidth="450"/>
 					</wm:WMFloatSite>
 				</WindowProfile>
 			</Debug>
