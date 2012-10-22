@@ -7,9 +7,10 @@
             'use strict';
             var cswPrivate = {
                 ID: 'landingpage',
-                Title: '',
+                Title: '',                
                 RoleId: '',
                 ActionId: '',
+                onTitleClick: null,
                 onLinkClick: null,
                 onAddClick: null,
                 onAddComponent: null,
@@ -52,9 +53,10 @@
                                 'font-size': '1.2em'
                             });
 
-                        cswPrivate.landingPageTitle = cswPrivate.landingPageDiv.span({
+                        cswPrivate.landingPageTitle = cswPrivate.landingPageDiv.a({
                             cssclass: 'LandingPageTitle',
-                            text: cswPrivate.Title
+                            text: cswPrivate.Title,
+                            onClick: cswPrivate.onTitleClick
                         });
 
                         cswPrivate.layoutTable = cswPrivate.landingPageDiv.layoutTable({
@@ -224,6 +226,7 @@
                 typeSelect.option({ value: 'Add', display: 'Add', isSelected: true });
                 typeSelect.option({ value: 'Link', display: 'Link' });
                 typeSelect.option({ value: 'Text', display: 'Text' });
+                //TODO - add Tab
 
                 var viewSelectLabel = table.cell(2, 1).span({ text: 'View:' }).hide();
 

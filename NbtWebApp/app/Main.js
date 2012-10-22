@@ -1050,6 +1050,13 @@ window.initMain = window.initMain || function (undefined) {
                                 Csw.layouts.landingpage(Csw.main.centerBottomDiv, {
                                     ID: 'createMaterialLandingPage',
                                     Title: actionData.Title,
+                                    onTitleClick: function () {
+                                        handleItemSelect({
+                                            type: 'view',
+                                            mode: 'tree',
+                                            itemid: actionData.NodeViewId
+                                        });
+                                    },
                                     ActionId: actionData.ActionId,
                                     onLinkClick: handleItemSelect,
                                     onAddClick: function (itemData) {
