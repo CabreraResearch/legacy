@@ -89,6 +89,8 @@
             //#region Tabs
 
             cswPrivate.clearTabs = function () {
+                cswPrivate.titleDiv.empty();
+                cswPrivate.identityDiv.empty();
                 cswPrivate.outerTabDiv.empty();
             };
 
@@ -202,9 +204,11 @@
                             ConfigMode: cswPrivate.tabState.Config
                         },
                         success: function (data) {
-                            cswPrivate.makeIdentityTab(data);
+                            
                             function makeTabs() {
                                 cswPrivate.clearTabs();
+
+                                cswPrivate.makeIdentityTab(data);
 
                                 var tabIds = Csw.delimitedString();
                                 Csw.each(data, function (tab) {
@@ -462,7 +466,7 @@
                         watchGlobal: cswPrivate.AjaxWatchGlobal,
                         urlMethod: cswPrivate.urls.QuotaUrlMethod,
                         data: {
-                            NodeTypeId: cswPrivate.tabState.nodetypeid,
+                            NodeTypeId: Csw.string(cswPrivate.tabState.nodetypeid),
                             NodeKey: ''
                         },
                         success: function (data) {
@@ -628,10 +632,10 @@
                             NodeId: Csw.tryParseObjByIdx(cswPrivate.globalState.nodeids, 0),
                             TabId: tabid,
                             SafeNodeKey: Csw.tryParseObjByIdx(cswPrivate.globalState.nodekeys, 0),
-                            NodeTypeId: cswPrivate.tabState.nodetypeid,
+                            NodeTypeId: Csw.string(cswPrivate.tabState.nodetypeid),
                             Date: Csw.string(cswPrivate.globalState.date, new Date().toDateString()),
                             Multi: Csw.bool(cswPrivate.tabState.Multi),
-                            filterToPropId: cswPrivate.globalState.filterToPropId,
+                            filterToPropId: Csw.string(cswPrivate.globalState.filterToPropId),
                             ConfigMode: cswPrivate.tabState.Config,
                             RelatedNodeId: Csw.string(cswPrivate.tabState.relatednodeid),
                             RelatedNodeTypeId: Csw.string(cswPrivate.tabState.relatednodetypeid),
