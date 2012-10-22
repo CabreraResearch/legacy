@@ -54,28 +54,24 @@
                                         function (event) { Csw.nodeHoverOut(event, cswPrivate.selectedNodeId); });
                     } else {
 
-                        cswPublic.control = cswPrivate.parent.table({
-                            ID: Csw.makeId(cswPublic.data.ID, window.Ext.id())
-                        });
-
-
+                        cswPublic.control = cswPrivate.parent.table();
+                        
                         if (cswPrivate.useSearch) {
                             // Find value by using search in a dialog
 
                             cswPrivate.nameSpan = cswPublic.control.cell(1, cswPrivate.cellCol).span({
-                                ID: Csw.makeId(cswPublic.data.ID, '', 'selectedname'),
+                                name: 'selectedname',
                                 text: cswPrivate.selectedName
                             });
 
                             cswPrivate.hiddenValue = cswPublic.control.cell(1, cswPrivate.cellCol).input({
-                                ID: Csw.makeId(cswPublic.data.ID, '', 'hiddenvalue'),
+                                name: 'hiddenvalue',
                                 type: Csw.enums.inputTypes.hidden,
                                 value: cswPrivate.selectedNodeId
                             });
                             cswPrivate.cellCol += 1;
 
                             cswPublic.control.cell(1, cswPrivate.cellCol).icon({
-                                ID: Csw.makeId(cswPublic.data.ID,window.Ext.id()),
                                 iconType: Csw.enums.iconType.magglass,
                                 hovertext: "Search " + cswPublic.data.propData.name,
                                 size: 16,
@@ -126,8 +122,7 @@
                             }
 
                             cswPrivate.selectBox = cswPublic.control.cell(1, cswPrivate.cellCol).select({
-                                ID: Csw.makeId(cswPublic.data.ID,window.Ext.id()),
-                                name: cswPublic.data.ID,
+                                name: cswPublic.data.name,
                                 cssclass: 'selectinput',
                                 onChange: function () {
                                     var val = cswPrivate.selectBox.val();
@@ -150,7 +145,6 @@
                             cswPrivate.toggleButton = cswPublic.control.cell(1, cswPrivate.cellCol).icon({
                                 iconType: Csw.enums.iconType.pencil,
                                 isButton: true,
-                                ID: Csw.makeId(cswPublic.data.ID,window.Ext.id()),
                                 onClick: function () {
                                     cswPrivate.toggleOptions(true);
                                 }
@@ -223,7 +217,6 @@
                             cswPrivate.makeAddImage = function (nodeTypeCount, lastNodeTypeId) {
                                 cswPrivate.addImage = cswPublic.control.cell(1, cswPrivate.cellCol).div()
                                     .buttonExt({
-                                        ID: Csw.makeId(cswPublic.data.ID,window.Ext.id()),
                                         icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.add),
                                         size: 'small',
                                         tooltip: { title: 'Add New ' + cswPublic.data.propData.name },

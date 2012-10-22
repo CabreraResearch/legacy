@@ -23,7 +23,7 @@
             /// <returns type="thinGrid">A thinGrid object</returns>
             'use strict';
             var cswPrivate = {
-                ID: '',
+                name: '',
                 cssclass: '',
                 rows: [],
                 width: '',

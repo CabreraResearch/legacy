@@ -6,7 +6,7 @@
         Csw.layouts.register('landingpage', function (cswParent, options) {
             'use strict';
             var cswPrivate = {
-                ID: 'landingpage',
+                name: 'landingpage',
                 Title: '',
                 RoleId: '',
                 ActionId: '',
@@ -46,7 +46,7 @@
                         };
                         Csw.extend(cswPrivate.data, ajaxdata);
 
-                        cswPrivate.landingPageDiv = cswParent.div({ ID: 'landingPageDiv' })
+                        cswPrivate.landingPageDiv = cswParent.div({ name: 'landingPageDiv' })
                             .css({
                                 'text-align': 'center',
                                 'font-size': '1.2em'
@@ -58,7 +58,7 @@
                         });
 
                         cswPrivate.layoutTable = cswPrivate.landingPageDiv.layoutTable({
-                            ID: 'landingpagetable',
+                            name: 'landingpagetable',
                             cellSet: { rows: 2, columns: 1 },
                             TableCssClass: 'LandingPageTable',
                             cellpadding: 10,
@@ -124,7 +124,7 @@
                                 }
 
                                 var landingPageHidden = textCell.input({
-                                    ID: thisItem.LandingPageId,
+                                    name: thisItem.LandingPageId,
                                     type: Csw.enums.inputTypes.hidden
                                 });
                                 landingPageHidden.propNonDom('landingpageid', thisItem.LandingPageId);
@@ -213,13 +213,13 @@
             cswPrivate.getAddItemForm = function (parentDiv, addOptions) {
                 var parent = parentDiv;
                 var table = parent.table({
-                    ID: 'addlandingpageitem_tbl'
+                    name: 'addlandingpageitem_tbl'
                 });
 
                 /* Type Select Label */
                 table.cell(1, 1).span({ text: 'Type:' });
                 var typeSelect = table.cell(1, 2).select({
-                    ID: 'landingpage_type'
+                    name: 'landingpage_type'
                 });
                 typeSelect.option({ value: 'Add', display: 'Add', isSelected: true });
                 typeSelect.option({ value: 'Link', display: 'Link' });
@@ -228,11 +228,11 @@
                 var viewSelectLabel = table.cell(2, 1).span({ text: 'View:' }).hide();
 
                 var viewSelectTable = table.cell(2, 2).table({
-                    ID: 'viewselecttable'
+                    name: 'viewselecttable'
                 });
 
                 var viewSelect = viewSelectTable.cell(1, 1).viewSelect({
-                    ID: 'landingpage_viewsel',
+                    name: 'landingpage_viewsel',
                     maxHeight: '275px',
                     includeRecent: false
                 });
@@ -241,17 +241,17 @@
                 var ntSelectLabel = table.cell(3, 1).span({ text: 'Add New:' });
                 var ntSelect = table.cell(3, 2)
                     .nodeTypeSelect({
-                        ID: 'landingpage_ntsel',
+                        name: 'landingpage_ntsel',
                         filterToPermission: 'Create'
                     });
 
                 /* Landing Page Item Text Label */
                 table.cell(4, 1).span({ text: 'Text:' });
 
-                var landingPageText = table.cell(4, 2).input({ ID: 'landingpage_text' });
+                var landingPageText = table.cell(4, 2).input({ name: 'landingpage_text' });
 
                 var addButton = table.cell(7, 2).button({
-                    ID: 'landingpage_add',
+                    name: 'landingpage_add',
                     enabledText: 'Add',
                     disabledText: 'Adding',
                     onClick: function () {

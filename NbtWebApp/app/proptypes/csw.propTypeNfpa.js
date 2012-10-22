@@ -48,15 +48,11 @@
                     cswPrivate.displayMode = cswPrivate.propVals.displaymode;
                     cswPrivate.hideSpecial = cswPrivate.propVals.hidespecial;
                     
-                    cswPublic.control = cswPrivate.parent.table({
-                        ID: Csw.makeId(cswPublic.data.ID, 'tbl')
-                    });
+                    cswPublic.control = cswPrivate.parent.table();
 
                     cswPrivate.table = cswPublic.control
                         .cell(1, 1)
-                        .table({
-                            ID: Csw.makeId(cswPublic.data.ID, 'tbl1')
-                        })
+                        .table()
                         .addClass('CswFieldTypeNFPA_table');
 
                     if (cswPrivate.displayMode === Csw.enums.NFPADisplayMode.Diamond) {
@@ -105,7 +101,6 @@
 
                     cswPrivate.makeSelect = function (cell, id, selected, div, vals) {
                         var select = cell.select({
-                            ID: Csw.makeId(cswPublic.data.ID, id),
                             selected: selected,
                             values: vals || cswPrivate.selVals,
                             cssclass: '',
@@ -140,7 +135,6 @@
 
                     if (false === cswPublic.data.isReadOnly()) {
                         cswPrivate.editTable = cswPublic.control.cell(1, 2).table({
-                            ID: Csw.makeId(cswPublic.data.ID, 'edittbl'),
                             FirstCellRightAlign: true
                         });
 

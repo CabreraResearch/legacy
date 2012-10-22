@@ -54,13 +54,10 @@
                     cswPrivate.selectedName = cswPrivate.relatednodename;
                 }
 
-                cswPublic.table = cswParent.table({
-                    ID: Csw.makeId(cswPrivate.ID, 'tbl')
-                });
+                cswPublic.table = cswParent.table();
 
-                var buildQuantityTextBox = function () {
+                var buildQuantityTextBox = function() {
                     cswPublic.quantityTextBox = cswPublic.table.cell(1, cswPrivate.cellCol).numberTextBox({
-                        ID: cswPrivate.ID + '_qty',
                         name: cswPrivate.name,
                         labelText: cswPrivate.labelText,
                         useWide: cswPrivate.useWide,
@@ -73,7 +70,7 @@
                         Precision: 6, //case 24646 - precision is being handled in the validator below, so we don't want to use the one in numberTextBox.
                         ReadOnly: Csw.bool(cswPrivate.qtyReadonly),
                         Required: Csw.bool(cswPrivate.Required),
-                        onChange: function () {
+                        onChange: function() {
                             var val = cswPublic.quantityTextBox.val();
                             cswPrivate.value = val;
                             cswPublic.quantityValue = val;
@@ -83,7 +80,7 @@
                     cswPublic.quantityValue = Csw.bool(cswPrivate.qtyReadonly) ? cswPrivate.value : cswPublic.quantityTextBox.val();
 
                     cswPrivate.cellCol += 1;
-                }
+                };
 
                 var buildUnitSelect = function () {
                     if (Csw.bool(cswPrivate.unitReadonly)) {
@@ -106,7 +103,6 @@
                             cswPrivate.relationships.push({ value: cswPrivate.selectedNodeId, display: cswPrivate.selectedName, frac: cswPrivate.fractional });
                         }
                         cswPublic.unitSelect = cswPublic.table.cell(1, cswPrivate.cellCol).select({
-                            ID: cswPrivate.ID + '_select',
                             name: cswPrivate.name,
                             cssclass: 'selectinput',
                             onChange: function () {

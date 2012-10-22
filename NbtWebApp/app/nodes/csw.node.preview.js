@@ -9,7 +9,7 @@
         Csw.register('nodeHoverIn', function (event, nodeid, cswnbtnodekey, delay) {
             'use strict';
             var previewopts = {
-                ID: nodeid + '_preview',
+                name: nodeid + '_preview',
                 nodeid: nodeid,
                 cswnbtnodekey: cswnbtnodekey,
                 eventArg: event
@@ -39,7 +39,7 @@
         Csw.nbt.register('nodePreview', function (cswParent, options) {
             'use strict';
             var cswPrivate = {
-                ID: '',
+                name: '',
                 nodeid: '',
                 cswnbtnodekey: '',
                 eventArg: {},
@@ -76,7 +76,7 @@
                 cswPrivate.div.show();
 
                 Csw.layouts.tabsAndProps(cswPrivate.div, {
-                    ID: cswPrivate.ID + 'tabs',
+                    name: cswPrivate.name + 'tabs',
                     globalState: {
                         nodeids: [cswPrivate.nodeid],
                         cswnbtnodekeys: [cswPrivate.cswnbtnodekey],
@@ -123,7 +123,7 @@
             (function() {
 
                 cswPrivate.div = cswParent.div({
-                        ID: cswPrivate.ID, 
+                        name: cswPrivate.name, 
                         cssclass: 'CswNodePreview' 
                     })
                     .css({

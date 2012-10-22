@@ -107,13 +107,14 @@ namespace ChemSW.Nbt.ServiceDrivers
                     if( LayoutType == CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit )
                     {
                         CswNbtMetaDataNodeTypeTab IdentityTab = NodeType.getIdentityTab();
+                        JObject Props = new JObject();
                         if( _CswNbtResources.Permit.canTab( CswNbtPermit.NodeTypePermission.View, NodeType, IdentityTab ) )
                         {
-                            JObject Props = getProps( Node, IdentityTab.TabId.ToString(), null, LayoutType );
+                            Props = getProps( Node, IdentityTab.TabId.ToString(), null, LayoutType );
                             Props.Remove( "nodeid" );
-                            Ret["IdentityTab"] = Props;
-                            Ret["IdentityTab"]["tabid"] = IdentityTab.TabId;
                         }
+                        Ret["IdentityTab"] = Props;
+                        Ret["IdentityTab"]["tabid"] = IdentityTab.TabId;
                     }
                 } // if-else( filterToPropId != string.Empty )
                 Ret["nodetypeid"] = NodeTypeId;
@@ -268,7 +269,6 @@ namespace ChemSW.Nbt.ServiceDrivers
                     IEnumerable<CswNbtMetaDataNodeTypeProp> FilteredProps = ( from _Prop in Props
                                                                               where CswNbtNodePropColl != null
                                                                               let Pw = CswNbtNodePropColl[_Prop]
-                                                                              where false == Pw.Hidden
                                                                               where _ConfigMode ||
                                                                                     _showProp( LayoutType, _Prop, FilterPropIdAttr, CswConvert.ToInt32( TabId ), Node )
                                                                               select _Prop );
@@ -368,7 +368,7 @@ namespace ChemSW.Nbt.ServiceDrivers
         {
             CswNbtMetaDataNodeTypeLayoutMgr.LayoutType LayoutType = _CswNbtResources.MetaData.NodeTypeLayout.LayoutTypeForEditMode( _CswNbtResources.EditMode );
             CswNbtMetaDataNodeTypeLayoutMgr.NodeTypeLayout Layout = Prop.getLayout( LayoutType, TabId );
-            if( false == Node.Properties[Prop].Hidden )
+            if( false == Node.Properties[Prop].Hidden || _ConfigMode )
             {
                 JProperty JpProp = makePropJson( Node.NodeId, TabId, Prop, Node.Properties[Prop], Layout.DisplayRow, Layout.DisplayColumn, Layout.TabGroup );
                 ParentObj.Add( JpProp );

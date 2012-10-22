@@ -29,7 +29,7 @@
                             cswPrivate.values.push(Csw.enums.multiEditDefaultValue);
                         }
                         cswPublic.control = cswPrivate.parent.select({
-                            ID: cswPublic.data.ID,
+                            name: cswPublic.data.name,
                             cssclass: 'selectinput',
                             onChange: function () {
                                 var val = cswPublic.control.val();

@@ -10,7 +10,7 @@
             'use strict';
 
             var cswPrivate = {
-                ID: 'cswCreateMaterialWizard',
+                name: 'cswCreateMaterialWizard',
                 exitFunc: null,
                 startingStep: 1,
                 wizard: null,
@@ -83,15 +83,15 @@
             };
 
             cswPrivate.getState = function () {
-                return Csw.clientDb.getItem(cswPrivate.ID + '_' + cswCreateMaterialWizardStateName);
+                return Csw.clientDb.getItem(cswPrivate.name + '_' + cswCreateMaterialWizardStateName);
             };
 
             cswPrivate.setState = function () {
-                Csw.clientDb.setItem(cswPrivate.ID + '_' + cswCreateMaterialWizardStateName, cswPrivate.state);
+                Csw.clientDb.setItem(cswPrivate.name + '_' + cswCreateMaterialWizardStateName, cswPrivate.state);
             };
 
             cswPrivate.clearState = function () {
-                Csw.clientDb.removeItem(cswPrivate.ID + '_' + cswCreateMaterialWizardStateName);
+                Csw.clientDb.removeItem(cswPrivate.name + '_' + cswCreateMaterialWizardStateName);
             };
 
             cswPrivate.reinitSteps = function (startWithStep) {
@@ -197,7 +197,6 @@
                 };
 
                 cswPrivate.wizard = Csw.layouts.wizard(cswParent.div(), {
-                    ID: Csw.makeId(cswPrivate.ID, 'wizard'),
                     Title: 'Create Material',
                     StepCount: 4,
                     Steps: cswPrivate.wizardSteps,
@@ -285,7 +284,7 @@
                         cswPrivate.divStep1.br({ number: 4 });
 
                         cswPrivate.materialTypeSelect = cswPrivate.divStep1.nodeTypeSelect({
-                            ID: cswPrivate.wizard.makeStepId('nodeTypeSelect'),
+                            name: 'nodeTypeSelect',
                             useWide: true,
                             labelText: 'Select a Material Type*: ',
                             objectClassName: 'MaterialClass',
@@ -299,7 +298,7 @@
 
                         /* TRADENAME */
                         cswPrivate.tradeNameInput = cswPrivate.divStep1.input({
-                            ID: cswPrivate.wizard.makeStepId('tradename'),
+                            name: 'tradename',
                             useWide: true,
                             labelText: 'Tradename*: ',
                             cssclass: 'required',
@@ -312,7 +311,7 @@
 
                         /* SUPPLIER */
                         cswPrivate.supplierSelect = cswPrivate.divStep1.nodeSelect({
-                            ID: cswPrivate.wizard.makeStepId('supplier'),
+                            name: 'supplier',
                             cssclass: 'required',
                             objectClassName: 'VendorClass',
                             addNodeDialogTitle: 'Vendor',
@@ -326,7 +325,7 @@
 
                         /* PARTNO */
                         cswPrivate.partNoInput = cswPrivate.divStep1.input({
-                            ID: cswPrivate.wizard.makeStepId('partno'),
+                            name: 'partno',
                             useWide: true,
                             value: cswPrivate.state.partNo,
                             labelText: 'Part No: ',
@@ -361,7 +360,7 @@
                                         cswPrivate.toggleButton(cswPrivate.buttons.prev, false, true);
                                         foundMaterialLabel = cswPrivate.divStep1.nodeLink({
                                             text: "A material with these properties already exists with a tradename of " + data.noderef,
-                                            ID: "materialExistsLabel"
+                                            name: "materialExistsLabel"
                                         });
                                     } else {
                                         cswPrivate.state.materialId = data.materialid;
@@ -520,7 +519,7 @@
                                     switch (columnName) {
                                         case cswPrivate.config.unitCountName:
                                             cswPublic.rows[rowid].unitCountCtrl = cswCell.numberTextBox({
-                                                ID: Csw.tryExec(Csw.makeId, 'sizeUnitCount' + rowid),
+                                                name: 'sizeUnitCount',
                                                 value: 1,
                                                 MinValue: 1,
                                                 Precision: 0,
@@ -532,7 +531,7 @@
                                             break;
                                         case cswPrivate.config.quantityName:
                                             cswPublic.rows[rowid].quantityCtrl = cswCell.numberTextBox({
-                                                ID: Csw.tryExec(Csw.makeId, 'quantityNumberBox' + rowid),
+                                                name: 'quantityNumberBox',
                                                 MinValue: 0,
                                                 excludeRangeLimits: true,
                                                 width: '60px',
@@ -541,7 +540,7 @@
                                                 }
                                             });
                                             cswPublic.rows[rowid].unitsCtrl = cswCell.select({
-                                                ID: Csw.tryExec(Csw.makeId, 'unitsOfMeasureSelect' + rowid),
+                                                name:'unitsOfMeasureSelect',
                                                 values: unitsOfMeasure,
                                                 onChange: function (value) {
                                                     cswPublic.rows[rowid].sizeValues.unit = cswPublic.rows[rowid].unitsCtrl.val();
@@ -553,7 +552,7 @@
                                             break;
                                         case cswPrivate.config.numberName:
                                             cswPublic.rows[rowid].catalogNoCtrl = cswCell.input({
-                                                ID: Csw.tryExec(Csw.makeId, 'sizeCatalogNo' + rowid),
+                                                name: 'sizeCatalogNo',
                                                 width: '80px',
                                                 onChange: function (value) {
                                                     cswPublic.rows[rowid].sizeValues.catalogNo = value;
@@ -562,7 +561,7 @@
                                             break;
                                         case cswPrivate.config.quantityEditableName:
                                             cswPublic.rows[rowid].quantEditableCtrl = cswCell.checkBox({
-                                                ID: Csw.tryExec(Csw.makeId, 'sizeQuantEditable' + rowid),
+                                                name: 'sizeQuantEditable',
                                                 Checked: true,
                                                 onChange: function (value) {
                                                     cswPublic.rows[rowid].sizeValues.quantEditableChecked = cswPublic.rows[rowid].quantEditableCtrl.val();
@@ -571,7 +570,7 @@
                                             break;
                                         case cswPrivate.config.dispensibleName:
                                             cswPublic.rows[rowid].dispensibleCtrl = cswCell.checkBox({
-                                                ID: Csw.tryExec(Csw.makeId, 'sizeDispensible' + rowid),
+                                                name: 'sizeDispensible',
                                                 Checked: true,
                                                 onChange: function (value) {
                                                     cswPublic.rows[rowid].sizeValues.dispensibleChecked = cswPublic.rows[rowid].dispensibleCtrl.val();
@@ -616,7 +615,7 @@
                         /* Size Select (hidden if only 1 NodeType present) - to get size node type */
                         selectDiv = div.div();
                         cswPrivate.sizeSelect = selectDiv.nodeTypeSelect({
-                            ID: cswPrivate.wizard.makeStepId('nodeTypeSelect'),
+                            name: 'nodeTypeSelect',
                             useWide: true,
                             value: cswPrivate.state.sizeNodeTypeId,
                             labelText: 'Select a Material Size: ',

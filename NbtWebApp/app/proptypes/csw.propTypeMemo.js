@@ -27,7 +27,7 @@
                             Csw.tryExec(cswPublic.data.onChange, val);
                             cswPublic.data.onPropChange({ text: val });
                         },
-                        ID: cswPublic.data.ID,
+                        name: cswPublic.data.name,
                         rows: cswPrivate.rows,
                         cols: cswPrivate.columns,
                         value: cswPrivate.value,

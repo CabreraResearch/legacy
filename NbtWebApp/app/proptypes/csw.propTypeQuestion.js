@@ -73,7 +73,6 @@
                         cswPublic.control.br();
                     } else {
                         cswPublic.control = cswPrivate.parent.table({
-                            ID: Csw.makeId(cswPublic.data.ID, 'tbl'),
                             FirstCellRightAlign: true
                         });
 
@@ -86,7 +85,7 @@
                         }
                         cswPrivate.answerSel = cswPublic.control.cell(1, 2)
                                               .select({
-                                                  ID: cswPublic.data.ID + '_ans',
+                                                  name: cswPublic.data.name + '_ans',
                                                   onChange: function () {
                                                       cswPrivate.checkCompliance();
                                                       var val = cswPrivate.answerSel.val();
@@ -99,7 +98,7 @@
 
                         cswPrivate.correctiveActionLabel = cswPublic.control.cell(2, 1).text('Corrective Action');
                         cswPrivate.correctiveActionTextBox = cswPublic.control.cell(2, 2).textArea({
-                            ID: cswPublic.data.ID + '_cor',
+                            name: cswPublic.data.name + '_cor',
                             text: cswPrivate.correctiveAction,
                             onChange: function () {
                                 cswPrivate.checkCompliance();
@@ -111,7 +110,7 @@
 
                         cswPublic.control.cell(3, 1).text('Comments');
                         cswPrivate.commentsArea = cswPublic.control.cell(3, 2).textArea({
-                            ID: cswPublic.data.ID + '_com',
+                            name: cswPublic.data.name + '_com',
                             text: cswPrivate.comments,
                             onChange: function () {
                                 var val = cswPrivate.commentsArea.val();

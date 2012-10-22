@@ -18,7 +18,7 @@
             /// <returns type="linkGrid">A linkGrid object</returns>
             'use strict';
             var cswPrivate = {
-                ID: '',
+                name: '',
                 cssclass: '',
                 linkText: '',
                 onLinkClick: null,

@@ -9,7 +9,7 @@
             var o = {
                 urlMethod: 'getQuotas',
                 saveUrlMethod: 'saveQuotas',
-                ID: 'action_quotas',
+                name: 'action_quotas',
                 onQuotaChange: null // function () { }
             };
             if (options) {
@@ -62,7 +62,7 @@
 
                         if (canedit) {
                             div.button({
-                                ID: o.ID + '_save',
+                                name: o.name + '_save',
                                 enabledText: 'Save',
                                 disabledText: 'Saving',
                                 onClick: handleSave
@@ -84,8 +84,7 @@
                 if (canedit) {
                     cell4 = table.cell(qRow, 4);
                     cell4.input({
-                        ID: o.ID + '_' + id + '_quota',
-                        name: o.ID + '_' + id + '_quota',
+                        name: o.name + '_' + id + '_quota',
                         type: Csw.enums.inputTypes.text,
                         value: quota,
                         width: '50px'
@@ -99,9 +98,9 @@
 
             function handleSave() {
                 Csw.crawlObject(quotaJson.objectclasses, function (childObj) {
-                    childObj.quota = $('#' + o.ID + '_OC_' + childObj.objectclassid + '_quota').val();
+                    childObj.quota = $('#' + o.name + '_OC_' + childObj.objectclassid + '_quota').val();
                     Csw.crawlObject(childObj.nodetypes, function (childObjNt) {
-                        childObjNt.quota = $('#' + o.ID + '_NT_' + childObjNt.nodetypeid + '_quota').val();
+                        childObjNt.quota = $('#' + o.name + '_NT_' + childObjNt.nodetypeid + '_quota').val();
                     }, false);
                 }, false);
 

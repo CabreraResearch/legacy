@@ -7,8 +7,8 @@
         Csw.actions.register('sessions', function (cswParent, options) {
             var o = {
                 urlMethod: 'getSessions',
-                endSessionUrlMethod: 'endSession',
-                ID: 'action_sessions'
+                endSessionUrlMethod: 'endSession' ,
+                name: 'action_sessions'
             };
             if (options) Csw.extend(o, options);
 
@@ -44,7 +44,7 @@
                             var cell2name = childObj.username;
                             var cell1 = table.cell(row, 1);
                             cell1.icon({
-                                ID: o.ID + '_end_' + childObj.sessionid,
+                                name: o.name + '_end_' + childObj.sessionid,
                                 hovertext: 'End Session',
                                 iconType: Csw.enums.iconType.x,
                                 state: Csw.enums.iconState.normal,

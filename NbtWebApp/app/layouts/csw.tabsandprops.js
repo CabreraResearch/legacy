@@ -7,7 +7,7 @@
         Csw.layouts.register('tabsAndProps', function (cswParent, options) {
             'use strict';
             var cswPrivate = {
-                ID: '',
+                name: '',
                 urls: {
                     TabsUrlMethod: 'getTabs',
                     SinglePropUrlMethod: 'getSingleProp',
@@ -44,6 +44,7 @@
                     relatednodetypeid: '',
                     relatedobjectclassid: '',
                     tabid: '',
+                    tabNo: 0,
                     nodetypeid: ''
                 },
                 IdentityTab: null,
@@ -75,13 +76,13 @@
                 //We don't have node name yet. Init the div in the right place and polyfill later.
                 cswPrivate.titleDiv = cswParent.div({ cssclass: 'CswIdentityTabHeader' }).hide();
                 cswPrivate.identityWrapDiv = cswParent.div();
-                
+
                 cswPrivate.tabsTable = cswPrivate.identityWrapDiv.table({ width: '100%' });
                 cswPrivate.identityDiv = cswPrivate.tabsTable.cell(1, 1); //.div();
 
                 cswPrivate.outerTabDiv = cswPrivate.tabsTable
                     .cell(3, 1)
-                    .tabDiv({ ID: cswPrivate.ID + '_tabdiv' });
+                    .tabDiv({});
                 cswPrivate.tabcnt = 0;
             }());
 
@@ -94,10 +95,10 @@
             cswPrivate.makeTabContentDiv = function (tabParent, tabid, canEditLayout) {
                 'use strict';
                 var tabContentDiv = tabParent.tabDiv({
-                    ID: tabid
+                    name: tabid
                 });
                 tabContentDiv.form({
-                    ID: tabid + '_form',
+                    name: tabid + '_form',
                     onsubmit: 'return false;'
                 });
 
@@ -111,6 +112,7 @@
                     Csw.subscribe(Csw.enums.events.CswNodeDelete, handle);
                 }
                 tabContentDiv.data('canEditLayout', canEditLayout);
+                tabContentDiv.data('tabid', tabid);
                 return tabContentDiv;
             };
 
@@ -137,10 +139,12 @@
 
                     if (Csw.isNullOrEmpty(cswPrivate.IdentityTab)) {
                         //
-                    } else {
+                    } else if (false === cswPrivate.tabState.Config &&
+                        cswPrivate.tabState.EditMode !== Csw.enums.editMode.PrintReport
+                        ) {
 
                         var layoutOpts = {
-                            ID: cswPrivate.ID + window.Ext.id(),
+                            name: cswPrivate.name + '_layout',
                             OddCellRightAlign: true,
                             ReadOnly: (cswPrivate.tabState.EditMode === Csw.enums.editMode.PrintReport || cswPrivate.tabState.ReadOnly),
                             cellSet: {
@@ -152,16 +156,18 @@
                             showExpandColButton: false,
                             showRemoveButton: false
                         };
-                        var tabId = cswPrivate.IdentityTab.tabid;
+                        cswPrivate.IdentityTabId = cswPrivate.IdentityTab.tabid;
                         delete cswPrivate.IdentityTab.tabid;
 
+                        cswPrivate.titleDiv.empty();
                         cswPrivate.titleDiv.append(cswPrivate.tabState.nodename);
                         cswPrivate.titleDiv.show();
 
                         if (false === Csw.isNullOrEmpty(cswPrivate.IdentityTab)) {
                             cswPrivate.identityWrapDiv.addClass('CswIdentityTab');
+                            cswPrivate.identityDiv.empty();
                             cswPrivate.identityLayoutTable = cswPrivate.identityDiv.layoutTable(layoutOpts);
-                            cswPrivate.handleProperties(cswPrivate.identityLayoutTable, cswPrivate.identityDiv, tabId, false, cswPrivate.IdentityTab);
+                            cswPrivate.handleProperties(cswPrivate.identityLayoutTable, cswPrivate.identityDiv, cswPrivate.IdentityTabId, false, cswPrivate.IdentityTab);
                         }
                     }
                 }
@@ -196,63 +202,81 @@
                             ConfigMode: cswPrivate.tabState.Config
                         },
                         success: function (data) {
-                            cswPrivate.clearTabs();
-                            var tabdivs = [];
-                            var selectedtabno = 0;
-                            var tabno = 0;
-                            var tabDiv, tabUl;
-
                             cswPrivate.makeIdentityTab(data);
+                            function makeTabs() {
+                                cswPrivate.clearTabs();
 
-                            var tabFunc = function (thisTab) {
-                                var thisTabId = thisTab.id;
-
-                                if (cswPrivate.tabState.EditMode === Csw.enums.editMode.PrintReport || tabdivs.length === 0) {
-                                    // For PrintReports, we're going to make a separate tabstrip for each tab
-                                    tabDiv = cswPrivate.outerTabDiv.tabDiv();
-                                    tabUl = tabDiv.ul();
-                                    tabdivs[tabdivs.length] = tabDiv;
+                                var tabIds = Csw.delimitedString();
+                                Csw.each(data, function (tab) {
+                                    tabIds.add(tab.id);
+                                });
+                                if(false === tabIds.contains(cswPrivate.tabState.tabid)) {
+                                    cswPrivate.tabState.tabid = '';
                                 }
-                                tabDiv = tabDiv || tabdivs[tabdivs.length - 1];
-                                tabUl = tabUl || tabDiv.ul();
-                                tabUl.li().a({ href: '#' + thisTabId, text: thisTab.name });
-                                cswPrivate.makeTabContentDiv(tabDiv, thisTabId, thisTab.canEditLayout);
-                                if (thisTabId === cswPrivate.tabState.tabid) {
-                                    selectedtabno = tabno;
-                                }
-                                tabno += 1;
-                                return false;
-                            };
-                            Csw.crawlObject(data, tabFunc, false);
 
-                            cswPrivate.tabcnt = tabno;
+                                var tabdivs = [];
+                                var tabno = 0;
+                                var tabDiv, tabUl;
 
-                            Csw.each(tabdivs, function (thisTabDiv) {
-                                thisTabDiv.tabs({
-                                    selected: selectedtabno,
-                                    select: function (event, ui) {
-                                        var ret = false;
-                                        var selectTabContentDiv = thisTabDiv.children('div:eq(' + Csw.number(ui.index) + ')');
-                                        var selectTabid = selectTabContentDiv.getId();
-                                        if (Csw.tryExec(cswPrivate.onBeforeTabSelect, selectedtabid)) {
-                                            if (false === Csw.isNullOrEmpty(selectTabContentDiv)) {
-                                                cswPrivate.form.empty();
-                                                cswPrivate.getProps(selectTabContentDiv, selectTabid);
-                                                Csw.tryExec(cswPrivate.onTabSelect, selectTabid);
-                                                ret = true;
-                                            }
+                                var tabFunc = function (thisTab) {
+                                    var thisTabId = thisTab.id;
+
+                                    if (cswPrivate.tabState.EditMode === Csw.enums.editMode.PrintReport || tabdivs.length === 0) {
+                                        // For PrintReports, we're going to make a separate tabstrip for each tab
+                                        tabDiv = cswPrivate.outerTabDiv.tabDiv();
+                                        tabUl = tabDiv.ul();
+                                        tabdivs[tabdivs.length] = tabDiv;
+                                    }
+                                    tabDiv = tabDiv || tabdivs[tabdivs.length - 1];
+
+                                    tabUl = tabUl || tabDiv.ul();
+                                    tabUl.li().a({ href: '#' + thisTabId, text: thisTab.name }).data('tabid', thisTabId);
+                                    cswPrivate.makeTabContentDiv(tabDiv, thisTabId, thisTab.canEditLayout);
+                                    if (thisTabId === cswPrivate.tabState.tabid) {
+                                        cswPrivate.tabState.tabNo = tabno;
+                                    }
+                                    tabno += 1;
+                                    return false;
+                                };
+                                Csw.crawlObject(data, tabFunc, false);
+
+                                cswPrivate.tabcnt = tabno;
+
+                                cswPrivate.genTab = function () {
+                                    Csw.tryExec(cswPrivate.onBeforeTabSelect, cswPrivate.tabState.tabid);
+                                    Csw.tryExec(cswPrivate.onTabSelect, cswPrivate.tabState.tabid);
+                                    cswPrivate.form.empty();
+                                    Csw.publish('initPropertyTearDown_' + cswPublic.getNodeId());
+                                    makeTabs();
+                                    return false;
+                                };
+
+                                Csw.each(tabdivs, function (thisTabDiv) {
+                                    thisTabDiv.$.tabs({
+                                        selected: cswPrivate.tabState.tabNo,
+                                        select: function (event, ui) {
+                                            var selectTabContentDiv = thisTabDiv.children('div:eq(' + Csw.number(ui.index) + ')');
+                                            cswPrivate.tabState.tabNo = Csw.number(ui.index);
+                                            cswPrivate.tabState.tabid = selectTabContentDiv.data('tabid');
+                                            return cswPrivate.genTab();
+                                        } // select()
+                                    }); // tabs
+                                    var eachTabContentDiv;
+                                    if (Csw.isNullOrEmpty(cswPrivate.tabState.tabid)) {
+                                        eachTabContentDiv = thisTabDiv.children('div:eq(' + Csw.number(thisTabDiv.tabs('option', 'selected')) + ')');
+                                        if (eachTabContentDiv.isValid) {
+                                            cswPrivate.tabState.tabid = eachTabContentDiv.data('tabid');
                                         }
-                                        Csw.publish('initPropertyTearDown_' + cswPublic.getNodeId());
-                                        return ret;
-                                    } // select()
-                                }); // tabs
-                                var eachTabContentDiv = thisTabDiv.children('div:eq(' + Csw.number(thisTabDiv.tabs('option', 'selected')) + ')');
-                                if (eachTabContentDiv.isValid) {
-                                    var selectedtabid = eachTabContentDiv.getId();
-                                    cswPrivate.getProps(eachTabContentDiv, selectedtabid);
-                                    Csw.tryExec(cswPrivate.onTabSelect, selectedtabid);
-                                }
-                            }); // for(var t in tabdivs)
+                                    } else {
+                                        eachTabContentDiv = thisTabDiv.children('div:eq(' + cswPrivate.tabState.tabNo + ')');
+                                    }
+                                    cswPrivate.getProps(eachTabContentDiv, cswPrivate.tabState.tabid);
+                                    Csw.tryExec(cswPrivate.onTabSelect, cswPrivate.tabState.tabid);
+
+                                }); // for(var t in tabdivs)
+                            }
+
+                            makeTabs();
                         } // success
                     }); // ajax
                 } // if-else editmode is add or preview
@@ -390,11 +414,10 @@
             cswPrivate.getCellSet = function (layoutTable, tabgroup, displayrow, displaycol) {
                 var ret;
                 if (false === Csw.isNullOrEmpty(tabgroup)) {
-                    var safetabgroup = Csw.makeSafeId(tabgroup);
                     if (Csw.isNullOrEmpty(cswPrivate.tabgrouptables)) {
                         cswPrivate.tabgrouptables = [];
                     }
-                    if (Csw.isNullOrEmpty(cswPrivate.tabgrouptables[safetabgroup])) {
+                    if (Csw.isNullOrEmpty(cswPrivate.tabgrouptables[tabgroup])) {
                         var cellSet = layoutTable.cellSet(displayrow, displaycol);
                         var propCell = cswPrivate.getPropertyCell(cellSet);
                         var fieldSet = propCell.fieldSet();
@@ -403,7 +426,7 @@
                         var div = fieldSet.div();
 
                         var tabgroupLayoutTable = div.layoutTable({
-                            ID: safetabgroup,
+                            name: tabgroup,
                             OddCellRightAlign: true,
                             ReadOnly: (cswPrivate.tabState.EditMode === Csw.enums.editMode.PrintReport || cswPrivate.tabState.ReadOnly),
                             cellSet: {
@@ -418,9 +441,9 @@
                             showExpandColButton: false,
                             showRemoveButton: false
                         });
-                        cswPrivate.tabgrouptables[safetabgroup] = tabgroupLayoutTable;
+                        cswPrivate.tabgrouptables[tabgroup] = tabgroupLayoutTable;
                     }
-                    ret = cswPrivate.tabgrouptables[safetabgroup].cellSet(displayrow, displaycol);
+                    ret = cswPrivate.tabgrouptables[tabgroup].cellSet(displayrow, displaycol);
                 } else {
                     ret = layoutTable.cellSet(displayrow, displaycol);
                 }
@@ -469,12 +492,12 @@
                     }
 
                     var formTable = cswPrivate.form.table({
-                        ID: cswPrivate.ID + '_formtbl_' + tabid + window.Ext.id(),
+                        name: cswPrivate.name + '_formtbl_' + tabid,
                         width: '100%'
                     });
 
                     var layoutOpts = {
-                        ID: cswPrivate.ID + '_props_' + tabid,
+                        name: cswPrivate.name + '_props_' + tabid,
                         OddCellRightAlign: true,
                         ReadOnly: (cswPrivate.tabState.EditMode === Csw.enums.editMode.PrintReport || cswPrivate.tabState.ReadOnly),
                         cellSet: {
@@ -523,9 +546,13 @@
                         Csw.crawlObject(cswPrivate.globalState.propertyData, updOnSuccess, false);
                     }
 
-                    if (cswPrivate.tabState.EditMode !== Csw.enums.editMode.PrintReport && Csw.bool(cswPrivate.tabState.showSaveButton)) {
+                    if (cswPrivate.tabState.EditMode !== Csw.enums.editMode.Preview &&
+                        cswPrivate.tabState.EditMode !== Csw.enums.editMode.AuditHistoryInPopup &&
+                        cswPrivate.tabState.EditMode !== Csw.enums.editMode.PrintReport &&
+                        Csw.bool(cswPrivate.tabState.showSaveButton)) {
+
                         cswPrivate.saveBtn = formTable.cell(2, 1).buttonExt({
-                            ID: 'SaveTab' + window.Ext.id(),
+                            name: 'SaveTab',
                             icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.save),
                             enabledText: 'Save Changes',
                             disabledText: 'Saving...',
@@ -549,17 +576,18 @@
                                         Csw.bool(tabContentDiv.data('canEditLayout'))) {
                             /* Case 24437 */
                         var editLayoutOpt = {
-                            ID: cswPrivate.ID,
+                            name: cswPrivate.name,
                             globalState: {
                                 nodeids: cswPrivate.globalState.nodeids,
                                 nodekeys: cswPrivate.globalState.nodekeys,
                                 nodetypeid: cswPrivate.tabState.nodetypeid
                             },
                             tabState: {
-                                tabid: cswPrivate.tabState.tabid
+                                tabid: tabid,
+                                tabNo: cswPrivate.tabState.tabNo
                             },
                             Refresh: function () {
-                                Csw.tryExec(cswPrivate.Refresh);
+                                //Csw.tryExec(cswPrivate.Refresh);
                                 cswPrivate.tabState.Config = false;
                                 cswPrivate.getTabs(tabContentDiv);
                             }
@@ -567,7 +595,7 @@
 
                         /* Show the 'fake' config button to open the dialog */
                         formTable.cell(1, 2).icon({
-                            ID: cswPrivate.ID + 'configbtn',
+                            name: cswPrivate.name + 'configbtn',
                             iconType: Csw.enums.iconType.wrench,
                             hovertext: 'Configure',
                             size: 16,
@@ -697,10 +725,10 @@
                         }
 
                         var inpPropCheck = labelCell.input({
-                            ID: 'check_' + propid,
+                            name: 'check_' + propid,
                             type: Csw.enums.inputTypes.checkbox,
                             value: false, // Value --not defined?,
-                            cssclass: cswPrivate.ID + '_check'
+                            cssclass: cswPrivate.name + '_check'
                         });
                         inpPropCheck.propNonDom('propid', propid);
                         inpPropCheck.hide();
@@ -792,7 +820,7 @@
                         var subProps = propData.subprops;
 
                         var subLayoutTable = propCell.layoutTable({
-                            ID: fieldOpt.propid + '_subproptable',
+                            name: fieldOpt.propid + '_subproptable',
                             width: '',
                             styles: {
                                 border: '1px solid #ccc'
@@ -979,7 +1007,7 @@
                             if (cswPrivate.globalState.ShowCheckboxes) {
                                 // apply the newly saved checked property values on this node to the checked nodes
                                 var nodechecks = cswPrivate.nodeTreeCheck.checkedNodes();
-                                var $propchecks = $('.' + cswPrivate.ID + '_check:checked');
+                                var $propchecks = $('.' + cswPrivate.name + '_check:checked');
 
                                 if (nodechecks.length > 0 && $propchecks.length > 0) {
                                     Csw.each(nodechecks, function (thisObj) {
@@ -1038,7 +1066,10 @@
                 cswPrivate.getTabs(cswPrivate.outerTabDiv);
 
                 if (cswPrivate.tabState.EditMode !== Csw.enums.editMode.PrintReport) {
-                    cswPrivate.linkDiv = cswParent.div({ ID: cswPrivate.ID + '_linkdiv', align: 'right' });
+                    cswPrivate.linkDiv = cswParent.div({
+                        name: cswPrivate.name + '_linkdiv',
+                        align: 'right'
+                    });
                     if (cswPrivate.globalState.ShowAsReport && false === cswPrivate.tabState.Multi) {
                         cswPrivate.linkDiv.a({
                             text: 'As Report',

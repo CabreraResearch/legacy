@@ -23,7 +23,7 @@
                 cleardiv();
 
                 var outertable = div.table({
-                    ID: 'outertable'
+                    name: 'outertable'
                 });
 
                 var cell11 = outertable.cell(1, 1);
@@ -32,7 +32,7 @@
                 // Delay
                 cell11.span({ text: 'Test Delay (ms):' });
                 cell11.append('<br/>');
-                var delaytb = cell11.input({ ID: 'delay', value: '500' });
+                var delaytb = cell11.input({ name: 'delay', value: '500' });
 
                 cell11.append('<br/><br/>');
 
@@ -57,7 +57,7 @@
                 cell11.append('<br/>');
 
                 var cbruntree = cell11.input({
-                    ID: 'cbruntree',
+                    name: 'cbruntree',
                     type: Csw.enums.inputTypes.checkbox,
                     checked: true,
                     onChange: function () {
@@ -71,7 +71,7 @@
                 cell11.span({ text: 'runTree' }).br();
 
                 var cbgetmainmenu = cell11.input({
-                    ID: 'cbgetmainmenu',
+                    name: 'cbgetmainmenu',
                     type: Csw.enums.inputTypes.checkbox,
                     checked: true,
                     onChange: function () {
@@ -83,7 +83,7 @@
                 cell11.span({ text: 'getMainMenu' }).br();
 
                 var cbgettabs = cell11.input({
-                    ID: 'cbgettabs',
+                    name: 'cbgettabs',
                     type: Csw.enums.inputTypes.checkbox,
                     checked: true,
                     onChange: function () {
@@ -98,7 +98,7 @@
                 cell11.span({ text: 'getTabs' }).br();
 
                 var cbgetprops = cell11.input({
-                    ID: 'cbgetprops',
+                    name: 'cbgetprops',
                     type: Csw.enums.inputTypes.checkbox,
                     checked: true,
                     onChange: function () {
@@ -112,7 +112,7 @@
                 cell11.append('<br/><br/>');
 
                 var startBtn = cell11.button({
-                    ID: 'start',
+                    name: 'start',
                     enabledText: 'Start',
                     disableOnClick: false,
                     onClick: function () {
@@ -123,7 +123,7 @@
                 startBtn.disable();
 
                 var stopBtn = cell11.button({
-                    ID: 'stop',
+                    name: 'stop',
                     enabledText: 'Stop',
                     disableOnClick: false,
                     onClick: function () {
@@ -137,7 +137,7 @@
                 stopBtn.disable();
 
                 var tbl = cell12.table({
-                    ID: 'resultstbl',
+                    name: 'resultstbl',
                     cellpadding: '5px'
                 });
 

@@ -9,7 +9,8 @@ using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
 using ChemSW.Nbt.ServiceDrivers;
 using Newtonsoft.Json.Linq;
-
+using System.Collections.Generic;
+using ChemSW.Config;
 
 namespace ChemSW.Nbt.ObjClasses
 {
@@ -33,6 +34,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string Dispose = "Dispose this Container";
             public const string Undispose = "Undispose";
             public const string Owner = "Owner";
+            public const string ContainerFamily = "Container Family";
         }
 
         private bool _IsDisposed
@@ -232,6 +234,16 @@ namespace ChemSW.Nbt.ObjClasses
                             ButtonData.Data["requestItemNodeTypeId"] = RequestAct.RequestItemNt.NodeTypeId;
                         }
                         break;
+                    case PropertyName.ContainerFamily:
+                        HasPermission = true;
+                        CswNbtView containerFamilyView = GetFamilyView();
+                        containerFamilyView.SaveToCache( false );
+
+                        ButtonData.Action = NbtButtonAction.loadView;
+                        ButtonData.Data["viewid"] = containerFamilyView.SessionViewId.ToString();
+                        ButtonData.Data["viewmode"] = containerFamilyView.ViewMode.ToString();
+                        ButtonData.Data["type"] = "view";
+                        break;
                 }
                 if( false == HasPermission )
                 {
@@ -333,6 +345,27 @@ namespace ChemSW.Nbt.ObjClasses
                 _createContainerTransactionNode( DispenseType, RealQuantityToAdd, Quantity.UnitId, RequestItemId, SourceContainer, this );
             }
         } // DispenseIn()
+
+        /// <summary>
+        /// Gets a tree view of this containers family
+        /// </summary>
+        /// <returns></returns>
+        public CswNbtView GetFamilyView()
+        {
+            CswNbtMetaDataObjectClass containerOC = _CswNbtResources.MetaData.getObjectClass( this.ObjectClass.ObjectClassId );
+            CswNbtMetaDataObjectClassProp barcodeOCP = containerOC.getObjectClassProp( PropertyName.Barcode );
+            CswNbtMetaDataObjectClassProp sourceContainerOCP = containerOC.getObjectClassProp( PropertyName.SourceContainer );
+            int maxGenerations = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswConfigurationVariables.ConfigurationVariableNames.container_max_depth ) );
+
+            CswNbtView familyView = new CswNbtView( _CswNbtResources );
+            familyView.ViewName = "Container Family for " + Barcode.Barcode;
+            CswNbtViewRelationship parent = familyView.AddViewRelationship( containerOC, false ); //only this container should be at the top
+            parent.NodeIdsToFilterIn.Add( this.NodeId );
+
+            _getFamilyView( ref familyView, parent, 1, maxGenerations, sourceContainerOCP, barcodeOCP );
+
+            return familyView;
+        }
 
         #endregion Custom Logic
 
@@ -512,6 +545,27 @@ namespace ChemSW.Nbt.ObjClasses
                 }
             }
             return ret;
+        }
+
+        /// <summary>
+        /// private worker method to get younger generations of containers in the family.
+        /// </summary>
+        /// <param name="view"></param>
+        /// <param name="parent"></param>
+        /// <param name="children"></param>
+        /// <param name="generation"></param>
+        /// <param name="maxGenerations"></param>
+        /// <param name="sourceContainerOCP"></param>
+        /// <param name="barcodeOCP"></param>
+        private void _getFamilyView( ref CswNbtView view, CswNbtViewRelationship parent, int generation, int maxGenerations,
+            CswNbtMetaDataObjectClassProp sourceContainerOCP, CswNbtMetaDataObjectClassProp barcodeOCP )
+        {
+            if( generation <= maxGenerations )
+            {
+                CswNbtViewRelationship generationXParent = view.AddViewRelationship( parent, NbtViewPropOwnerType.Second, sourceContainerOCP, false );
+                view.AddViewProperty( generationXParent, sourceContainerOCP );
+                _getFamilyView( ref view, generationXParent, generation + 1, maxGenerations, sourceContainerOCP, barcodeOCP );
+            }
         }
 
         #endregion
@@ -707,6 +761,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropButton Dispose { get { return ( _CswNbtNode.Properties[PropertyName.Dispose] ); } }
         public CswNbtNodePropButton Undispose { get { return ( _CswNbtNode.Properties[PropertyName.Undispose] ); } }
         public CswNbtNodePropRelationship Owner { get { return ( _CswNbtNode.Properties[PropertyName.Owner] ); } }
+        public CswNbtNodePropButton ContainerFamily { get { return ( _CswNbtNode.Properties[PropertyName.ContainerFamily] ); } }
         #endregion
 
 

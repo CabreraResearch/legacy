@@ -47,7 +47,7 @@
                         cswPrivate.table.cell(2, 1).show();
 
                         cswPrivate.comboBox = cswPrivate.selectDiv.comboBox({
-                            ID: cswPublic.data.ID + '_combo',
+                            name: cswPublic.data.name + '_combo',
                             topContent: cswPrivate.name,
                             selectContent: '',
                             width: '290px',
@@ -65,7 +65,7 @@
                         });
                         cswPrivate.comboBox.required(cswPublic.data.isRequired());
                         locationTree = Csw.nbt.nodeTree({
-                            ID: cswPublic.data.ID,
+                            name: cswPublic.data.name,
                             parent: cswPrivate.comboBox.pickList,
                             onInitialSelectNode: function (optSelect) {
                                 cswPrivate.onTreeSelect(optSelect);
@@ -107,9 +107,7 @@
                     }
                     cswPrivate.viewId = Csw.string(cswPrivate.propVals.viewid).trim();
 
-                    cswPrivate.table = cswPrivate.parent.table({
-                        ID: Csw.makeId(cswPublic.data.ID, 'tbl')
-                    });
+                    cswPrivate.table = cswPrivate.parent.table();
 
                     //TODO: Add nodeLink here
                     cswPrivate.table.cell(1, 1).text(cswPrivate.path);
@@ -129,7 +127,7 @@
                             cswPrivate.makeLocationCombo();
                         } else {
                             cswPrivate.table.cell(1, 2).icon({
-                                ID: Csw.makeId(cswPublic.data.ID, 'toggle'),
+                                name: 'toggle',
                                 iconType: Csw.enums.iconType.pencil,
                                 hovertext: 'Edit',
                                 size: 16,

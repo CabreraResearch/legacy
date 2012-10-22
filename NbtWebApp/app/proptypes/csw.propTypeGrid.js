@@ -33,7 +33,7 @@
                                         ViewId: cswPrivate.viewid,
                                         SafeNodeKey: cswPublic.data.tabState.cswnbtnodekey,
                                         NodeTypeId: '',
-                                        PropIdAttr: cswPublic.data.ID,
+                                        PropIdAttr: cswPublic.data.name,
                                         LimitMenuTo: '',
                                         ReadOnly: cswPublic.data.isReadOnly()
                                     }
@@ -60,16 +60,16 @@
                     cswPrivate.makeFullGrid = function (viewid, newDiv) {
                         'use strict';
                         newDiv.empty();
-                        cswPrivate.menuDiv = newDiv.div({ ID: Csw.makeId(cswPublic.data.ID + window.Ext.id(), 'grid_as_fieldtype_menu') }).css({ height: '25px' });
-                        var filterDiv = newDiv.div({ ID: Csw.makeId(cswPublic.data.ID + window.Ext.id(), 'grid_as_fieldtype_filter') });
-                        var gridDiv = newDiv.div({ ID: Csw.makeId(cswPublic.data.ID + window.Ext.id(), 'grid_as_fieldtype') });
+                        cswPrivate.menuDiv = newDiv.div({ name: 'grid_as_fieldtype_menu' }).css({ height: '25px' });
+                        var filterDiv = newDiv.div({ name: 'grid_as_fieldtype_filter' });
+                        var gridDiv = newDiv.div({ name: 'grid_as_fieldtype' });
                         cswPrivate.reinitGrid = (function () {
                             return function () {
                                 cswPrivate.makeFullGrid(viewid, newDiv);
                             };
                         }());
                         Csw.nbt.viewFilters({
-                            ID: cswPublic.data.ID + '_viewfilters',
+                            name: cswPublic.data.name + '_viewfilters',
                             parent: filterDiv,
                             viewid: viewid,
                             onEditFilters: function (newviewid) {
@@ -78,7 +78,7 @@
                         }); // viewFilters
 
                         var gridOpts = {
-                            ID: cswPublic.data.ID + '_fieldtypegrid',
+                            name: cswPublic.data.name + '_fieldtypegrid',
                             viewid: viewid,
                             nodeid: cswPublic.data.tabState.nodeid,
                             cswnbtnodekey: cswPublic.data.tabState.cswnbtnodekey,

@@ -7,7 +7,7 @@
             'use strict';
             
             var cswPrivate = {
-                ID: 'CswFutureScheduling',
+                name: 'CswFutureScheduling',
                 $parent: null,
                 onCancel: null, //function ($wizard) {},
                 onFinish: null, //function (viewid, viewmode) {},
@@ -66,7 +66,7 @@
 
                         if (Csw.number(data.result) > 0) {
                             var resultstree = Csw.nbt.nodeTree({
-                                ID: Csw.makeId(cswPrivate.ID, '', 'resultstree'),
+                                name: 'resultstree',
                                 height: '250px',
                                 width: '500px',
                                 parent: cswPrivate.resultscell
@@ -99,7 +99,6 @@
                 };
 
                 cswPrivate.wizard = Csw.layouts.wizard(div, {
-                    ID: Csw.makeId(cswPrivate.ID, '', 'wizard'),
                     Title: 'Future Scheduling Wizard',
                     StepCount: Csw.enums.wizardSteps_FutureScheduling.stepcount,
                     Steps: wizardSteps,
@@ -123,7 +122,6 @@
                 cswPrivate.step1div = cswPrivate.wizard.div(Csw.enums.wizardSteps_FutureScheduling.step1.step);
 
                 var step1table = cswPrivate.step1div.table({
-                    ID: Csw.makeId(cswPrivate.ID, '', 'table1'),
                     FirstCellRightAlign: true,
                     width: '100%',
                     cellpadding: 2
@@ -132,7 +130,7 @@
                 step1table.cell(1, 1).span({ text: 'Select future date:' });
 
                 cswPrivate.endDatePicker = step1table.cell(1, 2).dateTimePicker({
-                    ID: Csw.makeId(cswPrivate.ID, '', 'date'),
+                    name: 'date',
                     DisplayMode: 'Date',
                     Date: Csw.date().addDays(90).toString()
                 });
@@ -149,7 +147,7 @@
                     success: function (data) {
 
                         cswPrivate.generatorTree = Csw.nbt.nodeTree({
-                            ID: Csw.makeId(cswPrivate.ID, '', 'gentree'),
+                            name: 'gentree',
                             height: '225px',
                             width: '500px',
                             parent: cell42,
@@ -163,7 +161,7 @@
 
                 cswPrivate.step2div = cswPrivate.wizard.div(Csw.enums.wizardSteps_FutureScheduling.step2.step);
 
-                var step2table = cswPrivate.step2div.table({ ID: Csw.makeId(cswPrivate.ID, '', 'table2'), width: '100%' });
+                var step2table = cswPrivate.step2div.table({ width: '100%' });
                 step2table.cell(1, 1).span({ text: 'This operation will be completed by the following Batch Operations:' });
                 cswPrivate.resultscell = step2table.cell(2, 1);
 

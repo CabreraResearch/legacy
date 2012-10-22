@@ -59,20 +59,20 @@
             ///<returns type="Csw.dom">Object representing a Csw.dom</returns>
             'use strict';
 
-            var cswPrivate = {};
+            var cswPrivate = {
+                data: {}
+            };
             var cswPublic = options || {
                 parentId: ''
             };
 
             if (Csw.isJQuery(element)) {
                 cswPublic.$ = element;
-                cswPrivate.id = Csw.string(element.prop('id'));
                 cswPublic.isValid = true;
             } else if (false === Csw.isNullOrEmpty(element) && Csw.isJQuery(element.$)) {
                     /*This is already a Csw dom object*/
                 return element;
             } else {
-                cswPrivate.id = '';
                 cswPublic.$ = {};
             }
 
@@ -103,10 +103,8 @@
             };
 
             cswPrivate.prepControl = function (opts, controlName) {
-                var id = opts.id || controlName;
                 opts = opts || {};
-                cswPrivate.id = cswPrivate.id || Csw.makeId(cswPublic.parentId, 'sub', id, '_', false);
-                //opts.ID = opts.ID || cswPrivate.makeId(cswPublic.parentId, 'sub', id, '_', false);
+                opts.controlName = controlName;
                 opts.$ = cswPublic.$;
                 opts.root = cswPublic.root;
 
@@ -120,6 +118,8 @@
                 }
                 return ret;
             };
+
+            cswPublic[0] = cswPublic.$[0];
 
             cswPublic.addClass = function (name) {
                 /// <summary>Add a CSS class to an element.</summary>
@@ -238,23 +238,66 @@
                 return cswPublic;
             };
 
+            
+            cswPrivate.getData = function(propName) {
+            	/// <summary>
+            	/// Get the value of a data prop from an Element (first from the DOM, then from memory, then from clientDb)
+            	/// </summary>
+                var ret = null;
+                if (cswPrivate.isControlStillValid() && 
+                    false === Csw.isNullOrEmpty(propName)) {
+                    
+                    if(cswPublic[0] && cswPublic[0].dataset && cswPublic[0].dataset[propName]) {
+                        ret = cswPublic[0].dataset.propName;
+                    }
+                    if(Csw.isNullOrEmpty(ret)) {
+                        ret = cswPrivate.data[propName] || cswPublic.$.data(propName);
+                    }
+                    //We can probably come back and delete this
+                    if(Csw.isNullOrEmpty(ret)) {
+                        ret = Csw.clientDb.getItem(propName + '_control_data_' + cswPrivate.id);
+                    }
+                }
+                return ret;
+            };
+
+            cswPrivate.setData = function(propName, value) {
+                /// <summary>
+                /// Set the value of a data prop from an Element (first to the DOM, then to memory, then to clientDb)
+                /// </summary>
+                var ret = null;
+                if (cswPrivate.isControlStillValid() && 
+                    false === Csw.isNullOrEmpty(propName)) {
+                    
+                    ret = value;
+                    if(cswPublic[0] && cswPublic[0].dataset) {
+                        cswPublic[0].dataset[propName] = value;
+                        //keep it in memory too, in case we lose a handle on the DOM
+                        cswPrivate.data[propName] = value;
+                    } else {
+                        //No HTML5 for us, keep it in memory
+                        cswPrivate.data[propName] = value;
+                        cswPublic.$.data(propName, val);
+                    }
+                }
+                return ret;
+            };
+
             cswPublic.data = function (prop, val) {
                 /// <summary>Store property data on the control.</summary>
                 /// <returns type="Object">All properties, a single property, or the control if defining a property (for chaining).</returns> 
                 var ret = '';
                 if (cswPrivate.isControlStillValid()) {
-                    var _internal = Csw.clientDb.getItem('control_data_' + cswPrivate.id) || {};
                     switch (arguments.length) {
-                        case 0:
-                            ret = _internal || cswPublic.$.data();
-                            break;
+                        //this isn't a valid use case
+                        //case 0:
+                        //    ret = _internal || cswPublic.$.data();
+                        //    break;
                         case 1:
-                            ret = _internal[prop] || cswPublic.$.data(prop);
+                            ret = cswPrivate.getData(prop);
                             break;
                         case 2:
-                            _internal[prop] = val;
-                            cswPublic.$.data(prop, val);
-                            Csw.clientDb.setItem('control_data_' + cswPrivate.id, _internal);
+                            cswPrivate.setData(prop, val);
                             ret = cswPublic;
                             break;
                     }
@@ -310,7 +353,11 @@
             cswPublic.getId = function () {
                 /// <summary>Get the DOM Element ID of this object.</summary>
                 /// <returns type="String">Element ID.</returns> 
-                return cswPrivate.id;
+                var ret = null;
+                if (cswPrivate.isControlStillValid()) {
+                    ret = cswPublic[0].id;
+                }
+                return ret;
             };
 
             cswPublic.hide = function () {
@@ -546,98 +593,6 @@
             };
 
             return cswPublic;
-        });
-
-    Csw.makeId = Csw.makeId ||
-        Csw.register('makeId', function (options, id, suffix, delimiter, isUnique) {
-            /// <summary>
-            ///   Generates an ID for DOM assignment
-            /// </summary>
-            /// <param name="options" type="Object">
-            ///     A JSON Object or a prefix as string
-            ///     &#10;1 - options.id: Base ID string
-            ///     &#10;2 - options.prefix: String prefix to prepend
-            ///     &#10;3 - options.suffix: String suffix to append
-            ///     &#10;4 - options.Delimiter: String to use as delimiter for concatenation
-            /// </param>
-            /// <param name="ID" type="Object"></param>
-            /// <param name="suffix" type="Object"></param>
-            /// <param name="delimiter" type="Object"></param>
-            ///	<returns type="String">A concatenated string of provided values</returns>
-            var cswPrivate = {
-                idCount: 1 + Csw.number(Csw.getGlobalProp('uniqueIdCount'), 0),
-                prefix: '',
-                id: id,
-                suffix: suffix,
-                Delimiter: delimiter
-            };
-            var elementId = [];
-
-            if (Csw.isPlainObject(options)) {
-                Csw.extend(cswPrivate, options);
-            } else {
-                cswPrivate.prefix = options;
-            }
-            cswPrivate.Delimiter = Csw.string(cswPrivate.Delimiter, '_');
-
-            if (false === Csw.isNullOrEmpty(cswPrivate.prefix)) {
-                elementId.push(Csw.string(cswPrivate.prefix));
-            }
-            if (false === Csw.isNullOrEmpty(cswPrivate.id)) {
-                elementId.push(cswPrivate.id);
-            }
-
-            if (false === Csw.isNullOrEmpty(cswPrivate.suffix)) {
-                elementId.push(cswPrivate.suffix);
-            }
-            //            if (Csw.bool(isUnique, true)) {
-            //                Csw.setGlobalProp('uniqueIdCount', cswPrivate.idCount);
-            //                elementId.push(cswPrivate.idCount);
-            //            }
-            return elementId.join(cswPrivate.Delimiter);
-        });
-
-    Csw.makeSafeId = Csw.makeSafeId ||
-        Csw.register('makeSafeId', function (options, prefix, suffix, delimiter) {
-            /// <summary>   Generates a "safe" ID for DOM assignment </summary>
-            /// <param name="options" type="Object">
-            ///     A JSON Object
-            ///     &#10;1 - options.ID: Base ID string
-            ///     &#10;2 - options.prefix: String prefix to prepend
-            ///     &#10;3 - options.suffix: String suffix to append
-            ///     &#10;4 - options.Delimiter: String to use as delimiter for concatenation
-            /// </param>
-            /// <returns type="String">A concatenated string of provided values</returns>
-            var elementId, i, toReplace;
-            var o = {
-                ID: '',
-                prefix: Csw.string(prefix),
-                suffix: Csw.string(suffix),
-                Delimiter: Csw.string(delimiter, '_')
-            };
-            if (Csw.isPlainObject(options)) {
-                Csw.extend(o, options);
-            } else {
-                o.ID = Csw.string(options);
-            }
-
-            elementId = o.ID;
-            //toReplace = [/'/gi, / /gi, /\//g];
-            toReplace = [/\(/g, /\)/g, /'/gi, / /gi, /\//g, /&#58/gi, /:/gi];
-            if (false === Csw.isNullOrEmpty(o.prefix) && false === Csw.isNullOrEmpty(elementId)) {
-                elementId = o.prefix + o.Delimiter + elementId;
-            }
-            if (false === Csw.isNullOrEmpty(o.suffix) && false === Csw.isNullOrEmpty(elementId)) {
-                elementId += o.Delimiter + o.suffix;
-            }
-            for (i = 0; i < toReplace.length; i += 1) {
-                if (Csw.contains(toReplace, i)) {
-                    if (false === Csw.isNullOrEmpty(elementId)) {
-                        elementId = elementId.replace(toReplace[i], '');
-                    }
-                }
-            }
-            return elementId;
         });
 
     Csw.makeAttr = Csw.makeAttr ||

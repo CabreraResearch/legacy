@@ -7,7 +7,7 @@
         Csw.controls.register('checkBox', function (cswParent, options) {
             'use strict';
             var cswPrivate = {
-                ID: '',
+                name: '',
                 prefix: '',
                 Checked: '',
                 ReadOnly: false,
@@ -94,7 +94,6 @@
                         }
                         cswPrivate.checkBox = cswParent.div(cswPrivate);
                     } else {
-                        cswPrivate.ID = Csw.makeId(cswPrivate.ID, 'tst');
                         cswPrivate.ButtonType = cswPublic.getButtonType();
                         cswPrivate.checkBox = cswParent.imageButton(cswPrivate);
                     }

@@ -573,6 +573,20 @@ namespace ChemSW.Nbt.Schema
             #endregion
         }
 
+        public void _makeContainerFamilyButton()
+        {
+            #region Case 27884 - container family display button
+            _acceptBlame( CswDeveloper.MB, 27884 );
+            CswNbtMetaDataObjectClass containerOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.ContainerClass );
+            CswNbtMetaDataObjectClassProp containerFamilyOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( containerOC )
+            {
+                PropName = CswNbtObjClassContainer.PropertyName.ContainerFamily,
+                FieldType = CswNbtMetaDataFieldType.NbtFieldType.Button,
+            } );
+            _resetBlame();
+            #endregion
+        }
+
         public override void update()
         {
             // This script is for adding object class properties, 
@@ -731,6 +745,7 @@ namespace ChemSW.Nbt.Schema
             _makeEnterprisePartsAndManufacturerEquivalentPartsOCs();
             _makeReceiptLotOC();
             _setNodesToHiddenIfNull();
+            _makeContainerFamilyButton();
 
             #endregion TITANIA
         }

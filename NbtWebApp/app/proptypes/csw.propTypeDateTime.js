@@ -22,7 +22,7 @@
                         cswPublic.control.append(cswPublic.data.propData.gestalt);
                     } else {
                         cswPrivate.dateTimePicker = cswPublic.control.dateTimePicker({
-                            ID: cswPublic.data.ID,
+                            name: cswPublic.data.name,
                             Date: cswPrivate.date,
                             Time: cswPrivate.time,
                             DateFormat: Csw.serverDateFormatToJQuery(cswPrivate.propVals.value.dateformat),

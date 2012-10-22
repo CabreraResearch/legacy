@@ -13,7 +13,7 @@
             'use strict';
 
             var cswPrivate = {
-                ID: '',
+                name: '',
                 hovertext: '',
                 iconType: Csw.enums.iconType.none,
                 state: Csw.enums.iconState.normal,
