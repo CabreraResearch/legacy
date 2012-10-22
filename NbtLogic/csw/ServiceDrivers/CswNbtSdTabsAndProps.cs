@@ -107,13 +107,14 @@ namespace ChemSW.Nbt.ServiceDrivers
                     if( LayoutType == CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit )
                     {
                         CswNbtMetaDataNodeTypeTab IdentityTab = NodeType.getIdentityTab();
+                        JObject Props = new JObject();
                         if( _CswNbtResources.Permit.canTab( CswNbtPermit.NodeTypePermission.View, NodeType, IdentityTab ) )
                         {
-                            JObject Props = getProps( Node, IdentityTab.TabId.ToString(), null, LayoutType );
+                            Props = getProps( Node, IdentityTab.TabId.ToString(), null, LayoutType );
                             Props.Remove( "nodeid" );
-                            Ret["IdentityTab"] = Props;
-                            Ret["IdentityTab"]["tabid"] = IdentityTab.TabId;
                         }
+                        Ret["IdentityTab"] = Props;
+                        Ret["IdentityTab"]["tabid"] = IdentityTab.TabId;
                     }
                 } // if-else( filterToPropId != string.Empty )
                 Ret["nodetypeid"] = NodeTypeId;

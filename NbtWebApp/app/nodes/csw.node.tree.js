@@ -8,7 +8,7 @@
     Csw.nbt.register('nodeTree', function (opts) {
 
         var cswPrivate = {
-            ID: '',
+            name: '',
             parent: null,
             //showempty: false, // if true, shows an empty tree (primarily for search)
             forsearch: false, // if true, used to override default behavior of list views
@@ -108,13 +108,13 @@
                 if (false === Csw.bool(cswPrivate.ShowCheckboxes)) {
                     $cb.hide();
                 }
-                Csw.subscribe('CswMultiEdit', (function() {
-                    var onMultiEdit = function(eventObj, multiOpts) {
+                Csw.subscribe('CswMultiEdit', (function () {
+                    var onMultiEdit = function (eventObj, multiOpts) {
                         if (multiOpts && multiOpts.viewid === viewid) {
                             if (multiOpts.multi || Csw.bool(cswPrivate.ShowCheckboxes)) {
                                 $cb.show();
                                 if (cswPrivate.ValidateCheckboxes) {
-                                    $cb.click(function() { return cswPrivate.validateCheck($cb); });
+                                    $cb.click(function () { return cswPrivate.validateCheck($cb); });
                                 }
                             } else { // if (Csw.bool(cswPrivate.ShowCheckboxes)) {
                                 $cb.hide();
@@ -126,13 +126,13 @@
                     };
                     return onMultiEdit;
                 }()));
-                
+
                 if (thislocked) {
                     $('<img src="Images/quota/lock.gif" title="Quota exceeded" />')
                         .appendTo($childObj.children('a').first());
                 }
 
-                if(thisdisabled) {
+                if (thisdisabled) {
                     $childObj.children('a').addClass('disabled');
                 }
 
@@ -346,25 +346,32 @@
             if (false === Csw.isFunction(cswPrivate.onInitialSelectNode)) {
                 cswPrivate.onInitialSelectNode = cswPrivate.onSelectNode;
             }
-            cswPrivate.idPrefix = Csw.string(cswPrivate.ID) + '_';
+            cswPrivate.idPrefix = Csw.string(cswPrivate.name) + '_';
 
             cswPrivate.table = cswPrivate.parent.table();
-            var cell11 = cswPrivate.table.cell(1,1);
-            var cell12 = cswPrivate.table.cell(1,2);
-            var cell21 = cswPrivate.table.cell(2,1);
+            var cell11 = cswPrivate.table.cell(1, 1);
+            var cell12 = cswPrivate.table.cell(1, 2);
+            var cell21 = cswPrivate.table.cell(2, 1);
 
             cell11.css({ width: '100px', verticalAlign: 'middle' });
             cell12.css({ width: '170px' });
             cell21.propDom('colspan', 2);
 
-            cswPrivate.toggleDiv = cell11.div({ ID: Csw.makeId({ ID: cswPrivate.IdPrefix, suffix: 'toggleDiv' }) });
-            cswPublic.menuDiv = cell12.div({ ID: Csw.makeId({ ID: cswPrivate.IdPrefix, suffix: 'menuDiv', align: 'right' }) });
-            cswPublic.treeDiv = cell21.div({ ID: Csw.makeId({ ID: cswPrivate.IdPrefix, suffix: 'treeDiv' }) });
-            
+            cswPrivate.toggleDiv = cell11.div({
+                name: 'toggleDiv'
+            });
+            cswPublic.menuDiv = cell12.div({
+                name: 'menuDiv',
+                align: 'right'
+            });
+            cswPublic.treeDiv = cell21.div({
+                name: 'treeDiv'
+            });
+
 
             if (cswPrivate.ShowToggleLink) {
                 cswPrivate.toggleLink = cswPrivate.toggleDiv.a({
-                    ID: cswPrivate.idPrefix + 'toggle',
+                    name: 'toggleLink',
                     value: 'Expand All',
                     onClick: cswPublic.expandAll
                 });
@@ -387,6 +394,6 @@
 
         return cswPublic;
     });
-    
+
 
 })();

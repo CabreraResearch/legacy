@@ -617,7 +617,6 @@
     <Content Include="app\composites\_composites.factory.js" />
     <Content Include="app\controls\_controls.factory.js" />
     <Content Include="app\literals\csw.label.js" />
-    <Content Include="app\literals\csw.morediv.js" />
     <Content Include="app\literals\csw.table.js" />
     <Content Include="app\layouts\csw.wizard.js" />
     <Content Include="app\CswApp-vsdoc.js" />

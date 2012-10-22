@@ -12,7 +12,7 @@
             ///<returns type="Csw.controls.dateTimePicker">Object representing a dateTimePicker</returns>
             'use strict';
             var cswPrivate = {
-                ID: '',
+                name: '',
                 Date: '',
                 Time: '',
                 DateFormat: 'mm/dd/yyyy',
@@ -31,7 +31,7 @@
                 }
                 cswPrivate.dateTimeDiv = cswParent.div({
                     isControl: cswPrivate.isControl,
-                    ID: cswPrivate.id
+                    name: cswPrivate.id
                 });
                 cswPublic = Csw.dom({}, cswPrivate.dateTimeDiv);
                 //Csw.extend(cswPublic, Csw.literals.div(cswPrivate));
@@ -39,19 +39,19 @@
                 if (cswPrivate.ReadOnly) {
                     switch (cswPrivate.DisplayMode) {
                         case 'Date':
-                            cswPrivate.dateTimeDiv.div({ ID: cswPrivate.ID + '_date', value: cswPrivate.Date });
+                            cswPrivate.dateTimeDiv.div({ name: cswPrivate.name + '_date', value: cswPrivate.Date });
                             break;
                         case 'Time':
-                            cswPrivate.dateTimeDiv.div({ ID: cswPrivate.ID + '_time', value: cswPrivate.Time });
+                            cswPrivate.dateTimeDiv.div({ name: cswPrivate.name + '_time', value: cswPrivate.Time });
                             break;
                         case 'DateTime':
-                            cswPrivate.dateTimeDiv.div({ ID: cswPrivate.ID + '_time', value: cswPrivate.Date + ' ' + cswPrivate.Time });
+                            cswPrivate.dateTimeDiv.div({ name: cswPrivate.name + '_time', value: cswPrivate.Date + ' ' + cswPrivate.Time });
                             break;
                     }
                 } else {
                     if (cswPrivate.DisplayMode === 'Date' || cswPrivate.DisplayMode === 'DateTime') {
                         cswPrivate.dateBox = cswPrivate.dateTimeDiv.input({
-                            ID: cswPrivate.ID + '_date',
+                            name: cswPrivate.name + '_date',
                             type: Csw.enums.inputTypes.text,
                             value: cswPrivate.Date,
                             onChange: cswPrivate.onChange,
@@ -66,7 +66,7 @@
 
                     if (cswPrivate.DisplayMode === 'Time' || cswPrivate.DisplayMode === 'DateTime') {
                         cswPrivate.timeBox = cswPrivate.dateTimeDiv.input({
-                            ID: cswPrivate.ID + '_time',
+                            name: cswPrivate.name + '_time',
                             type: Csw.enums.inputTypes.text,
                             cssclass: 'textinput',
                             onChange: cswPrivate.onChange,
@@ -74,7 +74,7 @@
                             width: '80px'
                         });
                         cswPrivate.dateTimeDiv.button({
-                            ID: cswPrivate.ID + '_now',
+                            name: cswPrivate.name + '_now',
                             disableOnClick: false,
                             onClick: function () {
                                 cswPrivate.timeBox.val(Csw.getTimeString(new Date(), cswPrivate.TimeFormat));
@@ -87,7 +87,7 @@
 
                     if (Csw.bool(cswPrivate.showTodayButton)) {
                         cswPrivate.dateTimeDiv.button({
-                            ID: cswPrivate.ID + '_today',
+                            name: cswPrivate.name + '_today',
                             disableOnClick: false,
                             onClick: function () {
                                 cswPrivate.dateBox.$.datepicker('destroy');

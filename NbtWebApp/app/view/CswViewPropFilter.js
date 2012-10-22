@@ -12,32 +12,21 @@
             proparbitraryid: '',
             filtarbitraryid: '',
             viewbuilderpropid: '',
-            ID: ''
+            name: ''
         };
         if (options) Csw.extend(o, options);
 
         if (!Csw.isNullOrEmpty(o.filtarbitraryid)) {
-            filterId = Csw.makeId({ ID: id + delimiter + 'filtarbitraryid',
-                prefix: o.ID,
-                suffix: o.filtarbitraryid
-            });
+            filterId = id + delimiter + 'filtarbitraryid' + delimiter + o.name + delimiter + o.filtarbitraryid;
         }
         else if (!Csw.isNullOrEmpty(o.viewbuilderpropid)) {
-            filterId = Csw.makeId({ ID: id + delimiter + 'viewbuilderpropid',
-                prefix: o.ID,
-                suffix: o.viewbuilderpropid
-            });
+            filterId = id + delimiter + 'viewbuilderpropid' + delimiter + o.name + delimiter + o.viewbuilderpropid;
         }
         else if (!Csw.isNullOrEmpty(o.proparbitraryid)) {
-            filterId = Csw.makeId({ ID: id + delimiter + 'proparbitraryid',
-                prefix: o.ID,
-                suffix: o.proparbitraryid
-            });
+            filterId = id + delimiter + 'proparbitraryid' + delimiter + o.name + delimiter + o.proparbitraryid;
         }
-        else if (!Csw.isNullOrEmpty(o.ID)) {
-            filterId = Csw.makeId({ ID: id,
-                prefix: o.ID
-            });
+        else if (!Csw.isNullOrEmpty(o.name)) {
+            filterId = id + delimiter + o.name;
         } else {
             filterId = id;
         }
@@ -122,7 +111,7 @@
                     //Row propRow, Column 3: property
                     propFilterTable.cell(filtOpt.propRow, filtOpt.firstColumn)
                         .empty()
-                        .span({ text: propertyName, ID: makePropFilterId(propertyName, filtOpt) }) //3
+                        .span({ text: propertyName, name: makePropFilterId(propertyName, filtOpt) }) //3
                 }
                 //Row propRow, Column 4: Conjunction Cell
                 conjunctionCell = propFilterTable.cell(filtOpt.propRow, (filtOpt.firstColumn + 1)) //4
@@ -141,7 +130,7 @@
                     .empty();
 
                 // Conjunction picklist
-                conjunctionList = conjunctionCell.select({ ID: conjunctionOptionsId,
+                conjunctionList = conjunctionCell.select({ name: conjunctionOptionsId,
                     values: conjunctions,
                     selected: defaultConjunction,
                     cssclass: Csw.enums.cssClasses_ViewBuilder.conjunction_select.name,
@@ -153,7 +142,7 @@
                 
                 //Subfield default value (hidden)
                 defaultSubField = subfieldCell.span({
-                    ID: defaultSubFieldId,
+                    name: defaultSubFieldId,
                     value: defaultSubfieldVal,
                     cssclass: Csw.enums.cssClasses_ViewBuilder.default_filter.name
                 })
@@ -180,7 +169,7 @@
                 }
 
                 //Subfield picklist
-                subfieldsList = subfieldCell.select({ ID: subfieldOptionsId,
+                subfieldsList = subfieldCell.select({ name: subfieldOptionsId,
                     values: subFieldVals,
                     selected: defaultSubfieldVal,
                     cssclass: Csw.enums.cssClasses_ViewBuilder.subfield_select.name,
@@ -201,7 +190,7 @@
                 }
 
                 //Filter picklist
-                filterModesList = filterModesCell.select({ ID: filterModesId,
+                filterModesList = filterModesCell.select({ name: filterModesId,
                     values: filterModeVals,
                     selected: defaultFilterModeVal,
                     cssclass: Csw.enums.cssClasses_ViewBuilder.filter_select.name,
@@ -234,7 +223,7 @@
                                 filtValAry.push({ value: Csw.string(filt).trim(), display: Csw.string(filtValOpt[filt]).trim() });
                             }
                         }
-                        filtInput = propFilterValueCell.select({ ID: filtValInputId,
+                        filtInput = propFilterValueCell.select({ name: filtValInputId,
                             values: filtValAry,
                             selected: filtSelected,
                             cssclass: Csw.enums.cssClasses_ViewBuilder.filter_value.name
@@ -242,7 +231,7 @@
                     }
                 }
                 else if (fieldtype === Csw.enums.subFieldsMap.Logical.name) {
-                    filtInput = propFilterValueCell.triStateCheckBox({ ID: filtValInputId,
+                    filtInput = propFilterValueCell.triStateCheckBox({ name: filtValInputId,
                         Checked: (defaultSubfieldVal === 'checked') ? 'true' : 'false',
                         cssclass: 'ViewPropFilterLogical ' + Csw.enums.cssClasses_ViewBuilder.filter_value.name
                     });
@@ -254,7 +243,7 @@
                         }
                     }
                     filtInput = propFilterValueCell.input({
-                        ID: filtValInputId,
+                        name: filtValInputId,
                         type: Csw.enums.inputTypes.text,
                         cssclass: Csw.enums.cssClasses_ViewBuilder.filter_value.name,
                         value: '',
@@ -306,7 +295,7 @@
                         .css({ 'padding': '2px' });
 
                     var propCellId = makePropFilterId(propertyName, filtOpt);
-                    propSelectCell.span({ ID: propCellId, value: propertyName });
+                    propSelectCell.span({ name: propCellId, value: propertyName });
                 }
 
                 var selectedConjunction = Csw.string(propsData.conjunction);
@@ -336,28 +325,28 @@
 
                 //Conjunction
                 conjunctionCell.span({
-                    ID: defaultConjunctionId,
+                    name: defaultConjunctionId,
                     value: selectedConjunction,
                     cssclass: Csw.enums.cssClasses_ViewBuilder.default_filter.name
                 })
                     .css({ 'text-align': "center" });
                 //Subfield
                 subfieldCell.span({
-                    ID: defaultSubFieldId,
+                    name: defaultSubFieldId,
                     value: selectedSubfield,
                     cssclass: Csw.enums.cssClasses_ViewBuilder.default_filter.name
                 })
                     .css({ 'text-align': "center" });
                 //Selected Filter
                 filtersCell.span({
-                    ID: filtersOptionsId,
+                    name: filtersOptionsId,
                     value: selectedFilterMode,
                     cssclass: Csw.enums.cssClasses_ViewBuilder.filter_select.name
                 })
                     .css({ 'text-align': "center" });
                 //Filter Input
                 propFilterValueCell.span({
-                    ID: filtValInputId,
+                    name: filtValInputId,
                     value: filterValue,
                     cssclass: Csw.enums.cssClasses_ViewBuilder.default_filter.name
                 })
@@ -369,7 +358,7 @@
         getFilterJson: function (options) {
             var o = {
                 filtJson: {},
-                ID: '',
+                name: '',
                 proparbitraryid: '',
                 filtarbitraryid: '',
                 allowNullFilterValue: false

@@ -56,7 +56,7 @@
                 'use strict';
 
                 var cswPublic = {
-                    ID: '',
+                    name: '',
                     tabState: {
                         nodeid: '',
                         nodename: '',
@@ -100,6 +100,7 @@
                         Csw.bool(cswPublic.tabState.Config) ||
                         cswPublic.tabState.EditMode === Csw.enums.editMode.PrintReport ||
                         cswPublic.tabState.EditMode === Csw.enums.editMode.Preview ||
+                        Csw.enums.editMode.AuditHistoryInPopup === cswPublic.tabState.EditMode ||
                         Csw.bool(cswPublic.propData.readonly);
                 };
 
@@ -115,11 +116,12 @@
                     return (Csw.enums.editMode.PrintReport === cswPublic.tabState.EditMode || Csw.enums.editMode.AuditHistoryInPopup === cswPublic.tabState.EditMode);
                 };
 
-                cswPublic.ID = Csw.makeId(cswPublic.propDiv.getId(), cswPublic.propData.id);
+                cswPublic.name = cswPublic.propData.id;
 
-                cswPrivate.doPropChange = function () {
-                    return (false === cswPublic.isReadOnly() && false === cswPublic.tabState.Config);
-                }
+                cswPublic.doPropChangeDataBind = function() {
+                    //NOTE - if we don't verify that we're in config mode we'll get an INFINITE LOOP
+                    return (false === cswPublic.isReadOnly() && false === cswPublic.tabState.Config && false === cswPublic.isDisabled());
+                };
 
                 Csw.extend(cswPublic, cswPrivate);
                 cswPublic.onPropChange = function (attributes) {
@@ -129,20 +131,20 @@
                     'use strict';
                     attributes = attributes || {};
                     cswStaticInternalClosure.preparePropJsonForSave(cswPublic.isMulti(), cswPublic.propData, attributes);
-                    if (cswPrivate.doPropChange()) { //NOTE - if we don't verify that we're in config mode we'll get an INFINITE LOOP
+                    if (cswPublic.doPropChangeDataBind()) { 
                         Csw.publish('onPropChange_' + cswPublic.propid, { tabid: cswPublic.tabState.tabid, propData: cswPublic.propData });
                     }
                 };
 
-                cswPrivate.onPropChange = function (eventObj, data) {
+                cswPrivate.dataBindPropChange = function (eventObj, data) {
                     if (data.tabid !== cswPublic.tabState.tabid) {
                         Csw.extend(cswPublic.propData, data.propData, true);
                         cswPrivate.renderThisProp();
                     }
                 };
 
-                if (cswPrivate.doPropChange()) { //NOTE - if we don't verify that we're in config mode we'll get an INFINITE LOOP
-                    Csw.subscribe('onPropChange_' + cswPublic.propid, cswPrivate.onPropChange);
+                if (cswPublic.doPropChangeDataBind()) {
+                    Csw.subscribe('onPropChange_' + cswPublic.propid, cswPrivate.dataBindPropChange);
                 }
 
                 cswPublic.toggleMulti = function (eventObj, multiOpts) {
