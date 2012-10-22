@@ -1063,6 +1063,10 @@ window.initMain = window.initMain || function (undefined) {
                                         $.CswDialog('AddNodeDialog', {
                                             text: itemData.Text,
                                             nodetypeid: itemData.NodeTypeId,
+                                            relatednodeid: actionData.RelatedNodeId,
+                                            relatednodename: actionData.RelatedNodeName,
+                                            relatednodetypeid: actionData.RelatedNodeTypeId,
+                                            relatedobjectclassid: actionData.RelatedObjectClassId,
                                             onAddNode: function (nodeid, cswnbtnodekey) {
                                                 clear({ all: true });
                                                 refreshNodesTree({ 'nodeid': nodeid, 'cswnbtnodekey': cswnbtnodekey, 'IncludeNodeRequired': true });

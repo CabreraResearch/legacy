@@ -403,6 +403,10 @@ namespace ChemSW.Nbt.WebServices
                         RetObj["landingpagedata"]["Title"] = "Created " + MaterialNode.NodeName;
                         RetObj["landingpagedata"]["NodeId"] = MaterialObj["materialId"];
                         RetObj["landingpagedata"]["NodeViewId"] = MaterialNodeView.SessionViewId.ToString();
+                        RetObj["landingpagedata"]["RelatedNodeId"] = MaterialNode.NodeId.ToString();
+                        RetObj["landingpagedata"]["RelatedNodeName"] = MaterialNode.NodeName;
+                        RetObj["landingpagedata"]["RelatedNodeTypeId"] = MaterialNode.NodeTypeId.ToString();
+                        RetObj["landingpagedata"]["RelatedObjectClassId"] = MaterialNode.getObjectClassId().ToString();
                     }
                 }
             }

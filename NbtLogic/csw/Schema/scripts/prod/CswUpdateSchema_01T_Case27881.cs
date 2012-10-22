@@ -45,6 +45,27 @@ namespace ChemSW.Nbt.Schema
 
             #endregion Create Another Material
 
+            #region Define Sizes for this Material
+
+            CswNbtMetaDataObjectClass SizeOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.SizeClass );
+            CswNbtMetaDataNodeType SizeNt = SizeOc.FirstNodeType;
+            if( null != SizeNt )
+            {
+                Request = new LandingPageData.Request
+                {
+                    Type = "Add",
+                    ViewType = String.Empty,
+                    PkValue = String.Empty,
+                    NodeTypeId = SizeNt.NodeTypeId.ToString(),
+                    Text = "Define Sizes for this Material",
+                    RoleId = RoleId,
+                    ActionId = CreateMaterialActionId
+                };
+                LandingPageObj.addLandingPageItem(Request);
+            }
+
+            #endregion Create Another Material
+
             #region Enter GHS Data for this Material
 
             CswNbtMetaDataObjectClass MaterialOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.MaterialClass );
