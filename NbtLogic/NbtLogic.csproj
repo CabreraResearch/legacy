@@ -106,7 +106,6 @@
     <Compile Include="csw\LandingPage\CswNbtLandingPageItemTab.cs" />
     <Compile Include="csw\LandingPage\CswNbtLandingPageItemType.cs" />
     <Compile Include="csw\LandingPage\CswNbtLandingPageItemText.cs" />
-    <Compile Include="csw\Schema\CswNbtSchemaUpdaterUser.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01T_Case27881.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_0T1_Case27884.cs" />
