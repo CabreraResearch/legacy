@@ -13,6 +13,13 @@ namespace ChemSW.Nbt.Schema
         {
             bool MakeAdminNode = true;
             bool MakeChemSWAdminNode = true;
+            bool CISProEnabledTemporarily = false;
+
+            if( false == _CswNbtSchemaModTrnsctn.Modules.IsModuleEnabled( CswNbtModuleName.CISPro ) )
+            {
+                _CswNbtSchemaModTrnsctn.Modules.EnableModule( CswNbtModuleName.CISPro );
+                CISProEnabledTemporarily = true;
+            }
 
             CswNbtObjClassWorkUnit DefaultWorkUnit = _getDefaultWorkUnit();
             CswNbtObjClassInventoryGroup CISProInventoryGroup = _getInventoryGroup( "CISPro" );
@@ -35,7 +42,7 @@ namespace ChemSW.Nbt.Schema
                         {
                             InvGrpPermNode.InventoryGroup.RelatedNodeId = DefaultInventoryGroup.NodeId;
                             InvGrpPermNode.WorkUnit.RelatedNodeId = DefaultWorkUnit.NodeId;
-                            InvGrpPermNode.postChanges( false );
+                            InvGrpPermNode.postChanges( true );
                         }
                         if( null != AdminRole && InvGrpPermNode.Role.RelatedNodeId == AdminRole.NodeId )
                         {
@@ -47,11 +54,11 @@ namespace ChemSW.Nbt.Schema
                         }
                     }
 
-                    if( MakeAdminNode )
+                    if( MakeAdminNode && null != AdminRole )
                     {
                         _createInventoryGroupPermission( InvGrpPermNt.NodeTypeId, AdminRole.NodeId, DefaultInventoryGroup.NodeId, DefaultWorkUnit.NodeId );
                     }
-                    if( MakeChemSWAdminNode )
+                    if( MakeChemSWAdminNode && null != ChemSWAdminRole )
                     {
                         _createInventoryGroupPermission( InvGrpPermNt.NodeTypeId, ChemSWAdminRole.NodeId, DefaultInventoryGroup.NodeId, DefaultWorkUnit.NodeId );
                     }
@@ -62,7 +69,7 @@ namespace ChemSW.Nbt.Schema
 
                 if( null != CISProInventoryGroup && null != LocationNt )
                 {
-                    foreach( CswNbtObjClassLocation LocationNode in InvGrpPermOc.getNodes( false, false ) )
+                    foreach( CswNbtObjClassLocation LocationNode in LocationOc.getNodes( false, false ) )
                     {
                         if( LocationNode.InventoryGroup.RelatedNodeId == CISProInventoryGroup.NodeId )
                         {
@@ -72,6 +79,11 @@ namespace ChemSW.Nbt.Schema
                     }
                     CISProInventoryGroup.Node.delete();
                 }
+            }
+
+            if( CISProEnabledTemporarily )
+            {
+                _CswNbtSchemaModTrnsctn.Modules.DisableModule( CswNbtModuleName.CISPro );
             }
 
         }//Update()
