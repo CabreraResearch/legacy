@@ -50,10 +50,20 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
         }
 
         // This is used by CswNbtNodeProp for unique value enforcement
-        public void AddUniqueFilterToView( CswNbtView View, CswNbtViewProperty UniqueValueViewProperty, CswNbtNodePropWrapper PropertyValueToCheck )
+        public void AddUniqueFilterToView( CswNbtView View, CswNbtViewProperty UniqueValueViewProperty, CswNbtNodePropWrapper PropertyValueToCheck, bool EnforceNullEntries = false )
         {
             string StringValueToCheck = PropertyValueToCheck.GetPropRowValue( SubFields.Default.Column );
-            CswNbtPropFilterSql.PropertyFilterMode FilterMode = CswNbtPropFilterSql.PropertyFilterMode.Equals;
+            CswNbtPropFilterSql.PropertyFilterMode FilterMode;
+            //case 27670 - in order to reserve the right for compound unique props to be empty, it has to be explicitly stated when creating the ForCompundUnique view
+            if( EnforceNullEntries && String.IsNullOrEmpty( StringValueToCheck ) )
+            {
+                FilterMode = CswNbtPropFilterSql.PropertyFilterMode.Null;
+            }
+            else
+            {
+                FilterMode = CswNbtPropFilterSql.PropertyFilterMode.Equals;
+            }
+
             View.AddViewPropertyFilter( UniqueValueViewProperty, SubFields.Default.Name, FilterMode, StringValueToCheck.Trim(), false );
         }
 

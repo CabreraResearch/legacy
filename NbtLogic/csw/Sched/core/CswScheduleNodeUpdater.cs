@@ -22,7 +22,14 @@ namespace ChemSW.Nbt.Sched
             {
                 SchedulerNode.RunStatus.AddComment( StatusMessage );
             }
-            DateTime CandidateNextDueDate = SchedulerNode.DueDateInterval.getNextOccuranceAfter( SchedulerNode.NextDueDate.DateTimeValue );
+
+            DateTime AfterDate = SchedulerNode.NextDueDate.DateTimeValue;
+            if( SchedulerNode.WarningDays.Value > 0 )
+            {
+                // case 27930 - Prevent redundant activity within the warning days window
+                AfterDate = AfterDate.AddDays( SchedulerNode.WarningDays.Value ); 
+            }
+            DateTime CandidateNextDueDate = SchedulerNode.DueDateInterval.getNextOccuranceAfter( AfterDate );
             if( _finalDueDateHasPassed( CandidateNextDueDate.Date, SchedulerNode.FinalDueDate.DateTimeValue.Date ) )
             {
                 CandidateNextDueDate = DateTime.MinValue;

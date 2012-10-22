@@ -92,6 +92,8 @@ namespace ChemSW.Nbt.Batch
                             // case 27720 - clear existing Mail Report Event records for this mail report
                             BatchData.CurrentMailReport.ClearNodesToReport();
                             BatchData.CurrentMailReport.LastProcessed.DateTimeValue = DateTime.Now;
+                            BatchData.CurrentMailReport.postChanges( false );
+
                             BatchData.CurrentMailReportId = string.Empty;
                         }
                     }
