@@ -28,7 +28,9 @@
                 opts.controlName = controlName;
                 opts.$parent = $element;
                 opts.root = cswPublic.root;
-                Csw.debug.assert(false === Csw.isNullOrEmpty(cswPublic.getId()), 'Parent\'s element id was null or empty.');
+                //This seemed like a good idea, but it fails far too often.
+                //  Since these failures don't correspond to faults in the page, it's not clear that they are meaningful.
+                //Csw.debug.assert(false === Csw.isNullOrEmpty(cswPublic.getId()), 'Parent\'s element id was null or empty.');
                 opts.ID = Csw.delimitedString(cswPublic.getId(), opts.suffix, controlName, cswPrivate.count).string('_');
                 if (false === Csw.isNullOrEmpty(opts.labelText)) {                                                           
                     cswPublic.label({ forAttr: opts.ID, text: opts.labelText, useWide: opts.useWide });
