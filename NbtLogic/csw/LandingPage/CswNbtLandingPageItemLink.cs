@@ -13,7 +13,7 @@ namespace ChemSW.Nbt.LandingPage
     {
         public CswNbtLandingPageItemLink( CswNbtResources CswNbtResources ) : base( CswNbtResources ) { }
 
-        public override void setItemDataForUI( DataRow LandingPageRow )
+        public override void setItemDataForUI( DataRow LandingPageRow, LandingPageData.Request Request )
         {
             if( CswConvert.ToInt32( LandingPageRow["to_nodeviewid"] ) != Int32.MinValue )
             {

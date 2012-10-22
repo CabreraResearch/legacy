@@ -32,18 +32,15 @@ namespace ChemSW.Nbt.LandingPage
             _ItemRow = _LandingPageTable.NewRow();
         }
 
-        public abstract void setItemDataForUI( DataRow LandingPageRow );        
+        public abstract void setItemDataForUI( DataRow LandingPageRow, LandingPageData.Request Request );        
 
         protected virtual void _setCommonItemDataForUI( DataRow LandingPageRow )
         {
             _ItemData.LandingPageId = LandingPageRow["landingpageid"].ToString();
-            if( false == String.IsNullOrEmpty( _ItemData.Text ) )
-            {
                 _ItemData.LinkType = LandingPageRow["componenttype"].ToString();
                 _ItemData.DisplayRow = LandingPageRow["display_row"].ToString();
                 _ItemData.DisplayCol = LandingPageRow["display_col"].ToString();
             }
-        }
 
         public abstract void setItemDataForDB( LandingPageData.Request Request );
 

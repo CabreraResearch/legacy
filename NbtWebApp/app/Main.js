@@ -1069,6 +1069,10 @@ window.initMain = window.initMain || function (undefined) {
                                             }
                                         });
                                     },
+                                    onTabClick: function (itemData) {
+                                        Csw.cookie.set(Csw.cookie.cookieNames.CurrentTabId, itemData.TabId);
+                                        handleItemSelect(itemData);
+                                    },
                                     onAddComponent: createMaterialLandingPage,
                                     landingPageRequestData: actionData
                                 });

@@ -13,6 +13,7 @@
                 onTitleClick: null,
                 onLinkClick: null,
                 onAddClick: null,
+                onTabClick: null,
                 onAddComponent: null,
                 landingPageRequestData: null
             };
@@ -108,7 +109,8 @@
                                     itemData: thisItem,
                                     layoutTable: cswPrivate.layoutTable,
                                     onAddClick: cswPrivate.onAddClick,
-                                    onLinkClick: cswPrivate.onLinkClick
+                                    onLinkClick: cswPrivate.onLinkClick,
+                                    onTabClick: cswPrivate.onTabClick
                                 };
 
                                 if (Csw.string(thisItem.LinkType).toLowerCase() === 'text') {
@@ -148,7 +150,8 @@
                     text: clickopts.itemData.Text,
                     name: clickopts.itemData.ActionName,
                     url: clickopts.itemData.ActionUrl,
-                    linktype: clickopts.itemData.LinkType
+                    linktype: clickopts.itemData.LinkType,
+                    TabId: clickopts.itemData.TabId
                 };
 
                 if (clickopts.layoutTable.isConfig() === false) {
@@ -158,6 +161,9 @@
                             break;
                         case 'link':
                             Csw.tryExec(clickopts.onLinkClick, optSelect);
+                            break;
+                        case 'tab':
+                            Csw.tryExec(clickopts.onTabClick, optSelect);
                             break;
                         case 'text':
                             break;

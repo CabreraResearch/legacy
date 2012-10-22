@@ -22,8 +22,11 @@ namespace ChemSW.Nbt.LandingPage
             foreach( DataRow LandingPageRow in LandingPageTable.Rows )
             {
                 CswNbtLandingPageItem Item = CswNbtLandingPageItemFactory.makeLandingPageItem( _CswNbtResources, LandingPageRow["componenttype"].ToString() );
-                Item.setItemDataForUI( LandingPageRow );
-                Items.LandingPageItems.Add( Item.ItemData );
+                Item.setItemDataForUI( LandingPageRow, Request );
+                if( false == String.IsNullOrEmpty( Item.ItemData.LandingPageId ) )
+                {
+                    Items.LandingPageItems.Add( Item.ItemData );
+                }
             }
             return Items;
         }

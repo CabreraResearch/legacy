@@ -22,6 +22,10 @@ namespace ChemSW.Nbt.LandingPage
             {
                 Item = new CswNbtLandingPageItemLink( CswNbtResources );
             }
+            else if( CswNbtLandingPageItemType.Tab == LandingPageItemType )
+            {
+                Item = new CswNbtLandingPageItemTab( CswNbtResources );
+            }
             else
             {
                 throw new CswDniException( ErrorType.Error,

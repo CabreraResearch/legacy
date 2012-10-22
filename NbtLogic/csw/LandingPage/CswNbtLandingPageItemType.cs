@@ -29,6 +29,10 @@ namespace ChemSW.Nbt.LandingPage
         /// Link
         /// </summary>
         public static readonly CswNbtLandingPageItemType Link = new CswNbtLandingPageItemType( "Link" );
+        /// <summary>
+        /// Tab
+        /// </summary>
+        public static readonly CswNbtLandingPageItemType Tab = new CswNbtLandingPageItemType( "Tab" );
 
     } // class CswNbtModule
 }

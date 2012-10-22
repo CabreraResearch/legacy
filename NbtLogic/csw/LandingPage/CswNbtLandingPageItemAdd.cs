@@ -11,7 +11,7 @@ namespace ChemSW.Nbt.LandingPage
     {
         public CswNbtLandingPageItemAdd( CswNbtResources CswNbtResources ) : base( CswNbtResources ) { }
 
-        public override void setItemDataForUI( DataRow LandingPageRow )
+        public override void setItemDataForUI( DataRow LandingPageRow, LandingPageData.Request Request )
         {
             if( CswConvert.ToInt32( LandingPageRow["to_nodetypeid"] ) != Int32.MinValue )
             {
@@ -29,9 +29,9 @@ namespace ChemSW.Nbt.LandingPage
                         _ItemData.ButtonIcon = CswNbtMetaDataObjectClass.IconPrefix100 + NodeType.IconFileName;
                         _ItemData.Type = "add_new_nodetype";
                     }
+                    _setCommonItemDataForUI( LandingPageRow );
                 }
             }
-            _setCommonItemDataForUI( LandingPageRow );
         }
 
         public override void setItemDataForDB( LandingPageData.Request Request )

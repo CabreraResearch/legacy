@@ -74,6 +74,8 @@ namespace ChemSW.Nbt.LandingPage
             public string ActionUrl = string.Empty;
             [DataMember]
             public string ReportId = string.Empty;
+            [DataMember]
+            public string TabId = string.Empty;
         }
 
         [DataMember]
