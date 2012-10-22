@@ -22,12 +22,16 @@ namespace ChemSW.Nbt.Schema
             {
                 if( AuditLevel.NoAudit != CurrentNodeType.AuditLevel )
                 {
-                    string Where = " where nodetypeid=" + CurrentNodeType.NodeTypeId.ToString();
+
+
+                    string CurrentAuditLevel = CurrentNodeType.AuditLevel.ToString();
+
+                    string Where = " where nodetypeid= " + CurrentNodeType.NodeTypeId.ToString() + " and " + CswAuditMetaData.AuditLevelColName + " <> '" + CurrentAuditLevel + "' ";
                     CswTableUpdate CurrentNodesUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "update_nodes_case_27709", "nodes" );
                     DataTable NodesTable = CurrentNodesUpdate.getTable( Where );
                     foreach( DataRow CurrentRow in NodesTable.Rows )
                     {
-                        CurrentRow[CswAuditMetaData.AuditLevelColName] = CurrentNodeType.AuditLevel.ToString();
+                        CurrentRow[CswAuditMetaData.AuditLevelColName] = CurrentAuditLevel;
                     }
 
                     CurrentNodesUpdate.update( NodesTable );
