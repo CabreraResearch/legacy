@@ -1031,7 +1031,7 @@ namespace ChemSW.Nbt.Schema
                                             OcpModel );
 
                     ObjectClassPropUpdate.update( UpdateTable );
-                    MetaData.makeMissingNodeTypeProps();
+                    //MetaData.makeMissingNodeTypeProps();
                     RetProp = OcpModel.ObjectClass.getObjectClassProp( OcpModel.PropName );
                 }
             }
@@ -1120,7 +1120,7 @@ namespace ChemSW.Nbt.Schema
                         NewPropRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.statictext.ToString()] = CswConvert.ToDbVal( StaticText );
                     }
                     ObjectClassPropUpdate.update( UpdateTable );
-                    MetaData.makeMissingNodeTypeProps();
+                    //MetaData.makeMissingNodeTypeProps();
                     RetProp = ObjectClassOc.getObjectClassProp( PropName );
                 }
             }

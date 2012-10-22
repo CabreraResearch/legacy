@@ -166,6 +166,32 @@ namespace ChemSW.Nbt.Schema
                 _CswNbtSchemaModTrnsctn.MetaData.DeleteObjectClassProp( NoDataOCP, true );
             }
 
+            #region case 27703
+
+            CswNbtMetaDataObjectClassProp nameOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( requestItemOC )
+            {
+                PropName = "Name",
+                FieldType = CswNbtMetaDataFieldType.NbtFieldType.Text,
+                ServerManaged = true
+            } );
+
+            #endregion case 27703
+
+            #region case 27647
+
+            CswNbtMetaDataObjectClass SizeOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.SizeClass );
+            CswNbtMetaDataObjectClassProp UnitCountOcp = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( SizeOc )
+            {
+                PropName = CswNbtObjClassSize.PropertyName.UnitCount,
+                FieldType = CswNbtMetaDataFieldType.NbtFieldType.Number,
+                IsRequired = true,
+                SetValOnAdd = true,
+                NumberMinValue = 1,
+                NumberPrecision = 0
+            } );
+
+            #endregion case 27647
+
             #endregion SEBASTIAN
 
             _CswNbtSchemaModTrnsctn.MetaData.makeMissingNodeTypeProps();
