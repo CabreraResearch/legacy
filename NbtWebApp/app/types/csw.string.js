@@ -136,10 +136,12 @@
                 }
             };
 
-            (function () { //ctor
-                if (arguments.length > 1 && false === Csw.isPlainObject(opts)) {
-                    Csw.each(arguments, function (val) {
-                        cswPublic.array.push(val);
+            (function (a) { //ctor
+                if (a.length > 1 && false === Csw.isPlainObject(opts)) {
+                    Csw.each(a, function (val) {
+                        if (false === Csw.isNullOrEmpty(val)) {
+                            cswPublic.array.push(val);
+                        }
                     });
                 }
                 else if (opts) {

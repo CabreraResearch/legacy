@@ -28,8 +28,9 @@
                 opts.controlName = controlName;
                 opts.$parent = $element;
                 opts.root = cswPublic.root;
-                opts.ID = cswPublic.getId() + '_' + controlName + '_' + cswPrivate.count;
-                if (false === Csw.isNullOrEmpty(opts.labelText)) {
+                Csw.debug.assert(false === Csw.isNullOrEmpty(cswPublic.getId()), 'Parent\'s element id was null or empty.');
+                opts.ID = Csw.delimitedString(cswPublic.getId(), opts.suffix, controlName, cswPrivate.count).string('_');
+                if (false === Csw.isNullOrEmpty(opts.labelText)) {                                                           
                     cswPublic.label({ forAttr: opts.ID, text: opts.labelText, useWide: opts.useWide });
                 }
                 opts.parent = function () {

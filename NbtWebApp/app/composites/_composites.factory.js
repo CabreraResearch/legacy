@@ -18,7 +18,7 @@
 
                 cswPrivate.controlPreProcessing = function (opts, controlName) {
                     opts = opts || {};
-                    opts.ID = cswParent.getId() + '_' + controlName;
+                    opts.suffix = controlName;
                     return opts;
                 };
 
