@@ -236,7 +236,7 @@
                                     tabUl = tabUl || tabDiv.ul();
                                     tabUl.li().a({ href: '#' + thisTabId, text: thisTab.name }).data('tabid', thisTabId);
                                     cswPrivate.makeTabContentDiv(tabDiv, thisTabId, thisTab.canEditLayout);
-                                    if (thisTabId === cswPrivate.tabState.tabid) {
+                                    if (Csw.number(thisTabId) === Csw.number(cswPrivate.tabState.tabid)) {
                                         cswPrivate.tabState.tabNo = tabno;
                                     }
                                     tabno += 1;
