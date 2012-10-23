@@ -27,13 +27,15 @@ namespace ChemSW.Nbt.Schema
                 RoleId = AdminRole.NodeId.ToString();
             }
 
+            CswNbtMetaDataObjectClass MaterialOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.MaterialClass );
+
             #endregion Init
 
             #region Create Another Material
 
             LandingPageData.Request Request = new LandingPageData.Request
             {
-                Type = "Link",
+                Type = CswNbtLandingPageItemType.Link.ToString(),
                 ViewType = "Action",
                 PkValue = CreateMaterialActionId,
                 NodeTypeId = String.Empty,
@@ -41,11 +43,59 @@ namespace ChemSW.Nbt.Schema
                 RoleId = RoleId,
                 ActionId = CreateMaterialActionId,
                 NewRow = 1,
-                NewColumn = 1
+                NewColumn = 3
             };
             LandingPageObj.addLandingPageItem( Request );
 
             #endregion Create Another Material
+
+            #region Receive this Material
+
+            CswNbtMetaDataObjectClassProp ReceiveProp =
+                _CswNbtSchemaModTrnsctn.MetaData.getObjectClassProp( MaterialOc.ObjectClassId,
+                                                                    CswNbtObjClassMaterial.PropertyName.Receive );
+            if( null != ReceiveProp )
+            {
+                Request = new LandingPageData.Request
+                {
+                    Type = CswNbtLandingPageItemType.Button.ToString(),
+                    ViewType = String.Empty,
+                    PkValue = ReceiveProp.PropId.ToString(),
+                    NodeTypeId = String.Empty,
+                    Text = "Receive this Material",
+                    RoleId = RoleId,
+                    ActionId = CreateMaterialActionId,
+                    NewRow = 1,
+                    NewColumn = 1
+                };
+                LandingPageObj.addLandingPageItem( Request );
+            }
+
+            #endregion Receive this Material
+
+            #region Request this Material
+
+            CswNbtMetaDataObjectClassProp RequestProp =
+                _CswNbtSchemaModTrnsctn.MetaData.getObjectClassProp(MaterialOc.ObjectClassId,
+                                                                    CswNbtObjClassMaterial.PropertyName.Request);
+            if( null != RequestProp )
+            {
+                Request = new LandingPageData.Request
+                {
+                    Type = CswNbtLandingPageItemType.Button.ToString(),
+                    ViewType = String.Empty,
+                    PkValue = RequestProp.PropId.ToString(),
+                    NodeTypeId = String.Empty,
+                    Text = "Request this Material",
+                    RoleId = RoleId,
+                    ActionId = CreateMaterialActionId,
+                    NewRow = 1,
+                    NewColumn = 2
+                };
+                LandingPageObj.addLandingPageItem( Request );
+            }
+
+            #endregion Request this Material
 
             #region Define Sizes for this Material
 
@@ -55,24 +105,23 @@ namespace ChemSW.Nbt.Schema
             {
                 Request = new LandingPageData.Request
                 {
-                    Type = "Add",
+                    Type = CswNbtLandingPageItemType.Add.ToString(),
                     ViewType = String.Empty,
                     PkValue = String.Empty,
                     NodeTypeId = SizeNt.NodeTypeId.ToString(),
                     Text = "Define Sizes for this Material",
                     RoleId = RoleId,
                     ActionId = CreateMaterialActionId,
-                    NewRow = 1,
-                    NewColumn = 2
+                    NewRow = 2,
+                    NewColumn = 1
                 };
                 LandingPageObj.addLandingPageItem(Request);
             }
 
-            #endregion Create Another Material
+            #endregion Define Sizes for this Material
 
             #region Enter GHS Data for this Material
-
-            CswNbtMetaDataObjectClass MaterialOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.MaterialClass );
+            
             foreach( CswNbtMetaDataNodeType MaterialNt in MaterialOc.getNodeTypes() )
             {
                 if( MaterialNt.NodeTypeName == "Chemical" )
@@ -82,7 +131,7 @@ namespace ChemSW.Nbt.Schema
                     {
                         Request = new LandingPageData.Request
                         {
-                            Type = "Tab",
+                            Type = CswNbtLandingPageItemType.Tab.ToString(),
                             ViewType = "View",
                             PkValue = GHSTab.TabId.ToString(),
                             NodeTypeId = MaterialNt.NodeTypeId.ToString(),
@@ -90,7 +139,7 @@ namespace ChemSW.Nbt.Schema
                             RoleId = RoleId,
                             ActionId = CreateMaterialActionId,
                             NewRow = 2,
-                            NewColumn = 1
+                            NewColumn = 2
                         };
                         LandingPageObj.addLandingPageItem( Request );
                     }
@@ -99,10 +148,6 @@ namespace ChemSW.Nbt.Schema
 
             #endregion Enter GHS Data for this Material
 
-            //todo - add all default createMaterial landing page items:
-            //Receive this Material (Action + Material NodeId)
-            //Request this Material (Action + Material NodeId)
-            //For Size, we currently have "Add + Material NodeId", but we may want "Material NodeTypeId + TabId + Material NodeId" or implement a LinkGrid version instead
         } //Update()
 
         public override CswDeveloper Author

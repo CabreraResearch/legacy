@@ -1,7 +1,6 @@
 
 using System;
 using ChemSW.Nbt.csw.Dev;
-using System;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -125,6 +124,14 @@ namespace ChemSW.Nbt.Schema
 
             if( _CswNbtSchemaModTrnsctn.isTableDefined( "landingpage" ) )
             {
+                if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( "landingpage", "to_tabid" ) )
+                {
+                    _CswNbtSchemaModTrnsctn.addLongColumn( "landingpage", "to_tabid", "TabId to use for a given node - if the given Node's NodeType does not contain this TabId, component will not be created.", false, false );
+                }
+                if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( "landingpage", "to_objectclasspropid" ) )
+                {
+                    _CswNbtSchemaModTrnsctn.addLongColumn( "landingpage", "to_objectclasspropid", "PropId for an ObjectClass button - if the given Node's does not have this button, component will not be created.", false, false );
+                }
                 if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( "landingpage", "for_actionid" ) )
                 {
                     _CswNbtSchemaModTrnsctn.addLongColumn( "landingpage", "for_actionid", "Indicates the action to which this landing page is associated", false, false );

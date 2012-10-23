@@ -101,6 +101,7 @@
     <Compile Include="csw\LandingPage\CswNbtLandingPageDataContract.cs" />
     <Compile Include="csw\LandingPage\CswNbtLandingPageItem.cs" />
     <Compile Include="csw\LandingPage\CswNbtLandingPageItemAdd.cs" />
+    <Compile Include="csw\LandingPage\CswNbtLandingPageItemButton.cs" />
     <Compile Include="csw\LandingPage\CswNbtLandingPageItemFactory.cs" />
     <Compile Include="csw\LandingPage\CswNbtLandingPageItemLink.cs" />
     <Compile Include="csw\LandingPage\CswNbtLandingPageItemTab.cs" />

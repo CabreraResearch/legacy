@@ -22,12 +22,13 @@ namespace ChemSW.Nbt.LandingPage
                     if( CanAdd )
                     {
                         if( LandingPageRow["displaytext"].ToString() != string.Empty )
+                        {
                             _ItemData.Text = LandingPageRow["displaytext"].ToString();
+                        }
                         else
+                        {
                             _ItemData.Text = "Add New " + NodeType.NodeTypeName;
-
-                        //TODO - add related NodeId/Name/NodeTypeId/ObjectClassId if applicable?
-
+                        }
                         _ItemData.NodeTypeId = NodeType.NodeTypeId.ToString();
                         _ItemData.ButtonIcon = CswNbtMetaDataObjectClass.IconPrefix100 + NodeType.IconFileName;
                         _ItemData.Type = "add_new_nodetype";

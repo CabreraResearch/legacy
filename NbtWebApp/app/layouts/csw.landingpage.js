@@ -10,10 +10,12 @@
                 Title: '',                
                 RoleId: '',
                 ActionId: '',
+                ObjectClassId: '',
                 onTitleClick: null,
                 onLinkClick: null,
                 onAddClick: null,
                 onTabClick: null,
+                onButtonClick: null,
                 onAddComponent: null,
                 landingPageRequestData: null
             };
@@ -110,7 +112,8 @@
                                     layoutTable: cswPrivate.layoutTable,
                                     onAddClick: cswPrivate.onAddClick,
                                     onLinkClick: cswPrivate.onLinkClick,
-                                    onTabClick: cswPrivate.onTabClick
+                                    onTabClick: cswPrivate.onTabClick,
+                                    onButtonClick: cswPrivate.onButtonClick
                                 };
 
                                 if (Csw.string(thisItem.LinkType).toLowerCase() === 'text') {
@@ -164,6 +167,9 @@
                             break;
                         case 'tab':
                             Csw.tryExec(clickopts.onTabClick, optSelect);
+                            break;
+                        case 'button':
+                            Csw.tryExec(clickopts.onButtonClick, clickopts.itemData);
                             break;
                         case 'text':
                             break;

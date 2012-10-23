@@ -1057,6 +1057,7 @@ window.initMain = window.initMain || function (undefined) {
                                         });
                                     },
                                     ActionId: actionData.ActionId,
+                                    ObjectClassId: actionData.RelatedObjectClassId,
                                     onLinkClick: handleItemSelect,
                                     onAddClick: function (itemData) {
                                         $.CswDialog('AddNodeDialog', {
@@ -1075,6 +1076,14 @@ window.initMain = window.initMain || function (undefined) {
                                     onTabClick: function (itemData) {
                                         Csw.cookie.set(Csw.cookie.cookieNames.CurrentTabId, itemData.TabId);
                                         handleItemSelect(itemData);
+                                    },
+                                    onButtonClick: function (itemData) {
+                                        Csw.controls.nodeButton(Csw.main.centerBottomDiv, {
+                                            name: itemData.Text,
+                                            value: itemData.ActionName,
+                                            mode: 'landingpage',                                            
+                                            propId: itemData.NodeTypePropId
+                                        });
                                     },
                                     onAddComponent: createMaterialLandingPage,
                                     landingPageRequestData: actionData

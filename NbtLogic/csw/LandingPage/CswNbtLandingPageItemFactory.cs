@@ -26,6 +26,10 @@ namespace ChemSW.Nbt.LandingPage
             {
                 Item = new CswNbtLandingPageItemTab( CswNbtResources );
             }
+            else if( CswNbtLandingPageItemType.Button == LandingPageItemType )
+            {
+                Item = new CswNbtLandingPageItemButton( CswNbtResources );
+            }
             else
             {
                 throw new CswDniException( ErrorType.Error,
