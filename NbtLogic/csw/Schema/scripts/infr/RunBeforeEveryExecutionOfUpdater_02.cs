@@ -9,7 +9,7 @@ namespace ChemSW.Nbt.Schema
     /// </summary>
     public class RunBeforeEveryExecutionOfUpdater_02 : CswUpdateSchemaTo
     {
-        public static string Title = "RunBeforeEveryExecutionOfUpdater_02";
+        public static string Title = "Make Database Views";
 
         public override void update()
         {

@@ -1,5 +1,6 @@
 using System;
 using ChemSW.Nbt.csw.Dev;
+using ChemSW.Nbt.MetaData;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -9,6 +10,46 @@ namespace ChemSW.Nbt.Schema
     public class RunBeforeEveryExecutionOfUpdater_01M : CswUpdateSchemaTo
     {
         public static string Title = "Pre-Script: Modules";
+
+        private void _acceptBlame( CswDeveloper BlameMe, Int32 BlameCaseNo )
+        {
+            _Author = BlameMe;
+            _CaseNo = BlameCaseNo;
+        }
+
+        private void _resetBlame()
+        {
+            _Author = CswDeveloper.NBT;
+            _CaseNo = 0;
+        }
+
+        private CswDeveloper _Author = CswDeveloper.NBT;
+
+        public override CswDeveloper Author
+        {
+            get { return _Author; }
+        }
+
+        private Int32 _CaseNo = 0;
+
+        public override int CaseNo
+        {
+            get { return _CaseNo; }
+        }
+
+        public void _decoupleImcsFromPrintLabel()
+        {
+            _acceptBlame( CswDeveloper.CF, 27935 );
+
+            Int32 ImcsId = _CswNbtSchemaModTrnsctn.getModuleId( CswNbtModuleName.IMCS );
+            CswNbtMetaDataObjectClass PrintLabelOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.PrintLabelClass );
+            foreach( CswNbtMetaDataNodeType NodeType in PrintLabelOc.getNodeTypes() )
+            {
+                _CswNbtSchemaModTrnsctn.removeModuleNodeTypeJunction( ImcsId, NodeType.NodeTypeId );
+            }
+
+            _resetBlame();
+        }
 
         public override void update()
         {
@@ -32,20 +73,14 @@ namespace ChemSW.Nbt.Schema
                 _CswNbtSchemaModTrnsctn.Modules.EnableModule( CswNbtModuleName.MLM );
             }
 
+            _decoupleImcsFromPrintLabel();
+
             #endregion TITANIA
 
 
         }
 
-        public override CswDeveloper Author
-        {
-            get { return CswDeveloper.NBT; }
-        }
 
-        public override int CaseNo
-        {
-            get { return 0; }
-        }
 
         //Update()
 
