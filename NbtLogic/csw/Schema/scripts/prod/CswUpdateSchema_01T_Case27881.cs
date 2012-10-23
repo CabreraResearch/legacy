@@ -39,7 +39,9 @@ namespace ChemSW.Nbt.Schema
                 NodeTypeId = String.Empty,
                 Text = "Create Another Material",
                 RoleId = RoleId,
-                ActionId = CreateMaterialActionId
+                ActionId = CreateMaterialActionId,
+                NewRow = 1,
+                NewColumn = 1
             };
             LandingPageObj.addLandingPageItem( Request );
 
@@ -59,7 +61,9 @@ namespace ChemSW.Nbt.Schema
                     NodeTypeId = SizeNt.NodeTypeId.ToString(),
                     Text = "Define Sizes for this Material",
                     RoleId = RoleId,
-                    ActionId = CreateMaterialActionId
+                    ActionId = CreateMaterialActionId,
+                    NewRow = 1,
+                    NewColumn = 2
                 };
                 LandingPageObj.addLandingPageItem(Request);
             }
@@ -84,7 +88,9 @@ namespace ChemSW.Nbt.Schema
                             NodeTypeId = MaterialNt.NodeTypeId.ToString(),
                             Text = "Enter GHS Data for this Material",
                             RoleId = RoleId,
-                            ActionId = CreateMaterialActionId
+                            ActionId = CreateMaterialActionId,
+                            NewRow = 2,
+                            NewColumn = 1
                         };
                         LandingPageObj.addLandingPageItem( Request );
                     }
@@ -95,8 +101,8 @@ namespace ChemSW.Nbt.Schema
 
             //todo - add all default createMaterial landing page items:
             //Receive this Material (Action + Material NodeId)
-            //Request This Material (Action + Material NodeId)
-            //Defines Sizes for this Material (Add + Material NodeId || Material NodeTypeId + TabId + Material NodeId)
+            //Request this Material (Action + Material NodeId)
+            //For Size, we currently have "Add + Material NodeId", but we may want "Material NodeTypeId + TabId + Material NodeId" or implement a LinkGrid version instead
         } //Update()
 
         public override CswDeveloper Author

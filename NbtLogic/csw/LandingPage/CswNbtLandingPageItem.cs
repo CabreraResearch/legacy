@@ -67,8 +67,22 @@ namespace ChemSW.Nbt.LandingPage
                 _ItemRow["for_actionid"] = Request.ActionId;
             }
             _ItemRow["componenttype"] = Request.Type;
-            _ItemRow["display_col"] = "1";
-            _ItemRow["display_row"] = _getNextAvailableRowForItem( RoleId, Request.ActionId );
+            if( Int32.MinValue == Request.NewColumn )
+            {
+                _ItemRow["display_col"] = "1";
+            }
+            else
+            {
+                _ItemRow["display_col"] = Request.NewColumn;
+            }
+            if( Int32.MinValue == Request.NewRow )
+            {
+                _ItemRow["display_row"] = _getNextAvailableRowForItem( RoleId, Request.ActionId );
+            }
+            else
+            {
+                _ItemRow["display_row"] = Request.NewRow;
+            }
             _ItemRow["displaytext"] = Request.Text;
             _ItemRow["buttonicon"] = Request.ButtonIcon;
         }
