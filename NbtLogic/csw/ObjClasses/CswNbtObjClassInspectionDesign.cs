@@ -436,6 +436,16 @@ namespace ChemSW.Nbt.ObjClasses
         /// </summary>
         public override void afterWriteNode()
         {
+            CswNbtNode ParentNode = _CswNbtResources.Nodes.GetNode( this.Parent.RelatedNodeId );
+            if( ParentNode != null )
+            {
+                ICswNbtPropertySetInspectionParent Parent = CswNbtPropSetCaster.AsPropertySetInspectionParent( ParentNode );
+                bool IsDeficient = areMoreActionsRequired();  //case 25041
+
+                Parent.Status.Value = IsDeficient ? TargetStatusAsString( TargetStatus.Deficient ) : TargetStatusAsString( TargetStatus.OK );
+                //Parent.LastInspectionDate.DateTimeValue = DateTime.Now;
+                ParentNode.postChanges( false );
+            } // if( ParentNode != null )
             _CswNbtObjClassDefault.afterWriteNode();
         }
 
@@ -545,7 +555,6 @@ namespace ChemSW.Nbt.ObjClasses
                         }
                         ButtonData.Message = "Unanswered questions have been set to their preferred answer.";
                         SetPreferred.setReadOnly( value: true, SaveToDb: true );
-                        SetPreferred.setHidden( value: true, SaveToDb: true );
                         break;
                 }
                 ButtonData.Action = NbtButtonAction.refresh;
@@ -561,7 +570,6 @@ namespace ChemSW.Nbt.ObjClasses
             CswNbtView SiblingView = new CswNbtView( _CswNbtResources );
             SiblingView.ViewName = "SiblingView";
             CswNbtViewRelationship ParentRelationship = SiblingView.AddViewRelationship( this.NodeType, false );
-            ParentRelationship.NodeIdsToFilterOut.Add( this.NodeId );
             SiblingView.AddViewPropertyAndFilter(
                 ParentRelationship,
                 this.NodeType.getNodeTypePropByObjectClassProp( PropertyName.Status ),
@@ -680,16 +688,6 @@ namespace ChemSW.Nbt.ObjClasses
         /// </summary>
         public CswNbtNodePropRelationship Parent { get { return ( _CswNbtNode.Properties[GeneratorTargetParentPropertyName] ); } }
 
-        private void _toggleButtons( bool Disabled )
-        {
-            Finish.setReadOnly( value: Disabled, SaveToDb: true );
-            Finish.setHidden( value: Disabled, SaveToDb: true );
-            Cancel.setReadOnly( value: Disabled, SaveToDb: true );
-            Cancel.setHidden( value: Disabled, SaveToDb: true );
-            SetPreferred.setReadOnly( value: Disabled, SaveToDb: true );
-            SetPreferred.setHidden( value: Disabled, SaveToDb: true );
-        }
-
         /// <summary>
         /// Actual status of Inspection
         /// </summary>
@@ -714,35 +712,33 @@ namespace ChemSW.Nbt.ObjClasses
                             InspectionDate.DateTimeValue = DateTime.Now;
                             Inspector.RelatedNodeId = _CswNbtResources.CurrentNbtUser.UserId;
                         }
-                        _toggleButtons( Disabled: true );
+                        Finish.setReadOnly( true, true );
+                        SetPreferred.setReadOnly( true, true );
+                        Cancel.setReadOnly( true, true );
                         Node.setReadOnly( value: true, SaveToDb: true );
                     }
                     break;
 
                 case InspectionStatus.Cancelled:
                 case InspectionStatus.Missed:
-                    _toggleButtons( Disabled: true );
+                    Finish.setReadOnly( true, true );
+                    SetPreferred.setReadOnly( true, true );
+                    Cancel.setReadOnly( true, true );
                     Node.setReadOnly( value: true, SaveToDb: true );
                     break;
 
+                case InspectionStatus.Overdue:
+                case InspectionStatus.ActionRequired:
                 case InspectionStatus.Pending:
-                    Finish.setHidden( false, true );
-                    SetPreferred.setHidden( false, true );
-                    Cancel.setHidden( false, true );
+                    Finish.setReadOnly( false, true );
+                    SetPreferred.setReadOnly( false, true );
+                    Cancel.setReadOnly( false, true );
+                    Node.setReadOnly( value: false, SaveToDb: true );
                     break;
 
             } // switch( Status.Value )
 
-            CswNbtNode ParentNode = _CswNbtResources.Nodes.GetNode( this.Parent.RelatedNodeId );
-            if( ParentNode != null )
-            {
-                ICswNbtPropertySetInspectionParent Parent = CswNbtPropSetCaster.AsPropertySetInspectionParent( ParentNode );
-                bool IsDeficient = _InspectionState.Deficient || areMoreActionsRequired();  //case 25041
 
-                Parent.Status.Value = IsDeficient ? TargetStatusAsString( TargetStatus.Deficient ) : TargetStatusAsString( TargetStatus.OK );
-                //Parent.LastInspectionDate.DateTimeValue = DateTime.Now;
-                ParentNode.postChanges( false );
-            } // if( ParentNode != null )
         } // OnStatusPropChange()
 
 
