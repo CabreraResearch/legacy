@@ -230,7 +230,7 @@
                     name: 'addlandingpageitem_tbl'
                 });
 
-                /* Type Select Label */
+                //Type Select
                 table.cell(1, 1).span({ text: 'Type:' });
                 var typeSelect = table.cell(1, 2).select({
                     name: 'landingpage_type'
@@ -238,8 +238,10 @@
                 typeSelect.option({ value: 'Add', display: 'Add', isSelected: true });
                 typeSelect.option({ value: 'Link', display: 'Link' });
                 typeSelect.option({ value: 'Text', display: 'Text' });
-                //TODO - add Tab
+                typeSelect.option({ value: 'Tab', display: 'Tab' });
+                typeSelect.option({ value: 'Button', display: 'Button' });
 
+                //View Select
                 var viewSelectLabel = table.cell(2, 1).span({ text: 'View:' }).hide();
 
                 var viewSelectTable = table.cell(2, 2).table({
@@ -253,18 +255,59 @@
                 });
                 viewSelect.$.hide();
 
-                var ntSelectLabel = table.cell(3, 1).span({ text: 'Add New:' });
-                var ntSelect = table.cell(3, 2)
+                //NodeTypeSelect
+                var ntSelectLabel;
+                var ntSelect;
+                var makeNodeTypeControl = function (parentTable, rowNum) {
+                    parentTable.cell(rowNum, 1).empty();
+                    parentTable.cell(rowNum, 2).empty();
+                    var filter = '',
+                        text = '';
+                    if(typeSelect.val() == 'Add') {
+                        filter = 'Create';
+                        text = 'Add New:';
+                    } else if (typeSelect.val() == 'Tab') {
+                        filter = 'Edit';
+                        text = 'Select:';
+                    }
+                    ntSelectLabel = parentTable.cell(rowNum, 1).span({ text: text });
+                    ntSelect = parentTable.cell(rowNum, 2)
                     .nodeTypeSelect({
                         name: 'landingpage_ntsel',
-                        filterToPermission: 'Create'
+                        filterToPermission: filter,
+                        onSelect: function () {
+                            table.cell(4, 2).empty();
+                            tabSelect = table.cell(4, 2)
+                            .tabSelect({
+                                name: 'landingpage_tabsel',
+                                nodeTypeId: ntSelect.val(),
+                                filterToPermission: 'Edit'
                     });
+                            if (typeSelect.val() != 'Tab') {
+                                tabSelectLabel.hide();
+                                tabSelect.hide();
+                            }
+                        }
+                    });
+                };
+                makeNodeTypeControl(table, 3);
 
-                /* Landing Page Item Text Label */
-                table.cell(4, 1).span({ text: 'Text:' });
+                var tabSelectLabel = table.cell(4, 1).span({ text: 'Select Tab:' }).hide();
+                var tabSelect = table.cell(4, 2)
+                    .tabSelect({
+                        name: 'landingpage_tabsel',
+                        nodeTypeId: ntSelect.val(),
+                        filterToPermission: 'Edit'
+                    }).hide();
 
-                var landingPageText = table.cell(4, 2).input({ name: 'landingpage_text' });
+                //TODO - Button Select
+                //5
 
+                //Display Text
+                table.cell(7, 1).span({ text: 'Text:' });
+                var landingPageText = table.cell(7, 2).input({ name: 'landingpage_text' });
+
+                //Add Button
                 var addButton = table.cell(7, 2).button({
                     name: 'landingpage_add',
                     enabledText: 'Add',
@@ -277,6 +320,8 @@
                             selectedView = viewSelect.val();
                             viewtype = selectedView.type;
                             pkvalue = selectedView.value;
+                        } else if (false == tabSelect.$.is(':hidden')) {
+                            pkvalue = tabSelect.val();
                         }
 
                         cswPrivate.addItem({
@@ -292,12 +337,17 @@
                 });
 
                 typeSelect.change(function () {
+                    if(typeSelect.val() == 'Tab' || typeSelect.val() == 'Add') {
+                        makeNodeTypeControl(table, 3);
+                    }
                     cswPrivate.onTypeChange({
                         typeSelect: typeSelect,
                         viewSelectLabel: viewSelectLabel,
                         viewselect: viewSelect,
                         ntSelectLabel: ntSelectLabel,
-                        $ntselect: ntSelect
+                        ntselect: ntSelect,
+                        tabSelectLabel: tabSelectLabel,
+                        tabselect: tabSelect
                     });
                 });
 
@@ -324,26 +374,44 @@
                 });
             };
 
-            cswPrivate.onTypeChange = function (controlOptions) {
-                switch (controlOptions.typeSelect.val()) {
+            cswPrivate.onTypeChange = function (control) {
+                switch (control.typeSelect.val()) {
                     case 'Add':
-                        controlOptions.viewSelectLabel.hide();
-                        controlOptions.viewselect.$.hide();
-                        controlOptions.ntSelectLabel.show();
-                        controlOptions.$ntselect.show();
+                        cswPrivate.toggleVisibility(control.viewSelectLabel, control.viewselect, false);
+                        cswPrivate.toggleVisibility(control.ntSelectLabel, control.ntselect, true);
+                        cswPrivate.toggleVisibility(control.tabSelectLabel, control.tabselect, false);
                         break;
                     case 'Link':
-                        controlOptions.viewSelectLabel.show();
-                        controlOptions.viewselect.$.show();
-                        controlOptions.ntSelectLabel.hide();
-                        controlOptions.$ntselect.hide();
+                        cswPrivate.toggleVisibility(control.viewSelectLabel, control.viewselect, true);
+                        cswPrivate.toggleVisibility(control.ntSelectLabel, control.ntselect, false);
+                        cswPrivate.toggleVisibility(control.tabSelectLabel, control.tabselect, false);
                         break;
                     case 'Text':
-                        controlOptions.viewSelectLabel.hide();
-                        controlOptions.viewselect.$.hide();
-                        controlOptions.ntSelectLabel.hide();
-                        controlOptions.$ntselect.hide();
+                        cswPrivate.toggleVisibility(control.viewSelectLabel, control.viewselect, false);
+                        cswPrivate.toggleVisibility(control.ntSelectLabel, control.ntselect, false);
+                        cswPrivate.toggleVisibility(control.tabSelectLabel, control.tabselect, false);
                         break;
+                    case 'Tab':
+                        cswPrivate.toggleVisibility(control.viewSelectLabel, control.viewselect, false);
+                        cswPrivate.toggleVisibility(control.ntSelectLabel, control.ntselect, true);
+                        cswPrivate.toggleVisibility(control.tabSelectLabel, control.tabselect, true);
+                        break;
+                    case 'Button':
+                        cswPrivate.toggleVisibility(control.viewSelectLabel, control.viewselect, false);
+                        cswPrivate.toggleVisibility(control.ntSelectLabel, control.ntselect, false);
+                        cswPrivate.toggleVisibility(control.tabSelectLabel, control.tabselect, false);
+                        //show button select for csWPrivate.ObjectClassId
+                        break;
+                }
+            };
+
+            cswPrivate.toggleVisibility = function(label, control, show) {
+                if(show) {
+                    label.show();
+                    control.show();
+                } else {
+                    label.hide();
+                    control.hide();
                 }
             };
 

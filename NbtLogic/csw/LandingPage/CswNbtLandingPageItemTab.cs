@@ -18,28 +18,24 @@ namespace ChemSW.Nbt.LandingPage
                 CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( CswConvert.ToInt32( LandingPageRow["to_nodetypeid"] ) );
                 if( NodeType != null )
                 {
-                    CswNbtNode RequestNode = _CswNbtResources.Nodes.GetNode( CswConvert.ToPrimaryKey( Request.NodeId ) );
-                    if( RequestNode != null && RequestNode.NodeTypeId == NodeType.NodeTypeId )
+                    CswNbtMetaDataNodeTypeTab Tab = NodeType.getNodeTypeTab( CswConvert.ToInt32( LandingPageRow["to_tabid"] ) );
+                    if( null != Tab )
                     {
-                        CswNbtMetaDataNodeTypeTab Tab = NodeType.getNodeTypeTab( CswConvert.ToInt32( LandingPageRow["to_tabid"] ) );
-                        if( null != Tab )
+                        CswNbtView TabView = getTabView(Request.NodeViewId, NodeType);
+                        if( null != TabView && TabView.IsFullyEnabled() )
                         {
-                            CswNbtView TabView = getTabView(Request.NodeViewId, NodeType);
-                            if( null != TabView && TabView.IsFullyEnabled() )
-                            {
-                                _ItemData.Text = LandingPageRow["displaytext"].ToString() != string.Empty ? 
-                                    LandingPageRow["displaytext"].ToString() : 
-                                    TabView.ViewName + " " + Tab.TabName;
-                                _ItemData.ViewId = TabView.ViewId.ToString();
-                                _ItemData.ViewMode = TabView.ViewMode.ToString().ToLower();                                
-                                _ItemData.Type = "view";
+                            _ItemData.Text = LandingPageRow["displaytext"].ToString() != string.Empty ? 
+                                LandingPageRow["displaytext"].ToString() : 
+                                TabView.ViewName + " " + Tab.TabName;
+                            _ItemData.ViewId = TabView.SessionViewId.ToString();
+                            _ItemData.ViewMode = TabView.ViewMode.ToString().ToLower();                                
+                            _ItemData.Type = "view";
 
-                                _ItemData.TabId = LandingPageRow["to_tabid"].ToString();
-                                _ItemData.ButtonIcon = CswNbtMetaDataObjectClass.IconPrefix100 + NodeType.IconFileName;
-                                _setCommonItemDataForUI( LandingPageRow );
-                            }                            
-                        }
-                    }                   
+                            _ItemData.TabId = LandingPageRow["to_tabid"].ToString();
+                            _ItemData.ButtonIcon = CswNbtMetaDataObjectClass.IconPrefix100 + NodeType.IconFileName;
+                            _setCommonItemDataForUI( LandingPageRow );
+                        }                            
+                    }
                 }                
             }            
         }
@@ -55,6 +51,7 @@ namespace ChemSW.Nbt.LandingPage
             else
             {
                 TabView = NodeType.CreateDefaultView();
+                TabView.SaveToCache( false );
             }
             return TabView;
         }
