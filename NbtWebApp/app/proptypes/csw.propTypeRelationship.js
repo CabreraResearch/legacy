@@ -50,8 +50,8 @@
 
                     if (cswPublic.data.isReadOnly()) {
                         cswPublic.control = cswPrivate.parent.table();
-                        cswPrivate.nodeLinkText = cswPublic.control.cell(1, cswPrivate.cellCol);
-                        cswPrivate.nodeLinkText = cswPrivate.nodeLinkText.nodeLink({
+                        cswPrivate.nodeLinkTextCell = cswPublic.control.cell(1, cswPrivate.cellCol);
+                        cswPrivate.nodeLinkText = cswPrivate.nodeLinkTextCell.nodeLink({
                             text: cswPrivate.selectedNodeLink
                         });
                         cswPrivate.parent.$.hover(function (event) { Csw.nodeHoverIn(event, cswPrivate.selectedNodeId); },
