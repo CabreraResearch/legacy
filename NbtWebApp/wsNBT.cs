@@ -2219,7 +2219,6 @@ namespace ChemSW.Nbt.WebServices
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
         public string getNodeTypes( string ObjectClassName, string ObjectClassId, string ExcludeNodeTypeIds, string RelatedToNodeTypeId, string RelatedObjectClassPropName, string FilterToPermission )
         {
-            //sometimes we only want nodetypes for which the user has Create permissions - how do we determine this?
             JObject ReturnVal = new JObject();
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
             try
@@ -2259,6 +2258,31 @@ namespace ChemSW.Nbt.WebServices
             return ReturnVal.ToString();
 
         } // getNodeTypes()
+
+        [WebMethod( EnableSession = false )]
+        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        public string getNodeTypeTabs( string NodeTypeName, string NodeTypeId, string FilterToPermission )
+        {
+            JObject ReturnVal = new JObject();
+            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            try
+            {
+                _initResources();
+                AuthenticationStatus = _attemptRefresh();
+                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+                {
+                    var ws = new CswNbtWebServiceMetaData( _CswNbtResources );
+                    ReturnVal = ws.getNodeTypeTabs( NodeTypeName, NodeTypeId, FilterToPermission );
+                }
+                _deInitResources();
+            }
+            catch( Exception Ex )
+            {
+                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
+            }
+            CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
+            return ReturnVal.ToString();
+        } // getNodeTypeTabs()
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]

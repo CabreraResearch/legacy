@@ -178,6 +178,14 @@
                     opts = cswPrivate.controlPreProcessing(opts, 'tabDiv');
                     return Csw.controls.tabDiv(cswParent, opts);
                 };
+                
+                cswParent.tabSelect = function (opts) {
+                    /// <summary> Creates a Csw.tabSelect on this element</summary>
+                    /// <param name="opts" type="Object">Options to define the tabSelect.</param>
+                    /// <returns type="Csw.controls.tabDiv">A Csw.controls.tabSelect</returns> 
+                    opts = cswPrivate.controlPreProcessing(opts, 'tabSelect');
+                    return Csw.controls.tabSelect(cswParent, opts);
+                };
 
                 cswParent.timeInterval = function (opts) {
                     /// <summary> Creates a Csw.timeInterval on this element</summary>
