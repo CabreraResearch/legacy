@@ -67,7 +67,7 @@ namespace ChemSW.Nbt.LandingPage
                 _ItemRow["for_actionid"] = Request.ActionId;
             }
             _ItemRow["componenttype"] = Request.Type;
-            if( Int32.MinValue == Request.NewColumn )
+            if( Request.NewColumn <= 0 )
             {
                 _ItemRow["display_col"] = "1";
             }
@@ -75,7 +75,7 @@ namespace ChemSW.Nbt.LandingPage
             {
                 _ItemRow["display_col"] = Request.NewColumn;
             }
-            if( Int32.MinValue == Request.NewRow )
+            if( Request.NewRow <= 0 )
             {
                 _ItemRow["display_row"] = _getNextAvailableRowForItem( RoleId, Request.ActionId );
             }
