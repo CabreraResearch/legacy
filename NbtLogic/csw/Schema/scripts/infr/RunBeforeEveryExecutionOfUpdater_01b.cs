@@ -31,13 +31,18 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataObjectClassProp TypeOCP = MailReportOC.getObjectClassProp( CswNbtObjClassMailReport.PropertyName.Type );
             if( null == MailReportOC.getObjectClassProp( CswNbtObjClassMailReport.PropertyName.TargetType ) )
             {
-                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( MailReportOC )
-                {
-                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.NodeTypeSelect,
-                    PropName = CswNbtObjClassMailReport.PropertyName.TargetType,
-                    FilterPropId = TypeOCP.PropId,
-                    Filter = CswNbtObjClassMailReport.TypeOptionView
-                } );
+                CswNbtMetaDataObjectClassProp TargetTypeOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp(
+                    new CswNbtWcfMetaDataModel.ObjectClassProp( MailReportOC )
+                        {
+                            FieldType = CswNbtMetaDataFieldType.NbtFieldType.NodeTypeSelect,
+                            PropName = CswNbtObjClassMailReport.PropertyName.TargetType,
+                            FilterPropId = TypeOCP.PropId
+                        } );
+                _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp(
+                    TargetTypeOCP,
+                    CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.filter,
+                    CswNbtMetaDataObjectClassProp.makeFilter( TargetTypeOCP.getFieldTypeRule().SubFields.Default, CswNbtPropFilterSql.PropertyFilterMode.Equals, CswNbtObjClassMailReport.TypeOptionView )
+                    );
             }
             if( null == MailReportOC.getObjectClassProp( CswNbtObjClassMailReport.PropertyName.Event ) )
             {
@@ -49,14 +54,18 @@ namespace ChemSW.Nbt.Schema
                         Options.Add( EventOpt.ToString() );
                     }
                 }
-                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( MailReportOC )
+                CswNbtMetaDataObjectClassProp EventOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( MailReportOC )
                 {
                     FieldType = CswNbtMetaDataFieldType.NbtFieldType.List,
                     PropName = CswNbtObjClassMailReport.PropertyName.Event,
                     ListOptions = Options.ToString(),
-                    FilterPropId = TypeOCP.PropId,
-                    Filter = CswNbtObjClassMailReport.TypeOptionView
+                    FilterPropId = TypeOCP.PropId
                 } );
+                _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp(
+                    EventOCP,
+                    CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.filter,
+                    CswNbtMetaDataObjectClassProp.makeFilter( EventOCP.getFieldTypeRule().SubFields.Default, CswNbtPropFilterSql.PropertyFilterMode.Equals, CswNbtObjClassMailReport.TypeOptionView )
+                    );
             }
             if( null == MailReportOC.getObjectClassProp( CswNbtObjClassMailReport.PropertyName.NodesToReport ) )
             {
