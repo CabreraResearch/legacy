@@ -63,8 +63,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NbtWebAppJavaScript.Test", 
 EndProject
 Project("{218574D1-FF94-4B95-8577-A6D58C11C315}") = "NbtOracle", "NbtOracle\NbtOracle.oradbproj", "{218574D1-FF94-4B95-8577-A6D58C11C315}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NbtOracleClr", "NbtOracleClr\NbtOracleClr.csproj", "{4421DF55-0B3F-457C-9E90-9A5F1C2E0476}"
-EndProject
 Global
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = Nbt.vsmdi
@@ -189,30 +187,6 @@ Global
 		{434091FB-F487-4787-8BDB-58C2336B73C2}.Release|x64.ActiveCfg = Release|x64
 		{434091FB-F487-4787-8BDB-58C2336B73C2}.Release|x64.Build.0 = Release|x64
 		{434091FB-F487-4787-8BDB-58C2336B73C2}.Release|x86.ActiveCfg = Release|x64
-		{4421DF55-0B3F-457C-9E90-9A5F1C2E0476}.Debug (Fast)|Any CPU.ActiveCfg = Debug|x86
-		{4421DF55-0B3F-457C-9E90-9A5F1C2E0476}.Debug (Fast)|Mixed Platforms.ActiveCfg = Debug|x86
-		{4421DF55-0B3F-457C-9E90-9A5F1C2E0476}.Debug (Fast)|Mixed Platforms.Build.0 = Debug|x86
-		{4421DF55-0B3F-457C-9E90-9A5F1C2E0476}.Debug (Fast)|Mixed Platforms.Deploy.0 = Debug|x86
-		{4421DF55-0B3F-457C-9E90-9A5F1C2E0476}.Debug (Fast)|x64.ActiveCfg = Debug|x86
-		{4421DF55-0B3F-457C-9E90-9A5F1C2E0476}.Debug (Fast)|x86.ActiveCfg = Debug|x86
-		{4421DF55-0B3F-457C-9E90-9A5F1C2E0476}.Debug (Fast)|x86.Build.0 = Debug|x86
-		{4421DF55-0B3F-457C-9E90-9A5F1C2E0476}.Debug (Fast)|x86.Deploy.0 = Debug|x86
-		{4421DF55-0B3F-457C-9E90-9A5F1C2E0476}.Debug|Any CPU.ActiveCfg = Debug|x86
-		{4421DF55-0B3F-457C-9E90-9A5F1C2E0476}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
-		{4421DF55-0B3F-457C-9E90-9A5F1C2E0476}.Debug|Mixed Platforms.Build.0 = Debug|x86
-		{4421DF55-0B3F-457C-9E90-9A5F1C2E0476}.Debug|Mixed Platforms.Deploy.0 = Debug|x86
-		{4421DF55-0B3F-457C-9E90-9A5F1C2E0476}.Debug|x64.ActiveCfg = Debug|x86
-		{4421DF55-0B3F-457C-9E90-9A5F1C2E0476}.Debug|x86.ActiveCfg = Debug|x86
-		{4421DF55-0B3F-457C-9E90-9A5F1C2E0476}.Debug|x86.Build.0 = Debug|x86
-		{4421DF55-0B3F-457C-9E90-9A5F1C2E0476}.Debug|x86.Deploy.0 = Debug|x86
-		{4421DF55-0B3F-457C-9E90-9A5F1C2E0476}.Release|Any CPU.ActiveCfg = Release|x86
-		{4421DF55-0B3F-457C-9E90-9A5F1C2E0476}.Release|Mixed Platforms.ActiveCfg = Release|x86
-		{4421DF55-0B3F-457C-9E90-9A5F1C2E0476}.Release|Mixed Platforms.Build.0 = Release|x86
-		{4421DF55-0B3F-457C-9E90-9A5F1C2E0476}.Release|Mixed Platforms.Deploy.0 = Release|x86
-		{4421DF55-0B3F-457C-9E90-9A5F1C2E0476}.Release|x64.ActiveCfg = Release|x86
-		{4421DF55-0B3F-457C-9E90-9A5F1C2E0476}.Release|x86.ActiveCfg = Release|x86
-		{4421DF55-0B3F-457C-9E90-9A5F1C2E0476}.Release|x86.Build.0 = Release|x86
-		{4421DF55-0B3F-457C-9E90-9A5F1C2E0476}.Release|x86.Deploy.0 = Release|x86
 		{4AD32EDB-E47A-4CA8-910A-85C5994530B3}.Debug (Fast)|Any CPU.ActiveCfg = Debug (Fast)|x64
 		{4AD32EDB-E47A-4CA8-910A-85C5994530B3}.Debug (Fast)|Mixed Platforms.ActiveCfg = Debug (Fast)|x64
 		{4AD32EDB-E47A-4CA8-910A-85C5994530B3}.Debug (Fast)|Mixed Platforms.Build.0 = Debug (Fast)|x64
