@@ -153,7 +153,9 @@
                         });
                     };
 
-                    if (cswPublic.data.tabState.EditMode === Csw.enums.editMode.AuditHistoryInPopup || cswPublic.data.isMulti()) {
+                    if (cswPublic.data.isReadOnly() ||
+                        cswPublic.data.isMulti()) {
+
                         cswPublic.control = cswPrivate.parent.append('[Grid display disabled]');
                     } else {
                         
