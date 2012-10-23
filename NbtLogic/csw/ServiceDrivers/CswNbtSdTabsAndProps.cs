@@ -59,7 +59,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                             //_CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, Prop.getNodeType(), false, Tab, _CswNbtResources.CurrentNbtUser, Node.NodeId, Prop )
                             CswNbtMetaDataNodeTypeTab Tab = _CswNbtResources.MetaData.getNodeTypeTab( EditLayout.TabId );
                             if(
-                                    Tab.TabName != CswNbtMetaData.IdentityTabName && (
+                                    ( _ConfigMode || Tab.TabName != CswNbtMetaData.IdentityTabName ) && (
                                         _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.View, NodeType ) ||
                                         _CswNbtResources.Permit.canTab( CswNbtPermit.NodeTypePermission.View, NodeType, Tab ) ||
                                         (
@@ -80,11 +80,11 @@ namespace ChemSW.Nbt.ServiceDrivers
                     NodeTypeId = Node.NodeTypeId;
                     foreach( CswNbtMetaDataNodeTypeTab Tab in from _Tab in _CswNbtResources.MetaData.getNodeTypeTabs( Node.NodeTypeId )
                                                               orderby _Tab.TabOrder, _Tab.TabName
-                                                              where _Tab.TabName != CswNbtMetaData.IdentityTabName &&
+                                                              where ( ( _ConfigMode || _Tab.TabName != CswNbtMetaData.IdentityTabName ) &&
                                                                     (
                                                                         _CswNbtResources.Permit.canTab( CswNbtPermit.NodeTypePermission.View, Node.getNodeType(), _Tab ) ||
                                                                         _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.View, Node.getNodeType() )
-                                                                    )
+                                                                    ) )
                                                               select _Tab )
                     {
                         _makeTab( Ret, Tab.TabOrder, Tab.TabId.ToString(), Tab.TabName, _canEditLayout() );

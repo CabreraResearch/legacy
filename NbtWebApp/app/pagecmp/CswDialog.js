@@ -450,7 +450,7 @@
                 cswDlgPrivate.ShowAsReport = false;
                 cswDlgPrivate.tabState.Config = true;
                 cswDlgPrivate.onTabSelect = function (tabid) {
-                    // cswDlgPrivate.tabState.tabid = tabid;
+                    cswDlgPrivate.tabState.tabid = tabid;
                     // _configAddOptions();
                 };
                 cswDlgPrivate.onPropertyRemove = function () {

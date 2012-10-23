@@ -37,7 +37,7 @@
                     if (false === cswPrivate.fractional) {
                         cswPrivate.precision = 0;
                     }
-                    if (Csw.bool(cswPublic.data.propData.readonly)) {
+                    if (cswPublic.data.isReadOnly()) {
                         cswPublic.control = cswPrivate.parent.span({ text: cswPublic.data.propData.gestalt });
                     } else {
 

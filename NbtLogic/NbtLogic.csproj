@@ -98,6 +98,7 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01T_Case27920.cs" />
     <Compile Include="csw\LandingPage\CswNbtLandingPageDataContract.cs" />
     <Compile Include="csw\LandingPage\CswNbtLandingPageItem.cs" />
     <Compile Include="csw\LandingPage\CswNbtLandingPageItemAdd.cs" />
