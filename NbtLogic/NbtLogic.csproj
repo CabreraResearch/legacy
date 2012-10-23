@@ -101,6 +101,9 @@
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01T_Case27920.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_0T1_Case27884.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01S_Case28016.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01S_Case27742.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01S_Case28002.cs" />
     <Compile Include="csw\Actions\CswNbtActAssignTests.cs" />
     <Compile Include="csw\Actions\CswNbtActCopyNode.cs" />
     <Compile Include="csw\Actions\CswNbtActGenerateFutureNodes.cs" />

@@ -8,7 +8,7 @@ REM Generate default setting file
 >%LOCALCONF% echo REM Configuration File
 >>%LOCALCONF% echo set KilnPath=D:\kiln
 >>%LOCALCONF% echo set SchemaPath=D:\iisroot\Schema
->>%LOCALCONF% echo set LogFile=D:\log\dailyLogDev.txt
+>>%LOCALCONF% echo set LogFile=D:\log\dailyLog.txt
 >>%LOCALCONF% echo set SchedServiceName=ChemSW NBT Schedule Service
 >>%LOCALCONF% echo set ResetSchemaUsername=nbt_master
 >>%LOCALCONF% echo set ResetSchemaPassword=hj345defwu9

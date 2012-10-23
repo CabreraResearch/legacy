@@ -218,11 +218,19 @@ window.initMain = window.initMain || function (undefined) {
         return ret;
     }
 
+    function setUsername(username) {
+        Csw.clientSession.setUsername(username);
+        Csw.main.headerUsername.text(username)
+                .$.hover(function () { $(this).CswAttrDom('title', Csw.clientSession.getExpireTime()); });
+    }
+    Csw.subscribe(Csw.enums.events.main.reauthenticate, function (eventObj, username) {
+        setUsername(username);
+    });
+
     function initAll(onSuccess) {
         Csw.main.centerBottomDiv.$.CswLogin('init', {
             'onAuthenticate': function (u) {
-                Csw.main.headerUsername.text(u)
-                     .$.hover(function () { $(this).CswAttrDom('title', Csw.clientSession.getExpireTime()); });
+                setUsername(u);
                 refreshDashboard();
                 refreshHeaderMenu();
                 universalsearch = Csw.composites.universalSearch(null, {

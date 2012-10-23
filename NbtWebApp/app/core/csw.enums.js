@@ -89,7 +89,8 @@
                 refresh: 'refresh',
                 refreshHeader: 'refreshHeader',
                 refreshSelected: 'refreshSelected',
-                clear: 'clear'
+                clear: 'clear',
+                reauthenticate: 'reauthenticate'
             }
         });
 
