@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
-using System.Data;
-using ChemSW.Core;
-using ChemSW.DB;
+using ChemSW.Nbt.csw.Dev;
 using ChemSW.Nbt.MetaData;
-using ChemSW.Nbt.ObjClasses;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -13,6 +10,16 @@ namespace ChemSW.Nbt.Schema
     /// </summary>
     public class CswUpdateSchema_01S_Case28002 : CswUpdateSchemaTo
     {
+        public override CswDeveloper Author
+        {
+            get { return CswDeveloper.SS; }
+        }
+
+        public override int CaseNo
+        {
+            get { return 28002; }
+        }
+
         public override void update()
         {
             // Find and remove invalid property references

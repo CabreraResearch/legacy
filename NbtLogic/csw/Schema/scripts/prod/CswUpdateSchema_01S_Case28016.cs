@@ -1,10 +1,7 @@
-﻿using System;
-using System.Data;
-using ChemSW.Core;
-using ChemSW.DB;
+﻿using ChemSW.Nbt.csw.Dev;
 using ChemSW.Nbt.MetaData;
-using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.ObjClasses;
+using ChemSW.Nbt.PropTypes;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -13,9 +10,19 @@ namespace ChemSW.Nbt.Schema
     /// </summary>
     public class CswUpdateSchema_01S_Case28016 : CswUpdateSchemaTo
     {
+        public override CswDeveloper Author
+        {
+            get { return CswDeveloper.SS; }
+        }
+
+        public override int CaseNo
+        {
+            get { return 28016; }
+        }
+
         public override void update()
         {
-            CswNbtMetaDataObjectClass MailReportOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.MailReportClass );
+            CswNbtMetaDataObjectClass MailReportOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.MailReportClass );
             CswNbtMetaDataObjectClassProp NextDueDateOCP = MailReportOC.getObjectClassProp( CswNbtObjClassMailReport.PropertyName.NextDueDate );
             CswNbtMetaDataObjectClassProp LastProcessedOCP = MailReportOC.getObjectClassProp( CswNbtObjClassMailReport.PropertyName.LastProcessed );
 
