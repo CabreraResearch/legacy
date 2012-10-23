@@ -10,14 +10,17 @@
                 /// <param name="cswParent" type="Csw.literals">An Csw Control to bind to.</param>
                 /// <returns type="Csw.controls">The options object with DOM methods attached.</returns> 
                 'use strict';
-                var cswPrivate = {};
+                var cswPrivate = {
+                    count: 0
+                };
                 if (Csw.isNullOrEmpty(cswParent)) {
                     Csw.error.throwException('Cannot create a Csw control without a Csw parent', '_controls.factory', '_controls.factory.js', 14);
                 }
 
                 cswPrivate.controlPreProcessing = function (opts, controlName) {
                     opts = opts || {};
-                    opts.suffix = controlName;
+                    cswPrivate.count += 1;
+                    opts.suffix = controlName + cswPrivate.count;
                     return opts;
                 };
 

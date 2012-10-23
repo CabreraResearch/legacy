@@ -11,13 +11,17 @@
                 /// <returns type="Csw.composites">The options object with DOM methods attached.</returns> 
                 'use strict';
 
-                var cswPrivate = {};
+                var cswPrivate = {
+                    count: 0
+                };
                 if (Csw.isNullOrEmpty(cswParent)) {
                     throw new Error('Cannot create a Csw component without a Csw control');
                 }
 
                 cswPrivate.controlPreProcessing = function (opts, controlName) {
                     opts = opts || {};
+                    cswPrivate.count += 1;
+                    opts.suffix = controlName + cswPrivate.count;
                     opts.suffix = controlName;
                     return opts;
                 };
