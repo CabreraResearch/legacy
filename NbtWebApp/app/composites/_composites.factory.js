@@ -26,15 +26,6 @@
                     return opts;
                 };
 
-                for (var prop in Csw.composites) {
-                    if (Csw.composites.hasOwnProperty(prop) && prop !== 'factory') {
-                        cswParent[prop] = function (opts) {
-                            opts = cswPrivate.controlPreProcessing(opts, prop);
-                            return Csw.composites[prop](cswParent, opts);
-                        };
-                    }
-                }
-
                 //Csw.each is EXPENSIVE. Do !not! do this until each() is fixed.
                 //Csw.each(Csw.composites, function (literal, name) {
                 //    if (false === Csw.contains(Csw, name) &&
