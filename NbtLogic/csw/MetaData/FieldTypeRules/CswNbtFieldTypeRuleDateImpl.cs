@@ -65,7 +65,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                     }
                     else
                     {
-                        ReturnVal = ValueColumn + " > " + ThisDayString;
+                        ReturnVal = ValueColumn + " >= " + ThisDayString;
                         ReturnVal += " and " + ValueColumn + " < " + NextDayString;
                     }
                 }
@@ -108,7 +108,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                     else
                     {
                         ReturnVal = "(" + ValueColumn + " < " + ThisDayString;
-                        ReturnVal += " or " + ValueColumn + " > " + NextDayString + ")";
+                        ReturnVal += " or " + ValueColumn + " >= " + NextDayString + ")";
                     }
                 }
                 else
