@@ -119,14 +119,14 @@
             };
 
             cswPrivate.setPrivateProp = function (obj, propName) {
-                if (false === Csw.isNullOrEmpty(obj) && false === Csw.isNullOrEmpty(propName)) {
+                if (Csw.contains(obj, propName)) {
                     cswPrivate[propName] = obj[propName];
                     delete obj[propName];
                 }
             };
 
             cswPrivate.setTabStateProp = function (obj, propName) {
-                if (false === Csw.isNullOrEmpty(obj) && false === Csw.isNullOrEmpty(propName)) {
+                if (Csw.contains(obj, propName)) {
                     cswPrivate.tabState[propName] = obj[propName];
                     delete obj[propName];
                 }
@@ -207,7 +207,6 @@
                             
                             function makeTabs() {
                                 cswPrivate.clearTabs();
-
                                 cswPrivate.makeIdentityTab(data);
 
                                 var tabIds = Csw.delimitedString();
