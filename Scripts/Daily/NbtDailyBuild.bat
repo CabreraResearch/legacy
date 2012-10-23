@@ -97,6 +97,10 @@ exit | >>%LogFile% sqlplus %ResetSchemaUsername%/%ResetSchemaPassword%@%ResetSch
 
 >>%LogFile% %KilnPath%\Nbt\Nbt\NbtSchemaUpdaterCmdLn\bin\Release\NbtUpdt.exe -all
 
+>>%LogFile% echo 
+>>%LogFile% echo Schema Update Complete: Version Synopsis Follows
+>>%LogFile% %KilnPath%\Nbt\Nbt\NbtSchemaUpdaterCmdLn\bin\Release\NbtUpdt.exe -version
+
 
 >>%LogFile% echo ====================================================================
 >>%LogFile% net stop "ChemSW Log Service"
