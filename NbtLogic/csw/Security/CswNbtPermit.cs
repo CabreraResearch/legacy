@@ -84,8 +84,9 @@ namespace ChemSW.Nbt.Security
             public NodeTypePermission Permission = NodeTypePermission.View;
 
 
-            public CswNbtPermitInfo( CswNbtResources CswNbtResources, ICswNbtUser CswNbtUser, CswNbtObjClassRole CswNbtObjClassRole, CswNbtMetaDataNodeType NodeTypeIn, NodeTypePermission PermissionIn )
+            public CswNbtPermitInfo( CswNbtResources CswNbtResources, ICswNbtUser CswNbtUser, CswNbtObjClassRole CswNbtObjClassRole, CswNbtMetaDataNodeType NodeTypeIn, NodeTypePermission PermissionIn, CswPrimaryKey CswPrimaryKey )
             {
+                _NodePrimeKey = CswPrimaryKey;
                 NodeType = NodeTypeIn;
                 _CswNbtResources = CswNbtResources;
                 _CswNbtUser = CswNbtUser;
@@ -108,6 +109,14 @@ namespace ChemSW.Nbt.Security
                 }//get
 
             }//User
+
+
+            private CswPrimaryKey _NodePrimeKey = null;
+            public CswPrimaryKey NodePrimeKey
+            {
+                set { _NodePrimeKey = value; }
+                get { return ( _NodePrimeKey ); }
+            }
 
             public CswNbtObjClassRole Role
             {
@@ -147,6 +156,19 @@ namespace ChemSW.Nbt.Security
                     return ( _IsUberUser );
                 }
             }//IsUberUser
+
+
+            public bool allowAlways()
+            {
+                bool ReturnVal = IsUberUser;
+
+                // case 2209 - Users can edit their own profile without permissions to the User nodetype
+                ReturnVal = ReturnVal || ( ( null != User ) && ( NodePrimeKey == User.UserId ) );
+
+
+                return ( ReturnVal );
+
+            }//allowAlways()
 
 
             private bool _ExceptionCasesHaveBeenChecked = false;
@@ -189,7 +211,7 @@ namespace ChemSW.Nbt.Security
 
 
         private CswNbtPermitInfo _CswNbtPermitInfo = null;
-        private void _initPermissionInfo( ICswNbtUser CswNbtUser, CswNbtMetaDataNodeType NodeType, NodeTypePermission Permission )
+        private void _initPermissionInfo( ICswNbtUser CswNbtUser, CswNbtMetaDataNodeType NodeType, NodeTypePermission Permission, CswPrimaryKey CswPrimaryKey = null )
         {
             CswNbtObjClassRole CswNbtObjClassRole = null;
             CswPrimaryKey RoleId = null;
@@ -214,17 +236,22 @@ namespace ChemSW.Nbt.Security
                 {
                     _CswNbtPermitInfo = _PermitInfoItems[CswNbtPermitInfoKey];
 
+                    if( ( null != CswPrimaryKey ) && null == ( _CswNbtPermitInfo.NodePrimeKey ) )
+                    {
+                        _CswNbtPermitInfo.NodePrimeKey = CswPrimaryKey;
+                    }
+
                 }
                 else
                 {
-                    _CswNbtPermitInfo = new CswNbtPermitInfo( _CswNbtResources, CswNbtUser, CswNbtObjClassRole, NodeType, Permission );
+                    _CswNbtPermitInfo = new CswNbtPermitInfo( _CswNbtResources, CswNbtUser, CswNbtObjClassRole, NodeType, Permission, CswPrimaryKey );
                     _PermitInfoItems.Add( CswNbtPermitInfoKey, _CswNbtPermitInfo );
 
                 }
             }
             else //the permit info in this case is not catalogued, and permit info won't allow any ops to proceed
             {
-                _CswNbtPermitInfo = new CswNbtPermitInfo( _CswNbtResources, CswNbtUser, CswNbtObjClassRole, NodeType, Permission );
+                _CswNbtPermitInfo = new CswNbtPermitInfo( _CswNbtResources, CswNbtUser, CswNbtObjClassRole, NodeType, Permission, CswPrimaryKey );
             }//if we were able to retrieve a role
 
         }//_initPermissionInfo()
@@ -305,7 +332,7 @@ namespace ChemSW.Nbt.Security
 
             _initPermissionInfo( User, NodeType, Permission );
 
-            if( false == _CswNbtPermitInfo.IsUberUser )
+            if( false == _CswNbtPermitInfo.allowAlways() )
             {
 
                 if( _CswNbtPermitInfo.shouldPermissionCheckProceed() )
@@ -337,7 +364,7 @@ namespace ChemSW.Nbt.Security
 
             _initPermissionInfo( User, NodeType, Permission );
 
-            if( false == _CswNbtPermitInfo.IsUberUser )
+            if( false == _CswNbtPermitInfo.allowAlways() )
             {
                 if( null != NodeType )
                 {
@@ -383,7 +410,7 @@ namespace ChemSW.Nbt.Security
 
             _initPermissionInfo( User, NodeType, Permission );
 
-            if( false == _CswNbtPermitInfo.IsUberUser )
+            if( false == _CswNbtPermitInfo.allowAlways() )
             {
 
                 if( _CswNbtPermitInfo.shouldPermissionCheckProceed() )
@@ -418,9 +445,9 @@ namespace ChemSW.Nbt.Security
 
             if( ret )
             {
-                _initPermissionInfo( User, MetaDataProp.getNodeType(), Permission );
+                _initPermissionInfo( User, MetaDataProp.getNodeType(), Permission, NodePropWrapper.NodeId );
 
-                if( false == _CswNbtPermitInfo.IsUberUser )
+                if( false == _CswNbtPermitInfo.allowAlways() )
                 {
 
                     if( _CswNbtPermitInfo.shouldPermissionCheckProceed() )
@@ -485,9 +512,9 @@ namespace ChemSW.Nbt.Security
 
             bool ret = true;
 
-            _initPermissionInfo( User, NodeType, Permission );
+            _initPermissionInfo( User, NodeType, Permission, NodeId );
 
-            if( false == _CswNbtPermitInfo.IsUberUser )
+            if( false == _CswNbtPermitInfo.allowAlways() )
             {
 
                 if( _CswNbtPermitInfo.shouldPermissionCheckProceed() )
@@ -500,14 +527,17 @@ namespace ChemSW.Nbt.Security
                     // decide how to piece them together. 
                     //ret = canNodeType( Permission, _CswNbtPermitInfo.NodeType, _CswNbtPermitInfo.User );
 
+
+
+
                     if( null != NodeId && Int32.MinValue != NodeId.PrimaryKey )
                     {
-                        // case 2209 - Users can edit their own profile without permissions to the User nodetype
-                        if( !ret &&
-                            NodeId == _CswNbtPermitInfo.User.UserId )
-                        {
-                            ret = true;
-                        }
+                        //// case 2209 - Users can edit their own profile without permissions to the User nodetype
+                        //if( !ret &&
+                        //    NodeId == _CswNbtPermitInfo.User.UserId )
+                        //{
+                        //    ret = true;
+                        //}
 
                         // Prevent users from deleting themselves or their own roles
                         if( ret &&
