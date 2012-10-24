@@ -75,14 +75,27 @@ namespace ChemSW.Nbt.LandingPage
         {
             if( Request.LandingPageId != Int32.MinValue )
             {
+                bool updateComplete = false;
                 CswTableUpdate LandingPageUpdate = _CswNbtResources.makeCswTableUpdate( "MoveLandingPageItem", "landingpage" );
-                DataTable LandingPageTable = LandingPageUpdate.getTable( "landingpageid", Request.LandingPageId );
-                if( LandingPageTable.Rows.Count > 0 )
+                while( false == updateComplete )
                 {
-                    DataRow LandingPageRow = LandingPageTable.Rows[0];
-                    LandingPageRow["display_row"] = CswConvert.ToDbVal( Request.NewRow );
-                    LandingPageRow["display_col"] = CswConvert.ToDbVal( Request.NewColumn );
-                    LandingPageUpdate.update( LandingPageTable );
+                    DataTable ExistingCellTable = LandingPageUpdate.getTable( "where display_row = " + Request.NewRow + " and display_col = " + Request.NewColumn );
+                    if( ExistingCellTable.Rows.Count == 0 )
+                    {
+                        DataTable LandingPageTable = LandingPageUpdate.getTable( "landingpageid", Request.LandingPageId );
+                        if ( LandingPageTable.Rows.Count > 0 )
+                        {
+                            DataRow LandingPageRow = LandingPageTable.Rows[0];
+                            LandingPageRow["display_row"] = CswConvert.ToDbVal( Request.NewRow );
+                            LandingPageRow["display_col"] = CswConvert.ToDbVal( Request.NewColumn );
+                            LandingPageUpdate.update( LandingPageTable );
+                            updateComplete = true;
+                        }
+                    }
+                    else
+                    {
+                        Request.NewRow++;
+                    }
                 }
             }
         }
