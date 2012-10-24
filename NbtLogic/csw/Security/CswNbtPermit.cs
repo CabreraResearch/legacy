@@ -207,15 +207,7 @@ namespace ChemSW.Nbt.Security
                         _ExceptionCasesHaveBeenChecked = true;
 
                         // Only Administrators can edit Roles
-
                         NbtObjectClass ObjectClass = NodeType.getObjectClass().ObjectClass;
-
-                        if( ObjectClass == NbtObjectClass.RoleClass &&
-                          Permission != NodeTypePermission.View &&
-                          false == User.IsAdministrator() )
-                        {
-                            _NoExceptionCases = false;
-                        }
 
                         // case 24510
                         if( ObjectClass == NbtObjectClass.ContainerDispenseTransactionClass )
