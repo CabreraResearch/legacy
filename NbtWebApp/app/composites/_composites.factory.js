@@ -22,7 +22,7 @@
                     opts = opts || {};
                     cswPrivate.count += 1;
                     opts.suffix = controlName + cswPrivate.count;
-                    opts.suffix = controlName;
+                    opts.ID = cswParent.getId() + opts.suffix;
                     return opts;
                 };
 

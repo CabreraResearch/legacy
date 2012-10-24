@@ -35,6 +35,7 @@
                 bindOnEnter: false,
                 size: 'small',
                 tooltip: {
+                    id: options.ID + 'tooltip',
                     title: '',
                     width: 100,
                     showDelay: 1000
@@ -147,10 +148,9 @@
                 }
                 //cswPrivate.initBtn = function () {
 
-                cswPublic.button = window.Ext.create('Ext.Button');
                 try {
                     cswPublic.button = window.Ext.create('Ext.Button', {
-                        id: cswPrivate.name,
+                        id: cswPrivate.ID + 'button',
                         renderTo: cswParent.getId(),
                         text: Csw.string(cswPrivate.enabledText),
                         width: cswPrivate.width,
@@ -161,6 +161,7 @@
                         disabled: cswPrivate.disabled
                     });
                 } catch (e) {
+                    cswPublic.button = window.Ext.create('Ext.Button');
                     Csw.debug.error('Failed to create Ext.Button in csw.buttonExt');
                     Csw.debug.error(e);
                 }

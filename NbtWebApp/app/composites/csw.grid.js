@@ -316,7 +316,7 @@
             cswPrivate.init = Csw.method(function () {
                 cswParent.empty();
 
-                cswPrivate.store = cswPrivate.makeStore(cswPrivate.name + '_store', cswPrivate.usePaging);
+                cswPrivate.store = cswPrivate.makeStore(cswPrivate.name + 'store', cswPrivate.usePaging);
                 cswPrivate.grid = cswPrivate.makeGrid(cswParent.getId(), cswPrivate.store);
 
                 cswPrivate.grid.on({
@@ -392,7 +392,7 @@
 
             cswPublic.print = Csw.method(function (onSuccess) {
                 // turn paging off
-                var printStore = cswPrivate.makeStore(cswPrivate.name + '_printstore', false);
+                var printStore = cswPrivate.makeStore(cswPrivate.name + 'printstore', false);
                 var printGrid = cswPrivate.makeGrid('', printStore);
 
                 window.Ext.ux.grid.Printer.stylesheetPath = 'js/thirdparty/extJS-4.1.0/ux/grid/gridPrinterCss/print.css';

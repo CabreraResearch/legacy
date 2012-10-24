@@ -215,7 +215,7 @@
 
             //constructor
             (function () {
-                if (options) Csw.extend(cswPrivate, options);
+                Csw.extend(cswPrivate, options);
 
                 Csw.ajax.post({
                     urlMethod: cswPrivate.ajax.urlMethod,
@@ -266,6 +266,7 @@
                         //if (false === Csw.isNullOrEmpty($('#' + cswParent.getId()), true)) {
                         try {
                             window.Ext.create('Ext.toolbar.Toolbar', {
+                                id: cswPrivate.ID + 'toolbar',
                                 renderTo: cswParent.getId(),
                                 width: cswPrivate.width,
                                 items: items,

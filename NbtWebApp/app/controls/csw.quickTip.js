@@ -38,6 +38,7 @@
                 'use strict';
                 try {
                     window.Ext.create('Ext.tip.ToolTip', {
+                        id: cswPrivate.ID + 'tooltip',
                         target: cswParent.getId(),
                         html: cswPrivate.html,
                         autoShow: cswPrivate.autoShow,
