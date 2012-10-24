@@ -193,6 +193,7 @@ namespace ChemSW.Nbt.Grid
                 CswNbtGridExtJsDataIndex dataIndex = new CswNbtGridExtJsDataIndex( gridUniquePrefix, Prop[CswNbtTreeNodes._AttrName_NodePropName].ToString() );
 
                 bool IsHidden = CswConvert.ToBoolean( Prop[CswNbtTreeNodes._AttrName_NodePropHidden] );
+                bool IsLocked = Tree.getNodeLockedForCurrentPosition();
                 string newValue = string.Empty;
                 if( false == IsHidden )
                 {
@@ -212,15 +213,17 @@ namespace ChemSW.Nbt.Grid
                     switch( FieldType )
                     {
                         case CswNbtMetaDataFieldType.NbtFieldType.Button:
-                            bool IsReadOnly = CswConvert.ToBoolean( Prop[CswNbtTreeNodes._AttrName_NodePropHidden] );
-                            grid.buttons.Add( new CswNbtGridExtJsButton
+                            if( false == IsLocked )
                             {
-                                DataIndex = dataIndex.ToString(),
-                                RowNo = gridrow.RowNo,
-                                MenuOptions = "",
-                                SelectedText = oldValue ?? PropName,
-                                PropAttr = new CswPropIdAttr( NodeId, NodeTypePropId )
-                            } );
+                                grid.buttons.Add( new CswNbtGridExtJsButton
+                                {
+                                    DataIndex = dataIndex.ToString(),
+                                    RowNo = gridrow.RowNo,
+                                    MenuOptions = "",
+                                    SelectedText = oldValue ?? PropName,
+                                    PropAttr = new CswPropIdAttr( NodeId, NodeTypePropId )
+                                } );
+                            }
                             break;
                         case CswNbtMetaDataFieldType.NbtFieldType.File:
                             CswNbtSubField.PropColumn FileColumn = MetaDataProp.getFieldTypeRule().SubFields[CswNbtSubField.SubFieldName.Name].Column;
