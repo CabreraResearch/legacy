@@ -103,7 +103,7 @@
                     }
 
                     if (cswPrivate.ID) {
-                        retCell = cswPublic.find('#' + cswPrivate.ID + '_row_' + row + '_col_' + col);
+                        retCell = cswPublic.find('#' + cswPrivate.ID + 'row' + row + 'col' + col);
                     }
                     if (Csw.isNullOrEmpty(retCell)) {
                         retCell = cswPublic.children('tbody')
@@ -121,7 +121,7 @@
                         while (col > thisCol) {
                             html = '';
                             thisCol += 1;
-                            id = cswPrivate.ID + '_row_' + row + '_col_' + thisCol;
+                            id = cswPrivate.ID + 'row' + row + 'col' + thisCol;
                             align = cswPublic.propNonDom('cellalign');
                             if ((thisRow.children('td').length() === 0 && Csw.bool(cswPublic.propNonDom('FirstCellRightAlign'))) ||
                                 (thisRow.children('td').length() % 2 === 0 && Csw.bool(cswPublic.propNonDom('OddCellRightAlign')))) {

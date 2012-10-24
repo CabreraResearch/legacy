@@ -49,12 +49,12 @@
                             if (Csw.number(childObj.nodetypecount) > 0) {
 
                                 // one object class row                                
-                                makeQuotaRow(row, canedit, 'OC_' + childObj.objectclassid, childObj.objectclass, '', childObj.currentusage, childObj.quota);
+                                makeQuotaRow(row, canedit, 'OC' + childObj.objectclassid, childObj.objectclass, '', childObj.currentusage, childObj.quota);
                                 row += 1;
 
                                 // several nodetype rows
                                 Csw.crawlObject(childObj.nodetypes, function (childObjNt) {
-                                    makeQuotaRow(row, canedit, 'NT_' + childObjNt.nodetypeid, '', childObjNt.nodetypename, childObjNt.currentusage, childObjNt.quota);
+                                    makeQuotaRow(row, canedit, 'NT' + childObjNt.nodetypeid, '', childObjNt.nodetypename, childObjNt.currentusage, childObjNt.quota);
                                     row += 1;
                                 }, false);
                             }
@@ -62,7 +62,7 @@
 
                         if (canedit) {
                             div.button({
-                                name: o.name + '_save',
+                                name: 'Save',
                                 enabledText: 'Save',
                                 disabledText: 'Saving',
                                 onClick: handleSave
@@ -74,7 +74,7 @@
 
             // initTable()
 
-            function makeQuotaRow(qRow, canedit, id, objectclass, nodetype, currentusage, quota) {
+            function makeQuotaRow(qRow, canedit, objectclass, nodetype, currentusage, quota) {
                 // one object class row                                
                 var cell4;
                 table.cell(qRow, 1).text(objectclass);
@@ -84,7 +84,7 @@
                 if (canedit) {
                     cell4 = table.cell(qRow, 4);
                     cell4.input({
-                        name: o.name + '_' + id + '_quota',
+                        name: o.name + id + 'quota',
                         type: Csw.enums.inputTypes.text,
                         value: quota,
                         width: '50px'
@@ -98,9 +98,9 @@
 
             function handleSave() {
                 Csw.crawlObject(quotaJson.objectclasses, function (childObj) {
-                    childObj.quota = $('#' + o.name + '_OC_' + childObj.objectclassid + '_quota').val();
+                    childObj.quota = $('[name="' + o.name + 'OC' + childObj.objectclassid + 'quota"]').val();
                     Csw.crawlObject(childObj.nodetypes, function (childObjNt) {
-                        childObjNt.quota = $('#' + o.name + '_NT_' + childObjNt.nodetypeid + '_quota').val();
+                        childObjNt.quota = $('[name="' + o.name + 'NT' + childObjNt.nodetypeid + 'quota"]').val();
                     }, false);
                 }, false);
 
