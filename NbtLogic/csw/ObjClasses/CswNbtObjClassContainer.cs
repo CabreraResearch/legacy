@@ -357,14 +357,32 @@ namespace ChemSW.Nbt.ObjClasses
             CswNbtMetaDataObjectClassProp sourceContainerOCP = containerOC.getObjectClassProp( PropertyName.SourceContainer );
             int maxGenerations = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswConfigurationVariables.ConfigurationVariableNames.container_max_depth ) );
 
+            CswNbtObjClassContainer eldestContainer = FindEldestContainer();
+
             CswNbtView familyView = new CswNbtView( _CswNbtResources );
             familyView.ViewName = "Container Family for " + Barcode.Barcode;
             CswNbtViewRelationship parent = familyView.AddViewRelationship( containerOC, false ); //only this container should be at the top
-            parent.NodeIdsToFilterIn.Add( this.NodeId );
+            parent.NodeIdsToFilterIn.Add( eldestContainer.NodeId );
 
             _getFamilyView( ref familyView, parent, 1, maxGenerations, sourceContainerOCP, barcodeOCP );
 
             return familyView;
+        }
+
+        /// <summary>
+        /// Gets the forerunner container from which all family members of this container derive from
+        /// </summary>
+        public CswNbtObjClassContainer FindEldestContainer()
+        {
+            CswNbtObjClassContainer eldestContainer = this;
+            while( null != eldestContainer.SourceContainer.RelatedNodeId )
+            {
+                if( null != eldestContainer.SourceContainer.RelatedNodeId )
+                {
+                    eldestContainer = _CswNbtResources.Nodes.GetNode( eldestContainer.SourceContainer.RelatedNodeId );
+                }
+            }
+            return eldestContainer;
         }
 
         #endregion Custom Logic
