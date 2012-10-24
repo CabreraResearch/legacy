@@ -5,8 +5,8 @@ using System.Data;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
-using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.ObjClasses;
 
 namespace ChemSW.Nbt
 {
@@ -30,7 +30,7 @@ namespace ChemSW.Nbt
             {
                 if( CswNbtModuleName.Unknown != ModuleName )
                 {
-                    _ModuleRules.Add( ModuleName, CswNbtModuleRuleFactory.makeModuleRule( _CswNbtResources, ModuleName ) );
+                    _ModuleRules.Add( ModuleName.ToString().ToLower(), CswNbtModuleRuleFactory.makeModuleRule( _CswNbtResources, ModuleName ) );
                 }
             }
 
@@ -43,7 +43,7 @@ namespace ChemSW.Nbt
                 {
                     try
                     {
-                        CswNbtModuleRule ModuleRule = _ModuleRules[ModuleRow["name"].ToString()];
+                        CswNbtModuleRule ModuleRule = _ModuleRules[CswConvert.ToString( ModuleRow["name"] ).ToLower()];
                         if( null != ModuleRule )
                         {
                             ModuleRule.Enabled = CswConvert.ToBoolean( ModuleRow["enabled"].ToString() );
@@ -52,8 +52,8 @@ namespace ChemSW.Nbt
                     catch( Exception ex )
                     {
                         throw new CswDniException( ErrorType.Error,
-                                                   "Invalid Module",
-                                                   "An invalid module was detected in the Modules table: " + ModuleRow["name"].ToString(), ex );
+                                                   "Invalid Module: " + CswConvert.ToString( ModuleRow["name"] ),
+                                                   "An invalid module was detected in the Modules table: " + CswConvert.ToString( ModuleRow["name"] ), ex );
                     }
                 }
             } // if( _CswResources.IsInitializedForDbAccess )
