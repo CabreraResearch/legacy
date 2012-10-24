@@ -18,11 +18,25 @@
                     cswPrivate.parent = cswPublic.data.propDiv;
 
                     cswPrivate.checkCompliance = function() {
+                        var defaultText = (false === cswPrivate.multi) ? '' : Csw.enums.multiEditDefaultValue;
                         //if (false === multi) {//cases 26445 and 26442
+                        var splitCompliantAnswers = cswPrivate.compliantAnswers.split(',');
+                        var isCompliant = true;
                         var selectedAnswer = cswPrivate.answerSel.val();
                         var correctiveAction = cswPrivate.correctiveActionTextBox.val();
 
-                        if (false === cswPrivate.isActionRequired) {
+                        if (correctiveAction === defaultText) {
+                            if (selectedAnswer !== defaultText) {
+                                isCompliant = false;
+                                for (var i = 0; i < splitCompliantAnswers.length; i += 1) {
+                                    isCompliant = isCompliant || (Csw.string(splitCompliantAnswers[i]).trim().toLowerCase() === Csw.string(selectedAnswer).trim().toLowerCase());
+                                }
+                            }
+                            cswPrivate.correctiveActionLabel.hide();
+                            cswPrivate.correctiveActionTextBox.hide();
+                        }
+                        var showCorrectiveAction = (false === isCompliant) && cswPrivate.isActionRequired;
+                        if (false === showCorrectiveAction) {
                             cswPrivate.answerSel.removeClass('CswFieldTypeQuestion_Deficient');
                             cswPrivate.correctiveActionLabel.hide();
                             cswPrivate.correctiveActionTextBox.hide();
