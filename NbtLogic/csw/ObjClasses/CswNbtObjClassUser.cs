@@ -291,6 +291,15 @@ namespace ChemSW.Nbt.ObjClasses
                 this.FailedLoginCount.setHidden( value: true, SaveToDb: false );
                 this.AccountLocked.setHidden( value: true, SaveToDb: false );
             }
+
+
+            //case 27793: these are the properties that a user cannot edit
+            if( ( null != _CswNbtResources.CurrentNbtUser ) && ( false == _CswNbtResources.CurrentNbtUser.IsAdministrator() ) )
+            {
+                this.UsernameProperty.setReadOnly( true, false );
+                this.Role.setReadOnly( true, false );
+            }
+
             _CswNbtObjClassDefault.afterPopulateProps();
 
         }//afterPopulateProps()

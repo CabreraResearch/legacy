@@ -81,11 +81,13 @@ namespace ChemSW.Nbt.Security
             private ICswNbtUser _CswNbtUser = null;
             private CswNbtObjClassRole _CswNbtObjClassRole = null;
             public CswNbtMetaDataNodeType NodeType = null;
+            public CswNbtMetaDataNodeTypeProp PropType = null;
             public NodeTypePermission Permission = NodeTypePermission.View;
 
 
-            public CswNbtPermitInfo( CswNbtResources CswNbtResources, ICswNbtUser CswNbtUser, CswNbtObjClassRole CswNbtObjClassRole, CswNbtMetaDataNodeType NodeTypeIn, NodeTypePermission PermissionIn, CswPrimaryKey CswPrimaryKey )
+            public CswNbtPermitInfo( CswNbtResources CswNbtResources, ICswNbtUser CswNbtUser, CswNbtObjClassRole CswNbtObjClassRole, CswNbtMetaDataNodeType NodeTypeIn, NodeTypePermission PermissionIn, CswPrimaryKey CswPrimaryKey, CswNbtMetaDataNodeTypeProp PropTypeIn )
             {
+                PropType = PropTypeIn;
                 _NodePrimeKey = CswPrimaryKey;
                 NodeType = NodeTypeIn;
                 _CswNbtResources = CswNbtResources;
@@ -162,9 +164,31 @@ namespace ChemSW.Nbt.Security
             {
                 bool ReturnVal = IsUberUser;
 
-                // case 2209 - Users can edit their own profile without permissions to the User nodetype
-                ReturnVal = ReturnVal || ( ( null != User ) && ( NodePrimeKey == User.UserId ) );
+                if( ( false == ReturnVal ) && ( null != NodeType && NodeType.getObjectClass().ObjectClass == NbtObjectClass.UserClass ) )
+                {
+                    if( ( null != User ) && ( NodePrimeKey == User.UserId ) && ( null != PropType ) )
+                    {
 
+                        ReturnVal = true; //Let the user edit most of his props. However . . . 
+
+                        //for these props, leave it up to the obj class to decide
+                        CswNbtMetaDataObjectClassProp OCP = PropType.getObjectClassProp();
+                        if(
+                                ( null != OCP ) &&
+                                (
+                                    OCP.PropName == CswNbtObjClassUser.PropertyName.Username ||
+                                    OCP.PropName == CswNbtObjClassUser.PropertyName.Role ||
+                                    OCP.PropName == CswNbtObjClassUser.PropertyName.FailedLoginCount ||
+                                    OCP.PropName == CswNbtObjClassUser.PropertyName.AccountLocked
+                                )//Monster ||
+                           ) //monster if
+                        {
+                            ReturnVal = false;
+                        } //if the prop is in the special case
+
+                    }//if the user is editing his own user node
+
+                }//if we're editing the user class
 
                 return ( ReturnVal );
 
@@ -211,8 +235,9 @@ namespace ChemSW.Nbt.Security
 
 
         private CswNbtPermitInfo _CswNbtPermitInfo = null;
-        private void _initPermissionInfo( ICswNbtUser CswNbtUser, CswNbtMetaDataNodeType NodeType, NodeTypePermission Permission, CswPrimaryKey CswPrimaryKey = null )
+        private void _initPermissionInfo( ICswNbtUser CswNbtUser, CswNbtMetaDataNodeType NodeType, NodeTypePermission Permission, CswPrimaryKey CswPrimaryKey = null, CswNbtMetaDataNodeTypeProp PropType = null )
         {
+
             CswNbtObjClassRole CswNbtObjClassRole = null;
             CswPrimaryKey RoleId = null;
             if( null != CswNbtUser )
@@ -236,22 +261,29 @@ namespace ChemSW.Nbt.Security
                 {
                     _CswNbtPermitInfo = _PermitInfoItems[CswNbtPermitInfoKey];
 
-                    if( ( null != CswPrimaryKey ) && null == ( _CswNbtPermitInfo.NodePrimeKey ) )
+                    //must reset these per-request because they change per request (e.g., see allowAny() 
+                    if( null != CswPrimaryKey )
                     {
                         _CswNbtPermitInfo.NodePrimeKey = CswPrimaryKey;
                     }
 
+                    if( null != PropType )
+                    {
+                        _CswNbtPermitInfo.PropType = PropType;
+                    }
+
+
                 }
                 else
                 {
-                    _CswNbtPermitInfo = new CswNbtPermitInfo( _CswNbtResources, CswNbtUser, CswNbtObjClassRole, NodeType, Permission, CswPrimaryKey );
+                    _CswNbtPermitInfo = new CswNbtPermitInfo( _CswNbtResources, CswNbtUser, CswNbtObjClassRole, NodeType, Permission, CswPrimaryKey, PropType );
                     _PermitInfoItems.Add( CswNbtPermitInfoKey, _CswNbtPermitInfo );
 
                 }
             }
             else //the permit info in this case is not catalogued, and permit info won't allow any ops to proceed
             {
-                _CswNbtPermitInfo = new CswNbtPermitInfo( _CswNbtResources, CswNbtUser, CswNbtObjClassRole, NodeType, Permission, CswPrimaryKey );
+                _CswNbtPermitInfo = new CswNbtPermitInfo( _CswNbtResources, CswNbtUser, CswNbtObjClassRole, NodeType, Permission, CswPrimaryKey, PropType );
             }//if we were able to retrieve a role
 
         }//_initPermissionInfo()
@@ -445,7 +477,7 @@ namespace ChemSW.Nbt.Security
 
             if( ret )
             {
-                _initPermissionInfo( User, MetaDataProp.getNodeType(), Permission, NodePropWrapper.NodeId );
+                _initPermissionInfo( User, MetaDataProp.getNodeType(), Permission, NodePropWrapper.NodeId, MetaDataProp );
 
                 if( false == _CswNbtPermitInfo.allowAlways() )
                 {
