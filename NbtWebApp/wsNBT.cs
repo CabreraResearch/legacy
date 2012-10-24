@@ -2658,6 +2658,32 @@ namespace ChemSW.Nbt.WebServices
 
         } // saveMolProp()
 
+        [WebMethod( EnableSession = false )]
+        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        public string getObjectClassButtons( string ObjectClassId )
+        {
+            JObject ReturnVal = new JObject();
+            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            try
+            {
+                _initResources();
+                AuthenticationStatus = _attemptRefresh();
+                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+                {
+                    CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources, _CswNbtStatisticsEvents );
+                    ReturnVal = ws.getObjectClassButtons( ObjectClassId );
+                }
+                _deInitResources();
+            }
+            catch( Exception ex )
+            {
+                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, ex );
+                ReturnVal["success"] = false;
+            }
+            CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
+            return ReturnVal.ToString();
+        } // getObjectClassButtons()
+
         //[WebMethod( EnableSession = false )]
         //[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
         //public string getLabels( string PropId )

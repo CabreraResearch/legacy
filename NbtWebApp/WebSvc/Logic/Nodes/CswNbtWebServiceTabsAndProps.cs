@@ -140,6 +140,11 @@ namespace ChemSW.Nbt.WebServices
             }
         } // _getDefaultContentRecursive()
 
+        public JObject getObjectClassButtons( string ObjectClassId )
+        {
+            return _TabsPropsSd.getObjectClassButtons( ObjectClassId );
+        }
+
     } // class CswNbtWebServiceTabsAndProps
 
 } // namespace ChemSW.Nbt.WebServices

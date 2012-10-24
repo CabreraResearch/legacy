@@ -1037,7 +1037,25 @@ namespace ChemSW.Nbt.ServiceDrivers
             return ( _CswNbtResources.Permit.can( CswNbtActionName.Design ) || _CswNbtResources.CurrentNbtUser.IsAdministrator() );
         }
 
+        public JObject getObjectClassButtons( string ObjectClassId )
+        {
+            JObject Buttons = new JObject();
 
+            CswNbtMetaDataObjectClass Oc = _CswNbtResources.MetaData.getObjectClass( CswConvert.ToInt32( ObjectClassId ) );
+            foreach( CswNbtMetaDataObjectClassProp Prop in Oc.getObjectClassProps() )
+            {
+                CswNbtMetaDataFieldType Type = Prop.getFieldType();
+                if( Type.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Button )
+                {
+                    string propName = "button_" + Prop.PropId;
+                    Buttons[propName] = new JObject();
+                    Buttons[propName]["id"] = Prop.PropId;
+                    Buttons[propName]["name"] = Prop.PropName;
+                }
+            }
+
+            return Buttons;
+        }
 
 
     } // class CswNbtSdTabsAndProps
