@@ -487,11 +487,11 @@ namespace ChemSW.Nbt.ServiceDrivers
                     )
                 {
 
-                    PropObj["readonly"] = false.ToString().ToLower();
+                    PropObj["readonly"] = false;
                 }
                 else
                 {
-                    PropObj["readonly"] = true.ToString().ToLower();
+                    PropObj["readonly"] = true;
                 }
 
                 PropObj["gestalt"] = PropWrapper.Gestalt.Replace( "\"", "&quot;" );
