@@ -445,29 +445,26 @@ namespace ChemSW.Nbt.ObjClasses
         {
             //case 26113: check parent for bad inspections 
             CswNbtNode ParentNode = _CswNbtResources.Nodes.GetNode( this.Parent.RelatedNodeId );
-            ICswNbtPropertySetInspectionParent Parent = CswNbtPropSetCaster.AsPropertySetInspectionParent( ParentNode );
-            //CswNbtObjClassInspectionTarget pnodeAsTarget = (CswNbtObjClassInspectionTarget) ParentNode;
-            bool _alreadyDeficient = ( Parent.Status.Value == TargetStatusAsString( TargetStatus.Deficient ) );
-            bool _Deficient = areMoreActionsRequired();
-            if( _Deficient != _alreadyDeficient )
+            if( null != ParentNode )
             {
-                Parent.Status.Value = _Deficient ? TargetStatusAsString( TargetStatus.Deficient ) : TargetStatusAsString( TargetStatus.OK );
-                ParentNode.postChanges( false );
+                ICswNbtPropertySetInspectionParent Parent = CswNbtPropSetCaster.AsPropertySetInspectionParent( ParentNode );
+                //CswNbtObjClassInspectionTarget pnodeAsTarget = (CswNbtObjClassInspectionTarget) ParentNode;
+                bool _alreadyDeficient = ( Parent.Status.Value == TargetStatusAsString( TargetStatus.Deficient ) );
+                bool _Deficient = areMoreActionsRequired();
+                if( _Deficient != _alreadyDeficient )
+                {
+                    Parent.Status.Value = _Deficient ? TargetStatusAsString( TargetStatus.Deficient ) : TargetStatusAsString( TargetStatus.OK );
+                    ParentNode.postChanges( false );
+                }
             }
 
             _CswNbtObjClassDefault.beforeDeleteNode( DeleteAllRequiredRelatedNodes );
-
-        }
-
-        //beforeDeleteNode()
+        } //beforeDeleteNode()
 
         public override void afterDeleteNode()
         {
             _CswNbtObjClassDefault.afterDeleteNode();
-
-        }
-
-        //afterDeleteNode()        
+        } //afterDeleteNode()        
 
         public override void afterPopulateProps()
         {
@@ -479,9 +476,7 @@ namespace ChemSW.Nbt.ObjClasses
             IsFuture.SetOnPropChange( OnIsFutureChange );
             Status.SetOnPropChange( OnStatusPropChange );
             _CswNbtObjClassDefault.afterPopulateProps();
-        }
-
-        //afterPopulateProps()
+        } //afterPopulateProps()
 
         public void onQuestionChange( CswNbtNodeProp Prop )
         {
