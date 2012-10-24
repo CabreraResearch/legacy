@@ -436,16 +436,6 @@ namespace ChemSW.Nbt.ObjClasses
         /// </summary>
         public override void afterWriteNode()
         {
-            CswNbtNode ParentNode = _CswNbtResources.Nodes.GetNode( this.Parent.RelatedNodeId );
-            if( ParentNode != null )
-            {
-                ICswNbtPropertySetInspectionParent Parent = CswNbtPropSetCaster.AsPropertySetInspectionParent( ParentNode );
-                bool IsDeficient = areMoreActionsRequired();  //case 25041
-
-                Parent.Status.Value = IsDeficient ? TargetStatusAsString( TargetStatus.Deficient ) : TargetStatusAsString( TargetStatus.OK );
-                //Parent.LastInspectionDate.DateTimeValue = DateTime.Now;
-                ParentNode.postChanges( false );
-            } // if( ParentNode != null )
             _CswNbtObjClassDefault.afterWriteNode();
         }
 
@@ -575,6 +565,7 @@ namespace ChemSW.Nbt.ObjClasses
             CswNbtView SiblingView = new CswNbtView( _CswNbtResources );
             SiblingView.ViewName = "SiblingView";
             CswNbtViewRelationship ParentRelationship = SiblingView.AddViewRelationship( this.NodeType, false );
+            ParentRelationship.NodeIdsToFilterOut.Add( this.NodeId );
             SiblingView.AddViewPropertyAndFilter(
                 ParentRelationship,
                 this.NodeType.getNodeTypePropByObjectClassProp( PropertyName.Status ),
@@ -594,7 +585,7 @@ namespace ChemSW.Nbt.ObjClasses
             ICswNbtTree SiblingTree = _CswNbtResources.Trees.getTreeFromView( SiblingView, true, true, false, false );
             int NumOfSiblings = SiblingTree.getChildNodeCount();
 
-            return 0 < NumOfSiblings;
+            return 0 < NumOfSiblings || Status.Value.Equals( InspectionStatus.ActionRequired );
         }
 
         #endregion
@@ -743,6 +734,16 @@ namespace ChemSW.Nbt.ObjClasses
 
             } // switch( Status.Value )
 
+            CswNbtNode ParentNode = _CswNbtResources.Nodes.GetNode( this.Parent.RelatedNodeId );
+            if( ParentNode != null && false == IsTemp )
+            {
+                ICswNbtPropertySetInspectionParent Parent = CswNbtPropSetCaster.AsPropertySetInspectionParent( ParentNode );
+                bool IsDeficient = areMoreActionsRequired();  //case 25041
+
+                Parent.Status.Value = IsDeficient ? TargetStatusAsString( TargetStatus.Deficient ) : TargetStatusAsString( TargetStatus.OK );
+                //Parent.LastInspectionDate.DateTimeValue = DateTime.Now;
+                ParentNode.postChanges( false );
+            } // if( ParentNode != null )
 
         } // OnStatusPropChange()
 
