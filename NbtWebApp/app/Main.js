@@ -6,6 +6,10 @@ window.initMain = window.initMain || function (undefined) {
 
     'use strict';
 
+    var cswPrivate = {
+        tabsAndProps: null
+    };
+
     Csw.publish(Csw.enums.events.domready);
     //Csw.debug.group('Csw');
     var mainTree;
@@ -729,15 +733,17 @@ window.initMain = window.initMain || function (undefined) {
                 iconurl: '',
                 cswnbtnodekey: ''
             };
-            if (options) {
-                Csw.extend(o, options);
-            }
+            Csw.extend(o, options);
 
             Csw.cookie.set(Csw.cookie.cookieNames.CurrentNodeId, o.nodeid);
             Csw.cookie.set(Csw.cookie.cookieNames.CurrentNodeKey, o.cswnbtnodekey);
 
             if (o.nodeid !== '' && o.nodeid !== 'root') {
-                getTabs({ 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey });
+                getTabs({
+                    viewid: o.viewid,
+                    nodeid: o.nodeid,
+                    cswnbtnodekey: o.cswnbtnodekey
+                });
                 refreshMainMenu({
                     parent: o.tree.menuDiv,
                     viewid: o.viewid,
@@ -792,57 +798,64 @@ window.initMain = window.initMain || function (undefined) {
         div.$.CswDefaultContent(v);
 
     } // showDefaultContentTable()
-
+    
     function getTabs(options) {
         Csw.publish('initPropertyTearDown');
         var o = {
             nodeid: '',
-            cswnbtnodekey: ''
+            cswnbtnodekey: '',
+            viewid: ''
         };
         Csw.extend(o, options);
 
         clear({ right: true });
 
-        Csw.layouts.tabsAndProps(Csw.main.rightDiv, {
-            name: 'nodetabs',
-            globalState: {
-                nodeids: [o.nodeid],
-                nodekeys: [o.cswnbtnodekey]
-            },
-            tabState: {
-                ShowCheckboxes: multi,
-                tabid: Csw.cookie.get(Csw.cookie.cookieNames.CurrentTabId)
-            },
-            onSave: function () {
-                Csw.clientChanges.unsetChanged();
-            },
-            onBeforeTabSelect: function () {
-                return Csw.clientChanges.manuallyCheckChanges();
-            },
-            Refresh: function (options) {
-                Csw.clientChanges.unsetChanged();
-                multi = false;    // semi-kludge for multi-edit batch op
-                refreshSelected(options);
-            },
-            onTabSelect: function (tabid) {
-                Csw.cookie.set(Csw.cookie.cookieNames.CurrentTabId, tabid);
-            },
-            onPropertyChange: function () {
-                Csw.clientChanges.setChanged();
-            },
-            onEditView: function (viewid) {
-                handleAction({
-                    actionname: 'Edit_View',
-                    ActionOptions: {
-                        viewid: viewid,
-                        viewmode: Csw.enums.viewMode.grid.name,
-                        startingStep: 2,
-                        IgnoreReturn: true
-                    }
-                });
-            },
-            nodeTreeCheck: mainTree
-        });
+        if (Csw.isNullOrEmpty(cswPrivate.tabsAndProps) ||
+            o.viewid !== cswPrivate.tabsAndProps.getViewId()) {
+            cswPrivate.tabsAndProps = Csw.layouts.tabsAndProps(Csw.main.rightDiv, {
+                name: 'nodetabs',
+                globalState: {
+                    viewid: o.viewid,
+                    nodeids: [o.nodeid],
+                    nodekeys: [o.cswnbtnodekey]
+                },
+                tabState: {
+                    ShowCheckboxes: multi,
+                    tabid: Csw.cookie.get(Csw.cookie.cookieNames.CurrentTabId)
+                },
+                onSave: function() {
+                    Csw.clientChanges.unsetChanged();
+                },
+                onBeforeTabSelect: function() {
+                    return Csw.clientChanges.manuallyCheckChanges();
+                },
+                Refresh: function(options) {
+                    Csw.clientChanges.unsetChanged();
+                    multi = false; // semi-kludge for multi-edit batch op
+                    refreshSelected(options);
+                },
+                onTabSelect: function(tabid) {
+                    Csw.cookie.set(Csw.cookie.cookieNames.CurrentTabId, tabid);
+                },
+                onPropertyChange: function() {
+                    Csw.clientChanges.setChanged();
+                },
+                onEditView: function(viewid) {
+                    handleAction({
+                        actionname: 'Edit_View',
+                        ActionOptions: {
+                            viewid: viewid,
+                            viewmode: Csw.enums.viewMode.grid.name,
+                            startingStep: 2,
+                            IgnoreReturn: true
+                        }
+                    });
+                },
+                nodeTreeCheck: mainTree
+            });
+        } else {
+            cswPrivate.tabsAndProps.getTabs(o.nodeid, o.cswnbtnodekey);
+        }
     }
 
     function refreshSelected(options) {
