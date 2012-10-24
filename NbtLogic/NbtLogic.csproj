@@ -141,7 +141,6 @@
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01S_Case27800.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01S_Case27858.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01S_Case27720.cs" />
-    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01S_Case27528.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01S_Case27551_part2.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01S_Case27779_part2.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01S_Case27779_part1.cs" />
