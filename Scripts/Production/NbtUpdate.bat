@@ -20,6 +20,12 @@ D:\kiln\Nbt\Nbt\NbtSchemaUpdaterCmdLn\bin\Release\NbtUpdt.exe -all
 
 echo "Schema update completed."
 
+echo "Listing Updated Customer Schema Versions"
+
+D:\kiln\Nbt\Nbt\NbtSchemaUpdaterCmdLn\bin\Release\NbtUpdt.exe -version
+
+echo "Version Listing Complete"
+
 pause
 
 echo "Restarting Services..."
