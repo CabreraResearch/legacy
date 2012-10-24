@@ -66,12 +66,14 @@
                         align: cswPrivate.align
                     });
                     cswPublic.css(cswPrivate.styles);
-                    cswPublic.propNonDom({
+                    cswPublic.propDom({
                         cellpadding: cswPrivate.cellpadding,
                         cellspacing: cswPrivate.cellspacing,
                         border: cswPrivate.border,
                         cellalign: cswPrivate.cellalign,
-                        cellvalign: cswPrivate.cellvalign,
+                        cellvalign: cswPrivate.cellvalign
+                    });
+                    cswPublic.data({
                         cellcssclass: cswPrivate.CellCssClass,
                         FirstCellRightAlign: cswPrivate.FirstCellRightAlign,
                         OddCellRightAlign: cswPrivate.OddCellRightAlign
@@ -122,20 +124,20 @@
                             html = '';
                             thisCol += 1;
                             id = cswPrivate.ID + 'row' + row + 'col' + thisCol;
-                            align = cswPublic.propNonDom('cellalign');
-                            if ((thisRow.children('td').length() === 0 && Csw.bool(cswPublic.propNonDom('FirstCellRightAlign'))) ||
-                                (thisRow.children('td').length() % 2 === 0 && Csw.bool(cswPublic.propNonDom('OddCellRightAlign')))) {
+                            align = cswPublic.data('cellalign');
+                            if ((thisRow.children('td').length() === 0 && Csw.bool(cswPublic.data('FirstCellRightAlign'))) ||
+                                (thisRow.children('td').length() % 2 === 0 && Csw.bool(cswPublic.data('OddCellRightAlign')))) {
                                 align = 'right';
                             }
                             html += '<td ';
                             if (false === Csw.isNullOrEmpty(id)) {
                                 attr.add('id', id);
                             }
-                            attr.add('realrow', row);
-                            attr.add('realcol', thisCol);
-                            attr.add('class', cswPublic.propNonDom('cellcssclass'));
+                            attr.add('data-realrow', row);
+                            attr.add('data-realcol', thisCol);
+                            attr.add('class', cswPublic.data('cellcssclass'));
                             attr.add('align', align);
-                            attr.add('valign', cswPublic.propNonDom('cellvalign'));
+                            attr.add('valign', cswPublic.data('cellvalign'));
                             html += attr.get();
                             html += '>';
                             html += '</td>';
