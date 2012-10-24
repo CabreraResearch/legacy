@@ -18,8 +18,8 @@
                     cswPrivate.propVals = cswPublic.data.propData.values;
                     cswPrivate.parent = cswPublic.data.propDiv;
 
-                    cswPrivate.text = (false === cswPublic.data.isMulti()) ? Csw.string(cswPrivate.propVals.text).trim() : Csw.enums.multiEditDefaultValue;
-                    cswPrivate.href = (false === cswPublic.data.isMulti()) ? Csw.string(cswPrivate.propVals.href).trim() : Csw.enums.multiEditDefaultValue;
+                    cswPrivate.text = Csw.string(cswPrivate.propVals.text).trim();
+                    cswPrivate.href = Csw.string(cswPrivate.propVals.href).trim();
 
                     if (cswPublic.data.isReadOnly()) {
                         cswPublic.control = cswPrivate.parent.a({

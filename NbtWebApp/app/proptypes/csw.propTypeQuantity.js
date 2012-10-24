@@ -15,17 +15,13 @@
                 var render = function () {
                     'use strict';
 
-                    cswPrivate.isMultiEditValid = function (value) {
-                        return cswPublic.data.isMulti() && value === Csw.enums.multiEditDefaultValue;
-                    };
-
                     cswPrivate.propVals = cswPublic.data.propData.values;
                     cswPrivate.parent = cswPublic.data.propDiv;
 
                     cswPrivate.precision = Csw.number(cswPrivate.propVals.precision, 6);
                     cswPrivate.ceilingVal = '999999999' + Csw.getMaxValueForPrecision(cswPrivate.precision);
-                    cswPrivate.selectedNodeId = (false === cswPublic.data.isMulti()) ? Csw.string(cswPrivate.propVals.relatednodeid).trim() : Csw.enums.multiEditDefaultValue;
-                    cswPrivate.selectedName = (false === cswPublic.data.isMulti()) ? Csw.string(cswPrivate.propVals.name).trim() : Csw.enums.multiEditDefaultValue;
+                    cswPrivate.selectedNodeId = Csw.string(cswPrivate.propVals.relatednodeid).trim();
+                    cswPrivate.selectedName =   Csw.string(cswPrivate.propVals.name).trim();
                     cswPrivate.nodeTypeId = Csw.string(cswPrivate.propVals.nodetypeid).trim();
                     cswPrivate.objectClassId = Csw.string(cswPrivate.propVals.objectclassid).trim();
                     cswPrivate.options = cswPrivate.propVals.options;
@@ -54,7 +50,7 @@
 
                         cswPrivate.numberTextBox = cswPublic.control.cell(1, cswPrivate.cellCol).numberTextBox({
                             name: cswPublic.data.name + '_qty',
-                            value: (false === cswPublic.data.isMulti()) ? Csw.string(cswPrivate.propVals.value).trim() : Csw.enums.multiEditDefaultValue,
+                            value: Csw.string(cswPrivate.propVals.value).trim(),
                             MinValue: Csw.number(cswPrivate.propVals.minvalue),
                             MaxValue: Csw.number(cswPrivate.propVals.maxvalue),
                             excludeRangeLimits: Csw.bool(cswPrivate.propVals.excludeRangeLimits),
@@ -75,9 +71,6 @@
                             cswPrivate.numberTextBox.clickOnEnter(cswPublic.data.saveBtn);
                         }
 
-                        if (cswPublic.data.isMulti()) {
-                            cswPrivate.relationships.push({ value: Csw.enums.multiEditDefaultValue, display: Csw.enums.multiEditDefaultValue });
-                        }
                         if (false === cswPublic.data.isRequired()) {
                             cswPrivate.relationships.push({ value: '', display: '', frac: true });
                         }

@@ -39,13 +39,13 @@
                     });
 
                     if (cswPrivate.relatedmatch) {
-                        cswPrivate.nodeId = (false === cswPrivate.Multi) ? Csw.string(cswPrivate.nodeId, cswPrivate.relatednodeid).trim() : '';
-                        cswPrivate.name = (false === cswPrivate.Multi) ? Csw.string(cswPrivate.name, cswPrivate.relatednodename).trim() : Csw.enums.multiEditDefaultValue;
-                        cswPrivate.path = (false === cswPrivate.Multi) ? Csw.string(cswPrivate.path, cswPrivate.relatednodename).trim() : Csw.enums.multiEditDefaultValue;
+                        cswPrivate.nodeId = Csw.string(cswPrivate.nodeId, cswPrivate.relatednodeid).trim();
+                        cswPrivate.name = Csw.string(cswPrivate.name, cswPrivate.relatednodename).trim();
+                        cswPrivate.path = Csw.string(cswPrivate.path, cswPrivate.relatednodename).trim();
                     } else {
-                        cswPrivate.nodeId = (false === cswPrivate.Multi) ? Csw.string(cswPrivate.nodeId, '').trim() : '';
-                        cswPrivate.name = (false === cswPrivate.Multi) ? Csw.string(cswPrivate.name, '').trim() : Csw.enums.multiEditDefaultValue;
-                        cswPrivate.path = (false === cswPrivate.Multi) ? Csw.string(cswPrivate.path, '').trim() : Csw.enums.multiEditDefaultValue;
+                        cswPrivate.nodeId = Csw.string(cswPrivate.nodeId, '').trim();
+                        cswPrivate.name =   Csw.string(cswPrivate.name, '').trim();
+                        cswPrivate.path =   Csw.string(cswPrivate.path, '').trim();
                     }
                     cswPrivate.viewId = Csw.string(cswPrivate.viewId).trim();
                     

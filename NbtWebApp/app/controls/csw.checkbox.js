@@ -80,17 +80,13 @@
 
                 (function postInit() {
                     if (cswPrivate.ReadOnly) {
-                        if (cswPrivate.Multi) {
-                            cswPrivate.text = Csw.enums.multiEditDefaultValue;
-                        } else {
-                            switch (cswPrivate.value) {
-                                case 'true':
-                                    cswPrivate.text = 'Yes';
-                                    break;
-                                case 'false':
-                                    cswPrivate.text = 'No';
-                                    break;
-                            }
+                        switch (cswPrivate.value) {
+                            case 'true':
+                                cswPrivate.text = 'Yes';
+                                break;
+                            case 'false':
+                                cswPrivate.text = 'No';
+                                break;
                         }
                         cswPrivate.checkBox = cswParent.div(cswPrivate);
                     } else {

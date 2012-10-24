@@ -17,15 +17,15 @@
                     cswPrivate.propVals = cswPublic.data.propData.values;
                     cswPrivate.parent = cswPublic.data.propDiv;
 
-                    cswPrivate.isExpired = (false === cswPublic.data.isMulti()) ? Csw.bool(cswPrivate.propVals.isexpired) : null;
-                    cswPrivate.isAdmin = (false === cswPublic.data.isMulti()) ? Csw.bool(cswPrivate.propVals.isadmin) : null;
+                    cswPrivate.isExpired = Csw.bool(cswPrivate.propVals.isexpired);
+                    cswPrivate.isAdmin = Csw.bool(cswPrivate.propVals.isadmin);
                     cswPrivate.passwordcomplexity = Csw.number(cswPrivate.propVals.passwordcomplexity, 0);
                     cswPrivate.passwordlength = Csw.number(cswPrivate.propVals.passwordlength, 0);
 
                     cswPublic.control = cswPrivate.parent.table({
                         OddCellRightAlign: true
                     });
-                    
+
                     if (cswPublic.data.isReadOnly()) {
                         //show nothing
                     } else {
@@ -40,7 +40,7 @@
                             name: cswPublic.data.name + '_pwd1',
                             type: Csw.enums.inputTypes.password,
                             cssclass: 'textinput',
-                            value: (false === cswPublic.data.isMulti()) ? '' : Csw.enums.multiEditDefaultValue,
+                            value: '',
                             onChange: function () {
                                 var val = cswPrivate.textBox1.val();
                                 Csw.tryExec(cswPublic.data.onChange, val);
@@ -52,7 +52,7 @@
                         cswPrivate.cell22.input({
                             name: cswPublic.data.name + '_pwd2',
                             type: Csw.enums.inputTypes.password,
-                            value: (false === cswPublic.data.isMulti()) ? '' : Csw.enums.multiEditDefaultValue,
+                            value: '',
                             cssclass: 'textinput password2',
                             onChange: cswPublic.data.onChange
                         });
@@ -61,7 +61,7 @@
                                 name: cswPublic.data.name + '_exp',
                                 type: Csw.enums.inputTypes.checkbox,
                                 checked: cswPrivate.isExpired,
-                                onChange: function() {
+                                onChange: function () {
                                     var val = cswPrivate.expiredChk.$.is(':checked');
                                     Csw.tryExec(cswPublic.data.onChange, val);
                                     cswPublic.data.onPropChange({ isexpired: val });
