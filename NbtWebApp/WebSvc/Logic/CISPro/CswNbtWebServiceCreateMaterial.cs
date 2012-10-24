@@ -407,6 +407,8 @@ namespace ChemSW.Nbt.WebServices
                         RetObj["landingpagedata"]["RelatedNodeName"] = MaterialNode.NodeName;
                         RetObj["landingpagedata"]["RelatedNodeTypeId"] = MaterialNode.NodeTypeId.ToString();
                         RetObj["landingpagedata"]["RelatedObjectClassId"] = MaterialNode.getObjectClassId().ToString();
+                        //If (and when) action landing pages are slated to be roleId-specific, remove this line
+                        RetObj["landingpagedata"]["isConfigurable"] = _CswNbtResources.CurrentNbtUser.IsAdministrator();
                     }
                 }
             }

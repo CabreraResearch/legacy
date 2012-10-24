@@ -18,6 +18,7 @@
                 onButtonClick: null,
                 onAddComponent: null,
                 landingPageRequestData: null,
+                isConfigurable: true,
                 addItemForm: {
                     table: null,
                     row: {
@@ -33,7 +34,7 @@
                     button: 5,
                     text: 6,
                     add: 7
-                }
+                }                
             };
             if (options) {
                 Csw.extend(cswPrivate, options);
@@ -88,11 +89,11 @@
                             onSwap: function (ev, onSwapData) {
                                 cswPrivate.onSwap(onSwapData);
                             },
-                            showConfigButton: true, //TODO - these flags will be contingent upon whether or not the user is an admin
-                            showExpandRowButton: true,
-                            showExpandColButton: true,
-                            showAddButton: true,
-                            showRemoveButton: true,
+                            showConfigButton: cswPrivate.isConfigurable,
+                            showExpandRowButton: cswPrivate.isConfigurable,
+                            showExpandColButton: cswPrivate.isConfigurable,
+                            showAddButton: cswPrivate.isConfigurable,
+                            showRemoveButton: cswPrivate.isConfigurable,
                             onAddClick: function () {
                                 $.CswDialog('AddLandingPageItemDialog', {
                                     form: cswPrivate.getAddItemForm,

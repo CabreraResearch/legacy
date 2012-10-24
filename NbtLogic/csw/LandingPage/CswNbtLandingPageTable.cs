@@ -38,6 +38,7 @@ namespace ChemSW.Nbt.LandingPage
             string WhereClause;
             if( false == String.IsNullOrEmpty( ActionId ) )
             {
+                //If (and when) action landing pages are slated to be roleId-specific, add roleId clause here
                 WhereClause = "where for_actionid = '" + ActionId + "'";
             }
             else

@@ -1090,7 +1090,8 @@ window.initMain = window.initMain || function (undefined) {
                                         });
                                     },
                                     onAddComponent: createMaterialLandingPage,
-                                    landingPageRequestData: actionData
+                                    landingPageRequestData: actionData,
+                                    isConfigurable: actionData.isConfigurable
                                 });
                             });
                         };
