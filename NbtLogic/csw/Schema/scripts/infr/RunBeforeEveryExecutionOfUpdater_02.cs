@@ -1,4 +1,6 @@
-﻿using ChemSW.Nbt.csw.Dev;
+﻿using System.Collections.Generic;
+using ChemSW.Nbt.csw.Dev;
+using ChemSW.RscAdo;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -7,13 +9,11 @@ namespace ChemSW.Nbt.Schema
     /// </summary>
     public class RunBeforeEveryExecutionOfUpdater_02 : CswUpdateSchemaTo
     {
-        public static string Title = FileName;
-
-        private const string FileName = "nbt_initialize_ora.sql";
+        public static string Title = "Make Database Views";
 
         public override void update()
         {
-            _CswNbtSchemaModTrnsctn.runExternalSqlScript( FileName, ChemSW.Nbt.Properties.Resources.nbt_initialize_ora_sql );
+            _CswNbtSchemaModTrnsctn.execStoredProc( "CreateAllNtViews", new List<CswStoredProcParam>() );
         }
 
         public override CswDeveloper Author

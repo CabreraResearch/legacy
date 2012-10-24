@@ -204,8 +204,9 @@
                 Csw.ajax.post({
                     urlMethod: 'reauthenticate',
                     data: { PropId: Csw.string(opts.propid) },
-                    success: function () {
+                    success: function (result) {
                         Csw.clientChanges.unsetChanged();
+                        Csw.publish(Csw.enums.events.main.reauthenticate, result.username);
                         Csw.window.location('Main.html');
                     }
                 });

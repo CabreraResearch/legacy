@@ -1647,7 +1647,8 @@ namespace ChemSW.Nbt.Schema
 
 
         /// <summary>
-        /// Run an external SQL script stored in Resources
+        /// (Deprecated: vendor neutrality is no longer a requirement)
+        /// <para>Run an external SQL script stored in Resources</para>
         /// </summary>
         /// <param name="SqlFileName">Name of file</param>
         /// <param name="ResourceSqlFile">File contents from Resources</param>

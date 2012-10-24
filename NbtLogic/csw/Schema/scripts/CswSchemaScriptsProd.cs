@@ -57,6 +57,10 @@ namespace ChemSW.Nbt.Schema
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01S_Case27720_part2() ) );                        //01S-028
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01S_Case27720_part3() ) );                        //01S-029
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01S_Case27720_part4() ) );                        //01S-030
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01S_Case28002() ) );                              //01S-031
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01S_Case27742() ) );                              //01S-032
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01S_Case28016() ) );                              //01S-033
+
 
             #endregion SEBASTIAN
 
@@ -100,8 +104,6 @@ namespace ChemSW.Nbt.Schema
             _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_03() ), RunBeforeEveryExecutionOfUpdater_03.Title );
 
             _addRunAfterScript( new CswSchemaUpdateDriver( new RunAfterEveryExecutionOfUpdater_01() ), RunAfterEveryExecutionOfUpdater_01.Title );
-            _addRunAfterScript( new CswSchemaUpdateDriver( new RunAfterEveryExecutionOfUpdater_02() ), RunAfterEveryExecutionOfUpdater_02.Title );
-            _addRunAfterScript( new CswSchemaUpdateDriver( new RunAfterEveryExecutionOfUpdater_03() ), RunAfterEveryExecutionOfUpdater_03.Title );
 
         }//ctor
 

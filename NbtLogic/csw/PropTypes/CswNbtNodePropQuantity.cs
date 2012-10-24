@@ -47,7 +47,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                return ( 0 == Gestalt.Length );
+                return Required && QuantityOptional ? false == CswTools.IsDouble( Quantity ) : 0 == Gestalt.Length;
             }
         }
 

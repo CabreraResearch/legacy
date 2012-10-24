@@ -18,8 +18,18 @@ namespace ChemSW.Nbt.Sched
         {
             ICswNbtPropertySetScheduler SchedulerNode = CswNbtPropSetCaster.AsPropertySetScheduler( CswNbtNodeSchedualable );
             //case 25702 - add comment:
-            SchedulerNode.RunStatus.AddComment( StatusMessage );
-            DateTime CandidateNextDueDate = SchedulerNode.DueDateInterval.getNextOccuranceAfter( SchedulerNode.NextDueDate.DateTimeValue );
+            if( false == String.IsNullOrEmpty( StatusMessage ) )
+            {
+                SchedulerNode.RunStatus.AddComment( StatusMessage );
+            }
+
+            DateTime AfterDate = SchedulerNode.NextDueDate.DateTimeValue;
+            if( SchedulerNode.WarningDays.Value > 0 )
+            {
+                // case 27930 - Prevent redundant activity within the warning days window
+                AfterDate = AfterDate.AddDays( SchedulerNode.WarningDays.Value ); 
+            }
+            DateTime CandidateNextDueDate = SchedulerNode.DueDateInterval.getNextOccuranceAfter( AfterDate );
             if( _finalDueDateHasPassed( CandidateNextDueDate.Date, SchedulerNode.FinalDueDate.DateTimeValue.Date ) )
             {
                 CandidateNextDueDate = DateTime.MinValue;
