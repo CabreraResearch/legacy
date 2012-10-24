@@ -80,6 +80,7 @@ namespace ChemSW.Nbt.Security
             private CswNbtResources _CswNbtResources = null;
             private ICswNbtUser _CswNbtUser = null;
             private CswNbtObjClassRole _CswNbtObjClassRole = null;
+
             public CswNbtMetaDataNodeType NodeType = null;
             public CswNbtMetaDataNodeTypeProp PropType = null;
             public NodeTypePermission Permission = NodeTypePermission.View;
@@ -195,29 +196,21 @@ namespace ChemSW.Nbt.Security
             }//allowAlways()
 
 
-            private bool _ExceptionCasesHaveBeenChecked = false;
-            private bool _NoExceptionCases = true;
             public bool NoExceptionCases
             {
                 get
                 {
 
-                    if( false == _ExceptionCasesHaveBeenChecked )
+                    bool ReturnVal = true;
+                    // case 24510
+                    NbtObjectClass ObjectClass = NodeType.getObjectClass().ObjectClass;
+                    if( ObjectClass == NbtObjectClass.ContainerDispenseTransactionClass )
                     {
-                        _ExceptionCasesHaveBeenChecked = true;
+                        ReturnVal = Permission != NodeTypePermission.Delete;
+                    }
 
-                        // Only Administrators can edit Roles
-                        NbtObjectClass ObjectClass = NodeType.getObjectClass().ObjectClass;
 
-                        // case 24510
-                        if( ObjectClass == NbtObjectClass.ContainerDispenseTransactionClass )
-                        {
-                            _NoExceptionCases = Permission != NodeTypePermission.Delete;
-                        }
-
-                    }//if we have not already checked 
-
-                    return ( _NoExceptionCases );
+                    return ( ReturnVal );
 
                 }//get
 
@@ -253,7 +246,7 @@ namespace ChemSW.Nbt.Security
                 {
                     _CswNbtPermitInfo = _PermitInfoItems[CswNbtPermitInfoKey];
 
-                    //must reset these per-request because they change per request (e.g., see allowAny() 
+                    //must reset these per-request because they change per request for the same role and nodetype (e.g., see allowAny() )
                     if( null != CswPrimaryKey )
                     {
                         _CswNbtPermitInfo.NodePrimeKey = CswPrimaryKey;
@@ -264,7 +257,7 @@ namespace ChemSW.Nbt.Security
                         _CswNbtPermitInfo.PropType = PropType;
                     }
 
-
+                    _CswNbtPermitInfo.Permission = Permission;
                 }
                 else
                 {
@@ -361,8 +354,10 @@ namespace ChemSW.Nbt.Security
 
                 if( _CswNbtPermitInfo.shouldPermissionCheckProceed() )
                 {
+                    ret |= _CswNbtPermitInfo.NoExceptionCases;
+
                     // Base case: does the Role have this nodetype permission
-                    ret = _CswNbtPermitInfo.Role.NodeTypePermissions.CheckValue( CswNbtObjClassRole.MakeNodeTypePermissionValue( NodeType.FirstVersionNodeTypeId, Permission ) );
+                    ret |= _CswNbtPermitInfo.Role.NodeTypePermissions.CheckValue( CswNbtObjClassRole.MakeNodeTypePermissionValue( NodeType.FirstVersionNodeTypeId, Permission ) );
 
                     if( Permission == NodeTypePermission.View )
                     {
@@ -392,7 +387,10 @@ namespace ChemSW.Nbt.Security
             {
                 if( null != NodeType )
                 {
-                    ret = canNodeType( _CswNbtPermitInfo.Permission, _CswNbtPermitInfo.NodeType, _CswNbtPermitInfo.User );
+
+                    ret = _CswNbtPermitInfo.NoExceptionCases;
+
+                    ret |= canNodeType( _CswNbtPermitInfo.Permission, _CswNbtPermitInfo.NodeType, _CswNbtPermitInfo.User );
                 }
                 if( false == ret &&
                     null != NodeTypeTab )
@@ -439,6 +437,8 @@ namespace ChemSW.Nbt.Security
 
                 if( _CswNbtPermitInfo.shouldPermissionCheckProceed() )
                 {
+                    ret |= _CswNbtPermitInfo.NoExceptionCases;
+
                     NodeTypeTabPermission TabPermission = (NodeTypeTabPermission) Enum.Parse( typeof( NodeTypeTabPermission ), Permission.ToString() );
                     foreach( CswNbtMetaDataNodeTypeTab CurrentTab in _CswNbtPermitInfo.NodeType.getNodeTypeTabs() )
                     {
@@ -469,19 +469,23 @@ namespace ChemSW.Nbt.Security
 
             if( ret )
             {
-                _initPermissionInfo( User, MetaDataProp.getNodeType(), Permission, NodePropWrapper.NodeId, MetaDataProp );
+                _initPermissionInfo( User, MetaDataProp.getNodeType(), Permission, ( ( null != NodePropWrapper ) ? NodePropWrapper.NodeId : null ), MetaDataProp );
 
                 if( false == _CswNbtPermitInfo.allowAlways() )
                 {
 
                     if( _CswNbtPermitInfo.shouldPermissionCheckProceed() )
                     {
+                        ret |= _CswNbtPermitInfo.NoExceptionCases;
+
                         // You can't edit readonly properties
-                        if(
-                            ( Permission != NodeTypePermission.View ) &&
-                            ( MetaDataProp.ReadOnly || ( ( null != NodePropWrapper ) && NodePropWrapper.ReadOnly ) ) &&
-                            ( false == MetaDataProp.AllowReadOnlyAdd )
-                            ) /* Case 24514. Conditionally Permit edit on create. */
+                        if( ret &&
+                                (
+                                    ( Permission != NodeTypePermission.View ) &&
+                                    ( MetaDataProp.ReadOnly || ( ( null != NodePropWrapper ) && NodePropWrapper.ReadOnly ) ) &&
+                                    ( false == MetaDataProp.AllowReadOnlyAdd )
+                                )
+                            )/* Case 24514. Conditionally Permit edit on create. */
                         {
                             ret = false;
                         }
@@ -543,6 +547,9 @@ namespace ChemSW.Nbt.Security
 
                 if( _CswNbtPermitInfo.shouldPermissionCheckProceed() )
                 {
+                    ret = _CswNbtPermitInfo.NoExceptionCases;
+
+
                     //the case in which it is a problem that we check nodetype permissions: 
                     //  node type level permissions are off, but a tab has edit permission. 
                     //  this is called from CswNbtSdTabsAndProps::makePropJson(). So here, canNodeType() 
@@ -554,7 +561,7 @@ namespace ChemSW.Nbt.Security
 
 
 
-                    if( null != NodeId && Int32.MinValue != NodeId.PrimaryKey )
+                    if( ret && ( null != NodeId && Int32.MinValue != NodeId.PrimaryKey ) )
                     {
                         //// case 2209 - Users can edit their own profile without permissions to the User nodetype
                         //if( !ret &&
