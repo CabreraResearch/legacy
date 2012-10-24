@@ -704,7 +704,6 @@
     <Content Include="app\types\csw.window.js" />
     <Content Include="app\nodes\csw.node.interaction.js" />
     <Content Include="app\nodes\csw.node.preview.js" />
-    <Content Include="app\props\csw.props.js" />
     <Content Include="app\tools\csw.clientdb.js" />
     <Content Include="app\tools\csw.cookie.js" />
     <Content Include="app\tools\csw.newwindow.js" />
