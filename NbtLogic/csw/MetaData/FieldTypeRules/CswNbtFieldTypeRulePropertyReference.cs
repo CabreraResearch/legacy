@@ -121,9 +121,9 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             return _CswNbtFieldTypeRuleDefault.FilterModeToString( SubField, FilterMode );
         }
 
-        public void AddUniqueFilterToView( CswNbtView View, CswNbtViewProperty UniqueValueViewProperty, CswNbtNodePropWrapper PropertyValueToCheck )
+        public void AddUniqueFilterToView( CswNbtView View, CswNbtViewProperty UniqueValueViewProperty, CswNbtNodePropWrapper PropertyValueToCheck, bool EnforceNullEntries = false )
         {
-            _CswNbtFieldTypeRuleDefault.AddUniqueFilterToView( View, UniqueValueViewProperty, PropertyValueToCheck );
+            _CswNbtFieldTypeRuleDefault.AddUniqueFilterToView( View, UniqueValueViewProperty, PropertyValueToCheck, EnforceNullEntries );
         }
 
         private bool _validateRelationship( string FkType, Int32 FkValue, Int32 inValuePropId )

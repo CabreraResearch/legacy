@@ -101,6 +101,9 @@
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01T_Case27920.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_0T1_Case27884.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01S_Case28016.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01S_Case27742.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01S_Case28002.cs" />
     <Compile Include="csw\Actions\CswNbtActAssignTests.cs" />
     <Compile Include="csw\Actions\CswNbtActCopyNode.cs" />
     <Compile Include="csw\Actions\CswNbtActGenerateFutureNodes.cs" />
@@ -354,8 +357,6 @@
     <Compile Include="csw\Schema\scripts\CswUpdateSchemaTo.cs" />
     <Compile Include="csw\Schema\scripts\ICswSchemaScripts.cs" />
     <Compile Include="csw\Schema\scripts\infr\RunAfterEveryExecutionOfUpdater_01.cs" />
-    <Compile Include="csw\Schema\scripts\infr\RunAfterEveryExecutionOfUpdater_02.cs" />
-    <Compile Include="csw\Schema\scripts\infr\RunAfterEveryExecutionOfUpdater_03.cs" />
     <Compile Include="csw\Schema\scripts\infr\RunBeforeEveryExecutionOfUpdater_01.cs" />
     <Compile Include="csw\Schema\scripts\infr\RunBeforeEveryExecutionOfUpdater_01M.cs" />
     <Compile Include="csw\Schema\scripts\infr\RunBeforeEveryExecutionOfUpdater_01OC.cs" />
@@ -661,7 +662,11 @@
     <Compile Include="csw\View\CswNbtViewRoot.cs" />
     <Compile Include="csw\View\CswNbtViewSelect.cs" />
     <Compile Include="csw\Welcome\CswNbtWelcomeTable.cs" />
-    <Compile Include="Properties\Resources.Designer.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="csw\Actions\CswNbtActDispenseContainer.cs" />
     <Compile Include="csw\Actions\CswNbtActReceiving.cs" />
     <Compile Include="csw\Actions\CswNbtActSubmitRequest.cs" />
@@ -719,9 +724,6 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <None Include="Resources\runscript_bat" />
-    <None Include="Resources\nbt_initialize_ora_sql" />
-    <None Include="Resources\nbt_finalize_ora_sql" />
-    <None Include="Resources\indexes_sql" />
     <None Include="Resources\SqlRptViewDict.rpt">
       <Generator>CrystalDecisions.VSDesigner.CodeGen.ReportCodeGenerator</Generator>
       <LastGenOutput>SqlRptViewDict.cs</LastGenOutput>

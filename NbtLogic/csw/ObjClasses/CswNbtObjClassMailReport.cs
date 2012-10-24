@@ -167,6 +167,7 @@ namespace ChemSW.Nbt.ObjClasses
         public override void afterPopulateProps()
         {
             Type.SetOnPropChange( OnTypePropChange );
+            DueDateInterval.SetOnPropChange( OnDueDateIntervalChange );
 
             _CswNbtObjClassDefault.afterPopulateProps();
         }//afterPopulateProps()
@@ -195,6 +196,17 @@ namespace ChemSW.Nbt.ObjClasses
         #region Object class specific properties
 
         public CswNbtNodePropTimeInterval DueDateInterval { get { return ( _CswNbtNode.Properties[PropertyName.DueDateInterval] ); } }
+        public void OnDueDateIntervalChange( CswNbtNodeProp Prop )
+        {
+            if( DueDateInterval.RateInterval.RateType == CswRateInterval.RateIntervalType.Hourly )
+            {
+                RunTime.setHidden( value: true, SaveToDb: true );
+            }
+            else
+            {
+                RunTime.setHidden( value: false, SaveToDb: true );
+            }
+        } // OnDueDateIntervalChange
         public CswNbtNodePropLogical Enabled { get { return ( _CswNbtNode.Properties[PropertyName.Enabled] ); } }
         public CswNbtNodePropList Event { get { return ( _CswNbtNode.Properties[PropertyName.Event] ); } }
         public CswNbtNodePropDateTime FinalDueDate { get { return ( _CswNbtNode.Properties[PropertyName.FinalDueDate] ); } }
@@ -216,11 +228,6 @@ namespace ChemSW.Nbt.ObjClasses
             if( Type.Value == TypeOptionView )
             {
                 OutputFormat.Value = MailRptFormatOptions.Link.ToString();
-                OutputFormat.setReadOnly( value: true, SaveToDb: true );
-            }
-            else if( Type.Value == TypeOptionReport )
-            {
-                OutputFormat.setReadOnly( value: false, SaveToDb: true );
             }
         } // OnTypePropChange()
         public CswNbtNodePropNumber WarningDays { get { return ( _CswNbtNode.Properties[PropertyName.WarningDays] ); } }

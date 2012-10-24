@@ -363,7 +363,7 @@ namespace ChemSW.Nbt.MetaData
             CswNbtMetaDataNodeTypeTab FirstTab = null;
             foreach( CswNbtMetaDataNodeTypeTab Tab in getNodeTypeTabs() )
             {
-                if( FirstTab == null )
+                if( FirstTab == null && Tab != getIdentityTab() )
                 {
                     FirstTab = Tab;
                     break;
@@ -388,9 +388,14 @@ namespace ChemSW.Nbt.MetaData
             return SecondTab;
         }
 
+        private CswNbtMetaDataNodeTypeTab _IdentityTab = null;
         public CswNbtMetaDataNodeTypeTab getIdentityTab()
         {
-            return getNodeTypeTab( CswNbtMetaData.IdentityTabName );
+            if( null == _IdentityTab )
+            {
+                _IdentityTab = getNodeTypeTab( CswNbtMetaData.IdentityTabName );
+            }
+            return _IdentityTab;
         }
 
         public CswNbtMetaDataNodeTypeTab getNodeTypeTab( string NodeTypeTabName )

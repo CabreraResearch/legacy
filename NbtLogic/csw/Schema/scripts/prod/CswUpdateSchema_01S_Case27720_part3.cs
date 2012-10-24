@@ -54,8 +54,14 @@ namespace ChemSW.Nbt.Schema
 
 
                 // Fix default mail report layout
-
-                Tab2.TabName = "Schedule";  // formerly "Settings"
+                if( Tab2 == null )
+                {
+                    Tab2 = _CswNbtSchemaModTrnsctn.MetaData.makeNewTab( MailReportNT, "Schedule", 2 );
+                }
+                else
+                {
+                    Tab2.TabName = "Schedule";  // formerly "Settings"
+                }
 
                 // clear the old layout
                 _CswNbtSchemaModTrnsctn.MetaData.NodeTypeLayout.clearLayout( LayoutEdit, MailReportNT.NodeTypeId );
