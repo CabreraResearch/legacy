@@ -21,7 +21,7 @@ namespace ChemSW.Nbt.LandingPage
                     CswNbtMetaDataNodeTypeTab Tab = NodeType.getNodeTypeTab( CswConvert.ToInt32( LandingPageRow["to_tabid"] ) );
                     if( null != Tab )
                     {
-                        CswNbtView TabView = getTabView(Request.NodeViewId, NodeType);
+                        CswNbtView TabView = getTabView( Request.NodeId, Request.NodeViewId, NodeType );
                         if( null != TabView && TabView.IsFullyEnabled() )
                         {
                             _ItemData.Text = LandingPageRow["displaytext"].ToString() != string.Empty ? 
@@ -40,13 +40,17 @@ namespace ChemSW.Nbt.LandingPage
             }            
         }
 
-        private CswNbtView getTabView( string NodeViewId, CswNbtMetaDataNodeType NodeType )
+        private CswNbtView getTabView( string NodeId, string NodeViewId, CswNbtMetaDataNodeType NodeType )
         {
-            CswNbtView TabView;
+            CswNbtView TabView = null;
             if( false == String.IsNullOrEmpty( NodeViewId ) )
             {
-                CswNbtSessionDataId TabViewId = new CswNbtSessionDataId( NodeViewId );
-                TabView = _CswNbtResources.ViewSelect.getSessionView( TabViewId );
+                CswNbtNode RequestNode = _CswNbtResources.Nodes.GetNode( CswConvert.ToPrimaryKey( NodeId ) );
+                if( RequestNode != null && RequestNode.NodeTypeId == NodeType.NodeTypeId )
+                {
+                    CswNbtSessionDataId TabViewId = new CswNbtSessionDataId(NodeViewId);
+                    TabView = _CswNbtResources.ViewSelect.getSessionView(TabViewId);
+                }
             }
             else
             {
