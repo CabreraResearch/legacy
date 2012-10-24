@@ -212,12 +212,12 @@ namespace ChemSW.Nbt.WebServices
                         Int32 JctNodePropId = CswConvert.ToInt32( PropElm["jctnodepropid"].ToString() );
 
                         // Special case: Image becomes thumbnail
-                        if( FieldType == CswNbtMetaDataFieldType.NbtFieldType.Image.ToString() )
+                        if( FieldType == CswNbtMetaDataFieldType.NbtFieldType.Image )
                         {
                             ret["thumbnailurl"] = CswNbtNodePropImage.getLink( JctNodePropId, NodeId, NodeTypePropId );
                         }
 
-                        if( FieldType == CswNbtMetaDataFieldType.NbtFieldType.MOL.ToString() )
+                        if( FieldType == CswNbtMetaDataFieldType.NbtFieldType.MOL )
                         {
                             ret["thumbnailurl"] = CswNbtNodePropMol.getLink( JctNodePropId, NodeId, NodeTypePropId );
                         }
@@ -229,7 +229,7 @@ namespace ChemSW.Nbt.WebServices
                             ThisProp["gestalt"] = _Truncate( Gestalt );
                             ThisProp["fieldtype"] = FieldType;
 
-                            if( FieldType == CswNbtMetaDataFieldType.NbtFieldType.Button.ToString() )
+                            if( FieldType == CswNbtMetaDataFieldType.NbtFieldType.Button )
                             {
                                 // Include full info for rendering the button
                                 // This was done in such a way as to prevent instancing the CswNbtNode object, 
