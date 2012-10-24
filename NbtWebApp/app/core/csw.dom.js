@@ -283,12 +283,21 @@
                 return ret;
             };
 
+            cswPrivate.setDataObj = function(obj) {
+                Csw.each(obj, function(val, propName) {
+                    cswPrivate.setData(propName, val);
+                });
+            };
+
             cswPublic.data = function (prop, val) {
                 /// <summary>Store property data on the control.</summary>
                 /// <returns type="Object">All properties, a single property, or the control if defining a property (for chaining).</returns> 
                 var ret = '';
                 if (cswPrivate.isControlStillValid()) {
-                    switch (arguments.length) {
+                    if (Csw.isPlainObject(prop)) {
+                        cswPrivate.setDataObj(prop);
+                    } else {
+                        switch (arguments.length) {
                         //this isn't a valid use case
                         //case 0:
                         //    ret = _internal || cswPublic.$.data();
@@ -300,6 +309,7 @@
                             cswPrivate.setData(prop, val);
                             ret = cswPublic;
                             break;
+                        }
                     }
                 }
                 return ret;
