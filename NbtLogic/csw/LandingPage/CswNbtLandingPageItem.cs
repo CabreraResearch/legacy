@@ -94,13 +94,13 @@ namespace ChemSW.Nbt.LandingPage
             {
                 ActionText = " and (for_actionid = " + ActionId + ")";
             }
-            string SqlText = "select max(display_row) maxcol from landingpage where display_col = 1 and (for_roleid = " + RoleId.ToString() + ")" + ActionText;
+            string SqlText = "select max(display_row) maxrow from landingpage where display_col = 1 and (for_roleid = " + RoleId.ToString() + ")" + ActionText;
             CswArbitrarySelect LandingPageSelect = _CswNbtResources.makeCswArbitrarySelect( "LandingPageForRole", SqlText );
             DataTable LandingPageSelectTable = LandingPageSelect.getTable();
             Int32 MaxRow = 0;
             if( LandingPageSelectTable.Rows.Count > 0 )
             {
-                MaxRow = CswConvert.ToInt32( LandingPageSelectTable.Rows[0]["maxcol"] );
+                MaxRow = CswConvert.ToInt32( LandingPageSelectTable.Rows[0]["maxrow"] );
                 if( MaxRow < 0 ) MaxRow = 0;
             }
             return MaxRow + 1;
