@@ -854,7 +854,7 @@ window.initMain = window.initMain || function (undefined) {
                 nodeTreeCheck: mainTree
             });
         } else {
-            cswPrivate.tabsAndProps.getTabs(o.nodeid, o.cswnbtnodekey);
+            cswPrivate.tabsAndProps.resetTabs(o.nodeid, o.cswnbtnodekey);
         }
     }
 
