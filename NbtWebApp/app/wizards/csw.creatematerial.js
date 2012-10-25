@@ -138,6 +138,7 @@
                             }
                             cswPrivate.createMaterial();
                             if (cswPrivate.isDuplicateMaterial) {
+                                
                                 cswPrivate.toggleButton(cswPrivate.buttons.prev, true, true);
                             }
                         }
@@ -273,7 +274,7 @@
                     cswPrivate.toggleButton(cswPrivate.buttons.finish, false);
                     cswPrivate.toggleButton(cswPrivate.buttons.next, true);
 
-                    if (false === cswPrivate.stepTwoComplete) {
+                    if (false === cswPrivate.stepOneComplete) {
                         cswPrivate.divStep1 = cswPrivate.divStep1 || cswPrivate.wizard.div(1);
                         cswPrivate.divStep1.empty();
 
