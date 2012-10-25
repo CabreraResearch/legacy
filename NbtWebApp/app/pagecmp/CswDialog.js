@@ -241,7 +241,7 @@
                 globalState: {
                     propertyData: cswPrivate.propertyData,
                     ShowAsReport: false,
-                    nodeids: [cswPrivate.nodeid]
+                    currentNodeId: cswPrivate.nodeid
                 },
                 tabState: {
                     nodetypeid: cswPrivate.nodetypeid,
@@ -289,18 +289,18 @@
                 Csw.ajax.post({
                     urlMethod: "getFeedbackNode",
                     data: {
-                        'nodetypeid': cswDlgPrivate.nodetypeid,
-                        'actionname': state.actionname,
-                        'viewid': state.viewid,
-                        'viewmode': state.viewmode,
-                        'selectednodeid': Csw.cookie.get('csw_currentnodeid'),
-                        'author': Csw.cookie.get('csw_username')
+                        nodetypeid: cswDlgPrivate.nodetypeid,
+                        actionname: state.actionname,
+                        viewid: state.viewid,
+                        viewmode: state.viewmode,
+                        selectednodeid: Csw.cookie.get('csw_currentnodeid'),
+                        author: Csw.cookie.get('csw_username')
                     },
                     success: function(data) {
                         cswPublic.tabsAndProps = Csw.layouts.tabsAndProps(cswPublic.div, {
                             globalState: {
                                 ShowAsReport: false,
-                                nodeids: [data.nodeid],
+                                currentNodeId: data.nodeid,
                                 propertyData: data.propdata
                             },
                             tabState: {
@@ -431,9 +431,8 @@
             var cswDlgPrivate = {
                 name: 'editlayout',
                 globalState: {
-                    nodeids: [],
-                    nodekeys: [],
-                    nodenames: []
+                    currentNodeId: '',
+                    currentNodeKey: ''
                 },
                 tabState: {
                     tabid: '',
@@ -512,8 +511,8 @@
                         } // onChange
                     }); // 
                     var ajaxdata = {
-                        NodeId: Csw.string(cswDlgPrivate.globalState.nodeids[0]),
-                        NodeKey: Csw.string(cswDlgPrivate.globalState.nodekeys[0]),
+                        NodeId: Csw.string(cswDlgPrivate.globalState.currentNodeId),
+                        NodeKey: Csw.string(cswDlgPrivate.globalState.currentNodeKey),
                         NodeTypeId: Csw.string(cswDlgPrivate.globalState.nodetypeid),
                         TabId: Csw.string(cswDlgPrivate.tabState.tabid),
                         LayoutType: layoutSelect.val()

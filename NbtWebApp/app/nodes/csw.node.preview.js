@@ -78,8 +78,8 @@
                 Csw.layouts.tabsAndProps(cswPrivate.div, {
                     name: cswPrivate.name + 'tabs',
                     globalState: {
-                        nodeids: [cswPrivate.nodeid],
-                        cswnbtnodekeys: [cswPrivate.cswnbtnodekey],
+                        currentNodeId: cswPrivate.nodeid,
+                        currentNodeKey: cswPrivate.cswnbtnodekey,
                         ShowAsReport: false
                     },
                     tabState: {

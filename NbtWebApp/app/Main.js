@@ -816,8 +816,8 @@ window.initMain = window.initMain || function (undefined) {
                 name: 'nodetabs',
                 globalState: {
                     viewid: o.viewid,
-                    nodeids: [o.nodeid],
-                    nodekeys: [o.cswnbtnodekey]
+                    currentNodeId: o.nodeid,
+                    currentNodeKey: o.cswnbtnodekey
                 },
                 tabState: {
                     ShowCheckboxes: multi,

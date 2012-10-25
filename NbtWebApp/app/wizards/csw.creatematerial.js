@@ -407,7 +407,7 @@
                             cswPrivate.tabsAndProps = Csw.layouts.tabsAndProps(div, {
                                 globalState: {
                                     excludeOcProps: ['tradename', 'supplier', 'partno'],
-                                    nodeids: [cswPrivate.state.materialId],
+                                    currentNodeId: cswPrivate.state.materialId,
                                     propertyData: cswPrivate.state.properties,
                                     ShowAsReport: false
                                 },
