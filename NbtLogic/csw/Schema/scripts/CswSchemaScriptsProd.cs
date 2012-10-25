@@ -42,7 +42,7 @@ namespace ChemSW.Nbt.Schema
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01S_Case27665() ) );                              //01S-014
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01S_Case27670() ) );                              //01S-015
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01S_Case27769() ) );                              //01S-016
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01S_Case27528() ) );                              //01S-017
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCaseXXXXX() ) );                                   //01S-017
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01S_MobileModule_Case27859() ) );                 //01S-018
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01S_Case27779_part1() ) );                        //01S-019
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01S_Case27779_part2() ) );                        //01S-020
@@ -60,7 +60,6 @@ namespace ChemSW.Nbt.Schema
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01S_Case27742() ) );                              //01S-032
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01S_Case28016() ) );                              //01S-033
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01S_Case27709() ) );                             ///01S-034
-
             #endregion SEBASTIAN
 
             // This automatically detects the latest version
@@ -74,7 +73,8 @@ namespace ChemSW.Nbt.Schema
             }
 
             _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_01() ), RunBeforeEveryExecutionOfUpdater_01.Title );
-            _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_01b() ), RunBeforeEveryExecutionOfUpdater_01b.Title );
+            _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_01OC() ), RunBeforeEveryExecutionOfUpdater_01OC.Title );
+            _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_01M() ), RunBeforeEveryExecutionOfUpdater_01M.Title );
             _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02() ), RunBeforeEveryExecutionOfUpdater_02.Title );
             _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_03() ), RunBeforeEveryExecutionOfUpdater_03.Title );
 

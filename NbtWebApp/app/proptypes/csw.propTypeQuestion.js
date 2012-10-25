@@ -35,9 +35,11 @@
                             cswPrivate.correctiveActionLabel.hide();
                             cswPrivate.correctiveActionTextBox.hide();
                         }
-                        cswPrivate.isActionRequired = (false === isCompliant);
-                        if (false === cswPrivate.isActionRequired) {
+                        var showCorrectiveAction = (false === isCompliant) && cswPrivate.isActionRequired;
+                        if (false === showCorrectiveAction) {
                             cswPrivate.answerSel.removeClass('CswFieldTypeQuestion_Deficient');
+                            cswPrivate.correctiveActionLabel.hide();
+                            cswPrivate.correctiveActionTextBox.hide();
                         } else {
                             cswPrivate.answerSel.addClass('CswFieldTypeQuestion_Deficient');
                             cswPrivate.correctiveActionLabel.show();

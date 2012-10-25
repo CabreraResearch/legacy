@@ -445,29 +445,26 @@ namespace ChemSW.Nbt.ObjClasses
         {
             //case 26113: check parent for bad inspections 
             CswNbtNode ParentNode = _CswNbtResources.Nodes.GetNode( this.Parent.RelatedNodeId );
-            ICswNbtPropertySetInspectionParent Parent = CswNbtPropSetCaster.AsPropertySetInspectionParent( ParentNode );
-            //CswNbtObjClassInspectionTarget pnodeAsTarget = (CswNbtObjClassInspectionTarget) ParentNode;
-            bool _alreadyDeficient = ( Parent.Status.Value == TargetStatusAsString( TargetStatus.Deficient ) );
-            bool _Deficient = areMoreActionsRequired();
-            if( _Deficient != _alreadyDeficient )
+            if( null != ParentNode )
             {
-                Parent.Status.Value = _Deficient ? TargetStatusAsString( TargetStatus.Deficient ) : TargetStatusAsString( TargetStatus.OK );
-                ParentNode.postChanges( false );
+                ICswNbtPropertySetInspectionParent Parent = CswNbtPropSetCaster.AsPropertySetInspectionParent( ParentNode );
+                //CswNbtObjClassInspectionTarget pnodeAsTarget = (CswNbtObjClassInspectionTarget) ParentNode;
+                bool _alreadyDeficient = ( Parent.Status.Value == TargetStatusAsString( TargetStatus.Deficient ) );
+                bool _Deficient = areMoreActionsRequired();
+                if( _Deficient != _alreadyDeficient )
+                {
+                    Parent.Status.Value = _Deficient ? TargetStatusAsString( TargetStatus.Deficient ) : TargetStatusAsString( TargetStatus.OK );
+                    ParentNode.postChanges( false );
+                }
             }
 
             _CswNbtObjClassDefault.beforeDeleteNode( DeleteAllRequiredRelatedNodes );
-
-        }
-
-        //beforeDeleteNode()
+        } //beforeDeleteNode()
 
         public override void afterDeleteNode()
         {
             _CswNbtObjClassDefault.afterDeleteNode();
-
-        }
-
-        //afterDeleteNode()        
+        } //afterDeleteNode()        
 
         public override void afterPopulateProps()
         {
@@ -479,9 +476,7 @@ namespace ChemSW.Nbt.ObjClasses
             IsFuture.SetOnPropChange( OnIsFutureChange );
             Status.SetOnPropChange( OnStatusPropChange );
             _CswNbtObjClassDefault.afterPopulateProps();
-        }
-
-        //afterPopulateProps()
+        } //afterPopulateProps()
 
         public void onQuestionChange( CswNbtNodeProp Prop )
         {
@@ -550,7 +545,6 @@ namespace ChemSW.Nbt.ObjClasses
                         }
                         ButtonData.Message = "Unanswered questions have been set to their preferred answer.";
                         SetPreferred.setReadOnly( value: true, SaveToDb: true );
-                        SetPreferred.setHidden( value: true, SaveToDb: true );
                         break;
                 }
                 ButtonData.Action = NbtButtonAction.refresh;
@@ -586,7 +580,7 @@ namespace ChemSW.Nbt.ObjClasses
             ICswNbtTree SiblingTree = _CswNbtResources.Trees.getTreeFromView( SiblingView, true, true, false, false );
             int NumOfSiblings = SiblingTree.getChildNodeCount();
 
-            return 0 < NumOfSiblings;
+            return 0 < NumOfSiblings || Status.Value.Equals( InspectionStatus.ActionRequired );
         }
 
         #endregion
@@ -685,16 +679,6 @@ namespace ChemSW.Nbt.ObjClasses
         /// </summary>
         public CswNbtNodePropRelationship Parent { get { return ( _CswNbtNode.Properties[GeneratorTargetParentPropertyName] ); } }
 
-        private void _toggleButtons( bool Disabled )
-        {
-            Finish.setReadOnly( value: Disabled, SaveToDb: true );
-            Finish.setHidden( value: Disabled, SaveToDb: true );
-            Cancel.setReadOnly( value: Disabled, SaveToDb: true );
-            Cancel.setHidden( value: Disabled, SaveToDb: true );
-            SetPreferred.setReadOnly( value: Disabled, SaveToDb: true );
-            SetPreferred.setHidden( value: Disabled, SaveToDb: true );
-        }
-
         /// <summary>
         /// Actual status of Inspection
         /// </summary>
@@ -719,35 +703,43 @@ namespace ChemSW.Nbt.ObjClasses
                             InspectionDate.DateTimeValue = DateTime.Now;
                             Inspector.RelatedNodeId = _CswNbtResources.CurrentNbtUser.UserId;
                         }
-                        _toggleButtons( Disabled: true );
+                        Finish.setReadOnly( true, true );
+                        SetPreferred.setReadOnly( true, true );
+                        Cancel.setReadOnly( true, true );
                         Node.setReadOnly( value: true, SaveToDb: true );
                     }
                     break;
 
                 case InspectionStatus.Cancelled:
                 case InspectionStatus.Missed:
-                    _toggleButtons( Disabled: true );
+                    Finish.setReadOnly( true, true );
+                    SetPreferred.setReadOnly( true, true );
+                    Cancel.setReadOnly( true, true );
                     Node.setReadOnly( value: true, SaveToDb: true );
                     break;
 
+                case InspectionStatus.Overdue:
+                case InspectionStatus.ActionRequired:
                 case InspectionStatus.Pending:
-                    Finish.setHidden( false, true );
-                    SetPreferred.setHidden( false, true );
-                    Cancel.setHidden( false, true );
+                    Finish.setReadOnly( false, true );
+                    SetPreferred.setReadOnly( false, true );
+                    Cancel.setReadOnly( false, true );
+                    Node.setReadOnly( value: false, SaveToDb: true );
                     break;
 
             } // switch( Status.Value )
 
             CswNbtNode ParentNode = _CswNbtResources.Nodes.GetNode( this.Parent.RelatedNodeId );
-            if( ParentNode != null )
+            if( ParentNode != null && false == IsTemp )
             {
                 ICswNbtPropertySetInspectionParent Parent = CswNbtPropSetCaster.AsPropertySetInspectionParent( ParentNode );
-                bool IsDeficient = _InspectionState.Deficient || areMoreActionsRequired();  //case 25041
+                bool IsDeficient = areMoreActionsRequired();  //case 25041
 
                 Parent.Status.Value = IsDeficient ? TargetStatusAsString( TargetStatus.Deficient ) : TargetStatusAsString( TargetStatus.OK );
                 //Parent.LastInspectionDate.DateTimeValue = DateTime.Now;
                 ParentNode.postChanges( false );
             } // if( ParentNode != null )
+
         } // OnStatusPropChange()
 
 

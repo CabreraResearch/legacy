@@ -32,6 +32,7 @@
                 ReadOnly: false,
                 Required: false,
                 onChange: null,
+                useEditButton: true,
 
                 divHourly: '',
                 divWeekly: '',
@@ -424,7 +425,7 @@
             }; // makeYearlyDiv
 
 
-            cswPrivate.setDefaults = function() {
+            cswPrivate.setDefaults = function () {
                 var doOnChange = false;
 
                 if (Csw.isNullOrEmpty(cswPublic.rateInterval.ratetype)) {
@@ -483,6 +484,39 @@
 
             }; // cswPrivate.setDefaults
 
+
+            cswPrivate.make = function () {
+                cswPrivate.textValueSpan.hide();
+
+                cswPrivate.table = cswPrivate.div.table({ cellspacing: 5 });
+                cswPrivate.makeRateTypeDiv(cswPrivate.table.cell(1, 1));
+
+                var divCell = cswPrivate.table.cell(1, 2);
+                cswPrivate.makeHourlyDiv(divCell);
+                cswPrivate.makeWeeklyDiv(divCell);
+                cswPrivate.makeMonthlyDiv(divCell);
+                cswPrivate.makeYearlyDiv(divCell);
+
+                cswPrivate.hideDivs();
+                switch (cswPublic.rateInterval.ratetype) {
+                    case Csw.enums.rateIntervalTypes.Hourly:
+                        cswPrivate.divHourly.show();
+                        break;
+                    case Csw.enums.rateIntervalTypes.WeeklyByDay:
+                        cswPrivate.divWeekly.show();
+                        break;
+                    case Csw.enums.rateIntervalTypes.MonthlyByDate:
+                        cswPrivate.divMonthly.show();
+                        break;
+                    case Csw.enums.rateIntervalTypes.MonthlyByWeekAndDay:
+                        cswPrivate.divMonthly.show();
+                        break;
+                    case Csw.enums.rateIntervalTypes.YearlyByDate:
+                        cswPrivate.divYearly.show();
+                        break;
+                } // switch
+            }; // make()
+
             // constructor
             (function () {
                 var textValue;
@@ -507,46 +541,23 @@
                 cswPrivate.div = cswParent.div({ ID: cswPrivate.ID });
 
                 cswPrivate.textValueSpan = cswPrivate.div.span({ text: textValue }).css({ paddingRight: '5px' });
-                if(false === cswPrivate.ReadOnly)
-                {
-                    cswPrivate.editButton = cswPrivate.div.icon({
-                        ID: Csw.makeSafeId(cswPrivate.ID, 'editbtn'),
-                        iconType: Csw.enums.iconType.pencil,
-                        isButton: true,
-                        size: 16,
-                        onClick: function () {
-                            cswPrivate.textValueSpan.hide();
-                            cswPrivate.editButton.hide();
 
-                            cswPrivate.table = cswPrivate.div.table({ cellspacing: 5 });
-                            cswPrivate.makeRateTypeDiv(cswPrivate.table.cell(1, 1));
-
-                            var divCell = cswPrivate.table.cell(1, 2);
-                            cswPrivate.makeHourlyDiv(divCell);
-                            cswPrivate.makeWeeklyDiv(divCell);
-                            cswPrivate.makeMonthlyDiv(divCell);
-                            cswPrivate.makeYearlyDiv(divCell);
-
-                            cswPrivate.hideDivs();
-                            switch (cswPublic.rateInterval.ratetype) {
-                                case Csw.enums.rateIntervalTypes.Hourly:
-                                    cswPrivate.divHourly.show();
-                                    break;
-                                case Csw.enums.rateIntervalTypes.WeeklyByDay:
-                                    cswPrivate.divWeekly.show();
-                                    break;
-                                case Csw.enums.rateIntervalTypes.MonthlyByDate:
-                                    cswPrivate.divMonthly.show();
-                                    break;
-                                case Csw.enums.rateIntervalTypes.MonthlyByWeekAndDay:
-                                    cswPrivate.divMonthly.show();
-                                    break;
-                                case Csw.enums.rateIntervalTypes.YearlyByDate:
-                                    cswPrivate.divYearly.show();
-                                    break;
-                            } // switch
-                        } // onClick
-                    }); // editButton
+                if (false === cswPrivate.ReadOnly) {
+                    if (cswPrivate.useEditButton) {
+                        cswPrivate.editButton = cswPrivate.div.icon({
+                            ID: Csw.makeSafeId(cswPrivate.ID, 'editbtn'),
+                            iconType: Csw.enums.iconType.pencil,
+                            isButton: true,
+                            size: 16,
+                            onClick: function () {
+                                cswPrivate.editButton.hide();
+                                cswPrivate.make();
+                            } // onClick
+                        }); // editButton
+                    } // if(cswPrivate.useEditButton)
+                    else {
+                        cswPrivate.make();
+                    }
                 } // if(false === cswPrivate.ReadOnly)
 
             } ()); // constructor

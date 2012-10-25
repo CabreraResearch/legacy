@@ -15,15 +15,16 @@ namespace ChemSW.Nbt.Schema
         {
             CswNbtMetaDataObjectClass SizeOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.SizeClass );
 
-            CswNbtMetaDataObjectClassProp UnitCountOcp = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( SizeOc )
-            {
-                PropName = CswNbtObjClassSize.PropertyName.UnitCount,
-                FieldType = CswNbtMetaDataFieldType.NbtFieldType.Number,
-                IsRequired = true,
-                SetValOnAdd = true,
-                NumberMinValue = 1,
-                NumberPrecision = 0
-            } );
+            // moved to RunBeforeEveryExecutionOfUpdater_01OC
+            //CswNbtMetaDataObjectClassProp UnitCountOcp = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( SizeOc )
+            //{
+            //    PropName = CswNbtObjClassSize.PropertyName.UnitCount,
+            //    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Number,
+            //    IsRequired = true,
+            //    SetValOnAdd = true,
+            //    NumberMinValue = 1,
+            //    NumberPrecision = 0
+            //} );
 
             CswNbtMetaDataNodeType SizeNt = SizeOc.FirstNodeType;
             if( null != SizeNt )

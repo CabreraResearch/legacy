@@ -959,6 +959,23 @@ namespace ChemSW.Nbt.Schema
             JctModulesNTTable.update( JctModulesNTDataTable );
         }
 
+        public void removeModuleNodeTypeJunction( CswNbtModuleName Module, Int32 NodeTypeId )
+        {
+            Int32 ModuleId = getModuleId( Module );
+            removeModuleNodeTypeJunction( ModuleId, NodeTypeId );
+        }
+
+        public void removeModuleNodeTypeJunction( Int32 ModuleId, Int32 NodeTypeId )
+        {
+            CswTableUpdate jct_modules_nodetypesTU = makeCswTableUpdate( "SchemaModTrnsctn_RemoveModuleNTJunction", "jct_modules_nodetypes" );
+            DataTable jct_modules_nodetypesDT = jct_modules_nodetypesTU.getTable( "where nodetypeid = " + NodeTypeId + " and moduleid = " + ModuleId );
+            if( 1 == jct_modules_nodetypesDT.Rows.Count ) //A nodetype can only be tied to a module once (Highlander Theory)
+            {
+                jct_modules_nodetypesDT.Rows[0].Delete();
+            }
+            jct_modules_nodetypesTU.update( jct_modules_nodetypesDT );
+        }
+
         /// <summary>
         /// Convenience function for making new Object Classes
         /// </summary>
@@ -1031,7 +1048,8 @@ namespace ChemSW.Nbt.Schema
                                             OcpModel );
 
                     ObjectClassPropUpdate.update( UpdateTable );
-                    MetaData.makeMissingNodeTypeProps();
+                    MetaData.refreshAll();
+                    //MetaData.makeMissingNodeTypeProps();
                     RetProp = OcpModel.ObjectClass.getObjectClassProp( OcpModel.PropName );
                 }
             }
@@ -1120,7 +1138,7 @@ namespace ChemSW.Nbt.Schema
                         NewPropRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.statictext.ToString()] = CswConvert.ToDbVal( StaticText );
                     }
                     ObjectClassPropUpdate.update( UpdateTable );
-                    MetaData.makeMissingNodeTypeProps();
+                    //MetaData.makeMissingNodeTypeProps();
                     RetProp = ObjectClassOc.getObjectClassProp( PropName );
                 }
             }
