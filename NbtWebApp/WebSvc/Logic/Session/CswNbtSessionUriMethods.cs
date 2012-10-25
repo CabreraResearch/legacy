@@ -4,6 +4,7 @@ using System.ServiceModel.Activation;
 using System.ServiceModel.Web;
 using System.Web;
 using ChemSW.Nbt.WebServices;
+using ChemSW.Security;
 using ChemSW.Session;
 using ChemSW.WebSvc;
 using NbtWebApp.WebSvc.Returns;
@@ -39,6 +40,10 @@ namespace NbtWebApp.WebSvc.Session
                 );
 
             InitDriverType.run();
+            if( Ret.Authentication.AuthenticationStatus != AuthenticationStatus.Deauthenticated )
+            {
+                Ret.Authentication.AuthenticationStatus = AuthenticationStatus.Deauthenticated;
+            }
             return ( Ret );
 
         }
