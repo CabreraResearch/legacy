@@ -21,7 +21,7 @@
                         if (Csw.isPlainObject(attr)) {
                             wasModified = cswStaticInternalClosure.preparePropJsonForSaveRecursive(isMulti, propVals[key], attr) || wasModified;
                         } else if ((false === isMulti && propVals[key] !== attr) ||
-                            (isMulti && false === Csw.isNullOrUndefined(attr) && attr !== Csw.enums.multiEditDefaultValue)) {
+                            (isMulti && false === Csw.isNullOrUndefined(attr))) {
                             wasModified = true;
                             propVals[key] = attr;
                         }
@@ -91,16 +91,25 @@
                     onAfterButtonClick: function () {
                     }
                 };
-                if (Csw.isNullOrEmpty(cswPrivate)) {
-                    Csw.error.throwException('Cannot create a Csw propertyOption without an object to define the property control.', 'propertyOption', 'csw.propertyOption.js', 86);
-                }
+                
+                (function _preCtr() {
+                    if (Csw.isNullOrEmpty(cswPrivate)) {
+                        Csw.error.throwException('Cannot create a Csw propertyOption without an object to define the property control.', 'propertyOption', 'csw.propertyOption.js', 86);
+                    }
+                    Csw.extend(cswPublic, cswPrivate);
+                    cswPublic.name = cswPublic.propData.id;
+                }());
+
+                cswPublic.isDisabled = function () {
+                    return (Csw.enums.editMode.PrintReport === cswPublic.tabState.EditMode ||
+                            Csw.enums.editMode.Preview === cswPublic.tabState.EditMode ||
+                            Csw.enums.editMode.AuditHistoryInPopup === cswPublic.tabState.EditMode);
+                };
 
                 cswPublic.isReadOnly = function () {
                     return Csw.bool(cswPublic.tabState.ReadOnly) ||
                         Csw.bool(cswPublic.tabState.Config) ||
-                        cswPublic.tabState.EditMode === Csw.enums.editMode.PrintReport ||
-                        cswPublic.tabState.EditMode === Csw.enums.editMode.Preview ||
-                        Csw.enums.editMode.AuditHistoryInPopup === cswPublic.tabState.EditMode ||
+                        cswPublic.isDisabled() ||
                         Csw.bool(cswPublic.propData.readonly);
                 };
 
@@ -111,19 +120,12 @@
                 cswPublic.isMulti = function () {
                     return Csw.bool(cswPublic.tabState.Multi);
                 };
-
-                cswPublic.isDisabled = function () {
-                    return (Csw.enums.editMode.PrintReport === cswPublic.tabState.EditMode || Csw.enums.editMode.AuditHistoryInPopup === cswPublic.tabState.EditMode);
-                };
-
-                cswPublic.name = cswPublic.propData.id;
-
+                
                 cswPublic.doPropChangeDataBind = function() {
                     //NOTE - if we don't verify that we're in config mode we'll get an INFINITE LOOP
                     return (false === cswPublic.isReadOnly() && false === cswPublic.tabState.Config && false === cswPublic.isDisabled());
                 };
-
-                Csw.extend(cswPublic, cswPrivate);
+                 
                 cswPublic.onPropChange = function (attributes) {
                     /// <summary>
                     /// Update cswPublic.data as the DOM changes. Each propType is responsible for implementing a call to this method for each relevant subfield.
@@ -147,16 +149,6 @@
                     Csw.subscribe('onPropChange_' + cswPublic.propid, cswPrivate.dataBindPropChange);
                 }
 
-                cswPublic.toggleMulti = function (eventObj, multiOpts) {
-                    if (multiOpts && multiOpts.nodeid === cswPublic.tabState.nodeid) {
-                        cswPublic.tabState.Multi = multiOpts.multi;
-                        cswPrivate.renderThisProp();
-                    } else {
-                        //Csw.debug.assert(multiOpts.nodeid === cswPublic.tabState.nodeid, 'CswMultiEdit event pusblished for nodeid "' + multiOpts.nodeid + '" but was subscribed to from nodeid "' + cswPublic.tabState.nodeid + '".');
-                        Csw.unsubscribe('CswMultiEdit', cswPublic.toggleMulti);
-                    }
-                };
-
                 cswPublic.bindRender = function (callBack) {
                     /// <summary>
                     /// Subscribe to the render and teardown events
@@ -170,7 +162,6 @@
                         'use strict';
                         Csw.unsubscribe('render_' + cswPublic.tabState.nodeid, cswPrivate.renderer);
                         Csw.unsubscribe('initPropertyTearDown', cswPrivate.tearDown);
-                        Csw.unsubscribe('CswMultiEdit', cswPublic.toggleMulti);
                         Csw.unsubscribe('initPropertyTearDown_' + cswPublic.tabState.nodeid, cswPrivate.tearDown);
                         Csw.tryExec(cswPrivate.tearDownCallback);
                     };
@@ -193,16 +184,15 @@
 
                     //We only want to subscribe once--not on every possible publish to render
                     Csw.subscribe('render_' + cswPublic.tabState.nodeid, cswPrivate.renderer);
-                    Csw.subscribe('CswMultiEdit', cswPublic.toggleMulti);
                     Csw.subscribe('initPropertyTearDown', cswPrivate.tearDown);
                     Csw.subscribe('initPropertyTearDown_' + cswPublic.tabState.nodeid, cswPrivate.tearDown);
                 };
 
                 if (false === Csw.isNullOrEmpty(cswPublic.propDiv)) {
-                    cswPublic.propDiv.propNonDom({
+                    cswPublic.propDiv.data({
                         nodeid: cswPublic.tabState.nodeid,
                         propid: cswPublic.propid,
-                        cswnbtnodekey: cswPublic.tabState.cswnbtnodekey
+                        nodekey: cswPublic.tabState.nodekey
                     });
                 }
 

@@ -15,10 +15,6 @@
                     'use strict';
                     cswPublic.data = cswPublic.data || Csw.nbt.propertyOption(propertyOption);
 
-                    cswPrivate.isMultiEditValid = function(value) {
-                        return cswPublic.data.isMulti() && value === Csw.enums.multiEditDefaultValue;
-                    };
-
                     cswPrivate.propVals = cswPublic.data.propData.values;
                     cswPrivate.parent = cswPublic.data.propDiv;
                     cswPrivate.precision = Csw.number(cswPrivate.propVals.precision, 6);
@@ -26,7 +22,7 @@
 
                     cswPublic.control = cswPrivate.parent.numberTextBox({
                         name: cswPublic.data.name + '_num',
-                        value: (false === cswPublic.data.isMulti()) ? Csw.string(cswPrivate.propVals.value).trim() : Csw.enums.multiEditDefaultValue,
+                        value: Csw.string(cswPrivate.propVals.value).trim(),
                         MinValue: Csw.number(cswPrivate.propVals.minvalue),
                         MaxValue: Csw.number(cswPrivate.propVals.maxvalue),
                         excludeRangeLimits: Csw.bool(cswPrivate.propVals.excludeRangeLimits),

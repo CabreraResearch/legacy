@@ -41,10 +41,10 @@
                     cswPrivate.propVals = cswPublic.data.propData.values;
                     cswPrivate.parent = cswPublic.data.propDiv;
 
-                    cswPrivate.red = (false === cswPublic.data.isMulti()) ? cswPrivate.propVals.flammability : Csw.enums.multiEditDefaultValue;
-                    cswPrivate.yellow = (false === cswPublic.data.isMulti()) ? cswPrivate.propVals.reactivity : Csw.enums.multiEditDefaultValue;
-                    cswPrivate.blue = (false === cswPublic.data.isMulti()) ? cswPrivate.propVals.health : Csw.enums.multiEditDefaultValue;
-                    cswPrivate.white = (false === cswPublic.data.isMulti()) ? cswPrivate.propVals.special : Csw.enums.multiEditDefaultValue;
+                    cswPrivate.red =    cswPrivate.propVals.flammability;
+                    cswPrivate.yellow = cswPrivate.propVals.reactivity;
+                    cswPrivate.blue =   cswPrivate.propVals.health;
+                    cswPrivate.white =  cswPrivate.propVals.special;
                     cswPrivate.displayMode = cswPrivate.propVals.displaymode;
                     cswPrivate.hideSpecial = cswPrivate.propVals.hidespecial;
 
@@ -137,12 +137,7 @@
                         cswPrivate.editTable = cswPublic.control.cell(1, 2).table({
                             FirstCellRightAlign: true
                         });
-
-                        if (cswPublic.data.isMulti()) {
-                            cswPrivate.selVals.push({ value: Csw.enums.multiEditDefaultValue, display: Csw.enums.multiEditDefaultValue });
-                            cswPrivate.whiteVals.push({ value: Csw.enums.multiEditDefaultValue, display: Csw.enums.multiEditDefaultValue });
-                        }
-
+                        
                         cswPrivate.editTable.cell(1, 1).text('Flammability');
                         cswPrivate.editTable.cell(2, 1).text('Reactivity');
                         if (cswPrivate.displayMode === Csw.enums.NFPADisplayMode.Diamond) {

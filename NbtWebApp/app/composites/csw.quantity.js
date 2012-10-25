@@ -29,7 +29,8 @@
                     qtyWidth: '',
                     qtyReadonly: false,
                     unitReadonly: false,
-                    excludeRangeLimits: false
+                    excludeRangeLimits: false,
+                    Required: false
                 };
                 if (options) Csw.extend(cswPrivate, options);
 

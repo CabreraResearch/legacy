@@ -98,20 +98,19 @@
                         },
                         onEdit: function (rows) {
                             // this works for both Multi-edit and regular
-                            var cswnbtnodekeys = [],
-                                nodeids = [],
+                            var nodekeys = Csw.delimitedString(),
+                                nodeids = Csw.delimitedString(),
                                 nodenames = [];
 
                             Csw.each(rows, function (row) {
-                                cswnbtnodekeys.push(row.nodekey);
-                                nodeids.push(row.nodeid);
+                                nodekeys.add(row.nodekey);
+                                nodeids.add(row.nodeid);
                                 nodenames.push(row.nodename);
                             });
 
                             $.CswDialog('EditNodeDialog', {
-                                nodeids: nodeids,
-                                nodepks: nodeids,
-                                nodekeys: cswnbtnodekeys,
+                                selectedNodeIds: nodeids,
+                                selectedNodeKeys: nodekeys,
                                 nodenames: nodenames,
                                 Multi: (nodeids.length > 1),
                                 onEditNode: function () {

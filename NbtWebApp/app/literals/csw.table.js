@@ -66,12 +66,14 @@
                         align: cswPrivate.align
                     });
                     cswPublic.css(cswPrivate.styles);
-                    cswPublic.propNonDom({
+                    cswPublic.propDom({
                         cellpadding: cswPrivate.cellpadding,
                         cellspacing: cswPrivate.cellspacing,
                         border: cswPrivate.border,
                         cellalign: cswPrivate.cellalign,
-                        cellvalign: cswPrivate.cellvalign,
+                        cellvalign: cswPrivate.cellvalign
+                    });
+                    cswPublic.data({
                         cellcssclass: cswPrivate.CellCssClass,
                         FirstCellRightAlign: cswPrivate.FirstCellRightAlign,
                         OddCellRightAlign: cswPrivate.OddCellRightAlign
@@ -103,7 +105,7 @@
                     }
 
                     if (cswPrivate.ID) {
-                        retCell = cswPublic.find('#' + cswPrivate.ID + '_row_' + row + '_col_' + col);
+                        retCell = cswPublic.find('#' + cswPrivate.ID + 'row' + row + 'col' + col);
                     }
                     if (Csw.isNullOrEmpty(retCell)) {
                         retCell = cswPublic.children('tbody')
@@ -121,21 +123,21 @@
                         while (col > thisCol) {
                             html = '';
                             thisCol += 1;
-                            id = cswPrivate.ID + '_row_' + row + '_col_' + thisCol;
-                            align = cswPublic.propNonDom('cellalign');
-                            if ((thisRow.children('td').length() === 0 && Csw.bool(cswPublic.propNonDom('FirstCellRightAlign'))) ||
-                                (thisRow.children('td').length() % 2 === 0 && Csw.bool(cswPublic.propNonDom('OddCellRightAlign')))) {
+                            id = cswPrivate.ID + 'row' + row + 'col' + thisCol;
+                            align = cswPublic.data('cellalign');
+                            if ((thisRow.children('td').length() === 0 && Csw.bool(cswPublic.data('FirstCellRightAlign'))) ||
+                                (thisRow.children('td').length() % 2 === 0 && Csw.bool(cswPublic.data('OddCellRightAlign')))) {
                                 align = 'right';
                             }
                             html += '<td ';
                             if (false === Csw.isNullOrEmpty(id)) {
                                 attr.add('id', id);
                             }
-                            attr.add('realrow', row);
-                            attr.add('realcol', thisCol);
-                            attr.add('class', cswPublic.propNonDom('cellcssclass'));
+                            attr.add('data-realrow', row);
+                            attr.add('data-realcol', thisCol);
+                            attr.add('class', cswPublic.data('cellcssclass'));
                             attr.add('align', align);
-                            attr.add('valign', cswPublic.propNonDom('cellvalign'));
+                            attr.add('valign', cswPublic.data('cellvalign'));
                             html += attr.get();
                             html += '>';
                             html += '</td>';

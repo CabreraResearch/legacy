@@ -91,13 +91,21 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
     <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Data.Entity" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Security" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01T_Case27551.cs" />
+    <Compile Include="csw\Schema\CswNbtSchema.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>CswNbtSchema.edmx</DependentUpon>
+    </Compile>
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01T_Case27920.cs" />
     <Compile Include="csw\LandingPage\CswNbtLandingPageDataContract.cs" />
     <Compile Include="csw\LandingPage\CswNbtLandingPageItem.cs" />
@@ -600,7 +608,6 @@
     <Compile Include="csw\Sequence\CswNbtSequenceManager.cs" />
     <Compile Include="csw\Sequence\CswNbtSequenceValue.cs" />
     <Compile Include="csw\Sequence\CswSequenceName.cs" />
-    <Compile Include="csw\ServiceDrivers\CswNbtSdGrid.cs" />
     <Compile Include="csw\ServiceDrivers\CswNbtSdInventoryLevelMgr.cs" />
     <Compile Include="csw\ServiceDrivers\CswNbtSdLocations.cs" />
     <Compile Include="csw\ServiceDrivers\CswNbtSdNode.cs" />
@@ -699,6 +706,7 @@
       <DependentUpon>SqlRptViewDict.rpt</DependentUpon>
       <SubType>Component</SubType>
     </Compile>
+    <None Include="App.Config" />
     <None Include="ChemSW.snk" />
     <None Include="csw\Actions\Example.xsd">
       <SubType>Designer</SubType>
@@ -732,6 +740,13 @@
       <SubType>Designer</SubType>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <EntityDeploy Include="csw\Schema\CswNbtSchema.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>CswNbtSchema.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+    <None Include="csw\Schema\CswNbtSchema.edmx.diagram">
+      <DependentUpon>CswNbtSchema.edmx</DependentUpon>
+    </None>
     <None Include="Resources\runscript_bat" />
     <None Include="Resources\SqlRptViewDict.rpt">
       <Generator>CrystalDecisions.VSDesigner.CodeGen.ReportCodeGenerator</Generator>

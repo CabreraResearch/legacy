@@ -116,7 +116,7 @@ namespace ChemSW.Nbt.WebServices
             ThisNodeObj["attr"]["state"] = ThisNodeState;
             ThisNodeObj["attr"]["species"] = ThisNodeKey.NodeSpecies.ToString();
             ThisNodeObj["attr"]["nodeid"] = ThisNodeId;
-            ThisNodeObj["attr"]["cswnbtnodekey"] = ThisNodeKeyString;
+            ThisNodeObj["attr"]["nodekey"] = ThisNodeKeyString;
             ThisNodeObj["attr"]["locked"] = ThisNodeLocked.ToString().ToLower();
             if( ThisNodeDisabled )
             {
@@ -234,7 +234,7 @@ namespace ChemSW.Nbt.WebServices
                 ReturnObj["root"]["attr"]["rel"] = "root";
                 ReturnObj["root"]["attr"]["disabled"] = false == Tree.getNodeIncludedForCurrentPosition();
                 //Tree.goToRoot();
-                //ReturnObj["attr"]["cswnbtnodekey"] = Tree.getNodeKeyForCurrentPosition().ToString();
+                //ReturnObj["attr"]["nodekey"] = Tree.getNodeKeyForCurrentPosition().ToString();
                 ReturnObj["root"]["state"] = "open";
                 ReturnObj["root"]["children"] = new JArray();
 
@@ -427,7 +427,7 @@ namespace ChemSW.Nbt.WebServices
                         FirstObj["attr"] = new JObject();
                         FirstObj["attr"]["id"] = _IdPrefix + "root";
                         FirstObj["attr"]["rel"] = "root";
-                        FirstObj["attr"]["cswnbtnodekey"] = Tree.getNodeKeyForCurrentPosition().ToString();
+                        FirstObj["attr"]["nodekey"] = Tree.getNodeKeyForCurrentPosition().ToString();
                         FirstObj["state"] = "open";
                         FirstObj["children"] = ChildArray;
 

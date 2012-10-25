@@ -518,11 +518,7 @@
 
                 cswPrivate.nowString = $.datepicker.formatDate(cswPublic.rateInterval.startingdate.dateformat, cswPrivate.now);
 
-                if (cswPrivate.Multi) {
-                    textValue = Csw.enums.multiEditDefaultValue;
-                } else {
-                    textValue = Csw.string(cswPrivate.rateIntervalValue.text).trim();
-                }
+                textValue = Csw.string(cswPrivate.rateIntervalValue.text).trim();
                 if (Csw.isNullOrEmpty(textValue)) {
                     textValue = '[none set]';
                 }

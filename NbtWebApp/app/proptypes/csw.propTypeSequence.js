@@ -17,7 +17,7 @@
 
                     cswPrivate.propVals = cswPublic.data.propData.values;
                     cswPrivate.parent = cswPublic.data.propDiv;
-                    cswPrivate.value = (false === cswPublic.data.isMulti()) ? Csw.string(cswPrivate.propVals.sequence).trim() : Csw.enums.multiEditDefaultValue;
+                    cswPrivate.value = Csw.string(cswPrivate.propVals.sequence).trim();
 
                     if (cswPublic.data.isReadOnly() || cswPublic.data.isMulti()) {
                         cswPublic.control = cswPrivate.parent.append(cswPrivate.value);

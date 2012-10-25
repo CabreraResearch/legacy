@@ -47,6 +47,7 @@
 
                 try {
                     cswPublic.menu = window.Ext.create('Ext.button.Split', {
+                        id: cswPrivate.ID + 'splitmenu',
                         renderTo: cswParent.getId(),
                         text: cswPrivate.selectedText,
                         handler: cswPrivate.handleMenuItemClick,

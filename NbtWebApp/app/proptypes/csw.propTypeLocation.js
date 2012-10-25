@@ -80,7 +80,7 @@
                         locationTree.init({
                             viewid: cswPrivate.viewId,
                             nodeid: cswPrivate.nodeId,
-                            cswnbtnodekey: cswPrivate.nodeKey,
+                            nodekey: cswPrivate.nodeKey,
                             IncludeInQuickLaunch: false,
                             DefaultSelect: Csw.enums.nodeTree_DefaultSelect.root.name
                         });
@@ -91,19 +91,14 @@
                     });
 
                     
-                    if (Csw.bool(cswPublic.data.isMulti())) {
-                        cswPrivate.nodeId = '';
-                        cswPrivate.name = Csw.enums.multiEditDefaultValue;
-                        cswPrivate.path = Csw.enums.multiEditDefaultValue;
-                    }
-                    else if (cswPrivate.relatedmatch) {
+                    if (cswPrivate.relatedmatch) {
                         cswPrivate.nodeId = Csw.string(cswPrivate.propVals.nodeid, cswPublic.data.tabState.relatednodeid).trim();
                         cswPrivate.name = Csw.string(cswPrivate.propVals.name, cswPublic.data.tabState.relatednodename).trim();
                         cswPrivate.path = Csw.string(cswPrivate.propVals.path, cswPublic.data.tabState.relatednodename).trim();
                     } else {
-                        cswPrivate.nodeId = Csw.string(cswPrivate.propVals.nodeid, '').trim();
-                        cswPrivate.name = Csw.string(cswPrivate.propVals.name, '').trim();
-                        cswPrivate.path = Csw.string(cswPrivate.propVals.path, '').trim();
+                        cswPrivate.nodeId = Csw.string(cswPrivate.propVals.nodeid).trim();
+                        cswPrivate.name = Csw.string(cswPrivate.propVals.name).trim();
+                        cswPrivate.path = Csw.string(cswPrivate.propVals.path).trim();
                     }
                     cswPrivate.viewId = Csw.string(cswPrivate.propVals.viewid).trim();
 

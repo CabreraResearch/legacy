@@ -18,7 +18,7 @@
                     cswPublic.control = cswPrivate.parent.table();
 
                     if (cswPublic.data.isMulti()) {
-                        cswPublic.control.cell(1, 1).append(Csw.enums.multiEditDefaultValue);
+                        cswPublic.control.cell(1, 1).append('[File display disabled]');
                     } else {
 
                         cswPrivate.href = Csw.string(cswPrivate.propVals.href).trim();

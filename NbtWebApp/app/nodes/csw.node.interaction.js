@@ -63,7 +63,7 @@
             success: function (data) {
                 /* clear selected node cookies */
                 o.nodeid = Csw.cookie.clear(Csw.cookie.cookieNames.CurrentNodeId);
-                o.cswnbtnodekey = Csw.cookie.clear(Csw.cookie.cookieNames.CurrentNodeKey);
+                o.nodekey = Csw.cookie.clear(Csw.cookie.cookieNames.CurrentNodeKey);
                 /* returning '' will reselect the first node in the tree */
                 Csw.tryExec(o.onSuccess, '', '');
                 if (false === Csw.isNullOrEmpty(data.batch)) {

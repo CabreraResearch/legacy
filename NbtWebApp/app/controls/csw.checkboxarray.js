@@ -198,12 +198,8 @@
                 cswPublic = Csw.dom({}, cswPrivate.cbaDiv);
 
                 if (cswPrivate.useEditButton || cswPrivate.ReadOnly) {
-                    if (cswPrivate.Multi) {
-                        cswPrivate.cbaDiv.append(Csw.enums.multiEditDefaultValue);
-                    } else {
-                        cswPrivate.cbaDiv.append(cswPrivate.makeTextValue());
-                    }
-
+                    cswPrivate.cbaDiv.append(cswPrivate.makeTextValue());
+                    
                     if (false === cswPrivate.ReadOnly) {
                         cswPrivate.editButton = cswPrivate.cbaDiv.icon({
                             iconType: Csw.enums.iconType.pencil,

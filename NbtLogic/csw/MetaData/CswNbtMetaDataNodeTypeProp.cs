@@ -1276,7 +1276,10 @@ namespace ChemSW.Nbt.MetaData
         /// </summary>
         public bool IsCopyable()
         {
-            return ( false == IsUnique() && !ReadOnly && getFieldType().IsCopyable() );
+            return ( false == IsUnique() &&
+                false == ReadOnly &&
+                false == IsCompoundUnique() &&
+                getFieldType().IsCopyable() );
         }
         /// <summary>
         /// Returns whether this property can be deleted

@@ -18,15 +18,14 @@
                     cswPrivate.parent = cswPublic.data.propDiv;
 
                     cswPrivate.checkCompliance = function() {
-                        var defaultText = (false === cswPrivate.multi) ? '' : Csw.enums.multiEditDefaultValue;
                         //if (false === multi) {//cases 26445 and 26442
                         var splitCompliantAnswers = cswPrivate.compliantAnswers.split(',');
                         var isCompliant = true;
                         var selectedAnswer = cswPrivate.answerSel.val();
                         var correctiveAction = cswPrivate.correctiveActionTextBox.val();
 
-                        if (correctiveAction === defaultText) {
-                            if (selectedAnswer !== defaultText) {
+                        if (Csw.isNullOrEmpty(correctiveAction)) {
+                            if(false === Csw.isNullOrEmpty(selectedAnswer)) {
                                 isCompliant = false;
                                 for (var i = 0; i < splitCompliantAnswers.length; i += 1) {
                                     isCompliant = isCompliant || (Csw.string(splitCompliantAnswers[i]).trim().toLowerCase() === Csw.string(selectedAnswer).trim().toLowerCase());
@@ -47,14 +46,14 @@
                     }; // checkCompliance()
 
 
-                    cswPrivate.answer = (false === cswPublic.data.isMulti()) ? Csw.string(cswPrivate.propVals.answer).trim() : Csw.enums.multiEditDefaultValue;
+                    cswPrivate.answer = Csw.string(cswPrivate.propVals.answer).trim();
                     cswPrivate.allowedAnswers = Csw.string(cswPrivate.propVals.allowedanswers).trim();
                     cswPrivate.compliantAnswers = Csw.string(cswPrivate.propVals.compliantanswers).trim();
-                    cswPrivate.comments = (false === cswPublic.data.isMulti()) ? Csw.string(cswPrivate.propVals.comments).trim() : Csw.enums.multiEditDefaultValue;
-                    cswPrivate.correctiveAction = (false === cswPublic.data.isMulti()) ? Csw.string(cswPrivate.propVals.correctiveaction).trim() : Csw.enums.multiEditDefaultValue;
+                    cswPrivate.comments = Csw.string(cswPrivate.propVals.comments).trim();
+                    cswPrivate.correctiveAction = Csw.string(cswPrivate.propVals.correctiveaction).trim();
                     cswPrivate.multi = cswPublic.data.isMulti();
-                    cswPrivate.dateAnswered = (false === cswPublic.data.isMulti()) ? Csw.string(cswPrivate.propVals.dateanswered.date).trim() : '';
-                    cswPrivate.dateCorrected = (false === cswPublic.data.isMulti()) ? Csw.string(cswPrivate.propVals.datecorrected.date).trim() : '';
+                    cswPrivate.dateAnswered = Csw.string(cswPrivate.propVals.dateanswered.date).trim();
+                    cswPrivate.dateCorrected = Csw.string(cswPrivate.propVals.datecorrected.date).trim();
                     cswPrivate.isActionRequired = Csw.bool(cswPrivate.propVals.isactionrequired); //case 25035
                     
                     if (cswPublic.data.isReadOnly()) {
@@ -78,11 +77,8 @@
 
                         cswPublic.control.cell(1, 1).text('Answer');
                         cswPrivate.splitAnswers = cswPrivate.allowedAnswers.split(',');
-                        if (cswPublic.data.isMulti()) {
-                            cswPrivate.splitAnswers.push(Csw.enums.multiEditDefaultValue);
-                        } else {
-                            cswPrivate.splitAnswers.push('');
-                        }
+                        cswPrivate.splitAnswers.push('');
+                        
                         cswPrivate.answerSel = cswPublic.control.cell(1, 2)
                                               .select({
                                                   name: cswPublic.data.name + '_ans',

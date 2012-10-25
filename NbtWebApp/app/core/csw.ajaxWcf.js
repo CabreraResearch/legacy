@@ -91,17 +91,19 @@
 
     cswPrivate.onJsonError = Csw.method(function (xmlHttpRequest, textStatus, param1, o) {
         Csw.publish(Csw.enums.events.ajax.ajaxStop, o.watchGlobal, xmlHttpRequest, textStatus);
-        Csw.debug.error({
-            'Webservice Request': o.urlMethod,
-            data: o.data,
-            Failed: textStatus,
-            state: xmlHttpRequest.state(),
-            status: xmlHttpRequest.status,
-            statusText: xmlHttpRequest.statusText,
-            readyState: xmlHttpRequest.readyState,
-            responseText: xmlHttpRequest.responseText
-        });
-        Csw.tryExec(o.error, textStatus);
+        if (textStatus !== 'abort' && xmlHttpRequest.status !== 0 && xmlHttpRequest.readyState !== 0) {
+            Csw.debug.error({
+                'Webservice Request': o.urlMethod,
+                data: o.data,
+                Failed: textStatus,
+                state: xmlHttpRequest.state(),
+                status: xmlHttpRequest.status,
+                statusText: xmlHttpRequest.statusText,
+                readyState: xmlHttpRequest.readyState,
+                responseText: xmlHttpRequest.responseText
+            });
+            Csw.tryExec(o.error, textStatus);
+        }
     });
 
     cswPrivate.execRequest = Csw.method(function (verb, options) {

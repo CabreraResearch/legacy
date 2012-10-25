@@ -22,7 +22,7 @@
                     cswPrivate.parent = cswPublic.data.propDiv;
 
                     if (cswPublic.data.isMulti()) {
-                        cswPublic.control = cswPrivate.parent.append(Csw.enums.multiEditDefaultValue);
+                        cswPublic.control = cswPrivate.parent.append('[Image display disabled]');
                     } else {
 
                         cswPrivate.href = Csw.string(cswPrivate.propVals.href);
