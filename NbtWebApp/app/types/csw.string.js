@@ -86,16 +86,14 @@
                 	/// <summary>
                 	/// Remove an item from the delimited string
                 	/// </summary>
-                    var unique = function (array) {
-                        var seen = new Set;
+                    var remove = function (array) {
                         return array.filter(function (item) {
-                            if (false === seen.has(item) && item !== str) {
-                                seen.add(item);
+                            if (item !== str) {
                                 return true;
                             }
                         });
                     };
-                    cswPublic.array = unique(cswPublic.array);
+                    cswPublic.array = remove(cswPublic.array);
                     return cswPublic;
                 },
                 count: function() {
