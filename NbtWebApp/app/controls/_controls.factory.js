@@ -182,7 +182,7 @@
                 cswParent.tabSelect = function (opts) {
                     /// <summary> Creates a Csw.tabSelect on this element</summary>
                     /// <param name="opts" type="Object">Options to define the tabSelect.</param>
-                    /// <returns type="Csw.controls.tabDiv">A Csw.controls.tabSelect</returns> 
+                    /// <returns type="Csw.controls.tabSelect">A Csw.controls.tabSelect</returns> 
                     opts = cswPrivate.controlPreProcessing(opts, 'tabSelect');
                     return Csw.controls.tabSelect(cswParent, opts);
                 };
