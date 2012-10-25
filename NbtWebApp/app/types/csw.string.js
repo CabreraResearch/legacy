@@ -82,6 +82,28 @@
                     cswPrivate.deleteDuplicates();
                     return cswPublic;
                 },
+                remove: function (str) {
+                	/// <summary>
+                	/// Remove an item from the delimited string
+                	/// </summary>
+                    var unique = function (array) {
+                        var seen = new Set;
+                        return array.filter(function (item) {
+                            if (false === seen.has(item) && item !== str) {
+                                seen.add(item);
+                                return true;
+                            }
+                        });
+                    };
+                    cswPublic.array = unique(cswPublic.array);
+                    return cswPublic;
+                },
+                count: function() {
+                	/// <summary>
+                	///           A count of entities in the delimited string
+                    /// </summary>    
+                    return cswPublic.array.length;
+                },
                 contains: function (str, caseSensitive) {
                     /// <summary>
                     /// True if the delimited string contains the provided string
