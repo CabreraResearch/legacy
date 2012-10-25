@@ -432,8 +432,8 @@ namespace ChemSW.Nbt
                 // Properties for Select
                 if( Relationship.Properties.Count > 0 )
                 {
-                    CswCommaDelimitedString NTPropsInClause = new CswCommaDelimitedString( 0, true );
-                    CswCommaDelimitedString OCPropsInClause = new CswCommaDelimitedString( 0, true );
+                    CswCommaDelimitedString NTPropsInClause = new CswCommaDelimitedString( 0, "'" );
+                    CswCommaDelimitedString OCPropsInClause = new CswCommaDelimitedString( 0, "'" );
                     foreach( CswNbtViewProperty Prop in Relationship.Properties )
                     {
                         if( Prop.Type == NbtViewPropType.NodeTypePropId && Prop.NodeTypePropId != Int32.MinValue )
