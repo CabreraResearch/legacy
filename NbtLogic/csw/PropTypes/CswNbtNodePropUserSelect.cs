@@ -213,48 +213,48 @@ namespace ChemSW.Nbt.PropTypes
         public const string KeyColumn = "key";
         public const string StringKeyColumn = "UserIdString";
         public const string ValueColumn = "value";
+        public const string ElemName_Options = "options";
 
         // ToXml()
 
         public override void ToJSON( JObject ParentObject )
         {
             ParentObject[_SelectedUserIdsSubField.ToXmlNodeName()] = SelectedUserIds.ToString();
+            ParentObject[ElemName_Options] = new JObject();
 
-            JArray OptionsAry = new JArray();
-            ParentObject["options"] = OptionsAry;
+            CswCheckBoxArrayOptions CBAOptions = new CswCheckBoxArrayOptions();
+            CBAOptions.Columns.Add( "Include" );
 
             DataTable Data = getUserOptions();
             foreach( DataRow Row in Data.Rows )
             {
-                JObject OptionObj = new JObject();
-                OptionsAry.Add( OptionObj );
-                OptionObj[NameColumn] = Row[NameColumn].ToString();
-                OptionObj[KeyColumn] = Row[KeyColumn].ToString();
-                OptionObj[ValueColumn] = Row[ValueColumn].ToString();
+                CswCheckBoxArrayOptions.Option Option = new CswCheckBoxArrayOptions.Option();
+                Option.Key = Row[KeyColumn].ToString();
+                Option.Label = Row[NameColumn].ToString();
+                Option.Values.Add( CswConvert.ToBoolean( Row[ValueColumn] ) );
+                CBAOptions.Options.Add( Option );
             }
+
+            CBAOptions.ToJSON( (JObject) ParentObject[ElemName_Options] );
         }
 
         public override void ReadJSON( JObject JObject, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
             CswCommaDelimitedString NewSelectedUserIds = new CswCommaDelimitedString();
 
-            if( null != JObject["options"] )
+            CswCheckBoxArrayOptions CBAOptions = new CswCheckBoxArrayOptions();
+            if( null != JObject[ElemName_Options] )
             {
-                JArray OptionsObj = CswConvert.ToJArray( JObject["options"] );
-
-                foreach( JObject UserObj in OptionsObj )
-                {
-                    string Key = CswConvert.ToString( UserObj[KeyColumn] );
-                    JArray Values = CswConvert.ToJArray( UserObj["values"] );
-                    bool Value = null != Values && CswConvert.ToBoolean( Values.First );
-                    if( Value )
-                    {
-                        NewSelectedUserIds.Add( Key );
-                    }
-                } // foreach( JObject UserObj in OptionsObj )
-
-                SelectedUserIds = NewSelectedUserIds;
+                CBAOptions.ReadJson( (JObject) JObject[ElemName_Options] );
             }
+            foreach( CswCheckBoxArrayOptions.Option Option in CBAOptions.Options )
+            {
+                if( Option.Values.Count > 0 && true == Option.Values[0] )
+                {
+                    NewSelectedUserIds.Add( Option.Key );
+                }
+            }
+            SelectedUserIds = NewSelectedUserIds;
         }
 
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )

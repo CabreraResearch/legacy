@@ -7,7 +7,7 @@
         Csw.controls.register('radiobutton', function (cswParent, options) {
             'use strict';
             var cswPrivate = {
-                ID: '',
+                name: '',
                 prefix: '',
                 ReadOnly: false,
                 Multi: false,
@@ -31,14 +31,13 @@
 
                     cswPublic = cswParent.div();
                     var radioTable = cswPublic.table({
-                        ID: cswPrivate.ID,
+                        name: cswPrivate.name,
                         cellvalign: 'middle'
                     });
                     cswPrivate.names.forEach(function (name, index, array) {
                         cswPrivate.radio[index] =
                         radioTable.cell(index+1, 1).input({
-                            ID: cswPrivate.ID + index,
-                            name: cswPrivate.ID,
+                            name: cswPrivate.name,
                             type: Csw.enums.inputTypes.radio,
                             value: name,
                             cssclass: cswPrivate.cssClass,

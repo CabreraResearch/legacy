@@ -31,9 +31,10 @@
                                     urlMethod: 'getMainMenu',
                                     data: {
                                         ViewId: cswPrivate.viewid,
-                                        SafeNodeKey: cswPublic.data.tabState.cswnbtnodekey,
+                                        SafeNodeKey: Csw.string(cswPublic.data.tabState.nodekey),
+                                        NodeId: Csw.string(cswPublic.data.tabState.nodeid),
                                         NodeTypeId: '',
-                                        PropIdAttr: cswPublic.data.ID,
+                                        PropIdAttr: cswPublic.data.name,
                                         LimitMenuTo: '',
                                         ReadOnly: cswPublic.data.isReadOnly()
                                     }
@@ -60,16 +61,16 @@
                     cswPrivate.makeFullGrid = function (viewid, newDiv) {
                         'use strict';
                         newDiv.empty();
-                        cswPrivate.menuDiv = newDiv.div({ ID: Csw.makeId(cswPublic.data.ID + window.Ext.id(), 'grid_as_fieldtype_menu') }).css({ height: '25px' });
-                        var filterDiv = newDiv.div({ ID: Csw.makeId(cswPublic.data.ID + window.Ext.id(), 'grid_as_fieldtype_filter') });
-                        var gridDiv = newDiv.div({ ID: Csw.makeId(cswPublic.data.ID + window.Ext.id(), 'grid_as_fieldtype') });
+                        cswPrivate.menuDiv = newDiv.div({ name: 'grid_as_fieldtype_menu' }).css({ height: '25px' });
+                        var filterDiv = newDiv.div({ name: 'grid_as_fieldtype_filter' });
+                        var gridDiv = newDiv.div({ name: 'grid_as_fieldtype' });
                         cswPrivate.reinitGrid = (function () {
                             return function () {
                                 cswPrivate.makeFullGrid(viewid, newDiv);
                             };
                         }());
                         Csw.nbt.viewFilters({
-                            ID: cswPublic.data.ID + '_viewfilters',
+                            name: cswPublic.data.name + '_viewfilters',
                             parent: filterDiv,
                             viewid: viewid,
                             onEditFilters: function (newviewid) {
@@ -78,10 +79,10 @@
                         }); // viewFilters
 
                         var gridOpts = {
-                            ID: cswPublic.data.ID + '_fieldtypegrid',
+                            name: cswPublic.data.name + '_fieldtypegrid',
                             viewid: viewid,
                             nodeid: cswPublic.data.tabState.nodeid,
-                            cswnbtnodekey: cswPublic.data.tabState.cswnbtnodekey,
+                            nodekey: cswPublic.data.tabState.nodekey,
                             readonly: cswPublic.data.isReadOnly(),
                             reinit: false,
                             EditMode: cswPublic.data.tabState.EditMode,
@@ -104,7 +105,7 @@
                             urlMethod: 'getThinGrid',
                             data: {
                                 ViewId: cswPrivate.viewid,
-                                IncludeNodeKey: cswPublic.data.tabState.cswnbtnodekey,
+                                IncludeNodeKey: cswPublic.data.tabState.nodekey,
                                 MaxRows: cswPrivate.maxRows
                             },
                             success: function (data) {
@@ -132,7 +133,7 @@
                             urlMethod: 'getGridRowCount',
                             data: {
                                 ViewId: cswPrivate.viewid,
-                                IncludeNodeKey: cswPublic.data.tabState.cswnbtnodekey
+                                IncludeNodeKey: cswPublic.data.tabState.nodekey
                             },
                             success: function (data) {
                                 cswPublic.control = cswPrivate.parent.linkGrid({
@@ -153,7 +154,9 @@
                         });
                     };
 
-                    if (cswPublic.data.tabState.EditMode === Csw.enums.editMode.AuditHistoryInPopup || cswPublic.data.isMulti()) {
+                    if (cswPublic.data.isReadOnly() ||
+                        cswPublic.data.isMulti()) {
+
                         cswPublic.control = cswPrivate.parent.append('[Grid display disabled]');
                     } else {
                         

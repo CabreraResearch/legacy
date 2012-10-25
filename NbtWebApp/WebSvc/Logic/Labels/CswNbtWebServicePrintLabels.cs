@@ -64,7 +64,7 @@ namespace ChemSW.Nbt.WebServices
                     CswNbtViewProperty PrintLabelNodeTypesProperty = PrintLabelView.AddViewProperty( PrintLabelRelationship, NodeTypesProperty );
                     PrintLabelView.AddViewPropertyFilter( PrintLabelNodeTypesProperty, NodeTypesProperty.getFieldTypeRule().SubFields.Default.Name, CswNbtPropFilterSql.PropertyFilterMode.Contains, Request.TargetTypeId.ToString() );
 
-                    ICswNbtTree PrintLabelsTree = NbtResources.Trees.getTreeFromView( PrintLabelView, true, true, false, false );
+                    ICswNbtTree PrintLabelsTree = NbtResources.Trees.getTreeFromView( NbtResources.CurrentNbtUser, PrintLabelView, true, false, false );
                     Int32 PrintLabelCount = PrintLabelsTree.getChildNodeCount();
                     if( PrintLabelCount > 0 )
                     {

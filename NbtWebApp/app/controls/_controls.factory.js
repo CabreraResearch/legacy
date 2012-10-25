@@ -10,24 +10,31 @@
                 /// <param name="cswParent" type="Csw.literals">An Csw Control to bind to.</param>
                 /// <returns type="Csw.controls">The options object with DOM methods attached.</returns> 
                 'use strict';
-                var cswPrivate = {};
+                var cswPrivate = {
+                    count: 0
+                };
                 if (Csw.isNullOrEmpty(cswParent)) {
-                    Csw.error.throwException('Cannot create a Csw component without a Csw control', '_controls.factory', '_controls.factory.js', 14);
+                    Csw.error.throwException('Cannot create a Csw control without a Csw parent', '_controls.factory', '_controls.factory.js', 14);
                 }
 
                 cswPrivate.controlPreProcessing = function (opts, controlName) {
-                    var id = '';
                     opts = opts || {};
-                    if (opts.getId) {
-                        id = opts.getId();
-                    }
-                    if (opts.suffix) {
-                        opts.ID = Csw.makeId(id, opts.suffix);
-                    } else if (Csw.isNullOrEmpty(opts.ID) && false === Csw.isNullOrEmpty(cswParent.getId())) {
-                        opts.ID = Csw.makeId(id, controlName);
-                    }
+                    cswPrivate.count += 1;
+                    opts.suffix = controlName + cswPrivate.count;
+                    opts.ID = cswParent.getId() + opts.suffix;
                     return opts;
                 };
+
+                //Csw.each is EXPENSIVE. Do !not! do this until each() is fixed.
+                //Csw.each(Csw.controls, function (literal, name) {
+                //    if (false === Csw.contains(Csw, name) &&
+                //        name !== 'factory') {
+                //        cswParent[name] = function (opts) {
+                //            opts = cswPrivate.controlPreProcessing(opts, name);
+                //            return Csw.controls[name](cswParent, opts);
+                //        };
+                //    }
+                //});
 
                 cswParent.buttonExt = function (opts) {
                     /// <summary> Creates a Csw.buttonExt on this element</summary>
@@ -197,10 +204,11 @@
                     return Csw.controls.viewSelect(cswParent, opts);
                 };
 
+
                 return cswParent;
             });
 
 
-} ());
+}());
 
 

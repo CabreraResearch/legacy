@@ -16,11 +16,11 @@
 
                     cswPrivate.propVals = cswPublic.data.propData.values;
                     cswPrivate.parent = cswPublic.data.propDiv;
-                    cswPrivate.text = (false === cswPublic.data.isMulti()) ? Csw.string(cswPublic.data.propData.gestalt).trim() : Csw.enums.multiEditDefaultValue;
+                    cswPrivate.text = Csw.string(cswPublic.data.propData.gestalt).trim();
                     cswPrivate.text += '&nbsp;&nbsp;';
                     /* Static Div */
                     cswPrivate.parent.div({
-                        ID: cswPublic.data.ID,
+                        name: cswPublic.data.name,
                         cssclass: 'staticvalue',
                         text: cswPrivate.text
                     });

@@ -7,7 +7,7 @@
         Csw.controls.register('triStateCheckBox', function (cswParent, options) {
             'use strict';
             var cswPrivate = {
-                ID: '',
+                name: '',
                 prefix: '',
                 Checked: '',
                 ReadOnly: false,
@@ -83,21 +83,19 @@
                 cswPrivate.AlternateText = cswPrivate.value;
 
                 if (cswPrivate.ReadOnly) {
-                    if (cswPrivate.Multi) {
-                        cswPrivate.text = Csw.enums.multiEditDefaultValue;
-                    } else {
-                        switch (cswPrivate.value) {
-                            case 'true':
-                                cswPrivate.text = 'Yes';
-                                break;
-                            case 'false':
-                                cswPrivate.text = 'No';
-                                break;
-                        }
+
+                    switch (cswPrivate.value) {
+                        case 'true':
+                            cswPrivate.text = 'Yes';
+                            break;
+                        case 'false':
+                            cswPrivate.text = 'No';
+                            break;
                     }
+
                     cswPrivate.checkBox = cswParent.div(cswPrivate);
                 } else {
-                    cswPrivate.ID = Csw.makeId(cswPrivate.ID, 'tst');
+                    cswPrivate.name = cswPrivate.name + '_tst';
                     cswPrivate.ButtonType = cswPublic.getButtonType();
                     cswPrivate.checkBox = cswParent.imageButton(cswPrivate);
                     //cswPrivate.checkBox.imageButton(cswPrivate);
@@ -111,9 +109,9 @@
                 });
                 cswPublic.val(cswPrivate.value);
 
-            } ());
+            }());
 
             return cswPublic;
         });
 
-} ());
+}());

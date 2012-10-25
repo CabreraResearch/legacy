@@ -41,22 +41,18 @@
                     cswPrivate.propVals = cswPublic.data.propData.values;
                     cswPrivate.parent = cswPublic.data.propDiv;
 
-                    cswPrivate.red = (false === cswPublic.data.isMulti()) ? cswPrivate.propVals.flammability : Csw.enums.multiEditDefaultValue;
-                    cswPrivate.yellow = (false === cswPublic.data.isMulti()) ? cswPrivate.propVals.reactivity : Csw.enums.multiEditDefaultValue;
-                    cswPrivate.blue = (false === cswPublic.data.isMulti()) ? cswPrivate.propVals.health : Csw.enums.multiEditDefaultValue;
-                    cswPrivate.white = (false === cswPublic.data.isMulti()) ? cswPrivate.propVals.special : Csw.enums.multiEditDefaultValue;
+                    cswPrivate.red =    cswPrivate.propVals.flammability;
+                    cswPrivate.yellow = cswPrivate.propVals.reactivity;
+                    cswPrivate.blue =   cswPrivate.propVals.health;
+                    cswPrivate.white =  cswPrivate.propVals.special;
                     cswPrivate.displayMode = cswPrivate.propVals.displaymode;
                     cswPrivate.hideSpecial = cswPrivate.propVals.hidespecial;
-                    
-                    cswPublic.control = cswPrivate.parent.table({
-                        ID: Csw.makeId(cswPublic.data.ID, 'tbl')
-                    });
+
+                    cswPublic.control = cswPrivate.parent.table();
 
                     cswPrivate.table = cswPublic.control
                         .cell(1, 1)
-                        .table({
-                            ID: Csw.makeId(cswPublic.data.ID, 'tbl1')
-                        })
+                        .table()
                         .addClass('CswFieldTypeNFPA_table');
 
                     if (cswPrivate.displayMode === Csw.enums.NFPADisplayMode.Diamond) {
@@ -81,12 +77,12 @@
                             .div({ cssclass: 'CswFieldTypeNFPA_cell CswFieldTypeNFPA_red' + cswPrivate.displayMode })
                             .div({ cssclass: 'CswFieldTypeNFPA_text' });
 
-                        cswPrivate.yellowDiv = cswPrivate.table.cell(1, 2)
-                            .div({ cssclass: 'CswFieldTypeNFPA_cell CswFieldTypeNFPA_yellow' + cswPrivate.displayMode })
+                        cswPrivate.blueDiv = cswPrivate.table.cell(1, 2)
+                            .div({ cssclass: 'CswFieldTypeNFPA_cell CswFieldTypeNFPA_blue' + cswPrivate.displayMode })
                             .div({ cssclass: 'CswFieldTypeNFPA_text' });
 
-                        cswPrivate.blueDiv = cswPrivate.table.cell(1, 3)
-                            .div({ cssclass: 'CswFieldTypeNFPA_cell CswFieldTypeNFPA_blue' + cswPrivate.displayMode })
+                        cswPrivate.yellowDiv = cswPrivate.table.cell(1, 3)
+                            .div({ cssclass: 'CswFieldTypeNFPA_cell CswFieldTypeNFPA_yellow' + cswPrivate.displayMode })
                             .div({ cssclass: 'CswFieldTypeNFPA_text' });
 
                         cswPrivate.whiteDiv = cswPrivate.table.cell(1, 4)
@@ -105,7 +101,6 @@
 
                     cswPrivate.makeSelect = function (cell, id, selected, div, vals) {
                         var select = cell.select({
-                            ID: Csw.makeId(cswPublic.data.ID, id),
                             selected: selected,
                             values: vals || cswPrivate.selVals,
                             cssclass: '',
@@ -114,7 +109,7 @@
                                 Csw.tryExec(cswPublic.data.onChange, val);
                                 cswPrivate.setValue(div, select.val());
                                 var attr = {};
-                                switch(id) {
+                                switch (id) {
                                     case 'red':
                                         attr.flammability = val;
                                         break;
@@ -131,7 +126,7 @@
                                 cswPublic.data.onPropChange(attr);
                             }
                         });
-                    };// makeSelect()
+                    }; // makeSelect()
 
                     cswPrivate.setValue(cswPrivate.redDiv, cswPrivate.red);
                     cswPrivate.setValue(cswPrivate.yellowDiv, cswPrivate.yellow);
@@ -140,24 +135,29 @@
 
                     if (false === cswPublic.data.isReadOnly()) {
                         cswPrivate.editTable = cswPublic.control.cell(1, 2).table({
-                            ID: Csw.makeId(cswPublic.data.ID, 'edittbl'),
                             FirstCellRightAlign: true
                         });
-
-                        if (cswPublic.data.isMulti()) {
-                            cswPrivate.selVals.push({ value: Csw.enums.multiEditDefaultValue, display: Csw.enums.multiEditDefaultValue });
-                            cswPrivate.whiteVals.push({ value: Csw.enums.multiEditDefaultValue, display: Csw.enums.multiEditDefaultValue });
-                        }
-
+                        
                         cswPrivate.editTable.cell(1, 1).text('Flammability');
                         cswPrivate.editTable.cell(2, 1).text('Reactivity');
-                        cswPrivate.editTable.cell(3, 1).text('Health');
+                        if (cswPrivate.displayMode === Csw.enums.NFPADisplayMode.Diamond) {
+                            cswPrivate.editTable.cell(2, 1).text('Reactivity');
+                            cswPrivate.editTable.cell(3, 1).text('Health');
+                        } else {
+                            cswPrivate.editTable.cell(2, 1).text('Health');
+                            cswPrivate.editTable.cell(3, 1).text('Reactivity');
+                        }
                         if (false === cswPrivate.hideSpecial) {
                             cswPrivate.editTable.cell(4, 1).text('Special');
                         }
                         cswPrivate.makeSelect(cswPrivate.editTable.cell(1, 2), 'red', cswPrivate.red, cswPrivate.redDiv, cswPrivate.selVals);
-                        cswPrivate.makeSelect(cswPrivate.editTable.cell(2, 2), 'yellow', cswPrivate.yellow, cswPrivate.yellowDiv, cswPrivate.selVals);
-                        cswPrivate.makeSelect(cswPrivate.editTable.cell(3, 2), 'blue', cswPrivate.blue, cswPrivate.blueDiv, cswPrivate.selVals);
+                        if (cswPrivate.displayMode === Csw.enums.NFPADisplayMode.Diamond) {
+                            cswPrivate.makeSelect(cswPrivate.editTable.cell(2, 2), 'yellow', cswPrivate.yellow, cswPrivate.yellowDiv, cswPrivate.selVals);
+                            cswPrivate.makeSelect(cswPrivate.editTable.cell(3, 2), 'blue', cswPrivate.blue, cswPrivate.blueDiv, cswPrivate.selVals);
+                        } else {
+                            cswPrivate.makeSelect(cswPrivate.editTable.cell(2, 2), 'blue', cswPrivate.blue, cswPrivate.blueDiv, cswPrivate.selVals);
+                            cswPrivate.makeSelect(cswPrivate.editTable.cell(3, 2), 'yellow', cswPrivate.yellow, cswPrivate.yellowDiv, cswPrivate.selVals);
+                        }
                         if (false === cswPrivate.hideSpecial) {
                             cswPrivate.makeSelect(cswPrivate.editTable.cell(4, 2), 'white', cswPrivate.white, cswPrivate.whiteDiv, cswPrivate.whiteVals);
                         }
@@ -177,5 +177,5 @@
                 return cswPublic;
             }));
 
-}());
+} ());
 

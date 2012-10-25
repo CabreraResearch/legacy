@@ -16,14 +16,16 @@ namespace ChemSW.Nbt
         private CswNbtView _View;
         private ICswNbtUser _RunAsUser;
         private bool _IncludeSystemNodes = false;
+        private bool _IncludeHiddenNodes;
 
-        public CswNbtTreeLoaderFromXmlViewByLevel( CswNbtResources CswNbtResources, ICswNbtUser RunAsUser, ICswNbtTree pCswNbtTree, CswNbtView View, bool IncludeSystemNodes )
+        public CswNbtTreeLoaderFromXmlViewByLevel( CswNbtResources CswNbtResources, ICswNbtUser RunAsUser, ICswNbtTree pCswNbtTree, CswNbtView View, bool IncludeSystemNodes, bool IncludeHiddenNodes )
             : base( pCswNbtTree )
         {
             _CswNbtResources = CswNbtResources;
             _RunAsUser = RunAsUser;
             _View = View;
             _IncludeSystemNodes = IncludeSystemNodes;
+            _IncludeHiddenNodes = IncludeHiddenNodes;
         }
 
         public override void load( bool RequireViewPermissions )
@@ -174,9 +176,6 @@ namespace ChemSW.Nbt
                     // It also assumes that loadNodeAsChildFromRow() made the node current
                     if( NewNodeKeys.Count > 0 && NodesTable.Columns.Contains( "jctnodepropid" ) )
                     {
-                        //Int32 ThisJctNodePropId = CswConvert.ToInt32( NodesRow["jctnodepropid"] );
-                        //if( ThisJctNodePropId != Int32.MinValue )
-                        //{
                         foreach( CswNbtNodeKey NewNodeKey in NewNodeKeys )
                         {
                             _CswNbtTree.makeNodeCurrent( NewNodeKey );
@@ -200,7 +199,6 @@ namespace ChemSW.Nbt
                         {
                             _CswNbtTree.goToRoot();
                         }
-                        //} // if( ThisJctNodePropId != Int32.MinValue )
                     } // if( NewNodeKeys != null && NodesTable.Columns.Contains( "jctnodepropid" ) )
                 } // if( false == RequireViewPermissions || _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, ThisNodeType, true, null, _RunAsUser ) )
             } // foreach(DataRow NodesRow in NodesTable.Rows)
@@ -264,25 +262,6 @@ namespace ChemSW.Nbt
             string Where = string.Empty;
             string OrderBy = string.Empty;
 
-            // Filter out disabled nodetypes/object classes
-            //            Where += @"where ((exists (select j.jctmoduleobjectclassid
-            //                              from jct_modules_objectclass j
-            //                              join modules m on j.moduleid = m.moduleid
-            //                             where j.objectclassid = t.objectclassid
-            //                               and m.enabled = '1')
-            //                or not exists (select j.jctmoduleobjectclassid
-            //                                 from jct_modules_objectclass j
-            //                                 join modules m on j.moduleid = m.moduleid
-            //                                where j.objectclassid = t.objectclassid) )
-            //               and (exists (select j.jctmodulenodetypeid
-            //                              from jct_modules_nodetypes j
-            //                              join modules m on j.moduleid = m.moduleid
-            //                             where j.nodetypeid = t.firstversionid
-            //                               and m.enabled = '1')
-            //                or not exists (select j.jctmodulenodetypeid
-            //                                 from jct_modules_nodetypes j
-            //                                 join modules m on j.moduleid = m.moduleid
-            //                                where j.nodetypeid = t.firstversionid) )) ";
             // case 26029
             Where += "where t.enabled = '1' ";
 
@@ -299,7 +278,6 @@ namespace ChemSW.Nbt
                 {
                     Select += ",parent.parentnodeid ";
                 }
-                //Where += " and parent.parentnodeid is not null ";
 
                 Where += " and parent.parentnodeid in (" + _makeNodeSql( (CswNbtViewRelationship) Relationship.Parent, true ) + ")";
 
@@ -520,14 +498,6 @@ namespace ChemSW.Nbt
                     {
                         FilterCount += 1;
                         ICswNbtFieldTypeRule FilterFieldTypeRule = _CswNbtResources.MetaData.getFieldTypeRule( Prop.FieldType );
-                        //if( Prop.Type == CswNbtPropType.NodeTypePropId )
-                        //{
-                        //    FilterFieldTypeRule = Prop.NodeTypeProp.getFieldTypeRule();
-                        //}
-                        //else if( Prop.Type == CswNbtPropType.ObjectClassPropId )
-                        //{
-                        //    FilterFieldTypeRule = Prop.ObjectClassProp.getFieldTypeRule();
-                        //}
                         string FilterValue = string.Empty;
                         if( null != FilterFieldTypeRule )
                         {
@@ -595,7 +565,7 @@ namespace ChemSW.Nbt
                             } // if( FilterSubField.RelationalTable == string.empty )
                             else if( false == string.IsNullOrEmpty( FilterValue ) )
                             {
-                                FilterWhere += Filter.Conjunction.ToString().ToLower() + " " + FilterValue; // n." + FilterSubField.Column + " is not null";
+                                FilterWhere += Filter.Conjunction.ToString().ToLower() + " " + FilterValue;
                             }
                         } // if we really have a filter
                     } // if we have a filter
@@ -643,6 +613,10 @@ namespace ChemSW.Nbt
             if( !_IncludeSystemNodes )
             {
                 Where += " and n.issystem = '0' ";
+            }
+            if( false == _IncludeHiddenNodes )
+            {
+                Where += " and n.hidden = '0' ";
             }
             Where += " and n.istemp= '0' ";
             string ret = Select + " " + From + " " + Where;

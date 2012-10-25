@@ -6,7 +6,7 @@
         Csw.properties.register('file',
             Csw.method(function (propertyOption) {
                 'use strict';
-                var cswPrivate = { };
+                var cswPrivate = {};
                 var cswPublic = {
                     data: propertyOption
                 };
@@ -14,13 +14,11 @@
                     cswPublic.data = cswPublic.data || Csw.nbt.propertyOption(propertyOption);
                     cswPrivate.propVals = cswPublic.data.propData.values;
                     cswPrivate.parent = cswPublic.data.propDiv;
-                    
-                    cswPublic.control = cswPrivate.parent.table({
-                        ID: Csw.makeId(cswPublic.data.ID, 'tbl')
-                    });
+
+                    cswPublic.control = cswPrivate.parent.table();
 
                     if (cswPublic.data.isMulti()) {
-                        cswPublic.control.cell(1,1).append(Csw.enums.multiEditDefaultValue);
+                        cswPublic.control.cell(1, 1).append('[File display disabled]');
                     } else {
 
                         cswPrivate.href = Csw.string(cswPrivate.propVals.href).trim();
@@ -35,14 +33,14 @@
                         if (false === cswPublic.data.isReadOnly()) {
                             //Edit button
                             cswPrivate.cell12.icon({
-                                ID: cswPublic.data.ID + '_edit',
+                                name: cswPublic.data.name + '_edit',
                                 iconType: Csw.enums.iconType.pencil,
                                 hovertext: 'Edit',
                                 size: 16,
                                 isButton: true,
                                 onClick: function () {
                                     $.CswDialog('FileUploadDialog', {
-                                    urlMethod: 'fileForProp',
+                                        urlMethod: 'fileForProp',
                                         params: {
                                             PropId: cswPublic.data.propData.id
                                         },
@@ -63,7 +61,7 @@
                             });
                             //Clear button
                             cswPrivate.cell13.icon({
-                                ID: cswPublic.data.ID + '_clr',
+                                name: cswPublic.data.name + '_clr',
                                 iconType: Csw.enums.iconType.trash,
                                 hovertext: 'Clear File',
                                 size: 16,
@@ -77,9 +75,17 @@
                                         };
 
                                         Csw.ajax.post({
-                                        urlMethod: 'clearProp',
+                                            urlMethod: 'clearProp',
                                             data: dataJson,
-                                            success: function () { cswPublic.data.onReload(); }
+                                            success: function () {
+                                                var val = {
+                                                    href: '',
+                                                    name: '',
+                                                    contenttype: ''
+                                                };
+                                                cswPublic.data.onPropChange(val);
+                                                cswPublic.data.onReload();
+                                            }
                                         });
                                     }
                                 }
@@ -94,4 +100,4 @@
                 return cswPublic;
             }));
 
-}());
+} ());

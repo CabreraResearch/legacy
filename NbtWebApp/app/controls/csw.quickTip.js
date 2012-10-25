@@ -21,7 +21,9 @@
                     html: '',
                     autoShow: true,
                     focusOnToFront: true,
-                    autoHide: false,
+                    autoHide: true,
+                    autoScroll: true,
+                    dismissDelay: 10000,
                     closable: true,
                     anchor: 'left',
                     bodyStyle: {
@@ -34,16 +36,24 @@
 
             (function _post() {                                             
                 'use strict';
-                window.Ext.create('Ext.tip.ToolTip', {
-                    target: cswParent.getId(),
-                    html: cswPrivate.html,
-                    autoShow: cswPrivate.autoShow,
-                    focusOnToFront: cswPrivate.focusOnToFront,
-                    autoHide: cswPrivate.autoHide,
-                    closable: cswPrivate.closable,
-                    anchor: cswPrivate.anchor,
-                    bodyStyle: cswPrivate.bodyStyle
-                });
+                try {
+                    window.Ext.create('Ext.tip.ToolTip', {
+                        id: cswPrivate.ID + 'tooltip',
+                        target: cswParent.getId(),
+                        html: cswPrivate.html,
+                        autoShow: cswPrivate.autoShow,
+                        autoScroll: cswPrivate.autoScroll,
+                        dismissDelay: cswPrivate.dismissDelay,
+                        focusOnToFront: cswPrivate.focusOnToFront,
+                        autoHide: cswPrivate.autoHide,
+                        closable: cswPrivate.closable,
+                        anchor: cswPrivate.anchor,
+                        bodyStyle: cswPrivate.bodyStyle
+                    });
+                } catch (e) {
+                    Csw.debug.error('Failed to create Ext.tip.ToolTip in csw.quickTip');
+                    Csw.debug.error(e);
+                }
             }());
 
             return cswPublic;

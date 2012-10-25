@@ -590,7 +590,9 @@ namespace ChemSW.Nbt.Security
                         if( null != Node &&
                             Permission != NodeTypePermission.View && Permission != NodeTypePermission.Delete )
                         {
-                            ret = ret && ( false == Node.ReadOnly );
+                            ret = ret && ( _CswNbtPermitInfo.Permission != NodeTypePermission.Edit ||
+                                           _CswNbtPermitInfo.User.IsAdministrator() ||
+                                           false == Node.ReadOnly );
                         }
 
                     }//if NodeId is not null
@@ -1076,7 +1078,7 @@ namespace ChemSW.Nbt.Security
                 {
                     InvGrpPermView.AddViewPropertyAndFilter( InvGrpPermVR, PermWorkUnitOCP, User.WorkUnitId.PrimaryKey.ToString(), CswNbtSubField.SubFieldName.NodeID );
                 }
-                ICswNbtTree InvGrpPermTree = _CswNbtResources.Trees.getTreeFromView( InvGrpPermView, false, true );
+                ICswNbtTree InvGrpPermTree = _CswNbtResources.Trees.getTreeFromView( InvGrpPermView, false, true, false );
 
                 if( InvGrpPermTree.getChildNodeCount() > 0 )
                 {

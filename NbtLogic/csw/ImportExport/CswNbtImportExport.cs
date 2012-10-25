@@ -339,7 +339,7 @@ namespace ChemSW.Nbt.ImportExport
                     Frame.AddNodeType( MetaDataNodeType );
             }
 
-            ICswNbtTree CswNbtTree = _CswNbtResources.Trees.getTreeFromView( View, true, false, false, true );
+            ICswNbtTree CswNbtTree = _CswNbtResources.Trees.getTreeFromView( _CswNbtResources.CurrentNbtUser, View, true, false, true );
             Frame.AddTree( View, CswNbtTree, PropsInViewOnly );
 
             return Frame.AsXmlDoc();

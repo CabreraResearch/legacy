@@ -7,7 +7,7 @@
         Csw.controls.register('buttonGroup', function (cswParent, options) {
             'use strict';
             var cswPrivate = {
-                ID: '',
+                name: '',
                 buttons: {
                     previous: {
                         tooltip: {

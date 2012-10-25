@@ -560,7 +560,7 @@ namespace ChemSW.Nbt.Schema
         //public CswNbtView getTreeViewOfNodeType( Int32 NodeTypeId ) { return _CswNbtResources.Trees.getTreeViewOfNodeType( NodeTypeId ); }
         //public CswNbtView getTreeViewOfObjectClass( CswNbtMetaDataObjectClassName.NbtObjectClass ObjectClass ) { return _CswNbtResources.Trees.getTreeViewOfObjectClass( ObjectClass ); }
 
-        public ICswNbtTree getTreeFromView( CswNbtView View, bool IncludeSystemNodes ) { return _CswNbtResources.Trees.getTreeFromView( View, true, true, false, IncludeSystemNodes ); }
+        public ICswNbtTree getTreeFromView( CswNbtView View, bool IncludeSystemNodes ) { return _CswNbtResources.Trees.getTreeFromView( _CswNbtResources.CurrentNbtUser, View, true, IncludeSystemNodes, false ); }
         public List<CswNbtView> restoreViews( string ViewName )
         {
             List<CswNbtView> ReturnVal = new List<CswNbtView>();
@@ -957,6 +957,23 @@ namespace ChemSW.Nbt.Schema
             JctModulesNTDataTable.Rows.Add( JctRow );
             //Int32 NewModuleId = CswConvert.ToInt32(ModuleRow["jctmodulenodetypeid"]);
             JctModulesNTTable.update( JctModulesNTDataTable );
+        }
+
+        public void removeModuleNodeTypeJunction( CswNbtModuleName Module, Int32 NodeTypeId )
+        {
+            Int32 ModuleId = getModuleId( Module );
+            removeModuleNodeTypeJunction( ModuleId, NodeTypeId );
+        }
+
+        public void removeModuleNodeTypeJunction( Int32 ModuleId, Int32 NodeTypeId )
+        {
+            CswTableUpdate jct_modules_nodetypesTU = makeCswTableUpdate( "SchemaModTrnsctn_RemoveModuleNTJunction", "jct_modules_nodetypes" );
+            DataTable jct_modules_nodetypesDT = jct_modules_nodetypesTU.getTable( "where nodetypeid = " + NodeTypeId + " and moduleid = " + ModuleId );
+            if( 1 == jct_modules_nodetypesDT.Rows.Count ) //A nodetype can only be tied to a module once (Highlander Theory)
+            {
+                jct_modules_nodetypesDT.Rows[0].Delete();
+            }
+            jct_modules_nodetypesTU.update( jct_modules_nodetypesDT );
         }
 
         /// <summary>
@@ -1630,7 +1647,8 @@ namespace ChemSW.Nbt.Schema
 
 
         /// <summary>
-        /// Run an external SQL script stored in Resources
+        /// (Deprecated: vendor neutrality is no longer a requirement)
+        /// <para>Run an external SQL script stored in Resources</para>
         /// </summary>
         /// <param name="SqlFileName">Name of file</param>
         /// <param name="ResourceSqlFile">File contents from Resources</param>
@@ -1692,6 +1710,14 @@ namespace ChemSW.Nbt.Schema
             // This is kind of a kludgey way to determine whether we're on a fresh master, but see case 25806
             CswNbtNode AdminNode = Nodes.makeUserNodeFromUsername( "admin" );
             return ( null != AdminNode && ( (CswNbtObjClassUser) AdminNode ).LastLogin.DateTimeValue.Date == new DateTime( 2011, 12, 9 ) );
+        }
+
+        /// <summary>
+        /// Create a Rate Interval instance
+        /// </summary>
+        public CswRateInterval makeRateInterval()
+        {
+            return new CswRateInterval( _CswNbtResources );
         }
 
     }//class CswNbtSchemaModTrnsctn

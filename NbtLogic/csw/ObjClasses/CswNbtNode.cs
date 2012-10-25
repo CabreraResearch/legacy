@@ -307,10 +307,6 @@ namespace ChemSW.Nbt.ObjClasses
         /// The Node's data has been written to the database, but not yet committed
         /// </summary>
         public const string Posted = "Posted";
-        ///// <summary>
-        ///// The data written in the Posted phase has been committed
-        ///// </summary>
-        //Committed,
         /// <summary>
         /// The node has been removed from the database
         /// </summary>
@@ -394,9 +390,7 @@ namespace ChemSW.Nbt.ObjClasses
 
     };
 
-
-    //public enum NodeState { Insert, Update, Delete, Unchanged };
-    public class CswNbtNode //: System.IEquatable<CswNbtNode>
+    public class CswNbtNode
     {
         public delegate void OnSetNodeIdHandler( CswNbtNode Node, CswPrimaryKey OldNodeId, CswPrimaryKey NewNodeId );
         public delegate void OnRequestWriteNodeHandler( CswNbtNode Node, bool ForceUpdate, bool IsCopy, bool OverrideUniqueValidation );
@@ -416,7 +410,6 @@ namespace ChemSW.Nbt.ObjClasses
         }
 
         private CswNbtNodePropColl _CswNbtNodePropColl = null;
-        //private ICswNbtObjClassFactory _CswNbtObjClassFactory = null;
         private CswNbtObjClass __CswNbtObjClass = null;
         private CswNbtObjClass _CswNbtObjClass
         {
@@ -431,39 +424,28 @@ namespace ChemSW.Nbt.ObjClasses
         }
 
         private CswNbtResources _CswNbtResources;
-        public CswNbtNode( CswNbtResources CswNbtResources, Int32 NodeTypeId, NodeSpecies NodeSpecies, CswPrimaryKey NodeId, Int32 UniqueId, bool IsDemo = false ) //, ICswNbtObjClassFactory ICswNbtObjClassFactory )
+        public CswNbtNode( CswNbtResources CswNbtResources, Int32 NodeTypeId, NodeSpecies NodeSpecies, CswPrimaryKey NodeId, Int32 UniqueId, bool IsDemo = false )
         {
             _CswNbtResources = CswNbtResources;
             _UniqueId = UniqueId;
             _NodeId = NodeId;
             _NodeTypeId = NodeTypeId;
-            _CswNbtNodePropColl = new CswNbtNodePropColl( CswNbtResources, this, null ); //, ICswNbtObjClassFactory);
-            //_CswNbtObjClassFactory = ICswNbtObjClassFactory; // new CswNbtObjClassFactory(CswNbtResources, this);
+            _CswNbtNodePropColl = new CswNbtNodePropColl( CswNbtResources, this, null );
             _NodeSpecies = NodeSpecies;
             _IsDemo = IsDemo;
-            //if( NodeType != null )
-
-            //    ObjectClassId = NodeType.ObjectClassId;
-
         }//ctor()
-
-        //private NodeState _NodeState = NodeState.Unchanged;
-        //public NodeState 
 
         #region Core Properties
 
-        //bz # 5908
-        //We need this because in c# you can't take the address of an object
         private Int32 _UniqueId = Int32.MinValue;
         public Int32 UniqueId
         {
             get
             {
                 return ( _UniqueId );
-            }//
+            }
         }//UniqueId
 
-        //bz # 5943
         private NodeModificationState _NodeModificationState = NodeModificationState.Unknown;
         public NodeModificationState ModificationState
         {
@@ -517,6 +499,17 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
+        private bool _Hidden = false;
+        public bool Hidden
+        {
+            get { return _Hidden; }
+            set
+            {
+                _NodeModificationState = NodeModificationState.Modified;
+                _Hidden = value;
+            }
+        }
+
         private string _SessionId = string.Empty;
         /// <summary>
         /// If IsTemp, the SessionId associated with the Node
@@ -554,20 +547,6 @@ namespace ChemSW.Nbt.ObjClasses
             get { return _Locked; }
             set { _Locked = value; }
         }
-
-        //bz # 5943
-        //private bool _Modified = false;
-        //public bool Modified
-        //{
-        //    get { return ( _Modified || _CswNbtNodePropColl.Modified ); }
-        //    set { _Modified = value; }
-        //}//Modified
-
-        //public void clearModifiedFlag()
-        //{
-        //    _CswNbtNodePropColl.clearModifiedFlag();
-        //    _Modified = false;
-        //}
 
         public bool Filled
         {
@@ -670,8 +649,6 @@ namespace ChemSW.Nbt.ObjClasses
                 // case 20781 - only mark modified if we're changing the name, not assigning it from DB
                 if( _NodeName != value && _NodeName != string.Empty )
                 {
-                    //bz # 5943
-                    //_Modified = true;
                     _NodeModificationState = NodeModificationState.Modified;
                 }
                 _NodeName = value;
@@ -686,8 +663,6 @@ namespace ChemSW.Nbt.ObjClasses
                 if( _PendingUpdate != value )
                 {
                     _PendingUpdate = value;
-                    //bz # 5943
-                    //_Modified = true;
                     _NodeModificationState = NodeModificationState.Modified;
                 }
             }
@@ -717,8 +692,6 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Methods
 
-
-        //bz # 5943
         public void postChanges( bool ForceUpdate )
         {
             postChanges( ForceUpdate, false, false );
@@ -745,29 +718,8 @@ namespace ChemSW.Nbt.ObjClasses
                 }
 
                 _NodeModificationState = NodeModificationState.Posted;
-
-                //reset(); //bz # 6713
-                // But see BZ 9650 and BZ 8517
             }
         }//postChanges()
-
-        //bz # 5943
-        //public void beforeWriteNode()
-        //{
-        //    if( null != _CswNbtObjClass )
-        //    {
-        //        _CswNbtObjClass.beforeWriteNode();
-        //    }//
-        //}//beforeWriteNode()
-
-        //bz # 5943
-        //public void afterWriteNode()
-        //{
-        //    if( null != _CswNbtObjClass )
-        //    {
-        //        _CswNbtObjClass.afterWriteNode();
-        //    }//
-        //}//afterWriteNode()
 
         /// <summary>
         /// Get a tree view of this node, visible to the current user
@@ -783,7 +735,6 @@ namespace ChemSW.Nbt.ObjClasses
             return Ret;
         }
 
-        //bz # 5943
         /// <summary>
         /// Deletes the node from the database.
         /// </summary>
@@ -816,42 +767,6 @@ namespace ChemSW.Nbt.ObjClasses
             _NodeModificationState = NodeModificationState.Deleted;
 
         }//delete()
-
-        ////bz # 6713
-        // But see BZ 8517 and BZ 9650
-        //public void reset()
-        //{
-        //    if( ModificationState == NodeModificationState.Modified )
-        //        throw( new CswDniException( "There are pending changes -- reset not allowed" ) );
-
-        //    _clear();
-        //    fill();
-        //    Properties.clearModifiedFlag();
-        //    _NodeModificationState = NodeModificationState.Unchanged;
-
-        //}//reset()
-
-        //bz # 5943
-        //public void beforeDeleteNode(bool DeleteAllRequiredRelatedNodes = false)
-        //{
-        //    if( null != _CswNbtObjClass )
-        //    {
-        //        _CswNbtObjClassbeforeDeleteNode();
-        //    }//
-        //}//beforeDeleteNode()
-
-
-        //bz # 5943
-        //public void afterDeleteNode()
-        //{
-        //    if( null != _CswNbtObjClass )
-        //    {
-        //        _CswNbtObjClass.afterDeleteNode();
-        //    }//
-        //}//afterDeleteNode()
-
-
-        //bz # 5943
 
         public void fill( DateTime Date )
         {

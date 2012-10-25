@@ -9,7 +9,7 @@
             ///<summary>Creates a tabsandprops Add layout for a nodetype.</summary>
 
             var cswPrivate = {
-                ID: 'wizardTabsAndPropsAddLayout',
+                name: 'wizardTabsAndPropsAddLayout',
                 globalState: {
                     propertyData: {},
                     ShowAsReport: false,

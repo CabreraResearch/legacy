@@ -15,7 +15,7 @@
 
                     cswPrivate.propVals = cswPublic.data.propData.values;
                     cswPrivate.parent = cswPublic.data.propDiv;
-                    cswPrivate.text = (false === cswPublic.data.isMulti()) ? Csw.string(cswPrivate.propVals.text).trim() : Csw.enums.multiEditDefaultValue;
+                    cswPrivate.text = Csw.string(cswPrivate.propVals.text).trim();
                     cswPrivate.columns = Csw.number(cswPrivate.propVals.columns);
                     cswPrivate.rows = Csw.number(cswPrivate.propVals.rows);
                     cswPrivate.overflow = 'auto';

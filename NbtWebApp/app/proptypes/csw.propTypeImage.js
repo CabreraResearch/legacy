@@ -22,7 +22,7 @@
                     cswPrivate.parent = cswPublic.data.propDiv;
 
                     if (cswPublic.data.isMulti()) {
-                        cswPublic.control = cswPrivate.parent.append(Csw.enums.multiEditDefaultValue);
+                        cswPublic.control = cswPrivate.parent.append('[Image display disabled]');
                     } else {
 
                         cswPrivate.href = Csw.string(cswPrivate.propVals.href);
@@ -35,9 +35,7 @@
 
                         cswPrivate.fileName = Csw.string(cswPrivate.propVals.name).trim();
 
-                        cswPublic.control = cswPrivate.parent.table({
-                            ID: Csw.makeId(cswPublic.data.ID, 'tbl')
-                        });
+                        cswPublic.control = cswPrivate.parent.table();
                         cswPrivate.cell11 = cswPublic.control.cell(1, 1).propDom('colspan', '3');
                         cswPrivate.cell21 = cswPublic.control.cell(2, 1).propDom('width', cswPrivate.width);
                         cswPrivate.cell22 = cswPublic.control.cell(2, 2).propDom({ align: 'right', width: '20px' }).div();
@@ -48,7 +46,7 @@
                             if (false === Csw.isNullOrEmpty(fileName)) {
                                 //Clear button
                                 cswPrivate.cell23.icon({
-                                    ID: Csw.makeId(cswPublic.data.ID, 'clr'),
+                                    name: 'clear',
                                     iconType: Csw.enums.iconType.trash,
                                     hovertext: 'Clear Image',
                                     size: 16,
@@ -108,7 +106,7 @@
                         if (false === cswPublic.data.isReadOnly()) {
                             //Edit button
                             cswPrivate.cell22.icon({
-                                ID: Csw.makeId(cswPublic.data.ID, 'edit'),
+                                name: 'edit',
                                 iconType: Csw.enums.iconType.pencil,
                                 hovertext: 'Edit',
                                 size: 16,

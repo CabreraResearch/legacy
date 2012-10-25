@@ -14,7 +14,7 @@
 
                 (function _pre() {
                     cswPrivate = {
-                        ID: 'nodebutton' + window.Ext.id(),
+                        name: 'nodebutton',
                         div: {},
                         value: '',
                         mode: 'button',
@@ -30,12 +30,10 @@
                         disabled: false
                     };
                     Csw.extend(cswPrivate, options);
-                    cswPrivate.div = cswParent.div({ ID: window.Ext.id() });
+                    cswPrivate.div = cswParent.div();
                     cswPrivate.div.empty();
 
-                    cswPrivate.table = cswPrivate.div.table({
-                        ID: Csw.makeId(cswPrivate.ID, 'tbl')
-                    });
+                    cswPrivate.table = cswPrivate.div.table();
                 } ());
 
                 cswPrivate.onButtonClick = function () {
@@ -86,7 +84,7 @@
 
                             if (false === Csw.isNullOrEmpty(cswPrivate.confirmmessage)) {
                                 $.CswDialog('GenericDialog', {
-                                    ID: Csw.makeSafeId('ButtonConfirmationDialog'),
+                                    name: 'ButtonConfirmationDialog',
                                     title: 'Confirm ' + Csw.string(cswPrivate.value),
                                     height: 150,
                                     width: 400,
@@ -110,12 +108,10 @@
                 }; // onButtonClick()
 
                 (function _post() {
-                    cswPrivate.btnCell = cswPrivate.table.cell(1, 1).div({ ID: Csw.makeSafeId(cswPrivate.ID, window.Ext.id()) });
-                    cswPrivate.buttonId = Csw.makeSafeId(cswPrivate.ID, window.Ext.id());
+                    cswPrivate.btnCell = cswPrivate.table.cell(1, 1).div();
                     switch (cswPrivate.mode) {
                         case 'button':
                             cswPublic.button = cswPrivate.btnCell.buttonExt({
-                                ID: cswPrivate.buttonId,
                                 size: cswPrivate.size,
                                 enabledText: cswPrivate.value,
                                 disabledText: cswPrivate.value,
@@ -126,7 +122,6 @@
                             break;
                         case 'menu':
                             cswPublic.button = cswPrivate.btnCell.menuButton({
-                                ID: cswPrivate.buttonId,
                                 selectedText: cswPrivate.selectedText,
                                 menuOptions: cswPrivate.menuOptions,
                                 size: cswPrivate.size,
@@ -138,26 +133,23 @@
                                 disabled: cswPrivate.disabled
                             });
                             break;
-                        //case 'link':                     
-                        //this is a fallthrough case                     
+                 
                         default:
                             cswPublic.button = cswPrivate.btnCell.a({
-                                ID: cswPrivate.buttonId,
                                 value: cswPrivate.value,
                                 onClick: cswPrivate.onButtonClick
                             });
                             break;
                     }
 
-                    if (Csw.bool(cswPrivate.ReadOnly)) {
+                    if (Csw.bool(cswPrivate.disabled)) {
                         cswPublic.button.disable();
                     }
 
                     cswPublic.messageDiv = cswPrivate.table.cell(1, 2).div({
-                        ID: Csw.makeId(cswPrivate.buttonId, 'msg'),
                         cssclass: 'buttonmessage'
                     });
-                    //cswPublic.button.required(cswPrivate.Required);
+                    
                 } ());
             });
             return cswPublic;
@@ -181,7 +173,7 @@
                 break;
             case Csw.enums.nbtButtonAction.editprop:
                 $.CswDialog('EditNodeDialog', {
-                    nodeids: [Csw.string(actionJson.nodeid)],
+                    currentNodeId: Csw.string(actionJson.nodeid),
                     filterToPropId: Csw.string(actionJson.propidattr),
                     title: Csw.string(actionJson.title),
                     onEditNode: function (nodeid, nodekey, close) {
@@ -208,8 +200,9 @@
                 Csw.ajax.post({
                     urlMethod: 'reauthenticate',
                     data: { PropId: Csw.string(opts.propid) },
-                    success: function () {
+                    success: function (result) {
                         Csw.clientChanges.unsetChanged();
+                        Csw.publish(Csw.enums.events.main.reauthenticate, result.username);
                         Csw.window.location('Main.html');
                     }
                 });

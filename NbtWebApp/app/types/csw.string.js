@@ -32,14 +32,14 @@
             return retObj;
 
         });
-    
+
     Csw.delimitedString = Csw.delimitedString ||
         Csw.register('delimitedString', function (string, opts) {
-        	/// <summary>
-        	/// Parses a string into an array using the specified delimiter.
-        	/// </summary>
-        	/// <param name="string"></param>
-        	/// <param name="opts"></param>
+            /// <summary>
+            /// Parses a string into an array using the specified delimiter.
+            /// </summary>
+            /// <param name="string"></param>
+            /// <param name="opts"></param>
             /// <returns type="delimitedString">A delimitedString object</returns>
             var cswPrivate = {
                 newLineToDelimiter: true,
@@ -48,23 +48,30 @@
                 delimiter: ',',
                 initString: Csw.string(string)
             };
-            if (opts) Csw.extend(cswPrivate, opts);
-            
+
             var cswPublic = {
                 array: [],
                 delimited: function () {
-                	/// <summary>
-                	/// returns the delimited string as an Array
-                	/// </summary>
+                    /// <summary>
+                    /// returns the delimited string as an Array
+                    /// </summary>
                     return cswPublic.array.join(cswPrivate.delimiter);
                 },
-                string: function () {
+                string: function (delimiter) {
                     /// <summary>
                     /// returns the delimited string as a String
                     /// </summary>
-                    return cswPublic.array.toString();
+                    delimiter = delimiter || cswPrivate.delimiter;
+                    var ret = '';
+                    Csw.each(cswPublic.array, function (val) {
+                        if (ret.length > 0) {
+                            ret += delimiter;
+                        }
+                        ret += val;
+                    });
+                    return ret;
                 },
-                toString: function() {
+                toString: function () {
                     return cswPublic.string();
                 },
                 add: function (str) {
@@ -75,25 +82,45 @@
                     cswPrivate.deleteDuplicates();
                     return cswPublic;
                 },
-                contains: function (str, caseSensitive) {
+                remove: function (str) {
                 	/// <summary>
-                	/// True if the delimited string contains the provided string
+                	/// Remove an item from the delimited string
+                	/// </summary>
+                    var remove = function (array) {
+                        return array.filter(function (item) {
+                            if (item !== str) {
+                                return true;
+                            }
+                        });
+                    };
+                    cswPublic.array = remove(cswPublic.array);
+                    return cswPublic;
+                },
+                count: function() {
+                	/// <summary>
+                	///           A count of entities in the delimited string
+                    /// </summary>    
+                    return cswPublic.array.length;
+                },
+                contains: function (str, caseSensitive) {
+                    /// <summary>
+                    /// True if the delimited string contains the provided string
                     /// </summary>
                     var isCaseSensitive = Csw.bool(caseSensitive);
                     str = Csw.string(str).trim();
                     if (false === isCaseSensitive) {
                         str = str.toLowerCase();
                     }
-                    var match = cswPublic.array.filter(function(matStr) {
+                    var match = cswPublic.array.filter(function (matStr) {
                         return ((isCaseSensitive && Csw.string(matStr).trim() === str) || Csw.string(matStr).trim().toLowerCase() === str);
                     });
                     return match.length > 0;
                 }
             };
 
-            cswPrivate.parse = function(str) {
+            cswPrivate.parse = function (str) {
                 var ret = Csw.string(str);
-                
+
                 if (cswPrivate.newLineToDelimiter) {
                     while (ret.indexOf('\n') !== -1) {
                         ret = ret.replace(/\n/g, cswPrivate.delimiter);
@@ -110,7 +137,7 @@
                 return ret;
             };
 
-            cswPrivate.deleteDuplicates = function() {
+            cswPrivate.deleteDuplicates = function () {
                 if (cswPrivate.removeDuplicates) {
                     (function () {
 
@@ -129,12 +156,23 @@
                 }
             };
 
-            (function () { //ctor
-                var delimitedString = cswPrivate.parse(string);
-                cswPrivate.initString = delimitedString;
-                cswPublic.array = delimitedString.split(cswPrivate.delimiter);
+            (function (a) { //ctor
+                if (a.length > 1 && false === Csw.isPlainObject(opts)) {
+                    Csw.each(a, function (val) {
+                        if (false === Csw.isNullOrEmpty(val)) {
+                            cswPublic.array.push(val);
+                        }
+                    });
+                }
+                else if (opts) {
+                    Csw.extend(cswPrivate, opts);
+                    var delimitedString = cswPrivate.parse(string);
+                    cswPrivate.initString = delimitedString;
+                    cswPublic.array = delimitedString.split(cswPrivate.delimiter);
+                }
+
                 cswPrivate.deleteDuplicates();
-            } ());
+            }(arguments));
             return cswPublic;
         });
 
@@ -187,4 +225,4 @@
     Csw.register('getTimeString', getTimeString);
     Csw.getTimeString = Csw.getTimeString || getTimeString;
 
-} ());
+}());

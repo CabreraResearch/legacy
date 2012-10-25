@@ -272,6 +272,7 @@ namespace ChemSW.Nbt.WebServices
                 Ret["qtyReadonly"] = "false";
                 Ret["unitReadonly"] = "false";
                 Ret["unitCount"] = "1";
+                Ret["Required"] = InitialQuantity.Required.ToString();
                 if( Action.ToLower() == ChemSW.Nbt.ObjClasses.CswNbtObjClass.NbtButtonAction.receive.ToString() )
                 {
                     Ret["unitReadonly"] = "true";
@@ -412,7 +413,7 @@ namespace ChemSW.Nbt.WebServices
                                         {
                                             View.AddViewPropertyAndFilter( Relationship, RelationshipProp, SubFieldName: CswNbtSubField.SubFieldName.NodeID, Value: RelatedNodePk.PrimaryKey.ToString() );
                                         }
-                                        ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( View, false, false );
+                                        ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( View, false, false, false );
 
                                         UseSearch = UseSearch || Tree.getChildNodeCount() > SearchThreshold;
                                         for( int N = 0; N < Tree.getChildNodeCount() && N < SearchThreshold; N += 1 )

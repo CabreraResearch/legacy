@@ -76,6 +76,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Content Include="app\controls\csw.quickTip.js" />
+    <Content Include="app\literals\csw.fieldset.js" />
     <Content Include="app\layouts\csw.landingpage.js" />
     <Content Include="app\proptypes\_propTypeTemplate.js" />
     <Content Include="app\core\csw.ajaxWcf.js" />
@@ -119,6 +120,7 @@
     <Content Include="app\proptypes\csw.propTypeViewPickList.js" />
     <Content Include="app\proptypes\csw.propTypeViewReference.js" />
     <Content Include="ConnectTest.html" />
+    <Content Include="css\csw.tabs.css" />
     <Content Include="PrintTest.html" />
     <Content Include="etc\far.exe" />
     <Content Include="ExternalLogin.html" />
@@ -539,6 +541,7 @@
     <Content Include="vendor\harmony-collections.browser.min.js" />
     <Content Include="vendor\harmony-collections.js" />
     <Content Include="vendor\jquery-1.7.1.min.js" />
+    <Content Include="vendor\jquery-ui.min.js" />
     <Content Include="vendor\jquery.cookie.min.js" />
     <Content Include="vendor\jquery.validate.min.js" />
     <Content Include="vendor\jQueryFileUpload_2011.12.15\application.js" />
@@ -597,7 +600,7 @@
     <Content Include="vendor\jZebra\loading_red.gif" />
     <Content Include="vendor\jZebra\loading_yellow.gif" />
     <Content Include="vendor\jZebra\PluginDetect.js" />
-    <Content Include="vendor\modernizr-2.5.3.js" />
+    <Content Include="vendor\modernizr.custom.06564.js" />
     <Content Include="vendor\mousetrap.min.js" />
     <Content Include="vendor\multiselect\jquery.multiselect.css" />
     <Content Include="vendor\multiselect\jquery.multiselect.filter.css" />
@@ -614,8 +617,6 @@
     <Content Include="app\composites\_composites.factory.js" />
     <Content Include="app\controls\_controls.factory.js" />
     <Content Include="app\literals\csw.label.js" />
-    <Content Include="app\literals\csw.b.js" />
-    <Content Include="app\literals\csw.morediv.js" />
     <Content Include="app\literals\csw.table.js" />
     <Content Include="app\layouts\csw.wizard.js" />
     <Content Include="app\CswApp-vsdoc.js" />
@@ -703,7 +704,6 @@
     <Content Include="app\types\csw.window.js" />
     <Content Include="app\nodes\csw.node.interaction.js" />
     <Content Include="app\nodes\csw.node.preview.js" />
-    <Content Include="app\props\csw.props.js" />
     <Content Include="app\tools\csw.clientdb.js" />
     <Content Include="app\tools\csw.cookie.js" />
     <Content Include="app\tools\csw.newwindow.js" />

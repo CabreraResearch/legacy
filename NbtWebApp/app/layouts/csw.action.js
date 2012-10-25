@@ -7,7 +7,7 @@
         Csw.layouts.register('action', function (cswParent, options) {
             'use strict';
             var cswPrivate = {
-                ID: 'action',
+                name: 'action',
                 Title: 'An Action',
                 FinishText: 'Finish',
                 onFinish: null,
@@ -22,7 +22,7 @@
 
             (function () {
                 cswPublic.table = cswParent.table({
-                    suffix: cswPrivate.ID,
+                    suffix: cswPrivate.name,
                     TableCssClass: 'CswAction_ActionTable'
                 });
 

@@ -9,14 +9,13 @@
         Csw.composites.register('location', function (cswParent, options) {
             //#region variables
             var cswPrivate = {
-                ID: 'csw_location_tree',
+                name: 'csw_location_tree',
                 locationobjectclassid: '',
                 locationnodetypeids: [],
                 relatedmatch: false,
                 relatedobjectclassid: '',
                 nodeId: '',
                 viewId: '',
-                name: '',
                 path: '',
                 nodeKey: '',
                 Multi: false,
@@ -40,19 +39,17 @@
                     });
 
                     if (cswPrivate.relatedmatch) {
-                        cswPrivate.nodeId = (false === cswPrivate.Multi) ? Csw.string(cswPrivate.nodeId, cswPrivate.relatednodeid).trim() : '';
-                        cswPrivate.name = (false === cswPrivate.Multi) ? Csw.string(cswPrivate.name, cswPrivate.relatednodename).trim() : Csw.enums.multiEditDefaultValue;
-                        cswPrivate.path = (false === cswPrivate.Multi) ? Csw.string(cswPrivate.path, cswPrivate.relatednodename).trim() : Csw.enums.multiEditDefaultValue;
+                        cswPrivate.nodeId = Csw.string(cswPrivate.nodeId, cswPrivate.relatednodeid).trim();
+                        cswPrivate.name = Csw.string(cswPrivate.name, cswPrivate.relatednodename).trim();
+                        cswPrivate.path = Csw.string(cswPrivate.path, cswPrivate.relatednodename).trim();
                     } else {
-                        cswPrivate.nodeId = (false === cswPrivate.Multi) ? Csw.string(cswPrivate.nodeId, '').trim() : '';
-                        cswPrivate.name = (false === cswPrivate.Multi) ? Csw.string(cswPrivate.name, '').trim() : Csw.enums.multiEditDefaultValue;
-                        cswPrivate.path = (false === cswPrivate.Multi) ? Csw.string(cswPrivate.path, '').trim() : Csw.enums.multiEditDefaultValue;
+                        cswPrivate.nodeId = Csw.string(cswPrivate.nodeId, '').trim();
+                        cswPrivate.name =   Csw.string(cswPrivate.name, '').trim();
+                        cswPrivate.path =   Csw.string(cswPrivate.path, '').trim();
                     }
                     cswPrivate.viewId = Csw.string(cswPrivate.viewId).trim();
                     
-                    cswPublic.table = cswParent.table({
-                        ID: Csw.makeId(cswPrivate.ID, 'tbl')
-                    });
+                    cswPublic.table = cswParent.table();
 
                     cswPublic.table.cell(1, 1).text(cswPrivate.path);
 
@@ -96,7 +93,7 @@
                 (function _post() {
                     if (false === cswPrivate.ReadOnly) {
                         cswPublic.table.cell(1, 2).icon({
-                            ID: Csw.makeId(cswPrivate.ID, 'toggle'),
+                            name: cswPrivate.name + '_toggle',
                             iconType: Csw.enums.iconType.pencil,
                             hovertext: 'Edit',
                             size: 16,
@@ -108,7 +105,7 @@
                                 cswPublic.table.cell(2, 1).show();
 
                                 cswPublic.comboBox = cswPrivate.selectDiv.comboBox({
-                                    ID: cswPrivate.ID + '_combo',
+                                    name: cswPrivate.name + '_combo',
                                     topContent: cswPrivate.name,
                                     selectContent: '',
                                     width: '290px',
@@ -126,7 +123,7 @@
                                 });
 
                                 cswPublic.locationTree = Csw.nbt.nodeTree({
-                                    ID: cswPrivate.ID,
+                                    name: cswPrivate.name,
                                     parent: cswPublic.comboBox.pickList,
                                     onInitialSelectNode: function (optSelect) {
                                         cswPrivate.onTreeSelect(cswPrivate.selectDiv, cswPublic.comboBox, optSelect.nodeid, optSelect.nodename, optSelect.iconurl, function () { });
@@ -141,7 +138,7 @@
                                 cswPublic.locationTree.init({
                                     viewid: cswPrivate.viewId,
                                     nodeid: cswPrivate.nodeId,
-                                    cswnbtnodekey: cswPrivate.nodeKey,
+                                    nodekey: cswPrivate.nodeKey,
                                     IncludeInQuickLaunch: false,
                                     DefaultSelect: Csw.enums.nodeTree_DefaultSelect.root.name
                                 });

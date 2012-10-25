@@ -9,7 +9,7 @@ namespace ChemSW.Nbt.MetaData
     /// <summary>
     /// Nbt Object Class Name
     /// </summary>
-    public sealed class NbtObjectClass : IEquatable<NbtObjectClass>
+    public sealed class NbtObjectClass : IEquatable<NbtObjectClass>, IComparable<NbtObjectClass>
     {
         #region Internals
         private static Dictionary<string, string> _Enums = new Dictionary<string, string>( StringComparer.OrdinalIgnoreCase )
@@ -18,8 +18,8 @@ namespace ChemSW.Nbt.MetaData
             { BatchOpClass                      , BatchOpClass                       },
             { BiologicalClass                   , BiologicalClass                    },
             { MaterialComponentClass            , MaterialComponentClass             },
-            { CertMethodClass                   , CertMethodClass                    },
-            { CertMethodTemplateClass           , CertMethodTemplateClass            },
+            { CofAMethodClass                   , CofAMethodClass                    },
+            { CofAMethodTemplateClass           , CofAMethodTemplateClass            },
             { ContainerClass                    , ContainerClass                     },
             { ContainerDispenseTransactionClass , ContainerDispenseTransactionClass  },
             { CustomerClass                     , CustomerClass                      },
@@ -122,8 +122,8 @@ namespace ChemSW.Nbt.MetaData
         public const string AliquotClass = "AliquotClass";
         public const string BatchOpClass = "BatchOpClass";
         public const string BiologicalClass = "BiologicalClass";
-        public const string CertMethodClass = "CertMethodClass";
-        public const string CertMethodTemplateClass = "CertMethodTemplateClass";
+        public const string CofAMethodClass = "CofAMethodClass";
+        public const string CofAMethodTemplateClass = "CofAMethodTemplateClass";
         public const string ContainerClass = "ContainerClass";
         public const string ContainerDispenseTransactionClass = "ContainerDispenseTransactionClass";
         public const string CustomerClass = "CustomerClass";
@@ -171,6 +171,16 @@ namespace ChemSW.Nbt.MetaData
         public const string WorkUnitClass = "WorkUnitClass";
 
         #endregion Enum members
+
+
+        #region IComparable
+
+        public int CompareTo( NbtObjectClass other )
+        {
+            return string.Compare( ToString(), other.ToString(), StringComparison.Ordinal );
+        }
+
+        #endregion IComparable
 
         #region IEquatable (NbtObjectClass)
 

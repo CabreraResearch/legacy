@@ -8,7 +8,7 @@
             'use strict';
             var cswPrivate = {
                 $parent: '',
-                ID: '',
+                name: '',
                 value: '',
                 selectedName: '',
                 nodeTypesUrlMethod: 'getNodeTypes',
@@ -32,7 +32,7 @@
                 if (options) {
                     Csw.extend(cswPrivate, options);
                 }
-                cswPrivate.ID += '_sel';
+                cswPrivate.name += '_sel';
 
                 cswPrivate.select = cswParent.select(cswPrivate);
 

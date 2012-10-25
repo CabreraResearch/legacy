@@ -6,15 +6,15 @@
 
     var previews = {};
     Csw.nodeHoverIn = Csw.nodeHoverIn || 
-        Csw.register('nodeHoverIn', function (event, nodeid, cswnbtnodekey, delay) {
+        Csw.register('nodeHoverIn', function (event, nodeid, nodekey, delay) {
             'use strict';
             var previewopts = {
-                ID: nodeid + '_preview',
+                name: nodeid + '_preview',
                 nodeid: nodeid,
-                cswnbtnodekey: cswnbtnodekey,
+                nodekey: nodekey,
                 eventArg: event
             };
-            if (false === Csw.isNullOrEmpty(nodeid) || false === Csw.isNullOrEmpty(cswnbtnodekey)) {
+            if (false === Csw.isNullOrEmpty(nodeid) || false === Csw.isNullOrEmpty(nodekey)) {
                 if (Csw.number(delay, -1) >= 0) {
                     previewopts.openDelay = delay;
                 }
@@ -39,9 +39,9 @@
         Csw.nbt.register('nodePreview', function (cswParent, options) {
             'use strict';
             var cswPrivate = {
-                ID: '',
+                name: '',
                 nodeid: '',
-                cswnbtnodekey: '',
+                nodekey: '',
                 eventArg: {},
                 openDelay: 1500,
                 closeDelay: 500
@@ -76,10 +76,10 @@
                 cswPrivate.div.show();
 
                 Csw.layouts.tabsAndProps(cswPrivate.div, {
-                    ID: cswPrivate.ID + 'tabs',
+                    name: cswPrivate.name + 'tabs',
                     globalState: {
-                        nodeids: [cswPrivate.nodeid],
-                        cswnbtnodekeys: [cswPrivate.cswnbtnodekey],
+                        currentNodeId: cswPrivate.nodeid,
+                        currentNodeKey: cswPrivate.nodekey,
                         ShowAsReport: false
                     },
                     tabState: {
@@ -123,7 +123,7 @@
             (function() {
 
                 cswPrivate.div = cswParent.div({
-                        ID: cswPrivate.ID, 
+                        name: cswPrivate.name, 
                         cssclass: 'CswNodePreview' 
                     })
                     .css({

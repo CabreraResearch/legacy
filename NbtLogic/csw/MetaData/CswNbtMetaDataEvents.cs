@@ -248,10 +248,14 @@ namespace ChemSW.Nbt.MetaData
                 NewNodeType.NameTemplateValue = CswNbtMetaData.MakeTemplateEntry( NameProp.FirstPropVersionId.ToString() ) + " " + CswNbtMetaData.MakeTemplateEntry( DatePropId.ToString() );
 
                 // Set first tab to be "Details"
-                CswNbtMetaDataNodeTypeTab FirstTab = NewNodeType.getFirstNodeTypeTab();
-                FirstTab.TabName = "Details";
-                FirstTab.TabOrder = 10;
-                FirstTab.IncludeInNodeReport = false;
+                CswNbtMetaDataNodeTypeTab FirstTab = NewNodeType.getNodeTypeTab( NewNodeType.NodeTypeName );
+                if( null != FirstTab )
+                {
+                    FirstTab = NewNodeType.getSecondNodeTypeTab();
+                    FirstTab.TabName = "Details";
+                    FirstTab.TabOrder = 10;
+                    FirstTab.IncludeInNodeReport = false;
+                }
 
                 // case 20951 - Add an Action tab
                 CswNbtMetaDataNodeTypeTab ActionTab = NewNodeType.getNodeTypeTab( "Action" );

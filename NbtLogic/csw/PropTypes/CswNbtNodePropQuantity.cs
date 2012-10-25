@@ -47,7 +47,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                return ( 0 == Gestalt.Length );
+                return Required && QuantityOptional ? false == CswTools.IsDouble( Quantity ) : 0 == Gestalt.Length;
             }
         }
 
@@ -113,7 +113,7 @@ namespace ChemSW.Nbt.PropTypes
             {
                 Collection<CswNbtNode> _UnitNodes = new Collection<CswNbtNode>();
 
-                ICswNbtTree UnitsTree = _CswNbtResources.Trees.getTreeFromView( View, false, true, false, false );
+                ICswNbtTree UnitsTree = _CswNbtResources.Trees.getTreeFromView( _CswNbtResources.CurrentNbtUser, View, true, false, false );
                 UnitsTree.goToRoot();
                 for( int i = 0; i < UnitsTree.getChildNodeCount(); i++ )
                 {

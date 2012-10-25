@@ -6,7 +6,7 @@
         Csw.layouts.register('landingpage', function (cswParent, options) {
             'use strict';
             var cswPrivate = {
-                ID: 'landingpage',
+                name: 'landingpage',
                 Title: '',
                 onLinkClick: null,
                 onAddClick: null,
@@ -24,7 +24,7 @@
                     urlMethod: 'getWelcomeItems', //TODO - replace all things 'welcome' with 'landingPage' once webservice is refactored
                     data: cswPrivate.actionData,
                     success: function (data) {
-                        cswPrivate.landingPageDiv = cswParent.div({ ID: 'landingPageDiv' })
+                        cswPrivate.landingPageDiv = cswParent.div({ name: 'landingPageDiv' })
                             .css({
                                 'text-align': 'center',
                                 'font-size': '1.2em'
@@ -33,7 +33,7 @@
                         //add title here
 
                         cswPrivate.layoutTable = cswPrivate.landingPageDiv.layoutTable({
-                            ID: 'welcometable',
+                            name: 'welcometable',
                             cellSet: { rows: 2, columns: 1 },
                             TableCssClass: 'WelcomeTable',
                             cellpadding: 10,
@@ -99,7 +99,7 @@
                                 }
 
                                 var welcomeHidden = textCell.input({
-                                    ID: welcomeId,
+                                    name: welcomeId,
                                     type: Csw.enums.inputTypes.hidden
                                 });
                                 welcomeHidden.propNonDom('welcomeid', welcomeId);
@@ -192,13 +192,13 @@
             cswPrivate.getAddItemForm = function (parentDiv, addOptions) {
                 var parent = parentDiv;
                 var table = parent.table({
-                    ID: 'addwelcomeitem_tbl'
+                    name: 'addwelcomeitem_tbl'
                 });
 
                 /* Type Select Label */
                 table.cell(1, 1).span({ text: 'Type:' });
                 var typeSelect = table.cell(1, 2).select({
-                    ID: 'welcome_type'
+                    name: 'welcome_type'
                 });
                 typeSelect.option({ value: 'Add', display: 'Add', isSelected: true });
                 typeSelect.option({ value: 'Link', display: 'Link' });
@@ -207,11 +207,11 @@
                 var viewSelectLabel = table.cell(2, 1).span({ text: 'View:' }).hide();
 
                 var viewSelectTable = table.cell(2, 2).table({
-                    ID: 'viewselecttable'
+                    name: 'viewselecttable'
                 });
 
                 var viewSelect = viewSelectTable.cell(1, 1).viewSelect({
-                    ID: 'welcome_viewsel',
+                    name: 'welcome_viewsel',
                     maxHeight: '275px',
                     includeRecent: false
                 });
@@ -220,17 +220,17 @@
                 var ntSelectLabel = table.cell(3, 1).span({ text: 'Add New:' });
                 var ntSelect = table.cell(3, 2)
                     .nodeTypeSelect({
-                        ID: 'welcome_ntsel',
+                        name: 'welcome_ntsel',
                         filterToPermission: 'Create'
                     });
 
                 /* Welcome Text Label */
                 table.cell(4, 1).span({ text: 'Text:' });
 
-                var welcomeText = table.cell(4, 2).input({ ID: 'welcome_text' });
+                var welcomeText = table.cell(4, 2).input({ name: 'welcome_text' });
 
                 var addButton = table.cell(7, 2).button({
-                    ID: 'welcome_add',
+                    name: 'welcome_add',
                     enabledText: 'Add',
                     disabledText: 'Adding',
                     onClick: function () {

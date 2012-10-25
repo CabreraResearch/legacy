@@ -119,7 +119,7 @@ namespace ChemSW.Nbt.WebServices
             CswNbtObjClassMaterial Ret = null;
 
             CswNbtView MaterialNodeView = _getMaterialNodeView( MaterialNodeTypeId, TradeName, SupplierId, PartNo );
-            ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( MaterialNodeView, false );
+            ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( MaterialNodeView, false, false, false );
             bool MaterialExists = Tree.getChildNodeCount() > 0;
 
             if( MaterialExists )
@@ -173,7 +173,7 @@ namespace ChemSW.Nbt.WebServices
                     Ret["nodetypeid"] = NodeAsMaterial.NodeTypeId;
                     _CswNbtResources.EditMode = NodeEditMode.Temp;
                     CswNbtSdTabsAndProps SdProps = new CswNbtSdTabsAndProps( _CswNbtResources );
-                    Ret["properties"] = SdProps.getProps( NodeAsMaterial.Node, string.Empty, null, CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, true );
+                    Ret["properties"] = SdProps.getProps( NodeAsMaterial.Node, string.Empty, null, CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add );
                     Int32 DocumentNodeTypeId = CswNbtActReceiving.getMaterialDocumentNodeTypeId( _CswNbtResources, NodeAsMaterial );
                     if( Int32.MinValue != DocumentNodeTypeId )
                     {
@@ -336,7 +336,7 @@ namespace ChemSW.Nbt.WebServices
                     if( null != Ret )
                     {
                         Ret.IsTemp = false;
-                        wsTap.saveProps( Ret.NodeId, Int32.MinValue, MaterialProperties.ToString(), Ret.NodeTypeId, null );
+                        wsTap.saveProps( Ret.NodeId, Int32.MinValue, MaterialProperties.ToString(), Ret.NodeTypeId, null, IsIdentityTab: false );
                         string Tradename;
                         CswPrimaryKey SupplierId;
                         string PartNo;
@@ -488,7 +488,7 @@ namespace ChemSW.Nbt.WebServices
             CswNbtView unitsView = unitViewBuilder.getQuantityUnitOfMeasureView( PhysicalState );
 
             Collection<CswNbtNode> _UnitNodes = new Collection<CswNbtNode>();
-            ICswNbtTree UnitsTree = CswNbtResources.Trees.getTreeFromView( unitsView, false, true, false, false );
+            ICswNbtTree UnitsTree = CswNbtResources.Trees.getTreeFromView( CswNbtResources.CurrentNbtUser, unitsView, true, false, false );
             UnitsTree.goToRoot();
             for( int i = 0; i < UnitsTree.getChildNodeCount(); i++ )
             {

@@ -116,7 +116,7 @@ namespace ChemSW.Nbt.WebServices
             ThisNodeObj["attr"]["state"] = ThisNodeState;
             ThisNodeObj["attr"]["species"] = ThisNodeKey.NodeSpecies.ToString();
             ThisNodeObj["attr"]["nodeid"] = ThisNodeId;
-            ThisNodeObj["attr"]["cswnbtnodekey"] = ThisNodeKeyString;
+            ThisNodeObj["attr"]["nodekey"] = ThisNodeKeyString;
             ThisNodeObj["attr"]["locked"] = ThisNodeLocked.ToString().ToLower();
             if( ThisNodeDisabled )
             {
@@ -143,7 +143,7 @@ namespace ChemSW.Nbt.WebServices
 
             if( null != _View ) //&& ( _View.ViewMode == NbtViewRenderingMode.Tree || _View.ViewMode == NbtViewRenderingMode.List ) )
             {
-                ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( _View, false );
+                ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( _View, false, false, false );
                 _View.SaveToCache( IncludeInQuickLaunch );
 
                 if( IncludeNodeId != null && IncludeNodeId.PrimaryKey != Int32.MinValue && IncludeNodeKey == null )
@@ -158,7 +158,7 @@ namespace ChemSW.Nbt.WebServices
                         _View.SaveToCache( IncludeInQuickLaunch ); // case 22713
                         ReturnObj["newviewid"] = _View.SessionViewId.ToString();
                         ReturnObj["newviewmode"] = _View.ViewMode.ToString();
-                        Tree = _CswNbtResources.Trees.getTreeFromView( _View, false );
+                        Tree = _CswNbtResources.Trees.getTreeFromView( _View, false, false, false );
                     }
                 }
                 if( IncludeNodeRequired && IncludeNodeKey != null && Tree.getNodeKeyByNodeId( IncludeNodeKey.NodeId ) == null )
@@ -170,7 +170,7 @@ namespace ChemSW.Nbt.WebServices
                     _View.SaveToCache( IncludeInQuickLaunch ); // case 22713
                     ReturnObj["newviewid"] = _View.SessionViewId.ToString();
                     ReturnObj["newviewmode"] = _View.ViewMode.ToString();
-                    Tree = _CswNbtResources.Trees.getTreeFromView( _View, false );
+                    Tree = _CswNbtResources.Trees.getTreeFromView( _View, false, false, false );
                 }
 
                 Tree.goToRoot();
@@ -234,7 +234,7 @@ namespace ChemSW.Nbt.WebServices
                 ReturnObj["root"]["attr"]["rel"] = "root";
                 ReturnObj["root"]["attr"]["disabled"] = false == Tree.getNodeIncludedForCurrentPosition();
                 //Tree.goToRoot();
-                //ReturnObj["attr"]["cswnbtnodekey"] = Tree.getNodeKeyForCurrentPosition().ToString();
+                //ReturnObj["attr"]["nodekey"] = Tree.getNodeKeyForCurrentPosition().ToString();
                 ReturnObj["root"]["state"] = "open";
                 ReturnObj["root"]["children"] = new JArray();
 
@@ -402,7 +402,7 @@ namespace ChemSW.Nbt.WebServices
                 //    ChildRelationshipToStartWith = (CswNbtViewRelationship) View.FindViewNodeByUniqueId( IncludeNodeKey.ViewNodeUniqueId );
 
                 //ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( View, true, ref ParentNodeKey, ChildRelationshipToStartWith, PageSize, IsFirstLoad, UsePaging, IncludeNodeKey, false );
-                ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( _View, false );
+                ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( _View, false, false, false );
 
                 // case 21262
                 if( IncludeNodeKey != null && IncludeNodeRequired && ( //IncludeNodeKey.TreeKey != Tree.Key || 
@@ -413,7 +413,7 @@ namespace ChemSW.Nbt.WebServices
                     _View.ViewName = "New " + IncludeKeyNodeType.NodeTypeName;
                     _View.Root.ChildRelationships[0].NodeIdsToFilterIn.Add( IncludeNodeKey.NodeId );
                     _View.SaveToCache( true ); // case 22713
-                    Tree = _CswNbtResources.Trees.getTreeFromView( _View, true, ref ParentNodeKey, null, PageSize, IsFirstLoad, UsePaging, IncludeNodeKey, false );
+                    Tree = _CswNbtResources.Trees.getTreeFromView( _CswNbtResources.CurrentNbtUser, _View, true, false, false );
                 }
 
                 if( ( Tree.getChildNodeCount() > 0 ) )
@@ -427,7 +427,7 @@ namespace ChemSW.Nbt.WebServices
                         FirstObj["attr"] = new JObject();
                         FirstObj["attr"]["id"] = _IdPrefix + "root";
                         FirstObj["attr"]["rel"] = "root";
-                        FirstObj["attr"]["cswnbtnodekey"] = Tree.getNodeKeyForCurrentPosition().ToString();
+                        FirstObj["attr"]["nodekey"] = Tree.getNodeKeyForCurrentPosition().ToString();
                         FirstObj["state"] = "open";
                         FirstObj["children"] = ChildArray;
 

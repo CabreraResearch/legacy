@@ -18,20 +18,17 @@
 
                     cswPrivate.propVals = cswPublic.data.propData.values;
                     cswPrivate.parent = cswPublic.data.propDiv;
-                    cswPrivate.value = (false === cswPublic.data.isMulti()) ? Csw.string(cswPrivate.propVals.value).trim() : Csw.enums.multiEditDefaultValue;
+                    cswPrivate.value = Csw.string(cswPrivate.propVals.value).trim();
                     cswPrivate.options = cswPrivate.propVals.options;
                     cswPrivate.width = Csw.string(cswPrivate.propVals.width);
                     cswPrivate.height = Csw.string(cswPrivate.propVals.height);
                     cswPrivate.allowMultiple = Csw.bool(cswPrivate.propVals.allowmultiple);
 
                     cswPublic.control = cswPrivate.parent.table({
-                        ID: Csw.makeId(cswPublic.data.ID, 'tbl'),
                         cellvalign: 'top'
                     });
 
-                    cswPrivate.imageTable = cswPublic.control.cell(1, 1).table({
-                        ID: Csw.makeId(cswPublic.data.ID, 'tbl')
-                    });
+                    cswPrivate.imageTable = cswPublic.control.cell(1, 1).table();
                     cswPrivate.imgTblCol = 1;
                     cswPrivate.selectedValues = [];
 
@@ -82,7 +79,7 @@
                         }
                         if (false === cswPublic.data.isReadOnly() && (false === cswPublic.data.isRequired() || cswPrivate.allowMultiple)) {
                             nameCell.icon({
-                                ID: Csw.makeId('image', cswPrivate.imgTblCol, 'rembtn'),
+                                name: 'rembtn',
                                 iconType: Csw.enums.iconType.trash,
                                 hovertext: 'Remove',
                                 size: 16,
@@ -126,11 +123,8 @@
                     };
 
                     if (false === cswPublic.data.isReadOnly()) {
-                        cswPrivate.imageSelectList = cswPublic.control.cell(1, 2).select({ id: cswPublic.data.ID });
+                        cswPrivate.imageSelectList = cswPublic.control.cell(1, 2).select({ id: cswPublic.data.name });
                         cswPrivate.selectOption = cswPrivate.imageSelectList.option({ value: '', display: 'Select...' });
-                        if (cswPublic.data.isMulti()) {
-                            cswPrivate.imageSelectList.option({ value: Csw.enums.multiEditDefaultValue, display: Csw.enums.multiEditDefaultValue, isSelected: true });
-                        }
 
                         cswPrivate.imageSelectList.bind('change', function () {
                             var selected = cswPrivate.imageSelectList.children(':selected');

@@ -9,7 +9,7 @@
             var cswPrivate = {
                 urlMethod: 'getModules',
                 saveUrlMethod: 'saveModules',
-                ID: 'action_modules',
+                name: 'action_modules',
                 onModuleChange: null // function() {}
             };
             if (options) Csw.extend(cswPrivate, options);
@@ -20,7 +20,7 @@
                 cswParent.$.empty();
 
                 cswPrivate.table = cswParent.table({
-                    ID: cswPrivate.ID,
+                    name: cswPrivate.name,
                     cellpadding: '3px',
                     FirstCellRightAlign: true
                 }).css({ 'padding-top': '5px' });
@@ -38,7 +38,6 @@
 
                         Csw.each(result, function (thisValue, thisModule) {
                             checkboxes.push(cswPrivate.table.cell(row, 1).input({
-                                ID: thisModule,
                                 name: thisModule,
                                 type: Csw.enums.inputTypes.checkbox,
                                 checked: Csw.bool(thisValue)
@@ -48,7 +47,7 @@
                         }); //each()
 
                         cswPrivate.table.cell(row, 2).button({
-                            ID: 'savebtn',
+                            name: 'savebtn',
                             enabledText: 'Save',
                             disabledText: 'Saving...',
                             onClick: function () {

@@ -7,7 +7,7 @@
         Csw.layouts.register('wizard', function (cswParent, options) {
             'use strict';
             var cswPrivate = {
-                ID: 'wizard',
+                name: 'wizard',
                 Title: 'A Wizard',
                 StepCount: 1,
                 Steps: { 1: 'Default' },
@@ -86,7 +86,7 @@
                 cswPublic.form = cswParent.form();
 
                 cswPublic.table = cswPublic.form.table({
-                    suffix: cswPrivate.ID,
+                    suffix: cswPrivate.name,
                     TableCssClass: 'CswWizard_WizardTable'
                 });
 
@@ -177,12 +177,7 @@
             cswPublic.setStep = function (stepno) {
                 cswPrivate.selectStep(stepno);
             };
-
-            cswPublic.makeStepId = function (suffix, stepNo) {
-                var step = stepNo || cswPrivate.currentStepNo;
-                return Csw.makeId('step_' + step, cswPrivate.ID, suffix);
-            };
-
+            
             return cswPublic;
         });
 } ());

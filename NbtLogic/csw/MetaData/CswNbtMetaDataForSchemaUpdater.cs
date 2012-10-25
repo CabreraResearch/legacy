@@ -209,7 +209,7 @@ namespace ChemSW.Nbt.MetaData
 
             // Update MetaData
             _CswNbtMetaDataResources.ObjectClassesCollection.clearCache();
-            
+
             // Delete the Object Class Props
             foreach( CswNbtMetaDataObjectClassProp OcProp in ObjectClass.getObjectClassProps() )
             {
@@ -227,9 +227,10 @@ namespace ChemSW.Nbt.MetaData
         /// Set the default value for an object class prop, and cascade the change to all existing NodeTypeProps
         /// </summary>
         /// <param name="ObjectClassProp"></param>
-        /// <param name="SubFieldName">Optional. Use the default subfield if null.</param>
         /// <param name="Value"></param>
-        public void SetObjectClassPropDefaultValue( CswNbtMetaDataObjectClassProp ObjectClassProp, CswNbtSubField.SubFieldName SubFieldName, object Value )
+        /// <param name="SubFieldName">Optional. Use the default subfield if null.</param>
+        /// 
+        public void SetObjectClassPropDefaultValue( CswNbtMetaDataObjectClassProp ObjectClassProp, object Value, CswNbtSubField.SubFieldName SubFieldName = null )
         {
             if( null != ObjectClassProp )
             {

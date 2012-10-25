@@ -23,6 +23,7 @@
             var cswPrivate = {
                 $parent: '',
                 ID: '',
+                name: 'table',
                 TableCssClass: '',
                 CellCssClass: '',
                 cellpadding: 0,
@@ -44,7 +45,7 @@
                 if (options) {
                     Csw.extend(cswPrivate, options);
                 }
-                var $table = $('<table id="' + cswPrivate.ID + '"></table>');
+                var $table = $('<table id="' + cswPrivate.ID + '" name="' + cswPrivate.name + '"></table>');
                 var isjQuery = Csw.isJQuery(options);
 
                 if (isjQuery) {
@@ -65,12 +66,14 @@
                         align: cswPrivate.align
                     });
                     cswPublic.css(cswPrivate.styles);
-                    cswPublic.propNonDom({
+                    cswPublic.propDom({
                         cellpadding: cswPrivate.cellpadding,
                         cellspacing: cswPrivate.cellspacing,
                         border: cswPrivate.border,
                         cellalign: cswPrivate.cellalign,
-                        cellvalign: cswPrivate.cellvalign,
+                        cellvalign: cswPrivate.cellvalign
+                    });
+                    cswPublic.data({
                         cellcssclass: cswPrivate.CellCssClass,
                         FirstCellRightAlign: cswPrivate.FirstCellRightAlign,
                         OddCellRightAlign: cswPrivate.OddCellRightAlign
@@ -102,7 +105,7 @@
                     }
 
                     if (cswPrivate.ID) {
-                        retCell = cswPublic.find('#' + Csw.makeId(cswPrivate.ID, 'row_' + row, 'col_' + col, '', false));
+                        retCell = cswPublic.find('#' + cswPrivate.ID + 'row' + row + 'col' + col);
                     }
                     if (Csw.isNullOrEmpty(retCell)) {
                         retCell = cswPublic.children('tbody')
@@ -120,21 +123,21 @@
                         while (col > thisCol) {
                             html = '';
                             thisCol += 1;
-                            id = Csw.makeId(cswPrivate.ID, 'row_' + row, 'col_' + thisCol, '', false);
-                            align = cswPublic.propNonDom('cellalign');
-                            if ((thisRow.children('td').length() === 0 && Csw.bool(cswPublic.propNonDom('FirstCellRightAlign'))) ||
-                                (thisRow.children('td').length() % 2 === 0 && Csw.bool(cswPublic.propNonDom('OddCellRightAlign')))) {
+                            id = cswPrivate.ID + 'row' + row + 'col' + thisCol;
+                            align = cswPublic.data('cellalign');
+                            if ((thisRow.children('td').length() === 0 && Csw.bool(cswPublic.data('FirstCellRightAlign'))) ||
+                                (thisRow.children('td').length() % 2 === 0 && Csw.bool(cswPublic.data('OddCellRightAlign')))) {
                                 align = 'right';
                             }
                             html += '<td ';
                             if (false === Csw.isNullOrEmpty(id)) {
                                 attr.add('id', id);
                             }
-                            attr.add('realrow', row);
-                            attr.add('realcol', thisCol);
-                            attr.add('class', cswPublic.propNonDom('cellcssclass'));
+                            attr.add('data-realrow', row);
+                            attr.add('data-realcol', thisCol);
+                            attr.add('class', cswPublic.data('cellcssclass'));
                             attr.add('align', align);
-                            attr.add('valign', cswPublic.propNonDom('cellvalign'));
+                            attr.add('valign', cswPublic.data('cellvalign'));
                             html += attr.get();
                             html += '>';
                             html += '</td>';
@@ -155,17 +158,6 @@
                 }
                 return retCell;
             };
-
-            //        cswPublic.add = function (row, col, content, id) {
-            //            /// <summary>Add content to a cell of this table.</summary>
-            //            /// <param name="row" type="Number">Row number.</param>
-            //            /// <param name="col" type="Number">Column number.</param>
-            //            /// <param name="content" type="String">Content to add.</param>
-            //            /// <returns type="Object">The specified cell.</returns>
-            //            var retCell = cswPublic.cell(row, col, id);
-            //            retCell.append(content);
-            //            return retCell;
-            //        };
 
             cswPublic.maxrows = function() {
                 /// <summary>Get the maximum table row number</summary>

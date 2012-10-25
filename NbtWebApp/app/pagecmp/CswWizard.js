@@ -8,7 +8,7 @@
     var methods = {
         'init': function (options) {
             var o = {
-                ID: '',
+                name: '',
                 Title: 'A Wizard',
                 StepCount: 1,
                 Steps: { 1: 'Default' },
@@ -42,7 +42,7 @@
             var $parent = $(this);
             var table = Csw.literals.table({
                 $parent: $parent,
-                ID: o.ID,
+                name: o.name,
                 TableCssClass: 'CswWizard_WizardTable'
             });
             table.propNonDom({
@@ -65,11 +65,11 @@
             for (var s = 1; s <= o.StepCount; s += 1) {
                 var steptitle = o.Steps[s];
                 indexCell.append('<div class="CswWizard_StepLinkDiv" stepno="' + s + '">' + s + '.&nbsp;' + steptitle + '</div>');
-                stepsCell.append('<div class="CswWizard_StepDiv" id="' + o.ID + '_' + s + '" stepno="' + s + '" ><span class="CswWizard_StepTitle">' + steptitle + '</span><br/></br><div id="' + o.ID + '_' + s + '_content"></div></div>');
+                stepsCell.append('<div class="CswWizard_StepDiv" id="' + o.name + '_' + s + '" stepno="' + s + '" ><span class="CswWizard_StepTitle">' + steptitle + '</span><br/></br><div id="' + o.name + '_' + s + '_content"></div></div>');
             }
 
             var buttonTable = table.cell(3, 1).table({
-                ID: o.ID + '_btntbl',
+                name: o.name + '_btntbl',
                 width: '100%'
             });
             buttonTable.addClass('CswWizard_ButtonsCell');
@@ -86,7 +86,7 @@
             });
 
             /* Previous Button */
-            bCell11.button({ 'ID': o.ID + '_prev',
+            bCell11.button({ "name": o.name + '_prev',
                 'enabledText': '< Previous',
                 'disableOnClick': false,
                 'onClick': function () {
@@ -98,7 +98,7 @@
                 }
             });
             /* Next Button */
-            bCell11.button({ 'ID': o.ID + '_next',
+            bCell11.button({ "name": o.name + '_next',
                 'enabledText': 'Next >',
                 'disableOnClick': false,
                 'onClick': function () {
@@ -110,12 +110,12 @@
                 }
             });
             /* Finish Button */
-            bCell11.button({ 'ID': o.ID + '_finish',
+            bCell11.button({ "name": o.name + '_finish',
                 'enabledText': o.FinishText,
                 'onClick': function () { Csw.tryExec(o.onFinish, table); }
             });
             /* Cancel Button */
-            bCell12.button({ 'ID': o.ID + '_cancel',
+            bCell12.button({ "name": o.name + '_cancel',
                 'enabledText': 'Cancel',
                 'onClick': function () { Csw.tryExec(o.onCancel, table); }
             });

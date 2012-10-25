@@ -23,6 +23,7 @@
                         ReadOnly: cswPublic.data.isReadOnly(),
                         Required: cswPublic.data.isRequired(),
                         rateIntervalValue: cswPrivate.propVals.Interval.rateintervalvalue,
+                        useEditButton: cswPublic.data.tabState.EditMode !== Csw.enums.editMode.Add,
                         onChange: function () {
                             // We're bypassing this to avoid having to deal with the complexity of multiple copies of the RateInterval JSON
                             // cswPublic.data.onPropChange(compare);

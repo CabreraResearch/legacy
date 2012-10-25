@@ -6,7 +6,7 @@
     $.fn.CswDefaultContent = function (options) {
 
         var o = {
-            ID: 'defcont',
+            name: 'defcont',
             Url: 'getDefaultContent',
             viewid: '',
             viewmode: '',
@@ -23,7 +23,7 @@
 
                 var addDiv = Csw.literals.div({
                     $parent: $parent,
-                    ID: Csw.makeId({ id: o.ID, suffix: 'adddiv' }),
+                    name:  'adddiv',
                     cssclass: 'adddiv',
                     text: 'Add New:'
                 }).hide();

@@ -677,6 +677,7 @@ namespace ChemSW.Nbt
             CswNbtMetaDataObjectClass MailReportOC = MetaData.getObjectClass( NbtObjectClass.MailReportClass );
             CswNbtMetaDataObjectClassProp TargetTypeOCP = MailReportOC.getObjectClassProp( CswNbtObjClassMailReport.PropertyName.TargetType );
             CswNbtMetaDataObjectClassProp EventOCP = MailReportOC.getObjectClassProp( CswNbtObjClassMailReport.PropertyName.Event );
+            CswNbtMetaDataObjectClassProp EnabledOCP = MailReportOC.getObjectClassProp( CswNbtObjClassMailReport.PropertyName.Enabled );
             CswNbtMetaDataObjectClassProp NodesToReportOCP = MailReportOC.getObjectClassProp( CswNbtObjClassMailReport.PropertyName.NodesToReport );
 
             CswNbtView MailReportsView = new CswNbtView( this );
@@ -692,13 +693,18 @@ namespace ChemSW.Nbt
                                                       MetaDataProp: EventOCP,
                                                       FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals,
                                                       Value: EventOpt.ToString() );
+            // Enabled
+            MailReportsView.AddViewPropertyAndFilter( ParentViewRelationship: Rel1,
+                                                      MetaDataProp: EnabledOCP,
+                                                      FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals,
+                                                      Value: Tristate.True.ToString() );
             // Can't check the view, because it depends on the user
             // But check for a matching property value being altered
-            ICswNbtTree MailReportsTree = Trees.getTreeFromView( MailReportsView, RequireViewPermissions: false, IncludeSystemNodes: true );
+            ICswNbtTree MailReportsTree = Trees.getTreeFromView( MailReportsView, RequireViewPermissions: false, IncludeSystemNodes: true, IncludeHiddenNodes: false );
             for( Int32 i = 0; i < MailReportsTree.getChildNodeCount(); i++ )
             {
                 MailReportsTree.goToNthChild( i );
-                
+
                 CswNbtObjClassMailReport ThisMailReport = MailReportsTree.getNodeForCurrentPosition();
                 CswNbtView MailReportView = this.ViewSelect.restoreView( ThisMailReport.ReportView.ViewId );
                 bool IncludeNode = false;
@@ -834,6 +840,14 @@ namespace ChemSW.Nbt
         ///// </summary>
         ////public ICollection ConfigVariables { get { return _CswResources.ConfigVariables; } }
         //public CswConfigurationVariables CswConfigVbls { get { return ( _CswResources.ConfigVbls ); } }
+
+        /// <summary>
+        /// True if the user is the system user
+        /// </summary>
+        public bool IsSystemUser
+        {
+            get { return CurrentNbtUser is CswNbtSystemUser; }
+        }
 
         /// <summary>
         /// Information associated with the currently logged in user, Nbt-specific.

@@ -29,13 +29,14 @@ namespace ChemSW.Nbt
 
             DataTable NewNodeTable = CswTableUpdate.getEmptyTable();
             DataRow NewNodeRow = NewNodeTable.NewRow();
-            NewNodeRow[ "nodename" ] = Node.NodeName;
-            NewNodeRow[ "nodetypeid" ] = Node.NodeTypeId;
+            NewNodeRow["nodename"] = Node.NodeName;
+            NewNodeRow["nodetypeid"] = Node.NodeTypeId;
             //NewNodeRow["pendingupdate"] = "0";
             //NewNodeRow["issystem"] = "0";
+            NewNodeRow["hidden"] = CswConvert.ToDbVal( false );
             NewNodeTable.Rows.Add( NewNodeRow );
 
-            Node.NodeId = new CswPrimaryKey( TableName, CswConvert.ToInt32( NewNodeTable.Rows[ 0 ][ PkColumnName ] ) );
+            Node.NodeId = new CswPrimaryKey( TableName, CswConvert.ToInt32( NewNodeTable.Rows[0][PkColumnName] ) );
 
             if( PostToDatabase )
                 CswTableUpdate.update( NewNodeTable );
@@ -50,7 +51,7 @@ namespace ChemSW.Nbt
             CswTableUpdate = _CswNbtResources.makeCswTableUpdate( "CswNbtNodeWriterRelationalDb.getDataTable_update", TableName );
             NodesTable = CswTableUpdate.getTable( PkColumnName, Node.NodeId.PrimaryKey );
             if( 1 != NodesTable.Rows.Count )
-				throw ( new CswDniException( ErrorType.Error, "Internal data errors", "There are " + NodesTable.Rows.Count.ToString() + " node table records for node id (" + Node.NodeId.ToString() + ")" ) );
+                throw ( new CswDniException( ErrorType.Error, "Internal data errors", "There are " + NodesTable.Rows.Count.ToString() + " node table records for node id (" + Node.NodeId.ToString() + ")" ) );
 
             //return ( NodesTable );
         }//_getDataTable()
@@ -60,7 +61,7 @@ namespace ChemSW.Nbt
             DataTable NodesTable;
             CswTableUpdate NodesUpdate;
             _getDataTable( Node, out NodesTable, out NodesUpdate );
-            NodesTable.Rows[ 0 ][ "nodename" ] = Node.NodeName;
+            NodesTable.Rows[0]["nodename"] = Node.NodeName;
             NodesUpdate.update( NodesTable );
 
         }//write()
@@ -108,11 +109,11 @@ namespace ChemSW.Nbt
                 _getDataTable( CswNbtNode, out NodesTable, out NodesUpdate );
 
                 //DataTable NodesTable = _getDataTable( CswNbtNode );
-                NodesTable.Rows[ 0 ].Delete();
+                NodesTable.Rows[0].Delete();
                 NodesUpdate.update( NodesTable );
             }//try
 
-            catch ( System.Exception Exception )
+            catch( System.Exception Exception )
             {
                 throw ( Exception );
             }// catch

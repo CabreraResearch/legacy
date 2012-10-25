@@ -109,7 +109,7 @@ namespace ChemSW.Nbt.ObjClasses
             string OriginalName = Name.GetOriginalPropRowValue();
             materialsWithThisList.AddViewPropertyAndFilter( parent, regListsOCP, Value: OriginalName, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Contains );
 
-            ICswNbtTree materialsWithListTree = _CswNbtResources.Trees.getTreeFromView( materialsWithThisList, false );
+            ICswNbtTree materialsWithListTree = _CswNbtResources.Trees.getTreeFromView( materialsWithThisList, false, false, false );
             int nodeCount = materialsWithListTree.getChildNodeCount();
             for( int i = 0; i < nodeCount; i++ )
             {

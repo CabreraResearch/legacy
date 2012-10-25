@@ -89,7 +89,8 @@
                 refresh: 'refresh',
                 refreshHeader: 'refreshHeader',
                 refreshSelected: 'refreshSelected',
-                clear: 'clear'
+                clear: 'clear',
+                reauthenticate: 'reauthenticate'
             }
         });
 
@@ -181,9 +182,6 @@
             MonthlyByWeekAndDay: 'MonthlyByWeekAndDay',
             YearlyByDate: 'YearlyByDate'
         });
-
-    Csw.enums.multiEditDefaultValue = Csw.enums.multiEditDefaultValue ||
-        Csw.enums.register('multiEditDefaultValue', '[Unchanged]');
 
     Csw.enums.imageButton_ButtonType = Csw.enums.imageButton_ButtonType ||
         Csw.enums.register('imageButton_ButtonType', {

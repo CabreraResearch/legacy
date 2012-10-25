@@ -122,7 +122,7 @@ namespace ChemSW.Nbt.PropTypes
                 if( DateTime.MinValue == EndDate )
                 {
                     EndDate = DateTime.Now;
-                }                
+                }
                 Diff = EndDate.Subtract( StartDate );
 
                 days = Diff.TotalDays;
@@ -177,7 +177,7 @@ namespace ChemSW.Nbt.PropTypes
                 CswNbtViewPropertyFilter DateOpenedStartFilter = ProblemFailuresView.AddViewPropertyFilter( DateOpenedVP, CswNbtSubField.SubFieldName.Value, CswNbtPropFilterSql.PropertyFilterMode.GreaterThanOrEquals, StartDate.ToString(), false );
                 CswNbtViewPropertyFilter DateOpenedEndFilter = ProblemFailuresView.AddViewPropertyFilter( DateOpenedVP, CswNbtSubField.SubFieldName.Value, CswNbtPropFilterSql.PropertyFilterMode.LessThanOrEquals, EndDate.ToString(), false );
 
-                ICswNbtTree ProblemNodesTree = _CswNbtResources.Trees.getTreeFromView( ProblemFailuresView, true, true, false, false );
+                ICswNbtTree ProblemNodesTree = _CswNbtResources.Trees.getTreeFromView( _CswNbtResources.CurrentNbtUser, ProblemFailuresView, true, false, false );
 
                 if( ProblemNodesTree.getChildNodeCount() > 0 )
                 {

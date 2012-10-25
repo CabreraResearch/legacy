@@ -35,7 +35,7 @@ namespace ChemSW.NbtWebControls
 
                 string PriorVisibilityValue = _NewViewVisibilityRoleDropDown.SelectedValue;
                 _NewViewVisibilityRoleDropDown.Items.Clear();
-                ICswNbtTree RoleTree = _CswNbtResources.Trees.getTreeFromView( RoleView, true, true, false, false );
+                ICswNbtTree RoleTree = _CswNbtResources.Trees.getTreeFromView( _CswNbtResources.CurrentNbtUser, RoleView, true, false, false );
 
                 RoleTree.goToRoot();
                 //RoleTree.goToNthChild(0);
@@ -60,7 +60,7 @@ namespace ChemSW.NbtWebControls
 
             string PriorUserVisibilityValue = _NewViewVisibilityUserDropDown.SelectedValue;
             _NewViewVisibilityUserDropDown.Items.Clear();
-            ICswNbtTree UserTree = _CswNbtResources.Trees.getTreeFromView( UserView, true, true, false, false );
+            ICswNbtTree UserTree = _CswNbtResources.Trees.getTreeFromView( _CswNbtResources.CurrentNbtUser, UserView, true, false, false );
 
             UserTree.goToRoot();
             //UserTree.goToNthChild(0);

@@ -42,24 +42,22 @@
                     cswPrivate.propVals = cswPublic.data.propData.values;
                     cswPrivate.parent = cswPublic.data.propDiv;
 
-                    cswPrivate.startDate = (false === cswPublic.data.isMulti()) ? Csw.string(cswPrivate.propVals.startdatetime.date) : Csw.enums.multiEditDefaultValue;
+                    cswPrivate.startDate = Csw.string(cswPrivate.propVals.startdatetime.date);
                     cswPrivate.dateFormat = Csw.serverDateFormatToJQuery(cswPrivate.propVals.startdatetime.dateformat);
 
-                    cswPrivate.value = (false === cswPublic.data.isMulti()) ? Csw.string(cswPrivate.propVals.value).trim() : Csw.enums.multiEditDefaultValue;
-                    cswPrivate.units = (false === cswPublic.data.isMulti()) ? Csw.string(cswPrivate.propVals.units).trim() : Csw.enums.multiEditDefaultValue;
+                    cswPrivate.value = Csw.string(cswPrivate.propVals.value).trim();
+                    cswPrivate.units = Csw.string(cswPrivate.propVals.units).trim();
 
-                    cswPublic.control = cswPrivate.parent.table({
-                        ID: Csw.makeId(cswPublic.data.ID, 'tbl')
-                    });
+                    cswPublic.control = cswPrivate.parent.table();
 
-                    cswPrivate.mtbfStatic = (cswPrivate.units !== Csw.enums.multiEditDefaultValue) ? cswPrivate.value + '&nbsp;' + cswPrivate.units : cswPrivate.value;
+                    cswPrivate.mtbfStatic = cswPrivate.value + '&nbsp;' + cswPrivate.units;
                     cswPublic.control.cell(1, 1).append(cswPrivate.mtbfStatic);
 
                     cswPrivate.cell12 = cswPublic.control.cell(1, 2);
 
                     if (false === cswPublic.data.isReadOnly()) {
                         cswPrivate.cell12.icon({
-                            ID: cswPublic.data.ID,
+                            name: cswPublic.data.name,
                             iconType: Csw.enums.iconType.pencil,
                             hovertext: 'Edit',
                             size: 16,
@@ -69,12 +67,12 @@
                             }
                         });
 
-                        cswPrivate.editTable = cswPublic.control.cell(2, 2).table({ ID: Csw.makeId(cswPublic.data.ID, 'edittbl') });
+                        cswPrivate.editTable = cswPublic.control.cell(2, 2).table({ name: 'edittbl' });
                         cswPrivate.editTable.cell(1, 1).text('Start Date');
 
                         cswPrivate.datePicker = cswPrivate.editTable.cell(1, 2)
                             .dateTimePicker({
-                                ID: cswPublic.data.ID + '_sd',
+                                name: cswPublic.data.name + '_sd',
                                 Date: cswPrivate.startDate,
                                 DateFormat: cswPrivate.dateFormat,
                                 DisplayMode: 'Date',
@@ -89,11 +87,9 @@
 
                         cswPrivate.editTable.cell(3, 1).text('Units');
                         cswPrivate.unitVals = ['hours', 'days'];
-                        if (cswPublic.data.isMulti()) {
-                            cswPrivate.unitVals.push(Csw.enums.multiEditDefaultValue);
-                        }
+
                         cswPrivate.unitSelect = cswPrivate.editTable.cell(3, 2).select({
-                            ID: cswPublic.data.ID + '_units',
+                            name: cswPublic.data.name + '_units',
                             onChange: function () {
                                 var val = cswPrivate.unitSelect.val();
                                 Csw.tryExec(cswPublic.data.onChange, val);

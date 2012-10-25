@@ -8,7 +8,7 @@
             'use strict';
             var o = {
                 urlMethod: 'getQuotaPercent',
-                ID: 'action_quota_image'
+                name: 'action_quota_image'
             };
             if (options) {
                 Csw.extend(o, options);

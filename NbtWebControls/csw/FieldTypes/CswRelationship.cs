@@ -77,7 +77,7 @@ namespace ChemSW.NbtWebControls.FieldTypes
                          * if( !Required  )
                          */
                         _ValueList.Items.Add( new ListItem( "" ) );
-                        ICswNbtTree CswNbtTree = _CswNbtResources.Trees.getTreeFromView( View, false, true, false, false );
+                        ICswNbtTree CswNbtTree = _CswNbtResources.Trees.getTreeFromView( _CswNbtResources.CurrentNbtUser, View, true, false, false );
                         for( Int32 c = 0; c < CswNbtTree.getChildNodeCount(); c++ )
                         {
                             CswNbtTree.goToNthChild( c );

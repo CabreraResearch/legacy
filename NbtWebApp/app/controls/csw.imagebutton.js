@@ -15,7 +15,7 @@
                 ButtonType: Csw.enums.imageButton_ButtonType.None,
                 Active: false,
                 AlternateText: '',
-                ID: '',
+                name: '',
                 cssclass: '',
                 Required: false,
                 onClick: null

@@ -15,17 +15,13 @@
                 var render = function () {
                     'use strict';
 
-                    cswPrivate.isMultiEditValid = function (value) {
-                        return cswPublic.data.isMulti() && value === Csw.enums.multiEditDefaultValue;
-                    };
-
                     cswPrivate.propVals = cswPublic.data.propData.values;
                     cswPrivate.parent = cswPublic.data.propDiv;
 
                     cswPrivate.precision = Csw.number(cswPrivate.propVals.precision, 6);
                     cswPrivate.ceilingVal = '999999999' + Csw.getMaxValueForPrecision(cswPrivate.precision);
-                    cswPrivate.selectedNodeId = (false === cswPublic.data.isMulti()) ? Csw.string(cswPrivate.propVals.relatednodeid).trim() : Csw.enums.multiEditDefaultValue;
-                    cswPrivate.selectedName = (false === cswPublic.data.isMulti()) ? Csw.string(cswPrivate.propVals.name).trim() : Csw.enums.multiEditDefaultValue;
+                    cswPrivate.selectedNodeId = Csw.string(cswPrivate.propVals.relatednodeid).trim();
+                    cswPrivate.selectedName =   Csw.string(cswPrivate.propVals.name).trim();
                     cswPrivate.nodeTypeId = Csw.string(cswPrivate.propVals.nodetypeid).trim();
                     cswPrivate.objectClassId = Csw.string(cswPrivate.propVals.objectclassid).trim();
                     cswPrivate.options = cswPrivate.propVals.options;
@@ -37,7 +33,7 @@
                     if (false === cswPrivate.fractional) {
                         cswPrivate.precision = 0;
                     }
-                    if (Csw.bool(cswPublic.data.propData.readonly)) {
+                    if (cswPublic.data.isReadOnly()) {
                         cswPublic.control = cswPrivate.parent.span({ text: cswPublic.data.propData.gestalt });
                     } else {
 
@@ -50,13 +46,11 @@
                             cswPrivate.selectedName = cswPublic.data.tabState.relatednodename;
                         }
 
-                        cswPublic.control = cswPrivate.parent.table({
-                            ID: Csw.makeId(cswPublic.data.ID, 'tbl')
-                        });
+                        cswPublic.control = cswPrivate.parent.table();
 
                         cswPrivate.numberTextBox = cswPublic.control.cell(1, cswPrivate.cellCol).numberTextBox({
-                            ID: cswPublic.data.ID + '_qty',
-                            value: (false === cswPublic.data.isMulti()) ? Csw.string(cswPrivate.propVals.value).trim() : Csw.enums.multiEditDefaultValue,
+                            name: cswPublic.data.name + '_qty',
+                            value: Csw.string(cswPrivate.propVals.value).trim(),
                             MinValue: Csw.number(cswPrivate.propVals.minvalue),
                             MaxValue: Csw.number(cswPrivate.propVals.maxvalue),
                             excludeRangeLimits: Csw.bool(cswPrivate.propVals.excludeRangeLimits),
@@ -77,9 +71,6 @@
                             cswPrivate.numberTextBox.clickOnEnter(cswPublic.data.saveBtn);
                         }
 
-                        if (cswPublic.data.isMulti()) {
-                            cswPrivate.relationships.push({ value: Csw.enums.multiEditDefaultValue, display: Csw.enums.multiEditDefaultValue });
-                        }
                         if (false === cswPublic.data.isRequired()) {
                             cswPrivate.relationships.push({ value: '', display: '', frac: true });
                         }
@@ -96,7 +87,7 @@
                             cswPrivate.relationships.push({ value: cswPrivate.selectedNodeId, display: cswPrivate.selectedName, frac: Csw.bool(cswPrivate.propVals.fractional) });
                         }
                         cswPrivate.selectBox = cswPublic.control.cell(1, cswPrivate.cellCol).select({
-                            ID: cswPublic.data.ID,
+                            name: cswPublic.data.name,
                             cssclass: 'selectinput',
                             onChange: function () {
                                 var val = cswPrivate.selectBox.val();
@@ -112,8 +103,8 @@
                             values: cswPrivate.relationships,
                             selected: cswPrivate.selectedNodeId
                         });
-                        if(Csw.isNullOrEmpty(cswPrivate.selectedNodeId)) {
-                            cswPublic.data.onPropChange({ nodeid: cswPrivate.selectBox.val() })
+                        if(cswPublic.data.doPropChangeDataBind() && Csw.isNullOrEmpty(cswPrivate.selectedNodeId)) {
+                            cswPublic.data.onPropChange({ nodeid: cswPrivate.selectBox.val() });
                         }
                         cswPrivate.cellCol += 1;
 
