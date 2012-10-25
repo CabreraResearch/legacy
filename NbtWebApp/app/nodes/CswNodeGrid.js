@@ -88,7 +88,7 @@
                                             selectedNodeIds: nodeids,
                                             selectedNodeKeys: nodekeys,
                                             nodenames: nodenames,
-                                            Multi: (nodeids.length > 1),
+                                            Multi: (nodeids.count() > 1),
                                             onEditNode: o.onEditNode,
                                             onEditView: o.onEditView,
                                             onRefresh:  o.onRefresh

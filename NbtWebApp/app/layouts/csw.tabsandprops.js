@@ -393,14 +393,16 @@
             };
 
             cswPrivate.setSelectedNodes = function() {
-                var nodeData = cswPrivate.nodeTreeCheck.checkedNodes();
-                //It's easier to nuke the collection than to remap it
-                cswPrivate.globalState.selectedNodeIds = Csw.delimitedString();
-                cswPrivate.globalState.selectedNodeKeys = Csw.delimitedString();
-                Csw.each(nodeData, function(thisNode) {
-                    cswPrivate.globalState.selectedNodeIds.add(thisNode.nodeid);
-                    cswPrivate.globalState.selectedNodeKeys.add(thisNode.nodekey);
-                });
+                if (false === Csw.isNullOrEmpty(cswPrivate.nodeTreeCheck)) {
+                    var nodeData = cswPrivate.nodeTreeCheck.checkedNodes();
+                    //It's easier to nuke the collection than to remap it
+                    cswPrivate.globalState.selectedNodeIds = Csw.delimitedString();
+                    cswPrivate.globalState.selectedNodeKeys = Csw.delimitedString();
+                    Csw.each(nodeData, function(thisNode) {
+                        cswPrivate.globalState.selectedNodeIds.add(thisNode.nodeid);
+                        cswPrivate.globalState.selectedNodeKeys.add(thisNode.nodekey);
+                    });
+                }
             };
 
             cswPublic.getSelectedNodes = function() {
