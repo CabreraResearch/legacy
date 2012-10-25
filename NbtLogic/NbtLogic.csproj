@@ -598,7 +598,6 @@
     <Compile Include="csw\Sequence\CswNbtSequenceManager.cs" />
     <Compile Include="csw\Sequence\CswNbtSequenceValue.cs" />
     <Compile Include="csw\Sequence\CswSequenceName.cs" />
-    <Compile Include="csw\ServiceDrivers\CswNbtSdGrid.cs" />
     <Compile Include="csw\ServiceDrivers\CswNbtSdInventoryLevelMgr.cs" />
     <Compile Include="csw\ServiceDrivers\CswNbtSdLocations.cs" />
     <Compile Include="csw\ServiceDrivers\CswNbtSdNode.cs" />
