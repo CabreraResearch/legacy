@@ -79,7 +79,12 @@ namespace ChemSW.Nbt.LandingPage
                 CswTableUpdate LandingPageUpdate = _CswNbtResources.makeCswTableUpdate( "MoveLandingPageItem", "landingpage" );
                 while( false == updateComplete )
                 {
-                    DataTable ExistingCellTable = LandingPageUpdate.getTable( "where display_row = " + Request.NewRow + " and display_col = " + Request.NewColumn );
+                    DataTable ExistingCellTable = LandingPageUpdate.getTable( 
+                        "where display_row = " + Request.NewRow + 
+                        " and display_col = " + Request.NewColumn +
+                        "and for_roleid = (select for_roleid from landingpage where landingpageid = " + Request.LandingPageId + ")" +
+                        "and for_actionid = (select for_actionid from landingpage where landingpageid = " + Request.LandingPageId + ")"
+                        );
                     if( ExistingCellTable.Rows.Count == 0 )
                     {
                         DataTable LandingPageTable = LandingPageUpdate.getTable( "landingpageid", Request.LandingPageId );
