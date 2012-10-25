@@ -10,7 +10,7 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Updates the schema for DDL changes
     /// </summary>
-    public class RunBeforeEveryExecutionOfUpdater_01b : CswUpdateSchemaTo
+    public class RunBeforeEveryExecutionOfUpdater_01OC : CswUpdateSchemaTo
     {
         public static string Title = "Pre-Script: OC";
 
@@ -207,7 +207,7 @@ namespace ChemSW.Nbt.Schema
 
         }//Update()
 
-    }//class RunBeforeEveryExecutionOfUpdater_01b
+    }//class RunBeforeEveryExecutionOfUpdater_01OC
 
 }//namespace ChemSW.Nbt.Schema
 

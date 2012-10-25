@@ -65,7 +65,7 @@ namespace ChemSW.Nbt.Schema
 
             #region PART 2 - ADD NAME PROPERTY TO REQUEST ITEM
 
-            // moved to RunBeforeEveryExecutionOfUpdater_01b
+            // moved to RunBeforeEveryExecutionOfUpdater_01OC
             //CswNbtMetaDataObjectClassProp nameOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( requestItemOC )
             //{
             //    PropName = "Name",
