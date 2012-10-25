@@ -379,16 +379,7 @@ namespace ChemSW.Nbt
                     //}//if there are relationships
 
 
-                    if( ( ( ThisView.Root.ChildRelationships.Count > 0 &&
-                            (
-                               ThisView.Root.ChildRelationships.Where( R => R.SecondType != NbtViewRelatedIdType.NodeTypeId ||
-                             _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.View, _CswNbtResources.MetaData.getNodeType( R.SecondId ), User ) ||
-                             _CswNbtResources.Permit.canAnyTab( CswNbtPermit.NodeTypePermission.View, _CswNbtResources.MetaData.getNodeType( R.SecondId ), User )
-                             ).Count() > 0 )
-                          ) || IncludeEmptyViews ) &&
-                        ThisView.IsFullyEnabled() &&
-                        ( IncludeEmptyViews || ThisView.ViewMode != NbtViewRenderingMode.Grid || null != ThisView.findFirstProperty() ) &&
-                        ( !SearchableOnly || ThisView.IsSearchable() ) )
+                    if( isVisible( ThisView, User, IncludeEmptyViews, SearchableOnly ) )
                     {
                         Ret.Add( ThisView.ViewId, ThisView );
                     }
@@ -408,6 +399,29 @@ namespace ChemSW.Nbt
             _CswNbtResources.logTimerResult( "CswNbtView.getVisibleViews() finished", VisibleViewsTimer.ElapsedDurationInSecondsAsString );
 
             return Ret;
+        }
+
+        /// <summary>
+        /// Checks to see if a view is visible to a given user
+        /// </summary>
+        public bool isVisible( CswNbtView View, ICswNbtUser User, bool IncludeEmptyViews, bool SearchableOnly )
+        {
+            return ((View.Root.ChildRelationships.Count > 0 &&
+                     (
+                         View.Root.ChildRelationships.Where(R => R.SecondType != NbtViewRelatedIdType.NodeTypeId ||
+                                                                 _CswNbtResources.Permit.canNodeType(
+                                                                     CswNbtPermit.NodeTypePermission.View,
+                                                                     _CswNbtResources.MetaData.getNodeType(R.SecondId),
+                                                                     User) ||
+                                                                 _CswNbtResources.Permit.canAnyTab(
+                                                                     CswNbtPermit.NodeTypePermission.View,
+                                                                     _CswNbtResources.MetaData.getNodeType(R.SecondId),
+                                                                     User)
+                             ).Count() > 0)
+                    ) || IncludeEmptyViews) &&
+                   View.IsFullyEnabled() &&
+                   (IncludeEmptyViews || View.ViewMode != NbtViewRenderingMode.Grid || null != View.findFirstProperty()) &&
+                   (!SearchableOnly || View.IsSearchable());
         }
 
         /// <summary>

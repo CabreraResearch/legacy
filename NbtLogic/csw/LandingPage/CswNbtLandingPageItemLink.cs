@@ -19,8 +19,7 @@ namespace ChemSW.Nbt.LandingPage
             {
                 CswNbtViewId NodeViewId = new CswNbtViewId( CswConvert.ToInt32( LandingPageRow["to_nodeviewid"].ToString() ) );
                 CswNbtView ThisView = _CswNbtResources.ViewSelect.restoreView( NodeViewId );
-                Dictionary<CswNbtViewId, CswNbtView> VisibleViews = _CswNbtResources.ViewSelect.getVisibleViews( string.Empty, _CswNbtResources.CurrentNbtUser, true, false, false, NbtViewRenderingMode.Any );
-                if( null != ThisView && ThisView.IsFullyEnabled() && VisibleViews.ContainsKey( ThisView.ViewId ) )
+                if( null != ThisView && ThisView.IsFullyEnabled() && ThisView.IsVisible() )
                 {
                     _ItemData.Text = LandingPageRow["displaytext"].ToString() != string.Empty ? LandingPageRow["displaytext"].ToString() : ThisView.ViewName;
 
