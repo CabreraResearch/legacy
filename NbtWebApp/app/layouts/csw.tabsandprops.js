@@ -22,8 +22,8 @@
                 globalState: {
                     currentNodeId: 'newnode',
                     currentNodeKey: '',
-                    selectedNodeKeys: [],
-                    selectedNodeIds: [],
+                    selectedNodeKeys: Csw.delimitedString(),
+                    selectedNodeIds: Csw.delimitedString(),
                     selectedPropIds: Csw.delimitedString(),
                     propertyData: null,
                     filterToPropId: '',
@@ -380,7 +380,7 @@
                 if (data) {
                     nodeid = Csw.string(data.nodeid);
                     var nodekey = data.nodekey;
-                    if (nodeid != cswPublic.getNodeId()) {
+                    if (nodeid !== cswPublic.getNodeId()) {
                         Csw.tryExec(cswPrivate.onNodeIdSet, nodeid);
                         cswPrivate.tabState.nodeid = nodeid;
                         cswPrivate.tabState.cswnbtnodekey = nodekey;
@@ -392,12 +392,19 @@
                 return nodeid;
             };
 
-            cswPrivate.setSelectedNodes = function(data) {
-
+            cswPrivate.setSelectedNodes = function() {
+                var nodeData = cswPrivate.nodeTreeCheck.checkedNodes();
+                //It's easier to just nuke the collection than to try to remap it
+                cswPrivate.globalState.selectedNodeIds = Csw.delimitedString();
+                cswPrivate.globalState.selectedNodeKeys = Csw.delimitedString();
+                Csw.each(nodeData, function(thisNode) {
+                    cswPrivate.globalState.selectedNodeIds.add(thisNode.nodeid);
+                    cswPrivate.globalState.selectedNodeKeys.add(thisNode.cswnbtnodekey);
+                });
             };
 
-            cswPublic.getSelectedNodes = function(data) {
-                return cswPrivate.globalState.selectedNodeIds.join(',');
+            cswPublic.getSelectedNodes = function() {
+                return cswPrivate.globalState.selectedNodeIds.string();
             };
 
             cswPrivate.addSelectedProp = function(propid) {
@@ -819,12 +826,11 @@
                             labelCell.setLabelText(propName, propData.required, propData.readonly);
                         }
 
-                        cswPrivate.globalState.checkBoxes['check_' + propid] = labelCell.input({
+                        cswPrivate.globalState.checkBoxes['check_' + propid] = labelCell.checkBox({
                             name: 'check_' + propid,
-                            type: Csw.enums.inputTypes.checkbox,
                             value: false, // Value --not defined?,
                             cssclass: cswPrivate.name + '_check',
-                            onChange: function() {
+                            onChange: function(val) {
                                 if(cswPrivate.globalState.checkBoxes['check_' + propid].val()) {
                                     cswPrivate.addSelectedProp(propid);
                                 } else {
@@ -1042,7 +1048,8 @@
 
             cswPublic.copy = function(onSuccess) {
                 if (cswPrivate.isMultiEdit()) {
-                    var nodeids = cswPrivate.nodeTreeCheck.checkedNodes();
+                    cswPrivate.setSelectedNodes();
+                    var nodeids = cswPublic.getSelectedNodes();
                     var propids = cswPublic.getSelectedProps();
                     if (nodeids.length > 0 && propids.length > 0) {
                         // apply the newly saved checked property values on this node to the checked nodes
@@ -1154,7 +1161,7 @@
                     return cswPrivate.globalState.viewid;
                 };
 
-                cswPublic.getTabs = function (nodeid, nodekey) {
+                cswPublic.resetTabs = function (nodeid, nodekey) {
                     if (false === Csw.isNullOrEmpty(nodeid)) {
                         cswPrivate.setNode({ nodeid: nodeid, nodekey: nodekey });
                     }
