@@ -839,8 +839,11 @@
                             }
                         });
                         cswPrivate.globalState.checkBoxes['check_' + propid].data('propid', propid);
-                        if (cswPrivate.isMultiEdit() && Csw.bool(propData.copyable)) {
+                        if (cswPrivate.isMultiEdit()) {
                             cswPrivate.globalState.checkBoxes['check_' + propid].show();
+                            if(false === Csw.bool(propData.copyable)) {
+                                cswPrivate.globalState.checkBoxes['check_' + propid].disable();
+                            }
                         } else {
                             cswPrivate.globalState.checkBoxes['check_' + propid].hide();
                         }
