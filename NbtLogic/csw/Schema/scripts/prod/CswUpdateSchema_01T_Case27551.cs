@@ -1,6 +1,7 @@
 ﻿using ChemSW.Nbt.csw.Dev;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
+using System.Collections.Generic;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -21,10 +22,22 @@ namespace ChemSW.Nbt.Schema
 
         public override void update()
         {
+            //part 1 - make Material Components Mixture server managed
             CswNbtMetaDataObjectClass materialComponentOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.MaterialComponentClass );
             CswNbtMetaDataObjectClassProp mixtureOCP = materialComponentOC.getObjectClassProp( CswNbtObjClassMaterialComponent.PropertyName.Mixture );
 
             _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( mixtureOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.servermanaged, true );
+
+            //part 3 - mark the Components View as Demo
+            List<CswNbtView> componentsViews = _CswNbtSchemaModTrnsctn.ViewSelect.restoreViews( "Components" );
+            foreach( CswNbtView componentsView in componentsViews )
+            {
+                if( componentsView.Visibility.Equals( NbtViewVisibility.Global ) && componentsView.Category.Equals( "Materials" ) )
+                {
+                    componentsView.IsDemo = true;
+                    componentsView.save();
+                }
+            }
         }
 
         //Update()
