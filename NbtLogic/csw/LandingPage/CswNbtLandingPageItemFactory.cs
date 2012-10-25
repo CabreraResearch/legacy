@@ -10,28 +10,24 @@ namespace ChemSW.Nbt.LandingPage
         public static CswNbtLandingPageItem makeLandingPageItem( CswNbtResources CswNbtResources, CswNbtLandingPageItemType LandingPageItemType )
         {
             CswNbtLandingPageItem Item;
-            if( CswNbtLandingPageItemType.Text == LandingPageItemType )
+            switch(LandingPageItemType)
             {
+                case CswNbtLandingPageItemType.Text:
                 Item = new CswNbtLandingPageItemText( CswNbtResources );
-            }
-            else if( CswNbtLandingPageItemType.Add == LandingPageItemType )
-            {
+                    break;
+                case CswNbtLandingPageItemType.Add:
                 Item = new CswNbtLandingPageItemAdd( CswNbtResources );
-            }
-            else if( CswNbtLandingPageItemType.Link == LandingPageItemType )
-            {
+                    break;
+                case CswNbtLandingPageItemType.Link:
                 Item = new CswNbtLandingPageItemLink( CswNbtResources );
-            }
-            else if( CswNbtLandingPageItemType.Tab == LandingPageItemType )
-            {
+                    break;
+                case CswNbtLandingPageItemType.Tab:
                 Item = new CswNbtLandingPageItemTab( CswNbtResources );
-            }
-            else if( CswNbtLandingPageItemType.Button == LandingPageItemType )
-            {
+                    break;
+                case CswNbtLandingPageItemType.Button:
                 Item = new CswNbtLandingPageItemButton( CswNbtResources );
-            }
-            else
-            {
+                    break;
+                default:
                 throw new CswDniException( ErrorType.Error,
                                            "Unhandled item type: " + LandingPageItemType,
                                            "CswNbtLandingPageItemFactory did not recognize item type: " + LandingPageItemType );

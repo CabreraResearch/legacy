@@ -2,9 +2,7 @@
 using ChemSW.Nbt.csw.Dev;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
-using ChemSW.Core;
 using ChemSW.Nbt.LandingPage;
-using System.Data;
 using System;
 
 namespace ChemSW.Nbt.Schema
@@ -35,7 +33,7 @@ namespace ChemSW.Nbt.Schema
 
             LandingPageData.Request Request = new LandingPageData.Request
             {
-                Type = CswNbtLandingPageItemType.Link.ToString(),
+                Type = CswNbtLandingPageItemType.Link,
                 ViewType = "Action",
                 PkValue = CreateMaterialActionId,
                 NodeTypeId = String.Empty,
@@ -58,7 +56,7 @@ namespace ChemSW.Nbt.Schema
             {
                 Request = new LandingPageData.Request
                 {
-                    Type = CswNbtLandingPageItemType.Button.ToString(),
+                    Type = CswNbtLandingPageItemType.Button,
                     ViewType = String.Empty,
                     PkValue = ReceiveProp.PropId.ToString(),
                     NodeTypeId = String.Empty,
@@ -82,7 +80,7 @@ namespace ChemSW.Nbt.Schema
             {
                 Request = new LandingPageData.Request
                 {
-                    Type = CswNbtLandingPageItemType.Button.ToString(),
+                    Type = CswNbtLandingPageItemType.Button,
                     ViewType = String.Empty,
                     PkValue = RequestProp.PropId.ToString(),
                     NodeTypeId = String.Empty,
@@ -105,7 +103,7 @@ namespace ChemSW.Nbt.Schema
             {
                 Request = new LandingPageData.Request
                 {
-                    Type = CswNbtLandingPageItemType.Add.ToString(),
+                    Type = CswNbtLandingPageItemType.Add,
                     ViewType = String.Empty,
                     PkValue = String.Empty,
                     NodeTypeId = SizeNt.NodeTypeId.ToString(),
@@ -131,7 +129,7 @@ namespace ChemSW.Nbt.Schema
                     {
                         Request = new LandingPageData.Request
                         {
-                            Type = CswNbtLandingPageItemType.Tab.ToString(),
+                            Type = CswNbtLandingPageItemType.Tab,
                             ViewType = "View",
                             PkValue = GHSTab.TabId.ToString(),
                             NodeTypeId = MaterialNt.NodeTypeId.ToString(),
