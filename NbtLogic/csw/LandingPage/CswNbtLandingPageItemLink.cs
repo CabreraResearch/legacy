@@ -27,22 +27,7 @@ namespace ChemSW.Nbt.LandingPage
                     _ItemData.ViewMode = ThisView.ViewMode.ToString().ToLower();
                     if( ThisView.Root.ChildRelationships[0] != null )
                     {
-                        if( ThisView.Root.ChildRelationships[0].SecondType == NbtViewRelatedIdType.NodeTypeId )
-                        {
-                            CswNbtMetaDataNodeType RootNT = _CswNbtResources.MetaData.getNodeType( ThisView.Root.ChildRelationships[0].SecondId );
-                            if( RootNT != null )
-                            {
-                                _ItemData.ButtonIcon = CswNbtMetaDataObjectClass.IconPrefix100 + RootNT.IconFileName;
-                            }
-                        }
-                        else if( ThisView.Root.ChildRelationships[0].SecondType == NbtViewRelatedIdType.ObjectClassId )
-                        {
-                            CswNbtMetaDataObjectClass RootOC = _CswNbtResources.MetaData.getObjectClass( ThisView.Root.ChildRelationships[0].SecondId );
-                            if( RootOC != null )
-                            {
-                                _ItemData.ButtonIcon = CswNbtMetaDataObjectClass.IconPrefix100 + RootOC.IconFileName;
-                            }
-                        }
+                        _ItemData.ButtonIcon = CswNbtMetaDataObjectClass.IconPrefix100 + ThisView.Root.ChildRelationships[0].SecondIconFileName;
                     }
                     _ItemData.Type = "view";
                 }
