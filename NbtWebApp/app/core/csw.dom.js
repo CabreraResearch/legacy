@@ -277,7 +277,7 @@
                     } else {
                         //No HTML5 for us, keep it in memory
                         cswPrivate.data[propName] = value;
-                        cswPublic.$.data(propName, val);
+                        cswPublic.$.data(propName, value);
                     }
                 }
                 return ret;
