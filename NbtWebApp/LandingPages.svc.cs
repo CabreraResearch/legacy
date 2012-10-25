@@ -20,7 +20,7 @@ namespace NbtWebApp
         private HttpContext _Context = HttpContext.Current;
 
         [OperationContract]
-        [WebInvoke( Method = "POST" )]
+        [WebInvoke( Method = "POST", ResponseFormat = WebMessageFormat.Json)]
         [Description( "Get all of the LandingPage items associated with a given RoleId or ActionId" )]
         [FaultContract( typeof( FaultException ) )]
         public CswNbtWebServiceLandingPageItems.LandingPageItemsReturn getItems( LandingPageData.Request Request )
@@ -39,7 +39,7 @@ namespace NbtWebApp
         }
 
         [OperationContract]
-        [WebInvoke( Method = "POST" )]
+        [WebInvoke( Method = "POST", ResponseFormat = WebMessageFormat.Json )]
         [Description( "Remove an item from the LandingPage" )]
         [FaultContract( typeof( FaultException ) )]
         public CswNbtWebServiceLandingPageItems.LandingPageItemsReturn deleteItem( LandingPageData.Request Request )
@@ -58,7 +58,7 @@ namespace NbtWebApp
         }
 
         [OperationContract]
-        [WebInvoke( Method = "POST" )]
+        [WebInvoke( Method = "POST", ResponseFormat = WebMessageFormat.Json )]
         [Description( "Move a LandingPage item to a new cell on the LandingPage" )]
         [FaultContract( typeof( FaultException ) )]
         public CswNbtWebServiceLandingPageItems.LandingPageItemsReturn moveItem( LandingPageData.Request Request )
@@ -77,7 +77,7 @@ namespace NbtWebApp
         }
 
         [OperationContract]
-        [WebInvoke( Method = "POST" )]
+        [WebInvoke( Method = "POST", ResponseFormat = WebMessageFormat.Json )]
         [Description( "Add a new item to the LandingPage" )]
         [FaultContract( typeof( FaultException ) )]
         public CswNbtWebServiceLandingPageItems.LandingPageItemsReturn addItem( LandingPageData.Request Request )
