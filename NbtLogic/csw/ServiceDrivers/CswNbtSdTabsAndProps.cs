@@ -455,9 +455,9 @@ namespace ChemSW.Nbt.ServiceDrivers
 
             PropObj["displayrow"] = DisplayRow.ToString();
             PropObj["displaycol"] = Column.ToString();
-            PropObj["tabgroup"] = TabGroup.ToString();
-            PropObj["required"] = Prop.IsRequired.ToString().ToLower();
-            PropObj["copyable"] = Prop.IsCopyable().ToString().ToLower();
+            PropObj["tabgroup"] = TabGroup;
+            PropObj["required"] = Prop.IsRequired;
+            PropObj["copyable"] = Prop.IsCopyable();
 
             bool ShowPropertyName = false == ( FieldType == CswNbtMetaDataFieldType.NbtFieldType.Image ||
                                                FieldType == CswNbtMetaDataFieldType.NbtFieldType.Button ||
