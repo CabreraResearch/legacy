@@ -52,6 +52,12 @@ namespace ChemSW.Nbt.ObjClasses
                     throw new CswDniException( ErrorType.Warning, "Constituent cannot be the same as Mixture", "" );
                 }
             }
+            else if( false == IsTemp )
+            {
+                throw new CswDniException( ErrorType.Warning,
+                    "Material Components must be added from a Chemical.",
+                    "Mixture is a server managed property and in this context no material can be discerned to set as the Mixture." );
+            }
             _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
         }//beforeWriteNode()
 
