@@ -917,7 +917,7 @@
                         },
                         success: function (data) {
                             div.$.dialog('close');
-                            Csw.tryExec(o.onSuccess);
+                            Csw.tryExec(o.onSuccess, data);
                         },
                         error: saveBtn.enable
                     }); // ajax
