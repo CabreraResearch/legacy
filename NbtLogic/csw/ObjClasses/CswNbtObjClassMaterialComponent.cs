@@ -52,6 +52,12 @@ namespace ChemSW.Nbt.ObjClasses
                     throw new CswDniException( ErrorType.Warning, "Constituent cannot be the same as Mixture", "" );
                 }
             }
+            else if( false == IsTemp )
+            {
+                throw new CswDniException( ErrorType.Warning,
+                    "Material Components must be added from a Chemical.",
+                    "Mixture is a server managed property and in this context no material can be discerned to set as the Mixture." );
+            }
             _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
         }//beforeWriteNode()
 
@@ -128,7 +134,7 @@ namespace ChemSW.Nbt.ObjClasses
          */
         private void _recalculateRegListMembership()
         {
-            if( false == IsTemp )
+            if( false == IsTemp && null != Constituent.RelatedNodeId && null != Mixture.RelatedNodeId )
             {
                 CswCommaDelimitedString parents = new CswCommaDelimitedString();
                 CswNbtObjClassMaterial constituentNode = _CswNbtResources.Nodes.GetNode( Constituent.RelatedNodeId );
