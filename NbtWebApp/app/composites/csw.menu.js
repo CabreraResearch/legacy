@@ -44,7 +44,7 @@
                     Csw.each(nodechecks, function(thisObj) {
                         ret[thisObj.nodeid] = {
                             nodeid: thisObj.nodeid,
-                            cswnbtnodekey: thisObj.cswnbtnodekey,
+                            nodekey: thisObj.nodekey,
                             nodename: thisObj.nodename
                         };
                     });

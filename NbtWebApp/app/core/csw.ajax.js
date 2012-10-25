@@ -71,7 +71,7 @@
                 },
                 failure: o.onloginfail,
                 usernodeid: result.nodeid,
-                usernodekey: result.cswnbtnodekey,
+                usernodekey: result.nodekey,
                 passwordpropid: result.passwordpropid
             });
         }

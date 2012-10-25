@@ -684,7 +684,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                     if( AllSucceeded && null != RetNbtNodeKey )
                     {
                         string RetNodeKey = RetNbtNodeKey.ToString();
-                        ret["cswnbtnodekey"] = RetNodeKey;
+                        ret["nodekey"] = RetNodeKey;
                     } //if( AllSucceeded && null != RetNbtNodeKey )
                     else
                     {

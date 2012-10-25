@@ -66,7 +66,7 @@
                     name: cswPrivate.name + '_grid',
                     viewid: viewid,
                     nodeid: cswPrivate.nodeid,
-                    cswnbtnodekey: cswPrivate.cswnbtnodekey,
+                    nodekey: cswPrivate.nodekey,
                     readonly: cswPrivate.ReadOnly,
                     canSelectRow: cswPrivate.canSelectRow,
                     forceFit: cswPrivate.forceFit,
@@ -99,7 +99,7 @@
                             urlMethod: 'getMainMenu', 
                             data: {
                                 ViewId: viewid,
-                                SafeNodeKey: cswPrivate.cswnbtnodekey,
+                                SafeNodeKey: cswPrivate.nodekey,
                                 NodeTypeId: '',
                                 PropIdAttr: cswPrivate.name,
                                 LimitMenuTo: 'Add',

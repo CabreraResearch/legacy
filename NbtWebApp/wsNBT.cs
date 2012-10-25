@@ -450,7 +450,7 @@ namespace ChemSW.Nbt.WebServices
                     FakeKey.NodeSpecies = NodeSpecies.Plain;
                     FakeKey.NodeTypeId = CurrentUser.UserNodeTypeId;
                     FakeKey.ObjectClassId = CurrentUser.UserObjectClassId;
-                    ReturnVal.Add( new JProperty( "cswnbtnodekey", FakeKey.ToString() ) );
+                    ReturnVal.Add( new JProperty( "nodekey", FakeKey.ToString() ) );
                     CswPropIdAttr PasswordPropIdAttr = new CswPropIdAttr( CurrentUser.UserId, CurrentUser.PasswordPropertyId );
                     ReturnVal.Add( new JProperty( "passwordpropid", PasswordPropIdAttr.ToString() ) );
                 }

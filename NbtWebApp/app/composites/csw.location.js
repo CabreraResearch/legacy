@@ -138,7 +138,7 @@
                                 cswPublic.locationTree.init({
                                     viewid: cswPrivate.viewId,
                                     nodeid: cswPrivate.nodeId,
-                                    cswnbtnodekey: cswPrivate.nodeKey,
+                                    nodekey: cswPrivate.nodeKey,
                                     IncludeInQuickLaunch: false,
                                     DefaultSelect: Csw.enums.nodeTree_DefaultSelect.root.name
                                 });

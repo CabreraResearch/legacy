@@ -19,7 +19,7 @@
                 showempty: false,
                 name: '',
                 nodeid: '',
-                cswnbtnodekey: '',
+                nodekey: '',
                 reinit: false,
                 forceFit: false,
                 EditMode: Csw.enums.editMode.Edit,
@@ -56,7 +56,7 @@
                                         urlMethod: o.runGridUrl,
                                         data: {
                                             ViewId: o.viewid,
-                                            IncludeNodeKey: o.cswnbtnodekey,
+                                            IncludeNodeKey: o.nodekey,
                                             IncludeInQuickLaunch: o.includeInQuickLaunch,
                                             ForReport: forReporting
                                         }
@@ -97,7 +97,7 @@
                                         Csw.each(rows, function(row) {
                                             nodes[row.nodeid] = {
                                                 nodeid: row.nodeid,
-                                                cswnbtnodekey: row.nodekey,
+                                                nodekey: row.nodekey,
                                                 nodename: row.nodename
                                             };
                                         });

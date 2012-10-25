@@ -11,7 +11,7 @@
                 viewid: '',
                 name: '',
                 nodeid: '',
-                cswnbtnodekey: '',
+                nodekey: '',
                 EditMode: Csw.enums.editMode.Edit,
                 onEditNode: null,
                 onDeleteNode: null,
@@ -400,7 +400,7 @@
                         data: {
                             ViewId: cswPrivate.viewid,
                             NodeId: cswPrivate.nodeid,
-                            NodeKey: cswPrivate.cswnbtnodekey
+                            NodeKey: cswPrivate.nodekey
                         },
                         success: function (result) {
                             cswPrivate.tabledata = result;

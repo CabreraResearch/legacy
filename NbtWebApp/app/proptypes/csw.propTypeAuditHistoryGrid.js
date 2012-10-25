@@ -17,7 +17,7 @@
                         cswPublic.control = Csw.actions.auditHistory(cswPublic.data.propDiv, {
                             name: cswPublic.data.name,
                             nodeid: cswPublic.data.tabState.nodeid,
-                            cswnbtnodekey: cswPublic.data.tabState.cswnbtnodekey,
+                            nodekey: cswPublic.data.tabState.nodekey,
                             EditMode: cswPublic.data.tabState.EditMode,
                             width: '100%',
                             allowEditRow: (cswPublic.data.tabState.EditMode !== Csw.enums.editMode.PrintReport),
@@ -25,7 +25,7 @@
                                 Csw.publish('initPropertyTearDown');
                                 $.CswDialog('EditNodeDialog', {
                                     nodeids: [cswPublic.data.tabState.nodeid],
-                                    nodekeys: [cswPublic.data.tabState.cswnbtnodekey],
+                                    nodekeys: [cswPublic.data.tabState.nodekey],
                                     onEditNode: cswPublic.data.onEditNode,
                                     date: date
                                 });

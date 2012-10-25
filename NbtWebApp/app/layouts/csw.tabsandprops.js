@@ -383,7 +383,7 @@
                     if (nodeid !== cswPublic.getNodeId()) {
                         Csw.tryExec(cswPrivate.onNodeIdSet, nodeid);
                         cswPrivate.tabState.nodeid = nodeid;
-                        cswPrivate.tabState.cswnbtnodekey = nodekey;
+                        cswPrivate.tabState.nodekey = nodekey;
                         cswPrivate.globalState.currentNodeId = nodeid;
                         cswPrivate.globalState.currentNodeKey = nodekey;
                     }
@@ -394,12 +394,12 @@
 
             cswPrivate.setSelectedNodes = function() {
                 var nodeData = cswPrivate.nodeTreeCheck.checkedNodes();
-                //It's easier to just nuke the collection than to try to remap it
+                //It's easier to nuke the collection than to remap it
                 cswPrivate.globalState.selectedNodeIds = Csw.delimitedString();
                 cswPrivate.globalState.selectedNodeKeys = Csw.delimitedString();
                 Csw.each(nodeData, function(thisNode) {
                     cswPrivate.globalState.selectedNodeIds.add(thisNode.nodeid);
-                    cswPrivate.globalState.selectedNodeKeys.add(thisNode.cswnbtnodekey);
+                    cswPrivate.globalState.selectedNodeKeys.add(thisNode.nodekey);
                 });
             };
 
@@ -433,6 +433,7 @@
                 /// Get the current NodeKey
                 /// </summary>
                 var nodekey = Csw.string(cswPrivate.globalState.currentNodeKey);
+                cswPrivate.tabState.nodekey = nodekey;
                 return nodekey;
             };
 
@@ -1016,7 +1017,7 @@
                             fieldtype: thisProp.fieldtype,
                             nodeid: cswPublic.getNodeId(),
                             Multi: cswPrivate.isMultiEdit(),
-                            cswnbtnodekey: cswPublic.getNodeKey()
+                            nodekey: cswPublic.getNodeKey()
                         };
 
                         var cellSet = cswPrivate.getCellSet(layoutTable, thisProp.tabgroup, thisProp.displayrow, thisProp.displaycol);
@@ -1109,7 +1110,7 @@
                                 cswPrivate.enableSaveBtn();
                                 var onSaveSuccess = function () {
                                     var onSaveRefresh = function () {
-                                        Csw.tryExec(cswPrivate.onSave, successData.nodeid, successData.cswnbtnodekey, cswPrivate.tabcnt, successData.nodename);
+                                        Csw.tryExec(cswPrivate.onSave, successData.nodeid, successData.nodekey, cswPrivate.tabcnt, successData.nodename);
                                         Csw.tryExec(onSuccess);
                                     };
 
@@ -1154,7 +1155,7 @@
                         cswPrivate.linkDiv.a({
                             text: 'As Report',
                             onClick: function () {
-                                Csw.openPopup('NodeReport.html?nodeid=' + cswPublic.getNodeId() + '&cswnbtnodekey=' + cswPublic.getNodeKey());
+                                Csw.openPopup('NodeReport.html?nodeid=' + cswPublic.getNodeId() + '&nodekey=' + cswPublic.getNodeKey());
                             }
                         });
                     }

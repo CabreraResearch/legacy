@@ -192,7 +192,7 @@
                     cswPublic.propDiv.data({
                         nodeid: cswPublic.tabState.nodeid,
                         propid: cswPublic.propid,
-                        cswnbtnodekey: cswPublic.tabState.cswnbtnodekey
+                        nodekey: cswPublic.tabState.nodekey
                     });
                 }
 

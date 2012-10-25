@@ -6,15 +6,15 @@
 
     var previews = {};
     Csw.nodeHoverIn = Csw.nodeHoverIn || 
-        Csw.register('nodeHoverIn', function (event, nodeid, cswnbtnodekey, delay) {
+        Csw.register('nodeHoverIn', function (event, nodeid, nodekey, delay) {
             'use strict';
             var previewopts = {
                 name: nodeid + '_preview',
                 nodeid: nodeid,
-                cswnbtnodekey: cswnbtnodekey,
+                nodekey: nodekey,
                 eventArg: event
             };
-            if (false === Csw.isNullOrEmpty(nodeid) || false === Csw.isNullOrEmpty(cswnbtnodekey)) {
+            if (false === Csw.isNullOrEmpty(nodeid) || false === Csw.isNullOrEmpty(nodekey)) {
                 if (Csw.number(delay, -1) >= 0) {
                     previewopts.openDelay = delay;
                 }
@@ -41,7 +41,7 @@
             var cswPrivate = {
                 name: '',
                 nodeid: '',
-                cswnbtnodekey: '',
+                nodekey: '',
                 eventArg: {},
                 openDelay: 1500,
                 closeDelay: 500
@@ -79,7 +79,7 @@
                     name: cswPrivate.name + 'tabs',
                     globalState: {
                         currentNodeId: cswPrivate.nodeid,
-                        currentNodeKey: cswPrivate.cswnbtnodekey,
+                        currentNodeKey: cswPrivate.nodekey,
                         ShowAsReport: false
                     },
                     tabState: {

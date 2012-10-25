@@ -252,9 +252,9 @@
                     EditMode: Csw.enums.editMode.Add
                 },
                 ReloadTabOnSave: false,
-                onSave: function (nodeid, cswnbtnodekey, tabcount, nodename) {
+                onSave: function (nodeid, nodekey, tabcount, nodename) {
                     cswPublic.div.$.dialog('close');
-                    Csw.tryExec(cswPrivate.onAddNode, nodeid, cswnbtnodekey, nodename);
+                    Csw.tryExec(cswPrivate.onAddNode, nodeid, nodekey, nodename);
                     Csw.tryExec(cswPrivate.onSaveImmediate);
                 },
                 onInitFinish: function () {
@@ -309,7 +309,7 @@
                                 relatednodeid: data.nodeid
                             },
                             ReloadTabOnSave: false,
-                            onSave: function(nodeid, cswnbtnodekey, tabcount, nodename) {
+                            onSave: function(nodeid, nodekey, tabcount, nodename) {
                                 Csw.ajax.post({
                                     urlMethod: 'GetFeedbackCaseNumber',
                                     data: { nodeId: nodeid },
@@ -330,7 +330,7 @@
                                             enabledText: 'OK',
                                             onClick: closeDialog
                                         });
-                                        Csw.tryExec(cswDlgPrivate.onAddNode, nodeid, cswnbtnodekey, nodename);
+                                        Csw.tryExec(cswDlgPrivate.onAddNode, nodeid, nodekey, nodename);
                                     }
                                 });
                             },
@@ -592,7 +592,7 @@
                     Csw.actions.auditHistory(table.cell(1, 1), {
                         name: cswDlgPrivate.nodeids[0] + '_history',
                         nodeid: cswDlgPrivate.nodeids[0],
-                        cswnbtnodekey: cswDlgPrivate.nodekeys[0],
+                        nodekey: cswDlgPrivate.nodekeys[0],
                         onEditNode: cswDlgPrivate.onEditNode,
                         JustDateColumn: true,
                         selectedDate: cswDlgPrivate.date,
@@ -660,7 +660,7 @@
                 'nodename': '',
                 'nodeid': '',
                 'nodetypeid': '',
-                'cswnbtnodekey': '',
+                'nodekey': '',
                 'onCopyNode': function () { }
             };
 
@@ -689,7 +689,7 @@
                 urlMethod: 'checkQuota',
                 data: {
                     NodeTypeId: Csw.string(cswPrivate.nodetypeid),
-                    NodeKey: Csw.string(cswPrivate.cswnbtnodekey)
+                    NodeKey: Csw.string(cswPrivate.nodekey)
                 },
                 success: function (data) {
                     if (Csw.bool(data.result)) {
@@ -704,7 +704,7 @@
                             onClick: function () {
                                 Csw.copyNode({
                                     'nodeid': cswPrivate.nodeid,
-                                    'nodekey': Csw.string(cswPrivate.nodekey, cswPrivate.cswnbtnodekey[0]),
+                                    'nodekey': Csw.string(cswPrivate.nodekey, cswPrivate.nodekey[0]),
                                     'onSuccess': function (nodeid, nodekey) {
                                         cswPublic.close();
                                         cswPrivate.onCopyNode(nodeid, nodekey);
@@ -761,7 +761,7 @@
             var n = 0;
             Csw.each(cswPrivate.nodes, function (nodeObj) {
                 cswPrivate.nodeids[n] = nodeObj.nodeid;
-                cswPrivate.cswnbtnodekeys[n] = nodeObj.cswnbtnodekey;
+                cswPrivate.cswnbtnodekeys[n] = nodeObj.nodekey;
                 cswPublic.div.span({ text: nodeObj.nodename }).css({ 'padding-left': '10px' }).br();
                 n += 1;
             });

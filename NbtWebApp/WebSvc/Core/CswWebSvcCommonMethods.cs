@@ -150,7 +150,7 @@ namespace ChemSW.WebSvc
                                 NodeTypeId = CurrentUser.UserNodeTypeId,
                                 ObjectClassId = CurrentUser.UserObjectClassId
                             };
-                            SvcReturn.Add( new JProperty( "cswnbtnodekey", FakeKey.ToString() ) );
+                            SvcReturn.Add( new JProperty( "nodekey", FakeKey.ToString() ) );
                             CswPropIdAttr PasswordPropIdAttr = new CswPropIdAttr( CurrentUser.UserId, CurrentUser.PasswordPropertyId );
                             SvcReturn.Add( new JProperty( "passwordpropid", PasswordPropIdAttr.ToString() ) );
                         }
