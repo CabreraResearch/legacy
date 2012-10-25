@@ -293,11 +293,17 @@ namespace ChemSW.Nbt.ObjClasses
             }
 
 
-            //case 27793: these are the properties that a user cannot edit
+            //case 27793: these are the properties that a user cannot edit -- not even his own
             if( ( null != _CswNbtResources.CurrentNbtUser ) && ( false == _CswNbtResources.CurrentNbtUser.IsAdministrator() ) )
             {
                 this.UsernameProperty.setReadOnly( true, false );
                 this.Role.setReadOnly( true, false );
+            }
+
+            //case 27793: Prevent non-adminsitrators from editing paswords, except their own
+            if( ( null != _CswNbtResources.CurrentNbtUser ) && ( this.NodeId != _CswNbtResources.CurrentNbtUser.UserId ) && ( false == _CswNbtResources.CurrentNbtUser.IsAdministrator() ) )
+            {
+                this.PasswordProperty.setReadOnly( true, false );
             }
 
             _CswNbtObjClassDefault.afterPopulateProps();

@@ -494,7 +494,7 @@ namespace ChemSW.Nbt.Security
                             ret = ( null == MetaDataTab || canTab( Permission, _CswNbtPermitInfo.NodeType, MetaDataTab ) );
                             if( ret )
                             {
-                                CswNbtMetaDataObjectClassProp OCP = MetaDataProp.getObjectClassProp();
+                                //CswNbtMetaDataObjectClassProp OCP = MetaDataProp.getObjectClassProp();
 
                                 //// case 8218 - Certain properties on the user's preferences are not allowed to be edited
                                 //if( _CswNbtPermitInfo.NodeType.getObjectClass().ObjectClass == NbtObjectClass.UserClass &&
@@ -509,15 +509,15 @@ namespace ChemSW.Nbt.Security
                                 //}
 
                                 // Only admins can change other people's passwords
-                                if( ret &&
-                                    _CswNbtPermitInfo.NodeType.getObjectClass().ObjectClass == NbtObjectClass.UserClass &&
-                                    false == _CswNbtPermitInfo.User.IsAdministrator() &&
-                                    ( null != NodePropWrapper && _CswNbtPermitInfo.User.UserId != NodePropWrapper.NodeId ) &&
-                                    OCP != null &&
-                                    OCP.PropName == CswNbtObjClassUser.PropertyName.Password )
-                                {
-                                    ret = false;
-                                }
+                                //if( ret &&
+                                //    _CswNbtPermitInfo.NodeType.getObjectClass().ObjectClass == NbtObjectClass.UserClass &&
+                                //    false == _CswNbtPermitInfo.User.IsAdministrator() &&
+                                //    ( null != NodePropWrapper && _CswNbtPermitInfo.User.UserId != NodePropWrapper.NodeId ) &&
+                                //    OCP != null &&
+                                //    OCP.PropName == CswNbtObjClassUser.PropertyName.Password )
+                                //{
+                                //    ret = false;
+                                //}
                             }
                         } //if pre-reqs are satisfied
                     }
