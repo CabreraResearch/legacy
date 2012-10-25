@@ -414,7 +414,7 @@ namespace ChemSW.Nbt.WebServices
             try
             {
                 _initResources();
-                
+
                 AuthenticationStatus AuthenticationStatus = _doCswAdminAuthenticate( PropId );
                 ReturnVal["username"] = CswNbtObjClassUser.ChemSWAdminUsername;
 
@@ -2085,7 +2085,7 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string copyPropValues( string SourceNodeKey, string[] CopyNodeIds, string[] CopyNodeKeys, string[] PropIds )
+        public string copyPropValues( string SourceNodeId, string CopyNodeIds, string PropIds )
         {
             JObject ReturnVal = new JObject();
 
@@ -2098,7 +2098,7 @@ namespace ChemSW.Nbt.WebServices
                 if( AuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
                     var ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources, _CswNbtStatisticsEvents );
-                    ReturnVal = ws.copyPropValues( SourceNodeKey, CopyNodeIds, CopyNodeKeys, PropIds );
+                    ReturnVal = ws.copyPropValues( SourceNodeId, CopyNodeIds, PropIds );
                 }
 
                 _deInitResources();
