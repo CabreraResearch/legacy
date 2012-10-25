@@ -22,8 +22,9 @@
                 globalState: {
                     currentNodeId: 'newnode',
                     currentNodeKey: '',
-                    nodekeys: [],
-                    nodeids: [],
+                    selectedNodeKeys: [],
+                    selectedNodeIds: [],
+                    selectedPropIds: Csw.delimitedString(),
                     propertyData: null,
                     filterToPropId: '',
                     title: '',
@@ -365,6 +366,9 @@
             };
 
             cswPrivate.isMultiEdit = function () {
+                /// <summary>
+                /// True if Multi Edit is enabled
+                /// </summary>
                 return cswPrivate.tabState.Multi;
             };
 
@@ -386,6 +390,26 @@
                     delete data.nodeid;
                 }
                 return nodeid;
+            };
+
+            cswPrivate.setSelectedNodes = function(data) {
+
+            };
+
+            cswPublic.getSelectedNodes = function(data) {
+                return cswPrivate.globalState.selectedNodeIds.join(',');
+            };
+
+            cswPrivate.addSelectedProp = function(propid) {
+                cswPrivate.globalState.selectedPropIds.add(propid);
+            };
+
+            cswPrivate.dropSelectedProp = function(propid) {
+                cswPrivate.globalState.selectedPropIds.remove(propid);
+            };
+
+            cswPublic.getSelectedProps = function() {
+                return cswPrivate.globalState.selectedPropIds.string();
             };
 
             cswPublic.getNodeId = function () {
@@ -799,7 +823,14 @@
                             name: 'check_' + propid,
                             type: Csw.enums.inputTypes.checkbox,
                             value: false, // Value --not defined?,
-                            cssclass: cswPrivate.name + '_check'
+                            cssclass: cswPrivate.name + '_check',
+                            onChange: function() {
+                                if(cswPrivate.globalState.checkBoxes['check_' + propid].val()) {
+                                    cswPrivate.addSelectedProp(propid);
+                                } else {
+                                    cswPrivate.dropSelectedProp(propid);
+                                }
+                            }
                         });
                         cswPrivate.globalState.checkBoxes['check_' + propid].data('propid', propid);
                         if (cswPrivate.isMultiEdit() && Csw.bool(propData.copyable)) {
@@ -984,7 +1015,6 @@
                         propOpt.propCell = cswPrivate.getPropertyCell(cellSet);
                         propOpt.propDiv = propOpt.propCell.children('div').first();
 
-                        //$.CswFieldTypeFactory('save', propOpt);
                         if (propOpt.propData.wasmodified) {
                             propIds.push(propOpt.propData.id);
                         }
@@ -1006,93 +1036,67 @@
                 });
             }; // updatePropJsonFromLayoutTable()
 
+            //#endregion Properties
 
+            //#region commit
 
-            cswPublic.save = Csw.method(function (tabContentDiv, tabid, onSuccess, async) {
-                'use strict';
-                if (cswPrivate.isMultiEdit() || cswPublic.isFormValid()) {
-                    var propIds = cswPrivate.updatePropJsonFromLayoutTable();
-
-                    var sourcenodekey = cswPublic.getNodeKey();
-                    async = Csw.bool(async, true) && false === cswPrivate.isMultiEdit();
-                    cswPrivate.ajax.save = Csw.ajax.post({
-                        watchGlobal: cswPrivate.AjaxWatchGlobal,
-                        urlMethod: cswPrivate.urls.SavePropUrlMethod,
-                        async: async,
-                        data: {
-                            EditMode: cswPrivate.tabState.EditMode,
-                            NodeId: cswPublic.getNodeId(),
-                            SafeNodeKey: cswPublic.getNodeKey(),
-                            TabId: Csw.string(tabid),
-                            NodeTypeId: cswPrivate.tabState.nodetypeid,
-                            NewPropsJson: Csw.serialize(cswPrivate.globalState.propertyData),
-                            IdentityTabJson: Csw.serialize(cswPrivate.IdentityTab),
-                            ViewId: Csw.cookie.get(Csw.cookie.cookieNames.CurrentViewId)
-                        },
-                        success: function (successData) {
-                            var doSave = true;
-                            var dataJson = {
-                                SourceNodeKey: sourcenodekey,
-                                CopyNodeIds: [],
-                                CopyNodeKeys: [],
-                                PropIds: []
-                            };
-
-                            function copyNodeProps() {
-                                cswPrivate.ajax.copy = Csw.ajax.post({
-                                    watchGlobal: cswPrivate.AjaxWatchGlobal,
-                                    urlMethod: cswPrivate.urls.CopyPropValuesUrlMethod,
-                                    data: dataJson,
-                                    success: function (data) {
-                                        if (false === Csw.isNullOrEmpty(data.batch)) {
-                                            $.CswDialog('BatchOpDialog', {
-                                                opname: 'multi-edit',
-                                                onViewBatchOperation: function () {
-                                                    Csw.tryExec(cswPrivate.Refresh, {
-                                                        nodeid: data.batch,
-                                                        viewid: '',
-                                                        viewmode: 'tree',
-                                                        IncludeNodeRequired: true
-                                                    });
-                                                }
+            cswPublic.copy = function(onSuccess) {
+                if (cswPrivate.isMultiEdit()) {
+                    var nodeids = cswPrivate.nodeTreeCheck.checkedNodes();
+                    var propids = cswPublic.getSelectedProps();
+                    if (nodeids.length > 0 && propids.length > 0) {
+                        // apply the newly saved checked property values on this node to the checked nodes
+                        cswPrivate.ajax.copy = Csw.ajax.post({
+                            watchGlobal: cswPrivate.AjaxWatchGlobal,
+                            urlMethod: cswPrivate.urls.CopyPropValuesUrlMethod,
+                            data: {
+                                SourceNodeId: cswPublic.getNodeId(),
+                                CopyNodeIds: nodeids,
+                                PropIds: propids
+                            },
+                            success: function(data) {
+                                if (false === Csw.isNullOrEmpty(data.batch)) {
+                                    $.CswDialog('BatchOpDialog', {
+                                        opname: 'multi-edit',
+                                        onViewBatchOperation: function() {
+                                            Csw.tryExec(cswPrivate.Refresh, {
+                                                nodeid: data.batch,
+                                                viewid: '',
+                                                viewmode: 'tree',
+                                                IncludeNodeRequired: true
                                             });
                                         }
-                                    }
-                                }); // ajax						        
-                            }
-
-                            if (cswPrivate.isMultiEdit()) {
-                                // apply the newly saved checked property values on this node to the checked nodes
-                                var nodechecks = cswPrivate.nodeTreeCheck.checkedNodes();
-                                var $propchecks = $('.' + cswPrivate.name + '_check:checked');
-
-                                if (nodechecks.length > 0 && $propchecks.length > 0) {
-                                    Csw.each(nodechecks, function (thisObj) {
-                                        dataJson.CopyNodeIds.push(thisObj.nodeid);
                                     });
-
-                                    $propchecks.each(function () {
-                                        var propid = $(this).attr('propid');
-                                        dataJson.PropIds.push(propid);
-                                    });
-                                    copyNodeProps();
-                                } // if (nodechecks.length > 0 && $propchecks.length > 0)
-                                else {
-                                    doSave = false;
-                                    $.CswDialog('AlertDialog', 'You have not selected any properties to save.');
                                 }
-                            } // if(o.globalState.ShowCheckboxes)
-                            else if (cswPrivate.isMultiEdit()) {
-                                dataJson.CopyNodeIds = cswPrivate.globalState.nodeids;
-                                dataJson.CopyNodeKeys = cswPrivate.globalState.nodekeys;
-                                dataJson.PropIds = propIds;
-                                copyNodeProps();
+                                Csw.tryExec(onSuccess);
                             }
+                        }); // ajax
+                    } else {
+                        $.CswDialog('AlertDialog', 'You have not selected any properties to save.');
+                    }
+                }
+            };
 
-                            cswPrivate.enableSaveBtn();
-
-                            if (doSave) {
-                                // reload tab
+            cswPublic.save = Csw.method(function (tabContentDiv, tabid, onSuccess, async) {
+                    'use strict';
+                    if (cswPrivate.isMultiEdit() || cswPublic.isFormValid()) {
+                        async = Csw.bool(async, true) && false === cswPrivate.isMultiEdit();
+                        cswPrivate.ajax.save = Csw.ajax.post({
+                            watchGlobal: cswPrivate.AjaxWatchGlobal,
+                            urlMethod: cswPrivate.urls.SavePropUrlMethod,
+                            async: async,
+                            data: {
+                                EditMode: cswPrivate.tabState.EditMode,
+                                NodeId: cswPublic.getNodeId(),
+                                SafeNodeKey: cswPublic.getNodeKey(),
+                                TabId: Csw.string(tabid),
+                                NodeTypeId: cswPrivate.tabState.nodetypeid,
+                                NewPropsJson: Csw.serialize(cswPrivate.globalState.propertyData),
+                                IdentityTabJson: Csw.serialize(cswPrivate.IdentityTab),
+                                ViewId: Csw.cookie.get(Csw.cookie.cookieNames.CurrentViewId)
+                            },
+                            success: function (successData) {
+                                cswPrivate.enableSaveBtn();
                                 var onSaveSuccess = function () {
                                     var onSaveRefresh = function () {
                                         Csw.tryExec(cswPrivate.onSave, successData.nodeid, successData.cswnbtnodekey, cswPrivate.tabcnt, successData.nodename);
@@ -1101,67 +1105,71 @@
 
                                     onSaveRefresh();
                                 };
-                                if (cswPrivate.ReloadTabOnSave) {
-                                    cswPrivate.getProps(tabContentDiv, tabid, onSaveSuccess);
-                                } else {
-                                    onSaveSuccess();
+                                if (false === cswPrivate.isMultiEdit()) {
+                                    if (cswPrivate.ReloadTabOnSave) {
+                                        // reload tab
+                                        cswPrivate.getProps(tabContentDiv, tabid, onSaveSuccess);
+                                    } else {
+                                        onSaveSuccess();
+                                    }
+                                }  else {
+                                    cswPublic.copy(onSaveSuccess);
                                 }
-                            }
 
-                        }, // success
-                        error: cswPrivate.enableSaveBtn
-                    }); // ajax
-                } // if(cswPrivate.isValid())
-                else {
-                    cswPrivate.enableSaveBtn();
-                }
-            });// Save()
-
-            //#endregion Properties
-
-            cswPrivate.refreshLinkDiv = function () {
-                if (cswPrivate.globalState.ShowAsReport &&
-                    false === cswPrivate.isMultiEdit() &&
-                    cswPrivate.tabState.EditMode !== Csw.enums.editMode.PrintReport) {
-
-                    if (cswPrivate.linkDiv) {
-                        cswPrivate.linkDiv.remove();
+                            }, // success
+                            error: cswPrivate.enableSaveBtn
+                        }); // ajax
+                    } // if(cswPrivate.isValid())
+                    else {
+                        cswPrivate.enableSaveBtn();
                     }
-                    cswPrivate.linkDiv = cswParent.div({
-                        name: cswPrivate.name + '_linkdiv',
-                        align: 'right'
-                    });
-                    cswPrivate.linkDiv.empty();
+                });// Save()
 
-                    cswPrivate.linkDiv.a({
-                        text: 'As Report',
-                        onClick: function () {
-                            Csw.openPopup('NodeReport.html?nodeid=' + cswPublic.getNodeId() + '&cswnbtnodekey=' + cswPublic.getNodeKey());
+                //#endregion commit
+
+                cswPrivate.refreshLinkDiv = function () {
+                    if (cswPrivate.globalState.ShowAsReport &&
+                        false === cswPrivate.isMultiEdit() &&
+                        cswPrivate.tabState.EditMode !== Csw.enums.editMode.PrintReport) {
+
+                        if (cswPrivate.linkDiv) {
+                            cswPrivate.linkDiv.remove();
                         }
-                    });
-                }
-            };
+                        cswPrivate.linkDiv = cswParent.div({
+                            name: cswPrivate.name + '_linkdiv',
+                            align: 'right'
+                        });
+                        cswPrivate.linkDiv.empty();
 
-            cswPublic.getViewId = function () {
-                return cswPrivate.globalState.viewid;
-            };
+                        cswPrivate.linkDiv.a({
+                            text: 'As Report',
+                            onClick: function () {
+                                Csw.openPopup('NodeReport.html?nodeid=' + cswPublic.getNodeId() + '&cswnbtnodekey=' + cswPublic.getNodeKey());
+                            }
+                        });
+                    }
+                };
 
-            cswPublic.getTabs = function (nodeid, nodekey) {
-                if (false === Csw.isNullOrEmpty(nodeid)) {
-                    cswPrivate.setNode({ nodeid: nodeid, nodekey: nodekey });
-                }
-                cswPrivate.onTearDown();
-                cswPrivate.init();
-                cswPrivate.getTabs(cswPrivate.outerTabDiv);
-                cswPrivate.refreshLinkDiv();
-            };
+                cswPublic.getViewId = function () {
+                    return cswPrivate.globalState.viewid;
+                };
 
-            (function _postCtor() {
-                cswPrivate.getTabs(cswPrivate.outerTabDiv);
-                cswPrivate.refreshLinkDiv();
-            }());
+                cswPublic.getTabs = function (nodeid, nodekey) {
+                    if (false === Csw.isNullOrEmpty(nodeid)) {
+                        cswPrivate.setNode({ nodeid: nodeid, nodekey: nodekey });
+                    }
+                    cswPrivate.onTearDown();
+                    cswPrivate.init();
+                    cswPrivate.getTabs(cswPrivate.outerTabDiv);
+                    cswPrivate.refreshLinkDiv();
+                };
 
-            return cswPublic;
-        });
-}());
+                (function _postCtor() {
+                    cswPrivate.getTabs(cswPrivate.outerTabDiv);
+                    cswPrivate.refreshLinkDiv();
+                }());
+
+                return cswPublic;
+            });
+        }());
 
