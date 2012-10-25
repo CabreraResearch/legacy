@@ -247,7 +247,9 @@
                 cswPrivate.makeViewControl();
                 cswPrivate.makeNodeTypeControl();
                 cswPrivate.makeTabControl();
+                if (false === Csw.isNullOrEmpty(cswPrivate.ActionId) && false === Csw.isNullOrEmpty(cswPrivate.ObjectClassId)) {
                 cswPrivate.makeButtonControl();
+                }
                 cswPrivate.makeTextControl();
                 cswPrivate.makeAddControl(addOptions);
             };
@@ -352,6 +354,7 @@
 
             cswPrivate.makeAddControl = function (addOptions) {
                 cswPrivate.resetAddItem(cswPrivate.select.add);
+                cswPrivate.addItemForm[cswPrivate.select.add].label = cswPrivate.addItemForm.table.cell(cswPrivate.select.add, 1).span({ text: '' });
                 cswPrivate.addItemForm[cswPrivate.select.add].control = cswPrivate.addItemForm.table.cell(cswPrivate.select.add, 2).button({
                     name: 'landingpage_add',
                     enabledText: 'Add',
@@ -366,7 +369,8 @@
                             pkvalue = selectedView.value;
                         } else if (false == cswPrivate.addItemForm[cswPrivate.select.tab].control.$.is(':hidden')) {
                             pkvalue = cswPrivate.addItemForm[cswPrivate.select.tab].control.val();
-                        } else if (false == cswPrivate.addItemForm[cswPrivate.select.button].control.$.is(':hidden')) {
+                        } else if (false === Csw.isNullOrEmpty(cswPrivate.addItemForm[cswPrivate.select.button]) &&
+                            false == cswPrivate.addItemForm[cswPrivate.select.button].control.$.is(':hidden')) {
                             pkvalue = cswPrivate.addItemForm[cswPrivate.select.button].control.val();
                         }
                         cswPrivate.addItem({
@@ -412,7 +416,9 @@
                 cswPrivate.toggleVisibility(cswPrivate.select.view, false);
                 cswPrivate.toggleVisibility(cswPrivate.select.nodetype, false);
                 cswPrivate.toggleVisibility(cswPrivate.select.tab, false);
+                if (false === Csw.isNullOrEmpty(cswPrivate.ActionId) && false === Csw.isNullOrEmpty(cswPrivate.ObjectClassId)) {
                 cswPrivate.toggleVisibility(cswPrivate.select.button, false);
+                }
                 switch (cswPrivate.addItemForm[cswPrivate.select.type].control.val()) {
                     case 'Add':
                         cswPrivate.toggleVisibility(cswPrivate.select.nodetype, true);
