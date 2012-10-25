@@ -496,17 +496,17 @@ namespace ChemSW.Nbt.Security
                             {
                                 CswNbtMetaDataObjectClassProp OCP = MetaDataProp.getObjectClassProp();
 
-                                // case 8218 - Certain properties on the user's preferences are not allowed to be edited
-                                if( _CswNbtPermitInfo.NodeType.getObjectClass().ObjectClass == NbtObjectClass.UserClass &&
-                                    false == _CswNbtPermitInfo.User.IsAdministrator() &&
-                                    OCP != null &&
-                                    ( OCP.PropName == CswNbtObjClassUser.PropertyName.Username ||
-                                      OCP.PropName == CswNbtObjClassUser.PropertyName.Role ||
-                                      OCP.PropName == CswNbtObjClassUser.PropertyName.FailedLoginCount ||
-                                      OCP.PropName == CswNbtObjClassUser.PropertyName.AccountLocked ) )
-                                {
-                                    ret = false;
-                                }
+                                //// case 8218 - Certain properties on the user's preferences are not allowed to be edited
+                                //if( _CswNbtPermitInfo.NodeType.getObjectClass().ObjectClass == NbtObjectClass.UserClass &&
+                                //    false == _CswNbtPermitInfo.User.IsAdministrator() &&
+                                //    OCP != null &&
+                                //    ( OCP.PropName == CswNbtObjClassUser.PropertyName.Username ||
+                                //      OCP.PropName == CswNbtObjClassUser.PropertyName.Role ||
+                                //      OCP.PropName == CswNbtObjClassUser.PropertyName.FailedLoginCount ||
+                                //      OCP.PropName == CswNbtObjClassUser.PropertyName.AccountLocked ) )
+                                //{
+                                //    ret = false;
+                                //}
 
                                 // Only admins can change other people's passwords
                                 if( ret &&
