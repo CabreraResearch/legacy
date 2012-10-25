@@ -15,9 +15,11 @@ namespace ChemSW.Nbt.LandingPage
 
         public override void setItemDataForUI( DataRow LandingPageRow, LandingPageData.Request Request )
         {
-            if( CswConvert.ToInt32( LandingPageRow["to_nodeviewid"] ) != Int32.MinValue )
+            String DisplayText = LandingPageRow["displaytext"].ToString();
+            Int32 ViewId = CswConvert.ToInt32( LandingPageRow["to_nodeviewid"] );
+            if( ViewId != Int32.MinValue )
             {
-                CswNbtViewId NodeViewId = new CswNbtViewId( CswConvert.ToInt32( LandingPageRow["to_nodeviewid"].ToString() ) );
+                CswNbtViewId NodeViewId = new CswNbtViewId( ViewId );
                 CswNbtView ThisView = _CswNbtResources.ViewSelect.restoreView( NodeViewId );
                 if( null != ThisView && ThisView.IsFullyEnabled() && ThisView.IsVisible() )
                 {
@@ -32,31 +34,32 @@ namespace ChemSW.Nbt.LandingPage
                     _ItemData.Type = "view";
                 }
             }
-            if( CswConvert.ToInt32( LandingPageRow["to_actionid"] ) != Int32.MinValue )
+            Int32 ActionId = CswConvert.ToInt32( LandingPageRow["to_actionid"] );
+            if( ActionId != Int32.MinValue )
             {
-                CswNbtAction ThisAction = _CswNbtResources.Actions[CswConvert.ToInt32( LandingPageRow["to_actionid"] )];
+                CswNbtAction ThisAction = _CswNbtResources.Actions[ActionId];
                 if( null != ThisAction )
                 {
                     if( _CswNbtResources.Permit.can( ThisAction.Name ) )
                     {
-                        _ItemData.Text = LandingPageRow["displaytext"].ToString() != string.Empty ? LandingPageRow["displaytext"].ToString() : CswNbtAction.ActionNameEnumToString( ThisAction.Name );
+                        _ItemData.Text = false == String.IsNullOrEmpty( DisplayText ) ? DisplayText : CswNbtAction.ActionNameEnumToString( ThisAction.Name );
                     }
-                    _ItemData.ActionId = LandingPageRow["to_actionid"].ToString();
+                    _ItemData.ActionId = ActionId.ToString();
                     _ItemData.ActionName = ThisAction.Name.ToString();
                     _ItemData.ActionUrl = ThisAction.Url;
                     _ItemData.ButtonIcon = CswNbtMetaDataObjectClass.IconPrefix100 + "wizard.png";
                     _ItemData.Type = "action";
                 }
             }
-            if( CswConvert.ToInt32( LandingPageRow["to_reportid"] ) != Int32.MinValue )
+            Int32 ReportId = CswConvert.ToInt32( LandingPageRow["to_reportid"] );
+            if( ReportId != Int32.MinValue )
             {
-                CswNbtNode ThisReportNode = _CswNbtResources.Nodes[new CswPrimaryKey( "nodes", CswConvert.ToInt32( LandingPageRow["to_reportid"] ) )];
+                CswPrimaryKey ReportPk = new CswPrimaryKey( "nodes", ReportId );
+                CswNbtNode ThisReportNode = _CswNbtResources.Nodes[ReportPk];
                 if( null != ThisReportNode )
                 {
-                    _ItemData.Text = LandingPageRow["displaytext"].ToString() != string.Empty ? LandingPageRow["displaytext"].ToString() : ThisReportNode.NodeName;
-                    int idAsInt = CswConvert.ToInt32( LandingPageRow["to_reportid"] );
-                    CswPrimaryKey reportPk = new CswPrimaryKey( "nodes", idAsInt );
-                    _ItemData.ReportId = reportPk.ToString();
+                    _ItemData.Text = false == String.IsNullOrEmpty( DisplayText ) ? DisplayText : ThisReportNode.NodeName;                    
+                    _ItemData.ReportId = ReportPk.ToString();
                     _ItemData.Type = "report";
                     _ItemData.ButtonIcon = CswNbtMetaDataObjectClass.IconPrefix100 + ThisReportNode.getNodeType().IconFileName;
                 }
@@ -77,10 +80,8 @@ namespace ChemSW.Nbt.LandingPage
             }
             else if( ViewType == CswNbtView.ViewType.Report )
             {
-                CswPrimaryKey ReportPk = new CswPrimaryKey();
-                ReportPk.FromString( Request.PkValue );
-                Int32 PkVal = ReportPk.PrimaryKey;
-                _ItemRow["to_reportid"] = CswConvert.ToDbVal( PkVal );
+                CswPrimaryKey ReportPk = CswConvert.ToPrimaryKey( Request.PkValue );
+                _ItemRow["to_reportid"] = CswConvert.ToDbVal( ReportPk.PrimaryKey );
             }
             else
             {

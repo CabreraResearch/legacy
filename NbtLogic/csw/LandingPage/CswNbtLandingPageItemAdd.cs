@@ -13,22 +13,17 @@ namespace ChemSW.Nbt.LandingPage
 
         public override void setItemDataForUI( DataRow LandingPageRow, LandingPageData.Request Request )
         {
-            if( CswConvert.ToInt32( LandingPageRow["to_nodetypeid"] ) != Int32.MinValue )
+            Int32 NodeTypeId = CswConvert.ToInt32( LandingPageRow["to_nodetypeid"] );
+            if( NodeTypeId != Int32.MinValue )
             {
-                CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( CswConvert.ToInt32( LandingPageRow["to_nodetypeid"] ) );
+                CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeId );
                 if( NodeType != null )
                 {
                     bool CanAdd = NodeType.getObjectClass().CanAdd && _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Create, NodeType );
                     if( CanAdd )
                     {
-                        if( LandingPageRow["displaytext"].ToString() != string.Empty )
-                        {
-                            _ItemData.Text = LandingPageRow["displaytext"].ToString();
-                        }
-                        else
-                        {
-                            _ItemData.Text = "Add New " + NodeType.NodeTypeName;
-                        }
+                        String DisplayText = LandingPageRow["displaytext"].ToString();
+                        _ItemData.Text = false == String.IsNullOrEmpty( DisplayText ) ? DisplayText : "Add New " + NodeType.NodeTypeName;
                         _ItemData.NodeTypeId = NodeType.NodeTypeId.ToString();
                         _ItemData.ButtonIcon = CswNbtMetaDataObjectClass.IconPrefix100 + NodeType.IconFileName;
                         _ItemData.Type = "add_new_nodetype";

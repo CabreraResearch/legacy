@@ -46,14 +46,16 @@ namespace ChemSW.Nbt.LandingPage
 
         protected virtual void _setCommonItemDataForDB( LandingPageData.Request Request )
         {
+            Int32 RoleId = Int32.MinValue;
             if( Request.RoleId == string.Empty || false == _CswNbtResources.CurrentNbtUser.IsAdministrator() )
             {
                 Request.RoleId = _CswNbtResources.CurrentNbtUser.RoleId.ToString();
             }
-            CswPrimaryKey RolePk = new CswPrimaryKey();
-            RolePk.FromString( Request.RoleId );
-            Int32 RoleId = RolePk.PrimaryKey;
-
+            CswPrimaryKey RolePk = CswConvert.ToPrimaryKey( Request.RoleId );
+            if( null != RolePk )
+            {
+                RoleId = RolePk.PrimaryKey;
+            }
             if( Request.ButtonIcon == "blank.gif" )
             {
                 Request.ButtonIcon = string.Empty;

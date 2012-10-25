@@ -13,7 +13,8 @@ namespace ChemSW.Nbt.LandingPage
 
         public override void setItemDataForUI( DataRow LandingPageRow, LandingPageData.Request Request )
         {
-            if( CswConvert.ToInt32( LandingPageRow["to_objectclasspropid"] ) != Int32.MinValue )
+            Int32 ObjectClassPropId = CswConvert.ToInt32( LandingPageRow["to_objectclasspropid"] );
+            if( ObjectClassPropId != Int32.MinValue )
             {
                 CswNbtNode RequestNode = _CswNbtResources.Nodes.GetNode( CswConvert.ToPrimaryKey( Request.NodeId ) );
                 if( null != RequestNode )
@@ -21,10 +22,11 @@ namespace ChemSW.Nbt.LandingPage
                     CswNbtMetaDataNodeType NodeType = RequestNode.getNodeType();
                     if ( null != NodeType )
                     {
-                        CswNbtMetaDataNodeTypeProp NodeTypeProp = NodeType.getNodeTypePropByObjectClassProp( CswConvert.ToInt32(LandingPageRow["to_objectclasspropid"]));
+                        CswNbtMetaDataNodeTypeProp NodeTypeProp = NodeType.getNodeTypePropByObjectClassProp( ObjectClassPropId );
                         if ( null != NodeTypeProp )
                         {                            
-                            _ItemData.Text = LandingPageRow["displaytext"].ToString() != string.Empty ? LandingPageRow["displaytext"].ToString() : NodeTypeProp.PropName;
+                            String DisplayText = LandingPageRow["displaytext"].ToString();
+                            _ItemData.Text = false == String.IsNullOrEmpty( DisplayText ) ? DisplayText : "Add New " + NodeTypeProp.PropName;
                             _ItemData.NodeTypePropId = RequestNode.NodeId.ToString() + "_" + NodeTypeProp.PropId.ToString();
                             _ItemData.ActionName = NodeTypeProp.PropName;
                             _ItemData.ButtonIcon = CswNbtMetaDataObjectClass.IconPrefix100 + NodeType.IconFileName;

@@ -13,25 +13,25 @@ namespace ChemSW.Nbt.LandingPage
 
         public override void setItemDataForUI( DataRow LandingPageRow, LandingPageData.Request Request )
         {
-            if( CswConvert.ToInt32( LandingPageRow["to_nodetypeid"] ) != Int32.MinValue && CswConvert.ToInt32( LandingPageRow["to_tabid"] ) != Int32.MinValue )
+            Int32 NodeTypeId = CswConvert.ToInt32( LandingPageRow["to_nodetypeid"] );
+            Int32 TabId = CswConvert.ToInt32( LandingPageRow["to_tabid"] );
+            if( NodeTypeId != Int32.MinValue && TabId != Int32.MinValue )
             {
-                CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( CswConvert.ToInt32( LandingPageRow["to_nodetypeid"] ) );
+                CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeId );
                 if( NodeType != null )
                 {
-                    CswNbtMetaDataNodeTypeTab Tab = NodeType.getNodeTypeTab( CswConvert.ToInt32( LandingPageRow["to_tabid"] ) );
+                    CswNbtMetaDataNodeTypeTab Tab = NodeType.getNodeTypeTab( TabId );
                     if( null != Tab )
                     {
                         CswNbtView TabView = getTabView( Request.NodeId, Request.NodeViewId, NodeType );
                         if( null != TabView && TabView.IsFullyEnabled() )
                         {
-                            _ItemData.Text = LandingPageRow["displaytext"].ToString() != string.Empty ? 
-                                LandingPageRow["displaytext"].ToString() : 
-                                TabView.ViewName + " " + Tab.TabName;
+                            String DisplayText = LandingPageRow["displaytext"].ToString();
+                            _ItemData.Text = false == String.IsNullOrEmpty( DisplayText ) ? DisplayText : TabView.ViewName + " " + Tab.TabName;
                             _ItemData.ViewId = TabView.SessionViewId.ToString();
                             _ItemData.ViewMode = TabView.ViewMode.ToString().ToLower();                                
                             _ItemData.Type = "view";
-
-                            _ItemData.TabId = LandingPageRow["to_tabid"].ToString();
+                            _ItemData.TabId = TabId.ToString();
                             _ItemData.ButtonIcon = CswNbtMetaDataObjectClass.IconPrefix100 + NodeType.IconFileName;
                             _setCommonItemDataForUI( LandingPageRow );
                         }                            

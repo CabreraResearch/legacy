@@ -55,13 +55,17 @@ namespace ChemSW.Nbt.LandingPage
 
         private Int32 _getRoleIdPk( string RoleId )
         {
+            Int32 RoleIdPk = Int32.MinValue;
             if( RoleId == string.Empty || false == _CswNbtResources.CurrentNbtUser.IsAdministrator() )
             {
                 RoleId = _CswNbtResources.CurrentNbtUser.RoleId.ToString();
             }
-            CswPrimaryKey RolePk = new CswPrimaryKey();
-            RolePk.FromString( RoleId );
-            return RolePk.PrimaryKey;
+            CswPrimaryKey RolePk = CswConvert.ToPrimaryKey( RoleId );
+            if( null != RolePk )
+            {
+                RoleIdPk = RolePk.PrimaryKey;
+            }
+            return RoleIdPk;
         }
 
         public void addLandingPageItem( LandingPageData.Request Request )
