@@ -173,7 +173,7 @@
                 break;
             case Csw.enums.nbtButtonAction.editprop:
                 $.CswDialog('EditNodeDialog', {
-                    nodeids: [Csw.string(actionJson.nodeid)],
+                    currentNodeId: Csw.string(actionJson.nodeid),
                     filterToPropId: Csw.string(actionJson.propidattr),
                     title: Csw.string(actionJson.title),
                     onEditNode: function (nodeid, nodekey, close) {

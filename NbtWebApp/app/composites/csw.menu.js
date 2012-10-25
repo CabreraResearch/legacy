@@ -146,7 +146,7 @@
                                 break;
                             case 'Profile':
                                 $.CswDialog('EditNodeDialog', {
-                                    nodeids: [menuItemJson.userid],
+                                    currentNodeId: menuItemJson.userid,
                                     filterToPropId: '',
                                     title: 'User Profile',
                                     onEditNode: null // function (nodeid, nodekey) { }

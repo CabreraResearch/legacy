@@ -24,8 +24,8 @@
                             onEditRow: function(date) {
                                 Csw.publish('initPropertyTearDown');
                                 $.CswDialog('EditNodeDialog', {
-                                    nodeids: [cswPublic.data.tabState.nodeid],
-                                    nodekeys: [cswPublic.data.tabState.nodekey],
+                                    currentNodeId: cswPublic.data.tabState.nodeid,
+                                    currentNodeKey: cswPublic.data.tabState.nodekey,
                                     onEditNode: cswPublic.data.onEditNode,
                                     date: date
                                 });

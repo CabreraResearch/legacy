@@ -225,8 +225,8 @@
                             icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.magglass),
                             onClick: function () {
                                 $.CswDialog('EditNodeDialog', {
-                                    nodeids: [nodeid],
-                                    nodekeys: [nodeObj.nodekey],
+                                    currentNodeId: nodeid,
+                                    currentNodeKey: nodeObj.nodekey,
                                     nodenames: [nodeObj.nodename],
                                     ReadOnly: (false === nodeObj.allowedit),
                                     onEditNode: cswPrivate.onEditNode

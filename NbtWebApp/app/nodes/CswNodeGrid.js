@@ -69,20 +69,24 @@
                                     onSelect: o.onSelect,
                                     onEdit: function(rows) {
                                         // this works for both Multi-edit and regular
-                                        var cswnbtnodekeys = [],
-                                            nodeids = [],
-                                            nodenames = [];
+                                        var nodekeys = Csw.delimitedString(),
+                                            nodeids = Csw.delimitedString(),
+                                            nodenames = [],
+                                            firstNodeId, firstNodeKey;
     
                                         Csw.each(rows, function(row) {
-                                            cswnbtnodekeys.push(row.nodekey);
-                                            nodeids.push(row.nodeid);
+                                            firstNodeId = firstNodeId || row.nodeid;
+                                            firstNodeKey = firstNodeKey || row.nodekey;
+                                            nodekeys.add(row.nodekey);
+                                            nodeids.add(row.nodeid);
                                             nodenames.push(row.nodename);
                                         });
 
                                         $.CswDialog('EditNodeDialog', {
-                                            nodeids: nodeids,
-                                            nodepks: nodeids,
-                                            nodekeys: cswnbtnodekeys,
+                                            currentNodeId: firstNodeId,
+                                            currentNodeKey: firstNodeKey,
+                                            selectedNodeIds: nodeids,
+                                            selectedNodeKeys: nodekeys,
                                             nodenames: nodenames,
                                             Multi: (nodeids.length > 1),
                                             onEditNode: o.onEditNode,

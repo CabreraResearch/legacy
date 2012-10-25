@@ -551,9 +551,10 @@
         }, // EditLayoutDialog
         EditNodeDialog: function (options) {
             var cswDlgPrivate = {
-                nodeids: [],
-                nodepks: [],
-                nodekeys: [],
+                selectedNodeIds: Csw.delimitedString(),
+                selectedNodeKeys: Csw.delimitedString(),
+                currentNodeId: '',
+                currentNodeKey: '',
                 nodenames: [],
                 Multi: false,
                 ReadOnly: false,
@@ -585,14 +586,13 @@
 
             cswDlgPrivate.onOpen = function () {
                 var myEditMode = Csw.enums.editMode.EditInPopup;
-                var tableId = cswDlgPrivate.nodeids[0];
-                var table = cswPublic.div.table({ name: tableId });
+                var table = cswPublic.div.table();
                 if (false === Csw.isNullOrEmpty(cswDlgPrivate.date) && false === cswDlgPrivate.Multi) {
                     myEditMode = Csw.enums.editMode.AuditHistoryInPopup;
                     Csw.actions.auditHistory(table.cell(1, 1), {
-                        name: cswDlgPrivate.nodeids[0] + '_history',
-                        nodeid: cswDlgPrivate.nodeids[0],
-                        nodekey: cswDlgPrivate.nodekeys[0],
+                        name: 'history',
+                        nodeid: cswDlgPrivate.currentNodeId,
+                        nodekey: cswDlgPrivate.currentNodeKey,
                         onEditNode: cswDlgPrivate.onEditNode,
                         JustDateColumn: true,
                         selectedDate: cswDlgPrivate.date,
@@ -606,16 +606,16 @@
 
                 function setupTabs(date) {
                     tabCell.empty();
-                    //tabCell.$.CswNodeTabs({
 
                     cswPublic.tabsAndProps = Csw.layouts.tabsAndProps(tabCell, {
                         globalState: {
                             date: date,
-                            nodeids: cswDlgPrivate.nodeids,
-                            nodekeys: cswDlgPrivate.nodekeys,
+                            selectedNodeIds: cswDlgPrivate.selectedNodeIds,
+                            selectedNodeKeys: cswDlgPrivate.selectedNodeKeys,
+                            currentNodeId: cswDlgPrivate.currentNodeId,
+                            currentNodeKey: cswDlgPrivate.currentNodeKey,
                             nodenames: cswDlgPrivate.nodenames,
                             filterToPropId: cswDlgPrivate.filterToPropId
-                            //title: o.title,
                         },
                         tabState: {
                             Multi: cswDlgPrivate.Multi,
