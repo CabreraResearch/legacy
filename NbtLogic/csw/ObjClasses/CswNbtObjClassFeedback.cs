@@ -147,8 +147,7 @@ namespace ChemSW.Nbt.ObjClasses
                     ButtonData.Data["action"] = OCP.PropName;
 
                     ButtonData.Data["type"] = "view"; //assume it's a view unless it's an action
-                    CswNbtActionName ActionName = CswNbtActionName.Unknown;
-                    Enum.TryParse<CswNbtActionName>( Action.Text, out ActionName );
+                    CswNbtActionName ActionName = CswNbtAction.ActionNameStringToEnum( Action.Text );
                     if( CswNbtActionName.Unknown != ActionName )
                     {
                         if( null != _CswNbtResources.Actions[ActionName] )

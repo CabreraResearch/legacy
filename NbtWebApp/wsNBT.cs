@@ -3403,6 +3403,7 @@ namespace ChemSW.Nbt.WebServices
                 ReturnVal["propdata"] = tabsandprops.getProps( newFeedbackNode.Node, "", null, CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add ); //DO I REALLY BREAK THIS?
                 ReturnVal["nodeid"] = newFeedbackNode.NodeId.ToString();
 
+                _deInitResources();
             }
             catch( Exception Ex )
             {
