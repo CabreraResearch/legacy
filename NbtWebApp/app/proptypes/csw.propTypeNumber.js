@@ -35,7 +35,7 @@
                             Csw.tryExec(cswPublic.data.onChange, val);
                             cswPublic.data.onPropChange({ value: val });
                         },
-                        isValid: cswPrivate.isMultiEditValid
+                        isValid: true
                     });
                     cswPublic.control.required(cswPublic.data.propData.required);
                     if (false === Csw.isNullOrEmpty(cswPublic.control) && cswPublic.control.length > 0) {
