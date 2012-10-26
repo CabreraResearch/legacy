@@ -774,9 +774,7 @@ namespace ChemSW.Nbt.Schema
 
             #endregion case 27647
 
-            #endregion SEBASTIAN
-
-            _CswNbtSchemaModTrnsctn.MetaData.makeMissingNodeTypeProps();
+            #endregion SEBASTIAN            
 
             CswNbtMetaDataObjectClass userOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.UserClass );
 
@@ -793,6 +791,9 @@ namespace ChemSW.Nbt.Schema
             _makeContainerFamilyButton();
 
             #endregion TITANIA
+
+            //THIS GOES LAST!
+            _CswNbtSchemaModTrnsctn.MetaData.makeMissingNodeTypeProps();
         }
 
         //Update()
