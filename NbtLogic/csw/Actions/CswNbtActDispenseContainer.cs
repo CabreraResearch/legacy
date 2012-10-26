@@ -166,7 +166,9 @@ namespace ChemSW.Nbt.Actions
                 ChildContainer.SourceContainer.RelatedNodeId = _SourceContainer.NodeId;
                 ChildContainer.Quantity.Quantity = 0;
                 ChildContainer.Quantity.UnitId = UnitId;
+                ChildContainer.Disposed.Checked = Tristate.False;                
                 ChildContainer.postChanges( false );
+                ChildContainer.Undispose.setHidden( value: true, SaveToDb: true );
                 _ContainersToView.Add( ChildContainer.NodeId );
             }
             return ChildContainer;
@@ -224,9 +226,9 @@ namespace ChemSW.Nbt.Actions
                     CswNbtViewProperty QuantityVp = Ret.AddViewProperty( ContainerRel, ContainerOc.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Quantity ) );
                     Ret.AddViewPropertyFilter( QuantityVp, CswNbtSubField.SubFieldName.Value, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.GreaterThan, Value: "0" );
 
-                    CswNbtViewProperty ExpirationDateVp = Ret.AddViewProperty( ContainerRel, ContainerOc.getObjectClassProp( CswNbtObjClassContainer.PropertyName.ExpirationDate ) );
-                    Ret.AddViewPropertyFilter( ExpirationDateVp, CswNbtPropFilterSql.PropertyFilterConjunction.Or, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.GreaterThanOrEquals, Value: "today" );
-                    Ret.AddViewPropertyFilter( ExpirationDateVp, CswNbtPropFilterSql.PropertyFilterConjunction.Or, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Null );
+                    CswNbtViewProperty StatusVp = Ret.AddViewProperty( ContainerRel, ContainerOc.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Status ) );
+                    Ret.AddViewPropertyFilter( StatusVp, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.NotEquals, Value: CswNbtObjClassContainer.Statuses.Expired );
+                    StatusVp.ShowInGrid = false;
                 }
             }
 

@@ -65,12 +65,15 @@ namespace ChemSW.Nbt.Schema
 
             #region PART 2 - ADD NAME PROPERTY TO REQUEST ITEM
 
-            CswNbtMetaDataObjectClassProp nameOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( requestItemOC )
-            {
-                PropName = "Name",
-                FieldType = CswNbtMetaDataFieldType.NbtFieldType.Text,
-                ServerManaged = true
-            } );
+            // moved to RunBeforeEveryExecutionOfUpdater_01OC
+            //CswNbtMetaDataObjectClassProp nameOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( requestItemOC )
+            //{
+            //    PropName = "Name",
+            //    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Text,
+            //    ServerManaged = true
+            //} );
+            
+            CswNbtMetaDataObjectClassProp nameOCP = requestItemOC.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Name );
 
             string newNameTemplate = CswNbtMetaData.MakeTemplateEntry( CswNbtObjClassRequestItem.PropertyName.Name );
             if( null != requestItemNT )

@@ -21,11 +21,12 @@ using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Security;
 using ChemSW.Nbt.ServiceDrivers;
 using ChemSW.Nbt.Statistics;
-using ChemSW.Nbt.Welcome;
+using ChemSW.Nbt.LandingPage;
 using ChemSW.Security;
 using ChemSW.Session;
 using ChemSW.WebSvc;
 using Newtonsoft.Json.Linq;
+using NbtWebApp.WebSvc.Logic.Menus.LandingPages;
 
 
 
@@ -2221,7 +2222,6 @@ namespace ChemSW.Nbt.WebServices
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
         public string getNodeTypes( string ObjectClassName, string ObjectClassId, string ExcludeNodeTypeIds, string RelatedToNodeTypeId, string RelatedObjectClassPropName, string FilterToPermission )
         {
-            //sometimes we only want nodetypes for which the user has Create permissions - how do we determine this?
             JObject ReturnVal = new JObject();
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
             try
@@ -2261,6 +2261,31 @@ namespace ChemSW.Nbt.WebServices
             return ReturnVal.ToString();
 
         } // getNodeTypes()
+
+        [WebMethod( EnableSession = false )]
+        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        public string getNodeTypeTabs( string NodeTypeName, string NodeTypeId, string FilterToPermission )
+        {
+            JObject ReturnVal = new JObject();
+            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            try
+            {
+                _initResources();
+                AuthenticationStatus = _attemptRefresh();
+                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+                {
+                    var ws = new CswNbtWebServiceMetaData( _CswNbtResources );
+                    ReturnVal = ws.getNodeTypeTabs( NodeTypeName, NodeTypeId, FilterToPermission );
+                }
+                _deInitResources();
+            }
+            catch( Exception Ex )
+            {
+                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
+            }
+            CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
+            return ReturnVal.ToString();
+        } // getNodeTypeTabs()
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
@@ -2635,6 +2660,32 @@ namespace ChemSW.Nbt.WebServices
             return ReturnVal.ToString();
 
         } // saveMolProp()
+
+        [WebMethod( EnableSession = false )]
+        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        public string getObjectClassButtons( string ObjectClassId )
+        {
+            JObject ReturnVal = new JObject();
+            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            try
+            {
+                _initResources();
+                AuthenticationStatus = _attemptRefresh();
+                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+                {
+                    CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources, _CswNbtStatisticsEvents );
+                    ReturnVal = ws.getObjectClassButtons( ObjectClassId );
+                }
+                _deInitResources();
+            }
+            catch( Exception ex )
+            {
+                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, ex );
+                ReturnVal["success"] = false;
+            }
+            CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
+            return ReturnVal.ToString();
+        } // getObjectClassButtons()
 
         //[WebMethod( EnableSession = false )]
         //[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
@@ -3352,6 +3403,7 @@ namespace ChemSW.Nbt.WebServices
                 ReturnVal["propdata"] = tabsandprops.getProps( newFeedbackNode.Node, "", null, CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add ); //DO I REALLY BREAK THIS?
                 ReturnVal["nodeid"] = newFeedbackNode.NodeId.ToString();
 
+                _deInitResources();
             }
             catch( Exception Ex )
             {
@@ -3364,202 +3416,6 @@ namespace ChemSW.Nbt.WebServices
         }
 
         #endregion Node DML
-
-        #region Welcome Region
-
-
-        [WebMethod( EnableSession = false )]
-        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string getWelcomeItems( string RoleId )
-        {
-            JObject ReturnVal = new JObject();
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
-            try
-            {
-                _initResources();
-                AuthenticationStatus = _attemptRefresh();
-
-                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
-                {
-
-                    var ws = new CswNbtWebServiceWelcomeItems( _CswNbtResources );
-                    // Only administrators can get welcome content for other roles
-                    if( RoleId != string.Empty && _CswNbtResources.CurrentNbtUser.IsAdministrator() )
-                    {
-                        ReturnVal = ws.GetWelcomeItems( RoleId );
-                    }
-                    else
-                    {
-                        ReturnVal = ws.GetWelcomeItems( _CswNbtResources.CurrentNbtUser.RoleId.ToString() );
-                    }
-                }
-
-                _deInitResources();
-            }
-
-            catch( Exception Ex )
-            {
-                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
-            }
-
-
-            CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
-
-            return ReturnVal.ToString();
-
-
-        } // getWelcomeItems()
-
-        [WebMethod( EnableSession = false )]
-        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string getWelcomeButtonIconList()
-        {
-            JObject ReturnVal = new JObject();
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
-            try
-            {
-                _initResources();
-                AuthenticationStatus = _attemptRefresh();
-
-                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
-                {
-
-                    var ws = new CswNbtWebServiceWelcomeItems( _CswNbtResources );
-                    ReturnVal = ws.getButtonIconList();
-                }
-
-                _deInitResources();
-            }
-
-            catch( Exception Ex )
-            {
-                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
-            }
-
-            CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
-
-            return ReturnVal.ToString();
-
-        } // getWelcomeButtonIconList()
-
-        [WebMethod( EnableSession = false )]
-        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string addWelcomeItem( string RoleId, string Type, string ViewType, string ViewValue, string NodeTypeId, string Text, string IconFileName )
-        {
-            JObject ReturnVal = new JObject();
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
-            try
-            {
-                _initResources();
-                AuthenticationStatus = _attemptRefresh();
-
-                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
-                {
-
-                    CswNbtWebServiceWelcomeItems ws = new CswNbtWebServiceWelcomeItems( _CswNbtResources );
-                    // Only administrators can add welcome content to other roles
-                    string UseRoleId = _CswNbtResources.CurrentNbtUser.RoleId.ToString();
-                    if( RoleId != string.Empty && _CswNbtResources.CurrentNbtUser.IsAdministrator() )
-                        UseRoleId = RoleId;
-                    CswNbtWelcomeTable.WelcomeComponentType ComponentType;
-                    Enum.TryParse( Type, true, out ComponentType );
-                    CswNbtView.ViewType RealViewType = (CswNbtView.ViewType) ViewType;
-                    //Enum.TryParse( ViewType, true, out RealViewType );
-                    ws.AddWelcomeItem( ComponentType, RealViewType, ViewValue, CswConvert.ToInt32( NodeTypeId ), Text, Int32.MinValue, Int32.MinValue, IconFileName, UseRoleId );
-                    ReturnVal.Add( new JProperty( "Succeeded", true ) );
-                }
-
-                _deInitResources();
-            }
-            catch( Exception Ex )
-            {
-                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
-            }
-
-            CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
-
-            return ReturnVal.ToString();
-
-        } // addWelcomeItem()
-
-        [WebMethod( EnableSession = false )]
-        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string deleteWelcomeItem( string RoleId, string WelcomeId )
-        {
-            bool ret = false;
-            JObject ReturnVal = new JObject();
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
-            try
-            {
-                _initResources();
-                AuthenticationStatus = _attemptRefresh();
-
-                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
-                {
-                    CswNbtWebServiceWelcomeItems ws = new CswNbtWebServiceWelcomeItems( _CswNbtResources );
-                    // Only administrators can add welcome content to other roles
-                    string UseRoleId = _CswNbtResources.CurrentNbtUser.RoleId.ToString();
-                    if( RoleId != string.Empty && _CswNbtResources.CurrentNbtUser.IsAdministrator() )
-                        UseRoleId = RoleId;
-                    ret = ws.DeleteWelcomeItem( UseRoleId, CswConvert.ToInt32( WelcomeId ) );
-                    //ReturnVal = "{ \"Succeeded\": \"" + ret.ToString().ToLower() + "\" }";
-                    ReturnVal.Add( "Succeeded", ret );
-                }
-
-                _deInitResources();
-            }
-            catch( Exception Ex )
-            {
-                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
-            }
-
-            CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
-
-            return ReturnVal.ToString();
-
-        } // deleteWelcomeItem()
-
-
-
-        [WebMethod( EnableSession = false )]
-        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string moveWelcomeItems( string RoleId, string WelcomeId, string NewRow, string NewColumn )
-        {
-            bool ret = false;
-            //string ReturnVal = string.Empty;
-            JObject ReturnVal = new JObject();
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
-            try
-            {
-                _initResources();
-                AuthenticationStatus = _attemptRefresh();
-
-                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
-                {
-                    CswNbtWebServiceWelcomeItems ws = new CswNbtWebServiceWelcomeItems( _CswNbtResources );
-                    // Only administrators can move welcome content for other roles
-                    string UseRoleId = _CswNbtResources.CurrentNbtUser.RoleId.ToString();
-                    if( RoleId != string.Empty && _CswNbtResources.CurrentNbtUser.IsAdministrator() )
-                        UseRoleId = RoleId;
-                    ret = ws.MoveWelcomeItems( UseRoleId, CswConvert.ToInt32( WelcomeId ), CswConvert.ToInt32( NewRow ), CswConvert.ToInt32( NewColumn ) );
-                    //ReturnVal = "{ \"Succeeded\": \"" + ret.ToString().ToLower() + "\" }";
-                    ReturnVal.Add( "Succeeded", ret );
-                }
-
-                _deInitResources();
-            }
-            catch( Exception Ex )
-            {
-                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
-            }
-
-            CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
-
-            return ReturnVal.ToString();
-
-        } // moveWelcomeItems()
-
-        #endregion Welcome Region
 
         #region Permissions
 

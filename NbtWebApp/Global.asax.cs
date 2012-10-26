@@ -2,6 +2,7 @@
 using System.ServiceModel.Activation;
 using System.Web;
 using System.Web.Routing;
+using NbtWebApp.WebSvc.Logic.Menus.LandingPages;
 
 namespace NbtWebApp
 {
@@ -20,6 +21,7 @@ namespace NbtWebApp
             RouteTable.Routes.Add( new ServiceRoute( "Views", Factory, typeof( Views ) ) );
             RouteTable.Routes.Add( new ServiceRoute( "Session", Factory, typeof( Session ) ) );
             RouteTable.Routes.Add( new ServiceRoute( "Reports", Factory, typeof( Reports ) ) );
+            RouteTable.Routes.Add( new ServiceRoute( "LandingPages", Factory, typeof( LandingPages ) ) );
         }
 
         /// <summary>

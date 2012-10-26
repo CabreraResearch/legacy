@@ -1083,9 +1083,9 @@ ul li div {
     color: #4e94c8;
 }
 
-.WelcomeTitle
+.LandingPageTitle
 {
-    font-size: 14px;
+    font-size: 20px;
 }
 
 .FiltersTableDiv
@@ -1126,7 +1126,7 @@ ul li div {
     height: 18px;
     cursor: pointer;
 }
-.WelcomeDiv
+.LandingPageDiv
 {
     text-align: center;
     width: 95%;
@@ -1155,24 +1155,24 @@ ul li div {
     border: 1px solid #003366;
     width: 100px;
 }
-.WelcomeTable
+.LandingPageTable
 {
     font-size: 16px;
     text-align: center;
 }
-.WelcomeTable a
+.LandingPageTable a
 {
     font-size: 16px;
 }
-.WelcomeText
+.LandingPageText
 {
     font-size: 16px;
 }
-.WelcomeText a
+.LandingPageText a
 {
     font-size: 16px;
 }
-.WelcomeImage
+.LandingPageImage
 {
     padding: 5px;
     background-color: #e8e9f2;
@@ -1217,7 +1217,7 @@ ul li div {
 .CswLayoutTable
 {
 }
-.WelcomeButton
+.LandingPageButton
 {
     padding: 10px;
 }

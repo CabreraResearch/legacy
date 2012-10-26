@@ -349,6 +349,9 @@
                     cswPrivate.addBtn.hide();
                 }
                 if (cswPrivate.removeBtn) {
+                    if (cswPrivate.isRemoveMode(cswPublic.table)) {
+                        cswPrivate.toggleRemove();
+                    }
                     cswPrivate.removeBtn.hide();
                 }
                 if (cswPrivate.expandColBtn) {

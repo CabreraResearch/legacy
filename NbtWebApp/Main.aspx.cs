@@ -16,8 +16,6 @@ namespace ChemSW.Nbt.WebPages
     {
         #region Private Variables
 
-        private Int32 PageSize = 20;  //if this is changed, change Main.js too
-
         private RadTreeView _MainTreeView;
         private CswNodesGrid _MainGrid;
         private CswNodesList _MainList;
@@ -420,7 +418,6 @@ namespace ChemSW.Nbt.WebPages
 
         private void initNavigator( bool ReloadTree )
         {
-            CswNbtNodeKey ParentKey = null;
             if( _ViewMode == NbtViewRenderingMode.Tree )
             {
                 CswNbtNodeKey PriorSelectedNodeKey = null;

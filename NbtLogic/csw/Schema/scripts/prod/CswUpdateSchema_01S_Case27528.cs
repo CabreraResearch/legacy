@@ -1,7 +1,7 @@
 ﻿using ChemSW.Core;
-using ChemSW.Nbt.csw.Dev;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
+using ChemSW.Nbt.csw.Dev;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -29,14 +29,14 @@ namespace ChemSW.Nbt.Schema
             {
                 if( null != InvGrpPermNt && null != DefaultWorkUnit )
                 {
-                    foreach( CswNbtObjClassInventoryGroupPermission InvGrpPermNode in InvGrpPermOc.getNodes( false, false ) )
+                    foreach( CswNbtObjClassInventoryGroupPermission InvGrpPermNode in InvGrpPermOc.getNodes( false, false, IncludeHiddenNodes: true ) )
                     {
                         if( ( null != CISProInventoryGroup && InvGrpPermNode.InventoryGroup.RelatedNodeId == CISProInventoryGroup.NodeId ) ||
                             InvGrpPermNode.InventoryGroup.Gestalt == "CISPro" )
                         {
                             InvGrpPermNode.InventoryGroup.RelatedNodeId = DefaultInventoryGroup.NodeId;
                             InvGrpPermNode.WorkUnit.RelatedNodeId = DefaultWorkUnit.NodeId;
-                            InvGrpPermNode.postChanges( false );
+                            InvGrpPermNode.postChanges( true );
                         }
                         if( null != AdminRole && InvGrpPermNode.Role.RelatedNodeId == AdminRole.NodeId )
                         {
@@ -48,11 +48,11 @@ namespace ChemSW.Nbt.Schema
                         }
                     }
 
-                    if( MakeAdminNode )
+                    if( MakeAdminNode && null != AdminRole )
                     {
                         _createInventoryGroupPermission( InvGrpPermNt.NodeTypeId, AdminRole.NodeId, DefaultInventoryGroup.NodeId, DefaultWorkUnit.NodeId );
                     }
-                    if( MakeChemSWAdminNode )
+                    if( MakeChemSWAdminNode && null != ChemSWAdminRole )
                     {
                         _createInventoryGroupPermission( InvGrpPermNt.NodeTypeId, ChemSWAdminRole.NodeId, DefaultInventoryGroup.NodeId, DefaultWorkUnit.NodeId );
                     }
@@ -63,7 +63,7 @@ namespace ChemSW.Nbt.Schema
 
                 if( null != CISProInventoryGroup && null != LocationNt )
                 {
-                    foreach( CswNbtObjClassLocation LocationNode in InvGrpPermOc.getNodes( false, false ) )
+                    foreach( CswNbtObjClassLocation LocationNode in LocationOc.getNodes( false, false, IncludeHiddenNodes: true ) )
                     {
                         if( LocationNode.InventoryGroup.RelatedNodeId == CISProInventoryGroup.NodeId )
                         {
@@ -75,19 +75,7 @@ namespace ChemSW.Nbt.Schema
                 }
             }
 
-        }
-
-        public override CswDeveloper Author
-        {
-            get { return CswDeveloper.BV; }
-        }
-
-        public override int CaseNo
-        {
-            get { return 27528; }
-        }
-
-        //Update()
+        }//Update()
 
         private CswNbtObjClassWorkUnit _getDefaultWorkUnit()
         {
@@ -96,7 +84,7 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataNodeType WorkUnitNt = WorkUnitOc.FirstNodeType;
             if( null != WorkUnitNt )
             {
-                foreach( CswNbtObjClassWorkUnit WorkUnitNode in WorkUnitNt.getNodes( false, false ) )
+                foreach( CswNbtObjClassWorkUnit WorkUnitNode in WorkUnitNt.getNodes( false, false, IncludeHiddenNodes: true ) )
                 {
                     if( "Default Work Unit" == WorkUnitNode.Name.Text )
                     {
@@ -114,7 +102,7 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataNodeType InvGrpNt = InvGrpOc.FirstNodeType;
             if( null != InvGrpNt )
             {
-                foreach( CswNbtObjClassInventoryGroup InventoryGroupNode in InvGrpNt.getNodes( false, false ) )
+                foreach( CswNbtObjClassInventoryGroup InventoryGroupNode in InvGrpNt.getNodes( false, false, IncludeHiddenNodes: true ) )
                 {
                     if( Name == InventoryGroupNode.Name.Text )
                     {
@@ -140,6 +128,16 @@ namespace ChemSW.Nbt.Schema
             InvGrpPermNode.Undispose.Checked = Tristate.True;
 
             InvGrpPermNode.postChanges( false );
+        }
+
+        public override CswDeveloper Author
+        {
+            get { return CswDeveloper.BV; }
+        }
+
+        public override int CaseNo
+        {
+            get { return 27528; }
         }
 
     }//class CswUpdateSchema_01S_Case27528

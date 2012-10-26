@@ -23,7 +23,8 @@
                 labelText: null,
                 excludeNodeTypeIds: '',
                 relatedToNodeTypeId: '',
-                relatedObjectClassPropName: ''
+                relatedObjectClassPropName: '',
+                async: true
             };
             var cswPublic = {};
 
@@ -55,6 +56,7 @@
 
                 Csw.ajax.post({
                     urlMethod: cswPrivate.nodeTypesUrlMethod,
+                    async: cswPrivate.async,
                     data: {
                         ObjectClassName: Csw.string(cswPrivate.objectClassName),
                         ObjectClassId: Csw.string(cswPrivate.objectClassId),

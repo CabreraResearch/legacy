@@ -95,12 +95,10 @@
     <Compile Include="csw\CswSuperCycleCacheWeb.cs" />
     <Compile Include="csw\CswTabOuterTable.cs" />
     <Compile Include="csw\CswTreeCombo.cs" />
-    <Compile Include="csw\CswViewEditorWizard.cs" />
     <Compile Include="csw\CswViewFilterEditor.cs" />
     <Compile Include="csw\CswViewListTree.cs" />
     <Compile Include="csw\CswViewStructureTree.cs" />
     <Compile Include="csw\CswViewVisibilityEditor.cs" />
-    <Compile Include="csw\CswWelcomeTable.cs" />
     <Compile Include="csw\FieldTypes\CswBarcode.cs" />
     <Compile Include="csw\FieldTypes\CswComposite.cs" />
     <Compile Include="csw\FieldTypes\CswDate.cs" />

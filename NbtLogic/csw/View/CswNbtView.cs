@@ -207,6 +207,15 @@ namespace ChemSW.Nbt
         }
 
         /// <summary>
+        /// True if the View is visible by the current user
+        /// </summary>
+        /// <returns></returns>
+        public bool IsVisible()
+        {
+            return _CswNbtResources.ViewSelect.isVisible( this, _CswNbtResources.CurrentNbtUser, true, false );
+        }
+
+        /// <summary>
         /// Constructor - empty view
         /// </summary>
         public CswNbtView( CswNbtResources CswNbtResources )

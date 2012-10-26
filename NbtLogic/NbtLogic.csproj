@@ -107,8 +107,20 @@
       <DependentUpon>CswNbtSchema.edmx</DependentUpon>
     </Compile>
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01T_Case27920.cs" />
+    <Compile Include="csw\LandingPage\CswNbtLandingPageDataContract.cs" />
+    <Compile Include="csw\LandingPage\CswNbtLandingPageItem.cs" />
+    <Compile Include="csw\LandingPage\CswNbtLandingPageItemAdd.cs" />
+    <Compile Include="csw\LandingPage\CswNbtLandingPageItemButton.cs" />
+    <Compile Include="csw\LandingPage\CswNbtLandingPageItemFactory.cs" />
+    <Compile Include="csw\LandingPage\CswNbtLandingPageItemLink.cs" />
+    <Compile Include="csw\LandingPage\CswNbtLandingPageItemTab.cs" />
+    <Compile Include="csw\LandingPage\CswNbtLandingPageItemType.cs" />
+    <Compile Include="csw\LandingPage\CswNbtLandingPageItemText.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01T_Case27881.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_0T1_Case27884.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01S_Case27709.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01S_Case28016_2.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01S_Case28016.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01S_Case27742.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01S_Case28002.cs" />
@@ -145,6 +157,7 @@
     <Compile Include="csw\ImportExport\CswNbtImportStatus.cs" />
     <Compile Include="csw\ImportExport\CswNbtPersistedImportState.cs" />
     <Compile Include="csw\ImportExport\ICswImporter.cs" />
+    <Compile Include="csw\LandingPage\CswNbtLandingPageTable.cs" />
     <Compile Include="csw\MetaData\CswNbtFieldResources.cs" />
     <Compile Include="csw\MetaData\CswNbtMetaData.cs" />
     <Compile Include="csw\MetaData\CswNbtMetaDataCollectionFieldType.cs" />
@@ -354,7 +367,6 @@
     <Compile Include="csw\Schema\CswDemoDataManager.cs" />
     <Compile Include="csw\Schema\CswNbtNodeTypePermissions.cs" />
     <Compile Include="csw\Schema\CswNbtSchemaModTrnsctn.cs" />
-    <Compile Include="csw\Schema\CswNbtSchemaUpdaterUser.cs" />
     <Compile Include="csw\Schema\CswSchemaUpdateDriver.cs" />
     <Compile Include="csw\Schema\CswSchemaUpdater.cs" />
     <Compile Include="csw\Schema\CswSchemaVersion.cs" />
@@ -668,7 +680,6 @@
     <Compile Include="csw\View\CswNbtViewRelationship.cs" />
     <Compile Include="csw\View\CswNbtViewRoot.cs" />
     <Compile Include="csw\View\CswNbtViewSelect.cs" />
-    <Compile Include="csw\Welcome\CswNbtWelcomeTable.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

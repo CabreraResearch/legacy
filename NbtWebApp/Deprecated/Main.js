@@ -95,10 +95,6 @@ function getMainHiddenRefreshButton()
 		button = document.getElementById('ctl00_ctl00_ctl00_FormContent_StandardContent_MasterCenterContent_HiddenRefreshButton');
 	return button;
 }
-function getWelcomeAddedButton() 
-{
-	return document.getElementById('ctl00_ctl00_ctl00_FormContent_StandardContent_MasterCenterContent_WelcomeTable_AddedButton');
-}
 
 function getSelectedNodeKey()
 {
@@ -593,24 +589,6 @@ function CswQuickLaunch_openConfigPopup()
 function CswQuickLaunch_CallBack(radWindow, returnValue) 
 {
 }
-
-function WelcomeAddComponentDialog_openPopup(rolesel) {
-	var url = 'Popup_WelcomeAdd.Aspx';
-	if (rolesel != null)
-		url += '?roleid=' + rolesel.value;
-	var oWnd = window.radopen(null, 'WelcomeAddComponentDialog');
-	oWnd.setUrl(url);
-	//return false;
-}
-function WelcomeAddComponentDialog_Callback(radWindow, returnValue) 
-{
-	if (returnValue && !changed) 
-	{
-		var button = getMainHiddenRefreshButton();
-		button.click();
-	}
-}
-
 
 function CswFile_clearDocument(hiddenclearid, filelinkid)
 {
@@ -1435,21 +1413,6 @@ function MainAdd_CallBack(radWindow, returnValue)
 		var trigger = getMainTreeAjaxTrigger();
 		if(trigger != null)
 			trigger.click();
-	}
-}
-
-function WelcomeAddNodeDialog_openPopup(NodeTypeId) 
-{
-	var oWnd = window.radopen(null, "WelcomeAddNodeDialog");
-	oWnd.setUrl('Popup_EditNode.aspx?dcv=1&dcsn=0&nodetypeid=' + NodeTypeId + '&parentnodekey=&svid=&checkednodeids=');
-	return false;
-}
-function WelcomeAddNodeDialog_CallBack(radWindow, returnValue) 
-{
-	if (returnValue && !changed) 
-	{
-		var button = getWelcomeAddedButton();
-		button.click();
 	}
 }
 

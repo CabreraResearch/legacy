@@ -1,6 +1,7 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Data;
+using ChemSW.Audit;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Nbt.ObjClasses;
@@ -10,7 +11,7 @@ namespace ChemSW.Nbt
 
     public class CswNbtNodeReaderDataNative : ICswNbtNodeReaderData
     {
-
+        private ChemSW.Audit.CswAuditMetaData _CswAuditMetaData = new CswAuditMetaData();
         private CswNbtResources _CswNbtResources = null;
         public CswNbtNodeReaderDataNative( CswNbtResources CswNbtResources )
         {
@@ -45,6 +46,7 @@ namespace ChemSW.Nbt
                 CswNbtNode.IsTemp = CswConvert.ToBoolean( NodesTable.Rows[0]["istemp"] );
                 CswNbtNode.SessionId = CswConvert.ToString( NodesTable.Rows[0]["sessionid"] );
                 CswNbtNode.PendingUpdate = CswConvert.ToBoolean( NodesTable.Rows[0]["pendingupdate"] );
+                CswNbtNode.AuditLevel = NodesTable.Rows[0][_CswAuditMetaData.AuditLevelColName].ToString();
                 ReturnVal = true;
             }
             return ( ReturnVal );

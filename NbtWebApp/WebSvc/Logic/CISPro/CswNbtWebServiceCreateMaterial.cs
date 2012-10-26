@@ -249,7 +249,7 @@ namespace ChemSW.Nbt.WebServices
                 NodeAsSize.CatalogNo.Text = SizeObj["catalogNo"].ToString();
                 NodeAsSize.QuantityEditable.Checked = CswConvert.ToTristate( SizeObj["quantEditableChecked"] );
                 NodeAsSize.Dispensable.Checked = CswConvert.ToTristate( SizeObj["dispensibleChecked"] );
-                NodeAsSize.UnitCount.Value = CswConvert.ToInt32( SizeObj["unitCount"] );
+                NodeAsSize.UnitCount.Value = CswConvert.ToDouble( SizeObj["unitCount"] );
 
                 JArray Row = new JArray();
                 Ret["row"] = Row;
@@ -399,9 +399,16 @@ namespace ChemSW.Nbt.WebServices
 
                         /* 3. Add landingpage data */
                         RetObj["landingpagedata"] = new JObject();
-                        RetObj["landingpagedata"]["title"] = "Created " + MaterialNode.NodeName;
-                        RetObj["landingpagedata"]["materialid"] = MaterialObj["materialId"];
-                        RetObj["landingpagedata"]["materialviewid"] = MaterialNodeView.SessionViewId.ToString();
+                        RetObj["landingpagedata"]["ActionId"] = _CswNbtResources.Actions[CswNbtActionName.Create_Material].ActionId.ToString();
+                        RetObj["landingpagedata"]["Title"] = "Created " + MaterialNode.NodeName;
+                        RetObj["landingpagedata"]["NodeId"] = MaterialObj["materialId"];
+                        RetObj["landingpagedata"]["NodeViewId"] = MaterialNodeView.SessionViewId.ToString();
+                        RetObj["landingpagedata"]["RelatedNodeId"] = MaterialNode.NodeId.ToString();
+                        RetObj["landingpagedata"]["RelatedNodeName"] = MaterialNode.NodeName;
+                        RetObj["landingpagedata"]["RelatedNodeTypeId"] = MaterialNode.NodeTypeId.ToString();
+                        RetObj["landingpagedata"]["RelatedObjectClassId"] = MaterialNode.getObjectClassId().ToString();
+                        //If (and when) action landing pages are slated to be roleId-specific, remove this line
+                        RetObj["landingpagedata"]["isConfigurable"] = _CswNbtResources.CurrentNbtUser.IsAdministrator();
                     }
                 }
             }
