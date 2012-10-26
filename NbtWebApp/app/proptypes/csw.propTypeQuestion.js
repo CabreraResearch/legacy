@@ -18,8 +18,8 @@
                     cswPrivate.parent = cswPublic.data.propDiv;
 
                     cswPrivate.showCorrectiveAction = function () {
-                        return ((cswPrivate.isActionRequired && (cswPrivate.correctiveAction === cswPrivate.defaultText && false == cswPrivate.isAnswerCompliant())) ||
-                                 cswPrivate.correctiveAction !== cswPrivate.defaultText && false == cswPrivate.isAnswerCompliant());
+                        return ((cswPrivate.isActionRequired && cswPrivate.correctiveAction === cswPrivate.defaultText && false == cswPrivate.isAnswerCompliant()) ||
+                                 (cswPrivate.correctiveAction !== cswPrivate.defaultText && false == cswPrivate.isAnswerCompliant()));
                     }
 
                     cswPrivate.isAnswerCompliant = function () {
@@ -31,18 +31,17 @@
                     cswPrivate.checkCompliance = function () {
                         cswPrivate.selectedAnswer = cswPrivate.answerSel.val();
                         cswPrivate.correctiveAction = cswPrivate.correctiveActionTextBox.val();
+                        var isCompliant = true;
 
                         if (cswPrivate.correctiveAction === cswPrivate.defaultText) {
                             if (cswPrivate.selectedAnswer !== cswPrivate.defaultText) {
                                 for (var i = 0; i < cswPrivate.splitCompliantAnswers.length; i += 1) {
-                                    cswPrivate.isCompliant = cswPrivate.isAnswerCompliant();
+                                    isCompliant = cswPrivate.isAnswerCompliant();
                                 }
                             }
-                        } else {
-                            cswPrivate.isCompliant = true;
                         }
 
-                        if (cswPrivate.isCompliant) {
+                        if (isCompliant) {
                             cswPrivate.answerSel.removeClass('CswFieldTypeQuestion_Deficient');
                             if (false == cswPrivate.showCorrectiveAction()) {
                                 cswPrivate.correctiveActionLabel.hide();
@@ -139,14 +138,12 @@
 
                         cswPrivate.defaultText = (false === cswPrivate.multi) ? '' : Csw.enums.multiEditDefaultValue;
                         cswPrivate.splitCompliantAnswers = cswPrivate.compliantAnswers.split(',');
-                        cswPrivate.isCompliant = true;
                         cswPrivate.selectedAnswer = cswPrivate.answerSel.val();
                         cswPrivate.correctiveAction = cswPrivate.correctiveActionTextBox.val();
 
                         cswPrivate.checkCompliance();
 
-                        if ((cswPrivate.isActionRequired && (cswPrivate.correctiveAction === cswPrivate.defaultText && false == cswPrivate.isAnswerCompliant())) ||
-                                 cswPrivate.correctiveAction !== cswPrivate.defaultText && false == cswPrivate.isAnswerCompliant()) {
+                        if (cswPrivate.showCorrectiveAction()) {
                             cswPrivate.correctiveActionLabel.show();
                             cswPrivate.correctiveActionTextBox.show();
                         } else {
