@@ -166,7 +166,9 @@ namespace ChemSW.Nbt.Actions
                 ChildContainer.SourceContainer.RelatedNodeId = _SourceContainer.NodeId;
                 ChildContainer.Quantity.Quantity = 0;
                 ChildContainer.Quantity.UnitId = UnitId;
+                ChildContainer.Disposed.Checked = Tristate.False;                
                 ChildContainer.postChanges( false );
+                ChildContainer.Undispose.setHidden( value: true, SaveToDb: true );
                 _ContainersToView.Add( ChildContainer.NodeId );
             }
             return ChildContainer;
