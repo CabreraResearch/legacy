@@ -28,6 +28,14 @@ namespace ChemSW.Nbt.WebServices
             // like he says
         }
 
+        public static void deauthenticate( ICswResources CswResources, object Ret, object Request )
+        {
+            if( null != CswResources )
+            {
+                CswNbtResources Resources = (CswNbtResources) CswResources;
+                Resources.CswSessionManager.clearSession();
+            }
+        }
 
         /// <summary>
         /// WCF wrapper around resetPassword
@@ -40,6 +48,7 @@ namespace ChemSW.Nbt.WebServices
                 if( false == string.IsNullOrEmpty( Request.NewPassword ) )
                 {
                     CswNbtResources Resources = (CswNbtResources) CswResources;
+
                     CswNbtObjClassUser User = Resources.Nodes[Request.UserId];
                     if( null != User )
                     {

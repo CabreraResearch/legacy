@@ -673,6 +673,13 @@ namespace ChemSW.Nbt.ObjClasses
 
         public CswNbtNodePropColl Properties { get { return ( _CswNbtNodePropColl ); } }
 
+        private string _AuditLevel = ChemSW.Audit.AuditLevel.NoAudit;
+        public string AuditLevel //27709 nodes fully support audit level now
+        {
+            get { return ( _AuditLevel ); }
+            set { _AuditLevel = value; }
+        }
+
         public override int GetHashCode()
         {
             return this.NodeId.PrimaryKey;

@@ -15,7 +15,7 @@ namespace ChemSW.Nbt.Schema
         {
             CswNbtMetaDataObjectClass SizeOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.SizeClass );
 
-            // moved to RunBeforeEveryExecutionOfUpdater_01b
+            // moved to RunBeforeEveryExecutionOfUpdater_01OC
             //CswNbtMetaDataObjectClassProp UnitCountOcp = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( SizeOc )
             //{
             //    PropName = CswNbtObjClassSize.PropertyName.UnitCount,

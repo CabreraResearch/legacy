@@ -3,6 +3,8 @@ using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.ObjClasses;
+using ChemSW.Nbt.MetaData;
+using ChemSW.Audit;
 
 namespace ChemSW.Nbt
 {
@@ -10,7 +12,7 @@ namespace ChemSW.Nbt
     public class CswNbtNodeWriterNative : ICswNbtNodeWriterImpl
     {
         private CswNbtResources _CswNbtResources = null;
-
+        private CswAuditMetaData _CswAuditMetaData = new CswAuditMetaData();
         private CswTableUpdate _CswTableUpdateNodes = null;
         private CswTableUpdate CswTableUpdateNodes
         {
@@ -50,6 +52,15 @@ namespace ChemSW.Nbt
             NewNodeRow["readonly"] = CswConvert.ToDbVal( false );
             NewNodeRow["isdemo"] = CswConvert.ToDbVal( false );
             NewNodeRow["issystem"] = CswConvert.ToDbVal( false );
+
+            //case 27709: nodes must have an explicit audit level
+            CswNbtMetaDataNodeType CswNbtMetaDataNodeType = Node.getNodeType();
+            if( null != CswNbtMetaDataNodeType )
+            {
+                NewNodeRow[_CswAuditMetaData.AuditLevelColName] = CswNbtMetaDataNodeType.AuditLevel;
+                Node.AuditLevel = CswNbtMetaDataNodeType.AuditLevel; //Otherwise the Node's deafult NoAudit setting gets written to db; trust me on this one
+            }
+
             NewNodeTable.Rows.Add( NewNodeRow );
 
             Node.NodeId = new CswPrimaryKey( "nodes", CswConvert.ToInt32( NewNodeTable.Rows[0]["nodeid"] ) );
@@ -76,6 +87,7 @@ namespace ChemSW.Nbt
             NodesTable.Rows[0]["isdemo"] = CswConvert.ToDbVal( Node.IsDemo );
             NodesTable.Rows[0]["istemp"] = CswConvert.ToDbVal( Node.IsTemp );
             NodesTable.Rows[0]["sessionid"] = CswConvert.ToDbVal( Node.SessionId );
+            NodesTable.Rows[0][_CswAuditMetaData.AuditLevelColName] = Node.AuditLevel;
             CswTableUpdateNodes.update( NodesTable );
 
         }//write()

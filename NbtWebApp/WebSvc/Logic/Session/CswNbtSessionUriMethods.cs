@@ -4,6 +4,7 @@ using System.ServiceModel.Activation;
 using System.ServiceModel.Web;
 using System.Web;
 using ChemSW.Nbt.WebServices;
+using ChemSW.Security;
 using ChemSW.Session;
 using ChemSW.WebSvc;
 using NbtWebApp.WebSvc.Returns;
@@ -39,6 +40,10 @@ namespace NbtWebApp.WebSvc.Session
                 );
 
             InitDriverType.run();
+            if( Ret.Authentication.AuthenticationStatus != AuthenticationStatus.Deauthenticated )
+            {
+                Ret.Authentication.AuthenticationStatus = AuthenticationStatus.Deauthenticated;
+            }
             return ( Ret );
 
         }
@@ -50,12 +55,20 @@ namespace NbtWebApp.WebSvc.Session
         [WebGet]
         [FaultContract( typeof( FaultException ) )]
         [Description( "Terminate the current session" )]
-        public void End()
+        public CswWebSvcReturn End()
         {
-            CswWebSvcResourceInitializerNbt Resource = new CswWebSvcResourceInitializerNbt( _Context, null );
-            Resource.initResources();
-            Resource.deauthenticate();
-            Resource.deInitResources();
+            //delegate has to be static because you can't create an instance yet: you don't have resources until the delegate is actually called
+            CswWebSvcReturn Ret = new CswWebSvcReturn();
+
+            var InitDriverType = new CswWebSvcDriver<CswWebSvcReturn, object>(
+                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj: Ret,
+                WebSvcMethodPtr: CswNbtWebServiceSession.deauthenticate,
+                ParamObj: null
+                );
+
+            InitDriverType.run();
+            return ( Ret );
         }
 
         /// <summary>

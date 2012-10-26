@@ -316,7 +316,8 @@ namespace ChemSW.Nbt.MetaData
         {
             foreach( CswNbtMetaDataNodeTypeTab Tab in _CswNbtMetaDataResources.CswNbtMetaData.getNodeTypeTabs( NodeTypeId ) )
             {
-                if( _CswNbtMetaDataResources.CswNbtResources.Permit.canTab( CswNbtPermit.NodeTypePermission.View, this, NodeTypeTab: Tab ) )
+                if( _CswNbtMetaDataResources.CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.View, Tab.getNodeType() ) ||
+                    _CswNbtMetaDataResources.CswNbtResources.Permit.canTab( CswNbtPermit.NodeTypePermission.View, this, NodeTypeTab: Tab ) )
                 {
                     yield return Tab;
                 }
