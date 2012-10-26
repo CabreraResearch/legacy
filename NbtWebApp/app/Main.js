@@ -570,7 +570,7 @@ window.initMain = window.initMain || function (undefined) {
         o.parent.menu(menuOpts);
 
     }
-
+    
     function getViewGrid(options) {
         var o = {
             viewid: '',
@@ -584,7 +584,7 @@ window.initMain = window.initMain || function (undefined) {
             onRefresh: ''
         };
 
-        if (options) Csw.extend(o, options);
+        Csw.extend(o, options);
 
         // Defaults
         var getEmptyGrid = (Csw.bool(o.showempty));
@@ -620,8 +620,9 @@ window.initMain = window.initMain || function (undefined) {
                 getViewGrid(newopts);
             } // onEditFilters
         }); // viewFilters
-
-        Csw.main.centerBottomDiv.$.CswNodeGrid('init', {
+        var div = Csw.main.centerBottomDiv.div({ suffix: window.Ext.id() });
+        div.empty();
+        Csw.nbt.nodeGrid(div, {
             viewid: o.viewid,
             nodeid: o.nodeid,
             nodekey: o.nodekey,
