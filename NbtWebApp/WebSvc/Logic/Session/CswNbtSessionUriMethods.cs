@@ -40,12 +40,7 @@ namespace NbtWebApp.WebSvc.Session
                 );
 
             InitDriverType.run();
-            if( Ret.Authentication.AuthenticationStatus != AuthenticationStatus.Deauthenticated )
-            {
-                Ret.Authentication.AuthenticationStatus = AuthenticationStatus.Deauthenticated;
-            }
             return ( Ret );
-
         }
 
         /// <summary>
@@ -68,6 +63,10 @@ namespace NbtWebApp.WebSvc.Session
                 );
 
             InitDriverType.run();
+            if( Ret.Authentication.AuthenticationStatus != AuthenticationStatus.Deauthenticated )
+            {
+                Ret.Authentication.AuthenticationStatus = AuthenticationStatus.Deauthenticated;
+            }
             return ( Ret );
         }
 
