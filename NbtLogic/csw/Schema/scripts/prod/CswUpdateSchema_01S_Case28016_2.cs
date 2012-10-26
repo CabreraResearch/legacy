@@ -4,6 +4,7 @@ using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
+using ChemSW.Nbt.csw.Dev;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -16,7 +17,7 @@ namespace ChemSW.Nbt.Schema
         {
             // Set runtime hidden for existing Hourly reports and Schedules
             
-            CswNbtMetaDataObjectClass MailReportOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.MailReportClass );
+            CswNbtMetaDataObjectClass MailReportOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.MailReportClass );
             foreach( CswNbtObjClassMailReport MailReportNode in MailReportOC.getNodes( false, true ) )
             {
                 MailReportNode.RunTime.setHidden( 
@@ -25,7 +26,7 @@ namespace ChemSW.Nbt.Schema
                 );
             } // foreach( CswNbtObjClassMailReport MailReportNode in MailReportOC.getNodes( false, true ) )
 
-            CswNbtMetaDataObjectClass GeneratorOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.GeneratorClass );
+            CswNbtMetaDataObjectClass GeneratorOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.GeneratorClass );
             foreach( CswNbtObjClassGenerator GeneratorNode in GeneratorOC.getNodes( false, true ) )
             {
                 GeneratorNode.RunTime.setHidden(
@@ -34,6 +35,16 @@ namespace ChemSW.Nbt.Schema
                 );
             } // foreach( CswNbtObjClassGenerator GeneratorNode in GeneratorOC.getNodes( false, true ) )
         } //Update()
+
+        public override CswDeveloper Author
+        {
+            get { return CswDeveloper.SS; }
+        }
+
+        public override int CaseNo
+        {
+            get { return 28016; }
+        }
 
     }//class CswUpdateSchemaCase28016_2
 

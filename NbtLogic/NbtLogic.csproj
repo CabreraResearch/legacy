@@ -119,8 +119,6 @@
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01T_Case27881.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_0T1_Case27884.cs" />
-    <Compile Include="csw\Schema\scripts\infr\RunBeforeEveryExecutionOfUpdater_01OC.cs" />
-    <Compile Include="csw\Schema\scripts\infr\RunBeforeEveryExecutionOfUpdater_01M.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01S_Case27709.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01S_Case28016_2.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01S_Case28016.cs" />

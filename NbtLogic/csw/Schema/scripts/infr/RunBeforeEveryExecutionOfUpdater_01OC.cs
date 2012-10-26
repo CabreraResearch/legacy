@@ -761,7 +761,7 @@ namespace ChemSW.Nbt.Schema
 
             #region case 27647
 
-            CswNbtMetaDataObjectClass SizeOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.SizeClass );
+            CswNbtMetaDataObjectClass SizeOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.SizeClass );
             CswNbtMetaDataObjectClassProp UnitCountOcp = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( SizeOc )
             {
                 PropName = CswNbtObjClassSize.PropertyName.UnitCount,

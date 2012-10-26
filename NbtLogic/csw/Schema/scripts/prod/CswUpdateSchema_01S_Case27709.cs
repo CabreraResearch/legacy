@@ -5,6 +5,7 @@ using ChemSW.DB;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Audit;
+using ChemSW.Nbt.csw.Dev;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -39,6 +40,16 @@ namespace ChemSW.Nbt.Schema
             }
 
         }//Update()
+
+        public override CswDeveloper Author
+        {
+            get { return CswDeveloper.PG; }
+        }
+
+        public override int CaseNo
+        {
+            get { return 27709; }
+        }
 
     }//class CswUpdateSchema_01S_Case27709
 
