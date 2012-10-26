@@ -78,8 +78,8 @@
                             nodenames: nodenames,
                             Multi: (nodeids.count() > 1),
                             onEditNode: cswPrivate.onEditNode,
-                            onEditView: cswPrivate.onEditView
-                            ,onRefresh: cswPrivate.onRefresh
+                            onEditView: cswPrivate.onEditView,
+                            onRefresh: cswPrivate.onRefresh
                         });
                     }, // onEdit
                     onDelete: function(rows) {

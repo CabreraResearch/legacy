@@ -598,8 +598,8 @@ window.initMain = window.initMain || function (undefined) {
             Csw.cookie.get(Csw.cookie.cookieNames.CurrentViewId);
         }
 
-        o.onEditNode = function () { getViewGrid(o); };
-        o.onDeleteNode = function () { getViewGrid(o); };
+        o.onEditNode = function () { grid.reload(); };
+        o.onDeleteNode = function () { grid.reload(); };
         o.onRefresh = function (options) {
             clear({ centertop: true, centerbottom: true });
             Csw.clientChanges.unsetChanged();
@@ -622,7 +622,7 @@ window.initMain = window.initMain || function (undefined) {
         }); // viewFilters
         var div = Csw.main.centerBottomDiv.div({ suffix: window.Ext.id() });
         div.empty();
-        Csw.nbt.nodeGrid(div, {
+        var grid = Csw.nbt.nodeGrid(div, {
             viewid: o.viewid,
             nodeid: o.nodeid,
             nodekey: o.nodekey,
