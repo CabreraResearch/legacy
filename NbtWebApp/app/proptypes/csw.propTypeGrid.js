@@ -96,7 +96,7 @@
                                 cswPrivate.makeGridMenu(grid);
                             }
                         };
-                        cswPublic.control = gridDiv.$.CswNodeGrid('init', gridOpts);
+                        cswPublic.control = Csw.nbt.nodeGrid(gridDiv, gridOpts);
                     };
 
                     cswPrivate.makeSmallGrid = function () {
