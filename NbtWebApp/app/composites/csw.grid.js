@@ -114,6 +114,7 @@
                     columns: columns,
                     height: cswPrivate.height,
                     width: cswPrivate.width,
+                    minWidth: 400,
                     resizable: true,               // client side grid resizing
                     stateful: true,
                     stateId: cswPrivate.name,
@@ -305,6 +306,7 @@
                 cswPrivate.getData(function (result) {
                     if (result && result.grid && result.grid.data && result.grid.data.items) {
                         //cswPrivate.store.removeAll(false);
+                        cswPrivate.data.items = result.grid.data.items;
                         cswPrivate.store.loadRawData(result.grid.data.items);
                         cswPrivate.store.sync();
                     } else {
