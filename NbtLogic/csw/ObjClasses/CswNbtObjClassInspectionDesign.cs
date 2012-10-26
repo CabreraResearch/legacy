@@ -353,7 +353,7 @@ namespace ChemSW.Nbt.ObjClasses
 
                     }
 
-                    Design.SetPreferred.setReadOnly( value: AllAnswered && false == Deficient, SaveToDb: true );
+                    Design.SetPreferred.setReadOnly( value: AllAnswered, SaveToDb: true );
                     // case 26584
                     if( IsAdmin )
                     {
