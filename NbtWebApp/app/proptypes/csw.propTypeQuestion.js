@@ -17,35 +17,44 @@
                     cswPrivate.propVals = cswPublic.data.propData.values;
                     cswPrivate.parent = cswPublic.data.propDiv;
 
-                    cswPrivate.checkCompliance = function() {
-                        var defaultText = (false === cswPrivate.multi) ? '' : Csw.enums.multiEditDefaultValue;
-                        //if (false === multi) {//cases 26445 and 26442
-                        var splitCompliantAnswers = cswPrivate.compliantAnswers.split(',');
-                        var isCompliant = true;
-                        var selectedAnswer = cswPrivate.answerSel.val();
-                        var correctiveAction = cswPrivate.correctiveActionTextBox.val();
+                    cswPrivate.showCorrectiveAction = function () {
+                        return ((cswPrivate.isActionRequired && (cswPrivate.correctiveAction === cswPrivate.defaultText && false == cswPrivate.isAnswerCompliant())) ||
+                                 cswPrivate.correctiveAction !== cswPrivate.defaultText && false == cswPrivate.isAnswerCompliant());
+                    }
 
-                        if (correctiveAction === defaultText) {
-                            if (selectedAnswer !== defaultText) {
-                                isCompliant = false;
-                                for (var i = 0; i < splitCompliantAnswers.length; i += 1) {
-                                    isCompliant = isCompliant || (Csw.string(splitCompliantAnswers[i]).trim().toLowerCase() === Csw.string(selectedAnswer).trim().toLowerCase());
+                    cswPrivate.isAnswerCompliant = function () {
+                        for (var i = 0; i < cswPrivate.splitCompliantAnswers.length; i += 1) {
+                            return (Csw.string(cswPrivate.splitCompliantAnswers[i]).trim().toLowerCase() === Csw.string(cswPrivate.selectedAnswer).trim().toLowerCase());
+                        }
+                    }
+
+                    cswPrivate.checkCompliance = function () {
+                        cswPrivate.selectedAnswer = cswPrivate.answerSel.val();
+                        cswPrivate.correctiveAction = cswPrivate.correctiveActionTextBox.val();
+
+                        if (cswPrivate.correctiveAction === cswPrivate.defaultText) {
+                            if (cswPrivate.selectedAnswer !== cswPrivate.defaultText) {
+                                for (var i = 0; i < cswPrivate.splitCompliantAnswers.length; i += 1) {
+                                    cswPrivate.isCompliant = cswPrivate.isAnswerCompliant();
                                 }
                             }
-                            cswPrivate.correctiveActionLabel.hide();
-                            cswPrivate.correctiveActionTextBox.hide();
+                        } else {
+                            cswPrivate.isCompliant = true;
                         }
-                        var showCorrectiveAction = (false === isCompliant) && cswPrivate.isActionRequired;
-                        if (false === showCorrectiveAction) {
+
+                        if (cswPrivate.isCompliant) {
                             cswPrivate.answerSel.removeClass('CswFieldTypeQuestion_Deficient');
-                            cswPrivate.correctiveActionLabel.hide();
-                            cswPrivate.correctiveActionTextBox.hide();
+                            if (false == cswPrivate.showCorrectiveAction()) {
+                                cswPrivate.correctiveActionLabel.hide();
+                                cswPrivate.correctiveActionTextBox.hide();
+                            }
                         } else {
                             cswPrivate.answerSel.addClass('CswFieldTypeQuestion_Deficient');
-                            cswPrivate.correctiveActionLabel.show();
-                            cswPrivate.correctiveActionTextBox.show();
+                            if (cswPrivate.isActionRequired) {
+                                cswPrivate.correctiveActionLabel.show();
+                                cswPrivate.correctiveActionTextBox.show();
+                            }
                         }
-                        //}
                     }; // checkCompliance()
 
 
@@ -58,17 +67,19 @@
                     cswPrivate.dateAnswered = (false === cswPublic.data.isMulti()) ? Csw.string(cswPrivate.propVals.dateanswered.date).trim() : '';
                     cswPrivate.dateCorrected = (false === cswPublic.data.isMulti()) ? Csw.string(cswPrivate.propVals.datecorrected.date).trim() : '';
                     cswPrivate.isActionRequired = Csw.bool(cswPrivate.propVals.isactionrequired); //case 25035
-                    
+
                     if (cswPublic.data.isReadOnly()) {
                         cswPublic.control = cswPrivate.parent.div();
                         cswPublic.control.append('Answer: ' + cswPrivate.answer);
                         if (cswPrivate.dateAnswered !== '') {
                             cswPublic.control.append(' (' + cswPrivate.dateAnswered + ')');
                         }
-                        cswPublic.control.br();
-                        cswPublic.control.append('Corrective Action: ' + cswPrivate.correctiveAction);
-                        if (cswPrivate.dateCorrected !== '') {
-                            cswPublic.control.append(' (' + cswPrivate.dateCorrected + ')');
+                        if (cswPrivate.correctiveAction !== '') {
+                            cswPublic.control.br();
+                            cswPublic.control.append('Corrective Action: ' + cswPrivate.correctiveAction);
+                            if (cswPrivate.dateCorrected !== '') {
+                                cswPublic.control.append(' (' + cswPrivate.dateCorrected + ')');
+                            }
                         }
                         cswPublic.control.br();
                         cswPublic.control.append('Comments: ' + cswPrivate.comments);
@@ -90,6 +101,10 @@
                                               .select({
                                                   ID: cswPublic.data.ID + '_ans',
                                                   onChange: function () {
+                                                      cswPrivate.propVals.correctiveaction = cswPrivate.defaultText;
+                                                      cswPrivate.correctiveActionTextBox.empty();
+                                                      cswPrivate.correctiveAction = cswPrivate.defaultText;
+                                                      cswPrivate.propVals = {}
                                                       cswPrivate.checkCompliance();
                                                       var val = cswPrivate.answerSel.val();
                                                       Csw.tryExec(cswPublic.data.onChange, val);
@@ -122,7 +137,23 @@
                             }
                         });
 
+                        cswPrivate.defaultText = (false === cswPrivate.multi) ? '' : Csw.enums.multiEditDefaultValue;
+                        cswPrivate.splitCompliantAnswers = cswPrivate.compliantAnswers.split(',');
+                        cswPrivate.isCompliant = true;
+                        cswPrivate.selectedAnswer = cswPrivate.answerSel.val();
+                        cswPrivate.correctiveAction = cswPrivate.correctiveActionTextBox.val();
+
                         cswPrivate.checkCompliance();
+
+                        if ((cswPrivate.isActionRequired && (cswPrivate.correctiveAction === cswPrivate.defaultText && false == cswPrivate.isAnswerCompliant())) ||
+                                 cswPrivate.correctiveAction !== cswPrivate.defaultText && false == cswPrivate.isAnswerCompliant()) {
+                            cswPrivate.correctiveActionLabel.show();
+                            cswPrivate.correctiveActionTextBox.show();
+                        } else {
+                            cswPrivate.correctiveActionLabel.hide();
+                            cswPrivate.correctiveActionTextBox.hide();
+                        }
+
                     }
 
                 };
@@ -131,4 +162,4 @@
                 return cswPublic;
             }));
 
-}());
+} ());
