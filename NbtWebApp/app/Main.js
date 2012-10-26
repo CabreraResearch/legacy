@@ -366,7 +366,7 @@ window.initMain = window.initMain || function (undefined) {
                     $.CswDialog('AddNodeDialog', {
                         text: itemData.Text,
                         nodetypeid: itemData.NodeTypeId,
-                        onAddNode: function (nodeid, cswnbtnodekey) {
+                        onAddNode: function (nodeid, nodekey) {
                             clear({ all: true });
                             refreshNodesTree({ 'nodeid': nodeid, 'nodekey': nodekey, 'IncludeNodeRequired': true });
                         }
@@ -1093,7 +1093,7 @@ window.initMain = window.initMain || function (undefined) {
                                             relatednodename: actionData.RelatedNodeName,
                                             relatednodetypeid: actionData.RelatedNodeTypeId,
                                             relatedobjectclassid: actionData.RelatedObjectClassId,
-                                            onAddNode: function (nodeid, cswnbtnodekey) {
+                                            onAddNode: function (nodeid, nodekey) {
                                                 clear({ all: true });
                                                 refreshNodesTree({ 'nodeid': nodeid, 'nodekey': nodekey, 'IncludeNodeRequired': true });
                                             }
