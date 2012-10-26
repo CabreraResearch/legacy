@@ -493,7 +493,7 @@ namespace ChemSW.Nbt.WebServices
                 if( Rel.SecondType == NbtViewRelatedIdType.NodeTypeId )
                 {
                     CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( Rel.SecondId );
-                    if( !NodeTypes.ContainsKey( NodeType.FirstVersionNodeTypeId ) )
+                    if( null != NodeType && false == NodeTypes.ContainsKey( NodeType.FirstVersionNodeTypeId ) )
                     {
                         NodeTypes.Add( NodeType.FirstVersionNodeTypeId, NodeType.IconFileName );
                     }
@@ -501,11 +501,14 @@ namespace ChemSW.Nbt.WebServices
                 else
                 {
                     CswNbtMetaDataObjectClass ObjectClass = _CswNbtResources.MetaData.getObjectClass( Rel.SecondId );
-                    foreach( CswNbtMetaDataNodeType NodeType in ObjectClass.getNodeTypes() )
+                    if( null != ObjectClass )
                     {
-                        if( !NodeTypes.ContainsKey( NodeType.FirstVersionNodeTypeId ) )
+                        foreach( CswNbtMetaDataNodeType NodeType in ObjectClass.getNodeTypes() )
                         {
-                            NodeTypes.Add( NodeType.FirstVersionNodeTypeId, NodeType.IconFileName );
+                            if( !NodeTypes.ContainsKey( NodeType.FirstVersionNodeTypeId ) )
+                            {
+                                NodeTypes.Add( NodeType.FirstVersionNodeTypeId, NodeType.IconFileName );
+                            }
                         }
                     }
                 } // else
