@@ -534,13 +534,6 @@ namespace ChemSW.Nbt.Security
 
                     if( ret && ( null != NodeId && Int32.MinValue != NodeId.PrimaryKey ) )
                     {
-                        //// case 2209 - Users can edit their own profile without permissions to the User nodetype
-                        //if( !ret &&
-                        //    NodeId == _CswNbtPermitInfo.User.UserId )
-                        //{
-                        //    ret = true;
-                        //}
-
                         // Prevent users from deleting themselves or their own roles
                         if( ret &&
                             Permission == NodeTypePermission.Delete &&
@@ -557,18 +550,14 @@ namespace ChemSW.Nbt.Security
                             ret = ret && canContainer( NodeId, Permission, null, _CswNbtPermitInfo.User );
                         }
 
+
                         CswNbtNode Node = _CswNbtResources.Nodes[NodeId];
-                        if( null != Node &&
-                            Permission != NodeTypePermission.View && Permission != NodeTypePermission.Delete )
+                        if( null != Node && _CswNbtPermitInfo.Permission == NodeTypePermission.Edit )
                         {
-                            ret = ret && ( _CswNbtPermitInfo.Permission != NodeTypePermission.Edit ||
-                                           _CswNbtPermitInfo.User.IsAdministrator() ||
-                                           false == Node.ReadOnly );
+                            ret |= _CswNbtPermitInfo.User.IsAdministrator() || false == Node.ReadOnly;
                         }
 
                     }//if NodeId is not null
-
-
 
                 }//if pre-reqs are satisifed
 
@@ -1062,46 +1051,61 @@ namespace ChemSW.Nbt.Security
                             InvGrpPermTree.goToNthChild( 0 ); // inventory group
                             if( InvGrpPermTree.getChildNodeCount() > 0 )
                             {
-                                if( null != User.WorkUnitId )
+                                //if the user has no workunit, but the location does belong to an inventory group, 
+                                //you don't get permission. There's nothing to check -- it's not controlled
+                                if( null == User.WorkUnitId )
                                 {
-                                    // Location has an inventory group, but user has no workunit
-                                    ret = false;
-                                }
-                                InvGrpPermTree.goToNthChild( 0 ); // inventory group permission
-                                CswNbtNode PermNode = InvGrpPermTree.getNodeForCurrentPosition();
-                                CswNbtObjClassInventoryGroupPermission PermNodeAsPerm = PermNode;
-                                if( Action != null )
-                                {
-                                    if( ( Action.Name == CswNbtActionName.DispenseContainer && PermNodeAsPerm.Dispense.Checked == Tristate.True ) ||
-                                        ( Action.Name == CswNbtActionName.DisposeContainer && PermNodeAsPerm.Dispose.Checked == Tristate.True ) ||
-                                        ( Action.Name == CswNbtActionName.UndisposeContainer && PermNodeAsPerm.Undispose.Checked == Tristate.True ) ||
-                                        ( Action.Name == CswNbtActionName.Submit_Request && PermNodeAsPerm.Request.Checked == Tristate.True ) )
-                                    {
-                                        ret = true;
-                                    }
-                                    else if( Action.Name == CswNbtActionName.Receiving )
-                                    {
-                                        foreach( CswNbtMetaDataNodeType ContainerNt in ContainerOC.getLatestVersionNodeTypes() )
-                                        {
-                                            ret = canNodeType( NodeTypePermission.Create, ContainerNt );
-                                            if( ret )
-                                            {
-                                                break;
-                                            }
-                                        }
-                                    }
+                                    ret = false; //reset to false to be explicit
                                 }
                                 else
                                 {
-                                    if( ( Permission == NodeTypePermission.View && PermNodeAsPerm.View.Checked == Tristate.True ) ||
-                                        ( Permission == NodeTypePermission.Edit && PermNodeAsPerm.Edit.Checked == Tristate.True ) ||
-                                        ( Permission == NodeTypePermission.Create && PermNodeAsPerm.Edit.Checked == Tristate.True ) ||
-                                        ( Permission == NodeTypePermission.Delete && PermNodeAsPerm.Edit.Checked == Tristate.True ) )
+
+                                    InvGrpPermTree.goToNthChild( 0 ); // inventory group permission
+                                    CswNbtNode PermNode = InvGrpPermTree.getNodeForCurrentPosition();
+                                    CswNbtObjClassInventoryGroupPermission PermNodeAsPerm = PermNode;
+                                    if( Action != null )
                                     {
-                                        ret = true;
+                                        if( ( Action.Name == CswNbtActionName.DispenseContainer &&
+                                             PermNodeAsPerm.Dispense.Checked == Tristate.True ) ||
+                                            ( Action.Name == CswNbtActionName.DisposeContainer &&
+                                             PermNodeAsPerm.Dispose.Checked == Tristate.True ) ||
+                                            ( Action.Name == CswNbtActionName.UndisposeContainer &&
+                                             PermNodeAsPerm.Undispose.Checked == Tristate.True ) ||
+                                            ( Action.Name == CswNbtActionName.Submit_Request &&
+                                             PermNodeAsPerm.Request.Checked == Tristate.True ) )
+                                        {
+                                            ret = true;
+                                        }
+                                        else if( Action.Name == CswNbtActionName.Receiving )
+                                        {
+                                            foreach(
+                                                CswNbtMetaDataNodeType ContainerNt in
+                                                    ContainerOC.getLatestVersionNodeTypes() )
+                                            {
+                                                ret = canNodeType( NodeTypePermission.Create, ContainerNt );
+                                                if( ret )
+                                                {
+                                                    break;
+                                                }
+                                            }
+                                        }
                                     }
-                                }
+                                    else
+                                    {   //there's only edit, so edit applies to all three
+                                        if( ( Permission == NodeTypePermission.View && PermNodeAsPerm.View.Checked == Tristate.True ) ||
+                                            ( Permission == NodeTypePermission.Edit && PermNodeAsPerm.Edit.Checked == Tristate.True ) ||
+                                            ( Permission == NodeTypePermission.Create && PermNodeAsPerm.Edit.Checked == Tristate.True ) ||
+                                            ( Permission == NodeTypePermission.Delete && PermNodeAsPerm.Edit.Checked == Tristate.True ) )
+                                        {
+                                            ret = true;
+                                        }
+
+                                    }//if-else action is not null
+
+                                }//if else work unit id is not null
+
                             } // if( InvGrpPermTree.getChildNodeCount() > 0 ) inventory group permission
+
                         } // if( InvGrpPermTree.getChildNodeCount() > 0 ) inventory group
                         else
                         {
@@ -1114,7 +1118,9 @@ namespace ChemSW.Nbt.Security
                         // container has no location, no permissions to enforce
                         ret = true;
                     }
+
                 } // if( InvGrpPermTree.getChildNodeCount() > 0 ) container
+
             } // if( Node.getObjectClass().ObjectClass == CswNbtMetaDataObjectClassName.NbtObjectClass.ContainerClass )
             return ret;
         } // canContainer
