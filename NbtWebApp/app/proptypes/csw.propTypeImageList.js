@@ -18,7 +18,7 @@
 
                     cswPrivate.propVals = cswPublic.data.propData.values;
                     cswPrivate.parent = cswPublic.data.propDiv;
-                    cswPrivate.value = (false === cswPublic.data.isMulti()) ? Csw.string(cswPrivate.propVals.value).trim() : Csw.enums.multiEditDefaultValue;
+                    cswPrivate.value = Csw.string(cswPrivate.propVals.value).trim();
                     cswPrivate.options = cswPrivate.propVals.options;
                     cswPrivate.width = Csw.string(cswPrivate.propVals.width);
                     cswPrivate.height = Csw.string(cswPrivate.propVals.height);
@@ -125,9 +125,6 @@
                     if (false === cswPublic.data.isReadOnly()) {
                         cswPrivate.imageSelectList = cswPublic.control.cell(1, 2).select({ id: cswPublic.data.name });
                         cswPrivate.selectOption = cswPrivate.imageSelectList.option({ value: '', display: 'Select...' });
-                        if (cswPublic.data.isMulti()) {
-                            cswPrivate.imageSelectList.option({ value: Csw.enums.multiEditDefaultValue, display: Csw.enums.multiEditDefaultValue, isSelected: true });
-                        }
 
                         cswPrivate.imageSelectList.bind('change', function () {
                             var selected = cswPrivate.imageSelectList.children(':selected');

@@ -21,7 +21,7 @@
                     cswPrivate.maxRows = Csw.string(cswPrivate.propVals.maxrows);
                     cswPrivate.viewid = Csw.string(cswPrivate.propVals.viewid).trim();
                     
-                    cswPrivate.makeGridMenu = function(grid) {
+                    cswPrivate.makeGridMenu = function (grid, gridParentDiv) {
                         //Case 21741
                         if (cswPublic.data.tabState.EditMode !== Csw.enums.editMode.PrintReport) {
 
@@ -31,7 +31,8 @@
                                     urlMethod: 'getMainMenu',
                                     data: {
                                         ViewId: cswPrivate.viewid,
-                                        SafeNodeKey: cswPublic.data.tabState.cswnbtnodekey,
+                                        SafeNodeKey: Csw.string(cswPublic.data.tabState.nodekey),
+                                        NodeId: Csw.string(cswPublic.data.tabState.nodeid),
                                         NodeTypeId: '',
                                         PropIdAttr: cswPublic.data.name,
                                         LimitMenuTo: '',
@@ -44,7 +45,8 @@
                                 onMultiEdit: function () { 
                                     grid.toggleShowCheckboxes(); 
                                 },
-                                onEditView: function() { 
+                                onEditView: function () {
+                                    Csw.tryExec(gridParentDiv.$.dialog('close'));
                                     Csw.tryExec(cswPublic.data.onEditView, cswPrivate.viewid); 
                                 },
                                 onPrintView: function () { 
@@ -65,7 +67,7 @@
                         var gridDiv = newDiv.div({ name: 'grid_as_fieldtype' });
                         cswPrivate.reinitGrid = (function () {
                             return function () {
-                                cswPrivate.makeFullGrid(viewid, newDiv);
+                                cswPublic.control.reload();
                             };
                         }());
                         Csw.nbt.viewFilters({
@@ -81,21 +83,21 @@
                             name: cswPublic.data.name + '_fieldtypegrid',
                             viewid: viewid,
                             nodeid: cswPublic.data.tabState.nodeid,
-                            cswnbtnodekey: cswPublic.data.tabState.cswnbtnodekey,
+                            nodekey: cswPublic.data.tabState.nodekey,
                             readonly: cswPublic.data.isReadOnly(),
                             reinit: false,
                             EditMode: cswPublic.data.tabState.EditMode,
                             onEditNode: function () {
-                                cswPrivate.reinitGrid();
+                                cswPublic.control.reload();
                             },
                             onDeleteNode: function () {
-                                cswPrivate.reinitGrid();
+                                cswPublic.control.reload();
                             },
                             onSuccess: function (grid) {
-                                cswPrivate.makeGridMenu(grid);
+                                cswPrivate.makeGridMenu(grid, newDiv);
                             }
                         };
-                        cswPublic.control = gridDiv.$.CswNodeGrid('init', gridOpts);
+                        cswPublic.control = Csw.nbt.nodeGrid(gridDiv, gridOpts);
                     };
 
                     cswPrivate.makeSmallGrid = function () {
@@ -104,7 +106,7 @@
                             urlMethod: 'getThinGrid',
                             data: {
                                 ViewId: cswPrivate.viewid,
-                                IncludeNodeKey: cswPublic.data.tabState.cswnbtnodekey,
+                                IncludeNodeKey: cswPublic.data.tabState.nodekey,
                                 MaxRows: cswPrivate.maxRows
                             },
                             success: function (data) {
@@ -132,7 +134,7 @@
                             urlMethod: 'getGridRowCount',
                             data: {
                                 ViewId: cswPrivate.viewid,
-                                IncludeNodeKey: cswPublic.data.tabState.cswnbtnodekey
+                                IncludeNodeKey: cswPublic.data.tabState.nodekey
                             },
                             success: function (data) {
                                 cswPublic.control = cswPrivate.parent.linkGrid({

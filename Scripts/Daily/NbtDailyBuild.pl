@@ -27,9 +27,8 @@ my @components = (
 	"Nbt",
 	"NbtImport",
 	"NbtHelp",
-	"DailyBuildTools",
 	"StructureSearch",
-        "chemsw-fe"
+    "chemsw-fe"
 );
 
 my %repopaths;
@@ -145,11 +144,6 @@ foreach my $component (@components)
 			{
 				$file = $repopaths{$component} ."/CswLogService/Properties/AssemblyInfo.cs";
 			}
-			elsif($component eq "DailyBuildTools")   # special case
-			{
-				$file = $repopaths{$component} ."/DailyBuildWeb/DailyBuildWeb/Properties/AssemblyInfo.cs";
-				&setversion($file, "$datestr.$increment");
-			} 
 			else
 			{
 				$file = $repopaths{$component} ."/Properties/AssemblyInfo.cs";

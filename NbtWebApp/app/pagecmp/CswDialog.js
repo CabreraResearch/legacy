@@ -241,7 +241,7 @@
                 globalState: {
                     propertyData: cswPrivate.propertyData,
                     ShowAsReport: false,
-                    nodeids: [cswPrivate.nodeid]
+                    currentNodeId: cswPrivate.nodeid
                 },
                 tabState: {
                     nodetypeid: cswPrivate.nodetypeid,
@@ -252,9 +252,9 @@
                     EditMode: Csw.enums.editMode.Add
                 },
                 ReloadTabOnSave: false,
-                onSave: function (nodeid, cswnbtnodekey, tabcount, nodename) {
+                onSave: function (nodeid, nodekey, tabcount, nodename) {
                     cswPublic.div.$.dialog('close');
-                    Csw.tryExec(cswPrivate.onAddNode, nodeid, cswnbtnodekey, nodename);
+                    Csw.tryExec(cswPrivate.onAddNode, nodeid, nodekey, nodename);
                     Csw.tryExec(cswPrivate.onSaveImmediate);
                 },
                 onInitFinish: function () {
@@ -289,18 +289,18 @@
                 Csw.ajax.post({
                     urlMethod: "getFeedbackNode",
                     data: {
-                        'nodetypeid': cswDlgPrivate.nodetypeid,
-                        'actionname': state.actionname,
-                        'viewid': state.viewid,
-                        'viewmode': state.viewmode,
-                        'selectednodeid': Csw.cookie.get('csw_currentnodeid'),
-                        'author': Csw.cookie.get('csw_username')
+                        nodetypeid: cswDlgPrivate.nodetypeid,
+                        actionname: state.actionname,
+                        viewid: state.viewid,
+                        viewmode: state.viewmode,
+                        selectednodeid: Csw.cookie.get('csw_currentnodeid'),
+                        author: Csw.cookie.get('csw_username')
                     },
                     success: function(data) {
                         cswPublic.tabsAndProps = Csw.layouts.tabsAndProps(cswPublic.div, {
                             globalState: {
                                 ShowAsReport: false,
-                                nodeids: [data.nodeid],
+                                currentNodeId: data.nodeid,
                                 propertyData: data.propdata
                             },
                             tabState: {
@@ -309,7 +309,7 @@
                                 relatednodeid: data.nodeid
                             },
                             ReloadTabOnSave: false,
-                            onSave: function(nodeid, cswnbtnodekey, tabcount, nodename) {
+                            onSave: function(nodeid, nodekey, tabcount, nodename) {
                                 Csw.ajax.post({
                                     urlMethod: 'GetFeedbackCaseNumber',
                                     data: { nodeId: nodeid },
@@ -330,7 +330,7 @@
                                             enabledText: 'OK',
                                             onClick: closeDialog
                                         });
-                                        Csw.tryExec(cswDlgPrivate.onAddNode, nodeid, cswnbtnodekey, nodename);
+                                        Csw.tryExec(cswDlgPrivate.onAddNode, nodeid, nodekey, nodename);
                                     }
                                 });
                             },
@@ -431,9 +431,8 @@
             var cswDlgPrivate = {
                 name: 'editlayout',
                 globalState: {
-                    nodeids: [],
-                    nodekeys: [],
-                    nodenames: []
+                    currentNodeId: '',
+                    currentNodeKey: ''
                 },
                 tabState: {
                     tabid: '',
@@ -512,8 +511,8 @@
                         } // onChange
                     }); // 
                     var ajaxdata = {
-                        NodeId: Csw.string(cswDlgPrivate.globalState.nodeids[0]),
-                        NodeKey: Csw.string(cswDlgPrivate.globalState.nodekeys[0]),
+                        NodeId: Csw.string(cswDlgPrivate.globalState.currentNodeId),
+                        NodeKey: Csw.string(cswDlgPrivate.globalState.currentNodeKey),
                         NodeTypeId: Csw.string(cswDlgPrivate.globalState.nodetypeid),
                         TabId: Csw.string(cswDlgPrivate.tabState.tabid),
                         LayoutType: layoutSelect.val()
@@ -552,9 +551,10 @@
         }, // EditLayoutDialog
         EditNodeDialog: function (options) {
             var cswDlgPrivate = {
-                nodeids: [],
-                nodepks: [],
-                nodekeys: [],
+                selectedNodeIds: Csw.delimitedString(),
+                selectedNodeKeys: Csw.delimitedString(),
+                currentNodeId: '',
+                currentNodeKey: '',
                 nodenames: [],
                 Multi: false,
                 ReadOnly: false,
@@ -586,14 +586,13 @@
 
             cswDlgPrivate.onOpen = function () {
                 var myEditMode = Csw.enums.editMode.EditInPopup;
-                var tableId = cswDlgPrivate.nodeids[0];
-                var table = cswPublic.div.table({ name: tableId });
+                var table = cswPublic.div.table();
                 if (false === Csw.isNullOrEmpty(cswDlgPrivate.date) && false === cswDlgPrivate.Multi) {
                     myEditMode = Csw.enums.editMode.AuditHistoryInPopup;
                     Csw.actions.auditHistory(table.cell(1, 1), {
-                        name: cswDlgPrivate.nodeids[0] + '_history',
-                        nodeid: cswDlgPrivate.nodeids[0],
-                        cswnbtnodekey: cswDlgPrivate.nodekeys[0],
+                        name: 'history',
+                        nodeid: cswDlgPrivate.currentNodeId,
+                        nodekey: cswDlgPrivate.currentNodeKey,
                         onEditNode: cswDlgPrivate.onEditNode,
                         JustDateColumn: true,
                         selectedDate: cswDlgPrivate.date,
@@ -607,16 +606,16 @@
 
                 function setupTabs(date) {
                     tabCell.empty();
-                    //tabCell.$.CswNodeTabs({
 
                     cswPublic.tabsAndProps = Csw.layouts.tabsAndProps(tabCell, {
                         globalState: {
                             date: date,
-                            nodeids: cswDlgPrivate.nodeids,
-                            nodekeys: cswDlgPrivate.nodekeys,
+                            selectedNodeIds: cswDlgPrivate.selectedNodeIds,
+                            selectedNodeKeys: cswDlgPrivate.selectedNodeKeys,
+                            currentNodeId: cswDlgPrivate.currentNodeId,
+                            currentNodeKey: cswDlgPrivate.currentNodeKey,
                             nodenames: cswDlgPrivate.nodenames,
                             filterToPropId: cswDlgPrivate.filterToPropId
-                            //title: o.title,
                         },
                         tabState: {
                             Multi: cswDlgPrivate.Multi,
@@ -661,7 +660,7 @@
                 'nodename': '',
                 'nodeid': '',
                 'nodetypeid': '',
-                'cswnbtnodekey': '',
+                'nodekey': '',
                 'onCopyNode': function () { }
             };
 
@@ -690,7 +689,7 @@
                 urlMethod: 'checkQuota',
                 data: {
                     NodeTypeId: Csw.string(cswPrivate.nodetypeid),
-                    NodeKey: Csw.string(cswPrivate.cswnbtnodekey)
+                    NodeKey: Csw.string(cswPrivate.nodekey)
                 },
                 success: function (data) {
                     if (Csw.bool(data.result)) {
@@ -705,7 +704,7 @@
                             onClick: function () {
                                 Csw.copyNode({
                                     'nodeid': cswPrivate.nodeid,
-                                    'nodekey': Csw.string(cswPrivate.nodekey, cswPrivate.cswnbtnodekey[0]),
+                                    'nodekey': Csw.string(cswPrivate.nodekey, cswPrivate.nodekey[0]),
                                     'onSuccess': function (nodeid, nodekey) {
                                         cswPublic.close();
                                         cswPrivate.onCopyNode(nodeid, nodekey);
@@ -762,7 +761,7 @@
             var n = 0;
             Csw.each(cswPrivate.nodes, function (nodeObj) {
                 cswPrivate.nodeids[n] = nodeObj.nodeid;
-                cswPrivate.cswnbtnodekeys[n] = nodeObj.cswnbtnodekey;
+                cswPrivate.cswnbtnodekeys[n] = nodeObj.nodekey;
                 cswPublic.div.span({ text: nodeObj.nodename }).css({ 'padding-left': '10px' }).br();
                 n += 1;
             });

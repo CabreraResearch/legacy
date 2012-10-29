@@ -18,16 +18,14 @@
                     cswPrivate.propVals = cswPublic.data.propData.values;
                     cswPrivate.parent = cswPublic.data.propDiv;
 
-                    cswPrivate.value = (false === cswPublic.data.isMulti()) ? Csw.string(cswPrivate.propVals.value).trim() : Csw.enums.multiEditDefaultValue;
+                    cswPrivate.value = Csw.string(cswPrivate.propVals.value).trim();
                     cswPrivate.options = Csw.string(cswPrivate.propVals.options).trim();
 
                     if (cswPublic.data.isReadOnly()) {
                         cswPublic.control = cswPrivate.parent.append(cswPrivate.value);
                     } else {
                         cswPrivate.values = cswPrivate.options.split(',');
-                        if (cswPublic.data.isMulti()) {
-                            cswPrivate.values.push(Csw.enums.multiEditDefaultValue);
-                        }
+                        
                         cswPublic.control = cswPrivate.parent.select({
                             name: cswPublic.data.name,
                             cssclass: 'selectinput',

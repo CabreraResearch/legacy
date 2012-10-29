@@ -1114,17 +1114,36 @@
                 });
 
                 $span.find('.ViewPropFilterLogical').each(function () {
+                    //Word to the Wise: 
+                    //This is awful, awful stuff. We're here because we built the DOM and then called toString() on it before passing it to jsTree.
+                    //This wouldn't be necessary except for the domain specific logic of the TriState check box.
+                    //Left alone, the box would render just fine--but the click handler would have been stripped away
+                    //Previously, we used to attempt to attach a new binding to the existing control. This proves to be quite hard in our new framework.
+                    //Pray that you never see this code.
                     var $this = $(this);
                     var id = $this.prop('id');
-                    var $parent = $this.parent();
-                    $parent.empty();
-                    var parent = Csw.literals.factory($parent);
-                    parent.triStateCheckBox({ name: id,
+                    //1. Get a handle on the parent element
+                    var $theRent = $this.parent();
+                    //2. The parent has the Add button. Evils: 
+                    //  - parent.empty() will nuke the button
+                    //  - this.empty() won't nuke the div and you'll have duplicates
+                    //  - only this.remove is sufficient
+                    $this.remove();
+                    //3. Div won't render correctly, but span will
+                    var $newThis = $('<span />');
+                    //4. prepend() returns the parent, hence the handle reference
+                    $theRent.prepend($newThis);
+                    //5. Now we can instance a new control
+                    var parent = Csw.literals.factory($newThis);
+                    parent.triStateCheckBox({
+                        name: id,
                         Checked: 'false',
                         cssclass: 'ViewPropFilterLogical ' + Csw.enums.cssClasses_ViewBuilder.filter_value.name
                     });
-                    /* This may not be necessary */
+                    
+                    //7. We don't need to do this, because we're querying the DOM from the Add button.
                     //$this.CswTristateCheckBox('reBindClick');
+                    //8. What hasn't killed you, hasn't killed you yet.
                 });
 
             });

@@ -249,7 +249,7 @@ namespace ChemSW.Nbt.WebServices
                 NodeAsSize.CatalogNo.Text = SizeObj["catalogNo"].ToString();
                 NodeAsSize.QuantityEditable.Checked = CswConvert.ToTristate( SizeObj["quantEditableChecked"] );
                 NodeAsSize.Dispensable.Checked = CswConvert.ToTristate( SizeObj["dispensibleChecked"] );
-                NodeAsSize.UnitCount.Value = CswConvert.ToInt32( SizeObj["unitCount"] );
+                NodeAsSize.UnitCount.Value = CswConvert.ToDouble( SizeObj["unitCount"] );
 
                 JArray Row = new JArray();
                 Ret["row"] = Row;

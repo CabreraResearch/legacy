@@ -71,7 +71,7 @@
                 },
                 failure: o.onloginfail,
                 usernodeid: result.nodeid,
-                usernodekey: result.cswnbtnodekey,
+                usernodekey: result.nodekey,
                 passwordpropid: result.passwordpropid
             });
         }
@@ -79,8 +79,10 @@
 
     cswPrivate.onJsonError = Csw.method(function (xmlHttpRequest, textStatus, o) {
         Csw.publish(Csw.enums.events.ajax.ajaxStop, o.watchGlobal, xmlHttpRequest, textStatus);
-        Csw.debug.error('Webservice Request (' + o.url + ') Failed: ' + textStatus);
-        Csw.tryExec(o.error, textStatus);
+        if (textStatus !== 'abort' && xmlHttpRequest.status !== 0 && xmlHttpRequest.readyState !== 0) {
+            Csw.debug.error('Webservice Request (' + o.url + ') Failed: ' + textStatus);
+            Csw.tryExec(o.error, textStatus);
+        }
     });
 
     cswPrivate.jsonPost = Csw.method(function (options) {

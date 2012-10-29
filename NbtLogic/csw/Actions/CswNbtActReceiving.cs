@@ -182,7 +182,9 @@ namespace ChemSW.Nbt.Actions
                                                     AsContainer.Quantity.UnitId = UnitId;
                                                 }
                                                 AsContainer.DispenseIn( CswNbtObjClassContainerDispenseTransaction.DispenseType.Receive, QuantityValue, UnitId );
-                                                AsContainer.postChanges( true );
+                                                AsContainer.Disposed.Checked = Tristate.False;
+                                                AsContainer.Undispose.setHidden( value: true, SaveToDb: true );
+                                                AsContainer.postChanges( true );                                                
                                                 ContainerIds.Add( AsContainer.NodeId );
                                                 jBarcodes.Add( AsContainer.NodeId.ToString() );
                                             }

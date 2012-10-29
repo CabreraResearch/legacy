@@ -79,9 +79,9 @@ namespace ChemSW.Nbt.WebServices
             return _TabsPropsSd.saveProps( NodePk, TabId, NewPropsJson, NodeTypeId, View, IsIdentityTab );
         } // saveProps()
 
-        public JObject copyPropValues( string SourceNodeKeyStr, string[] CopyNodeIds, string[] CopyNodeKeys, string[] PropIds )
+        public JObject copyPropValues( string SourceNodeId, string CopyNodeIds, string PropIds )
         {
-            return _TabsPropsSd.copyPropValues( SourceNodeKeyStr, CopyNodeIds, CopyNodeKeys, PropIds );
+            return _TabsPropsSd.copyPropValues( SourceNodeId, CopyNodeIds, PropIds );
         } // copyPropValues()
 
         public JArray getPropertiesForLayoutAdd( string NodeId, string NodeKey, string NodeTypeId, string TabId, CswNbtMetaDataNodeTypeLayoutMgr.LayoutType LayoutType )

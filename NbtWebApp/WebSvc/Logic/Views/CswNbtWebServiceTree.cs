@@ -116,7 +116,7 @@ namespace ChemSW.Nbt.WebServices
             ThisNodeObj["attr"]["state"] = ThisNodeState;
             ThisNodeObj["attr"]["species"] = ThisNodeKey.NodeSpecies.ToString();
             ThisNodeObj["attr"]["nodeid"] = ThisNodeId;
-            ThisNodeObj["attr"]["cswnbtnodekey"] = ThisNodeKeyString;
+            ThisNodeObj["attr"]["nodekey"] = ThisNodeKeyString;
             ThisNodeObj["attr"]["locked"] = ThisNodeLocked.ToString().ToLower();
             if( ThisNodeDisabled )
             {
@@ -234,7 +234,7 @@ namespace ChemSW.Nbt.WebServices
                 ReturnObj["root"]["attr"]["rel"] = "root";
                 ReturnObj["root"]["attr"]["disabled"] = false == Tree.getNodeIncludedForCurrentPosition();
                 //Tree.goToRoot();
-                //ReturnObj["attr"]["cswnbtnodekey"] = Tree.getNodeKeyForCurrentPosition().ToString();
+                //ReturnObj["attr"]["nodekey"] = Tree.getNodeKeyForCurrentPosition().ToString();
                 ReturnObj["root"]["state"] = "open";
                 ReturnObj["root"]["children"] = new JArray();
 
@@ -427,7 +427,7 @@ namespace ChemSW.Nbt.WebServices
                         FirstObj["attr"] = new JObject();
                         FirstObj["attr"]["id"] = _IdPrefix + "root";
                         FirstObj["attr"]["rel"] = "root";
-                        FirstObj["attr"]["cswnbtnodekey"] = Tree.getNodeKeyForCurrentPosition().ToString();
+                        FirstObj["attr"]["nodekey"] = Tree.getNodeKeyForCurrentPosition().ToString();
                         FirstObj["state"] = "open";
                         FirstObj["children"] = ChildArray;
 
@@ -493,7 +493,7 @@ namespace ChemSW.Nbt.WebServices
                 if( Rel.SecondType == NbtViewRelatedIdType.NodeTypeId )
                 {
                     CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( Rel.SecondId );
-                    if( !NodeTypes.ContainsKey( NodeType.FirstVersionNodeTypeId ) )
+                    if( null != NodeType && false == NodeTypes.ContainsKey( NodeType.FirstVersionNodeTypeId ) )
                     {
                         NodeTypes.Add( NodeType.FirstVersionNodeTypeId, NodeType.IconFileName );
                     }
@@ -501,11 +501,14 @@ namespace ChemSW.Nbt.WebServices
                 else
                 {
                     CswNbtMetaDataObjectClass ObjectClass = _CswNbtResources.MetaData.getObjectClass( Rel.SecondId );
-                    foreach( CswNbtMetaDataNodeType NodeType in ObjectClass.getNodeTypes() )
+                    if( null != ObjectClass )
                     {
-                        if( !NodeTypes.ContainsKey( NodeType.FirstVersionNodeTypeId ) )
+                        foreach( CswNbtMetaDataNodeType NodeType in ObjectClass.getNodeTypes() )
                         {
-                            NodeTypes.Add( NodeType.FirstVersionNodeTypeId, NodeType.IconFileName );
+                            if( !NodeTypes.ContainsKey( NodeType.FirstVersionNodeTypeId ) )
+                            {
+                                NodeTypes.Add( NodeType.FirstVersionNodeTypeId, NodeType.IconFileName );
+                            }
                         }
                     }
                 } // else

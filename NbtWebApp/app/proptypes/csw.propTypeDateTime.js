@@ -14,8 +14,8 @@
                     cswPublic.data = cswPublic.data || Csw.nbt.propertyOption(propertyOption);
                     cswPrivate.propVals = cswPublic.data.propData.values;
                     cswPrivate.parent = cswPublic.data.propDiv;
-                    cswPrivate.date = (false === cswPublic.data.isMulti()) ? Csw.string(cswPrivate.propVals.value.date).trim() : Csw.enums.multiEditDefaultValue;
-                    cswPrivate.time = (false === cswPublic.data.isMulti()) ? Csw.string(cswPrivate.propVals.value.time).trim() : Csw.enums.multiEditDefaultValue;
+                    cswPrivate.date = Csw.string(cswPrivate.propVals.value.date).trim();
+                    cswPrivate.time = Csw.string(cswPrivate.propVals.value.time).trim();
 
                     cswPublic.control = cswPrivate.parent.div();
                     if (cswPublic.data.isReadOnly()) {

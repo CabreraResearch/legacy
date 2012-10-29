@@ -53,7 +53,7 @@
 
                 Csw.each(cswPrivate.generatorTree.checkedNodes(), function (thisObj) {
                     if (checkedNodeKeys !== '') checkedNodeKeys += ',';
-                    checkedNodeKeys += thisObj.cswnbtnodekey;
+                    checkedNodeKeys += thisObj.nodekey;
                 });
 
                 Csw.ajax.post({

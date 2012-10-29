@@ -60,7 +60,8 @@
             'use strict';
 
             var cswPrivate = {
-                data: {}
+                data: {},
+                enabled: true
             };
             var cswPublic = options || {
                 parentId: ''
@@ -238,72 +239,95 @@
                 return cswPublic;
             };
 
-            
-            cswPrivate.getData = function(propName) {
-            	/// <summary>
-            	/// Get the value of a data prop from an Element (first from the DOM, then from memory, then from clientDb)
-            	/// </summary>
+            //#region data methods
+
+            cswPrivate.getData = function (propName) {
+                /// <summary>
+                /// Get the value of a data prop from an Element (first from the DOM, then from memory, then from clientDb)
+                /// </summary>
                 var ret = null;
-                if (cswPrivate.isControlStillValid() && 
+                if (cswPrivate.isControlStillValid() &&
                     false === Csw.isNullOrEmpty(propName)) {
-                    
-                    if(cswPublic[0] && cswPublic[0].dataset && cswPublic[0].dataset[propName]) {
+
+                    if (cswPublic[0] && cswPublic[0].dataset && cswPublic[0].dataset[propName]) {
                         ret = cswPublic[0].dataset.propName;
                     }
-                    if(Csw.isNullOrEmpty(ret)) {
+                    if (Csw.isNullOrEmpty(ret)) {
                         ret = cswPrivate.data[propName] || cswPublic.$.data(propName);
                     }
                     //We can probably come back and delete this
-                    if(Csw.isNullOrEmpty(ret)) {
+                    if (Csw.isNullOrEmpty(ret)) {
                         ret = Csw.clientDb.getItem(propName + '_control_data_' + cswPrivate.id);
                     }
                 }
                 return ret;
             };
 
-            cswPrivate.setData = function(propName, value) {
+            cswPrivate.setData = function (propName, value) {
                 /// <summary>
                 /// Set the value of a data prop from an Element (first to the DOM, then to memory, then to clientDb)
                 /// </summary>
                 var ret = null;
-                if (cswPrivate.isControlStillValid() && 
+                if (cswPrivate.isControlStillValid() &&
                     false === Csw.isNullOrEmpty(propName)) {
-                    
+
                     ret = value;
-                    if(cswPublic[0] && cswPublic[0].dataset) {
+                    if (cswPublic[0] && cswPublic[0].dataset) {
                         cswPublic[0].dataset[propName] = value;
                         //keep it in memory too, in case we lose a handle on the DOM
                         cswPrivate.data[propName] = value;
                     } else {
                         //No HTML5 for us, keep it in memory
                         cswPrivate.data[propName] = value;
-                        cswPublic.$.data(propName, val);
+                        cswPublic.$.data(propName, value);
                     }
                 }
                 return ret;
             };
 
+            cswPrivate.setDataObj = function (obj) {
+                Csw.each(obj, function (val, propName) {
+                    cswPrivate.setData(propName, val);
+                });
+            };
+
+            //#endregion data methods
+            
             cswPublic.data = function (prop, val) {
                 /// <summary>Store property data on the control.</summary>
                 /// <returns type="Object">All properties, a single property, or the control if defining a property (for chaining).</returns> 
                 var ret = '';
                 if (cswPrivate.isControlStillValid()) {
-                    switch (arguments.length) {
-                        //this isn't a valid use case
-                        //case 0:
-                        //    ret = _internal || cswPublic.$.data();
-                        //    break;
-                        case 1:
-                            ret = cswPrivate.getData(prop);
-                            break;
-                        case 2:
-                            cswPrivate.setData(prop, val);
-                            ret = cswPublic;
-                            break;
+                    if (Csw.isPlainObject(prop)) {
+                        cswPrivate.setDataObj(prop);
+                    } else {
+                        switch (arguments.length) {
+                            //this isn't a valid use case
+                            //case 0:
+                            //    ret = _internal || cswPublic.$.data();
+                            //    break;
+                            case 1:
+                                ret = cswPrivate.getData(prop);
+                                break;
+                            case 2:
+                                cswPrivate.setData(prop, val);
+                                ret = cswPublic;
+                                break;
+                        }
                     }
                 }
                 return ret;
 
+            };
+
+            cswPublic.disable = function () {
+                /// <summary>Disable the element.</summary>
+                /// <returns type="Object">The Csw object (for chaining)</returns> 
+                if (cswPrivate.isControlStillValid()) {
+                    cswPrivate.enabled = false;
+                    cswPublic.propNonDom('disabled', 'disabled');
+                }
+                return cswPublic;
             };
 
             cswPublic.empty = function () {
@@ -311,6 +335,16 @@
                 /// <returns type="Object">The Csw object (for chaining)</returns> 
                 if (cswPrivate.isControlStillValid()) {
                     cswPublic.$.empty();
+                }
+                return cswPublic;
+            };
+
+            cswPublic.enable = function () {
+                /// <summary>Enable the element.</summary>
+                /// <returns type="Object">The Csw object (for chaining)</returns> 
+                if (cswPrivate.isControlStillValid()) {
+                    cswPrivate.enabled = true;
+                    cswPublic.removeAttr('disabled');
                 }
                 return cswPublic;
             };
@@ -369,15 +403,6 @@
                 return cswPublic;
             };
 
-            cswPublic.toggle = function () {
-                /// <summary>Toggle the element's visibility.</summary>
-                /// <returns type="Object">The Csw object (for chaining)</returns> 
-                if (cswPrivate.isControlStillValid()) {
-                    cswPublic.$.toggle();
-                }
-                return cswPublic;
-            };
-
             cswPublic.jquery = function ($jqElement, opts) {
                 /// <summary> Extend a jQuery object with Csw methods.</summary>
                 /// <param name="$element" type="jQuery">Element to extend.</param>
@@ -402,10 +427,10 @@
                 var ret = {};
                 if (cswPrivate.isControlStillValid()) {
                     var _$element = cswPublic.$.parent();
-                 
+
                     if (false === Csw.isNullOrEmpty(_$element, true)) {
                         ret = cswPublic.jquery(_$element);
-                    } 
+                    }
                 }
                 return ret;
             };
@@ -430,7 +455,7 @@
                         } else {
                             ret = doProp(cswPublic.$, name, value);
                         }
-                    } catch(e) {
+                    } catch (e) {
                         //We're in IE hell. Do nothing.
                     }
                     if (arguments.length === 2 || Csw.isPlainObject(name)) {
@@ -461,7 +486,7 @@
                             ret = doAttr(cswPublic.$, name, value);
                         }
                         // For proper chaining support
-                    } catch(e) {
+                    } catch (e) {
                         //We're in IE hell. Do nothing.
                     }
                     if (arguments.length === 2 || Csw.isPlainObject(name)) {
@@ -496,17 +521,39 @@
                 return cswPublic;
             };
 
+            cswPublic.removeProp = function (name) {
+                /// <summary>Remove a property from an element.</summary>
+                /// <param name="name" type="String">The name of the attribute</param>
+                /// <returns type="Object">CswDomObject (for chaining)</returns> 
+                if (cswPrivate.isControlStillValid()) {
+                    cswPublic.$.removeProp(name);
+                }
+                return cswPublic;
+            };
+
+            cswPublic.removeAttr = function (name) {
+                /// <summary>Remove an attribute from an element.</summary>
+                /// <param name="name" type="String">The name of the attribute</param>
+                /// <returns type="Object">CswDomObject (for chaining)</returns> 
+                if (cswPrivate.isControlStillValid()) {
+                    cswPublic.$.removeAttr(name);
+                }
+                return cswPublic;
+            };
+
             cswPublic.required = function (truthy) {
                 /// <summary>Mark the required status of the element.</summary>
-                /// <returns type="Object">Classless jQuery element (for chaining)</returns> 
+                /// <returns type="Object">CswDomObject (for chaining)</returns> 
                 if (cswPrivate.isControlStillValid()) {
                     switch (Csw.bool(truthy)) {
-                    case true:
-                        cswPublic.addClass('required');
-                        break;
-                    case false:
-                        cswPublic.removeClass('required');
-                        break;
+                        case true:
+                            cswPublic.propDom('required', true);
+                            cswPublic.addClass('required');
+                            break;
+                        case false:
+                            cswPublic.removeProp('required');
+                            cswPublic.removeClass('required');
+                            break;
                     }
                 }
                 return cswPublic;
@@ -524,7 +571,7 @@
                     if (false === Csw.isNullOrEmpty(_$element, true)) {
                         ret = cswPublic.jquery(_$element);
                     } else {
-                        ret = { };
+                        ret = {};
                     }
                 }
                 return ret;
@@ -550,6 +597,28 @@
                         return Csw.string(cswPublic.$.text());
                     }
                 }
+            };
+
+            cswPublic.toggle = function () {
+                /// <summary>Toggle the element's visibility.</summary>
+                /// <returns type="Object">The Csw object (for chaining)</returns> 
+                if (cswPrivate.isControlStillValid()) {
+                    cswPublic.$.toggle();
+                }
+                return cswPublic;
+            };
+
+            cswPublic.toggleEnable = function () {
+                /// <summary>Toggle the element's enabled state.</summary>
+                /// <returns type="Object">The Csw object (for chaining)</returns> 
+                if (cswPrivate.isControlStillValid()) {
+                    if (cswPrivate.enabled) {
+                        cswPublic.disable();
+                    } else {
+                        cswPublic.enable();
+                    }
+                }
+                return cswPublic;
             };
 
             cswPublic.trigger = function (eventName, eventOpts) {

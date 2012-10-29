@@ -44,7 +44,7 @@
                     Csw.each(nodechecks, function(thisObj) {
                         ret[thisObj.nodeid] = {
                             nodeid: thisObj.nodeid,
-                            cswnbtnodekey: thisObj.cswnbtnodekey,
+                            nodekey: thisObj.nodekey,
                             nodename: thisObj.nodename
                         };
                     });
@@ -146,7 +146,7 @@
                                 break;
                             case 'Profile':
                                 $.CswDialog('EditNodeDialog', {
-                                    nodeids: [menuItemJson.userid],
+                                    currentNodeId: menuItemJson.userid,
                                     filterToPropId: '',
                                     title: 'User Profile',
                                     onEditNode: null // function (nodeid, nodekey) { }
@@ -215,7 +215,7 @@
 
             //constructor
             (function () {
-                if (options) Csw.extend(cswPrivate, options);
+                Csw.extend(cswPrivate, options);
 
                 Csw.ajax.post({
                     urlMethod: cswPrivate.ajax.urlMethod,
@@ -266,6 +266,7 @@
                         //if (false === Csw.isNullOrEmpty($('#' + cswParent.getId()), true)) {
                         try {
                             window.Ext.create('Ext.toolbar.Toolbar', {
+                                id: cswPrivate.ID + 'toolbar',
                                 renderTo: cswParent.getId(),
                                 width: cswPrivate.width,
                                 items: items,

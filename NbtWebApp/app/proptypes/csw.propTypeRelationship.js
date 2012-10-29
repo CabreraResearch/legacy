@@ -17,9 +17,9 @@
                     cswPrivate.propVals = cswPublic.data.propData.values;
                     cswPrivate.parent = cswPublic.data.propDiv;
 
-                    cswPrivate.selectedNodeId = (false === cswPublic.data.isMulti()) ? Csw.string(cswPrivate.propVals.relatednodeid).trim() : Csw.enums.multiEditDefaultValue;
-                    cswPrivate.selectedNodeLink = (false === cswPublic.data.isMulti()) ? Csw.string(cswPrivate.propVals.relatednodelink).trim() : Csw.enums.multiEditDefaultValue;
-                    cswPrivate.selectedName = (false === cswPublic.data.isMulti()) ? Csw.string(cswPrivate.propVals.name).trim() : Csw.enums.multiEditDefaultValue;
+                    cswPrivate.selectedNodeId = Csw.string(cswPrivate.propVals.relatednodeid).trim();
+                    cswPrivate.selectedNodeLink = Csw.string(cswPrivate.propVals.relatednodelink).trim();
+                    cswPrivate.selectedName = Csw.string(cswPrivate.propVals.name).trim();
                     cswPrivate.nodeTypeId = Csw.string(cswPrivate.propVals.nodetypeid).trim();
                     cswPrivate.objectClassId = Csw.string(cswPrivate.propVals.objectclassid).trim();
                     cswPrivate.allowAdd = Csw.bool(cswPrivate.propVals.allowadd);
@@ -106,13 +106,7 @@
 
                         } else {
                             // Select value in a selectbox
-
-                            if (cswPublic.data.isMulti()) {
-                                cswPrivate.relationships.push({ value: Csw.enums.multiEditDefaultValue, display: Csw.enums.multiEditDefaultValue });
-                                cswPrivate.foundSelected = true;
-                            } else {
-                                cswPrivate.foundSelected = false;
-                            }
+                            cswPrivate.foundSelected = false;
                             
                             Csw.crawlObject(cswPrivate.options, function (relatedObj) {
                                 if (false === cswPublic.data.isMulti() && relatedObj.id === cswPrivate.selectedNodeId) {

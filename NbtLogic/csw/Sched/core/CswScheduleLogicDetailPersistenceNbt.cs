@@ -159,7 +159,7 @@ namespace ChemSW.Nbt.Sched
                         CswCommaDelimitedStringSelectCols.Add( NbtScheduledRuleParamsColumns.ParamVal.ToString() );
 
 
-                        CswCommaDelimitedString CswCommaDelimitedStringParams = new CswCommaDelimitedString( CswScheduleLogicDetail.RunParams.Keys.Count, true );
+                        CswCommaDelimitedString CswCommaDelimitedStringParams = new CswCommaDelimitedString( CswScheduleLogicDetail.RunParams.Keys.Count, "'" );
                         foreach( string CurrentParamName in CswScheduleLogicDetail.RunParams.Keys )
                         {
                             CswCommaDelimitedStringParams.Add( CurrentParamName );

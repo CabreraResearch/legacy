@@ -42,8 +42,8 @@
                         cswPublic.table.trigger(cswPrivate.name + 'CswLayoutTable_onRemove', {
                             table: cswPublic.table,
                             cellSet: cswPublic.cellSet(row, column),
-                            row: removeCells.propNonDom('row'),
-                            column: removeCells.propNonDom('column')
+                            row: removeCells.data('row'),
+                            column: removeCells.data('column')
                         });
                         removeCells.children().hide();
 
@@ -54,21 +54,21 @@
             }; // cswPrivate.onClick()
 
             cswPrivate.isRemoveMode = function () {
-                return (cswPublic.table.propNonDom('removemode') === "true");
+                return (cswPublic.table.data('removemode') === "true");
             };
 
             cswPrivate.setConfigMode = function (mode) {
-                cswPublic.table.propNonDom('configmode', mode);
+                cswPublic.table.data('configmode', mode);
             };
 
             cswPrivate.toggleRemove = function () {
                 if (cswPrivate.isRemoveMode(cswPublic.table)) {
-                    cswPublic.table.propNonDom('removemode', 'false');
+                    cswPublic.table.data('removemode', 'false');
                     if (cswPrivate.removeBtn) {
                         cswPrivate.removeBtn.removeClass('CswLayoutTable_removeEnabled');
                     }
                 } else {
-                    cswPublic.table.propNonDom('removemode', 'true');
+                    cswPublic.table.data('removemode', 'true');
                     if (cswPrivate.removeBtn) {
                         cswPrivate.removeBtn.addClass('CswLayoutTable_removeEnabled');
                     }
@@ -170,7 +170,7 @@
                     cswPrivate.firstCol = thisCol;
                 }
 
-                cell.propNonDom({
+                cell.data({
                     row: thisRow,
                     column: thisCol,
                     cellsetrow: cellsetrow,
@@ -247,7 +247,7 @@
                     $dragDiv = dd.draggable;
                     dragCell = Csw.literals.factory($dragDiv.parent(), {});
 
-                    dragCells = cswPublic.cellSet(dragCell.propNonDom('row'), dragCell.propNonDom('column')); // .table.findCell('[row="' + Csw.number(dragCell.propNonDom('row')) + '"][column="' + Csw.number(dragCell.propNonDom('column')) + '"]');
+                    dragCells = cswPublic.cellSet(dragCell.data('row'), dragCell.data('column')); // .table.findCell('[row="' + Csw.number(dragCell.data('row')) + '"][column="' + Csw.number(dragCell.data('column')) + '"]');
                     dropCells = cswPublic.cellSet($dropCell.attr('row'), $dropCell.attr('column')); //table.findCell('[row="' + Csw.number($dropCell.attr('row')) + '"][column="' + Csw.number($dropCell.attr('column')) + '"]');
 
                     // This must happen BEFORE we do the swap, in case the caller relies on the contents of the div being where it was
@@ -255,10 +255,10 @@
                         table: cswPublic.table,
                         cellSet: dragCells,
                         swapcellset: dropCells,
-                        row: dragCell.propNonDom('row'),
-                        column: dragCell.propNonDom('column'),
-                        swaprow: dropCells[1][1].propNonDom('row'),
-                        swapcolumn: dropCells[1][1].propNonDom('column')
+                        row: dragCell.data('row'),
+                        column: dragCell.data('column'),
+                        swaprow: dropCells[1][1].data('row'),
+                        swapcolumn: dropCells[1][1].data('column')
                     });
 
 
@@ -279,14 +279,14 @@
                                 my: "left top",
                                 at: "left top",
                                 of: thisDropCell.$,
-                                offset: cswPublic.table.propNonDom('cellpadding')
+                                offset: cswPublic.table.data('cellpadding')
                             });
 
                             $dropCellDiv.position({
                                 my: "left top",
                                 at: "left top",
                                 of: thisDragCell.$,
-                                offset: cswPublic.table.propNonDom('cellpadding')
+                                offset: cswPublic.table.data('cellpadding')
                             });
                         }
                     }
@@ -297,7 +297,7 @@
             cswPublic.isConfig = function () {
                 /// <summary>Determines whether layout table is in config mode.</summary>
                 /// <returns type="Boolean">True if config mode is on.</returns>
-                return Csw.bool(cswPublic.table.propNonDom('configmode'));
+                return Csw.bool(cswPublic.table.data('configmode'));
             };
 
             cswPublic.cellSet = function (row, column) {
@@ -322,7 +322,7 @@
 
                 function applyAttributes(cell) {
                     if (false === Csw.isNullOrEmpty(attributes)) {
-                        cell.propNonDom(attributes);
+                        cell.data(attributes);
                     }
                 }
 
@@ -432,7 +432,7 @@
                     },
                     styles: cswPrivate.styles
                 });
-                cswPublic.table.propNonDom({
+                cswPublic.table.data({
                     'cellset_rows': cswPrivate.cellSet.rows,
                     'cellset_columns': cswPrivate.cellSet.columns
                 });
