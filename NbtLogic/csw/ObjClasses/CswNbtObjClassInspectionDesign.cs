@@ -358,7 +358,6 @@ namespace ChemSW.Nbt.ObjClasses
                         // case 25035
                         QuestionProp.IsActionRequired = ( Design.Status.Value == InspectionStatus.ActionRequired );
                     }
-                    AllQuestionsFlt.Reset(); //always call reset() after iterating a CswNbtPropEnmrtrFiltered!!!!!
                 }
             }
         }
