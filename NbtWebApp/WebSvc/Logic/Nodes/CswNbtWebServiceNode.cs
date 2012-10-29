@@ -43,7 +43,10 @@ namespace ChemSW.Nbt.WebServices
                 foreach( string NodeKey in NodeKeys )
                 {
                     CswNbtNodeKey NbtNodeKey = new CswNbtNodeKey( _CswNbtResources, NodeKey );
-                    if( null != NbtNodeKey )
+                    if( null != NbtNodeKey && 
+                        null != NbtNodeKey.NodeId &&
+                        CswTools.IsPrimaryKey( NbtNodeKey.NodeId ) && 
+                        false == NodePrimaryKeys.Contains( NbtNodeKey.NodeId ) )
                     {
                         NodePrimaryKeys.Add( NbtNodeKey.NodeId );
                     }
@@ -54,7 +57,8 @@ namespace ChemSW.Nbt.WebServices
                 foreach( string NodePk in NodePks )
                 {
                     CswPrimaryKey PrimaryKey = CswConvert.ToPrimaryKey( NodePk );
-                    if( CswTools.IsPrimaryKey( PrimaryKey ) && false == NodePrimaryKeys.Contains( PrimaryKey ) )
+                    if( CswTools.IsPrimaryKey( PrimaryKey ) && 
+                        false == NodePrimaryKeys.Contains( PrimaryKey ) )
                     {
                         NodePrimaryKeys.Add( PrimaryKey );
                     }
