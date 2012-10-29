@@ -37,7 +37,7 @@
                         cswPrivate.correctiveAction = cswPrivate.correctiveActionTextBox.val();
                         var isCompliant = true;
 
-                        if (cswPrivate.correctiveAction === cswPrivate.defaultText) {
+                        if (cswPrivate.selectedAnswer !== cswPrivate.defaultText && cswPrivate.correctiveAction === cswPrivate.defaultText) {
                             isCompliant = cswPrivate.isAnswerCompliant();
                         }
 

@@ -323,7 +323,6 @@ namespace ChemSW.Nbt.ObjClasses
             public bool AllAnswered;
             public bool AllAnsweredInTime;
             public CswCommaDelimitedString UnAnsweredQuestions;
-            public CswNbtPropEnmrtrFiltered AllQuestionsFlt;
 
             public InspectionState( CswNbtObjClassInspectionDesign Design )
             {
@@ -334,9 +333,9 @@ namespace ChemSW.Nbt.ObjClasses
 
                 if( null != Design && null != Design.Node )
                 {
-                    AllQuestionsFlt = Design.Node.Properties[(CswNbtMetaDataFieldType.NbtFieldType) CswNbtMetaDataFieldType.NbtFieldType.Question];
+                    //AllQuestionsFlt = Design.Node.Properties[(CswNbtMetaDataFieldType.NbtFieldType) CswNbtMetaDataFieldType.NbtFieldType.Question];
                     IsInstanced = true;
-                    foreach( CswNbtNodePropWrapper PropWrapper in AllQuestionsFlt )
+                    foreach( CswNbtNodePropWrapper PropWrapper in Design.Node.Properties[(CswNbtMetaDataFieldType.NbtFieldType) CswNbtMetaDataFieldType.NbtFieldType.Question] )
                     {
                         CswNbtNodePropQuestion QuestionProp = PropWrapper;
                         Deficient = ( Deficient || false == QuestionProp.IsCompliant );
@@ -349,14 +348,6 @@ namespace ChemSW.Nbt.ObjClasses
                         {
                             UnAnsweredQuestions.Add( QuestionProp.Question );
                         }
-
-                        if( QuestionProp.IsAnswerCompliant() )
-                        {
-                            QuestionProp.CorrectiveAction = string.Empty;
-                        }
-
-                        // case 25035
-                        QuestionProp.IsActionRequired = ( Design.Status.Value == InspectionStatus.ActionRequired );
                     }
                 }
             }
@@ -431,6 +422,15 @@ namespace ChemSW.Nbt.ObjClasses
 
             SetPreferred.setReadOnly( value: _InspectionState.AllAnswered, SaveToDb: true );
 
+            foreach( CswNbtNodePropWrapper PropWrapper in Node.Properties[(CswNbtMetaDataFieldType.NbtFieldType) CswNbtMetaDataFieldType.NbtFieldType.Question] )
+            {
+                CswNbtNodePropQuestion QuestionProp = PropWrapper;
+                if( QuestionProp.IsAnswerCompliant() )
+                {
+                    QuestionProp.CorrectiveAction = string.Empty;
+                }
+            }
+
             _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
         }
 
@@ -473,6 +473,12 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void afterPopulateProps()
         {
+            foreach( CswNbtNodePropWrapper PropWrapper in Node.Properties[(CswNbtMetaDataFieldType.NbtFieldType) CswNbtMetaDataFieldType.NbtFieldType.Question] )
+            {
+                CswNbtNodePropQuestion QuestionProp = PropWrapper;
+                QuestionProp.IsActionRequired = ( Status.Value == InspectionStatus.ActionRequired ); // case 25035
+            }
+
             Generator.SetOnPropChange( OnGeneratorChange );
             IsFuture.SetOnPropChange( OnIsFutureChange );
             Status.SetOnPropChange( OnStatusPropChange );
