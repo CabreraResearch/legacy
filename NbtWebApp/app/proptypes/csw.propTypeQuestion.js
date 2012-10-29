@@ -73,7 +73,7 @@
                         if (cswPrivate.dateAnswered !== '') {
                             cswPublic.control.append(' (' + cswPrivate.dateAnswered + ')');
                         }
-                        if (cswPrivate.correctiveAction !== '') {
+                        if (false == Csw.isNullOrEmpty(cswPrivate.correctiveAction)) {
                             cswPublic.control.br();
                             cswPublic.control.append('Corrective Action: ' + cswPrivate.correctiveAction);
                             if (cswPrivate.dateCorrected !== '') {
