@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
@@ -318,54 +319,67 @@ namespace ChemSW.Nbt.ObjClasses
 
         private class InspectionState
         {
-            private CswNbtPropEnmrtrFiltered _QuestionsFlt;
+            private Collection<CswNbtNodePropQuestion> _Questions = new Collection<CswNbtNodePropQuestion>();
+            private CswNbtObjClassInspectionDesign _Design;
 
             public InspectionState( CswNbtObjClassInspectionDesign Design, bool IsAdmin )
             {
-                Deficient = false;
-                AllAnswered = true;
-                AllAnsweredInTime = true;
+                _Design = Design;
                 UnAnsweredQuestions = new CswCommaDelimitedString();
 
-                if( null != Design && null != Design.Node )
+                if( null != _Design && null != _Design.Node )
                 {
-                    _QuestionsFlt = Design.Node.Properties[(CswNbtMetaDataFieldType.NbtFieldType) CswNbtMetaDataFieldType.NbtFieldType.Question];
+                    CswNbtPropEnmrtrFiltered QuestionsFlt = _Design.Node.Properties[(CswNbtMetaDataFieldType.NbtFieldType) CswNbtMetaDataFieldType.NbtFieldType.Question];
                     IsInstanced = true;
-                    foreach( CswNbtNodePropWrapper PropWrapper in _QuestionsFlt )
+                    foreach( CswNbtNodePropWrapper PropWrapper in QuestionsFlt )
                     {
-                        CswNbtNodePropQuestion QuestionProp = PropWrapper;
-                        Deficient = ( Deficient || false == QuestionProp.IsCompliant );
-                        AllAnswered = ( AllAnswered && false == string.IsNullOrEmpty( QuestionProp.Answer.Trim() ) );
-                        AllAnsweredInTime = ( AllAnswered &&
-                                              AllAnsweredInTime &&
-                                              DateTime.MinValue != QuestionProp.DateAnswered.Date &&
-                                              QuestionProp.DateAnswered.Date <= Design.Date.DateTimeValue );
-                        if( string.IsNullOrEmpty( QuestionProp.Answer.Trim() ) )
-                        {
-                            UnAnsweredQuestions.Add( QuestionProp.Question );
-                        }
-
-                        // case 25035
-                        QuestionProp.IsActionRequired = ( Design.Status.Value == InspectionStatus.ActionRequired );
-
-                        // case 26705
-                        QuestionProp.SetOnPropChange( Design.onQuestionChange );
-
+                        _Questions.Add( PropWrapper );
                     }
 
-                    Design.SetPreferred.setReadOnly( value: AllAnswered && false == Deficient, SaveToDb: true );
+                    foreach( CswNbtNodePropQuestion Question in _Questions )
+                    {
+                        if( string.IsNullOrEmpty( Question.Answer.Trim() ) )
+                        {
+                            UnAnsweredQuestions.Add( Question.Question );
+                        }
+                        // case 26705
+                        Question.SetOnPropChange( _Design.onQuestionChange );
+                    }
+
+                    _Design.SetPreferred.setReadOnly( value: AllAnswered && false == Deficient, SaveToDb: true );
                     // case 26584
                     if( IsAdmin )
                     {
-                        Design.Status.setReadOnly( value: false, SaveToDb: false );
+                        _Design.Status.setReadOnly( value: false, SaveToDb: false );
                     }
+
                 }
             }
 
             public readonly bool IsInstanced = false;
-            public bool Deficient;
-            public bool AllAnswered;
-            public bool AllAnsweredInTime;
+            public bool Deficient
+            {
+                get
+                {
+                    return _Questions.Aggregate( false, ( Ret, QuestionProp ) => ( Ret || false == QuestionProp.IsCompliant ) );
+                }
+            }
+            public bool AllAnswered
+            {
+                get
+                {
+                    return _Questions.Aggregate( true, ( Ret, QuestionProp ) => ( Ret && false == string.IsNullOrEmpty( QuestionProp.Answer.Trim() ) ) );
+                }
+            }
+            public bool AllAnsweredInTime
+            {
+                get
+                {
+                    bool Ret = AllAnswered;
+                    Ret = Ret && _Questions.Aggregate( Ret, ( RetAns, QuestionProp ) => ( RetAns && DateTime.MinValue != QuestionProp.DateAnswered.Date && QuestionProp.DateAnswered.Date <= _Design.Date.DateTimeValue ) );
+                    return Ret;
+                }
+            }
             public CswCommaDelimitedString UnAnsweredQuestions;
         }
 
@@ -482,6 +496,10 @@ namespace ChemSW.Nbt.ObjClasses
         {
             CswNbtNodePropWrapper PropWrapper = _CswNbtNode.Properties[Prop.NodeTypeProp];
             CswNbtNodePropQuestion QuestionProp = PropWrapper.AsQuestion;
+
+            // case 25035
+            QuestionProp.IsActionRequired = ( Status.Value == InspectionStatus.ActionRequired );
+
             // case 26705
             if( string.IsNullOrEmpty( QuestionProp.Answer ) )
             {
