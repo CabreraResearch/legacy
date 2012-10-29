@@ -23,9 +23,13 @@
                     }
 
                     cswPrivate.isAnswerCompliant = function () {
+                        var answerCompliant = false;
                         for (var i = 0; i < cswPrivate.splitCompliantAnswers.length; i += 1) {
-                            return (Csw.string(cswPrivate.splitCompliantAnswers[i]).trim().toLowerCase() === Csw.string(cswPrivate.selectedAnswer).trim().toLowerCase());
+                            if (Csw.string(cswPrivate.splitCompliantAnswers[i]).trim().toLowerCase() === Csw.string(cswPrivate.selectedAnswer).trim().toLowerCase()) {
+                                answerCompliant = true;
+                            }
                         }
+                        return answerCompliant;
                     }
 
                     cswPrivate.checkCompliance = function () {
