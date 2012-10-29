@@ -350,6 +350,11 @@ namespace ChemSW.Nbt.ObjClasses
                             UnAnsweredQuestions.Add( QuestionProp.Question );
                         }
 
+                        if( QuestionProp.IsAnswerCompliant() )
+                        {
+                            QuestionProp.CorrectiveAction = string.Empty;
+                        }
+
                         // case 25035
                         QuestionProp.IsActionRequired = ( Design.Status.Value == InspectionStatus.ActionRequired );
                     }
@@ -428,17 +433,6 @@ namespace ChemSW.Nbt.ObjClasses
             SetPreferred.setReadOnly( value: _InspectionState.AllAnswered, SaveToDb: true );
 
             _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
-
-            foreach( CswNbtNodePropWrapper PropWrapper in _InspectionState.AllQuestionsFlt )
-            {
-                CswNbtNodePropQuestion QuestionProp = PropWrapper;
-                if( QuestionProp.IsAnswerCompliant() )
-                {
-                    QuestionProp.CorrectiveAction = string.Empty;
-                }
-            }
-            _InspectionState.AllQuestionsFlt.Reset(); //always call reset after iterating!!!!
-
         }
 
         //beforeWriteNode()
