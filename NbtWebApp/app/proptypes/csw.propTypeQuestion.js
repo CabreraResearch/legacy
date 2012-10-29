@@ -18,8 +18,8 @@
                     cswPrivate.parent = cswPublic.data.propDiv;
 
                     cswPrivate.showCorrectiveAction = function () {
-                        return ((cswPrivate.isActionRequired && cswPrivate.correctiveAction === cswPrivate.defaultText && false == cswPrivate.isAnswerCompliant()) ||
-                                 (cswPrivate.correctiveAction !== cswPrivate.defaultText && false == cswPrivate.isAnswerCompliant()));
+                        return (false == cswPrivate.isAnswerCompliant() &&
+                            (cswPrivate.isActionRequired || cswPrivate.correctiveAction !== cswPrivate.defaultText));
                     }
 
                     cswPrivate.isAnswerCompliant = function () {
@@ -101,7 +101,7 @@
                                                   ID: cswPublic.data.ID + '_ans',
                                                   onChange: function () {
                                                       cswPrivate.propVals.correctiveaction = cswPrivate.defaultText;
-                                                      cswPrivate.correctiveActionTextBox.empty();
+                                                      cswPrivate.correctiveActionTextBox.val(cswPrivate.defaultText);
                                                       cswPrivate.correctiveAction = cswPrivate.defaultText;
                                                       cswPrivate.propVals = {}
                                                       cswPrivate.checkCompliance();
