@@ -131,6 +131,7 @@
     <Compile Include="csw\PropTypes\CswCheckBoxArrayOptions.cs" />
     <Compile Include="csw\Schema\scripts\infr\RunBeforeEveryExecutionOfUpdater_01OC.cs" />
     <Compile Include="csw\Schema\scripts\infr\RunBeforeEveryExecutionOfUpdater_01M.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01S_Case28089.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01S_Case27709.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01S_Case28016_2.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01S_Case28016.cs" />

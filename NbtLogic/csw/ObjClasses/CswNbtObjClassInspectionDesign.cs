@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
@@ -318,37 +319,57 @@ namespace ChemSW.Nbt.ObjClasses
 
         private class InspectionState
         {
-            public readonly bool IsInstanced = false;
-            public bool Deficient;
+            private Collection<CswNbtNodePropQuestion> _Questions = new Collection<CswNbtNodePropQuestion>();
+            private CswNbtObjClassInspectionDesign _Design;
             public bool AllAnswered;
             public bool AllAnsweredInTime;
             public CswCommaDelimitedString UnAnsweredQuestions;
 
             public InspectionState( CswNbtObjClassInspectionDesign Design )
             {
-                Deficient = false;
-                AllAnswered = true;
-                AllAnsweredInTime = true;
+                _Design = Design;
                 UnAnsweredQuestions = new CswCommaDelimitedString();
 
-                if( null != Design && null != Design.Node )
+                if( null != _Design && null != _Design.Node )
                 {
-                    //AllQuestionsFlt = Design.Node.Properties[(CswNbtMetaDataFieldType.NbtFieldType) CswNbtMetaDataFieldType.NbtFieldType.Question];
+                    CswNbtPropEnmrtrFiltered QuestionsFlt = _Design.Node.Properties[(CswNbtMetaDataFieldType.NbtFieldType) CswNbtMetaDataFieldType.NbtFieldType.Question];
                     IsInstanced = true;
-                    foreach( CswNbtNodePropWrapper PropWrapper in Design.Node.Properties[(CswNbtMetaDataFieldType.NbtFieldType) CswNbtMetaDataFieldType.NbtFieldType.Question] )
+                    foreach( CswNbtNodePropWrapper PropWrapper in QuestionsFlt )
                     {
-                        CswNbtNodePropQuestion QuestionProp = PropWrapper;
-                        Deficient = ( Deficient || false == QuestionProp.IsCompliant );
-                        AllAnswered = ( AllAnswered && false == string.IsNullOrEmpty( QuestionProp.Answer.Trim() ) );
-                        AllAnsweredInTime = ( AllAnswered &&
-                                              AllAnsweredInTime &&
-                                              DateTime.MinValue != QuestionProp.DateAnswered.Date &&
-                                              QuestionProp.DateAnswered.Date <= Design.Date.DateTimeValue );
-                        if( string.IsNullOrEmpty( QuestionProp.Answer.Trim() ) )
-                        {
-                            UnAnsweredQuestions.Add( QuestionProp.Question );
-                        }
+                        _Questions.Add( PropWrapper );
                     }
+                    foreach( CswNbtNodePropQuestion Question in _Questions )
+                    {
+                        if( string.IsNullOrEmpty( Question.Answer.Trim() ) )
+                        {
+                            UnAnsweredQuestions.Add( Question.Question );
+                        }
+                        Question.SetOnPropChange( _Design.onQuestionChange );
+                    }
+
+                }
+            }
+            public bool Deficient
+            {
+                get
+                {
+                    return _Questions.Aggregate( false, ( Ret, QuestionProp ) => ( Ret || false == QuestionProp.IsCompliant ) );
+                }
+            }
+            public bool AllAnswered
+            {
+                get
+                {
+                    return _Questions.Aggregate( true, ( Ret, QuestionProp ) => ( Ret && false == string.IsNullOrEmpty( QuestionProp.Answer.Trim() ) ) );
+                }
+            }
+            public bool AllAnsweredInTime
+            {
+                get
+                {
+                    bool Ret = AllAnswered;
+                    Ret = Ret && _Questions.Aggregate( Ret, ( RetAns, QuestionProp ) => ( RetAns && DateTime.MinValue != QuestionProp.DateAnswered.Date && QuestionProp.DateAnswered.Date <= _Design.Date.DateTimeValue ) );
+                    return Ret;
                 }
             }
         }
@@ -484,6 +505,10 @@ namespace ChemSW.Nbt.ObjClasses
             Status.SetOnPropChange( OnStatusPropChange );
             _CswNbtObjClassDefault.afterPopulateProps();
         } //afterPopulateProps()
+
+
+            // case 25035
+            QuestionProp.IsActionRequired = ( Status.Value == InspectionStatus.ActionRequired );
 
         public override void addDefaultViewFilters( CswNbtViewRelationship ParentRelationship )
         {
