@@ -130,6 +130,15 @@ namespace ChemSW.Nbt.PropTypes
         }
 
         /// <summary>
+        /// True if the answer to the question is compliant, not if the entire question is compliant
+        /// </summary>
+        /// <returns></returns>
+        public bool IsAnswerCompliant()
+        {
+            return CompliantAnswers.Contains( Answer, true );
+        }
+
+        /// <summary>
         /// True if Answer is compliant or Corrective Action is not empty
         /// </summary>
         public bool IsCompliant

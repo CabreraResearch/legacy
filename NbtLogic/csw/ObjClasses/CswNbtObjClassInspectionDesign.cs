@@ -351,6 +351,11 @@ namespace ChemSW.Nbt.ObjClasses
                         // case 26705
                         QuestionProp.SetOnPropChange( Design.onQuestionChange );
 
+                        if( QuestionProp.IsAnswerCompliant() )
+                        {
+                            QuestionProp.CorrectiveAction = string.Empty;
+                        }
+
                     }
 
                     Design.SetPreferred.setReadOnly( value: AllAnswered, SaveToDb: true );

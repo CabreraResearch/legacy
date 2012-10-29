@@ -43,7 +43,10 @@
 
                         if (isCompliant) {
                             cswPrivate.answerSel.removeClass('CswFieldTypeQuestion_Deficient');
-                            if (false == cswPrivate.showCorrectiveAction()) {
+                            if (cswPrivate.showCorrectiveAction()) {
+                                cswPrivate.correctiveActionLabel.show();
+                                cswPrivate.correctiveActionTextBox.show();
+                            } else {
                                 cswPrivate.correctiveActionLabel.hide();
                                 cswPrivate.correctiveActionTextBox.hide();
                             }
@@ -100,9 +103,6 @@
                                               .select({
                                                   ID: cswPublic.data.ID + '_ans',
                                                   onChange: function () {
-                                                      cswPrivate.propVals.correctiveaction = cswPrivate.defaultText;
-                                                      cswPrivate.correctiveActionTextBox.val(cswPrivate.defaultText);
-                                                      cswPrivate.correctiveAction = cswPrivate.defaultText;
                                                       cswPrivate.propVals = {}
                                                       cswPrivate.checkCompliance();
                                                       var val = cswPrivate.answerSel.val();
@@ -135,6 +135,9 @@
                                 cswPublic.data.onPropChange({ comments: val });
                             }
                         });
+
+                        cswPrivate.correctiveActionTextBox.hide();
+                        cswPrivate.correctiveActionLabel.hide();
 
                         cswPrivate.defaultText = (false === cswPrivate.multi) ? '' : Csw.enums.multiEditDefaultValue;
                         cswPrivate.splitCompliantAnswers = cswPrivate.compliantAnswers.split(',');
