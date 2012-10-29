@@ -38,11 +38,7 @@
                         var isCompliant = true;
 
                         if (cswPrivate.correctiveAction === cswPrivate.defaultText) {
-                            if (cswPrivate.selectedAnswer !== cswPrivate.defaultText) {
-                                for (var i = 0; i < cswPrivate.splitCompliantAnswers.length; i += 1) {
-                                    isCompliant = cswPrivate.isAnswerCompliant();
-                                }
-                            }
+                            isCompliant = cswPrivate.isAnswerCompliant();
                         }
 
                         if (isCompliant) {
@@ -142,18 +138,8 @@
 
                         cswPrivate.defaultText = (false === cswPrivate.multi) ? '' : Csw.enums.multiEditDefaultValue;
                         cswPrivate.splitCompliantAnswers = cswPrivate.compliantAnswers.split(',');
-                        cswPrivate.selectedAnswer = cswPrivate.answerSel.val();
-                        cswPrivate.correctiveAction = cswPrivate.correctiveActionTextBox.val();
 
                         cswPrivate.checkCompliance();
-
-                        if (cswPrivate.showCorrectiveAction()) {
-                            cswPrivate.correctiveActionLabel.show();
-                            cswPrivate.correctiveActionTextBox.show();
-                        } else {
-                            cswPrivate.correctiveActionLabel.hide();
-                            cswPrivate.correctiveActionTextBox.hide();
-                        }
 
                     }
 
