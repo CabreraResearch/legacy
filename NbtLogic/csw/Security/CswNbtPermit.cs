@@ -482,7 +482,7 @@ namespace ChemSW.Nbt.Security
                         if( ret &&
                                 (
                                     ( Permission != NodeTypePermission.View ) &&
-                                    ( MetaDataProp.ReadOnly || ( ( null != NodePropWrapper ) && NodePropWrapper.ReadOnly ) ) &&
+                            ( MetaDataProp.ServerManaged || MetaDataProp.ReadOnly || ( ( null != NodePropWrapper ) && NodePropWrapper.ReadOnly ) ) &&
                                     ( false == MetaDataProp.AllowReadOnlyAdd )
                                 )
                             )/* Case 24514. Conditionally Permit edit on create. */

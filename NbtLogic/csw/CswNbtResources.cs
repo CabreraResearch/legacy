@@ -550,12 +550,14 @@ namespace ChemSW.Nbt
         private void handleGetAuditLevel( DataRow DataRow, ref string ReturnVal )
         {
 
-            ReturnVal = AuditLevel.NoAudit;
 
             // case 22542
             // Override jct_nodes_props audit level with level set on nodetype prop
             if( DataRow.Table.TableName == "jct_nodes_props" )
             {
+
+                ReturnVal = AuditLevel.NoAudit;//27709: don't invalidate the incoming audit level for other tables
+
                 Int32 NodeTypePropId = Int32.MinValue;
                 if( DataRowState.Deleted != DataRow.RowState )
                 {

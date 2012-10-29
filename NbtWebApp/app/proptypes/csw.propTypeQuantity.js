@@ -63,7 +63,7 @@
                                 Csw.tryExec(cswPublic.data.onChange, val);
                                 cswPublic.data.onPropChange({ value: val });
                             },
-                            isValid: cswPrivate.isMultiEditValid
+                            isValid: true
                         });
                         cswPrivate.cellCol++;
 
@@ -111,17 +111,17 @@
                         cswPrivate.selectBox.required(cswPublic.data.isRequired());
 
                         $.validator.addMethod('validateInteger', function (value, element) {
-                            return (cswPrivate.isMultiEditValid(value) || cswPrivate.precision != 0 || Csw.validateInteger(cswPrivate.numberTextBox.val()));
+                            return (cswPrivate.precision != 0 || Csw.validateInteger(cswPrivate.numberTextBox.val()));
                         }, 'Value must be a whole number');
                         cswPrivate.numberTextBox.addClass('validateInteger');
 
                         $.validator.addMethod('validateIntegerGreaterThanZero', function (value, element) {
-                            return (cswPrivate.isMultiEditValid(value) || Csw.validateIntegerGreaterThanZero(cswPrivate.numberTextBox.val()));
+                            return (Csw.validateIntegerGreaterThanZero(cswPrivate.numberTextBox.val()));
                         }, 'Value must be a non-zero, positive number');
                         cswPrivate.numberTextBox.addClass('validateIntegerGreaterThanZero');
 
                         $.validator.addMethod('validateUnitPresent', function (value, element) {
-                            return (cswPrivate.isMultiEditValid(value) || false === Csw.isNullOrEmpty(cswPrivate.selectBox.val()) || Csw.isNullOrEmpty(cswPrivate.numberTextBox.val()));
+                            return (false === Csw.isNullOrEmpty(cswPrivate.selectBox.val()) || Csw.isNullOrEmpty(cswPrivate.numberTextBox.val()));
                         }, 'Unit must be selected if Quantity is present.');
                         cswPrivate.selectBox.addClass('validateUnitPresent');
 
@@ -129,7 +129,7 @@
                             cswPrivate.numberTextBox.required(cswPublic.data.isRequired());
 
                             $.validator.addMethod('validateQuantityPresent', function (value, element) {
-                                return (cswPrivate.isMultiEditValid(value) || false === Csw.isNullOrEmpty(cswPrivate.numberTextBox.val()) || Csw.isNullOrEmpty(cswPrivate.selectBox.val()));
+                                return (false === Csw.isNullOrEmpty(cswPrivate.numberTextBox.val()) || Csw.isNullOrEmpty(cswPrivate.selectBox.val()));
                             }, 'Quantity must have a value if Unit is selected.');
                             cswPrivate.selectBox.addClass('validateQuantityPresent');
                         }

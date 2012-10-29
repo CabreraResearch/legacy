@@ -21,7 +21,7 @@
                     cswPrivate.maxRows = Csw.string(cswPrivate.propVals.maxrows);
                     cswPrivate.viewid = Csw.string(cswPrivate.propVals.viewid).trim();
                     
-                    cswPrivate.makeGridMenu = function(grid) {
+                    cswPrivate.makeGridMenu = function (grid, gridParentDiv) {
                         //Case 21741
                         if (cswPublic.data.tabState.EditMode !== Csw.enums.editMode.PrintReport) {
 
@@ -45,7 +45,8 @@
                                 onMultiEdit: function () { 
                                     grid.toggleShowCheckboxes(); 
                                 },
-                                onEditView: function() { 
+                                onEditView: function () {
+                                    Csw.tryExec(gridParentDiv.$.dialog('close'));
                                     Csw.tryExec(cswPublic.data.onEditView, cswPrivate.viewid); 
                                 },
                                 onPrintView: function () { 
@@ -66,7 +67,7 @@
                         var gridDiv = newDiv.div({ name: 'grid_as_fieldtype' });
                         cswPrivate.reinitGrid = (function () {
                             return function () {
-                                cswPrivate.makeFullGrid(viewid, newDiv);
+                                cswPublic.control.reload();
                             };
                         }());
                         Csw.nbt.viewFilters({
@@ -87,16 +88,16 @@
                             reinit: false,
                             EditMode: cswPublic.data.tabState.EditMode,
                             onEditNode: function () {
-                                cswPrivate.reinitGrid();
+                                cswPublic.control.reload();
                             },
                             onDeleteNode: function () {
-                                cswPrivate.reinitGrid();
+                                cswPublic.control.reload();
                             },
                             onSuccess: function (grid) {
-                                cswPrivate.makeGridMenu(grid);
+                                cswPrivate.makeGridMenu(grid, newDiv);
                             }
                         };
-                        cswPublic.control = gridDiv.$.CswNodeGrid('init', gridOpts);
+                        cswPublic.control = Csw.nbt.nodeGrid(gridDiv, gridOpts);
                     };
 
                     cswPrivate.makeSmallGrid = function () {

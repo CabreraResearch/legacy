@@ -76,6 +76,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Content Include="app\controls\csw.quickTip.js" />
+    <Content Include="app\controls\csw.tabselect.js" />
     <Content Include="app\literals\csw.fieldset.js" />
     <Content Include="app\layouts\csw.landingpage.js" />
     <Content Include="app\proptypes\_propTypeTemplate.js" />
@@ -643,7 +644,7 @@
     <Content Include="app\_first-vsdoc.js" />
     <Content Include="app\_last-vsdoc.js" />
     <Content Include="app\literals\CswInput.js" />
-    <Content Include="app\nodes\CswNodeGrid.js" />
+    <Content Include="app\nodes\csw.node.grid.js" />
     <Content Include="app\pagecmp\CswDashboard.js" />
     <Content Include="app\pagecmp\CswDefaultContent.js" />
     <Content Include="app\pagecmp\CswDialog.js" />

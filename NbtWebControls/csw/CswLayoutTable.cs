@@ -30,9 +30,9 @@ namespace ChemSW.NbtWebControls
             {
                 // This prevents IIS from dying when very small or very large numbers are used.
                 if( inDisplayRow < 0 || inDisplayRow > 200 )
-					throw new CswDniException( ErrorType.Error, "Invalid Row", "LayoutComponent got an invalid row:" + inDisplayRow.ToString() );
+                    throw new CswDniException( ErrorType.Error, "Invalid Row", "LayoutComponent got an invalid row:" + inDisplayRow.ToString() );
                 if( inDisplayColumn < 0 || inDisplayColumn > 200 )
-					throw new CswDniException( ErrorType.Error, "Invalid Column", "LayoutComponent got an invalid column:" + inDisplayColumn.ToString() );
+                    throw new CswDniException( ErrorType.Error, "Invalid Column", "LayoutComponent got an invalid column:" + inDisplayColumn.ToString() );
 
                 LayoutComponentId = inLayoutComponentId;
                 DisplayRow = inDisplayRow;
@@ -211,7 +211,7 @@ namespace ChemSW.NbtWebControls
                     }
                 } // for( Int32 c = 0; c < ComponentTable.MaxCells; c++ )
             } // for( Int32 r = 0; r < ComponentTable.Rows.Count; r++ )
-        } // _initWelcomeComponents()
+        } // ReinitComponents()
 
         public delegate void DeleteComponentEventHandler( Int32 LayoutComponentId );
         public event DeleteComponentEventHandler OnDeleteComponent = null;

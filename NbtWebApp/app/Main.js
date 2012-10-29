@@ -40,13 +40,13 @@ window.initMain = window.initMain || function (undefined) {
     } ());
 
 
-    var startSpinner = function() {
+    var startSpinner = function () {
         Csw.main.ajaxImage.show();
         Csw.main.ajaxSpacer.hide();
     }
     Csw.subscribe(Csw.enums.events.ajax.globalAjaxStart, startSpinner);
 
-    var stopSpinner = function() {
+    var stopSpinner = function () {
         Csw.main.ajaxImage.hide();
         Csw.main.ajaxSpacer.show();
     };
@@ -209,7 +209,7 @@ window.initMain = window.initMain || function (undefined) {
 
         } else if (false == Csw.isNullOrEmpty(qs.reportid)) {
             handleReport(qs.reportid);
-            ret = true;  // load the current context (probably the welcome page) below the report
+            ret = true;  // load the current context (probably the welcome landing page) below the report
 
         } else if (false == Csw.isNullOrEmpty(qs.clear)) {
             Csw.clientState.clearCurrent();
@@ -293,12 +293,12 @@ window.initMain = window.initMain || function (undefined) {
                                 itemid: current.searchid
                             });
                         } else {
-                            refreshWelcome();
+                            refreshWelcomeLandingPage();
                         }
                     };
-                } 
+                }
                 onSuccess();
-                
+
             } // onAuthenticate
         }); // CswLogin
 
@@ -318,7 +318,7 @@ window.initMain = window.initMain || function (undefined) {
             onSuccess: onSuccess
         });
     }
-    
+
     function clear(options) {
         ///<summary>Clears the contents of the page.</summary>
         ///<param name="options">An object representing the elements to clear: all, left, right, centertop, centerbottom.</param>
@@ -356,40 +356,47 @@ window.initMain = window.initMain || function (undefined) {
         clear(opts);
     });
 
-    function refreshWelcome() {
-        clear({ all: true });
-
-        Csw.layouts.landingpage(Csw.main.centerBottomDiv, {
+    function refreshWelcomeLandingPage() {
+        refreshLandingPage(function () {
+            Csw.layouts.landingpage(Csw.main.centerBottomDiv, {
             name: 'welcomeLandingPage',
-            Title: '',
-            onLinkClick: handleItemSelect,
-            onAddClick: function (nodetypeid) {
-                $.CswDialog('AddNodeDialog', {
-                    'nodetypeid': nodetypeid,
-                    'onAddNode': function (nodeid, nodekey) {
-                        clear({ all: true });
-                        refreshNodesTree({ 'nodeid': nodeid, 'nodekey': nodekey, 'IncludeNodeRequired': true });
-                    }
-                });
-            },
-            onAddComponent: refreshWelcome,
-            actionData: { 
-                RoleId: ''
-            }
+                Title: '',
+                onLinkClick: handleItemSelect,
+                onAddClick: function (itemData) {
+                    $.CswDialog('AddNodeDialog', {
+                        text: itemData.Text,
+                        nodetypeid: itemData.NodeTypeId,
+                        onAddNode: function (nodeid, nodekey) {
+                            clear({ all: true });
+                            refreshNodesTree({ 'nodeid': nodeid, 'nodekey': nodekey, 'IncludeNodeRequired': true });
+                        }
+                    });
+                },
+                onTabClick: function (itemData) {
+                    Csw.cookie.set(Csw.cookie.cookieNames.CurrentTabId, itemData.TabId);
+                    handleItemSelect(itemData);
+                },
+                onAddComponent: refreshWelcomeLandingPage,
+                landingPageRequestData: {
+                    RoleId: ''
+                }
+            });
         });
+    }
 
+    function refreshLandingPage(loadLandingPage) {
+        clear({ all: true });
+        loadLandingPage();
         refreshMainMenu();
         refreshViewSelect();
     }
-
-    // refreshWelcome()
 
     function handleItemSelect(options) {
         //if (debugOn()) Csw.debug.log('Main.handleItemSelect()');
         var o = {
             type: 'view', // Action, Report, View, Search
             mode: 'tree', // Grid, Tree, List
-            linktype: 'link', // WelcomeComponentType: Link, Search, Text, Add
+            linktype: 'link', // LandingPageItemType: Link, Text, Add
             itemid: '',
             name: '',
             url: '',
@@ -406,14 +413,14 @@ window.initMain = window.initMain || function (undefined) {
 
         var type = Csw.string(o.type).toLowerCase();
 
-//        function itemIsSupported() {
-//            var ret = (linkType === 'search' ||
-//                //false === Csw.isNullOrEmpty(o.itemid) ||
-//                type === 'action' ||
-//                type === 'search' ||
-//                type === 'report');
-//            return ret;
-//        }
+        //        function itemIsSupported() {
+        //            var ret = (linkType === 'search' ||
+        //                //false === Csw.isNullOrEmpty(o.itemid) ||
+        //                type === 'action' ||
+        //                type === 'search' ||
+        //                type === 'report');
+        //            return ret;
+        //        }
 
         if (Csw.clientChanges.manuallyCheckChanges()) { // && itemIsSupported()) {
 
@@ -570,7 +577,7 @@ window.initMain = window.initMain || function (undefined) {
         o.parent.menu(menuOpts);
 
     }
-
+    
     function getViewGrid(options) {
         var o = {
             viewid: '',
@@ -584,7 +591,7 @@ window.initMain = window.initMain || function (undefined) {
             onRefresh: ''
         };
 
-        if (options) Csw.extend(o, options);
+        Csw.extend(o, options);
 
         // Defaults
         var getEmptyGrid = (Csw.bool(o.showempty));
@@ -598,8 +605,8 @@ window.initMain = window.initMain || function (undefined) {
             Csw.cookie.get(Csw.cookie.cookieNames.CurrentViewId);
         }
 
-        o.onEditNode = function () { getViewGrid(o); };
-        o.onDeleteNode = function () { getViewGrid(o); };
+        o.onEditNode = function () { grid.reload(); };
+        o.onDeleteNode = function () { grid.reload(); };
         o.onRefresh = function (options) {
             clear({ centertop: true, centerbottom: true });
             Csw.clientChanges.unsetChanged();
@@ -620,8 +627,9 @@ window.initMain = window.initMain || function (undefined) {
                 getViewGrid(newopts);
             } // onEditFilters
         }); // viewFilters
-
-        Csw.main.centerBottomDiv.$.CswNodeGrid('init', {
+        var div = Csw.main.centerBottomDiv.div({ suffix: window.Ext.id() });
+        div.empty();
+        var grid = Csw.nbt.nodeGrid(div, {
             viewid: o.viewid,
             nodeid: o.nodeid,
             nodekey: o.nodekey,
@@ -928,7 +936,7 @@ window.initMain = window.initMain || function (undefined) {
                         });
                         break;
                     default:
-                        refreshWelcome();
+                        refreshWelcomeLandingPage();
                         break;
                 } // switch
             } // if (false === Csw.isNullOrEmpty(o.searchid))
@@ -1045,7 +1053,7 @@ window.initMain = window.initMain || function (undefined) {
                             mode: 'tree',
                             itemid: viewid
                         });
-                        
+
                     },
                     startingStep: o.ActionOptions.startingStep,
                     menuRefresh: refreshSelected
@@ -1062,21 +1070,54 @@ window.initMain = window.initMain || function (undefined) {
                         refreshSelected();
                     },
                     onFinish: function (actionData) {
-                        clear({ 'all': true });
-                        handleItemSelect({//todo - replace with landingpage call below once webservice supports action landing pages
-                            type: 'view',
-                            mode: 'tree',
-                            itemid: actionData.materialviewid
-                        });
-
-//                        Csw.layouts.landingpage(Csw.main.centerBottomDiv, {
-//                            name: 'createMaterialLandingPage',
-//                            Title: actionData.title,
-//                            onLinkClick: handleItemSelect,
-//                            actionData: actionData
-//                        });
-//                        refreshMainMenu();//Do we need these lines?
-//                        refreshViewSelect();
+                        var createMaterialLandingPage = function () {
+                            refreshLandingPage(function() {
+                                Csw.layouts.landingpage(Csw.main.centerBottomDiv, {
+                                    name: 'createMaterialLandingPage',
+                                    Title: actionData.Title,
+                                    onTitleClick: function () {
+                                        handleItemSelect({
+                                            type: 'view',
+                                            mode: 'tree',
+                                            itemid: actionData.NodeViewId
+                                        });
+                                    },
+                                    ActionId: actionData.ActionId,
+                                    ObjectClassId: actionData.RelatedObjectClassId,
+                                    onLinkClick: handleItemSelect,
+                                    onAddClick: function (itemData) {
+                                        $.CswDialog('AddNodeDialog', {
+                                            text: itemData.Text,
+                                            nodetypeid: itemData.NodeTypeId,
+                                            relatednodeid: actionData.RelatedNodeId,
+                                            relatednodename: actionData.RelatedNodeName,
+                                            relatednodetypeid: actionData.RelatedNodeTypeId,
+                                            relatedobjectclassid: actionData.RelatedObjectClassId,
+                                            onAddNode: function (nodeid, nodekey) {
+                                                clear({ all: true });
+                                                refreshNodesTree({ 'nodeid': nodeid, 'nodekey': nodekey, 'IncludeNodeRequired': true });
+                                            }
+                                        });
+                                    },
+                                    onTabClick: function (itemData) {
+                                        Csw.cookie.set(Csw.cookie.cookieNames.CurrentTabId, itemData.TabId);
+                                        handleItemSelect(itemData);
+                                    },
+                                    onButtonClick: function (itemData) {
+                                        Csw.controls.nodeButton(Csw.main.centerBottomDiv, {
+                                            name: itemData.Text,
+                                            value: itemData.ActionName,
+                                            mode: 'landingpage',                                            
+                                            propId: itemData.NodeTypePropId
+                                        });
+                                    },
+                                    onAddComponent: createMaterialLandingPage,
+                                    landingPageRequestData: actionData,
+                                    isConfigurable: actionData.isConfigurable
+                                });
+                            });
+                        };
+                        createMaterialLandingPage();
                     },
                     startingStep: o.ActionOptions.startingStep
                 };
@@ -1176,10 +1217,10 @@ window.initMain = window.initMain || function (undefined) {
                 });
                 break;
 
-            //			case 'Import_Fire_Extinguisher_Data':                                                                                            
-            //				break;                                                                                            
-            //			case 'Inspection_Design':                                                                                            
-            //				break;                                                                                            
+            //			case 'Import_Fire_Extinguisher_Data':                                                                                                
+            //				break;                                                                                                
+            //			case 'Inspection_Design':                                                                                                
+            //				break;                                                                                                
             case 'quotas':
                 Csw.actions.quotas(Csw.main.centerTopDiv, {
                     onQuotaChange: function () {

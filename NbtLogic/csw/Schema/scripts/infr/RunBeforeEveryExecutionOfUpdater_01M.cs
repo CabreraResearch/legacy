@@ -58,6 +58,7 @@ namespace ChemSW.Nbt.Schema
 
             #region SEBASTIAN
 
+            _decoupleImcsFromPrintLabel();
 
             #endregion SEBASTIAN
 
@@ -71,9 +72,7 @@ namespace ChemSW.Nbt.Schema
             else if( false == _CswNbtSchemaModTrnsctn.Modules.IsModuleEnabled( CswNbtModuleName.MLM ) )
             {
                 _CswNbtSchemaModTrnsctn.Modules.EnableModule( CswNbtModuleName.MLM );
-            }
-
-            _decoupleImcsFromPrintLabel();
+            }            
 
             #endregion TITANIA
 

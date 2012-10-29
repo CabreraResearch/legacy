@@ -88,7 +88,7 @@
 
             openDialog(div, 300, 150, null, 'Expire Warning');
         }, // ExpireDialog
-        AddWelcomeItemDialog: function (options) {
+        AddLandingPageItemDialog: function (options) {
             var o = {
                 form: function () { },
                 onAdd: function () { }
@@ -105,7 +105,7 @@
             });
 
             openDialog(div, 400, 400, null, 'New Landing Page Item');//should this be page-specific?
-        }, // AddWelcomeItemDialog
+        }, // AddLandingPageItemDialog
         AddViewDialog: function (options) {
             var o = {
                 name: 'addviewdialog',

@@ -227,7 +227,7 @@ namespace ChemSW.Nbt.PropTypes
                 if( NodeId != null )
                 {
                     // Use the User's visible, quicklaunch views
-                    CswCommaDelimitedString ViewIds = new CswCommaDelimitedString( SelectedViewIds.Count, true );
+                    CswCommaDelimitedString ViewIds = new CswCommaDelimitedString( SelectedViewIds.Count, "'" );
                     ViewIds.FromDelimitedString( SelectedViewIds );
                     _SelectedViews = _CswNbtResources.ViewSelect.getVisibleViews( User, false, ViewIds );
                 }

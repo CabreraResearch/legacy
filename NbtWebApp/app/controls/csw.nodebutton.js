@@ -133,6 +133,10 @@
                                 disabled: cswPrivate.disabled
                             });
                             break;
+                        case 'landingpage':
+                            //landing page handles the button - just execute the onClick event
+                            cswPublic.button = cswPrivate.btnCell.a().hide();
+                            cswPrivate.onButtonClick();
                  
                         default:
                             cswPublic.button = cswPrivate.btnCell.a({
