@@ -545,16 +545,24 @@ namespace ChemSW.Nbt.Security
 
 
                         // case 24510
-                        if( _CswNbtPermitInfo.NodeType.getObjectClass().ObjectClass == NbtObjectClass.ContainerClass )
-                        {
-                            ret = ret && canContainer( NodeId, Permission, null, _CswNbtPermitInfo.User );
-                        }
-
 
                         CswNbtNode Node = _CswNbtResources.Nodes[NodeId];
-                        if( null != Node && _CswNbtPermitInfo.Permission == NodeTypePermission.Edit )
+                        if( null != Node )
                         {
-                            ret |= _CswNbtPermitInfo.User.IsAdministrator() || false == Node.ReadOnly;
+                            if( _CswNbtPermitInfo.NodeType.getObjectClass().ObjectClass == NbtObjectClass.ContainerClass )
+                            {
+
+                                CswNbtObjClassContainer CswNbtObjClassContainer = Node;
+
+                                ret = ret && CswNbtObjClassContainer.canContainer( NodeId, Permission, null, _CswNbtPermitInfo.User );
+                            }
+
+
+                            if( _CswNbtPermitInfo.Permission == NodeTypePermission.Edit )
+                            {
+
+                                ret |= _CswNbtPermitInfo.User.IsAdministrator() || false == Node.ReadOnly;
+                            }
                         }
 
                     }//if NodeId is not null
@@ -983,147 +991,7 @@ namespace ChemSW.Nbt.Security
 
 
 
-        /// <summary>
-        /// Check container permissions.  Provide one of Permission or Action.
-        /// </summary>
-        public bool canContainer( CswPrimaryKey ContainerNodeId, NodeTypePermission Permission, CswNbtAction Action )
-        {
-            return canContainer( ContainerNodeId, Permission, Action, _CswNbtResources.CurrentNbtUser );
-        }
 
-        /// <summary>
-        /// Check container permissions.  Provide one of Permission or Action.
-        /// </summary>
-        public bool canContainer( CswPrimaryKey ContainerNodeId, NodeTypePermission Permission, CswNbtAction Action, ICswNbtUser User )
-        {
-            bool ret = true;
-            if( false == ( User is CswNbtSystemUser ) &&
-                null != ContainerNodeId &&
-                Int32.MinValue != ContainerNodeId.PrimaryKey )
-            {
-                // Special container permissions, based on Inventory Group                
-
-                // We find the matching InventoryGroupPermission based on:
-                //   the Container's Location's Inventory Group
-                //   the User's WorkUnit
-                //   the User's Role
-                // We allow or deny permission to perform the action using the appropriate Logical
-
-                ret = false;
-
-                CswNbtMetaDataObjectClass ContainerOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.ContainerClass );
-                CswNbtMetaDataObjectClass LocationOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.LocationClass );
-                CswNbtMetaDataObjectClass InvGrpOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.InventoryGroupClass );
-                CswNbtMetaDataObjectClass InvGrpPermOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.InventoryGroupPermissionClass );
-
-                CswNbtMetaDataObjectClassProp ContainerLocationOCP = ContainerOC.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Location );
-                CswNbtMetaDataObjectClassProp LocationInvGrpOCP = LocationOC.getObjectClassProp( CswNbtObjClassLocation.PropertyName.InventoryGroup );
-                CswNbtMetaDataObjectClassProp PermInvGrpOCP = InvGrpPermOC.getObjectClassProp( CswNbtObjClassInventoryGroupPermission.PropertyName.InventoryGroup );
-                CswNbtMetaDataObjectClassProp PermRoleOCP = InvGrpPermOC.getObjectClassProp( CswNbtObjClassInventoryGroupPermission.PropertyName.Role );
-                CswNbtMetaDataObjectClassProp PermWorkUnitOCP = InvGrpPermOC.getObjectClassProp( CswNbtObjClassInventoryGroupPermission.PropertyName.WorkUnit );
-
-                CswNbtView InvGrpPermView = new CswNbtView( _CswNbtResources );
-                InvGrpPermView.ViewName = "CswNbtPermit_InventoryGroupPermCheck";
-                CswNbtViewRelationship ContainerVR = InvGrpPermView.AddViewRelationship( ContainerOC, false );
-                CswNbtViewRelationship LocationVR = InvGrpPermView.AddViewRelationship( ContainerVR, NbtViewPropOwnerType.First, ContainerLocationOCP, false );
-                CswNbtViewRelationship InvGrpVR = InvGrpPermView.AddViewRelationship( LocationVR, NbtViewPropOwnerType.First, LocationInvGrpOCP, false );
-                CswNbtViewRelationship InvGrpPermVR = InvGrpPermView.AddViewRelationship( InvGrpVR, NbtViewPropOwnerType.Second, PermInvGrpOCP, false );
-
-                // filter to container id
-                ContainerVR.NodeIdsToFilterIn.Add( ContainerNodeId );
-                // filter to role and workunit
-                InvGrpPermView.AddViewPropertyAndFilter( InvGrpPermVR, PermRoleOCP, User.RoleId.PrimaryKey.ToString(), CswNbtSubField.SubFieldName.NodeID );
-
-                if( null != User.WorkUnitId )
-                {
-                    InvGrpPermView.AddViewPropertyAndFilter( InvGrpPermVR, PermWorkUnitOCP, User.WorkUnitId.PrimaryKey.ToString(), CswNbtSubField.SubFieldName.NodeID );
-                }
-                ICswNbtTree InvGrpPermTree = _CswNbtResources.Trees.getTreeFromView( InvGrpPermView, false, true, false );
-
-                if( InvGrpPermTree.getChildNodeCount() > 0 )
-                {
-                    InvGrpPermTree.goToNthChild( 0 ); // container
-                    if( InvGrpPermTree.getChildNodeCount() > 0 )
-                    {
-                        InvGrpPermTree.goToNthChild( 0 ); // location
-                        if( InvGrpPermTree.getChildNodeCount() > 0 )
-                        {
-                            InvGrpPermTree.goToNthChild( 0 ); // inventory group
-                            if( InvGrpPermTree.getChildNodeCount() > 0 )
-                            {
-                                //if the user has no workunit, but the location does belong to an inventory group, 
-                                //you don't get permission. There's nothing to check -- it's not controlled
-                                if( null == User.WorkUnitId )
-                                {
-                                    ret = false; //reset to false to be explicit
-                                }
-                                else
-                                {
-
-                                    InvGrpPermTree.goToNthChild( 0 ); // inventory group permission
-                                    CswNbtNode PermNode = InvGrpPermTree.getNodeForCurrentPosition();
-                                    CswNbtObjClassInventoryGroupPermission PermNodeAsPerm = PermNode;
-                                    if( Action != null )
-                                    {
-                                        if( ( Action.Name == CswNbtActionName.DispenseContainer &&
-                                             PermNodeAsPerm.Dispense.Checked == Tristate.True ) ||
-                                            ( Action.Name == CswNbtActionName.DisposeContainer &&
-                                             PermNodeAsPerm.Dispose.Checked == Tristate.True ) ||
-                                            ( Action.Name == CswNbtActionName.UndisposeContainer &&
-                                             PermNodeAsPerm.Undispose.Checked == Tristate.True ) ||
-                                            ( Action.Name == CswNbtActionName.Submit_Request &&
-                                             PermNodeAsPerm.Request.Checked == Tristate.True ) )
-                                        {
-                                            ret = true;
-                                        }
-                                        else if( Action.Name == CswNbtActionName.Receiving )
-                                        {
-                                            foreach(
-                                                CswNbtMetaDataNodeType ContainerNt in
-                                                    ContainerOC.getLatestVersionNodeTypes() )
-                                            {
-                                                ret = canNodeType( NodeTypePermission.Create, ContainerNt );
-                                                if( ret )
-                                                {
-                                                    break;
-                                                }
-                                            }
-                                        }
-                                    }
-                                    else
-                                    {   //there's only edit, so edit applies to all three
-                                        if( ( Permission == NodeTypePermission.View && PermNodeAsPerm.View.Checked == Tristate.True ) ||
-                                            ( Permission == NodeTypePermission.Edit && PermNodeAsPerm.Edit.Checked == Tristate.True ) ||
-                                            ( Permission == NodeTypePermission.Create && PermNodeAsPerm.Edit.Checked == Tristate.True ) ||
-                                            ( Permission == NodeTypePermission.Delete && PermNodeAsPerm.Edit.Checked == Tristate.True ) )
-                                        {
-                                            ret = true;
-                                        }
-
-                                    }//if-else action is not null
-
-                                }//if else work unit id is not null
-
-                            } // if( InvGrpPermTree.getChildNodeCount() > 0 ) inventory group permission
-
-                        } // if( InvGrpPermTree.getChildNodeCount() > 0 ) inventory group
-                        else
-                        {
-                            // location has no inventory group, no permissions to enforce
-                            ret = true;
-                        }
-                    } // if( InvGrpPermTree.getChildNodeCount() > 0 ) location
-                    else
-                    {
-                        // container has no location, no permissions to enforce
-                        ret = true;
-                    }
-
-                } // if( InvGrpPermTree.getChildNodeCount() > 0 ) container
-
-            } // if( Node.getObjectClass().ObjectClass == CswNbtMetaDataObjectClassName.NbtObjectClass.ContainerClass )
-            return ret;
-        } // canContainer
 
         #endregion Specialty
 
