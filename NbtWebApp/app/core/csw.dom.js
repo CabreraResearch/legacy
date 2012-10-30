@@ -71,7 +71,7 @@
                 cswPublic.$ = element;
                 cswPublic.isValid = true;
             } else if (false === Csw.isNullOrEmpty(element) && Csw.isJQuery(element.$)) {
-                    /*This is already a Csw dom object*/
+                /*This is already a Csw dom object*/
                 return element;
             } else {
                 cswPublic.$ = {};
@@ -158,20 +158,22 @@
                 /// <returns type="Object">The parent Csw object (for chaining)</returns> 
                 if (cswPrivate.isControlStillValid()) {
                     if (Csw.bool(isRequired) && !Csw.bool(isReadOnly)) {
-                        propName = Csw.makeRequiredName(propName);
+                        //propName = Csw.makeRequiredName(propName);
+                        cswPublic.append(propName).span({ text: "*" }).css('color', 'Red');
+                    } else {
+                        cswPublic.append(propName);
                     }
-                    cswPublic.append(propName);
                 }
                 return cswPublic;
             };
 
-            Csw.makeRequiredName = Csw.makeRequiredName ||
-                Csw.register('makeRequiredName', function (propName) {
-                    /// <summary>Returns the property name with the required symbol next to it</summary>
-                    /// <param name="propName" type="Object">the property name to display</param>
-                    /// <returns type="string">The label name for a required property</returns> 
-                    return propName + "*";
-                });
+//            Csw.makeRequiredName = Csw.makeRequiredName ||
+//                Csw.register('makeRequiredName', function (propName) {
+//                    /// <summary>Returns the property name with the required symbol next to it</summary>
+//                    /// <param name="propName" type="Object">the property name to display</param>
+//                    /// <returns type="string">The label name for a required property</returns> 
+//                    return propName + "*";
+//                });
 
             cswPublic.attach = function (object) {
                 /// <summary>Attach an object to this element.</summary>
@@ -292,7 +294,7 @@
             };
 
             //#endregion data methods
-            
+
             cswPublic.data = function (prop, val) {
                 /// <summary>Store property data on the control.</summary>
                 /// <returns type="Object">All properties, a single property, or the control if defining a property (for chaining).</returns> 
@@ -302,10 +304,10 @@
                         cswPrivate.setDataObj(prop);
                     } else {
                         switch (arguments.length) {
-                            //this isn't a valid use case
-                            //case 0:
-                            //    ret = _internal || cswPublic.$.data();
-                            //    break;
+                            //this isn't a valid use case   
+                            //case 0:   
+                            //    ret = _internal || cswPublic.$.data();   
+                            //    break;   
                             case 1:
                                 ret = cswPrivate.getData(prop);
                                 break;
@@ -765,6 +767,6 @@
             return $ret;
         });
 
-}());
+} ());
 
 
