@@ -90,12 +90,7 @@
                             .div({ cssclass: 'CswFieldTypeNFPA_text CswFieldTypeNFPA_whitetextLinear' });
                     }
                     cswPrivate.setValue = function (div, value) {
-                        if (cswPrivate.blueDiv.getId() === div.getId()) {
-                            div.empty();
-                            div.span({ text: value }).css('background-color', 'White');
-                        } else {
-                            div.text(value);
-                        }
+                        div.text(value);
 
                         if (value === 'W') {
                             div.addClass("strikethrough");
