@@ -287,13 +287,14 @@
                         cswPrivate.materialTypeSelect = cswPrivate.divStep1.nodeTypeSelect({
                             name: 'nodeTypeSelect',
                             useWide: true,
-                            labelText: 'Select a Material Type*: ',
+                            labelText: 'Select a Material Type:',
                             objectClassName: 'MaterialClass',
                             value: cswPrivate.state.materialType.val || cswPrivate.state.materialNodeTypeId,
                             selectedName: 'Chemical',
                             onSelect: changeMaterial,
                             onChange: changeMaterial,
-                            onSuccess: changeMaterial
+                            onSuccess: changeMaterial,
+                            isRequired: true
                         });
                         cswPrivate.divStep1.br({ number: 1 });
 
@@ -301,12 +302,13 @@
                         cswPrivate.tradeNameInput = cswPrivate.divStep1.input({
                             name: 'tradename',
                             useWide: true,
-                            labelText: 'Tradename*: ',
+                            labelText: 'Tradename:',
                             cssclass: 'required',
                             value: cswPrivate.state.tradeName,
                             onChange: function () {
                                 changeMaterial();
-                            }
+                            },
+                            isRequired: true
                         });
                         cswPrivate.divStep1.br({ number: 1 });
 
@@ -318,9 +320,10 @@
                             addNodeDialogTitle: 'Vendor',
                             useWide: true,
                             selectedNodeId: cswPrivate.state.supplierId || cswPrivate.state.supplier.val,
-                            labelText: 'Supplier*: ',
+                            labelText: 'Supplier: ',
                             onChange: changeMaterial,
-                            onSuccess: changeMaterial
+                            onSuccess: changeMaterial,
+                            isRequired: true
                         });
                         //cswPrivate.divStep1.br({ number: 1 });
 
@@ -329,7 +332,7 @@
                             name: 'partno',
                             useWide: true,
                             value: cswPrivate.state.partNo,
-                            labelText: 'Part No: ',
+                            labelText: 'Part No:',
                             onChange: function () {
                                 changeMaterial();
                             }

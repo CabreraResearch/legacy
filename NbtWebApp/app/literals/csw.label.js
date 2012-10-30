@@ -35,15 +35,15 @@
                     style = Csw.makeStyle(),
                     attr = Csw.makeAttr();
                 var $label;
-                
+
                 if (options) {
                     Csw.extend(cswPrivate, options);
                 }
                 var cssClass = 'CswLabel ' + cswPrivate.cssclass;
-                if(cswPrivate.useWide) {
+                if (cswPrivate.useWide) {
                     cssClass += ' CswLabelWide';
                 }
-                
+
                 cswPrivate.ID = Csw.string(cswPrivate.ID, cswPrivate.name);
 
                 html += '<label ';
@@ -57,13 +57,12 @@
 
                 html += '>';
 
-                var labelText = cswPrivate.value;
-                if(Csw.bool(cswPrivate.isRequired)){
-                    labelText = Csw.makeRequiredName(labelText);
+                var labelText = cswPrivate.text;
+                if (Csw.bool(cswPrivate.isRequired)) {
+                    labelText = labelText + "<span style='color:Red'> *</span>";
                 }
 
-                //html += Csw.string(cswPrivate.text, cswPrivate.value);
-                html += Csw.string(cswPrivate.text, labelText);
+                html += Csw.string(labelText, labelText);
 
                 html += '</label>';
                 $label = $(html);

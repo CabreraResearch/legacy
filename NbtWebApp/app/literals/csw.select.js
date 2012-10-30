@@ -15,7 +15,8 @@
                 multiple: false,
                 width: '',
                 onChange: null, //function () {}
-                onComplete: null
+                onComplete: null,
+                isRequired: false
             };
             var cswPublic = {};
 

@@ -28,7 +28,7 @@
                 rel: '',
                 media: '',
                 target: '',
-                onClick: null //function () {}
+                onClick: null, //function () {}
             };
             var cswPublic = {};
 
