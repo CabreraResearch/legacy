@@ -49,6 +49,7 @@
             };
             var cswPublic = {};
 
+            window.Ext.require('Ext.ux.grid.FiltersFeature');
 
             cswPrivate.makeActionButton = function (cellId, buttonName, iconType, clickFunc, record, rowIndex, colIndex) {
                 // Possible race condition - have to make the button after the cell is added, but it isn't added yet
@@ -105,6 +106,10 @@
             cswPrivate.makeGrid = Csw.method(function (renderTo, store) {
                 var columns = Csw.extend([], cswPrivate.columns);
 
+                Csw.each(columns, function (val) {
+                    val.filterable = true;
+                });                
+
                 var gridopts = {
                     id: cswPrivate.ID + 'grid',
                     itemId: cswPrivate.name,
@@ -138,7 +143,12 @@
                             Csw.tryExec(cswPrivate.onLoad, cswPublic, cswPrivate.ajaxResult);
                         }
                     },
-                    dockedItems: []
+                    dockedItems: [],
+                    features: [{
+                        ftype: 'filters',
+                        encode: false,
+                        local: true
+                    }]
                 };
 
                 // Action column
