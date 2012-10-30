@@ -45,7 +45,8 @@
                 data: {},     // { items: [ { col1: val, col2: val ... }, ... ]
                 pageSize: '',  // overridden by webservice
 
-                actionDataIndex: 'action'
+                actionDataIndex: 'action',
+                renderedRows: []
             };
             var cswPublic = {};
 
@@ -162,34 +163,42 @@
                         flex: false,
                         resizable: false,
                         xtype: 'actioncolumn',
-                        renderer: function (value, metaData, record, rowIndex, colIndex, store, view) {
+                        renderer: function (value, metaData, record, rowIndex, colIndex, store, view) {                            
                             var cell1Id = cswPrivate.name + 'action' + rowIndex + colIndex + '1';
                             var cell2Id = cswPrivate.name + 'action' + rowIndex + colIndex + '2';
-                            $('#gridActionColumn' + cell1Id).remove();
+                            //$('#gridActionColumn' + cell1Id).remove();
                             var ret = '<table id="gridActionColumn' + cell1Id + '" cellpadding="0"><tr>';
                             ret += '<td id="' + cell1Id + '" style="width: 26px;"/>';
                             ret += '<td id="' + cell2Id + '" style="width: 26px;"/>';
-                            ret += '</tr></table>';
-
+                            ret += '</tr></table>';                           
+                            
                             var canedit = Csw.bool(cswPrivate.showEdit) && Csw.bool(record.data.canedit, true);
                             var canview = Csw.bool(cswPrivate.showView) && Csw.bool(record.data.canview, true);
                             var candelete = Csw.bool(cswPrivate.showDelete) && Csw.bool(record.data.candelete, true);
                             var islocked = Csw.bool(cswPrivate.showLock) && Csw.bool(record.data.islocked, false);
 
-                            // only show one of edit/view/lock
-                            if (islocked) {
-                                cswPrivate.makeActionButton(cell1Id, 'Locked', Csw.enums.iconType.lock, null, record, rowIndex, colIndex);
-                            } else if (canedit) {
-                                cswPrivate.makeActionButton(cell1Id, 'Edit', Csw.enums.iconType.pencil, cswPrivate.onEdit, record, rowIndex, colIndex);
-                            } else if (canview) {
-                                cswPrivate.makeActionButton(cell1Id, 'View', Csw.enums.iconType.magglass, cswPrivate.onEdit, record, rowIndex, colIndex);
-                            }
+                            var render = true;
+                            Csw.each(cswPrivate.renderedRows, function (row) {
+                                if (row === ret) {
+                                    render = false;
+                                }
+                            });
+                            if (render) {
+                                // only show one of edit/view/lock
+                                if (islocked) {
+                                    cswPrivate.makeActionButton(cell1Id, 'Locked', Csw.enums.iconType.lock, null, record, rowIndex, colIndex);
+                                } else if (canedit) {
+                                    cswPrivate.makeActionButton(cell1Id, 'Edit', Csw.enums.iconType.pencil, cswPrivate.onEdit, record, rowIndex, colIndex);
+                                } else if (canview) {
+                                    cswPrivate.makeActionButton(cell1Id, 'View', Csw.enums.iconType.magglass, cswPrivate.onEdit, record, rowIndex, colIndex);
+                                }
 
-                            if (candelete) {
-                                cswPrivate.makeActionButton(cell2Id, 'Delete', Csw.enums.iconType.trash, cswPrivate.onDelete, record, rowIndex, colIndex);
+                                if (candelete) {
+                                    cswPrivate.makeActionButton(cell2Id, 'Delete', Csw.enums.iconType.trash, cswPrivate.onDelete, record, rowIndex, colIndex);
+                                }
+                                cswPrivate.renderedRows.push(ret);
                             }
-
-                            return ret;
+                            return ret;                            
                         } // renderer()
                     }; // newcol
                     gridopts.columns.splice(0, 0, newcol);
