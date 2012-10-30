@@ -561,7 +561,7 @@
                 Multi: false,
                 ReadOnly: false,
                 filterToPropId: '',
-                title: '',
+                title: 'Edit',
                 onEditNode: null, // function (nodeid, nodekey) { },
                 onEditView: null, // function (viewid) {}
                 onRefresh: null,
