@@ -246,9 +246,12 @@
                 cswPrivate.makeTypeControl();
                 cswPrivate.makeViewControl();
                 cswPrivate.makeNodeTypeControl();
-                cswPrivate.makeTabControl();
-                if (false === Csw.isNullOrEmpty(cswPrivate.ActionId) && false === Csw.isNullOrEmpty(cswPrivate.ObjectClassId)) {
-                cswPrivate.makeButtonControl();
+                if (false === Csw.isNullOrEmpty(cswPrivate.ActionId))
+                {
+                    cswPrivate.makeTabControl();
+                    if (false === Csw.isNullOrEmpty(cswPrivate.ObjectClassId)) {
+                        cswPrivate.makeButtonControl();
+                    }
                 }
                 cswPrivate.makeTextControl();
                 cswPrivate.makeAddControl(addOptions);
@@ -261,10 +264,12 @@
                     name: 'landingpage_type'
                 });
                 cswPrivate.addItemForm[cswPrivate.select.type].control.option({ value: 'Add', display: 'Add', isSelected: true });
-                cswPrivate.addItemForm[cswPrivate.select.type].control.option({ value: 'Link', display: 'Link' });                
-                cswPrivate.addItemForm[cswPrivate.select.type].control.option({ value: 'Tab', display: 'Tab' });
-                if (false === Csw.isNullOrEmpty(cswPrivate.ActionId) && false === Csw.isNullOrEmpty(cswPrivate.ObjectClassId)) {
-                    cswPrivate.addItemForm[cswPrivate.select.type].control.option({ value: 'Button', display: 'Button' });
+                cswPrivate.addItemForm[cswPrivate.select.type].control.option({ value: 'Link', display: 'Link' });
+                if (false === Csw.isNullOrEmpty(cswPrivate.ActionId)) {
+                    cswPrivate.addItemForm[cswPrivate.select.type].control.option({ value: 'Tab', display: 'Tab' });
+                    if (false === Csw.isNullOrEmpty(cswPrivate.ObjectClassId)) {
+                        cswPrivate.addItemForm[cswPrivate.select.type].control.option({ value: 'Button', display: 'Button' });
+                    }
                 }
                 cswPrivate.addItemForm[cswPrivate.select.type].control.option({ value: 'Text', display: 'Text' });
                 cswPrivate.addItemForm[cswPrivate.select.type].control.change(function () {
@@ -289,23 +294,26 @@
             
             cswPrivate.makeNodeTypeControl = function () {
                 cswPrivate.resetAddItem(cswPrivate.select.nodetype);
-                var filter = '', text = '';
+                var filter = '', text = '', objClassId = '';
                 if (cswPrivate.addItemForm[cswPrivate.select.type].control.val() == 'Add') {
                     filter = 'Create';
                     text = 'Add New:';
                 } else if (cswPrivate.addItemForm[cswPrivate.select.type].control.val() == 'Tab') {
                     filter = 'Edit';
                     text = 'Select:';
+                    objClassId = cswPrivate.ObjectClassId;
                 }
                 cswPrivate.addItemForm[cswPrivate.select.nodetype].label = cswPrivate.addItemForm.table.cell(cswPrivate.select.nodetype, 1).span({ text: text });
                 cswPrivate.addItemForm[cswPrivate.select.nodetype].control = cswPrivate.addItemForm.table.cell(cswPrivate.select.nodetype, 2).nodeTypeSelect({
                     name: 'landingpage_ntsel',
                     async: false,
+                    objectClassId: objClassId,
                     filterToPermission: filter,
                     onSelect: function () {
                         cswPrivate.makeTabControl();
                     }
                 });
+                cswPrivate.makeTabControl();
             };
             
             cswPrivate.makeTabControl = function () {
@@ -367,7 +375,8 @@
                             selectedView = cswPrivate.addItemForm[cswPrivate.select.view].control.val();
                             viewtype = selectedView.type;
                             pkvalue = selectedView.value;
-                        } else if (false == cswPrivate.addItemForm[cswPrivate.select.tab].control.$.is(':hidden')) {
+                        } else if (false === Csw.isNullOrEmpty(cswPrivate.addItemForm[cswPrivate.select.tab]) &&
+                            false == cswPrivate.addItemForm[cswPrivate.select.tab].control.$.is(':hidden')) {
                             pkvalue = cswPrivate.addItemForm[cswPrivate.select.tab].control.val();
                         } else if (false === Csw.isNullOrEmpty(cswPrivate.addItemForm[cswPrivate.select.button]) &&
                             false == cswPrivate.addItemForm[cswPrivate.select.button].control.$.is(':hidden')) {
@@ -415,9 +424,11 @@
             cswPrivate.onTypeChange = function () {
                 cswPrivate.toggleVisibility(cswPrivate.select.view, false);
                 cswPrivate.toggleVisibility(cswPrivate.select.nodetype, false);
-                cswPrivate.toggleVisibility(cswPrivate.select.tab, false);
-                if (false === Csw.isNullOrEmpty(cswPrivate.ActionId) && false === Csw.isNullOrEmpty(cswPrivate.ObjectClassId)) {
-                cswPrivate.toggleVisibility(cswPrivate.select.button, false);
+                if (false === Csw.isNullOrEmpty(cswPrivate.ActionId)) {
+                    cswPrivate.toggleVisibility(cswPrivate.select.tab, false);
+                    if (false === Csw.isNullOrEmpty(cswPrivate.ObjectClassId)) {
+                        cswPrivate.toggleVisibility(cswPrivate.select.button, false);
+                    }
                 }
                 switch (cswPrivate.addItemForm[cswPrivate.select.type].control.val()) {
                     case 'Add':
