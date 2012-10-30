@@ -169,11 +169,9 @@
                             // only show one of edit/view/lock
                             if (islocked) {
                                 cswPrivate.makeActionButton(cell1Id, 'Locked', Csw.enums.iconType.lock, null, record, rowIndex, colIndex);
-                            }
-                            else if (canedit) {
+                            } else if (canedit) {
                                 cswPrivate.makeActionButton(cell1Id, 'Edit', Csw.enums.iconType.pencil, cswPrivate.onEdit, record, rowIndex, colIndex);
-                            }
-                            else if (canview) {
+                            } else if (canview) {
                                 cswPrivate.makeActionButton(cell1Id, 'View', Csw.enums.iconType.magglass, cswPrivate.onEdit, record, rowIndex, colIndex);
                             }
 
@@ -216,7 +214,7 @@
                                     size: 'small',
                                     propId: thisBtn[0].propattr
                                 });
-                                
+
                             }
                             return '<div id="' + id + '"></div>';
 
@@ -266,7 +264,7 @@
                         }
                     }
                 }
-                
+
                 // Multi-Edit
                 if (cswPrivate.showCheckboxes &&
                     cswPrivate.showActionColumn) {
@@ -305,8 +303,13 @@
                         items: [cswPrivate.editAllButton, cswPrivate.deleteAllButton]
                     }); // panelopts.dockedItems
                 } // if(cswPrivate.showCheckboxes && cswPrivate.showActionColumn)
-                
-                var grid = window.Ext.create('Ext.grid.Panel', gridopts);
+
+                var grid;
+                if (Csw.isElementInDom(cswParent.getId())) {
+                    grid = window.Ext.create('Ext.grid.Panel', gridopts);
+                } else {
+                    grid = window.Ext.create('Ext.grid.Panel');
+                }
                 return grid;
             }); // makeGrid()
 
@@ -323,7 +326,7 @@
                 });
             };
 
-            cswPrivate.removeAll = function() {
+            cswPrivate.removeAll = function () {
                 if (cswPrivate.store) {
                     cswPrivate.store.removeAll();
                     cswPrivate.store.destroy();
@@ -337,7 +340,7 @@
 
             cswPrivate.init = Csw.method(function () {
                 cswPrivate.removeAll();
-                
+
                 cswPrivate.rootDiv = cswParent.div();
 
                 cswPrivate.store = cswPrivate.makeStore(cswPrivate.name + 'store', cswPrivate.usePaging);
@@ -450,7 +453,7 @@
                 }); // ajax.post()
             };
 
-            cswPrivate.reInit = function(forceRefresh) {
+            cswPrivate.reInit = function (forceRefresh) {
                 if (Csw.isNullOrEmpty(cswPrivate.data) || Csw.bool(forceRefresh)) {
                     cswPrivate.getData(function (result) {
                         if (false === Csw.isNullOrEmpty(result.grid)) {
