@@ -36,23 +36,26 @@
 
             (function _post() {                                             
                 'use strict';
-                try {
-                    window.Ext.create('Ext.tip.ToolTip', {
-                        id: cswPrivate.ID + 'tooltip',
-                        target: cswParent.getId(),
-                        html: cswPrivate.html,
-                        autoShow: cswPrivate.autoShow,
-                        autoScroll: cswPrivate.autoScroll,
-                        dismissDelay: cswPrivate.dismissDelay,
-                        focusOnToFront: cswPrivate.focusOnToFront,
-                        autoHide: cswPrivate.autoHide,
-                        closable: cswPrivate.closable,
-                        anchor: cswPrivate.anchor,
-                        bodyStyle: cswPrivate.bodyStyle
-                    });
-                } catch (e) {
-                    Csw.debug.error('Failed to create Ext.tip.ToolTip in csw.quickTip');
-                    Csw.debug.error(e);
+                
+                if (Csw.isElementInDom(cswParent.getId())) {
+                    try {
+                        window.Ext.create('Ext.tip.ToolTip', {
+                            id: cswPrivate.ID + 'tooltip',
+                            target: cswParent.getId(),
+                            html: cswPrivate.html,
+                            autoShow: cswPrivate.autoShow,
+                            autoScroll: cswPrivate.autoScroll,
+                            dismissDelay: cswPrivate.dismissDelay,
+                            focusOnToFront: cswPrivate.focusOnToFront,
+                            autoHide: cswPrivate.autoHide,
+                            closable: cswPrivate.closable,
+                            anchor: cswPrivate.anchor,
+                            bodyStyle: cswPrivate.bodyStyle
+                        });
+                    } catch(e) {
+                        Csw.debug.error('Failed to create Ext.tip.ToolTip in csw.quickTip');
+                        Csw.debug.error(e);
+                    }
                 }
             }());
 

@@ -227,6 +227,7 @@
             var cswPublic = {
                 div: Csw.literals.div({ name: cswPrivate.name }),
                 close: function () {
+                    cswPublic.tabsAndProps.tearDown();
                     cswPublic.div.$.dialog('close');
                 },
                 title: cswPrivate.text
@@ -278,6 +279,7 @@
             var cswPublic = {
                 div: Csw.literals.div(),
                 close: function () {
+                    cswPublic.tabsAndProps.tearDown();
                     cswPublic.div.$.dialog('close');
                 },
                 title: 'New ' + cswDlgPrivate.text
@@ -559,7 +561,7 @@
                 Multi: false,
                 ReadOnly: false,
                 filterToPropId: '',
-                title: '',
+                title: 'Edit',
                 onEditNode: null, // function (nodeid, nodekey) { },
                 onEditView: null, // function (viewid) {}
                 onRefresh: null,
@@ -574,13 +576,14 @@
             var cswPublic = {
                 div: Csw.literals.div(),
                 close: function () {
+                    cswPublic.tabsAndProps.tearDown();
                     cswPublic.div.$.dialog('close');
                 }
             };
 
             var title = Csw.string(cswDlgPrivate.title);
-            if (Csw.isNullOrEmpty(title)) {
-                title = (false === cswDlgPrivate.Multi) ? cswDlgPrivate.nodenames[0] : cswDlgPrivate.nodenames.join(', ');
+            if (cswDlgPrivate.nodenames.length > 1) {
+                title += ': ' + cswDlgPrivate.nodenames.join(', ');
             }
             cswPublic.title = title;
 
@@ -608,6 +611,7 @@
                     tabCell.empty();
 
                     cswPublic.tabsAndProps = Csw.layouts.tabsAndProps(tabCell, {
+                        Multi: cswDlgPrivate.Multi,
                         globalState: {
                             date: date,
                             selectedNodeIds: cswDlgPrivate.selectedNodeIds,
@@ -618,7 +622,6 @@
                             filterToPropId: cswDlgPrivate.filterToPropId
                         },
                         tabState: {
-                            Multi: cswDlgPrivate.Multi,
                             ReadOnly: cswDlgPrivate.ReadOnly,
                             EditMode: myEditMode,
                             tabid: Csw.cookie.get(Csw.cookie.cookieNames.CurrentTabId)

@@ -44,8 +44,6 @@
             };
             var cswPublic = {};
 
-            window.Ext.require('Ext.button.*');
-
             cswPublic.show = Csw.method(function () {
                 cswPublic.button.show();
                 return cswPublic;
@@ -146,26 +144,28 @@
                 if (Csw.bool(cswPrivate.bindOnEnter)) {
                     window.Mousetrap.bind('enter', cswPrivate.onClick);
                 }
-                //cswPrivate.initBtn = function () {
-
-                try {
-                    cswPublic.button = window.Ext.create('Ext.Button', {
-                        id: cswPrivate.ID + 'button',
-                        renderTo: cswParent.getId(),
-                        text: Csw.string(cswPrivate.enabledText),
-                        width: cswPrivate.width,
-                        handler: cswPrivate.onClick,
-                        icon: icon,
-                        cls: Csw.string(cswPrivate.cssclass),
-                        scale: Csw.string(cswPrivate.size, 'medium'),
-                        disabled: cswPrivate.disabled
-                    });
-                } catch (e) {
-                    cswPublic.button = window.Ext.create('Ext.Button');
-                    Csw.debug.error('Failed to create Ext.Button in csw.buttonExt');
-                    Csw.debug.error(e);
-                }
                 
+                if (Csw.isElementInDom(cswParent.getId())) {
+                    try {
+                        cswPublic.button = window.Ext.create('Ext.Button', {
+                            id: cswPrivate.ID + 'button',
+                            renderTo: cswParent.getId(),
+                            text: Csw.string(cswPrivate.enabledText),
+                            width: cswPrivate.width,
+                            handler: cswPrivate.onClick,
+                            icon: icon,
+                            cls: Csw.string(cswPrivate.cssclass),
+                            scale: Csw.string(cswPrivate.size, 'medium'),
+                            disabled: cswPrivate.disabled
+                        });
+                    } catch(e) {
+                        cswPublic.button = window.Ext.create('Ext.Button');
+                        Csw.debug.error('Failed to create Ext.Button in csw.buttonExt');
+                        Csw.debug.error(e);
+                    }
+                } else {
+                    cswPublic.button = window.Ext.create('Ext.Button');
+                }
                 if (false === Csw.isNullOrEmpty(cswPrivate.tooltip.title)) {
                         cswPrivate.tooltip.target = cswPublic.button.getId();
                     try {
