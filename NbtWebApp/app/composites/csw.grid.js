@@ -137,11 +137,14 @@
                         viewready: function () {
                             Csw.tryExec(cswPrivate.onLoad, cswPublic, cswPrivate.ajaxResult);
                         }
-                    }
+                    },
+                    dockedItems: []
                 };
 
                 // Action column
-                if (cswPrivate.showActionColumn && false === cswPrivate.showCheckboxes) {
+                if (cswPrivate.showActionColumn &&
+                    false === cswPrivate.showCheckboxes) {
+
                     var newcol = {
                         header: 'Action',
                         dataIndex: cswPrivate.actionDataIndex,
@@ -184,7 +187,11 @@
                     gridopts.columns.splice(0, 0, newcol);
                 } // if(cswPrivate.showActionColumn && false === cswPrivate.showCheckboxes) {
 
-                if (cswPrivate.data.buttons && cswPrivate.data.buttons.length > 0) {
+                //Render buttons in a callback
+                if (false === cswPrivate.showCheckboxes &&
+                    cswPrivate.data.buttons &&
+                    cswPrivate.data.buttons.length > 0) {
+
                     var colNames = Csw.delimitedString('', { spaceToDelimiter: false });
                     Csw.each(cswPrivate.data.buttons, function (val, key) {
                         //Get the column names, delimitedString will handle dupes for us automatically
@@ -197,8 +204,6 @@
                     var i = 0;
                     Csw.each(cols, function (colObj, key) {
                         colObj.renderer = function (value, metaData, record, rowIndex, colIndex, store, view) {
-                            //This is an appropriate use of Ext.id() given the context
-                            //var id = window.Ext.id();
                             i += 1;
                             var id = cswPrivate.ID + 'nodebutton' + i;
                             var thisBtn = cswPrivate.data.buttons.filter(function (btn) {
@@ -242,13 +247,13 @@
 
                 // Paging
                 if (Csw.bool(cswPrivate.usePaging)) {
-                    gridopts.dockedItems = [{
+                    gridopts.dockedItems.push({
                         xtype: 'pagingtoolbar',
                         store: cswPrivate.store,
                         dock: 'bottom',
                         displayInfo: true,
                         itemId: 'bottomtoolbar'
-                    }];
+                    });
 
                     var rows = cswPrivate.data.items.length;
                     if (false === Csw.isNumber(cswPrivate.height) || cswPrivate.height <= 0 || Csw.isNullOrEmpty(cswPrivate.height)) {
@@ -262,7 +267,10 @@
                     }
                 }
                 
-                if (cswPrivate.showCheckboxes && cswPrivate.showActionColumn) {
+                // Multi-Edit
+                if (cswPrivate.showCheckboxes &&
+                    cswPrivate.showActionColumn) {
+
                     cswPrivate.editAllButton = window.Ext.create('Ext.button.Button', {
                         id: cswPrivate.ID + 'edit',
                         xtype: 'button',
@@ -291,39 +299,23 @@
                             cswPrivate.onDelete(rows);
                         } // delete handler
                     });
-                    gridopts.dockedItems = [{
+                    gridopts.dockedItems.push({
                         xtype: 'toolbar',
                         dock: 'top',
                         items: [cswPrivate.editAllButton, cswPrivate.deleteAllButton]
-                    }]; // panelopts.dockedItems
+                    }); // panelopts.dockedItems
                 } // if(cswPrivate.showCheckboxes && cswPrivate.showActionColumn)
-                //cswPrivate.panel = window.Ext.create('Ext.panel.Panel', panelopts);
+                
                 var grid = window.Ext.create('Ext.grid.Panel', gridopts);
                 return grid;
             }); // makeGrid()
 
             cswPublic.reload = function () {
-                //cswPrivate.reInit(true);
-                //cswParent.grid({
-                //    viewid: cswPrivate.viewid,
-                //    nodeid: cswPrivate.nodeid,
-                //    nodekey: cswPrivate.nodekey,
-                //    showempty: cswPrivate.showempty,
-                //    name: cswPrivate.name,
-                //    onEditNode: cswPrivate.onEditNode,
-                //    onDeleteNode: cswPrivate.onDeleteNode,
-                //    onRefresh: cswPrivate.onRefresh,
-                //    onSuccess: cswPrivate.onSuccess,
-                //    onEditView: cswPrivate.onEditView
-                //});
                 cswPrivate.getData(function (result) {
                     if (result && result.grid && result.grid.data && result.grid.data.items) {
-                        //cswPrivate.store.removeAll(false);
                         cswPrivate.data = result.grid.data;
                         cswPrivate.store.destroy();
                         cswPrivate.store = cswPrivate.makeStore(cswPrivate.name + 'store', cswPrivate.usePaging);
-                        //cswPrivate.store.loadRawData(result.grid.data.items);
-                        //cswPrivate.store.sync();
                         cswPrivate.grid.reconfigure(cswPrivate.store);
                     } else {
                         Csw.debug.error('Failed to reload grid');
