@@ -72,7 +72,6 @@ timeout /T 30
 >>%LogFile% date /T
 >>%LogFile% time /T
 
->>%LogFile% msbuild %KilnPath%\Documentation\Documentation.sln /p:Configuration=Debug /m /v:q
 >>%LogFile% msbuild %KilnPath%\Nbt\Nbt\Nbt.sln /p:Configuration=Release /p:Platform="x64" /m /v:q
 >>%LogFile% net start "ChemSW Log Service"
 
