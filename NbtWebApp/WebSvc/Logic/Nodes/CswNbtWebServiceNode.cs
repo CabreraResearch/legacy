@@ -154,17 +154,16 @@ namespace ChemSW.Nbt.WebServices
             return Ret;
         }
 
-        private bool _tryDeleteNode( DataRow NodeRow, JObject RetObj, Collection<Exception> Exceptions )
+        private void _tryDeleteNode( CswNbtResources NbtResources, DataRow NodeRow, JObject RetObj, Collection<Exception> Exceptions )
         {
-            bool Ret = false;
             try
             {
                 string DoomedNodeName = CswConvert.ToString( NodeRow["nodename"] );
                 Int32 DoomedNodeId = CswConvert.ToInt32( NodeRow["nodeid"] );
                 Int32 NodeTypeId = CswConvert.ToInt32( NodeRow["nodetypeid"] );
-                CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeId );
+                CswNbtMetaDataNodeType NodeType = NbtResources.MetaData.getNodeType( NodeTypeId );
                 CswPrimaryKey NodePk = new CswPrimaryKey( "nodes", CswConvert.ToInt32( DoomedNodeId ) );
-                CswNbtNode DoomedNode = _CswNbtResources.Nodes[NodePk];
+                CswNbtNode DoomedNode = NbtResources.Nodes[NodePk];
                 try
                 {
                     if( null == DoomedNode )
@@ -175,7 +174,6 @@ namespace ChemSW.Nbt.WebServices
                     {
                         DoomedNode.delete( DeleteAllRequiredRelatedNodes: true );
                         RetObj["succeeded"][NodePk.ToString()] = _makeDeletedNodeText( NodeType, DoomedNodeName, DoomedNodeId );
-                        Ret = true;
                     }
                 }
                 catch( Exception Exception )
@@ -188,7 +186,6 @@ namespace ChemSW.Nbt.WebServices
             {
                 Exceptions.Add( Exception );
             }
-            return Ret;
         }
 
         public JObject deleteDemoDataNodes()
@@ -259,7 +256,7 @@ namespace ChemSW.Nbt.WebServices
                 Total = NodesTable.Rows.Count;
                 foreach( DataRow NodeRow in NodesTable.Rows )
                 {
-                    _tryDeleteNode( NodeRow, Ret, Exceptions );
+                    _tryDeleteNode( NbtSystemResources, NodeRow, Ret, Exceptions );
                 }
 
                 #endregion Delete Demo Nodes
