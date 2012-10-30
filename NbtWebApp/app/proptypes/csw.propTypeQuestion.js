@@ -18,7 +18,7 @@
                     cswPrivate.parent = cswPublic.data.propDiv;
 
                     cswPrivate.showCorrectiveAction = function () {
-                        return (false == cswPrivate.isAnswerCompliant()) &&
+                        return (false == cswPrivate.isAnswerCompliant() &&
                             (cswPrivate.isActionRequired || cswPrivate.correctiveAction !== cswPrivate.defaultText));
                     }
 
@@ -26,7 +26,7 @@
                         var answerCompliant = false;
                         for (var i = 0; i < cswPrivate.splitCompliantAnswers.length; i += 1) {
                             if (Csw.string(cswPrivate.splitCompliantAnswers[i]).trim().toLowerCase() === Csw.string(cswPrivate.selectedAnswer).trim().toLowerCase()) {
-                                answerCompliant = true;
+                                         answerCompliant = true;
                             }
                         }
                         return answerCompliant;
