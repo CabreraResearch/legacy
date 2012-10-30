@@ -321,8 +321,6 @@ namespace ChemSW.Nbt.ObjClasses
         {
             private Collection<CswNbtNodePropQuestion> _Questions = new Collection<CswNbtNodePropQuestion>();
             private CswNbtObjClassInspectionDesign _Design;
-            public bool AllAnswered;
-            public bool AllAnsweredInTime;
             public CswCommaDelimitedString UnAnsweredQuestions;
 
             public InspectionState( CswNbtObjClassInspectionDesign Design )
@@ -333,7 +331,6 @@ namespace ChemSW.Nbt.ObjClasses
                 if( null != _Design && null != _Design.Node )
                 {
                     CswNbtPropEnmrtrFiltered QuestionsFlt = _Design.Node.Properties[(CswNbtMetaDataFieldType.NbtFieldType) CswNbtMetaDataFieldType.NbtFieldType.Question];
-                    IsInstanced = true;
                     foreach( CswNbtNodePropWrapper PropWrapper in QuestionsFlt )
                     {
                         _Questions.Add( PropWrapper );
@@ -344,7 +341,6 @@ namespace ChemSW.Nbt.ObjClasses
                         {
                             UnAnsweredQuestions.Add( Question.Question );
                         }
-                        Question.SetOnPropChange( _Design.onQuestionChange );
                     }
 
                 }
@@ -441,8 +437,6 @@ namespace ChemSW.Nbt.ObjClasses
                 Status.setReadOnly( value: false, SaveToDb: false );
             }
 
-            SetPreferred.setReadOnly( value: _InspectionState.AllAnswered, SaveToDb: true );
-
             foreach( CswNbtNodePropWrapper PropWrapper in Node.Properties[(CswNbtMetaDataFieldType.NbtFieldType) CswNbtMetaDataFieldType.NbtFieldType.Question] )
             {
                 CswNbtNodePropQuestion QuestionProp = PropWrapper;
@@ -500,15 +494,13 @@ namespace ChemSW.Nbt.ObjClasses
                 QuestionProp.IsActionRequired = ( Status.Value == InspectionStatus.ActionRequired ); // case 25035
             }
 
+            SetPreferred.setReadOnly( value: _InspectionState.AllAnswered, SaveToDb: true );
+
             Generator.SetOnPropChange( OnGeneratorChange );
             IsFuture.SetOnPropChange( OnIsFutureChange );
             Status.SetOnPropChange( OnStatusPropChange );
             _CswNbtObjClassDefault.afterPopulateProps();
         } //afterPopulateProps()
-
-
-            // case 25035
-            QuestionProp.IsActionRequired = ( Status.Value == InspectionStatus.ActionRequired );
 
         public override void addDefaultViewFilters( CswNbtViewRelationship ParentRelationship )
         {

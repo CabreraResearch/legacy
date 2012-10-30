@@ -18,7 +18,7 @@
                     cswPrivate.parent = cswPublic.data.propDiv;
 
                     cswPrivate.showCorrectiveAction = function () {
-                        return (false == cswPrivate.isAnswerCompliant() &&
+                        return (false == cswPrivate.isAnswerCompliant()) &&
                             (cswPrivate.isActionRequired || cswPrivate.correctiveAction !== cswPrivate.defaultText));
                     }
 
@@ -52,7 +52,7 @@
                             }
                         } else {
                             cswPrivate.answerSel.addClass('CswFieldTypeQuestion_Deficient');
-                            if (cswPrivate.isActionRequired) {
+                            if (cswPrivate.isActionRequired && false == Csw.isNullOrEmpty(cswPrivate.selectedAnswer)) {
                                 cswPrivate.correctiveActionLabel.show();
                                 cswPrivate.correctiveActionTextBox.show();
                             }
