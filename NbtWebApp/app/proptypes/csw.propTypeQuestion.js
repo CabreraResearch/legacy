@@ -26,7 +26,7 @@
                         var answerCompliant = false;
                         for (var i = 0; i < cswPrivate.splitCompliantAnswers.length; i += 1) {
                             if (Csw.string(cswPrivate.splitCompliantAnswers[i]).trim().toLowerCase() === Csw.string(cswPrivate.selectedAnswer).trim().toLowerCase()) {
-                                         answerCompliant = true;
+                                answerCompliant = true;
                             }
                         }
                         return answerCompliant;
@@ -96,7 +96,7 @@
                         cswPrivate.splitAnswers = cswPrivate.allowedAnswers.split(',');
                         if (cswPublic.data.isMulti()) {
                             cswPrivate.splitAnswers.push(Csw.enums.multiEditDefaultValue);
-                        } else {
+                        } else if (Csw.isNullOrEmpty(cswPrivate.answer)) {
                             cswPrivate.splitAnswers.push('');
                         }
                         cswPrivate.answerSel = cswPublic.control.cell(1, 2)
@@ -106,6 +106,9 @@
                                                       cswPrivate.propVals = {}
                                                       cswPrivate.checkCompliance();
                                                       var val = cswPrivate.answerSel.val();
+                                                      if (false == Csw.isNullOrEmpty(val)) { //once the user has selected something other than the blank answer, remove that blank option from the list of options
+                                                          cswPrivate.answerSel.removeOption('');
+                                                      }
                                                       Csw.tryExec(cswPublic.data.onChange, val);
                                                       cswPublic.data.onPropChange({ answer: val });
                                                   },
