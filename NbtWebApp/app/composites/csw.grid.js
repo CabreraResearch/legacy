@@ -152,7 +152,8 @@
                         renderer: function (value, metaData, record, rowIndex, colIndex, store, view) {
                             var cell1Id = cswPrivate.name + 'action' + rowIndex + colIndex + '1';
                             var cell2Id = cswPrivate.name + 'action' + rowIndex + colIndex + '2';
-                            var ret = '<table cellpadding="0"><tr>';
+                            $('#gridActionColumn' + cell1Id).remove();
+                            var ret = '<table id="gridActionColumn' + cell1Id + '" cellpadding="0"><tr>';
                             ret += '<td id="' + cell1Id + '" style="width: 26px;"/>';
                             ret += '<td id="' + cell2Id + '" style="width: 26px;"/>';
                             ret += '</tr></table>';
@@ -204,14 +205,13 @@
                                 return btn.index === colObj.dataIndex && btn.rowno === rowIndex;
                             });
                             if (thisBtn.length === 1) {
-                                Csw.defer(function () {
-                                    var div = Csw.literals.factory($('#' + id));
-                                    div.nodeButton({
-                                        value: colObj.header,
-                                        size: 'small',
-                                        propId: thisBtn[0].propattr
-                                    });
-                                }, 100);
+                                var div = Csw.literals.factory($('#' + id));
+                                div.nodeButton({
+                                    value: colObj.header,
+                                    size: 'small',
+                                    propId: thisBtn[0].propattr
+                                });
+                                
                             }
                             return '<div id="' + id + '"></div>';
 
@@ -303,23 +303,53 @@
             }); // makeGrid()
 
             cswPublic.reload = function () {
+                //cswPrivate.reInit(true);
+                //cswParent.grid({
+                //    viewid: cswPrivate.viewid,
+                //    nodeid: cswPrivate.nodeid,
+                //    nodekey: cswPrivate.nodekey,
+                //    showempty: cswPrivate.showempty,
+                //    name: cswPrivate.name,
+                //    onEditNode: cswPrivate.onEditNode,
+                //    onDeleteNode: cswPrivate.onDeleteNode,
+                //    onRefresh: cswPrivate.onRefresh,
+                //    onSuccess: cswPrivate.onSuccess,
+                //    onEditView: cswPrivate.onEditView
+                //});
                 cswPrivate.getData(function (result) {
                     if (result && result.grid && result.grid.data && result.grid.data.items) {
                         //cswPrivate.store.removeAll(false);
-                        cswPrivate.data.items = result.grid.data.items;
-                        cswPrivate.store.loadRawData(result.grid.data.items);
-                        cswPrivate.store.sync();
+                        cswPrivate.data = result.grid.data;
+                        cswPrivate.store.destroy();
+                        cswPrivate.store = cswPrivate.makeStore(cswPrivate.name + 'store', cswPrivate.usePaging);
+                        //cswPrivate.store.loadRawData(result.grid.data.items);
+                        //cswPrivate.store.sync();
+                        cswPrivate.grid.reconfigure(cswPrivate.store);
                     } else {
                         Csw.debug.error('Failed to reload grid');
                     }
                 });
             };
 
-            cswPrivate.init = Csw.method(function () {
+            cswPrivate.removeAll = function() {
+                if (cswPrivate.store) {
+                    cswPrivate.store.removeAll();
+                    cswPrivate.store.destroy();
+                }
+                if (cswPrivate.grid) {
+                    cswPrivate.grid.removeAll();
+                    cswPrivate.grid.destroy();
+                }
                 cswParent.empty();
+            };
+
+            cswPrivate.init = Csw.method(function () {
+                cswPrivate.removeAll();
+                
+                cswPrivate.rootDiv = cswParent.div();
 
                 cswPrivate.store = cswPrivate.makeStore(cswPrivate.name + 'store', cswPrivate.usePaging);
-                cswPrivate.grid = cswPrivate.makeGrid(cswParent.getId(), cswPrivate.store);
+                cswPrivate.grid = cswPrivate.makeGrid(cswPrivate.rootDiv.getId(), cswPrivate.store);
 
                 cswPrivate.grid.on({
                     select: function (rowModel, record, index, eOpts) {
@@ -337,7 +367,7 @@
                 });
 
                 if (Csw.bool(cswPrivate.truncated)) {
-                    cswParent.span({ cssclass: 'truncated', text: 'Results Truncated' });
+                    cswPrivate.rootDiv.span({ cssclass: 'truncated', text: 'Results Truncated' });
                 }
 
             }); // init()
@@ -428,12 +458,8 @@
                 }); // ajax.post()
             };
 
-            //constructor
-            (function () {
-                Csw.extend(cswPrivate, options);
-                cswPrivate.ID = cswPrivate.ID || cswParent.getId();
-                cswPrivate.ID += cswPrivate.suffix;
-                if (Csw.isNullOrEmpty(cswPrivate.data)) {
+            cswPrivate.reInit = function(forceRefresh) {
+                if (Csw.isNullOrEmpty(cswPrivate.data) || Csw.bool(forceRefresh)) {
                     cswPrivate.getData(function (result) {
                         if (false === Csw.isNullOrEmpty(result.grid)) {
                             cswPrivate.pageSize = Csw.number(result.grid.pageSize);
@@ -454,6 +480,14 @@
                 } else {
                     cswPrivate.init();
                 }
+            };
+
+            //constructor
+            (function () {
+                Csw.extend(cswPrivate, options);
+                cswPrivate.ID = cswPrivate.ID || cswParent.getId();
+                cswPrivate.ID += cswPrivate.suffix;
+                cswPrivate.reInit();
             }());
 
             return cswPublic;

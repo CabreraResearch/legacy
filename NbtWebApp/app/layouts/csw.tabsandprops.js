@@ -108,7 +108,7 @@
 
                     cswPrivate.refreshLinkDiv();
                 } else {
-                    Csw.unsubscribe('CswMultiEdit', cswPrivate.onMultiEdit);
+                    //Csw.unsubscribe('CswMultiEdit', cswPrivate.onMultiEdit);
                 }
                 return isMulti;
             };
@@ -118,14 +118,22 @@
                 Csw.publish('render_' + cswPublic.getNodeId());
             };
 
-            cswPrivate.onTearDown = function () {
+            cswPrivate.onTearDownProps = function() {
                 Csw.publish('initPropertyTearDown_' + cswPublic.getNodeId());
+            };
+
+            cswPrivate.onTearDown = function () {
+                cswPrivate.onTearDownProps();
                 Csw.unsubscribe('CswMultiEdit', cswPrivate.onMultiEdit);
                 cswPrivate.clearTabs();
                 Csw.each(cswPrivate.ajax, function (call, name) {
                     call.ajax.abort();
                     delete cswPrivate.ajax[name];
                 });
+            };
+
+            cswPublic.tearDown = function() {
+                cswPrivate.onTearDown();
             };
 
             //#endregion Events
@@ -565,6 +573,7 @@
 
             cswPrivate.getProps = function (tabContentDiv, tabid, onSuccess) {
                 'use strict';
+                cswPrivate.onTearDownProps();
                 if (cswPrivate.tabState.EditMode === Csw.enums.editMode.Add && cswPrivate.tabState.Config === false) {
                     // case 20970 - make sure there's room in the quota
                     cswPrivate.ajax.props = Csw.ajax.post({

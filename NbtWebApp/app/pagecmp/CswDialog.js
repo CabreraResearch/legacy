@@ -227,6 +227,7 @@
             var cswPublic = {
                 div: Csw.literals.div({ name: cswPrivate.name }),
                 close: function () {
+                    cswPublic.tabsAndProps.tearDown();
                     cswPublic.div.$.dialog('close');
                 },
                 title: cswPrivate.text
@@ -278,6 +279,7 @@
             var cswPublic = {
                 div: Csw.literals.div(),
                 close: function () {
+                    cswPublic.tabsAndProps.tearDown();
                     cswPublic.div.$.dialog('close');
                 },
                 title: 'New ' + cswDlgPrivate.text
@@ -574,6 +576,7 @@
             var cswPublic = {
                 div: Csw.literals.div(),
                 close: function () {
+                    cswPublic.tabsAndProps.tearDown();
                     cswPublic.div.$.dialog('close');
                 }
             };
