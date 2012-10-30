@@ -582,8 +582,8 @@
             };
 
             var title = Csw.string(cswDlgPrivate.title);
-            if (Csw.isNullOrEmpty(title)) {
-                title = (false === cswDlgPrivate.Multi) ? cswDlgPrivate.nodenames[0] : cswDlgPrivate.nodenames.join(', ');
+            if (cswDlgPrivate.nodenames.length > 1) {
+                title += ': ' + cswDlgPrivate.nodenames.join(', ');
             }
             cswPublic.title = title;
 
@@ -611,6 +611,7 @@
                     tabCell.empty();
 
                     cswPublic.tabsAndProps = Csw.layouts.tabsAndProps(tabCell, {
+                        Multi: cswDlgPrivate.Multi,
                         globalState: {
                             date: date,
                             selectedNodeIds: cswDlgPrivate.selectedNodeIds,
@@ -621,7 +622,6 @@
                             filterToPropId: cswDlgPrivate.filterToPropId
                         },
                         tabState: {
-                            Multi: cswDlgPrivate.Multi,
                             ReadOnly: cswDlgPrivate.ReadOnly,
                             EditMode: myEditMode,
                             tabid: Csw.cookie.get(Csw.cookie.cookieNames.CurrentTabId)
