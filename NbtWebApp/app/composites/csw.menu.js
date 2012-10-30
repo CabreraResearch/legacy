@@ -139,6 +139,8 @@
                                                             table.cell(f, 4).append(failObj.id);
                                                             if (failObj.link) {
                                                                 table.cell(f, 5).nodeLink({ text: failObj.link });
+                                                            } else {
+                                                                table.cell(f, 5).append('No link. This may have deleted correctly.');
                                                             }
                                                        });
                                                         s = 2 + data.counts.failed;
