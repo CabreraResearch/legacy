@@ -50,20 +50,17 @@ namespace NbtWebAppServices.Response
                     Name = NewInspectionNodeType.NodeTypeName
                 };
 
-                bool IsNodeTypeReadOnly = ( false == _CswNbtWcfSessionResources.CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Edit, NewInspectionNodeType ) );
-
                 foreach( CswNbtMetaDataNodeTypeTab NodeTypeTab in from CswNbtMetaDataNodeTypeTab _NodeTypeTab
                                                                       in NewInspectionNodeType.getVisibleNodeTypeTabs()
                                                                   orderby _NodeTypeTab.TabOrder
                                                                   select _NodeTypeTab )
                 {
-                    bool IsTabReadOnly = IsNodeTypeReadOnly || ( false == _CswNbtWcfSessionResources.CswNbtResources.Permit.canTab( CswNbtPermit.NodeTypePermission.Edit, NewInspectionNodeType, NodeTypeTab: NodeTypeTab ) );
                     var ResponseSection = new CswNbtWcfInspectionsDataModel.CswNbtInspectionDesign.Section
                     {
                         Name = NodeTypeTab.TabName,
                         Order = NodeTypeTab.TabOrder,
                         SectionId = NodeTypeTab.TabId,
-                        ReadOnly = IsTabReadOnly
+                        ReadOnly = ( false == _CswNbtWcfSessionResources.CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Edit, NewInspectionNodeType ) || _CswNbtWcfSessionResources.CswNbtResources.Permit.canTab( CswNbtPermit.NodeTypePermission.Edit, NewInspectionNodeType, NodeTypeTab: NodeTypeTab ) )
                     };
 
                     IEnumerable<CswNbtMetaDataNodeTypeProp> NodeTypeProps = NodeTypeTab.getNodeTypePropsByDisplayOrder();
@@ -86,7 +83,6 @@ namespace NbtWebAppServices.Response
                                                    };
                         ResponseSection.Properties.Add( ResponseProperty );
                     }
-
 
                     foreach( CswNbtMetaDataNodeTypeProp NodeTypeProp in from CswNbtMetaDataNodeTypeProp _NodeTypeProp
                                                                             in NodeTypeProps
@@ -125,8 +121,6 @@ namespace NbtWebAppServices.Response
                     {
                         ResponseDesign.Sections.Add( ResponseSection );
                     }
-
-
                 }
                 _InspectionsResponse.Data.Designs.Add( ResponseDesign );
             }
