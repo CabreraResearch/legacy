@@ -208,13 +208,14 @@
                                 return btn.index === colObj.dataIndex && btn.rowno === rowIndex;
                             });
                             if (thisBtn.length === 1) {
-                                var div = Csw.literals.factory($('#' + id));
-                                div.nodeButton({
-                                    value: colObj.header,
-                                    size: 'small',
-                                    propId: thisBtn[0].propattr
-                                });
-
+                                Csw.defer(function() {
+                                    var div = Csw.literals.factory($('#' + id));
+                                    div.nodeButton({
+                                        value: colObj.header,
+                                        size: 'small',
+                                        propId: thisBtn[0].propattr
+                                    });
+                                },100);
                             }
                             return '<div id="' + id + '"></div>';
 
