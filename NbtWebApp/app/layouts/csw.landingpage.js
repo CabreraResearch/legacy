@@ -72,14 +72,16 @@
                                 'text-align': 'center',
                                 'font-size': '1.2em'
                             });
-
-                        cswPrivate.landingPageTitle = cswPrivate.landingPageDiv.a({
-                            cssclass: 'LandingPageTitle',
-                            text: cswPrivate.Title,
-                            onClick: cswPrivate.onTitleClick
+                        
+                        cswPrivate.landingPageTable = cswPrivate.landingPageDiv.table({
+                            name: 'landingpage_tbl',
+                            align: 'center',
+                            width: '100%'
                         });
+                                                
+                        cswPrivate.buildActionLinkTable(cswPrivate.landingPageTable.cell(1, 1));
 
-                        cswPrivate.layoutTable = cswPrivate.landingPageDiv.layoutTable({
+                        cswPrivate.layoutTable = cswPrivate.landingPageTable.cell(1, 2).layoutTable({
                             name: 'landingpagetable',
                             cellSet: { rows: 2, columns: 1 },
                             TableCssClass: 'LandingPageTable',
@@ -156,7 +158,31 @@
                         });
                     } // success{}
                 }); // Csw.ajax
-            } ());
+            }());
+
+            cswPrivate.buildActionLinkTable = function(parentDiv) {
+                cswPrivate.actionLinkTable = parentDiv.table({
+                    name: 'actionLink_tbl',
+                    cellpadding: 5,
+                    align: 'left',
+                    width: null
+                });
+                cswPrivate.landingPageTitle = cswPrivate.actionLinkTable.cell(1, 1).span({
+                    text: cswPrivate.Title
+                });
+                var actionLinkRow = 2;
+                Csw.each(cswPrivate.landingPageRequestData.ActionLinks, function (ActionLink) {
+                    if (false === Csw.isNullOrEmpty(ActionLink)) {
+                        cswPrivate.landingPageTitle = cswPrivate.actionLinkTable.cell(actionLinkRow, 1).a({
+                            text: ActionLink.Text,
+                            onClick: function () {
+                                cswPrivate.onActionLinkClick(ActionLink.ViewId);
+                            }
+                        });
+                        actionLinkRow++;
+                    }
+                });
+            };
 
             cswPrivate.clickItem = function (clickopts) {
                 var itemid = clickopts.itemData.ViewId;

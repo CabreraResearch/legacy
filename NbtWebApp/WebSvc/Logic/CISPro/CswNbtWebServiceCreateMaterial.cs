@@ -388,7 +388,6 @@ namespace ChemSW.Nbt.WebServices
                         MaterialNodeView.SaveToCache( false );
 
                         /* 1. Validate the new material and get its properties and sizes */
-
                         MaterialNode = _commitMaterialNode( MaterialObj );
                         RetObj["createdmaterial"] = true;
 
@@ -398,17 +397,7 @@ namespace ChemSW.Nbt.WebServices
                         RetObj["sizescount"] = SizesArray.Count;
 
                         /* 3. Add landingpage data */
-                        RetObj["landingpagedata"] = new JObject();
-                        RetObj["landingpagedata"]["ActionId"] = _CswNbtResources.Actions[CswNbtActionName.Create_Material].ActionId.ToString();
-                        RetObj["landingpagedata"]["Title"] = "Created " + MaterialNode.NodeName;
-                        RetObj["landingpagedata"]["NodeId"] = MaterialObj["materialId"];
-                        RetObj["landingpagedata"]["NodeViewId"] = MaterialNodeView.SessionViewId.ToString();
-                        RetObj["landingpagedata"]["RelatedNodeId"] = MaterialNode.NodeId.ToString();
-                        RetObj["landingpagedata"]["RelatedNodeName"] = MaterialNode.NodeName;
-                        RetObj["landingpagedata"]["RelatedNodeTypeId"] = MaterialNode.NodeTypeId.ToString();
-                        RetObj["landingpagedata"]["RelatedObjectClassId"] = MaterialNode.getObjectClassId().ToString();
-                        //If (and when) action landing pages are slated to be roleId-specific, remove this line
-                        RetObj["landingpagedata"]["isConfigurable"] = _CswNbtResources.CurrentNbtUser.IsAdministrator();
+                        RetObj["landingpagedata"] = _getLandingPageData( MaterialNode, MaterialNodeView );                        
                     }
                 }
             }
@@ -477,6 +466,29 @@ namespace ChemSW.Nbt.WebServices
                     SizesArray.Remove( SizeObj );
                 }
             }
+        }
+
+        private JObject _getLandingPageData( CswNbtNode MaterialNode, CswNbtView MaterialNodeView )
+        {
+            JObject LandingPageData = new JObject();
+            LandingPageData["ActionId"] = _CswNbtResources.Actions[CswNbtActionName.Create_Material].ActionId.ToString();
+            //Used for Tab and Button items
+            LandingPageData["NodeId"] = MaterialNode.NodeId.ToString();
+            LandingPageData["NodeViewId"] = MaterialNodeView.SessionViewId.ToString();
+            //Used for node-specific Add items
+            LandingPageData["RelatedNodeId"] = MaterialNode.NodeId.ToString();
+            LandingPageData["RelatedNodeName"] = MaterialNode.NodeName;
+            LandingPageData["RelatedNodeTypeId"] = MaterialNode.NodeTypeId.ToString();
+            LandingPageData["RelatedObjectClassId"] = MaterialNode.getObjectClassId().ToString();
+            //If (and when) action landing pages are slated to be roleId-specific, remove this line
+            LandingPageData["isConfigurable"] = _CswNbtResources.CurrentNbtUser.IsAdministrator();
+            //Used for viewing new material
+            LandingPageData["ActionLinks"] = new JObject();
+            string ActionLinkName = MaterialNode.NodeId.ToString();
+            LandingPageData["ActionLinks"][ActionLinkName] = new JObject();
+            LandingPageData["ActionLinks"][ActionLinkName]["Text"] = MaterialNode.NodeName;
+            LandingPageData["ActionLinks"][ActionLinkName]["ViewId"] = MaterialNodeView.SessionViewId.ToString();
+            return LandingPageData;
         }
 
         public static JObject getMaterialUnitsOfMeasure( string MaterialId, CswNbtResources CswNbtResources )
