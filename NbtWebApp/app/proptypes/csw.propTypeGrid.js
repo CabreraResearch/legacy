@@ -54,7 +54,7 @@
                                 },
                                 Multi: false
                             };
-                            cswPrivate.menuDiv.menu(menuOpts);
+                            cswPrivate.menu = cswPrivate.menuDiv.menu(menuOpts);
 
                         } // if( o.EditMode !== Csw.enums.editMode.PrintReport )
                     }; // makeGridMenu()
@@ -102,7 +102,7 @@
 
                     cswPrivate.makeSmallGrid = function () {
                         'use strict';
-                        Csw.ajax.post({
+                        cswPrivate.smallAjax = Csw.ajax.post({
                             urlMethod: 'getThinGrid',
                             data: {
                                 ViewId: cswPrivate.viewid,
@@ -130,7 +130,7 @@
 
                     cswPrivate.makeLinkGrid = function () {
                         'use strict';
-                        Csw.ajax.post({
+                        cswPrivate.linkAjax = Csw.ajax.post({
                             urlMethod: 'getGridRowCount',
                             data: {
                                 ViewId: cswPrivate.viewid,
@@ -178,6 +178,20 @@
                 };
 
                 cswPublic.data.bindRender(render);
+                cswPublic.data.unBindRender(function() {
+                    if (cswPublic.control && cswPublic.control.ajax && cswPublic.control.ajax.ajax) {
+                        cswPublic.control.ajax.ajax.abort();
+                    }
+                    if (cswPrivate.linkAjax && cswPrivate.linkAjax.ajax) {
+                        cswPrivate.linkAjax.ajax.abort();
+                    }
+                    if (cswPrivate.smallAjax && cswPrivate.smallAjax.ajax) {
+                        cswPrivate.smallAjax.ajax.abort();
+                    }
+                    if(cswPrivate.menu && cswPrivate.menu.ajax && cswPrivate.menu.ajax.ajax) {
+                        cswPrivate.menu.ajax.ajax.abort();
+                    }
+                });
                 return cswPublic;
             }));
 
