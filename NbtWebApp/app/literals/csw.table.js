@@ -70,15 +70,17 @@
                         cellpadding: cswPrivate.cellpadding,
                         cellspacing: cswPrivate.cellspacing,
                         border: cswPrivate.border,
-                        cellalign: cswPrivate.cellalign,
-                        cellvalign: cswPrivate.cellvalign
+                        cellalign: cswPrivate.cellalign
                     });
                     cswPublic.data({
                         cellcssclass: cswPrivate.CellCssClass,
                         FirstCellRightAlign: cswPrivate.FirstCellRightAlign,
                         OddCellRightAlign: cswPrivate.OddCellRightAlign
                     });
-                    cswPublic.css('text-align', cswPrivate.align);
+                    cswPublic.css({
+                        'text-align': cswPrivate.align,
+                        'vertical-align': cswPrivate.cellvalign
+                    });
                     cswPrivate.$parent.append(cswPublic.$);
                 }
             }());
@@ -90,7 +92,8 @@
                 /// <returns type="Object">A Csw table cell object.</returns>
                 var thisRow, align, newCell, retCell = { }, html,
                     thisCol, id,
-                    attr = Csw.makeAttr();
+                    attr = Csw.makeAttr(),
+                    style = Csw.makeStyle();
 
                 if (cswPublic.length() > 0 &&
                     false === Csw.isNullOrEmpty(row) &&
@@ -135,10 +138,11 @@
                             }
                             attr.add('data-realrow', row);
                             attr.add('data-realcol', thisCol);
-                            attr.add('class', cswPublic.data('cellcssclass'));
+                            attr.add('class', cswPrivate.cellcssclass);
                             attr.add('align', align);
-                            attr.add('valign', cswPublic.data('cellvalign'));
+                            style.add('vertical-align', cswPrivate.cellvalign);
                             html += attr.get();
+                            html += style.get();
                             html += '>';
                             html += '</td>';
                             newCell = thisRow.attach(html);
