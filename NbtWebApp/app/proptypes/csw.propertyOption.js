@@ -57,7 +57,7 @@
 
                 var cswPublic = {
                     name: '',
-                    Multi: false,
+                    isMulti: function() {},
                     tabState: {
                         nodeid: '',
                         nodename: '',
@@ -118,7 +118,7 @@
                 };
 
                 cswPublic.isMulti = function () {
-                    return Csw.bool(cswPublic.Multi);
+                    return Csw.tryExec(cswPrivate.isMulti);
                 };
                 
                 cswPublic.doPropChangeDataBind = function() {

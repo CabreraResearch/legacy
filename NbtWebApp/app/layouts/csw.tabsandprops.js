@@ -87,7 +87,7 @@
                                 chk.hide();
                             }
                         });
-
+                        cswPrivate.onRenderProps();
                         cswPrivate.refreshLinkDiv();
                     }
                 }
@@ -373,6 +373,7 @@
 
             cswPrivate.toggleMulti = function () {
                 cswPrivate.Multi = !cswPrivate.Multi;
+                cswPrivate.tabState.Multi = cswPrivate.Multi;
                 return cswPrivate.Multi;
             };
 
@@ -899,12 +900,12 @@
                     tabState.tabid = tabid;
 
                     var fieldOpt = Csw.nbt.propertyOption({
+                        isMulti: cswPrivate.isMultiEdit,
                         fieldtype: propData.fieldtype,
                         tabState: tabState,
                         propid: propData.id,
                         saveBtn: cswPrivate.saveBtn,
                         propData: propData,
-                        Multi: cswPrivate.isMultiEdit(),
                         Required: Csw.bool(propData.required),
                         onReload: function (afterReload) {
                             cswPrivate.getProps(tabContentDiv, tabid, afterReload);
