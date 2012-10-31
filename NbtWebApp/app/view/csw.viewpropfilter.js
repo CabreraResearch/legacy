@@ -205,7 +205,7 @@
 //                            TimeFormat: Csw.serverTimeFormatToJQuery(cswPrivate.propsData.timeformat),
                             DisplayMode: 'Date',
                             ReadOnly: false,
-                            Required: false,
+                            isRequired: false,
                             showTodayButton: true,
                             onChange: function() {
                                 cswPrivate.selectedValue = Csw.string(cswPrivate.valueControl.val().date);

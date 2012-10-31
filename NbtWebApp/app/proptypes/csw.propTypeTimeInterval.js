@@ -22,7 +22,7 @@
                     cswPublic.control = cswPrivate.parent.timeInterval({
                         Multi: cswPublic.data.isMulti(),
                         ReadOnly: cswPublic.data.isReadOnly(),
-                        Required: cswPublic.data.isRequired(),
+                        isRequired: cswPublic.data.isRequired(),
                         rateIntervalValue: cswPrivate.propVals.Interval.rateintervalvalue,
                         useEditButton: cswPublic.data.tabState.EditMode !== Csw.enums.editMode.Add,
                         onChange: function () {

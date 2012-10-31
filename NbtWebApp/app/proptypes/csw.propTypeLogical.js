@@ -20,7 +20,7 @@
                     var parent = cswPublic.data.propDiv;
                     var checkOpt = {
                         Checked: Csw.string(propVals.checked).trim(),
-                        Required: Csw.bool(cswPublic.data.isRequired()),
+                        isRequired: Csw.bool(cswPublic.data.isRequired()),
                         ReadOnly: Csw.bool(cswPublic.data.isReadOnly()),
                         Multi: cswPublic.data.isMulti(),
                         onChange: function () {
