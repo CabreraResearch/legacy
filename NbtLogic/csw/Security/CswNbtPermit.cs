@@ -463,7 +463,7 @@ namespace ChemSW.Nbt.Security
         }//canAnyTab() 
 
 
-        public bool canProp( NodeTypePermission Permission, CswNbtMetaDataNodeTypeProp MetaDataProp, CswNbtMetaDataNodeTypeTab MetaDataTab, CswNbtNodePropWrapper NodePropWrapper = null, ICswNbtUser User = null )
+        public bool isPropWritable( NodeTypePermission Permission, CswNbtMetaDataNodeTypeProp MetaDataProp, CswNbtMetaDataNodeTypeTab MetaDataTab, CswNbtNodePropWrapper NodePropWrapper = null, ICswNbtUser User = null )
         {
             bool ret = ( null != MetaDataProp );
 
@@ -502,11 +502,11 @@ namespace ChemSW.Nbt.Security
 
             return ( ret );
 
-        }//canProp
+        }//isPropWritable
 
 
 
-        public bool canNode( NodeTypePermission Permission, CswNbtMetaDataNodeType NodeType, CswPrimaryKey NodeId, ICswNbtUser User = null )
+        public bool isNodeWritable( NodeTypePermission Permission, CswNbtMetaDataNodeType NodeType, CswPrimaryKey NodeId, ICswNbtUser User = null )
         {
 
             bool ret = true;
@@ -577,7 +577,7 @@ namespace ChemSW.Nbt.Security
 
             return ( ret );
 
-        }//canNode() 
+        }//isNodeWritable() 
 
 
 

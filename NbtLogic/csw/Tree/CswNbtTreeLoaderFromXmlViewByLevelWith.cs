@@ -92,7 +92,7 @@ namespace ChemSW.Nbt
                 // Verify permissions
                 // this could be a performance problem
                 CswNbtMetaDataNodeType ThisNodeType = _CswNbtResources.MetaData.getNodeType( ThisNodeTypeId );
-                if( false == RequireViewPermissions || _CswNbtResources.Permit.canNode( CswNbtPermit.NodeTypePermission.View, ThisNodeType, ThisNodePk, _RunAsUser ) )
+                if( false == RequireViewPermissions || _CswNbtResources.Permit.isNodeWritable( CswNbtPermit.NodeTypePermission.View, ThisNodeType, ThisNodePk, _RunAsUser ) )
                 {
                     // Handle property multiplexing
                     // This assumes that property rows for the same nodeid are next to one another

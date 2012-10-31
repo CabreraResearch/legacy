@@ -91,7 +91,7 @@ namespace NbtWebAppServices.Response
                                                                         orderby _NodeTypeProp.PropNameWithQuestionNo
                                                                         where _NodeTypeProp.getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.Question &&
                                                                               false == _NodeTypeProp.ReadOnly &&
-                                                                              _CswNbtWcfSessionResources.CswNbtResources.Permit.canProp( CswNbtPermit.NodeTypePermission.Edit, _NodeTypeProp, null )
+                                                                              _CswNbtWcfSessionResources.CswNbtResources.Permit.isPropWritable( CswNbtPermit.NodeTypePermission.Edit, _NodeTypeProp, null )
                                                                         select _NodeTypeProp )
                     {
                         var ResponseProperty = new CswNbtWcfInspectionsDataModel.CswNbtInspectionDesign.SectionProperty
@@ -178,7 +178,7 @@ namespace NbtWebAppServices.Response
                 {
                     if( Prop.getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.Question &&
                         false == Prop.ReadOnly &&
-                        _CswNbtWcfSessionResources.CswNbtResources.Permit.canProp( CswNbtPermit.NodeTypePermission.Edit, Prop.NodeTypeProp, null ) )
+                        _CswNbtWcfSessionResources.CswNbtResources.Permit.isPropWritable( CswNbtPermit.NodeTypePermission.Edit, Prop.NodeTypeProp, null ) )
                     {
                         CswNbtNodePropQuestion PropAsQuestion = Prop.AsQuestion;
                         ResponseInspection.Counts.Total += 1;
