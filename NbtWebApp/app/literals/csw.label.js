@@ -68,6 +68,7 @@
                 $label = $(html);
 
                 Csw.literals.factory($label, cswPublic);
+                cswPublic.required(cswPrivate.isRequired);
 
                 if (Csw.isJQuery(cswPrivate.$parent)) {
                     cswPrivate.$parent.append(cswPublic.$);
