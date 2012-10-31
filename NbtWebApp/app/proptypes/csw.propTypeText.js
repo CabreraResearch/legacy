@@ -35,7 +35,7 @@
                                 Csw.tryExec(cswPublic.data.onChange, val);
                                 cswPublic.data.onPropChange({ text: val });
                             },
-                            required: cswPublic.data.isRequired(),
+                            isRequired: cswPublic.data.isRequired(),
                             maxlength: cswPrivate.maxlength
                         });
                         

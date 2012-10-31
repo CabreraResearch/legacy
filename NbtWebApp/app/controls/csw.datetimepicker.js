@@ -19,7 +19,7 @@
                 TimeFormat: '',
                 DisplayMode: 'Date',    // Date, Time, DateTime
                 ReadOnly: false,
-                Required: false,
+                isRequired: false,
                 onChange: null,
                 showTodayButton: false
             };
@@ -61,7 +61,7 @@
                         if (cswPrivate.Date.substr(0, 'today'.length) !== 'today') {
                             cswPrivate.dateBox.$.datepicker({ 'dateFormat': Csw.serverDateFormatToJQuery(cswPrivate.DateFormat) });
                         }
-                        cswPrivate.dateBox.required(cswPrivate.Required);
+                        cswPrivate.dateBox.required(cswPrivate.isRequired);
                     }
 
                     if (cswPrivate.DisplayMode === 'Time' || cswPrivate.DisplayMode === 'DateTime') {
@@ -82,7 +82,7 @@
                             },
                             enabledText: 'Now'
                         });
-                        cswPrivate.timeBox.required(cswPrivate.Required);
+                        cswPrivate.timeBox.required(cswPrivate.isRequired);
                     }
 
                     if (Csw.bool(cswPrivate.showTodayButton)) {

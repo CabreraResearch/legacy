@@ -32,7 +32,7 @@
                                 cswPublic.data.onPropChange({ sequence: val });
                             },
                             value: cswPrivate.value,
-                            required: cswPublic.data.isRequired()
+                            isRequired: cswPublic.data.isRequired()
                         });
 
                         cswPublic.control.required(cswPublic.data.isRequired());

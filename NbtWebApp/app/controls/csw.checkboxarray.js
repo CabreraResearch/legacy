@@ -17,7 +17,7 @@
                 data: [], // [{ label: 'Option1', key: '1', values: [ true, ... ] }, ... ]
                 HeightInRows: 4,
                 UseRadios: false,
-                Required: false,
+                isRequired: false,
                 ReadOnly: false,
                 Multi: false,
                 onChange: null,
@@ -146,7 +146,7 @@
                 tablerow += 1;
 
                 //[none] row
-                if (cswPrivate.UseRadios && false === cswPrivate.Required) {
+                if (cswPrivate.UseRadios && false === cswPrivate.isRequired) {
                     var noneRowData = {};
                     noneRowData[cswPrivate.nameCol] = '[none]';
                     noneRowData[cswPrivate.keyCol] = '';
@@ -155,7 +155,7 @@
                         noneRowData[cswPrivate.valCol][e] = true;
                     }
                     cswPrivate.makeCheckboxRow(table, tablerow, noneRowData, -1);
-                } // if(cswPrivate.UseRadios && ! cswPrivate.Required)
+                } // if(cswPrivate.UseRadios && ! cswPrivate.isRequired)
                 tablerow += 1;
 
 

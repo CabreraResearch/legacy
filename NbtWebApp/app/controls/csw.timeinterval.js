@@ -30,7 +30,7 @@
                 },
                 Multi: false,
                 ReadOnly: false,
-                Required: false,
+                isRequired: false,
                 onChange: null,
                 useEditButton: true,
 
@@ -219,7 +219,7 @@
                     DateFormat: cswPublic.rateInterval.startingdate.dateformat,
                     DisplayMode: 'DateTime',
                     ReadOnly: cswPrivate.ReadOnly,
-                    Required: cswPrivate.Required,
+                    isRequired: cswPrivate.isRequired,
                     onChange: function () {
                         cswPublic.rateInterval.startingdate.date = startingDatePicker.val().date;
                         cswPublic.rateInterval.startingdate.time = startingDatePicker.val().time;

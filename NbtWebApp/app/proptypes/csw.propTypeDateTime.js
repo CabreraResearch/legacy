@@ -29,7 +29,7 @@
                             TimeFormat: Csw.serverTimeFormatToJQuery(cswPrivate.propVals.value.timeformat),
                             DisplayMode: cswPrivate.propVals.displaymode,
                             ReadOnly: cswPublic.data.isReadOnly(),
-                            Required: cswPublic.data.isRequired(),
+                            isRequired: cswPublic.data.isRequired(),
                             onChange: function () {
                                 var val = cswPrivate.dateTimePicker.val();
                                 Csw.tryExec(cswPublic.data.onChange, val);
