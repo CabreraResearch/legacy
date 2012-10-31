@@ -790,7 +790,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                                     CswNbtNode Node = _CswNbtResources.Nodes[CopyToNodeId];
                                     if( null != Node &&
                                         Node.NodeTypeId == SourceNode.NodeTypeId &&
-                                        _CswNbtResources.Permit.isNodeWritable( CswNbtPermit.NodeTypePermission.Edit, SourceNode.getNodeType(), Node.NodeId, null ) )
+                                        _CswNbtResources.Permit.isNodeWritable( CswNbtPermit.NodeTypePermission.Edit, SourceNode.getNodeType(), Node.NodeId ) )
                                     {
                                         CopyToNodes.Add( Node );
                                     }
