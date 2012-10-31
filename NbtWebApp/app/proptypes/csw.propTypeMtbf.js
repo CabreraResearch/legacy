@@ -11,30 +11,8 @@
                 var cswPublic = {
                     data: propertyOption
                 };
-                //var attributes = {
-                //    startdatetime: {
-                //        date: null,
-                //        time: null
-                //    },
-                //    units: null
-                //};
-                //var compare = {};
-                //var startDate = o.propDiv.find('#' + o.ID + '_sd_date'),
-                //    dateVal;
-
-                //if (false === Csw.isNullOrEmpty(startDate)) {
-                //    dateVal = startDate.val();
-                //    attributes.startdatetime.date = dateVal;
-                //    compare = attributes;
-                //    //attributes.startdatetime.time = dateVal.time;
-                //}
-
-                //var units = o.propDiv.find('#' + o.ID + '_units');
-                //if (false === Csw.isNullOrEmpty(units)) {
-                //    attributes.units = units.val();
-                //    compare = attributes;
-                //}
-                //Csw.preparePropJsonForSave(o.Multi, o.propData, compare);
+                
+                //The render function to be executed as a callback
                 var render = function () {
                     'use strict';
                     cswPublic.data = cswPublic.data || Csw.nbt.propertyOption(propertyOption);
@@ -103,7 +81,12 @@
                     }
                 };
 
+                //Bind the callback to the render event
                 cswPublic.data.bindRender(render);
+
+                //Bind an unrender callback to terminate any outstanding ajax requests, if any. See propTypeGrid.
+                //cswPublic.data.unBindRender();
+
                 return cswPublic;
             }));
 

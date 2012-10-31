@@ -11,6 +11,8 @@
                 var cswPublic = {
                     data: propertyOption
                 };
+
+                //The render function to be executed as a callback
                 var render = function () {
                     'use strict';
                     cswPublic.data = cswPublic.data || Csw.nbt.propertyOption(propertyOption);
@@ -54,7 +56,7 @@
                                 },
                                 Multi: false
                             };
-                            cswPrivate.menuDiv.menu(menuOpts);
+                            cswPrivate.menu = cswPrivate.menuDiv.menu(menuOpts);
 
                         } // if( o.EditMode !== Csw.enums.editMode.PrintReport )
                     }; // makeGridMenu()
@@ -102,7 +104,7 @@
 
                     cswPrivate.makeSmallGrid = function () {
                         'use strict';
-                        Csw.ajax.post({
+                        cswPrivate.smallAjax = Csw.ajax.post({
                             urlMethod: 'getThinGrid',
                             data: {
                                 ViewId: cswPrivate.viewid,
@@ -130,7 +132,7 @@
 
                     cswPrivate.makeLinkGrid = function () {
                         'use strict';
-                        Csw.ajax.post({
+                        cswPrivate.linkAjax = Csw.ajax.post({
                             urlMethod: 'getGridRowCount',
                             data: {
                                 ViewId: cswPrivate.viewid,
@@ -177,7 +179,24 @@
 
                 };
 
+                //Bind the callback to the render event
                 cswPublic.data.bindRender(render);
+                
+                //Bind an unrender callback to terminate any outstanding ajax requests
+                cswPublic.data.unBindRender(function() {
+                    if (cswPublic.control && cswPublic.control.ajax && cswPublic.control.ajax.ajax) {
+                        cswPublic.control.ajax.ajax.abort();
+                    }
+                    if (cswPrivate.linkAjax && cswPrivate.linkAjax.ajax) {
+                        cswPrivate.linkAjax.ajax.abort();
+                    }
+                    if (cswPrivate.smallAjax && cswPrivate.smallAjax.ajax) {
+                        cswPrivate.smallAjax.ajax.abort();
+                    }
+                    if(cswPrivate.menu && cswPrivate.menu.ajax && cswPrivate.menu.ajax.ajax) {
+                        cswPrivate.menu.ajax.ajax.abort();
+                    }
+                });
                 return cswPublic;
             }));
 

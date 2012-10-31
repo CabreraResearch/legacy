@@ -54,7 +54,7 @@
 
             cswPrivate.makeActionButton = function (cellId, buttonName, iconType, clickFunc, record, rowIndex, colIndex) {
                 // Possible race condition - have to make the button after the cell is added, but it isn't added yet
-                setTimeout(function () {
+                Csw.defer(function () {
                     var cell = Csw.literals.factory($('#' + cellId));
                     var iconopts = {
                         name: cswPrivate.name + cellId + buttonName,
@@ -227,13 +227,14 @@
                                 return btn.index === colObj.dataIndex && btn.rowno === rowIndex;
                             });
                             if (thisBtn.length === 1) {
-                                var div = Csw.literals.factory($('#' + id));
-                                div.nodeButton({
-                                    value: colObj.header,
-                                    size: 'small',
-                                    propId: thisBtn[0].propattr
-                                });
-
+                                Csw.defer(function() {
+                                    var div = Csw.literals.factory($('#' + id));
+                                    div.nodeButton({
+                                        value: colObj.header,
+                                        size: 'small',
+                                        propId: thisBtn[0].propattr
+                                    });
+                                },100);
                             }
                             return '<div id="' + id + '"></div>';
 
@@ -460,7 +461,7 @@
             });
 
             cswPrivate.getData = function (onSuccess) {
-                Csw.ajax.post({
+                cswPublic.ajax = Csw.ajax.post({
                     url: cswPrivate.ajax.url,
                     urlMethod: cswPrivate.ajax.urlMethod,
                     data: cswPrivate.ajax.data,
