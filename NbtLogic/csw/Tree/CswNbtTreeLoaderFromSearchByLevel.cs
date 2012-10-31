@@ -4,7 +4,9 @@ using System.Data;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
+using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Security;
 
 namespace ChemSW.Nbt
@@ -80,39 +82,43 @@ namespace ChemSW.Nbt
                     CswNbtMetaDataNodeType ThisNodeType = _CswNbtResources.MetaData.getNodeType( ThisNodeTypeId );
                     if( false == RequireViewPermissions || _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.View, ThisNodeType ) )
                     {
-
-                        // Handle property multiplexing
-                        // This assumes that property rows for the same nodeid are next to one another
-                        if( ThisNodeId != PriorNodeId )
+                        if( _canViewNode( ThisNodeType, ThisNodeId ) )
                         {
-                            PriorNodeId = ThisNodeId;
-                            NewNodeKeys = _CswNbtTree.loadNodeAsChildFromRow( null, NodesRow, false, string.Empty, true, true, NbtViewAddChildrenSetting.None, RowCount );
-                            RowCount++;
-                        } // if( ThisNodeId != PriorNodeId )
-
-                        if( NewNodeKeys != null && NodesTable.Columns.Contains( "nodetypepropid" ) )
-                        {
-                            Int32 ThisNTPId = CswConvert.ToInt32( NodesRow["nodetypepropid"] );
-                            if( ThisNTPId != Int32.MinValue )
+                            // Handle property multiplexing
+                            // This assumes that property rows for the same nodeid are next to one another
+                            if( ThisNodeId != PriorNodeId )
                             {
-                                foreach( CswNbtNodeKey NewNodeKey in NewNodeKeys )
-                                {
-                                    _CswNbtTree.makeNodeCurrent( NewNodeKey );
-                                    _CswNbtTree.addProperty( ThisNTPId,
-                                                             CswConvert.ToInt32( NodesRow["jctnodepropid"] ),
-                                                             NodesRow["propname"].ToString(),
-                                                             NodesRow["gestalt"].ToString(),
-                                                             CswConvert.ToString( NodesRow["fieldtype"] ),
-                                                             CswConvert.ToString( NodesRow["field1"] ),
-                                                             CswConvert.ToString( NodesRow["field2"] ),
-                                                             CswConvert.ToInt32( NodesRow["field1_fk"] ),
-                                                             CswConvert.ToInt32( NodesRow["field1_numeric"] ),
-                                                             CswConvert.ToBoolean( NodesRow["hidden"] ) );
+                                PriorNodeId = ThisNodeId;
+                                NewNodeKeys = _CswNbtTree.loadNodeAsChildFromRow( null, NodesRow, false, string.Empty, true, true, NbtViewAddChildrenSetting.None, RowCount );
+                                RowCount++;
+                            } // if( ThisNodeId != PriorNodeId )
 
-                                } // foreach( CswNbtNodeKey NewNodeKey in NewNodeKeys )
-                            } // if( ThisNTPId != Int32.MinValue )
-                            _CswNbtTree.goToRoot();
-                        } // if( NewNodeKeys != null && NodesTable.Columns.Contains( "jctnodepropid" ) )
+                            if( NewNodeKeys != null && NodesTable.Columns.Contains( "nodetypepropid" ) )
+                            {
+                                Int32 ThisNTPId = CswConvert.ToInt32( NodesRow["nodetypepropid"] );
+                                if( ThisNTPId != Int32.MinValue )
+                                {
+                                    foreach( CswNbtNodeKey NewNodeKey in NewNodeKeys )
+                                    {
+                                        if( _canViewProp( ThisNTPId, ThisNodeId ) )
+                                        {
+                                            _CswNbtTree.makeNodeCurrent(NewNodeKey);
+                                            _CswNbtTree.addProperty(ThisNTPId,
+                                                                    CswConvert.ToInt32(NodesRow["jctnodepropid"]),
+                                                                    NodesRow["propname"].ToString(),
+                                                                    NodesRow["gestalt"].ToString(),
+                                                                    CswConvert.ToString(NodesRow["fieldtype"]),
+                                                                    CswConvert.ToString(NodesRow["field1"]),
+                                                                    CswConvert.ToString(NodesRow["field2"]),
+                                                                    CswConvert.ToInt32(NodesRow["field1_fk"]),
+                                                                    CswConvert.ToInt32(NodesRow["field1_numeric"]),
+                                                                    CswConvert.ToBoolean(NodesRow["hidden"]));
+                                        }
+                                    } // foreach( CswNbtNodeKey NewNodeKey in NewNodeKeys )
+                                } // if( ThisNTPId != Int32.MinValue )
+                                _CswNbtTree.goToRoot();
+                            } // if( NewNodeKeys != null && NodesTable.Columns.Contains( "jctnodepropid" ) )
+                        }
                     } // if( _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, ThisNodeTypeId ) )
                 } // foreach(DataRow NodesRow in NodesTable.Rows)
 
@@ -132,6 +138,33 @@ namespace ChemSW.Nbt
             }
         } // load()
 
+        private bool _canViewNode( CswNbtMetaDataNodeType NodeType, int NodeId )
+        {
+            bool canView = true;
+            CswNbtMetaDataObjectClass ObjClass = _CswNbtResources.MetaData.getObjectClass(NodeType.ObjectClassId);
+            #region Container View Inventory Group Permission
+            if( ObjClass.ObjectClass.Value == NbtObjectClass.ContainerClass )
+            {
+                canView = _CswNbtResources.Permit.canContainer( CswConvert.ToPrimaryKey("nodes_" + NodeId ), CswNbtPermit.NodeTypePermission.View, null );
+            }
+            #endregion
+            return canView;
+        }
+
+        private bool _canViewProp( int NodeTypePropId, int NodeId )
+        {
+            bool canView = true;
+            CswNbtMetaDataNodeTypeProp NTProp = _CswNbtResources.MetaData.getNodeTypeProp( NodeTypePropId );
+            #region Container Request Button Inventory Group Permission
+            CswNbtMetaDataObjectClass ContainerClass = _CswNbtResources.MetaData.getObjectClass(NbtObjectClass.ContainerClass);
+            CswNbtMetaDataObjectClassProp RequestProp = _CswNbtResources.MetaData.getObjectClassProp( ContainerClass.ObjectClassId, CswNbtObjClassContainer.PropertyName.Request );
+            if( NTProp.ObjectClassPropId == RequestProp.PropId )
+            {
+                canView = _CswNbtResources.Permit.canContainer( CswConvert.ToPrimaryKey("nodes_" + NodeId ), CswNbtPermit.NodeTypePermission.View, _CswNbtResources.Actions[CswNbtActionName.Submit_Request] );
+            }
+            #endregion
+            return canView;
+        }
 
         private string _makeNodeSql()
         {

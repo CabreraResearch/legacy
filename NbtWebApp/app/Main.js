@@ -1074,14 +1074,7 @@ window.initMain = window.initMain || function (undefined) {
                             refreshLandingPage(function() {
                                 Csw.layouts.landingpage(Csw.main.centerBottomDiv, {
                                     name: 'createMaterialLandingPage',
-                                    Title: actionData.Title,
-                                    onTitleClick: function () {
-                                        handleItemSelect({
-                                            type: 'view',
-                                            mode: 'tree',
-                                            itemid: actionData.NodeViewId
-                                        });
-                                    },
+                                    Title: 'Created:',                                    
                                     ActionId: actionData.ActionId,
                                     ObjectClassId: actionData.RelatedObjectClassId,
                                     onLinkClick: handleItemSelect,
@@ -1113,6 +1106,13 @@ window.initMain = window.initMain || function (undefined) {
                                     },
                                     onAddComponent: createMaterialLandingPage,
                                     landingPageRequestData: actionData,
+                                    onActionLinkClick: function (viewId) {
+                                        handleItemSelect({
+                                            type: 'view',
+                                            mode: 'tree',
+                                            itemid: viewId
+                                        });
+                                    },
                                     isConfigurable: actionData.isConfigurable
                                 });
                             });

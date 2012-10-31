@@ -123,40 +123,41 @@
                         cswPrivate.saveProp();
                     };
 
-                    if (false === cswPublic.data.isReadOnly()) {
-                        cswPrivate.imageSelectList = cswPublic.control.cell(1, 2).select({ id: cswPublic.data.name });
-                        cswPrivate.selectOption = cswPrivate.imageSelectList.option({ value: '', display: 'Select...' });
+                    cswPrivate.imageSelectList = cswPublic.control.cell(1, 2).select({ id: cswPublic.data.name });
+                    if (cswPublic.data.isReadOnly()) {
+                        cswPrivate.imageSelectList.hide();
+                    }
+                    cswPrivate.selectOption = cswPrivate.imageSelectList.option({ value: '', display: 'Select...' });
 
-                        cswPrivate.imageSelectList.bind('change', function () {
-                            var selected = cswPrivate.imageSelectList.children(':selected');
-                            cswPrivate.changeImage(selected.text(), selected.val(), true, selected);
-                            if (cswPublic.data.isRequired() && false === cswPrivate.allowMultiple) {
-                                cswPrivate.selectOption.remove();
-                            }
-                            Csw.tryExec(cswPublic.data.onChange, cswPrivate.selectedValues);
-                        });
+                    cswPrivate.imageSelectList.bind('change', function () {
+                        var selected = cswPrivate.imageSelectList.children(':selected');
+                        cswPrivate.changeImage(selected.text(), selected.val(), true, selected);
+                        if (cswPublic.data.isRequired() && false === cswPrivate.allowMultiple) {
+                            cswPrivate.selectOption.remove();
+                        }
+                        Csw.tryExec(cswPublic.data.onChange, cswPrivate.selectedValues);
+                    });
 
                         Csw.eachRecursive(cswPrivate.options,
-                            function (thisOpt) {
-                                if (Csw.bool(thisOpt.selected)) {
-                                    cswPrivate.selectedValues.push(thisOpt.value);
-                                    cswPrivate.addImage(thisOpt.text, thisOpt.value, false);
-                                } else {
-                                    if (false === cswPublic.data.isReadOnly()) {
-                                        cswPrivate.imageSelectList.option({ value: thisOpt.value, display: thisOpt.text });
-                                    }
+                        function (thisOpt) {
+                            if (Csw.bool(thisOpt.selected)) {
+                                cswPrivate.selectedValues.push(thisOpt.value);
+                                cswPrivate.addImage(thisOpt.text, thisOpt.value, false);
+                            } else {
+                                if (false === cswPublic.data.isReadOnly()) {
+                                    cswPrivate.imageSelectList.option({ value: thisOpt.value, display: thisOpt.text });
                                 }
-                            },
-                            false
-                        );
+                            }
+                        },
+                        false
+                    );
 
-                        cswPrivate.imageSelectList.required(cswPublic.data.isRequired());
-                        if (cswPublic.data.isRequired()) {
-                            $.validator.addMethod('imageRequired', function (value, element) {
-                                return (cswPrivate.selectedValues.length > 0);
-                            }, 'An image is required.');
-                            cswPrivate.imageSelectList.addClass('imageRequired');
-                        }
+                    cswPrivate.imageSelectList.required(cswPublic.data.isRequired());
+                    if (cswPublic.data.isRequired()) {
+                        $.validator.addMethod('imageRequired', function (value, element) {
+                            return (cswPrivate.selectedValues.length > 0);
+                        }, 'An image is required.');
+                        cswPrivate.imageSelectList.addClass('imageRequired');
                     }
                     
                 };

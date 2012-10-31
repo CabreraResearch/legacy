@@ -45,10 +45,15 @@
                 data: {},     // { items: [ { col1: val, col2: val ... }, ... ]
                 pageSize: '',  // overridden by webservice
 
-                actionDataIndex: 'action'
+                actionDataIndex: 'action',
+                renderedRows: [{
+                    val: '',
+                    loaded: false
+                }]
             };
             var cswPublic = {};
 
+            window.Ext.require('Ext.ux.grid.FiltersFeature');
 
             cswPrivate.makeActionButton = function (cellId, buttonName, iconType, clickFunc, record, rowIndex, colIndex) {
                 // Possible race condition - have to make the button after the cell is added, but it isn't added yet
@@ -105,6 +110,10 @@
             cswPrivate.makeGrid = Csw.method(function (renderTo, store) {
                 var columns = Csw.extend([], cswPrivate.columns);
 
+                Csw.each(columns, function (val) {
+                    val.filterable = true;
+                });                
+
                 var gridopts = {
                     id: cswPrivate.ID + 'grid',
                     itemId: cswPrivate.name,
@@ -138,7 +147,13 @@
                             Csw.tryExec(cswPrivate.onLoad, cswPublic, cswPrivate.ajaxResult);
                         }
                     },
-                    dockedItems: []
+                    dockedItems: [],
+                    features: [{
+                        ftype: 'filters',
+                        autoReload: false,
+                        encode: false,
+                        local: true
+                    }]
                 };
 
                 // Action column
@@ -152,34 +167,48 @@
                         flex: false,
                         resizable: false,
                         xtype: 'actioncolumn',
-                        renderer: function (value, metaData, record, rowIndex, colIndex, store, view) {
+                        renderer: function (value, metaData, record, rowIndex, colIndex, store, view) {                            
                             var cell1Id = cswPrivate.name + 'action' + rowIndex + colIndex + '1';
                             var cell2Id = cswPrivate.name + 'action' + rowIndex + colIndex + '2';
-                            $('#gridActionColumn' + cell1Id).remove();
+                            //$('#gridActionColumn' + cell1Id).remove();
                             var ret = '<table id="gridActionColumn' + cell1Id + '" cellpadding="0"><tr>';
                             ret += '<td id="' + cell1Id + '" style="width: 26px;"/>';
                             ret += '<td id="' + cell2Id + '" style="width: 26px;"/>';
-                            ret += '</tr></table>';
-
+                            ret += '</tr></table>';                           
+                            
                             var canedit = Csw.bool(cswPrivate.showEdit) && Csw.bool(record.data.canedit, true);
                             var canview = Csw.bool(cswPrivate.showView) && Csw.bool(record.data.canview, true);
                             var candelete = Csw.bool(cswPrivate.showDelete) && Csw.bool(record.data.candelete, true);
                             var islocked = Csw.bool(cswPrivate.showLock) && Csw.bool(record.data.islocked, false);
 
-                            // only show one of edit/view/lock
-                            if (islocked) {
-                                cswPrivate.makeActionButton(cell1Id, 'Locked', Csw.enums.iconType.lock, null, record, rowIndex, colIndex);
-                            } else if (canedit) {
-                                cswPrivate.makeActionButton(cell1Id, 'Edit', Csw.enums.iconType.pencil, cswPrivate.onEdit, record, rowIndex, colIndex);
-                            } else if (canview) {
-                                cswPrivate.makeActionButton(cell1Id, 'View', Csw.enums.iconType.magglass, cswPrivate.onEdit, record, rowIndex, colIndex);
-                            }
+                            var found = false, render = true;
+                            Csw.each(cswPrivate.renderedRows, function (row, key) {
+                                if (row.val === ret) {
+                                    found = true;
+                                    if (false === row.loaded) {
+                                        render = false;
+                                        cswPrivate.renderedRows[key].loaded = true;
+                                    }
+                                }
+                            });
+                            if (render) {
+                                // only show one of edit/view/lock
+                                if (islocked) {
+                                    cswPrivate.makeActionButton(cell1Id, 'Locked', Csw.enums.iconType.lock, null, record, rowIndex, colIndex);
+                                } else if (canedit) {
+                                    cswPrivate.makeActionButton(cell1Id, 'Edit', Csw.enums.iconType.pencil, cswPrivate.onEdit, record, rowIndex, colIndex);
+                                } else if (canview) {
+                                    cswPrivate.makeActionButton(cell1Id, 'View', Csw.enums.iconType.magglass, cswPrivate.onEdit, record, rowIndex, colIndex);
+                                }
 
-                            if (candelete) {
-                                cswPrivate.makeActionButton(cell2Id, 'Delete', Csw.enums.iconType.trash, cswPrivate.onDelete, record, rowIndex, colIndex);
+                                if (candelete) {
+                                    cswPrivate.makeActionButton(cell2Id, 'Delete', Csw.enums.iconType.trash, cswPrivate.onDelete, record, rowIndex, colIndex);
+                                }
+                                if (false === found) {
+                                    cswPrivate.renderedRows.push({ val: ret, loaded: false });
+                                }
                             }
-
-                            return ret;
+                            return ret;                            
                         } // renderer()
                     }; // newcol
                     gridopts.columns.splice(0, 0, newcol);
