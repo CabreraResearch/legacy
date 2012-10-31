@@ -163,35 +163,35 @@ namespace ChemSW.Nbt.Security
 
             public bool allowAlways()
             {
-                bool ReturnVal = IsUberUser;
+                //                bool ReturnVal = IsUberUser;
 
-                if( ( false == ReturnVal ) && ( null != NodeType && NodeType.getObjectClass().ObjectClass == NbtObjectClass.UserClass ) )
-                {
-                    if( ( null != User ) && ( NodePrimeKey == User.UserId ) && ( null != PropType ) )
-                    {
+                //if( ( false == ReturnVal ) && ( null != NodeType && NodeType.getObjectClass().ObjectClass == NbtObjectClass.UserClass ) )
+                //{
+                //    if( ( null != User ) && ( NodePrimeKey == User.UserId ) && ( null != PropType ) )
+                //    {
 
-                        ReturnVal = true; //Let the user edit most of his props. However . . . 
+                //        ReturnVal = true; //Let the user edit most of his props. However . . . 
 
-                        //for these props, leave it up to the obj class to decide
-                        CswNbtMetaDataObjectClassProp OCP = PropType.getObjectClassProp();
-                        if(
-                                ( null != OCP ) &&
-                                (
-                                    OCP.PropName == CswNbtObjClassUser.PropertyName.Username ||
-                                    OCP.PropName == CswNbtObjClassUser.PropertyName.Role ||
-                                    OCP.PropName == CswNbtObjClassUser.PropertyName.FailedLoginCount ||
-                                    OCP.PropName == CswNbtObjClassUser.PropertyName.AccountLocked
-                                )//Monster ||
-                           ) //monster if
-                        {
-                            ReturnVal = false;
-                        } //if the prop is in the special case
+                //        //for these props, leave it up to the obj class to decide
+                //        CswNbtMetaDataObjectClassProp OCP = PropType.getObjectClassProp();
+                //        if(
+                //                ( null != OCP ) &&
+                //                (
+                //                    OCP.PropName == CswNbtObjClassUser.PropertyName.Username ||
+                //                    OCP.PropName == CswNbtObjClassUser.PropertyName.Role ||
+                //                    OCP.PropName == CswNbtObjClassUser.PropertyName.FailedLoginCount ||
+                //                    OCP.PropName == CswNbtObjClassUser.PropertyName.AccountLocked
+                //                )//Monster ||
+                //           ) //monster if
+                //        {
+                //            ReturnVal = false;
+                //        } //if the prop is in the special case
 
-                    }//if the user is editing his own user node
+                //    }//if the user is editing his own user node
 
-                }//if we're editing the user class
+                //}//if we're editing the user class
 
-                return ( ReturnVal );
+                return ( IsUberUser );
 
             }//allowAlways()
 
@@ -478,6 +478,9 @@ namespace ChemSW.Nbt.Security
                     {
                         ret |= _CswNbtPermitInfo.NoExceptionCases;
 
+                        ret |= ( null == MetaDataTab || canTab( Permission, _CswNbtPermitInfo.NodeType, MetaDataTab ) );
+
+
                         // You can't edit readonly properties
                         if( ret &&
                                 (
@@ -489,8 +492,6 @@ namespace ChemSW.Nbt.Security
                         {
                             ret = false;
                         }
-
-                        ret = ( null == MetaDataTab || canTab( Permission, _CswNbtPermitInfo.NodeType, MetaDataTab ) );
                     }
                 }
                 else
