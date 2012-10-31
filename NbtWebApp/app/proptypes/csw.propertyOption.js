@@ -14,7 +14,7 @@
             'use strict';
             var wasModified = false;
             if (false === Csw.isNullOrEmpty(propVals)) {
-                Csw.crawlObject(propVals, function (prop, key) {
+                Csw.eachRecursive(propVals, function (prop, key) {
                     if (Csw.contains(attributes, key)) {
                         var attr = attributes[key];
                         //don't bother sending this to server unless it's changed

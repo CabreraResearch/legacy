@@ -175,7 +175,7 @@
                     var btncol = 1;
                     var row = 1;
                     // Props
-                    Csw.crawlObject(nodeObj.props, function (propObj) {
+                    Csw.eachRecursive(nodeObj.props, function (propObj) {
                         if (propObj.fieldtype === "Button") {
 
                             // Object Class Buttons
@@ -312,7 +312,7 @@
                     cellspacing: cellspacing
                 });
 
-                Csw.crawlObject(cswPrivate.tabledata.nodes, cswPrivate.makeNodeCell);
+                Csw.eachRecursive(cswPrivate.tabledata.nodes, cswPrivate.makeNodeCell);
 
                 // Pager control
                 if (cswPrivate.pagenodelimit < cswPrivate.results) {

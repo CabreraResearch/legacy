@@ -93,7 +93,7 @@
                             cswPrivate.relationships.push({ value: '', display: '', frac: true });
                         }
                         cswPrivate.foundSelected = false;
-                        Csw.crawlObject(cswPrivate.options, function (relatedObj) {
+                        Csw.eachRecursive(cswPrivate.options, function (relatedObj) {
                             if (relatedObj.id === cswPrivate.selectedNodeId) {
                                 cswPrivate.foundSelected = true;
                                 cswPrivate.fractional = Csw.bool(relatedObj.fractional);
@@ -108,7 +108,7 @@
                             cssclass: 'selectinput',
                             onChange: function () {
                                 var val = cswPublic.unitSelect.val();
-                                Csw.crawlObject(cswPrivate.options, function (relatedObj) {
+                                Csw.eachRecursive(cswPrivate.options, function (relatedObj) {
                                     if (relatedObj.id === cswPublic.unitSelect.val()) {
                                         cswPrivate.fractional = Csw.bool(relatedObj.fractional);
                                     }

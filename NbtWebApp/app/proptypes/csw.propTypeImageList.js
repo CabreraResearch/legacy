@@ -136,7 +136,7 @@
                             Csw.tryExec(cswPublic.data.onChange, cswPrivate.selectedValues);
                         });
 
-                        Csw.crawlObject(cswPrivate.options,
+                        Csw.eachRecursive(cswPrivate.options,
                             function (thisOpt) {
                                 if (Csw.bool(thisOpt.selected)) {
                                     cswPrivate.selectedValues.push(thisOpt.value);

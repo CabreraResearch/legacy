@@ -45,7 +45,7 @@
                         quotaJson = result;
                         var canedit = Csw.bool(quotaJson.canedit);
 
-                        Csw.crawlObject(quotaJson.objectclasses, function (childObj) {
+                        Csw.eachRecursive(quotaJson.objectclasses, function (childObj) {
                             if (Csw.number(childObj.nodetypecount) > 0) {
 
                                 // one object class row                                
@@ -53,12 +53,12 @@
                                 row += 1;
 
                                 // several nodetype rows
-                                Csw.crawlObject(childObj.nodetypes, function (childObjNt) {
+                                Csw.eachRecursive(childObj.nodetypes, function (childObjNt) {
                                     makeQuotaRow(row, canedit, 'NT' + childObjNt.nodetypeid, '', childObjNt.nodetypename, childObjNt.currentusage, childObjNt.quota);
                                     row += 1;
                                 }, false);
                             }
-                        }, false); // Csw.crawlObject()
+                        }, false); // Csw.eachRecursive()
 
                         if (canedit) {
                             div.button({
@@ -97,9 +97,9 @@
             // makeQuotaRow()
 
             function handleSave() {
-                Csw.crawlObject(quotaJson.objectclasses, function (childObj) {
+                Csw.eachRecursive(quotaJson.objectclasses, function (childObj) {
                     childObj.quota = $('[name="' + o.name + 'OC' + childObj.objectclassid + 'quota"]').val();
-                    Csw.crawlObject(childObj.nodetypes, function (childObjNt) {
+                    Csw.eachRecursive(childObj.nodetypes, function (childObjNt) {
                         childObjNt.quota = $('[name="' + o.name + 'NT' + childObjNt.nodetypeid + 'quota"]').val();
                     }, false);
                 }, false);

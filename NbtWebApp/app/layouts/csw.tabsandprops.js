@@ -296,7 +296,7 @@
                                     tabno += 1;
                                     return false;
                                 };
-                                Csw.crawlObject(data, tabFunc, false);
+                                Csw.eachRecursive(data, tabFunc, false);
 
                                 cswPrivate.tabcnt = tabno;
 
@@ -665,7 +665,7 @@
                             }
                             return false;
                         };
-                        Csw.crawlObject(cswPrivate.globalState.propertyData, updOnSuccess, false);
+                        Csw.eachRecursive(cswPrivate.globalState.propertyData, updOnSuccess, false);
                     }
 
                     if (cswPrivate.tabState.EditMode !== Csw.enums.editMode.Preview &&
@@ -791,7 +791,7 @@
                     return false;
                 };
                 tabPropData = tabPropData || cswPrivate.globalState.propertyData;
-                Csw.crawlObject(tabPropData, handleSuccess, false);
+                Csw.eachRecursive(tabPropData, handleSuccess, false);
 
                 if (false === Csw.isNullOrEmpty(cswPrivate.saveBtn, true)) {
                     if (cswPrivate.tabState.Config || (cswPrivate.atLeastOne.Saveable === false && cswPrivate.tabState.EditMode != Csw.enums.editMode.Add)) {
@@ -966,7 +966,7 @@
                             }
                             return false;
                         };
-                        Csw.crawlObject(subProps, subOnSuccess, false);
+                        Csw.eachRecursive(subProps, subOnSuccess, false);
                     }
                 } // if (propData.display != 'false' || ConfigMode )
             }; // _makeProp()
@@ -1057,7 +1057,7 @@
                         }
                         return false;
                     };
-                    Csw.crawlObject(propData, updSuccess, false);
+                    Csw.eachRecursive(propData, updSuccess, false);
                     return propIds;
                 });
             }; // updatePropJsonFromLayoutTable()
