@@ -1106,7 +1106,9 @@
                 'use strict';
                 if (cswPrivate.isMultiEdit() || cswPublic.isFormValid()) {
                     async = Csw.bool(async, true) && false === cswPrivate.isMultiEdit();
-                    cswPrivate.ajax.save = Csw.ajax.post({
+                    //Do NOT register save for tear down. Only true gets are eligible for teardown.
+                    //cswPrivate.ajax.save = Csw.ajax.post({
+                    Csw.ajax.post({
                         watchGlobal: cswPrivate.AjaxWatchGlobal,
                         urlMethod: cswPrivate.urls.SavePropUrlMethod,
                         async: async,
