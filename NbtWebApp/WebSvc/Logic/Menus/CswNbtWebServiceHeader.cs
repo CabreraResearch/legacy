@@ -93,12 +93,21 @@ namespace ChemSW.Nbt.WebServices
             return Ret;
         } // getDashboard()
 
-        private bool _SchemaHasDemoData()
+        private Int32 _getSchemaDemoDataCount()
         {
+            Int32 Ret = 0;
+
+            //Nodes
             CswTableSelect DemoNodesSelect = _CswNbtResources.makeCswTableSelect( "AdminMenuDemoSelect", "nodes" );
-            //CswTableSelect DemoNodesSelect = new CswTableSelect( _CswNbtResources.CswResources, "AdminMenuDemoSelect", "nodes" );
             DataTable DemoNodesTable = DemoNodesSelect.getTable( new CswCommaDelimitedString { "nodeid" }, " where isdemo='" + CswConvert.ToDbVal( true ) + "' " );
-            return DemoNodesTable.Rows.Count > 0;
+            Ret += DemoNodesTable.Rows.Count;
+
+            //Views
+            CswTableSelect DemoViewsSelect = _CswNbtResources.makeCswTableSelect( "AdminMenuDemoSelect", "node_views" );
+            DataTable DemoViewsTable = DemoViewsSelect.getTable( new CswCommaDelimitedString { "nodeviewid" }, " where isdemo='" + CswConvert.ToDbVal( true ) + "' " );
+            Ret += DemoViewsTable.Rows.Count;
+
+            return Ret;
         }
 
         public JObject getHeaderMenu( CswSessionResourcesNbt CswSessionResources )
@@ -135,11 +144,14 @@ namespace ChemSW.Nbt.WebServices
                         Ret["Admin"]["Modules"]["action"] = "Modules";
                     }
 
-                    if( _CswNbtResources.CurrentNbtUser.IsAdministrator() &&
-                        _SchemaHasDemoData() )
+                    if( _CswNbtResources.CurrentNbtUser.IsAdministrator() )
                     {
-                        Ret["Admin"]["Delete Demo Data"] = new JObject();
-                        Ret["Admin"]["Delete Demo Data"]["action"] = "DeleteDemoNodes";
+                        Int32 DemoCount = _getSchemaDemoDataCount();
+                        if( DemoCount > 0 )
+                        {
+                            Ret["Admin"]["Delete Demo Data (" + DemoCount + ")"] = new JObject();
+                            Ret["Admin"]["Delete Demo Data (" + DemoCount + ")"]["action"] = "DeleteDemoNodes";
+                        }
                     }
                 } // if( _CswNbtResources.CurrentNbtUser.IsAdministrator() )
 

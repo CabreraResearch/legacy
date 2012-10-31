@@ -3165,7 +3165,7 @@ namespace ChemSW.Nbt.WebServices
                 if( _CswNbtResources.CurrentNbtUser.IsAdministrator() )
                 {
                     CswNbtWebServiceNode ws = new CswNbtWebServiceNode( _CswNbtResources, _CswNbtStatisticsEvents );
-                    ReturnVal["Succeeded"] = ws.deleteDemoDataNodes();
+                    ReturnVal = ws.deleteDemoDataNodes();
                 }
                 _deInitResources();
             }

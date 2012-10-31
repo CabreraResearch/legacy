@@ -43,9 +43,9 @@ namespace ChemSW.Nbt.WebServices
                 foreach( string NodeKey in NodeKeys )
                 {
                     CswNbtNodeKey NbtNodeKey = new CswNbtNodeKey( _CswNbtResources, NodeKey );
-                    if( null != NbtNodeKey && 
+                    if( null != NbtNodeKey &&
                         null != NbtNodeKey.NodeId &&
-                        CswTools.IsPrimaryKey( NbtNodeKey.NodeId ) && 
+                        CswTools.IsPrimaryKey( NbtNodeKey.NodeId ) &&
                         false == NodePrimaryKeys.Contains( NbtNodeKey.NodeId ) )
                     {
                         NodePrimaryKeys.Add( NbtNodeKey.NodeId );
@@ -57,7 +57,7 @@ namespace ChemSW.Nbt.WebServices
                 foreach( string NodePk in NodePks )
                 {
                     CswPrimaryKey PrimaryKey = CswConvert.ToPrimaryKey( NodePk );
-                    if( CswTools.IsPrimaryKey( PrimaryKey ) && 
+                    if( CswTools.IsPrimaryKey( PrimaryKey ) &&
                         false == NodePrimaryKeys.Contains( PrimaryKey ) )
                     {
                         NodePrimaryKeys.Add( PrimaryKey );
@@ -102,21 +102,120 @@ namespace ChemSW.Nbt.WebServices
             return _NodeSd.doObjectClassButtonClick( PropId, SelectedText );
         }
 
+        private JObject _makeDeletedNodeText( CswNbtMetaDataNodeType NodeType, string NodeName, Int32 NodeId, CswNbtNode Node = null )
+        {
+            string Type = CswNbtResources.UnknownEnum;
+            if( null != NodeType )
+            {
+                Type = NodeType.NodeTypeName;
+            }
+            string Name = CswNbtResources.UnknownEnum;
+            if( false == string.IsNullOrEmpty( NodeName ) )
+            {
+                Name = NodeName;
+            }
+            else if( null != Node )
+            {
+                Name = Node.NodeName;
+            }
+            string Link = string.Empty;
+            if( null != Node )
+            {
+                Link = Node.NodeLink;
+            }
+            return _makeDeletedItemText( Type, Name, NodeId, Link );
+        }
+
+        private JObject _makeDeletedItemText( string Type, string Name, Int32 Id, string Link = null )
+        {
+            JObject Ret = new JObject();
+            if( false == string.IsNullOrEmpty( Type ) )
+            {
+                Ret["type"] = Type;
+            }
+            else
+            {
+                Ret["type"] = CswNbtResources.UnknownEnum;
+            }
+            if( false == string.IsNullOrEmpty( Name ) )
+            {
+                Ret["name"] = Name;
+            }
+            else
+            {
+                Ret["name"] = CswNbtResources.UnknownEnum;
+            }
+            if( false == string.IsNullOrEmpty( Link ) )
+            {
+                Ret["link"] = Link;
+            }
+            Ret["id"] = Id;
+
+            return Ret;
+        }
+
+        private void _tryDeleteNode( CswNbtResources NbtResources, DataRow NodeRow, JObject RetObj, Collection<Exception> Exceptions )
+        {
+            try
+            {
+                string DoomedNodeName = CswConvert.ToString( NodeRow["nodename"] );
+                Int32 DoomedNodeId = CswConvert.ToInt32( NodeRow["nodeid"] );
+                Int32 NodeTypeId = CswConvert.ToInt32( NodeRow["nodetypeid"] );
+                CswNbtMetaDataNodeType NodeType = NbtResources.MetaData.getNodeType( NodeTypeId );
+                CswPrimaryKey NodePk = new CswPrimaryKey( "nodes", CswConvert.ToInt32( DoomedNodeId ) );
+                CswNbtNode DoomedNode = NbtResources.Nodes[NodePk];
+                try
+                {
+                    if( null == DoomedNode )
+                    {
+                        RetObj["failed"][NodePk.ToString()] = _makeDeletedNodeText( NodeType, DoomedNodeName, DoomedNodeId, DoomedNode );
+                    }
+                    else
+                    {
+                        DoomedNode.delete( DeleteAllRequiredRelatedNodes: true );
+                        RetObj["succeeded"][NodePk.ToString()] = _makeDeletedNodeText( NodeType, DoomedNodeName, DoomedNodeId );
+                    }
+                }
+                catch( Exception Exception )
+                {
+                    RetObj["failed"][NodePk.ToString()] = _makeDeletedNodeText( NodeType, DoomedNodeName, DoomedNodeId, DoomedNode );
+                    Exceptions.Add( Exception );
+                }
+            }
+            catch( Exception Exception )
+            {
+                Exceptions.Add( Exception );
+            }
+        }
+
         public JObject deleteDemoDataNodes()
         {
             JObject Ret = new JObject();
-            CswCommaDelimitedString SuccessfulDeletes = new CswCommaDelimitedString();
-            CswCommaDelimitedString FailedDeletes = new CswCommaDelimitedString();
             Int32 Total = 0;
-            string SuccessText = "";
+            Int32 SuccessCount = 0;
+            Int32 FailedCount = 0;
+
+            Ret["counts"] = new JObject();
+
+            Ret["successtext"] = string.Empty;
+            Ret["succeeded"] = new JObject();
+
+            Ret["failedtext"] = string.Empty;
+            Ret["failed"] = new JObject();
+
+            Ret["exceptions"] = new JArray();
+
+            Collection<Exception> Exceptions = new Collection<Exception>();
+
             if( _CswNbtResources.CurrentNbtUser.IsAdministrator() )
             {
-                /* Get a new CswNbtResources as the System User */
+                // Get a new CswNbtResources as the System User
                 CswNbtWebServiceMetaData wsMd = new CswNbtWebServiceMetaData( _CswNbtResources );
                 CswNbtResources NbtSystemResources = wsMd.makeSystemUserResources( _CswNbtResources.AccessId, false, false );
-                Collection<Exception> Exceptions = new Collection<Exception>();
+
                 try
                 {
+                    //Reassign required relationships which may be tied to Demo data
                     CswNbtResources UserSystemResources = wsMd.makeSystemUserResources( _CswNbtResources.AccessId, false, false );
                     CswNbtMetaDataObjectClass UserOc = UserSystemResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
                     foreach( CswNbtObjClassUser User in UserOc.getNodes( forceReInit: true, includeSystemNodes: false ) )
@@ -145,72 +244,48 @@ namespace ChemSW.Nbt.WebServices
                 {
                     Exceptions.Add( Ex );
                 }
+
                 #region Delete Demo Nodes
-                CswTableSelect NodesSelect = _CswNbtResources.makeCswTableSelect( "delete_demodata_nodes", "nodes" );
-                DataTable NodesTable = NodesSelect.getTable( new CswCommaDelimitedString { "nodeid" }, " where isdemo='" + CswConvert.ToDbVal( true ) + "' " );
+
+                CswTableSelect NodesSelect = NbtSystemResources.makeCswTableSelect( "delete_demodata_nodes1", "nodes" );
+                DataTable NodesTable = NodesSelect.getTable(
+                    SelectColumns: new CswCommaDelimitedString { "nodeid", "nodename", "nodetypeid" },
+                    WhereClause: "where isdemo='" + CswConvert.ToDbVal( true ) + "'",
+                    OrderByColumns: new Collection<OrderByClause> { new OrderByClause( "nodeid", OrderByType.Descending ) }
+                );
                 Total = NodesTable.Rows.Count;
                 foreach( DataRow NodeRow in NodesTable.Rows )
                 {
-                    string DeletedNodeName = "";
-                    try
-                    {
-                        CswPrimaryKey NodePk = new CswPrimaryKey( "nodes", CswConvert.ToInt32( NodeRow["nodeid"] ) );
-
-                        if( _NodeSd.DeleteNode( NodePk, out DeletedNodeName, DeleteAllRequiredRelatedNodes: true ) )
-                        {
-                            SuccessfulDeletes.Add( DeletedNodeName );
-                        }
-                        else if( false == string.IsNullOrEmpty( DeletedNodeName ) )
-                        {
-                            //The cascading delete from above has actually failed to delete this node
-                            FailedDeletes.Add( DeletedNodeName );
-                        }
-                    }
-                    catch( Exception Exception )
-                    {
-                        FailedDeletes.Add( DeletedNodeName );
-                        Exceptions.Add( Exception );
-                    }
-                }
-
-                CswTableSelect PostDeleteNodesSelect = _CswNbtResources.makeCswTableSelect( "delete_demodata_nodes", "nodes" );
-                DataTable PostDeleteNodesTable = PostDeleteNodesSelect.getTable( new CswCommaDelimitedString { "nodeid" }, " where isdemo='" + CswConvert.ToDbVal( true ) + "' " );
-                if( PostDeleteNodesTable.Rows.Count == 0 )
-                {
-                    //Since DeleteNode() cascades across all required relationships, not all nodes iterated above will be deleted in the visible loop. 
-                    //As we can't know the nodenames of these deletes, eliminate confusion and make the numbers match.
-                    Total = SuccessfulDeletes.Count;
-                    FailedDeletes = new CswCommaDelimitedString();
+                    _tryDeleteNode( NbtSystemResources, NodeRow, Ret, Exceptions );
                 }
 
                 #endregion Delete Demo Nodes
 
                 #region Delete Demo Views
-                CswTableSelect ViewsSelect = _CswNbtResources.makeCswTableSelect( "delete_demodata_views", "node_views" );
-                DataTable ViewsTable = ViewsSelect.getTable( new CswCommaDelimitedString { "nodeviewid" }, " where isdemo='" + CswConvert.ToDbVal( true ) + "' " );
+                CswTableSelect ViewsSelect = NbtSystemResources.makeCswTableSelect( "delete_demodata_views", "node_views" );
+                DataTable ViewsTable = ViewsSelect.getTable( new CswCommaDelimitedString { "nodeviewid", "viewname" }, " where isdemo='" + CswConvert.ToDbVal( true ) + "' " );
                 Total += ViewsTable.Rows.Count;
                 foreach( DataRow ViewRow in ViewsTable.Rows )
                 {
                     Int32 ViewPk = CswConvert.ToInt32( ViewRow["nodeviewid"] );
-                    string ViewName = "View: ViewId " + ViewPk;
+                    string ViewName = CswConvert.ToString( ViewRow["viewname"] );
                     try
                     {
                         CswNbtViewId ViewId = new CswNbtViewId( ViewPk );
                         CswNbtView View = _CswNbtResources.ViewSelect.restoreView( ViewId );
                         if( null != View )
                         {
-                            ViewName = "View: " + View.ViewName;
-                            SuccessfulDeletes.Add( ViewName );
                             View.Delete();
+                            Ret["succeeded"][View.ViewId.ToString()] = _makeDeletedItemText( "View", ViewName, ViewPk );
                         }
                         else
                         {
-                            FailedDeletes.Add( ViewName );
+                            Ret["failed"][ViewPk] = _makeDeletedItemText( "View", ViewName, ViewPk );
                         }
                     }
                     catch( Exception Exception )
                     {
-                        FailedDeletes.Add( ViewName );
+                        Ret["failed"][ViewPk] = _makeDeletedItemText( "View", ViewName, ViewPk );
                         Exceptions.Add( Exception );
                     }
                 }
@@ -218,34 +293,24 @@ namespace ChemSW.Nbt.WebServices
 
                 wsMd.finalizeOtherResources( NbtSystemResources );
 
+                SuccessCount = ( (JObject) Ret["succeeded"] ).Count;
+                Ret["successtext"] = SuccessCount + " deletes succeeded out of " + Total + " total. <br>";
 
-                SuccessText += SuccessfulDeletes.Count + " deletes succeeded out of " + Total + " total. <br>";
-                SuccessText += "The following items were successfully deleted: <br>";
-                foreach( string SuccessfulDelete in SuccessfulDeletes )
+                FailedCount = ( (JObject) Ret["failed"] ).Count;
+                if( FailedCount > 0 )
                 {
-                    SuccessText += SuccessfulDelete + ", ";
-                }
+                    Ret["failedtext"] = "Not all demo data was deleted. " + FailedCount + " deletes failed out of " + Total + " total.<br>";
 
-                if( FailedDeletes.Count > 0 )
-                {
-                    SuccessText += "<br>";
-                    SuccessText += "Not all demo data was deleted. " + FailedDeletes.Count + " deletes failed out of " + Total + " total.<br>";
-                    SuccessText += "The following items have not been deleted: \n";
-                    foreach( string FailedDelete in FailedDeletes )
-                    {
-                        SuccessText += FailedDelete + ", ";
-                    }
-                    SuccessText += "<br><br>";
                     foreach( Exception ex in Exceptions )
                     {
-                        SuccessText += ex.Message + " " + ex.InnerException + " <br><br>";
+                        ( (JArray) Ret["exceptions"] ).Add( ex.Message + ": " + ex.InnerException );
                     }
                 }
             }
-            Ret["message"] = SuccessText;
-            Ret["succeeded"] = SuccessfulDeletes.Count;
-            Ret["total"] = Total;
-            Ret["failed"] = FailedDeletes.Count;
+
+            Ret["counts"]["succeeded"] = SuccessCount;
+            Ret["counts"]["total"] = Total;
+            Ret["counts"]["failed"] = FailedCount;
 
             return Ret;
         }
