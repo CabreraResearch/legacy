@@ -46,7 +46,10 @@
                 pageSize: '',  // overridden by webservice
 
                 actionDataIndex: 'action',
-                renderedRows: []
+                renderedRows: [{
+                    val: '',
+                    loaded: false
+                }]
             };
             var cswPublic = {};
 
@@ -147,6 +150,7 @@
                     dockedItems: [],
                     features: [{
                         ftype: 'filters',
+                        autoReload: false,
                         encode: false,
                         local: true
                     }]
@@ -177,10 +181,14 @@
                             var candelete = Csw.bool(cswPrivate.showDelete) && Csw.bool(record.data.candelete, true);
                             var islocked = Csw.bool(cswPrivate.showLock) && Csw.bool(record.data.islocked, false);
 
-                            var render = true;
-                            Csw.each(cswPrivate.renderedRows, function (row) {
-                                if (row === ret) {
-                                    render = false;
+                            var found = false, render = true;
+                            Csw.each(cswPrivate.renderedRows, function (row, key) {
+                                if (row.val === ret) {
+                                    found = true;
+                                    if (false === row.loaded) {
+                                        render = false;
+                                        cswPrivate.renderedRows[key].loaded = true;
+                                    }
                                 }
                             });
                             if (render) {
@@ -196,7 +204,9 @@
                                 if (candelete) {
                                     cswPrivate.makeActionButton(cell2Id, 'Delete', Csw.enums.iconType.trash, cswPrivate.onDelete, record, rowIndex, colIndex);
                                 }
-                                cswPrivate.renderedRows.push(ret);
+                                if (false === found) {
+                                    cswPrivate.renderedRows.push({ val: ret, loaded: false });
+                                }
                             }
                             return ret;                            
                         } // renderer()
