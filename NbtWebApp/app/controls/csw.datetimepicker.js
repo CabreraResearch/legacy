@@ -59,7 +59,7 @@
                             cssclass: 'textinput'
                         });
                         if (cswPrivate.Date.substr(0, 'today'.length) !== 'today') {
-                            cswPrivate.dateBox.$.datepicker({ 'dateFormat': Csw.serverDateFormatToJQuery(cswPrivate.DateFormat) });
+                            cswPrivate.dateBox.$.datepicker({ 'dateFormat': Csw.serverDateFormatToJQuery(cswPrivate.DateFormat), 'changeYear': true });
                         }
                         cswPrivate.dateBox.required(cswPrivate.isRequired);
                     }
