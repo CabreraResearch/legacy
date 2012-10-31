@@ -30,7 +30,7 @@
                     qtyReadonly: false,
                     unitReadonly: false,
                     excludeRangeLimits: false,
-                    Required: false
+                    isRequired: false
                 };
                 if (options) Csw.extend(cswPrivate, options);
 
@@ -70,7 +70,7 @@
                         ceilingVal: Csw.number(cswPrivate.ceilingVal),
                         Precision: 6, //case 24646 - precision is being handled in the validator below, so we don't want to use the one in numberTextBox.
                         ReadOnly: Csw.bool(cswPrivate.qtyReadonly),
-                        Required: Csw.bool(cswPrivate.Required),
+                        isRequired: Csw.bool(cswPrivate.isRequired),
                         onChange: function() {
                             var val = cswPublic.quantityTextBox.val();
                             cswPrivate.value = val;
@@ -89,7 +89,7 @@
                         cswPublic.unitText = cswPrivate.selectedName;
                         cswPublic.unitSelectReaDOnly = cswPublic.table.cell(1, cswPrivate.cellCol).span({ text: cswPrivate.selectedName });
                     } else {
-                        if (false === cswPrivate.Required && false === Csw.isNullOrEmpty(cswPrivate.selectedName)) {
+                        if (false === cswPrivate.isRequired && false === Csw.isNullOrEmpty(cswPrivate.selectedName)) {
                             cswPrivate.relationships.push({ value: '', display: '', frac: true });
                         }
                         cswPrivate.foundSelected = false;
@@ -128,8 +128,8 @@
 
                         cswPrivate.cellCol += 1;
 
-                        cswPublic.unitSelect.required(cswPrivate.Required);
-                        cswPublic.quantityTextBox.required(cswPrivate.Required);
+                        cswPublic.unitSelect.required(cswPrivate.isRequired);
+                        cswPublic.quantityTextBox.required(cswPrivate.isRequired);
 
                         $.validator.addMethod('validateInteger', function () {
                             return (cswPrivate.precision != 0 || Csw.validateInteger(cswPublic.quantityTextBox.val()));
