@@ -125,7 +125,6 @@
 
             cswPrivate.onTearDown = function () {
                 cswPrivate.onTearDownProps();
-                Csw.unsubscribe('CswMultiEdit', cswPrivate.onMultiEdit);
                 cswPrivate.clearTabs();
                 cswPrivate.globalState.checkBoxes = { };
                 Csw.each(cswPrivate.ajax, function (call, name) {
@@ -135,6 +134,7 @@
             };
 
             cswPublic.tearDown = function () {
+                Csw.unsubscribe('CswMultiEdit', cswPrivate.onMultiEdit);
                 cswPrivate.onTearDown();
             };
 
