@@ -476,8 +476,7 @@ namespace ChemSW.Nbt.ServiceDrivers
             if( PropWrapper != null )
             {
                 CswNbtMetaDataNodeType NodeType = Prop.getNodeType();
-                if( ( false == Prop.ServerManaged ) &&
-                    _CswNbtResources.Permit.isPropWritable( CswNbtPermit.NodeTypePermission.Edit, Prop, Tab, PropWrapper ) &&
+                if( _CswNbtResources.Permit.isPropWritable( CswNbtPermit.NodeTypePermission.Edit, Prop, Tab, PropWrapper ) &&
                     _CswNbtResources.Permit.isNodeWritable( CswNbtPermit.NodeTypePermission.Edit, NodeType, NodeId ) &&
                     ( _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Edit, NodeType ) ||
                     _CswNbtResources.Permit.canTab( CswNbtPermit.NodeTypePermission.Edit, NodeType, Tab ) )

@@ -627,17 +627,27 @@ namespace ChemSW.Nbt.Security
 
             ret |= ( null == MetaDataTab || canTab( _CswNbtPermitInfo.Permission, _CswNbtPermitInfo.NodeType, MetaDataTab ) );
 
-            // You can't edit readonly properties
-            if( ret &&
-                    (
-                        ( _CswNbtPermitInfo.Permission != NodeTypePermission.View ) &&
-                ( MetaDataProp.ServerManaged || MetaDataProp.ReadOnly || ( ( null != NodePropWrapper ) && NodePropWrapper.ReadOnly ) ) &&
-                        ( false == MetaDataProp.AllowReadOnlyAdd )
-                    )
-                )/* Case 24514. Conditionally Permit edit on create. */
-            {
-                ret = false;
-            }
+            // Anyone but an admin cannot write to read-only props
+            // Even admins cannot write to servermanaged props
+            ret = ret &&
+                  ( _CswNbtPermitInfo.Permission != NodeTypePermission.View ) &&
+                  ( false == MetaDataProp.ServerManaged ) &&
+                  (
+                      ( ( null != _CswNbtPermitInfo.User ) && ( _CswNbtPermitInfo.User.IsAdministrator() ) ) ||
+                      ( false == MetaDataProp.ReadOnly ) ||
+                      ( ( null != NodePropWrapper ) && ( false == NodePropWrapper.ReadOnly ) ) );
+
+            //if( ret &&
+            //        (
+            //            ( _CswNbtPermitInfo.Permission != NodeTypePermission.View ) &&
+            //            ( false == MetaDataProp.ServerManaged ) &&
+            //            (  MetaDataProp.ReadOnly || ( ( null != NodePropWrapper ) && NodePropWrapper.ReadOnly ) ) &&
+            //            ( false == MetaDataProp.AllowReadOnlyAdd )
+            //        )
+            //    )/* Case 24514. Conditionally Permit edit on create. */
+            //{
+            //    ret = false;
+            //}
 
             return ( ret );
 
