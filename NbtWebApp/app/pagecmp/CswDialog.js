@@ -236,7 +236,6 @@
                     if (cswPublic.isOpen) {
                         cswPublic.isOpen = false;
                         cswPublic.tabsAndProps.tearDown();
-                        cswPublic.div.$.dialog('close');
                     }
                 },
                 title: cswDlgPrivate.text
@@ -289,7 +288,6 @@
                 div: Csw.literals.div(),
                 close: function () {
                     cswPublic.tabsAndProps.tearDown();
-                    cswPublic.div.$.dialog('close');
                 },
                 title: 'New ' + cswDlgPrivate.text
             };
@@ -586,7 +584,7 @@
                 div: Csw.literals.div(),
                 close: function () {
                     cswPublic.tabsAndProps.tearDown();
-                    cswPublic.div.$.dialog('close');
+
                 }
             };
 
@@ -646,6 +644,7 @@
                             Csw.clientChanges.unsetChanged();
                             if (tabcount === 2 || cswDlgPrivate.Multi) { /* Ignore history tab */
                                 cswPublic.close();
+                                cswPublic.div.$.dialog('close');
                             }
                             Csw.tryExec(cswDlgPrivate.onEditNode, nodeids, nodekeys, cswPublic.close);
                         },
