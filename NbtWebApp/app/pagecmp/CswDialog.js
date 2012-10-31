@@ -262,6 +262,7 @@
                     ReloadTabOnSave: false,
                     onSave: function (nodeid, nodekey, tabcount, nodename) {
                         cswPublic.close();
+                        cswPublic.div.$.dialog('close');
                         Csw.tryExec(cswDlgPrivate.onAddNode, nodeid, nodekey, nodename);
                         Csw.tryExec(cswDlgPrivate.onSaveImmediate);
                     },
@@ -285,7 +286,7 @@
             }
             Csw.extend(cswDlgPrivate, options);
             var cswPublic = {
-                div: Csw.literals.div(),
+                div: cswPrivate.div.div(),
                 close: function () {
                     cswPublic.tabsAndProps.tearDown();
                 },
@@ -326,7 +327,7 @@
 
                                         var closeDialog = function () { cswPublic.div.$.dialog('close'); };
 
-                                        cswPublic.div.$.empty();
+                                        cswPublic.div.empty();
                                         //div.text('Your feedback has been submitted. Your case number is ' + result.casenumber + '.');
                                         cswPublic.div.nodeLink({
                                             text: 'Your feedback has been submitted. Your case number is ' + result.noderef + '.',
