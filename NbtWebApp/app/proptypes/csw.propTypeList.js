@@ -25,7 +25,12 @@
                         cswPublic.control = cswPrivate.parent.append(cswPrivate.value);
                     } else {
                         cswPrivate.values = cswPrivate.options.split(',');
-                        
+
+                        //case 28020 - if a list has a value selected that's not in the list, add it to the options
+                        if (false == Csw.contains(cswPrivate.values, cswPrivate.value)) {
+                            cswPrivate.values.push(cswPrivate.value);
+                        }
+
                         cswPublic.control = cswPrivate.parent.select({
                             name: cswPublic.data.name,
                             cssclass: 'selectinput',
@@ -46,4 +51,4 @@
                 return cswPublic;
             }));
 
-}());
+} ());
