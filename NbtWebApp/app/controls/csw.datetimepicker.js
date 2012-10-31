@@ -21,7 +21,8 @@
                 ReadOnly: false,
                 isRequired: false,
                 onChange: null,
-                showTodayButton: false
+                showTodayButton: false,
+                changeYear: true
             };
             var cswPublic = {};
 
@@ -59,7 +60,7 @@
                             cssclass: 'textinput'
                         });
                         if (cswPrivate.Date.substr(0, 'today'.length) !== 'today') {
-                            cswPrivate.dateBox.$.datepicker({ 'dateFormat': Csw.serverDateFormatToJQuery(cswPrivate.DateFormat), 'changeYear': true });
+                            cswPrivate.dateBox.$.datepicker({ 'dateFormat': Csw.serverDateFormatToJQuery(cswPrivate.DateFormat), 'changeYear': cswPrivate.changeYear });
                         }
                         cswPrivate.dateBox.required(cswPrivate.isRequired);
                     }
