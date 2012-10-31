@@ -634,8 +634,10 @@ namespace ChemSW.Nbt.Security
                   ( false == MetaDataProp.ServerManaged ) &&
                   (
                       ( ( null != _CswNbtPermitInfo.User ) && ( _CswNbtPermitInfo.User.IsAdministrator() ) ) ||
-                      ( false == MetaDataProp.ReadOnly ) ||
-                      ( ( null != NodePropWrapper ) && ( false == NodePropWrapper.ReadOnly ) ) );
+                      (
+                          ( false == MetaDataProp.ReadOnly ) && ( null != NodePropWrapper ) && ( false == NodePropWrapper.ReadOnly )  
+                      )
+                  );
 
             //if( ret &&
             //        (
