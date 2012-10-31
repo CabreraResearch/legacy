@@ -59,7 +59,7 @@
 
                 var labelText = cswPrivate.text;
                 if (Csw.bool(cswPrivate.isRequired)) {
-                    labelText = labelText + "<span style='color:Red'> *</span>";
+                    labelText = Csw.makeRequiredName(labelText);
                 }
 
                 html += Csw.string(labelText, labelText);

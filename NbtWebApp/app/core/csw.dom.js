@@ -159,21 +159,20 @@
                 if (cswPrivate.isControlStillValid()) {
                     if (Csw.bool(isRequired) && !Csw.bool(isReadOnly)) {
                         //propName = Csw.makeRequiredName(propName);
-                        cswPublic.append(propName).span({ text: "*" }).css('color', 'Red');
-                    } else {
-                        cswPublic.append(propName);
+                        propName = Csw.makeRequiredName(propName);
                     }
+                    cswPublic.append(propName);
                 }
                 return cswPublic;
             };
 
-//            Csw.makeRequiredName = Csw.makeRequiredName ||
-//                Csw.register('makeRequiredName', function (propName) {
-//                    /// <summary>Returns the property name with the required symbol next to it</summary>
-//                    /// <param name="propName" type="Object">the property name to display</param>
-//                    /// <returns type="string">The label name for a required property</returns> 
-//                    return propName + "*";
-//                });
+            Csw.makeRequiredName = Csw.makeRequiredName ||
+                Csw.register('makeRequiredName', function (propName) {
+                    /// <summary>Returns the property name with the required symbol next to it</summary>
+                    /// <param name="propName" type="Object">the property name to display</param>
+                    /// <returns type="string">The label name for a required property</returns> 
+                    return propName + "<span style='color:Red'>*</span>";
+                });
 
             cswPublic.attach = function (object) {
                 /// <summary>Attach an object to this element.</summary>
@@ -304,10 +303,10 @@
                         cswPrivate.setDataObj(prop);
                     } else {
                         switch (arguments.length) {
-                            //this isn't a valid use case   
-                            //case 0:   
-                            //    ret = _internal || cswPublic.$.data();   
-                            //    break;   
+                            //this isn't a valid use case     
+                            //case 0:     
+                            //    ret = _internal || cswPublic.$.data();     
+                            //    break;     
                             case 1:
                                 ret = cswPrivate.getData(prop);
                                 break;
@@ -738,7 +737,7 @@
         });
 
     Csw.isElementInDom = Csw.isElementInDom ||
-        Csw.register('isElementInDom', function(elementId) {
+        Csw.register('isElementInDom', function (elementId) {
             return false === Csw.isNullOrEmpty(document.getElementById(elementId));
         });
 
