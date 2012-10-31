@@ -202,7 +202,7 @@
             cswPrivate.onHoverIn = function (ev, dd, $cell) {
                 var cellSet;
                 if (cswPrivate.isRemoveMode()) {
-                    cellSet = cswPublic.cellSet($cell.attr('row'), $cell.attr('column'));
+                    cellSet = cswPublic.cellSet($cell.attr('data-row'), $cell.attr('data-column'));
                     cswPrivate.eachCell(cellSet, function (cell) {
                         cell.addClass('CswLayoutTable_remove');
                     });
@@ -212,7 +212,7 @@
             cswPrivate.onHoverOut = function (ev, dd, $cell) {
                 var cellSet;
                 if (cswPrivate.isRemoveMode()) {
-                    cellSet = cswPublic.cellSet($cell.attr('row'), $cell.attr('column'));
+                    cellSet = cswPublic.cellSet($cell.attr('data-row'), $cell.attr('data-column'));
                     cswPrivate.eachCell(cellSet, function (cell) {
                         cell.removeClass('CswLayoutTable_remove');
                     });
@@ -223,7 +223,7 @@
                 var $dragCell, cells;
                 if (cswPublic.isConfig(cswPublic.table)) {
                     $dragCell = $dragDiv.parent();
-                    cells = cswPublic.cellSet($dragCell.attr('row'), $dragCell.attr('column'));
+                    cells = cswPublic.cellSet($dragCell.attr('data-row'), $dragCell.attr('data-column'));
                     cswPrivate.eachCell(cells, function (cell) {
                         cell.addClass('CswLayoutTable_dragcell');
                     });
@@ -247,8 +247,8 @@
                     $dragDiv = dd.draggable;
                     dragCell = Csw.literals.factory($dragDiv.parent(), {});
 
-                    dragCells = cswPublic.cellSet(dragCell.data('row'), dragCell.data('column')); // .table.findCell('[row="' + Csw.number(dragCell.data('row')) + '"][column="' + Csw.number(dragCell.data('column')) + '"]');
-                    dropCells = cswPublic.cellSet($dropCell.attr('row'), $dropCell.attr('column')); //table.findCell('[row="' + Csw.number($dropCell.attr('row')) + '"][column="' + Csw.number($dropCell.attr('column')) + '"]');
+                    dragCells = cswPublic.cellSet(dragCell.data('row'), dragCell.data('column')); 
+                    dropCells = cswPublic.cellSet($dropCell.attr('data-row'), $dropCell.attr('data-column'));
 
                     // This must happen BEFORE we do the swap, in case the caller relies on the contents of the div being where it was
                     cswPublic.table.trigger(cswPrivate.name + 'CswLayoutTable_onSwap', {
@@ -279,14 +279,14 @@
                                 my: "left top",
                                 at: "left top",
                                 of: thisDropCell.$,
-                                offset: cswPublic.table.data('cellpadding')
+                                offset: cswPrivate.cellpadding
                             });
 
                             $dropCellDiv.position({
                                 my: "left top",
                                 at: "left top",
                                 of: thisDragCell.$,
-                                offset: cswPublic.table.data('cellpadding')
+                                offset: cswPrivate.cellpadding
                             });
                         }
                     }

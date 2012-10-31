@@ -500,7 +500,14 @@
             cswPrivate.moveProp = function (propDiv, tabid, newrow, newcolumn, propId) {
                 'use strict';
                 var propid = Csw.string(propDiv.data('propid'), propId);
-                if (propDiv.length() > 0) {
+                if(Csw.isNullOrEmpty(propid) && propDiv.length() > 0) {
+                    if (false === Csw.isNullOrEmpty(propDiv.children())) {
+                        propid = propDiv.children().data('propid');
+                    }
+                }
+                if(Csw.isNullOrEmpty(propid)) {
+                    Csw.debug.error('No property selected for move.');
+                } else {
                     var dataJson = {
                         PropId: propid,
                         TabId: tabid,
