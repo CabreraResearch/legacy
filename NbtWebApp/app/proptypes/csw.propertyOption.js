@@ -57,11 +57,11 @@
 
                 var cswPublic = {
                     name: '',
+                    Multi: false,
                     tabState: {
                         nodeid: '',
                         nodename: '',
                         EditMode: Csw.enums.editMode.Edit,
-                        Multi: false,
                         ReadOnly: false,
                         Config: false,
                         showSaveButton: true,
@@ -118,7 +118,7 @@
                 };
 
                 cswPublic.isMulti = function () {
-                    return Csw.bool(cswPublic.tabState.Multi);
+                    return Csw.bool(cswPublic.Multi);
                 };
                 
                 cswPublic.doPropChangeDataBind = function() {

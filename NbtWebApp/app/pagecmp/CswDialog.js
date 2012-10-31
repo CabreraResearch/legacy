@@ -5,25 +5,30 @@
     "use strict";
     var pluginName = 'CswDialog';
 
-    var cswPrivateInit = function () { //create this to prevent anyone from modifying the orginal position of the dialog positions
+    var cswPrivateInit = (function () { //create this to prevent anyone from modifying the orginal position of the dialog positions
         var origX = 0; //150
         var origY = 0; //30
 
-        this.origXAccessor = function () {
-            return origX;
+        return function () {
+            return {
+                origXAccessor: function() {
+                    return origX;
+                },
+                origYAccessor: function() {
+                    return origY;
+                },
+                windowWidth: function() {
+                    return document.documentElement.clientWidth;
+                },
+                windowHeight: function() {
+                    return document.documentElement.clientHeight;
+                }
+            };
         };
-        this.origYAccessor = function () {
-            return origY;
-        };
-        this.windowWidth = function () {
-            return document.documentElement.clientWidth;
-        };
-        this.windowHeight = function () {
-            return document.documentElement.clientHeight;
-        };
-    };
-    var cswPrivate = new cswPrivateInit();
-
+    }());
+    var cswPrivate = cswPrivateInit();
+    cswPrivate.div = Csw.literals.div();
+    
     var posX = cswPrivate.origXAccessor();
     var posY = cswPrivate.origYAccessor();
     var incrPosBy = 30;
@@ -207,7 +212,7 @@
         }, // AddViewDialog
         AddNodeDialog: function (options) {
             ///<summary>Creates an Add Node dialog and returns an object represent that dialog.</summary>
-            var cswPrivate = {
+            var cswDlgPrivate = {
                 text: '',
                 nodeid: '',
                 nodetypeid: '',
@@ -222,46 +227,51 @@
             if (Csw.isNullOrEmpty(options)) {
                 Csw.error.throwException(Csw.error.exception('Cannot create an Add Dialog without options.', '', 'CswDialog.js', 177));
             }
-            Csw.extend(cswPrivate, options);
-            cswPrivate.name = cswPrivate.text;
+            Csw.extend(cswDlgPrivate, options);
+            cswDlgPrivate.name = cswDlgPrivate.text;
             var cswPublic = {
-                div: Csw.literals.div({ name: cswPrivate.name }),
+                isOpen: true,
+                div: cswPrivate.div.div({ name: cswDlgPrivate.name }),
                 close: function () {
-                    cswPublic.div.$.dialog('close');
+                    if (cswPublic.isOpen) {
+                        cswPublic.isOpen = false;
+                        cswPublic.tabsAndProps.tearDown();
+                        cswPublic.div.$.dialog('close');
+                    }
                 },
-                title: cswPrivate.text
+                title: cswDlgPrivate.text
             };
-
-            openDialog(cswPublic.div, 800, 600, null, cswPublic.title);
-            if (false === Csw.isNullOrEmpty(cswPrivate.propertyData) && false === Csw.isNullOrEmpty(cswPrivate.propertyData.nodeid)) {
-                cswPrivate.nodeid = Csw.string(cswPrivate.nodeid, cswPrivate.propertyData.nodeid);
-            }
-            cswPublic.tabsAndProps = Csw.layouts.tabsAndProps(cswPublic.div, {
-                name: 'tabsAndProps',
-                globalState: {
-                    propertyData: cswPrivate.propertyData,
-                    ShowAsReport: false,
-                    currentNodeId: cswPrivate.nodeid
-                },
-                tabState: {
-                    nodetypeid: cswPrivate.nodetypeid,
-                    relatednodeid: cswPrivate.relatednodeid,
-                    relatednodename: cswPrivate.relatednodename,
-                    relatednodetypeid: cswPrivate.relatednodetypeid,
-                    relatedobjectclassid: cswPrivate.relatedobjectclassid,
-                    EditMode: Csw.enums.editMode.Add
-                },
-                ReloadTabOnSave: false,
-                onSave: function (nodeid, nodekey, tabcount, nodename) {
-                    cswPublic.div.$.dialog('close');
-                    Csw.tryExec(cswPrivate.onAddNode, nodeid, nodekey, nodename);
-                    Csw.tryExec(cswPrivate.onSaveImmediate);
-                },
-                onInitFinish: function () {
-                    //openDialog(cswPublic.div, 800, 600, null, cswPublic.title);
+            cswDlgPrivate.onOpen = function () {
+                if (false === Csw.isNullOrEmpty(cswDlgPrivate.propertyData) && false === Csw.isNullOrEmpty(cswDlgPrivate.propertyData.nodeid)) {
+                    cswDlgPrivate.nodeid = Csw.string(cswDlgPrivate.nodeid, cswDlgPrivate.propertyData.nodeid);
                 }
-
-            });
+                cswPublic.tabsAndProps = Csw.layouts.tabsAndProps(cswPublic.div, {
+                    name: 'tabsAndProps',
+                    globalState: {
+                        propertyData: cswDlgPrivate.propertyData,
+                        ShowAsReport: false,
+                        currentNodeId: cswDlgPrivate.nodeid
+                    },
+                    tabState: {
+                        nodetypeid: cswDlgPrivate.nodetypeid,
+                        relatednodeid: cswDlgPrivate.relatednodeid,
+                        relatednodename: cswDlgPrivate.relatednodename,
+                        relatednodetypeid: cswDlgPrivate.relatednodetypeid,
+                        relatedobjectclassid: cswDlgPrivate.relatedobjectclassid,
+                        EditMode: Csw.enums.editMode.Add
+                    },
+                    ReloadTabOnSave: false,
+                    onSave: function (nodeid, nodekey, tabcount, nodename) {
+                        cswPublic.close();
+                        Csw.tryExec(cswDlgPrivate.onAddNode, nodeid, nodekey, nodename);
+                        Csw.tryExec(cswDlgPrivate.onSaveImmediate);
+                    },
+                    onInitFinish: function () {
+                        //openDialog(cswPublic.div, 800, 600, null, cswPublic.title);
+                    }
+                });
+            };
+            openDialog(cswPublic.div, 800, 600, cswPublic.close, cswPublic.title, cswDlgPrivate.onOpen);
             return cswPublic;
         },
         AddFeedbackDialog: function (options) {
@@ -278,12 +288,13 @@
             var cswPublic = {
                 div: Csw.literals.div(),
                 close: function () {
+                    cswPublic.tabsAndProps.tearDown();
                     cswPublic.div.$.dialog('close');
                 },
                 title: 'New ' + cswDlgPrivate.text
             };
 
-            cswDlgPrivate.onOpen = function() {
+            cswDlgPrivate.onOpen = function () {
 
                 var state = Csw.clientState.getCurrent();
                 Csw.ajax.post({
@@ -296,7 +307,7 @@
                         selectednodeid: Csw.cookie.get('csw_currentnodeid'),
                         author: Csw.cookie.get('csw_username')
                     },
-                    success: function(data) {
+                    success: function (data) {
                         cswPublic.tabsAndProps = Csw.layouts.tabsAndProps(cswPublic.div, {
                             globalState: {
                                 ShowAsReport: false,
@@ -309,13 +320,13 @@
                                 relatednodeid: data.nodeid
                             },
                             ReloadTabOnSave: false,
-                            onSave: function(nodeid, nodekey, tabcount, nodename) {
+                            onSave: function (nodeid, nodekey, tabcount, nodename) {
                                 Csw.ajax.post({
                                     urlMethod: 'GetFeedbackCaseNumber',
                                     data: { nodeId: nodeid },
-                                    success: function(result) {
+                                    success: function (result) {
 
-                                        var closeDialog = function() { cswPublic.div.$.dialog('close'); };
+                                        var closeDialog = function () { cswPublic.div.$.dialog('close'); };
 
                                         cswPublic.div.$.empty();
                                         //div.text('Your feedback has been submitted. Your case number is ' + result.casenumber + '.');
@@ -334,8 +345,8 @@
                                     }
                                 });
                             },
-                            onInitFinish: function() {
-                                
+                            onInitFinish: function () {
+
                             }
                         });
                     }
@@ -559,7 +570,7 @@
                 Multi: false,
                 ReadOnly: false,
                 filterToPropId: '',
-                title: '',
+                title: 'Edit',
                 onEditNode: null, // function (nodeid, nodekey) { },
                 onEditView: null, // function (viewid) {}
                 onRefresh: null,
@@ -574,13 +585,14 @@
             var cswPublic = {
                 div: Csw.literals.div(),
                 close: function () {
+                    cswPublic.tabsAndProps.tearDown();
                     cswPublic.div.$.dialog('close');
                 }
             };
 
             var title = Csw.string(cswDlgPrivate.title);
-            if (Csw.isNullOrEmpty(title)) {
-                title = (false === cswDlgPrivate.Multi) ? cswDlgPrivate.nodenames[0] : cswDlgPrivate.nodenames.join(', ');
+            if (cswDlgPrivate.nodenames.length > 1) {
+                title += ': ' + cswDlgPrivate.nodenames.join(', ');
             }
             cswPublic.title = title;
 
@@ -608,6 +620,7 @@
                     tabCell.empty();
 
                     cswPublic.tabsAndProps = Csw.layouts.tabsAndProps(tabCell, {
+                        Multi: cswDlgPrivate.Multi,
                         globalState: {
                             date: date,
                             selectedNodeIds: cswDlgPrivate.selectedNodeIds,
@@ -618,7 +631,6 @@
                             filterToPropId: cswDlgPrivate.filterToPropId
                         },
                         tabState: {
-                            Multi: cswDlgPrivate.Multi,
                             ReadOnly: cswDlgPrivate.ReadOnly,
                             EditMode: myEditMode,
                             tabid: Csw.cookie.get(Csw.cookie.cookieNames.CurrentTabId)
@@ -656,7 +668,7 @@
             return cswPublic;
         }, // EditNodeDialog
         CopyNodeDialog: function (options) {
-            var cswPrivate = {
+            var cswDlgPrivate = {
                 'nodename': '',
                 'nodeid': '',
                 'nodetypeid': '',
@@ -667,7 +679,7 @@
             if (Csw.isNullOrEmpty(options)) {
                 Csw.error.throwException(Csw.error.exception('Cannot create an Copy Dialog without options.', '', 'CswDialog.js', 177));
             }
-            Csw.extend(cswPrivate, options);
+            Csw.extend(cswDlgPrivate, options);
             var cswPublic = {
                 div: Csw.literals.div({
                     name: 'CopyNodeDialogDiv'
@@ -688,13 +700,13 @@
             Csw.ajax.post({
                 urlMethod: 'checkQuota',
                 data: {
-                    NodeTypeId: Csw.string(cswPrivate.nodetypeid),
-                    NodeKey: Csw.string(cswPrivate.nodekey)
+                    NodeTypeId: Csw.string(cswDlgPrivate.nodetypeid),
+                    NodeKey: Csw.string(cswDlgPrivate.nodekey)
                 },
                 success: function (data) {
                     if (Csw.bool(data.result)) {
 
-                        cell11.append('Copying: ' + cswPrivate.nodename);
+                        cell11.append('Copying: ' + cswDlgPrivate.nodename);
                         cell11.br({ number: 2 });
 
                         var copyBtn = cell21.button({
@@ -703,11 +715,11 @@
                             disabledText: 'Copying',
                             onClick: function () {
                                 Csw.copyNode({
-                                    'nodeid': cswPrivate.nodeid,
-                                    'nodekey': Csw.string(cswPrivate.nodekey, cswPrivate.nodekey[0]),
+                                    'nodeid': cswDlgPrivate.nodeid,
+                                    'nodekey': Csw.string(cswDlgPrivate.nodekey, cswDlgPrivate.nodekey[0]),
                                     'onSuccess': function (nodeid, nodekey) {
                                         cswPublic.close();
-                                        cswPrivate.onCopyNode(nodeid, nodekey);
+                                        cswDlgPrivate.onCopyNode(nodeid, nodekey);
                                     },
                                     'onError': function () {
                                         copyBtn.enable();
@@ -735,7 +747,7 @@
             return cswPublic;
         }, // CopyNodeDialog       
         DeleteNodeDialog: function (options) {
-            var cswPrivate = {
+            var cswDlgPrivate = {
                 nodes: {},
                 nodenames: [],
                 nodeids: [],
@@ -749,7 +761,7 @@
             if (Csw.isNullOrEmpty(options)) {
                 Csw.error.throwException(Csw.error.exception('Cannot create an Delete Dialog without options.', '', 'CswDialog.js', 641));
             }
-            Csw.extend(cswPrivate, options);
+            Csw.extend(cswDlgPrivate, options);
             var cswPublic = {
                 div: Csw.literals.div(),
                 close: function () {
@@ -759,9 +771,9 @@
 
             cswPublic.div.span({ text: 'Are you sure you want to delete the following?' }).br();
             var n = 0;
-            Csw.each(cswPrivate.nodes, function (nodeObj) {
-                cswPrivate.nodeids[n] = nodeObj.nodeid;
-                cswPrivate.cswnbtnodekeys[n] = nodeObj.nodekey;
+            Csw.each(cswDlgPrivate.nodes, function (nodeObj) {
+                cswDlgPrivate.nodeids[n] = nodeObj.nodeid;
+                cswDlgPrivate.cswnbtnodekeys[n] = nodeObj.nodekey;
                 cswPublic.div.span({ text: nodeObj.nodename }).css({ 'padding-left': '10px' }).br();
                 n += 1;
             });
@@ -774,13 +786,13 @@
                 disabledText: 'Deleting',
                 onClick: function () {
                     Csw.deleteNodes({
-                        nodeids: cswPrivate.nodeids,
-                        nodekeys: cswPrivate.cswnbtnodekeys,
+                        nodeids: cswDlgPrivate.nodeids,
+                        nodekeys: cswDlgPrivate.cswnbtnodekeys,
                         onSuccess: function (nodeid, nodekey) {
                             cswPublic.close();
-                            Csw.tryExec(cswPrivate.onDeleteNode, nodeid, nodekey);
-                            if (Csw.bool(cswPrivate.publishDeleteEvent)) {
-                                Csw.publish(Csw.enums.events.CswNodeDelete, { nodeids: cswPrivate.nodeids, cswnbtnodekeys: cswPrivate.cswnbtnodekeys });
+                            Csw.tryExec(cswDlgPrivate.onDeleteNode, nodeid, nodekey);
+                            if (Csw.bool(cswDlgPrivate.publishDeleteEvent)) {
+                                Csw.publish(Csw.enums.events.CswNodeDelete, { nodeids: cswDlgPrivate.nodeids, cswnbtnodekeys: cswDlgPrivate.cswnbtnodekeys });
                             }
                         },
                         onError: deleteBtn.enable
@@ -1016,7 +1028,7 @@
         }, // ShowLicenseDialog
         PrintLabelDialog: function (options) {
             ///<summary>Creates an Print Label dialog and returns an object represent that dialog.</summary>
-            var cswPrivate = {
+            var cswDlgPrivate = {
                 name: 'print_label',
                 GetPrintLabelsUrl: 'Labels/type/',
                 nodes: {},
@@ -1026,7 +1038,7 @@
             if (Csw.isNullOrEmpty(options)) {
                 Csw.error.throwException(Csw.error.exception('Cannot create an Print Label Dialog without options.', '', 'CswDialog.js', 893));
             }
-            Csw.extend(cswPrivate, options);
+            Csw.extend(cswDlgPrivate, options);
 
 
 
@@ -1038,13 +1050,13 @@
             };
 
             cswPublic.div.br();
-            Csw.each(cswPrivate.nodes, function (nodeObj, nodeId) {
-                cswPrivate.nodeids.push(nodeId);
+            Csw.each(cswDlgPrivate.nodes, function (nodeObj, nodeId) {
+                cswDlgPrivate.nodeids.push(nodeId);
                 cswPublic.div.span({ text: nodeObj.nodename }).css({ 'padding-left': '10px' }).br();
             });
 
             var getEplContext = function () {
-                Csw.openPopup('Print.html?TargetId=' + cswPrivate.nodeids.join(',') + '&PrintLabelNodeId=' + labelSel.val(), 'Print ' + labelSel.selectedText(), {
+                Csw.openPopup('Print.html?TargetId=' + cswDlgPrivate.nodeids.join(',') + '&PrintLabelNodeId=' + labelSel.val(), 'Print ' + labelSel.selectedText(), {
                     width: 500,
                     height: 250,
                     location: 'no',
@@ -1061,11 +1073,11 @@
             cswPublic.div.div({ text: 'Select a label to Print' });
             var labelSelDiv = cswPublic.div.div();
             var labelSel = labelSelDiv.select({
-                name: cswPrivate.name + '_labelsel'
+                name: cswDlgPrivate.name + '_labelsel'
             });
 
             Csw.ajaxWcf.get({
-                urlMethod: cswPrivate.GetPrintLabelsUrl + cswPrivate.nodetypeid,
+                urlMethod: cswDlgPrivate.GetPrintLabelsUrl + cswDlgPrivate.nodetypeid,
                 success: function (data) {
                     if (data.Labels && data.Labels.length > 0) {
                         for (var i = 0; i < data.Labels.length; i += 1) {
@@ -1146,7 +1158,7 @@
         }, // ImpersonateDialog
 
         SearchDialog: function (options) {
-            var cswPrivate = {
+            var cswDlgPrivate = {
                 name: 'searchdialog',
                 propname: '',
                 title: '',
@@ -1157,19 +1169,19 @@
             if (Csw.isNullOrEmpty(options)) {
                 Csw.error.throwException(Csw.error.exception('Cannot create an Search Dialog without options.', '', 'CswDialog.js', 1013));
             }
-            Csw.extend(cswPrivate, options);
+            Csw.extend(cswDlgPrivate, options);
             var cswPublic = {
                 div: Csw.literals.div({ name: 'searchdialog_div' }),
                 close: function () {
                     cswPublic.div.$.dialog('close');
                 },
-                title: Csw.string(cswPrivate.title, 'Search ' + cswPrivate.propname)
+                title: Csw.string(cswDlgPrivate.title, 'Search ' + cswDlgPrivate.propname)
             };
 
             cswPublic.search = Csw.composites.universalSearch(cswPublic.div, {
-                name: cswPrivate.name,
-                nodetypeid: cswPrivate.nodetypeid,
-                objectclassid: cswPrivate.objectclassid,
+                name: cswDlgPrivate.name,
+                nodetypeid: cswDlgPrivate.nodetypeid,
+                objectclassid: cswDlgPrivate.objectclassid,
                 onBeforeSearch: function () { },
                 onAfterSearch: function () { },
                 onAfterNewSearch: function (searchid) { },
@@ -1183,10 +1195,10 @@
                 extraActionIcon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.check),
                 onExtraAction: function (nodeObj) {
                     cswPublic.close();
-                    Csw.tryExec(cswPrivate.onSelectNode, nodeObj);
+                    Csw.tryExec(cswDlgPrivate.onSelectNode, nodeObj);
                 }
             });
-            openDialog(cswPublic.div, 800, 600, null, 'Search ' + cswPrivate.propname);
+            openDialog(cswPublic.div, 800, 600, null, 'Search ' + cswDlgPrivate.propname);
             return cswPublic;
         }, // SearchDialog
 

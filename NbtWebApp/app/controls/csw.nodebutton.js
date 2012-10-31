@@ -137,7 +137,7 @@
                             //landing page handles the button - just execute the onClick event
                             cswPublic.button = cswPrivate.btnCell.a().hide();
                             cswPrivate.onButtonClick();
-                 
+                            break;
                         default:
                             cswPublic.button = cswPrivate.btnCell.a({
                                 value: cswPrivate.value,

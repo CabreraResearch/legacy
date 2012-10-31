@@ -735,6 +735,11 @@
             return cswPublic;
         });
 
+    Csw.isElementInDom = Csw.isElementInDom ||
+        Csw.register('isElementInDom', function(elementId) {
+            return false === Csw.isNullOrEmpty(document.getElementById(elementId));
+        });
+
     Csw.tryParseElement = Csw.tryParseElement ||
         Csw.register('tryParseElement', function (elementId, $context) {
             /// <summary>Attempts to fetch an element from the DOM first through jQuery, then through JavaScript.</summary>

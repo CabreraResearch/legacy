@@ -52,7 +52,7 @@
 
             cswPrivate.makeActionButton = function (cellId, buttonName, iconType, clickFunc, record, rowIndex, colIndex) {
                 // Possible race condition - have to make the button after the cell is added, but it isn't added yet
-                setTimeout(function () {
+                Csw.defer(function () {
                     var cell = Csw.literals.factory($('#' + cellId));
                     var iconopts = {
                         name: cswPrivate.name + cellId + buttonName,
@@ -137,11 +137,14 @@
                         viewready: function () {
                             Csw.tryExec(cswPrivate.onLoad, cswPublic, cswPrivate.ajaxResult);
                         }
-                    }
+                    },
+                    dockedItems: []
                 };
 
                 // Action column
-                if (cswPrivate.showActionColumn && false === cswPrivate.showCheckboxes) {
+                if (cswPrivate.showActionColumn &&
+                    false === cswPrivate.showCheckboxes) {
+
                     var newcol = {
                         header: 'Action',
                         dataIndex: cswPrivate.actionDataIndex,
@@ -152,7 +155,8 @@
                         renderer: function (value, metaData, record, rowIndex, colIndex, store, view) {
                             var cell1Id = cswPrivate.name + 'action' + rowIndex + colIndex + '1';
                             var cell2Id = cswPrivate.name + 'action' + rowIndex + colIndex + '2';
-                            var ret = '<table cellpadding="0"><tr>';
+                            $('#gridActionColumn' + cell1Id).remove();
+                            var ret = '<table id="gridActionColumn' + cell1Id + '" cellpadding="0"><tr>';
                             ret += '<td id="' + cell1Id + '" style="width: 26px;"/>';
                             ret += '<td id="' + cell2Id + '" style="width: 26px;"/>';
                             ret += '</tr></table>';
@@ -165,11 +169,9 @@
                             // only show one of edit/view/lock
                             if (islocked) {
                                 cswPrivate.makeActionButton(cell1Id, 'Locked', Csw.enums.iconType.lock, null, record, rowIndex, colIndex);
-                            }
-                            else if (canedit) {
+                            } else if (canedit) {
                                 cswPrivate.makeActionButton(cell1Id, 'Edit', Csw.enums.iconType.pencil, cswPrivate.onEdit, record, rowIndex, colIndex);
-                            }
-                            else if (canview) {
+                            } else if (canview) {
                                 cswPrivate.makeActionButton(cell1Id, 'View', Csw.enums.iconType.magglass, cswPrivate.onEdit, record, rowIndex, colIndex);
                             }
 
@@ -183,7 +185,11 @@
                     gridopts.columns.splice(0, 0, newcol);
                 } // if(cswPrivate.showActionColumn && false === cswPrivate.showCheckboxes) {
 
-                if (cswPrivate.data.buttons && cswPrivate.data.buttons.length > 0) {
+                //Render buttons in a callback
+                if (false === cswPrivate.showCheckboxes &&
+                    cswPrivate.data.buttons &&
+                    cswPrivate.data.buttons.length > 0) {
+
                     var colNames = Csw.delimitedString('', { spaceToDelimiter: false });
                     Csw.each(cswPrivate.data.buttons, function (val, key) {
                         //Get the column names, delimitedString will handle dupes for us automatically
@@ -196,22 +202,20 @@
                     var i = 0;
                     Csw.each(cols, function (colObj, key) {
                         colObj.renderer = function (value, metaData, record, rowIndex, colIndex, store, view) {
-                            //This is an appropriate use of Ext.id() given the context
-                            //var id = window.Ext.id();
                             i += 1;
                             var id = cswPrivate.ID + 'nodebutton' + i;
                             var thisBtn = cswPrivate.data.buttons.filter(function (btn) {
                                 return btn.index === colObj.dataIndex && btn.rowno === rowIndex;
                             });
                             if (thisBtn.length === 1) {
-                                Csw.defer(function () {
+                                Csw.defer(function() {
                                     var div = Csw.literals.factory($('#' + id));
                                     div.nodeButton({
                                         value: colObj.header,
                                         size: 'small',
                                         propId: thisBtn[0].propattr
                                     });
-                                }, 100);
+                                },100);
                             }
                             return '<div id="' + id + '"></div>';
 
@@ -242,13 +246,13 @@
 
                 // Paging
                 if (Csw.bool(cswPrivate.usePaging)) {
-                    gridopts.dockedItems = [{
+                    gridopts.dockedItems.push({
                         xtype: 'pagingtoolbar',
                         store: cswPrivate.store,
                         dock: 'bottom',
                         displayInfo: true,
                         itemId: 'bottomtoolbar'
-                    }];
+                    });
 
                     var rows = cswPrivate.data.items.length;
                     if (false === Csw.isNumber(cswPrivate.height) || cswPrivate.height <= 0 || Csw.isNullOrEmpty(cswPrivate.height)) {
@@ -261,8 +265,11 @@
                         }
                     }
                 }
-                
-                if (cswPrivate.showCheckboxes && cswPrivate.showActionColumn) {
+
+                // Multi-Edit
+                if (cswPrivate.showCheckboxes &&
+                    cswPrivate.showActionColumn) {
+
                     cswPrivate.editAllButton = window.Ext.create('Ext.button.Button', {
                         id: cswPrivate.ID + 'edit',
                         xtype: 'button',
@@ -291,35 +298,54 @@
                             cswPrivate.onDelete(rows);
                         } // delete handler
                     });
-                    gridopts.dockedItems = [{
+                    gridopts.dockedItems.push({
                         xtype: 'toolbar',
                         dock: 'top',
                         items: [cswPrivate.editAllButton, cswPrivate.deleteAllButton]
-                    }]; // panelopts.dockedItems
+                    }); // panelopts.dockedItems
                 } // if(cswPrivate.showCheckboxes && cswPrivate.showActionColumn)
-                //cswPrivate.panel = window.Ext.create('Ext.panel.Panel', panelopts);
-                var grid = window.Ext.create('Ext.grid.Panel', gridopts);
+
+                var grid;
+                if (Csw.isElementInDom(cswParent.getId())) {
+                    grid = window.Ext.create('Ext.grid.Panel', gridopts);
+                } else {
+                    grid = window.Ext.create('Ext.grid.Panel');
+                }
                 return grid;
             }); // makeGrid()
 
             cswPublic.reload = function () {
                 cswPrivate.getData(function (result) {
                     if (result && result.grid && result.grid.data && result.grid.data.items) {
-                        //cswPrivate.store.removeAll(false);
-                        cswPrivate.data.items = result.grid.data.items;
-                        cswPrivate.store.loadRawData(result.grid.data.items);
-                        cswPrivate.store.sync();
+                        cswPrivate.data = result.grid.data;
+                        cswPrivate.store.destroy();
+                        cswPrivate.store = cswPrivate.makeStore(cswPrivate.name + 'store', cswPrivate.usePaging);
+                        cswPrivate.grid.reconfigure(cswPrivate.store);
                     } else {
                         Csw.debug.error('Failed to reload grid');
                     }
                 });
             };
 
-            cswPrivate.init = Csw.method(function () {
+            cswPrivate.removeAll = function () {
+                if (cswPrivate.store) {
+                    cswPrivate.store.removeAll();
+                    cswPrivate.store.destroy();
+                }
+                if (cswPrivate.grid) {
+                    cswPrivate.grid.removeAll();
+                    cswPrivate.grid.destroy();
+                }
                 cswParent.empty();
+            };
+
+            cswPrivate.init = Csw.method(function () {
+                cswPrivate.removeAll();
+
+                cswPrivate.rootDiv = cswParent.div();
 
                 cswPrivate.store = cswPrivate.makeStore(cswPrivate.name + 'store', cswPrivate.usePaging);
-                cswPrivate.grid = cswPrivate.makeGrid(cswParent.getId(), cswPrivate.store);
+                cswPrivate.grid = cswPrivate.makeGrid(cswPrivate.rootDiv.getId(), cswPrivate.store);
 
                 cswPrivate.grid.on({
                     select: function (rowModel, record, index, eOpts) {
@@ -337,7 +363,7 @@
                 });
 
                 if (Csw.bool(cswPrivate.truncated)) {
-                    cswParent.span({ cssclass: 'truncated', text: 'Results Truncated' });
+                    cswPrivate.rootDiv.span({ cssclass: 'truncated', text: 'Results Truncated' });
                 }
 
             }); // init()
@@ -416,7 +442,7 @@
             });
 
             cswPrivate.getData = function (onSuccess) {
-                Csw.ajax.post({
+                cswPublic.ajax = Csw.ajax.post({
                     url: cswPrivate.ajax.url,
                     urlMethod: cswPrivate.ajax.urlMethod,
                     data: cswPrivate.ajax.data,
@@ -428,12 +454,8 @@
                 }); // ajax.post()
             };
 
-            //constructor
-            (function () {
-                Csw.extend(cswPrivate, options);
-                cswPrivate.ID = cswPrivate.ID || cswParent.getId();
-                cswPrivate.ID += cswPrivate.suffix;
-                if (Csw.isNullOrEmpty(cswPrivate.data)) {
+            cswPrivate.reInit = function (forceRefresh) {
+                if (Csw.isNullOrEmpty(cswPrivate.data) || Csw.bool(forceRefresh)) {
                     cswPrivate.getData(function (result) {
                         if (false === Csw.isNullOrEmpty(result.grid)) {
                             cswPrivate.pageSize = Csw.number(result.grid.pageSize);
@@ -454,6 +476,14 @@
                 } else {
                     cswPrivate.init();
                 }
+            };
+
+            //constructor
+            (function () {
+                Csw.extend(cswPrivate, options);
+                cswPrivate.ID = cswPrivate.ID || cswParent.getId();
+                cswPrivate.ID += cswPrivate.suffix;
+                cswPrivate.reInit();
             }());
 
             return cswPublic;
