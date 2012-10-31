@@ -113,6 +113,7 @@
                                 selectedNodeKeys: nodekeys,
                                 nodenames: nodenames,
                                 Multi: (nodeids.length > 1),
+                                title: 'Request',
                                 onEditNode: function () {
                                     cswPrivate.initGrid(); //Case 27619--don't pass the function by reference, because we want to control the parameters with which it is called
                                 }

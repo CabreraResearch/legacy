@@ -33,15 +33,15 @@
             };
             var cswPublic = {};
 
-            cswPrivate.getSelectedNodes = function(menuItemJson) {
-                var ret = { };
+            cswPrivate.getSelectedNodes = function (menuItemJson) {
+                var ret = {};
                 var nodechecks = null;
-                
+
                 if (false == Csw.isNullOrEmpty(cswPrivate.nodeTreeCheck)) {
                     nodechecks = Csw.tryExec(cswPrivate.nodeTreeCheck.checkedNodes);
                 }
                 if (false === Csw.isNullOrEmpty(nodechecks, true)) {
-                    Csw.each(nodechecks, function(thisObj) {
+                    Csw.each(nodechecks, function (thisObj) {
                         ret[thisObj.nodeid] = {
                             nodeid: thisObj.nodeid,
                             nodekey: thisObj.nodekey,
@@ -49,7 +49,7 @@
                         };
                     });
                 }
-                if(Csw.isNullOrEmpty(ret)) {
+                if (Csw.isNullOrEmpty(ret)) {
                     ret[menuItemJson.nodeid] = {
                         nodeid: menuItemJson.nodeid,
                         nodename: menuItemJson.nodename,
@@ -58,7 +58,7 @@
                 }
                 return ret;
             };
-            
+
             cswPrivate.handleMenuItemClick = function (menuItemName, menuItemJson) {
                 if (false === Csw.isNullOrEmpty(menuItemJson)) {
 
@@ -260,26 +260,29 @@
                             }
                             items.push(thisItem);
                         }); // each
-                        
+
                         cswParent.empty();
 
-                        //if (false === Csw.isNullOrEmpty($('#' + cswParent.getId()), true)) {
-                        try {
-                            window.Ext.create('Ext.toolbar.Toolbar', {
-                                id: cswPrivate.ID + 'toolbar',
-                                renderTo: cswParent.getId(),
-                                width: cswPrivate.width,
-                                items: items,
-                                cls: 'menutoolbar'
-                            }); // toolbar
-                        } catch(e) {
-                            Csw.debug.error('Failed to create Ext.toolbar.Toolbar in csw.menu');
-                            Csw.debug.error(e);
+                        if (Csw.isElementInDom(cswParent.getId())) {
+                            try {
+                                cswPublic.menu = window.Ext.create('Ext.toolbar.Toolbar', {
+                                    id: cswPrivate.ID + 'toolbar',
+                                    renderTo: cswParent.getId(),
+                                    width: cswPrivate.width,
+                                    items: items,
+                                    cls: 'menutoolbar'
+                                }); // toolbar
+                            } catch (e) {
+                                Csw.debug.error('Failed to create Ext.toolbar.Toolbar in csw.menu');
+                                Csw.debug.error(e);
+                            }
+                        } else {
+                            cswPublic.menu = window.Ext.create('Ext.toolbar.Toolbar');
                         }
-                        //} 
+                        //}                                                            
                     }       //success
                 }); // ajax
-            } ()); // constructor
+            }()); // constructor
 
             return cswPublic;
         });
@@ -292,4 +295,4 @@
             Csw.window.location(Csw.getGlobalProp('homeUrl'));
         });
 
-} ());
+}());
