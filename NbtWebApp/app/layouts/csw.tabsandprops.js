@@ -97,6 +97,7 @@
             (function _preCtor() {
                 Csw.extend(cswPrivate, options, true);
                 cswPrivate.init = function () {
+                    Csw.unsubscribe('CswMultiEdit', cswPrivate.onMultiEdit);
                     Csw.subscribe('CswMultiEdit', cswPrivate.onMultiEdit);
                     //We don't have node name yet. Init the div in the right place and polyfill later.
                     cswPrivate.titleDiv = cswParent.div({ cssclass: 'CswIdentityTabHeader' }).hide();
@@ -379,7 +380,7 @@
                 /// <summary>
                 /// True if Multi Edit is enabled
                 /// </summary>
-                return cswPrivate.Multi;
+                return cswPrivate.tabState.EditMode === Csw.enums.editMode.Edit && cswPrivate.Multi;
             };
 
             cswPrivate.setNode = function (data) {
