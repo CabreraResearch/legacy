@@ -84,7 +84,7 @@
                         onChange();
                     }
                     cswPrivate.selectDiv.propNonDom('value', itemid);
-                    setTimeout(function () { cswPublic.comboBox.close(); }, 100);
+                    Csw.defer(function () { cswPublic.comboBox.close(); }, 100);
                 };
 
                 //#endregion cswPrivate/cswPublic methods and props

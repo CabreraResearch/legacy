@@ -442,7 +442,7 @@
             });
 
             cswPrivate.getData = function (onSuccess) {
-                Csw.ajax.post({
+                cswPublic.ajax = Csw.ajax.post({
                     url: cswPrivate.ajax.url,
                     urlMethod: cswPrivate.ajax.urlMethod,
                     data: cswPrivate.ajax.data,

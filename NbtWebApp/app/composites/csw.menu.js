@@ -217,7 +217,7 @@
             (function () {
                 Csw.extend(cswPrivate, options);
 
-                Csw.ajax.post({
+                cswPublic.ajax = Csw.ajax.post({
                     urlMethod: cswPrivate.ajax.urlMethod,
                     data: cswPrivate.ajax.data,
                     success: function (result) {
