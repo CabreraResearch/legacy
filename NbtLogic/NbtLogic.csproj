@@ -100,6 +100,7 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase_01T_LocationLabel_Case28108.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01T_Case27551.cs" />
     <Compile Include="csw\Schema\CswNbtSchema.Designer.cs">
       <AutoGen>True</AutoGen>
