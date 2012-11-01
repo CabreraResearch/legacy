@@ -279,14 +279,14 @@
                                 my: "left top",
                                 at: "left top",
                                 of: thisDropCell.$,
-                                offset: cswPrivate.cellpadding
+                                offset: Csw.string(cswPrivate.cellpadding)
                             });
 
                             $dropCellDiv.position({
                                 my: "left top",
                                 at: "left top",
                                 of: thisDragCell.$,
-                                offset: cswPrivate.cellpadding
+                                offset: Csw.string(cswPrivate.cellpadding)
                             });
                         }
                     }
