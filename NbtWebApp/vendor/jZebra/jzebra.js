@@ -1,26 +1,26 @@
-(function() {
+(function () {
 
     var jZebra = {
-        
+
     };
 
     var sleepCounter = 0;
 
- //#region monitor methods
+    //#region monitor methods
 
     jZebra.monitorFinding = function () {
         //jZebra.monitorApplet('isDoneFinding()', 'alert("Found printer [" + document.jzebra.getPrinter() + "]")', 'monitor finding job');
-    var applet = document.jzebra;
-    if (applet != null) {
-     if (!applet.isDoneFinding()) {
+        var applet = document.jzebra;
+        if (applet != null) {
+            if (!applet.isDoneFinding()) {
                 window.setTimeout(jZebra.monitorFinding, 100);
-     } else {
+            } else {
                 var printer = applet.getPrinter();
                 window.alert(printer == null ? "Printer not found" : "Printer \"" + printer + "\" found");
-     }
-    } else {
+            }
+        } else {
             window.alert("Applet not loaded!");
-      }
+        }
     };
 
     jZebra.monitorFinding2 = function (defaultPrinter) {
@@ -33,15 +33,21 @@
             } else {
                 var listing = applet.getPrinters();
                 var printers = listing.split(',');
-                for (var i in printers) {
-                    if (defaultPrinter == printers[i]) {
-                        document.getElementById("printersList").options[i] = new Option(printers[i], printers[i], true);
-                    } else {
-                        document.getElementById("printersList").options[i] = new Option(printers[i], printers[i]);
+                var pickList = document.getElementsByClassName("CswZebraPrintersList");
+                var id = '';
+                if (pickList && pickList[0]) {
+                    id = pickList[0].id;
+                    for (var i in printers) {
+                        if (defaultPrinter == printers[i]) {
+                            pickList[0].options[i] = new Option(printers[i], printers[i], true);
+                        }
+                        else {
+                            pickList[0].options[i] = new Option(printers[i], printers[i]);
+                        }
+                        //alert(printers[i]);
                     }
-                    //alert(printers[i]);
                 }
-                $('#printersList').val(defaultPrinter);
+                //$('#' + id).val(defaultPrinter);
             }
         } else {
             window.alert("Applet not loaded!");
@@ -73,10 +79,10 @@
      * Example:
      *    monitorApplet('isDoneFinding()', 'alert(\\"Success\\")', '');
      */
-                  
+
     jZebra.monitorApplet = function (appletFunction, finishedFunction, description) {
         var NOT_LOADED = "jZebra hasn't loaded yet.";
-        var INVALID_FUNCTION = 'jZebra does not recognize function: "' + appletFunction +'"';
+        var INVALID_FUNCTION = 'jZebra does not recognize function: "' + appletFunction + '"';
         var INVALID_PRINTER = "jZebra could not find the specified printer";
         if (document.jzebra != null) {
             var finished = false;
@@ -183,7 +189,7 @@
 
     //#region find
 
-    jZebra.findPrinter = function() {
+    jZebra.findPrinter = function () {
         var applet = document.jzebra;
         if (applet != null) {
             // Searches for locally installed printer with "zebra" in the name
@@ -269,10 +275,10 @@
         jZebra.monitorPrinting();
     };
 
-    jZebra.printPage = function() {
+    jZebra.printPage = function () {
         $("#content").html2canvas({
             canvas: hidden_screenshot,
-            onrendered: function() { printBase64Image($("canvas")[0].toDataURL('image/png')); }
+            onrendered: function () { printBase64Image($("canvas")[0].toDataURL('image/png')); }
         });
     };
 
@@ -456,7 +462,7 @@
 
     //#region helper
 
-    jZebra.useDefaultPrinter = function() {
+    jZebra.useDefaultPrinter = function () {
         var applet = document.jzebra;
         if (applet != null) {
             // Searches for default printer
@@ -465,8 +471,8 @@
         jZebra.monitorFinding();
     };
     window.useDefaultPrinter = window.useDefaultPrinter || jZebra.useDefaultPrinter;
-    
-    jZebra.jzebraReady = function() {
+
+    jZebra.jzebraReady = function () {
         // Change title to reflect version
         var applet = document.jzebra;
         var footer = document.getElementById("footer");
@@ -476,8 +482,8 @@
         }
     };
     window.jzebraReady = window.jzebraReady || jZebra.jzebraReady;
-    
-    jZebra.logFeatures = function() {
+
+    jZebra.logFeatures = function () {
         if (document.jzebra != null) {
             var applet = document.jzebra;
             var logging = applet.getLogPostScriptFeatures();
@@ -486,7 +492,7 @@
         }
     };
     window.logFeatures = window.logFeatures || jZebra.logFeatures;
-    
+
     jZebra.chr = function (i) {
         return String.fromCharCode(i);
     };
@@ -501,7 +507,7 @@
             link.innerHTML.replace("-", "+").replace("hide", "show") :
             link.innerHTML.replace("+", "-").replace("show", "hide");
     };
-   
+
 
     jZebra.displayLogo = function () {
         if (navigator.appName == "Microsoft Internet Explorer") { // IE Fix
