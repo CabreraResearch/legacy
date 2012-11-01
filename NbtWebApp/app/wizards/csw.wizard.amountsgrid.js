@@ -96,7 +96,7 @@
                         cswPrivate.quantity = {
                             qtyReadonly: true,
                             unitReadonly: true
-                        }
+                        };
                     }
                     return ret;
                 };
@@ -121,7 +121,7 @@
                             }
                         });
                         return totalContainerQuantity;
-                    }
+                    };
 
                     var updateTotalContainerCount = function () {
                         cswPublic.containerCount = getTotalContainerQuantity();

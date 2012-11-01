@@ -52,11 +52,6 @@ namespace ChemSW.Nbt.LandingPage
                     TabView = _CswNbtResources.ViewSelect.getSessionView(TabViewId);
                 }
             }
-            else
-            {
-                TabView = NodeType.CreateDefaultView();
-                TabView.SaveToCache( false );
-            }
             return TabView;
         }
 

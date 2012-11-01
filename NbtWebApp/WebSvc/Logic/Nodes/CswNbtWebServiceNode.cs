@@ -269,6 +269,7 @@ namespace ChemSW.Nbt.WebServices
             {
                 CswNbtNodePropQuantity InitialQuantity = Size.InitialQuantity;
                 InitialQuantity.ToJSON( Ret );
+                Ret["unitName"] = Ret["name"];
                 Ret["qtyReadonly"] = "false";
                 Ret["unitReadonly"] = "false";
                 Ret["unitCount"] = "1";

@@ -72,11 +72,6 @@
                         border: cswPrivate.border,
                         cellalign: cswPrivate.cellalign
                     });
-                    cswPublic.data({
-                        cellcssclass: cswPrivate.CellCssClass,
-                        FirstCellRightAlign: cswPrivate.FirstCellRightAlign,
-                        OddCellRightAlign: cswPrivate.OddCellRightAlign
-                    });
                     cswPublic.css({
                         'text-align': cswPrivate.align,
                         'vertical-align': cswPrivate.cellvalign
@@ -127,9 +122,9 @@
                             html = '';
                             thisCol += 1;
                             id = cswPrivate.ID + 'row' + row + 'col' + thisCol;
-                            align = cswPublic.data('cellalign');
-                            if ((thisRow.children('td').length() === 0 && Csw.bool(cswPublic.data('FirstCellRightAlign'))) ||
-                                (thisRow.children('td').length() % 2 === 0 && Csw.bool(cswPublic.data('OddCellRightAlign')))) {
+                            align = cswPrivate.cellalign;
+                            if ((thisRow.children('td').length() === 0 && Csw.bool(cswPrivate.FirstCellRightAlign)) ||
+                                (thisRow.children('td').length() % 2 === 0 && Csw.bool(cswPrivate.OddCellRightAlign))) {
                                 align = 'right';
                             }
                             html += '<td ';
@@ -138,7 +133,7 @@
                             }
                             attr.add('data-realrow', row);
                             attr.add('data-realcol', thisCol);
-                            attr.add('class', cswPrivate.cellcssclass);
+                            attr.add('class', cswPrivate.CellCssClass);
                             attr.add('align', align);
                             style.add('vertical-align', cswPrivate.cellvalign);
                             html += attr.get();

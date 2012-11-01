@@ -77,7 +77,7 @@
                         }
 
                         cswPrivate.foundSelected = false;
-                        Csw.crawlObject(cswPrivate.options, function (relatedObj) {
+                        Csw.eachRecursive(cswPrivate.options, function (relatedObj) {
                             if (relatedObj.id === cswPrivate.selectedNodeId) {
                                 cswPrivate.foundSelected = true;
                                 cswPrivate.fractional = Csw.bool(relatedObj.fractional);
@@ -92,7 +92,7 @@
                             cssclass: 'selectinput',
                             onChange: function () {
                                 var val = cswPrivate.selectBox.val();
-                                Csw.crawlObject(cswPrivate.options, function (relatedObj) {
+                                Csw.eachRecursive(cswPrivate.options, function (relatedObj) {
                                     if (relatedObj.id === val) {
                                         cswPrivate.fractional = Csw.bool(relatedObj.fractional);
                                     }

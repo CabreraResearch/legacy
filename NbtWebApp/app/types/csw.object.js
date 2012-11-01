@@ -222,8 +222,8 @@
             return ret;
         });
 
-    Csw.crawlObject = Csw.crawlObject ||
-        Csw.register('crawlObject', function (thisObj, onSuccess, doRecursion) {
+    Csw.eachRecursive = Csw.eachRecursive ||
+        Csw.register('eachRecursive', function (thisObj, onSuccess, doRecursion) {
             /// <summary>Iterates (optionally recursively) an object and executes a function on each of its properties.</summary>
             /// <param name="thisObj" type="Object"> An object to crawl </param>
             /// <param name="onSuccess" type="Function"> A function to execute on finding a property. To force iteration to stop, onSuccess should return false. </param>
@@ -237,7 +237,7 @@
                     stopCrawling = Csw.bool(onSuccess(childObj, childKey, parentObj, value));
                 }
                 if (false === stopCrawling && doRecursion) {
-                    stopCrawling = Csw.bool(Csw.crawlObject(childObj, onSuccess, doRecursion));
+                    stopCrawling = Csw.bool(Csw.eachRecursive(childObj, onSuccess, doRecursion));
                 }
                 return stopCrawling;
             };
@@ -282,7 +282,7 @@
                         }
                         return found;
                     };
-                    Csw.crawlObject(thisObj, onSuccess, true);
+                    Csw.eachRecursive(thisObj, onSuccess, true);
                 }
                 return ret;
             }
@@ -300,7 +300,7 @@
                     }
                     return deleted;
                 };
-                return Csw.crawlObject(thisObj, onSuccess, true);
+                return Csw.eachRecursive(thisObj, onSuccess, true);
             }
 
             return {

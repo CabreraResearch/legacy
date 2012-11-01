@@ -218,7 +218,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                 FilterPropIdAttr = new CswPropIdAttr( filterToPropId );
             }
 
-            if( false == _IsMultiEdit && TabId.StartsWith( HistoryTabPrefix ) )
+            if( TabId.StartsWith( HistoryTabPrefix ) )
             {
                 CswNbtNode Node = _CswNbtResources.getNode( NodeId, NodeKey, Date );
                 if( _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.View, Node.getNodeType() ) )
@@ -260,25 +260,35 @@ namespace ChemSW.Nbt.ServiceDrivers
                 }
                 CswNbtMetaDataNodeType NodeType = Node.getNodeType();
 
-                IEnumerable<CswNbtMetaDataNodeTypeProp> Props = _CswNbtResources.MetaData.NodeTypeLayout.getPropsInLayout( Node.NodeTypeId, CswConvert.ToInt32( TabId ), LayoutType );
-
-                if( _CswNbtResources.EditMode != NodeEditMode.Add ||
-                    _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Create, NodeType ) )
+                if( TabId.StartsWith( HistoryTabPrefix ) )
                 {
-                    var CswNbtNodePropColl = Node.Properties;
-                    IEnumerable<CswNbtMetaDataNodeTypeProp> FilteredProps = ( from _Prop in Props
-                                                                              where CswNbtNodePropColl != null
-                                                                              let Pw = CswNbtNodePropColl[_Prop]
-                                                                              where _ConfigMode ||
-                                                                                    _showProp( LayoutType, _Prop, FilterPropIdAttr, CswConvert.ToInt32( TabId ), Node )
-                                                                              select _Prop );
-
-                    foreach( CswNbtMetaDataNodeTypeProp Prop in FilteredProps )
+                    if( _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.View, Node.getNodeType() ) )
                     {
-                        _addProp( Ret, Node, Prop, CswConvert.ToInt32( TabId ) );
+                        _getAuditHistoryGridProp( Ret, Node );
                     }
                 }
-            } // if(Node != null)
+                else
+                {
+                    IEnumerable<CswNbtMetaDataNodeTypeProp> Props = _CswNbtResources.MetaData.NodeTypeLayout.getPropsInLayout( Node.NodeTypeId, CswConvert.ToInt32( TabId ), LayoutType );
+
+                    if( _CswNbtResources.EditMode != NodeEditMode.Add ||
+                        _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Create, NodeType ) )
+                    {
+                        var CswNbtNodePropColl = Node.Properties;
+                        IEnumerable<CswNbtMetaDataNodeTypeProp> FilteredProps = ( from _Prop in Props
+                                                                                  where CswNbtNodePropColl != null
+                                                                                  let Pw = CswNbtNodePropColl[_Prop]
+                                                                                  where _ConfigMode ||
+                                                                                        _showProp( LayoutType, _Prop, FilterPropIdAttr, CswConvert.ToInt32( TabId ), Node )
+                                                                                  select _Prop );
+
+                        foreach( CswNbtMetaDataNodeTypeProp Prop in FilteredProps )
+                        {
+                            _addProp( Ret, Node, Prop, CswConvert.ToInt32( TabId ) );
+                        }
+                    }
+                } // if(Node != null)
+            }
             return Ret;
         }
 

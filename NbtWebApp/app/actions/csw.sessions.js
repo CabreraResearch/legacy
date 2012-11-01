@@ -40,7 +40,7 @@
                     data: {},
                     success: function (result) {
 
-                        Csw.crawlObject(result, function (childObj) {
+                        Csw.eachRecursive(result, function (childObj) {
                             var cell2name = childObj.username;
                             var cell1 = table.cell(row, 1);
                             cell1.icon({
@@ -64,7 +64,7 @@
                             table.cell(row, 6).text(childObj.ismobile);
                             table.cell(row, 7).text(childObj.sessionid);
                             row += 1;
-                        }, false); // Csw.crawlObject()
+                        }, false); // Csw.eachRecursive()
 
                     } // success
                 }); // ajax()
