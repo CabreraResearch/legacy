@@ -78,11 +78,11 @@ namespace ChemSW.Nbt.Schema
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01T_Case27880() ) );                         //01S-045    01T-11
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01T_Case27740() ) );                         //01S-046    01T-12
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01T_Case27801() ) );                         //01S-047    01T-13
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_0T1_Case27884() ) );                         //01S-048    01T-14
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01T_Case27884() ) );                         //01S-048    01T-14
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01T_Case27920() ) );                         //01S-049    01T-15
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01T_Case27551() ) );                         //01S-050    01T-16
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01T_Case27881() ) );                         //01S-051    01T-17
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01S_Case27528() ) );                         //01S-052    01T-18
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01T_Case27528() ) );                         //01S-052    01T-18
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase_01T_LocationLabel_Case28108() ) );       //01S-053    01T-19
 
             #endregion TITANIA

@@ -119,7 +119,7 @@
     <Compile Include="csw\LandingPage\CswNbtLandingPageItemText.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01T_Case27881.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_0T1_Case27884.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01T_Case27884.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01S_Case27709.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01S_Case28016_2.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01S_Case28016.cs" />
@@ -385,7 +385,7 @@
     <Compile Include="csw\Schema\scripts\infr\RunBeforeEveryExecutionOfUpdater_03.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCaseXXXXX.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01S_Case26760.cs" />
-    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01S_Case27528.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01T_Case27528.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01S_Case27551_part2.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01S_Case27578.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01S_Case27578_part2.cs" />
