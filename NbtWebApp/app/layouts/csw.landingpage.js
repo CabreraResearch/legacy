@@ -153,7 +153,7 @@
                                     name: thisItem.LandingPageId,
                                     type: Csw.enums.inputTypes.hidden
                                 });
-                                landingPageHidden.propNonDom('landingpageid', thisItem.LandingPageId);
+                                landingPageHidden.data('landingpageid', thisItem.LandingPageId);
                             }
                         });
                     } // success{}
@@ -223,13 +223,13 @@
             cswPrivate.onSwap = function (onSwapData) {
                 var landingpageidOrig = cswPrivate.moveItem(onSwapData.cellSet, onSwapData.swaprow, onSwapData.swapcolumn);
                 var landingpageidSwap = cswPrivate.moveItem(onSwapData.swapcellset, onSwapData.row, onSwapData.column);
-                onSwapData.cellSet[2][1].propNonDom('landingpageid', landingpageidSwap);
-                onSwapData.swapcellset[2][1].propNonDom('landingpageid', landingpageidOrig);
+                onSwapData.cellSet[2][1].data('landingpageid', landingpageidSwap);
+                onSwapData.swapcellset[2][1].data('landingpageid', landingpageidOrig);
             };
 
             cswPrivate.moveItem = function (cellSet, newrow, newcolumn) {
                 var textCell = cellSet[2][1];
-                var landingpageid = textCell.propNonDom('landingpageid');
+                var landingpageid = textCell.data('landingpageid');
                 if (textCell.length() > 0) {
                     if (false === Csw.isNullOrEmpty(landingpageid)) {
                         var dataJson = {
@@ -251,7 +251,7 @@
                     landingpageid,
                     dataJson;
                 if (textCell.length() > 0) {
-                    landingpageid = textCell.propNonDom('landingpageid');
+                    landingpageid = textCell.data('landingpageid');
                     if (landingpageid) {
                         dataJson = {
                             LandingPageId: landingpageid
