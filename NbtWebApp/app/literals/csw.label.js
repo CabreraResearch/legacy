@@ -58,9 +58,6 @@
                 html += '>';
 
                 var labelText = cswPrivate.text;
-                if (Csw.bool(cswPrivate.isRequired)) {
-                    labelText = Csw.makeRequiredName(labelText);
-                }
 
                 html += Csw.string(labelText, labelText);
 
@@ -68,7 +65,7 @@
                 $label = $(html);
 
                 Csw.literals.factory($label, cswPublic);
-                cswPublic.required(cswPrivate.isRequired);
+                cswPublic.required(cswPrivate.isRequired, true);
 
                 if (Csw.isJQuery(cswPrivate.$parent)) {
                     cswPrivate.$parent.append(cswPublic.$);
