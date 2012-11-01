@@ -49,11 +49,13 @@
             };
             var cswPublic = {};
 
+            window.Ext.require('Ext.ux.grid.FiltersFeature');
 
             cswPrivate.makeActionButton = function (cellId, buttonName, iconType, clickFunc, record, rowIndex, colIndex) {
                 // Possible race condition - have to make the button after the cell is added, but it isn't added yet
                 Csw.defer(function () {
                     var cell = Csw.literals.factory($('#' + cellId));
+                    cell.empty();
                     var iconopts = {
                         name: cswPrivate.name + cellId + buttonName,
                         hovertext: buttonName,
@@ -105,6 +107,10 @@
             cswPrivate.makeGrid = Csw.method(function (renderTo, store) {
                 var columns = Csw.extend([], cswPrivate.columns);
 
+                Csw.each(columns, function (val) {
+                    val.filterable = true;
+                });                
+
                 var gridopts = {
                     id: cswPrivate.ID + 'grid',
                     itemId: cswPrivate.name,
@@ -138,7 +144,13 @@
                             Csw.tryExec(cswPrivate.onLoad, cswPublic, cswPrivate.ajaxResult);
                         }
                     },
-                    dockedItems: []
+                    dockedItems: [],
+                    features: [{
+                        ftype: 'filters',
+                        autoReload: false,
+                        encode: false,
+                        local: true
+                    }]
                 };
 
                 // Action column
@@ -152,15 +164,15 @@
                         flex: false,
                         resizable: false,
                         xtype: 'actioncolumn',
-                        renderer: function (value, metaData, record, rowIndex, colIndex, store, view) {
+                        renderer: function (value, metaData, record, rowIndex, colIndex, store, view) {                            
                             var cell1Id = cswPrivate.name + 'action' + rowIndex + colIndex + '1';
                             var cell2Id = cswPrivate.name + 'action' + rowIndex + colIndex + '2';
-                            $('#gridActionColumn' + cell1Id).remove();
+                            //$('#gridActionColumn' + cell1Id).remove();
                             var ret = '<table id="gridActionColumn' + cell1Id + '" cellpadding="0"><tr>';
                             ret += '<td id="' + cell1Id + '" style="width: 26px;"/>';
                             ret += '<td id="' + cell2Id + '" style="width: 26px;"/>';
-                            ret += '</tr></table>';
-
+                            ret += '</tr></table>';                           
+                            
                             var canedit = Csw.bool(cswPrivate.showEdit) && Csw.bool(record.data.canedit, true);
                             var canview = Csw.bool(cswPrivate.showView) && Csw.bool(record.data.canview, true);
                             var candelete = Csw.bool(cswPrivate.showDelete) && Csw.bool(record.data.candelete, true);

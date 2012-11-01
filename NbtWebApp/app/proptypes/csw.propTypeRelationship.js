@@ -109,7 +109,7 @@
                             // Select value in a selectbox
                             cswPrivate.foundSelected = false;
                             
-                            Csw.crawlObject(cswPrivate.options, function (relatedObj) {
+                            Csw.eachRecursive(cswPrivate.options, function (relatedObj) {
                                 if (false === cswPublic.data.isMulti() && relatedObj.id === cswPrivate.selectedNodeId) {
                                     cswPrivate.foundSelected = true;
                                 }

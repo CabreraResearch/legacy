@@ -397,12 +397,12 @@
         function gridHasOneProp() {
             var ret = false;
             if (Csw.contains(currentViewJson, 'childrelationships')) {
-                Csw.crawlObject(currentViewJson.childrelationships, function (childObj) {
+                Csw.eachRecursive(currentViewJson.childrelationships, function (childObj) {
                     if (ret) {
                         return false;
                     }
                     else if (Csw.contains(childObj, 'properties')) {
-                        Csw.crawlObject(childObj.properties, function (propObj) {
+                        Csw.eachRecursive(childObj.properties, function (propObj) {
                             if (false === Csw.isNullOrUndefined(propObj)) {
                                 ret = true;
                                 return false;

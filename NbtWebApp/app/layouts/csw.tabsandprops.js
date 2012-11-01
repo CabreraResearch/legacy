@@ -79,6 +79,7 @@
                 if (multiOpts &&
                     multiOpts.viewid === cswPublic.getViewId()) {
                     isMulti = cswPrivate.toggleMulti();
+                    cswPrivate.toggleConfigIcon(false === isMulti);
                     if (multiOpts.nodeid === cswPublic.getNodeId()) {
                         Csw.each(cswPrivate.globalState.checkBoxes, function (chk) {
                             if (isMulti) {
@@ -87,16 +88,17 @@
                                 chk.hide();
                             }
                         });
-
+                        cswPrivate.onRenderProps();
                         cswPrivate.refreshLinkDiv();
                     }
                 }
                 return isMulti;
             };
-            
+
             (function _preCtor() {
                 Csw.extend(cswPrivate, options, true);
                 cswPrivate.init = function () {
+                    Csw.unsubscribe('CswMultiEdit', cswPrivate.onMultiEdit);
                     Csw.subscribe('CswMultiEdit', cswPrivate.onMultiEdit);
                     //We don't have node name yet. Init the div in the right place and polyfill later.
                     cswPrivate.titleDiv = cswParent.div({ cssclass: 'CswIdentityTabHeader' }).hide();
@@ -114,7 +116,7 @@
             }());
 
             //#region Events
-            
+
             cswPrivate.onRenderProps = function () {
                 Csw.publish('render_' + cswPublic.getNodeId());
             };
@@ -126,7 +128,7 @@
             cswPrivate.onTearDown = function () {
                 cswPrivate.onTearDownProps();
                 cswPrivate.clearTabs();
-                cswPrivate.globalState.checkBoxes = { };
+                cswPrivate.globalState.checkBoxes = {};
                 Csw.each(cswPrivate.ajax, function (call, name) {
                     call.ajax.abort();
                     delete cswPrivate.ajax[name];
@@ -289,13 +291,13 @@
                                     tabUl = tabUl || tabDiv.ul();
                                     tabUl.li().a({ href: '#' + thisTabId, text: thisTab.name }).data('tabid', thisTabId);
                                     cswPrivate.makeTabContentDiv(tabDiv, thisTabId, thisTab.canEditLayout);
-                                    if (Csw.number(thisTabId) === Csw.number(cswPrivate.tabState.tabid)) {
+                                    if (Csw.string(thisTabId) === Csw.string(cswPrivate.tabState.tabid)) {
                                         cswPrivate.tabState.tabNo = tabno;
                                     }
                                     tabno += 1;
                                     return false;
                                 };
-                                Csw.crawlObject(data, tabFunc, false);
+                                Csw.eachRecursive(data, tabFunc, false);
 
                                 cswPrivate.tabcnt = tabno;
 
@@ -370,8 +372,19 @@
 
             //#region Helper Methods
 
+            cswPrivate.toggleConfigIcon = function (enabled) {
+                if (cswPrivate.globalState.configIcn) {
+                    if (enabled) {
+                        cswPrivate.globalState.configIcn.show();
+                    } else {
+                        cswPrivate.globalState.configIcn.hide();
+                    }
+                }
+            };
+
             cswPrivate.toggleMulti = function () {
                 cswPrivate.Multi = !cswPrivate.Multi;
+                cswPrivate.tabState.Multi = cswPrivate.Multi;
                 return cswPrivate.Multi;
             };
 
@@ -379,7 +392,7 @@
                 /// <summary>
                 /// True if Multi Edit is enabled
                 /// </summary>
-                return cswPrivate.Multi;
+                return (cswPrivate.tabState.EditMode === Csw.enums.editMode.Edit || cswPrivate.tabState.EditMode === Csw.enums.editMode.EditInPopup) && cswPrivate.Multi;
             };
 
             cswPrivate.setNode = function (data) {
@@ -498,7 +511,14 @@
             cswPrivate.moveProp = function (propDiv, tabid, newrow, newcolumn, propId) {
                 'use strict';
                 var propid = Csw.string(propDiv.data('propid'), propId);
-                if (propDiv.length() > 0) {
+                if (Csw.isNullOrEmpty(propid) && propDiv.length() > 0) {
+                    if (false === Csw.isNullOrEmpty(propDiv.children())) {
+                        propid = propDiv.children().data('propid');
+                    }
+                }
+                if (Csw.isNullOrEmpty(propid)) {
+                    Csw.debug.error('No property selected for move.');
+                } else {
                     var dataJson = {
                         PropId: propid,
                         TabId: tabid,
@@ -663,7 +683,7 @@
                             }
                             return false;
                         };
-                        Csw.crawlObject(cswPrivate.globalState.propertyData, updOnSuccess, false);
+                        Csw.eachRecursive(cswPrivate.globalState.propertyData, updOnSuccess, false);
                     }
 
                     if (cswPrivate.tabState.EditMode !== Csw.enums.editMode.Preview &&
@@ -710,7 +730,7 @@
                         };
 
                         /* Show the 'fake' config button to open the dialog */
-                        formTable.cell(1, 2).icon({
+                        cswPrivate.globalState.configIcn = formTable.cell(1, 2).icon({
                             name: cswPrivate.name + 'configbtn',
                             iconType: Csw.enums.iconType.wrench,
                             hovertext: 'Configure',
@@ -721,6 +741,7 @@
                                 $.CswDialog('EditLayoutDialog', editLayoutOpt);
                             }
                         });
+                        cswPrivate.toggleConfigIcon(false === cswPrivate.isMultiEdit());
                     }
 
                     /* case 8494 */
@@ -789,7 +810,7 @@
                     return false;
                 };
                 tabPropData = tabPropData || cswPrivate.globalState.propertyData;
-                Csw.crawlObject(tabPropData, handleSuccess, false);
+                Csw.eachRecursive(tabPropData, handleSuccess, false);
 
                 if (false === Csw.isNullOrEmpty(cswPrivate.saveBtn, true)) {
                     if (cswPrivate.tabState.Config || (cswPrivate.atLeastOne.Saveable === false && cswPrivate.tabState.EditMode != Csw.enums.editMode.Add)) {
@@ -898,12 +919,12 @@
                     tabState.tabid = tabid;
 
                     var fieldOpt = Csw.nbt.propertyOption({
+                        isMulti: cswPrivate.isMultiEdit,
                         fieldtype: propData.fieldtype,
                         tabState: tabState,
                         propid: propData.id,
                         saveBtn: cswPrivate.saveBtn,
                         propData: propData,
-                        Multi: cswPrivate.isMultiEdit(),
                         Required: Csw.bool(propData.required),
                         onReload: function (afterReload) {
                             cswPrivate.getProps(tabContentDiv, tabid, afterReload);
@@ -964,7 +985,7 @@
                             }
                             return false;
                         };
-                        Csw.crawlObject(subProps, subOnSuccess, false);
+                        Csw.eachRecursive(subProps, subOnSuccess, false);
                     }
                 } // if (propData.display != 'false' || ConfigMode )
             }; // _makeProp()
@@ -1055,7 +1076,7 @@
                         }
                         return false;
                     };
-                    Csw.crawlObject(propData, updSuccess, false);
+                    Csw.eachRecursive(propData, updSuccess, false);
                     return propIds;
                 });
             }; // updatePropJsonFromLayoutTable()
@@ -1178,7 +1199,7 @@
             };
 
             cswPublic.getViewId = function () {
-                if(Csw.isNullOrEmpty(cswPrivate.globalState.viewid)) {
+                if (Csw.isNullOrEmpty(cswPrivate.globalState.viewid)) {
                     cswPrivate.globalState.viewid = Csw.cookie.get(Csw.cookie.cookieNames.CurrentViewId);
                 }
                 return cswPrivate.globalState.viewid;

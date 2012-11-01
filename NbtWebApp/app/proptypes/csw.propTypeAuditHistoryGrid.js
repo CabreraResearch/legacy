@@ -14,7 +14,10 @@
                 var render = function() {
                     'use strict';
                     cswPublic.data = cswPublic.data || Csw.nbt.propertyOption(propertyOption);
-                    if (false === cswPublic.data.isMulti()) {
+                    if (cswPublic.data.isMulti()) {
+                        cswPublic.control = cswPublic.data.propDiv.append('[History display disabled]');
+                    } else {
+                    
                         cswPublic.control = Csw.actions.auditHistory(cswPublic.data.propDiv, {
                             name: cswPublic.data.name,
                             nodeid: cswPublic.data.tabState.nodeid,

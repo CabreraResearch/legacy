@@ -236,7 +236,6 @@
                     if (cswPublic.isOpen) {
                         cswPublic.isOpen = false;
                         cswPublic.tabsAndProps.tearDown();
-                        cswPublic.div.$.dialog('close');
                     }
                 },
                 title: cswDlgPrivate.text
@@ -263,6 +262,7 @@
                     ReloadTabOnSave: false,
                     onSave: function (nodeid, nodekey, tabcount, nodename) {
                         cswPublic.close();
+                        cswPublic.div.$.dialog('close');
                         Csw.tryExec(cswDlgPrivate.onAddNode, nodeid, nodekey, nodename);
                         Csw.tryExec(cswDlgPrivate.onSaveImmediate);
                     },
@@ -286,10 +286,9 @@
             }
             Csw.extend(cswDlgPrivate, options);
             var cswPublic = {
-                div: Csw.literals.div(),
+                div: cswPrivate.div.div(),
                 close: function () {
                     cswPublic.tabsAndProps.tearDown();
-                    cswPublic.div.$.dialog('close');
                 },
                 title: 'New ' + cswDlgPrivate.text
             };
@@ -328,7 +327,7 @@
 
                                         var closeDialog = function () { cswPublic.div.$.dialog('close'); };
 
-                                        cswPublic.div.$.empty();
+                                        cswPublic.div.empty();
                                         //div.text('Your feedback has been submitted. Your case number is ' + result.casenumber + '.');
                                         cswPublic.div.nodeLink({
                                             text: 'Your feedback has been submitted. Your case number is ' + result.noderef + '.',
@@ -586,7 +585,7 @@
                 div: Csw.literals.div(),
                 close: function () {
                     cswPublic.tabsAndProps.tearDown();
-                    cswPublic.div.$.dialog('close');
+
                 }
             };
 
@@ -646,6 +645,7 @@
                             Csw.clientChanges.unsetChanged();
                             if (tabcount === 2 || cswDlgPrivate.Multi) { /* Ignore history tab */
                                 cswPublic.close();
+                                cswPublic.div.$.dialog('close');
                             }
                             Csw.tryExec(cswDlgPrivate.onEditNode, nodeids, nodekeys, cswPublic.close);
                         },
