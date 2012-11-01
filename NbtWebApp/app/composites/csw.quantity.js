@@ -16,6 +16,7 @@
                     maxvalue: NaN,
                     minvalue: NaN,
                     name: '',
+                    unitName: '',
                     nodeid: '',
                     nodetypeid: '',
                     options: [],
@@ -38,7 +39,7 @@
                 cswPrivate.precision = Csw.number(cswPrivate.precision, 6);
                 cswPrivate.ceilingVal = '999999999' + Csw.getMaxValueForPrecision(cswPrivate.precision);
                 cswPrivate.selectedNodeId = Csw.string(cswPrivate.relatednodeid).trim();
-                cswPrivate.selectedName = Csw.string(cswPrivate.name).trim();
+                cswPrivate.selectedName = Csw.string(cswPrivate.unitName).trim();
                 cswPrivate.nodeTypeId = Csw.string(cswPrivate.nodetypeid).trim();
                 cswPrivate.fractional = Csw.bool(cswPrivate.fractional);
                 cswPrivate.gestalt = cswPrivate.value + ' ' + cswPrivate.selectedName;
@@ -162,7 +163,7 @@
                     cswPrivate.name = data.name;
                     cswPrivate.qtyReadonly = data.qtyReadonly;
                     cswPrivate.selectedNodeId = Csw.string(data.relatednodeid).trim();
-                    cswPrivate.selectedName = Csw.string(data.name).trim();
+                    cswPrivate.selectedName = Csw.string(data.unitName).trim();
                     cswPublic.table.empty();
                     buildQuantityTextBox();
                     buildUnitSelect();
