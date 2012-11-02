@@ -70,9 +70,13 @@
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Xml" />
+    <Reference Include="Telerik.Charting, Version=2.0.5.0, Culture=neutral, PublicKeyToken=d14f3dcc8e3e8763, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Resources\Telerik.Charting.dll</HintPath>
+    </Reference>
     <Reference Include="Telerik.Web.UI, Version=2008.2.1001.35, Culture=neutral, PublicKeyToken=121fae78165ba3d4, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\ThirdParty\Telerik\RadControls for ASPNET AJAX Q2 2008 1001\bin35\Telerik.Web.UI.dll</HintPath>
+      <HintPath>Resources\Telerik.Web.UI.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -148,6 +152,10 @@
     <Content Include="csw\Notes\cswappconfig.txt" />
     <Content Include="csw\Notes\CurrentIssues.txt" />
     <Content Include="csw\Notes\nodepropqueries.txt" />
+    <Content Include="Resources\Telerik.Charting.dll" />
+    <Content Include="Resources\Telerik.Charting.xml" />
+    <Content Include="Resources\Telerik.Web.UI.dll" />
+    <Content Include="Resources\Telerik.Web.UI.XML" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Common\CswCommon\CswCommon.csproj">
