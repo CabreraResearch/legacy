@@ -41,6 +41,7 @@ namespace ChemSW.Nbt.Schema
             get { return _CaseNo; }
         }
 
+        #region Titania Methods
         private void _makeCertMethodTemplateOc()
         {
             #region CertMethodTemplate
@@ -586,6 +587,13 @@ namespace ChemSW.Nbt.Schema
             _resetBlame();
             #endregion
         }
+        #endregion
+
+        #region Ursula Methods
+
+
+
+        #endregion
 
         public override void update()
         {
