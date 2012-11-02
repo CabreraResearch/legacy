@@ -45,11 +45,7 @@
                 data: {},     // { items: [ { col1: val, col2: val ... }, ... ]
                 pageSize: '',  // overridden by webservice
 
-                actionDataIndex: 'action',
-                renderedRows: [{
-                    val: '',
-                    loaded: false
-                }]
+                actionDataIndex: 'action'
             };
             var cswPublic = {};
 
@@ -59,6 +55,7 @@
                 // Possible race condition - have to make the button after the cell is added, but it isn't added yet
                 Csw.defer(function () {
                     var cell = Csw.literals.factory($('#' + cellId));
+                    cell.empty();
                     var iconopts = {
                         name: cswPrivate.name + cellId + buttonName,
                         hovertext: buttonName,
@@ -181,34 +178,20 @@
                             var candelete = Csw.bool(cswPrivate.showDelete) && Csw.bool(record.data.candelete, true);
                             var islocked = Csw.bool(cswPrivate.showLock) && Csw.bool(record.data.islocked, false);
 
-                            var found = false, render = true;
-                            Csw.each(cswPrivate.renderedRows, function (row, key) {
-                                if (row.val === ret) {
-                                    found = true;
-                                    if (false === row.loaded) {
-                                        render = false;
-                                        cswPrivate.renderedRows[key].loaded = true;
-                                    }
-                                }
-                            });
-                            if (render) {
-                                // only show one of edit/view/lock
-                                if (islocked) {
-                                    cswPrivate.makeActionButton(cell1Id, 'Locked', Csw.enums.iconType.lock, null, record, rowIndex, colIndex);
-                                } else if (canedit) {
-                                    cswPrivate.makeActionButton(cell1Id, 'Edit', Csw.enums.iconType.pencil, cswPrivate.onEdit, record, rowIndex, colIndex);
-                                } else if (canview) {
-                                    cswPrivate.makeActionButton(cell1Id, 'View', Csw.enums.iconType.magglass, cswPrivate.onEdit, record, rowIndex, colIndex);
-                                }
-
-                                if (candelete) {
-                                    cswPrivate.makeActionButton(cell2Id, 'Delete', Csw.enums.iconType.trash, cswPrivate.onDelete, record, rowIndex, colIndex);
-                                }
-                                if (false === found) {
-                                    cswPrivate.renderedRows.push({ val: ret, loaded: false });
-                                }
+                            // only show one of edit/view/lock
+                            if (islocked) {
+                                cswPrivate.makeActionButton(cell1Id, 'Locked', Csw.enums.iconType.lock, null, record, rowIndex, colIndex);
+                            } else if (canedit) {
+                                cswPrivate.makeActionButton(cell1Id, 'Edit', Csw.enums.iconType.pencil, cswPrivate.onEdit, record, rowIndex, colIndex);
+                            } else if (canview) {
+                                cswPrivate.makeActionButton(cell1Id, 'View', Csw.enums.iconType.magglass, cswPrivate.onEdit, record, rowIndex, colIndex);
                             }
-                            return ret;                            
+
+                            if (candelete) {
+                                cswPrivate.makeActionButton(cell2Id, 'Delete', Csw.enums.iconType.trash, cswPrivate.onDelete, record, rowIndex, colIndex);
+                            }
+
+                            return ret;
                         } // renderer()
                     }; // newcol
                     gridopts.columns.splice(0, 0, newcol);

@@ -63,8 +63,8 @@ namespace ChemSW.Nbt.ServiceDrivers
                                         _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.View, NodeType ) ||
                                         _CswNbtResources.Permit.canTab( CswNbtPermit.NodeTypePermission.View, NodeType, Tab ) ||
                                         (
-                                         _CswNbtResources.Permit.canNode( CswNbtPermit.NodeTypePermission.View, NodeType, Node.NodeId ) &&
-                                         _CswNbtResources.Permit.canProp( CswNbtPermit.NodeTypePermission.View, Prop, Tab )
+                                         _CswNbtResources.Permit.isNodeWritable( CswNbtPermit.NodeTypePermission.View, NodeType, Node.NodeId ) &&
+                                         _CswNbtResources.Permit.isPropWritable( CswNbtPermit.NodeTypePermission.View, Prop, Tab )
                                         )
                                     )
                                )
@@ -486,9 +486,8 @@ namespace ChemSW.Nbt.ServiceDrivers
             if( PropWrapper != null )
             {
                 CswNbtMetaDataNodeType NodeType = Prop.getNodeType();
-                if( ( false == Prop.ServerManaged ) &&
-                    _CswNbtResources.Permit.canProp( CswNbtPermit.NodeTypePermission.Edit, Prop, Tab, PropWrapper ) &&
-                    _CswNbtResources.Permit.canNode( CswNbtPermit.NodeTypePermission.Edit, NodeType, NodeId ) &&
+                if( _CswNbtResources.Permit.isPropWritable( CswNbtPermit.NodeTypePermission.Edit, Prop, Tab, PropWrapper ) &&
+                    _CswNbtResources.Permit.isNodeWritable( CswNbtPermit.NodeTypePermission.Edit, NodeType, NodeId ) &&
                     ( _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Edit, NodeType ) ||
                     _CswNbtResources.Permit.canTab( CswNbtPermit.NodeTypePermission.Edit, NodeType, Tab ) )
                     )
@@ -588,7 +587,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                 bool CanEdit = (
                                     _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Edit, NodeType ) ||
                                     _CswNbtResources.Permit.canTab( CswNbtPermit.NodeTypePermission.Edit, NodeType, NodeTypeTab ) ||
-                                    _CswNbtResources.Permit.canNode( CswNbtPermit.NodeTypePermission.Edit, NodeType, Ret.NodeId )
+                                    _CswNbtResources.Permit.isNodeWritable( CswNbtPermit.NodeTypePermission.Edit, NodeType, Ret.NodeId )
                                );
                 if( CanEdit )
                 {
@@ -671,7 +670,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                                                    _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Edit, NodeType ) ||
                                                    _CswNbtResources.Permit.canTab( CswNbtPermit.NodeTypePermission.Edit, NodeType, NodeTypeTab ) ||
                                                    _CswNbtResources.Permit.canAnyTab( CswNbtPermit.NodeTypePermission.Edit, NodeType ) ||
-                                                   _CswNbtResources.Permit.canNode( CswNbtPermit.NodeTypePermission.Edit, NodeType, Node.NodeId )
+                                                   _CswNbtResources.Permit.isNodeWritable( CswNbtPermit.NodeTypePermission.Edit, NodeType, Node.NodeId )
 
 
                                                );
@@ -800,7 +799,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                                     CswNbtNode Node = _CswNbtResources.Nodes[CopyToNodeId];
                                     if( null != Node &&
                                         Node.NodeTypeId == SourceNode.NodeTypeId &&
-                                        _CswNbtResources.Permit.canNode( CswNbtPermit.NodeTypePermission.Edit, SourceNode.getNodeType(), Node.NodeId, null ) )
+                                        _CswNbtResources.Permit.isNodeWritable( CswNbtPermit.NodeTypePermission.Edit, SourceNode.getNodeType(), Node.NodeId ) )
                                     {
                                         CopyToNodes.Add( Node );
                                     }
