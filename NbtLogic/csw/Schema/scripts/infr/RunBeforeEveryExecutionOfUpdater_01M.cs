@@ -1,6 +1,5 @@
 using System;
 using ChemSW.Nbt.csw.Dev;
-using ChemSW.Nbt.MetaData;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -37,30 +36,10 @@ namespace ChemSW.Nbt.Schema
             get { return _CaseNo; }
         }
 
-        public void _decoupleImcsFromPrintLabel()
-        {
-            _acceptBlame( CswDeveloper.CF, 27935 );
-
-            Int32 ImcsId = _CswNbtSchemaModTrnsctn.getModuleId( CswNbtModuleName.IMCS );
-            CswNbtMetaDataObjectClass PrintLabelOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.PrintLabelClass );
-            foreach( CswNbtMetaDataNodeType NodeType in PrintLabelOc.getNodeTypes() )
-            {
-                _CswNbtSchemaModTrnsctn.removeModuleNodeTypeJunction( ImcsId, NodeType.NodeTypeId );
-            }
-
-            _resetBlame();
-        }
-
         public override void update()
         {
             // This script is for adding Modules, 
             // which often become required by other business logic and can cause prior scripts to fail.
-
-            #region SEBASTIAN
-
-            _decoupleImcsFromPrintLabel();
-
-            #endregion SEBASTIAN
 
             #region TITANIA
 
@@ -72,10 +51,13 @@ namespace ChemSW.Nbt.Schema
             else if( false == _CswNbtSchemaModTrnsctn.Modules.IsModuleEnabled( CswNbtModuleName.MLM ) )
             {
                 _CswNbtSchemaModTrnsctn.Modules.EnableModule( CswNbtModuleName.MLM );
-            }            
+            }
 
             #endregion TITANIA
 
+            #region URSULA
+
+            #endregion URSULA
 
         }
 
