@@ -53,7 +53,7 @@
                     if (data.Labels) {
 
                         cswPrivate.labelData = data.Labels;
-                        cswPrivate.processingDiv.span({ text: 'Received EPL Text for ' + data.Labels.length + ' labels.' });
+                        cswPrivate.processingDiv.span({ text: 'Received EPL Text for ' + data.Labels.length + ' label(s).' });
 
                         try {
                             cswPrivate.jZeb = cswPrivate.table.cell(1, 1).jZebra();

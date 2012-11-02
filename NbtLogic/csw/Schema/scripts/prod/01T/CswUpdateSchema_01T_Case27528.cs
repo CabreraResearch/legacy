@@ -8,7 +8,7 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Schema Update for case 27528
     /// </summary>
-    public class CswUpdateSchema_01S_Case27528 : CswUpdateSchemaTo
+    public class CswUpdateSchema_01T_Case27528 : CswUpdateSchemaTo
     {
         public override void update()
         {
@@ -140,6 +140,6 @@ namespace ChemSW.Nbt.Schema
             get { return 27528; }
         }
 
-    }//class CswUpdateSchema_01S_Case27528
+    }//class CswUpdateSchema_01T_Case27528
 
 }//namespace ChemSW.Nbt.Schema

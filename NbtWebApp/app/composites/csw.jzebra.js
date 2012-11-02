@@ -30,9 +30,8 @@
                 cswPublic.zebraJs = window.jZebra;
                 
                 (function _pre() {
-                    if (options) {
-                        $.extend(cswPrivate, options);
-                    }
+                    Csw.extend(cswPrivate, options);
+                    
                     cswPrivate.div = cswParent.div();
                     
                     //We don't have a need yet to dynamically inject a Java applet. When we do, this is what it would look like.
@@ -53,28 +52,20 @@
                     
                     //To minimize hacking jZebra, use their ID
                     Csw.tryExec(function() {
-                        var doomedElement = $('#printersList');
-                        if (false === Csw.isNullOrEmpty(doomedElement, true)) {
-                            doomedElement.remove();
-                            Csw.debug.warn('initializing jZebra encountered a duplicate printersList.');
-                        }
                         
                         cswPrivate.printerSel = cswPrivate.div.select({
-                            name: 'printersList'
-                            /*
-                            ,
+                            cssclass: 'CswZebraPrintersList',
+                            name: 'CswZebraPrintersList',
                             selected: cswPublic.defaultPrinter,
                             onChange: function() {
-                                //cswPublic.defaultPrinter = cswPrivate.printerSel.val();
+                                cswPublic.defaultPrinter = cswPrivate.printerSel.val();
                                 Csw.cookie.set('defaultPrinter', cswPublic.defaultPrinter);
                             }
-                            */
                         });
                         
                     });
                     
                 }());
-
 
                 cswPublic.zebraJava = document.jzebra;
 
