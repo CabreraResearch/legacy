@@ -41,6 +41,8 @@ namespace ChemSW.Nbt.Schema
             get { return _CaseNo; }
         }
 
+        #region Titania Methods
+
         private void _makeCertMethodTemplateOc()
         {
             #region CertMethodTemplate
@@ -354,7 +356,7 @@ namespace ChemSW.Nbt.Schema
             #endregion Case 27873 - Jurisdiction ObjectClass
         }
 
-        public void _makeNewInvGroupProps()
+        private void _makeNewInvGroupProps()
         {
             #region Case 27870 - New InventoryGroup ObjClassProps
             _acceptBlame( CswDeveloper.BV, 27870 );
@@ -384,7 +386,7 @@ namespace ChemSW.Nbt.Schema
             #endregion Case 27870 - New InventoryGroup ObjClassProps
         }
 
-        public void _makeEnterprisePartsAndManufacturerEquivalentPartsOCs()
+        private void _makeEnterprisePartsAndManufacturerEquivalentPartsOCs()
         {
             _acceptBlame( CswDeveloper.MB, 27865 );
             #region Case 27865 part 1 - Enterprise Part (EP)
@@ -465,7 +467,7 @@ namespace ChemSW.Nbt.Schema
             _resetBlame();
         }
 
-        public void _makeReceiptLotOC()
+        private void _makeReceiptLotOC()
         {
             #region Case 27867 - Receipt Lot
             _acceptBlame( CswDeveloper.MB, 27867 );
@@ -550,7 +552,7 @@ namespace ChemSW.Nbt.Schema
             #endregion
         }
 
-        public void _setNodesToHiddenIfNull()
+        private void _setNodesToHiddenIfNull()
         {
             #region Case 27862 - set nodes hidden = "0" if null
             _acceptBlame( CswDeveloper.MB, 27862 );
@@ -573,7 +575,7 @@ namespace ChemSW.Nbt.Schema
             #endregion
         }
 
-        public void _makeContainerFamilyButton()
+        private void _makeContainerFamilyButton()
         {
             #region Case 27884 - container family display button
             _acceptBlame( CswDeveloper.MB, 27884 );
@@ -587,11 +589,22 @@ namespace ChemSW.Nbt.Schema
             #endregion
         }
 
+        #endregion Titania Methods
+
+        #region Ursula Methods
+
+
+        #endregion Ursula Methods
+
+
+        /// <summary>
+        /// The actual update call
+        /// </summary>
         public override void update()
         {
             // This script is for adding object class properties, 
             // which often become required by other business logic and can cause prior scripts to fail.
-            
+
             #region TITANIA
 
             _makeCertMethodTemplateOc();
