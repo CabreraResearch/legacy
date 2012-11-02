@@ -591,7 +591,49 @@ namespace ChemSW.Nbt.Schema
 
         #region Ursula Methods
 
+        public void _makeContainerGroup()
+        {
+            #region 27866 - Container Group
+            _acceptBlame( CswDeveloper.MB, 27866 );
 
+            CswNbtMetaDataObjectClass containerGoupOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.ContainerGroupClass );
+            if( null == containerGoupOC )
+            {
+                containerGoupOC = _CswNbtSchemaModTrnsctn.createObjectClass( NbtObjectClass.ContainerGroupClass, "barcode.png", false );
+
+                CswNbtMetaDataObjectClassProp containerGroupNameOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( containerGoupOC )
+                {
+                    PropName = CswNbtObjClassContainerGroup.PropertyName.Name,
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Text
+                } );
+
+                //this barcode prop has to start with a "G" - sequence it set on the NTP and thus in a schemascript
+                CswNbtMetaDataObjectClassProp containerGroupBarcodeOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( containerGoupOC )
+                {
+                    PropName = CswNbtObjClassContainerGroup.PropertyName.Barcode,
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Barcode
+                } );
+
+                CswNbtMetaDataObjectClassProp containerGroupSyncLocationOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( containerGoupOC )
+                {
+                    PropName = CswNbtObjClassContainerGroup.PropertyName.SyncLocation,
+                    FieldType= CswNbtMetaDataFieldType.NbtFieldType.Logical,
+                    IsRequired = true
+                } );
+                _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( containerGroupSyncLocationOCP, false );
+
+                CswNbtMetaDataObjectClassProp containerGroupLocationOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( containerGoupOC )
+                {
+                    PropName = CswNbtObjClassContainerGroup.PropertyName.Location,
+                    FieldType= CswNbtMetaDataFieldType.NbtFieldType.Location
+                } );
+
+                _CswNbtSchemaModTrnsctn.createModuleObjectClassJunction( CswNbtModuleName.MLM, containerGoupOC.ObjectClassId );
+
+            }
+            _resetBlame();
+            #endregion
+        }
 
         #endregion
 
@@ -599,7 +641,7 @@ namespace ChemSW.Nbt.Schema
         {
             // This script is for adding object class properties, 
             // which often become required by other business logic and can cause prior scripts to fail.
-            
+
             #region TITANIA
 
             _makeCertMethodTemplateOc();
