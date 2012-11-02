@@ -384,7 +384,7 @@
     <Compile Include="csw\Schema\scripts\infr\RunBeforeEveryExecutionOfUpdater_01OC.cs" />
     <Compile Include="csw\Schema\scripts\infr\RunBeforeEveryExecutionOfUpdater_02.cs" />
     <Compile Include="csw\Schema\scripts\infr\RunBeforeEveryExecutionOfUpdater_03.cs" />
-    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCaseXXXXX.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01U\CswUpdateSchemaCaseXXXXX.cs" />
     <Compile Include="csw\Schema\scripts\past\01S\CswUpdateSchema_01S_Case26760.cs" />
     <Compile Include="csw\Schema\scripts\prod\01T\CswUpdateSchema_01T_Case27528.cs" />
     <Compile Include="csw\Schema\scripts\past\01S\CswUpdateSchema_01S_Case27551_part2.cs" />
