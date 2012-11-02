@@ -159,14 +159,14 @@ namespace ChemSW.Nbt.Grid
                 gridrow.data.Add( nodenameDataIndex, Tree.getNodeNameForCurrentPosition().ToString() );
 
                 CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( Tree.getNodeKeyForCurrentPosition().NodeTypeId );
-                gridrow.canView = _CswNbtResources.Permit.canNode( Security.CswNbtPermit.NodeTypePermission.View,
+                gridrow.canView = _CswNbtResources.Permit.isNodeWritable( Security.CswNbtPermit.NodeTypePermission.View,
                                                                NodeType,
                                                                NodeId: Tree.getNodeIdForCurrentPosition() );
-                gridrow.canEdit = ( _CswNbtResources.Permit.canNode( Security.CswNbtPermit.NodeTypePermission.Edit,
+                gridrow.canEdit = ( _CswNbtResources.Permit.isNodeWritable( Security.CswNbtPermit.NodeTypePermission.Edit,
                                                                 NodeType,
                                                                NodeId: Tree.getNodeIdForCurrentPosition() ) &&
                                     false == Tree.getNodeLockedForCurrentPosition() );
-                gridrow.canDelete = _CswNbtResources.Permit.canNode( Security.CswNbtPermit.NodeTypePermission.Delete,
+                gridrow.canDelete = _CswNbtResources.Permit.isNodeWritable( Security.CswNbtPermit.NodeTypePermission.Delete,
                                                                  NodeType,
                                                                  NodeId: Tree.getNodeIdForCurrentPosition() );
                 gridrow.isLocked = Tree.getNodeLockedForCurrentPosition();

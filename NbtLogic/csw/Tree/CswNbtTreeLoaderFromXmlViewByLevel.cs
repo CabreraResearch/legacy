@@ -93,7 +93,7 @@ namespace ChemSW.Nbt
                 if( false == RequireViewPermissions ||
                     _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.View, ThisNodeType ) ||
                    _CswNbtResources.Permit.canAnyTab( CswNbtPermit.NodeTypePermission.View, ThisNodeType, _RunAsUser ) ||
-                   _CswNbtResources.Permit.canNode( CswNbtPermit.NodeTypePermission.View, ThisNodeType, ThisNodePk, _RunAsUser )
+                   _CswNbtResources.Permit.isNodeWritable( CswNbtPermit.NodeTypePermission.View, ThisNodeType, ThisNodePk, _RunAsUser )
 
                     )
                 {
