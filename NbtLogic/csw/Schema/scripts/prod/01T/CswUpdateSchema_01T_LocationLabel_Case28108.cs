@@ -8,7 +8,7 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Schema Update for case 28108
     /// </summary>
-    public class CswUpdateSchemaCase_01T_LocationLabel_Case28108 : CswUpdateSchemaTo
+    public class CswUpdateSchema_01T_LocationLabel_Case28108 : CswUpdateSchemaTo
     {
         public override CswDeveloper Author
         {
