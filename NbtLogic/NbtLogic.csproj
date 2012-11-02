@@ -103,7 +103,6 @@
     <Compile Include="csw\Schema\scripts\prod\01T\CswUpdateSchema_01T_LocationLabel_Case28108.cs" />
     <Compile Include="csw\Schema\scripts\prod\01T\CswUpdateSchema_01T_Case27551.cs" />
     <Compile Include="csw\Schema\CswNbtSchema.Designer.cs">
-    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01S_Case28089.cs" />
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>CswNbtSchema.edmx</DependentUpon>
