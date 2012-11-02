@@ -188,50 +188,50 @@ namespace ChemSW.WebSvc
             {
                 SvcReturn.Authentication = SvcReturn.Authentication ?? new CswNbtSessionAuthenticateData.Authentication.Response();
                 SvcReturn.Authentication.AuthenticationStatus = AuthenticationStatusIn;
-
-                if( ( null != CswNbtResources ) && ( null != CswNbtResources.CswSessionManager ) )
-                {
-                    SvcReturn.Authentication.TimeOut = CswDateTime.ToClientAsJavascriptString( CswNbtResources.CswSessionManager.TimeoutDate );
-                }
-                if( SvcReturn.Authentication.AuthenticationStatus == AuthenticationStatus.ExpiredPassword )
-                {
-                    SvcReturn.Authentication.ExpirationReset = new CswNbtSessionAuthenticateData.Authentication.Response.Expired();
-                    ICswNbtUser CurrentUser = CswNbtResources.CurrentNbtUser;
-                    SvcReturn.Authentication.ExpirationReset.UserId = CurrentUser.UserId.ToString();
-                    CswNbtNodeKey FakeKey = new CswNbtNodeKey( CswNbtResources )
-                    {
-                        NodeId = CurrentUser.UserId,
-                        NodeSpecies = NodeSpecies.Plain,
-                        NodeTypeId = CurrentUser.UserNodeTypeId,
-                        ObjectClassId = CurrentUser.UserObjectClassId
-                    };
-                    SvcReturn.Authentication.ExpirationReset.UserKey = FakeKey.ToString();
-                    CswPropIdAttr PasswordPropIdAttr = new CswPropIdAttr( CurrentUser.UserId, CurrentUser.PasswordPropertyId );
-                    SvcReturn.Authentication.ExpirationReset.PasswordId = PasswordPropIdAttr.ToString();
-                }
-
-                SvcReturn.Performance = SvcReturn.Performance ?? new CswWebSvcReturnBase.Performance();
-
-                SvcReturn.Performance.ServerInit = Math.Round( CswNbtResources.ServerInitTime, 3 );
                 if( null != CswNbtResources )
                 {
+                    if( null != CswNbtResources.CswSessionManager )
+                    {
+                        SvcReturn.Authentication.TimeOut = CswDateTime.ToClientAsJavascriptString( CswNbtResources.CswSessionManager.TimeoutDate );
+                    }
+                    if( SvcReturn.Authentication.AuthenticationStatus == AuthenticationStatus.ExpiredPassword )
+                    {
+                        SvcReturn.Authentication.ExpirationReset = new CswNbtSessionAuthenticateData.Authentication.Response.Expired();
+
+                        ICswNbtUser CurrentUser = CswNbtResources.CurrentNbtUser;
+                        SvcReturn.Authentication.ExpirationReset.UserId = CurrentUser.UserId.ToString();
+                        CswNbtNodeKey FakeKey = new CswNbtNodeKey( CswNbtResources )
+                        {
+                            NodeId = CurrentUser.UserId,
+                            NodeSpecies = NodeSpecies.Plain,
+                            NodeTypeId = CurrentUser.UserNodeTypeId,
+                            ObjectClassId = CurrentUser.UserObjectClassId
+                        };
+                        SvcReturn.Authentication.ExpirationReset.UserKey = FakeKey.ToString();
+                        CswPropIdAttr PasswordPropIdAttr = new CswPropIdAttr( CurrentUser.UserId, CurrentUser.PasswordPropertyId );
+                        SvcReturn.Authentication.ExpirationReset.PasswordId = PasswordPropIdAttr.ToString();
+                    }
+
+                    SvcReturn.Performance = SvcReturn.Performance ?? new CswWebSvcReturnBase.Performance();
+                    SvcReturn.Performance.ServerInit = Math.Round( CswNbtResources.ServerInitTime, 3 );
                     SvcReturn.Performance.DbDeinit = Math.Round( CswNbtResources.CswLogger.DbInitTime, 3 );
                     SvcReturn.Performance.DbQuery = Math.Round( CswNbtResources.CswLogger.DbQueryTime, 3 );
                     SvcReturn.Performance.DbCommit = Math.Round( CswNbtResources.CswLogger.DbCommitTime, 3 );
                     SvcReturn.Performance.DbDeinit = Math.Round( CswNbtResources.CswLogger.DbDeInitTime, 3 );
                     SvcReturn.Performance.TreeLoaderSql = Math.Round( CswNbtResources.CswLogger.TreeLoaderSQLTime, 3 );
-                }
-                SvcReturn.Performance.ServerTotal = Math.Round( CswNbtResources.TotalServerTime, 3 );
+                    SvcReturn.Performance.ServerTotal = Math.Round( CswNbtResources.TotalServerTime, 3 );
 
-                SvcReturn.Logging = SvcReturn.Logging ?? new CswWebSvcReturnBase.Logging();
-                SvcReturn.Logging.CustomerId = CswNbtResources.AccessId;
-                SvcReturn.Logging.Server = Environment.MachineName;
-                LogLevels LogLevel = CswNbtResources.ConfigVbls.getConfigVariableValue( CswConfigurationVariables.ConfigurationVariableNames.Logging_Level );
-                if( LogLevel == CswNbtResources.UnknownEnum )
-                {
-                    LogLevel = LogLevels.Error;
+                    SvcReturn.Logging = SvcReturn.Logging ?? new CswWebSvcReturnBase.Logging();
+                    SvcReturn.Logging.CustomerId = CswNbtResources.AccessId;
+                    SvcReturn.Logging.Server = Environment.MachineName;
+                    LogLevels LogLevel = CswNbtResources.ConfigVbls.getConfigVariableValue( CswConfigurationVariables.ConfigurationVariableNames.Logging_Level );
+
+                    if( LogLevel == CswNbtResources.UnknownEnum )
+                    {
+                        LogLevel = LogLevels.Error;
+                    }
+                    SvcReturn.Logging.LogLevel = LogLevel;
                 }
-                SvcReturn.Logging.LogLevel = LogLevel;
             }
         }//_jAuthenticationStatus()
     } // class CswWebSvcCommonMethods

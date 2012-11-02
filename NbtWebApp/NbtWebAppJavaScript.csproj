@@ -134,7 +134,7 @@
     <Content Include="app\composites\csw.menubutton.js" />
     <Content Include="app\composites\csw.quantity.js" />
     <Content Include="app\controls\csw.nodebutton.js" />
-    <Content Include="app\nodes\csw.node.link.js" />
+    <Content Include="app\controls\csw.node.link.js" />
     <Content Include="DevHeader.html" />
     <Content Include="Dev.html" />
     <Content Include="app\controls\csw.icon.js" />

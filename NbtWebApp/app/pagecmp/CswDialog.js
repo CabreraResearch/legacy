@@ -957,7 +957,7 @@
                         },
                         success: function (data) {
                             div.$.dialog('close');
-                            Csw.tryExec(o.onSuccess);
+                            Csw.tryExec(o.onSuccess, data);
                         },
                         error: saveBtn.enable
                     }); // ajax
@@ -1273,7 +1273,7 @@
             div.$.CswErrorMessage(error);
         },
 
-        AlertDialog: function (message, title, onClose, height, width) {
+        AlertDialog: function (message, title, onClose, height, width, onOpen) {
 
             var div = Csw.literals.div({
                 name: Csw.string(title, 'an alert dialog').replace(' ', '_'),
@@ -1283,6 +1283,8 @@
 
             div.br();
 
+            var divBody = div.div();
+
             div.button({
                 enabledText: 'OK',
                 onClick: function () {
@@ -1290,6 +1292,8 @@
                     Csw.tryExec(onClose);
                 }
             });
+
+            Csw.tryExec(onOpen, divBody);
 
             openDialog(div, Csw.number(width, 400), Csw.number(height, 200), null, title);
         },

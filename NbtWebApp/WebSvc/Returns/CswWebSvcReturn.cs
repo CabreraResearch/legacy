@@ -76,8 +76,14 @@ namespace NbtWebApp.WebSvc.Returns
         /// </summary>
         public void finalize( AuthenticationStatus AuthenticationStatus )
         {
-
-            CswWebSvcCommonMethods.wAddAuthenticationStatus( _CswNbtResources, null, this, AuthenticationStatus );
+            try
+            {
+                CswWebSvcCommonMethods.wAddAuthenticationStatus( _CswNbtResources, null, this, AuthenticationStatus );
+            }
+            catch( Exception Exception )
+            {
+                addException( Exception );
+            }
             // ******************************************
             // IT IS VERY IMPORTANT for this function not to require the use of database resources, 
             // since it occurs AFTER the call to _deInitResources(), and thus will leak Oracle connections 

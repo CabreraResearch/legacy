@@ -518,7 +518,7 @@ namespace ChemSW.Nbt
                                     join nodetype_props p on (jnp.nodetypepropid = p.nodetypepropid) ";
                                     if( Prop.Type == NbtViewPropType.NodeTypePropId )
                                     {
-                                        FilterClause += @"  where p.firstpropversionid = " + Prop.FirstVersionNodeTypeProp.PropId + @")";
+                                        FilterClause += @"  where (lower(p.propname) = '" + Prop.NodeTypeProp.PropName.ToLower() + @"')) ";
                                     }
                                     else
                                     {
