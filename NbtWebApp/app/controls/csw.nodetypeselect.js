@@ -24,7 +24,8 @@
                 excludeNodeTypeIds: '',
                 relatedToNodeTypeId: '',
                 relatedObjectClassPropName: '',
-                async: true
+                async: true,
+                isRequired: false
             };
             var cswPublic = {};
 

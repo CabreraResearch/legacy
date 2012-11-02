@@ -33,7 +33,7 @@
                         cols: cswPrivate.columns,
                         value: cswPrivate.value,
                         disabled: cswPublic.data.isReadOnly(),
-                        required: cswPublic.data.isRequired(),
+                        isRequired: cswPublic.data.isRequired(),
                         readonly: cswPublic.data.isReadOnly()
                     });
 
