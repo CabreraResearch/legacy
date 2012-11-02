@@ -905,7 +905,7 @@ namespace ChemSW.NbtWebControls
                     {
                         if( SelectedNodeKeyViewNode is CswNbtViewRelationship &&
                             ( (CswNbtViewRelationship) SelectedNodeKeyViewNode ).AllowDelete &&
-                            _CswNbtResources.Permit.canNode( CswNbtPermit.NodeTypePermission.Delete, _CswNbtResources.MetaData.getNodeType( SelectedNodeKey.NodeTypeId ), CswNbtResources.Nodes[SelectedNodeKey].NodeId ) )
+                            _CswNbtResources.Permit.isNodeWritable( CswNbtPermit.NodeTypePermission.Delete, _CswNbtResources.MetaData.getNodeType( SelectedNodeKey.NodeTypeId ), CswNbtResources.Nodes[SelectedNodeKey].NodeId ) )
                         {
                             DeleteMenuItem.Visible = true;
 
