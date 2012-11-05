@@ -118,7 +118,7 @@
     <Compile Include="csw\LandingPage\CswNbtLandingPageItemType.cs" />
     <Compile Include="csw\LandingPage\CswNbtLandingPageItemText.cs" />
     <Compile Include="csw\Schema\scripts\prod\01T\CswUpdateSchema_01T_Case27881.cs" />
-    <Compile Include="csw\Schema\scripts\prod\01U\CswUpdateSchema_RequestItems_Case27942.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01U\CswUpdateSchema_01U_RequestItems_Case27942.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="csw\Schema\scripts\prod\01T\CswUpdateSchema_01T_Case27884.cs" />
     <Compile Include="csw\Schema\scripts\past\01S\CswUpdateSchema_01S_Case27709.cs" />
