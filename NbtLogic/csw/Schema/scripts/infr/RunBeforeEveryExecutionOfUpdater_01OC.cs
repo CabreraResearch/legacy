@@ -628,7 +628,7 @@ namespace ChemSW.Nbt.Schema
                     FieldType= CswNbtMetaDataFieldType.NbtFieldType.Location
                 } );
 
-                _CswNbtSchemaModTrnsctn.createModuleObjectClassJunction( CswNbtModuleName.MLM, containerGoupOC.ObjectClassId );
+                _CswNbtSchemaModTrnsctn.createModuleObjectClassJunction( CswNbtModuleName.CISPro, containerGoupOC.ObjectClassId );
 
             }
             _resetBlame();

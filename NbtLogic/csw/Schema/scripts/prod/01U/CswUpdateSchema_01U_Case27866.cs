@@ -48,6 +48,8 @@ namespace ChemSW.Nbt.Schema
             template += " " + CswNbtMetaData.MakeTemplateEntry( barcodeNTP.PropName );
             containerGroupNT.setNameTemplateText( template );
 
+            _CswNbtSchemaModTrnsctn.createModuleNodeTypeJunction( CswNbtModuleName.CISPro, containerGroupNT.NodeTypeId );
+
             //create demo view
             CswNbtView containerGroupView = _CswNbtSchemaModTrnsctn.restoreView( "Container Groups" );
             if( null == containerGroupView )
