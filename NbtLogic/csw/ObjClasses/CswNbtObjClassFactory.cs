@@ -54,6 +54,10 @@ namespace ChemSW.Nbt.ObjClasses
                     ReturnVal = new CswNbtObjClassContainerDispenseTransaction( CswNbtResources, Node );
                     break;
 
+                case NbtObjectClass.ContainerLocationClass:
+                    ReturnVal = new CswNbtObjClassContainerLocation( CswNbtResources, Node );
+                    break;
+
                 case NbtObjectClass.CustomerClass:
                     ReturnVal = new CswNbtObjClassCustomer( CswNbtResources, Node );
                     break;
