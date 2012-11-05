@@ -122,7 +122,7 @@ namespace ChemSW.Nbt.ObjClasses
         private ICswNbtTree _getRelatedRequestItemsTree( bool FilterByPending = false )
         {
             CswNbtView RequestItemView = new CswNbtView( _CswNbtResources );
-            CswNbtMetaDataObjectClass RequestItemOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.RequestItemClass );
+            CswNbtMetaDataObjectClass RequestItemOc = _CswNbtResources.MetaData.getObjectClass( NbtDoomedObjectClasses.RequestItemClass );
             CswNbtMetaDataObjectClassProp RequestOcp = RequestItemOc.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Request );
             CswNbtViewRelationship RiRelationship = RequestItemView.AddViewRelationship( RequestItemOc, false );
             if( FilterByPending )

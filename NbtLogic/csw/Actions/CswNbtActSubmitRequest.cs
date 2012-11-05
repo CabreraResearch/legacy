@@ -43,7 +43,7 @@ namespace ChemSW.Nbt.Actions
             }
             _SystemViews = new CswNbtActSystemViews( _CswNbtResources, RequestViewName, null );
             _RequestOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.RequestClass );
-            _RequestItemOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.RequestItemClass );
+            _RequestItemOc = _CswNbtResources.MetaData.getObjectClass( NbtDoomedObjectClasses.RequestItemClass );
 
             if( null != RequestNodeId )
             {

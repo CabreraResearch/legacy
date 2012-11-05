@@ -7,6 +7,14 @@ namespace ChemSW.Nbt.MetaData
 {
 
     /// <summary>
+    /// Const values for retired Object Classes
+    /// </summary>
+    public sealed class NbtDoomedObjectClasses
+    {
+        public const string RequestItemClass = "RequestItemClass";
+    }
+
+    /// <summary>
     /// Nbt Object Class Name
     /// </summary>
     public sealed class NbtObjectClass : IEquatable<NbtObjectClass>, IComparable<NbtObjectClass>
@@ -54,7 +62,10 @@ namespace ChemSW.Nbt.MetaData
             { ReportClass                       , ReportClass                        },
             { ResultClass                       , ResultClass                        },
             { RequestClass                      , RequestClass                       },
-            { RequestItemClass                  , RequestItemClass                   },
+            { RequestContainerDispenseClass     , RequestContainerDispenseClass      },
+            { RequestContainerUpdateClass       , RequestContainerUpdateClass        },
+            { RequestMaterialCreateClass        , RequestMaterialCreateClass         },
+            { RequestMaterialDispenseClass      , RequestMaterialDispenseClass       },
             { RoleClass                         , RoleClass                          },
             { SampleClass                       , SampleClass                        },
             { SizeClass                         , SizeClass                          },
@@ -159,7 +170,10 @@ namespace ChemSW.Nbt.MetaData
         public const string ReportClass = "ReportClass";
         public const string ResultClass = "ResultClass";
         public const string RequestClass = "RequestClass";
-        public const string RequestItemClass = "RequestItemClass";
+        public const string RequestContainerDispenseClass = "RequestContainerDispenseClass";
+        public const string RequestContainerUpdateClass = "RequestContainerUpdateClass";
+        public const string RequestMaterialDispenseClass = "RequestMaterialDispenseClass";
+        public const string RequestMaterialCreateClass = "RequestMaterialCreateClass";
         public const string RoleClass = "RoleClass";
         public const string SampleClass = "SampleClass";
         public const string SizeClass = "SizeClass";

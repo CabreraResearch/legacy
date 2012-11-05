@@ -385,7 +385,7 @@ namespace ChemSW.Nbt.WebServices
                                 SizeId = NodeAsContainer.Size.RelatedNodeId.ToString();
                             }
                             break;
-                        case NbtObjectClass.RequestItemClass:
+                        case NbtDoomedObjectClasses.RequestItemClass:
                             CswNbtObjClassRequestItem NodeAsRequestItem = Node;
                             if( null != NodeAsRequestItem )
                             {

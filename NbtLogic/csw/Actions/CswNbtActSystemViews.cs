@@ -229,7 +229,7 @@ namespace ChemSW.Nbt.Actions
 
                 Ret.Root.ChildRelationships.Clear();
 
-                CswNbtMetaDataObjectClass RequestItemOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.RequestItemClass );
+                CswNbtMetaDataObjectClass RequestItemOc = _CswNbtResources.MetaData.getObjectClass( NbtDoomedObjectClasses.RequestItemClass );
                 CswNbtViewRelationship RequestItemVr = Ret.AddViewRelationship( RequestItemOc, true );
 
                 CswNbtMetaDataObjectClassProp NumberOcp = RequestItemOc.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Number );
