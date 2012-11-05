@@ -166,13 +166,13 @@ namespace ChemSW.Nbt.ObjClasses
         {
             Type.SetOnPropChange( onTypePropChange );
             Container.SetOnPropChange( onContainerPropChange );
-            Status.SetOnPropChange( onStatusPropChange );
-            CswNbtObjClassDefault.afterPopulateProps();
         }
-
-        public override bool onPropertySetButtonClick( NbtButtonData ButtonData )
+        
+        /// <summary>
+        /// Abstract override to be called on onButtonClick
+        /// </summary>
+        public override bool onPropertySetButtonClick( CswNbtMetaDataObjectClassProp OCP, NbtButtonData ButtonData )
         {
-            CswNbtMetaDataObjectClassProp OCP = ButtonData.NodeTypeProp.getObjectClassProp();
             if( null != ButtonData.NodeTypeProp && null != OCP )
             {
                 switch( OCP.PropName )
@@ -181,12 +181,6 @@ namespace ChemSW.Nbt.ObjClasses
                         CswNbtObjClassContainer NodeAsContainer = null;
                         switch( ButtonData.SelectedText )
                         {
-                            case FulfillMenu.Cancel:
-                                ButtonData.Action = NbtButtonAction.refresh;
-                                break;
-                            case FulfillMenu.Complete:
-                                ButtonData.Action = NbtButtonAction.refresh;
-                                break;
                             case FulfillMenu.Dispose:
                                 NodeAsContainer = _CswNbtResources.Nodes.GetNode( Container.RelatedNodeId );
                                 if( null != NodeAsContainer )
@@ -214,7 +208,7 @@ namespace ChemSW.Nbt.ObjClasses
                         } //switch( ButtonData.SelectedText )
 
                         _getNextStatus( ButtonData.SelectedText );
-                        postChanges( true );
+                        
                         ButtonData.Data["requestitem"] = ButtonData.Data["requestitem"] ?? new JObject();
                         ButtonData.Data["requestitem"]["requestitemid"] = NodeId.ToString();
                         ButtonData.Data["requestitem"]["containerid"] = ( Container.RelatedNodeId ?? new CswPrimaryKey() ).ToString();
@@ -269,43 +263,20 @@ namespace ChemSW.Nbt.ObjClasses
         #region CswNbtPropertySetRequestItem Members
 
         /// <summary>
-        /// Status
+        /// Additional, Request-specific Status change event logic to be called
         /// </summary>
-        public override CswNbtNodePropList Status { get { return _CswNbtNode.Properties[PropertyName.Status]; } }
-        private void onStatusPropChange( CswNbtNodeProp Prop )
+        public override void onStatusPropChange( CswNbtNodeProp Prop )
         {
-            AssignedTo.setHidden( value: ( Status.Value == Statuses.Pending || Status.Value == Statuses.Completed || Status.Value == Statuses.Cancelled ), SaveToDb: true );
-            Fulfill.setHidden( value: ( Status.Value == Statuses.Pending || Status.Value == Statuses.Completed || Status.Value == Statuses.Cancelled ), SaveToDb: true );
-
-            //27800 - don't show redundant props when status is pending
-            Request.setHidden( value: ( Status.Value == Statuses.Pending ), SaveToDb: true );
-            Name.setHidden( value: ( Status.Value == Statuses.Pending ), SaveToDb: true );
-            Requestor.setHidden( value: ( Status.Value == Statuses.Pending ), SaveToDb: true );
-            Status.setHidden( value: ( Status.Value == Statuses.Pending ), SaveToDb: true );
             Type.setHidden( value: ( Status.Value == Statuses.Pending ), SaveToDb: true );
 
             switch( Status.Value )
             {
-                case Statuses.Submitted:
-                    toggleReadOnlyProps( true, this );
-                    break;
                 case Statuses.Moved: //This fallthrough is intentional
                 case Statuses.Disposed:
                     Fulfill.State = FulfillMenu.Complete;
                     break;
-                case Statuses.Cancelled: //This fallthrough is intentional
-                case Statuses.Completed:
-                    CswNbtObjClassRequest NodeAsRequest = _CswNbtResources.Nodes[Request.RelatedNodeId];
-                    if( null != NodeAsRequest )
-                    {
-                        NodeAsRequest.setCompletedDate();
-                    }
-                    Node.setReadOnly( true, true );
-                    break;
             }
         }
-
-        public override CswNbtNodePropButton Fulfill { get { return _CswNbtNode.Properties[PropertyName.Fulfill]; } }
 
         #endregion
 

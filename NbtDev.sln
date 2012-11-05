@@ -61,8 +61,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "API.Test", "API.Test\API.Te
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NbtWebAppJavaScript.Test", "TestApps\NbtWebAppJavaScript.Test\NbtWebAppJavaScript.Test.csproj", "{1DE23F57-1CA1-4EFE-B1BB-842AB94434BD}"
 EndProject
-Project("{218574D1-FF94-4B95-8577-A6D58C11C315}") = "NbtOracle", "NbtOracle\NbtOracle.oradbproj", "{218574D1-FF94-4B95-8577-A6D58C11C315}"
-EndProject
 Global
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = Nbt.vsmdi

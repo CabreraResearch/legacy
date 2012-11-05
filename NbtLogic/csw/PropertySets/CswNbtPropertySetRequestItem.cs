@@ -171,7 +171,7 @@ namespace ChemSW.Nbt.ObjClasses
             }
             return ret;
         }
-        
+
 
         #region Inherited Events
 
@@ -239,6 +239,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             afterPropertySetPopulateProps();
             setFulfillVisibility();
+            Status.SetOnPropChange( _onStatusPropChange );
             CswNbtObjClassDefault.afterPopulateProps();
         }//afterPopulateProps()
 
@@ -247,20 +248,75 @@ namespace ChemSW.Nbt.ObjClasses
             CswNbtObjClassDefault.addDefaultViewFilters( ParentRelationship );
         }
 
-        public abstract bool onPropertySetButtonClick( NbtButtonData ButtonData );
+        public abstract bool onPropertySetButtonClick( CswNbtMetaDataObjectClassProp OCP, NbtButtonData ButtonData );
 
         public override bool onButtonClick( NbtButtonData ButtonData )
         {
-            bool Ret = onPropertySetButtonClick( ButtonData );
-            if( null != ButtonData && null != ButtonData.NodeTypeProp ) { /*Do Something*/ }
+            bool Ret = false;
+            CswNbtMetaDataObjectClassProp OCP = ButtonData.NodeTypeProp.getObjectClassProp();
+            if( null != ButtonData.NodeTypeProp && null != OCP )
+            {
+                switch( OCP.PropName )
+                {
+                    case PropertyName.Fulfill:
+                        switch( ButtonData.SelectedText )
+                        {
+                            case FulfillMenu.Cancel:
+                                ButtonData.Action = NbtButtonAction.refresh;
+                                break;
+                            case FulfillMenu.Complete:
+                                ButtonData.Action = NbtButtonAction.refresh;
+                                break;
+                        }
+                        break;
+                }
+                Ret = onPropertySetButtonClick( OCP, ButtonData );
+                postChanges( ForceUpdate: false );
+            }
+
             return Ret;
         }
         #endregion
 
         #region Property Set specific properties
 
-        public abstract CswNbtNodePropButton Fulfill { get; }
-        public abstract CswNbtNodePropList Status { get; }
+        public CswNbtNodePropButton Fulfill { get { return _CswNbtNode.Properties[PropertyName.Fulfill]; } }
+        public CswNbtNodePropList Status { get { return _CswNbtNode.Properties[PropertyName.Status]; } }
+        private void _onStatusPropChange( CswNbtNodeProp Prop )
+        {
+            AssignedTo.setHidden( value: ( Status.Value == Statuses.Pending || Status.Value == Statuses.Completed || Status.Value == Statuses.Cancelled ), SaveToDb: true );
+            Fulfill.setHidden( value: ( Status.Value == Statuses.Pending || Status.Value == Statuses.Completed || Status.Value == Statuses.Cancelled ), SaveToDb: true );
+
+            //27800 - don't show redundant props when status is pending
+            Request.setHidden( value: ( Status.Value == Statuses.Pending ), SaveToDb: true );
+            Name.setHidden( value: ( Status.Value == Statuses.Pending ), SaveToDb: true );
+            Requestor.setHidden( value: ( Status.Value == Statuses.Pending ), SaveToDb: true );
+            Status.setHidden( value: ( Status.Value == Statuses.Pending ), SaveToDb: true );
+
+            switch( Status.Value )
+            {
+                case Statuses.Submitted:
+                    toggleReadOnlyProps( true, this );
+                    break;
+                case Statuses.Cancelled: //This fallthrough is intentional
+                case Statuses.Completed:
+                    CswNbtObjClassRequest NodeAsRequest = _CswNbtResources.Nodes[Request.RelatedNodeId];
+                    if( null != NodeAsRequest )
+                    {
+                        NodeAsRequest.setCompletedDate();
+                    }
+                    Node.setReadOnly( true, true );
+                    break;
+            }
+
+            onStatusPropChange( Prop );
+
+        }
+
+        /// <summary>
+        /// Status change event for derived classes to implement
+        /// </summary>
+        public abstract void onStatusPropChange( CswNbtNodeProp Prop );
 
         public CswNbtNodePropComments Comments { get { return _CswNbtNode.Properties[PropertyName.Comments]; } }
         public CswNbtNodePropDateTime NeededBy { get { return _CswNbtNode.Properties[PropertyName.NeededBy]; } }

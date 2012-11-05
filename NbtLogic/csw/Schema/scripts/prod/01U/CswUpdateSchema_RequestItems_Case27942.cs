@@ -1,4 +1,5 @@
 ﻿using ChemSW.Nbt.csw.Dev;
+using ChemSW.Nbt.MetaData;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -19,7 +20,9 @@ namespace ChemSW.Nbt.Schema
 
         public override void update()
         {
-            
+            CswNbtMetaDataObjectClass RequestContainerDispenseOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.RequestContainerDispenseClass );
+            CswNbtMetaDataNodeType RequestNt = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( NbtObjectClass.RequestContainerDispenseClass, "Request Container Dispense", "Requests" );
+
         }
 
         //Update()

@@ -1,12 +1,8 @@
 using System;
-using System.Collections.ObjectModel;
 using ChemSW.Core;
 using ChemSW.Exceptions;
-using ChemSW.Mail;
-using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
-using ChemSW.Nbt.ServiceDrivers;
 using ChemSW.Nbt.UnitsOfMeasure;
 using Newtonsoft.Json.Linq;
 
@@ -18,7 +14,7 @@ namespace ChemSW.Nbt.ObjClasses
     public class CswNbtObjClassRequestContainerDispense : CswNbtPropertySetRequestItem
     {
         /// <summary>
-        /// Property Names
+        /// Property Names (Includes Property Names inherited from base class <see cref="CswNbtPropertySetRequestItem"/>)
         /// </summary>
         public new sealed class PropertyName : CswNbtPropertySetRequestItem.PropertyName
         {
@@ -26,11 +22,6 @@ namespace ChemSW.Nbt.ObjClasses
             /// Relationship(<see cref="CswNbtNodePropRelationship"/> ) to the Container (<see cref="CswNbtObjClassContainer"/>) from which the Request Item will be Fulfilled.
             /// </summary>
             public const string Container = "Container";
-
-            /// <summary>
-            /// For "Request By Size" items, the number(<see cref="CswNbtNodePropNumber"/>) of sizes(<see cref="Size"/>) to request. 
-            /// </summary>
-            public const string Count = "Count";
 
             /// <summary>
             /// Relationship(<see cref="CswNbtNodePropRelationship"/> ) to the Material (<see cref="CswNbtObjClassMaterial"/>) from which the Request Item will be Fulfilled.
@@ -55,6 +46,9 @@ namespace ChemSW.Nbt.ObjClasses
 
         }
 
+        /// <summary>
+        /// Possible <see cref="Status"/> values (Includes Statuses inherited from base class <see cref="CswNbtPropertySetRequestItem"/>)
+        /// </summary>
         public new sealed class Statuses : CswNbtPropertySetRequestItem.Statuses
         {
             /// <summary>
@@ -71,6 +65,9 @@ namespace ChemSW.Nbt.ObjClasses
                 };
         }
 
+        /// <summary>
+        /// Possible <see cref="Fulfill"/> menu options (Includes menu inherited from base class <see cref="CswNbtPropertySetRequestItem"/>)
+        /// </summary>
         public new sealed class FulfillMenu : CswNbtPropertySetRequestItem.FulfillMenu
         {
             /// <summary>
@@ -99,7 +96,7 @@ namespace ChemSW.Nbt.ObjClasses
             }
             return ret;
         }
-      
+
 
         /// <summary>
         /// Constructor
@@ -120,6 +117,9 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Inherited Events
 
+        /// <summary>
+        /// Abstract override to toggle read only properties
+        /// </summary>
         public override void toggleReadOnlyProps( bool IsReadOnly, CswNbtPropertySetRequestItem ItemInstance )
         {
             if( null != ItemInstance )
@@ -131,6 +131,9 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
+        /// <summary>
+        /// Abstract override to be called on beforeWriteNode
+        /// </summary>
         public override void beforePropertySetWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
             if( CswTools.IsPrimaryKey( InventoryGroup.RelatedNodeId ) )
@@ -164,12 +167,18 @@ namespace ChemSW.Nbt.ObjClasses
                 }
             }
         }
-        
+
+        /// <summary>
+        /// Abstract override to be called on afterWriteNode
+        /// </summary>
         public override void afterPropertySetWriteNode()
         {
-        
+
         }
 
+        /// <summary>
+        /// Abstract override to be called on afterPopulateProps
+        /// </summary>
         public override void afterPropertySetPopulateProps()
         {
             Quantity.SetOnPropChange( onQuantityPropChange );
@@ -179,9 +188,11 @@ namespace ChemSW.Nbt.ObjClasses
             Status.SetOnPropChange( onStatusPropChange );
         }
 
-        public override bool onPropertySetButtonClick( NbtButtonData ButtonData )
+        /// <summary>
+        /// Abstract override to be called on onButtonClick
+        /// </summary>
+        public override bool onPropertySetButtonClick( CswNbtMetaDataObjectClassProp OCP, NbtButtonData ButtonData )
         {
-            CswNbtMetaDataObjectClassProp OCP = ButtonData.NodeTypeProp.getObjectClassProp();
             if( null != ButtonData.NodeTypeProp && null != OCP )
             {
                 switch( OCP.PropName )
@@ -190,10 +201,6 @@ namespace ChemSW.Nbt.ObjClasses
                         CswNbtObjClassContainer NodeAsContainer = null;
                         switch( ButtonData.SelectedText )
                         {
-                            case FulfillMenu.Cancel:
-                            case FulfillMenu.Complete:
-                                ButtonData.Action = NbtButtonAction.refresh;
-                                break;
                             case FulfillMenu.Dispense:
                                 NodeAsContainer = _CswNbtResources.Nodes.GetNode( Container.RelatedNodeId );
                                 if( null != NodeAsContainer && null != NodeAsContainer.Dispense.NodeTypeProp )
@@ -233,7 +240,6 @@ namespace ChemSW.Nbt.ObjClasses
                         } //switch( ButtonData.SelectedText )
 
                         _getNextStatus( ButtonData.SelectedText );
-                        postChanges( true );
                         ButtonData.Data["requestitem"] = ButtonData.Data["requestitem"] ?? new JObject();
                         ButtonData.Data["requestitem"]["requestitemid"] = NodeId.ToString();
                         ButtonData.Data["requestitem"]["materialid"] = ( Material.RelatedNodeId ?? new CswPrimaryKey() ).ToString();
@@ -244,7 +250,7 @@ namespace ChemSW.Nbt.ObjClasses
             }
             return true;
         }
-        
+
         private void _getNextStatus( string ButtonText )
         {
             switch( ButtonText )
@@ -258,6 +264,9 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
+        /// <summary>
+        /// Move to the next permitted Status based on the current Status
+        /// </summary>
         public void setNextStatus( string StatusVal )
         {
             switch( Status.Value )
@@ -282,52 +291,23 @@ namespace ChemSW.Nbt.ObjClasses
         #region CswNbtPropertySetRequestItem Members
 
         /// <summary>
-        /// Container Dispense Request status
+        /// Request-specific Status property change events
         /// </summary>
-        public override CswNbtNodePropList Status
+        public override void onStatusPropChange( CswNbtNodeProp Prop )
         {
-            get { return _CswNbtNode.Properties[PropertyName.Status]; }
-        }
-
-        private void onStatusPropChange( CswNbtNodeProp Prop )
-        {
-            AssignedTo.setHidden( value: ( Status.Value == Statuses.Pending || Status.Value == Statuses.Completed || Status.Value == Statuses.Cancelled ), SaveToDb: true );
-            Fulfill.setHidden( value: ( Status.Value == Statuses.Pending || Status.Value == Statuses.Completed || Status.Value == Statuses.Cancelled ), SaveToDb: true );
             TotalDispensed.setHidden( value: ( Status.Value == Statuses.Pending ), SaveToDb: true );
-
-            //27800 - don't show redundant props when status is pending
-            Request.setHidden( value: ( Status.Value == Statuses.Pending ), SaveToDb: true );
-            Name.setHidden( value: ( Status.Value == Statuses.Pending ), SaveToDb: true );
-            Requestor.setHidden( value: ( Status.Value == Statuses.Pending ), SaveToDb: true );
-            Status.setHidden( value: ( Status.Value == Statuses.Pending ), SaveToDb: true );
 
             switch( Status.Value )
             {
-                case Statuses.Submitted:
-                    toggleReadOnlyProps( true, this );
-                    break;
                 case Statuses.Dispensed:
                     if( TotalDispensed.Quantity >= Quantity.Quantity )
                     {
                         Fulfill.State = FulfillMenu.Complete;
                     }
                     break;
-                case Statuses.Cancelled: //This fallthrough is intentional
-                case Statuses.Completed:
-                    CswNbtObjClassRequest NodeAsRequest = _CswNbtResources.Nodes[Request.RelatedNodeId];
-                    if( null != NodeAsRequest )
-                    {
-                        NodeAsRequest.setCompletedDate();
-                    }
-                    Node.setReadOnly( true, true );
-                    break;
             }
         }
 
-        /// <summary>
-        /// Fulfill Menu Button
-        /// </summary>
-        public override CswNbtNodePropButton Fulfill { get { return _CswNbtNode.Properties[PropertyName.Fulfill]; } }
         #endregion
 
         #region Object class specific properties
@@ -338,6 +318,14 @@ namespace ChemSW.Nbt.ObjClasses
         }
         private void onQuantityPropChange( CswNbtNodeProp Prop )
         {
+            if( TotalDispensed.Precision != Quantity.Precision )
+            {
+                TotalDispensed.NodeTypeProp.NumberPrecision = Quantity.Precision;
+            }
+            if( TotalDispensed.UnitId != Quantity.UnitId )
+            {
+                TotalDispensed.UnitId = Quantity.UnitId;
+            }
             TotalDispensed.UnitId = Quantity.UnitId;
         }
 

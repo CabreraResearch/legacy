@@ -5,6 +5,7 @@ using ChemSW.DB;
 using ChemSW.Nbt.csw.Dev;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
+using ChemSW.Nbt.PropTypes;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -536,7 +537,7 @@ namespace ChemSW.Nbt.Schema
                     FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
                 _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( manufacturerOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.viewxml, manufacturerOCPView.ToString() );
 
-                CswNbtMetaDataObjectClass requestItemOC_27867 = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.RequestItemClass );
+                CswNbtMetaDataObjectClass requestItemOC_27867 = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtDoomedObjectClasses.RequestItemClass );
                 CswNbtMetaDataObjectClassProp requestItemOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( receiptLotOC )
                 {
                     PropName = CswNbtObjClassReceiptLot.PropertyName.RequestItem,
@@ -593,6 +594,189 @@ namespace ChemSW.Nbt.Schema
 
         #region Ursula Methods
 
+        private void _destroyRequestItemOc()
+        {
+            CswNbtMetaDataObjectClass RequestItemOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtDoomedObjectClasses.RequestItemClass );
+            if( null != RequestItemOc )
+            {
+                _CswNbtSchemaModTrnsctn.MetaData.DeleteObjectClass( RequestItemOc );
+            }
+        }
+
+        private void _createRequestContainerDispense( CswDeveloper Dev, Int32 CaseNo )
+        {
+            _acceptBlame( Dev, CaseNo );
+            CswNbtMetaDataObjectClass RequestContainerDispenseOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.RequestContainerDispenseClass );
+            if( null == RequestContainerDispenseOc )
+            {
+                CswNbtMetaDataObjectClass UserOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.UserClass );
+                CswNbtMetaDataObjectClass ContainerOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.ContainerClass );
+                CswNbtMetaDataObjectClass MaterialOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.MaterialClass );
+                CswNbtMetaDataObjectClass SizeOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.SizeClass );
+                CswNbtMetaDataObjectClass InventoryGroupOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.InventoryGroupClass );
+                CswNbtMetaDataObjectClass RequestOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.RequestClass );
+                RequestContainerDispenseOc = _CswNbtSchemaModTrnsctn.createObjectClass( NbtObjectClass.RequestContainerDispenseClass, NbtIcon.cart, AuditLevel: true );
+
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( RequestContainerDispenseOc )
+                {
+                    PropName = CswNbtObjClassRequestContainerDispense.PropertyName.AssignedTo,
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Relationship,
+                    IsFk = true,
+                    FkType = NbtViewRelatedIdType.ObjectClassId.ToString(),
+                    FkValue = UserOc.ObjectClassId,
+                    SetValOnAdd = false
+                } );
+
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( RequestContainerDispenseOc )
+                {
+                    PropName = CswNbtObjClassRequestContainerDispense.PropertyName.Comments,
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Comments,
+                    SetValOnAdd = false
+                } );
+
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( RequestContainerDispenseOc )
+                {
+                    PropName = CswNbtObjClassRequestContainerDispense.PropertyName.Container,
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Relationship,
+                    IsFk = true,
+                    FkType = NbtViewRelatedIdType.ObjectClassId.ToString(),
+                    FkValue = ContainerOc.ObjectClassId,
+                    ServerManaged = true,
+                    SetValOnAdd = false
+                } );
+
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( RequestContainerDispenseOc )
+                {
+                    PropName = CswNbtObjClassRequestContainerDispense.PropertyName.ExternalOrderNumber,
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Text,
+                    SetValOnAdd = false
+                } );
+
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( RequestContainerDispenseOc )
+                {
+                    PropName = CswNbtObjClassRequestContainerDispense.PropertyName.Fulfill,
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Button,
+                    Extended = CswNbtNodePropButton.ButtonMode.menu,
+                    StaticText = CswNbtObjClassRequestContainerDispense.FulfillMenu.Dispense,
+                    SetValOnAdd = false
+                } );
+
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( RequestContainerDispenseOc )
+                {
+                    PropName = CswNbtObjClassRequestContainerDispense.PropertyName.InventoryGroup,
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Relationship,
+                    IsFk = true,
+                    FkType = NbtViewRelatedIdType.ObjectClassId.ToString(),
+                    FkValue = InventoryGroupOc.ObjectClassId,
+                    SetValOnAdd = false
+                } );
+
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( RequestContainerDispenseOc )
+                {
+                    PropName = CswNbtObjClassRequestContainerDispense.PropertyName.Location,
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Location,
+                    SetValOnAdd = false
+                } );
+
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( RequestContainerDispenseOc )
+                {
+                    PropName = CswNbtObjClassRequestContainerDispense.PropertyName.Material,
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Relationship,
+                    IsFk = true,
+                    FkType = NbtViewRelatedIdType.ObjectClassId.ToString(),
+                    FkValue = MaterialOc.ObjectClassId,
+                    SetValOnAdd = false,
+                    ServerManaged = true
+                } );
+
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( RequestContainerDispenseOc )
+                {
+                    PropName = CswNbtObjClassRequestContainerDispense.PropertyName.Name,
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Text
+                } );
+
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( RequestContainerDispenseOc )
+                {
+                    PropName = CswNbtObjClassRequestContainerDispense.PropertyName.NeededBy,
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.DateTime
+                } );
+
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( RequestContainerDispenseOc )
+                {
+                    PropName = CswNbtObjClassRequestContainerDispense.PropertyName.Number,
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Sequence,
+                    SetValOnAdd = false
+                } );
+
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( RequestContainerDispenseOc )
+                {
+                    PropName = CswNbtObjClassRequestContainerDispense.PropertyName.Quantity,
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Quantity,
+                    IsRequired = true,
+                    SetValOnAdd = true
+                } );
+
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( RequestContainerDispenseOc )
+                {
+                    PropName = CswNbtObjClassRequestContainerDispense.PropertyName.Request,
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Relationship,
+                    IsFk = true,
+                    FkType = NbtViewRelatedIdType.ObjectClassId.ToString(),
+                    FkValue = RequestOc.ObjectClassId,
+                    ServerManaged = true,
+                    SetValOnAdd = false
+                } );
+
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( RequestContainerDispenseOc )
+                {
+                    PropName = CswNbtObjClassRequestContainerDispense.PropertyName.RequestedFor,
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Relationship,
+                    IsFk = true,
+                    FkType = NbtViewRelatedIdType.ObjectClassId.ToString(),
+                    FkValue = UserOc.ObjectClassId
+                } );
+
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( RequestContainerDispenseOc )
+                {
+                    PropName = CswNbtObjClassRequestContainerDispense.PropertyName.Requestor,
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Relationship,
+                    IsFk = true,
+                    FkType = NbtViewRelatedIdType.ObjectClassId.ToString(),
+                    FkValue = UserOc.ObjectClassId,
+                    ServerManaged = true
+                } );
+
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( RequestContainerDispenseOc )
+                {
+                    PropName = CswNbtObjClassRequestContainerDispense.PropertyName.Size,
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Relationship,
+                    IsFk = true,
+                    FkType = NbtViewRelatedIdType.ObjectClassId.ToString(),
+                    FkValue = SizeOc.ObjectClassId,
+                    ServerManaged = true,
+                    SetValOnAdd = false
+                } );
+
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( RequestContainerDispenseOc )
+                {
+                    PropName = CswNbtObjClassRequestContainerDispense.PropertyName.Status,
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.List,
+                    ListOptions = CswNbtObjClassRequestContainerDispense.Statuses.Options.ToString(),
+                    ServerManaged = true,
+                    SetValOnAdd = false
+                } );
+
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( RequestContainerDispenseOc )
+                {
+                    PropName = CswNbtObjClassRequestContainerDispense.PropertyName.TotalDispensed,
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Quantity,
+                    ServerManaged = true,
+                    SetValOnAdd = false
+                } );
+
+            }
+            _resetBlame();
+        }
 
         #endregion Ursula Methods
 
@@ -620,6 +804,8 @@ namespace ChemSW.Nbt.Schema
             #endregion TITANIA
 
             #region URSULA
+
+            _createRequestContainerDispense( CswDeveloper.CF, 27942 );
 
             #endregion URSULA
 
