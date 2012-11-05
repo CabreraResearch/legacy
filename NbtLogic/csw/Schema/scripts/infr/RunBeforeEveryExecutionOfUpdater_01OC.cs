@@ -680,7 +680,7 @@ namespace ChemSW.Nbt.Schema
             } );
 
             CswNbtMetaDataObjectClass printLabelOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.PrintLabelClass );
-            CswNbtMetaDataObjectClassProp labelFormatOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( containerGroupOC )
+            CswNbtMetaDataObjectClassProp labelFormatOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( containerOC )
             {
                 PropName = CswNbtObjClassContainer.PropertyName.LabelFormat,
                 FieldType = CswNbtMetaDataFieldType.NbtFieldType.Relationship,
@@ -690,9 +690,9 @@ namespace ChemSW.Nbt.Schema
             } );
 
             CswNbtMetaDataObjectClass userOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass(NbtObjectClass.UserClass);
-            CswNbtMetaDataObjectClassProp reservedForOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( containerGroupOC )
+            CswNbtMetaDataObjectClassProp reservedForOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( containerOC )
             {
-                PropName = CswNbtObjClassContainer.PropertyName.ReserverFor,
+                PropName = CswNbtObjClassContainer.PropertyName.ReservedFor,
                 FieldType = CswNbtMetaDataFieldType.NbtFieldType.Relationship,
                 IsFk = true,
                 FkValue = userOC.ObjectClassId,

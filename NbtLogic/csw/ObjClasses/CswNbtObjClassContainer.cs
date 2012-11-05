@@ -41,7 +41,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string Requisitionable = "Requisitionable";
             public const string ContainerGroup = "Container Group";
             public const string LabelFormat = "Label Format";
-            public const string ReserverFor = "Reserved For";
+            public const string ReservedFor = "Reserved For";
         }
 
         private bool _IsDisposed
@@ -938,7 +938,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropLogical LotControlled { get { return ( _CswNbtNode.Properties[PropertyName.LotControlled] ); } }
         public CswNbtNodePropLogical Requisitionable { get { return ( _CswNbtNode.Properties[PropertyName.Requisitionable] ); } }
         public CswNbtNodePropRelationship LabelFormat { get { return ( _CswNbtNode.Properties[PropertyName.LabelFormat] ); } }
-        public CswNbtNodePropRelationship ReserverFor { get { return ( _CswNbtNode.Properties[PropertyName.ReserverFor] ); } }
+        public CswNbtNodePropRelationship ReservedFor { get { return ( _CswNbtNode.Properties[PropertyName.ReservedFor] ); } }
         #endregion
 
 
