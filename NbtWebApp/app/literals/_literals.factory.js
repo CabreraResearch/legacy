@@ -38,7 +38,7 @@
                 opts.ID += controlName + cswPrivate.count;
                 //opts.ID = window.Ext.id();
                 if (false === Csw.isNullOrEmpty(opts.labelText)) {
-                    cswPublic.label({ forAttr: opts.ID, text: opts.labelText, useWide: opts.useWide });
+                    cswPublic.label({ forAttr: opts.ID, text: opts.labelText, useWide: opts.useWide, isRequired: opts.isRequired });
                 }
                 opts.parent = function () {
                     return cswPublic;

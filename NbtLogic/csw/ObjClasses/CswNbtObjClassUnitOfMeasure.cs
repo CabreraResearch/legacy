@@ -48,18 +48,21 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
+            if( false == IsTemp )
+            {
+                _validateConversionFactor();
+            }
             _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
         }//beforeWriteNode()
 
         public override void afterWriteNode()
-        {
+        {            
             _CswNbtObjClassDefault.afterWriteNode();
         }//afterWriteNode()
 
         public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false )
         {
             _CswNbtObjClassDefault.beforeDeleteNode( DeleteAllRequiredRelatedNodes );
-
         }//beforeDeleteNode()
 
         public override void afterDeleteNode()
@@ -80,21 +83,13 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override bool onButtonClick( NbtButtonData ButtonData )
         {
-
-
-
             if( null != ButtonData && null != ButtonData.NodeTypeProp ) { /*Do Something*/ }
             return true;
         }
 
         #endregion
 
-        #region Object class specific properties
-
-        public CswNbtNodePropText Name { get { return ( _CswNbtNode.Properties[PropertyName.Name] ); } }
-        public CswNbtNodePropText BaseUnit { get { return ( _CswNbtNode.Properties[PropertyName.BaseUnit] ); } }
-        public CswNbtNodePropScientific ConversionFactor { get { return ( _CswNbtNode.Properties[PropertyName.ConversionFactor] ); } }
-        private void OnConversionFactorPropChange( CswNbtNodeProp Prop )
+        private void _validateConversionFactor()
         {
             if( UnitType.Value != UnitTypes.Each.ToString() && false == CswTools.IsDouble( ConversionFactor.RealValue ) )
             {
@@ -105,6 +100,16 @@ namespace ChemSW.Nbt.ObjClasses
                     "Unit of Measure cannot be used for unit conversion."
                 );
             }
+        }
+
+        #region Object class specific properties
+
+        public CswNbtNodePropText Name { get { return ( _CswNbtNode.Properties[PropertyName.Name] ); } }
+        public CswNbtNodePropText BaseUnit { get { return ( _CswNbtNode.Properties[PropertyName.BaseUnit] ); } }
+        public CswNbtNodePropScientific ConversionFactor { get { return ( _CswNbtNode.Properties[PropertyName.ConversionFactor] ); } }
+        private void OnConversionFactorPropChange( CswNbtNodeProp Prop )
+        {
+            _validateConversionFactor();
         }
         public CswNbtNodePropLogical Fractional { get { return ( _CswNbtNode.Properties[PropertyName.Fractional] ); } }
         public CswNbtNodePropList UnitType { get { return ( _CswNbtNode.Properties[PropertyName.UnitType] ); } }

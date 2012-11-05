@@ -99,7 +99,7 @@
                 return (rowid === 1 && cswPrivate.hasHeader);
             };
 
-            cswPublic.addCell = Csw.method(function (value, row, col) {
+            cswPublic.addCell = Csw.method(function (cellData, row, col) {
                 /// <summary>
                 /// Add a cell to the thin grid
                 /// </summary>
@@ -109,8 +109,8 @@
                 /// <returns type="Csw.table.cell">A Csw table cell.</returns>
                 var cssClass = '', thisCell;
                 if (cswPrivate.isHeaderRow(row)) {
-                    if (false === Csw.isNullOrEmpty(value)) {
-                        cswPrivate.header[col] = value;
+                    if (false === Csw.isNullOrEmpty(cellData)) {
+                        cswPrivate.header[col] = cellData.value;
                     }
                     cssClass = 'CswThinGridHeaderShow';
                 } else if (row === 1) {
@@ -118,8 +118,9 @@
                 }
 
                 thisCell = cswPrivate.table.cell(row, col);
-                if (false === Csw.isNullOrEmpty(value)) {
-                    thisCell.append(Csw.string(value, '&nbsp;'));
+                if (false === Csw.isNullOrEmpty(cellData.value)) {
+                    //thisCell.append(Csw.string(value, '&nbsp;'));
+                    thisCell.label({ text: cellData.value, isRequired: cellData.isRequired, useWide: true }).css('text-align', 'left');
                 }
                 thisCell.addClass(cssClass);
                 if (false === Csw.isArray(cswPrivate.rowElements[row])) {

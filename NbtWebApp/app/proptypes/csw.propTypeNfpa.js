@@ -42,10 +42,10 @@
                     cswPrivate.propVals = cswPublic.data.propData.values;
                     cswPrivate.parent = cswPublic.data.propDiv;
 
-                    cswPrivate.red =    cswPrivate.propVals.flammability;
+                    cswPrivate.red = cswPrivate.propVals.flammability;
                     cswPrivate.yellow = cswPrivate.propVals.reactivity;
-                    cswPrivate.blue =   cswPrivate.propVals.health;
-                    cswPrivate.white =  cswPrivate.propVals.special;
+                    cswPrivate.blue = cswPrivate.propVals.health;
+                    cswPrivate.white = cswPrivate.propVals.special;
                     cswPrivate.displayMode = cswPrivate.propVals.displaymode;
                     cswPrivate.hideSpecial = cswPrivate.propVals.hidespecial;
 
@@ -138,7 +138,7 @@
                         cswPrivate.editTable = cswPublic.control.cell(1, 2).table({
                             FirstCellRightAlign: true
                         });
-                        
+
                         cswPrivate.editTable.cell(1, 1).text('Flammability');
                         cswPrivate.editTable.cell(2, 1).text('Reactivity');
                         if (cswPrivate.displayMode === Csw.enums.NFPADisplayMode.Diamond) {

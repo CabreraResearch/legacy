@@ -16,7 +16,7 @@
                 MaxValue: '',
                 Precision: '',
                 ReadOnly: false,
-                Required: false,
+                isRequired: false,
                 onChange: function () {
                 },
                 width: '',
@@ -113,7 +113,7 @@
                         }, 'Value precision cannot exceed ' + ceilingVal + '.');
                         cswPublic.addClass(cswPrivate.name + '_validateDb_15_6_FieldLength');
                     }
-                    cswPublic.required(cswPrivate.Required);
+                    cswPublic.required(cswPrivate.isRequired);
                 } /* else */
             } ());
             return cswPublic;

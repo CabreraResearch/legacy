@@ -26,7 +26,7 @@
                 text: '',
                 maxlength: '',
                 autofocus: false,
-                required: false,
+                isRequired: false,
                 rows: 3,
                 cols: 25,
                 disabled: false,
@@ -59,7 +59,7 @@
                 if (Csw.bool(cswPrivate.disabled)) {
                     attr.add('disabled', 'disabled');
                 }
-                if (Csw.bool(cswPrivate.required)) {
+                if (Csw.bool(cswPrivate.isRequired)) {
                     attr.add('required', 'required');
                     cswPrivate.cssclass += ' required ';
                 }

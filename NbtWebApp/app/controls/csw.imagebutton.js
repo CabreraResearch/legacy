@@ -17,7 +17,7 @@
                 AlternateText: '',
                 name: '',
                 cssclass: '',
-                Required: false,
+                isRequired: false,
                 onClick: null
             };
             var cswPublic = { };
@@ -86,6 +86,7 @@
                 cswPublic.addClass('divbutton');
                 cswPublic.propNonDom('title', cswPrivate.AlternateText);
                 cswPublic.css('display', 'inline-block');
+                cswPublic.required(cswPrivate.isRequired);
                 cswPublic.setButtonType(cswPrivate.ButtonType);
             }());
             return cswPublic;

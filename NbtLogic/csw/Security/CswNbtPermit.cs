@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Linq;
-using System.Runtime.Serialization;
-using ChemSW.Core;
 using System.Collections.Generic;
+using ChemSW.Core;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
@@ -20,10 +18,19 @@ namespace ChemSW.Nbt.Security
 
         public class CswNbtPermitInfoKey : IEquatable<CswNbtPermitInfoKey>, IComparable<CswNbtPermitInfoKey>
         {
+            private readonly Int32 HashMultiplier = 1;
             public CswNbtPermitInfoKey( CswNbtObjClassRole CswNbtObjClassRole, CswNbtMetaDataNodeType NodeTypeIn )
             {
                 Role = CswNbtObjClassRole;
                 NodeType = NodeTypeIn;
+                if( null != Role )
+                {
+                    HashMultiplier += Role.GetHashCode();
+                }
+                if( null != NodeType )
+                {
+                    HashMultiplier += NodeType.GetHashCode();
+                }
             }
 
             private char _Delimiter = '_';
@@ -71,7 +78,7 @@ namespace ChemSW.Nbt.Security
 
             public override int GetHashCode()
             {
-                return 17 * Role.GetHashCode() + NodeType.GetHashCode();
+                return 17 * HashMultiplier;
             }
         }//CswNbtPermitInfoKey
 
@@ -635,7 +642,7 @@ namespace ChemSW.Nbt.Security
                   (
                       ( ( null != _CswNbtPermitInfo.User ) && ( _CswNbtPermitInfo.User.IsAdministrator() ) ) ||
                       (
-                          ( false == MetaDataProp.ReadOnly ) && ( null != NodePropWrapper ) && ( false == NodePropWrapper.ReadOnly )  
+                          ( false == MetaDataProp.ReadOnly ) && ( null != NodePropWrapper ) && ( false == NodePropWrapper.ReadOnly )
                       )
                   );
 
