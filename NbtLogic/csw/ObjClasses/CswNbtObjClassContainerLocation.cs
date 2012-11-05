@@ -42,10 +42,10 @@ namespace ChemSW.Nbt.ObjClasses
                 return ret ?? NoAction;
             }
             //Null Option?
-            public static readonly ActionOptions NoAction = new ActionOptions( "NoAction" );
+            public static readonly ActionOptions NoAction = new ActionOptions( "No Action" );
             public static readonly ActionOptions Undispose = new ActionOptions( "Undispose" );
-            public static readonly ActionOptions MoveToLocation = new ActionOptions( "MoveToLocation" );
-            public static readonly ActionOptions UndisposeAndMove = new ActionOptions( "UndisposeAndMove" );
+            public static readonly ActionOptions MoveToLocation = new ActionOptions( "Move To Location" );
+            public static readonly ActionOptions UndisposeAndMove = new ActionOptions( "Undispose And Move" );
         }
 
         public sealed class TypeOptions : CswEnum<TypeOptions>
@@ -75,8 +75,8 @@ namespace ChemSW.Nbt.ObjClasses
             }
             public static readonly StatusOptions Correct = new StatusOptions( "Correct" );
             public static readonly StatusOptions Disposed = new StatusOptions( "Disposed" );
-            public static readonly StatusOptions WrongLocation = new StatusOptions( "WrongLocation" );
-            public static readonly StatusOptions DisposedAtWrongLocation = new StatusOptions( "DisposedAtWrongLocation" );
+            public static readonly StatusOptions WrongLocation = new StatusOptions( "Wrong Location" );
+            public static readonly StatusOptions DisposedAtWrongLocation = new StatusOptions( "Disposed At Wrong Location" );
             public static readonly StatusOptions Missing = new StatusOptions( "Missing" );
         }
 
@@ -121,6 +121,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void afterWriteNode()
         {
+            _setStatus();
             _CswNbtObjClassDefault.afterWriteNode();
         }//afterWriteNode()
 
@@ -151,6 +152,40 @@ namespace ChemSW.Nbt.ObjClasses
         {
             if( null != ButtonData && null != ButtonData.NodeTypeProp ) { /*Do Something*/ }
             return true;
+        }
+
+        #endregion
+
+        #region Private Methods
+
+        private void _setStatus()
+        {
+            bool Disposed = false;
+            bool WrongLocation = false;
+            StatusOptions ContLocStatus = StatusOptions.Correct;
+            if( null != Container.RelatedNodeId )
+            {
+                CswNbtObjClassContainer ContainerNode = _CswNbtResources.Nodes.GetNode( Container.RelatedNodeId );
+                if( ContainerNode.Disposed.Checked == Tristate.True )
+                {
+                    Disposed = true;
+                    ContLocStatus = StatusOptions.Disposed;
+                }
+                if( ContainerNode.Location.SelectedNodeId != Location.SelectedNodeId )
+                {
+                    WrongLocation = true;
+                    ContLocStatus = StatusOptions.WrongLocation;
+                }
+                if( Disposed && WrongLocation )
+                {
+                    ContLocStatus = StatusOptions.DisposedAtWrongLocation;
+                }
+            }
+            else
+            {
+                ContLocStatus = StatusOptions.Missing;
+            }
+            Status.Value = ContLocStatus.ToString();
         }
 
         #endregion
@@ -196,6 +231,7 @@ namespace ChemSW.Nbt.ObjClasses
                     Container.RelatedNodeId = null;
                 }
             }
+            _setStatus();
         }
         public CswNbtNodePropText LocationScan
         {
@@ -228,6 +264,7 @@ namespace ChemSW.Nbt.ObjClasses
                     Location.CachedBarcode = String.Empty;
                 }
             }
+            _setStatus();
         }
         public CswNbtNodePropDateTime ScanDate
         {

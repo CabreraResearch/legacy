@@ -694,7 +694,6 @@ namespace ChemSW.Nbt.ObjClasses
                 ContLocNode.ContainerScan.Text = Barcode.Barcode;
                 ContLocNode.LocationScan.Text = Location.CachedBarcode;
                 ContLocNode.ScanDate.DateTimeValue = DateTime.Now;
-                ContLocNode.Status.Value = CswNbtObjClassContainerLocation.StatusOptions.Correct.ToString();
                 ContLocNode.User.RelatedNodeId = _CswNbtResources.CurrentNbtUser.UserId;
                 ContLocNode.postChanges( false );
                 LocationVerified.DateTimeValue = DateTime.Now;
