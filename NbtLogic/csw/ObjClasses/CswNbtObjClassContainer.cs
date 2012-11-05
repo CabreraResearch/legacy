@@ -140,7 +140,7 @@ namespace ChemSW.Nbt.ObjClasses
         }//afterWriteNode()
 
         public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false )
-        {            
+        {
             _CswNbtObjClassDefault.beforeDeleteNode( DeleteAllRequiredRelatedNodes );
 
         }//beforeDeleteNode()
@@ -274,7 +274,7 @@ namespace ChemSW.Nbt.ObjClasses
         /// </summary>
         public bool canContainer( CswPrimaryKey ContainerNodeId, CswNbtPermit.NodeTypePermission Permission, CswNbtAction Action, ICswNbtUser User )
         {
-            
+
             bool ret = true;
             if( false == ( User is CswNbtSystemUser ) &&
                 null != ContainerNodeId &&
@@ -690,14 +690,6 @@ namespace ChemSW.Nbt.ObjClasses
             if( ContLocNT != null )
             {
                 CswNbtObjClassContainerLocation ContLocNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( ContLocNT.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode );
-                ContLocNode.Container.RelatedNodeId = NodeId;
-                ContLocNode.Location.SelectedNodeId = Location.SelectedNodeId;
-                if( null != Location )
-                {
-                    ContLocNode.Location.SelectedNodeId = Location.SelectedNodeId;
-                    ContLocNode.Location.CachedNodeName = Location.CachedNodeName;
-                    ContLocNode.Location.CachedPath = Location.CachedPath;
-                }
                 ContLocNode.Type.Value = Type.ToString();
                 ContLocNode.ContainerScan.Text = Barcode.Barcode;
                 ContLocNode.LocationScan.Text = Location.CachedBarcode;

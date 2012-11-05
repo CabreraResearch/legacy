@@ -56,7 +56,7 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 TypeOptions ret = Parse( str );
                 return ret ?? Missing;
-            }            
+            }
             public static readonly TypeOptions Scan = new TypeOptions( "Scan" );
             public static readonly TypeOptions Receipt = new TypeOptions( "Receipt" );
             public static readonly TypeOptions Move = new TypeOptions( "Move" );
@@ -136,6 +136,9 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void afterPopulateProps()
         {
+            ContainerScan.SetOnPropChange( OnContainerScanPropChange );
+            LocationScan.SetOnPropChange( OnLocationScanPropChange );
+            Action.SetOnPropChange( OnActionPropChange );
             _CswNbtObjClassDefault.afterPopulateProps();
         }//afterPopulateProps()
 
@@ -170,9 +173,61 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get { return _CswNbtNode.Properties[PropertyName.ContainerScan]; }
         }
+        private void OnContainerScanPropChange( CswNbtNodeProp Prop )
+        {
+            if( null != ContainerScan.Text )
+            {
+                CswNbtMetaDataObjectClass ContainerOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.ContainerClass );
+                CswNbtView ContainerView = new CswNbtView( _CswNbtResources );
+
+                CswNbtViewRelationship ContainerRel = ContainerView.AddViewRelationship( ContainerOc, false );
+                CswNbtMetaDataObjectClassProp BarcodeOcp = ContainerOc.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Barcode );
+
+                ContainerView.AddViewPropertyAndFilter( ContainerRel, BarcodeOcp, ContainerScan.Text );
+                ICswNbtTree ContainerTree = _CswNbtResources.Trees.getTreeFromView( ContainerView, false, false, true );
+                if( ContainerTree.getChildNodeCount() > 0 )
+                {
+                    ContainerTree.goToNthChild( 0 );
+                    CswNbtObjClassContainer ContainerNode = ContainerTree.getNodeForCurrentPosition();
+                    Container.RelatedNodeId = ContainerNode.NodeId;
+                }
+                else
+                {
+                    Container.RelatedNodeId = null;
+                }
+            }
+        }
         public CswNbtNodePropText LocationScan
         {
             get { return _CswNbtNode.Properties[PropertyName.LocationScan]; }
+        }
+        private void OnLocationScanPropChange( CswNbtNodeProp Prop )
+        {
+            if( null != LocationScan.Text )
+            {
+                CswNbtMetaDataObjectClass LocationOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.LocationClass );
+                CswNbtView LocationView = new CswNbtView( _CswNbtResources );
+
+                CswNbtViewRelationship LocationRel = LocationView.AddViewRelationship( LocationOc, false );
+                CswNbtMetaDataObjectClassProp BarcodeOcp = LocationOc.getObjectClassProp( CswNbtObjClassLocation.PropertyName.Barcode );
+
+                LocationView.AddViewPropertyAndFilter( LocationRel, BarcodeOcp, LocationScan.Text );
+                ICswNbtTree LocationTree = _CswNbtResources.Trees.getTreeFromView( LocationView, false, false, true );
+                if( LocationTree.getChildNodeCount() > 0 )
+                {
+                    LocationTree.goToNthChild( 0 );
+                    CswNbtObjClassLocation LocationNode = LocationTree.getNodeForCurrentPosition();
+                    Location.SelectedNodeId = LocationNode.NodeId;
+                    Location.RefreshNodeName();
+                }
+                else
+                {
+                    Location.SelectedNodeId = null;
+                    Location.CachedNodeName = String.Empty;
+                    Location.CachedPath = String.Empty;
+                    Location.CachedBarcode = String.Empty;
+                }
+            }
         }
         public CswNbtNodePropDateTime ScanDate
         {
@@ -185,6 +240,14 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropList Action
         {
             get { return _CswNbtNode.Properties[PropertyName.Action]; }
+        }
+        private void OnActionPropChange( CswNbtNodeProp Prop )
+        {
+            if( Action.Value == ActionOptions.NoAction.ToString() )
+            {
+                ActionApplied.Checked = Tristate.True;
+                ActionApplied.setReadOnly( true, true );
+            }
         }
         public CswNbtNodePropLogical ActionApplied
         {
