@@ -44,13 +44,15 @@ namespace ChemSW.Nbt.Schema
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01T_Case27551() ) );                         //01S-050    01T-16
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01T_Case27881() ) );                         //01S-051    01T-17
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01T_Case27528() ) );                         //01S-052    01T-18
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01T_LocationLabel_Case28108() ) );           //01S-053    01T-29
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01T_Case27912() ) );                         //01S-054    01T-21
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01T_Case28020() ) );                         //01S-055    01T-22
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01T_LocationLabel_Case28108() ) );           //01S-053    01T-19
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01T_Case27912() ) );                         //01S-054    01T-20
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01T_Case28020() ) );                         //01S-055    01T-21
 
             #endregion TITANIA
 
             #region URSULA
+
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_01U_Case27866() ) );                         //01T-22     01U-01
 
             #endregion URSULA
 

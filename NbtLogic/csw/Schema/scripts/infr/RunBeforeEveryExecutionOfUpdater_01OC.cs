@@ -658,6 +658,8 @@ namespace ChemSW.Nbt.Schema
 
             #region URSULA
 
+            _makeContainerGroup();
+
             #endregion URSULA
 
             //THIS GOES LAST!
