@@ -617,7 +617,7 @@ namespace ChemSW.Nbt.Schema
                 CswNbtMetaDataObjectClassProp containerGroupSyncLocationOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( containerGoupOC )
                 {
                     PropName = CswNbtObjClassContainerGroup.PropertyName.SyncLocation,
-                    FieldType= CswNbtMetaDataFieldType.NbtFieldType.Logical,
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Logical,
                     IsRequired = true
                 } );
                 _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( containerGroupSyncLocationOCP, false );
@@ -625,12 +625,80 @@ namespace ChemSW.Nbt.Schema
                 CswNbtMetaDataObjectClassProp containerGroupLocationOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( containerGoupOC )
                 {
                     PropName = CswNbtObjClassContainerGroup.PropertyName.Location,
-                    FieldType= CswNbtMetaDataFieldType.NbtFieldType.Location
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Location
                 } );
 
                 _CswNbtSchemaModTrnsctn.createModuleObjectClassJunction( CswNbtModuleName.CISPro, containerGoupOC.ObjectClassId );
 
             }
+            _resetBlame();
+            #endregion
+        }
+
+        public void _newContainerProperties27866()
+        {
+            #region Case 27866 part 2 - new container properties
+            _acceptBlame( CswDeveloper.MB, 27866 );
+
+            CswNbtMetaDataObjectClass containerOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.ContainerClass );
+
+            CswNbtMetaDataObjectClass receiptLotOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.ReceiptLotClass );
+            CswNbtMetaDataObjectClassProp receiptLotOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( containerOC )
+            {
+                PropName = CswNbtObjClassContainer.PropertyName.ReceiptLot,
+                FieldType = CswNbtMetaDataFieldType.NbtFieldType.Relationship,
+                IsFk = true,
+                FkValue = receiptLotOC.ObjectClassId,
+                FkType = NbtViewRelatedIdType.ObjectClassId.ToString(),
+                ServerManaged = true
+            } );
+
+            CswNbtMetaDataObjectClassProp lotControlledOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( containerOC )
+            {
+                PropName = CswNbtObjClassContainer.PropertyName.LotControlled,
+                FieldType = CswNbtMetaDataFieldType.NbtFieldType.Logical,
+                IsRequired = true
+            } );
+            _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( lotControlledOCP, false );
+
+            CswNbtMetaDataObjectClassProp requisitionableOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( containerOC )
+            {
+                PropName = CswNbtObjClassContainer.PropertyName.Requisitionable,
+                FieldType = CswNbtMetaDataFieldType.NbtFieldType.Logical,
+                IsRequired = true
+            } );
+            _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( requisitionableOCP, false );
+
+            CswNbtMetaDataObjectClass containerGroupOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.ContainerGroupClass );
+            CswNbtMetaDataObjectClassProp containerGroupOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( containerOC )
+            {
+                PropName = CswNbtObjClassContainer.PropertyName.ContainerGroup,
+                FieldType = CswNbtMetaDataFieldType.NbtFieldType.Relationship,
+                IsFk = true,
+                FkValue = containerGroupOC.ObjectClassId,
+                FkType = NbtViewRelatedIdType.ObjectClassId.ToString()
+            } );
+
+            CswNbtMetaDataObjectClass printLabelOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.PrintLabelClass );
+            CswNbtMetaDataObjectClassProp labelFormatOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( containerGroupOC )
+            {
+                PropName = CswNbtObjClassContainer.PropertyName.LabelFormat,
+                FieldType = CswNbtMetaDataFieldType.NbtFieldType.Relationship,
+                IsFk = true,
+                FkValue = printLabelOC.ObjectClassId,
+                FkType = NbtViewRelatedIdType.ObjectClassId.ToString()
+            } );
+
+            CswNbtMetaDataObjectClass userOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass(NbtObjectClass.UserClass);
+            CswNbtMetaDataObjectClassProp reservedForOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( containerGroupOC )
+            {
+                PropName = CswNbtObjClassContainer.PropertyName.ReserverFor,
+                FieldType = CswNbtMetaDataFieldType.NbtFieldType.Relationship,
+                IsFk = true,
+                FkValue = userOC.ObjectClassId,
+                FkType = NbtViewRelatedIdType.ObjectClassId.ToString()
+            } );
+
             _resetBlame();
             #endregion
         }
@@ -659,6 +727,7 @@ namespace ChemSW.Nbt.Schema
             #region URSULA
 
             _makeContainerGroup();
+            _newContainerProperties27866();
 
             #endregion URSULA
 
