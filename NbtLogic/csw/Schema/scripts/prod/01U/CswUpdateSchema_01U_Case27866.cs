@@ -22,6 +22,7 @@ namespace ChemSW.Nbt.Schema
 
         public override void update()
         {
+            #region part 1 - container group NT
             CswNbtMetaDataObjectClass containerGroupOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.ContainerGroupClass );
 
             CswNbtMetaDataNodeType containerGroupNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Container Group" );
@@ -61,6 +62,33 @@ namespace ChemSW.Nbt.Schema
                 containerGroupView.AddViewRelationship( containerGroupNT, true );
                 containerGroupView.save();
             }
+            #endregion
+
+            #region part 2 - new container props
+
+            CswNbtMetaDataNodeType containerNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Container" );
+            if( null != containerNT )
+            {
+                CswNbtMetaDataNodeTypeTab cmgTab = containerNT.getNodeTypeTab( "Central Material Group" );
+                if( null == cmgTab )
+                {
+                    cmgTab = _CswNbtSchemaModTrnsctn.MetaData.makeNewTab( containerNT, "Central Material Group", containerNT.GetMaximumTabOrder() + 1 );
+                }
+
+                CswNbtMetaDataNodeTypeProp lotControlledNTP = containerNT.getNodeTypePropByObjectClassProp( CswNbtObjClassContainer.PropertyName.LotControlled );
+                lotControlledNTP.removeFromAllLayouts();
+                lotControlledNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, false, cmgTab.TabId );
+
+                CswNbtMetaDataNodeTypeProp requisitionableNTP = containerNT.getNodeTypePropByObjectClassProp( CswNbtObjClassContainer.PropertyName.Requisitionable );
+                requisitionableNTP.removeFromAllLayouts();
+                requisitionableNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, false, cmgTab.TabId );
+
+                CswNbtMetaDataNodeTypeProp reservedForNTP = containerNT.getNodeTypePropByObjectClassProp( CswNbtObjClassContainer.PropertyName.ReservedFor );
+                reservedForNTP.removeFromAllLayouts();
+                reservedForNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, false, cmgTab.TabId );
+            }
+
+            #endregion
 
         }
 
