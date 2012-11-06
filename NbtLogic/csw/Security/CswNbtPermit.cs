@@ -407,12 +407,12 @@ namespace ChemSW.Nbt.Security
 
         private bool _CanNodeTypeImpl()
         {
-            bool ret = false;
+            bool ret = _CswNbtPermitInfo.NoExceptionCases;
 
-            ret |= _CswNbtPermitInfo.NoExceptionCases;
+
 
             // Base case: does the Role have this nodetype permission
-            ret |= _CswNbtPermitInfo.Role.NodeTypePermissions.CheckValue( CswNbtObjClassRole.MakeNodeTypePermissionValue( _CswNbtPermitInfo.NodeType.FirstVersionNodeTypeId, _CswNbtPermitInfo.Permission ) );
+            ret = ret || _CswNbtPermitInfo.Role.NodeTypePermissions.CheckValue( CswNbtObjClassRole.MakeNodeTypePermissionValue( _CswNbtPermitInfo.NodeType.FirstVersionNodeTypeId, _CswNbtPermitInfo.Permission ) );
 
             if( _CswNbtPermitInfo.Permission == NodeTypePermission.View )
             {
@@ -463,7 +463,7 @@ namespace ChemSW.Nbt.Security
 
                     ret = _CswNbtPermitInfo.NoExceptionCases;
 
-                    ret |= canNodeType( _CswNbtPermitInfo.Permission, _CswNbtPermitInfo.NodeType, _CswNbtPermitInfo.User );
+                    ret = ret || canNodeType( _CswNbtPermitInfo.Permission, _CswNbtPermitInfo.NodeType, _CswNbtPermitInfo.User );
                 }
                 if( false == ret &&
                     null != NodeTypeTab )
@@ -553,7 +553,7 @@ namespace ChemSW.Nbt.Security
         {
             bool ret = false;
 
-            ret |= _CswNbtPermitInfo.NoExceptionCases;
+            ret = ret || _CswNbtPermitInfo.NoExceptionCases;
 
             NodeTypeTabPermission TabPermission = (NodeTypeTabPermission) Enum.Parse( typeof( NodeTypeTabPermission ), _CswNbtPermitInfo.Permission.ToString() );
             foreach( CswNbtMetaDataNodeTypeTab CurrentTab in _CswNbtPermitInfo.NodeType.getNodeTypeTabs() )
@@ -628,11 +628,9 @@ namespace ChemSW.Nbt.Security
 
         private bool _isPropWritableImpl( CswNbtMetaDataNodeTypeTab MetaDataTab, CswNbtMetaDataNodeTypeProp MetaDataProp, CswNbtNodePropWrapper NodePropWrapper )
         {
-            bool ret = true;
+            bool ret = _CswNbtPermitInfo.NoExceptionCases;
 
-            ret |= _CswNbtPermitInfo.NoExceptionCases;
-
-            ret |= ( null == MetaDataTab || canTab( _CswNbtPermitInfo.Permission, _CswNbtPermitInfo.NodeType, MetaDataTab ) );
+            ret = ret || ( null == MetaDataTab || canTab( _CswNbtPermitInfo.Permission, _CswNbtPermitInfo.NodeType, MetaDataTab ) );
 
             // Anyone but an admin cannot write to read-only props
             // Even admins cannot write to servermanaged props
@@ -763,7 +761,7 @@ namespace ChemSW.Nbt.Security
                     if( _CswNbtPermitInfo.Permission == NodeTypePermission.Edit )
                     {
 
-                        ret |= _CswNbtPermitInfo.User.IsAdministrator() || false == Node.ReadOnly;
+                        ret = ret || _CswNbtPermitInfo.User.IsAdministrator() || false == Node.ReadOnly;
                     }
                 }
 
