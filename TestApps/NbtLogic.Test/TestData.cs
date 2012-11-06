@@ -23,6 +23,8 @@ namespace ChemSw.Nbt.Test
         private Dictionary<int, string> _ChangedNodeTypePropExtended = new Dictionary<int, string>();
         private Dictionary<int, int> _ChangedNodeTypePropMaxValue = new Dictionary<int, int>();
 
+        private Dictionary<CswPrimaryKey, String> _ContainerLocationNodeActions = new Dictionary<CswPrimaryKey, String>();
+
         internal TestData()
         {
             _CswNbtResources = CswNbtResourcesFactory.makeCswNbtResources( AppType.Nbt, SetupMode.NbtExe, true, false );
@@ -48,6 +50,11 @@ namespace ChemSw.Nbt.Test
         {
             CswNbtNode PlaceHolderNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( _getNodeTypeId( "Container Dispense Transaction" ), CswNbtNodeCollection.MakeNodeOperation.WriteNode );
             _NodeIdHighWaterMark = PlaceHolderNode.NodeId;
+        }
+
+        internal bool isTestNode( CswPrimaryKey NodeId )
+        {
+            return NodeId.PrimaryKey > _NodeIdHighWaterMark.PrimaryKey;
         }
 
         private List<Int32> _getNodesAboveHighWaterMark()
@@ -101,18 +108,57 @@ namespace ChemSw.Nbt.Test
             }
         }
 
+        internal void RevertNodeProps()
+        {
+            foreach( KeyValuePair<CswPrimaryKey, String> ContainerLocationNodeId in _ContainerLocationNodeActions )
+            {
+                CswNbtObjClassContainerLocation ContainerLocationNode = CswNbtResources.Nodes[ContainerLocationNodeId.Key];
+                ContainerLocationNode.Action.Value = ContainerLocationNodeId.Value;
+                ContainerLocationNode.postChanges( false );
+            }
+        }
+
         #endregion Setup and Teardown
 
         #region Nodes
 
-        internal CswNbtNode createContainerNode( string NodeTypeName, double Quantity, CswNbtNode UnitOfMeasure, CswNbtNode Material = null )
+        internal CswNbtNode createContainerLocationNode( CswNbtNode ContainerNode = null, String Action = "", DateTime? NullableScanDate = null, CswPrimaryKey LocationId = null )
+        {
+            CswNbtObjClassContainerLocation ContainerLocationNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( _getNodeTypeId( "Container Location" ), CswNbtNodeCollection.MakeNodeOperation.DoNothing );
+            if( null == ContainerNode )
+            {
+                ContainerNode = createContainerNode();
+            }
+            ContainerLocationNode.Container.RelatedNodeId = ContainerNode.NodeId;
+            ContainerLocationNode.Action.Value = Action;
+            DateTime ScanDate = NullableScanDate ?? DateTime.Now;
+            ContainerLocationNode.ScanDate.DateTimeValue = ScanDate;
+            if( LocationId != null )
+            {
+                ContainerLocationNode.Location.SelectedNodeId = LocationId;
+                ContainerLocationNode.Location.RefreshNodeName();
+            }
+            ContainerLocationNode.postChanges( false );
+            return ContainerLocationNode.Node;
+        }
+
+        internal CswNbtNode createContainerNode( string NodeTypeName = "Container", double Quantity = 1.0, CswNbtNode UnitOfMeasure = null, CswNbtNode Material = null, CswPrimaryKey LocationId = null )
         {
             CswNbtObjClassContainer ContainerNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( _getNodeTypeId( NodeTypeName ), CswNbtNodeCollection.MakeNodeOperation.DoNothing );
             ContainerNode.Quantity.Quantity = Quantity;
+            if( null == UnitOfMeasure )
+            {
+                UnitOfMeasure = createUnitOfMeasureNode( "Volume", "Liters", 1.0, 0, Tristate.True );
+            }
             ContainerNode.Quantity.UnitId = UnitOfMeasure.NodeId;
             if( Material != null )
             {
                 ContainerNode.Material.RelatedNodeId = Material.NodeId;
+            }
+            if( LocationId != null )
+            {
+                ContainerNode.Location.SelectedNodeId = LocationId;
+                ContainerNode.Location.RefreshNodeName();
             }
             ContainerNode.postChanges( true );
 
@@ -155,6 +201,21 @@ namespace ChemSw.Nbt.Test
             ChemicalNode.postChanges( true );
 
             return ChemicalNode;
+        }
+
+        #endregion
+
+        #region Node Props
+
+        internal void setAllContainerLocationNodeActions( String Action )
+        {
+            CswNbtMetaDataObjectClass ContainerLocationOc = CswNbtResources.MetaData.getObjectClass( NbtObjectClass.ContainerLocationClass );
+            foreach( CswNbtObjClassContainerLocation ContainerLocationNode in ContainerLocationOc.getNodes( false, false ) )
+            {
+                _ContainerLocationNodeActions.Add( ContainerLocationNode.NodeId, ContainerLocationNode.Action.Value );
+                ContainerLocationNode.Action.Value = Action;
+                ContainerLocationNode.postChanges( false );
+            }
         }
 
         #endregion
