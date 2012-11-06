@@ -244,17 +244,30 @@ namespace ChemSW.Nbt
         /// </summary>
         /// <param name="hidden">True if the view should be hidden</param>
         /// <param name="viewName">The name of the view to hide/unhide</param>
-        public void ToggleView( bool hidden, string viewName )
+        public void ToggleView( bool hidden, string viewName, NbtViewVisibility Visibility = null )
         {
-            DataTable viewDT = _CswNbtResources.ViewSelect.getView( viewName, NbtViewVisibility.Global, null, null );
+            Visibility = Visibility ?? NbtViewVisibility.Global;
+            DataTable viewDT = _CswNbtResources.ViewSelect.getView( viewName, Visibility, null, null );
             if( viewDT.Rows.Count == 1 )
             {
                 CswNbtView view = _CswNbtResources.ViewSelect.restoreView( viewDT.Rows[0]["viewxml"].ToString() );
                 if( null != view )
                 {
-                    view.SetVisibility( NbtViewVisibility.Hidden, null, null );
+                    if( hidden )
+                    {
+                        view.SetVisibility( NbtViewVisibility.Hidden, null, null );
+                    }
+                    else
+                    {
+                        view.SetVisibility( NbtViewVisibility.Global, null, null );
+                    }
                     view.save();
                 }
+            }
+            if( Visibility == NbtViewVisibility.Global )
+            {
+                //Case 28124: If we're toggling a 2nd time, the View Visibility will be hidden
+                ToggleView( hidden, viewName, NbtViewVisibility.Hidden );
             }
         }
 
