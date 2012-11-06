@@ -30,7 +30,7 @@
                         ceilingVal: cswPrivate.ceilingVal,
                         Precision: cswPrivate.precision,
                         ReadOnly: Csw.bool(cswPublic.data.isReadOnly()),
-                        Required: Csw.bool(cswPublic.data.isRequired()),
+                        isRequired: Csw.bool(cswPublic.data.isRequired()),
                         onChange: function () {
                             var val = cswPublic.control.val();
                             Csw.tryExec(cswPublic.data.onChange, val);

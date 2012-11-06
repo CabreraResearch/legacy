@@ -71,7 +71,7 @@
                 cswPublic.$ = element;
                 cswPublic.isValid = true;
             } else if (false === Csw.isNullOrEmpty(element) && Csw.isJQuery(element.$)) {
-                    /*This is already a Csw dom object*/
+                /*This is already a Csw dom object*/
                 return element;
             } else {
                 cswPublic.$ = {};
@@ -157,21 +157,10 @@
                 /// <param name='isReadOnly" type="Object">whether or not this property is read only</param>
                 /// <returns type="Object">The parent Csw object (for chaining)</returns> 
                 if (cswPrivate.isControlStillValid()) {
-                    if (Csw.bool(isRequired) && !Csw.bool(isReadOnly)) {
-                        propName = Csw.makeRequiredName(propName);
-                    }
-                    cswPublic.append(propName);
+                    cswPublic.append(propName).required(isRequired, true);
                 }
                 return cswPublic;
             };
-
-            Csw.makeRequiredName = Csw.makeRequiredName ||
-                Csw.register('makeRequiredName', function (propName) {
-                    /// <summary>Returns the property name with the required symbol next to it</summary>
-                    /// <param name="propName" type="Object">the property name to display</param>
-                    /// <returns type="string">The label name for a required property</returns> 
-                    return propName + "*";
-                });
 
             cswPublic.attach = function (object) {
                 /// <summary>Attach an object to this element.</summary>
@@ -292,7 +281,7 @@
             };
 
             //#endregion data methods
-            
+
             cswPublic.data = function (prop, val) {
                 /// <summary>Store property data on the control.</summary>
                 /// <returns type="Object">All properties, a single property, or the control if defining a property (for chaining).</returns> 
@@ -302,10 +291,10 @@
                         cswPrivate.setDataObj(prop);
                     } else {
                         switch (arguments.length) {
-                            //this isn't a valid use case
-                            //case 0:
-                            //    ret = _internal || cswPublic.$.data();
-                            //    break;
+                            //this isn't a valid use case        
+                            //case 0:        
+                            //    ret = _internal || cswPublic.$.data();        
+                            //    break;        
                             case 1:
                                 ret = cswPrivate.getData(prop);
                                 break;
@@ -541,16 +530,22 @@
                 return cswPublic;
             };
 
-            cswPublic.required = function (truthy) {
+            cswPublic.required = function (truthy, addLabel) {
                 /// <summary>Mark the required status of the element.</summary>
                 /// <returns type="Object">CswDomObject (for chaining)</returns> 
                 if (cswPrivate.isControlStillValid()) {
                     switch (Csw.bool(truthy)) {
                         case true:
+                            if (addLabel) {
+                                cswPrivate.requiredspan = cswPublic.span({ text: "*" }).css('color', 'Red');
+                            }
                             cswPublic.propDom('required', true);
                             cswPublic.addClass('required');
                             break;
                         case false:
+                            if (cswPrivate.requiredspan) {
+                                cswPrivate.requiredspan.remove();
+                            }
                             cswPublic.removeProp('required');
                             cswPublic.removeClass('required');
                             break;
@@ -736,7 +731,7 @@
         });
 
     Csw.isElementInDom = Csw.isElementInDom ||
-        Csw.register('isElementInDom', function(elementId) {
+        Csw.register('isElementInDom', function (elementId) {
             return false === Csw.isNullOrEmpty(document.getElementById(elementId));
         });
 
@@ -770,6 +765,6 @@
             return $ret;
         });
 
-}());
+} ());
 
 

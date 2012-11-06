@@ -28,7 +28,7 @@
                 stepThreeComplete: false,
                 stepFourComplete: false,
                 config: {
-                    quantityName: 'Initial Quantity *',
+                    quantityName: 'Initial Quantity',
                     numberName: 'Catalog No.',
                     dispensibleName: 'Dispensible',
                     quantityEditableName: 'Quantity Editable',
@@ -138,7 +138,7 @@
                             }
                             cswPrivate.createMaterial();
                             if (cswPrivate.isDuplicateMaterial) {
-                                
+
                                 cswPrivate.toggleButton(cswPrivate.buttons.prev, true, true);
                             }
                         }
@@ -287,13 +287,14 @@
                         cswPrivate.materialTypeSelect = cswPrivate.divStep1.nodeTypeSelect({
                             name: 'nodeTypeSelect',
                             useWide: true,
-                            labelText: 'Select a Material Type*: ',
+                            labelText: 'Select a Material Type:',
                             objectClassName: 'MaterialClass',
                             value: cswPrivate.state.materialType.val || cswPrivate.state.materialNodeTypeId,
                             selectedName: 'Chemical',
                             onSelect: changeMaterial,
                             onChange: changeMaterial,
-                            onSuccess: changeMaterial
+                            onSuccess: changeMaterial,
+                            isRequired: true
                         });
                         cswPrivate.divStep1.br({ number: 1 });
 
@@ -301,12 +302,13 @@
                         cswPrivate.tradeNameInput = cswPrivate.divStep1.input({
                             name: 'tradename',
                             useWide: true,
-                            labelText: 'Tradename*: ',
+                            labelText: 'Tradename:',
                             cssclass: 'required',
                             value: cswPrivate.state.tradeName,
                             onChange: function () {
                                 changeMaterial();
-                            }
+                            },
+                            isRequired: true
                         });
                         cswPrivate.divStep1.br({ number: 1 });
 
@@ -318,9 +320,10 @@
                             addNodeDialogTitle: 'Vendor',
                             useWide: true,
                             selectedNodeId: cswPrivate.state.supplierId || cswPrivate.state.supplier.val,
-                            labelText: 'Supplier*: ',
+                            labelText: 'Supplier: ',
                             onChange: changeMaterial,
-                            onSuccess: changeMaterial
+                            onSuccess: changeMaterial,
+                            isRequired: true
                         });
                         //cswPrivate.divStep1.br({ number: 1 });
 
@@ -329,7 +332,7 @@
                             name: 'partno',
                             useWide: true,
                             value: cswPrivate.state.partNo,
-                            labelText: 'Part No: ',
+                            labelText: 'Part No:',
                             onChange: function () {
                                 changeMaterial();
                             }
@@ -497,12 +500,14 @@
                                 return ret;
                             };
 
-                            cswPrivate.header = [cswPrivate.config.unitCountName, cswPrivate.config.quantityName, cswPrivate.config.numberName];
+                            cswPrivate.header = [{ "value": cswPrivate.config.unitCountName, "isRequired": false },
+                                { "value": cswPrivate.config.quantityName, "isRequired": true },
+                                { "value": cswPrivate.config.numberName, "isRequired": false}];
                             if (cswPrivate.showQuantityEditable) {
-                                cswPrivate.header = cswPrivate.header.concat([cswPrivate.config.quantityEditableName]);
+                                cswPrivate.header = cswPrivate.header.concat([{ "value": cswPrivate.config.quantityEditableName, "isRequired": false}]);
                             }
                             if (cswPrivate.showDispensable) {
-                                cswPrivate.header = cswPrivate.header.concat([cswPrivate.config.dispensibleName]);
+                                cswPrivate.header = cswPrivate.header.concat([{ "value": cswPrivate.config.dispensibleName, "isRequired": false}]);
                             }
                             if (cswPrivate.rows.length === 0) {
                                 cswPrivate.rows.push(cswPrivate.header);
@@ -541,7 +546,7 @@
                                                 }
                                             });
                                             cswPublic.rows[rowid].unitsCtrl = cswCell.select({
-                                                name:'unitsOfMeasureSelect',
+                                                name: 'unitsOfMeasureSelect',
                                                 values: unitsOfMeasure,
                                                 onChange: function (value) {
                                                     cswPublic.rows[rowid].sizeValues.unit = cswPublic.rows[rowid].unitsCtrl.val();

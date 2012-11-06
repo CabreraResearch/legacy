@@ -85,7 +85,7 @@
     </Reference>
     <Reference Include="SMTP.Net, Version=3.0.0.3, Culture=neutral, PublicKeyToken=986a9aa31056680b">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\ThirdParty\SMTP\SMTP.Net.dll</HintPath>
+      <HintPath>Resources\SMTP.Net.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -249,6 +249,8 @@
     <Content Include="csw\Schema\scripts\past\01R\CswUpdateSchema_Size_Case27438.cs" />
     <Compile Include="csw\Schema\scripts\prod\01T\CswUpdateSchema_01T_LocationLabel_Case28108.cs" />
     <Compile Include="csw\Schema\scripts\prod\01T\CswUpdateSchema_01T_Case27551.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01T_Case28020.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01T_Case27912.cs" />
     <Compile Include="csw\Schema\scripts\prod\01T\CswUpdateSchema_01T_Case27920.cs" />
     <Compile Include="csw\LandingPage\CswNbtLandingPageDataContract.cs" />
     <Compile Include="csw\LandingPage\CswNbtLandingPageItem.cs" />
@@ -261,6 +263,7 @@
     <Compile Include="csw\LandingPage\CswNbtLandingPageItemText.cs" />
     <Compile Include="csw\Schema\scripts\prod\01T\CswUpdateSchema_01T_Case27881.cs" />
     <Compile Include="csw\Schema\scripts\prod\01U\CswUpdateSchema_01U_RequestItems_Case27942.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchema_01T_Case28046.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="csw\Schema\scripts\prod\01T\CswUpdateSchema_01T_Case27884.cs" />
     <Content Include="csw\Schema\scripts\past\01S\CswUpdateSchema_01S_Case27709.cs" />
@@ -841,11 +844,7 @@
     <Compile Include="csw\Batch\CswNbtBatchOpMailReport.cs" />
     <Compile Include="csw\Batch\CswNbtBatchOpMultiDelete.cs" />
     <Compile Include="csw\Batch\CswNbtBatchOpMultiEdit.cs" />
-    <Compile Include="csw\Batch\CswNbtBatchOpUpdateRegulatoryLists.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
+    <Compile Include="csw\Batch\CswNbtBatchOpUpdateRegulatoryLists.cs" />
     <Compile Include="Resources\SqlRptViewDict.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -859,7 +858,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Common\CswCommon\CswCommon.csproj">
-      <Project>{434091FB-F487-4787-8BDB-58C2336B73C2}</Project>
+      <Project>{434091fb-f487-4787-8bdb-58c2336b73c2}</Project>
       <Name>CswCommon</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\Common\StructureSearch\StructureSearch\StructureSearch.csproj">
@@ -893,6 +892,10 @@
   </ItemGroup>
   <ItemGroup>
     <Service Include="{C0C07587-41A7-46C8-8FBD-3F9C8EBE2DDC}" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Resources\SMTP.Net.dll" />
+    <Content Include="Resources\SMTP.Net.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSHARP.Targets" />
   <ProjectExtensions>

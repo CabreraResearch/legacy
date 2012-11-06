@@ -16,7 +16,7 @@
                         quantityValues: {}
                     }
                 },
-                quantities: function() {
+                quantities: function () {
                     var qtyVals = [];
                     Csw.each(cswPublic.rows, function (row) {
                         qtyVals.push(row.quantityValues);
@@ -43,22 +43,22 @@
                     materialId: null,
                     rows: [],
                     config: {
-                        numberName: 'No. Containers *',
-                        sizeName: 'Size *',
-                        quantityName: 'Net Quantity *',
+                        numberName: 'No. Containers',
+                        sizeName: 'Size',
+                        quantityName: 'Net Quantity',
                         barcodeName: 'Barcodes (Optional)'
                     },
                     customBarcodes: false
                 };
                 Csw.extend(cswPrivate, options);
 
-                cswPrivate.header = [cswPrivate.config.numberName];
+                cswPrivate.header = [{ "value": cswPrivate.config.numberName, "isRequired": true}];
                 if (false === Csw.isNullOrEmpty(cswPrivate.materialId) && cswPrivate.action === 'Receive') {
-                    cswPrivate.header = cswPrivate.header.concat([cswPrivate.config.sizeName]);
+                    cswPrivate.header = cswPrivate.header.concat([{ "value": cswPrivate.config.sizeName, "isRequired": true}]);
                 }
-                cswPrivate.header = cswPrivate.header.concat([cswPrivate.config.quantityName]);
+                cswPrivate.header = cswPrivate.header.concat([{ "value": cswPrivate.config.quantityName, "isRequired": true}]);
                 if (cswPrivate.customBarcodes) {
-                    cswPrivate.header = cswPrivate.header.concat([cswPrivate.config.barcodeName]);
+                    cswPrivate.header = cswPrivate.header.concat([{ "value": cswPrivate.config.barcodeName, "isRequired": false}]);
                 }
 
                 if (cswPrivate.rows.length === 0) {
@@ -173,7 +173,7 @@
                             switch (columnName) {
                                 case cswPrivate.config.numberName:
                                     cswPublic.rows[rowid].containerNoControl = cswCell.numberTextBox({
-                                        name: 'containerCount' ,
+                                        name: 'containerCount',
                                         value: 1,
                                         MinValue: cswPrivate.containerMinimum,
                                         MaxValue: cswPublic.containerlimit,

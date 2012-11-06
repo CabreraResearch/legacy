@@ -35,15 +35,15 @@
                     style = Csw.makeStyle(),
                     attr = Csw.makeAttr();
                 var $label;
-                
+
                 if (options) {
                     Csw.extend(cswPrivate, options);
                 }
                 var cssClass = 'CswLabel ' + cswPrivate.cssclass;
-                if(cswPrivate.useWide) {
+                if (cswPrivate.useWide) {
                     cssClass += ' CswLabelWide';
                 }
-                
+
                 cswPrivate.ID = Csw.string(cswPrivate.ID, cswPrivate.name);
 
                 html += '<label ';
@@ -57,18 +57,15 @@
 
                 html += '>';
 
-                var labelText = cswPrivate.value;
-                if(Csw.bool(cswPrivate.isRequired)){
-                    labelText = Csw.makeRequiredName(labelText);
-                }
+                var labelText = cswPrivate.text;
 
-                //html += Csw.string(cswPrivate.text, cswPrivate.value);
-                html += Csw.string(cswPrivate.text, labelText);
+                html += Csw.string(labelText, labelText);
 
                 html += '</label>';
                 $label = $(html);
 
                 Csw.literals.factory($label, cswPublic);
+                cswPublic.required(cswPrivate.isRequired, true);
 
                 if (Csw.isJQuery(cswPrivate.$parent)) {
                     cswPrivate.$parent.append(cswPublic.$);

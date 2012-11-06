@@ -33,7 +33,7 @@
                             ceilingVal: Csw.number(cswPrivate.ceilingVal),
                             Precision: cswPrivate.precision,
                             ReadOnly: cswPublic.data.isReadOnly(),
-                            Required: cswPublic.data.isRequired(),
+                            isRequired: cswPublic.data.isRequired(),
                             onChange: function () {
                                 var val = cswPrivate.valueNtb.val();
                                 Csw.tryExec(cswPublic.data.onChange, val);
@@ -47,7 +47,7 @@
                             value: Csw.string(cswPrivate.propVals.exponent).trim(),
                             Precision: 0,
                             ReadOnly: cswPublic.data.isReadOnly(),
-                            Required: cswPublic.data.isRequired(),
+                            isRequired: cswPublic.data.isRequired(),
                             onChange: function () {
                                 var val = cswPrivate.exponentNtb.val();
                                 Csw.tryExec(cswPublic.data.onChange, val);
