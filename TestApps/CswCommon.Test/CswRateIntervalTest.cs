@@ -46,19 +46,19 @@ namespace CswCommon.Test
         public void WeeklyByDayTest()
         {
             CswRateInterval r = new CswRateInterval( _CswResources );
-            DateTime StartDate = new DateTime( 2012, 10, 5, 1, 30, 15 );
+            DateTime StartDate = new DateTime( 2012, 10, 5 );
             SortedList Days = new SortedList();
             Days.Add( DayOfWeek.Monday, DayOfWeek.Monday );
             Days.Add( DayOfWeek.Wednesday, DayOfWeek.Wednesday );
             Days.Add( DayOfWeek.Friday, DayOfWeek.Friday );
             r.setWeeklyByDay( Days, StartDate );
-            
+
             Assert.AreEqual( r.getFirst(), StartDate );
             DateTime CurrentDate = StartDate;
             for( Int32 i = 1; i <= 365; i++ )
             {
                 CurrentDate = CurrentDate.AddDays( 1 );
-                DateTime TargetDate = CurrentDate.AddDays(1);
+                DateTime TargetDate = CurrentDate.AddDays( 1 );
                 while( TargetDate.DayOfWeek != DayOfWeek.Monday &&
                        TargetDate.DayOfWeek != DayOfWeek.Wednesday &&
                        TargetDate.DayOfWeek != DayOfWeek.Friday )
@@ -73,8 +73,8 @@ namespace CswCommon.Test
         public void MonthlyByDateTest()
         {
             CswRateInterval r = new CswRateInterval( _CswResources );
-            DateTime StartDate = new DateTime( 2012, 10, 15, 1, 30, 15 );
-            
+            DateTime StartDate = new DateTime( 2012, 10, 15 );
+
             r.setMonthlyByDate( 1, 15, 10, 2012 );
             Assert.AreEqual( r.getFirst(), StartDate );
             DateTime CurrentDate = StartDate;
@@ -89,19 +89,20 @@ namespace CswCommon.Test
         public void MonthlyByWeekAndDayTest()
         {
             CswRateInterval r = new CswRateInterval( _CswResources );
-            DateTime StartDate = new DateTime( 2012, 10, 8, 1, 30, 15 );
+            DateTime StartDate = new DateTime( 2012, 10, 8 );
 
             r.setMonthlyByWeekAndDay( 1, 2, DayOfWeek.Monday, 10, 2012 );
             Assert.AreEqual( r.getFirst(), StartDate );
             DateTime CurrentDate = StartDate;
             for( Int32 i = 1; i <= 24; i++ )
             {
-                CurrentDate = new DateTime( CurrentDate.Year, CurrentDate.Month + 1, 1 );
+                CurrentDate = CurrentDate.AddMonths( 1 );
                 DateTime TargetDate = CurrentDate;
-                while( TargetDate.Day < 8 && TargetDate.DayOfWeek != DayOfWeek.Monday ) {
-                    TargetDate = TargetDate.AddDays( 1 ); 
+                while( TargetDate.Day > 7 && TargetDate.Day < 15 && TargetDate.DayOfWeek != DayOfWeek.Monday )
+                {
+                    TargetDate = TargetDate.AddDays( 1 );
                 }
-                Assert.AreEqual( r.getNext( CurrentDate ), TargetDate );
+                Assert.AreEqual( r.getNext( CurrentDate.AddDays( -1 ) ), TargetDate );
             }
         }
 
@@ -109,7 +110,7 @@ namespace CswCommon.Test
         public void YearlyTest()
         {
             CswRateInterval r = new CswRateInterval( _CswResources );
-            DateTime StartDate = new DateTime( 2012, 10, 15, 1, 30, 15 );
+            DateTime StartDate = new DateTime( 2012, 10, 15 );
 
             r.setYearlyByDate( StartDate );
             Assert.AreEqual( r.getFirst(), StartDate );
