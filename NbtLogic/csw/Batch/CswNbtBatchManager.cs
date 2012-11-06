@@ -130,6 +130,10 @@ namespace ChemSW.Nbt.Batch
                 {
                     op = new CswNbtBatchOpExpiredContainers( CswNbtResources );
                 }
+                else if( OpName == NbtBatchOpName.ContainerReconciliationActions )
+                {
+                    op = new CswNbtBatchOpContainerReconciliationActions( CswNbtResources );
+                }
                 // New batch ops go here
                 // else if( OpName == NbtBatchOpName.NEWNAME ) 
                 if( null != op )
