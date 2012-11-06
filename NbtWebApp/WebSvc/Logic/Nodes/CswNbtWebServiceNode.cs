@@ -342,7 +342,7 @@ namespace ChemSW.Nbt.WebServices
                 Ret["qtyReadonly"] = "false";
                 Ret["unitReadonly"] = "false";
                 Ret["unitCount"] = "1";
-                Ret["Required"] = InitialQuantity.Required.ToString();
+                Ret["isRequired"] = InitialQuantity.Required.ToString();
                 if( Action.ToLower() == ChemSW.Nbt.ObjClasses.CswNbtObjClass.NbtButtonAction.receive.ToString() )
                 {
                     Ret["unitReadonly"] = "true";

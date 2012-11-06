@@ -11,7 +11,7 @@
                 prefix: '',
                 Checked: '',
                 ReadOnly: false,
-                Required: false,
+                isRequired: false,
                 Multi: false,
                 cssclass: 'CswTristateCheckBox',
                 onChange: function () {
@@ -56,7 +56,7 @@
                     cswPrivate.btnValue = Csw.enums.imageButton_ButtonType.CheckboxTrue;
                     cswPrivate.value = 'true';
                 } else if (cswPrivate.value === 'false') {
-                    if (Csw.bool(cswPrivate.Required)) {
+                    if (Csw.bool(cswPrivate.isRequired)) {
                         cswPrivate.btnValue = Csw.enums.imageButton_ButtonType.CheckboxTrue;
                         cswPrivate.value = 'true';
                     } else {

@@ -26,7 +26,8 @@
                 labelText: null,
                 excludeNodeTypeIds: '',
                 canAdd: false,
-                selectedNodeId: ''
+                selectedNodeId: '',
+                isRequired: false
             };
             var cswPublic = {};
 

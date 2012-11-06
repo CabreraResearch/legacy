@@ -55,7 +55,7 @@
                                 DateFormat: cswPrivate.dateFormat,
                                 DisplayMode: 'Date',
                                 ReadOnly: cswPublic.data.isReadOnly(),
-                                Required: cswPublic.data.isRequired(),
+                                isRequired: cswPublic.data.isRequired(),
                                 onChange: function() {
                                     var val = cswPrivate.datePicker.val();
                                     Csw.tryExec(cswPublic.data.onChange, val);

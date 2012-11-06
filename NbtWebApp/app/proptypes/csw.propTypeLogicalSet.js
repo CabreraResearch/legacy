@@ -24,7 +24,7 @@
                     cols: cswPrivate.logicalSetJson.columns,
                     data: cswPrivate.logicalSetJson.data,
                     UseRadios: false,
-                    Required: cswPublic.data.isRequired(),
+                    isRequired: cswPublic.data.isRequired(),
                     ReadOnly: cswPublic.data.isReadOnly(),
                     Multi: cswPublic.data.isMulti(),
                     onChange: function () {

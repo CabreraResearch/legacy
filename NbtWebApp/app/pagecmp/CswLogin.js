@@ -79,15 +79,16 @@
                                         });
                     loginTable.cell(6, 2);
                     parent.br({ number: 3 });
-                    parent.div({
+
+                    var assemblyDiv = parent.div({
                         name: 'assemblydiv',
                         width: '100%',
                         align: 'right'
                     });
 
-                    $('#assemblydiv').load('_Assembly.txt');
+                    assemblyDiv.$.load('_Assembly.txt');
 
-                    $('#login_accessid').focus();
+                    inpAccessId.$.focus();
                     
                 } // if-else(ThisSessionId !== null)
             } // init
