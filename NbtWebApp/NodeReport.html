@@ -29,8 +29,8 @@
                     Csw.layouts.tabsAndProps(parent, {
                         name: 'nodereporttabs',
                         globalState: {
-                            nodeids: [qs.nodeid],
-                            nodekeys: [qs.nodekey]
+                            currentNodeId: qs.nodeid,
+                            currentNodeKey: qs.nodekey
                         },
                         tabState: {
                             EditMode: Csw.enums.editMode.PrintReport
