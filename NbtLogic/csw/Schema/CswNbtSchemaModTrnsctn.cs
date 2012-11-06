@@ -82,6 +82,20 @@ namespace ChemSW.Nbt.Schema
             //            _CswNbtSequenceManager = new CswNbtSequenceManager( _CswNbtResources );
         }//ctor
 
+        /// <summary>
+        /// Send a Schema Update error to the log.
+        /// </summary>
+        public void logError( string Message )
+        {
+            CswStatusMessage Msg = new CswStatusMessage
+            {
+                AppType = AppType.SchemUpdt,
+                ContentType = ContentType.Error
+            };
+            Msg.Attributes.Add( LegalAttribute.exoteric_message, Message );
+            CswLogger.send( Msg );
+        }
+
         public ICswLogger CswLogger { get { return ( _CswNbtResources.CswLogger ); } }
 
         //private bool _ManageConstraints = true;
@@ -1343,6 +1357,7 @@ namespace ChemSW.Nbt.Schema
             }
             OCPRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.statictext.ToString()] = OcpModel.StaticText;
             OCPRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.extended.ToString()] = OcpModel.Extended;
+            
             OCPRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.filter.ToString()] = OcpModel.Filter;
             OCPRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.filterpropid.ToString()] = CswConvert.ToDbVal( OcpModel.FilterPropId );
             OCPRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.auditlevel.ToString()] = CswConvert.ToDbVal( OcpModel.AuditLevel );

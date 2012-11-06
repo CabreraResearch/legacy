@@ -629,7 +629,7 @@ namespace ChemSW.Nbt.Schema
                     FieldType = CswNbtMetaDataFieldType.NbtFieldType.Comments,
                     SetValOnAdd = false
                 } );
-                
+
                 _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( Ret )
                 {
                     PropName = CswNbtPropertySetRequestItem.PropertyName.ExternalOrderNumber,
@@ -757,8 +757,8 @@ namespace ChemSW.Nbt.Schema
                 } );
 
                 CswNbtMetaDataObjectClassProp FulfillOcp = RequestContainerDispenseOc.getObjectClassProp( CswNbtObjClassRequestContainerDispense.PropertyName.Fulfill );
-                _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp(FulfillOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.statictext, CswNbtObjClassRequestContainerDispense.FulfillMenu.Dispense );
-                
+                _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( FulfillOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.statictext, CswNbtObjClassRequestContainerDispense.FulfillMenu.Dispense );
+
                 _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( RequestContainerDispenseOc )
                 {
                     PropName = CswNbtObjClassRequestContainerDispense.PropertyName.Material,
@@ -777,7 +777,7 @@ namespace ChemSW.Nbt.Schema
                     IsRequired = true,
                     SetValOnAdd = true
                 } );
-                
+
                 _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( RequestContainerDispenseOc )
                 {
                     PropName = CswNbtObjClassRequestContainerDispense.PropertyName.Size,
@@ -791,7 +791,7 @@ namespace ChemSW.Nbt.Schema
 
                 CswNbtMetaDataObjectClassProp StatusOcp = RequestContainerDispenseOc.getObjectClassProp( CswNbtObjClassRequestContainerDispense.PropertyName.Status );
                 _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( StatusOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.listoptions, CswNbtObjClassRequestContainerDispense.Statuses.Options.ToString() );
-                
+
                 _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( RequestContainerDispenseOc )
                 {
                     PropName = CswNbtObjClassRequestContainerDispense.PropertyName.TotalDispensed,
@@ -841,9 +841,9 @@ namespace ChemSW.Nbt.Schema
                 _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( TypeOcp, CswNbtObjClassRequestContainerUpdate.Types.Dispose );
 
                 CswNbtMetaDataObjectClassProp LocationOcp = RequestContainerUpdateOc.getObjectClassProp( CswNbtObjClassRequestContainerUpdate.PropertyName.Location );
-                _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp(LocationOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.filterpropid, TypeOcp.ObjectClassPropId );
-                _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( LocationOcp, 
-                    CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.filter, 
+                _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( LocationOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.filterpropid, TypeOcp.ObjectClassPropId );
+                _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( LocationOcp,
+                    CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.filter,
                     CswNbtMetaDataObjectClassProp.makeFilter( TypeOcp.getFieldTypeRule().SubFields.Default, CswNbtPropFilterSql.PropertyFilterMode.Equals, CswNbtObjClassRequestContainerUpdate.Types.Move ) );
 
 
@@ -874,7 +874,7 @@ namespace ChemSW.Nbt.Schema
                 CswNbtMetaDataObjectClass SizeOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.SizeClass );
 
                 RequestMaterialDispenseOc = _createRequestItemBase( NbtObjectClass.RequestMaterialDispenseClass );
-                
+
                 CswNbtMetaDataObjectClassProp FulfillOcp = RequestMaterialDispenseOc.getObjectClassProp( CswNbtObjClassRequestMaterialDispense.PropertyName.Fulfill );
                 _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( FulfillOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.statictext, CswNbtObjClassRequestMaterialDispense.FulfillMenu.Order );
 
@@ -904,7 +904,6 @@ namespace ChemSW.Nbt.Schema
                 {
                     PropName = CswNbtObjClassRequestMaterialDispense.PropertyName.Quantity,
                     FieldType = CswNbtMetaDataFieldType.NbtFieldType.Quantity,
-                    IsRequired = true,
                     SetValOnAdd = true,
                     FilterPropId = TypeOcp.ObjectClassPropId,
                     Filter = CswNbtMetaDataObjectClassProp.makeFilter( TypeOcp.getFieldTypeRule().SubFields.Default, CswNbtPropFilterSql.PropertyFilterMode.Equals, CswNbtObjClassRequestMaterialDispense.Types.Bulk )
@@ -914,7 +913,6 @@ namespace ChemSW.Nbt.Schema
                 {
                     PropName = CswNbtObjClassRequestMaterialDispense.PropertyName.Count,
                     FieldType = CswNbtMetaDataFieldType.NbtFieldType.Number,
-                    IsRequired = true,
                     SetValOnAdd = true,
                     NumberPrecision = 0,
                     NumberMinValue = 1,
@@ -929,7 +927,6 @@ namespace ChemSW.Nbt.Schema
                     IsFk = true,
                     FkType = NbtViewRelatedIdType.ObjectClassId.ToString(),
                     FkValue = SizeOc.ObjectClassId,
-                    IsRequired = true,
                     SetValOnAdd = true,
                     FilterPropId = TypeOcp.ObjectClassPropId,
                     Filter = CswNbtMetaDataObjectClassProp.makeFilter( TypeOcp.getFieldTypeRule().SubFields.Default, CswNbtPropFilterSql.PropertyFilterMode.Equals, CswNbtObjClassRequestMaterialDispense.Types.Size )
