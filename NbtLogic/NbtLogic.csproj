@@ -696,11 +696,7 @@
     <Compile Include="csw\Batch\CswNbtBatchOpMailReport.cs" />
     <Compile Include="csw\Batch\CswNbtBatchOpMultiDelete.cs" />
     <Compile Include="csw\Batch\CswNbtBatchOpMultiEdit.cs" />
-    <Compile Include="csw\Batch\CswNbtBatchOpUpdateRegulatoryLists.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
+    <Compile Include="csw\Batch\CswNbtBatchOpUpdateRegulatoryLists.cs" />
     <Compile Include="Resources\SqlRptViewDict.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -714,7 +710,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Common\CswCommon\CswCommon.csproj">
-      <Project>{434091FB-F487-4787-8BDB-58C2336B73C2}</Project>
+      <Project>{434091fb-f487-4787-8bdb-58c2336b73c2}</Project>
       <Name>CswCommon</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\Common\StructureSearch\StructureSearch\StructureSearch.csproj">
