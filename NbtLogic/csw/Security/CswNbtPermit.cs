@@ -46,7 +46,7 @@ namespace ChemSW.Nbt.Security
 
                 if( ( null != Role ) && ( null != NodeType ) && ( null != other.Role ) && ( null != other.NodeType ) )
                 {
-                    if( ( other.Role.Name.Text == Role.Name.Text ) && ( other.NodeType.NodeTypeName == NodeType.NodeTypeName ) )
+                    if( ( other.Role.NodeId == Role.NodeId ) && ( other.NodeType.FirstVersionNodeTypeId == NodeType.FirstVersionNodeTypeId ) )
                     {
                         ReturnVal = true;
                     }
