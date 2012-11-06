@@ -297,7 +297,7 @@ namespace ChemSW.Nbt.ObjClasses
 
 
             //case 27793: these are the properties that a user cannot edit -- not even his own
-            if( ( null != _CswNbtResources.CurrentNbtUser ) && ( false == _CswNbtResources.CurrentNbtUser.IsAdministrator() ) )
+            if( ( null == _CswNbtResources.CurrentNbtUser ) || ( false == _CswNbtResources.CurrentNbtUser.IsAdministrator() ) )
             {
 
                 this.Role.setReadOnly( true, false );
