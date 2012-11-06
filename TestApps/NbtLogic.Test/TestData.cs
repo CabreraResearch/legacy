@@ -46,7 +46,7 @@ namespace ChemSw.Nbt.Test
 
         private void _setHighWaterMark()
         {
-            CswNbtNode PlaceHolderNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( _getNodeTypeId( "Unit (Weight)" ), CswNbtNodeCollection.MakeNodeOperation.WriteNode );
+            CswNbtNode PlaceHolderNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( _getNodeTypeId( "Container Dispense Transaction" ), CswNbtNodeCollection.MakeNodeOperation.WriteNode );
             _NodeIdHighWaterMark = PlaceHolderNode.NodeId;
         }
 
@@ -107,7 +107,7 @@ namespace ChemSw.Nbt.Test
 
         internal CswNbtNode createContainerNode( string NodeTypeName, double Quantity, CswNbtNode UnitOfMeasure, CswNbtNode Material = null )
         {
-            CswNbtObjClassContainer ContainerNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( _getNodeTypeId( NodeTypeName ), CswNbtNodeCollection.MakeNodeOperation.WriteNode );
+            CswNbtObjClassContainer ContainerNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( _getNodeTypeId( NodeTypeName ), CswNbtNodeCollection.MakeNodeOperation.DoNothing );
             ContainerNode.Quantity.Quantity = Quantity;
             ContainerNode.Quantity.UnitId = UnitOfMeasure.NodeId;
             if( Material != null )
@@ -121,7 +121,7 @@ namespace ChemSw.Nbt.Test
 
         internal CswNbtNode createUnitOfMeasureNode( string NodeTypeName, string Name, double ConversionFactorBase, int ConversionFactorExponent, Tristate Fractional )
         {
-            CswNbtObjClassUnitOfMeasure UnitOfMeasureNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( _getNodeTypeId( "Unit (" + NodeTypeName + ")" ), CswNbtNodeCollection.MakeNodeOperation.WriteNode );
+            CswNbtObjClassUnitOfMeasure UnitOfMeasureNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( _getNodeTypeId( "Unit (" + NodeTypeName + ")" ), CswNbtNodeCollection.MakeNodeOperation.DoNothing );
             UnitOfMeasureNode.Name.Text = Name + "Test";
             if( ConversionFactorBase != Int32.MinValue )
                 UnitOfMeasureNode.ConversionFactor.Base = ConversionFactorBase;
@@ -136,7 +136,7 @@ namespace ChemSw.Nbt.Test
 
         internal CswNbtNode createMaterialNode( string NodeTypeName, string State, double SpecificGravity )
         {
-            CswNbtObjClassMaterial MaterialNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( _getNodeTypeId( NodeTypeName ), CswNbtNodeCollection.MakeNodeOperation.WriteNode );
+            CswNbtObjClassMaterial MaterialNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( _getNodeTypeId( NodeTypeName ), CswNbtNodeCollection.MakeNodeOperation.DoNothing );
             if( CswTools.IsDouble( SpecificGravity ) )
                 MaterialNode.SpecificGravity.Value = SpecificGravity;
             MaterialNode.PhysicalState.Value = State;
