@@ -263,7 +263,8 @@
                         store: cswPrivate.store,
                         dock: 'bottom',
                         displayInfo: true,
-                        itemId: 'bottomtoolbar'
+                        itemId: 'bottomtoolbar',
+                        doRefresh: cswPublic.reload
                     });
 
                     var rows = cswPrivate.data.items.length;
