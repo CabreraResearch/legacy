@@ -38,7 +38,6 @@ namespace ChemSW.Nbt.Sched
             get { return ( _CswScheduleLogicDetail ); }
         }
 
-        private CswScheduleNodeUpdater _CswScheduleNodeUpdater = null;
         private CswScheduleLogicNodes _CswScheduleLogicNodes = null;
         private CswNbtResources _CswNbtResources = null;
         public void init( ICswResources RuleResources, CswScheduleLogicDetail CswScheduleLogicDetail )
@@ -46,8 +45,6 @@ namespace ChemSW.Nbt.Sched
             _CswNbtResources = (CswNbtResources) RuleResources;
             _CswScheduleLogicDetail = CswScheduleLogicDetail;
             _CswScheduleLogicNodes = new CswScheduleLogicNodes( _CswNbtResources );
-            _CswScheduleNodeUpdater = new CswScheduleNodeUpdater( _CswNbtResources );
-            //_CswNbtResources.AuditContext = "Scheduler Task: Generate Nodes";
             _CswNbtResources.AuditContext = "Scheduler Task: " + RuleName;
 
         }//init()
@@ -119,7 +116,13 @@ namespace ChemSW.Nbt.Sched
                                         if( Finished )  // case 26111
                                         {
                                             string Message = "Created all " + CurrentGenerator.TargetType.SelectedNodeTypeNames() + " target(s) for " + CurrentGenerator.NextDueDate.DateTimeValue.Date.ToShortDateString();
-                                            _CswScheduleNodeUpdater.update( CurrentGenerator.Node, Message );
+                                            //case 25702 - add comment:
+                                            if( false == String.IsNullOrEmpty( Message ) )
+                                            {
+                                                CurrentGenerator.RunStatus.AddComment( Message );
+                                            }
+                                            CurrentGenerator.updateNextDueDate( DateTime.MinValue, ForceUpdate: true, DeleteFutureNodes: false );
+                                            CurrentGenerator.postChanges( false );
                                         }
 
                                         GeneratorDescriptions += CurrentGenerator.Description + "; ";

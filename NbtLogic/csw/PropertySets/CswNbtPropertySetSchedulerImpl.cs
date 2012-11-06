@@ -25,28 +25,53 @@ namespace ChemSW.Nbt.PropertySets
 
         bool _UpdateFutureTasks = false;
 
-        public void updateNextDueDate( bool DeleteFutureNodes = false )
+        public void updateNextDueDate( DateTime AfterDate, bool ForceUpdate, bool DeleteFuture )
         {
             if( _Scheduler.DueDateInterval.WasModified ||
                 _Scheduler.FinalDueDate.WasModified ||
                 _CswNbtNode.New ||
-                DeleteFutureNodes )
+                DeleteFuture ||
+                ForceUpdate )
             {
-                DateTime CandidateDueDate = DateTime.MinValue;
+                DateTime CandidateNextDueDate = DateTime.MinValue;
                 if( _Scheduler.DueDateInterval.RateInterval.RateType != CswRateInterval.RateIntervalType.Unknown )
                 {
-                    CandidateDueDate = _Scheduler.DueDateInterval.getNextOccuranceAfter( DateTime.Now.Date );
-                    if( _Scheduler.FinalDueDate.DateTimeValue != DateTime.MinValue &&
-                        CandidateDueDate > _Scheduler.FinalDueDate.DateTimeValue )
+                    DateTime StartDate = _Scheduler.DueDateInterval.getStartDate();
+                    DateTime NextDueDate = _Scheduler.NextDueDate.DateTimeValue;
+                    if( DateTime.MinValue == NextDueDate )
                     {
-                        CandidateDueDate = DateTime.MinValue;
+                        NextDueDate = StartDate;
                     }
-                }
-                _Scheduler.NextDueDate.DateTimeValue = CandidateDueDate;
-                _UpdateFutureTasks = true;
-            }//If one of the main properties is modified
 
-        } // _updateNextDueDate()
+                    // case 28146 - minimum one cycle before now
+                    DateTime LastCycle = _Scheduler.DueDateInterval.getLastOccuranceBefore( DateTime.Now );
+                    if( CswDateTime.GreaterThanNoMs( LastCycle, AfterDate ) )
+                    {
+                        AfterDate = LastCycle;
+                    }
+                    if( DateTime.MinValue == AfterDate )
+                    {
+                        AfterDate = NextDueDate;
+                    }
+
+                    CandidateNextDueDate = NextDueDate;
+                    while( false == CswDateTime.GreaterThanNoMs( CandidateNextDueDate, AfterDate ) )
+                    {
+                        CandidateNextDueDate = _Scheduler.DueDateInterval.getNextOccuranceAfter( CandidateNextDueDate );
+                    }
+
+                    DateTime FinalDueDate = _Scheduler.FinalDueDate.DateTimeValue;
+                    if( DateTime.MinValue != FinalDueDate &&
+                        CswDateTime.GreaterThanNoMs( CandidateNextDueDate, FinalDueDate ) )
+                    {
+                        CandidateNextDueDate = DateTime.MinValue;
+                    }
+                } // if( _Scheduler.DueDateInterval.RateInterval.RateType != CswRateInterval.RateIntervalType.Unknown )
+                _Scheduler.NextDueDate.DateTimeValue = CandidateNextDueDate;
+
+                _UpdateFutureTasks = DeleteFuture;
+            }
+        } // updateNextDueDate()
 
         public void setLastFutureDate()
         {

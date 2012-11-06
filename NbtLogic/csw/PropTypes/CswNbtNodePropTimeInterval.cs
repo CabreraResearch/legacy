@@ -73,10 +73,15 @@ namespace ChemSW.Nbt.PropTypes
         }
 
 
-        public DateTime getNextOccuranceAfter( DateTime DateTimeToAdd )
+        public DateTime getNextOccuranceAfter( DateTime AfterDateTime )
         {
-            return _RateInterval.getNext( DateTimeToAdd );
-        }//getNextOccuranceFrom()
+            return _RateInterval.getNext( AfterDateTime );
+        }//getNextOccuranceAfter()
+
+        public DateTime getLastOccuranceBefore( DateTime BeforeDateTime )
+        {
+            return _RateInterval.getPrevious( BeforeDateTime );
+        }//getLastOccuranceBefore()
 
 
         public DateTime getStartDate()

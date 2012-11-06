@@ -351,7 +351,6 @@
     <Compile Include="csw\Sched\core\CswScheduleLogicFactoryNbt.cs" />
     <Compile Include="csw\Sched\core\CswScheduleLogicNodes.cs" />
     <Compile Include="csw\Sched\core\CswScheduleLogicParamNbt.cs" />
-    <Compile Include="csw\Sched\core\CswScheduleNodeUpdater.cs" />
     <Compile Include="csw\Sched\core\CswScheduleResourceFactoryNbt.cs" />
     <Compile Include="csw\Sched\logic\CswScheduleLogicNbtBatchOps.cs" />
     <Compile Include="csw\Sched\logic\CswScheduleLogicNbtDisableCswAdmin.cs" />

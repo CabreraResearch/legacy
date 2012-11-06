@@ -1,5 +1,5 @@
-﻿using ChemSW.Nbt.PropTypes;
-
+﻿using System;
+using ChemSW.Nbt.PropTypes;
 
 namespace ChemSW.Nbt.PropertySets
 {
@@ -24,6 +24,8 @@ namespace ChemSW.Nbt.PropertySets
         CswNbtNodePropDateTime RunTime { get; }
         CswNbtNodePropLogical Enabled { get; }
         CswNbtNodePropButton RunNow { get; }
+
+        void updateNextDueDate( DateTime AfterDate, bool ForceUpdate, bool DeleteFutureNodes );
 
     }//ICswNbtPropertySetScheduler
 

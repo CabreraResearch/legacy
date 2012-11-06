@@ -86,9 +86,9 @@ namespace ChemSW.Nbt.ObjClasses
             _setDefaultValues();
 
             //Case 24572
-            bool DeleteFutureNodes = ( TargetType.WasModified || ParentType.WasModified );
-            _CswNbtPropertySetSchedulerImpl.updateNextDueDate( DeleteFutureNodes );
-
+            updateNextDueDate( DateTime.MinValue, 
+                               ForceUpdate: false, 
+                               DeleteFutureNodes: ( TargetType.WasModified || ParentType.WasModified ) );
 
             _trySetNodeTypeSelectDefaultValues();
 
@@ -286,22 +286,18 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override bool onButtonClick( NbtButtonData ButtonData )
         {
-
-
-
-
             CswNbtMetaDataObjectClassProp OCP = ButtonData.NodeTypeProp.getObjectClassProp();
             if( null != ButtonData.NodeTypeProp && null != OCP )
             {
-                if( PropertyName.RunNow == OCP.PropName )
-                {
-                    NextDueDate.DateTimeValue = DateTime.Now;
-                    //case 25702 - empty comment?
-                    //RunStatus.StaticText = string.Empty;
-                    //RunStatus_new.a
-                    Node.postChanges( false );
-                    ButtonData.Action = NbtButtonAction.refresh;
-                }
+                //if( PropertyName.RunNow == OCP.PropName )
+                //{
+                //    NextDueDate.DateTimeValue = DateTime.Now;
+                //    //case 25702 - empty comment?
+                //    //RunStatus.StaticText = string.Empty;
+                //    //RunStatus_new.a
+                //    Node.postChanges( false );
+                //    ButtonData.Action = NbtButtonAction.refresh;
+                //}
             }
             return true;
         }
@@ -361,6 +357,11 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropButton RunNow { get { return ( _CswNbtNode.Properties[PropertyName.RunNow] ); } }
 
         #endregion
+
+        public void updateNextDueDate( DateTime AfterDate, bool ForceUpdate, bool DeleteFutureNodes )
+        {
+            _CswNbtPropertySetSchedulerImpl.updateNextDueDate( AfterDate, ForceUpdate, DeleteFutureNodes );
+        }
 
     }//CswNbtObjClassGenerator
 
