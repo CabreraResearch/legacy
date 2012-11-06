@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using ChemSW.Core;
-using ChemSW.Nbt.csw.Conversion;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
 
@@ -139,7 +138,6 @@ namespace ChemSW.Nbt.ObjClasses
         {
             ContainerScan.SetOnPropChange( OnContainerScanPropChange );
             LocationScan.SetOnPropChange( OnLocationScanPropChange );
-            Action.SetOnPropChange( OnActionPropChange );
             _CswNbtObjClassDefault.afterPopulateProps();
         }//afterPopulateProps()
 
@@ -277,14 +275,6 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropList Action
         {
             get { return _CswNbtNode.Properties[PropertyName.Action]; }
-        }
-        private void OnActionPropChange( CswNbtNodeProp Prop )
-        {
-            if( Action.Value == ActionOptions.NoAction.ToString() )
-            {
-                ActionApplied.Checked = Tristate.True;
-                ActionApplied.setReadOnly( true, true );
-            }
         }
         public CswNbtNodePropLogical ActionApplied
         {
