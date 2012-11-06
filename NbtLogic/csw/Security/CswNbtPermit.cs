@@ -611,7 +611,7 @@ namespace ChemSW.Nbt.Security
             {
                 _initPermissionInfo( null, User, MetaDataProp.getNodeType(), Permission, ( ( null != NodePropWrapper ) ? NodePropWrapper.NodeId : null ), MetaDataProp );
 
-                if( false == _CswNbtPermitInfo.IsUberUser )
+                if( ( false == _CswNbtPermitInfo.IsUberUser ) || ( true == MetaDataProp.ServerManaged ) ) //we already known that ( null != MetaDataProp ) 
                 {
 
                     if( true == _CswNbtPermitInfo.NoExceptionCases )
