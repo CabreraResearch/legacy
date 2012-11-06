@@ -808,7 +808,7 @@ namespace ChemSW.Nbt.Security
                     if( _CswNbtPermitInfo.Permission == NodeTypePermission.Edit )
                     {
 
-                        ret = ret || _CswNbtPermitInfo.User.IsAdministrator() || false == Node.ReadOnly;
+                        ret = ret && ( _CswNbtPermitInfo.User.IsAdministrator() || false == Node.ReadOnly );
                     }
                 }
 
