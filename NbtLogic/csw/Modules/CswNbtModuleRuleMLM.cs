@@ -15,8 +15,8 @@ namespace ChemSW.Nbt
         {
             if( false == _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.CISPro ) )
             {
-            _CswNbtResources.Modules.EnableModule( CswNbtModuleName.CISPro );
-        }
+                _CswNbtResources.Modules.EnableModule( CswNbtModuleName.CISPro );
+            }
         }
 
         public override void OnDisable()

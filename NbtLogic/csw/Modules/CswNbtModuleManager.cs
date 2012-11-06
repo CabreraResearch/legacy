@@ -135,16 +135,23 @@ namespace ChemSW.Nbt
                 CswNbtModuleName Module = ModuleRow["name"].ToString();
                 //Enum.TryParse( ModuleRow["name"].ToString(), true, out Module );
                 ModulesToEnable = ModulesToEnable ?? new Collection<CswNbtModuleName>();
+                bool Enabled = CswConvert.ToBoolean( ModuleRow["enabled"] );
                 if( ModulesToEnable.Contains( Module ) )
                 {
-                    ModuleRow["enabled"] = CswConvert.ToDbVal( true );
-                    _ModuleRules[Module].OnEnable();
+                    if( false == Enabled )
+                    {
+                        ModuleRow["enabled"] = CswConvert.ToDbVal( true );
+                        _ModuleRules[Module].OnEnable();
+                    }
                 }
                 ModulesToDisable = ModulesToDisable ?? new Collection<CswNbtModuleName>();
                 if( ModulesToDisable.Contains( Module ) )
                 {
-                    ModuleRow["enabled"] = CswConvert.ToDbVal( false );
-                    _ModuleRules[Module].OnDisable();
+                    if( Enabled )
+                    {
+                        ModuleRow["enabled"] = CswConvert.ToDbVal( false );
+                        _ModuleRules[Module].OnDisable();
+                    }
                 }
             }
             ret = ModulesUpdate.update( ModulesTable );
