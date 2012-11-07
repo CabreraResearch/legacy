@@ -2,6 +2,7 @@
 using ChemSW.Nbt.csw.Dev;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
+using ChemSW.Nbt.Security;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -142,6 +143,67 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataNodeType RequestMdNt = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( NbtObjectClass.RequestMaterialDispenseClass, "Request Material Dispense", "Requests" );
 
             #endregion Build the new Request Item NTs
+
+            #region Permissions
+
+            //Grab permissions from Case 25815
+
+            CswNbtObjClassRole CisproAdmin = _CswNbtSchemaModTrnsctn.Nodes.makeRoleNodeFromRoleName( "CISPro_Admin" );
+            if( null != CisproAdmin )
+            {
+                _setCISProPermissions( CisproAdmin, FullPermissions );
+            }
+
+            CswNbtObjClassRole CisproReceive = _CswNbtSchemaModTrnsctn.Nodes.makeRoleNodeFromRoleName( "CISPro_Receiver" );
+            if( null != CisproReceive )
+            {
+                _setCISProPermissions( CisproReceive, FullPermissions );
+            }
+
+            CswNbtObjClassRole CisproGeneral = _CswNbtSchemaModTrnsctn.Nodes.makeRoleNodeFromRoleName( "CISPro_General" );
+            if( null != CisproGeneral )
+            {
+                _setCISProPermissions( CisproGeneral, ViewPermissions );
+            }
+
+            CswNbtObjClassRole CisproFulfiller = _CswNbtSchemaModTrnsctn.Nodes.makeRoleNodeFromRoleName( "CISPro_Request_Fulfiller" );
+            if( null != CisproFulfiller )
+            {
+                _setCISProPermissions( CisproFulfiller, ViewPermissions );
+            }
+
+            CswNbtObjClassRole CisproView = _CswNbtSchemaModTrnsctn.Nodes.makeRoleNodeFromRoleName( "CISPro_View_Only" );
+            if( null != CisproView )
+            {
+                _setCISProPermissions( CisproView, ViewPermissions );
+            }
+
+            #endregion Permissions
+        }
+
+        private static CswNbtPermit.NodeTypePermission[] ViewPermissions = { CswNbtPermit.NodeTypePermission.View };
+        private static CswNbtPermit.NodeTypePermission[] FullPermissions = { 
+            CswNbtPermit.NodeTypePermission.View, 
+            CswNbtPermit.NodeTypePermission.Create, 
+            CswNbtPermit.NodeTypePermission.Edit, 
+            CswNbtPermit.NodeTypePermission.Delete 
+        };
+
+        private void _setCISProPermissions( CswNbtObjClassRole Role, CswNbtPermit.NodeTypePermission[] Permissions )
+        {
+            _setNodeTypePermissions( Role, NbtObjectClass.RequestClass, Permissions );
+            _setNodeTypePermissions( Role, NbtObjectClass.RequestContainerDispenseClass, Permissions );
+            _setNodeTypePermissions( Role, NbtObjectClass.RequestContainerUpdateClass, Permissions );
+            _setNodeTypePermissions( Role, NbtObjectClass.RequestMaterialDispenseClass, Permissions );
+        }
+
+        private void _setNodeTypePermissions( CswNbtObjClassRole Role, NbtObjectClass ObjClassName, CswNbtPermit.NodeTypePermission[] Permissions )
+        {
+            CswNbtMetaDataObjectClass ObjectClass = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( ObjClassName );
+            foreach( CswNbtMetaDataNodeType NodeType in ObjectClass.getNodeTypes() )
+            {
+                _CswNbtSchemaModTrnsctn.Permit.set( Permissions, NodeType, Role, true );
+            }
         }
 
         //Update()
