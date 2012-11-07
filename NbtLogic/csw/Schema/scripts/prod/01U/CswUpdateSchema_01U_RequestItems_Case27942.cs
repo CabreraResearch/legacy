@@ -164,6 +164,10 @@ namespace ChemSW.Nbt.Schema
             RcdLocationNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, RcdContainerNtp, true );
             RcdRequestNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, RcdLocationNtp, true );
 
+            //Case 27800
+            CswNbtMetaDataNodeTypeProp RcdRequestorNTP = RequestCdNt.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestContainerDispense.PropertyName.Requestor );
+            RcdRequestorNTP.removeFromLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add );
+
             //Table Layout
             CswNbtMetaDataNodeTypeProp RcdStatusNtp = RequestCdNt.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestContainerDispense.PropertyName.Status );
             CswNbtMetaDataNodeTypeProp RcdNumberNtp = RequestCdNt.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestContainerDispense.PropertyName.Number );
@@ -205,6 +209,10 @@ namespace ChemSW.Nbt.Schema
             RcuLocationNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, RcuTypeNtp, true );
             RcuRequestNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, RcuLocationNtp, true );
 
+            //Case 27800
+            CswNbtMetaDataNodeTypeProp RcuRequestorNTP = RequestCdNt.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestContainerUpdate.PropertyName.Requestor );
+            RcuRequestorNTP.removeFromLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add );
+
             //Table Layout
 
             CswNbtMetaDataNodeTypeProp RcuStatusNtp = RequestCuNt.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestContainerUpdate.PropertyName.Status );
@@ -242,6 +250,10 @@ namespace ChemSW.Nbt.Schema
             RmdTypeNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, RmdMaterialNtp, true );
             RmdLocationNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, RmdTypeNtp, true );
             RmdRequestNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, RmdLocationNtp, true );
+
+            //Case 27800
+            CswNbtMetaDataNodeTypeProp RmdRequestorNTP = RequestCdNt.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestMaterialDispense.PropertyName.Requestor );
+            RmdRequestorNTP.removeFromLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add );
 
             //Table layout
             CswNbtMetaDataNodeTypeProp RmdStatusNtp = RequestMdNt.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestMaterialDispense.PropertyName.Status );
