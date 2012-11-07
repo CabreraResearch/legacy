@@ -81,6 +81,11 @@ namespace ChemSW.Nbt.ObjClasses
             /// The status(<see cref="CswNbtNodePropList"/>) of the item.
             /// </summary>
             public const string Status = "Status";
+
+            /// <summary>
+            /// The Type(<see cref="CswNbtNodePropList"/>) of the item.
+            /// </summary>
+            public const string Type = "Type";
         }
 
         /// <summary>
@@ -103,12 +108,9 @@ namespace ChemSW.Nbt.ObjClasses
             public const string Cancel = "Cancel Request";
         }
 
-        public sealed class Members
+        public class Types
         {
-            public const string MaterialDispense = NbtObjectClass.RequestMaterialDispenseClass;
-            public const string MaterialCreate = NbtObjectClass.RequestMaterialCreateClass;
-            public const string ContainerUpdate = NbtObjectClass.RequestContainerUpdateClass;
-            public const string ContainerDispense = NbtObjectClass.RequestContainerDispenseClass;
+
         }
 
         #endregion Enums
@@ -240,6 +242,7 @@ namespace ChemSW.Nbt.ObjClasses
             afterPropertySetPopulateProps();
             setFulfillVisibility();
             Status.SetOnPropChange( _onStatusPropChange );
+            Type.SetOnPropChange( _onTypePropChange );
             CswNbtObjClassDefault.afterPopulateProps();
         }//afterPopulateProps()
 
@@ -320,6 +323,15 @@ namespace ChemSW.Nbt.ObjClasses
 
         public CswNbtNodePropComments Comments { get { return _CswNbtNode.Properties[PropertyName.Comments]; } }
         public CswNbtNodePropDateTime NeededBy { get { return _CswNbtNode.Properties[PropertyName.NeededBy]; } }
+        
+        public CswNbtNodePropList Type { get { return _CswNbtNode.Properties[PropertyName.Type]; } }
+        private void _onTypePropChange(CswNbtNodeProp Prop)
+        {
+            onTypePropChange(Prop);
+        }
+
+        public abstract void onTypePropChange( CswNbtNodeProp Prop );
+
         public CswNbtNodePropLocation Location { get { return _CswNbtNode.Properties[PropertyName.Location]; } }
         public CswNbtNodePropPropertyReference Requestor { get { return _CswNbtNode.Properties[PropertyName.Requestor]; } }
         public CswNbtNodePropRelationship AssignedTo { get { return _CswNbtNode.Properties[PropertyName.AssignedTo]; } }

@@ -55,7 +55,7 @@ namespace ChemSW.Nbt.ObjClasses
         /// <summary>
         /// Types: Bulk or Size
         /// </summary>
-        public sealed class Types
+        public new sealed class Types : CswNbtPropertySetRequestItem.Types
         {
             public const string Bulk = "Request By Bulk";
             public const string Size = "Request By Size";
@@ -346,7 +346,8 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get { return _CswNbtNode.Properties[PropertyName.Type]; }
         }
-        private void onTypePropChange( CswNbtNodeProp Prop )
+
+        public override void onTypePropChange( CswNbtNodeProp Prop )
         {
             switch( Type.Value )
             {

@@ -33,10 +33,10 @@ namespace ChemSW.Nbt.ObjClasses
             public const string Type = "Type";
         }
 
-        public sealed class Types
+        public new sealed class Types : CswNbtPropertySetRequestItem.Types
         {
-            public const string Dispose = "Dispose Container";
-            public const string Move = "Move Container";
+            public const string Dispose = "Request Container Dispose";
+            public const string Move = "Request Container Move";
             public static readonly CswCommaDelimitedString Options = new CswCommaDelimitedString { Dispose, Move };
         }
 
@@ -289,7 +289,8 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get { return _CswNbtNode.Properties[PropertyName.Type]; }
         }
-        private void onTypePropChange( CswNbtNodeProp Prop )
+
+        public override void onTypePropChange( CswNbtNodeProp Prop )
         {
             /* Spec W1010: Location applies to all but Dispose */
             Location.setHidden( value: ( Types.Dispose == Type.Value ), SaveToDb: true );

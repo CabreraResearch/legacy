@@ -46,6 +46,11 @@ namespace ChemSW.Nbt.ObjClasses
 
         }
 
+        public new sealed class Types : CswNbtPropertySetRequestItem.Types
+        {
+            public const string ContainerDispense = "Request Container Dispense";
+        }
+
         /// <summary>
         /// Possible <see cref="Status"/> values (Includes Statuses inherited from base class <see cref="CswNbtPropertySetRequestItem"/>)
         /// </summary>
@@ -64,7 +69,7 @@ namespace ChemSW.Nbt.ObjClasses
                     Pending, Submitted, Dispensed, Completed, Cancelled
                 };
         }
-
+        
         /// <summary>
         /// Possible <see cref="Fulfill"/> menu options (Includes menu inherited from base class <see cref="CswNbtPropertySetRequestItem"/>)
         /// </summary>
@@ -306,6 +311,11 @@ namespace ChemSW.Nbt.ObjClasses
                     }
                     break;
             }
+        }
+
+        public override void onTypePropChange( CswNbtNodeProp Prop )
+        {
+        
         }
 
         #endregion
