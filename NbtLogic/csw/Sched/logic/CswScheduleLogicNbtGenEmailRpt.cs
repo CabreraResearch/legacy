@@ -115,7 +115,7 @@ namespace ChemSW.Nbt.Sched
                                                 MailReportIdsToRun.Add( CurrentMailReport.NodeId );
 
                                                 // Cycle the next due date so we don't make another batch op while this one is running
-                                                CurrentMailReport.updateNextDueDate( DateTime.Now, ForceUpdate: true, DeleteFutureNodes: false );
+                                                CurrentMailReport.updateNextDueDate( ForceUpdate: true, DeleteFutureNodes: false );
                                                 CurrentMailReport.postChanges( false );
                                             }
                                         } // if( ThisDueDateValue != DateTime.MinValue )

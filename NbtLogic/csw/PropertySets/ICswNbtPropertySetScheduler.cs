@@ -23,7 +23,7 @@ namespace ChemSW.Nbt.PropertySets
         CswNbtNodePropDateTime RunTime { get; }
         CswNbtNodePropLogical Enabled { get; }
 
-        void updateNextDueDate( DateTime AfterDate, bool ForceUpdate, bool DeleteFutureNodes );
+        void updateNextDueDate( bool ForceUpdate, bool DeleteFutureNodes );
 
     }//ICswNbtPropertySetScheduler
 

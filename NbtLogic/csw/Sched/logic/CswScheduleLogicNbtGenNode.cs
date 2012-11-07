@@ -121,7 +121,7 @@ namespace ChemSW.Nbt.Sched
                                             {
                                                 CurrentGenerator.RunStatus.AddComment( Message );
                                             }
-                                            CurrentGenerator.updateNextDueDate( DateTime.MinValue, ForceUpdate: true, DeleteFutureNodes: false );
+                                            CurrentGenerator.updateNextDueDate( ForceUpdate: true, DeleteFutureNodes: false );
                                             CurrentGenerator.postChanges( false );
                                         }
 

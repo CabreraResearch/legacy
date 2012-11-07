@@ -84,9 +84,7 @@ namespace ChemSW.Nbt.ObjClasses
             _setDefaultValues();
 
             //Case 24572
-            updateNextDueDate( DateTime.MinValue, 
-                               ForceUpdate: false, 
-                               DeleteFutureNodes: ( TargetType.WasModified || ParentType.WasModified ) );
+            updateNextDueDate( ForceUpdate: false, DeleteFutureNodes: ( TargetType.WasModified || ParentType.WasModified ) );
 
             _trySetNodeTypeSelectDefaultValues();
 
@@ -347,9 +345,9 @@ namespace ChemSW.Nbt.ObjClasses
 
         #endregion
 
-        public void updateNextDueDate( DateTime AfterDate, bool ForceUpdate, bool DeleteFutureNodes )
+        public void updateNextDueDate( bool ForceUpdate, bool DeleteFutureNodes )
         {
-            _CswNbtPropertySetSchedulerImpl.updateNextDueDate( AfterDate, ForceUpdate, DeleteFutureNodes );
+            _CswNbtPropertySetSchedulerImpl.updateNextDueDate( ForceUpdate, DeleteFutureNodes );
         }
 
     }//CswNbtObjClassGenerator

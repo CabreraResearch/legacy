@@ -98,7 +98,7 @@ namespace ChemSW.Nbt.ObjClasses
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
             _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
-            updateNextDueDate( DateTime.Now, ForceUpdate: false, DeleteFutureNodes: false );
+            updateNextDueDate( ForceUpdate: false, DeleteFutureNodes: false );
 
             _assertMailReportIsValid();
 
@@ -167,7 +167,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             Type.SetOnPropChange( OnTypePropChange );
             DueDateInterval.SetOnPropChange( OnDueDateIntervalChange );
-
+            
             _CswNbtObjClassDefault.afterPopulateProps();
         }//afterPopulateProps()
 
@@ -233,9 +233,9 @@ namespace ChemSW.Nbt.ObjClasses
 
         #endregion
 
-        public void updateNextDueDate( DateTime AfterDate, bool ForceUpdate, bool DeleteFutureNodes )
+        public void updateNextDueDate( bool ForceUpdate, bool DeleteFutureNodes )
         {
-            _CswNbtPropertySetSchedulerImpl.updateNextDueDate( AfterDate, ForceUpdate, DeleteFutureNodes );
+            _CswNbtPropertySetSchedulerImpl.updateNextDueDate( ForceUpdate, DeleteFutureNodes );
         }
 
         public CswCommaDelimitedString GetNodesToReport()
