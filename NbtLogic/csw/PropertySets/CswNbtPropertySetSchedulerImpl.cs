@@ -25,7 +25,7 @@ namespace ChemSW.Nbt.PropertySets
 
         bool _UpdateFutureTasks = false;
 
-        public void updateNextDueDate( DateTime AfterDate, bool ForceUpdate, bool DeleteFuture )
+        public void updateNextDueDate( bool ForceUpdate, bool DeleteFuture )
         {
             if( _Scheduler.DueDateInterval.WasModified ||
                 _Scheduler.FinalDueDate.WasModified ||
@@ -36,29 +36,19 @@ namespace ChemSW.Nbt.PropertySets
                 DateTime CandidateNextDueDate = DateTime.MinValue;
                 if( _Scheduler.DueDateInterval.RateInterval.RateType != CswRateInterval.RateIntervalType.Unknown )
                 {
-                    DateTime StartDate = _Scheduler.DueDateInterval.getStartDate();
+                    DateTime AfterDate = DateTime.Now;
                     DateTime NextDueDate = _Scheduler.NextDueDate.DateTimeValue;
-                    if( DateTime.MinValue == NextDueDate )
+                    if( _Scheduler.DueDateInterval.WasModified || _CswNbtNode.New )
                     {
-                        NextDueDate = StartDate;
+                        // Next Due Date might be invalid if the interval was altered
+                        NextDueDate = DateTime.MinValue;
                     }
-
-                    // case 28146 - minimum one cycle before now
-                    DateTime LastCycle = _Scheduler.DueDateInterval.getLastOccuranceBefore( DateTime.Now );
-                    if( CswDateTime.GreaterThanNoMs( LastCycle, AfterDate ) )
-                    {
-                        AfterDate = LastCycle;
-                    }
-                    if( DateTime.MinValue == AfterDate )
+                    if( CswDateTime.GreaterThanNoMs( NextDueDate, AfterDate ) )
                     {
                         AfterDate = NextDueDate;
                     }
-
-                    CandidateNextDueDate = NextDueDate;
-                    while( false == CswDateTime.GreaterThanNoMs( CandidateNextDueDate, AfterDate ) )
-                    {
-                        CandidateNextDueDate = _Scheduler.DueDateInterval.getNextOccuranceAfter( CandidateNextDueDate );
-                    }
+                    
+                    CandidateNextDueDate = _Scheduler.DueDateInterval.getNextOccuranceAfter( AfterDate );
 
                     DateTime FinalDueDate = _Scheduler.FinalDueDate.DateTimeValue;
                     if( DateTime.MinValue != FinalDueDate &&
