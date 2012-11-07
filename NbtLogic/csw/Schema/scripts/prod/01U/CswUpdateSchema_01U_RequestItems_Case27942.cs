@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using System.Linq;
 using ChemSW.Core;
 using ChemSW.Nbt.Actions;
@@ -30,6 +31,11 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataObjectClass RequestContainerDispenseOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.RequestContainerDispenseClass );
             CswNbtMetaDataObjectClass RequestContainerUpdateOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.RequestContainerUpdateClass );
             CswNbtMetaDataObjectClass RequestMaterialDispenseOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.RequestMaterialDispenseClass );
+
+            _CswNbtSchemaModTrnsctn.createModuleObjectClassJunction( CswNbtModuleName.CISPro, RequestOc.ObjectClassId );
+            _CswNbtSchemaModTrnsctn.createModuleObjectClassJunction( CswNbtModuleName.CISPro, RequestContainerDispenseOc.ObjectClassId );
+            _CswNbtSchemaModTrnsctn.createModuleObjectClassJunction( CswNbtModuleName.CISPro, RequestContainerUpdateOc.ObjectClassId );
+            _CswNbtSchemaModTrnsctn.createModuleObjectClassJunction( CswNbtModuleName.CISPro, RequestMaterialDispenseOc.ObjectClassId );
 
             #region Delete the old Request NTs
 
@@ -87,30 +93,23 @@ namespace ChemSW.Nbt.Schema
                 GridView.Root.ChildRelationships.Clear();
                 CswNbtViewRelationship RequestRel = GridView.AddViewRelationship( RequestNt, false );
 
-                CswNbtMetaDataObjectClassProp RcdRequestOcp = RequestContainerDispenseOc.getObjectClassProp( CswNbtObjClassRequestContainerDispense.PropertyName.Request );
-                CswNbtMetaDataObjectClassProp RcuRequestOcp = RequestContainerUpdateOc.getObjectClassProp( CswNbtObjClassRequestContainerUpdate.PropertyName.Request );
-                CswNbtMetaDataObjectClassProp RmdRequestOcp = RequestMaterialDispenseOc.getObjectClassProp( CswNbtObjClassRequestMaterialDispense.PropertyName.Request );
-
-                CswNbtViewRelationship RequestItemRel = GridView.AddViewRelationship( RequestRel,
+                foreach( NbtObjectClass Member in CswNbtPropertySetRequestItem.Members() )
+                {
+                    CswNbtMetaDataObjectClass MemberOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( Member );
+                    CswNbtMetaDataObjectClassProp RequestOcp = MemberOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.Request );
+                    CswNbtViewRelationship RequestItemRel = GridView.AddViewRelationship( RequestRel,
                                                                                       NbtViewPropOwnerType.Second,
-                                                                                      RcdRequestOcp, false );
-                GridView.AddViewRelationship( RequestRel,
-                                              NbtViewPropOwnerType.Second,
-                                              RcuRequestOcp, false );
-                GridView.AddViewRelationship( RequestRel,
-                                              NbtViewPropOwnerType.Second,
-                                              RmdRequestOcp, false );
+                                                                                      RequestOcp, false );
 
-
-
-                GridView.AddViewProperty( RequestItemRel, RequestContainerDispenseOc.getObjectClassProp( CswNbtObjClassRequestContainerDispense.PropertyName.Type ) );
-                GridView.AddViewProperty( RequestItemRel, RequestContainerDispenseOc.getObjectClassProp( CswNbtObjClassRequestContainerDispense.PropertyName.Number ) );
-                GridView.AddViewProperty( RequestItemRel, RequestContainerDispenseOc.getObjectClassProp( CswNbtObjClassRequestContainerDispense.PropertyName.Name ) );
-                GridView.AddViewProperty( RequestItemRel, RequestContainerDispenseOc.getObjectClassProp( CswNbtObjClassRequestContainerDispense.PropertyName.AssignedTo ) );
-                GridView.AddViewProperty( RequestItemRel, RequestContainerDispenseOc.getObjectClassProp( CswNbtObjClassRequestContainerDispense.PropertyName.NeededBy ) );
-                GridView.AddViewProperty( RequestItemRel, RequestContainerDispenseOc.getObjectClassProp( CswNbtObjClassRequestContainerDispense.PropertyName.RequestedFor ) );
-                GridView.AddViewProperty( RequestItemRel, RequestContainerDispenseOc.getObjectClassProp( CswNbtObjClassRequestContainerDispense.PropertyName.InventoryGroup ) );
-                GridView.AddViewProperty( RequestItemRel, RequestContainerDispenseOc.getObjectClassProp( CswNbtObjClassRequestContainerDispense.PropertyName.Location ) );
+                    GridView.AddViewProperty( RequestItemRel, MemberOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.Type ) );
+                    GridView.AddViewProperty( RequestItemRel, MemberOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.Number ) );
+                    GridView.AddViewProperty( RequestItemRel, MemberOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.Name ) );
+                    GridView.AddViewProperty( RequestItemRel, MemberOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.AssignedTo ) );
+                    GridView.AddViewProperty( RequestItemRel, MemberOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.NeededBy ) );
+                    GridView.AddViewProperty( RequestItemRel, MemberOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.RequestedFor ) );
+                    GridView.AddViewProperty( RequestItemRel, MemberOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.InventoryGroup ) );
+                    GridView.AddViewProperty( RequestItemRel, MemberOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.Location ) );
+                }
 
                 GridView.save();
 
@@ -377,48 +376,51 @@ namespace ChemSW.Nbt.Schema
 
                 CswNbtViewRelationship RootRel = GridView.AddViewRelationship( ContainerNt, false );
 
-                CswNbtViewRelationship RequestItemRel1 = GridView.AddViewRelationship( RootRel,
+                Collection<CswNbtMetaDataObjectClass> OcsInThisView = new Collection<CswNbtMetaDataObjectClass>
+                {
+                    RequestContainerDispenseOc, RequestContainerUpdateOc
+                };
+
+                foreach( CswNbtMetaDataObjectClass Oc in OcsInThisView )
+                {
+                    CswNbtViewRelationship RequestItemRel = GridView.AddViewRelationship( RootRel,
                                                                                     NbtViewPropOwnerType.Second,
-                                                                                    RequestContainerDispenseOc.getObjectClassProp( CswNbtObjClassRequestContainerDispense.PropertyName.Container ),
+                                                                                    Oc.getObjectClassProp( CswNbtObjClassRequestContainerDispense.PropertyName.Container ),
                                                                                     false );
 
-                CswNbtViewRelationship RequestItemRel2 = GridView.AddViewRelationship( RootRel,
-                                              NbtViewPropOwnerType.Second,
-                                              RequestContainerUpdateOc.getObjectClassProp( CswNbtObjClassRequestContainerUpdate.PropertyName.Container ),
-                                              false );
 
-                CswNbtViewRelationship RequestRel1 = GridView.AddViewRelationship( RequestItemRel1,
-                                                                                  NbtViewPropOwnerType.First,
-                                                                                  RequestContainerDispenseOc.getObjectClassProp( CswNbtObjClassRequestContainerDispense.PropertyName.Request ), false );
+                    CswNbtViewRelationship RequestRel = GridView.AddViewRelationship( RequestItemRel,
+                                                                                      NbtViewPropOwnerType.First,
+                                                                                      Oc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.Request ), false );
 
-                CswNbtViewRelationship RequestRel2 = GridView.AddViewRelationship( RequestItemRel2,
-                                                                  NbtViewPropOwnerType.First,
-                                                                  RequestContainerUpdateOc.getObjectClassProp( CswNbtObjClassRequestContainerUpdate.PropertyName.Request ), false );
 
-                CswNbtViewProperty CompletedVp = GridView.AddViewProperty( RequestRel1, RequestOc.getObjectClassProp( CswNbtObjClassRequest.PropertyName.CompletedDate ) );
-                CompletedVp.Order = 3;
-                CompletedVp.SortBy = true;
-                CompletedVp.SortMethod = NbtViewPropertySortMethod.Descending;
 
-                CswNbtViewProperty SubmittedVp = GridView.AddViewProperty( RequestRel1, RequestOc.getObjectClassProp( CswNbtObjClassRequest.PropertyName.SubmittedDate ) );
-                SubmittedVp.Order = 2;
-                SubmittedVp.SortMethod = NbtViewPropertySortMethod.Descending;
+                    CswNbtViewProperty CompletedVp = GridView.AddViewProperty( RequestRel, RequestOc.getObjectClassProp( CswNbtObjClassRequest.PropertyName.CompletedDate ) );
+                    CompletedVp.Order = 3;
+                    CompletedVp.SortBy = true;
+                    CompletedVp.SortMethod = NbtViewPropertySortMethod.Descending;
 
-                CswNbtViewProperty NameVp = GridView.AddViewProperty( RequestRel1, RequestOc.getObjectClassProp( CswNbtObjClassRequest.PropertyName.Name ) );
-                NameVp.Order = 1;
-                NameVp.SortMethod = NbtViewPropertySortMethod.Descending;
+                    CswNbtViewProperty SubmittedVp = GridView.AddViewProperty( RequestRel, RequestOc.getObjectClassProp( CswNbtObjClassRequest.PropertyName.SubmittedDate ) );
+                    SubmittedVp.Order = 2;
+                    SubmittedVp.SortMethod = NbtViewPropertySortMethod.Descending;
 
-                CswNbtViewProperty RequestorVp = GridView.AddViewProperty( RequestRel1, RequestOc.getObjectClassProp( CswNbtObjClassRequest.PropertyName.Requestor ) );
-                RequestorVp.Order = 4;
+                    CswNbtViewProperty NameVp = GridView.AddViewProperty( RequestRel, RequestOc.getObjectClassProp( CswNbtObjClassRequest.PropertyName.Name ) );
+                    NameVp.Order = 1;
+                    NameVp.SortMethod = NbtViewPropertySortMethod.Descending;
 
-                CswNbtViewProperty TypeVp = GridView.AddViewProperty( RequestItemRel1, RequestContainerUpdateOc.getObjectClassProp( CswNbtObjClassRequestContainerUpdate.PropertyName.Type ) );
-                TypeVp.Order = 5;
-                CswNbtViewProperty NumberVp = GridView.AddViewProperty( RequestItemRel1, RequestContainerUpdateOc.getObjectClassProp( CswNbtObjClassRequestContainerUpdate.PropertyName.Number ) );
-                NumberVp.Order = 6;
-                CswNbtViewProperty OrderVp = GridView.AddViewProperty( RequestItemRel1, RequestContainerUpdateOc.getObjectClassProp( CswNbtObjClassRequestContainerUpdate.PropertyName.ExternalOrderNumber ) );
-                OrderVp.Order = 7;
-                CswNbtViewProperty StatusVp = GridView.AddViewProperty( RequestItemRel1, RequestContainerUpdateOc.getObjectClassProp( CswNbtObjClassRequestContainerUpdate.PropertyName.Status ) );
-                StatusVp.Order = 8;
+                    CswNbtViewProperty RequestorVp = GridView.AddViewProperty( RequestRel, RequestOc.getObjectClassProp( CswNbtObjClassRequest.PropertyName.Requestor ) );
+                    RequestorVp.Order = 4;
+
+                    CswNbtViewProperty TypeVp = GridView.AddViewProperty( RequestItemRel, RequestContainerUpdateOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.Type ) );
+                    TypeVp.Order = 5;
+                    CswNbtViewProperty NumberVp = GridView.AddViewProperty( RequestItemRel, RequestContainerUpdateOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.Number ) );
+                    NumberVp.Order = 6;
+                    CswNbtViewProperty OrderVp = GridView.AddViewProperty( RequestItemRel, RequestContainerUpdateOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.ExternalOrderNumber ) );
+                    OrderVp.Order = 7;
+                    CswNbtViewProperty StatusVp = GridView.AddViewProperty( RequestItemRel, RequestContainerUpdateOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.Status ) );
+                    StatusVp.Order = 8;
+                }
+
 
                 GridView.save();
 

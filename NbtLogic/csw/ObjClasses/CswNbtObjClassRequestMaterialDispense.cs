@@ -339,6 +339,11 @@ namespace ChemSW.Nbt.ObjClasses
             TotalDispensed.setHidden( value: ( Status.Value == Statuses.Pending ), SaveToDb: true );
             Type.setHidden( value: ( Status.Value == Statuses.Pending ), SaveToDb: true );
 
+            bool AmountsReadOnly = Status.Value != Statuses.Pending;
+            Quantity.setReadOnly( value: AmountsReadOnly, SaveToDb: true );
+            Size.setReadOnly( value: AmountsReadOnly, SaveToDb: true );
+            Count.setReadOnly( value: AmountsReadOnly, SaveToDb: true );
+
             switch( Status.Value )
             {
                 case Statuses.Received:
@@ -377,18 +382,14 @@ namespace ChemSW.Nbt.ObjClasses
                     break;
             }
 
-
             /* Spec W1010: Quantity applies only to Request by Bulk and Dispense */
-            bool QuantityVisible = Type.Value != Types.Size;
-            bool AmountsReadOnly = Status.Value != Statuses.Pending;
+            bool QuantityHidden = Type.Value == Types.Size;
 
-            Quantity.setHidden( value: QuantityVisible, SaveToDb: true );
-            Size.setHidden( value: false == QuantityVisible, SaveToDb: true );
-            Count.setHidden( value: false == QuantityVisible, SaveToDb: true );
+            Quantity.setHidden( value: false == QuantityHidden, SaveToDb: true );
+            Size.setHidden( value: QuantityHidden, SaveToDb: true );
+            Count.setHidden( value: QuantityHidden, SaveToDb: true );
 
-            Quantity.setReadOnly( value: ( QuantityVisible && AmountsReadOnly ), SaveToDb: true );
-            Size.setReadOnly( value: AmountsReadOnly, SaveToDb: true );
-            Count.setReadOnly( value: AmountsReadOnly, SaveToDb: true );
+            Type.setReadOnly( value: true, SaveToDb: true );
         }
 
         public CswNbtNodePropQuantity Quantity

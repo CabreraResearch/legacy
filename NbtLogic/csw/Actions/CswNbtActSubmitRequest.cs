@@ -327,6 +327,8 @@ namespace ChemSW.Nbt.Actions
                         RetAsDispense.Material.setHidden( value: true, SaveToDb: false );
                         RetAsDispense.Quantity.UnitId = Container.Quantity.UnitId;
                         RetAsDispense.Size.RelatedNodeId = Container.Size.RelatedNodeId;
+                        RetAsDispense.Location.SelectedNodeId = SelectedLocationId;
+
                         _setRequestItemSizesView( RetAsDispense.Size.View.ViewId, Container.Material.RelatedNodeId );
                         CswNbtNode MaterialNode = _CswNbtResources.Nodes[Container.Material.RelatedNodeId];
                         Debug.Assert( null != MaterialNode, "RequestItem created without a valid Material." );
@@ -347,15 +349,16 @@ namespace ChemSW.Nbt.Actions
                             case CswNbtObjClassContainer.RequestMenu.Dispose:
                                 RetAsUpdate.IsTemp = false; // This is the only condition in which we want to commit the node upfront.
                                 RetAsUpdate.Type.Value = CswNbtObjClassRequestContainerUpdate.Types.Dispose;
-                                SelectedLocationId = Container.Location.SelectedNodeId;
+                                RetAsUpdate.Location.SelectedNodeId = Container.Location.SelectedNodeId;
+                                RetAsUpdate.Location.setReadOnly( value: true, SaveToDb: true );
                                 break;
                             case CswNbtObjClassContainer.RequestMenu.Move:
+                                RetAsUpdate.Location.SelectedNodeId = SelectedLocationId;
                                 RetAsUpdate.Type.Value = CswNbtObjClassRequestContainerUpdate.Types.Move;
                                 break;
                         }
                     }
 
-                    RetAsRequestItem.Location.SelectedNodeId = SelectedLocationId;
                     RetAsRequestItem.Location.RefreshNodeName();
                     RetAsRequestItem.Type.setReadOnly( value: true, SaveToDb: true );
 
@@ -418,20 +421,13 @@ namespace ChemSW.Nbt.Actions
                     switch( ButtonData.SelectedText )
                     {
                         case CswNbtObjClassMaterial.Requests.Bulk:
-                            RetAsMatDisp.Size.setHidden( value: true, SaveToDb: true );
-                            RetAsMatDisp.Count.setHidden( value: true, SaveToDb: true );
-                            RetAsMatDisp.Quantity.setHidden( value: false, SaveToDb: true );
                             RetAsMatDisp.Type.Value = CswNbtObjClassRequestMaterialDispense.Types.Bulk;
                             break;
 
                         case CswNbtObjClassMaterial.Requests.Size:
-                            RetAsMatDisp.Size.setHidden( value: false, SaveToDb: true );
-                            RetAsMatDisp.Count.setHidden( value: false, SaveToDb: true );
-                            RetAsMatDisp.Quantity.setHidden( value: true, SaveToDb: true );
                             RetAsMatDisp.Type.Value = CswNbtObjClassRequestMaterialDispense.Types.Size;
                             break;
                     }
-                    RetAsMatDisp.Type.setReadOnly( value: true, SaveToDb: true );
                 }
             }
             return RetAsRequestItem;

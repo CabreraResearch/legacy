@@ -231,24 +231,35 @@ namespace ChemSW.Nbt.Actions
                 Ret.Root.ChildRelationships.Clear();
 
                 CswNbtMetaDataObjectClass RequestOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.RequestClass );
-                CswNbtMetaDataObjectClass RequestContainerDispenseOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.RequestContainerDispenseClass );
-                CswNbtMetaDataObjectClass RequestContainerUpdateOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.RequestContainerUpdateClass );
-                CswNbtMetaDataObjectClass RequestMaterialDispenseOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.RequestMaterialDispenseClass );
-
                 CswNbtViewRelationship RootVr = Ret.AddViewRelationship( RequestOc, true );
 
-                CswNbtViewRelationship RequestItemVr1 = Ret.AddViewRelationship( RootVr, NbtViewPropOwnerType.Second, RequestContainerDispenseOc.getObjectClassProp( CswNbtObjClassRequestContainerDispense.PropertyName.Request ), true );
-                CswNbtViewRelationship RequestItemVr2 = Ret.AddViewRelationship( RootVr, NbtViewPropOwnerType.Second, RequestContainerUpdateOc.getObjectClassProp( CswNbtObjClassRequestContainerUpdate.PropertyName.Request ), true );
-                CswNbtViewRelationship RequestItemVr3 = Ret.AddViewRelationship( RootVr, NbtViewPropOwnerType.Second, RequestMaterialDispenseOc.getObjectClassProp( CswNbtObjClassRequestMaterialDispense.PropertyName.Request ), true );
+                foreach( NbtObjectClass Member in CswNbtPropertySetRequestItem.Members() )
+                {
+                    CswNbtMetaDataObjectClass MemberOc = _CswNbtResources.MetaData.getObjectClass( Member );
+                    CswNbtMetaDataObjectClassProp RequestOcp = MemberOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.Request );
+                    CswNbtViewRelationship RequestItemRel = Ret.AddViewRelationship( RootVr,
+                                                                                      NbtViewPropOwnerType.Second,
+                                                                                      RequestOcp, false );
 
-                Ret.AddViewProperty( RequestItemVr1, RequestContainerDispenseOc.getObjectClassProp( CswNbtObjClassRequestContainerDispense.PropertyName.Number ) );
-                Ret.AddViewProperty( RequestItemVr1, RequestContainerDispenseOc.getObjectClassProp( CswNbtObjClassRequestContainerDispense.PropertyName.Type ) );
-                Ret.AddViewProperty( RequestItemVr1, RequestContainerDispenseOc.getObjectClassProp( CswNbtObjClassRequestContainerDispense.PropertyName.Quantity ) );
-                Ret.AddViewProperty( RequestItemVr3, RequestMaterialDispenseOc.getObjectClassProp( CswNbtObjClassRequestMaterialDispense.PropertyName.Count ) );
-                Ret.AddViewProperty( RequestItemVr3, RequestMaterialDispenseOc.getObjectClassProp( CswNbtObjClassRequestMaterialDispense.PropertyName.Size ) );
-                Ret.AddViewProperty( RequestItemVr3, RequestMaterialDispenseOc.getObjectClassProp( CswNbtObjClassRequestMaterialDispense.PropertyName.Count ) );
-                Ret.AddViewProperty( RequestItemVr1, RequestContainerDispenseOc.getObjectClassProp( CswNbtObjClassRequestContainerDispense.PropertyName.Container ) );
-                Ret.AddViewProperty( RequestItemVr1, RequestContainerDispenseOc.getObjectClassProp( CswNbtObjClassRequestContainerDispense.PropertyName.Location ) );
+                    Ret.AddViewProperty( RequestItemRel, MemberOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.Type ) );
+                    Ret.AddViewProperty( RequestItemRel, MemberOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.Number ) );
+                    if( MemberOc.ObjectClass == NbtObjectClass.RequestContainerDispenseClass )
+                    {
+                        Ret.AddViewProperty( RequestItemRel, MemberOc.getObjectClassProp( CswNbtObjClassRequestContainerDispense.PropertyName.Quantity ) );
+                    }
+                    if( MemberOc.ObjectClass == NbtObjectClass.RequestMaterialDispenseClass )
+                    {
+                        Ret.AddViewProperty( RequestItemRel, MemberOc.getObjectClassProp( CswNbtObjClassRequestMaterialDispense.PropertyName.Quantity ) );
+                        Ret.AddViewProperty( RequestItemRel, MemberOc.getObjectClassProp( CswNbtObjClassRequestMaterialDispense.PropertyName.Count ) );
+                        Ret.AddViewProperty( RequestItemRel, MemberOc.getObjectClassProp( CswNbtObjClassRequestMaterialDispense.PropertyName.Size ) );
+                    }
+                    Ret.AddViewProperty( RequestItemRel, MemberOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.Name ) );
+                    Ret.AddViewProperty( RequestItemRel, MemberOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.AssignedTo ) );
+                    Ret.AddViewProperty( RequestItemRel, MemberOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.NeededBy ) );
+                    Ret.AddViewProperty( RequestItemRel, MemberOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.RequestedFor ) );
+                    Ret.AddViewProperty( RequestItemRel, MemberOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.InventoryGroup ) );
+                    Ret.AddViewProperty( RequestItemRel, MemberOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.Location ) );
+                }
 
                 Ret.save();
             }
