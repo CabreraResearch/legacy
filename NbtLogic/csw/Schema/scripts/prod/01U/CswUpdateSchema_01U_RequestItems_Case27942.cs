@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using ChemSW.Core;
 using ChemSW.Nbt.csw.Dev;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
@@ -410,6 +411,50 @@ namespace ChemSW.Nbt.Schema
             }
 
             #endregion Container Request Tabs
+
+            #region Size Relationship
+
+            //Grab Size View mutator from Case 27542
+            CswNbtMetaDataObjectClass SizeOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.SizeClass );
+
+            CswNbtView RcdSizeView = _CswNbtSchemaModTrnsctn.restoreView( RcdSizeNtp.ViewId );
+            RcdSizeView.Root.ChildRelationships.Clear();
+
+            CswNbtViewRelationship RcdRequestItemViewRel = RcdSizeView.AddViewRelationship( RequestContainerDispenseOc, false );
+            CswNbtViewRelationship RcdMaterialViewRel = RcdSizeView.AddViewRelationship( RcdRequestItemViewRel, NbtViewPropOwnerType.First, RequestContainerDispenseOc.getObjectClassProp( CswNbtObjClassRequestContainerDispense.PropertyName.Material ), true );
+            CswNbtViewRelationship RcdSizeViewRel = RcdSizeView.AddViewRelationship( RcdMaterialViewRel, NbtViewPropOwnerType.Second, SizeOc.getObjectClassProp( CswNbtObjClassSize.PropertyName.Material ), true );
+
+            //Case 27438 
+            RcdSizeView.AddViewPropertyAndFilter(
+                    ParentViewRelationship: RcdSizeViewRel,
+                    MetaDataProp: SizeOc.getObjectClassProp( CswNbtObjClassSize.PropertyName.Dispensable ),
+                    Value: Tristate.False.ToString(),
+                    SubFieldName: CswNbtSubField.SubFieldName.Checked,
+                    FilterMode: CswNbtPropFilterSql.PropertyFilterMode.NotEquals
+                    );
+
+            RcdSizeView.save();
+
+            CswNbtView RmdSizeView = _CswNbtSchemaModTrnsctn.restoreView( RcdSizeNtp.ViewId );
+            RmdSizeView.Root.ChildRelationships.Clear();
+
+            CswNbtViewRelationship RmdRequestItemViewRel = RmdSizeView.AddViewRelationship( RequestMaterialDispenseOc, false );
+            CswNbtViewRelationship RmdMaterialViewRel = RmdSizeView.AddViewRelationship( RmdRequestItemViewRel, NbtViewPropOwnerType.First, RequestMaterialDispenseOc.getObjectClassProp( CswNbtObjClassRequestMaterialDispense.PropertyName.Material ), true );
+            CswNbtViewRelationship RmdSizeViewRel = RmdSizeView.AddViewRelationship( RmdMaterialViewRel, NbtViewPropOwnerType.Second, SizeOc.getObjectClassProp( CswNbtObjClassSize.PropertyName.Material ), true );
+
+            //Case 27438 
+            RmdSizeView.AddViewPropertyAndFilter(
+                    ParentViewRelationship: RmdSizeViewRel,
+                    MetaDataProp: SizeOc.getObjectClassProp( CswNbtObjClassSize.PropertyName.Dispensable ),
+                    Value: Tristate.False.ToString(),
+                    SubFieldName: CswNbtSubField.SubFieldName.Checked,
+                    FilterMode: CswNbtPropFilterSql.PropertyFilterMode.NotEquals
+                    );
+
+            RmdSizeView.save();
+
+
+            #endregion Size Relationship
 
         }
 
