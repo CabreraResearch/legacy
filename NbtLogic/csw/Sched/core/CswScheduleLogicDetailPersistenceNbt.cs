@@ -6,7 +6,7 @@ using ChemSW.MtSched.Core;
 
 namespace ChemSW.Nbt.Sched
 {
-    public enum NbtScheduleRuleNames { Unknown, UpdtPropVals, UpdtMTBF, UpdtInspection, GenNode, GenEmailRpt, DisableChemSwAdmin, BatchOp, ExpiredContainers }
+    public enum NbtScheduleRuleNames { Unknown, UpdtPropVals, UpdtMTBF, UpdtInspection, GenNode, GenEmailRpt, DisableChemSwAdmin, BatchOp, ExpiredContainers, MolFingerprints }
     public enum NbtScheduledRuleColumns { Unknown, ScheduledRuleId, RuleName, MaxRunTimeMs, ThreadId, ReprobateThreshold, TotalRogueCount, FailedCount, Reprobate, Disabled, StatusMessage, Recurrence, Interval, RunStartTime, RunEndTime, LastRun }
     public enum NbtScheduledRuleParamsColumns { Unknown, ScheduledRuleParamId, ParamName, ParamVal }
     public class CswScheduleLogicDetailPersistenceNbt : ICswScheduleLogicDetailPersistence

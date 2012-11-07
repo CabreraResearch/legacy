@@ -1,6 +1,8 @@
 ﻿using ChemSW.Nbt.csw.Dev;
 using ChemSW.StructureSearch;
 using ChemSW.DB;
+using ChemSW.Nbt.Sched;
+using ChemSW.MtSched.Core;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -21,6 +23,7 @@ namespace ChemSW.Nbt.Schema
 
         public override void update()
         {
+            #region Create fingerprint table
             if( false == _CswNbtSchemaModTrnsctn.isTableDefined( "mol_keys" ) )
             {
                 _CswNbtSchemaModTrnsctn.addTable( "mol_keys", "nodeid" );
@@ -31,7 +34,14 @@ namespace ChemSW.Nbt.Schema
                 }
 
                 _CswNbtSchemaModTrnsctn.addNumberColumn( "mol_keys", "atomcount", "", false, false, string.Empty, false, string.Empty, false );
-            }         
+            }
+            #endregion
+
+            #region Fingerprinting scheduled task
+
+            _CswNbtSchemaModTrnsctn.createScheduledRule( NbtScheduleRuleNames.MolFingerprints, Recurrence.NSeconds, 15 );
+
+            #endregion
         }
 
         //Update()
