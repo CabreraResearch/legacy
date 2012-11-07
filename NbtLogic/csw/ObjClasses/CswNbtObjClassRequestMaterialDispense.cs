@@ -14,6 +14,8 @@ namespace ChemSW.Nbt.ObjClasses
     /// </summary>
     public class CswNbtObjClassRequestMaterialDispense : CswNbtPropertySetRequestItem
     {
+        #region Enums
+
         /// <summary>
         /// Property Names
         /// </summary>
@@ -87,6 +89,10 @@ namespace ChemSW.Nbt.ObjClasses
                 };
         }
 
+        #endregion Enums
+
+        #region Base
+
         public static implicit operator CswNbtObjClassRequestMaterialDispense( CswNbtNode Node )
         {
             CswNbtObjClassRequestMaterialDispense ret = null;
@@ -95,6 +101,22 @@ namespace ChemSW.Nbt.ObjClasses
                 ret = (CswNbtObjClassRequestMaterialDispense) Node.ObjClass;
             }
             return ret;
+        }
+
+        /// <summary>
+        /// Cast a Request Item PropertySet back to an Object Class
+        /// </summary>
+        public static CswNbtObjClassRequestMaterialDispense fromPropertySet( CswNbtPropertySetRequestItem PropertySet )
+        {
+            return PropertySet.Node;
+        }
+
+        /// <summary>
+        /// Cast a the Object Class as a PropertySet
+        /// </summary>
+        public static CswNbtPropertySetRequestItem toPropertySet( CswNbtObjClassRequestMaterialDispense ObjClass )
+        {
+            return ObjClass;
         }
 
         public CswNbtObjClassRequestMaterialDispense( CswNbtResources CswNbtResources, CswNbtNode Node )
@@ -107,6 +129,8 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get { return _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.RequestMaterialDispenseClass ); }
         }
+
+        #endregion Base
 
         #region Inherited Events
 

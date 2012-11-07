@@ -12,6 +12,7 @@ namespace ChemSW.Nbt.ObjClasses
     /// </summary>
     public class CswNbtObjClassRequestContainerUpdate : CswNbtPropertySetRequestItem
     {
+        #region Enums
         /// <summary>
         /// Property Names
         /// </summary>
@@ -62,6 +63,10 @@ namespace ChemSW.Nbt.ObjClasses
                 };
         }
 
+        #endregion Enums
+
+        #region Base
+
         /// <summary>
         /// Implicit cast of Node to Object Class
         /// </summary>
@@ -73,6 +78,22 @@ namespace ChemSW.Nbt.ObjClasses
                 ret = (CswNbtObjClassRequestContainerUpdate) Node.ObjClass;
             }
             return ret;
+        }
+
+        /// <summary>
+        /// Cast a Request Item PropertySet back to an Object Class
+        /// </summary>
+        public static CswNbtObjClassRequestContainerUpdate fromPropertySet( CswNbtPropertySetRequestItem PropertySet )
+        {
+            return PropertySet.Node;
+        }
+
+        /// <summary>
+        /// Cast a the Object Class as a PropertySet
+        /// </summary>
+        public static CswNbtPropertySetRequestItem toPropertySet( CswNbtObjClassRequestContainerUpdate ObjClass )
+        {
+            return ObjClass;
         }
 
         /// <summary>
@@ -91,6 +112,8 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get { return _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.RequestContainerUpdateClass ); }
         }
+
+        #endregion Base
 
         #region Inherited Events
 
