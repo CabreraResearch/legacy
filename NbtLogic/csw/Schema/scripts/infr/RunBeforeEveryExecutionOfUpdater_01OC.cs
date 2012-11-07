@@ -691,7 +691,7 @@ namespace ChemSW.Nbt.Schema
                 FkType = NbtViewRelatedIdType.ObjectClassId.ToString()
             } );
 
-            CswNbtMetaDataObjectClass userOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass(NbtObjectClass.UserClass);
+            CswNbtMetaDataObjectClass userOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.UserClass );
             CswNbtMetaDataObjectClassProp reservedForOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( containerOC )
             {
                 PropName = CswNbtObjClassContainer.PropertyName.ReservedFor,
@@ -704,12 +704,6 @@ namespace ChemSW.Nbt.Schema
             _resetBlame();
             #endregion
         }
-
-        #endregion
-
-        #endregion Titania Methods
-
-        #region Ursula Methods
 
         private void _destroyRequestItemOc()
         {
