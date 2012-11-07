@@ -1398,6 +1398,14 @@ namespace ChemSW.Nbt.Schema
                        required, tablename, DataDictionaryUniqueType.None, UpperRangeValueInclusive, UpperRangeValue );
         }
 
+        public void addNumberColumn(string tablename, string columnname, string description, bool logicaldelete, bool required,
+                                     string LowerRangeValue, bool LowerRangeValueInclusive, string UpperRangeValue, bool UpperRangeValueInclusive )
+        {
+            addColumn( columnname, DataDictionaryColumnType.Value, Int32.MinValue, 1, string.Empty, description, string.Empty, string.Empty,
+                       false, false, logicaldelete, LowerRangeValue, LowerRangeValueInclusive, DataDictionaryPortableDataType.Int, false,
+                       required, tablename, DataDictionaryUniqueType.None, UpperRangeValueInclusive, UpperRangeValue );
+        }
+
         /// <summary>
         /// Convenience function for adding a new double column to the database schema
         /// </summary>
