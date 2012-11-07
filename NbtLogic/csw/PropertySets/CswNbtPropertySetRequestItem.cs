@@ -1,3 +1,4 @@
+using System.Collections.ObjectModel;
 using ChemSW.Core;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
@@ -114,6 +115,15 @@ namespace ChemSW.Nbt.ObjClasses
         }
 
         #endregion Enums
+
+        public static Collection<NbtObjectClass> Members()
+        {
+            Collection<NbtObjectClass> Ret = new Collection<NbtObjectClass>();
+            Ret.Add( NbtObjectClass.RequestContainerDispenseClass );
+            Ret.Add( NbtObjectClass.RequestContainerUpdateClass );
+            Ret.Add( NbtObjectClass.RequestMaterialDispenseClass );
+            return Ret;
+        }
 
         private void _toggleReadOnlyProps( bool IsReadOnly, CswNbtPropertySetRequestItem ItemInstance )
         {
@@ -239,6 +249,8 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void afterPopulateProps()
         {
+            //TODO: Create Mail Report for Status Changes
+
             afterPropertySetPopulateProps();
             setFulfillVisibility();
             Status.SetOnPropChange( _onStatusPropChange );

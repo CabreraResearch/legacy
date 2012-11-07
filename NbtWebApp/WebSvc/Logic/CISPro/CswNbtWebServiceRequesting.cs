@@ -48,7 +48,6 @@ namespace ChemSW.Nbt.WebServices
             JObject ret = new JObject();
             CswNbtNode CurrentRequest = _RequestAct.CurrentRequestNode();
             ret["cartnodeid"] = CurrentRequest.NodeId.ToString();
-            ret["cartitemnodetypeid"] = _RequestAct.RequestItemNt.NodeTypeId;
             return ret;
         }
 
@@ -70,7 +69,7 @@ namespace ChemSW.Nbt.WebServices
             CswNbtActSubmitRequest CopyRequest = _RequestAct.copyRequest( CopyFromNodeId, CopyToNodeId );
             return getCurrentRequest( CopyRequest );
         }
-        
+
     } // class CswNbtWebServiceRequesting
 
 } // namespace ChemSW.Nbt.WebServices
