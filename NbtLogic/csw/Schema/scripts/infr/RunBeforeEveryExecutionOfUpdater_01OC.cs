@@ -706,13 +706,15 @@ namespace ChemSW.Nbt.Schema
             #endregion
         }
 
-        private void _destroyRequestItemOc()
+        private void _destroyRequestItemOc( CswDeveloper Dev, Int32 CaseNo )
         {
+            _acceptBlame( Dev, CaseNo );
             CswNbtMetaDataObjectClass RequestItemOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( "RequestItemClass" );
             if( null != RequestItemOc )
             {
                 _CswNbtSchemaModTrnsctn.MetaData.DeleteObjectClass( RequestItemOc );
             }
+            _resetBlame();
         }
 
         private CswNbtMetaDataObjectClass _createRequestItemBase( NbtObjectClass ObjectClass )
@@ -1089,6 +1091,7 @@ namespace ChemSW.Nbt.Schema
 
             #region URSULA
 
+            _destroyRequestItemOc( CswDeveloper.CF, 27942 );
             _createRequestContainerDispense( CswDeveloper.CF, 27942 );
             _createRequestContainerUpdate( CswDeveloper.CF, 27942 );
             _createRequestMaterialDispense( CswDeveloper.CF, 27942 );

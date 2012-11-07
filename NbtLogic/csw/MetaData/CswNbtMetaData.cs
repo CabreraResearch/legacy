@@ -1442,8 +1442,7 @@ namespace ChemSW.Nbt.MetaData
                 CswNbtNodePropMultiList prop = (CswNbtNodePropMultiList) nodeAsRole.NodeTypePermissions;
                 prop.ValidateValues();
             }
-
-
+            
         }//DeleteNodeType()
 
 
