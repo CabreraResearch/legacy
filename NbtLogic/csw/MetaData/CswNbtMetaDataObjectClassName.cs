@@ -30,6 +30,7 @@ namespace ChemSW.Nbt.MetaData
             { CofAMethodTemplateClass           , CofAMethodTemplateClass            },
             { ContainerClass                    , ContainerClass                     },
             { ContainerDispenseTransactionClass , ContainerDispenseTransactionClass  },
+            { ContainerGroupClass               , ContainerGroupClass                },
             { CustomerClass                     , CustomerClass                      },
             { DocumentClass                     , DocumentClass                      },
             { EnterprisePartClass               , EnterprisePartClass                },
@@ -138,6 +139,7 @@ namespace ChemSW.Nbt.MetaData
         public const string CofAMethodTemplateClass = "CofAMethodTemplateClass";
         public const string ContainerClass = "ContainerClass";
         public const string ContainerDispenseTransactionClass = "ContainerDispenseTransactionClass";
+        public const string ContainerGroupClass = "ContainerGroupClass";
         public const string CustomerClass = "CustomerClass";
         public const string DocumentClass = "DocumentClass";
         public const string EnterprisePartClass = "EnterprisePartClass";

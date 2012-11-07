@@ -36,6 +36,12 @@ namespace ChemSW.Nbt.ObjClasses
             public const string Undispose = "Undispose";
             public const string Owner = "Owner";
             public const string ContainerFamily = "Container Family";
+            public const string ReceiptLot = "Receipt Lot";
+            public const string LotControlled = "Lot Controlled";
+            public const string Requisitionable = "Requisitionable";
+            public const string ContainerGroup = "Container Group";
+            public const string LabelFormat = "Label Format";
+            public const string ReservedFor = "Reserved For";
         }
 
         private bool _IsDisposed
@@ -274,7 +280,7 @@ namespace ChemSW.Nbt.ObjClasses
         /// </summary>
         public bool canContainer( CswPrimaryKey ContainerNodeId, CswNbtPermit.NodeTypePermission Permission, CswNbtAction Action, ICswNbtUser User )
         {
-            
+
             bool ret = true;
             if( false == ( User is CswNbtSystemUser ) &&
                 null != ContainerNodeId &&
@@ -931,6 +937,11 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropButton Undispose { get { return ( _CswNbtNode.Properties[PropertyName.Undispose] ); } }
         public CswNbtNodePropRelationship Owner { get { return ( _CswNbtNode.Properties[PropertyName.Owner] ); } }
         public CswNbtNodePropButton ContainerFamily { get { return ( _CswNbtNode.Properties[PropertyName.ContainerFamily] ); } }
+        public CswNbtNodePropRelationship ReceiptLot { get { return ( _CswNbtNode.Properties[PropertyName.ReceiptLot] ); } }
+        public CswNbtNodePropLogical LotControlled { get { return ( _CswNbtNode.Properties[PropertyName.LotControlled] ); } }
+        public CswNbtNodePropLogical Requisitionable { get { return ( _CswNbtNode.Properties[PropertyName.Requisitionable] ); } }
+        public CswNbtNodePropRelationship LabelFormat { get { return ( _CswNbtNode.Properties[PropertyName.LabelFormat] ); } }
+        public CswNbtNodePropRelationship ReservedFor { get { return ( _CswNbtNode.Properties[PropertyName.ReservedFor] ); } }
         #endregion
 
 
