@@ -62,27 +62,32 @@ namespace ChemSW.Nbt.Sched
 
                 try
                 {
-                    List<int> nonFingerprintedMols = new List<int>();
+                    CswCommaDelimitedString nonFingerprintedMols = new CswCommaDelimitedString();
+                    CswCommaDelimitedString nonFingerprintedMolsPropIds = new CswCommaDelimitedString();
 
                     CswNbtMetaDataFieldType molFT = _CswNbtResources.MetaData.getFieldType( CswNbtMetaDataFieldType.NbtFieldType.MOL );
                     CswTableSelect ts = _CswNbtResources.makeCswTableSelect( "getMolNTPs", "nodetype_props" );
                     DataTable nodetype_props = ts.getTable( "where fieldtypeid = " + molFT.FieldTypeId );
                     foreach( DataRow row in nodetype_props.Rows )
                     {
+                        int nodeTypeId = CswConvert.ToInt32( row["nodetypepropid"] );
                         CswTableSelect ts_nodes = _CswNbtResources.makeCswTableSelect( "selectNonNullMolNodes", "jct_nodes_props" );
-                        DataTable nonNullMolNodes = ts_nodes.getTable( "where clobdata is not null and nodetypepropid = " + row["nodetypepropid"] );
+                        DataTable nonNullMolNodes = ts_nodes.getTable( "where clobdata is not null and nodetypepropid = " + nodeTypeId );
 
                         foreach( DataRow jctnode_row in nonNullMolNodes.Rows )
                         {
                             int nodeid = CswConvert.ToInt32( jctnode_row["nodeid"] );
                             if( false == _CswNbtResources.StructureSearchManager.DoesRecordExist( nodeid ) ) 
                             {
-                                nonFingerprintedMols.Add( nodeid );
+                                nonFingerprintedMols.Add( nodeid.ToString() );
+                                nonFingerprintedMolsPropIds.Add( nodeTypeId.ToString() );
                             }
                         }
                     }
 
-                    //create batch op                    
+                    CswNbtBatchOpMolFingerprints batchOp = new CswNbtBatchOpMolFingerprints( _CswNbtResources );
+                    int nodesPerIteration = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswConfigurationVariables.ConfigurationVariableNames.NodesProcessedPerCycle ) );
+                    batchOp.makeBatchOp( nonFingerprintedMols, nonFingerprintedMolsPropIds, nodesPerIteration );                 
 
                     _CswScheduleLogicDetail.StatusMessage = "Completed without error";
                     _LogicRunStatus = MtSched.Core.LogicRunStatus.Succeeded; //last line

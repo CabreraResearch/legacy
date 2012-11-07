@@ -39,7 +39,7 @@ namespace ChemSW.Nbt.Schema
 
             #region Fingerprinting scheduled task
 
-            _CswNbtSchemaModTrnsctn.createScheduledRule( NbtScheduleRuleNames.MolFingerprints, Recurrence.NSeconds, 15 );
+            _CswNbtSchemaModTrnsctn.createScheduledRule( NbtScheduleRuleNames.MolFingerprints, Recurrence.NSeconds, 45 );
 
             #endregion
         }

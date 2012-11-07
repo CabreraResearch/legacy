@@ -100,6 +100,7 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="csw\Batch\CswNbtBatchOpMolFingerprints.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassContainerGroup.cs" />
     <Compile Include="csw\Sched\logic\CswScheduleLogicNbtMolFingerprints.cs" />
     <Compile Include="csw\Schema\scripts\prod\01T\CswUpdateSchema_01T_LocationLabel_Case28108.cs" />
