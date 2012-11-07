@@ -48,10 +48,20 @@ namespace ChemSW.Nbt.Schema
             {
                 _CswNbtSchemaModTrnsctn.createModule( "Material Life-Cycle Management", CswNbtModuleName.MLM.ToString(), false );
             }
-            else if( false == _CswNbtSchemaModTrnsctn.Modules.IsModuleEnabled( CswNbtModuleName.MLM ) )
+            else if( _CswNbtSchemaModTrnsctn.isMaster() && false == _CswNbtSchemaModTrnsctn.Modules.IsModuleEnabled( CswNbtModuleName.MLM ) )
             {
                 _CswNbtSchemaModTrnsctn.Modules.EnableModule( CswNbtModuleName.MLM );
             }
+
+            if( _CswNbtSchemaModTrnsctn.Modules.IsModuleEnabled( CswNbtModuleName.SI ) )
+            {
+                _CswNbtSchemaModTrnsctn.Modules.EnableModule( CswNbtModuleName.Mobile );
+            }
+            else
+            {
+                _CswNbtSchemaModTrnsctn.Modules.DisableModule( CswNbtModuleName.Mobile );
+            }
+
 
             #endregion TITANIA
 

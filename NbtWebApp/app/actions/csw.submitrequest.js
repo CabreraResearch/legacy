@@ -100,15 +100,21 @@
                             // this works for both Multi-edit and regular
                             var nodekeys = Csw.delimitedString(),
                                 nodeids = Csw.delimitedString(),
-                                nodenames = [];
+                                nodenames = [],
+                                currentNodeId, currentNodeKey;
+                               
 
                             Csw.each(rows, function (row) {
+                                currentNodeId = currentNodeId || row.nodeid;
+                                currentNodeKey = currentNodeKey || row.nodekey;
                                 nodekeys.add(row.nodekey);
                                 nodeids.add(row.nodeid);
                                 nodenames.push(row.nodename);
                             });
 
                             $.CswDialog('EditNodeDialog', {
+                                currentNodeId: currentNodeId,
+                                currentNodeKey: currentNodeKey,
                                 selectedNodeIds: nodeids,
                                 selectedNodeKeys: nodekeys,
                                 nodenames: nodenames,
