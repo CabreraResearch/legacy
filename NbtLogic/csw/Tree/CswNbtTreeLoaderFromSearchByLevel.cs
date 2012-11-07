@@ -80,7 +80,7 @@ namespace ChemSW.Nbt
                     // Verify permissions
                     // this could be a performance problem
                     CswNbtMetaDataNodeType ThisNodeType = _CswNbtResources.MetaData.getNodeType( ThisNodeTypeId );
-                    if( false == RequireViewPermissions || _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.View, ThisNodeType ) )
+                    if( false == RequireViewPermissions || _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.View, ThisNodeType ) || _CswNbtResources.Permit.canAnyTab( CswNbtPermit.NodeTypePermission.View, ThisNodeType ) )
                     {
                         if( _canViewNode( ThisNodeType, ThisNodeId ) )
                         {
