@@ -143,6 +143,11 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataNodeType RequestCuNt = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( NbtObjectClass.RequestContainerUpdateClass, "Request Container Update", "Requests" );
             CswNbtMetaDataNodeType RequestMdNt = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( NbtObjectClass.RequestMaterialDispenseClass, "Request Material Dispense", "Requests" );
 
+            //Grab name template from Case 27703
+            RequestCdNt.addNameTemplateText( CswNbtPropertySetRequestItem.PropertyName.Name );
+            RequestCuNt.addNameTemplateText( CswNbtPropertySetRequestItem.PropertyName.Name );
+            RequestMdNt.addNameTemplateText( CswNbtPropertySetRequestItem.PropertyName.Name );
+
             //Grab Table/Preview layouts from Case 27071
 
             #region RequestCdNt Layout
