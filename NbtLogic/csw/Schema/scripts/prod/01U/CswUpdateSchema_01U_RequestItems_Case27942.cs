@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using ChemSW.Nbt.csw.Dev;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
@@ -179,6 +180,27 @@ namespace ChemSW.Nbt.Schema
             }
 
             #endregion Permissions
+
+            #region Views
+
+            //Grab Dispense Requests View from Case 27071
+
+            CswNbtMetaDataObjectClassProp StatusOcp = RequestContainerDispenseOc.getObjectClassProp( CswNbtObjClassRequestContainerDispense.PropertyName.Status );
+            CswNbtView DispenseRequestsView = _CswNbtSchemaModTrnsctn.ViewSelect.restoreViews( "Dispense Requests: Open" ).FirstOrDefault() ?? _CswNbtSchemaModTrnsctn.makeNewView( "Dispense Requests: Open", NbtViewVisibility.Global );
+            DispenseRequestsView.Root.ChildRelationships.Clear();
+
+            DispenseRequestsView.ViewMode = NbtViewRenderingMode.Tree;
+            DispenseRequestsView.Category = "Requests";
+            CswNbtViewRelationship RequestItemsVr = DispenseRequestsView.AddViewRelationship( RequestContainerDispenseOc, true );
+
+            DispenseRequestsView.AddViewPropertyAndFilter( RequestItemsVr, RequestContainerDispenseOc.getObjectClassProp( CswNbtObjClassRequestContainerDispense.PropertyName.AssignedTo ), "me" );
+            DispenseRequestsView.AddViewPropertyAndFilter( RequestItemsVr, StatusOcp, CswNbtObjClassRequestItem.Statuses.Completed, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.NotEquals );
+            DispenseRequestsView.AddViewPropertyAndFilter( RequestItemsVr, StatusOcp, CswNbtObjClassRequestItem.Statuses.Cancelled, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.NotEquals );
+            DispenseRequestsView.AddViewPropertyAndFilter( RequestItemsVr, StatusOcp, CswNbtObjClassRequestItem.Statuses.Dispensed, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.NotEquals );
+            DispenseRequestsView.save();
+
+            #endregion Views
+
         }
 
         private static CswNbtPermit.NodeTypePermission[] ViewPermissions = { CswNbtPermit.NodeTypePermission.View };
