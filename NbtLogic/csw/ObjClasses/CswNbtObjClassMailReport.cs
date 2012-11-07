@@ -64,8 +64,7 @@ namespace ChemSW.Nbt.ObjClasses
         public string SchedulerWarningDaysPropertyName { get { return PropertyName.WarningDays; } }
         public string SchedulerDueDateIntervalPropertyName { get { return PropertyName.DueDateInterval; } }
         public string SchedulerRunTimePropertyName { get { return PropertyName.RunTime; } }
-        public string SchedulerRunNowPropertyName { get { return PropertyName.RunNow; } }
-
+        
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
         private CswNbtPropertySetSchedulerImpl _CswNbtPropertySetSchedulerImpl;
 

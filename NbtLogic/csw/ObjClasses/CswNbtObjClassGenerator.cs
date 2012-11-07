@@ -28,7 +28,6 @@ namespace ChemSW.Nbt.ObjClasses
             public static string Summary = "Summary";
             public static string ParentType = "Parent Type";
             public static string ParentView = "Parent View";
-            public static string RunNow = "Run Now";
         }
 
 
@@ -40,7 +39,6 @@ namespace ChemSW.Nbt.ObjClasses
         public string SchedulerWarningDaysPropertyName { get { return PropertyName.WarningDays; } }
         public string SchedulerDueDateIntervalPropertyName { get { return PropertyName.DueDateInterval; } }
         public string SchedulerRunTimePropertyName { get { return PropertyName.RunTime; } }
-        public string SchedulerRunNowPropertyName { get { return PropertyName.RunNow; } }
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
         private CswNbtPropertySetSchedulerImpl _CswNbtPropertySetSchedulerImpl;
@@ -289,15 +287,6 @@ namespace ChemSW.Nbt.ObjClasses
             CswNbtMetaDataObjectClassProp OCP = ButtonData.NodeTypeProp.getObjectClassProp();
             if( null != ButtonData.NodeTypeProp && null != OCP )
             {
-                //if( PropertyName.RunNow == OCP.PropName )
-                //{
-                //    NextDueDate.DateTimeValue = DateTime.Now;
-                //    //case 25702 - empty comment?
-                //    //RunStatus.StaticText = string.Empty;
-                //    //RunStatus_new.a
-                //    Node.postChanges( false );
-                //    ButtonData.Action = NbtButtonAction.refresh;
-                //}
             }
             return true;
         }
@@ -350,11 +339,6 @@ namespace ChemSW.Nbt.ObjClasses
         /// View from owner to parent. In FE this is Location Group > Location > Inspection Target > Inspection. Parent view not utilized elsewhere, yet.
         /// </summary>
         public CswNbtNodePropViewReference ParentView { get { return ( _CswNbtNode.Properties[PropertyName.ParentView] ); } }
-
-        /// <summary>
-        /// Run Now button clears the Last Run Date thereby forcing scheduler to process the Generator node on its next iteration 
-        /// </summary>
-        public CswNbtNodePropButton RunNow { get { return ( _CswNbtNode.Properties[PropertyName.RunNow] ); } }
 
         #endregion
 
