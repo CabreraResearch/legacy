@@ -20,7 +20,8 @@ namespace ChemSW.Nbt.Actions
         DisposeContainer,
         UndisposeContainer,
         Receiving,
-        Subscriptions
+        Subscriptions,
+        Reconciliation
     }
 
     public class CswNbtAction
