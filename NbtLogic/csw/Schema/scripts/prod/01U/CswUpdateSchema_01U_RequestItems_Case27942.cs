@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using ChemSW.Core;
+using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.csw.Dev;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
@@ -469,6 +470,9 @@ namespace ChemSW.Nbt.Schema
 
             #endregion Size Relationship
 
+            CswNbtActSystemViews SysViews = new CswNbtActSystemViews( _CswNbtSchemaModTrnsctn.MetaData._CswNbtMetaDataResources.CswNbtResources, CswNbtActSystemViews.SystemViewName.CISProRequestCart, null );
+            SysViews.reInitSystemView( CswNbtActSystemViews.SystemViewName.CISProRequestCart );
+            SysViews.reInitSystemView( CswNbtActSystemViews.SystemViewName.CISProRequestHistory );
         }
 
         private static CswNbtPermit.NodeTypePermission[] ViewPermissions = { CswNbtPermit.NodeTypePermission.View };
