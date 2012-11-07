@@ -276,7 +276,7 @@ namespace ChemSW.Nbt.ObjClasses
             // case 28146
             WarningDays.MinValue = 0;
             WarningDays.MaxValue = DueDateInterval.getMaximumWarningDays();
-            
+
             _CswNbtObjClassDefault.afterPopulateProps();
         }//afterPopulateProps()
 
@@ -329,6 +329,13 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 RunTime.setHidden( value: false, SaveToDb: true );
             }
+
+            Int32 max = DueDateInterval.getMaximumWarningDays();
+            if( WarningDays.Value > max )
+            {
+                WarningDays.Value = max;
+            }
+
         } // OnDueDateIntervalChange
         public CswNbtNodePropDateTime RunTime { get { return ( _CswNbtNode.Properties[PropertyName.RunTime] ); } }
         public CswNbtNodePropLogical Enabled { get { return ( _CswNbtNode.Properties[PropertyName.Enabled] ); } }
