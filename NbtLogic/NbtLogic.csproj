@@ -100,6 +100,7 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="csw\Schema\scripts\prod\01T\CswUpdateSchema_01T_Case28146.cs" />
     <Compile Include="csw\Schema\scripts\prod\01T\CswUpdateSchema_01T_LocationLabel_Case28108.cs" />
     <Compile Include="csw\Schema\scripts\prod\01T\CswUpdateSchema_01T_Case27551.cs" />
     <Compile Include="csw\Schema\scripts\prod\01T\CswUpdateSchema_01T_Case28020.cs" />
@@ -351,7 +352,6 @@
     <Compile Include="csw\Sched\core\CswScheduleLogicFactoryNbt.cs" />
     <Compile Include="csw\Sched\core\CswScheduleLogicNodes.cs" />
     <Compile Include="csw\Sched\core\CswScheduleLogicParamNbt.cs" />
-    <Compile Include="csw\Sched\core\CswScheduleNodeUpdater.cs" />
     <Compile Include="csw\Sched\core\CswScheduleResourceFactoryNbt.cs" />
     <Compile Include="csw\Sched\logic\CswScheduleLogicNbtBatchOps.cs" />
     <Compile Include="csw\Sched\logic\CswScheduleLogicNbtDisableCswAdmin.cs" />
@@ -425,7 +425,7 @@
     <Compile Include="csw\Schema\scripts\prod\01T\CswUpdateSchema_01T_Case27947.cs" />
     <Compile Include="csw\Schema\scripts\prod\01T\CswUpdateSchema_01T_CertMethod_Case27868.cs" />
     <Compile Include="csw\Schema\scripts\prod\01T\CswUpdateSchema_01T_IdentityTab_Case27965.cs" />
-    <Compile Include="csw\Schema\scripts\prod\01T\CswUpdateSchema_0T1_Case27865_part2.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01T\CswUpdateSchema_01T_Case27865_part2.cs" />
     <Compile Include="csw\Schema\scripts\tests\cases\001\CswTestCase_001_01.cs" />
     <Compile Include="csw\Schema\scripts\tests\cases\001\CswTestCase_001_02.cs" />
     <Compile Include="csw\Schema\scripts\tests\cases\001\CswTestCase_001_03.cs" />

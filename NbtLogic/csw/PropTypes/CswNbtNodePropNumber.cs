@@ -80,20 +80,35 @@ namespace ChemSW.Nbt.PropTypes
                 return _CswNbtMetaDataNodeTypeProp.NumberPrecision;
             }
         }
+
+        private double _MinValue = Double.NaN;
         public double MinValue
         {
             get
             {
-                return _CswNbtMetaDataNodeTypeProp.MinValue;
+                if( Double.IsNaN( _MinValue ) )
+                {
+                    _MinValue = _CswNbtMetaDataNodeTypeProp.MinValue;
+                }
+                return _MinValue;
             }
-        }
+            set { _MinValue = value; }
+        } // MinValue
+
+
+        private double _MaxValue = Double.NaN;
         public double MaxValue
         {
             get
             {
-                return _CswNbtMetaDataNodeTypeProp.MaxValue;
+                if( Double.IsNaN( _MaxValue ) )
+                {
+                    _MaxValue = _CswNbtMetaDataNodeTypeProp.MaxValue;
+                }
+                return _MaxValue;
             }
-        }
+            set { _MaxValue = value; }
+        } // MaxValue
 
         /// <summary>
         /// When set to true, the MinValue and MaxValue limits are not included in the allowed number range.
