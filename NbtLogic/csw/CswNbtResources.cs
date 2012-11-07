@@ -17,6 +17,7 @@ using ChemSW.RscAdo;
 using ChemSW.Security;
 using ChemSW.Session;
 using ChemSW.TblDn;
+using ChemSW.StructureSearch;
 
 namespace ChemSW.Nbt
 {
@@ -193,6 +194,11 @@ namespace ChemSW.Nbt
         public CswEventLinker CswEventLinker = new CswEventLinker();
 
         /// <summary>
+        /// Provides an interface into the StructureSearch classes
+        /// </summary>
+        public CswStructureSearchManager StructureSearchManager;
+
+        /// <summary>
         /// For unique naming and tracking
         /// </summary>
         public string _DebugID;
@@ -215,6 +221,7 @@ namespace ChemSW.Nbt
             ViewSelect = new CswNbtViewSelect( this );
             SessionDataMgr = new CswNbtSessionDataMgr( this );
             Permit = new CswNbtPermit( this );
+            StructureSearchManager = new CswStructureSearchManager( this, "mol_keys", "nodeid", "nodeid", "clobdata", "jct_nodes_props" );
         }
 
         public ICswSuperCycleCache CswSuperCycleCache { get { return ( _CswResources.CswSuperCycleCache ); } }
