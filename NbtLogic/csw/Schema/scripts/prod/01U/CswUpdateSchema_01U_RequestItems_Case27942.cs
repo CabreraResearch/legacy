@@ -102,6 +102,7 @@ namespace ChemSW.Nbt.Schema
 
 
 
+                GridView.AddViewProperty( RequestItemRel, RequestContainerDispenseOc.getObjectClassProp( CswNbtObjClassRequestContainerDispense.PropertyName.Type ) );
                 GridView.AddViewProperty( RequestItemRel, RequestContainerDispenseOc.getObjectClassProp( CswNbtObjClassRequestContainerDispense.PropertyName.Number ) );
                 GridView.AddViewProperty( RequestItemRel, RequestContainerDispenseOc.getObjectClassProp( CswNbtObjClassRequestContainerDispense.PropertyName.Name ) );
                 GridView.AddViewProperty( RequestItemRel, RequestContainerDispenseOc.getObjectClassProp( CswNbtObjClassRequestContainerDispense.PropertyName.AssignedTo ) );
