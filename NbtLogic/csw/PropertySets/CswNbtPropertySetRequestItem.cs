@@ -323,11 +323,11 @@ namespace ChemSW.Nbt.ObjClasses
 
         public CswNbtNodePropComments Comments { get { return _CswNbtNode.Properties[PropertyName.Comments]; } }
         public CswNbtNodePropDateTime NeededBy { get { return _CswNbtNode.Properties[PropertyName.NeededBy]; } }
-        
+
         public CswNbtNodePropList Type { get { return _CswNbtNode.Properties[PropertyName.Type]; } }
-        private void _onTypePropChange(CswNbtNodeProp Prop)
+        private void _onTypePropChange( CswNbtNodeProp Prop )
         {
-            onTypePropChange(Prop);
+            onTypePropChange( Prop );
         }
 
         public abstract void onTypePropChange( CswNbtNodeProp Prop );

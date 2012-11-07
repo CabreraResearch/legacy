@@ -52,7 +52,7 @@ namespace ChemSW.Nbt.ObjClasses
         }
 
         /// <summary>
-        /// Possible <see cref="Status"/> values (Includes Statuses inherited from base class <see cref="CswNbtPropertySetRequestItem"/>)
+        /// Possible values (Includes Statuses inherited from base class <see cref="CswNbtPropertySetRequestItem"/>)
         /// </summary>
         public new sealed class Statuses : CswNbtPropertySetRequestItem.Statuses
         {
@@ -69,9 +69,9 @@ namespace ChemSW.Nbt.ObjClasses
                     Pending, Submitted, Dispensed, Completed, Cancelled
                 };
         }
-        
+
         /// <summary>
-        /// Possible <see cref="Fulfill"/> menu options (Includes menu inherited from base class <see cref="CswNbtPropertySetRequestItem"/>)
+        /// Possible Fulfill menu options (Includes menu inherited from base class <see cref="CswNbtPropertySetRequestItem"/>)
         /// </summary>
         public new sealed class FulfillMenu : CswNbtPropertySetRequestItem.FulfillMenu
         {
@@ -315,7 +315,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void onTypePropChange( CswNbtNodeProp Prop )
         {
-        
+
         }
 
         #endregion

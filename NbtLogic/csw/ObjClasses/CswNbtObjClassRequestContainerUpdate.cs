@@ -27,10 +27,6 @@ namespace ChemSW.Nbt.ObjClasses
             /// </summary>
             public const string Material = "Material";
 
-            /// <summary>
-            /// Type of Request (Move or Dispose)
-            /// </summary>
-            public const string Type = "Type";
         }
 
         public new sealed class Types : CswNbtPropertySetRequestItem.Types
@@ -167,7 +163,7 @@ namespace ChemSW.Nbt.ObjClasses
             Type.SetOnPropChange( onTypePropChange );
             Container.SetOnPropChange( onContainerPropChange );
         }
-        
+
         /// <summary>
         /// Abstract override to be called on onButtonClick
         /// </summary>
@@ -208,7 +204,7 @@ namespace ChemSW.Nbt.ObjClasses
                         } //switch( ButtonData.SelectedText )
 
                         _getNextStatus( ButtonData.SelectedText );
-                        
+
                         ButtonData.Data["requestitem"] = ButtonData.Data["requestitem"] ?? new JObject();
                         ButtonData.Data["requestitem"]["requestitemid"] = NodeId.ToString();
                         ButtonData.Data["requestitem"]["containerid"] = ( Container.RelatedNodeId ?? new CswPrimaryKey() ).ToString();
@@ -281,14 +277,6 @@ namespace ChemSW.Nbt.ObjClasses
         #endregion
 
         #region Object class specific properties
-
-        /// <summary>
-        /// Type of Request (Move or Dispose)
-        /// </summary>
-        public CswNbtNodePropList Type
-        {
-            get { return _CswNbtNode.Properties[PropertyName.Type]; }
-        }
 
         public override void onTypePropChange( CswNbtNodeProp Prop )
         {

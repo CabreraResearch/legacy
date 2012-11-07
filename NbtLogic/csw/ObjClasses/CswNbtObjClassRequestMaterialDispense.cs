@@ -45,11 +45,6 @@ namespace ChemSW.Nbt.ObjClasses
             /// </summary>
             public const string TotalDispensed = "Total Dispensed";
 
-            /// <summary>
-            /// The request's type(<see cref="CswNbtNodePropList"/>)
-            /// <para>ServerManaged</para>
-            /// </summary>
-            public const string Type = "Type";
         }
 
         /// <summary>
@@ -341,11 +336,6 @@ namespace ChemSW.Nbt.ObjClasses
         #endregion
 
         #region Object class specific properties
-
-        public CswNbtNodePropList Type
-        {
-            get { return _CswNbtNode.Properties[PropertyName.Type]; }
-        }
 
         public override void onTypePropChange( CswNbtNodeProp Prop )
         {
