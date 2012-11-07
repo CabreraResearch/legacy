@@ -274,6 +274,11 @@ namespace ChemSW.Nbt.ObjClasses
         public override void afterPopulateProps()
         {
             DueDateInterval.SetOnPropChange( OnDueDateIntervalChange );
+
+            // case 28146
+            WarningDays.MinValue = 0;
+            WarningDays.MaxValue = DueDateInterval.getMaximumWarningDays();
+            
             _CswNbtObjClassDefault.afterPopulateProps();
         }//afterPopulateProps()
 

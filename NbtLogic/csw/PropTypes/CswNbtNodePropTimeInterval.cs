@@ -89,6 +89,11 @@ namespace ChemSW.Nbt.PropTypes
             return _RateInterval.getFirst();
         }//getStartDate()
 
+        public Int32 getMaximumWarningDays()
+        {
+            return _RateInterval.getMaximumWarningDays();
+        }
+
 
 
         //private string _ElemName_Rateinterval = "Rateinterval";
