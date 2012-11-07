@@ -204,7 +204,11 @@ namespace ChemSW.Nbt.WebServices
             bool IsTruncated = false;
             if( NodeCount > 0 )
             {
-                foreach( CswViewBuilderProp VbProp in _PropsInGrid )
+                foreach( CswViewBuilderProp VbProp in
+                    from _VbProp
+                        in _PropsInGrid
+                    orderby _VbProp.ViewProp.Order, _VbProp.PropName
+                    select _VbProp )
                 {
                     DT.Columns.Add( VbProp.PropName );
                 }
