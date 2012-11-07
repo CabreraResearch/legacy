@@ -729,6 +729,14 @@ namespace ChemSW.Nbt.Schema
                     SetValOnAdd = false
                 } );
                 _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( StatusOcp, CswNbtPropertySetRequestItem.Statuses.Pending );
+
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( Ret )
+                {
+                    PropName = CswNbtPropertySetRequestItem.PropertyName.Type,
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.List,
+                    ServerManaged = true,
+                    SetValOnAdd = false
+                } );
             }
             return Ret;
         }
@@ -800,6 +808,10 @@ namespace ChemSW.Nbt.Schema
                     SetValOnAdd = false
                 } );
 
+                CswNbtMetaDataObjectClassProp TypeOcp = RequestContainerDispenseOc.getObjectClassProp( CswNbtObjClassRequestContainerDispense.PropertyName.Type );
+                _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( TypeOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.listoptions, CswNbtObjClassRequestContainerDispense.Types.ContainerDispense );
+                _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( TypeOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.isrequired, true );
+                _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( TypeOcp, CswNbtObjClassRequestContainerDispense.Types.ContainerDispense );
             }
             _resetBlame();
         }
@@ -829,15 +841,9 @@ namespace ChemSW.Nbt.Schema
                 CswNbtMetaDataObjectClassProp FulfillOcp = RequestContainerUpdateOc.getObjectClassProp( CswNbtObjClassRequestContainerUpdate.PropertyName.Fulfill );
                 _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( FulfillOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.statictext, CswNbtObjClassRequestContainerUpdate.FulfillMenu.Dispose );
 
-                CswNbtMetaDataObjectClassProp TypeOcp = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( RequestContainerUpdateOc )
-                {
-                    PropName = CswNbtObjClassRequestContainerUpdate.PropertyName.Type,
-                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.List,
-                    ListOptions = CswNbtObjClassRequestContainerUpdate.Types.Options.ToString(),
-                    SetValOnAdd = false,
-                    ServerManaged = true,
-                    IsRequired = true
-                } );
+                CswNbtMetaDataObjectClassProp TypeOcp = RequestContainerUpdateOc.getObjectClassProp( CswNbtObjClassRequestContainerUpdate.PropertyName.Type );
+                _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( TypeOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.listoptions, CswNbtObjClassRequestContainerUpdate.Types.Options.ToString() );
+                _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( TypeOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.isrequired, true );
                 _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( TypeOcp, CswNbtObjClassRequestContainerUpdate.Types.Dispose );
 
                 CswNbtMetaDataObjectClassProp LocationOcp = RequestContainerUpdateOc.getObjectClassProp( CswNbtObjClassRequestContainerUpdate.PropertyName.Location );
@@ -889,15 +895,9 @@ namespace ChemSW.Nbt.Schema
                     ServerManaged = true
                 } );
 
-                CswNbtMetaDataObjectClassProp TypeOcp = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( RequestMaterialDispenseOc )
-                {
-                    PropName = CswNbtObjClassRequestMaterialDispense.PropertyName.Type,
-                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.List,
-                    ListOptions = CswNbtObjClassRequestMaterialDispense.Types.Options.ToString(),
-                    SetValOnAdd = false,
-                    ServerManaged = true,
-                    IsRequired = true
-                } );
+                CswNbtMetaDataObjectClassProp TypeOcp = RequestMaterialDispenseOc.getObjectClassProp( CswNbtObjClassRequestMaterialDispense.PropertyName.Type );
+                _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( TypeOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.listoptions, CswNbtObjClassRequestMaterialDispense.Types.Options.ToString() );
+                _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( TypeOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.isrequired, true );
                 _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( TypeOcp, CswNbtObjClassRequestMaterialDispense.Types.Bulk );
 
                 _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( RequestMaterialDispenseOc )
