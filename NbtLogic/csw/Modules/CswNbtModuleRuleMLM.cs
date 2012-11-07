@@ -15,13 +15,17 @@ namespace ChemSW.Nbt
         {
             if( false == _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.CISPro ) )
             {
-            _CswNbtResources.Modules.EnableModule( CswNbtModuleName.CISPro );
-        }
+                _CswNbtResources.Modules.EnableModule( CswNbtModuleName.CISPro );
+            }
+
+            //Turn on all views in the MLM (demo) category
+            _CswNbtResources.Modules.ToggleViewsInCategory( false, "MLM (demo)" );
         }
 
         public override void OnDisable()
         {
-
+            //Turn on off views in the MLM (demo) category
+            _CswNbtResources.Modules.ToggleViewsInCategory( true, "MLM (demo)" );
         } // OnDisable()
 
     } // class CswNbtModuleCISPro
