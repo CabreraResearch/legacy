@@ -62,13 +62,6 @@ namespace ChemSW.Nbt.Sched
 
                 try
                 {
-                    /*
-                     *    get molFT
-                     *    get all NTPs where ft = molft
-                     *    foreach NTP in NTPs
-                     *       get nodes that have this NTP 
-                     * 
-                     */
                     List<int> nonFingerprintedMols = new List<int>();
 
                     CswNbtMetaDataFieldType molFT = _CswNbtResources.MetaData.getFieldType( CswNbtMetaDataFieldType.NbtFieldType.MOL );
@@ -99,7 +92,7 @@ namespace ChemSW.Nbt.Sched
                 catch( Exception Exception )
                 {
 
-                    _CswScheduleLogicDetail.StatusMessage = "CswScheduleLogicNbtUpdtMTBF::GetUpdatedItems() exception: " + Exception.Message;
+                    _CswScheduleLogicDetail.StatusMessage = "CswScheduleLogicNbtMolFingerprints::GetUpdatedItems() exception: " + Exception.Message;
                     _CswNbtResources.logError( new CswDniException( _CswScheduleLogicDetail.StatusMessage ) );
                     _LogicRunStatus = MtSched.Core.LogicRunStatus.Failed;
 
@@ -127,7 +120,7 @@ namespace ChemSW.Nbt.Sched
             _CswNbtResources.release();
         }
 
-    }//CswScheduleLogicNbtUpdtMTBF
+    }//CswScheduleLogicNbtMolFingerpritns
 
 
 }//namespace ChemSW.Nbt.Sched
