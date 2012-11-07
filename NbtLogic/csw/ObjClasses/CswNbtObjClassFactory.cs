@@ -180,10 +180,6 @@ namespace ChemSW.Nbt.ObjClasses
                     ReturnVal = new CswNbtObjClassRequest( CswNbtResources, Node );
                     break;
 
-                case NbtDoomedObjectClasses.RequestItemClass:
-                    ReturnVal = new CswNbtObjClassRequestItem( CswNbtResources, Node );
-                    break;
-
                 case NbtObjectClass.RequestContainerDispenseClass:
                     ReturnVal = new CswNbtObjClassRequestContainerDispense( CswNbtResources, Node );
                     break;

@@ -200,38 +200,16 @@ namespace ChemSW.Nbt.ObjClasses
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
 
-        public static implicit operator CswNbtObjClassRequestItem( CswNbtNode Node )
-        {
-            CswNbtObjClassRequestItem ret = null;
-            if( null != Node && _Validate( Node, NbtDoomedObjectClasses.RequestItemClass ) )
-            {
-                ret = (CswNbtObjClassRequestItem) Node.ObjClass;
-            }
-            return ret;
-        }
-
-        public CswNbtObjClassRequestItem copyNode()
-        {
-            CswNbtNode CopyNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing );
-            CopyNode.copyPropertyValues( Node );
-            CswNbtObjClassRequestItem RetCopy = CopyNode;
-            RetCopy.Status.Value = Statuses.Pending;
-            RetCopy.Request.RelatedNodeId = null;
-            _toggleReadOnlyProps( false, RetCopy );
-            RetCopy.postChanges( true );
-            return RetCopy;
-        }
-
         public CswNbtObjClassRequestItem( CswNbtResources CswNbtResources, CswNbtNode Node )
             : base( CswNbtResources, Node )
         {
-            _CswNbtObjClassDefault = new CswNbtObjClassDefault( _CswNbtResources, Node );
+            throw new NotImplementedException( "This Object Class is deprecated." );
 
         }//ctor()
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
-            get { return _CswNbtResources.MetaData.getObjectClass( NbtDoomedObjectClasses.RequestItemClass ); }
+            get { return null; }
         }
 
         #region Inherited Events

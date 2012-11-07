@@ -190,7 +190,6 @@ namespace ChemSW.Nbt.MetaData
                 return ( ( ( ObjectClass != NbtObjectClass.RoleClass &&
                              ObjectClass != NbtObjectClass.UserClass ) ||
                            _CswNbtMetaDataResources.CswNbtResources.CurrentNbtUser.IsAdministrator() ) &&
-                       ObjectClass != NbtDoomedObjectClasses.RequestItemClass &&
                        ObjectClass != NbtObjectClass.RequestClass &&
                        ObjectClass != NbtObjectClass.RequestContainerDispenseClass &&
                        ObjectClass != NbtObjectClass.RequestContainerUpdateClass &&

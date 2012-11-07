@@ -537,15 +537,16 @@ namespace ChemSW.Nbt.Schema
                     FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
                 _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( manufacturerOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.viewxml, manufacturerOCPView.ToString() );
 
-                CswNbtMetaDataObjectClass requestItemOC_27867 = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtDoomedObjectClasses.RequestItemClass );
-                CswNbtMetaDataObjectClassProp requestItemOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( receiptLotOC )
-                {
-                    PropName = CswNbtObjClassReceiptLot.PropertyName.RequestItem,
-                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Relationship,
-                    IsFk = true,
-                    FkType = NbtViewRelatedIdType.ObjectClassId.ToString(),
-                    FkValue = requestItemOC_27867.ObjectClassId
-                } );
+                //TODO: Determine what needs to happen here.
+                //CswNbtMetaDataObjectClass requestItemOC_27867 = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtDoomedObjectClasses.RequestItemClass );
+                //CswNbtMetaDataObjectClassProp requestItemOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( receiptLotOC )
+                //{
+                //    PropName = CswNbtObjClassReceiptLot.PropertyName.RequestItem,
+                //    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Relationship,
+                //    IsFk = true,
+                //    FkType = NbtViewRelatedIdType.ObjectClassId.ToString(),
+                //    FkValue = requestItemOC_27867.ObjectClassId
+                //} );
 
                 _CswNbtSchemaModTrnsctn.createModuleObjectClassJunction( CswNbtModuleName.CISPro, receiptLotOC.ObjectClassId );
             }
@@ -707,7 +708,7 @@ namespace ChemSW.Nbt.Schema
 
         private void _destroyRequestItemOc()
         {
-            CswNbtMetaDataObjectClass RequestItemOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtDoomedObjectClasses.RequestItemClass );
+            CswNbtMetaDataObjectClass RequestItemOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( "RequestItemClass" );
             if( null != RequestItemOc )
             {
                 _CswNbtSchemaModTrnsctn.MetaData.DeleteObjectClass( RequestItemOc );
