@@ -177,7 +177,7 @@ namespace ChemSW.Nbt.ObjClasses
         public static implicit operator CswNbtPropertySetRequestItem( CswNbtNode Node )
         {
             CswNbtPropertySetRequestItem ret = null;
-            if( null != Node && _Validate( Node, NbtObjectClass.GenericClass ) )
+            if( null != Node && Members().Contains( Node.ObjClass.ObjectClass.ObjectClass ) )
             {
                 ret = (CswNbtPropertySetRequestItem) Node.ObjClass;
             }
@@ -345,11 +345,11 @@ namespace ChemSW.Nbt.ObjClasses
         public abstract void onTypePropChange( CswNbtNodeProp Prop );
 
         public CswNbtNodePropLocation Location { get { return _CswNbtNode.Properties[PropertyName.Location]; } }
-        public CswNbtNodePropPropertyReference Requestor { get { return _CswNbtNode.Properties[PropertyName.Requestor]; } }
         public CswNbtNodePropRelationship AssignedTo { get { return _CswNbtNode.Properties[PropertyName.AssignedTo]; } }
         public CswNbtNodePropRelationship InventoryGroup { get { return _CswNbtNode.Properties[PropertyName.InventoryGroup]; } }
         public CswNbtNodePropRelationship Request { get { return _CswNbtNode.Properties[PropertyName.Request]; } }
         public CswNbtNodePropRelationship RequestedFor { get { return _CswNbtNode.Properties[PropertyName.RequestedFor]; } }
+        public CswNbtNodePropRelationship Requestor { get { return _CswNbtNode.Properties[PropertyName.Requestor]; } }
         public CswNbtNodePropSequence Number { get { return _CswNbtNode.Properties[PropertyName.Number]; } }
         public CswNbtNodePropText ExternalOrderNumber { get { return _CswNbtNode.Properties[PropertyName.ExternalOrderNumber]; } }
         public CswNbtNodePropText Name { get { return _CswNbtNode.Properties[PropertyName.Name]; } }

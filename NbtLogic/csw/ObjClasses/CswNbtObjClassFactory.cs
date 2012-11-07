@@ -192,9 +192,9 @@ namespace ChemSW.Nbt.ObjClasses
                 //    ReturnVal = new CswNbtObjClassRequestMaterialCreate( CswNbtResources, Node );
                 //    break;
 
-                //case NbtObjectClass.RequestMaterialDispenseClass:
-                //    ReturnVal = new CswNbtObjClassRequestMaterialDispense( CswNbtResources, Node );
-                //    break;
+                case NbtObjectClass.RequestMaterialDispenseClass:
+                    ReturnVal = new CswNbtObjClassRequestMaterialDispense( CswNbtResources, Node );
+                    break;
 
                 case NbtObjectClass.ResultClass:
                     ReturnVal = new CswNbtObjClassResult( CswNbtResources, Node );
