@@ -1,6 +1,6 @@
+using System;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
-using System.Data;
 
 namespace ChemSW.Nbt
 {
@@ -42,6 +42,30 @@ namespace ChemSW.Nbt
                 CswNbtMetaDataNodeTypeProp reservedForNTP = containerNT.getNodeTypePropByObjectClassProp( CswNbtObjClassContainer.PropertyName.ReservedFor );
                 reservedForNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, false, TabId: cmgTab.TabId );
             }
+
+            CswNbtMetaDataObjectClass RequestMatDispOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.RequestMaterialDispenseClass );
+            foreach( CswNbtMetaDataNodeType NodeType in RequestMatDispOc.getLatestVersionNodeTypes() )
+            {
+                CswNbtMetaDataNodeTypeTab CmgTab = NodeType.getNodeTypeTab( "Central Material Group" ) ?? _CswNbtResources.MetaData.makeNewTab( NodeType, "Central Material Group", NodeType.GetMaximumTabOrder() + 1 );
+                Int32 C = 0;
+                foreach( string CmgTabProp in CswNbtObjClassRequestMaterialDispense.PropertyName.MLMCmgTabProps )
+                {
+                    C += 1;
+                    CswNbtMetaDataNodeTypeProp CmgNtp = NodeType.getNodeTypePropByObjectClassProp( CmgTabProp );
+                    CmgNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, CmgTab.TabId, C, 1 );
+                }
+
+                CswNbtMetaDataNodeTypeTab ReceiveTab = NodeType.getNodeTypeTab( "Receive" ) ?? _CswNbtResources.MetaData.makeNewTab( NodeType, "Receive", NodeType.GetMaximumTabOrder() + 1 );
+                Int32 R = 0;
+                foreach( string ReceiveTabProp in CswNbtObjClassRequestMaterialDispense.PropertyName.MLMReceiveTabProps )
+                {
+                    R += 1;
+                    CswNbtMetaDataNodeTypeProp ReceiveNtp = NodeType.getNodeTypePropByObjectClassProp( ReceiveTabProp );
+                    ReceiveNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, ReceiveTab.TabId, R, 1 );
+                }
+
+            }
+
         }
 
         public override void OnDisable()
@@ -64,6 +88,32 @@ namespace ChemSW.Nbt
 
                 CswNbtMetaDataNodeTypeTab cmgTab = containerNT.getNodeTypeTab( "Central Material Group" );
                 _CswNbtResources.MetaData.DeleteNodeTypeTab( cmgTab );
+            }
+
+            CswNbtMetaDataObjectClass RequestMatDispOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.RequestMaterialDispenseClass );
+            foreach( CswNbtMetaDataNodeType NodeType in RequestMatDispOc.getLatestVersionNodeTypes() )
+            {
+                foreach( string CmgTabProp in CswNbtObjClassRequestMaterialDispense.PropertyName.MLMCmgTabProps )
+                {
+                    CswNbtMetaDataNodeTypeProp CmgNtp = NodeType.getNodeTypePropByObjectClassProp( CmgTabProp );
+                    CmgNtp.removeFromAllLayouts();
+                }
+                CswNbtMetaDataNodeTypeTab CmgTab = NodeType.getNodeTypeTab( "Central Material Group" );
+                if( null != CmgTab )
+                {
+                    _CswNbtResources.MetaData.DeleteNodeTypeTab( CmgTab );
+                }
+
+                foreach( string ReceiveTabProp in CswNbtObjClassRequestMaterialDispense.PropertyName.MLMReceiveTabProps )
+                {
+                    CswNbtMetaDataNodeTypeProp ReceiveNtp = NodeType.getNodeTypePropByObjectClassProp( ReceiveTabProp );
+                    ReceiveNtp.removeFromAllLayouts();
+                }
+                CswNbtMetaDataNodeTypeTab ReceiveTab = NodeType.getNodeTypeTab( "Receive" );
+                if( null != ReceiveTab )
+                {
+                    _CswNbtResources.MetaData.DeleteNodeTypeTab( ReceiveTab );
+                }
             }
 
         } // OnDisable()
