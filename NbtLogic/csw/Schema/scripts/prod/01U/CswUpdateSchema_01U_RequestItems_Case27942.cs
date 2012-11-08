@@ -30,11 +30,13 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataObjectClass RequestOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.RequestClass );
             CswNbtMetaDataObjectClass RequestContainerDispenseOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.RequestContainerDispenseClass );
             CswNbtMetaDataObjectClass RequestContainerUpdateOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.RequestContainerUpdateClass );
+            CswNbtMetaDataObjectClass RequestMaterialCreateOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.RequestMaterialCreateClass );
             CswNbtMetaDataObjectClass RequestMaterialDispenseOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.RequestMaterialDispenseClass );
 
             _CswNbtSchemaModTrnsctn.createModuleObjectClassJunction( CswNbtModuleName.CISPro, RequestOc.ObjectClassId );
             _CswNbtSchemaModTrnsctn.createModuleObjectClassJunction( CswNbtModuleName.CISPro, RequestContainerDispenseOc.ObjectClassId );
             _CswNbtSchemaModTrnsctn.createModuleObjectClassJunction( CswNbtModuleName.CISPro, RequestContainerUpdateOc.ObjectClassId );
+            _CswNbtSchemaModTrnsctn.createModuleObjectClassJunction( CswNbtModuleName.CISPro, RequestMaterialCreateOc.ObjectClassId );
             _CswNbtSchemaModTrnsctn.createModuleObjectClassJunction( CswNbtModuleName.CISPro, RequestMaterialDispenseOc.ObjectClassId );
 
             #region Delete the old Request NTs
@@ -143,11 +145,13 @@ namespace ChemSW.Nbt.Schema
 
             CswNbtMetaDataNodeType RequestCdNt = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( NbtObjectClass.RequestContainerDispenseClass, "Request Container Dispense", "Requests" );
             CswNbtMetaDataNodeType RequestCuNt = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( NbtObjectClass.RequestContainerUpdateClass, "Request Container Update", "Requests" );
+            CswNbtMetaDataNodeType RequestMcNt = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( NbtObjectClass.RequestMaterialCreateClass, "Request Material Create", "Requests" );
             CswNbtMetaDataNodeType RequestMdNt = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( NbtObjectClass.RequestMaterialDispenseClass, "Request Material Dispense", "Requests" );
 
             //Grab name template from Case 27703
             RequestCdNt.addNameTemplateText( CswNbtPropertySetRequestItem.PropertyName.Name );
             RequestCuNt.addNameTemplateText( CswNbtPropertySetRequestItem.PropertyName.Name );
+            RequestMcNt.addNameTemplateText( CswNbtPropertySetRequestItem.PropertyName.Name );
             RequestMdNt.addNameTemplateText( CswNbtPropertySetRequestItem.PropertyName.Name );
 
             //Grab Table/Preview layouts from Case 27071
@@ -286,6 +290,48 @@ namespace ChemSW.Nbt.Schema
 
             #endregion RequestCdNt Layout
 
+            #region RequestMcNt Layout
+
+            //Add Layout: Case 27263
+
+            CswNbtMetaDataNodeTypeProp RmcRequestNtp = RequestMcNt.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestMaterialCreate.PropertyName.Request );
+            RmcRequestNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, true, DisplayColumn: 1, DisplayRow: 1 );
+
+            //Case 27800
+            CswNbtMetaDataNodeTypeProp RmcRequestorNTP = RequestMcNt.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestMaterialCreate.PropertyName.Requestor );
+            RmcRequestorNTP.removeFromLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add );
+
+            CswNbtMetaDataNodeTypeProp RmcMaterialNtp = RequestMcNt.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestMaterialCreate.PropertyName.Material );
+            RmcMaterialNtp.removeFromLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add );
+
+            CswNbtMetaDataNodeTypeProp RmcLocationNtp = RequestMcNt.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestMaterialCreate.PropertyName.Location );
+            RmcLocationNtp.removeFromAllLayouts();
+
+            //Table Layout
+            CswNbtMetaDataNodeTypeProp RmcStatusNtp = RequestMcNt.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestMaterialCreate.PropertyName.Status );
+            CswNbtMetaDataNodeTypeProp RmcNumberNtp = RequestMcNt.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestMaterialCreate.PropertyName.Number );
+            CswNbtMetaDataNodeTypeProp RmcOrderNoNtp = RequestMcNt.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestMaterialCreate.PropertyName.ExternalOrderNumber );
+            CswNbtMetaDataNodeTypeProp RmcFulfillNtp = RequestMcNt.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestMaterialCreate.PropertyName.Fulfill );
+            CswNbtMetaDataNodeTypeProp RmcIGroupNtp = RequestMcNt.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestMaterialCreate.PropertyName.InventoryGroup );
+
+            RmcNumberNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Table, true, DisplayRow: 1, DisplayColumn: 1 );
+            RmcMaterialNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Table, true, DisplayRow: 1, DisplayColumn: 2 );
+            RmcRequestNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Table, true, DisplayRow: 2, DisplayColumn: 1 );
+            RmcOrderNoNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Table, true, DisplayRow: 2, DisplayColumn: 2 );
+            RmcIGroupNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Table, true, DisplayRow: 3, DisplayColumn: 1 );
+            RmcStatusNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Table, true, DisplayRow: 4, DisplayColumn: 1 );
+            RmcFulfillNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Table, true, DisplayRow: 5, DisplayColumn: 1 );
+
+            //Preview Layout
+            CswNbtMetaDataNodeTypeProp RmcMaterialNameNtp = RequestMcNt.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestMaterialCreate.PropertyName.NewMaterialTradename );
+            CswNbtMetaDataNodeTypeProp RmcSupplierNtp = RequestMcNt.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestMaterialCreate.PropertyName.NewMaterialSupplier );
+            CswNbtMetaDataNodeTypeProp RmcPartNoNtp = RequestMcNt.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestMaterialCreate.PropertyName.NewMaterialPartNo );
+
+            RmcMaterialNameNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Preview, true, DisplayRow: 1, DisplayColumn: 1 );
+            RmcSupplierNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Preview, true, DisplayRow: 2, DisplayColumn: 1 );
+            RmcPartNoNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Preview, true, DisplayRow: 3, DisplayColumn: 1 );
+
+            #endregion RequestMcNt Layout
 
             #endregion Build the new Request Item NTs
 
@@ -388,13 +434,10 @@ namespace ChemSW.Nbt.Schema
                                                                                     Oc.getObjectClassProp( CswNbtObjClassRequestContainerDispense.PropertyName.Container ),
                                                                                     false );
 
-
                     CswNbtViewRelationship RequestRel = GridView.AddViewRelationship( RequestItemRel,
                                                                                       NbtViewPropOwnerType.First,
                                                                                       Oc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.Request ), false );
-
-
-
+                    
                     CswNbtViewProperty CompletedVp = GridView.AddViewProperty( RequestRel, RequestOc.getObjectClassProp( CswNbtObjClassRequest.PropertyName.CompletedDate ) );
                     CompletedVp.Order = 3;
                     CompletedVp.SortBy = true;
@@ -420,10 +463,8 @@ namespace ChemSW.Nbt.Schema
                     CswNbtViewProperty StatusVp = GridView.AddViewProperty( RequestItemRel, RequestContainerUpdateOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.Status ) );
                     StatusVp.Order = 8;
                 }
-
-
+                
                 GridView.save();
-
             }
 
             #endregion Container Request Tabs
@@ -469,12 +510,16 @@ namespace ChemSW.Nbt.Schema
 
             RmdSizeView.save();
 
-
             #endregion Size Relationship
 
-            CswNbtActSystemViews SysViews = new CswNbtActSystemViews( _CswNbtSchemaModTrnsctn.MetaData._CswNbtMetaDataResources.CswNbtResources, CswNbtActSystemViews.SystemViewName.CISProRequestCart, null );
-            SysViews.reInitSystemView( CswNbtActSystemViews.SystemViewName.CISProRequestCart );
-            SysViews.reInitSystemView( CswNbtActSystemViews.SystemViewName.CISProRequestHistory );
+            foreach( CswNbtView View in _CswNbtSchemaModTrnsctn.ViewSelect.restoreViews( CswNbtActSystemViews.SystemViewName.CISProRequestCart.ToString() ) )
+            {
+                View.Delete();
+            }
+            foreach( CswNbtView View in _CswNbtSchemaModTrnsctn.ViewSelect.restoreViews( CswNbtActSystemViews.SystemViewName.CISProRequestHistory.ToString() ) )
+            {
+                View.Delete();
+            }
         }
 
         private static CswNbtPermit.NodeTypePermission[] ViewPermissions = { CswNbtPermit.NodeTypePermission.View };
@@ -490,6 +535,7 @@ namespace ChemSW.Nbt.Schema
             _setNodeTypePermissions( Role, NbtObjectClass.RequestClass, Permissions );
             _setNodeTypePermissions( Role, NbtObjectClass.RequestContainerDispenseClass, Permissions );
             _setNodeTypePermissions( Role, NbtObjectClass.RequestContainerUpdateClass, Permissions );
+            _setNodeTypePermissions( Role, NbtObjectClass.RequestMaterialCreateClass, Permissions );
             _setNodeTypePermissions( Role, NbtObjectClass.RequestMaterialDispenseClass, Permissions );
         }
 
