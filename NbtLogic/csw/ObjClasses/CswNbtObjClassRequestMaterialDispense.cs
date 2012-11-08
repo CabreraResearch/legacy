@@ -362,10 +362,6 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
-        #endregion
-
-        #region Object class specific properties
-
         public override void onTypePropChange( CswNbtNodeProp Prop )
         {
             switch( Type.Value )
@@ -390,7 +386,14 @@ namespace ChemSW.Nbt.ObjClasses
             Count.setHidden( value: false == QuantityHidden, SaveToDb: true );
 
             Type.setReadOnly( value: true, SaveToDb: true );
+
+            Fulfill.MenuOptions = FulfillMenu.Options.ToString();
+            Fulfill.State = FulfillMenu.Order;
         }
+
+        #endregion
+
+        #region Object class specific properties
 
         public CswNbtNodePropQuantity Quantity
         {

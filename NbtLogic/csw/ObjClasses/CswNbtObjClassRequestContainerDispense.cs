@@ -337,7 +337,8 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void onTypePropChange( CswNbtNodeProp Prop )
         {
-
+            Fulfill.MenuOptions = FulfillMenu.Options.ToString();
+            Fulfill.State = FulfillMenu.Dispense;
         }
 
         #endregion
