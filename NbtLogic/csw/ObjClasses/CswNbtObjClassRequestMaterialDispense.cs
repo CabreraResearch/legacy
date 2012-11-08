@@ -191,7 +191,6 @@ namespace ChemSW.Nbt.ObjClasses
         {
             Quantity.SetOnPropChange( onQuantityPropChange );
             TotalDispensed.SetOnPropChange( onTotalDispensedPropChange );
-            Type.SetOnPropChange( onTypePropChange );
             Material.SetOnPropChange( onMaterialPropChange );
         }//afterPopulateProps()
 

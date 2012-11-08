@@ -183,7 +183,6 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void afterPropertySetPopulateProps()
         {
-            Type.SetOnPropChange( onTypePropChange );
             Container.SetOnPropChange( onContainerPropChange );
         }
 
