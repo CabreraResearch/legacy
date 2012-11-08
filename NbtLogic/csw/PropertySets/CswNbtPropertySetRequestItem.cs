@@ -121,6 +121,7 @@ namespace ChemSW.Nbt.ObjClasses
             Collection<NbtObjectClass> Ret = new Collection<NbtObjectClass>();
             Ret.Add( NbtObjectClass.RequestContainerDispenseClass );
             Ret.Add( NbtObjectClass.RequestContainerUpdateClass );
+            Ret.Add( NbtObjectClass.RequestMaterialCreateClass );
             Ret.Add( NbtObjectClass.RequestMaterialDispenseClass );
             return Ret;
         }
