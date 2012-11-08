@@ -182,7 +182,7 @@ namespace ChemSW.Nbt.Actions
                 _CurrentCartView.Root.ChildRelationships[0].NodeIdsToFilterIn.Clear();
                 _CurrentCartView.Root.ChildRelationships[0].NodeIdsToFilterIn.Add( CartNode.NodeId );
                 ICswNbtTree CartTree = _CswNbtResources.Trees.getTreeFromView( _CurrentCartView, false, false, false );
-                CartTree.goToNthChild(0);
+                CartTree.goToNthChild( 0 );
                 CartContentCount = CartTree.getChildNodeCount();
             }
         }
