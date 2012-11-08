@@ -258,29 +258,19 @@ namespace ChemSW.Nbt.Actions
 
         private CswNbtView _cisproRequestHistoryView( bool ReInit )
         {
-            CswNbtView Ret = _getSystemView( SystemViewName.CISProRequestHistory );
-            if( null == Ret )
-            {
-                CswNbtNode ChemSwAdminRoleNode = _CswNbtResources.Nodes.makeRoleNodeFromRoleName( CswNbtObjClassRole.ChemSWAdminRoleName );
-                Ret = new CswNbtView( _CswNbtResources );
-                Ret.saveNew( SystemViewName.CISProRequestHistory.ToString(), NbtViewVisibility.Role, ChemSwAdminRoleNode.NodeId );
-                ReInit = true;
-            }
-            if( ReInit )
-            {
-                Ret.Visibility = NbtViewVisibility.Hidden;
-                Ret.Category = "Request Configuration";
-                Ret.ViewMode = NbtViewRenderingMode.Tree;
-                Ret.Root.ChildRelationships.Clear();
-                CswNbtMetaDataObjectClass RequestOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.RequestClass );
-                CswNbtMetaDataObjectClassProp SubmittedDateOcp = RequestOc.getObjectClassProp( CswNbtObjClassRequest.PropertyName.SubmittedDate.ToString() );
-                CswNbtMetaDataObjectClassProp NameOcp = RequestOc.getObjectClassProp( CswNbtObjClassRequest.PropertyName.Name.ToString() );
-                CswNbtViewRelationship RequestVr = Ret.AddViewRelationship( RequestOc, true ); //default filter says Requestor == me
-                Ret.AddViewProperty( RequestVr, SubmittedDateOcp );
-                Ret.AddViewPropertyAndFilter( RequestVr, NameOcp, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.NotNull );
+            CswNbtView Ret = new CswNbtView( _CswNbtResources );
 
-                Ret.save();
-            }
+            Ret.Visibility = NbtViewVisibility.Hidden;
+            Ret.Category = "Request Configuration";
+            Ret.ViewMode = NbtViewRenderingMode.Tree;
+            Ret.Root.ChildRelationships.Clear();
+            CswNbtMetaDataObjectClass RequestOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.RequestClass );
+            CswNbtMetaDataObjectClassProp SubmittedDateOcp = RequestOc.getObjectClassProp( CswNbtObjClassRequest.PropertyName.SubmittedDate.ToString() );
+            CswNbtMetaDataObjectClassProp NameOcp = RequestOc.getObjectClassProp( CswNbtObjClassRequest.PropertyName.Name.ToString() );
+            CswNbtViewRelationship RequestVr = Ret.AddViewRelationship( RequestOc, true ); //default filter says Requestor == me
+            Ret.AddViewProperty( RequestVr, SubmittedDateOcp );
+            Ret.AddViewPropertyAndFilter( RequestVr, NameOcp, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.NotNull );
+
             return Ret;
         }
 
