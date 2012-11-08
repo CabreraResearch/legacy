@@ -385,9 +385,9 @@ namespace ChemSW.Nbt.ObjClasses
             /* Spec W1010: Quantity applies only to Request by Bulk and Dispense */
             bool QuantityHidden = Type.Value == Types.Size;
 
-            Quantity.setHidden( value: false == QuantityHidden, SaveToDb: true );
-            Size.setHidden( value: QuantityHidden, SaveToDb: true );
-            Count.setHidden( value: QuantityHidden, SaveToDb: true );
+            Quantity.setHidden( value: QuantityHidden, SaveToDb: true );
+            Size.setHidden( value: false == QuantityHidden, SaveToDb: true );
+            Count.setHidden( value: false == QuantityHidden, SaveToDb: true );
 
             Type.setReadOnly( value: true, SaveToDb: true );
         }

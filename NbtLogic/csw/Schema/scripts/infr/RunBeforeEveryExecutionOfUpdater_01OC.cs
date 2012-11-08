@@ -1017,6 +1017,7 @@ namespace ChemSW.Nbt.Schema
                 {
                     PropName = CswNbtObjClassRequestMaterialDispense.PropertyName.Quantity,
                     FieldType = CswNbtMetaDataFieldType.NbtFieldType.Quantity,
+                    IsRequired = true,
                     SetValOnAdd = true
                 } );
 
@@ -1025,6 +1026,7 @@ namespace ChemSW.Nbt.Schema
                     PropName = CswNbtObjClassRequestMaterialDispense.PropertyName.Count,
                     FieldType = CswNbtMetaDataFieldType.NbtFieldType.Number,
                     SetValOnAdd = true,
+                    IsRequired = true,
                     NumberPrecision = 0,
                     NumberMinValue = 1
                 } );
@@ -1036,6 +1038,7 @@ namespace ChemSW.Nbt.Schema
                     IsFk = true,
                     FkType = NbtViewRelatedIdType.ObjectClassId.ToString(),
                     FkValue = SizeOc.ObjectClassId,
+                    IsRequired = true,
                     SetValOnAdd = true
                 } );
 
