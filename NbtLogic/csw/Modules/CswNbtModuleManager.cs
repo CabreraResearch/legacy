@@ -253,15 +253,8 @@ namespace ChemSW.Nbt
         /// <param name="viewName">The name of the view to hide/unhide</param>
         public void ToggleView( bool hidden, string viewName, NbtViewVisibility Visibility = null )
         {
-            DataTable viewDT;
-            if( hidden )
-            {
-                viewDT = _CswNbtResources.ViewSelect.getView( viewName, NbtViewVisibility.Global, null, null );
-            }
-            else
-            {
-                viewDT = _CswNbtResources.ViewSelect.getView( viewName, NbtViewVisibility.Hidden, null, null );
-            }
+            Visibility = Visibility ?? NbtViewVisibility.Global;
+            DataTable viewDT = _CswNbtResources.ViewSelect.getView( viewName, Visibility, null, null );
             if( viewDT.Rows.Count == 1 )
             {
                 CswNbtView view = _CswNbtResources.ViewSelect.restoreView( viewDT.Rows[0]["viewxml"].ToString() );
@@ -275,7 +268,6 @@ namespace ChemSW.Nbt
                     {
                         view.SetVisibility( NbtViewVisibility.Global, null, null );
                     }
-
                     view.save();
                 }
             }
