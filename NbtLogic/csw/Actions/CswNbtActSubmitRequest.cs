@@ -14,8 +14,6 @@ namespace ChemSW.Nbt.Actions
 {
     public class CswNbtActSubmitRequest
     {
-
-
         #region Private, core methods
 
         private CswNbtResources _CswNbtResources = null;
