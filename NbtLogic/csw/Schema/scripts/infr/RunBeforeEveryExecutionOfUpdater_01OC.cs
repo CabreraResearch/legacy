@@ -760,12 +760,23 @@ namespace ChemSW.Nbt.Schema
                     SetValOnAdd = false
                 } );
 
+                CswNbtMetaDataObjectClassProp PriorityOcp = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( Ret )
+                {
+                    PropName = CswNbtPropertySetRequestItem.PropertyName.Priority,
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Number,
+                    SetValOnAdd = true,
+                    DisplayColAdd = 1,
+                    DisplayRowAdd = 1,
+                    NumberPrecision = 1
+                } );
+                _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( PriorityOcp, 0 );
+
                 _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( Ret )
                 {
                     PropName = CswNbtPropertySetRequestItem.PropertyName.Location,
                     FieldType = CswNbtMetaDataFieldType.NbtFieldType.Location,
                     SetValOnAdd = true,
-                    DisplayColAdd = 1,
+                    DisplayColAdd = 2,
                     DisplayRowAdd = 1
                 } );
 
@@ -777,7 +788,7 @@ namespace ChemSW.Nbt.Schema
                     FkType = NbtViewRelatedIdType.ObjectClassId.ToString(),
                     FkValue = InventoryGroupOc.ObjectClassId,
                     SetValOnAdd = true,
-                    DisplayColAdd = 1,
+                    DisplayColAdd = 2,
                     DisplayRowAdd = 3
                 } );
 
@@ -792,7 +803,7 @@ namespace ChemSW.Nbt.Schema
                     PropName = CswNbtPropertySetRequestItem.PropertyName.NeededBy,
                     FieldType = CswNbtMetaDataFieldType.NbtFieldType.DateTime,
                     SetValOnAdd = true,
-                    DisplayColAdd = 1,
+                    DisplayColAdd = 2,
                     DisplayRowAdd = 2
                 } );
 

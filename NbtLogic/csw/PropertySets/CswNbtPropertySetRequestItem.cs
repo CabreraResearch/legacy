@@ -63,6 +63,11 @@ namespace ChemSW.Nbt.ObjClasses
             public const string Number = "Number";
 
             /// <summary>
+            /// Numeric priority of this Item, Sequence(<see cref="CswNbtNodePropNumber"/>)
+            /// </summary>
+            public const string Priority = "Priority";
+
+            /// <summary>
             /// Relationship(<see cref="CswNbtNodePropRelationship"/> ) to the Request(<see cref="CswNbtObjClassRequest"/>) to which this Item belongs. 
             /// <para>ServerManaged</para>
             /// </summary>
@@ -346,6 +351,7 @@ namespace ChemSW.Nbt.ObjClasses
         public abstract void onTypePropChange( CswNbtNodeProp Prop );
 
         public CswNbtNodePropLocation Location { get { return _CswNbtNode.Properties[PropertyName.Location]; } }
+        public CswNbtNodePropNumber Priority { get { return _CswNbtNode.Properties[PropertyName.Priority]; } }
         public CswNbtNodePropRelationship AssignedTo { get { return _CswNbtNode.Properties[PropertyName.AssignedTo]; } }
         public CswNbtNodePropRelationship InventoryGroup { get { return _CswNbtNode.Properties[PropertyName.InventoryGroup]; } }
         public CswNbtNodePropRelationship Request { get { return _CswNbtNode.Properties[PropertyName.Request]; } }
