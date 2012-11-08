@@ -37,7 +37,7 @@ namespace ChemSW.Nbt.WebServices
             RequestAct = RequestAct ?? _RequestAct;
             JObject ret = new JObject();
             CswNbtWebServiceGrid GridWs = new CswNbtWebServiceGrid( _CswNbtResources, RequestAct.CurrentCartView, ForReport: false );
-            ret = GridWs.runGrid( IncludeInQuickLaunch: false, GetAllRowsNow: true );
+            ret = GridWs.runGrid( IncludeInQuickLaunch: false, GetAllRowsNow: true, IsPropertyGrid: true );
             ret["cartnodeid"] = RequestAct.CurrentRequestNode().NodeId.ToString();
             ret["cartviewid"] = RequestAct.CurrentCartView.SessionViewId.ToString();
             return ret;

@@ -214,54 +214,44 @@ namespace ChemSW.Nbt.Actions
 
         private CswNbtView _cisproRequestCartView( bool ReInit )
         {
-            CswNbtView Ret = _getSystemView( SystemViewName.CISProRequestCart );
-            if( null == Ret )
+            CswNbtView Ret = new CswNbtView( _CswNbtResources )
             {
-                Ret = new CswNbtView( _CswNbtResources );
-                CswNbtNode ChemSwAdminRoleNode = _CswNbtResources.Nodes.makeRoleNodeFromRoleName( CswNbtObjClassRole.ChemSWAdminRoleName );
-                Ret.saveNew( SystemViewName.CISProRequestCart.ToString(), NbtViewVisibility.Role, ChemSwAdminRoleNode.NodeId );
-                ReInit = true;
-            }
-            if( ReInit )
+                Category = "Request Configuration",
+                Visibility = NbtViewVisibility.Hidden,
+                ViewMode = NbtViewRenderingMode.Grid
+            };
+
+            Ret.Root.ChildRelationships.Clear();
+
+            CswNbtMetaDataObjectClass RequestOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.RequestClass );
+            CswNbtViewRelationship RootVr = Ret.AddViewRelationship( RequestOc, true );
+
+            foreach( NbtObjectClass Member in CswNbtPropertySetRequestItem.Members() )
             {
-                Ret.Category = "Request Configuration";
-                Ret.Visibility = NbtViewVisibility.Hidden;
-                Ret.ViewMode = NbtViewRenderingMode.Grid;
+                CswNbtMetaDataObjectClass MemberOc = _CswNbtResources.MetaData.getObjectClass( Member );
+                CswNbtMetaDataObjectClassProp RequestOcp = MemberOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.Request );
+                CswNbtViewRelationship RequestItemRel = Ret.AddViewRelationship( RootVr,
+                                                                                 NbtViewPropOwnerType.Second,
+                                                                                 RequestOcp, false );
 
-                Ret.Root.ChildRelationships.Clear();
-
-                CswNbtMetaDataObjectClass RequestOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.RequestClass );
-                CswNbtViewRelationship RootVr = Ret.AddViewRelationship( RequestOc, true );
-
-                foreach( NbtObjectClass Member in CswNbtPropertySetRequestItem.Members() )
+                Ret.AddViewProperty( RequestItemRel, MemberOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.Type ) );
+                Ret.AddViewProperty( RequestItemRel, MemberOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.Number ) );
+                if( MemberOc.ObjectClass == NbtObjectClass.RequestContainerDispenseClass )
                 {
-                    CswNbtMetaDataObjectClass MemberOc = _CswNbtResources.MetaData.getObjectClass( Member );
-                    CswNbtMetaDataObjectClassProp RequestOcp = MemberOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.Request );
-                    CswNbtViewRelationship RequestItemRel = Ret.AddViewRelationship( RootVr,
-                                                                                      NbtViewPropOwnerType.Second,
-                                                                                      RequestOcp, false );
-
-                    Ret.AddViewProperty( RequestItemRel, MemberOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.Type ) );
-                    Ret.AddViewProperty( RequestItemRel, MemberOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.Number ) );
-                    if( MemberOc.ObjectClass == NbtObjectClass.RequestContainerDispenseClass )
-                    {
-                        Ret.AddViewProperty( RequestItemRel, MemberOc.getObjectClassProp( CswNbtObjClassRequestContainerDispense.PropertyName.Quantity ) );
-                    }
-                    if( MemberOc.ObjectClass == NbtObjectClass.RequestMaterialDispenseClass )
-                    {
-                        Ret.AddViewProperty( RequestItemRel, MemberOc.getObjectClassProp( CswNbtObjClassRequestMaterialDispense.PropertyName.Quantity ) );
-                        Ret.AddViewProperty( RequestItemRel, MemberOc.getObjectClassProp( CswNbtObjClassRequestMaterialDispense.PropertyName.Count ) );
-                        Ret.AddViewProperty( RequestItemRel, MemberOc.getObjectClassProp( CswNbtObjClassRequestMaterialDispense.PropertyName.Size ) );
-                    }
-                    Ret.AddViewProperty( RequestItemRel, MemberOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.Name ) );
-                    Ret.AddViewProperty( RequestItemRel, MemberOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.AssignedTo ) );
-                    Ret.AddViewProperty( RequestItemRel, MemberOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.NeededBy ) );
-                    Ret.AddViewProperty( RequestItemRel, MemberOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.RequestedFor ) );
-                    Ret.AddViewProperty( RequestItemRel, MemberOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.InventoryGroup ) );
-                    Ret.AddViewProperty( RequestItemRel, MemberOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.Location ) );
+                    Ret.AddViewProperty( RequestItemRel, MemberOc.getObjectClassProp( CswNbtObjClassRequestContainerDispense.PropertyName.Quantity ) );
                 }
-
-                Ret.save();
+                if( MemberOc.ObjectClass == NbtObjectClass.RequestMaterialDispenseClass )
+                {
+                    Ret.AddViewProperty( RequestItemRel, MemberOc.getObjectClassProp( CswNbtObjClassRequestMaterialDispense.PropertyName.Quantity ) );
+                    Ret.AddViewProperty( RequestItemRel, MemberOc.getObjectClassProp( CswNbtObjClassRequestMaterialDispense.PropertyName.Count ) );
+                    Ret.AddViewProperty( RequestItemRel, MemberOc.getObjectClassProp( CswNbtObjClassRequestMaterialDispense.PropertyName.Size ) );
+                }
+                Ret.AddViewProperty( RequestItemRel, MemberOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.Name ) );
+                Ret.AddViewProperty( RequestItemRel, MemberOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.AssignedTo ) );
+                Ret.AddViewProperty( RequestItemRel, MemberOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.NeededBy ) );
+                Ret.AddViewProperty( RequestItemRel, MemberOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.RequestedFor ) );
+                Ret.AddViewProperty( RequestItemRel, MemberOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.InventoryGroup ) );
+                Ret.AddViewProperty( RequestItemRel, MemberOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.Location ) );
             }
             return Ret;
         }

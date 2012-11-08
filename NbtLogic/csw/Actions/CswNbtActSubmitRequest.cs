@@ -171,23 +171,6 @@ namespace ChemSW.Nbt.Actions
             return Ret;
         }
 
-        public void applyCartFilter( CswPrimaryKey NodeId )
-        {
-            foreach( NbtObjectClass Member in CswNbtPropertySetRequestItem.Members() )
-            {
-                CswNbtMetaDataObjectClass MemberOc = _CswNbtResources.MetaData.getObjectClass( Member );
-                CswNbtMetaDataObjectClassProp RequestOcp = MemberOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.Request.ToString() );
-                _SystemViews.addSystemViewFilter( new CswNbtActSystemViews.SystemViewPropFilterDefinition
-                {
-                    FilterMode = CswNbtPropFilterSql.PropertyFilterMode.Equals,
-                    FilterValue = NodeId.PrimaryKey.ToString(),
-                    ObjectClassProp = RequestOcp,
-                    SubFieldName = CswNbtSubField.SubFieldName.NodeID,
-                    ShowInGrid = false
-                }, MemberOc );
-            }
-        }
-
         /// <summary>
         /// Fetch the current Request node for the current user and establish base counts.
         /// </summary>
@@ -196,8 +179,10 @@ namespace ChemSW.Nbt.Actions
             CswNbtNode CartNode = CurrentRequestNode();
             if( null != CartNode )
             {
-                applyCartFilter( CartNode.NodeId );
+                _CurrentCartView.Root.ChildRelationships[0].NodeIdsToFilterIn.Clear();
+                _CurrentCartView.Root.ChildRelationships[0].NodeIdsToFilterIn.Add( CartNode.NodeId );
                 ICswNbtTree CartTree = _CswNbtResources.Trees.getTreeFromView( _CurrentCartView, false, false, false );
+                CartTree.goToNthChild(0);
                 CartContentCount = CartTree.getChildNodeCount();
             }
         }
@@ -397,8 +382,7 @@ namespace ChemSW.Nbt.Actions
 
                     if( null != _CswNbtResources.CurrentNbtUser.DefaultLocationId )
                     {
-                        CswNbtObjClassLocation DefaultAsLocation =
-                            _CswNbtResources.Nodes.GetNode( _CswNbtResources.CurrentNbtUser.DefaultLocationId );
+                        CswNbtObjClassLocation DefaultAsLocation = _CswNbtResources.Nodes.GetNode( _CswNbtResources.CurrentNbtUser.DefaultLocationId );
                         if( null != DefaultAsLocation )
                         {
                             RetAsMatDisp.Location.SelectedNodeId = _CswNbtResources.CurrentNbtUser.DefaultLocationId;
