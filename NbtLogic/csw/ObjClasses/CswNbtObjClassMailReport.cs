@@ -64,8 +64,7 @@ namespace ChemSW.Nbt.ObjClasses
         public string SchedulerWarningDaysPropertyName { get { return PropertyName.WarningDays; } }
         public string SchedulerDueDateIntervalPropertyName { get { return PropertyName.DueDateInterval; } }
         public string SchedulerRunTimePropertyName { get { return PropertyName.RunTime; } }
-        public string SchedulerRunNowPropertyName { get { return PropertyName.RunNow; } }
-
+        
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
         private CswNbtPropertySetSchedulerImpl _CswNbtPropertySetSchedulerImpl;
 
@@ -99,7 +98,7 @@ namespace ChemSW.Nbt.ObjClasses
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
             _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
-            _CswNbtPropertySetSchedulerImpl.updateNextDueDate();
+            updateNextDueDate( ForceUpdate: false, DeleteFutureNodes: false );
 
             _assertMailReportIsValid();
 
@@ -168,7 +167,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             Type.SetOnPropChange( OnTypePropChange );
             DueDateInterval.SetOnPropChange( OnDueDateIntervalChange );
-
+            
             _CswNbtObjClassDefault.afterPopulateProps();
         }//afterPopulateProps()
 
@@ -184,7 +183,7 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 if( PropertyName.RunNow == OCP.PropName )
                 {
-                    NextDueDate.DateTimeValue = DateTime.Now.AddDays( this.WarningDays.Value );
+                    NextDueDate.DateTimeValue = DateTime.Now;
                     Node.postChanges( false );
                     ButtonData.Action = NbtButtonAction.refresh;
                 }
@@ -233,6 +232,11 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropNumber WarningDays { get { return ( _CswNbtNode.Properties[PropertyName.WarningDays] ); } }
 
         #endregion
+
+        public void updateNextDueDate( bool ForceUpdate, bool DeleteFutureNodes )
+        {
+            _CswNbtPropertySetSchedulerImpl.updateNextDueDate( ForceUpdate, DeleteFutureNodes );
+        }
 
         public CswCommaDelimitedString GetNodesToReport()
         {

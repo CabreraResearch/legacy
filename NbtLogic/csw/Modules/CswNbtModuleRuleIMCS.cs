@@ -1,8 +1,3 @@
-using System;
-using ChemSW.Core;
-using System.Data;
-using ChemSW.Nbt.MetaData;
-using ChemSW.Nbt.ObjClasses;
 
 namespace ChemSW.Nbt
 {

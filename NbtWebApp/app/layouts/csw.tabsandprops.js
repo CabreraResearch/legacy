@@ -329,8 +329,8 @@
                                     } else {
                                         eachTabContentDiv = thisTabDiv.children('div:eq(' + cswPrivate.tabState.tabNo + ')');
                                     }
-                                    cswPrivate.getProps(eachTabContentDiv, cswPrivate.tabState.tabid);
-                                    Csw.tryExec(cswPrivate.onTabSelect, cswPrivate.tabState.tabid);
+                                    cswPrivate.getProps(eachTabContentDiv, eachTabContentDiv.data('tabid'));
+                                    Csw.tryExec(cswPrivate.onTabSelect, eachTabContentDiv.data('tabid'));
 
                                 }); // for(var t in tabdivs)
                             }
@@ -634,7 +634,7 @@
                     var formTable = cswPrivate.form.table({
                         name: cswPrivate.name + '_formtbl_' + tabid,
                         width: '100%'
-                    });
+                    }).css({ padding: '10px' });
 
                     var layoutOpts = {
                         name: cswPrivate.name + '_props_' + tabid,

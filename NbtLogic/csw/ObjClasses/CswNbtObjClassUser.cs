@@ -264,6 +264,9 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void afterPopulateProps()
         {
+
+            UsernameProperty.SetOnPropChange( OnUserNamePropChange );
+
             // BZ 6941, 8288
             // Set the Default View to use the selected User, rather than the logged in User
             //DefaultView.User = this;
@@ -294,14 +297,14 @@ namespace ChemSW.Nbt.ObjClasses
 
 
             //case 27793: these are the properties that a user cannot edit -- not even his own
-            if( ( null != _CswNbtResources.CurrentNbtUser ) && ( false == _CswNbtResources.CurrentNbtUser.IsAdministrator() ) )
+            if( ( null == _CswNbtResources.CurrentNbtUser ) || ( false == _CswNbtResources.CurrentNbtUser.IsAdministrator() ) )
             {
-                this.UsernameProperty.setReadOnly( true, false );
+
                 this.Role.setReadOnly( true, false );
             }
 
             //case 27793: Prevent non-adminsitrators from editing paswords, except their own
-            if( ( null != _CswNbtResources.CurrentNbtUser ) && ( this.NodeId != _CswNbtResources.CurrentNbtUser.UserId ) && ( false == _CswNbtResources.CurrentNbtUser.IsAdministrator() ) )
+            if( ( null == _CswNbtResources.CurrentNbtUser ) || ( ( this.NodeId != _CswNbtResources.CurrentNbtUser.UserId ) && ( false == _CswNbtResources.CurrentNbtUser.IsAdministrator() ) ) )
             {
                 this.PasswordProperty.setReadOnly( true, false );
             }
@@ -424,6 +427,17 @@ namespace ChemSW.Nbt.ObjClasses
         public CswPrimaryKey WorkUnitId { get { return WorkUnitProperty.RelatedNodeId; } }
         public CswNbtNodePropLogical Archived { get { return _CswNbtNode.Properties[PropertyName.Archived]; } }
         public CswNbtNodePropRelationship Jurisdiction { get { return _CswNbtNode.Properties[PropertyName.Jurisdiction]; } }
+
+
+
+        private void OnUserNamePropChange( CswNbtNodeProp Prop )
+        {
+            if( false == Prop.Empty )
+            {
+                Prop.setReadOnly( true, true );
+            }
+        }
+
 
         #endregion
 
