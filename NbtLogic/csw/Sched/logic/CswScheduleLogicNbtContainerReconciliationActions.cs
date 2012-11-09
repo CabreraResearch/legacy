@@ -117,6 +117,11 @@ namespace ChemSW.Nbt.Sched
                 Value: String.Empty,
                 SubFieldName: CswNbtSubField.SubFieldName.Value,
                 FilterMode: CswNbtPropFilterSql.PropertyFilterMode.NotNull );
+            ContainerLocationsView.AddViewPropertyAndFilter( ParentRelationship,
+                MetaDataProp: ActionOcp,
+                Value: CswNbtObjClassContainerLocation.ActionOptions.NoAction.ToString(),
+                SubFieldName: CswNbtSubField.SubFieldName.Value,
+                FilterMode: CswNbtPropFilterSql.PropertyFilterMode.NotEquals );
             return ContainerLocationsView;
         }
 

@@ -86,7 +86,7 @@ namespace ChemSW.Nbt.Batch
         private void _executeReconciliationActions( CswPrimaryKey ContainerLocationId )
         {
             CswNbtObjClassContainerLocation ContainerLocation = _CswNbtResources.Nodes[ContainerLocationId];
-            if( null != ContainerLocation && ContainerLocation.Action.Value != CswNbtObjClassContainerLocation.ActionOptions.NoAction.ToString() )
+            if( null != ContainerLocation )
             {
                 if( _isMostRecentContainerLocation( ContainerLocation ) )
                 {
