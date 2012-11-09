@@ -357,7 +357,7 @@ namespace ChemSW.Nbt.Schema
             #endregion Case 27873 - Jurisdiction ObjectClass
         }
 
-        private void _makeNewInvGroupProps()
+        private void    _makeNewInvGroupProps()
         {
             #region Case 27870 - New InventoryGroup ObjClassProps
             _acceptBlame( CswDeveloper.BV, 27870 );
@@ -537,16 +537,12 @@ namespace ChemSW.Nbt.Schema
                     FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
                 _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( manufacturerOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.viewxml, manufacturerOCPView.ToString() );
 
-                //TODO: Determine what needs to happen here.
-                //CswNbtMetaDataObjectClass requestItemOC_27867 = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtDoomedObjectClasses.RequestItemClass );
-                //CswNbtMetaDataObjectClassProp requestItemOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( receiptLotOC )
-                //{
-                //    PropName = CswNbtObjClassReceiptLot.PropertyName.RequestItem,
-                //    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Relationship,
-                //    IsFk = true,
-                //    FkType = NbtViewRelatedIdType.ObjectClassId.ToString(),
-                //    FkValue = requestItemOC_27867.ObjectClassId
-                //} );
+                //Appropriate Request OC doesn't exist yet. It will be responsible for fixing this.
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( receiptLotOC )
+                {
+                    PropName = CswNbtObjClassReceiptLot.PropertyName.RequestItem,
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Relationship
+                } );
 
                 _CswNbtSchemaModTrnsctn.createModuleObjectClassJunction( CswNbtModuleName.CISPro, receiptLotOC.ObjectClassId );
             }
@@ -1112,7 +1108,7 @@ namespace ChemSW.Nbt.Schema
                 CswNbtMetaDataObjectClassProp GoodsReceivedOcp = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( RequestMaterialDispenseOc )
                 {
                     PropName = CswNbtObjClassRequestMaterialDispense.PropertyName.GoodsReceived,
-                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Quantity,
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Logical,
                     IsRequired = true,
                     SetValOnAdd = false
                 } );
@@ -1146,7 +1142,7 @@ namespace ChemSW.Nbt.Schema
                 CswNbtMetaDataObjectClass MaterialOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.MaterialClass );
                 CswNbtMetaDataObjectClass SupplierOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.VendorClass );
 
-                RequestMaterialCreateOc = _createRequestItemBase( NbtObjectClass.RequestMaterialDispenseClass );
+                RequestMaterialCreateOc = _createRequestItemBase( NbtObjectClass.RequestMaterialCreateClass );
 
                 CswNbtMetaDataObjectClassProp FulfillOcp = RequestMaterialCreateOc.getObjectClassProp( CswNbtObjClassRequestMaterialCreate.PropertyName.Fulfill );
                 _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( FulfillOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.statictext, CswNbtObjClassRequestMaterialCreate.FulfillMenu.Create );
