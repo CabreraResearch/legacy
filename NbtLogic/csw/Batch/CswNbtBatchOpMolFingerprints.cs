@@ -6,6 +6,7 @@ using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 using ChemSW.Nbt.MetaData;
 using ChemSW.StructureSearch;
+using ChemSW.Nbt.PropTypes;
 
 namespace ChemSW.Nbt.Batch
 {
@@ -36,12 +37,12 @@ namespace ChemSW.Nbt.Batch
         /// <summary>
         /// Create a new batch operation to update the mols with no fingerprints
         /// </summary>
-        public CswNbtObjClassBatchOp makeBatchOp( CswCommaDelimitedString nodeIds, CswCommaDelimitedString propIds, int nodesPerIteration )
+        public CswNbtObjClassBatchOp makeBatchOp( CswCommaDelimitedString nodeIds, int nodesPerIteration )
         {
             CswNbtObjClassBatchOp BatchNode = null;
-            if( false == nodeIds.IsEmpty && false == propIds.IsEmpty )
+            if( false == nodeIds.IsEmpty )
             {
-                MolFingerprintBatchData BatchData = new MolFingerprintBatchData( nodeIds, propIds, nodesPerIteration );
+                MolFingerprintBatchData BatchData = new MolFingerprintBatchData( nodeIds, nodesPerIteration );
                 BatchNode = CswNbtBatchManager.makeNew( _CswNbtResources, _BatchOpName, BatchData.ToString() );
             }
             return BatchNode;
@@ -63,16 +64,19 @@ namespace ChemSW.Nbt.Batch
                     while( processedThisIteration <= BatchData.nodesPerIteration && false == BatchData.nodeIds.IsEmpty ) //terminate if we've reached the config limit or if there are no more nodes to update
                     {
                         int nodeId = CswConvert.ToInt32( BatchData.nodeIds[0] );
-                        int propId = CswConvert.ToInt32( BatchData.propIds[0] );
                         BatchData.nodeIds.RemoveAt( 0 );
-                        BatchData.propIds.RemoveAt( 0 );
 
-                        CswNbtMetaDataNodeTypeProp molNTP = _CswNbtResources.MetaData.getNodeTypeProp( propId );
-                        if( null != molNTP )
+                        CswPrimaryKey pk = new CswPrimaryKey( "nodes", nodeId );
+                        CswNbtNode node = _CswNbtResources.Nodes.GetNode( pk );
+
+                        bool hasntBeenInserted = true;
+                        foreach( CswNbtNodePropWrapper prop in node.Properties[(CswNbtMetaDataFieldType.NbtFieldType) CswNbtMetaDataFieldType.NbtFieldType.MOL] )
                         {
-                            CswPrimaryKey pk = new CswPrimaryKey( "nodes", nodeId );
-                            CswNbtNode node = _CswNbtResources.Nodes.GetNode( pk );
-                            _CswNbtResources.StructureSearchManager.InsertFingerprintRecord( nodeId, node.Properties[molNTP].AsMol.Mol );
+                            if( hasntBeenInserted )
+                            {
+                                _CswNbtResources.StructureSearchManager.InsertFingerprintRecord( nodeId, prop.AsMol.Mol );
+                                hasntBeenInserted = false;
+                            }
                         }
                         processedThisIteration++;
                     }
@@ -99,22 +103,19 @@ namespace ChemSW.Nbt.Batch
         private class MolFingerprintBatchData
         {
             public CswCommaDelimitedString nodeIds = new CswCommaDelimitedString();
-            public CswCommaDelimitedString propIds = new CswCommaDelimitedString();
             public int nodesPerIteration;
             public int totalNodes;
 
-            public MolFingerprintBatchData( CswCommaDelimitedString nodeIds, CswCommaDelimitedString propIds, int nodesPerIteration )
+            public MolFingerprintBatchData( CswCommaDelimitedString nodeIds, int nodesPerIteration )
             {
                 this.nodeIds = nodeIds;
-                this.propIds = propIds;
                 this.nodesPerIteration = nodesPerIteration;
                 totalNodes = nodeIds.Count;
             }
 
-            public MolFingerprintBatchData( CswCommaDelimitedString nodeIds, CswCommaDelimitedString propIds, int nodesPerIteration, int totalNodes )
+            public MolFingerprintBatchData( CswCommaDelimitedString nodeIds, int nodesPerIteration, int totalNodes )
             {
                 this.nodeIds = nodeIds;
-                this.propIds = propIds;
                 this.nodesPerIteration = nodesPerIteration;
                 this.totalNodes = totalNodes;
             }
@@ -129,10 +130,7 @@ namespace ChemSW.Nbt.Batch
                 CswCommaDelimitedString nodeIds = new CswCommaDelimitedString();
                 nodeIds.FromString( Obj["nodeIds"].ToString() );
 
-                CswCommaDelimitedString propIds = new CswCommaDelimitedString();
-                propIds.FromString( Obj["propIds"].ToString() );
-
-                return new MolFingerprintBatchData( nodeIds, propIds, nodesPerIteration, totalNodes );
+                return new MolFingerprintBatchData( nodeIds, nodesPerIteration, totalNodes );
             }
 
             public static implicit operator string( MolFingerprintBatchData item )
@@ -144,7 +142,6 @@ namespace ChemSW.Nbt.Batch
             {
                 JObject Obj = new JObject();
                 Obj["nodeIds"] = nodeIds.ToString();
-                Obj["propIds"] = propIds.ToString();
                 Obj["nodesPerIteration"] = nodesPerIteration.ToString();
                 Obj["totalNodes"] = totalNodes.ToString();
                 return Obj.ToString();

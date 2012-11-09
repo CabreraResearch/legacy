@@ -63,7 +63,6 @@ namespace ChemSW.Nbt.Sched
                 try
                 {
                     CswCommaDelimitedString nonFingerprintedMols = new CswCommaDelimitedString();
-                    CswCommaDelimitedString nonFingerprintedMolsPropIds = new CswCommaDelimitedString();
 
                     CswNbtMetaDataFieldType molFT = _CswNbtResources.MetaData.getFieldType( CswNbtMetaDataFieldType.NbtFieldType.MOL );
                     CswTableSelect ts = _CswNbtResources.makeCswTableSelect( "getMolNTPs", "nodetype_props" );
@@ -80,14 +79,13 @@ namespace ChemSW.Nbt.Sched
                             if( false == _CswNbtResources.StructureSearchManager.DoesRecordExist( nodeid ) ) 
                             {
                                 nonFingerprintedMols.Add( nodeid.ToString() );
-                                nonFingerprintedMolsPropIds.Add( nodeTypeId.ToString() );
                             }
                         }
                     }
 
                     CswNbtBatchOpMolFingerprints batchOp = new CswNbtBatchOpMolFingerprints( _CswNbtResources );
                     int nodesPerIteration = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswConfigurationVariables.ConfigurationVariableNames.NodesProcessedPerCycle ) );
-                    batchOp.makeBatchOp( nonFingerprintedMols, nonFingerprintedMolsPropIds, nodesPerIteration );                 
+                    batchOp.makeBatchOp( nonFingerprintedMols, nodesPerIteration );                 
 
                     _CswScheduleLogicDetail.StatusMessage = "Completed without error";
                     _LogicRunStatus = MtSched.Core.LogicRunStatus.Succeeded; //last line
