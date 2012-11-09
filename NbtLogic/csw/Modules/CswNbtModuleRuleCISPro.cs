@@ -66,8 +66,8 @@ namespace ChemSW.Nbt
             //_CswNbtResources.Modules.ToggleRoleNodes()
             _CswNbtResources.Modules.ToggleRoleNodes( false, "cispro" );
             _CswNbtResources.Modules.ToggleUserNodes( false, "cispro" );
-            _CswNbtResources.Modules.ToggleView( false, "Units of Measurement" );
-            _CswNbtResources.Modules.ToggleView( false, "Work Units" );
+            _CswNbtResources.Modules.ToggleView( false, "Units of Measurement", NbtViewVisibility.Global );
+            _CswNbtResources.Modules.ToggleView( false, "Work Units", NbtViewVisibility.Global );
         }
 
         public override void OnDisable()
@@ -116,8 +116,8 @@ namespace ChemSW.Nbt
             //   Unit of measure and work units views
             _CswNbtResources.Modules.ToggleRoleNodes( true, "cispro" );
             _CswNbtResources.Modules.ToggleUserNodes( true, "cispro" );
-            _CswNbtResources.Modules.ToggleView( true, "Units of Measurement" );
-            _CswNbtResources.Modules.ToggleView( true, "Work Units" );
+            _CswNbtResources.Modules.ToggleView( true, "Units of Measurement", NbtViewVisibility.Global );
+            _CswNbtResources.Modules.ToggleView( true, "Work Units", NbtViewVisibility.Global );
 
         } // OnDisable()
 
