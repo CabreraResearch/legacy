@@ -32,9 +32,9 @@ namespace ChemSW.Nbt.Schema
                 null != shelfNT &&
                 null != boxNT )
             {
-                _CswNbtSchemaModTrnsctn.removeModuleNodeTypeJunction( CswNbtModuleName.IMCS, cabinetNT.NodeTypeId );
-                _CswNbtSchemaModTrnsctn.removeModuleNodeTypeJunction( CswNbtModuleName.IMCS, shelfNT.NodeTypeId );
-                _CswNbtSchemaModTrnsctn.removeModuleNodeTypeJunction( CswNbtModuleName.IMCS, boxNT.NodeTypeId );
+                _CswNbtSchemaModTrnsctn.deleteModuleNodeTypeJunction( CswNbtModuleName.IMCS, cabinetNT.NodeTypeId );
+                _CswNbtSchemaModTrnsctn.deleteModuleNodeTypeJunction( CswNbtModuleName.IMCS, shelfNT.NodeTypeId );
+                _CswNbtSchemaModTrnsctn.deleteModuleNodeTypeJunction( CswNbtModuleName.IMCS, boxNT.NodeTypeId );
             }
 
         }

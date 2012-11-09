@@ -12,7 +12,7 @@ namespace ChemSW.Nbt.Schema
         public override void update()
         {
             // moved from RunBeforeEveryExecutionOfUpdater_01OC
-            CswNbtMetaDataObjectClass requestItemOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.RequestItemClass );
+            CswNbtMetaDataObjectClass requestItemOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtDoomedObjectClasses.RequestItemClass );
             CswNbtMetaDataNodeType requestItemNT = requestItemOC.FirstNodeType;
             if( null != requestItemNT )
             {
