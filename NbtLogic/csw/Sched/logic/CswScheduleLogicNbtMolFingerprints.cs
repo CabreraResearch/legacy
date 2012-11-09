@@ -64,28 +64,22 @@ namespace ChemSW.Nbt.Sched
                 {
                     CswCommaDelimitedString nonFingerprintedMols = new CswCommaDelimitedString();
 
-                    CswNbtMetaDataFieldType molFT = _CswNbtResources.MetaData.getFieldType( CswNbtMetaDataFieldType.NbtFieldType.MOL );
-                    CswTableSelect ts = _CswNbtResources.makeCswTableSelect( "getMolNTPs", "nodetype_props" );
-                    DataTable nodetype_props = ts.getTable( "where fieldtypeid = " + molFT.FieldTypeId );
-                    foreach( DataRow row in nodetype_props.Rows )
-                    {
-                        int nodeTypeId = CswConvert.ToInt32( row["nodetypepropid"] );
-                        CswTableSelect ts_nodes = _CswNbtResources.makeCswTableSelect( "selectNonNullMolNodes", "jct_nodes_props" );
-                        DataTable nonNullMolNodes = ts_nodes.getTable( "where clobdata is not null and nodetypepropid = " + nodeTypeId );
+                    string sql = @"select jnp.nodeid from nodetype_props ntp
+                                    join jct_nodes_props jnp on ntp.nodetypepropid = jnp.nodetypepropid 
+                                        where ntp.fieldtypeid = (select fieldtypeid from field_types ft where ft.fieldtype = 'MOL')
+                                            and jnp.clobdata is not null 
+                                            and not exists (select nodeid from mol_keys where nodeid = jnp.nodeid)";
 
-                        foreach( DataRow jctnode_row in nonNullMolNodes.Rows )
-                        {
-                            int nodeid = CswConvert.ToInt32( jctnode_row["nodeid"] );
-                            if( false == _CswNbtResources.StructureSearchManager.DoesRecordExist( nodeid ) ) 
-                            {
-                                nonFingerprintedMols.Add( nodeid.ToString() );
-                            }
-                        }
+                    CswArbitrarySelect arbSelect = _CswNbtResources.makeCswArbitrarySelect( "getNonFingerprintedMols", sql );
+                    DataTable jctnodesprops = arbSelect.getTable();
+                    foreach( DataRow row in jctnodesprops.Rows )
+                    {
+                        nonFingerprintedMols.Add( row["nodeid"].ToString() );
                     }
 
                     CswNbtBatchOpMolFingerprints batchOp = new CswNbtBatchOpMolFingerprints( _CswNbtResources );
                     int nodesPerIteration = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswConfigurationVariables.ConfigurationVariableNames.NodesProcessedPerCycle ) );
-                    batchOp.makeBatchOp( nonFingerprintedMols, nodesPerIteration );                 
+                    batchOp.makeBatchOp( nonFingerprintedMols, nodesPerIteration );
 
                     _CswScheduleLogicDetail.StatusMessage = "Completed without error";
                     _LogicRunStatus = MtSched.Core.LogicRunStatus.Succeeded; //last line
