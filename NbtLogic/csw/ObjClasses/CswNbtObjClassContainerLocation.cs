@@ -115,12 +115,12 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
+            _setStatus();
             _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
         }//beforeWriteNode()
 
         public override void afterWriteNode()
         {
-            _setStatus();
             _CswNbtObjClassDefault.afterWriteNode();
         }//afterWriteNode()
 
