@@ -696,7 +696,6 @@ namespace ChemSW.Nbt.ObjClasses
                 CswNbtObjClassContainerLocation ContLocNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( ContLocNT.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode );
                 ContLocNode.Type.Value = Type.ToString();
                 ContLocNode.Container.RelatedNodeId = NodeId;
-                ContLocNode.Location.SelectedNodeId = Location.SelectedNodeId;
                 if( null != Location )
                 {
                     ContLocNode.Location.SelectedNodeId = Location.SelectedNodeId;
