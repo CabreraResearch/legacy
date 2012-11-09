@@ -995,7 +995,7 @@ namespace ChemSW.Nbt.Schema
             CswTableUpdate jct_modules_nodetypesTU = makeCswTableUpdate( "SchemaModTrnsctn_DeleteAllModuleNTJunction", "jct_modules_nodetypes" );
             DataTable jct_modules_nodetypesDT = jct_modules_nodetypesTU.getTable( "where nodetypeid = " + NodeTypeId );
             Int32 RowCount = jct_modules_nodetypesDT.Rows.Count;
-            for( Int32 R = 0; R < RowCount; R+= 1 )
+            for( Int32 R = 0; R < RowCount; R += 1 )
             {
                 jct_modules_nodetypesDT.Rows[R].Delete();
             }
@@ -1006,13 +1006,13 @@ namespace ChemSW.Nbt.Schema
         {
             foreach( Int32 NodeTypeId in ObjectClass.getNodeTypeIds() )
             {
-                deleteAllModuleNodeTypeJunctions(NodeTypeId);
+                deleteAllModuleNodeTypeJunctions( NodeTypeId );
             }
 
             CswTableUpdate jct_modules_objectclassTU = makeCswTableUpdate( "SchemaModTrnsctn_DeleteAllModuleOCJunction", "jct_modules_objectclass" );
             DataTable jct_modules_objectclassDT = jct_modules_objectclassTU.getTable( "where objectclassid = " + ObjectClass.ObjectClassId );
             Int32 RowCount = jct_modules_objectclassDT.Rows.Count;
-            for( Int32 R = 0; R < RowCount; R+= 1 )
+            for( Int32 R = 0; R < RowCount; R += 1 )
             {
                 jct_modules_objectclassDT.Rows[R].Delete();
             }
@@ -1386,7 +1386,7 @@ namespace ChemSW.Nbt.Schema
             }
             OCPRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.statictext.ToString()] = OcpModel.StaticText;
             OCPRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.extended.ToString()] = OcpModel.Extended;
-            
+
             OCPRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.filter.ToString()] = OcpModel.Filter;
             OCPRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.filterpropid.ToString()] = CswConvert.ToDbVal( OcpModel.FilterPropId );
             OCPRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.auditlevel.ToString()] = CswConvert.ToDbVal( OcpModel.AuditLevel );
@@ -1754,7 +1754,7 @@ namespace ChemSW.Nbt.Schema
         {
             // This is kind of a kludgey way to determine whether we're on a fresh master, but see case 25806
             CswNbtNode AdminNode = Nodes.makeUserNodeFromUsername( "admin" );
-            return ( null != AdminNode && ( (CswNbtObjClassUser) AdminNode ).LastLogin.DateTimeValue.Date == new DateTime( 2011, 12, 9 ) );
+            return ( null != AdminNode && ( (CswNbtObjClassUser) AdminNode ).LastLogin.DateTimeValue.Date == new DateTime( 2012, 8, 10 ) );
         }
 
         /// <summary>
