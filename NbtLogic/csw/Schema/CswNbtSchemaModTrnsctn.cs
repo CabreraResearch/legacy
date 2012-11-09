@@ -1710,7 +1710,7 @@ namespace ChemSW.Nbt.Schema
         {
             // This is kind of a kludgey way to determine whether we're on a fresh master, but see case 25806
             CswNbtNode AdminNode = Nodes.makeUserNodeFromUsername( "admin" );
-            return ( null != AdminNode && ( (CswNbtObjClassUser) AdminNode ).LastLogin.DateTimeValue.Date == new DateTime( 2011, 12, 9 ) );
+            return ( null != AdminNode && ( (CswNbtObjClassUser) AdminNode ).LastLogin.DateTimeValue.Date == new DateTime( 2012, 8, 10 ) );
         }
 
         /// <summary>
