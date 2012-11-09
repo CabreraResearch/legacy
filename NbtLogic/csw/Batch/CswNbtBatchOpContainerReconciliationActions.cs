@@ -103,6 +103,7 @@ namespace ChemSW.Nbt.Batch
             CswNbtView ContainerLocationsView = new CswNbtView( _CswNbtResources );
             CswNbtMetaDataObjectClass ContainerLocationOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.ContainerLocationClass );
             CswNbtViewRelationship ParentRelationship = ContainerLocationsView.AddViewRelationship( ContainerLocationOc, true );
+            ParentRelationship.NodeIdsToFilterOut.Add( ContainerLocation.NodeId );
             CswNbtMetaDataObjectClassProp ContainerOcp = ContainerLocationOc.getObjectClassProp( CswNbtObjClassContainerLocation.PropertyName.Container );
             ContainerLocationsView.AddViewPropertyAndFilter( ParentRelationship,
                 MetaDataProp: ContainerOcp,

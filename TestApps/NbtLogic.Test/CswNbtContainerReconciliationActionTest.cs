@@ -158,7 +158,7 @@ namespace ChemSw.Nbt.Test
         {
             CswCommaDelimitedString ContainerLocationIds = new CswCommaDelimitedString();
             CswNbtObjClassContainer ContainerNode = TestData.createContainerNode();
-            CswNbtObjClassContainerLocation FirstContainerLocationNode = TestData.createContainerLocationNode( ContainerNode.Node, CswNbtObjClassContainerLocation.ActionOptions.Undispose.ToString(), DateTime.Today.AddDays( -1 ) );
+            CswNbtObjClassContainerLocation FirstContainerLocationNode = TestData.createContainerLocationNode( ContainerNode.Node, CswNbtObjClassContainerLocation.ActionOptions.Undispose.ToString(), DateTime.Now );
             ContainerLocationIds.Add( FirstContainerLocationNode.NodeId.ToString() );
             TestData.createContainerLocationNode( ContainerNode.Node, CswNbtObjClassContainerLocation.ActionOptions.NoAction.ToString() );
             CswNbtBatchOpContainerReconciliationActions BatchOp = new CswNbtBatchOpContainerReconciliationActions( TestData.CswNbtResources );
