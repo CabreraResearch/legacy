@@ -695,8 +695,14 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 CswNbtObjClassContainerLocation ContLocNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( ContLocNT.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode );
                 ContLocNode.Type.Value = Type.ToString();
-                ContLocNode.ContainerScan.Text = Barcode.Barcode;
-                ContLocNode.LocationScan.Text = Location.CachedBarcode;
+                ContLocNode.Container.RelatedNodeId = NodeId;
+                ContLocNode.Location.SelectedNodeId = Location.SelectedNodeId;
+                if( null != Location )
+                {
+                    ContLocNode.Location.SelectedNodeId = Location.SelectedNodeId;
+                    ContLocNode.Location.CachedNodeName = Location.CachedNodeName;
+                    ContLocNode.Location.CachedPath = Location.CachedPath;
+                }
                 ContLocNode.ScanDate.DateTimeValue = DateTime.Now;
                 ContLocNode.User.RelatedNodeId = _CswNbtResources.CurrentNbtUser.UserId;
                 ContLocNode.postChanges( false );
