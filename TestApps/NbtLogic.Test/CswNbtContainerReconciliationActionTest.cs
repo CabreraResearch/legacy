@@ -156,14 +156,10 @@ namespace ChemSw.Nbt.Test
         [TestMethod]
         public void runBatchOpTestMoreRecentExists()
         {
-            CswCommaDelimitedString ContainerLocationIds = new CswCommaDelimitedString();
             CswNbtObjClassContainer ContainerNode = TestData.createContainerNode();
-            CswNbtObjClassContainerLocation FirstContainerLocationNode = TestData.createContainerLocationNode( ContainerNode.Node, CswNbtObjClassContainerLocation.ActionOptions.Undispose.ToString(), DateTime.Now );
-            ContainerLocationIds.Add( FirstContainerLocationNode.NodeId.ToString() );
+            CswNbtObjClassContainerLocation FirstContainerLocationNode = TestData.createContainerLocationNode( ContainerNode.Node, CswNbtObjClassContainerLocation.ActionOptions.Undispose.ToString(), DateTime.Now.AddSeconds( -1 ) );
             TestData.createContainerLocationNode( ContainerNode.Node, CswNbtObjClassContainerLocation.ActionOptions.NoAction.ToString() );
-            CswNbtBatchOpContainerReconciliationActions BatchOp = new CswNbtBatchOpContainerReconciliationActions( TestData.CswNbtResources );
-            CswNbtObjClassBatchOp BatchOpNode = BatchOp.makeBatchOp( ContainerLocationIds, 10 );
-            BatchOp.runBatchOp( BatchOpNode );
+            _runReconciliationBatchOp( FirstContainerLocationNode.NodeId );
             Assert.AreEqual( Tristate.True, FirstContainerLocationNode.ActionApplied.Checked );
             Assert.AreNotEqual( Tristate.False, ContainerNode.Missing.Checked );
         }
@@ -176,13 +172,9 @@ namespace ChemSw.Nbt.Test
         [TestMethod]
         public void runBatchOpTestNoAction()
         {
-            CswCommaDelimitedString ContainerLocationIds = new CswCommaDelimitedString();
             CswNbtObjClassContainer ContainerNode = TestData.createContainerNode();
             CswNbtObjClassContainerLocation ContainerLocationNode = TestData.createContainerLocationNode( ContainerNode.Node, CswNbtObjClassContainerLocation.ActionOptions.NoAction.ToString() );
-            ContainerLocationIds.Add( ContainerLocationNode.NodeId.ToString() );
-            CswNbtBatchOpContainerReconciliationActions BatchOp = new CswNbtBatchOpContainerReconciliationActions( TestData.CswNbtResources );
-            CswNbtObjClassBatchOp BatchOpNode = BatchOp.makeBatchOp( ContainerLocationIds, 10 );
-            BatchOp.runBatchOp( BatchOpNode );
+            _runReconciliationBatchOp( ContainerLocationNode.NodeId );
             Assert.AreNotEqual( Tristate.True, ContainerLocationNode.ActionApplied.Checked );
             Assert.AreNotEqual( Tristate.False, ContainerNode.Missing.Checked );
         }
@@ -196,15 +188,12 @@ namespace ChemSw.Nbt.Test
         [TestMethod]
         public void runBatchOpTestUndispose()
         {
-            CswCommaDelimitedString ContainerLocationIds = new CswCommaDelimitedString();
             CswNbtObjClassContainer ContainerNode = TestData.createContainerNode();
             ContainerNode.DisposeContainer();
             Assert.AreEqual( Tristate.True, ContainerNode.Disposed.Checked );
             CswNbtObjClassContainerLocation ContainerLocationNode = TestData.createContainerLocationNode( ContainerNode.Node, CswNbtObjClassContainerLocation.ActionOptions.Undispose.ToString() );
-            ContainerLocationIds.Add( ContainerLocationNode.NodeId.ToString() );
-            CswNbtBatchOpContainerReconciliationActions BatchOp = new CswNbtBatchOpContainerReconciliationActions( TestData.CswNbtResources );
-            CswNbtObjClassBatchOp BatchOpNode = BatchOp.makeBatchOp( ContainerLocationIds, 10 );
-            BatchOp.runBatchOp( BatchOpNode );
+
+            _runReconciliationBatchOp( ContainerLocationNode.NodeId );
             Assert.AreEqual( Tristate.True, ContainerLocationNode.ActionApplied.Checked );
             Assert.AreEqual( Tristate.False, ContainerNode.Disposed.Checked );
             Assert.AreEqual( Tristate.False, ContainerNode.Missing.Checked );
@@ -232,11 +221,7 @@ namespace ChemSw.Nbt.Test
             Assert.AreNotEqual( ContainerLocationNode.Location.SelectedNodeId, ContainerNode.Location.SelectedNodeId );
             Assert.AreEqual( CswNbtObjClassContainerLocation.StatusOptions.WrongLocation, ContainerLocationNode.Status.Value );
 
-            CswCommaDelimitedString ContainerLocationIds = new CswCommaDelimitedString();
-            ContainerLocationIds.Add( ContainerLocationNode.NodeId.ToString() );
-            CswNbtBatchOpContainerReconciliationActions BatchOp = new CswNbtBatchOpContainerReconciliationActions( TestData.CswNbtResources );
-            CswNbtObjClassBatchOp BatchOpNode = BatchOp.makeBatchOp( ContainerLocationIds, 10 );
-            BatchOp.runBatchOp( BatchOpNode );
+            _runReconciliationBatchOp( ContainerLocationNode.NodeId );
             Assert.AreEqual( Tristate.True, ContainerLocationNode.ActionApplied.Checked );
             Assert.AreEqual( ContainerLocationNode.Location.SelectedNodeId, ContainerNode.Location.SelectedNodeId );
             Assert.AreEqual( Tristate.False, ContainerNode.Missing.Checked );
@@ -266,11 +251,7 @@ namespace ChemSw.Nbt.Test
             Assert.AreNotEqual( ContainerLocationNode.Location.SelectedNodeId, ContainerNode.Location.SelectedNodeId );
             Assert.AreEqual( CswNbtObjClassContainerLocation.StatusOptions.DisposedAtWrongLocation, ContainerLocationNode.Status.Value );
 
-            CswCommaDelimitedString ContainerLocationIds = new CswCommaDelimitedString();
-            ContainerLocationIds.Add( ContainerLocationNode.NodeId.ToString() );
-            CswNbtBatchOpContainerReconciliationActions BatchOp = new CswNbtBatchOpContainerReconciliationActions( TestData.CswNbtResources );
-            CswNbtObjClassBatchOp BatchOpNode = BatchOp.makeBatchOp( ContainerLocationIds, 10 );
-            BatchOp.runBatchOp( BatchOpNode );
+            _runReconciliationBatchOp( ContainerLocationNode.NodeId );
             Assert.AreEqual( Tristate.True, ContainerLocationNode.ActionApplied.Checked );
             Assert.AreEqual( ContainerLocationNode.Location.SelectedNodeId, ContainerNode.Location.SelectedNodeId );
             Assert.AreEqual( Tristate.False, ContainerNode.Missing.Checked );
@@ -301,11 +282,7 @@ namespace ChemSw.Nbt.Test
             Assert.AreNotEqual( ContainerLocationNode.Location.SelectedNodeId, ContainerNode.Location.SelectedNodeId );
             Assert.AreEqual( CswNbtObjClassContainerLocation.StatusOptions.DisposedAtWrongLocation, ContainerLocationNode.Status.Value );
 
-            CswCommaDelimitedString ContainerLocationIds = new CswCommaDelimitedString();
-            ContainerLocationIds.Add( ContainerLocationNode.NodeId.ToString() );
-            CswNbtBatchOpContainerReconciliationActions BatchOp = new CswNbtBatchOpContainerReconciliationActions( TestData.CswNbtResources );
-            CswNbtObjClassBatchOp BatchOpNode = BatchOp.makeBatchOp( ContainerLocationIds, 10 );
-            BatchOp.runBatchOp( BatchOpNode );
+            _runReconciliationBatchOp( ContainerLocationNode.NodeId );
             Assert.AreEqual( Tristate.True, ContainerLocationNode.ActionApplied.Checked );
             Assert.AreEqual( ContainerLocationNode.Location.SelectedNodeId, ContainerNode.Location.SelectedNodeId );
             Assert.AreEqual( Tristate.False, ContainerNode.Missing.Checked );
@@ -329,6 +306,15 @@ namespace ChemSw.Nbt.Test
                     LocationId1 = LocationNode.NodeId;
                 }
             }
+        }
+
+        private void _runReconciliationBatchOp( CswPrimaryKey ContainerLocationNodeId )
+        {
+            CswCommaDelimitedString ContainerLocationIds = new CswCommaDelimitedString();
+            ContainerLocationIds.Add( ContainerLocationNodeId.ToString() );
+            CswNbtBatchOpContainerReconciliationActions BatchOp = new CswNbtBatchOpContainerReconciliationActions( TestData.CswNbtResources );
+            CswNbtObjClassBatchOp BatchOpNode = BatchOp.makeBatchOp( ContainerLocationIds, 10 );
+            BatchOp.runBatchOp( BatchOpNode );
         }
 
         #endregion
