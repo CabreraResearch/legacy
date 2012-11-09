@@ -296,13 +296,15 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataNodeTypeProp RmdGoodsReceivedNtp = RequestMdNt.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestMaterialDispense.PropertyName.GoodsReceived );
             CswNbtMetaDataNodeTypeProp RmdReceiptLotsToDispenseNtp = RequestMdNt.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestMaterialDispense.PropertyName.ReceiptLotToDispense );
 
+            CswNbtMetaDataNodeTypeProp RmdReorderFreqNtp = RequestMdNt.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestMaterialDispense.PropertyName.ReorderFrequency );
+            CswNbtMetaDataNodeTypeProp RmdNextReorderDateNtp = RequestMdNt.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestMaterialDispense.PropertyName.NextReorderDate );
+            RmdReorderFreqNtp.removeFromLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add );
+            RmdNextReorderDateNtp.removeFromLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add );
+
             if( _CswNbtSchemaModTrnsctn.Modules.IsModuleEnabled( CswNbtModuleName.MLM ) )
             {
                 CswNbtMetaDataNodeTypeTab CmgTab = _CswNbtSchemaModTrnsctn.MetaData.makeNewTab( RequestMdNt, "Central Material Group" );
-                CswNbtMetaDataNodeTypeProp RmdReorderFreqNtp = RequestMdNt.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestMaterialDispense.PropertyName.ReorderFrequency );
                 RmdReorderFreqNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, CmgTab.TabId );
-
-                CswNbtMetaDataNodeTypeProp RmdNextReorderDateNtp = RequestMdNt.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestMaterialDispense.PropertyName.NextReorderDate );
                 RmdNextReorderDateNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, CmgTab.TabId );
 
                 RmdLevelNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, CmgTab.TabId );
