@@ -27,7 +27,7 @@ namespace ChemSW.Nbt.Batch
             if( BatchNode != null && BatchNode.OpNameValue == NbtBatchOpName.ContainerReconciliationActions )
             {
                 ContainerReconciliationActionsBatchData BatchData = BatchNode.BatchData.Text;
-                return ( ( BatchData.ContainerLocationIds.Count / BatchData.TotalContainerLocations ) * 100 );
+                return ( ( ( BatchData.TotalContainerLocations - BatchData.ContainerLocationIds.Count ) / BatchData.TotalContainerLocations ) * 100 );
             }
             return PercentDone;
         }
