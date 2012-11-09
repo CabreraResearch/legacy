@@ -1,5 +1,4 @@
 using System;
-using System.Collections.ObjectModel;
 using ChemSW.Core;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
@@ -26,17 +25,17 @@ namespace ChemSW.Nbt.ObjClasses
             /// Batch (<see cref="CswNbtNodePropRelationship"/>)
             /// </summary>
             public const string Batch = "Batch";
-            
+
             /// <summary>
             /// For "Request By Size" items, the number(<see cref="CswNbtNodePropNumber"/>) of sizes(<see cref="Size"/>) to request. 
             /// </summary>
             public const string Count = "Count";
-            
+
             /// <summary>
             /// True if Goods received (<see cref="CswNbtNodePropLogical"/>)
             /// </summary>
             public const string GoodsReceived = "Goods Received";
-            
+
             /// <summary>
             /// Is Batch (<see cref="CswNbtNodePropLogical"/>)
             /// </summary>
@@ -51,7 +50,7 @@ namespace ChemSW.Nbt.ObjClasses
             /// Relationship(<see cref="CswNbtNodePropRelationship"/> ) to the Material (<see cref="CswNbtObjClassMaterial"/>) from which the Request Item will be Fulfilled.
             /// </summary>
             public const string Material = "Material";
-            
+
             /// <summary>
             /// Next date to reorder(<see cref="CswNbtNodePropDateTime"/> )
             /// </summary>
@@ -92,7 +91,7 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 Level, IsBatch, Batch
             };
-            
+
             public static CswCommaDelimitedString MLMReceiveTabProps = new CswCommaDelimitedString
             {
                 ReceiptLotsReceived, GoodsReceived, ReceiptLotToDispense
@@ -416,23 +415,20 @@ namespace ChemSW.Nbt.ObjClasses
             switch( Type.Value )
             {
                 case Types.Size:
-                    Quantity.CachedUnitName = "";
-                    Quantity.UnitId = null;
-                    Quantity.Quantity = Double.NaN;
+                    Quantity.clearQuantity( ForceClear: true );
                     break;
                 case Types.Bulk:
-                    Size.CachedNodeName = "";
-                    Size.RelatedNodeId = null;
+                    Size.clearRelationship();
                     Count.Value = Double.NaN;
                     break;
             }
 
             /* Spec W1010: Quantity applies only to Request by Bulk and Dispense */
-            bool QuantityHidden = Type.Value == Types.Size;
+            bool QuantityDisabled = Type.Value == Types.Size;
 
-            Quantity.setHidden( value: QuantityHidden, SaveToDb: true );
-            Size.setHidden( value: false == QuantityHidden, SaveToDb: true );
-            Count.setHidden( value: false == QuantityHidden, SaveToDb: true );
+            Quantity.setHidden( value: QuantityDisabled, SaveToDb: true );
+            Size.setHidden( value: false == QuantityDisabled, SaveToDb: true );
+            Count.setHidden( value: false == QuantityDisabled, SaveToDb: true );
 
             Type.setReadOnly( value: true, SaveToDb: true );
 
@@ -507,7 +503,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropGrid ReceiptLotsReceived { get { return _CswNbtNode.Properties[PropertyName.ReceiptLotsReceived]; } }
         public CswNbtNodePropLogical GoodsReceived { get { return _CswNbtNode.Properties[PropertyName.GoodsReceived]; } }
         public CswNbtNodePropRelationship ReceiptLotToDispense { get { return _CswNbtNode.Properties[PropertyName.ReceiptLotToDispense]; } }
-        
+
         #endregion
     }//CswNbtObjClassRequestMaterialDispense
 

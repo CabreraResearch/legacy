@@ -357,7 +357,7 @@ namespace ChemSW.Nbt.Schema
             #endregion Case 27873 - Jurisdiction ObjectClass
         }
 
-        private void    _makeNewInvGroupProps()
+        private void _makeNewInvGroupProps()
         {
             #region Case 27870 - New InventoryGroup ObjClassProps
             _acceptBlame( CswDeveloper.BV, 27870 );
@@ -1016,7 +1016,6 @@ namespace ChemSW.Nbt.Schema
 
                 CswNbtMetaDataObjectClassProp TypeOcp = RequestMaterialDispenseOc.getObjectClassProp( CswNbtObjClassRequestMaterialDispense.PropertyName.Type );
                 _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( TypeOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.listoptions, CswNbtObjClassRequestMaterialDispense.Types.Options.ToString() );
-                _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( TypeOcp, CswNbtObjClassRequestMaterialDispense.Types.Bulk );
 
                 _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( RequestMaterialDispenseOc )
                 {
