@@ -46,8 +46,12 @@ namespace ChemSW.Nbt
                 CswNbtNode.IsTemp = CswConvert.ToBoolean( NodesTable.Rows[0]["istemp"] );
                 CswNbtNode.SessionId = CswConvert.ToString( NodesTable.Rows[0]["sessionid"] );
                 CswNbtNode.PendingUpdate = CswConvert.ToBoolean( NodesTable.Rows[0]["pendingupdate"] );
-                CswNbtNode.AuditLevel = NodesTable.Rows[0][_CswAuditMetaData.AuditLevelColName].ToString();
-                ReturnVal = true;
+
+                if( NodesTable.Columns.Contains( _CswAuditMetaData.AuditLevelColName ) )
+                {
+                    CswNbtNode.AuditLevel = NodesTable.Rows[0][_CswAuditMetaData.AuditLevelColName].ToString();
+                    ReturnVal = true;
+                }
             }
             return ( ReturnVal );
             //CswNbtNode.Modified = false; //bz # 5943
