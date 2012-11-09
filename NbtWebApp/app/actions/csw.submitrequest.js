@@ -57,7 +57,18 @@
                     .css('text-align', 'left')
                     .span({ text: 'Edit any of the Request Items in your cart. When you are finished, click "Place Request" to submit your cart.' });
 
-
+                //Case 27871: a Request Material Create button has to go _somewhere_ ...
+                cswPrivate.requestCreateMaterial = window.Ext.create('Ext.button.Button', {
+                    id: cswPrivate.ID + 'create',
+                    xtype: 'button',
+                    text: 'Request Create Material',
+                    icon: 'Images/newicons/16/cart.png',
+                    disabled: false,
+                    handler: function () {
+                        //Do AJAX request
+                    } // delete handler
+                });
+                
                 cswPrivate.actionTbl.cell(3, 1).br({ number: 2 });
                 cswPrivate.gridId = cswPrivate.name + '_csw_requestGrid_outer';
                 cswPublic.gridParent = cswPrivate.actionTbl.cell(4, 1).div({
@@ -151,7 +162,9 @@
                             });
                         }, // onDelete
                         onSelect: null, // function(row)
-                        onDeselect: null // function(row)
+                        onDeselect: null, // function(row)
+                        
+                        topToolbar: [cswPrivate.requestCreateMaterial]
                     });
                 }; // initGrid()
 
