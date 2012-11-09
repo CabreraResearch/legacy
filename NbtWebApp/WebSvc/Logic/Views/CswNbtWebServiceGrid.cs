@@ -220,15 +220,9 @@ namespace ChemSW.Nbt.WebServices
                     DataRow Row = DT.NewRow();
                     foreach( JObject Prop in Tree.getChildNodePropsOfNode() )
                     {
-                        CswNbtMetaDataFieldType.NbtFieldType FieldType = CswConvert.ToString( Prop["fieldtype"] );
                         if( DT.Columns.Contains( Prop["propname"].ToString() ) )
                         {
-                            string Val = CswConvert.ToString( Prop["gestalt"] );
-                            if( FieldType == CswNbtMetaDataFieldType.NbtFieldType.Barcode )
-                            {
-                                Val = "'" + Val + "'";
-                            }
-                            Row[Prop["propname"].ToString()] = Val;
+                            Row[Prop["propname"].ToString()] = Prop["gestalt"].ToString();
                         }
                     }
                     DT.Rows.Add( Row );
