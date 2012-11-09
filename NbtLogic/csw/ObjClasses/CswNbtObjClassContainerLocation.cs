@@ -158,25 +158,17 @@ namespace ChemSW.Nbt.ObjClasses
 
         private void _setStatus()
         {
-            bool Disposed = false;
-            bool WrongLocation = false;
             StatusOptions ContLocStatus = StatusOptions.Correct;
             if( null != Container.RelatedNodeId )
             {
                 CswNbtObjClassContainer ContainerNode = _CswNbtResources.Nodes.GetNode( Container.RelatedNodeId );
                 if( ContainerNode.Disposed.Checked == Tristate.True )
                 {
-                    Disposed = true;
                     ContLocStatus = StatusOptions.Disposed;
                 }
                 if( ContainerNode.Location.SelectedNodeId != Location.SelectedNodeId )
                 {
-                    WrongLocation = true;
-                    ContLocStatus = StatusOptions.WrongLocation;
-                }
-                if( Disposed && WrongLocation )
-                {
-                    ContLocStatus = StatusOptions.DisposedAtWrongLocation;
+                    ContLocStatus = ContLocStatus == StatusOptions.Disposed ? StatusOptions.DisposedAtWrongLocation : StatusOptions.WrongLocation;
                 }
             }
             else
