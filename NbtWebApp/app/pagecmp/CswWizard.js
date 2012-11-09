@@ -86,37 +86,58 @@
             });
 
             /* Previous Button */
-            bCell11.button({ "name": o.name + '_prev',
+            var prev = bCell11.button({ "name": o.name + '_prev',
                 'enabledText': '< Previous',
                 'disableOnClick': false,
+                'cssclass': o.name + '_prev',
+                'isEnabled': o.SelectedStep > o.StartingStep,
                 'onClick': function () {
                     var currentStepNo = _getCurrentStepNo(table);
                     if (Csw.tryExec(o.onBeforePrevious, table.$, currentStepNo)) {
                         _selectStep(table, currentStepNo - 1);
                         Csw.tryExec(o.onPrevious, table.$, currentStepNo - 1);
+                        
+                        // redundant with _selectStep, but works with new buttons
+                        if(currentStepNo-1 <= o.StartingStep) {
+                            prev.disable();
+                        }
+                        if(currentStepNo-1 < o.StepCount) {
+                            next.enable();
+                        }
                     }
                 }
             });
             /* Next Button */
-            bCell11.button({ "name": o.name + '_next',
+            var next = bCell11.button({ "name": o.name + '_next',
                 'enabledText': 'Next >',
                 'disableOnClick': false,
+                'cssclass': o.name + '_next',
                 'onClick': function () {
                     var currentStepNo = _getCurrentStepNo(table);
                     if (Csw.tryExec(o.onBeforeNext, table.$, currentStepNo)) {
                         _selectStep(table, currentStepNo + 1);
                         Csw.tryExec(o.onNext, table.$, currentStepNo + 1);
+
+                        // redundant with _selectStep, but works with new buttons
+                        if(currentStepNo+1 > o.StartingStep) {
+                            prev.enable();
+                        }
+                        if(currentStepNo+1 >= o.StepCount) {
+                            next.disable();
+                        }
                     }
                 }
             });
             /* Finish Button */
             bCell11.button({ "name": o.name + '_finish',
                 'enabledText': o.FinishText,
+                'cssclass': o.name + '_finish',
                 'onClick': function () { Csw.tryExec(o.onFinish, table); }
             });
             /* Cancel Button */
             bCell12.button({ "name": o.name + '_cancel',
                 'enabledText': 'Cancel',
+                'cssclass': o.name + '_cancel',
                 'onClick': function () { Csw.tryExec(o.onCancel, table); }
             });
 
@@ -139,19 +160,18 @@
             var ret = null;
             switch (button) {
                 case 'previous':
-                    ret = $('#' + $table.prop('id') + '_prev');
+                    ret = $('.' + $table.attr('name') + '_prev');
                     break;
                 case 'next':
-                    ret = $('#' + $table.prop('id') + '_next');
+                    ret = $('.' + $table.attr('name') + '_next');
                     break;
                 case 'finish':
-                    ret = $('#' + $table.prop('id') + '_finish');
+                    ret = $('.' + $table.attr('name') + '_finish');
                     break;
                 case 'cancel':
-                    ret = $('#' + $table.prop('id') + '_cancel');
+                    ret = $('.' + $table.attr('name') + '_cancel');
                     break;
             }
-
             switch (action) {
                 case 'enable':
                     enable(ret);
