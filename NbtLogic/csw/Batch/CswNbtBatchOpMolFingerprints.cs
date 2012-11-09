@@ -28,7 +28,7 @@ namespace ChemSW.Nbt.Batch
             if( BatchNode != null && BatchNode.OpNameValue == NbtBatchOpName.MolFingerprints )
             {
                 MolFingerprintBatchData BatchData = BatchNode.BatchData.Text;
-                return ( ( BatchData.nodeIds.Count / BatchData.totalNodes ) * 100 );
+                return ( ( (double) ( BatchData.totalNodes - BatchData.nodeIds.Count ) / BatchData.totalNodes ) * 100 );
             }
             return ret;
         } // getPercentDone()
@@ -77,13 +77,13 @@ namespace ChemSW.Nbt.Batch
                         processedThisIteration++;
                     }
 
+                    BatchNode.BatchData.Text = BatchData.ToString();
+                    BatchNode.PercentDone.Value = getPercentDone( BatchNode );
+
                     if( BatchData.nodeIds.IsEmpty )
                     {
                         BatchNode.finish();
                     }
-
-                    BatchNode.PercentDone.Value = getPercentDone( BatchNode );
-                    BatchNode.BatchData.Text = BatchData.ToString();
                     BatchNode.postChanges( false );
                 }
             }
