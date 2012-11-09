@@ -288,9 +288,66 @@ namespace ChemSW.Nbt.Schema
             RmdSizeNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Preview, true, DisplayRow: 2, DisplayColumn: 2 );
             RmdQuantityNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Preview, true, DisplayRow: 3, DisplayColumn: 1 );
 
+            //Case 27871
+            CswNbtMetaDataNodeTypeProp RmdLevelNtp = RequestMdNt.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestMaterialDispense.PropertyName.Level );
+            CswNbtMetaDataNodeTypeProp RmdIsBatchNtp = RequestMdNt.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestMaterialDispense.PropertyName.IsBatch );
+            CswNbtMetaDataNodeTypeProp RmdBatchNtp = RequestMdNt.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestMaterialDispense.PropertyName.Batch );
+            CswNbtMetaDataNodeTypeProp RmdReceiptLotsReceivedNtp = RequestMdNt.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestMaterialDispense.PropertyName.ReceiptLotsReceived );
+            CswNbtMetaDataNodeTypeProp RmdGoodsReceivedNtp = RequestMdNt.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestMaterialDispense.PropertyName.GoodsReceived );
+            CswNbtMetaDataNodeTypeProp RmdReceiptLotsToDispenseNtp = RequestMdNt.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestMaterialDispense.PropertyName.ReceiptLotToDispense );
+
+            if( _CswNbtSchemaModTrnsctn.Modules.IsModuleEnabled( CswNbtModuleName.MLM ) )
+            {
+                CswNbtMetaDataNodeTypeTab CmgTab = _CswNbtSchemaModTrnsctn.MetaData.makeNewTab( RequestMdNt, "Central Material Group" );
+                CswNbtMetaDataNodeTypeProp RmdReorderFreqNtp = RequestMdNt.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestMaterialDispense.PropertyName.ReorderFrequency );
+                RmdReorderFreqNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, CmgTab.TabId );
+
+                CswNbtMetaDataNodeTypeProp RmdNextReorderDateNtp = RequestMdNt.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestMaterialDispense.PropertyName.NextReorderDate );
+                RmdNextReorderDateNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, CmgTab.TabId );
+
+                RmdLevelNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, CmgTab.TabId );
+                RmdIsBatchNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, CmgTab.TabId );
+                RmdBatchNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, CmgTab.TabId );
+
+                CswNbtMetaDataNodeTypeProp RmdPriorityNtp = RequestMdNt.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestMaterialDispense.PropertyName.Priority );
+                RmdPriorityNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, CmgTab.TabId );
+                RmdFulfillNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, false, CmgTab.TabId );
+
+                CswNbtMetaDataNodeTypeTab ReceiveTab = _CswNbtSchemaModTrnsctn.MetaData.makeNewTab( RequestMdNt, "Receive" );
+                RmdReceiptLotsReceivedNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, ReceiveTab.TabId );
+                RmdGoodsReceivedNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, ReceiveTab.TabId );
+                RmdReceiptLotsToDispenseNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, ReceiveTab.TabId );
+            }
+            else
+            {
+                RmdLevelNtp.removeFromAllLayouts();
+                RmdIsBatchNtp.removeFromAllLayouts();
+                RmdBatchNtp.removeFromAllLayouts();
+                RmdReceiptLotsReceivedNtp.removeFromAllLayouts();
+                RmdGoodsReceivedNtp.removeFromAllLayouts();
+                RmdReceiptLotsToDispenseNtp.removeFromAllLayouts();
+            }
+
+            CswNbtView ReceiptLotGridView = _CswNbtSchemaModTrnsctn.ViewSelect.restoreView( RmdReceiptLotsReceivedNtp.ViewId );
+            ReceiptLotGridView.Root.ChildRelationships.Clear();
+            CswNbtViewRelationship RootVr = ReceiptLotGridView.AddViewRelationship( RequestMaterialDispenseOc, IncludeDefaultFilters: true );
+
+            CswNbtMetaDataObjectClass ReceiptLotOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.ReceiptLotClass );
+            CswNbtMetaDataObjectClassProp ReceiptLotRequestOcp = ReceiptLotOc.getObjectClassProp( CswNbtObjClassReceiptLot.PropertyName.RequestItem );
+            CswNbtViewRelationship LotVr = ReceiptLotGridView.AddViewRelationship( RootVr, NbtViewPropOwnerType.Second, ReceiptLotRequestOcp, IncludeDefaultFilters: true );
+
+            ReceiptLotGridView.AddViewProperty( LotVr, ReceiptLotOc.getObjectClassProp( CswNbtObjClassReceiptLot.PropertyName.ExpirationDate ) );
+            ReceiptLotGridView.AddViewProperty( LotVr, ReceiptLotOc.getObjectClassProp( CswNbtObjClassReceiptLot.PropertyName.InvestigationNotes ) );
+            ReceiptLotGridView.AddViewProperty( LotVr, ReceiptLotOc.getObjectClassProp( CswNbtObjClassReceiptLot.PropertyName.Manufacturer ) );
+            ReceiptLotGridView.AddViewProperty( LotVr, ReceiptLotOc.getObjectClassProp( CswNbtObjClassReceiptLot.PropertyName.UnderInvestigation ) );
+
+            ReceiptLotGridView.save();
+
+            //end Case 27871
+
             #endregion RequestCdNt Layout
 
-            #region RequestMcNt Layout
+            #region RequestMcNt Layout Case 27871
 
             //Add Layout: Case 27263
 
@@ -331,7 +388,7 @@ namespace ChemSW.Nbt.Schema
             RmcSupplierNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Preview, true, DisplayRow: 2, DisplayColumn: 1 );
             RmcPartNoNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Preview, true, DisplayRow: 3, DisplayColumn: 1 );
 
-            #endregion RequestMcNt Layout
+            #endregion RequestMcNt Layout Case 27871
 
             #endregion Build the new Request Item NTs
 
@@ -437,7 +494,7 @@ namespace ChemSW.Nbt.Schema
                     CswNbtViewRelationship RequestRel = GridView.AddViewRelationship( RequestItemRel,
                                                                                       NbtViewPropOwnerType.First,
                                                                                       Oc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.Request ), false );
-                    
+
                     CswNbtViewProperty CompletedVp = GridView.AddViewProperty( RequestRel, RequestOc.getObjectClassProp( CswNbtObjClassRequest.PropertyName.CompletedDate ) );
                     CompletedVp.Order = 3;
                     CompletedVp.SortBy = true;
@@ -463,7 +520,7 @@ namespace ChemSW.Nbt.Schema
                     CswNbtViewProperty StatusVp = GridView.AddViewProperty( RequestItemRel, RequestContainerUpdateOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.Status ) );
                     StatusVp.Order = 8;
                 }
-                
+
                 GridView.save();
             }
 
@@ -512,6 +569,7 @@ namespace ChemSW.Nbt.Schema
 
             #endregion Size Relationship
 
+            //Nuke the System Views from the DB
             foreach( CswNbtView View in _CswNbtSchemaModTrnsctn.ViewSelect.restoreViews( CswNbtActSystemViews.SystemViewName.CISProRequestCart.ToString() ) )
             {
                 View.Delete();
@@ -520,6 +578,24 @@ namespace ChemSW.Nbt.Schema
             {
                 View.Delete();
             }
+
+            //Case 27871: Fix ContainerDispenseTransaction's RequestItem relationship view
+            CswNbtMetaDataObjectClass CdtOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.ContainerDispenseTransactionClass );
+            foreach( CswNbtMetaDataNodeType NodeType in CdtOc.getNodeTypes() )
+            {
+                CswNbtMetaDataNodeTypeProp RequestItemNtp = NodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassContainerDispenseTransaction.PropertyName.RequestItem );
+                CswNbtView RelationshipView = _CswNbtSchemaModTrnsctn.restoreView( RequestItemNtp.ViewId );
+                RelationshipView.Root.ChildRelationships.Clear();
+                //It would probably be better to cache the Request on the ContainerDispenseTransaction and scope the relationship view down
+                //however, we're going to be assigning the relatednodeid directly and won't need to use this view to generate a picklist (which would be a performance nightmare)
+                foreach( NbtObjectClass Member in CswNbtPropertySetRequestItem.Members() )
+                {
+                    CswNbtMetaDataObjectClass MemberOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( Member );
+                    RelationshipView.AddViewRelationship( MemberOc, IncludeDefaultFilters: false );
+                }
+                RelationshipView.save();
+            }
+
         }
 
         private static CswNbtPermit.NodeTypePermission[] ViewPermissions = { CswNbtPermit.NodeTypePermission.View };

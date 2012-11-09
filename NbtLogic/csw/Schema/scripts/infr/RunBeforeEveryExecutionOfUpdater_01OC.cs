@@ -1062,6 +1062,77 @@ namespace ChemSW.Nbt.Schema
                     SetValOnAdd = false
                 } );
 
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( RequestMaterialDispenseOc )
+                {
+                    PropName = CswNbtObjClassRequestMaterialDispense.PropertyName.ReorderFrequency,
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.TimeInterval,
+                    SetValOnAdd = false
+                } );
+
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( RequestMaterialDispenseOc )
+                {
+                    PropName = CswNbtObjClassRequestMaterialDispense.PropertyName.NextReorderDate,
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.DateTime,
+                    SetValOnAdd = false
+                } );
+
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( RequestMaterialDispenseOc )
+                {
+                    PropName = CswNbtObjClassRequestMaterialDispense.PropertyName.Level,
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Relationship,
+                    SetValOnAdd = false
+                } );
+
+                CswNbtMetaDataObjectClassProp IsBatchOcp = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( RequestMaterialDispenseOc )
+                {
+                    PropName = CswNbtObjClassRequestMaterialDispense.PropertyName.IsBatch,
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Logical,
+                    IsRequired = true,
+                    SetValOnAdd = false
+                } );
+                _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( IsBatchOcp, false );
+
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( RequestMaterialDispenseOc )
+                {
+                    PropName = CswNbtObjClassRequestMaterialDispense.PropertyName.Batch,
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Relationship,
+                    SetValOnAdd = false
+                } );
+
+
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( RequestMaterialDispenseOc )
+                 {
+                     PropName = CswNbtObjClassRequestMaterialDispense.PropertyName.ReceiptLotsReceived,
+                     FieldType = CswNbtMetaDataFieldType.NbtFieldType.Grid,
+                     SetValOnAdd = false,
+                     Extended = CswNbtNodePropGrid.GridPropMode.Link.ToString(),
+
+                 } );
+
+                CswNbtMetaDataObjectClassProp GoodsReceivedOcp = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( RequestMaterialDispenseOc )
+                {
+                    PropName = CswNbtObjClassRequestMaterialDispense.PropertyName.GoodsReceived,
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Quantity,
+                    IsRequired = true,
+                    SetValOnAdd = false
+                } );
+                _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( GoodsReceivedOcp, false );
+
+                CswNbtMetaDataObjectClass ReceiptLotOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.ReceiptLotClass );
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( RequestMaterialDispenseOc )
+                {
+                    PropName = CswNbtObjClassRequestMaterialDispense.PropertyName.ReceiptLotToDispense,
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Relationship,
+                    IsFk = true,
+                    FkType = NbtViewRelatedIdType.ObjectClassId.ToString(),
+                    FkValue = ReceiptLotOc.ObjectClassId,
+                    SetValOnAdd = false
+                } );
+
+                CswNbtMetaDataObjectClassProp ReceiptLotRequestOcp = ReceiptLotOc.getObjectClassProp( CswNbtObjClassReceiptLot.PropertyName.RequestItem );
+                _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( ReceiptLotRequestOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.fktype, NbtViewRelatedIdType.ObjectClassId.ToString() );
+                _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( ReceiptLotRequestOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.fkvalue, RequestMaterialDispenseOc.ObjectClassId );
+                //We should fix ContainerDispenseTransaction too, but PropertySets aren't in the database. So we have to fix the relationship view on the NodeTypeProp.
             }
             _resetBlame();
         }
