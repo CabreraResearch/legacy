@@ -6,7 +6,7 @@ using ChemSW.Nbt.PropTypes;
 
 namespace ChemSW.Nbt.ObjClasses
 {
-    public class CswNbtObjClassTask : CswNbtObjClass, ICswNbtPropertySetGeneratorTarget
+    public class CswNbtObjClassTask : CswNbtPropertySetGeneratorTarget
     {
         public sealed class PropertyName
         {
@@ -16,26 +16,21 @@ namespace ChemSW.Nbt.ObjClasses
             public const string Owner = "Owner";
             public const string Summary = "Summary";
             public const string DoneOn = "Done On";
-            public const string IsFuture = "IsFuture";
-            public const string Generator = "Generator";
             public const string Parts = "Parts";
             public const string PartsXValue = "Service";
+            public const string IsFuture = "IsFuture";
+            public const string Generator = "Generator";
         }
-
-
-        //ICswNbtPropertySetRuleGeneratorTarget
-        public string GeneratorTargetGeneratedDatePropertyName { get { return PropertyName.DueDate; } }
-        public string GeneratorTargetIsFuturePropertyName { get { return PropertyName.IsFuture; } }
-        public string GeneratorTargetGeneratorPropertyName { get { return PropertyName.Generator; } }
-        public string GeneratorTargetParentPropertyName { get { return PropertyName.Owner; } }
-
-
-        private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
+        
+        // for CswNbtPropertySetGeneratorTarget
+        public override string ParentPropertyName { get { return PropertyName.Owner; } }
+        public override string GeneratedDatePropertyName { get { return PropertyName.DueDate; } }
+        public override string GeneratorPropertyName { get { return PropertyName.Generator; } }
+        public override string IsFuturePropertyName { get { return PropertyName.IsFuture; } }
 
         public CswNbtObjClassTask( CswNbtResources CswNbtResources, CswNbtNode Node )
             : base( CswNbtResources, Node )
         {
-            _CswNbtObjClassDefault = new CswNbtObjClassDefault( _CswNbtResources, Node );
         }//ctor()
 
         public override CswNbtMetaDataObjectClass ObjectClass
@@ -71,9 +66,8 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Inherited Events
 
-        public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
+        public override void beforePropertySetWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
-            _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
             setDoneOnDate();
             // Set the IsFuture flag = false if the node is modified
             if( !_CswNbtNode.New && ( NodeModificationState.Modified == _CswNbtNode.ModificationState ) )
@@ -88,23 +82,15 @@ namespace ChemSW.Nbt.ObjClasses
 
         }//beforeWriteNode()
 
-        public override void afterWriteNode()
+        public override void afterPropertySetWriteNode()
         {
-            _CswNbtObjClassDefault.afterWriteNode();
         }//afterWriteNode()
 
-        public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false )
+        public override void beforePropertySetDeleteNode( bool DeleteAllRequiredRelatedNodes )
         {
-            _CswNbtObjClassDefault.beforeDeleteNode( DeleteAllRequiredRelatedNodes );
+        }
 
-        }//beforeDeleteNode()
-
-        public override void afterDeleteNode()
-        {
-            _CswNbtObjClassDefault.afterDeleteNode();
-        }//afterDeleteNode()        
-
-        public override void afterPopulateProps()
+        public override void afterPropertySetPopulateProps()
         {
             if( Owner.RelatedNodeId != null )
             {
@@ -133,20 +119,10 @@ namespace ChemSW.Nbt.ObjClasses
                     this.Parts.YValues = NewYValues;
                 } // if( EquipmentOrAssemblyNode != null )
             } // if( Owner.RelatedNodeId != null )
-
-            _CswNbtObjClassDefault.afterPopulateProps();
         }//afterPopulateProps()
 
-        public override void addDefaultViewFilters( CswNbtViewRelationship ParentRelationship )
+        public override bool onPropertySetButtonClick( CswNbtMetaDataObjectClassProp OCP, NbtButtonData ButtonData )
         {
-            _CswNbtObjClassDefault.addDefaultViewFilters( ParentRelationship );
-        }
-
-        public override bool onButtonClick( NbtButtonData ButtonData )
-        {
-
-
-
             if( null != ButtonData && null != ButtonData.NodeTypeProp ) { /*Do Something*/ }
             return true;
         }
@@ -154,18 +130,19 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Object class specific properties
 
-        public CswNbtNodePropDateTime GeneratedDate { get { return ( _CswNbtNode.Properties[GeneratorTargetGeneratedDatePropertyName] ); } }
         public CswNbtNodePropDateTime DoneOn { get { return ( _CswNbtNode.Properties[PropertyName.DoneOn] ); } }
         public CswNbtNodePropDateTime DueDate { get { return ( _CswNbtNode.Properties[PropertyName.DueDate] ); } }
-        public CswNbtNodePropLogical IsFuture { get { return ( _CswNbtNode.Properties[PropertyName.IsFuture] ); } }
         public CswNbtNodePropLogical Completed { get { return ( _CswNbtNode.Properties[PropertyName.Completed] ); } }
         public CswNbtNodePropMemo Description { get { return ( _CswNbtNode.Properties[PropertyName.Description] ); } }
-        public CswNbtNodePropRelationship Generator { get { return ( _CswNbtNode.Properties[PropertyName.Generator] ); } }
         public CswNbtNodePropRelationship Owner { get { return ( _CswNbtNode.Properties[PropertyName.Owner] ); } }
         public CswNbtNodePropText Summary { get { return ( _CswNbtNode.Properties[PropertyName.Summary] ); } }
-        public CswNbtNodePropRelationship Parent { get { return ( _CswNbtNode.Properties[GeneratorTargetParentPropertyName] ); } }
         public CswNbtNodePropLogicalSet Parts { get { return ( _CswNbtNode.Properties[PropertyName.Parts] ); } }
 
+        public override CswNbtNodePropDateTime GeneratedDate { get { return ( _CswNbtNode.Properties[GeneratedDatePropertyName] ); } }
+        public override CswNbtNodePropRelationship Parent { get { return ( _CswNbtNode.Properties[ParentPropertyName] ); } }
+        public override CswNbtNodePropRelationship Generator { get { return ( _CswNbtNode.Properties[GeneratorPropertyName] ); } }
+        public override CswNbtNodePropLogical IsFuture { get { return ( _CswNbtNode.Properties[IsFuturePropertyName] ); } }
+        
         #endregion
 
 
