@@ -34,7 +34,7 @@ namespace ChemSW.Nbt.Batch
         } // getPercentDone()
 
         /// <summary>
-        /// Create a new batch operation to update materials regulatory lists property
+        /// Create a new batch operation to update the mols with no fingerprints
         /// </summary>
         public CswNbtObjClassBatchOp makeBatchOp( CswCommaDelimitedString nodeIds, CswCommaDelimitedString propIds, int nodesPerIteration )
         {
