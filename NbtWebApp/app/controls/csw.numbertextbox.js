@@ -87,7 +87,7 @@
                     if (Csw.isNumber(cswPrivate.maxLength)) {
                         $.validator.addMethod(cswPrivate.name + '_validateMaxLength', function (value, element) {
                             return (Csw.tryExec(cswPrivate.isValid, value) || this.optional(element) || Csw.validateMaxLength($(element).val(), cswPrivate.maxLength));
-                        }, 'Number must contain a most ' + cswPrivate.maxLength + ' digits');
+                        }, 'Number must contain at most ' + cswPrivate.maxLength + ' digits');
                         cswPublic.addClass(cswPrivate.name + '_validateMaxLength');
                     }
 

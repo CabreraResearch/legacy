@@ -38,45 +38,6 @@
             };
             var cswPublic = {};
 
-            cswPublic.enable = function () {
-                /// <summary>Enable the button.</summary>
-                /// <returns type="button">The button object.</returns>
-                cswPrivate.isEnabled = true;
-                if (cswPublic.length() > 0) {
-                    cswPublic.$.button({
-                        label: cswPublic.propNonDom('enabledText'),
-                        disabled: false
-                    });
-                }
-                return cswPublic;
-            };
-            cswPublic.disable = function () {
-                /// <summary>Disable the button.</summary>
-                /// <returns type="button">The button object.</returns>
-                cswPrivate.isEnabled = false;
-                if (cswPublic.length() > 0) {
-                    cswPublic.$.button({
-                        label: cswPublic.propNonDom('disabledText'),
-                        disabled: true
-                    });
-                }
-                return cswPublic;
-            };
-
-            cswPublic.click = function (func) {
-                /// <summary>Trigger or assign a button click event.</summary>
-                /// <param name="func" type="Function">(Optional) A function to bind to the control.</param>
-                /// <returns type="button">The button object.</returns>
-                if (Csw.isFunction(func)) {
-                    cswPublic.bind('click', func);
-                } else {
-                    if (cswPrivate.isEnabled) {
-                        cswPublic.trigger('click');
-                    }
-                }
-                return cswPublic;
-            };
-
             (function () {
                 if (options) {
                     Csw.extend(cswPrivate, options);
@@ -120,18 +81,60 @@
                 buttonOpt = {
                     text: Csw.bool(cswPrivate.hasText),
                     label: cswPrivate.enabledText,
-                    disabled: Csw.bool(cswPrivate.ReadOnly),
+                    disabled: Csw.bool(cswPrivate.ReadOnly) || false === Csw.bool(cswPrivate.isEnabled),
                     icons: {
                         primary: cswPrivate.primaryicon,
                         secondary: cswPrivate.secondaryicon
                     }
                 };
-                if (buttonOpt.disabled) {
+                if (buttonOpt.disabled && false === Csw.isNullOrEmpty(cswPrivate.disabledText)) {
                     buttonOpt.label = cswPrivate.disabledText;
                 }
                 cswPublic.$.button(buttonOpt);
 
             } ());
+
+
+            
+            cswPublic.enable = function () {
+                /// <summary>Enable the button.</summary>
+                /// <returns type="button">The button object.</returns>
+                cswPrivate.isEnabled = true;
+                if (cswPublic.length() > 0) {
+                    cswPublic.$.button({
+                        label: cswPublic.propNonDom('enabledText'),
+                        disabled: false
+                    });
+                }
+                return cswPublic;
+            };
+            cswPublic.disable = function () {
+                /// <summary>Disable the button.</summary>
+                /// <returns type="button">The button object.</returns>
+                cswPrivate.isEnabled = false;
+                if (cswPublic.length() > 0) {
+                    cswPublic.$.button({
+                        label: cswPublic.propNonDom('disabledText'),
+                        disabled: true
+                    });
+                }
+                return cswPublic;
+            };
+
+            cswPublic.click = function (func) {
+                /// <summary>Trigger or assign a button click event.</summary>
+                /// <param name="func" type="Function">(Optional) A function to bind to the control.</param>
+                /// <returns type="button">The button object.</returns>
+                if (Csw.isFunction(func)) {
+                    cswPublic.bind('click', func);
+                } else {
+                    if (cswPrivate.isEnabled) {
+                        cswPublic.trigger('click');
+                    }
+                }
+                return cswPublic;
+            };
+
 
             return cswPublic;
         });

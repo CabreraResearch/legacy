@@ -28,7 +28,6 @@ namespace ChemSW.Nbt.ObjClasses
             public static string Summary = "Summary";
             public static string ParentType = "Parent Type";
             public static string ParentView = "Parent View";
-            public static string RunNow = "Run Now";
         }
 
 
@@ -40,7 +39,6 @@ namespace ChemSW.Nbt.ObjClasses
         public string SchedulerWarningDaysPropertyName { get { return PropertyName.WarningDays; } }
         public string SchedulerDueDateIntervalPropertyName { get { return PropertyName.DueDateInterval; } }
         public string SchedulerRunTimePropertyName { get { return PropertyName.RunTime; } }
-        public string SchedulerRunNowPropertyName { get { return PropertyName.RunNow; } }
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
         private CswNbtPropertySetSchedulerImpl _CswNbtPropertySetSchedulerImpl;
@@ -86,9 +84,7 @@ namespace ChemSW.Nbt.ObjClasses
             _setDefaultValues();
 
             //Case 24572
-            bool DeleteFutureNodes = ( TargetType.WasModified || ParentType.WasModified );
-            _CswNbtPropertySetSchedulerImpl.updateNextDueDate( DeleteFutureNodes );
-
+            updateNextDueDate( ForceUpdate: false, DeleteFutureNodes: ( TargetType.WasModified || ParentType.WasModified ) );
 
             _trySetNodeTypeSelectDefaultValues();
 
@@ -276,6 +272,11 @@ namespace ChemSW.Nbt.ObjClasses
         public override void afterPopulateProps()
         {
             DueDateInterval.SetOnPropChange( OnDueDateIntervalChange );
+
+            // case 28146
+            WarningDays.MinValue = 0;
+            WarningDays.MaxValue = DueDateInterval.getMaximumWarningDays();
+
             _CswNbtObjClassDefault.afterPopulateProps();
         }//afterPopulateProps()
 
@@ -286,22 +287,9 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override bool onButtonClick( NbtButtonData ButtonData )
         {
-
-
-
-
             CswNbtMetaDataObjectClassProp OCP = ButtonData.NodeTypeProp.getObjectClassProp();
             if( null != ButtonData.NodeTypeProp && null != OCP )
             {
-                if( PropertyName.RunNow == OCP.PropName )
-                {
-                    NextDueDate.DateTimeValue = DateTime.Now;
-                    //case 25702 - empty comment?
-                    //RunStatus.StaticText = string.Empty;
-                    //RunStatus_new.a
-                    Node.postChanges( false );
-                    ButtonData.Action = NbtButtonAction.refresh;
-                }
             }
             return true;
         }
@@ -341,6 +329,13 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 RunTime.setHidden( value: false, SaveToDb: true );
             }
+
+            Int32 max = DueDateInterval.getMaximumWarningDays();
+            if( WarningDays.Value > max )
+            {
+                WarningDays.Value = max;
+            }
+
         } // OnDueDateIntervalChange
         public CswNbtNodePropDateTime RunTime { get { return ( _CswNbtNode.Properties[PropertyName.RunTime] ); } }
         public CswNbtNodePropLogical Enabled { get { return ( _CswNbtNode.Properties[PropertyName.Enabled] ); } }
@@ -355,12 +350,12 @@ namespace ChemSW.Nbt.ObjClasses
         /// </summary>
         public CswNbtNodePropViewReference ParentView { get { return ( _CswNbtNode.Properties[PropertyName.ParentView] ); } }
 
-        /// <summary>
-        /// Run Now button clears the Last Run Date thereby forcing scheduler to process the Generator node on its next iteration 
-        /// </summary>
-        public CswNbtNodePropButton RunNow { get { return ( _CswNbtNode.Properties[PropertyName.RunNow] ); } }
-
         #endregion
+
+        public void updateNextDueDate( bool ForceUpdate, bool DeleteFutureNodes )
+        {
+            _CswNbtPropertySetSchedulerImpl.updateNextDueDate( ForceUpdate, DeleteFutureNodes );
+        }
 
     }//CswNbtObjClassGenerator
 
