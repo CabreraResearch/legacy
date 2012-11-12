@@ -50,10 +50,19 @@ namespace ChemSW.Nbt
                 if( NodesTable.Columns.Contains( _CswAuditMetaData.AuditLevelColName ) )
                 {
                     CswNbtNode.AuditLevel = NodesTable.Rows[0][_CswAuditMetaData.AuditLevelColName].ToString();
-                    ReturnVal = true;
+                }
+                else
+                {
+                    CswNbtNode.AuditLevel = _CswAuditMetaData.DefaultAuditLevel;
                 }
             }
+
+            ReturnVal = true;
+
+
             return ( ReturnVal );
+
+
             //CswNbtNode.Modified = false; //bz # 5943
         }//fetchNodeInfo()
 
