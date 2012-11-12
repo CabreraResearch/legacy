@@ -69,12 +69,21 @@ namespace ChemSW.Nbt.Sched
                                         where ntp.fieldtypeid = (select fieldtypeid from field_types ft where ft.fieldtype = 'MOL')
                                             and jnp.clobdata is not null 
                                             and not exists (select nodeid from mol_keys where nodeid = jnp.nodeid)";
-
                     CswArbitrarySelect arbSelect = _CswNbtResources.makeCswArbitrarySelect( "getNonFingerprintedMols", sql );
-                    DataTable jctnodesprops = arbSelect.getTable();
-                    foreach( DataRow row in jctnodesprops.Rows )
+
+                    int lowerBound = 0;
+                    int upperBound = 100;
+                    DataTable jctnodesprops = arbSelect.getTable( lowerBound, upperBound, false, false );
+
+                    while( jctnodesprops.Rows.Count > 0 )
                     {
-                        nonFingerprintedMols.Add( row["nodeid"].ToString() );
+                        foreach( DataRow row in jctnodesprops.Rows )
+                        {
+                            nonFingerprintedMols.Add( row["nodeid"].ToString() );
+                        }
+                        lowerBound += 100;
+                        upperBound += 100;
+                        jctnodesprops = arbSelect.getTable( lowerBound, upperBound, false, false );
                     }
 
                     CswNbtBatchOpMolFingerprints batchOp = new CswNbtBatchOpMolFingerprints( _CswNbtResources );
