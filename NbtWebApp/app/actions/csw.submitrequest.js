@@ -27,6 +27,24 @@
                 cswParent.empty();
             }());
 
+            cswPrivate.makeRequestCreateMaterial = function() {
+                Csw.ajaxWcf.get({
+                    urlMethod: 'Requests/findMaterialCreate',
+                    success: function(data) {
+                        if(data.NodeTypeId) {
+                            $.CswDialog('AddNodeDialog', {
+                                text: 'New Create Material Request',
+                                nodetypeid: data.NodeTypeId,
+                                onAddNode: function() {
+                                    cswPublic.grid.reload();
+                                    Csw.publish(Csw.enums.events.main.refreshHeader);
+                                }
+                            });
+                        }
+                    }
+                });
+            };
+
             cswPrivate.submitRequest = function () {
                 Csw.ajax.post({
                     urlMethod: 'submitRequest',
@@ -174,7 +192,7 @@
                     icon: 'Images/newicons/16/cart.png',
                     disabled: false,
                     handler: function () {
-                        //Do AJAX request
+                        cswPrivate.makeRequestCreateMaterial();
                     } // delete handler
                 });
 
@@ -235,7 +253,8 @@
                     })
                 });
 
-            });
+            }());
+            
             return cswPublic;
         });
 }());

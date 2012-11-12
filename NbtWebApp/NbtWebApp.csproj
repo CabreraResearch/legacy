@@ -121,6 +121,9 @@
     <Compile Include="Services\Reports.svc.cs">
       <DependentUpon>Reports.svc</DependentUpon>
     </Compile>
+    <Compile Include="Services\Requests.svc.cs">
+      <DependentUpon>Requests.svc</DependentUpon>
+    </Compile>
     <Compile Include="Services\Session.svc.cs">
       <DependentUpon>Session.svc</DependentUpon>
     </Compile>
@@ -1035,6 +1038,7 @@
     <Content Include="Deprecated\Main.js" />
     <Content Include="Popup_DesignAdd.aspx" />
     <Content Include="Popup_DesignDelete.aspx" />
+    <Content Include="Services\Requests.svc" />
     <Content Include="Services\Session.svc" />
     <Content Include="SkinPrint\Calendar.ChemSWPrint.css" />
     <Content Include="SkinPrint\Calendar\arrowLeft.gif" />
@@ -1397,10 +1401,6 @@
       <SubType>Designer</SubType>
     </Content>
     <Content Include="Web.Release.config">
-      <DependentUpon>Web.config</DependentUpon>
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="Web.Debug %28Fast%29.config">
       <DependentUpon>Web.config</DependentUpon>
       <SubType>Designer</SubType>
     </Content>

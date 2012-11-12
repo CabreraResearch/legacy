@@ -1,0 +1,1 @@
+﻿<%@ ServiceHost Language="C#" Debug="true" Service="NbtWebApp.Services.Service1" CodeBehind="Requests.svc.cs" %>

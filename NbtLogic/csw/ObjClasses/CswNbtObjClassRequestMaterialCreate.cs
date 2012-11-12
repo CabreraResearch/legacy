@@ -243,11 +243,12 @@ namespace ChemSW.Nbt.ObjClasses
         private CswNbtObjClassMaterial _getExistingMaterial()
         {
             CswNbtObjClassMaterial Ret = null;
-            Int32 SelectedNodeTypeId = NewMaterialType.SelectedNodeTypeIds.ToIntCollection().First();
+            Int32 SelectedNodeTypeId = NewMaterialType.SelectedNodeTypeIds.ToIntCollection().FirstOrDefault();
             CswPrimaryKey Supplier = NewMaterialSupplier.RelatedNodeId;
             string Tradename = NewMaterialTradename.Text;
             string PartNo = NewMaterialPartNo.Text;
-            if( Int32.MinValue != SelectedNodeTypeId && CswTools.IsPrimaryKey( Supplier ) && false == string.IsNullOrEmpty( Tradename ) )
+            if( SelectedNodeTypeId > 0 //Default for Int32 is 0
+                && CswTools.IsPrimaryKey( Supplier ) && false == string.IsNullOrEmpty( Tradename ) )
             {
                 Ret = CswNbtObjClassMaterial.getExistingMaterial( _CswNbtResources, SelectedNodeTypeId, Supplier, Tradename, PartNo );
             }
