@@ -5,6 +5,8 @@ using System.Data;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
+using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.ObjClasses;
 
 namespace ChemSW.Nbt
 {
@@ -28,7 +30,7 @@ namespace ChemSW.Nbt
             {
                 if( CswNbtModuleName.Unknown != ModuleName )
                 {
-                    _ModuleRules.Add( ModuleName, CswNbtModuleRuleFactory.makeModuleRule( _CswNbtResources, ModuleName ) );
+                    _ModuleRules.Add( ModuleName.ToString().ToLower(), CswNbtModuleRuleFactory.makeModuleRule( _CswNbtResources, ModuleName ) );
                 }
             }
 
@@ -41,7 +43,7 @@ namespace ChemSW.Nbt
                 {
                     try
                     {
-                        CswNbtModuleRule ModuleRule = _ModuleRules[ModuleRow["name"].ToString()];
+                        CswNbtModuleRule ModuleRule = _ModuleRules[CswConvert.ToString( ModuleRow["name"] ).ToLower()];
                         if( null != ModuleRule )
                         {
                             ModuleRule.Enabled = CswConvert.ToBoolean( ModuleRow["enabled"].ToString() );
@@ -50,8 +52,8 @@ namespace ChemSW.Nbt
                     catch( Exception ex )
                     {
                         throw new CswDniException( ErrorType.Error,
-                                                   "Invalid Module",
-                                                   "An invalid module was detected in the Modules table: " + ModuleRow["name"].ToString(), ex );
+                                                   "Invalid Module: " + CswConvert.ToString( ModuleRow["name"] ),
+                                                   "An invalid module was detected in the Modules table: " + CswConvert.ToString( ModuleRow["name"] ), ex );
                     }
                 }
             } // if( _CswResources.IsInitializedForDbAccess )
@@ -133,16 +135,23 @@ namespace ChemSW.Nbt
                 CswNbtModuleName Module = ModuleRow["name"].ToString();
                 //Enum.TryParse( ModuleRow["name"].ToString(), true, out Module );
                 ModulesToEnable = ModulesToEnable ?? new Collection<CswNbtModuleName>();
+                bool Enabled = CswConvert.ToBoolean( ModuleRow["enabled"] );
                 if( ModulesToEnable.Contains( Module ) )
                 {
-                    ModuleRow["enabled"] = CswConvert.ToDbVal( true );
-                    _ModuleRules[Module].OnEnable();
+                    if( false == Enabled )
+                    {
+                        ModuleRow["enabled"] = CswConvert.ToDbVal( true );
+                        _ModuleRules[Module].OnEnable();
+                    }
                 }
                 ModulesToDisable = ModulesToDisable ?? new Collection<CswNbtModuleName>();
                 if( ModulesToDisable.Contains( Module ) )
                 {
-                    ModuleRow["enabled"] = CswConvert.ToDbVal( false );
-                    _ModuleRules[Module].OnDisable();
+                    if( Enabled )
+                    {
+                        ModuleRow["enabled"] = CswConvert.ToDbVal( false );
+                        _ModuleRules[Module].OnDisable();
+                    }
                 }
             }
             ret = ModulesUpdate.update( ModulesTable );
@@ -179,6 +188,110 @@ namespace ChemSW.Nbt
             initModules();
         }
 
+        /// <summary>
+        /// Convenience function for hiding User nodes. Entering 'cispro' for the modulename param will hide all users with 'cispro' in the username.
+        /// </summary>
+        /// <param name="hidden">True if the nodes should be hidden</param>
+        /// <param name="modulename">The module of the nodes to hide</param>
+        public void ToggleUserNodes( bool hidden, string modulename )
+        {
+            CswNbtMetaDataObjectClass userOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.UserClass );
+            CswNbtMetaDataObjectClassProp usernameOCP = userOC.getObjectClassProp( CswNbtObjClassUser.PropertyName.Username );
+            CswNbtView usersView = new CswNbtView( _CswNbtResources );
+            CswNbtViewRelationship parent = usersView.AddViewRelationship( userOC, false );
+            usersView.AddViewPropertyAndFilter( parent,
+                MetaDataProp: usernameOCP,
+                Value: modulename,
+                SubFieldName: CswNbtSubField.SubFieldName.Text,
+                FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Contains );
+
+            ICswNbtTree cisproUsersTree = _CswNbtResources.Trees.getTreeFromView( usersView, false, true, true );
+            int count = cisproUsersTree.getChildNodeCount();
+            for( int i = 0; i < count; i++ )
+            {
+                cisproUsersTree.goToNthChild( i );
+                CswNbtNode userNode = cisproUsersTree.getNodeForCurrentPosition();
+                userNode.Hidden = hidden;
+                userNode.postChanges( false );
+                cisproUsersTree.goToParentNode();
+            }
+        }
+
+        /// <summary>
+        /// Convenience function for hiding Role nodes. Entering 'cispro' for the modulename param will hide all Roels with 'cispro' in the name.
+        /// </summary>
+        /// <param name="hidden">True if the nodes should be hidden</param>
+        /// <param name="modulename">The module of the nodes to hide</param>
+        public void ToggleRoleNodes( bool hidden, string modulename )
+        {
+            CswNbtMetaDataObjectClass roleOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.RoleClass );
+            CswNbtMetaDataObjectClassProp nameOCP = roleOC.getObjectClassProp( CswNbtObjClassRole.PropertyName.Name );
+            CswNbtView rolesView = new CswNbtView( _CswNbtResources );
+            CswNbtViewRelationship parent = rolesView.AddViewRelationship( roleOC, false );
+            rolesView.AddViewPropertyAndFilter( parent,
+                MetaDataProp: nameOCP,
+                Value: modulename,
+                SubFieldName: CswNbtSubField.SubFieldName.Text,
+                FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Contains );
+
+            ICswNbtTree cisproUsersTree = _CswNbtResources.Trees.getTreeFromView( rolesView, false, true, true );
+            int count = cisproUsersTree.getChildNodeCount();
+            for( int i = 0; i < count; i++ )
+            {
+                cisproUsersTree.goToNthChild( i );
+                CswNbtNode userNode = cisproUsersTree.getNodeForCurrentPosition();
+                userNode.Hidden = hidden;
+                userNode.postChanges( false );
+                cisproUsersTree.goToParentNode();
+            }
+        }
+
+        /// <summary>
+        /// Convenience function for hiding views (null safe)
+        /// </summary>
+        /// <param name="hidden">True if the view should be hidden</param>
+        /// <param name="viewName">The name of the view to hide/unhide</param>
+        public void ToggleView( bool hidden, string viewName, NbtViewVisibility Visibility = null )
+        {
+            Visibility = Visibility ?? NbtViewVisibility.Global;
+            DataTable viewDT = _CswNbtResources.ViewSelect.getView( viewName, Visibility, null, null );
+            if( viewDT.Rows.Count == 1 )
+            {
+                CswNbtView view = _CswNbtResources.ViewSelect.restoreView( viewDT.Rows[0]["viewxml"].ToString() );
+                if( null != view )
+                {
+                    if( hidden )
+                    {
+                        view.SetVisibility( NbtViewVisibility.Hidden, null, null );
+                    }
+                    else
+                    {
+                        view.SetVisibility( NbtViewVisibility.Global, null, null );
+                    }
+                    view.save();
+                }
+            }
+            if( Visibility == NbtViewVisibility.Global )
+            {
+                //Case 28124: If we're toggling a 2nd time, the View Visibility will be hidden
+                ToggleView( hidden, viewName, NbtViewVisibility.Hidden );
+            }
+        }
+
+        /// <summary>
+        /// Convenience function for hiding all views in a category
+        /// </summary>
+        /// <param name="hidden">true if the views should be hidden</param>
+        /// <param name="category">the category to get all views in</param>
+        public void ToggleViewsInCategory( bool hidden, string category )
+        {
+            CswTableSelect tu = _CswNbtResources.makeCswTableSelect( "toggleViewsInCategory_26717", "node_views" );
+            DataTable nodeviews = tu.getTable( "where category = '" + category + "'" );
+            foreach( DataRow row in nodeviews.Rows )
+            {
+                _CswNbtResources.Modules.ToggleView( hidden, row["viewname"].ToString() );
+            }
+        }
 
     } // class CswNbtModuleManager
 

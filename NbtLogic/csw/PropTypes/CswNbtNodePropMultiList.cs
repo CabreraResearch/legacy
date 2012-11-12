@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Xml;
-using System.Xml.Linq;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
@@ -289,27 +287,6 @@ namespace ChemSW.Nbt.PropTypes
 
         #region Serialization
 
-        public override void ToXml( XmlNode ParentNode )
-        {
-            CswXmlDocument.AppendXmlNode( ParentNode, _ValueSubField.ToXmlNodeName(), Value.ToString() );
-            XmlNode OptionsNode = CswXmlDocument.AppendXmlNode( ParentNode, "Options" );
-            foreach( string Key in this.Options.Keys )
-            {
-                XmlNode OptionNode = CswXmlDocument.AppendXmlNode( OptionsNode, "Option" );
-                CswXmlDocument.AppendXmlAttribute( OptionNode, "value", Key );
-                CswXmlDocument.AppendXmlAttribute( OptionNode, "text", Options[Key] );
-                CswXmlDocument.AppendXmlAttribute( OptionNode, "selected", Value.Contains( Key ).ToString().ToLower() );
-            }
-            CswXmlDocument.AppendXmlNode( ParentNode, "readonlyless", CollapsedReadOnlyValue );
-            CswXmlDocument.AppendXmlNode( ParentNode, "readonlymore", ExpandedReadOnlyValue );
-        }
-
-        public override void ToXElement( XElement ParentNode )
-        {
-            //ParentNode.Add( new XElement( _ValueSubField.ToXmlNodeName(true), Value ),
-            //    new XElement( "options", Options.ToString() ) );
-        }
-
         public override void ToJSON( JObject ParentObject )
         {
             ParentObject[_ValueSubField.ToXmlNodeName( true )] = Value.ToString();
@@ -327,21 +304,6 @@ namespace ChemSW.Nbt.PropTypes
             ParentObject["readonlyless"] = CollapsedReadOnlyValue;
             ParentObject["readonlymore"] = ExpandedReadOnlyValue;
         } // ToJSON()
-
-        public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
-        {
-            CswCommaDelimitedString NewValue = new CswCommaDelimitedString();
-            NewValue.FromString( CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _ValueSubField.ToXmlNodeName() ) );
-            Value = NewValue;
-        }
-
-        public override void ReadXElement( XElement XmlNode, Dictionary<int, int> NodeMap, Dictionary<int, int> NodeTypeMap )
-        {
-            //if( null != XmlNode.Element( _ValueSubField.ToXmlNodeName(true) ) )
-            //{
-            //    Value = XmlNode.Element( _ValueSubField.ToXmlNodeName(true) ).Value;
-            //}
-        }
 
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {

@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Xml;
-using System.Xml.Linq;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
@@ -82,20 +80,35 @@ namespace ChemSW.Nbt.PropTypes
                 return _CswNbtMetaDataNodeTypeProp.NumberPrecision;
             }
         }
+
+        private double _MinValue = Double.NaN;
         public double MinValue
         {
             get
             {
-                return _CswNbtMetaDataNodeTypeProp.MinValue;
+                if( Double.IsNaN( _MinValue ) )
+                {
+                    _MinValue = _CswNbtMetaDataNodeTypeProp.MinValue;
+                }
+                return _MinValue;
             }
-        }
+            set { _MinValue = value; }
+        } // MinValue
+
+
+        private double _MaxValue = Double.NaN;
         public double MaxValue
         {
             get
             {
-                return _CswNbtMetaDataNodeTypeProp.MaxValue;
+                if( Double.IsNaN( _MaxValue ) )
+                {
+                    _MaxValue = _CswNbtMetaDataNodeTypeProp.MaxValue;
+                }
+                return _MaxValue;
             }
-        }
+            set { _MaxValue = value; }
+        } // MaxValue
 
         /// <summary>
         /// When set to true, the MinValue and MaxValue limits are not included in the allowed number range.
@@ -108,26 +121,6 @@ namespace ChemSW.Nbt.PropTypes
             }
         }
 
-        public override void ToXml( XmlNode ParentNode )
-        {
-            XmlNode ValueNode = CswXmlDocument.AppendXmlNode( ParentNode, _ValueSubField.ToXmlNodeName() );
-            if( !Double.IsNaN( Value ) )
-            {
-                ValueNode.InnerText = Value.ToString();
-            }
-            CswXmlDocument.AppendXmlAttribute( ValueNode, "minvalue", MinValue.ToString() );
-            CswXmlDocument.AppendXmlAttribute( ValueNode, "maxvalue", MaxValue.ToString() );
-            CswXmlDocument.AppendXmlAttribute( ValueNode, "precision", Precision.ToString() );
-        }
-
-        public override void ToXElement( XElement ParentNode )
-        {
-            ParentNode.Add( new XElement( _ValueSubField.ToXmlNodeName( true ), ( !Double.IsNaN( Value ) ) ? Value.ToString() : string.Empty,
-                                          new XAttribute( "minvalue", MinValue.ToString() ),
-                                          new XAttribute( "maxvalue", MaxValue.ToString() ),
-                                          new XAttribute( "precision", Precision.ToString() ) ) );
-        }
-
         public override void ToJSON( JObject ParentObject )
         {
             ParentObject[_ValueSubField.ToXmlNodeName( true )] = ( !Double.IsNaN( Value ) ) ? Value.ToString() : string.Empty;
@@ -135,19 +128,6 @@ namespace ChemSW.Nbt.PropTypes
             ParentObject["maxvalue"] = MaxValue.ToString();
             ParentObject["precision"] = Precision.ToString();
             ParentObject["excludeRangeLimits"] = ExcludeRangeLimits.ToString();
-        }
-
-        public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
-        {
-            Value = CswXmlDocument.ChildXmlNodeValueAsDouble( XmlNode, _ValueSubField.ToXmlNodeName() );
-        }
-
-        public override void ReadXElement( XElement XmlNode, Dictionary<int, int> NodeMap, Dictionary<int, int> NodeTypeMap )
-        {
-            if( null != XmlNode.Element( _ValueSubField.ToXmlNodeName( true ) ) )
-            {
-                Value = CswConvert.ToDouble( XmlNode.Element( _ValueSubField.ToXmlNodeName( true ) ).Value );
-            }
         }
 
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )

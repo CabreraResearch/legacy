@@ -1,11 +1,20 @@
 using ChemSW.Nbt.MetaData;
-using Newtonsoft.Json.Linq;
-using ChemSW.Nbt.PropTypes;
 
 namespace ChemSW.Nbt.ObjClasses
 {
     public class CswNbtObjClassGeneric : CswNbtObjClass
     {
+        #region Enums
+        /// <summary>
+        /// Object Class property names
+        /// </summary>
+        public sealed class PropertyName
+        {
+
+        }
+
+        #endregion Enums
+
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
 
         public CswNbtObjClassGeneric( CswNbtResources CswNbtResources, CswNbtNode Node )
@@ -16,7 +25,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
-            get { return _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.GenericClass ); }
+            get { return _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.GenericClass ); }
         }
 
         /// <summary>
@@ -25,7 +34,7 @@ namespace ChemSW.Nbt.ObjClasses
         public static implicit operator CswNbtObjClassGeneric( CswNbtNode Node )
         {
             CswNbtObjClassGeneric ret = null;
-            if( null != Node && _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.GenericClass ) )
+            if( null != Node && _Validate( Node, NbtObjectClass.GenericClass ) )
             {
                 ret = (CswNbtObjClassGeneric) Node.ObjClass;
             }
@@ -45,9 +54,9 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault.afterWriteNode();
         }//afterWriteNode()
 
-        public override void beforeDeleteNode(bool DeleteAllRequiredRelatedNodes = false)
+        public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false )
         {
-            _CswNbtObjClassDefault.beforeDeleteNode(DeleteAllRequiredRelatedNodes);
+            _CswNbtObjClassDefault.beforeDeleteNode( DeleteAllRequiredRelatedNodes );
 
         }//beforeDeleteNode()
 
@@ -68,9 +77,9 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override bool onButtonClick( NbtButtonData ButtonData )
         {
-            
-            
-            
+
+
+
             if( null != ButtonData && null != ButtonData.NodeTypeProp ) { /*Do Something*/ }
             return true;
         }

@@ -8,7 +8,7 @@
         Csw.controls.register('numberTextBox', function (cswParent, options) {
             'use strict';
             var cswPrivate = {
-                ID: '',
+                name: '',
                 value: '',
                 cssclass: '',
                 type: Csw.enums.inputTypes.text,
@@ -16,7 +16,7 @@
                 MaxValue: '',
                 Precision: '',
                 ReadOnly: false,
-                Required: false,
+                isRequired: false,
                 onChange: function () {
                 },
                 width: '',
@@ -74,46 +74,46 @@
                     });
 
                     if (precision === undefined || precision <= 0) {
-                        $.validator.addMethod(cswPrivate.ID + '_validateInteger', function (value, element) {
+                        $.validator.addMethod(cswPrivate.name + '_validateInteger', function (value, element) {
                             return (Csw.tryExec(cswPrivate.isValid, value) || this.optional(element) || Csw.validateInteger($(element).val()));
                         }, 'Value must be an integer');
-                        cswPublic.addClass(cswPrivate.ID + '_validateInteger');
+                        cswPublic.addClass(cswPrivate.name + '_validateInteger');
                     } else {
-                        $.validator.addMethod(cswPrivate.ID + '_validateFloatPrecision', function (value, element) {
+                        $.validator.addMethod(cswPrivate.name + '_validateFloatPrecision', function (value, element) {
                             return (Csw.tryExec(cswPrivate.isValid, value) || this.optional(element) || Csw.validateFloatPrecision($(element).val(), precision));
                         }, 'Value must be numeric');
-                        cswPublic.addClass(cswPrivate.ID + '_validateFloatPrecision');
+                        cswPublic.addClass(cswPrivate.name + '_validateFloatPrecision');
                     }
                     if (Csw.isNumber(cswPrivate.maxLength)) {
-                        $.validator.addMethod(cswPrivate.ID + '_validateMaxLength', function (value, element) {
+                        $.validator.addMethod(cswPrivate.name + '_validateMaxLength', function (value, element) {
                             return (Csw.tryExec(cswPrivate.isValid, value) || this.optional(element) || Csw.validateMaxLength($(element).val(), cswPrivate.maxLength));
-                        }, 'Number must contain a most ' + cswPrivate.maxLength + ' digits');
-                        cswPublic.addClass(cswPrivate.ID + '_validateMaxLength');
+                        }, 'Number must contain at most ' + cswPrivate.maxLength + ' digits');
+                        cswPublic.addClass(cswPrivate.name + '_validateMaxLength');
                     }
 
                     if (Csw.isNumber(minValue) && Csw.isNumeric(minValue)) {
-                        $.validator.addMethod(cswPrivate.ID + '_validateFloatMinValue', function (value, element) {
+                        $.validator.addMethod(cswPrivate.name + '_validateFloatMinValue', function (value, element) {
                             return (Csw.tryExec(cswPrivate.isValid, value) || this.optional(element) || Csw.validateFloatMinValue($(element).val(), minValue, cswPrivate.excludeRangeLimits));
                         }, 'Number must be greater than' + (Csw.bool(cswPrivate.excludeRangeLimits) ? ' ' : ' or equal to ') + minValue);
-                        cswPublic.addClass(cswPrivate.ID + '_validateFloatMinValue');
+                        cswPublic.addClass(cswPrivate.name + '_validateFloatMinValue');
                     }
                     if (Csw.isNumber(maxValue) &&
                         Csw.isNumeric(maxValue) &&
                             maxValue > minValue) {
-                        $.validator.addMethod(cswPrivate.ID + '_validateFloatMaxValue', function (value, element) {
+                        $.validator.addMethod(cswPrivate.name + '_validateFloatMaxValue', function (value, element) {
                             return (Csw.tryExec(cswPrivate.isValid, value) || this.optional(element) || Csw.validateFloatMaxValue($(element).val(), maxValue, cswPrivate.excludeRangeLimits));
                         }, 'Number must be less than' + (Csw.bool(cswPrivate.excludeRangeLimits) ? ' ' : ' or equal to ') + maxValue);
-                        cswPublic.addClass(cswPrivate.ID + '_validateFloatMaxValue');
+                        cswPublic.addClass(cswPrivate.name + '_validateFloatMaxValue');
                     }
 
                     if (0 < ceilingVal) {
                         //Independant of any other validation, no number can be greater than this.
-                        $.validator.addMethod(cswPrivate.ID + '_validateDb_15_6_FieldLength', function (value, element) {
+                        $.validator.addMethod(cswPrivate.name + '_validateDb_15_6_FieldLength', function (value, element) {
                             return Csw.validateFloatMaxValue(Math.abs($(element).val()), ceilingVal);
                         }, 'Value precision cannot exceed ' + ceilingVal + '.');
-                        cswPublic.addClass(cswPrivate.ID + '_validateDb_15_6_FieldLength');
+                        cswPublic.addClass(cswPrivate.name + '_validateDb_15_6_FieldLength');
                     }
-                    cswPublic.required(cswPrivate.Required);
+                    cswPublic.required(cswPrivate.isRequired);
                 } /* else */
             } ());
             return cswPublic;

@@ -22,7 +22,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
-            get { return _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass ); }
+            get { return _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.MaterialClass ); }
         }
 
         public sealed class PropertyName
@@ -56,7 +56,7 @@ namespace ChemSW.Nbt.ObjClasses
         public static implicit operator CswNbtObjClassMaterial( CswNbtNode Node )
         {
             CswNbtObjClassMaterial ret = null;
-            if( null != Node && _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass ) )
+            if( null != Node && _Validate( Node, NbtObjectClass.MaterialClass ) )
             {
                 ret = (CswNbtObjClassMaterial) Node.ObjClass;
             }
@@ -254,7 +254,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         private void _updateRegulatoryLists()
         {
-            CswNbtMetaDataObjectClass regListOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.RegulatoryListClass );
+            CswNbtMetaDataObjectClass regListOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.RegulatoryListClass );
             foreach( CswNbtObjClassRegulatoryList nodeAsRegList in regListOC.getNodes( false, false ) )
             {
                 CswCommaDelimitedString CASNos = new CswCommaDelimitedString();
@@ -272,7 +272,7 @@ namespace ChemSW.Nbt.ObjClasses
         /// <returns></returns>
         public void getParentMaterials( ref CswCommaDelimitedString MachingMaterialIDs )
         {
-            CswNbtMetaDataObjectClass materialComponentOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.MaterialComponentClass );
+            CswNbtMetaDataObjectClass materialComponentOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.MaterialComponentClass );
             CswNbtMetaDataObjectClassProp constituentOCP = materialComponentOC.getObjectClassProp( CswNbtObjClassMaterialComponent.PropertyName.Constituent );
             CswNbtMetaDataObjectClassProp mixtureOCP = materialComponentOC.getObjectClassProp( CswNbtObjClassMaterialComponent.PropertyName.Mixture );
 
@@ -284,7 +284,7 @@ namespace ChemSW.Nbt.ObjClasses
                 SubFieldName: CswNbtSubField.SubFieldName.NodeID );
             componentsView.AddViewRelationship( parent, NbtViewPropOwnerType.First, mixtureOCP, false );
 
-            ICswNbtTree componentsTree = _CswNbtResources.Trees.getTreeFromView( componentsView, false );
+            ICswNbtTree componentsTree = _CswNbtResources.Trees.getTreeFromView( componentsView, false, false, false );
             int nodesCount = componentsTree.getChildNodeCount();
             for( int i = 0; i < nodesCount; i++ )
             {

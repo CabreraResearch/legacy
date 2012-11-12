@@ -52,7 +52,7 @@ namespace ChemSW.Nbt
             NewNodeRow["readonly"] = CswConvert.ToDbVal( false );
             NewNodeRow["isdemo"] = CswConvert.ToDbVal( false );
             NewNodeRow["issystem"] = CswConvert.ToDbVal( false );
-
+            NewNodeRow["hidden"] = CswConvert.ToDbVal( false );
             //case 27709: nodes must have an explicit audit level
             CswNbtMetaDataNodeType CswNbtMetaDataNodeType = Node.getNodeType();
             if( null != CswNbtMetaDataNodeType )
@@ -88,6 +88,7 @@ namespace ChemSW.Nbt
             NodesTable.Rows[0]["istemp"] = CswConvert.ToDbVal( Node.IsTemp );
             NodesTable.Rows[0]["sessionid"] = CswConvert.ToDbVal( Node.SessionId );
             NodesTable.Rows[0][_CswAuditMetaData.AuditLevelColName] = Node.AuditLevel;
+            NodesTable.Rows[0]["hidden"] = CswConvert.ToDbVal( Node.Hidden );
             CswTableUpdateNodes.update( NodesTable );
 
         }//write()

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Xml;
-using System.Xml.Linq;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Nbt.MetaData;
@@ -326,44 +325,7 @@ namespace ChemSW.Nbt.PropTypes
         private string _KeyColumn = "key";
         //private string _TableName = "logicalsetitem";
 
-        /// <summary>
-        /// Convert this data to XML format, and add beneath the given parent node
-        /// </summary>
-        public override void ToXml( XmlNode ParentNode )
-        {
-            XmlNode LSXmlNode = CswXmlDocument.AppendXmlNode( ParentNode, _ElemName_LogicalSetXml );
-
-            DataTable Data = GetDataAsTable( _NameColumn, _KeyColumn );
-            foreach( DataRow Row in Data.Rows )
-            {
-                XmlNode ItemNode = CswXmlDocument.AppendXmlNode( LSXmlNode, "item" );
-                foreach( DataColumn Column in Data.Columns )
-                {
-                    XmlNode ColumnNode = CswXmlDocument.AppendXmlNode( ItemNode, "column" );
-                    CswXmlDocument.AppendXmlAttribute( ColumnNode, "field", Column.ColumnName );
-                    CswXmlDocument.AppendXmlAttribute( ColumnNode, "value", Row[Column].ToString() );
-                }
-            }
-        } // ToXml()
-
-        public override void ToXElement( XElement ParentNode )
-        {
-            XElement LSXmlNode = new XElement( _ElemName_LogicalSetXml.ToLower() );
-            ParentNode.Add( LSXmlNode );
-
-            DataTable Data = GetDataAsTable( _NameColumn, _KeyColumn );
-            foreach( DataRow Row in Data.Rows )
-            {
-                XElement ItemNode = new XElement( "item" );
-                LSXmlNode.Add( ItemNode );
-                foreach( DataColumn Column in Data.Columns )
-                {
-                    ItemNode.Add( new XElement( "column",
-                        new XAttribute( "field", Column.ColumnName ),
-                        new XAttribute( "value", Row[Column].ToString() ) ) );
-                }
-            }
-        }
+        // ToXml()
 
         public override void ToJSON( JObject ParentObject )
         {
@@ -395,45 +357,6 @@ namespace ChemSW.Nbt.PropTypes
 
             CBAOptions.ToJSON( (JObject) ParentObject[_ElemName_LogicalSetJson] );
         } // ToJSON()
-
-        /// <summary>
-        /// Initialize this object with data from the given XmlNode
-        /// </summary>
-        public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
-        {
-
-            foreach( XmlNode ItemNode in CswXmlDocument.ChildXmlNode( XmlNode, _ElemName_LogicalSetXml ).ChildNodes )
-            {
-                // get key and name
-                string key = string.Empty;
-                string name = string.Empty;
-                foreach( XmlNode ColumnNode in ItemNode.ChildNodes )
-                {
-                    if( _KeyColumn == ColumnNode.Attributes["field"].Value )
-                        key = ColumnNode.Attributes["value"].Value;
-                    if( _NameColumn == ColumnNode.Attributes["field"].Value )
-                        name = ColumnNode.Attributes["value"].Value;
-                }
-                // save values
-                foreach( XmlNode ColumnNode in ItemNode.ChildNodes )
-                {
-                    string field = ColumnNode.Attributes["field"].Value;
-                    string value = ColumnNode.Attributes["value"].Value;
-                    if( field != _KeyColumn && field != _NameColumn )
-                    {
-                        SetValue( field, key, CswConvert.ToBoolean( value ) );
-                    }
-                }
-            }
-
-            Save();
-        }
-
-
-        public override void ReadXElement( XElement XmlNode, Dictionary<int, int> NodeMap, Dictionary<int, int> NodeTypeMap )
-        {
-            //Not yet implemented
-        }
 
         public override void ReadJSON( JObject JObject, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {

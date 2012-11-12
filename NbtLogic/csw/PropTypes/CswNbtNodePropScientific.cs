@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Xml;
-using System.Xml.Linq;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
@@ -132,41 +130,7 @@ namespace ChemSW.Nbt.PropTypes
             }
         }
 
-
-        public override void ToXml( XmlNode ParentNode )
-        {
-            XmlNode BaseNode = CswXmlDocument.AppendXmlNode( ParentNode, _BaseSubField.ToXmlNodeName( true ) );
-            if( false == Double.IsNaN( Base ) )
-            {
-                BaseNode.InnerText = Base.ToString();
-            }
-            CswXmlDocument.AppendXmlAttribute( BaseNode, "minvalue", MinValue.ToString() );
-            CswXmlDocument.AppendXmlAttribute( BaseNode, "precision", Precision.ToString() );
-
-            XmlNode ExponentNode = CswXmlDocument.AppendXmlNode( ParentNode, _ExponentSubField.ToXmlNodeName( true ) );
-            if( Int32.MinValue != Exponent )
-            {
-                ExponentNode.InnerText = Exponent.ToString();
-            }
-            CswXmlDocument.AppendXmlAttribute( ExponentNode, "minvalue", MinValue.ToString() );
-
-        } // ToXml()
-
-        public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
-        {
-            Base = CswXmlDocument.ChildXmlNodeValueAsDouble( XmlNode, _BaseSubField.ToXmlNodeName( true ) );
-            Exponent = CswXmlDocument.ChildXmlNodeValueAsInteger( XmlNode, _ExponentSubField.ToXmlNodeName( true ) );
-        }
-
-        public override void ToXElement( XElement ParentNode )
-        {
-            throw new NotImplementedException();
-        }
-
-        public override void ReadXElement( XElement XmlNode, Dictionary<int, int> NodeMap, Dictionary<int, int> NodeTypeMap )
-        {
-            throw new NotImplementedException();
-        }
+        // ToXml()
 
         public override void ToJSON( JObject ParentObject )
         {

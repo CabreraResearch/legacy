@@ -38,8 +38,8 @@ namespace ChemSW.Nbt.Actions
 
             _MaterialOc = MaterialOc;
             _MaterialId = MaterialNodeId;
-            _ContainerOc = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.ContainerClass );
-            _SizeOc = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.SizeClass );
+            _ContainerOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.ContainerClass );
+            _SizeOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.SizeClass );
         }
 
         #endregion Constructor
@@ -55,7 +55,7 @@ namespace ChemSW.Nbt.Actions
                 SizeView.ViewMode = NbtViewRenderingMode.Grid;
 
                 CswNbtViewRelationship MaterialRel = SizeView.AddViewRelationship( _MaterialOc, true );
-                CswNbtMetaDataObjectClass SizeOc = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.SizeClass );
+                CswNbtMetaDataObjectClass SizeOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.SizeClass );
                 CswNbtMetaDataObjectClassProp InitialQuantityOcp = SizeOc.getObjectClassProp( CswNbtObjClassSize.PropertyName.InitialQuantity );
                 CswNbtMetaDataObjectClassProp MaterialOcp = SizeOc.getObjectClassProp( CswNbtObjClassSize.PropertyName.Material );
                 CswNbtMetaDataObjectClassProp CatalogNoOcp = SizeOc.getObjectClassProp( CswNbtObjClassSize.PropertyName.CatalogNo );
@@ -105,7 +105,7 @@ namespace ChemSW.Nbt.Actions
             {
                 CswNbtSdTabsAndProps PropsAction = new CswNbtSdTabsAndProps( _CswNbtResources );
                 _CswNbtResources.EditMode = NodeEditMode.Add;
-                Ret = PropsAction.getProps( Container.Node, "", null, CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, true );
+                Ret = PropsAction.getProps( Container.Node, "", null, CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add );
             }
             return Ret;
         }
@@ -182,7 +182,9 @@ namespace ChemSW.Nbt.Actions
                                                     AsContainer.Quantity.UnitId = UnitId;
                                                 }
                                                 AsContainer.DispenseIn( CswNbtObjClassContainerDispenseTransaction.DispenseType.Receive, QuantityValue, UnitId );
-                                                AsContainer.postChanges( true );
+                                                AsContainer.Disposed.Checked = Tristate.False;
+                                                AsContainer.Undispose.setHidden( value: true, SaveToDb: true );
+                                                AsContainer.postChanges( true );                                                
                                                 ContainerIds.Add( AsContainer.NodeId );
                                                 jBarcodes.Add( AsContainer.NodeId.ToString() );
                                             }
@@ -214,7 +216,7 @@ namespace ChemSW.Nbt.Actions
         public static Int32 getMaterialDocumentNodeTypeId( CswNbtResources CswNbtResources, CswNbtObjClassMaterial NodeAsMaterial )
         {
             Int32 Ret = Int32.MinValue;
-            CswNbtMetaDataObjectClass DocumentOc = CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.DocumentClass );
+            CswNbtMetaDataObjectClass DocumentOc = CswNbtResources.MetaData.getObjectClass( NbtObjectClass.DocumentClass );
             foreach( CswNbtMetaDataNodeType DocumentNt in from
                                                               _DocumentNt in
                                                               DocumentOc.getLatestVersionNodeTypes()
@@ -241,7 +243,7 @@ namespace ChemSW.Nbt.Actions
             if( null != Doc )
             {
                 Doc.IsTemp = false;
-                SdTabsAndProps.saveProps( Doc.NodeId, Int32.MinValue, CswConvert.ToString( Obj["documentProperties"] ), Doc.NodeTypeId, null );
+                SdTabsAndProps.saveProps( Doc.NodeId, Int32.MinValue, CswConvert.ToString( Obj["documentProperties"] ), Doc.NodeTypeId, null, IsIdentityTab: false );
                 if( ( Doc.FileType.Value == CswNbtObjClassDocument.FileTypes.File && false == string.IsNullOrEmpty( Doc.File.FileName ) ) ||
                     ( Doc.FileType.Value == CswNbtObjClassDocument.FileTypes.Link && false == string.IsNullOrEmpty( Doc.Link.Href ) ) )
                 {

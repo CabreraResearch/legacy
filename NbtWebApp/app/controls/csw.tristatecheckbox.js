@@ -7,11 +7,11 @@
         Csw.controls.register('triStateCheckBox', function (cswParent, options) {
             'use strict';
             var cswPrivate = {
-                ID: '',
+                name: '',
                 prefix: '',
                 Checked: '',
                 ReadOnly: false,
-                Required: false,
+                isRequired: false,
                 Multi: false,
                 cssclass: 'CswTristateCheckBox',
                 onChange: function () {
@@ -56,7 +56,7 @@
                     cswPrivate.btnValue = Csw.enums.imageButton_ButtonType.CheckboxTrue;
                     cswPrivate.value = 'true';
                 } else if (cswPrivate.value === 'false') {
-                    if (Csw.bool(cswPrivate.Required)) {
+                    if (Csw.bool(cswPrivate.isRequired)) {
                         cswPrivate.btnValue = Csw.enums.imageButton_ButtonType.CheckboxTrue;
                         cswPrivate.value = 'true';
                     } else {
@@ -83,21 +83,19 @@
                 cswPrivate.AlternateText = cswPrivate.value;
 
                 if (cswPrivate.ReadOnly) {
-                    if (cswPrivate.Multi) {
-                        cswPrivate.text = Csw.enums.multiEditDefaultValue;
-                    } else {
-                        switch (cswPrivate.value) {
-                            case 'true':
-                                cswPrivate.text = 'Yes';
-                                break;
-                            case 'false':
-                                cswPrivate.text = 'No';
-                                break;
-                        }
+
+                    switch (cswPrivate.value) {
+                        case 'true':
+                            cswPrivate.text = 'Yes';
+                            break;
+                        case 'false':
+                            cswPrivate.text = 'No';
+                            break;
                     }
+
                     cswPrivate.checkBox = cswParent.div(cswPrivate);
                 } else {
-                    cswPrivate.ID = Csw.makeId(cswPrivate.ID, 'tst');
+                    cswPrivate.name = cswPrivate.name + '_tst';
                     cswPrivate.ButtonType = cswPublic.getButtonType();
                     cswPrivate.checkBox = cswParent.imageButton(cswPrivate);
                     //cswPrivate.checkBox.imageButton(cswPrivate);
@@ -111,9 +109,9 @@
                 });
                 cswPublic.val(cswPrivate.value);
 
-            } ());
+            }());
 
             return cswPublic;
         });
 
-} ());
+}());

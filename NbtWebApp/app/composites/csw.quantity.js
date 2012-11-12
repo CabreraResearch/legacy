@@ -16,6 +16,7 @@
                     maxvalue: NaN,
                     minvalue: NaN,
                     name: '',
+                    unitName: '',
                     nodeid: '',
                     nodetypeid: '',
                     options: [],
@@ -29,7 +30,8 @@
                     qtyWidth: '',
                     qtyReadonly: false,
                     unitReadonly: false,
-                    excludeRangeLimits: false
+                    excludeRangeLimits: false,
+                    isRequired: false
                 };
                 if (options) Csw.extend(cswPrivate, options);
 
@@ -37,7 +39,7 @@
                 cswPrivate.precision = Csw.number(cswPrivate.precision, 6);
                 cswPrivate.ceilingVal = '999999999' + Csw.getMaxValueForPrecision(cswPrivate.precision);
                 cswPrivate.selectedNodeId = Csw.string(cswPrivate.relatednodeid).trim();
-                cswPrivate.selectedName = Csw.string(cswPrivate.name).trim();
+                cswPrivate.selectedName = Csw.string(cswPrivate.unitName).trim();
                 cswPrivate.nodeTypeId = Csw.string(cswPrivate.nodetypeid).trim();
                 cswPrivate.fractional = Csw.bool(cswPrivate.fractional);
                 cswPrivate.gestalt = cswPrivate.value + ' ' + cswPrivate.selectedName;
@@ -54,13 +56,10 @@
                     cswPrivate.selectedName = cswPrivate.relatednodename;
                 }
 
-                cswPublic.table = cswParent.table({
-                    ID: Csw.makeId(cswPrivate.ID, 'tbl')
-                });
+                cswPublic.table = cswParent.table();
 
-                var buildQuantityTextBox = function () {
+                var buildQuantityTextBox = function() {
                     cswPublic.quantityTextBox = cswPublic.table.cell(1, cswPrivate.cellCol).numberTextBox({
-                        ID: cswPrivate.ID + '_qty',
                         name: cswPrivate.name,
                         labelText: cswPrivate.labelText,
                         useWide: cswPrivate.useWide,
@@ -72,8 +71,8 @@
                         ceilingVal: Csw.number(cswPrivate.ceilingVal),
                         Precision: 6, //case 24646 - precision is being handled in the validator below, so we don't want to use the one in numberTextBox.
                         ReadOnly: Csw.bool(cswPrivate.qtyReadonly),
-                        Required: Csw.bool(cswPrivate.Required),
-                        onChange: function () {
+                        isRequired: Csw.bool(cswPrivate.isRequired),
+                        onChange: function() {
                             var val = cswPublic.quantityTextBox.val();
                             cswPrivate.value = val;
                             cswPublic.quantityValue = val;
@@ -83,7 +82,7 @@
                     cswPublic.quantityValue = Csw.bool(cswPrivate.qtyReadonly) ? cswPrivate.value : cswPublic.quantityTextBox.val();
 
                     cswPrivate.cellCol += 1;
-                }
+                };
 
                 var buildUnitSelect = function () {
                     if (Csw.bool(cswPrivate.unitReadonly)) {
@@ -91,11 +90,11 @@
                         cswPublic.unitText = cswPrivate.selectedName;
                         cswPublic.unitSelectReaDOnly = cswPublic.table.cell(1, cswPrivate.cellCol).span({ text: cswPrivate.selectedName });
                     } else {
-                        if (false === cswPrivate.Required && false === Csw.isNullOrEmpty(cswPrivate.selectedName)) {
+                        if (false === cswPrivate.isRequired && false === Csw.isNullOrEmpty(cswPrivate.selectedName)) {
                             cswPrivate.relationships.push({ value: '', display: '', frac: true });
                         }
                         cswPrivate.foundSelected = false;
-                        Csw.crawlObject(cswPrivate.options, function (relatedObj) {
+                        Csw.eachRecursive(cswPrivate.options, function (relatedObj) {
                             if (relatedObj.id === cswPrivate.selectedNodeId) {
                                 cswPrivate.foundSelected = true;
                                 cswPrivate.fractional = Csw.bool(relatedObj.fractional);
@@ -106,12 +105,11 @@
                             cswPrivate.relationships.push({ value: cswPrivate.selectedNodeId, display: cswPrivate.selectedName, frac: cswPrivate.fractional });
                         }
                         cswPublic.unitSelect = cswPublic.table.cell(1, cswPrivate.cellCol).select({
-                            ID: cswPrivate.ID + '_select',
                             name: cswPrivate.name,
                             cssclass: 'selectinput',
                             onChange: function () {
                                 var val = cswPublic.unitSelect.val();
-                                Csw.crawlObject(cswPrivate.options, function (relatedObj) {
+                                Csw.eachRecursive(cswPrivate.options, function (relatedObj) {
                                     if (relatedObj.id === cswPublic.unitSelect.val()) {
                                         cswPrivate.fractional = Csw.bool(relatedObj.fractional);
                                     }
@@ -131,8 +129,8 @@
 
                         cswPrivate.cellCol += 1;
 
-                        cswPublic.unitSelect.required(cswPrivate.Required);
-                        cswPublic.quantityTextBox.required(cswPrivate.Required);
+                        cswPublic.unitSelect.required(cswPrivate.isRequired);
+                        cswPublic.quantityTextBox.required(cswPrivate.isRequired);
 
                         $.validator.addMethod('validateInteger', function () {
                             return (cswPrivate.precision != 0 || Csw.validateInteger(cswPublic.quantityTextBox.val()));
@@ -165,7 +163,7 @@
                     cswPrivate.name = data.name;
                     cswPrivate.qtyReadonly = data.qtyReadonly;
                     cswPrivate.selectedNodeId = Csw.string(data.relatednodeid).trim();
-                    cswPrivate.selectedName = Csw.string(data.name).trim();
+                    cswPrivate.selectedName = Csw.string(data.unitName).trim();
                     cswPublic.table.empty();
                     buildQuantityTextBox();
                     buildUnitSelect();

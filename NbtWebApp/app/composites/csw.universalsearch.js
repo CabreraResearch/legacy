@@ -8,7 +8,7 @@
         Csw.composites.register('universalSearch', function (cswParent, params) {
             'use strict';
             var cswPrivate = {
-                ID: 'newsearch',
+                name: 'newsearch',
                 searchBoxParent: {},
                 searchResultsParent: {},
                 searchFiltersParent: {},
@@ -40,12 +40,11 @@
                 buttonSingleColumn: '',
                 buttonMultiColumn: ''
             };
-            if (params) {
-                Csw.extend(cswPrivate, params);
-            }
+            Csw.extend(cswPrivate, params);
+            
             if (false === Csw.isNullOrEmpty(cswParent)) {
                 cswPrivate.table = cswParent.table({
-                    ID: Csw.makeId(cswPrivate.ID, 'table'),
+                    name: cswPrivate.name + '_table',
                     cellpadding: '2px'
                 });
 
@@ -53,9 +52,9 @@
 
                 cell11.propDom('colspan', 2);
 
-                cswPrivate.searchBoxParent = cell11.div({ ID: 'searchdialog_searchdiv' });
-                cswPrivate.searchResultsParent = cswPrivate.table.cell(2, 2).div({ ID: 'searchdialog_resultsdiv' });
-                cswPrivate.searchFiltersParent = cswPrivate.table.cell(2, 1).div({ ID: 'searchdialog_filtersdiv' });
+                cswPrivate.searchBoxParent = cell11.div({ name: 'searchdialog_searchdiv' });
+                cswPrivate.searchResultsParent = cswPrivate.table.cell(2, 2).div({ name: 'searchdialog_resultsdiv' });
+                cswPrivate.searchFiltersParent = cswPrivate.table.cell(2, 1).div({ name: 'searchdialog_filtersdiv' });
             }
             var cswPublic = {};
 
@@ -63,28 +62,27 @@
             // Adds a searchbox to the form
             (function () {
                 cswPrivate.searchBoxParent.empty();
-                var cswtable = cswPrivate.searchBoxParent.table({
-                    ID: Csw.makeId(cswPrivate.ID, '_div')
-                });
+                var cswtable = cswPrivate.searchBoxParent.table();
 
                 cswPrivate.searchinput = cswtable.cell(1, 1).input({
-                    ID: Csw.makeId(cswPrivate.ID, '', '_input'),
                     type: Csw.enums.inputTypes.search,
                     width: cswPrivate.searchbox_width,
                     cssclass: 'mousetrap'
                 });
 
-                cswPrivate.searchbutton = cswtable.cell(1, 2).div({ ID: cswPrivate.ID + window.Ext.id() }).buttonExt({
-                    ID: Csw.makeId(cswPrivate.ID, '_srchbtn'),
-                    icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.search),
-                    width: ('Search'.length * 11) + 16,
-                    enabledText: 'Search',
-                    disabledText: 'Searching...',
-                    bindOnEnter: true,
-                    onClick: function () {
-                        cswPrivate.searchterm = cswPrivate.searchinput.val();
-                        cswPrivate.newsearch();
-                    }
+                cswPrivate.searchbutton = cswtable.cell(1, 2)
+                    .div({ name: cswPrivate.name })
+                    .buttonExt({
+                        icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.search),
+                        width: ('Search'.length * 11) + 16,
+                        enabledText: 'Search',
+                        disabledText: 'Searching...',
+                        bindOnEnter: true,
+                        onClick: function () {
+                            Csw.publish('initPropertyTearDown');
+                            cswPrivate.searchterm = cswPrivate.searchinput.val();
+                            cswPrivate.newsearch();
+                        }
                 });
             })();
 
@@ -120,7 +118,6 @@
                     cswPrivate.searchResultsParent.css({ paddingTop: '15px' });
 
                     var resultstable = cswPrivate.searchResultsParent.table({
-                        ID: Csw.makeId(cswPrivate.ID, '', 'resultstbl'),
                         width: '100%'
                     });
 
@@ -129,7 +126,6 @@
                     if (Csw.bool(cswPrivate.compactResults)) {
                         resultstable.cell(1, 2).css({ width: '100px' });
                         cswPrivate.linkExpandAll = resultstable.cell(1, 2).a({
-                            ID: Csw.makeId(cswPrivate.ID, '', '_expandall'),
                             text: 'Expand All',
                             onClick: function () {
                                 if (cswPrivate.linkExpandAll.text() === 'Expand All') {
@@ -144,7 +140,6 @@
                     }
                     resultstable.cell(1, 3).css({ width: '18px' });
                     cswPrivate.buttonSingleColumn = resultstable.cell(1, 3).imageButton({
-                        ID: Csw.makeId(cswPrivate.ID, '', '_singlecol'),
                         ButtonType: Csw.enums.imageButton_ButtonType.TableSingleColumn,
                         Active: (columns === 1),
                         AlternateText: 'Single Column',
@@ -157,7 +152,6 @@
 
                     resultstable.cell(1, 4).css({ width: '18px' });
                     cswPrivate.buttonMultiColumn = resultstable.cell(1, 4).imageButton({
-                        ID: Csw.makeId(cswPrivate.ID, '', '_multicol'),
                         ButtonType: Csw.enums.imageButton_ButtonType.TableMultiColumn,
                         Active: (columns !== 1),
                         AlternateText: 'Multi Column',
@@ -171,7 +165,6 @@
                     resultstable.cell(2, 1).propDom({ 'colspan': 3 });
 
                     nodeTable = Csw.nbt.nodeTable(resultstable.cell(2, 1), {
-                        ID: Csw.makeId(cswPrivate.ID, '', 'srchresults'),
                         onEditNode: function () {
                             // case 27245 - refresh on edit
                             cswPublic.restoreSearch(cswPrivate.sessiondataid);
@@ -180,12 +173,10 @@
                             // case 25380 - refresh on delete
                             cswPublic.restoreSearch(cswPrivate.sessiondataid);
                         },
-                        //onSuccess: cswPrivate.onAfterSearch,
                         onNoResults: function () {
                             resultstable.cell(2, 1).text('No Results Found');
                         },
                         tabledata: data.table,
-                        //maxheight: cswPrivate.searchresults_maxheight
                         columns: columns,
                         allowEdit: cswPrivate.allowEdit,
                         allowDelete: cswPrivate.allowEdit,
@@ -201,13 +192,8 @@
                 // Filter panel
                 cswPrivate.searchFiltersParent.empty();
 
-                filtersdivid = Csw.makeId(cswPrivate.ID, '', 'filtersdiv');
-                fdiv = cswPrivate.searchFiltersParent.div({
-                    ID: filtersdivid
-                }).css({
+                fdiv = cswPrivate.searchFiltersParent.div().css({
                     paddingTop: '15px'
-                    //height: cswPrivate.searchresults_maxheight + 'px',
-                    //overflow: 'auto'
                 });
 
                 fdiv.span({ text: 'Searched For: ' + data.searchterm }).br();
@@ -228,7 +214,6 @@
                     });
                     if (Csw.bool(thisFilter.removeable)) {
                         ftable.cell(ftable_row, 3).icon({
-                            ID: Csw.makeId(filtersdivid, '', thisFilter.filterid),
                             iconType: Csw.enums.iconType.x,
                             hovertext: 'Remove Filter',
                             size: 16,
@@ -247,7 +232,6 @@
                 if (hasFilters && cswPrivate.showSaveAsView) {
                     fdiv.br();
                     fdiv.buttonExt({
-                        ID: Csw.makeId(filtersdivid, '', "saveview"),
                         enabledText: 'Save as View',
                         disableOnClick: false,
                         icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.save),
@@ -261,7 +245,6 @@
 
                 function makeFilterLink(thisFilter, div, filterCount) {
                     var flink = div.a({
-                        ID: Csw.makeId(filtersdivid, '', thisFilter.filterid),
                         text: thisFilter.filtervalue + ' (' + thisFilter.count + ')',
                         onClick: function () {
                             cswPrivate.filter(thisFilter, 'add');
@@ -273,12 +256,8 @@
 
                 function makeFilterSet(thisFilterSet, Name) {
 
-                    var thisfilterdivid = Csw.makeId(filtersdivid, '', Name);
-                    //var thisfilterdiv = fdiv.div({ ID: thisfilterdivid });
                     var filterCount = 0;
-                    var moreDiv = fdiv.moreDiv({
-                        ID: thisfilterdivid
-                    });
+                    var moreDiv = fdiv.moreDiv();
 
                     moreDiv.shownDiv.append('<b>' + Name + ':</b>');
                     moreDiv.shownDiv.br();
@@ -305,8 +284,6 @@
 
 
             cswPrivate.filter = function (thisFilter, action) {
-                //cswPrivate.filters[thisFilter.filterid] = thisFilter;
-
                 Csw.tryExec(cswPrivate.onBeforeSearch);
                 Csw.ajax.post({
                     urlMethod: cswPrivate.filtersearchurl,
@@ -321,8 +298,6 @@
 
             cswPrivate.saveAsView = function () {
                 $.CswDialog('AddViewDialog', {
-                    ID: Csw.makeId(cswPrivate.ID, '', 'addviewdialog'),
-                    //viewmode: 'table',
                     category: 'Saved Searches',
                     onAddView: function (newviewid, viewmode) {
 

@@ -28,7 +28,7 @@ namespace ChemSW.Nbt.WebServices
 
             CswNbtMetaDataNodeType Ret = _CswNbtResources.MetaData.getNodeType( NodeTypeId );
             if( null == Ret ||
-                Ret.getObjectClass().ObjectClass != CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass )
+                Ret.getObjectClass().ObjectClass != NbtObjectClass.MaterialClass )
             {
                 throw new CswDniException( ErrorType.Error,
                                            "The provided material type was not a valid material.",
@@ -44,7 +44,7 @@ namespace ChemSW.Nbt.WebServices
             if( MaterialNode != null )
             {
                 Ret = MaterialNode.getViewOfNode();
-                CswNbtMetaDataObjectClass SizeOc = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.SizeClass );
+                CswNbtMetaDataObjectClass SizeOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.SizeClass );
                 CswNbtMetaDataObjectClassProp MaterialOcp = SizeOc.getObjectClassProp( CswNbtObjClassSize.PropertyName.Material );
                 Ret.AddViewRelationship( Ret.Root.ChildRelationships[0], NbtViewPropOwnerType.Second, MaterialOcp, false );
                 Ret.ViewName = "New Material: " + MaterialNode.NodeName;
@@ -77,7 +77,7 @@ namespace ChemSW.Nbt.WebServices
             Ret.AddViewPropertyAndFilter( MaterialRel, SupplierNtp, SupplierId.PrimaryKey.ToString(), CswNbtSubField.SubFieldName.NodeID );
             Ret.AddViewPropertyAndFilter( MaterialRel, PartNoNtp, PartNo );
 
-            CswNbtMetaDataObjectClass SizeOc = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.SizeClass );
+            CswNbtMetaDataObjectClass SizeOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.SizeClass );
             CswNbtMetaDataObjectClassProp MaterialOcp = SizeOc.getObjectClassProp( CswNbtObjClassSize.PropertyName.Material );
             Ret.AddViewRelationship( MaterialRel, NbtViewPropOwnerType.Second, MaterialOcp, false );
 
@@ -119,7 +119,7 @@ namespace ChemSW.Nbt.WebServices
             CswNbtObjClassMaterial Ret = null;
 
             CswNbtView MaterialNodeView = _getMaterialNodeView( MaterialNodeTypeId, TradeName, SupplierId, PartNo );
-            ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( MaterialNodeView, false );
+            ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( MaterialNodeView, false, false, false );
             bool MaterialExists = Tree.getChildNodeCount() > 0;
 
             if( MaterialExists )
@@ -173,7 +173,7 @@ namespace ChemSW.Nbt.WebServices
                     Ret["nodetypeid"] = NodeAsMaterial.NodeTypeId;
                     _CswNbtResources.EditMode = NodeEditMode.Temp;
                     CswNbtSdTabsAndProps SdProps = new CswNbtSdTabsAndProps( _CswNbtResources );
-                    Ret["properties"] = SdProps.getProps( NodeAsMaterial.Node, string.Empty, null, CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, true );
+                    Ret["properties"] = SdProps.getProps( NodeAsMaterial.Node, string.Empty, null, CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add );
                     Int32 DocumentNodeTypeId = CswNbtActReceiving.getMaterialDocumentNodeTypeId( _CswNbtResources, NodeAsMaterial );
                     if( Int32.MinValue != DocumentNodeTypeId )
                     {
@@ -293,7 +293,7 @@ namespace ChemSW.Nbt.WebServices
             CswNbtNode MaterialNode = CswNbtResources.Nodes.GetNode( MaterialId );
 
             if( null == MaterialNode ||
-                 MaterialNode.getObjectClass().ObjectClass != CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass )
+                 MaterialNode.getObjectClass().ObjectClass != NbtObjectClass.MaterialClass )
             {
                 throw new CswDniException( ErrorType.Error,
                                            "The provided node was not a valid material.",
@@ -302,7 +302,7 @@ namespace ChemSW.Nbt.WebServices
 
             CswNbtView SizesView = new CswNbtView( CswNbtResources );  //MaterialNode.getNodeType().CreateDefaultView();
             SizesView.ViewMode = NbtViewRenderingMode.Grid;
-            CswNbtMetaDataObjectClass SizeOc = CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.SizeClass );
+            CswNbtMetaDataObjectClass SizeOc = CswNbtResources.MetaData.getObjectClass( NbtObjectClass.SizeClass );
 
             CswNbtMetaDataObjectClassProp SizeMaterialOcp = SizeOc.getObjectClassProp( CswNbtObjClassSize.PropertyName.Material );
             CswNbtViewRelationship SizeRel = SizesView.AddViewRelationship( SizeOc, false );
@@ -336,7 +336,7 @@ namespace ChemSW.Nbt.WebServices
                     if( null != Ret )
                     {
                         Ret.IsTemp = false;
-                        wsTap.saveProps( Ret.NodeId, Int32.MinValue, MaterialProperties.ToString(), Ret.NodeTypeId, null );
+                        wsTap.saveProps( Ret.NodeId, Int32.MinValue, MaterialProperties.ToString(), Ret.NodeTypeId, null, IsIdentityTab: false );
                         string Tradename;
                         CswPrimaryKey SupplierId;
                         string PartNo;
@@ -385,9 +385,9 @@ namespace ChemSW.Nbt.WebServices
                     if( null != MaterialNode )
                     {
                         CswNbtView MaterialNodeView = _getMaterialNodeView( MaterialNode );
+                        MaterialNodeView.SaveToCache( false );
 
                         /* 1. Validate the new material and get its properties and sizes */
-
                         MaterialNode = _commitMaterialNode( MaterialObj );
                         RetObj["createdmaterial"] = true;
 
@@ -396,13 +396,8 @@ namespace ChemSW.Nbt.WebServices
                         _addMaterialSizes( SizesArray, MaterialNode );
                         RetObj["sizescount"] = SizesArray.Count;
 
-                        /* 3. Add possible secondary actions 
-                         * Recieve Material and Request Material workflows don't exist yet.
-                         * For now, return a view of the new Node.             
-                         */
-                        MaterialNodeView.SaveToCache( false );
-                        RetObj["nextoptions"] = new JObject();
-                        RetObj["nextoptions"]["nodeview"] = MaterialNodeView.SessionViewId.ToString();
+                        /* 3. Add landingpage data */
+                        RetObj["landingpagedata"] = _getLandingPageData( MaterialNode, MaterialNodeView );                        
                     }
                 }
             }
@@ -473,6 +468,29 @@ namespace ChemSW.Nbt.WebServices
             }
         }
 
+        private JObject _getLandingPageData( CswNbtNode MaterialNode, CswNbtView MaterialNodeView )
+        {
+            JObject LandingPageData = new JObject();
+            LandingPageData["ActionId"] = _CswNbtResources.Actions[CswNbtActionName.Create_Material].ActionId.ToString();
+            //Used for Tab and Button items
+            LandingPageData["NodeId"] = MaterialNode.NodeId.ToString();
+            LandingPageData["NodeViewId"] = MaterialNodeView.SessionViewId.ToString();
+            //Used for node-specific Add items
+            LandingPageData["RelatedNodeId"] = MaterialNode.NodeId.ToString();
+            LandingPageData["RelatedNodeName"] = MaterialNode.NodeName;
+            LandingPageData["RelatedNodeTypeId"] = MaterialNode.NodeTypeId.ToString();
+            LandingPageData["RelatedObjectClassId"] = MaterialNode.getObjectClassId().ToString();
+            //If (and when) action landing pages are slated to be roleId-specific, remove this line
+            LandingPageData["isConfigurable"] = _CswNbtResources.CurrentNbtUser.IsAdministrator();
+            //Used for viewing new material
+            LandingPageData["ActionLinks"] = new JObject();
+            string ActionLinkName = MaterialNode.NodeId.ToString();
+            LandingPageData["ActionLinks"][ActionLinkName] = new JObject();
+            LandingPageData["ActionLinks"][ActionLinkName]["Text"] = MaterialNode.NodeName;
+            LandingPageData["ActionLinks"][ActionLinkName]["ViewId"] = MaterialNodeView.SessionViewId.ToString();
+            return LandingPageData;
+        }
+
         public static JObject getMaterialUnitsOfMeasure( string MaterialId, CswNbtResources CswNbtResources )
         {
             JObject ret = new JObject();
@@ -489,7 +507,7 @@ namespace ChemSW.Nbt.WebServices
             CswNbtView unitsView = unitViewBuilder.getQuantityUnitOfMeasureView( PhysicalState );
 
             Collection<CswNbtNode> _UnitNodes = new Collection<CswNbtNode>();
-            ICswNbtTree UnitsTree = CswNbtResources.Trees.getTreeFromView( unitsView, false, true, false, false );
+            ICswNbtTree UnitsTree = CswNbtResources.Trees.getTreeFromView( CswNbtResources.CurrentNbtUser, unitsView, true, false, false );
             UnitsTree.goToRoot();
             for( int i = 0; i < UnitsTree.getChildNodeCount(); i++ )
             {

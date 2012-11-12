@@ -1,4 +1,6 @@
 
+using ChemSW.Nbt.csw.Dev;
+
 namespace ChemSW.Nbt.Schema
 {
     /// <summary>
@@ -14,7 +16,19 @@ namespace ChemSW.Nbt.Schema
             // see case 21989 and 26011
             _CswNbtSchemaModTrnsctn.makeMissingAuditTablesAndColumns();
 
-        }//Update()
+        }
+
+        public override CswDeveloper Author
+        {
+            get { return CswDeveloper.NBT; }
+        }
+
+        public override int CaseNo
+        {
+            get { return 0; }
+        }
+
+        //Update()
 
     }//class RunBeforeEveryExecutionOfUpdater_03
 

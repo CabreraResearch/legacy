@@ -31,7 +31,7 @@ namespace ChemSW.Nbt.Schema
 
         private CswDDL _CswDdl = null;
         CswAuditMetaData _CswAuditMetaData = new CswAuditMetaData();
-        ChemSW.Nbt.Welcome.CswNbtWelcomeTable _WelcomeTable = null;
+        ChemSW.Nbt.LandingPage.CswNbtLandingPageTable _LandingPageTable = null;
 
         public ICswDbCfgInfo CswDbCfgInfo
         {
@@ -96,13 +96,13 @@ namespace ChemSW.Nbt.Schema
             return ( new CswNbtActInspectionDesignWiz( _CswNbtResources, NbtViewVisibility.Global, null, true ) );
         }
 
-        public ChemSW.Nbt.Welcome.CswNbtWelcomeTable getWelcomeTable()
+        public LandingPage.CswNbtLandingPageTable getLandingPageTable()
         {
-            if( null == _WelcomeTable )
+            if( null == _LandingPageTable )
             {
-                _WelcomeTable = new ChemSW.Nbt.Welcome.CswNbtWelcomeTable( _CswNbtResources );
+                _LandingPageTable = new LandingPage.CswNbtLandingPageTable( _CswNbtResources );
             }
-            return ( _WelcomeTable );
+            return ( _LandingPageTable );
         }
 
         #region TransactionManagement
@@ -558,9 +558,9 @@ namespace ChemSW.Nbt.Schema
         //}
 
         //public CswNbtView getTreeViewOfNodeType( Int32 NodeTypeId ) { return _CswNbtResources.Trees.getTreeViewOfNodeType( NodeTypeId ); }
-        //public CswNbtView getTreeViewOfObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass ObjectClass ) { return _CswNbtResources.Trees.getTreeViewOfObjectClass( ObjectClass ); }
+        //public CswNbtView getTreeViewOfObjectClass( CswNbtMetaDataObjectClassName.NbtObjectClass ObjectClass ) { return _CswNbtResources.Trees.getTreeViewOfObjectClass( ObjectClass ); }
 
-        public ICswNbtTree getTreeFromView( CswNbtView View, bool IncludeSystemNodes ) { return _CswNbtResources.Trees.getTreeFromView( View, true, true, false, IncludeSystemNodes ); }
+        public ICswNbtTree getTreeFromView( CswNbtView View, bool IncludeSystemNodes ) { return _CswNbtResources.Trees.getTreeFromView( _CswNbtResources.CurrentNbtUser, View, true, IncludeSystemNodes, false ); }
         public List<CswNbtView> restoreViews( string ViewName )
         {
             List<CswNbtView> ReturnVal = new List<CswNbtView>();
@@ -979,8 +979,12 @@ namespace ChemSW.Nbt.Schema
         /// <summary>
         /// Convenience function for making new Object Classes
         /// </summary>
-        public CswNbtMetaDataObjectClass createObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass ObjectClass, string IconFileName, bool AuditLevel, bool UseBatchEntry )
+        public CswNbtMetaDataObjectClass createObjectClass( NbtObjectClass ObjectClass, string IconFileName, bool AuditLevel )
         {
+            if( ObjectClass == CswNbtResources.UnknownEnum )
+            {
+                throw new CswDniException( ErrorType.Error, "Cannot create an ObjectClass of Unknown.", "The provided Object Class name was not defined." );
+            }
             CswNbtMetaDataObjectClass NewObjectClass = _CswNbtResources.MetaData.getObjectClass( ObjectClass );
             if( null == NewObjectClass )
             {
@@ -991,7 +995,6 @@ namespace ChemSW.Nbt.Schema
                 NewOCRow["objectclass"] = ObjectClass.ToString();
                 NewOCRow["iconfilename"] = IconFileName;
                 NewOCRow["auditlevel"] = CswConvert.ToDbVal( AuditLevel );
-                NewOCRow["use_batch_entry"] = CswConvert.ToDbVal( UseBatchEntry );
                 NewObjectClassTable.Rows.Add( NewOCRow );
                 Int32 NewObjectClassId = CswConvert.ToInt32( NewOCRow["objectclassid"] );
                 ObjectClassTableUpdate.update( NewObjectClassTable );
@@ -1059,11 +1062,11 @@ namespace ChemSW.Nbt.Schema
         /// <summary>
         /// Convenience wrapper for creating an Object Class Prop
         /// </summary>
-        public CswNbtMetaDataObjectClassProp createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass NbtObjectClass,
+        public CswNbtMetaDataObjectClassProp createObjectClassProp( NbtObjectClass NbtObjectClass,
                                                                     CswNbtWcfMetaDataModel.ObjectClassProp OcpModel )
         {
             CswNbtMetaDataObjectClassProp RetProp = null;
-            if( NbtObjectClass != CswNbtMetaDataObjectClass.NbtObjectClass.Unknown )
+            if( NbtObjectClass != CswNbtResources.UnknownEnum )
             {
                 CswNbtMetaDataObjectClass ObjectClassOc = MetaData.getObjectClass( NbtObjectClass );
                 OcpModel.ObjectClass = ObjectClassOc;
@@ -1075,7 +1078,7 @@ namespace ChemSW.Nbt.Schema
         /// <summary>
         /// (Deprecated) Convenience wrapper for creating an Object Class Prop
         /// </summary>
-        public CswNbtMetaDataObjectClassProp createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass NbtObjectClass,
+        public CswNbtMetaDataObjectClassProp createObjectClassProp( NbtObjectClass NbtObjectClass,
                                                                     string PropName,
                                                                     CswNbtMetaDataFieldType.NbtFieldType FieldType,
                                                                     bool IsBatchEntry = false,
@@ -1100,7 +1103,7 @@ namespace ChemSW.Nbt.Schema
 
 
             CswNbtMetaDataObjectClassProp RetProp = null;
-            if( NbtObjectClass != CswNbtMetaDataObjectClass.NbtObjectClass.Unknown )
+            if( NbtObjectClass != CswNbtResources.UnknownEnum )
             {
                 CswNbtMetaDataObjectClass ObjectClassOc = MetaData.getObjectClass( NbtObjectClass );
                 RetProp = ObjectClassOc.getObjectClassProp( PropName );
@@ -1645,7 +1648,8 @@ namespace ChemSW.Nbt.Schema
 
 
         /// <summary>
-        /// Run an external SQL script stored in Resources
+        /// (Deprecated: vendor neutrality is no longer a requirement)
+        /// <para>Run an external SQL script stored in Resources</para>
         /// </summary>
         /// <param name="SqlFileName">Name of file</param>
         /// <param name="ResourceSqlFile">File contents from Resources</param>

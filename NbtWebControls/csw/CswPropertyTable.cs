@@ -666,7 +666,7 @@ namespace ChemSW.NbtWebControls
                     } // if( Prop.NodeTypeTab != null && Prop.NodeTypeTab.TabId.ToString() == SelectedTabId.ToString() )
                 } // foreach( CswNbtMetaDataNodeTypeProp Prop in MetaDataNodeType.NodeTypeProps )
 
-                if( !_CswNbtResources.Permit.canNode( CswNbtPermit.NodeTypePermission.Edit, _CswNbtResources.MetaData.getNodeType( SelectedNodeTypeId ), SelectedNode.NodeId ) )
+                if( !_CswNbtResources.Permit.isNodeWritable( CswNbtPermit.NodeTypePermission.Edit, _CswNbtResources.MetaData.getNodeType( SelectedNodeTypeId ), SelectedNode.NodeId ) )
                 {
                     SaveButton.Visible = false;
                 }

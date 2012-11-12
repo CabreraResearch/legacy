@@ -8,7 +8,7 @@
         Csw.controls.register('nodeLink', function (cswParent, options) {
             'use strict';
             var cswPrivate = {
-                ID: '',
+                name: '',
                 text: '',
                 onClick: null
             };
@@ -41,12 +41,12 @@
 
             cswPrivate.makeNodeLink = function (nodeid, nodename) {
                 cswPrivate.div.a({
-                    ID: Csw.makeId(cswPrivate.ID, nodeid),
+                    name: cswPrivate.name + '_' + nodeid,
                     text: nodename,
                     onClick: function () {
                         Csw.tryExec(cswPrivate.onClick);
                         $.CswDialog('EditNodeDialog', {
-                            nodeids: [nodeid],
+                            currentNodeId: nodeid,
                             nodenames: [nodename]
                         }); // CswDialog
                     } // onClick

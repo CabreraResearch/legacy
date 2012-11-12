@@ -39,7 +39,6 @@ namespace ChemSW.Nbt.Sched
             get { return ( _CswScheduleLogicDetail ); }
         }
 
-        private CswScheduleNodeUpdater _CswScheduleNodeUpdater = null;
         private CswScheduleLogicNodes _CswScheduleLogicNodes = null;
         private CswNbtResources _CswNbtResources = null;
         public void init( ICswResources RuleResources, CswScheduleLogicDetail CswScheduleLogicDetail )
@@ -47,9 +46,7 @@ namespace ChemSW.Nbt.Sched
             _CswNbtResources = (CswNbtResources) RuleResources;
             _CswScheduleLogicDetail = CswScheduleLogicDetail;
             _CswScheduleLogicNodes = new CswScheduleLogicNodes( _CswNbtResources );
-            _CswScheduleNodeUpdater = new CswScheduleNodeUpdater( _CswNbtResources );
             _CswNbtResources.AuditContext = "Scheduler Task: " + RuleName;
-
         }//init()
 
         public void threadCallBack()

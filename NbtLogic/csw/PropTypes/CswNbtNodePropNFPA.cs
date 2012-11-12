@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Xml;
-using System.Xml.Linq;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
@@ -146,22 +144,6 @@ namespace ChemSW.Nbt.PropTypes
             _CswNbtNodePropData.Gestalt = newGestalt;
         }
 
-        public override void ToXml( XmlNode ParentNode )
-        {
-            XmlNode RedNode = CswXmlDocument.AppendXmlNode( ParentNode, _RedSubField.ToXmlNodeName(), Red );
-            XmlNode YellowNode = CswXmlDocument.AppendXmlNode( ParentNode, _YellowSubField.ToXmlNodeName(), Yellow );
-            XmlNode BlueNode = CswXmlDocument.AppendXmlNode( ParentNode, _BlueSubField.ToXmlNodeName(), Blue );
-            XmlNode WhiteNode = CswXmlDocument.AppendXmlNode( ParentNode, _WhiteSubField.ToXmlNodeName(), White );
-        }
-
-        public override void ToXElement( XElement ParentNode )
-        {
-            ParentNode.Add( new XElement( _RedSubField.ToXmlNodeName( true ), Red ) );
-            ParentNode.Add( new XElement( _YellowSubField.ToXmlNodeName( true ), Yellow ) );
-            ParentNode.Add( new XElement( _BlueSubField.ToXmlNodeName( true ), Blue ) );
-            ParentNode.Add( new XElement( _WhiteSubField.ToXmlNodeName( true ), White ) );
-        }
-
         public override void ToJSON( JObject ParentObject )
         {
             ParentObject[_RedSubField.ToXmlNodeName( true )] = Red;
@@ -170,34 +152,6 @@ namespace ChemSW.Nbt.PropTypes
             ParentObject[_WhiteSubField.ToXmlNodeName( true )] = White;
             ParentObject["displaymode"] = DisplayMode.ToString();
             ParentObject["hidespecial"] = HideSpecial;
-        }
-
-        public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
-        {
-            Red = CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _RedSubField.ToXmlNodeName() );
-            Yellow = CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _YellowSubField.ToXmlNodeName() );
-            Blue = CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _BlueSubField.ToXmlNodeName() );
-            White = CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _WhiteSubField.ToXmlNodeName() );
-        }
-
-        public override void ReadXElement( XElement XmlNode, Dictionary<int, int> NodeMap, Dictionary<int, int> NodeTypeMap )
-        {
-            if( null != XmlNode.Element( _RedSubField.ToXmlNodeName( true ) ) )
-            {
-                Red = XmlNode.Element( _RedSubField.ToXmlNodeName( true ) ).Value;
-            }
-            if( null != XmlNode.Element( _YellowSubField.ToXmlNodeName( true ) ) )
-            {
-                Yellow = XmlNode.Element( _YellowSubField.ToXmlNodeName( true ) ).Value;
-            }
-            if( null != XmlNode.Element( _BlueSubField.ToXmlNodeName( true ) ) )
-            {
-                Blue = XmlNode.Element( _BlueSubField.ToXmlNodeName( true ) ).Value;
-            }
-            if( null != XmlNode.Element( _WhiteSubField.ToXmlNodeName( true ) ) )
-            {
-                White = XmlNode.Element( _WhiteSubField.ToXmlNodeName( true ) ).Value;
-            }
         }
 
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )

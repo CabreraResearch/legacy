@@ -1,9 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Xml;
-using System.Xml.Linq;
-using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
 using Newtonsoft.Json.Linq;
@@ -95,19 +92,6 @@ namespace ChemSW.Nbt.PropTypes
 
         }//Gestalt
 
-
-        public override void ToXml( XmlNode ParentNode )
-        {
-            XmlNode TextNode = CswXmlDocument.AppendXmlNode( ParentNode, "text", Text );
-            CswXmlDocument.AppendXmlAttribute( TextNode, "mode", Mode.ToString() );
-        }
-
-        public override void ToXElement( XElement ParentNode )
-        {
-            ParentNode.Add( new XElement( "text", Text,
-                new XAttribute( "mode", Mode.ToString() ) ) );
-        }
-
         public override void ToJSON( JObject ParentObject )
         {
             //ParentObject.Add( new JProperty( "text", Text ) );
@@ -122,16 +106,6 @@ namespace ChemSW.Nbt.PropTypes
             ParentObject["mode"] = NodeTypeProp.Extended.ToLower();
             ParentObject["menuoptions"] = MenuOptions;
             ParentObject["selectedText"] = SelectedText;
-        }
-
-        public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
-        {
-            //nothing to do here
-        }
-
-        public override void ReadXElement( XElement XmlNode, Dictionary<int, int> NodeMap, Dictionary<int, int> NodeTypeMap )
-        {
-            //nothing to do here
         }
 
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )

@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Xml;
-using System.Xml.Linq;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
@@ -74,10 +73,15 @@ namespace ChemSW.Nbt.PropTypes
         }
 
 
-        public DateTime getNextOccuranceAfter( DateTime DateTimeToAdd )
+        public DateTime getNextOccuranceAfter( DateTime AfterDateTime )
         {
-            return _RateInterval.getNext( DateTimeToAdd );
-        }//getNextOccuranceFrom()
+            return _RateInterval.getNext( AfterDateTime );
+        }//getNextOccuranceAfter()
+
+        public DateTime getLastOccuranceBefore( DateTime BeforeDateTime )
+        {
+            return _RateInterval.getPrevious( BeforeDateTime );
+        }//getLastOccuranceBefore()
 
 
         public DateTime getStartDate()
@@ -85,22 +89,14 @@ namespace ChemSW.Nbt.PropTypes
             return _RateInterval.getFirst();
         }//getStartDate()
 
+        public Int32 getMaximumWarningDays()
+        {
+            return _RateInterval.getMaximumWarningDays();
+        }
+
 
 
         //private string _ElemName_Rateinterval = "Rateinterval";
-
-        public override void ToXml( XmlNode ParentNode )
-        {
-            XmlNode RateIntervalNode = CswXmlDocument.AppendXmlNode( ParentNode, _IntervalSubField.ToXmlNodeName() );
-            //CswXmlDocument.AppendXmlAttribute( RateIntervalNode, "text", RateInterval.ToString() );
-            //CswXmlDocument.SetInnerTextAsCData( RateIntervalNode, RateInterval.ToXmlString() );
-            RateInterval.ToXml( RateIntervalNode );
-        }
-
-        public override void ToXElement( XElement ParentNode )
-        {
-            //Not yet implemented
-        }
 
         public override void ToJSON( JObject ParentObject )
         {
@@ -108,27 +104,6 @@ namespace ChemSW.Nbt.PropTypes
             ParentObject[_IntervalSubField.ToXmlNodeName()] = IntervalObj;
             //IntervalObj["text"] = RateInterval.ToString();
             RateInterval.ToJson( IntervalObj );
-        }
-
-        public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
-        {
-            //RateInterval = new CswRateInterval( CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _IntervalSubField.ToXmlNodeName() ) );
-            //string IntervalXmlAsString = CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _IntervalSubField.ToXmlNodeName() );
-            //XmlDocument Doc = new XmlDocument();
-            //XmlNode IntervalNode = CswXmlDocument.SetDocumentElement( Doc, _IntervalSubField.ToXmlNodeName() );
-            //IntervalNode.InnerXml = IntervalXmlAsString;
-
-            CswRateInterval NewRateInterval = new CswRateInterval( _CswNbtResources );
-            NewRateInterval.ReadXml( XmlNode.FirstChild.FirstChild );
-            // Setting RateInterval triggers the change to the property value -- don't skip this step
-            RateInterval = NewRateInterval;
-        }
-
-
-
-        public override void ReadXElement( XElement XmlNode, Dictionary<int, int> NodeMap, Dictionary<int, int> NodeTypeMap )
-        {
-            //Not yet implemented
         }
 
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )

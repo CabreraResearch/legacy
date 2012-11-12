@@ -267,8 +267,8 @@
                     break;
                 case 'ExpiredPassword':
                     $.CswDialog('EditNodeDialog', {
-                        nodeids: [o.data.ExpirationReset.UserId],
-                        nodekeys: [o.data.ExpirationReset.UserKey],
+                        currentNodeId: o.data.ExpirationReset.UserId,
+                        currentNodeKey: o.data.ExpirationReset.UserKey,
                         filterToPropId: o.data.ExpirationReset.PasswordId,
                         title: 'Your password has expired.  Please change it now:',
                         onEditNode: function () {

@@ -11,6 +11,7 @@
                     data: propertyOption
                 };
 
+                //The render function to be executed as a callback
                 var render = function () {
                     'use strict';
                     cswPublic.data = cswPublic.data || Csw.nbt.propertyOption(propertyOption);
@@ -18,18 +19,21 @@
                     cswPrivate.propVals = cswPublic.data.propData.values;
                     cswPrivate.parent = cswPublic.data.propDiv;
 
-                    cswPrivate.value = (false === cswPublic.data.isMulti()) ? Csw.string(cswPrivate.propVals.value).trim() : Csw.enums.multiEditDefaultValue;
+                    cswPrivate.value = Csw.string(cswPrivate.propVals.value).trim();
                     cswPrivate.options = Csw.string(cswPrivate.propVals.options).trim();
 
                     if (cswPublic.data.isReadOnly()) {
                         cswPublic.control = cswPrivate.parent.append(cswPrivate.value);
                     } else {
                         cswPrivate.values = cswPrivate.options.split(',');
-                        if (cswPublic.data.isMulti()) {
-                            cswPrivate.values.push(Csw.enums.multiEditDefaultValue);
+
+                        //case 28020 - if a list has a value selected that's not in the list, add it to the options
+                        if (false == Csw.contains(cswPrivate.values, cswPrivate.value)) {
+                            cswPrivate.values.push(cswPrivate.value);
                         }
+
                         cswPublic.control = cswPrivate.parent.select({
-                            ID: cswPublic.data.ID,
+                            name: cswPublic.data.name,
                             cssclass: 'selectinput',
                             onChange: function () {
                                 var val = cswPublic.control.val();
@@ -44,8 +48,13 @@
 
                 };
 
+                //Bind the callback to the render event
                 cswPublic.data.bindRender(render);
+                
+                //Bind an unrender callback to terminate any outstanding ajax requests, if any. See propTypeGrid.
+                //cswPublic.data.unBindRender();
+
                 return cswPublic;
             }));
 
-}());
+} ());

@@ -1,14 +1,6 @@
-﻿using System;
-using System.IO;
-using System.Windows.Forms;
-using System.Data;
-using System.Collections.Generic;
-using ChemSW.Core;
-using ChemSW.DB;
-using ChemSW.Nbt.MetaData;
-using ChemSW.Nbt.MetaData.FieldTypeRules;
-using ChemSW.Nbt.ObjClasses;
-using System.Diagnostics;
+﻿using System.Collections.Generic;
+using ChemSW.Nbt.csw.Dev;
+using ChemSW.RscAdo;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -17,14 +9,24 @@ namespace ChemSW.Nbt.Schema
     /// </summary>
     public class RunBeforeEveryExecutionOfUpdater_02 : CswUpdateSchemaTo
     {
-        public static string Title = FileName;
-
-        private const string FileName = "nbt_initialize_ora.sql";
+        public static string Title = "Make Database Views";
 
         public override void update()
         {
-            _CswNbtSchemaModTrnsctn.runExternalSqlScript( FileName, ChemSW.Nbt.Properties.Resources.nbt_initialize_ora_sql );
-        }//update()
+            _CswNbtSchemaModTrnsctn.execStoredProc( "CreateAllNtViews", new List<CswStoredProcParam>() );
+        }
+
+        public override CswDeveloper Author
+        {
+            get { return CswDeveloper.NBT; }
+        }
+
+        public override int CaseNo
+        {
+            get { return 0; }
+        }
+
+        //update()
 
     }//class RunBeforeEveryExecutionOfUpdater_02
 

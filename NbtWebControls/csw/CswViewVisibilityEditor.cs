@@ -28,14 +28,14 @@ namespace ChemSW.NbtWebControls
                 _NewViewVisibilityDropDown.Items.Add( new ListItem( "Everyone", NbtViewVisibility.Global.ToString() ) );
 
                 // Role dropdown
-                CswNbtMetaDataObjectClass Role_ObjectClass = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.RoleClass );
+                CswNbtMetaDataObjectClass Role_ObjectClass = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.RoleClass );
 
                 CswNbtView RoleView = new CswNbtView( _CswNbtResources );
                 CswNbtViewRelationship RoleRelationship = RoleView.AddViewRelationship( Role_ObjectClass, true );
 
                 string PriorVisibilityValue = _NewViewVisibilityRoleDropDown.SelectedValue;
                 _NewViewVisibilityRoleDropDown.Items.Clear();
-                ICswNbtTree RoleTree = _CswNbtResources.Trees.getTreeFromView( RoleView, true, true, false, false );
+                ICswNbtTree RoleTree = _CswNbtResources.Trees.getTreeFromView( _CswNbtResources.CurrentNbtUser, RoleView, true, false, false );
 
                 RoleTree.goToRoot();
                 //RoleTree.goToNthChild(0);
@@ -51,7 +51,7 @@ namespace ChemSW.NbtWebControls
             }
 
             // User dropdown
-            CswNbtMetaDataObjectClass User_ObjectClass = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
+            CswNbtMetaDataObjectClass User_ObjectClass = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.UserClass );
 
             CswNbtView UserView = new CswNbtView( _CswNbtResources );
             CswNbtViewRelationship UserRelationship = UserView.AddViewRelationship( User_ObjectClass, true );
@@ -60,7 +60,7 @@ namespace ChemSW.NbtWebControls
 
             string PriorUserVisibilityValue = _NewViewVisibilityUserDropDown.SelectedValue;
             _NewViewVisibilityUserDropDown.Items.Clear();
-            ICswNbtTree UserTree = _CswNbtResources.Trees.getTreeFromView( UserView, true, true, false, false );
+            ICswNbtTree UserTree = _CswNbtResources.Trees.getTreeFromView( _CswNbtResources.CurrentNbtUser, UserView, true, false, false );
 
             UserTree.goToRoot();
             //UserTree.goToNthChild(0);

@@ -11,15 +11,31 @@
                 /// <returns type="Csw.composites">The options object with DOM methods attached.</returns> 
                 'use strict';
 
-                var cswPrivate = {};
+                var cswPrivate = {
+                    count: 0
+                };
                 if (Csw.isNullOrEmpty(cswParent)) {
                     throw new Error('Cannot create a Csw component without a Csw control');
                 }
 
                 cswPrivate.controlPreProcessing = function (opts, controlName) {
                     opts = opts || {};
+                    cswPrivate.count += 1;
+                    opts.suffix = controlName + cswPrivate.count;
+                    opts.ID = cswParent.getId() + opts.suffix;
                     return opts;
                 };
+
+                //Csw.each is EXPENSIVE. Do !not! do this until each() is fixed.
+                //Csw.each(Csw.composites, function (literal, name) {
+                //    if (false === Csw.contains(Csw, name) &&
+                //        name !== 'factory') {
+                //        cswParent[name] = function (opts) {
+                //            opts = cswPrivate.controlPreProcessing(opts, name);
+                //            return Csw.composites[name](cswParent, opts);
+                //};
+                //    }
+                //});
 
                 cswParent.grid = function (opts) {
                     /// <summary> Creates a Csw.grid on this element</summary>
@@ -27,6 +43,7 @@
                     /// <returns type="Csw.composites.grid">A Csw.composites.grid</returns>
                     opts = cswPrivate.controlPreProcessing(opts, 'grid');
                     return Csw.composites.grid(cswParent, opts);
+
                 };
 
                 cswParent.jZebra = function (opts) {
@@ -44,15 +61,15 @@
                     opts = cswPrivate.controlPreProcessing(opts, 'layoutTable');
                     return Csw.composites.layoutTable(cswParent, opts);
                 };
-                
-//                cswParent.table = function (opts) {
-//                    /// <summary> Creates a Csw.table on this element</summary>
-//                    /// <param name="opts" type="Object">Options to define the table.</param>
-//                    /// <returns type="Csw.composites.table">A Csw.composites.table</returns> 
-//                    opts = cswPrivate.controlPreProcessing(opts, 'table');
-//                    return Csw.composites.table(cswParent, opts);
-//                };
-                
+
+                //                cswParent.table = function (opts) {
+                //                    /// <summary> Creates a Csw.table on this element</summary>
+                //                    /// <param name="opts" type="Object">Options to define the table.</param>
+                //                    /// <returns type="Csw.composites.table">A Csw.composites.table</returns> 
+                //                    opts = cswPrivate.controlPreProcessing(opts, 'table');
+                //                    return Csw.composites.table(cswParent, opts);
+                //                };
+
                 cswParent.linkGrid = function (opts) {
                     /// <summary> Creates a Csw.linkGrid on this element</summary>
                     /// <param name="opts" type="Object">Options to define the linkGrid.</param>
@@ -100,7 +117,7 @@
                     opts = cswPrivate.controlPreProcessing(opts, 'thinGrid');
                     return Csw.composites.thinGrid(cswParent, opts);
                 };
-                
+
                 cswParent.universalSearch = function (opts) {
                     /// <summary> Creates a Csw.universalSearch on this element</summary>
                     /// <param name="opts" type="Object">Options to define the universalSearch.</param>
@@ -108,11 +125,11 @@
                     opts = cswPrivate.controlPreProcessing(opts, 'universalSearch');
                     return Csw.composites.universalSearch(cswParent, opts);
                 };
-                
+
                 return cswParent;
             });
 
 
-} ());
+}());
 
 

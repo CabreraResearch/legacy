@@ -10,26 +10,28 @@
                 var cswPublic = {
                     data: propertyOption
                 };
+                
+                //The render function to be executed as a callback
                 var render = function () {
                     cswPublic.data = cswPublic.data || Csw.nbt.propertyOption(propertyOption);
                     cswPrivate.propVals = cswPublic.data.propData.values;
                     cswPrivate.parent = cswPublic.data.propDiv;
-                    cswPrivate.date = (false === cswPublic.data.isMulti()) ? Csw.string(cswPrivate.propVals.value.date).trim() : Csw.enums.multiEditDefaultValue;
-                    cswPrivate.time = (false === cswPublic.data.isMulti()) ? Csw.string(cswPrivate.propVals.value.time).trim() : Csw.enums.multiEditDefaultValue;
+                    cswPrivate.date = Csw.string(cswPrivate.propVals.value.date).trim();
+                    cswPrivate.time = Csw.string(cswPrivate.propVals.value.time).trim();
 
                     cswPublic.control = cswPrivate.parent.div();
                     if (cswPublic.data.isReadOnly()) {
                         cswPublic.control.append(cswPublic.data.propData.gestalt);
                     } else {
                         cswPrivate.dateTimePicker = cswPublic.control.dateTimePicker({
-                            ID: cswPublic.data.ID,
+                            name: cswPublic.data.name,
                             Date: cswPrivate.date,
                             Time: cswPrivate.time,
                             DateFormat: Csw.serverDateFormatToJQuery(cswPrivate.propVals.value.dateformat),
                             TimeFormat: Csw.serverTimeFormatToJQuery(cswPrivate.propVals.value.timeformat),
                             DisplayMode: cswPrivate.propVals.displaymode,
                             ReadOnly: cswPublic.data.isReadOnly(),
-                            Required: cswPublic.data.isRequired(),
+                            isRequired: cswPublic.data.isRequired(),
                             onChange: function () {
                                 var val = cswPrivate.dateTimePicker.val();
                                 Csw.tryExec(cswPublic.data.onChange, val);
@@ -42,7 +44,12 @@
 
                 };
 
+                //Bind the callback to the render event
                 cswPublic.data.bindRender(render);
+                
+                //Bind an unrender callback to terminate any outstanding ajax requests, if any. See propTypeGrid.
+                //cswPublic.data.unBindRender();
+
                 return cswPublic;
             }));
 

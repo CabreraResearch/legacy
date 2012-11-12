@@ -59,9 +59,7 @@
         } else {
 
             var auth = Csw.string(response.Authentication.AuthenticationStatus, 'Unknown');
-            if (false === o.formobile) {
                 Csw.clientSession.setExpireTime(Csw.string(response.Authentication.TimeOut, ''));
-            }
 
             if (false === Csw.isNullOrEmpty(response.Performance)) {
                 response.Performance.url = url;
@@ -93,17 +91,19 @@
 
     cswPrivate.onJsonError = Csw.method(function (xmlHttpRequest, textStatus, param1, o) {
         Csw.publish(Csw.enums.events.ajax.ajaxStop, o.watchGlobal, xmlHttpRequest, textStatus);
-        Csw.debug.error({
-            'Webservice Request': o.urlMethod,
-            data: o.data,
-            Failed: textStatus,
-            state: xmlHttpRequest.state(),
-            status: xmlHttpRequest.status,
-            statusText: xmlHttpRequest.statusText,
-            readyState: xmlHttpRequest.readyState,
-            responseText: xmlHttpRequest.responseText
-        });
-        Csw.tryExec(o.error, textStatus);
+        if (textStatus !== 'abort') {
+            Csw.debug.error({
+                'Webservice Request': o.urlMethod,
+                data: o.data,
+                Failed: textStatus,
+                state: xmlHttpRequest.state(),
+                status: xmlHttpRequest.status,
+                statusText: xmlHttpRequest.statusText,
+                readyState: xmlHttpRequest.readyState,
+                responseText: xmlHttpRequest.responseText
+            });
+            Csw.tryExec(o.error, textStatus);
+        }
     });
 
     cswPrivate.execRequest = Csw.method(function (verb, options) {
@@ -125,7 +125,6 @@
             success: null,
             error: null,
             overrideError: false,
-            formobile: false,
             async: true,
             watchGlobal: true,
             removeTimer: true
@@ -174,7 +173,6 @@
             /// <para>options.data: {field1: value, field2: value}</para>
             /// <para>options.success: function () {}</para>
             /// <para>options.error: function () {}</para>
-            /// <para>options.formobile: false</para>
             /// </param>
             /// <param name="type" type="String">XML or JSON (default)</param>
             /// <return type="Object">Returns the results of the $.ajax() request in an object wrapper.</return>
@@ -190,7 +188,6 @@
             /// <para>options.data: {field1: value, field2: value}</para>
             /// <para>options.success: function () {}</para>
             /// <para>options.error: function () {}</para>
-            /// <para>options.formobile: false</para>
             /// </param>
             /// <param name="type" type="String">XML or JSON (default)</param>
             /// <return type="Object">Returns the results of the $.ajax() request in an object wrapper.</return>
@@ -206,7 +203,6 @@
             /// <para>options.data: {field1: value, field2: value}</para>
             /// <para>options.success: function () {}</para>
             /// <para>options.error: function () {}</para>
-            /// <para>options.formobile: false</para>
             /// </param>
             /// <param name="type" type="String">XML or JSON (default)</param>
             /// <return type="Object">Returns the results of the $.ajax() request in an object wrapper.</return>
@@ -222,7 +218,6 @@
             /// <para>options.data: {field1: value, field2: value}</para>
             /// <para>options.success: function () {}</para>
             /// <para>options.error: function () {}</para>
-            /// <para>options.formobile: false</para>
             /// </param>
             /// <param name="type" type="String">XML or JSON (default)</param>
             /// <return type="Object">Returns the results of the $.ajax() request in an object wrapper.</return>

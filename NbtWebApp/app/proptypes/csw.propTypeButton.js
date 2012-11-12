@@ -12,6 +12,8 @@
                 var cswPublic = {
                     data: propertyOption
                 };
+
+                //The render function to be executed as a callback
                 var render = function () {
                     'use strict';
                     cswPublic.data = cswPublic.data || Csw.nbt.propertyOption(propertyOption);
@@ -24,28 +26,9 @@
                     cswPrivate.state = cswPrivate.propVals.state;
                     cswPrivate.text = cswPrivate.propVals.text;
                     cswPrivate.selectedText = cswPrivate.propVals.selectedText;
-                    cswPrivate.selectedText = cswPrivate.propVals.selectedText;
-
-                    
-                    //                    cswPrivate.onClickSuccess = function(data) {
-                    //                        var isRefresh = data.action == Csw.enums.nbtButtonAction.refresh;
-                    //                        if (isRefresh) { //cases 26201, 26107 
-                    //                            Csw.tryExec(cswPublic.data.onReload,
-                    //                                (function(messagedivid) {
-                    //                                    return function() {
-                    //                                        if (false === Csw.isNullOrEmpty(data.message)) {
-                    //                                            var $newmessagediv = $('#' + messagedivid);
-                    //                                            $newmessagediv.text(data.message);
-                    //                                        }
-                    //                                    };
-                    //                                })(cswPublic.control.messageDiv.getId())
-                    //                            );
-                    //                        }
-                    //                        return false === isRefresh;
-                    //                    };
 
                     cswPublic.control = cswPrivate.propDiv.nodeButton({
-                        ID: Csw.makeId(cswPublic.data.propid, cswPrivate.text, 'btn'),
+                        name: cswPrivate.text,
                         value: cswPrivate.value,
                         size: cswPublic.data.size,
                         mode: cswPrivate.mode,
@@ -54,13 +37,16 @@
                         selectedText: cswPrivate.selectedText,
                         confirmmessage: cswPrivate.propVals.confirmmessage,
                         propId: cswPublic.data.propid,
-                        ReadOnly: Csw.bool(cswPublic.data.isReadOnly()),
                         onClickSuccess: cswPrivate.onClickSuccess,
-                        disabled: cswPublic.data.isDisabled()
+                        disabled: cswPublic.data.isDisabled() || cswPublic.data.isReadOnly()
                     });
                 };
 
+                //Bind the callback to the render event
                 cswPublic.data.bindRender(render);
+                
+                //Bind an unrender callback to terminate any outstanding ajax requests, if any. See propTypeGrid.
+                //cswPublic.data.unBindRender();
 
                 return cswPublic;
             }));

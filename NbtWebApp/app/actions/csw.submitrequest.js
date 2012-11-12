@@ -8,7 +8,7 @@
             'use strict';
             var cswPublic = {};
             var cswPrivate = {
-                ID: 'CswSubmitRequest',
+                name: 'CswSubmitRequest',
                 onSubmit: null,
                 onCancel: null,
                 gridOpts: {},
@@ -48,7 +48,10 @@
                     onCancel: cswPrivate.onCancel
                 });
 
-                cswPrivate.actionTbl = cswPrivate.action.actionDiv.table({ ID: cswPrivate.ID + '_tbl', align: 'center' }).css('width', '95%');
+                cswPrivate.actionTbl = cswPrivate.action.actionDiv.table({
+                    name: cswPrivate.name + '_tbl',
+                    align: 'center'
+                }).css('width', '95%');
 
                 cswPrivate.actionTbl.cell(1, 1)
                     .css('text-align', 'left')
@@ -56,8 +59,10 @@
 
 
                 cswPrivate.actionTbl.cell(3, 1).br({ number: 2 });
-                cswPrivate.gridId = cswPrivate.ID + '_csw_requestGrid_outer';
-                cswPublic.gridParent = cswPrivate.actionTbl.cell(4, 1).div({ ID: cswPrivate.gridId }); //, align: 'center' });
+                cswPrivate.gridId = cswPrivate.name + '_csw_requestGrid_outer';
+                cswPublic.gridParent = cswPrivate.actionTbl.cell(4, 1).div({
+                    name: cswPrivate.gridId
+                }); //, align: 'center' });
 
                 cswPrivate.initGrid = function (opts) {
 
@@ -68,9 +73,9 @@
                         onSuccess: null 
                     };
 
-                    var gridId = Csw.makeId(cswPrivate.ID, '_srgrid');
+                    var gridId = cswPrivate.name + '_srgrid';
                     cswPublic.grid = cswPublic.gridParent.grid({
-                        ID: gridId,
+                        name: gridId,
                         storeId: gridId + '_store',
                         stateId: gridId,
                         title: 'Your Cart',
@@ -93,22 +98,28 @@
                         },
                         onEdit: function (rows) {
                             // this works for both Multi-edit and regular
-                            var cswnbtnodekeys = [],
-                                nodeids = [],
-                                nodenames = [];
+                            var nodekeys = Csw.delimitedString(),
+                                nodeids = Csw.delimitedString(),
+                                nodenames = [],
+                                currentNodeId, currentNodeKey;
+                               
 
                             Csw.each(rows, function (row) {
-                                cswnbtnodekeys.push(row.nodekey);
-                                nodeids.push(row.nodeid);
+                                currentNodeId = currentNodeId || row.nodeid;
+                                currentNodeKey = currentNodeKey || row.nodekey;
+                                nodekeys.add(row.nodekey);
+                                nodeids.add(row.nodeid);
                                 nodenames.push(row.nodename);
                             });
 
                             $.CswDialog('EditNodeDialog', {
-                                nodeids: nodeids,
-                                nodepks: nodeids,
-                                nodekeys: cswnbtnodekeys,
+                                currentNodeId: currentNodeId,
+                                currentNodeKey: currentNodeKey,
+                                selectedNodeIds: nodeids,
+                                selectedNodeKeys: nodekeys,
                                 nodenames: nodenames,
                                 Multi: (nodeids.length > 1),
+                                title: 'Request',
                                 onEditNode: function () {
                                     cswPrivate.initGrid(); //Case 27619--don't pass the function by reference, because we want to control the parameters with which it is called
                                 }

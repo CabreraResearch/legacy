@@ -51,7 +51,7 @@ namespace ChemSW.Nbt.ObjClasses
         public static implicit operator CswNbtObjClassInventoryLevel( CswNbtNode Node )
         {
             CswNbtObjClassInventoryLevel ret = null;
-            if( null != Node && _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.InventoryLevelClass ) )
+            if( null != Node && _Validate( Node, NbtObjectClass.InventoryLevelClass ) )
             {
                 ret = (CswNbtObjClassInventoryLevel) Node.ObjClass;
             }
@@ -76,7 +76,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
-            get { return _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.InventoryLevelClass ); }
+            get { return _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.InventoryLevelClass ); }
         }
 
 

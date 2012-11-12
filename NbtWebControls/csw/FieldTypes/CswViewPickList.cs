@@ -40,7 +40,7 @@ namespace ChemSW.NbtWebControls.FieldTypes
                 //DataTable Views = null;
                 //CswQueryCaddy ViewsCaddy = _CswNbtResources.makeCswQueryCaddy( "getVisibleViewInfo" );
                 //ViewsCaddy.S4Parameters.Add( "orderbyclause", "lower(v.viewname)" );
-                ////if( MetaDataProp.NodeType.ObjectClass.ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.UserClass )
+                ////if( MetaDataProp.NodeType.ObjectClass.ObjectClass == CswNbtMetaDataObjectClassName.NbtObjectClass.UserClass )
                 ////{
                 ////    CswNbtObjClassUser UserNode = (CswNbtObjClassUser) _CswNbtResources.Nodes[this.NodeKey];
                 ////    if( UserNode != null && UserNode.RoleId > 0 )

@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.Linq;
-using System.Xml;
-using System.Xml.Linq;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Nbt.MetaData;
@@ -229,7 +227,7 @@ namespace ChemSW.Nbt.PropTypes
                 if( NodeId != null )
                 {
                     // Use the User's visible, quicklaunch views
-                    CswCommaDelimitedString ViewIds = new CswCommaDelimitedString( SelectedViewIds.Count, true );
+                    CswCommaDelimitedString ViewIds = new CswCommaDelimitedString( SelectedViewIds.Count, "'" );
                     ViewIds.FromDelimitedString( SelectedViewIds );
                     _SelectedViews = _CswNbtResources.ViewSelect.getVisibleViews( User, false, ViewIds );
                 }
@@ -272,36 +270,6 @@ namespace ChemSW.Nbt.PropTypes
             return _ViewsForCBA;
         } // ViewsForCBA
 
-        public override void ToXml( XmlNode ParentNode )
-        {
-            XmlNode SelectedViewIdsNode = CswXmlDocument.AppendXmlNode( ParentNode, _SelectedViewIdsSubField.ToXmlNodeName(), SelectedViewIds.ToString() );
-            CswXmlDocument.AppendXmlAttribute( SelectedViewIdsNode, "SelectMode", SelectMode.ToString() );
-            XmlNode CachedViewNameNode = CswXmlDocument.AppendXmlNode( ParentNode, _CachedViewNameSubField.ToXmlNodeName(), CachedViewNames.ToString() );
-            XmlNode OptionsNode = CswXmlDocument.AppendXmlNode( ParentNode, ElemName_Options );
-            DataTable ViewsTable = ViewsForCBA();
-            foreach( DataRow ViewRow in ViewsTable.Rows )
-            {
-                XmlNode ViewNode = CswXmlDocument.AppendXmlNode( OptionsNode, "user" );
-
-                XmlNode NameNode = CswXmlDocument.AppendXmlNode( ViewNode, "column" );
-                CswXmlDocument.AppendXmlAttribute( NameNode, "field", NameColumn );
-                CswXmlDocument.AppendXmlAttribute( NameNode, "value", ViewRow[NameColumn].ToString() );
-
-                XmlNode KeyNode = CswXmlDocument.AppendXmlNode( ViewNode, "column" );
-                CswXmlDocument.AppendXmlAttribute( KeyNode, "field", KeyColumn );
-                CswXmlDocument.AppendXmlAttribute( KeyNode, "value", ViewRow[KeyColumn].ToString() );
-
-                XmlNode IncludeNode = CswXmlDocument.AppendXmlNode( ViewNode, "column" );
-                CswXmlDocument.AppendXmlAttribute( IncludeNode, "field", ValueColumn );
-                CswXmlDocument.AppendXmlAttribute( IncludeNode, "value", ViewRow[ValueColumn].ToString() );
-            }
-        }
-
-        public override void ToXElement( XElement ParentNode )
-        {
-            //Not yet implemented
-        }
-
         public override void ToJSON( JObject ParentObject )
         {
             ParentObject[_SelectedViewIdsSubField.ToXmlNodeName()] = SelectedViewIds.ToString();
@@ -322,45 +290,8 @@ namespace ChemSW.Nbt.PropTypes
                 Option.Values.Add( CswConvert.ToBoolean( ViewRow[ValueColumn] ) );
                 CBAOptions.Options.Add( Option );
             }
-
             CBAOptions.ToJSON( (JObject) ParentObject[ElemName_Options] );
         } // ToJSON()
-
-        public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
-        {
-            //SelectedViewIds.FromString( CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _SelectedViewIdsSubField.ToXmlNodeName() ) );
-            //PendingUpdate = true;
-
-            CswCommaDelimitedString NewSelectedViewIds = new CswCommaDelimitedString();
-
-            foreach( XmlNode ItemNode in CswXmlDocument.ChildXmlNode( XmlNode, "options" ).ChildNodes )
-            {
-                string key = string.Empty;
-                string name = string.Empty;
-                bool value = false;
-                foreach( XmlNode ColumnNode in ItemNode.ChildNodes )
-                {
-                    if( KeyColumn == ColumnNode.Attributes["field"].Value )
-                        key = ColumnNode.Attributes["value"].Value;
-                    if( NameColumn == ColumnNode.Attributes["field"].Value )
-                        name = ColumnNode.Attributes["value"].Value;
-                    if( ValueColumn == ColumnNode.Attributes["field"].Value )
-                        value = CswConvert.ToBoolean( ColumnNode.Attributes["value"].Value );
-                }
-                if( value )
-                {
-                    NewSelectedViewIds.Add( key );
-                }
-            } // foreach( XmlNode ItemNode in CswXmlDocument.ChildXmlNode( XmlNode, "Options" ).ChildNodes )
-
-            SelectedViewIds = NewSelectedViewIds;
-            RefreshViewName();
-        }
-
-        public override void ReadXElement( XElement XmlNode, Dictionary<int, int> NodeMap, Dictionary<int, int> NodeTypeMap )
-        {
-            //Not yet implemented
-        }
 
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {

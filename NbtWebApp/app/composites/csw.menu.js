@@ -33,23 +33,23 @@
             };
             var cswPublic = {};
 
-            cswPrivate.getSelectedNodes = function(menuItemJson) {
-                var ret = { };
+            cswPrivate.getSelectedNodes = function (menuItemJson) {
+                var ret = {};
                 var nodechecks = null;
-                
+
                 if (false == Csw.isNullOrEmpty(cswPrivate.nodeTreeCheck)) {
                     nodechecks = Csw.tryExec(cswPrivate.nodeTreeCheck.checkedNodes);
                 }
                 if (false === Csw.isNullOrEmpty(nodechecks, true)) {
-                    Csw.each(nodechecks, function(thisObj) {
+                    Csw.each(nodechecks, function (thisObj) {
                         ret[thisObj.nodeid] = {
                             nodeid: thisObj.nodeid,
-                            cswnbtnodekey: thisObj.cswnbtnodekey,
+                            nodekey: thisObj.nodekey,
                             nodename: thisObj.nodename
                         };
                     });
                 }
-                if(Csw.isNullOrEmpty(ret)) {
+                if (Csw.isNullOrEmpty(ret)) {
                     ret[menuItemJson.nodeid] = {
                         nodeid: menuItemJson.nodeid,
                         nodename: menuItemJson.nodename,
@@ -58,7 +58,7 @@
                 }
                 return ret;
             };
-            
+
             cswPrivate.handleMenuItemClick = function (menuItemName, menuItemJson) {
                 if (false === Csw.isNullOrEmpty(menuItemJson)) {
 
@@ -81,7 +81,7 @@
                                 break;
                             case 'AddNode':
                                 $.CswDialog('AddNodeDialog', {
-                                    text: menuItemName,
+                                    text: "New " + menuItemName,
                                     nodetypeid: Csw.string(menuItemJson.nodetypeid),
                                     relatednodeid: Csw.string(menuItemJson.relatednodeid), //for Grid Props
                                     relatednodename: Csw.string(menuItemJson.relatednodename), //for Grid Props
@@ -196,7 +196,7 @@
                                 break;
                             case 'Profile':
                                 $.CswDialog('EditNodeDialog', {
-                                    nodeids: [menuItemJson.userid],
+                                    currentNodeId: menuItemJson.userid,
                                     filterToPropId: '',
                                     title: 'User Profile',
                                     onEditNode: null // function (nodeid, nodekey) { }
@@ -265,9 +265,9 @@
 
             //constructor
             (function () {
-                if (options) Csw.extend(cswPrivate, options);
+                Csw.extend(cswPrivate, options);
 
-                Csw.ajax.post({
+                cswPublic.ajax = Csw.ajax.post({
                     urlMethod: cswPrivate.ajax.urlMethod,
                     data: cswPrivate.ajax.data,
                     success: function (result) {
@@ -310,20 +310,29 @@
                             }
                             items.push(thisItem);
                         }); // each
-                        
+
                         cswParent.empty();
 
-                        if (false === Csw.isNullOrEmpty($('#' + cswParent.getId()), true)) {
-                            window.Ext.create('Ext.toolbar.Toolbar', {
-                                renderTo: cswParent.getId(),
-                                width: cswPrivate.width,
-                                items: items,
-                                cls: 'menutoolbar'
-                            }); // toolbar
-                        } // success
-                    }
+                        if (Csw.isElementInDom(cswParent.getId())) {
+                            try {
+                                cswPublic.menu = window.Ext.create('Ext.toolbar.Toolbar', {
+                                    id: cswPrivate.ID + 'toolbar',
+                                    renderTo: cswParent.getId(),
+                                    width: cswPrivate.width,
+                                    items: items,
+                                    cls: 'menutoolbar'
+                                }); // toolbar
+                            } catch (e) {
+                                Csw.debug.error('Failed to create Ext.toolbar.Toolbar in csw.menu');
+                                Csw.debug.error(e);
+                            }
+                        } else {
+                            cswPublic.menu = window.Ext.create('Ext.toolbar.Toolbar');
+                        }
+                        //}                                                            
+                    }       //success
                 }); // ajax
-            } ()); // constructor
+            }()); // constructor
 
             return cswPublic;
         });
@@ -336,4 +345,4 @@
             Csw.window.location(Csw.getGlobalProp('homeUrl'));
         });
 
-} ());
+}());

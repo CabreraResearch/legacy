@@ -207,6 +207,15 @@ namespace ChemSW.Nbt
         }
 
         /// <summary>
+        /// True if the View is visible by the current user
+        /// </summary>
+        /// <returns></returns>
+        public bool IsVisible()
+        {
+            return _CswNbtResources.ViewSelect.isVisible( this, _CswNbtResources.CurrentNbtUser, true, false );
+        }
+
+        /// <summary>
         /// Constructor - empty view
         /// </summary>
         public CswNbtView( CswNbtResources CswNbtResources )
@@ -221,9 +230,9 @@ namespace ChemSW.Nbt
         /// Creates a new <see cref="CswNbtViewRelationship"/> for this view.
         /// For copying an existing relationship
         /// </summary>
-        public CswNbtViewRelationship AddViewRelationship( CswNbtMetaDataObjectClass.NbtObjectClass NbtObjectClass, bool IncludeDefaultFilters, out CswNbtMetaDataObjectClass ObjectClass )
+        public CswNbtViewRelationship AddViewRelationship( NbtObjectClass NbtObjectClass, bool IncludeDefaultFilters, out CswNbtMetaDataObjectClass ObjectClass )
         {
-            if( NbtObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.Unknown )
+            if( NbtObjectClass == CswNbtResources.UnknownEnum )
             {
                 throw new CswDniException( ErrorType.Error, "Cannot create an view relationship if the object class is unknown.", "Attempted to call AddViewRelationship with an Unknown Object Class." );
             }
@@ -859,7 +868,7 @@ namespace ChemSW.Nbt
 
             // Reset user information
 
-            CswNbtMetaDataObjectClass User_ObjectClass = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
+            CswNbtMetaDataObjectClass User_ObjectClass = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.UserClass );
 
             // generate the view
             CswNbtView View = new CswNbtView( _CswNbtResources );
@@ -867,7 +876,7 @@ namespace ChemSW.Nbt
             CswNbtViewRelationship UserRelationship = View.AddViewRelationship( User_ObjectClass, false );
 
             // generate the tree
-            ICswNbtTree UserTree = _CswNbtResources.Trees.getTreeFromView( View, false, true, false, false );
+            ICswNbtTree UserTree = _CswNbtResources.Trees.getTreeFromView( _CswNbtResources.CurrentNbtUser, View, true, false, false );
 
             // reset the default view and quick launch views
             UserTree.goToRoot();

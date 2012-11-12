@@ -12,12 +12,12 @@
             }
 
             var cswPrivate = {
-                ID: '',
+                name: '',
                 cols: [], // [ 'Included', ... ]
                 data: [], // [{ label: 'Option1', key: '1', values: [ true, ... ] }, ... ]
                 HeightInRows: 4,
                 UseRadios: false,
-                Required: false,
+                isRequired: false,
                 ReadOnly: false,
                 Multi: false,
                 onChange: null,
@@ -83,7 +83,6 @@
                     var cell = table.cell(tablerownum, c + 2);
                     cell.addClass('cbarraycell');
 
-                    var checkid = cswPrivate.ID + '_' + rownum + '_' + c;
                     var checkType = Csw.enums.inputTypes.checkbox;
                     if (cswPrivate.UseRadios) {
                         checkType = Csw.enums.inputTypes.radio;
@@ -91,9 +90,8 @@
 
                     var check = cell.input({
                         type: checkType,
-                        cssclass: 'CBACheckBox_' + cswPrivate.ID,
-                        ID: checkid,
-                        name: cswPrivate.ID,
+                        cssclass: 'CBACheckBox_' + cswPrivate.name,
+                        name: cswPrivate.name,
                         checked: rowdata[cswPrivate.valCol][c]
                     });
 
@@ -130,9 +128,7 @@
             cswPrivate.makeTable = function (parent) {
                 parent.empty();
 
-                var table = parent.table({
-                    ID: Csw.makeId(cswPrivate.ID, 'tbl')
-                });
+                var table = parent.table();
 
                 parent.addClass('cbarraydiv');
                 table.addClass('cbarraytable');
@@ -150,7 +146,7 @@
                 tablerow += 1;
 
                 //[none] row
-                if (cswPrivate.UseRadios && false === cswPrivate.Required) {
+                if (cswPrivate.UseRadios && false === cswPrivate.isRequired) {
                     var noneRowData = {};
                     noneRowData[cswPrivate.nameCol] = '[none]';
                     noneRowData[cswPrivate.keyCol] = '';
@@ -159,7 +155,7 @@
                         noneRowData[cswPrivate.valCol][e] = true;
                     }
                     cswPrivate.makeCheckboxRow(table, tablerow, noneRowData, -1);
-                } // if(cswPrivate.UseRadios && ! cswPrivate.Required)
+                } // if(cswPrivate.UseRadios && ! cswPrivate.isRequired)
                 tablerow += 1;
 
 
@@ -170,7 +166,7 @@
 
                 if (false === cswPrivate.UseRadios && cswPrivate.data.length > 0) {
                     var checkAllLinkText = 'Check All';
-                    if ($('.CBACheckBox_' + cswPrivate.ID).not(':checked').length === 0) {
+                    if ($('.CBACheckBox_' + cswPrivate.name).not(':checked').length === 0) {
                         checkAllLinkText = 'Uncheck All';
                     }
 
@@ -197,22 +193,17 @@
                 cswPrivate.data = options.data;
 
                 cswPrivate.cbaDiv = cswParent.div({
-                    ID: cswPrivate.ID
+                    name: cswPrivate.name
                 });
                 cswPublic = Csw.dom({}, cswPrivate.cbaDiv);
 
                 if (cswPrivate.useEditButton || cswPrivate.ReadOnly) {
-                    if (cswPrivate.Multi) {
-                        cswPrivate.cbaDiv.append(Csw.enums.multiEditDefaultValue);
-                    } else {
-                        cswPrivate.cbaDiv.append(cswPrivate.makeTextValue());
-                    }
-
+                    cswPrivate.cbaDiv.append(cswPrivate.makeTextValue());
+                    
                     if (false === cswPrivate.ReadOnly) {
                         cswPrivate.editButton = cswPrivate.cbaDiv.icon({
                             iconType: Csw.enums.iconType.pencil,
                             isButton: true,
-                            ID: Csw.makeId(cswPrivate.ID, 'edit'),
                             onClick: function () {
                                 cswPrivate.cbaDiv.css({
                                     height: (25 * cswPrivate.HeightInRows) + 'px'
@@ -228,7 +219,7 @@
 
 
             cswPublic.toggleCheckAll = function () {
-                var checkBoxes = cswPublic.find('.CBACheckBox_' + cswPrivate.ID);
+                var checkBoxes = cswPublic.find('.CBACheckBox_' + cswPrivate.name);
                 if (checkBoxes.isValid) {
                     if (cswPrivate.checkAllLink.text() === 'Uncheck All') {
                         checkBoxes.propDom('checked', 'checked'); // Yes, this checks.  But click below unchecks again.

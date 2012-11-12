@@ -499,6 +499,17 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
+        private bool _Hidden = false;
+        public bool Hidden
+        {
+            get { return _Hidden; }
+            set
+            {
+                _NodeModificationState = NodeModificationState.Modified;
+                _Hidden = value;
+            }
+        }
+
         private string _SessionId = string.Empty;
         /// <summary>
         /// If IsTemp, the SessionId associated with the Node

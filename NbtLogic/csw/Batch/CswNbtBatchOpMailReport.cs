@@ -1,13 +1,13 @@
 ﻿using System;
-using System.Collections.ObjectModel;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Data;
 using System.Linq;
 using ChemSW.Core;
 using ChemSW.DB;
+using ChemSW.Mail;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Sched;
-using ChemSW.Mail;
 using ChemSW.Nbt.Security;
 using Newtonsoft.Json.Linq;
 
@@ -317,7 +317,13 @@ namespace ChemSW.Nbt.Batch
                                 if( ViewId.isSet() )
                                 {
                                     CswNbtView ReportView = _CswNbtResources.ViewSelect.restoreView( ViewId );
-                                    ICswNbtTree ReportTree = _CswNbtResources.Trees.getTreeFromView( UserNodeAsUser as ICswNbtUser, ReportView, true, true, false, false );
+                                    ICswNbtTree ReportTree = _CswNbtResources.Trees.getTreeFromView(
+                                        RunAsUser: UserNodeAsUser as ICswNbtUser,
+                                        View: ReportView,
+                                        RequireViewPermissions: true,
+                                        IncludeSystemNodes: false,
+                                        IncludeHiddenNodes: false );
+                                    //ICswNbtTree ReportTree = _CswNbtResources.Trees.getTreeFromView( UserNodeAsUser as ICswNbtUser, ReportView, true, true, false, false );
 
                                     if( ReportTree.getChildNodeCount() > 0 )
                                     {

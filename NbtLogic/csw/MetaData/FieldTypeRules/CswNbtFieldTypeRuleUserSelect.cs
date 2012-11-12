@@ -64,11 +64,11 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                 // BZ 7938
                 // We store the users by ID, but search by name.  So we have to decode.
                 Collection<CswPrimaryKey> MatchingUserKeys = new Collection<CswPrimaryKey>();
-                //ICswNbtTree UsersTree = _CswNbtFieldResources.CswNbtResources.Trees.getTreeFromObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
+                //ICswNbtTree UsersTree = _CswNbtFieldResources.CswNbtResources.Trees.getTreeFromObjectClass( CswNbtMetaDataObjectClassName.NbtObjectClass.UserClass );
                 //for( Int32 u = 0; u < UsersTree.getChildNodeCount(); u++ )
                 //{
                 //    UsersTree.goToNthChild( u );
-                CswNbtMetaDataObjectClass UserOC = _CswNbtFieldResources.CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
+                CswNbtMetaDataObjectClass UserOC = _CswNbtFieldResources.CswNbtResources.MetaData.getObjectClass( NbtObjectClass.UserClass );
                 foreach( CswNbtNode UserNode in UserOC.getNodes( false, false ) )
                 {
                     string UserNodeName = UserNode.NodeName; //UsersTree.getNodeNameForCurrentPosition();

@@ -606,7 +606,7 @@ namespace ChemSW.Nbt
             CswTimer Timer = new CswTimer();
             CswNbtNode UserNode = null;
 
-            CswNbtMetaDataObjectClass User_ObjectClass = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
+            CswNbtMetaDataObjectClass User_ObjectClass = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.UserClass );
             CswNbtMetaDataObjectClassProp UserName_ObjectClassProp = User_ObjectClass.getObjectClassProp( CswNbtObjClassUser.PropertyName.Username );
 
             _CswNbtResources.logTimerResult( "makeUserNodeFromUsername 1", Timer );
@@ -621,7 +621,7 @@ namespace ChemSW.Nbt
             _CswNbtResources.logTimerResult( "makeUserNodeFromUsername 2", Timer );
 
             // generate the tree
-            ICswNbtTree UserTree = _CswNbtResources.Trees.getTreeFromView( View, RequireViewPermissions, true );
+            ICswNbtTree UserTree = _CswNbtResources.Trees.getTreeFromView( View, RequireViewPermissions, true, IncludeHiddenNodes: false );
 
             _CswNbtResources.logTimerResult( "makeUserNodeFromUsername 3", Timer );
 
@@ -655,7 +655,7 @@ namespace ChemSW.Nbt
         {
             CswNbtNode RoleNode = null;
 
-            CswNbtMetaDataObjectClass Role_ObjectClass = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.RoleClass );
+            CswNbtMetaDataObjectClass Role_ObjectClass = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.RoleClass );
             CswNbtMetaDataObjectClassProp RoleName_ObjectClassProp = Role_ObjectClass.getObjectClassProp( CswNbtObjClassRole.PropertyName.Name );
 
             // generate the view
@@ -666,7 +666,7 @@ namespace ChemSW.Nbt
             CswNbtViewPropertyFilter Filter = View.AddViewPropertyFilter( Prop, CswNbtSubField.SubFieldName.Unknown, CswNbtPropFilterSql.PropertyFilterMode.Equals, RoleName, false );
 
             // generate the tree
-            ICswNbtTree UserTree = _CswNbtResources.Trees.getTreeFromView( View, false, true );
+            ICswNbtTree UserTree = _CswNbtResources.Trees.getTreeFromView( View, false, true, false );
 
             // get user node
             UserTree.goToRoot();

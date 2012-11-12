@@ -10,70 +10,14 @@ namespace ChemSW.Nbt.MetaData
 {
     public class CswNbtMetaDataObjectClass : ICswNbtMetaDataObject, IEquatable<CswNbtMetaDataObjectClass>
     {
-        public static string IconPrefix16 = "Images/newicons/16/";
-        public static string IconPrefix18 = "Images/newicons/18/";
-        public static string IconPrefix100 = "Images/newicons/100/";
-
-        public enum NbtObjectClass
-        {
-            Unknown,
-            AliquotClass,
-            BatchOpClass,
-            BiologicalClass,
-            MaterialComponentClass,
-            ContainerClass,
-            ContainerDispenseTransactionClass,
-            CustomerClass,
-            DocumentClass,
-            EquipmentAssemblyClass,
-            EquipmentClass,
-            EquipmentTypeClass,
-            FeedbackClass,
-            GeneratorClass,
-            GenericClass,
-            InspectionDesignClass,
-            InspectionRouteClass,
-            InventoryGroupClass,
-            InventoryGroupPermissionClass,
-            InventoryLevelClass,
-            LocationClass,
-            MailReportClass,
-            MaterialClass,
-            MaterialSynonymClass,
-            InspectionTargetClass,
-            InspectionTargetGroupClass,
-            //NotificationClass,
-            ParameterClass,
-            PrintLabelClass,
-            ProblemClass,
-            RegulatoryListClass,
-            ReportClass,
-            ResultClass,
-            RequestClass,
-            RequestItemClass,
-            RoleClass,
-            SampleClass,
-            SizeClass,
-            TaskClass,
-            TestClass,
-            //TestGroupClass,
-            UnitOfMeasureClass,
-            UserClass,
-            VendorClass,
-            WorkUnitClass
-            //UnitTypeClass//case 7608 - deprecated
-        };
+        public const string IconPrefix16 = "Images/newicons/16/";
+        public const string IconPrefix18 = "Images/newicons/18/";
+        public const string IconPrefix100 = "Images/newicons/100/";
 
         public static NbtObjectClass getObjectClassFromString( string ObjectClassName )
         {
-            //return ( ( CswNbtMetaDataObjectClass.NbtObjectClass )Enum.Parse( typeof( CswNbtMetaDataObjectClass.NbtObjectClass ), ObjectClassName, true ) );
-            NbtObjectClass ReturnVal = NbtObjectClass.Unknown;
             //bz # 7815 -- Should not care if the requested object class doesn't exist anymore
-            if( Enum.IsDefined( typeof( NbtObjectClass ), ObjectClassName ) )
-            {
-                Enum.TryParse( ObjectClassName, true, out ReturnVal );
-            }
-            return ( ReturnVal );
+            return ( ObjectClassName );
         }
 
         private CswNbtMetaDataResources _CswNbtMetaDataResources;
@@ -224,12 +168,12 @@ namespace ChemSW.Nbt.MetaData
             return DefaultView;
         }
 
-        public Collection<CswNbtNode> getNodes( bool forceReInit, bool includeSystemNodes, bool IncludeDefaultFilters = true )
+        public Collection<CswNbtNode> getNodes( bool forceReInit, bool includeSystemNodes, bool IncludeDefaultFilters = true, bool IncludeHiddenNodes = false )
         {
             Collection<CswNbtNode> Collection = new Collection<CswNbtNode>();
 
             CswNbtView View = CreateDefaultView( IncludeDefaultFilters );
-            ICswNbtTree Tree = _CswNbtMetaDataResources.CswNbtResources.Trees.getTreeFromView( View, forceReInit, true, true, includeSystemNodes );
+            ICswNbtTree Tree = _CswNbtMetaDataResources.CswNbtResources.Trees.getTreeFromView( _CswNbtMetaDataResources.CswNbtResources.CurrentNbtUser, View, false, includeSystemNodes, IncludeHiddenNodes );
             for( Int32 c = 0; c < Tree.getChildNodeCount(); c++ )
             {
                 Tree.goToNthChild( c );
@@ -250,7 +194,8 @@ namespace ChemSW.Nbt.MetaData
                        ObjectClass != NbtObjectClass.RequestClass &&
                        ObjectClass != NbtObjectClass.ContainerClass &&
                        ObjectClass != NbtObjectClass.MaterialClass &&
-                       ObjectClass != NbtObjectClass.ContainerDispenseTransactionClass );
+                       ObjectClass != NbtObjectClass.ContainerDispenseTransactionClass &&
+                       ObjectClass != NbtObjectClass.BatchOpClass );
             }
         } // CanAdd
 

@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Xml;
-using System.Xml.Linq;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
@@ -138,37 +136,12 @@ namespace ChemSW.Nbt.PropTypes
             //}
         }
 
-
-
-        public override void ToXml( XmlNode ParentNode )
-        {
-            CswXmlDocument.AppendXmlNode( ParentNode, _BarcodeSubField.ToXmlNodeName(), Barcode );
-            CswXmlDocument.AppendXmlNode( ParentNode, _SequenceNumberSubField.ToXmlNodeName(), SequenceNumber );
-        }
-
-        public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
-        {
-            _setPropVals( CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _BarcodeSubField.ToXmlNodeName() ) );
-        } // ReadXml()
-
-        public override void ToXElement( XElement ParentNode )
-        {
-            ParentNode.Add( new XElement( _BarcodeSubField.ToXmlNodeName( true ), Barcode ),
-                            new XElement( _SequenceNumberSubField.ToXmlNodeName( true ), SequenceNumber ) );
-        }
+        // ReadXml()
 
         public override void ToJSON( JObject ParentObject )
         {
             ParentObject[_SequenceNumberSubField.ToXmlNodeName( true )] = SequenceNumber;
             ParentObject[_BarcodeSubField.ToXmlNodeName( true )] = Barcode;
-        }
-
-        public override void ReadXElement( XElement XmlNode, Dictionary<int, int> NodeMap, Dictionary<int, int> NodeTypeMap )
-        {
-            if( null != XmlNode.Element( _BarcodeSubField.ToXmlNodeName( true ) ) )
-            {
-                _setPropVals( XmlNode.Element( _BarcodeSubField.ToXmlNodeName( true ) ).Value );
-            }
         }
 
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )

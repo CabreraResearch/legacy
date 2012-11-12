@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Xml;
-using System.Xml.Linq;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
@@ -88,40 +86,11 @@ namespace ChemSW.Nbt.PropTypes
             //}
         }
 
-        public override void ToXml( XmlNode ParentNode )
-        {
-            XmlNode TextNode = CswXmlDocument.AppendXmlNode( ParentNode, _TextSubField.ToXmlNodeName() );
-            CswXmlDocument.AppendXmlAttribute( TextNode, "rows", Rows.ToString() );
-            CswXmlDocument.AppendXmlAttribute( TextNode, "columns", Columns.ToString() );
-            CswXmlDocument.SetInnerTextAsCData( TextNode, Text );
-        }
-
-        public override void ToXElement( XElement ParentNode )
-        {
-            XElement TextNode = new XElement( _TextSubField.ToXmlNodeName( true ),
-                                              new XElement( "rows", Rows.ToString() ),
-                                              new XElement( "columns", Columns.ToString() ) ) { Value = Text };
-            ParentNode.Add( TextNode );
-        }
-
         public override void ToJSON( JObject ParentObject )
         {
             ParentObject[_TextSubField.ToXmlNodeName( true )] = Text;
             ParentObject["rows"] = Rows.ToString();
             ParentObject["columns"] = Columns.ToString();
-        }
-
-        public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
-        {
-            Text = CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _TextSubField.ToXmlNodeName() );
-        }
-
-        public override void ReadXElement( XElement XmlNode, Dictionary<int, int> NodeMap, Dictionary<int, int> NodeTypeMap )
-        {
-            if( null != XmlNode.Element( _TextSubField.ToXmlNodeName( true ) ) )
-            {
-                Text = XmlNode.Element( _TextSubField.ToXmlNodeName( true ) ).Value;
-            }
         }
 
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )

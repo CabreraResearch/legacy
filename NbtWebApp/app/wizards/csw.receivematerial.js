@@ -9,7 +9,7 @@
             'use strict';
 
             var cswPrivate = {
-                ID: 'cswReceiveMaterialWizard',
+                name: 'cswReceiveMaterialWizard',
                 exitFunc: null, //function ($wizard) {},
                 startingStep: 1,
                 wizard: null,
@@ -67,16 +67,16 @@
             };
 
             cswPrivate.getState = function () {
-                var ret = Csw.clientDb.getItem(cswPrivate.ID + '_' + cswReceiveMaterialWizardState);
+                var ret = Csw.clientDb.getItem(cswPrivate.name + '_' + cswReceiveMaterialWizardState);
                 return ret;
             };
 
             cswPrivate.setState = function () {
-                Csw.clientDb.setItem(cswPrivate.ID + '_' + cswReceiveMaterialWizardState, cswPrivate.state);
+                Csw.clientDb.setItem(cswPrivate.name + '_' + cswReceiveMaterialWizardState, cswPrivate.state);
             };
 
             cswPrivate.clearState = function () {
-                Csw.clientDb.removeItem(cswPrivate.ID + '_' + cswReceiveMaterialWizardState);
+                Csw.clientDb.removeItem(cswPrivate.name + '_' + cswReceiveMaterialWizardState);
             };
 
             //ctor preInit
@@ -146,7 +146,6 @@
                 };
 
                 cswPrivate.wizard = Csw.layouts.wizard(cswParent.div(), {
-                    ID: Csw.makeId(cswPrivate.ID, 'wizard'),
                     Title: 'Receive: ' + cswPrivate.state.tradeName,
                     StepCount: 3,
                     Steps: cswPrivate.wizardSteps,
@@ -222,10 +221,9 @@
                             cswPrivate.amountsDiv.empty();
 
                             cswPrivate.amountsGrid = Csw.wizard.amountsGrid(cswPrivate.amountsDiv, {
-                                ID: cswPrivate.wizard.makeStepId('wizardAmountsThinGrid'),
+                                name: 'wizardAmountsThinGrid',
                                 quantity: cswPrivate.state.quantity,
                                 containerlimit: cswPrivate.state.containerlimit,
-                                makeId: cswPrivate.wizard.makeStepId,
                                 materialId: cswPrivate.state.materialId,
                                 action: 'Receive',
                                 customBarcodes: cswPrivate.state.customBarcodes
@@ -277,7 +275,7 @@
                         cswPrivate.divStep2.br({ number: 4 });
 
                         cswPrivate.tabsAndProps = Csw.wizard.addLayout(cswPrivate.divStep2, {
-                            ID: cswPrivate.state.containerNodeTypeId + 'add_layout',
+                            name: cswPrivate.state.containerNodeTypeId + 'add_layout',
                             tabState: {
                                 nodetypeid: cswPrivate.state.containerNodeTypeId
                             },

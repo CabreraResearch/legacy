@@ -7,12 +7,10 @@
 
     Csw.composites.menuButton = Csw.composites.menuButton ||
         Csw.composites.register('menuButton', function (cswParent, options) {
-            window.Ext.require('Ext.button.*');
-            window.Ext.require('Ext.menu.*');
 
             var cswPrivate = {
-                ID: '',
-                menuOptions: ['Menu Item 1', 'Menu Item 2'],
+                name: '',
+                menuOptions: [], // ['Menu Item 1', 'Menu Item 2'],
                 menu: [],
                 size: 'medium',
                 selectedText: '',
@@ -43,28 +41,25 @@
                     cswPrivate.menu.push({ text: val, handler: function () { Csw.tryExec(cswPrivate.handleMenuItemClick, val); } });
                 });
 
-                cswPrivate.initBtn = function() {
-
-                    cswPublic.menu = window.Ext.create('Ext.button.Split', {
-                        renderTo: cswParent.getId(),
-                        text: cswPrivate.selectedText,
-                        handler: cswPrivate.handleMenuItemClick,
-                        scale: Csw.string(cswPrivate.size, 'medium'),
-                        menu: new window.Ext.menu.Menu({ items: cswPrivate.menu }),
-                        disabled: cswPrivate.disabled
-                    });
-                };
-                
-                if (false === Csw.isNullOrEmpty($('#' + cswParent.getId()), true)) {
-                    cswPrivate.initBtn();
-                } else {
-                    cswPublic.button = window.Ext.create('Ext.Button');
-                    window.setTimeout(function() {
-                        if (false === Csw.isNullOrEmpty($('#' + cswParent.getId()), true)) {
-                            cswPrivate.initBtn();
-                        }
-                    }, 500);
+                if (Csw.isElementInDom(cswParent.getId())) {
+                    try {
+                        cswPublic.menu = window.Ext.create('Ext.button.Split', {
+                            id: cswPrivate.ID + 'splitmenu',
+                            renderTo: cswParent.getId(),
+                            text: cswPrivate.selectedText,
+                            handler: cswPrivate.handleMenuItemClick,
+                            scale: Csw.string(cswPrivate.size, 'medium'),
+                            menu: new window.Ext.menu.Menu({ items: cswPrivate.menu }),
+                            disabled: cswPrivate.disabled
+                        });
+                    } catch(e) {
+                        Csw.debug.error('Failed to create Ext.button.Split in csw.menuButton');
+                        Csw.debug.error(e);
+                    }
+                }    else {
+                    cswPublic.menu = window.Ext.create('Ext.button.Split');
                 }
+
             } ()); // constructor
 
             cswPublic.disable = function () {

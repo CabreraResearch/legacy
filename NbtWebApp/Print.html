@@ -12,7 +12,7 @@
         window.onload = Csw.method(function () {
             var cswPublic = {};
             var cswPrivate = {
-                ID: 'print_label',
+                name: 'print_label',
                 nodeid: '',
                 propid: '',
                 parent: Csw.literals.factory($('#divBody'), cswPublic),
@@ -53,7 +53,7 @@
                     if (data.Labels) {
 
                         cswPrivate.labelData = data.Labels;
-                        cswPrivate.processingDiv.span({ text: 'Received EPL Text for ' + data.Labels.length + ' labels.' });
+                        cswPrivate.processingDiv.span({ text: 'Received EPL Text for ' + data.Labels.length + ' label(s).' });
 
                         try {
                             cswPrivate.jZeb = cswPrivate.table.cell(1, 1).jZebra();
@@ -74,7 +74,7 @@
                             size: 'medium',
                             width: '100px',
                             bindOnEnter: true,
-                            ID: 'print_label_print',
+                            name: 'print_label_print',
                             enabledText: 'Print',
                             disableOnClick: false,
                             onClick: function () {

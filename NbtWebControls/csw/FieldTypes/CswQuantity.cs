@@ -55,7 +55,7 @@ namespace ChemSW.NbtWebControls.FieldTypes
                 if( Prop.AsQuantity.TargetType == NbtViewRelatedIdType.NodeTypeId && !ReadOnly )
                     ReadOnly = !( _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.View, _CswNbtResources.MetaData.getNodeType( Prop.AsQuantity.TargetId ) ) );
 
-                CswNbtMetaDataObjectClass Unit_ObjectClass = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UnitOfMeasureClass );
+                CswNbtMetaDataObjectClass Unit_ObjectClass = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.UnitOfMeasureClass );
                 CswNbtView View = new CswNbtView( _CswNbtResources );
                 View.ViewName = "CswNbtNodePropQuantity()";
                 View.AddViewRelationship( Unit_ObjectClass, true );
@@ -64,7 +64,7 @@ namespace ChemSW.NbtWebControls.FieldTypes
                 {
                     _UnitList.Items.Clear();
                     _UnitList.Items.Add( new ListItem( "" ) );
-                    ICswNbtTree CswNbtTree = _CswNbtResources.Trees.getTreeFromView( View, false, true, false, false );
+                    ICswNbtTree CswNbtTree = _CswNbtResources.Trees.getTreeFromView( _CswNbtResources.CurrentNbtUser, View, true, false, false );
                     for( Int32 c = 0; c < CswNbtTree.getChildNodeCount(); c++ )
                     {
                         CswNbtTree.goToNthChild( c );

@@ -26,7 +26,7 @@ namespace ChemSW.Nbt.Actions
             DateTime ReturnVal = DateTime.MinValue.Date;
 
             CswNbtView FutureNodesView = getTreeViewOfFutureNodes( new CswNbtNode[] { CswNbtNodeGenerator } );
-            ICswNbtTree TargetNodeTree = _CswNbtResources.Trees.getTreeFromView( FutureNodesView, true, true, false, false );
+            ICswNbtTree TargetNodeTree = _CswNbtResources.Trees.getTreeFromView( _CswNbtResources.CurrentNbtUser, FutureNodesView, true, false, false );
             TargetNodeTree.goToRoot();
             if( TargetNodeTree.getChildNodeCount() > 0 )
             {
@@ -128,7 +128,7 @@ namespace ChemSW.Nbt.Actions
             CswNbtView ReturnVal = new CswNbtView( _CswNbtResources );
             ReturnVal.ViewName = "All Future Nodes";
 
-            CswNbtMetaDataObjectClass GeneratorObjectClass = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.GeneratorClass );
+            CswNbtMetaDataObjectClass GeneratorObjectClass = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.GeneratorClass );
 
             CswNbtViewRelationship GeneratorRelationship = ReturnVal.AddViewRelationship( GeneratorObjectClass, false );
 
@@ -174,7 +174,7 @@ namespace ChemSW.Nbt.Actions
         public void deleteExistingFutureNodes( CswNbtNode GeneratorNode )
         {
             CswNbtView FutureNodesView = getTreeViewOfFutureNodes( new CswNbtNode[] { GeneratorNode } );
-            ICswNbtTree TargetNodeTree = _CswNbtResources.Trees.getTreeFromView( FutureNodesView, true, true, false, false );
+            ICswNbtTree TargetNodeTree = _CswNbtResources.Trees.getTreeFromView( _CswNbtResources.CurrentNbtUser, FutureNodesView, true, false, false );
 
             TargetNodeTree.goToRoot();
             if( TargetNodeTree.getChildNodeCount() > 0 )

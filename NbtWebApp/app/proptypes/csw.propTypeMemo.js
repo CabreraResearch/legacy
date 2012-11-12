@@ -11,13 +11,14 @@
                     data: propertyOption
                 };
 
+                //The render function to be executed as a callback
                 var render = function () {
                     'use strict';
                     cswPublic.data = cswPublic.data || Csw.nbt.propertyOption(propertyOption);
 
                     cswPrivate.propVals = cswPublic.data.propData.values;
                     cswPrivate.parent = cswPublic.data.propDiv;
-                    cswPrivate.value = (false === cswPublic.data.isMulti()) ? Csw.string(cswPrivate.propVals.text).trim() : Csw.enums.multiEditDefaultValue;
+                    cswPrivate.value = Csw.string(cswPrivate.propVals.text).trim();
                     cswPrivate.rows = Csw.string(cswPrivate.propVals.rows);
                     cswPrivate.columns = Csw.string(cswPrivate.propVals.columns);
 
@@ -27,18 +28,23 @@
                             Csw.tryExec(cswPublic.data.onChange, val);
                             cswPublic.data.onPropChange({ text: val });
                         },
-                        ID: cswPublic.data.ID,
+                        name: cswPublic.data.name,
                         rows: cswPrivate.rows,
                         cols: cswPrivate.columns,
                         value: cswPrivate.value,
                         disabled: cswPublic.data.isReadOnly(),
-                        required: cswPublic.data.isRequired(),
+                        isRequired: cswPublic.data.isRequired(),
                         readonly: cswPublic.data.isReadOnly()
                     });
 
                 };
 
+                //Bind the callback to the render event
                 cswPublic.data.bindRender(render);
+
+                //Bind an unrender callback to terminate any outstanding ajax requests, if any. See propTypeGrid.
+                //cswPublic.data.unBindRender();
+
                 return cswPublic;
             }));
 

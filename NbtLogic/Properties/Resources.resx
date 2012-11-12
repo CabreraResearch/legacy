@@ -121,16 +121,8 @@
   <data name="runscript_bat" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\runscript_bat;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="nbt_finalize_ora_sql" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\nbt_finalize_ora_sql;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="nbt_initialize_ora_sql" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\nbt_initialize_ora_sql;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
   <data name="SqlRptViewDict_rpt" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\SqlRptViewDict.rpt;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="indexes_sql" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\indexes_sql;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
-  </data>
+  
 </root>

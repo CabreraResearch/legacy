@@ -7,7 +7,7 @@
         Csw.actions.register('subscriptions', function (cswParent, options) {
 
             var cswPrivate = {
-                ID: 'action_subscriptions'
+                name: 'action_subscriptions'
             };
             if (options) Csw.extend(cswPrivate, options)
 
@@ -44,7 +44,6 @@
                             atLeastOne = true;
                             cswPrivate.table.cell(row, 1).css({ width: '15px' })
                                                          .checkBox({
-                                                             ID: Csw.makeId(cswPrivate.ID, subObj.NodeId),
                                                              onChange: function (newval) {
                                                                  subObj.Subscribed = newval;
                                                                  subObj.Modified = true;
@@ -57,7 +56,6 @@
 
                         //save button, onClick ajax call - takes all checked items and subscribes them
                         cswPrivate.saveBtn = cswParent.buttonExt({
-                            ID: Csw.makeId(cswPrivate.ID, 'save'),
                             enabledText: 'Save Subscriptions',
                             disabledText: 'Saving...',
                             icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.save),

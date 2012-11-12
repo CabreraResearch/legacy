@@ -1,4 +1,5 @@
 using ChemSW.Exceptions;
+using ChemSW.Nbt.csw.Dev;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -25,7 +26,19 @@ namespace ChemSW.Nbt.Schema
 
             _CswNbtSchemaModTrnsctn.renameColumn( _CswTstCaseRsrc_016.FakeTestTableName, _CswTstCaseRsrc_016.FakeValColumnName01, _CswTstCaseRsrc_016.FakeValColumnName02 );
             throw ( new CswDniExceptionIgnoreDeliberately() ); 
-        }//runTest()
+        }
+
+        public override CswDeveloper Author
+        {
+            get { return CswDeveloper.PG; }
+        }
+
+        public override int CaseNo
+        {
+            get { return 0; }
+        }
+
+        //runTest()
 
     }//CswSchemaUpdaterTestCaseDropColumnRollback
 

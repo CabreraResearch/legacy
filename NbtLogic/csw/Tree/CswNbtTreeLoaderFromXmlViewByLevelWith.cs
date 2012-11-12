@@ -18,14 +18,16 @@ namespace ChemSW.Nbt
         private CswNbtView _View;
         private ICswNbtUser _RunAsUser;
         private bool _IncludeSystemNodes = false;
+        private bool _IncludeHiddenNodes;
 
-        public CswNbtTreeLoaderFromXmlViewByLevelWith( CswNbtResources CswNbtResources, ICswNbtUser RunAsUser, ICswNbtTree pCswNbtTree, CswNbtView View, bool IncludeSystemNodes )
+        public CswNbtTreeLoaderFromXmlViewByLevelWith( CswNbtResources CswNbtResources, ICswNbtUser RunAsUser, ICswNbtTree pCswNbtTree, CswNbtView View, bool IncludeSystemNodes, bool IncludeHiddenNodes )
             : base( pCswNbtTree )
         {
             _CswNbtResources = CswNbtResources;
             _RunAsUser = RunAsUser;
             _View = View;
             _IncludeSystemNodes = IncludeSystemNodes;
+            _IncludeHiddenNodes = IncludeHiddenNodes;
         }
 
         public override void load( bool RequireViewPermissions )
@@ -90,7 +92,7 @@ namespace ChemSW.Nbt
                 // Verify permissions
                 // this could be a performance problem
                 CswNbtMetaDataNodeType ThisNodeType = _CswNbtResources.MetaData.getNodeType( ThisNodeTypeId );
-                if( false == RequireViewPermissions || _CswNbtResources.Permit.canNode( CswNbtPermit.NodeTypePermission.View, ThisNodeType, ThisNodePk, _RunAsUser ) )
+                if( false == RequireViewPermissions || _CswNbtResources.Permit.isNodeWritable( CswNbtPermit.NodeTypePermission.View, ThisNodeType, ThisNodePk, _RunAsUser ) )
                 {
                     // Handle property multiplexing
                     // This assumes that property rows for the same nodeid are next to one another
@@ -438,8 +440,8 @@ namespace ChemSW.Nbt
                 // Properties for Select
                 if( Relationship.Properties.Count > 0 )
                 {
-                    CswCommaDelimitedString NTPropsInClause = new CswCommaDelimitedString( 0, true );
-                    CswCommaDelimitedString OCPropsInClause = new CswCommaDelimitedString( 0, true );
+                    CswCommaDelimitedString NTPropsInClause = new CswCommaDelimitedString( 0, "'" );
+                    CswCommaDelimitedString OCPropsInClause = new CswCommaDelimitedString( 0, "'" );
                     foreach( CswNbtViewProperty Prop in Relationship.Properties )
                     {
                         if( Prop.Type == NbtViewPropType.NodeTypePropId && Prop.NodeTypePropId != Int32.MinValue )
@@ -626,6 +628,10 @@ namespace ChemSW.Nbt
             if( !_IncludeSystemNodes )
             {
                 Where += " and n.issystem = '0' ";
+            }
+            if( false == _IncludeHiddenNodes )
+            {
+                Where += " and n.hidden = '0' ";
             }
             Where += " and n.istemp= '0' ";
             string ret = Select + " " + From + " " + Where;

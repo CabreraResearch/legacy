@@ -11,15 +11,16 @@
                     data: propertyOption || Csw.nbt.propertyOption(propertyOption)
                 };
 
+                //The render function to be executed as a callback
                 var render = function () {
                     'use strict';
 
                     cswPrivate.propVals = cswPublic.data.propData.values;
                     cswPrivate.parent = cswPublic.data.propDiv;
 
-                    cswPrivate.selectedNodeId = (false === cswPublic.data.isMulti()) ? Csw.string(cswPrivate.propVals.relatednodeid).trim() : Csw.enums.multiEditDefaultValue;
-                    cswPrivate.selectedNodeLink = (false === cswPublic.data.isMulti()) ? Csw.string(cswPrivate.propVals.relatednodelink).trim() : Csw.enums.multiEditDefaultValue;
-                    cswPrivate.selectedName = (false === cswPublic.data.isMulti()) ? Csw.string(cswPrivate.propVals.name).trim() : Csw.enums.multiEditDefaultValue;
+                    cswPrivate.selectedNodeId = Csw.string(cswPrivate.propVals.relatednodeid).trim();
+                    cswPrivate.selectedNodeLink = Csw.string(cswPrivate.propVals.relatednodelink).trim();
+                    cswPrivate.selectedName = Csw.string(cswPrivate.propVals.name).trim();
                     cswPrivate.nodeTypeId = Csw.string(cswPrivate.propVals.nodetypeid).trim();
                     cswPrivate.objectClassId = Csw.string(cswPrivate.propVals.objectclassid).trim();
                     cswPrivate.allowAdd = Csw.bool(cswPrivate.propVals.allowadd);
@@ -49,33 +50,33 @@
                     }
 
                     if (cswPublic.data.isReadOnly()) {
-                        cswPublic.control = cswPrivate.parent.append(cswPrivate.selectedName);
+                        cswPublic.control = cswPrivate.parent.table();
+                        cswPrivate.nodeLinkTextCell = cswPublic.control.cell(1, cswPrivate.cellCol);
+                        cswPrivate.nodeLinkText = cswPrivate.nodeLinkTextCell.nodeLink({
+                            text: cswPrivate.selectedNodeLink
+                        });
                         cswPrivate.parent.$.hover(function (event) { Csw.nodeHoverIn(event, cswPrivate.selectedNodeId); },
                                         function (event) { Csw.nodeHoverOut(event, cswPrivate.selectedNodeId); });
                     } else {
 
-                        cswPublic.control = cswPrivate.parent.table({
-                            ID: Csw.makeId(cswPublic.data.ID, window.Ext.id())
-                        });
-
-
+                        cswPublic.control = cswPrivate.parent.table();
+                        
                         if (cswPrivate.useSearch) {
                             // Find value by using search in a dialog
 
                             cswPrivate.nameSpan = cswPublic.control.cell(1, cswPrivate.cellCol).span({
-                                ID: Csw.makeId(cswPublic.data.ID, '', 'selectedname'),
+                                name: 'selectedname',
                                 text: cswPrivate.selectedName
                             });
 
                             cswPrivate.hiddenValue = cswPublic.control.cell(1, cswPrivate.cellCol).input({
-                                ID: Csw.makeId(cswPublic.data.ID, '', 'hiddenvalue'),
+                                name: 'hiddenvalue',
                                 type: Csw.enums.inputTypes.hidden,
                                 value: cswPrivate.selectedNodeId
                             });
                             cswPrivate.cellCol += 1;
 
                             cswPublic.control.cell(1, cswPrivate.cellCol).icon({
-                                ID: Csw.makeId(cswPublic.data.ID,window.Ext.id()),
                                 iconType: Csw.enums.iconType.magglass,
                                 hovertext: "Search " + cswPublic.data.propData.name,
                                 size: 16,
@@ -106,15 +107,9 @@
 
                         } else {
                             // Select value in a selectbox
-
-                            if (cswPublic.data.isMulti()) {
-                                cswPrivate.relationships.push({ value: Csw.enums.multiEditDefaultValue, display: Csw.enums.multiEditDefaultValue });
-                                cswPrivate.foundSelected = true;
-                            } else {
-                                cswPrivate.foundSelected = false;
-                            }
+                            cswPrivate.foundSelected = false;
                             
-                            Csw.crawlObject(cswPrivate.options, function (relatedObj) {
+                            Csw.eachRecursive(cswPrivate.options, function (relatedObj) {
                                 if (false === cswPublic.data.isMulti() && relatedObj.id === cswPrivate.selectedNodeId) {
                                     cswPrivate.foundSelected = true;
                                 }
@@ -126,8 +121,7 @@
                             }
 
                             cswPrivate.selectBox = cswPublic.control.cell(1, cswPrivate.cellCol).select({
-                                ID: Csw.makeId(cswPublic.data.ID,window.Ext.id()),
-                                name: cswPublic.data.ID,
+                                name: cswPublic.data.name,
                                 cssclass: 'selectinput',
                                 onChange: function () {
                                     var val = cswPrivate.selectBox.val();
@@ -150,7 +144,6 @@
                             cswPrivate.toggleButton = cswPublic.control.cell(1, cswPrivate.cellCol).icon({
                                 iconType: Csw.enums.iconType.pencil,
                                 isButton: true,
-                                ID: Csw.makeId(cswPublic.data.ID,window.Ext.id()),
                                 onClick: function () {
                                     cswPrivate.toggleOptions(true);
                                 }
@@ -223,7 +216,6 @@
                             cswPrivate.makeAddImage = function (nodeTypeCount, lastNodeTypeId) {
                                 cswPrivate.addImage = cswPublic.control.cell(1, cswPrivate.cellCol).div()
                                     .buttonExt({
-                                        ID: Csw.makeId(cswPublic.data.ID,window.Ext.id()),
                                         icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.add),
                                         size: 'small',
                                         tooltip: { title: 'Add New ' + cswPublic.data.propData.name },
@@ -245,7 +237,12 @@
                     } // if-else (o.ReadOnly) {
                 };
 
+                //Bind the callback to the render event
                 cswPublic.data.bindRender(render);
+
+                //Bind an unrender callback to terminate any outstanding ajax requests, if any. See propTypeGrid.
+                //cswPublic.data.unBindRender();
+
                 return cswPublic;
             }));
 

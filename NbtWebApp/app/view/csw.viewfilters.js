@@ -8,7 +8,7 @@
             'use strict';
 
             var cswPrivate = {
-                ID: '',
+                name: '',
                 parent: '',
                 filtersMethod: 'getRuntimeViewFilters',
                 applyMethod: 'updateRuntimeViewFilters',
@@ -31,7 +31,7 @@
                 outercell12.css({ width: '100%', textAlign: 'right' });
 
                 var editbtn = outercell12.icon({
-                    ID: 'editfilterbtn',
+                    name: 'editfilterbtn',
                     iconType: Csw.enums.iconType.pencil,
                     hovertext: 'Edit Filters',
                     size: 16,
@@ -82,7 +82,7 @@
             cswPrivate.renderDialog = function(data)
             {
                 var filterbtn;
-                var dialogdiv = Csw.literals.div({ ID: cswPrivate.ID })
+                var dialogdiv = Csw.literals.div({ name: cswPrivate.name })
                                 //.addClass('viewfilters')
                                 .hide();
 
@@ -151,7 +151,7 @@
 
                 if (options) Csw.extend(cswPrivate, options);
 
-                cswPrivate.div = cswPrivate.parent.div({ ID: cswPrivate.ID })
+                cswPrivate.div = cswPrivate.parent.div({ name: cswPrivate.name })
                                 .addClass('viewfilters')
                                 .hide();
 

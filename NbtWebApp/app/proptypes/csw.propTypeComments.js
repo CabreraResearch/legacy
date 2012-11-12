@@ -10,6 +10,8 @@
                 var cswPublic = {
                     data: propertyOption
                 };
+                
+                //The render function to be executed as a callback
                 var render = function() {
                     'use strict';
                     cswPublic.data = cswPublic.data || Csw.nbt.propertyOption(propertyOption);
@@ -75,7 +77,12 @@
                     }
                 };
 
+                //Bind the callback to the render event
                 cswPublic.data.bindRender(render);
+                
+                //Bind an unrender callback to terminate any outstanding ajax requests, if any. See propTypeGrid.
+                //cswPublic.data.unBindRender();
+                
                 return cswPublic;
             }));
     

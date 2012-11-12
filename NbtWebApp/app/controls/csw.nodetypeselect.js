@@ -8,7 +8,7 @@
             'use strict';
             var cswPrivate = {
                 $parent: '',
-                ID: '',
+                name: '',
                 value: '',
                 selectedName: '',
                 nodeTypesUrlMethod: 'getNodeTypes',
@@ -23,7 +23,9 @@
                 labelText: null,
                 excludeNodeTypeIds: '',
                 relatedToNodeTypeId: '',
-                relatedObjectClassPropName: ''
+                relatedObjectClassPropName: '',
+                async: true,
+                isRequired: false
             };
             var cswPublic = {};
 
@@ -32,7 +34,7 @@
                 if (options) {
                     Csw.extend(cswPrivate, options);
                 }
-                cswPrivate.ID += '_sel';
+                cswPrivate.name += '_sel';
 
                 cswPrivate.select = cswParent.select(cswPrivate);
 
@@ -55,6 +57,7 @@
 
                 Csw.ajax.post({
                     urlMethod: cswPrivate.nodeTypesUrlMethod,
+                    async: cswPrivate.async,
                     data: {
                         ObjectClassName: Csw.string(cswPrivate.objectClassName),
                         ObjectClassId: Csw.string(cswPrivate.objectClassId),

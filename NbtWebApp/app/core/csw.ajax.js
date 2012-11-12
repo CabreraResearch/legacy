@@ -38,9 +38,7 @@
         } else {
 
             var auth = Csw.string(result.AuthenticationStatus, 'Unknown');
-            if (false === o.formobile) {
                 Csw.clientSession.setExpireTime(Csw.string(result.timeout, ''));
-            }
 
             if (false === Csw.isNullOrEmpty(result.timer)) {
                 var timer = {};
@@ -73,17 +71,18 @@
                 },
                 failure: o.onloginfail,
                 usernodeid: result.nodeid,
-                usernodekey: result.cswnbtnodekey,
-                passwordpropid: result.passwordpropid,
-                ForMobile: o.formobile
+                usernodekey: result.nodekey,
+                passwordpropid: result.passwordpropid
             });
         }
     });
 
     cswPrivate.onJsonError = Csw.method(function (xmlHttpRequest, textStatus, o) {
         Csw.publish(Csw.enums.events.ajax.ajaxStop, o.watchGlobal, xmlHttpRequest, textStatus);
-        Csw.debug.error('Webservice Request (' + o.url + ') Failed: ' + textStatus);
-        Csw.tryExec(o.error, textStatus);
+        if (textStatus !== 'abort' && xmlHttpRequest.status !== 0 && xmlHttpRequest.readyState !== 0) {
+            Csw.debug.error('Webservice Request (' + o.url + ') Failed: ' + textStatus);
+            Csw.tryExec(o.error, textStatus);
+        }
     });
 
     cswPrivate.jsonPost = Csw.method(function (options) {
@@ -106,7 +105,6 @@
             success: null,
             error: null,
             overrideError: false,
-            formobile: false,
             async: true,
             watchGlobal: true,
             removeTimer: true
@@ -162,7 +160,6 @@
             success: null,
             error: null,
             overrideError: false,
-            formobile: false,
             async: true,
             watchGlobal: true
         };
@@ -188,98 +185,6 @@
         }); /* $.ajax({ */
         return cswExternal;
     });
-
-    cswPrivate.xmlPost = function (options) {
-        /// <summary>
-        ///   Executes Async webservice request for XML
-        /// </summary>
-        /// <param name="options" type="Object">
-        ///     A JSON Object
-        ///     &#10;1 - options.url: WebService URL
-        ///     &#10;2 - options.data: {field1: value, field2: value}
-        ///     &#10;3 - options.success: function () {}
-        ///     &#10;4 - options.error: function () {}
-        ///     &#10;5 - options.formobile: false
-        /// </param>
-
-        var o = {
-            url: '',
-            urlPrefix: Csw.enums.ajaxUrlPrefix,
-            urlMethod: '',
-            data: {},
-            stringify: false, /* in case we need to conditionally apply $.param() instead of JSON.stringify() (or both) */
-            onloginfail: function () {
-                Csw.clientSession.finishLogout();
-            },
-            success: function () {
-            },
-            error: function () {
-            },
-            formobile: false,
-            async: true,
-            watchGlobal: true
-        };
-
-        if (options) {
-            Csw.extend(o, options);
-        }
-
-        var url = Csw.string(o.url, o.urlPrefix + o.urlMethod);
-        if (false === Csw.isNullOrEmpty(o.url)) {
-            Csw.publish(Csw.enums.events.ajax.ajaxStart, o.watchGlobal);
-            $.ajax({
-                type: 'POST',
-                async: o.async,
-                url: url,
-                dataType: 'text',
-                data: $.param(o.data),
-                success: function (data, textStatus, xmlHttpRequest) {
-                    Csw.publish(Csw.enums.events.ajax.ajaxStop, o.watchGlobal);
-
-                    var $realxml;
-                    if ($.browser.msie) {
-                        /* We have to use third-party jquery.xml.js for Internet Explorer to handle non-DOM XML content */
-                        $realxml = $.xml(data);
-                    } else {
-                        $realxml = $(xmlHttpRequest.responseXML).children().first();
-                    }
-
-                    if ($realxml.first().get(0).nodeName === 'error') {
-                        cswPrivate.handleAjaxError({
-                            'display': $realxml.CswAttrNonDom('display'),
-                            'type': $realxml.CswAttrNonDom('type'),
-                            'message': $realxml.CswAttrNonDom('message'),
-                            'detail': $realxml.CswAttrNonDom('detail')
-                        }, '');
-                        o.error();
-                    } else {
-                        var auth = Csw.string($realxml.CswAttrNonDom('authenticationstatus'), 'Unknown');
-                        if (false === o.formobile) {
-                            Csw.clientSession.setExpireTime($realxml.CswAttrNonDom('timeout'));
-                        }
-
-                        Csw.clientSession.handleAuthenticationStatus({
-                            status: auth,
-                            success: function () {
-                                Csw.tryExec(o.success, $realxml);
-                            },
-                            failure: o.onloginfail,
-                            usernodeid: Csw.string($realxml.CswAttrNonDom('nodeid'), ''),
-                            usernodekey: Csw.string($realxml.CswAttrNonDom('cswnbtnodekey'), ''),
-                            passwordpropid: Csw.string($realxml.CswAttrNonDom('passwordpropid'), ''),
-                            ForMobile: o.formobile
-                        });
-                    }
-
-                }, /* success{} */
-                error: function (xmlHttpRequest, textStatus) {
-                    Csw.publish(Csw.enums.events.ajax.ajaxStop, o.watchGlobal, xmlHttpRequest, textStatus);
-                    Csw.debug.log('Webservice Request (' + o.url + ') Failed: ' + textStatus);
-                    Csw.tryExec(o.error);
-                }
-            }); /* $.ajax({ */
-        } /* if(o.url != '') */
-    }; /* cswPrivate.xmlPost() */
 
     cswPrivate.bindAjaxEvents = (function () {
         if (false === cswPrivate.ajaxBindingsHaveRun) {
@@ -331,7 +236,6 @@
             /// <para>options.data: {field1: value, field2: value}</para>
             /// <para>options.success: function () {}</para>
             /// <para>options.error: function () {}</para>
-            /// <para>options.formobile: false</para>
             /// </param>
             /// <param name="type" type="String">XML or JSON (default)</param>
             /// <return type="Object">Returns the results of the $.ajax() request in an object wrapper.</return>
@@ -355,7 +259,6 @@
             /// <para>options.data: {field1: value, field2: value}</para>
             /// <para>options.success: function () {}</para>
             /// <para>options.error: function () {}</para>
-            /// <para>options.formobile: false</para>
             /// </param>
             /// <param name="type" type="String">XML or JSON (default)</param>
             /// <return type="Object">Returns the results of the $.ajax() request in an object wrapper.</return>

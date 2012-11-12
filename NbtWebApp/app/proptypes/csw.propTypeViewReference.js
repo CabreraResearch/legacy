@@ -11,6 +11,7 @@
                     data: propertyOption
                 };
 
+                //The render function to be executed as a callback
                 var render = function () {
                     'use strict';
                     cswPublic.data = cswPublic.data || Csw.nbt.propertyOption(propertyOption);
@@ -19,11 +20,8 @@
                     cswPrivate.parent = cswPublic.data.propDiv;
                     cswPrivate.viewId = Csw.string(cswPrivate.propVals.viewid).trim();
                     cswPrivate.viewMode = Csw.string(cswPrivate.propVals.viewmode).trim().toLowerCase();
-                    /* var viewName = Csw.string(propVals.name).trim(); */
 
-                    cswPublic.control = cswPrivate.parent.table({
-                        ID: Csw.makeId(cswPublic.data.ID, 'tbl')
-                    });
+                    cswPublic.control = cswPrivate.parent.table();
 
                     if (false === cswPublic.data.isMulti()) {
                         cswPublic.control.cell(1, 1).$.CswViewContentTree({
@@ -31,7 +29,7 @@
                         });
 
                         cswPublic.control.cell(1, 2).icon({
-                            ID: cswPublic.data.ID + '_view',
+                            name: cswPublic.data.name + '_view',
                             iconType: Csw.enums.iconType.magglass,
                             hovertext: 'View',
                             size: 16,
@@ -47,7 +45,7 @@
                         });
                         if (false === cswPublic.data.isReadOnly()) {
                             cswPublic.control.cell(1, 3).icon({
-                                ID: cswPublic.data.ID + '_edit',
+                                name: cswPublic.data.name + '_edit',
                                 hovertext: 'Edit',
                                 iconType: Csw.enums.iconType.pencil,
                                 size: 16,
@@ -61,7 +59,12 @@
 
                 };
 
+                //Bind the callback to the render event
                 cswPublic.data.bindRender(render);
+
+                //Bind an unrender callback to terminate any outstanding ajax requests, if any. See propTypeGrid.
+                //cswPublic.data.unBindRender();
+
                 return cswPublic;
             }));
 

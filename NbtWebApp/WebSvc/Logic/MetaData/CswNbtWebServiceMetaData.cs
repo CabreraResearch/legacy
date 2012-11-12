@@ -103,6 +103,46 @@ namespace ChemSW.Nbt.WebServices
             return ReturnVal;
         } // getNodeTypes()
 
+        public JObject getNodeTypeTabs( string NodeTypeName, string NodeTypeId, string FilterToPermission )
+        {
+            JObject ReturnVal = new JObject();
+            CswNbtMetaDataNodeType NodeType;
+            if( false == String.IsNullOrEmpty( NodeTypeName ) )
+            {
+                NodeType = _CswNbtResources.MetaData.getNodeType(NodeTypeName);
+            }
+            else
+            {
+                NodeType = _CswNbtResources.MetaData.getNodeType( CswConvert.ToInt32( NodeTypeId ) );
+            }
+            if( null != NodeType )
+            {
+                IEnumerable<CswNbtMetaDataNodeTypeTab> Tabs = NodeType.getNodeTypeTabs();
+                foreach (CswNbtMetaDataNodeTypeTab Tab in Tabs)
+                {
+                    if( _userHasTabPermission( FilterToPermission, NodeType, Tab ) )
+                    {
+                        string TabName = "tab_" + Tab.TabId;
+                        ReturnVal[TabName] = new JObject();
+                        ReturnVal[TabName]["id"] = Tab.TabId;
+                        ReturnVal[TabName]["name"] = Tab.TabName;
+                    }
+                }
+            }
+            return ReturnVal;
+        }
+
+        private bool _userHasTabPermission( string FilterToPermission, CswNbtMetaDataNodeType NodeType, CswNbtMetaDataNodeTypeTab Tab )
+        {
+            bool hasPermission = true;
+            CswNbtPermit.NodeTypePermission PermissionType;
+            if( Enum.TryParse( FilterToPermission, out PermissionType ) )
+            {
+                hasPermission = _CswNbtResources.Permit.canTab( PermissionType, NodeType, Tab );
+            }
+            return hasPermission;
+        }
+
         private bool _userHasPermission( string FilterToPermission, CswNbtMetaDataNodeType RetNodeType )
         {
             bool hasPermission = true;
@@ -130,7 +170,7 @@ namespace ChemSW.Nbt.WebServices
 
             switch( ObjectClass.ObjectClass )
             {
-                case CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass:
+                case NbtObjectClass.InspectionDesignClass:
                     CswNbtMetaDataNodeTypeProp InspectionTargetNTP = NodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.PropertyName.Target );
                     ReturnVal[NtName]["targetnodetypeid"] = InspectionTargetNTP.FKValue.ToString();
                     if( InspectionTargetNTP.FKType == NbtViewPropIdType.NodeTypePropId.ToString() )

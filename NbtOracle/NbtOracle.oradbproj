@@ -1,0 +1,84 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <ProductVersion>4.112.3.20</ProductVersion>
+    <ProjectGuid>218574D1-FF94-4b95-8577-A6D58C11C315</ProjectGuid>
+    <AssemblyName>NbtOracle</AssemblyName>
+    <Name>NbtOracle</Name>
+    <RootNamespace>NbtOracle</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <DBRefs Include="Database References\" />
+    <Folder Include="Functions\" />
+    <Folder Include="Packages\" />
+    <Folder Include="Procedures\" />
+    <Folder Include="Scripts\" />
+    <Folder Include="Security\" />
+    <Folder Include="Security\Permissions\" />
+    <Folder Include="Security\Roles\" />
+    <Folder Include="Security\Users\" />
+    <Folder Include="Sequences\" />
+    <Folder Include="Synonyms\" />
+    <Folder Include="Tables\" />
+    <Folder Include="Tables\Triggers\" />
+    <Folder Include="User Defined Types\" />
+    <Folder Include="User Defined Types\Nested Tables\" />
+    <Folder Include="User Defined Types\Objects\" />
+    <Folder Include="User Defined Types\VARRAYs\" />
+    <Folder Include="Views\" />
+    <Folder Include="Views\Triggers\" />
+    <Folder Include="XML Schemas\" />
+    <Folder Include="AQ\" />
+    <Folder Include="AQ\Queues\" />
+    <Folder Include="AQ\Queue Tables\" />
+    <DBRefs Include="Database References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <DBRef Include="Database References\NBT.(Local Database)\">
+      <ConnectionString>DATA SOURCE=W2008X64DB;PERSIST SECURITY INFO=True;USER ID=NBT</ConnectionString>
+      <IsDefault>true</IsDefault>
+    </DBRef>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Functions\AlNumOnly.sql">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Functions\IsNumeric.sql">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Functions\OraColLen.sql">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Functions\SafeSqlParam.sql">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Procedures\CorrectSequenceCache.sql">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Procedures\CreateAllNtViews.sql">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Procedures\CreateNtView.sql">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Procedures\CreateOcView.sql">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Procedures\DropSequences.sql">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Procedures\UpdateSequences.sql">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Security\Users\Nbt.sql">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Tables\W2008X64DB.NBT.ACTIONS.sql">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Views\NbtData.sql">
+      <SubType>Content</SubType>
+    </Content>
+  </ItemGroup>
+</Project>

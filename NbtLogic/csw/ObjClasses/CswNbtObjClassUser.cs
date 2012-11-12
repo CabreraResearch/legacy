@@ -35,6 +35,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string WorkUnit = "Work Unit";
             public const string LogLevel = "Log Level";
             public const string Archived = "Archived";
+            public const string Jurisdiction = "Jurisdiction";
         }
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
@@ -76,8 +77,8 @@ namespace ChemSW.Nbt.ObjClasses
         {
             if( Node.NodeId != null )
             {
-                //CswNbtMetaDataObjectClass User_ObjectClass = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
-                //CswNbtMetaDataObjectClass Role_ObjectClass = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.RoleClass );
+                //CswNbtMetaDataObjectClass User_ObjectClass = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClassName.NbtObjectClass.UserClass );
+                //CswNbtMetaDataObjectClass Role_ObjectClass = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClassName.NbtObjectClass.RoleClass );
                 //CswNbtMetaDataObjectClassProp UserName_ObjectClassProp = User_ObjectClass.getObjectClassProp( CswNbtObjClassUser.UsernamePropertyName );
                 //CswNbtMetaDataObjectClassProp Role_ObjectClassProp = User_ObjectClass.getObjectClassProp( CswNbtObjClassUser.RolePropertyName );
 
@@ -146,7 +147,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
-            get { return _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass ); }
+            get { return _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.UserClass ); }
         }
 
         /// <summary>
@@ -155,7 +156,7 @@ namespace ChemSW.Nbt.ObjClasses
         public static implicit operator CswNbtObjClassUser( CswNbtNode Node )
         {
             CswNbtObjClassUser ret = null;
-            if( null != Node && _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.UserClass ) )
+            if( null != Node && _Validate( Node, NbtObjectClass.UserClass ) )
             {
                 ret = (CswNbtObjClassUser) Node.ObjClass;
             }
@@ -206,7 +207,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             return
                 false == String.IsNullOrEmpty( this.UsernameProperty.Text ) &&
-                false == CswTools.IsAlphaNumeric( this.UsernameProperty.Text ) &&
+                false == CswTools.IsValidUsername( this.UsernameProperty.Text ) &&
                 ( this.UsernameProperty.WasModified ||
                 ( this.AccountLocked.WasModified && this.AccountLocked.Checked == Tristate.False ) );
         }
@@ -263,6 +264,9 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void afterPopulateProps()
         {
+
+            UsernameProperty.SetOnPropChange( OnUserNamePropChange );
+
             // BZ 6941, 8288
             // Set the Default View to use the selected User, rather than the logged in User
             //DefaultView.User = this;
@@ -290,6 +294,21 @@ namespace ChemSW.Nbt.ObjClasses
                 this.FailedLoginCount.setHidden( value: true, SaveToDb: false );
                 this.AccountLocked.setHidden( value: true, SaveToDb: false );
             }
+
+
+            //case 27793: these are the properties that a user cannot edit -- not even his own
+            if( ( null == _CswNbtResources.CurrentNbtUser ) || ( false == _CswNbtResources.CurrentNbtUser.IsAdministrator() ) )
+            {
+
+                this.Role.setReadOnly( true, false );
+            }
+
+            //case 27793: Prevent non-adminsitrators from editing paswords, except their own
+            if( ( null == _CswNbtResources.CurrentNbtUser ) || ( ( this.NodeId != _CswNbtResources.CurrentNbtUser.UserId ) && ( false == _CswNbtResources.CurrentNbtUser.IsAdministrator() ) ) )
+            {
+                this.PasswordProperty.setReadOnly( true, false );
+            }
+
             _CswNbtObjClassDefault.afterPopulateProps();
 
         }//afterPopulateProps()
@@ -298,7 +317,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             //case 24525 - add default filter to ignore archived users in relationship props
             CswNbtView view = ParentRelationship.View;
-            CswNbtMetaDataObjectClass userOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
+            CswNbtMetaDataObjectClass userOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.UserClass );
             CswNbtMetaDataObjectClassProp archivedOCP = userOC.getObjectClassProp( PropertyName.Archived );
             view.AddViewPropertyAndFilter( ParentRelationship, archivedOCP, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.NotEquals, Value: Tristate.True.ToString() );
 
@@ -407,6 +426,18 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropRelationship WorkUnitProperty { get { return _CswNbtNode.Properties[PropertyName.WorkUnit]; } }
         public CswPrimaryKey WorkUnitId { get { return WorkUnitProperty.RelatedNodeId; } }
         public CswNbtNodePropLogical Archived { get { return _CswNbtNode.Properties[PropertyName.Archived]; } }
+        public CswNbtNodePropRelationship Jurisdiction { get { return _CswNbtNode.Properties[PropertyName.Jurisdiction]; } }
+
+
+
+        private void OnUserNamePropChange( CswNbtNodeProp Prop )
+        {
+            if( false == Prop.Empty )
+            {
+                Prop.setReadOnly( true, true );
+            }
+        }
+
 
         #endregion
 
