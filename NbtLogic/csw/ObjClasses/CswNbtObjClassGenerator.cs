@@ -221,14 +221,14 @@ namespace ChemSW.Nbt.ObjClasses
                         CswNbtMetaDataObjectClass TargetObjectClass = TargetNodeType.getObjectClass();
 
                         CswNbtObjClass TargetObjClass = CswNbtObjClassFactory.makeObjClass( _CswNbtResources, TargetObjectClass );
-                        if( !( TargetObjClass is ICswNbtPropertySetGeneratorTarget ) )
+                        if( !( TargetObjClass is CswNbtPropertySetGeneratorTarget ) )
                         {
                             throw new CswDniException( "CswNbtObjClassGenerator.beforeDeleteNode() got an invalid object class: " + TargetObjectClass.ObjectClass.ToString() );
                         }
-                        ICswNbtPropertySetGeneratorTarget GeneratorTarget = (ICswNbtPropertySetGeneratorTarget) TargetObjClass;
+                        CswNbtPropertySetGeneratorTarget GeneratorTarget = (CswNbtPropertySetGeneratorTarget) TargetObjClass;
 
-                        CswNbtMetaDataNodeTypeProp GeneratorProp = TargetNodeType.getNodeTypePropByObjectClassProp( GeneratorTarget.GeneratorTargetGeneratorPropertyName );
-                        CswNbtMetaDataNodeTypeProp IsFutureProp = TargetNodeType.getNodeTypePropByObjectClassProp( GeneratorTarget.GeneratorTargetIsFuturePropertyName );
+                        CswNbtMetaDataNodeTypeProp GeneratorProp = TargetNodeType.getNodeTypePropByObjectClassProp( GeneratorTarget.GeneratorPropertyName );
+                        CswNbtMetaDataNodeTypeProp IsFutureProp = TargetNodeType.getNodeTypePropByObjectClassProp( GeneratorTarget.IsFuturePropertyName );
 
                         CswNbtView View = new CswNbtView( _CswNbtResources );
                         View.ViewName = "CswNbtObjClassSchedule.beforeDeleteNode()";

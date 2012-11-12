@@ -37,10 +37,9 @@ namespace ChemSW.Nbt.Actions
                     for( int idx = 0; idx < TotalTargetNodes; idx++ )
                     {
                         TargetNodeTree.goToNthChild( idx );
-                        CswNbtNode CurrentTargetNode = TargetNodeTree.getNodeForCurrentPosition();
-                        ICswNbtPropertySetGeneratorTarget CurrentTargetNodeAsGeneratorTarget = CswNbtPropSetCaster.AsPropertySetGeneratorTarget( CurrentTargetNode );
-
-                        DateTime CurrentDate = CurrentTargetNodeAsGeneratorTarget.GeneratedDate.DateTimeValue;
+                        CswNbtPropertySetGeneratorTarget CurrentTargetNode = TargetNodeTree.getNodeForCurrentPosition();
+                        
+                        DateTime CurrentDate = CurrentTargetNode.GeneratedDate.DateTimeValue;
                         if( CurrentDate.Date > ReturnVal.Date )
                         {
                             ReturnVal = CurrentDate.Date;
@@ -155,13 +154,13 @@ namespace ChemSW.Nbt.Actions
                     CswNbtMetaDataObjectClass TargetObjectClass = TargetNodeType.getObjectClass();
 
                     CswNbtObjClass TargetObjClass = CswNbtObjClassFactory.makeObjClass( _CswNbtResources, TargetObjectClass );
-                    if( !( TargetObjClass is ICswNbtPropertySetGeneratorTarget ) )
+                    if( !( TargetObjClass is CswNbtPropertySetGeneratorTarget ) )
                         throw new CswDniException( "CswNbtActGenerateFutureNodes.getTreeViewOfFutureNodes() got an invalid object class: " + TargetObjectClass.ObjectClass.ToString() );
-                    ICswNbtPropertySetGeneratorTarget GeneratorTarget = (ICswNbtPropertySetGeneratorTarget) TargetObjClass;
+                    CswNbtPropertySetGeneratorTarget GeneratorTarget = (CswNbtPropertySetGeneratorTarget) TargetObjClass;
 
-                    CswNbtViewRelationship TargetRelationship = ReturnVal.AddViewRelationship( GeneratorRelationship, NbtViewPropOwnerType.Second, TargetNodeType.getNodeTypePropByObjectClassProp( GeneratorTarget.GeneratorTargetGeneratorPropertyName ), false );
+                    CswNbtViewRelationship TargetRelationship = ReturnVal.AddViewRelationship( GeneratorRelationship, NbtViewPropOwnerType.Second, TargetNodeType.getNodeTypePropByObjectClassProp( GeneratorTarget.GeneratorPropertyName ), false );
                     //bz# 5959
-                    CswNbtViewProperty IsFutureFlagProperty = ReturnVal.AddViewProperty( TargetRelationship, TargetNodeType.getNodeTypePropByObjectClassProp( GeneratorTarget.GeneratorTargetIsFuturePropertyName ) );
+                    CswNbtViewProperty IsFutureFlagProperty = ReturnVal.AddViewProperty( TargetRelationship, TargetNodeType.getNodeTypePropByObjectClassProp( GeneratorTarget.IsFuturePropertyName ) );
                     CswNbtViewPropertyFilter IsFutureFilter = ReturnVal.AddViewPropertyFilter( IsFutureFlagProperty, CswNbtSubField.SubFieldName.Unknown, CswNbtPropFilterSql.PropertyFilterMode.Equals, "1", false );
                 }
             }
