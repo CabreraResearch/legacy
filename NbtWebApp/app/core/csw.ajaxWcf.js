@@ -146,7 +146,7 @@
         Csw.publish(Csw.enums.events.ajax.ajaxStart, cswInternal.watchGlobal);
         cswExternal.ajax = $.ajax({
             type: verb,
-            url: cswInternal.urlMethod,
+            url: 'Services/' + cswInternal.urlMethod,
             xhrFields: {
                 withCredentials: true
             },
