@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using ChemSW;
 using ChemSW.Config;
 using ChemSW.Core;
@@ -215,6 +216,25 @@ namespace ChemSw.Nbt.Test
                 _ContainerLocationNodeActions.Add( ContainerLocationNode.NodeId, ContainerLocationNode.Action.Value );
                 ContainerLocationNode.Action.Value = Action;
                 ContainerLocationNode.postChanges( false );
+            }
+        }
+
+        internal void getTwoDifferentLocationIds( out CswPrimaryKey LocationId1, out CswPrimaryKey LocationId2 )
+        {
+            LocationId1 = null;
+            LocationId2 = null;
+            CswNbtMetaDataObjectClass LocationOc = CswNbtResources.MetaData.getObjectClass( NbtObjectClass.LocationClass );
+            foreach( CswNbtObjClassLocation LocationNode in LocationOc.getNodes( false, false ) )
+            {
+                if( LocationId1 != null )
+                {
+                    LocationId2 = LocationNode.NodeId;
+                    break;
+                }
+                if( LocationId1 == null )
+                {
+                    LocationId1 = LocationNode.NodeId;
+                }
             }
         }
 

@@ -82,11 +82,14 @@
     </CodeAnalysisDependentAssemblyPaths>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CswNbtContainerReconciliationActionTest.cs" />
+    <Compile Include="Reconciliation\CswNbtBatchOpContainerReconciliationActionsTest.cs" />
+    <Compile Include="Reconciliation\CswNbtActionReconciliationTest.cs" />
     <Compile Include="CswNbtNodePropMultiListTest.cs" />
     <Compile Include="CswNbtUnitConversionTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="CswNbtActDispenseContainerTest.cs" />
+    <Compile Include="Reconciliation\CswNbtObjClassContainerLocationTest.cs" />
+    <Compile Include="Reconciliation\CswScheduleLogicNbtContainerReconciliationActionsTest.cs" />
     <Compile Include="TestData.cs" />
   </ItemGroup>
   <ItemGroup>

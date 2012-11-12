@@ -1,0 +1,126 @@
+﻿using ChemSW.Core;
+using ChemSW.Nbt.ObjClasses;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+namespace ChemSw.Nbt.Test
+{
+    [TestClass]
+    public class CswNbtObjClassContainerLocationTest
+    {
+        #region Setup and Teardown
+
+        private TestData TestData;
+
+        [TestInitialize()]
+        public void MyTestInitialize()
+        {
+            TestData = new TestData();
+        }
+
+        [TestCleanup()]
+        public void MyTestCleanup()
+        {
+            TestData.DeleteTestNodes();
+            TestData.RevertNodeProps();
+        }
+
+        #endregion
+
+        #region ContainerLocation Status
+
+        /// <summary>
+        /// Given an undisposed Container and a related ContainerLocation with the same location,
+        /// assert that the ContainerLocation's Status has been set to Correct
+        /// </summary>
+        [TestMethod]
+        public void setStatusTestCorrect()
+        {
+            CswPrimaryKey ContainerLocId, ContainerLocationLocId;
+            TestData.getTwoDifferentLocationIds( out ContainerLocId, out ContainerLocationLocId );
+            CswNbtObjClassContainer ContainerNode = TestData.createContainerNode( LocationId: ContainerLocId );
+            CswNbtObjClassContainerLocation ContainerLocationNode = TestData.createContainerLocationNode(
+                ContainerNode.Node,
+                CswNbtObjClassContainerLocation.ActionOptions.NoAction.ToString(),
+                LocationId: ContainerLocId );
+            Assert.AreEqual( ContainerLocationNode.Location.SelectedNodeId, ContainerNode.Location.SelectedNodeId );
+            Assert.AreEqual( CswNbtObjClassContainerLocation.StatusOptions.Correct, ContainerLocationNode.Status.Value );
+        }
+
+        /// <summary>
+        /// Given a ContainerLocation with no related Container,
+        /// assert that the ContainerLocation's Status has been set to Missing
+        /// </summary>
+        [TestMethod]
+        public void setStatusTestMissing()
+        {
+            CswNbtObjClassContainer ContainerNode = TestData.createContainerNode();
+            CswNbtObjClassContainerLocation ContainerLocationNode = TestData.createContainerLocationNode(
+                ContainerNode.Node,
+                CswNbtObjClassContainerLocation.ActionOptions.NoAction.ToString() );
+            ContainerLocationNode.Container.RelatedNodeId = null;
+            ContainerLocationNode.postChanges( false );
+            Assert.AreEqual( CswNbtObjClassContainerLocation.StatusOptions.Missing, ContainerLocationNode.Status.Value );
+        }
+
+        /// <summary>
+        /// Given a disposed Container and a related ContainerLocation with the same location,
+        /// assert that the ContainerLocation's Status has been set to Disposed
+        /// </summary>
+        [TestMethod]
+        public void setStatusTestDisposed()
+        {
+            CswPrimaryKey ContainerLocId, ContainerLocationLocId;
+            TestData.getTwoDifferentLocationIds( out ContainerLocId, out ContainerLocationLocId );
+            CswNbtObjClassContainer ContainerNode = TestData.createContainerNode( LocationId: ContainerLocId );
+            ContainerNode.DisposeContainer();
+            Assert.AreEqual( Tristate.True, ContainerNode.Disposed.Checked );
+            CswNbtObjClassContainerLocation ContainerLocationNode = TestData.createContainerLocationNode(
+                ContainerNode.Node,
+                CswNbtObjClassContainerLocation.ActionOptions.NoAction.ToString(),
+                LocationId: ContainerLocId );
+            Assert.AreEqual( ContainerLocationNode.Location.SelectedNodeId, ContainerNode.Location.SelectedNodeId );
+            Assert.AreEqual( CswNbtObjClassContainerLocation.StatusOptions.Disposed, ContainerLocationNode.Status.Value );
+        }
+
+        /// <summary>
+        /// Given an undisposed Container and a related ContainerLocation with different locations,
+        /// assert that the ContainerLocation's Status has been set to WrongLocation
+        /// </summary>
+        [TestMethod]
+        public void setStatusTestWrongLocation()
+        {
+            CswPrimaryKey ContainerLocId, ContainerLocationLocId;
+            TestData.getTwoDifferentLocationIds( out ContainerLocId, out ContainerLocationLocId );
+            CswNbtObjClassContainer ContainerNode = TestData.createContainerNode( LocationId: ContainerLocId );
+            CswNbtObjClassContainerLocation ContainerLocationNode = TestData.createContainerLocationNode(
+                ContainerNode.Node,
+                CswNbtObjClassContainerLocation.ActionOptions.NoAction.ToString(),
+                LocationId: ContainerLocationLocId );
+            Assert.AreNotEqual( ContainerLocationNode.Location.SelectedNodeId, ContainerNode.Location.SelectedNodeId );
+            Assert.AreEqual( CswNbtObjClassContainerLocation.StatusOptions.WrongLocation, ContainerLocationNode.Status.Value );
+        }
+
+        /// <summary>
+        /// Given a disposed Container and a related ContainerLocation with different locations,
+        /// assert that the ContainerLocation's Status has been set to DisposedAtWrongLocation
+        /// </summary>
+        [TestMethod]
+        public void setStatusTestDisposedAtWrongLocation()
+        {
+            CswPrimaryKey ContainerLocId, ContainerLocationLocId;
+            TestData.getTwoDifferentLocationIds( out ContainerLocId, out ContainerLocationLocId );
+            CswNbtObjClassContainer ContainerNode = TestData.createContainerNode( LocationId: ContainerLocId );
+            ContainerNode.DisposeContainer();
+            Assert.AreEqual( Tristate.True, ContainerNode.Disposed.Checked );
+            CswNbtObjClassContainerLocation ContainerLocationNode = TestData.createContainerLocationNode(
+                ContainerNode.Node,
+                CswNbtObjClassContainerLocation.ActionOptions.NoAction.ToString(),
+                LocationId: ContainerLocationLocId );
+            Assert.AreNotEqual( ContainerLocationNode.Location.SelectedNodeId, ContainerNode.Location.SelectedNodeId );
+            Assert.AreEqual( CswNbtObjClassContainerLocation.StatusOptions.DisposedAtWrongLocation, ContainerLocationNode.Status.Value );
+        }
+
+        #endregion
+
+    }
+}
