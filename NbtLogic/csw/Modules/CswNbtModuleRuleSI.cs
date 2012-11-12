@@ -27,9 +27,9 @@ namespace ChemSW.Nbt
             _CswNbtResources.Modules.ToggleRoleNodes( false, "inspection manager" );
             _CswNbtResources.Modules.ToggleUserNodes( false, "inspector" );
             _CswNbtResources.Modules.ToggleUserNodes( false, "inspectmgr" );
-            _CswNbtResources.Modules.ToggleViewsInCategory( false, "Lab Safety (demo)" );
-            _CswNbtResources.Modules.ToggleViewsInCategory( false, "Inspections" );
-            _CswNbtResources.Modules.ToggleViewsInCategory( false, "Lab Safety" );
+            _CswNbtResources.Modules.ToggleViewsInCategory( false, "Lab Safety (demo)", NbtViewVisibility.Global );
+            _CswNbtResources.Modules.ToggleViewsInCategory( false, "Inspections", NbtViewVisibility.Global );
+            _CswNbtResources.Modules.ToggleViewsInCategory( false, "Lab Safety", NbtViewVisibility.Global );
 
             CswNbtMetaDataObjectClass reportOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.ReportClass );
             CswNbtMetaDataObjectClassProp reportNameOCP = reportOC.getObjectClassProp( CswNbtObjClassReport.PropertyName.ReportName );
@@ -51,9 +51,9 @@ namespace ChemSW.Nbt
             _CswNbtResources.Modules.ToggleRoleNodes( true, "inspection manager" );
             _CswNbtResources.Modules.ToggleUserNodes( true, "inspector" );
             _CswNbtResources.Modules.ToggleUserNodes( true, "inspectmgr" );
-            _CswNbtResources.Modules.ToggleViewsInCategory( true, "Lab Safety (demo)" );
-            _CswNbtResources.Modules.ToggleViewsInCategory( true, "Inspections" );
-            _CswNbtResources.Modules.ToggleViewsInCategory( true, "Lab Safety" );
+            _CswNbtResources.Modules.ToggleViewsInCategory( true, "Lab Safety (demo)", NbtViewVisibility.Global );
+            _CswNbtResources.Modules.ToggleViewsInCategory( true, "Inspections", NbtViewVisibility.Global );
+            _CswNbtResources.Modules.ToggleViewsInCategory( true, "Lab Safety", NbtViewVisibility.Global );
 
 
             CswNbtMetaDataObjectClass reportOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.ReportClass );

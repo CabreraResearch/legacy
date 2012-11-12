@@ -26,3 +26,6 @@ NbtWebApp/css/_dev.*.css
 NbtWebApp/MainCswIncludes.html
 glob:TestResults/*
 *.js.map
+syntax: regexp
+.*\.orig
+.*\.rej

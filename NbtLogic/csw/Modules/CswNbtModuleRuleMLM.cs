@@ -17,11 +17,15 @@ namespace ChemSW.Nbt
             {
                 _CswNbtResources.Modules.EnableModule( CswNbtModuleName.CISPro );
             }
+
+            //Turn on all views in the MLM (demo) category
+            _CswNbtResources.Modules.ToggleViewsInCategory( false, "MLM (demo)", NbtViewVisibility.Global);
         }
 
         public override void OnDisable()
         {
-
+            //Turn on off views in the MLM (demo) category
+            _CswNbtResources.Modules.ToggleViewsInCategory( true, "MLM (demo)", NbtViewVisibility.Global );
         } // OnDisable()
 
     } // class CswNbtModuleCISPro

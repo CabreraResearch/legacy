@@ -210,7 +210,10 @@ namespace ChemSW.Nbt.WebServices
                     orderby _VbProp.ViewProp.Order, _VbProp.PropName
                     select _VbProp )
                 {
-                    DT.Columns.Add( VbProp.PropName );
+                    if( false == DT.Columns.Contains( VbProp.PropName ) )
+                    {
+                        DT.Columns.Add( VbProp.PropName );
+                    }
                 }
 
                 for( Int32 C = 0; C < NodeCount; C += 1 )
@@ -225,6 +228,9 @@ namespace ChemSW.Nbt.WebServices
                             Row[Prop["propname"].ToString()] = Prop["gestalt"].ToString();
                         }
                     }
+
+                    _recurse( Tree, DT, ref Row );
+
                     DT.Rows.Add( Row );
 
                     IsTruncated = IsTruncated || Tree.getCurrentNodeChildrenTruncated();
@@ -242,6 +248,27 @@ namespace ChemSW.Nbt.WebServices
 
             wsTools.ReturnCSV( Context, DT );
         } // ExportCsv()
+
+        private void _recurse( ICswNbtTree Tree, DataTable DT, ref DataRow Row )
+        {
+            int childNodeCount = Tree.getChildNodeCount();
+            if( childNodeCount > 0 )
+            {
+                for( int i = 0; i < childNodeCount; i++ )
+                {
+                    Tree.goToNthChild( i );
+                    foreach( JObject Prop in Tree.getChildNodePropsOfNode() )
+                    {
+                        if( DT.Columns.Contains( Prop["propname"].ToString() ) )
+                        {
+                            Row[Prop["propname"].ToString()] = Prop["gestalt"].ToString();
+                        }
+                    }
+                    _recurse( Tree, DT, ref Row );
+                    Tree.goToParentNode();
+                }
+            }
+        }
 
         /// <summary>
         /// Returns a thin JArray of grid row values
