@@ -186,6 +186,10 @@
                 });
                 break;
 
+            case Csw.enums.nbtButtonAction.landingpage:
+                Csw.publish('refreshLandingPage');
+                break;
+                
             case Csw.enums.nbtButtonAction.loadView:
                 Csw.publish(Csw.enums.events.main.clear, { centertop: true, centerbottom: true });
                 Csw.debug.assert(false === Csw.isNullOrEmpty(actionJson), 'actionJson is null.');

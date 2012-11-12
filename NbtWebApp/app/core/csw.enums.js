@@ -134,6 +134,7 @@
             refresh: 'refresh',
             popup: 'popup',
             request: 'request',
+            landingPage: 'landingpage',
             loadView: 'loadview',
             editprop: 'editprop',
             nothing: 'nothing'

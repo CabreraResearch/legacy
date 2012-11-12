@@ -181,12 +181,12 @@ namespace ChemSW.Nbt.ObjClasses
                 switch( OCP.PropName )
                 {
                     case PropertyName.Fulfill:
+                        ButtonData.Action = NbtButtonAction.nothing;
                         switch( ButtonData.SelectedText )
                         {
                             case FulfillMenu.Create:
-                                if( PotentialMaterial().existsInDb( true ) )
+                                if( PotentialMaterial().existsInDb( ForceRecalc: true ) )
                                 {
-                                    ButtonData.Action = NbtButtonAction.nothing;
                                     ButtonData.Message = "The requested Material has already been created: " + PotentialMaterial().existingMaterial().Node.NodeLink;
                                 }
                                 else
@@ -195,13 +195,16 @@ namespace ChemSW.Nbt.ObjClasses
                                     bool Success = null != NewMaterial;
                                     if( Success )
                                     {
+                                        ButtonData.Action = NbtButtonAction.landingpage;
                                         Material.RelatedNodeId = NewMaterial.NodeId;
                                         Fulfill.State = FulfillMenu.Complete;
-                                        ButtonData.Data["landingPage"] = "";
+                                        ButtonData.Data["landingPage"] = CswNbtActCreateMaterial.getLandingPageData( _CswNbtResources, NewMaterial.Node );
                                     }
-                                    ButtonData.Action = NbtButtonAction.nothing;
+                                    else
+                                    {
+                                        ButtonData.Message = "The requested Material could not be created.";
+                                    }
                                     ButtonData.Data["success"] = Success;
-                                    ButtonData.Data["title"] = "";
                                 }
                                 break;
 
