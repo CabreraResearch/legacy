@@ -16,53 +16,9 @@ namespace ChemSW.Nbt.WebServices
     {
         #region private
 
-        private static CswNbtView getMaterialNodeView( CswNbtResources NbtResources, CswNbtNode MaterialNode )
-        {
-            CswNbtView Ret = null;
-            if( MaterialNode != null )
-            {
-                Ret = MaterialNode.getViewOfNode();
-                CswNbtMetaDataObjectClass SizeOc = NbtResources.MetaData.getObjectClass( NbtObjectClass.SizeClass );
-                CswNbtMetaDataObjectClassProp MaterialOcp = SizeOc.getObjectClassProp( CswNbtObjClassSize.PropertyName.Material );
-                Ret.AddViewRelationship( Ret.Root.ChildRelationships[0], NbtViewPropOwnerType.Second, MaterialOcp, false );
-                Ret.ViewName = "New Material: " + MaterialNode.NodeName;
-            }
-            return Ret;
-        }
 
-        public static CswNbtView getMaterialNodeView( CswNbtResources NbtResources, Int32 NodeTypeId, string Tradename, CswPrimaryKey SupplierId, string PartNo = "" )
-        {
 
-            if( false == CswTools.IsPrimaryKey( SupplierId ) ||
-                    string.IsNullOrEmpty( Tradename ) )
-            {
-                throw new CswDniException( ErrorType.Error,
-                                           "Cannot get a material without a supplier and a tradename.",
-                                           "Attempted to call _getMaterialNodeView with invalid or empty parameters." );
-            }
 
-            CswNbtView Ret = new CswNbtView( NbtResources );
-            Ret.ViewMode = NbtViewRenderingMode.Tree;
-            Ret.Visibility = NbtViewVisibility.User;
-            Ret.VisibilityUserId = NbtResources.CurrentNbtUser.UserId;
-            CswNbtMetaDataNodeType MaterialNt = NbtResources.MetaData.getNodeType( NodeTypeId );
-            CswNbtViewRelationship MaterialRel = Ret.AddViewRelationship( MaterialNt, false );
-            CswNbtMetaDataNodeTypeProp TradeNameNtp = MaterialNt.getNodeTypePropByObjectClassProp( CswNbtObjClassMaterial.PropertyName.Tradename );
-            CswNbtMetaDataNodeTypeProp SupplierNtp = MaterialNt.getNodeTypePropByObjectClassProp( CswNbtObjClassMaterial.PropertyName.Supplier );
-            CswNbtMetaDataNodeTypeProp PartNoNtp = MaterialNt.getNodeTypePropByObjectClassProp( CswNbtObjClassMaterial.PropertyName.PartNumber );
-
-            Ret.AddViewPropertyAndFilter( MaterialRel, TradeNameNtp, Tradename );
-            Ret.AddViewPropertyAndFilter( MaterialRel, SupplierNtp, SupplierId.PrimaryKey.ToString(), CswNbtSubField.SubFieldName.NodeID );
-            Ret.AddViewPropertyAndFilter( MaterialRel, PartNoNtp, PartNo );
-
-            CswNbtMetaDataObjectClass SizeOc = NbtResources.MetaData.getObjectClass( NbtObjectClass.SizeClass );
-            CswNbtMetaDataObjectClassProp MaterialOcp = SizeOc.getObjectClassProp( CswNbtObjClassSize.PropertyName.Material );
-            Ret.AddViewRelationship( MaterialRel, NbtViewPropOwnerType.Second, MaterialOcp, false );
-
-            Ret.ViewName = "New Material: " + Tradename;
-
-            return Ret;
-        }
 
         private void _getMaterialPropsFromObject( JObject Obj, out string Tradename, out CswPrimaryKey SupplierId, out string PartNo )
         {
@@ -79,27 +35,13 @@ namespace ChemSW.Nbt.WebServices
             }
         }
 
-        public static CswNbtObjClassMaterial getExistingMaterial( CswNbtResources NbtResources, Int32 MaterialNodeTypeId, CswPrimaryKey SupplierId, string TradeName, string PartNo )
-        {
-            CswNbtObjClassMaterial Ret = null;
 
-            CswNbtView MaterialNodeView = getMaterialNodeView( NbtResources, MaterialNodeTypeId, TradeName, SupplierId, PartNo );
-            ICswNbtTree Tree = NbtResources.Trees.getTreeFromView( MaterialNodeView, false, false, false );
-            bool MaterialExists = Tree.getChildNodeCount() > 0;
-
-            if( MaterialExists )
-            {
-                Tree.goToNthChild( 0 );
-                Ret = Tree.getNodeForCurrentPosition();
-            }
-            return Ret;
-        }
 
         private JObject _tryCreateMaterial( Int32 MaterialNodeTypeId, CswPrimaryKey SupplierId, string TradeName, string PartNo )
         {
             JObject Ret = new JObject();
 
-            CswNbtObjClassMaterial NodeAsMaterial = getExistingMaterial( _CswNbtResources, MaterialNodeTypeId, SupplierId, TradeName, PartNo );
+            CswNbtObjClassMaterial NodeAsMaterial = CswNbtObjClassMaterial.getExistingMaterial( _CswNbtResources, MaterialNodeTypeId, SupplierId, TradeName, PartNo );
             bool MaterialExists = ( null != NodeAsMaterial );
 
             if( false == MaterialExists && Int32.MinValue != MaterialNodeTypeId )
@@ -337,7 +279,7 @@ namespace ChemSW.Nbt.WebServices
                     CswNbtNode MaterialNode = _CswNbtResources.Nodes[MaterialId];
                     if( null != MaterialNode )
                     {
-                        CswNbtView MaterialNodeView = getMaterialNodeView( _CswNbtResources, MaterialNode );
+                        CswNbtView MaterialNodeView = CswNbtObjClassMaterial.getMaterialNodeView( _CswNbtResources, MaterialNode );
                         MaterialNodeView.SaveToCache( false );
 
                         /* 1. Validate the new material and get its properties and sizes */
@@ -501,6 +443,5 @@ namespace ChemSW.Nbt.WebServices
         }
 
         #endregion Public
-
     }
 }
