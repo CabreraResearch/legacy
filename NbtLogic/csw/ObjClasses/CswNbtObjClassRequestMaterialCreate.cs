@@ -1,5 +1,7 @@
 using System;
+using System.Linq;
 using ChemSW.Core;
+using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
 using Newtonsoft.Json.Linq;
@@ -165,11 +167,8 @@ namespace ChemSW.Nbt.ObjClasses
         /// </summary>
         public override void afterPropertySetPopulateProps()
         {
-
-
+            _throwIfMaterialExists();
         }//afterPopulateProps()
-
-
 
         /// <summary>
         /// 
@@ -184,10 +183,18 @@ namespace ChemSW.Nbt.ObjClasses
                         switch( ButtonData.SelectedText )
                         {
                             case FulfillMenu.Create:
-                                ButtonData.Action = NbtButtonAction.loadView;
-                                ButtonData.Data["nodeid"] = NodeId.ToString();
-
-                                ButtonData.Data["title"] = "";
+                                CswNbtObjClassMaterial ExistingMaterial = _getExistingMaterial();
+                                if( null != ExistingMaterial )
+                                {
+                                    ButtonData.Action = NbtButtonAction.nothing;
+                                    ButtonData.Message = "The requested Material has already been created: " + ExistingMaterial.Node.NodeLink;
+                                }
+                                else
+                                {
+                                    ButtonData.Action = NbtButtonAction.nothing;
+                                    ButtonData.Data["nodeid"] = NodeId.ToString();
+                                    ButtonData.Data["title"] = "";
+                                }
                                 break;
 
                         } //switch( ButtonData.SelectedText )
@@ -230,6 +237,29 @@ namespace ChemSW.Nbt.ObjClasses
                     }
                     break;
 
+            }
+        }
+
+        private CswNbtObjClassMaterial _getExistingMaterial()
+        {
+            CswNbtObjClassMaterial Ret = null;
+            Int32 SelectedNodeTypeId = NewMaterialType.SelectedNodeTypeIds.ToIntCollection().First();
+            CswPrimaryKey Supplier = NewMaterialSupplier.RelatedNodeId;
+            string Tradename = NewMaterialTradename.Text;
+            string PartNo = NewMaterialPartNo.Text;
+            if( Int32.MinValue != SelectedNodeTypeId && CswTools.IsPrimaryKey( Supplier ) && false == string.IsNullOrEmpty( Tradename ) )
+            {
+                Ret = CswNbtObjClassMaterial.getExistingMaterial( _CswNbtResources, SelectedNodeTypeId, Supplier, Tradename, PartNo );
+            }
+            return Ret;
+        }
+
+        private void _throwIfMaterialExists()
+        {
+            CswNbtObjClassMaterial ExistingMaterial = _getExistingMaterial();
+            if( null != ExistingMaterial )
+            {
+                throw new CswDniException( ErrorType.Warning, "The requested Material already exists: " + ExistingMaterial.Node.NodeLink, "The requested Material already exists: " + ExistingMaterial.Node.NodeLink );
             }
         }
 

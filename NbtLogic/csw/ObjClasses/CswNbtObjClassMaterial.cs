@@ -313,13 +313,13 @@ namespace ChemSW.Nbt.ObjClasses
 
         public static CswNbtView getMaterialNodeView( CswNbtResources NbtResources, Int32 NodeTypeId, string Tradename, CswPrimaryKey SupplierId, string PartNo = "" )
         {
-
-            if( false == CswTools.IsPrimaryKey( SupplierId ) ||
+            if( Int32.MinValue == NodeTypeId ||
+                false == CswTools.IsPrimaryKey( SupplierId ) ||
                 String.IsNullOrEmpty( Tradename ) )
             {
                 throw new CswDniException( ErrorType.Error,
-                                           "Cannot get a material without a supplier and a tradename.",
-                                           "Attempted to call _getMaterialNodeView with invalid or empty parameters." );
+                                           "Cannot get a material without a type, a supplier and a tradename.",
+                                           "Attempted to call _getMaterialNodeView with invalid or empty parameters. Type: " + NodeTypeId + ", Tradename: " + Tradename + ", SupplierId: " + SupplierId );
             }
 
             CswNbtView Ret = new CswNbtView( NbtResources );
@@ -345,6 +345,9 @@ namespace ChemSW.Nbt.ObjClasses
             return Ret;
         }
 
+        /// <summary>
+        /// Fetch a Material node by NodeTypeId, TradeName, Supplier and PartNo (Optional). This method will throw if required parameters are null or empty.
+        /// </summary>
         public static CswNbtObjClassMaterial getExistingMaterial( CswNbtResources NbtResources, Int32 MaterialNodeTypeId, CswPrimaryKey SupplierId, string TradeName, string PartNo )
         {
             CswNbtObjClassMaterial Ret = null;
