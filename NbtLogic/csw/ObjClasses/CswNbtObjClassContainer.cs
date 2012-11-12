@@ -1,4 +1,5 @@
 using System;
+using ChemSW.Config;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.Actions;
@@ -8,10 +9,7 @@ using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
 using ChemSW.Nbt.ServiceDrivers;
-using ChemSW.Security;
 using Newtonsoft.Json.Linq;
-using System.Collections.Generic;
-using ChemSW.Config;
 
 namespace ChemSW.Nbt.ObjClasses
 {
@@ -146,7 +144,7 @@ namespace ChemSW.Nbt.ObjClasses
         }//afterWriteNode()
 
         public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false )
-        {            
+        {
             _CswNbtObjClassDefault.beforeDeleteNode( DeleteAllRequiredRelatedNodes );
 
         }//beforeDeleteNode()
@@ -236,12 +234,12 @@ namespace ChemSW.Nbt.ObjClasses
                             CswNbtActSubmitRequest RequestAct = new CswNbtActSubmitRequest( _CswNbtResources, CreateDefaultRequestNode: true );
                             HasPermission = true;
 
-                            CswNbtObjClassRequestItem NodeAsRequestItem = RequestAct.makeContainerRequestItem( this, ButtonData );
+                            CswNbtPropertySetRequestItem NodeAsPropSet = RequestAct.makeContainerRequestItem( this, ButtonData );
 
-                            ButtonData.Data["titleText"] = "Add to Cart&#58 " + NodeAsRequestItem.Type.Value + " " + Barcode.Barcode;
+                            ButtonData.Data["titleText"] = "Add to Cart&#58 " + NodeAsPropSet.Type.Value + " " + Barcode.Barcode;
                             ButtonData.Data["requestaction"] = ButtonData.SelectedText;
-                            ButtonData.Data["requestItemProps"] = RequestAct.getRequestItemAddProps( NodeAsRequestItem );
-                            ButtonData.Data["requestItemNodeTypeId"] = RequestAct.RequestItemNt.NodeTypeId;
+                            ButtonData.Data["requestItemProps"] = RequestAct.getRequestItemAddProps( NodeAsPropSet );
+                            ButtonData.Data["requestItemNodeTypeId"] = NodeAsPropSet.NodeTypeId;
                         }
                         break;
                     case PropertyName.ContainerFamily:
@@ -753,19 +751,19 @@ namespace ChemSW.Nbt.ObjClasses
              RequestItemType == CswNbtObjClassRequestItem.Types.Dispose )
             {
                 CswNbtView RequestItemView = new CswNbtView( _CswNbtResources );
-                CswNbtMetaDataObjectClass RequestItemOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.RequestItemClass );
+                CswNbtMetaDataObjectClass RequestItemOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.RequestContainerUpdateClass );
                 CswNbtViewRelationship RiRelationship = RequestItemView.AddViewRelationship( RequestItemOc, false );
-                CswNbtMetaDataObjectClassProp StatusOcp = RequestItemOc.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Status );
-                CswNbtMetaDataObjectClassProp ContainerOcp = RequestItemOc.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Container );
-                CswNbtMetaDataObjectClassProp TypeOcp = RequestItemOc.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Type );
+                CswNbtMetaDataObjectClassProp StatusOcp = RequestItemOc.getObjectClassProp( CswNbtObjClassRequestContainerUpdate.PropertyName.Status );
+                CswNbtMetaDataObjectClassProp ContainerOcp = RequestItemOc.getObjectClassProp( CswNbtObjClassRequestContainerUpdate.PropertyName.Container );
+                CswNbtMetaDataObjectClassProp TypeOcp = RequestItemOc.getObjectClassProp( CswNbtObjClassRequestContainerUpdate.PropertyName.Type );
 
-                RequestItemView.AddViewPropertyAndFilter( RiRelationship, StatusOcp, CswNbtObjClassRequestItem.Statuses.Submitted );
+                RequestItemView.AddViewPropertyAndFilter( RiRelationship, StatusOcp, CswNbtObjClassRequestContainerUpdate.Statuses.Submitted );
                 RequestItemView.AddViewPropertyAndFilter( RiRelationship, ContainerOcp, SubFieldName: CswNbtSubField.SubFieldName.NodeID, Value: NodeId.PrimaryKey.ToString() );
                 RequestItemView.AddViewPropertyAndFilter( RiRelationship, TypeOcp, RequestItemType );
 
                 if( RequestItemType == CswNbtObjClassRequestItem.Types.Move )
                 {
-                    CswNbtMetaDataObjectClassProp LocationOcp = RequestItemOc.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Location );
+                    CswNbtMetaDataObjectClassProp LocationOcp = RequestItemOc.getObjectClassProp( CswNbtObjClassRequestContainerUpdate.PropertyName.Location );
                     RequestItemView.AddViewPropertyAndFilter( RiRelationship, LocationOcp, SubFieldName: CswNbtSubField.SubFieldName.NodeID, Value: Location.SelectedNodeId.PrimaryKey.ToString() );
                 }
 
@@ -775,16 +773,16 @@ namespace ChemSW.Nbt.ObjClasses
                     for( Int32 N = 0; N < Tree.getChildNodeCount(); N += 1 )
                     {
                         Tree.goToNthChild( N );
-                        CswNbtObjClassRequestItem NodeAsRequestItem = Tree.getNodeForCurrentPosition();
+                        CswNbtObjClassRequestContainerUpdate NodeAsRequestItem = Tree.getNodeForCurrentPosition();
                         if( null != NodeAsRequestItem )
                         {
                             switch( RequestItemType )
                             {
                                 case CswNbtObjClassRequestItem.Types.Move:
-                                    NodeAsRequestItem.Status.Value = CswNbtObjClassRequestItem.Statuses.Moved;
+                                    NodeAsRequestItem.Status.Value = CswNbtObjClassRequestContainerUpdate.Statuses.Moved;
                                     break;
                                 case CswNbtObjClassRequestItem.Types.Dispose:
-                                    NodeAsRequestItem.Status.Value = CswNbtObjClassRequestItem.Statuses.Disposed;
+                                    NodeAsRequestItem.Status.Value = CswNbtObjClassRequestContainerUpdate.Statuses.Disposed;
                                     break;
                             }
                             NodeAsRequestItem.postChanges( false );
@@ -847,7 +845,7 @@ namespace ChemSW.Nbt.ObjClasses
                         _InventoryLevelModified = Mgr.addToCurrentQuantity( Quantity.Quantity, Quantity.UnitId, Reason, Material.RelatedNodeId, Location.SelectedNodeId );
                     }
                 }
-                _updateRequestItems( CswNbtObjClassRequestItem.Types.Move );
+                _updateRequestItems( CswNbtObjClassRequestContainerUpdate.Types.Move );
             }
         }
         public CswNbtNodePropDateTime LocationVerified { get { return ( _CswNbtNode.Properties[PropertyName.LocationVerified] ); } }
@@ -879,7 +877,7 @@ namespace ChemSW.Nbt.ObjClasses
             if( CswConvert.ToTristate( Disposed.GetOriginalPropRowValue() ) != Disposed.Checked &&
                 Disposed.Checked == Tristate.True )
             {
-                _updateRequestItems( CswNbtObjClassRequestItem.Types.Dispose );
+                _updateRequestItems( CswNbtObjClassRequestContainerUpdate.Types.Dispose );
             }
             updateRequestMenu();
         }

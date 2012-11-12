@@ -225,30 +225,41 @@ namespace ChemSW.Nbt.Actions
             if( ReInit )
             {
                 Ret.Category = "Request Configuration";
+                Ret.Visibility = NbtViewVisibility.Hidden;
                 Ret.ViewMode = NbtViewRenderingMode.Grid;
 
                 Ret.Root.ChildRelationships.Clear();
 
-                CswNbtMetaDataObjectClass RequestItemOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.RequestItemClass );
-                CswNbtViewRelationship RequestItemVr = Ret.AddViewRelationship( RequestItemOc, true );
+                CswNbtMetaDataObjectClass RequestOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.RequestClass );
+                CswNbtViewRelationship RootVr = Ret.AddViewRelationship( RequestOc, true );
 
-                CswNbtMetaDataObjectClassProp NumberOcp = RequestItemOc.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Number );
-                CswNbtMetaDataObjectClassProp TypeOcp = RequestItemOc.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Type );
-                CswNbtMetaDataObjectClassProp QuantityOcp = RequestItemOc.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Quantity );
-                CswNbtMetaDataObjectClassProp CountOcp = RequestItemOc.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Count );
-                CswNbtMetaDataObjectClassProp SizeOcp = RequestItemOc.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Size );
-                CswNbtMetaDataObjectClassProp MaterialOcp = RequestItemOc.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Material );
-                CswNbtMetaDataObjectClassProp ContainerOcp = RequestItemOc.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Container );
-                CswNbtMetaDataObjectClassProp LocationOcp = RequestItemOc.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Location );
+                foreach( NbtObjectClass Member in CswNbtPropertySetRequestItem.Members() )
+                {
+                    CswNbtMetaDataObjectClass MemberOc = _CswNbtResources.MetaData.getObjectClass( Member );
+                    CswNbtMetaDataObjectClassProp RequestOcp = MemberOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.Request );
+                    CswNbtViewRelationship RequestItemRel = Ret.AddViewRelationship( RootVr,
+                                                                                      NbtViewPropOwnerType.Second,
+                                                                                      RequestOcp, false );
 
-                Ret.AddViewProperty( RequestItemVr, NumberOcp );
-                Ret.AddViewProperty( RequestItemVr, TypeOcp );
-                Ret.AddViewProperty( RequestItemVr, QuantityOcp );
-                Ret.AddViewProperty( RequestItemVr, CountOcp );
-                Ret.AddViewProperty( RequestItemVr, SizeOcp );
-                Ret.AddViewProperty( RequestItemVr, MaterialOcp );
-                Ret.AddViewProperty( RequestItemVr, ContainerOcp );
-                Ret.AddViewProperty( RequestItemVr, LocationOcp );
+                    Ret.AddViewProperty( RequestItemRel, MemberOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.Type ) );
+                    Ret.AddViewProperty( RequestItemRel, MemberOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.Number ) );
+                    if( MemberOc.ObjectClass == NbtObjectClass.RequestContainerDispenseClass )
+                    {
+                        Ret.AddViewProperty( RequestItemRel, MemberOc.getObjectClassProp( CswNbtObjClassRequestContainerDispense.PropertyName.Quantity ) );
+                    }
+                    if( MemberOc.ObjectClass == NbtObjectClass.RequestMaterialDispenseClass )
+                    {
+                        Ret.AddViewProperty( RequestItemRel, MemberOc.getObjectClassProp( CswNbtObjClassRequestMaterialDispense.PropertyName.Quantity ) );
+                        Ret.AddViewProperty( RequestItemRel, MemberOc.getObjectClassProp( CswNbtObjClassRequestMaterialDispense.PropertyName.Count ) );
+                        Ret.AddViewProperty( RequestItemRel, MemberOc.getObjectClassProp( CswNbtObjClassRequestMaterialDispense.PropertyName.Size ) );
+                    }
+                    Ret.AddViewProperty( RequestItemRel, MemberOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.Name ) );
+                    Ret.AddViewProperty( RequestItemRel, MemberOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.AssignedTo ) );
+                    Ret.AddViewProperty( RequestItemRel, MemberOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.NeededBy ) );
+                    Ret.AddViewProperty( RequestItemRel, MemberOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.RequestedFor ) );
+                    Ret.AddViewProperty( RequestItemRel, MemberOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.InventoryGroup ) );
+                    Ret.AddViewProperty( RequestItemRel, MemberOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.Location ) );
+                }
 
                 Ret.save();
             }
@@ -263,12 +274,13 @@ namespace ChemSW.Nbt.Actions
                 CswNbtNode ChemSwAdminRoleNode = _CswNbtResources.Nodes.makeRoleNodeFromRoleName( CswNbtObjClassRole.ChemSWAdminRoleName );
                 Ret = new CswNbtView( _CswNbtResources );
                 Ret.saveNew( SystemViewName.CISProRequestHistory.ToString(), NbtViewVisibility.Role, ChemSwAdminRoleNode.NodeId );
-                Ret.Category = "Request Configuration";
-                Ret.ViewMode = NbtViewRenderingMode.Tree;
                 ReInit = true;
             }
             if( ReInit )
             {
+                Ret.Visibility = NbtViewVisibility.Hidden;
+                Ret.Category = "Request Configuration";
+                Ret.ViewMode = NbtViewRenderingMode.Tree;
                 Ret.Root.ChildRelationships.Clear();
                 CswNbtMetaDataObjectClass RequestOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.RequestClass );
                 CswNbtMetaDataObjectClassProp SubmittedDateOcp = RequestOc.getObjectClassProp( CswNbtObjClassRequest.PropertyName.SubmittedDate.ToString() );

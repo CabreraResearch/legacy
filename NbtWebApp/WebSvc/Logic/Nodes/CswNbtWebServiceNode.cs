@@ -385,18 +385,29 @@ namespace ChemSW.Nbt.WebServices
                                 SizeId = NodeAsContainer.Size.RelatedNodeId.ToString();
                             }
                             break;
-                        case NbtObjectClass.RequestItemClass:
-                            CswNbtObjClassRequestItem NodeAsRequestItem = Node;
-                            if( null != NodeAsRequestItem )
+                        case NbtObjectClass.RequestContainerDispenseClass:
+                            CswNbtObjClassRequestContainerDispense NodeAsCd = Node;
+                            if( null != NodeAsCd )
                             {
-                                if( null != NodeAsRequestItem.Size.RelatedNodeId && Int32.MinValue != NodeAsRequestItem.Size.RelatedNodeId.PrimaryKey )
+                                if( null != NodeAsCd.Size.RelatedNodeId && Int32.MinValue != NodeAsCd.Size.RelatedNodeId.PrimaryKey )
                                 {
-                                    SizeId = NodeAsRequestItem.Size.RelatedNodeId.ToString();
+                                    SizeId = NodeAsCd.Size.RelatedNodeId.ToString();
                                 }
-                                else if( null != NodeAsRequestItem.Container.RelatedNodeId && Int32.MinValue != NodeAsRequestItem.Container.RelatedNodeId.PrimaryKey )
+                                if( null != NodeAsCd.Container.RelatedNodeId && Int32.MinValue != NodeAsCd.Container.RelatedNodeId.PrimaryKey )
                                 {
-                                    SizeId = NodeAsRequestItem.Container.RelatedNodeId.ToString();
+                                    SizeId = NodeAsCd.Container.RelatedNodeId.ToString();
                                 }
+                            }
+                            break;
+                        case NbtObjectClass.RequestMaterialDispenseClass:
+                            CswNbtObjClassRequestMaterialDispense NodeAsMd = Node;
+                            if( null != NodeAsMd )
+                            {
+                                if( null != NodeAsMd.Size.RelatedNodeId && Int32.MinValue != NodeAsMd.Size.RelatedNodeId.PrimaryKey )
+                                {
+                                    SizeId = NodeAsMd.Size.RelatedNodeId.ToString();
+                                }
+
                             }
                             break;
                         default:

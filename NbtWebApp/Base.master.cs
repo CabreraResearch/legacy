@@ -5,7 +5,6 @@ using System.Web.UI;
 using ChemSW.Config;
 //using ChemSW.Nbt.TableEvents;
 using ChemSW.Core;
-using ChemSW.CswWebControls;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Statistics;
@@ -33,7 +32,7 @@ namespace ChemSW.Nbt.WebPages
                 if( Session["logoutpath"] != null && Session["logoutpath"].ToString() != string.Empty )
                     return Session["logoutpath"].ToString();
                 else
-                    return "Login.aspx";
+                    return "Main.html";
             }
             set
             {
@@ -182,7 +181,7 @@ namespace ChemSW.Nbt.WebPages
                 if( !CswSessionManager.IsAuthenticated() )
                 {
                     string ScriptName = HttpContext.Current.Request.ServerVariables["SCRIPT_NAME"];
-                    if( ScriptName.Substring( ScriptName.LastIndexOf( '/' ) ) != "/Login.aspx" )
+                    if( ScriptName.Substring( ScriptName.LastIndexOf( '/' ) ) != "/Main.html" )
                     {
                         //ReleaseAll();
                         Redirect( LogoutPath );

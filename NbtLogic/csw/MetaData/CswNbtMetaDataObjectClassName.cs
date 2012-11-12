@@ -40,7 +40,7 @@ namespace ChemSW.Nbt.MetaData
             { JurisdictionClass                 , JurisdictionClass                  },
             { LocationClass                     , LocationClass                      },
             { MailReportClass                   , MailReportClass                    },
-            {ManufacturerEquivalentPartClass    , ManufacturerEquivalentPartClass    },
+            { ManufacturerEquivalentPartClass   , ManufacturerEquivalentPartClass    },
             { MaterialClass                     , MaterialClass                      },
             { MaterialSynonymClass              , MaterialSynonymClass               },
             { MethodClass                       , MethodClass                        },
@@ -55,7 +55,10 @@ namespace ChemSW.Nbt.MetaData
             { ReportClass                       , ReportClass                        },
             { ResultClass                       , ResultClass                        },
             { RequestClass                      , RequestClass                       },
-            { RequestItemClass                  , RequestItemClass                   },
+            { RequestContainerDispenseClass     , RequestContainerDispenseClass      },
+            { RequestContainerUpdateClass       , RequestContainerUpdateClass        },
+            { RequestMaterialCreateClass        , RequestMaterialCreateClass         },
+            { RequestMaterialDispenseClass      , RequestMaterialDispenseClass       },
             { RoleClass                         , RoleClass                          },
             { SampleClass                       , SampleClass                        },
             { SizeClass                         , SizeClass                          },
@@ -64,7 +67,7 @@ namespace ChemSW.Nbt.MetaData
             { UnitOfMeasureClass                , UnitOfMeasureClass                 },
             { UserClass                         , UserClass                          },
             { VendorClass                       , VendorClass                        },
-            {  WorkUnitClass                    , WorkUnitClass                     }
+            {  WorkUnitClass                    , WorkUnitClass                      }
         };
         /// <summary>
         /// The string value of the current instance
@@ -161,7 +164,10 @@ namespace ChemSW.Nbt.MetaData
         public const string ReportClass = "ReportClass";
         public const string ResultClass = "ResultClass";
         public const string RequestClass = "RequestClass";
-        public const string RequestItemClass = "RequestItemClass";
+        public const string RequestContainerDispenseClass = "RequestContainerDispenseClass";
+        public const string RequestContainerUpdateClass = "RequestContainerUpdateClass";
+        public const string RequestMaterialDispenseClass = "RequestMaterialDispenseClass";
+        public const string RequestMaterialCreateClass = "RequestMaterialCreateClass";
         public const string RoleClass = "RoleClass";
         public const string SampleClass = "SampleClass";
         public const string SizeClass = "SizeClass";

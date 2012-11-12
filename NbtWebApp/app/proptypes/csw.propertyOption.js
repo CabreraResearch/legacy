@@ -100,8 +100,12 @@
                     cswPublic.name = cswPublic.propData.id;
                 }());
 
+                cswPublic.isReport = function() {
+                    return Csw.enums.editMode.PrintReport === cswPublic.tabState.EditMode;
+                };
+
                 cswPublic.isDisabled = function () {
-                    return (Csw.enums.editMode.PrintReport === cswPublic.tabState.EditMode ||
+                    return ( cswPublic.isReport() ||
                             Csw.enums.editMode.Preview === cswPublic.tabState.EditMode ||
                             Csw.enums.editMode.AuditHistoryInPopup === cswPublic.tabState.EditMode);
                 };

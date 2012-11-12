@@ -50,6 +50,14 @@ namespace ChemSW.Nbt.ObjClasses
             public static readonly CswCommaDelimitedString Options = new CswCommaDelimitedString { Solid, Liquid, NA };
         }
 
+        public sealed class Requests
+        {
+            public const string Bulk = "Request By Bulk";
+            public const string Size = "Request By Size";
+
+            public static readonly CswCommaDelimitedString Options = new CswCommaDelimitedString { Bulk, Size };
+        }
+
         /// <summary>
         /// Convert a CswNbtNode to a CswNbtObjClassMaterial
         /// </summary>
@@ -67,8 +75,8 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
-            Request.MenuOptions = CswNbtObjClassRequestItem.RequestsBy.Options.ToString();
-            Request.State = CswNbtObjClassRequestItem.RequestsBy.Size;
+            Request.MenuOptions = Requests.Options.ToString();
+            Request.State = Requests.Size;
 
             if( ApprovalStatus.WasModified )
             {
@@ -143,24 +151,13 @@ namespace ChemSW.Nbt.ObjClasses
                             HasPermission = true;
                             CswNbtActSubmitRequest RequestAct = new CswNbtActSubmitRequest( _CswNbtResources, CreateDefaultRequestNode: true );
 
-                            CswNbtObjClassRequestItem NodeAsRequestItem = RequestAct.makeMaterialRequestItem( new CswNbtActSubmitRequest.RequestItem( CswNbtActSubmitRequest.RequestItem.Material ), NodeId, ButtonData );
-                            NodeAsRequestItem.RequestBy.Value = ButtonData.SelectedText;
-                            if( ButtonData.SelectedText.Equals( CswNbtObjClassRequestItem.RequestsBy.Size ) )
-                            {
-                                NodeAsRequestItem.Quantity.setHidden( true, true );
-                            }
-                            else
-                            {
-                                NodeAsRequestItem.Size.setHidden( true, true );
-                                NodeAsRequestItem.Count.setHidden( true, true );
-                            }
-                            NodeAsRequestItem.RequestBy.setHidden( true, true );
-                            NodeAsRequestItem.postChanges( false );
+                            CswNbtPropertySetRequestItem NodeAsPropSet = RequestAct.makeMaterialRequestItem( new CswNbtActSubmitRequest.RequestItem( CswNbtActSubmitRequest.RequestItem.Material ), NodeId, ButtonData );
+                            NodeAsPropSet.postChanges( false );
 
                             ButtonData.Data["requestaction"] = OCP.PropName;
                             ButtonData.Data["titleText"] = ButtonData.SelectedText + " for " + TradeName.Text;
-                            ButtonData.Data["requestItemProps"] = RequestAct.getRequestItemAddProps( NodeAsRequestItem );
-                            ButtonData.Data["requestItemNodeTypeId"] = RequestAct.RequestItemNt.NodeTypeId;
+                            ButtonData.Data["requestItemProps"] = RequestAct.getRequestItemAddProps( NodeAsPropSet );
+                            ButtonData.Data["requestItemNodeTypeId"] = NodeAsPropSet.NodeTypeId;
                             ButtonData.Action = NbtButtonAction.request;
                         }
                         break;

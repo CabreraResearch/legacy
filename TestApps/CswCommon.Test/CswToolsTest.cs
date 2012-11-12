@@ -9,7 +9,7 @@ namespace CswCommon.Test
         [TestMethod]
         public void IsAlphaNumericTest()
         {
-            string[] ValidStrings = { "abc", "123", "abc123", "abc_123" };
+            string[] ValidStrings = { "abc", "123", "abc123" };
             string[] InvalidStrings = { "abc!", "1'23", "(abc123)" };
 
             foreach( string StringToValidate in ValidStrings )
