@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using ChemSW.Core;
 using ChemSW.Exceptions;
+using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
 using Newtonsoft.Json.Linq;
@@ -183,16 +184,23 @@ namespace ChemSW.Nbt.ObjClasses
                         switch( ButtonData.SelectedText )
                         {
                             case FulfillMenu.Create:
-                                CswNbtObjClassMaterial ExistingMaterial = _getExistingMaterial();
-                                if( null != ExistingMaterial )
+                                if( PotentialMaterial().existsInDb( true ) )
                                 {
                                     ButtonData.Action = NbtButtonAction.nothing;
-                                    ButtonData.Message = "The requested Material has already been created: " + ExistingMaterial.Node.NodeLink;
+                                    ButtonData.Message = "The requested Material has already been created: " + PotentialMaterial().existingMaterial().Node.NodeLink;
                                 }
                                 else
                                 {
+                                    CswNbtObjClassMaterial NewMaterial = PotentialMaterial().commit();
+                                    bool Success = null != NewMaterial;
+                                    if( Success )
+                                    {
+                                        Material.RelatedNodeId = NewMaterial.NodeId;
+                                        Fulfill.State = FulfillMenu.Complete;
+                                        ButtonData.Data["landingPage"] = "";
+                                    }
                                     ButtonData.Action = NbtButtonAction.nothing;
-                                    ButtonData.Data["nodeid"] = NodeId.ToString();
+                                    ButtonData.Data["success"] = Success;
                                     ButtonData.Data["title"] = "";
                                 }
                                 break;
@@ -240,24 +248,20 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
-        private CswNbtObjClassMaterial _getExistingMaterial()
+        private CswNbtActCreateMaterial.NewMaterial _PotentialMaterial = null;
+        private CswNbtActCreateMaterial.NewMaterial PotentialMaterial()
         {
-            CswNbtObjClassMaterial Ret = null;
             Int32 SelectedNodeTypeId = NewMaterialType.SelectedNodeTypeIds.ToIntCollection().FirstOrDefault();
-            CswPrimaryKey Supplier = NewMaterialSupplier.RelatedNodeId;
-            string Tradename = NewMaterialTradename.Text;
-            string PartNo = NewMaterialPartNo.Text;
-            if( SelectedNodeTypeId > 0 //Default for Int32 is 0
-                && CswTools.IsPrimaryKey( Supplier ) && false == string.IsNullOrEmpty( Tradename ) )
-            {
-                Ret = CswNbtObjClassMaterial.getExistingMaterial( _CswNbtResources, SelectedNodeTypeId, Supplier, Tradename, PartNo );
-            }
-            return Ret;
+            _PotentialMaterial = _PotentialMaterial ?? new CswNbtActCreateMaterial.NewMaterial( _CswNbtResources, SelectedNodeTypeId, NewMaterialTradename.Text, NewMaterialSupplier.RelatedNodeId, NewMaterialPartNo.Text );
+            _PotentialMaterial.TradeName = NewMaterialTradename.Text;
+            _PotentialMaterial.SupplierId = NewMaterialSupplier.RelatedNodeId;
+            _PotentialMaterial.PartNo = NewMaterialPartNo.Text;
+            return _PotentialMaterial;
         }
 
         private void _throwIfMaterialExists()
         {
-            CswNbtObjClassMaterial ExistingMaterial = _getExistingMaterial();
+            CswNbtObjClassMaterial ExistingMaterial = PotentialMaterial().existingMaterial( ForceRecalc: true );
             if( null != ExistingMaterial )
             {
                 throw new CswDniException( ErrorType.Warning, "The requested Material already exists: " + ExistingMaterial.Node.NodeLink, "The requested Material already exists: " + ExistingMaterial.Node.NodeLink );
