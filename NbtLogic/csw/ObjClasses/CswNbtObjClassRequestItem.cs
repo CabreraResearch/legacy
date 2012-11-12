@@ -493,6 +493,7 @@ namespace ChemSW.Nbt.ObjClasses
                                 if( null != NodeAsContainer )
                                 {
                                     NodeAsContainer.Disposed.Checked = Tristate.True;
+                                    NodeAsContainer.Undispose.setHidden( false, true );
                                     NodeAsContainer.postChanges( true );
                                 }
                                 ButtonData.Action = NbtButtonAction.refresh;
