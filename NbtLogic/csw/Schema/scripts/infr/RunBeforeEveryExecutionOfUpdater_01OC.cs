@@ -772,7 +772,7 @@ namespace ChemSW.Nbt.Schema
                     PropName = CswNbtPropertySetRequestItem.PropertyName.Location,
                     FieldType = CswNbtMetaDataFieldType.NbtFieldType.Location,
                     SetValOnAdd = true,
-                    DisplayColAdd = 2,
+                    DisplayColAdd = 1,
                     DisplayRowAdd = 1
                 } );
 
@@ -784,7 +784,7 @@ namespace ChemSW.Nbt.Schema
                     FkType = NbtViewRelatedIdType.ObjectClassId.ToString(),
                     FkValue = InventoryGroupOc.ObjectClassId,
                     SetValOnAdd = true,
-                    DisplayColAdd = 2,
+                    DisplayColAdd = 1,
                     DisplayRowAdd = 3
                 } );
 
@@ -799,7 +799,7 @@ namespace ChemSW.Nbt.Schema
                     PropName = CswNbtPropertySetRequestItem.PropertyName.NeededBy,
                     FieldType = CswNbtMetaDataFieldType.NbtFieldType.DateTime,
                     SetValOnAdd = true,
-                    DisplayColAdd = 2,
+                    DisplayColAdd = 1,
                     DisplayRowAdd = 2
                 } );
 
@@ -1167,11 +1167,25 @@ namespace ChemSW.Nbt.Schema
 
                 _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( RequestMaterialCreateOc )
                 {
+                    PropName = CswNbtObjClassRequestMaterialCreate.PropertyName.NewMaterialType,
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.NodeTypeSelect,
+                    IsFk = true,
+                    FkType = NbtViewRelatedIdType.ObjectClassId.ToString(),
+                    FkValue = MaterialOc.ObjectClassId,
+                    Multi = false,
+                    SetValOnAdd = true,
+                    DisplayColAdd = 1,
+                    DisplayRowAdd = 1,
+                    IsRequired = true
+                } );
+
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( RequestMaterialCreateOc )
+                {
                     PropName = CswNbtObjClassRequestMaterialCreate.PropertyName.NewMaterialTradename,
                     FieldType = CswNbtMetaDataFieldType.NbtFieldType.Text,
                     SetValOnAdd = true,
                     DisplayColAdd = 1,
-                    DisplayRowAdd = 1,
+                    DisplayRowAdd = 2,
                     IsRequired = true
                 } );
 
@@ -1184,7 +1198,7 @@ namespace ChemSW.Nbt.Schema
                     FkValue = SupplierOc.ObjectClassId,
                     SetValOnAdd = true,
                     DisplayColAdd = 1,
-                    DisplayRowAdd = 2,
+                    DisplayRowAdd = 3,
                     IsRequired = true
                 } );
 
@@ -1194,7 +1208,7 @@ namespace ChemSW.Nbt.Schema
                     FieldType = CswNbtMetaDataFieldType.NbtFieldType.Text,
                     SetValOnAdd = true,
                     DisplayColAdd = 1,
-                    DisplayRowAdd = 3
+                    DisplayRowAdd = 4
                 } );
             }
             _resetBlame();

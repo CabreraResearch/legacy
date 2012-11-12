@@ -24,6 +24,11 @@ namespace ChemSW.Nbt.ObjClasses
             public const string Material = "Material";
 
             /// <summary>
+            /// The type of the new material 
+            /// </summary>
+            public const string NewMaterialType = "New Material Type";
+
+            /// <summary>
             /// The name of the new material 
             /// </summary>
             public const string NewMaterialTradename = "New Material Tradename";
@@ -262,10 +267,9 @@ namespace ChemSW.Nbt.ObjClasses
 
         public CswNbtNodePropRelationship Material { get { return _CswNbtNode.Properties[PropertyName.Material]; } }
 
+        public CswNbtNodePropNodeTypeSelect NewMaterialType { get { return _CswNbtNode.Properties[PropertyName.NewMaterialType]; } }
         public CswNbtNodePropText NewMaterialTradename { get { return _CswNbtNode.Properties[PropertyName.NewMaterialTradename]; } }
-
         public CswNbtNodePropText NewMaterialPartNo { get { return _CswNbtNode.Properties[PropertyName.NewMaterialPartNo]; } }
-
         public CswNbtNodePropRelationship NewMaterialSupplier { get { return _CswNbtNode.Properties[PropertyName.NewMaterialSupplier]; } }
 
         #endregion
