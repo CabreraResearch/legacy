@@ -4,7 +4,6 @@ using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
-using ChemSW.Nbt.ServiceDrivers;
 using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.Actions
@@ -166,7 +165,7 @@ namespace ChemSW.Nbt.Actions
                 ChildContainer.SourceContainer.RelatedNodeId = _SourceContainer.NodeId;
                 ChildContainer.Quantity.Quantity = 0;
                 ChildContainer.Quantity.UnitId = UnitId;
-                ChildContainer.Disposed.Checked = Tristate.False;                
+                ChildContainer.Disposed.Checked = Tristate.False;
                 ChildContainer.postChanges( false );
                 ChildContainer.Undispose.setHidden( value: true, SaveToDb: true );
                 _ContainersToView.Add( ChildContainer.NodeId );
