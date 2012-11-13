@@ -132,7 +132,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             string Ret = "";
 
-            switch(Type.Value)
+            switch( Type.Value )
             {
                 case Types.Dispose:
                     Ret += "Dispose " + Container.Gestalt + " of " + Material.Gestalt;
@@ -141,7 +141,7 @@ namespace ChemSW.Nbt.ObjClasses
                 case Types.Move:
                     Ret += "Move " + Container.Gestalt + " of " + Material.Gestalt + " to " + Location.Gestalt;
                     break;
-            } 
+            }
 
             return Ret;
         }
@@ -337,7 +337,7 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
-        public CswNbtNodePropPropertyReference Material { get { return _CswNbtNode.Properties[PropertyName.Material]; } }
+        public CswNbtNodePropRelationship Material { get { return _CswNbtNode.Properties[PropertyName.Material]; } }
 
         public CswNbtNodePropRelationship Container
         {
@@ -348,6 +348,7 @@ namespace ChemSW.Nbt.ObjClasses
             if( null != Container.RelatedNodeId )
             {
                 Container.setReadOnly( value: true, SaveToDb: true );
+                Material.RelatedNodeId = Container.RelatedNodeId;
             }
         }
 

@@ -146,10 +146,10 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override string setRequestDescription()
         {
-            string Ret = "Create new " + NewMaterialType.SelectedNodeTypeNames() + " Material name " + NewMaterialTradename.Text + " from " + NewMaterialSupplier.Gestalt;
-            if(false == string.IsNullOrEmpty(NewMaterialPartNo.Text))
+            string Ret = "Create new " + NewMaterialType.SelectedNodeTypeNames() + " name " + NewMaterialTradename.Text + " from supplier " + NewMaterialSupplier.Gestalt;
+            if( false == string.IsNullOrEmpty( NewMaterialPartNo.Text ) )
             {
-                Ret += " number " + NewMaterialPartNo.Text;
+                Ret += " on partno " + NewMaterialPartNo.Text;
             }
             return Ret;
         }
@@ -325,14 +325,14 @@ namespace ChemSW.Nbt.ObjClasses
         #region Object class specific properties
 
         public CswNbtNodePropRelationship Material { get { return _CswNbtNode.Properties[PropertyName.Material]; } }
-        private void onMaterialPropChange(CswNbtNodeProp NodeProp)
+        private void onMaterialPropChange( CswNbtNodeProp NodeProp )
         {
-            if(CswTools.IsPrimaryKey(Material.RelatedNodeId))
+            if( CswTools.IsPrimaryKey( Material.RelatedNodeId ) )
             {
-                NewMaterialType.setHidden(value: true, SaveToDb: true);
-                NewMaterialTradename.setHidden(value: true, SaveToDb: true);
-                NewMaterialSupplier.setHidden(value: true, SaveToDb: true);
-                NewMaterialPartNo.setHidden(value: true, SaveToDb: true);
+                NewMaterialType.setHidden( value: true, SaveToDb: true );
+                NewMaterialTradename.setHidden( value: true, SaveToDb: true );
+                NewMaterialSupplier.setHidden( value: true, SaveToDb: true );
+                NewMaterialPartNo.setHidden( value: true, SaveToDb: true );
             }
         }
         public CswNbtNodePropNodeTypeSelect NewMaterialType { get { return _CswNbtNode.Properties[PropertyName.NewMaterialType]; } }

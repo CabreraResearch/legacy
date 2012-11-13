@@ -125,11 +125,11 @@ namespace ChemSW.Nbt.Actions
             if( null == _CurrentRequestNode )
             {
                 CswNbtView RequestView = new CswNbtView( _CswNbtResources );
-                CswNbtMetaDataObjectClassProp SubmittedDateOcp = _RequestOc.getObjectClassProp( CswNbtObjClassRequest.PropertyName.SubmittedDate.ToString() );
-                CswNbtMetaDataObjectClassProp CompletedDateOcp = _RequestOc.getObjectClassProp( CswNbtObjClassRequest.PropertyName.CompletedDate.ToString() );
+                CswNbtMetaDataObjectClassProp SubmittedDateOcp = _RequestOc.getObjectClassProp( CswNbtObjClassRequest.PropertyName.SubmittedDate );
+                CswNbtMetaDataObjectClassProp CompletedDateOcp = _RequestOc.getObjectClassProp( CswNbtObjClassRequest.PropertyName.CompletedDate );
                 CswNbtViewRelationship RequestVr = RequestView.AddViewRelationship( _RequestOc, true ); //default filter says Requestor == me
-                RequestView.AddViewPropertyAndFilter( RequestVr, SubmittedDateOcp, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Null );
-                RequestView.AddViewPropertyAndFilter( RequestVr, CompletedDateOcp, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Null );
+                RequestView.AddViewPropertyAndFilter( RequestVr, SubmittedDateOcp, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Null, ShowInGrid: false );
+                RequestView.AddViewPropertyAndFilter( RequestVr, CompletedDateOcp, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Null, ShowInGrid: false );
 
                 ICswNbtTree RequestTree = _CswNbtResources.Trees.getTreeFromView( RequestView, false, false, false );
                 CartCount = RequestTree.getChildNodeCount();
@@ -138,10 +138,6 @@ namespace ChemSW.Nbt.Actions
                     RequestTree.goToNthChild( 0 );
                     _CurrentRequestNode = RequestTree.getNodeForCurrentPosition();
                 }
-                //else if( CartCount > 1 )
-                //{
-                //    throw new CswDniException( ErrorType.Warning, "Only one pending request may be open at a time.", "There is more than one Pending request assigned to the current user." );
-                //}
                 else if( CartCount == 0 &&
                          _CreateDefaultRequestNode )
                 {
