@@ -92,6 +92,11 @@ namespace ChemSW.Nbt.ObjClasses
             /// The Type(<see cref="CswNbtNodePropList"/>) of the item.
             /// </summary>
             public const string Type = "Type";
+
+            /// <summary>
+            /// A composite description (<see cref="CswNbtNodePropComposite"/>) of the item.
+            /// </summary>
+            public const string Description = "Description";
         }
 
         /// <summary>
@@ -121,28 +126,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         #endregion Enums
 
-        public static Collection<NbtObjectClass> Members()
-        {
-            Collection<NbtObjectClass> Ret = new Collection<NbtObjectClass>();
-            Ret.Add( NbtObjectClass.RequestContainerDispenseClass );
-            Ret.Add( NbtObjectClass.RequestContainerUpdateClass );
-            Ret.Add( NbtObjectClass.RequestMaterialCreateClass );
-            Ret.Add( NbtObjectClass.RequestMaterialDispenseClass );
-            return Ret;
-        }
-
-        private void _toggleReadOnlyProps( bool IsReadOnly, CswNbtPropertySetRequestItem ItemInstance )
-        {
-            ItemInstance.Request.setReadOnly( value: IsReadOnly, SaveToDb: true );
-            ItemInstance.Location.setReadOnly( value: IsReadOnly, SaveToDb: true );
-            ItemInstance.Number.setReadOnly( value: IsReadOnly, SaveToDb: true );
-            ItemInstance.toggleReadOnlyProps( IsReadOnly, ItemInstance );
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public abstract void toggleReadOnlyProps( bool IsReadOnly, CswNbtPropertySetRequestItem ItemInstance );
+        #region Base
 
         /// <summary>
         /// Copy the Request Item
@@ -190,6 +174,44 @@ namespace ChemSW.Nbt.ObjClasses
             return ret;
         }
 
+        public static Collection<NbtObjectClass> Members()
+        {
+            Collection<NbtObjectClass> Ret = new Collection<NbtObjectClass>
+            {
+                NbtObjectClass.RequestContainerDispenseClass, 
+                NbtObjectClass.RequestContainerUpdateClass, 
+                NbtObjectClass.RequestMaterialCreateClass, 
+                NbtObjectClass.RequestMaterialDispenseClass
+            };
+            return Ret;
+        }
+
+        #endregion Base
+
+        #region Abstract Methods
+
+
+
+        private void _toggleReadOnlyProps( bool IsReadOnly, CswNbtPropertySetRequestItem ItemInstance )
+        {
+            ItemInstance.Request.setReadOnly( value: IsReadOnly, SaveToDb: true );
+            ItemInstance.Location.setReadOnly( value: IsReadOnly, SaveToDb: true );
+            ItemInstance.Number.setReadOnly( value: IsReadOnly, SaveToDb: true );
+            ItemInstance.toggleReadOnlyProps( IsReadOnly, ItemInstance );
+        }
+
+        /// <summary>
+        /// Change the ReadOnly state of Properties
+        /// </summary>
+        public abstract void toggleReadOnlyProps( bool IsReadOnly, CswNbtPropertySetRequestItem ItemInstance );
+
+        /// <summary>
+        /// Set the Description of this Request Item according to Object Class logic
+        /// </summary>
+        public abstract string setRequestDescription();
+
+        #endregion Abstract Methods
+
 
         #region Inherited Events
 
@@ -202,12 +224,14 @@ namespace ChemSW.Nbt.ObjClasses
                 Request.setReadOnly( value: true, SaveToDb: true );
                 Request.setHidden( value: true, SaveToDb: false );
             }
-            CswNbtObjClassRequest ThisRequest = _CswNbtResources.Nodes[Request.RelatedNodeId];
-            if( null != ThisRequest )
+            if( false == CswTools.IsPrimaryKey( Requestor.RelatedNodeId ) )
             {
-                Requestor.RelatedNodeId = ThisRequest.Requestor.RelatedNodeId;
+                CswNbtObjClassRequest ThisRequest = _CswNbtResources.Nodes[Request.RelatedNodeId];
+                if( null != ThisRequest )
+                {
+                    Requestor.RelatedNodeId = ThisRequest.Requestor.RelatedNodeId;
+                }
             }
-
         }
 
         public abstract void beforePropertySetWriteNode( bool IsCopy, bool OverrideUniqueValidation );
@@ -216,6 +240,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             beforePropertySetWriteNode( IsCopy, OverrideUniqueValidation );
             _setDefaultValues();
+            Description.StaticText = setRequestDescription();
             CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
         }//beforeWriteNode()
 
@@ -371,6 +396,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropRelationship RequestedFor { get { return _CswNbtNode.Properties[PropertyName.RequestedFor]; } }
         public CswNbtNodePropRelationship Requestor { get { return _CswNbtNode.Properties[PropertyName.Requestor]; } }
         public CswNbtNodePropSequence Number { get { return _CswNbtNode.Properties[PropertyName.Number]; } }
+        public CswNbtNodePropStatic Description { get { return _CswNbtNode.Properties[PropertyName.Description]; } }
         public CswNbtNodePropText ExternalOrderNumber { get { return _CswNbtNode.Properties[PropertyName.ExternalOrderNumber]; } }
         public CswNbtNodePropText Name { get { return _CswNbtNode.Properties[PropertyName.Name]; } }
 

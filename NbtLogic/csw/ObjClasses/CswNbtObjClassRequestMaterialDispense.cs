@@ -199,6 +199,22 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
+        public override string setRequestDescription()
+        {
+            string Ret = "Dispense ";
+            switch( Type.Value )
+            {
+                case Types.Bulk:
+                    Ret += Quantity.Gestalt;
+                    break;
+                case Types.Size:
+                    Ret += Count.Gestalt + " " + Size.Gestalt;
+                    break;
+            }
+            Ret += " of " + Material.Gestalt;
+            return Ret;
+        }
+
         /// <summary>
         /// 
         /// </summary>

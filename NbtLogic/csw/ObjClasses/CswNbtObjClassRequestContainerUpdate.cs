@@ -128,6 +128,24 @@ namespace ChemSW.Nbt.ObjClasses
 
         }
 
+        public override string setRequestDescription()
+        {
+            string Ret = "";
+
+            switch(Type.Value)
+            {
+                case Types.Dispose:
+                    Ret += "Dispose " + Container.Gestalt + " of " + Material.Gestalt;
+                    break;
+
+                case Types.Move:
+                    Ret += "Move " + Container.Gestalt + " of " + Material.Gestalt + " to " + Location.Gestalt;
+                    break;
+            } 
+
+            return Ret;
+        }
+
         public override void beforePropertySetWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
             /* Container-specific logic */

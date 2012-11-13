@@ -158,6 +158,11 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
+        public override string setRequestDescription()
+        {
+            return "Dispense " + Quantity.Gestalt + " from " + Container.Gestalt + " of " + Material.Gestalt;
+        }
+
         /// <summary>
         /// Abstract override to be called on beforeWriteNode
         /// </summary>

@@ -144,6 +144,16 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
+        public override string setRequestDescription()
+        {
+            string Ret = "Create new " + NewMaterialType.SelectedNodeTypeNames() + " Material name " + NewMaterialTradename.Text + " from " + NewMaterialSupplier.Gestalt;
+            if(false == string.IsNullOrEmpty(NewMaterialPartNo.Text))
+            {
+                Ret += " number " + NewMaterialPartNo.Text;
+            }
+            return Ret;
+        }
+
         /// <summary>
         /// 
         /// </summary>

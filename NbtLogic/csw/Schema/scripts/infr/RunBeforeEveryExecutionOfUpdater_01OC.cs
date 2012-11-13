@@ -725,45 +725,50 @@ namespace ChemSW.Nbt.Schema
 
                 _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( Ret )
                 {
-                    PropName = CswNbtPropertySetRequestItem.PropertyName.AssignedTo,
+                    PropName = CswNbtPropertySetRequestItem.PropertyName.Name,
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Text
+                } );
+                
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( Ret )
+                {
+                    PropName = CswNbtPropertySetRequestItem.PropertyName.Description,
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Static
+                } );
+
+                CswNbtMetaDataObjectClassProp StatusOcp = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( Ret )
+                {
+                    PropName = CswNbtPropertySetRequestItem.PropertyName.Status,
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.List,
+                    ServerManaged = true,
+                    SetValOnAdd = false
+                } );
+                _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( StatusOcp, CswNbtPropertySetRequestItem.Statuses.Pending );
+
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( Ret )
+                {
+                    PropName = CswNbtPropertySetRequestItem.PropertyName.Type,
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.List,
+                    ServerManaged = true,
+                    SetValOnAdd = false
+                } );
+
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( Ret )
+                {
+                    PropName = CswNbtPropertySetRequestItem.PropertyName.Requestor,
                     FieldType = CswNbtMetaDataFieldType.NbtFieldType.Relationship,
                     IsFk = true,
                     FkType = NbtViewRelatedIdType.ObjectClassId.ToString(),
                     FkValue = UserOc.ObjectClassId,
+                    ServerManaged = true,
                     SetValOnAdd = false
                 } );
-
-                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( Ret )
-                {
-                    PropName = CswNbtPropertySetRequestItem.PropertyName.Comments,
-                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Comments,
-                    SetValOnAdd = false
-                } );
-
-                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( Ret )
-                {
-                    PropName = CswNbtPropertySetRequestItem.PropertyName.ExternalOrderNumber,
-                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Text,
-                    SetValOnAdd = false
-                } );
-
-                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( Ret )
-                {
-                    PropName = CswNbtPropertySetRequestItem.PropertyName.Fulfill,
-                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Button,
-                    Extended = CswNbtNodePropButton.ButtonMode.menu,
-                    StaticText = CswNbtPropertySetRequestItem.FulfillMenu.Complete,
-                    SetValOnAdd = false
-                } );
-
+                
                 CswNbtMetaDataObjectClassProp PriorityOcp = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( Ret )
                 {
                     PropName = CswNbtPropertySetRequestItem.PropertyName.Priority,
                     FieldType = CswNbtMetaDataFieldType.NbtFieldType.Number,
-                    SetValOnAdd = true,
-                    DisplayColAdd = 1,
-                    DisplayRowAdd = 1,
-                    NumberPrecision = 1
+                    NumberPrecision = 1,
+                    SetValOnAdd = false
                 } );
                 _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( PriorityOcp, 0 );
 
@@ -785,22 +790,16 @@ namespace ChemSW.Nbt.Schema
                     FkValue = InventoryGroupOc.ObjectClassId,
                     SetValOnAdd = true,
                     DisplayColAdd = 1,
-                    DisplayRowAdd = 3
+                    DisplayRowAdd = 2
                 } );
-
-                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( Ret )
-                {
-                    PropName = CswNbtPropertySetRequestItem.PropertyName.Name,
-                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Text
-                } );
-
+                
                 _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( Ret )
                 {
                     PropName = CswNbtPropertySetRequestItem.PropertyName.NeededBy,
                     FieldType = CswNbtMetaDataFieldType.NbtFieldType.DateTime,
                     SetValOnAdd = true,
                     DisplayColAdd = 1,
-                    DisplayRowAdd = 2
+                    DisplayRowAdd = 3
                 } );
 
                 _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( Ret )
@@ -823,6 +822,13 @@ namespace ChemSW.Nbt.Schema
 
                 _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( Ret )
                 {
+                    PropName = CswNbtPropertySetRequestItem.PropertyName.ExternalOrderNumber,
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Text,
+                    SetValOnAdd = false
+                } );
+
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( Ret )
+                {
                     PropName = CswNbtPropertySetRequestItem.PropertyName.RequestedFor,
                     FieldType = CswNbtMetaDataFieldType.NbtFieldType.Relationship,
                     IsFk = true,
@@ -833,31 +839,30 @@ namespace ChemSW.Nbt.Schema
 
                 _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( Ret )
                 {
-                    PropName = CswNbtPropertySetRequestItem.PropertyName.Requestor,
+                    PropName = CswNbtPropertySetRequestItem.PropertyName.AssignedTo,
                     FieldType = CswNbtMetaDataFieldType.NbtFieldType.Relationship,
                     IsFk = true,
                     FkType = NbtViewRelatedIdType.ObjectClassId.ToString(),
                     FkValue = UserOc.ObjectClassId,
-                    ServerManaged = true,
                     SetValOnAdd = false
                 } );
-
-                CswNbtMetaDataObjectClassProp StatusOcp = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( Ret )
-                {
-                    PropName = CswNbtPropertySetRequestItem.PropertyName.Status,
-                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.List,
-                    ServerManaged = true,
-                    SetValOnAdd = false
-                } );
-                _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( StatusOcp, CswNbtPropertySetRequestItem.Statuses.Pending );
 
                 _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( Ret )
                 {
-                    PropName = CswNbtPropertySetRequestItem.PropertyName.Type,
-                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.List,
-                    ServerManaged = true,
+                    PropName = CswNbtPropertySetRequestItem.PropertyName.Comments,
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Comments,
                     SetValOnAdd = false
                 } );
+
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( Ret )
+                {
+                    PropName = CswNbtPropertySetRequestItem.PropertyName.Fulfill,
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Button,
+                    Extended = CswNbtNodePropButton.ButtonMode.menu,
+                    StaticText = CswNbtPropertySetRequestItem.FulfillMenu.Complete,
+                    SetValOnAdd = false
+                } );
+                
             }
             return Ret;
         }
