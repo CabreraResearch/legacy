@@ -139,6 +139,8 @@ namespace ChemSW.Nbt.Actions
                     {
                         Ret = _NbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.MakeTemp, OverrideUniqueValidation: false );
                         Node = Ret.Node;
+                        //TODO: Improve default handling here
+                        Ret.PhysicalState.Value = CswNbtObjClassMaterial.PhysicalStates.Solid;
                     }
                     else
                     {

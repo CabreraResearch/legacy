@@ -235,22 +235,27 @@ namespace ChemSW.Nbt.Actions
             if( null != CopyFromNodeId && null != CopyToNodeId )
             {
                 ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( CurrentCartView, false, false, false );
-                Int32 ItemCount = Tree.getChildNodeCount();
-                for( Int32 I = 0; I < ItemCount; I += 1 )
+                if( Tree.getChildNodeCount() == 1 ) //the first Item will be the Request
                 {
-                    Tree.goToNthChild( I );
+                    Tree.goToNthChild( 0 );
 
-                    CswNbtPropertySetRequestItem CopyFromNodeAsRequestItem = Tree.getNodeForCurrentPosition();
-                    if( null != CopyFromNodeAsRequestItem )
+                    Int32 ItemCount = Tree.getChildNodeCount();
+                    for( Int32 I = 0; I < ItemCount; I += 1 )
                     {
-                        CswNbtPropertySetRequestItem CopyToNodeAsRequestItem = CopyFromNodeAsRequestItem.copyNode();
-                        if( null != CopyToNodeAsRequestItem )
+                        Tree.goToNthChild( I );
+
+                        CswNbtPropertySetRequestItem CopyFromNodeAsRequestItem = Tree.getNodeForCurrentPosition();
+                        if( null != CopyFromNodeAsRequestItem )
                         {
-                            CopyToNodeAsRequestItem.Request.RelatedNodeId = CopyToNodeId;
-                            CopyToNodeAsRequestItem.postChanges( true );
+                            CswNbtPropertySetRequestItem CopyToNodeAsRequestItem = CopyFromNodeAsRequestItem.copyNode();
+                            if( null != CopyToNodeAsRequestItem )
+                            {
+                                CopyToNodeAsRequestItem.Request.RelatedNodeId = CopyToNodeId;
+                                CopyToNodeAsRequestItem.postChanges( true );
+                            }
                         }
+                        Tree.goToParentNode();
                     }
-                    Tree.goToParentNode();
                 }
             }
             return new CswNbtActSubmitRequest( _CswNbtResources, CreateDefaultRequestNode: true, RequestNodeId: CopyToNodeId );
