@@ -15,10 +15,10 @@ namespace ChemSW.Nbt.ObjClasses
     public class CswNbtObjClassInspectionDesign : CswNbtPropertySetGeneratorTarget
     {
         #region Enums
-        public sealed class PropertyName
+        public new sealed class PropertyName : CswNbtPropertySetGeneratorTarget.PropertyName
         {
             /// <summary>
-            /// Target == Owner == Parent
+            /// Target == Parent
             /// </summary>
             public const string Target = "Target";
 
@@ -26,26 +26,6 @@ namespace ChemSW.Nbt.ObjClasses
             /// Inspection name
             /// </summary>
             public const string Name = "Name";
-
-            /// <summary>
-            /// Due date
-            /// </summary>
-            public const string Date = "Due Date";
-
-            /// <summary>
-            /// Is Future Inspection
-            /// </summary>
-            public const string IsFuture = "IsFuture";
-
-            /// <summary>
-            /// Schedule generating this inspection
-            /// </summary>
-            public const string Generator = "Generator";
-
-            /// <summary>
-            /// Owner == Target == Parent
-            /// </summary>
-            public const string Owner = "Target";
 
             /// <summary>
             /// Inspection status as list should match InspectionStatus enum
@@ -283,10 +263,7 @@ namespace ChemSW.Nbt.ObjClasses
         #region PropertySet
 
         // for CswNbtPropertySetGeneratorTarget
-        public override string ParentPropertyName { get { return PropertyName.Owner; } }
-        public override string GeneratedDatePropertyName { get { return PropertyName.Date; } }
-        public override string GeneratorPropertyName { get { return PropertyName.Generator; } }
-        public override string IsFuturePropertyName { get { return PropertyName.IsFuture; } }
+        public override string ParentPropertyName { get { return PropertyName.Target; } }
 
         #endregion PropertySet
 
@@ -337,7 +314,7 @@ namespace ChemSW.Nbt.ObjClasses
                 get
                 {
                     bool Ret = AllAnswered;
-                    Ret = Ret && _Questions.Aggregate( Ret, ( RetAns, QuestionProp ) => ( RetAns && DateTime.MinValue != QuestionProp.DateAnswered.Date && QuestionProp.DateAnswered.Date <= _Design.Date.DateTimeValue ) );
+                    Ret = Ret && _Questions.Aggregate( Ret, ( RetAns, QuestionProp ) => ( RetAns && DateTime.MinValue != QuestionProp.DateAnswered.Date && QuestionProp.DateAnswered.Date <= _Design.DueDate.DateTimeValue ) );
                     return Ret;
                 }
             }
@@ -586,7 +563,7 @@ namespace ChemSW.Nbt.ObjClasses
         }
 
         /// <summary>
-        /// Inspection target == owner == parent. 
+        /// Inspection target == parent. 
         /// In FE, target == Inspection Target
         /// </summary>
         public CswNbtNodePropRelationship Target { get { return ( _CswNbtNode.Properties[PropertyName.Target] ); } }
@@ -596,20 +573,6 @@ namespace ChemSW.Nbt.ObjClasses
         /// </summary>
         public CswNbtNodePropText Name { get { return ( _CswNbtNode.Properties[PropertyName.Name] ); } }
 
-        /// <summary>
-        /// Due Date of inspection
-        /// </summary>
-        public CswNbtNodePropDateTime Date { get { return ( _CswNbtNode.Properties[PropertyName.Date] ); } }
-
-        /// <summary>
-        /// Date the inspection was generated
-        /// </summary>
-        public override CswNbtNodePropDateTime GeneratedDate { get { return ( _CswNbtNode.Properties[GeneratedDatePropertyName] ); } }
-
-        /// <summary>
-        /// Inspection is preemptively generated for future date
-        /// </summary>
-        public override CswNbtNodePropLogical IsFuture { get { return ( _CswNbtNode.Properties[IsFuturePropertyName] ); } }
         private void OnIsFutureChange( CswNbtNodeProp NodeProp )
         {
             if( false == _genFutureNodesHasRun ) //redundant--for readability
@@ -619,7 +582,6 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
-        public override CswNbtNodePropRelationship Generator { get { return ( _CswNbtNode.Properties[GeneratorPropertyName] ); } }
         private void OnGeneratorChange( CswNbtNodeProp NodeProp )
         {
             if( false == _genFutureNodesHasRun ) //redundant--for readability
@@ -630,12 +592,7 @@ namespace ChemSW.Nbt.ObjClasses
         }
 
         /// <summary>
-        /// In this context owner == parent
-        /// </summary>
-        public CswNbtNodePropRelationship Owner { get { return ( _CswNbtNode.Properties[PropertyName.Owner] ); } }
-
-        /// <summary>
-        /// In this context parent == owner
+        /// In this context parent == target
         /// </summary>
         public override CswNbtNodePropRelationship Parent { get { return ( _CswNbtNode.Properties[ParentPropertyName] ); } }
 

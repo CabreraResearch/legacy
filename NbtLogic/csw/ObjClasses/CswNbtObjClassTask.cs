@@ -8,9 +8,8 @@ namespace ChemSW.Nbt.ObjClasses
 {
     public class CswNbtObjClassTask : CswNbtPropertySetGeneratorTarget
     {
-        public sealed class PropertyName
+        public new sealed class PropertyName : CswNbtPropertySetGeneratorTarget.PropertyName
         {
-            public const string DueDate = "Due Date";
             public const string Completed = "Completed";
             public const string Description = "Description";
             public const string Owner = "Owner";
@@ -18,15 +17,10 @@ namespace ChemSW.Nbt.ObjClasses
             public const string DoneOn = "Done On";
             public const string Parts = "Parts";
             public const string PartsXValue = "Service";
-            public const string IsFuture = "IsFuture";
-            public const string Generator = "Generator";
         }
         
         // for CswNbtPropertySetGeneratorTarget
         public override string ParentPropertyName { get { return PropertyName.Owner; } }
-        public override string GeneratedDatePropertyName { get { return PropertyName.DueDate; } }
-        public override string GeneratorPropertyName { get { return PropertyName.Generator; } }
-        public override string IsFuturePropertyName { get { return PropertyName.IsFuture; } }
 
         public CswNbtObjClassTask( CswNbtResources CswNbtResources, CswNbtNode Node )
             : base( CswNbtResources, Node )
@@ -131,17 +125,13 @@ namespace ChemSW.Nbt.ObjClasses
         #region Object class specific properties
 
         public CswNbtNodePropDateTime DoneOn { get { return ( _CswNbtNode.Properties[PropertyName.DoneOn] ); } }
-        public CswNbtNodePropDateTime DueDate { get { return ( _CswNbtNode.Properties[PropertyName.DueDate] ); } }
         public CswNbtNodePropLogical Completed { get { return ( _CswNbtNode.Properties[PropertyName.Completed] ); } }
         public CswNbtNodePropMemo Description { get { return ( _CswNbtNode.Properties[PropertyName.Description] ); } }
         public CswNbtNodePropRelationship Owner { get { return ( _CswNbtNode.Properties[PropertyName.Owner] ); } }
         public CswNbtNodePropText Summary { get { return ( _CswNbtNode.Properties[PropertyName.Summary] ); } }
         public CswNbtNodePropLogicalSet Parts { get { return ( _CswNbtNode.Properties[PropertyName.Parts] ); } }
 
-        public override CswNbtNodePropDateTime GeneratedDate { get { return ( _CswNbtNode.Properties[GeneratedDatePropertyName] ); } }
         public override CswNbtNodePropRelationship Parent { get { return ( _CswNbtNode.Properties[ParentPropertyName] ); } }
-        public override CswNbtNodePropRelationship Generator { get { return ( _CswNbtNode.Properties[GeneratorPropertyName] ); } }
-        public override CswNbtNodePropLogical IsFuture { get { return ( _CswNbtNode.Properties[IsFuturePropertyName] ); } }
         
         #endregion
 

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.ObjectModel;
 using ChemSW.Core;
 using ChemSW.Nbt.Actions;
@@ -11,11 +12,16 @@ namespace ChemSW.Nbt.ObjClasses
     /// </summary>
     public abstract class CswNbtPropertySetGeneratorTarget : CswNbtObjClass
     {
-        // Object Class property names
+        public class PropertyName
+        {
+            public const string Generator = "Generator";
+            public const string DueDate = "Due Date";
+            public const string CreatedDate = "Date Created";
+            public const string IsFuture = "IsFuture";
+        }
+
+        // Configurable Object Class properties
         public abstract string ParentPropertyName { get; }
-        public abstract string GeneratedDatePropertyName { get; }
-        public abstract string GeneratorPropertyName { get; }
-        public abstract string IsFuturePropertyName { get; }
 
         public static Collection<NbtObjectClass> Members()
         {
@@ -65,6 +71,11 @@ namespace ChemSW.Nbt.ObjClasses
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
             beforePropertySetWriteNode( IsCopy, OverrideUniqueValidation );
+
+            if( DateTime.MinValue == CreatedDate.DateTimeValue )
+            {
+                CreatedDate.DateTimeValue = DateTime.Now;
+            }
 
             CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
         }//beforeWriteNode()
@@ -122,9 +133,11 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Property Set specific properties
 
-        public abstract CswNbtNodePropDateTime GeneratedDate { get; }
-        public abstract CswNbtNodePropLogical IsFuture { get; }
-        public abstract CswNbtNodePropRelationship Generator { get; }
+        public CswNbtNodePropDateTime DueDate { get { return _CswNbtNode.Properties[PropertyName.DueDate]; } }
+        public CswNbtNodePropDateTime CreatedDate { get { return _CswNbtNode.Properties[PropertyName.CreatedDate]; } }
+        public CswNbtNodePropLogical IsFuture { get { return _CswNbtNode.Properties[PropertyName.IsFuture]; } }
+        public CswNbtNodePropRelationship Generator { get { return _CswNbtNode.Properties[PropertyName.Generator]; } }
+        
         public abstract CswNbtNodePropRelationship Parent { get; }
 
         #endregion
