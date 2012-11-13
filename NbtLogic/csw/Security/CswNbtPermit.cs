@@ -236,6 +236,27 @@ namespace ChemSW.Nbt.Security
                         ReturnVal = NodeTypePermission != NodeTypePermission.Delete;
                     }
 
+                    //case 28158: Another way to cope with this would for the CswNbtObjClass abstract 
+                    //class to expose an interface along the lines of allowNodeType(). 
+                    //If we come across additonal exception cases such as this, we can 
+                    //apply such a strategy.
+                    if( ( null != PropType ) && ( ObjectClass == NbtObjectClass.UserClass ) )
+                    {
+
+                        CswNbtObjClassUser CswNbtObjClassUser = _CswNbtResources.Nodes[_CswNbtUser.UserId];
+                        if( null != CswNbtObjClassUser )
+                        {
+                            CswNbtMetaDataObjectClassProp CswNbtMetaDataObjectClassProp = PropType.getObjectClassProp();
+                            if( null != CswNbtMetaDataObjectClassProp )
+                            {
+                                if( ( CswNbtMetaDataObjectClassProp.PropName == CswNbtObjClassUser.PropertyName.Password ) && ( false == CswNbtObjClassUser.IsPasswordReadyOnly ) )
+                                {
+                                    ReturnVal = false;
+                                }
+                            }
+                        }
+
+                    }//get() 
 
                     return ( ReturnVal );
 
@@ -388,6 +409,10 @@ namespace ChemSW.Nbt.Security
 
                         ret = _CanNodeTypeImpl();
                     }
+                    else
+                    {
+                        ret = true;
+                    }
 
                 }//if pre-reqs are satisifed
             }
@@ -422,6 +447,11 @@ namespace ChemSW.Nbt.Security
                     {
 
                         ret = _CanNodeTypeImpl();
+                    }
+                    else
+                    {
+                        ret = true;
+
                     }
 
                 }//if pre-reqs are satisifed
@@ -458,7 +488,6 @@ namespace ChemSW.Nbt.Security
 
             }//if we denied view permission
 
-
             return ( ret );
 
         } // _CanNodeTypeImpl()
@@ -480,6 +509,10 @@ namespace ChemSW.Nbt.Security
                     {
 
                         ret = _canTabImpl( NodeTypeTab );
+                    }
+                    else
+                    {
+                        ret = true;
                     }
                 }
             }
@@ -505,6 +538,10 @@ namespace ChemSW.Nbt.Security
                     {
 
                         ret = _canTabImpl( NodeTypeTab );
+                    }
+                    else
+                    {
+                        ret = true;
                     }
 
                 }//if can proceed
@@ -563,6 +600,10 @@ namespace ChemSW.Nbt.Security
 
                         ret = _canAnyTabImpl();
                     }
+                    else
+                    {
+                        ret = true;
+                    }
                 }//if pre-reqs are in order
             }
             else
@@ -592,6 +633,10 @@ namespace ChemSW.Nbt.Security
 
                         ret = _canAnyTabImpl();
                     }
+                    else
+                    {
+                        ret = true;
+                    }
 
                 }//if pre-reqs are in order
             }
@@ -609,31 +654,28 @@ namespace ChemSW.Nbt.Security
         {
             bool ret = false;
 
-            if( _CswNbtPermitInfo.NoExceptionCases )
-            {
 
-                //NodeTypeTabPermission TabPermission = (NodeTypeTabPermission) Enum.Parse( typeof( NodeTypeTabPermission ), _CswNbtPermitInfo.NodeTypePermission.ToString() );
-                foreach( CswNbtMetaDataNodeTypeTab CurrentTab in _CswNbtPermitInfo.NodeType.getNodeTypeTabs() )
+            //NodeTypeTabPermission TabPermission = (NodeTypeTabPermission) Enum.Parse( typeof( NodeTypeTabPermission ), _CswNbtPermitInfo.NodeTypePermission.ToString() );
+            foreach( CswNbtMetaDataNodeTypeTab CurrentTab in _CswNbtPermitInfo.NodeType.getNodeTypeTabs() )
+            {
+                ret = ret ||
+                      _CswNbtPermitInfo.Role.NodeTypePermissions.CheckValue(
+                          CswNbtObjClassRole.MakeNodeTypeTabPermissionValue(
+                              _CswNbtPermitInfo.NodeType.FirstVersionNodeTypeId, CurrentTab.FirstTabVersionId,
+                              _CswNbtPermitInfo.NodeTypeTabPermission ) );
+
+                if( _CswNbtPermitInfo.NodeTypeTabPermission == NodeTypeTabPermission.View )
                 {
+                    // Having 'Edit' grants 'View' automatically
                     ret = ret ||
                           _CswNbtPermitInfo.Role.NodeTypePermissions.CheckValue(
                               CswNbtObjClassRole.MakeNodeTypeTabPermissionValue(
                                   _CswNbtPermitInfo.NodeType.FirstVersionNodeTypeId, CurrentTab.FirstTabVersionId,
-                                  _CswNbtPermitInfo.NodeTypeTabPermission ) );
+                                  NodeTypeTabPermission.Edit ) );
+                }
 
-                    if( _CswNbtPermitInfo.NodeTypeTabPermission == NodeTypeTabPermission.View )
-                    {
-                        // Having 'Edit' grants 'View' automatically
-                        ret = ret ||
-                              _CswNbtPermitInfo.Role.NodeTypePermissions.CheckValue(
-                                  CswNbtObjClassRole.MakeNodeTypeTabPermissionValue(
-                                      _CswNbtPermitInfo.NodeType.FirstVersionNodeTypeId, CurrentTab.FirstTabVersionId,
-                                      NodeTypeTabPermission.Edit ) );
-                    }
+            } //iterate tabs
 
-                } //iterate tabs
-
-            }//if no exception cases
 
             return ( ret );
 
@@ -658,6 +700,10 @@ namespace ChemSW.Nbt.Security
                         {
                             ret = _isPropWritableImpl( MetaDataTab, MetaDataProp, NodePropWrapper );
                         }
+                    }
+                    else
+                    {
+                        ret = true;
                     }
                 }
                 else
@@ -688,6 +734,10 @@ namespace ChemSW.Nbt.Security
                         {
                             ret = _isPropWritableImpl( MetaDataTab, MetaDataProp, NodePropWrapper );
                         }
+                    }
+                    else
+                    {
+                        ret = true;
                     }
                 }
                 else
