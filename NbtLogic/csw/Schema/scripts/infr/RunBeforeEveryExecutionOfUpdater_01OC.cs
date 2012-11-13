@@ -1069,6 +1069,29 @@ namespace ChemSW.Nbt.Schema
             _resetBlame();
         }
 
+        public void _addGeneratorTargetCreatedDate()
+        {
+            _acceptBlame( CswDeveloper.SS, 28069 );
+
+            CswNbtMetaDataObjectClass TaskOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.TaskClass );
+            _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( TaskOC )
+            {
+                PropName = CswNbtPropertySetGeneratorTarget.PropertyName.CreatedDate,
+                FieldType = CswNbtMetaDataFieldType.NbtFieldType.DateTime,
+                ServerManaged = true
+            } );
+
+            CswNbtMetaDataObjectClass InspectionDesignOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.InspectionDesignClass );
+            _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( InspectionDesignOC )
+            {
+                PropName = CswNbtPropertySetGeneratorTarget.PropertyName.CreatedDate,
+                FieldType = CswNbtMetaDataFieldType.NbtFieldType.DateTime,
+                ServerManaged = true
+            } );
+            
+            _resetBlame();
+        }
+
         #endregion Ursula Methods
 
 
@@ -1105,6 +1128,8 @@ namespace ChemSW.Nbt.Schema
             _makeContainerGroup();
             _newContainerProperties27866();
 
+            _addGeneratorTargetCreatedDate();
+            
             #endregion URSULA
 
             //THIS GOES LAST!

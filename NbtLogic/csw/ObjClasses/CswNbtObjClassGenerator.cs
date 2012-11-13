@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.PropertySets;
 using ChemSW.Nbt.PropTypes;
 
@@ -223,8 +224,8 @@ namespace ChemSW.Nbt.ObjClasses
                         }
                         CswNbtPropertySetGeneratorTarget GeneratorTarget = (CswNbtPropertySetGeneratorTarget) TargetObjClass;
 
-                        CswNbtMetaDataNodeTypeProp GeneratorProp = TargetNodeType.getNodeTypePropByObjectClassProp( GeneratorTarget.GeneratorPropertyName );
-                        CswNbtMetaDataNodeTypeProp IsFutureProp = TargetNodeType.getNodeTypePropByObjectClassProp( GeneratorTarget.IsFuturePropertyName );
+                        CswNbtMetaDataNodeTypeProp GeneratorProp = TargetNodeType.getNodeTypePropByObjectClassProp( CswNbtPropertySetGeneratorTarget.PropertyName.Generator );
+                        CswNbtMetaDataNodeTypeProp IsFutureProp = TargetNodeType.getNodeTypePropByObjectClassProp( CswNbtPropertySetGeneratorTarget.PropertyName.IsFuture );
 
                         CswNbtView View = new CswNbtView( _CswNbtResources );
                         View.ViewName = "CswNbtObjClassSchedule.beforeDeleteNode()";
@@ -356,6 +357,39 @@ namespace ChemSW.Nbt.ObjClasses
         {
             _CswNbtPropertySetSchedulerImpl.updateNextDueDate( ForceUpdate, DeleteFutureNodes );
         }
+
+
+        public Int32 GeneratedNodeCount( DateTime TargetDay )
+        {
+            CswNbtView View = new CswNbtView( _CswNbtResources );
+            View.ViewName = "Generated Node Count";
+
+            CswNbtMetaDataNodeType TargetNT = _CswNbtResources.MetaData.getNodeType( CswConvert.ToInt32( TargetType.SelectedNodeTypeIds[0] ) );
+            CswNbtMetaDataNodeTypeProp GeneratorNTP = TargetNT.getNodeTypePropByObjectClassProp( CswNbtPropertySetGeneratorTarget.PropertyName.Generator );
+            CswNbtMetaDataNodeTypeProp CreatedDateNTP = TargetNT.getNodeTypePropByObjectClassProp( CswNbtPropertySetGeneratorTarget.PropertyName.CreatedDate );
+
+            CswNbtViewRelationship TargetRel = View.AddViewRelationship( TargetNT, false );
+            View.AddViewPropertyAndFilter( TargetRel,
+                                           GeneratorNTP,
+                                           Conjunction: CswNbtPropFilterSql.PropertyFilterConjunction.And,
+                                           ResultMode: CswNbtPropFilterSql.FilterResultMode.Hide,
+                                           Value: this.NodeId.PrimaryKey.ToString(),
+                                           SubFieldName: ((CswNbtFieldTypeRuleRelationship)GeneratorNTP.getFieldTypeRule()).NodeIDSubField.Name,
+                                           FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+
+            if( DateTime.MinValue != TargetDay )
+            {
+                View.AddViewPropertyAndFilter( TargetRel,
+                                               CreatedDateNTP,
+                                               Conjunction: CswNbtPropFilterSql.PropertyFilterConjunction.And,
+                                               ResultMode: CswNbtPropFilterSql.FilterResultMode.Hide,
+                                               Value: TargetDay.Date.ToString(),
+                                               FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+            }
+
+            ICswNbtTree TargetTree = _CswNbtResources.Trees.getTreeFromView( View, false, true, true );
+            return TargetTree.getChildNodeCount();
+        } // GeneratedNodeCount
 
     }//CswNbtObjClassGenerator
 

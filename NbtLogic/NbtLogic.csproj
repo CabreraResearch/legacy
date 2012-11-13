@@ -254,6 +254,7 @@
     <Compile Include="csw\Schema\scripts\prod\01T\CswUpdateSchema_01T_LocationLabel_Case28108.cs" />
     <Compile Include="csw\Schema\scripts\prod\01T\CswUpdateSchema_01T_Case27551.cs" />
     <Compile Include="csw\Schema\scripts\prod\01T\CswUpdateSchema_01T_Case28020.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01U\CswUpdateSchema_01U_Case28069.cs" />
     <Compile Include="csw\Schema\scripts\prod\01U\CswUpdateSchema_01U_Case27866.cs" />
     <Compile Include="csw\Schema\scripts\prod\01T\CswUpdateSchema_01T_Case27912.cs" />
     <Compile Include="csw\Schema\scripts\prod\01T\CswUpdateSchema_01T_Case27920.cs" />
