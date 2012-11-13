@@ -47,9 +47,9 @@ namespace ChemSW.Nbt.Actions
 
                         // CreatedForNTP is the parent or owner of the new node. Inspections created for Inspection Targets, Tasks for Equipment, etc.
                         CswNbtMetaDataNodeTypeProp CreatedForNTP = CreatedNodeType.getNodeTypePropByObjectClassProp( GeneratorTarget.ParentPropertyName );
-                        CswNbtMetaDataNodeTypeProp GeneratorNTP = CreatedNodeType.getNodeTypePropByObjectClassProp( GeneratorTarget.GeneratorPropertyName );
+                        CswNbtMetaDataNodeTypeProp GeneratorNTP = CreatedNodeType.getNodeTypePropByObjectClassProp( CswNbtPropertySetGeneratorTarget.PropertyName.Generator );
                         //CreatedNodeType.getNodeTypePropByObjectClassProp( GeneratorTarget.GeneratorTargetIsFuturePropertyName );
-                        CswNbtMetaDataNodeTypeProp DueDateNTP = CreatedNodeType.getNodeTypePropByObjectClassProp( GeneratorTarget.GeneratedDatePropertyName );
+                        CswNbtMetaDataNodeTypeProp DueDateNTP = CreatedNodeType.getNodeTypePropByObjectClassProp( CswNbtPropertySetGeneratorTarget.PropertyName.DueDate );
 
                         CswNbtView CswNbtView = new CswNbtView( _CswNbtResources );
                         CswNbtView.ViewName = "Nodes for Generator";
@@ -194,8 +194,8 @@ namespace ChemSW.Nbt.Actions
                             CswNbtPropertySetGeneratorTarget NewNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( LatestVersionNT.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing );
                             NewNode.Node.copyPropertyValues( CswNbtNodeGenerator );
 
-                            NewNode.GeneratedDate.DateTimeValue = DueDate;
-                            NewNode.GeneratedDate.setReadOnly( value: true, SaveToDb: true ); //bz # 5349
+                            NewNode.DueDate.DateTimeValue = DueDate;
+                            NewNode.DueDate.setReadOnly( value: true, SaveToDb: true ); //bz # 5349
                             NewNode.Generator.RelatedNodeId = CswNbtNodeGenerator.NodeId;
                             NewNode.Generator.CachedNodeName = CswNbtNodeGenerator.NodeName;
                             NewNode.Parent.RelatedNodeId = NewParentPk;
@@ -231,7 +231,7 @@ namespace ChemSW.Nbt.Actions
                         }
                         else
                         {
-                            if( DateTime.Now.Date >= ExistingNode.GeneratedDate.DateTimeValue.Date )
+                            if( DateTime.Now.Date >= ExistingNode.DueDate.DateTimeValue.Date )
                             {
                                 ExistingNode.IsFuture.Checked = Tristate.False;
                             }

@@ -39,7 +39,7 @@ namespace ChemSW.Nbt.Actions
                         TargetNodeTree.goToNthChild( idx );
                         CswNbtPropertySetGeneratorTarget CurrentTargetNode = TargetNodeTree.getNodeForCurrentPosition();
                         
-                        DateTime CurrentDate = CurrentTargetNode.GeneratedDate.DateTimeValue;
+                        DateTime CurrentDate = CurrentTargetNode.DueDate.DateTimeValue;
                         if( CurrentDate.Date > ReturnVal.Date )
                         {
                             ReturnVal = CurrentDate.Date;
@@ -158,9 +158,9 @@ namespace ChemSW.Nbt.Actions
                         throw new CswDniException( "CswNbtActGenerateFutureNodes.getTreeViewOfFutureNodes() got an invalid object class: " + TargetObjectClass.ObjectClass.ToString() );
                     CswNbtPropertySetGeneratorTarget GeneratorTarget = (CswNbtPropertySetGeneratorTarget) TargetObjClass;
 
-                    CswNbtViewRelationship TargetRelationship = ReturnVal.AddViewRelationship( GeneratorRelationship, NbtViewPropOwnerType.Second, TargetNodeType.getNodeTypePropByObjectClassProp( GeneratorTarget.GeneratorPropertyName ), false );
+                    CswNbtViewRelationship TargetRelationship = ReturnVal.AddViewRelationship( GeneratorRelationship, NbtViewPropOwnerType.Second, TargetNodeType.getNodeTypePropByObjectClassProp( CswNbtPropertySetGeneratorTarget.PropertyName.Generator ), false );
                     //bz# 5959
-                    CswNbtViewProperty IsFutureFlagProperty = ReturnVal.AddViewProperty( TargetRelationship, TargetNodeType.getNodeTypePropByObjectClassProp( GeneratorTarget.IsFuturePropertyName ) );
+                    CswNbtViewProperty IsFutureFlagProperty = ReturnVal.AddViewProperty( TargetRelationship, TargetNodeType.getNodeTypePropByObjectClassProp( CswNbtPropertySetGeneratorTarget.PropertyName.IsFuture ) );
                     CswNbtViewPropertyFilter IsFutureFilter = ReturnVal.AddViewPropertyFilter( IsFutureFlagProperty, CswNbtSubField.SubFieldName.Unknown, CswNbtPropFilterSql.PropertyFilterMode.Equals, "1", false );
                 }
             }
