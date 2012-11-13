@@ -348,7 +348,14 @@ namespace ChemSW.Nbt.ObjClasses
             if( null != Container.RelatedNodeId )
             {
                 Container.setReadOnly( value: true, SaveToDb: true );
-                Material.RelatedNodeId = Container.RelatedNodeId;
+                if( false == CswTools.IsPrimaryKey( Material.RelatedNodeId ) )
+                {
+                    CswNbtObjClassContainer ThisContainer = _CswNbtResources.Nodes[Container.RelatedNodeId];
+                    if( null != ThisContainer )
+                    {
+                        Material.RelatedNodeId = ThisContainer.Material.RelatedNodeId;
+                    }
+                }
             }
         }
 

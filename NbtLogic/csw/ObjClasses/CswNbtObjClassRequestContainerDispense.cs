@@ -328,7 +328,7 @@ namespace ChemSW.Nbt.ObjClasses
         public override void onStatusPropChange( CswNbtNodeProp Prop )
         {
             TotalDispensed.setHidden( value: ( Status.Value == Statuses.Pending ), SaveToDb: true );
-
+            Size.setHidden( value: true, SaveToDb: true );
             switch( Status.Value )
             {
                 case Statuses.Dispensed:

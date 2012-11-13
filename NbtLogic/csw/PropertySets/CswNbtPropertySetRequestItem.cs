@@ -350,6 +350,9 @@ namespace ChemSW.Nbt.ObjClasses
             Name.setHidden( value: ( Status.Value == Statuses.Pending ), SaveToDb: true );
             Requestor.setHidden( value: ( Status.Value == Statuses.Pending ), SaveToDb: true );
             Status.setHidden( value: ( Status.Value == Statuses.Pending ), SaveToDb: true );
+            Priority.setHidden( value: ( Status.Value == Statuses.Pending ), SaveToDb: true );
+            ExternalOrderNumber.setHidden( value: ( Status.Value == Statuses.Pending ), SaveToDb: true );
+            Type.setHidden( value: ( Status.Value == Statuses.Pending ), SaveToDb: true );
 
             switch( Status.Value )
             {
