@@ -23,6 +23,15 @@ namespace ChemSw.Nbt.Test
         private Dictionary<int, string> _ChangedNodeTypePropListOptions = new Dictionary<int, string>();
         private Dictionary<int, string> _ChangedNodeTypePropExtended = new Dictionary<int, string>();
         private Dictionary<int, int> _ChangedNodeTypePropMaxValue = new Dictionary<int, int>();
+        private int _UniqueSequence;
+        public int Sequence
+        {
+            get
+            {
+                _UniqueSequence++;
+                return _UniqueSequence;
+            }
+        }
 
         private Dictionary<CswPrimaryKey, String> _ContainerLocationNodeActions = new Dictionary<CswPrimaryKey, String>();
 
@@ -123,7 +132,20 @@ namespace ChemSw.Nbt.Test
 
         #region Nodes
 
-        internal CswNbtNode createContainerLocationNode( CswNbtNode ContainerNode = null, String Action = "", DateTime? NullableScanDate = null, CswPrimaryKey LocationId = null )
+        internal CswNbtNode createLocationNode( String LocationType = "Room", String Name = "New Room", CswPrimaryKey ParentLocationId = null )
+        {
+            CswNbtObjClassLocation LocationNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( _getNodeTypeId( LocationType ), CswNbtNodeCollection.MakeNodeOperation.DoNothing );
+            LocationNode.Name.Text = Name;
+            if( ParentLocationId != null )
+            {
+                LocationNode.Location.SelectedNodeId = ParentLocationId;
+                LocationNode.Location.RefreshNodeName();
+            }
+            LocationNode.postChanges( false );
+            return LocationNode.Node;
+        }
+
+        internal CswNbtNode createContainerLocationNode( CswNbtNode ContainerNode = null, String Action = "", DateTime? NullableScanDate = null, CswPrimaryKey LocationId = null, String ContainerScan = "" )
         {
             CswNbtObjClassContainerLocation ContainerLocationNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( _getNodeTypeId( "Container Location" ), CswNbtNodeCollection.MakeNodeOperation.DoNothing );
             if( null == ContainerNode )
@@ -139,6 +161,7 @@ namespace ChemSw.Nbt.Test
                 ContainerLocationNode.Location.SelectedNodeId = LocationId;
                 ContainerLocationNode.Location.RefreshNodeName();
             }
+            ContainerLocationNode.ContainerScan.Text = ContainerScan;
             ContainerLocationNode.postChanges( false );
             return ContainerLocationNode.Node;
         }
@@ -149,7 +172,7 @@ namespace ChemSw.Nbt.Test
             ContainerNode.Quantity.Quantity = Quantity;
             if( null == UnitOfMeasure )
             {
-                UnitOfMeasure = createUnitOfMeasureNode( "Volume", "Liters", 1.0, 0, Tristate.True );
+                UnitOfMeasure = createUnitOfMeasureNode( "Volume", "Liters" + Sequence, 1.0, 0, Tristate.True );
             }
             ContainerNode.Quantity.UnitId = UnitOfMeasure.NodeId;
             if( Material != null )
@@ -170,7 +193,7 @@ namespace ChemSw.Nbt.Test
         {
             CswNbtObjClassUnitOfMeasure UnitOfMeasureNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( _getNodeTypeId( "Unit (" + NodeTypeName + ")" ), CswNbtNodeCollection.MakeNodeOperation.DoNothing );
             UnitOfMeasureNode.Name.Text = Name + "Test";
-            if( ConversionFactorBase != Int32.MinValue )
+            if( CswTools.IsDouble( ConversionFactorBase ) )
                 UnitOfMeasureNode.ConversionFactor.Base = ConversionFactorBase;
             if( ConversionFactorExponent != Int32.MinValue )
                 UnitOfMeasureNode.ConversionFactor.Exponent = ConversionFactorExponent;
