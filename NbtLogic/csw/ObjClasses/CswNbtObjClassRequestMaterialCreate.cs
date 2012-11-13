@@ -22,11 +22,6 @@ namespace ChemSW.Nbt.ObjClasses
         public new sealed class PropertyName : CswNbtPropertySetRequestItem.PropertyName
         {
             /// <summary>
-            /// Relationship(<see cref="CswNbtNodePropRelationship"/> ) to the Material (<see cref="CswNbtObjClassMaterial"/>) from which the Request Item will be Fulfilled.
-            /// </summary>
-            public const string Material = "Material";
-
-            /// <summary>
             /// The type of the new material 
             /// </summary>
             public const string NewMaterialType = "New Material Type";
@@ -326,7 +321,6 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Object class specific properties
 
-        public CswNbtNodePropRelationship Material { get { return _CswNbtNode.Properties[PropertyName.Material]; } }
         private void onMaterialPropChange( CswNbtNodeProp NodeProp )
         {
             if( CswTools.IsPrimaryKey( Material.RelatedNodeId ) )

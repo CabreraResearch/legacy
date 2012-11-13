@@ -48,6 +48,11 @@ namespace ChemSW.Nbt.ObjClasses
             public const string Location = "Location";
 
             /// <summary>
+            /// Relationship(<see cref="CswNbtNodePropRelationship"/> ) to the Material (<see cref="CswNbtObjClassMaterial"/>) from which the Request Item will be Fulfilled.
+            /// </summary>
+            public const string Material = "Material";
+
+            /// <summary>
             /// Name(<see cref="CswNbtNodePropText"/>) of this Item
             /// </summary>
             public const string Name = "Name";
@@ -395,6 +400,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropNumber Priority { get { return _CswNbtNode.Properties[PropertyName.Priority]; } }
         public CswNbtNodePropRelationship AssignedTo { get { return _CswNbtNode.Properties[PropertyName.AssignedTo]; } }
         public CswNbtNodePropRelationship InventoryGroup { get { return _CswNbtNode.Properties[PropertyName.InventoryGroup]; } }
+        public CswNbtNodePropRelationship Material { get { return _CswNbtNode.Properties[PropertyName.Material]; } }
         public CswNbtNodePropRelationship Request { get { return _CswNbtNode.Properties[PropertyName.Request]; } }
         public CswNbtNodePropRelationship RequestedFor { get { return _CswNbtNode.Properties[PropertyName.RequestedFor]; } }
         public CswNbtNodePropRelationship Requestor { get { return _CswNbtNode.Properties[PropertyName.Requestor]; } }

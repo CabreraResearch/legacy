@@ -22,12 +22,6 @@ namespace ChemSW.Nbt.ObjClasses
             /// Relationship(<see cref="CswNbtNodePropRelationship"/> ) to the Container (<see cref="CswNbtObjClassContainer"/>) from which the Request Item will be Fulfilled.
             /// </summary>
             public const string Container = "Container";
-
-            /// <summary>
-            /// Relationship(<see cref="CswNbtNodePropPropertyReference"/> ) to the Material (<see cref="CswNbtObjClassMaterial"/>) from which the Request Item will be Fulfilled.
-            /// </summary>
-            public const string Material = "Material";
-
         }
 
         public new sealed class Types : CswNbtPropertySetRequestItem.Types
@@ -330,8 +324,6 @@ namespace ChemSW.Nbt.ObjClasses
                     break;
             }
         }
-
-        public CswNbtNodePropRelationship Material { get { return _CswNbtNode.Properties[PropertyName.Material]; } }
 
         public CswNbtNodePropRelationship Container
         {

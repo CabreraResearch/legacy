@@ -47,11 +47,6 @@ namespace ChemSW.Nbt.ObjClasses
             public const string Level = "Level";
 
             /// <summary>
-            /// Relationship(<see cref="CswNbtNodePropRelationship"/> ) to the Material (<see cref="CswNbtObjClassMaterial"/>) from which the Request Item will be Fulfilled.
-            /// </summary>
-            public const string Material = "Material";
-
-            /// <summary>
             /// Next date to reorder(<see cref="CswNbtNodePropDateTime"/> )
             /// </summary>
             public const string NextReorderDate = "Next Reorder Date";
@@ -475,10 +470,6 @@ namespace ChemSW.Nbt.ObjClasses
             get { return _CswNbtNode.Properties[PropertyName.Count]; }
         }
 
-        public CswNbtNodePropRelationship Material
-        {
-            get { return _CswNbtNode.Properties[PropertyName.Material]; }
-        }
         private void onMaterialPropChange( CswNbtNodeProp Prop )
         {
             if( CswTools.IsPrimaryKey( Material.RelatedNodeId ) )

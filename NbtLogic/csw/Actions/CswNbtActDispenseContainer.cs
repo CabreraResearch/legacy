@@ -200,7 +200,7 @@ namespace ChemSW.Nbt.Actions
         {
             CswNbtView Ret = new CswNbtView( _CswNbtResources );
 
-            CswNbtObjClassRequestContainerDispense NodeAsRequestItem = _CswNbtResources.Nodes[RequestItemId];
+            CswNbtPropertySetRequestItem NodeAsRequestItem = _CswNbtResources.Nodes[RequestItemId];
             if( null != NodeAsRequestItem )
             {
                 CswNbtObjClassMaterial NodeAsMaterial = _CswNbtResources.Nodes[NodeAsRequestItem.Material.RelatedNodeId];

@@ -25,11 +25,6 @@ namespace ChemSW.Nbt.ObjClasses
             public const string Container = "Container";
 
             /// <summary>
-            /// Relationship(<see cref="CswNbtNodePropRelationship"/> ) to the Material (<see cref="CswNbtObjClassMaterial"/>) from which the Request Item will be Fulfilled.
-            /// </summary>
-            public const string Material = "Material";
-
-            /// <summary>
             /// Relationship(<see cref="CswNbtNodePropRelationship"/> ) to the Material Size of the Container (<see cref="CswNbtObjClassSize"/>) from which the Request Item will be Fulfilled.
             /// </summary>
             public const string Size = "Size";
@@ -372,10 +367,6 @@ namespace ChemSW.Nbt.ObjClasses
             get { return _CswNbtNode.Properties[PropertyName.Size]; }
         }
 
-        public CswNbtNodePropRelationship Material
-        {
-            get { return _CswNbtNode.Properties[PropertyName.Material]; }
-        }
         private void onMaterialPropChange( CswNbtNodeProp Prop )
         {
             if( CswTools.IsPrimaryKey( Material.RelatedNodeId ) )
