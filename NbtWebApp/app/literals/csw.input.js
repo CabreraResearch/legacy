@@ -47,8 +47,8 @@
                 Csw.extend(cswPrivate, options);
             }
 
-            cswPrivate.name = Csw.string(cswPrivate.name, cswPrivate.ID);
-            cswPrivate.ID = Csw.string(cswPrivate.ID, cswPrivate.name);
+            cswPrivate.name = Csw.string(cswPrivate.name);
+            cswPrivate.ID = Csw.string(cswPrivate.ID);
 
             html += '<input ';
             attr.add('id', cswPrivate.ID);

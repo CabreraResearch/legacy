@@ -48,8 +48,8 @@
                     style = Csw.makeStyle();
                 var $textArea;
 
-                cswPrivate.name = Csw.string(cswPrivate.name, cswPrivate.ID);
-                cswPrivate.ID = Csw.string(cswPrivate.ID, cswPrivate.name);
+                cswPrivate.name = Csw.string(cswPrivate.name);
+                cswPrivate.ID = Csw.string(cswPrivate.ID);
 
                 html += '<textarea ';
                 attr.add('id', cswPrivate.ID);

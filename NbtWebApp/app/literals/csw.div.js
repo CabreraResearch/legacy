@@ -45,7 +45,7 @@
                 var $div;
 
                 attr.add('id', cswPrivate.ID);
-                attr.add('name', Csw.string(cswPrivate.name, cswPrivate.ID));
+                attr.add('name', Csw.string(cswPrivate.name));
                 attr.add('class', cswPrivate.cssclass);
                 attr.add('value', cswPrivate.value);
                 attr.add('align', cswPrivate.align);

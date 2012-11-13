@@ -42,7 +42,7 @@
                     Csw.extend(cswPrivate, options);
                 }
 
-                cswPrivate.ID = Csw.string(cswPrivate.ID, cswPrivate.name);
+                cswPrivate.ID = Csw.string(cswPrivate.ID);
 
                 html += '<a ';
                 attr.add('id', cswPrivate.ID);

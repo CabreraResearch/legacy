@@ -43,7 +43,7 @@
                 Csw.extend(cswPrivate, options);
             }
 
-            cswPrivate.ID = Csw.string(cswPrivate.ID, cswPrivate.name);
+            cswPrivate.ID = Csw.string(cswPrivate.ID);
 
             html += '<img ';
             attr.add('id', cswPrivate.ID);

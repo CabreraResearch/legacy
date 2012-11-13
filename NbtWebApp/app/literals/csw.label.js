@@ -44,7 +44,7 @@
                     cssClass += ' CswLabelWide';
                 }
 
-                cswPrivate.ID = Csw.string(cswPrivate.ID, cswPrivate.name);
+                cswPrivate.ID = Csw.string(cswPrivate.ID);
 
                 html += '<label ';
                 attr.add('id', cswPrivate.ID);

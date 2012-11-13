@@ -50,11 +50,8 @@
 
                 Csw.extend(cswPrivate, options);
 
-                cswPrivate.ID = Csw.string(cswPrivate.ID, cswPrivate.name);
-                if (false === Csw.isNullOrEmpty(cswPrivate.name)) {
-                    cswPrivate.name = cswPrivate.ID;
-                }
-
+                cswPrivate.ID = Csw.string(cswPrivate.ID);
+                
                 attr.add('id', cswPrivate.ID);
                 attr.add('class', cswPrivate.cssclass);
                 attr.add('form', cswPrivate.form);
