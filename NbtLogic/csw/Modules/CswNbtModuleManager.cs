@@ -43,10 +43,14 @@ namespace ChemSW.Nbt
                 {
                     try
                     {
-                        CswNbtModuleRule ModuleRule = _ModuleRules[CswConvert.ToString( ModuleRow["name"] ).ToLower()];
-                        if( null != ModuleRule )
+                        CswNbtModuleName ModuleName = CswConvert.ToString( ModuleRow["name"] );
+                        if( ModuleName != CswNbtModuleName.Unknown )
                         {
-                            ModuleRule.Enabled = CswConvert.ToBoolean( ModuleRow["enabled"].ToString() );
+                            CswNbtModuleRule ModuleRule = _ModuleRules[ModuleName];
+                            if( null != ModuleRule )
+                            {
+                                ModuleRule.Enabled = CswConvert.ToBoolean( ModuleRow["enabled"].ToString() );
+                            }
                         }
                     }
                     catch( Exception ex )
