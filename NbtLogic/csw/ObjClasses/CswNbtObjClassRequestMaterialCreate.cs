@@ -78,7 +78,7 @@ namespace ChemSW.Nbt.ObjClasses
 
             public static readonly CswCommaDelimitedString Options = new CswCommaDelimitedString
                 {
-                    Create, Complete, Cancel
+                    Create, Cancel
                 };
         }
 
@@ -211,8 +211,9 @@ namespace ChemSW.Nbt.ObjClasses
                                     {
                                         ButtonData.Action = NbtButtonAction.landingpage;
                                         Material.RelatedNodeId = NewMaterial.NodeId;
-                                        Fulfill.MenuOptions = FulfillMenu.Complete + "," + FulfillMenu.Cancel;
+                                        Fulfill.MenuOptions = "";
                                         Fulfill.State = FulfillMenu.Complete;
+                                        Status.Value = Statuses.Completed;
                                         ButtonData.Data["landingpage"] = CswNbtActCreateMaterial.getLandingPageData( _CswNbtResources, NewMaterial.Node );
                                     }
                                     else
@@ -246,7 +247,7 @@ namespace ChemSW.Nbt.ObjClasses
                     setNextStatus( Statuses.Completed );
                     break;
                 case FulfillMenu.Create:
-                    setNextStatus( Statuses.Created );
+                    setNextStatus( Statuses.Completed );
                     break;
 
             }
@@ -279,7 +280,8 @@ namespace ChemSW.Nbt.ObjClasses
 
         private void _throwIfMaterialExists()
         {
-            if( false == CswTools.IsPrimaryKey( Material.RelatedNodeId ) &&
+            if( Status.Value != Statuses.Cancelled &&
+                false == CswTools.IsPrimaryKey( Material.RelatedNodeId ) &&
                 NewMaterialType.SelectedNodeTypeIds.Count == 1 &&
                 false == string.IsNullOrEmpty( NewMaterialTradename.Text ) &&
                 CswTools.IsPrimaryKey( NewMaterialSupplier.RelatedNodeId ) )

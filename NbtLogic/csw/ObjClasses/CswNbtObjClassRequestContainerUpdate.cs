@@ -44,7 +44,7 @@ namespace ChemSW.Nbt.ObjClasses
 
             public static readonly CswCommaDelimitedString Options = new CswCommaDelimitedString
                 {
-                    Pending, Submitted, Disposed, Moved, Completed, Cancelled
+                    Pending, Submitted, Completed, Cancelled
                 };
         }
 
@@ -55,11 +55,11 @@ namespace ChemSW.Nbt.ObjClasses
 
             public static readonly CswCommaDelimitedString DisposeOptions = new CswCommaDelimitedString
                 {
-                    Dispose, Complete, Cancel
+                    Dispose, Cancel
                 };
             public static readonly CswCommaDelimitedString MoveOptions = new CswCommaDelimitedString
                 {
-                    Move, Complete, Cancel
+                    Move, Cancel
                 };
         }
 
@@ -223,6 +223,7 @@ namespace ChemSW.Nbt.ObjClasses
                                 {
                                     NodeAsContainer.Disposed.Checked = Tristate.True;
                                     NodeAsContainer.postChanges( true );
+                                    Status.Value = Statuses.Completed;
                                 }
                                 ButtonData.Action = NbtButtonAction.refresh;
                                 break;
@@ -266,10 +267,10 @@ namespace ChemSW.Nbt.ObjClasses
                     setNextStatus( Statuses.Completed );
                     break;
                 case FulfillMenu.Dispose:
-                    setNextStatus( Statuses.Disposed );
+                    setNextStatus( Statuses.Completed );
                     break;
                 case FulfillMenu.Move:
-                    setNextStatus( Statuses.Moved );
+                    setNextStatus( Statuses.Completed );
                     break;
             }
         }
@@ -280,13 +281,6 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 case Statuses.Submitted:
                     if( StatusVal == Statuses.Disposed || StatusVal == Statuses.Moved || StatusVal == Statuses.Cancelled || StatusVal == Statuses.Completed )
-                    {
-                        Status.Value = StatusVal;
-                    }
-                    break;
-                case Statuses.Moved:
-                case Statuses.Disposed:
-                    if( StatusVal == Statuses.Cancelled || StatusVal == Statuses.Completed )
                     {
                         Status.Value = StatusVal;
                     }
