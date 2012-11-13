@@ -38,18 +38,13 @@
             var cswPublic = { };
 
             (function() {
-                if (options) {
-                    Csw.extend(cswPrivate, options);
-                }
+                Csw.extend(cswPrivate, options);
 
                 var html = '',
                     value = Csw.string(cswPrivate.value, cswPrivate.text),
                     attr = Csw.makeAttr(),
                     style = Csw.makeStyle();
                 var $textArea;
-
-                cswPrivate.name = Csw.string(cswPrivate.name);
-                cswPrivate.ID = Csw.string(cswPrivate.ID);
 
                 html += '<textarea ';
                 attr.add('id', cswPrivate.ID);

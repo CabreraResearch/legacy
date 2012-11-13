@@ -49,9 +49,7 @@
                     style = Csw.makeStyle();
 
                 Csw.extend(cswPrivate, options);
-
-                cswPrivate.ID = Csw.string(cswPrivate.ID);
-                
+               
                 attr.add('id', cswPrivate.ID);
                 attr.add('class', cswPrivate.cssclass);
                 attr.add('form', cswPrivate.form);
