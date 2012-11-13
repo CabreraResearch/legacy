@@ -1075,6 +1075,64 @@ namespace ChemSW.Nbt.Schema
         {
             _acceptBlame( Dev, CaseNo );
 
+            CswNbtMetaDataObjectClass materialOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.MaterialClass );
+
+            CswNbtMetaDataObjectClassProp materialIdOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( materialOC )
+            {
+                PropName = CswNbtObjClassMaterial.PropertyName.MaterialId,
+                FieldType = CswNbtMetaDataFieldType.NbtFieldType.Sequence,
+                ServerManaged = true,
+                IsUnique = true
+            } );
+
+            CswNbtMetaDataObjectClassProp approvedOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( materialOC )
+            {
+                PropName = CswNbtObjClassMaterial.PropertyName.Approved,
+                FieldType = CswNbtMetaDataFieldType.NbtFieldType.Logical,
+                IsRequired = true
+            } );
+            _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( approvedOCP, false );
+
+            CswNbtMetaDataObjectClass vendorOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.VendorClass );
+            CswNbtMetaDataObjectClassProp vendorNameOCP = vendorOC.getObjectClassProp( CswNbtObjClassVendor.PropertyName.VendorName );
+            CswNbtView supplierView = _CswNbtSchemaModTrnsctn.makeView();
+            CswNbtViewRelationship supplierParent = supplierView.AddViewRelationship( vendorOC, true );
+            supplierView.AddViewPropertyAndFilter( supplierParent,
+                MetaDataProp: vendorNameOCP,
+                Value: "Corporate",
+                FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+
+            CswNbtMetaDataObjectClassProp supplierOCP = materialOC.getObjectClassProp( CswNbtObjClassMaterial.PropertyName.Supplier );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( supplierOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.viewxml, supplierView.ToXml().ToString() );
+
+            CswNbtMetaDataNodeType unCodeNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "UN Code" );
+            if( null != unCodeNT )
+            {
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( materialOC )
+                {
+                    PropName = CswNbtObjClassMaterial.PropertyName.UNCode,
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Relationship,
+                    IsFk = true,
+                    FkType = NbtViewRelatedIdType.NodeTypeId.ToString(),
+                    FkValue = unCodeNT.NodeTypeId
+                } );
+            }
+
+            //CswNbtMetaDataObjectClass mepOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.ManufacturerEquivalentPartClass );
+            //CswNbtMetaDataObjectClassProp manufacturerOCP = mepOC.getObjectClassProp( CswNbtObjClassManufacturerEquivalentPart.PropertyName.Manufacturer );
+            //CswNbtMetaDataObjectClassProp materialOCP = mepOC.getObjectClassProp(CswNbtObjClassManufacturerEquivalentPart.PropertyName.Material);
+
+            //CswNbtView manufacturingSitesView = _CswNbtSchemaModTrnsctn.makeView();
+            //CswNbtViewRelationship parent = manufacturingSitesView.AddViewRelationship( materialOC, true );
+            //CswNbtViewRelationship parent2 = manufacturingSitesView.AddViewRelationship( parent, NbtViewPropOwnerType.Second, materialOCP, false );
+            //manufacturingSitesView.AddViewProperty( parent2, manufacturerOCP );
+
+            //CswNbtMetaDataObjectClassProp manufacturingSitesOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( materialOC )
+            //{
+            //    PropName = CswNbtObjClassMaterial.PropertyName.ManufacturingSites,
+            //    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Grid
+            //} );
+
             _resetBlame();
         }
 
@@ -1114,6 +1172,7 @@ namespace ChemSW.Nbt.Schema
             _newContainerProperties27866();
 
             _createaNewMaterialComponentProp( CswDeveloper.MB, 27864 );
+            _createNewMaterialProps( CswDeveloper.MB, 27864 );
 
             #endregion URSULA
 
