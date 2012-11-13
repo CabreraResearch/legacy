@@ -168,9 +168,9 @@ namespace ChemSW.Nbt.Actions
         /// <summary>
         /// Fetch the current Request node for the current user and establish base counts.
         /// </summary>
-        public void applyCurrentCartFilter()
+        public void applyCurrentCartFilter( CswNbtNode CartNode = null )
         {
-            CswNbtNode CartNode = CurrentRequestNode();
+            CartNode = CartNode ?? CurrentRequestNode();
             if( null != CartNode )
             {
                 _CurrentCartView.Root.ChildRelationships[0].NodeIdsToFilterIn.Clear();
@@ -216,10 +216,14 @@ namespace ChemSW.Nbt.Actions
                 CswNbtObjClassRequest NodeAsRequest = _CswNbtResources.Nodes.GetNode( NodeId );
                 if( null != NodeAsRequest )
                 {
-                    NodeAsRequest.SubmittedDate.DateTimeValue = DateTime.Now;
-                    NodeAsRequest.Name.Text = NodeName;
-                    NodeAsRequest.postChanges( true );
-                    Ret["succeeded"] = true;
+                    applyCurrentCartFilter( NodeAsRequest.Node );
+                    if( CartContentCount > 0 )
+                    {
+                        NodeAsRequest.SubmittedDate.DateTimeValue = DateTime.Now;
+                        NodeAsRequest.Name.Text = NodeName;
+                        NodeAsRequest.postChanges( true );
+                        Ret["succeeded"] = true;
+                    }
                 }
             }
 
