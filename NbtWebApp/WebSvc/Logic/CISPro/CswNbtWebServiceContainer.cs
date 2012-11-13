@@ -90,6 +90,15 @@ namespace ChemSW.Nbt.WebServices
         }
 
         /// <summary>
+        /// Gets both ContainerStatistics and ContainerStatuses data
+        /// </summary>
+        public static void getContainerData( ICswResources CswResources, ContainerDataReturn Return, ContainerData.ReconciliationRequest Request )
+        {
+            CswNbtActReconciliation _CswNbtActReconciliation = new CswNbtActReconciliation( (CswNbtResources) CswResources );
+            Return.Data = _CswNbtActReconciliation.getContainerData( Request );
+        }
+
+        /// <summary>
         /// Gets all of the ContainerLocation Statuses along with their Container count and scan percentage for the given Location and timeframe
         /// </summary>
         public static void getContainerStatistics( ICswResources CswResources, ContainerDataReturn Return, ContainerData.ReconciliationRequest Request )

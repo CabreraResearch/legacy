@@ -21,6 +21,25 @@ namespace NbtWebApp
 
         [OperationContract]
         [WebInvoke( Method = "POST", ResponseFormat = WebMessageFormat.Json )]
+        [Description( "Get all Container barcodes and their most recent ContainerLocation Status for the given Location and timeframe" )]
+        [FaultContract( typeof( FaultException ) )]
+        public CswNbtWebServiceContainer.ContainerDataReturn getContainerData( ContainerData.ReconciliationRequest Request )
+        {
+            CswNbtWebServiceContainer.ContainerDataReturn Ret = new CswNbtWebServiceContainer.ContainerDataReturn();
+
+            var SvcDriver = new CswWebSvcDriver<CswNbtWebServiceContainer.ContainerDataReturn, ContainerData.ReconciliationRequest>(
+                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj: Ret,
+                WebSvcMethodPtr: CswNbtWebServiceContainer.getContainerData,
+                ParamObj: Request
+                );
+
+            SvcDriver.run();
+            return ( Ret );
+        }
+
+        [OperationContract]
+        [WebInvoke( Method = "POST", ResponseFormat = WebMessageFormat.Json )]
         [Description( "Get all of the ContainerLocation Statuses along with their Container count and scan percentage for the given Location and timeframe" )]
         [FaultContract( typeof( FaultException ) )]
         public CswNbtWebServiceContainer.ContainerDataReturn getContainerStatistics( ContainerData.ReconciliationRequest Request )

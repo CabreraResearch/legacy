@@ -26,6 +26,8 @@ namespace ChemSW.Nbt.Actions
             [DataMember]
             public Int32 ContainerCount = Int32.MinValue;
             [DataMember]
+            public Int32 AmountScanned = Int32.MinValue;
+            [DataMember]
             public Double PercentScanned = Double.NaN;
         }
 
@@ -41,7 +43,7 @@ namespace ChemSW.Nbt.Actions
             [DataMember]
             public String Action = String.Empty;
             [DataMember]
-            public bool ActionApplied = false;
+            public String ActionApplied = String.Empty;
         }
 
         [DataContract]

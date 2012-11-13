@@ -40,7 +40,6 @@ namespace ChemSW.Nbt.ObjClasses
                 ActionOptions ret = Parse( str );
                 return ret ?? NoAction;
             }
-            //Null Option?
             public static readonly ActionOptions NoAction = new ActionOptions( "No Action" );
             public static readonly ActionOptions Undispose = new ActionOptions( "Undispose" );
             public static readonly ActionOptions MoveToLocation = new ActionOptions( "Move To Location" );
@@ -70,8 +69,10 @@ namespace ChemSW.Nbt.ObjClasses
             public static implicit operator StatusOptions( string str )
             {
                 StatusOptions ret = Parse( str );
-                return ret ?? Missing;
+                return ret ?? Unknown;
             }
+            //ContainerLocation nodes should never have a status of Unknown - this is only used in the Reconciliation wizard
+            public static readonly StatusOptions Unknown = new StatusOptions( "Unknown" );
             public static readonly StatusOptions Correct = new StatusOptions( "Correct" );
             public static readonly StatusOptions Disposed = new StatusOptions( "Disposed" );
             public static readonly StatusOptions WrongLocation = new StatusOptions( "Wrong Location" );
