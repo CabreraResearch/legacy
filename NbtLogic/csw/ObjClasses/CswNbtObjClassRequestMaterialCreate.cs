@@ -180,7 +180,7 @@ namespace ChemSW.Nbt.ObjClasses
         /// </summary>
         public override void afterPropertySetPopulateProps()
         {
-
+            Material.SetOnPropChange( onMaterialPropChange );
         }//afterPopulateProps()
 
         /// <summary>
@@ -325,7 +325,16 @@ namespace ChemSW.Nbt.ObjClasses
         #region Object class specific properties
 
         public CswNbtNodePropRelationship Material { get { return _CswNbtNode.Properties[PropertyName.Material]; } }
-
+        private void onMaterialPropChange(CswNbtNodeProp NodeProp)
+        {
+            if(CswTools.IsPrimaryKey(Material.RelatedNodeId))
+            {
+                NewMaterialType.setHidden(value: true, SaveToDb: true);
+                NewMaterialTradename.setHidden(value: true, SaveToDb: true);
+                NewMaterialSupplier.setHidden(value: true, SaveToDb: true);
+                NewMaterialPartNo.setHidden(value: true, SaveToDb: true);
+            }
+        }
         public CswNbtNodePropNodeTypeSelect NewMaterialType { get { return _CswNbtNode.Properties[PropertyName.NewMaterialType]; } }
         public CswNbtNodePropText NewMaterialTradename { get { return _CswNbtNode.Properties[PropertyName.NewMaterialTradename]; } }
         public CswNbtNodePropText NewMaterialPartNo { get { return _CswNbtNode.Properties[PropertyName.NewMaterialPartNo]; } }

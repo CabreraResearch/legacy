@@ -713,7 +713,7 @@ namespace ChemSW.Nbt.Schema
             _resetBlame();
         }
 
-        private CswNbtMetaDataObjectClass _createRequestItemBase( NbtObjectClass ObjectClass )
+        private CswNbtMetaDataObjectClass _createRequestItemBase( NbtObjectClass ObjectClass, Int32 StartAddRowAt = 1 )
         {
             CswNbtMetaDataObjectClass Ret = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( ObjectClass );
             if( null == Ret )
@@ -725,10 +725,56 @@ namespace ChemSW.Nbt.Schema
 
                 _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( Ret )
                 {
+                    PropName = CswNbtPropertySetRequestItem.PropertyName.Location,
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Location,
+                    SetValOnAdd = true,
+                    DisplayColAdd = 1,
+                    DisplayRowAdd = StartAddRowAt
+                } );
+                StartAddRowAt += 1;
+
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( Ret )
+                {
+                    PropName = CswNbtPropertySetRequestItem.PropertyName.RequestedFor,
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Relationship,
+                    IsFk = true,
+                    FkType = NbtViewRelatedIdType.ObjectClassId.ToString(),
+                    FkValue = UserOc.ObjectClassId,
+                    SetValOnAdd = true,
+                    DisplayColAdd = 1,
+                    DisplayRowAdd = StartAddRowAt
+                } );
+                StartAddRowAt += 1;
+
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( Ret )
+                {
+                    PropName = CswNbtPropertySetRequestItem.PropertyName.InventoryGroup,
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Relationship,
+                    IsFk = true,
+                    FkType = NbtViewRelatedIdType.ObjectClassId.ToString(),
+                    FkValue = InventoryGroupOc.ObjectClassId,
+                    SetValOnAdd = true,
+                    DisplayColAdd = 1,
+                    DisplayRowAdd = StartAddRowAt
+                } );
+                StartAddRowAt += 1;
+
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( Ret )
+                {
+                    PropName = CswNbtPropertySetRequestItem.PropertyName.NeededBy,
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.DateTime,
+                    SetValOnAdd = true,
+                    DisplayColAdd = 1,
+                    DisplayRowAdd = StartAddRowAt
+                } );
+                StartAddRowAt += 1;
+
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( Ret )
+                {
                     PropName = CswNbtPropertySetRequestItem.PropertyName.Name,
                     FieldType = CswNbtMetaDataFieldType.NbtFieldType.Text
                 } );
-                
+
                 _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( Ret )
                 {
                     PropName = CswNbtPropertySetRequestItem.PropertyName.Description,
@@ -762,7 +808,7 @@ namespace ChemSW.Nbt.Schema
                     ServerManaged = true,
                     SetValOnAdd = false
                 } );
-                
+
                 CswNbtMetaDataObjectClassProp PriorityOcp = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( Ret )
                 {
                     PropName = CswNbtPropertySetRequestItem.PropertyName.Priority,
@@ -771,36 +817,6 @@ namespace ChemSW.Nbt.Schema
                     SetValOnAdd = false
                 } );
                 _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( PriorityOcp, 0 );
-
-                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( Ret )
-                {
-                    PropName = CswNbtPropertySetRequestItem.PropertyName.Location,
-                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Location,
-                    SetValOnAdd = true,
-                    DisplayColAdd = 1,
-                    DisplayRowAdd = 1
-                } );
-
-                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( Ret )
-                {
-                    PropName = CswNbtPropertySetRequestItem.PropertyName.InventoryGroup,
-                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Relationship,
-                    IsFk = true,
-                    FkType = NbtViewRelatedIdType.ObjectClassId.ToString(),
-                    FkValue = InventoryGroupOc.ObjectClassId,
-                    SetValOnAdd = true,
-                    DisplayColAdd = 1,
-                    DisplayRowAdd = 2
-                } );
-                
-                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( Ret )
-                {
-                    PropName = CswNbtPropertySetRequestItem.PropertyName.NeededBy,
-                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.DateTime,
-                    SetValOnAdd = true,
-                    DisplayColAdd = 1,
-                    DisplayRowAdd = 3
-                } );
 
                 _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( Ret )
                 {
@@ -827,15 +843,7 @@ namespace ChemSW.Nbt.Schema
                     SetValOnAdd = false
                 } );
 
-                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( Ret )
-                {
-                    PropName = CswNbtPropertySetRequestItem.PropertyName.RequestedFor,
-                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Relationship,
-                    IsFk = true,
-                    FkType = NbtViewRelatedIdType.ObjectClassId.ToString(),
-                    FkValue = UserOc.ObjectClassId,
-                    SetValOnAdd = false
-                } );
+
 
                 _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( Ret )
                 {
@@ -862,7 +870,7 @@ namespace ChemSW.Nbt.Schema
                     StaticText = CswNbtPropertySetRequestItem.FulfillMenu.Complete,
                     SetValOnAdd = false
                 } );
-                
+
             }
             return Ret;
         }
@@ -910,7 +918,9 @@ namespace ChemSW.Nbt.Schema
                     PropName = CswNbtObjClassRequestContainerDispense.PropertyName.Quantity,
                     FieldType = CswNbtMetaDataFieldType.NbtFieldType.Quantity,
                     IsRequired = true,
-                    SetValOnAdd = true
+                    SetValOnAdd = true,
+                    DisplayColAdd = 1,
+                    DisplayRowAdd = 5
                 } );
 
                 _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( RequestContainerDispenseOc )
@@ -1027,7 +1037,9 @@ namespace ChemSW.Nbt.Schema
                     PropName = CswNbtObjClassRequestMaterialDispense.PropertyName.Quantity,
                     FieldType = CswNbtMetaDataFieldType.NbtFieldType.Quantity,
                     IsRequired = true,
-                    SetValOnAdd = true
+                    SetValOnAdd = true,
+                    DisplayColAdd = 1,
+                    DisplayRowAdd = 5
                 } );
 
                 _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( RequestMaterialDispenseOc )
@@ -1037,7 +1049,9 @@ namespace ChemSW.Nbt.Schema
                     SetValOnAdd = true,
                     IsRequired = true,
                     NumberPrecision = 0,
-                    NumberMinValue = 1
+                    NumberMinValue = 1,
+                    DisplayColAdd = 1,
+                    DisplayRowAdd = 6
                 } );
 
                 _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( RequestMaterialDispenseOc )
@@ -1048,7 +1062,9 @@ namespace ChemSW.Nbt.Schema
                     FkType = NbtViewRelatedIdType.ObjectClassId.ToString(),
                     FkValue = SizeOc.ObjectClassId,
                     IsRequired = true,
-                    SetValOnAdd = true
+                    SetValOnAdd = true,
+                    DisplayRowAdd = 7,
+                    DisplayColAdd = 1
                 } );
 
                 CswNbtMetaDataObjectClassProp StatusOcp = RequestMaterialDispenseOc.getObjectClassProp( CswNbtObjClassRequestMaterialDispense.PropertyName.Status );
@@ -1099,7 +1115,6 @@ namespace ChemSW.Nbt.Schema
                     SetValOnAdd = false
                 } );
 
-
                 _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( RequestMaterialDispenseOc )
                  {
                      PropName = CswNbtObjClassRequestMaterialDispense.PropertyName.ReceiptLotsReceived,
@@ -1146,7 +1161,7 @@ namespace ChemSW.Nbt.Schema
                 CswNbtMetaDataObjectClass MaterialOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.MaterialClass );
                 CswNbtMetaDataObjectClass SupplierOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.VendorClass );
 
-                RequestMaterialCreateOc = _createRequestItemBase( NbtObjectClass.RequestMaterialCreateClass );
+                RequestMaterialCreateOc = _createRequestItemBase( NbtObjectClass.RequestMaterialCreateClass, 5 );
 
                 CswNbtMetaDataObjectClassProp FulfillOcp = RequestMaterialCreateOc.getObjectClassProp( CswNbtObjClassRequestMaterialCreate.PropertyName.Fulfill );
                 _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( FulfillOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.statictext, CswNbtObjClassRequestMaterialCreate.FulfillMenu.Create );
