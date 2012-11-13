@@ -1048,6 +1048,16 @@ namespace ChemSW.Nbt.ServiceDrivers
             return Buttons;
         }
 
+        public JObject getLocationTree( string NodeId )
+        {
+            JObject LocationTreeJSON = new JObject();
+            CswPrimaryKey LocationId = String.IsNullOrEmpty( NodeId )
+                                           ? _CswNbtResources.CurrentNbtUser.DefaultLocationId
+                                           : CswConvert.ToPrimaryKey( NodeId );
+            CswNbtObjClassLocation LocationNode = _CswNbtResources.Nodes.GetNode( LocationId );
+            LocationNode.Location.ToJSON( LocationTreeJSON );
+            return LocationTreeJSON;
+        }
 
     } // class CswNbtSdTabsAndProps
 

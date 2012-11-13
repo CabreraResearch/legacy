@@ -2,7 +2,7 @@
 /// <reference path="~/app/CswApp-vsdoc.js" />
 /// <reference path="~/vendor/extjs-4.1.0/ext-all-debug.js" />
 
-(function() {
+(function () {
     'use strict';
 
     Csw.composites.location = Csw.composites.location ||
@@ -14,76 +14,87 @@
                 locationnodetypeids: [],
                 relatedmatch: false,
                 relatedobjectclassid: '',
-                nodeId: '',
-                viewId: '',
+                nodeid: '',
+                viewid: '',
                 path: '',
                 nodeKey: '',
                 Multi: false,
-                ReadOnly: false
+                ReadOnly: false,
+                onChange: null,
+                value: ''
             };
 
-            var cswPublic = { };
+            var cswPublic = {};
             //#endregion variables
 
             //#region safety net
-            Csw.tryExec(function() {
+            Csw.tryExec(function () {
 
                 //#region init ctor
                 (function _pre() {
                     Csw.extend(cswPrivate, options, true);
+                    if (Csw.isNullOrEmpty(cswPrivate.viewid)) {
+                        Csw.ajax.post({
+                            urlMethod: 'getLocationTree',
+                            async: false,
+                            data: {
+                                NodeId: Csw.string(cswPrivate.nodeid)
+                            },
+                            success: function (data) {
+                                Csw.extend(cswPrivate, data, true);
+                            }
+                        });
+                    }
                     cswParent.empty();
-                    
+
                     cswPrivate.relatedmatch = (cswPrivate.relatedobjectclassid === cswPrivate.locationobjectclassid);
                     Csw.each(cswPrivate.locationnodetypeids, function (thisNTid) {
                         cswPrivate.relatedmatch = (cswPrivate.relatedmatch || thisNTid === cswPrivate.relatednodetypeid);
                     });
 
                     if (cswPrivate.relatedmatch) {
-                        cswPrivate.nodeId = Csw.string(cswPrivate.nodeId, cswPrivate.relatednodeid).trim();
+                        cswPrivate.nodeid = Csw.string(cswPrivate.nodeid, cswPrivate.relatednodeid).trim();
                         cswPrivate.name = Csw.string(cswPrivate.name, cswPrivate.relatednodename).trim();
                         cswPrivate.path = Csw.string(cswPrivate.path, cswPrivate.relatednodename).trim();
                     } else {
-                        cswPrivate.nodeId = Csw.string(cswPrivate.nodeId, '').trim();
-                        cswPrivate.name =   Csw.string(cswPrivate.name, '').trim();
-                        cswPrivate.path =   Csw.string(cswPrivate.path, '').trim();
+                        cswPrivate.nodeid = Csw.string(cswPrivate.nodeid, '').trim();
+                        cswPrivate.name = Csw.string(cswPrivate.name, '').trim();
+                        cswPrivate.path = Csw.string(cswPrivate.path, '').trim();
                     }
-                    cswPrivate.viewId = Csw.string(cswPrivate.viewId).trim();
-                    
+                    cswPrivate.viewid = Csw.string(cswPrivate.viewid).trim();
+                    cswPrivate.value = cswPrivate.nodeid;
+
                     cswPublic.table = cswParent.table();
 
                     cswPublic.table.cell(1, 1).text(cswPrivate.path);
 
                     cswPrivate.selectDiv = cswPublic.table.cell(2, 1).div({
                         cssclass: 'locationselect',
-                        value: cswPrivate.nodeId
+                        value: cswPrivate.nodeid
                     });
 
                     cswPublic.table.cell(2, 1).hide();
-                    
-                }());
+
+                } ());
                 //#endregion init ctor
-                
+
                 //#region cswPrivate/cswPublic methods and props
 
-                cswPublic.val = function() {
-                    var ret = '';
-                    if (false === Csw.isNullOrEmpty(cswPrivate.selectDiv)) {
-                        ret = cswPrivate.selectDiv.propNonDom('value');
-                    }
-                    return ret;
+                cswPublic.val = function () {
+                    return cswPrivate.value;
                 };
 
-
-                cswPrivate.onTreeSelect = function(itemid, text, onChange) {
-                    if (itemid === 'root' || itemid === undefined) {
-                        itemid = ''; // case 21046
+                cswPrivate.onTreeSelect = function (optSelect) {
+                    optSelect = optSelect || { nodeid: '', nodename: '', iconurl: '' };
+                    if (optSelect.nodeid === 'root' || optSelect.nodeid === undefined) {
+                        optSelect.nodeid = ''; // case 21046   
                     }
-                    cswPublic.comboBox.topContent(text, itemid);
-                    if (cswPublic.comboBox.val() !== itemid) {
-                        cswPublic.comboBox.val(itemid);
-                        onChange();
+                    cswPublic.comboBox.topContent(optSelect.nodename, optSelect.nodeid);
+                    if (cswPublic.comboBox.val() !== optSelect.nodeid) {
+                        cswPublic.comboBox.val(optSelect.nodeid);
                     }
-                    cswPrivate.selectDiv.propNonDom('value', itemid);
+                    Csw.tryExec(cswPrivate.onChange, optSelect.nodeid);
+                    cswPrivate.value = optSelect.nodeid;
                     Csw.defer(function () { cswPublic.comboBox.close(); }, 100);
                 };
 
@@ -126,18 +137,18 @@
                                     name: cswPrivate.name,
                                     parent: cswPublic.comboBox.pickList,
                                     onInitialSelectNode: function (optSelect) {
-                                        cswPrivate.onTreeSelect(cswPrivate.selectDiv, cswPublic.comboBox, optSelect.nodeid, optSelect.nodename, optSelect.iconurl, function () { });
+                                        cswPrivate.onTreeSelect(optSelect);
                                     },
                                     onSelectNode: function (optSelect) {
-                                        cswPrivate.onTreeSelect(cswPrivate.selectDiv, cswPublic.comboBox, optSelect.nodeid, optSelect.nodename, optSelect.iconurl, cswPrivate.onChange);
+                                        cswPrivate.onTreeSelect(optSelect);
                                     },
                                     UseScrollbars: false,
                                     ShowToggleLink: false
                                 });
 
                                 cswPublic.locationTree.init({
-                                    viewid: cswPrivate.viewId,
-                                    nodeid: cswPrivate.nodeId,
+                                    viewid: cswPrivate.viewid,
+                                    nodeid: cswPrivate.nodeid,
                                     nodekey: cswPrivate.nodeKey,
                                     IncludeInQuickLaunch: false,
                                     DefaultSelect: Csw.enums.nodeTree_DefaultSelect.root.name
@@ -145,10 +156,10 @@
                             } // onClick
                         }); // imageButton
 
-                        cswParent.$.hover(function (event) { Csw.nodeHoverIn(event, cswPrivate.selectDiv.propNonDom('value')); }, 
+                        cswParent.$.hover(function (event) { Csw.nodeHoverIn(event, cswPrivate.selectDiv.propNonDom('value')); },
                                           function (event) { Csw.nodeHoverOut(event, cswPrivate.selectDiv.propNonDom('value')); });
                     }
-                }());
+                } ());
                 //#region final ctor
 
             });
@@ -159,6 +170,6 @@
         });
 
 
-}());
+} ());
 
 
