@@ -1118,20 +1118,22 @@ namespace ChemSW.Nbt.Schema
                 } );
             }
 
-            //CswNbtMetaDataObjectClass mepOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.ManufacturerEquivalentPartClass );
-            //CswNbtMetaDataObjectClassProp manufacturerOCP = mepOC.getObjectClassProp( CswNbtObjClassManufacturerEquivalentPart.PropertyName.Manufacturer );
-            //CswNbtMetaDataObjectClassProp materialOCP = mepOC.getObjectClassProp(CswNbtObjClassManufacturerEquivalentPart.PropertyName.Material);
+            CswNbtMetaDataObjectClass mepOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.ManufacturerEquivalentPartClass );
+            CswNbtMetaDataObjectClassProp manufacturerOCP = mepOC.getObjectClassProp( CswNbtObjClassManufacturerEquivalentPart.PropertyName.Manufacturer );
+            CswNbtMetaDataObjectClassProp materialOCP = mepOC.getObjectClassProp( CswNbtObjClassManufacturerEquivalentPart.PropertyName.Material );
 
-            //CswNbtView manufacturingSitesView = _CswNbtSchemaModTrnsctn.makeView();
-            //CswNbtViewRelationship parent = manufacturingSitesView.AddViewRelationship( materialOC, true );
-            //CswNbtViewRelationship parent2 = manufacturingSitesView.AddViewRelationship( parent, NbtViewPropOwnerType.Second, materialOCP, false );
-            //manufacturingSitesView.AddViewProperty( parent2, manufacturerOCP );
+            CswNbtView manufacturingSitesView = _CswNbtSchemaModTrnsctn.makeNewView( CswNbtObjClassMaterial.PropertyName.ManufacturingSites, NbtViewVisibility.Property );
+            CswNbtViewRelationship parent = manufacturingSitesView.AddViewRelationship( materialOC, true );
+            CswNbtViewRelationship parent2 = manufacturingSitesView.AddViewRelationship( parent, NbtViewPropOwnerType.Second, materialOCP, false );
+            manufacturingSitesView.AddViewProperty( parent2, manufacturerOCP );
+            manufacturingSitesView.SetViewMode( NbtViewRenderingMode.Grid );
+            manufacturingSitesView.save();
 
-            //CswNbtMetaDataObjectClassProp manufacturingSitesOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( materialOC )
-            //{
-            //    PropName = CswNbtObjClassMaterial.PropertyName.ManufacturingSites,
-            //    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Grid
-            //} );
+            CswNbtMetaDataObjectClassProp manufacturingSitesOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( materialOC )
+            {
+                PropName = CswNbtObjClassMaterial.PropertyName.ManufacturingSites,
+                FieldType = CswNbtMetaDataFieldType.NbtFieldType.Grid
+            } );
 
             _resetBlame();
         }

@@ -37,6 +37,29 @@ namespace ChemSW.Nbt.Schema
                 }
             }
             #endregion
+
+            #region set the NodeViewId for Manufacturing Sites on Material
+
+            CswNbtViewId viewid = null;
+            foreach( CswNbtView view in _CswNbtSchemaModTrnsctn.ViewSelect.restoreViews( "Manufacturing Sites" ) )
+            {
+                if( view.Visibility.Equals( NbtViewVisibility.Property ) )
+                {
+                    viewid = view.ViewId;
+                }
+            }
+
+            if( null != viewid )
+            {
+                CswNbtMetaDataObjectClassProp manufacturingSitesOCP = materialOC.getObjectClassProp( CswNbtObjClassMaterial.PropertyName.ManufacturingSites );
+                foreach( CswNbtMetaDataNodeTypeProp manufacturingSitesNTP in manufacturingSitesOCP.getNodeTypeProps() )
+                {
+                    manufacturingSitesNTP.ViewId = viewid;
+                }
+            }
+
+            #endregion
+
         }
 
         //Update()
