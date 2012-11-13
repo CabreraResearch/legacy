@@ -103,6 +103,8 @@ namespace ChemSW.Nbt.Schema
                                                                                       NbtViewPropOwnerType.Second,
                                                                                       RequestOcp, false );
 
+                    CswNbtViewProperty Vp0 = GridView.AddViewProperty( RequestItemRel, MemberOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.Status ) );
+                    Vp0.Order = 0;
                     CswNbtViewProperty Vp1 = GridView.AddViewProperty( RequestItemRel, MemberOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.Type ) );
                     Vp1.Order = 1;
                     CswNbtViewProperty Vp2 = GridView.AddViewProperty( RequestItemRel, MemberOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.Description ) );
@@ -165,7 +167,7 @@ namespace ChemSW.Nbt.Schema
             //Add Layout: Case 27263
             //Nothing to add to this Layout
 
-            
+
             CswNbtMetaDataNodeTypeProp RcdQuantityNtp = RequestCdNt.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestContainerDispense.PropertyName.Quantity );
             CswNbtMetaDataNodeTypeProp RcdNeededByNtp = RequestCdNt.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestContainerDispense.PropertyName.NeededBy );
             CswNbtMetaDataNodeTypeProp RcdStatusNtp = RequestCdNt.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestContainerDispense.PropertyName.Status );
