@@ -186,8 +186,8 @@
                 });
                 break;
 
-            case Csw.enums.nbtButtonAction.landingpage:
-                Csw.publish('refreshLandingPage');
+            case Csw.enums.nbtButtonAction.landingPage:
+                Csw.publish('refreshLandingPage', actionJson.landingpage);
                 break;
                 
             case Csw.enums.nbtButtonAction.loadView:

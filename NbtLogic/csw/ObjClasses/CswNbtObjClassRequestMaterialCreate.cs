@@ -137,6 +137,10 @@ namespace ChemSW.Nbt.ObjClasses
                 CswNbtObjClassRequestMaterialCreate ThisRequest = (CswNbtObjClassRequestMaterialCreate) ItemInstance;
 
                 ThisRequest.Material.setReadOnly( value: IsReadOnly, SaveToDb: true );
+                ThisRequest.NewMaterialType.setReadOnly( value: IsReadOnly, SaveToDb: true );
+                ThisRequest.NewMaterialSupplier.setReadOnly( value: IsReadOnly, SaveToDb: true );
+                ThisRequest.NewMaterialTradename.setReadOnly( value: IsReadOnly, SaveToDb: true );
+                ThisRequest.NewMaterialPartNo.setReadOnly( value: IsReadOnly, SaveToDb: true );
             }
         }
 
@@ -145,13 +149,11 @@ namespace ChemSW.Nbt.ObjClasses
         /// </summary>
         public override void beforePropertySetWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
-            //case 2753 - naming logic
-            if( false == IsTemp )
+            _throwIfMaterialExists();
+            if( false == Location.Hidden )
             {
                 Location.setHidden( value: true, SaveToDb: true );
             }
-
-
         }
 
         /// <summary>
@@ -168,7 +170,7 @@ namespace ChemSW.Nbt.ObjClasses
         /// </summary>
         public override void afterPropertySetPopulateProps()
         {
-            _throwIfMaterialExists();
+
         }//afterPopulateProps()
 
         /// <summary>
@@ -181,24 +183,27 @@ namespace ChemSW.Nbt.ObjClasses
                 switch( OCP.PropName )
                 {
                     case PropertyName.Fulfill:
-                        ButtonData.Action = NbtButtonAction.nothing;
+                        //If we do this here, we'll override the Actions for other options managed by the Property Set
+                        //ButtonData.Action = NbtButtonAction.nothing;
                         switch( ButtonData.SelectedText )
                         {
                             case FulfillMenu.Create:
+                                ButtonData.Action = NbtButtonAction.nothing;
                                 if( PotentialMaterial().existsInDb( ForceRecalc: true ) )
                                 {
                                     ButtonData.Message = "The requested Material has already been created: " + PotentialMaterial().existingMaterial().Node.NodeLink;
                                 }
                                 else
                                 {
-                                    CswNbtObjClassMaterial NewMaterial = PotentialMaterial().commit();
+                                    CswNbtObjClassMaterial NewMaterial = PotentialMaterial().commit( UpversionTemp: true );
                                     bool Success = null != NewMaterial;
                                     if( Success )
                                     {
                                         ButtonData.Action = NbtButtonAction.landingpage;
                                         Material.RelatedNodeId = NewMaterial.NodeId;
+                                        Fulfill.MenuOptions = FulfillMenu.Complete + "," + FulfillMenu.Cancel;
                                         Fulfill.State = FulfillMenu.Complete;
-                                        ButtonData.Data["landingPage"] = CswNbtActCreateMaterial.getLandingPageData( _CswNbtResources, NewMaterial.Node );
+                                        ButtonData.Data["landingpage"] = CswNbtActCreateMaterial.getLandingPageData( _CswNbtResources, NewMaterial.Node );
                                     }
                                     else
                                     {
@@ -264,10 +269,15 @@ namespace ChemSW.Nbt.ObjClasses
 
         private void _throwIfMaterialExists()
         {
-            CswNbtObjClassMaterial ExistingMaterial = PotentialMaterial().existingMaterial( ForceRecalc: true );
-            if( null != ExistingMaterial )
+            if( NewMaterialType.SelectedNodeTypeIds.Count == 1 &&
+                false == string.IsNullOrEmpty( NewMaterialTradename.Text ) &&
+                CswTools.IsPrimaryKey( NewMaterialSupplier.RelatedNodeId ) )
             {
-                throw new CswDniException( ErrorType.Warning, "The requested Material already exists: " + ExistingMaterial.Node.NodeLink, "The requested Material already exists: " + ExistingMaterial.Node.NodeLink );
+                CswNbtObjClassMaterial ExistingMaterial = PotentialMaterial().existingMaterial( ForceRecalc: true );
+                if( null != ExistingMaterial )
+                {
+                    throw new CswDniException( ErrorType.Warning, "The requested Material already exists: " + ExistingMaterial.Node.NodeLink, "The requested Material already exists: " + ExistingMaterial.Node.NodeLink );
+                }
             }
         }
 

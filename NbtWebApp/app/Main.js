@@ -391,7 +391,7 @@ window.initMain = window.initMain || function (undefined) {
         refreshViewSelect();
     }
 
-    var refreshLandingPage = function(opts) {
+    var refreshLandingPage = function(eventObj, opts) {
         clear({ all: true });
         var layData = {
             ActionId: '',
@@ -950,6 +950,9 @@ window.initMain = window.initMain || function (undefined) {
             if (Csw.isNullOrEmpty(o.viewmode)) {
                 o.viewmode = Csw.cookie.get(Csw.cookie.cookieNames.CurrentViewMode);
             }
+            if (Csw.isNullOrEmpty(o.searchid)) {
+                o.searchid = Csw.cookie.get(Csw.cookie.cookieNames.CurrentSearchId);
+            }
 
             if (false === Csw.isNullOrEmpty(o.searchid)) { //if we have a searchid, we are probably looking at a search
                 universalsearch.restoreSearch(o.searchid);
@@ -1003,7 +1006,10 @@ window.initMain = window.initMain || function (undefined) {
             } // if (false === Csw.isNullOrEmpty(o.searchid))
         } // if (manuallyCheckChanges())
     } // refreshSelected()
-    Csw.subscribe(Csw.enums.events.main.refreshSelected, refreshSelected);
+    Csw.subscribe(Csw.enums.events.main.refreshSelected,
+        function (eventObj, opts) {
+            refreshSelected(opts);
+        });
 
     var multi = false;
 

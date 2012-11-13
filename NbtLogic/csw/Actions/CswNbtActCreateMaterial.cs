@@ -126,7 +126,7 @@ namespace ChemSW.Nbt.Actions
                 return _ExistingNode;
             }
 
-            public CswNbtObjClassMaterial commit()
+            public CswNbtObjClassMaterial commit( bool UpversionTemp = false )
             {
                 CswNbtObjClassMaterial Ret = null;
                 if( null == Node ) //Don't commit twice
@@ -149,9 +149,12 @@ namespace ChemSW.Nbt.Actions
                 {
                     Ret = Node;
                 }
+
                 Ret.TradeName.Text = TradeName;
                 Ret.PartNumber.Text = PartNo;
                 Ret.Supplier.RelatedNodeId = SupplierId;
+
+                Ret.IsTemp = ( false == UpversionTemp );
                 Ret.postChanges( ForceUpdate: false );
 
                 return Ret;
@@ -475,10 +478,7 @@ namespace ChemSW.Nbt.Actions
             JObject Ret = new JObject();
             if( null != MaterialNode )
             {
-                if( MaterialNodeView == null )
-                {
-                    MaterialNodeView = CswNbtObjClassMaterial.getMaterialNodeView( NbtResources, MaterialNode );
-                }
+                MaterialNodeView = MaterialNodeView ?? CswNbtObjClassMaterial.getMaterialNodeView( NbtResources, MaterialNode );
                 MaterialNodeView.SaveToCache( IncludeInQuickLaunch: false );
 
                 Ret["ActionId"] = NbtResources.Actions[CswNbtActionName.Create_Material].ActionId.ToString();

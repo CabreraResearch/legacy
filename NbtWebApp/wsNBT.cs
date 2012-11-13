@@ -21,12 +21,10 @@ using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Security;
 using ChemSW.Nbt.ServiceDrivers;
 using ChemSW.Nbt.Statistics;
-using ChemSW.Nbt.LandingPage;
 using ChemSW.Security;
 using ChemSW.Session;
 using ChemSW.WebSvc;
 using Newtonsoft.Json.Linq;
-using NbtWebApp.WebSvc.Logic.Menus.LandingPages;
 
 
 
@@ -2063,7 +2061,8 @@ namespace ChemSW.Nbt.WebServices
                     _setEditMode( EditMode );
                     CswNbtView View = _getView( ViewId );
                     //Identity
-                    if( false == string.IsNullOrEmpty( IdentityTabJson ) )
+                    if( false == string.IsNullOrEmpty( IdentityTabJson ) &&
+                        IdentityTabJson != "null" ) //null can be deserialized to string
                     {
                         ws.saveProps( NodePk, Int32.MinValue, IdentityTabJson, CswConvert.ToInt32( NodeTypeId ), View, IsIdentityTab: true );
                     }
