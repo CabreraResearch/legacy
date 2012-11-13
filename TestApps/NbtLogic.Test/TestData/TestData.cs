@@ -16,31 +16,25 @@ namespace ChemSw.Nbt.Test
 {
     internal class TestData
     {
-        private CswNbtResources _CswNbtResources = null;
-        private ICswDbCfgInfo _CswDbCfgInfoNbt = null;
-        private CswPrimaryKey _NodeIdHighWaterMark = null;
+        private CswNbtResources _CswNbtResources;
+        private ICswDbCfgInfo _CswDbCfgInfoNbt;
+        private CswPrimaryKey _NodeIdHighWaterMark;
         //TODO - refactor the way we're handling NTP states
         private Dictionary<int, string> _ChangedNodeTypePropListOptions = new Dictionary<int, string>();
         private Dictionary<int, string> _ChangedNodeTypePropExtended = new Dictionary<int, string>();
         private Dictionary<int, int> _ChangedNodeTypePropMaxValue = new Dictionary<int, int>();
-        private int _UniqueSequence;
-        public int Sequence
-        {
-            get
-            {
-                _UniqueSequence++;
-                return _UniqueSequence;
-            }
-        }
 
         private Dictionary<CswPrimaryKey, String> _ContainerLocationNodeActions = new Dictionary<CswPrimaryKey, String>();
 
+        internal TestDataNodes Nodes;
+
         internal TestData()
         {
-            _CswNbtResources = CswNbtResourcesFactory.makeCswNbtResources( AppType.Nbt, SetupMode.NbtExe, true, false );
+            _CswNbtResources = CswNbtResourcesFactory.makeCswNbtResources( AppType.Nbt, SetupMode.TestProject, true, false );
             _CswDbCfgInfoNbt = new CswDbCfgInfoNbt( SetupMode.NbtExe, IsMobile: false );
             _CswNbtResources.InitCurrentUser = _InitUser;
             _CswNbtResources.AccessId = _CswDbCfgInfoNbt.MasterAccessId;
+            Nodes = new TestDataNodes( _CswNbtResources );
             _setHighWaterMark();
         }
 
@@ -129,105 +123,6 @@ namespace ChemSw.Nbt.Test
         }
 
         #endregion Setup and Teardown
-
-        #region Nodes
-
-        internal CswNbtNode createLocationNode( String LocationType = "Room", String Name = "New Room", CswPrimaryKey ParentLocationId = null )
-        {
-            CswNbtObjClassLocation LocationNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( _getNodeTypeId( LocationType ), CswNbtNodeCollection.MakeNodeOperation.DoNothing );
-            LocationNode.Name.Text = Name;
-            if( ParentLocationId != null )
-            {
-                LocationNode.Location.SelectedNodeId = ParentLocationId;
-                LocationNode.Location.RefreshNodeName();
-            }
-            LocationNode.postChanges( false );
-            return LocationNode.Node;
-        }
-
-        internal CswNbtNode createContainerLocationNode( CswNbtNode ContainerNode = null, String Action = "", DateTime? NullableScanDate = null, CswPrimaryKey LocationId = null, String ContainerScan = "" )
-        {
-            CswNbtObjClassContainerLocation ContainerLocationNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( _getNodeTypeId( "Container Location" ), CswNbtNodeCollection.MakeNodeOperation.DoNothing );
-            if( null == ContainerNode )
-            {
-                ContainerNode = createContainerNode();
-            }
-            ContainerLocationNode.Container.RelatedNodeId = ContainerNode.NodeId;
-            ContainerLocationNode.Action.Value = Action;
-            DateTime ScanDate = NullableScanDate ?? DateTime.Now;
-            ContainerLocationNode.ScanDate.DateTimeValue = ScanDate;
-            if( LocationId != null )
-            {
-                ContainerLocationNode.Location.SelectedNodeId = LocationId;
-                ContainerLocationNode.Location.RefreshNodeName();
-            }
-            ContainerLocationNode.ContainerScan.Text = ContainerScan;
-            ContainerLocationNode.postChanges( false );
-            return ContainerLocationNode.Node;
-        }
-
-        internal CswNbtNode createContainerNode( string NodeTypeName = "Container", double Quantity = 1.0, CswNbtNode UnitOfMeasure = null, CswNbtNode Material = null, CswPrimaryKey LocationId = null )
-        {
-            CswNbtObjClassContainer ContainerNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( _getNodeTypeId( NodeTypeName ), CswNbtNodeCollection.MakeNodeOperation.DoNothing );
-            ContainerNode.Quantity.Quantity = Quantity;
-            if( null == UnitOfMeasure )
-            {
-                UnitOfMeasure = createUnitOfMeasureNode( "Volume", "Liters" + Sequence, 1.0, 0, Tristate.True );
-            }
-            ContainerNode.Quantity.UnitId = UnitOfMeasure.NodeId;
-            if( Material != null )
-            {
-                ContainerNode.Material.RelatedNodeId = Material.NodeId;
-            }
-            if( LocationId != null )
-            {
-                ContainerNode.Location.SelectedNodeId = LocationId;
-                ContainerNode.Location.RefreshNodeName();
-            }
-            ContainerNode.postChanges( true );
-
-            return ContainerNode.Node;
-        }
-
-        internal CswNbtNode createUnitOfMeasureNode( string NodeTypeName, string Name, double ConversionFactorBase, int ConversionFactorExponent, Tristate Fractional )
-        {
-            CswNbtObjClassUnitOfMeasure UnitOfMeasureNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( _getNodeTypeId( "Unit (" + NodeTypeName + ")" ), CswNbtNodeCollection.MakeNodeOperation.DoNothing );
-            UnitOfMeasureNode.Name.Text = Name + "Test";
-            if( CswTools.IsDouble( ConversionFactorBase ) )
-                UnitOfMeasureNode.ConversionFactor.Base = ConversionFactorBase;
-            if( ConversionFactorExponent != Int32.MinValue )
-                UnitOfMeasureNode.ConversionFactor.Exponent = ConversionFactorExponent;
-            UnitOfMeasureNode.Fractional.Checked = Fractional;
-            UnitOfMeasureNode.UnitType.Value = NodeTypeName;
-            UnitOfMeasureNode.postChanges( true );
-
-            return UnitOfMeasureNode.Node;
-        }
-
-        internal CswNbtNode createMaterialNode( string NodeTypeName, string State, double SpecificGravity )
-        {
-            CswNbtObjClassMaterial MaterialNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( _getNodeTypeId( NodeTypeName ), CswNbtNodeCollection.MakeNodeOperation.DoNothing );
-            if( CswTools.IsDouble( SpecificGravity ) )
-                MaterialNode.SpecificGravity.Value = SpecificGravity;
-            MaterialNode.PhysicalState.Value = State;
-            MaterialNode.postChanges( true );
-
-            return MaterialNode.Node;
-        }
-
-        internal CswNbtNode createChemicalNodeWithPPE( string PPE )
-        {
-            CswCommaDelimitedString PPEString = new CswCommaDelimitedString();
-            PPEString.FromString( PPE );
-            CswNbtNode ChemicalNode = createMaterialNode( "Chemical", "Liquid", 1 );
-            CswNbtMetaDataNodeTypeProp PPENTP = _CswNbtResources.MetaData.getNodeTypeProp( ChemicalNode.NodeTypeId, "PPE" );
-            ChemicalNode.Properties[PPENTP].AsMultiList.Value = PPEString;
-            ChemicalNode.postChanges( true );
-
-            return ChemicalNode;
-        }
-
-        #endregion
 
         #region Node Props
 

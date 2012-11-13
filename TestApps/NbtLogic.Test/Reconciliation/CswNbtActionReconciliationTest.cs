@@ -46,7 +46,7 @@ namespace ChemSw.Nbt.Test
             {
                 StartDate = DateTime.Now.ToString(),
                 EndDate = DateTime.Now.AddSeconds( 1 ).ToString(),
-                LocationId = TestData.createLocationNode().NodeId.ToString(),
+                LocationId = TestData.Nodes.createLocationNode().NodeId.ToString(),
                 IncludeChildLocations = false
             };
             ContainerData Data = ReconciliationAction.getContainerStatuses( Request );
@@ -60,8 +60,8 @@ namespace ChemSw.Nbt.Test
         [TestMethod]
         public void getContainerStatusesTestUnknown()
         {
-            CswPrimaryKey LocationId = TestData.createLocationNode().NodeId;
-            TestData.createContainerNode( LocationId: LocationId );
+            CswPrimaryKey LocationId = TestData.Nodes.createLocationNode().NodeId;
+            TestData.Nodes.createContainerNode( LocationId: LocationId );
             ContainerData.ReconciliationRequest Request = new ContainerData.ReconciliationRequest
             {
                 StartDate = DateTime.Now.AddSeconds( 1 ).ToString(),
@@ -81,8 +81,8 @@ namespace ChemSw.Nbt.Test
         [TestMethod]
         public void getContainerStatusesTestCorrect()
         {
-            CswPrimaryKey LocationId = TestData.createLocationNode().NodeId;
-            TestData.createContainerNode( LocationId: LocationId );
+            CswPrimaryKey LocationId = TestData.Nodes.createLocationNode().NodeId;
+            TestData.Nodes.createContainerNode( LocationId: LocationId );
             ContainerData.ReconciliationRequest Request = new ContainerData.ReconciliationRequest
             {
                 StartDate = DateTime.Now.AddDays( -1 ).ToString(),
@@ -102,9 +102,9 @@ namespace ChemSw.Nbt.Test
         [TestMethod]
         public void getContainerStatusesTestMultipleContainers()
         {
-            CswPrimaryKey LocationId = TestData.createLocationNode().NodeId;
-            TestData.createContainerNode( LocationId: LocationId );
-            TestData.createContainerNode( LocationId: LocationId );
+            CswPrimaryKey LocationId = TestData.Nodes.createLocationNode().NodeId;
+            TestData.Nodes.createContainerNode( LocationId: LocationId );
+            TestData.Nodes.createContainerNode( LocationId: LocationId );
             ContainerData.ReconciliationRequest Request = new ContainerData.ReconciliationRequest
             {
                 StartDate = DateTime.Now.AddDays( -1 ).ToString(),
@@ -127,10 +127,10 @@ namespace ChemSw.Nbt.Test
         [TestMethod]
         public void getContainerStatusesTestIncludeChildLocations()
         {
-            CswNbtObjClassLocation Location1 = TestData.createLocationNode();
-            CswNbtObjClassLocation Location2 = TestData.createLocationNode( ParentLocationId: Location1.NodeId );
-            TestData.createContainerNode( LocationId: Location1.NodeId );
-            TestData.createContainerNode( LocationId: Location2.NodeId );
+            CswNbtObjClassLocation Location1 = TestData.Nodes.createLocationNode();
+            CswNbtObjClassLocation Location2 = TestData.Nodes.createLocationNode( ParentLocationId: Location1.NodeId );
+            TestData.Nodes.createContainerNode( LocationId: Location1.NodeId );
+            TestData.Nodes.createContainerNode( LocationId: Location2.NodeId );
             ContainerData.ReconciliationRequest Request = new ContainerData.ReconciliationRequest
             {
                 StartDate = DateTime.Now.AddDays( -1 ).ToString(),
@@ -161,7 +161,7 @@ namespace ChemSw.Nbt.Test
             {
                 StartDate = DateTime.Now.ToString(),
                 EndDate = DateTime.Now.AddSeconds( 1 ).ToString(),
-                LocationId = TestData.createLocationNode().NodeId.ToString(),
+                LocationId = TestData.Nodes.createLocationNode().NodeId.ToString(),
                 IncludeChildLocations = false
             };
             ContainerData Data = ReconciliationAction.getContainerStatistics( Request );
@@ -178,8 +178,8 @@ namespace ChemSw.Nbt.Test
         [TestMethod]
         public void getContainerStatisticsTestUnknown()
         {
-            CswPrimaryKey LocationId = TestData.createLocationNode().NodeId;
-            TestData.createContainerNode( LocationId: LocationId );
+            CswPrimaryKey LocationId = TestData.Nodes.createLocationNode().NodeId;
+            TestData.Nodes.createContainerNode( LocationId: LocationId );
             ContainerData.ReconciliationRequest Request = new ContainerData.ReconciliationRequest
             {
                 StartDate = DateTime.Now.AddSeconds( 1 ).ToString(),
@@ -208,9 +208,9 @@ namespace ChemSw.Nbt.Test
         [TestMethod]
         public void getContainerStatisticsTestMultipleContainers()
         {
-            CswPrimaryKey LocationId = TestData.createLocationNode().NodeId;
-            TestData.createContainerNode( LocationId: LocationId );
-            TestData.createContainerNode( LocationId: LocationId );
+            CswPrimaryKey LocationId = TestData.Nodes.createLocationNode().NodeId;
+            TestData.Nodes.createContainerNode( LocationId: LocationId );
+            TestData.Nodes.createContainerNode( LocationId: LocationId );
             ContainerData.ReconciliationRequest Request = new ContainerData.ReconciliationRequest
             {
                 StartDate = DateTime.Now.AddDays( -1 ).ToString(),
@@ -240,10 +240,10 @@ namespace ChemSw.Nbt.Test
         [TestMethod]
         public void getContainerStatisticsTestPercentScanned()
         {
-            CswPrimaryKey LocationId = TestData.createLocationNode().NodeId;
-            CswNbtObjClassContainer ContainerNode = TestData.createContainerNode( LocationId: LocationId );
-            TestData.createContainerNode( LocationId: LocationId );
-            TestData.createContainerLocationNode( ContainerNode.Node, LocationId: LocationId, ContainerScan: ContainerNode.Barcode.Barcode );
+            CswPrimaryKey LocationId = TestData.Nodes.createLocationNode().NodeId;
+            CswNbtObjClassContainer ContainerNode = TestData.Nodes.createContainerNode( LocationId: LocationId );
+            TestData.Nodes.createContainerNode( LocationId: LocationId );
+            TestData.Nodes.createContainerLocationNode( ContainerNode.Node, LocationId: LocationId, ContainerScan: ContainerNode.Barcode.Barcode );
             ContainerData.ReconciliationRequest Request = new ContainerData.ReconciliationRequest
             {
                 StartDate = DateTime.Now.AddDays( -1 ).ToString(),
@@ -272,9 +272,9 @@ namespace ChemSw.Nbt.Test
         [TestMethod]
         public void getContainerDataTest()
         {
-            CswPrimaryKey LocationId = TestData.createLocationNode().NodeId;
-            TestData.createContainerNode( LocationId: LocationId );
-            TestData.createContainerNode( LocationId: LocationId );
+            CswPrimaryKey LocationId = TestData.Nodes.createLocationNode().NodeId;
+            TestData.Nodes.createContainerNode( LocationId: LocationId );
+            TestData.Nodes.createContainerNode( LocationId: LocationId );
             ContainerData.ReconciliationRequest Request = new ContainerData.ReconciliationRequest
             {
                 StartDate = DateTime.Now.AddDays( -1 ).ToString(),

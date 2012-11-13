@@ -35,7 +35,7 @@ namespace ChemSw.Nbt.Test
         public void setReadOnlyValuesTestOneValue()
         {
             TestData.SetPPENodeTypeProp( "Goggles,Gloves,Clothing,Fume Hood" );
-            CswNbtNode ChemicalNode = TestData.createChemicalNodeWithPPE( "Goggles" );
+            CswNbtNode ChemicalNode = TestData.Nodes.createMaterialNode( PPE: "Goggles" );
             CswNbtMetaDataNodeTypeProp PPENTP = TestData.CswNbtResources.MetaData.getNodeTypeProp( ChemicalNode.NodeTypeId, "PPE" );
             String Expected = "Goggles";
             JObject SerializedPPE = new JObject();
@@ -51,7 +51,7 @@ namespace ChemSw.Nbt.Test
         public void setReadOnlyValuesTestTwoValuesCommaDelimited()
         {
             TestData.SetPPENodeTypeProp( "Goggles,Gloves,Clothing,Fume Hood" );
-            CswNbtNode ChemicalNode = TestData.createChemicalNodeWithPPE( "Goggles,Clothing" );
+            CswNbtNode ChemicalNode = TestData.Nodes.createMaterialNode( PPE: "Goggles,Clothing" );
             CswNbtMetaDataNodeTypeProp PPENTP = TestData.CswNbtResources.MetaData.getNodeTypeProp( ChemicalNode.NodeTypeId, "PPE" );
             String Expected = "Goggles, Clothing";
             JObject SerializedPPE = new JObject();
@@ -67,7 +67,7 @@ namespace ChemSw.Nbt.Test
         public void setReadOnlyValuesTestTwoValuesNewlineDelimiter()
         {
             TestData.SetPPENodeTypeProp( "Goggles,Gloves,Clothing,Fume Hood", "<br/>" );
-            CswNbtNode ChemicalNode = TestData.createChemicalNodeWithPPE( "Goggles,Clothing" );
+            CswNbtNode ChemicalNode = TestData.Nodes.createMaterialNode( PPE: "Goggles,Clothing" );
             CswNbtMetaDataNodeTypeProp PPENTP = TestData.CswNbtResources.MetaData.getNodeTypeProp( ChemicalNode.NodeTypeId, "PPE" );
             String Expected = "Goggles<br/> Clothing";
             JObject SerializedPPE = new JObject();
@@ -85,7 +85,7 @@ namespace ChemSw.Nbt.Test
         public void setReadOnlyValuesTestFourValuesExceedingHideThreshold()
         {
             TestData.SetPPENodeTypeProp( "Goggles,Gloves,Clothing,Fume Hood", ",", 2 );
-            CswNbtNode ChemicalNode = TestData.createChemicalNodeWithPPE( "Goggles,Gloves,Clothing,Fume Hood" );
+            CswNbtNode ChemicalNode = TestData.Nodes.createMaterialNode( PPE: "Goggles,Gloves,Clothing,Fume Hood" );
             CswNbtMetaDataNodeTypeProp PPENTP = TestData.CswNbtResources.MetaData.getNodeTypeProp( ChemicalNode.NodeTypeId, "PPE" );
             String ExpectedLess = "Goggles, Gloves";
             String ExpectedMore = "Clothing, Fume Hood";
@@ -104,7 +104,7 @@ namespace ChemSw.Nbt.Test
         public void setReadOnlyValuesTestCollapsedSubjects()
         {
             TestData.SetPPENodeTypeProp( "Hazard Gear: Goggles,Hazard Gear: Gloves,Hazard Wear: Clothing,Hazard Wear: Fume Hood", "<br/>", 2 );
-            CswNbtNode ChemicalNode = TestData.createChemicalNodeWithPPE( "Hazard Gear: Goggles,Hazard Gear: Gloves,Hazard Wear: Clothing,Hazard Wear: Fume Hood" );
+            CswNbtNode ChemicalNode = TestData.Nodes.createMaterialNode( PPE: "Hazard Gear: Goggles,Hazard Gear: Gloves,Hazard Wear: Clothing,Hazard Wear: Fume Hood" );
             CswNbtMetaDataNodeTypeProp PPENTP = TestData.CswNbtResources.MetaData.getNodeTypeProp( ChemicalNode.NodeTypeId, "PPE" );
             String Expected = "Hazard Gear: Goggles, Gloves<br/> Hazard Wear: Clothing, Fume Hood";
             JObject SerializedPPE = new JObject();
@@ -122,7 +122,7 @@ namespace ChemSw.Nbt.Test
         public void setReadOnlyValuesTestCollapsedSubjectsExceedingHideThreshold()
         {
             TestData.SetPPENodeTypeProp( "Hazard Gear: Goggles,Hazard Gear: Gloves,Hazard Wear: Clothing,Hazard Wear: Fume Hood", "<br/>", 1 );
-            CswNbtNode ChemicalNode = TestData.createChemicalNodeWithPPE( "Hazard Gear: Goggles,Hazard Gear: Gloves,Hazard Wear: Clothing,Hazard Wear: Fume Hood" );
+            CswNbtNode ChemicalNode = TestData.Nodes.createMaterialNode( PPE: "Hazard Gear: Goggles,Hazard Gear: Gloves,Hazard Wear: Clothing,Hazard Wear: Fume Hood" );
             CswNbtMetaDataNodeTypeProp PPENTP = TestData.CswNbtResources.MetaData.getNodeTypeProp( ChemicalNode.NodeTypeId, "PPE" );
             String ExpectedLess = "Hazard Gear: Goggles, Gloves";
             String ExpectedMore = "Hazard Wear: Clothing, Fume Hood";

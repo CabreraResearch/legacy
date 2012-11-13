@@ -37,8 +37,8 @@ namespace ChemSw.Nbt.Test
         {
             CswPrimaryKey ContainerLocId, ContainerLocationLocId;
             TestData.getTwoDifferentLocationIds( out ContainerLocId, out ContainerLocationLocId );
-            CswNbtObjClassContainer ContainerNode = TestData.createContainerNode( LocationId: ContainerLocId );
-            CswNbtObjClassContainerLocation ContainerLocationNode = TestData.createContainerLocationNode(
+            CswNbtObjClassContainer ContainerNode = TestData.Nodes.createContainerNode( LocationId: ContainerLocId );
+            CswNbtObjClassContainerLocation ContainerLocationNode = TestData.Nodes.createContainerLocationNode(
                 ContainerNode.Node,
                 CswNbtObjClassContainerLocation.ActionOptions.NoAction.ToString(),
                 LocationId: ContainerLocId );
@@ -53,8 +53,8 @@ namespace ChemSw.Nbt.Test
         [TestMethod]
         public void setStatusTestMissing()
         {
-            CswNbtObjClassContainer ContainerNode = TestData.createContainerNode();
-            CswNbtObjClassContainerLocation ContainerLocationNode = TestData.createContainerLocationNode(
+            CswNbtObjClassContainer ContainerNode = TestData.Nodes.createContainerNode();
+            CswNbtObjClassContainerLocation ContainerLocationNode = TestData.Nodes.createContainerLocationNode(
                 ContainerNode.Node,
                 CswNbtObjClassContainerLocation.ActionOptions.NoAction.ToString() );
             ContainerLocationNode.Container.RelatedNodeId = null;
@@ -71,10 +71,10 @@ namespace ChemSw.Nbt.Test
         {
             CswPrimaryKey ContainerLocId, ContainerLocationLocId;
             TestData.getTwoDifferentLocationIds( out ContainerLocId, out ContainerLocationLocId );
-            CswNbtObjClassContainer ContainerNode = TestData.createContainerNode( LocationId: ContainerLocId );
+            CswNbtObjClassContainer ContainerNode = TestData.Nodes.createContainerNode( LocationId: ContainerLocId );
             ContainerNode.DisposeContainer();
             Assert.AreEqual( Tristate.True, ContainerNode.Disposed.Checked );
-            CswNbtObjClassContainerLocation ContainerLocationNode = TestData.createContainerLocationNode(
+            CswNbtObjClassContainerLocation ContainerLocationNode = TestData.Nodes.createContainerLocationNode(
                 ContainerNode.Node,
                 CswNbtObjClassContainerLocation.ActionOptions.NoAction.ToString(),
                 LocationId: ContainerLocId );
@@ -91,8 +91,8 @@ namespace ChemSw.Nbt.Test
         {
             CswPrimaryKey ContainerLocId, ContainerLocationLocId;
             TestData.getTwoDifferentLocationIds( out ContainerLocId, out ContainerLocationLocId );
-            CswNbtObjClassContainer ContainerNode = TestData.createContainerNode( LocationId: ContainerLocId );
-            CswNbtObjClassContainerLocation ContainerLocationNode = TestData.createContainerLocationNode(
+            CswNbtObjClassContainer ContainerNode = TestData.Nodes.createContainerNode( LocationId: ContainerLocId );
+            CswNbtObjClassContainerLocation ContainerLocationNode = TestData.Nodes.createContainerLocationNode(
                 ContainerNode.Node,
                 CswNbtObjClassContainerLocation.ActionOptions.NoAction.ToString(),
                 LocationId: ContainerLocationLocId );
@@ -109,10 +109,10 @@ namespace ChemSw.Nbt.Test
         {
             CswPrimaryKey ContainerLocId, ContainerLocationLocId;
             TestData.getTwoDifferentLocationIds( out ContainerLocId, out ContainerLocationLocId );
-            CswNbtObjClassContainer ContainerNode = TestData.createContainerNode( LocationId: ContainerLocId );
+            CswNbtObjClassContainer ContainerNode = TestData.Nodes.createContainerNode( LocationId: ContainerLocId );
             ContainerNode.DisposeContainer();
             Assert.AreEqual( Tristate.True, ContainerNode.Disposed.Checked );
-            CswNbtObjClassContainerLocation ContainerLocationNode = TestData.createContainerLocationNode(
+            CswNbtObjClassContainerLocation ContainerLocationNode = TestData.Nodes.createContainerLocationNode(
                 ContainerNode.Node,
                 CswNbtObjClassContainerLocation.ActionOptions.NoAction.ToString(),
                 LocationId: ContainerLocationLocId );
