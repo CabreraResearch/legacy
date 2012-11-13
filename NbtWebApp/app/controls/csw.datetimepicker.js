@@ -22,7 +22,9 @@
                 isRequired: false,
                 onChange: null,
                 showTodayButton: false,
-                changeYear: true
+                changeYear: true,
+                minDate: null,
+                maxDate: null
             };
             var cswPublic = {};
 
@@ -60,7 +62,12 @@
                             cssclass: 'textinput'
                         });
                         if (cswPrivate.Date.substr(0, 'today'.length) !== 'today') {
-                            cswPrivate.dateBox.$.datepicker({ 'dateFormat': Csw.serverDateFormatToJQuery(cswPrivate.DateFormat), 'changeYear': cswPrivate.changeYear });
+                            cswPrivate.dateBox.$.datepicker({
+                                'dateFormat': Csw.serverDateFormatToJQuery(cswPrivate.DateFormat), 
+                                'changeYear': cswPrivate.changeYear,
+                                'minDate': cswPrivate.minDate,
+                                'maxDate': cswPrivate.maxDate
+                            });
                         }
                         cswPrivate.dateBox.required(cswPrivate.isRequired);
                     }

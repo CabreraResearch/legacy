@@ -26,10 +26,10 @@
                 stepTwoComplete: false,
                 stepThreeComplete: false,
                 state: {
-                    locationId: '',
-                    includeChildLocations: false,
-                    startDate: '',
-                    endDate: ''
+                    LocationId: '',
+                    IncludeChildLocations: false,
+                    StartDate: '',
+                    EndDate: ''
                 }
             };
 
@@ -98,12 +98,66 @@
                             text: "Choose the location of the Containers you wish to examine, and select a timeline with which to filter Reconciliation Scans.",
                             cssclass: "wizardHelpDesc"
                         });
-                        cswPrivate.divStep1.br({ number: 4 });
-                        //TODO - create controls for location (with checkbox to include child locations), start date (blank), and end date (Today)
+                        cswPrivate.divStep1.br({ number: 2 });
+                        //Props Table
+                        var locationDatesTable = cswPrivate.divStep1.table({
+                            name: 'setLocationDatesTable',
+                            cellpadding: '5px',
+                            cellalign: 'left',
+                            cellvalign: 'top',
+                            FirstCellRightAlign: true
+                        });
+                        //Location
+                        locationDatesTable.cell(1, 1).span({ text: 'Location:' }).addClass('propertylabel');
+                        var locationControl = locationDatesTable.cell(1, 2).location({
+                            name: '',
+                            onChange: function (locationId) {
+                                cswPrivate.state.LocationId = locationId;
+                            }
+                        });
+                        cswPrivate.state.LocationId = locationControl.val();
+                        locationDatesTable.cell(1, 2).br();
+                        //IncludeChildLocations
+                        var checkBoxTable = locationDatesTable.cell(1, 2).table({
+                            name: 'checkboxTable',
+                            cellalign: 'left',
+                            cellvalign: 'middle'
+                        });                        
+                        cswPrivate.childLocationsCheckBox = checkBoxTable.cell(1, 1).checkBox({
+                            onChange: Csw.method(function () {
+                                cswPrivate.state.IncludeChildLocations = cswPrivate.childLocationsCheckBox.checked();
+                            })
+                        });
+                        checkBoxTable.cell(1, 2).span({ text: ' Include child locations' });
+                        //StartDate
+                        locationDatesTable.cell(2, 1).span({ text: 'Start Date:' }).addClass('propertylabel');
+                        var startDatePicker = locationDatesTable.cell(2, 2).dateTimePicker({
+                            name: 'startDate',
+                            Date: cswPrivate.getCurrentDate(),
+                            isRequired: true,
+                            maxDate: cswPrivate.getCurrentDate(),
+                            onChange: function () {
+                                cswPrivate.state.StartDate = startDatePicker.val().date;
+                            }
+                        });
+                        cswPrivate.state.StartDate = startDatePicker.val().date;
+                        //EndDate
+                        locationDatesTable.cell(3, 1).span({ text: 'End Date:' }).addClass('propertylabel');
+                        var endDatePicker = locationDatesTable.cell(3, 2).dateTimePicker({
+                            name: 'endDate',
+                            Date: cswPrivate.getCurrentDate(),
+                            isRequired: true,
+                            maxDate: cswPrivate.getCurrentDate(),
+                            onChange: function () {
+                                cswPrivate.state.EndDate = endDatePicker.val().date;
+                            }
+                        });
+                        cswPrivate.state.EndDate = endDatePicker.val().date;
+                        
                         cswPrivate.stepOneComplete = true;
                     }
                 };
-            } ());
+            } ());//Step 1
 
             //Step 2: Statistics
             cswPrivate.makeStep2 = (function () {
@@ -118,12 +172,13 @@
                             text: "Container statistics in (location) from (start date) to (end date)",
                             cssclass: "wizardHelpDesc"
                         });
-                        cswPrivate.divStep2.br({ number: 4 });
+                        cswPrivate.divStep2.br({ number: 2 });
                         //TODO - take values from step 1 control and create grid of statuses in selected location(s) within selected timeframe
+                        //since the grid is static, make the grid columns here and pass it into the grid control
                         cswPrivate.stepTwoComplete = true;
                     }
                 };
-            } ());
+            } ());//Step 2
 
             //Step 3: Containers
             cswPrivate.makeStep3 = (function () {
@@ -138,13 +193,29 @@
                             text: "Containers and their statuses in (location) from (start date) to (end date)",
                             cssclass: "wizardHelpDesc"
                         });
-                        cswPrivate.divStep3.br({ number: 4 });
+                        cswPrivate.divStep3.br({ number: 2 });
                         //TODO - take values from step 1 control and create grid of containers with their most current containerlocation status
                         //TODO - if end time = Today, include an ActionSelect control in each row, along with a save button outside the grid to update action
+                        //because we have to make a control inside each row, make the grid columns here and pass it into the grid control
                         cswPrivate.stepThreeComplete = true;
                     }
                 };
-            } ());
+            } ()); //Step 3
+
+            //Helper Functions
+            cswPrivate.getCurrentDate = function () {
+                var today = new Date();
+                var dd = today.getDate();
+                var mm = today.getMonth() + 1; //January is 0!
+                var yyyy = today.getFullYear();
+                if (dd < 10) {
+                    dd = '0' + dd;
+                } if (mm < 10) {
+                    mm = '0' + mm;
+                }
+                today = mm + '/' + dd + '/' + yyyy;
+                return today;
+            };
 
             (function () {
                 if (options) {
