@@ -101,7 +101,8 @@ namespace ChemSW.Nbt
             if( AuthenticationStatus == AuthenticationStatus.Authenticated )
             {
                 // case 21036
-                if( _AuthenticationRequest.IsMobile && false == _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.Mobile ) )
+                if( _AuthenticationRequest.IsMobile &&
+                    false == _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.SI ) )
                 {
                     AuthenticationStatus = AuthenticationStatus.ModuleNotEnabled;
                     _CswSessionManager.clearSession();

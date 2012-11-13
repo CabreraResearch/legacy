@@ -53,19 +53,11 @@ namespace ChemSW.Nbt.Schema
                 _CswNbtSchemaModTrnsctn.Modules.EnableModule( CswNbtModuleName.MLM );
             }
 
-            if( _CswNbtSchemaModTrnsctn.Modules.IsModuleEnabled( CswNbtModuleName.SI ) )
-            {
-                _CswNbtSchemaModTrnsctn.Modules.EnableModule( CswNbtModuleName.Mobile );
-            }
-            else
-            {
-                _CswNbtSchemaModTrnsctn.Modules.DisableModule( CswNbtModuleName.Mobile );
-            }
-
-
             #endregion TITANIA
 
             #region URSULA
+
+            _CswNbtSchemaModTrnsctn.deleteModule( "mobile" );
 
             #endregion URSULA
 
