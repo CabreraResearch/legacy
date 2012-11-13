@@ -92,10 +92,10 @@ namespace ChemSW.Nbt.WebServices
         /// <summary>
         /// Gets both ContainerStatistics and ContainerStatuses data
         /// </summary>
-        public static void getContainerData( ICswResources CswResources, ContainerDataReturn Return, ContainerData.ReconciliationRequest Request )
+        public static void getReconciliationData( ICswResources CswResources, ContainerDataReturn Return, ContainerData.ReconciliationRequest Request )
         {
             CswNbtActReconciliation _CswNbtActReconciliation = new CswNbtActReconciliation( (CswNbtResources) CswResources );
-            Return.Data = _CswNbtActReconciliation.getContainerData( Request );
+            Return.Data = _CswNbtActReconciliation.getReconciliationData( Request );
         }
 
         /// <summary>

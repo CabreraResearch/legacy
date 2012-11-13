@@ -21,7 +21,7 @@ namespace ChemSW.Nbt.Actions
             Data = new ContainerData();
         }
 
-        public ContainerData getContainerData( ContainerData.ReconciliationRequest Request )
+        public ContainerData getReconciliationData( ContainerData.ReconciliationRequest Request )
         {
             getContainerStatistics( Request );
             getContainerStatuses( Request );
@@ -67,7 +67,14 @@ namespace ChemSW.Nbt.Actions
             }
             foreach( ContainerData.ReconciliationStatistics Stat in Data.ContainerStatistics )
             {
-                Stat.PercentScanned = CswConvert.ToDouble( Stat.AmountScanned ) / CswConvert.ToDouble( Stat.ContainerCount ) * 100.0;
+                if( Stat.ContainerCount > 0 )
+                {
+                    Stat.PercentScanned = CswConvert.ToDouble(Stat.AmountScanned) / CswConvert.ToDouble(Stat.ContainerCount) * 100.0;
+                }
+                else
+                {
+                    Stat.PercentScanned = 0.0;
+                }
             }
             return Data;
         }

@@ -28,7 +28,7 @@ namespace ChemSW.Nbt.Actions
             [DataMember]
             public Int32 AmountScanned = Int32.MinValue;
             [DataMember]
-            public Double PercentScanned = Double.NaN;
+            public Double PercentScanned = 0.0;
         }
 
         [DataContract]

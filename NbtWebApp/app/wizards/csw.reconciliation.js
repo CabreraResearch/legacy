@@ -122,7 +122,7 @@
                             name: 'checkboxTable',
                             cellalign: 'left',
                             cellvalign: 'middle'
-                        });                        
+                        });
                         cswPrivate.childLocationsCheckBox = checkBoxTable.cell(1, 1).checkBox({
                             onChange: Csw.method(function () {
                                 cswPrivate.state.IncludeChildLocations = cswPrivate.childLocationsCheckBox.checked();
@@ -153,11 +153,11 @@
                             }
                         });
                         cswPrivate.state.EndDate = endDatePicker.val().date;
-                        
+
                         cswPrivate.stepOneComplete = true;
                     }
                 };
-            } ());//Step 1
+            } ()); //Step 1
 
             //Step 2: Statistics
             cswPrivate.makeStep2 = (function () {
@@ -175,10 +175,34 @@
                         cswPrivate.divStep2.br({ number: 2 });
                         //TODO - take values from step 1 control and create grid of statuses in selected location(s) within selected timeframe
                         //since the grid is static, make the grid columns here and pass it into the grid control
+                        
+                        Csw.ajaxWcf.post({
+                            urlMethod: 'Containers/getReconciliationData',
+                            data: cswPrivate.state,
+                            success: function (ajaxdata) {
+                                cswPrivate.data = {
+                                    ContainerStatistics: [{
+                                        Status: '',
+                                        ContainerCount: '',
+                                        AmountScanned: '',
+                                        PercentScanned: ''
+                                    }],
+                                    ContainerStatuses: [{
+                                        ContainerId: '',
+                                        ContainerBarcode: '',
+                                        ContainerStatus: '',
+                                        Action: '',
+                                        ActionApplied: ''
+                                    }]
+                                };
+                                Csw.extend(cswPrivate.data, ajaxdata);
+                            }
+                        });
+
                         cswPrivate.stepTwoComplete = true;
                     }
                 };
-            } ());//Step 2
+            } ()); //Step 2
 
             //Step 3: Containers
             cswPrivate.makeStep3 = (function () {
@@ -197,6 +221,7 @@
                         //TODO - take values from step 1 control and create grid of containers with their most current containerlocation status
                         //TODO - if end time = Today, include an ActionSelect control in each row, along with a save button outside the grid to update action
                         //because we have to make a control inside each row, make the grid columns here and pass it into the grid control
+
                         cswPrivate.stepThreeComplete = true;
                     }
                 };

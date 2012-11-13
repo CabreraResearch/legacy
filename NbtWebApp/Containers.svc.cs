@@ -10,7 +10,7 @@ using ChemSW.WebSvc;
 namespace NbtWebApp
 {
     /// <summary>
-    /// WCF Web Methods for Landing Page operations
+    /// WCF Web Methods for Contianer operations
     /// </summary>
     [ServiceBehavior( IncludeExceptionDetailInFaults = true )]
     [ServiceContract( Namespace = "NbtWebApp" )]
@@ -21,16 +21,16 @@ namespace NbtWebApp
 
         [OperationContract]
         [WebInvoke( Method = "POST", ResponseFormat = WebMessageFormat.Json )]
-        [Description( "Get all Container barcodes and their most recent ContainerLocation Status for the given Location and timeframe" )]
+        [Description( "Get all Container Reconciliation data (including both Statistics and Statuses)" )]
         [FaultContract( typeof( FaultException ) )]
-        public CswNbtWebServiceContainer.ContainerDataReturn getContainerData( ContainerData.ReconciliationRequest Request )
+        public CswNbtWebServiceContainer.ContainerDataReturn getReconciliationData( ContainerData.ReconciliationRequest Request )
         {
             CswNbtWebServiceContainer.ContainerDataReturn Ret = new CswNbtWebServiceContainer.ContainerDataReturn();
 
             var SvcDriver = new CswWebSvcDriver<CswNbtWebServiceContainer.ContainerDataReturn, ContainerData.ReconciliationRequest>(
                 CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
                 ReturnObj: Ret,
-                WebSvcMethodPtr: CswNbtWebServiceContainer.getContainerData,
+                WebSvcMethodPtr: CswNbtWebServiceContainer.getReconciliationData,
                 ParamObj: Request
                 );
 
