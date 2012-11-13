@@ -202,6 +202,12 @@ namespace ChemSW.Nbt.ObjClasses
                 Request.setReadOnly( value: true, SaveToDb: true );
                 Request.setHidden( value: true, SaveToDb: false );
             }
+            CswNbtObjClassRequest ThisRequest = _CswNbtResources.Nodes[Request.RelatedNodeId];
+            if( null != ThisRequest )
+            {
+                Requestor.RelatedNodeId = ThisRequest.Requestor.RelatedNodeId;
+            }
+
         }
 
         public abstract void beforePropertySetWriteNode( bool IsCopy, bool OverrideUniqueValidation );
@@ -283,9 +289,15 @@ namespace ChemSW.Nbt.ObjClasses
                         switch( ButtonData.SelectedText )
                         {
                             case FulfillMenu.Cancel:
+                                Status.Value = Statuses.Cancelled;
+                                Fulfill.State = FulfillMenu.Cancel;
+                                Fulfill.MenuOptions = "";
                                 ButtonData.Action = NbtButtonAction.refresh;
                                 break;
                             case FulfillMenu.Complete:
+                                Status.Value = Statuses.Completed;
+                                Fulfill.State = FulfillMenu.Complete;
+                                Fulfill.MenuOptions = "";
                                 ButtonData.Action = NbtButtonAction.refresh;
                                 break;
                         }
@@ -326,7 +338,8 @@ namespace ChemSW.Nbt.ObjClasses
                     {
                         NodeAsRequest.setCompletedDate();
                     }
-                    Node.setReadOnly( true, true );
+                    _toggleReadOnlyProps( IsReadOnly: true, ItemInstance: this );
+                    Node.setReadOnly( value: true, SaveToDb: true );
                     break;
             }
 

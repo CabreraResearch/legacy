@@ -269,7 +269,8 @@ namespace ChemSW.Nbt.ObjClasses
 
         private void _throwIfMaterialExists()
         {
-            if( NewMaterialType.SelectedNodeTypeIds.Count == 1 &&
+            if( false == CswTools.IsPrimaryKey( Material.RelatedNodeId ) &&
+                NewMaterialType.SelectedNodeTypeIds.Count == 1 &&
                 false == string.IsNullOrEmpty( NewMaterialTradename.Text ) &&
                 CswTools.IsPrimaryKey( NewMaterialSupplier.RelatedNodeId ) )
             {
