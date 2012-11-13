@@ -1054,6 +1054,30 @@ namespace ChemSW.Nbt.Schema
             _resetBlame();
         }
 
+        private void _createaNewMaterialComponentProp( CswDeveloper Dev, Int32 CaseNo )
+        {
+            _acceptBlame( Dev, CaseNo );
+
+            CswNbtMetaDataObjectClass materialComponentOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.MaterialComponentClass );
+
+            CswNbtMetaDataObjectClassProp activeOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( materialComponentOC )
+            {
+                PropName = CswNbtObjClassMaterialComponent.PropertyName.Active,
+                FieldType = CswNbtMetaDataFieldType.NbtFieldType.Logical,
+                IsRequired = true
+            } );
+            _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( activeOCP, false );
+
+            _resetBlame();
+        }
+
+        private void _createNewMaterialProps( CswDeveloper Dev, Int32 CaseNo )
+        {
+            _acceptBlame( Dev, CaseNo );
+
+            _resetBlame();
+        }
+
         #endregion Ursula Methods
 
 
@@ -1088,6 +1112,8 @@ namespace ChemSW.Nbt.Schema
 
             _makeContainerGroup();
             _newContainerProperties27866();
+
+            _createaNewMaterialComponentProp( CswDeveloper.MB, 27864 );
 
             #endregion URSULA
 
