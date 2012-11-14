@@ -1,6 +1,5 @@
 using System;
 using ChemSW.Core;
-using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
 using Newtonsoft.Json.Linq;
@@ -143,25 +142,9 @@ namespace ChemSW.Nbt.ObjClasses
         public override void beforePropertySetWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
             /* Container-specific logic */
-            if( CswTools.IsPrimaryKey( InventoryGroup.RelatedNodeId ) )
+            if( false == InventoryGroup.Hidden )
             {
-                CswNbtObjClassContainer NodeAsContainer = _CswNbtResources.Nodes[Container.RelatedNodeId];
-                if( null == NodeAsContainer )
-                {
-                    throw new CswDniException( ErrorType.Warning,
-                                                "A " + Type.Value +
-                                                " type of Request Item requires a valid Container.",
-                                                "Attempted to edit node without a valid Container relationship." );
-                }
-                CswNbtObjClassLocation NodeAsLocation = _CswNbtResources.Nodes[NodeAsContainer.Location.SelectedNodeId];
-                if( null != NodeAsLocation &&
-                    InventoryGroup.RelatedNodeId != NodeAsLocation.InventoryGroup.RelatedNodeId )
-                {
-                    throw new CswDniException( ErrorType.Warning,
-                                                "For a " + Type.Value +
-                                                " type of Request Item, the Inventory Group of the Request must match the Inventory Group of the Container's Location.",
-                                                "Attempted to edit node without matching Container and Request Inventory Group relationships." );
-                }
+                InventoryGroup.setHidden( value: true, SaveToDb: true );
             }
 
 
