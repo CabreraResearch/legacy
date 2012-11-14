@@ -141,10 +141,10 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override string setRequestDescription()
         {
-            string Ret = "Create new " + NewMaterialType.SelectedNodeTypeNames() + " name " + NewMaterialTradename.Text + " from supplier " + NewMaterialSupplier.Gestalt;
+            string Ret = "Create new " + NewMaterialType.SelectedNodeTypeNames() + ": " + NewMaterialTradename.Text + " " + NewMaterialSupplier.Gestalt;
             if( false == string.IsNullOrEmpty( NewMaterialPartNo.Text ) )
             {
-                Ret += " on partno " + NewMaterialPartNo.Text;
+                Ret += " " + NewMaterialPartNo.Text;
             }
             return Ret;
         }
