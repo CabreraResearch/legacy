@@ -161,7 +161,6 @@ namespace ChemSW.Nbt.ObjClasses
         {
             Material.SetOnPropChange( OnMaterialPropChange );
             Dispose.SetOnPropChange( OnDisposedPropChange );
-            OnDisposedPropChange( Dispose );
             Quantity.SetOnPropChange( OnQuantityPropChange );
             Location.SetOnPropChange( OnLocationPropChange );
             Size.SetOnPropChange( OnSizePropChange );
