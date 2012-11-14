@@ -1231,75 +1231,83 @@ namespace ChemSW.Nbt.Schema
             if( null != GenericOc )
             {
                 //LQNo NodeType
-                CswNbtMetaDataNodeType LQNoNt = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( GenericOc.ObjectClassId, "LQNo", "MLM" );
-                _CswNbtSchemaModTrnsctn.createModuleNodeTypeJunction( CswNbtModuleName.CISPro, LQNoNt.NodeTypeId );
-                CswNbtMetaDataNodeTypeProp LQNoLQNoNtp = _createNewProp( LQNoNt, "LQNo", CswNbtMetaDataFieldType.NbtFieldType.Text );
-                LQNoLQNoNtp.setIsUnique( true );
-                CswNbtMetaDataNodeTypeProp LQNoLimitNtp = _createNewProp( LQNoNt, "Limit", CswNbtMetaDataFieldType.NbtFieldType.Quantity );
-                LQNoLimitNtp.IsRequired = true;
-                CswNbtMetaDataNodeType WeightNt = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Unit (Weight)" );
-                if( null != WeightNt )
+                CswNbtMetaDataNodeType LQNoNt = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "LQNo" );
+                if( null == LQNoNt )
                 {
-                    LQNoLimitNtp.SetFK( NbtViewRelatedIdType.NodeTypeId.ToString(), WeightNt.NodeTypeId );
-                }
-                LQNoNt.setNameTemplateText( CswNbtMetaData.MakeTemplateEntry( "LQNo" ) );
-
-                //UNCode NodeType
-                CswNbtMetaDataNodeType UNCodeNt = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( GenericOc.ObjectClassId, "UN Code", "MLM" );
-                _CswNbtSchemaModTrnsctn.createModuleNodeTypeJunction( CswNbtModuleName.CISPro, UNCodeNt.NodeTypeId );
-                CswNbtMetaDataNodeTypeProp UNCodeUNCodeNtp = _createNewProp( UNCodeNt, "UN Code", CswNbtMetaDataFieldType.NbtFieldType.Text );
-                UNCodeUNCodeNtp.setIsUnique( true );
-                CswNbtMetaDataNodeTypeProp UNCodeLQNoNtp = _createNewProp( UNCodeNt, "LQNo", CswNbtMetaDataFieldType.NbtFieldType.Relationship, false );
-                UNCodeLQNoNtp.SetFK( NbtViewRelatedIdType.NodeTypeId.ToString(), LQNoNt.NodeTypeId );
-                UNCodeNt.setNameTemplateText( CswNbtMetaData.MakeTemplateEntry( "UN Code" ) );
-
-                //Create Demo Data
-                if( null != WeightNt )
-                {
-                    CswPrimaryKey kgNodeId = null;
-                    foreach( CswNbtObjClassUnitOfMeasure WeightNode in WeightNt.getNodes( false, false ) )
+                    LQNoNt = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( GenericOc.ObjectClassId, "LQNo", "MLM" );
+                    _CswNbtSchemaModTrnsctn.createModuleNodeTypeJunction( CswNbtModuleName.CISPro, LQNoNt.NodeTypeId );
+                    CswNbtMetaDataNodeTypeProp LQNoLQNoNtp = _createNewProp( LQNoNt, "LQNo", CswNbtMetaDataFieldType.NbtFieldType.Text );
+                    LQNoLQNoNtp.setIsUnique( true );
+                    CswNbtMetaDataNodeTypeProp LQNoLimitNtp = _createNewProp( LQNoNt, "Limit", CswNbtMetaDataFieldType.NbtFieldType.Quantity );
+                    LQNoLimitNtp.IsRequired = true;
+                    CswNbtMetaDataNodeType WeightNt = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Unit (Weight)" );
+                    if( null != WeightNt )
                     {
-                        if( "kg" == WeightNode.Name.Text )
+                        LQNoLimitNtp.SetFK( NbtViewRelatedIdType.NodeTypeId.ToString(), WeightNt.NodeTypeId );
+                    }
+                    LQNoNt.setNameTemplateText( CswNbtMetaData.MakeTemplateEntry( "LQNo" ) );
+
+                    //UNCode NodeType
+                    CswNbtMetaDataNodeType UNCodeNt = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "UN Code" );
+                    if( null != UNCodeNt )
+                    {
+                        UNCodeNt = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( GenericOc.ObjectClassId, "UN Code", "MLM" );
+                        _CswNbtSchemaModTrnsctn.createModuleNodeTypeJunction( CswNbtModuleName.CISPro, UNCodeNt.NodeTypeId );
+                        CswNbtMetaDataNodeTypeProp UNCodeUNCodeNtp = _createNewProp( UNCodeNt, "UN Code", CswNbtMetaDataFieldType.NbtFieldType.Text );
+                        UNCodeUNCodeNtp.setIsUnique( true );
+                        CswNbtMetaDataNodeTypeProp UNCodeLQNoNtp = _createNewProp( UNCodeNt, "LQNo", CswNbtMetaDataFieldType.NbtFieldType.Relationship, false );
+                        UNCodeLQNoNtp.SetFK( NbtViewRelatedIdType.NodeTypeId.ToString(), LQNoNt.NodeTypeId );
+                        UNCodeNt.setNameTemplateText( CswNbtMetaData.MakeTemplateEntry( "UN Code" ) );
+
+                        //Create Demo Data
+                        if( null != WeightNt )
                         {
-                            kgNodeId = WeightNode.NodeId;
+                            CswPrimaryKey kgNodeId = null;
+                            foreach( CswNbtObjClassUnitOfMeasure WeightNode in WeightNt.getNodes( false, false ) )
+                            {
+                                if( "kg" == WeightNode.Name.Text )
+                                {
+                                    kgNodeId = WeightNode.NodeId;
+                                }
+                            }
+                            CswNbtNode LQNoNode = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( LQNoNt.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode );
+                            LQNoNode.Properties[LQNoLQNoNtp].AsText.Text = "1 Metric Ton";
+                            LQNoNode.Properties[LQNoLimitNtp].AsQuantity.Quantity = 1000;
+                            LQNoNode.Properties[LQNoLimitNtp].AsQuantity.UnitId = kgNodeId;
+                            LQNoNode.IsDemo = true;
+                            LQNoNode.postChanges( false );
+
+                            CswNbtNode UNCodeNode = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( UNCodeNt.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode );
+                            UNCodeNode.Properties[UNCodeLQNoNtp].AsRelationship.RelatedNodeId = LQNoNode.NodeId;
+                            UNCodeNode.Properties[UNCodeUNCodeNtp].AsText.Text = "US ITH";
+                            UNCodeNode.IsDemo = true;
+                            UNCodeNode.postChanges( false );
+                        }
+
+                        //Create demo Views
+                        CswNbtView UNCodeView = _CswNbtSchemaModTrnsctn.makeNewView( "UN Codes", NbtViewVisibility.Global );
+                        UNCodeView.Category = "MLM (demo)";
+                        UNCodeView.IsDemo = true;
+                        UNCodeView.ViewMode = NbtViewRenderingMode.Tree;
+                        UNCodeView.AddViewRelationship( UNCodeNt, true );
+                        UNCodeView.save();
+
+                        CswNbtView LQNoView = _CswNbtSchemaModTrnsctn.makeNewView( "UN Codes by LQNo", NbtViewVisibility.Global );
+                        LQNoView.Category = "MLM (demo)";
+                        LQNoView.IsDemo = true;
+                        LQNoView.ViewMode = NbtViewRenderingMode.Tree;
+                        CswNbtViewRelationship LQNoRelationship = LQNoView.AddViewRelationship( LQNoNt, true );
+                        LQNoView.AddViewRelationship( LQNoRelationship, NbtViewPropOwnerType.Second, UNCodeLQNoNtp, false );
+                        LQNoView.save();
+
+                        //Update Chemical to include UN Code
+                        CswNbtMetaDataNodeType ChemicalNt = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Chemical" );
+                        if( null != ChemicalNt )
+                        {
+                            CswNbtMetaDataNodeTypeProp ChemUNCodeNtp = _createNewProp( ChemicalNt, "UN Code", CswNbtMetaDataFieldType.NbtFieldType.Relationship, false );
+                            ChemUNCodeNtp.SetFK( NbtViewRelatedIdType.NodeTypeId.ToString(), UNCodeNt.NodeTypeId );
                         }
                     }
-                    CswNbtNode LQNoNode = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( LQNoNt.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode );
-                    LQNoNode.Properties[LQNoLQNoNtp].AsText.Text = "1 Metric Ton";
-                    LQNoNode.Properties[LQNoLimitNtp].AsQuantity.Quantity = 1000;
-                    LQNoNode.Properties[LQNoLimitNtp].AsQuantity.UnitId = kgNodeId;
-                    LQNoNode.IsDemo = true;
-                    LQNoNode.postChanges( false );
-
-                    CswNbtNode UNCodeNode = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( UNCodeNt.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode );
-                    UNCodeNode.Properties[UNCodeLQNoNtp].AsRelationship.RelatedNodeId = LQNoNode.NodeId;
-                    UNCodeNode.Properties[UNCodeUNCodeNtp].AsText.Text = "US ITH";
-                    UNCodeNode.IsDemo = true;
-                    UNCodeNode.postChanges( false );
-                }
-
-                //Create demo Views
-                CswNbtView UNCodeView = _CswNbtSchemaModTrnsctn.makeNewView( "UN Codes", NbtViewVisibility.Global );
-                UNCodeView.Category = "MLM (demo)";
-                UNCodeView.IsDemo = true;
-                UNCodeView.ViewMode = NbtViewRenderingMode.Tree;
-                UNCodeView.AddViewRelationship( UNCodeNt, true );
-                UNCodeView.save();
-
-                CswNbtView LQNoView = _CswNbtSchemaModTrnsctn.makeNewView( "UN Codes by LQNo", NbtViewVisibility.Global );
-                LQNoView.Category = "MLM (demo)";
-                LQNoView.IsDemo = true;
-                LQNoView.ViewMode = NbtViewRenderingMode.Tree;
-                CswNbtViewRelationship LQNoRelationship = LQNoView.AddViewRelationship( LQNoNt, true );
-                LQNoView.AddViewRelationship( LQNoRelationship, NbtViewPropOwnerType.Second, UNCodeLQNoNtp, false );
-                LQNoView.save();
-
-                //Update Chemical to include UN Code
-                CswNbtMetaDataNodeType ChemicalNt = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Chemical" );
-                if( null != ChemicalNt )
-                {
-                    CswNbtMetaDataNodeTypeProp ChemUNCodeNtp = _createNewProp( ChemicalNt, "UN Code", CswNbtMetaDataFieldType.NbtFieldType.Relationship, false );
-                    ChemUNCodeNtp.SetFK( NbtViewRelatedIdType.NodeTypeId.ToString(), UNCodeNt.NodeTypeId );
                 }
             }
         }
