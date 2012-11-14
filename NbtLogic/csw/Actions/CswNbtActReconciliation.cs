@@ -94,9 +94,9 @@ namespace ChemSW.Nbt.Actions
                         {
                             ContainerData.ReconciliationStatuses ContainerStatus = new ContainerData.ReconciliationStatuses();
                             ContainersTree.goToNthChild( j );
-                            CswNbtObjClassContainer ContainerNode = ContainersTree.getNodeForCurrentPosition();
+                            CswNbtNode ContainerNode = ContainersTree.getNodeForCurrentPosition();
                             ContainerStatus.ContainerId = ContainerNode.NodeId.ToString();
-                            ContainerStatus.ContainerBarcode = ContainerNode.Barcode.Barcode;
+                            ContainerStatus.ContainerBarcode = ContainerNode.Properties[CswNbtObjClassContainer.PropertyName.Barcode].AsBarcode.Barcode;
                             if( ContainersTree.getChildNodeCount() > 0 )//ContainerLocation Nodes
                             {
                                 ContainersTree.goToNthChild( 0 );
