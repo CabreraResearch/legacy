@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using ChemSW.Core;
+using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
@@ -123,7 +124,20 @@ namespace ChemSW.Nbt.Actions
         {
             if( null == ContainersTree )
             {
-                ContainersTree = _CswNbtResources.Trees.getTreeFromView( _getReconciliationView( Request ), false, true, false );
+                try//TODO - remove try/catch block when Case 28194 is resolved
+                {
+                    ContainersTree = _CswNbtResources.Trees.getTreeFromView( _getReconciliationView( Request ), false, true, false );
+                }
+                catch( Exception ex )
+                {
+                    String ErrorMessage = "Treeloader error occured.";
+                    if( ex.StackTrace.Contains( "ORA-01795" ) )
+                    {
+                        ErrorMessage += " Too many child locations.";
+                    }
+                    throw new CswDniException( ErrorType.Error, "Unable to get Reconciliation data.", ErrorMessage, ex );
+                }
+                
             }
         }
 
