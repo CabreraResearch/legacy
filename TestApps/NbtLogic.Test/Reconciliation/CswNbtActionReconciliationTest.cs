@@ -263,14 +263,14 @@ namespace ChemSw.Nbt.Test
 
         #endregion
 
-        #region getContainerData
+        #region getReconciliationData
 
         /// <summary>
         /// Given a location that has more than one Container with ContainerLocations in the given timeframe with a Correct status,
         /// assert that both expected ContainerStatus and ContainerStatistics data is returned.
         /// </summary>
         [TestMethod]
-        public void getContainerDataTest()
+        public void getReconciliationDataTest()
         {
             CswPrimaryKey LocationId = TestData.Nodes.createLocationNode().NodeId;
             TestData.Nodes.createContainerNode( LocationId: LocationId );
@@ -282,7 +282,7 @@ namespace ChemSw.Nbt.Test
                 LocationId = LocationId.ToString(),
                 IncludeChildLocations = false
             };
-            ContainerData Data = ReconciliationAction.getContainerData( Request );
+            ContainerData Data = ReconciliationAction.getReconciliationData( Request );
             Assert.AreEqual( 2, Data.ContainerStatuses.Count );
             foreach( ContainerData.ReconciliationStatuses Stat in Data.ContainerStatuses )
             {
