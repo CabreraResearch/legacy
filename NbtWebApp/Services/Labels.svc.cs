@@ -24,7 +24,7 @@ namespace NbtWebApp
         /// 
         /// </summary>
         [OperationContract]
-        [WebGet( UriTemplate = "type/{TargetTypeId}", ResponseFormat = WebMessageFormat.Json )]
+        [WebGet( UriTemplate = "type/{TargetTypeId}" )]
 
         [Description( "Get all Print labels matching this Target Type" )]
         public CswNbtLabelList list( string TargetTypeId )
@@ -47,7 +47,7 @@ namespace NbtWebApp
         /// 
         /// </summary>
         [OperationContract]
-        [WebGet( UriTemplate = "label/{PrintLabelId}/target/{TargetId}", ResponseFormat = WebMessageFormat.Json )]
+        [WebGet( UriTemplate = "label/{PrintLabelId}/target/{TargetId}" )]
 
         [Description( "Get a collection of EPL texts for the selected Targets" )]
         public CswNbtLabelEpl get( string PrintLabelId, string TargetId )

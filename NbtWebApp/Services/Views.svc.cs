@@ -23,7 +23,7 @@ namespace NbtWebApp
         /// 
         /// </summary>
         [OperationContract]
-        [WebInvoke( Method = "POST", ResponseFormat = WebMessageFormat.Json )]
+        [WebInvoke( Method = "POST" )]
         [FaultContract( typeof( FaultException ) )]
         [Description( "Generate a View Select" )]
         public CswNbtViewReturn ViewSelect( ViewSelect.Request Request )
