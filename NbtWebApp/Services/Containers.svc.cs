@@ -10,7 +10,7 @@ using ChemSW.WebSvc;
 namespace NbtWebApp
 {
     /// <summary>
-    /// WCF Web Methods for Contianer operations
+    /// WCF Web Methods for Container operations
     /// </summary>
     [ServiceBehavior( IncludeExceptionDetailInFaults = true )]
     [ServiceContract( Namespace = "NbtWebApp" )]
