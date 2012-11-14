@@ -45,7 +45,9 @@
                 data: {},     // { items: [ { col1: val, col2: val ... }, ... ]
                 pageSize: '',  // overridden by webservice
 
-                actionDataIndex: 'action'
+                actionDataIndex: 'action',
+                
+                topToolbar: []
             };
             var cswPublic = {};
 
@@ -297,6 +299,8 @@
                             cswPrivate.onEdit(rows);
                         } // edit handler
                     });
+                    cswPrivate.topToolbar.push(cswPrivate.editAllButton);
+
                     cswPrivate.deleteAllButton = window.Ext.create('Ext.button.Button', {
                         id: cswPrivate.ID + 'delete',
                         xtype: 'button',
@@ -311,12 +315,16 @@
                             cswPrivate.onDelete(rows);
                         } // delete handler
                     });
+                    cswPrivate.topToolbar.push(cswPrivate.deleteAllButton);
+                } // if(cswPrivate.showCheckboxes && cswPrivate.showActionColumn)
+                
+                if(cswPrivate.topToolbar.length > 0) {
                     gridopts.dockedItems.push({
                         xtype: 'toolbar',
                         dock: 'top',
-                        items: [cswPrivate.editAllButton, cswPrivate.deleteAllButton]
+                        items: cswPrivate.topToolbar
                     }); // panelopts.dockedItems
-                } // if(cswPrivate.showCheckboxes && cswPrivate.showActionColumn)
+                }
 
                 var grid;
                 if (Csw.isElementInDom(cswParent.getId())) {

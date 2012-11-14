@@ -30,10 +30,6 @@ namespace ChemSW.Nbt
             {
                 ret = new CswNbtModuleRuleIMCS( CswNbtResources );
             }
-            else if( CswNbtModuleName.Mobile == ModuleName )
-            {
-                ret = new CswNbtModuleRuleMobile( CswNbtResources );
-            }
             else if( CswNbtModuleName.MLM == ModuleName )
             {
                 ret = new CswNbtModuleRuleMLM( CswNbtResources );

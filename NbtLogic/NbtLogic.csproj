@@ -100,6 +100,7 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="csw\Actions\CswNbtActCreateMaterial.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassRequestContainerDispense.cs" />
     <Compile Include="csw\Batch\CswNbtBatchOpMolFingerprints.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassContainerGroup.cs" />
@@ -390,7 +391,6 @@
     <Compile Include="csw\Modules\CswNbtModuleRuleFactory.cs" />
     <Compile Include="csw\Modules\CswNbtModuleRuleIMCS.cs" />
     <Compile Include="csw\Modules\CswNbtModuleRuleMLM.cs" />
-    <Compile Include="csw\Modules\CswNbtModuleRuleMobile.cs" />
     <Compile Include="csw\Modules\CswNbtModuleRuleNBTManager.cs" />
     <Compile Include="csw\Modules\CswNbtModuleRuleSI.cs" />
     <Compile Include="csw\Modules\CswNbtModuleRuleSTIS.cs" />
@@ -562,9 +562,9 @@
     <Content Include="csw\Schema\scripts\past\01S\CswUpdateSchema_01S_Case27858.cs" />
     <Content Include="csw\Schema\scripts\past\01S\CswUpdateSchema_01S_Case27904.cs" />
     <Content Include="csw\Schema\scripts\past\01S\CswUpdateSchema_01S_DevModule_Case27759.cs" />
-    <Compile Include="csw\Schema\scripts\past\01S\CswUpdateSchema_01S_FieldTypes_Case25352.cs" />
-    <Compile Include="csw\Schema\scripts\past\01S\CswUpdateSchema_01S_MobileModule_Case27859.cs" />
-    <Compile Include="csw\Schema\scripts\past\01S\CswUpdateSchema_01S_PrintLabel_Case21701.cs" />
+    <Content Include="csw\Schema\scripts\past\01S\CswUpdateSchema_01S_FieldTypes_Case25352.cs" />
+    <Content Include="csw\Schema\scripts\past\01S\CswUpdateSchema_01S_MobileModule_Case27859.cs" />
+    <Content Include="csw\Schema\scripts\past\01S\CswUpdateSchema_01S_PrintLabel_Case21701.cs" />
     <Compile Include="csw\Schema\scripts\prod\01T\CswUpdateSchema_01T_Case27606.cs" />
     <Compile Include="csw\Schema\scripts\prod\01T\CswUpdateSchema_01T_Case27694.cs" />
     <Compile Include="csw\Schema\scripts\prod\01T\CswUpdateSchema_01T_Case27740.cs" />

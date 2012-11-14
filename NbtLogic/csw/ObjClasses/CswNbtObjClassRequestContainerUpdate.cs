@@ -22,12 +22,6 @@ namespace ChemSW.Nbt.ObjClasses
             /// Relationship(<see cref="CswNbtNodePropRelationship"/> ) to the Container (<see cref="CswNbtObjClassContainer"/>) from which the Request Item will be Fulfilled.
             /// </summary>
             public const string Container = "Container";
-
-            /// <summary>
-            /// Relationship(<see cref="CswNbtNodePropPropertyReference"/> ) to the Material (<see cref="CswNbtObjClassMaterial"/>) from which the Request Item will be Fulfilled.
-            /// </summary>
-            public const string Material = "Material";
-
         }
 
         public new sealed class Types : CswNbtPropertySetRequestItem.Types
@@ -44,7 +38,7 @@ namespace ChemSW.Nbt.ObjClasses
 
             public static readonly CswCommaDelimitedString Options = new CswCommaDelimitedString
                 {
-                    Pending, Submitted, Disposed, Moved, Completed, Cancelled
+                    Pending, Submitted, Completed, Cancelled
                 };
         }
 
@@ -55,11 +49,11 @@ namespace ChemSW.Nbt.ObjClasses
 
             public static readonly CswCommaDelimitedString DisposeOptions = new CswCommaDelimitedString
                 {
-                    Dispose, Complete, Cancel
+                    Dispose, Cancel
                 };
             public static readonly CswCommaDelimitedString MoveOptions = new CswCommaDelimitedString
                 {
-                    Move, Complete, Cancel
+                    Move, Cancel
                 };
         }
 
@@ -128,6 +122,24 @@ namespace ChemSW.Nbt.ObjClasses
 
         }
 
+        public override string setRequestDescription()
+        {
+            string Ret = "";
+
+            switch( Type.Value )
+            {
+                case Types.Dispose:
+                    Ret += "Dispose " + Container.Gestalt + " of " + Material.Gestalt;
+                    break;
+
+                case Types.Move:
+                    Ret += "Move " + Container.Gestalt + " of " + Material.Gestalt + " to " + Location.Gestalt;
+                    break;
+            }
+
+            return Ret;
+        }
+
         public override void beforePropertySetWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
             /* Container-specific logic */
@@ -183,7 +195,6 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void afterPropertySetPopulateProps()
         {
-            Type.SetOnPropChange( onTypePropChange );
             Container.SetOnPropChange( onContainerPropChange );
         }
 
@@ -206,6 +217,7 @@ namespace ChemSW.Nbt.ObjClasses
                                 {
                                     NodeAsContainer.Disposed.Checked = Tristate.True;
                                     NodeAsContainer.postChanges( true );
+                                    Status.Value = Statuses.Completed;
                                 }
                                 ButtonData.Action = NbtButtonAction.refresh;
                                 break;
@@ -249,10 +261,10 @@ namespace ChemSW.Nbt.ObjClasses
                     setNextStatus( Statuses.Completed );
                     break;
                 case FulfillMenu.Dispose:
-                    setNextStatus( Statuses.Disposed );
+                    setNextStatus( Statuses.Completed );
                     break;
                 case FulfillMenu.Move:
-                    setNextStatus( Statuses.Moved );
+                    setNextStatus( Statuses.Completed );
                     break;
             }
         }
@@ -263,13 +275,6 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 case Statuses.Submitted:
                     if( StatusVal == Statuses.Disposed || StatusVal == Statuses.Moved || StatusVal == Statuses.Cancelled || StatusVal == Statuses.Completed )
-                    {
-                        Status.Value = StatusVal;
-                    }
-                    break;
-                case Statuses.Moved:
-                case Statuses.Disposed:
-                    if( StatusVal == Statuses.Cancelled || StatusVal == Statuses.Completed )
                     {
                         Status.Value = StatusVal;
                     }
@@ -320,8 +325,6 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
-        public CswNbtNodePropPropertyReference Material { get { return _CswNbtNode.Properties[PropertyName.Material]; } }
-
         public CswNbtNodePropRelationship Container
         {
             get { return _CswNbtNode.Properties[PropertyName.Container]; }
@@ -331,6 +334,14 @@ namespace ChemSW.Nbt.ObjClasses
             if( null != Container.RelatedNodeId )
             {
                 Container.setReadOnly( value: true, SaveToDb: true );
+                if( false == CswTools.IsPrimaryKey( Material.RelatedNodeId ) )
+                {
+                    CswNbtObjClassContainer ThisContainer = _CswNbtResources.Nodes[Container.RelatedNodeId];
+                    if( null != ThisContainer )
+                    {
+                        Material.RelatedNodeId = ThisContainer.Material.RelatedNodeId;
+                    }
+                }
             }
         }
 

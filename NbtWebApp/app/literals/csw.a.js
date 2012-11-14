@@ -38,11 +38,7 @@
                     attr = Csw.makeAttr();
                 var $link;
 
-                if (options) {
-                    Csw.extend(cswPrivate, options);
-                }
-
-                cswPrivate.ID = Csw.string(cswPrivate.ID, cswPrivate.name);
+                Csw.extend(cswPrivate, options);
 
                 html += '<a ';
                 attr.add('id', cswPrivate.ID);

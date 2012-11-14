@@ -140,7 +140,9 @@ namespace ChemSW.Nbt.PropTypes
                 string StringVal = string.Empty;
                 if( Double.IsNaN( value ) )
                 {
-                    if( Required && false == QuantityOptional )
+                    if( Required &&
+                        false == QuantityOptional &&
+                        false == _AllowSetNull )
                     {
                         throw new CswDniException( ErrorType.Warning, "Cannot save a Quantity without a value if the Property is required.", "Attempted to save the Quantity of a Quantity with an invalid number." );
                     }
@@ -169,6 +171,18 @@ namespace ChemSW.Nbt.PropTypes
                     _SynchGestalt();
                 }
             }
+        }
+
+        private bool _AllowSetNull = false;
+        /// <summary>
+        /// Empty the subfield data on this Prop
+        /// </summary>
+        public void clearQuantity( bool ForceClear = false )
+        {
+            _AllowSetNull = ForceClear;
+            CachedUnitName = "";
+            Quantity = double.NaN;
+            UnitId = null;
         }
 
         public CswPrimaryKey UnitId
@@ -201,7 +215,7 @@ namespace ChemSW.Nbt.PropTypes
                 }
                 else
                 {
-                    if( Required )
+                    if( Required && false == _AllowSetNull )
                     {
                         throw new CswDniException( ErrorType.Warning, "Cannot save a Quantity without a Unit if the Property is required.", "Attempted to save a Quantity with an invalid UnitId." );
                     }

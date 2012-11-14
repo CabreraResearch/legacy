@@ -39,11 +39,7 @@
                     
                     var $applet;
 
-                    if (options) {
-                        $.extend(cswPrivate, options);
-                    }
-
-                    cswPrivate.ID = Csw.string(cswPrivate.ID, cswPrivate.name);
+                    Csw.extend(cswPrivate, options);
 
                     html += '<applet ';
                     attr.add('id', cswPrivate.ID);

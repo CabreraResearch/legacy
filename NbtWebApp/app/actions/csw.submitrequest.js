@@ -21,30 +21,157 @@
             if (Csw.isNullOrEmpty(cswParent)) {
                 Csw.error.throwException('Cannot create a Submit Request action without a valid Csw Parent object.', 'Csw.actions.submitRequest', 'csw.submitrequest.js', 14);
             }
-            Csw.tryExec(function () {
-                if (options) {
-                    Csw.extend(cswPrivate, options, true);
-                }
-                var submitRequest = function () {
-                    Csw.ajax.post({
-                        urlMethod: 'submitRequest',
-                        data: {
-                            RequestId: cswPrivate.cartnodeid,
-                            RequestName: Csw.string(cswPrivate.saveRequestTxt.val())
-                        },
-                        success: function (json) {
-                            if (json.succeeded) {
-                                Csw.tryExec(cswPrivate.onSubmit);
-                            }
-                        }
-                    });
-                };
+            (function _preCtor() {
+                Csw.extend(cswPrivate, options, true);
 
                 cswParent.empty();
+            }());
+
+            cswPrivate.makeRequestCreateMaterial = function() {
+                Csw.ajaxWcf.get({
+                    urlMethod: 'Requests/findMaterialCreate',
+                    success: function(data) {
+                        if(data.NodeTypeId) {
+                            $.CswDialog('AddNodeDialog', {
+                                text: 'New Create Material Request',
+                                nodetypeid: data.NodeTypeId,
+                                onAddNode: function() {
+                                    cswPublic.grid.reload();
+                                    Csw.publish(Csw.enums.events.main.refreshHeader);
+                                }
+                            });
+                        }
+                    }
+                });
+            };
+
+            cswPrivate.submitRequest = function () {
+                Csw.ajax.post({
+                    urlMethod: 'submitRequest',
+                    data: {
+                        RequestId: cswPrivate.cartnodeid,
+                        RequestName: Csw.string(cswPrivate.saveRequestTxt.val())
+                    },
+                    success: function (json) {
+                        if (json.succeeded) {
+                            Csw.tryExec(cswPrivate.onSubmit);
+                        }
+                    }
+                });
+            };
+
+            cswPrivate.initGrid = function (opts) {
+
+                // This really ought to be a CswNodeGrid
+                opts = opts || {
+                    urlMethod: 'getCurrentRequest',
+                    data: {},
+                    onSuccess: null
+                };
+
+                var gridId = cswPrivate.name + '_srgrid';
+                cswPublic.grid = cswPublic.gridParent.grid({
+                    name: gridId,
+                    storeId: gridId + '_store',
+                    stateId: gridId,
+                    title: 'Your Cart',
+                    usePaging: true,
+                    height: 180,
+
+                    ajax: {
+                        urlMethod: opts.urlMethod,
+                        data: opts.data
+                    },
+
+                    showCheckboxes: false,
+                    showActionColumn: true,
+                    canSelectRow: false,
+
+                    onLoad: function (grid, json) {
+                        cswPrivate.cartnodeid = json.cartnodeid;
+                        cswPrivate.cartviewid = json.cartviewid;
+                        Csw.tryExec(opts.onSuccess);
+                    },
+                    onEdit: function (rows) {
+                        // this works for both Multi-edit and regular
+                        var nodekeys = Csw.delimitedString(),
+                            nodeids = Csw.delimitedString(),
+                            nodenames = [],
+                            currentNodeId, currentNodeKey;
+
+
+                        Csw.each(rows, function (row) {
+                            currentNodeId = currentNodeId || row.nodeid;
+                            currentNodeKey = currentNodeKey || row.nodekey;
+                            nodekeys.add(row.nodekey);
+                            nodeids.add(row.nodeid);
+                            nodenames.push(row.nodename);
+                        });
+
+                        $.CswDialog('EditNodeDialog', {
+                            currentNodeId: currentNodeId,
+                            currentNodeKey: currentNodeKey,
+                            selectedNodeIds: nodeids,
+                            selectedNodeKeys: nodekeys,
+                            nodenames: nodenames,
+                            Multi: (nodeids.length > 1),
+                            title: 'Request',
+                            onEditNode: function () {
+                                cswPrivate.initGrid(); //Case 27619--don't pass the function by reference, because we want to control the parameters with which it is called
+                            }
+                        });
+                    }, // onEdit
+                    onDelete: function (rows) {
+                        // this works for both Multi-edit and regular
+                        var cswnbtnodekeys = [],
+                            nodeids = [],
+                            nodenames = [];
+
+                        Csw.each(rows, function (row) {
+                            cswnbtnodekeys.push(row.nodekey);
+                            nodeids.push(row.nodeid);
+                            nodenames.push(row.nodename);
+                        });
+
+                        $.CswDialog('DeleteNodeDialog', {
+                            nodeids: nodeids,
+                            nodepks: nodeids,
+                            nodekeys: cswnbtnodekeys,
+                            nodenames: nodenames,
+                            onDeleteNode: Csw.method(function () {
+                                Csw.publish(Csw.enums.events.main.refreshHeader);
+                                cswPrivate.initGrid();
+                            }),
+                            Multi: (nodeids.length > 1),
+                            publishDeleteEvent: false
+                        });
+                    }, // onDelete
+                    onSelect: null, // function(row)
+                    onDeselect: null, // function(row)
+
+                    topToolbar: [cswPrivate.requestCreateMaterial]
+                });
+            }; // initGrid()
+
+            cswPrivate.copyRequest = function () {
+                cswPrivate.initGrid({
+                    urlMethod: 'copyRequest',
+                    data: {
+                        CopyFromRequestId: cswPrivate.copyFromNodeId,
+                        CopyToRequestId: cswPrivate.cartnodeid
+                    },
+                    onSuccess: function () {
+                        Csw.publish(Csw.enums.events.main.refreshHeader);
+                    }
+                });
+            }; // copyRequest()    
+
+            (function _postCtor() {
+
                 cswPrivate.action = Csw.layouts.action(cswParent, {
                     Title: 'Submit Request',
                     FinishText: 'Place Request',
-                    onFinish: submitRequest,
+                    onFinish: cswPrivate.submitRequest,
                     onCancel: cswPrivate.onCancel
                 });
 
@@ -57,6 +184,17 @@
                     .css('text-align', 'left')
                     .span({ text: 'Edit any of the Request Items in your cart. When you are finished, click "Place Request" to submit your cart.' });
 
+                //Case 27871: a Request Material Create button has to go _somewhere_ ...
+                cswPrivate.requestCreateMaterial = window.Ext.create('Ext.button.Button', {
+                    id: cswPrivate.ID + 'create',
+                    xtype: 'button',
+                    text: 'Request Create Material',
+                    icon: 'Images/newicons/16/cart.png',
+                    disabled: false,
+                    handler: function () {
+                        cswPrivate.makeRequestCreateMaterial();
+                    } // delete handler
+                });
 
                 cswPrivate.actionTbl.cell(3, 1).br({ number: 2 });
                 cswPrivate.gridId = cswPrivate.name + '_csw_requestGrid_outer';
@@ -64,111 +202,7 @@
                     name: cswPrivate.gridId
                 }); //, align: 'center' });
 
-                cswPrivate.initGrid = function (opts) {
-
-                    // This really ought to be a CswNodeGrid
-                    opts = opts || {
-                        urlMethod: 'getCurrentRequest',
-                        data: {},
-                        onSuccess: null 
-                    };
-
-                    var gridId = cswPrivate.name + '_srgrid';
-                    cswPublic.grid = cswPublic.gridParent.grid({
-                        name: gridId,
-                        storeId: gridId + '_store',
-                        stateId: gridId,
-                        title: 'Your Cart',
-                        usePaging: true,
-                        height: 180,
-
-                        ajax: {
-                            urlMethod: opts.urlMethod,
-                            data: opts.data
-                        },
-
-                        showCheckboxes: false,
-                        showActionColumn: true,
-                        canSelectRow: false,
-
-                        onLoad: function (grid, json) {
-                            cswPrivate.cartnodeid = json.cartnodeid;
-                            cswPrivate.cartviewid = json.cartviewid;
-                            Csw.tryExec(opts.onSuccess);
-                        },
-                        onEdit: function (rows) {
-                            // this works for both Multi-edit and regular
-                            var nodekeys = Csw.delimitedString(),
-                                nodeids = Csw.delimitedString(),
-                                nodenames = [],
-                                currentNodeId, currentNodeKey;
-                               
-
-                            Csw.each(rows, function (row) {
-                                currentNodeId = currentNodeId || row.nodeid;
-                                currentNodeKey = currentNodeKey || row.nodekey;
-                                nodekeys.add(row.nodekey);
-                                nodeids.add(row.nodeid);
-                                nodenames.push(row.nodename);
-                            });
-
-                            $.CswDialog('EditNodeDialog', {
-                                currentNodeId: currentNodeId,
-                                currentNodeKey: currentNodeKey,
-                                selectedNodeIds: nodeids,
-                                selectedNodeKeys: nodekeys,
-                                nodenames: nodenames,
-                                Multi: (nodeids.length > 1),
-                                title: 'Request',
-                                onEditNode: function () {
-                                    cswPrivate.initGrid(); //Case 27619--don't pass the function by reference, because we want to control the parameters with which it is called
-                                }
-                            });
-                        }, // onEdit
-                        onDelete: function (rows) {
-                            // this works for both Multi-edit and regular
-                            var cswnbtnodekeys = [],
-                                nodeids = [],
-                                nodenames = [];
-
-                            Csw.each(rows, function (row) {
-                                cswnbtnodekeys.push(row.nodekey);
-                                nodeids.push(row.nodeid);
-                                nodenames.push(row.nodename);
-                            });
-
-                            $.CswDialog('DeleteNodeDialog', {
-                                nodeids: nodeids,
-                                nodepks: nodeids,
-                                nodekeys: cswnbtnodekeys,
-                                nodenames: nodenames,
-                                onDeleteNode: Csw.method(function () {
-                                    Csw.publish(Csw.enums.events.main.refreshHeader);
-                                    cswPrivate.initGrid();
-                                }),
-                                Multi: (nodeids.length > 1),
-                                publishDeleteEvent: false
-                            });
-                        }, // onDelete
-                        onSelect: null, // function(row)
-                        onDeselect: null // function(row)
-                    });
-                }; // initGrid()
-
                 cswPrivate.initGrid();
-
-                cswPrivate.copyRequest = function () {
-                    cswPrivate.initGrid({
-                        urlMethod: 'copyRequest',
-                        data: {
-                            CopyFromRequestId: cswPrivate.copyFromNodeId,
-                            CopyToRequestId: cswPrivate.cartnodeid
-                        },
-                        onSuccess: function() {
-                            Csw.publish(Csw.enums.events.main.refreshHeader);
-                        }
-                    });
-                }; // copyRequest()
 
                 cswPrivate.historyTbl = cswPrivate.actionTbl.cell(5, 1).table({ align: 'left', cellvalign: 'middle' });
                 Csw.ajax.post({
@@ -219,7 +253,8 @@
                     })
                 });
 
-            });
+            }());
+            
             return cswPublic;
         });
 }());

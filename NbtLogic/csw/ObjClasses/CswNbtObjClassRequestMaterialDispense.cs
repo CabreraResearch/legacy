@@ -22,19 +22,54 @@ namespace ChemSW.Nbt.ObjClasses
         public new sealed class PropertyName : CswNbtPropertySetRequestItem.PropertyName
         {
             /// <summary>
+            /// Batch (<see cref="CswNbtNodePropRelationship"/>)
+            /// </summary>
+            public const string Batch = "Batch";
+
+            /// <summary>
             /// For "Request By Size" items, the number(<see cref="CswNbtNodePropNumber"/>) of sizes(<see cref="Size"/>) to request. 
             /// </summary>
             public const string Count = "Count";
 
             /// <summary>
-            /// Relationship(<see cref="CswNbtNodePropRelationship"/> ) to the Material (<see cref="CswNbtObjClassMaterial"/>) from which the Request Item will be Fulfilled.
+            /// True if Goods received (<see cref="CswNbtNodePropLogical"/>)
             /// </summary>
-            public const string Material = "Material";
+            public const string GoodsReceived = "Goods Received";
+
+            /// <summary>
+            /// Is Batch (<see cref="CswNbtNodePropLogical"/>)
+            /// </summary>
+            public const string IsBatch = "Is Batch";
+
+            /// <summary>
+            /// Level (<see cref="CswNbtNodePropRelationship"/>)
+            /// </summary>
+            public const string Level = "Level";
+
+            /// <summary>
+            /// Next date to reorder(<see cref="CswNbtNodePropDateTime"/> )
+            /// </summary>
+            public const string NextReorderDate = "Next Reorder Date";
 
             /// <summary>
             /// For "Request By Bulk" items, the Quantity(<see cref="CswNbtNodePropQuantity"/>) to request. 
             /// </summary>
             public const string Quantity = "Quantity";
+
+            /// <summary>
+            /// Receipt Lot (<see cref="CswNbtNodePropRelationship"/>) to dispense from. 
+            /// </summary>
+            public const string ReceiptLotToDispense = "Receipt Lot to Dispense";
+
+            /// <summary>
+            /// Link grid of Receipt Lots received (<see cref="CswNbtNodePropGrid"/>) for this request. 
+            /// </summary>
+            public const string ReceiptLotsReceived = "Receipt Lots Received";
+
+            /// <summary>
+            /// The frequency to reorder this item(<see cref="CswNbtNodePropTimeInterval"/>) to request. 
+            /// </summary>
+            public const string ReorderFrequency = "Reorder Frequency";
 
             /// <summary>
             /// For "Request By Size" items, a relationship(<see cref="CswNbtNodePropRelationship"/>) to the Size(<see cref="CswNbtObjClassSize"/>) to request. 
@@ -47,6 +82,15 @@ namespace ChemSW.Nbt.ObjClasses
             /// </summary>
             public const string TotalDispensed = "Total Dispensed";
 
+            public static CswCommaDelimitedString MLMCmgTabProps = new CswCommaDelimitedString
+            {
+                Level, IsBatch, Batch
+            };
+
+            public static CswCommaDelimitedString MLMReceiveTabProps = new CswCommaDelimitedString
+            {
+                ReceiptLotsReceived, GoodsReceived, ReceiptLotToDispense
+            };
         }
 
         /// <summary>
@@ -81,7 +125,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             public const string Order = "Order";
             public const string Receive = "Receive";
-            public const string Dispense = "Dispense this Container";
+            public const string Dispense = "Dispense from Container";
 
             public static readonly CswCommaDelimitedString Options = new CswCommaDelimitedString
                 {
@@ -150,6 +194,22 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
+        public override string setRequestDescription()
+        {
+            string Ret = "Dispense ";
+            switch( Type.Value )
+            {
+                case Types.Bulk:
+                    Ret += Quantity.Gestalt;
+                    break;
+                case Types.Size:
+                    Ret += Count.Gestalt + " " + Size.Gestalt;
+                    break;
+            }
+            Ret += " of " + Material.Gestalt;
+            return Ret;
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -191,7 +251,6 @@ namespace ChemSW.Nbt.ObjClasses
         {
             Quantity.SetOnPropChange( onQuantityPropChange );
             TotalDispensed.SetOnPropChange( onTotalDispensedPropChange );
-            Type.SetOnPropChange( onTypePropChange );
             Material.SetOnPropChange( onMaterialPropChange );
         }//afterPopulateProps()
 
@@ -362,35 +421,35 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
-        #endregion
-
-        #region Object class specific properties
-
         public override void onTypePropChange( CswNbtNodeProp Prop )
         {
             switch( Type.Value )
             {
                 case Types.Size:
-                    Quantity.CachedUnitName = "";
-                    Quantity.UnitId = null;
-                    Quantity.Quantity = Double.NaN;
+                    Quantity.clearQuantity( ForceClear: true );
                     break;
                 case Types.Bulk:
-                    Size.CachedNodeName = "";
-                    Size.RelatedNodeId = null;
+                    Size.clearRelationship();
                     Count.Value = Double.NaN;
                     break;
             }
 
             /* Spec W1010: Quantity applies only to Request by Bulk and Dispense */
-            bool QuantityHidden = Type.Value == Types.Size;
+            bool QuantityDisabled = Type.Value == Types.Size;
 
-            Quantity.setHidden( value: false == QuantityHidden, SaveToDb: true );
-            Size.setHidden( value: QuantityHidden, SaveToDb: true );
-            Count.setHidden( value: QuantityHidden, SaveToDb: true );
+            Quantity.setHidden( value: QuantityDisabled, SaveToDb: true );
+            Size.setHidden( value: false == QuantityDisabled, SaveToDb: true );
+            Count.setHidden( value: false == QuantityDisabled, SaveToDb: true );
 
             Type.setReadOnly( value: true, SaveToDb: true );
+
+            Fulfill.MenuOptions = FulfillMenu.Options.ToString();
+            Fulfill.State = FulfillMenu.Order;
         }
+
+        #endregion
+
+        #region Object class specific properties
 
         public CswNbtNodePropQuantity Quantity
         {
@@ -411,10 +470,6 @@ namespace ChemSW.Nbt.ObjClasses
             get { return _CswNbtNode.Properties[PropertyName.Count]; }
         }
 
-        public CswNbtNodePropRelationship Material
-        {
-            get { return _CswNbtNode.Properties[PropertyName.Material]; }
-        }
         private void onMaterialPropChange( CswNbtNodeProp Prop )
         {
             if( CswTools.IsPrimaryKey( Material.RelatedNodeId ) )
@@ -447,7 +502,14 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
-
+        public CswNbtNodePropTimeInterval ReorderFrequency { get { return _CswNbtNode.Properties[PropertyName.ReorderFrequency]; } }
+        public CswNbtNodePropDateTime NextReorderDate { get { return _CswNbtNode.Properties[PropertyName.NextReorderDate]; } }
+        public CswNbtNodePropRelationship Level { get { return _CswNbtNode.Properties[PropertyName.Level]; } }
+        public CswNbtNodePropLogical IsBatch { get { return _CswNbtNode.Properties[PropertyName.IsBatch]; } }
+        public CswNbtNodePropLogical Batch { get { return _CswNbtNode.Properties[PropertyName.Batch]; } }
+        public CswNbtNodePropGrid ReceiptLotsReceived { get { return _CswNbtNode.Properties[PropertyName.ReceiptLotsReceived]; } }
+        public CswNbtNodePropLogical GoodsReceived { get { return _CswNbtNode.Properties[PropertyName.GoodsReceived]; } }
+        public CswNbtNodePropRelationship ReceiptLotToDispense { get { return _CswNbtNode.Properties[PropertyName.ReceiptLotToDispense]; } }
 
         #endregion
     }//CswNbtObjClassRequestMaterialDispense

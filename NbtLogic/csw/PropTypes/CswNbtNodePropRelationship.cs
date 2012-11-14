@@ -149,6 +149,15 @@ namespace ChemSW.Nbt.PropTypes
         }
 
         /// <summary>
+        /// Empty the subfield data on this Prop
+        /// </summary>
+        public void clearRelationship()
+        {
+            RelatedNodeId = null;
+            CachedNodeName = "";
+        }
+
+        /// <summary>
         /// Primary key of related node
         /// </summary>
         /// <remarks>
@@ -352,13 +361,9 @@ namespace ChemSW.Nbt.PropTypes
                 TargetObjectClass = _CswNbtResources.MetaData.getObjectClass( TargetId );
             }
 
-            ParentObject["allowadd"] = false;
-
-            if( TargetObjectClass != null && TargetObjectClass.CanAdd && // case 27189
-                ( TargetNodeType == null || _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Create, TargetNodeType ) ) )
-            {
-                ParentObject["allowadd"] = "true";
-            }
+            bool AllowAdd = ( TargetObjectClass != null && TargetObjectClass.CanAdd && // case 27189
+                ( TargetNodeType == null || _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Create, TargetNodeType ) ) );
+            ParentObject["allowadd"] = AllowAdd;
 
             ParentObject["relatednodeid"] = default( string );
             CswNbtNode RelatedNode = _CswNbtResources.Nodes[RelatedNodeId];
@@ -368,31 +373,36 @@ namespace ChemSW.Nbt.PropTypes
                 ParentObject["relatednodelink"] = RelatedNode.NodeLink;
             }
 
-            ParentObject["usesearch"] = false;
-            Dictionary<CswPrimaryKey, string> Options = getOptions();
-            if( Options.Count > _SearchThreshold )
-            {
-                ParentObject["usesearch"] = "true";
-            }
-            else
-            {
-                JArray JOptions = new JArray();
-                ParentObject["options"] = JOptions;
+            bool AllowEdit = _CswNbtResources.Permit.isPropWritable( CswNbtPermit.NodeTypePermission.Create, NodeTypeProp, null );
 
-                foreach( CswPrimaryKey NodePk in Options.Keys ) //.Where( NodePk => NodePk != null && NodePk.PrimaryKey != Int32.MinValue ) )
+            if( AllowEdit )
+            {
+                ParentObject["usesearch"] = false;
+                Dictionary<CswPrimaryKey, string> Options = getOptions();
+                if( Options.Count > _SearchThreshold )
                 {
-                    JObject JOption = new JObject();
-                    if( NodePk != null && NodePk.PrimaryKey != Int32.MinValue )
+                    ParentObject["usesearch"] = "true";
+                }
+                else
+                {
+                    JArray JOptions = new JArray();
+                    ParentObject["options"] = JOptions;
+
+                    foreach( CswPrimaryKey NodePk in Options.Keys ) //.Where( NodePk => NodePk != null && NodePk.PrimaryKey != Int32.MinValue ) )
                     {
-                        JOption["id"] = NodePk.ToString();
-                        JOption["value"] = Options[NodePk];
+                        JObject JOption = new JObject();
+                        if( NodePk != null && NodePk.PrimaryKey != Int32.MinValue )
+                        {
+                            JOption["id"] = NodePk.ToString();
+                            JOption["value"] = Options[NodePk];
+                        }
+                        else
+                        {
+                            JOption["id"] = "";
+                            JOption["value"] = "";
+                        }
+                        JOptions.Add( JOption );
                     }
-                    else
-                    {
-                        JOption["id"] = "";
-                        JOption["value"] = "";
-                    }
-                    JOptions.Add( JOption );
                 }
             }
         } // ToJSON()
