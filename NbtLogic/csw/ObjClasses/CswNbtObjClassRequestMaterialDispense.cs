@@ -67,6 +67,11 @@ namespace ChemSW.Nbt.ObjClasses
             public const string ReceiptLotsReceived = "Receipt Lots Received";
 
             /// <summary>
+            /// Whether or no to reorder this item
+            /// </summary>
+            public const string Reorder = "Reorder";
+
+            /// <summary>
             /// The frequency to reorder this item(<see cref="CswNbtNodePropTimeInterval"/>) to request. 
             /// </summary>
             public const string ReorderFrequency = "Reorder Frequency";
@@ -507,6 +512,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropRelationship Level { get { return _CswNbtNode.Properties[PropertyName.Level]; } }
         public CswNbtNodePropLogical IsBatch { get { return _CswNbtNode.Properties[PropertyName.IsBatch]; } }
         public CswNbtNodePropLogical Batch { get { return _CswNbtNode.Properties[PropertyName.Batch]; } }
+        public CswNbtNodePropLogical Reorder { get { return _CswNbtNode.Properties[PropertyName.Reorder]; } }
         public CswNbtNodePropGrid ReceiptLotsReceived { get { return _CswNbtNode.Properties[PropertyName.ReceiptLotsReceived]; } }
         public CswNbtNodePropLogical GoodsReceived { get { return _CswNbtNode.Properties[PropertyName.GoodsReceived]; } }
         public CswNbtNodePropRelationship ReceiptLotToDispense { get { return _CswNbtNode.Properties[PropertyName.ReceiptLotToDispense]; } }
