@@ -71,7 +71,7 @@ namespace ChemSW.Nbt.ObjClasses
                 StatusOptions ret = Parse( str );
                 return ret ?? NotScanned;
             }
-            //ContainerLocation nodes should never have a status of Unknown - this is only used in the Reconciliation wizard
+            //ContainerLocation nodes should never have a status of NotScanned - this is only used in the Reconciliation wizard
             public static readonly StatusOptions NotScanned = new StatusOptions( "Not Scanned" );
             public static readonly StatusOptions Correct = new StatusOptions( "Correct" );
             public static readonly StatusOptions Disposed = new StatusOptions( "Disposed" );
