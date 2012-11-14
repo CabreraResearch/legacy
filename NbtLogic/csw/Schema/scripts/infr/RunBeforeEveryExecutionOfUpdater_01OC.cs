@@ -1054,6 +1054,193 @@ namespace ChemSW.Nbt.Schema
             _resetBlame();
         }
 
+        private void _createaNewMaterialComponentProp( CswDeveloper Dev, Int32 CaseNo )
+        {
+            _acceptBlame( Dev, CaseNo );
+
+            CswNbtMetaDataObjectClass materialComponentOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.MaterialComponentClass );
+
+            CswNbtMetaDataObjectClassProp activeOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( materialComponentOC )
+            {
+                PropName = CswNbtObjClassMaterialComponent.PropertyName.Active,
+                FieldType = CswNbtMetaDataFieldType.NbtFieldType.Logical,
+                IsRequired = true
+            } );
+            _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( activeOCP, false );
+
+            _resetBlame();
+        }
+
+        private void _createUNCodeNodeType( CswDeveloper Dev, Int32 CaseNo )
+        {
+            CswNbtMetaDataObjectClass GenericOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.GenericClass );
+            if( null != GenericOc )
+            {
+                //LQNo NodeType
+                CswNbtMetaDataNodeType LQNoNt = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( GenericOc.ObjectClassId, "LQNo", "MLM" );
+                _CswNbtSchemaModTrnsctn.createModuleNodeTypeJunction( CswNbtModuleName.CISPro, LQNoNt.NodeTypeId );
+                CswNbtMetaDataNodeTypeProp LQNoLQNoNtp = _createNewProp( LQNoNt, "LQNo", CswNbtMetaDataFieldType.NbtFieldType.Text );
+                LQNoLQNoNtp.setIsUnique( true );
+                CswNbtMetaDataNodeTypeProp LQNoLimitNtp = _createNewProp( LQNoNt, "Limit", CswNbtMetaDataFieldType.NbtFieldType.Quantity );
+                LQNoLimitNtp.IsRequired = true;
+                CswNbtMetaDataNodeType WeightNt = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Unit (Weight)" );
+                if( null != WeightNt )
+                {
+                    LQNoLimitNtp.SetFK( NbtViewRelatedIdType.NodeTypeId.ToString(), WeightNt.NodeTypeId );
+                }
+                LQNoNt.setNameTemplateText( CswNbtMetaData.MakeTemplateEntry( "LQNo" ) );
+
+                //UNCode NodeType
+                CswNbtMetaDataNodeType UNCodeNt = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( GenericOc.ObjectClassId, "UN Code", "MLM" );
+                _CswNbtSchemaModTrnsctn.createModuleNodeTypeJunction( CswNbtModuleName.CISPro, UNCodeNt.NodeTypeId );
+                CswNbtMetaDataNodeTypeProp UNCodeUNCodeNtp = _createNewProp( UNCodeNt, "UN Code", CswNbtMetaDataFieldType.NbtFieldType.Text );
+                UNCodeUNCodeNtp.setIsUnique( true );
+                CswNbtMetaDataNodeTypeProp UNCodeLQNoNtp = _createNewProp( UNCodeNt, "LQNo", CswNbtMetaDataFieldType.NbtFieldType.Relationship, false );
+                UNCodeLQNoNtp.SetFK( NbtViewRelatedIdType.NodeTypeId.ToString(), LQNoNt.NodeTypeId );
+                UNCodeNt.setNameTemplateText( CswNbtMetaData.MakeTemplateEntry( "UN Code" ) );
+
+                //Create Demo Data
+                if( null != WeightNt )
+                {
+                    CswPrimaryKey kgNodeId = null;
+                    foreach( CswNbtObjClassUnitOfMeasure WeightNode in WeightNt.getNodes( false, false ) )
+                    {
+                        if( "kg" == WeightNode.Name.Text )
+                        {
+                            kgNodeId = WeightNode.NodeId;
+                        }
+                    }
+                    CswNbtNode LQNoNode = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( LQNoNt.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode );
+                    LQNoNode.Properties[LQNoLQNoNtp].AsText.Text = "1 Metric Ton";
+                    LQNoNode.Properties[LQNoLimitNtp].AsQuantity.Quantity = 1000;
+                    LQNoNode.Properties[LQNoLimitNtp].AsQuantity.UnitId = kgNodeId;
+                    LQNoNode.IsDemo = true;
+                    LQNoNode.postChanges( false );
+
+                    CswNbtNode UNCodeNode = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( UNCodeNt.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode );
+                    UNCodeNode.Properties[UNCodeLQNoNtp].AsRelationship.RelatedNodeId = LQNoNode.NodeId;
+                    UNCodeNode.Properties[UNCodeUNCodeNtp].AsText.Text = "US ITH";
+                    UNCodeNode.IsDemo = true;
+                    UNCodeNode.postChanges( false );
+                }
+
+                //Create demo Views
+                CswNbtView UNCodeView = _CswNbtSchemaModTrnsctn.makeNewView( "UN Codes", NbtViewVisibility.Global );
+                UNCodeView.Category = "MLM (demo)";
+                UNCodeView.IsDemo = true;
+                UNCodeView.ViewMode = NbtViewRenderingMode.Tree;
+                UNCodeView.AddViewRelationship( UNCodeNt, true );
+                UNCodeView.save();
+
+                CswNbtView LQNoView = _CswNbtSchemaModTrnsctn.makeNewView( "UN Codes by LQNo", NbtViewVisibility.Global );
+                LQNoView.Category = "MLM (demo)";
+                LQNoView.IsDemo = true;
+                LQNoView.ViewMode = NbtViewRenderingMode.Tree;
+                CswNbtViewRelationship LQNoRelationship = LQNoView.AddViewRelationship( LQNoNt, true );
+                LQNoView.AddViewRelationship( LQNoRelationship, NbtViewPropOwnerType.Second, UNCodeLQNoNtp, false );
+                LQNoView.save();
+
+                //Update Chemical to include UN Code
+                CswNbtMetaDataNodeType ChemicalNt = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Chemical" );
+                if( null != ChemicalNt )
+                {
+                    CswNbtMetaDataNodeTypeProp ChemUNCodeNtp = _createNewProp( ChemicalNt, "UN Code", CswNbtMetaDataFieldType.NbtFieldType.Relationship, false );
+                    ChemUNCodeNtp.SetFK( NbtViewRelatedIdType.NodeTypeId.ToString(), UNCodeNt.NodeTypeId );
+                }
+            }
+        }
+
+        private CswNbtMetaDataNodeTypeProp _createNewProp( CswNbtMetaDataNodeType Nodetype, string PropName, CswNbtMetaDataFieldType.NbtFieldType PropType, bool SetValOnAdd = true )
+        {
+            CswNbtMetaDataNodeTypeProp Prop = _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( Nodetype, PropType, PropName, Nodetype.getFirstNodeTypeTab().TabId );
+            if( SetValOnAdd )
+            {
+                _CswNbtSchemaModTrnsctn.MetaData.NodeTypeLayout.updatePropLayout(
+                    CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add,
+                    Nodetype.NodeTypeId,
+                    Prop.PropId,
+                    true,
+                    Nodetype.getFirstNodeTypeTab().TabId
+                    );
+            }
+            _CswNbtSchemaModTrnsctn.MetaData.NodeTypeLayout.updatePropLayout(
+                CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit,
+                Nodetype.NodeTypeId,
+                Prop.PropId,
+                true,
+                Nodetype.getFirstNodeTypeTab().TabId
+                );
+
+            return Prop;
+        }
+
+        private void _createNewMaterialProps( CswDeveloper Dev, Int32 CaseNo )
+        {
+            _acceptBlame( Dev, CaseNo );
+
+            CswNbtMetaDataObjectClass materialOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.MaterialClass );
+
+            CswNbtMetaDataObjectClassProp materialIdOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( materialOC )
+            {
+                PropName = CswNbtObjClassMaterial.PropertyName.MaterialId,
+                FieldType = CswNbtMetaDataFieldType.NbtFieldType.Sequence,
+                ServerManaged = true,
+                IsUnique = true
+            } );
+
+            CswNbtMetaDataObjectClassProp approvedOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( materialOC )
+            {
+                PropName = CswNbtObjClassMaterial.PropertyName.Approved,
+                FieldType = CswNbtMetaDataFieldType.NbtFieldType.Logical,
+                IsRequired = true
+            } );
+            _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( approvedOCP, false );
+
+            CswNbtMetaDataObjectClass vendorOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.VendorClass );
+            CswNbtMetaDataObjectClassProp vendorNameOCP = vendorOC.getObjectClassProp( CswNbtObjClassVendor.PropertyName.VendorName );
+            CswNbtView supplierView = _CswNbtSchemaModTrnsctn.makeView();
+            CswNbtViewRelationship supplierParent = supplierView.AddViewRelationship( vendorOC, true );
+            supplierView.AddViewPropertyAndFilter( supplierParent,
+                MetaDataProp: vendorNameOCP,
+                Value: "Corporate",
+                FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+
+            CswNbtMetaDataObjectClassProp supplierOCP = materialOC.getObjectClassProp( CswNbtObjClassMaterial.PropertyName.Supplier );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( supplierOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.viewxml, supplierView.ToXml().ToString() );
+
+            CswNbtMetaDataNodeType unCodeNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "UN Code" );
+            if( null != unCodeNT )
+            {
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( materialOC )
+                {
+                    PropName = CswNbtObjClassMaterial.PropertyName.UNCode,
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Relationship,
+                    IsFk = true,
+                    FkType = NbtViewRelatedIdType.NodeTypeId.ToString(),
+                    FkValue = unCodeNT.NodeTypeId
+                } );
+            }
+
+            CswNbtMetaDataObjectClass mepOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.ManufacturerEquivalentPartClass );
+            CswNbtMetaDataObjectClassProp manufacturerOCP = mepOC.getObjectClassProp( CswNbtObjClassManufacturerEquivalentPart.PropertyName.Manufacturer );
+            CswNbtMetaDataObjectClassProp materialOCP = mepOC.getObjectClassProp( CswNbtObjClassManufacturerEquivalentPart.PropertyName.Material );
+
+            CswNbtView manufacturingSitesView = _CswNbtSchemaModTrnsctn.makeNewView( CswNbtObjClassMaterial.PropertyName.ManufacturingSites, NbtViewVisibility.Property );
+            CswNbtViewRelationship parent = manufacturingSitesView.AddViewRelationship( materialOC, true );
+            CswNbtViewRelationship parent2 = manufacturingSitesView.AddViewRelationship( parent, NbtViewPropOwnerType.Second, materialOCP, false );
+            manufacturingSitesView.AddViewProperty( parent2, manufacturerOCP );
+            manufacturingSitesView.SetViewMode( NbtViewRenderingMode.Grid );
+            manufacturingSitesView.save();
+
+            CswNbtMetaDataObjectClassProp manufacturingSitesOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( materialOC )
+            {
+                PropName = CswNbtObjClassMaterial.PropertyName.ManufacturingSites,
+                FieldType = CswNbtMetaDataFieldType.NbtFieldType.Grid
+            } );
+
+            _resetBlame();
+        }
+
         #endregion Ursula Methods
 
 
@@ -1088,6 +1275,10 @@ namespace ChemSW.Nbt.Schema
 
             _makeContainerGroup();
             _newContainerProperties27866();
+
+            _createaNewMaterialComponentProp( CswDeveloper.MB, 27864 );
+            _createUNCodeNodeType( CswDeveloper.MB, 27872 );
+            _createNewMaterialProps( CswDeveloper.MB, 27864 );
 
             #endregion URSULA
 

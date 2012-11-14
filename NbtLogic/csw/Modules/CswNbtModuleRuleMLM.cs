@@ -42,6 +42,20 @@ namespace ChemSW.Nbt
                 CswNbtMetaDataNodeTypeProp reservedForNTP = containerNT.getNodeTypePropByObjectClassProp( CswNbtObjClassContainer.PropertyName.ReservedFor );
                 reservedForNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, false, TabId: cmgTab.TabId );
             }
+
+            //Case 27864 on enable show Material props...
+            //   Manufacturing Sites
+            //   UN Code
+            CswNbtMetaDataObjectClass materialOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.MaterialClass );
+            foreach( CswNbtMetaDataNodeType materialNT in materialOC.getNodeTypes() )
+            {
+                CswNbtMetaDataNodeTypeProp manufacturingSitesNTP = materialNT.getNodeTypePropByObjectClassProp( CswNbtObjClassMaterial.PropertyName.ManufacturingSites );
+                manufacturingSitesNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, false, materialNT.getFirstNodeTypeTab().TabId );
+
+                CswNbtMetaDataNodeTypeProp uNCodeNTP = materialNT.getNodeTypePropByObjectClassProp( CswNbtObjClassMaterial.PropertyName.UNCode );
+                uNCodeNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, false, materialNT.getFirstNodeTypeTab().TabId );
+            }
+
         }
 
         public override void OnDisable()
@@ -64,6 +78,19 @@ namespace ChemSW.Nbt
 
                 CswNbtMetaDataNodeTypeTab cmgTab = containerNT.getNodeTypeTab( "Central Material Group" );
                 _CswNbtResources.MetaData.DeleteNodeTypeTab( cmgTab );
+            }
+
+            //Case 27864 on enable hide Material props...
+            //   Manufacturing Sites
+            //   UN Code
+            CswNbtMetaDataObjectClass materialOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.MaterialClass );
+            foreach( CswNbtMetaDataNodeType materialNT in materialOC.getNodeTypes() )
+            {
+                CswNbtMetaDataNodeTypeProp manufacturingSitesNTP = materialNT.getNodeTypePropByObjectClassProp( CswNbtObjClassMaterial.PropertyName.ManufacturingSites );
+                manufacturingSitesNTP.removeFromAllLayouts();
+
+                CswNbtMetaDataNodeTypeProp uNCodeNTP = materialNT.getNodeTypePropByObjectClassProp( CswNbtObjClassMaterial.PropertyName.UNCode );
+                uNCodeNTP.removeFromAllLayouts();
             }
 
         } // OnDisable()
