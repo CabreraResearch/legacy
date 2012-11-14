@@ -82,7 +82,7 @@
 
             cswPrivate.validationFailed = function () {
                 cswPrivate.toggleButton(cswPrivate.buttons.next, true);
-                cswPrivate.toggleButton(cswPrivate.buttons.prev, true, true);
+                cswPrivate.toggleButton(cswPrivate.buttons.prev, true); //, true);
             };
 
             cswPrivate.checkTargetIsClientSideUnique = function () {
@@ -631,7 +631,9 @@
                         cswPrivate.makeStepTwo();
                         break;
                     case Csw.enums.wizardSteps_InspectionDesign.step3.step:
-                        cswPrivate.checkIsNodeTypeNameUnique(cswPrivate.selectedInspectionDesign.name);
+                        if (cswPrivate.isNewInspectionDesign()) {
+                            cswPrivate.checkIsNodeTypeNameUnique(cswPrivate.selectedInspectionDesign.name);
+                        }
                         cswPrivate.makeStepThree(true); //we're moving forward
                         break;
                     case Csw.enums.wizardSteps_InspectionDesign.step4.step:
