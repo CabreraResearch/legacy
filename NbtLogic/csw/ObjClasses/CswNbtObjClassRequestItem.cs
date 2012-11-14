@@ -492,8 +492,7 @@ namespace ChemSW.Nbt.ObjClasses
                                 NodeAsContainer = _CswNbtResources.Nodes.GetNode( Container.RelatedNodeId );
                                 if( null != NodeAsContainer )
                                 {
-                                    NodeAsContainer.Disposed.Checked = Tristate.True;
-                                    NodeAsContainer.Undispose.setHidden( false, true );
+                                    NodeAsContainer.DisposeContainer();
                                     NodeAsContainer.postChanges( true );
                                 }
                                 ButtonData.Action = NbtButtonAction.refresh;

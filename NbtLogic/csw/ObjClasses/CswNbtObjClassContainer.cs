@@ -408,7 +408,7 @@ namespace ChemSW.Nbt.ObjClasses
         } // canContainer
 
         /// <summary>
-        /// Checks permission and disposes a container
+        /// Checks permission and disposes a container (does not post changes!)
         /// </summary>
         public void DisposeContainer()
         {
@@ -418,6 +418,7 @@ namespace ChemSW.Nbt.ObjClasses
                 _createContainerTransactionNode( CswNbtObjClassContainerDispenseTransaction.DispenseType.Dispose, -this.Quantity.Quantity, this.Quantity.UnitId, SourceContainer: this );
                 this.Quantity.Quantity = 0;
                 this.Disposed.Checked = Tristate.True;
+                this.Undispose.setHidden( false, true );
                 _setDisposedReadOnly( true );
             }
         }
