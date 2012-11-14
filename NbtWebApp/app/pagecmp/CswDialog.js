@@ -11,16 +11,16 @@
 
         return function () {
             return {
-                origXAccessor: function() {
+                origXAccessor: function () {
                     return origX;
                 },
-                origYAccessor: function() {
+                origYAccessor: function () {
                     return origY;
                 },
-                windowWidth: function() {
+                windowWidth: function () {
                     return document.documentElement.clientWidth;
                 },
-                windowHeight: function() {
+                windowHeight: function () {
                     return document.documentElement.clientHeight;
                 }
             };
@@ -28,7 +28,7 @@
     }());
     var cswPrivate = cswPrivateInit();
     cswPrivate.div = Csw.literals.div();
-    
+
     var posX = cswPrivate.origXAccessor();
     var posY = cswPrivate.origYAccessor();
     var incrPosBy = 30;
@@ -597,7 +597,7 @@
 
             cswDlgPrivate.onOpen = function () {
                 var myEditMode = Csw.enums.editMode.EditInPopup;
-                var table = cswPublic.div.table({width: '100%'});
+                var table = cswPublic.div.table({ width: '100%' });
                 if (false === Csw.isNullOrEmpty(cswDlgPrivate.date) && false === cswDlgPrivate.Multi) {
                     myEditMode = Csw.enums.editMode.AuditHistoryInPopup;
                     Csw.actions.auditHistory(table.cell(1, 1), {
