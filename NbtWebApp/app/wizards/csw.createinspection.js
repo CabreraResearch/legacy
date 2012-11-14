@@ -82,7 +82,7 @@
 
             cswPrivate.validationFailed = function () {
                 cswPrivate.toggleButton(cswPrivate.buttons.next, true);
-                cswPrivate.toggleButton(cswPrivate.buttons.prev, true); //, true);
+                cswPrivate.toggleButton(cswPrivate.buttons.prev, true, true);
             };
 
             cswPrivate.checkTargetIsClientSideUnique = function () {
