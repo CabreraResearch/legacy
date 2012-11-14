@@ -459,7 +459,7 @@ namespace ChemSW.Nbt.WebPages
 
             AddTabOrderTextBox = new TextBox();
             AddTabOrderTextBox.ID = "AddTabOrderTextBox";
-            AddTabOrderTextBox.Text = ( SelectedNodeType.GetMaximumTabOrder() + 1 ).ToString();
+            AddTabOrderTextBox.Text = ( SelectedNodeType.getMaximumTabOrder() + 1 ).ToString();
             AddTabOrderTextBox.CssClass = "textinput";
 
             AddNewTabVersionLabel = new Label();

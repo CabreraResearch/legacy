@@ -48,6 +48,11 @@ namespace ChemSW.Nbt.ObjClasses
             public const string Location = "Location";
 
             /// <summary>
+            /// Relationship(<see cref="CswNbtNodePropRelationship"/> ) to the Material (<see cref="CswNbtObjClassMaterial"/>) from which the Request Item will be Fulfilled.
+            /// </summary>
+            public const string Material = "Material";
+
+            /// <summary>
             /// Name(<see cref="CswNbtNodePropText"/>) of this Item
             /// </summary>
             public const string Name = "Name";
@@ -61,6 +66,11 @@ namespace ChemSW.Nbt.ObjClasses
             /// Unique Identified of this Item, Sequence(<see cref="CswNbtNodePropSequence"/>)
             /// </summary>
             public const string Number = "Number";
+
+            /// <summary>
+            /// Numeric priority of this Item, Sequence(<see cref="CswNbtNodePropNumber"/>)
+            /// </summary>
+            public const string Priority = "Priority";
 
             /// <summary>
             /// Relationship(<see cref="CswNbtNodePropRelationship"/> ) to the Request(<see cref="CswNbtObjClassRequest"/>) to which this Item belongs. 
@@ -87,6 +97,11 @@ namespace ChemSW.Nbt.ObjClasses
             /// The Type(<see cref="CswNbtNodePropList"/>) of the item.
             /// </summary>
             public const string Type = "Type";
+
+            /// <summary>
+            /// A composite description (<see cref="CswNbtNodePropComposite"/>) of the item.
+            /// </summary>
+            public const string Description = "Description";
         }
 
         /// <summary>
@@ -116,27 +131,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         #endregion Enums
 
-        public static Collection<NbtObjectClass> Members()
-        {
-            Collection<NbtObjectClass> Ret = new Collection<NbtObjectClass>();
-            Ret.Add( NbtObjectClass.RequestContainerDispenseClass );
-            Ret.Add( NbtObjectClass.RequestContainerUpdateClass );
-            Ret.Add( NbtObjectClass.RequestMaterialDispenseClass );
-            return Ret;
-        }
-
-        private void _toggleReadOnlyProps( bool IsReadOnly, CswNbtPropertySetRequestItem ItemInstance )
-        {
-            ItemInstance.Request.setReadOnly( value: IsReadOnly, SaveToDb: true );
-            ItemInstance.Location.setReadOnly( value: IsReadOnly, SaveToDb: true );
-            ItemInstance.Number.setReadOnly( value: IsReadOnly, SaveToDb: true );
-            ItemInstance.toggleReadOnlyProps( IsReadOnly, ItemInstance );
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public abstract void toggleReadOnlyProps( bool IsReadOnly, CswNbtPropertySetRequestItem ItemInstance );
+        #region Base
 
         /// <summary>
         /// Copy the Request Item
@@ -184,6 +179,44 @@ namespace ChemSW.Nbt.ObjClasses
             return ret;
         }
 
+        public static Collection<NbtObjectClass> Members()
+        {
+            Collection<NbtObjectClass> Ret = new Collection<NbtObjectClass>
+            {
+                NbtObjectClass.RequestContainerDispenseClass, 
+                NbtObjectClass.RequestContainerUpdateClass, 
+                NbtObjectClass.RequestMaterialCreateClass, 
+                NbtObjectClass.RequestMaterialDispenseClass
+            };
+            return Ret;
+        }
+
+        #endregion Base
+
+        #region Abstract Methods
+
+
+
+        private void _toggleReadOnlyProps( bool IsReadOnly, CswNbtPropertySetRequestItem ItemInstance )
+        {
+            ItemInstance.Request.setReadOnly( value: IsReadOnly, SaveToDb: true );
+            ItemInstance.Location.setReadOnly( value: IsReadOnly, SaveToDb: true );
+            ItemInstance.Number.setReadOnly( value: IsReadOnly, SaveToDb: true );
+            ItemInstance.toggleReadOnlyProps( IsReadOnly, ItemInstance );
+        }
+
+        /// <summary>
+        /// Change the ReadOnly state of Properties
+        /// </summary>
+        public abstract void toggleReadOnlyProps( bool IsReadOnly, CswNbtPropertySetRequestItem ItemInstance );
+
+        /// <summary>
+        /// Set the Description of this Request Item according to Object Class logic
+        /// </summary>
+        public abstract string setRequestDescription();
+
+        #endregion Abstract Methods
+
 
         #region Inherited Events
 
@@ -196,6 +229,14 @@ namespace ChemSW.Nbt.ObjClasses
                 Request.setReadOnly( value: true, SaveToDb: true );
                 Request.setHidden( value: true, SaveToDb: false );
             }
+            if( false == CswTools.IsPrimaryKey( Requestor.RelatedNodeId ) )
+            {
+                CswNbtObjClassRequest ThisRequest = _CswNbtResources.Nodes[Request.RelatedNodeId];
+                if( null != ThisRequest )
+                {
+                    Requestor.RelatedNodeId = ThisRequest.Requestor.RelatedNodeId;
+                }
+            }
         }
 
         public abstract void beforePropertySetWriteNode( bool IsCopy, bool OverrideUniqueValidation );
@@ -204,6 +245,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             beforePropertySetWriteNode( IsCopy, OverrideUniqueValidation );
             _setDefaultValues();
+            Description.StaticText = setRequestDescription();
             CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
         }//beforeWriteNode()
 
@@ -277,9 +319,15 @@ namespace ChemSW.Nbt.ObjClasses
                         switch( ButtonData.SelectedText )
                         {
                             case FulfillMenu.Cancel:
+                                Status.Value = Statuses.Cancelled;
+                                Fulfill.State = FulfillMenu.Cancel;
+                                Fulfill.MenuOptions = "";
                                 ButtonData.Action = NbtButtonAction.refresh;
                                 break;
                             case FulfillMenu.Complete:
+                                Status.Value = Statuses.Completed;
+                                Fulfill.State = FulfillMenu.Complete;
+                                Fulfill.MenuOptions = "";
                                 ButtonData.Action = NbtButtonAction.refresh;
                                 break;
                         }
@@ -307,6 +355,9 @@ namespace ChemSW.Nbt.ObjClasses
             Name.setHidden( value: ( Status.Value == Statuses.Pending ), SaveToDb: true );
             Requestor.setHidden( value: ( Status.Value == Statuses.Pending ), SaveToDb: true );
             Status.setHidden( value: ( Status.Value == Statuses.Pending ), SaveToDb: true );
+            Priority.setHidden( value: ( Status.Value == Statuses.Pending ), SaveToDb: true );
+            ExternalOrderNumber.setHidden( value: ( Status.Value == Statuses.Pending ), SaveToDb: true );
+            Type.setHidden( value: ( Status.Value == Statuses.Pending ), SaveToDb: true );
 
             switch( Status.Value )
             {
@@ -320,7 +371,8 @@ namespace ChemSW.Nbt.ObjClasses
                     {
                         NodeAsRequest.setCompletedDate();
                     }
-                    Node.setReadOnly( true, true );
+                    _toggleReadOnlyProps( IsReadOnly: true, ItemInstance: this );
+                    Node.setReadOnly( value: true, SaveToDb: true );
                     break;
             }
 
@@ -345,12 +397,15 @@ namespace ChemSW.Nbt.ObjClasses
         public abstract void onTypePropChange( CswNbtNodeProp Prop );
 
         public CswNbtNodePropLocation Location { get { return _CswNbtNode.Properties[PropertyName.Location]; } }
+        public CswNbtNodePropNumber Priority { get { return _CswNbtNode.Properties[PropertyName.Priority]; } }
         public CswNbtNodePropRelationship AssignedTo { get { return _CswNbtNode.Properties[PropertyName.AssignedTo]; } }
         public CswNbtNodePropRelationship InventoryGroup { get { return _CswNbtNode.Properties[PropertyName.InventoryGroup]; } }
+        public CswNbtNodePropRelationship Material { get { return _CswNbtNode.Properties[PropertyName.Material]; } }
         public CswNbtNodePropRelationship Request { get { return _CswNbtNode.Properties[PropertyName.Request]; } }
         public CswNbtNodePropRelationship RequestedFor { get { return _CswNbtNode.Properties[PropertyName.RequestedFor]; } }
         public CswNbtNodePropRelationship Requestor { get { return _CswNbtNode.Properties[PropertyName.Requestor]; } }
         public CswNbtNodePropSequence Number { get { return _CswNbtNode.Properties[PropertyName.Number]; } }
+        public CswNbtNodePropStatic Description { get { return _CswNbtNode.Properties[PropertyName.Description]; } }
         public CswNbtNodePropText ExternalOrderNumber { get { return _CswNbtNode.Properties[PropertyName.ExternalOrderNumber]; } }
         public CswNbtNodePropText Name { get { return _CswNbtNode.Properties[PropertyName.Name]; } }
 

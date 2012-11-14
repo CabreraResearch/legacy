@@ -44,7 +44,6 @@
             
             if (false === Csw.isNullOrEmpty(cswParent)) {
                 cswPrivate.table = cswParent.table({
-                    name: cswPrivate.name + '_table',
                     cellpadding: '2px'
                 });
 
@@ -71,7 +70,7 @@
                 });
 
                 cswPrivate.searchbutton = cswtable.cell(1, 2)
-                    .div({ name: cswPrivate.name })
+                    .div()
                     .buttonExt({
                         icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.search),
                         width: ('Search'.length * 11) + 16,

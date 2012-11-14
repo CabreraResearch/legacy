@@ -357,7 +357,7 @@ window.initMain = window.initMain || function (undefined) {
     });
 
     function refreshWelcomeLandingPage() {
-        refreshLandingPage(function () {
+        setLandingPage(function () {
             Csw.layouts.landingpage(Csw.main.centerBottomDiv, {
                 name: 'welcomeLandingPage',
                 Title: '',
@@ -384,12 +384,73 @@ window.initMain = window.initMain || function (undefined) {
         });
     }
 
-    function refreshLandingPage(loadLandingPage) {
+    function setLandingPage(loadLandingPage) {
         clear({ all: true });
         loadLandingPage();
         refreshMainMenu();
         refreshViewSelect();
     }
+
+    var refreshLandingPage = function(eventObj, opts) {
+        clear({ all: true });
+        var layData = {
+            ActionId: '',
+            RelatedObjectClassId: '',
+            RelatedNodeName: '',
+            RelatedNodeTypeId: '',
+            isConfigurable: false,
+            Title: '',
+            name: 'CswLandingPage'
+        };
+        Csw.extend(layData, opts);
+        
+        Csw.layouts.landingpage(Csw.main.centerBottomDiv, {
+            name: layData.name,
+            Title: layData.Title,
+            ActionId: layData.ActionId,
+            ObjectClassId: layData.RelatedObjectClassId,
+            onLinkClick: handleItemSelect,
+            onAddClick: function (itemData) {
+                $.CswDialog('AddNodeDialog', {
+                    text: itemData.Text,
+                    nodetypeid: itemData.NodeTypeId,
+                    relatednodeid: layData.RelatedNodeId,
+                    relatednodename: layData.RelatedNodeName,
+                    relatednodetypeid: layData.RelatedNodeTypeId,
+                    relatedobjectclassid: layData.RelatedObjectClassId,
+                    onAddNode: function (nodeid, nodekey) {
+                        clear({ all: true });
+                        refreshNodesTree({ nodeid: nodeid, nodekey: nodekey, IncludeNodeRequired: true });
+                    }
+                });
+            },
+            onTabClick: function (itemData) {
+                Csw.cookie.set(Csw.cookie.cookieNames.CurrentTabId, itemData.TabId);
+                handleItemSelect(itemData);
+            },
+            onButtonClick: function (itemData) {
+                Csw.controls.nodeButton(Csw.main.centerBottomDiv, {
+                    name: itemData.Text,
+                    value: itemData.ActionName,
+                    mode: 'landingpage',                                            
+                    propId: itemData.NodeTypePropId
+                });
+            },
+            onAddComponent: function() { Csw.publish('refreshLandingPage'); },
+            landingPageRequestData: layData,
+            onActionLinkClick: function (viewId) {
+                handleItemSelect({
+                    type: 'view',
+                    mode: 'tree',
+                    itemid: viewId
+                });
+            },
+            isConfigurable: layData.isConfigurable
+        });
+        refreshMainMenu();
+        refreshViewSelect();
+    };        
+    Csw.subscribe('refreshLandingPage', refreshLandingPage);
 
     function handleItemSelect(options) {
         //if (debugOn()) Csw.debug.log('Main.handleItemSelect()');
@@ -889,6 +950,9 @@ window.initMain = window.initMain || function (undefined) {
             if (Csw.isNullOrEmpty(o.viewmode)) {
                 o.viewmode = Csw.cookie.get(Csw.cookie.cookieNames.CurrentViewMode);
             }
+            if (Csw.isNullOrEmpty(o.searchid)) {
+                o.searchid = Csw.cookie.get(Csw.cookie.cookieNames.CurrentSearchId);
+            }
 
             if (false === Csw.isNullOrEmpty(o.searchid)) { //if we have a searchid, we are probably looking at a search
                 universalsearch.restoreSearch(o.searchid);
@@ -942,7 +1006,10 @@ window.initMain = window.initMain || function (undefined) {
             } // if (false === Csw.isNullOrEmpty(o.searchid))
         } // if (manuallyCheckChanges())
     } // refreshSelected()
-    Csw.subscribe(Csw.enums.events.main.refreshSelected, refreshSelected);
+    Csw.subscribe(Csw.enums.events.main.refreshSelected,
+        function (eventObj, opts) {
+            refreshSelected(opts);
+        });
 
     var multi = false;
 
@@ -1071,7 +1138,7 @@ window.initMain = window.initMain || function (undefined) {
                     },
                     onFinish: function (actionData) {
                         var createMaterialLandingPage = function () {
-                            refreshLandingPage(function () {
+                            setLandingPage(function() {
                                 Csw.layouts.landingpage(Csw.main.centerBottomDiv, {
                                     name: 'createMaterialLandingPage',
                                     Title: 'Created:',

@@ -34,10 +34,6 @@ namespace ChemSW.Nbt
         /// </summary>
         public static readonly CswNbtModuleName Dev = new CswNbtModuleName( "Dev" );
         /// <summary>
-        /// Mobile
-        /// </summary>
-        public static readonly CswNbtModuleName Mobile = new CswNbtModuleName( "Mobile" );
-        /// <summary>
         /// Material Life-cycle Management
         /// </summary>
         public static readonly CswNbtModuleName MLM = new CswNbtModuleName( "MLM" );

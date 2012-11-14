@@ -43,13 +43,8 @@
                 style = Csw.makeStyle();
             var $input;
 
-            if (options) {
-                Csw.extend(cswPrivate, options);
-            }
-
-            cswPrivate.name = Csw.string(cswPrivate.name, cswPrivate.ID);
-            cswPrivate.ID = Csw.string(cswPrivate.ID, cswPrivate.name);
-
+            Csw.extend(cswPrivate, options);
+            
             html += '<input ';
             attr.add('id', cswPrivate.ID);
             attr.add('name', cswPrivate.name);

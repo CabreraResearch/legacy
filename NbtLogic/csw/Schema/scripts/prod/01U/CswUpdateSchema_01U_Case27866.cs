@@ -83,7 +83,7 @@ namespace ChemSW.Nbt.Schema
                     CswNbtMetaDataNodeTypeTab cmgTab = containerNT.getNodeTypeTab( "Central Material Group" );
                     if( null == cmgTab )
                     {
-                        cmgTab = _CswNbtSchemaModTrnsctn.MetaData.makeNewTab( containerNT, "Central Material Group", containerNT.GetMaximumTabOrder() + 1 );
+                        cmgTab = _CswNbtSchemaModTrnsctn.MetaData.makeNewTab( containerNT, "Central Material Group", containerNT.getMaximumTabOrder() + 1 );
                     }
                     lotControlledNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, false, cmgTab.TabId );
                     requisitionableNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, false, cmgTab.TabId );

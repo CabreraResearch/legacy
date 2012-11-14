@@ -109,25 +109,28 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Containers.svc.cs">
+    <Compile Include="Containers.svc.cs">    
       <DependentUpon>Containers.svc</DependentUpon>
     </Compile>
-    <Compile Include="LandingPages.svc.cs">
+    <Compile Include="Services\LandingPages.svc.cs">
       <DependentUpon>LandingPages.svc</DependentUpon>
     </Compile>
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Labels.svc.cs">
+    <Compile Include="Services\Labels.svc.cs">
       <DependentUpon>Labels.svc</DependentUpon>
     </Compile>
-    <Compile Include="Reports.svc.cs">
+    <Compile Include="Services\Reports.svc.cs">
       <DependentUpon>Reports.svc</DependentUpon>
     </Compile>
-    <Compile Include="Session.svc.cs">
+    <Compile Include="Services\Requests.svc.cs">
+      <DependentUpon>Requests.svc</DependentUpon>
+    </Compile>
+    <Compile Include="Services\Session.svc.cs">
       <DependentUpon>Session.svc</DependentUpon>
     </Compile>
-    <Compile Include="Views.svc.cs">
+    <Compile Include="Services\Views.svc.cs">
       <DependentUpon>Views.svc</DependentUpon>
     </Compile>
     <Compile Include="WebSvc\Logic\CISPro\CswNbtWebServiceContainer.cs" />
@@ -149,8 +152,8 @@
     <Compile Include="WebSvc\Logic\Nodes\CswNbtWebServiceAuditing.cs" />
     <Compile Include="WebSvc\Logic\SI\CswNbtWebServiceInspectionDesign.cs" />
     <Content Include="ConfigVars.aspx" />
+    <Content Include="Services\LandingPages.svc" />
     <Content Include="Containers.svc" />
-    <Content Include="LandingPages.svc" />
     <Content Include="crystal\ActiveXControls\PrintControl.cab" />
     <Content Include="crystal\ActiveXControls\PrintControl_res_cs.cab" />
     <Content Include="crystal\ActiveXControls\PrintControl_res_da.cab" />
@@ -736,10 +739,10 @@
     <Content Include="Images\quota\half.gif" />
     <Content Include="Images\quota\lock.gif" />
     <Content Include="Images\view\viewtable.gif" />
-    <Content Include="Labels.svc" />
+    <Content Include="Services\Labels.svc" />
     <Content Include="NodeTypeTreeService.asmx" />
     <Content Include="Report.aspx" />
-    <Content Include="Reports.svc" />
+    <Content Include="Services\Reports.svc" />
     <Content Include="Scripts\es5-shim.js" />
     <Content Include="Scripts\es5-shim.min.js" />
     <Content Include="Scripts\ES5.js" />
@@ -1039,7 +1042,8 @@
     <Content Include="Deprecated\Main.js" />
     <Content Include="Popup_DesignAdd.aspx" />
     <Content Include="Popup_DesignDelete.aspx" />
-    <Content Include="Session.svc" />
+    <Content Include="Services\Requests.svc" />
+    <Content Include="Services\Session.svc" />
     <Content Include="SkinPrint\Calendar.ChemSWPrint.css" />
     <Content Include="SkinPrint\Calendar\arrowLeft.gif" />
     <Content Include="SkinPrint\Calendar\arrowLeftHover.gif" />
@@ -1194,7 +1198,7 @@
     <Content Include="Statistics.aspx" />
     <Content Include="Subscriptions.aspx" />
     <Content Include="TermsOfUse.aspx" />
-    <Content Include="Views.svc" />
+    <Content Include="Services\Views.svc" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
@@ -1401,10 +1405,6 @@
       <SubType>Designer</SubType>
     </Content>
     <Content Include="Web.Release.config">
-      <DependentUpon>Web.config</DependentUpon>
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="Web.Debug %28Fast%29.config">
       <DependentUpon>Web.config</DependentUpon>
       <SubType>Designer</SubType>
     </Content>

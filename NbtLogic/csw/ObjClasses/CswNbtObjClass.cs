@@ -114,7 +114,8 @@ namespace ChemSW.Nbt.ObjClasses
             public static readonly NbtButtonAction receive = new NbtButtonAction( "receive" );
             public static readonly NbtButtonAction request = new NbtButtonAction( "request" );
             public static readonly NbtButtonAction popup = new NbtButtonAction( "popup" );
-            public static readonly NbtButtonAction loadView = new NbtButtonAction( "loadView" );
+            public static readonly NbtButtonAction landingpage = new NbtButtonAction( "landingpage" );
+            public static readonly NbtButtonAction loadView = new NbtButtonAction( "loadview" );
             public static readonly NbtButtonAction nothing = new NbtButtonAction( "nothing" );
         }
 

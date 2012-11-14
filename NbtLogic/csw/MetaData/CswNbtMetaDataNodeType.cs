@@ -456,8 +456,18 @@ namespace ChemSW.Nbt.MetaData
             return _CswNbtMetaDataResources.NodeTypePropsCollection.getNodeTypePropIdByObjectClassProp( NodeTypeId, ObjectClassPropName );
         }
 
+        /// <summary>
+        /// Get the next available Tab order for assignment
+        /// </summary>
+        public Int32 getNextTabOrder()
+        {
+            return getMaximumTabOrder() + 1;
+        }
 
-        public Int32 GetMaximumTabOrder()
+        /// <summary>
+        /// Get the Tab Order of the last tab
+        /// </summary>
+        public Int32 getMaximumTabOrder()
         {
             Int32 MaximumTabOrder = ( from _Tab in getNodeTypeTabs()
                                       where _Tab.TabName != "History"

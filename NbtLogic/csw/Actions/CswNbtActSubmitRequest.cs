@@ -14,8 +14,6 @@ namespace ChemSW.Nbt.Actions
 {
     public class CswNbtActSubmitRequest
     {
-
-
         #region Private, core methods
 
         private CswNbtResources _CswNbtResources = null;
@@ -127,11 +125,11 @@ namespace ChemSW.Nbt.Actions
             if( null == _CurrentRequestNode )
             {
                 CswNbtView RequestView = new CswNbtView( _CswNbtResources );
-                CswNbtMetaDataObjectClassProp SubmittedDateOcp = _RequestOc.getObjectClassProp( CswNbtObjClassRequest.PropertyName.SubmittedDate.ToString() );
-                CswNbtMetaDataObjectClassProp CompletedDateOcp = _RequestOc.getObjectClassProp( CswNbtObjClassRequest.PropertyName.CompletedDate.ToString() );
+                CswNbtMetaDataObjectClassProp SubmittedDateOcp = _RequestOc.getObjectClassProp( CswNbtObjClassRequest.PropertyName.SubmittedDate );
+                CswNbtMetaDataObjectClassProp CompletedDateOcp = _RequestOc.getObjectClassProp( CswNbtObjClassRequest.PropertyName.CompletedDate );
                 CswNbtViewRelationship RequestVr = RequestView.AddViewRelationship( _RequestOc, true ); //default filter says Requestor == me
-                RequestView.AddViewPropertyAndFilter( RequestVr, SubmittedDateOcp, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Null );
-                RequestView.AddViewPropertyAndFilter( RequestVr, CompletedDateOcp, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Null );
+                RequestView.AddViewPropertyAndFilter( RequestVr, SubmittedDateOcp, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Null, ShowInGrid: false );
+                RequestView.AddViewPropertyAndFilter( RequestVr, CompletedDateOcp, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Null, ShowInGrid: false );
 
                 ICswNbtTree RequestTree = _CswNbtResources.Trees.getTreeFromView( RequestView, false, false, false );
                 CartCount = RequestTree.getChildNodeCount();
@@ -140,10 +138,6 @@ namespace ChemSW.Nbt.Actions
                     RequestTree.goToNthChild( 0 );
                     _CurrentRequestNode = RequestTree.getNodeForCurrentPosition();
                 }
-                //else if( CartCount > 1 )
-                //{
-                //    throw new CswDniException( ErrorType.Warning, "Only one pending request may be open at a time.", "There is more than one Pending request assigned to the current user." );
-                //}
                 else if( CartCount == 0 &&
                          _CreateDefaultRequestNode )
                 {
@@ -171,33 +165,18 @@ namespace ChemSW.Nbt.Actions
             return Ret;
         }
 
-        public void applyCartFilter( CswPrimaryKey NodeId )
-        {
-            foreach( NbtObjectClass Member in CswNbtPropertySetRequestItem.Members() )
-            {
-                CswNbtMetaDataObjectClass MemberOc = _CswNbtResources.MetaData.getObjectClass( Member );
-                CswNbtMetaDataObjectClassProp RequestOcp = MemberOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.Request.ToString() );
-                _SystemViews.addSystemViewFilter( new CswNbtActSystemViews.SystemViewPropFilterDefinition
-                {
-                    FilterMode = CswNbtPropFilterSql.PropertyFilterMode.Equals,
-                    FilterValue = NodeId.PrimaryKey.ToString(),
-                    ObjectClassProp = RequestOcp,
-                    SubFieldName = CswNbtSubField.SubFieldName.NodeID,
-                    ShowInGrid = false
-                }, MemberOc );
-            }
-        }
-
         /// <summary>
         /// Fetch the current Request node for the current user and establish base counts.
         /// </summary>
-        public void applyCurrentCartFilter()
+        public void applyCurrentCartFilter( CswNbtNode CartNode = null )
         {
-            CswNbtNode CartNode = CurrentRequestNode();
+            CartNode = CartNode ?? CurrentRequestNode();
             if( null != CartNode )
             {
-                applyCartFilter( CartNode.NodeId );
+                _CurrentCartView.Root.ChildRelationships[0].NodeIdsToFilterIn.Clear();
+                _CurrentCartView.Root.ChildRelationships[0].NodeIdsToFilterIn.Add( CartNode.NodeId );
                 ICswNbtTree CartTree = _CswNbtResources.Trees.getTreeFromView( _CurrentCartView, false, false, false );
+                CartTree.goToNthChild( 0 );
                 CartContentCount = CartTree.getChildNodeCount();
             }
         }
@@ -237,10 +216,14 @@ namespace ChemSW.Nbt.Actions
                 CswNbtObjClassRequest NodeAsRequest = _CswNbtResources.Nodes.GetNode( NodeId );
                 if( null != NodeAsRequest )
                 {
-                    NodeAsRequest.SubmittedDate.DateTimeValue = DateTime.Now;
-                    NodeAsRequest.Name.Text = NodeName;
-                    NodeAsRequest.postChanges( true );
-                    Ret["succeeded"] = true;
+                    applyCurrentCartFilter( NodeAsRequest.Node );
+                    if( CartContentCount > 0 )
+                    {
+                        NodeAsRequest.SubmittedDate.DateTimeValue = DateTime.Now;
+                        NodeAsRequest.Name.Text = NodeName;
+                        NodeAsRequest.postChanges( true );
+                        Ret["succeeded"] = true;
+                    }
                 }
             }
 
@@ -256,22 +239,27 @@ namespace ChemSW.Nbt.Actions
             if( null != CopyFromNodeId && null != CopyToNodeId )
             {
                 ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( CurrentCartView, false, false, false );
-                Int32 ItemCount = Tree.getChildNodeCount();
-                for( Int32 I = 0; I < ItemCount; I += 1 )
+                if( Tree.getChildNodeCount() == 1 ) //the first Item will be the Request
                 {
-                    Tree.goToNthChild( I );
+                    Tree.goToNthChild( 0 );
 
-                    CswNbtPropertySetRequestItem CopyFromNodeAsRequestItem = Tree.getNodeForCurrentPosition();
-                    if( null != CopyFromNodeAsRequestItem )
+                    Int32 ItemCount = Tree.getChildNodeCount();
+                    for( Int32 I = 0; I < ItemCount; I += 1 )
                     {
-                        CswNbtPropertySetRequestItem CopyToNodeAsRequestItem = CopyFromNodeAsRequestItem.copyNode();
-                        if( null != CopyToNodeAsRequestItem )
+                        Tree.goToNthChild( I );
+
+                        CswNbtPropertySetRequestItem CopyFromNodeAsRequestItem = Tree.getNodeForCurrentPosition();
+                        if( null != CopyFromNodeAsRequestItem )
                         {
-                            CopyToNodeAsRequestItem.Request.RelatedNodeId = CopyToNodeId;
-                            CopyToNodeAsRequestItem.postChanges( true );
+                            CswNbtPropertySetRequestItem CopyToNodeAsRequestItem = CopyFromNodeAsRequestItem.copyNode();
+                            if( null != CopyToNodeAsRequestItem )
+                            {
+                                CopyToNodeAsRequestItem.Request.RelatedNodeId = CopyToNodeId;
+                                CopyToNodeAsRequestItem.postChanges( true );
+                            }
                         }
+                        Tree.goToParentNode();
                     }
-                    Tree.goToParentNode();
                 }
             }
             return new CswNbtActSubmitRequest( _CswNbtResources, CreateDefaultRequestNode: true, RequestNodeId: CopyToNodeId );
@@ -397,8 +385,7 @@ namespace ChemSW.Nbt.Actions
 
                     if( null != _CswNbtResources.CurrentNbtUser.DefaultLocationId )
                     {
-                        CswNbtObjClassLocation DefaultAsLocation =
-                            _CswNbtResources.Nodes.GetNode( _CswNbtResources.CurrentNbtUser.DefaultLocationId );
+                        CswNbtObjClassLocation DefaultAsLocation = _CswNbtResources.Nodes.GetNode( _CswNbtResources.CurrentNbtUser.DefaultLocationId );
                         if( null != DefaultAsLocation )
                         {
                             RetAsMatDisp.Location.SelectedNodeId = _CswNbtResources.CurrentNbtUser.DefaultLocationId;
