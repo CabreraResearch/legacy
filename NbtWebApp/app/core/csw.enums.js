@@ -415,6 +415,12 @@
                     Text: Csw.enums.subFieldNames.Text
                 }
             },
+            CASNo: {
+                name: 'CASNo',
+                subfields: {
+                    Text: Csw.enums.subFieldNames.Text
+                }
+            },
             Comments: { name: 'Comments', subfields: {} },
             Composite: { name: 'Composite', subfields: {} },
             DateTime: {
