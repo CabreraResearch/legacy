@@ -57,7 +57,7 @@ namespace ChemSW.Nbt.Actions
                             }
                             else
                             {
-                                _incrementContainerCount( Data.ContainerStatistics, CswNbtObjClassContainerLocation.StatusOptions.Unknown.ToString() );
+                                _incrementContainerCount( Data.ContainerStatistics, CswNbtObjClassContainerLocation.StatusOptions.NotScanned.ToString() );
                             }
                             ContainersTree.goToParentNode();
                         }
@@ -107,7 +107,7 @@ namespace ChemSW.Nbt.Actions
                             }
                             else
                             {
-                                ContainerStatus.ContainerStatus = CswNbtObjClassContainerLocation.StatusOptions.Unknown.ToString();
+                                ContainerStatus.ContainerStatus = CswNbtObjClassContainerLocation.StatusOptions.NotScanned.ToString();
                             }
                             Data.ContainerStatuses.Add( ContainerStatus );
                             ContainersTree.goToParentNode();

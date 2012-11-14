@@ -55,10 +55,10 @@ namespace ChemSw.Nbt.Test
 
         /// <summary>
         /// Given a location that has one Container and no ContainerLocations in the given timeframe,
-        /// assert that the returned ContainerStatus data has a ContainerStatus value of Unknown
+        /// assert that the returned ContainerStatus data has a ContainerStatus value of NotScanned
         /// </summary>
         [TestMethod]
-        public void getContainerStatusesTestUnknown()
+        public void getContainerStatusesTestNotScanned()
         {
             CswPrimaryKey LocationId = TestData.Nodes.createLocationNode().NodeId;
             TestData.Nodes.createContainerNode( LocationId: LocationId );
@@ -71,7 +71,7 @@ namespace ChemSw.Nbt.Test
             };
             ContainerData Data = ReconciliationAction.getContainerStatuses( Request );
             Assert.AreEqual( 1, Data.ContainerStatuses.Count );
-            Assert.AreEqual( CswNbtObjClassContainerLocation.StatusOptions.Unknown.ToString(), Data.ContainerStatuses[0].ContainerStatus );
+            Assert.AreEqual( CswNbtObjClassContainerLocation.StatusOptions.NotScanned.ToString(), Data.ContainerStatuses[0].ContainerStatus );
         }
 
         /// <summary>
@@ -173,10 +173,10 @@ namespace ChemSw.Nbt.Test
 
         /// <summary>
         /// Given a location that has one Container and no ContainerLocations in the given timeframe,
-        /// assert that the returned ContainerStatistics data's Unknown ContainerStatus row's ContainerCount value > 1.
+        /// assert that the returned ContainerStatistics data's NotScanned ContainerStatus row's ContainerCount value > 1.
         /// </summary>
         [TestMethod]
-        public void getContainerStatisticsTestUnknown()
+        public void getContainerStatisticsTestNotScanned()
         {
             CswPrimaryKey LocationId = TestData.Nodes.createLocationNode().NodeId;
             TestData.Nodes.createContainerNode( LocationId: LocationId );
@@ -190,7 +190,7 @@ namespace ChemSw.Nbt.Test
             ContainerData Data = ReconciliationAction.getContainerStatistics( Request );
             foreach( ContainerData.ReconciliationStatistics Stat in Data.ContainerStatistics )
             {
-                if( Stat.Status == CswNbtObjClassContainerLocation.StatusOptions.Unknown.ToString() )
+                if( Stat.Status == CswNbtObjClassContainerLocation.StatusOptions.NotScanned.ToString() )
                 {
                     Assert.AreEqual( 1, Stat.ContainerCount );
                 }
