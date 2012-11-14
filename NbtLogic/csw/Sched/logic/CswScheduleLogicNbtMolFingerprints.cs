@@ -72,18 +72,12 @@ namespace ChemSW.Nbt.Sched
                     CswArbitrarySelect arbSelect = _CswNbtResources.makeCswArbitrarySelect( "getNonFingerprintedMols", sql );
 
                     int lowerBound = 0;
-                    int upperBound = 100;
-                    DataTable jctnodesprops = arbSelect.getTable( lowerBound, upperBound, false, false );
+                    int upperBound = 500;
+                    DataTable jctnodesprops = arbSelect.getTable( lowerBound, upperBound, false, false ); //only get up to 500 records to do in a day
 
-                    while( jctnodesprops.Rows.Count > 0 )
+                    foreach( DataRow row in jctnodesprops.Rows )
                     {
-                        foreach( DataRow row in jctnodesprops.Rows )
-                        {
-                            nonFingerprintedMols.Add( row["nodeid"].ToString() );
-                        }
-                        lowerBound += 100;
-                        upperBound += 100;
-                        jctnodesprops = arbSelect.getTable( lowerBound, upperBound, false, false );
+                        nonFingerprintedMols.Add( row["nodeid"].ToString() );
                     }
 
                     CswNbtBatchOpMolFingerprints batchOp = new CswNbtBatchOpMolFingerprints( _CswNbtResources );
