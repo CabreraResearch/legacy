@@ -86,7 +86,7 @@ namespace ChemSW.Nbt.ObjClasses
             /// <summary>
             /// A relationship(<see cref="CswNbtNodePropRelationship"/>) to the User (<see cref="CswNbtObjClassUser"/>) for whom the Request(<see cref="CswNbtObjClassRequest"/>) is intended.
             /// </summary>
-            public const string RequestedFor = "RequestedFor";
+            public const string RequestedFor = "Requested For";
 
             /// <summary>
             /// The status(<see cref="CswNbtNodePropList"/>) of the item.
@@ -235,6 +235,7 @@ namespace ChemSW.Nbt.ObjClasses
                 if( null != ThisRequest )
                 {
                     Requestor.RelatedNodeId = ThisRequest.Requestor.RelatedNodeId;
+                    RequestedFor.RelatedNodeId = ThisRequest.Requestor.RelatedNodeId;
                 }
             }
         }
