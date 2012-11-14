@@ -113,6 +113,7 @@
                             name: '',
                             onChange: function (locationId) {
                                 cswPrivate.state.LocationId = locationId;
+                                cswPrivate.reinitSteps(2);
                             }
                         });
                         cswPrivate.state.LocationId = locationControl.val();
@@ -126,6 +127,7 @@
                         cswPrivate.childLocationsCheckBox = checkBoxTable.cell(1, 1).checkBox({
                             onChange: Csw.method(function () {
                                 cswPrivate.state.IncludeChildLocations = cswPrivate.childLocationsCheckBox.checked();
+                                cswPrivate.reinitSteps(2);
                             })
                         });
                         checkBoxTable.cell(1, 2).span({ text: ' Include child locations' });
@@ -138,6 +140,7 @@
                             maxDate: cswPrivate.getCurrentDate(),
                             onChange: function () {
                                 cswPrivate.state.StartDate = startDatePicker.val().date;
+                                cswPrivate.reinitSteps(2);
                             }
                         });
                         cswPrivate.state.StartDate = startDatePicker.val().date;
@@ -150,6 +153,7 @@
                             maxDate: cswPrivate.getCurrentDate(),
                             onChange: function () {
                                 cswPrivate.state.EndDate = endDatePicker.val().date;
+                                cswPrivate.reinitSteps(2);
                             }
                         });
                         cswPrivate.state.EndDate = endDatePicker.val().date;
@@ -162,9 +166,7 @@
             //Step 2: Statistics
             cswPrivate.makeStep2 = (function () {
                 cswPrivate.stepTwoComplete = false;
-                return function () {
-                    cswPrivate.toggleStepButtons();
-
+                return function () {                    
                     if (false === cswPrivate.stepTwoComplete) {
                         cswPrivate.divStep2 = cswPrivate.divStep2 || cswPrivate.wizard.div(2);
                         cswPrivate.divStep2.empty();
@@ -173,11 +175,10 @@
                             cssclass: "wizardHelpDesc"
                         });
                         cswPrivate.divStep2.br({ number: 2 });
-                        //TODO - take values from step 1 control and create grid of statuses in selected location(s) within selected timeframe
                         //since the grid is static, make the grid columns here and pass it into the grid control
-                        
+
                         Csw.ajaxWcf.post({
-                            urlMethod: 'Containers/getReconciliationData',
+                            urlMethod: 'Containers/getContainerStatistics',
                             data: cswPrivate.state,
                             success: function (ajaxdata) {
                                 cswPrivate.data = {
@@ -196,10 +197,66 @@
                                     }]
                                 };
                                 Csw.extend(cswPrivate.data, ajaxdata);
+
+                                var StatusMetricsGridFields = [];
+                                var StatusMetricsGridColumns = [];
+                                var addColumn = function (colName, displayName) {
+                                    StatusMetricsGridColumns.push({
+                                        dataIndex: colName,
+                                        filterable: false,
+                                        format: null,
+                                        header: displayName,
+                                        id: 'reconciliation_' + colName
+                                    });
+                                    StatusMetricsGridFields.push({
+                                        name: colName,
+                                        type: 'string',
+                                        useNull: true
+                                    });
+                                };
+                                addColumn('status', 'Status');
+                                addColumn('numofcontainers', 'Number of Containers');
+                                addColumn('percentscanned', 'Percent Scanned');
+                                addColumn('percentunscanned', 'Percent Unscanned');
+
+                                var StatusMetricsGridData = [];
+                                Csw.each(cswPrivate.data.ContainerStatistics, function (row) {
+                                    StatusMetricsGridData.push({
+                                        status: row.Status,
+                                        numofcontainers: row.ContainerCount,
+                                        percentscanned: Csw.number(row.PercentScanned) + '%',
+                                        percentunscanned: Csw.number(100 - Csw.number(row.PercentScanned)) + '%'
+                                    });
+                                });
+
+                                var StatusMetricsGridId = 'ReconciliationStatusGrid';
+                                cswPrivate.gridOptions = {
+                                    name: StatusMetricsGridId,
+                                    storeId: StatusMetricsGridId,
+                                    title: 'Container Statistics from ' + cswPrivate.state.StartDate + ' to ' + cswPrivate.state.EndDate,
+                                    stateId: StatusMetricsGridId,
+                                    usePaging: false,
+                                    showActionColumn: false,
+                                    canSelectRow: false,
+                                    onLoad: null,
+                                    onEdit: null,
+                                    onDelete: null,
+                                    onSelect: null,
+                                    onDeselect: null,
+                                    height: 200,
+                                    forcefit: true,
+                                    width: '100%',
+                                    fields: StatusMetricsGridFields,
+                                    columns: StatusMetricsGridColumns,
+                                    data: StatusMetricsGridData
+                                };
+                                cswPrivate.ReconciliationStatusGrid = cswPrivate.divStep2.grid(cswPrivate.gridOptions);
+                                cswPrivate.toggleStepButtons();
                             }
                         });
-
                         cswPrivate.stepTwoComplete = true;
+                    } else {
+                        cswPrivate.toggleStepButtons();
                     }
                 };
             } ()); //Step 2
@@ -256,6 +313,8 @@
 
                 cswPrivate.handleStep = function (newStepNo) {
                     cswPrivate.setState();
+                    cswPrivate.toggleButton(cswPrivate.buttons.finish, false);
+                    cswPrivate.toggleButton(cswPrivate.buttons.next, false);
                     if (Csw.contains(cswPrivate, 'makeStep' + newStepNo)) {
                         cswPrivate.lastStepNo = cswPrivate.currentStepNo;
                         cswPrivate.currentStepNo = newStepNo;
