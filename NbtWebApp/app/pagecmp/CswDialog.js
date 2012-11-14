@@ -597,7 +597,7 @@
 
             cswDlgPrivate.onOpen = function () {
                 var myEditMode = Csw.enums.editMode.EditInPopup;
-                var table = cswPublic.div.table();
+                var table = cswPublic.div.table({width: '100%'});
                 if (false === Csw.isNullOrEmpty(cswDlgPrivate.date) && false === cswDlgPrivate.Multi) {
                     myEditMode = Csw.enums.editMode.AuditHistoryInPopup;
                     Csw.actions.auditHistory(table.cell(1, 1), {
