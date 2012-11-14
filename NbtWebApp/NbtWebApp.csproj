@@ -130,11 +130,6 @@
     <Compile Include="Services\Views.svc.cs">
       <DependentUpon>Views.svc</DependentUpon>
     </Compile>
-    <Compile Include="WebSvc\Core\CswWebSvcDynamicAttribute.cs" />
-    <Compile Include="WebSvc\Core\CswWebSvcDynamicSerializer.cs" />
-    <Compile Include="WebSvc\Core\CswWebSvcHostFactory.cs" />
-    <Compile Include="WebSvc\Core\CswWebSvcHttpBehavior.cs" />
-    <Compile Include="WebSvc\Core\CswWebSvcHost.cs" />
     <Compile Include="WebSvc\Logic\CISPro\CswNbtWebServiceContainer.cs" />
     <Compile Include="WebSvc\Logic\CISPro\CswNbtWebServiceRequesting.cs" />
     <Compile Include="WebSvc\Logic\Labels\CswNbtLabelData.cs" />
