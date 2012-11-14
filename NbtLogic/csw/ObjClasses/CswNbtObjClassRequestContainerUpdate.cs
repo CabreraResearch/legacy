@@ -43,7 +43,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public new sealed class FulfillMenu : CswNbtPropertySetRequestItem.FulfillMenu
         {
-            public const string Move = "Move";
+            public const string Move = "Move this Container";
             public const string Dispose = "Dispose this Container";
 
             public static readonly CswCommaDelimitedString DisposeOptions = new CswCommaDelimitedString
