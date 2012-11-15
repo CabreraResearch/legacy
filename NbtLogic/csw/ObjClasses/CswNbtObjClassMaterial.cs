@@ -39,6 +39,10 @@ namespace ChemSW.Nbt.ObjClasses
             public const string ExpirationInterval = "Expiration Interval";
             public const string Request = "Request";
             public const string Receive = "Receive";
+            public const string MaterialId = "Material Id";
+            public const string Approved = "Approved";
+            public const string ManufacturingSites = "Manufacturing Sites";
+            public const string UNCode = "UN Code";
         }
 
         public sealed class PhysicalStates
@@ -108,6 +112,8 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false )
         {
+            _CswNbtResources.StructureSearchManager.DeleteFingerprintRecord( this.NodeId.PrimaryKey );
+
             _CswNbtObjClassDefault.beforeDeleteNode( DeleteAllRequiredRelatedNodes );
 
         }//beforeDeleteNode()
@@ -392,6 +398,10 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
         public CswNbtNodePropButton Receive { get { return ( _CswNbtNode.Properties[PropertyName.Receive] ); } }
+        public CswNbtNodePropSequence MaterialId { get { return ( _CswNbtNode.Properties[PropertyName.MaterialId] ); } }
+        public CswNbtNodePropLogical Approved { get { return ( _CswNbtNode.Properties[PropertyName.Approved] ); } }
+        public CswNbtNodePropGrid ManufacturingSites { get { return ( _CswNbtNode.Properties[PropertyName.ManufacturingSites] ); } }
+        public CswNbtNodePropRelationship UNCode { get { return ( _CswNbtNode.Properties[PropertyName.UNCode] ); } }
 
         #endregion
     }//CswNbtObjClassMaterial

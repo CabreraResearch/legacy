@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.PropertySets;
 using ChemSW.Nbt.PropTypes;
 
@@ -28,7 +29,6 @@ namespace ChemSW.Nbt.ObjClasses
             public static string Summary = "Summary";
             public static string ParentType = "Parent Type";
             public static string ParentView = "Parent View";
-            public static string RunNow = "Run Now";
         }
 
 
@@ -40,7 +40,6 @@ namespace ChemSW.Nbt.ObjClasses
         public string SchedulerWarningDaysPropertyName { get { return PropertyName.WarningDays; } }
         public string SchedulerDueDateIntervalPropertyName { get { return PropertyName.DueDateInterval; } }
         public string SchedulerRunTimePropertyName { get { return PropertyName.RunTime; } }
-        public string SchedulerRunNowPropertyName { get { return PropertyName.RunNow; } }
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
         private CswNbtPropertySetSchedulerImpl _CswNbtPropertySetSchedulerImpl;
@@ -86,9 +85,7 @@ namespace ChemSW.Nbt.ObjClasses
             _setDefaultValues();
 
             //Case 24572
-            bool DeleteFutureNodes = ( TargetType.WasModified || ParentType.WasModified );
-            _CswNbtPropertySetSchedulerImpl.updateNextDueDate( DeleteFutureNodes );
-
+            updateNextDueDate( ForceUpdate: false, DeleteFutureNodes: ( TargetType.WasModified || ParentType.WasModified ) );
 
             _trySetNodeTypeSelectDefaultValues();
 
@@ -221,14 +218,14 @@ namespace ChemSW.Nbt.ObjClasses
                         CswNbtMetaDataObjectClass TargetObjectClass = TargetNodeType.getObjectClass();
 
                         CswNbtObjClass TargetObjClass = CswNbtObjClassFactory.makeObjClass( _CswNbtResources, TargetObjectClass );
-                        if( !( TargetObjClass is ICswNbtPropertySetGeneratorTarget ) )
+                        if( !( TargetObjClass is CswNbtPropertySetGeneratorTarget ) )
                         {
                             throw new CswDniException( "CswNbtObjClassGenerator.beforeDeleteNode() got an invalid object class: " + TargetObjectClass.ObjectClass.ToString() );
                         }
-                        ICswNbtPropertySetGeneratorTarget GeneratorTarget = (ICswNbtPropertySetGeneratorTarget) TargetObjClass;
+                        CswNbtPropertySetGeneratorTarget GeneratorTarget = (CswNbtPropertySetGeneratorTarget) TargetObjClass;
 
-                        CswNbtMetaDataNodeTypeProp GeneratorProp = TargetNodeType.getNodeTypePropByObjectClassProp( GeneratorTarget.GeneratorTargetGeneratorPropertyName );
-                        CswNbtMetaDataNodeTypeProp IsFutureProp = TargetNodeType.getNodeTypePropByObjectClassProp( GeneratorTarget.GeneratorTargetIsFuturePropertyName );
+                        CswNbtMetaDataNodeTypeProp GeneratorProp = TargetNodeType.getNodeTypePropByObjectClassProp( CswNbtPropertySetGeneratorTarget.PropertyName.Generator );
+                        CswNbtMetaDataNodeTypeProp IsFutureProp = TargetNodeType.getNodeTypePropByObjectClassProp( CswNbtPropertySetGeneratorTarget.PropertyName.IsFuture );
 
                         CswNbtView View = new CswNbtView( _CswNbtResources );
                         View.ViewName = "CswNbtObjClassSchedule.beforeDeleteNode()";
@@ -276,6 +273,11 @@ namespace ChemSW.Nbt.ObjClasses
         public override void afterPopulateProps()
         {
             DueDateInterval.SetOnPropChange( OnDueDateIntervalChange );
+
+            // case 28146
+            WarningDays.MinValue = 0;
+            WarningDays.MaxValue = DueDateInterval.getMaximumWarningDays();
+
             _CswNbtObjClassDefault.afterPopulateProps();
         }//afterPopulateProps()
 
@@ -286,22 +288,9 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override bool onButtonClick( NbtButtonData ButtonData )
         {
-
-
-
-
             CswNbtMetaDataObjectClassProp OCP = ButtonData.NodeTypeProp.getObjectClassProp();
             if( null != ButtonData.NodeTypeProp && null != OCP )
             {
-                if( PropertyName.RunNow == OCP.PropName )
-                {
-                    NextDueDate.DateTimeValue = DateTime.Now;
-                    //case 25702 - empty comment?
-                    //RunStatus.StaticText = string.Empty;
-                    //RunStatus_new.a
-                    Node.postChanges( false );
-                    ButtonData.Action = NbtButtonAction.refresh;
-                }
             }
             return true;
         }
@@ -341,6 +330,13 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 RunTime.setHidden( value: false, SaveToDb: true );
             }
+
+            Int32 max = DueDateInterval.getMaximumWarningDays();
+            if( WarningDays.Value > max )
+            {
+                WarningDays.Value = max;
+            }
+
         } // OnDueDateIntervalChange
         public CswNbtNodePropDateTime RunTime { get { return ( _CswNbtNode.Properties[PropertyName.RunTime] ); } }
         public CswNbtNodePropLogical Enabled { get { return ( _CswNbtNode.Properties[PropertyName.Enabled] ); } }
@@ -355,12 +351,45 @@ namespace ChemSW.Nbt.ObjClasses
         /// </summary>
         public CswNbtNodePropViewReference ParentView { get { return ( _CswNbtNode.Properties[PropertyName.ParentView] ); } }
 
-        /// <summary>
-        /// Run Now button clears the Last Run Date thereby forcing scheduler to process the Generator node on its next iteration 
-        /// </summary>
-        public CswNbtNodePropButton RunNow { get { return ( _CswNbtNode.Properties[PropertyName.RunNow] ); } }
-
         #endregion
+
+        public void updateNextDueDate( bool ForceUpdate, bool DeleteFutureNodes )
+        {
+            _CswNbtPropertySetSchedulerImpl.updateNextDueDate( ForceUpdate, DeleteFutureNodes );
+        }
+
+
+        public Int32 GeneratedNodeCount( DateTime TargetDay )
+        {
+            CswNbtView View = new CswNbtView( _CswNbtResources );
+            View.ViewName = "Generated Node Count";
+
+            CswNbtMetaDataNodeType TargetNT = _CswNbtResources.MetaData.getNodeType( CswConvert.ToInt32( TargetType.SelectedNodeTypeIds[0] ) );
+            CswNbtMetaDataNodeTypeProp GeneratorNTP = TargetNT.getNodeTypePropByObjectClassProp( CswNbtPropertySetGeneratorTarget.PropertyName.Generator );
+            CswNbtMetaDataNodeTypeProp CreatedDateNTP = TargetNT.getNodeTypePropByObjectClassProp( CswNbtPropertySetGeneratorTarget.PropertyName.CreatedDate );
+
+            CswNbtViewRelationship TargetRel = View.AddViewRelationship( TargetNT, false );
+            View.AddViewPropertyAndFilter( TargetRel,
+                                           GeneratorNTP,
+                                           Conjunction: CswNbtPropFilterSql.PropertyFilterConjunction.And,
+                                           ResultMode: CswNbtPropFilterSql.FilterResultMode.Hide,
+                                           Value: this.NodeId.PrimaryKey.ToString(),
+                                           SubFieldName: ((CswNbtFieldTypeRuleRelationship)GeneratorNTP.getFieldTypeRule()).NodeIDSubField.Name,
+                                           FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+
+            if( DateTime.MinValue != TargetDay )
+            {
+                View.AddViewPropertyAndFilter( TargetRel,
+                                               CreatedDateNTP,
+                                               Conjunction: CswNbtPropFilterSql.PropertyFilterConjunction.And,
+                                               ResultMode: CswNbtPropFilterSql.FilterResultMode.Hide,
+                                               Value: TargetDay.Date.ToString(),
+                                               FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+            }
+
+            ICswNbtTree TargetTree = _CswNbtResources.Trees.getTreeFromView( View, false, true, true );
+            return TargetTree.getChildNodeCount();
+        } // GeneratedNodeCount
 
     }//CswNbtObjClassGenerator
 

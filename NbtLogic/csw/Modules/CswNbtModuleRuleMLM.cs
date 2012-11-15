@@ -20,6 +20,9 @@ namespace ChemSW.Nbt
                 _CswNbtResources.Modules.EnableModule( CswNbtModuleName.CISPro );
             }
 
+            //Turn on all views in the MLM (demo) category
+            _CswNbtResources.Modules.ToggleViewsInCategory( false, "MLM (demo)", NbtViewVisibility.Global);
+
             //Case 27866 on enable show Container props...
             //   Lot Controlled
             //   Requisitionable
@@ -40,6 +43,19 @@ namespace ChemSW.Nbt
 
                 CswNbtMetaDataNodeTypeProp reservedForNTP = containerNT.getNodeTypePropByObjectClassProp( CswNbtObjClassContainer.PropertyName.ReservedFor );
                 reservedForNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, false, TabId: cmgTab.TabId );
+            }
+
+            //Case 27864 on enable show Material props...
+            //   Manufacturing Sites
+            //   UN Code
+            CswNbtMetaDataObjectClass materialOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.MaterialClass );
+            foreach( CswNbtMetaDataNodeType materialNT in materialOC.getNodeTypes() )
+            {
+                CswNbtMetaDataNodeTypeProp manufacturingSitesNTP = materialNT.getNodeTypePropByObjectClassProp( CswNbtObjClassMaterial.PropertyName.ManufacturingSites );
+                manufacturingSitesNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, false, materialNT.getFirstNodeTypeTab().TabId );
+
+                CswNbtMetaDataNodeTypeProp uNCodeNTP = materialNT.getNodeTypePropByObjectClassProp( CswNbtObjClassMaterial.PropertyName.UNCode );
+                uNCodeNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, false, materialNT.getFirstNodeTypeTab().TabId );
             }
 
             CswNbtMetaDataObjectClass RequestMatDispOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.RequestMaterialDispenseClass );
@@ -72,6 +88,9 @@ namespace ChemSW.Nbt
 
         public override void OnDisable()
         {
+            //Turn on off views in the MLM (demo) category
+            _CswNbtResources.Modules.ToggleViewsInCategory( true, "MLM (demo)", NbtViewVisibility.Global );
+
             //Case 27866 on disable hide Container props...
             //   Lot Controlled
             //   Requisitionable
@@ -92,6 +111,19 @@ namespace ChemSW.Nbt
                 _CswNbtResources.MetaData.DeleteNodeTypeTab( cmgTab );
             }
 
+            //Case 27864 on enable hide Material props...
+            //   Manufacturing Sites
+            //   UN Code
+            CswNbtMetaDataObjectClass materialOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.MaterialClass );
+            foreach( CswNbtMetaDataNodeType materialNT in materialOC.getNodeTypes() )
+            {
+                CswNbtMetaDataNodeTypeProp manufacturingSitesNTP = materialNT.getNodeTypePropByObjectClassProp( CswNbtObjClassMaterial.PropertyName.ManufacturingSites );
+                manufacturingSitesNTP.removeFromAllLayouts();
+
+                CswNbtMetaDataNodeTypeProp uNCodeNTP = materialNT.getNodeTypePropByObjectClassProp( CswNbtObjClassMaterial.PropertyName.UNCode );
+                uNCodeNTP.removeFromAllLayouts();
+            }
+            
             CswNbtMetaDataObjectClass RequestMatDispOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.RequestMaterialDispenseClass );
             foreach( CswNbtMetaDataNodeType NodeType in RequestMatDispOc.getLatestVersionNodeTypes() )
             {
@@ -123,7 +155,6 @@ namespace ChemSW.Nbt
                 NrdNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, RofNtp, true );
 
             }
-
         } // OnDisable()
 
     } // class CswNbtModuleCISPro

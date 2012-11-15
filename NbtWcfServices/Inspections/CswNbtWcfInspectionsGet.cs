@@ -164,7 +164,7 @@ namespace NbtWebAppServices.Response
                 {
                     DesignId = InspectionNode.NodeTypeId,
 
-                    DueDate = NodeAsInspectionDesign.Date.DateTimeValue,
+                    DueDate = NodeAsInspectionDesign.DueDate.DateTimeValue,
                     InspectionId = NodeAsInspectionDesign.NodeId.PrimaryKey,
                     InspectionPointName = NodeAsInspectionDesign.Target.CachedNodeName,
                     LocationPath = NodeAsInspectionDesign.Location.Gestalt,
