@@ -184,7 +184,8 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataNodeTypeProp RcdLocationNtp = RequestCdNt.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestContainerDispense.PropertyName.Location );
 
             //Edit Layout
-            RcdNumberNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, DisplayRow: 1, DisplayColumn: 1 );
+            CswNbtMetaDataNodeTypeTab RcdNodeTypeTab = RequestCdNt.getFirstNodeTypeTab();
+            RcdNumberNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, DisplayRow: 1, DisplayColumn: 1, TabId: RcdNodeTypeTab.TabId );
             RcdDescriptionNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, RcdNumberNtp, DoMove: true );
             RcdQuantityNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, RcdDescriptionNtp, DoMove: true );
             RcdContainerNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, RcdQuantityNtp, DoMove: true );
@@ -233,7 +234,8 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataNodeTypeProp RcuCommentsNtp = RequestCuNt.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestContainerUpdate.PropertyName.Comments );
 
             //Edit Layout
-            RcuNumberNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, DoMove: true, DisplayRow: 1, DisplayColumn: 1 );
+            CswNbtMetaDataNodeTypeTab RcuNodeTypeTab = RequestCuNt.getFirstNodeTypeTab();
+            RcuNumberNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, DoMove: true, DisplayRow: 1, DisplayColumn: 1, TabId: RcuNodeTypeTab.TabId );
             RcuDescriptionNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, RcuNumberNtp, DoMove: true );
             RcuContainerNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, RcuDescriptionNtp, DoMove: true );
             RcuMaterialNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, RcuContainerNtp, DoMove: true );
@@ -296,7 +298,8 @@ namespace ChemSW.Nbt.Schema
             //Nothing to add to this Layout
 
             //Edit Layout
-            RmdNumberNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, DisplayRow: 1, DisplayColumn: 1 );
+            CswNbtMetaDataNodeTypeTab RmdNodeTypeTab = RequestMdNt.getFirstNodeTypeTab();
+            RmdNumberNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, DisplayRow: 1, DisplayColumn: 1, TabId: RmdNodeTypeTab.TabId );
             RmdDescriptionNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, DoMove: true, InsertAfterProp: RmdNumberNtp );
             RmdCountNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, DoMove: true, InsertAfterProp: RmdDescriptionNtp );
             RmdSizeNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, DoMove: true, InsertAfterProp: RmdCountNtp );
@@ -335,6 +338,9 @@ namespace ChemSW.Nbt.Schema
             if( _CswNbtSchemaModTrnsctn.Modules.IsModuleEnabled( CswNbtModuleName.MLM ) )
             {
                 //Identity Tab
+                CswNbtMetaDataNodeTypeTab IdentityTab = RequestMdNt.getIdentityTab();
+                RmdDescriptionNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, DisplayRow: 1, DisplayColumn: 1, DoMove: false, TabId: IdentityTab.TabId );
+                RmdFulfillNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, DisplayRow: 2, DisplayColumn: 1, DoMove: false, TabId: IdentityTab.TabId );
 
                 //CMG Tab
                 CswNbtMetaDataNodeTypeTab CmgTab = _CswNbtSchemaModTrnsctn.MetaData.makeNewTab( RequestMdNt, "Central Material Group" );
@@ -404,7 +410,8 @@ namespace ChemSW.Nbt.Schema
             RmcLocationNtp.removeFromAllLayouts();
 
             //Edit Layout
-            RmcNumberNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, DoMove: true, DisplayRow: 1, DisplayColumn: 1 );
+            CswNbtMetaDataNodeTypeTab RmcNodeTypeTab = RequestMcNt.getFirstNodeTypeTab();
+            RmcNumberNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, DoMove: true, DisplayRow: 1, DisplayColumn: 1, TabId: RmcNodeTypeTab.TabId );
             RmcDescriptionNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, DoMove: true, InsertAfterProp: RmcNumberNtp );
             RmcMaterialNameNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, DoMove: true, InsertAfterProp: RmcNumberNtp );
             RmcSupplierNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, DoMove: true, InsertAfterProp: RmcMaterialNameNtp );
