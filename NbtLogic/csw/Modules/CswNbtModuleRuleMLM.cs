@@ -20,6 +20,9 @@ namespace ChemSW.Nbt
                 _CswNbtResources.Modules.EnableModule( CswNbtModuleName.CISPro );
             }
 
+            //Turn on all views in the MLM (demo) category
+            _CswNbtResources.Modules.ToggleViewsInCategory( false, "MLM (demo)", NbtViewVisibility.Global);
+
             //Case 27866 on enable show Container props...
             //   Lot Controlled
             //   Requisitionable
@@ -72,6 +75,9 @@ namespace ChemSW.Nbt
 
         public override void OnDisable()
         {
+            //Turn on off views in the MLM (demo) category
+            _CswNbtResources.Modules.ToggleViewsInCategory( true, "MLM (demo)", NbtViewVisibility.Global );
+
             //Case 27866 on disable hide Container props...
             //   Lot Controlled
             //   Requisitionable
@@ -123,7 +129,6 @@ namespace ChemSW.Nbt
                 NrdNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, RofNtp, true );
 
             }
-
         } // OnDisable()
 
     } // class CswNbtModuleCISPro

@@ -634,7 +634,7 @@
                     var formTable = cswPrivate.form.table({
                         name: cswPrivate.name + '_formtbl_' + tabid,
                         width: '100%'
-                    });
+                    }).css({ padding: '10px' });
 
                     var layoutOpts = {
                         name: cswPrivate.name + '_props_' + tabid,

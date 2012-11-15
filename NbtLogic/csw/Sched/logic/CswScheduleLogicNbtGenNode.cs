@@ -38,7 +38,6 @@ namespace ChemSW.Nbt.Sched
             get { return ( _CswScheduleLogicDetail ); }
         }
 
-        private CswScheduleNodeUpdater _CswScheduleNodeUpdater = null;
         private CswScheduleLogicNodes _CswScheduleLogicNodes = null;
         private CswNbtResources _CswNbtResources = null;
         public void init( ICswResources RuleResources, CswScheduleLogicDetail CswScheduleLogicDetail )
@@ -46,8 +45,6 @@ namespace ChemSW.Nbt.Sched
             _CswNbtResources = (CswNbtResources) RuleResources;
             _CswScheduleLogicDetail = CswScheduleLogicDetail;
             _CswScheduleLogicNodes = new CswScheduleLogicNodes( _CswNbtResources );
-            _CswScheduleNodeUpdater = new CswScheduleNodeUpdater( _CswNbtResources );
-            //_CswNbtResources.AuditContext = "Scheduler Task: Generate Nodes";
             _CswNbtResources.AuditContext = "Scheduler Task: " + RuleName;
 
         }//init()
@@ -61,7 +58,7 @@ namespace ChemSW.Nbt.Sched
 
                 try
                 {
-                    Int32 GeneratorLimit = CswConvert.ToInt32(_CswNbtResources.ConfigVbls.getConfigVariableValue( CswNbtResources.ConfigurationVariables.generatorlimit.ToString() ));
+                    Int32 GeneratorLimit = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswNbtResources.ConfigurationVariables.generatorlimit.ToString() ) );
                     if( Int32.MinValue == GeneratorLimit )
                     {
                         GeneratorLimit = 1;
@@ -114,17 +111,36 @@ namespace ChemSW.Nbt.Sched
                                         ( DateTime.Now.Date <= FinalDueDateValue || DateTime.MinValue.Date == FinalDueDateValue ) &&
                                         ( DateTime.Now >= ThisDueDateValue ) )
                                     {
-                                        CswNbtActGenerateNodes CswNbtActGenerateNodes = new CswNbtActGenerateNodes( _CswNbtResources );
-                                        bool Finished = CswNbtActGenerateNodes.makeNode( CurrentGenerator.Node );
-                                        if( Finished )  // case 26111
+                                        // case 28069
+                                        // It should not be possible to make more than 24 nodes in a single day, 
+                                        // since the fastest interval is 1 hour, and we're not creating things into the past anymore.
+                                        // Therefore, disable anything that is erroneously spewing things.
+                                        if( CurrentGenerator.GeneratedNodeCount( DateTime.Today ) >= 24 )
                                         {
-                                            string Message = "Created all " + CurrentGenerator.TargetType.SelectedNodeTypeNames() + " target(s) for " + CurrentGenerator.NextDueDate.DateTimeValue.Date.ToShortDateString();
-                                            _CswScheduleNodeUpdater.update( CurrentGenerator.Node, Message );
+                                            CurrentGenerator.Enabled.Checked = Tristate.False;
+                                            CurrentGenerator.RunStatus.AddComment( "Disabled due to error: Generated too many " + CurrentGenerator.TargetType.SelectedNodeTypeNames() + " target(s) in a single day" );
+                                            CurrentGenerator.postChanges( false );
                                         }
+                                        else
+                                        {
+                                            CswNbtActGenerateNodes CswNbtActGenerateNodes = new CswNbtActGenerateNodes( _CswNbtResources );
+                                            bool Finished = CswNbtActGenerateNodes.makeNode( CurrentGenerator.Node );
+                                            if( Finished ) // case 26111
+                                            {
+                                                string Message = "Created all " + CurrentGenerator.TargetType.SelectedNodeTypeNames() + " target(s) for " + CurrentGenerator.NextDueDate.DateTimeValue.Date.ToShortDateString();
+                                                //case 25702 - add comment:
+                                                if( false == String.IsNullOrEmpty( Message ) )
+                                                {
+                                                    CurrentGenerator.RunStatus.AddComment( Message );
+                                                }
+                                                CurrentGenerator.updateNextDueDate( ForceUpdate: true, DeleteFutureNodes: false );
+                                                CurrentGenerator.postChanges( false );
+                                            }
 
-                                        GeneratorDescriptions += CurrentGenerator.Description + "; ";
-                                        TotalGeneratorsProcessed++;
-                                    }
+                                            GeneratorDescriptions += CurrentGenerator.Description + "; ";
+                                            TotalGeneratorsProcessed++;
+                                        } // if-else( CurrentGenerator.GeneratedNodeCount( DateTime.Today ) >= 24 )
+                                    } // if due
                                 } // if( ThisDueDateValue != DateTime.MinValue )
 
                             }//try

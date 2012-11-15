@@ -6,20 +6,7 @@ namespace ChemSW.Nbt.ObjClasses
 {
     public class CswNbtPropSetCaster
     {
-        public static ICswNbtPropertySetGeneratorTarget AsPropertySetGeneratorTarget( CswNbtNode Node )
-        {
-            if( Node != null )
-            {
-                if( !( Node.ObjClass is ICswNbtPropertySetGeneratorTarget ) )
-                    throw ( new CswDniException( ErrorType.Error, "Invalid cast", "Can't cast current object class as ICswNbtPropertySetGeneratorTarget; Current object class is " + Node.getObjectClass().ObjectClass.ToString() ) );
-                return ( (ICswNbtPropertySetGeneratorTarget) Node.ObjClass );
-            }
-            else
-            {
-                return null;
-            }
-        }//AsPropertySetGeneratorTarget
-
+        
         public static ICswNbtPropertySetScheduler AsPropertySetScheduler( CswNbtNode Node )
         {
             if( Node != null )

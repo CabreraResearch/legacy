@@ -588,6 +588,21 @@ namespace ChemSW.Nbt.Schema
         }
         #endregion
 
+        public void _removeRunNowOnGenerators()
+        {
+            #region case 28146 - Remove 'Run Now' on Generators
+            _acceptBlame( CswDeveloper.SS, 28146 );
+
+            CswNbtMetaDataObjectClass GeneratorOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.GeneratorClass );
+            CswNbtMetaDataObjectClassProp RunNowOCP = GeneratorOC.getObjectClassProp( "Run Now" );
+            if( null != RunNowOCP )
+            {
+                _CswNbtSchemaModTrnsctn.MetaData.DeleteObjectClassProp( RunNowOCP, true );
+            }
+            _resetBlame();
+            #endregion case 28146 - Remove 'Run Now' on Generators
+        }
+
         #region Ursula Methods
 
         public void _makeContainerGroup()
@@ -1228,6 +1243,29 @@ namespace ChemSW.Nbt.Schema
             _resetBlame();
         }
 
+        public void _addGeneratorTargetCreatedDate()
+        {
+            _acceptBlame( CswDeveloper.SS, 28069 );
+
+            CswNbtMetaDataObjectClass TaskOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.TaskClass );
+            _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( TaskOC )
+            {
+                PropName = CswNbtPropertySetGeneratorTarget.PropertyName.CreatedDate,
+                FieldType = CswNbtMetaDataFieldType.NbtFieldType.DateTime,
+                ServerManaged = true
+            } );
+
+            CswNbtMetaDataObjectClass InspectionDesignOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.InspectionDesignClass );
+            _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( InspectionDesignOC )
+            {
+                PropName = CswNbtPropertySetGeneratorTarget.PropertyName.CreatedDate,
+                FieldType = CswNbtMetaDataFieldType.NbtFieldType.DateTime,
+                ServerManaged = true
+            } );
+            
+            _resetBlame();
+        }
+
         #endregion Ursula Methods
 
 
@@ -1250,6 +1288,7 @@ namespace ChemSW.Nbt.Schema
             _makeReceiptLotOC();
             _setNodesToHiddenIfNull();
             _makeContainerFamilyButton();
+            _removeRunNowOnGenerators();
 
             #endregion TITANIA
 
@@ -1265,6 +1304,8 @@ namespace ChemSW.Nbt.Schema
             _newContainerProperties27866();
 
 
+            _addGeneratorTargetCreatedDate();
+            
             #endregion URSULA
 
             //THIS GOES LAST!
