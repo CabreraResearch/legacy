@@ -24,7 +24,7 @@ namespace NbtWebApp
         /// 
         /// </summary>
         [OperationContract]
-        [WebInvoke( Method = "POST", ResponseFormat = WebMessageFormat.Json )]
+        [WebInvoke( Method = "POST" )]
         [FaultContract( typeof( FaultException ) )]
         [Description( "Initiate a new session" )]
         public CswWebSvcReturn Init( CswNbtSessionAuthenticateData.Authentication.Request Request )
@@ -47,7 +47,7 @@ namespace NbtWebApp
         /// 
         /// </summary>
         [OperationContract]
-        [WebGet( ResponseFormat = WebMessageFormat.Json )]
+        [WebGet(  )]
         [FaultContract( typeof( FaultException ) )]
         [Description( "Terminate the current session" )]
         public void End()
@@ -62,7 +62,7 @@ namespace NbtWebApp
         /// 
         /// </summary>
         [OperationContract]
-        [WebInvoke( Method = "POST", ResponseFormat = WebMessageFormat.Json )]
+        [WebInvoke( Method = "POST" )]
         [FaultContract( typeof( FaultException ) )]
         [Description( "Reset a user's password" )]
         public CswNbtWebServiceSession.CswNbtSessionReturn ResetPassword( CswNbtSessionAuthenticateData.Authentication.Response.Expired Request )

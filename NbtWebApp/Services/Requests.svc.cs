@@ -22,9 +22,9 @@ namespace NbtWebApp
         /// 
         /// </summary>
         [OperationContract]
-        [WebInvoke( Method = "GET", ResponseFormat = WebMessageFormat.Json )]
+        [WebInvoke( Method = "GET" )]
         [FaultContract( typeof( FaultException ) )]
-        [Description( "Get " )]
+        [Description( "Get the appropriate Request type for Material Creation" )]
         public CswNbtRequestReturn findMaterialCreate()
         {
             //delegate has to be static because you can't create an instance yet: you don't have resources until the delegate is actually called

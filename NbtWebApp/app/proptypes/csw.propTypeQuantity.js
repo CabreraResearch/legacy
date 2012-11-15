@@ -56,6 +56,7 @@
                             MaxValue: Csw.number(cswPrivate.propVals.maxvalue),
                             excludeRangeLimits: Csw.bool(cswPrivate.propVals.excludeRangeLimits),
                             ceilingVal: Csw.number(cswPrivate.ceilingVal),
+                            size: 6,
                             Precision: 6, //case 24646 - precision is being handled in the validator below, so we don't want to use the one in numberTextBox.
                             ReadOnly: Csw.bool(cswPublic.data.isReadOnly()),
                             isRequired: Csw.bool(cswPublic.data.isRequired()) && false === cswPrivate.quantityoptional,

@@ -1052,18 +1052,38 @@ namespace ChemSW.Nbt.Schema
                     SetValOnAdd = false
                 } );
 
+                CswNbtMetaDataObjectClassProp ReorderOcp = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( RequestMaterialDispenseOc )
+                {
+                    PropName = CswNbtObjClassRequestMaterialDispense.PropertyName.Reorder,
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Logical,
+                    SetValOnAdd = false,
+                    IsRequired = true
+                } );
+                _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( ReorderOcp, false );
+
                 _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( RequestMaterialDispenseOc )
                 {
                     PropName = CswNbtObjClassRequestMaterialDispense.PropertyName.ReorderFrequency,
                     FieldType = CswNbtMetaDataFieldType.NbtFieldType.TimeInterval,
-                    SetValOnAdd = false
+                    SetValOnAdd = false,
+                    IsFk = true,
+                    FkType = NbtViewRelatedIdType.ObjectClassId.ToString(),
+                    FkValue = RequestMaterialDispenseOc.ObjectClassId,
+                    FilterPropId = ReorderOcp.PropId,
+                    Filter = CswNbtMetaDataObjectClassProp.makeFilter( ReorderOcp, CswNbtPropFilterSql.PropertyFilterMode.Equals, true )
                 } );
 
                 _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( RequestMaterialDispenseOc )
                 {
                     PropName = CswNbtObjClassRequestMaterialDispense.PropertyName.NextReorderDate,
                     FieldType = CswNbtMetaDataFieldType.NbtFieldType.DateTime,
-                    SetValOnAdd = false
+                    SetValOnAdd = false,
+                    ServerManaged = true,
+                    IsFk = true,
+                    FkType = NbtViewRelatedIdType.ObjectClassId.ToString(),
+                    FkValue = RequestMaterialDispenseOc.ObjectClassId,
+                    FilterPropId = ReorderOcp.PropId,
+                    Filter = CswNbtMetaDataObjectClassProp.makeFilter( ReorderOcp, CswNbtPropFilterSql.PropertyFilterMode.Equals, true )
                 } );
 
                 _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( RequestMaterialDispenseOc )

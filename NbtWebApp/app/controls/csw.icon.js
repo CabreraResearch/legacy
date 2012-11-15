@@ -19,7 +19,7 @@
                 state: Csw.enums.iconState.normal,
                 isButton: false,
                 onClick: null,
-                size: 18, // 16, 18, or 100
+                size: 16, // 16, 18, or 100
 
                 iconFilePrefix: 'Images/newicons/icons',
                 iconFileSuffix: '.png'

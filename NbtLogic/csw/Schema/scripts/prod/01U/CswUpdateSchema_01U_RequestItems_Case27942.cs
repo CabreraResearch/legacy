@@ -103,19 +103,19 @@ namespace ChemSW.Nbt.Schema
                                                                                       NbtViewPropOwnerType.Second,
                                                                                       RequestOcp, false );
 
-                    CswNbtViewProperty Vp0 = GridView.AddViewProperty( RequestItemRel, MemberOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.Status ) );
+                    CswNbtViewProperty Vp0 = GridView.AddViewProperty( RequestItemRel, MemberOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.Number ) );
                     Vp0.Order = 0;
-                    CswNbtViewProperty Vp1 = GridView.AddViewProperty( RequestItemRel, MemberOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.Type ) );
+                    CswNbtViewProperty Vp1 = GridView.AddViewProperty( RequestItemRel, MemberOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.Status ) );
                     Vp1.Order = 1;
                     CswNbtViewProperty Vp2 = GridView.AddViewProperty( RequestItemRel, MemberOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.Description ) );
                     Vp2.Order = 2;
-                    CswNbtViewProperty Vp3 = GridView.AddViewProperty( RequestItemRel, MemberOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.Number ) );
+                    CswNbtViewProperty Vp3 = GridView.AddViewProperty( RequestItemRel, MemberOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.NeededBy ) );
                     Vp3.Order = 3;
-                    CswNbtViewProperty Vp4 = GridView.AddViewProperty( RequestItemRel, MemberOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.Name ) );
+                    CswNbtViewProperty Vp4 = GridView.AddViewProperty( RequestItemRel, MemberOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.Location ) );
                     Vp4.Order = 4;
                     CswNbtViewProperty Vp5 = GridView.AddViewProperty( RequestItemRel, MemberOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.InventoryGroup ) );
                     Vp5.Order = 5;
-                    CswNbtViewProperty Vp6 = GridView.AddViewProperty( RequestItemRel, MemberOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.Location ) );
+                    CswNbtViewProperty Vp6 = GridView.AddViewProperty( RequestItemRel, MemberOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.RequestedFor ) );
                     Vp6.Order = 6;
                 }
 
@@ -495,9 +495,9 @@ namespace ChemSW.Nbt.Schema
                     CswNbtViewProperty RequestorVp = GridView.AddViewProperty( RequestRel, RequestOc.getObjectClassProp( CswNbtObjClassRequest.PropertyName.Requestor ) );
                     RequestorVp.Order = 4;
 
-                    CswNbtViewProperty TypeVp = GridView.AddViewProperty( RequestItemRel, RequestContainerUpdateOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.Type ) );
+                    CswNbtViewProperty TypeVp = GridView.AddViewProperty( RequestItemRel, RequestContainerUpdateOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.Number ) );
                     TypeVp.Order = 5;
-                    CswNbtViewProperty NumberVp = GridView.AddViewProperty( RequestItemRel, RequestContainerUpdateOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.Number ) );
+                    CswNbtViewProperty NumberVp = GridView.AddViewProperty( RequestItemRel, RequestContainerUpdateOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.Description ) );
                     NumberVp.Order = 6;
                     CswNbtViewProperty OrderVp = GridView.AddViewProperty( RequestItemRel, RequestContainerUpdateOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.ExternalOrderNumber ) );
                     OrderVp.Order = 7;

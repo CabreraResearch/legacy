@@ -20,7 +20,7 @@ namespace NbtWebApp
         private HttpContext _Context = HttpContext.Current;
 
         [OperationContract]
-        [WebGet( ResponseFormat = WebMessageFormat.Json )]
+        [WebGet()]
         [Description( "Generate subscription information for the current user" )]
         [FaultContract( typeof( FaultException ) )]
         public CswNbtWebServiceMailReports.MailReportSubscriptionsReturn getSubscriptions()
@@ -40,7 +40,7 @@ namespace NbtWebApp
         }
 
         [OperationContract]
-        [WebInvoke( ResponseFormat = WebMessageFormat.Json )]
+        [WebInvoke()]
         [Description( "Save subscription information for the current user" )]
         [FaultContract( typeof( FaultException ) )]
         public CswWebSvcReturn saveSubscriptions( CswNbtWebServiceMailReports.MailReportSubscriptions Subscriptions )

@@ -247,6 +247,11 @@ namespace ChemSW.Nbt.MetaData
             return ( _ObjectClassPropRow["filter"].ToString() != string.Empty );
         }
 
+        public static string makeFilter( CswNbtMetaDataObjectClassProp Prop, CswNbtPropFilterSql.PropertyFilterMode FilterMode, object FilterValue )
+        {
+            return makeFilter( Prop.getFieldTypeRule().SubFields.Default, FilterMode, FilterValue );
+        }
+
         public static string makeFilter( CswNbtSubField SubField, CswNbtPropFilterSql.PropertyFilterMode FilterMode, object FilterValue )
         {
             return SubField.Column.ToString() + FilterDelimiter + FilterMode + FilterDelimiter + FilterValue;
