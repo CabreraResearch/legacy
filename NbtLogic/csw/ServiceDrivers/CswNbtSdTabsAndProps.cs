@@ -1048,13 +1048,21 @@ namespace ChemSW.Nbt.ServiceDrivers
             return Buttons;
         }
 
-        public JObject getLocationTree( string NodeId )
+        /// <summary>
+        /// Returns the JSON needed to build the full location tree, no nodes attached
+        /// </summary>
+        /// <param name="SelectedNodeId">Location tree's selected NodeId - if null, uses the User's default location</param>
+        /// <returns></returns>
+        public JObject getLocationTree( string SelectedNodeId )
         {
             JObject LocationTreeJSON = new JObject();
-            CswPrimaryKey LocationId = String.IsNullOrEmpty( NodeId )
+            CswPrimaryKey LocationId = String.IsNullOrEmpty( SelectedNodeId )
                                            ? _CswNbtResources.CurrentNbtUser.DefaultLocationId
-                                           : CswConvert.ToPrimaryKey( NodeId );
-            CswNbtObjClassLocation LocationNode = _CswNbtResources.Nodes.GetNode( LocationId );
+                                           : CswConvert.ToPrimaryKey( SelectedNodeId );
+            CswNbtMetaDataNodeType LocationNT = _CswNbtResources.MetaData.getNodeType( "Site" );
+            CswNbtObjClassLocation LocationNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( LocationNT.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing );
+            LocationNode.Location.SelectedNodeId = LocationId;
+            LocationNode.Location.RefreshNodeName();
             LocationNode.Location.ToJSON( LocationTreeJSON );
             return LocationTreeJSON;
         }
