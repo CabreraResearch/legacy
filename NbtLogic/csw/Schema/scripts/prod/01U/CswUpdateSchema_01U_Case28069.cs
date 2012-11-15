@@ -22,8 +22,24 @@ namespace ChemSW.Nbt.Schema
 
         public override void update()
         {
-            // Set creation date for all existing tasks and inspection designs to be 1/1/2000
             CswNbtMetaDataObjectClass TaskOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.TaskClass );
+            CswNbtMetaDataObjectClass InspectionOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.InspectionDesignClass );
+
+            // Set layout to be next to Due Date
+            foreach( CswNbtMetaDataNodeType TaskNT in TaskOC.getNodeTypes() )
+            {
+                CswNbtMetaDataNodeTypeProp TaskCreatedDateNTP = TaskNT.getNodeTypePropByObjectClassProp( CswNbtObjClassTask.PropertyName.CreatedDate );
+                CswNbtMetaDataNodeTypeProp TaskDueDateNTP = TaskNT.getNodeTypePropByObjectClassProp( CswNbtObjClassTask.PropertyName.DueDate );
+                TaskCreatedDateNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, TaskDueDateNTP, true );
+            }
+            foreach( CswNbtMetaDataNodeType InspectionNT in InspectionOC.getNodeTypes() )
+            {
+                CswNbtMetaDataNodeTypeProp InspCreatedDateNTP = InspectionNT.getNodeTypePropByObjectClassProp( CswNbtObjClassTask.PropertyName.CreatedDate );
+                CswNbtMetaDataNodeTypeProp InspDueDateNTP = InspectionNT.getNodeTypePropByObjectClassProp( CswNbtObjClassTask.PropertyName.DueDate );
+                InspCreatedDateNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, InspDueDateNTP, true );
+            }
+
+            // Set creation date for all existing tasks and inspection designs to be 1/1/2000
             foreach( CswNbtPropertySetGeneratorTarget TaskNode in TaskOC.getNodes( false, true, false, true ) )
             {
                 if( DateTime.MinValue == TaskNode.CreatedDate.DateTimeValue )
@@ -33,7 +49,6 @@ namespace ChemSW.Nbt.Schema
                 }
             }
 
-            CswNbtMetaDataObjectClass InspectionOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.InspectionDesignClass );
             foreach( CswNbtPropertySetGeneratorTarget InspNode in InspectionOC.getNodes( false, true, false, true ) )
             {
                 if( DateTime.MinValue == InspNode.CreatedDate.DateTimeValue )
