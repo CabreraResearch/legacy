@@ -106,7 +106,11 @@
                         });
                     }
                 } // if-else(o.ReadOnly)
-            } ());
+            }());
+
+            cswPublic.setMaxDate = function(maxDate) {
+                cswPrivate.dateBox.$.datepicker('option', 'maxDate', maxDate);
+            };
 
             cswPublic.val = function (readOnly) {
                 var ret = {};

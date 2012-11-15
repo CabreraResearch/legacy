@@ -153,6 +153,7 @@
                             maxDate: cswPrivate.getCurrentDate(),
                             onChange: function () {
                                 cswPrivate.state.EndDate = endDatePicker.val().date;
+                                startDatePicker.setMaxDate(cswPrivate.state.EndDate);
                                 cswPrivate.reinitSteps(2);
                             }
                         });
