@@ -16,11 +16,15 @@
                 relatedobjectclassid: '',
                 nodeid: '',
                 viewid: '',
+                selectedName: '',
                 path: '',
                 nodeKey: '',
+                selectednodelink: '',
                 Multi: false,
                 ReadOnly: false,
+                isRequired: false,
                 onChange: null,
+                EditMode: Csw.enums.editMode.Edit,
                 value: ''
             };
 
@@ -42,6 +46,7 @@
                             },
                             success: function (data) {
                                 Csw.extend(cswPrivate, data, true);
+                                cswPrivate.selectedName = data.name;
                             }
                         });
                     }
@@ -57,24 +62,23 @@
                         cswPrivate.name = Csw.string(cswPrivate.name, cswPrivate.relatednodename).trim();
                         cswPrivate.path = Csw.string(cswPrivate.path, cswPrivate.relatednodename).trim();
                     } else {
-                        cswPrivate.nodeid = Csw.string(cswPrivate.nodeid, '').trim();
-                        cswPrivate.name = Csw.string(cswPrivate.name, '').trim();
-                        cswPrivate.path = Csw.string(cswPrivate.path, '').trim();
+                        cswPrivate.nodeid = Csw.string(cswPrivate.nodeid).trim();
+                        cswPrivate.name = Csw.string(cswPrivate.name).trim();
+                        cswPrivate.path = Csw.string(cswPrivate.path).trim();
                     }
                     cswPrivate.viewid = Csw.string(cswPrivate.viewid).trim();
                     cswPrivate.value = cswPrivate.nodeid;
-
                     cswPublic.table = cswParent.table();
-
                     cswPublic.table.cell(1, 1).text(cswPrivate.path);
 
                     cswPrivate.selectDiv = cswPublic.table.cell(2, 1).div({
                         cssclass: 'locationselect',
-                        value: cswPrivate.nodeid
+                        value: cswPrivate.nodeid,
+                        onChange: function () {
+                            cswPrivate.selectDiv.val();
+                        }
                     });
-
                     cswPublic.table.cell(2, 1).hide();
-
                 } ());
                 //#endregion init ctor
 
@@ -85,7 +89,7 @@
                 };
 
                 cswPublic.selectedName = function() {
-                    return cswPrivate.name;
+                    return cswPrivate.selectedName;
                 };
 
                 cswPrivate.onTreeSelect = function (optSelect) {
@@ -103,64 +107,68 @@
                     Csw.defer(function () { cswPublic.comboBox.close(); }, 100);
                 };
 
+                cswPrivate.makeLocationCombo = function() {
+                    cswPublic.table.cell(1, 1).hide();
+                    cswPublic.table.cell(1, 2).hide();
+                    cswPublic.table.cell(2, 1).show();
+
+                    cswPublic.comboBox = cswPrivate.selectDiv.comboBox({
+                        name: cswPrivate.name + '_combo',
+                        topContent: cswPrivate.selectedName,
+                        selectContent: '',
+                        width: '290px',
+                        onClick: (function () {
+                            var first = true;
+                            return function () {
+                                if (first) {      // only do this once
+                                    cswPublic.locationTree.expandAll();
+                                    first = false;
+                                }
+                                cswPublic.comboBox.open(); // ensure we're open on click
+                                return false;    // but only close when onTreeSelect fires, below
+                            };
+                        })()
+                    });
+                    cswPublic.comboBox.required(cswPrivate.isRequired);
+                    cswPublic.locationTree = Csw.nbt.nodeTree({
+                        name: cswPrivate.name,
+                        parent: cswPublic.comboBox.pickList,
+                        onInitialSelectNode: function (optSelect) {
+                            cswPrivate.onTreeSelect(optSelect);
+                        },
+                        onSelectNode: function (optSelect) {
+                            cswPrivate.onTreeSelect(optSelect);
+                        },
+                        UseScrollbars: false,
+                        ShowToggleLink: false
+                    });
+
+                    cswPublic.locationTree.init({
+                        viewid: cswPrivate.viewid,
+                        nodeid: cswPrivate.nodeid,
+                        nodekey: cswPrivate.nodeKey,
+                        IncludeInQuickLaunch: false,
+                        DefaultSelect: Csw.enums.nodeTree_DefaultSelect.root.name
+                    });
+                };
+
                 //#endregion cswPrivate/cswPublic methods and props
 
                 //#region final ctor
                 (function _post() {
                     if (false === cswPrivate.ReadOnly) {
-                        cswPublic.table.cell(1, 2).icon({
-                            name: cswPrivate.name + '_toggle',
-                            iconType: Csw.enums.iconType.pencil,
-                            hovertext: 'Edit',
-                            size: 16,
-                            isButton: true,
-                            onClick: function () {
-
-                                cswPublic.table.cell(1, 1).hide();
-                                cswPublic.table.cell(1, 2).hide();
-                                cswPublic.table.cell(2, 1).show();
-
-                                cswPublic.comboBox = cswPrivate.selectDiv.comboBox({
-                                    name: cswPrivate.name + '_combo',
-                                    topContent: cswPrivate.name,
-                                    selectContent: '',
-                                    width: '290px',
-                                    onClick: (function () {
-                                        var first = true;
-                                        return function () {
-                                            if (first) {      // only do this once
-                                                cswPublic.locationTree.expandAll();
-                                                first = false;
-                                            }
-                                            cswPublic.comboBox.open(); // ensure we're open on click
-                                            return false;    // but only close when onTreeSelect fires, below
-                                        };
-                                    })()
-                                });
-
-                                cswPublic.locationTree = Csw.nbt.nodeTree({
-                                    name: cswPrivate.name,
-                                    parent: cswPublic.comboBox.pickList,
-                                    onInitialSelectNode: function (optSelect) {
-                                        cswPrivate.onTreeSelect(optSelect);
-                                    },
-                                    onSelectNode: function (optSelect) {
-                                        cswPrivate.onTreeSelect(optSelect);
-                                    },
-                                    UseScrollbars: false,
-                                    ShowToggleLink: false
-                                });
-
-                                cswPublic.locationTree.init({
-                                    viewid: cswPrivate.viewid,
-                                    nodeid: cswPrivate.nodeid,
-                                    nodekey: cswPrivate.nodeKey,
-                                    IncludeInQuickLaunch: false,
-                                    DefaultSelect: Csw.enums.nodeTree_DefaultSelect.root.name
-                                });
-                            } // onClick
-                        }); // imageButton
-
+                        if (cswPrivate.EditMode === Csw.enums.editMode.Add) {
+                            cswPrivate.makeLocationCombo();
+                        } else {
+                            cswPublic.table.cell(1, 2).icon({
+                                name: cswPrivate.name + '_toggle',
+                                iconType: Csw.enums.iconType.pencil,
+                                hovertext: 'Edit',
+                                size: 16,
+                                isButton: true,
+                                onClick: cswPrivate.makeLocationCombo
+                            }); // imageButton
+                        }
                         cswParent.$.hover(function (event) { Csw.nodeHoverIn(event, cswPrivate.selectDiv.propNonDom('value')); },
                                           function (event) { Csw.nodeHoverOut(event, cswPrivate.selectDiv.propNonDom('value')); });
                     }
@@ -171,9 +179,7 @@
             //#endregion safety net
 
             return cswPublic;
-
         });
-
 
 } ());
 
