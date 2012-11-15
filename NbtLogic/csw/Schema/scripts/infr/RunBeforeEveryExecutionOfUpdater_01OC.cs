@@ -1269,7 +1269,7 @@ namespace ChemSW.Nbt.Schema
 
                     //UNCode NodeType
                     CswNbtMetaDataNodeType UNCodeNt = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "UN Code" );
-                    if( null != UNCodeNt )
+                    if( null == UNCodeNt )
                     {
                         UNCodeNt = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( GenericOc.ObjectClassId, "UN Code", "MLM" );
                         _CswNbtSchemaModTrnsctn.createModuleNodeTypeJunction( CswNbtModuleName.CISPro, UNCodeNt.NodeTypeId );
