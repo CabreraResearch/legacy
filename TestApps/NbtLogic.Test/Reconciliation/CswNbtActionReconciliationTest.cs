@@ -75,6 +75,26 @@ namespace ChemSw.Nbt.Test
         }
 
         /// <summary>
+        /// Given a location that has one Container that did not exist in the given timeframe,
+        /// assert that the no ContainerStatus data is returned
+        /// </summary>
+        [TestMethod]
+        public void getContainerStatusesTestContainerDidNotExist()
+        {
+            CswPrimaryKey LocationId = TestData.Nodes.createLocationNode().NodeId;
+            TestData.Nodes.createContainerNode( LocationId: LocationId );
+            ContainerData.ReconciliationRequest Request = new ContainerData.ReconciliationRequest
+            {
+                StartDate = DateTime.Now.AddHours( -2 ).ToString(),
+                EndDate = DateTime.Now.AddHours( -1 ).ToString(),
+                LocationId = LocationId.ToString(),
+                IncludeChildLocations = false
+            };
+            ContainerData Data = ReconciliationAction.getContainerStatuses( Request );
+            Assert.AreEqual( 0, Data.ContainerStatuses.Count );
+        }
+
+        /// <summary>
         /// Given a location that has one Container and a ContainerLocation in the given timeframe with a Correct status,
         /// assert that the returned ContainerStatus data has a ContainerStatus value of Correct
         /// </summary>

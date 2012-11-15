@@ -1291,6 +1291,13 @@ namespace ChemSW.Nbt.Schema
                 FkValue = UserOc.ObjectClassId,
                 ServerManaged = true
             } );
+            //Container DateCreated
+            _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( ContainerOc )
+            {
+                PropName = CswNbtObjClassContainer.PropertyName.DateCreated,
+                FieldType = CswNbtMetaDataFieldType.NbtFieldType.DateTime,
+                ServerManaged = true
+            } );
 
             _resetBlame();
             #endregion Case 24489 - ContainerLocation ObjectClass

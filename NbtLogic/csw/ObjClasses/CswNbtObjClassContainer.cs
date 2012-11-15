@@ -40,6 +40,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string ContainerGroup = "Container Group";
             public const string LabelFormat = "Label Format";
             public const string ReservedFor = "Reserved For";
+            public const string DateCreated = "Date Created";
         }
 
         private bool _IsDisposed
@@ -134,7 +135,10 @@ namespace ChemSW.Nbt.ObjClasses
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
             updateRequestMenu();
-
+            if( DateTime.MinValue == DateCreated.DateTimeValue )
+            {
+                DateCreated.DateTimeValue = DateTime.Now;
+            }
             _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
         }//beforeWriteNode()
 
@@ -969,6 +973,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropLogical Requisitionable { get { return ( _CswNbtNode.Properties[PropertyName.Requisitionable] ); } }
         public CswNbtNodePropRelationship LabelFormat { get { return ( _CswNbtNode.Properties[PropertyName.LabelFormat] ); } }
         public CswNbtNodePropRelationship ReservedFor { get { return ( _CswNbtNode.Properties[PropertyName.ReservedFor] ); } }
+        public CswNbtNodePropDateTime DateCreated { get { return ( _CswNbtNode.Properties[PropertyName.DateCreated] ); } }
         #endregion
 
 

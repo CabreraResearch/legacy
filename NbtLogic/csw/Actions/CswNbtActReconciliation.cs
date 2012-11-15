@@ -94,7 +94,7 @@ namespace ChemSW.Nbt.Actions
                         {
                             ContainerData.ReconciliationStatuses ContainerStatus = new ContainerData.ReconciliationStatuses();
                             ContainersTree.goToNthChild( j );
-                            CswNbtNode ContainerNode = ContainersTree.getNodeForCurrentPosition();
+                            CswNbtNode ContainerNode = ContainersTree.getNodeForCurrentPosition();//TODO - revert to CswObjClassContainer when Case 27520 is resolved
                             ContainerStatus.ContainerId = ContainerNode.NodeId.ToString();
                             ContainerStatus.ContainerBarcode = ContainerNode.Properties[CswNbtObjClassContainer.PropertyName.Barcode].AsBarcode.Barcode;
                             if( ContainersTree.getChildNodeCount() > 0 )//ContainerLocation Nodes
@@ -148,6 +148,7 @@ namespace ChemSW.Nbt.Actions
             CswNbtMetaDataObjectClass LocationOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.LocationClass );
             CswNbtMetaDataObjectClass ContainerOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.ContainerClass );
             CswNbtMetaDataObjectClassProp LocationOCP = ContainerOC.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Location );
+            CswNbtMetaDataObjectClassProp DateCreatedOCP = ContainerOC.getObjectClassProp( CswNbtObjClassContainer.PropertyName.DateCreated );
             CswNbtMetaDataObjectClass ContainerLocationOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.ContainerLocationClass );
             CswNbtMetaDataObjectClassProp ContainerOCP = ContainerLocationOC.getObjectClassProp( CswNbtObjClassContainerLocation.PropertyName.Container );
             CswNbtMetaDataObjectClassProp ScanDateOCP = ContainerLocationOC.getObjectClassProp( CswNbtObjClassContainerLocation.PropertyName.ScanDate );
@@ -157,10 +158,12 @@ namespace ChemSW.Nbt.Actions
             CswNbtViewRelationship LocationVR = ContainersView.AddViewRelationship( LocationOC, false );
             LocationVR.NodeIdsToFilterIn = LocationIds;
             CswNbtViewRelationship ContainerVR = ContainersView.AddViewRelationship( LocationVR, NbtViewPropOwnerType.Second, LocationOCP, false );
+            CswNbtViewProperty DateCreatedVP = ContainersView.AddViewProperty( ContainerVR, DateCreatedOCP );
+            ContainersView.AddViewPropertyFilter( DateCreatedVP, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.LessThanOrEquals, Value: Request.EndDate );
             CswNbtViewRelationship ContainerLocationVR = ContainersView.AddViewRelationship( ContainerVR, NbtViewPropOwnerType.Second, ContainerOCP, false );
             CswNbtViewProperty ScanDateVP = ContainersView.AddViewProperty( ContainerLocationVR, ScanDateOCP );
-            ContainersView.AddViewPropertyFilter( ScanDateVP, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.GreaterThan, Value: Request.StartDate );
-            ContainersView.AddViewPropertyFilter( ScanDateVP, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.LessThan, Value: Request.EndDate );
+            ContainersView.AddViewPropertyFilter( ScanDateVP, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.GreaterThanOrEquals, Value: Request.StartDate );
+            ContainersView.AddViewPropertyFilter( ScanDateVP, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.LessThanOrEquals, Value: Request.EndDate );
             ContainersView.setSortProperty( ScanDateVP, NbtViewPropertySortMethod.Descending );
 
             return ContainersView;
