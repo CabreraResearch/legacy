@@ -69,7 +69,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                                     )
                                )
                             {
-                                _makeTab( Ret, Tab.TabOrder, Tab.TabId.ToString(), Tab.TabName, false );
+                                _makeTab( Ret, Tab, false );
                                 break;
                             }
                         }
@@ -87,7 +87,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                                                                     ) )
                                                               select _Tab )
                     {
-                        _makeTab( Ret, Tab.TabOrder, Tab.TabId.ToString(), Tab.TabName, _canEditLayout() );
+                        _makeTab( Ret, Tab, _canEditLayout() );
                     }
 
                     // History tab
@@ -123,6 +123,18 @@ namespace ChemSW.Nbt.ServiceDrivers
         } // getTabs()
 
         private Int32 TabOrderModifier = 0;
+
+        public void _makeTab( JObject ParentObj, CswNbtMetaDataNodeTypeTab Tab, bool CanEditLayout )
+        {
+            if( null != Tab )
+            {
+                if( Tab.getNodeTypePropIds().Count > 0 )
+                {
+                    _makeTab( ParentObj, Tab.TabOrder, Tab.TabId.ToString(), Tab.TabName, CanEditLayout );
+                }
+            }
+        }
+
         public void _makeTab( JObject ParentObj, Int32 TabOrder, string Id, string Name, bool CanEditLayout )
         {
             // case 24250
@@ -244,7 +256,6 @@ namespace ChemSW.Nbt.ServiceDrivers
             } // if-else( TabId.StartsWith( HistoryTabPrefix ) )
             return Ret;
         } // getProps()
-
 
         /// <summary>
         /// Get props of a Node instance
