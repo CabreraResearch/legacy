@@ -102,10 +102,12 @@
   <ItemGroup>
     <Compile Include="csw\Actions\CswNbtActCreateMaterial.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassRequestContainerDispense.cs" />
+    <Compile Include="csw\Batch\CswNbtBatchOpMolFingerprints.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassContainerGroup.cs" />
     <Compile Include="csw\Schema\scripts\prod\01T\CswUpdateSchema_0T1_Case27867_part2.cs" />
     <Compile Include="csw\Schema\scripts\prod\01T\CswUpdateSchema_01T_Case28146.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassRequestContainerUpdate.cs" />
+    <Compile Include="csw\Sched\logic\CswScheduleLogicNbtMolFingerprints.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassRequestItem.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassRequestMaterialCreate.cs" />
     <Compile Include="csw\PropertySets\CswNbtPropertySetGeneratorTarget.cs" />
@@ -254,6 +256,9 @@
     <Content Include="csw\Schema\scripts\past\01R\CswUpdateSchema_Size_Case27438.cs" />
     <Compile Include="csw\Schema\scripts\prod\01T\CswUpdateSchema_01T_LocationLabel_Case28108.cs" />
     <Compile Include="csw\Schema\scripts\prod\01T\CswUpdateSchema_01T_Case27551.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01U\CswUpdateSchema_01U_Case27864_part2.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01U\CswUpdateSchema_01U_Case27864.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01U\CswUpdateSchema_01U_Case24524.cs" />
     <Compile Include="csw\Schema\scripts\prod\01T\CswUpdateSchema_01T_Case28020.cs" />
     <Compile Include="csw\Schema\scripts\prod\01U\CswUpdateSchema_01U_Case28069.cs" />
     <Compile Include="csw\Schema\scripts\prod\01U\CswUpdateSchema_01U_Case27866.cs" />
