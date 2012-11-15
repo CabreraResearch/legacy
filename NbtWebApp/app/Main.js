@@ -1081,14 +1081,12 @@ window.initMain = window.initMain || function (undefined) {
 
     function handleAction(options) {
         var o = {
-            'actionname': '',
-            'actionurl': '',
-            'ActionOptions': {}
+            actionname: '',
+            actionurl: '',
+            ActionOptions: {}
         };
-        if (options) {
-            Csw.extend(o, options);
-        }
-
+        Csw.extend(o, options);
+        
         var designOpt = {};
 
         Csw.clientState.setCurrentAction(o.actionname, o.actionurl);
@@ -1131,6 +1129,8 @@ window.initMain = window.initMain || function (undefined) {
 
             case 'create material':
                 var createOpt = {
+                    state: o.state,
+                    request: o.requestitem,
                     onCancel: function () {
                         clear({ 'all': true });
                         Csw.clientState.setCurrent(Csw.clientState.getLast());

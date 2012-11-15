@@ -40,6 +40,7 @@
                 showQuantityEditable: false,
                 showDispensable: false,
                 state: {
+                    request: {},
                     sizeNodeTypeId: '',
                     relatedNodeId: null,
                     materialId: '',
@@ -108,9 +109,8 @@
             };
 
             (function () {
-                if (options) {
-                    Csw.extend(cswPrivate, options);
-                }
+                Csw.extend(cswPrivate, options);
+
                 cswPrivate.validateState();
                 cswPrivate.wizardSteps = {
                     1: 'Choose Type and Identity',
@@ -165,6 +165,7 @@
                         };
 
                         if (false === cswPrivate.state.useExistingMaterial) {
+                            createMaterialDef.request = cswPrivate.state.request || cswPrivate.request;
                             createMaterialDef.materialId = cswPrivate.state.materialId;
                             createMaterialDef.materialnodetypeid = cswPrivate.state.materialType.val;
                             createMaterialDef.tradename = cswPrivate.state.tradeName;

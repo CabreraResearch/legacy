@@ -400,14 +400,49 @@ namespace ChemSW.Nbt.ObjClasses
         /// </summary>
         public override void onStatusPropChange( CswNbtNodeProp Prop )
         {
-            TotalDispensed.setHidden( value: ( Status.Value == Statuses.Pending ), SaveToDb: true );
-            Type.setHidden( value: ( Status.Value == Statuses.Pending ), SaveToDb: true );
+            if( Status.Value == Statuses.Pending )
+            {
+                TotalDispensed.setHidden( value: true, SaveToDb: true );
+                Type.setHidden( value: true, SaveToDb: true );
+                Quantity.setReadOnly( value: false, SaveToDb: true );
+                Size.setReadOnly( value: false, SaveToDb: true );
+                Count.setReadOnly( value: false, SaveToDb: true );
 
-            bool AmountsReadOnly = Status.Value != Statuses.Pending;
-            Quantity.setReadOnly( value: AmountsReadOnly, SaveToDb: true );
-            Size.setReadOnly( value: AmountsReadOnly, SaveToDb: true );
-            Count.setReadOnly( value: AmountsReadOnly, SaveToDb: true );
-
+                //MLM
+                if( _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.MLM ) )
+                {
+                    Reorder.setHidden( value: true, SaveToDb: true );
+                    foreach( string PropName in PropertyName.MLMCmgTabProps )
+                    {
+                        _CswNbtNode.Properties[PropName].setHidden( value: true, SaveToDb: true );
+                    }
+                    foreach( string PropName in PropertyName.MLMReceiveTabProps )
+                    {
+                        _CswNbtNode.Properties[PropName].setHidden( value: true, SaveToDb: true );
+                    }
+                }
+            }
+            else
+            {
+                TotalDispensed.setHidden( value: false, SaveToDb: true );
+                Type.setHidden( value: false, SaveToDb: true );
+                Quantity.setReadOnly( value: true, SaveToDb: true );
+                Size.setReadOnly( value: true, SaveToDb: true );
+                Count.setReadOnly( value: true, SaveToDb: true );
+                //MLM
+                if( _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.MLM ) )
+                {
+                    Reorder.setHidden( value: false, SaveToDb: true );
+                    foreach( string PropName in PropertyName.MLMCmgTabProps )
+                    {
+                        _CswNbtNode.Properties[PropName].setHidden( value: false, SaveToDb: true );
+                    }
+                    foreach( string PropName in PropertyName.MLMReceiveTabProps )
+                    {
+                        _CswNbtNode.Properties[PropName].setHidden( value: false, SaveToDb: true );
+                    }
+                }
+            }
             switch( Status.Value )
             {
                 case Statuses.Received:
@@ -462,7 +497,10 @@ namespace ChemSW.Nbt.ObjClasses
         }
         private void onQuantityPropChange( CswNbtNodeProp Prop )
         {
-            TotalDispensed.UnitId = Quantity.UnitId;
+            if( CswTools.IsPrimaryKey( Quantity.UnitId ) && TotalDispensed.UnitId != Quantity.UnitId )
+            {
+                TotalDispensed.UnitId = Quantity.UnitId;
+            }
         }
 
         public CswNbtNodePropRelationship Size
