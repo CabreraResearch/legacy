@@ -28,6 +28,7 @@ namespace ChemSW.Nbt.Actions
             private CswNbtObjClassMaterial _ExistingNode = null;
             private CswNbtMetaDataNodeType _MaterialNt = null;
             private CswNbtObjClassVendor _Supplier = null;
+            private string _NodeTypeName;
 
             /// <summary>
             /// Standard constructor for validating required properties
@@ -69,10 +70,15 @@ namespace ChemSW.Nbt.Actions
                     {
                         throw new CswDniException( ErrorType.Warning, "Cannot create a new Material object without a valid Material Type.", "Cannot make a Material for Object Class: " + PotentialNt.getObjectClass().ObjectClass + "." );
                     }
-
+                    _NodeTypeName = PotentialNt.NodeTypeName;
                     _MaterialNt = PotentialNt;
                     _NodeTypeId = Id;
                 }
+            }
+
+            public string NodeTypeName
+            {
+                get { return _NodeTypeName; }
             }
 
             public string TradeName
@@ -104,6 +110,11 @@ namespace ChemSW.Nbt.Actions
                     _Supplier = PotentialSupplier;
                     _SupplierId = PotentialSupplier.NodeId;
                 }
+            }
+
+            public string SupplierName
+            {
+                get { return _Supplier.VendorName.Text; }
             }
 
             public string PartNo
@@ -352,6 +363,19 @@ namespace ChemSW.Nbt.Actions
 
                         CswNbtObjClassMaterial NodeAsMaterial = FinalMaterial.commit();
 
+                        JObject RequestObj = CswConvert.ToJObject( MaterialObj["request"] );
+                        if( RequestObj.HasValues )
+                        {
+                            CswNbtObjClassRequestMaterialCreate RequestCreate = _CswNbtResources.Nodes[CswConvert.ToString( RequestObj["requestitemid"] )];
+                            if( null != RequestCreate )
+                            {
+                                RequestCreate.Material.RelatedNodeId = FinalMaterial.Node.NodeId;
+                                RequestCreate.Status.Value = CswNbtObjClassRequestMaterialCreate.Statuses.Created;
+                                RequestCreate.Fulfill.State = CswNbtObjClassRequestMaterialCreate.FulfillMenu.Complete;
+                                RequestCreate.Fulfill.MenuOptions = CswNbtObjClassRequestMaterialCreate.FulfillMenu.Complete;
+                                RequestCreate.postChanges( ForceUpdate: false );
+                            }
+                        }
                         CswNbtActReceiving.commitDocumentNode( _CswNbtResources, NodeAsMaterial, MaterialObj );
                     }
                 }
