@@ -27,6 +27,7 @@
                 stepThreeComplete: false,
                 state: {
                     LocationId: '',
+                    LocationName: '',
                     IncludeChildLocations: false,
                     StartDate: '',
                     EndDate: ''
@@ -111,12 +112,14 @@
                         locationDatesTable.cell(1, 1).span({ text: 'Location:' }).addClass('propertylabel');
                         var locationControl = locationDatesTable.cell(1, 2).location({
                             name: '',
-                            onChange: function (locationId) {
+                            onChange: function (locationId, locationName) {
                                 cswPrivate.state.LocationId = locationId;
+                                cswPrivate.state.LocationName = locationName;
                                 cswPrivate.reinitSteps(2);
                             }
                         });
                         cswPrivate.state.LocationId = locationControl.val();
+                        cswPrivate.state.LocationName = locationControl.selectedName();
                         locationDatesTable.cell(1, 2).br();
                         //IncludeChildLocations
                         var checkBoxTable = locationDatesTable.cell(1, 2).table({
@@ -172,11 +175,10 @@
                         cswPrivate.divStep2 = cswPrivate.divStep2 || cswPrivate.wizard.div(2);
                         cswPrivate.divStep2.empty();
                         cswPrivate.divStep2.label({
-                            text: "Container statistics in (location) from (start date) to (end date)",
+                            text: "Loading Container Statistics...",
                             cssclass: "wizardHelpDesc"
                         });
                         cswPrivate.divStep2.br({ number: 2 });
-                        //since the grid is static, make the grid columns here and pass it into the grid control
 
                         Csw.ajaxWcf.post({
                             urlMethod: 'Containers/getContainerStatistics',
@@ -207,7 +209,7 @@
                                         filterable: false,
                                         format: null,
                                         header: displayName,
-                                        id: 'reconciliation_' + colName
+                                        id: 'reconciliation_status_' + colName
                                     });
                                     StatusMetricsGridFields.push({
                                         name: colName,
@@ -234,7 +236,9 @@
                                 cswPrivate.gridOptions = {
                                     name: StatusMetricsGridId,
                                     storeId: StatusMetricsGridId,
-                                    title: 'Container Statistics from ' + cswPrivate.state.StartDate + ' to ' + cswPrivate.state.EndDate,
+                                    title: 'Container Statistics in ' + cswPrivate.state.LocationName
+                                        + ' from ' + cswPrivate.state.StartDate
+                                        + ' to ' + cswPrivate.state.EndDate,
                                     stateId: StatusMetricsGridId,
                                     usePaging: false,
                                     showActionColumn: false,
@@ -272,13 +276,91 @@
                         cswPrivate.divStep3 = cswPrivate.divStep3 || cswPrivate.wizard.div(3);
                         cswPrivate.divStep3.empty();
                         cswPrivate.divStep3.label({
-                            text: "Containers and their statuses in (location) from (start date) to (end date)",
+                            text: "Loading Containers and their Statuses...",
                             cssclass: "wizardHelpDesc"
                         });
                         cswPrivate.divStep3.br({ number: 2 });
-                        //TODO - take values from step 1 control and create grid of containers with their most current containerlocation status
                         //TODO - if end time = Today, include an ActionSelect control in each row, along with a save button outside the grid to update action
-                        //because we have to make a control inside each row, make the grid columns here and pass it into the grid control
+                        Csw.ajaxWcf.post({
+                            urlMethod: 'Containers/getContainerStatuses',
+                            data: cswPrivate.state,
+                            success: function (ajaxdata) {
+                                cswPrivate.data.ContainerStatuses = [{
+                                    ContainerId: '',
+                                    ContainerBarcode: '',
+                                    ContainerStatus: '',
+                                    Action: '',
+                                    ActionApplied: ''
+                                }];
+                                Csw.extend(cswPrivate.data.ContainerStatuses, ajaxdata.ContainerStatuses);
+
+                                var ContainersGridFields = [];
+                                var ContainersGridColumns = [];
+                                var addColumn = function (colName, displayName, hidden, filter) {
+                                    ContainersGridColumns.push({
+                                        dataIndex: colName,
+                                        filterable: true,
+                                        format: null,
+                                        hidden: hidden,
+                                        header: displayName,
+                                        id: 'reconciliation_container_' + colName,
+                                        filter: filter
+                                    });
+                                    ContainersGridFields.push({
+                                        name: colName,
+                                        type: 'string',
+                                        useNull: true
+                                    });
+                                };
+                                addColumn('containerid', 'Container Id', true);
+                                addColumn('containerbarcode', 'Container Barcode', false);
+                                var StatusOptions = [];
+                                Csw.each(cswPrivate.data.ContainerStatistics, function(row) {
+                                    StatusOptions.push( row.Status );
+                                });
+                                addColumn('status', 'Status', false, {
+                                    type: 'list',
+                                    options: StatusOptions
+                                });
+                                addColumn('action', 'Action', false);
+
+                                var ContainersGridData = [];
+                                Csw.each(cswPrivate.data.ContainerStatuses, function (row) {
+                                    ContainersGridData.push({
+                                        containerid: row.ContainerId,
+                                        containerbarcode: row.ContainerBarcode,
+                                        status: row.ContainerStatus,
+                                        action: row.Action
+                                    });
+                                });
+
+                                var ContainersGridId = 'ReconciliationContainersGrid';
+                                cswPrivate.gridOptions = {
+                                    name: ContainersGridId,
+                                    storeId: ContainersGridId,
+                                    title: 'Containers in ' + cswPrivate.state.LocationName
+                                        + ' from ' + cswPrivate.state.StartDate
+                                        + ' to ' + cswPrivate.state.EndDate,
+                                    stateId: ContainersGridId,
+                                    usePaging: false,
+                                    showActionColumn: false,
+                                    canSelectRow: false,
+                                    onLoad: null,
+                                    onEdit: null,
+                                    onDelete: null,
+                                    onSelect: null,
+                                    onDeselect: null,
+                                    height: 200,
+                                    forcefit: true,
+                                    width: '100%',
+                                    fields: ContainersGridFields,
+                                    columns: ContainersGridColumns,
+                                    data: ContainersGridData
+                                };
+                                cswPrivate.ReconciliationContainersGrid = cswPrivate.divStep3.grid(cswPrivate.gridOptions);
+                                cswPrivate.toggleStepButtons();
+                            }
+                        });
 
                         cswPrivate.stepThreeComplete = true;
                     }

@@ -84,6 +84,10 @@
                     return cswPrivate.value;
                 };
 
+                cswPublic.selectedName = function() {
+                    return cswPrivate.name;
+                };
+
                 cswPrivate.onTreeSelect = function (optSelect) {
                     optSelect = optSelect || { nodeid: '', nodename: '', iconurl: '' };
                     if (optSelect.nodeid === 'root' || optSelect.nodeid === undefined) {
@@ -93,8 +97,9 @@
                     if (cswPublic.comboBox.val() !== optSelect.nodeid) {
                         cswPublic.comboBox.val(optSelect.nodeid);
                     }
-                    Csw.tryExec(cswPrivate.onChange, optSelect.nodeid);
+                    Csw.tryExec(cswPrivate.onChange, optSelect.nodeid, optSelect.nodename);
                     cswPrivate.value = optSelect.nodeid;
+                    cswPrivate.name = optSelect.nodename;
                     Csw.defer(function () { cswPublic.comboBox.close(); }, 100);
                 };
 
