@@ -1423,6 +1423,31 @@ namespace ChemSW.Nbt.Schema
             _resetBlame();
         }
 
+        private void _replaceMaterialCASNoProp( CswDeveloper Dev, Int32 CaseNo )
+        {
+            _acceptBlame( Dev, CaseNo );
+
+            CswNbtMetaDataFieldType CASNoFT = _CswNbtSchemaModTrnsctn.MetaData.getFieldType( CswNbtMetaDataFieldType.NbtFieldType.CASNo );
+            if( null == CASNoFT )
+            {
+                _CswNbtSchemaModTrnsctn.MetaData.makeNewFieldType( CswNbtMetaDataFieldType.NbtFieldType.CASNo, CswNbtMetaDataFieldType.DataType.TEXT );
+            }
+
+            //drop the existing CASNo prop (a text ft) and replace it with the new CASNo prop
+            CswNbtMetaDataObjectClass materialOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.MaterialClass );
+            CswNbtMetaDataObjectClassProp oldCASNoOCP = materialOC.getObjectClassProp( CswNbtObjClassMaterial.PropertyName.CasNo );
+            _CswNbtSchemaModTrnsctn.MetaData.DeleteObjectClassProp( oldCASNoOCP, true );
+
+            _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( materialOC )
+            {
+                PropName = CswNbtObjClassMaterial.PropertyName.CasNo,
+                FieldType = CswNbtMetaDataFieldType.NbtFieldType.CASNo,
+                SetValOnAdd = false
+            } );
+
+            _resetBlame();
+        }
+
         #endregion Ursula Methods
 
 
@@ -1462,6 +1487,7 @@ namespace ChemSW.Nbt.Schema
             _createaNewMaterialComponentProp( CswDeveloper.MB, 27864 );
             _createUNCodeNodeType( CswDeveloper.MB, 27872 );
             _createNewMaterialProps( CswDeveloper.MB, 27864 );
+            _replaceMaterialCASNoProp( CswDeveloper.MB, 27876 );
 
             #endregion URSULA
 

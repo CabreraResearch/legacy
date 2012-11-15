@@ -1,5 +1,6 @@
 ﻿using ChemSW.Nbt.csw.Dev;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.ObjClasses;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -20,7 +21,13 @@ namespace ChemSW.Nbt.Schema
 
         public override void update()
         {
-            CswNbtMetaDataFieldType CASNoFT = _CswNbtSchemaModTrnsctn.MetaData.makeNewFieldType( CswNbtMetaDataFieldType.NbtFieldType.CASNo, CswNbtMetaDataFieldType.DataType.TEXT );
+            CswNbtMetaDataObjectClass materialOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.MaterialClass );
+            CswNbtMetaDataObjectClassProp CASNoOCP = materialOC.getObjectClassProp( CswNbtObjClassMaterial.PropertyName.CasNo );
+            foreach( CswNbtMetaDataNodeTypeProp casNoNTP in CASNoOCP.getNodeTypeProps() )
+            {
+                casNoNTP.removeFromLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add );
+            }
+
         }
 
         //Update()
