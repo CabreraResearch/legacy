@@ -359,7 +359,7 @@ window.initMain = window.initMain || function (undefined) {
     function refreshWelcomeLandingPage() {
         setLandingPage(function () {
             Csw.layouts.landingpage(Csw.main.centerBottomDiv, {
-            name: 'welcomeLandingPage',
+                name: 'welcomeLandingPage',
                 Title: '',
                 onLinkClick: handleItemSelect,
                 onAddClick: function (itemData) {
@@ -638,7 +638,7 @@ window.initMain = window.initMain || function (undefined) {
         o.parent.menu(menuOpts);
 
     }
-    
+
     function getViewGrid(options) {
         var o = {
             viewid: '',
@@ -757,7 +757,7 @@ window.initMain = window.initMain || function (undefined) {
         clear({ centertop: true, centerbottom: true });
 
         Csw.nbt.viewFilters({
-        name: 'main_viewfilters',
+            name: 'main_viewfilters',
             parent: Csw.main.centerTopDiv,
             viewid: o.viewid,
             onEditFilters: function (newviewid) {
@@ -867,7 +867,7 @@ window.initMain = window.initMain || function (undefined) {
         div.$.CswDefaultContent(v);
 
     } // showDefaultContentTable()
-    
+
     function getTabs(options) {
         Csw.publish('initPropertyTearDown');
         var o = {
@@ -892,24 +892,24 @@ window.initMain = window.initMain || function (undefined) {
                     ShowCheckboxes: multi,
                     tabid: Csw.cookie.get(Csw.cookie.cookieNames.CurrentTabId)
                 },
-                onSave: function() {
+                onSave: function () {
                     Csw.clientChanges.unsetChanged();
                 },
-                onBeforeTabSelect: function() {
+                onBeforeTabSelect: function () {
                     return Csw.clientChanges.manuallyCheckChanges();
                 },
-                Refresh: function(options) {
+                Refresh: function (options) {
                     Csw.clientChanges.unsetChanged();
                     multi = false; // semi-kludge for multi-edit batch op
                     refreshSelected(options);
                 },
-                onTabSelect: function(tabid) {
+                onTabSelect: function (tabid) {
                     Csw.cookie.set(Csw.cookie.cookieNames.CurrentTabId, tabid);
                 },
-                onPropertyChange: function() {
+                onPropertyChange: function () {
                     Csw.clientChanges.setChanged();
                 },
-                onEditView: function(viewid) {
+                onEditView: function (viewid) {
                     handleAction({
                         actionname: 'Edit_View',
                         ActionOptions: {
@@ -1141,7 +1141,7 @@ window.initMain = window.initMain || function (undefined) {
                             setLandingPage(function() {
                                 Csw.layouts.landingpage(Csw.main.centerBottomDiv, {
                                     name: 'createMaterialLandingPage',
-                                    Title: 'Created:',                                    
+                                    Title: 'Created:',
                                     ActionId: actionData.ActionId,
                                     ObjectClassId: actionData.RelatedObjectClassId,
                                     onLinkClick: handleItemSelect,
@@ -1167,7 +1167,7 @@ window.initMain = window.initMain || function (undefined) {
                                         Csw.controls.nodeButton(Csw.main.centerBottomDiv, {
                                             name: itemData.Text,
                                             value: itemData.ActionName,
-                                            mode: 'landingpage',                                            
+                                            mode: 'landingpage',
                                             propId: itemData.NodeTypePropId
                                         });
                                     },
@@ -1284,10 +1284,10 @@ window.initMain = window.initMain || function (undefined) {
                 });
                 break;
 
-            //			case 'Import_Fire_Extinguisher_Data':                                                                                                
-            //				break;                                                                                                
-            //			case 'Inspection_Design':                                                                                                
-            //				break;                                                                                                
+            //			case 'Import_Fire_Extinguisher_Data':                                                                                                 
+            //				break;                                                                                                 
+            //			case 'Inspection_Design':                                                                                                 
+            //				break;                                                                                                 
             case 'quotas':
                 Csw.actions.quotas(Csw.main.centerTopDiv, {
                     onQuotaChange: function () {
@@ -1319,6 +1319,20 @@ window.initMain = window.initMain || function (undefined) {
                     refreshSelected();
                 };
                 Csw.nbt.receiveMaterialWizard(Csw.main.centerTopDiv, o);
+                break;
+            case 'reconciliation':
+                var reconciliationOptions = {
+                    onCancel: function () {
+                        clear({ 'all': true });
+                        Csw.clientState.setCurrent(Csw.clientState.getLast());
+                        refreshSelected();
+                    },
+                    onFinish: function () {
+                        refreshWelcomeLandingPage();
+                    },
+                    startingStep: o.ActionOptions.startingStep
+                };
+                Csw.nbt.ReconciliationWizard(Csw.main.centerTopDiv, reconciliationOptions);
                 break;
             case 'sessions':
                 Csw.actions.sessions(Csw.main.centerTopDiv);
@@ -1360,6 +1374,8 @@ window.initMain = window.initMain || function (undefined) {
             default:
                 if (false == Csw.isNullOrEmpty(o.actionurl)) {
                     Csw.window.location(o.actionurl);
+                } else {
+                    refreshWelcomeLandingPage();
                 }
                 break;
         }

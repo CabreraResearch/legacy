@@ -109,6 +109,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Services\Containers.svc.cs">
+      <DependentUpon>Containers.svc</DependentUpon>
+    </Compile>
     <Compile Include="Services\LandingPages.svc.cs">
       <DependentUpon>LandingPages.svc</DependentUpon>
     </Compile>
@@ -150,6 +153,7 @@
     <Compile Include="WebSvc\Logic\SI\CswNbtWebServiceInspectionDesign.cs" />
     <Content Include="ConfigVars.aspx" />
     <Content Include="Services\LandingPages.svc" />
+    <Content Include="Services\Containers.svc" />
     <Content Include="crystal\ActiveXControls\PrintControl.cab" />
     <Content Include="crystal\ActiveXControls\PrintControl_res_cs.cab" />
     <Content Include="crystal\ActiveXControls\PrintControl_res_da.cab" />

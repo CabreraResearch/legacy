@@ -40,6 +40,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string ContainerGroup = "Container Group";
             public const string LabelFormat = "Label Format";
             public const string ReservedFor = "Reserved For";
+            public const string DateCreated = "Date Created";
         }
 
         private bool _IsDisposed
@@ -134,7 +135,10 @@ namespace ChemSW.Nbt.ObjClasses
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
             updateRequestMenu();
-
+            if( DateTime.MinValue == DateCreated.DateTimeValue )
+            {
+                DateCreated.DateTimeValue = DateTime.Now;
+            }
             _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
         }//beforeWriteNode()
 
@@ -161,7 +165,6 @@ namespace ChemSW.Nbt.ObjClasses
         {
             Material.SetOnPropChange( OnMaterialPropChange );
             Dispose.SetOnPropChange( OnDisposedPropChange );
-            OnDisposedPropChange( Dispose );
             Quantity.SetOnPropChange( OnQuantityPropChange );
             Location.SetOnPropChange( OnLocationPropChange );
             Size.SetOnPropChange( OnSizePropChange );
@@ -475,6 +478,7 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 _createContainerTransactionNode( DispenseType, -RealQuantityToDeduct, this.Quantity.UnitId, RequestItemId, this, DestinationContainer );
             }
+            _createContainerLocationNode( CswNbtObjClassContainerLocation.TypeOptions.Dispense );
         } // DispenseOut()
 
         /// <summary>
@@ -499,6 +503,10 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 _createContainerTransactionNode( DispenseType, RealQuantityToAdd, Quantity.UnitId, RequestItemId, SourceContainer, this );
             }
+            CswNbtObjClassContainerLocation.TypeOptions ContainerLocationType =
+                SourceContainer == null ? CswNbtObjClassContainerLocation.TypeOptions.Receipt
+                                        : CswNbtObjClassContainerLocation.TypeOptions.Dispense;
+            _createContainerLocationNode( ContainerLocationType );
         } // DispenseIn()
 
         /// <summary>
@@ -683,6 +691,27 @@ namespace ChemSW.Nbt.ObjClasses
             } // if( ContDispTransNT != null )
         } // _createContainerTransactionNode
 
+        private void _createContainerLocationNode( CswNbtObjClassContainerLocation.TypeOptions Type )
+        {
+            CswNbtMetaDataNodeType ContLocNT = _CswNbtResources.MetaData.getNodeType( "Container Location" );
+            if( ContLocNT != null )
+            {
+                CswNbtObjClassContainerLocation ContLocNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( ContLocNT.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode );
+                ContLocNode.Type.Value = Type.ToString();
+                ContLocNode.Container.RelatedNodeId = NodeId;
+                if( null != Location )
+                {
+                    ContLocNode.Location.SelectedNodeId = Location.SelectedNodeId;
+                    ContLocNode.Location.CachedNodeName = Location.CachedNodeName;
+                    ContLocNode.Location.CachedPath = Location.CachedPath;
+                }
+                ContLocNode.ScanDate.DateTimeValue = DateTime.Now;
+                ContLocNode.User.RelatedNodeId = _CswNbtResources.CurrentNbtUser.UserId;
+                ContLocNode.postChanges( false );
+                LocationVerified.DateTimeValue = DateTime.Now;
+            }
+        }
+
 
         private void _setDisposedReadOnly( bool isReadOnly )//case 25814
         {
@@ -847,6 +876,10 @@ namespace ChemSW.Nbt.ObjClasses
                 }
                 _updateRequestItems( CswNbtObjClassRequestContainerUpdate.Types.Move );
             }
+            if( null != Location.SelectedNodeId )
+            {
+                _createContainerLocationNode( CswNbtObjClassContainerLocation.TypeOptions.Move );
+            }
         }
         public CswNbtNodePropDateTime LocationVerified { get { return ( _CswNbtNode.Properties[PropertyName.LocationVerified] ); } }
         public CswNbtNodePropRelationship Material { get { return ( _CswNbtNode.Properties[PropertyName.Material] ); } }
@@ -940,6 +973,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropLogical Requisitionable { get { return ( _CswNbtNode.Properties[PropertyName.Requisitionable] ); } }
         public CswNbtNodePropRelationship LabelFormat { get { return ( _CswNbtNode.Properties[PropertyName.LabelFormat] ); } }
         public CswNbtNodePropRelationship ReservedFor { get { return ( _CswNbtNode.Properties[PropertyName.ReservedFor] ); } }
+        public CswNbtNodePropDateTime DateCreated { get { return ( _CswNbtNode.Properties[PropertyName.DateCreated] ); } }
         #endregion
 
 
