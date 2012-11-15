@@ -80,7 +80,7 @@ namespace ChemSW.Nbt
                     // Verify permissions
                     // this could be a performance problem
                     CswNbtMetaDataNodeType ThisNodeType = _CswNbtResources.MetaData.getNodeType( ThisNodeTypeId );
-                    if( false == RequireViewPermissions || _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.View, ThisNodeType ) )
+                    if( false == RequireViewPermissions || _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.View, ThisNodeType ) || _CswNbtResources.Permit.canAnyTab( CswNbtPermit.NodeTypePermission.View, ThisNodeType ) )
                     {
                         if( _canViewNode( ThisNodeType, ThisNodeId ) )
                         {
@@ -161,20 +161,25 @@ namespace ChemSW.Nbt
             bool canView = true;
             CswNbtMetaDataNodeTypeProp NTProp = _CswNbtResources.MetaData.getNodeTypeProp( NodeTypePropId );
             #region Container Request Button Inventory Group Permission
+            
             CswNbtMetaDataObjectClass ContainerClass = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.ContainerClass );
-            CswNbtMetaDataObjectClassProp RequestProp = _CswNbtResources.MetaData.getObjectClassProp( ContainerClass.ObjectClassId, CswNbtObjClassContainer.PropertyName.Request );
-            if( NTProp.ObjectClassPropId == RequestProp.PropId )
+            if( null != ContainerClass )
             {
-                CswNbtObjClassContainer CswNbtObjClassContainerInstance = _CswNbtResources.Nodes[CswConvert.ToPrimaryKey( "nodes_" + NodeId )];
-                if( null != CswNbtObjClassContainerInstance )
+                CswNbtMetaDataObjectClassProp RequestProp = _CswNbtResources.MetaData.getObjectClassProp( ContainerClass.ObjectClassId, CswNbtObjClassContainer.PropertyName.Request );
+                if( NTProp.ObjectClassPropId == RequestProp.PropId )
                 {
+                    CswNbtObjClassContainer CswNbtObjClassContainerInstance = _CswNbtResources.Nodes[CswConvert.ToPrimaryKey( "nodes_" + NodeId )];
+                    if( null != CswNbtObjClassContainerInstance )
+                    {
 
-                    canView = CswNbtObjClassContainerInstance.canContainer( CswNbtObjClassContainerInstance.NodeId,
-                                                                   CswNbtPermit.NodeTypePermission.View,
-                                                                   _CswNbtResources.Actions[
-                                                                       CswNbtActionName.Submit_Request] );
+                        canView = CswNbtObjClassContainerInstance.canContainer( CswNbtObjClassContainerInstance.NodeId,
+                                                                                CswNbtPermit.NodeTypePermission.View,
+                                                                                _CswNbtResources.Actions[
+                                                                                    CswNbtActionName.Submit_Request] );
+                    }
                 }
             }
+
             #endregion
             return canView;
         }

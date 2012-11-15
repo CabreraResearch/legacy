@@ -1504,13 +1504,32 @@ namespace ChemSW.Nbt.MetaData
                 }
 
                 // Delete Jct_Nodes_Props records
-                /* Case 26285: This is a bit of a hack (admittedly), but the crux of the issue is this: 
-                 * because JctNodesPropsTableUpdate is a CswTableUpdate and not a CswTableSelect, we must commit the underlying DataTables, 
-                 * which contain the row for this property's DefaultValue, which we fetched when we clicked the property in order to delete it. 
-                 * Short of refactoring the CswTable instances into read/write pairs and implementing read and write getters, this'll do.
-                 * TODO: Remove _CswNbtMetaDataResources.JctNodesPropsTableUpdate.clear(); when Design mode is refactored.
-                 */
-                _CswNbtMetaDataResources.JctNodesPropsTableUpdate.clear();
+                // Case 26285: This is a bit of a hack (admittedly), but the crux of the issue is this: 
+                // because JctNodesPropsTableUpdate is a CswTableUpdate and not a CswTableSelect, we must commit the underlying DataTables, 
+                // which contain the row for this property's DefaultValue, which we fetched when we clicked the property in order to delete it. 
+                // Short of refactoring the CswTable instances into read/write pairs and implementing read and write getters, this'll do.
+                // TODO: Remove _CswNbtMetaDataResources.JctNodesPropsTableUpdate.clear(); when Design mode is refactored.
+                //
+                // _CswNbtMetaDataResources.JctNodesPropsTableUpdate.clear();
+                // So, this was a terrible idea. If you create an object class prop and a default value and then delete a nodetype--you will obliterate the changes you just made
+
+                // Case 27871: Only remove the rows that affect this delete
+                foreach( DataTable Table in _CswNbtMetaDataResources.JctNodesPropsTableUpdate._DoledOutTables )
+                {
+                    Collection<DataRow> DoomedRows = new Collection<DataRow>();
+                    foreach( DataRow Row in Table.Rows )
+                    {
+                        if( CswConvert.ToInt32( Row["nodetypepropid"] ) == NodeTypeProp.PropId )
+                        {
+                            DoomedRows.Add( Row );
+                        }
+                    }
+                    foreach( DataRow DoomedRow in DoomedRows )
+                    {
+                        Table.Rows.Remove( DoomedRow );
+                    }
+                }
+
                 CswTableUpdate JctNodesPropsUpdate = _CswNbtMetaDataResources.CswNbtResources.makeCswTableUpdate( "DeleteNodeTypeProp_jct_update", "jct_nodes_props" );
                 DataTable JctNodesPropsTable = JctNodesPropsUpdate.getTable( "nodetypepropid", NodeTypeProp.PropId );
                 foreach( DataRow CurrentJctNodesPropsRow in JctNodesPropsTable.Rows )
