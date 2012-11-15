@@ -169,10 +169,7 @@ namespace ChemSW.Nbt
                 if( null != CswNbtObjClassContainerInstance )
                 {
 
-                    canView = CswNbtObjClassContainerInstance.canContainer( CswNbtObjClassContainerInstance.NodeId,
-                                                                   CswNbtPermit.NodeTypePermission.View,
-                                                                   _CswNbtResources.Actions[
-                                                                       CswNbtActionName.Submit_Request] );
+                    canView = CswNbtObjClassContainerInstance.canContainer( CswNbtObjClassContainerInstance.NodeId, _CswNbtResources.Actions[CswNbtActionName.Submit_Request] );
                 }
             }
             #endregion
