@@ -1,12 +1,12 @@
 /// <reference path="~/app/CswApp-vsdoc.js" />
 (function () {
-
     var cswReconciliationWizardStateName = 'cswReconciliationWizardStateName';
 
     Csw.nbt.ReconciliationWizard = Csw.nbt.ReconciliationWizard ||
         Csw.nbt.register('ReconciliationWizard', function (cswParent, options) {
             'use strict';
 
+            //#region Properties
             var cswPrivate = {
                 name: 'cswReconciliationWizard',
                 exitFunc: null,
@@ -30,14 +30,23 @@
                     LocationName: '',
                     IncludeChildLocations: false,
                     StartDate: '',
-                    EndDate: ''
+                    EndDate: '',
+                    ContainerActions: [{
+                        ContainerId: '',
+                        ContainerLocationId: '',
+                        LocationId: '',
+                        Action: ''
+                    }]
                 }
             };
 
             var cswPublic = {};
+            //#endregion Properties
 
+            //#region Wizard Functions
             cswPrivate.reinitSteps = function (startWithStep) {
                 cswPrivate.stepThreeComplete = false;
+                cswPrivate.state.ContainerActions = [];
                 if (startWithStep <= 2) {
                     cswPrivate.stepTwoComplete = false;
                 }
@@ -62,8 +71,20 @@
                 cswPrivate.toggleButton(cswPrivate.buttons.finish, Csw.bool(cswPrivate.currentStepNo === cswPrivate.numOfSteps));
                 cswPrivate.toggleButton(cswPrivate.buttons.next, Csw.bool(cswPrivate.currentStepNo < cswPrivate.numOfSteps));
             };
+            
+            cswPrivate.handleStep = function (newStepNo) {
+                cswPrivate.setState();
+                cswPrivate.toggleButton(cswPrivate.buttons.finish, false);
+                cswPrivate.toggleButton(cswPrivate.buttons.next, false);
+                if (Csw.contains(cswPrivate, 'makeStep' + newStepNo)) {
+                    cswPrivate.lastStepNo = cswPrivate.currentStepNo;
+                    cswPrivate.currentStepNo = newStepNo;
+                    cswPrivate['makeStep' + newStepNo]();
+                }
+            };
+            //#endregion Wizard Functions
 
-            //State Functions
+            //#region State Functions
             cswPrivate.validateState = function () {
                 var state;
                 if (Csw.isNullOrEmpty(cswPrivate.state.locationId)) {
@@ -84,8 +105,9 @@
             cswPrivate.clearState = function () {
                 Csw.clientDb.removeItem(cswPrivate.name + '_' + cswReconciliationWizardStateName);
             };
+            //#endregion State Functions
 
-            //Step 1: Locations and Dates
+            //#region Step 1: Locations and Dates
             cswPrivate.makeStep1 = (function () {
                 cswPrivate.stepOneComplete = false;
                 return function () {
@@ -165,9 +187,10 @@
                         cswPrivate.stepOneComplete = true;
                     }
                 };
-            } ()); //Step 1
+            }());
+            //#endregion Step 1: Locations and Dates
 
-            //Step 2: Statistics
+            //#region Step 2: Statistics
             cswPrivate.makeStep2 = (function () {
                 cswPrivate.stepTwoComplete = false;
                 return function () {                    
@@ -194,9 +217,12 @@
                                     ContainerStatuses: [{
                                         ContainerId: '',
                                         ContainerBarcode: '',
+                                        LocationId: '',
+                                        ContainerLocationId: '',
                                         ContainerStatus: '',
                                         Action: '',
-                                        ActionApplied: ''
+                                        ActionApplied: '',
+                                        ActionOptions: []
                                     }]
                                 };
                                 Csw.extend(cswPrivate.data, ajaxdata);
@@ -264,14 +290,13 @@
                         cswPrivate.toggleStepButtons();
                     }
                 };
-            } ()); //Step 2
+            }());
+            //#endregion Step 2: Statistics
 
-            //Step 3: Containers
+            //#region Step 3: Containers
             cswPrivate.makeStep3 = (function () {
                 cswPrivate.stepThreeComplete = false;
                 return function () {
-                    cswPrivate.toggleStepButtons();
-
                     if (false === cswPrivate.stepThreeComplete) {
                         cswPrivate.divStep3 = cswPrivate.divStep3 || cswPrivate.wizard.div(3);
                         cswPrivate.divStep3.empty();
@@ -280,7 +305,6 @@
                             cssclass: "wizardHelpDesc"
                         });
                         cswPrivate.divStep3.br({ number: 2 });
-                        //TODO - if end time = Today, include an ActionSelect control in each row, along with a save button outside the grid to update action
                         Csw.ajaxWcf.post({
                             urlMethod: 'Containers/getContainerStatuses',
                             data: cswPrivate.state,
@@ -288,9 +312,12 @@
                                 cswPrivate.data.ContainerStatuses = [{
                                     ContainerId: '',
                                     ContainerBarcode: '',
+                                    LocationId: '',
+                                    ContainerLocationId: '',
                                     ContainerStatus: '',
                                     Action: '',
-                                    ActionApplied: ''
+                                    ActionApplied: '',
+                                    ActionOptions: []
                                 }];
                                 Csw.extend(cswPrivate.data.ContainerStatuses, ajaxdata.ContainerStatuses);
 
@@ -313,6 +340,10 @@
                                     });
                                 };
                                 addColumn('containerid', 'Container Id', true);
+                                addColumn('locationid', 'Location Id', true);
+                                addColumn('containerlocationid', 'ContainerLocation Id', true);
+                                addColumn('actionapplied', 'Action Applied', true);
+                                addColumn('actionoptions', 'Action Options', true);
                                 addColumn('containerbarcode', 'Container Barcode', false);
                                 var StatusOptions = [];
                                 Csw.each(cswPrivate.data.ContainerStatistics, function(row) {
@@ -322,15 +353,36 @@
                                     type: 'list',
                                     options: StatusOptions
                                 });
-                                addColumn('action', 'Action', false);
+                                var actionEditable = Csw.bool(cswPrivate.state.EndDate === cswPrivate.getCurrentDate());
+                                addColumn('currentaction', 'Action', actionEditable);
+                                if (actionEditable) {
+                                    var actionControlCol = {
+                                        header: 'Action',
+                                        dataIndex: 'action',
+                                        xtype: 'actioncolumn',
+                                        renderer: function(value, metaData, record, rowIndex, colIndex, store, view) {
+                                            var cell1Id = cswPrivate.name + 'action' + rowIndex + colIndex + '1';
+                                            var ret = '<table id="gridActionColumn' + cell1Id + '" cellpadding="0"><tr>';
+                                            ret += '<td id="' + cell1Id + '" style="width: 26px;"/>';
+                                            ret += '</tr></table>';
+                                            cswPrivate.makeActionPicklist(cell1Id, record);
+                                            return ret;
+                                        }
+                                    };
+                                    ContainersGridColumns.push(actionControlCol);
+                                }
 
                                 var ContainersGridData = [];
                                 Csw.each(cswPrivate.data.ContainerStatuses, function (row) {
                                     ContainersGridData.push({
                                         containerid: row.ContainerId,
+                                        locationid: row.LocationId,
+                                        containerlocationid: row.ContainerLocationId,
+                                        actionapplied: row.ActionApplied,
                                         containerbarcode: row.ContainerBarcode,
                                         status: row.ContainerStatus,
-                                        action: row.Action
+                                        actionoptions: row.ActionOptions.join(','),
+                                        currentaction: row.Action
                                     });
                                 });
 
@@ -361,13 +413,15 @@
                                 cswPrivate.toggleStepButtons();
                             }
                         });
-
                         cswPrivate.stepThreeComplete = true;
+                    } else {
+                        cswPrivate.toggleStepButtons();
                     }
                 };
-            } ()); //Step 3
+            }());
+            //#endregion Step 3: Containers
 
-            //Helper Functions
+            //#region Helper Functions
             cswPrivate.getCurrentDate = function () {
                 var today = new Date();
                 var dd = today.getDate();
@@ -381,7 +435,63 @@
                 today = mm + '/' + dd + '/' + yyyy;
                 return today;
             };
+            
+            cswPrivate.makeActionPicklist = function (cellId, record) {
+                // Possible race condition - have to make the button after the cell is added, but it isn't added yet
+                Csw.defer(function () {
+                    var cell = Csw.literals.factory($('#' + cellId));
+                    cell.empty();
+                    var actionOptions = record.data.actionoptions.split(',');
+                    var selectedOption = record.data.currentaction;
+                    Csw.each(cswPrivate.state.ContainerActions, function (row) {
+                        if (row.ContainerId === record.data.containerid) {
+                            selectedOption = row.Action;
+                        }
+                    });
+                    if (false === Csw.isNullOrEmpty(record.data.currentaction) 
+                        && Csw.isNullOrEmpty(record.data.actionoptions)) {
+                        actionOptions.push(record.data.currentaction);
+                    }
+                    var actionSelect = cell.select({
+                        ID: cellId,
+                        name: cellId,
+                        values: actionOptions,
+                        selected: selectedOption,
+                        onChange: function () {
+                            var ContainerAction = {
+                                ContainerId: record.data.containerid,
+                                ContainerLocationId: record.data.containerlocationid,
+                                LocationId: record.data.locationid,
+                                Action: actionSelect.val()
+                            };
+                            var changeExists = false;
+                            Csw.each(cswPrivate.state.ContainerActions, function(row, key) {
+                                if(row.ContainerId === ContainerAction.ContainerId) {
+                                    cswPrivate.state.ContainerActions[key] = ContainerAction;
+                                    changeExists = true;
+                                }
+                            });
+                            if(false === changeExists) {
+                                cswPrivate.state.ContainerActions.push(ContainerAction);
+                            }
+                        }
+                    });
+                    if (Csw.bool(record.data.actionapplied) === true || Csw.isNullOrEmpty(record.data.actionoptions)) {
+                        actionSelect.disable();
+                    }
+                }, 50);
+            };
 
+            cswPrivate.saveChanges = function() {
+                Csw.ajaxWcf.post({
+                    urlMethod: 'Containers/saveContainerActions',
+                    data: cswPrivate.state
+                });
+                cswPrivate.state.ContainerActions = [];
+            };
+            //#endregion Helper Functions
+
+            //#region ctor
             (function () {
                 if (options) {
                     Csw.extend(cswPrivate, options);
@@ -394,19 +504,8 @@
                 };
                 cswPrivate.currentStepNo = cswPrivate.startingStep;
 
-                cswPrivate.handleStep = function (newStepNo) {
-                    cswPrivate.setState();
-                    cswPrivate.toggleButton(cswPrivate.buttons.finish, false);
-                    cswPrivate.toggleButton(cswPrivate.buttons.next, false);
-                    if (Csw.contains(cswPrivate, 'makeStep' + newStepNo)) {
-                        cswPrivate.lastStepNo = cswPrivate.currentStepNo;
-                        cswPrivate.currentStepNo = newStepNo;
-                        cswPrivate['makeStep' + newStepNo]();
-                    }
-                };
-
                 cswPrivate.finalize = function () {
-                    //TODO - Save any unsaved container statuses left over from step 3
+                    cswPrivate.saveChanges();
                     Csw.tryExec(cswPrivate.onFinish);
                 };
 
@@ -426,7 +525,8 @@
                     doNextOnInit: false
                 });
 
-            } ());
+            }());
+            //#endregion ctor
 
             cswPrivate.makeStep1();
 

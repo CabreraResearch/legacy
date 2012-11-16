@@ -80,7 +80,7 @@ namespace NbtWebApp
         [WebInvoke( Method = "POST", ResponseFormat = WebMessageFormat.Json )]
         [Description( "Save all actions that have changed on selected Containers' most recent ContainerLocation" )]
         [FaultContract( typeof( FaultException ) )]
-        public CswNbtWebServiceContainer.ContainerDataReturn saveContianerActions( ContainerData.ReconciliationRequest Request )
+        public CswNbtWebServiceContainer.ContainerDataReturn saveContainerActions( ContainerData.ReconciliationRequest Request )
         {
             CswNbtWebServiceContainer.ContainerDataReturn Ret = new CswNbtWebServiceContainer.ContainerDataReturn();
 

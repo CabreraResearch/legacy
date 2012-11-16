@@ -142,9 +142,13 @@ namespace ChemSW.Nbt.Actions
                     }
                     else
                     {
-                        CswNbtObjClassContainerLocation ContLocNode = _CswNbtResources.Nodes.GetNode( CswConvert.ToPrimaryKey( Action.ContainerLocationId ) );
-                        ContLocNode.Action.Value = Action.Action;
-                        ContLocNode.postChanges(false);
+                        CswPrimaryKey ContLocNodeId = CswConvert.ToPrimaryKey(Action.ContainerLocationId);
+                        if( null != ContLocNodeId )
+                        {
+                            CswNbtObjClassContainerLocation ContLocNode = _CswNbtResources.Nodes.GetNode( CswConvert.ToPrimaryKey( Action.ContainerLocationId ) );
+                            ContLocNode.Action.Value = Action.Action;
+                            ContLocNode.postChanges( false );
+                        }
                     }
                 }
             }
