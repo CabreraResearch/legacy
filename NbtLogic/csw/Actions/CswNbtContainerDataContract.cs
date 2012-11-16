@@ -34,21 +34,37 @@ namespace ChemSW.Nbt.Actions
         [DataContract]
         public class ReconciliationStatuses
         {
+            public ReconciliationStatuses()
+            {
+                ActionOptions = new Collection<String>();
+            }
+
             [DataMember]
             public String ContainerId = String.Empty;
             [DataMember]
             public String ContainerBarcode = String.Empty;
+            [DataMember]
+            public String LocationId = String.Empty;
+            [DataMember]
+            public String ContainerLocationId = String.Empty;
             [DataMember]
             public String ContainerStatus = String.Empty;
             [DataMember]
             public String Action = String.Empty;
             [DataMember]
             public String ActionApplied = String.Empty;
+            [DataMember]
+            public Collection<String> ActionOptions;
         }
 
         [DataContract]
         public class ReconciliationRequest
         {
+            public ReconciliationRequest()
+            {
+                ContainerActions = new Collection<ReconciliationActions>();
+            }
+
             [DataMember]
             public String LocationId = String.Empty;
             [DataMember]
@@ -57,6 +73,21 @@ namespace ChemSW.Nbt.Actions
             public String StartDate = String.Empty;
             [DataMember]
             public String EndDate = String.Empty;
+            [DataMember]
+            public Collection<ReconciliationActions> ContainerActions;
+        }
+
+        [DataContract]
+        public class ReconciliationActions
+        {
+            [DataMember]
+            public String ContainerId = String.Empty;
+            [DataMember]
+            public String ContainerLocationId = String.Empty;
+            [DataMember]
+            public String LocationId = String.Empty;
+            [DataMember]
+            public String Action = String.Empty;
         }
 
     } // ContainerData

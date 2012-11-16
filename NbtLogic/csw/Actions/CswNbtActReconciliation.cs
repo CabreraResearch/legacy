@@ -12,6 +12,8 @@ namespace ChemSW.Nbt.Actions
 {
     public class CswNbtActReconciliation
     {
+        #region Properties and ctor
+
         private CswNbtResources _CswNbtResources;
         private ContainerData Data;
         private ICswNbtTree ContainersTree;
@@ -21,6 +23,10 @@ namespace ChemSW.Nbt.Actions
             _CswNbtResources = CswNbtResources;
             Data = new ContainerData();
         }
+
+        #endregion Properties and ctor
+
+        #region Public Methods
 
         public ContainerData getReconciliationData( ContainerData.ReconciliationRequest Request )
         {
@@ -88,6 +94,7 @@ namespace ChemSW.Nbt.Actions
                 for( int i = 0; i < ContainersTree.getChildNodeCount(); i++ )//Location Nodes
                 {
                     ContainersTree.goToNthChild( i );
+                    CswPrimaryKey LocationId = ContainersTree.getNodeIdForCurrentPosition();
                     if( ContainersTree.getChildNodeCount() > 0 )
                     {
                         for( int j = 0; j < ContainersTree.getChildNodeCount(); j++ )//Container Nodes
@@ -97,10 +104,12 @@ namespace ChemSW.Nbt.Actions
                             CswNbtNode ContainerNode = ContainersTree.getNodeForCurrentPosition();//TODO - revert to CswObjClassContainer when Case 27520 is resolved
                             ContainerStatus.ContainerId = ContainerNode.NodeId.ToString();
                             ContainerStatus.ContainerBarcode = ContainerNode.Properties[CswNbtObjClassContainer.PropertyName.Barcode].AsBarcode.Barcode;
+                            ContainerStatus.LocationId = LocationId.ToString();
                             if( ContainersTree.getChildNodeCount() > 0 )//ContainerLocation Nodes
                             {
                                 ContainersTree.goToNthChild( 0 );
                                 CswNbtObjClassContainerLocation ContainerLocationNode = ContainersTree.getNodeForCurrentPosition();
+                                ContainerStatus.ContainerLocationId = ContainerLocationNode.NodeId.ToString();
                                 ContainerStatus.ContainerStatus = ContainerLocationNode.Status.Value;
                                 ContainerStatus.Action = ContainerLocationNode.Action.Value;
                                 ContainerStatus.ActionApplied = ContainerLocationNode.ActionApplied.Checked.ToString();
@@ -110,6 +119,7 @@ namespace ChemSW.Nbt.Actions
                             {
                                 ContainerStatus.ContainerStatus = CswNbtObjClassContainerLocation.StatusOptions.NotScanned.ToString();
                             }
+                            ContainerStatus.ActionOptions = _getActionOptions( ContainerStatus.ContainerStatus );
                             Data.ContainerStatuses.Add( ContainerStatus );
                             ContainersTree.goToParentNode();
                         }
@@ -119,6 +129,30 @@ namespace ChemSW.Nbt.Actions
             }
             return Data;
         }
+
+        public void saveContainerActions( ContainerData.ReconciliationRequest Request )
+        {
+            if( null != Request.ContainerActions )
+            {
+                foreach (ContainerData.ReconciliationActions Action in Request.ContainerActions)
+                {
+                    if (Action.Action == CswNbtObjClassContainerLocation.ActionOptions.MarkMissing.ToString())
+                    {
+                        _createMissingContainerLocation( Action );
+                    }
+                    else
+                    {
+                        CswNbtObjClassContainerLocation ContLocNode = _CswNbtResources.Nodes.GetNode( CswConvert.ToPrimaryKey( Action.ContainerLocationId ) );
+                        ContLocNode.Action.Value = Action.Action;
+                        ContLocNode.postChanges(false);
+                    }
+                }
+            }
+        }
+
+        #endregion Public Methods
+
+        #region Private Methods
 
         private void _setContainersTree( ContainerData.ReconciliationRequest Request )
         {
@@ -218,5 +252,59 @@ namespace ChemSW.Nbt.Actions
                 }
             }
         }
+
+        private Collection<String> _getActionOptions( String Status )
+        {
+            Collection<String> ActionOptions = new Collection<String>();
+            ActionOptions.Add( String.Empty );
+            if( Status != CswNbtObjClassContainerLocation.StatusOptions.Correct.ToString() )
+            {
+                ActionOptions.Add( CswNbtObjClassContainerLocation.ActionOptions.NoAction.ToString() );
+            }
+            if( Status == CswNbtObjClassContainerLocation.StatusOptions.Missing.ToString() )
+            {
+                ActionOptions.Add( CswNbtObjClassContainerLocation.ActionOptions.MarkMissing.ToString() );
+            }
+            if( Status == CswNbtObjClassContainerLocation.StatusOptions.Disposed.ToString() ||
+                Status == CswNbtObjClassContainerLocation.StatusOptions.DisposedAtWrongLocation.ToString() )
+            {
+                ActionOptions.Add( CswNbtObjClassContainerLocation.ActionOptions.Undispose.ToString() );
+            }
+            if( Status == CswNbtObjClassContainerLocation.StatusOptions.WrongLocation.ToString() ||
+                Status == CswNbtObjClassContainerLocation.StatusOptions.DisposedAtWrongLocation.ToString() )
+            {
+                ActionOptions.Add( CswNbtObjClassContainerLocation.ActionOptions.MoveToLocation.ToString() );
+            }
+            if( Status == CswNbtObjClassContainerLocation.StatusOptions.DisposedAtWrongLocation.ToString() )
+            {
+                ActionOptions.Add( CswNbtObjClassContainerLocation.ActionOptions.UndisposeAndMove.ToString() );
+            }
+            return ActionOptions;
+        }
+
+        private void _createMissingContainerLocation( ContainerData.ReconciliationActions Action )
+        {
+            CswNbtMetaDataObjectClass ContLocOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.ContainerLocationClass );
+            CswNbtMetaDataNodeType ContLocNt = ContLocOc.FirstNodeType;
+            if( null != ContLocNt )
+            {
+                CswNbtObjClassContainerLocation ContLocNode = 
+                    _CswNbtResources.Nodes.makeNodeFromNodeTypeId( 
+                        ContLocNt.NodeTypeId,
+                        CswNbtNodeCollection.MakeNodeOperation.DoNothing 
+                    );
+                ContLocNode.Container.RelatedNodeId = CswConvert.ToPrimaryKey( Action.ContainerId );
+                ContLocNode.Location.SelectedNodeId = CswConvert.ToPrimaryKey( Action.LocationId );
+                ContLocNode.Type.Value = CswNbtObjClassContainerLocation.TypeOptions.Missing.ToString();
+                ContLocNode.Status.Value = CswNbtObjClassContainerLocation.StatusOptions.Missing.ToString();
+                ContLocNode.Action.Value = CswNbtObjClassContainerLocation.ActionOptions.MarkMissing.ToString();
+                ContLocNode.ActionApplied.Checked = Tristate.False;
+                ContLocNode.ScanDate.DateTimeValue = DateTime.Now;
+                ContLocNode.User.RelatedNodeId = _CswNbtResources.CurrentNbtUser.UserId;
+                ContLocNode.postChanges( false );
+            }
+        }
+
+        #endregion Private Methods
     }
 }

@@ -705,6 +705,7 @@ namespace ChemSW.Nbt.ObjClasses
                     ContLocNode.Location.CachedNodeName = Location.CachedNodeName;
                     ContLocNode.Location.CachedPath = Location.CachedPath;
                 }
+                ContLocNode.ActionApplied.Checked = Tristate.False;
                 ContLocNode.ScanDate.DateTimeValue = DateTime.Now;
                 ContLocNode.User.RelatedNodeId = _CswNbtResources.CurrentNbtUser.UserId;
                 ContLocNode.postChanges( false );
