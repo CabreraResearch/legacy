@@ -13,7 +13,7 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Schema Update for case 27942
     /// </summary>
-    public class CswUpdateSchema_RequestItems_Case27942 : CswUpdateSchemaTo
+    public class CswUpdateSchema_01U_RequestItems_Case27942 : CswUpdateSchemaTo
     {
         public override CswDeveloper Author
         {
@@ -391,6 +391,7 @@ namespace ChemSW.Nbt.Schema
             #region Request Material Create Layout Case 27871
 
             CswNbtMetaDataNodeTypeProp RmcDescriptionNtp = RequestMcNt.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestMaterialCreate.PropertyName.Description );
+            CswNbtMetaDataNodeTypeProp RmcMaterialTypeNtp = RequestMcNt.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestMaterialCreate.PropertyName.NewMaterialType );
             CswNbtMetaDataNodeTypeProp RmcMaterialNameNtp = RequestMcNt.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestMaterialCreate.PropertyName.NewMaterialTradename );
             CswNbtMetaDataNodeTypeProp RmcSupplierNtp = RequestMcNt.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestMaterialCreate.PropertyName.NewMaterialSupplier );
             CswNbtMetaDataNodeTypeProp RmcPartNoNtp = RequestMcNt.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestMaterialCreate.PropertyName.NewMaterialPartNo );
@@ -413,7 +414,8 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataNodeTypeTab RmcNodeTypeTab = RequestMcNt.getFirstNodeTypeTab();
             RmcNumberNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, DoMove: true, DisplayRow: 1, DisplayColumn: 1, TabId: RmcNodeTypeTab.TabId );
             RmcDescriptionNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, DoMove: true, InsertAfterProp: RmcNumberNtp );
-            RmcMaterialNameNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, DoMove: true, InsertAfterProp: RmcNumberNtp );
+            RmcMaterialTypeNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, DoMove: true, InsertAfterProp: RmcNumberNtp );
+            RmcMaterialNameNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, DoMove: true, InsertAfterProp: RmcMaterialTypeNtp );
             RmcSupplierNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, DoMove: true, InsertAfterProp: RmcMaterialNameNtp );
             RmcPartNoNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, DoMove: true, InsertAfterProp: RmcSupplierNtp );
             RmcNeededByNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, DoMove: true, InsertAfterProp: RmcPartNoNtp );
