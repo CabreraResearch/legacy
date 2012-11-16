@@ -303,26 +303,17 @@ namespace ChemSW.Nbt.Security
         // This is probably a performance problem!
         private CswNbtObjClassRole _getRole( CswPrimaryKey RoleId )
         {
-            CswNbtObjClassRole ReturnVal = null;
-
-            if( null != RoleId )
-            {
-                CswNbtNode RoleNode = _CswNbtResources.Nodes[RoleId];
-                ReturnVal = (CswNbtObjClassRole) RoleNode;
-            }
-
-            return ( ReturnVal );
+            return _CswNbtResources.Nodes[RoleId];
         }
 
         #region NodeTypes
 
         public bool canNodeType( NodeTypePermission Permission, CswNbtMetaDataNodeType NodeType, ICswNbtUser User = null )
         {
-            bool ret = false;
-
             _initPermissionInfo( null, User, NodeType, Permission );
 
-            if( false == _CswNbtPermitInfo.IsUberUser )
+            bool ret = _CswNbtPermitInfo.IsUberUser;
+            if( false == ret )
             {
 
                 if( _CswNbtPermitInfo.shouldPermissionCheckProceed() )
@@ -335,10 +326,6 @@ namespace ChemSW.Nbt.Security
                     }
 
                 }//if pre-reqs are satisifed
-            }
-            else
-            {
-                ret = true;
             }
 
             return ( ret );
@@ -353,11 +340,10 @@ namespace ChemSW.Nbt.Security
         /// <returns></returns>
         public bool canNodeType( NodeTypePermission Permission, CswNbtMetaDataNodeType NodeType, CswNbtObjClassRole Role )
         {
-            bool ret = false;
-
             _initPermissionInfo( Role, null, NodeType, Permission );
 
-            if( false == _CswNbtPermitInfo.IsUberUser )
+            bool ret = _CswNbtPermitInfo.IsUberUser;
+            if( false == ret )
             {
 
                 if( _CswNbtPermitInfo.shouldPermissionCheckProceed() )
@@ -370,10 +356,6 @@ namespace ChemSW.Nbt.Security
                     }
 
                 }//if pre-reqs are satisifed
-            }
-            else
-            {
-                ret = true;
             }
 
             return ( ret );
@@ -408,11 +390,10 @@ namespace ChemSW.Nbt.Security
 
         public bool canTab( NodeTypePermission Permission, CswNbtMetaDataNodeType NodeType, CswNbtMetaDataNodeTypeTab NodeTypeTab, ICswNbtUser User = null )
         {
-            bool ret = false;
-
             _initPermissionInfo( null, User, NodeType, Permission );
 
-            if( false == _CswNbtPermitInfo.IsUberUser )
+            bool ret = _CswNbtPermitInfo.IsUberUser;
+            if( false == ret )
             {
 
                 if( _CswNbtPermitInfo.shouldPermissionCheckProceed() )
@@ -433,11 +414,10 @@ namespace ChemSW.Nbt.Security
 
         public bool canTab( NodeTypePermission Permission, CswNbtMetaDataNodeType NodeType, CswNbtMetaDataNodeTypeTab NodeTypeTab, CswNbtObjClassRole Role )
         {
-            bool ret = false;
-
             _initPermissionInfo( Role, null, NodeType, Permission );
 
-            if( false == _CswNbtPermitInfo.IsUberUser )
+            bool ret = _CswNbtPermitInfo.IsUberUser;
+            if( false == ret )
             {
 
                 if( _CswNbtPermitInfo.shouldPermissionCheckProceed() )
@@ -490,13 +470,11 @@ namespace ChemSW.Nbt.Security
 
         public bool canAnyTab( NodeTypePermission Permission, CswNbtMetaDataNodeType NodeType, ICswNbtUser User = null )
         {
-            bool ret = false;
-
             _initPermissionInfo( null, User, NodeType, Permission );
 
-            if( false == _CswNbtPermitInfo.IsUberUser )
+            bool ret = _CswNbtPermitInfo.IsUberUser;
+            if( false == ret )
             {
-
                 if( _CswNbtPermitInfo.shouldPermissionCheckProceed() )
                 {
 
@@ -506,10 +484,6 @@ namespace ChemSW.Nbt.Security
                         ret = _canAnyTabImpl();
                     }
                 }//if pre-reqs are in order
-            }
-            else
-            {
-                ret = true;
             }
 
             return ( ret );
@@ -519,11 +493,10 @@ namespace ChemSW.Nbt.Security
 
         public bool canAnyTab( NodeTypePermission Permission, CswNbtMetaDataNodeType NodeType, CswNbtObjClassRole Role )
         {
-            bool ret = false;
-
             _initPermissionInfo( Role, null, NodeType, Permission );
 
-            if( false == _CswNbtPermitInfo.IsUberUser )
+            bool ret = _CswNbtPermitInfo.IsUberUser;
+            if( false == ret )
             {
 
                 if( _CswNbtPermitInfo.shouldPermissionCheckProceed() )
@@ -536,10 +509,6 @@ namespace ChemSW.Nbt.Security
                     }
 
                 }//if pre-reqs are in order
-            }
-            else
-            {
-                ret = true;
             }
 
             return ( ret );
@@ -561,7 +530,7 @@ namespace ChemSW.Nbt.Security
                     ret = ret || _CswNbtPermitInfo.Role.NodeTypePermissions.CheckValue( CswNbtObjClassRole.MakeNodeTypeTabPermissionValue( _CswNbtPermitInfo.NodeType.FirstVersionNodeTypeId, CurrentTab.FirstTabVersionId, NodeTypeTabPermission.Edit ) );
                 }
 
-                } //iterate tabs
+            } //iterate tabs
 
             return ( ret );
 
@@ -576,9 +545,9 @@ namespace ChemSW.Nbt.Security
             {
                 _initPermissionInfo( null, User, MetaDataProp.getNodeType(), Permission, ( ( null != NodePropWrapper ) ? NodePropWrapper.NodeId : null ), MetaDataProp );
 
-                if( ( false == _CswNbtPermitInfo.IsUberUser ) || ( true == MetaDataProp.ServerManaged ) ) //we already known that ( null != MetaDataProp ) 
+                ret = _CswNbtPermitInfo.IsUberUser;
+                if( ( false == ret ) || ( true == MetaDataProp.ServerManaged ) ) //we already known that ( null != MetaDataProp ) 
                 {
-
                     if( true == _CswNbtPermitInfo.NoExceptionCases )
                     {
 
@@ -588,11 +557,6 @@ namespace ChemSW.Nbt.Security
                         }
                     }
                 }
-                else
-                {
-                    ret = true;
-                }//f-else is uber user
-
             }//if-else we have metadata prop
 
             return ( ret );
@@ -607,9 +571,9 @@ namespace ChemSW.Nbt.Security
             {
                 _initPermissionInfo( Role, null, MetaDataProp.getNodeType(), Permission, ( ( null != NodePropWrapper ) ? NodePropWrapper.NodeId : null ), MetaDataProp );
 
-                if( false == _CswNbtPermitInfo.IsUberUser )
+                ret = _CswNbtPermitInfo.IsUberUser;
+                if( false == ret )
                 {
-
                     if( true == _CswNbtPermitInfo.NoExceptionCases )
                     {
                         if( _CswNbtPermitInfo.shouldPermissionCheckProceed() )
@@ -618,11 +582,6 @@ namespace ChemSW.Nbt.Security
                         }
                     }
                 }
-                else
-                {
-                    ret = true;
-                }//f-else is uber user
-
             }//if-else we have metadata prop
 
             return ( ret );
@@ -672,7 +631,6 @@ namespace ChemSW.Nbt.Security
 
             if( false == _CswNbtPermitInfo.IsUberUser )
             {
-
                 if( true == _CswNbtPermitInfo.NoExceptionCases )
                 {
 
@@ -683,11 +641,6 @@ namespace ChemSW.Nbt.Security
                     }//if pre-reqs are satisifed
 
                 }
-
-            }
-            else
-            {
-                ret = true;
             }
 
             return ( ret );
@@ -697,35 +650,22 @@ namespace ChemSW.Nbt.Security
 
         public bool isNodeWritable( NodeTypePermission Permission, CswNbtMetaDataNodeType NodeType, CswPrimaryKey NodeId, CswNbtObjClassRole Role )
         {
-
             bool ret = true;
 
             _initPermissionInfo( Role, null, NodeType, Permission, NodeId );
 
             if( false == _CswNbtPermitInfo.IsUberUser )
             {
-
                 if( _CswNbtPermitInfo.shouldPermissionCheckProceed() )
                 {
-
-
                     if( true == _CswNbtPermitInfo.NoExceptionCases )
                     {
-
                         ret = _isNodeWritableImpl();
-
                     }
-
                 }//if pre-reqs are satisifed
-
-            }
-            else
-            {
-                ret = true;
             }
 
             return ( ret );
-
         }//isNodeWritable() 
 
 
@@ -741,9 +681,6 @@ namespace ChemSW.Nbt.Security
             // decide how to piece them together. 
             //ret = canNodeType( Permission, _CswNbtPermitInfo.NodeType, _CswNbtPermitInfo.User );
 
-
-
-
             if( ret && ( null != _CswNbtPermitInfo.NodePrimeKey && Int32.MinValue != _CswNbtPermitInfo.NodePrimeKey.PrimaryKey ) )
             {
                 // Prevent users from deleting themselves or their own roles
@@ -755,190 +692,25 @@ namespace ChemSW.Nbt.Security
                     ret = false;
                 }
 
-
                 // case 24510
-
                 CswNbtNode Node = _CswNbtResources.Nodes[_CswNbtPermitInfo.NodePrimeKey];
                 if( null != Node )
                 {
                     if( _CswNbtPermitInfo.NodeType.getObjectClass().ObjectClass == NbtObjectClass.ContainerClass )
                     {
-
                         CswNbtObjClassContainer CswNbtObjClassContainer = Node;
-
                         ret = ret && CswNbtObjClassContainer.canContainer( _CswNbtPermitInfo.NodePrimeKey, _CswNbtPermitInfo.Permission, null, _CswNbtPermitInfo.User );
                     }
 
-
                     if( _CswNbtPermitInfo.Permission == NodeTypePermission.Edit )
                     {
-
                         ret = ret && ( _CswNbtPermitInfo.User.IsAdministrator() || false == Node.ReadOnly );
                     }
                 }
-
             }//if NodeId is not null
 
             return ( ret );
-
         }//_isNodeWritableImpl()
-
-        ///// <summary>
-        ///// Returns true if the user has the appropriate permissions for the nodetype
-        ///// </summary>
-        //public bool can( NodeTypePermission Permission,
-        //                 CswNbtMetaDataNodeType NodeType,
-        //                 bool CheckAllTabPermissions = false,
-        //                 CswNbtMetaDataNodeTypeTab NodeTypeTab = null,
-        //                 ICswNbtUser User = null,
-        //                 CswPrimaryKey NodeId = null,
-        //                 CswNbtMetaDataNodeTypeProp MetaDataProp = null )
-        //{
-        //    bool ret = false;
-
-        //    // Default to logged-in user
-        //    if( User == null )
-        //    {
-        //        User = _CswNbtResources.CurrentNbtUser;
-        //    }
-
-        //    if( User != null )
-        //    {
-        //        if( User is CswNbtSystemUser || User.Username == CswNbtObjClassUser.ChemSWAdminUsername )
-        //        {
-        //            ret = true;
-        //        }
-        //        else
-        //        {
-        //            CswNbtObjClassRole Role = _getRole( User.RoleId );
-        //            if( Role != null && NodeType != null ) // if no role, no permissions
-        //            {
-        //                // Base case: does the Role have this nodetype permission
-        //                ret = Role.NodeTypePermissions.CheckValue( CswNbtObjClassRole.MakeNodeTypePermissionValue( NodeType.FirstVersionNodeTypeId, Permission ) );
-        //                if( Permission == NodeTypePermission.View )
-        //                {
-        //                    // Having 'Edit' grants 'View' automatically
-        //                    ret = ret || Role.NodeTypePermissions.CheckValue( CswNbtObjClassRole.MakeNodeTypePermissionValue( NodeType.FirstVersionNodeTypeId, NodeTypePermission.Edit ) );
-        //                }
-
-        //                // case 8411 - Tab permissions
-        //                if( ( CheckAllTabPermissions || NodeTypeTab != null ) &&
-        //                    ( Permission == NodeTypePermission.View || Permission == NodeTypePermission.Edit ) )
-        //                {
-        //                    NodeTypeTabPermission TabPermission = (NodeTypeTabPermission) Enum.Parse( typeof( NodeTypeTabPermission ), Permission.ToString() );
-        //                    Collection<CswNbtMetaDataNodeTypeTab> TabsToCheck = new Collection<CswNbtMetaDataNodeTypeTab>();
-        //                    if( NodeTypeTab != null )
-        //                    {
-        //                        TabsToCheck.Add( NodeTypeTab );
-        //                    }
-        //                    else if( CheckAllTabPermissions )
-        //                    {
-        //                        foreach( CswNbtMetaDataNodeTypeTab Tab in NodeType.getNodeTypeTabs() )
-        //                        {
-        //                            TabsToCheck.Add( Tab );
-        //                        }
-        //                    }
-
-        //                    foreach( CswNbtMetaDataNodeTypeTab Tab in TabsToCheck )
-        //                    {
-        //                        ret = ret || Role.NodeTypePermissions.CheckValue( CswNbtObjClassRole.MakeNodeTypeTabPermissionValue( NodeType.FirstVersionNodeTypeId, Tab.FirstTabVersionId, TabPermission ) );
-        //                        if( TabPermission == NodeTypeTabPermission.View )
-        //                        {
-        //                            // Having 'Edit' grants 'View' automatically
-        //                            ret = ret || Role.NodeTypePermissions.CheckValue( CswNbtObjClassRole.MakeNodeTypeTabPermissionValue( NodeType.FirstVersionNodeTypeId, Tab.FirstTabVersionId, NodeTypeTabPermission.Edit ) );
-        //                        }
-        //                    }
-        //                } // if checking tab permissions
-
-        //                // Only Administrators can edit Roles
-        //                if( ret &&
-        //                    NodeType.getObjectClass().ObjectClass == CswNbtMetaDataObjectClassName.NbtObjectClass.RoleClass &&
-        //                    Permission != NodeTypePermission.View &&
-        //                    !User.IsAdministrator() )
-        //                {
-        //                    ret = false;
-        //                }
-
-        //                if( null != NodeId && Int32.MinValue != NodeId.PrimaryKey )
-        //                {
-        //                    // case 2209 - Users can edit their own profile without permissions to the User nodetype
-        //                    if( !ret &&
-        //                        NodeId == User.UserId )
-        //                    {
-        //                        ret = true;
-        //                    }
-
-        //                    // Prevent users from deleting themselves or their own roles
-        //                    if( ret &&
-        //                        Permission == NodeTypePermission.Delete &&
-        //                        ( ( NodeId == User.UserId ||
-        //                            NodeId == User.RoleId ) ) )
-        //                    {
-        //                        ret = false;
-        //                    }
-
-        //                    // case 24510
-        //                    if( NodeType.getObjectClass().ObjectClass == CswNbtMetaDataObjectClassName.NbtObjectClass.ContainerDispenseTransactionClass )
-        //                    {
-        //                        ret = Permission != NodeTypePermission.Delete;
-        //                    }
-
-        //                    // case 24510
-        //                    if( NodeType.getObjectClass().ObjectClass == CswNbtMetaDataObjectClassName.NbtObjectClass.ContainerClass )
-        //                    {
-        //                        ret = ret && canContainer( NodeId, Permission, null, User );
-        //                    }
-
-        //                    if( MetaDataProp != null )
-        //                    {
-
-        //                        // You can't edit readonly properties
-        //                        if( ret &&
-        //                            Permission != NodeTypePermission.View &&
-        //                            MetaDataProp.ReadOnly && false == MetaDataProp.AllowReadOnlyAdd ) /* Case 24514. Conditionally Permit edit on create. */
-        //                        {
-        //                            ret = false;
-        //                        }
-
-        //                        CswNbtMetaDataObjectClassProp OCP = MetaDataProp.getObjectClassProp();
-
-        //                        // case 8218 - Certain properties on the user's preferences are not allowed to be edited
-        //                        if( ret &&
-        //                            NodeType.getObjectClass().ObjectClass == CswNbtMetaDataObjectClassName.NbtObjectClass.UserClass &&
-        //                            !User.IsAdministrator() &&
-        //                            OCP != null &&
-        //                            ( OCP.PropName == CswNbtObjClassUser.PropertyName.Username ||
-        //                              OCP.PropName == CswNbtObjClassUser.PropertyName.Role ||
-        //                              OCP.PropName == CswNbtObjClassUser.PropertyName.FailedLoginCount ||
-        //                              OCP.PropName == CswNbtObjClassUser.PropertyName.AccountLocked ) )
-        //                        {
-        //                            ret = false;
-        //                        }
-
-        //                        // Only admins can change other people's passwords
-        //                        if( ret &&
-        //                            NodeType.getObjectClass().ObjectClass == CswNbtMetaDataObjectClassName.NbtObjectClass.UserClass &&
-        //                            !User.IsAdministrator() &&
-        //                            User.UserId != NodeId &&
-        //                            OCP != null &&
-        //                            OCP.PropName == CswNbtObjClassUser.PropertyName.Password )
-        //                        {
-        //                            ret = false;
-        //                        }
-
-        //                    } // if( MetaDataProp != null )
-
-        //                } // if( null != Node && null != Node.NodeId )
-
-        //            } // if( Role != null )
-
-        //        } // if-else( User is CswNbtSystemUser )
-
-        //    } // if( User != null )
-
-        //    return ret;
-
-        //} // can( NodeTypePermission Permission, CswNbtMetaDataNodeType NodeType, ICswNbtUser User, CswPrimaryKey NodeId, CswNbtMetaDataNodeTypeProp Prop )
 
         /// <summary>
         /// Sets a permission for the given nodetype for the user
@@ -987,7 +759,6 @@ namespace ChemSW.Nbt.Security
                 }
                 Role.postChanges( false );
             }
-
         }
 
         public void set( NodeTypePermission Permission, CswNbtMetaDataNodeType NodeType, CswNbtObjClassRole Role, bool value )
