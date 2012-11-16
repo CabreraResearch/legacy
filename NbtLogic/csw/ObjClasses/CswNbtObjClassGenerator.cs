@@ -374,7 +374,7 @@ namespace ChemSW.Nbt.ObjClasses
                                            Conjunction: CswNbtPropFilterSql.PropertyFilterConjunction.And,
                                            ResultMode: CswNbtPropFilterSql.FilterResultMode.Hide,
                                            Value: this.NodeId.PrimaryKey.ToString(),
-                                           SubFieldName: ((CswNbtFieldTypeRuleRelationship)GeneratorNTP.getFieldTypeRule()).NodeIDSubField.Name,
+                                           SubFieldName: ( (CswNbtFieldTypeRuleRelationship) GeneratorNTP.getFieldTypeRule() ).NodeIDSubField.Name,
                                            FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
 
             if( DateTime.MinValue != TargetDay )
@@ -390,6 +390,48 @@ namespace ChemSW.Nbt.ObjClasses
             ICswNbtTree TargetTree = _CswNbtResources.Trees.getTreeFromView( View, false, true, true );
             return TargetTree.getChildNodeCount();
         } // GeneratedNodeCount
+
+        private Collection<CswPrimaryKey> _TargetParents = null;
+        public Collection<CswPrimaryKey> TargetParents
+        {
+            get
+            {
+                if( null == _TargetParents )
+                {
+                    _initTargetParents();
+                }
+                return _TargetParents;
+            }
+        }
+
+        private void _initTargetParents()
+        {
+            //SI will have a ParentView to fetch InspectionTargets which will be used to find existing InsepctionDesign nodes or create new ones
+            CswNbtView theParentView = null;
+            if( this.ParentView.ViewId.isSet() )
+            {
+                theParentView = _CswNbtResources.ViewSelect.restoreView( this.ParentView.ViewId );
+            }
+
+            if( null != theParentView &&
+                false == theParentView.IsEmpty() &&
+                this.ParentType.SelectedNodeTypeIds.Count > 0 )
+            {
+                // Case 20482
+                ( theParentView.Root.ChildRelationships[0] ).NodeIdsToFilterIn.Add( this.NodeId );
+                ICswNbtTree ParentsTree = _CswNbtResources.Trees.getTreeFromView( theParentView, false, false, false );
+                if( this.ParentType.SelectMode == PropertySelectMode.Single )
+                {
+                    Int32 ParentNtId = CswConvert.ToInt32( this.ParentType.SelectedNodeTypeIds[0] );
+                    _TargetParents = ParentsTree.getNodeKeysOfNodeType( ParentNtId );
+                }
+            }
+            else
+            {
+                _TargetParents = new Collection<CswPrimaryKey>();
+                _TargetParents.Add( this.Owner.RelatedNodeId );
+            }
+        } // getTargetParents()
 
     }//CswNbtObjClassGenerator
 

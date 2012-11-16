@@ -149,7 +149,7 @@ namespace ChemSW.Nbt
                 CswNbtObjClassContainer CswNbtObjClassContainer = _CswNbtResources.Nodes[CswConvert.ToPrimaryKey( "nodes_" + NodeId )];
                 if( null != CswNbtObjClassContainer )
                 {
-                    canView = CswNbtObjClassContainer.canContainer( CswNbtObjClassContainer.NodeId, CswNbtPermit.NodeTypePermission.View, null );
+                    canView = CswNbtObjClassContainer.canContainer( CswNbtPermit.NodeTypePermission.View, null );
                 }
             }
             #endregion
@@ -169,10 +169,7 @@ namespace ChemSW.Nbt
                 if( null != CswNbtObjClassContainerInstance )
                 {
 
-                    canView = CswNbtObjClassContainerInstance.canContainer( CswNbtObjClassContainerInstance.NodeId,
-                                                                   CswNbtPermit.NodeTypePermission.View,
-                                                                   _CswNbtResources.Actions[
-                                                                       CswNbtActionName.Submit_Request] );
+                    canView = CswNbtObjClassContainerInstance.canContainer( _CswNbtResources.Actions[CswNbtActionName.Submit_Request] );
                 }
             }
             #endregion

@@ -119,7 +119,6 @@ namespace ChemSW.Nbt.Actions
                 throw ( new CswDniException( "Generator node " + CswNbtNodeGenerator.NodeName + " (" + CswNbtNodeGenerator.NodeId.ToString() + ") does not have a valid nodetypeid" ) );
             }
 
-            string DateFilter = string.Empty;
             if( DueDate == DateTime.MinValue )
             {
                 DueDate = GeneratorNodeAsGenerator.NextDueDate.DateTimeValue.Date;
@@ -128,49 +127,18 @@ namespace ChemSW.Nbt.Actions
             {
                 DueDate = GeneratorNodeAsGenerator.DueDateInterval.getStartDate().Date;
             }
-            DateFilter = DueDate.ToShortDateString();
+            string DateFilter = DueDate.ToShortDateString();
 
             bool GeneratorBaseIsProperlyConfigured = ( null != GeneratorNodeAsGenerator.Owner &&
-                                                   null != GeneratorNodeAsGenerator.Owner.RelatedNodeId &&
-                                                   null != _CswNbtResources.Nodes.GetNode( GeneratorNodeAsGenerator.Owner.RelatedNodeId ) &&
-                                                   GeneratorNodeAsGenerator.TargetType.SelectedNodeTypeIds.Count > 0 );
+                                                       null != GeneratorNodeAsGenerator.Owner.RelatedNodeId &&
+                                                       null != _CswNbtResources.Nodes.GetNode( GeneratorNodeAsGenerator.Owner.RelatedNodeId ) &&
+                                                       GeneratorNodeAsGenerator.TargetType.SelectedNodeTypeIds.Count > 0 );
 
             if( false == GeneratorBaseIsProperlyConfigured )
             {
                 throw new CswDniException( ErrorType.Error, "Cannot execute generator task if the generator does not have an owner and a target type.", "Generator node did not define both an Owner and a Target Type." );
             }
-            Collection<CswPrimaryKey> Parents = new Collection<CswPrimaryKey>();
-
-            //SI will have a ParentView to fetch InspectionTargets which will be used to find existing InsepctionDesign nodes or create new ones
-            CswNbtView ParentView = null;
-            if( GeneratorNodeAsGenerator.ParentView.ViewId.isSet() )
-            {
-                ParentView = _CswNbtResources.ViewSelect.restoreView( GeneratorNodeAsGenerator.ParentView.ViewId );
-            }
-            bool GeneratorUsesParentViews = ( null != ParentView &&
-                                              false == ParentView.IsEmpty() &&
-                                              GeneratorNodeAsGenerator.ParentType.SelectedNodeTypeIds.Count > 0 );
-            if( GeneratorUsesParentViews )
-            {
-                // Case 20482
-                ( ParentView.Root.ChildRelationships[0] ).NodeIdsToFilterIn.Add( GeneratorNodeAsGenerator.NodeId );
-                ICswNbtTree ParentsTree = _CswNbtResources.Trees.getTreeFromView( ParentView, false, false, false );
-                if( GeneratorNodeAsGenerator.ParentType.SelectMode == PropertySelectMode.Single )
-                {
-                    Int32 ParentNtId = CswConvert.ToInt32( GeneratorNodeAsGenerator.ParentType.SelectedNodeTypeIds[0] );
-                    Parents = ParentsTree.getNodeKeysOfNodeType( ParentNtId );
-                }
-            }
-
-            //IMCS won't have a ParentView or a ParentType
-            bool GeneratorDoesNotUseParentViews = ( false == GeneratorUsesParentViews &&
-                                                    Parents.Count == 0 );
-
-            if( GeneratorDoesNotUseParentViews )
-            {
-                Parents.Add( GeneratorNodeAsGenerator.Owner.RelatedNodeId );
-            }
-
+            
             // case 26111 - only generate a few at a time, and only increment NextDueDate when we're completely done
             Int32 GeneratorTargetLimit = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswNbtResources.ConfigurationVariables.generatortargetlimit.ToString() ) );
             if( Int32.MinValue == GeneratorTargetLimit )
@@ -178,15 +146,14 @@ namespace ChemSW.Nbt.Actions
                 GeneratorTargetLimit = 5;
             }
 
-            foreach( CswPrimaryKey NewParentPk in Parents )
+            foreach( CswPrimaryKey NewParentPk in GeneratorNodeAsGenerator.TargetParents )
             {
                 if( null != NewParentPk && NodesCreated < GeneratorTargetLimit )
                 {
                     CswNbtPropertySetGeneratorTarget ExistingNode = _getTargetNodeForGenerator( CswNbtNodeGenerator, NewParentPk, DateFilter );
                     if( null == ExistingNode )
                     {
-                        Collection<Int32> SelectedNodeTypeIds = new Collection<Int32>();
-                        SelectedNodeTypeIds = GeneratorNodeAsGenerator.TargetType.SelectedNodeTypeIds.ToIntCollection();
+                        Collection<Int32> SelectedNodeTypeIds = GeneratorNodeAsGenerator.TargetType.SelectedNodeTypeIds.ToIntCollection();
                         foreach( Int32 refNodeTypeId in SelectedNodeTypeIds )
                         {
                             CswNbtMetaDataNodeType LatestVersionNT = _CswNbtResources.MetaData.getNodeType( refNodeTypeId ).getNodeTypeLatestVersion();

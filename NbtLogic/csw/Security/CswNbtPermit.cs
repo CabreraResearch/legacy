@@ -684,8 +684,7 @@ namespace ChemSW.Nbt.Security
             if( ret && ( null != _CswNbtPermitInfo.NodePrimeKey && Int32.MinValue != _CswNbtPermitInfo.NodePrimeKey.PrimaryKey ) )
             {
                 // Prevent users from deleting themselves or their own roles
-                if( ret &&
-                    _CswNbtPermitInfo.Permission == NodeTypePermission.Delete &&
+                if( ret && _CswNbtPermitInfo.Permission == NodeTypePermission.Delete &&
                     ( ( _CswNbtPermitInfo.NodePrimeKey == _CswNbtPermitInfo.User.UserId ||
                         _CswNbtPermitInfo.NodePrimeKey == _CswNbtPermitInfo.User.RoleId ) ) )
                 {
@@ -698,10 +697,8 @@ namespace ChemSW.Nbt.Security
                 {
                     if( _CswNbtPermitInfo.NodeType.getObjectClass().ObjectClass == NbtObjectClass.ContainerClass )
                     {
-                        CswNbtObjClassContainer CswNbtObjClassContainer = Node;
-                        ret = ret && CswNbtObjClassContainer.canContainer( _CswNbtPermitInfo.NodePrimeKey, _CswNbtPermitInfo.Permission, null, _CswNbtPermitInfo.User );
+                        ret = ret && ( (CswNbtObjClassContainer) Node ).canContainer( _CswNbtPermitInfo.Permission, _CswNbtPermitInfo.User );
                     }
-
                     if( _CswNbtPermitInfo.Permission == NodeTypePermission.Edit )
                     {
                         ret = ret && ( _CswNbtPermitInfo.User.IsAdministrator() || false == Node.ReadOnly );

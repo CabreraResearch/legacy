@@ -198,7 +198,7 @@ namespace ChemSW.Nbt.ObjClasses
                                 NodeAsContainer = _CswNbtResources.Nodes.GetNode( Container.RelatedNodeId );
                                 if( null != NodeAsContainer )
                                 {
-                                    NodeAsContainer.Disposed.Checked = Tristate.True;
+                                    NodeAsContainer.DisposeContainer();
                                     NodeAsContainer.postChanges( true );
                                     Status.Value = Statuses.Completed;
                                 }
