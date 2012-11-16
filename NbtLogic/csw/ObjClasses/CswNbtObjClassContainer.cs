@@ -159,10 +159,10 @@ namespace ChemSW.Nbt.ObjClasses
             Barcode.SetOnPropChange( OnBarcodePropChange );
 
             bool IsDisposed = ( Disposed.Checked == Tristate.True );
-            Dispense.setHidden( value: ( IsDisposed || false == canContainer( NodeId, _CswNbtResources.Actions[CswNbtActionName.DispenseContainer] ) ), SaveToDb: false );
-            Dispose.setHidden( value: ( IsDisposed || false == canContainer( NodeId, _CswNbtResources.Actions[CswNbtActionName.DisposeContainer] ) ), SaveToDb: false );
-            Undispose.setHidden( value: ( false == IsDisposed || false == canContainer( NodeId, _CswNbtResources.Actions[CswNbtActionName.UndisposeContainer] ) ), SaveToDb: false );
-            Request.setHidden( value: ( IsDisposed || false == canContainer( NodeId, _CswNbtResources.Actions[CswNbtActionName.Submit_Request] ) ), SaveToDb: false );
+            Dispense.setHidden( value: ( IsDisposed || false == canContainer( _CswNbtResources.Actions[CswNbtActionName.DispenseContainer] ) ), SaveToDb: false );
+            Dispose.setHidden( value: ( IsDisposed || false == canContainer( _CswNbtResources.Actions[CswNbtActionName.DisposeContainer] ) ), SaveToDb: false );
+            Undispose.setHidden( value: ( false == IsDisposed || false == canContainer( _CswNbtResources.Actions[CswNbtActionName.UndisposeContainer] ) ), SaveToDb: false );
+            Request.setHidden( value: ( IsDisposed || false == canContainer( _CswNbtResources.Actions[CswNbtActionName.Submit_Request] ) ), SaveToDb: false );
 
             _CswNbtObjClassDefault.afterPopulateProps();
         }//afterPopulateProps()
@@ -187,7 +187,7 @@ namespace ChemSW.Nbt.ObjClasses
                 switch( OCP.PropName )
                 {
                     case PropertyName.Dispose:
-                        if( canContainer( NodeId, _CswNbtResources.Actions[CswNbtActionName.DisposeContainer] ) )
+                        if( canContainer( _CswNbtResources.Actions[CswNbtActionName.DisposeContainer] ) )
                         {
                             HasPermission = true;
                             DisposeContainer(); //case 26665
@@ -196,7 +196,7 @@ namespace ChemSW.Nbt.ObjClasses
                         }
                         break;
                     case PropertyName.Undispose:
-                        if( canContainer( NodeId, _CswNbtResources.Actions[CswNbtActionName.UndisposeContainer] ) )
+                        if( canContainer( _CswNbtResources.Actions[CswNbtActionName.UndisposeContainer] ) )
                         {
                             HasPermission = true;
                             UndisposeContainer();
@@ -205,7 +205,7 @@ namespace ChemSW.Nbt.ObjClasses
                         }
                         break;
                     case PropertyName.Dispense:
-                        if( canContainer( NodeId, _CswNbtResources.Actions[CswNbtActionName.DispenseContainer] ) )
+                        if( canContainer( _CswNbtResources.Actions[CswNbtActionName.DispenseContainer] ) )
                         {
                             HasPermission = true;
                             //ActionData = this.NodeId.ToString();
@@ -214,7 +214,7 @@ namespace ChemSW.Nbt.ObjClasses
                         }
                         break;
                     case PropertyName.Request:
-                        if( canContainer( NodeId, _CswNbtResources.Actions[CswNbtActionName.Submit_Request] ) )
+                        if( canContainer( _CswNbtResources.Actions[CswNbtActionName.Submit_Request] ) )
                         {
                             CswNbtActSubmitRequest RequestAct = new CswNbtActSubmitRequest( _CswNbtResources, CreateDefaultRequestNode: true );
                             HasPermission = true;
@@ -253,36 +253,34 @@ namespace ChemSW.Nbt.ObjClasses
         /// <summary>
         /// Check container permissions.  Provide one of Permission or Action.
         /// </summary>
-        public bool canContainer( CswPrimaryKey ContainerNodeId, CswNbtPermit.NodeTypePermission Permission, ICswNbtUser User = null )
+        public bool canContainer( CswNbtPermit.NodeTypePermission Permission, ICswNbtUser User = null )
         {
-            return _canContainer( ContainerNodeId, Permission, null, User );
+            return _canContainer( Permission, null, User );
         }
         /// <summary>
         /// Check container permissions.  Provide one of Permission or Action.
         /// </summary>
-        public bool canContainer( CswPrimaryKey ContainerNodeId, CswNbtAction Action, ICswNbtUser User = null )
+        public bool canContainer( CswNbtAction Action, ICswNbtUser User = null )
         {
             if( null == Action )
             {
                 throw new CswDniException( ErrorType.Warning, "You do not have appropriate permissions", "canContainer called with null Action" );
             }
-            return _canContainer( ContainerNodeId, CswNbtPermit.NodeTypePermission.View, Action, User );
+            return _canContainer( CswNbtPermit.NodeTypePermission.View, Action, User );
         }
 
         /// <summary>
         /// Check container permissions.  Provide one of Permission or Action.
         /// </summary>
-        private bool _canContainer( CswPrimaryKey ContainerNodeId, CswNbtPermit.NodeTypePermission Permission, CswNbtAction Action, ICswNbtUser User )
+        private bool _canContainer( CswNbtPermit.NodeTypePermission Permission, CswNbtAction Action, ICswNbtUser User )
         {
+            bool ret = true;
+
             if( null == User )
             {
                 User = _CswNbtResources.CurrentNbtUser;
             }
-
-            bool ret = true;
-            if( false == ( User is CswNbtSystemUser ) &&
-                null != ContainerNodeId &&
-                Int32.MinValue != ContainerNodeId.PrimaryKey )
+            if( false == ( User is CswNbtSystemUser ) )
             {
                 // Special container permissions, based on Inventory Group                
 
@@ -367,7 +365,7 @@ namespace ChemSW.Nbt.ObjClasses
                     // container has no location, no permissions to enforce
                     ret = true;
                 }
-            }
+            } // if( false == ( User is CswNbtSystemUser ) )
             return ret;
         } // canContainer()
 
@@ -376,7 +374,7 @@ namespace ChemSW.Nbt.ObjClasses
         /// </summary>
         public void DisposeContainer( bool OverridePermissions = false )
         {
-            if( OverridePermissions || canContainer( NodeId, _CswNbtResources.Actions[CswNbtActionName.DisposeContainer] ) )
+            if( OverridePermissions || canContainer( _CswNbtResources.Actions[CswNbtActionName.DisposeContainer] ) )
             {
                 _createContainerTransactionNode( CswNbtObjClassContainerDispenseTransaction.DispenseType.Dispose, -this.Quantity.Quantity, this.Quantity.UnitId, SrcContainer: this );
                 this.Quantity.Quantity = 0;
@@ -391,7 +389,7 @@ namespace ChemSW.Nbt.ObjClasses
         public void UndisposeContainer( bool OverridePermissions = false )
         {
 
-            if( OverridePermissions || canContainer( NodeId, _CswNbtResources.Actions[CswNbtActionName.UndisposeContainer] ) )
+            if( OverridePermissions || canContainer( _CswNbtResources.Actions[CswNbtActionName.UndisposeContainer] ) )
             {
                 CswNbtMetaDataNodeType ContDispTransNT = _CswNbtResources.MetaData.getNodeType( "Container Dispense Transaction" );
                 CswNbtObjClassContainerDispenseTransaction ContDispTransNode = _getMostRecentDisposeTransaction( ContDispTransNT );
