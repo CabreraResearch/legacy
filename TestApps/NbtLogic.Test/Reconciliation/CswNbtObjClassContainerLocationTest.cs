@@ -56,9 +56,8 @@ namespace ChemSw.Nbt.Test
             CswNbtObjClassContainer ContainerNode = TestData.Nodes.createContainerNode();
             CswNbtObjClassContainerLocation ContainerLocationNode = TestData.Nodes.createContainerLocationNode(
                 ContainerNode.Node,
-                CswNbtObjClassContainerLocation.ActionOptions.NoAction.ToString() );
-            ContainerLocationNode.Container.RelatedNodeId = null;
-            ContainerLocationNode.postChanges( false );
+                CswNbtObjClassContainerLocation.ActionOptions.NoAction.ToString(), 
+                Type: CswNbtObjClassContainerLocation.TypeOptions.Missing.ToString() );
             Assert.AreEqual( CswNbtObjClassContainerLocation.StatusOptions.Missing, ContainerLocationNode.Status.Value );
         }
 

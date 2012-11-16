@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using System.Threading;
 using ChemSW.Core;
+using ChemSW.Nbt;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
@@ -323,5 +324,120 @@ namespace ChemSw.Nbt.Test
 
         #endregion
 
+        #region saveContainerActions
+
+        /// <summary>
+        /// Given that no ContainerLocation actions have changed,
+        /// assert that no exception is thrown
+        /// </summary>
+        [TestMethod]
+        public void saveContainerActionsTestNoResults()
+        {
+            ContainerData.ReconciliationRequest Request = new ContainerData.ReconciliationRequest
+            {
+                StartDate = DateTime.Now.ToString(),
+                EndDate = DateTime.Now.AddSeconds( 1 ).ToString(),
+                LocationId = TestData.Nodes.createLocationNode().NodeId.ToString(),
+                IncludeChildLocations = false,
+                ContainerActions = null
+            };
+            try
+            {
+                ReconciliationAction.saveContainerActions( Request );
+            }
+            catch (Exception ex)
+            {
+                Assert.Fail("Unexpected exception thrown: " + ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// Given a ContainerLocation whose action has been set to MarkMissing,
+        /// assert that a new ContainerLocation node has been created with an action of MarkMissing
+        /// </summary>
+        [TestMethod]
+        public void saveContainerActionsTestMarkMissing()
+        {
+            CswPrimaryKey LocationId = TestData.Nodes.createLocationNode().NodeId;
+            CswNbtObjClassContainer ContainerNode = TestData.Nodes.createContainerNode( LocationId: LocationId );
+            Collection<ContainerData.ReconciliationActions> Actions = new Collection<ContainerData.ReconciliationActions>();
+            ContainerData.ReconciliationActions Action = new ContainerData.ReconciliationActions
+            {
+                Action = CswNbtObjClassContainerLocation.ActionOptions.MarkMissing.ToString(),
+                ContainerId = ContainerNode.NodeId.ToString(),
+                LocationId = LocationId.ToString()
+            };
+            Actions.Add( Action );
+            ContainerData.ReconciliationRequest Request = new ContainerData.ReconciliationRequest
+            {
+                StartDate = DateTime.Now.AddHours( -1 ).ToString(),
+                EndDate = DateTime.Now.AddSeconds( 1 ).ToString(),
+                LocationId = LocationId.ToString(),
+                IncludeChildLocations = false,
+                ContainerActions = Actions
+            };
+            Thread.Sleep( 1000 );//Running into two race conditions:
+            //The Missing ContainerLocation is created before the Container onCreate's Move ContainerLocation
+            //The new ContainerLocation doesn't exist when trying to retreive it
+            ReconciliationAction.saveContainerActions( Request );
+            CswNbtObjClassContainerLocation NewContLocNode = _getNewContianerLocation( ContainerNode.NodeId );
+            Assert.AreEqual( CswNbtObjClassContainerLocation.TypeOptions.Missing.ToString(), NewContLocNode.Type.Value );
+            Assert.AreEqual( CswNbtObjClassContainerLocation.ActionOptions.MarkMissing.ToString(), NewContLocNode.Action.Value );
+            Assert.AreEqual( CswNbtObjClassContainerLocation.StatusOptions.Missing.ToString(), NewContLocNode.Status.Value );
+        }
+
+        /// <summary>
+        /// Given a ContainerLocation whose action has been set to NoAction,
+        /// assert that the selected ContainerLocation has its action set to NoAction
+        /// </summary>
+        [TestMethod]
+        public void saveContainerActionsTestNoAction()
+        {
+            CswPrimaryKey LocationId = TestData.Nodes.createLocationNode().NodeId;
+            CswNbtObjClassContainer ContainerNode = TestData.Nodes.createContainerNode( LocationId: LocationId );
+            CswNbtObjClassContainerLocation ContLocNode = TestData.Nodes.createContainerLocationNode( ContainerNode.Node, LocationId: LocationId, ContainerScan: ContainerNode.Barcode.Barcode );
+            Collection<ContainerData.ReconciliationActions> Actions = new Collection<ContainerData.ReconciliationActions>();
+            ContainerData.ReconciliationActions Action = new ContainerData.ReconciliationActions
+            {
+                Action = CswNbtObjClassContainerLocation.ActionOptions.NoAction.ToString(),
+                ContainerId = ContainerNode.NodeId.ToString(),
+                ContainerLocationId = ContLocNode.NodeId.ToString(),
+                LocationId = LocationId.ToString()
+            };
+            Actions.Add( Action );
+            ContainerData.ReconciliationRequest Request = new ContainerData.ReconciliationRequest
+            {
+                StartDate = DateTime.Now.AddHours( -1 ).ToString(),
+                EndDate = DateTime.Now.AddSeconds( 1 ).ToString(),
+                LocationId = LocationId.ToString(),
+                IncludeChildLocations = false,
+                ContainerActions = Actions
+            };
+            Assert.AreNotEqual( CswNbtObjClassContainerLocation.ActionOptions.NoAction.ToString(), ContLocNode.Action.Value );
+            ReconciliationAction.saveContainerActions( Request );
+            Assert.AreEqual( CswNbtObjClassContainerLocation.ActionOptions.NoAction.ToString(), ContLocNode.Action.Value );
+        }
+
+        private CswNbtObjClassContainerLocation _getNewContianerLocation( CswPrimaryKey ContainerId )
+        {
+            CswNbtMetaDataObjectClass ContainerOC = TestData.CswNbtResources.MetaData.getObjectClass( NbtObjectClass.ContainerClass );
+            CswNbtMetaDataObjectClass ContainerLocationOC = TestData.CswNbtResources.MetaData.getObjectClass( NbtObjectClass.ContainerLocationClass );
+            CswNbtMetaDataObjectClassProp ContainerOCP = ContainerLocationOC.getObjectClassProp( CswNbtObjClassContainerLocation.PropertyName.Container );
+            CswNbtMetaDataObjectClassProp ScanDateOCP = ContainerLocationOC.getObjectClassProp( CswNbtObjClassContainerLocation.PropertyName.ScanDate );
+            CswNbtView ContainersView = new CswNbtView( TestData.CswNbtResources );
+
+            CswNbtViewRelationship ContainerVR = ContainersView.AddViewRelationship( ContainerOC, false );
+            ContainerVR.NodeIdsToFilterIn = new Collection<CswPrimaryKey>{ ContainerId };
+            CswNbtViewRelationship ContainerLocationVR = ContainersView.AddViewRelationship( ContainerVR, NbtViewPropOwnerType.Second, ContainerOCP, false );
+            CswNbtViewProperty ScanDateVP = ContainersView.AddViewProperty( ContainerLocationVR, ScanDateOCP );
+            ContainersView.setSortProperty( ScanDateVP, NbtViewPropertySortMethod.Descending );
+            ICswNbtTree ContainersTree = TestData.CswNbtResources.Trees.getTreeFromView( ContainersView, false, true, false );
+            ContainersTree.goToNthChild( 0 );
+            ContainersTree.goToNthChild( 0 );
+            CswNbtObjClassContainerLocation ContLocNode = TestData.CswNbtResources.Nodes.GetNode( ContainersTree.getNodeIdForCurrentPosition() );
+            return ContLocNode;
+        }
+
+        #endregion
     }
 }
