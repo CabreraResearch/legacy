@@ -40,10 +40,10 @@ window.initMain = window.initMain || function (undefined) {
     } ());
 
 
-    var startSpinner = function () {
+    var startSpinner = function() {
         Csw.main.ajaxImage.show();
         Csw.main.ajaxSpacer.hide();
-    }
+    };
     Csw.subscribe(Csw.enums.events.ajax.globalAjaxStart, startSpinner);
 
     var stopSpinner = function () {
@@ -303,7 +303,9 @@ window.initMain = window.initMain || function (undefined) {
         }); // CswLogin
 
     }
+
     initAll();
+
     function refreshDashboard() {
         Csw.main.headerDashboard.empty().$.CswDashboard();
     }
@@ -1192,9 +1194,10 @@ window.initMain = window.initMain || function (undefined) {
                 break;
 
             case 'dispensecontainer':
-                var requestItemId = '';
-                if (Csw.contains(o, 'requestitem')) {
+                var requestItemId = '', requestMode = '';
+                if (o.requestitem) {
                     requestItemId = o.requestitem.requestitemid;
+                    requestMode = o.requestitem.requestMode;
                 }
                 var title = o.title;
                 if (false === title) {
@@ -1214,6 +1217,7 @@ window.initMain = window.initMain || function (undefined) {
                         precision: o.precision,
                         initialQuantity: Csw.deserialize(o.initialQuantity),
                         requestItemId: requestItemId,
+                        requestMode: requestMode,
                         title: title,
                         location: o.location,
                         material: o.material,

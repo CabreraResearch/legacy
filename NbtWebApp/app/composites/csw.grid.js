@@ -293,7 +293,7 @@
                         disabled: true,
                         handler: function () {
                             var rows = [];
-                            Csw.each(grid.getSelectionModel().getSelection(), function (selectedRow) {
+                            Csw.each(cswPublic.extGrid.getSelectionModel().getSelection(), function (selectedRow) {
                                 rows.push(selectedRow.raw);
                             });
                             cswPrivate.onEdit(rows);
@@ -309,7 +309,7 @@
                         disabled: true,
                         handler: function () {
                             var rows = [];
-                            Csw.each(grid.getSelectionModel().getSelection(), function (selectedRow) {
+                            Csw.each(cswPublic.extGrid.getSelectionModel().getSelection(), function (selectedRow) {
                                 rows.push(selectedRow.raw);
                             });
                             cswPrivate.onDelete(rows);
@@ -326,13 +326,12 @@
                     }); // panelopts.dockedItems
                 }
 
-                var grid;
                 if (Csw.isElementInDom(cswParent.getId())) {
-                    grid = window.Ext.create('Ext.grid.Panel', gridopts);
+                    cswPublic.extGrid = window.Ext.create('Ext.grid.Panel', gridopts);
                 } else {
-                    grid = window.Ext.create('Ext.grid.Panel');
+                    cswPublic.extGrid = window.Ext.create('Ext.grid.Panel');
                 }
-                return grid;
+                return cswPublic.extGrid;
             }); // makeGrid()
 
             cswPublic.reload = function () {
@@ -397,6 +396,26 @@
 
             cswPublic.getSelectedRowId = Csw.method(function () {
                 return cswPrivate.store.indexOf(cswPrivate.grid.getSelectionModel().getSelection()[0]);
+            });
+
+            cswPublic.getSelectedRows = Csw.method(function () {
+                var ret = [];
+                Csw.each(cswPrivate.grid.getSelectionModel().getSelection(), function(val) {
+                     if(val.data) {
+                         ret.push(val.data);
+                     }
+                });
+                return ret;
+            });
+
+            cswPublic.getSelectedRowsVals = Csw.method(function (key) {
+                var ret = [];
+                Csw.each(cswPublic.getSelectedRows(), function (val) {
+                    if (val[key]) {
+                        ret.push(val[key]);
+                    }
+                });
+                return ret;
             });
 
             cswPublic.scrollToRow = Csw.method(function (rowindex) {

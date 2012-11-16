@@ -32,6 +32,7 @@
                         barcode: '',
                         location: '',
                         requestItemId: '',
+                        requestMode: 'bulk',
                         dispenseMode: '',
                         customBarcodes: false,
                         netQuantityEnforced: true
@@ -205,16 +206,18 @@
                                         if (Csw.isNullOrEmpty(data.viewid)) {
                                             Csw.error.throwException(Csw.error.exception('Could not get a grid of containers for this request item.', '', 'csw.dispensecontainer.js', 141));
                                         }
-
+                                        var multi = cswPrivate.state.requestMode === 'request by size';
                                         cswPrivate.containerGrid = Csw.wizard.nodeGrid(cswPrivate.divStep1, {
                                             hasMenu: false,
                                             viewid: data.viewid,
-                                            ReadOnly: true,
-                                            onSelect: function () {
-                                                if (cswPrivate.state.sourceContainerNodeId !== cswPrivate.containerGrid.getSelectedNodeId()) {
+                                            readonly: true,
+                                            showCheckboxes: multi,
+                                            onSelect: function (row, val) {
+                                                if (false === multi && cswPrivate.state.sourceContainerNodeId !== row.nodeid) {
                                                     resetStepTwo();
                                                 }
-                                                cswPrivate.state.sourceContainerNodeId = cswPrivate.containerGrid.getSelectedNodeId();
+                                                cswPrivate.state.selectedNodeIds = cswPrivate.containerGrid.grid.getSelectedRowsVals('nodeid');
+                                                cswPrivate.state.sourceContainerNodeId = row.nodeid;
                                                 toggleNext();
                                             },
                                             onSuccess: makeTypeSelect
@@ -321,7 +324,7 @@
                             if (false === Csw.isNullOrEmpty(cswPrivate.state.currentQuantity)) {
                                 quantityTable.cell(qtyTableCol, 1).span({ labelText: 'Current Quantity: ', text: cswPrivate.state.currentQuantity + ' ' + cswPrivate.state.currentUnitName });
                                 cswPrivate.state.quantityAfterDispense = cswPrivate.state.currentQuantity;
-                                cswPrivate.quantityAfterDispenseSpan = quantityTable.cell(5, 2).span({ labelText: 'Quantity after Dispense: ', text: cswPrivate.state.quantityAfterDispense + ' ' + cswPrivate.state.currentUnitName });
+                                cswPrivate.quantityAfterDispenseSpan = quantityTable.cell(5, 2).span({ labelText: 'Quantity after Dispense: ', text: Csw.number(cswPrivate.state.quantityAfterDispense, 0) + ' ' + cswPrivate.state.currentUnitName });
                                 cswPrivate.netQuantityExceededSpan = quantityTable.cell(5, 2).span({ cssclass: 'CswErrorMessage_ValidatorError', text: ' Total quantity to dispense cannot exceed source container\'s net quantity.' });
                                 cswPrivate.netQuantityExceededSpan.hide();
                                 qtyTableCol++;
@@ -437,7 +440,7 @@
                 } ());
 
                 cswPrivate.roundToPrecision = function (num) {
-                    var precision = Csw.number(cswPrivate.state.precision);
+                    var precision = Csw.number(cswPrivate.state.precision, 6);
                     return Math.round(Csw.number(num) * Math.pow(10, precision)) / Math.pow(10, precision);
                 };
 
