@@ -741,38 +741,26 @@ namespace ChemSW.Nbt.Security
             // decide how to piece them together. 
             //ret = canNodeType( Permission, _CswNbtPermitInfo.NodeType, _CswNbtPermitInfo.User );
 
-
-
-
             if( ret && ( null != _CswNbtPermitInfo.NodePrimeKey && Int32.MinValue != _CswNbtPermitInfo.NodePrimeKey.PrimaryKey ) )
             {
                 // Prevent users from deleting themselves or their own roles
-                if( ret &&
-                    _CswNbtPermitInfo.Permission == NodeTypePermission.Delete &&
+                if( ret && _CswNbtPermitInfo.Permission == NodeTypePermission.Delete &&
                     ( ( _CswNbtPermitInfo.NodePrimeKey == _CswNbtPermitInfo.User.UserId ||
                         _CswNbtPermitInfo.NodePrimeKey == _CswNbtPermitInfo.User.RoleId ) ) )
                 {
                     ret = false;
                 }
 
-
                 // case 24510
-
                 CswNbtNode Node = _CswNbtResources.Nodes[_CswNbtPermitInfo.NodePrimeKey];
                 if( null != Node )
                 {
                     if( _CswNbtPermitInfo.NodeType.getObjectClass().ObjectClass == NbtObjectClass.ContainerClass )
                     {
-
-                        CswNbtObjClassContainer CswNbtObjClassContainer = Node;
-
-                        ret = ret && CswNbtObjClassContainer.canContainer( _CswNbtPermitInfo.NodePrimeKey, _CswNbtPermitInfo.Permission, null, _CswNbtPermitInfo.User );
+                        ret = ret && ( (CswNbtObjClassContainer) Node ).canContainer( _CswNbtPermitInfo.Permission, _CswNbtPermitInfo.User );
                     }
-
-
                     if( _CswNbtPermitInfo.Permission == NodeTypePermission.Edit )
                     {
-
                         ret = ret && ( _CswNbtPermitInfo.User.IsAdministrator() || false == Node.ReadOnly );
                     }
                 }

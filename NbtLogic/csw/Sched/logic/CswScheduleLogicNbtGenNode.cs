@@ -112,10 +112,10 @@ namespace ChemSW.Nbt.Sched
                                         ( DateTime.Now >= ThisDueDateValue ) )
                                     {
                                         // case 28069
-                                        // It should not be possible to make more than 24 nodes in a single day, 
+                                        // It should not be possible to make more than 24 nodes per parent in a single day, 
                                         // since the fastest interval is 1 hour, and we're not creating things into the past anymore.
                                         // Therefore, disable anything that is erroneously spewing things.
-                                        if( CurrentGenerator.GeneratedNodeCount( DateTime.Today ) >= 24 )
+                                        if( CurrentGenerator.GeneratedNodeCount( DateTime.Today ) >= ( 24 * CurrentGenerator.TargetParents.Count ) )
                                         {
                                             CurrentGenerator.Enabled.Checked = Tristate.False;
                                             CurrentGenerator.RunStatus.AddComment( "Disabled due to error: Generated too many " + CurrentGenerator.TargetType.SelectedNodeTypeNames() + " target(s) in a single day" );
