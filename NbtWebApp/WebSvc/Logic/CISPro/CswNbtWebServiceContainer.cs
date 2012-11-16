@@ -1,10 +1,12 @@
 using System;
 using System.Globalization;
+using System.Runtime.Serialization;
 using System.Threading;
 using ChemSW.Core;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Security;
+using NbtWebApp.WebSvc.Returns;
 using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.WebServices
@@ -27,6 +29,23 @@ namespace ChemSW.Nbt.WebServices
 
         #endregion ctor
 
+        #region DataContract
+
+        /// <summary>
+        /// Return Object for Containers
+        /// </summary>
+        [DataContract]
+        public class ContainerDataReturn : CswWebSvcReturn
+        {
+            public ContainerDataReturn()
+            {
+                Data = new ContainerData();
+            }
+            [DataMember]
+            public ContainerData Data;
+        }
+
+        #endregion DataContract
 
         #region Public
 
@@ -68,6 +87,33 @@ namespace ChemSW.Nbt.WebServices
             }
 
             return Ret;
+        }
+
+        /// <summary>
+        /// Gets both ContainerStatistics and ContainerStatuses data
+        /// </summary>
+        public static void getReconciliationData( ICswResources CswResources, ContainerDataReturn Return, ContainerData.ReconciliationRequest Request )
+        {
+            CswNbtActReconciliation _CswNbtActReconciliation = new CswNbtActReconciliation( (CswNbtResources) CswResources );
+            Return.Data = _CswNbtActReconciliation.getReconciliationData( Request );
+        }
+
+        /// <summary>
+        /// Gets all of the ContainerLocation Statuses along with their Container count and scan percentage for the given Location and timeframe
+        /// </summary>
+        public static void getContainerStatistics( ICswResources CswResources, ContainerDataReturn Return, ContainerData.ReconciliationRequest Request )
+        {
+            CswNbtActReconciliation _CswNbtActReconciliation = new CswNbtActReconciliation( (CswNbtResources) CswResources );
+            Return.Data = _CswNbtActReconciliation.getContainerStatistics( Request );
+        }
+
+        /// <summary>
+        /// Gets all Container barcodes and their most recent ContainerLocation Status for the given Location and timeframe
+        /// </summary>
+        public static void getContainerStatuses( ICswResources CswResources, ContainerDataReturn Return, ContainerData.ReconciliationRequest Request )
+        {
+            CswNbtActReconciliation _CswNbtActReconciliation = new CswNbtActReconciliation( (CswNbtResources) CswResources );
+            Return.Data = _CswNbtActReconciliation.getContainerStatuses( Request );
         }
 
         #endregion Public

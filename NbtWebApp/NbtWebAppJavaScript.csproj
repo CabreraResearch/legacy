@@ -74,6 +74,16 @@
     <DocumentationFile>bin\NbtJavaScript.XML</DocumentationFile>
     <NoWarn>1591</NoWarn>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Test|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Test\</OutputPath>
+    <DocumentationFile>bin\NbtJavaScript.XML</DocumentationFile>
+    <NoWarn>1591</NoWarn>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
   <ItemGroup>
     <Content Include="app\controls\csw.quickTip.js" />
     <Content Include="app\controls\csw.tabselect.js" />
@@ -120,6 +130,7 @@
     <Content Include="app\proptypes\csw.propTypeUserSelect.js" />
     <Content Include="app\proptypes\csw.propTypeViewPickList.js" />
     <Content Include="app\proptypes\csw.propTypeViewReference.js" />
+    <Content Include="app\wizards\csw.reconciliation.js" />
     <Content Include="ConnectTest.html" />
     <Content Include="css\csw.tabs.css" />
     <Content Include="PrintTest.html" />
