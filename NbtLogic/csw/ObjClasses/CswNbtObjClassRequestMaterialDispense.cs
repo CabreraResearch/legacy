@@ -238,8 +238,6 @@ namespace ChemSW.Nbt.ObjClasses
                     Name.Text = "Request " + Quantity.Quantity + Quantity.CachedUnitName;
                 }
             }
-
-
         }
 
         /// <summary>
@@ -250,7 +248,6 @@ namespace ChemSW.Nbt.ObjClasses
 
         }
 
-
         /// <summary>
         /// 
         /// </summary>
@@ -260,8 +257,6 @@ namespace ChemSW.Nbt.ObjClasses
             TotalDispensed.SetOnPropChange( onTotalDispensedPropChange );
             Material.SetOnPropChange( onMaterialPropChange );
         }//afterPopulateProps()
-
-
 
         /// <summary>
         /// 
@@ -332,6 +327,12 @@ namespace ChemSW.Nbt.ObjClasses
                                     {
                                         ButtonData.Data["initialQuantity"] = InitialQuantity;
                                     }
+                                    string Title = "Fulfill Request for " + Quantity.Gestalt + " of " + Material.Gestalt;
+                                    if( TotalDispensed.Quantity > 0 )
+                                    {
+                                        Title += " (" + TotalDispensed.Gestalt + ") dispensed.";
+                                    }
+                                    ButtonData.Data["title"] = Title;
                                     ButtonData.Action = NbtButtonAction.dispense;
                                 }
                                 break;

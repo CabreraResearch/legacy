@@ -1196,13 +1196,17 @@ window.initMain = window.initMain || function (undefined) {
                 if (Csw.contains(o, 'requestitem')) {
                     requestItemId = o.requestitem.requestitemid;
                 }
-                var title = 'Dispense from ';
-                if (false === Csw.isNullOrEmpty(o.barcode)) {
-                    title += 'Barcode [' + o.barcode + ']';
-                } else {
-                    title += 'Selected Container';
+                var title = o.title;
+                if (false === title) {
+                    title = 'Dispense from ';
+                    if (false === Csw.isNullOrEmpty(o.barcode)) {
+                        title += 'Barcode [' + o.barcode + ']';
+                    } else {
+                        title += 'Selected Container';
+                    }
                 }
                 designOpt = {
+                    title: title,
                     state: {
                         sourceContainerNodeId: o.sourceContainerNodeId,
                         currentQuantity: o.currentQuantity,
