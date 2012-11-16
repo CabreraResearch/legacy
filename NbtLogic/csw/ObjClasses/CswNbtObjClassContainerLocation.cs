@@ -44,6 +44,7 @@ namespace ChemSW.Nbt.ObjClasses
             public static readonly ActionOptions Undispose = new ActionOptions( "Undispose" );
             public static readonly ActionOptions MoveToLocation = new ActionOptions( "Move To Location" );
             public static readonly ActionOptions UndisposeAndMove = new ActionOptions( "Undispose And Move" );
+            public static readonly ActionOptions MarkMissing = new ActionOptions( "Mark Missing" );
         }
 
         public sealed class TypeOptions : CswEnum<TypeOptions>
@@ -160,7 +161,7 @@ namespace ChemSW.Nbt.ObjClasses
         private void _setStatus()
         {
             StatusOptions ContLocStatus = StatusOptions.Correct;
-            if( null != Container.RelatedNodeId )
+            if( Type.Value != TypeOptions.Missing.ToString() && null != Container.RelatedNodeId )
             {
                 CswNbtObjClassContainer ContainerNode = _CswNbtResources.Nodes.GetNode( Container.RelatedNodeId );
                 if( ContainerNode.Disposed.Checked == Tristate.True )

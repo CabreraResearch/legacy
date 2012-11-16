@@ -142,7 +142,9 @@ namespace ChemSW.Nbt.Batch
                     Container.Location.SelectedNodeId = ContainerLocation.Location.SelectedNodeId;
                     Container.Location.RefreshNodeName();
                 }
-                Container.Missing.Checked = Tristate.False;
+                Container.Missing.Checked = Action == CswNbtObjClassContainerLocation.ActionOptions.MarkMissing 
+                    ? Tristate.True 
+                    : Tristate.False;
                 Container.postChanges( false );
             }
         }
