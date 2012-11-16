@@ -159,10 +159,10 @@ namespace ChemSW.Nbt.ObjClasses
             Barcode.SetOnPropChange( OnBarcodePropChange );
 
             bool IsDisposed = ( Disposed.Checked == Tristate.True );
-            Dispense.setHidden( value: ( IsDisposed || false == canContainer( _CswNbtResources.Actions[CswNbtActionName.DispenseContainer] ) ), SaveToDb: false );
-            Dispose.setHidden( value: ( IsDisposed || false == canContainer( _CswNbtResources.Actions[CswNbtActionName.DisposeContainer] ) ), SaveToDb: false );
-            Undispose.setHidden( value: ( false == IsDisposed || false == canContainer( _CswNbtResources.Actions[CswNbtActionName.UndisposeContainer] ) ), SaveToDb: false );
-            Request.setHidden( value: ( IsDisposed || false == canContainer( _CswNbtResources.Actions[CswNbtActionName.Submit_Request] ) ), SaveToDb: false );
+            Dispense.setHidden( value: ( IsDisposed || false == canContainer( _CswNbtResources.Actions[CswNbtActionName.DispenseContainer] ) ), SaveToDb: true );              // SaveToDb true is necessary
+            Dispose.setHidden( value: ( IsDisposed || false == canContainer( _CswNbtResources.Actions[CswNbtActionName.DisposeContainer] ) ), SaveToDb: true );                // to override what's in the db
+            Undispose.setHidden( value: ( false == IsDisposed || false == canContainer( _CswNbtResources.Actions[CswNbtActionName.UndisposeContainer] ) ), SaveToDb: true );   // even if it isn't actually saved
+            Request.setHidden( value: ( IsDisposed || false == canContainer( _CswNbtResources.Actions[CswNbtActionName.Submit_Request] ) ), SaveToDb: true );                  // as part of this request
 
             _CswNbtObjClassDefault.afterPopulateProps();
         }//afterPopulateProps()
@@ -318,40 +318,41 @@ namespace ChemSW.Nbt.ObjClasses
                             InvGrpPermView.AddViewPropertyAndFilter( InvGrpPermVR, PermWorkUnitOCP, User.WorkUnitId.PrimaryKey.ToString(), CswNbtSubField.SubFieldName.NodeID );
 
                             ICswNbtTree InvGrpPermTree = _CswNbtResources.Trees.getTreeFromView( InvGrpPermView, false, true, false );
-
-                            InvGrpPermTree.goToNthChild( 0 ); // inventory group permission
-                            CswNbtObjClassInventoryGroupPermission PermNode = InvGrpPermTree.getNodeForCurrentPosition();
-                            if( Action != null )
+                            if( InvGrpPermTree.getChildNodeCount() > 0 )
                             {
-                                if( ( Action.Name == CswNbtActionName.DispenseContainer && PermNode.Dispense.Checked == Tristate.True ) ||
-                                    ( Action.Name == CswNbtActionName.DisposeContainer && PermNode.Dispose.Checked == Tristate.True ) ||
-                                    ( Action.Name == CswNbtActionName.UndisposeContainer && PermNode.Undispose.Checked == Tristate.True ) ||
-                                    ( Action.Name == CswNbtActionName.Submit_Request && PermNode.Request.Checked == Tristate.True ) )
+                                InvGrpPermTree.goToNthChild( 0 ); // inventory group permission
+                                CswNbtObjClassInventoryGroupPermission PermNode = InvGrpPermTree.getNodeForCurrentPosition();
+                                if( Action != null )
                                 {
-                                    ret = true;
-                                }
-                                else if( Action.Name == CswNbtActionName.Receiving )
-                                {
-                                    foreach( CswNbtMetaDataNodeType ContainerNt in ContainerOC.getLatestVersionNodeTypes() )
+                                    if( ( Action.Name == CswNbtActionName.DispenseContainer && PermNode.Dispense.Checked == Tristate.True ) ||
+                                        ( Action.Name == CswNbtActionName.DisposeContainer && PermNode.Dispose.Checked == Tristate.True ) ||
+                                        ( Action.Name == CswNbtActionName.UndisposeContainer && PermNode.Undispose.Checked == Tristate.True ) ||
+                                        ( Action.Name == CswNbtActionName.Submit_Request && PermNode.Request.Checked == Tristate.True ) )
                                     {
-                                        ret = _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Create, ContainerNt );
-                                        if( ret )
+                                        ret = true;
+                                    }
+                                    else if( Action.Name == CswNbtActionName.Receiving )
+                                    {
+                                        foreach( CswNbtMetaDataNodeType ContainerNt in ContainerOC.getLatestVersionNodeTypes() )
                                         {
-                                            break;
+                                            ret = _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Create, ContainerNt );
+                                            if( ret )
+                                            {
+                                                break;
+                                            }
                                         }
                                     }
                                 }
-                            }
-                            else
-                            {   //there's only edit, so edit applies to all three
-                                if( ( Permission == CswNbtPermit.NodeTypePermission.View && PermNode.View.Checked == Tristate.True ) ||
-                                    PermNode.Edit.Checked == Tristate.True )
-                                {
-                                    ret = true;
-                                }
+                                else
+                                { //there's only edit, so edit applies to all three
+                                    if( ( Permission == CswNbtPermit.NodeTypePermission.View && PermNode.View.Checked == Tristate.True ) ||
+                                        PermNode.Edit.Checked == Tristate.True )
+                                    {
+                                        ret = true;
+                                    }
 
-                            }//if-else action is not null
-
+                                } //if-else action is not null
+                            } // if( InvGrpPermTree.getChildNodeCount() > 0 )
                         }//if( null != User.WorkUnitId )
                     } // if( null != InventoryGroupNode )
                     else
