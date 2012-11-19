@@ -28,6 +28,5 @@ glob:TestResults/*
 *.js.map
 .*\.rej
 syntax: regexp
-.*\.rej
 NbtLogic/csw/Batch/CswNbtBatchOpUpdateRegulatoryLists.cs.orig
 .*\.orig

@@ -170,6 +170,12 @@
             case Csw.enums.nbtButtonAction.nothing:
                 //Do nothing
                 break;
+            case Csw.enums.nbtButtonAction.creatematerial:
+                Csw.publish(Csw.enums.events.main.clear, { centertop: true, centerbottom: true });
+                actionJson.actionname = 'create material';
+                actionJson.state.request = actionJson.request;
+                Csw.publish(Csw.enums.events.main.handleAction, actionJson);
+                break;
             case Csw.enums.nbtButtonAction.dispense:
                 Csw.publish(Csw.enums.events.main.clear, { centertop: true, centerbottom: true });
                 actionJson.actionname = 'DispenseContainer';

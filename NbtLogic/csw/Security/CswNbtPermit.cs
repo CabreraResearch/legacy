@@ -168,41 +168,6 @@ namespace ChemSW.Nbt.Security
             }//IsUberUser
 
 
-            //public bool allowAlways()
-            //{
-            //    //                bool ReturnVal = IsUberUser;
-
-            //    //if( ( false == ReturnVal ) && ( null != NodeType && NodeType.getObjectClass().ObjectClass == NbtObjectClass.UserClass ) )
-            //    //{
-            //    //    if( ( null != User ) && ( NodePrimeKey == User.UserId ) && ( null != PropType ) )
-            //    //    {
-
-            //    //        ReturnVal = true; //Let the user edit most of his props. However . . . 
-
-            //    //        //for these props, leave it up to the obj class to decide
-            //    //        CswNbtMetaDataObjectClassProp OCP = PropType.getObjectClassProp();
-            //    //        if(
-            //    //                ( null != OCP ) &&
-            //    //                (
-            //    //                    OCP.PropName == CswNbtObjClassUser.PropertyName.Username ||
-            //    //                    OCP.PropName == CswNbtObjClassUser.PropertyName.Role ||
-            //    //                    OCP.PropName == CswNbtObjClassUser.PropertyName.FailedLoginCount ||
-            //    //                    OCP.PropName == CswNbtObjClassUser.PropertyName.AccountLocked
-            //    //                )//Monster ||
-            //    //           ) //monster if
-            //    //        {
-            //    //            ReturnVal = false;
-            //    //        } //if the prop is in the special case
-
-            //    //    }//if the user is editing his own user node
-
-            //    //}//if we're editing the user class
-
-            //    return ( IsUberUser );
-
-            //}//allowAlways()
-
-
             public bool NoExceptionCases
             {
                 get
@@ -596,7 +561,7 @@ namespace ChemSW.Nbt.Security
                     ret = ret || _CswNbtPermitInfo.Role.NodeTypePermissions.CheckValue( CswNbtObjClassRole.MakeNodeTypeTabPermissionValue( _CswNbtPermitInfo.NodeType.FirstVersionNodeTypeId, CurrentTab.FirstTabVersionId, NodeTypeTabPermission.Edit ) );
                 }
 
-            }//iterate tabs
+                } //iterate tabs
 
             return ( ret );
 
@@ -776,38 +741,26 @@ namespace ChemSW.Nbt.Security
             // decide how to piece them together. 
             //ret = canNodeType( Permission, _CswNbtPermitInfo.NodeType, _CswNbtPermitInfo.User );
 
-
-
-
             if( ret && ( null != _CswNbtPermitInfo.NodePrimeKey && Int32.MinValue != _CswNbtPermitInfo.NodePrimeKey.PrimaryKey ) )
             {
                 // Prevent users from deleting themselves or their own roles
-                if( ret &&
-                    _CswNbtPermitInfo.Permission == NodeTypePermission.Delete &&
+                if( ret && _CswNbtPermitInfo.Permission == NodeTypePermission.Delete &&
                     ( ( _CswNbtPermitInfo.NodePrimeKey == _CswNbtPermitInfo.User.UserId ||
                         _CswNbtPermitInfo.NodePrimeKey == _CswNbtPermitInfo.User.RoleId ) ) )
                 {
                     ret = false;
                 }
 
-
                 // case 24510
-
                 CswNbtNode Node = _CswNbtResources.Nodes[_CswNbtPermitInfo.NodePrimeKey];
                 if( null != Node )
                 {
                     if( _CswNbtPermitInfo.NodeType.getObjectClass().ObjectClass == NbtObjectClass.ContainerClass )
                     {
-
-                        CswNbtObjClassContainer CswNbtObjClassContainer = Node;
-
-                        ret = ret && CswNbtObjClassContainer.canContainer( _CswNbtPermitInfo.NodePrimeKey, _CswNbtPermitInfo.Permission, null, _CswNbtPermitInfo.User );
+                        ret = ret && ( (CswNbtObjClassContainer) Node ).canContainer( _CswNbtPermitInfo.Permission, _CswNbtPermitInfo.User );
                     }
-
-
                     if( _CswNbtPermitInfo.Permission == NodeTypePermission.Edit )
                     {
-
                         ret = ret && ( _CswNbtPermitInfo.User.IsAdministrator() || false == Node.ReadOnly );
                     }
                 }

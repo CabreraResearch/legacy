@@ -200,20 +200,28 @@ namespace ChemSW.Nbt.ObjClasses
                                 }
                                 else
                                 {
-                                    CswNbtObjClassMaterial NewMaterial = PotentialMaterial().commit( UpversionTemp: true );
+                                    CswNbtObjClassMaterial NewMaterial = PotentialMaterial().commit();
                                     bool Success = null != NewMaterial;
                                     if( Success )
                                     {
-                                        ButtonData.Action = NbtButtonAction.landingpage;
+                                        ButtonData.Action = NbtButtonAction.creatematerial;
                                         Material.RelatedNodeId = NewMaterial.NodeId;
-                                        Fulfill.MenuOptions = "";
-                                        Fulfill.State = FulfillMenu.Complete;
-                                        Status.Value = Statuses.Completed;
-                                        ButtonData.Data["landingpage"] = CswNbtActCreateMaterial.getLandingPageData( _CswNbtResources, NewMaterial.Node );
+                                        Fulfill.State = FulfillMenu.Create;
+
+                                        ButtonData.Data["state"] = new JObject();
+                                        ButtonData.Data["state"]["materialType"] = new JObject();
+                                        ButtonData.Data["state"]["materialType"]["name"] = PotentialMaterial().NodeTypeName;
+                                        ButtonData.Data["state"]["materialType"]["val"] = PotentialMaterial().NodeTypeId;
+                                        ButtonData.Data["state"]["materialId"] = NewMaterial.NodeId.ToString();
+                                        ButtonData.Data["state"]["tradeName"] = PotentialMaterial().TradeName;
+                                        ButtonData.Data["state"]["supplier"] = new JObject();
+                                        ButtonData.Data["state"]["supplier"]["val"] = PotentialMaterial().SupplierId.ToString();
+                                        ButtonData.Data["state"]["supplier"]["name"] = PotentialMaterial().SupplierName;
+                                        ButtonData.Data["state"]["partNo"] = NewMaterialPartNo.Text;
                                     }
                                     else
                                     {
-                                        ButtonData.Message = "The requested Material could not be created.";
+                                        ButtonData.Message = "The requested Material cannot not be created.";
                                     }
                                     ButtonData.Data["success"] = Success;
                                 }
@@ -242,9 +250,8 @@ namespace ChemSW.Nbt.ObjClasses
                     setNextStatus( Statuses.Completed );
                     break;
                 case FulfillMenu.Create:
-                    setNextStatus( Statuses.Completed );
+                    //setNextStatus( Statuses.Created );
                     break;
-
             }
         }
 

@@ -588,6 +588,21 @@ namespace ChemSW.Nbt.Schema
         }
         #endregion
 
+        public void _removeRunNowOnGenerators()
+        {
+            #region case 28146 - Remove 'Run Now' on Generators
+            _acceptBlame( CswDeveloper.SS, 28146 );
+
+            CswNbtMetaDataObjectClass GeneratorOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.GeneratorClass );
+            CswNbtMetaDataObjectClassProp RunNowOCP = GeneratorOC.getObjectClassProp( "Run Now" );
+            if( null != RunNowOCP )
+            {
+                _CswNbtSchemaModTrnsctn.MetaData.DeleteObjectClassProp( RunNowOCP, true );
+            }
+            _resetBlame();
+            #endregion case 28146 - Remove 'Run Now' on Generators
+        }
+
         #region Ursula Methods
 
         public void _makeContainerGroup()
@@ -1227,7 +1242,30 @@ namespace ChemSW.Nbt.Schema
             }
             _resetBlame();
         }
+     public void _addGeneratorTargetCreatedDate()
+        {
+            _acceptBlame( CswDeveloper.SS, 28069 );
 
+            CswNbtMetaDataObjectClass TaskOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.TaskClass );
+            _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( TaskOC )
+            {
+                PropName = CswNbtPropertySetGeneratorTarget.PropertyName.CreatedDate,
+                FieldType = CswNbtMetaDataFieldType.NbtFieldType.DateTime,
+                ServerManaged = true
+            } );
+
+            CswNbtMetaDataObjectClass InspectionDesignOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.InspectionDesignClass );
+            _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( InspectionDesignOC )
+            {
+                PropName = CswNbtPropertySetGeneratorTarget.PropertyName.CreatedDate,
+                FieldType = CswNbtMetaDataFieldType.NbtFieldType.DateTime,
+                ServerManaged = true
+            } );
+            
+            _resetBlame();
+        }
+
+        
         private void _createaNewMaterialComponentProp( CswDeveloper Dev, Int32 CaseNo )
         {
             _acceptBlame( Dev, CaseNo );
@@ -1422,6 +1460,101 @@ namespace ChemSW.Nbt.Schema
 
             _resetBlame();
         }
+        
+        private void _makeContainerLocationOc()
+        {
+            #region Case 24489 - ContainerLocation ObjectClass
+            _acceptBlame( CswDeveloper.BV, 24489 );
+
+            CswNbtMetaDataObjectClass ContainerLocationOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.ContainerLocationClass );
+            if( null == ContainerLocationOc )
+            {
+                //Create new ObjectClass
+                ContainerLocationOc = _CswNbtSchemaModTrnsctn.createObjectClass( NbtObjectClass.ContainerLocationClass, "barcode.png", true );
+                _CswNbtSchemaModTrnsctn.createModuleObjectClassJunction( CswNbtModuleName.CISPro, ContainerLocationOc.ObjectClassId );
+            }
+            //Create ObjectClassProps
+            CswNbtMetaDataObjectClass ContainerOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.ContainerClass );
+            _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( ContainerLocationOc )
+            {
+                PropName = CswNbtObjClassContainerLocation.PropertyName.Container,
+                FieldType = CswNbtMetaDataFieldType.NbtFieldType.Relationship,
+                IsFk = true,
+                FkType = NbtViewRelatedIdType.ObjectClassId.ToString(),
+                FkValue = ContainerOc.ObjectClassId,
+                ServerManaged = true
+            } );
+            _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( ContainerLocationOc )
+            {
+                PropName = CswNbtObjClassContainerLocation.PropertyName.Location,
+                FieldType = CswNbtMetaDataFieldType.NbtFieldType.Location,
+                ServerManaged = true
+            } );
+            _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( ContainerLocationOc )
+            {
+                PropName = CswNbtObjClassContainerLocation.PropertyName.Type,
+                FieldType = CswNbtMetaDataFieldType.NbtFieldType.List,
+                ListOptions = String.Join( ",", CswNbtObjClassContainerLocation.TypeOptions._All ),
+                ServerManaged = true
+            } );
+            _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( ContainerLocationOc )
+            {
+                PropName = CswNbtObjClassContainerLocation.PropertyName.ContainerScan,
+                FieldType = CswNbtMetaDataFieldType.NbtFieldType.Text,
+                ServerManaged = true
+            } );
+            _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( ContainerLocationOc )
+            {
+                PropName = CswNbtObjClassContainerLocation.PropertyName.LocationScan,
+                FieldType = CswNbtMetaDataFieldType.NbtFieldType.Text,
+                ServerManaged = true
+            } );
+            _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( ContainerLocationOc )
+            {
+                PropName = CswNbtObjClassContainerLocation.PropertyName.ScanDate,
+                FieldType = CswNbtMetaDataFieldType.NbtFieldType.DateTime,
+                ServerManaged = true
+            } );
+            _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( ContainerLocationOc )
+            {
+                PropName = CswNbtObjClassContainerLocation.PropertyName.Status,
+                FieldType = CswNbtMetaDataFieldType.NbtFieldType.List,
+                ListOptions = String.Join( ",", CswNbtObjClassContainerLocation.StatusOptions._All ),
+                ServerManaged = true
+            } );
+            _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( ContainerLocationOc )
+            {
+                PropName = CswNbtObjClassContainerLocation.PropertyName.Action,
+                FieldType = CswNbtMetaDataFieldType.NbtFieldType.List,
+                ListOptions = String.Join( ",", CswNbtObjClassContainerLocation.ActionOptions._All )
+            } );
+            _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( ContainerLocationOc )
+            {
+                PropName = CswNbtObjClassContainerLocation.PropertyName.ActionApplied,
+                FieldType = CswNbtMetaDataFieldType.NbtFieldType.Logical,
+                ServerManaged = true
+            } );
+            CswNbtMetaDataObjectClass UserOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.UserClass );
+            _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( ContainerLocationOc )
+            {
+                PropName = CswNbtObjClassContainerLocation.PropertyName.User,
+                FieldType = CswNbtMetaDataFieldType.NbtFieldType.Relationship,
+                IsFk = true,
+                FkType = NbtViewRelatedIdType.ObjectClassId.ToString(),
+                FkValue = UserOc.ObjectClassId,
+                ServerManaged = true
+            } );
+            //Container DateCreated
+            _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( ContainerOc )
+            {
+                PropName = CswNbtObjClassContainer.PropertyName.DateCreated,
+                FieldType = CswNbtMetaDataFieldType.NbtFieldType.DateTime,
+                ServerManaged = true
+            } );
+
+            _resetBlame();
+            #endregion Case 24489 - ContainerLocation ObjectClass
+        }
 
         private void _replaceMaterialCASNoProp( CswDeveloper Dev, Int32 CaseNo )
         {
@@ -1470,6 +1603,7 @@ namespace ChemSW.Nbt.Schema
             _makeReceiptLotOC();
             _setNodesToHiddenIfNull();
             _makeContainerFamilyButton();
+            _removeRunNowOnGenerators();
 
             #endregion TITANIA
 
@@ -1481,14 +1615,16 @@ namespace ChemSW.Nbt.Schema
             _createRequestMaterialDispense( CswDeveloper.CF, 27942 );
             _createRequestMaterialCreate( CswDeveloper.CF, 27871 );
 
-            _makeContainerGroup();
+            _makeContainerGroup();            
             _newContainerProperties27866();
-
+            _makeContainerLocationOc();
             _createaNewMaterialComponentProp( CswDeveloper.MB, 27864 );
             _createUNCodeNodeType( CswDeveloper.MB, 27872 );
             _createNewMaterialProps( CswDeveloper.MB, 27864 );
             _replaceMaterialCASNoProp( CswDeveloper.MB, 27876 );
 
+            _addGeneratorTargetCreatedDate();
+            
             #endregion URSULA
 
             //THIS GOES LAST!

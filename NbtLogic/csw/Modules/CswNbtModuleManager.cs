@@ -255,45 +255,37 @@ namespace ChemSW.Nbt
         /// </summary>
         /// <param name="hidden">True if the view should be hidden</param>
         /// <param name="viewName">The name of the view to hide/unhide</param>
-        public void ToggleView( bool hidden, string viewName, NbtViewVisibility Visibility = null )
+        /// /// <param name="visibility">the original visibility of the view when not hidden</param>
+        public void ToggleView( bool hidden, string viewName, NbtViewVisibility Visibility )
         {
-            Visibility = Visibility ?? NbtViewVisibility.Global;
-            DataTable viewDT = _CswNbtResources.ViewSelect.getView( viewName, Visibility, null, null );
+            NbtViewVisibility FindVisibility = hidden ? Visibility : NbtViewVisibility.Hidden;
+            NbtViewVisibility SetVisibility = hidden ? NbtViewVisibility.Hidden : Visibility;
+
+            DataTable viewDT = _CswNbtResources.ViewSelect.getView( viewName, FindVisibility, null, null );
             if( viewDT.Rows.Count == 1 )
             {
                 CswNbtView view = _CswNbtResources.ViewSelect.restoreView( viewDT.Rows[0]["viewxml"].ToString() );
                 if( null != view )
                 {
-                    if( hidden )
-                    {
-                        view.SetVisibility( NbtViewVisibility.Hidden, null, null );
-                    }
-                    else
-                    {
-                        view.SetVisibility( NbtViewVisibility.Global, null, null );
-                    }
+                    view.SetVisibility( SetVisibility, null, null );
                     view.save();
                 }
             }
-            if( Visibility == NbtViewVisibility.Global )
-            {
-                //Case 28124: If we're toggling a 2nd time, the View Visibility will be hidden
-                ToggleView( hidden, viewName, NbtViewVisibility.Hidden );
-            }
-        }
+        }        
 
         /// <summary>
         /// Convenience function for hiding all views in a category
         /// </summary>
         /// <param name="hidden">true if the views should be hidden</param>
         /// <param name="category">the category to get all views in</param>
-        public void ToggleViewsInCategory( bool hidden, string category )
+        /// <param name="visibility">the original visibility of the view when not hidden</param>
+        public void ToggleViewsInCategory( bool hidden, string category, NbtViewVisibility visibility )
         {
             CswTableSelect tu = _CswNbtResources.makeCswTableSelect( "toggleViewsInCategory_26717", "node_views" );
             DataTable nodeviews = tu.getTable( "where category = '" + category + "'" );
             foreach( DataRow row in nodeviews.Rows )
             {
-                _CswNbtResources.Modules.ToggleView( hidden, row["viewname"].ToString() );
+                _CswNbtResources.Modules.ToggleView( hidden, row["viewname"].ToString(), visibility );
             }
         }
 

@@ -272,7 +272,7 @@ namespace ChemSW.Nbt.ObjClasses
             ActionPermissions.InitOptions = InitActionPermissionOptions;
 
             //case 27793: only an administrator can edit nodes
-            if( ( null != _CswNbtResources.CurrentNbtUser ) && ( false == _CswNbtResources.CurrentNbtUser.IsAdministrator() ) )
+            if( ( null == _CswNbtResources.CurrentNbtUser ) || ( false == _CswNbtResources.CurrentNbtUser.IsAdministrator() ) )
             {
                 this.Node.setReadOnly( true, false );
             }

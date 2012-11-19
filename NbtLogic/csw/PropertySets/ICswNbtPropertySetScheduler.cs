@@ -1,5 +1,5 @@
-﻿using ChemSW.Nbt.PropTypes;
-
+﻿using System;
+using ChemSW.Nbt.PropTypes;
 
 namespace ChemSW.Nbt.PropertySets
 {
@@ -14,7 +14,6 @@ namespace ChemSW.Nbt.PropertySets
         string SchedulerWarningDaysPropertyName { get; }
         string SchedulerDueDateIntervalPropertyName { get; }
         string SchedulerRunTimePropertyName { get; }
-        string SchedulerRunNowPropertyName { get; }
 
         CswNbtNodePropDateTime FinalDueDate { get; }
         CswNbtNodePropDateTime NextDueDate { get; }
@@ -23,7 +22,8 @@ namespace ChemSW.Nbt.PropertySets
         CswNbtNodePropTimeInterval DueDateInterval { get; }
         CswNbtNodePropDateTime RunTime { get; }
         CswNbtNodePropLogical Enabled { get; }
-        CswNbtNodePropButton RunNow { get; }
+
+        void updateNextDueDate( bool ForceUpdate, bool DeleteFutureNodes );
 
     }//ICswNbtPropertySetScheduler
 

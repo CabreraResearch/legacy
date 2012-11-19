@@ -42,7 +42,6 @@ namespace ChemSW.Nbt.Sched
         private CswNbtResources _CswNbtResources = null;
         private CswSchedItemTimingFactory _CswSchedItemTimingFactory = new CswSchedItemTimingFactory();
         private CswScheduleLogicNodes _CswScheduleLogicNodes = null;
-        private CswScheduleNodeUpdater _CswScheduleNodeUpdater;
 
         public void init( ICswResources RuleResources, CswScheduleLogicDetail CswScheduleLogicDetail )
         {
@@ -50,7 +49,6 @@ namespace ChemSW.Nbt.Sched
             _CswScheduleLogicDetail = CswScheduleLogicDetail;
             _CswScheduleLogicNodes = new CswScheduleLogicNodes( _CswNbtResources );
             _CswNbtResources.AuditContext = "Scheduler Task: " + RuleName;
-            _CswScheduleNodeUpdater = new CswScheduleNodeUpdater( _CswNbtResources );
         }//init() 
 
         public void threadCallBack()
@@ -117,7 +115,8 @@ namespace ChemSW.Nbt.Sched
                                                 MailReportIdsToRun.Add( CurrentMailReport.NodeId );
 
                                                 // Cycle the next due date so we don't make another batch op while this one is running
-                                                _CswScheduleNodeUpdater.update( CurrentMailReport.Node, string.Empty );
+                                                CurrentMailReport.updateNextDueDate( ForceUpdate: true, DeleteFutureNodes: false );
+                                                CurrentMailReport.postChanges( false );
                                             }
                                         } // if( ThisDueDateValue != DateTime.MinValue )
 

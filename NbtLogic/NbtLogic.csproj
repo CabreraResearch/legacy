@@ -71,6 +71,19 @@
     <DocumentationFile>bin\NbtLogic.XML</DocumentationFile>
     <NoWarn>1591,1572,1571,1573,1587,1570</NoWarn>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Test|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Test\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DocumentationFile>bin\NbtLogic.XML</DocumentationFile>
+    <NoWarn>1591,1572,1571,1573,1587,1570</NoWarn>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisIgnoreBuiltInRuleSets>false</CodeAnalysisIgnoreBuiltInRuleSets>
+    <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="CrystalDecisions.CrystalReports.Engine, Version=13.0.2000.0, Culture=neutral, PublicKeyToken=692fbea5521e1304, processorArchitecture=MSIL" />
     <Reference Include="CrystalDecisions.ReportSource, Version=13.0.2000.0, Culture=neutral, PublicKeyToken=692fbea5521e1304, processorArchitecture=MSIL" />
@@ -101,15 +114,23 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="csw\Actions\CswNbtActCreateMaterial.cs" />
+    <Compile Include="csw\Actions\CswNbtActReconciliation.cs" />
     <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleCASNo.cs" />
+    <Compile Include="csw\Actions\CswNbtContainerDataContract.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassRequestContainerDispense.cs" />
+    <Compile Include="csw\Batch\CswNbtBatchOpContainerReconciliationActions.cs" />
     <Compile Include="csw\Batch\CswNbtBatchOpMolFingerprints.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassContainerGroup.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01T\CswUpdateSchema_0T1_Case27867_part2.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01T\CswUpdateSchema_01T_Case28146.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassRequestContainerUpdate.cs" />
     <Compile Include="csw\PropTypes\CswNbtNodePropCASNo.cs" />
     <Compile Include="csw\Sched\logic\CswScheduleLogicNbtMolFingerprints.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassRequestItem.cs" />
+    <Compile Include="csw\ObjClasses\CswNbtObjClassContainerLocation.cs" />
+    <Compile Include="csw\Sched\logic\CswScheduleLogicNbtContainerReconciliationActions.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassRequestMaterialCreate.cs" />
+    <Compile Include="csw\PropertySets\CswNbtPropertySetGeneratorTarget.cs" />
     <Compile Include="csw\PropertySets\CswNbtPropertySetRequestItem.cs" />
     <Content Include="csw\Schema\scripts\past\01P\CswUpdateSchemaCase24441.cs" />
     <Content Include="csw\Schema\scripts\past\01P\CswUpdateSchemaCase24446Action.cs" />
@@ -259,6 +280,8 @@
     <Compile Include="csw\Schema\scripts\prod\01U\CswUpdateSchema_01U_Case27864.cs" />
     <Compile Include="csw\Schema\scripts\prod\01U\CswUpdateSchema_01U_Case24524.cs" />
     <Compile Include="csw\Schema\scripts\prod\01T\CswUpdateSchema_01T_Case28020.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01U\CswUpdateSchema_01U_Case24489_Part2.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01U\CswUpdateSchema_01U_Case28069.cs" />
     <Compile Include="csw\Schema\scripts\prod\01U\CswUpdateSchema_01U_Case27866.cs" />
     <Compile Include="csw\Schema\scripts\prod\01T\CswUpdateSchema_01T_Case27912.cs" />
     <Compile Include="csw\Schema\scripts\prod\01T\CswUpdateSchema_01T_Case27920.cs" />
@@ -274,6 +297,7 @@
     <Compile Include="csw\Schema\scripts\prod\01T\CswUpdateSchema_01T_Case27881.cs" />
     <Compile Include="csw\Schema\scripts\prod\01U\CswUpdateSchema_01U_Case27876.cs" />
     <Compile Include="csw\Schema\scripts\prod\01U\CswUpdateSchema_01U_RequestItems_Case27942.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01U\CswUpdateSchema_01U_Case24489.cs" />
     <Compile Include="csw\Schema\scripts\prod\01T\CswUpdateSchema_01T_Case28046.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="csw\Schema\scripts\prod\01T\CswUpdateSchema_01T_Case27884.cs" />
@@ -501,7 +525,6 @@
     <Compile Include="csw\PropTypes\CswNbtNodeTypePropListOptions.cs" />
     <Compile Include="csw\PropertySets\CswNbtPropSetCaster.cs" />
     <Compile Include="csw\PropertySets\CswNbtPropertySetSchedulerImpl.cs" />
-    <Compile Include="csw\PropertySets\ICswNbtPropertySetGeneratorTarget.cs" />
     <Compile Include="csw\PropertySets\ICswNbtPropertySetInspectionParent.cs" />
     <Compile Include="csw\PropertySets\ICswNbtPropertySetScheduler.cs" />
     <Compile Include="csw\Sched\core\CswScheduleLogicDetailPersistenceFactoryNbt.cs" />
@@ -509,7 +532,6 @@
     <Compile Include="csw\Sched\core\CswScheduleLogicFactoryNbt.cs" />
     <Compile Include="csw\Sched\core\CswScheduleLogicNodes.cs" />
     <Compile Include="csw\Sched\core\CswScheduleLogicParamNbt.cs" />
-    <Compile Include="csw\Sched\core\CswScheduleNodeUpdater.cs" />
     <Compile Include="csw\Sched\core\CswScheduleResourceFactoryNbt.cs" />
     <Compile Include="csw\Sched\logic\CswScheduleLogicNbtBatchOps.cs" />
     <Compile Include="csw\Sched\logic\CswScheduleLogicNbtDisableCswAdmin.cs" />
@@ -583,7 +605,7 @@
     <Compile Include="csw\Schema\scripts\prod\01T\CswUpdateSchema_01T_Case27947.cs" />
     <Compile Include="csw\Schema\scripts\prod\01T\CswUpdateSchema_01T_CertMethod_Case27868.cs" />
     <Compile Include="csw\Schema\scripts\prod\01T\CswUpdateSchema_01T_IdentityTab_Case27965.cs" />
-    <Compile Include="csw\Schema\scripts\prod\01T\CswUpdateSchema_0T1_Case27865_part2.cs" />
+    <Compile Include="csw\Schema\scripts\prod\01T\CswUpdateSchema_01T_Case27865_part2.cs" />
     <Compile Include="csw\Schema\scripts\tests\cases\001\CswTestCase_001_01.cs" />
     <Compile Include="csw\Schema\scripts\tests\cases\001\CswTestCase_001_02.cs" />
     <Compile Include="csw\Schema\scripts\tests\cases\001\CswTestCase_001_03.cs" />
