@@ -28,6 +28,18 @@ namespace ChemSW.Nbt.Schema
                 casNoNTP.removeFromLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add );
             }
 
+            CswNbtMetaDataNodeType chemicalNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Chemical" );
+            if( null != chemicalNT )
+            {
+                CswNbtMetaDataNodeTypeTab chemicalTab = chemicalNT.getFirstNodeTypeTab();
+                CswNbtMetaDataNodeTypeProp chemicalCASNoNTP = chemicalNT.getNodeTypePropByObjectClassProp( CswNbtObjClassMaterial.PropertyName.CasNo );
+                CswNbtMetaDataNodeTypeProp chemicalSynoNTP = chemicalNT.getNodeTypeProp( "Synonyms" );
+                if( null != chemicalSynoNTP )
+                {
+                    _CswNbtSchemaModTrnsctn.MetaData.NodeTypeLayout.updatePropLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, chemicalCASNoNTP, chemicalSynoNTP, true );
+                }
+            }
+
         }
 
         //Update()
