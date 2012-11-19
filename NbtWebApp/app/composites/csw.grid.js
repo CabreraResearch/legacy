@@ -320,7 +320,7 @@
                     cswPrivate.topToolbar.push(cswPrivate.deleteAllButton);
                 } // if(cswPrivate.showCheckboxes && cswPrivate.showActionColumn)
                 
-                if(cswPrivate.topToolbar.length > 0) {
+                if(cswPrivate.topToolbar.length === '1') {
                     gridopts.dockedItems.push({
                         xtype: 'toolbar',
                         dock: 'top',
@@ -472,6 +472,13 @@
 
             cswPublic.toggleShowCheckboxes = Csw.method(function (val) {
                 cswPrivate.showCheckboxes = (false === cswPrivate.showCheckboxes);
+                if (false === cswPrivate.showCheckboxes) {
+                    if(options.topToolbar) {
+                        cswPrivate.topToolbar = options.topToolbar;
+                    } else {
+                        cswPrivate.topToolbar = [];
+                    }
+                }
                 cswPrivate.init();
             });
 
