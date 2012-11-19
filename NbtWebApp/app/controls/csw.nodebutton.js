@@ -177,6 +177,10 @@
                 Csw.publish(Csw.enums.events.main.handleAction, actionJson);
                 break;
             case Csw.enums.nbtButtonAction.move:
+                Csw.publish(Csw.enums.events.main.clear, { centertop: true, centerbottom: true });
+                actionJson.actionname = 'MoveContainer';
+                Csw.publish(Csw.enums.events.main.handleAction, actionJson);
+                break;
             case Csw.enums.nbtButtonAction.dispense:
                 Csw.publish(Csw.enums.events.main.clear, { centertop: true, centerbottom: true });
                 actionJson.actionname = 'DispenseContainer';

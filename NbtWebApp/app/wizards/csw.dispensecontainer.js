@@ -32,7 +32,6 @@
                         barcode: '',
                         location: '',
                         requestItemId: '',
-                        requestMode: 'bulk',
                         dispenseMode: '',
                         customBarcodes: false,
                         netQuantityEnforced: true
@@ -162,8 +161,6 @@
                         cswPrivate.toggleButton(cswPrivate.buttons.finish, false);
 
                         var initStepOne = Csw.method(function () {
-                            var dispenseTypeSelect;
-
                             var makeTypeSelect = function () {
 
                                 if (cswPrivate.state.dispenseMode !== cswPrivate.dispenseModes.RequestMaterial) {
@@ -206,18 +203,16 @@
                                         if (Csw.isNullOrEmpty(data.viewid)) {
                                             Csw.error.throwException(Csw.error.exception('Could not get a grid of containers for this request item.', '', 'csw.dispensecontainer.js', 141));
                                         }
-                                        var multi = cswPrivate.state.requestMode === 'request by size';
+
                                         cswPrivate.containerGrid = Csw.wizard.nodeGrid(cswPrivate.divStep1, {
                                             hasMenu: false,
                                             viewid: data.viewid,
-                                            readonly: true,
-                                            showCheckboxes: multi,
-                                            onSelect: function (row, val) {
-                                                if (false === multi && cswPrivate.state.sourceContainerNodeId !== row.nodeid) {
+                                            ReadOnly: true,
+                                            onSelect: function () {
+                                                if (cswPrivate.state.sourceContainerNodeId !== cswPrivate.containerGrid.getSelectedNodeId()) {
                                                     resetStepTwo();
                                                 }
-                                                cswPrivate.state.selectedNodeIds = cswPrivate.containerGrid.grid.getSelectedRowsVals('nodeid');
-                                                cswPrivate.state.sourceContainerNodeId = row.nodeid;
+                                                cswPrivate.state.sourceContainerNodeId = cswPrivate.containerGrid.getSelectedNodeId();
                                                 toggleNext();
                                             },
                                             onSuccess: makeTypeSelect
@@ -324,7 +319,7 @@
                             if (false === Csw.isNullOrEmpty(cswPrivate.state.currentQuantity)) {
                                 quantityTable.cell(qtyTableCol, 1).span({ labelText: 'Current Quantity: ', text: cswPrivate.state.currentQuantity + ' ' + cswPrivate.state.currentUnitName });
                                 cswPrivate.state.quantityAfterDispense = cswPrivate.state.currentQuantity;
-                                cswPrivate.quantityAfterDispenseSpan = quantityTable.cell(5, 2).span({ labelText: 'Quantity after Dispense: ', text: Csw.number(cswPrivate.state.quantityAfterDispense, 0) + ' ' + cswPrivate.state.currentUnitName });
+                                cswPrivate.quantityAfterDispenseSpan = quantityTable.cell(5, 2).span({ labelText: 'Quantity after Dispense: ', text: cswPrivate.state.quantityAfterDispense + ' ' + cswPrivate.state.currentUnitName });
                                 cswPrivate.netQuantityExceededSpan = quantityTable.cell(5, 2).span({ cssclass: 'CswErrorMessage_ValidatorError', text: ' Total quantity to dispense cannot exceed source container\'s net quantity.' });
                                 cswPrivate.netQuantityExceededSpan.hide();
                                 qtyTableCol++;
@@ -344,7 +339,7 @@
                                     name: 'nodeTypeSelect',
                                     objectClassName: 'ContainerClass',
                                     blankOptionText: blankText,
-                                    onSelect: function (data, nodeTypeCount) {
+                                    onSelect: function () {
                                         if (blankText !== containerTypeSelect.val()) {
                                             cswPrivate.state.containerNodeTypeId = containerTypeSelect.val();
                                         }
@@ -379,7 +374,7 @@
                                 qtyTableCol++;
                             };
 
-                            var makePrintBarcodesCheckBox = function () {
+                            var makePrintBarcodesCheckBox = function() {
                                 var checkBoxTable = quantityTable.cell(qtyTableCol, 1).table({
                                     name: 'checkboxTable',
                                     cellpadding: '1px',
@@ -388,8 +383,7 @@
                                 qtyTableCol++;
 
                                 cswPrivate.printBarcodesCheckBox = checkBoxTable.cell(1, 1).checkBox({
-                                    onChange: Csw.method(function () {
-                                        var val;
+                                    onChange: Csw.method(function() {
                                         if (cswPrivate.printBarcodesCheckBox.checked()) {
                                             cswPrivate.printBarcodes = true;
                                         } else {
@@ -398,9 +392,9 @@
                                     })
                                 });
                                 checkBoxTable.cell(1, 2).span({ text: 'Print barcode labels for new containers' });
-                            }
+                            };
 
-                            var getQuantityAfterDispense = function () {
+                            var getQuantityAfterDispense = function() {
                                 var deductingValue = Csw.bool(cswPrivate.state.dispenseType !== cswPrivate.dispenseTypes.Add);
                                 cswPrivate.state.quantityAfterDispense = cswPrivate.state.currentQuantity;
                                 var quantities = [];
@@ -411,7 +405,7 @@
                                 });
                                 cswPrivate.formIsValid = cswPrivate.updateQuantityAfterDispense(quantities);
                                 cswPrivate.toggleButton(cswPrivate.buttons.finish, cswPrivate.formIsValid);
-                            }
+                            };
 
                             if (cswPrivate.state.dispenseType === cswPrivate.dispenseTypes.Dispense) {
                                 makeContainerSelect();
@@ -421,9 +415,9 @@
                                 quantityTable.cell(qtyTableCol, 1).br();
                                 quantityTable.cell(qtyTableCol, 1).span({ text: 'Set quantity for dispense:' });                                
                                 qtyTableCol++;
-                                cswPrivate.state.initialQuantity.onChange = function () {
+                                cswPrivate.state.initialQuantity.onChange = function() {
                                     getQuantityAfterDispense();
-                                }
+                                };
                                 quantityTable.cell(qtyTableCol, 1).br({ number: 2 });
                                 cswPrivate.quantityControl = quantityTable.cell(qtyTableCol, 1).quantity(cswPrivate.state.initialQuantity);
                                 qtyTableCol++;
@@ -444,9 +438,9 @@
                     return Math.round(Csw.number(num) * Math.pow(10, precision)) / Math.pow(10, precision);
                 };
 
-                cswPrivate.getTotalQuantityToDispense = function (quantities) {
+                cswPrivate.getTotalQuantityToDispense = function(quantities) {
                     var totalQuantityToDispense = 0;
-                    Csw.each(quantities, function (quantity) {
+                    Csw.each(quantities, function(quantity) {
                         if (false === Csw.isNullOrEmpty(quantity)) {
                             var containerNo = quantity.containerNo;
                             if (Csw.number(containerNo) === 0) {
@@ -462,10 +456,9 @@
                                         OldUnitId: quantity.unitid,
                                         NewUnitId: cswPrivate.state.unitId
                                     },
-                                    success: function (data) {
+                                    success: function(data) {
                                         if (false === Csw.isNullOrEmpty(data)) {
-                                            var precision = Csw.number(cswPrivate.state.precision);
-                                            totalQuantityToDispense += cswPrivate.roundToPrecision(Csw.number(data.convertedvalue) * Csw.number(containerNo, 0));
+                                            totalQuantityToDispense += cswPrivate.roundToPrecision(Csw.number(data.convertedvalue, 0) * Csw.number(containerNo, 0));
                                         }
                                     }
                                 });
@@ -475,9 +468,9 @@
                         }
                     });
                     return totalQuantityToDispense;
-                }
+                };
 
-                cswPrivate.updateQuantityAfterDispense = function (quantities) {
+                cswPrivate.updateQuantityAfterDispense = function(quantities) {
                     var enableFinishButton = true;
                     cswPrivate.state.quantityAfterDispense = cswPrivate.roundToPrecision(Csw.number(cswPrivate.state.currentQuantity - cswPrivate.getTotalQuantityToDispense(quantities)));
 
@@ -500,7 +493,7 @@
                         enableFinishButton = false;
                     }
                     return enableFinishButton;
-                }
+                };
 
                 cswPrivate.handleNext = function (newStepNo) {
                     cswPrivate.currentStepNo = newStepNo;

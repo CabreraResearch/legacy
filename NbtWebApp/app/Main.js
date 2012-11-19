@@ -1244,6 +1244,26 @@ window.initMain = window.initMain || function (undefined) {
                 Csw.nbt.dispenseContainerWizard(Csw.main.centerTopDiv, designOpt);
                 break;
 
+            case 'movecontainer':
+                
+                designOpt = {
+                    title: o.title,
+                    requestitemid: o.requestitem.requestitemid,
+                    location: o.location,
+                    onCancel: function () {
+                        clear({ 'all': true });
+                        Csw.clientState.setCurrent(Csw.clientState.getLast());
+                        refreshSelected();
+                    },
+                    onFinish: function (viewid) {
+                        clear({ 'all': true });
+                        Csw.clientState.setCurrent(Csw.clientState.getLast());
+                        refreshSelected();
+                    }
+                };
+                Csw.actions.containerMove(Csw.main.centerTopDiv, designOpt);
+                break;
+
             case 'edit view':
                 var editViewOptions = {
                     'viewid': o.ActionOptions.viewid,
