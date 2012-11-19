@@ -851,6 +851,11 @@ namespace ChemSW.Nbt.ObjClasses
                         LotControlled.Checked = InvGroupNode.Central.Checked == Tristate.True ? Tristate.True : Tristate.False;
                     }
                 }
+                CswNbtObjClassContainerGroup ContGrpNode = _CswNbtResources.Nodes.GetNode( ContainerGroup.RelatedNodeId );
+                if( null != ContGrpNode && ContGrpNode.SyncLocation.Checked == Tristate.True )
+                {
+                    ContainerGroup.RelatedNodeId = null;
+                }
                 _createContainerLocationNode( CswNbtObjClassContainerLocation.TypeOptions.Move );
             }
         }
@@ -971,6 +976,7 @@ namespace ChemSW.Nbt.ObjClasses
                 //}
             }
         }
+        public CswNbtNodePropRelationship ContainerGroup { get { return ( _CswNbtNode.Properties[PropertyName.ContainerGroup] ); } }
         public CswNbtNodePropLogical Requisitionable { get { return ( _CswNbtNode.Properties[PropertyName.Requisitionable] ); } }
         public CswNbtNodePropRelationship LabelFormat { get { return ( _CswNbtNode.Properties[PropertyName.LabelFormat] ); } }
         public CswNbtNodePropRelationship ReservedFor { get { return ( _CswNbtNode.Properties[PropertyName.ReservedFor] ); } }
