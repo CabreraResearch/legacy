@@ -18,15 +18,19 @@
         /// <summary> Returns true if the input string has a valid checksum </summary>
         /// <param name="CASNo"> the string to check </param>
         /// <returns type="Boolean" />
-
-        var numbers = CASNo.match(/\d/g);
-        var sum = 0;
-        var i;
-        for (i = 0; i < numbers.length - 1; i++) {
-            sum += (numbers.length - 1 - i) * numbers[i];
+        var ret;
+        if (false == Csw.isNullOrEmpty(CASNo)) {
+            var numbers = CASNo.match(/\d/g);
+            var sum = 0;
+            var i;
+            for (i = 0; i < numbers.length - 1; i++) {
+                sum += (numbers.length - 1 - i) * numbers[i];
+            }
+            ret = (sum % 10) == numbers[numbers.length - 1]
+        } else {
+            ret = false;
         }
-
-        return (sum % 10) == numbers[numbers.length - 1];
+        return ret;
     }
     Csw.register('checkSumCASNo', checkSumCASNo);
     Csw.checkSumCASNo = Csw.checkSumCASNo || checkSumCASNo;

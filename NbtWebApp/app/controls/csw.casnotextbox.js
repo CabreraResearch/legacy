@@ -42,12 +42,12 @@
                     });
 
                     $.validator.addMethod(cswPrivate.name + '_validateCASNo', function (value, element) {
-                        return Csw.validateCASNo(value);
+                        return Csw.validateCASNo(value) || (Csw.isNullOrEmpty(value) && false == cswPrivate.isRequired);
                     }, "Input must be a valid CASNo");
                     cswPublic.addClass(cswPrivate.name + '_validateCASNo');
 
                     $.validator.addMethod(cswPrivate.name + '_CASNoCheckSum', function (value, element) {
-                        return Csw.checkSumCASNo(value);
+                        return Csw.checkSumCASNo(value) || (Csw.isNullOrEmpty(value) && false == cswPrivate.isRequired);
                     }, "CASNo checksum is invalid");
                     cswPublic.addClass(cswPrivate.name + '_CASNoCheckSum');
 
