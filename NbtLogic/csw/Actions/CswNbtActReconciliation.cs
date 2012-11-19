@@ -265,7 +265,8 @@ namespace ChemSW.Nbt.Actions
             {
                 ActionOptions.Add( CswNbtObjClassContainerLocation.ActionOptions.NoAction.ToString() );
             }
-            if( Status == CswNbtObjClassContainerLocation.StatusOptions.Missing.ToString() )
+            if( Status == CswNbtObjClassContainerLocation.StatusOptions.Missing.ToString() ||
+                Status == CswNbtObjClassContainerLocation.StatusOptions.NotScanned.ToString() )
             {
                 ActionOptions.Add( CswNbtObjClassContainerLocation.ActionOptions.MarkMissing.ToString() );
             }
