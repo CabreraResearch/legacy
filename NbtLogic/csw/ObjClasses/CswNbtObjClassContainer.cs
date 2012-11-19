@@ -530,6 +530,7 @@ namespace ChemSW.Nbt.ObjClasses
             ActionDataObj["containernodetypeid"] = NodeTypeId;
             ActionDataObj["barcode"] = Barcode.Barcode;
             ActionDataObj["materialname"] = Material.CachedNodeName;
+            ActionDataObj["materialid"] = Material.RelatedNodeId.ToString();
             ActionDataObj["location"] = Location.CachedFullPath;
             ActionDataObj["sizeid"] = Size.RelatedNodeId.ToString();
 
