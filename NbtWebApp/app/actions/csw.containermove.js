@@ -12,7 +12,6 @@
                 onSubmit: null,
                 onCancel: null,
                 gridOpts: {},
-                viewid: '',
                 requestitemid: '',
                 location: ''
             };
@@ -20,30 +19,49 @@
             if (Csw.isNullOrEmpty(cswParent)) {
                 Csw.error.throwException('Cannot create a Request action without a valid Csw Parent object.', 'Csw.actions.containerMove', 'csw.containerMove.js', 14);
             }
+
             (function _preCtor() {
                 Csw.extend(cswPrivate, options, true);
                 cswParent.empty();
+                var state;
+                if (!cswPrivate.requestitemid) {
+                    state = Csw.clientDb.getItem(cswPrivate.name + '_clientDb');
+                    cswPrivate.requestitemid = state.requestitemid;
+                    cswPrivate.location = state.location;
+                } else {
+                    Csw.clientDb.setItem(cswPrivate.name + '_clientDb', {
+                        requestitemid: cswPrivate.requestitemid,
+                        location: cswPrivate.location
+                    });
+                }
             }());
-            
+
             cswPrivate.submitRequest = function () {
-                Csw.ajaxWcf.post({
-                    urlMethod: 'Requests/fulfill',
-                    data: {
-                        RequestItemId: cswPrivate.requestitemid,
-                        ContainerIds: cswPrivate.containerGrid.grid.getSelectedRowsVals('nodeid')
-                    },
-                    success: function (json) {
-                        if (json.Succeeded) {
-                            Csw.tryExec(cswPrivate.onSubmit);
-                        } else {
-                            cswPrivate.containerGrid.grid.reload();
+                if (cswPrivate.containerGrid &&
+                    cswPrivate.containerGrid.grid &&
+                    cswPrivate.containerGrid.grid.getSelectedRowsVals('nodeid').length > 0) {
+                    Csw.ajaxWcf.post({
+                        urlMethod: 'Requests/fulfill',
+                        data: {
+                            RequestItemId: cswPrivate.requestitemid,
+                            ContainerIds: cswPrivate.containerGrid.grid.getSelectedRowsVals('nodeid')
+                        },
+                        success: function (json) {
+                            if (json.Succeeded) {
+                                Csw.clientDb.removeItem(cswPrivate.name + '_clientDb');
+                                Csw.tryExec(cswPrivate.onSubmit);
+                            } else {
+                                cswPrivate.containerGrid.grid.reload();
+                            }
                         }
-                    }
-                });
+                    });
+                } else {
+                    cswPrivate.action.finish.quickTip({ html: 'No containers selected for move.' });
+                }
             };
 
             cswPrivate.initGrid = function () {
-                
+
                 Csw.ajax.post({
                     urlMethod: 'getDispenseContainerView',
                     data: {
@@ -63,14 +81,17 @@
                     }
                 });
             }; // initGrid()
-           
+
             (function _postCtor() {
 
                 cswPrivate.action = Csw.layouts.action(cswParent, {
                     Title: cswPrivate.title || 'Fulfill Material Request by Size',
                     FinishText: 'Fulfill Request',
                     onFinish: cswPrivate.submitRequest,
-                    onCancel: cswPrivate.onCancel
+                    onCancel: function() {
+                        Csw.clientDb.removeItem(cswPrivate.name + '_clientDb');
+                        Csw.tryExec(cswPrivate.onCancel);
+                    }
                 });
 
                 cswPrivate.actionTbl = cswPrivate.action.actionDiv.table({
@@ -81,17 +102,17 @@
                 cswPrivate.actionTbl.cell(1, 1)
                     .css('text-align', 'left')
                     .span({ text: 'Select the containers to move to: ' + cswPrivate.location });
-                
+
                 cswPrivate.actionTbl.cell(3, 1).br({ number: 2 });
                 cswPrivate.gridId = cswPrivate.name + '_csw_requestGrid_outer';
                 cswPublic.gridParent = cswPrivate.actionTbl.cell(4, 1).div({
                     name: cswPrivate.gridId
-                }); 
+                });
 
                 cswPrivate.initGrid();
 
             }());
-            
+
             return cswPublic;
         });
 }());

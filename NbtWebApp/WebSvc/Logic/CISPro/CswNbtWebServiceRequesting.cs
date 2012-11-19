@@ -119,6 +119,7 @@ namespace ChemSW.Nbt.WebServices
                                 Ret.Data.Succeeded = true;
                                 RequestNode.Status.Value = CswNbtObjClassRequestMaterialDispense.Statuses.Moved;
                                 RequestNode.Fulfill.State = CswNbtObjClassRequestMaterialDispense.FulfillMenu.Complete;
+                                RequestNode.postChanges( ForceUpdate: false );
                             }
                             break;
                     }

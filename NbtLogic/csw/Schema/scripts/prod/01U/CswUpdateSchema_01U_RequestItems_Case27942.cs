@@ -389,9 +389,13 @@ namespace ChemSW.Nbt.Schema
             #endregion Request Material Dispense Layout
 
             #region Request Material Create Layout Case 27871
-
-            CswNbtMetaDataNodeTypeProp RmcDescriptionNtp = RequestMcNt.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestMaterialCreate.PropertyName.Description );
             CswNbtMetaDataNodeTypeProp RmcMaterialTypeNtp = RequestMcNt.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestMaterialCreate.PropertyName.NewMaterialType );
+            CswNbtMetaDataNodeType ChemicalNt = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Chemical" );
+            if( null != ChemicalNt && ChemicalNt.getObjectClass().ObjectClass == NbtObjectClass.MaterialClass )
+            {
+                RmcMaterialTypeNtp.DefaultValue.AsNodeTypeSelect.SelectedNodeTypeIds.Add( ChemicalNt.NodeTypeId.ToString() );
+            }
+            CswNbtMetaDataNodeTypeProp RmcDescriptionNtp = RequestMcNt.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestMaterialCreate.PropertyName.Description );
             CswNbtMetaDataNodeTypeProp RmcMaterialNameNtp = RequestMcNt.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestMaterialCreate.PropertyName.NewMaterialTradename );
             CswNbtMetaDataNodeTypeProp RmcSupplierNtp = RequestMcNt.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestMaterialCreate.PropertyName.NewMaterialSupplier );
             CswNbtMetaDataNodeTypeProp RmcPartNoNtp = RequestMcNt.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestMaterialCreate.PropertyName.NewMaterialPartNo );

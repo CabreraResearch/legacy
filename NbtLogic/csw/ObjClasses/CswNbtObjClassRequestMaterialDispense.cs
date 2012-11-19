@@ -483,11 +483,13 @@ namespace ChemSW.Nbt.ObjClasses
                 case Types.Size:
                     TotalDispensed.setHidden( value: true, SaveToDb: true );
                     Fulfill.MenuOptions = FulfillMenu.Options.Remove( FulfillMenu.Dispense ).ToString();
+                    Fulfill.State = FulfillMenu.Move;
                     Quantity.clearQuantity( ForceClear: true );
                     break;
                 case Types.Bulk:
                     TotalDispensed.setHidden( value: false, SaveToDb: true );
                     Fulfill.MenuOptions = FulfillMenu.Options.Remove( FulfillMenu.Move ).ToString();
+                    Fulfill.State = FulfillMenu.Dispense;
                     Size.clearRelationship();
                     Count.Value = Double.NaN;
                     break;
@@ -501,8 +503,6 @@ namespace ChemSW.Nbt.ObjClasses
             Count.setHidden( value: false == QuantityDisabled, SaveToDb: true );
 
             Type.setReadOnly( value: true, SaveToDb: true );
-
-            Fulfill.State = FulfillMenu.Order;
         }
 
         #endregion

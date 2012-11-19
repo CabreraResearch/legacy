@@ -1248,15 +1248,15 @@ window.initMain = window.initMain || function (undefined) {
                 
                 designOpt = {
                     title: o.title,
-                    requestitemid: o.requestitem.requestitemid,
+                    requestitemid: (o.requestitem) ? o.requestitem.requestitemid : '',
                     location: o.location,
                     onCancel: function () {
-                        clear({ 'all': true });
+                        clear({ all: true });
                         Csw.clientState.setCurrent(Csw.clientState.getLast());
                         refreshSelected();
                     },
-                    onFinish: function (viewid) {
-                        clear({ 'all': true });
+                    onSubmit: function (viewid) {
+                        clear({ all: true });
                         Csw.clientState.setCurrent(Csw.clientState.getLast());
                         refreshSelected();
                     }
