@@ -157,6 +157,25 @@ namespace ChemSw.Nbt.Test
             Assert.AreEqual( Tristate.False, ContainerNode.Disposed.Checked );
         }
 
+        /// <summary>
+        /// Given a ContainerReconciliationActions BatchOp with a ContainerLocation with Action "MarkMissing"
+        /// (given a Container with no ContainerLocation in the given timeframe),
+        /// assert that the Contianer has Missing set to true, 
+        /// and that the ContainerLocation is marked ActionApplied.
+        /// </summary>
+        [TestMethod]
+        public void runBatchOpTestMarkMissing()
+        {
+            CswNbtObjClassContainer ContainerNode = TestData.Nodes.createContainerNode();
+            CswNbtObjClassContainerLocation ContainerLocationNode = TestData.Nodes.createContainerLocationNode( 
+                ContainerNode.Node, 
+                CswNbtObjClassContainerLocation.ActionOptions.MarkMissing.ToString(), 
+                Type: CswNbtObjClassContainerLocation.TypeOptions.Missing.ToString() );
+            _runReconciliationBatchOp( ContainerLocationNode.NodeId );
+            Assert.AreEqual( Tristate.True, ContainerLocationNode.ActionApplied.Checked );
+            Assert.AreEqual( Tristate.True, ContainerNode.Missing.Checked );
+        }
+
         private void _runReconciliationBatchOp( CswPrimaryKey ContainerLocationNodeId )
         {
             CswCommaDelimitedString ContainerLocationIds = new CswCommaDelimitedString();

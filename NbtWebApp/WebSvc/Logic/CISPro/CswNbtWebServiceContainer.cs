@@ -116,6 +116,15 @@ namespace ChemSW.Nbt.WebServices
             Return.Data = _CswNbtActReconciliation.getContainerStatuses( Request );
         }
 
+        /// <summary>
+        /// Saves all actions that have changed on selected Containers' most recent ContainerLocation
+        /// </summary>
+        public static void saveContainerActions( ICswResources CswResources, ContainerDataReturn Return, ContainerData.ReconciliationRequest Request )
+        {
+            CswNbtActReconciliation _CswNbtActReconciliation = new CswNbtActReconciliation( (CswNbtResources) CswResources );
+            _CswNbtActReconciliation.saveContainerActions( Request );
+        }
+
         #endregion Public
 
     }
