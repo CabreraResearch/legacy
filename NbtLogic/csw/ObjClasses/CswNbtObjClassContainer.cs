@@ -164,10 +164,13 @@ namespace ChemSW.Nbt.ObjClasses
             LotControlled.SetOnPropChange( OnLotControlledPropChange );
 
             bool IsDisposed = ( Disposed.Checked == Tristate.True );
-            Dispense.setHidden( value: ( IsDisposed || false == canContainer( _CswNbtResources.Actions[CswNbtActionName.DispenseContainer] ) ), SaveToDb: true );              // SaveToDb true is necessary
-            Dispose.setHidden( value: ( IsDisposed || false == canContainer( _CswNbtResources.Actions[CswNbtActionName.DisposeContainer] ) ), SaveToDb: true );                // to override what's in the db
-            Undispose.setHidden( value: ( false == IsDisposed || false == canContainer( _CswNbtResources.Actions[CswNbtActionName.UndisposeContainer] ) ), SaveToDb: true );   // even if it isn't actually saved
-            Request.setHidden( value: ( IsDisposed || false == canContainer( _CswNbtResources.Actions[CswNbtActionName.Submit_Request] ) ), SaveToDb: true );                  // as part of this request
+            //SaveToDb true is necessary to override what's in the db even if it isn't actually saved as part of this request
+            Dispense.setHidden( value: ( IsDisposed || false == canContainer( _CswNbtResources.Actions[CswNbtActionName.DispenseContainer] ) ), SaveToDb: true );
+            Dispose.setHidden( value: ( IsDisposed || false == canContainer( _CswNbtResources.Actions[CswNbtActionName.DisposeContainer] ) ), SaveToDb: true );
+            Undispose.setHidden( value: ( false == IsDisposed || false == canContainer( _CswNbtResources.Actions[CswNbtActionName.UndisposeContainer] ) ), SaveToDb: true );
+            Request.setHidden( value: ( IsDisposed || 
+                false == canContainer( _CswNbtResources.Actions[CswNbtActionName.Submit_Request] ) || 
+                Requisitionable.Checked == Tristate.False ), SaveToDb: true );
 
             _CswNbtObjClassDefault.afterPopulateProps();
         }//afterPopulateProps()
