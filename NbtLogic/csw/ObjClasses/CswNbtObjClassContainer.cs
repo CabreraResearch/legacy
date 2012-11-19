@@ -838,6 +838,15 @@ namespace ChemSW.Nbt.ObjClasses
             }
             if( null != Location.SelectedNodeId )
             {
+                if( String.IsNullOrEmpty( Location.GetOriginalPropRowValue() ) )
+                {
+                    CswNbtObjClassLocation LocNode = _CswNbtResources.Nodes.GetNode( Location.SelectedNodeId );
+                    CswNbtObjClassInventoryGroup InvGroupNode = _CswNbtResources.Nodes.GetNode( LocNode.InventoryGroup.RelatedNodeId );
+                    if( null != InvGroupNode )
+                    {
+                        LotControlled.Checked = InvGroupNode.Central.Checked == Tristate.True ? Tristate.True : Tristate.False;
+                    }
+                }
                 _createContainerLocationNode( CswNbtObjClassContainerLocation.TypeOptions.Move );
             }
         }
