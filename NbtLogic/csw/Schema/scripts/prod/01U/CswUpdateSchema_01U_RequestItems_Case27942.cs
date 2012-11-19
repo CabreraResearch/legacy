@@ -155,10 +155,17 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataNodeType RequestMdNt = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( NbtObjectClass.RequestMaterialDispenseClass, "Request Material Dispense", "Requests" );
 
             //Grab name template from Case 27703
-            RequestCdNt.addNameTemplateText( CswNbtPropertySetRequestItem.PropertyName.Name );
-            RequestCuNt.addNameTemplateText( CswNbtPropertySetRequestItem.PropertyName.Name );
-            RequestMcNt.addNameTemplateText( CswNbtPropertySetRequestItem.PropertyName.Name );
-            RequestMdNt.addNameTemplateText( CswNbtPropertySetRequestItem.PropertyName.Name );
+            RequestCdNt.addNameTemplateText( CswNbtPropertySetRequestItem.PropertyName.Number );
+            RequestCdNt.addNameTemplateText( CswNbtPropertySetRequestItem.PropertyName.Description );
+
+            RequestCuNt.addNameTemplateText( CswNbtPropertySetRequestItem.PropertyName.Number );
+            RequestCuNt.addNameTemplateText( CswNbtPropertySetRequestItem.PropertyName.Description );
+
+            RequestMcNt.addNameTemplateText( CswNbtPropertySetRequestItem.PropertyName.Number );
+            RequestMcNt.addNameTemplateText( CswNbtPropertySetRequestItem.PropertyName.Description );
+
+            RequestMdNt.addNameTemplateText( CswNbtPropertySetRequestItem.PropertyName.Number );
+            RequestMdNt.addNameTemplateText( CswNbtPropertySetRequestItem.PropertyName.Description );
 
             //Grab Table/Preview layouts from Case 27071
 
