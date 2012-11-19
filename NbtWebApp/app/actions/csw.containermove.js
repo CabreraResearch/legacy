@@ -56,6 +56,7 @@
                         cswPrivate.containerGrid = Csw.wizard.nodeGrid(cswPublic.gridParent, {
                             hasMenu: false,
                             viewid: data.viewid,
+                            forceFit: false,
                             readonly: true,
                             showCheckboxes: true
                         });
