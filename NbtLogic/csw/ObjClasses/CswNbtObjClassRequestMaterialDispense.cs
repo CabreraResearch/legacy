@@ -210,7 +210,7 @@ namespace ChemSW.Nbt.ObjClasses
                     Ret += Quantity.Gestalt;
                     break;
                 case Types.Size:
-                    Ret += Count.Gestalt + " " + Size.Gestalt;
+                    Ret += Count.Gestalt + " x " + Size.Gestalt;
                     break;
             }
             Ret += " of " + Material.Gestalt;
@@ -308,17 +308,6 @@ namespace ChemSW.Nbt.ObjClasses
                                 else
                                 {
                                     JObject InitialQuantity = null;
-                                    //if( null != Size.RelatedNodeId && Int32.MinValue != Size.RelatedNodeId.PrimaryKey )
-                                    //{
-                                    //    CswNbtObjClassSize NodeAsSize = _CswNbtResources.Nodes[Size.RelatedNodeId];
-                                    //    if( null != NodeAsSize )
-                                    //    {
-                                    //        InitialQuantity = new JObject();
-                                    //        NodeAsSize.InitialQuantity.ToJSON( InitialQuantity );
-                                    //        ButtonData.Data["initialQuantity"] = InitialQuantity;
-                                    //    }
-                                    //}
-                                    //else 
                                     if( false == Quantity.Empty )
                                     {
                                         InitialQuantity = new JObject();
@@ -341,6 +330,7 @@ namespace ChemSW.Nbt.ObjClasses
                             case FulfillMenu.Move:
                                 ButtonData.Data["title"] = "Fulfill Request for " + Count.Value + " x " + Size.Gestalt + " of " + Material.Gestalt;
                                 ButtonData.Data["sizeid"] = Size.RelatedNodeId.ToString();
+                                ButtonData.Data["location"] = Location.Gestalt;
                                 ButtonData.Action = NbtButtonAction.move;
                                 break;
                         } //switch( ButtonData.SelectedText )

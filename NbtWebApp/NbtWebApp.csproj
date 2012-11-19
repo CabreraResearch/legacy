@@ -133,6 +133,7 @@
     <Compile Include="Services\Views.svc.cs">
       <DependentUpon>Views.svc</DependentUpon>
     </Compile>
+    <Compile Include="WebSvc\Logic\CISPro\CswNbtRequestDataModel.cs" />
     <Compile Include="WebSvc\Logic\CISPro\CswNbtWebServiceContainer.cs" />
     <Compile Include="WebSvc\Logic\CISPro\CswNbtWebServiceRequesting.cs" />
     <Compile Include="WebSvc\Logic\Labels\CswNbtLabelData.cs" />
