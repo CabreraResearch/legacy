@@ -945,6 +945,28 @@ namespace ChemSW.Nbt.ObjClasses
                 //DispenseForCertificate.RelatedNodeId = null;//TODO - uncomment when DispenseForCertificate is created
                 Status.Value = String.Empty;
             }
+            else if( LotControlled.Checked == Tristate.False )
+            {
+                //TODO - uncomment this if-else condition when Certificates have been implemented
+                //if( null != Certificate.RelatedNodeId )
+                //{ 
+                //    CswNbtObjClassCertificate CertificateNode = _CswNbtResources.Nodes.GetNode( Certificate.RelatedNodeId );
+                //    if( null != CertificateNode )
+                //    {
+                //        Status.Value = CertificateNode.Status.Value;
+                //        ExpirationDate.DateTimeValue = CertificateNode.ExpirationDate.DateTimeValue;
+                //    }
+                //}
+                //else
+                //{
+                    Status.Value = Statuses.LabUseOnly;
+                    CswNbtObjClassReceiptLot ReceiptLotNode = _CswNbtResources.Nodes.GetNode( ReceiptLot.RelatedNodeId );
+                    if( null != ReceiptLotNode )
+                    {
+                        ExpirationDate.DateTimeValue = ReceiptLotNode.ExpirationDate.DateTimeValue;
+                    }
+                //}
+            }
         }
         public CswNbtNodePropLogical Requisitionable { get { return ( _CswNbtNode.Properties[PropertyName.Requisitionable] ); } }
         public CswNbtNodePropRelationship LabelFormat { get { return ( _CswNbtNode.Properties[PropertyName.LabelFormat] ); } }
