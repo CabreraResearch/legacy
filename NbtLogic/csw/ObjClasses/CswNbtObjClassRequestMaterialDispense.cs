@@ -82,10 +82,16 @@ namespace ChemSW.Nbt.ObjClasses
             public const string Size = "Size";
 
             /// <summary>
-            /// For Dispense requests, the total amount(<see cref="CswNbtNodePropQuantity"/>) dispensed.
+            /// For By Bulk requests, the total amount(<see cref="CswNbtNodePropQuantity"/>) dispensed.
             /// <para>ServerManaged</para>
             /// </summary>
             public const string TotalDispensed = "Total Dispensed";
+
+            /// <summary>
+            /// For By Size requests, the total number(<see cref="CswNbtNodePropNumber"/>) moved.
+            /// <para>ServerManaged</para>
+            /// </summary>
+            public const string TotalMoved = "Total Moved";
 
             public static CswCommaDelimitedString MLMCmgTabProps = new CswCommaDelimitedString
             {
@@ -256,6 +262,7 @@ namespace ChemSW.Nbt.ObjClasses
             Quantity.SetOnPropChange( onQuantityPropChange );
             TotalDispensed.SetOnPropChange( onTotalDispensedPropChange );
             Material.SetOnPropChange( onMaterialPropChange );
+            TotalMoved.SetOnPropChange( onTotalMovedPropChange );
         }//afterPopulateProps()
 
         /// <summary>
@@ -413,6 +420,7 @@ namespace ChemSW.Nbt.ObjClasses
             if( Status.Value == Statuses.Pending )
             {
                 TotalDispensed.setHidden( value: true, SaveToDb: true );
+                TotalMoved.setHidden( value: true, SaveToDb: true );
                 Type.setHidden( value: true, SaveToDb: true );
                 Quantity.setReadOnly( value: false, SaveToDb: true );
                 Size.setReadOnly( value: false, SaveToDb: true );
@@ -434,9 +442,15 @@ namespace ChemSW.Nbt.ObjClasses
             }
             else
             {
-                if( Type.Value != Types.Size )
+                if( Type.Value == Types.Size )
+                {
+                    TotalDispensed.setHidden( value: true, SaveToDb: true );
+                    TotalMoved.setHidden( value: false, SaveToDb: true );
+                }
+                else
                 {
                     TotalDispensed.setHidden( value: false, SaveToDb: true );
+                    TotalMoved.setHidden( value: true, SaveToDb: true );
                 }
                 Type.setHidden( value: false, SaveToDb: true );
                 Quantity.setReadOnly( value: true, SaveToDb: true );
@@ -468,7 +482,10 @@ namespace ChemSW.Nbt.ObjClasses
                     }
                     break;
                 case Statuses.Moved:
-                    Fulfill.State = FulfillMenu.Complete;
+                    if( TotalMoved.Value >= Count.Value )
+                    {
+                        Fulfill.State = FulfillMenu.Complete;
+                    }
                     break;
                 case Statuses.Ordered:
                     Fulfill.State = FulfillMenu.Receive;
@@ -481,13 +498,11 @@ namespace ChemSW.Nbt.ObjClasses
             switch( Type.Value )
             {
                 case Types.Size:
-                    TotalDispensed.setHidden( value: true, SaveToDb: true );
                     Fulfill.MenuOptions = FulfillMenu.Options.Remove( FulfillMenu.Dispense ).ToString();
                     Fulfill.State = FulfillMenu.Move;
                     Quantity.clearQuantity( ForceClear: true );
                     break;
                 case Types.Bulk:
-                    TotalDispensed.setHidden( value: false, SaveToDb: true );
                     Fulfill.MenuOptions = FulfillMenu.Options.Remove( FulfillMenu.Move ).ToString();
                     Fulfill.State = FulfillMenu.Dispense;
                     Size.clearRelationship();
@@ -547,7 +562,8 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropQuantity TotalDispensed { get { return _CswNbtNode.Properties[PropertyName.TotalDispensed]; } }
         private void onTotalDispensedPropChange( CswNbtNodeProp Prop )
         {
-            if( Status.Value != Statuses.Pending &&
+            if( Type.Value == Types.Bulk &&
+                Status.Value != Statuses.Pending &&
                 Status.Value != Statuses.Cancelled &&
                 Status.Value != Statuses.Completed )
             {
@@ -563,15 +579,26 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
-        public CswNbtNodePropTimeInterval ReorderFrequency { get { return _CswNbtNode.Properties[PropertyName.ReorderFrequency]; } }
+        public CswNbtNodePropNumber TotalMoved { get { return _CswNbtNode.Properties[PropertyName.TotalMoved]; } }
+        private void onTotalMovedPropChange( CswNbtNodeProp Prop )
+        {
+            if( Type.Value == Types.Size &&
+                TotalMoved.Value >= Count.Value )
+            {
+                Status.Value = Statuses.Moved;
+                Fulfill.State = FulfillMenu.Complete;
+            }
+        }
+
+        public CswNbtNodePropGrid ReceiptLotsReceived { get { return _CswNbtNode.Properties[PropertyName.ReceiptLotsReceived]; } }
         public CswNbtNodePropDateTime NextReorderDate { get { return _CswNbtNode.Properties[PropertyName.NextReorderDate]; } }
-        public CswNbtNodePropRelationship Level { get { return _CswNbtNode.Properties[PropertyName.Level]; } }
         public CswNbtNodePropLogical IsBatch { get { return _CswNbtNode.Properties[PropertyName.IsBatch]; } }
         public CswNbtNodePropLogical Batch { get { return _CswNbtNode.Properties[PropertyName.Batch]; } }
         public CswNbtNodePropLogical Reorder { get { return _CswNbtNode.Properties[PropertyName.Reorder]; } }
-        public CswNbtNodePropGrid ReceiptLotsReceived { get { return _CswNbtNode.Properties[PropertyName.ReceiptLotsReceived]; } }
         public CswNbtNodePropLogical GoodsReceived { get { return _CswNbtNode.Properties[PropertyName.GoodsReceived]; } }
         public CswNbtNodePropRelationship ReceiptLotToDispense { get { return _CswNbtNode.Properties[PropertyName.ReceiptLotToDispense]; } }
+        public CswNbtNodePropRelationship Level { get { return _CswNbtNode.Properties[PropertyName.Level]; } }
+        public CswNbtNodePropTimeInterval ReorderFrequency { get { return _CswNbtNode.Properties[PropertyName.ReorderFrequency]; } }
 
         #endregion
     }//CswNbtObjClassRequestMaterialDispense

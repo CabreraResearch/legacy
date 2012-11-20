@@ -1067,6 +1067,15 @@ namespace ChemSW.Nbt.Schema
                     SetValOnAdd = false
                 } );
 
+                CswNbtMetaDataObjectClassProp TotalMovedOcp = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( RequestMaterialDispenseOc )
+                {
+                    PropName = CswNbtObjClassRequestMaterialDispense.PropertyName.TotalMoved,
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Number,
+                    ServerManaged = true,
+                    SetValOnAdd = false
+                } );
+                _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( TotalMovedOcp, 0 );
+
                 CswNbtMetaDataObjectClassProp ReorderOcp = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( RequestMaterialDispenseOc )
                 {
                     PropName = CswNbtObjClassRequestMaterialDispense.PropertyName.Reorder,
@@ -1242,7 +1251,7 @@ namespace ChemSW.Nbt.Schema
             }
             _resetBlame();
         }
-     public void _addGeneratorTargetCreatedDate()
+        public void _addGeneratorTargetCreatedDate()
         {
             _acceptBlame( CswDeveloper.SS, 28069 );
 
@@ -1261,11 +1270,11 @@ namespace ChemSW.Nbt.Schema
                 FieldType = CswNbtMetaDataFieldType.NbtFieldType.DateTime,
                 ServerManaged = true
             } );
-            
+
             _resetBlame();
         }
 
-        
+
         private void _createaNewMaterialComponentProp( CswDeveloper Dev, Int32 CaseNo )
         {
             _acceptBlame( Dev, CaseNo );
@@ -1460,7 +1469,7 @@ namespace ChemSW.Nbt.Schema
 
             _resetBlame();
         }
-        
+
         private void _makeContainerLocationOc()
         {
             #region Case 24489 - ContainerLocation ObjectClass
@@ -1590,7 +1599,7 @@ namespace ChemSW.Nbt.Schema
             _createRequestMaterialDispense( CswDeveloper.CF, 27942 );
             _createRequestMaterialCreate( CswDeveloper.CF, 27871 );
 
-            _makeContainerGroup();            
+            _makeContainerGroup();
             _newContainerProperties27866();
             _makeContainerLocationOc();
             _createaNewMaterialComponentProp( CswDeveloper.MB, 27864 );
@@ -1598,7 +1607,7 @@ namespace ChemSW.Nbt.Schema
             _createNewMaterialProps( CswDeveloper.MB, 27864 );
 
             _addGeneratorTargetCreatedDate();
-            
+
             #endregion URSULA
 
             //THIS GOES LAST!

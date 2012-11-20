@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using ChemSW.Core;
 using ChemSW.Exceptions;
@@ -114,11 +115,19 @@ namespace ChemSW.Nbt.WebServices
                     {
                         case CswNbtObjClassRequestMaterialDispense.Types.Size:
                             CswNbtObjClassRequestMaterialDispense RequestNode = CswNbtObjClassRequestMaterialDispense.fromPropertySet( RequestAsPropSet );
-                            if( moveContainers( NbtResources, RequestNode, Request ) )
+                            Int32 ContainersMoved = moveContainers( NbtResources, RequestNode, Request );
+                            Ret.Data.Succeeded = ContainersMoved > 0;
+                            if( Ret.Data.Succeeded )
                             {
-                                Ret.Data.Succeeded = true;
+                                if( CswTools.IsDouble( RequestNode.TotalMoved.Value ) )
+                                {
+                                    RequestNode.TotalMoved.Value += ContainersMoved;
+                                }
+                                else
+                                {
+                                    RequestNode.TotalMoved.Value = ContainersMoved;
+                                }
                                 RequestNode.Status.Value = CswNbtObjClassRequestMaterialDispense.Statuses.Moved;
-                                RequestNode.Fulfill.State = CswNbtObjClassRequestMaterialDispense.FulfillMenu.Complete;
                                 RequestNode.postChanges( ForceUpdate: false );
                             }
                             break;
@@ -127,12 +136,11 @@ namespace ChemSW.Nbt.WebServices
             }
         }
 
-        private static bool moveContainers( CswNbtResources NbtResources, CswNbtObjClassRequestMaterialDispense RequestNode, CswNbtRequestDataModel.RequestFulfill Request )
+        private static Int32 moveContainers( CswNbtResources NbtResources, CswNbtObjClassRequestMaterialDispense RequestNode, CswNbtRequestDataModel.RequestFulfill Request )
         {
-            bool Ret = true;
+            Int32 Ret = 0;
             if( null != RequestNode )
             {
-                Ret = Request.ContainerIds.Count > 0;
                 foreach( string ContainerId in Request.ContainerIds )
                 {
                     CswNbtObjClassContainer ContainerNode = NbtResources.Nodes[ContainerId];
@@ -141,11 +149,7 @@ namespace ChemSW.Nbt.WebServices
                         ContainerNode.Location.SelectedNodeId = RequestNode.Location.SelectedNodeId;
                         ContainerNode.Location.RefreshNodeName();
                         ContainerNode.postChanges( ForceUpdate: false );
-                        Ret = true && Ret;
-                    }
-                    else
-                    {
-                        Ret = false;
+                        Ret += 1;
                     }
                 }
             }
