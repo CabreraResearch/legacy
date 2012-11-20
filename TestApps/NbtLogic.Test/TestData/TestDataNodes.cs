@@ -49,7 +49,7 @@ namespace ChemSw.Nbt.Test
             CswNbtObjClassContainerLocation ContainerLocationNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( _getNodeTypeId( "Container Location" ), CswNbtNodeCollection.MakeNodeOperation.DoNothing );
             if( null == ContainerNode )
             {
-                ContainerNode = createContainerNode();
+                ContainerNode = createContainerNode( LocationId: LocationId );
             }
             ContainerLocationNode.Container.RelatedNodeId = ContainerNode.NodeId;
             ContainerLocationNode.Action.Value = Action;

@@ -85,7 +85,8 @@ namespace ChemSw.Nbt.Test
             CswNbtObjClassContainerLocation ContainerLocationNode = TestData.Nodes.createContainerLocationNode(
                 ContainerNode.Node,
                 CswNbtObjClassContainerLocation.ActionOptions.MoveToLocation.ToString(),
-                LocationId: ContainerLocationLocId );
+                LocationId: ContainerLocationLocId,
+                Type: CswNbtObjClassContainerLocation.TypeOptions.Scan.ToString() );
             Assert.AreNotEqual( ContainerLocationNode.Location.SelectedNodeId, ContainerNode.Location.SelectedNodeId );
             Assert.AreEqual( CswNbtObjClassContainerLocation.StatusOptions.WrongLocation, ContainerLocationNode.Status.Value );
 
@@ -115,7 +116,8 @@ namespace ChemSw.Nbt.Test
             CswNbtObjClassContainerLocation ContainerLocationNode = TestData.Nodes.createContainerLocationNode(
                 ContainerNode.Node,
                 CswNbtObjClassContainerLocation.ActionOptions.MoveToLocation.ToString(),
-                LocationId: ContainerLocationLocId );
+                LocationId: ContainerLocationLocId,
+                Type: CswNbtObjClassContainerLocation.TypeOptions.Scan.ToString() );
             Assert.AreNotEqual( ContainerLocationNode.Location.SelectedNodeId, ContainerNode.Location.SelectedNodeId );
             Assert.AreEqual( CswNbtObjClassContainerLocation.StatusOptions.DisposedAtWrongLocation, ContainerLocationNode.Status.Value );
 
@@ -146,7 +148,8 @@ namespace ChemSw.Nbt.Test
             CswNbtObjClassContainerLocation ContainerLocationNode = TestData.Nodes.createContainerLocationNode(
                 ContainerNode.Node,
                 CswNbtObjClassContainerLocation.ActionOptions.UndisposeAndMove.ToString(),
-                LocationId: ContainerLocationLocId );
+                LocationId: ContainerLocationLocId,
+                Type: CswNbtObjClassContainerLocation.TypeOptions.Scan.ToString() );
             Assert.AreNotEqual( ContainerLocationNode.Location.SelectedNodeId, ContainerNode.Location.SelectedNodeId );
             Assert.AreEqual( CswNbtObjClassContainerLocation.StatusOptions.DisposedAtWrongLocation, ContainerLocationNode.Status.Value );
 
