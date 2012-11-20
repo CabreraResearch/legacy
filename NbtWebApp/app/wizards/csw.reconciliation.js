@@ -25,6 +25,8 @@
                 stepOneComplete: false,
                 stepTwoComplete: false,
                 stepThreeComplete: false,
+                isCurrent: true,
+                currentDate: '',
                 state: {
                     LocationId: '',
                     LocationName: '',
@@ -130,9 +132,35 @@
                             cellvalign: 'top',
                             FirstCellRightAlign: true
                         });
+                        var rowNum = 1;
+                        //ViewMode
+                        locationDatesTable.cell(rowNum, 1).span({ text: 'View Mode:' }).addClass('propertylabel');
+                        var viewModeSelect = locationDatesTable.cell(rowNum, 2).select({
+                            name: 'ReconciliationViewModeSelect',
+                            values: ['Current','History'],
+                            onChange: function () {
+                                cswPrivate.isCurrent = Csw.bool(viewModeSelect.val() === 'Current');
+                                if(cswPrivate.isCurrent) {
+                                    endDatePicker.hide();
+                                    staticEndDate.show();
+                                    startDatePicker.setMaxDate(cswPrivate.getCurrentDate());
+                                    endDatePicker.setMaxDate(cswPrivate.getCurrentDate());
+                                    cswPrivate.state.EndDate = cswPrivate.getCurrentDate();
+                                } else {
+                                    endDatePicker.show();
+                                    staticEndDate.hide();
+                                    endDatePicker.setMaxDate(cswPrivate.getCurrentDate());
+                                    cswPrivate.state.EndDate = endDatePicker.val().date;
+                                    startDatePicker.setMaxDate(endDatePicker.val().date);
+                                    cswPrivate.state.StartDate = startDatePicker.val().date;
+                                }
+                                cswPrivate.reinitSteps(2);
+                            }
+                        });
+                        rowNum++;
                         //Location
-                        locationDatesTable.cell(1, 1).span({ text: 'Location:' }).addClass('propertylabel');
-                        var locationControl = locationDatesTable.cell(1, 2).location({
+                        locationDatesTable.cell(rowNum, 1).span({ text: 'Location:' }).addClass('propertylabel');
+                        var locationControl = locationDatesTable.cell(rowNum, 2).location({
                             name: '',
                             onChange: function (locationId, locationName) {
                                 cswPrivate.state.LocationId = locationId;
@@ -142,9 +170,9 @@
                         });
                         cswPrivate.state.LocationId = locationControl.val();
                         cswPrivate.state.LocationName = locationControl.selectedName();
-                        locationDatesTable.cell(1, 2).br();
+                        rowNum++;
                         //IncludeChildLocations
-                        var checkBoxTable = locationDatesTable.cell(1, 2).table({
+                        var checkBoxTable = locationDatesTable.cell(rowNum, 2).table({
                             name: 'checkboxTable',
                             cellalign: 'left',
                             cellvalign: 'middle'
@@ -156,9 +184,10 @@
                             })
                         });
                         checkBoxTable.cell(1, 2).span({ text: ' Include child locations' });
+                        rowNum++;
                         //StartDate
-                        locationDatesTable.cell(2, 1).span({ text: 'Start Date:' }).addClass('propertylabel');
-                        var startDatePicker = locationDatesTable.cell(2, 2).dateTimePicker({
+                        locationDatesTable.cell(rowNum, 1).span({ text: 'Start Date:' }).addClass('propertylabel');
+                        var startDatePicker = locationDatesTable.cell(rowNum, 2).dateTimePicker({
                             name: 'startDate',
                             Date: cswPrivate.getCurrentDate(),
                             isRequired: true,
@@ -169,9 +198,10 @@
                             }
                         });
                         cswPrivate.state.StartDate = startDatePicker.val().date;
+                        rowNum++;
                         //EndDate
-                        locationDatesTable.cell(3, 1).span({ text: 'End Date:' }).addClass('propertylabel');
-                        var endDatePicker = locationDatesTable.cell(3, 2).dateTimePicker({
+                        locationDatesTable.cell(rowNum, 1).span({ text: 'End Date:' }).addClass('propertylabel');
+                        var endDatePicker = locationDatesTable.cell(rowNum, 2).dateTimePicker({
                             name: 'endDate',
                             Date: cswPrivate.getCurrentDate(),
                             isRequired: true,
@@ -179,10 +209,13 @@
                             onChange: function () {
                                 cswPrivate.state.EndDate = endDatePicker.val().date;
                                 startDatePicker.setMaxDate(cswPrivate.state.EndDate);
+                                cswPrivate.state.StartDate = startDatePicker.val().date;
                                 cswPrivate.reinitSteps(2);
                             }
                         });
+                        endDatePicker.hide();
                         cswPrivate.state.EndDate = endDatePicker.val().date;
+                        var staticEndDate = locationDatesTable.cell(rowNum, 2).span({ text: 'Today' });
 
                         cswPrivate.stepOneComplete = true;
                     }
@@ -423,17 +456,21 @@
 
             //#region Helper Functions
             cswPrivate.getCurrentDate = function () {
-                var today = new Date();
-                var dd = today.getDate();
-                var mm = today.getMonth() + 1; //January is 0!
-                var yyyy = today.getFullYear();
-                if (dd < 10) {
-                    dd = '0' + dd;
-                } if (mm < 10) {
-                    mm = '0' + mm;
+                if (Csw.isNullOrEmpty(cswPrivate.currentDate)) {
+                    var today = new Date();
+                    var dd = today.getDate();
+                    var mm = today.getMonth() + 1; //January is 0!
+                    var yyyy = today.getFullYear();
+                    if (dd < 10) {
+                        dd = '0' + dd;
+                    }
+                    if (mm < 10) {
+                        mm = '0' + mm;
+                    }
+                    today = mm + '/' + dd + '/' + yyyy;
+                    cswPrivate.currentDate = today;
                 }
-                today = mm + '/' + dd + '/' + yyyy;
-                return today;
+                return cswPrivate.currentDate;
             };
             
             cswPrivate.makeActionPicklist = function (cellId, record) {
