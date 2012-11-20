@@ -3607,8 +3607,12 @@ namespace ChemSW.Nbt.WebServices
                 AuthenticationStatus = _attemptRefresh();
                 if( AuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
-                    _CswNbtResources.SessionDataMgr.saveSessionData( _CswNbtResources.Actions[CswNbtAction.ActionNameStringToEnum( ActionName )], true );
-                    ReturnVal = new JObject( new JProperty( "succeeded", "true" ) );
+                    CswNbtAction Action = _CswNbtResources.Actions[CswNbtAction.ActionNameStringToEnum( ActionName )];
+                    if( null != Action && Action.Name != CswNbtActionName.Unknown )
+                    {
+                        _CswNbtResources.SessionDataMgr.saveSessionData( Action, true );
+                        ReturnVal = new JObject( new JProperty( "succeeded", "true" ) );
+                    }
                 }
                 _deInitResources();
             }

@@ -13,7 +13,7 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Schema Update for case 27942
     /// </summary>
-    public class CswUpdateSchema_RequestItems_Case27942 : CswUpdateSchemaTo
+    public class CswUpdateSchema_01U_RequestItems_Case27942 : CswUpdateSchemaTo
     {
         public override CswDeveloper Author
         {
@@ -155,10 +155,17 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataNodeType RequestMdNt = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( NbtObjectClass.RequestMaterialDispenseClass, "Request Material Dispense", "Requests" );
 
             //Grab name template from Case 27703
-            RequestCdNt.addNameTemplateText( CswNbtPropertySetRequestItem.PropertyName.Name );
-            RequestCuNt.addNameTemplateText( CswNbtPropertySetRequestItem.PropertyName.Name );
-            RequestMcNt.addNameTemplateText( CswNbtPropertySetRequestItem.PropertyName.Name );
-            RequestMdNt.addNameTemplateText( CswNbtPropertySetRequestItem.PropertyName.Name );
+            RequestCdNt.addNameTemplateText( CswNbtPropertySetRequestItem.PropertyName.Number );
+            RequestCdNt.addNameTemplateText( CswNbtPropertySetRequestItem.PropertyName.Description );
+
+            RequestCuNt.addNameTemplateText( CswNbtPropertySetRequestItem.PropertyName.Number );
+            RequestCuNt.addNameTemplateText( CswNbtPropertySetRequestItem.PropertyName.Description );
+
+            RequestMcNt.addNameTemplateText( CswNbtPropertySetRequestItem.PropertyName.Number );
+            RequestMcNt.addNameTemplateText( CswNbtPropertySetRequestItem.PropertyName.Description );
+
+            RequestMdNt.addNameTemplateText( CswNbtPropertySetRequestItem.PropertyName.Number );
+            RequestMdNt.addNameTemplateText( CswNbtPropertySetRequestItem.PropertyName.Description );
 
             //Grab Table/Preview layouts from Case 27071
 
@@ -389,7 +396,12 @@ namespace ChemSW.Nbt.Schema
             #endregion Request Material Dispense Layout
 
             #region Request Material Create Layout Case 27871
-
+            CswNbtMetaDataNodeTypeProp RmcMaterialTypeNtp = RequestMcNt.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestMaterialCreate.PropertyName.NewMaterialType );
+            CswNbtMetaDataNodeType ChemicalNt = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Chemical" );
+            if( null != ChemicalNt && ChemicalNt.getObjectClass().ObjectClass == NbtObjectClass.MaterialClass )
+            {
+                RmcMaterialTypeNtp.DefaultValue.AsNodeTypeSelect.SelectedNodeTypeIds.Add( ChemicalNt.NodeTypeId.ToString() );
+            }
             CswNbtMetaDataNodeTypeProp RmcDescriptionNtp = RequestMcNt.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestMaterialCreate.PropertyName.Description );
             CswNbtMetaDataNodeTypeProp RmcMaterialNameNtp = RequestMcNt.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestMaterialCreate.PropertyName.NewMaterialTradename );
             CswNbtMetaDataNodeTypeProp RmcSupplierNtp = RequestMcNt.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestMaterialCreate.PropertyName.NewMaterialSupplier );
@@ -413,7 +425,8 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataNodeTypeTab RmcNodeTypeTab = RequestMcNt.getFirstNodeTypeTab();
             RmcNumberNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, DoMove: true, DisplayRow: 1, DisplayColumn: 1, TabId: RmcNodeTypeTab.TabId );
             RmcDescriptionNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, DoMove: true, InsertAfterProp: RmcNumberNtp );
-            RmcMaterialNameNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, DoMove: true, InsertAfterProp: RmcNumberNtp );
+            RmcMaterialTypeNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, DoMove: true, InsertAfterProp: RmcNumberNtp );
+            RmcMaterialNameNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, DoMove: true, InsertAfterProp: RmcMaterialTypeNtp );
             RmcSupplierNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, DoMove: true, InsertAfterProp: RmcMaterialNameNtp );
             RmcPartNoNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, DoMove: true, InsertAfterProp: RmcSupplierNtp );
             RmcNeededByNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, DoMove: true, InsertAfterProp: RmcPartNoNtp );
@@ -489,9 +502,9 @@ namespace ChemSW.Nbt.Schema
             CswNbtViewRelationship RequestItemsVr = DispenseRequestsView.AddViewRelationship( RequestContainerDispenseOc, true );
 
             DispenseRequestsView.AddViewPropertyAndFilter( RequestItemsVr, RequestContainerDispenseOc.getObjectClassProp( CswNbtObjClassRequestContainerDispense.PropertyName.AssignedTo ), "me" );
-            DispenseRequestsView.AddViewPropertyAndFilter( RequestItemsVr, StatusOcp, CswNbtObjClassRequestItem.Statuses.Completed, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.NotEquals );
-            DispenseRequestsView.AddViewPropertyAndFilter( RequestItemsVr, StatusOcp, CswNbtObjClassRequestItem.Statuses.Cancelled, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.NotEquals );
-            DispenseRequestsView.AddViewPropertyAndFilter( RequestItemsVr, StatusOcp, CswNbtObjClassRequestItem.Statuses.Dispensed, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.NotEquals );
+            DispenseRequestsView.AddViewPropertyAndFilter( RequestItemsVr, StatusOcp, CswNbtObjClassRequestContainerDispense.Statuses.Completed, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.NotEquals );
+            DispenseRequestsView.AddViewPropertyAndFilter( RequestItemsVr, StatusOcp, CswNbtObjClassRequestContainerDispense.Statuses.Cancelled, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.NotEquals );
+            DispenseRequestsView.AddViewPropertyAndFilter( RequestItemsVr, StatusOcp, CswNbtObjClassRequestContainerDispense.Statuses.Dispensed, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.NotEquals );
             DispenseRequestsView.save();
 
             #endregion Views

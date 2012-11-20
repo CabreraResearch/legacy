@@ -116,10 +116,11 @@ namespace ChemSW.Nbt.ObjClasses
             public const string Ordered = "Ordered";
             public const string Received = "Received";
             public const string Dispensed = "Dispensed";
+            public const string Moved = "Moved";
 
             public static readonly CswCommaDelimitedString Options = new CswCommaDelimitedString
                 {
-                    Pending, Submitted, Ordered, Received, Dispensed, Completed, Cancelled
+                    Pending, Submitted, Ordered, Received, Moved, Dispensed, Completed, Cancelled
                 };
         }
 
@@ -131,10 +132,11 @@ namespace ChemSW.Nbt.ObjClasses
             public const string Order = "Order";
             public const string Receive = "Receive";
             public const string Dispense = "Dispense from Container";
+            public const string Move = "Move Containers";
 
             public static readonly CswCommaDelimitedString Options = new CswCommaDelimitedString
                 {
-                    Order, Receive, Dispense, Complete, Cancel
+                    Order, Receive, Move, Dispense, Complete, Cancel
                 };
         }
 
@@ -208,7 +210,7 @@ namespace ChemSW.Nbt.ObjClasses
                     Ret += Quantity.Gestalt;
                     break;
                 case Types.Size:
-                    Ret += Count.Gestalt + " " + Size.Gestalt;
+                    Ret += Count.Gestalt + " x " + Size.Gestalt;
                     break;
             }
             Ret += " of " + Material.Gestalt;
@@ -236,8 +238,6 @@ namespace ChemSW.Nbt.ObjClasses
                     Name.Text = "Request " + Quantity.Quantity + Quantity.CachedUnitName;
                 }
             }
-
-
         }
 
         /// <summary>
@@ -248,7 +248,6 @@ namespace ChemSW.Nbt.ObjClasses
 
         }
 
-
         /// <summary>
         /// 
         /// </summary>
@@ -258,8 +257,6 @@ namespace ChemSW.Nbt.ObjClasses
             TotalDispensed.SetOnPropChange( onTotalDispensedPropChange );
             Material.SetOnPropChange( onMaterialPropChange );
         }//afterPopulateProps()
-
-
 
         /// <summary>
         /// 
@@ -274,42 +271,6 @@ namespace ChemSW.Nbt.ObjClasses
                         CswNbtObjClassContainer NodeAsContainer = null;
                         switch( ButtonData.SelectedText )
                         {
-                            case FulfillMenu.Dispense:
-                                //TODO: Someone will need to provide this container data
-                                NodeAsContainer = _CswNbtResources.Nodes[CswConvert.ToString( ButtonData.Data["containerid"] )];
-                                if( null != NodeAsContainer && null != NodeAsContainer.Dispense.NodeTypeProp )
-                                {
-                                    NbtButtonData DispenseData = new NbtButtonData( NodeAsContainer.Dispense.NodeTypeProp );
-                                    NodeAsContainer.onButtonClick( DispenseData );
-                                    ButtonData.clone( DispenseData );
-                                }
-                                else
-                                {
-                                    //ButtonData.Data["containernodetypeid"] = Container.TargetId;
-                                    //ButtonData.Data["containerobjectclassid"] = Container.TargetId;
-                                    JObject InitialQuantity = null;
-                                    if( null != Size.RelatedNodeId && Int32.MinValue != Size.RelatedNodeId.PrimaryKey )
-                                    {
-                                        CswNbtObjClassSize NodeAsSize = _CswNbtResources.Nodes[Size.RelatedNodeId];
-                                        if( null != NodeAsSize )
-                                        {
-                                            InitialQuantity = new JObject();
-                                            NodeAsSize.InitialQuantity.ToJSON( InitialQuantity );
-                                            ButtonData.Data["initialQuantity"] = InitialQuantity;
-                                        }
-                                    }
-                                    else if( false == Quantity.Empty )
-                                    {
-                                        InitialQuantity = new JObject();
-                                        Quantity.ToJSON( InitialQuantity );
-                                    }
-                                    if( null != InitialQuantity )
-                                    {
-                                        ButtonData.Data["initialQuantity"] = InitialQuantity;
-                                    }
-                                    ButtonData.Action = NbtButtonAction.dispense;
-                                }
-                                break;
                             case FulfillMenu.Order:
                                 ButtonData.Action = NbtButtonAction.editprop;
                                 ButtonData.Data["nodeid"] = NodeId.ToString();
@@ -334,11 +295,51 @@ namespace ChemSW.Nbt.ObjClasses
                                     }
                                 }
                                 break;
+
+                            case FulfillMenu.Dispense:
+                                //TODO: Someone will need to provide this container data
+                                NodeAsContainer = _CswNbtResources.Nodes[CswConvert.ToString( ButtonData.Data["containerid"] )];
+                                if( null != NodeAsContainer && null != NodeAsContainer.Dispense.NodeTypeProp )
+                                {
+                                    NbtButtonData DispenseData = new NbtButtonData( NodeAsContainer.Dispense.NodeTypeProp );
+                                    NodeAsContainer.onButtonClick( DispenseData );
+                                    ButtonData.clone( DispenseData );
+                                }
+                                else
+                                {
+                                    JObject InitialQuantity = null;
+                                    if( false == Quantity.Empty )
+                                    {
+                                        InitialQuantity = new JObject();
+                                        Quantity.ToJSON( InitialQuantity );
+                                    }
+                                    if( null != InitialQuantity )
+                                    {
+                                        ButtonData.Data["initialQuantity"] = InitialQuantity;
+                                    }
+                                    string Title = "Fulfill Request for " + Quantity.Gestalt + " of " + Material.Gestalt;
+                                    if( TotalDispensed.Quantity > 0 )
+                                    {
+                                        Title += " (" + TotalDispensed.Gestalt + ") dispensed.";
+                                    }
+                                    ButtonData.Data["title"] = Title;
+                                    ButtonData.Action = NbtButtonAction.dispense;
+                                }
+                                break;
+
+                            case FulfillMenu.Move:
+                                ButtonData.Data["title"] = "Fulfill Request for " + Count.Value + " x " + Size.Gestalt + " of " + Material.Gestalt;
+                                ButtonData.Data["sizeid"] = Size.RelatedNodeId.ToString();
+                                ButtonData.Data["location"] = Location.Gestalt;
+                                ButtonData.Action = NbtButtonAction.move;
+                                break;
                         } //switch( ButtonData.SelectedText )
 
                         _getNextStatus( ButtonData.SelectedText );
                         ButtonData.Data["requestitem"] = ButtonData.Data["requestitem"] ?? new JObject();
+                        ButtonData.Data["requestitem"]["requestMode"] = Type.Value.ToLower();
                         ButtonData.Data["requestitem"]["requestitemid"] = NodeId.ToString();
+                        ButtonData.Data["requestitem"]["inventorygroupid"] = InventoryGroup.RelatedNodeId.ToString();
                         ButtonData.Data["requestitem"]["materialid"] = ( Material.RelatedNodeId ?? new CswPrimaryKey() ).ToString();
                         ButtonData.Data["requestitem"]["locationid"] = ( Location.SelectedNodeId ?? new CswPrimaryKey() ).ToString();
                         break; //case PropertyName.Fulfill:
@@ -356,6 +357,9 @@ namespace ChemSW.Nbt.ObjClasses
                     break;
                 case FulfillMenu.Complete:
                     setNextStatus( Statuses.Completed );
+                    break;
+                case FulfillMenu.Move:
+                    setNextStatus( Statuses.Moved );
                     break;
                 case FulfillMenu.Order:
                     setNextStatus( Statuses.Ordered );
@@ -383,6 +387,12 @@ namespace ChemSW.Nbt.ObjClasses
                     }
                     break;
                 case Statuses.Dispensed:
+                    if( StatusVal == Statuses.Cancelled || StatusVal == Statuses.Completed )
+                    {
+                        Status.Value = StatusVal;
+                    }
+                    break;
+                case Statuses.Moved:
                     if( StatusVal == Statuses.Cancelled || StatusVal == Statuses.Completed )
                     {
                         Status.Value = StatusVal;
@@ -424,7 +434,10 @@ namespace ChemSW.Nbt.ObjClasses
             }
             else
             {
-                TotalDispensed.setHidden( value: false, SaveToDb: true );
+                if( Type.Value != Types.Size )
+                {
+                    TotalDispensed.setHidden( value: false, SaveToDb: true );
+                }
                 Type.setHidden( value: false, SaveToDb: true );
                 Quantity.setReadOnly( value: true, SaveToDb: true );
                 Size.setReadOnly( value: true, SaveToDb: true );
@@ -454,7 +467,9 @@ namespace ChemSW.Nbt.ObjClasses
                         Fulfill.State = FulfillMenu.Complete;
                     }
                     break;
-
+                case Statuses.Moved:
+                    Fulfill.State = FulfillMenu.Complete;
+                    break;
                 case Statuses.Ordered:
                     Fulfill.State = FulfillMenu.Receive;
                     break;
@@ -466,9 +481,15 @@ namespace ChemSW.Nbt.ObjClasses
             switch( Type.Value )
             {
                 case Types.Size:
+                    TotalDispensed.setHidden( value: true, SaveToDb: true );
+                    Fulfill.MenuOptions = FulfillMenu.Options.Remove( FulfillMenu.Dispense ).ToString();
+                    Fulfill.State = FulfillMenu.Move;
                     Quantity.clearQuantity( ForceClear: true );
                     break;
                 case Types.Bulk:
+                    TotalDispensed.setHidden( value: false, SaveToDb: true );
+                    Fulfill.MenuOptions = FulfillMenu.Options.Remove( FulfillMenu.Move ).ToString();
+                    Fulfill.State = FulfillMenu.Dispense;
                     Size.clearRelationship();
                     Count.Value = Double.NaN;
                     break;
@@ -482,9 +503,6 @@ namespace ChemSW.Nbt.ObjClasses
             Count.setHidden( value: false == QuantityDisabled, SaveToDb: true );
 
             Type.setReadOnly( value: true, SaveToDb: true );
-
-            Fulfill.MenuOptions = FulfillMenu.Options.ToString();
-            Fulfill.State = FulfillMenu.Order;
         }
 
         #endregion
