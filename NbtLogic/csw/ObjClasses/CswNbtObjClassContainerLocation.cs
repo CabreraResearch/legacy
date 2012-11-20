@@ -75,7 +75,7 @@ namespace ChemSW.Nbt.ObjClasses
                 return ret ?? NotScanned;
             }
 
-            public static readonly StatusOptions Correct = new StatusOptions( "Received, Moved, or Dispensed, or Disposed" );
+            public static readonly StatusOptions Correct = new StatusOptions( "Received, Moved, Dispensed, or Disposed" );
             public static readonly StatusOptions ScannedCorrect = new StatusOptions( "Scanned Correct" );
             public static readonly StatusOptions Missing = new StatusOptions( "Scanned, but already marked Missing" );
             public static readonly StatusOptions WrongLocation = new StatusOptions( "Scanned at Wrong Location" );

@@ -59,7 +59,7 @@ namespace ChemSW.Nbt.Actions
                             {
                                 ContainersTree.goToNthChild( 0 );
                                 CswNbtObjClassContainerLocation ContainerLocationNode = ContainersTree.getNodeForCurrentPosition();
-                                _incrementContainerCount( Data.ContainerStatistics, ContainerLocationNode.Status.Value, ContainerLocationNode.ContainerScan.Text );
+                                _incrementContainerCount( Data.ContainerStatistics, ContainerLocationNode.Status.Value, ContainerLocationNode.Type.Value );
                                 ContainersTree.goToParentNode();
                             }
                             else
@@ -243,14 +243,14 @@ namespace ChemSW.Nbt.Actions
             }
         }
 
-        private void _incrementContainerCount( IEnumerable<ContainerData.ReconciliationStatistics> Stats, String Status, String Scan = null )
+        private void _incrementContainerCount( IEnumerable<ContainerData.ReconciliationStatistics> Stats, String Status, String Type = null )
         {
             foreach( ContainerData.ReconciliationStatistics Stat in Stats )
             {
                 if( Stat.Status == Status )
                 {
                     Stat.ContainerCount += 1;
-                    if( false == String.IsNullOrEmpty( Scan ) )
+                    if( Type == CswNbtObjClassContainerLocation.TypeOptions.Scan.ToString() )
                     {
                         Stat.AmountScanned += 1;
                     }
