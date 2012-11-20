@@ -177,17 +177,19 @@ namespace ChemSW.Nbt.PropTypes
             }
             set
             {
-                if( value != null &&
-                    false == string.IsNullOrEmpty( value.TableName ) &&
-                    Int32.MinValue != value.PrimaryKey ) //&& value.TableName == "nodes" )
+                CswPrimaryKey PotentialKey = CswConvert.ToPrimaryKey( value );
+
+                if( CswTools.IsPrimaryKey( PotentialKey ) &&
+                    false == string.IsNullOrEmpty( PotentialKey.TableName ) &&
+                    Int32.MinValue != PotentialKey.PrimaryKey ) //&& value.TableName == "nodes" )
                 {
                     if( value.TableName != TargetTableName )
                     {
-                        throw new CswDniException( ErrorType.Error, "Invalid reference", "CswNbtNodePropRelationship.RelatedNodeId requires a primary key from tablename '" + TargetTableName + "' but got one from tablename '" + value.TableName + "' instead." );
+                        throw new CswDniException( ErrorType.Error, "Invalid reference", "CswNbtNodePropRelationship.RelatedNodeId requires a primary key from tablename '" + TargetTableName + "' but got one from tablename '" + PotentialKey.TableName + "' instead." );
                     }
-                    if( RelatedNodeId != value )
+                    if( RelatedNodeId != PotentialKey )
                     {
-                        _CswNbtNodePropData.SetPropRowValue( _NodeIDSubField.Column, value.PrimaryKey );
+                        _CswNbtNodePropData.SetPropRowValue( _NodeIDSubField.Column, PotentialKey.PrimaryKey );
                         CswNbtNode RelatedNode = _CswNbtResources.Nodes[value];
                         if( null != RelatedNode )
                         {
@@ -217,7 +219,7 @@ namespace ChemSW.Nbt.PropTypes
             {
                 if( value != _CswNbtNodePropData.GetPropRowValue( _NameSubField.Column ) )
                 {
-                    _CswNbtNodePropData.SetPropRowValue( _NameSubField.Column, value );
+                    _CswNbtNodePropData.SetPropRowValue( _NameSubField.Column, value, IsNonModifying: true );
                     _CswNbtNodePropData.Gestalt = value;
                 }
             }

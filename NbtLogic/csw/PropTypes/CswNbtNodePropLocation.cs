@@ -88,7 +88,7 @@ namespace ChemSW.Nbt.PropTypes
             }
             set
             {
-                _CswNbtNodePropData.SetPropRowValue( _NameSubField.Column, value );
+                _CswNbtNodePropData.SetPropRowValue( _NameSubField.Column, value, IsNonModifying: true );
             }
         }
 
@@ -100,7 +100,7 @@ namespace ChemSW.Nbt.PropTypes
             }
             set
             {
-                _CswNbtNodePropData.SetPropRowValue( _PathSubField.Column, value );
+                _CswNbtNodePropData.SetPropRowValue( _PathSubField.Column, value, IsNonModifying: true );
                 _CswNbtNodePropData.Gestalt = value;
             }
         }
@@ -118,7 +118,7 @@ namespace ChemSW.Nbt.PropTypes
             }
             set
             {
-                _CswNbtNodePropData.SetPropRowValue( _BarcodeSubField.Column, value );
+                _CswNbtNodePropData.SetPropRowValue( _BarcodeSubField.Column, value, IsNonModifying: true );
             }
         }
 
@@ -134,7 +134,7 @@ namespace ChemSW.Nbt.PropTypes
             }
             set
             {
-                if( _CswNbtNodePropData.SetPropRowValue( _RowSubField.Column, value ) )
+                if( _CswNbtNodePropData.SetPropRowValue( _RowSubField.Column, value, IsNonModifying: true ) )
                     PendingUpdate = true;
             }
         }
@@ -150,7 +150,7 @@ namespace ChemSW.Nbt.PropTypes
             }
             set
             {
-                _CswNbtNodePropData.SetPropRowValue( _ColumnSubField.Column, value );
+                _CswNbtNodePropData.SetPropRowValue( _ColumnSubField.Column, value, IsNonModifying: true );
                 PendingUpdate = true;
             }
         }
@@ -160,7 +160,7 @@ namespace ChemSW.Nbt.PropTypes
             if( SelectedNodeId != null )
             {
                 CswNbtNode Node = _CswNbtResources.Nodes.GetNode( SelectedNodeId );
-                CswNbtObjClassLocation NodeAsLocation = (CswNbtObjClassLocation) Node;
+                CswNbtObjClassLocation NodeAsLocation = Node;
                 CachedNodeName = Node.NodeName;
                 CachedPath = _generateLocationPath( Node );
                 CachedBarcode = NodeAsLocation.Barcode.Barcode;
@@ -179,7 +179,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             string ret;
             ret = Node.NodeName;
-            CswNbtObjClassLocation NodeAsLocation = (CswNbtObjClassLocation) Node;
+            CswNbtObjClassLocation NodeAsLocation = Node;
             if( NodeAsLocation.Location.SelectedNodeId != null )
             {
                 string prev = _generateLocationPath( _CswNbtResources.Nodes[NodeAsLocation.Location.SelectedNodeId] );
