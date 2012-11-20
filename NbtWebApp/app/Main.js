@@ -40,10 +40,10 @@ window.initMain = window.initMain || function (undefined) {
     } ());
 
 
-    var startSpinner = function () {
+    var startSpinner = function() {
         Csw.main.ajaxImage.show();
         Csw.main.ajaxSpacer.hide();
-    }
+    };
     Csw.subscribe(Csw.enums.events.ajax.globalAjaxStart, startSpinner);
 
     var stopSpinner = function () {
@@ -303,7 +303,9 @@ window.initMain = window.initMain || function (undefined) {
         }); // CswLogin
 
     }
+
     initAll();
+
     function refreshDashboard() {
         Csw.main.headerDashboard.empty().$.CswDashboard();
     }
@@ -1192,17 +1194,22 @@ window.initMain = window.initMain || function (undefined) {
                 break;
 
             case 'dispensecontainer':
-                var requestItemId = '';
-                if (Csw.contains(o, 'requestitem')) {
+                var requestItemId = '', requestMode = '';
+                if (o.requestitem) {
                     requestItemId = o.requestitem.requestitemid;
+                    requestMode = o.requestitem.requestMode;
                 }
-                var title = 'Dispense from ';
-                if (false === Csw.isNullOrEmpty(o.barcode)) {
-                    title += 'Barcode [' + o.barcode + ']';
-                } else {
-                    title += 'Selected Container';
+                var title = o.title;
+                if (false === title) {
+                    title = 'Dispense from ';
+                    if (false === Csw.isNullOrEmpty(o.barcode)) {
+                        title += 'Barcode [' + o.barcode + ']';
+                    } else {
+                        title += 'Selected Container';
+                    }
                 }
                 designOpt = {
+                    title: title,
                     state: {
                         sourceContainerNodeId: o.sourceContainerNodeId,
                         currentQuantity: o.currentQuantity,
@@ -1210,6 +1217,7 @@ window.initMain = window.initMain || function (undefined) {
                         precision: o.precision,
                         initialQuantity: Csw.deserialize(o.initialQuantity),
                         requestItemId: requestItemId,
+                        requestMode: requestMode,
                         title: title,
                         location: o.location,
                         material: o.material,
@@ -1234,6 +1242,26 @@ window.initMain = window.initMain || function (undefined) {
                     }
                 };
                 Csw.nbt.dispenseContainerWizard(Csw.main.centerTopDiv, designOpt);
+                break;
+
+            case 'movecontainer':
+                
+                designOpt = {
+                    title: o.title,
+                    requestitemid: (o.requestitem) ? o.requestitem.requestitemid : '',
+                    location: o.location,
+                    onCancel: function () {
+                        clear({ all: true });
+                        Csw.clientState.setCurrent(Csw.clientState.getLast());
+                        refreshSelected();
+                    },
+                    onSubmit: function (viewid) {
+                        clear({ all: true });
+                        Csw.clientState.setCurrent(Csw.clientState.getLast());
+                        refreshSelected();
+                    }
+                };
+                Csw.actions.containerMove(Csw.main.centerTopDiv, designOpt);
                 break;
 
             case 'edit view':

@@ -1,40 +1,14 @@
-using System;
 using System.Linq;
-using System.Runtime.Serialization;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
-using NbtWebApp.WebSvc.Returns;
+using NbtWebApp.WebSvc.Logic.CISPro;
 using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.WebServices
 {
-    /// <summary>
-    /// Requesting Return Object
-    /// </summary>
-    [DataContract]
-    public class CswNbtRequestReturn : CswWebSvcReturn
-    {
-        /// <summary>
-        /// Ctor
-        /// </summary>
-        public CswNbtRequestReturn()
-        {
-            Data = new RequestCreateMaterial();
-        }
-        [DataMember]
-        public RequestCreateMaterial Data;
-    }
-
-    /// <summary>
-    /// Represents a RequestCreateMaterial NodeTypeId
-    /// </summary>
-    public class RequestCreateMaterial
-    {
-        public Int32 NodeTypeId { get; set; }
-    }
 
     public class CswNbtWebServiceRequesting
     {
@@ -103,7 +77,7 @@ namespace ChemSW.Nbt.WebServices
         /// <summary>
         /// WCF method to get the NodeTypeId of the Request Material Create 
         /// </summary>
-        public static void getRequestMaterialCreate( ICswResources CswResources, CswNbtRequestReturn Ret, object Request )
+        public static void getRequestMaterialCreate( ICswResources CswResources, CswNbtRequestDataModel.CswNbtRequestMaterialCreateReturn Ret, object Request )
         {
             if( null != CswResources )
             {
@@ -119,6 +93,63 @@ namespace ChemSW.Nbt.WebServices
                     Ret.Data.NodeTypeId = FirstNodeType.NodeTypeId;
                 }
             }
+        }
+
+        /// <summary>
+        /// WCF method to fulfill request
+        /// </summary>
+        public static void fulfillRequest( ICswResources CswResources, CswNbtRequestDataModel.CswNbtRequestMaterialDispenseReturn Ret, CswNbtRequestDataModel.RequestFulfill Request )
+        {
+            if( null != CswResources )
+            {
+                CswNbtResources NbtResources = (CswNbtResources) CswResources;
+                if( false == NbtResources.Modules.IsModuleEnabled( CswNbtModuleName.CISPro ) )
+                {
+                    throw new CswDniException( ErrorType.Error, "The CISPro module is required to complete this action.", "Attempted to use the Ordering service without the CISPro module." );
+                }
+                CswNbtPropertySetRequestItem RequestAsPropSet = NbtResources.Nodes[Request.RequestItemId];
+                if( null != RequestAsPropSet )
+                {
+                    switch( RequestAsPropSet.Type.Value )
+                    {
+                        case CswNbtObjClassRequestMaterialDispense.Types.Size:
+                            CswNbtObjClassRequestMaterialDispense RequestNode = CswNbtObjClassRequestMaterialDispense.fromPropertySet( RequestAsPropSet );
+                            if( moveContainers( NbtResources, RequestNode, Request ) )
+                            {
+                                Ret.Data.Succeeded = true;
+                                RequestNode.Status.Value = CswNbtObjClassRequestMaterialDispense.Statuses.Moved;
+                                RequestNode.Fulfill.State = CswNbtObjClassRequestMaterialDispense.FulfillMenu.Complete;
+                                RequestNode.postChanges( ForceUpdate: false );
+                            }
+                            break;
+                    }
+                }
+            }
+        }
+
+        private static bool moveContainers( CswNbtResources NbtResources, CswNbtObjClassRequestMaterialDispense RequestNode, CswNbtRequestDataModel.RequestFulfill Request )
+        {
+            bool Ret = true;
+            if( null != RequestNode )
+            {
+                Ret = Request.ContainerIds.Count > 0;
+                foreach( string ContainerId in Request.ContainerIds )
+                {
+                    CswNbtObjClassContainer ContainerNode = NbtResources.Nodes[ContainerId];
+                    if( null != ContainerNode )
+                    {
+                        ContainerNode.Location.SelectedNodeId = RequestNode.Location.SelectedNodeId;
+                        ContainerNode.Location.RefreshNodeName();
+                        ContainerNode.postChanges( ForceUpdate: false );
+                        Ret = true && Ret;
+                    }
+                    else
+                    {
+                        Ret = false;
+                    }
+                }
+            }
+            return Ret;
         }
 
     } // class CswNbtWebServiceRequesting

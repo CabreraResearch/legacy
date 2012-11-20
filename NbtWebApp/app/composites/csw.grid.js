@@ -243,12 +243,14 @@
                     gridopts.selType = 'checkboxmodel';
                     gridopts.selModel = { mode: 'Simple' };
                     gridopts.listeners.selectionchange = function (t, selected, eOpts) {
-                        if (Csw.isNullOrEmpty(selected) || selected.length === 0) {
-                            cswPrivate.editAllButton.disable();
-                            cswPrivate.deleteAllButton.disable();
-                        } else {
-                            cswPrivate.editAllButton.enable();
-                            cswPrivate.deleteAllButton.enable();
+                        if(cswPrivate.editAllButton && cswPrivate.deleteAllButton) {
+                            if (Csw.isNullOrEmpty(selected) || selected.length === 0) {
+                                cswPrivate.editAllButton.disable();
+                                cswPrivate.deleteAllButton.disable();
+                            } else {
+                                cswPrivate.editAllButton.enable();
+                                cswPrivate.deleteAllButton.enable();
+                            }
                         }
                     };
                 } else {
@@ -293,7 +295,7 @@
                         disabled: true,
                         handler: function () {
                             var rows = [];
-                            Csw.each(grid.getSelectionModel().getSelection(), function (selectedRow) {
+                            Csw.each(cswPublic.extGrid.getSelectionModel().getSelection(), function (selectedRow) {
                                 rows.push(selectedRow.raw);
                             });
                             cswPrivate.onEdit(rows);
@@ -309,7 +311,7 @@
                         disabled: true,
                         handler: function () {
                             var rows = [];
-                            Csw.each(grid.getSelectionModel().getSelection(), function (selectedRow) {
+                            Csw.each(cswPublic.extGrid.getSelectionModel().getSelection(), function (selectedRow) {
                                 rows.push(selectedRow.raw);
                             });
                             cswPrivate.onDelete(rows);
@@ -318,7 +320,7 @@
                     cswPrivate.topToolbar.push(cswPrivate.deleteAllButton);
                 } // if(cswPrivate.showCheckboxes && cswPrivate.showActionColumn)
                 
-                if(cswPrivate.topToolbar.length > 0) {
+                if(cswPrivate.topToolbar.length === '1') {
                     gridopts.dockedItems.push({
                         xtype: 'toolbar',
                         dock: 'top',
@@ -326,13 +328,12 @@
                     }); // panelopts.dockedItems
                 }
 
-                var grid;
                 if (Csw.isElementInDom(cswParent.getId())) {
-                    grid = window.Ext.create('Ext.grid.Panel', gridopts);
+                    cswPublic.extGrid = window.Ext.create('Ext.grid.Panel', gridopts);
                 } else {
-                    grid = window.Ext.create('Ext.grid.Panel');
+                    cswPublic.extGrid = window.Ext.create('Ext.grid.Panel');
                 }
-                return grid;
+                return cswPublic.extGrid;
             }); // makeGrid()
 
             cswPublic.reload = function () {
@@ -399,6 +400,26 @@
                 return cswPrivate.store.indexOf(cswPrivate.grid.getSelectionModel().getSelection()[0]);
             });
 
+            cswPublic.getSelectedRows = Csw.method(function () {
+                var ret = [];
+                Csw.each(cswPrivate.grid.getSelectionModel().getSelection(), function(val) {
+                     if(val.data) {
+                         ret.push(val.data);
+                     }
+                });
+                return ret;
+            });
+
+            cswPublic.getSelectedRowsVals = Csw.method(function (key) {
+                var ret = [];
+                Csw.each(cswPublic.getSelectedRows(), function (val) {
+                    if (val[key]) {
+                        ret.push(val[key]);
+                    }
+                });
+                return ret;
+            });
+
             cswPublic.scrollToRow = Csw.method(function (rowindex) {
                 ///<summary>Scrolls the grid to the specified index</summary>
                 ///<param name="rowid" type="String">Optional. jqGrid rowid. If null, selected row is assumed.</param>
@@ -451,6 +472,13 @@
 
             cswPublic.toggleShowCheckboxes = Csw.method(function (val) {
                 cswPrivate.showCheckboxes = (false === cswPrivate.showCheckboxes);
+                if (false === cswPrivate.showCheckboxes) {
+                    if(options.topToolbar) {
+                        cswPrivate.topToolbar = options.topToolbar;
+                    } else {
+                        cswPrivate.topToolbar = [];
+                    }
+                }
                 cswPrivate.init();
             });
 

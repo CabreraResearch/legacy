@@ -161,8 +161,6 @@
                         cswPrivate.toggleButton(cswPrivate.buttons.finish, false);
 
                         var initStepOne = Csw.method(function () {
-                            var dispenseTypeSelect;
-
                             var makeTypeSelect = function () {
 
                                 if (cswPrivate.state.dispenseMode !== cswPrivate.dispenseModes.RequestMaterial) {
@@ -341,7 +339,7 @@
                                     name: 'nodeTypeSelect',
                                     objectClassName: 'ContainerClass',
                                     blankOptionText: blankText,
-                                    onSelect: function (data, nodeTypeCount) {
+                                    onSelect: function () {
                                         if (blankText !== containerTypeSelect.val()) {
                                             cswPrivate.state.containerNodeTypeId = containerTypeSelect.val();
                                         }
@@ -376,7 +374,7 @@
                                 qtyTableCol++;
                             };
 
-                            var makePrintBarcodesCheckBox = function () {
+                            var makePrintBarcodesCheckBox = function() {
                                 var checkBoxTable = quantityTable.cell(qtyTableCol, 1).table({
                                     name: 'checkboxTable',
                                     cellpadding: '1px',
@@ -385,8 +383,7 @@
                                 qtyTableCol++;
 
                                 cswPrivate.printBarcodesCheckBox = checkBoxTable.cell(1, 1).checkBox({
-                                    onChange: Csw.method(function () {
-                                        var val;
+                                    onChange: Csw.method(function() {
                                         if (cswPrivate.printBarcodesCheckBox.checked()) {
                                             cswPrivate.printBarcodes = true;
                                         } else {
@@ -395,9 +392,9 @@
                                     })
                                 });
                                 checkBoxTable.cell(1, 2).span({ text: 'Print barcode labels for new containers' });
-                            }
+                            };
 
-                            var getQuantityAfterDispense = function () {
+                            var getQuantityAfterDispense = function() {
                                 var deductingValue = Csw.bool(cswPrivate.state.dispenseType !== cswPrivate.dispenseTypes.Add);
                                 cswPrivate.state.quantityAfterDispense = cswPrivate.state.currentQuantity;
                                 var quantities = [];
@@ -408,7 +405,7 @@
                                 });
                                 cswPrivate.formIsValid = cswPrivate.updateQuantityAfterDispense(quantities);
                                 cswPrivate.toggleButton(cswPrivate.buttons.finish, cswPrivate.formIsValid);
-                            }
+                            };
 
                             if (cswPrivate.state.dispenseType === cswPrivate.dispenseTypes.Dispense) {
                                 makeContainerSelect();
@@ -418,9 +415,9 @@
                                 quantityTable.cell(qtyTableCol, 1).br();
                                 quantityTable.cell(qtyTableCol, 1).span({ text: 'Set quantity for dispense:' });                                
                                 qtyTableCol++;
-                                cswPrivate.state.initialQuantity.onChange = function () {
+                                cswPrivate.state.initialQuantity.onChange = function() {
                                     getQuantityAfterDispense();
-                                }
+                                };
                                 quantityTable.cell(qtyTableCol, 1).br({ number: 2 });
                                 cswPrivate.quantityControl = quantityTable.cell(qtyTableCol, 1).quantity(cswPrivate.state.initialQuantity);
                                 qtyTableCol++;
@@ -437,13 +434,13 @@
                 } ());
 
                 cswPrivate.roundToPrecision = function (num) {
-                    var precision = Csw.number(cswPrivate.state.precision);
+                    var precision = Csw.number(cswPrivate.state.precision, 6);
                     return Math.round(Csw.number(num) * Math.pow(10, precision)) / Math.pow(10, precision);
                 };
 
-                cswPrivate.getTotalQuantityToDispense = function (quantities) {
+                cswPrivate.getTotalQuantityToDispense = function(quantities) {
                     var totalQuantityToDispense = 0;
-                    Csw.each(quantities, function (quantity) {
+                    Csw.each(quantities, function(quantity) {
                         if (false === Csw.isNullOrEmpty(quantity)) {
                             var containerNo = quantity.containerNo;
                             if (Csw.number(containerNo) === 0) {
@@ -459,10 +456,9 @@
                                         OldUnitId: quantity.unitid,
                                         NewUnitId: cswPrivate.state.unitId
                                     },
-                                    success: function (data) {
+                                    success: function(data) {
                                         if (false === Csw.isNullOrEmpty(data)) {
-                                            var precision = Csw.number(cswPrivate.state.precision);
-                                            totalQuantityToDispense += cswPrivate.roundToPrecision(Csw.number(data.convertedvalue) * Csw.number(containerNo, 0));
+                                            totalQuantityToDispense += cswPrivate.roundToPrecision(Csw.number(data.convertedvalue, 0) * Csw.number(containerNo, 0));
                                         }
                                     }
                                 });
@@ -472,9 +468,9 @@
                         }
                     });
                     return totalQuantityToDispense;
-                }
+                };
 
-                cswPrivate.updateQuantityAfterDispense = function (quantities) {
+                cswPrivate.updateQuantityAfterDispense = function(quantities) {
                     var enableFinishButton = true;
                     cswPrivate.state.quantityAfterDispense = cswPrivate.roundToPrecision(Csw.number(cswPrivate.state.currentQuantity - cswPrivate.getTotalQuantityToDispense(quantities)));
 
@@ -497,7 +493,7 @@
                         enableFinishButton = false;
                     }
                     return enableFinishButton;
-                }
+                };
 
                 cswPrivate.handleNext = function (newStepNo) {
                     cswPrivate.currentStepNo = newStepNo;

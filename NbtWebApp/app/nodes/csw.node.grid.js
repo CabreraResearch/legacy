@@ -25,6 +25,7 @@
                 onSuccess: null,
                 onEditView: null,
                 onRefresh: null,
+                showCheckboxes: false,
                 height: '',
                 includeInQuickLaunch: true
             };
@@ -51,6 +52,7 @@
                     },
                     forceFit: cswPrivate.forceFit,
                     usePaging: false === cswPrivate.forReporting,
+                    showCheckboxes: cswPrivate.showCheckboxes,
                     showActionColumn: false === cswPrivate.forReporting && false === cswPrivate.readonly,
                     height: cswPrivate.height,
                     canSelectRow: cswPrivate.canSelectRow,

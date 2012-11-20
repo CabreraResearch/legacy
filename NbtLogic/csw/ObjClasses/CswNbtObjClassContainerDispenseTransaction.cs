@@ -190,7 +190,7 @@ namespace ChemSW.Nbt.ObjClasses
                                     {
                                         NodeAsCd.TotalDispensed.UnitId = QuantityDispensed.UnitId;
                                     }
-                                    NodeAsCd.setNextStatus( CswNbtObjClassRequestItem.Statuses.Dispensed );
+                                    NodeAsCd.setNextStatus( CswNbtObjClassRequestContainerDispense.Statuses.Dispensed );
 
                                     Conversion = new CswNbtUnitConversion( _CswNbtResources, QuantityDispensed.UnitId, NodeAsCd.TotalDispensed.UnitId, NodeAsCd.Material.RelatedNodeId );
                                     NodeAsCd.TotalDispensed.Quantity -= Conversion.convertUnit( QuantityDispensed.Quantity );  // Subtracting a negative number in order to add
@@ -202,7 +202,7 @@ namespace ChemSW.Nbt.ObjClasses
                                     {
                                         NodeAsMd.TotalDispensed.UnitId = QuantityDispensed.UnitId;
                                     }
-                                    NodeAsMd.setNextStatus( CswNbtObjClassRequestItem.Statuses.Dispensed );
+                                    NodeAsMd.setNextStatus( CswNbtObjClassRequestMaterialDispense.Statuses.Dispensed );
 
                                     Conversion = new CswNbtUnitConversion( _CswNbtResources, QuantityDispensed.UnitId, NodeAsMd.TotalDispensed.UnitId, NodeAsMd.Material.RelatedNodeId );
                                     NodeAsMd.TotalDispensed.Quantity -= Conversion.convertUnit( QuantityDispensed.Quantity );  // Subtracting a negative number in order to add

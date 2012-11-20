@@ -44,6 +44,12 @@
             };
             var cswPublic = {};
 
+            (function _preCtor() {
+                Csw.extend(cswPrivate, options, true);
+                cswPublic = cswParent.div();
+            }());
+
+
             cswPublic.show = Csw.method(function () {
                 cswPublic.button.show();
                 return cswPublic;
@@ -97,11 +103,7 @@
                 return cswPublic;
             });
 
-            (function () {
-                if (options) {
-                    Csw.extend(cswPrivate, options, true);
-                }
-
+            (function _postCtor () {
                 switch (Csw.string(cswPrivate.size, 'medium').toLowerCase()) {
                     case 'medium':
                         cswPrivate.size = 'medium';
@@ -145,11 +147,11 @@
                     window.Mousetrap.bind('enter', cswPrivate.onClick);
                 }
                 
-                if (Csw.isElementInDom(cswParent.getId())) {
+                if (Csw.isElementInDom(cswPublic.getId())) {
                     try {
                         cswPublic.button = window.Ext.create('Ext.Button', {
                             id: cswPrivate.ID + 'button',
-                            renderTo: cswParent.getId(),
+                            renderTo: cswPublic.getId(),
                             text: Csw.string(cswPrivate.enabledText),
                             width: cswPrivate.width,
                             handler: cswPrivate.onClick,
@@ -176,17 +178,7 @@
                         Csw.debug.error(e);
                     }
                 }
-                //};
-                //if (false === Csw.isNullOrEmpty($('#' + cswParent.getId()), true)) {
-                //    cswPrivate.initBtn();
-                //} else {
-                //    cswPublic.button = window.Ext.create('Ext.Button');
-                //    window.setTimeout(function () {
-                //        if (false === Csw.isNullOrEmpty($('#' + cswParent.getId()), true)) {
-                //            cswPrivate.initBtn();
-                //        }
-                //    }, 500);
-                //}
+                
             } ());
 
             return cswPublic;

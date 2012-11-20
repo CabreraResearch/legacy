@@ -735,8 +735,8 @@ namespace ChemSW.Nbt.ObjClasses
 
         private void _updateRequestItems( string RequestItemType )
         {
-            if( RequestItemType == CswNbtObjClassRequestItem.Types.Move ||
-             RequestItemType == CswNbtObjClassRequestItem.Types.Dispose )
+            if( RequestItemType == CswNbtObjClassRequestContainerUpdate.Types.Move ||
+             RequestItemType == CswNbtObjClassRequestContainerUpdate.Types.Dispose )
             {
                 CswNbtView RequestItemView = new CswNbtView( _CswNbtResources );
                 CswNbtMetaDataObjectClass RequestItemOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.RequestContainerUpdateClass );
@@ -749,7 +749,7 @@ namespace ChemSW.Nbt.ObjClasses
                 RequestItemView.AddViewPropertyAndFilter( RiRelationship, ContainerOcp, SubFieldName: CswNbtSubField.SubFieldName.NodeID, Value: NodeId.PrimaryKey.ToString() );
                 RequestItemView.AddViewPropertyAndFilter( RiRelationship, TypeOcp, RequestItemType );
 
-                if( RequestItemType == CswNbtObjClassRequestItem.Types.Move )
+                if( RequestItemType == CswNbtObjClassRequestContainerUpdate.Types.Move )
                 {
                     CswNbtMetaDataObjectClassProp LocationOcp = RequestItemOc.getObjectClassProp( CswNbtObjClassRequestContainerUpdate.PropertyName.Location );
                     RequestItemView.AddViewPropertyAndFilter( RiRelationship, LocationOcp, SubFieldName: CswNbtSubField.SubFieldName.NodeID, Value: Location.SelectedNodeId.PrimaryKey.ToString() );
@@ -766,10 +766,10 @@ namespace ChemSW.Nbt.ObjClasses
                         {
                             switch( RequestItemType )
                             {
-                                case CswNbtObjClassRequestItem.Types.Move:
+                                case CswNbtObjClassRequestContainerUpdate.Types.Move:
                                     NodeAsRequestItem.Status.Value = CswNbtObjClassRequestContainerUpdate.Statuses.Moved;
                                     break;
-                                case CswNbtObjClassRequestItem.Types.Dispose:
+                                case CswNbtObjClassRequestContainerUpdate.Types.Dispose:
                                     NodeAsRequestItem.Status.Value = CswNbtObjClassRequestContainerUpdate.Statuses.Disposed;
                                     break;
                             }

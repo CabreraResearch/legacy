@@ -375,11 +375,13 @@
                 cswPrivate.divStep4 = cswPrivate.divStep4 || cswPrivate.wizard.div(Csw.enums.wizardSteps_InspectionDesign.step4.step);
                 cswPrivate.divStep4.empty();
 
-                var helpText = cswPrivate.divStep4.p({ text: '<p>Review the <b>' + cswPrivate.selectedInspectionDesign.name + '</b> upload results. Make any necessary edits.' });
-
+                var helpText = cswPrivate.divStep4.div();
+                helpText.p({ text: '<p>Review the <b>' + cswPrivate.selectedInspectionDesign.name + '</b> upload results.' });
+                helpText.p({ text: Csw.string(cswPrivate.importMsg) });
                 var designChangeHandle = function () {
-                    helpText.remove();
-                    helpText = cswPrivate.divStep4.p({ text: '<p>Review the <b>' + cswPrivate.selectedInspectionDesign.name + '</b> upload results. Make any necessary edits.' });
+                    helpText.empty();
+                    helpText.p({ text: '<p>Review the <b>' + cswPrivate.selectedInspectionDesign.name + '</b> upload results.' });
+                    helpText.p({ text: Csw.string(cswPrivate.importMsg) });
                     cswPrivate.toggleButton(cswPrivate.buttons.next, true);
                 };
                 Csw.subscribe(cswPrivate.createInspectionEvents.designNameChanged, designChangeHandle);
@@ -436,6 +438,7 @@
                         cswPrivate.gridJson = {};
                         if (Csw.contains(ret, 'result') && Csw.contains(ret.result, 'grid')) {
                             cswPrivate.gridJson = ret.result.grid;
+                            cswPrivate.importMsg = ret.result.error;
                             cswPrivate.makeInspectionDesignGrid(f.onSuccess);
                         }
                     }

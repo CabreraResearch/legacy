@@ -130,7 +130,7 @@
             creatematerial: 'creatematerial',
             dispense: 'dispense',
             reauthenticate: 'reauthenticate',
-            //home: 'home',
+            move: 'move',
             receive: 'receive',
             refresh: 'refresh',
             popup: 'popup',

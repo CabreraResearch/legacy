@@ -848,6 +848,7 @@ namespace ChemSW.Nbt.Actions
         public CswNbtViewId InspectionsViewId { get { return ( _inspectionsViewId ); } }
         public CswNbtViewId SchedulingViewId { get { return ( _schedulingViewId ); } }
 
+        private CswCommaDelimitedString _UniqueQuestions = new CswCommaDelimitedString();
 
         public DataTable prepareDataTable( DataTable UploadDataTable )
         {
@@ -871,32 +872,36 @@ namespace ChemSW.Nbt.Actions
                 foreach( DataRow Row in UploadDataTable.Rows )
                 {
                     string Question = _standardizeName( Row[_QuestionName] );
-                    if( false == string.IsNullOrEmpty( Question ) )
+                    if( false == _UniqueQuestions.Contains( Question, CaseSensitive: false ) )
                     {
-                        DataRow NewRow = RetDataTable.NewRow();
-                        NewRow[_QuestionName] = Question;
-
-                        string AllowedAnswers = CswConvert.ToString( Row[_AllowedAnswersName] );
-                        string ComplaintAnswers = CswConvert.ToString( Row[_CompliantAnswersName] );
-                        string PreferredAnswer = CswConvert.ToString( Row[_PreferredAnswer] );
-                        _validateAnswers( ref ComplaintAnswers, ref AllowedAnswers, ref PreferredAnswer );
-
-                        NewRow[_AllowedAnswersName] = AllowedAnswers;
-                        NewRow[_CompliantAnswersName] = ComplaintAnswers;
-                        NewRow[_PreferredAnswer] = PreferredAnswer;
-                        NewRow[_HelpTextName] = CswConvert.ToString( Row[_HelpTextName] );
-
-                        string SectionName = _standardizeName( Row[_SectionName] );
-                        if( string.Empty == SectionName ||
-                            "Section 1" == SectionName )
+                        _UniqueQuestions.Add( Question );
+                        if( false == string.IsNullOrEmpty( Question ) )
                         {
-                            SectionName = _DefaultSectionName;
-                        }
-                        NewRow[_SectionName] = SectionName;
-                        NewRow["RowNumber"] = RowNumber;
+                            DataRow NewRow = RetDataTable.NewRow();
+                            NewRow[_QuestionName] = Question;
 
-                        RetDataTable.Rows.Add( NewRow );
-                        RowNumber += 1;
+                            string AllowedAnswers = CswConvert.ToString( Row[_AllowedAnswersName] );
+                            string ComplaintAnswers = CswConvert.ToString( Row[_CompliantAnswersName] );
+                            string PreferredAnswer = CswConvert.ToString( Row[_PreferredAnswer] );
+                            _validateAnswers( ref ComplaintAnswers, ref AllowedAnswers, ref PreferredAnswer );
+
+                            NewRow[_AllowedAnswersName] = AllowedAnswers;
+                            NewRow[_CompliantAnswersName] = ComplaintAnswers;
+                            NewRow[_PreferredAnswer] = PreferredAnswer;
+                            NewRow[_HelpTextName] = CswConvert.ToString( Row[_HelpTextName] );
+
+                            string SectionName = _standardizeName( Row[_SectionName] );
+                            if( string.Empty == SectionName ||
+                                "Section 1" == SectionName )
+                            {
+                                SectionName = _DefaultSectionName;
+                            }
+                            NewRow[_SectionName] = SectionName;
+                            NewRow["RowNumber"] = RowNumber;
+
+                            RetDataTable.Rows.Add( NewRow );
+                            RowNumber += 1;
+                        }
                     }
                 }
             }

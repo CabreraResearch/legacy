@@ -86,6 +86,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Content Include="app\controls\csw.casnotextbox.js" />
+    <Content Include="app\actions\csw.containermove.js" />
     <Content Include="app\controls\csw.quickTip.js" />
     <Content Include="app\controls\csw.tabselect.js" />
     <Content Include="app\literals\csw.fieldset.js" />
