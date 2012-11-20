@@ -310,34 +310,23 @@ namespace ChemSW.Nbt.ObjClasses
                                 break;
 
                             case FulfillMenu.Dispense:
-                                //TODO: Someone will need to provide this container data
-                                NodeAsContainer = _CswNbtResources.Nodes[CswConvert.ToString( ButtonData.Data["containerid"] )];
-                                if( null != NodeAsContainer && null != NodeAsContainer.Dispense.NodeTypeProp )
+                                JObject InitialQuantity = null;
+                                if( false == Quantity.Empty )
                                 {
-                                    NbtButtonData DispenseData = new NbtButtonData( NodeAsContainer.Dispense.NodeTypeProp );
-                                    NodeAsContainer.onButtonClick( DispenseData );
-                                    ButtonData.clone( DispenseData );
+                                    InitialQuantity = new JObject();
+                                    Quantity.ToJSON( InitialQuantity );
                                 }
-                                else
+                                if( null != InitialQuantity )
                                 {
-                                    JObject InitialQuantity = null;
-                                    if( false == Quantity.Empty )
-                                    {
-                                        InitialQuantity = new JObject();
-                                        Quantity.ToJSON( InitialQuantity );
-                                    }
-                                    if( null != InitialQuantity )
-                                    {
-                                        ButtonData.Data["initialQuantity"] = InitialQuantity;
-                                    }
-                                    string Title = "Fulfill Request for " + Quantity.Gestalt + " of " + Material.Gestalt;
-                                    if( TotalDispensed.Quantity > 0 )
-                                    {
-                                        Title += " (" + TotalDispensed.Gestalt + ") dispensed.";
-                                    }
-                                    ButtonData.Data["title"] = Title;
-                                    ButtonData.Action = NbtButtonAction.dispense;
+                                    ButtonData.Data["initialQuantity"] = InitialQuantity;
                                 }
+                                string Title = "Fulfill Request for " + Quantity.Gestalt + " of " + Material.Gestalt;
+                                if( TotalDispensed.Quantity > 0 )
+                                {
+                                    Title += " (" + TotalDispensed.Gestalt + ") dispensed.";
+                                }
+                                ButtonData.Data["title"] = Title;
+                                ButtonData.Action = NbtButtonAction.dispense;
                                 break;
 
                             case FulfillMenu.Move:
