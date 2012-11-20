@@ -161,12 +161,16 @@ namespace ChemSW.Nbt.ObjClasses
             Size.SetOnPropChange( OnSizePropChange );
             SourceContainer.SetOnPropChange( OnSourceContainerChange );
             Barcode.SetOnPropChange( OnBarcodePropChange );
+            LotControlled.SetOnPropChange( OnLotControlledPropChange );
 
             bool IsDisposed = ( Disposed.Checked == Tristate.True );
-            Dispense.setHidden( value: ( IsDisposed || false == canContainer( _CswNbtResources.Actions[CswNbtActionName.DispenseContainer] ) ), SaveToDb: true );              // SaveToDb true is necessary
-            Dispose.setHidden( value: ( IsDisposed || false == canContainer( _CswNbtResources.Actions[CswNbtActionName.DisposeContainer] ) ), SaveToDb: true );                // to override what's in the db
-            Undispose.setHidden( value: ( false == IsDisposed || false == canContainer( _CswNbtResources.Actions[CswNbtActionName.UndisposeContainer] ) ), SaveToDb: true );   // even if it isn't actually saved
-            Request.setHidden( value: ( IsDisposed || false == canContainer( _CswNbtResources.Actions[CswNbtActionName.Submit_Request] ) ), SaveToDb: true );                  // as part of this request
+            //SaveToDb true is necessary to override what's in the db even if it isn't actually saved as part of this request
+            Dispense.setHidden( value: ( IsDisposed || false == canContainer( _CswNbtResources.Actions[CswNbtActionName.DispenseContainer] ) ), SaveToDb: true );
+            Dispose.setHidden( value: ( IsDisposed || false == canContainer( _CswNbtResources.Actions[CswNbtActionName.DisposeContainer] ) ), SaveToDb: true );
+            Undispose.setHidden( value: ( false == IsDisposed || false == canContainer( _CswNbtResources.Actions[CswNbtActionName.UndisposeContainer] ) ), SaveToDb: true );
+            Request.setHidden( value: ( IsDisposed || 
+                false == canContainer( _CswNbtResources.Actions[CswNbtActionName.Submit_Request] ) || 
+                Requisitionable.Checked == Tristate.False ), SaveToDb: true );
 
             _CswNbtObjClassDefault.afterPopulateProps();
         }//afterPopulateProps()
@@ -846,6 +850,20 @@ namespace ChemSW.Nbt.ObjClasses
                 false == String.IsNullOrEmpty( Location.GetOriginalPropRowValue() ) &&
                 Location.GetOriginalPropRowValue() != Location.CachedNodeName )
             {
+                if( String.IsNullOrEmpty( Location.GetOriginalPropRowValue() ) )
+                {
+                    CswNbtObjClassLocation LocNode = _CswNbtResources.Nodes.GetNode( Location.SelectedNodeId );
+                    CswNbtObjClassInventoryGroup InvGroupNode = _CswNbtResources.Nodes.GetNode( LocNode.InventoryGroup.RelatedNodeId );
+                    if( null != InvGroupNode )
+                    {
+                        LotControlled.Checked = InvGroupNode.Central.Checked == Tristate.True ? Tristate.True : Tristate.False;
+                    }
+                }
+                CswNbtObjClassContainerGroup ContGrpNode = _CswNbtResources.Nodes.GetNode( ContainerGroup.RelatedNodeId );
+                if( null != ContGrpNode && ContGrpNode.SyncLocation.Checked == Tristate.True )
+                {
+                    ContainerGroup.RelatedNodeId = null;
+                }
                 _createContainerLocationNode( CswNbtObjClassContainerLocation.TypeOptions.Move );
             }
         }
@@ -936,6 +954,37 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropButton ContainerFamily { get { return ( _CswNbtNode.Properties[PropertyName.ContainerFamily] ); } }
         public CswNbtNodePropRelationship ReceiptLot { get { return ( _CswNbtNode.Properties[PropertyName.ReceiptLot] ); } }
         public CswNbtNodePropLogical LotControlled { get { return ( _CswNbtNode.Properties[PropertyName.LotControlled] ); } }
+        private void OnLotControlledPropChange( CswNbtNodeProp Prop )
+        {
+            if( LotControlled.Checked == Tristate.True )
+            {
+                //DispenseForCertificate.RelatedNodeId = null;//TODO - uncomment when DispenseForCertificate is created
+                Status.Value = String.Empty;
+            }
+            else if( LotControlled.Checked == Tristate.False )
+            {
+                //TODO - uncomment this if-else condition when Certificates have been implemented
+                //if( null != Certificate.RelatedNodeId )
+                //{ 
+                //    CswNbtObjClassCertificate CertificateNode = _CswNbtResources.Nodes.GetNode( Certificate.RelatedNodeId );
+                //    if( null != CertificateNode )
+                //    {
+                //        Status.Value = CertificateNode.Status.Value;
+                //        ExpirationDate.DateTimeValue = CertificateNode.ExpirationDate.DateTimeValue;
+                //    }
+                //}
+                //else
+                //{
+                    Status.Value = Statuses.LabUseOnly;
+                    CswNbtObjClassReceiptLot ReceiptLotNode = _CswNbtResources.Nodes.GetNode( ReceiptLot.RelatedNodeId );
+                    if( null != ReceiptLotNode )
+                    {
+                        ExpirationDate.DateTimeValue = ReceiptLotNode.ExpirationDate.DateTimeValue;
+                    }
+                //}
+            }
+        }
+        public CswNbtNodePropRelationship ContainerGroup { get { return ( _CswNbtNode.Properties[PropertyName.ContainerGroup] ); } }
         public CswNbtNodePropLogical Requisitionable { get { return ( _CswNbtNode.Properties[PropertyName.Requisitionable] ); } }
         public CswNbtNodePropRelationship LabelFormat { get { return ( _CswNbtNode.Properties[PropertyName.LabelFormat] ); } }
         public CswNbtNodePropRelationship ReservedFor { get { return ( _CswNbtNode.Properties[PropertyName.ReservedFor] ); } }
