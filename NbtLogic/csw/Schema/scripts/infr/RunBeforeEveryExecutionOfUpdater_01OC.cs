@@ -728,6 +728,19 @@ namespace ChemSW.Nbt.Schema
             _resetBlame();
         }
 
+        private void _addRequestFavorite( CswDeveloper Dev, Int32 CaseNo )
+        {
+            CswNbtMetaDataObjectClass RequestOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.RequestClass );
+            CswNbtMetaDataObjectClassProp IsFavoriteOcp = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( RequestOc )
+            {
+                PropName = CswNbtObjClassRequest.PropertyName.IsFavorite,
+                FieldType = CswNbtMetaDataFieldType.NbtFieldType.Logical,
+                SetValOnAdd = false,
+                ServerManaged = true
+            } );
+            _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( IsFavoriteOcp, false );
+        }
+
         private CswNbtMetaDataObjectClass _createRequestItemBase( NbtObjectClass ObjectClass, Int32 StartAddRowAt = 1 )
         {
             CswNbtMetaDataObjectClass Ret = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( ObjectClass );
@@ -1594,6 +1607,8 @@ namespace ChemSW.Nbt.Schema
             #region URSULA
 
             _destroyRequestItemOc( CswDeveloper.CF, 27942 );
+
+            _addRequestFavorite( CswDeveloper.CF, 27695 ); //This needs to happen before we create the Items
             _createRequestContainerDispense( CswDeveloper.CF, 27942 );
             _createRequestContainerUpdate( CswDeveloper.CF, 27942 );
             _createRequestMaterialDispense( CswDeveloper.CF, 27942 );

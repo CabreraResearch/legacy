@@ -14,6 +14,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string Name = "Name";
             public const string SubmittedDate = "Submitted Date";
             public const string CompletedDate = "Completed Date";
+            public const string IsFavorite = "Completed Date";
         }
 
         public static implicit operator CswNbtObjClassRequest( CswNbtNode Node )
@@ -188,6 +189,11 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropDateTime CompletedDate
         {
             get { return _CswNbtNode.Properties[PropertyName.CompletedDate]; }
+        }
+
+        public CswNbtNodePropDateTime IsFavorite
+        {
+            get { return _CswNbtNode.Properties[PropertyName.IsFavorite]; }
         }
 
         #endregion
