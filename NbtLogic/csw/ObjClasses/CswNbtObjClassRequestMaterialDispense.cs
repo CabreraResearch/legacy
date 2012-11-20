@@ -268,6 +268,7 @@ namespace ChemSW.Nbt.ObjClasses
             TotalDispensed.SetOnPropChange( onTotalDispensedPropChange );
             Material.SetOnPropChange( onMaterialPropChange );
             TotalMoved.SetOnPropChange( onTotalMovedPropChange );
+            IsFavorite.SetOnPropChange( onIsFavoritePropChange );
         }//afterPopulateProps()
 
         /// <summary>
@@ -608,6 +609,23 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropLogical Reorder { get { return _CswNbtNode.Properties[PropertyName.Reorder]; } }
         public CswNbtNodePropLogical GoodsReceived { get { return _CswNbtNode.Properties[PropertyName.GoodsReceived]; } }
         public CswNbtNodePropPropertyReference IsFavorite { get { return _CswNbtNode.Properties[PropertyName.IsFavorite]; } }
+        private void onIsFavoritePropChange( CswNbtNodeProp NodeProp )
+        {
+            bool Fave = CswConvert.ToBoolean( IsFavorite.Gestalt );
+            if( Fave )
+            {
+                Status.setHidden( value: true, SaveToDb: true );
+                Fulfill.setHidden( value: true, SaveToDb: true );
+                AssignedTo.setHidden( value: true, SaveToDb: true );
+                NeededBy.setHidden( value: true, SaveToDb: true );
+                TotalMoved.setHidden( value: true, SaveToDb: true );
+                TotalDispensed.setHidden( value: true, SaveToDb: true );
+                Reorder.setHidden( value: true, SaveToDb: true );
+                ReceiptLotToDispense.setHidden( value: true, SaveToDb: true );
+                ReceiptLotsReceived.setHidden( value: true, SaveToDb: true );
+                NextReorderDate.setHidden( value: true, SaveToDb: true );
+            }
+        }
         public CswNbtNodePropRelationship ReceiptLotToDispense { get { return _CswNbtNode.Properties[PropertyName.ReceiptLotToDispense]; } }
         public CswNbtNodePropRelationship Level { get { return _CswNbtNode.Properties[PropertyName.Level]; } }
         public CswNbtNodePropTimeInterval ReorderFrequency { get { return _CswNbtNode.Properties[PropertyName.ReorderFrequency]; } }
