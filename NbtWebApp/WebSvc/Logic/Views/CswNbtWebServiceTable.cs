@@ -103,6 +103,30 @@ namespace ChemSW.Nbt.WebServices
             return ret;
         } // makeTableFromTree()
 
+        private string _getThumbnailUrl( CswNbtMetaDataNodeType NodeType, CswPrimaryKey NodeId )
+        {
+            string ret = "";
+
+            CswTableSelect ts = _CswNbtResources.makeCswTableSelect( "getMolProp", "jct_nodes_props" );
+            DataTable dt = ts.getTable( "where nodeid = " + NodeId.PrimaryKey + " and field1 = 'mol.jpeg' and blobdata is not null" );
+
+            if( dt.Rows.Count > 0 ) //if there's a mol prop, use that as the image
+            {
+                int jctnodepropid = CswConvert.ToInt32( dt.Rows[0]["jctnodepropid"] );
+                int nodetypepropid = CswConvert.ToInt32( dt.Rows[0]["nodetypepropid"] );
+                ret = CswNbtNodePropMol.getLink( jctnodepropid, NodeId, nodetypepropid );
+            }
+            // default image, overridden below
+            else if( NodeType.IconFileName != string.Empty )
+            {
+                ret = CswNbtMetaDataObjectClass.IconPrefix100 + NodeType.IconFileName;
+            }
+            else
+            {
+                ret = "Images/icons/300/_placeholder.gif";
+            }
+            return ret;
+        }
 
         private class TableNode
         {
