@@ -60,6 +60,8 @@ namespace ChemSW.Nbt.ObjClasses
             public static readonly TypeOptions Receipt = new TypeOptions( "Receipt" );
             public static readonly TypeOptions Move = new TypeOptions( "Move" );
             public static readonly TypeOptions Dispense = new TypeOptions( "Dispense" );
+            public static readonly TypeOptions Dispose = new TypeOptions( "Dispose" );
+            public static readonly TypeOptions Undispose = new TypeOptions( "Undispose" );
             public static readonly TypeOptions Missing = new TypeOptions( "Missing" );
         }
 
@@ -163,12 +165,9 @@ namespace ChemSW.Nbt.ObjClasses
         private void _setStatus()
         {
             StatusOptions ContLocStatus = StatusOptions.Correct;
-            if( false == String.IsNullOrEmpty( ContainerScan.Text ) )
+            if( Type.Value == TypeOptions.Scan.ToString() )
             {
                 ContLocStatus = StatusOptions.ScannedCorrect;
-            }
-            if( Type.Value != TypeOptions.Missing.ToString() && null != Container.RelatedNodeId )
-            {
                 CswNbtObjClassContainer ContainerNode = _CswNbtResources.Nodes.GetNode( Container.RelatedNodeId );
                 if( ContainerNode.Disposed.Checked == Tristate.True )
                 {
@@ -176,10 +175,12 @@ namespace ChemSW.Nbt.ObjClasses
                 }
                 if( ContainerNode.Location.SelectedNodeId != Location.SelectedNodeId )
                 {
-                    ContLocStatus = ContLocStatus == StatusOptions.Disposed ? StatusOptions.DisposedAtWrongLocation : StatusOptions.WrongLocation;
+                    ContLocStatus = ContLocStatus == StatusOptions.Disposed
+                                        ? StatusOptions.DisposedAtWrongLocation
+                                        : StatusOptions.WrongLocation;
                 }
             }
-            else
+            else if( Type.Value == TypeOptions.Missing.ToString() )
             {
                 ContLocStatus = StatusOptions.Missing;
             }

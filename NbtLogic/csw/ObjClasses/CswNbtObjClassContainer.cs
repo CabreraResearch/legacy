@@ -385,6 +385,7 @@ namespace ChemSW.Nbt.ObjClasses
                 this.Quantity.Quantity = 0;
                 this.Disposed.Checked = Tristate.True;
                 _setDisposedReadOnly( true );
+                _createContainerLocationNode( CswNbtObjClassContainerLocation.TypeOptions.Dispose );
             }
         }
 
@@ -407,6 +408,7 @@ namespace ChemSW.Nbt.ObjClasses
                 }
                 this.Disposed.Checked = Tristate.False;
                 _setDisposedReadOnly( false );
+                _createContainerLocationNode( CswNbtObjClassContainerLocation.TypeOptions.Undispose );
             }
         }
 
