@@ -72,13 +72,15 @@ namespace ChemSW.Nbt.ObjClasses
                 StatusOptions ret = Parse( str );
                 return ret ?? NotScanned;
             }
+
+            public static readonly StatusOptions Correct = new StatusOptions( "Received, Moved, or Dispensed, or Disposed" );
+            public static readonly StatusOptions ScannedCorrect = new StatusOptions( "Scanned Correct" );
+            public static readonly StatusOptions Missing = new StatusOptions( "Scanned, but already marked Missing" );
+            public static readonly StatusOptions WrongLocation = new StatusOptions( "Scanned at Wrong Location" );
+            public static readonly StatusOptions Disposed = new StatusOptions( "Scanned, but already marked Disposed" );
+            public static readonly StatusOptions DisposedAtWrongLocation = new StatusOptions( "Scanned, but Disposed At Wrong Location" );
             //ContainerLocation nodes should never have a status of NotScanned - this is only used in the Reconciliation wizard
             public static readonly StatusOptions NotScanned = new StatusOptions( "Not Scanned" );
-            public static readonly StatusOptions Correct = new StatusOptions( "Correct" );
-            public static readonly StatusOptions Disposed = new StatusOptions( "Disposed" );
-            public static readonly StatusOptions WrongLocation = new StatusOptions( "Wrong Location" );
-            public static readonly StatusOptions DisposedAtWrongLocation = new StatusOptions( "Disposed At Wrong Location" );
-            public static readonly StatusOptions Missing = new StatusOptions( "Missing" );
         }
 
         #endregion
@@ -161,6 +163,10 @@ namespace ChemSW.Nbt.ObjClasses
         private void _setStatus()
         {
             StatusOptions ContLocStatus = StatusOptions.Correct;
+            if( false == String.IsNullOrEmpty( ContainerScan.Text ) )
+            {
+                ContLocStatus = StatusOptions.ScannedCorrect;
+            }
             if( Type.Value != TypeOptions.Missing.ToString() && null != Container.RelatedNodeId )
             {
                 CswNbtObjClassContainer ContainerNode = _CswNbtResources.Nodes.GetNode( Container.RelatedNodeId );

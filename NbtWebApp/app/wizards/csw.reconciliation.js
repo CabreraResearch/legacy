@@ -266,6 +266,7 @@
                                     StatusMetricsGridColumns.push({
                                         dataIndex: colName,
                                         filterable: false,
+                                        sortable: false,
                                         format: null,
                                         header: displayName,
                                         id: 'reconciliation_status_' + colName
@@ -276,19 +277,40 @@
                                         useNull: true
                                     });
                                 };
-                                addColumn('status', 'Status');
+                                addColumn('status', 'Status at time of Scan');
                                 addColumn('numofcontainers', 'Number of Containers');
-                                addColumn('percentscanned', 'Percent Scanned');
-                                addColumn('percentunscanned', 'Percent Unscanned');
+                                addColumn('percentscanned', 'Percent of Containers');
 
                                 var StatusMetricsGridData = [];
+                                var totalContainerCount = 0;
+                                var totalContainersScanned = 0;
                                 Csw.each(cswPrivate.data.ContainerStatistics, function (row) {
+                                    totalContainerCount += row.ContainerCount;
+                                });
+                                Csw.each(cswPrivate.data.ContainerStatistics, function (row) {
+                                    var percent = totalContainerCount > 0 ? Csw.number(row.ContainerCount / totalContainerCount) * 100.0 : 0;
+                                    if (row.Status === 'Not Scanned') {
+                                        StatusMetricsGridData.push({});
+                                    }
                                     StatusMetricsGridData.push({
                                         status: row.Status,
                                         numofcontainers: row.ContainerCount,
-                                        percentscanned: Csw.number(row.PercentScanned) + '%',
-                                        percentunscanned: Csw.number(100 - Csw.number(row.PercentScanned)) + '%'
+                                        percentscanned: (Math.round(Csw.number(percent) * 100) / 100) + '%'
                                     });
+                                    if(Csw.startsWith(row.Status, 'Scanned')) {
+                                        totalContainersScanned += row.ContainerCount;
+                                    } else {
+                                        StatusMetricsGridData.push({});
+                                    }
+                                });
+                                StatusMetricsGridData.push({
+                                    status: 'Total',
+                                    numofcontainers: totalContainerCount
+                                });
+                                var percentScanned = totalContainerCount > 0 ? Csw.number(totalContainersScanned / totalContainerCount) * 100.0 : 0;
+                                StatusMetricsGridData.push({
+                                    status: 'Percent Scanned',
+                                    numofcontainers: (Math.round(Csw.number(percentScanned) * 100) / 100) + '%'
                                 });
 
                                 var StatusMetricsGridId = 'ReconciliationStatusGrid';
@@ -307,8 +329,8 @@
                                     onDelete: null,
                                     onSelect: null,
                                     onDeselect: null,
-                                    height: 200,
-                                    forcefit: true,
+                                    height: StatusMetricsGridData.length * 25,
+                                    forcefit: false,
                                     width: '100%',
                                     fields: StatusMetricsGridFields,
                                     columns: StatusMetricsGridColumns,
