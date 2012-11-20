@@ -670,6 +670,10 @@ namespace ChemSW.Nbt.ObjClasses
                 ContLocNode.User.RelatedNodeId = _CswNbtResources.CurrentNbtUser.UserId;
                 ContLocNode.postChanges( false );
                 LocationVerified.DateTimeValue = DateTime.Now;
+                if( Missing.Checked == Tristate.True )
+                {
+                    Missing.Checked = Tristate.False;
+                }
             }
         }
 
@@ -836,7 +840,9 @@ namespace ChemSW.Nbt.ObjClasses
                 }
                 _updateRequestItems( CswNbtObjClassRequestContainerUpdate.Types.Move );
             }
-            if( null != Location.SelectedNodeId )
+            if( null != Location.SelectedNodeId && 
+                false == String.IsNullOrEmpty( Location.GetOriginalPropRowValue() ) &&
+                Location.GetOriginalPropRowValue() != Location.CachedNodeName )
             {
                 _createContainerLocationNode( CswNbtObjClassContainerLocation.TypeOptions.Move );
             }
