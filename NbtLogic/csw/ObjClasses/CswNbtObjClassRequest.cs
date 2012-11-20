@@ -90,6 +90,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void afterPopulateProps()
         {
+            IsFavorite.SetOnPropChange( onIsFavortiteChange );
             _CswNbtObjClassDefault.afterPopulateProps();
         }//afterPopulateProps()
 
@@ -193,9 +194,22 @@ namespace ChemSW.Nbt.ObjClasses
             get { return _CswNbtNode.Properties[PropertyName.CompletedDate]; }
         }
 
-        public CswNbtNodePropDateTime IsFavorite
+        public CswNbtNodePropLogical IsFavorite
         {
             get { return _CswNbtNode.Properties[PropertyName.IsFavorite]; }
+        }
+        private void onIsFavortiteChange( CswNbtNodeProp NodeProp )
+        {
+            if( IsFavorite.Checked == Tristate.True )
+            {
+                SubmittedDate.setHidden( value: true, SaveToDb: true );
+                CompletedDate.setHidden( value: true, SaveToDb: true );
+            }
+            else
+            {
+                SubmittedDate.setHidden( value: false, SaveToDb: true );
+                CompletedDate.setHidden( value: false, SaveToDb: true );
+            }
         }
 
         #endregion
