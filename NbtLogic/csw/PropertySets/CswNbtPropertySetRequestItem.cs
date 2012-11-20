@@ -33,6 +33,11 @@ namespace ChemSW.Nbt.ObjClasses
             public const string Comments = "Comments";
 
             /// <summary>
+            /// A composite description (<see cref="CswNbtNodePropComposite"/>) of the item.
+            /// </summary>
+            public const string Description = "Description";
+
+            /// <summary>
             /// External Order Number(<see cref="CswNbtNodePropText"/>)
             /// </summary>
             public const string ExternalOrderNumber = "External Order Number";
@@ -98,10 +103,7 @@ namespace ChemSW.Nbt.ObjClasses
             /// </summary>
             public const string Type = "Type";
 
-            /// <summary>
-            /// A composite description (<see cref="CswNbtNodePropComposite"/>) of the item.
-            /// </summary>
-            public const string Description = "Description";
+
         }
 
         /// <summary>

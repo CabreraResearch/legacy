@@ -1179,6 +1179,18 @@ namespace ChemSW.Nbt.Schema
                 _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( ReceiptLotRequestOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.fktype, NbtViewRelatedIdType.ObjectClassId.ToString() );
                 _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( ReceiptLotRequestOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.fkvalue, RequestMaterialDispenseOc.ObjectClassId );
                 //We should fix ContainerDispenseTransaction too, but PropertySets aren't in the database. So we have to fix the relationship view on the NodeTypeProp.
+
+                CswNbtMetaDataObjectClass RequestOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.RequestClass );
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( RequestMaterialDispenseOc )
+                {
+                    PropName = CswNbtObjClassRequestMaterialDispense.PropertyName.IsFavorite,
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.PropertyReference,
+                    FkType = NbtViewPropIdType.ObjectClassPropId.ToString(),
+                    FkValue = RequestMaterialDispenseOc.getObjectClassProp( CswNbtObjClassRequestMaterialDispense.PropertyName.Request ).PropId,
+                    ValuePropId = RequestOc.getObjectClassProp( CswNbtObjClassRequest.PropertyName.IsFavorite ).PropId,
+                    ValuePropType = NbtViewPropIdType.ObjectClassPropId.ToString(),
+                    SetValOnAdd = false
+                } );
             }
             _resetBlame();
         }

@@ -42,6 +42,11 @@ namespace ChemSW.Nbt.ObjClasses
             public const string IsBatch = "Is Batch";
 
             /// <summary>
+            /// True (<see cref="CswNbtNodePropLogical"/>) if this Request Item is a member of a Favorites Request
+            /// </summary>
+            public const string IsFavorite = "Is Favorite";
+
+            /// <summary>
             /// Level (<see cref="CswNbtNodePropRelationship"/>)
             /// </summary>
             public const string Level = "Level";
@@ -596,6 +601,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropLogical Batch { get { return _CswNbtNode.Properties[PropertyName.Batch]; } }
         public CswNbtNodePropLogical Reorder { get { return _CswNbtNode.Properties[PropertyName.Reorder]; } }
         public CswNbtNodePropLogical GoodsReceived { get { return _CswNbtNode.Properties[PropertyName.GoodsReceived]; } }
+        public CswNbtNodePropPropertyReference IsFavorite { get { return _CswNbtNode.Properties[PropertyName.IsFavorite]; } }
         public CswNbtNodePropRelationship ReceiptLotToDispense { get { return _CswNbtNode.Properties[PropertyName.ReceiptLotToDispense]; } }
         public CswNbtNodePropRelationship Level { get { return _CswNbtNode.Properties[PropertyName.Level]; } }
         public CswNbtNodePropTimeInterval ReorderFrequency { get { return _CswNbtNode.Properties[PropertyName.ReorderFrequency]; } }
