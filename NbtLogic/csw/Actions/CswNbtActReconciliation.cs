@@ -111,6 +111,7 @@ namespace ChemSW.Nbt.Actions
                                 CswNbtObjClassContainerLocation ContainerLocationNode = ContainersTree.getNodeForCurrentPosition();
                                 ContainerStatus.ContainerLocationId = ContainerLocationNode.NodeId.ToString();
                                 ContainerStatus.ContainerStatus = ContainerLocationNode.Status.Value;
+                                ContainerStatus.ScanDate = ContainerLocationNode.ScanDate.DateTimeValue.Date.ToShortDateString();
                                 ContainerStatus.Action = ContainerLocationNode.Action.Value;
                                 ContainerStatus.ActionApplied = ContainerLocationNode.ActionApplied.Checked.ToString();
                                 ContainersTree.goToParentNode();

@@ -50,6 +50,8 @@ namespace ChemSW.Nbt.Actions
             [DataMember]
             public String ContainerStatus = String.Empty;
             [DataMember]
+            public String ScanDate = String.Empty;
+            [DataMember]
             public String Action = String.Empty;
             [DataMember]
             public String ActionApplied = String.Empty;

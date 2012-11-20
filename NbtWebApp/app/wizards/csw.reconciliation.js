@@ -370,6 +370,7 @@
                                     LocationId: '',
                                     ContainerLocationId: '',
                                     ContainerStatus: '',
+                                    ScanDate: '',
                                     Action: '',
                                     ActionApplied: '',
                                     ActionOptions: []
@@ -408,8 +409,9 @@
                                     type: 'list',
                                     options: StatusOptions
                                 });
+                                addColumn('scandate', 'Last Scan Date', false);
                                 var actionEditable = Csw.bool(cswPrivate.state.EndDate === cswPrivate.getCurrentDate());
-                                addColumn('currentaction', 'Action', actionEditable);
+                                addColumn('currentaction', 'Current Action', true);
                                 if (actionEditable) {
                                     var actionControlCol = {
                                         header: 'Action',
@@ -436,6 +438,7 @@
                                         actionapplied: row.ActionApplied,
                                         containerbarcode: row.ContainerBarcode,
                                         status: row.ContainerStatus,
+                                        scandate: row.ScanDate,
                                         actionoptions: row.ActionOptions.join(','),
                                         currentaction: row.Action
                                     });
@@ -535,8 +538,11 @@
                             }
                         }
                     });
-                    if (Csw.bool(record.data.actionapplied) === true || Csw.isNullOrEmpty(record.data.actionoptions)) {
+                    if (Csw.bool(record.data.actionapplied) === true) {
                         actionSelect.disable();
+                    }
+                    if(Csw.isNullOrEmpty(record.data.actionoptions)) {
+                        actionSelect.hide();
                     }
                 }, 50);
             };
