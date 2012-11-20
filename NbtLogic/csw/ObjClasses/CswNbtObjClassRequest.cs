@@ -14,7 +14,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string Name = "Name";
             public const string SubmittedDate = "Submitted Date";
             public const string CompletedDate = "Completed Date";
-            public const string IsFavorite = "Completed Date";
+            public const string IsFavorite = "Is Favorite";
         }
 
         public static implicit operator CswNbtObjClassRequest( CswNbtNode Node )
