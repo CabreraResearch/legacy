@@ -525,6 +525,12 @@ namespace ChemSW.Nbt.ObjClasses
             Type.setReadOnly( value: true, SaveToDb: true );
         }
 
+        public override void onPropertySetAddDefaultViewFilters( CswNbtViewRelationship ParentRelationship )
+        {
+            CswNbtMetaDataObjectClassProp IsFavoriteOcp = ObjectClass.getObjectClassProp( PropertyName.IsFavorite );
+            ParentRelationship.View.AddViewPropertyAndFilter( ParentRelationship, IsFavoriteOcp, Tristate.False.ToString() );
+        }
+
         #endregion
 
         #region Object class specific properties

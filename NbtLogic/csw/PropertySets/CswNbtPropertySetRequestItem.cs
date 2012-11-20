@@ -197,8 +197,6 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Abstract Methods
 
-
-
         private void _toggleReadOnlyProps( bool IsReadOnly, CswNbtPropertySetRequestItem ItemInstance )
         {
             ItemInstance.Request.setReadOnly( value: IsReadOnly, SaveToDb: true );
@@ -216,6 +214,41 @@ namespace ChemSW.Nbt.ObjClasses
         /// Set the Description of this Request Item according to Object Class logic
         /// </summary>
         public abstract string setRequestDescription();
+
+        /// <summary>
+        /// Before write node event for derived classes to implement
+        /// </summary>
+        public abstract void beforePropertySetWriteNode( bool IsCopy, bool OverrideUniqueValidation );
+
+        /// <summary>
+        /// After write node event for derived classes to implement
+        /// </summary>
+        public abstract void afterPropertySetWriteNode();
+
+        /// <summary>
+        /// Populate props event for derived classes to implement
+        /// </summary>
+        public abstract void afterPropertySetPopulateProps();
+
+        /// <summary>
+        /// Button click event for derived classes to implement
+        /// </summary>
+        public abstract bool onPropertySetButtonClick( CswNbtMetaDataObjectClassProp OCP, NbtButtonData ButtonData );
+
+        /// <summary>
+        /// Status change event for derived classes to implement
+        /// </summary>
+        public abstract void onStatusPropChange( CswNbtNodeProp Prop );
+
+        /// <summary>
+        /// Type change event for derived classes to implement
+        /// </summary>
+        public abstract void onTypePropChange( CswNbtNodeProp Prop );
+
+        /// <summary>
+        /// Mechanism to add default filters in derived classes
+        /// </summary>
+        public abstract void onPropertySetAddDefaultViewFilters( CswNbtViewRelationship ParentRelationship );
 
         #endregion Abstract Methods
 
@@ -242,8 +275,6 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
-        public abstract void beforePropertySetWriteNode( bool IsCopy, bool OverrideUniqueValidation );
-
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
             beforePropertySetWriteNode( IsCopy, OverrideUniqueValidation );
@@ -251,8 +282,6 @@ namespace ChemSW.Nbt.ObjClasses
             Description.StaticText = setRequestDescription();
             CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
         }//beforeWriteNode()
-
-        public abstract void afterPropertySetWriteNode();
 
         public override void afterWriteNode()
         {
@@ -290,8 +319,6 @@ namespace ChemSW.Nbt.ObjClasses
             Fulfill.setHidden( value: HideMenuButton, SaveToDb: false );
         }
 
-        public abstract void afterPropertySetPopulateProps();
-
         public override void afterPopulateProps()
         {
             //TODO: Create Mail Report for Status Changes
@@ -305,10 +332,9 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void addDefaultViewFilters( CswNbtViewRelationship ParentRelationship )
         {
+            onPropertySetAddDefaultViewFilters( ParentRelationship );
             CswNbtObjClassDefault.addDefaultViewFilters( ParentRelationship );
         }
-
-        public abstract bool onPropertySetButtonClick( CswNbtMetaDataObjectClassProp OCP, NbtButtonData ButtonData );
 
         public override bool onButtonClick( NbtButtonData ButtonData )
         {
@@ -383,11 +409,6 @@ namespace ChemSW.Nbt.ObjClasses
 
         }
 
-        /// <summary>
-        /// Status change event for derived classes to implement
-        /// </summary>
-        public abstract void onStatusPropChange( CswNbtNodeProp Prop );
-
         public CswNbtNodePropComments Comments { get { return _CswNbtNode.Properties[PropertyName.Comments]; } }
         public CswNbtNodePropDateTime NeededBy { get { return _CswNbtNode.Properties[PropertyName.NeededBy]; } }
 
@@ -396,8 +417,6 @@ namespace ChemSW.Nbt.ObjClasses
         {
             onTypePropChange( Prop );
         }
-
-        public abstract void onTypePropChange( CswNbtNodeProp Prop );
 
         public CswNbtNodePropLocation Location { get { return _CswNbtNode.Properties[PropertyName.Location]; } }
         public CswNbtNodePropNumber Priority { get { return _CswNbtNode.Properties[PropertyName.Priority]; } }
