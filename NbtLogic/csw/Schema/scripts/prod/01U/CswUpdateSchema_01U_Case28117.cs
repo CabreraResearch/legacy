@@ -51,6 +51,22 @@ namespace ChemSW.Nbt.Schema
             }
 
             #endregion
+
+            #region part 3 - moving more views around
+
+            //views that belong in the Containers category (Expiring Containers, Missing Containers, Above Maximum Inventory, Below Minimum Inventory)
+            CswTableSelect containersTS = _CswNbtSchemaModTrnsctn.makeCswTableSelect( "conainerViews_28117", "node_views" );
+            DataTable containersDT = containersTS.getTable( "where viewname = 'Expiring Containers' or viewname = 'Missing Containers' or viewname = 'Above Maximum Inventory' or viewname = 'Below Minimum Inventory'" );
+
+            foreach( DataRow row in containersDT.Rows )
+            {
+                CswNbtViewId viewId = new CswNbtViewId( CswConvert.ToInt32( row["nodeviewid"] ) );
+                CswNbtView containerView = _CswNbtSchemaModTrnsctn.ViewSelect.restoreView( viewId );
+                containerView.Category = "Containers";
+                containerView.save();
+            }
+
+            #endregion
         }
 
         //Update()

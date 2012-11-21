@@ -68,6 +68,13 @@ namespace ChemSW.Nbt
             _CswNbtResources.Modules.ToggleUserNodes( false, "cispro" );
             _CswNbtResources.Modules.ToggleView( false, "Units of Measurement", NbtViewVisibility.Global );
             _CswNbtResources.Modules.ToggleView( false, "Work Units", NbtViewVisibility.Global );
+
+            //Case 28117 - show views...
+            //   Expiring Containers
+            //   Missing Containers
+            //   Above Maximum Inventory
+            //   Below Minimum Inventory
+            _CswNbtResources.Modules.ToggleViewsInCategory( false, "Containers", NbtViewVisibility.Global );
         }
 
         public override void OnDisable()
@@ -118,6 +125,13 @@ namespace ChemSW.Nbt
             _CswNbtResources.Modules.ToggleUserNodes( true, "cispro" );
             _CswNbtResources.Modules.ToggleView( true, "Units of Measurement", NbtViewVisibility.Global );
             _CswNbtResources.Modules.ToggleView( true, "Work Units", NbtViewVisibility.Global );
+
+            //Case 28117 - hide views...
+            //   Expiring Containers
+            //   Missing Containers
+            //   Above Maximum Inventory
+            //   Below Minimum Inventory
+            _CswNbtResources.Modules.ToggleViewsInCategory( true, "Containers", NbtViewVisibility.Global );
 
         } // OnDisable()
 
