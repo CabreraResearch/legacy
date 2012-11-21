@@ -134,6 +134,10 @@ namespace ChemSW.Nbt.Batch
                 {
                     op = new CswNbtBatchOpMolFingerprints( CswNbtResources );
                 }
+                else if( OpName == NbtBatchOpName.SyncLocation )
+                {
+                    op = new CswNbtBatchOpSyncLocation( CswNbtResources );
+                }
                 // New batch ops go here
                 // else if( OpName == NbtBatchOpName.NEWNAME ) 
                 if( null != op )

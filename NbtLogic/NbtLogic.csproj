@@ -101,6 +101,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="csw\Actions\CswNbtActCreateMaterial.cs" />
+    <Compile Include="csw\Batch\CswNbtBatchOpSyncLocation.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassRequestContainerDispense.cs" />
     <Compile Include="csw\Batch\CswNbtBatchOpMolFingerprints.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassContainerGroup.cs" />
