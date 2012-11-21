@@ -20,7 +20,8 @@ namespace ChemSW.Nbt.Batch
         }
 
         /// <summary>
-        /// Create a new batch operation to handle a copyNodeProps/multi edit operation
+        /// Create a new batch operation to handle an edit of the location property 
+        /// based on the location property of another node.
         /// </summary>
         /// <param name="NodePks"></param>
         /// <param name="CGLocationId"></param>
