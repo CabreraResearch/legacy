@@ -27,6 +27,7 @@ namespace ChemSW.Nbt.Batch
         public static readonly NbtBatchOpName ExpiredContainers = new NbtBatchOpName( "ExpiredContainers" );
         public static readonly NbtBatchOpName MolFingerprints = new NbtBatchOpName( "MolFingerprints" );
         public static readonly NbtBatchOpName ContainerReconciliationActions = new NbtBatchOpName( "ContainerReconciliationActions" );
+        public static readonly NbtBatchOpName SyncLocation = new NbtBatchOpName( "SyncLocation" );
     }
 
     /// <summary>

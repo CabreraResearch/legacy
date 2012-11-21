@@ -1,15 +1,5 @@
-using System;
-using ChemSW.Config;
 using ChemSW.Core;
-using ChemSW.Exceptions;
-using ChemSW.Nbt.Actions;
-using ChemSW.Nbt.csw.Conversion;
 using ChemSW.Nbt.MetaData;
-using ChemSW.Nbt.MetaData.FieldTypeRules;
-using ChemSW.Nbt.PropTypes;
-using ChemSW.Nbt.Security;
-using ChemSW.Nbt.ServiceDrivers;
-using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.ObjClasses
 {
@@ -130,6 +120,39 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 DateCreated.DateTimeValue = DateTime.Now;
             }
+            // If the Location and Container Group are both set on a Container,
+            // then the Container Group location overrides the user set location.  
+            if( this.ContainerGroup.WasModified &&
+                this.ContainerGroup.RelatedNodeId != null &&
+                ( this.ContainerGroup.GetOriginalPropRowValue( CswNbtSubField.SubFieldName.NodeID ) != this.ContainerGroup.RelatedNodeId.PrimaryKey.ToString() ) )
+            {
+                CswNbtObjClassContainerGroup NewGroupNode = _CswNbtResources.Nodes[this.ContainerGroup.RelatedNodeId];
+
+                if( null != NewGroupNode )
+                {
+                    if( Tristate.True == NewGroupNode.SyncLocation.Checked )
+                    {
+                        this.Location.SelectedNodeId = NewGroupNode.Location.SelectedNodeId;
+                        this.Location.RefreshNodeName();
+                    }
+                }
+            }
+            else if( this.Location.WasModified &&
+                this.Location.SelectedNodeId != null &&
+                ( this.Location.GetOriginalPropRowValue( CswNbtSubField.SubFieldName.NodeID ) != this.Location.SelectedNodeId.PrimaryKey.ToString() ) )
+            {
+                CswNbtObjClassContainerGroup NewGroupNode = _CswNbtResources.Nodes[this.ContainerGroup.RelatedNodeId];
+
+                if( null != NewGroupNode )
+                {
+                    if( Tristate.True == NewGroupNode.SyncLocation.Checked && ( this.Location.SelectedNodeId != NewGroupNode.Location.SelectedNodeId ) )
+                    {
+                        this.ContainerGroup.RelatedNodeId = null;
+                    }
+
+                }
+            }
+
             _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
         }//beforeWriteNode()
 
@@ -931,6 +954,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropRelationship LabelFormat { get { return ( _CswNbtNode.Properties[PropertyName.LabelFormat] ); } }
         public CswNbtNodePropRelationship ReservedFor { get { return ( _CswNbtNode.Properties[PropertyName.ReservedFor] ); } }
         public CswNbtNodePropDateTime DateCreated { get { return ( _CswNbtNode.Properties[PropertyName.DateCreated] ); } }
+        public CswNbtNodePropRelationship ContainerGroup { get { return ( _CswNbtNode.Properties[PropertyName.ContainerGroup] ); } }
         #endregion
 
 
