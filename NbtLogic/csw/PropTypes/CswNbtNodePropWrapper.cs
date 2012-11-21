@@ -378,6 +378,16 @@ namespace ChemSW.Nbt.PropTypes
             }
         }//Blob
 
+        public CswNbtNodePropCASNo AsCASNo
+        {
+            get
+            {
+                if( !( _CswNbtNodeProp is CswNbtNodePropCASNo ) )
+                    throw ( new CswDniException( _makeTypeErrorMessage( typeof( CswNbtNodePropCASNo ) ) ) );
+                return ( (CswNbtNodePropCASNo) _CswNbtNodeProp );
+            }
+        }//Blob
+
         public CswNbtNodePropComments AsComments
         {
             get

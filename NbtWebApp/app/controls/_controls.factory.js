@@ -52,6 +52,14 @@
                     return Csw.controls.buttonGroup(cswParent, opts);
                 };
 
+                cswParent.CASNoTextBox = function (opts) {
+                    /// <summary> Creates a Csw.CASNoTextBox on this element</summary>
+                    /// <param name="opts" type="Object">Options to define the CASNoTextBox.</param>
+                    /// <returns type="Csw.controls.CASNoTextBox">A Csw.controls.CASNoTextBox</returns>
+                    opts = cswPrivate.controlPreProcessing(opts, 'CASNoTextBox');
+                    return Csw.controls.CASNoTextBox(cswParent, opts);
+                }
+
                 cswParent.checkBox = function (opts) {
                     /// <summary> Creates a Csw.checkBox on this element</summary>
                     /// <param name="opts" type="Object">Options to define the checkBox.</param>
@@ -179,7 +187,7 @@
                     opts = cswPrivate.controlPreProcessing(opts, 'tabDiv');
                     return Csw.controls.tabDiv(cswParent, opts);
                 };
-                
+
                 cswParent.tabSelect = function (opts) {
                     /// <summary> Creates a Csw.tabSelect on this element</summary>
                     /// <param name="opts" type="Object">Options to define the tabSelect.</param>
@@ -217,6 +225,6 @@
             });
 
 
-}());
+} ());
 
 
