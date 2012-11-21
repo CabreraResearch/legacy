@@ -134,13 +134,14 @@ namespace ChemSW.Nbt.Batch
                 if( Action == CswNbtObjClassContainerLocation.ActionOptions.Undispose ||
                     Action == CswNbtObjClassContainerLocation.ActionOptions.UndisposeAndMove )
                 {
-                    Container.UndisposeContainer();
+                    Container.UndisposeContainer( OverridePermissions: true, CreateContainerLocation: false );
                 }
                 if( Action == CswNbtObjClassContainerLocation.ActionOptions.MoveToLocation ||
                     Action == CswNbtObjClassContainerLocation.ActionOptions.UndisposeAndMove )
                 {
                     Container.Location.SelectedNodeId = ContainerLocation.Location.SelectedNodeId;
                     Container.Location.RefreshNodeName();
+                    Container.Location.CreateContainerLocation = false;
                 }
                 Container.Missing.Checked = Action == CswNbtObjClassContainerLocation.ActionOptions.MarkMissing 
                     ? Tristate.True 

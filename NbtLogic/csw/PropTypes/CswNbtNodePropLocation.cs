@@ -37,6 +37,7 @@ namespace ChemSW.Nbt.PropTypes
         private CswNbtSubField _BarcodeSubField;
 
         public const string TopLevelName = "Top";
+        public bool CreateContainerLocation = true;
 
         override public bool Empty
         {

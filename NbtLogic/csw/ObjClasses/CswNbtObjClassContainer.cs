@@ -396,7 +396,7 @@ namespace ChemSW.Nbt.ObjClasses
         /// <summary>
         /// Checks permission and undisposes a container
         /// </summary>
-        public void UndisposeContainer( bool OverridePermissions = false )
+        public void UndisposeContainer( bool OverridePermissions = false, bool CreateContainerLocation = true )
         {
 
             if( OverridePermissions || canContainer( _CswNbtResources.Actions[CswNbtActionName.UndisposeContainer] ) )
@@ -412,7 +412,10 @@ namespace ChemSW.Nbt.ObjClasses
                 }
                 this.Disposed.Checked = Tristate.False;
                 _setDisposedReadOnly( false );
-                _createContainerLocationNode( CswNbtObjClassContainerLocation.TypeOptions.Undispose );
+                if( CreateContainerLocation )
+                {
+                    _createContainerLocationNode( CswNbtObjClassContainerLocation.TypeOptions.Undispose );
+                }
             }
         }
 
@@ -864,7 +867,10 @@ namespace ChemSW.Nbt.ObjClasses
                 {
                     ContainerGroup.RelatedNodeId = null;
                 }
-                _createContainerLocationNode( CswNbtObjClassContainerLocation.TypeOptions.Move );
+                if( Location.CreateContainerLocation )
+                {
+                    _createContainerLocationNode(CswNbtObjClassContainerLocation.TypeOptions.Move);
+                }
             }
         }
         public CswNbtNodePropDateTime LocationVerified { get { return ( _CswNbtNode.Properties[PropertyName.LocationVerified] ); } }
