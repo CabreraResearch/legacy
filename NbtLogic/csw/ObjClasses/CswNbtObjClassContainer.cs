@@ -1,5 +1,15 @@
+using System;
+using ChemSW.Config;
 using ChemSW.Core;
+using ChemSW.Exceptions;
+using ChemSW.Nbt.Actions;
+using ChemSW.Nbt.csw.Conversion;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.MetaData.FieldTypeRules;
+using ChemSW.Nbt.PropTypes;
+using ChemSW.Nbt.Security;
+using ChemSW.Nbt.ServiceDrivers;
+using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.ObjClasses
 {
