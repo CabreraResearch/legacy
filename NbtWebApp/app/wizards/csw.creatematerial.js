@@ -569,7 +569,7 @@
                                         case cswPrivate.config.quantityEditableName:
                                             cswPublic.rows[rowid].quantEditableCtrl = cswCell.checkBox({
                                                 name: 'sizeQuantEditable',
-                                                Checked: true,
+                                                checked: true,
                                                 onChange: function (value) {
                                                     cswPublic.rows[rowid].sizeValues.quantEditableChecked = cswPublic.rows[rowid].quantEditableCtrl.val();
                                                 }
@@ -578,7 +578,7 @@
                                         case cswPrivate.config.dispensibleName:
                                             cswPublic.rows[rowid].dispensibleCtrl = cswCell.checkBox({
                                                 name: 'sizeDispensible',
-                                                Checked: true,
+                                                checked: true,
                                                 onChange: function (value) {
                                                     cswPublic.rows[rowid].sizeValues.dispensibleChecked = cswPublic.rows[rowid].dispensibleCtrl.val();
                                                 }
