@@ -77,6 +77,8 @@ namespace ChemSW.Nbt.Actions
             public String EndDate = String.Empty;
             [DataMember]
             public Collection<ReconciliationActions> ContainerActions;
+            [DataMember]
+            public Collection<ReconciliationTypes> ContainerLocationTypes;
         }
 
         [DataContract]
@@ -90,6 +92,15 @@ namespace ChemSW.Nbt.Actions
             public String LocationId = String.Empty;
             [DataMember]
             public String Action = String.Empty;
+        }
+
+        [DataContract]
+        public class ReconciliationTypes
+        {
+            [DataMember]
+            public String Type = String.Empty;
+            [DataMember]
+            public bool Enabled = true;
         }
 
     } // ContainerData

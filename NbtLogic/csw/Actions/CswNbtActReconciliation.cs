@@ -59,7 +59,10 @@ namespace ChemSW.Nbt.Actions
                             {
                                 ContainersTree.goToNthChild( 0 );
                                 CswNbtObjClassContainerLocation ContainerLocationNode = ContainersTree.getNodeForCurrentPosition();
-                                _incrementContainerCount( Data.ContainerStatistics, ContainerLocationNode.Status.Value, ContainerLocationNode.Type.Value );
+                                if( _isTypeEnabled( ContainerLocationNode.Type.Value, Request ) )
+                                {
+                                    _incrementContainerCount(Data.ContainerStatistics, ContainerLocationNode.Status.Value, ContainerLocationNode.Type.Value);
+                                }
                                 ContainersTree.goToParentNode();
                             }
                             else
@@ -105,15 +108,20 @@ namespace ChemSW.Nbt.Actions
                             ContainerStatus.ContainerId = ContainerNode.NodeId.ToString();
                             ContainerStatus.ContainerBarcode = ContainerNode.Properties[CswNbtObjClassContainer.PropertyName.Barcode].AsBarcode.Barcode;
                             ContainerStatus.LocationId = LocationId.ToString();
+                            bool isEnabled = false;
                             if( ContainersTree.getChildNodeCount() > 0 )//ContainerLocation Nodes
                             {
                                 ContainersTree.goToNthChild( 0 );
                                 CswNbtObjClassContainerLocation ContainerLocationNode = ContainersTree.getNodeForCurrentPosition();
-                                ContainerStatus.ContainerLocationId = ContainerLocationNode.NodeId.ToString();
-                                ContainerStatus.ContainerStatus = ContainerLocationNode.Status.Value;
-                                ContainerStatus.ScanDate = ContainerLocationNode.ScanDate.DateTimeValue.Date.ToShortDateString();
-                                ContainerStatus.Action = ContainerLocationNode.Action.Value;
-                                ContainerStatus.ActionApplied = ContainerLocationNode.ActionApplied.Checked.ToString();
+                                if( _isTypeEnabled( ContainerLocationNode.Type.Value, Request ) )
+                                {
+                                    ContainerStatus.ContainerLocationId = ContainerLocationNode.NodeId.ToString();
+                                    ContainerStatus.ContainerStatus = ContainerLocationNode.Status.Value;
+                                    ContainerStatus.ScanDate = ContainerLocationNode.ScanDate.DateTimeValue.Date.ToShortDateString();
+                                    ContainerStatus.Action = ContainerLocationNode.Action.Value;
+                                    ContainerStatus.ActionApplied = ContainerLocationNode.ActionApplied.Checked.ToString();
+                                    isEnabled = true;
+                                }
                                 ContainersTree.goToParentNode();
                             }
                             else
@@ -121,7 +129,10 @@ namespace ChemSW.Nbt.Actions
                                 ContainerStatus.ContainerStatus = CswNbtObjClassContainerLocation.StatusOptions.NotScanned.ToString();
                             }
                             ContainerStatus.ActionOptions = _getActionOptions( ContainerStatus.ContainerStatus );
-                            Data.ContainerStatuses.Add( ContainerStatus );
+                            if( isEnabled )
+                            {
+                                Data.ContainerStatuses.Add(ContainerStatus);
+                            }
                             ContainersTree.goToParentNode();
                         }
                     }
@@ -241,6 +252,19 @@ namespace ChemSW.Nbt.Actions
                     LocationTree.goToParentNode();
                 }
             }
+        }
+
+        private bool _isTypeEnabled( String Type, ContainerData.ReconciliationRequest Request )
+        {
+            bool Enabled = false;
+            foreach( ContainerData.ReconciliationTypes ContainerLocationType in Request.ContainerLocationTypes )
+            {
+                if(Type == ContainerLocationType.Type)
+                {
+                    Enabled = ContainerLocationType.Enabled;
+                }
+            }
+            return Enabled;
         }
 
         private void _incrementContainerCount( IEnumerable<ContainerData.ReconciliationStatistics> Stats, String Status, String Type = null )

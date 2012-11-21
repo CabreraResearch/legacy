@@ -38,6 +38,10 @@
                         ContainerLocationId: '',
                         LocationId: '',
                         Action: ''
+                    }],
+                    ContainerLocationTypes: [{
+                        Type: '',
+                        Enabled: true
                     }]
                 }
             };
@@ -216,6 +220,35 @@
                         endDatePicker.hide();
                         cswPrivate.state.EndDate = endDatePicker.val().date;
                         var staticEndDate = locationDatesTable.cell(rowNum, 2).span({ text: 'Today' });
+                        rowNum++;
+                        //TypeSelect
+                        cswPrivate.state.ContainerLocationTypes = [
+                            { Type: 'Scan', Enabled: true },
+                            { Type: 'Receipt', Enabled: false },
+                            { Type: 'Move', Enabled: false },
+                            { Type: 'Dispense', Enabled: false },
+                            { Type: 'Dispose', Enabled: false },
+                            { Type: 'Undispose', Enabled: false }
+                        ];
+                        locationDatesTable.cell(rowNum, 1).span({ text: 'Type:' }).addClass('propertylabel');
+                        var typeSelectTable = locationDatesTable.cell(rowNum, 2).table({
+                            name: 'checkboxTable',
+                            cellalign: 'left',
+                            cellvalign: 'middle'
+                        });
+                        cswPrivate.typeCheckBox = [];
+                        var typeRowNum = 1;
+                        Csw.each(cswPrivate.state.ContainerLocationTypes, function(type, key) {
+                            cswPrivate.typeCheckBox[typeRowNum - 1] = typeSelectTable.cell(typeRowNum, 1).checkBox({
+                                checked: type.Enabled,
+                                onChange: Csw.method(function () {
+                                    cswPrivate.state.ContainerLocationTypes[key].Enabled = cswPrivate.typeCheckBox[key].checked();
+                                    cswPrivate.reinitSteps(2);
+                                })
+                            });
+                            typeSelectTable.cell(typeRowNum, 2).span({ text: ' ' + type.Type });
+                            typeRowNum++;
+                        });
 
                         cswPrivate.stepOneComplete = true;
                     }
@@ -411,7 +444,7 @@
                                     options: StatusOptions
                                 });
                                 addColumn('scandate', 'Last Scan Date', false);
-                                var actionEditable = Csw.bool(cswPrivate.state.EndDate === cswPrivate.getCurrentDate());
+                                var actionEditable = Csw.bool(cswPrivate.state.EndDate === cswPrivate.getCurrentDate());//cswPrivate.isCurrent (?)
                                 addColumn('currentaction', 'Current Action', true);
                                 if (actionEditable) {
                                     var actionControlCol = {
