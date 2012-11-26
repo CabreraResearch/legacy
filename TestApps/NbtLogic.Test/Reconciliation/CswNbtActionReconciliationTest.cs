@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading;
 using ChemSW.Core;
 using ChemSW.Nbt;
@@ -48,7 +49,8 @@ namespace ChemSw.Nbt.Test
                 StartDate = DateTime.Now.ToString(),
                 EndDate = DateTime.Now.AddSeconds( 1 ).ToString(),
                 LocationId = TestData.Nodes.createLocationNode().NodeId.ToString(),
-                IncludeChildLocations = false
+                IncludeChildLocations = false,
+                ContainerLocationTypes = _getTypes()
             };
             ContainerData Data = ReconciliationAction.getContainerStatuses( Request );
             Assert.AreEqual( 0, Data.ContainerStatuses.Count );
@@ -68,7 +70,8 @@ namespace ChemSw.Nbt.Test
                 StartDate = DateTime.Now.AddSeconds( 1 ).ToString(),
                 EndDate = DateTime.Now.AddSeconds( 2 ).ToString(),
                 LocationId = LocationId.ToString(),
-                IncludeChildLocations = false
+                IncludeChildLocations = false,
+                ContainerLocationTypes = _getTypes()
             };
             ContainerData Data = ReconciliationAction.getContainerStatuses( Request );
             Assert.AreEqual( 1, Data.ContainerStatuses.Count );
@@ -89,7 +92,8 @@ namespace ChemSw.Nbt.Test
                 StartDate = DateTime.Now.AddHours( -2 ).ToString(),
                 EndDate = DateTime.Now.AddHours( -1 ).ToString(),
                 LocationId = LocationId.ToString(),
-                IncludeChildLocations = false
+                IncludeChildLocations = false,
+                ContainerLocationTypes = _getTypes()
             };
             ContainerData Data = ReconciliationAction.getContainerStatuses( Request );
             Assert.AreEqual( 0, Data.ContainerStatuses.Count );
@@ -109,7 +113,8 @@ namespace ChemSw.Nbt.Test
                 StartDate = DateTime.Now.AddDays( -1 ).ToString(),
                 EndDate = DateTime.Now.AddSeconds( 1 ).ToString(),
                 LocationId = LocationId.ToString(),
-                IncludeChildLocations = false
+                IncludeChildLocations = false,
+                ContainerLocationTypes = _getTypes()
             };
             ContainerData Data = ReconciliationAction.getContainerStatuses( Request );
             Assert.AreEqual( 1, Data.ContainerStatuses.Count );
@@ -131,7 +136,8 @@ namespace ChemSw.Nbt.Test
                 StartDate = DateTime.Now.AddDays( -1 ).ToString(),
                 EndDate = DateTime.Now.AddSeconds( 1 ).ToString(),
                 LocationId = LocationId.ToString(),
-                IncludeChildLocations = false
+                IncludeChildLocations = false,
+                ContainerLocationTypes = _getTypes()
             };
             ContainerData Data = ReconciliationAction.getContainerStatuses( Request );
             Assert.AreEqual( 2, Data.ContainerStatuses.Count );
@@ -157,7 +163,8 @@ namespace ChemSw.Nbt.Test
                 StartDate = DateTime.Now.AddDays( -1 ).ToString(),
                 EndDate = DateTime.Now.AddSeconds( 1 ).ToString(),
                 LocationId = Location1.NodeId.ToString(),
-                IncludeChildLocations = true
+                IncludeChildLocations = true,
+                ContainerLocationTypes = _getTypes()
             };
             ContainerData Data = ReconciliationAction.getContainerStatuses( Request );
             Assert.AreEqual( 2, Data.ContainerStatuses.Count );
@@ -183,7 +190,8 @@ namespace ChemSw.Nbt.Test
                 StartDate = DateTime.Now.ToString(),
                 EndDate = DateTime.Now.AddSeconds( 1 ).ToString(),
                 LocationId = TestData.Nodes.createLocationNode().NodeId.ToString(),
-                IncludeChildLocations = false
+                IncludeChildLocations = false,
+                ContainerLocationTypes = _getTypes()
             };
             ContainerData Data = ReconciliationAction.getContainerStatistics( Request );
             foreach( ContainerData.ReconciliationStatistics Stat in Data.ContainerStatistics )
@@ -206,7 +214,8 @@ namespace ChemSw.Nbt.Test
                 StartDate = DateTime.Now.AddSeconds( 1 ).ToString(),
                 EndDate = DateTime.Now.AddSeconds( 2 ).ToString(),
                 LocationId = LocationId.ToString(),
-                IncludeChildLocations = false
+                IncludeChildLocations = false,
+                ContainerLocationTypes = _getTypes()
             };
             ContainerData Data = ReconciliationAction.getContainerStatistics( Request );
             foreach( ContainerData.ReconciliationStatistics Stat in Data.ContainerStatistics )
@@ -237,7 +246,8 @@ namespace ChemSw.Nbt.Test
                 StartDate = DateTime.Now.AddDays( -1 ).ToString(),
                 EndDate = DateTime.Now.AddSeconds( 1 ).ToString(),
                 LocationId = LocationId.ToString(),
-                IncludeChildLocations = false
+                IncludeChildLocations = false,
+                ContainerLocationTypes = _getTypes()
             };
             ContainerData Data = ReconciliationAction.getContainerStatistics( Request );
             foreach( ContainerData.ReconciliationStatistics Stat in Data.ContainerStatistics )
@@ -274,7 +284,8 @@ namespace ChemSw.Nbt.Test
                 StartDate = DateTime.Now.AddDays( -1 ).ToString(),
                 EndDate = DateTime.Now.AddSeconds( 1 ).ToString(),
                 LocationId = LocationId.ToString(),
-                IncludeChildLocations = false
+                IncludeChildLocations = false,
+                ContainerLocationTypes = _getTypes()
             };
             ContainerData Data = ReconciliationAction.getContainerStatistics( Request );
             foreach( ContainerData.ReconciliationStatistics Stat in Data.ContainerStatistics )
@@ -304,12 +315,14 @@ namespace ChemSw.Nbt.Test
             CswPrimaryKey LocationId = TestData.Nodes.createLocationNode().NodeId;
             TestData.Nodes.createContainerLocationNode( LocationId: LocationId );
             TestData.Nodes.createContainerLocationNode( LocationId: LocationId );
+            
             ContainerData.ReconciliationRequest Request = new ContainerData.ReconciliationRequest
             {
                 StartDate = DateTime.Now.AddDays( -1 ).ToString(),
                 EndDate = DateTime.Now.AddSeconds( 1 ).ToString(),
                 LocationId = LocationId.ToString(),
-                IncludeChildLocations = false
+                IncludeChildLocations = false,
+                ContainerLocationTypes = _getTypes()
             };
             ContainerData Data = ReconciliationAction.getReconciliationData( Request );
             Assert.AreEqual( 2, Data.ContainerStatuses.Count );
@@ -328,6 +341,16 @@ namespace ChemSw.Nbt.Test
                     Assert.AreEqual( 0, Stat.ContainerCount, "Status " + Stat.Status + " should have been empty." );
                 }
             }
+        }
+
+        private Collection<ContainerData.ReconciliationTypes> _getTypes()
+        {
+            Collection<ContainerData.ReconciliationTypes> Types = new Collection<ContainerData.ReconciliationTypes>();
+            for( int i = 0; i < CswNbtObjClassContainerLocation.TypeOptions._All.Count(); i++ )
+            {
+                Types.Add( new ContainerData.ReconciliationTypes { Enabled = true, Type = CswNbtObjClassContainerLocation.TypeOptions._All.ToArray()[i].ToString() } );
+            }
+            return Types;
         }
 
         #endregion
