@@ -105,26 +105,26 @@ namespace ChemSW.Nbt.ObjClasses
 
         private void _setContainerLocations()
         {
-            IEnumerable<CswNbtObjClassContainer> Containers = this.getContainersInGroup();
-            if( Containers.Count() > 0 )
+            IEnumerable<CswPrimaryKey> ContainerNodePks = this.getContainersInGroup();
+            if( ContainerNodePks.Count() > 0 )
             {
                 int BatchThreshold = CswNbtBatchManager.getBatchThreshold( _CswNbtResources );
-                if( Containers.Count() > BatchThreshold )
+                if( ContainerNodePks.Count() > BatchThreshold )
                 {
                     // Shelve this to a batch operation
-                    Collection<CswPrimaryKey> ContainerNodePks = new Collection<CswPrimaryKey>();
-                    foreach( CswNbtObjClassContainer ContainerNode in Containers )
+                    Collection<CswPrimaryKey> ContainerPkCollection = new Collection<CswPrimaryKey>();
+                    foreach( CswPrimaryKey ContainerPk in ContainerNodePks )
                     {
-                        ContainerNodePks.Add( ContainerNode.NodeId );
+                        ContainerPkCollection.Add( ContainerPk );
                     }
                     CswNbtBatchOpSyncLocation op = new CswNbtBatchOpSyncLocation( _CswNbtResources );
-                    CswNbtObjClassBatchOp BatchNode = op.makeBatchOp( ContainerNodePks, this.Location.SelectedNodeId );
-                    //ret["batch"] = BatchNode.NodeId.ToString();
+                    CswNbtObjClassBatchOp BatchNode = op.makeBatchOp( ContainerPkCollection, this.Location.SelectedNodeId );
                 }
                 else
                 {
-                    foreach( CswNbtObjClassContainer CurrentContainer in Containers )
+                    foreach( CswPrimaryKey CurrentContainerNodePk in ContainerNodePks )
                     {
+                        CswNbtObjClassContainer CurrentContainer = _CswNbtResources.Nodes[CurrentContainerNodePk];
                         CurrentContainer.Location.SelectedNodeId = this.Location.SelectedNodeId;
                         CurrentContainer.postChanges( false );
                     }
@@ -132,7 +132,7 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
-        public IEnumerable<CswNbtObjClassContainer> getContainersInGroup()
+        public IEnumerable<CswPrimaryKey> getContainersInGroup()
         {
             CswNbtView ContainersInGroupView = new CswNbtView( _CswNbtResources );
             ContainersInGroupView.ViewName = "ContainersInGroup";
@@ -151,19 +151,19 @@ namespace ChemSW.Nbt.ObjClasses
                                                       false,
                                                       false );
 
-            Collection<CswNbtObjClassContainer> _ContainerGroupNodes = new Collection<CswNbtObjClassContainer>();
+            Collection<CswPrimaryKey> _ContainerGroupNodePks = new Collection<CswPrimaryKey>();
 
             ICswNbtTree ContainersInGroupTree = _CswNbtResources.Trees.getTreeFromView( ContainersInGroupView, false, true, true );
             ContainersInGroupTree.goToRoot();
             for( int i = 0; i < ContainersInGroupTree.getChildNodeCount(); i++ )
             {
                 ContainersInGroupTree.goToNthChild( i );
-                _ContainerGroupNodes.Add( ContainersInGroupTree.getNodeForCurrentPosition() );
+                _ContainerGroupNodePks.Add( ContainersInGroupTree.getNodeIdForCurrentPosition() );
                 ContainersInGroupTree.goToParentNode();
 
             }
 
-            return _ContainerGroupNodes;
+            return _ContainerGroupNodePks;
         }
 
     }//CswNbtObjClassContainerGroup
