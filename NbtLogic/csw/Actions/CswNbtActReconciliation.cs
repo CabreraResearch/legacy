@@ -55,13 +55,36 @@ namespace ChemSW.Nbt.Actions
                         for( int j = 0; j < ContainersTree.getChildNodeCount(); j++ )//Container Nodes
                         {
                             ContainersTree.goToNthChild( j );
-                            if( ContainersTree.getChildNodeCount() > 0 )//ContainerLocation Nodes
+                            if( ContainersTree.getChildNodeCount() > 0 )
                             {
-                                ContainersTree.goToNthChild( 0 );
-                                CswNbtObjClassContainerLocation ContainerLocationNode = ContainersTree.getNodeForCurrentPosition();
-                                if( _isTypeEnabled( ContainerLocationNode.Type.Value, Request ) )
+                                CswNbtObjClassContainerLocation ContainerLocationNode = null;
+                                for( int k = 0; k < ContainersTree.getChildNodeCount(); k++ )//ContainerLocation Nodes
                                 {
-                                    _incrementContainerCount(Data.ContainerStatistics, ContainerLocationNode.Status.Value, ContainerLocationNode.Type.Value);
+                                    ContainersTree.goToNthChild(k);
+                                    if( null == ContainerLocationNode )
+                                    {
+                                        ContainerLocationNode = ContainersTree.getNodeForCurrentPosition();
+                                        if( ContainerLocationNode.Type.Value == CswNbtObjClassContainerLocation.TypeOptions.Scan.ToString() )
+                                        {
+                                            break;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        CswNbtObjClassContainerLocation TempContainerLocationNode = ContainersTree.getNodeForCurrentPosition();
+                                        if( TempContainerLocationNode.Type.Value == CswNbtObjClassContainerLocation.TypeOptions.Scan.ToString() &&
+                                            ContainerLocationNode.Type.Value != CswNbtObjClassContainerLocation.TypeOptions.Scan.ToString() )
+                                        {
+                                            ContainerLocationNode = TempContainerLocationNode;
+                                            break;
+                                        }
+                                    }
+                                }
+                                if( null != ContainerLocationNode && _isTypeEnabled( ContainerLocationNode.Type.Value, Request ) )
+                                {
+                                    _incrementContainerCount( Data.ContainerStatistics,
+                                                             ContainerLocationNode.Status.Value,
+                                                             ContainerLocationNode.Type.Value );
                                 }
                                 ContainersTree.goToParentNode();
                             }
@@ -109,11 +132,32 @@ namespace ChemSW.Nbt.Actions
                             ContainerStatus.ContainerBarcode = ContainerNode.Properties[CswNbtObjClassContainer.PropertyName.Barcode].AsBarcode.Barcode;
                             ContainerStatus.LocationId = LocationId.ToString();
                             bool isEnabled = false;
-                            if( ContainersTree.getChildNodeCount() > 0 )//ContainerLocation Nodes
+                            if( ContainersTree.getChildNodeCount() > 0 )
                             {
-                                ContainersTree.goToNthChild( 0 );
-                                CswNbtObjClassContainerLocation ContainerLocationNode = ContainersTree.getNodeForCurrentPosition();
-                                if( _isTypeEnabled( ContainerLocationNode.Type.Value, Request ) )
+                                CswNbtObjClassContainerLocation ContainerLocationNode = null;
+                                for( int k = 0; k < ContainersTree.getChildNodeCount(); k++ )//ContainerLocation Nodes
+                                {
+                                    ContainersTree.goToNthChild( k );
+                                    if( null == ContainerLocationNode )
+                                    {
+                                        ContainerLocationNode = ContainersTree.getNodeForCurrentPosition();
+                                        if( ContainerLocationNode.Type.Value == CswNbtObjClassContainerLocation.TypeOptions.Scan.ToString() )
+                                        {
+                                            break;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        CswNbtObjClassContainerLocation TempContainerLocationNode = ContainersTree.getNodeForCurrentPosition();
+                                        if( TempContainerLocationNode.Type.Value == CswNbtObjClassContainerLocation.TypeOptions.Scan.ToString() &&
+                                            ContainerLocationNode.Type.Value != CswNbtObjClassContainerLocation.TypeOptions.Scan.ToString() )
+                                        {
+                                            ContainerLocationNode = TempContainerLocationNode;
+                                            break;
+                                        }
+                                    }
+                                }
+                                if( null != ContainerLocationNode && _isTypeEnabled( ContainerLocationNode.Type.Value, Request ) )
                                 {
                                     ContainerStatus.ContainerLocationId = ContainerLocationNode.NodeId.ToString();
                                     ContainerStatus.ContainerStatus = ContainerLocationNode.Status.Value;

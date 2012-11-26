@@ -174,6 +174,36 @@ namespace ChemSw.Nbt.Test
             }
         }
 
+        /// <summary>
+        /// Given a location that has one Container with two ContainerLocations in the given timeframe,
+        /// given that the first ContainerLocation is of Type Scan and the second is not,
+        /// assert that the returned ContainerStatus data has a ContainerStatus value of ScannedCorrect
+        /// </summary>
+        [TestMethod]
+        public void getContainerStatusesTestScanTrumpsTouch()
+        {
+            CswPrimaryKey LocationId = TestData.Nodes.createLocationNode().NodeId;
+            CswNbtObjClassContainer ContainerNode = TestData.Nodes.createContainerNode( LocationId: LocationId );
+            TestData.Nodes.createContainerLocationNode( ContainerNode.Node,
+                LocationId: LocationId,
+                ContainerScan: ContainerNode.Barcode.Barcode,
+                Type: CswNbtObjClassContainerLocation.TypeOptions.Scan.ToString() );
+            TestData.Nodes.createContainerLocationNode( ContainerNode.Node,
+                LocationId: LocationId,
+                Type: CswNbtObjClassContainerLocation.TypeOptions.Dispense.ToString() );
+            ContainerData.ReconciliationRequest Request = new ContainerData.ReconciliationRequest
+            {
+                StartDate = DateTime.Now.AddDays( -1 ).ToString(),
+                EndDate = DateTime.Now.AddSeconds( 1 ).ToString(),
+                LocationId = LocationId.ToString(),
+                IncludeChildLocations = false,
+                ContainerLocationTypes = _getTypes()
+            };
+            ContainerData Data = ReconciliationAction.getContainerStatuses( Request );
+            Assert.AreEqual( 1, Data.ContainerStatuses.Count );
+            Assert.AreEqual( CswNbtObjClassContainerLocation.StatusOptions.ScannedCorrect.ToString(), Data.ContainerStatuses[0].ContainerStatus );
+        }
+
         #endregion
 
         #region getContainerStatistics
@@ -297,6 +327,47 @@ namespace ChemSw.Nbt.Test
                 else if( Stat.Status == CswNbtObjClassContainerLocation.StatusOptions.ScannedCorrect.ToString() )
                 {
                     Assert.AreEqual( 100, Stat.PercentScanned );
+                }
+            }
+        }
+
+        /// <summary>
+        /// Given a location that has one Container with two ContainerLocations in the given timeframe,
+        /// given that the first ContainerLocation is of Type Scan and the second is not,
+        /// assert that both the returned data's NotScanned and Received/Dispensed/Disposed/etc 
+        /// ContainerStatus row's ContainerCount value = 0
+        /// </summary>
+        [TestMethod]
+        public void getContainerStatisticsTestScanTrumpsTouch()
+        {
+            CswPrimaryKey LocationId = TestData.Nodes.createLocationNode().NodeId;
+            CswNbtObjClassContainer ContainerNode = TestData.Nodes.createContainerNode( LocationId: LocationId );
+            TestData.Nodes.createContainerLocationNode( ContainerNode.Node,
+                LocationId: LocationId,
+                ContainerScan: ContainerNode.Barcode.Barcode,
+                Type: CswNbtObjClassContainerLocation.TypeOptions.Scan.ToString() );
+            TestData.Nodes.createContainerLocationNode( ContainerNode.Node, 
+                LocationId: LocationId, 
+                Type: CswNbtObjClassContainerLocation.TypeOptions.Dispense.ToString() );
+            ContainerData.ReconciliationRequest Request = new ContainerData.ReconciliationRequest
+            {
+                StartDate = DateTime.Now.AddHours( -1 ).ToString(),
+                EndDate = DateTime.Now.AddSeconds( 1 ).ToString(),
+                LocationId = LocationId.ToString(),
+                IncludeChildLocations = false,
+                ContainerLocationTypes = _getTypes()
+            };
+            ContainerData Data = ReconciliationAction.getContainerStatistics( Request );
+            foreach( ContainerData.ReconciliationStatistics Stat in Data.ContainerStatistics )
+            {
+                if( Stat.Status == CswNbtObjClassContainerLocation.StatusOptions.NotScanned.ToString() ||
+                    Stat.Status == CswNbtObjClassContainerLocation.StatusOptions.Correct.ToString() )
+                {
+                    Assert.AreEqual( 0, Stat.ContainerCount );
+                }
+                else if( Stat.Status == CswNbtObjClassContainerLocation.StatusOptions.ScannedCorrect.ToString())
+                {
+                    Assert.AreEqual( 1, Stat.ContainerCount );
                 }
             }
         }
