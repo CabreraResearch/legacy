@@ -17,6 +17,21 @@
             };
             cswPublic = cswPublic || {};
 
+            cswPrivate.domNodeProcessing = function (control) {
+                control = Csw.dom(control);
+                cswPrivate.count += 1;
+                control.$parent = cswPublic.$.parent();
+                control.root = control;
+                control.ID = control.getId();
+                control.parent = function () {
+                    return Csw.domNode(control.$parent[0].id);
+                };
+                $element = control.$;
+                
+                cswPrivate.controlPostProcessing(control);
+                return control;
+            };
+
             cswPrivate.controlPreProcessing = function (opts, controlName) {
                 /* 
                 This is our last chance to capture context for chaining. 
@@ -80,11 +95,14 @@
                 return ret;
             };
 
-            if (Csw.isJQuery($element)) {
+            if (null === $element && cswPublic.$ && cswPublic[0]) {
+                cswPrivate.domNodeProcessing(cswPublic);
+            }
+            else if (Csw.isJQuery($element)) {
                 cswPublic = Csw.dom(cswPublic, $element);
                 cswPrivate.controlPostProcessing(cswPublic);
             } else {
-                throw new Error('Cannot directly instance a literals factory without a jQuery element.');
+                Csw.debug.error('Cannot directly instance a literals factory without a DOM element.');
             }
 
             //#endregion cswPrivate
