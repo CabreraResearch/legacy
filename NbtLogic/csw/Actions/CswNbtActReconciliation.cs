@@ -127,6 +127,7 @@ namespace ChemSW.Nbt.Actions
                             else
                             {
                                 ContainerStatus.ContainerStatus = CswNbtObjClassContainerLocation.StatusOptions.NotScanned.ToString();
+                                isEnabled = true;
                             }
                             ContainerStatus.ActionOptions = _getActionOptions( ContainerStatus.ContainerStatus );
                             if( isEnabled )

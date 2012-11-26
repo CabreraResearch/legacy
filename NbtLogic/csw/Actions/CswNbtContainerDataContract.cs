@@ -65,6 +65,7 @@ namespace ChemSW.Nbt.Actions
             public ReconciliationRequest()
             {
                 ContainerActions = new Collection<ReconciliationActions>();
+                ContainerLocationTypes = new Collection<ReconciliationTypes>();
             }
 
             [DataMember]
