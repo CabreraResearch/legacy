@@ -91,7 +91,10 @@
         });
 
     Csw.clientSession.isDebug = Csw.clientSession.isDebug ||
-        Csw.clientSession.register('isDebug', function () {
+        Csw.clientSession.register('isDebug', function (qs) {
+            if (qs && (Csw.bool(qs.debug) || 'dev.html' === Csw.string(qs.pageName).toLowerCase())) {
+                cswPrivate.debug = true;
+            }
             return cswPrivate.debug;
         });
 
