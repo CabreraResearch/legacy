@@ -105,7 +105,7 @@ namespace ChemSW.Nbt.Batch
 
                             if( false == LocationUpdated )
                             {
-                                BatchNode.appendToLog( "Unable to update the location property of the following node: " + Node.NodeId );
+                                BatchNode.appendToLog( "Unable to update the location of: " + Node.NodeName + " (" + Node.NodeId.ToString() + ")" );
                             }
 
                         }//for( int i = 0; i < NodesProcessedPerIteration && BatchData.NodePks.Count > 0; i++ )
