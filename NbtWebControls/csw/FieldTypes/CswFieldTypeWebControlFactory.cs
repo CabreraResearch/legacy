@@ -80,6 +80,10 @@ namespace ChemSW.NbtWebControls.FieldTypes
                     Control = new CswBarcode( CswNbtResources, MetaDataProp, EditMode ); //, (EditMode == NodeEditMode.AddInPopup));
                     break;
 
+                case CswNbtMetaDataFieldType.NbtFieldType.CASNo:
+                    Control = new CswCASNo( CswNbtResources, MetaDataProp, EditMode );
+                    break;
+
                 case CswNbtMetaDataFieldType.NbtFieldType.Composite:
                     Control = new CswComposite( CswNbtResources, MetaDataProp, EditMode );
                     break;

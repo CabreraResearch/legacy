@@ -114,6 +114,7 @@
     <Compile Include="csw\CswViewStructureTree.cs" />
     <Compile Include="csw\CswViewVisibilityEditor.cs" />
     <Compile Include="csw\FieldTypes\CswBarcode.cs" />
+    <Compile Include="csw\FieldTypes\CswCASNo.cs" />
     <Compile Include="csw\FieldTypes\CswComposite.cs" />
     <Compile Include="csw\FieldTypes\CswDate.cs" />
     <Compile Include="csw\FieldTypes\CswFieldTypeWebControl.cs" />
