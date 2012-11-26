@@ -26,7 +26,6 @@
                     Csw.extend(cswPrivate, options);
                     cswPrivate.type = Csw.enums.inputTypes.checkbox;
                     cswPrivate.value = Csw.bool(cswPrivate.checked) || Csw.bool(cswPrivate.value); //Case 21769
-
                     if (cswPrivate.ReadOnly) {
                         switch (cswPrivate.value) {
                             case true:
@@ -38,10 +37,11 @@
                         }
                         cswPrivate.checkBox = cswParent.div(cswPrivate);
                     } else {
-                        cswPrivate.onClick = function() {
+                        var onChange = cswPrivate.onChange;
+                        cswPrivate.onChange = function () {
                             cswPrivate.value = !cswPrivate.value;
                             cswPrivate.checked = !cswPrivate.checked;
-                            Csw.tryExec(cswPrivate.onChange, cswPrivate.value);
+                            Csw.tryExec(onChange, cswPrivate.value);
                             return cswPrivate.value;
                         };
                         cswPrivate.checkBox = cswParent.input(cswPrivate);

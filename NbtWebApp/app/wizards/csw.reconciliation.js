@@ -26,6 +26,7 @@
                 stepTwoComplete: false,
                 stepThreeComplete: false,
                 isCurrent: true,
+                touchesIncluded: 0,
                 currentDate: '',
                 state: {
                     LocationId: '',
@@ -243,6 +244,13 @@
                                 checked: type.Enabled,
                                 onChange: Csw.method(function () {
                                     cswPrivate.state.ContainerLocationTypes[key].Enabled = cswPrivate.typeCheckBox[key].checked();
+                                    if (cswPrivate.state.ContainerLocationTypes[key].Type != 'Scan'){
+                                        if (cswPrivate.state.ContainerLocationTypes[key].Enabled) {
+                                            cswPrivate.touchesIncluded++;
+                                        } else {
+                                            cswPrivate.touchesIncluded--;
+                                        }
+                                    }
                                     cswPrivate.reinitSteps(2);
                                 })
                             });
@@ -279,16 +287,6 @@
                                         ContainerCount: '',
                                         AmountScanned: '',
                                         PercentScanned: ''
-                                    }],
-                                    ContainerStatuses: [{
-                                        ContainerId: '',
-                                        ContainerBarcode: '',
-                                        LocationId: '',
-                                        ContainerLocationId: '',
-                                        ContainerStatus: '',
-                                        Action: '',
-                                        ActionApplied: '',
-                                        ActionOptions: []
                                     }]
                                 };
                                 Csw.extend(cswPrivate.data, ajaxdata);
@@ -325,15 +323,17 @@
                                     if (row.Status === 'Not Scanned') {
                                         StatusMetricsGridData.push({});
                                     }
-                                    StatusMetricsGridData.push({
-                                        status: row.Status,
-                                        numofcontainers: row.ContainerCount,
-                                        percentscanned: (Math.round(Csw.number(percent) * 100) / 100) + '%'
-                                    });
-                                    if(Csw.startsWith(row.Status, 'Scanned')) {
-                                        totalContainersScanned += row.ContainerCount;
-                                    } else {
-                                        StatusMetricsGridData.push({});
+                                    if (cswPrivate.touchesIncluded > 0 || row.Status !== 'Received, Moved, Dispensed, or Disposed') {
+                                        StatusMetricsGridData.push({
+                                            status: row.Status,
+                                            numofcontainers: row.ContainerCount,
+                                            percentscanned: (Math.round(Csw.number(percent) * 100) / 100) + '%'
+                                        });
+                                        if(Csw.startsWith(row.Status, 'Scanned')) {
+                                            totalContainersScanned += row.ContainerCount;
+                                        } else {
+                                            StatusMetricsGridData.push({});
+                                        }
                                     }
                                 });
                                 StatusMetricsGridData.push({
@@ -363,7 +363,7 @@
                                     onDelete: null,
                                     onSelect: null,
                                     onDeselect: null,
-                                    height: StatusMetricsGridData.length * 25 + 2,
+                                    height: StatusMetricsGridData.length * 26,
                                     forcefit: true,
                                     width: '100%',
                                     fields: StatusMetricsGridFields,
