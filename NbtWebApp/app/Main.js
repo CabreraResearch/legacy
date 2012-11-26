@@ -4,14 +4,27 @@
 
 window.initMain = window.initMain || function (undefined) {
 
-    'use strict';
-
     var cswPrivate = {
-        tabsAndProps: null
+        tabsAndProps: null,
+        isDocumentReady: false,
+        isExtReady: false
     };
 
+    $(document).ready(function() {
+        cswPrivate.isDocumentReady = true;
     Csw.publish(Csw.enums.events.domready);
-    //Csw.debug.group('Csw');
+    });
+    window.Ext.onReady(function() {
+        cswPrivate.isExtReady = true;
+        Csw.publish(Csw.enums.events.domready);
+    });
+
+    Csw.subscribe(Csw.enums.events.domready, function _onReady() {
+
+        if (cswPrivate.isDocumentReady && cswPrivate.isExtReady) {
+
+            Csw.unsubscribe(Csw.enums.events.domready, _onReady); //We only need to execute once
+            
     var mainTree;
     var mainGridId = 'CswNodeGrid';
     var mainTableId = 'CswNodeTable';
@@ -21,21 +34,21 @@ window.initMain = window.initMain || function (undefined) {
     var mainviewselect;
 
     (function _initMain() {
-        Csw.main.body = Csw.main.body || Csw.main.register('body', Csw.literals.factory($('body')));     // case 27563 review K3663 comment 1
-        Csw.main.ajaxImage = Csw.main.ajaxImage || Csw.main.register('ajaxImage', Csw.literals.factory($('#ajaxImage')));
-        Csw.main.ajaxSpacer = Csw.main.ajaxSpacer || Csw.main.register('ajaxSpacer', Csw.literals.factory($('#ajaxSpacer')));
-        Csw.main.centerBottomDiv = Csw.main.centerBottomDiv || Csw.main.register('centerBottomDiv', Csw.literals.factory($('#CenterBottomDiv')));
-        Csw.main.centerTopDiv = Csw.main.centerTopDiv || Csw.main.register('centerTopDiv', Csw.literals.factory($('#CenterTopDiv')));
-        Csw.main.headerDashboard = Csw.main.headerDashboard || Csw.main.register('headerDashboard', Csw.literals.factory($('#header_dashboard')));
-        Csw.main.headerMenu = Csw.main.headerMenu || Csw.main.register('headerMenu', Csw.literals.factory($('#header_menu')));
-        Csw.main.headerQuota = Csw.main.headerQuota || Csw.main.register('headerQuota', Csw.literals.factory($('#header_quota')));
-        Csw.main.headerUsername = Csw.main.headerUsername || Csw.main.register('headerUsername', Csw.literals.factory($('#header_username')));
-        Csw.main.leftDiv = Csw.main.leftDiv || Csw.main.register('leftDiv', Csw.literals.factory($('#LeftDiv')));
-        Csw.main.mainMenuDiv = Csw.main.mainMenuDiv || Csw.main.register('mainMenuDiv', Csw.literals.factory($('#MainMenuDiv')));
-        Csw.main.rightDiv = Csw.main.rightDiv || Csw.main.register('rightDiv', Csw.literals.factory($('#RightDiv')));
-        Csw.main.searchDiv = Csw.main.searchDiv || Csw.main.register('searchDiv', Csw.literals.factory($('#SearchDiv')));
-        Csw.main.viewSelectDiv = Csw.main.viewSelectDiv || Csw.main.register('viewSelectDiv', Csw.literals.factory($('#ViewSelectDiv')));
-        Csw.main.watermark = Csw.main.watermark || Csw.main.register('watermark', Csw.literals.factory($('#watermark')));
+                Csw.main.body = Csw.main.body || Csw.main.register('body', Csw.domNode({ ID: 'body' })); // case 27563 review K3663 comment 1
+                Csw.main.ajaxImage = Csw.main.ajaxImage || Csw.main.register('ajaxImage', Csw.domNode({ ID: 'ajaxImage' }));
+                Csw.main.ajaxSpacer = Csw.main.ajaxSpacer || Csw.main.register('ajaxSpacer', Csw.domNode({ ID: 'ajaxSpacer' }));
+                Csw.main.centerBottomDiv = Csw.main.centerBottomDiv || Csw.main.register('centerBottomDiv', Csw.domNode({ ID: 'CenterBottomDiv' }));
+                Csw.main.centerTopDiv = Csw.main.centerTopDiv || Csw.main.register('centerTopDiv', Csw.domNode({ ID: 'CenterTopDiv' }));
+                Csw.main.headerDashboard = Csw.main.headerDashboard || Csw.main.register('headerDashboard', Csw.domNode({ ID: 'header_dashboard' }));
+                Csw.main.headerMenu = Csw.main.headerMenu || Csw.main.register('headerMenu', Csw.domNode({ ID: 'header_menu' }));
+                Csw.main.headerQuota = Csw.main.headerQuota || Csw.main.register('headerQuota', Csw.domNode({ ID: 'header_quota' }));
+                Csw.main.headerUsername = Csw.main.headerUsername || Csw.main.register('headerUsername', Csw.domNode({ ID: 'header_username' }));
+                Csw.main.leftDiv = Csw.main.leftDiv || Csw.main.register('leftDiv', Csw.domNode({ ID: 'LeftDiv' }));
+                Csw.main.mainMenuDiv = Csw.main.mainMenuDiv || Csw.main.register('mainMenuDiv', Csw.domNode({ ID: 'MainMenuDiv' }));
+                Csw.main.rightDiv = Csw.main.rightDiv || Csw.main.register('rightDiv', Csw.domNode({ ID: 'RightDiv' }));
+                Csw.main.searchDiv = Csw.main.searchDiv || Csw.main.register('searchDiv', Csw.domNode({ ID: 'SearchDiv' }));
+                Csw.main.viewSelectDiv = Csw.main.viewSelectDiv || Csw.main.register('viewSelectDiv', Csw.domNode({ ID: 'ViewSelectDiv' }));
+                Csw.main.watermark = Csw.main.watermark || Csw.main.register('watermark', Csw.domNode({ ID: 'watermark' }));
 
     } ());
 
@@ -168,7 +181,7 @@ window.initMain = window.initMain || function (undefined) {
         var ret = false;
         var qs = Csw.queryString();
 
-        if (Csw.bool(qs.debug) || 'dev.html' === Csw.string(qs.pageName).toLowerCase()) {
+                if (Csw.clientSession.isDebug(qs)) {
             Csw.clientSession.enableDebug();
             Csw.cookie.set(Csw.cookie.cookieNames.LogoutPath, 'Dev.html');
             Csw.setGlobalProp('homeUrl', 'Dev.html');
@@ -553,7 +566,9 @@ window.initMain = window.initMain || function (undefined) {
             }
         }   //if (Csw.clientChanges.manuallyCheckChanges() && itemIsSupported()) {
 
-    } //handleItemSelect
+            }
+
+            //handleItemSelect
 
     function handleReport(reportid) {
         Csw.openPopup("Report.html?reportid=" + reportid);
@@ -847,7 +862,9 @@ window.initMain = window.initMain || function (undefined) {
         clear({ right: true });
         Csw.main.rightDiv.$.CswDefaultContent(v);
 
-    } // showDefaultContentTree()
+            }
+
+            // showDefaultContentTree()
 
     function showDefaultContentTable(viewopts) {
         var v = {
@@ -868,7 +885,9 @@ window.initMain = window.initMain || function (undefined) {
 
         div.$.CswDefaultContent(v);
 
-    } // showDefaultContentTable()
+            }
+
+            // showDefaultContentTable()
 
     function getTabs(options) {
         Csw.publish('initPropertyTearDown');
@@ -1007,7 +1026,9 @@ window.initMain = window.initMain || function (undefined) {
                 } // switch
             } // if (false === Csw.isNullOrEmpty(o.searchid))
         } // if (manuallyCheckChanges())
-    } // refreshSelected()
+            }
+
+            // refreshSelected()
     Csw.subscribe(Csw.enums.events.main.refreshSelected,
         function (eventObj, opts) {
             refreshSelected(opts);
@@ -1078,7 +1099,9 @@ window.initMain = window.initMain || function (undefined) {
                 Csw.clientState.setCurrentView(newviewid, newviewmode);
             }
         });
-    }    // refreshNodesTree()
+            }
+
+            // refreshNodesTree()
 
 
     function handleAction(options) {
@@ -1412,5 +1435,7 @@ window.initMain = window.initMain || function (undefined) {
         handleAction(opts);
     });
     // _handleAction()
+        }
+    });
 };
 

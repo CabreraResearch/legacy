@@ -56,7 +56,7 @@
             cswPrivate.makeActionButton = function (cellId, buttonName, iconType, clickFunc, record, rowIndex, colIndex) {
                 // Possible race condition - have to make the button after the cell is added, but it isn't added yet
                 Csw.defer(function () {
-                    var cell = Csw.literals.factory($('#' + cellId));
+                    var cell = Csw.domNode({ ID: cellId });
                     cell.empty();
                     var iconopts = {
                         name: cswPrivate.name + cellId + buttonName,
@@ -223,7 +223,7 @@
                             });
                             if (thisBtn.length === 1) {
                                 Csw.defer(function() {
-                                    var div = Csw.literals.factory($('#' + id));
+                                    var div = Csw.domNode({ ID: id });
                                     div.nodeButton({
                                         value: colObj.header,
                                         size: 'small',
