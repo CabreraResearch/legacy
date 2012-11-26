@@ -862,11 +862,6 @@ namespace ChemSW.Nbt.ObjClasses
                         LotControlled.Checked = InvGroupNode.Central.Checked == Tristate.True ? Tristate.True : Tristate.False;
                     }
                 }
-                CswNbtObjClassContainerGroup ContGrpNode = _CswNbtResources.Nodes.GetNode( ContainerGroup.RelatedNodeId );
-                if( null != ContGrpNode && ContGrpNode.SyncLocation.Checked == Tristate.True )
-                {
-                    ContainerGroup.RelatedNodeId = null;
-                }
                 if( Location.CreateContainerLocation )
                 {
                     _createContainerLocationNode(CswNbtObjClassContainerLocation.TypeOptions.Move);
