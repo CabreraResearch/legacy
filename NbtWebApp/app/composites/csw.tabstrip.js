@@ -16,14 +16,18 @@
                     stateful: true,
                     stateId: 'CswRequestCart'
                 },
-                tabs: [{
-                    title: 'First tab',
-                    html: 'No content has been defined for this tab',
-                    tooltip: 'First tab of many',
-                    handler: function (tab, eventObj) {
+                tabs: [],
+                //    [{
+                //    title: 'First tab',
+                //    html: 'No content has been defined for this tab',
+                //    tooltip: 'First tab of many',
+                //    handler: function (tab, eventObj) {
                         
-                    }
-                }],
+                //    }
+                //}],
+                onTabSelect: function(el, eventObj, callBack) {
+                    
+                },
                 extTabs: []
             };
             var cswPublic = { };
@@ -47,7 +51,11 @@
             //cswPrivate.method = function() {};
 
             cswPublic.addTab = function(tab) {
-                window.Ext.onReady(function() {
+            	/// <summary>
+            	/// Add a single Ext tab based on a simple JS tab object.
+            	/// </summary>
+            	/// <param name="tab" type="Object">Definition containing title and HTML.</param>
+            	/// <returns type="Ext.tab">ExtJS tab instance</returns>
                     tab = tab || {
                         title: 'This is a tab',
                         html: 'Hi, I am tab ',
@@ -56,7 +64,28 @@
                     var extTab = cswPublic.tabPanel.add([tab])[0];
                     cswPrivate.extTabs.push(extTab);
                     return extTab;
+            };
+            
+            cswPublic.addTabs = function (tabs) {
+                /// <summary>
+                /// Add an array of Ext tabs based on an array of simple JS tab object.
+                /// </summary>
+                /// <param name="tabs" type="Array">Array of tab definitions, each containing a title and HTML.</param>
+                /// <returns type="Array">Array of ExtJS tab instances</returns>
+                tabs = tabs || cswPrivate.tabs;
+                Csw.each(tabs, function (tabObj) {
+                    cswPublic.addTab(tabObj);
                 });
+                return cswPrivate.extTabs;
+            };
+            
+            cswPublic.setActiveTab = function (tab) {
+                /// <summary>
+                /// Takes a tab instance, id or index and sets it as active/selected
+                /// </summary>
+                /// <returns type="Ext.tab">ExtJS tab instance</returns>
+                tab = tab || 0;
+                return cswPublic.tabPanel.setActiveTab(tab);
             };
                 
             //#endregion Define Class Members
