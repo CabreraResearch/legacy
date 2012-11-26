@@ -104,13 +104,17 @@ namespace ChemSW.Nbt
                 Node2.postChanges( ForceUpdate: false );
             }
 
+            _CswNbtResources.Modules.ToggleView( false, "Containers", NbtViewVisibility.Global );
         }
+
         public override void OnDisable()
         {
             if( _CswNbtResources.ConfigVbls.doesConfigVarExist( CswConfigurationVariables.ConfigurationVariableNames.Logging_Level ) )
             {
                 _CswNbtResources.ConfigVbls.setConfigVariableValue( CswConfigurationVariables.ConfigurationVariableNames.Logging_Level.ToString(), "None" );
             }
+
+            _CswNbtResources.Modules.ToggleView( true, "Containers", NbtViewVisibility.Global );
         }
 
     } // class CswNbtModuleRuleDev

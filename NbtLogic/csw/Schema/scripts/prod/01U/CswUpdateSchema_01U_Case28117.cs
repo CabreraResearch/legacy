@@ -2,6 +2,7 @@
 using ChemSW.DB;
 using ChemSW.Core;
 using ChemSW.Nbt.ObjClasses;
+using ChemSW.Nbt.MetaData;
 using System.Collections.Generic;
 using System.Data;
 
@@ -56,7 +57,7 @@ namespace ChemSW.Nbt.Schema
 
             //views that belong in the Containers category (Expiring Containers, Missing Containers, Above Maximum Inventory, Below Minimum Inventory)
             CswTableSelect containersTS = _CswNbtSchemaModTrnsctn.makeCswTableSelect( "conainerViews_28117", "node_views" );
-            DataTable containersDT = containersTS.getTable( "where viewname = 'Expiring Containers' or viewname = 'Missing Containers' or viewname = 'Above Maximum Inventory' or viewname = 'Below Minimum Inventory'" );
+            DataTable containersDT = containersTS.getTable( "where viewname = 'Expiring Containers' or viewname = 'Missing Containers' or viewname = 'Above Maximum Inventory' or viewname = 'Below Minimum Inventory' or viewname = 'Containers'" );
 
             foreach( DataRow row in containersDT.Rows )
             {
