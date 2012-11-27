@@ -54,6 +54,7 @@
                 //opts.ID = window.Ext.id();
                 if (false === Csw.isNullOrEmpty(opts.labelText)) {
                     cswPublic.label({ forAttr: opts.ID, text: opts.labelText, useWide: opts.useWide, isRequired: opts.isRequired });
+                    opts.cssclass += ' CswLabelValue ';
                 }
                 opts.parent = function () {
                     return cswPublic;
