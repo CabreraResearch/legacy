@@ -5,6 +5,7 @@ using ChemSW.Nbt.Grid;
 using ChemSW.Nbt.ObjClasses;
 using Newtonsoft.Json.Linq;
 using ChemSW.Nbt.Security;
+using ChemSW.Core;
 
 namespace ChemSW.Nbt.WebServices
 {
@@ -39,11 +40,12 @@ namespace ChemSW.Nbt.WebServices
                                 join field_types ft on ft.fieldtypeid = np.fieldtypeid
                             where ja.nodeid = " + Node.NodeId.PrimaryKey.ToString();
 
+                CswCommaDelimitedString sysUserNames = new CswCommaDelimitedString();
                 foreach( SystemUserNames sysUserName in Enum.GetValues( typeof( SystemUserNames ) ) )
                 {
-                    SQL += @"and x.transactionusername != '" + sysUserName.ToString() + "'";
+                    sysUserNames.Add( "'" + sysUserName.ToString() + "'" );
                 }
-                SQL += " order by ChangeDate desc";
+                SQL += @" and x.transactionusername not in (" + sysUserNames + ") order by ChangeDate desc";
 
                 CswArbitrarySelect HistorySelect = _CswNbtResources.makeCswArbitrarySelect( "CswNbtWebServiceAuditing_getAuditHistory_select", SQL );
                 DataTable HistoryTable = HistorySelect.getTable();
