@@ -46,8 +46,9 @@
                 pageSize: '',  // overridden by webservice
 
                 actionDataIndex: 'action',
-                
-                topToolbar: []
+
+                topToolbar: [],
+                groupField: ''
             };
             var cswPublic = {};
 
@@ -91,7 +92,8 @@
                             type: 'json',
                             root: 'items'
                         }
-                    }
+                    },
+                    groupField: cswPrivate.groupField
                 };
                 if (cswPrivate.showActionColumn && false === cswPrivate.showCheckboxes) {
                     var newfld = { name: cswPrivate.actionDataIndex };
@@ -111,7 +113,7 @@
 
                 Csw.each(columns, function (val) {
                     val.filterable = true;
-                });                
+                });
 
                 var gridopts = {
                     id: cswPrivate.ID + 'grid',
@@ -152,6 +154,13 @@
                         autoReload: false,
                         encode: false,
                         local: true
+                    },
+                    {
+                        id: 'group',
+                        ftype: 'groupingsummary',
+                        groupHeaderTpl: '{name}',
+                        hideGroupedHeader: true,
+                        enableGroupingMenu: false
                     }]
                 };
 
@@ -166,15 +175,15 @@
                         flex: false,
                         resizable: false,
                         xtype: 'actioncolumn',
-                        renderer: function (value, metaData, record, rowIndex, colIndex, store, view) {                            
+                        renderer: function (value, metaData, record, rowIndex, colIndex, store, view) {
                             var cell1Id = cswPrivate.name + 'action' + rowIndex + colIndex + '1';
                             var cell2Id = cswPrivate.name + 'action' + rowIndex + colIndex + '2';
                             //$('#gridActionColumn' + cell1Id).remove();
                             var ret = '<table id="gridActionColumn' + cell1Id + '" cellpadding="0"><tr>';
                             ret += '<td id="' + cell1Id + '" style="width: 26px;"/>';
                             ret += '<td id="' + cell2Id + '" style="width: 26px;"/>';
-                            ret += '</tr></table>';                           
-                            
+                            ret += '</tr></table>';
+
                             var canedit = Csw.bool(cswPrivate.showEdit) && Csw.bool(record.data.canedit, true);
                             var canview = Csw.bool(cswPrivate.showView) && Csw.bool(record.data.canview, true);
                             var candelete = Csw.bool(cswPrivate.showDelete) && Csw.bool(record.data.candelete, true);
@@ -222,14 +231,14 @@
                                 return btn.index === colObj.dataIndex && btn.rowno === rowIndex;
                             });
                             if (thisBtn.length === 1) {
-                                Csw.defer(function() {
+                                Csw.defer(function () {
                                     var div = Csw.literals.factory($('#' + id));
                                     div.nodeButton({
                                         value: colObj.header,
                                         size: 'small',
                                         propId: thisBtn[0].propattr
                                     });
-                                },100);
+                                }, 100);
                             }
                             return '<div id="' + id + '"></div>';
 
@@ -243,7 +252,7 @@
                     gridopts.selType = 'checkboxmodel';
                     gridopts.selModel = { mode: 'Simple' };
                     gridopts.listeners.selectionchange = function (t, selected, eOpts) {
-                        if(cswPrivate.editAllButton && cswPrivate.deleteAllButton) {
+                        if (cswPrivate.editAllButton && cswPrivate.deleteAllButton) {
                             if (Csw.isNullOrEmpty(selected) || selected.length === 0) {
                                 cswPrivate.editAllButton.disable();
                                 cswPrivate.deleteAllButton.disable();
@@ -319,8 +328,8 @@
                     });
                     cswPrivate.topToolbar.push(cswPrivate.deleteAllButton);
                 } // if(cswPrivate.showCheckboxes && cswPrivate.showActionColumn)
-                
-                if(cswPrivate.topToolbar.length === '1') {
+
+                if (cswPrivate.topToolbar.length === '1') {
                     gridopts.dockedItems.push({
                         xtype: 'toolbar',
                         dock: 'top',
@@ -402,10 +411,10 @@
 
             cswPublic.getSelectedRows = Csw.method(function () {
                 var ret = [];
-                Csw.each(cswPrivate.grid.getSelectionModel().getSelection(), function(val) {
-                     if(val.data) {
-                         ret.push(val.data);
-                     }
+                Csw.each(cswPrivate.grid.getSelectionModel().getSelection(), function (val) {
+                    if (val.data) {
+                        ret.push(val.data);
+                    }
                 });
                 return ret;
             });
@@ -473,7 +482,7 @@
             cswPublic.toggleShowCheckboxes = Csw.method(function (val) {
                 cswPrivate.showCheckboxes = (false === cswPrivate.showCheckboxes);
                 if (false === cswPrivate.showCheckboxes) {
-                    if(options.topToolbar) {
+                    if (options.topToolbar) {
                         cswPrivate.topToolbar = options.topToolbar;
                     } else {
                         cswPrivate.topToolbar = [];
@@ -533,9 +542,9 @@
                 cswPrivate.ID = cswPrivate.ID || cswParent.getId();
                 cswPrivate.ID += cswPrivate.suffix;
                 cswPrivate.reInit();
-            }());
+            } ());
 
             return cswPublic;
         });
 
-}());
+} ());

@@ -314,9 +314,22 @@ namespace ChemSW.Nbt.Grid
             foreach( DataRow Row in DT.Rows )
             {
                 CswNbtGridExtJsRow gridrow = new CswNbtGridExtJsRow( RowNo );
+                bool IsPassword = false;
                 foreach( DataColumn Column in DT.Columns )
                 {
-                    gridrow.data[new CswNbtGridExtJsDataIndex( gridUniquePrefix, Column.ColumnName )] = Row[Column].ToString();
+                    if( IsPassword )
+                    {
+                        IsPassword = false;
+                        gridrow.data[new CswNbtGridExtJsDataIndex( gridUniquePrefix, Column.ColumnName )] = "[password field]";
+                    }
+                    else
+                    {
+                        gridrow.data[new CswNbtGridExtJsDataIndex( gridUniquePrefix, Column.ColumnName )] = Row[Column].ToString();
+                    }
+                    if( Row[Column].ToString().Equals( "Password" ) )
+                    {
+                        IsPassword = true;
+                    }
                 }
                 grid.rows.Add( gridrow );
                 RowNo += 1;
