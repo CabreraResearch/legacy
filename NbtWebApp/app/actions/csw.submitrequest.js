@@ -1,5 +1,3 @@
-/// <reference path="~/app/CswApp-vsdoc.js" />
-
 
 (function () {
 
@@ -27,15 +25,15 @@
                 cswParent.empty();
             }());
 
-            cswPrivate.makeRequestCreateMaterial = function() {
+            cswPrivate.makeRequestCreateMaterial = function () {
                 Csw.ajaxWcf.get({
                     urlMethod: 'Requests/findMaterialCreate',
-                    success: function(data) {
-                        if(data.NodeTypeId) {
+                    success: function (data) {
+                        if (data.NodeTypeId) {
                             $.CswDialog('AddNodeDialog', {
                                 text: 'New Create Material Request',
                                 nodetypeid: data.NodeTypeId,
-                                onAddNode: function() {
+                                onAddNode: function () {
                                     cswPublic.grid.reload();
                                     Csw.publish(Csw.enums.events.main.refreshHeader);
                                 }
@@ -60,7 +58,9 @@
                 });
             };
 
-            cswPrivate.initGrid = function (opts) {
+            cswPrivate.makePendingTab = function (opts) {
+
+                cswPrivate.tabs.setTitle('Request Items Pending Submission');
 
                 // This really ought to be a CswNodeGrid
                 opts = opts || {
@@ -70,14 +70,29 @@
                 };
 
                 var gridId = cswPrivate.name + '_srgrid';
-                cswPublic.grid = cswPublic.gridParent.grid({
+
+                cswPrivate.pendingTab.csw.empty();
+
+                cswPrivate.pendingTab.csw.br({ number: 2 });
+                
+
+                var pendingTbl = cswPrivate.pendingTab.csw.table();
+                
+                pendingTbl.cell(1, 1).input({
+                    labelText: 'Request Name: ',
+                    value: Csw.cookie.get(Csw.cookie.cookieNames.Username) + ' ' + Csw.todayAsString()
+                });
+
+                pendingTbl.cell(2, 1).br({ number: 1 });
+
+                cswPublic.grid = pendingTbl.cell(3, 1).grid({
                     name: gridId,
                     storeId: gridId + '_store',
                     stateId: gridId,
                     title: 'Your Cart',
                     usePaging: true,
                     height: 180,
-
+                    width: 750,
                     ajax: {
                         urlMethod: opts.urlMethod,
                         data: opts.data
@@ -117,7 +132,7 @@
                             Multi: (nodeids.length > 1),
                             title: 'Request',
                             onEditNode: function () {
-                                cswPrivate.initGrid(); //Case 27619--don't pass the function by reference, because we want to control the parameters with which it is called
+                                cswPrivate.makePendingTab(); //Case 27619--don't pass the function by reference, because we want to control the parameters with which it is called
                             }
                         });
                     }, // onEdit
@@ -140,7 +155,7 @@
                             nodenames: nodenames,
                             onDeleteNode: Csw.method(function () {
                                 Csw.publish(Csw.enums.events.main.refreshHeader);
-                                cswPrivate.initGrid();
+                                cswPrivate.makePendingTab();
                             }),
                             Multi: (nodeids.length > 1),
                             publishDeleteEvent: false
@@ -154,7 +169,7 @@
             }; // initGrid()
 
             cswPrivate.copyRequest = function () {
-                cswPrivate.initGrid({
+                cswPrivate.makePendingTab({
                     urlMethod: 'copyRequest',
                     data: {
                         CopyFromRequestId: cswPrivate.copyFromNodeId,
@@ -165,6 +180,83 @@
                     }
                 });
             }; // copyRequest()    
+
+            cswPrivate.onTabSelect = function (tabName, el, eventObj, callBack) {
+
+                switch (tabName) {
+                    case 'Pending':
+                        cswPrivate.tabs.setTitle('Request Items Pending Submission');
+                        break;
+                    case 'Submitted':
+                        break;
+                    case 'Recurring':
+                        break;
+                    case 'Favorites':
+                        break;
+                }
+
+
+                /*
+            
+            cswPrivate.actionTbl.cell(3, 1).br({ number: 2 });
+      cswPrivate.gridId = cswPrivate.name + '_csw_requestGrid_outer';
+      cswPublic.gridParent = cswPrivate.actionTbl.cell(4, 1).div({
+          name: cswPrivate.gridId
+      }); //, align: 'center' });
+
+      cswPrivate.initGrid();
+
+      cswPrivate.historyTbl = cswPrivate.actionTbl.cell(5, 1).table({ align: 'left', cellvalign: 'middle' });
+      Csw.ajax.post({
+          urlMethod: 'getRequestHistory',
+          data: {},
+          success: function (json) {
+              if (json.count > 0) {
+                  delete json.count;
+                  cswPrivate.historyTbl.cell(1, 1).span({ text: '</br>&nbsp;Past Requests: ' });
+                  cswPrivate.historySelect = cswPrivate.historyTbl.cell(2, 1).select({
+                      onChange: function () {
+                          cswPrivate.copyFromNodeId = cswPrivate.historySelect.val();
+                      }
+                  });
+                  json = json || {};
+
+                  Csw.each(json, function (prop, name) {
+                      var display = Csw.string(prop['name']) + ' (' + Csw.string(prop['submitted date']) + ')';
+                      cswPrivate.historySelect.option({ value: prop['requestnodeid'], display: display });
+                  });
+                  cswPrivate.copyFromNodeId = cswPrivate.historySelect.val();
+                  cswPrivate.copyHistoryBtn = cswPrivate.historyTbl.cell(2, 2).buttonExt({
+                      icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.copy),
+                      size: 'small',
+                      enabledText: 'Copy to Cart',
+                      disabledText: 'Copying...',
+                      onClick: cswPrivate.copyRequest
+                  });
+              }
+          }
+         
+          cswPrivate.saveRequestTbl = cswPrivate.actionTbl.cell(6, 1).table({ align: 'right', cellvalign: 'middle', cellpadding: '2px' });
+      //cswPrivate.saveRequestTbl.cell(1, 4).span({ text: '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' });
+      cswPrivate.saveRequestTxt = cswPrivate.saveRequestTbl.cell(2, 1).input().hide();
+      cswPrivate.saveRequestTbl.cell(1, 1).span({ text: 'Save Request' });
+      cswPrivate.saveRequestChk = cswPrivate.saveRequestTbl.cell(1, 2).checkBox({
+          onChange: Csw.method(function () {
+              var val;
+              if (cswPrivate.saveRequestChk.checked()) {
+                  val = Csw.cookie.get(Csw.cookie.cookieNames.Username) + ' ' + Csw.todayAsString();
+                  cswPrivate.saveRequestTxt.show();
+              } else {
+                  val = '';
+                  cswPrivate.saveRequestTxt.hide();
+              }
+              cswPrivate.saveRequestTxt.val(val);
+          })
+
+            
+            */
+
+            };
 
             (function _postCtor() {
 
@@ -184,78 +276,36 @@
                     .css('text-align', 'left')
                     .span({ text: 'Edit any of the Request Items in your cart. When you are finished, click "Place Request" to submit your cart.' });
 
-                //Case 27871: a Request Material Create button has to go _somewhere_ ...
-                cswPrivate.requestCreateMaterial = window.Ext.create('Ext.button.Button', {
-                    id: cswPrivate.ID + 'create',
-                    xtype: 'button',
-                    text: 'Request Create Material',
-                    icon: 'Images/newicons/16/cart.png',
-                    disabled: false,
-                    handler: function () {
-                        cswPrivate.makeRequestCreateMaterial();
-                    } // delete handler
+                cswPrivate.tabs = cswPrivate.actionTbl.cell(2, 1).tabStrip({
+                    onTabSelect: cswPrivate.onTabSelect
                 });
 
-                cswPrivate.actionTbl.cell(3, 1).br({ number: 2 });
-                cswPrivate.gridId = cswPrivate.name + '_csw_requestGrid_outer';
-                cswPublic.gridParent = cswPrivate.actionTbl.cell(4, 1).div({
-                    name: cswPrivate.gridId
-                }); //, align: 'center' });
-
-                cswPrivate.initGrid();
-
-                cswPrivate.historyTbl = cswPrivate.actionTbl.cell(5, 1).table({ align: 'left', cellvalign: 'middle' });
-                Csw.ajax.post({
-                    urlMethod: 'getRequestHistory',
-                    data: {},
-                    success: function (json) {
-                        if (json.count > 0) {
-                            delete json.count;
-                            cswPrivate.historyTbl.cell(1, 1).span({ text: '</br>&nbsp;Past Requests: ' });
-                            cswPrivate.historySelect = cswPrivate.historyTbl.cell(2, 1).select({
-                                onChange: function () {
-                                    cswPrivate.copyFromNodeId = cswPrivate.historySelect.val();
-                                }
-                            });
-                            json = json || {};
-
-                            Csw.each(json, function (prop, name) {
-                                var display = Csw.string(prop['name']) + ' (' + Csw.string(prop['submitted date']) + ')';
-                                cswPrivate.historySelect.option({ value: prop['requestnodeid'], display: display });
-                            });
-                            cswPrivate.copyFromNodeId = cswPrivate.historySelect.val();
-                            cswPrivate.copyHistoryBtn = cswPrivate.historyTbl.cell(2, 2).buttonExt({
-                                icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.copy),
-                                size: 'small',
-                                enabledText: 'Copy to Cart',
-                                disabledText: 'Copying...',
-                                onClick: cswPrivate.copyRequest
-                            });
-                        }
-                    }
+                cswPrivate.pendingTab = cswPrivate.tabs.addTab({
+                    title: 'Pending',
+                    html: 'Pending Request Items'
                 });
 
-                cswPrivate.saveRequestTbl = cswPrivate.actionTbl.cell(6, 1).table({ align: 'right', cellvalign: 'middle', cellpadding: '2px' });
-                //cswPrivate.saveRequestTbl.cell(1, 4).span({ text: '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' });
-                cswPrivate.saveRequestTxt = cswPrivate.saveRequestTbl.cell(2, 1).input().hide();
-                cswPrivate.saveRequestTbl.cell(1, 1).span({ text: 'Save Request' });
-                cswPrivate.saveRequestChk = cswPrivate.saveRequestTbl.cell(1, 2).checkBox({
-                    onChange: Csw.method(function () {
-                        var val;
-                        if (cswPrivate.saveRequestChk.checked()) {
-                            val = Csw.cookie.get(Csw.cookie.cookieNames.Username) + ' ' + Csw.todayAsString();
-                            cswPrivate.saveRequestTxt.show();
-                        } else {
-                            val = '';
-                            cswPrivate.saveRequestTxt.hide();
-                        }
-                        cswPrivate.saveRequestTxt.val(val);
-                    })
+                cswPrivate.submittedTab = cswPrivate.tabs.addTab({
+                    title: 'Submitted',
+                    html: 'Submitted Request Items'
                 });
+
+                cswPrivate.recurringTab = cswPrivate.tabs.addTab({
+                    title: 'Recurring',
+                    html: 'Recurring Request Items'
+                });
+
+                cswPrivate.favoritesTab = cswPrivate.tabs.addTab({
+                    title: 'Favorites',
+                    html: 'Favorite Request Items'
+                });
+
+                cswPrivate.tabs.setActiveTab(0);
+
+                cswPrivate.makePendingTab();
 
             }());
-            
+
             return cswPublic;
         });
 }());
-

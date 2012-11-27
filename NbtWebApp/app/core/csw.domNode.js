@@ -40,9 +40,8 @@
                             break;
                     }
                     
-                    if (!cswPrivate.el) {
-                        cswPublic[0] = cswPublic.$[0];
-                    }
+                    cswPublic[0] = cswPrivate.el || cswPublic.$[0];
+
                     switch(cswPrivate.tagName) {
                         case 'A':
                         case 'APPLET':
