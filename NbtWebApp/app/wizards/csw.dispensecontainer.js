@@ -235,6 +235,7 @@
 
                             dispenseTypeTable = cswPrivate.divStep1.table({
                                 name: 'setDispenseTypeTable',
+                                width: '45%',
                                 cellpadding: '1px',
                                 cellalign: 'left',
                                 cellvalign: 'middle',
@@ -243,20 +244,28 @@
 
                             if (cswPrivate.state.dispenseMode !== cswPrivate.dispenseModes.RequestMaterial) {
                                 if (false === Csw.isNullOrEmpty(cswPrivate.state.barcode)) {
-                                    dispenseTypeTable.cell(1, 1).span({ text: 'Barcode: ' }).addClass('propertylabel');
-                                    dispenseTypeTable.cell(1, 2).span({ text: Csw.string(cswPrivate.state.barcode) });
+                                    dispenseTypeTable.cell(1, 1).span({
+                                        labelText: 'Barcode:', 
+                                        text: Csw.string(cswPrivate.state.barcode)
+                                    });
                                 }
                                 if (false === Csw.isNullOrEmpty(cswPrivate.state.materialname)) {
-                                    dispenseTypeTable.cell(2, 1).span({ text: 'Material: ' }).addClass('propertylabel');
-                                    dispenseTypeTable.cell(2, 2).span({ text: Csw.string(cswPrivate.state.materialname) });
+                                    dispenseTypeTable.cell(2, 1).span({
+                                        labelText: 'Material:',
+                                        text: Csw.string(cswPrivate.state.materialname)
+                                    });
                                 }
                                 if (false === Csw.isNullOrEmpty(cswPrivate.state.location)) {
-                                    dispenseTypeTable.cell(3, 1).span({ text: 'Location: ' }).addClass('propertylabel');
-                                    dispenseTypeTable.cell(3, 2).span({ text: Csw.string(cswPrivate.state.location) });
+                                    dispenseTypeTable.cell(3, 1).span({
+                                        labelText: 'Location:',
+                                        text: Csw.string(cswPrivate.state.location)
+                                    });
                                 }
                                 if (false === Csw.isNullOrEmpty(cswPrivate.state.currentQuantity)) {
-                                    dispenseTypeTable.cell(4, 1).span({ text: 'Current Quantity: ' }).addClass('propertylabel');
-                                    dispenseTypeTable.cell(4, 2).span({ text: cswPrivate.state.currentQuantity + ' ' + cswPrivate.state.currentUnitName });
+                                    dispenseTypeTable.cell(4, 1).span({
+                                        labelText: 'Current Quantity:',
+                                        text: cswPrivate.state.currentQuantity + ' ' + cswPrivate.state.currentUnitName
+                                    });
                                 }
                             }
 
@@ -297,6 +306,7 @@
                             cswPrivate.divStep2.br();
 
                             quantityTable = cswPrivate.divStep2.table({
+                                width: '45%',
                                 name: 'setQuantityTable',
                                 cellpadding: '1px',
                                 cellvalign: 'middle'
@@ -318,11 +328,12 @@
                             }
                             if (false === Csw.isNullOrEmpty(cswPrivate.state.currentQuantity)) {
                                 quantityTable.cell(qtyTableCol, 1).span({ labelText: 'Current Quantity: ', text: cswPrivate.state.currentQuantity + ' ' + cswPrivate.state.currentUnitName });
+                                qtyTableCol += 1;
                                 cswPrivate.state.quantityAfterDispense = cswPrivate.state.currentQuantity;
-                                cswPrivate.quantityAfterDispenseSpan = quantityTable.cell(5, 2).span({ labelText: 'Quantity after Dispense: ', text: cswPrivate.state.quantityAfterDispense + ' ' + cswPrivate.state.currentUnitName });
-                                cswPrivate.netQuantityExceededSpan = quantityTable.cell(5, 2).span({ cssclass: 'CswErrorMessage_ValidatorError', text: ' Total quantity to dispense cannot exceed source container\'s net quantity.' });
+                                cswPrivate.quantityAfterDispenseSpan = quantityTable.cell(qtyTableCol, 1).span({ labelText: 'After Dispense: ', text: cswPrivate.state.quantityAfterDispense + ' ' + cswPrivate.state.currentUnitName });
+                                cswPrivate.netQuantityExceededSpan = quantityTable.cell(qtyTableCol, 2).span({ cssclass: 'CswErrorMessage_ValidatorError', text: ' Total quantity to dispense cannot exceed source container\'s net quantity.' });
                                 cswPrivate.netQuantityExceededSpan.hide();
-                                qtyTableCol++;
+                                qtyTableCol += 1;
                             }
 
                             var makeContainerSelect = function () {

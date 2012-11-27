@@ -1,13 +1,19 @@
-
 .CswLabel
 {
+    float: left;
+    text-align: right;
     font-weight: bold;
+    width: 30%;
 }
 
-.CswLabelWide
+.CswLabelValue
 {
-    width: 180px;
+    float: left;
+    width: 65%;
+    margin-left: 5px;
+    text-align: left;
 }
+
 
 .CswLabelCreateMaterial{
     width: 325px;
