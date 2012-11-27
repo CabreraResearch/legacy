@@ -8,14 +8,12 @@
             'use strict';
             var cswPrivate = {
                 name: '',
-                prefix: '',
-                Checked: '',
+                checked: '',
                 ReadOnly: false,
                 Multi: false,
                 cssclass: 'CswTristateCheckBox',
                 onChange: null, // function (newval) {},
                 value: 'false'
-                
             };
 
             var cswPublic = {};
@@ -25,7 +23,7 @@
                 (function _preCtor() {
                     Csw.extend(cswPrivate, options);
                     cswPrivate.type = Csw.enums.inputTypes.checkbox;
-                    cswPrivate.value = Csw.bool(cswPrivate.Checked) || Csw.bool(cswPrivate.value); //Case 21769
+                    cswPrivate.value = Csw.bool(cswPrivate.checked) || Csw.bool(cswPrivate.value); //Case 21769
 
                     if (cswPrivate.ReadOnly) {
                         switch (cswPrivate.value) {
@@ -45,7 +43,6 @@
                         };
                         cswPrivate.checkBox = cswParent.input(cswPrivate);
                     }
-
                     cswPublic = Csw.dom({}, cswPrivate.checkBox.$);
                 } ());
 

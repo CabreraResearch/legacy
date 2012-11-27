@@ -9,7 +9,7 @@
             var cswPrivate = {
                 name: '',
                 prefix: '',
-                Checked: '',
+                checked: '',
                 ReadOnly: false,
                 isRequired: false,
                 Multi: false,
@@ -79,7 +79,7 @@
                 if (options) {
                     Csw.extend(cswPrivate, options);
                 }
-                cswPrivate.value = Csw.string(cswPrivate.Checked, 'null').toLowerCase(); //Case 21769
+                cswPrivate.value = Csw.string(cswPrivate.checked, 'null').toLowerCase(); //Case 21769
                 cswPrivate.AlternateText = cswPrivate.value;
 
                 if (cswPrivate.ReadOnly) {
