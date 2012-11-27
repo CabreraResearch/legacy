@@ -849,9 +849,7 @@ namespace ChemSW.Nbt.ObjClasses
                 }
                 _updateRequestItems( CswNbtObjClassRequestContainerUpdate.Types.Move );
             }
-            if( null != Location.SelectedNodeId && 
-                false == String.IsNullOrEmpty( Location.GetOriginalPropRowValue() ) &&
-                Location.GetOriginalPropRowValue() != Location.CachedNodeName )
+            if( null != Location.SelectedNodeId )
             {
                 if( String.IsNullOrEmpty( Location.GetOriginalPropRowValue() ) )
                 {
@@ -862,7 +860,7 @@ namespace ChemSW.Nbt.ObjClasses
                         LotControlled.Checked = InvGroupNode.Central.Checked == Tristate.True ? Tristate.True : Tristate.False;
                     }
                 }
-                if( Location.CreateContainerLocation )
+                else if( Location.GetOriginalPropRowValue() != Location.CachedNodeName && Location.CreateContainerLocation )
                 {
                     _createContainerLocationNode(CswNbtObjClassContainerLocation.TypeOptions.Move);
                 }
