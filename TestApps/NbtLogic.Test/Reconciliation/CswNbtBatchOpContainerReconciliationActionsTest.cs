@@ -73,7 +73,6 @@ namespace ChemSw.Nbt.Test
         /// assert that the Contianer's location matches the ContainerLocation's Location,
         /// assert that the Container has Missing set to false, 
         /// assert that the ContainerLocation is marked ActionApplied,
-        /// assert that a new ContainerLocation of Type Move is created with a status of Correct.
         /// </summary>
         [TestMethod]
         public void runBatchOpTestWrongLocationMoveToLocation()
@@ -85,7 +84,8 @@ namespace ChemSw.Nbt.Test
             CswNbtObjClassContainerLocation ContainerLocationNode = TestData.Nodes.createContainerLocationNode(
                 ContainerNode.Node,
                 CswNbtObjClassContainerLocation.ActionOptions.MoveToLocation.ToString(),
-                LocationId: ContainerLocationLocId );
+                LocationId: ContainerLocationLocId,
+                Type: CswNbtObjClassContainerLocation.TypeOptions.Scan.ToString() );
             Assert.AreNotEqual( ContainerLocationNode.Location.SelectedNodeId, ContainerNode.Location.SelectedNodeId );
             Assert.AreEqual( CswNbtObjClassContainerLocation.StatusOptions.WrongLocation, ContainerLocationNode.Status.Value );
 
@@ -101,7 +101,6 @@ namespace ChemSw.Nbt.Test
         /// assert that the Contianer's location matches the ContainerLocation's Location,
         /// assert that the Container has Missing set to false,
         /// assert that the ContainerLocation is marked ActionApplied,
-        /// assert that a new ContainerLocation of Type Move is created with a status of Disposed.
         /// </summary>
         [TestMethod]
         public void runBatchOpTestDisposedAtWrongLocationMoveToLocation()
@@ -115,7 +114,8 @@ namespace ChemSw.Nbt.Test
             CswNbtObjClassContainerLocation ContainerLocationNode = TestData.Nodes.createContainerLocationNode(
                 ContainerNode.Node,
                 CswNbtObjClassContainerLocation.ActionOptions.MoveToLocation.ToString(),
-                LocationId: ContainerLocationLocId );
+                LocationId: ContainerLocationLocId,
+                Type: CswNbtObjClassContainerLocation.TypeOptions.Scan.ToString() );
             Assert.AreNotEqual( ContainerLocationNode.Location.SelectedNodeId, ContainerNode.Location.SelectedNodeId );
             Assert.AreEqual( CswNbtObjClassContainerLocation.StatusOptions.DisposedAtWrongLocation, ContainerLocationNode.Status.Value );
 
@@ -132,7 +132,6 @@ namespace ChemSw.Nbt.Test
         /// assert that the Contianer's location matches the ContainerLocation's Location,
         /// assert that the Container has Disposed and Missing set to false,
         /// assert that the ContainerLocation is marked ActionApplied,
-        /// assert that a new ContainerLocation of Type Move is created with a status of Correct.
         /// </summary>
         [TestMethod]
         public void runBatchOpTestUndisposeAndMove()
@@ -146,7 +145,8 @@ namespace ChemSw.Nbt.Test
             CswNbtObjClassContainerLocation ContainerLocationNode = TestData.Nodes.createContainerLocationNode(
                 ContainerNode.Node,
                 CswNbtObjClassContainerLocation.ActionOptions.UndisposeAndMove.ToString(),
-                LocationId: ContainerLocationLocId );
+                LocationId: ContainerLocationLocId,
+                Type: CswNbtObjClassContainerLocation.TypeOptions.Scan.ToString() );
             Assert.AreNotEqual( ContainerLocationNode.Location.SelectedNodeId, ContainerNode.Location.SelectedNodeId );
             Assert.AreEqual( CswNbtObjClassContainerLocation.StatusOptions.DisposedAtWrongLocation, ContainerLocationNode.Status.Value );
 

@@ -27,6 +27,7 @@
                         quantity: '',
                         unitId: '',
                         sizeId: '',
+                        materialId: '',
                         containerNodeTypeId: '',
                         materialname: '',
                         barcode: '',
@@ -454,7 +455,8 @@
                                     data: {
                                         ValueToConvert: Csw.number(quantity.quantity, 0),
                                         OldUnitId: quantity.unitid,
-                                        NewUnitId: cswPrivate.state.unitId
+                                        NewUnitId: cswPrivate.state.unitId,
+                                        MaterialId: cswPrivate.state.materialId
                                     },
                                     success: function(data) {
                                         if (false === Csw.isNullOrEmpty(data)) {
@@ -523,6 +525,7 @@
                                             cswPrivate.state.currentQuantity = data.quantity;
                                             cswPrivate.state.currentUnitName = data.unit;
                                             cswPrivate.state.sizeId = data.sizeid;
+                                            cswPrivate.state.materialId = data.materialid;
                                         }
                                     });
                                 }

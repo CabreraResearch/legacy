@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading;
 using ChemSW.Core;
 using ChemSW.Nbt;
@@ -48,7 +49,8 @@ namespace ChemSw.Nbt.Test
                 StartDate = DateTime.Now.ToString(),
                 EndDate = DateTime.Now.AddSeconds( 1 ).ToString(),
                 LocationId = TestData.Nodes.createLocationNode().NodeId.ToString(),
-                IncludeChildLocations = false
+                IncludeChildLocations = false,
+                ContainerLocationTypes = _getTypes()
             };
             ContainerData Data = ReconciliationAction.getContainerStatuses( Request );
             Assert.AreEqual( 0, Data.ContainerStatuses.Count );
@@ -68,7 +70,8 @@ namespace ChemSw.Nbt.Test
                 StartDate = DateTime.Now.AddSeconds( 1 ).ToString(),
                 EndDate = DateTime.Now.AddSeconds( 2 ).ToString(),
                 LocationId = LocationId.ToString(),
-                IncludeChildLocations = false
+                IncludeChildLocations = false,
+                ContainerLocationTypes = _getTypes()
             };
             ContainerData Data = ReconciliationAction.getContainerStatuses( Request );
             Assert.AreEqual( 1, Data.ContainerStatuses.Count );
@@ -89,7 +92,8 @@ namespace ChemSw.Nbt.Test
                 StartDate = DateTime.Now.AddHours( -2 ).ToString(),
                 EndDate = DateTime.Now.AddHours( -1 ).ToString(),
                 LocationId = LocationId.ToString(),
-                IncludeChildLocations = false
+                IncludeChildLocations = false,
+                ContainerLocationTypes = _getTypes()
             };
             ContainerData Data = ReconciliationAction.getContainerStatuses( Request );
             Assert.AreEqual( 0, Data.ContainerStatuses.Count );
@@ -103,13 +107,14 @@ namespace ChemSw.Nbt.Test
         public void getContainerStatusesTestCorrect()
         {
             CswPrimaryKey LocationId = TestData.Nodes.createLocationNode().NodeId;
-            TestData.Nodes.createContainerNode( LocationId: LocationId );
+            TestData.Nodes.createContainerLocationNode( LocationId: LocationId );
             ContainerData.ReconciliationRequest Request = new ContainerData.ReconciliationRequest
             {
                 StartDate = DateTime.Now.AddDays( -1 ).ToString(),
                 EndDate = DateTime.Now.AddSeconds( 1 ).ToString(),
                 LocationId = LocationId.ToString(),
-                IncludeChildLocations = false
+                IncludeChildLocations = false,
+                ContainerLocationTypes = _getTypes()
             };
             ContainerData Data = ReconciliationAction.getContainerStatuses( Request );
             Assert.AreEqual( 1, Data.ContainerStatuses.Count );
@@ -124,14 +129,15 @@ namespace ChemSw.Nbt.Test
         public void getContainerStatusesTestMultipleContainers()
         {
             CswPrimaryKey LocationId = TestData.Nodes.createLocationNode().NodeId;
-            TestData.Nodes.createContainerNode( LocationId: LocationId );
-            TestData.Nodes.createContainerNode( LocationId: LocationId );
+            TestData.Nodes.createContainerLocationNode( LocationId: LocationId );
+            TestData.Nodes.createContainerLocationNode( LocationId: LocationId );
             ContainerData.ReconciliationRequest Request = new ContainerData.ReconciliationRequest
             {
                 StartDate = DateTime.Now.AddDays( -1 ).ToString(),
                 EndDate = DateTime.Now.AddSeconds( 1 ).ToString(),
                 LocationId = LocationId.ToString(),
-                IncludeChildLocations = false
+                IncludeChildLocations = false,
+                ContainerLocationTypes = _getTypes()
             };
             ContainerData Data = ReconciliationAction.getContainerStatuses( Request );
             Assert.AreEqual( 2, Data.ContainerStatuses.Count );
@@ -150,14 +156,15 @@ namespace ChemSw.Nbt.Test
         {
             CswNbtObjClassLocation Location1 = TestData.Nodes.createLocationNode();
             CswNbtObjClassLocation Location2 = TestData.Nodes.createLocationNode( ParentLocationId: Location1.NodeId );
-            TestData.Nodes.createContainerNode( LocationId: Location1.NodeId );
-            TestData.Nodes.createContainerNode( LocationId: Location2.NodeId );
+            TestData.Nodes.createContainerLocationNode( LocationId: Location1.NodeId );
+            TestData.Nodes.createContainerLocationNode( LocationId: Location2.NodeId );
             ContainerData.ReconciliationRequest Request = new ContainerData.ReconciliationRequest
             {
                 StartDate = DateTime.Now.AddDays( -1 ).ToString(),
                 EndDate = DateTime.Now.AddSeconds( 1 ).ToString(),
                 LocationId = Location1.NodeId.ToString(),
-                IncludeChildLocations = true
+                IncludeChildLocations = true,
+                ContainerLocationTypes = _getTypes()
             };
             ContainerData Data = ReconciliationAction.getContainerStatuses( Request );
             Assert.AreEqual( 2, Data.ContainerStatuses.Count );
@@ -165,6 +172,37 @@ namespace ChemSw.Nbt.Test
             {
                 Assert.AreEqual( CswNbtObjClassContainerLocation.StatusOptions.Correct.ToString(), Stat.ContainerStatus );
             }
+        }
+
+        /// <summary>
+        /// Given a location that has one Container with two ContainerLocations in the given timeframe,
+        /// given that the first ContainerLocation is of Type Scan and the second is not,
+        /// assert that the returned ContainerStatus data has a ContainerStatus value of ScannedCorrect
+        /// </summary>
+        [TestMethod]
+        public void getContainerStatusesTestScanTrumpsTouch()
+        {
+            CswPrimaryKey LocationId = TestData.Nodes.createLocationNode().NodeId;
+            CswNbtObjClassContainer ContainerNode = TestData.Nodes.createContainerNode( LocationId: LocationId );
+            TestData.Nodes.createContainerLocationNode( ContainerNode.Node,
+                LocationId: LocationId,
+                ContainerScan: ContainerNode.Barcode.Barcode,
+                Type: CswNbtObjClassContainerLocation.TypeOptions.Scan.ToString() );
+            TestData.Nodes.createContainerLocationNode( ContainerNode.Node,
+                LocationId: LocationId,
+                Type: CswNbtObjClassContainerLocation.TypeOptions.Dispense.ToString() );
+            ContainerData.ReconciliationRequest Request = new ContainerData.ReconciliationRequest
+            {
+                StartDate = DateTime.Now.AddDays( -1 ).ToString(),
+                EndDate = DateTime.Now.AddSeconds( 1 ).ToString(),
+                LocationId = LocationId.ToString(),
+                IncludeChildLocations = false,
+                ContainerLocationTypes = _getTypes()
+            };
+            Thread.Sleep( 1000 );//Running into a race condition
+            ContainerData Data = ReconciliationAction.getContainerStatuses( Request );
+            Assert.AreEqual( 1, Data.ContainerStatuses.Count );
+            Assert.AreEqual( CswNbtObjClassContainerLocation.StatusOptions.ScannedCorrect.ToString(), Data.ContainerStatuses[0].ContainerStatus );
         }
 
         #endregion
@@ -183,7 +221,8 @@ namespace ChemSw.Nbt.Test
                 StartDate = DateTime.Now.ToString(),
                 EndDate = DateTime.Now.AddSeconds( 1 ).ToString(),
                 LocationId = TestData.Nodes.createLocationNode().NodeId.ToString(),
-                IncludeChildLocations = false
+                IncludeChildLocations = false,
+                ContainerLocationTypes = _getTypes()
             };
             ContainerData Data = ReconciliationAction.getContainerStatistics( Request );
             foreach( ContainerData.ReconciliationStatistics Stat in Data.ContainerStatistics )
@@ -206,7 +245,8 @@ namespace ChemSw.Nbt.Test
                 StartDate = DateTime.Now.AddSeconds( 1 ).ToString(),
                 EndDate = DateTime.Now.AddSeconds( 2 ).ToString(),
                 LocationId = LocationId.ToString(),
-                IncludeChildLocations = false
+                IncludeChildLocations = false,
+                ContainerLocationTypes = _getTypes()
             };
             ContainerData Data = ReconciliationAction.getContainerStatistics( Request );
             foreach( ContainerData.ReconciliationStatistics Stat in Data.ContainerStatistics )
@@ -230,14 +270,15 @@ namespace ChemSw.Nbt.Test
         public void getContainerStatisticsTestMultipleContainers()
         {
             CswPrimaryKey LocationId = TestData.Nodes.createLocationNode().NodeId;
-            TestData.Nodes.createContainerNode( LocationId: LocationId );
-            TestData.Nodes.createContainerNode( LocationId: LocationId );
+            TestData.Nodes.createContainerLocationNode( LocationId: LocationId );
+            TestData.Nodes.createContainerLocationNode( LocationId: LocationId );
             ContainerData.ReconciliationRequest Request = new ContainerData.ReconciliationRequest
             {
                 StartDate = DateTime.Now.AddDays( -1 ).ToString(),
                 EndDate = DateTime.Now.AddSeconds( 1 ).ToString(),
                 LocationId = LocationId.ToString(),
-                IncludeChildLocations = false
+                IncludeChildLocations = false,
+                ContainerLocationTypes = _getTypes()
             };
             ContainerData Data = ReconciliationAction.getContainerStatistics( Request );
             foreach( ContainerData.ReconciliationStatistics Stat in Data.ContainerStatistics )
@@ -256,28 +297,78 @@ namespace ChemSw.Nbt.Test
         /// <summary>
         /// Given a location that has two Containers with ContainerLocations in the given timeframe with a Correct status,
         /// given one of these ContainerLocations has a ContainerScan value,
-        /// assert that the returned ContainerStatus data's Correct ContainerStatus row's PercentScanned value = 50.
+        /// assert that the returned ContainerStatus data's Correct ContainerStatus row's PercentScanned value = 0
+        /// and that ScannedCorrect ContainerStatus row's PercentScanned value = 100
         /// </summary>
         [TestMethod]
         public void getContainerStatisticsTestPercentScanned()
         {
             CswPrimaryKey LocationId = TestData.Nodes.createLocationNode().NodeId;
             CswNbtObjClassContainer ContainerNode = TestData.Nodes.createContainerNode( LocationId: LocationId );
-            TestData.Nodes.createContainerNode( LocationId: LocationId );
-            TestData.Nodes.createContainerLocationNode( ContainerNode.Node, LocationId: LocationId, ContainerScan: ContainerNode.Barcode.Barcode );
+            TestData.Nodes.createContainerLocationNode( LocationId: LocationId );
+            TestData.Nodes.createContainerLocationNode( ContainerNode.Node, 
+                LocationId: LocationId, 
+                ContainerScan: ContainerNode.Barcode.Barcode, 
+                Type: CswNbtObjClassContainerLocation.TypeOptions.Scan.ToString() );
             ContainerData.ReconciliationRequest Request = new ContainerData.ReconciliationRequest
             {
                 StartDate = DateTime.Now.AddDays( -1 ).ToString(),
                 EndDate = DateTime.Now.AddSeconds( 1 ).ToString(),
                 LocationId = LocationId.ToString(),
-                IncludeChildLocations = false
+                IncludeChildLocations = false,
+                ContainerLocationTypes = _getTypes()
             };
             ContainerData Data = ReconciliationAction.getContainerStatistics( Request );
             foreach( ContainerData.ReconciliationStatistics Stat in Data.ContainerStatistics )
             {
                 if( Stat.Status == CswNbtObjClassContainerLocation.StatusOptions.Correct.ToString() )
                 {
-                    Assert.AreEqual( 50, Stat.PercentScanned );
+                    Assert.AreEqual( 0, Stat.PercentScanned );
+                }
+                else if( Stat.Status == CswNbtObjClassContainerLocation.StatusOptions.ScannedCorrect.ToString() )
+                {
+                    Assert.AreEqual( 100, Stat.PercentScanned );
+                }
+            }
+        }
+
+        /// <summary>
+        /// Given a location that has one Container with two ContainerLocations in the given timeframe,
+        /// given that the first ContainerLocation is of Type Scan and the second is not,
+        /// assert that both the returned data's NotScanned and Received/Dispensed/Disposed/etc 
+        /// ContainerStatus row's ContainerCount value = 0
+        /// </summary>
+        [TestMethod]
+        public void getContainerStatisticsTestScanTrumpsTouch()
+        {
+            CswPrimaryKey LocationId = TestData.Nodes.createLocationNode().NodeId;
+            CswNbtObjClassContainer ContainerNode = TestData.Nodes.createContainerNode( LocationId: LocationId );
+            TestData.Nodes.createContainerLocationNode( ContainerNode.Node,
+                LocationId: LocationId,
+                ContainerScan: ContainerNode.Barcode.Barcode,
+                Type: CswNbtObjClassContainerLocation.TypeOptions.Scan.ToString() );
+            TestData.Nodes.createContainerLocationNode( ContainerNode.Node, 
+                LocationId: LocationId, 
+                Type: CswNbtObjClassContainerLocation.TypeOptions.Dispense.ToString() );
+            ContainerData.ReconciliationRequest Request = new ContainerData.ReconciliationRequest
+            {
+                StartDate = DateTime.Now.AddHours( -1 ).ToString(),
+                EndDate = DateTime.Now.AddSeconds( 1 ).ToString(),
+                LocationId = LocationId.ToString(),
+                IncludeChildLocations = false,
+                ContainerLocationTypes = _getTypes()
+            };
+            ContainerData Data = ReconciliationAction.getContainerStatistics( Request );
+            foreach( ContainerData.ReconciliationStatistics Stat in Data.ContainerStatistics )
+            {
+                if( Stat.Status == CswNbtObjClassContainerLocation.StatusOptions.NotScanned.ToString() ||
+                    Stat.Status == CswNbtObjClassContainerLocation.StatusOptions.Correct.ToString() )
+                {
+                    Assert.AreEqual( 0, Stat.ContainerCount );
+                }
+                else if( Stat.Status == CswNbtObjClassContainerLocation.StatusOptions.ScannedCorrect.ToString())
+                {
+                    Assert.AreEqual( 1, Stat.ContainerCount );
                 }
             }
         }
@@ -294,14 +385,16 @@ namespace ChemSw.Nbt.Test
         public void getReconciliationDataTest()
         {
             CswPrimaryKey LocationId = TestData.Nodes.createLocationNode().NodeId;
-            TestData.Nodes.createContainerNode( LocationId: LocationId );
-            TestData.Nodes.createContainerNode( LocationId: LocationId );
+            TestData.Nodes.createContainerLocationNode( LocationId: LocationId );
+            TestData.Nodes.createContainerLocationNode( LocationId: LocationId );
+            
             ContainerData.ReconciliationRequest Request = new ContainerData.ReconciliationRequest
             {
                 StartDate = DateTime.Now.AddDays( -1 ).ToString(),
                 EndDate = DateTime.Now.AddSeconds( 1 ).ToString(),
                 LocationId = LocationId.ToString(),
-                IncludeChildLocations = false
+                IncludeChildLocations = false,
+                ContainerLocationTypes = _getTypes()
             };
             ContainerData Data = ReconciliationAction.getReconciliationData( Request );
             Assert.AreEqual( 2, Data.ContainerStatuses.Count );
@@ -320,6 +413,16 @@ namespace ChemSw.Nbt.Test
                     Assert.AreEqual( 0, Stat.ContainerCount, "Status " + Stat.Status + " should have been empty." );
                 }
             }
+        }
+
+        private Collection<ContainerData.ReconciliationTypes> _getTypes()
+        {
+            Collection<ContainerData.ReconciliationTypes> Types = new Collection<ContainerData.ReconciliationTypes>();
+            for( int i = 0; i < CswNbtObjClassContainerLocation.TypeOptions._All.Count(); i++ )
+            {
+                Types.Add( new ContainerData.ReconciliationTypes { Enabled = true, Type = CswNbtObjClassContainerLocation.TypeOptions._All.ToArray()[i].ToString() } );
+            }
+            return Types;
         }
 
         #endregion
@@ -383,7 +486,7 @@ namespace ChemSw.Nbt.Test
             CswNbtObjClassContainerLocation NewContLocNode = _getNewContianerLocation( ContainerNode.NodeId );
             Assert.AreEqual( CswNbtObjClassContainerLocation.TypeOptions.Missing.ToString(), NewContLocNode.Type.Value );
             Assert.AreEqual( CswNbtObjClassContainerLocation.ActionOptions.MarkMissing.ToString(), NewContLocNode.Action.Value );
-            Assert.AreEqual( CswNbtObjClassContainerLocation.StatusOptions.Missing.ToString(), NewContLocNode.Status.Value );
+            Assert.AreEqual( CswNbtObjClassContainerLocation.StatusOptions.NotScanned.ToString(), NewContLocNode.Status.Value );
         }
 
         /// <summary>
