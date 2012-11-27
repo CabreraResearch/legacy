@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using ChemSW.Config;
 using ChemSW.Core;
@@ -6,6 +7,7 @@ using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
 using Newtonsoft.Json.Linq;
+using System.Linq;
 
 namespace ChemSW.Nbt.Batch
 {
@@ -26,19 +28,19 @@ namespace ChemSW.Nbt.Batch
         /// <param name="NodePks"></param>
         /// <param name="CGLocationId"></param>
         /// <returns></returns>
-        public CswNbtObjClassBatchOp makeBatchOp( Collection<CswPrimaryKey> NodePks, CswPrimaryKey LocationId )
+        public CswNbtObjClassBatchOp makeBatchOp( IEnumerable<CswPrimaryKey> NodePks, CswPrimaryKey LocationId )
         {
             CswNbtObjClassBatchOp BatchNode = null;
             SyncLocationBatchData BatchData = new SyncLocationBatchData( string.Empty );
             BatchData.LocationId = LocationId;
-            BatchData.StartingCount = NodePks.Count;
+            BatchData.StartingCount = NodePks.Count();
             BatchData.NodePks = _pkArrayToJArray( NodePks );
 
             BatchNode = CswNbtBatchManager.makeNew( _CswNbtResources, _BatchOpName, BatchData.ToString() );
             return BatchNode;
         } // makeBatchOp()
 
-        private JArray _pkArrayToJArray( Collection<CswPrimaryKey> PkArray )
+        private JArray _pkArrayToJArray( IEnumerable<CswPrimaryKey> PkArray )
         {
             JArray ReturnVal = new JArray();
             foreach( CswPrimaryKey PK in PkArray )

@@ -131,6 +131,39 @@ namespace ChemSW.Nbt.ObjClasses
                 DateCreated.DateTimeValue = DateTime.Now;
             }
 
+            // Case 28206: Setting Location of Container based on Container Group
+            // Note: If the Location and Container Group are both set on a Container,
+            // then the Container Group location overrides the user set location.
+            if( this.ContainerGroup.WasModified &&
+                this.ContainerGroup.RelatedNodeId != null &&
+                ( this.ContainerGroup.GetOriginalPropRowValue( CswNbtSubField.SubFieldName.NodeID ) != this.ContainerGroup.RelatedNodeId.PrimaryKey.ToString() ) )
+            {
+                CswNbtObjClassContainerGroup NewGroupNode = _CswNbtResources.Nodes[this.ContainerGroup.RelatedNodeId];
+
+                if( null != NewGroupNode )
+                {
+                    if( Tristate.True == NewGroupNode.SyncLocation.Checked )
+                    {
+                        this.Location.SelectedNodeId = NewGroupNode.Location.SelectedNodeId;
+                        this.Location.RefreshNodeName();
+                    }
+                }
+            }
+            else if( this.Location.WasModified &&
+                     this.Location.SelectedNodeId != null &&
+                     ( this.Location.GetOriginalPropRowValue( CswNbtSubField.SubFieldName.NodeID ) != this.Location.SelectedNodeId.PrimaryKey.ToString() ) )
+            {
+                CswNbtObjClassContainerGroup NewGroupNode = _CswNbtResources.Nodes[this.ContainerGroup.RelatedNodeId];
+
+                if( null != NewGroupNode )
+                {
+                    if( Tristate.True == NewGroupNode.SyncLocation.Checked && ( this.Location.SelectedNodeId != NewGroupNode.Location.SelectedNodeId ) )
+                    {
+                        this.ContainerGroup.RelatedNodeId = null;
+                    }
+                }
+            }
+
             _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
         }//beforeWriteNode()
 
@@ -162,7 +195,6 @@ namespace ChemSW.Nbt.ObjClasses
             Size.SetOnPropChange( OnSizePropChange );
             SourceContainer.SetOnPropChange( OnSourceContainerChange );
             Barcode.SetOnPropChange( OnBarcodePropChange );
-            ContainerGroup.SetOnPropChange( OnContainerGroupPropChange );
 
             bool IsDisposed = ( Disposed.Checked == Tristate.True );
             Dispense.setHidden( value: ( IsDisposed || false == canContainer( _CswNbtResources.Actions[CswNbtActionName.DispenseContainer] ) ), SaveToDb: true );              // SaveToDb true is necessary
@@ -842,24 +874,6 @@ namespace ChemSW.Nbt.ObjClasses
                 _createContainerLocationNode( CswNbtObjClassContainerLocation.TypeOptions.Move );
             }
 
-            // Case 28206: Setting Location of Container based on Container Group
-            // Note: If the Location and Container Group are both set on a Container,
-            // then the Container Group location overrides the user set location.
-            if( false == this.ContainerGroup.WasModified &&
-                         this.Location.SelectedNodeId != null &&
-                         ( this.Location.GetOriginalPropRowValue( CswNbtSubField.SubFieldName.NodeID ) != this.Location.SelectedNodeId.PrimaryKey.ToString() ) )
-            {
-                CswNbtObjClassContainerGroup NewGroupNode = _CswNbtResources.Nodes[this.ContainerGroup.RelatedNodeId];
-
-                if( null != NewGroupNode )
-                {
-                    if( Tristate.True == NewGroupNode.SyncLocation.Checked && ( this.Location.SelectedNodeId != NewGroupNode.Location.SelectedNodeId ) )
-                    {
-                        this.ContainerGroup.RelatedNodeId = null;
-                    }
-                }
-            }//if( false == this.ContainerGroup.WasModified && ... )
-
         }
         public CswNbtNodePropDateTime LocationVerified { get { return ( _CswNbtNode.Properties[PropertyName.LocationVerified] ); } }
         public CswNbtNodePropRelationship Material { get { return ( _CswNbtNode.Properties[PropertyName.Material] ); } }
@@ -953,24 +967,6 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropRelationship ReservedFor { get { return ( _CswNbtNode.Properties[PropertyName.ReservedFor] ); } }
         public CswNbtNodePropDateTime DateCreated { get { return ( _CswNbtNode.Properties[PropertyName.DateCreated] ); } }
         public CswNbtNodePropRelationship ContainerGroup { get { return ( _CswNbtNode.Properties[PropertyName.ContainerGroup] ); } }
-        private void OnContainerGroupPropChange( CswNbtNodeProp Prop )
-        {
-            // Case 28206: Setting Location of Container based on Container Group
-            if( this.ContainerGroup.RelatedNodeId != null &&
-                ( this.ContainerGroup.GetOriginalPropRowValue( CswNbtSubField.SubFieldName.NodeID ) != this.ContainerGroup.RelatedNodeId.PrimaryKey.ToString() ) )
-            {
-                CswNbtObjClassContainerGroup NewGroupNode = _CswNbtResources.Nodes[this.ContainerGroup.RelatedNodeId];
-
-                if( null != NewGroupNode )
-                {
-                    if( Tristate.True == NewGroupNode.SyncLocation.Checked )
-                    {
-                        this.Location.SelectedNodeId = NewGroupNode.Location.SelectedNodeId;
-                        this.Location.RefreshNodeName();
-                    }
-                }
-            }//if( this.ContainerGroup.RelatedNodeId != null && ... )
-        }
         #endregion
 
 

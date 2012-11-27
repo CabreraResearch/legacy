@@ -112,21 +112,19 @@ namespace ChemSW.Nbt.ObjClasses
                 if( ContainerNodePks.Count() > BatchThreshold )
                 {
                     // Shelve this to a batch operation
-                    Collection<CswPrimaryKey> ContainerPkCollection = new Collection<CswPrimaryKey>();
-                    foreach( CswPrimaryKey ContainerPk in ContainerNodePks )
-                    {
-                        ContainerPkCollection.Add( ContainerPk );
-                    }
                     CswNbtBatchOpSyncLocation op = new CswNbtBatchOpSyncLocation( _CswNbtResources );
-                    CswNbtObjClassBatchOp BatchNode = op.makeBatchOp( ContainerPkCollection, this.Location.SelectedNodeId );
+                    CswNbtObjClassBatchOp BatchNode = op.makeBatchOp( ContainerNodePks, this.Location.SelectedNodeId );
                 }
                 else
                 {
                     foreach( CswPrimaryKey CurrentContainerNodePk in ContainerNodePks )
                     {
                         CswNbtObjClassContainer CurrentContainer = _CswNbtResources.Nodes[CurrentContainerNodePk];
-                        CurrentContainer.Location.SelectedNodeId = this.Location.SelectedNodeId;
-                        CurrentContainer.postChanges( false );
+                        if( null != CurrentContainer )
+                        {
+                            CurrentContainer.Location.SelectedNodeId = this.Location.SelectedNodeId;
+                            CurrentContainer.postChanges( false );
+                        }
                     }
                 }
             }
