@@ -232,7 +232,7 @@
                 }
                 else if (fieldtype === Csw.enums.subFieldsMap.Logical.name) {
                     filtInput = propFilterValueCell.triStateCheckBox({ name: filtValInputId,
-                        Checked: (defaultSubfieldVal === 'checked') ? 'true' : 'false',
+                        checked: (defaultSubfieldVal === 'checked') ? 'true' : 'false',
                         cssclass: 'ViewPropFilterLogical ' + Csw.enums.cssClasses_ViewBuilder.filter_value.name
                     });
                 } else {

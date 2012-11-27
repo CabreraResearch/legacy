@@ -232,7 +232,7 @@
                     } else if (fieldtype === Csw.enums.subFieldsMap.Logical.name) {
                         cswPrivate.valueControl = cswPrivate.valueCell.triStateCheckBox({ 
                             name: valueId,
-                            Checked: cswPrivate.selectedValue,   // tristate, not bool
+                            checked: cswPrivate.selectedValue,   // tristate, not bool
                             onChange: function() {
                                 cswPrivate.selectedValue = cswPrivate.valueControl.val();
                             }
