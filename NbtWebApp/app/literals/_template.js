@@ -4,20 +4,19 @@
     if (false) { //remove this when you're ready to use the template
 
         Csw.literals.template = Csw.literals.template ||
-            Csw.literals.register('template', function (options) {
+            Csw.literals.register('template', function (cswPrivate) {
 
                 //#region Variables
-                var cswPrivate = {
-                    name: '',
-                    $parent: {}
-                };
+                
                 var cswPublic = { };
 
                 //#endregion Variables
 
                 //#region Pre-ctor
                 (function _pre() {
-                    Csw.extend(cswPrivate, options);
+                    //set default values on cswPrivate if none are supplied
+                    cswPrivate.name = cswPrivate.name || 'No name';
+                    cswPrivate.$parent = cswPrivate.$parent || {};
                 }());
                 
                 //#endregion Pre-ctor

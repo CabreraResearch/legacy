@@ -4,19 +4,18 @@
     if (false) { //remove this when you're ready to use the template
 
         Csw.controls.template = Csw.controls.template ||
-            Csw.controls.register('template', function (cswParent, options) {
+            Csw.controls.register('template', function (cswParent, cswPrivate) {
 
                 //#region Variables
-                var cswPrivate = {
-                    name: ''
-                };
+                
                 var cswPublic = { };
 
                 //#endregion Variables
 
                 //#region Pre-ctor
                 (function _pre() {
-                    Csw.extend(cswPrivate, options);
+                    //set default values on cswPrivate if none are supplied
+                    cswPrivate.name = cswPrivate.name || 'No name';
 
                     cswParent.empty();
                     cswPublic = cswParent.div();
