@@ -286,8 +286,8 @@ namespace ChemSW.Nbt
             Collection<string> Clauses = new Collection<string>();
 
             // Find entries in quotes
-            bool Continue = true;
-            while( SearchTerm.Contains( "\"" ) && Continue )
+            bool StopLoop = false;
+            while( SearchTerm.Contains( "\"" ) && false == StopLoop )
             {
                 int begin = SearchTerm.IndexOf( '"' );
                 int length = SearchTerm.Substring( begin + 1 ).IndexOf( '"' );
@@ -302,7 +302,7 @@ namespace ChemSW.Nbt
                 }
                 else
                 {
-                    Continue = false;
+                    StopLoop = true;
                 }
             } // while( SearchTerm.Contains( "\"" ) && Continue)
 
