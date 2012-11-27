@@ -179,6 +179,10 @@ namespace ChemSW.Nbt.ObjClasses
                                         ? StatusOptions.DisposedAtWrongLocation
                                         : StatusOptions.WrongLocation;
                 }
+                if( ContainerNode.Missing.Checked == Tristate.True )
+                {
+                    ContLocStatus = StatusOptions.Missing;
+                }
             }
             else if( Type.Value == TypeOptions.Missing.ToString() )
             {

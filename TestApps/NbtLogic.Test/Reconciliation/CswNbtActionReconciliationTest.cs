@@ -199,6 +199,7 @@ namespace ChemSw.Nbt.Test
                 IncludeChildLocations = false,
                 ContainerLocationTypes = _getTypes()
             };
+            Thread.Sleep( 1000 );//Running into a race condition
             ContainerData Data = ReconciliationAction.getContainerStatuses( Request );
             Assert.AreEqual( 1, Data.ContainerStatuses.Count );
             Assert.AreEqual( CswNbtObjClassContainerLocation.StatusOptions.ScannedCorrect.ToString(), Data.ContainerStatuses[0].ContainerStatus );
@@ -485,7 +486,7 @@ namespace ChemSw.Nbt.Test
             CswNbtObjClassContainerLocation NewContLocNode = _getNewContianerLocation( ContainerNode.NodeId );
             Assert.AreEqual( CswNbtObjClassContainerLocation.TypeOptions.Missing.ToString(), NewContLocNode.Type.Value );
             Assert.AreEqual( CswNbtObjClassContainerLocation.ActionOptions.MarkMissing.ToString(), NewContLocNode.Action.Value );
-            Assert.AreEqual( CswNbtObjClassContainerLocation.StatusOptions.Missing.ToString(), NewContLocNode.Status.Value );
+            Assert.AreEqual( CswNbtObjClassContainerLocation.StatusOptions.NotScanned.ToString(), NewContLocNode.Status.Value );
         }
 
         /// <summary>
