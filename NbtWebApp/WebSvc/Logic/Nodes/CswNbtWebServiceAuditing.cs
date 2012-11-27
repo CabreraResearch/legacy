@@ -29,7 +29,8 @@ namespace ChemSW.Nbt.WebServices
                                   x.auditeventname as Context,
                                   np.propname as Propname,
                                   ja.field1 as Value,
-                                  x.auditeventname as Type";
+                                  x.auditeventname as Type,
+                                  x.audittransactionid as AuditId";
                 }
                 SQL += @"		from jct_nodes_props_audit ja
 

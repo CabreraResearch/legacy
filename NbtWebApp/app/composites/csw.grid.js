@@ -48,7 +48,8 @@
                 actionDataIndex: 'action',
 
                 topToolbar: [],
-                groupField: ''
+                groupField: '',
+                groupHeaderTpl: '{name}'
             };
             var cswPublic = {};
 
@@ -158,7 +159,7 @@
                     {
                         id: 'group',
                         ftype: 'groupingsummary',
-                        groupHeaderTpl: '{name}',
+                        groupHeaderTpl: cswPrivate.groupHeaderTpl,
                         hideGroupedHeader: true,
                         enableGroupingMenu: false
                     }]
