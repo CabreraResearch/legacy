@@ -229,7 +229,8 @@
                             { Type: 'Move', Enabled: false },
                             { Type: 'Dispense', Enabled: false },
                             { Type: 'Dispose', Enabled: false },
-                            { Type: 'Undispose', Enabled: false }
+                            { Type: 'Undispose', Enabled: false },
+                            { Type: 'Missing', Enabled: false }
                         ];
                         locationDatesTable.cell(rowNum, 1).span({ text: 'Type:' }).addClass('propertylabel');
                         var typeSelectTable = locationDatesTable.cell(rowNum, 2).table({
@@ -444,9 +445,8 @@
                                     options: StatusOptions
                                 });
                                 addColumn('scandate', 'Last Scan Date', false);
-                                var actionEditable = Csw.bool(cswPrivate.state.EndDate === cswPrivate.getCurrentDate());//cswPrivate.isCurrent (?)
                                 addColumn('currentaction', 'Current Action', true);
-                                if (actionEditable) {
+                                if (cswPrivate.isCurrent) {
                                     var actionControlCol = {
                                         header: 'Action',
                                         dataIndex: 'action',
@@ -501,7 +501,56 @@
                                     columns: ContainersGridColumns,
                                     data: ContainersGridData
                                 };
-                                cswPrivate.ReconciliationContainersGrid = cswPrivate.divStep3.grid(cswPrivate.gridOptions);
+                                var step3Table = cswPrivate.divStep3.table();
+                                cswPrivate.ReconciliationContainersGrid = step3Table.cell(1, 1).grid(cswPrivate.gridOptions);
+                                if (cswPrivate.isCurrent) {
+                                    cswPrivate.divStep3.br({ number: 2 });
+                                    var bulkActionTable = step3Table.cell(2, 1).table({ cellvalign: 'center' });
+
+                                    bulkActionTable.cell(1, 1).span({ text: 'Set Action of all Containers with Status&nbsp;' });
+                                    var statusOptions = [];
+                                    Csw.each(cswPrivate.data.ContainerStatistics, function(row) {
+                                        if (row.Status.indexOf('Scanned') !== -1 && row.Status !== 'Scanned Correct') {
+                                            statusOptions.push(row.Status);
+                                        }
+                                    });
+                                    var statusSelect = bulkActionTable.cell(1, 2).select({
+                                        name: 'bulkActionTableStatusSelect',
+                                        values: statusOptions,
+                                        onChange: function () {
+                                            rebuildActionSelect();
+                                        }
+                                    });
+                                    bulkActionTable.cell(1, 3).span({ text: '&nbsp;to&nbsp;' });
+                                    var actionSelect;
+                                    var rebuildActionSelect = function () {
+                                        var actionOptions = cswPrivate.getActionOptions(statusSelect.val());
+                                        bulkActionTable.cell(1, 4).empty();
+                                        actionSelect = bulkActionTable.cell(1, 4).select({
+                                            name: 'bulkActionTableStatusSelect',
+                                            values: actionOptions
+                                        });
+                                        actionSelect.val('');
+                                    };
+                                    rebuildActionSelect();
+                                    bulkActionTable.cell(1, 5).span({ text: '&nbsp;' });
+                                    var applyChangesButton = bulkActionTable.cell(1, 6).buttonExt({
+                                        enabledText: 'Apply Changes',
+                                        size: 'small',
+                                        tooltip: { title: 'Apply Changes' },
+                                        icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.save),
+                                        onClick: function () {
+                                            Csw.each(cswPrivate.ReconciliationContainersGrid.getAllGridRows().items, function (row) {
+                                                if (row.data.status === statusSelect.val()) {
+                                                    cswPrivate.addActionChange(row.data, actionSelect.val());
+                                                }
+                                            });
+                                            step3Table.cell(1, 1).empty();
+                                            step3Table.cell(1, 1).grid(cswPrivate.gridOptions);
+                                            applyChangesButton.enable();
+                                        }
+                                    });
+                                }
                                 cswPrivate.toggleStepButtons();
                             }
                         });
@@ -554,11 +603,24 @@
                         values: actionOptions,
                         selected: selectedOption,
                         onChange: function () {
+                            cswPrivate.addActionChange(record.data, actionSelect.val());
+                        }
+                    });
+                    if (Csw.bool(record.data.actionapplied) === true) {
+                        actionSelect.disable();
+                    }
+                    if(Csw.isNullOrEmpty(record.data.actionoptions)) {
+                        actionSelect.hide();
+                    }
+                }, 50);
+            };
+
+            cswPrivate.addActionChange = function(container, action) {
                             var ContainerAction = {
-                                ContainerId: record.data.containerid,
-                                ContainerLocationId: record.data.containerlocationid,
-                                LocationId: record.data.locationid,
-                                Action: actionSelect.val()
+                    ContainerId: container.containerid,
+                    ContainerLocationId: container.containerlocationid,
+                    LocationId: container.locationid,
+                    Action: action
                             };
                             var changeExists = false;
                             Csw.each(cswPrivate.state.ContainerActions, function(row, key) {
@@ -570,15 +632,23 @@
                             if(false === changeExists) {
                                 cswPrivate.state.ContainerActions.push(ContainerAction);
                             }
+            };
+
+            cswPrivate.getActionOptions = function(status) {
+                var actionOptions = ['', 'No Action'];
+                if (status === 'Scanned, but already marked Disposed') {
+                    actionOptions.push('Undispose');
                         }
-                    });
-                    if (Csw.bool(record.data.actionapplied) === true) {
-                        actionSelect.disable();
+                if (status === 'Scanned at Wrong Location') {
+                    actionOptions.push('Move To Location');
                     }
-                    if(Csw.isNullOrEmpty(record.data.actionoptions)) {
-                        actionSelect.hide();
-                    }
-                }, 50);
+                if (status === 'Scanned, but Disposed at Wrong Location') {
+                    actionOptions.push('Undispose and Move');
+                }
+                if (status === 'Not Scanned') {
+                    actionOptions.push('Mark Missing');
+                }
+                return actionOptions;
             };
 
             cswPrivate.saveChanges = function() {

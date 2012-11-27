@@ -77,11 +77,11 @@ namespace ChemSW.Nbt.ObjClasses
 
             public static readonly StatusOptions Correct = new StatusOptions( "Received, Moved, Dispensed, or Disposed" );
             public static readonly StatusOptions ScannedCorrect = new StatusOptions( "Scanned Correct" );
-            public static readonly StatusOptions Missing = new StatusOptions( "Scanned, but already marked Missing" );
             public static readonly StatusOptions WrongLocation = new StatusOptions( "Scanned at Wrong Location" );
             public static readonly StatusOptions Disposed = new StatusOptions( "Scanned, but already marked Disposed" );
-            public static readonly StatusOptions DisposedAtWrongLocation = new StatusOptions( "Scanned, but Disposed At Wrong Location" );
-            //ContainerLocation nodes should never have a status of NotScanned - this is only used in the Reconciliation wizard
+            public static readonly StatusOptions DisposedAtWrongLocation = new StatusOptions( "Scanned, but Disposed at Wrong Location" );
+            public static readonly StatusOptions Missing = new StatusOptions( "Scanned, but already marked Missing" );
+            //ContainerLocation nodes only have a status of NotScanned when used as a placeholder to Mark Missing
             public static readonly StatusOptions NotScanned = new StatusOptions( "Not Scanned" );
         }
 
@@ -182,7 +182,7 @@ namespace ChemSW.Nbt.ObjClasses
             }
             else if( Type.Value == TypeOptions.Missing.ToString() )
             {
-                ContLocStatus = StatusOptions.Missing;
+                ContLocStatus = StatusOptions.NotScanned;
             }
             Status.Value = ContLocStatus.ToString();
         }
