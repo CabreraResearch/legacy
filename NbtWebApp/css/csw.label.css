@@ -1,12 +1,7 @@
 
 .CswLabel
 {
-    clear: left;
-    float: left;
     font-weight: bold;
-    padding: 1px 10px 2px;
-    text-align: right;
-    width: 70px;
 }
 
 .CswLabelWide
