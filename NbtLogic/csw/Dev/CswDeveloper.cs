@@ -79,7 +79,7 @@ namespace ChemSW.Nbt.csw.Dev
         public const string BV = "Brendan Vavra";
         /// <summary> Christopher </summary>
         public const string CF = "Christopher Froehlich";
-        /// <summary> Collen </summary>
+        /// <summary> Colleen </summary>
         public const string CM = "Colleen Muldowney";
         /// <summary> David </summary>
         public const string DH = "The Honey Badger";

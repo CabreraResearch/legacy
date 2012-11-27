@@ -37,6 +37,7 @@ namespace ChemSW.Nbt.PropTypes
         private CswNbtSubField _BarcodeSubField;
 
         public const string TopLevelName = "Top";
+        public bool CreateContainerLocation = true;
 
         override public bool Empty
         {
@@ -129,13 +130,17 @@ namespace ChemSW.Nbt.PropTypes
                 Int32 ret = Int32.MinValue;
                 string StringVal = _CswNbtNodePropData.GetPropRowValue( _RowSubField.Column );
                 if( CswTools.IsInteger( StringVal ) )
+                {
                     ret = CswConvert.ToInt32( StringVal );
+                }
                 return ret;
             }
             set
             {
                 if( _CswNbtNodePropData.SetPropRowValue( _RowSubField.Column, value ) )
+                {
                     PendingUpdate = true;
+                }
             }
         }
         public Int32 SelectedColumn
@@ -145,13 +150,17 @@ namespace ChemSW.Nbt.PropTypes
                 Int32 ret = Int32.MinValue;
                 string StringVal = _CswNbtNodePropData.GetPropRowValue( _ColumnSubField.Column );
                 if( CswTools.IsInteger( StringVal ) )
+                {
                     ret = CswConvert.ToInt32( StringVal );
+                }
                 return ret;
             }
             set
             {
-                _CswNbtNodePropData.SetPropRowValue( _ColumnSubField.Column, value );
-                PendingUpdate = true;
+                if( _CswNbtNodePropData.SetPropRowValue( _ColumnSubField.Column, value ) )
+                {
+                    PendingUpdate = true;
+                }
             }
         }
 
