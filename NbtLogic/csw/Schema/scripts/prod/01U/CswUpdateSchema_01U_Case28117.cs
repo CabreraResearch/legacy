@@ -44,11 +44,14 @@ namespace ChemSW.Nbt.Schema
 
             foreach( DataRow row in nodesDT.Rows )
             {
-                int pkAsInt = CswConvert.ToInt32(row["nodeid"]);
+                int pkAsInt = CswConvert.ToInt32( row["nodeid"] );
                 CswPrimaryKey pk = new CswPrimaryKey( "nodes", pkAsInt );
                 CswNbtObjClassReport reportNode = _CswNbtSchemaModTrnsctn.Nodes.GetNode( pk );
-                reportNode.Category.Text = "Lab Safety (demo)";
-                reportNode.postChanges( false );
+                if( null != reportNode )
+                {
+                    reportNode.Category.Text = "Lab Safety (demo)";
+                    reportNode.postChanges( false );
+                }
             }
 
             #endregion
