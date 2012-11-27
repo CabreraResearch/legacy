@@ -36,9 +36,13 @@ namespace ChemSW.Nbt.WebServices
                                 join audit_transactions x on ja.audittransactionid = x.audittransactionid
                                 join nodetype_props np on ja.nodetypepropid = np.nodetypepropid
                                 join field_types ft on ft.fieldtypeid = np.fieldtypeid
-                            where ja.nodeid = " + Node.NodeId.PrimaryKey.ToString() + @" 
-                                and x.transactionusername != '" + ChemSW.Nbt.Security.SystemUserNames.SysUsr_SchemaUpdt.ToString() + @"'
-                            order by ChangeDate desc";
+                            where ja.nodeid = " + Node.NodeId.PrimaryKey.ToString();
+
+                foreach( SystemUserNames sysUserName in Enum.GetValues( typeof( SystemUserNames ) ) )
+                {
+                    SQL += @"and x.transactionusername != '" + sysUserName.ToString() + "'";
+                }
+                SQL += " order by ChangeDate desc";
 
                 CswArbitrarySelect HistorySelect = _CswNbtResources.makeCswArbitrarySelect( "CswNbtWebServiceAuditing_getAuditHistory_select", SQL );
                 DataTable HistoryTable = HistorySelect.getTable();
