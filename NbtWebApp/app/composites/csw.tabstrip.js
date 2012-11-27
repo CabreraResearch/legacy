@@ -17,7 +17,7 @@
                 cswPrivate.tabPanel = cswPrivate.tabPanel || {};
                 cswPrivate.tabPanel.title = cswPrivate.tabPanel.title || 'Tabs';
                 cswPrivate.tabPanel.height = cswPrivate.tabPanel.height || 400;
-                cswPrivate.tabPanel.width = cswPrivate.tabPanel.width || 800;
+                cswPrivate.tabPanel.width = cswPrivate.tabPanel.width || 1000;
                 cswPrivate.tabPanel.resizable = cswPrivate.tabPanel.resizable || true;
                 cswPrivate.tabPanel.stateful = cswPrivate.tabPanel.stateful || true;
                 cswPrivate.tabPanel.stateId = cswPrivate.tabPanel.stateId || 'CswRequestCart';
@@ -107,6 +107,14 @@
                 title = title || 'Tab Title';
                 cswPublic.tabPanel.setTitle(title);
                 return cswPublic;
+            };
+
+            cswPublic.getWidth = function () {
+                /// <summary>
+                /// Gets the width of the tab strip
+                /// </summary>
+                /// <returns type="Number">Width</returns>
+                return cswPublic.tabPanel.getWidth();
             };
 
             //#endregion Define Class Members

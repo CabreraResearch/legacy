@@ -59,7 +59,7 @@
             };
 
             cswPrivate.makePendingTab = function (opts) {
-
+                cswPrivate.action.finish.enable();
                 cswPrivate.tabs.setTitle('Request Items Pending Submission');
 
                 // This really ought to be a CswNodeGrid
@@ -72,27 +72,31 @@
                 var gridId = cswPrivate.name + '_srgrid';
 
                 cswPrivate.pendingTab.csw.empty();
-
-                cswPrivate.pendingTab.csw.br({ number: 2 });
                 
-
-                var pendingTbl = cswPrivate.pendingTab.csw.table();
+                var pendingTbl = cswPrivate.pendingTab.csw.table({
+                    TableCssClass: 'CswAction_ContentTable'
+                });
                 
-                pendingTbl.cell(1, 1).input({
+                pendingTbl.cell(1, 1).label({ text: 'Edit any of the Request Items in your cart. When you are finished, click "Place Request" to submit your cart.' });
+                pendingTbl.cell(1, 1).br({ number: 2 });
+
+                pendingTbl.cell(2, 1).input({
                     labelText: 'Request Name: ',
-                    value: Csw.cookie.get(Csw.cookie.cookieNames.Username) + ' ' + Csw.todayAsString()
+                    value: Csw.cookie.get(Csw.cookie.cookieNames.Username) + ' ' + Csw.todayAsString(),
+                    onChange: function(val) {
+                        cswPrivate.requestName = val;
+                    }
                 });
 
-                pendingTbl.cell(2, 1).br({ number: 1 });
+                pendingTbl.cell(2, 1).br({ number: 2 });
 
                 cswPublic.grid = pendingTbl.cell(3, 1).grid({
                     name: gridId,
                     storeId: gridId + '_store',
                     stateId: gridId,
-                    title: 'Your Cart',
                     usePaging: true,
                     height: 180,
-                    width: 750,
+                    width: cswPrivate.tabs.getWidth() - 20,
                     ajax: {
                         urlMethod: opts.urlMethod,
                         data: opts.data
@@ -182,16 +186,19 @@
             }; // copyRequest()    
 
             cswPrivate.onTabSelect = function (tabName, el, eventObj, callBack) {
-
                 switch (tabName) {
                     case 'Pending':
+                        cswPrivate.action.finish.enable();
                         cswPrivate.tabs.setTitle('Request Items Pending Submission');
                         break;
                     case 'Submitted':
+                        cswPrivate.action.finish.disable();
                         break;
                     case 'Recurring':
+                        cswPrivate.action.finish.disable();
                         break;
                     case 'Favorites':
+                        cswPrivate.action.finish.disable();
                         break;
                 }
 
@@ -235,24 +242,7 @@
                   });
               }
           }
-         
-          cswPrivate.saveRequestTbl = cswPrivate.actionTbl.cell(6, 1).table({ align: 'right', cellvalign: 'middle', cellpadding: '2px' });
-      //cswPrivate.saveRequestTbl.cell(1, 4).span({ text: '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' });
-      cswPrivate.saveRequestTxt = cswPrivate.saveRequestTbl.cell(2, 1).input().hide();
-      cswPrivate.saveRequestTbl.cell(1, 1).span({ text: 'Save Request' });
-      cswPrivate.saveRequestChk = cswPrivate.saveRequestTbl.cell(1, 2).checkBox({
-          onChange: Csw.method(function () {
-              var val;
-              if (cswPrivate.saveRequestChk.checked()) {
-                  val = Csw.cookie.get(Csw.cookie.cookieNames.Username) + ' ' + Csw.todayAsString();
-                  cswPrivate.saveRequestTxt.show();
-              } else {
-                  val = '';
-                  cswPrivate.saveRequestTxt.hide();
-              }
-              cswPrivate.saveRequestTxt.val(val);
-          })
-
+                   
             
             */
 
@@ -261,43 +251,38 @@
             (function _postCtor() {
 
                 cswPrivate.action = Csw.layouts.action(cswParent, {
-                    Title: 'Submit Request',
+                    Title: 'Requests',
                     FinishText: 'Place Request',
                     onFinish: cswPrivate.submitRequest,
                     onCancel: cswPrivate.onCancel
                 });
+                cswPrivate.action.finish.disable();
 
                 cswPrivate.actionTbl = cswPrivate.action.actionDiv.table({
                     name: cswPrivate.name + '_tbl',
                     align: 'center'
                 }).css('width', '95%');
 
-                cswPrivate.actionTbl.cell(1, 1)
-                    .css('text-align', 'left')
-                    .span({ text: 'Edit any of the Request Items in your cart. When you are finished, click "Place Request" to submit your cart.' });
+                cswPrivate.action.setHeader('Pending Request Items');
 
                 cswPrivate.tabs = cswPrivate.actionTbl.cell(2, 1).tabStrip({
                     onTabSelect: cswPrivate.onTabSelect
                 });
 
                 cswPrivate.pendingTab = cswPrivate.tabs.addTab({
-                    title: 'Pending',
-                    html: 'Pending Request Items'
+                    title: 'Pending'
                 });
 
                 cswPrivate.submittedTab = cswPrivate.tabs.addTab({
-                    title: 'Submitted',
-                    html: 'Submitted Request Items'
+                    title: 'Submitted'
                 });
 
                 cswPrivate.recurringTab = cswPrivate.tabs.addTab({
-                    title: 'Recurring',
-                    html: 'Recurring Request Items'
+                    title: 'Recurring'
                 });
 
                 cswPrivate.favoritesTab = cswPrivate.tabs.addTab({
-                    title: 'Favorites',
-                    html: 'Favorite Request Items'
+                    title: 'Favorites'
                 });
 
                 cswPrivate.tabs.setActiveTab(0);

@@ -10,7 +10,7 @@
             var cswPrivate = {
                 name: 'extjsGrid',
                 //storeId: '',
-                title: 'Untitled Grid',
+                title: '',
                 truncated: false,
                 //stateId: '',
                 usePaging: true,
