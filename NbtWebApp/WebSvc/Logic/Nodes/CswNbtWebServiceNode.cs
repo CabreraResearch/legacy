@@ -12,6 +12,7 @@ using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
 using ChemSW.Nbt.ServiceDrivers;
 using ChemSW.Nbt.Statistics;
+using NbtWebApp;
 using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.WebServices
@@ -421,26 +422,32 @@ namespace ChemSW.Nbt.WebServices
             }
             return Ret;
         }
-
-        public JObject getNodes( string NodeTypeId, string ObjectClassId, string ObjectClass, string RelatedToObjectClass, string RelatedToNodeId )
+        
+        public NodeSelect.Response.Ret getNodes( NodeSelect.Request Request )
         {
-            JObject Ret = new JObject();
+            NodeSelect.Response.Ret Ret = new NodeSelect.Response.Ret();
 
-            Int32 RealNodeTypeId = CswConvert.ToInt32( NodeTypeId );
-            Int32 RealObjectClassId = CswConvert.ToInt32( ObjectClassId );
-            NbtObjectClass RealObjectClass = ObjectClass;
+            Int32 RealNodeTypeId = Request.NodeTypeId;
+            Int32 RealObjectClassId = Request.ObjectClassId;
+            NbtObjectClass RealObjectClass = Request.ObjectClass;
             bool CanAdd;
             Collection<CswNbtNode> Nodes = new Collection<CswNbtNode>();
             bool UseSearch = false;
             // case 25956
             Int32 SearchThreshold = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswNbtResources.ConfigurationVariables.relationshipoptionlimit.ToString() ) );
+            CswNbtView View = null;
 
             if( SearchThreshold <= 0 )
             {
                 SearchThreshold = 100;
             }
 
-            if( RealNodeTypeId != Int32.MinValue )
+            if( null != Request.NbtViewId && Request.NbtViewId.isSet() )
+            {
+                View = _CswNbtResources.ViewSelect.getSessionView( Request.NbtViewId );
+                CanAdd = true;
+            }
+            else if( RealNodeTypeId != Int32.MinValue )
             {
                 CswNbtMetaDataNodeType MetaDataNodeType = _CswNbtResources.MetaData.getNodeType( RealNodeTypeId );
                 Nodes = MetaDataNodeType.getNodes( true, false );
@@ -458,14 +465,14 @@ namespace ChemSW.Nbt.WebServices
                     MetaDataObjectClass = _CswNbtResources.MetaData.getObjectClass( RealObjectClass );
                     RealObjectClassId = MetaDataObjectClass.ObjectClassId;
                 }
+                
                 if( null != MetaDataObjectClass )
                 {
                     bool doGetNodes = true;
-                    if( false == string.IsNullOrEmpty( RelatedToObjectClass ) && false == string.IsNullOrEmpty( RelatedToNodeId ) )
+                    if( false == string.IsNullOrEmpty( Request.RelatedToObjectClass ) && CswTools.IsPrimaryKey(Request.RelatedNodeId) )
                     {
-                        NbtObjectClass RealRelatedObjectClass = RelatedToObjectClass;
-                        CswPrimaryKey RelatedNodePk = new CswPrimaryKey();
-                        RelatedNodePk.FromString( RelatedToNodeId );
+                        NbtObjectClass RealRelatedObjectClass = Request.RelatedToObjectClass;
+                        CswPrimaryKey RelatedNodePk = Request.RelatedNodeId;
                         if( Int32.MinValue != RelatedNodePk.PrimaryKey )
                         {
                             CswNbtNode RelatedNode = _CswNbtResources.Nodes[RelatedNodePk];
@@ -475,7 +482,7 @@ namespace ChemSW.Nbt.WebServices
                                 {
                                     Collection<CswNbtMetaDataObjectClassProp> RelatedProps = new Collection<CswNbtMetaDataObjectClassProp>();
                                     CswNbtMetaDataObjectClass MetaRelatedObjectClass = _CswNbtResources.MetaData.getObjectClass( RealRelatedObjectClass );
-                                    Ret["relatedobjectclassid"] = MetaRelatedObjectClass.ObjectClassId;
+                                    Ret.RelatedObjectClassId = MetaRelatedObjectClass.ObjectClassId;
                                     foreach( CswNbtMetaDataObjectClassProp OcProp in from _OcProp in MetaDataObjectClass.getObjectClassProps()
                                                                                      where _OcProp.getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.Relationship &&
                                                                                            _OcProp.FKType == NbtViewRelatedIdType.ObjectClassId.ToString() &&
@@ -488,20 +495,11 @@ namespace ChemSW.Nbt.WebServices
                                     if( RelatedProps.Any() )
                                     {
                                         doGetNodes = false;
-                                        CswNbtView View = new CswNbtView( _CswNbtResources );
+                                        View = new CswNbtView( _CswNbtResources );
                                         CswNbtViewRelationship Relationship = View.AddViewRelationship( MetaDataObjectClass, true );
                                         foreach( CswNbtMetaDataObjectClassProp RelationshipProp in RelatedProps )
                                         {
                                             View.AddViewPropertyAndFilter( Relationship, RelationshipProp, SubFieldName: CswNbtSubField.SubFieldName.NodeID, Value: RelatedNodePk.PrimaryKey.ToString() );
-                                        }
-                                        ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( View, false, false, false );
-
-                                        UseSearch = UseSearch || Tree.getChildNodeCount() > SearchThreshold;
-                                        for( int N = 0; N < Tree.getChildNodeCount() && N < SearchThreshold; N += 1 )
-                                        {
-                                            Tree.goToNthChild( N );
-                                            Ret[Tree.getNodeIdForCurrentPosition().ToString()] = Tree.getNodeNameForCurrentPosition();
-                                            Tree.goToParentNode();
                                         }
                                     }
                                 }
@@ -520,18 +518,50 @@ namespace ChemSW.Nbt.WebServices
                     CanAdd = false;
                 }
             }
+
+            if( null != View )
+            {
+                ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( View, false, false, false );
+
+                UseSearch = UseSearch || Tree.getChildNodeCount() > SearchThreshold;
+                for( int N = 0; N < Tree.getChildNodeCount() && N < SearchThreshold; N += 1 )
+                {
+                    Tree.goToNthChild( N );
+                    Ret.Nodes.Add( new NodeSelect.Response.Node( null )
+                    {
+                        NodePk = Tree.getNodeIdForCurrentPosition(),
+                        NodeName = Tree.getNodeNameForCurrentPosition()
+                    } );
+                    Tree.goToParentNode();
+                }
+            }
+
             UseSearch = UseSearch || Nodes.Count > SearchThreshold;
             foreach( CswNbtNode Node in ( from _Node in Nodes orderby _Node.NodeName select _Node ).Take( SearchThreshold ) )
             {
-                Ret[Node.NodeId.ToString()] = Node.NodeName;
+                Ret.Nodes.Add(new NodeSelect.Response.Node(Node));
             }
-            Ret["usesearch"] = UseSearch;
-            Ret["canadd"] = CanAdd;
-            Ret["nodetypeid"] = RealNodeTypeId;
-            Ret["objectclassid"] = RealObjectClassId;
-
+            Ret.usesearch = UseSearch;
+            Ret.canadd = CanAdd;
+            Ret.nodetypeid = RealNodeTypeId;
+            Ret.objectclassid = RealObjectClassId;
+            
             return Ret;
         }
+
+        /// <summary>
+        /// WCF wrapper around getNodes
+        /// </summary>
+        public static void getNodes( ICswResources CswResources, NodeSelect.Response Response, NodeSelect.Request Request )
+        {
+            if( null != CswResources )
+            {
+                CswNbtResources NbtResources = (CswNbtResources) CswResources;
+                CswNbtWebServiceNode ws = new CswNbtWebServiceNode( NbtResources, null );
+                Response.Data = ws.getNodes( Request );
+            }
+        }
+
 
     } // class CswNbtWebServiceNode
 
