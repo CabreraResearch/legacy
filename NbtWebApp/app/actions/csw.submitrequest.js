@@ -2,28 +2,26 @@
 (function () {
 
     Csw.actions.submitRequest = Csw.actions.submitRequest ||
-        Csw.actions.register('submitRequest', function (cswParent, options) {
+        Csw.actions.register('submitRequest', function (cswParent, cswPrivate) {
             'use strict';
             var cswPublic = {};
-            var cswPrivate = {
-                name: 'CswSubmitRequest',
-                onSubmit: null,
-                onCancel: null,
-                gridOpts: {},
-                cartnodeid: '',
-                cartviewid: '',
-                materialnodeid: '',
-                containernodeid: ''
-            };
-
+            
             if (Csw.isNullOrEmpty(cswParent)) {
                 Csw.error.throwException('Cannot create a Submit Request action without a valid Csw Parent object.', 'Csw.actions.submitRequest', 'csw.submitrequest.js', 14);
             }
             (function _preCtor() {
-                Csw.extend(cswPrivate, options, true);
-
+                cswPrivate.name = cswPrivate.name || 'CswSubmitRequest';
+                cswPrivate.onSubmit = cswPrivate.onSubmit || function() {};
+                cswPrivate.onCancel = cswPrivate.onCancel || function () {};
+                cswPrivate.cartnodeid = cswPrivate.cartnodeid || '';
+                cswPrivate.cartviewid = cswPrivate.cartviewid || '';
+                cswPrivate.materialnodeid = cswPrivate.materialnodeid || '';
+                cswPrivate.containernodeid = cswPrivate.containernodeid || '';
+                
                 cswParent.empty();
             }());
+
+            cswPrivate.gridOpts = {};
 
             cswPrivate.makeRequestCreateMaterial = function () {
                 Csw.ajaxWcf.get({
@@ -56,7 +54,7 @@
                         }
                     }
                 });
-            };
+            };        // cswPrivate.submitRequest
 
             cswPrivate.makePendingTab = function (opts) {
                 cswPrivate.action.finish.enable();
@@ -71,26 +69,36 @@
 
                 var gridId = cswPrivate.name + '_srgrid';
 
-                cswPrivate.pendingTab.csw.empty();
+                cswPrivate.pendingTab.csw.empty().css({margin: '10px'});
                 
-                var pendingTbl = cswPrivate.pendingTab.csw.table({
-                    TableCssClass: 'CswAction_ContentTable'
-                });
-                
-                pendingTbl.cell(1, 1).label({ text: 'Edit any of the Request Items in your cart. When you are finished, click "Place Request" to submit your cart.' });
-                pendingTbl.cell(1, 1).br({ number: 2 });
+                var ol = cswPrivate.pendingTab.csw.ol();
 
-                pendingTbl.cell(2, 1).input({
-                    labelText: 'Request Name: ',
+                ol.li().span({
+                    text: 'Edit any of the Request Items in your cart. When you are finished, click "Place Request" to submit your cart.'
+                });
+                ol.li().br({ number: 2 });
+                
+                var inpTbl = ol.li().table({ width: '100%' });
+                
+                inpTbl.cell(1,1).ol().li().input({
+                    labelText: 'Request Name:',
                     value: Csw.cookie.get(Csw.cookie.cookieNames.Username) + ' ' + Csw.todayAsString(),
                     onChange: function(val) {
                         cswPrivate.requestName = val;
                     }
                 });
 
-                pendingTbl.cell(2, 1).br({ number: 2 });
+                inpTbl.cell(1, 2)
+                    .css({ 'text-align': 'center' })
+                    .buttonExt({
+                    enabledText: 'Request Create Material',
+                    icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.cart),
+                    onClick: cswPrivate.makeRequestCreateMaterial
+                });
+                
+                ol.li().br({ number: 1 });
 
-                cswPublic.grid = pendingTbl.cell(3, 1).grid({
+                cswPublic.grid = ol.li().grid({
                     name: gridId,
                     storeId: gridId + '_store',
                     stateId: gridId,
@@ -102,7 +110,7 @@
                         data: opts.data
                     },
 
-                    showCheckboxes: false,
+                    showCheckboxes: true,
                     showActionColumn: true,
                     canSelectRow: false,
 
@@ -110,6 +118,7 @@
                         cswPrivate.cartnodeid = json.cartnodeid;
                         cswPrivate.cartviewid = json.cartviewid;
                         Csw.tryExec(opts.onSuccess);
+                        window.requestGrid = cswPublic.grid;
                     },
                     onEdit: function (rows) {
                         // this works for both Multi-edit and regular
@@ -165,24 +174,34 @@
                             publishDeleteEvent: false
                         });
                     }, // onDelete
-                    onSelect: null, // function(row)
-                    onDeselect: null, // function(row)
-
-                    topToolbar: [cswPrivate.requestCreateMaterial]
+                    onSelect: function(row) {}, 
+                    onDeselect: function(row) {}
                 });
-            }; // initGrid()
 
-            cswPrivate.copyRequest = function () {
-                cswPrivate.makePendingTab({
-                    urlMethod: 'copyRequest',
-                    data: {
-                        CopyFromRequestId: cswPrivate.copyFromNodeId,
-                        CopyToRequestId: cswPrivate.cartnodeid
-                    },
-                    onSuccess: function () {
-                        Csw.publish(Csw.enums.events.main.refreshHeader);
-                    }
+                ol.li().br();
+                
+                var btmTbl = ol.li().table();
+                btmTbl.cell(1, 1).buttonExt({
+                    enabledText: 'Save to Favorites',
+                    icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.save),
+                    onClick: cswPrivate.saveToFavorites
                 });
+                btmTbl.cell(1, 2).nodeSelect({
+                    viewid: ''    
+                });
+            }; // cswPrivate.makePendingTab()
+
+            cswPrivate.saveToFavorites = function () {
+                //cswPrivate.makePendingTab({
+                //    urlMethod: 'copyRequest',
+                //    data: {
+                //        CopyFromRequestId: cswPrivate.copyFromNodeId,
+                //        CopyToRequestId: cswPrivate.cartnodeid
+                //    },
+                //    onSuccess: function () {
+                //        Csw.publish(Csw.enums.events.main.refreshHeader);
+                //    }
+                //});
             }; // copyRequest()    
 
             cswPrivate.onTabSelect = function (tabName, el, eventObj, callBack) {
@@ -251,8 +270,9 @@
             (function _postCtor() {
 
                 cswPrivate.action = Csw.layouts.action(cswParent, {
-                    Title: 'Requests',
-                    FinishText: 'Place Request',
+                    title: 'Requests',
+                    finishText: 'Place Request',
+                    cancelText: 'Close',
                     onFinish: cswPrivate.submitRequest,
                     onCancel: cswPrivate.onCancel
                 });
