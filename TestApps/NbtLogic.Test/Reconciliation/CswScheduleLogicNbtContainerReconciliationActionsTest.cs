@@ -61,7 +61,6 @@ namespace ChemSw.Nbt.Test
         [TestMethod]
         public void makeReconciliationActionBatchProcessTestHasNodes()
         {
-            TestData.setAllContainerLocationNodeActions( CswNbtObjClassContainerLocation.ActionOptions.Undispose.ToString() );
             TestData.Nodes.createContainerLocationNode( Action: CswNbtObjClassContainerLocation.ActionOptions.Undispose.ToString() );
             CswScheduleLogicNbtContainerReconciliationActions Sched = _getReconciliationActionSched();
             Sched.makeReconciliationActionBatchProcess();
@@ -98,7 +97,6 @@ namespace ChemSw.Nbt.Test
         [TestMethod]
         public void getOutstandingContainerLocationsTestHasNodes()
         {
-            TestData.setAllContainerLocationNodeActions( CswNbtObjClassContainerLocation.ActionOptions.Undispose.ToString() );
             TestData.Nodes.createContainerLocationNode( Action: CswNbtObjClassContainerLocation.ActionOptions.Undispose.ToString() );
             CswScheduleLogicNbtContainerReconciliationActions Sched = _getReconciliationActionSched();
             CswNbtView ContainerLocationsView = Sched.getOutstandingContainerLocations();
@@ -142,7 +140,6 @@ namespace ChemSw.Nbt.Test
         [TestMethod]
         public void getContainerLocationIdsTestHasNodes()
         {
-            TestData.setAllContainerLocationNodeActions( CswNbtObjClassContainerLocation.ActionOptions.Undispose.ToString() );
             TestData.Nodes.createContainerLocationNode( Action: CswNbtObjClassContainerLocation.ActionOptions.Undispose.ToString() );
             CswScheduleLogicNbtContainerReconciliationActions Sched = _getReconciliationActionSched();
             CswNbtView ContainerLocationsView = Sched.getOutstandingContainerLocations();

@@ -25,6 +25,9 @@
                 stepOneComplete: false,
                 stepTwoComplete: false,
                 stepThreeComplete: false,
+                isCurrent: true,
+                touchesIncluded: 0,
+                currentDate: '',
                 state: {
                     LocationId: '',
                     LocationName: '',
@@ -36,6 +39,10 @@
                         ContainerLocationId: '',
                         LocationId: '',
                         Action: ''
+                    }],
+                    ContainerLocationTypes: [{
+                        Type: '',
+                        Enabled: true
                     }]
                 }
             };
@@ -130,9 +137,35 @@
                             cellvalign: 'top',
                             FirstCellRightAlign: true
                         });
+                        var rowNum = 1;
+                        //ViewMode
+                        locationDatesTable.cell(rowNum, 1).span({ text: 'View Mode:' }).addClass('propertylabel');
+                        var viewModeSelect = locationDatesTable.cell(rowNum, 2).select({
+                            name: 'ReconciliationViewModeSelect',
+                            values: ['Current','History'],
+                            onChange: function () {
+                                cswPrivate.isCurrent = Csw.bool(viewModeSelect.val() === 'Current');
+                                if(cswPrivate.isCurrent) {
+                                    endDatePicker.hide();
+                                    staticEndDate.show();
+                                    startDatePicker.setMaxDate(cswPrivate.getCurrentDate());
+                                    endDatePicker.setMaxDate(cswPrivate.getCurrentDate());
+                                    cswPrivate.state.EndDate = cswPrivate.getCurrentDate();
+                                } else {
+                                    endDatePicker.show();
+                                    staticEndDate.hide();
+                                    endDatePicker.setMaxDate(cswPrivate.getCurrentDate());
+                                    cswPrivate.state.EndDate = endDatePicker.val().date;
+                                    startDatePicker.setMaxDate(endDatePicker.val().date);
+                                    cswPrivate.state.StartDate = startDatePicker.val().date;
+                                }
+                                cswPrivate.reinitSteps(2);
+                            }
+                        });
+                        rowNum++;
                         //Location
-                        locationDatesTable.cell(1, 1).span({ text: 'Location:' }).addClass('propertylabel');
-                        var locationControl = locationDatesTable.cell(1, 2).location({
+                        locationDatesTable.cell(rowNum, 1).span({ text: 'Location:' }).addClass('propertylabel');
+                        var locationControl = locationDatesTable.cell(rowNum, 2).location({
                             name: '',
                             onChange: function (locationId, locationName) {
                                 cswPrivate.state.LocationId = locationId;
@@ -142,9 +175,9 @@
                         });
                         cswPrivate.state.LocationId = locationControl.val();
                         cswPrivate.state.LocationName = locationControl.selectedName();
-                        locationDatesTable.cell(1, 2).br();
+                        rowNum++;
                         //IncludeChildLocations
-                        var checkBoxTable = locationDatesTable.cell(1, 2).table({
+                        var checkBoxTable = locationDatesTable.cell(rowNum, 2).table({
                             name: 'checkboxTable',
                             cellalign: 'left',
                             cellvalign: 'middle'
@@ -156,9 +189,10 @@
                             })
                         });
                         checkBoxTable.cell(1, 2).span({ text: ' Include child locations' });
+                        rowNum++;
                         //StartDate
-                        locationDatesTable.cell(2, 1).span({ text: 'Start Date:' }).addClass('propertylabel');
-                        var startDatePicker = locationDatesTable.cell(2, 2).dateTimePicker({
+                        locationDatesTable.cell(rowNum, 1).span({ text: 'Start Date:' }).addClass('propertylabel');
+                        var startDatePicker = locationDatesTable.cell(rowNum, 2).dateTimePicker({
                             name: 'startDate',
                             Date: cswPrivate.getCurrentDate(),
                             isRequired: true,
@@ -169,9 +203,10 @@
                             }
                         });
                         cswPrivate.state.StartDate = startDatePicker.val().date;
+                        rowNum++;
                         //EndDate
-                        locationDatesTable.cell(3, 1).span({ text: 'End Date:' }).addClass('propertylabel');
-                        var endDatePicker = locationDatesTable.cell(3, 2).dateTimePicker({
+                        locationDatesTable.cell(rowNum, 1).span({ text: 'End Date:' }).addClass('propertylabel');
+                        var endDatePicker = locationDatesTable.cell(rowNum, 2).dateTimePicker({
                             name: 'endDate',
                             Date: cswPrivate.getCurrentDate(),
                             isRequired: true,
@@ -179,10 +214,50 @@
                             onChange: function () {
                                 cswPrivate.state.EndDate = endDatePicker.val().date;
                                 startDatePicker.setMaxDate(cswPrivate.state.EndDate);
+                                cswPrivate.state.StartDate = startDatePicker.val().date;
                                 cswPrivate.reinitSteps(2);
                             }
                         });
+                        endDatePicker.hide();
                         cswPrivate.state.EndDate = endDatePicker.val().date;
+                        var staticEndDate = locationDatesTable.cell(rowNum, 2).span({ text: 'Today' });
+                        rowNum++;
+                        //TypeSelect
+                        cswPrivate.state.ContainerLocationTypes = [
+                            { Type: 'Scan', Enabled: true },
+                            { Type: 'Receipt', Enabled: false },
+                            { Type: 'Move', Enabled: false },
+                            { Type: 'Dispense', Enabled: false },
+                            { Type: 'Dispose', Enabled: false },
+                            { Type: 'Undispose', Enabled: false },
+                            { Type: 'Missing', Enabled: false }
+                        ];
+                        locationDatesTable.cell(rowNum, 1).span({ text: 'Type:' }).addClass('propertylabel');
+                        var typeSelectTable = locationDatesTable.cell(rowNum, 2).table({
+                            name: 'checkboxTable',
+                            cellalign: 'left',
+                            cellvalign: 'middle'
+                        });
+                        cswPrivate.typeCheckBox = [];
+                        var typeRowNum = 1;
+                        Csw.each(cswPrivate.state.ContainerLocationTypes, function(type, key) {
+                            cswPrivate.typeCheckBox[typeRowNum - 1] = typeSelectTable.cell(typeRowNum, 1).checkBox({
+                                checked: type.Enabled,
+                                onChange: Csw.method(function () {
+                                    cswPrivate.state.ContainerLocationTypes[key].Enabled = cswPrivate.typeCheckBox[key].checked();
+                                    if (cswPrivate.state.ContainerLocationTypes[key].Type != 'Scan'){
+                                        if (cswPrivate.state.ContainerLocationTypes[key].Enabled) {
+                                            cswPrivate.touchesIncluded++;
+                                        } else {
+                                            cswPrivate.touchesIncluded--;
+                                        }
+                                    }
+                                    cswPrivate.reinitSteps(2);
+                                })
+                            });
+                            typeSelectTable.cell(typeRowNum, 2).span({ text: ' ' + type.Type });
+                            typeRowNum++;
+                        });
 
                         cswPrivate.stepOneComplete = true;
                     }
@@ -213,16 +288,6 @@
                                         ContainerCount: '',
                                         AmountScanned: '',
                                         PercentScanned: ''
-                                    }],
-                                    ContainerStatuses: [{
-                                        ContainerId: '',
-                                        ContainerBarcode: '',
-                                        LocationId: '',
-                                        ContainerLocationId: '',
-                                        ContainerStatus: '',
-                                        Action: '',
-                                        ActionApplied: '',
-                                        ActionOptions: []
                                     }]
                                 };
                                 Csw.extend(cswPrivate.data, ajaxdata);
@@ -233,6 +298,7 @@
                                     StatusMetricsGridColumns.push({
                                         dataIndex: colName,
                                         filterable: false,
+                                        sortable: false,
                                         format: null,
                                         header: displayName,
                                         id: 'reconciliation_status_' + colName
@@ -243,19 +309,42 @@
                                         useNull: true
                                     });
                                 };
-                                addColumn('status', 'Status');
+                                addColumn('status', 'Status at time of Scan');
                                 addColumn('numofcontainers', 'Number of Containers');
-                                addColumn('percentscanned', 'Percent Scanned');
-                                addColumn('percentunscanned', 'Percent Unscanned');
+                                addColumn('percentscanned', 'Percent of Containers');
 
                                 var StatusMetricsGridData = [];
+                                var totalContainerCount = 0;
+                                var totalContainersScanned = 0;
                                 Csw.each(cswPrivate.data.ContainerStatistics, function (row) {
-                                    StatusMetricsGridData.push({
-                                        status: row.Status,
-                                        numofcontainers: row.ContainerCount,
-                                        percentscanned: Csw.number(row.PercentScanned) + '%',
-                                        percentunscanned: Csw.number(100 - Csw.number(row.PercentScanned)) + '%'
-                                    });
+                                    totalContainerCount += row.ContainerCount;
+                                });
+                                Csw.each(cswPrivate.data.ContainerStatistics, function (row) {
+                                    var percent = totalContainerCount > 0 ? Csw.number(row.ContainerCount / totalContainerCount) * 100.0 : 0;
+                                    if (row.Status === 'Not Scanned') {
+                                        StatusMetricsGridData.push({});
+                                    }
+                                    if (cswPrivate.touchesIncluded > 0 || row.Status !== 'Received, Moved, Dispensed, or Disposed') {
+                                        StatusMetricsGridData.push({
+                                            status: row.Status,
+                                            numofcontainers: row.ContainerCount,
+                                            percentscanned: (Math.round(Csw.number(percent) * 100) / 100) + '%'
+                                        });
+                                        if(Csw.startsWith(row.Status, 'Scanned')) {
+                                            totalContainersScanned += row.ContainerCount;
+                                        } else {
+                                            StatusMetricsGridData.push({});
+                                        }
+                                    }
+                                });
+                                StatusMetricsGridData.push({
+                                    status: 'Total',
+                                    numofcontainers: totalContainerCount
+                                });
+                                var percentScanned = totalContainerCount > 0 ? Csw.number(totalContainersScanned / totalContainerCount) * 100.0 : 0;
+                                StatusMetricsGridData.push({
+                                    status: 'Percent Scanned',
+                                    numofcontainers: (Math.round(Csw.number(percentScanned) * 100) / 100) + '%'
                                 });
 
                                 var StatusMetricsGridId = 'ReconciliationStatusGrid';
@@ -267,6 +356,7 @@
                                         + ' to ' + cswPrivate.state.EndDate,
                                     stateId: StatusMetricsGridId,
                                     usePaging: false,
+                                    resizable: false,
                                     showActionColumn: false,
                                     canSelectRow: false,
                                     onLoad: null,
@@ -274,7 +364,7 @@
                                     onDelete: null,
                                     onSelect: null,
                                     onDeselect: null,
-                                    height: 200,
+                                    height: StatusMetricsGridData.length * 26,
                                     forcefit: true,
                                     width: '100%',
                                     fields: StatusMetricsGridFields,
@@ -315,6 +405,7 @@
                                     LocationId: '',
                                     ContainerLocationId: '',
                                     ContainerStatus: '',
+                                    ScanDate: '',
                                     Action: '',
                                     ActionApplied: '',
                                     ActionOptions: []
@@ -353,9 +444,9 @@
                                     type: 'list',
                                     options: StatusOptions
                                 });
-                                var actionEditable = Csw.bool(cswPrivate.state.EndDate === cswPrivate.getCurrentDate());
-                                addColumn('currentaction', 'Action', actionEditable);
-                                if (actionEditable) {
+                                addColumn('scandate', 'Last Scan Date', false);
+                                addColumn('currentaction', 'Current Action', true);
+                                if (cswPrivate.isCurrent) {
                                     var actionControlCol = {
                                         header: 'Action',
                                         dataIndex: 'action',
@@ -381,6 +472,7 @@
                                         actionapplied: row.ActionApplied,
                                         containerbarcode: row.ContainerBarcode,
                                         status: row.ContainerStatus,
+                                        scandate: row.ScanDate,
                                         actionoptions: row.ActionOptions.join(','),
                                         currentaction: row.Action
                                     });
@@ -409,7 +501,56 @@
                                     columns: ContainersGridColumns,
                                     data: ContainersGridData
                                 };
-                                cswPrivate.ReconciliationContainersGrid = cswPrivate.divStep3.grid(cswPrivate.gridOptions);
+                                var step3Table = cswPrivate.divStep3.table();
+                                cswPrivate.ReconciliationContainersGrid = step3Table.cell(1, 1).grid(cswPrivate.gridOptions);
+                                if (cswPrivate.isCurrent) {
+                                    cswPrivate.divStep3.br({ number: 2 });
+                                    var bulkActionTable = step3Table.cell(2, 1).table({ cellvalign: 'center' });
+
+                                    bulkActionTable.cell(1, 1).span({ text: 'Set Action of all Containers with Status&nbsp;' });
+                                    var statusOptions = [];
+                                    Csw.each(cswPrivate.data.ContainerStatistics, function(row) {
+                                        if (row.Status.indexOf('Scanned') !== -1 && row.Status !== 'Scanned Correct') {
+                                            statusOptions.push(row.Status);
+                                        }
+                                    });
+                                    var statusSelect = bulkActionTable.cell(1, 2).select({
+                                        name: 'bulkActionTableStatusSelect',
+                                        values: statusOptions,
+                                        onChange: function () {
+                                            rebuildActionSelect();
+                                        }
+                                    });
+                                    bulkActionTable.cell(1, 3).span({ text: '&nbsp;to&nbsp;' });
+                                    var actionSelect;
+                                    var rebuildActionSelect = function () {
+                                        var actionOptions = cswPrivate.getActionOptions(statusSelect.val());
+                                        bulkActionTable.cell(1, 4).empty();
+                                        actionSelect = bulkActionTable.cell(1, 4).select({
+                                            name: 'bulkActionTableStatusSelect',
+                                            values: actionOptions
+                                        });
+                                        actionSelect.val('');
+                                    };
+                                    rebuildActionSelect();
+                                    bulkActionTable.cell(1, 5).span({ text: '&nbsp;' });
+                                    var applyChangesButton = bulkActionTable.cell(1, 6).buttonExt({
+                                        enabledText: 'Apply Changes',
+                                        size: 'small',
+                                        tooltip: { title: 'Apply Changes' },
+                                        icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.save),
+                                        onClick: function () {
+                                            Csw.each(cswPrivate.ReconciliationContainersGrid.getAllGridRows().items, function (row) {
+                                                if (row.data.status === statusSelect.val()) {
+                                                    cswPrivate.addActionChange(row.data, actionSelect.val());
+                                                }
+                                            });
+                                            step3Table.cell(1, 1).empty();
+                                            step3Table.cell(1, 1).grid(cswPrivate.gridOptions);
+                                            applyChangesButton.enable();
+                                        }
+                                    });
+                                }
                                 cswPrivate.toggleStepButtons();
                             }
                         });
@@ -423,17 +564,21 @@
 
             //#region Helper Functions
             cswPrivate.getCurrentDate = function () {
-                var today = new Date();
-                var dd = today.getDate();
-                var mm = today.getMonth() + 1; //January is 0!
-                var yyyy = today.getFullYear();
-                if (dd < 10) {
-                    dd = '0' + dd;
-                } if (mm < 10) {
-                    mm = '0' + mm;
+                if (Csw.isNullOrEmpty(cswPrivate.currentDate)) {
+                    var today = new Date();
+                    var dd = today.getDate();
+                    var mm = today.getMonth() + 1; //January is 0!
+                    var yyyy = today.getFullYear();
+                    if (dd < 10) {
+                        dd = '0' + dd;
+                    }
+                    if (mm < 10) {
+                        mm = '0' + mm;
+                    }
+                    today = mm + '/' + dd + '/' + yyyy;
+                    cswPrivate.currentDate = today;
                 }
-                today = mm + '/' + dd + '/' + yyyy;
-                return today;
+                return cswPrivate.currentDate;
             };
             
             cswPrivate.makeActionPicklist = function (cellId, record) {
@@ -458,11 +603,24 @@
                         values: actionOptions,
                         selected: selectedOption,
                         onChange: function () {
+                            cswPrivate.addActionChange(record.data, actionSelect.val());
+                        }
+                    });
+                    if (Csw.bool(record.data.actionapplied) === true) {
+                        actionSelect.disable();
+                    }
+                    if(Csw.isNullOrEmpty(record.data.actionoptions)) {
+                        actionSelect.hide();
+                    }
+                }, 50);
+            };
+
+            cswPrivate.addActionChange = function(container, action) {
                             var ContainerAction = {
-                                ContainerId: record.data.containerid,
-                                ContainerLocationId: record.data.containerlocationid,
-                                LocationId: record.data.locationid,
-                                Action: actionSelect.val()
+                    ContainerId: container.containerid,
+                    ContainerLocationId: container.containerlocationid,
+                    LocationId: container.locationid,
+                    Action: action
                             };
                             var changeExists = false;
                             Csw.each(cswPrivate.state.ContainerActions, function(row, key) {
@@ -474,12 +632,23 @@
                             if(false === changeExists) {
                                 cswPrivate.state.ContainerActions.push(ContainerAction);
                             }
+            };
+
+            cswPrivate.getActionOptions = function(status) {
+                var actionOptions = ['', 'No Action'];
+                if (status === 'Scanned, but already marked Disposed') {
+                    actionOptions.push('Undispose');
                         }
-                    });
-                    if (Csw.bool(record.data.actionapplied) === true || Csw.isNullOrEmpty(record.data.actionoptions)) {
-                        actionSelect.disable();
+                if (status === 'Scanned at Wrong Location') {
+                    actionOptions.push('Move To Location');
                     }
-                }, 50);
+                if (status === 'Scanned, but Disposed at Wrong Location') {
+                    actionOptions.push('Undispose and Move');
+                }
+                if (status === 'Not Scanned') {
+                    actionOptions.push('Mark Missing');
+                }
+                return actionOptions;
             };
 
             cswPrivate.saveChanges = function() {

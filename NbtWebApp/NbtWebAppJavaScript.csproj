@@ -681,7 +681,6 @@
     <Content Include="app\view\CswViewContentTree.js" />
     <Content Include="app\view\CswViewEditor.js" />
     <Content Include="app\view\CswViewPropFilter.js" />
-    <Content Include="MainHead.html" />
     <Content Include="Report.html" />
     <Content Include="app\ChemSW.js" />
     <Content Include="app\composites\csw.thingrid.js" />

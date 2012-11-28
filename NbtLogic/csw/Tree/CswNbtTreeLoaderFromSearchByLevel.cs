@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
 using ChemSW.Core;
@@ -8,6 +9,7 @@ using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Security;
+using System.Linq;
 
 namespace ChemSW.Nbt
 {
@@ -36,7 +38,7 @@ namespace ChemSW.Nbt
         /// </summary>
         private Int32 _getMaxPropertyCount()
         {
-            // come back to this!
+            // TODO: come back to this!
             return 10;
         }
 
@@ -82,7 +84,16 @@ namespace ChemSW.Nbt
                     CswNbtMetaDataNodeType ThisNodeType = _CswNbtResources.MetaData.getNodeType( ThisNodeTypeId );
                     if( false == RequireViewPermissions || _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.View, ThisNodeType ) )
                     {
-                        if( _canViewNode( ThisNodeType, ThisNodeId ) )
+                        Int32 ThisNTPId = Int32.MinValue;
+                        if( NodesTable.Columns.Contains( "nodetypepropid" ) )
+                        {
+                            ThisNTPId = CswConvert.ToInt32( NodesRow["nodetypepropid"] );
+                        }
+
+                        // don't include properties in search results to which the user has no permissions
+                        if( false == RequireViewPermissions ||
+                            ( _canViewNode( ThisNodeType, ThisNodeId ) &&
+                              ( Int32.MinValue == ThisNTPId || _canViewProp( ThisNTPId, ThisNodeId ) ) ) )
                         {
                             // Handle property multiplexing
                             // This assumes that property rows for the same nodeid are next to one another
@@ -93,32 +104,25 @@ namespace ChemSW.Nbt
                                 RowCount++;
                             } // if( ThisNodeId != PriorNodeId )
 
-                            if( NewNodeKeys != null && NodesTable.Columns.Contains( "nodetypepropid" ) )
+                            if( NewNodeKeys != null && ThisNTPId != Int32.MinValue )
                             {
-                                Int32 ThisNTPId = CswConvert.ToInt32( NodesRow["nodetypepropid"] );
-                                if( ThisNTPId != Int32.MinValue )
+                                foreach( CswNbtNodeKey NewNodeKey in NewNodeKeys )
                                 {
-                                    foreach( CswNbtNodeKey NewNodeKey in NewNodeKeys )
-                                    {
-                                        if( _canViewProp( ThisNTPId, ThisNodeId ) )
-                                        {
-                                            _CswNbtTree.makeNodeCurrent( NewNodeKey );
-                                            _CswNbtTree.addProperty( ThisNTPId,
-                                                                    CswConvert.ToInt32( NodesRow["jctnodepropid"] ),
-                                                                    NodesRow["propname"].ToString(),
-                                                                    NodesRow["gestalt"].ToString(),
-                                                                    CswConvert.ToString( NodesRow["fieldtype"] ),
-                                                                    CswConvert.ToString( NodesRow["field1"] ),
-                                                                    CswConvert.ToString( NodesRow["field2"] ),
-                                                                    CswConvert.ToInt32( NodesRow["field1_fk"] ),
-                                                                    CswConvert.ToInt32( NodesRow["field1_numeric"] ),
-                                                                    CswConvert.ToBoolean( NodesRow["hidden"] ) );
-                                        }
-                                    } // foreach( CswNbtNodeKey NewNodeKey in NewNodeKeys )
-                                } // if( ThisNTPId != Int32.MinValue )
-                                _CswNbtTree.goToRoot();
-                            } // if( NewNodeKeys != null && NodesTable.Columns.Contains( "jctnodepropid" ) )
-                        }
+                                    _CswNbtTree.makeNodeCurrent( NewNodeKey );
+                                    _CswNbtTree.addProperty( ThisNTPId,
+                                                            CswConvert.ToInt32( NodesRow["jctnodepropid"] ),
+                                                            NodesRow["propname"].ToString(),
+                                                            NodesRow["gestalt"].ToString(),
+                                                            CswConvert.ToString( NodesRow["fieldtype"] ),
+                                                            CswConvert.ToString( NodesRow["field1"] ),
+                                                            CswConvert.ToString( NodesRow["field2"] ),
+                                                            CswConvert.ToInt32( NodesRow["field1_fk"] ),
+                                                            CswConvert.ToInt32( NodesRow["field1_numeric"] ),
+                                                            CswConvert.ToBoolean( NodesRow["hidden"] ) );
+                                } // foreach( CswNbtNodeKey NewNodeKey in NewNodeKeys )
+                            } // if( NewNodeKeys != null && ThisNTPId != Int32.MinValue )
+                            _CswNbtTree.goToRoot();
+                        } // if( _canViewNode( ThisNodeType, ThisNodeId ) &&
                     } // if( _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, ThisNodeTypeId ) )
                 } // foreach(DataRow NodesRow in NodesTable.Rows)
 
@@ -193,35 +197,14 @@ namespace ChemSW.Nbt
             string Where = string.Empty;
             string OrderBy = string.Empty;
 
-            // Filter out disabled nodetypes/object classes
-            //            Where += @"where ((exists (select j.jctmoduleobjectclassid
-            //                              from jct_modules_objectclass j
-            //                              join modules m on j.moduleid = m.moduleid
-            //                             where j.objectclassid = t.objectclassid
-            //                               and m.enabled = '1')
-            //                or not exists (select j.jctmoduleobjectclassid
-            //                                 from jct_modules_objectclass j
-            //                                 join modules m on j.moduleid = m.moduleid
-            //                                where j.objectclassid = t.objectclassid) )
-            //               and (exists (select j.jctmodulenodetypeid
-            //                              from jct_modules_nodetypes j
-            //                              join modules m on j.moduleid = m.moduleid
-            //                             where j.nodetypeid = t.firstversionid
-            //                               and m.enabled = '1')
-            //                or not exists (select j.jctmodulenodetypeid
-            //                                 from jct_modules_nodetypes j
-            //                                 join modules m on j.moduleid = m.moduleid
-            //                                where j.nodetypeid = t.firstversionid) )) ";
-            // case 26029
+            // Filter out disabled nodetypes/object classes (see case 26029)
             Where += "where t.enabled = '1' ";
 
             Select += ",lower(n.nodename) mssqlorder ";
             OrderBy = " order by lower(n.nodename)";
-
             OrderBy += ",n.nodeid,lower(props.propname) "; // for property multiplexing
 
-
-            string SafeLikeClause = CswTools.SafeSqlLikeClause( _SearchTerm, CswTools.SqlLikeMode.Contains, true );
+            IEnumerable<string> SafeLikeClauses = _makeSafeLikeClauses();
 
             // Properties
             Select += @" ,props.nodetypepropid, props.propname, props.fieldtype, propval.jctnodepropid, propval.gestalt, propval.field1, propval.field2, propval.field1_fk, propval.field1_numeric, propval.hidden   ";
@@ -234,19 +217,39 @@ namespace ChemSW.Nbt
                                                         or f.fieldtype in ('Image', 'MOL')
                                                         or (f.searchable = '1' 
                                                             and p.nodetypepropid in (select nodetypepropid 
-                                                                                  from jct_nodes_props j 
-                                                                                 where (lower(j.gestaltsearch) " + SafeLikeClause + @"))))
+                                                                                  from jct_nodes_props j ";
+
+            bool first = true;
+            foreach( string SafeLikeClause in SafeLikeClauses )
+            {
+                if( first )
+                {
+                    From += @"                                                   where (lower(j.gestaltsearch) " + SafeLikeClause + @" ";
+                    Where += @" and (";
+                    first = false;
+                }
+                else
+                {
+                    From += @"                                                     or lower(j.gestaltsearch) " + SafeLikeClause + @" ";
+                    Where += @" and ";
+                }
+
+                Where += @" n.nodeid in (select nodeid 
+                                                from jct_nodes_props jnp 
+                                                join nodetype_props p on (jnp.nodetypepropid = p.nodetypepropid) 
+                                                join field_types f on (p.fieldtypeid = f.fieldtypeid) 
+                                               where f.searchable = '1' 
+                                                 and (lower(jnp.gestaltsearch) " + SafeLikeClause + @" ))";
+            }
+            From += @"                                                              ))
+                                                           )
+                                                       )
                                                ) props on (props.nodetypeid = t.nodetypeid)
                                left outer join jct_nodes_props propvaljoin on (    props.nodetypepropid = propvaljoin.nodetypepropid 
                                                                                and propvaljoin.nodeid = n.nodeid)
                                left outer join jct_nodes_props propval on (propval.jctnodepropid = propvaljoin.jctnodepropid) ";
 
-            Where += @" and (n.nodeid in (select nodeid 
-                                                   from jct_nodes_props jnp 
-                                                   join nodetype_props p on (jnp.nodetypepropid = p.nodetypepropid) 
-                                                   join field_types f on (p.fieldtypeid = f.fieldtypeid) 
-                                                  where f.searchable = '1' 
-                                                    and lower(jnp.gestaltsearch) " + SafeLikeClause + @" )";
+
 
             if( CswTools.IsInteger( _SearchTerm ) )
             {
@@ -275,6 +278,44 @@ namespace ChemSW.Nbt
 
             return Select + " " + From + " " + Where + " " + OrderBy;
         } //_makeNodeSql()
+
+
+        private IEnumerable<string> _makeSafeLikeClauses()
+        {
+            string SearchTerm = _SearchTerm.Trim();
+            Collection<string> Clauses = new Collection<string>();
+
+            // Find entries in quotes
+            bool StopLoop = false;
+            while( SearchTerm.Contains( "\"" ) && false == StopLoop )
+            {
+                int begin = SearchTerm.IndexOf( '"' );
+                int length = SearchTerm.Substring( begin + 1 ).IndexOf( '"' );
+                if( length > 0 )
+                {
+                    string QueryItem = SearchTerm.Substring( begin + 1, length ).Trim();
+                    SearchTerm = SearchTerm.Remove( begin, length + 2 ).Trim();
+                    if( false == string.IsNullOrEmpty( QueryItem ) )
+                    {
+                        Clauses.Add( CswTools.SafeSqlLikeClause( QueryItem, CswTools.SqlLikeMode.Contains, true ) );
+                    }
+                }
+                else
+                {
+                    StopLoop = true;
+                }
+            } // while( SearchTerm.Contains( "\"" ) && Continue)
+
+            // Split by spaces (case 27532)
+            foreach( string TrimmedQueryItem in SearchTerm.Split( new char[] { ' ' } )
+                                                          .Select( QueryItem => QueryItem.Trim() )
+                                                          .Where( TrimmedQueryItem => false == string.IsNullOrEmpty( TrimmedQueryItem ) ) )
+            {
+                Clauses.Add( CswTools.SafeSqlLikeClause( TrimmedQueryItem, CswTools.SqlLikeMode.Contains, true ) );
+            }
+            return Clauses;
+        } // makeSafeLikeClauses
+
 
     } // class CswNbtTreeLoaderFromSearchByLevel
 
