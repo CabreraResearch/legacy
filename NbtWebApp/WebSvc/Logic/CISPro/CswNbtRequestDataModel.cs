@@ -62,5 +62,31 @@ namespace NbtWebApp.WebSvc.Logic.CISPro
             public Collection<string> ContainerIds { get; set; }
         }
 
+        /// <summary>
+        /// Requesting Return Object
+        /// </summary>
+        [DataContract]
+        public class RequestCart : CswWebSvcReturn
+        {
+            /// <summary>
+            /// Ctor
+            /// </summary>
+            public RequestCart()
+            {
+                Data = new Ret();
+            }
+
+            [DataMember]
+            public Ret Data;
+
+            public class Ret
+            {
+                public string PendingItemsViewId = string.Empty;
+                public string FavoriteItemsViewId = string.Empty;
+                public string SubmittedItemsViewId = string.Empty;
+            }
+
+        }
+
     }
 }

@@ -865,7 +865,7 @@
     </Compile>
     <Compile Include="csw\Actions\CswNbtActDispenseContainer.cs" />
     <Compile Include="csw\Actions\CswNbtActReceiving.cs" />
-    <Compile Include="csw\Actions\CswNbtActSubmitRequest.cs" />
+    <Compile Include="csw\Actions\CswNbtActRequesting.cs" />
     <Compile Include="csw\Actions\CswNbtActSystemViews.cs" />
     <Compile Include="csw\Batch\CswNbtBatchEnums.cs" />
     <Compile Include="csw\Batch\CswNbtBatchManager.cs" />

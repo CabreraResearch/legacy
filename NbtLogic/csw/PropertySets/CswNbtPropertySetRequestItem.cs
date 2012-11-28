@@ -259,7 +259,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             if( false == CswTools.IsPrimaryKey( Request.RelatedNodeId ) )
             {
-                CswNbtActSubmitRequest RequestAct = new CswNbtActSubmitRequest( _CswNbtResources, CreateDefaultRequestNode: true );
+                CswNbtActRequesting RequestAct = new CswNbtActRequesting( _CswNbtResources, CreateDefaultRequestNode: true );
                 Request.RelatedNodeId = RequestAct.CurrentRequestNode().NodeId;
                 Request.setReadOnly( value: true, SaveToDb: true );
                 Request.setHidden( value: true, SaveToDb: false );

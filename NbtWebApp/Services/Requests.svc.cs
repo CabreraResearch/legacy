@@ -60,6 +60,25 @@ namespace NbtWebApp
             return ( Ret );
         }
 
+        [OperationContract]
+        [WebInvoke( Method = "GET" )]
+        [FaultContract( typeof( FaultException ) )]
+        [Description( "Get the Current User's Request Cart" )]
+        public CswNbtRequestDataModel.RequestCart cart()
+        {
+            //delegate has to be static because you can't create an instance yet: you don't have resources until the delegate is actually called
+            CswNbtRequestDataModel.RequestCart Ret = new CswNbtRequestDataModel.RequestCart();
+            var InitDriverType = new CswWebSvcDriver<CswNbtRequestDataModel.RequestCart, object>(
+                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj: Ret,
+                WebSvcMethodPtr: CswNbtWebServiceRequesting.getCart,
+                ParamObj: null
+                );
+
+            InitDriverType.run();
+            return ( Ret );
+        }
+
         // Add more operations here and mark them with [OperationContract]
     }
 }

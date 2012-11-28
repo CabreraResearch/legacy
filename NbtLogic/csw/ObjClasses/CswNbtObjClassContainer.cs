@@ -220,7 +220,7 @@ namespace ChemSW.Nbt.ObjClasses
                     case PropertyName.Request:
                         if( canContainer( _CswNbtResources.Actions[CswNbtActionName.Submit_Request] ) )
                         {
-                            CswNbtActSubmitRequest RequestAct = new CswNbtActSubmitRequest( _CswNbtResources, CreateDefaultRequestNode: true );
+                            CswNbtActRequesting RequestAct = new CswNbtActRequesting( _CswNbtResources, CreateDefaultRequestNode: true );
                             HasPermission = true;
 
                             CswNbtPropertySetRequestItem NodeAsPropSet = RequestAct.makeContainerRequestItem( this, ButtonData );

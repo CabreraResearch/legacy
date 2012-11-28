@@ -15,11 +15,11 @@ namespace ChemSW.Nbt.WebServices
     {
         private readonly CswNbtResources _CswNbtResources;
 
-        private CswNbtActSubmitRequest _RequestAct;
+        private CswNbtActRequesting _RequestAct;
 
         private void _initOrderingResources( SystemViewName ViewName, CswPrimaryKey RequestNodeId = null )
         {
-            _RequestAct = new CswNbtActSubmitRequest( _CswNbtResources, CreateDefaultRequestNode: true, RequestViewName: ViewName, RequestNodeId: RequestNodeId );
+            _RequestAct = new CswNbtActRequesting( _CswNbtResources, CreateDefaultRequestNode: true, RequestViewName: ViewName, RequestNodeId: RequestNodeId );
         }
 
         public CswNbtWebServiceRequesting( CswNbtResources CswNbtResources, SystemViewName ViewName = null, CswPrimaryKey RequestNodeId = null )
@@ -37,7 +37,7 @@ namespace ChemSW.Nbt.WebServices
 
         } //ctor
 
-        public JObject getCurrentRequest( CswNbtActSubmitRequest RequestAct = null )
+        public JObject getCurrentRequest( CswNbtActRequesting RequestAct = null )
         {
             RequestAct = RequestAct ?? _RequestAct;
             JObject ret = new JObject();
@@ -71,7 +71,7 @@ namespace ChemSW.Nbt.WebServices
             /* We're need two instances of CswNbtActSubmitRequest. 
              * The current instance was loaded with CopyFromNodeId
              * For the response we need a new instance with the current RequestNodeId, CopyToNodeId */
-            CswNbtActSubmitRequest CopyRequest = _RequestAct.copyRequest( CopyFromNodeId, CopyToNodeId );
+            CswNbtActRequesting CopyRequest = _RequestAct.copyRequest( CopyFromNodeId, CopyToNodeId );
             return getCurrentRequest( CopyRequest );
         }
 
@@ -93,6 +93,23 @@ namespace ChemSW.Nbt.WebServices
                 {
                     Ret.Data.NodeTypeId = FirstNodeType.NodeTypeId;
                 }
+            }
+        }
+
+        /// <summary>
+        /// WCF method to get current User's cart data
+        /// </summary>
+        public static void getCart( ICswResources CswResources, CswNbtRequestDataModel.RequestCart Ret, object Request )
+        {
+            if( null != CswResources )
+            {
+                CswNbtResources NbtResources = (CswNbtResources) CswResources;
+                if( false == NbtResources.Modules.IsModuleEnabled( CswNbtModuleName.CISPro ) )
+                {
+                    throw new CswDniException( ErrorType.Error, "The CISPro module is required to complete this action.", "Attempted to use the Ordering service without the CISPro module." );
+                }
+                CswNbtActRequesting ActRequesting = new CswNbtActRequesting(NbtResources, false);
+                Ret.Data.FavoriteItemsViewId = ActRequesting.getFavoriteRequests().SessionViewId.ToString();
             }
         }
 
