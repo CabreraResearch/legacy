@@ -17,7 +17,7 @@
                 cswPrivate.tabPanel = cswPrivate.tabPanel || {};
                 cswPrivate.tabPanel.title = cswPrivate.tabPanel.title || 'Tabs';
                 cswPrivate.tabPanel.height = cswPrivate.tabPanel.height || 400;
-                cswPrivate.tabPanel.width = cswPrivate.tabPanel.width || 1000;
+                //cswPrivate.tabPanel.width = cswPrivate.tabPanel.width || 1000;
                 cswPrivate.tabPanel.resizable = cswPrivate.tabPanel.resizable || true;
                 cswPrivate.tabPanel.stateful = cswPrivate.tabPanel.stateful || true;
                 cswPrivate.tabPanel.stateId = cswPrivate.tabPanel.stateId || 'CswRequestCart';
