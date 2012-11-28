@@ -42,9 +42,6 @@
                 showDelete: false,
                 canSelectRow: cswPrivate.JustDateColumn,
 
-                groupField: 'auditid',
-                groupHeaderTpl: '{[values.rows[0].changedate]}',
-
                 usePaging: (cswPrivate.EditMode !== Csw.enums.editMode.PrintReport),
                 ajax: {
                     urlMethod: cswPrivate.urlMethod,

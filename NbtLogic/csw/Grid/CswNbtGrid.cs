@@ -314,22 +314,9 @@ namespace ChemSW.Nbt.Grid
             foreach( DataRow Row in DT.Rows )
             {
                 CswNbtGridExtJsRow gridrow = new CswNbtGridExtJsRow( RowNo );
-                bool IsPassword = false;
                 foreach( DataColumn Column in DT.Columns )
                 {
-                    if( IsPassword )
-                    {
-                        IsPassword = false;
-                        gridrow.data[new CswNbtGridExtJsDataIndex( gridUniquePrefix, Column.ColumnName )] = "[password field]";
-                    }
-                    else
-                    {
-                        gridrow.data[new CswNbtGridExtJsDataIndex( gridUniquePrefix, Column.ColumnName )] = Row[Column].ToString();
-                    }
-                    if( Row[Column].ToString().Equals( "Password" ) )
-                    {
-                        IsPassword = true;
-                    }
+                    gridrow.data[new CswNbtGridExtJsDataIndex( gridUniquePrefix, Column.ColumnName )] = Row[Column].ToString();
                 }
                 grid.rows.Add( gridrow );
                 RowNo += 1;
@@ -338,10 +325,10 @@ namespace ChemSW.Nbt.Grid
             return grid;
         } // DataTableToGrid()
 
-        public JObject DataTableToJSON( DataTable DT, bool Editable = false )
+        public JObject DataTableToJSON( DataTable DT, bool Editable = false, string GroupByCol = "" )
         {
             CswNbtGridExtJsGrid grid = DataTableToGrid( DT, Editable );
-            return grid.ToJson();
+            return grid.ToJson( GroupByCol );
         } // DataTableToJSON()
 
 

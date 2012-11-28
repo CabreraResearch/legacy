@@ -527,6 +527,7 @@
                             cswPrivate.fields = result.grid.fields;
                             cswPrivate.columns = result.grid.columns;
                             cswPrivate.data = result.grid.data;
+                            cswPrivate.groupField = result.grid.groupfield;
                             cswPrivate.ajaxResult = result;
                             cswPrivate.init();
 

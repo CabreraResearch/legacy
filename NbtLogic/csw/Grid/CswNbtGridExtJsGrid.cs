@@ -91,7 +91,7 @@ namespace ChemSW.Nbt.Grid.ExtJs
             return ret;
         } // getColumn()
 
-        public JObject ToJson()
+        public JObject ToJson( string GroupByCol = "" )
         {
             JArray Jfields = new JArray();
             JArray Jcolumns = new JArray();
@@ -127,6 +127,11 @@ namespace ChemSW.Nbt.Grid.ExtJs
             Jret["grid"]["data"] = new JObject();
             Jret["grid"]["data"]["items"] = Jdataitems;
             Jret["grid"]["data"]["buttons"] = Jdatabuttons;
+
+            if( false == String.IsNullOrEmpty( GroupByCol ) )
+            {
+                Jret["grid"]["groupfield"] = GroupByCol.ToLower();
+            }
 
             return Jret;
         } // ToJson()

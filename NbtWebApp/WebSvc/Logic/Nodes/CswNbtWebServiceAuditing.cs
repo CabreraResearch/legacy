@@ -30,8 +30,8 @@ namespace ChemSW.Nbt.WebServices
                                   x.auditeventname as Context,
                                   np.propname as Propname,
                                   ja.field1 as Value,
-                                  x.auditeventname as Type,
-                                  x.audittransactionid as AuditId";
+                                  x.audittransactionid as AuditId,
+                                  ft.fieldtype as FieldType";
                 }
                 SQL += @"		from jct_nodes_props_audit ja
 
@@ -40,18 +40,41 @@ namespace ChemSW.Nbt.WebServices
                                 join field_types ft on ft.fieldtypeid = np.fieldtypeid
                             where ja.nodeid = " + Node.NodeId.PrimaryKey.ToString();
 
+
                 CswCommaDelimitedString sysUserNames = new CswCommaDelimitedString();
                 foreach( SystemUserNames sysUserName in Enum.GetValues( typeof( SystemUserNames ) ) )
                 {
                     sysUserNames.Add( "'" + sysUserName.ToString() + "'" );
                 }
-                SQL += @" and x.transactionusername not in (" + sysUserNames + ") order by ChangeDate desc";
+                SQL += @" and x.transactionusername not in (" + sysUserNames + ") order by AuditId desc";
 
                 CswArbitrarySelect HistorySelect = _CswNbtResources.makeCswArbitrarySelect( "CswNbtWebServiceAuditing_getAuditHistory_select", SQL );
                 DataTable HistoryTable = HistorySelect.getTable();
 
+                //for the audit grid we want to group by audittransactionid, but show the changedate
+                //also, we mask the password value column and not show the encrypted password
+                string mutatingRowsAuditId = "";
+                string changeToDate = "";
+                foreach( DataRow row in HistoryTable.Rows )
+                {
+                    string currentAuditId = row["AuditId"].ToString();
+                    if( false == currentAuditId.Equals( mutatingRowsAuditId ) ) //we're onto a new group
+                    {
+                        mutatingRowsAuditId = currentAuditId;
+                        changeToDate = row["ChangeDate"].ToString();
+                    }
+                    row["ChangeDate"] = changeToDate;
+
+                    if( row["FieldType"].ToString().Equals( "Password" ) )
+                    {
+                        row["Value"] = "[password changed]";
+                    }
+                }
+                HistoryTable.Columns.Remove( "FieldType" );
+                HistoryTable.Columns.Remove( "AuditId" );
+
                 CswNbtGrid g = new CswNbtGrid( _CswNbtResources );
-                ret = g.DataTableToJSON( HistoryTable );
+                ret = g.DataTableToJSON( HistoryTable, GroupByCol: "ChangeDate" );
             }
             return ret;
 
