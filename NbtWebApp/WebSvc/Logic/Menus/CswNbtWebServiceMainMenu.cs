@@ -222,16 +222,17 @@ namespace ChemSW.Nbt.WebServices
                                     PrintObj["Print Label"]["action"] = MenuActions.PrintLabel.ToString();
                                 }
                             }
-                            else if( View.Root.ChildRelationships[0].ChildRelationships.Count == 1 )
-                            {
-                                CswNbtViewRelationship Relationship = View.Root.ChildRelationships[0].ChildRelationships[0];
-                                ICswNbtMetaDataObject MetaDataObject = Relationship.SecondMetaDataObject();
-                                if( null != MetaDataObject )
-                                {
+                            //This is rather interesting and useless?
+                            //else if( View.Root.ChildRelationships[0].ChildRelationships.Count == 1 )
+                            //{
+                            //    CswNbtViewRelationship Relationship = View.Root.ChildRelationships[0].ChildRelationships[0];
+                            //    ICswNbtMetaDataObject MetaDataObject = Relationship.SecondMetaDataObject();
+                            //    if( null != MetaDataObject )
+                            //    {
 
-                                }
+                            //    }
 
-                            }
+                            //}
                         }
                     }
                     // PRINT
