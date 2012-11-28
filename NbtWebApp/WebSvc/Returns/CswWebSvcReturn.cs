@@ -1,6 +1,7 @@
 using System;
 using System.Runtime.Serialization;
 using ChemSW;
+//using ChemSW.Nbt;
 using ChemSW.Nbt;
 using ChemSW.Security;
 using ChemSW.Session;
@@ -19,7 +20,7 @@ namespace NbtWebApp.WebSvc.Returns
         /// </summary>
         public CswWebSvcReturn()
         {
-            Authentication = new CswNbtSessionAuthenticateData.Authentication.Response();
+            Authentication = new CswWebSvcSessionAuthenticateData.Authentication.Response();
             Status = new CswWebSvcReturnBase.Status();
             Performance = new CswWebSvcReturnBase.Performance();
             Logging = new CswWebSvcReturnBase.Logging();
@@ -30,20 +31,12 @@ namespace NbtWebApp.WebSvc.Returns
         /// <summary>
         /// CswResources to support run() and finalize()
         /// </summary>
-        public ICswResources CswResources
-        {
-            set
-            {
-                _CswNbtResources = (CswNbtResources) value;
-            }
-
-        }
 
         /// <summary>
         /// Authentication status and Timeout for this request's response 
         /// </summary>
         [DataMember]
-        public CswNbtSessionAuthenticateData.Authentication.Response Authentication { get; set; }
+        public CswWebSvcSessionAuthenticateData.Authentication.Response Authentication { get; set; }
 
         /// <summary>
         /// Status of this request's response, include error content (if any)
@@ -62,6 +55,19 @@ namespace NbtWebApp.WebSvc.Returns
         /// </summary>
         [DataMember]
         public CswWebSvcReturnBase.Logging Logging { get; set; }
+
+
+        #region inherited
+        public ICswResources CswResources
+        {
+            set
+            {
+                _CswNbtResources = (CswNbtResources) value;
+            }
+
+        }
+
+
 
         /// <summary>
         /// Add an exception to this request's Status's Error collection
@@ -90,6 +96,8 @@ namespace NbtWebApp.WebSvc.Returns
             // (see case 26273)
             // ******************************************
         }//finaize() 
+        #endregion
+
 
 
 

@@ -41,7 +41,7 @@ namespace ChemSW.Nbt.WebServices
         /// <summary>
         /// WCF wrapper around resetPassword
         /// </summary>
-        public static void resetPassword( ICswResources CswResources, CswNbtSessionReturn Ret, CswNbtSessionAuthenticateData.Authentication.Response.Expired Request )
+        public static void resetPassword( ICswResources CswResources, CswNbtSessionReturn Ret, CswWebSvcSessionAuthenticateData.Authentication.Response.Expired Request )
         {
             Ret.Data.Succeeded = false;
             try
