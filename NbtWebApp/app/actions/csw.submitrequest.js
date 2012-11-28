@@ -186,9 +186,17 @@
                     icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.save),
                     onClick: cswPrivate.saveToFavorites
                 });
-                btmTbl.cell(1, 2).nodeSelect({
-                    viewid: ''    
+
+                Csw.ajaxWcf.get({
+                    urlMethod: 'Requests/cart',
+                    success: function(data) {
+                        btmTbl.cell(1, 2).nodeSelect({
+                            viewid: data.FavoriteItemsViewId
+                        });
+                    }
                 });
+
+                
             }; // cswPrivate.makePendingTab()
 
             cswPrivate.saveToFavorites = function () {
