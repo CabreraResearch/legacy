@@ -63,21 +63,16 @@
                     },
                     success: function (data) {
                         var ret = data;
-                        var canAdd = Csw.bool(cswPrivate.canAdd) && Csw.bool(ret.canadd);
-                        var useSearch = Csw.bool(ret.usesearch);
+                        var canAdd = Csw.bool(cswPrivate.canAdd) && Csw.bool(ret.CanAdd);
+                        var useSearch = Csw.bool(ret.UseSearch);
                         var cellCol = 2;
-                        cswPrivate.nodeTypeId = cswPrivate.nodeTypeId || ret.nodetypeid;
-                        cswPrivate.objectClassId = cswPrivate.objectClassId || ret.objectclassid;
-                        cswPrivate.relatedTo.objectClassId = cswPrivate.relatedTo.objectClassId || ret.relatedobjectclassid;
-                        delete ret.canadd;
-                        delete ret.usesearch;
-                        delete ret.nodetypeid;
-                        delete ret.objectclassid;
-                        delete ret.relatedobjectclassid;
+                        cswPrivate.nodeTypeId = cswPrivate.nodeTypeId || ret.NodeTypeId;
+                        cswPrivate.objectClassId = cswPrivate.objectClassId || ret.ObjectClassId;
+                        cswPrivate.relatedTo.objectClassId = cswPrivate.relatedTo.objectClassId || ret.ObjectClassId;
 
                         var nodecount = 0;
                         //Case 24155
-                        Csw.each(ret, function (nodeName, nodeId) {
+                        Csw.each(ret.Nodes, function (nodeName, nodeId) {
                             nodecount += 1;
                             if (false === Csw.isNullOrEmpty(cswPrivate.selectedNodeId) &&
                                 nodeId === cswPrivate.selectedNodeId) {

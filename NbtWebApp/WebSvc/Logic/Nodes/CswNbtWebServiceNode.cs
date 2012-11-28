@@ -541,10 +541,10 @@ namespace ChemSW.Nbt.WebServices
             {
                 Ret.Nodes.Add(new NodeSelect.Response.Node(Node));
             }
-            Ret.usesearch = UseSearch;
-            Ret.canadd = CanAdd;
-            Ret.nodetypeid = RealNodeTypeId;
-            Ret.objectclassid = RealObjectClassId;
+            Ret.UseSearch = UseSearch;
+            Ret.CanAdd = CanAdd;
+            Ret.NodeTypeId = RealNodeTypeId;
+            Ret.ObjectClassId = RealObjectClassId;
             
             return Ret;
         }

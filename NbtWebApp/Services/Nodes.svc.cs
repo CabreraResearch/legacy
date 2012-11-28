@@ -105,19 +105,20 @@ namespace NbtWebApp
                 public Int32 RelatedObjectClassId = Int32.MinValue;
 
                 [DataMember]
-                public bool canadd = false;
+                public bool CanAdd = false;
                 [DataMember]
-                public bool usesearch = false;
+                public bool UseSearch = false;
 
                 [DataMember]
-                public Int32 nodetypeid = Int32.MinValue;
+                public Int32 NodeTypeId = Int32.MinValue;
                 [DataMember]
-                public Int32 objectclassid = Int32.MinValue;
+                public Int32 ObjectClassId = Int32.MinValue;
 
                 [DataMember]
                 public Collection<Node> Nodes = new Collection<Node>();
             }
 
+            [DataMember]
             public Ret Data = null;
         }
     }
