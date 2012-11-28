@@ -156,8 +156,7 @@
                 };
 
                 // Action column
-                if (cswPrivate.showActionColumn &&
-                    false === cswPrivate.showCheckboxes) {
+                if (cswPrivate.showActionColumn) { //&& false === cswPrivate.showCheckboxes
 
                     var newcol = {
                         header: 'Action',
@@ -196,7 +195,11 @@
                             return ret;
                         } // renderer()
                     }; // newcol
-                    gridopts.columns.splice(0, 0, newcol);
+                    var position = 0;
+                    if (cswPrivate.showCheckboxes) {
+                        position = gridopts.columns.length;
+                    }
+                    gridopts.columns.splice(position, 0, newcol);
                 } // if(cswPrivate.showActionColumn && false === cswPrivate.showCheckboxes) {
 
                 //Render buttons in a callback
@@ -254,7 +257,7 @@
                         }
                     };
                 } else {
-                    gridopts.selType = 'rowmodel';
+                    gridopts.selType = 'cellmodel';
                     gridopts.listeners.beforeselect = function () {
                         return Csw.bool(cswPrivate.canSelectRow);
                     };
