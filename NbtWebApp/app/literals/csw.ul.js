@@ -6,33 +6,33 @@
 
 
     Csw.literals.ul = Csw.literals.ul ||
-        Csw.literals.register('ul', function ul(options) {
+        Csw.literals.register('ul', function ul(cswPrivate) {
             /// <summary> Create a <ul /> </summary>
             /// <param name="options" type="Object">Options to define the ul.</param>
             /// <returns type="ul">A ul object</returns>
-            var cswPrivate = {
-                $parent: '',
-                count: 1,
-                ID: '',
-                name: '',
-                cssclass: ''
-            };
             var cswPublic = {};
 
-            cswPublic.li = function (liOptions) {
+            (function _preCtor() {
+                cswPrivate = cswPrivate || {};
+                cswPrivate.$parent = cswPrivate.$parent || {};
+                cswPrivate.ID = cswPrivate.ID || '';
+                cswPrivate.name = cswPrivate.name || '';
+                cswPrivate.cssclass = cswPrivate.cssclass || '';
+            }());
+
+            cswPrivate.count = 1;
+
+            cswPublic.li = function (liInternal) {
                 /// <summary> Create a <li /> </summary>
                 /// <param name="options" type="Object">Options to define the li.</param>
                 /// <returns type="li">A li object</returns>
-                var liInternal = {
-                    text: ''  ,
-                    ID: '',
-                    cssclass: ''
-                };
+                liInternal = liInternal || {};
+                liInternal.text = liInternal.text || '';
+                liInternal.cssclass = liInternal.cssclass || '';
+                
                 var liExternal = {};
 
                 (function () {
-                    Csw.extend(liInternal, liOptions);
-                    
                     var $li, 
                         html = '',
                         attr = Csw.makeAttr();
@@ -56,7 +56,7 @@
                 return liExternal;
             };
 
-            (function () {
+            (function _postCtor () {
                 var html = '',
                     attr = Csw.makeAttr();
 
@@ -67,9 +67,7 @@
                 html += attr.get();
                 html += '></ul>';
                 var $ul;
-
-                Csw.extend(cswPrivate, options);
-
+                
                 $ul = $(html);
                 Csw.literals.factory($ul, cswPublic);
 

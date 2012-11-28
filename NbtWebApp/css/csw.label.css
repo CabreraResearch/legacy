@@ -1,5 +1,6 @@
 .CswLabel
 {
+    display: block;
     float: left;
     text-align: right;
     font-weight: bold;
@@ -8,9 +9,10 @@
 
 .CswLabelValue
 {
+    display: block;
     float: left;
-    width: 65%;
-    margin-left: 5px;
+    /*width: 65%;*/
+    margin-left: 10px;
     text-align: left;
 }
 
