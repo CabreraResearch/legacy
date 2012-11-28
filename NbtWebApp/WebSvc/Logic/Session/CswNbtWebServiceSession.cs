@@ -2,6 +2,7 @@ using System;
 using System.Runtime.Serialization;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Session;
+using ChemSW.WebSvc;
 using NbtWebApp.WebSvc.Returns;
 
 namespace ChemSW.Nbt.WebServices
