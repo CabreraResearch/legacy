@@ -43,19 +43,19 @@
             };
 
             cswPrivate.submitRequest = function () {
-                Csw.ajax.post({
-                    urlMethod: 'submitRequest',
+                Csw.ajaxWcf.post({
+                    urlMethod: 'Requests/place',
                     data: {
-                        RequestId: cswPrivate.cartnodeid,
-                        RequestName: cswPrivate.requestName
+                        NodeId: cswPrivate.cartnodeid,
+                        NodeName: cswPrivate.requestName
                     },
                     success: function (json) {
-                        if (json.succeeded) {
+                        if (json.Succeeded) {
                             Csw.tryExec(cswPrivate.onSubmit);
                         }
                     }
                 });
-            };        // cswPrivate.submitRequest
+            }; // cswPrivate.submitRequest
 
             cswPrivate.makePendingTab = function (opts) {
                 cswPrivate.action.finish.enable();

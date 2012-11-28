@@ -208,9 +208,9 @@ namespace ChemSW.Nbt.Actions
             return Ret;
         }
 
-        public JObject submitRequest( CswPrimaryKey NodeId, string NodeName )
+        public bool submitRequest( CswPrimaryKey NodeId, string NodeName )
         {
-            JObject Ret = new JObject();
+            bool Ret = false;
             if( null != NodeId )
             {
                 CswNbtObjClassRequest NodeAsRequest = _CswNbtResources.Nodes.GetNode( NodeId );
@@ -222,7 +222,7 @@ namespace ChemSW.Nbt.Actions
                         NodeAsRequest.SubmittedDate.DateTimeValue = DateTime.Now;
                         NodeAsRequest.Name.Text = NodeName;
                         NodeAsRequest.postChanges( true );
-                        Ret["succeeded"] = true;
+                        Ret = true;
                     }
                 }
             }

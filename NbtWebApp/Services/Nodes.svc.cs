@@ -77,28 +77,6 @@ namespace NbtWebApp
                 Data = new Ret();
             }
 
-            public class Node
-            {
-                public Node( CswNbtNode NbtNode )
-                {
-                    if( null != NbtNode )
-                    {
-                        NodePk = NbtNode.NodeId;
-                        NodeName = NbtNode.NodeName;
-                    }
-                }
-                public CswPrimaryKey NodePk
-                {
-                    set { NodeId = value.ToString(); }
-                }
-
-                [DataMember]
-                public string NodeId = string.Empty;
-
-                [DataMember]
-                public string NodeName = string.Empty;
-            }
-
             public class Ret
             {
                 [DataMember]
@@ -120,6 +98,54 @@ namespace NbtWebApp
 
             [DataMember]
             public Ret Data = null;
+        }
+
+        [DataContract]
+        public class Node
+        {
+            public Node( CswNbtNode NbtNode )
+            {
+                if( null != NbtNode )
+                {
+                    _NodeId = NbtNode.NodeId.ToString();
+                    _NodePk = NbtNode.NodeId;
+                    NodeName = NbtNode.NodeName;
+                }
+            }
+
+            private string _NodeId = string.Empty;
+            private CswPrimaryKey _NodePk = null;
+
+            public CswPrimaryKey NodePk
+            {
+                get { return _NodePk; }
+                set
+                {
+                    _NodePk = value;
+                    if( CswTools.IsPrimaryKey( value ) )
+                    {
+                        _NodeId = _NodePk.ToString();
+                    }
+                    else
+                    {
+                        _NodeId = string.Empty;
+                    }
+                }
+            }
+
+            [DataMember]
+            public string NodeId
+            {
+                get { return _NodeId; }
+                set
+                {
+                    _NodeId = value;
+                    _NodePk = CswConvert.ToPrimaryKey( _NodeId );
+                }
+            }
+
+            [DataMember( IsRequired = false )]
+            public string NodeName = String.Empty;
         }
     }
 

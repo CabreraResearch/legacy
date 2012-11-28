@@ -18,44 +18,45 @@ namespace NbtWebApp.WebSvc.Logic.CISPro
             /// </summary>
             public CswNbtRequestMaterialCreateReturn()
             {
-                Data = new RequestType();
+                Data = new Ret();
             }
 
             [DataMember]
-            public RequestType Data;
+            public Ret Data;
+
+            public class Ret
+            {
+                public Int32 NodeTypeId { get; set; }
+            }
+
         }
 
         /// <summary>
         /// Requesting Return Object
         /// </summary>
         [DataContract]
-        public class CswNbtRequestMaterialDispenseReturn : CswWebSvcReturn
+        public class CswRequestReturn : CswWebSvcReturn
         {
             /// <summary>
             /// Ctor
             /// </summary>
-            public CswNbtRequestMaterialDispenseReturn()
+            public CswRequestReturn()
             {
-                Data = new RequestResponse();
+                Data = new Ret();
             }
 
             [DataMember]
-            public RequestResponse Data;
+            public Ret Data;
+
+            public class Ret
+            {
+                public bool Succeeded { get; set; }
+            }
         }
 
         // <summary>
         /// Represents a RequestCreateMaterial NodeTypeId
         /// </summary>
-        public class RequestType
-        {
-            public Int32 NodeTypeId { get; set; }
-        }
-
-        public class RequestResponse
-        {
-            public bool Succeeded { get; set; }
-        }
-
         public class RequestFulfill
         {
             public string RequestItemId { get; set; }

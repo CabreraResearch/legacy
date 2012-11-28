@@ -5,6 +5,7 @@ using ChemSW.Exceptions;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
+using NbtWebApp;
 using NbtWebApp.WebSvc.Logic.CISPro;
 using Newtonsoft.Json.Linq;
 
@@ -61,11 +62,6 @@ namespace ChemSW.Nbt.WebServices
             return _RequestAct.getRequestHistory();
         }
 
-        public JObject submitRequest( CswPrimaryKey NodeId, string NodeName )
-        {
-            return _RequestAct.submitRequest( NodeId, NodeName );
-        }
-
         public JObject copyRequest( CswPrimaryKey CopyFromNodeId, CswPrimaryKey CopyToNodeId )
         {
             /* We're need two instances of CswNbtActSubmitRequest. 
@@ -73,6 +69,22 @@ namespace ChemSW.Nbt.WebServices
              * For the response we need a new instance with the current RequestNodeId, CopyToNodeId */
             CswNbtActRequesting CopyRequest = _RequestAct.copyRequest( CopyFromNodeId, CopyToNodeId );
             return getCurrentRequest( CopyRequest );
+        }
+
+        #region WCF
+
+        public static void submitRequest( ICswResources CswResources, CswNbtRequestDataModel.CswRequestReturn Ret, NodeSelect.Node Request )
+        {
+            if( null != CswResources )
+            {
+                CswNbtResources NbtResources = (CswNbtResources) CswResources;
+                if( false == NbtResources.Modules.IsModuleEnabled( CswNbtModuleName.CISPro ) )
+                {
+                    throw new CswDniException( ErrorType.Error, "The CISPro module is required to complete this action.", "Attempted to use the Ordering service without the CISPro module." );
+                }
+                CswNbtActRequesting ActRequesting = new CswNbtActRequesting( NbtResources, false );
+                Ret.Data.Succeeded = ActRequesting.submitRequest( Request.NodePk, Request.NodeName );
+            }
         }
 
         /// <summary>
@@ -116,7 +128,7 @@ namespace ChemSW.Nbt.WebServices
         /// <summary>
         /// WCF method to fulfill request
         /// </summary>
-        public static void fulfillRequest( ICswResources CswResources, CswNbtRequestDataModel.CswNbtRequestMaterialDispenseReturn Ret, CswNbtRequestDataModel.RequestFulfill Request )
+        public static void fulfillRequest( ICswResources CswResources, CswNbtRequestDataModel.CswRequestReturn Ret, CswNbtRequestDataModel.RequestFulfill Request )
         {
             if( null != CswResources )
             {
@@ -173,6 +185,7 @@ namespace ChemSW.Nbt.WebServices
             return Ret;
         }
 
+        #endregion WCF
     } // class CswNbtWebServiceRequesting
 
 } // namespace ChemSW.Nbt.WebServices

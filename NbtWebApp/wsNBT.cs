@@ -4075,34 +4075,6 @@ namespace ChemSW.Nbt.WebServices
             return ReturnVal.ToString();
         } // getRequestHistory()
 
-        [WebMethod( EnableSession = false )]
-        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string submitRequest( string RequestId, string RequestName )
-        {
-            JObject ReturnVal = new JObject();
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
-            try
-            {
-                _initResources();
-                AuthenticationStatus = _attemptRefresh( true );
-
-                CswPrimaryKey NodeId = _getNodeId( RequestId );
-                if( null != NodeId )
-                {
-                    CswNbtWebServiceRequesting ws = new CswNbtWebServiceRequesting( _CswNbtResources );
-                    ReturnVal = ws.submitRequest( NodeId, RequestName );
-                }
-                _deInitResources();
-            }
-            catch( Exception Ex )
-            {
-                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
-            }
-
-            CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
-
-            return ReturnVal.ToString();
-        } // submitRequest()
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]

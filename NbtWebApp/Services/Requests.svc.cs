@@ -45,14 +45,33 @@ namespace NbtWebApp
         [WebInvoke( Method = "POST" )]
         [FaultContract( typeof( FaultException ) )]
         [Description( "Fulfill a Request Item" )]
-        public CswNbtRequestDataModel.CswNbtRequestMaterialDispenseReturn fulfill( CswNbtRequestDataModel.RequestFulfill Request )
+        public CswNbtRequestDataModel.CswRequestReturn fulfill( CswNbtRequestDataModel.RequestFulfill Request )
         {
             //delegate has to be static because you can't create an instance yet: you don't have resources until the delegate is actually called
-            CswNbtRequestDataModel.CswNbtRequestMaterialDispenseReturn Ret = new CswNbtRequestDataModel.CswNbtRequestMaterialDispenseReturn();
-            var InitDriverType = new CswWebSvcDriver<CswNbtRequestDataModel.CswNbtRequestMaterialDispenseReturn, CswNbtRequestDataModel.RequestFulfill>(
+            CswNbtRequestDataModel.CswRequestReturn Ret = new CswNbtRequestDataModel.CswRequestReturn();
+            var InitDriverType = new CswWebSvcDriver<CswNbtRequestDataModel.CswRequestReturn, CswNbtRequestDataModel.RequestFulfill>(
                 CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
                 ReturnObj: Ret,
                 WebSvcMethodPtr: CswNbtWebServiceRequesting.fulfillRequest,
+                ParamObj: Request
+                );
+
+            InitDriverType.run();
+            return ( Ret );
+        }
+
+        [OperationContract]
+        [WebInvoke( Method = "POST" )]
+        [FaultContract( typeof( FaultException ) )]
+        [Description( "Place a Request" )]
+        public CswNbtRequestDataModel.CswRequestReturn place( NodeSelect.Node Request )
+        {
+            //delegate has to be static because you can't create an instance yet: you don't have resources until the delegate is actually called
+            CswNbtRequestDataModel.CswRequestReturn Ret = new CswNbtRequestDataModel.CswRequestReturn();
+            var InitDriverType = new CswWebSvcDriver<CswNbtRequestDataModel.CswRequestReturn, NodeSelect.Node>(
+                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj: Ret,
+                WebSvcMethodPtr: CswNbtWebServiceRequesting.submitRequest,
                 ParamObj: Request
                 );
 
