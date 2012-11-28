@@ -104,13 +104,13 @@
             }; // search()
 
             cswPrivate.handleResults = function (data) {
-                var fdiv, ftable, filtersdivid;
+                var fdiv, ftable;
 
                 cswPrivate.sessiondataid = data.sessiondataid;
 
                 // Search results
 
-                function _renderResultsTable(columns) {
+                function _renderResultsTable() { //columns) {
                     var nodeTable;
 
                     cswPrivate.searchResultsParent.empty();
@@ -137,29 +137,29 @@
                             }
                         });
                     }
-                    resultstable.cell(1, 3).css({ width: '18px' });
-                    cswPrivate.buttonSingleColumn = resultstable.cell(1, 3).imageButton({
-                        ButtonType: Csw.enums.imageButton_ButtonType.TableSingleColumn,
-                        Active: (columns === 1),
-                        AlternateText: 'Single Column',
-                        onClick: function () {
-                            setTimeout(function () { // so we see the clear immediately
-                                _renderResultsTable(1);
-                            }, 0);
-                        }
-                    });
+//                    resultstable.cell(1, 3).css({ width: '18px' });
+//                    cswPrivate.buttonSingleColumn = resultstable.cell(1, 3).imageButton({
+//                        ButtonType: Csw.enums.imageButton_ButtonType.TableSingleColumn,
+//                        Active: (columns === 1),
+//                        AlternateText: 'Single Column',
+//                        onClick: function () {
+//                            setTimeout(function () { // so we see the clear immediately
+//                                _renderResultsTable(1);
+//                            }, 0);
+//                        }
+//                    });
 
-                    resultstable.cell(1, 4).css({ width: '18px' });
-                    cswPrivate.buttonMultiColumn = resultstable.cell(1, 4).imageButton({
-                        ButtonType: Csw.enums.imageButton_ButtonType.TableMultiColumn,
-                        Active: (columns !== 1),
-                        AlternateText: 'Multi Column',
-                        onClick: function () {
-                            setTimeout(function () { // so we see the clear immediately
-                                _renderResultsTable(3);
-                            }, 0);
-                        }
-                    });
+//                    resultstable.cell(1, 4).css({ width: '18px' });
+//                    cswPrivate.buttonMultiColumn = resultstable.cell(1, 4).imageButton({
+//                        ButtonType: Csw.enums.imageButton_ButtonType.TableMultiColumn,
+//                        Active: (columns !== 1),
+//                        AlternateText: 'Multi Column',
+//                        onClick: function () {
+//                            setTimeout(function () { // so we see the clear immediately
+//                                _renderResultsTable(3);
+//                            }, 0);
+//                        }
+//                    });
 
                     resultstable.cell(2, 1).propDom({ 'colspan': 3 });
 
@@ -176,17 +176,29 @@
                             resultstable.cell(2, 1).text('No Results Found');
                         },
                         tabledata: data.table,
-                        columns: columns,
+                        //columns: columns,
                         allowEdit: cswPrivate.allowEdit,
                         allowDelete: cswPrivate.allowEdit,
                         extraAction: cswPrivate.extraAction,
                         extraActionIcon: cswPrivate.extraActionIcon,
                         onExtraAction: cswPrivate.onExtraAction,
-                        compactResults: cswPrivate.compactResults
+                        compactResults: cswPrivate.compactResults,
+                        onMoreClick: function (nodetypeid, nodetypename) {
+                            // a little bit of a kludge
+                            cswPrivate.filter({
+                                FilterName: '',
+                                Type: '',
+                                FilterId: '',
+                                FilterValue: '',
+                                Count: '',
+                                Icon: '',
+                                Removeable: ''
+                            }, 'add');
+                        }
                     });
                 }
 
-                _renderResultsTable(1);
+                _renderResultsTable(); //1);
 
                 // Filter panel
                 cswPrivate.searchFiltersParent.empty();
