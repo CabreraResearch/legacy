@@ -26,7 +26,7 @@ namespace ChemSW.Nbt.Actions
         private CswNbtActSystemViews _SystemViews;
         private bool _CreateDefaultRequestNode = true;
 
-        public CswNbtActSubmitRequest( CswNbtResources CswNbtResources, bool CreateDefaultRequestNode, CswNbtActSystemViews.SystemViewName RequestViewName = null, CswPrimaryKey RequestNodeId = null )
+        public CswNbtActSubmitRequest( CswNbtResources CswNbtResources, bool CreateDefaultRequestNode, SystemViewName RequestViewName = null, CswPrimaryKey RequestNodeId = null )
         {
             _CswNbtResources = CswNbtResources;
             _CreateDefaultRequestNode = CreateDefaultRequestNode;
@@ -34,9 +34,9 @@ namespace ChemSW.Nbt.Actions
             {
                 throw new CswDniException( ErrorType.Error, "Cannot use the Submit Request action without the required module.", "Attempted to constuct CswNbtActSubmitRequest without the required module." );
             }
-            if( RequestViewName != CswNbtActSystemViews.SystemViewName.CISProRequestCart && RequestViewName != CswNbtActSystemViews.SystemViewName.CISProRequestHistory )
+            if( RequestViewName != SystemViewName.CISProRequestCart && RequestViewName != SystemViewName.CISProRequestHistory )
             {
-                RequestViewName = CswNbtActSystemViews.SystemViewName.CISProRequestCart;
+                RequestViewName = SystemViewName.CISProRequestCart;
             }
             _SystemViews = new CswNbtActSystemViews( _CswNbtResources, RequestViewName, null );
             _RequestOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.RequestClass );
@@ -50,13 +50,13 @@ namespace ChemSW.Nbt.Actions
                 }
             }
 
-            if( RequestViewName == CswNbtActSystemViews.SystemViewName.CISProRequestCart )
+            if( RequestViewName == SystemViewName.CISProRequestCart )
             {
                 _CurrentCartView = _SystemViews.SystemView;
                 _CurrentCartView.SaveToCache( false );
                 applyCurrentCartFilter();
             }
-            else if( RequestViewName == CswNbtActSystemViews.SystemViewName.CISProRequestHistory )
+            else if( RequestViewName == SystemViewName.CISProRequestHistory )
             {
                 _RequestHistoryView = _SystemViews.SystemView;
                 _RequestHistoryView.SaveToCache( false );
@@ -93,7 +93,7 @@ namespace ChemSW.Nbt.Actions
             {
                 if( null == _CurrentCartView )
                 {
-                    CswNbtActSystemViews SystemViews = new CswNbtActSystemViews( _CswNbtResources, CswNbtActSystemViews.SystemViewName.CISProRequestCart, null );
+                    CswNbtActSystemViews SystemViews = new CswNbtActSystemViews( _CswNbtResources, SystemViewName.CISProRequestCart, null );
                     _CurrentCartView = SystemViews.SystemView;
                     _CurrentCartView.SaveToCache( false );
                     applyCurrentCartFilter();
@@ -108,7 +108,7 @@ namespace ChemSW.Nbt.Actions
             {
                 if( null == _RequestHistoryView )
                 {
-                    CswNbtActSystemViews SystemViews = new CswNbtActSystemViews( _CswNbtResources, CswNbtActSystemViews.SystemViewName.CISProRequestHistory, null );
+                    CswNbtActSystemViews SystemViews = new CswNbtActSystemViews( _CswNbtResources, SystemViewName.CISProRequestHistory, null );
                     _RequestHistoryView = SystemViews.SystemView;
                     _RequestHistoryView.SaveToCache( false );
                 }

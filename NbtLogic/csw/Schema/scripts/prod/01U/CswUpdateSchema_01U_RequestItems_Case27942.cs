@@ -634,11 +634,11 @@ namespace ChemSW.Nbt.Schema
             #endregion Size Relationship
 
             //Nuke the System Views from the DB
-            foreach( CswNbtView View in _CswNbtSchemaModTrnsctn.ViewSelect.restoreViews( CswNbtActSystemViews.SystemViewName.CISProRequestCart.ToString() ) )
+            foreach( CswNbtView View in _CswNbtSchemaModTrnsctn.ViewSelect.restoreViews( SystemViewName.CISProRequestCart.ToString() ) )
             {
                 View.Delete();
             }
-            foreach( CswNbtView View in _CswNbtSchemaModTrnsctn.ViewSelect.restoreViews( CswNbtActSystemViews.SystemViewName.CISProRequestHistory.ToString() ) )
+            foreach( CswNbtView View in _CswNbtSchemaModTrnsctn.ViewSelect.restoreViews( SystemViewName.CISProRequestHistory.ToString() ) )
             {
                 View.Delete();
             }

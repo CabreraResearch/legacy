@@ -4090,7 +4090,7 @@ namespace ChemSW.Nbt.WebServices
                 _initResources();
                 AuthenticationStatus = _attemptRefresh( true );
 
-                CswNbtWebServiceRequesting ws = new CswNbtWebServiceRequesting( _CswNbtResources, CswNbtActSystemViews.SystemViewName.CISProRequestHistory );
+                CswNbtWebServiceRequesting ws = new CswNbtWebServiceRequesting( _CswNbtResources, SystemViewName.CISProRequestHistory );
                 ReturnVal = ws.getRequestHistory();
 
                 _deInitResources();
@@ -4149,7 +4149,7 @@ namespace ChemSW.Nbt.WebServices
                 CswPrimaryKey CopyToNodeId = _getNodeId( CopyToRequestId );
                 if( null != CopyFromNodeId && null != CopyToNodeId )
                 {
-                    CswNbtWebServiceRequesting ws = new CswNbtWebServiceRequesting( _CswNbtResources, CswNbtActSystemViews.SystemViewName.CISProRequestCart, CopyFromNodeId );
+                    CswNbtWebServiceRequesting ws = new CswNbtWebServiceRequesting( _CswNbtResources, SystemViewName.CISProRequestCart, CopyFromNodeId );
                     ReturnVal = ws.copyRequest( CopyFromNodeId, CopyToNodeId );
                 }
                 _deInitResources();
