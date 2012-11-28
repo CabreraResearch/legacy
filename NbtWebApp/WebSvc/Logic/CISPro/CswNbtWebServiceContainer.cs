@@ -83,6 +83,7 @@ namespace ChemSW.Nbt.WebServices
                     Ret["unit"] = NodeAsContainer.Quantity.CachedUnitName;
                     Ret["unitid"] = ( NodeAsContainer.Quantity.UnitId ?? new CswPrimaryKey() ).ToString();
                     Ret["sizeid"] = ( NodeAsContainer.Size.RelatedNodeId ?? new CswPrimaryKey() ).ToString();
+                    Ret["materialid"] = ( NodeAsContainer.Material.RelatedNodeId ?? new CswPrimaryKey() ).ToString();
                 }
             }
 

@@ -1560,7 +1560,8 @@ namespace ChemSW.Nbt.Schema
             {
                 PropName = CswNbtObjClassContainerLocation.PropertyName.Action,
                 FieldType = CswNbtMetaDataFieldType.NbtFieldType.List,
-                ListOptions = String.Join( ",", CswNbtObjClassContainerLocation.ActionOptions._All )
+                ListOptions = String.Join( ",", CswNbtObjClassContainerLocation.ActionOptions._All ),
+                ServerManaged = true
             } );
             _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( ContainerLocationOc )
             {

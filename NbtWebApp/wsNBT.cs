@@ -4609,7 +4609,7 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string convertUnit( string ValueToConvert, string OldUnitId, string NewUnitId )
+        public string convertUnit( string ValueToConvert, string OldUnitId, string NewUnitId, string MaterialId )
         {
             JObject ReturnVal = new JObject();
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
@@ -4620,7 +4620,8 @@ namespace ChemSW.Nbt.WebServices
 
                 CswPrimaryKey OldUnitPk = CswConvert.ToPrimaryKey( OldUnitId );
                 CswPrimaryKey NewUnitPk = CswConvert.ToPrimaryKey( NewUnitId );
-                CswNbtUnitConversion Conversion = new CswNbtUnitConversion( _CswNbtResources, OldUnitPk, NewUnitPk );
+                CswPrimaryKey MaterialPk = CswConvert.ToPrimaryKey( MaterialId );
+                CswNbtUnitConversion Conversion = new CswNbtUnitConversion( _CswNbtResources, OldUnitPk, NewUnitPk, MaterialPk );
                 double convertedValue = Conversion.convertUnit( CswConvert.ToDouble( ValueToConvert ) );
                 ReturnVal["convertedvalue"] = convertedValue.ToString();
 

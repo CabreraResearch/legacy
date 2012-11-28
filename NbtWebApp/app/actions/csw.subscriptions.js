@@ -48,7 +48,7 @@
                                                                  subObj.Subscribed = newval;
                                                                  subObj.Modified = true;
                                                              },
-                                                             Checked: subObj.Subscribed
+                                                             checked: subObj.Subscribed
                                                          }); // checkBox
                             cswPrivate.table.cell(row, 2).text(subObj.Name);
                             row += 1;
