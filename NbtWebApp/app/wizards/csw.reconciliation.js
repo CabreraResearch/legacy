@@ -502,11 +502,22 @@
                                     data: ContainersGridData
                                 };
                                 var step3Table = cswPrivate.divStep3.table();
+                                //Containers Grid
                                 cswPrivate.ReconciliationContainersGrid = step3Table.cell(1, 1).grid(cswPrivate.gridOptions);
                                 if (cswPrivate.isCurrent) {
-                                    cswPrivate.divStep3.br({ number: 2 });
-                                    var bulkActionTable = step3Table.cell(2, 1).table({ cellvalign: 'center' });
-
+                                    //Filter Correct Containers Checkbox
+                                    var filterCorrectTable = step3Table.cell(2, 1).table({ cellvalign: 'center' });
+                                    var filterCorrectCheckbox = filterCorrectTable.cell(1, 1).checkBox({
+                                        checked: true,
+                                        onChange: Csw.method(function () {
+                                            cswPrivate.filterCorrectContainers(filterCorrectCheckbox.checked());
+                                        })
+                                    });
+                                    filterCorrectTable.cell(1, 2).span({ text: ' Filter out Correct Containers' });
+                                    cswPrivate.filterCorrectContainers(filterCorrectCheckbox.checked());
+                                    step3Table.cell(3, 1).br();
+                                    //Set Action in Bulk
+                                    var bulkActionTable = step3Table.cell(4, 1).table({ cellvalign: 'center' });
                                     bulkActionTable.cell(1, 1).span({ text: 'Set Action of all Containers with Status&nbsp;' });
                                     var statusOptions = [];
                                     Csw.each(cswPrivate.data.ContainerStatistics, function(row) {
@@ -616,22 +627,22 @@
             };
 
             cswPrivate.addActionChange = function(container, action) {
-                            var ContainerAction = {
+                var ContainerAction = {
                     ContainerId: container.containerid,
                     ContainerLocationId: container.containerlocationid,
                     LocationId: container.locationid,
                     Action: action
-                            };
-                            var changeExists = false;
-                            Csw.each(cswPrivate.state.ContainerActions, function(row, key) {
-                                if(row.ContainerId === ContainerAction.ContainerId) {
-                                    cswPrivate.state.ContainerActions[key] = ContainerAction;
-                                    changeExists = true;
-                                }
-                            });
-                            if(false === changeExists) {
-                                cswPrivate.state.ContainerActions.push(ContainerAction);
-                            }
+                };
+                var changeExists = false;
+                Csw.each(cswPrivate.state.ContainerActions, function(row, key) {
+                    if(row.ContainerId === ContainerAction.ContainerId) {
+                        cswPrivate.state.ContainerActions[key] = ContainerAction;
+                        changeExists = true;
+                    }
+                });
+                if(false === changeExists) {
+                    cswPrivate.state.ContainerActions.push(ContainerAction);
+                }
             };
 
             cswPrivate.getActionOptions = function(status) {
@@ -649,6 +660,22 @@
                     actionOptions.push('Mark Missing');
                 }
                 return actionOptions;
+            };
+
+            cswPrivate.filterCorrectContainers = function (filterOutCorrect) {
+                var statusFilter = cswPrivate.ReconciliationContainersGrid.extGrid.filters.getFilter('status');
+                if (filterOutCorrect) {
+                    statusFilter.setActive(true);
+                    var optionsToFilter = [];
+                    Csw.each(cswPrivate.data.ContainerStatistics, function (row) {
+                        if (row.Status !== 'Scanned Correct' && row.Status !== 'Received, Moved, Dispensed, or Disposed') {
+                            optionsToFilter.push(row.Status);
+                        }
+                    });
+                    statusFilter.menu.setSelected(optionsToFilter, true);
+                } else {
+                    statusFilter.setActive(false);
+                }
             };
 
             cswPrivate.saveChanges = function() {
