@@ -28,6 +28,8 @@ namespace NbtWebApp.WebSvc.Returns
 
         private CswNbtResources _CswNbtResources = null;
 
+
+        #region inherited
         /// <summary>
         /// CswResources to support run() and finalize()
         /// </summary>
@@ -57,7 +59,6 @@ namespace NbtWebApp.WebSvc.Returns
         public CswWebSvcReturnBase.Logging Logging { get; set; }
 
 
-        #region inherited
         public ICswResources CswResources
         {
             set
