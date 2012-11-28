@@ -19,9 +19,12 @@ namespace ChemSW.Nbt.Schema
                 CswNbtMetaDataObjectClass MaterialClass = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.MaterialClass );
                 CswNbtMetaDataObjectClassProp RequestProp = MaterialClass.getObjectClassProp( CswNbtObjClassMaterial.PropertyName.Request );
                 CswNbtViewRelationship InvLevelRelationship = BelowInventoryView.Root.ChildRelationships[0];
-                CswNbtViewRelationship MaterialRelationship = BelowInventoryView.AddViewRelationship( InvLevelRelationship, NbtViewPropOwnerType.First, MaterialProp, true );
-                BelowInventoryView.AddViewProperty( MaterialRelationship, RequestProp );
-                BelowInventoryView.save();
+                if( InvLevelRelationship.TextLabel == "InventoryLevelClass" )
+                {
+                    CswNbtViewRelationship MaterialRelationship = BelowInventoryView.AddViewRelationship(InvLevelRelationship, NbtViewPropOwnerType.First, MaterialProp, true);
+                    BelowInventoryView.AddViewProperty( MaterialRelationship, RequestProp );
+                    BelowInventoryView.save();
+                }
             }
         } //Update()
 
