@@ -4,44 +4,41 @@
 (function () {
 
     Csw.controls.nodeSelect = Csw.controls.nodeSelect ||
-        Csw.controls.register('nodeSelect', function (cswParent, options) {
+        Csw.controls.register('nodeSelect', function (cswParent, cswPrivate) {
             'use strict';
-            var cswPrivate = {
-                $parent: '',
-                name: '',
-                async: true,
-                nodesUrlMethod: 'getNodes',
-                nodeTypeId: '',
-                objectClassId: '',
-                objectClassName: '',
-                addNodeDialogTitle: '',
-                relatedTo: {
-                    objectClassName: '',
-                    nodeId: ''
-                },
-                onSelect: null,
-                onSuccess: null,
-                width: '200px',
-                addNewOption: false,
-                labelText: null,
-                excludeNodeTypeIds: '',
-                canAdd: false,
-                selectedNodeId: '',
-                isRequired: false
-            };
+            
             var cswPublic = {};
 
-            (function () {
+            (function _preCtor() {
+                cswPrivate.$parent = cswPrivate.$parent || cswParent.$;
+                cswPrivate.name = cswPrivate.name || '';
+                cswPrivate.async = cswPrivate.async || true;
+                cswPrivate.nodesUrlMethod = cswPrivate.nodesUrlMethod || 'Nodes/get';
+                cswPrivate.nodeTypeId = cswPrivate.nodeTypeId || '';
+                cswPrivate.objectClassId = cswPrivate.objectClassId || '';
+                cswPrivate.objectClassName = cswPrivate.objectClassName || '';
+                cswPrivate.addNodeDialogTitle = cswPrivate.addNodeDialogTitle || '';
+                cswPrivate.relatedTo = cswPrivate.relatedTo || {};
+                cswPrivate.width = cswPrivate.width || '200px';
+                cswPrivate.labelText = cswPrivate.labelText || null;
+                cswPrivate.excludeNodeTypeIds = cswPrivate.excludeNodeTypeIds || '';
+                cswPrivate.selectedNodeId = cswPrivate.selectedNodeId || '';
+                cswPrivate.viewid = cswPrivate.viewid || '';
+                cswPrivate.onSelect = cswPrivate.onSelect || function() {};
+                cswPrivate.onSuccess = cswPrivate.onSuccess || function () { };
+                cswPrivate.addNewOption = cswPrivate.addNewOption || false;
+                cswPrivate.canAdd = cswPrivate.canAdd || false;
+                cswPrivate.isRequired = cswPrivate.isRequired || false;
 
-                if (options) {
-                    Csw.extend(cswPrivate, options);
-                }
+            }());
+
+            (function _postCtor() {
                 cswPrivate.name += '_nodesel';
 
                 cswPrivate.table = cswParent.table();
                 cswPrivate.select = cswPrivate.table.cell(1, 1).select(cswPrivate);
 
-                cswPublic = Csw.dom({}, cswPrivate.select);
+                cswPublic = cswPrivate.select;
 
                 cswPublic.bind('change', function () {
                     cswPrivate.selectedNodeId = cswPublic.val();
@@ -53,15 +50,16 @@
                     return cswPrivate.selectedNodeId || cswPublic.val();
                 };
 
-                Csw.ajax.post({
+                Csw.ajaxWcf.post({
                     urlMethod: cswPrivate.nodesUrlMethod,
                     async: Csw.bool(cswPrivate.async),
                     data: {
-                        NodeTypeId: Csw.string(cswPrivate.nodeTypeId),
-                        ObjectClassId: Csw.string(cswPrivate.objectClassId),
+                        NodeTypeId: Csw.number(cswPrivate.nodeTypeId, 0),
+                        ObjectClassId: Csw.number(cswPrivate.objectClassId, 0),
                         ObjectClass: Csw.string(cswPrivate.objectClassName),
                         RelatedToObjectClass: Csw.string(cswPrivate.relatedTo.objectClassName),
-                        RelatedToNodeId: Csw.string(cswPrivate.relatedTo.nodeId)
+                        RelatedToNodeId: Csw.string(cswPrivate.relatedTo.nodeId),
+                        ViewId: Csw.string(cswPrivate.viewid)
                     },
                     success: function (data) {
                         var ret = data;

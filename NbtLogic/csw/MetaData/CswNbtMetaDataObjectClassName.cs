@@ -1,6 +1,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 using ChemSW.Core;
 
 namespace ChemSW.Nbt.MetaData
@@ -9,6 +10,7 @@ namespace ChemSW.Nbt.MetaData
     /// <summary>
     /// Nbt Object Class Name
     /// </summary>
+    [DataContract]
     public sealed class NbtObjectClass : IEquatable<NbtObjectClass>, IComparable<NbtObjectClass>
     {
         #region Internals
@@ -121,63 +123,115 @@ namespace ChemSW.Nbt.MetaData
 
         #region Enum members
 
-        /// <summary>
-        /// Enum member 1
-        /// </summary>
+        [DataMember]
         public const string AliquotClass = "AliquotClass";
+        [DataMember]
         public const string BatchOpClass = "BatchOpClass";
+        [DataMember]
         public const string BiologicalClass = "BiologicalClass";
+        [DataMember]
         public const string CofAMethodClass = "CofAMethodClass";
+        [DataMember]
         public const string CofAMethodTemplateClass = "CofAMethodTemplateClass";
+        [DataMember]
         public const string ContainerClass = "ContainerClass";
+        [DataMember]
         public const string ContainerLocationClass = "ContainerLocationClass";
+        [DataMember]
         public const string ContainerDispenseTransactionClass = "ContainerDispenseTransactionClass";
+        [DataMember]
         public const string ContainerGroupClass = "ContainerGroupClass";
+        [DataMember]
         public const string CustomerClass = "CustomerClass";
+        [DataMember]
         public const string DocumentClass = "DocumentClass";
+        [DataMember]
         public const string EnterprisePartClass = "EnterprisePartClass";
+        [DataMember]
         public const string EquipmentAssemblyClass = "EquipmentAssemblyClass";
+        [DataMember]
         public const string EquipmentClass = "EquipmentClass";
+        [DataMember]
         public const string EquipmentTypeClass = "EquipmentTypeClass";
+        [DataMember]
         public const string FeedbackClass = "FeedbackClass";
+        [DataMember]
         public const string GeneratorClass = "GeneratorClass";
+        [DataMember]
         public const string GenericClass = "GenericClass";
+        [DataMember]
         public const string InspectionDesignClass = "InspectionDesignClass";
+        [DataMember]
         public const string InspectionRouteClass = "InspectionRouteClass";
+        [DataMember]
         public const string InventoryGroupClass = "InventoryGroupClass";
+        [DataMember]
         public const string InventoryGroupPermissionClass = "InventoryGroupPermissionClass";
+        [DataMember]
         public const string InventoryLevelClass = "InventoryLevelClass";
+        [DataMember]
         public const string JurisdictionClass = "JurisdictionClass";
+        [DataMember]
         public const string LocationClass = "LocationClass";
+        [DataMember]
         public const string MailReportClass = "MailReportClass";
+        [DataMember]
         public const string MaterialClass = "MaterialClass";
+        [DataMember]
         public const string ManufacturerEquivalentPartClass = "ManufacturerEquivalentPartClass";
+        [DataMember]
         public const string MaterialComponentClass = "MaterialComponentClass";
+        [DataMember]
         public const string MaterialSynonymClass = "MaterialSynonymClass";
+        [DataMember]
         public const string MethodClass = "MethodClass";
+        [DataMember]
         public const string InspectionTargetClass = "InspectionTargetClass";
+        [DataMember]
         public const string InspectionTargetGroupClass = "InspectionTargetGroupClass";
+        [DataMember]
         public const string NotificationClass = "NotificationClass";
+        [DataMember]
         public const string ParameterClass = "ParameterClass";
+        [DataMember]
         public const string PrintLabelClass = "PrintLabelClass";
+        [DataMember]
         public const string ProblemClass = "ProblemClass";
+        [DataMember]
         public const string ReceiptLotClass = "ReceiptLotClass";
+        [DataMember]
         public const string RegulatoryListClass = "RegulatoryListClass";
+        [DataMember]
         public const string ReportClass = "ReportClass";
+        [DataMember]
         public const string ResultClass = "ResultClass";
+        [DataMember]
         public const string RequestClass = "RequestClass";
+        [DataMember]
         public const string RequestContainerDispenseClass = "RequestContainerDispenseClass";
+        [DataMember]
         public const string RequestContainerUpdateClass = "RequestContainerUpdateClass";
+        [DataMember]
         public const string RequestMaterialDispenseClass = "RequestMaterialDispenseClass";
+        [DataMember]
         public const string RequestMaterialCreateClass = "RequestMaterialCreateClass";
+        [DataMember]
         public const string RoleClass = "RoleClass";
+        [DataMember]
         public const string SampleClass = "SampleClass";
+        [DataMember]
         public const string SizeClass = "SizeClass";
+        [DataMember]
         public const string TaskClass = "TaskClass";
+        [DataMember]
         public const string TestClass = "TestClass";
+        [DataMember]
         public const string UnitOfMeasureClass = "UnitOfMeasureClass";
+        [DataMember]
         public const string UserClass = "UserClass";
+        [DataMember]
         public const string VendorClass = "VendorClass";
+        [DataMember]
         public const string WorkUnitClass = "WorkUnitClass";
 
         #endregion Enum members

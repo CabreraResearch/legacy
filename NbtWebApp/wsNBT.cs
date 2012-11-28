@@ -1414,36 +1414,6 @@ namespace ChemSW.Nbt.WebServices
 
         } // getTreeOfNode()
 
-        [WebMethod( EnableSession = false )]
-        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string getNodes( string NodeTypeId, string ObjectClassId, string ObjectClass, string RelatedToObjectClass, string RelatedToNodeId )
-        {
-            JObject ReturnVal = new JObject();
-
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
-            try
-            {
-                _initResources();
-                AuthenticationStatus = _attemptRefresh( true );
-
-                CswNbtWebServiceNode ws = new CswNbtWebServiceNode( _CswNbtResources, _CswNbtStatisticsEvents );
-                ReturnVal = ws.getNodes( NodeTypeId, ObjectClassId, ObjectClass, RelatedToObjectClass, RelatedToNodeId );
-
-                _deInitResources();
-            }
-            catch( Exception Ex )
-            {
-                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
-            }
-
-
-            CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
-
-            return ReturnVal.ToString();
-
-
-        } // getNodes()
-
         #endregion Render Core UI
 
         #region View Editing
