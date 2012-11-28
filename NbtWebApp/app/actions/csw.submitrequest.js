@@ -21,6 +21,7 @@
                 cswParent.empty();
             }());
 
+            cswPrivate.requestName = Csw.cookie.get(Csw.cookie.cookieNames.Username) + ' ' + Csw.todayAsString();
             cswPrivate.gridOpts = {};
 
             cswPrivate.makeRequestCreateMaterial = function () {
@@ -46,7 +47,7 @@
                     urlMethod: 'submitRequest',
                     data: {
                         RequestId: cswPrivate.cartnodeid,
-                        RequestName: Csw.string(cswPrivate.saveRequestTxt.val())
+                        RequestName: cswPrivate.requestName
                     },
                     success: function (json) {
                         if (json.succeeded) {
@@ -82,7 +83,7 @@
                 
                 inpTbl.cell(1,1).ol().li().input({
                     labelText: 'Request Name:',
-                    value: Csw.cookie.get(Csw.cookie.cookieNames.Username) + ' ' + Csw.todayAsString(),
+                    value: cswPrivate.requestName,
                     onChange: function(val) {
                         cswPrivate.requestName = val;
                     }
@@ -191,7 +192,8 @@
                     urlMethod: 'Requests/cart',
                     success: function(data) {
                         btmTbl.cell(1, 2).nodeSelect({
-                            viewid: data.FavoriteItemsViewId
+                            viewid: data.FavoriteItemsViewId,
+                            canAdd: true
                         });
                     }
                 });
