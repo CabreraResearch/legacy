@@ -49,8 +49,8 @@
                 (function _postCtor() {
 
                     cswPrivate.action = Csw.layouts.action(cswParent, {
-                        Title: 'Template',
-                        FinishText: 'Finish',
+                        title: 'Template',
+                        finishText: 'Finish',
                         onFinish: cswPrivate.onSubmitClick,
                         onCancel: cswPrivate.onCancelClick
                     });

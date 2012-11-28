@@ -11,8 +11,9 @@
 
             (function _preCtor() {
                 cswPrivate.name = cswPrivate.name || 'action';
-                cswPrivate.Title = cswPrivate.Title || 'An Action';
-                cswPrivate.FinishText = cswPrivate.FinishText || 'Finish';
+                cswPrivate.title = cswPrivate.title || 'An Action';
+                cswPrivate.finishText = cswPrivate.finishText || 'Finish';
+                cswPrivate.cancelText = cswPrivate.cancelText || 'Cancel';
                 cswPrivate.onFinish = cswPrivate.onFinish || function() {};
                 cswPrivate.onCancel = cswPrivate.onCancel || function() {};
                 cswPrivate.hasButtonGroup = cswPrivate.hasButtonGroup || true;
@@ -38,7 +39,7 @@
                 cswPrivate.titleCell = cswPublic.table.cell(1, 1)
                     .propDom('colspan', 2)
                     .addClass('CswAction_TitleCell');
-                cswPublic.setTitle(cswPrivate.Title);
+                cswPublic.setTitle(cswPrivate.title);
                 
                 cswPrivate.indexCell = cswPublic.table.cell(2, 1)
                     .propDom('rowspan', 2)
@@ -58,12 +59,13 @@
                             next: { enabled: false, hidden: true },
                             previous: { enabled: false, hidden: true },
                             finish: {
-                                text: cswPrivate.FinishText,
+                                text: cswPrivate.finishText,
                                 onclick: function() { Csw.tryExec(cswPrivate.onFinish); }
                             }
                         },
                         cancel: {
-                            onclick: function() { Csw.tryExec(cswPrivate.onCancel); }
+                            text: cswPrivate.cancelText,
+                            onclick: function () { Csw.tryExec(cswPrivate.onCancel); }
                         }
                     });
                     cswPublic.finish = cswPrivate.btnGroup.finish;
