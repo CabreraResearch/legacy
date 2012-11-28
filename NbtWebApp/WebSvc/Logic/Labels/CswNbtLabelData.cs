@@ -83,7 +83,13 @@ namespace NbtWebApp.WebSvc.Logic.Labels
                 [Description( "NodeTypeId for which to find matching Print Label nodes" )]
                 public Int32 TargetTypeId = Int32.MinValue;
 
-
+                /// <summary>
+                /// NodeId of which to apply selected Print Label.
+                /// If multiple NodeIds have been selected for Print Labels, the first shoudl be passed in.
+                /// </summary>
+                [DataMember( IsRequired = false )]
+                [Description( "NodeId of which to apply selected Print Label." )]
+                public string TargetId = string.Empty;
             }
 
             /// <summary>
@@ -166,6 +172,13 @@ namespace NbtWebApp.WebSvc.Logic.Labels
                 [DataMember]
                 [Description( "Collection of label names and ids" )]
                 public Collection<Label> Labels = new Collection<Label>();
+
+                /// <summary>
+                /// Default selected LabelId (based on Target's Label Format)
+                /// </summary>
+                [DataMember]
+                [Description( "Collection of label names and ids" )]
+                public string SelectedLabelId = string.Empty;
             }
 
 

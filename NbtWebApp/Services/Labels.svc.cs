@@ -24,10 +24,10 @@ namespace NbtWebApp
         /// 
         /// </summary>
         [OperationContract]
-        [WebGet( UriTemplate = "type/{TargetTypeId}" )]
-
-        [Description( "Get all Print labels matching this Target Type" )]
-        public CswNbtLabelList list( string TargetTypeId )
+        [WebInvoke( Method = "POST", ResponseFormat = WebMessageFormat.Json )]
+        [Description( "Get all Print labels matching this Target Type, selecting the Target Id's Label Format by default" )]
+        [FaultContract( typeof( FaultException ) )]
+        public CswNbtLabelList list( NbtPrintLabel.Request.List Request )
         {
             //delegate has to be static because you can't create an instance yet: you don't have resources until the delegate is actually called
             CswNbtLabelList Ret = new CswNbtLabelList();
@@ -35,12 +35,11 @@ namespace NbtWebApp
                 CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
                 ReturnObj: Ret,
                 WebSvcMethodPtr: CswNbtWebServicePrintLabels.getLabels,
-                ParamObj: new NbtPrintLabel.Request.List { TargetTypeId = CswConvert.ToInt32( TargetTypeId ) }
+                ParamObj: Request
                 );
 
             SvcDriver.run();
             return ( Ret );
-
         }
 
         /// <summary>

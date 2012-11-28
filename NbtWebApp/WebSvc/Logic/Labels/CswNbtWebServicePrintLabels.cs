@@ -68,15 +68,21 @@ namespace ChemSW.Nbt.WebServices
                     Int32 PrintLabelCount = PrintLabelsTree.getChildNodeCount();
                     if( PrintLabelCount > 0 )
                     {
+                        String LabelFormatId = _getLabelFormatForTargetId( NbtResources, TargetNodeType, Request.TargetId );
                         PrintLabelsTree.goToRoot();
                         for( int P = 0; P < PrintLabelCount; P += 1 )
                         {
                             PrintLabelsTree.goToNthChild( P );
+                            String PrintLabelId = PrintLabelsTree.getNodeIdForCurrentPosition().ToString();
                             Return.Data.Labels.Add( new Label
                             {
                                 Name = PrintLabelsTree.getNodeNameForCurrentPosition(),
-                                Id = PrintLabelsTree.getNodeIdForCurrentPosition().ToString()
+                                Id = PrintLabelId
                             } );
+                            if( PrintLabelId == LabelFormatId )
+                            {
+                                Return.Data.SelectedLabelId = PrintLabelId;
+                            }
                             PrintLabelsTree.goToParentNode();
                         }
                     }
@@ -84,6 +90,26 @@ namespace ChemSW.Nbt.WebServices
             }
         } // getLabels()
 
+        private static String _getLabelFormatForTargetId( CswNbtResources NbtResources, CswNbtMetaDataNodeType TargetNodeType, String TargetId )
+        {
+            String LabelFormatId = String.Empty;
+            if( null != TargetId )
+            {
+                CswNbtNode TargetNode = NbtResources.Nodes.GetNode( CswConvert.ToPrimaryKey( TargetId ) );
+                if( null != TargetNode )
+                {
+                    CswNbtMetaDataObjectClass PrintLabelClass = NbtResources.MetaData.getObjectClass( NbtObjectClass.PrintLabelClass );
+                    foreach( CswNbtMetaDataNodeTypeProp RelationshipProp in TargetNodeType.getNodeTypeProps( CswNbtMetaDataFieldType.NbtFieldType.Relationship ) )
+                    {
+                        if( RelationshipProp.FKValue == PrintLabelClass.ObjectClassId )
+                        {
+                            LabelFormatId = TargetNode.Properties[RelationshipProp].AsRelationship.RelatedNodeId.ToString();
+                        }
+                    }
+                }
+            }
+            return LabelFormatId;
+        }
 
         public static void getEPLText( ICswResources CswResources, CswNbtLabelEpl Return, NbtPrintLabel.Request.Get Request )
         {
