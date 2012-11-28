@@ -34,7 +34,7 @@ namespace ChemSW.Nbt.Grid
             return ret;
         } // _getUniquePrefix()
 
-        public JObject TreeToJson( CswNbtView View, ICswNbtTree Tree, bool IsPropertyGrid = false )
+        public JObject TreeToJson( CswNbtView View, ICswNbtTree Tree, bool IsPropertyGrid = false, string GroupByCol = "" )
         {
             string gridUniquePrefix = _getUniquePrefix( View );
 
@@ -178,7 +178,7 @@ namespace ChemSW.Nbt.Grid
                 grid.rows.Add( gridrow );
             }
 
-            return grid.ToJson();
+            return grid.ToJson( GroupByCol );
         } // TreeToJson()
 
         private void _TreeNodeToGrid( CswNbtView View, ICswNbtTree Tree, CswNbtGridExtJsGrid grid, CswNbtGridExtJsRow gridrow )
