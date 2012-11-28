@@ -193,7 +193,7 @@
                     success: function(data) {
                         btmTbl.cell(1, 2).nodeSelect({
                             viewid: data.FavoriteItemsViewId,
-                            canAdd: true
+                            allowAdd: true
                         });
                     }
                 });

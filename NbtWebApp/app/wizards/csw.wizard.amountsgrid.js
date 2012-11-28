@@ -209,7 +209,7 @@
                                             cswPublic.rows[rowid].qtyControl.refresh(cswPrivate.quantity);
                                             updateColumnVals(true);
                                         },
-                                        canAdd: true
+                                        allowAdd: true
                                     });
                                     updateSizeVals();
                                     break;

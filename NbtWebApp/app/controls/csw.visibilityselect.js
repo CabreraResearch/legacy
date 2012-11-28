@@ -39,12 +39,12 @@
                     cswPublic.$visroleselect = parent.cell(1, 3).nodeSelect({
                         name: id + '_visrolesel',
                         objectClassName: 'RoleClass',
-                        canAdd: false
+                        allowAdd: false
                     }).$.hide();
                     cswPublic.$visuserselect = parent.cell(1, 4).nodeSelect({
                         name: id + '_visusersel',
                         objectClassName: 'UserClass',
-                        canAdd: false
+                        allowAdd: false
                     }).$;
 
                     cswPublic.$visibilityselect.change(function() {

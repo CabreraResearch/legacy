@@ -319,7 +319,6 @@
                             cssclass: 'required',
                             objectClassName: 'VendorClass',
                             addNodeDialogTitle: 'Vendor',
-                            useWide: true,
                             selectedNodeId: cswPrivate.state.supplierId || cswPrivate.state.supplier.val,
                             labelText: 'Supplier: ',
                             onChange: changeMaterial,
