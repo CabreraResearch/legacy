@@ -389,7 +389,7 @@
                 });
 
                 // Pager control
-                if (cswPrivate.pagenodelimit < cswPrivate.results) {
+                if (cswPrivate.totalpages > 1) {
 
                     if (cswPrivate.currentpage > 1) {
                         cswPrivate.pagerDiv.a({
@@ -427,6 +427,15 @@
                         });
                     }
                 } // if (pagenodelimit < results)
+
+                // Show truncated
+                if(Csw.bool(cswPrivate.tabledata.truncated)) {
+                    cswPrivate.pagerDiv.br();
+                    cswPrivate.pagerDiv.span({
+                        cssclass: 'truncated',
+                        text: 'Results Truncated'
+                    });
+                }
             }; // makeTable()
 
 
