@@ -75,6 +75,7 @@ namespace ChemSW.Nbt.WebServices
                 _populateDictionary( Tree, PropsToHide );
                 
                 ret["results"] = Tree.getChildNodeCount().ToString();
+                ret["nodetypecount"] = _TableDict.Keys.Count;
                 ret["truncated"] = Tree.getCurrentNodeChildrenTruncated();
                 ret["nodetypes"] = _dictionaryToJson();
             }
@@ -300,7 +301,7 @@ namespace ChemSW.Nbt.WebServices
                 foreach( TableNode thisNode in _TableDict[NodeType] )
                 {
                     // Limit nodes per nodetype, if there is more than one nodetype
-                    if( _TableDict.Keys.Count > 1 && NodesArray.Count <= _NodePerNodeTypeLimit )
+                    if( _TableDict.Keys.Count <= 1 || NodesArray.Count < _NodePerNodeTypeLimit )
                     {
                         NodesArray.Add( thisNode.ToJson() );
                     }

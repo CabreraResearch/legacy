@@ -28,9 +28,7 @@
                 extraActionIcon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.none),
                 onExtraAction: null,  // function(nodeObj) {}
                 compactResults: false,
-
                 newsearchurl: 'doUniversalSearch',
-                filtersearchurl: 'filterUniversalSearch',
                 restoresearchurl: 'restoreUniversalSearch',
                 saveurl: 'saveSearchAsView',
                 //filters: {},
@@ -120,7 +118,10 @@
                         width: '100%'
                     });
 
-                    resultstable.cell(1, 1).append('<b>Search Results: (' + data.table.results + ')</b>');
+                    resultstable.cell(1, 1).div({
+                        cssclass: 'SearchLabel',
+                        text: 'Search Results: (' + data.table.results + ')'
+                    });
 
                     if (Csw.bool(cswPrivate.compactResults)) {
                         resultstable.cell(1, 2).css({ width: '100px' });
@@ -185,15 +186,7 @@
                         compactResults: cswPrivate.compactResults,
                         onMoreClick: function (nodetypeid, nodetypename) {
                             // a little bit of a kludge
-                            cswPrivate.filter({
-                                FilterName: '',
-                                Type: '',
-                                FilterId: '',
-                                FilterValue: '',
-                                Count: '',
-                                Icon: '',
-                                Removeable: ''
-                            }, 'add');
+                            cswPrivate.filterNodeType(nodetypeid);
                         }
                     });
                 }
@@ -297,11 +290,23 @@
             cswPrivate.filter = function (thisFilter, action) {
                 Csw.tryExec(cswPrivate.onBeforeSearch);
                 Csw.ajax.post({
-                    urlMethod: cswPrivate.filtersearchurl,
+                    urlMethod: 'filterUniversalSearch',
                     data: {
                         SessionDataId: cswPrivate.sessiondataid,
                         Filter: JSON.stringify(thisFilter),
                         Action: action
+                    },
+                    success: cswPrivate.handleResults
+                });
+            }; // filter()
+
+            cswPrivate.filterNodeType = function (nodetypeid) {
+                Csw.tryExec(cswPrivate.onBeforeSearch);
+                Csw.ajax.post({
+                    urlMethod: 'filterUniversalSearchByNodeType',
+                    data: {
+                        SessionDataId: cswPrivate.sessiondataid,
+                        NodeTypeId: nodetypeid
                     },
                     success: cswPrivate.handleResults
                 });

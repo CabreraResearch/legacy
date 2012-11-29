@@ -29,24 +29,44 @@
                 extraActionIcon: Csw.enums.iconType.none,
                 onExtraAction: null,  // function(nodeObj) {}
                 properties: {},
-                onMoreClick: function () {}
+                onMoreClick: function () { }
             };
             if (params) Csw.extend(cswPrivate, params);
 
             var cswPublic = {};
 
 
+            cswPrivate.getRowHeaderCell = function (cellSet) {
+                var ret;
+                if (cswPrivate.singleColumn) {
+                    ret = cellSet[1][1]
+                            .propDom({ colspan: 3 })
+                            .addClass('SearchSubLabel');
+                } else {
+                    ret = cellSet[1][1]
+                            .propDom({ colspan: 4 })
+                            .addClass('SearchSubLabel');
+                }
+                return ret;
+            };
+
             cswPrivate.getThumbnailCell = function (cellSet) {
-                return cellSet[1][1];
+                var ret;
+                if (cswPrivate.singleColumn) {
+                    ret = cellSet[2][1];
+                } else {
+                    ret = cellSet[2][1];
+                }
+                return ret;
             };
 
 
             cswPrivate.getTextCell = function (cellSet) {
                 var ret;
                 if (cswPrivate.singleColumn) {
-                    ret = cellSet[1][2];
+                    ret = cellSet[2][2];
                 } else {
-                    ret = cellSet[2][1];
+                    ret = cellSet[3][1];
                 }
                 return ret;
             };
@@ -55,9 +75,9 @@
             cswPrivate.getButtonCell = function (cellSet) {
                 var ret;
                 if (cswPrivate.singleColumn) {
-                    ret = cellSet[1][3];
+                    ret = cellSet[2][3];
                 } else {
-                    ret = cellSet[3][1];
+                    ret = cellSet[4][1];
                 }
                 return ret;
             };
@@ -65,7 +85,8 @@
 
             cswPrivate.makeNodeCell = function (nodeObj) {
                 if (cswPrivate.c <= cswPrivate.columns) {
-                    if ((cswPrivate.pagenodecount >= cswPrivate.pagenodelimit * (cswPrivate.currentpage - 1)) &&
+                    if ((false == cswPrivate.singleColumn || // paging handled in makeTable()
+                        cswPrivate.pagenodecount >= cswPrivate.pagenodelimit * (cswPrivate.currentpage - 1)) &&
                         (cswPrivate.pagenodecount < cswPrivate.pagenodelimit * cswPrivate.currentpage)) {
                         var nodeid = nodeObj.nodeid;
 
@@ -81,7 +102,7 @@
                         var thumbverticalAlign = 'middle';
                         var thumbhorizontalAlign = 'center';
                         var thumbBackgroundColor = '#ffffff';
-                        var bborder = '1px solid #cccccc';
+                        //var bborder = '1px solid #cccccc';
                         var cellpad = cswPrivate.rowpadding + 'px';
                         if (cswPrivate.singleColumn) {
                             thumbwidth = '25%';
@@ -98,34 +119,34 @@
                         }
 
                         var thumbnailCell = cswPrivate.getThumbnailCell(cellSet)
-                            .css({
-                                width: thumbwidth,
-                                verticalAlign: thumbverticalAlign,
-                                backgroundColor: thumbBackgroundColor,
-                                textAlign: thumbhorizontalAlign,
-                                paddingTop: cellpad,
-                                maxWidth: '100px'
-                            });
+                                .css({
+                                    width: thumbwidth,
+                                    verticalAlign: thumbverticalAlign,
+                                    backgroundColor: thumbBackgroundColor,
+                                    textAlign: thumbhorizontalAlign,
+                                    paddingTop: cellpad,
+                                    maxWidth: '100px'
+                                });
                         var textCell = cswPrivate.getTextCell(cellSet)
-                            .css({
-                                width: textwidth,
-                                paddingTop: cellpad
-                            });
+                                .css({
+                                    width: textwidth,
+                                    paddingTop: cellpad
+                                });
                         if (cswPrivate.singleColumn) {
                             thumbnailCell.css({
-                                borderBottom: bborder,
+                                //borderBottom: bborder,
                                 paddingBottom: cellpad
                             });
                             textCell.css({
-                                borderBottom: bborder,
+                                //borderBottom: bborder,
                                 paddingBottom: cellpad
                             });
                         }
                         var btncell = cswPrivate.getButtonCell(cellSet)
-                            .css({
-                                borderBottom: bborder,
-                                paddingBottom: cellpad
-                            });
+                                .css({
+                                    //borderBottom: bborder,
+                                    paddingBottom: cellpad
+                                });
 
                         // Banding
                         if (cswPrivate.singleColumn) {
@@ -166,9 +187,9 @@
                         }
 
                         thumbnailCell.$.hover(function (event) { Csw.nodeHoverIn(event, nodeid, ''); },
-                            function (event) { Csw.nodeHoverOut(event, nodeid, ''); });
+                                function (event) { Csw.nodeHoverOut(event, nodeid, ''); });
                         textCell.$.hover(function (event) { Csw.nodeHoverIn(event, nodeid, ''); },
-                            function (event) { Csw.nodeHoverOut(event, nodeid, ''); });
+                                function (event) { Csw.nodeHoverOut(event, nodeid, ''); });
 
                         var btnTable = btncell.table({
                             name: cswPrivate.name + '_' + nodeid + '_btntbl',
@@ -279,7 +300,11 @@
                             btnTable.addClass('disabled');
                         }
 
-                        cswPrivate.c += 1;
+                        if (cswPrivate.singleColumn) {
+                            cswPrivate.r += 1;
+                        } else {
+                            cswPrivate.c += 1;
+                        }
                         //                        if (cswPrivate.c > cswPrivate.columns) {
                         //                            cswPrivate.c = 1;
                         //                            cswPrivate.r += 1;
@@ -300,11 +325,11 @@
                 cswPrivate.texttables = [];
 
                 var cellalign = 'left';
-                var cellset = { rows: 3, columns: 1 };
+                var cellset = { rows: 4, columns: 1 };
                 var cellspacing = '5px';
                 if (cswPrivate.singleColumn) {
                     cellalign = 'left';
-                    cellset = { rows: 1, columns: 3 };
+                    cellset = { rows: 2, columns: 3 };
                     cellspacing = '0px';
                 }
 
@@ -318,25 +343,49 @@
 
                 // Iterate Nodes per Nodetype
                 Csw.each(cswPrivate.tabledata.nodetypes, function (nodetypeObj) {
-                    
-                    Csw.eachRecursive(nodetypeObj.nodes, cswPrivate.makeNodeCell);
 
                     var results = Csw.number(nodetypeObj["results"]);
-                    if(results > 3) {
+
+                    var buffer = results;
+                    if (results > cswPrivate.columns) {
+                        buffer = cswPrivate.columns;
+                    }
+                    if (cswPrivate.singleColumn || // paging handled in makeNodeCell
+                        ((cswPrivate.pagenodecount + buffer) >= cswPrivate.pagenodelimit * (cswPrivate.currentpage - 1)) &&
+                        ((cswPrivate.pagenodecount + buffer) < cswPrivate.pagenodelimit * cswPrivate.currentpage)) {
+
+                        Csw.eachRecursive(nodetypeObj.nodes, cswPrivate.makeNodeCell);
+
                         var nodetypeid = nodetypeObj["nodetypeid"];
                         var nodetypename = nodetypeObj["nodetypename"];
-                        var endCellSet = cswPrivate.layoutTable.cellSet(cswPrivate.r, cswPrivate.c);
-                        var endTextCell = cswPrivate.getTextCell(endCellSet);
 
-                        endTextCell.a({
-                            text: 'More ' + nodetypename + ' Results...',
-                            onClick: function() {
-                                Csw.tryExec(onMoreClick, nodetypeid, nodetypename);
-                            }
-                        });
+                        var handleClick = function () {
+                            Csw.tryExec(cswPrivate.onMoreClick, nodetypeid, nodetypename);
+                        };
+
+                        if (false === cswPrivate.singleColumn) {
+                            var startCellSet = cswPrivate.layoutTable.cellSet(cswPrivate.r, 1);
+                            var startHeaderCell = cswPrivate.getRowHeaderCell(startCellSet);
+                            startHeaderCell.a({
+                                text: nodetypename + ' Results (' + results + ')',
+                                onClick: handleClick
+                            });
+
+                            if (results > 3) {
+                                var endCellSet = cswPrivate.layoutTable.cellSet(cswPrivate.r, cswPrivate.c);
+                                var endTextCell = cswPrivate.getTextCell(endCellSet);
+
+                                endTextCell.a({
+                                    text: 'More...',
+                                    onClick: handleClick
+                                });
+                            } // if (results > 3) {
+                        }
+                        cswPrivate.c = 1;
+                        cswPrivate.r += 1;
+                    } else {
+                        cswPrivate.pagenodecount += buffer;
                     }
-                    cswPrivate.c = 1;
-                    cswPrivate.r += 1;
                 });
 
                 // Pager control
@@ -383,15 +432,29 @@
 
             cswPrivate.HandleTableData = function () {
                 cswPrivate.results = Csw.number(cswPrivate.tabledata.results, -1);
-                cswPrivate.totalpages = Math.ceil(cswPrivate.results / cswPrivate.pagenodelimit);
 
                 // multi-nodetype
                 cswPrivate.singleColumn = false;
                 cswPrivate.columns = 3;
-                if (cswPrivate.tabledata.nodetypes.length === 1) {
+                if (Csw.number(cswPrivate.tabledata.nodetypecount) <= 1) {
                     // single nodetype
                     cswPrivate.singleColumn = true;
                     cswPrivate.columns = 1;
+                }
+
+                // calculate totalpages
+                if (cswPrivate.singleColumn) {
+                    cswPrivate.totalpages = Math.ceil(cswPrivate.results / cswPrivate.pagenodelimit);
+                } else {
+                    var constrainedResults = 0;
+                    Csw.each(cswPrivate.tabledata.nodetypes, function (nodetypeObj) {
+                        var add = Csw.number(nodetypeObj.results);
+                        if (add > cswPrivate.columns) {
+                            add = cswPrivate.columns;
+                        }
+                        constrainedResults += add;
+                    });
+                    cswPrivate.totalpages = Math.ceil(constrainedResults / cswPrivate.pagenodelimit);
                 }
 
                 if (cswPrivate.results === 0) {

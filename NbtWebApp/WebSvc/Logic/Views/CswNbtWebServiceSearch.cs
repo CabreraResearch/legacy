@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using ChemSW.Core;
 using ChemSW.Nbt.Logic;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.Search;
@@ -94,6 +95,19 @@ namespace ChemSW.Nbt.WebServices
                 {
                     Search.removeFilter( Filter );
                 }
+                ret = _finishUniversalSearch( Search );
+            }
+            return ret;
+        }
+
+        public JObject filterUniversalSearchByNodeType( CswNbtSessionDataId SessionDataId, Int32 NodeTypeId )
+        {
+            JObject ret = new JObject();
+            CswNbtSessionDataItem SessionDataItem = _CswNbtResources.SessionDataMgr.getSessionDataItem( SessionDataId );
+            if( SessionDataItem.DataType == CswNbtSessionDataItem.SessionDataType.Search )
+            {
+                CswNbtSearch Search = SessionDataItem.Search;
+                Search.addNodeTypeFilter( NodeTypeId );
                 ret = _finishUniversalSearch( Search );
             }
             return ret;

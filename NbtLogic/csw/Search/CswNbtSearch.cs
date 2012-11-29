@@ -97,6 +97,15 @@ namespace ChemSW.Nbt.Search
 
         #region Search Functions
 
+        public void addNodeTypeFilter( Int32 NodeTypeId )
+        {
+            CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeId );
+            if( null != NodeType )
+            {
+                addFilter( makeFilter( NodeType, Int32.MinValue, true ) );
+            }
+        } // addNodeTypeFilter()
+
         public void addFilter( CswNbtSearchFilterWrapper Filter )
         {
             addFilter( Filter.ToJObject() );
@@ -107,7 +116,7 @@ namespace ChemSW.Nbt.Search
             FiltersApplied.Add( FilterObj );
             _FilteredPropIds = null;
         } // addFilter()
-
+        
         public void removeFilter( JObject FilterObj )
         {
             CswNbtSearchFilterWrapper Filter = new CswNbtSearchFilterWrapper( FilterObj );
