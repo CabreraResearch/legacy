@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Runtime.Serialization;
+using ChemSW.Core;
+using ChemSW.Nbt.ServiceDrivers;
 using NbtWebApp.WebSvc.Returns;
 
 namespace NbtWebApp.WebSvc.Logic.CISPro
@@ -48,9 +50,34 @@ namespace NbtWebApp.WebSvc.Logic.CISPro
             [DataMember]
             public Ret Data;
 
+            [DataContract]
             public class Ret
             {
+                [DataMember( IsRequired = false )]
                 public bool Succeeded { get; set; }
+
+                [DataMember]
+                public string RequestId
+                {
+                    get { return CswTools.IsPrimaryKey( CswRequestId ) ? CswRequestId.ToString() : ""; }
+                    set
+                    {
+                        CswRequestId = new CswPrimaryKey();
+                        CswRequestId.FromString( value );
+                    }
+                }
+
+                [DataMember( IsRequired = false )]
+                public string RequestName
+                {
+                    get { return ( null != CswRequestName ) ? CswRequestName.ToString() : ""; }
+                    set { CswRequestName = new CswPropIdAttr( value ); }
+                }
+
+                [IgnoreDataMember]
+                public CswPrimaryKey CswRequestId { get; set; }
+                [IgnoreDataMember]
+                public CswPropIdAttr CswRequestName { get; set; }
             }
         }
 

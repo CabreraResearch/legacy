@@ -85,7 +85,11 @@
                         ViewId: Csw.string(cswPrivate.viewid)
                     },
                     success: function (data) {
-                        cswPrivate.relationships = data.Nodes;
+                        var relationships = [];
+                        data.Nodes.forEach(function(obj) {
+                            relationships.push({value: obj.NodeId, display: obj.NodeName});
+                        });
+                        cswPrivate.relationships = relationships;
                         cswPrivate.canAdd = Csw.bool(cswPrivate.canAdd) && Csw.bool(data.CanAdd);
                         cswPrivate.useSearch = Csw.bool(data.UseSearch);
                         cswPrivate.nodeTypeId = cswPrivate.nodeTypeId || data.NodeTypeId;
@@ -241,27 +245,29 @@
 
                     cswPrivate.getNodeTypeOptions = function () {
                         cswPrivate.blankText = '[Select One]';
-                        cswPrivate.selectedNodeType = cswPublic.cell(1, cswPrivate.cellCol)
-                            .nodeTypeSelect({
+                        cswPrivate.selectedNodeType = cswPrivate.selectedNodeType ||
+                            cswPublic.cell(1, cswPrivate.cellCol)
+                                     .nodeTypeSelect({
                                 objectClassId: cswPrivate.objectClassId,
                                 onSelect: function () {
                                     if (cswPrivate.blankText !== cswPrivate.selectedNodeType.val()) {
-                                        cswPrivate.openAddNodeDialog(cswPrivate.selectedNodeType.val());
+                                        cswPrivate.nodeTypeId = cswPrivate.selectedNodeType.val();
+                                        cswPrivate.openAddNodeDialog(cswPrivate.nodeTypeId);
                                     }
                                 },
                                 onSuccess: function (data, nodeTypeCount, lastNodeTypeId) {
                                     if (Csw.number(nodeTypeCount) > 1) {
                                         cswPrivate.selectedNodeType.show();
                                         cswPrivate.addImage.hide();
-                                    }
-                                    if (nodeTypeCount === 1 && false === Csw.isNullOrEmpty(cswPrivate.selectedNodeType)) {
-                                        cswPrivate.openAddNodeDialog(lastNodeTypeId);
+                                    } else {
+                                        cswPrivate.nodeTypeId = lastNodeTypeId;
+                                        cswPrivate.selectedNodeType.hide();
+                                        cswPrivate.openAddNodeDialog(cswPrivate.nodeTypeId);
                                     }
                                 },
                                 blankOptionText: cswPrivate.blankText,
                                 filterToPermission: 'Create'
-                            })
-                            .hide();
+                            }).hide();
                         cswPrivate.cellCol += 1;
                     };
 
@@ -272,7 +278,7 @@
                                 size: 'small',
                                 tooltip: { title: 'Add New ' + cswPrivate.name },
                                 onClick: function () {
-                                    if (false === Csw.isNullOrEmpty(cswPrivate.nodeTypeId)) {
+                                    if (Csw.number(cswPrivate.nodeTypeId)>0) {
                                         cswPrivate.openAddNodeDialog(cswPrivate.nodeTypeId);
                                     }
                                     else {

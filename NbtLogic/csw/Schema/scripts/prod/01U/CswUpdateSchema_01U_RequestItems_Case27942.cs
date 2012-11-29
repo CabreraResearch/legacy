@@ -75,8 +75,6 @@ namespace ChemSW.Nbt.Schema
                 CswNbtMetaDataNodeTypeProp RequestRequestorNtp = RequestNt.getNodeTypePropByObjectClassProp( CswNbtObjClassRequest.PropertyName.Requestor );
                 CswNbtMetaDataNodeTypeProp RequestSubmittedNtp = RequestNt.getNodeTypePropByObjectClassProp( CswNbtObjClassRequest.PropertyName.SubmittedDate );
                 RequestNt.addNameTemplateText( RequestNameNtp.PropName );
-                RequestNt.addNameTemplateText( RequestRequestorNtp.PropName );
-                RequestNt.addNameTemplateText( RequestSubmittedNtp.PropName );
 
                 CswNbtMetaDataNodeTypeTab RequestItemsTab = _CswNbtSchemaModTrnsctn.MetaData.makeNewTab( RequestNt, "Request Items", Int32.MinValue );
 

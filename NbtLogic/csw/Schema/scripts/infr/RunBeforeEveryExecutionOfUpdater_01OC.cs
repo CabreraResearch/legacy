@@ -739,6 +739,17 @@ namespace ChemSW.Nbt.Schema
                 ServerManaged = true
             } );
             _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( IsFavoriteOcp, false );
+
+            CswNbtMetaDataObjectClassProp RequestorOcp = RequestOc.getObjectClassProp( CswNbtObjClassRequest.PropertyName.Requestor );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( RequestorOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.setvalonadd, false );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( RequestorOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.display_col_add, Int32.MinValue );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( RequestorOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.display_row_add, Int32.MinValue );
+
+            CswNbtMetaDataObjectClassProp NameOcp = RequestOc.getObjectClassProp( CswNbtObjClassRequest.PropertyName.Name );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( NameOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.setvalonadd, true );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( NameOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.display_col_add, 1 );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( NameOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.display_row_add, 1 );
+
         }
 
         private CswNbtMetaDataObjectClass _createRequestItemBase( NbtObjectClass ObjectClass, Int32 StartAddRowAt = 1 )

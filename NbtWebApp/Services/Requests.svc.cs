@@ -98,6 +98,25 @@ namespace NbtWebApp
             return ( Ret );
         }
 
+        [OperationContract()]
+        [WebInvoke( Method = "PUT", UriTemplate = "Favorites/create" )]
+        [FaultContract( typeof( FaultException ) )]
+        [Description( "Create a new Favorite" )]
+        public CswNbtRequestDataModel.CswRequestReturn create( CswNbtRequestDataModel.CswRequestReturn.Ret Request )
+        {
+            //delegate has to be static because you can't create an instance yet: you don't have resources until the delegate is actually called
+            CswNbtRequestDataModel.CswRequestReturn Ret = new CswNbtRequestDataModel.CswRequestReturn();
+            var InitDriverType = new CswWebSvcDriver<CswNbtRequestDataModel.CswRequestReturn, CswNbtRequestDataModel.CswRequestReturn.Ret>(
+                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj: Ret,
+                WebSvcMethodPtr: CswNbtWebServiceRequesting.createFavorite,
+                ParamObj: Request
+                );
+
+            InitDriverType.run();
+            return ( Ret );
+        }
+
         // Add more operations here and mark them with [OperationContract]
     }
 }

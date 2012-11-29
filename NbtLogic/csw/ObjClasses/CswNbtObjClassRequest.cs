@@ -183,7 +183,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get { return _CswNbtNode.Properties[PropertyName.Name]; }
         }
-
+        
         public CswNbtNodePropDateTime SubmittedDate
         {
             get { return _CswNbtNode.Properties[PropertyName.SubmittedDate]; }
