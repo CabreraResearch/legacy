@@ -54,7 +54,7 @@ namespace ChemSW.Nbt.PropTypes
                 if( val != DBNull.Value )
                 {
                     _CswNbtNodePropData.SetPropRowValue( _CheckedSubField.Column, val );
-                    _CswNbtNodePropData.Gestalt = CswConvert.ToDisplayString( value );
+                    _CswNbtNodePropData.Gestalt = val.ToString();
                 }
                 else
                 {
