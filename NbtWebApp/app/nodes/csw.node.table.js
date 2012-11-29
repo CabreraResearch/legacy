@@ -208,6 +208,7 @@
                     if (Csw.bool(cswPrivate.compactResults)) {
                         btnTable.cell(1, btncol).buttonExt({
                             name: Csw.delimitedString(cswPrivate.name, nodeid, 'morebtn').string('_'),
+                            width: ('More Info'.length * 8) + 16,
                             enabledText: 'More Info',
                             icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.info),
                             disableOnClick: false,
@@ -221,6 +222,7 @@
 
                         btnTable.cell(1, btncol).buttonExt({
                             name: Csw.delimitedString(cswPrivate.name, nodeid, 'editbtn').string('_'),
+                            width: ('Details'.length * 7) + 16,
                             enabledText: 'Details',
                             icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.magglass),
                             onClick: function () {
@@ -239,6 +241,7 @@
                     if (Csw.bool(cswPrivate.allowDelete) && Csw.bool(nodeObj.allowdelete)) {
                         btnTable.cell(1, btncol).buttonExt({
                             name: Csw.delimitedString(cswPrivate.name, nodeid, 'morebtn').string('_'),
+                            width: ('Delete'.length * 8) + 16,
                             enabledText: 'Delete',
                             disabledOnClick: false,
                             //tooltip: { title: 'Delete' },
@@ -261,6 +264,7 @@
 
                         btnTable.cell(1, btncol).buttonExt({
                             name: Csw.delimitedString(cswPrivate.name, nodeid, 'extbtn').string('_'),
+                            width: (cswPrivate.extraAction.length * 8) + 16,
                             enabledText: cswPrivate.extraAction,
                             //tooltip: { title: cswPrivate.extraAction },
                             icon: cswPrivate.extraActionIcon,
